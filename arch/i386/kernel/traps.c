@@ -33,6 +33,12 @@ DECL|variable|default_ldt
 r_struct
 id|desc_struct
 id|default_ldt
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 DECL|function|console_verbose
 r_static
@@ -351,7 +357,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;EIP:    %04x:%08lx&bslash;nEFLAGS: %08lx&bslash;n&quot;
+l_string|&quot;EIP:    %04x:[&lt;%08lx&gt;]&bslash;nEFLAGS: %08lx&bslash;n&quot;
 comma
 l_int|0xffff
 op_amp
@@ -659,7 +665,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%08lx &quot;
+l_string|&quot;[&lt;%08lx&gt;] &quot;
 comma
 id|addr
 )paren

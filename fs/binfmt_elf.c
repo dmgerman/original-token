@@ -311,7 +311,6 @@ id|mpnt-&gt;vm_page_prot
 op_assign
 id|PAGE_COPY
 suffix:semicolon
-macro_line|#ifdef VM_STACK_FLAGS
 id|mpnt-&gt;vm_flags
 op_assign
 id|VM_STACK_FLAGS
@@ -320,14 +319,6 @@ id|mpnt-&gt;vm_pte
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#else
-macro_line|#  ifdef VM_GROWSDOWN
-id|mpnt-&gt;vm_flags
-op_assign
-id|VM_GROWSDOWN
-suffix:semicolon
-macro_line|#  endif
-macro_line|#endif
 id|mpnt-&gt;vm_inode
 op_assign
 l_int|NULL
@@ -348,12 +339,16 @@ comma
 id|mpnt
 )paren
 suffix:semicolon
-macro_line|#ifndef VM_GROWSDOWN
-id|current-&gt;mm-&gt;stk_vma
-op_assign
-id|mpnt
+id|current-&gt;mm-&gt;total_vm
+op_add_assign
+(paren
+id|mpnt-&gt;vm_end
+op_minus
+id|mpnt-&gt;vm_start
+)paren
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
-macro_line|#endif
 )brace
 id|sp
 op_assign
@@ -3621,15 +3616,6 @@ op_assign
 id|k
 suffix:semicolon
 )brace
-id|SYS
-c_func
-(paren
-id|close
-)paren
-(paren
-id|fd
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

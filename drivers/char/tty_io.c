@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/tty_io.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was a array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discipline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; *&n; * Rewrote canonical mode and added more termios flags.&n; * &t;-- julian@uhunix.uhcc.hawaii.edu (J. Cowley), 13Jan94&n; *&n; * Reorganized FASYNC support so mouse code can share it.&n; *&t;-- ctm@ardi.com, 9Sep95&n; */
+multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was a array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discipline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; *&n; * Rewrote canonical mode and added more termios flags.&n; * &t;-- julian@uhunix.uhcc.hawaii.edu (J. Cowley), 13Jan94&n; *&n; * Reorganized FASYNC support so mouse code can share it.&n; *&t;-- ctm@ardi.com, 9Sep95&n; *&n; * New TIOCLINUX variants added.&n; *&t;-- mj@k332.feld.cvut.cz, 19-Nov-95&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -77,7 +77,7 @@ id|NR_LDISCS
 )braket
 suffix:semicolon
 multiline_comment|/* line disc dispatch table&t;*/
-multiline_comment|/*&n; * fg_console is the current virtual console,&n; * last_console is the last used one&n; * redirect is the pseudo-tty that console output&n; * is redirected to if asked by TIOCCONS.&n; */
+multiline_comment|/*&n; * fg_console is the current virtual console,&n; * last_console is the last used one,&n; * kmsg_redirect is the console for kernel messages,&n; * redirect is the pseudo-tty that console output&n; * is redirected to if asked by TIOCCONS.&n; */
 DECL|variable|fg_console
 r_int
 id|fg_console
@@ -87,6 +87,12 @@ suffix:semicolon
 DECL|variable|last_console
 r_int
 id|last_console
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|kmsg_redirect
+r_int
+id|kmsg_redirect
 op_assign
 l_int|0
 suffix:semicolon
@@ -6732,6 +6738,73 @@ id|arg
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+r_case
+l_int|11
+suffix:colon
+multiline_comment|/* set kmsg redirect */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+id|retval
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+op_plus
+l_int|1
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+id|retval
+suffix:semicolon
+id|kmsg_redirect
+op_assign
+id|get_user
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|arg
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+l_int|12
+suffix:colon
+multiline_comment|/* get fg_console */
+r_return
+id|fg_console
 suffix:semicolon
 r_default
 suffix:colon

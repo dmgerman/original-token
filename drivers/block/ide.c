@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide.c&t;Version 5.17  Nov 3, 1995&n; *&n; *  Copyright (C) 1994, 1995  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; * This is the multiple IDE interface driver, as evolved from hd.c.  &n; * It supports up to four IDE interfaces, on one or more IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary i/f:    ide0: major=3;  (hda)         minor=0; (hdb)         minor=64&n; * Secondary i/f:  ide1: major=22; (hdc or hd1a) minor=0; (hdd or hd1b) minor=64&n; * Tertiary i/f:   ide2: major=33; (hde)         minor=0; (hdf)         minor=64&n; * Quaternary i/f: ide3: major=34; (hdg)         minor=0; (hdh)         minor=64&n; * &n; * It is easy to extend ide.c to handle more than four interfaces:&n; *&n; *&t;Change the MAX_HWIFS constant in ide.h.&n; * &n; *&t;Define some new major numbers (in major.h), and insert them into&n; *&t;the ide_hwif_to_major table in ide.c.&n; * &n; *&t;Fill in the extra values for the new interfaces into the two tables&n; *&t;inside ide.c:  default_io_base[]  and  default_irqs[].&n; * &n; *&t;Create the new request handlers by cloning &quot;do_ide3_request()&quot;&n; *&t;for each new interface, and add them to the switch statement&n; *&t;in the ide_init() function in ide.c.&n; *&n; *&t;Recompile, create the new /dev/ entries, and it will probably work.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@bnr.ca).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@bnr.ca)&t;&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Petri Mattila&t;(ptjmatti@kruuna.helsinki.fi)&t;(EIDE stuff)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  Maintained by Mark Lord (mlord@bnr.ca):  ide.c, ide.h, triton.c, hd.c, ..&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with &n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; *  Version 1.0 ALPHA&t;initial code, primary i/f working okay&n; *  Version 1.3 BETA&t;dual i/f on shared irq tested &amp; working!&n; *  Version 1.4 BETA&t;added auto probing for irq(s)&n; *  Version 1.5 BETA&t;added ALPHA (untested) support for IDE cd-roms,&n; *  ...&n; *  Version 3.5&t;&t;correct the bios_cyl field if it&squot;s too small&n; *  (linux 1.1.76)&t; (to help fdisk with brain-dead BIOSs)&n; *  Version 3.6&t;&t;cosmetic corrections to comments and stuff&n; *  (linux 1.1.77)&t;reorganise probing code to make it understandable&n; *&t;&t;&t;added halfway retry to probing for drive identification&n; *&t;&t;&t;added &quot;hdx=noprobe&quot; command line option&n; *&t;&t;&t;allow setting multmode even when identification fails&n; *  Version 3.7&t;&t;move set_geometry=1 from do_identify() to ide_init()&n; *&t;&t;&t;increase DRQ_WAIT to eliminate nuisance messages&n; *&t;&t;&t;wait for DRQ_STAT instead of DATA_READY during probing&n; *&t;&t;&t;  (courtesy of Gary Thomas gary@efland.UU.NET)&n; *  Version 3.8&t;&t;fixed byte-swapping for confused Mitsumi cdrom drives&n; *&t;&t;&t;update of ide-cd.c from Scott, allows blocksize=1024&n; *&t;&t;&t;cdrom probe fixes, inspired by jprang@uni-duisburg.de&n; *  Version 3.9&t;&t;don&squot;t use LBA if lba_capacity looks funny&n; *&t;&t;&t;correct the drive capacity calculations&n; *&t;&t;&t;fix probing for old Seagates without IDE_ALTSTATUS_REG&n; *&t;&t;&t;fix byte-ordering for some NEC cdrom drives&n; *  Version 3.10&t;disable multiple mode by default; was causing trouble&n; *  Version 3.11&t;fix mis-identification of old WD disks as cdroms&n; *  Version 3,12&t;simplify logic for selecting initial mult_count&n; *&t;&t;&t;  (fixes problems with buggy WD drives)&n; *  Version 3.13&t;remove excess &quot;multiple mode disabled&quot; messages&n; *  Version 3.14&t;fix ide_error() handling of BUSY_STAT&n; *&t;&t;&t;fix byte-swapped cdrom strings (again.. arghh!)&n; *&t;&t;&t;ignore INDEX bit when checking the ALTSTATUS reg&n; *  Version 3.15&t;add SINGLE_THREADED flag for use with dual-CMD i/f&n; *&t;&t;&t;ignore WRERR_STAT for non-write operations&n; *&t;&t;&t;added vlb_sync support for DC-2000A &amp; others,&n; *&t;&t;&t; (incl. some Promise chips), courtesy of Frank Gockel&n; *  Version 3.16&t;convert vlb_32bit and vlb_sync into runtime flags&n; *&t;&t;&t;add ioctls to get/set VLB flags (HDIO_[SG]ET_CHIPSET)&n; *&t;&t;&t;rename SINGLE_THREADED to SUPPORT_SERIALIZE,&n; *&t;&t;&t;add boot flag to &quot;serialize&quot; operation for CMD i/f&n; *&t;&t;&t;add optional support for DTC2278 interfaces,&n; *&t;&t;&t; courtesy of andy@cercle.cts.com (Dyan Wile).&n; *&t;&t;&t;add boot flag to enable &quot;dtc2278&quot; probe&n; *&t;&t;&t;add probe to avoid EATA (SCSI) interfaces,&n; *&t;&t;&t; courtesy of neuffer@goofy.zdv.uni-mainz.de.&n; *  Version 4.00&t;tidy up verify_area() calls - heiko@colossus.escape.de&n; *&t;&t;&t;add flag to ignore WRERR_STAT for some drives&n; *&t;&t;&t; courtesy of David.H.West@um.cc.umich.edu&n; *&t;&t;&t;assembly syntax tweak to vlb_sync&n; *&t;&t;&t;removeable drive support from scuba@cs.tu-berlin.de&n; *&t;&t;&t;add transparent support for DiskManager-6.0x &quot;Dynamic&n; *&t;&t;&t; Disk Overlay&quot; (DDO), most of this in in genhd.c&n; *&t;&t;&t;eliminate &quot;multiple mode turned off&quot; message at boot&n; *  Version 4.10&t;fix bug in ioctl for &quot;hdparm -c3&quot;&n; *&t;&t;&t;fix DM6:DDO support -- now works with LILO, fdisk, ...&n; *&t;&t;&t;don&squot;t treat some naughty WD drives as removeable&n; *  Version 4.11&t;updated DM6 support using info provided by OnTrack&n; *  Version 5.00&t;major overhaul, multmode setting fixed, vlb_sync fixed&n; *&t;&t;&t;added support for 3rd/4th/alternative IDE ports&n; *&t;&t;&t;created ide.h; ide-cd.c now compiles separate from ide.c&n; *&t;&t;&t;hopefully fixed infinite &quot;unexpected_intr&quot; from cdroms&n; *&t;&t;&t;zillions of other changes and restructuring&n; *&t;&t;&t;somehow reduced overall memory usage by several kB&n; *&t;&t;&t;probably slowed things down slightly, but worth it&n; *  Version 5.01&t;AT LAST!!  Finally understood why &quot;unexpected_intr&quot;&n; *&t;&t;&t; was happening at various times/places:  whenever the&n; *&t;&t;&t; ide-interface&squot;s ctl_port was used to &quot;mask&quot; the irq,&n; *&t;&t;&t; it also would trigger an edge in the process of masking&n; *&t;&t;&t; which would result in a self-inflicted interrupt!!&n; *&t;&t;&t; (such a stupid way to build a hardware interrupt mask).&n; *&t;&t;&t; This is now fixed (after a year of head-scratching).&n; *  Version 5.02&t;got rid of need for {enable,disable}_irq_list()&n; *  Version 5.03&t;tune-ups, comments, remove &quot;busy wait&quot; from drive resets&n; *&t;&t;&t;removed PROBE_FOR_IRQS option -- no longer needed&n; *&t;&t;&t;OOOPS!  fixed &quot;bad access&quot; bug for 2nd drive on an i/f&n; *  Version 5.04&t;changed &quot;ira %d&quot; to &quot;irq %d&quot; in DEBUG message&n; *&t;&t;&t;added more comments, cleaned up unexpected_intr()&n; *&t;&t;&t;OOOPS!  fixed null pointer problem in ide reset code&n; *&t;&t;&t;added autodetect for Triton chipset -- no effect yet&n; *  Version 5.05&t;OOOPS!  fixed bug in revalidate_disk()&n; *&t;&t;&t;OOOPS!  fixed bug in ide_do_request()&n; *&t;&t;&t;added ATAPI reset sequence for cdroms&n; *  Version 5.10&t;added Bus-Mastered DMA support for Triton Chipset&n; *&t;&t;&t;some (mostly) cosmetic changes&n; *  Version 5.11&t;added ht6560b support by malafoss@snakemail.hut.fi&n; *&t;&t;&t;reworked PCI scanning code&n; *&t;&t;&t;added automatic RZ1000 detection/support&n; *&t;&t;&t;added automatic PCI CMD640 detection/support&n; *&t;&t;&t;added option for VLB CMD640 support&n; *&t;&t;&t;tweaked probe to find cdrom on hdb with disks on hda,hdc&n; *  Version 5.12&t;some performance tuning&n; *&t;&t;&t;added message to alert user to bad /dev/hd[cd] entries&n; *&t;&t;&t;OOOPS!  fixed bug in atapi reset&n; *&t;&t;&t;driver now forces &quot;serialize&quot; again for all cmd640 chips&n; *&t;&t;&t;noticed REALLY_SLOW_IO had no effect, moved it to ide.c&n; *&t;&t;&t;made do_drive_cmd() into public ide_do_drive_cmd()&n; *  Version 5.13&t;fixed typo (&squot;B&squot;), thanks to houston@boyd.geog.mcgill.ca&n; *&t;&t;&t;fixed ht6560b support&n; *  Version 5.13b (sss)&t;fix problem in calling ide_cdrom_setup()&n; *&t;&t;&t;don&squot;t bother invalidating nonexistent partitions&n; *  Version 5.14&t;fixes to cmd640 support.. maybe it works now(?)&n; *&t;&t;&t;added &amp; tested full EZ-DRIVE support -- don&squot;t use LILO!&n; *&t;&t;&t;don&squot;t enable 2nd CMD640 PCI port during init - conflict&n; *  Version 5.15&t;bug fix in init_cmd640_vlb()&n; *&t;&t;&t;bug fix in interrupt sharing code&n; *  Version 5.16&t;ugh.. fix &quot;serialize&quot; support, broken in 5.15&n; *&t;&t;&t;remove &quot;Huh?&quot; from cmd640 code&n; *&t;&t;&t;added qd6580 interface speed select from Colten Edwards&n; *  Version 5.17&t;kludge around bug in BIOS32 on Intel triton motherboards&n; *&n; *  Driver compile-time options are in ide.h&n; *&n; *  To do, in likely order of completion:&n; *&t;- add ALI M1443/1445 chipset support from derekn@vw.ece.cmu.edu&n; *&t;- add Promise Caching controller support from peterd@pnd-pc.demon.co.uk&n; *&t;- add ioctls to get/set interface timings on various interfaces&n; *&t;- modify kernel to obtain BIOS geometry for drives on 2nd/3rd/4th i/f&n; *&t;- improved CMD support:  handed this off to someone else&n; *&t;- find someone to work on IDE *tape drive* support&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide.c&t;Version 5.18  Nov 16, 1995&n; *&n; *  Copyright (C) 1994, 1995  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; * This is the multiple IDE interface driver, as evolved from hd.c.&n; * It supports up to four IDE interfaces, on one or more IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary i/f:    ide0: major=3;  (hda)         minor=0; (hdb)         minor=64&n; * Secondary i/f:  ide1: major=22; (hdc or hd1a) minor=0; (hdd or hd1b) minor=64&n; * Tertiary i/f:   ide2: major=33; (hde)         minor=0; (hdf)         minor=64&n; * Quaternary i/f: ide3: major=34; (hdg)         minor=0; (hdh)         minor=64&n; *&n; * It is easy to extend ide.c to handle more than four interfaces:&n; *&n; *&t;Change the MAX_HWIFS constant in ide.h.&n; *&n; *&t;Define some new major numbers (in major.h), and insert them into&n; *&t;the ide_hwif_to_major table in ide.c.&n; *&n; *&t;Fill in the extra values for the new interfaces into the two tables&n; *&t;inside ide.c:  default_io_base[]  and  default_irqs[].&n; *&n; *&t;Create the new request handlers by cloning &quot;do_ide3_request()&quot;&n; *&t;for each new interface, and add them to the switch statement&n; *&t;in the ide_init() function in ide.c.&n; *&n; *&t;Recompile, create the new /dev/ entries, and it will probably work.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@bnr.ca).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@bnr.ca)&t;&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Petri Mattila&t;(ptjmatti@kruuna.helsinki.fi)&t;(EIDE stuff)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  Maintained by Mark Lord (mlord@bnr.ca):  ide.c, ide.h, triton.c, hd.c, ..&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with&n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; *  Version 1.0 ALPHA&t;initial code, primary i/f working okay&n; *  Version 1.3 BETA&t;dual i/f on shared irq tested &amp; working!&n; *  Version 1.4 BETA&t;added auto probing for irq(s)&n; *  Version 1.5 BETA&t;added ALPHA (untested) support for IDE cd-roms,&n; *  ...&n; *  Version 3.5&t;&t;correct the bios_cyl field if it&squot;s too small&n; *  (linux 1.1.76)&t; (to help fdisk with brain-dead BIOSs)&n; *  Version 3.6&t;&t;cosmetic corrections to comments and stuff&n; *  (linux 1.1.77)&t;reorganise probing code to make it understandable&n; *&t;&t;&t;added halfway retry to probing for drive identification&n; *&t;&t;&t;added &quot;hdx=noprobe&quot; command line option&n; *&t;&t;&t;allow setting multmode even when identification fails&n; *  Version 3.7&t;&t;move set_geometry=1 from do_identify() to ide_init()&n; *&t;&t;&t;increase DRQ_WAIT to eliminate nuisance messages&n; *&t;&t;&t;wait for DRQ_STAT instead of DATA_READY during probing&n; *&t;&t;&t;  (courtesy of Gary Thomas gary@efland.UU.NET)&n; *  Version 3.8&t;&t;fixed byte-swapping for confused Mitsumi cdrom drives&n; *&t;&t;&t;update of ide-cd.c from Scott, allows blocksize=1024&n; *&t;&t;&t;cdrom probe fixes, inspired by jprang@uni-duisburg.de&n; *  Version 3.9&t;&t;don&squot;t use LBA if lba_capacity looks funny&n; *&t;&t;&t;correct the drive capacity calculations&n; *&t;&t;&t;fix probing for old Seagates without IDE_ALTSTATUS_REG&n; *&t;&t;&t;fix byte-ordering for some NEC cdrom drives&n; *  Version 3.10&t;disable multiple mode by default; was causing trouble&n; *  Version 3.11&t;fix mis-identification of old WD disks as cdroms&n; *  Version 3,12&t;simplify logic for selecting initial mult_count&n; *&t;&t;&t;  (fixes problems with buggy WD drives)&n; *  Version 3.13&t;remove excess &quot;multiple mode disabled&quot; messages&n; *  Version 3.14&t;fix ide_error() handling of BUSY_STAT&n; *&t;&t;&t;fix byte-swapped cdrom strings (again.. arghh!)&n; *&t;&t;&t;ignore INDEX bit when checking the ALTSTATUS reg&n; *  Version 3.15&t;add SINGLE_THREADED flag for use with dual-CMD i/f&n; *&t;&t;&t;ignore WRERR_STAT for non-write operations&n; *&t;&t;&t;added vlb_sync support for DC-2000A &amp; others,&n; *&t;&t;&t; (incl. some Promise chips), courtesy of Frank Gockel&n; *  Version 3.16&t;convert vlb_32bit and vlb_sync into runtime flags&n; *&t;&t;&t;add ioctls to get/set VLB flags (HDIO_[SG]ET_CHIPSET)&n; *&t;&t;&t;rename SINGLE_THREADED to SUPPORT_SERIALIZE,&n; *&t;&t;&t;add boot flag to &quot;serialize&quot; operation for CMD i/f&n; *&t;&t;&t;add optional support for DTC2278 interfaces,&n; *&t;&t;&t; courtesy of andy@cercle.cts.com (Dyan Wile).&n; *&t;&t;&t;add boot flag to enable &quot;dtc2278&quot; probe&n; *&t;&t;&t;add probe to avoid EATA (SCSI) interfaces,&n; *&t;&t;&t; courtesy of neuffer@goofy.zdv.uni-mainz.de.&n; *  Version 4.00&t;tidy up verify_area() calls - heiko@colossus.escape.de&n; *&t;&t;&t;add flag to ignore WRERR_STAT for some drives&n; *&t;&t;&t; courtesy of David.H.West@um.cc.umich.edu&n; *&t;&t;&t;assembly syntax tweak to vlb_sync&n; *&t;&t;&t;removeable drive support from scuba@cs.tu-berlin.de&n; *&t;&t;&t;add transparent support for DiskManager-6.0x &quot;Dynamic&n; *&t;&t;&t; Disk Overlay&quot; (DDO), most of this in in genhd.c&n; *&t;&t;&t;eliminate &quot;multiple mode turned off&quot; message at boot&n; *  Version 4.10&t;fix bug in ioctl for &quot;hdparm -c3&quot;&n; *&t;&t;&t;fix DM6:DDO support -- now works with LILO, fdisk, ...&n; *&t;&t;&t;don&squot;t treat some naughty WD drives as removeable&n; *  Version 4.11&t;updated DM6 support using info provided by OnTrack&n; *  Version 5.00&t;major overhaul, multmode setting fixed, vlb_sync fixed&n; *&t;&t;&t;added support for 3rd/4th/alternative IDE ports&n; *&t;&t;&t;created ide.h; ide-cd.c now compiles separate from ide.c&n; *&t;&t;&t;hopefully fixed infinite &quot;unexpected_intr&quot; from cdroms&n; *&t;&t;&t;zillions of other changes and restructuring&n; *&t;&t;&t;somehow reduced overall memory usage by several kB&n; *&t;&t;&t;probably slowed things down slightly, but worth it&n; *  Version 5.01&t;AT LAST!!  Finally understood why &quot;unexpected_intr&quot;&n; *&t;&t;&t; was happening at various times/places:  whenever the&n; *&t;&t;&t; ide-interface&squot;s ctl_port was used to &quot;mask&quot; the irq,&n; *&t;&t;&t; it also would trigger an edge in the process of masking&n; *&t;&t;&t; which would result in a self-inflicted interrupt!!&n; *&t;&t;&t; (such a stupid way to build a hardware interrupt mask).&n; *&t;&t;&t; This is now fixed (after a year of head-scratching).&n; *  Version 5.02&t;got rid of need for {enable,disable}_irq_list()&n; *  Version 5.03&t;tune-ups, comments, remove &quot;busy wait&quot; from drive resets&n; *&t;&t;&t;removed PROBE_FOR_IRQS option -- no longer needed&n; *&t;&t;&t;OOOPS!  fixed &quot;bad access&quot; bug for 2nd drive on an i/f&n; *  Version 5.04&t;changed &quot;ira %d&quot; to &quot;irq %d&quot; in DEBUG message&n; *&t;&t;&t;added more comments, cleaned up unexpected_intr()&n; *&t;&t;&t;OOOPS!  fixed null pointer problem in ide reset code&n; *&t;&t;&t;added autodetect for Triton chipset -- no effect yet&n; *  Version 5.05&t;OOOPS!  fixed bug in revalidate_disk()&n; *&t;&t;&t;OOOPS!  fixed bug in ide_do_request()&n; *&t;&t;&t;added ATAPI reset sequence for cdroms&n; *  Version 5.10&t;added Bus-Mastered DMA support for Triton Chipset&n; *&t;&t;&t;some (mostly) cosmetic changes&n; *  Version 5.11&t;added ht6560b support by malafoss@snakemail.hut.fi&n; *&t;&t;&t;reworked PCI scanning code&n; *&t;&t;&t;added automatic RZ1000 detection/support&n; *&t;&t;&t;added automatic PCI CMD640 detection/support&n; *&t;&t;&t;added option for VLB CMD640 support&n; *&t;&t;&t;tweaked probe to find cdrom on hdb with disks on hda,hdc&n; *  Version 5.12&t;some performance tuning&n; *&t;&t;&t;added message to alert user to bad /dev/hd[cd] entries&n; *&t;&t;&t;OOOPS!  fixed bug in atapi reset&n; *&t;&t;&t;driver now forces &quot;serialize&quot; again for all cmd640 chips&n; *&t;&t;&t;noticed REALLY_SLOW_IO had no effect, moved it to ide.c&n; *&t;&t;&t;made do_drive_cmd() into public ide_do_drive_cmd()&n; *  Version 5.13&t;fixed typo (&squot;B&squot;), thanks to houston@boyd.geog.mcgill.ca&n; *&t;&t;&t;fixed ht6560b support&n; *  Version 5.13b (sss)&t;fix problem in calling ide_cdrom_setup()&n; *&t;&t;&t;don&squot;t bother invalidating nonexistent partitions&n; *  Version 5.14&t;fixes to cmd640 support.. maybe it works now(?)&n; *&t;&t;&t;added &amp; tested full EZ-DRIVE support -- don&squot;t use LILO!&n; *&t;&t;&t;don&squot;t enable 2nd CMD640 PCI port during init - conflict&n; *  Version 5.15&t;bug fix in init_cmd640_vlb()&n; *&t;&t;&t;bug fix in interrupt sharing code&n; *  Version 5.16&t;ugh.. fix &quot;serialize&quot; support, broken in 5.15&n; *&t;&t;&t;remove &quot;Huh?&quot; from cmd640 code&n; *&t;&t;&t;added qd6580 interface speed select from Colten Edwards&n; *  Version 5.17&t;kludge around bug in BIOS32 on Intel triton motherboards&n; *  Version 5.18&t;new CMD640 code, moved to cmd640.c, #include&squot;d for now&n; *&t;&t;&t;new UMC8672 code, moved to umc8672.c, #include&squot;d for now&n; *&t;&t;&t;disallow turning on DMA when h/w not capable of DMA&n; *&n; *  Driver compile-time options are in ide.h&n; *&n; *  To do, in likely order of completion:&n; *&t;- make cmd640.c and umc8672.c compile separately from ide.c&n; *&t;- add ALI M1443/1445 chipset support from derekn@vw.ece.cmu.edu&n; *&t;- add ioctls to get/set interface timings on various interfaces&n; *&t;- add Promise Caching controller support from peterd@pnd-pc.demon.co.uk&n; *&t;- modify kernel to obtain BIOS geometry for drives on 2nd/3rd/4th i/f&n; *&t;- find someone to work on IDE *tape drive* support&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -26,6 +26,23 @@ macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#endif /* CONFIG_PCI */
 macro_line|#include &quot;ide.h&quot;
+macro_line|#ifdef SUPPORT_CMD640
+r_void
+id|cmd640_tune_drive
+c_func
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
+DECL|variable|cmd640_vlb
+r_static
+r_int
+id|cmd640_vlb
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|variable|ide_hwifs
 id|ide_hwif_t
 id|ide_hwifs
@@ -3567,7 +3584,7 @@ id|stat
 id|IDE_DO_REQUEST
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * multwrite() transfers a block of one or more sectors of data to a drive&n; * as part of a disk multwrite operation.  &n; */
+multiline_comment|/*&n; * multwrite() transfers a block of one or more sectors of data to a drive&n; * as part of a disk multwrite operation.&n; */
 DECL|function|multwrite
 r_static
 r_void
@@ -6049,7 +6066,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * There&squot;s nothing really useful we can do with an unexpected interrupt,&n; * other than reading the status register (to clear it), and logging it.&n; * There should be no way that an irq can happen before we&squot;re ready for it,&n; * so we needn&squot;t worry much about losing an &quot;important&quot; interrupt here.&n; *&n; * On laptops (and &quot;green&quot; PCs), an unexpected interrupt occurs whenever the&n; * drive enters &quot;idle&quot;, &quot;standby&quot;, or &quot;sleep&quot; mode, so if the status looks&n; * &quot;good&quot;, we just ignore the interrupt completely.&n; *&n; * This routine assumes cli() is in effect when called.&n; *&n; * If an unexpected interrupt happens on irq15 while we are handling irq14&n; * and if the two interfaces are &quot;serialized&quot; (CMD640B), then it looks like&n; * we could screw up by interfering with a new request being set up for irq15.&n; *&n; * In reality, this is a non-issue.  The new command is not sent unless the&n; * drive is ready to accept one, in which case we know the drive is not&n; * trying to interrupt us.  And ide_set_handler() is always invoked before&n; * completing the issuance of any new drive command, so we will not be &n; * accidently invoked as a result of any valid command completion interrupt.&n; *&n; */
+multiline_comment|/*&n; * There&squot;s nothing really useful we can do with an unexpected interrupt,&n; * other than reading the status register (to clear it), and logging it.&n; * There should be no way that an irq can happen before we&squot;re ready for it,&n; * so we needn&squot;t worry much about losing an &quot;important&quot; interrupt here.&n; *&n; * On laptops (and &quot;green&quot; PCs), an unexpected interrupt occurs whenever the&n; * drive enters &quot;idle&quot;, &quot;standby&quot;, or &quot;sleep&quot; mode, so if the status looks&n; * &quot;good&quot;, we just ignore the interrupt completely.&n; *&n; * This routine assumes cli() is in effect when called.&n; *&n; * If an unexpected interrupt happens on irq15 while we are handling irq14&n; * and if the two interfaces are &quot;serialized&quot; (CMD640B), then it looks like&n; * we could screw up by interfering with a new request being set up for irq15.&n; *&n; * In reality, this is a non-issue.  The new command is not sent unless the&n; * drive is ready to accept one, in which case we know the drive is not&n; * trying to interrupt us.  And ide_set_handler() is always invoked before&n; * completing the issuance of any new drive command, so we will not be&n; * accidently invoked as a result of any valid command completion interrupt.&n; *&n; */
 DECL|function|unexpected_intr
 r_static
 r_void
@@ -7801,6 +7818,32 @@ id|cmd
 r_case
 id|HDIO_SET_DMA
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|dmaproc
+)paren
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 id|drive-&gt;using_dma
 op_assign
 id|arg
@@ -8811,7 +8854,7 @@ op_logical_and
 id|id-&gt;cur_sectors
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Extract the physical drive geometry for our use.&n;&t;&t; * Note that we purposely do *not* update the bios info.&n;&t;&t; * This way, programs that use it (like fdisk) will &n;&t;&t; * still have the same logical view as the BIOS does,&n;&t;&t; * which keeps the partition table from being screwed.&n;&t;&t; *&n;&t;&t; * An exception to this is the cylinder count,&n;&t;&t; * which we reexamine later on to correct for 1024 limitations.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Extract the physical drive geometry for our use.&n;&t;&t; * Note that we purposely do *not* update the bios info.&n;&t;&t; * This way, programs that use it (like fdisk) will&n;&t;&t; * still have the same logical view as the BIOS does,&n;&t;&t; * which keeps the partition table from being screwed.&n;&t;&t; *&n;&t;&t; * An exception to this is the cylinder count,&n;&t;&t; * which we reexamine later on to correct for 1024 limitations.&n;&t;&t; */
 id|drive-&gt;cyl
 op_assign
 id|id-&gt;cur_cyls
@@ -9069,6 +9112,15 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef SUPPORT_CMD640
+id|cmd640_tune_drive
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+multiline_comment|/* but can we tune a fish? */
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Delay for *at least* 10ms.  As we don&squot;t know how much time is left&n; * until the next tick occurs, we wait an extra tick to be safe.&n; */
 DECL|function|delay_10ms
@@ -10083,7 +10135,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#if SUPPORT_DTC2278
-multiline_comment|/*&n; * From: andy@cercle.cts.com (Dyan Wile)&n; *&n; * Below is a patch for DTC-2278 - alike software-programmable controllers&n; * The code enables the secondary IDE controller and the PIO4 (3?) timings on&n; * the primary (EIDE). You may probably have to enable the 32-bit support to&n; * get the full speed. You better get the disk interrupts disabled ( hdparm -u0&n; * /dev/hd.. ) for the drives connected to the EIDE interface. (I get my &n; * filesystem  corrupted with -u1, but under heavy disk load only :-)  &n; *&n; * From: mlord@bnr.ca -- this chipset is now forced to use the &quot;serialize&quot; feature,&n; * which hopefully will make it more reliable to use.. maybe it has the same bugs&n; * as the CMD640B and RZ1000 ??&n; */
+multiline_comment|/*&n; * From: andy@cercle.cts.com (Dyan Wile)&n; *&n; * Below is a patch for DTC-2278 - alike software-programmable controllers&n; * The code enables the secondary IDE controller and the PIO4 (3?) timings on&n; * the primary (EIDE). You may probably have to enable the 32-bit support to&n; * get the full speed. You better get the disk interrupts disabled ( hdparm -u0&n; * /dev/hd.. ) for the drives connected to the EIDE interface. (I get my&n; * filesystem  corrupted with -u1, but under heavy disk load only :-)&n; *&n; * From: mlord@bnr.ca -- this chipset is now forced to use the &quot;serialize&quot; feature,&n; * which hopefully will make it more reliable to use.. maybe it has the same bugs&n; * as the CMD640B and RZ1000 ??&n; */
 macro_line|#if SET_DTC2278_MODE4
 DECL|function|sub22
 r_static
@@ -10326,261 +10378,12 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif /* SUPPORT_QD6580 */
-macro_line|#if SUPPORT_CMD640
-multiline_comment|/*&n; * ??? fixme: &n; */
-DECL|function|read_cmd640_vlb
-id|byte
-id|read_cmd640_vlb
-(paren
-id|byte
-id|port
-comma
-id|byte
-id|reg
-)paren
-(brace
-id|byte
-id|val
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|reg
-comma
-id|port
-)paren
-suffix:semicolon
-id|val
-op_assign
-id|inb
-c_func
-(paren
-id|port
-op_plus
-l_int|4
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-id|val
-suffix:semicolon
-)brace
-DECL|function|write_cmd640_vlb
-r_void
-id|write_cmd640_vlb
-(paren
-id|byte
-id|port
-comma
-id|byte
-id|reg
-comma
-id|byte
-id|val
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|reg
-comma
-id|port
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|val
-comma
-id|port
-op_plus
-l_int|4
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-DECL|function|init_cmd640_vlb
-r_void
-id|init_cmd640_vlb
-(paren
-r_void
-)paren
-(brace
-id|byte
-id|reg
-suffix:semicolon
-r_int
-r_int
-id|port
-op_assign
-l_int|0x178
-suffix:semicolon
-id|serialized
-op_assign
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;ide: buggy CMD640 interface: serialized, &quot;
-)paren
-suffix:semicolon
-id|reg
-op_assign
-id|read_cmd640_vlb
-c_func
-(paren
-id|port
-comma
-l_int|0x50
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|reg
-op_eq
-l_int|0xff
-op_logical_or
-(paren
-id|reg
-op_amp
-l_int|0x90
-)paren
-op_ne
-l_int|0x90
-)paren
-(brace
-macro_line|#if TRY_CMD640_VLB_AT_0x78
-id|port
-op_assign
-l_int|0x78
-suffix:semicolon
-id|reg
-op_assign
-id|read_cmd640_vlb
-c_func
-(paren
-id|port
-comma
-l_int|0x50
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|reg
-op_eq
-l_int|0xff
-op_logical_or
-(paren
-id|reg
-op_amp
-l_int|0x90
-)paren
-op_ne
-l_int|0x90
-)paren
+macro_line|#ifdef SUPPORT_UMC8672
+macro_line|#include &quot;umc8672.c&quot;&t;/* until we tidy up the interface some more */
 macro_line|#endif
-(brace
-id|disallow_unmask
-op_assign
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;(probe failed) disabled unmasking&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-)brace
-id|write_cmd640_vlb
-c_func
-(paren
-id|port
-comma
-l_int|0x51
-comma
-id|read_cmd640_vlb
-c_func
-(paren
-id|port
-comma
-l_int|0x51
-)paren
-op_or
-l_int|0xc8
-)paren
-suffix:semicolon
-id|write_cmd640_vlb
-c_func
-(paren
-id|port
-comma
-l_int|0x57
-comma
-id|read_cmd640_vlb
-c_func
-(paren
-id|port
-comma
-l_int|0x57
-)paren
-op_or
-l_int|0x0c
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;disabled read-ahead, enabled secondary&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* SUPPORT_CMD640 */
+macro_line|#ifdef SUPPORT_CMD640
+macro_line|#include &quot;cmd640.c&quot;&t;/* until we tidy up the interface some more */
+macro_line|#endif
 multiline_comment|/*&n; * stridx() returns the offset of c within s,&n; * or -1 if c is &squot;&bslash;0&squot; or not found within s.&n; */
 DECL|function|stridx
 r_static
@@ -10624,7 +10427,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * match_parm() does parsing for ide_setup():&n; *&n; * 1. the first char of s must be &squot;=&squot;.&n; * 2. if the remainder matches one of the supplied keywords,&n; *     the index (1 based) of the keyword is negated and returned.&n; * 3. if the remainder is a series of no more than max_vals numbers&n; *     separated by commas, the numbers are saved in vals[] and a &n; *     count of how many were saved is returned.  Base10 is assumed,&n; *     and base16 is allowed when prefixed with &quot;0x&quot;.&n; * 4. otherwise, zero is returned.&n; */
+multiline_comment|/*&n; * match_parm() does parsing for ide_setup():&n; *&n; * 1. the first char of s must be &squot;=&squot;.&n; * 2. if the remainder matches one of the supplied keywords,&n; *     the index (1 based) of the keyword is negated and returned.&n; * 3. if the remainder is a series of no more than max_vals numbers&n; *     separated by commas, the numbers are saved in vals[] and a&n; *     count of how many were saved is returned.  Base10 is assumed,&n; *     and base16 is allowed when prefixed with &quot;0x&quot;.&n; * 4. otherwise, zero is returned.&n; */
 DECL|function|match_parm
 r_static
 r_int
@@ -10721,7 +10524,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Look for a series of no more than &quot;max_vals&quot;&n;&t;&t; * numeric values separated by commas, in base10,&n;&t;&t; * or base16 when prefixed with &quot;0x&quot;.  &n;&t;&t; * Return a count of how many were found.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Look for a series of no more than &quot;max_vals&quot;&n;&t;&t; * numeric values separated by commas, in base10,&n;&t;&t; * or base16 when prefixed with &quot;0x&quot;.&n;&t;&t; * Return a count of how many were found.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -11235,6 +11038,8 @@ l_string|&quot;cmd640_vlb&quot;
 comma
 l_string|&quot;qd6580&quot;
 comma
+l_string|&quot;umc8672&quot;
+comma
 l_int|NULL
 )brace
 suffix:semicolon
@@ -11275,6 +11080,31 @@ l_int|3
 )paren
 )paren
 (brace
+macro_line|#if SUPPORT_UMC8672
+r_case
+op_minus
+l_int|7
+suffix:colon
+multiline_comment|/* &quot;umc8672&quot; */
+r_if
+c_cond
+(paren
+id|hw
+op_ne
+l_int|0
+)paren
+r_goto
+id|bad_hwif
+suffix:semicolon
+id|init_umc8672
+c_func
+(paren
+)paren
+suffix:semicolon
+r_goto
+id|done
+suffix:semicolon
+macro_line|#endif /* SUPPORT_UMC8672 */
 macro_line|#if SUPPORT_QD6580
 r_case
 op_minus
@@ -11316,15 +11146,10 @@ l_int|1
 r_goto
 id|bad_hwif
 suffix:semicolon
-id|init_cmd640_vlb
-c_func
-(paren
-)paren
+id|cmd640_vlb
+op_assign
+l_int|1
 suffix:semicolon
-r_goto
-id|do_serialize
-suffix:semicolon
-multiline_comment|/* not necessary once we implement the above */
 r_break
 suffix:semicolon
 macro_line|#endif /* SUPPORT_CMD640 */
@@ -11767,7 +11592,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We query CMOS about hard disks : it could be that we have a SCSI/ESDI/etc&n; * controller that is BIOS compatible with ST-506, and thus showing up in our&n; * BIOS table, but not register compatible, and therefore not present in CMOS.&n; *&n; * Furthermore, we will assume that our ST-506 drives &lt;if any&gt; are the primary&n; * drives in the system -- the ones reflected as drive 1 or 2.  The first&n; * drive is stored in the high nibble of CMOS byte 0x12, the second in the low&n; * nibble.  This will be either a 4 bit drive type or 0xf indicating use byte&n; * 0x19 for an 8 bit type, drive 1, 0x1a for drive 2 in CMOS.  A non-zero value &n; * means we have an AT controller hard disk for that drive.&n; *&n; * Of course, there is no guarantee that either drive is actually on the&n; * &quot;primary&quot; IDE interface, but we don&squot;t bother trying to sort that out here.&n; * If a drive is not actually on the primary interface, then these parameters&n; * will be ignored.  This results in the user having to supply the logical&n; * drive geometry as a boot parameter for each drive not on the primary i/f.&n; *&n; * The only &quot;perfect&quot; way to handle this would be to modify the setup.[cS] code&n; * to do BIOS calls Int13h/Fn08h and Int13h/Fn48h to get all of the drive info&n; * for us during initialization.  I have the necessary docs -- any takers?  -ml&n; */
+multiline_comment|/*&n; * We query CMOS about hard disks : it could be that we have a SCSI/ESDI/etc&n; * controller that is BIOS compatible with ST-506, and thus showing up in our&n; * BIOS table, but not register compatible, and therefore not present in CMOS.&n; *&n; * Furthermore, we will assume that our ST-506 drives &lt;if any&gt; are the primary&n; * drives in the system -- the ones reflected as drive 1 or 2.  The first&n; * drive is stored in the high nibble of CMOS byte 0x12, the second in the low&n; * nibble.  This will be either a 4 bit drive type or 0xf indicating use byte&n; * 0x19 for an 8 bit type, drive 1, 0x1a for drive 2 in CMOS.  A non-zero value&n; * means we have an AT controller hard disk for that drive.&n; *&n; * Of course, there is no guarantee that either drive is actually on the&n; * &quot;primary&quot; IDE interface, but we don&squot;t bother trying to sort that out here.&n; * If a drive is not actually on the primary interface, then these parameters&n; * will be ignored.  This results in the user having to supply the logical&n; * drive geometry as a boot parameter for each drive not on the primary i/f.&n; *&n; * The only &quot;perfect&quot; way to handle this would be to modify the setup.[cS] code&n; * to do BIOS calls Int13h/Fn08h and Int13h/Fn48h to get all of the drive info&n; * for us during initialization.  I have the necessary docs -- any takers?  -ml&n; */
 DECL|function|probe_cmos_for_drives
 r_static
 r_void
@@ -12399,231 +12224,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* SUPPORT_RZ1000 */
-macro_line|#if SUPPORT_CMD640
-DECL|function|init_cmd640
-r_void
-id|init_cmd640
-(paren
-id|byte
-id|bus
-comma
-id|byte
-id|fn
-)paren
-(brace
-r_int
-id|rc
-suffix:semicolon
-r_int
-r_char
-id|reg
-suffix:semicolon
-id|serialized
-op_assign
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;ide: buggy CMD640 interface: &quot;
-)paren
-suffix:semicolon
-macro_line|#if 0&t;/* funny.. the cmd640b I tried this on claimed to not be enabled.. */
-r_int
-r_int
-id|sreg
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|rc
-op_assign
-id|pcibios_read_config_word
-(paren
-id|bus
-comma
-id|fn
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|sreg
-)paren
-)paren
-)paren
-(brace
-id|ide_pci_access_error
-(paren
-id|rc
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|sreg
-op_amp
-l_int|1
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;not enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/*&n;&t; * The first part is undocumented magic from the DOS driver.&n;&t; * According to the datasheet, there is no port 0x5b on the cmd640.&n;&t; */
-(paren
-r_void
-)paren
-id|pcibios_write_config_byte
-c_func
-(paren
-id|bus
-comma
-id|fn
-comma
-l_int|0x5b
-comma
-l_int|0xbd
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_write_config_byte
-c_func
-(paren
-id|bus
-comma
-id|fn
-comma
-l_int|0x5b
-comma
-l_int|0xbd
-)paren
-op_ne
-l_int|0xbd
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;init_cmd640: huh? 0x5b read back wrong&bslash;n&quot;
-)paren
-suffix:semicolon
-(paren
-r_void
-)paren
-id|pcibios_write_config_byte
-c_func
-(paren
-id|bus
-comma
-id|fn
-comma
-l_int|0x5b
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif /* 0 */
-multiline_comment|/*&n;&t; * The rest is from the cmd640b datasheet.&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|rc
-op_assign
-id|pcibios_read_config_byte
-c_func
-(paren
-id|bus
-comma
-id|fn
-comma
-l_int|0x51
-comma
-op_amp
-id|reg
-)paren
-)paren
-op_logical_or
-(paren
-id|rc
-op_assign
-id|pcibios_write_config_byte
-c_func
-(paren
-id|bus
-comma
-id|fn
-comma
-l_int|0x51
-comma
-id|reg
-op_or
-l_int|0xc0
-)paren
-)paren
-multiline_comment|/* 0xc8 to enable 2nd i/f */
-op_logical_or
-(paren
-id|rc
-op_assign
-id|pcibios_read_config_byte
-c_func
-(paren
-id|bus
-comma
-id|fn
-comma
-l_int|0x57
-comma
-op_amp
-id|reg
-)paren
-)paren
-op_logical_or
-(paren
-id|rc
-op_assign
-id|pcibios_write_config_byte
-c_func
-(paren
-id|bus
-comma
-id|fn
-comma
-l_int|0x57
-comma
-id|reg
-op_or
-l_int|0x0c
-)paren
-)paren
-)paren
-id|buggy_interface_fallback
-(paren
-id|rc
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;serialized, disabled read-ahead&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* SUPPORT_CMD640 */
 DECL|typedef|ide_pci_init_proc_t
 r_typedef
 r_void
@@ -12725,7 +12325,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ide_init_pci() finds/initializes &quot;known&quot; PCI IDE interfaces&n; * &n; * This routine should ideally be using pcibios_find_class() to find&n; * all IDE interfaces, but that function causes some systems to &quot;go weird&quot;.&n; */
+multiline_comment|/*&n; * ide_init_pci() finds/initializes &quot;known&quot; PCI IDE interfaces&n; *&n; * This routine should ideally be using pcibios_find_class() to find&n; * all IDE interfaces, but that function causes some systems to &quot;go weird&quot;.&n; */
 DECL|function|ide_init_pci
 r_static
 r_void
@@ -12743,20 +12343,6 @@ id|PCI_DEVICE_ID_PCTECH_RZ1000
 comma
 op_amp
 id|init_rz1000
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if SUPPORT_CMD640
-id|ide_probe_pci
-(paren
-id|PCI_VENDOR_ID_CMD
-comma
-id|PCI_DEVICE_ID_CMD_640
-comma
-op_amp
-id|init_cmd640
 comma
 l_int|0
 )paren
@@ -12810,6 +12396,13 @@ id|ide_init_pci
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PCI */
+macro_line|#ifdef SUPPORT_CMD640
+id|ide_probe_for_cmd640x
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Probe for drives in the usual way.. CMOS/BIOS, then poke at ports&n;&t; */
 r_for
 c_loop

@@ -20,6 +20,9 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+multiline_comment|/* We really shouldn&squot;t be using this define.. */
+DECL|macro|IOCCMD_MASK
+mdefine_line|#define IOCCMD_MASK 0x0000ffff
 multiline_comment|/* check existence of required configuration parameters */
 macro_line|#if !defined(QIC02_CMD_PORT) || &bslash;&n;    !defined(QIC02_TAPE_IRQ) || &bslash;&n;    !defined(QIC02_TAPE_DMA)
 macro_line|#error qic02_tape configuration error

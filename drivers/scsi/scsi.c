@@ -1833,19 +1833,6 @@ l_int|7
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0xe0
-)paren
-r_continue
-suffix:semicolon
-multiline_comment|/* No devices here... */
-r_if
-c_cond
-(paren
 (paren
 (paren
 id|SCpnt-&gt;sense_buffer
@@ -8431,7 +8418,7 @@ id|expires
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Register the core /proc/scsi entry */
+multiline_comment|/* Register the /proc/scsi/scsi entry */
 macro_line|#if CONFIG_PROC_FS 
 id|proc_scsi_register
 c_func
@@ -11867,6 +11854,18 @@ id|scsi_loadable_module_flag
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* Register the /proc/scsi/scsi entry */
+macro_line|#if CONFIG_PROC_FS
+id|proc_scsi_register
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|proc_scsi_scsi
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dma_sectors
 op_assign
 id|PAGE_SIZE
@@ -11967,23 +11966,16 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
+macro_line|#if CONFIG_PROC_FS
+id|proc_scsi_unregister
 c_func
 (paren
-id|KERN_INFO
-id|__FILE__
-l_string|&quot;: module is in use, remove rejected&bslash;n&quot;
+l_int|0
+comma
+id|PROC_SCSI_SCSI
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
+macro_line|#endif
 multiline_comment|/* No, we&squot;re not here anymore. Don&squot;t show the /proc/scsi files. */
 id|dispatch_scsi_info_ptr
 op_assign

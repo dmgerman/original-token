@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.3&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.5&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
 macro_line|#if RCS
 DECL|variable|mcdx_c_version
 r_static
@@ -7,9 +7,10 @@ r_char
 op_star
 id|mcdx_c_version
 op_assign
-l_string|&quot;mcdx.c,v 1.17 1995/11/06 01:07:57 heiko Exp&quot;
+l_string|&quot;mcdx.c,v 1.19 1995/11/20 17:06:25 heiko Exp&quot;
 suffix:semicolon
 macro_line|#endif
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -25,22 +26,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-multiline_comment|/* old kernel (doesn&squot;t know about MCDX) */
-macro_line|#ifndef MITSUMI_X_CDROM_MAJOR
-DECL|macro|MITSUMI_X_CDROM_MAJOR
-mdefine_line|#define MITSUMI_X_CDROM_MAJOR 20
-DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;mcdx&quot;
-multiline_comment|/* #define DEVICE_INTR do_mcdx */
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_mcdx_request
-DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device))
-DECL|macro|DEVICE_ON
-mdefine_line|#define DEVICE_ON(device)
-DECL|macro|DEVICE_OFF
-mdefine_line|#define DEVICE_OFF(device)
-macro_line|#endif
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MITSUMI_X_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
@@ -495,22 +480,6 @@ suffix:semicolon
 multiline_comment|/* Prototypes ******************************************************/
 multiline_comment|/*&t;The following prototypes are already declared elsewhere.  They are&n; &t;repeated here to show what&squot;s going on.  And to sense, if they&squot;re&n;&t;changed elsewhere. */
 multiline_comment|/* declared in blk.h */
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
-r_int
-r_int
-id|mcdx_init
-c_func
-(paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-suffix:semicolon
-macro_line|#else
 r_int
 id|mcdx_init
 c_func
@@ -518,7 +487,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
 r_void
 id|do_mcdx_request
 c_func
@@ -526,15 +494,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
-r_int
-id|check_mcdx_media_change
-c_func
-(paren
-id|dev_t
-)paren
-suffix:semicolon
-macro_line|#else
 r_int
 id|check_mcdx_media_change
 c_func
@@ -542,7 +501,6 @@ c_func
 id|kdev_t
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* already declared in init/main */
 r_void
 id|mcdx_setup
@@ -2758,24 +2716,6 @@ l_string|&quot;do_request()&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
-r_if
-c_cond
-(paren
-(paren
-id|CURRENT
-op_eq
-l_int|NULL
-)paren
-op_logical_or
-(paren
-id|CURRENT-&gt;dev
-OL
-l_int|0
-)paren
-)paren
-(brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -2792,7 +2732,6 @@ id|RQ_INACTIVE
 )paren
 )paren
 (brace
-macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -2806,19 +2745,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
-id|stuffp
-op_assign
-id|mcdx_stuffp
-(braket
-id|MINOR
-c_func
-(paren
-id|CURRENT-&gt;dev
-)paren
-)braket
-suffix:semicolon
-macro_line|#else
 id|stuffp
 op_assign
 id|mcdx_stuffp
@@ -2830,7 +2756,6 @@ id|CURRENT-&gt;rq_dev
 )paren
 )braket
 suffix:semicolon
-macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -2845,16 +2770,6 @@ id|stuffp
 suffix:semicolon
 id|INIT_REQUEST
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
-id|dev
-op_assign
-id|MINOR
-c_func
-(paren
-id|CURRENT-&gt;dev
-)paren
-suffix:semicolon
-macro_line|#else
 id|dev
 op_assign
 id|MINOR
@@ -2863,7 +2778,6 @@ c_func
 id|CURRENT-&gt;rq_dev
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2885,18 +2799,6 @@ id|stuffp-&gt;present
 )paren
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
-id|WARN
-c_func
-(paren
-(paren
-l_string|&quot;do_request(): bad device: 0x%04x&bslash;n&quot;
-comma
-id|CURRENT-&gt;dev
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
 id|WARN
 c_func
 (paren
@@ -2911,7 +2813,6 @@ id|CURRENT-&gt;rq_dev
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|end_request
 c_func
 (paren
@@ -3847,16 +3748,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
 DECL|function|check_mcdx_media_change
-r_int
-id|check_mcdx_media_change
-c_func
-(paren
-id|dev_t
-id|full_dev
-)paren
-macro_line|#else
 r_int
 id|check_mcdx_media_change
 c_func
@@ -3864,21 +3756,8 @@ c_func
 id|kdev_t
 id|full_dev
 )paren
-macro_line|#endif
 multiline_comment|/*&t;Return: 1 if media changed since last call to &n;&t;&t;&t;  this function&n;&t;&t;&t;0 else&n;&t;Setting flag to 0 resets the changed state. */
 (brace
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
-id|INFO
-c_func
-(paren
-(paren
-l_string|&quot;check_mcdx_media_change called for device %x&bslash;n&quot;
-comma
-id|full_dev
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
 id|INFO
 c_func
 (paren
@@ -3893,7 +3772,6 @@ id|full_dev
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4753,22 +4631,11 @@ id|drives
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
-id|mcdx_init
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#else
 id|mcdx_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -5153,29 +5020,13 @@ id|args
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &lt; 66338
 DECL|function|mcdx_init
-r_int
-r_int
-id|mcdx_init
-c_func
-(paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-macro_line|#else
 r_int
 id|mcdx_init
 c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_int
 id|drive
@@ -5184,8 +5035,8 @@ id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;Version 1.3 &quot;
-l_string|&quot;mcdx.c,v 1.17 1995/11/06 01:07:57 heiko Exp&bslash;n&quot;
+l_string|&quot;Version 1.5 &quot;
+l_string|&quot;mcdx.c,v 1.19 1995/11/20 17:06:25 heiko Exp&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -5193,8 +5044,8 @@ id|INFO
 c_func
 (paren
 (paren
-l_string|&quot;: Version 1.3 &quot;
-l_string|&quot;mcdx.c,v 1.17 1995/11/06 01:07:57 heiko Exp&bslash;n&quot;
+l_string|&quot;: Version 1.5 &quot;
+l_string|&quot;mcdx.c,v 1.19 1995/11/20 17:06:25 heiko Exp&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -5268,7 +5119,6 @@ id|drive
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(MODULE) || LINUX_VERSION_CODE &gt; 66338
 id|TRACE
 c_func
 (paren
@@ -5319,31 +5169,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#else
-id|TRACE
-c_func
-(paren
-(paren
-id|INIT
-comma
-l_string|&quot;adjust mem_start&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|stuffp
-op_assign
-(paren
-r_struct
-id|s_drive_stuff
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-id|size
-suffix:semicolon
-macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -5998,15 +5823,9 @@ id|stuffp
 )paren
 suffix:semicolon
 )brace
-macro_line|#if MODULE || LINUX_VERSION_CODE &gt; 66338
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#else
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|mcdx_transfer
 r_static

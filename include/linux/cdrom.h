@@ -18,7 +18,7 @@ mdefine_line|#define CD_SUBHEAD_SIZE      8 /* subheader bytes per raw XA data f
 DECL|macro|CD_XA_HEAD
 mdefine_line|#define CD_XA_HEAD        (CD_HEAD_SIZE+CD_SUBHEAD_SIZE) /* &quot;before data&quot; part of raw XA frame */
 DECL|macro|CD_XA_SYNC_HEAD
-mdefine_line|#define CD_XA_SYNC_HEAD   (CD_XA_HEAD+12)/* sync bytes + header of XA frame */
+mdefine_line|#define CD_XA_SYNC_HEAD   (CD_SYNC_SIZE+CD_XA_HEAD)/* sync bytes + header of XA frame */
 DECL|macro|CD_FRAMESIZE
 mdefine_line|#define CD_FRAMESIZE      2048 /* bytes per frame, &quot;cooked&quot; mode */
 DECL|macro|CD_FRAMESIZE_RAW
@@ -487,7 +487,7 @@ DECL|macro|CDROMSUBCHNL
 mdefine_line|#define CDROMSUBCHNL&t;&t;0x530b&t;/* (struct cdrom_subchnl) */
 DECL|macro|CDROMREADMODE2
 mdefine_line|#define CDROMREADMODE2&t;&t;0x530c&t;/* (struct cdrom_read) */
-multiline_comment|/* read type-2 data (not suppt) */
+multiline_comment|/* read type-2 data */
 DECL|macro|CDROMREADMODE1
 mdefine_line|#define CDROMREADMODE1&t;&t;0x530d&t;/* (struct cdrom_read) */
 multiline_comment|/* read type-1 data */
@@ -513,7 +513,7 @@ mdefine_line|#define CDROMREADRAW&t;&t;0x5314&t;/* read data in raw mode */
 DECL|macro|CDROMREADCOOKED
 mdefine_line|#define CDROMREADCOOKED&t;&t;0x5315&t;/* read data in cooked mode */
 DECL|macro|CDROMSEEK
-mdefine_line|#define CDROMSEEK&t;&t;0x5316  /*seek msf address*/
+mdefine_line|#define CDROMSEEK&t;&t;0x5316  /* seek msf address */
 multiline_comment|/*&n; * for playing audio in logical block addressing mode&n; */
 DECL|macro|CDROMPLAYBLK
 mdefine_line|#define CDROMPLAYBLK&t;&t;0x5317&t;/* (struct cdrom_blk) */

@@ -364,6 +364,18 @@ r_int
 r_char
 id|vc_saved_G1
 suffix:semicolon
+DECL|member|vc_bell_pitch
+r_int
+r_int
+id|vc_bell_pitch
+suffix:semicolon
+multiline_comment|/* Console bell pitch */
+DECL|member|vc_bell_duration
+r_int
+r_int
+id|vc_bell_duration
+suffix:semicolon
+multiline_comment|/* Console bell duration */
 multiline_comment|/* additional information is in vt_kern.h */
 )brace
 suffix:semicolon
@@ -502,6 +514,10 @@ DECL|macro|tab_stop
 mdefine_line|#define tab_stop&t;(vc_cons[currcons].d-&gt;vc_tab_stop)
 DECL|macro|palette
 mdefine_line|#define palette&t;&t;(vc_cons[currcons].d-&gt;vc_palette)
+DECL|macro|bell_pitch
+mdefine_line|#define bell_pitch&t;(vc_cons[currcons].d-&gt;vc_bell_pitch)
+DECL|macro|bell_duration
+mdefine_line|#define bell_duration&t;(vc_cons[currcons].d-&gt;vc_bell_duration)
 DECL|macro|vcmode
 mdefine_line|#define vcmode&t;&t;(vt_cons[currcons]-&gt;vc_mode)
 DECL|macro|structsize

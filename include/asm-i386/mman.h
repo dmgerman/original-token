@@ -25,11 +25,17 @@ DECL|macro|MAP_DENYWRITE
 mdefine_line|#define MAP_DENYWRITE&t;0x0800&t;&t;/* ETXTBSY */
 DECL|macro|MAP_EXECUTABLE
 mdefine_line|#define MAP_EXECUTABLE&t;0x1000&t;&t;/* mark it as a executable */
+DECL|macro|MAP_LOCKED
+mdefine_line|#define MAP_LOCKED&t;0x2000&t;&t;/* pages are locked */
 DECL|macro|MS_ASYNC
 mdefine_line|#define MS_ASYNC&t;1&t;&t;/* sync memory asynchronously */
 DECL|macro|MS_INVALIDATE
 mdefine_line|#define MS_INVALIDATE&t;2&t;&t;/* invalidate the caches */
 DECL|macro|MS_SYNC
 mdefine_line|#define MS_SYNC&t;&t;4&t;&t;/* synchronous memory sync */
+DECL|macro|MCL_CURRENT
+mdefine_line|#define MCL_CURRENT&t;1&t;&t;/* lock all current mappings */
+DECL|macro|MCL_FUTURE
+mdefine_line|#define MCL_FUTURE&t;2&t;&t;/* lock all future mappings */
 macro_line|#endif /* __I386_MMAN_H__ */
 eof

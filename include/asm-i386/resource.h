@@ -18,15 +18,13 @@ DECL|macro|RLIMIT_NPROC
 mdefine_line|#define RLIMIT_NPROC&t;6&t;&t;/* max number of processes */
 DECL|macro|RLIMIT_NOFILE
 mdefine_line|#define RLIMIT_NOFILE&t;7&t;&t;/* max number of open files */
-macro_line|#ifdef notdef
 DECL|macro|RLIMIT_MEMLOCK
-mdefine_line|#define RLIMIT_MEMLOCK&t;8&t;&t;/* max locked-in-memory address space*/
-macro_line|#endif
+mdefine_line|#define RLIMIT_MEMLOCK&t;8&t;&t;/* max locked-in-memory address space */
 DECL|macro|RLIM_NLIMITS
-mdefine_line|#define RLIM_NLIMITS&t;8
+mdefine_line|#define RLIM_NLIMITS&t;9
 macro_line|#ifdef __KERNEL__
 DECL|macro|INIT_RLIMITS
-mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},&t;&t;&t;&t;&bslash;&n;    {       0, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}&t;&bslash;&n;}
+mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ _STK_LIM, _STK_LIM },&t;&t;&t;&t;&bslash;&n;&t;{        0, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ MAX_TASKS_PER_USER, MAX_TASKS_PER_USER },&t;&bslash;&n;&t;{ NR_OPEN, NR_OPEN },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;}
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

@@ -45,18 +45,23 @@ multiline_comment|/*&n; * some more or less user dependent definitions - service
 multiline_comment|/* Set this to 0 after you have configured your interface definitions right. */
 DECL|macro|DISTRIBUTION
 mdefine_line|#define DISTRIBUTION 1
+macro_line|#if DISTRIBUTION
+DECL|macro|READ_AUDIO
+mdefine_line|#define READ_AUDIO 0
+macro_line|#else
 multiline_comment|/* max. number of audio frames to read with one     */
 multiline_comment|/* request (allocates n* 2352 bytes kernel memory!) */
 multiline_comment|/* may be freely adjusted, f.e. 75 (= 1 sec.), at   */
 multiline_comment|/* runtime by use of the CDROMAUDIOBUFSIZ ioctl.    */
 DECL|macro|READ_AUDIO
-mdefine_line|#define READ_AUDIO 0 
+mdefine_line|#define READ_AUDIO 75
 multiline_comment|/* tray control: eject tray if no disk is in (0 or 1) */
 DECL|macro|JUKEBOX
 mdefine_line|#define JUKEBOX 1
 multiline_comment|/* tray control: eject tray after last use (0 or 1) */
 DECL|macro|EJECT
 mdefine_line|#define EJECT 1
+macro_line|#endif DISTRIBUTION
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * nothing to change below here if you are not experimenting&n; */
@@ -559,6 +564,8 @@ DECL|macro|CMD0_READ_XA
 mdefine_line|#define CMD0_READ_XA&t;0x03
 DECL|macro|CMD2_READ_XA
 mdefine_line|#define CMD2_READ_XA&t;0xd4
+DECL|macro|CMD2_READ_XA2
+mdefine_line|#define CMD2_READ_XA2&t;0xd5
 DECL|macro|CMDL_READ_XA
 mdefine_line|#define CMDL_READ_XA&t;CMD0_READ_XA /* really ?? */
 DECL|macro|CMD0_READ_HEAD
@@ -623,6 +630,8 @@ DECL|macro|CMDT_STATUS
 mdefine_line|#define CMDT_STATUS&t;CMD2_STATUS
 DECL|macro|CMDL_STATUS
 mdefine_line|#define CMDL_STATUS&t;CMD0_STATUS
+DECL|macro|CMD2_SEEK_LEADIN
+mdefine_line|#define CMD2_SEEK_LEADIN 0x00
 DECL|macro|CMD0_READ_ERR
 mdefine_line|#define CMD0_READ_ERR&t;0x82
 DECL|macro|CMD1_READ_ERR

@@ -4786,15 +4786,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|floppy
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|floppy-&gt;rate
+id|raw_cmd-&gt;rate
 op_amp
 l_int|0x40
 )paren
@@ -4803,6 +4795,8 @@ r_switch
 c_cond
 (paren
 id|raw_cmd-&gt;rate
+op_amp
+l_int|3
 )paren
 (brace
 r_case
@@ -5257,7 +5251,11 @@ multiline_comment|/* If data rate not already set to desired value, set it. */
 r_if
 c_cond
 (paren
+(paren
 id|raw_cmd-&gt;rate
+op_amp
+l_int|3
+)paren
 op_eq
 id|FDCS-&gt;dtr
 )paren
@@ -5269,6 +5267,8 @@ id|fd_outb
 c_func
 (paren
 id|raw_cmd-&gt;rate
+op_amp
+l_int|3
 comma
 id|FD_DCR
 )paren
@@ -5277,6 +5277,8 @@ multiline_comment|/* TODO: some FDC/drive combinations (C&amp;T 82C711 with TEAC
 id|FDCS-&gt;dtr
 op_assign
 id|raw_cmd-&gt;rate
+op_amp
+l_int|3
 suffix:semicolon
 r_return
 id|wait_for_completion
@@ -8457,7 +8459,7 @@ id|raw_cmd-&gt;rate
 op_assign
 id|floppy-&gt;rate
 op_amp
-l_int|0x3
+l_int|0x43
 suffix:semicolon
 id|raw_cmd-&gt;cmd_count
 op_assign
@@ -10291,7 +10293,7 @@ id|raw_cmd-&gt;rate
 op_assign
 id|floppy-&gt;rate
 op_amp
-l_int|3
+l_int|0x43
 suffix:semicolon
 r_if
 c_cond
@@ -12978,7 +12980,7 @@ l_int|0
 suffix:semicolon
 id|ptr-&gt;rate
 op_and_assign
-l_int|0x03
+l_int|0x43
 suffix:semicolon
 )brace
 )brace

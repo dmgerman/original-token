@@ -2099,6 +2099,16 @@ id|shmd-&gt;vm_start
 )paren
 suffix:semicolon
 multiline_comment|/* add new mapping */
+id|current-&gt;mm-&gt;total_vm
+op_add_assign
+(paren
+id|shmd-&gt;vm_end
+op_minus
+id|shmd-&gt;vm_start
+)paren
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
@@ -2618,8 +2628,6 @@ op_or
 id|VM_MAYSHARE
 op_or
 id|VM_SHARED
-op_or
-id|VM_DONTSWAP
 op_or
 id|VM_MAYREAD
 op_or

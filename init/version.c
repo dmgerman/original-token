@@ -6,6 +6,20 @@ macro_line|#include &lt;linux/compile.h&gt;
 multiline_comment|/* make the &quot;checkconfig&quot; script happy: we really need to include config.h */
 macro_line|#ifdef CONFIG_BOGUS
 macro_line|#endif
+DECL|macro|version
+mdefine_line|#define version(a) Version_ ## a
+DECL|macro|version_string
+mdefine_line|#define version_string(a) version(a)
+DECL|variable|LINUX_VERSION_CODE
+r_int
+id|version_string
+c_func
+(paren
+id|LINUX_VERSION_CODE
+)paren
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|system_utsname
 r_struct
 id|new_utsname

@@ -59,20 +59,20 @@ r_int
 r_char
 id|orig_video_cols
 suffix:semicolon
-DECL|member|orig_video_ega_ax
+DECL|member|unused2
 r_int
 r_int
-id|orig_video_ega_ax
+id|unused2
 suffix:semicolon
 DECL|member|orig_video_ega_bx
 r_int
 r_int
 id|orig_video_ega_bx
 suffix:semicolon
-DECL|member|orig_video_ega_cx
+DECL|member|unused3
 r_int
 r_int
-id|orig_video_ega_cx
+id|unused3
 suffix:semicolon
 DECL|member|orig_video_lines
 r_int
@@ -106,12 +106,8 @@ DECL|macro|ORIG_VIDEO_MODE
 mdefine_line|#define ORIG_VIDEO_MODE&t;&t;(screen_info.orig_video_mode)
 DECL|macro|ORIG_VIDEO_COLS
 mdefine_line|#define ORIG_VIDEO_COLS &t;(screen_info.orig_video_cols)
-DECL|macro|ORIG_VIDEO_EGA_AX
-mdefine_line|#define ORIG_VIDEO_EGA_AX&t;(screen_info.orig_video_ega_ax)
 DECL|macro|ORIG_VIDEO_EGA_BX
 mdefine_line|#define ORIG_VIDEO_EGA_BX&t;(screen_info.orig_video_ega_bx)
-DECL|macro|ORIG_VIDEO_EGA_CX
-mdefine_line|#define ORIG_VIDEO_EGA_CX&t;(screen_info.orig_video_ega_cx)
 DECL|macro|ORIG_VIDEO_LINES
 mdefine_line|#define ORIG_VIDEO_LINES&t;(screen_info.orig_video_lines)
 DECL|macro|ORIG_VIDEO_ISVGA
@@ -641,6 +637,10 @@ suffix:semicolon
 r_extern
 r_int
 id|fg_console
+suffix:semicolon
+r_extern
+r_int
+id|kmsg_redirect
 suffix:semicolon
 r_extern
 r_struct

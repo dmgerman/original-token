@@ -150,13 +150,13 @@ mdefine_line|#define VM_GROWSDOWN&t;0x0100&t;/* general info on the segment */
 DECL|macro|VM_GROWSUP
 mdefine_line|#define VM_GROWSUP&t;0x0200
 DECL|macro|VM_SHM
-mdefine_line|#define VM_SHM&t;&t;0x0400
+mdefine_line|#define VM_SHM&t;&t;0x0400&t;/* shared memory area, don&squot;t swap out */
 DECL|macro|VM_DENYWRITE
 mdefine_line|#define VM_DENYWRITE&t;0x0800&t;/* ETXTBSY on write attempts.. */
 DECL|macro|VM_EXECUTABLE
 mdefine_line|#define VM_EXECUTABLE&t;0x1000
-DECL|macro|VM_DONTSWAP
-mdefine_line|#define VM_DONTSWAP&t;0x2000  /* Some vm types have their own&n;&t;&t;&t;&t; * hard-coded swap mechanism */
+DECL|macro|VM_LOCKED
+mdefine_line|#define VM_LOCKED&t;0x2000
 DECL|macro|VM_STACK_FLAGS
 mdefine_line|#define VM_STACK_FLAGS&t;0x0177
 multiline_comment|/*&n; * mapping from the currently active vm_flags protection bits (the&n; * low four bits) to a page protection mask..&n; */
@@ -367,84 +367,39 @@ r_int
 suffix:semicolon
 )brace
 suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|count
+r_int
+id|count
+suffix:colon
+l_int|24
+comma
+DECL|member|age
+id|age
+suffix:colon
+l_int|6
+comma
+DECL|member|dirty
+id|dirty
+suffix:colon
+l_int|1
+comma
+DECL|member|reserved
+id|reserved
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|typedef|mem_map_t
+)brace
+id|mem_map_t
+suffix:semicolon
 r_extern
 id|mem_map_t
 op_star
 id|mem_map
 suffix:semicolon
-r_extern
-r_int
-r_char
-op_star
-id|age_map
-suffix:semicolon
-multiline_comment|/* planning stage.. */
-DECL|macro|P_DIRTY
-mdefine_line|#define P_DIRTY&t;&t;0x0001
-DECL|macro|P_LOCKED
-mdefine_line|#define P_LOCKED&t;0x0002
-DECL|macro|P_UPTODATE
-mdefine_line|#define P_UPTODATE&t;0x0004
-DECL|macro|P_RESERVED
-mdefine_line|#define P_RESERVED&t;0x8000
-DECL|struct|page_info
-r_struct
-id|page_info
-(brace
-DECL|member|flags
-r_int
-r_int
-id|flags
-suffix:semicolon
-DECL|member|count
-r_int
-r_int
-id|count
-suffix:semicolon
-DECL|member|inode
-r_struct
-id|inode
-op_star
-id|inode
-suffix:semicolon
-DECL|member|offset
-r_int
-r_int
-id|offset
-suffix:semicolon
-DECL|member|next_same_inode
-r_struct
-id|page_info
-op_star
-id|next_same_inode
-suffix:semicolon
-DECL|member|prev_same_inode
-r_struct
-id|page_info
-op_star
-id|prev_same_inode
-suffix:semicolon
-DECL|member|next_hash
-r_struct
-id|page_info
-op_star
-id|next_hash
-suffix:semicolon
-DECL|member|prev_hash
-r_struct
-id|page_info
-op_star
-id|prev_hash
-suffix:semicolon
-DECL|member|wait
-r_struct
-id|wait_queue
-op_star
-id|wait
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* end of planning stage */
 multiline_comment|/*&n; * Free area management&n; */
 r_extern
 r_int
@@ -1135,6 +1090,86 @@ DECL|macro|GFP_LEVEL_MASK
 mdefine_line|#define GFP_LEVEL_MASK 0xf
 DECL|macro|avl_empty
 mdefine_line|#define avl_empty&t;(struct vm_area_struct *) NULL
+DECL|function|expand_stack
+r_static
+r_inline
+r_int
+id|expand_stack
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+)paren
+(brace
+r_int
+r_int
+id|grow
+suffix:semicolon
+id|address
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_end
+op_minus
+id|address
+OG
+id|current-&gt;rlim
+(braket
+id|RLIMIT_STACK
+)braket
+dot
+id|rlim_cur
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+id|grow
+op_assign
+id|vma-&gt;vm_start
+op_minus
+id|address
+suffix:semicolon
+id|vma-&gt;vm_start
+op_assign
+id|address
+suffix:semicolon
+id|vma-&gt;vm_offset
+op_sub_assign
+id|grow
+suffix:semicolon
+id|vma-&gt;vm_mm-&gt;total_vm
+op_add_assign
+id|grow
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_LOCKED
+)paren
+id|vma-&gt;vm_mm-&gt;locked_vm
+op_add_assign
+id|grow
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Look up the first VMA which satisfies  addr &lt; vm_end,  NULL if none. */
 DECL|function|find_vma
 r_static

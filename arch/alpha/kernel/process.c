@@ -136,7 +136,7 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nps: %04lx pc: %016lx&bslash;n&quot;
+l_string|&quot;&bslash;nps: %04lx pc: [&lt;%016lx&gt;]&bslash;n&quot;
 comma
 id|regs-&gt;ps
 comma
@@ -146,7 +146,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;rp: %016lx sp: %p&bslash;n&quot;
+l_string|&quot;rp: [&lt;%016lx&gt;] sp: %p&bslash;n&quot;
 comma
 id|regs-&gt;r26
 comma

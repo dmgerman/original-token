@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc by Hannu Savolainen 1993 and Matthias Urlichs 1994&n; * puts by Nick Holloway 1993&n; */
+multiline_comment|/*&n; * misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc by Hannu Savolainen 1993 and Matthias Urlichs 1994&n; * puts by Nick Holloway 1993, better puts by Martin Mares 1995&n; */
 macro_line|#include &quot;gzip.h&quot;
 macro_line|#include &quot;lzw.h&quot;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * These are set up by the setup-routine at boot-time:&n; */
 DECL|struct|screen_info
 r_struct
@@ -40,20 +41,20 @@ r_int
 r_char
 id|orig_video_cols
 suffix:semicolon
-DECL|member|orig_video_ega_ax
+DECL|member|unused2
 r_int
 r_int
-id|orig_video_ega_ax
+id|unused2
 suffix:semicolon
 DECL|member|orig_video_ega_bx
 r_int
 r_int
 id|orig_video_ega_bx
 suffix:semicolon
-DECL|member|orig_video_ega_cx
+DECL|member|unused3
 r_int
 r_int
-id|orig_video_ega_cx
+id|unused3
 suffix:semicolon
 DECL|member|orig_video_lines
 r_int
@@ -253,6 +254,10 @@ r_char
 op_star
 )paren
 l_int|0xb8000
+suffix:semicolon
+DECL|variable|vidport
+r_int
+id|vidport
 suffix:semicolon
 DECL|variable|lines
 DECL|variable|cols
@@ -498,6 +503,8 @@ r_int
 id|x
 comma
 id|y
+comma
+id|pos
 suffix:semicolon
 r_char
 id|c
@@ -613,6 +620,67 @@ suffix:semicolon
 id|SCREEN_INFO.orig_y
 op_assign
 id|y
+suffix:semicolon
+id|pos
+op_assign
+(paren
+id|x
+op_plus
+id|cols
+op_star
+id|y
+)paren
+op_star
+l_int|2
+suffix:semicolon
+multiline_comment|/* Update cursor position */
+id|outb_p
+c_func
+(paren
+l_int|14
+comma
+id|vidport
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0xff
+op_amp
+(paren
+id|pos
+op_rshift
+l_int|9
+)paren
+comma
+id|vidport
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|15
+comma
+id|vidport
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0xff
+op_amp
+(paren
+id|pos
+op_rshift
+l_int|1
+)paren
+comma
+id|vidport
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 )brace
 DECL|function|memset
@@ -1342,6 +1410,7 @@ id|SCREEN_INFO.orig_video_mode
 op_eq
 l_int|7
 )paren
+(brace
 id|vidmem
 op_assign
 (paren
@@ -1350,7 +1419,13 @@ op_star
 )paren
 l_int|0xb0000
 suffix:semicolon
+id|vidport
+op_assign
+l_int|0x3b4
+suffix:semicolon
+)brace
 r_else
+(brace
 id|vidmem
 op_assign
 (paren
@@ -1359,6 +1434,11 @@ op_star
 )paren
 l_int|0xb8000
 suffix:semicolon
+id|vidport
+op_assign
+l_int|0x3d4
+suffix:semicolon
+)brace
 id|lines
 op_assign
 id|SCREEN_INFO.orig_video_lines

@@ -314,6 +314,11 @@ op_assign
 op_star
 id|mpnt
 suffix:semicolon
+id|tmp-&gt;vm_flags
+op_and_assign
+op_complement
+id|VM_LOCKED
+suffix:semicolon
 id|tmp-&gt;vm_mm
 op_assign
 id|mm
@@ -479,6 +484,10 @@ suffix:semicolon
 id|tsk-&gt;mm-&gt;count
 op_assign
 l_int|1
+suffix:semicolon
+id|tsk-&gt;mm-&gt;def_flags
+op_assign
+l_int|0
 suffix:semicolon
 id|tsk-&gt;min_flt
 op_assign

@@ -785,6 +785,10 @@ id|buffer
 comma
 l_string|&quot;cpu  %u %u %u %lu&bslash;n&quot;
 l_string|&quot;disk %u %u %u %u&bslash;n&quot;
+l_string|&quot;disk_rio %u %u %u %u&bslash;n&quot;
+l_string|&quot;disk_wio %u %u %u %u&bslash;n&quot;
+l_string|&quot;disk_rblk %u %u %u %u&bslash;n&quot;
+l_string|&quot;disk_wblk %u %u %u %u&bslash;n&quot;
 l_string|&quot;page %u %u&bslash;n&quot;
 l_string|&quot;swap %u %u&bslash;n&quot;
 l_string|&quot;intr %u&quot;
@@ -821,6 +825,86 @@ l_int|2
 )braket
 comma
 id|kstat.dk_drive
+(braket
+l_int|3
+)braket
+comma
+id|kstat.dk_drive_rio
+(braket
+l_int|0
+)braket
+comma
+id|kstat.dk_drive_rio
+(braket
+l_int|1
+)braket
+comma
+id|kstat.dk_drive_rio
+(braket
+l_int|2
+)braket
+comma
+id|kstat.dk_drive_rio
+(braket
+l_int|3
+)braket
+comma
+id|kstat.dk_drive_wio
+(braket
+l_int|0
+)braket
+comma
+id|kstat.dk_drive_wio
+(braket
+l_int|1
+)braket
+comma
+id|kstat.dk_drive_wio
+(braket
+l_int|2
+)braket
+comma
+id|kstat.dk_drive_wio
+(braket
+l_int|3
+)braket
+comma
+id|kstat.dk_drive_rblk
+(braket
+l_int|0
+)braket
+comma
+id|kstat.dk_drive_rblk
+(braket
+l_int|1
+)braket
+comma
+id|kstat.dk_drive_rblk
+(braket
+l_int|2
+)braket
+comma
+id|kstat.dk_drive_rblk
+(braket
+l_int|3
+)braket
+comma
+id|kstat.dk_drive_wblk
+(braket
+l_int|0
+)braket
+comma
+id|kstat.dk_drive_wblk
+(braket
+l_int|1
+)braket
+comma
+id|kstat.dk_drive_wblk
+(braket
+l_int|2
+)braket
+comma
+id|kstat.dk_drive_wblk
 (braket
 l_int|3
 )braket

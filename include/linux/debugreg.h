@@ -19,7 +19,7 @@ DECL|macro|DR_TRAP2
 mdefine_line|#define DR_TRAP2 (0x4) /* Trap due to db2 */
 DECL|macro|DR_TRAP3
 mdefine_line|#define DR_TRAP3 (0x8) /* Trap due to db3 */
-multiline_comment|/* Now define a bunch of things for manipulating the control register.&n;   The top two bytes of the control register consist of 4 fields of 4&n;   bytes - each field corresponds to one of the four debug registers,&n;   and indicates what types of access we trap on, and how large the data&n;   field is that we are looking at */
+multiline_comment|/* Now define a bunch of things for manipulating the control register.&n;   The top two bytes of the control register consist of 4 fields of 4&n;   bits - each field corresponds to one of the four debug registers,&n;   and indicates what types of access we trap on, and how large the data&n;   field is that we are looking at */
 DECL|macro|DR_CONTROL_SHIFT
 mdefine_line|#define DR_CONTROL_SHIFT 16 /* Skip this many bits in ctl register */
 DECL|macro|DR_CONTROL_SIZE

@@ -75,27 +75,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MINIX_FS
-id|register_filesystem
-c_func
-(paren
-op_amp
-(paren
-r_struct
-id|file_system_type
-)paren
-(brace
-id|minix_read_super
-comma
-l_string|&quot;minix&quot;
-comma
-l_int|1
-comma
-l_int|NULL
-)brace
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_EXT_FS
 id|register_filesystem
 c_func
@@ -151,6 +130,27 @@ id|file_system_type
 id|xiafs_read_super
 comma
 l_string|&quot;xiafs&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MINIX_FS
+id|register_filesystem
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|file_system_type
+)paren
+(brace
+id|minix_read_super
+comma
+l_string|&quot;minix&quot;
 comma
 l_int|1
 comma

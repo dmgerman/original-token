@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Logitech Bus Mouse Driver for Linux&n; * by James Banks&n; *&n; * Mods by Matthew Dillon&n; *   calls verify_area()&n; *   tracks better when X is busy or paging&n; *&n; * Heavily modified by David Giller&n; *   changed from queue- to counter- driven&n; *   hacked out a (probably incorrect) mouse_select&n; *&n; * Modified again by Nathan Laredo to interface with&n; *   0.96c-pl1 IRQ handling changes (13JUL92)&n; *   didn&squot;t bother touching select code.&n; *&n; * Modified the select() code blindly to conform to the VFS&n; *   requirements. 92.07.14 - Linus. Somebody should test it out.&n; *&n; * Modified by Johan Myreen to make room for other mice (9AUG92)&n; *   removed assignment chr_fops[10] = &amp;mouse_fops; see mouse.c&n; *   renamed mouse_fops =&gt; bus_mouse_fops, made bus_mouse_fops public.&n; *   renamed this file mouse.c =&gt; busmouse.c&n; *&n; * Minor addition by Cliff Matthews&n; *   added fasync support&n; *&n; * Modularised 6-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt; &n; */
+multiline_comment|/*&n; * Logitech Bus Mouse Driver for Linux&n; * by James Banks&n; *&n; * Mods by Matthew Dillon&n; *   calls verify_area()&n; *   tracks better when X is busy or paging&n; *&n; * Heavily modified by David Giller&n; *   changed from queue- to counter- driven&n; *   hacked out a (probably incorrect) mouse_select&n; *&n; * Modified again by Nathan Laredo to interface with&n; *   0.96c-pl1 IRQ handling changes (13JUL92)&n; *   didn&squot;t bother touching select code.&n; *&n; * Modified the select() code blindly to conform to the VFS&n; *   requirements. 92.07.14 - Linus. Somebody should test it out.&n; *&n; * Modified by Johan Myreen to make room for other mice (9AUG92)&n; *   removed assignment chr_fops[10] = &amp;mouse_fops; see mouse.c&n; *   renamed mouse_fops =&gt; bus_mouse_fops, made bus_mouse_fops public.&n; *   renamed this file mouse.c =&gt; busmouse.c&n; *&n; * Minor addition by Cliff Matthews&n; *   added fasync support&n; *&n; * Modularised 6-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt; &n; *&n; * Replaced dumb busy loop with udelay()  16 Nov 95&n; *   Nathan Laredo &lt;laredo@gnu.ai.mit.edu&gt;&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -891,22 +892,13 @@ comma
 id|MSE_SIGNATURE_PORT
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|udelay
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|100000
-suffix:semicolon
-id|i
-op_increment
+l_int|100L
 )paren
-multiline_comment|/* busy loop */
 suffix:semicolon
+multiline_comment|/* wait for reply from mouse */
 r_if
 c_cond
 (paren

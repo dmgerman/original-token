@@ -1274,6 +1274,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|function|get_address
+r_static
 r_int
 r_int
 id|get_address
@@ -1898,11 +1899,8 @@ op_assign
 id|root_dev-&gt;pa_mask
 suffix:semicolon
 id|server_route.rt_dev
-(braket
-l_int|0
-)braket
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|server_route.rt_flags
 op_assign

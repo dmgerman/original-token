@@ -73,7 +73,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;pc = %lx ps = %04lx&bslash;n&quot;
+l_string|&quot;pc = [&lt;%lx&gt;] ps = %04lx&bslash;n&quot;
 comma
 id|regs-&gt;pc
 comma
@@ -83,7 +83,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;rp = %lx sp = %lx&bslash;n&quot;
+l_string|&quot;rp = [&lt;%lx&gt;] sp = %lx&bslash;n&quot;
 comma
 id|regs-&gt;r26
 comma
