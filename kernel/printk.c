@@ -942,7 +942,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if 0&t;/* debugging - avoid this if we&squot;re deadlocked */
 id|wake_up_interruptible
 c_func
 (paren
@@ -950,7 +949,6 @@ op_amp
 id|log_wait
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|i
 suffix:semicolon

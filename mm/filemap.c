@@ -565,7 +565,7 @@ multiline_comment|/* If it has been referenced recently, don&squot;t free it */
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|PG_referenced
@@ -4900,7 +4900,7 @@ suffix:colon
 r_while
 c_loop
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|PG_locked

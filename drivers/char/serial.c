@@ -3585,7 +3585,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|RS_EVENT_WRITE_WAKEUP

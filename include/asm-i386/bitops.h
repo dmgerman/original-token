@@ -32,8 +32,113 @@ mdefine_line|#define CONST_ADDR (*(const struct __dummy *) addr)
 DECL|function|set_bit
 r_extern
 id|__inline__
-r_int
+r_void
 id|set_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+id|LOCK_PREFIX
+l_string|&quot;btsl %1,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|ADDR
+)paren
+suffix:colon
+l_string|&quot;ir&quot;
+(paren
+id|nr
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|clear_bit
+r_extern
+id|__inline__
+r_void
+id|clear_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+id|LOCK_PREFIX
+l_string|&quot;btrl %1,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|ADDR
+)paren
+suffix:colon
+l_string|&quot;ir&quot;
+(paren
+id|nr
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|change_bit
+r_extern
+id|__inline__
+r_void
+id|change_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+id|LOCK_PREFIX
+l_string|&quot;btcl %1,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|ADDR
+)paren
+suffix:colon
+l_string|&quot;ir&quot;
+(paren
+id|nr
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|test_and_set_bit
+r_extern
+id|__inline__
+r_int
+id|test_and_set_bit
 c_func
 (paren
 r_int
@@ -75,11 +180,11 @@ r_return
 id|oldbit
 suffix:semicolon
 )brace
-DECL|function|clear_bit
+DECL|function|test_and_clear_bit
 r_extern
 id|__inline__
 r_int
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 r_int
@@ -121,11 +226,11 @@ r_return
 id|oldbit
 suffix:semicolon
 )brace
-DECL|function|change_bit
+DECL|function|test_and_change_bit
 r_extern
 id|__inline__
 r_int
-id|change_bit
+id|test_and_change_bit
 c_func
 (paren
 r_int
@@ -524,9 +629,9 @@ suffix:semicolon
 )brace
 macro_line|#ifdef __KERNEL__
 DECL|macro|ext2_set_bit
-mdefine_line|#define ext2_set_bit                 set_bit
+mdefine_line|#define ext2_set_bit                 test_and_set_bit
 DECL|macro|ext2_clear_bit
-mdefine_line|#define ext2_clear_bit               clear_bit
+mdefine_line|#define ext2_clear_bit               test_and_clear_bit
 DECL|macro|ext2_test_bit
 mdefine_line|#define ext2_test_bit                test_bit
 DECL|macro|ext2_find_first_zero_bit
@@ -535,9 +640,9 @@ DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit      find_next_zero_bit
 multiline_comment|/* Bitmap functions for the minix filesystem.  */
 DECL|macro|minix_set_bit
-mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+mdefine_line|#define minix_set_bit(nr,addr) test_and_set_bit(nr,addr)
 DECL|macro|minix_clear_bit
-mdefine_line|#define minix_clear_bit(nr,addr) clear_bit(nr,addr)
+mdefine_line|#define minix_clear_bit(nr,addr) test_and_clear_bit(nr,addr)
 DECL|macro|minix_test_bit
 mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
 DECL|macro|minix_find_first_zero_bit

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1152,38 +1153,68 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|enable_NMI
+DECL|function|mem_parity_error
+r_static
 r_void
-id|enable_NMI
+id|mem_parity_error
 c_func
 (paren
-r_void
-)paren
-(brace
 r_int
 r_char
 id|reason
-suffix:semicolon
-r_int
-r_int
-id|i
-suffix:semicolon
-id|reason
-op_assign
-id|inb
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|printk
 c_func
 (paren
-l_int|0x61
+l_string|&quot;Uhhuh. NMI received. Dazed and confused, but trying to continue&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;NMI reason = %02x&bslash;n&quot;
-comma
-id|reason
+l_string|&quot;You probably have a hardware problem with your RAM chips&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
+DECL|function|io_check_error
+r_static
+r_void
+id|io_check_error
+c_func
+(paren
+r_int
+r_char
+id|reason
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;NMI: IOCK error (debug interrupt?)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|show_registers
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+multiline_comment|/* Re-enable the&#xfffd;IOCK line, wait for a few seconds */
 id|reason
 op_or_assign
 l_int|8
@@ -1198,13 +1229,18 @@ l_int|0x61
 suffix:semicolon
 id|i
 op_assign
-l_int|400000000
+l_int|2000
 suffix:semicolon
 r_while
 c_loop
 (paren
 op_decrement
 id|i
+)paren
+id|udelay
+c_func
+(paren
+l_int|1000
 )paren
 suffix:semicolon
 id|reason
@@ -1218,6 +1254,43 @@ c_func
 id|reason
 comma
 l_int|0x61
+)paren
+suffix:semicolon
+)brace
+DECL|function|unknown_nmi_error
+r_static
+r_void
+id|unknown_nmi_error
+c_func
+(paren
+r_int
+r_char
+id|reason
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Uhhuh. NMI received for unknown reason %02x.&bslash;n&quot;
+comma
+id|reason
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Dazed and confused, but trying to continue&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Do you have a strange power saving mode enabled?&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1236,43 +1309,62 @@ r_int
 id|error_code
 )paren
 (brace
-id|show_registers
+r_int
+r_char
+id|reason
+op_assign
+id|inb
 c_func
 (paren
+l_int|0x61
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|reason
+op_amp
+l_int|0x80
+)paren
+id|mem_parity_error
+c_func
+(paren
+id|reason
+comma
 id|regs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP_NMI_INVAL
-id|smp_flush_tlb_rcv
+r_if
+c_cond
+(paren
+id|reason
+op_amp
+l_int|0x40
+)paren
+id|io_check_error
 c_func
 (paren
+id|reason
+comma
+id|regs
 )paren
 suffix:semicolon
-macro_line|#else
-macro_line|#ifndef CONFIG_IGNORE_NMI
-id|printk
-c_func
+r_if
+c_cond
 (paren
-l_string|&quot;Uhhuh. NMI received. Dazed and confused, but trying to continue&bslash;n&quot;
+op_logical_neg
+(paren
+id|reason
+op_amp
+l_int|0xc0
 )paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;You probably have a hardware problem with your RAM chips or a&bslash;n&quot;
 )paren
-suffix:semicolon
-id|printk
+id|unknown_nmi_error
 c_func
 (paren
-l_string|&quot;power saving mode enabled.&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif&t;
-macro_line|#endif
-id|enable_NMI
-c_func
-(paren
+id|reason
+comma
+id|regs
 )paren
 suffix:semicolon
 )brace

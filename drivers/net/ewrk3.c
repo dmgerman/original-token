@@ -2666,7 +2666,7 @@ multiline_comment|/*&n;    ** Block a timer-based transmit from overlapping.  Th
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -2733,7 +2733,7 @@ multiline_comment|/*&n;&t;** Set up shared memory window and pointer into the wi
 r_while
 c_loop
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -3698,7 +3698,7 @@ c_cond
 (paren
 id|tmpLock
 op_assign
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -4988,7 +4988,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -8023,7 +8023,7 @@ id|ioc-&gt;len
 r_while
 c_loop
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0

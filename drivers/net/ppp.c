@@ -4404,7 +4404,7 @@ multiline_comment|/*&n; * The total length includes the protocol data.&n; * Lock
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 (paren
 l_int|0
 comma
@@ -5738,7 +5738,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 (paren
 l_int|0
 comma
@@ -9228,7 +9228,7 @@ multiline_comment|/* Must lock the user buffer area while checking. */
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -11070,7 +11070,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -11183,7 +11183,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0

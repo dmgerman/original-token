@@ -282,7 +282,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|change_bit
+id|test_and_change_bit
 c_func
 (paren
 id|index

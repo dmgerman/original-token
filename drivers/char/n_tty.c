@@ -135,7 +135,7 @@ c_cond
 (paren
 id|tty-&gt;driver.unthrottle
 op_logical_and
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|TTY_THROTTLED
@@ -2960,7 +2960,7 @@ op_logical_and
 id|tty-&gt;driver.throttle
 op_logical_and
 op_logical_neg
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|TTY_THROTTLED
@@ -4435,7 +4435,7 @@ suffix:semicolon
 )brace
 id|eol
 op_assign
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|tty-&gt;read_tail
@@ -4575,7 +4575,7 @@ op_le
 id|TTY_THRESHOLD_UNTHROTTLE
 )paren
 op_logical_and
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|TTY_THROTTLED
@@ -4685,7 +4685,7 @@ c_cond
 op_logical_neg
 id|size
 op_logical_and
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|TTY_PUSH

@@ -6,9 +6,279 @@ multiline_comment|/*&n; * These have to be done with inline assembly: that way t
 DECL|function|set_bit
 r_extern
 id|__inline__
-r_int
-r_int
+r_void
 id|set_bit
+c_func
+(paren
+r_int
+r_int
+id|nr
+comma
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|oldbit
+suffix:semicolon
+r_int
+r_int
+id|temp
+suffix:semicolon
+r_int
+r_int
+op_star
+id|m
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|addr
+)paren
+op_plus
+(paren
+id|nr
+op_rshift
+l_int|5
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
+l_string|&quot;&t;bne %2,2f&bslash;n&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
+l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|oldbit
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|clear_bit
+r_extern
+id|__inline__
+r_void
+id|clear_bit
+c_func
+(paren
+r_int
+r_int
+id|nr
+comma
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|oldbit
+suffix:semicolon
+r_int
+r_int
+id|temp
+suffix:semicolon
+r_int
+r_int
+op_star
+id|m
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|addr
+)paren
+op_plus
+(paren
+id|nr
+op_rshift
+l_int|5
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&bslash;t&quot;
+l_string|&quot;&t;beq %2,2f&bslash;n&bslash;t&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&bslash;t&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|oldbit
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|change_bit
+r_extern
+id|__inline__
+r_void
+id|change_bit
+c_func
+(paren
+r_int
+r_int
+id|nr
+comma
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|temp
+suffix:semicolon
+r_int
+r_int
+op_star
+id|m
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|addr
+)paren
+op_plus
+(paren
+id|nr
+op_rshift
+l_int|5
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;xor %0,%2,%0&bslash;n&bslash;t&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|test_and_set_bit
+r_extern
+id|__inline__
+r_int
+r_int
+id|test_and_set_bit
 c_func
 (paren
 r_int
@@ -103,12 +373,12 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|clear_bit
+DECL|function|test_and_clear_bit
 r_extern
 id|__inline__
 r_int
 r_int
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 r_int
@@ -203,12 +473,12 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|change_bit
+DECL|function|test_and_change_bit
 r_extern
 id|__inline__
 r_int
 r_int
-id|change_bit
+id|test_and_change_bit
 c_func
 (paren
 r_int
@@ -700,9 +970,9 @@ DECL|macro|find_first_zero_bit
 mdefine_line|#define find_first_zero_bit(addr, size) &bslash;&n;&t;find_next_zero_bit((addr), (size), 0)
 macro_line|#ifdef __KERNEL__
 DECL|macro|ext2_set_bit
-mdefine_line|#define ext2_set_bit                 set_bit
+mdefine_line|#define ext2_set_bit                 test_and_set_bit
 DECL|macro|ext2_clear_bit
-mdefine_line|#define ext2_clear_bit               clear_bit
+mdefine_line|#define ext2_clear_bit               test_and_clear_bit
 DECL|macro|ext2_test_bit
 mdefine_line|#define ext2_test_bit                test_bit
 DECL|macro|ext2_find_first_zero_bit
@@ -711,9 +981,9 @@ DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit      find_next_zero_bit
 multiline_comment|/* Bitmap functions for the minix filesystem.  */
 DECL|macro|minix_set_bit
-mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+mdefine_line|#define minix_set_bit(nr,addr) test_and_set_bit(nr,addr)
 DECL|macro|minix_clear_bit
-mdefine_line|#define minix_clear_bit(nr,addr) clear_bit(nr,addr)
+mdefine_line|#define minix_clear_bit(nr,addr) test_and_clear_bit(nr,addr)
 DECL|macro|minix_test_bit
 mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
 DECL|macro|minix_find_first_zero_bit

@@ -181,7 +181,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|SLF_INUSE
@@ -450,7 +450,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|SLF_INUSE
@@ -772,7 +772,7 @@ id|sl
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -812,7 +812,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 l_int|0
@@ -2249,7 +2249,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|SLF_ERROR
@@ -2730,7 +2730,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|SLF_ERROR
@@ -2799,7 +2799,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|SLF_ESCAPE

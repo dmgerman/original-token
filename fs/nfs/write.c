@@ -1789,7 +1789,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|PG_locked
@@ -2541,7 +2541,7 @@ c_func
 id|req
 )paren
 op_logical_and
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|PG_locked

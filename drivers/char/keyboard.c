@@ -1828,7 +1828,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|keycode
@@ -1858,7 +1858,7 @@ suffix:semicolon
 r_else
 id|rep
 op_assign
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|keycode

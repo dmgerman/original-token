@@ -34,16 +34,20 @@ l_string|&quot;ax&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * division by multiplication: you don&squot;t have to worry about&n; * loss of precision.&n; *&n; * Use only for very small delays ( &lt; 1 msec).  Should probably use a&n; * lookup table, really, as the multiplications take much too long with&n; * short delays.  This is a &quot;reasonable&quot; implementation, though (and the&n; * first constant multiplications gets optimized away if the delay is&n; * a constant)&n; */
-DECL|function|udelay
+DECL|function|__udelay
 r_extern
 id|__inline__
 r_void
-id|udelay
+id|__udelay
 c_func
 (paren
 r_int
 r_int
 id|usecs
+comma
+r_int
+r_int
+id|lps
 )paren
 (brace
 id|usecs
@@ -60,7 +64,6 @@ l_string|&quot;=d&quot;
 (paren
 id|usecs
 )paren
-macro_line|#ifdef __SMP__
 suffix:colon
 l_string|&quot;a&quot;
 (paren
@@ -69,28 +72,8 @@ id|usecs
 comma
 l_string|&quot;0&quot;
 (paren
-id|cpu_data
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
+id|lps
 )paren
-)braket
-dot
-id|udelay_val
-)paren
-macro_line|#else
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-id|usecs
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|loops_per_sec
-)paren
-macro_line|#endif
 suffix:colon
 l_string|&quot;ax&quot;
 )paren
@@ -102,6 +85,15 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+DECL|macro|__udelay_val
+mdefine_line|#define __udelay_val cpu_data[smp_processor_id()].udelay_val
+macro_line|#else
+DECL|macro|__udelay_val
+mdefine_line|#define __udelay_val loops_per_sec
+macro_line|#endif
+DECL|macro|udelay
+mdefine_line|#define udelay(usecs) __udelay((usecs),__udelay_val)
 DECL|function|muldiv
 r_extern
 id|__inline__

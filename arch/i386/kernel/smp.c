@@ -2226,6 +2226,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_return
 id|cpu_idle
 c_func
 (paren
@@ -3751,7 +3752,7 @@ suffix:semicolon
 r_int
 id|p
 op_assign
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -4194,7 +4195,7 @@ c_cond
 (paren
 id|smp_activated
 op_logical_and
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -4207,7 +4208,7 @@ c_func
 (paren
 l_string|&quot;CPU #%d:Attempted flush tlb IPI when not AKP(=%d)&bslash;n&quot;
 comma
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -4301,7 +4302,7 @@ id|regs
 r_int
 id|cpu
 op_assign
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -4525,7 +4526,7 @@ r_void
 r_int
 id|cpu
 op_assign
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -4570,10 +4571,10 @@ r_void
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -4607,7 +4608,7 @@ c_cond
 (paren
 id|cpu_data
 (braket
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -5067,7 +5068,7 @@ r_void
 r_int
 id|cpu
 op_assign
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -5105,7 +5106,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -5199,7 +5200,7 @@ id|multiplier
 r_int
 id|cpu
 op_assign
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren

@@ -66,7 +66,7 @@ id|bh
 r_while
 c_loop
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|BH_Lock

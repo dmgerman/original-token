@@ -1146,7 +1146,7 @@ multiline_comment|/* Avoid contention */
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|1
@@ -1734,7 +1734,7 @@ id|CMD_RECEIVE_PACKET_COMPLETE
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -2030,7 +2030,7 @@ multiline_comment|/* if this happens, we die */
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -3590,7 +3590,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -3677,7 +3677,7 @@ multiline_comment|/* if this happens, we die */
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -3984,7 +3984,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0

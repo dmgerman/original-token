@@ -1046,7 +1046,7 @@ r_if
 c_cond
 (paren
 id|fdnum
-OG
+OL
 id|fdmax
 )paren
 id|fdmax
@@ -1115,9 +1115,6 @@ id|new_fd
 comma
 id|cmfptr
 )paren
-suffix:semicolon
-id|cmfptr
-op_increment
 suffix:semicolon
 )brace
 r_if

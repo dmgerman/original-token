@@ -11486,7 +11486,7 @@ id|tty-&gt;driver_data
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|PCXE_EVENT_HANGUP

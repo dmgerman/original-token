@@ -2294,7 +2294,7 @@ macro_line|#else
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 (paren
 l_int|0
 comma

@@ -1717,14 +1717,6 @@ r_int
 r_int
 id|previous_irqholder
 suffix:semicolon
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 100000000
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;wait_on_irq CPU#%d stuck at %08lx, waiting for %08lx (local=%d, global=%d)&bslash;n&quot;, cpu, where, previous_irqholder, local_count, atomic_read(&amp;global_irq_count)); stuck = INIT_STUCK; }
 DECL|function|wait_on_irq
 r_static
 r_inline
@@ -1740,11 +1732,6 @@ r_int
 id|where
 )paren
 (brace
-r_int
-id|stuck
-op_assign
-id|INIT_STUCK
-suffix:semicolon
 r_int
 id|local_count
 op_assign
@@ -1789,8 +1776,6 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|STUCK
-suffix:semicolon
 id|check_smp_invalidate
 c_func
 (paren
@@ -1820,7 +1805,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -1895,14 +1880,6 @@ c_func
 suffix:semicolon
 )brace
 )brace
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 10000000
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;get_irqlock stuck at %08lx, waiting for %08lx&bslash;n&quot;, where, previous_irqholder); stuck = INIT_STUCK;}
 DECL|function|get_irqlock
 r_static
 r_inline
@@ -1918,15 +1895,10 @@ r_int
 id|where
 )paren
 (brace
-r_int
-id|stuck
-op_assign
-id|INIT_STUCK
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -1955,8 +1927,6 @@ r_do
 (brace
 r_do
 (brace
-id|STUCK
-suffix:semicolon
 id|check_smp_invalidate
 c_func
 (paren
@@ -1981,7 +1951,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0

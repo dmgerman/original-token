@@ -167,7 +167,7 @@ multiline_comment|/* Make sure we are the only process doing I/O with this swap 
 r_while
 c_loop
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|offset
@@ -518,7 +518,7 @@ c_cond
 id|offset
 op_logical_and
 op_logical_neg
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|offset
@@ -623,7 +623,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|offset
@@ -739,7 +739,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|PG_locked

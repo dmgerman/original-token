@@ -364,7 +364,7 @@ c_cond
 (paren
 id|cpu_data
 (braket
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren

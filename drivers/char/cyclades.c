@@ -1221,7 +1221,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|Cy_EVENT_HANGUP
@@ -1257,7 +1257,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|Cy_EVENT_OPEN_WAKEUP
@@ -1278,7 +1278,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|Cy_EVENT_WRITE_WAKEUP

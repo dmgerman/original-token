@@ -2678,7 +2678,7 @@ multiline_comment|/* Block a timer-based transmit from overlapping.  This could 
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -2709,7 +2709,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
