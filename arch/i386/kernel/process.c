@@ -980,6 +980,7 @@ id|regs
 )paren
 (brace
 r_int
+r_int
 id|cr0
 op_assign
 l_int|0L
@@ -989,6 +990,10 @@ op_assign
 l_int|0L
 comma
 id|cr3
+op_assign
+l_int|0L
+comma
+id|cr4
 op_assign
 l_int|0L
 suffix:semicolon
@@ -1110,16 +1115,39 @@ id|cr3
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* This could fault if %cr4 does not exist */
+id|__asm__
+c_func
+(paren
+l_string|&quot;1: movl %%cr4, %0&t;&t;&bslash;n&quot;
+l_string|&quot;2:&t;&t;&t;&t;&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&t;&bslash;n&quot;
+l_string|&quot;.long 1b,2b&t;&t;&t;&bslash;n&quot;
+l_string|&quot;.previous&t;&t;&t;&bslash;n&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cr4
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CR0: %08lx CR2: %08lx CR3: %08lx&bslash;n&quot;
+l_string|&quot;CR0: %08lx CR2: %08lx CR3: %08lx CR4: %08lx&bslash;n&quot;
 comma
 id|cr0
 comma
 id|cr2
 comma
 id|cr3
+comma
+id|cr4
 )paren
 suffix:semicolon
 )brace

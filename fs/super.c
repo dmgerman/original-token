@@ -7584,11 +7584,6 @@ op_star
 id|put_old
 )paren
 (brace
-id|kdev_t
-id|old_root_dev
-op_assign
-id|ROOT_DEV
-suffix:semicolon
 r_struct
 id|vfsmount
 op_star
@@ -7662,13 +7657,6 @@ op_logical_neg
 id|error
 )paren
 (brace
-r_struct
-id|super_block
-op_star
-id|sb
-op_assign
-id|devfs_nd.dentry-&gt;d_inode-&gt;i_sb
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7838,7 +7826,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;error %ld&bslash;n&quot;
+l_string|&quot;error %d&bslash;n&quot;
 comma
 id|blivet
 )paren
