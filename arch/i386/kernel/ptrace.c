@@ -55,7 +55,7 @@ r_int
 r_char
 op_star
 )paren
-id|task-&gt;tss.esp0
+id|task-&gt;thread.esp0
 suffix:semicolon
 id|stack
 op_add_assign
@@ -107,7 +107,7 @@ r_int
 r_char
 op_star
 )paren
-id|task-&gt;tss.esp0
+id|task-&gt;thread.esp0
 suffix:semicolon
 id|stack
 op_add_assign
@@ -182,7 +182,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-id|child-&gt;tss.fs
+id|child-&gt;thread.fs
 op_assign
 id|value
 suffix:semicolon
@@ -209,7 +209,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-id|child-&gt;tss.gs
+id|child-&gt;thread.gs
 op_assign
 id|value
 suffix:semicolon
@@ -365,7 +365,7 @@ id|FS
 suffix:colon
 id|retval
 op_assign
-id|child-&gt;tss.fs
+id|child-&gt;thread.fs
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -374,7 +374,7 @@ id|GS
 suffix:colon
 id|retval
 op_assign
-id|child-&gt;tss.gs
+id|child-&gt;thread.gs
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -969,7 +969,7 @@ l_int|2
 suffix:semicolon
 id|tmp
 op_assign
-id|child-&gt;tss.debugreg
+id|child-&gt;thread.debugreg
 (braket
 id|addr
 )braket
@@ -1286,7 +1286,7 @@ id|addr
 op_rshift
 l_int|2
 suffix:semicolon
-id|child-&gt;tss.debugreg
+id|child-&gt;thread.debugreg
 (braket
 id|addr
 )braket
@@ -1917,15 +1917,15 @@ id|child-&gt;used_math
 )paren
 (brace
 multiline_comment|/* Simulate an empty FPU. */
-id|child-&gt;tss.i387.hard.cwd
+id|child-&gt;thread.i387.hard.cwd
 op_assign
 l_int|0xffff037f
 suffix:semicolon
-id|child-&gt;tss.i387.hard.swd
+id|child-&gt;thread.i387.hard.swd
 op_assign
 l_int|0xffff0000
 suffix:semicolon
-id|child-&gt;tss.i387.hard.twd
+id|child-&gt;thread.i387.hard.twd
 op_assign
 l_int|0xffffffff
 suffix:semicolon
@@ -1948,7 +1948,7 @@ op_star
 id|data
 comma
 op_amp
-id|child-&gt;tss.i387.hard
+id|child-&gt;thread.i387.hard
 comma
 r_sizeof
 (paren
@@ -1965,7 +1965,7 @@ id|save_i387_soft
 c_func
 (paren
 op_amp
-id|child-&gt;tss.i387.soft
+id|child-&gt;thread.i387.soft
 comma
 (paren
 r_struct
@@ -2035,7 +2035,7 @@ id|__copy_from_user
 c_func
 (paren
 op_amp
-id|child-&gt;tss.i387.hard
+id|child-&gt;thread.i387.hard
 comma
 (paren
 r_void
@@ -2058,7 +2058,7 @@ id|restore_i387_soft
 c_func
 (paren
 op_amp
-id|child-&gt;tss.i387.soft
+id|child-&gt;thread.i387.soft
 comma
 (paren
 r_struct

@@ -12,7 +12,7 @@ macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef __SMP__
 macro_line|#ifndef ASSEMBLY
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 multiline_comment|/*&n; *&t;Support definitions for SMP machines following the intel multiprocessing&n; *&t;specification&n; */
 multiline_comment|/*&n; *&t;This tag identifies where the SMP configuration&n; *&t;information is. &n; */

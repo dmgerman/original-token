@@ -104,7 +104,7 @@ DECL|variable|smp_num_cpus
 r_int
 id|smp_num_cpus
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 multiline_comment|/* Total count of live CPUs &t;&t;&t;&t;*/
 DECL|variable|smp_threads_ready
@@ -2704,6 +2704,11 @@ id|unused
 )paren
 (brace
 multiline_comment|/*&n;&t; * Dont put anything before smp_callin(), SMP&n;&t; * booting is too fragile that we want to limit the&n;&t; * things done here to the most necessary things.&n;&t; */
+id|cpu_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|smp_callin
 c_func
 (paren
@@ -2740,44 +2745,6 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|thread_struct
-op_star
-id|p
-op_assign
-op_amp
-id|current-&gt;tss
-suffix:semicolon
-multiline_comment|/*&n;&t; * Load up the LDT and the task register.&n;&t; */
-id|asm
-r_volatile
-(paren
-l_string|&quot;lldt %%ax&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-id|p-&gt;ldt
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;ltr %%ax&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-id|p-&gt;tr
-)paren
-)paren
-suffix:semicolon
-id|stts
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * We don&squot;t actually need to load the full TSS,&n;&t; * basically just the stack pointer and the eip.&n;&t; */
 id|asm
 r_volatile
@@ -2788,12 +2755,12 @@ suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-id|p-&gt;esp
+id|current-&gt;thread.esp
 )paren
 comma
 l_string|&quot;r&quot;
 (paren
-id|p-&gt;eip
+id|current-&gt;thread.eip
 )paren
 )paren
 suffix:semicolon
@@ -2868,12 +2835,17 @@ suffix:semicolon
 id|cpucount
 op_increment
 suffix:semicolon
+multiline_comment|/*&n;&t; * We remove it from the pidhash and the runqueue&n;&t; * once we got the process:&n;&t; */
 id|idle
 op_assign
-id|task
+id|init_task.prev_task
+suffix:semicolon
+id|init_tasks
 (braket
 id|cpucount
 )braket
+op_assign
+id|idle
 suffix:semicolon
 r_if
 c_cond
@@ -2912,13 +2884,25 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* we schedule the first task manually */
-id|idle-&gt;tss.eip
+id|idle-&gt;thread.eip
 op_assign
 (paren
 r_int
 r_int
 )paren
 id|start_secondary
+suffix:semicolon
+id|del_from_runqueue
+c_func
+(paren
+id|idle
+)paren
+suffix:semicolon
+id|unhash_process
+c_func
+(paren
+id|idle
+)paren
 suffix:semicolon
 multiline_comment|/* start_eip had better be page-aligned! */
 id|start_eip
@@ -3893,11 +3877,6 @@ id|mtrr_init_boot_cpu
 )paren
 suffix:semicolon
 macro_line|#endif
-id|init_idle
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize the logical to physical CPU number mapping&n;&t; *&t;and the per-CPU profiling counter/multiplier&n;&t; */
 r_for
 c_loop
@@ -3993,6 +3972,11 @@ id|boot_cpu_id
 )braket
 op_assign
 l_int|0
+suffix:semicolon
+id|init_idle
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If we couldnt find an SMP configuration at boot time,&n;&t; * get out of here now!&n;&t; */
 r_if
@@ -4341,9 +4325,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|cpucount
-op_eq
-l_int|0
 )paren
 (brace
 id|printk
@@ -4387,7 +4370,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -4408,7 +4390,6 @@ id|i
 dot
 id|loops_per_sec
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -4452,13 +4433,13 @@ id|smp_activated
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 id|smp_num_cpus
 op_assign
 id|cpucount
 op_plus
 l_int|1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4477,6 +4458,12 @@ c_func
 (paren
 l_string|&quot;Boot done.&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * now we know the other CPUs have fired off and we know our&n;&t; * APIC ID, so we can go init the TSS and stuff:&n;&t; */
+id|cpu_init
+c_func
+(paren
 )paren
 suffix:semicolon
 id|cache_APIC_registers

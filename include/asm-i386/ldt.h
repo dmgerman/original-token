@@ -8,6 +8,7 @@ mdefine_line|#define LDT_ENTRIES&t;8192
 multiline_comment|/* The size of each LDT entry. */
 DECL|macro|LDT_ENTRY_SIZE
 mdefine_line|#define LDT_ENTRY_SIZE&t;8
+macro_line|#ifndef __ASSEMBLY__
 DECL|struct|modify_ldt_ldt_s
 r_struct
 id|modify_ldt_ldt_s
@@ -77,5 +78,6 @@ DECL|macro|MODIFY_LDT_CONTENTS_STACK
 mdefine_line|#define MODIFY_LDT_CONTENTS_STACK&t;1
 DECL|macro|MODIFY_LDT_CONTENTS_CODE
 mdefine_line|#define MODIFY_LDT_CONTENTS_CODE&t;2
+macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif
 eof

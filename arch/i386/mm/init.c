@@ -867,66 +867,6 @@ id|__init_begin
 comma
 id|__init_end
 suffix:semicolon
-DECL|macro|X86_CR4_VME
-mdefine_line|#define X86_CR4_VME&t;&t;0x0001&t;&t;/* enable vm86 extensions */
-DECL|macro|X86_CR4_PVI
-mdefine_line|#define X86_CR4_PVI&t;&t;0x0002&t;&t;/* virtual interrupts flag enable */
-DECL|macro|X86_CR4_TSD
-mdefine_line|#define X86_CR4_TSD&t;&t;0x0004&t;&t;/* disable time stamp at ipl 3 */
-DECL|macro|X86_CR4_DE
-mdefine_line|#define X86_CR4_DE&t;&t;0x0008&t;&t;/* enable debugging extensions */
-DECL|macro|X86_CR4_PSE
-mdefine_line|#define X86_CR4_PSE&t;&t;0x0010&t;&t;/* enable page size extensions */
-DECL|macro|X86_CR4_PAE
-mdefine_line|#define X86_CR4_PAE&t;&t;0x0020&t;&t;/* enable physical address extensions */
-DECL|macro|X86_CR4_MCE
-mdefine_line|#define X86_CR4_MCE&t;&t;0x0040&t;&t;/* Machine check enable */
-DECL|macro|X86_CR4_PGE
-mdefine_line|#define X86_CR4_PGE&t;&t;0x0080&t;&t;/* enable global pages */
-DECL|macro|X86_CR4_PCE
-mdefine_line|#define X86_CR4_PCE&t;&t;0x0100&t;&t;/* enable performance counters at ipl 3 */
-multiline_comment|/*&n; * Save the cr4 feature set we&squot;re using (ie&n; * Pentium 4MB enable and PPro Global page&n; * enable), so that any CPU&squot;s that boot up&n; * after us can get the correct flags.&n; */
-DECL|variable|__initdata
-r_int
-r_int
-id|mmu_cr4_features
-id|__initdata
-op_assign
-l_int|0
-suffix:semicolon
-DECL|function|set_in_cr4
-r_static
-r_inline
-r_void
-id|set_in_cr4
-c_func
-(paren
-r_int
-r_int
-id|mask
-)paren
-(brace
-id|mmu_cr4_features
-op_or_assign
-id|mask
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movl %%cr4,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;orl %0,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%eax,%%cr4&bslash;n&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;irg&quot;
-(paren
-id|mask
-)paren
-suffix:colon
-l_string|&quot;ax&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * allocate page table(s) for compile-time fixed mappings&n; */
 DECL|function|fixmap_init
 r_static

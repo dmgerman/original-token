@@ -1393,8 +1393,6 @@ id|old_mm
 suffix:semicolon
 r_int
 id|retval
-comma
-id|nr
 suffix:semicolon
 r_if
 c_cond
@@ -1482,22 +1480,10 @@ id|mm-&gt;rss
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Make sure we have a private ldt if needed ...&n;&t; */
-id|nr
-op_assign
-id|current-&gt;tarray_ptr
-op_minus
-op_amp
-id|task
-(braket
-l_int|0
-)braket
-suffix:semicolon
+multiline_comment|/*&n;&t; * Make sure we have a private LDT if needed ...&n;&t; */
 id|copy_segments
 c_func
 (paren
-id|nr
-comma
 id|current
 comma
 id|mm
@@ -1565,8 +1551,6 @@ multiline_comment|/* restore the ldt for this task */
 id|copy_segments
 c_func
 (paren
-id|nr
-comma
 id|current
 comma
 l_int|NULL

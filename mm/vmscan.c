@@ -1080,7 +1080,7 @@ suffix:semicolon
 multiline_comment|/* &n;&t; * We make one or two passes through the task list, indexed by &n;&t; * assign = {0, 1}:&n;&t; *   Pass 1: select the swappable task with maximal RSS that has&n;&t; *         not yet been swapped out. &n;&t; *   Pass 2: re-assign rss swap_cnt values, then select as above.&n;&t; *&n;&t; * With this approach, there&squot;s no need to remember the last task&n;&t; * swapped out.  If the swap-out fails, we clear swap_cnt so the &n;&t; * task won&squot;t be selected again until all others have been tried.&n;&t; *&n;&t; * Think of swap_cnt as a &quot;shadow rss&quot; - it tells us which process&n;&t; * we want to page out (always try largest first).&n;&t; */
 id|counter
 op_assign
-id|nr_tasks
+id|nr_threads
 op_div
 (paren
 id|priority
@@ -1104,11 +1104,11 @@ c_cond
 (paren
 id|counter
 OG
-id|nr_tasks
+id|nr_threads
 )paren
 id|counter
 op_assign
-id|nr_tasks
+id|nr_threads
 suffix:semicolon
 r_for
 c_loop

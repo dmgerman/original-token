@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
 DECL|macro|current_text_addr
 mdefine_line|#define current_text_addr() ({ void *pc; __asm__(&quot;movl $1f,%0&bslash;n1:&quot;:&quot;=g&quot; (pc)); pc; })
@@ -199,6 +200,14 @@ r_struct
 id|cpuinfo_x86
 id|boot_cpu_data
 suffix:semicolon
+r_extern
+r_struct
+id|hard_thread_struct
+id|init_tss
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 macro_line|#ifdef __SMP__
 r_extern
 r_struct
@@ -313,6 +322,97 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Intel CPU features in CR4&n; */
+DECL|macro|X86_CR4_VME
+mdefine_line|#define X86_CR4_VME&t;0x0001&t;/* enable vm86 extensions */
+DECL|macro|X86_CR4_PVI
+mdefine_line|#define X86_CR4_PVI&t;0x0002&t;/* virtual interrupts flag enable */
+DECL|macro|X86_CR4_TSD
+mdefine_line|#define X86_CR4_TSD&t;0x0004&t;/* disable time stamp at ipl 3 */
+DECL|macro|X86_CR4_DE
+mdefine_line|#define X86_CR4_DE&t;0x0008&t;/* enable debugging extensions */
+DECL|macro|X86_CR4_PSE
+mdefine_line|#define X86_CR4_PSE&t;0x0010&t;/* enable page size extensions */
+DECL|macro|X86_CR4_PAE
+mdefine_line|#define X86_CR4_PAE&t;0x0020&t;/* enable physical address extensions */
+DECL|macro|X86_CR4_MCE
+mdefine_line|#define X86_CR4_MCE&t;0x0040&t;/* Machine check enable */
+DECL|macro|X86_CR4_PGE
+mdefine_line|#define X86_CR4_PGE&t;0x0080&t;/* enable global pages */
+DECL|macro|X86_CR4_PCE
+mdefine_line|#define X86_CR4_PCE&t;0x0100&t;/* enable performance counters at ipl 3 */
+multiline_comment|/*&n; * Save the cr4 feature set we&squot;re using (ie&n; * Pentium 4MB enable and PPro Global page&n; * enable), so that any CPU&squot;s that boot up&n; * after us can get the correct flags.&n; */
+r_extern
+r_int
+r_int
+id|mmu_cr4_features
+suffix:semicolon
+DECL|function|set_in_cr4
+r_static
+r_inline
+r_void
+id|set_in_cr4
+(paren
+r_int
+r_int
+id|mask
+)paren
+(brace
+id|mmu_cr4_features
+op_or_assign
+id|mask
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %%cr4,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;orl %0,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%eax,%%cr4&bslash;n&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;irg&quot;
+(paren
+id|mask
+)paren
+suffix:colon
+l_string|&quot;ax&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|clear_in_cr4
+r_static
+r_inline
+r_void
+id|clear_in_cr4
+(paren
+r_int
+r_int
+id|mask
+)paren
+(brace
+id|mmu_cr4_features
+op_and_assign
+op_complement
+id|mask
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %%cr4,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;andl %0,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%eax,%%cr4&bslash;n&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;irg&quot;
+(paren
+op_complement
+id|mask
+)paren
+suffix:colon
+l_string|&quot;ax&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *      Cyrix CPU configuration register indexes&n; */
 DECL|macro|CX86_CCR0
 mdefine_line|#define CX86_CCR0 0xc0
@@ -380,6 +480,10 @@ mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
 multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32
+DECL|macro|IO_BITMAP_OFFSET
+mdefine_line|#define IO_BITMAP_OFFSET offsetof(struct hard_thread_struct,io_bitmap)
+DECL|macro|INVALID_IO_BITMAP_OFFSET
+mdefine_line|#define INVALID_IO_BITMAP_OFFSET 0x8000
 DECL|struct|i387_hard_struct
 r_struct
 id|i387_hard_struct
@@ -528,9 +632,9 @@ DECL|typedef|mm_segment_t
 )brace
 id|mm_segment_t
 suffix:semicolon
-DECL|struct|thread_struct
+DECL|struct|hard_thread_struct
 r_struct
-id|thread_struct
+id|hard_thread_struct
 (brace
 DECL|member|back_link
 DECL|member|__blh
@@ -702,11 +806,62 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
-DECL|member|tr
+multiline_comment|/*&n;&t; * pads the TSS to be cacheline-aligned (size is 0x100)&n;&t; */
+DECL|member|__cacheline_filler
 r_int
 r_int
-id|tr
+id|__cacheline_filler
+(braket
+l_int|5
+)braket
 suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|soft_thread_struct
+r_struct
+id|soft_thread_struct
+(brace
+DECL|member|esp0
+r_int
+r_int
+id|esp0
+suffix:semicolon
+DECL|member|cr3
+r_int
+r_int
+id|cr3
+suffix:semicolon
+DECL|member|eip
+r_int
+r_int
+id|eip
+suffix:semicolon
+DECL|member|esp
+r_int
+r_int
+id|esp
+suffix:semicolon
+DECL|member|fs
+r_int
+r_int
+id|fs
+suffix:semicolon
+DECL|member|gs
+r_int
+r_int
+id|gs
+suffix:semicolon
+multiline_comment|/* Hardware debugging registers */
+DECL|member|debugreg
+r_int
+r_int
+id|debugreg
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* %%db0-7 debug registers */
+multiline_comment|/* fault info */
 DECL|member|cr2
 DECL|member|trap_no
 DECL|member|error_code
@@ -718,19 +873,6 @@ id|trap_no
 comma
 id|error_code
 suffix:semicolon
-DECL|member|segment
-id|mm_segment_t
-id|segment
-suffix:semicolon
-multiline_comment|/* debug registers */
-DECL|member|debugreg
-r_int
-id|debugreg
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* Hardware debugging registers */
 multiline_comment|/* floating point info */
 DECL|member|i387
 r_union
@@ -763,12 +905,29 @@ id|v86mode
 comma
 id|saved_esp0
 suffix:semicolon
+multiline_comment|/* IO permissions */
+DECL|member|ioperm
+r_int
+id|ioperm
+suffix:semicolon
+DECL|member|io_bitmap
+r_int
+r_int
+id|io_bitmap
+(braket
+id|IO_BITMAP_SIZE
+op_plus
+l_int|1
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|INIT_THREAD
+mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,(long) &amp;swapper_pg_dir - PAGE_OFFSET,&t;&t;&t;&bslash;&n;&t;0, 0, 0, 0, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ [0 ... 7] = 0 },&t;/* debugging registers */&t;&bslash;&n;&t;0, 0, 0,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ { 0, }, },&t;&t;/* 387 state */&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,{~0,}&t;&t;&t;/* io permissions */&t;&t;&bslash;&n;}
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, NULL, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,0, /* back_link, __blh */&t;&t;&t;&t;&bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* esp0 */&t;&bslash;&n;&t;__KERNEL_DS, 0, /* ss0 */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* stack1, stack2 */&t;&t;&t;&bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, /* cr3 */&t;&t;&bslash;&n;&t;0,0, /* eip,eflags */&t;&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* eax,ecx,edx,ebx */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* esp,ebp,esi,edi */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* es,cs,ss */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* ds,fs,gs */&t;&t;&t;&t;&bslash;&n;&t;_LDT(0),0, /* ldt */&t;&t;&t;&t;&t;&bslash;&n;&t;0, 0x8000, /* tace, bitmap */&t;&t;&t;&t;&bslash;&n;&t;{~0, }, /* ioperm */&t;&t;&t;&t;&t;&bslash;&n;&t;_TSS(0), 0, 0, 0, (mm_segment_t) { 0 }, /* obsolete */&t;&bslash;&n;&t;{ 0, },&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ { 0, }, },  /* 387 state */&t;&t;&t;&t;&bslash;&n;&t;NULL, 0, 0, 0, 0, 0, /* vm86_info */&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,0, /* back_link, __blh */&t;&t;&t;&t;&bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* esp0 */&t;&bslash;&n;&t;__KERNEL_DS, 0, /* ss0 */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* stack1, stack2 */&t;&t;&t;&bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, /* cr3 */&t;&t;&bslash;&n;&t;0,0, /* eip,eflags */&t;&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* eax,ecx,edx,ebx */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* esp,ebp,esi,edi */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* es,cs,ss */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* ds,fs,gs */&t;&t;&t;&t;&bslash;&n;&t;__LDT(0),0, /* ldt */&t;&t;&t;&t;&t;&bslash;&n;&t;0, INVALID_IO_BITMAP_OFFSET, /* tace, bitmap */&t;&t;&bslash;&n;&t;{~0, } /* ioperm */&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&t;&t;&bslash;&n;&t;__asm__(&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;: :&quot;r&quot; (0));&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xds = __USER_DS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xes = __USER_DS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xss = __USER_DS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xcs = __USER_CS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;eip = new_eip;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;esp = new_esp;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* Forward declaration, a strange C thing */
@@ -789,6 +948,7 @@ id|task_struct
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * create a kernel thread without removing it from tasklists&n; */
 r_extern
 r_int
 id|kernel_thread
@@ -819,9 +979,6 @@ r_void
 id|copy_segments
 c_func
 (paren
-r_int
-id|nr
-comma
 r_struct
 id|task_struct
 op_star
@@ -854,7 +1011,7 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * FPU lazy state save handling..&n; */
 DECL|macro|save_fpu
-mdefine_line|#define save_fpu(tsk) do { &bslash;&n;&t;asm volatile(&quot;fnsave %0&bslash;n&bslash;tfwait&quot;:&quot;=m&quot; (tsk-&gt;tss.i387)); &bslash;&n;&t;tsk-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;stts(); &bslash;&n;} while (0)
+mdefine_line|#define save_fpu(tsk) do { &bslash;&n;&t;asm volatile(&quot;fnsave %0&bslash;n&bslash;tfwait&quot;:&quot;=m&quot; (tsk-&gt;thread.i387)); &bslash;&n;&t;tsk-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;stts(); &bslash;&n;} while (0)
 DECL|macro|unlazy_fpu
 mdefine_line|#define unlazy_fpu(tsk) do { &bslash;&n;&t;if (tsk-&gt;flags &amp; PF_USEDFPU) &bslash;&n;&t;&t;save_fpu(tsk); &bslash;&n;} while (0)
 DECL|macro|clear_fpu
@@ -869,7 +1026,7 @@ id|thread_saved_pc
 c_func
 (paren
 r_struct
-id|thread_struct
+id|soft_thread_struct
 op_star
 id|t
 )paren
@@ -888,6 +1045,8 @@ l_int|3
 )braket
 suffix:semicolon
 )brace
+DECL|macro|THREAD_SIZE
+mdefine_line|#define THREAD_SIZE (2*PAGE_SIZE)
 r_extern
 r_struct
 id|task_struct

@@ -597,7 +597,7 @@ id|bit
 OL
 l_int|32
 )paren
-id|tsk-&gt;tss.screen_bitmap
+id|tsk-&gt;thread.screen_bitmap
 op_or_assign
 l_int|1
 op_lshift
@@ -632,15 +632,15 @@ op_amp
 l_int|4
 )paren
 (brace
-id|tsk-&gt;tss.cr2
+id|tsk-&gt;thread.cr2
 op_assign
 id|address
 suffix:semicolon
-id|tsk-&gt;tss.error_code
+id|tsk-&gt;thread.error_code
 op_assign
 id|error_code
 suffix:semicolon
-id|tsk-&gt;tss.trap_no
+id|tsk-&gt;thread.trap_no
 op_assign
 l_int|14
 suffix:semicolon
@@ -807,6 +807,20 @@ comma
 id|address
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; printing eip:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%08lx&bslash;n&quot;
+comma
+id|regs-&gt;eip
+)paren
+suffix:semicolon
 id|__asm__
 c_func
 (paren
@@ -822,9 +836,9 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;current-&gt;tss.cr3 = %08lx, %%cr3 = %08lx&bslash;n&quot;
+l_string|&quot;current-&gt;thread.cr3 = %08lx, %%cr3 = %08lx&bslash;n&quot;
 comma
-id|tsk-&gt;tss.cr3
+id|tsk-&gt;thread.cr3
 comma
 id|page
 )paren
@@ -964,15 +978,15 @@ id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Send a sigbus, regardless of whether we were in kernel&n;&t; * or user mode.&n;&t; */
-id|tsk-&gt;tss.cr2
+id|tsk-&gt;thread.cr2
 op_assign
 id|address
 suffix:semicolon
-id|tsk-&gt;tss.error_code
+id|tsk-&gt;thread.error_code
 op_assign
 id|error_code
 suffix:semicolon
-id|tsk-&gt;tss.trap_no
+id|tsk-&gt;thread.trap_no
 op_assign
 l_int|14
 suffix:semicolon

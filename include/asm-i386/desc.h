@@ -1,6 +1,17 @@
 macro_line|#ifndef __ARCH_DESC_H
 DECL|macro|__ARCH_DESC_H
 mdefine_line|#define __ARCH_DESC_H
+macro_line|#include &lt;asm/ldt.h&gt;
+multiline_comment|/*&n; * The layout of the GDT under Linux:&n; *&n; *   0 - null&n; *   1 - not used&n; *   2 - kernel code segment&n; *   3 - kernel data segment&n; *   4 - user code segment                  &lt;-- new cacheline &n; *   5 - user data segment&n; *   6 - not used&n; *   7 - not used&n; *   8 - APM BIOS support                   &lt;-- new cacheline &n; *   9 - APM BIOS support&n; *  10 - APM BIOS support&n; *  11 - APM BIOS support&n; *&n; * The TSS+LDT descriptors are spread out a bit so that every CPU&n; * has an exclusive cacheline for the per-CPU TSS and LDT:&n; *&n; *  12 - CPU#0 TSS                          &lt;-- new cacheline &n; *  13 - CPU#0 LDT&n; *  14 - not used &n; *  15 - not used &n; *  16 - CPU#1 TSS                          &lt;-- new cacheline &n; *  17 - CPU#1 LDT&n; *  18 - not used &n; *  19 - not used &n; *  ... NR_CPUS per-CPU TSS+LDT&squot;s if on SMP&n; *&n; * Entry into gdt where to find first TSS.&n; */
+DECL|macro|__FIRST_TSS_ENTRY
+mdefine_line|#define __FIRST_TSS_ENTRY 12
+DECL|macro|__FIRST_LDT_ENTRY
+mdefine_line|#define __FIRST_LDT_ENTRY (__FIRST_TSS_ENTRY+1)
+DECL|macro|__TSS
+mdefine_line|#define __TSS(n) (((n)&lt;&lt;2) + __FIRST_TSS_ENTRY)
+DECL|macro|__LDT
+mdefine_line|#define __LDT(n) (((n)&lt;&lt;2) + __FIRST_LDT_ENTRY)
+macro_line|#ifndef __ASSEMBLY__
 DECL|struct|desc_struct
 r_struct
 id|desc_struct
@@ -58,21 +69,16 @@ DECL|macro|idt_descr
 mdefine_line|#define idt_descr (*(struct Xgt_desc_struct *)((char *)&amp;idt - 2))
 DECL|macro|gdt_descr
 mdefine_line|#define gdt_descr (*(struct Xgt_desc_struct *)((char *)&amp;gdt - 2))
-multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - null&n; *   1 - not used&n; *   2 - kernel code segment&n; *   3 - kernel data segment&n; *   4 - user code segment&n; *   5 - user data segment&n; *   6 - not used&n; *   7 - not used&n; *   8 - APM BIOS support&n; *   9 - APM BIOS support&n; *  10 - APM BIOS support&n; *  11 - APM BIOS support&n; *  12 - TSS #0&n; *  13 - LDT #0&n; *  14 - TSS #1&n; *  15 - LDT #1&n; */
-DECL|macro|FIRST_TSS_ENTRY
-mdefine_line|#define FIRST_TSS_ENTRY 12
-DECL|macro|FIRST_LDT_ENTRY
-mdefine_line|#define FIRST_LDT_ENTRY (FIRST_TSS_ENTRY+1)
-DECL|macro|_TSS
-mdefine_line|#define _TSS(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_TSS_ENTRY&lt;&lt;3))
-DECL|macro|_LDT
-mdefine_line|#define _LDT(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_LDT_ENTRY&lt;&lt;3))
 DECL|macro|load_TR
-mdefine_line|#define load_TR(n) __asm__ __volatile__(&quot;ltr %%ax&quot;: /* no output */ :&quot;a&quot; (_TSS(n)))
-DECL|macro|load_ldt
-mdefine_line|#define load_ldt(n) __asm__ __volatile__(&quot;lldt %%ax&quot;: /* no output */ :&quot;a&quot; (_LDT(n)))
-DECL|macro|store_TR
-mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
+mdefine_line|#define load_TR(n) __asm__ __volatile__(&quot;ltr %%ax&quot;::&quot;a&quot; (__TSS(n)&lt;&lt;3))
+DECL|macro|__load_LDT
+mdefine_line|#define __load_LDT(n) __asm__ __volatile__(&quot;lldt %%ax&quot;::&quot;a&quot; (__LDT(n)&lt;&lt;3))
+multiline_comment|/*&n; * This is the ldt that every process will get unless we need&n; * something other than this.&n; */
+r_extern
+r_struct
+id|desc_struct
+id|default_ldt
+suffix:semicolon
 r_extern
 r_void
 id|set_intr_gate
@@ -119,11 +125,61 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is the ldt that every process will get unless we need&n; * something other than this.&n; */
+multiline_comment|/*&n; * load one particular LDT into the current CPU&n; */
+DECL|function|load_LDT
 r_extern
+r_inline
+r_void
+id|load_LDT
+(paren
 r_struct
-id|desc_struct
-id|default_ldt
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mm-&gt;segments
+)paren
+id|set_ldt_desc
+c_func
+(paren
+id|cpu
+comma
+id|mm-&gt;segments
+comma
+id|LDT_ENTRIES
+)paren
+suffix:semicolon
+r_else
+id|set_ldt_desc
+c_func
+(paren
+id|cpu
+comma
+op_amp
+id|default_ldt
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|__load_LDT
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif
 eof

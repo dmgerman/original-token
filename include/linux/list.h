@@ -19,8 +19,10 @@ id|prev
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|LIST_HEAD_INIT
+mdefine_line|#define LIST_HEAD_INIT(name) { &amp;(name), &amp;(name) }
 DECL|macro|LIST_HEAD
-mdefine_line|#define LIST_HEAD(name) &bslash;&n;&t;struct list_head name = { &amp;name, &amp;name }
+mdefine_line|#define LIST_HEAD(name) &bslash;&n;&t;struct list_head name = LIST_HEAD_INIT(name)
 DECL|macro|INIT_LIST_HEAD
 mdefine_line|#define INIT_LIST_HEAD(ptr) do { &bslash;&n;&t;(ptr)-&gt;next = (ptr); (ptr)-&gt;prev = (ptr); &bslash;&n;} while (0)
 multiline_comment|/*&n; * Insert a new entry between two known consecutive entries. &n; *&n; * This is only for internal list manipulation where we know&n; * the prev/next entries already!&n; */
@@ -95,6 +97,36 @@ comma
 id|head
 comma
 id|head-&gt;next
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Insert a new entry before the specified head..&n; */
+DECL|function|list_add_tail
+r_static
+id|__inline__
+r_void
+id|list_add_tail
+c_func
+(paren
+r_struct
+id|list_head
+op_star
+r_new
+comma
+r_struct
+id|list_head
+op_star
+id|head
+)paren
+(brace
+id|__list_add
+c_func
+(paren
+r_new
+comma
+id|head-&gt;prev
+comma
+id|head
 )paren
 suffix:semicolon
 )brace

@@ -725,6 +725,8 @@ DECL|macro|CRCCONTROL1
 mdefine_line|#define&t;CRCCONTROL1     &t;&t;0x9d
 DECL|macro|CRCONSEEN
 mdefine_line|#define&t;&t;CRCONSEEN       &t;0x80
+DECL|macro|TARGCRCCNTEN
+mdefine_line|#define&t;&t;TARGCRCCNTEN    &t;0x40
 DECL|macro|CRCVALCHKEN
 mdefine_line|#define&t;&t;CRCVALCHKEN     &t;0x40
 DECL|macro|CRCENDCHKEN
@@ -733,8 +735,6 @@ DECL|macro|CRCREQCHKEN
 mdefine_line|#define&t;&t;CRCREQCHKEN     &t;0x10
 DECL|macro|TARGCRCENDEN
 mdefine_line|#define&t;&t;TARGCRCENDEN    &t;0x08
-DECL|macro|TARGCRCCNTEN
-mdefine_line|#define&t;&t;TARGCRCCNTEN    &t;0x04
 DECL|macro|SCSIPHASE
 mdefine_line|#define&t;SCSIPHASE       &t;&t;0x9e
 DECL|macro|SP_STATUS

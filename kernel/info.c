@@ -101,7 +101,7 @@ id|FSHIFT
 suffix:semicolon
 id|val.procs
 op_assign
-id|nr_tasks
+id|nr_threads
 op_minus
 l_int|1
 suffix:semicolon

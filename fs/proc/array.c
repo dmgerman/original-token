@@ -783,7 +783,7 @@ id|c
 comma
 id|nr_running
 comma
-id|nr_tasks
+id|nr_threads
 comma
 id|last_pid
 )paren
@@ -1212,14 +1212,14 @@ id|jiffies
 suffix:semicolon
 id|idle
 op_assign
-id|task
+id|init_tasks
 (braket
 l_int|0
 )braket
 op_member_access_from_pointer
 id|times.tms_utime
 op_plus
-id|task
+id|init_tasks
 (braket
 l_int|0
 )braket
@@ -2080,7 +2080,7 @@ id|p
 suffix:semicolon
 id|esp
 op_assign
-id|p-&gt;tss.esp
+id|p-&gt;thread.esp
 suffix:semicolon
 r_if
 c_cond

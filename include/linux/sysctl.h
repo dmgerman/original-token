@@ -282,7 +282,13 @@ DECL|enumerator|KERN_MSGPOOL
 id|KERN_MSGPOOL
 op_assign
 l_int|37
+comma
 multiline_comment|/* int: Maximum system message pool size */
+DECL|enumerator|KERN_MAX_THREADS
+id|KERN_MAX_THREADS
+op_assign
+l_int|38
+multiline_comment|/* int: Maximum nr of threads in the system */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */

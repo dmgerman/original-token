@@ -133,7 +133,7 @@ c_cond
 (paren
 id|current
 op_eq
-id|task
+id|init_tasks
 (braket
 l_int|0
 )braket

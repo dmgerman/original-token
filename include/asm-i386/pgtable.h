@@ -6,7 +6,7 @@ multiline_comment|/*&n; * The Linux memory management assumes a three-level page
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/fixmap.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 multiline_comment|/* Caches aren&squot;t brain-dead on the intel. */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
@@ -546,7 +546,7 @@ DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 multiline_comment|/* to set the page-dir */
 DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;unsigned long __pgdir = __pa(pgdir); &bslash;&n;&t;(tsk)-&gt;tss.cr3 = __pgdir; &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;r&quot; (__pgdir)); &bslash;&n;} while (0)
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;unsigned long __pgdir = __pa(pgdir); &bslash;&n;&t;(tsk)-&gt;thread.cr3 = __pgdir; &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;r&quot; (__pgdir)); &bslash;&n;} while (0)
 DECL|macro|pte_none
 mdefine_line|#define pte_none(x)&t;(!pte_val(x))
 DECL|macro|pte_present
@@ -1504,11 +1504,11 @@ id|pmd
 )paren
 suffix:semicolon
 DECL|macro|pte_free_kernel
-mdefine_line|#define pte_free_kernel(pte)    free_pte_fast(pte)
+mdefine_line|#define pte_free_kernel(pte)    free_pte_slow(pte)
 DECL|macro|pte_free
-mdefine_line|#define pte_free(pte)           free_pte_fast(pte)
+mdefine_line|#define pte_free(pte)           free_pte_slow(pte)
 DECL|macro|pgd_free
-mdefine_line|#define pgd_free(pgd)           free_pgd_fast(pgd)
+mdefine_line|#define pgd_free(pgd)           free_pgd_slow(pgd)
 DECL|macro|pgd_alloc
 mdefine_line|#define pgd_alloc()             get_pgd_fast()
 DECL|function|pte_alloc_kernel

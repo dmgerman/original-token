@@ -3,7 +3,7 @@ DECL|macro|_LINUX_KERNEL_STAT_H
 mdefine_line|#define _LINUX_KERNEL_STAT_H
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 multiline_comment|/*&n; * &squot;kernel_stat.h&squot; contains the definitions needed for doing&n; * some kernel statistics (CPU usage, context switches ...),&n; * used by rstatd/perfmeter&n; */
 DECL|macro|DK_NDRIVE
 mdefine_line|#define DK_NDRIVE 4

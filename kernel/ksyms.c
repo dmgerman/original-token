@@ -1599,6 +1599,20 @@ c_func
 id|__release_region
 )paren
 suffix:semicolon
+DECL|variable|pci_io_resource
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_io_resource
+)paren
+suffix:semicolon
+DECL|variable|pci_mem_resource
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_mem_resource
+)paren
+suffix:semicolon
 multiline_comment|/* process management */
 DECL|variable|__wake_up
 id|EXPORT_SYMBOL

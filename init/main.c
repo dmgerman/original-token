@@ -130,10 +130,11 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|uidcache_init
+id|fork_init
 c_func
 (paren
-r_void
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -5115,9 +5116,12 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|uidcache_init
+id|fork_init
 c_func
 (paren
+id|memory_end
+op_minus
+id|memory_start
 )paren
 suffix:semicolon
 id|filescache_init

@@ -677,7 +677,7 @@ id|__copy_from_user
 c_func
 (paren
 op_amp
-id|tsk-&gt;tss.i387.hard
+id|tsk-&gt;thread.i387.hard
 comma
 id|buf
 comma
@@ -735,7 +735,7 @@ id|restore_i387_soft
 c_func
 (paren
 op_amp
-id|current-&gt;tss.i387.soft
+id|current-&gt;thread.i387.soft
 comma
 id|buf
 )paren
@@ -1376,9 +1376,9 @@ c_func
 id|tsk
 )paren
 suffix:semicolon
-id|tsk-&gt;tss.i387.hard.status
+id|tsk-&gt;thread.i387.hard.status
 op_assign
-id|tsk-&gt;tss.i387.hard.swd
+id|tsk-&gt;thread.i387.hard.swd
 suffix:semicolon
 r_if
 c_cond
@@ -1389,7 +1389,7 @@ c_func
 id|buf
 comma
 op_amp
-id|tsk-&gt;tss.i387.hard
+id|tsk-&gt;thread.i387.hard
 comma
 r_sizeof
 (paren
@@ -1455,7 +1455,7 @@ id|save_i387_soft
 c_func
 (paren
 op_amp
-id|current-&gt;tss.i387.soft
+id|current-&gt;thread.i387.soft
 comma
 id|buf
 )paren
@@ -1688,7 +1688,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 comma
 op_amp
 id|sc-&gt;trapno
@@ -1699,7 +1699,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 comma
 op_amp
 id|sc-&gt;err
@@ -1823,7 +1823,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.cr2
+id|current-&gt;thread.cr2
 comma
 op_amp
 id|sc-&gt;cr2

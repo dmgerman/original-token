@@ -9,7 +9,7 @@ id|event
 suffix:semicolon
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/times.h&gt;
@@ -71,7 +71,7 @@ r_extern
 r_int
 id|nr_running
 comma
-id|nr_tasks
+id|nr_threads
 suffix:semicolon
 r_extern
 r_int
@@ -152,6 +152,13 @@ r_extern
 r_void
 id|show_state
 c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cpu_init
 (paren
 r_void
 )paren
@@ -497,15 +504,10 @@ comma
 op_star
 id|prev_task
 suffix:semicolon
-DECL|member|next_run
-DECL|member|prev_run
+DECL|member|run_list
 r_struct
-id|task_struct
-op_star
-id|next_run
-comma
-op_star
-id|prev_run
+id|list_head
+id|run_list
 suffix:semicolon
 multiline_comment|/* task state */
 DECL|member|binfmt
@@ -601,14 +603,6 @@ id|task_struct
 op_star
 op_star
 id|pidhash_pprev
-suffix:semicolon
-multiline_comment|/* Pointer to task[] array linkage. */
-DECL|member|tarray_ptr
-r_struct
-id|task_struct
-op_star
-op_star
-id|tarray_ptr
 suffix:semicolon
 DECL|member|wait_chldexit
 id|wait_queue_head_t
@@ -807,11 +801,11 @@ id|sem_queue
 op_star
 id|semsleeping
 suffix:semicolon
-multiline_comment|/* tss for this task */
-DECL|member|tss
+multiline_comment|/* CPU-specific state of this task */
+DECL|member|thread
 r_struct
-id|thread_struct
-id|tss
+id|soft_thread_struct
+id|thread
 suffix:semicolon
 multiline_comment|/* filesystem information */
 DECL|member|fs
@@ -910,7 +904,7 @@ DECL|macro|DEF_PRIORITY
 mdefine_line|#define DEF_PRIORITY&t;(20*HZ/100)&t;/* 200 ms time slices */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK(name) &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;__WAIT_QUEUE_HEAD_INITIALIZER(name.wait_chldexit), NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
+mdefine_line|#define INIT_TASK(name) &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, LIST_HEAD_INIT(init_task.run_list), &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* chld wait */&t;__WAIT_QUEUE_HEAD_INITIALIZER(name.wait_chldexit), NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* thread */&t;INIT_THREAD, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
 macro_line|#ifndef INIT_TASK_SIZE
 DECL|macro|INIT_TASK_SIZE
 macro_line|# define INIT_TASK_SIZE&t;2048*sizeof(long)
@@ -953,129 +947,14 @@ r_extern
 r_struct
 id|task_struct
 op_star
-id|task
+id|init_tasks
 (braket
-id|NR_TASKS
+id|NR_CPUS
 )braket
 suffix:semicolon
-r_extern
-r_struct
-id|task_struct
-op_star
-op_star
-id|tarray_freelist
-suffix:semicolon
-r_extern
-id|spinlock_t
-id|taskslot_lock
-suffix:semicolon
-DECL|function|add_free_taskslot
-r_extern
-id|__inline__
-r_void
-id|add_free_taskslot
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-op_star
-id|t
-)paren
-(brace
-id|spin_lock
-c_func
-(paren
-op_amp
-id|taskslot_lock
-)paren
-suffix:semicolon
-op_star
-id|t
-op_assign
-(paren
-r_struct
-id|task_struct
-op_star
-)paren
-id|tarray_freelist
-suffix:semicolon
-id|tarray_freelist
-op_assign
-id|t
-suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|taskslot_lock
-)paren
-suffix:semicolon
-)brace
-DECL|function|get_free_taskslot
-r_extern
-id|__inline__
-r_struct
-id|task_struct
-op_star
-op_star
-id|get_free_taskslot
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|task_struct
-op_star
-op_star
-id|tslot
-suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|taskslot_lock
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|tslot
-op_assign
-id|tarray_freelist
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|tarray_freelist
-op_assign
-(paren
-r_struct
-id|task_struct
-op_star
-op_star
-)paren
-op_star
-id|tslot
-suffix:semicolon
-)brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|taskslot_lock
-)paren
-suffix:semicolon
-r_return
-id|tslot
-suffix:semicolon
-)brace
-multiline_comment|/* PID hashing. */
+multiline_comment|/* PID hashing. (shouldnt this be dynamic?) */
 DECL|macro|PIDHASH_SZ
-mdefine_line|#define PIDHASH_SZ (NR_TASKS &gt;&gt; 2)
+mdefine_line|#define PIDHASH_SZ (4096 &gt;&gt; 2)
 r_extern
 r_struct
 id|task_struct
@@ -2398,6 +2277,112 @@ DECL|macro|SET_LINKS
 mdefine_line|#define SET_LINKS(p) do { &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p; &bslash;&n;&t;} while (0)
 DECL|macro|for_each_task
 mdefine_line|#define for_each_task(p) &bslash;&n;&t;for (p = &amp;init_task ; (p = p-&gt;next_task) != &amp;init_task ; )
+DECL|function|del_from_runqueue
+r_static
+r_inline
+r_void
+id|del_from_runqueue
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+(brace
+id|nr_running
+op_decrement
+suffix:semicolon
+id|list_del
+c_func
+(paren
+op_amp
+id|p-&gt;run_list
+)paren
+suffix:semicolon
+id|p-&gt;run_list.next
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+DECL|function|task_on_runqueue
+r_extern
+r_inline
+r_int
+id|task_on_runqueue
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+(brace
+r_return
+(paren
+id|p-&gt;run_list.next
+op_ne
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+DECL|function|unhash_process
+r_extern
+r_inline
+r_void
+id|unhash_process
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|task_on_runqueue
+c_func
+(paren
+id|p
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+id|nr_threads
+op_decrement
+suffix:semicolon
+id|write_lock_irq
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
+id|unhash_pid
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|REMOVE_LINKS
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|write_unlock_irq
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

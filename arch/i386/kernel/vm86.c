@@ -27,9 +27,9 @@ DECL|macro|SP
 mdefine_line|#define SP(regs)&t;(*(unsigned short *)&amp;((regs)-&gt;esp))
 multiline_comment|/*&n; * virtual flags (16 and 32-bit versions)&n; */
 DECL|macro|VFLAGS
-mdefine_line|#define VFLAGS&t;(*(unsigned short *)&amp;(current-&gt;tss.v86flags))
+mdefine_line|#define VFLAGS&t;(*(unsigned short *)&amp;(current-&gt;thread.v86flags))
 DECL|macro|VEFLAGS
-mdefine_line|#define VEFLAGS&t;(current-&gt;tss.v86flags)
+mdefine_line|#define VEFLAGS&t;(current-&gt;thread.v86flags)
 DECL|macro|set_flags
 mdefine_line|#define set_flags(X,new,mask) &bslash;&n;((X) = ((X) &amp; ~(mask)) | ((new) &amp; (mask)))
 DECL|macro|SAFE_MASK
@@ -73,6 +73,11 @@ id|regs
 )paren
 (brace
 r_struct
+id|hard_thread_struct
+op_star
+id|tss
+suffix:semicolon
+r_struct
 id|pt_regs
 op_star
 id|ret
@@ -90,7 +95,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;tss.vm86_info
+id|current-&gt;thread.vm86_info
 )paren
 (brace
 id|printk
@@ -115,7 +120,7 @@ id|VEFLAGS
 comma
 id|VIF_MASK
 op_or
-id|current-&gt;tss.v86mask
+id|current-&gt;thread.v86mask
 )paren
 suffix:semicolon
 id|tmp
@@ -124,7 +129,7 @@ id|copy_to_user
 c_func
 (paren
 op_amp
-id|current-&gt;tss.vm86_info-&gt;regs
+id|current-&gt;thread.vm86_info-&gt;regs
 comma
 id|regs
 comma
@@ -137,7 +142,7 @@ id|copy_to_user
 c_func
 (paren
 op_amp
-id|current-&gt;tss.vm86_info-&gt;regs.VM86_REGS_PART2
+id|current-&gt;thread.vm86_info-&gt;regs.VM86_REGS_PART2
 comma
 op_amp
 id|regs-&gt;VM86_REGS_PART2
@@ -150,10 +155,10 @@ op_add_assign
 id|put_user
 c_func
 (paren
-id|current-&gt;tss.screen_bitmap
+id|current-&gt;thread.screen_bitmap
 comma
 op_amp
-id|current-&gt;tss.vm86_info-&gt;screen_bitmap
+id|current-&gt;thread.vm86_info-&gt;screen_bitmap
 )paren
 suffix:semicolon
 r_if
@@ -175,11 +180,22 @@ id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.esp0
+id|tss
 op_assign
-id|current-&gt;tss.saved_esp0
+id|init_tss
+op_plus
+id|smp_processor_id
+c_func
+(paren
+)paren
 suffix:semicolon
-id|current-&gt;tss.saved_esp0
+id|tss-&gt;esp0
+op_assign
+id|current-&gt;thread.esp0
+op_assign
+id|current-&gt;thread.saved_esp0
+suffix:semicolon
+id|current-&gt;thread.saved_esp0
 op_assign
 l_int|0
 suffix:semicolon
@@ -465,7 +481,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tsk-&gt;tss.saved_esp0
+id|tsk-&gt;thread.saved_esp0
 )paren
 r_goto
 id|out
@@ -551,7 +567,7 @@ op_star
 op_amp
 id|v86
 suffix:semicolon
-id|tsk-&gt;tss.vm86_info
+id|tsk-&gt;thread.vm86_info
 op_assign
 id|v86
 suffix:semicolon
@@ -675,7 +691,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tsk-&gt;tss.saved_esp0
+id|tsk-&gt;thread.saved_esp0
 )paren
 r_goto
 id|out
@@ -744,7 +760,7 @@ id|info.vm86plus.is_vm86pus
 op_assign
 l_int|1
 suffix:semicolon
-id|tsk-&gt;tss.vm86_info
+id|tsk-&gt;thread.vm86_info
 op_assign
 (paren
 r_struct
@@ -795,6 +811,11 @@ op_star
 id|tsk
 )paren
 (brace
+r_struct
+id|hard_thread_struct
+op_star
+id|tss
+suffix:semicolon
 multiline_comment|/*&n; * make sure the vm86() system call doesn&squot;t try to do anything silly&n; */
 id|info-&gt;regs.__null_ds
 op_assign
@@ -834,7 +855,7 @@ id|info-&gt;cpu_type
 r_case
 id|CPU_286
 suffix:colon
-id|tsk-&gt;tss.v86mask
+id|tsk-&gt;thread.v86mask
 op_assign
 l_int|0
 suffix:semicolon
@@ -843,7 +864,7 @@ suffix:semicolon
 r_case
 id|CPU_386
 suffix:colon
-id|tsk-&gt;tss.v86mask
+id|tsk-&gt;thread.v86mask
 op_assign
 id|NT_MASK
 op_or
@@ -854,7 +875,7 @@ suffix:semicolon
 r_case
 id|CPU_486
 suffix:colon
-id|tsk-&gt;tss.v86mask
+id|tsk-&gt;thread.v86mask
 op_assign
 id|AC_MASK
 op_or
@@ -866,7 +887,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|tsk-&gt;tss.v86mask
+id|tsk-&gt;thread.v86mask
 op_assign
 id|ID_MASK
 op_or
@@ -884,11 +905,22 @@ id|info-&gt;regs32-&gt;eax
 op_assign
 l_int|0
 suffix:semicolon
-id|tsk-&gt;tss.saved_esp0
+id|tsk-&gt;thread.saved_esp0
 op_assign
-id|tsk-&gt;tss.esp0
+id|tsk-&gt;thread.esp0
 suffix:semicolon
-id|tsk-&gt;tss.esp0
+id|tss
+op_assign
+id|init_tss
+op_plus
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+id|tss-&gt;esp0
+op_assign
+id|tsk-&gt;thread.esp0
 op_assign
 (paren
 r_int
@@ -897,7 +929,7 @@ r_int
 op_amp
 id|info-&gt;VM86_TSS_ESP0
 suffix:semicolon
-id|tsk-&gt;tss.screen_bitmap
+id|tsk-&gt;thread.screen_bitmap
 op_assign
 id|info-&gt;screen_bitmap
 suffix:semicolon
@@ -1098,7 +1130,7 @@ id|VEFLAGS
 comma
 id|eflags
 comma
-id|current-&gt;tss.v86mask
+id|current-&gt;thread.v86mask
 )paren
 suffix:semicolon
 id|set_flags
@@ -1149,7 +1181,7 @@ id|VFLAGS
 comma
 id|flags
 comma
-id|current-&gt;tss.v86mask
+id|current-&gt;thread.v86mask
 )paren
 suffix:semicolon
 id|set_flags
@@ -1215,7 +1247,7 @@ op_or
 (paren
 id|VEFLAGS
 op_amp
-id|current-&gt;tss.v86mask
+id|current-&gt;thread.v86mask
 )paren
 suffix:semicolon
 )brace
@@ -1637,11 +1669,11 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 op_assign
 id|trapno
 suffix:semicolon
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 op_assign
 id|error_code
 suffix:semicolon

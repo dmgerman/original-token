@@ -437,8 +437,7 @@ op_star
 id|p
 comma
 op_star
-op_star
-id|tarrayp
+id|tmp
 suffix:semicolon
 r_int
 r_int
@@ -570,10 +569,6 @@ id|p
 )paren
 r_goto
 id|out_unlock
-suffix:semicolon
-id|tarrayp
-op_assign
-id|p-&gt;tarray_ptr
 suffix:semicolon
 r_for
 c_loop
@@ -707,18 +702,21 @@ op_amp
 id|tasklist_lock
 )paren
 suffix:semicolon
-multiline_comment|/* filldir() might have slept, so we must re-validate &quot;p&quot; */
+multiline_comment|/*&n;&t;&t; * filldir() might have slept, so we must&n;&t;&t; * re-validate &quot;p&quot;. This is fast enough due&n;&t;&t; * to the pidhash&n;&t;&t; */
+id|tmp
+op_assign
+id|find_task_by_pid
+c_func
+(paren
+id|pid
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|p
 op_ne
-op_star
-id|tarrayp
-op_logical_or
-id|p-&gt;pid
-op_ne
-id|pid
+id|tmp
 )paren
 r_break
 suffix:semicolon

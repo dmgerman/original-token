@@ -106,9 +106,9 @@ l_int|15
 suffix:semicolon
 )brace
 DECL|macro|DO_ERROR
-mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;tsk-&gt;tss.error_code = error_code; &bslash;&n;&t;tsk-&gt;tss.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_no_fixup(str,regs,error_code); &bslash;&n;}
+mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_no_fixup(str,regs,error_code); &bslash;&n;}
 DECL|macro|DO_VM86_ERROR
-mdefine_line|#define DO_VM86_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;lock_kernel(); &bslash;&n;&t;if (regs-&gt;eflags &amp; VM_MASK) { &bslash;&n;&t;&t;if (!handle_vm86_trap((struct kernel_vm86_regs *) regs, error_code, trapnr)) &bslash;&n;&t;&t;&t;goto out; &bslash;&n;&t;&t;/* else fall through */ &bslash;&n;&t;} &bslash;&n;&t;tsk-&gt;tss.error_code = error_code; &bslash;&n;&t;tsk-&gt;tss.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;out: &bslash;&n;&t;unlock_kernel(); &bslash;&n;}
+mdefine_line|#define DO_VM86_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;lock_kernel(); &bslash;&n;&t;if (regs-&gt;eflags &amp; VM_MASK) { &bslash;&n;&t;&t;if (!handle_vm86_trap((struct kernel_vm86_regs *) regs, error_code, trapnr)) &bslash;&n;&t;&t;&t;goto out; &bslash;&n;&t;&t;/* else fall through */ &bslash;&n;&t;} &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;out: &bslash;&n;&t;unlock_kernel(); &bslash;&n;}
 r_void
 id|page_exception
 c_func
@@ -420,24 +420,14 @@ comma
 id|ss
 )paren
 suffix:semicolon
-id|store_TR
-c_func
-(paren
-id|i
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Process %s (pid: %d, process nr: %d, stackpage=%08lx)&quot;
+l_string|&quot;Process %s (pid: %d, stackpage=%08lx)&quot;
 comma
 id|current-&gt;comm
 comma
 id|current-&gt;pid
-comma
-l_int|0xffff
-op_amp
-id|i
 comma
 l_int|4096
 op_plus
@@ -1154,11 +1144,11 @@ comma
 id|error_code
 )paren
 suffix:semicolon
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 op_assign
 id|error_code
 suffix:semicolon
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 op_assign
 l_int|19
 suffix:semicolon
@@ -1209,11 +1199,11 @@ l_int|3
 r_goto
 id|gp_in_kernel
 suffix:semicolon
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 op_assign
 id|error_code
 suffix:semicolon
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 op_assign
 l_int|13
 suffix:semicolon
@@ -1615,7 +1605,7 @@ r_goto
 id|clear_TF
 suffix:semicolon
 )brace
-multiline_comment|/* Mast out spurious debug traps due to lazy DR7 setting */
+multiline_comment|/* Mask out spurious debug traps due to lazy DR7 setting */
 r_if
 c_cond
 (paren
@@ -1636,7 +1626,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|tsk-&gt;tss.debugreg
+id|tsk-&gt;thread.debugreg
 (braket
 l_int|7
 )braket
@@ -1661,11 +1651,11 @@ r_goto
 id|clear_dr7
 suffix:semicolon
 multiline_comment|/* Ok, finally something we can handle */
-id|tsk-&gt;tss.trap_no
+id|tsk-&gt;thread.trap_no
 op_assign
 l_int|1
 suffix:semicolon
-id|tsk-&gt;tss.error_code
+id|tsk-&gt;thread.error_code
 op_assign
 id|error_code
 suffix:semicolon
@@ -1760,11 +1750,11 @@ c_func
 id|task
 )paren
 suffix:semicolon
-id|task-&gt;tss.trap_no
+id|task-&gt;thread.trap_no
 op_assign
 l_int|16
 suffix:semicolon
-id|task-&gt;tss.error_code
+id|task-&gt;thread.error_code
 op_assign
 l_int|0
 suffix:semicolon
@@ -1861,7 +1851,7 @@ suffix:colon
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|current-&gt;tss.i387
+id|current-&gt;thread.i387
 )paren
 )paren
 suffix:semicolon
@@ -1963,6 +1953,8 @@ suffix:semicolon
 id|pte_t
 op_star
 id|pte
+suffix:semicolon
+r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; * Allocate a new page in virtual address space, &n;&t; * move the IDT into it and write protect this page.&n;&t; */
 id|page
@@ -2205,12 +2197,10 @@ c_func
 (paren
 id|gdt_table
 op_plus
-id|FIRST_TSS_ENTRY
-op_plus
+id|__TSS
+c_func
 (paren
 id|n
-op_lshift
-l_int|1
 )paren
 comma
 (paren
@@ -2247,12 +2237,10 @@ c_func
 (paren
 id|gdt_table
 op_plus
-id|FIRST_LDT_ENTRY
-op_plus
+id|__LDT
+c_func
 (paren
 id|n
-op_lshift
-l_int|1
 )paren
 comma
 (paren
@@ -2663,15 +2651,6 @@ id|EISA_bus
 op_assign
 l_int|1
 suffix:semicolon
-id|set_call_gate
-c_func
-(paren
-op_amp
-id|default_ldt
-comma
-id|lcall7
-)paren
-suffix:semicolon
 id|set_trap_gate
 c_func
 (paren
@@ -2844,46 +2823,24 @@ op_amp
 id|system_call
 )paren
 suffix:semicolon
-multiline_comment|/* set up GDT task &amp; ldt entries */
-id|set_tss_desc
+multiline_comment|/*&n;&t; * default LDT is a single-entry callgate to lcall7&n;&t; */
+id|set_call_gate
 c_func
 (paren
-l_int|0
-comma
-op_amp
-id|init_task.tss
-)paren
-suffix:semicolon
-id|set_ldt_desc
-c_func
-(paren
-l_int|0
-comma
 op_amp
 id|default_ldt
 comma
-l_int|1
+id|lcall7
 )paren
 suffix:semicolon
-multiline_comment|/* Clear NT, so that we won&squot;t have troubles with that later on */
-id|__asm__
+multiline_comment|/*&n;&t; * on SMP we do not yet know which CPU is on which TSS,&n;&t; * so we delay this until smp_init(). (the CPU is already&n;&t; * in a reasonable state, otherwise we wouldnt have gotten so far :)&n;&t; */
+macro_line|#ifndef __SMP__
+id|cpu_init
 c_func
 (paren
-l_string|&quot;pushfl ; andl $0xffffbfff,(%esp) ; popfl&quot;
 )paren
 suffix:semicolon
-id|load_TR
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-id|load_ldt
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_X86_VISWS_APIC
 id|superio_init
 c_func

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 DECL|variable|init_mmap
 r_static
 r_struct
@@ -84,6 +85,30 @@ c_func
 (paren
 id|init_task_union.task
 )paren
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * per-CPU TSS segments. Threads are completely &squot;soft&squot; on Linux,&n; * no more per-task TSS&squot;s. The TSS size is kept cacheline-aligned&n; * so they are allowed to end up in the .data.cacheline_aligned&n; * section. Since TSS&squot;s are completely CPU-local, we want them&n; * on exact cacheline boundaries, to eliminate cacheline ping-pong.&n; */
+DECL|variable|__cacheline_aligned
+r_struct
+id|hard_thread_struct
+id|init_tss
+(braket
+id|NR_CPUS
+)braket
+id|__cacheline_aligned
+op_assign
+(brace
+(braket
+l_int|0
+dot
+dot
+dot
+id|NR_CPUS
+op_minus
+l_int|1
+)braket
+op_assign
+id|INIT_TSS
 )brace
 suffix:semicolon
 eof
