@@ -67,6 +67,292 @@ DECL|macro|write_unlock_irqrestore
 mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
 macro_line|#else /* !(__SMP__) */
 macro_line|#include &lt;asm/psr.h&gt;
+multiline_comment|/* Define this to use the verbose/debugging versions in arch/sparc/lib/debuglocks.c */
+DECL|macro|SPIN_LOCK_DEBUG
+mdefine_line|#define SPIN_LOCK_DEBUG
+macro_line|#ifdef SPIN_LOCK_DEBUG
+DECL|struct|_spinlock_debug
+r_struct
+id|_spinlock_debug
+(brace
+DECL|member|lock
+r_int
+r_char
+id|lock
+suffix:semicolon
+DECL|member|owner_pc
+r_int
+r_int
+id|owner_pc
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|typedef|spinlock_t
+r_typedef
+r_struct
+id|_spinlock_debug
+id|spinlock_t
+suffix:semicolon
+DECL|macro|SPIN_LOCK_UNLOCKED
+mdefine_line|#define SPIN_LOCK_UNLOCKED&t;{ 0, 0 }
+DECL|macro|spin_lock_init
+mdefine_line|#define spin_lock_init(lp)&t;do { (lp)-&gt;owner_pc = 0; (lp)-&gt;lock = 0; } while(0)
+DECL|macro|spin_unlock_wait
+mdefine_line|#define spin_unlock_wait(lp)&t;do { barrier(); } while((lp)-&gt;lock)
+r_extern
+r_void
+id|_spin_lock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|_spin_trylock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_spin_unlock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_spin_lock_irq
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_spin_unlock_irq
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_spin_lock_irqsave
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_spin_unlock_irqrestore
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+DECL|macro|spin_lock
+mdefine_line|#define spin_lock(lp)&t;&t;&t;_spin_lock(lp)
+DECL|macro|spin_trylock
+mdefine_line|#define spin_trylock(lp)&t;&t;_spin_trylock(lp)
+DECL|macro|spin_unlock
+mdefine_line|#define spin_unlock(lp)&t;&t;&t;_spin_unlock(lp)
+DECL|macro|spin_lock_irq
+mdefine_line|#define spin_lock_irq(lp)&t;&t;_spin_lock_irq(lp)
+DECL|macro|spin_unlock_irq
+mdefine_line|#define spin_unlock_irq(lp)&t;&t;_spin_unlock_irq(lp)
+DECL|macro|spin_lock_irqsave
+mdefine_line|#define spin_lock_irqsave(lp, flags)&t;do { __save_and_cli(flags); &bslash;&n;&t;&t;&t;&t;&t;     _spin_lock_irqsave(lp); } while (0)
+DECL|macro|spin_unlock_irqrestore
+mdefine_line|#define spin_unlock_irqrestore(lp, flags) do { _spin_unlock_irqrestore(lp); &bslash;&n;&t;&t;&t;&t;&t;       __restore_flags(flags); } while(0)
+DECL|struct|_rwlock_debug
+r_struct
+id|_rwlock_debug
+(brace
+DECL|member|lock
+r_volatile
+r_int
+r_int
+id|lock
+suffix:semicolon
+DECL|member|owner_pc
+r_int
+r_int
+id|owner_pc
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|typedef|rwlock_t
+r_typedef
+r_struct
+id|_rwlock_debug
+id|rwlock_t
+suffix:semicolon
+DECL|macro|RW_LOCK_UNLOCKED
+mdefine_line|#define RW_LOCK_UNLOCKED { 0, 0 }
+r_extern
+r_void
+id|_read_lock
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_read_unlock
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_write_lock
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_write_unlock
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_read_lock_irq
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_read_unlock_irq
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_write_lock_irq
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_write_unlock_irq
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_read_lock_irqsave
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_read_unlock_irqrestore
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_write_lock_irqsave
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_write_unlock_irqrestore
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+DECL|macro|read_lock
+mdefine_line|#define read_lock(rw)&t;&t;_read_lock(rw)
+DECL|macro|read_unlock
+mdefine_line|#define read_unlock(rw)&t;&t;_read_unlock(rw)
+DECL|macro|write_lock
+mdefine_line|#define write_lock(rw)&t;&t;_write_lock(rw)
+DECL|macro|write_unlock
+mdefine_line|#define write_unlock(rw)&t;_write_unlock(rw)
+DECL|macro|read_lock_irq
+mdefine_line|#define read_lock_irq(rw)&t;_read_lock_irq(rw)
+DECL|macro|read_unlock_irq
+mdefine_line|#define read_unlock_irq(rw)&t;_read_unlock_irq(rw)
+DECL|macro|write_lock_irq
+mdefine_line|#define write_lock_irq(rw)&t;_write_lock_irq(rw)
+DECL|macro|write_unlock_irq
+mdefine_line|#define write_unlock_irq(rw)&t;_write_unlock_irq(rw)
+DECL|macro|read_lock_irqsave
+mdefine_line|#define read_lock_irqsave(rw, flags) &bslash;&n;do { __save_and_cli(flags); _read_lock_irqsave(rw); } while (0)
+DECL|macro|read_unlock_irqrestore
+mdefine_line|#define read_unlock_irqrestore(rw, flags) do { _read_unlock_irqrestore(rw); &bslash;&n;&t;&t;&t;&t;&t;       __restore_flags(flags); } while(0)
+DECL|macro|write_lock_irqsave
+mdefine_line|#define write_lock_irqsave(rw, flags) &bslash;&n;do { __save_and_cli(flags); _write_lock_irqsave(rw); } while(0)
+DECL|macro|write_unlock_irqrestore
+mdefine_line|#define write_unlock_irqrestore(rw, flags) do { _write_unlock_irqrestore(rw); &bslash;&n;&t;&t;&t;&t;&t;        __restore_flags(flags); } while(0)
+macro_line|#else /* !SPIN_LOCK_DEBUG */
 DECL|typedef|spinlock_t
 r_typedef
 r_int
@@ -807,6 +1093,7 @@ DECL|macro|write_lock_irqsave
 mdefine_line|#define write_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { __save_and_cli(flags); write_lock(lock); } while (0)
 DECL|macro|write_unlock_irqrestore
 mdefine_line|#define write_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { write_unlock(lock); __restore_flags(flags); } while (0)
+macro_line|#endif /* SPIN_LOCK_DEBUG */
 macro_line|#endif /* __SMP__ */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* __SPARC_SPINLOCK_H */

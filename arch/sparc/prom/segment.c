@@ -1,9 +1,19 @@
-multiline_comment|/* $Id: segment.c,v 1.4 1997/05/01 01:41:33 davem Exp $&n; * segment.c:  Prom routine to map segments in other contexts before&n; *             a standalone is completely mapped.  This is for sun4 and&n; *             sun4c architectures only.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: segment.c,v 1.5 1997/05/14 20:45:02 davem Exp $&n; * segment.c:  Prom routine to map segments in other contexts before&n; *             a standalone is completely mapped.  This is for sun4 and&n; *             sun4c architectures only.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
+r_extern
+r_struct
+id|task_struct
+op_star
+id|current_set
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 multiline_comment|/* Set physical segment &squot;segment&squot; at virtual address &squot;vaddr&squot; in&n; * context &squot;ctx&squot;.&n; */
 r_void
 DECL|function|prom_putsegment

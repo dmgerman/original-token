@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.23 1997/04/26 22:52:34 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.24 1997/05/04 07:21:21 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -205,16 +205,15 @@ multiline_comment|/* Free all resources held by a thread. */
 DECL|macro|release_thread
 mdefine_line|#define release_thread(tsk)&t;&t;do { } while(0)
 macro_line|#ifdef __KERNEL__
-multiline_comment|/* Allocation and freeing of basic task resources. */
-multiline_comment|/* XXX FIXME For task_struct must use SLAB or something other than&n; * XXX kmalloc() as FPU registers in TSS require that entire structure&n; * XXX be 64-byte aligned as well.&n; */
-DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack(tsk)&t;&t;__get_free_page(GFP_KERNEL)
-DECL|macro|free_kernel_stack
-mdefine_line|#define free_kernel_stack(stack)&t;free_page(stack)
+multiline_comment|/* Allocation and freeing of task_struct and kernel stack. */
 DECL|macro|alloc_task_struct
-mdefine_line|#define alloc_task_struct()&t;&t;kmalloc(sizeof(struct task_struct), GFP_KERNEL)
+mdefine_line|#define alloc_task_struct()   ((struct task_struct *)__get_free_pages(GFP_KERNEL, 1, 0))
 DECL|macro|free_task_struct
-mdefine_line|#define free_task_struct(tsk)&t;&t;kfree(tsk)
+mdefine_line|#define free_task_struct(tsk) free_pages((unsigned long)(tsk),1)
+DECL|macro|init_task
+mdefine_line|#define init_task&t;(init_task_union.task)
+DECL|macro|init_stack
+mdefine_line|#define init_stack&t;(init_task_union.stack)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__ASM_SPARC64_PROCESSOR_H) */

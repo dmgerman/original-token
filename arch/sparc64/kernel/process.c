@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.6 1997/04/07 18:57:07 jj Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.8 1997/05/14 20:45:06 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -25,6 +25,21 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/pstate.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;asm/fpumacro.h&gt;
+DECL|variable|current_set
+r_struct
+id|task_struct
+op_star
+id|current_set
+(braket
+id|NR_CPUS
+)braket
+op_assign
+(brace
+op_amp
+id|init_task
+comma
+)brace
+suffix:semicolon
 macro_line|#ifndef __SMP__
 multiline_comment|/*&n; * the idle loop on a Sparc... ;)&n; */
 DECL|function|sys_idle
@@ -2062,7 +2077,11 @@ multiline_comment|/* Calculate offset to stack_frame &amp; pt_regs */
 id|stack_offset
 op_assign
 (paren
+(paren
 id|PAGE_SIZE
+op_lshift
+l_int|1
+)paren
 op_minus
 id|TRACEREG_SZ
 )paren
@@ -2089,7 +2108,13 @@ id|pt_regs
 op_star
 )paren
 (paren
-id|p-&gt;kernel_stack_page
+(paren
+(paren
+r_int
+r_int
+)paren
+id|p
+)paren
 op_plus
 id|stack_offset
 )paren
@@ -2137,7 +2162,7 @@ op_assign
 op_star
 id|old_stack
 suffix:semicolon
-id|p-&gt;saved_kernel_stack
+id|p-&gt;tss.ksp
 op_assign
 (paren
 (paren
@@ -2146,10 +2171,6 @@ r_int
 )paren
 id|new_stack
 )paren
-suffix:semicolon
-id|p-&gt;tss.ksp
-op_assign
-id|p-&gt;saved_kernel_stack
 op_minus
 id|STACK_BIAS
 suffix:semicolon
@@ -2237,7 +2258,7 @@ c_cond
 (paren
 id|sp
 op_ne
-id|current-&gt;tss.kregs-&gt;u_regs
+id|regs-&gt;u_regs
 (braket
 id|UREG_FP
 )braket
@@ -2270,7 +2291,7 @@ r_struct
 id|sparc_stackf
 op_star
 )paren
-id|current-&gt;tss.kregs-&gt;u_regs
+id|regs-&gt;u_regs
 (braket
 id|UREG_FP
 )braket

@@ -1,4 +1,4 @@
-multiline_comment|/* qlogicpti.c: Performance Technologies QlogicISP sbus card driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caipfs.rutgers.edu)&n; *&n; * A lot of this driver was directly stolen from Erik H. Moe&squot;s PCI&n; * Qlogic ISP driver.  Mucho kudos to him for this code.&n; *&n; * An even bigger kudos to John Grana at Performance Technologies&n; * for providing me with the hardware to write this driver, you rule&n; * John you really do.&n; */
+multiline_comment|/* qlogicpti.c: Performance Technologies QlogicISP sbus card driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caipfs.rutgers.edu)&n; *&n; * A lot of this driver was directly stolen from Erik H. Moe&squot;s PCI&n; * Qlogic ISP driver.  Mucho kudos to him for this code.&n; *&n; * An even bigger kudos to John Grana at Performance Technologies&n; * for providing me with the hardware to write this driver, you rule&n; * John you really do.&n; *&n; * May, 2, 1997: Added support for QLGC,isp --jj&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3091,6 +3091,9 @@ suffix:semicolon
 r_int
 id|qpti_node
 suffix:semicolon
+r_int
+id|is_pti
+suffix:semicolon
 id|tpnt-&gt;proc_dir
 op_assign
 op_amp
@@ -3150,6 +3153,14 @@ c_func
 id|qpti_dev-&gt;prom_name
 comma
 l_string|&quot;PTI,ptisp&quot;
+)paren
+op_logical_and
+id|strcmp
+c_func
+(paren
+id|qpti_dev-&gt;prom_name
+comma
+l_string|&quot;QLGC,isp&quot;
 )paren
 )paren
 (brace
@@ -3289,6 +3300,15 @@ id|qpti-&gt;prom_node
 op_assign
 id|qpti_node
 suffix:semicolon
+id|is_pti
+op_assign
+id|strcmp
+(paren
+id|qpti-&gt;prom_name
+comma
+l_string|&quot;QLGC,isp&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Setup the reg property for this device. */
 id|prom_apply_sbus_ranges
 c_func
@@ -3357,6 +3377,12 @@ l_string|&quot;PTI Qlogic/ISP registers unmappable&quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|is_pti
+)paren
+(brace
 multiline_comment|/* Map this one read only. */
 id|qpti-&gt;sreg
 op_assign
@@ -3424,6 +3450,7 @@ id|qpti-&gt;swsreg
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 id|qpti_host-&gt;base
 op_assign
 (paren
@@ -3730,6 +3757,12 @@ c_func
 id|qpti
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|is_pti
+)paren
+(brace
 multiline_comment|/* Load the firmware. */
 r_if
 c_cond
@@ -3766,6 +3799,7 @@ l_string|&quot;PTI Qlogic/ISP tmon verification failed&quot;
 )paren
 suffix:semicolon
 )brace
+)brace
 multiline_comment|/* Reset the ISP and init res/req queues. */
 r_if
 c_cond
@@ -3784,14 +3818,54 @@ l_string|&quot;PTI Qlogic/ISP cannot be reset&quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|is_pti
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;(Firmware v%d.%d) [%s Wide, using %s interface]&bslash;n&quot;
+l_string|&quot;(Firmware v%d.%d)&quot;
 comma
 id|qpti-&gt;fware_majrev
 comma
 id|qpti-&gt;fware_minrev
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_char
+id|buffer
+(braket
+l_int|60
+)braket
+suffix:semicolon
+id|prom_getstring
+(paren
+id|qpti_node
+comma
+l_string|&quot;isp-fcode&quot;
+comma
+id|buffer
+comma
+l_int|60
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;(Firmware %s)&quot;
+comma
+id|buffer
+)paren
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot; [%s Wide, using %s interface]&bslash;n&quot;
 comma
 (paren
 id|qpti-&gt;ultra
@@ -3889,6 +3963,17 @@ r_int
 id|qregs
 )paren
 suffix:semicolon
+multiline_comment|/* QLGC,isp doesn&squot;t have status reg */
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|qpti-&gt;prom_name
+comma
+l_string|&quot;QLGC,isp&quot;
+)paren
+)paren
 id|unmapioaddr
 c_func
 (paren

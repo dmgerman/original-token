@@ -485,13 +485,7 @@ r_struct
 id|uid_taskcount
 )paren
 comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-op_star
-l_int|2
+l_int|0
 comma
 id|SLAB_HWCACHE_ALIGN
 comma
@@ -1173,6 +1167,11 @@ op_assign
 l_int|1
 suffix:semicolon
 id|mm-&gt;def_flags
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* It has not run yet, so cannot be present in anyone&squot;s&n;&t;&t; * cache or tlb.&n;&t;&t; */
+id|mm-&gt;cpu_vm_mask
 op_assign
 l_int|0
 suffix:semicolon

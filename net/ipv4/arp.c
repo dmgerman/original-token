@@ -636,10 +636,7 @@ comma
 r_sizeof
 (paren
 r_struct
-(paren
-r_struct
 id|hh_cache
-)paren
 )paren
 )paren
 suffix:semicolon

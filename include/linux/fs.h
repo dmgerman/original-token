@@ -2877,12 +2877,10 @@ DECL|macro|BUF_CLEAN
 mdefine_line|#define BUF_CLEAN&t;0
 DECL|macro|BUF_LOCKED
 mdefine_line|#define BUF_LOCKED&t;1&t;/* Buffers scheduled for write */
-DECL|macro|BUF_LOCKED1
-mdefine_line|#define BUF_LOCKED1&t;2&t;/* Supers, inodes */
 DECL|macro|BUF_DIRTY
-mdefine_line|#define BUF_DIRTY&t;3&t;/* Dirty buffers, not yet scheduled for write */
+mdefine_line|#define BUF_DIRTY&t;2&t;/* Dirty buffers, not yet scheduled for write */
 DECL|macro|NR_LIST
-mdefine_line|#define NR_LIST&t;&t;4
+mdefine_line|#define NR_LIST&t;&t;3
 r_void
 id|mark_buffer_uptodate
 c_func

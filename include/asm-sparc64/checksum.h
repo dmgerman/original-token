@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.6 1997/04/10 23:32:43 davem Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.7 1997/05/14 07:02:44 davem Exp $ */
 macro_line|#ifndef __SPARC64_CHECKSUM_H
 DECL|macro|__SPARC64_CHECKSUM_H
 mdefine_line|#define __SPARC64_CHECKSUM_H
@@ -107,6 +107,16 @@ comma
 op_mod
 op_mod
 id|g7
+id|srl
+op_mod
+op_mod
+id|o0
+comma
+l_int|0
+comma
+op_mod
+op_mod
+id|o0
 l_string|&quot; : &quot;
 op_assign
 id|r
@@ -306,6 +316,16 @@ l_int|0x7ff
 op_plus
 l_int|128
 )braket
+id|srl
+op_mod
+op_mod
+id|o0
+comma
+l_int|0
+comma
+op_mod
+op_mod
+id|o0
 l_string|&quot; : &quot;
 op_assign
 id|r
@@ -499,6 +519,16 @@ l_int|0x7ff
 op_plus
 l_int|128
 )braket
+id|srl
+op_mod
+op_mod
+id|o0
+comma
+l_int|0
+comma
+op_mod
+op_mod
+id|o0
 l_string|&quot; : &quot;
 op_assign
 id|r
@@ -803,6 +833,14 @@ l_int|0
 comma
 op_mod
 l_int|0
+id|srl
+op_mod
+l_int|0
+comma
+l_int|0
+comma
+op_mod
+l_int|0
 l_string|&quot;&t;: &quot;
 op_assign
 id|r
@@ -996,7 +1034,11 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
+(paren
 id|sum
+op_amp
+l_int|0xffff
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Fold a partial checksum without adding pseudo headers. */
@@ -1087,7 +1129,11 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
+(paren
 id|sum
+op_amp
+l_int|0xffff
+)paren
 suffix:semicolon
 )brace
 DECL|macro|_HAVE_ARCH_IPV6_CSUM

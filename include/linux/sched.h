@@ -303,10 +303,15 @@ r_int
 r_int
 id|def_flags
 suffix:semicolon
+DECL|member|cpu_vm_mask
+r_int
+r_int
+id|cpu_vm_mask
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, swapper_pg_dir, 1,&t;&bslash;&n;&t;&t;MUTEX,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0 }
+mdefine_line|#define INIT_MM {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, swapper_pg_dir, 1,&t;&bslash;&n;&t;&t;MUTEX,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0 }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct

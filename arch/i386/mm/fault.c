@@ -142,6 +142,8 @@ suffix:semicolon
 id|handle_mm_fault
 c_func
 (paren
+id|current
+comma
 id|vma
 comma
 id|start
@@ -490,6 +492,8 @@ suffix:semicolon
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|address

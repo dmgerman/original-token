@@ -1717,6 +1717,11 @@ suffix:colon
 r_case
 id|SIGSEGV
 suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1743,6 +1748,11 @@ op_or_assign
 l_int|0x80
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* fall through */
 r_default
 suffix:colon

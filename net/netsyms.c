@@ -102,16 +102,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ATALK_MODULE
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#endif
-r_extern
-r_char
-op_star
-id|skb_push_errstr
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|skb_put_errstr
-suffix:semicolon
 multiline_comment|/* Skbuff symbols. */
 DECL|variable|skb_push_errstr
 id|EXPORT_SYMBOL

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.5 1997/04/04 00:49:52 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.6 1997/05/04 07:21:04 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -984,6 +984,17 @@ id|saved_command_line
 comma
 op_star
 id|cmdline_p
+)paren
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;BOOT: args[%s] saved[%s]&bslash;n&quot;
+comma
+op_star
+id|cmdline_p
+comma
+id|saved_command_line
 )paren
 suffix:semicolon
 id|printk

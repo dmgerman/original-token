@@ -258,6 +258,8 @@ suffix:semicolon
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|address

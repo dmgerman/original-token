@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.39 1997/04/23 07:45:26 ecd Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.41 1997/05/14 20:46:51 davem Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12,6 +12,8 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/keyboard.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -38,12 +40,6 @@ DECL|macro|KEYBOARD_LINE
 mdefine_line|#define KEYBOARD_LINE 0x2
 DECL|macro|MOUSE_LINE
 mdefine_line|#define MOUSE_LINE    0x3
-r_extern
-r_struct
-id|wait_queue
-op_star
-id|keypress_wait
-suffix:semicolon
 DECL|variable|zs_chips
 r_struct
 id|sun_zslayout
@@ -4328,32 +4324,38 @@ c_func
 r_const
 r_char
 op_star
-id|p
+id|s
+comma
+r_int
+id|count
 )paren
 (brace
-r_char
-id|c
+r_int
+id|i
 suffix:semicolon
-r_while
+r_for
 c_loop
 (paren
-(paren
-id|c
+id|i
 op_assign
-op_star
-(paren
-id|p
-op_increment
-)paren
-)paren
-op_ne
 l_int|0
+suffix:semicolon
+id|i
+OL
+id|count
+suffix:semicolon
+id|i
+op_increment
+comma
+id|s
+op_increment
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|c
+op_star
+id|s
 op_eq
 l_char|&squot;&bslash;n&squot;
 )paren
@@ -4368,7 +4370,8 @@ suffix:semicolon
 id|rs_put_char
 c_func
 (paren
-id|c
+op_star
+id|s
 )paren
 suffix:semicolon
 )brace
@@ -4378,7 +4381,49 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+DECL|function|zs_console_wait_key
+r_static
+r_void
+id|zs_console_wait_key
+c_func
+(paren
+r_void
+)paren
+(brace
+id|sleep_on
+c_func
+(paren
+op_amp
+id|keypress_wait
+)paren
+suffix:semicolon
+)brace
+DECL|function|zs_console_device
+r_static
+r_int
+id|zs_console_device
+c_func
+(paren
+r_void
+)paren
+(brace
+r_extern
+r_int
+id|serial_console
+suffix:semicolon
 r_return
+id|MKDEV
+c_func
+(paren
+id|TTYAUX_MAJOR
+comma
+l_int|64
+op_plus
+id|serial_console
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 )brace
 DECL|function|rs_flush_chars
@@ -7921,7 +7966,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.39 $&quot;
+l_string|&quot;$Revision: 1.41 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9515,23 +9560,6 @@ op_assign
 id|cflag
 suffix:semicolon
 )brace
-r_extern
-r_void
-id|register_console
-c_func
-(paren
-r_void
-(paren
-op_star
-id|proc
-)paren
-(paren
-r_const
-r_char
-op_star
-)paren
-)paren
-suffix:semicolon
 r_static
 r_inline
 r_void
@@ -9566,6 +9594,21 @@ r_int
 id|msg_printed
 op_assign
 l_int|0
+suffix:semicolon
+r_static
+r_struct
+id|console
+id|console
+op_assign
+(brace
+id|zs_console_print
+comma
+l_int|0
+comma
+id|zs_console_wait_key
+comma
+id|zs_console_device
+)brace
 suffix:semicolon
 id|i
 op_assign
@@ -9638,6 +9681,9 @@ op_star
 r_const
 r_char
 op_star
+comma
+r_int
+id|count
 )paren
 )paren
 suffix:semicolon
@@ -9649,7 +9695,8 @@ suffix:semicolon
 id|register_console
 c_func
 (paren
-id|zs_console_print
+op_amp
+id|console
 )paren
 suffix:semicolon
 id|consout_registered

@@ -2966,13 +2966,7 @@ r_struct
 id|inode
 )paren
 comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-op_star
-l_int|4
+l_int|0
 comma
 id|SLAB_HWCACHE_ALIGN
 comma

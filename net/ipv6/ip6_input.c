@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;$Id: ip6_input.c,v 1.4 1997/03/18 18:24:35 davem Exp $&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;$Id: ip6_input.c,v 1.6 1997/05/11 16:06:52 davem Exp $&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -393,8 +393,6 @@ r_switch
 c_cond
 (paren
 id|hdr-&gt;type
-op_amp
-l_int|0x3F
 )paren
 (brace
 r_case
@@ -445,8 +443,6 @@ id|curr-&gt;type
 op_eq
 (paren
 id|hdr-&gt;type
-op_amp
-l_int|0x3F
 )paren
 )paren
 (brace
@@ -559,6 +555,28 @@ id|res
 op_assign
 l_int|0
 suffix:semicolon
+r_void
+op_star
+id|lastopt
+op_assign
+id|skb-&gt;h.raw
+op_plus
+id|hdr-&gt;hdrlen
+op_plus
+r_sizeof
+(paren
+r_struct
+id|ipv6_destopt_hdr
+)paren
+suffix:semicolon
+id|skb-&gt;h.raw
+op_add_assign
+r_sizeof
+(paren
+r_struct
+id|ipv6_destopt_hdr
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -575,14 +593,16 @@ id|nhptr
 comma
 id|opt
 comma
-id|skb-&gt;h.raw
-op_plus
-id|hdr-&gt;hdrlen
+id|lastopt
 )paren
 )paren
 id|res
 op_assign
 id|hdr-&gt;nexthdr
+suffix:semicolon
+id|skb-&gt;h.raw
+op_add_assign
+id|hdr-&gt;hdrlen
 suffix:semicolon
 r_return
 id|res

@@ -25,8 +25,7 @@ op_star
 id|in_ntoa
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|in
 )paren
 (brace
@@ -100,8 +99,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Convert an ASCII string to binary IP. &n; */
 DECL|function|in_aton
-r_int
-r_int
+id|__u32
 id|in_aton
 c_func
 (paren

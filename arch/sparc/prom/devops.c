@@ -1,9 +1,19 @@
-multiline_comment|/* $Id: devops.c,v 1.8 1997/05/01 01:41:31 davem Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: devops.c,v 1.10 1997/05/14 20:44:59 davem Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
+r_extern
+r_struct
+id|task_struct
+op_star
+id|current_set
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 multiline_comment|/* Open the device described by the string &squot;dstr&squot;.  Returns the handle&n; * to that device used for subsequent operations on that device.&n; * Returns -1 on failure.&n; */
 r_int
 DECL|function|prom_devopen
@@ -203,6 +213,8 @@ suffix:semicolon
 r_case
 id|PROM_AP1000
 suffix:colon
+r_default
+suffix:colon
 r_break
 suffix:semicolon
 )brace
@@ -321,6 +333,8 @@ r_break
 suffix:semicolon
 r_case
 id|PROM_AP1000
+suffix:colon
+r_default
 suffix:colon
 r_break
 suffix:semicolon

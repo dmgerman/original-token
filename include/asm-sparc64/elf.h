@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.3 1997/04/04 00:50:12 davem Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.4 1997/05/04 07:21:21 davem Exp $ */
 macro_line|#ifndef __ASM_SPARC64_ELF_H
 DECL|macro|__ASM_SPARC64_ELF_H
 mdefine_line|#define __ASM_SPARC64_ELF_H
@@ -26,9 +26,6 @@ r_int
 r_int
 id|elf_fpregset_t
 suffix:semicolon
-multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
-DECL|macro|elf_check_arch
-mdefine_line|#define elf_check_arch(x) ((x) == EM_SPARC)
 multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
 macro_line|#ifndef ELF_ARCH
 DECL|macro|ELF_ARCH
@@ -38,6 +35,9 @@ mdefine_line|#define ELF_CLASS&t;ELFCLASS64
 DECL|macro|ELF_DATA
 mdefine_line|#define ELF_DATA&t;ELFDATA2MSB;
 macro_line|#endif
+multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
+DECL|macro|elf_check_arch
+mdefine_line|#define elf_check_arch(x) ((x) == ELF_ARCH)&t;/* Might be EM_SPARC64 or EM_SPARC */
 DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
 DECL|macro|ELF_EXEC_PAGESIZE

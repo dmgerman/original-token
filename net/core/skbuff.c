@@ -60,16 +60,20 @@ id|ip_frag_mem
 suffix:semicolon
 multiline_comment|/*&n; *&t;Strings we don&squot;t want inline&squot;s duplicating&n; */
 DECL|variable|skb_push_errstr
+r_const
 r_char
-op_star
 id|skb_push_errstr
+(braket
+)braket
 op_assign
 l_string|&quot;skpush:under: %p:%d&quot;
 suffix:semicolon
 DECL|variable|skb_put_errstr
+r_const
 r_char
-op_star
 id|skb_put_errstr
+(braket
+)braket
 op_assign
 l_string|&quot;skput:over: %p:%d&quot;
 suffix:semicolon

@@ -191,6 +191,8 @@ id|pgdir
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -260,6 +262,8 @@ id|pgmiddle
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -330,6 +334,8 @@ id|pgtable
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -451,6 +457,8 @@ id|pgdir
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -519,6 +527,8 @@ id|pgmiddle
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -588,6 +598,8 @@ id|pgtable
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -623,6 +635,8 @@ id|pgtable
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr

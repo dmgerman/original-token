@@ -179,26 +179,17 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/lib/semaphore.S&n; */
-DECL|function|do_down
+DECL|function|down
 r_extern
 r_inline
 r_void
-id|do_down
+id|down
 c_func
 (paren
 r_struct
 id|semaphore
 op_star
 id|sem
-comma
-r_void
-(paren
-op_star
-id|failed
-)paren
-(paren
-r_void
-)paren
 )paren
 (brace
 id|__asm__
@@ -214,7 +205,7 @@ l_string|&quot;js 2f&bslash;n&quot;
 l_string|&quot;1:&bslash;n&quot;
 l_string|&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&bslash;tpushl $1b&bslash;n&bslash;t&quot;
-l_string|&quot;jmp %1&bslash;n&quot;
+l_string|&quot;jmp __down_failed&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
 multiline_comment|/* no outputs */
@@ -223,26 +214,61 @@ l_string|&quot;c&quot;
 (paren
 id|sem
 )paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|failed
-)paren
 suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|macro|down
-mdefine_line|#define down(sem) do_down((sem),__down_failed)
-DECL|macro|down_interruptible
-mdefine_line|#define down_interruptible(sem) do_down((sem),__down_failed_interruptible)
+DECL|function|down_interruptible
+r_extern
+r_inline
+r_int
+id|down_interruptible
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+r_int
+id|result
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;# atomic interruptible down operation&bslash;n&bslash;t&quot;
+macro_line|#ifdef __SMP__
+l_string|&quot;lock ; &quot;
+macro_line|#endif
+l_string|&quot;decl 0(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;js 2f&bslash;n&bslash;t&quot;
+l_string|&quot;xorl %0,%0&bslash;n&quot;
+l_string|&quot;1:&bslash;n&quot;
+l_string|&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;2:&bslash;tpushl $1b&bslash;n&bslash;t&quot;
+l_string|&quot;jmp __down_failed_interruptible&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;c&quot;
+(paren
+id|sem
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Note! This is subtle. We jump to wake people up only if&n; * the semaphore was negative (== somebody was waiting on it).&n; * The default case (no contention) will result in NO&n; * jumps for both down() and up().&n; */
 DECL|function|up
 r_extern
@@ -270,7 +296,7 @@ l_string|&quot;jle 2f&bslash;n&quot;
 l_string|&quot;1:&bslash;n&quot;
 l_string|&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&bslash;tpushl $1b&bslash;n&bslash;t&quot;
-l_string|&quot;jmp %1&bslash;n&quot;
+l_string|&quot;jmp __up_wakeup&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
 multiline_comment|/* no outputs */
@@ -278,17 +304,6 @@ suffix:colon
 l_string|&quot;c&quot;
 (paren
 id|sem
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|__up_wakeup
 )paren
 suffix:colon
 l_string|&quot;memory&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.17 1997/04/18 05:44:52 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.19 1997/05/08 20:57:39 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
@@ -6,8 +6,43 @@ macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/system.h&gt;     /* For NCPUS */
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS    15
+multiline_comment|/* Get rid of this when lockups have gone away. -DaveM */
+macro_line|#ifndef DEBUG_IRQLOCK
+DECL|macro|DEBUG_IRQLOCK
+mdefine_line|#define DEBUG_IRQLOCK
+macro_line|#endif
 multiline_comment|/* IRQ handler dispatch entry and exit. */
 macro_line|#ifdef __SMP__
+macro_line|#ifdef DEBUG_IRQLOCK
+r_extern
+r_void
+id|irq_enter
+c_func
+(paren
+r_int
+id|cpu
+comma
+r_int
+id|irq
+comma
+r_void
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|irq_exit
+c_func
+(paren
+r_int
+id|cpu
+comma
+r_int
+id|irq
+)paren
+suffix:semicolon
+macro_line|#else
 DECL|function|irq_enter
 r_extern
 id|__inline__
@@ -170,6 +205,7 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* DEBUG_IRQLOCK */
 macro_line|#else
 DECL|macro|irq_enter
 mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count[cpu]++)

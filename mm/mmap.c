@@ -2580,12 +2580,7 @@ r_struct
 id|vm_area_struct
 )paren
 comma
-r_sizeof
-(paren
-r_int
-)paren
-op_star
-l_int|8
+l_int|0
 comma
 id|SLAB_HWCACHE_ALIGN
 comma
@@ -2621,12 +2616,7 @@ r_struct
 id|mm_struct
 )paren
 comma
-r_sizeof
-(paren
-r_int
-)paren
-op_star
-l_int|4
+l_int|0
 comma
 id|SLAB_HWCACHE_ALIGN
 comma

@@ -1661,6 +1661,20 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_const
+r_char
+id|skb_put_errstr
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_const
+r_char
+id|skb_push_errstr
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/*&n; *&t;Add data to an sk_buff&n; */
 DECL|function|skb_put
 r_extern
@@ -1681,11 +1695,6 @@ r_int
 id|len
 )paren
 (brace
-r_extern
-r_char
-op_star
-id|skb_put_errstr
-suffix:semicolon
 r_int
 r_char
 op_star
@@ -1750,11 +1759,6 @@ r_int
 id|len
 )paren
 (brace
-r_extern
-r_char
-op_star
-id|skb_push_errstr
-suffix:semicolon
 id|skb-&gt;data
 op_sub_assign
 id|len

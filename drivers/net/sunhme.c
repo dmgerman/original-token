@@ -7122,6 +7122,10 @@ suffix:semicolon
 id|hp-&gt;net_stats.rx_packets
 op_increment
 suffix:semicolon
+id|hp-&gt;net_stats.rx_bytes
+op_add_assign
+id|len
+suffix:semicolon
 id|next
 suffix:colon
 id|elem
@@ -7469,6 +7473,10 @@ id|skb
 suffix:semicolon
 id|hp-&gt;net_stats.rx_packets
 op_increment
+suffix:semicolon
+id|hp-&gt;net_stats.rx_bytes
+op_add_assign
+id|len
 suffix:semicolon
 )brace
 )brace

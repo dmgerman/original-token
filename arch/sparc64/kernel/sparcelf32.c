@@ -2473,6 +2473,10 @@ id|current-&gt;mm-&gt;rss
 op_assign
 l_int|0
 suffix:semicolon
+id|current-&gt;tss.flags
+op_or_assign
+id|SPARC_FLAG_32BIT
+suffix:semicolon
 id|bprm-&gt;p
 op_assign
 id|setup_arg_pages

@@ -952,7 +952,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|optlen
+id|ip_options
 )paren
 op_plus
 id|old_opt-&gt;optlen

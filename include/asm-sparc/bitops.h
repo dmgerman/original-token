@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.46 1997/04/13 06:38:24 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.47 1997/05/14 20:47:56 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
@@ -383,12 +383,12 @@ DECL|macro|__SMPVOL
 mdefine_line|#define __SMPVOL
 macro_line|#endif
 multiline_comment|/* Set bit &squot;nr&squot; in 32-bit quantity at address &squot;addr&squot; where bit &squot;0&squot;&n; * is in the highest of the four bytes and bit &squot;31&squot; is the high bit&n; * within the first byte. Sparc is BIG-Endian. Unless noted otherwise&n; * all bit-ops return 0 if bit was previously clear and != 0 otherwise.&n; */
-DECL|function|set_bit
+DECL|function|test_and_set_bit
 r_extern
 id|__inline__
 r_int
 r_int
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 r_int
@@ -508,12 +508,41 @@ r_return
 id|mask
 suffix:semicolon
 )brace
-DECL|function|clear_bit
+DECL|function|set_bit
+r_extern
+id|__inline__
+r_void
+id|set_bit
+c_func
+(paren
+r_int
+r_int
+id|nr
+comma
+id|__SMPVOL
+r_void
+op_star
+id|addr
+)paren
+(brace
+(paren
+r_void
+)paren
+id|test_and_set_bit
+c_func
+(paren
+id|nr
+comma
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|function|test_and_clear_bit
 r_extern
 id|__inline__
 r_int
 r_int
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 r_int
@@ -633,12 +662,42 @@ r_return
 id|mask
 suffix:semicolon
 )brace
-DECL|function|change_bit
+DECL|function|clear_bit
 r_extern
 id|__inline__
 r_int
 r_int
-id|change_bit
+id|clear_bit
+c_func
+(paren
+r_int
+r_int
+id|nr
+comma
+id|__SMPVOL
+r_void
+op_star
+id|addr
+)paren
+(brace
+(paren
+r_void
+)paren
+id|test_and_clear_bit
+c_func
+(paren
+id|nr
+comma
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|function|test_and_change_bit
+r_extern
+id|__inline__
+r_int
+r_int
+id|test_and_change_bit
 c_func
 (paren
 r_int
@@ -756,6 +815,36 @@ l_string|&quot;cc&quot;
 suffix:semicolon
 r_return
 id|mask
+suffix:semicolon
+)brace
+DECL|function|change_bit
+r_extern
+id|__inline__
+r_int
+r_int
+id|change_bit
+c_func
+(paren
+r_int
+r_int
+id|nr
+comma
+id|__SMPVOL
+r_void
+op_star
+id|addr
+)paren
+(brace
+(paren
+r_void
+)paren
+id|test_and_change_bit
+c_func
+(paren
+id|nr
+comma
+id|addr
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif /* __KERNEL__ */
@@ -1878,9 +1967,9 @@ DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit      find_next_zero_le_bit
 multiline_comment|/* Bitmap functions for the minix filesystem.  */
 DECL|macro|minix_set_bit
-mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+mdefine_line|#define minix_set_bit(nr,addr) test_and_set_bit(nr,addr)
 DECL|macro|minix_clear_bit
-mdefine_line|#define minix_clear_bit(nr,addr) clear_bit(nr,addr)
+mdefine_line|#define minix_clear_bit(nr,addr) test_and_clear_bit(nr,addr)
 DECL|macro|minix_test_bit
 mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
 DECL|macro|minix_find_first_zero_bit

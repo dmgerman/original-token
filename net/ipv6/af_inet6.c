@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.17 1997/04/29 09:38:39 mj Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.18 1997/05/07 09:40:12 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1716,6 +1716,20 @@ id|afinet6_get_info
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_PROC_FS */
 macro_line|#ifdef MODULE
+DECL|function|ipv6_unload
+r_int
+id|ipv6_unload
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
 id|init_module
@@ -1744,6 +1758,30 @@ id|sk_buff
 op_star
 id|dummy_skb
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mod_member_present
+c_func
+(paren
+op_amp
+id|__this_module
+comma
+id|can_unload
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|__this_module.can_unload
+op_assign
+op_amp
+id|ipv6_unload
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren

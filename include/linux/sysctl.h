@@ -364,6 +364,9 @@ comma
 DECL|enumerator|NET_IPV4_RFC1620_REDIRECTS
 id|NET_IPV4_RFC1620_REDIRECTS
 comma
+DECL|enumerator|NET_TCP_SYN_RETRIES
+id|NET_TCP_SYN_RETRIES
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv6 */

@@ -248,6 +248,15 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ROOT_NFS
+r_char
+op_star
+id|in_ntoa
+c_func
+(paren
+id|__u32
+id|in
+)paren
+suffix:semicolon
 r_int
 DECL|function|rpc_getport_external
 id|rpc_getport_external

@@ -540,6 +540,22 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|route
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|rtentry
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* or else! */
 id|route.rt_dev
 op_assign
 id|dev-&gt;name
@@ -669,11 +685,12 @@ c_func
 id|oldfs
 )paren
 suffix:semicolon
+multiline_comment|/* in_ntoa in ipv4/utils.c uses a single static buffer, so&n;&t; * must make multiple printk calls, one for each in_ntoa&n;&t; * invocation...&n;&t; */
 id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;%s route %s %s %s: res %d&bslash;n&quot;
+l_string|&quot;%s route &quot;
 comma
 (paren
 id|op
@@ -681,22 +698,40 @@ op_eq
 id|SIOCADDRT
 ques
 c_cond
-l_string|&quot;add&quot;
+l_string|&quot;addr&quot;
 suffix:colon
 l_string|&quot;del&quot;
 )paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s &quot;
 comma
 id|in_ntoa
 c_func
 (paren
 id|dest
 )paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s &quot;
 comma
 id|in_ntoa
 c_func
 (paren
 id|mask
 )paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: res %d&bslash;n&quot;
 comma
 id|in_ntoa
 c_func
@@ -843,12 +878,14 @@ op_amp
 id|IFF_UP
 )paren
 )paren
+(brace
 id|dev_close
 c_func
 (paren
 id|openp-&gt;dev
 )paren
 suffix:semicolon
+)brace
 id|openp-&gt;dev-&gt;flags
 op_assign
 id|openp-&gt;old_flags
@@ -5243,6 +5280,15 @@ suffix:semicolon
 id|root_dev-&gt;pa_dstaddr
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* Sticky situation, but it has a solution.  We opened it earlier,&n;&t; * but before we knew what pa_addr etc. to give to it, thus the&n;&t; * routing code did not add a RTF_LOCAL route for it (how could&n;&t; * it?) so we send the pseudo device state change event now.  -DaveM&n;&t; */
+id|ip_rt_event
+c_func
+(paren
+id|NETDEV_CHANGE
+comma
+id|root_dev
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Now add a route to the server. If there is no gateway given,&n;&t; * the server is on the same subnet, so we establish only a route to&n;&t; * the local network. Otherwise we create a route to the gateway (the&n;&t; * same local network router as in the former case) and then setup a&n;&t; * gatewayed default route. Note that this gives sufficient network&n;&t; * setup even for full system operation in all common cases.&n;&t; */
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.1.93&t;18/02/95&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&t;&t;Niibe Yutaka&t;:&t;Asynchronous I/O for writes (4.4BSD style)&n; *&t;&t;Jeff Uphoff&t;:&t;Made max number of sockets command-line&n; *&t;&t;&t;&t;&t;configurable.&n; *&t;&t;Matti Aarnio&t;:&t;Made the number of sockets dynamic,&n; *&t;&t;&t;&t;&t;to be allocated when needed, and mr.&n; *&t;&t;&t;&t;&t;Uphoff&squot;s max is used as max to be&n; *&t;&t;&t;&t;&t;allowed to allocate.&n; *&t;&t;Linus&t;&t;:&t;Argh. removed all the socket allocation&n; *&t;&t;&t;&t;&t;altogether: it&squot;s in the inode now.&n; *&t;&t;Alan Cox&t;:&t;Made sock_alloc()/sock_release() public&n; *&t;&t;&t;&t;&t;for NetROM and future kernel nfsd type&n; *&t;&t;&t;&t;&t;stuff.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basics.&n; *&t;&t;Tom Dyas&t;:&t;Export net symbols.&n; *&t;&t;Marcin Dalecki&t;:&t;Fixed problems with CONFIG_NET=&quot;n&quot;.&n; *&t;&t;Alan Cox&t;:&t;Added thread locking to sys_* calls&n; *&t;&t;&t;&t;&t;for sockets. May have errors at the&n; *&t;&t;&t;&t;&t;moment.&n; *&t;&t;Kevin Buhr&t;:&t;Fixed the dumb errors in the above.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. &n; *&n; */
+multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.1.93&t;18/02/95&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&t;&t;Niibe Yutaka&t;:&t;Asynchronous I/O for writes (4.4BSD style)&n; *&t;&t;Jeff Uphoff&t;:&t;Made max number of sockets command-line&n; *&t;&t;&t;&t;&t;configurable.&n; *&t;&t;Matti Aarnio&t;:&t;Made the number of sockets dynamic,&n; *&t;&t;&t;&t;&t;to be allocated when needed, and mr.&n; *&t;&t;&t;&t;&t;Uphoff&squot;s max is used as max to be&n; *&t;&t;&t;&t;&t;allowed to allocate.&n; *&t;&t;Linus&t;&t;:&t;Argh. removed all the socket allocation&n; *&t;&t;&t;&t;&t;altogether: it&squot;s in the inode now.&n; *&t;&t;Alan Cox&t;:&t;Made sock_alloc()/sock_release() public&n; *&t;&t;&t;&t;&t;for NetROM and future kernel nfsd type&n; *&t;&t;&t;&t;&t;stuff.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basics.&n; *&t;&t;Tom Dyas&t;:&t;Export net symbols.&n; *&t;&t;Marcin Dalecki&t;:&t;Fixed problems with CONFIG_NET=&quot;n&quot;.&n; *&t;&t;Alan Cox&t;:&t;Added thread locking to sys_* calls&n; *&t;&t;&t;&t;&t;for sockets. May have errors at the&n; *&t;&t;&t;&t;&t;moment.&n; *&t;&t;Kevin Buhr&t;:&t;Fixed the dumb errors in the above.&n; *&t;&t;Andi Kleen&t;:&t;Some small cleanups, optimizations,&n; *&t;&t;&t;&t;&t;and fixed a copy_from_user() bug.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. &n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -403,7 +403,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;&quot;fromlen shall refer to the value before truncation..&quot;&n;&t; *&t;&t;&t;1003.1g&n;&t; */
 r_return
-id|put_user
+id|__put_user
 c_func
 (paren
 id|klen
@@ -1092,6 +1092,7 @@ multiline_comment|/* Match SYS5 behaviour */
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* FIXME: I think this can be removed now. */
 r_if
 c_cond
 (paren
@@ -1236,6 +1237,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* FIXME: I think this can be removed now */
 r_if
 c_cond
 (paren
@@ -2832,13 +2834,6 @@ c_func
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;accept: no more sockets&bslash;n&quot;
-)paren
-suffix:semicolon
 id|err
 op_assign
 op_minus
@@ -4346,6 +4341,13 @@ suffix:semicolon
 r_int
 id|total_len
 suffix:semicolon
+r_int
+r_char
+op_star
+id|ctl_buf
+op_assign
+id|ctl
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -4426,6 +4428,7 @@ c_cond
 id|msg_sys.msg_controllen
 )paren
 (brace
+multiline_comment|/* XXX We just limit the buffer and assume that the &n;&t;&t; * skbuff accounting stops it from going too far.&n;&t;&t; * I hope this is correct.&n; &t;&t; */
 r_if
 c_cond
 (paren
@@ -4435,11 +4438,13 @@ r_sizeof
 (paren
 id|ctl
 )paren
+op_logical_and
+id|msg_sys.msg_controllen
+op_le
+l_int|256
 )paren
 (brace
-r_char
-op_star
-id|tmp
+id|ctl_buf
 op_assign
 id|kmalloc
 c_func
@@ -4452,7 +4457,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tmp
+id|ctl_buf
 op_eq
 l_int|NULL
 )paren
@@ -4466,49 +4471,33 @@ r_goto
 id|failed2
 suffix:semicolon
 )brace
-id|err
-op_assign
-id|copy_from_user
-c_func
-(paren
-id|tmp
-comma
-id|msg_sys.msg_control
-comma
-id|msg_sys.msg_controllen
-)paren
-suffix:semicolon
-id|msg_sys.msg_control
-op_assign
-id|tmp
-suffix:semicolon
-)brace
-r_else
-(brace
-id|err
-op_assign
-id|copy_from_user
-c_func
-(paren
-id|ctl
-comma
-id|msg_sys.msg_control
-comma
-id|msg_sys.msg_controllen
-)paren
-suffix:semicolon
-id|msg_sys.msg_control
-op_assign
-id|ctl
-suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-id|err
+id|copy_from_user
+c_func
+(paren
+id|ctl_buf
+comma
+id|msg_sys.msg_control
+comma
+id|msg_sys.msg_controllen
 )paren
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_goto
 id|failed
+suffix:semicolon
+)brace
+id|msg_sys.msg_control
+op_assign
+id|ctl_buf
 suffix:semicolon
 )brace
 id|msg_sys.msg_flags
@@ -4575,16 +4564,16 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|msg_sys.msg_controllen
-op_logical_and
-id|msg_sys.msg_control
+id|ctl_buf
 op_ne
 id|ctl
 )paren
-id|kfree
+id|kfree_s
 c_func
 (paren
-id|msg_sys.msg_control
+id|ctl_buf
+comma
+id|msg_sys.msg_controllen
 )paren
 suffix:semicolon
 id|failed2
@@ -4903,9 +4892,11 @@ c_cond
 id|err
 op_ge
 l_int|0
-op_logical_and
-(paren
-id|put_user
+)paren
+(brace
+id|err
+op_assign
+id|__put_user
 c_func
 (paren
 id|msg_sys.msg_flags
@@ -4913,8 +4904,16 @@ comma
 op_amp
 id|msg-&gt;msg_flags
 )paren
-op_logical_or
-id|put_user
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|err
+)paren
+id|err
+op_assign
+id|__put_user
 c_func
 (paren
 (paren
@@ -4928,13 +4927,8 @@ comma
 op_amp
 id|msg-&gt;msg_controllen
 )paren
-)paren
-)paren
-id|err
-op_assign
-op_minus
-id|EFAULT
 suffix:semicolon
+)brace
 id|out
 suffix:colon
 id|unlock_kernel
@@ -5017,7 +5011,23 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;System call vectors. &n; *&n; *&t;Argument checking cleaned up. Saved 20% in size.&n; */
+multiline_comment|/* Argument list sizes for sys_socketcall */
+DECL|macro|AL
+mdefine_line|#define AL(x) ((x) * sizeof(unsigned long))
+DECL|variable|nargs
+r_static
+r_int
+r_char
+id|nargs
+(braket
+l_int|18
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+DECL|macro|AL
+macro_line|#undef AL
+multiline_comment|/*&n; *&t;System call vectors. &n; *&n; *&t;Argument checking cleaned up. Saved 20% in size.&n; *  This function doesn&squot;t need to set the kernel lock because&n; *  it is set by the callees. &n; */
 DECL|function|sys_socketcall
 id|asmlinkage
 r_int
@@ -5034,15 +5044,6 @@ id|args
 )paren
 (brace
 r_int
-r_char
-id|nargs
-(braket
-l_int|18
-)braket
-op_assign
-initialization_block
-suffix:semicolon
-r_int
 r_int
 id|a
 (braket
@@ -5057,14 +5058,6 @@ id|a1
 suffix:semicolon
 r_int
 id|err
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -5073,19 +5066,14 @@ id|call
 id|SYS_RECVMSG
 )paren
 (brace
-r_goto
-id|out
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
-id|err
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Ideally we want to precompute the maths, but unsigned long&n;&t; *&t;isnt a fixed size....&n;&t; */
+multiline_comment|/* copy_from_user should be SMP safe. */
 r_if
 c_cond
-(paren
 (paren
 id|copy_from_user
 c_func
@@ -5098,17 +5086,11 @@ id|nargs
 (braket
 id|call
 )braket
-op_star
-r_sizeof
-(paren
-r_int
-r_int
 )paren
 )paren
-)paren
-)paren
-r_goto
-id|out
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|a0
 op_assign
@@ -5628,13 +5610,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon

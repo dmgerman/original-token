@@ -103,16 +103,6 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|kmalloc_init
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|sock_init
 c_func
@@ -3949,16 +3939,6 @@ suffix:semicolon
 macro_line|#endif
 id|memory_start
 op_assign
-id|kmalloc_init
-c_func
-(paren
-id|memory_start
-comma
-id|memory_end
-)paren
-suffix:semicolon
-id|memory_start
-op_assign
 id|kmem_cache_init
 c_func
 (paren
@@ -4027,6 +4007,11 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
+id|kmem_cache_sizes_init
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_root_init
 c_func
@@ -4034,11 +4019,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|kmem_cache_sizes_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|uidcache_init
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.14 1997/05/01 01:41:32 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: misc.c,v 1.15 1997/05/14 20:45:00 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -6,6 +6,16 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
+multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
+r_extern
+r_struct
+id|task_struct
+op_star
+id|current_set
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 multiline_comment|/* Reset and reboot the machine with the command &squot;bcommand&squot;. */
 r_void
 DECL|function|prom_reboot

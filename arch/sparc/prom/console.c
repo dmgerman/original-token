@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.12 1997/05/01 01:41:30 davem Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: console.c,v 1.14 1997/05/14 20:44:58 davem Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7,6 +7,16 @@ macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
+r_extern
+r_struct
+id|task_struct
+op_star
+id|current_set
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 multiline_comment|/* Non blocking get character from console input device, returns -1&n; * if no input was taken.  This can be used for polling.&n; */
 r_int
 DECL|function|prom_nbgetchar
@@ -110,6 +120,8 @@ r_break
 suffix:semicolon
 r_case
 id|PROM_AP1000
+suffix:colon
+r_default
 suffix:colon
 id|i
 op_assign
@@ -283,6 +295,15 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|i
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -966,6 +987,8 @@ r_break
 suffix:semicolon
 r_case
 id|PROM_AP1000
+suffix:colon
+r_default
 suffix:colon
 r_return
 id|PROMDEV_I_UNK

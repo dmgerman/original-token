@@ -2478,6 +2478,15 @@ id|current-&gt;mm-&gt;rss
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
+id|current-&gt;tss.flags
+op_and_assign
+op_complement
+(paren
+id|SPARC_FLAG_32BIT
+)paren
+suffix:semicolon
+macro_line|#endif
 id|bprm-&gt;p
 op_assign
 id|setup_arg_pages
