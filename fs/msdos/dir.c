@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/dir.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  MS-DOS directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/msdos/dir.c&n; *  MS-DOS directory handling functions&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Hidden files 1995 by Albert Cahalan &lt;albert@ccs.neu.edu&gt; &lt;adc@coe.neu.edu&gt;&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -326,20 +326,14 @@ op_logical_neg
 (paren
 id|de-&gt;attr
 op_amp
-(paren
 id|ATTR_VOLUME
-op_or
-id|ATTR_SYS
-op_or
-id|ATTR_HIDDEN
-)paren
 )paren
 )paren
 (brace
 r_char
 id|bufname
 (braket
-l_int|12
+l_int|13
 )braket
 suffix:semicolon
 r_char
@@ -348,6 +342,47 @@ id|ptname
 op_assign
 id|bufname
 suffix:semicolon
+r_int
+id|dotoffset
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|de-&gt;attr
+op_amp
+id|ATTR_HIDDEN
+)paren
+op_logical_and
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|dotsOK
+)paren
+(brace
+id|bufname
+(braket
+l_int|0
+)braket
+op_assign
+l_char|&squot;.&squot;
+suffix:semicolon
+id|dotoffset
+op_assign
+l_int|1
+suffix:semicolon
+id|ptname
+op_assign
+id|bufname
+op_plus
+l_int|1
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -394,6 +429,18 @@ l_char|&squot;Z&squot;
 id|c
 op_add_assign
 l_int|32
+suffix:semicolon
+multiline_comment|/* see namei.c, msdos_format_name */
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_int|0x05
+)paren
+id|c
+op_assign
+l_int|0xE5
 suffix:semicolon
 r_if
 c_cond
@@ -561,6 +608,8 @@ comma
 id|bufname
 comma
 id|i
+op_plus
+id|dotoffset
 comma
 id|oldpos
 comma

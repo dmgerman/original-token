@@ -1695,20 +1695,6 @@ id|smb_current_malloced
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
-multiline_comment|/* looks ugly, taken from gcc-info */
-DECL|variable|shut_up_gcc
-r_static
-r_void
-op_star
-id|shut_up_gcc
-op_assign
-(paren
-op_amp
-id|shut_up_gcc
-comma
-id|kernel_version
-)paren
-suffix:semicolon
 DECL|variable|smb_fs_type
 r_static
 r_struct

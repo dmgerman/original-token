@@ -1,17 +1,10 @@
 multiline_comment|/*&n; * scsicam.c - SCSI CAM support functions, use for HDIO_GETGEO, etc.&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@Colorado.EDU&n; *&t;+1 (303) 786-7975&n; *&n; * For more information, please consult the SCSI-CAM draft.&n; */
-macro_line|#ifdef MODULE
 multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
 DECL|macro|_SCSI_SYMS_VER_
 mdefine_line|#define _SCSI_SYMS_VER_
-macro_line|#include &lt;linux/autoconf.h&gt;
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

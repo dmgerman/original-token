@@ -4977,5 +4977,5 @@ suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -DMODULE -DCONFIG_MODVERSIONS -D__KERNEL__ -Wall -Wstrict-prototypes -O2 -g -fomit-frame-pointer -pipe -m486 -c plip.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -DMODULE -DMODVERSIONS -D__KERNEL__ -Wall -Wstrict-prototypes -O2 -g -fomit-frame-pointer -pipe -m486 -c plip.c&quot;&n; * End:&n; */
 eof

@@ -2157,12 +2157,15 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* scale priority and nice values from timeslices to -20..20 */
+multiline_comment|/* to make it look like a &quot;normal&quot; unix priority/nice value  */
 id|priority
 op_assign
 id|tsk-&gt;counter
 suffix:semicolon
 id|priority
 op_assign
+l_int|20
+op_minus
 (paren
 id|priority
 op_star
@@ -2174,8 +2177,6 @@ l_int|2
 )paren
 op_div
 id|DEF_PRIORITY
-op_minus
-l_int|20
 suffix:semicolon
 id|nice
 op_assign
@@ -2183,6 +2184,8 @@ id|tsk-&gt;priority
 suffix:semicolon
 id|nice
 op_assign
+l_int|20
+op_minus
 (paren
 id|nice
 op_star
@@ -2194,8 +2197,6 @@ l_int|2
 )paren
 op_div
 id|DEF_PRIORITY
-op_minus
-l_int|20
 suffix:semicolon
 r_return
 id|sprintf
@@ -2250,10 +2251,8 @@ id|tsk-&gt;cstime
 comma
 id|priority
 comma
-multiline_comment|/* this is the kernel priority ---&n;&t;&t;&t;&t;   subtract 20 in your user-level program. */
 id|nice
 comma
-multiline_comment|/* this is the nice value ---&n;&t;&t;&t;&t;   subtract 20 in your user-level program. */
 id|tsk-&gt;timeout
 comma
 id|tsk-&gt;it_real_value

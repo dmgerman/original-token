@@ -1,8 +1,4 @@
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/autoconf.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif /* MODULE */
+multiline_comment|/*&n; * drivers/scsi/sd_ioctl.c&n; *&n; * ioctl handling for SCSI disks&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

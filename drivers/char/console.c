@@ -8973,7 +8973,6 @@ id|kmem_start
 r_char
 id|display_desc
 (braket
-l_int|5
 )braket
 op_assign
 l_string|&quot;????&quot;

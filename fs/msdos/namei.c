@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/namei.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
+multiline_comment|/*&n; *  linux/fs/msdos/namei.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *  Hidden files 1995 by Albert Cahalan &lt;albert@ccs.neu.edu&gt; &lt;adc@coe.neu.edu&gt;&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -66,7 +66,7 @@ id|bad_if_strict
 op_assign
 l_string|&quot;+=,; &quot;
 suffix:semicolon
-multiline_comment|/* Formats an MS-DOS file name. Rejects invalid names. */
+multiline_comment|/***** Formats an MS-DOS file name. Rejects invalid names. */
 DECL|function|msdos_format_name
 r_static
 r_int
@@ -90,7 +90,11 @@ id|res
 comma
 r_int
 id|dot_dirs
+comma
+r_char
+id|dotsOK
 )paren
+multiline_comment|/* conv is relaxed/normal/strict, name is proposed name,&n;&t; * len is the length of the proposed name, res is the result name,&n;&t; * dot_dirs is . and .. are OK, dotsOK is if hidden files get dots.&n;&t; */
 (brace
 r_char
 op_star
@@ -108,19 +112,6 @@ id|c
 suffix:semicolon
 r_int
 id|space
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|IS_FREE
-c_func
-(paren
-id|name
-)paren
-)paren
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -190,11 +181,41 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|name
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;.&squot;
+)paren
+(brace
+multiline_comment|/* dotfile because . and .. already done */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dotsOK
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+multiline_comment|/* Get rid of dot - test for it elsewhere */
+id|name
+op_increment
+suffix:semicolon
+id|len
+op_decrement
+suffix:semicolon
+)brace
 id|space
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* disallow names starting with a dot */
+multiline_comment|/* disallow names that _really_ start with a dot */
 id|c
 op_assign
 l_int|0
@@ -303,6 +324,31 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/*  0xE5 is legal as a first character, but we must substitute 0x05     */
+multiline_comment|/*  because 0xE5 marks deleted files.  Yes, DOS really does this.       */
+multiline_comment|/*  It seems that Microsoft hacked DOS to support non-US characters     */
+multiline_comment|/*  after the 0xE5 character was already in use to mark deleted files.  */
+r_if
+c_cond
+(paren
+(paren
+id|res
+op_eq
+id|walk
+)paren
+op_logical_and
+(paren
+id|c
+op_eq
+l_int|0xE5
+)paren
+)paren
+(brace
+id|c
+op_assign
+l_int|0x05
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -314,13 +360,16 @@ r_break
 suffix:semicolon
 id|space
 op_assign
+(paren
 id|c
 op_eq
 l_char|&squot; &squot;
+)paren
 suffix:semicolon
 op_star
 id|walk
 op_assign
+(paren
 id|c
 op_ge
 l_char|&squot;a&squot;
@@ -328,6 +377,7 @@ op_logical_and
 id|c
 op_le
 l_char|&squot;z&squot;
+)paren
 ques
 c_cond
 id|c
@@ -623,7 +673,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Locates a directory entry. */
+multiline_comment|/***** Locates a directory entry.  Uses unformatted name. */
 DECL|function|msdos_find
 r_static
 r_int
@@ -669,6 +719,22 @@ suffix:semicolon
 r_int
 id|res
 suffix:semicolon
+r_char
+id|dotsOK
+suffix:semicolon
+r_char
+id|scantype
+suffix:semicolon
+id|dotsOK
+op_assign
+id|MSDOS_SB
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|dotsOK
+suffix:semicolon
 id|res
 op_assign
 id|msdos_format_name
@@ -689,6 +755,8 @@ comma
 id|msdos_name
 comma
 l_int|1
+comma
+id|dotsOK
 )paren
 suffix:semicolon
 r_if
@@ -702,6 +770,90 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|name
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;.&squot;
+)paren
+op_logical_and
+id|dotsOK
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|len
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|panic
+c_func
+(paren
+l_string|&quot;Empty name in msdos_find!&quot;
+)paren
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|scantype
+op_assign
+id|SCAN_ANY
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|scantype
+op_assign
+(paren
+(paren
+id|name
+(braket
+l_int|1
+)braket
+op_eq
+l_char|&squot;.&squot;
+)paren
+ques
+c_cond
+id|SCAN_ANY
+suffix:colon
+id|SCAN_HID
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|scantype
+op_assign
+id|SCAN_HID
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|scantype
+op_assign
+(paren
+id|dotsOK
+ques
+c_cond
+id|SCAN_NOTHID
+suffix:colon
+id|SCAN_ANY
+)paren
+suffix:semicolon
+)brace
 r_return
 id|msdos_scan
 c_func
@@ -715,9 +867,12 @@ comma
 id|de
 comma
 id|ino
+comma
+id|scantype
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/***** Get inode using directory and name */
 DECL|function|msdos_lookup
 r_int
 id|msdos_lookup
@@ -1158,7 +1313,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Creates a directory entry (name is already formatted). */
+multiline_comment|/***** Creates a directory entry (name is already formatted). */
 DECL|function|msdos_create_entry
 r_static
 r_int
@@ -1177,6 +1332,9 @@ id|name
 comma
 r_int
 id|is_dir
+comma
+r_int
+id|is_hid
 comma
 r_struct
 id|inode
@@ -1228,6 +1386,8 @@ id|de
 comma
 op_amp
 id|ino
+comma
+id|SCAN_ANY
 )paren
 )paren
 OL
@@ -1295,6 +1455,8 @@ id|de
 comma
 op_amp
 id|ino
+comma
+id|SCAN_ANY
 )paren
 )paren
 OL
@@ -1346,6 +1508,24 @@ c_cond
 id|ATTR_DIR
 suffix:colon
 id|ATTR_ARCH
+suffix:semicolon
+id|de-&gt;attr
+op_assign
+id|is_hid
+ques
+c_cond
+(paren
+id|de-&gt;attr
+op_or
+id|ATTR_HIDDEN
+)paren
+suffix:colon
+(paren
+id|de-&gt;attr
+op_amp
+op_complement
+id|ATTR_HIDDEN
+)paren
 suffix:semicolon
 id|de-&gt;start
 op_assign
@@ -1453,6 +1633,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/***** Create a file or directory */
 DECL|function|msdos_create
 r_int
 id|msdos_create
@@ -1508,6 +1689,8 @@ r_int
 id|ino
 comma
 id|res
+comma
+id|is_hid
 suffix:semicolon
 r_if
 c_cond
@@ -1543,6 +1726,14 @@ comma
 id|msdos_name
 comma
 l_int|0
+comma
+id|MSDOS_SB
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|dotsOK
 )paren
 )paren
 OL
@@ -1559,11 +1750,32 @@ r_return
 id|res
 suffix:semicolon
 )brace
+id|is_hid
+op_assign
+(paren
+id|name
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;.&squot;
+)paren
+op_logical_and
+(paren
+id|msdos_name
+(braket
+l_int|0
+)braket
+op_ne
+l_char|&squot;.&squot;
+)paren
+suffix:semicolon
 id|lock_creation
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Scan for existing file twice, so that creating a file fails&n;&t; * with -EINVAL if the other (dotfile/nondotfile) exists.&n;&t; * Else SCAN_ANY would do. Maybe use EACCES, EBUSY, ENOSPC, ENFILE?&n;&t; */
 r_if
 c_cond
 (paren
@@ -1582,6 +1794,8 @@ id|de
 comma
 op_amp
 id|ino
+comma
+id|SCAN_HID
 )paren
 op_ge
 l_int|0
@@ -1605,6 +1819,65 @@ id|dir
 )paren
 suffix:semicolon
 r_return
+id|is_hid
+ques
+c_cond
+op_minus
+id|EEXIST
+suffix:colon
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|msdos_scan
+c_func
+(paren
+id|dir
+comma
+id|msdos_name
+comma
+op_amp
+id|bh
+comma
+op_amp
+id|de
+comma
+op_amp
+id|ino
+comma
+id|SCAN_NOTHID
+)paren
+op_ge
+l_int|0
+)paren
+(brace
+id|unlock_creation
+c_func
+(paren
+)paren
+suffix:semicolon
+id|brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
+r_return
+id|is_hid
+ques
+c_cond
+op_minus
+id|EINVAL
+suffix:colon
 op_minus
 id|EEXIST
 suffix:semicolon
@@ -1623,6 +1896,8 @@ c_func
 (paren
 id|mode
 )paren
+comma
+id|is_hid
 comma
 id|result
 )paren
@@ -1726,6 +2001,7 @@ l_string|&quot;]&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/***** Make a directory */
 DECL|function|msdos_mkdir
 r_int
 id|msdos_mkdir
@@ -1783,6 +2059,8 @@ r_int
 id|ino
 comma
 id|res
+comma
+id|is_hid
 suffix:semicolon
 r_if
 c_cond
@@ -1808,6 +2086,14 @@ comma
 id|msdos_name
 comma
 l_int|0
+comma
+id|MSDOS_SB
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|dotsOK
 )paren
 )paren
 OL
@@ -1824,6 +2110,26 @@ r_return
 id|res
 suffix:semicolon
 )brace
+id|is_hid
+op_assign
+(paren
+id|name
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;.&squot;
+)paren
+op_logical_and
+(paren
+id|msdos_name
+(braket
+l_int|0
+)braket
+op_ne
+l_char|&squot;.&squot;
+)paren
+suffix:semicolon
 id|lock_creation
 c_func
 (paren
@@ -1847,6 +2153,8 @@ id|de
 comma
 op_amp
 id|ino
+comma
+id|SCAN_ANY
 )paren
 op_ge
 l_int|0
@@ -1888,6 +2196,8 @@ comma
 id|msdos_name
 comma
 l_int|1
+comma
+id|is_hid
 comma
 op_amp
 id|inode
@@ -1964,6 +2274,8 @@ id|MSDOS_DOT
 comma
 l_int|1
 comma
+l_int|0
+comma
 op_amp
 id|dot
 )paren
@@ -2023,6 +2335,8 @@ comma
 id|MSDOS_DOTDOT
 comma
 l_int|1
+comma
+l_int|0
 comma
 op_amp
 id|dot
@@ -2138,6 +2452,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
+multiline_comment|/***** See if directory is empty */
 DECL|function|msdos_empty
 r_static
 r_int
@@ -2281,6 +2596,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/***** Remove a directory */
 DECL|function|msdos_rmdir
 r_int
 id|msdos_rmdir
@@ -2544,6 +2860,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
+multiline_comment|/***** Unlink a file */
 DECL|function|msdos_unlinkx
 r_static
 r_int
@@ -2682,6 +2999,29 @@ r_goto
 id|unlink_done
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_attrs
+op_amp
+id|ATTR_SYS
+)paren
+(brace
+id|res
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+r_goto
+id|unlink_done
+suffix:semicolon
+)brace
 id|inode-&gt;i_nlink
 op_assign
 l_int|0
@@ -2749,6 +3089,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
+multiline_comment|/***** Unlink, as called for msdosfs */
 DECL|function|msdos_unlink
 r_int
 id|msdos_unlink
@@ -2781,7 +3122,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Special entry for umsdos&n;*/
+multiline_comment|/***** Unlink, as called for umsdosfs */
 DECL|function|msdos_unlink_umsdos
 r_int
 id|msdos_unlink_umsdos
@@ -2814,6 +3155,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/***** Rename within a directory */
 DECL|function|rename_same_dir
 r_static
 r_int
@@ -2850,6 +3192,9 @@ id|old_de
 comma
 r_int
 id|old_ino
+comma
+r_int
+id|is_hid
 )paren
 (brace
 r_struct
@@ -2898,8 +3243,8 @@ comma
 id|MSDOS_NAME
 )paren
 )paren
-r_return
-l_int|0
+r_goto
+id|set_hid
 suffix:semicolon
 id|exists
 op_assign
@@ -2918,6 +3263,8 @@ id|new_de
 comma
 op_amp
 id|new_ino
+comma
+id|SCAN_ANY
 )paren
 op_ge
 l_int|0
@@ -3026,6 +3373,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|error
+op_logical_and
+(paren
+id|old_de-&gt;attr
+op_amp
+id|ATTR_SYS
+)paren
+)paren
+id|error
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|error
 )paren
 (brace
@@ -3119,6 +3483,26 @@ comma
 id|MSDOS_NAME
 )paren
 suffix:semicolon
+id|set_hid
+suffix:colon
+id|old_de-&gt;attr
+op_assign
+id|is_hid
+ques
+c_cond
+(paren
+id|old_de-&gt;attr
+op_or
+id|ATTR_HIDDEN
+)paren
+suffix:colon
+(paren
+id|old_de-&gt;attr
+op_amp
+op_complement
+id|ATTR_HIDDEN
+)paren
+suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
@@ -3127,20 +3511,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|MSDOS_SB
-c_func
-(paren
-id|old_dir-&gt;i_sb
-)paren
-op_member_access_from_pointer
-id|conversion
-op_eq
-l_char|&squot;a&squot;
-)paren
-multiline_comment|/* update binary info */
+multiline_comment|/* update binary info for conversion, i_attrs */
 r_if
 c_cond
 (paren
@@ -3165,6 +3536,42 @@ c_func
 id|old_inode
 )paren
 suffix:semicolon
+id|MSDOS_I
+c_func
+(paren
+id|old_inode
+)paren
+op_member_access_from_pointer
+id|i_attrs
+op_assign
+id|is_hid
+ques
+c_cond
+(paren
+id|MSDOS_I
+c_func
+(paren
+id|old_inode
+)paren
+op_member_access_from_pointer
+id|i_attrs
+op_or
+id|ATTR_HIDDEN
+)paren
+suffix:colon
+(paren
+id|MSDOS_I
+c_func
+(paren
+id|old_inode
+)paren
+op_member_access_from_pointer
+id|i_attrs
+op_amp
+op_complement
+id|ATTR_HIDDEN
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -3176,6 +3583,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/***** Rename across directories - a nonphysical move */
 DECL|function|rename_diff_dir
 r_static
 r_int
@@ -3212,6 +3620,9 @@ id|old_de
 comma
 r_int
 id|old_ino
+comma
+r_int
+id|is_hid
 )paren
 (brace
 r_struct
@@ -3316,6 +3727,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+multiline_comment|/* prevent moving directory below itself */
 r_while
 c_loop
 (paren
@@ -3388,6 +3800,7 @@ c_func
 id|walk
 )paren
 suffix:semicolon
+multiline_comment|/* find free spot */
 r_while
 c_loop
 (paren
@@ -3409,6 +3822,8 @@ id|free_de
 comma
 op_amp
 id|free_ino
+comma
+id|SCAN_ANY
 )paren
 )paren
 OL
@@ -3460,6 +3875,8 @@ id|new_de
 comma
 op_amp
 id|new_ino
+comma
+id|SCAN_ANY
 )paren
 op_ge
 l_int|0
@@ -3556,6 +3973,7 @@ c_cond
 id|exists
 )paren
 (brace
+multiline_comment|/* Trash the old file! */
 r_if
 c_cond
 (paren
@@ -3626,6 +4044,23 @@ op_minus
 id|EPERM
 suffix:colon
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+op_logical_and
+(paren
+id|old_de-&gt;attr
+op_amp
+id|ATTR_SYS
+)paren
+)paren
+id|error
+op_assign
+op_minus
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -3711,6 +4146,24 @@ comma
 id|new_name
 comma
 id|MSDOS_NAME
+)paren
+suffix:semicolon
+id|free_de-&gt;attr
+op_assign
+id|is_hid
+ques
+c_cond
+(paren
+id|free_de-&gt;attr
+op_or
+id|ATTR_HIDDEN
+)paren
+suffix:colon
+(paren
+id|free_de-&gt;attr
+op_amp
+op_complement
+id|ATTR_HIDDEN
 )paren
 suffix:semicolon
 r_if
@@ -3916,6 +4369,8 @@ id|dotdot_de
 comma
 op_amp
 id|dotdot_ino
+comma
+id|SCAN_ANY
 )paren
 )paren
 OL
@@ -4032,6 +4487,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
+multiline_comment|/***** Rename, a wrapper for rename_same_dir &amp; rename_diff_dir */
 DECL|function|msdos_rename
 r_int
 id|msdos_rename
@@ -4097,6 +4553,12 @@ id|old_ino
 comma
 id|error
 suffix:semicolon
+r_int
+id|is_hid
+comma
+id|old_hid
+suffix:semicolon
+multiline_comment|/* if new file and old file are hidden */
 r_if
 c_cond
 (paren
@@ -4121,6 +4583,14 @@ comma
 id|old_msdos_name
 comma
 l_int|1
+comma
+id|MSDOS_SB
+c_func
+(paren
+id|old_dir-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|dotsOK
 )paren
 )paren
 OL
@@ -4153,6 +4623,14 @@ comma
 id|new_msdos_name
 comma
 l_int|0
+comma
+id|MSDOS_SB
+c_func
+(paren
+id|new_dir-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|dotsOK
 )paren
 )paren
 OL
@@ -4160,6 +4638,46 @@ l_int|0
 )paren
 r_goto
 id|rename_done
+suffix:semicolon
+id|is_hid
+op_assign
+(paren
+id|new_name
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;.&squot;
+)paren
+op_logical_and
+(paren
+id|new_msdos_name
+(braket
+l_int|0
+)braket
+op_ne
+l_char|&squot;.&squot;
+)paren
+suffix:semicolon
+id|old_hid
+op_assign
+(paren
+id|old_name
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;.&squot;
+)paren
+op_logical_and
+(paren
+id|old_msdos_name
+(braket
+l_int|0
+)braket
+op_ne
+l_char|&squot;.&squot;
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4182,6 +4700,13 @@ id|old_de
 comma
 op_amp
 id|old_ino
+comma
+id|old_hid
+ques
+c_cond
+id|SCAN_HID
+suffix:colon
+id|SCAN_NOTHID
 )paren
 )paren
 OL
@@ -4220,6 +4745,8 @@ comma
 id|old_de
 comma
 id|old_ino
+comma
+id|is_hid
 )paren
 suffix:semicolon
 r_else
@@ -4241,6 +4768,8 @@ comma
 id|old_de
 comma
 id|old_ino
+comma
+id|is_hid
 )paren
 suffix:semicolon
 id|unlock_creation

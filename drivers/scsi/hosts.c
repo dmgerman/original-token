@@ -1,18 +1,11 @@
 multiline_comment|/*&n; *  hosts.c Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to lowlevel SCSI driver interface&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; */
 multiline_comment|/*&n; *  This file contains the medium level SCSI&n; *  host interface initialization, as well as the scsi_hosts array of SCSI&n; *  hosts currently present in the system.&n; */
-macro_line|#ifdef MODULE
 multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
 DECL|macro|_SCSI_SYMS_VER_
 mdefine_line|#define _SCSI_SYMS_VER_
-macro_line|#include &lt;linux/autoconf.h&gt;
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

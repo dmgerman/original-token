@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; *&n; *&t; Modified by Thomas Quinot thomas@melchior.frmug.fr.net to&n; *&t; provide auto-eject.&n; *&n; */
+multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; *&n; *&t; Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *&t; provide auto-eject.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1270,7 +1270,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works:&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              Multisession CD&squot;s are supported too.&n; *&n; *   kraxel@cs.tu-berlin.de (Gerd Knorr)&n; */
-multiline_comment|/*&n; * 19950704 operator@melchior.frmug.fr.net (Thomas Quinot)&n; *&n; *   - SONY:&t;Same as Nec.&n; *&n; *   - PIONEER: works with SONY code&n; */
+multiline_comment|/*&n; * 19950704 operator@melchior.cuivre.fdn.fr (Thomas Quinot)&n; *&n; *   - SONY:&t;Same as Nec.&n; *&n; *   - PIONEER: works with SONY code&n; */
 DECL|function|sr_photocd
 r_static
 r_void
@@ -1581,7 +1581,7 @@ l_int|0xb0
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
+l_string|&quot;sr_photocd: (NEC) Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
 )paren
 suffix:semicolon
 id|no_multi
@@ -1849,7 +1849,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
+l_string|&quot;sr_photocd: (TOSHIBA) Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
 )paren
 suffix:semicolon
 id|no_multi
@@ -2301,7 +2301,7 @@ suffix:semicolon
 r_case
 id|SCSI_MAN_SONY
 suffix:colon
-multiline_comment|/* Thomas QUINOT &lt;thomas@melchior.frmug.fr.net&gt; */
+multiline_comment|/* Thomas QUINOT &lt;thomas@melchior.cuivre.fdn.fr&gt; */
 r_case
 id|SCSI_MAN_PIONEER
 suffix:colon
@@ -2397,12 +2397,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|rc
 op_ne
 l_int|0
 )paren
-op_logical_or
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;sr_photocd: ioctl error (SONY): 0x%x&bslash;n&quot;
+comma
+id|rc
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
 (paren
 (paren
 id|rec
@@ -2420,15 +2432,16 @@ l_int|1
 op_ne
 l_int|0x0a
 )paren
-)paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: ioctl error (SONY): 0x%x&bslash;n&quot;
-comma
-id|rc
+l_string|&quot;sr_photocd: (SONY) Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
 )paren
+suffix:semicolon
+id|no_multi
+op_assign
+l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2839,7 +2852,7 @@ id|CURRENT-&gt;rq_dev
 dot
 id|device
 suffix:semicolon
-multiline_comment|/*&n;         * I am not sure where the best place to do this is.  We need&n;         * to hook in a place where we are likely to come if in user&n;         * space.&n;         */
+multiline_comment|/*&n;&t; * I am not sure where the best place to do this is.  We need&n;&t; * to hook in a place where we are likely to come if in user&n;&t; * space.&n;&t; */
 r_if
 c_cond
 (paren

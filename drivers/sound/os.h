@@ -6,7 +6,6 @@ DECL|macro|NO_INLINE_ASM
 macro_line|#undef NO_INLINE_ASM
 DECL|macro|SHORT_BANNERS
 macro_line|#undef SHORT_BANNERS
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

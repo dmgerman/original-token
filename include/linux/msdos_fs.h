@@ -44,6 +44,14 @@ mdefine_line|#define ATTR_NONE    0 /* no attribute bits */
 DECL|macro|ATTR_UNUSED
 mdefine_line|#define ATTR_UNUSED  (ATTR_VOLUME | ATTR_ARCH | ATTR_SYS | ATTR_HIDDEN)
 multiline_comment|/* attribute bits that are copied &quot;as is&quot; */
+DECL|macro|SCAN_ANY
+mdefine_line|#define SCAN_ANY     0  /* either hidden or not */
+DECL|macro|SCAN_HID
+mdefine_line|#define SCAN_HID     1  /* only hidden */
+DECL|macro|SCAN_NOTHID
+mdefine_line|#define SCAN_NOTHID  2  /* only not hidden */
+DECL|macro|SCAN_NOTANY
+mdefine_line|#define SCAN_NOTANY  3  /* test name, then use SCAN_HID or SCAN_NOTHID */
 DECL|macro|DELETED_FLAG
 mdefine_line|#define DELETED_FLAG 0xe5 /* marks file as deleted when in name[0] */
 DECL|macro|IS_FREE
@@ -63,7 +71,7 @@ DECL|macro|MSDOS_DOTDOT
 mdefine_line|#define MSDOS_DOTDOT &quot;..         &quot; /* &quot;..&quot;, padded to MSDOS_NAME chars */
 DECL|macro|MSDOS_FAT12
 mdefine_line|#define MSDOS_FAT12 4078 /* maximum number of clusters in a 12 bit FAT */
-multiline_comment|/*&n; * Conversion from and to little-endian byte order. (no-op on i386/i486)&n; *&n; * Naming: Ca_b_c, where a: F = from, T = to, b: LE = little-endian, BE = big-&n; * endian, c: W = word (16 bits), L = longword (32 bits)&n; */
+multiline_comment|/*&n; * Conversion from and to little-endian byte order. (no-op on i386/i486)&n; *&n; * Naming: Ca_b_c, where a: F = from, T = to, b: LE = little-endian,&n; * BE = big-endian, c: W = word (16 bits), L = longword (32 bits)&n; */
 DECL|macro|CF_LE_W
 mdefine_line|#define CF_LE_W(v) (v)
 DECL|macro|CF_LE_L
@@ -419,6 +427,9 @@ comma
 r_int
 op_star
 id|ino
+comma
+r_char
+id|scantype
 )paren
 suffix:semicolon
 r_extern

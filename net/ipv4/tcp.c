@@ -4397,7 +4397,7 @@ op_minus
 id|hdrlen
 )paren
 comma
-id|len
+id|seglen
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME: this is really a bug. */
@@ -4412,7 +4412,15 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;TCP: **bug**: &bslash;&quot;copy&bslash;&quot; &lt;= 0!!&bslash;n&quot;
+l_string|&quot;TCP: **bug**: &bslash;&quot;copy&bslash;&quot; &lt;= 0: %d - (%ld - %d) &lt;= %d&bslash;n&quot;
+comma
+id|sk-&gt;mss
+comma
+id|skb-&gt;len
+comma
+id|hdrlen
+comma
+id|seglen
 )paren
 suffix:semicolon
 id|copy
@@ -4524,11 +4532,11 @@ c_cond
 (paren
 id|copy
 OG
-id|len
+id|seglen
 )paren
 id|copy
 op_assign
-id|len
+id|seglen
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;We should really check the window here also. &n;&t;&t; */
 id|send_tmp
@@ -4859,7 +4867,7 @@ id|skb-&gt;h.th
 comma
 id|sk
 comma
-id|len
+id|seglen
 op_minus
 id|copy
 )paren
@@ -6076,14 +6084,10 @@ id|sk-&gt;err
 (brace
 id|copied
 op_assign
-op_minus
-id|xchg
+id|sock_error
 c_func
 (paren
-op_amp
-id|sk-&gt;err
-comma
-l_int|0
+id|sk
 )paren
 suffix:semicolon
 r_break

@@ -101,6 +101,10 @@ r_int
 id|free_clusters
 suffix:semicolon
 multiline_comment|/* -1 if undefined */
+DECL|member|dotsOK
+r_char
+id|dotsOK
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

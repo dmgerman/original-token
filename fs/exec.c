@@ -193,8 +193,11 @@ op_member_access_from_pointer
 id|next
 suffix:semicolon
 )brace
-op_star
-id|tmp
+id|fmt-&gt;next
+op_assign
+id|formats
+suffix:semicolon
+id|formats
 op_assign
 id|fmt
 suffix:semicolon

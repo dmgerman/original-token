@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/msdos/file.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  MS-DOS regular file handling primitives&n; */
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -1228,6 +1227,24 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/* Must not harm system files */
+r_if
+c_cond
+(paren
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_attrs
+op_amp
+id|ATTR_SYS
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 multiline_comment|/*&n; * ok, append may not work when many processes are writing at the same time&n; * but so what. That way leads to madness anyway.&n; */
 r_if
 c_cond
@@ -1671,6 +1688,24 @@ id|inode
 (brace
 r_int
 id|cluster
+suffix:semicolon
+multiline_comment|/* Must not harm system files */
+multiline_comment|/* Why no return value?  Surely the disk could fail... */
+r_if
+c_cond
+(paren
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_attrs
+op_amp
+id|ATTR_SYS
+)paren
+r_return
+multiline_comment|/* -EPERM */
 suffix:semicolon
 id|cluster
 op_assign

@@ -64,7 +64,7 @@ id|skb
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|init_netlink
 c_func
 (paren

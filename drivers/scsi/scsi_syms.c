@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * We should not even be trying to compile this if we are not doing&n; * a module.&n; */
-macro_line|#ifndef MODULE
-macro_line|#error Go away.
-macro_line|#endif
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -11,6 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
