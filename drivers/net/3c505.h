@@ -1,4 +1,10 @@
 multiline_comment|/*****************************************************************&n; *&n; *  defines for 3Com Etherlink Plus adapter&n; *&n; *****************************************************************/
+DECL|macro|ELP_DMA
+mdefine_line|#define ELP_DMA       6
+DECL|macro|ELP_RX_PCBS
+mdefine_line|#define ELP_RX_PCBS   4
+DECL|macro|ELP_MAX_CARDS
+mdefine_line|#define ELP_MAX_CARDS 4
 multiline_comment|/*&n; * I/O register offsets&n; */
 DECL|macro|PORT_COMMAND
 mdefine_line|#define&t;PORT_COMMAND&t;0x00&t;/* read/write, 8-bit */
@@ -591,4 +597,140 @@ DECL|macro|INT_LOOPBACK
 mdefine_line|#define INT_LOOPBACK&t;0x08
 DECL|macro|EXT_LOOPBACK
 mdefine_line|#define EXT_LOOPBACK&t;0x10
+multiline_comment|/*****************************************************************&n; *&n; *  structure to hold context information for adapter&n; *&n; *****************************************************************/
+DECL|macro|DMA_BUFFER_SIZE
+mdefine_line|#define DMA_BUFFER_SIZE  1600
+DECL|macro|BACKLOG_SIZE
+mdefine_line|#define BACKLOG_SIZE      4
+r_typedef
+r_struct
+(brace
+DECL|member|got
+r_volatile
+r_int
+id|got
+(braket
+id|NUM_TRANSMIT_CMDS
+)braket
+suffix:semicolon
+multiline_comment|/* flags for&n;&t;&t;&t;&t;&t;&t;   command completion */
+DECL|member|tx_pcb
+id|pcb_struct
+id|tx_pcb
+suffix:semicolon
+multiline_comment|/* PCB for foreground sending */
+DECL|member|rx_pcb
+id|pcb_struct
+id|rx_pcb
+suffix:semicolon
+multiline_comment|/* PCB for foreground receiving */
+DECL|member|itx_pcb
+id|pcb_struct
+id|itx_pcb
+suffix:semicolon
+multiline_comment|/* PCB for background sending */
+DECL|member|irx_pcb
+id|pcb_struct
+id|irx_pcb
+suffix:semicolon
+multiline_comment|/* PCB for background receiving */
+DECL|member|stats
+r_struct
+id|enet_statistics
+id|stats
+suffix:semicolon
+DECL|member|dma_buffer
+r_void
+op_star
+id|dma_buffer
+suffix:semicolon
+r_struct
+(brace
+DECL|member|length
+r_int
+r_int
+id|length
+(braket
+id|BACKLOG_SIZE
+)braket
+suffix:semicolon
+DECL|member|in
+r_int
+r_int
+id|in
+suffix:semicolon
+DECL|member|out
+r_int
+r_int
+id|out
+suffix:semicolon
+DECL|member|rx_backlog
+)brace
+id|rx_backlog
+suffix:semicolon
+r_struct
+(brace
+DECL|member|direction
+r_int
+r_int
+id|direction
+suffix:semicolon
+DECL|member|length
+r_int
+r_int
+id|length
+suffix:semicolon
+DECL|member|skb
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+DECL|member|target
+r_void
+op_star
+id|target
+suffix:semicolon
+DECL|member|start_time
+r_int
+r_int
+id|start_time
+suffix:semicolon
+DECL|member|current_dma
+)brace
+id|current_dma
+suffix:semicolon
+multiline_comment|/* flags */
+DECL|member|send_pcb_semaphore
+r_int
+r_int
+id|send_pcb_semaphore
+suffix:semicolon
+DECL|member|dmaing
+r_int
+r_int
+id|dmaing
+suffix:semicolon
+DECL|member|busy
+r_int
+r_int
+id|busy
+suffix:semicolon
+DECL|member|rx_active
+r_int
+r_int
+id|rx_active
+suffix:semicolon
+multiline_comment|/* number of receive PCBs */
+DECL|member|hcr_val
+r_volatile
+r_int
+r_char
+id|hcr_val
+suffix:semicolon
+multiline_comment|/* what we think the HCR contains */
+DECL|typedef|elp_device
+)brace
+id|elp_device
+suffix:semicolon
 eof

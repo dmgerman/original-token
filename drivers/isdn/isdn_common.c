@@ -3342,7 +3342,7 @@ c_cond
 (paren
 id|user
 )paren
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|cp
@@ -4112,7 +4112,7 @@ op_le
 id|count
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -4992,7 +4992,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -5066,7 +5066,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -5175,7 +5175,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|buf
@@ -5326,7 +5326,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|buf
@@ -5658,7 +5658,7 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|dest
@@ -5672,7 +5672,7 @@ id|dest
 op_add_assign
 l_int|10
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|dest
@@ -6133,7 +6133,7 @@ id|name
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|name
@@ -6206,7 +6206,7 @@ l_int|1
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6272,7 +6272,7 @@ id|bname
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|bname
@@ -6339,7 +6339,7 @@ l_int|1
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6405,7 +6405,7 @@ id|name
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|name
@@ -6472,7 +6472,7 @@ id|cfg
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -6545,7 +6545,7 @@ id|cfg
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -6610,7 +6610,7 @@ id|cfg
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6679,7 +6679,7 @@ id|phone
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -6752,7 +6752,7 @@ id|phone
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -6831,7 +6831,7 @@ id|phone
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -6904,7 +6904,7 @@ id|name
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|name
@@ -6977,7 +6977,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|name
@@ -7043,7 +7043,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|name
@@ -7105,7 +7105,7 @@ id|name
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|name
@@ -7244,7 +7244,7 @@ id|isdn_ioctl_struct
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -7504,7 +7504,7 @@ id|i
 op_increment
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|p
@@ -7523,7 +7523,7 @@ id|p
 op_add_assign
 id|ISDN_MODEM_ANZREG
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|p
@@ -7628,7 +7628,7 @@ id|i
 op_increment
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|dev-&gt;mdm.info
@@ -7647,7 +7647,7 @@ id|p
 op_add_assign
 id|ISDN_MODEM_ANZREG
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|dev-&gt;mdm.info
@@ -7731,7 +7731,7 @@ id|isdn_ioctl_struct
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -7857,7 +7857,7 @@ l_int|255
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|nstring
@@ -8049,7 +8049,7 @@ l_int|1
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -8115,7 +8115,7 @@ id|ulong
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -8222,7 +8222,7 @@ id|isdn_ioctl_struct
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -8427,7 +8427,7 @@ id|ulong
 )paren
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -10020,7 +10020,7 @@ c_cond
 (paren
 id|user
 )paren
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|skb_put

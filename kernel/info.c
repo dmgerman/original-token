@@ -143,7 +143,7 @@ op_amp
 id|val
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|info

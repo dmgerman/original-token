@@ -22975,7 +22975,7 @@ c_func
 id|st
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -23250,7 +23250,7 @@ id|st
 )paren
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -23531,7 +23531,7 @@ c_func
 id|st
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -23599,7 +23599,7 @@ c_func
 id|st
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -23810,7 +23810,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -24168,7 +24168,7 @@ c_func
 id|st
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -24322,7 +24322,7 @@ id|volctrl.channel2
 op_assign
 l_int|0
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -24424,7 +24424,7 @@ c_func
 id|st
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -24648,7 +24648,7 @@ op_amp
 l_int|0x00FF
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -25150,7 +25150,7 @@ c_func
 id|i
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -26281,7 +26281,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -26311,7 +26311,7 @@ c_func
 (paren
 id|DBG_AUD
 comma
-l_string|&quot;read_audio: memcpy_tofs done.&bslash;n&quot;
+l_string|&quot;read_audio: copy_to_user done.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -26426,7 +26426,7 @@ c_func
 id|st
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -26514,7 +26514,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* invalid redirection address */
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

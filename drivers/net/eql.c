@@ -1458,7 +1458,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|srq
@@ -1706,7 +1706,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|srq
@@ -1854,7 +1854,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|sc
@@ -1957,7 +1957,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|scp
 comma
@@ -2060,7 +2060,7 @@ id|sc.slave_name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|sc
@@ -2232,7 +2232,7 @@ id|mc.min_slaves
 op_assign
 id|eql-&gt;min_slaves
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|mcp
 comma
@@ -2323,7 +2323,7 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|mc

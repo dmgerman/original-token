@@ -2605,7 +2605,7 @@ id|filp-&gt;f_pos
 op_add_assign
 id|size
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -2977,7 +2977,7 @@ id|blocksize
 op_plus
 id|bh-&gt;b_data
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p
@@ -3413,7 +3413,7 @@ id|bh-&gt;b_data
 op_plus
 l_int|24
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p

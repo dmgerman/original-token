@@ -792,7 +792,7 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1098,7 +1098,7 @@ r_int
 id|ip
 suffix:semicolon
 multiline_comment|/*&n; *&t;We only understand about IP addresses...&n; */
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1207,7 +1207,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *        Copy the information back&n; */
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|req
@@ -1300,7 +1300,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp

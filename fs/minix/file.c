@@ -384,7 +384,7 @@ id|BLOCK_SIZE
 op_plus
 id|bh-&gt;b_data
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p

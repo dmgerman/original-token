@@ -36,6 +36,12 @@ r_typedef
 r_int
 id|__kernel_pid_t
 suffix:semicolon
+DECL|typedef|__kernel_ipc_pid_t
+r_typedef
+r_int
+r_int
+id|__kernel_ipc_pid_t
+suffix:semicolon
 DECL|typedef|__kernel_uid_t
 r_typedef
 r_int

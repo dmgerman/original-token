@@ -5190,7 +5190,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5230,7 +5230,7 @@ c_func
 id|wc.data
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|rq-&gt;ifr_data
@@ -5522,7 +5522,7 @@ l_int|0
 suffix:colon
 id|len
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|rq-&gt;ifr_data

@@ -2092,7 +2092,7 @@ c_cond
 op_logical_neg
 id|res
 )paren
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|tmp
@@ -2252,7 +2252,7 @@ id|addr
 suffix:semicolon
 )brace
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|tmp

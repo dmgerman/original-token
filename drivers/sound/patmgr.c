@@ -371,7 +371,7 @@ op_eq
 id|A_TO_S
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -474,7 +474,7 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -628,7 +628,7 @@ id|dev
 )braket
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 (paren

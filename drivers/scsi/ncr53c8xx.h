@@ -2,6 +2,13 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef NCR53C8XX_H
 DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
+multiline_comment|/*&n;**&t;If SCSI_NCR_SPECIAL_FEATURES is defined,&n;**&t;the driver enables or not the following features according to chip id &n;**&t;revision id:&n;**&t;DMODE   0xce&n;**&t;&t;0x02&t;burst op-code fetch&n;**&t;&t;0x04&t;enable read multiple&n;**&t;&t;0x08&t;enable read line&n;**&t;&t;0xc0&t;burst length 16/8/2&n;**&t;DCNTL   0xa0&n;**&t;&t;0x20&t;enable pre-fetch&n;**&t;&t;0x80&t;enable cache line size&n;**&t;CTEST3  0x01&n;**&t;&t;0x01&t;set write and invalidate&n;**&t;CTEST4  0x80&n;**&t;&t;0x80&t;burst disabled&n;**&n;**&t;If SCSI_NCR_TRUST_BIOS_SETTING is defined, the driver will use the &n;**&t;initial value of corresponding bit fields, assuming they have been &n;**&t;set by the SDMS BIOS.&n;**&t;When Linux is booted from another O/S, these assertion is false and &n;**&t;the driver will not be able to guess it. &n;*/
+macro_line|#if 0
+mdefine_line|#define SCSI_NCR_TRUST_BIOS_SETTING
+macro_line|#endif
+macro_line|#if 0
+mdefine_line|#define SCSI_NCR_SPECIAL_FEATURES
+macro_line|#endif
 multiline_comment|/*********** LINUX SPECIFIC SECTION ******************/
 multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
 macro_line|#if !defined(LINUX_VERSION_CODE)
@@ -58,9 +65,12 @@ macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_IOMAPPED
 DECL|macro|SCSI_NCR_IOMAPPED
 mdefine_line|#define&t;SCSI_NCR_IOMAPPED
 macro_line|#endif
-macro_line|#ifndef CONFIG_SCSI_NCR53C8XX_TAGGED_QUEUE
-DECL|macro|SCSI_NCR_TAGGED_QUEUE_DISABLED
-mdefine_line|#define SCSI_NCR_TAGGED_QUEUE_DISABLED
+macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_TAGGED_QUEUE
+DECL|macro|SCSI_NCR_DEFAULT_TAGS
+mdefine_line|#define SCSI_NCR_DEFAULT_TAGS&t;SCSI_NCR_MAX_TAGS
+macro_line|#else
+DECL|macro|SCSI_NCR_DEFAULT_TAGS
+mdefine_line|#define SCSI_NCR_DEFAULT_TAGS&t;(0)
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_NO_DISCONNECT
 DECL|macro|SCSI_NCR_NO_DISCONNECT
@@ -190,10 +200,10 @@ mdefine_line|#define ncr53c8xx_release NULL
 macro_line|#endif
 macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
 DECL|macro|NCR53C8XX
-mdefine_line|#define NCR53C8XX {NULL,NULL,NULL,NULL,&quot;ncr53c8xx (rel 1.12c)&quot;, ncr53c8xx_detect,&bslash;&n;    &t;ncr53c8xx_release, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;ncr53c8xx_queue_command, ncr53c8xx_abort, ncr53c8xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ SCSI_NCR_CAN_QUEUE,&bslash;&n;&t;/* id */ 7, SCSI_NCR_SG_TABLESIZE /* SG */, /* cmd per lun */ SCSI_NCR_CMD_PER_LUN, &t;&t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+mdefine_line|#define NCR53C8XX {NULL,NULL,NULL,NULL,&quot;ncr53c8xx (rel 1.14a)&quot;, ncr53c8xx_detect,&bslash;&n;    &t;ncr53c8xx_release, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;ncr53c8xx_queue_command, ncr53c8xx_abort, ncr53c8xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ SCSI_NCR_CAN_QUEUE,&bslash;&n;&t;/* id */ 7, SCSI_NCR_SG_TABLESIZE /* SG */, /* cmd per lun */ SCSI_NCR_CMD_PER_LUN, &t;&t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
 macro_line|#else
 DECL|macro|NCR53C8XX
-mdefine_line|#define NCR53C8XX {NULL, NULL, &quot;ncr53c8xx (rel 1.12c)&quot;, ncr53c8xx_detect,&bslash;&n;    &t;ncr53c8xx_release, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;ncr53c8xx_queue_command, ncr53c8xx_abort, ncr53c8xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ SCSI_NCR_CAN_QUEUE,&bslash;&n;&t;/* id */ 7, SCSI_NCR_SG_TABLESIZE /* SG */, /* cmd per lun */ SCSI_NCR_CMD_PER_LUN, &t;&t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+mdefine_line|#define NCR53C8XX {NULL, NULL, &quot;ncr53c8xx (rel 1.14a)&quot;, ncr53c8xx_detect,&bslash;&n;    &t;ncr53c8xx_release, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;ncr53c8xx_queue_command, ncr53c8xx_abort, ncr53c8xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ SCSI_NCR_CAN_QUEUE,&bslash;&n;&t;/* id */ 7, SCSI_NCR_SG_TABLESIZE /* SG */, /* cmd per lun */ SCSI_NCR_CMD_PER_LUN, &t;&t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
 macro_line|#endif /* LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0) */
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
@@ -263,6 +273,18 @@ macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_NCR_53C875
 DECL|macro|PCI_DEVICE_ID_NCR_53C875
 mdefine_line|#define PCI_DEVICE_ID_NCR_53C875 0xf
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_NCR_53C885
+DECL|macro|PCI_DEVICE_ID_NCR_53C885
+mdefine_line|#define PCI_DEVICE_ID_NCR_53C885 0xd
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_NCR_53C895
+DECL|macro|PCI_DEVICE_ID_NCR_53C895
+mdefine_line|#define PCI_DEVICE_ID_NCR_53C895 0xc
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_NCR_53C896
+DECL|macro|PCI_DEVICE_ID_NCR_53C896
+mdefine_line|#define PCI_DEVICE_ID_NCR_53C896 0xb
 macro_line|#endif
 multiline_comment|/**************** ORIGINAL CONTENT of ncrreg.h from FreeBSD ******************/
 multiline_comment|/*-----------------------------------------------------------------&n;**&n;**&t;The ncr 53c810 register structure.&n;**&n;**-----------------------------------------------------------------&n;*/
@@ -670,6 +692,10 @@ multiline_comment|/*4d*/
 id|u_char
 id|nc_stest1
 suffix:semicolon
+DECL|macro|DBLEN
+mdefine_line|#define   DBLEN   0x08&t;/* clock doubler running&t;&t;*/
+DECL|macro|DBLSEL
+mdefine_line|#define   DBLSEL  0x04&t;/* clock doubler selected&t;&t;*/
 DECL|member|nc_stest2
 multiline_comment|/*4e*/
 id|u_char

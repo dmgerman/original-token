@@ -84,6 +84,8 @@ DECL|macro|MS_SYNCHRONOUS
 mdefine_line|#define MS_SYNCHRONOUS&t;16&t;/* Writes are synced at once */
 DECL|macro|MS_REMOUNT
 mdefine_line|#define MS_REMOUNT&t;32&t;/* Alter flags of a mounted FS */
+DECL|macro|MS_MANDLOCK
+mdefine_line|#define MS_MANDLOCK&t;64&t;/* Allow mandatory locks on an FS */
 DECL|macro|S_WRITE
 mdefine_line|#define S_WRITE&t;&t;128&t;/* Write on file/directory/symlink */
 DECL|macro|S_APPEND
@@ -92,7 +94,7 @@ DECL|macro|S_IMMUTABLE
 mdefine_line|#define S_IMMUTABLE&t;512&t;/* Immutable file */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
-mdefine_line|#define MS_RMT_MASK (MS_RDONLY)
+mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_MANDLOCK)
 multiline_comment|/*&n; * Magic mount flag number. Has to be or-ed to the flag values.&n; */
 DECL|macro|MS_MGC_VAL
 mdefine_line|#define MS_MGC_VAL 0xC0ED0000&t;/* magic flag number to indicate &quot;new&quot; flags */
@@ -109,6 +111,8 @@ DECL|macro|IS_NOEXEC
 mdefine_line|#define IS_NOEXEC(inode) ((inode)-&gt;i_flags &amp; MS_NOEXEC)
 DECL|macro|IS_SYNC
 mdefine_line|#define IS_SYNC(inode) ((inode)-&gt;i_flags &amp; MS_SYNCHRONOUS)
+DECL|macro|IS_MANDLOCK
+mdefine_line|#define IS_MANDLOCK(inode) ((inode)-&gt;i_flags &amp; MS_MANDLOCK)
 DECL|macro|IS_WRITABLE
 mdefine_line|#define IS_WRITABLE(inode) ((inode)-&gt;i_flags &amp; S_WRITE)
 DECL|macro|IS_APPEND
@@ -1133,11 +1137,16 @@ op_star
 id|inode
 )paren
 (brace
-macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
 multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
 r_if
 c_cond
 (paren
+id|IS_MANDLOCK
+c_func
+(paren
+id|inode
+)paren
+op_logical_and
 (paren
 id|inode-&gt;i_mode
 op_amp
@@ -1159,7 +1168,6 @@ id|inode
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 (paren
 l_int|0
@@ -1195,11 +1203,16 @@ r_int
 id|count
 )paren
 (brace
-macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
 multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
 r_if
 c_cond
 (paren
+id|IS_MANDLOCK
+c_func
+(paren
+id|inode
+)paren
+op_logical_and
 (paren
 id|inode-&gt;i_mode
 op_amp
@@ -1229,7 +1242,6 @@ id|count
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 (paren
 l_int|0

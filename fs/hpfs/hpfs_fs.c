@@ -2625,7 +2625,7 @@ id|tmp.f_namelen
 op_assign
 l_int|254
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -3240,7 +3240,7 @@ id|CONV_BINARY
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * regular copy, output length is same as input&n;&t;&t;&t; * length&n;&t;&t;&t; */
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

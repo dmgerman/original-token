@@ -1107,9 +1107,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* All checking and format change makes this code really hard to read!&n; * So let&squot;s make some check and memory move macros.  These macros are&n; * a little inefficient when both used in the same piece of code, as&n; * verify_area is used twice, but who cares, as ioctl() calls&n; * shouldn&squot;t be in inner loops.&n; */
 DECL|macro|GETARG
-mdefine_line|#define GETARG(type, x) { &bslash;&n;        int ret=verify_area(VERIFY_READ, (void *) arg, sizeof x); &bslash;&n;&t;    if (ret) return ret; &bslash;&n;&t;    memcpy_fromfs(&amp;x, (type *) arg, sizeof x); }
+mdefine_line|#define GETARG(type, x) { &bslash;&n;        int ret=verify_area(VERIFY_READ, (void *) arg, sizeof x); &bslash;&n;&t;    if (ret) return ret; &bslash;&n;&t;    copy_from_user(&amp;x, (type *) arg, sizeof x); }
 DECL|macro|PUTARG
-mdefine_line|#define PUTARG(type, x) { &bslash;&n;&t;    int ret=verify_area(VERIFY_WRITE, (void *) arg, sizeof x); &bslash;&n;&t;    if (ret) return ret; &bslash;&n;&t;    memcpy_tofs((type *) arg, &amp;x, sizeof x); }
+mdefine_line|#define PUTARG(type, x) { &bslash;&n;&t;    int ret=verify_area(VERIFY_WRITE, (void *) arg, sizeof x); &bslash;&n;&t;    if (ret) return ret; &bslash;&n;&t;    copy_to_user((type *) arg, &amp;x, sizeof x); }
 multiline_comment|/* Some of the cdrom ioctls are not implemented here, because these&n; * appear to be either too device-specific, or it is not clear to me&n; * what use they are. These are (number of drivers that support them&n; * in parenthesis): CDROMREADMODE1 (2+ide), CDROMREADMODE2 (2+ide),&n; * CDROMREADAUDIO (2+ide), CDROMREADRAW (2), CDROMREADCOOKED (2),&n; * CDROMSEEK (2), CDROMPLAYBLK (scsi), CDROMREADALL (1). Read-audio,&n; * OK (although i guess the record companies aren&squot;t too happy with&n; * this, most drives therefore refuse to transport audio data).  But&n; * why are there 5 different READs defined? For now, these functions&n; * are left over to the device-specific ioctl routine,&n; * cdo-&gt;dev_ioctl. Note that as a result of this, no&n; * memory-verification is performed for these ioctls.&n; */
 DECL|function|cdrom_ioctl
 r_int

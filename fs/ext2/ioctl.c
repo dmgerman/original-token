@@ -126,11 +126,11 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|flags
-op_assign
 id|get_user
 c_func
 (paren
+id|flags
+comma
 (paren
 r_int
 op_star
@@ -371,11 +371,11 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|inode-&gt;u.ext2_i.i_version
-op_assign
 id|get_user
 c_func
 (paren
+id|inode-&gt;u.ext2_i.i_version
+comma
 (paren
 r_int
 op_star

@@ -4262,11 +4262,11 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|pid
-op_assign
 id|get_user
 c_func
 (paren
+id|pid
+comma
 (paren
 r_int
 op_star
@@ -4339,7 +4339,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|sk-&gt;proc
@@ -4400,7 +4400,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

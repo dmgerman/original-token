@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
-macro_line|#include &lt;asm/segment.h&gt; /* for memcpy_to/fromfs */
+macro_line|#include &lt;asm/segment.h&gt; /* for cop_to/from_user */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * To save us from swapping out pages which have just been swapped in and&n; * have not been modified since then, we keep in swap_cache[page&gt;&gt;PAGE_SHIFT]&n; * the swap entry which was last used to fill the page, or zero if the&n; * page does not currently correspond to a page in swap. PAGE_DIRTY makes&n; * this info useless.&n; */

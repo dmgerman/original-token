@@ -2477,7 +2477,7 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2592,7 +2592,7 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp

@@ -7691,7 +7691,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -7765,7 +7765,7 @@ id|EWRK3_CSR
 )paren
 suffix:semicolon
 multiline_comment|/* Disable the TX and RX */
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp.addr
@@ -8092,7 +8092,7 @@ op_rshift
 l_int|3
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -8144,7 +8144,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp.addr
@@ -8288,7 +8288,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -8393,7 +8393,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -8438,7 +8438,7 @@ l_int|1
 )paren
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp.addr
@@ -8594,7 +8594,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -8648,7 +8648,7 @@ id|EEPROM_MAX
 )paren
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp.addr
@@ -8741,7 +8741,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data

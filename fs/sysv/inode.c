@@ -2956,7 +2956,7 @@ id|SYSV_NAMELEN
 suffix:semicolon
 multiline_comment|/* Don&squot;t know what value to put in tmp.f_fsid */
 multiline_comment|/* file system id */
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

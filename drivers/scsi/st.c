@@ -5142,7 +5142,7 @@ op_assign
 id|count
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -5641,7 +5641,7 @@ id|STp-&gt;dirty
 op_assign
 l_int|1
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -7258,7 +7258,7 @@ id|count
 op_minus
 id|total
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -13548,7 +13548,7 @@ id|i
 r_return
 id|i
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -14726,7 +14726,7 @@ c_func
 l_int|0xffffffff
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -14862,7 +14862,7 @@ id|mt_pos.mt_blkno
 op_assign
 id|blk
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

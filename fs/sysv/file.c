@@ -601,7 +601,7 @@ op_star
 id|bhe
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -1033,7 +1033,7 @@ id|sb-&gt;sv_block_size_1
 op_plus
 id|bh-&gt;b_data
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p

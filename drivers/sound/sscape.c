@@ -2336,7 +2336,7 @@ op_minus
 id|ENOSPC
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char

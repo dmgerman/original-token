@@ -34,12 +34,12 @@ id|shm_ctime
 suffix:semicolon
 multiline_comment|/* last change time */
 DECL|member|shm_cpid
-id|__kernel_pid_t
+id|__kernel_ipc_pid_t
 id|shm_cpid
 suffix:semicolon
 multiline_comment|/* pid of creator */
 DECL|member|shm_lpid
-id|__kernel_pid_t
+id|__kernel_ipc_pid_t
 id|shm_lpid
 suffix:semicolon
 multiline_comment|/* pid of last operator */

@@ -10159,7 +10159,7 @@ r_return
 op_minus
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

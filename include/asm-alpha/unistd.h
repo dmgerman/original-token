@@ -318,6 +318,10 @@ DECL|macro|__NR_mremap
 mdefine_line|#define __NR_mremap&t;&t;&t;341
 DECL|macro|__NR_nfsctl
 mdefine_line|#define __NR_nfsctl&t;&t;&t;342
+DECL|macro|__NR_setresuid
+mdefine_line|#define __NR_setresuid&t;&t;&t;343
+DECL|macro|__NR_getresuid
+mdefine_line|#define __NR_getresuid&t;&t;&t;344
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

@@ -821,7 +821,7 @@ suffix:colon
 id|LP_BUFFER_SIZE
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|lp-&gt;lp_buffer
@@ -1280,11 +1280,11 @@ OG
 l_int|0
 )paren
 (brace
-id|c
-op_assign
 id|get_user
 c_func
 (paren
+id|c
+comma
 id|temp
 )paren
 suffix:semicolon
@@ -2644,7 +2644,7 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -2709,7 +2709,7 @@ c_func
 id|minor
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -2774,7 +2774,7 @@ id|retval
 suffix:semicolon
 r_else
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -2868,7 +2868,7 @@ c_func
 id|minor
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

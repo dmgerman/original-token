@@ -5409,7 +5409,7 @@ id|status
 r_return
 id|status
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5528,7 +5528,7 @@ id|status
 r_return
 id|status
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5759,7 +5759,7 @@ id|tochdr.cdth_trk1
 op_assign
 id|disk_info.last
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -5827,7 +5827,7 @@ id|status
 r_return
 id|status
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5932,7 +5932,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -5999,7 +5999,7 @@ id|status
 r_return
 id|status
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -6123,7 +6123,7 @@ id|status
 r_return
 id|status
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -6189,7 +6189,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6263,7 +6263,7 @@ id|status
 r_return
 id|status
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -6346,7 +6346,7 @@ comma
 id|blocksize
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6408,7 +6408,7 @@ id|status
 r_return
 id|status
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -6513,7 +6513,7 @@ id|status
 r_return
 id|status
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -6574,7 +6574,7 @@ id|ms.xa_flag
 op_assign
 id|disk_info.xa
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

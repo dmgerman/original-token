@@ -150,6 +150,11 @@ id|___vm86_ds
 suffix:semicolon
 DECL|macro|VM86_REG_
 mdefine_line|#define VM86_REG_(x) (*(unsigned short *) &bslash;&n;&t;&t;      (reg_offset_vm86[((unsigned)x)]+(char *) FPU_info))
+multiline_comment|/* These are dummy, fs and gs are not saved on the stack. */
+DECL|macro|___FS
+mdefine_line|#define ___FS ___ds
+DECL|macro|___GS
+mdefine_line|#define ___GS ___ds
 DECL|variable|reg_offset_pm
 r_static
 r_int
@@ -187,7 +192,7 @@ m_offsetof
 r_struct
 id|info
 comma
-id|___fs
+id|___FS
 )paren
 comma
 m_offsetof
@@ -195,7 +200,7 @@ m_offsetof
 r_struct
 id|info
 comma
-id|___gs
+id|___GS
 )paren
 comma
 m_offsetof
@@ -252,12 +257,13 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|base
-op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
+id|base
+comma
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -371,6 +377,9 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* 8 bit signed displacement */
+r_int
+id|displacement
+suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
 id|FPU_code_verify_area
@@ -379,16 +388,13 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|offset
-op_add_assign
-(paren
-r_int
-r_char
-)paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
+id|displacement
+comma
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -397,6 +403,10 @@ op_star
 id|fpu_eip
 )paren
 )paren
+suffix:semicolon
+id|offset
+op_add_assign
+id|displacement
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
@@ -422,6 +432,9 @@ l_int|5
 multiline_comment|/* The second condition also has mod==0 */
 (brace
 multiline_comment|/* 32 bit displacement */
+r_int
+id|displacement
+suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
 id|FPU_code_verify_area
@@ -430,14 +443,11 @@ c_func
 l_int|4
 )paren
 suffix:semicolon
-id|offset
-op_add_assign
-(paren
-r_int
-)paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|displacement
+comma
 (paren
 r_int
 r_int
@@ -448,6 +458,10 @@ op_star
 id|fpu_eip
 )paren
 )paren
+suffix:semicolon
+id|offset
+op_add_assign
+id|displacement
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
@@ -575,6 +589,7 @@ id|segment
 op_decrement
 suffix:semicolon
 macro_line|#ifdef PARANOID
+multiline_comment|/* segment is unsigned, so this also detects if segment was 0: */
 r_if
 c_cond
 (paren
@@ -601,6 +616,53 @@ id|SIGSEGV
 suffix:semicolon
 )brace
 macro_line|#endif PARANOID
+r_switch
+c_cond
+(paren
+id|segment
+)paren
+(brace
+multiline_comment|/* fs and gs aren&squot;t used by the kernel, so they still have their&n;&t; user-space values. */
+r_case
+id|PREFIX_FS_
+op_minus
+l_int|1
+suffix:colon
+id|__asm__
+c_func
+(paren
+l_string|&quot;mov %%fs,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+op_star
+id|selector
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PREFIX_GS_
+op_minus
+l_int|1
+suffix:colon
+id|__asm__
+c_func
+(paren
+l_string|&quot;mov %%gs,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+op_star
+id|selector
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 op_star
 id|selector
 op_assign
@@ -610,6 +672,7 @@ c_func
 id|segment
 )paren
 suffix:semicolon
+)brace
 id|descriptor
 op_assign
 id|LDT_DESCRIPTOR
@@ -975,11 +1038,11 @@ c_func
 l_int|4
 )paren
 suffix:semicolon
-id|address
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|address
+comma
 (paren
 r_int
 r_int
@@ -1044,16 +1107,13 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|address
-op_assign
-(paren
-r_int
-r_char
-)paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
+id|address
+comma
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -1085,16 +1145,12 @@ c_func
 l_int|4
 )paren
 suffix:semicolon
-id|address
-op_assign
-(paren
-r_int
-)paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|address
+comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -1331,15 +1387,11 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
-id|address
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|address
+comma
 (paren
 r_int
 r_int
@@ -1378,15 +1430,11 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|address
-op_assign
-(paren
-r_int
-r_char
-)paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
+id|address
+comma
 (paren
 r_int
 r_char
@@ -1420,14 +1468,11 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
-id|address
-op_assign
-(paren
-r_int
-)paren
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|address
+comma
 (paren
 r_int
 r_int

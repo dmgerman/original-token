@@ -797,11 +797,11 @@ l_int|1
 )paren
 r_return
 suffix:semicolon
-id|mode
-op_assign
 id|get_user
 c_func
 (paren
+id|mode
+comma
 id|argp
 )paren
 suffix:semicolon

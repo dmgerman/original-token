@@ -201,7 +201,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -322,7 +322,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|iov-&gt;iov_base
@@ -399,7 +399,7 @@ comma
 id|iov-&gt;iov_len
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|kdata

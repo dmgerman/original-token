@@ -1030,7 +1030,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|target

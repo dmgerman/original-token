@@ -332,7 +332,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|value
@@ -673,7 +673,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -768,7 +768,7 @@ id|ovalue
 r_return
 id|error
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ovalue

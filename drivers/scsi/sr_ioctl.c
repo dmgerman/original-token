@@ -609,7 +609,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -756,7 +756,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -911,7 +911,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1201,7 +1201,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -1263,7 +1263,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|tocentry
@@ -1542,7 +1542,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -2009,7 +2009,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|volctrl
@@ -2604,7 +2604,7 @@ id|buffer
 l_int|27
 )braket
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -2880,7 +2880,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -3087,7 +3087,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -3166,7 +3166,7 @@ r_return
 id|err
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3300,7 +3300,7 @@ r_return
 id|err
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

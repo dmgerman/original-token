@@ -296,16 +296,31 @@ op_eq
 l_int|1
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;Taking exception at %lx (%lx)&bslash;n&quot;
+comma
+id|regs.pc
+comma
+id|regs.r28
+)paren
+suffix:semicolon
 id|current-&gt;tss.ex.count
 op_assign
 l_int|0
 suffix:semicolon
-id|__handle_exception
-c_func
+multiline_comment|/* return to the address in r28 */
 (paren
 op_amp
-id|current-&gt;tss.ex
+id|regs
 )paren
+op_member_access_from_pointer
+id|pc
+op_assign
+id|regs.r28
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 r_if

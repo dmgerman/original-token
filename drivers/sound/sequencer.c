@@ -500,7 +500,7 @@ op_ge
 id|ev_len
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -1036,7 +1036,7 @@ op_ge
 l_int|4
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -1233,7 +1233,7 @@ op_minus
 id|c
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -7039,7 +7039,7 @@ suffix:semicolon
 r_int
 id|dev
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -7140,7 +7140,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -7203,7 +7203,7 @@ suffix:semicolon
 r_int
 id|dev
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -7251,7 +7251,7 @@ op_minus
 id|ENXIO
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -7341,7 +7341,7 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -7452,7 +7452,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -7540,7 +7540,7 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -7643,7 +7643,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren

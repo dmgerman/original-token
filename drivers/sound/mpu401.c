@@ -2603,7 +2603,7 @@ id|cmd
 r_case
 l_int|1
 suffix:colon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -2693,7 +2693,7 @@ suffix:semicolon
 id|mpu_command_rec
 id|rec
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -2740,7 +2740,7 @@ l_int|0
 r_return
 id|ret
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -2870,7 +2870,7 @@ id|cmd
 r_case
 id|SNDCTL_SYNTH_INFO
 suffix:colon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren

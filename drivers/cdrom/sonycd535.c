@@ -3086,7 +3086,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3144,7 +3144,7 @@ id|schi.cdsc_audiostatus
 op_assign
 id|sony_audio_status
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -3307,7 +3307,7 @@ id|last_sony_subcode-&gt;rel_msf
 )paren
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -3932,7 +3932,7 @@ comma
 id|status
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|params
@@ -4208,7 +4208,7 @@ c_func
 id|sony_toc-&gt;last_track_num
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|hdr
@@ -4299,7 +4299,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -4446,7 +4446,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|entry
@@ -4517,7 +4517,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5015,7 +5015,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp

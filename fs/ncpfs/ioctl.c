@@ -197,7 +197,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -286,7 +286,7 @@ id|server-&gt;current_size
 op_assign
 id|request.size
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|server-&gt;packet
@@ -312,7 +312,7 @@ comma
 id|server-&gt;reply_size
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|request.data
@@ -429,7 +429,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -505,7 +505,7 @@ id|inode
 op_member_access_from_pointer
 id|DosDirNum
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -588,7 +588,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|server-&gt;m.mounted_uid

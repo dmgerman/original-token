@@ -8036,7 +8036,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -8085,7 +8085,7 @@ id|ETH_ALEN
 )paren
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp.addr
@@ -8423,7 +8423,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -8470,7 +8470,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp.addr
@@ -8595,7 +8595,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -8751,7 +8751,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data

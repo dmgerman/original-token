@@ -265,7 +265,7 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|skb_put
@@ -431,7 +431,7 @@ op_assign
 id|skb-&gt;len
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

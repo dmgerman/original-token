@@ -2893,7 +2893,7 @@ l_int|0
 r_return
 id|error
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3266,7 +3266,7 @@ op_ne
 id|NODQUOT
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|dqblk
@@ -3348,7 +3348,7 @@ id|dqstats.free_dquots
 op_assign
 id|nr_free_dquots
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|addr

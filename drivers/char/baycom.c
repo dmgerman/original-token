@@ -1580,7 +1580,7 @@ c_cond
 (paren
 id|from_user
 )paren
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|hdr
@@ -7951,7 +7951,7 @@ id|par.fulldup
 op_assign
 id|bc-&gt;ch_params.fulldup
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -8015,7 +8015,7 @@ id|i
 r_return
 id|i
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -8127,7 +8127,7 @@ id|i
 r_return
 id|i
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

@@ -1904,7 +1904,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2040,7 +2040,7 @@ op_assign
 id|dev-&gt;pa_addr
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Write this block to the caller&squot;s space. &n;&t;&t; */
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|pos
@@ -2090,7 +2090,7 @@ op_star
 )paren
 id|ifc.ifc_buf
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -2513,7 +2513,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3555,7 +3555,7 @@ comma
 id|getset
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -3585,7 +3585,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;The load of calls that return an ifreq and ok (saves memory).&n; */
 id|rarok
 suffix:colon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg

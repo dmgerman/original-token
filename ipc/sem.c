@@ -1788,7 +1788,7 @@ id|i
 r_return
 id|i
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|tmp
 comma
@@ -1912,7 +1912,7 @@ id|tbuf.sem_nsems
 op_assign
 id|sma-&gt;sem_nsems
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -2231,7 +2231,7 @@ id|ushort
 r_return
 id|i
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 id|sem_io
 comma
@@ -2337,7 +2337,7 @@ id|buf
 r_return
 id|i
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|tbuf
@@ -2441,7 +2441,7 @@ id|i
 dot
 id|semval
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|array
 comma
@@ -2599,7 +2599,7 @@ id|tbuf.sem_nsems
 op_assign
 id|sma-&gt;sem_nsems
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -2832,7 +2832,7 @@ id|tsops
 r_return
 id|i
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 id|sops
 comma

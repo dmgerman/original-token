@@ -1010,10 +1010,12 @@ r_do
 (brace
 r_char
 id|c
-op_assign
+suffix:semicolon
 id|get_user
 c_func
 (paren
+id|c
+comma
 (paren
 r_char
 op_star

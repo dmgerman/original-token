@@ -7324,7 +7324,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|msf
@@ -7439,7 +7439,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|ti
@@ -7614,7 +7614,7 @@ id|tochdr.cdth_trk1
 op_assign
 id|toc-&gt;hdr.last_track
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -7677,7 +7677,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|tocentry
@@ -7753,7 +7753,7 @@ id|tocentry.cdte_addr.lba
 op_assign
 id|toce-&gt;addr.lba
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -7815,7 +7815,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|subchnl
@@ -7981,7 +7981,7 @@ id|subchnl.cdsc_ind
 op_assign
 id|scbuf.acdsc_ind
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -8050,7 +8050,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|volctrl
@@ -8300,7 +8300,7 @@ id|buffer
 l_int|23
 )braket
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -8363,7 +8363,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|ms_info
@@ -8444,7 +8444,7 @@ id|ms_info.xa_flag
 op_assign
 id|toc-&gt;xa_flag
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -8536,7 +8536,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|ra
@@ -8728,7 +8728,7 @@ id|stat
 )paren
 r_break
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|ra.buf
 comma
@@ -8843,7 +8843,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|msf
@@ -8958,7 +8958,7 @@ id|stat
 op_eq
 l_int|0
 )paren
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_char
@@ -9078,7 +9078,7 @@ l_int|1
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -9315,7 +9315,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|pc.c
@@ -9365,7 +9365,7 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|len
@@ -9477,7 +9477,7 @@ id|len
 OG
 l_int|0
 )paren
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void

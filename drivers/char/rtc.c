@@ -535,7 +535,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -833,7 +833,7 @@ op_amp
 id|alm_tm
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -909,7 +909,7 @@ l_int|0
 r_return
 id|retval
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1105,7 +1105,7 @@ op_amp
 id|rtc_tm
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -1213,7 +1213,7 @@ l_int|0
 r_return
 id|retval
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1613,7 +1613,7 @@ l_int|0
 r_return
 id|retval
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

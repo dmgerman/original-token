@@ -2768,7 +2768,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2964,7 +2964,7 @@ op_assign
 id|CDROM_AUDIO_NO_STATUS
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3116,7 +3116,7 @@ id|toc_header.cdth_trk1
 op_assign
 id|sjcd_last_track_no
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -3190,7 +3190,7 @@ id|sjcd_hw_disk_info
 op_star
 id|tp
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3332,7 +3332,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -3405,7 +3405,7 @@ r_struct
 id|sjcd_hw_qinfo
 id|q_info
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3566,7 +3566,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -3642,7 +3642,7 @@ id|dummy
 l_int|4
 )braket
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3792,7 +3792,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

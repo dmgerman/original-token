@@ -1152,7 +1152,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|tbuf
@@ -1235,7 +1235,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -1317,7 +1317,7 @@ id|shm_info.swap_successes
 op_assign
 id|swap_successes
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -1462,7 +1462,7 @@ id|tbuf.shm_nattch
 op_assign
 id|shp-&gt;shm_nattch
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -1693,7 +1693,7 @@ id|tbuf.shm_nattch
 op_assign
 id|shp-&gt;shm_nattch
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|buf
 comma

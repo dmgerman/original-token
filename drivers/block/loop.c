@@ -1674,7 +1674,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2040,7 +2040,7 @@ id|lo-&gt;lo_encrypt_key_size
 )paren
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg

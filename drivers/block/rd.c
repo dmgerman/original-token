@@ -461,7 +461,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

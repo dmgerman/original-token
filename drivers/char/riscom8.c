@@ -5872,7 +5872,7 @@ c_cond
 id|from_user
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp_buf
@@ -7136,7 +7136,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -7484,7 +7484,7 @@ id|tmp.xmit_fifo_size
 op_assign
 id|CD180_NFIFO
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|retinfo

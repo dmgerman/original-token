@@ -66,7 +66,7 @@ op_logical_neg
 id|size
 )paren
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 id|vma
 op_assign
@@ -206,7 +206,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 id|check_stack
 suffix:colon
@@ -242,8 +242,7 @@ suffix:semicolon
 id|bad_area
 suffix:colon
 r_return
-op_minus
-id|EFAULT
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; *&n; * error_code:&n; *&t;bit 0 == 0 means no page found, 1 means protection fault&n; *&t;bit 1 == 0 means read, 1 means write&n; *&t;bit 2 == 0 means kernel, 1 means user-mode&n; */
@@ -571,13 +570,40 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|handle_exception
+multiline_comment|/* is there valid exception data? Return to indicated handler if so */
+r_if
+c_cond
+(paren
+id|tsk-&gt;tss.ex.count
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
 c_func
 (paren
-op_amp
-id|tsk-&gt;tss.ex
+l_string|&quot;Exception at %lx (%lx)&bslash;n&quot;
+comma
+id|regs-&gt;eip
+comma
+id|regs-&gt;edx
 )paren
 suffix:semicolon
+id|tsk-&gt;tss.ex.count
+op_decrement
+suffix:semicolon
+id|regs-&gt;eip
+op_assign
+id|regs-&gt;edx
+suffix:semicolon
+id|regs-&gt;edx
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

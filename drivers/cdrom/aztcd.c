@@ -4606,7 +4606,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -4684,7 +4684,7 @@ id|ms.xa_flag
 op_assign
 id|DiskInfo.xa
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -4782,7 +4782,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -4928,7 +4928,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5100,7 +5100,7 @@ id|tocHdr.cdth_trk1
 op_assign
 id|DiskInfo.last
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -5147,7 +5147,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5301,7 +5301,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -5363,7 +5363,7 @@ r_return
 id|st
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5528,7 +5528,7 @@ id|qInfo.trackTime.frame
 )paren
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -5582,7 +5582,7 @@ r_return
 id|st
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5786,7 +5786,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5911,7 +5911,7 @@ comma
 id|CD_FRAMESIZE_RAW
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -5959,7 +5959,7 @@ comma
 id|CD_FRAMESIZE
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6007,7 +6007,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp

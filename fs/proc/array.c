@@ -200,7 +200,7 @@ id|dump
 op_plus
 id|p
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -266,7 +266,7 @@ id|read
 op_increment
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -486,7 +486,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -4245,7 +4245,7 @@ id|i
 op_assign
 id|count
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|destptr
@@ -5058,7 +5058,7 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* We have had block-adjusting processing! */
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -5119,7 +5119,7 @@ id|count
 op_plus
 id|file-&gt;f_pos
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

@@ -71,14 +71,16 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|new_set
-op_assign
 id|get_user
 c_func
 (paren
+id|new_set
+comma
 id|set
 )paren
-op_amp
+suffix:semicolon
+id|new_set
+op_and_assign
 id|_BLOCKABLE
 suffix:semicolon
 r_switch
@@ -570,7 +572,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -650,7 +652,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|oldaction

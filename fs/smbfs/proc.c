@@ -406,7 +406,7 @@ c_cond
 (paren
 id|fs
 )paren
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p
@@ -503,7 +503,7 @@ c_cond
 (paren
 id|fs
 )paren
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|data
@@ -3051,7 +3051,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* In smb_proc_read and smb_proc_write we do not retry, because the&n;   file-id would not be valid after a reconnection. */
-multiline_comment|/* smb_proc_read: fs indicates if it should be copied with&n;   memcpy_tofs. */
+multiline_comment|/* smb_proc_read: fs indicates if it should be copied with&n;   copy_to_user. */
 r_int
 DECL|function|smb_proc_read
 id|smb_proc_read
@@ -3497,7 +3497,7 @@ comma
 id|count
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p

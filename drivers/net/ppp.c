@@ -7249,7 +7249,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 id|new_data
 comma
@@ -7359,7 +7359,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|data
@@ -7419,7 +7419,7 @@ l_int|0
 r_return
 id|error
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 id|ccp_option
 comma
@@ -8532,7 +8532,7 @@ id|ppp-&gt;ddinfo.recv_idle
 op_div
 id|HZ
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -8595,7 +8595,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -8665,7 +8665,7 @@ id|temp_tbl
 l_int|8
 )braket
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 id|temp_tbl
 comma
@@ -8947,7 +8947,7 @@ r_struct
 id|npioctl
 id|npi
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|npi
@@ -9038,7 +9038,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_void
@@ -9647,7 +9647,7 @@ id|error
 op_eq
 l_int|0
 )paren
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|result
 comma
@@ -9808,7 +9808,7 @@ id|error
 op_eq
 l_int|0
 )paren
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|result
 comma
@@ -9952,7 +9952,7 @@ id|error
 op_eq
 l_int|0
 )paren
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|result
 comma

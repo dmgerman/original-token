@@ -104,7 +104,7 @@ id|tmp.st_ctime
 op_assign
 id|inode-&gt;i_ctime
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|statbuf
@@ -342,7 +342,7 @@ op_assign
 id|inode-&gt;i_blksize
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|statbuf

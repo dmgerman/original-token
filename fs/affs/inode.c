@@ -3189,7 +3189,7 @@ id|tmp.f_ffree
 op_assign
 l_int|0
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

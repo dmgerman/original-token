@@ -235,7 +235,7 @@ id|vals.ipxcfg_auto_select_primary
 op_assign
 id|ipxcfg_auto_select_primary
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -3626,7 +3626,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3772,7 +3772,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3864,7 +3864,7 @@ id|sipx-&gt;sipx_node
 )paren
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -5088,7 +5088,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -6538,7 +6538,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 r_sizeof
@@ -6546,11 +6546,6 @@ r_sizeof
 r_int
 )paren
 comma
-(paren
-r_int
-r_int
-op_star
-)paren
 id|optlen
 )paren
 suffix:semicolon
@@ -6577,13 +6572,12 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|val
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -9109,7 +9103,6 @@ comma
 r_sizeof
 (paren
 r_int
-r_int
 )paren
 )paren
 suffix:semicolon
@@ -9142,13 +9135,12 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|amount
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -9212,7 +9204,6 @@ comma
 r_sizeof
 (paren
 r_int
-r_int
 )paren
 )paren
 suffix:semicolon
@@ -9226,13 +9217,12 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|amount
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -9414,7 +9404,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

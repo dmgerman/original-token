@@ -4719,7 +4719,7 @@ id|gus_info.nr_voices
 op_assign
 id|nr_voices
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -7570,7 +7570,7 @@ id|ENOSPC
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Copy the header from user space but ignore the first bytes which have&n;   * been transferred already.&n;   */
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 (paren
@@ -8140,7 +8140,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;   * OK, move now. First in and then out.&n;&t;   */
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 id|audio_devs
 (braket
@@ -11190,7 +11190,7 @@ op_eq
 l_int|1
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|localbuf

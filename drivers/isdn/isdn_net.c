@@ -8941,7 +8941,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|phones

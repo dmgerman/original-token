@@ -8358,7 +8358,7 @@ c_cond
 op_logical_neg
 id|err
 )paren
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -8899,7 +8899,7 @@ l_int|4
 )paren
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|args
@@ -9039,7 +9039,7 @@ comma
 id|ide_wait
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

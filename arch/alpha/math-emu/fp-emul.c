@@ -1080,11 +1080,11 @@ suffix:semicolon
 id|__u32
 id|insn
 suffix:semicolon
-id|insn
-op_assign
 id|get_user
 c_func
 (paren
+id|insn
+comma
 (paren
 id|__u32
 op_star
@@ -1759,11 +1759,11 @@ c_loop
 id|write_mask
 )paren
 (brace
-id|insn
-op_assign
 id|get_user
 c_func
 (paren
+id|insn
+comma
 (paren
 id|__u32
 op_star

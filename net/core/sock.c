@@ -125,11 +125,11 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|val
-op_assign
 id|get_user
 c_func
 (paren
+id|val
+comma
 (paren
 r_int
 op_star
@@ -413,7 +413,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -699,7 +699,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 r_sizeof
@@ -707,11 +707,6 @@ r_sizeof
 id|ling
 )paren
 comma
-(paren
-r_int
-r_int
-op_star
-)paren
 id|optlen
 )paren
 suffix:semicolon
@@ -723,7 +718,7 @@ id|ling.l_linger
 op_assign
 id|sk-&gt;lingertime
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|optval
@@ -781,7 +776,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 r_sizeof
@@ -789,11 +784,6 @@ r_sizeof
 r_int
 )paren
 comma
-(paren
-r_int
-r_int
-op_star
-)paren
 id|optlen
 )paren
 suffix:semicolon
@@ -822,7 +812,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|val

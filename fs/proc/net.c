@@ -160,7 +160,7 @@ l_int|0
 r_break
 suffix:semicolon
 multiline_comment|/*&n; &t;&t; *&t;Copy the bytes&n;&t;&t; */
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

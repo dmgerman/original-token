@@ -77,12 +77,12 @@ id|msg_qbytes
 suffix:semicolon
 multiline_comment|/* max number of bytes on queue */
 DECL|member|msg_lspid
-id|__kernel_pid_t
+id|__kernel_ipc_pid_t
 id|msg_lspid
 suffix:semicolon
 multiline_comment|/* pid of last msgsnd */
 DECL|member|msg_lrpid
-id|__kernel_pid_t
+id|__kernel_ipc_pid_t
 id|msg_lrpid
 suffix:semicolon
 multiline_comment|/* last receive pid */

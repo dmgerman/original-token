@@ -1299,7 +1299,7 @@ id|ti
 r_return
 id|ans
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1449,7 +1449,7 @@ id|cdrom_msf
 r_return
 id|ans
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1615,7 +1615,7 @@ id|entry
 r_return
 id|ans
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1757,7 +1757,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -1829,7 +1829,7 @@ id|sub
 r_return
 id|ans
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2042,7 +2042,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -2116,7 +2116,7 @@ id|toc.cdth_trk1
 op_assign
 id|stuffp-&gt;di.n_last
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -2267,7 +2267,7 @@ id|cdrom_multisession
 r_return
 id|ans
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2347,7 +2347,7 @@ op_logical_neg
 op_logical_neg
 id|stuffp-&gt;multi.multi
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -2525,7 +2525,7 @@ id|volctrl
 r_return
 id|ans
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp

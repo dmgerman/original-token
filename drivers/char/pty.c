@@ -32,7 +32,7 @@ DECL|macro|PTY_MAGIC
 mdefine_line|#define PTY_MAGIC 0x5001
 DECL|macro|PTY_BUF_SIZE
 mdefine_line|#define PTY_BUF_SIZE PAGE_SIZE/2
-multiline_comment|/*&n; * tmp_buf is used as a temporary buffer by pty_write.  We need to&n; * lock it in case the memcpy_fromfs blocks while swapping in a page,&n; * and some other program tries to do a pty write at the same time.&n; * Since the lock will only come under contention when the system is&n; * swapping and available memory is low, it makes sense to share one&n; * buffer across all the PTY&squot;s, since it significantly saves memory if&n; * large numbers of PTY&squot;s are open.&n; */
+multiline_comment|/*&n; * tmp_buf is used as a temporary buffer by pty_write.  We need to&n; * lock it in case the copy_from_user blocks while swapping in a page,&n; * and some other program tries to do a pty write at the same time.&n; * Since the lock will only come under contention when the system is&n; * swapping and available memory is low, it makes sense to share one&n; * buffer across all the PTY&squot;s, since it significantly saves memory if&n; * large numbers of PTY&squot;s are open.&n; */
 DECL|variable|tmp_buf
 r_static
 r_int
@@ -420,27 +420,6 @@ op_star
 id|PTY_BUF_SIZE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|exception
-c_func
-(paren
-)paren
-)paren
-(brace
-id|up
-c_func
-(paren
-op_amp
-id|tmp_buf_sem
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -459,7 +438,7 @@ comma
 id|PTY_BUF_SIZE
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|temp_buffer
@@ -525,11 +504,6 @@ op_sub_assign
 id|n
 suffix:semicolon
 )brace
-id|end_exception
-c_func
-(paren
-)paren
-suffix:semicolon
 id|up
 c_func
 (paren

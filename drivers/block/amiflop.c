@@ -7808,7 +7808,7 @@ id|drive
 dot
 id|blocks
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -7957,7 +7957,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

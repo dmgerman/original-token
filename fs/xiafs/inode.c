@@ -840,7 +840,7 @@ id|tmp.f_namelen
 op_assign
 id|_XIAFS_NAME_LEN
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

@@ -1209,7 +1209,7 @@ c_cond
 id|from_user
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmpbuf
@@ -3298,7 +3298,7 @@ c_cond
 (paren
 id|from_user
 )paren
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -7937,7 +7937,7 @@ c_cond
 id|from_user
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|cbuf

@@ -3710,7 +3710,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|dev-&gt;dev_addr
@@ -3860,7 +3860,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg

@@ -185,7 +185,7 @@ op_and_assign
 op_complement
 id|PF_USEDFPU
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -563,7 +563,7 @@ id|current-&gt;tss.i387.hard.status
 op_assign
 id|current-&gt;tss.i387.hard.swd
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

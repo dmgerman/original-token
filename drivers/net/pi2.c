@@ -7370,7 +7370,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -7614,7 +7614,7 @@ id|rq.irq
 op_assign
 id|dev-&gt;irq
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ifr-&gt;ifr_data

@@ -5940,7 +5940,7 @@ mdefine_line|#define OPEN_WRITE_BIT 16
 DECL|macro|IOCTL_ALLOWED
 mdefine_line|#define IOCTL_ALLOWED (filp &amp;&amp; (filp-&gt;f_mode &amp; IOCTL_MODE_BIT))
 DECL|macro|COPYIN
-mdefine_line|#define COPYIN(x) (memcpy_fromfs( &amp;(x), (void *) param, sizeof(x)))
+mdefine_line|#define COPYIN(x) (copy_from_user( &amp;(x), (void *) param, sizeof(x)))
 r_int
 id|drive
 comma
@@ -6148,7 +6148,7 @@ id|getprm.stretch
 op_assign
 id|dtp-&gt;stretch
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

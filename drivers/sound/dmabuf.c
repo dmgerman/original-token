@@ -4851,7 +4851,7 @@ id|info.bytes
 op_add_assign
 id|info.ptr
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -4995,7 +4995,7 @@ id|info.bytes
 op_add_assign
 id|info.ptr
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren

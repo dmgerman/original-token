@@ -483,7 +483,7 @@ l_int|0
 r_break
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Copy the bytes&n;&t; */
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -612,7 +612,7 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|page

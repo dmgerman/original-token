@@ -10868,7 +10868,7 @@ comma
 id|count
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|buf_ptr
 comma
@@ -10927,7 +10927,7 @@ r_return
 id|actually_read
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|buf_ptr
 comma
@@ -10987,7 +10987,7 @@ comma
 id|bytes_read
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|buf_ptr
 comma
@@ -11177,7 +11177,7 @@ comma
 id|count
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 id|tape-&gt;merge_buffer
 op_plus
@@ -11245,7 +11245,7 @@ op_ge
 id|tape-&gt;data_buffer_size
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 id|tape-&gt;merge_buffer
 comma
@@ -11300,7 +11300,7 @@ id|actually_written
 op_add_assign
 id|count
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 id|tape-&gt;merge_buffer
 comma
@@ -11471,7 +11471,7 @@ r_return
 id|retval
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -11547,7 +11547,7 @@ r_return
 id|retval
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_char
@@ -11636,7 +11636,7 @@ r_return
 id|retval
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 (paren
 r_char

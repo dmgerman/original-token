@@ -2018,7 +2018,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2081,7 +2081,7 @@ r_return
 id|rc
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc.data
@@ -2223,7 +2223,7 @@ c_cond
 id|ioc.len
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|S2H

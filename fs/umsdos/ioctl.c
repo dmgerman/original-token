@@ -79,7 +79,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|d-&gt;ent-&gt;d_name
 comma
@@ -251,7 +251,8 @@ id|UMSDOS_GETVERSION
 )paren
 (brace
 multiline_comment|/* #Specification: ioctl / UMSDOS_GETVERSION&n;&t;&t;&t;&t;The field version and release of the structure&n;&t;&t;&t;&t;umsdos_ioctl are filled with the version and release&n;&t;&t;&t;&t;number of the fs code in the kernel. This will allow&n;&t;&t;&t;&t;some form of checking. Users won&squot;t be able to run&n;&t;&t;&t;&t;incompatible utility such as the synchroniser (umssync).&n;&t;&t;&t;&t;umsdos_progs/umsdosio.c enforce this checking.&n;&n;&t;&t;&t;&t;Return always 0.&n;&t;&t;&t;*/
-id|put_fs_byte
+id|put_user
+c_func
 (paren
 id|UMSDOS_VERSION
 comma
@@ -259,7 +260,8 @@ op_amp
 id|idata-&gt;version
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
+c_func
 (paren
 id|UMSDOS_RELEASE
 comma
@@ -443,7 +445,7 @@ op_amp
 id|info
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 op_amp
@@ -458,7 +460,7 @@ id|entry
 )paren
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 op_amp
@@ -547,7 +549,7 @@ r_struct
 id|umsdos_ioctl
 id|data
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|data
@@ -812,7 +814,7 @@ id|data.stat.st_mtime
 op_assign
 id|inode-&gt;i_mtime
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 id|idata-&gt;stat

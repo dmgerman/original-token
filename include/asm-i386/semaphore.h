@@ -70,7 +70,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/lib/semaphore.S&n; */
 DECL|function|down
 r_extern
-r_inline
+id|__inline__
 r_void
 id|down
 c_func
@@ -120,7 +120,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Note! This is subtle. We jump to wake people up only if&n; * the semaphore was negative (== somebody was waiting on it).&n; * The default case (no contention) will result in NO&n; * jumps for both down() and up().&n; */
 DECL|function|up
 r_extern
-r_inline
+id|__inline__
 r_void
 id|up
 c_func

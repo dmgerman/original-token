@@ -985,7 +985,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -1202,6 +1202,12 @@ comma
 id|MS_SYNCHRONOUS
 comma
 l_string|&quot;,sync&quot;
+)brace
+comma
+(brace
+id|MS_MANDLOCK
+comma
+l_string|&quot;,mand&quot;
 )brace
 comma
 macro_line|#ifdef MS_NOSUB&t;&t;&t;/* Can&squot;t find this except in mount.c */
@@ -2352,7 +2358,7 @@ id|tmp.f_tinode
 op_assign
 id|sbuf.f_ffree
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ubuf
@@ -3826,7 +3832,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren

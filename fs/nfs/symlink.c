@@ -499,7 +499,7 @@ op_logical_neg
 id|error
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buffer

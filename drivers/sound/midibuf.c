@@ -1455,7 +1455,7 @@ id|i
 op_increment
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -1743,7 +1743,7 @@ comma
 id|tmp_data
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren

@@ -1049,7 +1049,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1230,7 +1230,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1403,7 +1403,7 @@ id|tocHdr.cdth_trk1
 op_assign
 id|DiskInfo.last
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -1451,7 +1451,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1587,7 +1587,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -1635,7 +1635,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1787,7 +1787,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -1837,7 +1837,7 @@ id|st
 r_return
 id|st
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp

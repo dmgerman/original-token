@@ -335,7 +335,7 @@ id|IRQ_cards
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * tmp_buf is used as a temporary buffer by serial_write.  We need to&n; * lock it in case the memcpy_fromfs blocks while swapping in a page,&n; * and some other program tries to do a serial write at the same time.&n; * Since the lock will only come under contention when the system is&n; * swapping and available memory is low, it makes sense to share one&n; * buffer across all the serial ports, since it significantly saves&n; * memory if large numbers of serial ports are open.&n; */
+multiline_comment|/*&n; * tmp_buf is used as a temporary buffer by serial_write.  We need to&n; * lock it in case the copy_from_user blocks while swapping in a page,&n; * and some other program tries to do a serial write at the same time.&n; * Since the lock will only come under contention when the system is&n; * swapping and available memory is low, it makes sense to share one&n; * buffer across all the serial ports, since it significantly saves&n; * memory if large numbers of serial ports are open.&n; */
 DECL|variable|tmp_buf
 r_static
 r_int
@@ -6072,7 +6072,7 @@ op_amp
 id|tmp_buf_sem
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp_buf
@@ -6983,7 +6983,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*!!!*/
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|retinfo
@@ -7038,7 +7038,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -8117,7 +8117,7 @@ op_star
 id|mon
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|mon

@@ -889,7 +889,7 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1589,7 +1589,7 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 r_sizeof
@@ -1597,11 +1597,6 @@ r_sizeof
 r_int
 )paren
 comma
-(paren
-r_int
-r_int
-op_star
-)paren
 id|optlen
 )paren
 suffix:semicolon
@@ -1630,13 +1625,12 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|val
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -4965,7 +4959,6 @@ comma
 r_sizeof
 (paren
 r_int
-r_int
 )paren
 )paren
 )paren
@@ -4992,13 +4985,12 @@ id|amount
 op_assign
 l_int|0
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|amount
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -5060,7 +5052,6 @@ comma
 r_sizeof
 (paren
 r_int
-r_int
 )paren
 )paren
 )paren
@@ -5070,13 +5061,12 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|amount
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -5139,7 +5129,7 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -5276,7 +5266,7 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5299,7 +5289,7 @@ id|nr_parms
 op_assign
 id|nr_default
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -5373,7 +5363,7 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp

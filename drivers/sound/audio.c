@@ -971,7 +971,7 @@ id|d-&gt;copy_from_user
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t; * No device specific copy routine&n;&t;&t;&t;&t; */
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 id|dma_buf
@@ -1310,7 +1310,7 @@ id|l
 )paren
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -1675,7 +1675,7 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -1827,7 +1827,7 @@ id|info.bytes
 op_sub_assign
 id|buf_ptr
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -1947,7 +1947,7 @@ id|info
 op_or_assign
 id|DSP_CAP_MMAP
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren

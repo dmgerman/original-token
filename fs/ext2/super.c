@@ -3447,7 +3447,7 @@ id|tmp.f_namelen
 op_assign
 id|EXT2_NAME_LEN
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

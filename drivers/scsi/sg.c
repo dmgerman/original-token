@@ -303,16 +303,16 @@ id|result
 r_return
 id|result
 suffix:semicolon
+id|get_user
+c_func
+(paren
 id|scsi_generics
 (braket
 id|dev
 )braket
 dot
 id|timeout
-op_assign
-id|get_user
-c_func
-(paren
+comma
 (paren
 r_int
 op_star
@@ -1058,7 +1058,7 @@ id|sg_header
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -1104,7 +1104,7 @@ id|sg_header
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -1515,7 +1515,7 @@ id|device-&gt;complete
 op_assign
 l_int|0
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1543,11 +1543,11 @@ id|sg_header
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Now we need to grab the command itself from the user&squot;s buffer.&n;     */
-id|opcode
-op_assign
 id|get_user
 c_func
 (paren
+id|opcode
+comma
 id|buf
 )paren
 suffix:semicolon
@@ -1795,7 +1795,7 @@ op_assign
 id|size
 suffix:semicolon
 multiline_comment|/*&n;     * Now copy the SCSI command from the user&squot;s address space.&n;     */
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|cmnd
@@ -1817,7 +1817,7 @@ id|input_size
 OG
 l_int|0
 )paren
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|device-&gt;buff

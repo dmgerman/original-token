@@ -12334,7 +12334,7 @@ id|size
 )paren
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|param
@@ -12387,7 +12387,7 @@ id|size
 )paren
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren

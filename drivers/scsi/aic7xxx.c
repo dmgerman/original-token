@@ -1,9 +1,10 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver for Linux.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Sources include the Adaptec 1740 driver (aha1740.c), the Ultrastor 24F&n; * driver (ultrastor.c), various Linux kernel source, the Adaptec EISA&n; * config file (!adp7771.cfg), the Adaptec AHA-2740A Series User&squot;s Guide,&n; * the Linux Kernel Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; * the Adaptec 1542 driver (aha1542.c), the Adaptec EISA overlay file&n; * (adp7770.ovl), the Adaptec AHA-2740 Series Technical Reference Manual,&n; * the Adaptec AIC-7770 Data Book, the ANSI SCSI specification, the&n; * ANSI SCSI-2 specification (draft 10c), ...&n; *&n; * ----------------------------------------------------------------&n; *  Modified to include support for wide and twin bus adapters,&n; *  DMAing of SCBs, tagged queueing, IRQ sharing, bug fixes,&n; *  SCB paging, and other rework of the code.&n; *&n; *  Parts of this driver are based on the FreeBSD driver by Justin&n; *  T. Gibbs.&n; *&n; *  A Boot time option was also added for not resetting the scsi bus.&n; *&n; *    Form:  aic7xxx=extended,no_reset&n; *&n; *    -- Daniel M. Eischen, deischen@iworks.InterWorks.org, 07/07/96&n; *&n; *  $Id: aic7xxx.c,v 3.4 1996/08/09 15:56:31 deang Exp $&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver for Linux.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Sources include the Adaptec 1740 driver (aha1740.c), the Ultrastor 24F&n; * driver (ultrastor.c), various Linux kernel source, the Adaptec EISA&n; * config file (!adp7771.cfg), the Adaptec AHA-2740A Series User&squot;s Guide,&n; * the Linux Kernel Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; * the Adaptec 1542 driver (aha1542.c), the Adaptec EISA overlay file&n; * (adp7770.ovl), the Adaptec AHA-2740 Series Technical Reference Manual,&n; * the Adaptec AIC-7770 Data Book, the ANSI SCSI specification, the&n; * ANSI SCSI-2 specification (draft 10c), ...&n; *&n; * ----------------------------------------------------------------&n; *  Modified to include support for wide and twin bus adapters,&n; *  DMAing of SCBs, tagged queueing, IRQ sharing, bug fixes,&n; *  SCB paging, and other rework of the code.&n; *&n; *  Parts of this driver are based on the FreeBSD driver by Justin&n; *  T. Gibbs.&n; *&n; *  A Boot time option was also added for not resetting the scsi bus.&n; *&n; *    Form:  aic7xxx=extended,no_reset&n; *&n; *    -- Daniel M. Eischen, deischen@iworks.InterWorks.org, 07/07/96&n; *&n; *  $Id: aic7xxx.c,v 4.0 1996/10/13 08:23:42 deang Exp $&n; *-M*************************************************************************/
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,7 +21,11 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;aic7xxx.h&quot;
 macro_line|#include &quot;aic7xxx_reg.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;&t;/* for kmalloc() */
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
+multiline_comment|/*&n; * To generate the correct addresses for the controller to issue&n; * on the bus.  Originally added for DEC Alpha support.&n; */
+DECL|macro|VIRT_TO_BUS
+mdefine_line|#define VIRT_TO_BUS(a) (unsigned int)virt_to_bus((void *)(a))
 DECL|variable|proc_scsi_aic7xxx
 r_struct
 id|proc_dir_entry
@@ -43,7 +48,7 @@ l_int|2
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;$Revision: 3.4 $&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;$Revision: 4.0 $&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -58,7 +63,7 @@ macro_line|#ifndef FALSE
 DECL|macro|FALSE
 macro_line|#  define FALSE 0
 macro_line|#endif
-multiline_comment|/*&n; * Defines for PCI bus support, testing twin bus support, DMAing of&n; * SCBs, tagged queueing, commands (SCBs) per lun, and SCSI bus reset&n; * delay time.&n; *&n; *   o PCI bus support - this has been implemented and working since&n; *     the December 1, 1994 release of this driver. If you don&squot;t have&n; *     a PCI bus, then you can configure your kernel without PCI&n; *     support because all PCI dependent code is bracketed with&n; *     &quot;#ifdef CONFIG_PCI ... #endif CONFIG_PCI&quot;.&n; *&n; *   o Twin bus support - this has been tested and does work.&n; *&n; *   o DMAing of SCBs - thanks to Kai Makisara, this now works.&n; *     This define is now taken out and DMAing of SCBs is always&n; *     performed (8/12/95 - DE).&n; *&n; *   o Tagged queueing - this driver is capable of tagged queueing&n; *     but I am unsure as to how well the higher level driver implements&n; *     tagged queueing. Therefore, the maximum commands per lun is&n; *     set to 2. If you want to implement tagged queueing, ensure&n; *     this define is not commented out.&n; *&n; *   o Commands per lun - If tagged queueing is enabled, then you&n; *     may want to try increasing AIC7XXX_CMDS_PER_LUN to more&n; *     than 2.  By default, we limit the SCBs per LUN to 2 with&n; *     or without tagged queueing enabled.  If tagged queueing is&n; *     disabled, the sequencer will keep the 2nd SCB in the input&n; *     queue until the first one completes - so it is OK to to have&n; *     more than 1 SCB queued.  If tagged queueing is enabled, then&n; *     the sequencer will attempt to send the 2nd SCB to the device&n; *     while the first SCB is executing and the device is disconnected.&n; *     For adapters limited to 4 SCBs, you may want to actually&n; *     decrease the commands per LUN to 1, if you often have more&n; *     than 2 devices active at the same time.  This will allocate&n; *     1 SCB for each device and ensure that there will always be&n; *     a free SCB for up to 4 devices active at the same time.&n; *     When SCB paging is enabled, set the commands per LUN to 8&n; *     or higher (see SCB paging support below).  Note that if&n; *     AIC7XXX_CMDS_PER_LUN is not defined and tagged queueing is&n; *     enabled, the driver will attempt to set the commands per&n; *     LUN using its own heuristic based on the number of available&n; *     SCBs.&n; *&n; *   o 3985 support - The 3985 adapter is much like the 3940, but&n; *     has three 7870 controllers as opposed to two for the 3940.&n; *     It will get probed and recognized as three different adapters,&n; *     but all three controllers share the same bank of 255 SCBs&n; *     instead of each controller having their own bank (like the&n; *     controllers on the 3940).  For this reason, it is important&n; *     that all devices be resident on just one channel of the 3985.&n; *     In the near future, we&squot;ll modify the driver to reserve 1/3&n; *     of the SCBs for each controller.&n; *&n; *   o SCB paging support - SCB paging is enabled by defining&n; *     AIC7XXX_PAGE_ENABLE.  Support for this was taken from the&n; *     FreeBSD driver (by Justin Gibbs) and allows for up to 255&n; *     active SCBs.  This will increase performance when tagged&n; *     queueing is enabled.  Note that you should increase the&n; *     AIC7XXX_CMDS_PER_LUN to 8 as most tagged queueing devices&n; *     allow at least this many.&n; *&n; *  Note that sharing of IRQs is not an option any longer.  Linux supports&n; *  it so we support it.&n; *&n; *  Daniel M. Eischen, deischen@iworks.InterWorks.org, 06/30/96&n; */
+multiline_comment|/*&n; * Defines for PCI bus support, testing twin bus support, DMAing of&n; * SCBs, tagged queueing, commands (SCBs) per lun, and SCSI bus reset&n; * delay time.&n; *&n; *   o PCI bus support - this has been implemented and working since&n; *     the December 1, 1994 release of this driver. If you don&squot;t have&n; *     a PCI bus, then you can configure your kernel without PCI&n; *     support because all PCI dependent code is bracketed with&n; *     &quot;#ifdef CONFIG_PCI ... #endif CONFIG_PCI&quot;.&n; *&n; *   o Twin bus support - this has been tested and does work.&n; *&n; *   o DMAing of SCBs - thanks to Kai Makisara, this now works.&n; *     This define is now taken out and DMAing of SCBs is always&n; *     performed (8/12/95 - DE).&n; *&n; *   o Tagged queueing - this driver is capable of tagged queueing&n; *     but I am unsure as to how well the higher level driver implements&n; *     tagged queueing. Therefore, the maximum commands per lun is&n; *     set to 2. If you want to implement tagged queueing, ensure&n; *     this define is not commented out.&n; *&n; *   o Commands per lun - If tagged queueing is enabled, then you&n; *     may want to try increasing AIC7XXX_CMDS_PER_LUN to more&n; *     than 2.  By default, we limit the SCBs per LUN to 2 with&n; *     or without tagged queueing enabled.  If tagged queueing is&n; *     disabled, the sequencer will keep the 2nd SCB in the input&n; *     queue until the first one completes - so it is OK to to have&n; *     more than 1 SCB queued.  If tagged queueing is enabled, then&n; *     the sequencer will attempt to send the 2nd SCB to the device&n; *     while the first SCB is executing and the device is disconnected.&n; *     For adapters limited to 4 SCBs, you may want to actually&n; *     decrease the commands per LUN to 1, if you often have more&n; *     than 2 devices active at the same time.  This will allocate&n; *     1 SCB for each device and ensure that there will always be&n; *     a free SCB for up to 4 devices active at the same time.&n; *     When SCB paging is enabled, set the commands per LUN to 8&n; *     or higher (see SCB paging support below).  Note that if&n; *     AIC7XXX_CMDS_PER_LUN is not defined and tagged queueing is&n; *     enabled, the driver will attempt to set the commands per&n; *     LUN using its own heuristic based on the number of available&n; *     SCBs.&n; *&n; *   o 3985 support - The 3985 adapter is much like the 3940, but&n; *     has three 7870 controllers as opposed to two for the 3940.&n; *     It will get probed and recognized as three different adapters,&n; *     but all three controllers can share the same external bank of&n; *     255 SCBs.  If you enable AIC7XXX_SHARE_SCBS, then the driver&n; *     will attempt to share the common bank of SCBs between the three&n; *     controllers of the 3985.  This is experimental and hasn&squot;t&n; *     been tested.  By default, we do not share the bank of SCBs,&n; *     and force the controllers to use their own internal bank of&n; *     16 SCBs.  Please let us know if sharing the SCB array works.&n; *&n; *   o SCB paging support - SCB paging is enabled by defining&n; *     AIC7XXX_PAGE_ENABLE.  Support for this was taken from the&n; *     FreeBSD driver (by Justin Gibbs) and allows for up to 255&n; *     active SCBs.  This will increase performance when tagged&n; *     queueing is enabled.  Note that you should increase the&n; *     AIC7XXX_CMDS_PER_LUN to 8 as most tagged queueing devices&n; *     allow at least this many.&n; *&n; *  Note that sharing of IRQs is not an option any longer.  Linux supports&n; *  it so we support it.&n; *&n; *  Daniel M. Eischen, deischen@iworks.InterWorks.org, 06/30/96&n; */
 multiline_comment|/* Uncomment this for testing twin bus support. */
 DECL|macro|AIC7XXX_TWIN_SUPPORT
 mdefine_line|#define AIC7XXX_TWIN_SUPPORT
@@ -69,10 +74,13 @@ multiline_comment|/* #define AIC7XXX_CMDS_PER_LUN 8 */
 multiline_comment|/* Set this to the delay in seconds after SCSI bus reset. */
 DECL|macro|AIC7XXX_RESET_DELAY
 mdefine_line|#define AIC7XXX_RESET_DELAY 15
-multiline_comment|/*&n; * Uncomment the following define for collection of SCSI transfer statistics&n; * for the /proc filesystem.&n; *&n; * NOTE: This does affect performance since it has to maintain statistics.&n; */
+multiline_comment|/*&n; * Uncomment the following define for collection of SCSI transfer statistics&n; * for the /proc filesystem.&n; *&n; * NOTE: Do NOT enable this when running on kernels version 1.2.x and below.&n; * NOTE: This does affect performance since it has to maintain statistics.&n; */
 multiline_comment|/* #define AIC7XXX_PROC_STATS */
 multiline_comment|/*&n; * Uncomment the following to enable SCB paging.&n; */
 multiline_comment|/* #define AIC7XXX_PAGE_ENABLE */
+multiline_comment|/*&n; * Uncomment the following to enable sharing of the external bank&n; * of 255 SCBs for the 3985.&n; */
+DECL|macro|AIC7XXX_SHARE_SCBS
+mdefine_line|#define AIC7XXX_SHARE_SCBS
 multiline_comment|/*&n; * For debugging the abort/reset code.&n; */
 DECL|macro|AIC7XXX_DEBUG_ABORT
 mdefine_line|#define AIC7XXX_DEBUG_ABORT
@@ -110,6 +118,10 @@ DECL|enumerator|AIC_7860
 id|AIC_7860
 comma
 multiline_comment|/* PCI  aic7860 (7850 Ultra) */
+DECL|enumerator|AIC_7861
+id|AIC_7861
+comma
+multiline_comment|/* PCI  aic7861 on 2940AU */
 DECL|enumerator|AIC_7870
 id|AIC_7870
 comma
@@ -267,6 +279,9 @@ multiline_comment|/* AIC_7855 */
 l_string|&quot;AIC-7850 Ultra&quot;
 comma
 multiline_comment|/* AIC_7860 */
+l_string|&quot;AHA-2940A Ultra&quot;
+comma
+multiline_comment|/* AIC_7861 */
 l_string|&quot;AIC-7870&quot;
 comma
 multiline_comment|/* AIC_7870 */
@@ -311,8 +326,6 @@ DECL|macro|MAXSLOT
 mdefine_line|#define MAXSLOT&t;&t;15
 DECL|macro|SLOTBASE
 mdefine_line|#define SLOTBASE(x)&t;((x) &lt;&lt; 12)
-DECL|macro|MAXIRQ
-mdefine_line|#define MAXIRQ&t;&t;15
 multiline_comment|/*&n; * Standard EISA Host ID regs  (Offset from slot base)&n; */
 DECL|macro|HID0
 mdefine_line|#define HID0&t;&t;0x80   /* 0,1: msb of ID2, 2-7: ID1      */
@@ -379,6 +392,23 @@ DECL|macro|STPWLEVEL
 mdefine_line|#define&t;&t;STPWLEVEL&t;0x00000002ul
 DECL|macro|DIFACTNEGEN
 mdefine_line|#define&t;&t;DIFACTNEGEN&t;0x00000001ul&t;/* aic7870 only */
+multiline_comment|/*&n; * Define the different types of SEEPROMs on aic7xxx adapters&n; * and make it also represent the address size used in accessing&n; * its registers.  The 93C46 chips have 1024 bits organized into&n; * 64 16-bit words, while the 93C56 chips have 2048 bits organized&n; * into 128 16-bit words.  The C46 chips use 6 bits to address&n; * each word, while the C56 and C66 (4096 bits) use 8 bits to&n; * address each word.&n; */
+DECL|enumerator|c46
+DECL|enumerator|c56_66
+DECL|typedef|seeprom_chip_type
+r_typedef
+r_enum
+(brace
+id|c46
+op_assign
+l_int|6
+comma
+id|c56_66
+op_assign
+l_int|8
+)brace
+id|seeprom_chip_type
+suffix:semicolon
 multiline_comment|/*&n; *&n; * Define the format of the SEEPROM registers (16 bits).&n; *&n; */
 DECL|struct|seeprom_config
 r_struct
@@ -516,9 +546,6 @@ mdefine_line|#define aic7xxx_status(cmd)&t;((cmd)-&gt;SCp.sent_command)
 multiline_comment|/*&n; * The position of the SCSI commands scb within the scb array.&n; */
 DECL|macro|aic7xxx_position
 mdefine_line|#define aic7xxx_position(cmd)&t;((cmd)-&gt;SCp.have_data_in)
-multiline_comment|/*&n; * Since the sequencer code DMAs the scatter-gather structures&n; * directly from memory, we use this macro to assert that the&n; * kernel structure hasn&squot;t changed.&n; */
-DECL|macro|SG_STRUCT_CHECK
-mdefine_line|#define SG_STRUCT_CHECK(sg) &bslash;&n;  ((char *) &amp;(sg).address - (char *) &amp;(sg) != 0 ||  &bslash;&n;   (char *) &amp;(sg).length  - (char *) &amp;(sg) != 8 ||  &bslash;&n;   sizeof((sg).address) != 4 ||                   &bslash;&n;   sizeof((sg).length)  != 4 ||                   &bslash;&n;   sizeof(sg)           != 12)
 multiline_comment|/*&n; * &quot;Static&quot; structures. Note that these are NOT initialized&n; * to zero inside the kernel - we have to initialize them all&n; * explicitly.&n; *&n; * We support multiple adapter cards per interrupt, but keep a&n; * linked list of Scsi_Host structures for each IRQ.  On an interrupt,&n; * use the IRQ as an index into aic7xxx_boards[] to locate the card&n; * information.&n; */
 DECL|variable|aic7xxx_boards
 r_static
@@ -527,7 +554,7 @@ id|Scsi_Host
 op_star
 id|aic7xxx_boards
 (braket
-id|MAXIRQ
+id|NR_IRQS
 op_plus
 l_int|1
 )braket
@@ -539,6 +566,26 @@ r_int
 id|aic7xxx_spurious_count
 suffix:semicolon
 multiline_comment|/*&n; * The driver keeps up to four scb structures per card in memory. Only the&n; * first 25 bytes of the structure are valid for the hardware, the rest used&n; * for driver level bookkeeping.&n; */
+multiline_comment|/*&n; * As of Linux 2.1, the mid-level SCSI code uses virtual addresses&n; * in the scatter-gather lists.  We need to convert the virtual&n; * addresses to physical addresses.&n; */
+DECL|struct|hw_scatterlist
+r_struct
+id|hw_scatterlist
+(brace
+DECL|member|address
+r_int
+r_int
+id|address
+suffix:semicolon
+DECL|member|length
+r_int
+r_int
+id|length
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Maximum number of SG segments these cards can support.&n; */
+DECL|macro|MAX_SG
+mdefine_line|#define&t;MAX_SG 256
 DECL|struct|aic7xxx_scb
 r_struct
 id|aic7xxx_scb
@@ -598,6 +645,12 @@ id|residual_data_count
 (braket
 l_int|3
 )braket
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|member|data_pointer
 multiline_comment|/*12*/
@@ -619,7 +672,14 @@ multiline_comment|/*16*/
 r_int
 r_int
 id|data_count
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
+multiline_comment|/* must be 32 bits */
 DECL|member|SCSI_cmd_pointer
 multiline_comment|/*20*/
 r_int
@@ -704,16 +764,15 @@ r_int
 id|position
 suffix:semicolon
 multiline_comment|/* Position in scb array */
-DECL|member|sg
+DECL|member|sg_list
 r_struct
-id|scatterlist
-id|sg
+id|hw_scatterlist
+id|sg_list
+(braket
+id|MAX_SG
+)braket
 suffix:semicolon
-DECL|member|sense_sg
-r_struct
-id|scatterlist
-id|sense_sg
-suffix:semicolon
+multiline_comment|/* SG list in adapter format */
 DECL|member|sense_cmd
 r_int
 r_char
@@ -813,6 +872,28 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|free_scbs
+id|scb_queue_type
+id|free_scbs
+suffix:semicolon
+multiline_comment|/*&n;                                    * SCBs assigned to free slot on&n;                                    * card (no paging required)&n;                                    */
+DECL|member|numscbs
+r_int
+id|numscbs
+suffix:semicolon
+multiline_comment|/* current number of scbs */
+DECL|member|activescbs
+r_int
+id|activescbs
+suffix:semicolon
+multiline_comment|/* active scbs */
+DECL|typedef|scb_usage_type
+)brace
+id|scb_usage_type
+suffix:semicolon
 multiline_comment|/*&n; * The maximum number of SCBs we could have for ANY type&n; * of card. DON&squot;T FORGET TO CHANGE THE SCB MASK IN THE&n; * SEQUENCER CODE IF THIS IS MODIFIED!&n; */
 DECL|macro|AIC7XXX_MAXSCB
 mdefine_line|#define AIC7XXX_MAXSCB&t;255
@@ -848,16 +929,6 @@ r_int
 id|maxscbs
 suffix:semicolon
 multiline_comment|/* max SCBs (including pageable) */
-DECL|member|numscbs
-r_int
-id|numscbs
-suffix:semicolon
-multiline_comment|/* current number of scbs */
-DECL|member|activescbs
-r_int
-id|activescbs
-suffix:semicolon
-multiline_comment|/* active scbs */
 DECL|macro|A_SCANNED
 mdefine_line|#define A_SCANNED              0x0001
 DECL|macro|B_SCANNED
@@ -987,6 +1058,7 @@ multiline_comment|/* allow for multiple IRQs */
 DECL|member|scb_array
 r_struct
 id|aic7xxx_scb
+op_star
 id|scb_array
 (braket
 id|AIC7XXX_MAXSCB
@@ -1003,11 +1075,6 @@ l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/*&n;                                                  * paged-out, non-tagged scbs&n;                                                  * indexed by target.&n;                                                  */
-DECL|member|free_scbs
-id|scb_queue_type
-id|free_scbs
-suffix:semicolon
-multiline_comment|/*&n;                                              * SCBs assigned to free slot on&n;                                              * card (no paging required)&n;                                              */
 DECL|member|page_scbs
 id|scb_queue_type
 id|page_scbs
@@ -1023,6 +1090,15 @@ id|scb_queue_type
 id|assigned_scbs
 suffix:semicolon
 multiline_comment|/*&n;                                              * SCBs that were waiting but have&n;                                              * have now been assigned a slot&n;                                              * by aic7xxx_free_scb&n;                                              */
+DECL|member|scb_usage
+id|scb_usage_type
+id|scb_usage
+suffix:semicolon
+DECL|member|scb_link
+id|scb_usage_type
+op_star
+id|scb_link
+suffix:semicolon
 DECL|struct|aic7xxx_cmd_queue
 r_struct
 id|aic7xxx_cmd_queue
@@ -1396,6 +1472,16 @@ id|number_of_3985s
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef AIC7XXX_SHARE_SCBS
+DECL|variable|shared_3985_scbs
+r_static
+id|scb_usage_type
+op_star
+id|shared_3985_scbs
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif CONFIG_PCI
 macro_line|#ifdef AIC7XXX_DEBUG
 r_static
@@ -1588,6 +1674,9 @@ id|AIC_7855
 suffix:colon
 r_case
 id|AIC_7860
+suffix:colon
+r_case
+id|AIC_7861
 suffix:colon
 r_case
 id|AIC_7870
@@ -1941,7 +2030,6 @@ id|scb-&gt;SCSI_cmd_length
 )paren
 suffix:semicolon
 id|printk
-c_func
 (paren
 l_string|&quot;reserved 0x%x, target status 0x%x, resid SG count %d, resid data count %d&bslash;n&quot;
 comma
@@ -1963,7 +2051,31 @@ id|scb-&gt;target_status
 comma
 id|scb-&gt;residual_SG_segment_count
 comma
+(paren
+(paren
 id|scb-&gt;residual_data_count
+(braket
+l_int|2
+)braket
+op_lshift
+l_int|16
+)paren
+op_or
+(paren
+id|scb-&gt;residual_data_count
+(braket
+l_int|1
+)braket
+op_lshift
+l_int|8
+)paren
+op_or
+(paren
+id|scb-&gt;residual_data_count
+(braket
+l_int|0
+)braket
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -2070,6 +2182,14 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n;                                              * -1 use board setting&n;                                              *  0 use edge triggered&n;                                              *  1 use level triggered&n;                                              */
+DECL|variable|aic7xxx_enable_ultra
+r_static
+r_int
+id|aic7xxx_enable_ultra
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* enable ultra SCSI speeds */
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_setup&n; *&n; * Description:&n; *   Handle Linux boot parameters. This routine allows for assigning a value&n; *   to a parameter with a &squot;:&squot; between the parameter and the value.&n; *   ie. aic7xxx=unpause:0x0A,extended&n; *-F*************************************************************************/
 r_void
 DECL|function|aic7xxx_setup
@@ -2132,6 +2252,13 @@ l_string|&quot;irq_trigger&quot;
 comma
 op_amp
 id|aic7xxx_irq_trigger
+)brace
+comma
+(brace
+l_string|&quot;ultra&quot;
+comma
+op_amp
+id|aic7xxx_enable_ultra
 )brace
 comma
 (brace
@@ -2735,7 +2862,7 @@ r_struct
 id|scatterlist
 op_star
 )paren
-id|cmd-&gt;buffer
+id|cmd-&gt;request_buffer
 suffix:semicolon
 r_if
 c_cond
@@ -2836,6 +2963,15 @@ id|ultra_enb
 comma
 id|sxfrctl0
 suffix:semicolon
+multiline_comment|/*&n;   * If the offset is 0, then the device is requesting asynchronous&n;   * transfers.&n;   */
+r_if
+c_cond
+(paren
+id|offset
+op_ne
+l_int|0
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -2868,7 +3004,7 @@ op_ge
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;       * Watch out for Ultra speeds when ultra is not enabled and&n;       * vice-versa.&n;       */
+multiline_comment|/*&n;         * Watch out for Ultra speeds when ultra is not enabled and&n;         * vice-versa.&n;         */
 r_if
 c_cond
 (paren
@@ -2891,7 +3027,7 @@ id|ULTRA_SXFR
 )paren
 )paren
 (brace
-multiline_comment|/*&n;         * This should only happen if the drive is the first to negotiate&n;         * and chooses a high rate.   We&squot;ll just move down the table until&n;         * we hit a non ultra speed.&n;         */
+multiline_comment|/*&n;           * This should only happen if the drive is the first to negotiate&n;           * and chooses a high rate.   We&squot;ll just move down the table until&n;           * we hit a non ultra speed.&n;           */
 r_continue
 suffix:semicolon
 )brace
@@ -2913,7 +3049,7 @@ op_amp
 l_int|0x0F
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Ensure Ultra mode is set properly for this target.&n;       */
+multiline_comment|/*&n;         * Ensure Ultra mode is set properly for this target.&n;         */
 id|ultra_enb_addr
 op_assign
 id|ULTRA_ENB
@@ -3051,6 +3187,7 @@ id|offset
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n;   * Default to asynchronous transfer&n;   */
@@ -3651,7 +3788,7 @@ id|maxscbs
 suffix:semicolon
 id|scbp
 op_assign
-id|p-&gt;free_scbs.head
+id|p-&gt;scb_link-&gt;free_scbs.head
 suffix:semicolon
 r_if
 c_cond
@@ -3665,7 +3802,7 @@ id|scbq_remove_head
 c_func
 (paren
 op_amp
-id|p-&gt;free_scbs
+id|p-&gt;scb_link-&gt;free_scbs
 )paren
 suffix:semicolon
 )brace
@@ -3714,21 +3851,57 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;numscbs
+id|p-&gt;scb_link-&gt;numscbs
 OL
 id|maxscbs
 )paren
 (brace
+r_int
+id|scb_index
+op_assign
+id|p-&gt;scb_link-&gt;numscbs
+suffix:semicolon
+r_int
+id|scb_size
+op_assign
+r_sizeof
+(paren
+r_struct
+id|aic7xxx_scb
+)paren
+suffix:semicolon
+id|p-&gt;scb_array
+(braket
+id|scb_index
+)braket
+op_assign
+id|kmalloc
+c_func
+(paren
+id|scb_size
+comma
+id|GFP_ATOMIC
+op_or
+id|GFP_DMA
+)paren
+suffix:semicolon
 id|scbp
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
-id|p-&gt;numscbs
+id|scb_index
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|scbp
+op_ne
+l_int|NULL
+)paren
+(brace
 id|memset
 c_func
 (paren
@@ -3745,27 +3918,28 @@ id|scbp
 suffix:semicolon
 id|scbp-&gt;tag
 op_assign
-id|p-&gt;numscbs
+id|scb_index
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;numscbs
+id|scb_index
 OL
 id|p-&gt;maxhscbs
 )paren
 id|scbp-&gt;position
 op_assign
-id|p-&gt;numscbs
+id|scb_index
 suffix:semicolon
 r_else
 id|scbp-&gt;position
 op_assign
 id|SCB_LIST_NULL
 suffix:semicolon
-id|p-&gt;numscbs
+id|p-&gt;scb_link-&gt;numscbs
 op_increment
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace
@@ -3778,7 +3952,7 @@ l_int|NULL
 )paren
 (brace
 macro_line|#ifdef AIC7XXX_DEBUG
-id|p-&gt;activescbs
+id|p-&gt;scb_link-&gt;activescbs
 op_increment
 suffix:semicolon
 macro_line|#endif
@@ -4012,14 +4186,14 @@ id|scbq_insert_head
 c_func
 (paren
 op_amp
-id|p-&gt;free_scbs
+id|p-&gt;scb_link-&gt;free_scbs
 comma
 id|scb
 )paren
 suffix:semicolon
 )brace
 macro_line|#ifdef AIC7XXX_DEBUG
-id|p-&gt;activescbs
+id|p-&gt;scb_link-&gt;activescbs
 op_decrement
 suffix:semicolon
 multiline_comment|/* For debugging purposes. */
@@ -4101,7 +4275,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|p-&gt;numscbs
+id|p-&gt;scb_link-&gt;numscbs
 suffix:semicolon
 id|i
 op_increment
@@ -4109,7 +4283,6 @@ op_increment
 (brace
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -4597,7 +4770,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -4751,7 +4923,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -4825,7 +4996,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|p-&gt;numscbs
+id|p-&gt;scb_link-&gt;numscbs
 suffix:semicolon
 id|i
 op_increment
@@ -4833,7 +5004,6 @@ op_increment
 (brace
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -5385,11 +5555,17 @@ l_string|&quot;aic7xxx: (reset_channel) Channel reset, sequencer restarted&bslas
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;   * Delay by the bus settle time.&n;   */
-id|aic7xxx_delay
-c_func
+multiline_comment|/*&n;   * Cause the mid-level SCSI code to delay any further &n;   * queueing by the bus settle time for us.&n;   */
+id|p-&gt;host-&gt;last_reset
+op_assign
+(paren
+id|jiffies
+op_plus
 (paren
 id|AIC7XXX_RESET_DELAY
+op_star
+id|HZ
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * Now loop through all the SCBs that have been marked for abortion,&n;   * and call the scsi_done routines.&n;   */
@@ -5533,6 +5709,8 @@ id|scb
 suffix:semicolon
 id|u_char
 id|cur_scb
+comma
+id|intstat
 suffix:semicolon
 id|u_long
 id|base
@@ -5582,6 +5760,16 @@ id|inb
 c_func
 (paren
 id|SCBPTR
+op_plus
+id|base
+)paren
+suffix:semicolon
+id|intstat
+op_assign
+id|inb
+c_func
+(paren
+id|INTSTAT
 op_plus
 id|base
 )paren
@@ -5784,7 +5972,6 @@ id|base
 suffix:semicolon
 id|out_scbp
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -5904,12 +6091,31 @@ op_plus
 id|base
 )paren
 suffix:semicolon
+multiline_comment|/*&n;   * Guard against unpausing the sequencer if there is an interrupt&n;   * waiting to happen.&n;   */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|intstat
+op_amp
+(paren
+id|BRKADRINT
+op_or
+id|SEQINT
+op_or
+id|SCSIINT
+)paren
+)paren
+)paren
+(brace
 id|UNPAUSE_SEQUENCER
 c_func
 (paren
 id|p
 )paren
 suffix:semicolon
+)brace
 id|restore_flags
 c_func
 (paren
@@ -5996,10 +6202,11 @@ suffix:semicolon
 r_char
 id|channel
 suffix:semicolon
-r_void
-op_star
+r_int
+r_int
 id|addr
 suffix:semicolon
+multiline_comment|/* must be 32 bits */
 id|Scsi_Cmnd
 op_star
 id|cmd
@@ -6407,7 +6614,6 @@ suffix:semicolon
 r_else
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -6485,20 +6691,20 @@ multiline_comment|/*&n;    &t;   * Now to pick the SCB to page out.  Either take
 r_if
 c_cond
 (paren
-id|p-&gt;free_scbs.head
+id|p-&gt;scb_link-&gt;free_scbs.head
 op_ne
 l_int|NULL
 )paren
 (brace
 id|outscb
 op_assign
-id|p-&gt;free_scbs.head
+id|p-&gt;scb_link-&gt;free_scbs.head
 suffix:semicolon
 id|scbq_remove_head
 c_func
 (paren
 op_amp
-id|p-&gt;free_scbs
+id|p-&gt;scb_link-&gt;free_scbs
 )paren
 suffix:semicolon
 id|scb-&gt;position
@@ -6671,7 +6877,6 @@ suffix:semicolon
 )brace
 id|outscb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -6858,7 +7063,6 @@ id|base
 suffix:semicolon
 id|outscb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -6984,11 +7188,12 @@ id|base
 suffix:semicolon
 id|outscb
 op_assign
-op_amp
+(paren
 id|p-&gt;scb_array
 (braket
 id|tag
 )braket
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7124,11 +7329,12 @@ id|base
 suffix:semicolon
 id|outscb
 op_assign
-op_amp
+(paren
 id|p-&gt;scb_array
 (braket
 id|tag
 )braket
+)paren
 suffix:semicolon
 )brace
 id|scb-&gt;position
@@ -7340,7 +7546,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -7547,7 +7752,38 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;   * The requested rate was so low that asynchronous transfers&n;&t;   * are faster (not to mention the controller won&squot;t support&n;&t;   * them), so we issue a reject to ensure we go to asynchronous&n;&t;   * transfers.&n;&t;   */
+multiline_comment|/*&n;           * One of two things happened.  Either the device requested&n;           * asynchronous data transfers, or it requested a synchronous&n;           * data transfer rate that was so low that asynchronous&n;           * transfers are faster (not to mention the controller won&squot;t&n;           * support them).  In both cases the synchronous data transfer&n;           * rate and the offset are set to 0 indicating asynchronous&n;           * transfers.&n;           *&n;           * If the device requested an asynchronous transfer, then&n;           * accept the request.  If the device is being forced to&n;           * asynchronous data transfers and this is the first time&n;           * we&squot;ve seen the request, accept the request.  If we&squot;ve&n;           * already seen the request, then attempt to force&n;           * asynchronous data transfers by rejecting the message.&n;           */
+r_if
+c_cond
+(paren
+(paren
+id|offset
+op_eq
+l_int|0
+)paren
+op_logical_or
+(paren
+id|p-&gt;sdtr_pending
+op_amp
+id|target_mask
+)paren
+)paren
+(brace
+multiline_comment|/*&n;             * Device requested asynchronous transfers or we&squot;re&n;             * forcing asynchronous transfers for the first time.&n;             */
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|RETURN_1
+op_plus
+id|base
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;     * The first time in forcing asynchronous transfers&n;             * failed, so we try sending a reject message.&n;&t;     */
 id|outb
 c_func
 (paren
@@ -7558,6 +7794,7 @@ op_plus
 id|base
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -7992,7 +8229,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -8033,7 +8269,7 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;scsi%d: Referenced SCB not valid during &quot;
-l_string|&quot;SEQINT 0x%x, scb %d, state 0x%x, cmd 0x%x.&bslash;n&quot;
+l_string|&quot;SEQINT 0x%x, scb %d, state 0x%x, cmd 0x%lx.&bslash;n&quot;
 comma
 id|p-&gt;host_no
 comma
@@ -8129,10 +8365,11 @@ r_int
 r_char
 id|tcl
 suffix:semicolon
-r_void
-op_star
+r_int
+r_int
 id|req_buf
 suffix:semicolon
+multiline_comment|/* must be 32 bits */
 id|tcl
 op_assign
 id|scb-&gt;target_channel_lun
@@ -8184,16 +8421,26 @@ r_sizeof
 id|cmd-&gt;sense_buffer
 )paren
 suffix:semicolon
-id|scb-&gt;sense_sg.address
+id|scb-&gt;sg_list
+(braket
+l_int|0
+)braket
+dot
+id|address
 op_assign
+id|VIRT_TO_BUS
+c_func
 (paren
-r_char
-op_star
-)paren
 op_amp
 id|cmd-&gt;sense_buffer
+)paren
 suffix:semicolon
-id|scb-&gt;sense_sg.length
+id|scb-&gt;sg_list
+(braket
+l_int|0
+)braket
+dot
+id|length
 op_assign
 r_sizeof
 (paren
@@ -8202,8 +8449,15 @@ id|cmd-&gt;sense_buffer
 suffix:semicolon
 id|req_buf
 op_assign
+id|VIRT_TO_BUS
+c_func
+(paren
 op_amp
-id|scb-&gt;sense_sg
+id|scb-&gt;sg_list
+(braket
+l_int|0
+)braket
+)paren
 suffix:semicolon
 id|cmd-&gt;cmd_len
 op_assign
@@ -8228,7 +8482,11 @@ id|tcl
 suffix:semicolon
 id|addr
 op_assign
+id|VIRT_TO_BUS
+c_func
+(paren
 id|scb-&gt;sense_cmd
+)paren
 suffix:semicolon
 id|scb-&gt;SCSI_cmd_length
 op_assign
@@ -8275,7 +8533,12 @@ id|scb-&gt;SG_list_pointer
 suffix:semicolon
 id|scb-&gt;data_count
 op_assign
-id|scb-&gt;sense_sg.length
+id|scb-&gt;sg_list
+(braket
+l_int|0
+)braket
+dot
+id|length
 suffix:semicolon
 id|memcpy
 c_func
@@ -8284,10 +8547,18 @@ id|scb-&gt;data_pointer
 comma
 op_amp
 (paren
-id|scb-&gt;sense_sg.address
+id|scb-&gt;sg_list
+(braket
+l_int|0
+)braket
+dot
+id|address
 )paren
 comma
-l_int|4
+r_sizeof
+(paren
+id|scb-&gt;data_pointer
+)paren
 )paren
 suffix:semicolon
 id|aic7xxx_putscb
@@ -8385,13 +8656,14 @@ id|cmd
 )paren
 )paren
 (brace
+multiline_comment|/* The error code here used to be DID_BUS_BUSY,&n;                 * but after extensive testing, it has been determined&n;                 * that a DID_BUS_BUSY return is a waste of time.  If&n;                 * the problem is something that will go away, then it&n;                 * will, if it isn&squot;t, then you don&squot;t want the endless&n;                 * looping that you get with a DID_BUS_BUSY.  Better&n;                 * to be on the safe side and specify an error condition&n;                 * that will eventually lead to a reset or abort of some&n;                 * sort instead of an endless loop.&n;                 */
 id|aic7xxx_error
 c_func
 (paren
 id|cmd
 )paren
 op_assign
-id|DID_BUS_BUSY
+id|DID_RETRY_COMMAND
 suffix:semicolon
 )brace
 r_break
@@ -8479,7 +8751,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -8509,7 +8780,7 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;scsi%d: Referenced SCB not valid during &quot;
-l_string|&quot;SEQINT 0x%x, scb %d, state 0x%x, cmd 0x%x.&bslash;n&quot;
+l_string|&quot;SEQINT 0x%x, scb %d, state 0x%x, cmd 0x%lx.&bslash;n&quot;
 comma
 id|p-&gt;host_no
 comma
@@ -8658,7 +8929,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -8688,7 +8958,7 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;scsi%d: Referenced SCB not valid during &quot;
-l_string|&quot;SEQINT 0x%x, scb %d, state 0x%x, cmd 0x%x&bslash;n&quot;
+l_string|&quot;SEQINT 0x%x, scb %d, state 0x%x, cmd 0x%lx&bslash;n&quot;
 comma
 id|p-&gt;host_no
 comma
@@ -8764,7 +9034,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -8794,7 +9063,7 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;scsi%d: Referenced SCB not valid during &quot;
-l_string|&quot;SEQINT 0x%x, scb %d, state 0x%x, cmd 0x%x.&bslash;n&quot;
+l_string|&quot;SEQINT 0x%x, scb %d, state 0x%x, cmd 0x%lx.&bslash;n&quot;
 comma
 id|p-&gt;host_no
 comma
@@ -8883,7 +9152,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -9037,7 +9305,7 @@ id|overrun
 suffix:semicolon
 id|scb
 op_assign
-op_amp
+(paren
 id|p-&gt;scb_array
 (braket
 id|inb
@@ -9048,6 +9316,7 @@ op_plus
 id|SCB_TAG
 )paren
 )braket
+)paren
 suffix:semicolon
 id|overrun
 op_assign
@@ -9238,7 +9507,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -9780,7 +10048,6 @@ id|base
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -9810,7 +10077,7 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;scsi%d: CMDCMPLT without command for SCB %d.&bslash;n&quot;
-l_string|&quot;       QOUTCNT %d, QINCNT %d, SCB state 0x%x, cmd 0x%x, &quot;
+l_string|&quot;       QOUTCNT %d, QINCNT %d, SCB state 0x%x, cmd 0x%lx, &quot;
 l_string|&quot;pos(%d).&bslash;n&quot;
 comma
 id|p-&gt;host_no
@@ -10154,13 +10421,6 @@ id|tq_depth
 op_assign
 l_int|2
 suffix:semicolon
-macro_line|#ifdef AIC7XXX_CMDS_PER_LUN
-id|tq_depth
-op_assign
-id|AIC7XXX_CMDS_PER_LUN
-suffix:semicolon
-macro_line|#else
-(brace
 r_struct
 id|aic7xxx_host
 op_star
@@ -10173,6 +10433,13 @@ op_star
 )paren
 id|host-&gt;hostdata
 suffix:semicolon
+macro_line|#ifdef AIC7XXX_CMDS_PER_LUN
+id|tq_depth
+op_assign
+id|AIC7XXX_CMDS_PER_LUN
+suffix:semicolon
+macro_line|#else
+(brace
 r_if
 c_cond
 (paren
@@ -10231,6 +10498,48 @@ c_cond
 id|device-&gt;tagged_supported
 )paren
 (brace
+r_int
+r_int
+id|target_mask
+op_assign
+(paren
+l_int|1
+op_lshift
+id|device-&gt;id
+)paren
+op_or
+id|device-&gt;channel
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|p-&gt;discenable
+op_amp
+id|target_mask
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;scsi%d: Disconnection disabled, unable to enable &quot;
+l_string|&quot;tagged queueing for target %d, channel %d, LUN %d.&bslash;n&quot;
+comma
+id|host-&gt;host_no
+comma
+id|device-&gt;id
+comma
+id|device-&gt;channel
+comma
+id|device-&gt;lun
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|device-&gt;queue_depth
 op_assign
 id|tq_depth
@@ -10269,6 +10578,7 @@ id|device-&gt;current_tag
 op_assign
 id|SCB_LIST_NULL
 suffix:semicolon
+)brace
 )brace
 )brace
 macro_line|#endif
@@ -11104,7 +11414,7 @@ suffix:semicolon
 DECL|macro|CLOCK_PULSE
 macro_line|#undef CLOCK_PULSE
 )brace
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_seeprom&n; *&n; * Description:&n; *   Reads the serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   The instruction set of the 93C46 chip is as follows:&n; *&n; *               Start  OP&n; *     Function   Bit  Code  Address    Data     Description&n; *     -------------------------------------------------------------------&n; *     READ        1    10   A5 - A0             Reads data stored in memory,&n; *                                               starting at specified address&n; *     EWEN        1    00   11XXXX              Write enable must precede&n; *                                               all programming modes&n; *     ERASE       1    11   A5 - A0             Erase register A5A4A3A2A1A0&n; *     WRITE       1    01   A5 - A0   D15 - D0  Writes register&n; *     ERAL        1    00   10XXXX              Erase all registers&n; *     WRAL        1    00   01XXXX    D15 - D0  Writes to all registers&n; *     EWDS        1    00   00XXXX              Disables all programming&n; *                                               instructions&n; *     *Note: A value of X for address is a don&squot;t care condition.&n; *&n; *   The 93C46 has a four wire interface: clock, chip select, data in, and&n; *   data out.  In order to perform one of the above functions, you need&n; *   to enable the chip select for a clock period (typically a minimum of&n; *   1 usec, with the clock high and low a minimum of 750 and 250 nsec&n; *   respectively.  While the chip select remains high, you can clock in&n; *   the instructions (above) starting with the start bit, followed by the&n; *   OP code, Address, and Data (if needed).  For the READ instruction, the&n; *   requested 16-bit register contents is read from the data out line but&n; *   is preceded by an initial zero (leading 0, followed by 16-bits, MSB&n; *   first).  The clock cycling from low to high initiates the next data&n; *   bit to be sent from the chip.&n; *&n; *   The 7870 interface to the 93C46 serial EEPROM is through the SEECTL&n; *   register.  After successful arbitration for the memory port, the&n; *   SEECS bit of the SEECTL register is connected to the chip select.&n; *   The SEECK, SEEDO, and SEEDI are connected to the clock, data out,&n; *   and data in lines respectively.  The SEERDY bit of SEECTL is useful&n; *   in that it gives us an 800 nsec timer.  After a write to the SEECTL&n; *   register, the SEERDY goes high 800 nsec later.  The one exception&n; *   to this is when we first request access to the memory port.  The&n; *   SEERDY goes high to signify that access has been granted and, for&n; *   this case, has no implied timing.&n; *&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_seeprom&n; *&n; * Description:&n; *   Reads the serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   The instruction set of the 93C46/56/66 chips is as follows:&n; *&n; *               Start  OP&n; *     Function   Bit  Code  Address    Data     Description&n; *     -------------------------------------------------------------------&n; *     READ        1    10   A5 - A0             Reads data stored in memory,&n; *                                               starting at specified address&n; *     EWEN        1    00   11XXXX              Write enable must precede&n; *                                               all programming modes&n; *     ERASE       1    11   A5 - A0             Erase register A5A4A3A2A1A0&n; *     WRITE       1    01   A5 - A0   D15 - D0  Writes register&n; *     ERAL        1    00   10XXXX              Erase all registers&n; *     WRAL        1    00   01XXXX    D15 - D0  Writes to all registers&n; *     EWDS        1    00   00XXXX              Disables all programming&n; *                                               instructions&n; *     *Note: A value of X for address is a don&squot;t care condition.&n; *     *Note: The 93C56 and 93C66 have 8 address bits.&n; * &n; *&n; *   The 93C46 has a four wire interface: clock, chip select, data in, and&n; *   data out.  In order to perform one of the above functions, you need&n; *   to enable the chip select for a clock period (typically a minimum of&n; *   1 usec, with the clock high and low a minimum of 750 and 250 nsec&n; *   respectively.  While the chip select remains high, you can clock in&n; *   the instructions (above) starting with the start bit, followed by the&n; *   OP code, Address, and Data (if needed).  For the READ instruction, the&n; *   requested 16-bit register contents is read from the data out line but&n; *   is preceded by an initial zero (leading 0, followed by 16-bits, MSB&n; *   first).  The clock cycling from low to high initiates the next data&n; *   bit to be sent from the chip.&n; *&n; *   The 7870 interface to the 93C46 serial EEPROM is through the SEECTL&n; *   register.  After successful arbitration for the memory port, the&n; *   SEECS bit of the SEECTL register is connected to the chip select.&n; *   The SEECK, SEEDO, and SEEDI are connected to the clock, data out,&n; *   and data in lines respectively.  The SEERDY bit of SEECTL is useful&n; *   in that it gives us an 800 nsec timer.  After a write to the SEECTL&n; *   register, the SEERDY goes high 800 nsec later.  The one exception&n; *   to this is when we first request access to the memory port.  The&n; *   SEERDY goes high to signify that access has been granted and, for&n; *   this case, has no implied timing.&n; *&n; *-F*************************************************************************/
 r_static
 r_int
 DECL|function|read_seeprom
@@ -11121,6 +11431,9 @@ r_struct
 id|seeprom_config
 op_star
 id|sc
+comma
+id|seeprom_chip_type
+id|chip
 )paren
 (brace
 r_int
@@ -11392,7 +11705,14 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|5
+(paren
+(paren
+r_int
+)paren
+id|chip
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 id|i
 op_ge
@@ -12709,6 +13029,9 @@ r_case
 id|AIC_7860
 suffix:colon
 r_case
+id|AIC_7861
+suffix:colon
+r_case
 id|AIC_7880
 suffix:colon
 r_case
@@ -12727,6 +13050,7 @@ multiline_comment|/*&n;       * Remember if Ultra was enabled in case there is n
 r_if
 c_cond
 (paren
+(paren
 id|inb
 c_func
 (paren
@@ -12736,6 +13060,9 @@ id|base
 )paren
 op_amp
 id|ULTRAEN
+)paren
+op_logical_or
+id|aic7xxx_enable_ultra
 )paren
 id|config-&gt;flags
 op_or_assign
@@ -12822,6 +13149,22 @@ id|KERN_INFO
 l_string|&quot;aic7xxx: Reading SEEPROM...&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|config-&gt;type
+op_eq
+id|AIC_7873
+)paren
+op_logical_or
+(paren
+id|config-&gt;type
+op_eq
+id|AIC_7883
+)paren
+)paren
+(brace
 id|have_seeprom
 op_assign
 id|read_seeprom
@@ -12842,8 +13185,38 @@ l_int|2
 comma
 op_amp
 id|sc
+comma
+id|c56_66
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|have_seeprom
+op_assign
+id|read_seeprom
+c_func
+(paren
+id|base
+comma
+id|config-&gt;chan_num
+op_star
+(paren
+r_sizeof
+(paren
+id|sc
+)paren
+op_div
+l_int|2
+)paren
+comma
+op_amp
+id|sc
+comma
+id|c46
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -13598,47 +13971,6 @@ c_func
 id|config
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Before registry, make sure that the offsets of the&n;   * struct scatterlist are what the sequencer will expect,&n;   * otherwise disable scatter-gather altogether until someone&n;   * can fix it. This is important since the sequencer will&n;   * DMA elements of the SG array in while executing commands.&n;   */
-r_if
-c_cond
-(paren
-r_template
-op_member_access_from_pointer
-id|sg_tablesize
-op_ne
-id|SG_NONE
-)paren
-(brace
-r_struct
-id|scatterlist
-id|sg
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|SG_STRUCT_CHECK
-c_func
-(paren
-id|sg
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;aic7xxx: Warning - Kernel scatter-gather structures &quot;
-l_string|&quot;changed, disabling it.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_template
-op_member_access_from_pointer
-id|sg_tablesize
-op_assign
-id|SG_NONE
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&n;   * Register each &quot;host&quot; and fill in the returned Scsi_Host&n;   * structure as best we can. Some of the parameters aren&squot;t&n;   * really relevant for bus types beyond ISA, and none of the&n;   * high-level SCSI code looks at it anyway. Why are the fields&n;   * there? Also save the pointer so that we can find the&n;   * information when an IRQ is triggered.&n;   */
 id|host
 op_assign
@@ -13681,6 +14013,7 @@ suffix:semicolon
 id|host-&gt;base
 op_assign
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -13756,10 +14089,6 @@ id|p-&gt;qcntmask
 op_assign
 id|config-&gt;qcntmask
 suffix:semicolon
-id|p-&gt;numscbs
-op_assign
-l_int|0
-suffix:semicolon
 id|p-&gt;mbase
 op_assign
 (paren
@@ -13783,6 +14112,58 @@ suffix:semicolon
 id|p-&gt;chan_num
 op_assign
 id|config-&gt;chan_num
+suffix:semicolon
+id|p-&gt;scb_link
+op_assign
+op_amp
+(paren
+id|p-&gt;scb_usage
+)paren
+suffix:semicolon
+macro_line|#ifdef AIC7XXX_SHARE_SCBS
+r_if
+c_cond
+(paren
+(paren
+id|p-&gt;chan_num
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+id|p-&gt;type
+op_eq
+id|AIC_7873
+)paren
+op_or
+(paren
+id|p-&gt;type
+op_eq
+id|AIC_7883
+)paren
+)paren
+)paren
+(brace
+id|shared_3985_scbs
+op_assign
+op_amp
+(paren
+id|p-&gt;scb_usage
+)paren
+suffix:semicolon
+id|p-&gt;scb_link
+op_assign
+op_amp
+(paren
+id|p-&gt;scb_usage
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+id|p-&gt;scb_link-&gt;numscbs
+op_assign
+l_int|0
 suffix:semicolon
 id|p-&gt;bus_type
 op_assign
@@ -13808,7 +14189,7 @@ id|scbq_init
 c_func
 (paren
 op_amp
-id|p-&gt;free_scbs
+id|p-&gt;scb_link-&gt;free_scbs
 )paren
 suffix:semicolon
 id|scbq_init
@@ -15039,7 +15420,11 @@ l_int|0
 suffix:semicolon
 id|i
 op_le
-id|MAXIRQ
+id|NUMBER
+c_func
+(paren
+id|aic7xxx_boards
+)paren
 suffix:semicolon
 id|i
 op_increment
@@ -15260,6 +15645,16 @@ comma
 id|PCI_DEVICE_ID_ADAPTEC_7860
 comma
 id|AIC_7860
+comma
+id|AIC_785x
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_ADAPTEC
+comma
+id|PCI_DEVICE_ID_ADAPTEC_7861
+comma
+id|AIC_7861
 comma
 id|AIC_785x
 )brace
@@ -15538,6 +15933,9 @@ suffix:colon
 r_case
 id|AIC_7860
 suffix:colon
+r_case
+id|AIC_7861
+suffix:colon
 id|config.bios
 op_assign
 id|AIC_DISABLED
@@ -15583,8 +15981,6 @@ multiline_comment|/* 3985-Ultra */
 id|config.chan_num
 op_assign
 id|number_of_3985s
-op_amp
-l_int|0x3
 suffix:semicolon
 multiline_comment|/* Has 3 controllers */
 id|number_of_3985s
@@ -15826,6 +16222,7 @@ id|config.flags
 op_or_assign
 id|EXTENDED_TRANSLATION
 suffix:semicolon
+macro_line|#ifdef AIC7XXX_SHARE_SCBs
 r_if
 c_cond
 (paren
@@ -15833,6 +16230,29 @@ id|devconfig
 op_amp
 id|RAMPSM
 )paren
+macro_line|#else
+r_if
+c_cond
+(paren
+(paren
+id|devconfig
+op_amp
+id|RAMPSM
+)paren
+op_logical_and
+(paren
+id|config.type
+op_ne
+id|AIC_7873
+)paren
+op_logical_and
+(paren
+id|config.type
+op_ne
+id|AIC_7883
+)paren
+)paren
+macro_line|#endif
 (brace
 multiline_comment|/*&n;             * External SRAM present.  The probe will walk the SCBs to see&n;             * how much SRAM we have and set the number of SCBs accordingly.&n;             * We have to turn off SCBRAMSEL to access the external SCB&n;             * SRAM.&n;             *&n;             * It seems that early versions of the aic7870 didn&squot;t use these&n;             * bits, hence the hack for the 3940 above.  I would guess that&n;             * recent 3940s using later aic7870 or aic7880 chips do actually&n;             * set RAMPSM.&n;             *&n;             * The documentation isn&squot;t clear, but it sounds like the value&n;             * written to devconfig must not have RAMPSM set.  The second&n;             * sixteen bits of the register are R/O anyway, so it shouldn&squot;t&n;             * affect RAMPSM either way.&n;             */
 id|printk
@@ -15928,18 +16348,14 @@ op_star
 id|scb
 )paren
 (brace
-r_void
-op_star
+r_int
+r_int
 id|addr
 suffix:semicolon
+multiline_comment|/* must be 32 bits */
 r_int
 r_int
 id|mask
-suffix:semicolon
-r_struct
-id|scatterlist
-op_star
-id|sg
 suffix:semicolon
 id|mask
 op_assign
@@ -16186,7 +16602,11 @@ multiline_comment|/*&n;   * The interpretation of request_buffer and request_buf
 multiline_comment|/*&n;   * XXX - this relies on the host data being stored in a&n;   *       little-endian format.&n;   */
 id|addr
 op_assign
+id|VIRT_TO_BUS
+c_func
+(paren
 id|cmd-&gt;cmnd
+)paren
 suffix:semicolon
 id|scb-&gt;SCSI_cmd_length
 op_assign
@@ -16212,36 +16632,100 @@ c_cond
 id|cmd-&gt;use_sg
 )paren
 (brace
+r_struct
+id|scatterlist
+op_star
+id|sg
+suffix:semicolon
+multiline_comment|/* Must be mid-level SCSI code scatterlist */
+multiline_comment|/*&n;     * We must build an SG list in adapter format, as the kernel&squot;s SG list&n;     * cannot be used directly because of data field size (__alpha__)&n;     * differences and the kernel SG list uses virtual addresses where&n;     * we need physical addresses.&n;     */
+r_int
+id|i
+suffix:semicolon
+id|sg
+op_assign
+(paren
+r_struct
+id|scatterlist
+op_star
+)paren
+id|cmd-&gt;request_buffer
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|cmd-&gt;use_sg
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|scb-&gt;sg_list
+(braket
+id|i
+)braket
+dot
+id|address
+op_assign
+id|VIRT_TO_BUS
+c_func
+(paren
+id|sg
+(braket
+id|i
+)braket
+dot
+id|address
+)paren
+suffix:semicolon
+id|scb-&gt;sg_list
+(braket
+id|i
+)braket
+dot
+id|length
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|sg
+(braket
+id|i
+)braket
+dot
+id|length
+suffix:semicolon
+)brace
 id|scb-&gt;SG_segment_count
 op_assign
 id|cmd-&gt;use_sg
 suffix:semicolon
-id|memcpy
+id|addr
+op_assign
+id|VIRT_TO_BUS
 c_func
 (paren
-id|scb-&gt;SG_list_pointer
-comma
-op_amp
-id|cmd-&gt;request_buffer
-comma
-r_sizeof
-(paren
-id|scb-&gt;SG_list_pointer
-)paren
+id|scb-&gt;sg_list
 )paren
 suffix:semicolon
 id|memcpy
 c_func
 (paren
-op_amp
-id|sg
+id|scb-&gt;SG_list_pointer
 comma
 op_amp
-id|cmd-&gt;request_buffer
+id|addr
 comma
 r_sizeof
 (paren
-id|sg
+id|scb-&gt;SG_list_pointer
 )paren
 )paren
 suffix:semicolon
@@ -16252,7 +16736,7 @@ id|scb-&gt;data_pointer
 comma
 op_amp
 (paren
-id|sg
+id|scb-&gt;sg_list
 (braket
 l_int|0
 )braket
@@ -16268,7 +16752,7 @@ id|scb-&gt;data_pointer
 suffix:semicolon
 id|scb-&gt;data_count
 op_assign
-id|sg
+id|scb-&gt;sg_list
 (braket
 l_int|0
 )braket
@@ -16276,7 +16760,7 @@ dot
 id|length
 suffix:semicolon
 macro_line|#if 0
-id|debug
+id|printk
 c_func
 (paren
 l_string|&quot;aic7xxx: (build_scb) SG segs(%d), length(%u), sg[0].length(%d).&bslash;n&quot;
@@ -16299,7 +16783,7 @@ macro_line|#endif
 r_else
 (brace
 macro_line|#if 0
-id|debug
+id|printk
 c_func
 (paren
 l_string|&quot;aic7xxx: (build_scb) Creating scatterlist, addr(0x%lx) length(%d).&bslash;n&quot;
@@ -16364,22 +16848,39 @@ id|scb-&gt;SG_segment_count
 op_assign
 l_int|1
 suffix:semicolon
-id|scb-&gt;sg.address
+id|scb-&gt;sg_list
+(braket
+l_int|0
+)braket
+dot
+id|address
 op_assign
+id|VIRT_TO_BUS
+c_func
 (paren
-r_char
-op_star
-)paren
 id|cmd-&gt;request_buffer
+)paren
 suffix:semicolon
-id|scb-&gt;sg.length
+id|scb-&gt;sg_list
+(braket
+l_int|0
+)braket
+dot
+id|length
 op_assign
 id|cmd-&gt;request_bufflen
 suffix:semicolon
 id|addr
 op_assign
+id|VIRT_TO_BUS
+c_func
+(paren
 op_amp
-id|scb-&gt;sg
+id|scb-&gt;sg_list
+(braket
+l_int|0
+)braket
+)paren
 suffix:semicolon
 id|memcpy
 c_func
@@ -16397,7 +16898,20 @@ id|scb-&gt;SG_list_pointer
 suffix:semicolon
 id|scb-&gt;data_count
 op_assign
-id|scb-&gt;sg.length
+id|scb-&gt;sg_list
+(braket
+l_int|0
+)braket
+dot
+id|length
+suffix:semicolon
+id|addr
+op_assign
+id|VIRT_TO_BUS
+c_func
+(paren
+id|cmd-&gt;request_buffer
+)paren
 suffix:semicolon
 id|memcpy
 c_func
@@ -16405,7 +16919,7 @@ c_func
 id|scb-&gt;data_pointer
 comma
 op_amp
-id|cmd-&gt;request_buffer
+id|addr
 comma
 r_sizeof
 (paren
@@ -16438,7 +16952,7 @@ op_star
 )paren
 (brace
 r_int
-id|flags
+id|processor_flags
 suffix:semicolon
 r_struct
 id|aic7xxx_host
@@ -16452,6 +16966,8 @@ id|scb
 suffix:semicolon
 id|u_char
 id|curscb
+comma
+id|intstat
 suffix:semicolon
 id|p
 op_assign
@@ -16462,6 +16978,25 @@ op_star
 )paren
 id|cmd-&gt;host-&gt;hostdata
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;host
+op_ne
+id|cmd-&gt;host
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;scsi%d: Internal host structure != scsi.c host &quot;
+l_string|&quot;structure.&bslash;n&quot;
+comma
+id|p-&gt;host_no
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;   * Check to see if channel was scanned.&n;   */
 r_if
 c_cond
@@ -16529,7 +17064,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#if 0
-id|debug
+id|printk
 c_func
 (paren
 l_string|&quot;aic7xxx: (queue) cmd(0x%x) size(%u), target %d, channel %d, lun %d.&bslash;n&quot;
@@ -16551,11 +17086,11 @@ l_int|0x07
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;   * This is a critical section, since we don&squot;t want the&n;   * interrupt routine mucking with the host data or the&n;   * card. Since the kernel documentation is vague on&n;   * whether or not we are in a cli/sti pair already, save&n;   * the flags to be on the safe side.&n;   */
+multiline_comment|/*&n;   * This is a critical section, since we don&squot;t want the interrupt&n;   * routine mucking with the host data or the card.  For this reason&n;   * it is nice to know that this function can only be called in one&n;   * of two ways from scsi.c  First, as part of a routine queue command,&n;   * in which case, the irq for our card is disabled before this&n;   * function is called.  This doesn&squot;t help us if there is more than&n;   * one card using more than one IRQ in our system, therefore, we&n;   * should disable all interrupts on these grounds alone.  Second,&n;   * this can be called as part of the scsi_done routine, in which case&n;   * we are in the aic7xxx_isr routine already and interrupts are&n;   * disabled, therefore we should saveflags first, then disable the&n;   * interrupts, do our work, then restore the CPU flags. If it weren&squot;t&n;   * for the possibility of more than one card using more than one IRQ&n;   * in our system, we wouldn&squot;t have to touch the interrupt flags at all.&n;   */
 id|save_flags
 c_func
 (paren
-id|flags
+id|processor_flags
 )paren
 suffix:semicolon
 id|cli
@@ -16625,11 +17160,12 @@ c_cond
 (paren
 id|scb
 op_ne
-op_amp
+(paren
 id|p-&gt;scb_array
 (braket
 id|scb-&gt;position
 )braket
+)paren
 )paren
 (brace
 id|printk
@@ -16746,6 +17282,16 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|intstat
+op_assign
+id|inb
+c_func
+(paren
+id|INTSTAT
+op_plus
+id|p-&gt;base
+)paren
+suffix:semicolon
 multiline_comment|/*&n;         * Save the SCB pointer and put our own pointer in - this&n;         * selects one of the four banks of SCB registers. Load&n;         * the SCB, then write its pointer into the queue in FIFO&n;         * and restore the saved SCB pointer.&n;         */
 id|curscb
 op_assign
@@ -16799,12 +17345,31 @@ id|scb-&gt;state
 op_or_assign
 id|SCB_ACTIVE
 suffix:semicolon
+multiline_comment|/*&n;         * Guard against unpausing the sequencer if there is an interrupt&n;         * waiting to happen.&n;         */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|intstat
+op_amp
+(paren
+id|BRKADRINT
+op_or
+id|SEQINT
+op_or
+id|SCSIINT
+)paren
+)paren
+)paren
+(brace
 id|UNPAUSE_SEQUENCER
 c_func
 (paren
 id|p
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -16864,7 +17429,7 @@ macro_line|#endif;
 id|restore_flags
 c_func
 (paren
-id|flags
+id|processor_flags
 )paren
 suffix:semicolon
 )brace
@@ -16897,9 +17462,6 @@ op_star
 id|scb
 suffix:semicolon
 r_int
-id|flags
-suffix:semicolon
-r_int
 r_char
 id|bus_state
 suffix:semicolon
@@ -16916,7 +17478,6 @@ id|channel
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -16959,17 +17520,6 @@ id|SCB_IN_PROGRESS
 )paren
 )paren
 (brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -17191,7 +17741,6 @@ id|base
 suffix:semicolon
 id|active_scbp
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -17580,10 +18129,21 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|restore_flags
+)brace
+multiline_comment|/* Make sure the sequencer is unpaused upon return. */
+r_if
+c_cond
+(paren
+id|result
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|UNPAUSE_SEQUENCER
 c_func
 (paren
-id|flags
+id|p
 )paren
 suffix:semicolon
 )brace
@@ -17632,7 +18192,6 @@ id|cmd-&gt;host-&gt;hostdata
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -17777,6 +18336,10 @@ id|channel
 op_assign
 l_char|&squot;A&squot;
 suffix:semicolon
+r_int
+r_int
+id|processor_flags
+suffix:semicolon
 id|p
 op_assign
 (paren
@@ -17788,7 +18351,6 @@ id|cmd-&gt;host-&gt;hostdata
 suffix:semicolon
 id|scb
 op_assign
-op_amp
 (paren
 id|p-&gt;scb_array
 (braket
@@ -17835,6 +18397,18 @@ id|cmd-&gt;channel
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* &n;   * This routine is called by scsi.c, in which case the interrupts&n;   * very well may be on when we are called.  As such, we need to save&n;   * the flags to be sure, then turn interrupts off, and then call our&n;   * various method funtions which all assume interrupts are off.&n;   */
+id|save_flags
+c_func
+(paren
+id|processor_flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -17853,7 +18427,11 @@ op_logical_neg
 (paren
 id|flags
 op_amp
+(paren
 id|SCSI_RESET_SUGGEST_HOST_RESET
+op_or
+id|SCSI_RESET_SUGGEST_BUS_RESET
+)paren
 )paren
 op_logical_and
 (paren
@@ -18039,9 +18617,22 @@ multiline_comment|/*&n;     * The bus device reset failed; try resetting the cha
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+(paren
+id|SCSI_RESET_SUGGEST_BUS_RESET
+op_or
+id|SCSI_RESET_SUGGEST_HOST_RESET
+)paren
+)paren
+op_logical_and
+(paren
 id|flags
 op_amp
 id|SCSI_RESET_ASYNCHRONOUS
+)paren
 )paren
 (brace
 r_if
@@ -18114,6 +18705,13 @@ op_minus
 l_int|1
 )paren
 (brace
+multiline_comment|/*&n;       * The reset channel function assumes that the sequencer is paused.&n;       */
+id|PAUSE_SEQUENCER
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
 id|found
 op_assign
 id|aic7xxx_reset_channel
@@ -18259,6 +18857,12 @@ id|SCSI_RESET_HOST_RESET
 suffix:semicolon
 )brace
 )brace
+id|restore_flags
+c_func
+(paren
+id|processor_flags
+)paren
+suffix:semicolon
 r_return
 (paren
 id|result

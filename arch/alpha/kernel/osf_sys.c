@@ -300,7 +300,7 @@ op_amp
 id|dirent-&gt;d_reclen
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|dirent-&gt;d_name
@@ -310,7 +310,7 @@ comma
 id|namlen
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0
@@ -915,6 +915,7 @@ DECL|function|linux_to_osf_statfs
 r_static
 r_void
 id|linux_to_osf_statfs
+c_func
 (paren
 r_struct
 id|statfs
@@ -1655,7 +1656,7 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1784,7 +1785,7 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -1911,7 +1912,7 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2195,7 +2196,7 @@ id|remain
 r_return
 id|retval
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2302,7 +2303,7 @@ id|ticks
 op_mod
 id|HZ
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|remain
@@ -2355,7 +2356,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|name
@@ -2367,7 +2368,7 @@ comma
 l_int|32
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|name
@@ -2379,7 +2380,7 @@ comma
 l_int|32
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|name
@@ -2391,7 +2392,7 @@ comma
 l_int|32
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|name
@@ -2403,7 +2404,7 @@ comma
 l_int|32
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|name
@@ -2939,6 +2940,7 @@ DECL|function|osf_proplist_syscall
 id|asmlinkage
 r_int
 id|osf_proplist_syscall
+c_func
 (paren
 r_enum
 id|pl_code
@@ -3026,35 +3028,11 @@ suffix:semicolon
 r_case
 id|PL_GET
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-op_amp
-id|args-&gt;get.min_buf_size
-comma
-r_sizeof
-(paren
-id|args-&gt;get.min_buf_size
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
-id|min_buf_size_ptr
-op_assign
 id|get_user
 c_func
 (paren
+id|min_buf_size_ptr
+comma
 op_amp
 id|args-&gt;get.min_buf_size
 )paren
@@ -3097,35 +3075,11 @@ suffix:semicolon
 r_case
 id|PL_FGET
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-op_amp
-id|args-&gt;fget.min_buf_size
-comma
-r_sizeof
-(paren
-id|args-&gt;fget.min_buf_size
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
-id|min_buf_size_ptr
-op_assign
 id|get_user
 c_func
 (paren
+id|min_buf_size_ptr
+comma
 op_amp
 id|args-&gt;fget.min_buf_size
 )paren
@@ -3183,11 +3137,12 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * The Linux kernel isn&squot;t good at returning values that look&n; * like negative longs (they are mistaken as error values).&n; * Until that is fixed, we need this little workaround for&n; * create_module() because it&squot;s one of the few system calls&n; * that return kernel addresses (which are negative).&n; */
+DECL|function|alpha_create_module
 id|asmlinkage
 r_int
 r_int
-DECL|function|alpha_create_module
 id|alpha_create_module
+c_func
 (paren
 r_char
 op_star
@@ -3218,6 +3173,7 @@ id|asmlinkage
 r_int
 r_int
 id|sys_create_module
+c_func
 (paren
 r_char
 op_star
@@ -3261,11 +3217,12 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|function|osf_getsysinfo
 id|asmlinkage
 r_int
 r_int
-DECL|function|osf_getsysinfo
 id|osf_getsysinfo
+c_func
 (paren
 r_int
 r_int
@@ -3292,6 +3249,7 @@ r_extern
 r_int
 r_int
 id|rdfpcr
+c_func
 (paren
 r_void
 )paren
@@ -3354,7 +3312,7 @@ r_case
 l_int|46
 suffix:colon
 multiline_comment|/* GSI_IEEE_STATE_AT_SIGNAL */
-multiline_comment|/*&n;&t;   * Not sure anybody will ever use this weird stuff.  These&n;&t;   * ops can be used (under OSF/1) to set the fpcr that should&n;&t;   * be used when a signal handler starts executing.&n;&t;   */
+multiline_comment|/*&n;&t;&t; * Not sure anybody will ever use this weird stuff.  These&n;&t;&t; * ops can be used (under OSF/1) to set the fpcr that should&n;&t;&t; * be used when a signal handler starts executing.&n;&t;&t; */
 r_break
 suffix:semicolon
 r_default
@@ -3367,11 +3325,12 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
+DECL|function|osf_setsysinfo
 id|asmlinkage
 r_int
 r_int
-DECL|function|osf_setsysinfo
 id|osf_setsysinfo
+c_func
 (paren
 r_int
 r_int
@@ -3409,11 +3368,11 @@ l_int|14
 suffix:colon
 multiline_comment|/* SSI_IEEE_FP_CONTROL */
 multiline_comment|/* update trap enable bits: */
-id|fpcw
-op_assign
 id|get_user
 c_func
 (paren
+id|fpcw
+comma
 (paren
 r_int
 r_int
@@ -3446,7 +3405,7 @@ r_case
 l_int|16
 suffix:colon
 multiline_comment|/* SSI_IEEE_IGNORE_STATE_AT_SIGNAL */
-multiline_comment|/*&n;&t;   * Not sure anybody will ever use this weird stuff.  These&n;&t;   * ops can be used (under OSF/1) to set the fpcr that should&n;&t;   * be used when a signal handler starts executing.&n;&t;   */
+multiline_comment|/*&n;&t;&t; * Not sure anybody will ever use this weird stuff.  These&n;&t;&t; * ops can be used (under OSF/1) to set the fpcr that should&n;&t;&t; * be used when a signal handler starts executing.&n;&t;&t; */
 r_default
 suffix:colon
 r_break

@@ -468,7 +468,7 @@ r_int
 id|size
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|to

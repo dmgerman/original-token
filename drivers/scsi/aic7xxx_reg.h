@@ -1,4 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx register and scratch ram definitions.&n; *&n; * Copyright (c) 1994, 1995, 1996 Justin T. Gibbs.&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * This version corresponds to version 1.12 of FreeBSDs aic7xxx_reg.h&n; *&n; * $Id: aic7xxx_reg.h,v 3.1 1996/07/23 03:37:26 deang Exp $&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx register and scratch ram definitions.&n; *&n; * Copyright (c) 1994, 1995, 1996 Justin T. Gibbs.&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * This version corresponds to version 1.12 of FreeBSDs aic7xxx_reg.h&n; *&n; * $Id: aic7xxx_reg.h,v 4.0 1996/10/13 08:23:42 deang Exp $&n; *-M*************************************************************************/
 multiline_comment|/*&n; * This header is shared by the sequencer code and the kernel level driver.&n; *&n; * All page numbers refer to the Adaptec AIC-7770 Data Book available from&n; * Adaptec&squot;s Technical Documents Department 1-800-934-2766&n; */
 multiline_comment|/*&n; * SCSI Sequence Control (p. 3-11).&n; * Each bit, when set starts a specific SCSI sequence on the bus&n; */
 DECL|macro|SCSISEQ
@@ -591,13 +591,8 @@ DECL|macro|SCB_NEXT
 mdefine_line|#define&t;SCB_NEXT&t;&t;0x0ba
 DECL|macro|SCB_PREV
 mdefine_line|#define&t;SCB_PREV&t;&t;0x0bb
-macro_line|#ifdef linux
-DECL|macro|SG_SIZEOF
-mdefine_line|#define&t;SG_SIZEOF&t;&t;0x0c&t;&t;/* sizeof(struct scatterlist) */
-macro_line|#else
 DECL|macro|SG_SIZEOF
 mdefine_line|#define&t;SG_SIZEOF&t;&t;0x08&t;&t;/* sizeof(struct ahc_dma) */
-macro_line|#endif
 multiline_comment|/* --------------------- AHA-2840-only definitions -------------------- */
 DECL|macro|SEECTL_2840
 mdefine_line|#define&t;SEECTL_2840&t;&t;0x0c0

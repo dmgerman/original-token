@@ -590,11 +590,11 @@ r_int
 id|opcode
 suffix:semicolon
 multiline_comment|/* get opcode of faulting instruction: */
-id|opcode
-op_assign
 id|get_user
 c_func
 (paren
+id|opcode
+comma
 (paren
 id|__u32
 op_star
@@ -605,7 +605,9 @@ op_minus
 l_int|4
 )paren
 )paren
-op_rshift
+suffix:semicolon
+id|opcode
+op_rshift_assign
 l_int|26
 suffix:semicolon
 r_if

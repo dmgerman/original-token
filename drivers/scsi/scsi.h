@@ -125,6 +125,8 @@ DECL|macro|SCSI_MAN_PIONEER
 mdefine_line|#define SCSI_MAN_PIONEER     5
 DECL|macro|SCSI_MAN_MATSHITA
 mdefine_line|#define SCSI_MAN_MATSHITA    6
+DECL|macro|SCSI_MAN_HP
+mdefine_line|#define SCSI_MAN_HP          7
 multiline_comment|/*&n; *  As the scsi do command functions are intelligent, and may need to&n; *  redo a command, we need to keep track of the last command&n; *  executed on each one.&n; */
 DECL|macro|WAS_RESET
 mdefine_line|#define WAS_RESET       0x01

@@ -259,12 +259,6 @@ multiline_comment|/* process memory management */
 id|X
 c_func
 (paren
-id|__verify_write
-)paren
-comma
-id|X
-c_func
-(paren
 id|do_mmap
 )paren
 comma

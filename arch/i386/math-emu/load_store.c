@@ -914,11 +914,11 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-id|control_word
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|control_word
+comma
 (paren
 r_int
 r_int
@@ -1101,12 +1101,13 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|control_word
 comma
 (paren
+r_int
 r_int
 op_star
 )paren
@@ -1167,7 +1168,7 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|status_word
@@ -1176,6 +1177,7 @@ c_func
 )paren
 comma
 (paren
+r_int
 r_int
 op_star
 )paren

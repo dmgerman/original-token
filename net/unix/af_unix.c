@@ -2588,7 +2588,7 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|cm
@@ -2622,7 +2622,7 @@ op_star
 id|cm
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|userp
@@ -4379,7 +4379,7 @@ op_minus
 id|done
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|sp
@@ -4716,7 +4716,6 @@ comma
 r_sizeof
 (paren
 r_int
-r_int
 )paren
 )paren
 suffix:semicolon
@@ -4749,13 +4748,12 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|amount
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -4826,7 +4824,6 @@ comma
 r_sizeof
 (paren
 r_int
-r_int
 )paren
 )paren
 suffix:semicolon
@@ -4840,13 +4837,12 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|amount
 comma
 (paren
-r_int
 r_int
 op_star
 )paren

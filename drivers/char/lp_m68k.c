@@ -584,7 +584,7 @@ suffix:colon
 id|LP_BUFFER_SIZE
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|lp_table

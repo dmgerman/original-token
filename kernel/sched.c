@@ -4419,7 +4419,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -4793,7 +4793,7 @@ id|lp.sched_priority
 op_assign
 id|p-&gt;rt_priority
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|param
@@ -4975,7 +4975,7 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 multiline_comment|/* and then delete this line. Thanks!           */
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|interval
@@ -5149,7 +5149,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5310,7 +5310,7 @@ op_amp
 id|t
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|rmtp

@@ -5110,7 +5110,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5557,7 +5557,7 @@ id|frhdr
 suffix:colon
 id|data.config.mtu
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|conf
@@ -5632,7 +5632,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -5704,7 +5704,7 @@ comma
 id|mem.len
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|mem.data
@@ -5763,7 +5763,7 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|temp

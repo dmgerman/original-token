@@ -92,12 +92,11 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;set if arbitration has finished and we are &n;&t;&t;&t;&t;&t;&t;in some command phase.&n;&t;&t;&t;&t;&t;*/
 DECL|variable|base_address
 r_static
-r_const
-r_void
-op_star
+r_int
+r_int
 id|base_address
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;Where the card ROM starts,&n;&t;&t;&t;&t;&t;&t;used to calculate memory mapped&n;&t;&t;&t;&t;&t;&t;register location.&n;&t;&t;&t;&t;&t;*/
 macro_line|#ifdef notyet
@@ -112,17 +111,15 @@ suffix:semicolon
 macro_line|#endif
 DECL|variable|st0x_cr_sr
 r_static
-r_volatile
-r_void
-op_star
+r_int
+r_int
 id|st0x_cr_sr
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;control register write,&n;&t;&t;&t;&t;&t;&t;status register read.&n;&t;&t;&t;&t;&t;&t;256 bytes in length.&n;&n;&t;&t;&t;&t;&t;&t;Read is status of SCSI BUS,&n;&t;&t;&t;&t;&t;&t;as per STAT masks.&n;&n;&t;&t;&t;&t;&t;*/
 DECL|variable|st0x_dr
 r_static
-r_volatile
-r_void
-op_star
+r_int
+r_int
 id|st0x_dr
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;data register, read write&n;&t;&t;&t;&t;&t;&t;256 bytes in length.&n;&t;&t;&t;&t;&t;*/
@@ -155,11 +152,11 @@ suffix:semicolon
 DECL|macro|retcode
 mdefine_line|#define retcode(result) (((result) &lt;&lt; 16) | (message &lt;&lt; 8) | status) &t;&t;&t;
 DECL|macro|STATUS
-mdefine_line|#define STATUS (*(volatile unsigned char *) st0x_cr_sr)
+mdefine_line|#define STATUS (readb(st0x_cr_sr))
 DECL|macro|CONTROL
 mdefine_line|#define CONTROL STATUS 
 DECL|macro|DATA
-mdefine_line|#define DATA (*(volatile unsigned char *) st0x_dr)
+mdefine_line|#define DATA (readb(st0x_dr))
 DECL|function|st0x_setup
 r_void
 id|st0x_setup
@@ -179,10 +176,6 @@ id|SEAGATE
 suffix:semicolon
 id|base_address
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|ints
 (braket
 l_int|1
@@ -215,10 +208,6 @@ id|FD
 suffix:semicolon
 id|base_address
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|ints
 (braket
 l_int|1
@@ -235,48 +224,23 @@ suffix:semicolon
 macro_line|#ifndef OVERRIDE&t;&t;
 DECL|variable|seagate_bases
 r_static
-r_const
-r_char
-op_star
+r_int
+r_int
 id|seagate_bases
 (braket
 )braket
 op_assign
 (brace
-(paren
-r_char
-op_star
-)paren
 l_int|0xc8000
 comma
-(paren
-r_char
-op_star
-)paren
 l_int|0xca000
 comma
-(paren
-r_char
-op_star
-)paren
 l_int|0xcc000
 comma
-(paren
-r_char
-op_star
-)paren
 l_int|0xce000
 comma
-(paren
-r_char
-op_star
-)paren
 l_int|0xdc000
 comma
-(paren
-r_char
-op_star
-)paren
 l_int|0xde000
 )brace
 suffix:semicolon
@@ -285,6 +249,7 @@ r_struct
 (brace
 DECL|member|signature
 r_const
+r_int
 r_char
 op_star
 id|signature
@@ -687,10 +652,6 @@ id|controller_type
 macro_line|#ifdef OVERRIDE
 id|base_address
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|OVERRIDE
 suffix:semicolon
 multiline_comment|/* CONTROLLER is used to override controller (SEAGATE or FD). PM: 07/01/93 */
@@ -740,8 +701,8 @@ id|seagate_bases
 op_div
 r_sizeof
 (paren
-r_char
-op_star
+r_int
+r_int
 )paren
 )paren
 suffix:semicolon
@@ -768,14 +729,8 @@ id|j
 r_if
 c_cond
 (paren
-op_logical_neg
-id|memcmp
-(paren
-(paren
-r_const
-r_void
-op_star
-)paren
+id|check_signature
+c_func
 (paren
 id|seagate_bases
 (braket
@@ -788,13 +743,7 @@ id|j
 )braket
 dot
 id|offset
-)paren
 comma
-(paren
-r_const
-r_void
-op_star
-)paren
 id|signatures
 (braket
 id|j
@@ -813,11 +762,6 @@ id|length
 (brace
 id|base_address
 op_assign
-(paren
-r_const
-r_void
-op_star
-)paren
 id|seagate_bases
 (braket
 id|i
@@ -870,20 +814,7 @@ id|base_address
 (brace
 id|st0x_cr_sr
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-(paren
-(paren
-r_const
-r_int
-r_char
-op_star
-)paren
 id|base_address
-)paren
 op_plus
 (paren
 id|controller_type
@@ -899,32 +830,9 @@ l_int|0x1c00
 suffix:semicolon
 id|st0x_dr
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-(paren
-(paren
-r_const
-r_int
-r_char
-op_star
-)paren
-id|base_address
-)paren
+id|st0x_cr_sr
 op_plus
-(paren
-id|controller_type
-op_eq
-id|SEAGATE
-ques
-c_cond
-l_int|0x1c00
-suffix:colon
-l_int|0x1e00
-)paren
-)paren
+l_int|0x200
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
@@ -1010,10 +918,6 @@ id|irq
 suffix:semicolon
 id|instance-&gt;io_port
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|base_address
 suffix:semicolon
 macro_line|#ifdef SLOW_HANDSHAKE
@@ -1107,10 +1011,6 @@ id|FD_ID_STR
 comma
 id|irq
 comma
-(paren
-r_int
-r_int
-)paren
 id|base_address
 )paren
 suffix:semicolon
@@ -3216,6 +3116,7 @@ id|data
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#warning This no longer works: rewrite in C and use readbwl/writebwl
 id|__asm__
 c_func
 (paren
@@ -3322,6 +3223,7 @@ r_else
 macro_line|#endif
 (brace
 multiline_comment|/*&n; * &t;We loop as long as we are in a data out phase, there is data to send, &n; *&t;and BSY is still active.&n; */
+macro_line|#warning This no longer works: rewrite in C and use readbwl/writebwl
 id|__asm__
 (paren
 multiline_comment|/*&n;&t;Local variables : &n;&t;len = ecx&n;&t;data = esi&n;&t;st0x_cr_sr = ebx&n;&t;st0x_dr =  edi&n;&n;&t;Test for any data here at all.&n;*/
@@ -3611,6 +3513,7 @@ id|data
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#warning This no longer works: rewrite in C and use readbwl/writebwl
 id|__asm__
 c_func
 (paren
@@ -3750,6 +3653,7 @@ suffix:semicolon
 multiline_comment|/* Assume we&squot;ll transfer it all, then&n;&t;&t;&t;&t;   subtract what we *didn&squot;t* transfer */
 macro_line|#endif
 multiline_comment|/*&n; * &t;We loop as long as we are in a data in phase, there is room to read, &n; * &t;and BSY is still active&n; */
+macro_line|#warning This no longer works: rewrite in C and use readbwl/writebwl
 id|__asm__
 (paren
 multiline_comment|/*&n;&t;Local variables : &n;&t;ecx = len&n;&t;edi = data&n;&t;esi = st0x_cr_sr&n;&t;ebx = st0x_dr&n;&n;&t;Test for room to read&n;*/
@@ -4743,10 +4647,8 @@ l_int|256
 op_plus
 r_sizeof
 (paren
-r_int
+id|Scsi_Ioctl_Command
 )paren
-op_star
-l_int|2
 )braket
 comma
 id|cmd
@@ -4760,10 +4662,17 @@ comma
 op_star
 id|page
 suffix:semicolon
-r_int
+id|Scsi_Ioctl_Command
 op_star
-id|sizes
-comma
+id|sic
+op_assign
+(paren
+id|Scsi_Ioctl_Command
+op_star
+)paren
+id|buf
+suffix:semicolon
+r_int
 id|result
 comma
 id|formatted_sectors
@@ -4792,26 +4701,9 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-id|sizes
-op_assign
-(paren
-r_int
-op_star
-)paren
-id|buf
-suffix:semicolon
 id|data
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|sizes
-op_plus
-l_int|2
-)paren
+id|sic-&gt;data
 suffix:semicolon
 id|cmd
 (braket
@@ -4863,17 +4755,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * We are transferring 0 bytes in the out direction, and expect to get back&n; * 24 bytes for each mode page.&n; */
-id|sizes
-(braket
-l_int|0
-)braket
+id|sic-&gt;inlen
 op_assign
 l_int|0
 suffix:semicolon
-id|sizes
-(braket
-l_int|1
-)braket
+id|sic-&gt;outlen
 op_assign
 l_int|256
 suffix:semicolon
@@ -4899,11 +4785,7 @@ id|disk-&gt;device
 comma
 id|SCSI_IOCTL_SEND_COMMAND
 comma
-(paren
-r_void
-op_star
-)paren
-id|buf
+id|sic
 )paren
 )paren
 )paren
@@ -4985,11 +4867,7 @@ id|disk-&gt;device
 comma
 id|SCSI_IOCTL_SEND_COMMAND
 comma
-(paren
-r_void
-op_star
-)paren
-id|buf
+id|sic
 )paren
 )paren
 )paren

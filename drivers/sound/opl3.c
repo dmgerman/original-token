@@ -455,7 +455,7 @@ r_struct
 id|sbi_instrument
 id|ins
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -551,7 +551,7 @@ l_int|6
 suffix:colon
 id|devc-&gt;nr_voice
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -3836,7 +3836,7 @@ id|EINVAL
 )paren
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 (paren

@@ -3338,7 +3338,7 @@ op_amp
 id|stl_tmpwritesem
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|stl_tmpwritebuf
@@ -4193,7 +4193,7 @@ id|sio.irq
 op_assign
 id|brdp-&gt;irq
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|sp
@@ -4249,7 +4249,7 @@ id|sp
 )paren
 suffix:semicolon
 macro_line|#endif
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -13298,7 +13298,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -13447,7 +13447,7 @@ op_assign
 id|panelp-&gt;nrports
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|bp
@@ -13656,7 +13656,7 @@ op_star
 l_int|NULL
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -13859,7 +13859,7 @@ c_func
 id|portp
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|cp
@@ -13906,7 +13906,7 @@ op_star
 l_int|NULL
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -13974,7 +13974,7 @@ id|portp-&gt;stats.port
 op_assign
 id|portp-&gt;portnr
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|cp
@@ -14009,7 +14009,7 @@ id|stlport_t
 op_star
 id|portp
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -14054,7 +14054,7 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -14092,7 +14092,7 @@ id|stlbrd_t
 op_star
 id|brdp
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -14151,7 +14151,7 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren

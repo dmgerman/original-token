@@ -5764,7 +5764,7 @@ id|used
 op_assign
 id|count
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p
@@ -6105,7 +6105,7 @@ id|used
 op_assign
 id|count
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p
@@ -8848,7 +8848,7 @@ id|used
 op_assign
 id|count
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p
@@ -15770,7 +15770,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|dest

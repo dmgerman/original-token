@@ -1069,7 +1069,7 @@ op_sub_assign
 id|hdr_size
 suffix:semicolon
 multiline_comment|/*&n;   * Copy the header from user space but ignore the first bytes which have&n;   * been transferred already.&n;   */
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 op_amp
 (paren

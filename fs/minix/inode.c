@@ -1484,7 +1484,7 @@ id|tmp.f_namelen
 op_assign
 id|sb-&gt;u.minix_sb.s_namelen
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

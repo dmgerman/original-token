@@ -455,7 +455,7 @@ r_int
 id|fraglen
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|to
@@ -502,7 +502,7 @@ r_int
 id|fraglen
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|to

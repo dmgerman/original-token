@@ -18448,7 +18448,7 @@ id|i
 )braket
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -18507,7 +18507,7 @@ id|status
 op_assign
 l_int|0
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp.addr
@@ -18749,7 +18749,7 @@ op_logical_neg
 id|status
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -18810,7 +18810,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp.addr
@@ -18964,7 +18964,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -19068,7 +19068,7 @@ l_int|1
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -19117,7 +19117,7 @@ l_int|1
 )paren
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp.addr
@@ -19305,7 +19305,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data
@@ -20373,7 +20373,7 @@ id|ioc-&gt;len
 )paren
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|ioc-&gt;data

@@ -1184,7 +1184,7 @@ r_int
 r_return
 id|r
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -1249,7 +1249,7 @@ r_int
 r_return
 id|r
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|b
@@ -2415,7 +2415,7 @@ id|count
 op_assign
 id|b-&gt;len
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -2592,7 +2592,7 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|skb_put
@@ -6702,7 +6702,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-id|memcpy_tofs
+id|copy_to_user
 (paren
 id|res
 comma
@@ -6828,7 +6828,7 @@ c_cond
 op_logical_neg
 id|error
 )paren
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|r

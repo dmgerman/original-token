@@ -1807,7 +1807,7 @@ op_minus
 id|ENOSPC
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -1901,7 +1901,7 @@ op_minus
 id|ENOSPC
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -1987,7 +1987,7 @@ op_assign
 id|i
 suffix:semicolon
 multiline_comment|/* feed back number of WORDs sent */
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -2166,7 +2166,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -2215,7 +2215,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -2341,7 +2341,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren
@@ -2385,7 +2385,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -2537,7 +2537,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -2727,7 +2727,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 (paren
 (paren
 r_char
@@ -2888,7 +2888,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 (paren
 op_amp
 (paren

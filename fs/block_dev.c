@@ -771,7 +771,7 @@ id|count
 op_sub_assign
 id|chars
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p
@@ -1687,7 +1687,7 @@ op_star
 id|bhe
 )paren
 (brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

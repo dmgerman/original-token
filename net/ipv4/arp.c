@@ -7104,7 +7104,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -7167,7 +7167,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -7477,7 +7477,7 @@ c_cond
 op_logical_neg
 id|err
 )paren
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -7567,7 +7567,7 @@ c_cond
 op_logical_neg
 id|err
 )paren
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg

@@ -846,7 +846,7 @@ id|len
 op_assign
 id|buflen
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buffer

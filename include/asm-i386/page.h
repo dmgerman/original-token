@@ -11,6 +11,10 @@ mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
+DECL|macro|clear_page
+mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
+DECL|macro|copy_page
+mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
 macro_line|#ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte

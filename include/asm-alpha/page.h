@@ -11,6 +11,162 @@ mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
+multiline_comment|/*&n; * A _lot_ of the kernel time is spent clearing pages, so&n; * do this as fast as we possibly can. Also, doing this&n; * as a separate inline function (rather than memset())&n; * results in clearer kernel profiles as we see _who_ is&n; * doing page clearing or copying.&n; */
+DECL|function|clear_page
+r_static
+r_inline
+r_void
+id|clear_page
+c_func
+(paren
+r_int
+r_int
+id|page
+)paren
+(brace
+r_int
+r_int
+id|count
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.align 4&bslash;n&quot;
+l_string|&quot;1:&bslash;n&bslash;t&quot;
+l_string|&quot;stq $31,0(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $31,8(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $31,16(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $31,24(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;subq %0,1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;stq $31,32(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $31,40(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $31,48(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $31,56(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;addq $1,64,$1&bslash;n&bslash;t&quot;
+l_string|&quot;bne %0,1b&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|count
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|page
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|PAGE_SIZE
+op_div
+l_int|64
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|page
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|copy_page
+r_static
+r_inline
+r_void
+id|copy_page
+c_func
+(paren
+r_int
+r_int
+id|to
+comma
+r_int
+r_int
+id|from
+)paren
+(brace
+r_int
+r_int
+id|count
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.align 4&bslash;n&quot;
+l_string|&quot;1:&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $0,0(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $1,8(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $2,16(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $3,24(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $4,32(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $5,40(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $6,48(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $7,56(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;subq %0,1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;addq %1,64,%1&bslash;n&bslash;t&quot;
+l_string|&quot;stq $0,0(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $1,8(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $2,16(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $3,24(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $4,32(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $5,40(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $6,48(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $7,56(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;addq %2,64,%2&bslash;n&bslash;t&quot;
+l_string|&quot;bne %0,1b&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|count
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|from
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|to
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|PAGE_SIZE
+op_div
+l_int|64
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|from
+)paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|to
+)paren
+suffix:colon
+l_string|&quot;$0&quot;
+comma
+l_string|&quot;$1&quot;
+comma
+l_string|&quot;$2&quot;
+comma
+l_string|&quot;$3&quot;
+comma
+l_string|&quot;$4&quot;
+comma
+l_string|&quot;$5&quot;
+comma
+l_string|&quot;$6&quot;
+comma
+l_string|&quot;$7&quot;
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte

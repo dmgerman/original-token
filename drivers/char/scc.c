@@ -7249,7 +7249,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -7805,7 +7805,7 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -8352,7 +8352,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -8394,7 +8394,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|scc-&gt;tty-&gt;termios
@@ -8434,7 +8434,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -8538,7 +8538,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -8611,7 +8611,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -8899,7 +8899,7 @@ id|kiss_cmd.param
 op_assign
 id|r
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -8936,7 +8936,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -9267,7 +9267,7 @@ op_amp
 id|scc_sem
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|scc_wbuf

@@ -2500,7 +2500,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3054,7 +3054,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -3120,7 +3120,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -7262,7 +7262,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -7439,7 +7439,6 @@ comma
 r_sizeof
 (paren
 r_int
-r_int
 )paren
 )paren
 suffix:semicolon
@@ -7453,13 +7452,12 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|amount
 comma
 (paren
-r_int
 r_int
 op_star
 )paren

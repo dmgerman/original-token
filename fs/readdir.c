@@ -140,7 +140,7 @@ op_amp
 id|dirent-&gt;d_namlen
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|dirent-&gt;d_name
@@ -467,7 +467,7 @@ op_amp
 id|dirent-&gt;d_reclen
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|dirent-&gt;d_name

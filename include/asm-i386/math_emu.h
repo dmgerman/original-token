@@ -99,14 +99,6 @@ DECL|member|___es
 r_int
 id|___es
 suffix:semicolon
-DECL|member|___fs
-r_int
-id|___fs
-suffix:semicolon
-DECL|member|___gs
-r_int
-id|___gs
-suffix:semicolon
 DECL|member|___orig_eax
 r_int
 id|___orig_eax

@@ -562,7 +562,7 @@ id|i
 op_assign
 id|count
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|tmp
@@ -884,7 +884,7 @@ id|i
 op_assign
 id|count
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|page

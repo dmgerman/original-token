@@ -3018,7 +3018,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_else
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|ch-&gt;tmp_buf
@@ -9963,7 +9963,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -10065,7 +10065,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -10240,7 +10240,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -10323,7 +10323,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp

@@ -492,7 +492,7 @@ c_func
 id|len
 )paren
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|p

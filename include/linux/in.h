@@ -221,10 +221,10 @@ DECL|macro|INADDR_ALLHOSTS_GROUP
 mdefine_line|#define INADDR_ALLHOSTS_GROUP &t;0xe0000001      /* 224.0.0.1   */
 DECL|macro|INADDR_MAX_LOCAL_GROUP
 mdefine_line|#define INADDR_MAX_LOCAL_GROUP  0xe00000ff      /* 224.0.0.255 */
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* &lt;asm/byteorder.h&gt; contains the htonl type stuff.. */
 macro_line|#include &lt;asm/byteorder.h&gt; 
 multiline_comment|/* Some random defines to make it easier in the kernel.. */
-macro_line|#ifdef __KERNEL__
 DECL|macro|LOOPBACK
 mdefine_line|#define LOOPBACK(x)&t;(((x) &amp; htonl(0xff000000)) == htonl(0x7f000000))
 DECL|macro|MULTICAST

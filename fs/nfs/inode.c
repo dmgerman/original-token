@@ -870,7 +870,7 @@ id|tmp.f_namelen
 op_assign
 id|NAME_MAX
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

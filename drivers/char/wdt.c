@@ -469,7 +469,7 @@ id|c
 op_plus
 l_int|7
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|buf

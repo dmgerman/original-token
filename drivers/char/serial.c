@@ -896,7 +896,7 @@ macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
 macro_line|#endif
-multiline_comment|/*&n; * tmp_buf is used as a temporary buffer by serial_write.  We need to&n; * lock it in case the memcpy_fromfs blocks while swapping in a page,&n; * and some other program tries to do a serial write at the same time.&n; * Since the lock will only come under contention when the system is&n; * swapping and available memory is low, it makes sense to share one&n; * buffer across all the serial ports, since it significantly saves&n; * memory if large numbers of serial ports are open.&n; */
+multiline_comment|/*&n; * tmp_buf is used as a temporary buffer by serial_write.  We need to&n; * lock it in case the copy_from_user blocks while swapping in a page,&n; * and some other program tries to do a serial write at the same time.&n; * Since the lock will only come under contention when the system is&n; * swapping and available memory is low, it makes sense to share one&n; * buffer across all the serial ports, since it significantly saves&n; * memory if large numbers of serial ports are open.&n; */
 DECL|variable|tmp_buf
 r_static
 r_int
@@ -5901,7 +5901,7 @@ c_cond
 id|from_user
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|tmp_buf
@@ -6580,7 +6580,7 @@ id|tmp.hub6
 op_assign
 id|info-&gt;hub6
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|retinfo
@@ -6647,7 +6647,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -7319,11 +7319,11 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|arg
-op_assign
 id|get_user
 c_func
 (paren
+id|arg
+comma
 id|value
 )paren
 suffix:semicolon
@@ -7963,7 +7963,7 @@ id|ret.irq
 op_assign
 id|info-&gt;irq
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|retinfo
@@ -8055,7 +8055,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -8634,7 +8634,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|C_CLOCAL
@@ -8649,7 +8649,6 @@ suffix:colon
 l_int|0
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -8689,11 +8688,11 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|arg
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|arg
+comma
 (paren
 r_int
 r_int
@@ -8925,7 +8924,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|rs_wild_int_mask
@@ -9031,11 +9030,11 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|rs_wild_int_mask
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|rs_wild_int_mask
+comma
 (paren
 r_int
 r_int
@@ -9093,7 +9092,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
