@@ -2892,7 +2892,7 @@ c_func
 (paren
 id|pkt_len
 op_plus
-l_int|3
+l_int|5
 )paren
 suffix:semicolon
 r_if
@@ -2924,6 +2924,15 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* Align IP on 16 byte boundaries */
 multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
 id|insl
 c_func

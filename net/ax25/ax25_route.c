@@ -465,7 +465,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;callsign  dev count      time mode&bslash;n&quot;
+l_string|&quot;callsign  dev  count time      mode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -493,7 +493,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-9s %-3s %5d %9d&quot;
+l_string|&quot;%-9s %-4s %5d %9d&quot;
 comma
 id|ax2asc
 c_func

@@ -910,5 +910,13 @@ mdefine_line|#define&t;CDROMEJECT_SW&t;&t;0x530f&t;&t;/* arg: 0 or 1 */
 multiline_comment|/*&n; * obtain the start-of-last-session address of multi session disks&n; */
 DECL|macro|CDROMMULTISESSION
 mdefine_line|#define&t;CDROMMULTISESSION&t;0x5310 /* (struct cdrom_multisession) */
+multiline_comment|/*&n; * obtain the &quot;universal product code&quot; number&n; * (only some data disks have it coded)&n; */
+DECL|macro|CDROM_GET_UPC
+mdefine_line|#define&t;CDROM_GET_UPC&t;&t;0x5311 /* 8 bytes returned */
+DECL|macro|CDROMRESET
+mdefine_line|#define&t;CDROMRESET&t;&t;0x5312 /* hard-reset the drive */
+DECL|macro|CDROMVOLREAD
+mdefine_line|#define&t;CDROMVOLREAD&t;&t;0x5313 /* let the drive tell its volume setting */
+multiline_comment|/* (struct cdrom_volctrl) */
 macro_line|#endif  _LINUX_CDROM_H
 eof

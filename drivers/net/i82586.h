@@ -1,4 +1,3 @@
-macro_line|#if&t;defined(CONFIG_WAVELAN)
 multiline_comment|/*&n; * Intel 82586 IEEE 802.3 Ethernet LAN Coprocessor.&n; *&n; * See:&n; *&t;Intel Microcommunications 1991&n; *&t;p1-1 to p1-37&n; *&t;Intel order No. 231658&n; *&t;ISBN 1-55512-119-5&n; *&n; *     Unfortunately, the above chapter mentions neither&n; * the System Configuration Pointer (SCP) nor the&n; * Intermediate System Configuration Pointer (ISCP),&n; * so we probably need to look elsewhere for the&n; * whole story -- some recommend the &quot;Intel LAN&n; * Components manual&quot; but I have neither a copy&n; * nor a full reference.  But &quot;elsewhere&quot; may be&n; * in the same publication...&n; *     The description of a later device, the&n; * &quot;82596CA High-Performance 32-Bit Local Area Network&n; * Coprocessor&quot;, (ibid. p1-38 to p1-109) does mention&n; * the SCP and ISCP and also has an i82586 compatibility&n; * mode.  Even more useful is &quot;AP-235 An 82586 Data Link&n; * Driver&quot; (ibid. p1-337 to p1-417).&n; */
 DECL|macro|I82586_MEMZ
 mdefine_line|#define&t;I82586_MEMZ&t;(64 * 1024)
@@ -973,5 +972,4 @@ suffix:semicolon
 DECL|macro|fdoff
 mdefine_line|#define&t;fdoff(p,f) &t;toff(fd_t, p, f)
 multiline_comment|/*&n; * This software may only be used and distributed&n; * according to the terms of the GNU Public License.&n; *&n; * For more details, see wavelan.c.&n; */
-macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 eof

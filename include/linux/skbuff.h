@@ -6,9 +6,12 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/* #define CONFIG_SKB_CHECK 1 */
+DECL|macro|CONFIG_SKB_CHECK
+mdefine_line|#define CONFIG_SKB_CHECK 0
 DECL|macro|HAVE_ALLOC_SKB
 mdefine_line|#define HAVE_ALLOC_SKB&t;&t;/* For the drivers to know */
+DECL|macro|HAVE_ALIGNABLE_SKB
+mdefine_line|#define HAVE_ALIGNABLE_SKB&t;/* Ditto 8)&t;&t;   */
 DECL|macro|FREE_READ
 mdefine_line|#define FREE_READ&t;1
 DECL|macro|FREE_WRITE
@@ -141,6 +144,25 @@ DECL|member|h
 )brace
 id|h
 suffix:semicolon
+r_union
+(brace
+multiline_comment|/* As yet incomplete physical layer views &t;*/
+DECL|member|raw
+r_int
+r_char
+op_star
+id|raw
+suffix:semicolon
+DECL|member|ethernet
+r_struct
+id|ethhdr
+op_star
+id|ethernet
+suffix:semicolon
+DECL|member|mac
+)brace
+id|mac
+suffix:semicolon
 DECL|member|ip_hdr
 r_struct
 id|iphdr
@@ -172,6 +194,12 @@ r_int
 id|raddr
 suffix:semicolon
 multiline_comment|/* IP next hop address&t;&t;&t;&t;*/
+DECL|member|csum
+r_int
+r_int
+id|csum
+suffix:semicolon
+multiline_comment|/* Checksum &t;&t;&t;&t;&t;*/
 DECL|member|acked
 r_volatile
 r_char
@@ -206,8 +234,12 @@ comma
 multiline_comment|/* Local routing asserted for this frame&t;*/
 DECL|member|pkt_type
 id|pkt_type
-suffix:semicolon
+comma
 multiline_comment|/* Packet class&t;&t;&t;&t;&t;*/
+DECL|member|ip_summed
+id|ip_summed
+suffix:semicolon
+multiline_comment|/* Driver fed us an IP checksum&t;&t;&t;*/
 DECL|macro|PACKET_HOST
 mdefine_line|#define PACKET_HOST&t;&t;0&t;&t;&t;/* To us&t;&t;&t;&t;&t;*/
 DECL|macro|PACKET_BROADCAST
@@ -268,7 +300,7 @@ DECL|macro|SK_WMEM_MAX
 mdefine_line|#define SK_WMEM_MAX&t;32767
 DECL|macro|SK_RMEM_MAX
 mdefine_line|#define SK_RMEM_MAX&t;32767
-macro_line|#ifdef CONFIG_SKB_CHECK
+macro_line|#if CONFIG_SKB_CHECK
 DECL|macro|SK_FREED_SKB
 mdefine_line|#define SK_FREED_SKB&t;0x0DE2C0DE
 DECL|macro|SK_GOOD_SKB

@@ -1,9 +1,11 @@
 multiline_comment|/* $Id: scsi_debug.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/scsi_debug.c&n; *&n; *  Copyright (C) 1992  Eric Youngdale&n; *  Simulate a host adapter with 2 disks attached.  Do a lot of checking&n; *  to make sure that we are not getting blocks mixed up, and panic if&n; *  anything out of the ordinary is seen.&n; */
 macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3120,6 +3122,127 @@ suffix:semicolon
 multiline_comment|/* looks nicer without anything here */
 r_return
 id|buffer
+suffix:semicolon
+)brace
+multiline_comment|/* generic_proc_info&n; * Used if the driver currently has no own support for /proc/scsi&n; */
+DECL|function|scsi_debug_proc_info
+r_int
+id|scsi_debug_proc_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|inode
+comma
+r_int
+id|inout
+)paren
+(brace
+r_int
+id|len
+comma
+id|pos
+comma
+id|begin
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inout
+op_eq
+l_int|1
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
+multiline_comment|/* This is a no-op */
+id|begin
+op_assign
+l_int|0
+suffix:semicolon
+id|pos
+op_assign
+id|len
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;This driver is not a real scsi driver, but it plays one on TV.&bslash;n&quot;
+l_string|&quot;It is very handy for debugging specific problems because you&bslash;n&quot;
+l_string|&quot;can simulate a variety of error conditions&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pos
+OL
+id|offset
+)paren
+(brace
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|begin
+op_assign
+id|pos
+suffix:semicolon
+)brace
+op_star
+id|start
+op_assign
+id|buffer
+op_plus
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+multiline_comment|/* Start of wanted data */
+id|len
+op_sub_assign
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+(brace
+id|len
+op_assign
+id|length
+suffix:semicolon
+)brace
+r_return
+id|len
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE

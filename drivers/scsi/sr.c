@@ -1,4 +1,9 @@
 multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/autoconf.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2268,6 +2273,194 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
+r_case
+id|SCSI_MAN_SONY
+suffix:colon
+multiline_comment|/* Thomas QUINOT &lt;thomas@melchior.frmug.fr.net&gt; */
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;sr_photocd: use SONY code&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|memset
+c_func
+(paren
+id|buf
+comma
+l_int|0
+comma
+l_int|40
+)paren
+suffix:semicolon
+op_star
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|buf
+)paren
+op_assign
+l_int|0x0
+suffix:semicolon
+multiline_comment|/* we send nothing...     */
+op_star
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|buf
+op_plus
+l_int|1
+)paren
+op_assign
+l_int|0x0c
+suffix:semicolon
+multiline_comment|/* and receive 0x0c bytes */
+id|cmd
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0x43
+suffix:semicolon
+multiline_comment|/* Read TOC */
+id|cmd
+(braket
+l_int|8
+)braket
+op_assign
+l_int|0x0c
+suffix:semicolon
+id|cmd
+(braket
+l_int|9
+)braket
+op_assign
+l_int|0x40
+suffix:semicolon
+id|rc
+op_assign
+id|kernel_scsi_ioctl
+c_func
+(paren
+id|scsi_CDs
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+dot
+id|device
+comma
+id|SCSI_IOCTL_SEND_COMMAND
+comma
+id|buf
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|rc
+op_ne
+l_int|0
+)paren
+op_logical_or
+(paren
+(paren
+id|rec
+(braket
+l_int|0
+)braket
+op_lshift
+l_int|8
+)paren
+op_plus
+id|rec
+(braket
+l_int|1
+)braket
+op_ne
+l_int|0x0a
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;sr_photocd: ioctl error (SONY): 0x%x&bslash;n&quot;
+comma
+id|rc
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|sector
+op_assign
+id|rec
+(braket
+l_int|11
+)braket
+op_plus
+(paren
+id|rec
+(braket
+l_int|10
+)braket
+op_lshift
+l_int|8
+)paren
+op_plus
+(paren
+id|rec
+(braket
+l_int|9
+)braket
+op_lshift
+l_int|16
+)paren
+op_plus
+(paren
+id|rec
+(braket
+l_int|8
+)braket
+op_lshift
+l_int|24
+)paren
+suffix:semicolon
+id|is_xa
+op_assign
+op_logical_neg
+op_logical_neg
+id|sector
+suffix:semicolon
+macro_line|#ifdef DEBUG
+r_if
+c_cond
+(paren
+id|sector
+)paren
+id|printk
+(paren
+l_string|&quot;sr_photocd: multisession CD detected. start: %lu&bslash;n&quot;
+comma
+id|sector
+)paren
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case

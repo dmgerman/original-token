@@ -24,7 +24,7 @@ macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
-macro_line|#include &lt;net/atalk.h&gt;
+macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#ifdef CONFIG_ATALK
 DECL|macro|APPLETALK_DEBUG
 mdefine_line|#define APPLETALK_DEBUG
@@ -5126,15 +5126,6 @@ suffix:semicolon
 r_int
 id|origlen
 suffix:semicolon
-multiline_comment|/* First strip the MAC header */
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-id|dev-&gt;hard_header_len
-)paren
-suffix:semicolon
 multiline_comment|/* Size check */
 r_if
 c_cond
@@ -5954,14 +5945,6 @@ comma
 id|dev-&gt;hard_header_len
 )paren
 suffix:semicolon
-id|skb_put
-c_func
-(paren
-id|skb
-comma
-id|size
-)paren
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -5981,10 +5964,6 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
 id|ddp
 op_assign
 (paren
@@ -5992,7 +5971,17 @@ r_struct
 id|ddpehdr
 op_star
 )paren
-id|skb-&gt;h.raw
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+r_struct
+id|ddpehdr
+)paren
+)paren
 suffix:semicolon
 id|ddp-&gt;deh_pad
 op_assign
@@ -6079,14 +6068,12 @@ suffix:semicolon
 id|memcpy_fromfs
 c_func
 (paren
+id|skb_put
+c_func
 (paren
-r_char
-op_star
-)paren
-(paren
-id|ddp
-op_plus
-l_int|1
+id|skb
+comma
+id|len
 )paren
 comma
 id|ubuf
@@ -6273,6 +6260,10 @@ suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
+suffix:semicolon
+id|skb-&gt;mac.raw
+op_assign
+id|skb-&gt;data
 suffix:semicolon
 id|skb-&gt;h.raw
 op_assign

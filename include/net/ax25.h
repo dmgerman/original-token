@@ -3,6 +3,16 @@ macro_line|#ifndef _AX25_H
 DECL|macro|_AX25_H
 mdefine_line|#define _AX25_H 
 macro_line|#include &lt;linux/ax25.h&gt;
+DECL|macro|AX25_BPQ_HEADER_LEN
+mdefine_line|#define&t;AX25_BPQ_HEADER_LEN&t;16
+DECL|macro|AX25_KISS_HEADER_LEN
+mdefine_line|#define&t;AX25_KISS_HEADER_LEN&t;1
+DECL|macro|AX25_MAX_HEADER_LEN
+mdefine_line|#define&t;AX25_MAX_HEADER_LEN&t;56
+DECL|macro|AX25_HEADER_LEN
+mdefine_line|#define&t;AX25_HEADER_LEN&t;&t;17
+DECL|macro|AX25_ADDR_LEN
+mdefine_line|#define&t;AX25_ADDR_LEN&t;&t;7
 DECL|macro|AX25_P_IP
 mdefine_line|#define AX25_P_IP&t;0xCC
 DECL|macro|AX25_P_ARP
@@ -270,7 +280,7 @@ DECL|typedef|ax25_cb
 )brace
 id|ax25_cb
 suffix:semicolon
-multiline_comment|/* ax25.c */
+multiline_comment|/* af_ax25.c */
 r_extern
 r_char
 op_star
@@ -308,26 +318,11 @@ comma
 id|ax25_address
 op_star
 comma
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ax25_rcv
-c_func
-(paren
-r_struct
-id|sk_buff
+id|ax25_digi
 op_star
 comma
 r_struct
 id|device
-op_star
-comma
-r_struct
-id|packet_type
 op_star
 )paren
 suffix:semicolon
@@ -431,6 +426,22 @@ id|ax25_findbyuid
 c_func
 (paren
 id|uid_t
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_queue_xmit
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+comma
+r_struct
+id|device
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 macro_line|#include &quot;ax25call.h&quot;
@@ -817,6 +828,17 @@ id|ax25_set_timer
 c_func
 (paren
 id|ax25_cb
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* slip.c */
+r_extern
+r_int
+id|sl_get_ax25_mode
+c_func
+(paren
+r_struct
+id|device
 op_star
 )paren
 suffix:semicolon

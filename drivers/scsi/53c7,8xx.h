@@ -94,29 +94,8 @@ macro_line|#else
 DECL|macro|NCR53c7xx_release
 mdefine_line|#define NCR53c7xx_release NULL
 macro_line|#endif
-r_extern
-r_int
-id|generic_proc_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 DECL|macro|NCR53c7xx
-mdefine_line|#define NCR53c7xx {NULL, NULL, generic_proc_info, &quot;NCR53c7xx&quot;,          &bslash;&n; &t;PROC_SCSI_NCR53C7xx, &quot;NCR53c{7,8}xx (rel 4)&quot;, NCR53c7xx_detect, &bslash;&n;    &t;NULL, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 1, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 1 , &t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+mdefine_line|#define NCR53c7xx {NULL, NULL, NULL, &quot;NCR53c7xx&quot;,          &bslash;&n; &t;PROC_SCSI_NCR53C7xx, &quot;NCR53c{7,8}xx (rel 4)&quot;, NCR53c7xx_detect, &bslash;&n;    &t;NULL, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 1, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 1 , &t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
 multiline_comment|/* Register addresses, ordered numerically */

@@ -193,27 +193,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|generic_proc_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
@@ -222,6 +201,6 @@ multiline_comment|/* next may be &quot;SG_NONE&quot; or &quot;SG_ALL&quot; or nr
 DECL|macro|IN2000_SG
 mdefine_line|#define IN2000_SG SG_ALL
 DECL|macro|IN2000
-mdefine_line|#define IN2000 {NULL, NULL, generic_proc_info,  &bslash;&n;&t;&t;&quot;in2000&quot;, PROC_SCSI_IN2000, &bslash;&n;&t;&t;&quot;Always IN2000&quot;, in2000_detect, NULL,&t;&bslash;&n;&t;&t;NULL, in2000_command,&t;&t;&bslash;&n;&t;&t;in2000_queuecommand,&t;&t;&bslash;&n;&t;&t;in2000_abort,&t;&t;&t;&bslash;&n;&t;&t;in2000_reset,&t;&t;&t;&bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;in2000_biosparam,               &bslash;&n;&t;&t;1, 7, IN2000_SG, 1, 0, 0}
+mdefine_line|#define IN2000 {NULL, NULL, NULL,  &bslash;&n;&t;&t;&quot;in2000&quot;, PROC_SCSI_IN2000, &bslash;&n;&t;&t;&quot;Always IN2000&quot;, in2000_detect, NULL,&t;&bslash;&n;&t;&t;NULL, in2000_command,&t;&t;&bslash;&n;&t;&t;in2000_queuecommand,&t;&t;&bslash;&n;&t;&t;in2000_abort,&t;&t;&t;&bslash;&n;&t;&t;in2000_reset,&t;&t;&t;&bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;in2000_biosparam,               &bslash;&n;&t;&t;1, 7, IN2000_SG, 1, 0, 0}
 macro_line|#endif
 eof

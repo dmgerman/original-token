@@ -1,4 +1,24 @@
-multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioctls and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;        0.3.3 Added more #defines and mcd_setup()&n;   &t;&t;   (Jon Tombs &lt;jon@gtex02.us.es&gt;)&n;&n;&t;October 1993 Bernd Huebner and Ruediger Helsch, Unifix Software GmbH,&n;&t;Braunschweig, Germany: Total rework to speed up data read operation.&n;&t;Also enabled definition of irq and address from bootstrap, using the&n;&t;environment. linux/init/main.c must be patched to export the env.&n;&t;November 93 added code for FX001 S,D (single &amp; double speed).&n;&t;February 94 added code for broken M 5/6 series of 16-bit single speed.&n;*/
+multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com (no longer valid - where are you now, Martin?)&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioctls and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;        0.3.3 Added more #defines and mcd_setup()&n;   &t;&t;   (Jon Tombs &lt;jon@gtex02.us.es&gt;)&n;&n;&t;October 1993 Bernd Huebner and Ruediger Helsch, Unifix Software GmbH,&n;&t;Braunschweig, Germany: rework to speed up data read operation.&n;&t;Also enabled definition of irq and address from bootstrap, using the&n;&t;environment.&n;&t;November 93 added code for FX001 S,D (single &amp; double speed).&n;&t;February 94 added code for broken M 5/6 series of 16-bit single speed.&n;&n;        0.4   Added support for loadable MODULEs, so mcd can now also be&n;              loaded by insmod and removed by rmmod during runtime.&n;              Werner Zimmermann (zimmerma@rz.fht-esslingen.de), Mar. 26, 95&n;*/
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+macro_line|# include &lt;linux/module.h&gt;
+macro_line|# include &lt;linux/version.h&gt;
+macro_line|# ifndef CONFIG_MODVERSIONS
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+macro_line|# endif
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+macro_line|# define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+macro_line|# define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -17,6 +37,8 @@ macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MITSUMI_CDROM_MAJOR
 macro_line|#include &quot;blk.h&quot;
+DECL|macro|mcd_port
+mdefine_line|#define mcd_port mcd    /* for compatible parameter passing with &quot;insmod&quot; */
 macro_line|#include &lt;linux/mcd.h&gt;
 macro_line|#if 0
 r_static
@@ -192,6 +214,7 @@ id|mcd_port
 op_assign
 id|MCD_BASE_ADDR
 suffix:semicolon
+multiline_comment|/* used as &quot;mcd&quot; by &quot;insmod&quot; */
 DECL|variable|mcd_irq
 r_static
 r_int
@@ -199,6 +222,7 @@ id|mcd_irq
 op_assign
 id|MCD_INTR_NR
 suffix:semicolon
+multiline_comment|/* must directly follow mcd_port */
 DECL|variable|McdTimeout
 DECL|variable|McdTries
 r_static
@@ -4010,6 +4034,8 @@ suffix:semicolon
 op_increment
 id|mcd_open_count
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4032,6 +4058,8 @@ op_star
 id|file
 )paren
 (brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4109,6 +4137,7 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Test for presence of drive and initialize it.  Called at boot time.&n; */
+macro_line|#ifndef MODULE
 r_int
 r_int
 DECL|function|mcd_init
@@ -4123,6 +4152,14 @@ r_int
 r_int
 id|mem_end
 )paren
+macro_line|#else
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+macro_line|#endif
 (brace
 r_int
 id|count
@@ -4152,9 +4189,16 @@ c_func
 l_string|&quot;skip mcd_init&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifndef MODULE
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#endif
 )brace
 id|printk
 c_func
@@ -4191,9 +4235,16 @@ comma
 id|MAJOR_NR
 )paren
 suffix:semicolon
+macro_line|#ifndef MODULE
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -4215,9 +4266,16 @@ comma
 id|mcd_port
 )paren
 suffix:semicolon
+macro_line|#ifndef MODULE&t;&t; 
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#endif&t;  
 )brace
 id|blk_dev
 (braket
@@ -4342,9 +4400,16 @@ comma
 id|mcd_irq
 )paren
 suffix:semicolon
+macro_line|#ifndef MODULE
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#endif                
 )brace
 id|count
 op_assign
@@ -4405,9 +4470,16 @@ comma
 id|mcd_port
 )paren
 suffix:semicolon
+macro_line|#ifndef MODULE
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -4432,9 +4504,16 @@ id|result
 l_int|2
 )braket
 )paren
+macro_line|#ifndef MODULE
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -4522,9 +4601,16 @@ comma
 id|mcd_irq
 )paren
 suffix:semicolon
+macro_line|#ifndef MODULE
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#endif
 )brace
 id|request_region
 c_func
@@ -4629,9 +4715,15 @@ id|mcdPresent
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifndef MODULE&t;
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 r_static
 r_void
@@ -6294,4 +6386,70 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;mcd module in use - can&squot;t remove it.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;mcd&quot;
+)paren
+op_eq
+op_minus
+id|EINVAL
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;What&squot;s that: can&squot;t unregister mcd&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|release_region
+c_func
+(paren
+id|mcd_port
+comma
+l_int|4
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;mcd module released.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif MODULE
 eof

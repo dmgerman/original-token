@@ -628,7 +628,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_SKB_CHECK
+macro_line|#if CONFIG_SKB_CHECK
 DECL|function|skb_queue_head_init
 r_void
 id|skb_queue_head_init
@@ -1593,7 +1593,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SKB_CHECK
+macro_line|#if CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
@@ -1975,6 +1975,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* No idea about time */
 id|skb-&gt;localroute
+op_assign
+l_int|0
+suffix:semicolon
+id|skb-&gt;ip_summed
 op_assign
 l_int|0
 suffix:semicolon

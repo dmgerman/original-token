@@ -7095,6 +7095,19 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Pull off the arcnet header.&n;&t; */
+id|skb-&gt;mac.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

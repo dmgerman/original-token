@@ -3,6 +3,10 @@ macro_line|#ifndef _NETROM_H
 DECL|macro|_NETROM_H
 mdefine_line|#define _NETROM_H 
 macro_line|#include &lt;linux/netrom.h&gt;
+DECL|macro|NR_NETWORK_LEN
+mdefine_line|#define&t;NR_NETWORK_LEN&t;&t;15
+DECL|macro|NR_TRANSPORT_LEN
+mdefine_line|#define&t;NR_TRANSPORT_LEN&t;5
 DECL|macro|NR_PROTO_IP
 mdefine_line|#define&t;NR_PROTO_IP&t;&t;0x0C
 DECL|macro|NR_PROTOEXT
@@ -235,6 +239,11 @@ DECL|member|callsign
 id|ax25_address
 id|callsign
 suffix:semicolon
+DECL|member|digipeat
+id|ax25_digi
+op_star
+id|digipeat
+suffix:semicolon
 DECL|member|dev
 r_struct
 id|device
@@ -263,7 +272,7 @@ id|number
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* netrom.c */
+multiline_comment|/* af_netrom.c */
 r_extern
 r_struct
 id|nr_parms_struct
@@ -509,8 +518,7 @@ r_struct
 id|sk_buff
 op_star
 comma
-r_struct
-id|device
+id|ax25_cb
 op_star
 )paren
 suffix:semicolon

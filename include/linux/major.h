@@ -7,7 +7,7 @@ DECL|macro|MAX_CHRDEV
 mdefine_line|#define MAX_CHRDEV 64
 DECL|macro|MAX_BLKDEV
 mdefine_line|#define MAX_BLKDEV 64
-multiline_comment|/*&n; * assignments&n; *&n; * devices are as follows (same as minix, so we can use the minix fs):&n; *&n; *      character              block                  comments&n; *      --------------------   --------------------   --------------------&n; *  0 - unnamed                unnamed                minor 0 = true nodev&n; *  1 - /dev/mem               ramdisk&n; *  2 -                        floppy&n; *  3 -                        hd&n; *  4 - /dev/tty*&n; *  5 - /dev/tty; /dev/cua*&n; *  6 - lp&n; *  7 - /dev/vcs*&n; *  8 -                        scsi disk&n; *  9 - scsi tape&n; * 10 - mice&n; * 11 -                        scsi cdrom&n; * 12 - qic02 tape&n; * 13 -                        xt disk&n; * 14 - sound card&n; * 15 -                        cdu31a cdrom&n; * 16 - sockets&n; * 17 - af_unix&n; * 18 - af_inet&n; * 19 - cyclades /dev/ttyC*&n; * 20 - cyclades /dev/cub*&n; * 21 - scsi generic&n; * 22 -                        (at2disk)&n; * 23 -                        mitsumi cdrom&n; * 24 -&t;                       sony535 cdrom&n; * 25 -                        matsushita cdrom       minors 0..3&n; * 26 -                        matsushita cdrom 2     minors 0..3&n; * 27 - qic117 tape            matsushita cdrom 3     minors 0..3&n; * 28 -                        matsushita cdrom 4     minors 0..3&n; * 29 -                        aztech/orchid/okano/wearnes cdrom&n; */
+multiline_comment|/*&n; * assignments&n; *&n; * devices are as follows (same as minix, so we can use the minix fs):&n; *&n; *      character              block                  comments&n; *      --------------------   --------------------   --------------------&n; *  0 - unnamed                unnamed                minor 0 = true nodev&n; *  1 - /dev/mem               ramdisk&n; *  2 -                        floppy&n; *  3 -                        hd&n; *  4 - /dev/tty*&n; *  5 - /dev/tty; /dev/cua*&n; *  6 - lp&n; *  7 - /dev/vcs*&n; *  8 -                        scsi disk&n; *  9 - scsi tape&n; * 10 - mice&n; * 11 -                        scsi cdrom&n; * 12 - qic02 tape&n; * 13 -                        xt disk&n; * 14 - sound card&n; * 15 -                        cdu31a cdrom&n; * 16 - sockets                goldstar cdrom&n; * 17 - af_unix                optics cdrom&n; * 18 - af_inet                sanyo cdrom&n; * 19 - cyclades /dev/ttyC*&n; * 20 - cyclades /dev/cub*     mitsumi (mcdx) cdrom&n; * 21 - scsi generic&n; * 22 -                        (at2disk)&n; * 23 -                        mitsumi cdrom&n; * 24 -&t;                       sony535 cdrom&n; * 25 -                        matsushita cdrom       minors 0..3&n; * 26 -                        matsushita cdrom 2     minors 0..3&n; * 27 - qic117 tape            matsushita cdrom 3     minors 0..3&n; * 28 -                        matsushita cdrom 4     minors 0..3&n; * 29 -                        aztech/orchid/okano/wearnes cdrom&n; * 32 -                        philips/lms cm206 cdrom&n; */
 DECL|macro|UNNAMED_MAJOR
 mdefine_line|#define UNNAMED_MAJOR&t;0
 DECL|macro|MEM_MAJOR
@@ -44,14 +44,22 @@ DECL|macro|CDU31A_CDROM_MAJOR
 mdefine_line|#define CDU31A_CDROM_MAJOR 15
 DECL|macro|SOCKET_MAJOR
 mdefine_line|#define SOCKET_MAJOR&t;16
+DECL|macro|GOLDSTAR_CDROM_MAJOR
+mdefine_line|#define GOLDSTAR_CDROM_MAJOR 16
 DECL|macro|AF_UNIX_MAJOR
 mdefine_line|#define AF_UNIX_MAJOR&t;17
+DECL|macro|OPTICS_CDROM_MAJOR
+mdefine_line|#define OPTICS_CDROM_MAJOR 17
 DECL|macro|AF_INET_MAJOR
 mdefine_line|#define AF_INET_MAJOR&t;18
+DECL|macro|SANYO_CDROM_MAJOR
+mdefine_line|#define SANYO_CDROM_MAJOR 18
 DECL|macro|CYCLADES_MAJOR
 mdefine_line|#define CYCLADES_MAJOR  19
 DECL|macro|CYCLADESAUX_MAJOR
 mdefine_line|#define CYCLADESAUX_MAJOR 20
+DECL|macro|MITSUMI_X_CDROM_MAJOR
+mdefine_line|#define MITSUMI_X_CDROM_MAJOR 20
 DECL|macro|SCSI_GENERIC_MAJOR
 mdefine_line|#define SCSI_GENERIC_MAJOR 21
 DECL|macro|IDE1_MAJOR
@@ -64,14 +72,16 @@ DECL|macro|MATSUSHITA_CDROM_MAJOR
 mdefine_line|#define MATSUSHITA_CDROM_MAJOR 25
 DECL|macro|MATSUSHITA_CDROM2_MAJOR
 mdefine_line|#define MATSUSHITA_CDROM2_MAJOR 26
+DECL|macro|QIC117_TAPE_MAJOR
+mdefine_line|#define QIC117_TAPE_MAJOR 27
 DECL|macro|MATSUSHITA_CDROM3_MAJOR
 mdefine_line|#define MATSUSHITA_CDROM3_MAJOR 27
 DECL|macro|MATSUSHITA_CDROM4_MAJOR
 mdefine_line|#define MATSUSHITA_CDROM4_MAJOR 28
-DECL|macro|QIC117_TAPE_MAJOR
-mdefine_line|#define QIC117_TAPE_MAJOR 27
 DECL|macro|AZTECH_CDROM_MAJOR
 mdefine_line|#define AZTECH_CDROM_MAJOR 29
+DECL|macro|CM206_CDROM_MAJOR
+mdefine_line|#define CM206_CDROM_MAJOR 32
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
 DECL|macro|SCSI_MAJOR
 mdefine_line|#define SCSI_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_TAPE_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR&t;&bslash;&n;   || (M) == SCSI_GENERIC_MAJOR)

@@ -3524,6 +3524,8 @@ id|dev_alloc_skb
 c_func
 (paren
 id|len
+op_plus
+l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* allocate socket buffer */
@@ -3562,6 +3564,15 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* Align IP header on 16 byte boundary */
 multiline_comment|/* &n;             * Copy data out of our receive descriptor into sk_buff.&n;&t;     *&n;&t;     * (rmdp-&gt;u.buffer &amp; 0x00ffffff) -&gt; get address of buffer and &n;&t;     * ignore status fields) &n;&t;     */
 id|memcpy
 c_func

@@ -259,7 +259,7 @@ id|writeb
 c_func
 (paren
 r_int
-r_int
+r_char
 id|b
 comma
 r_int
@@ -1043,6 +1043,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Copy data from IO memory space to &quot;real&quot; memory space.&n; * This needs to be optimized.&n; */
+DECL|macro|memcpy_fromio
+macro_line|#undef memcpy_fromio
 DECL|function|memcpy_fromio
 r_void
 id|memcpy_fromio
@@ -1098,6 +1100,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Copy data from &quot;real&quot; memory space to IO memory space.&n; * This needs to be optimized.&n; */
+DECL|macro|memcpy_toio
+macro_line|#undef memcpy_toio
 DECL|function|memcpy_toio
 r_void
 id|memcpy_toio
@@ -1153,6 +1157,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * &quot;memset&quot; on IO memory space.&n; * This needs to be optimized.&n; */
+DECL|macro|memset_io
+macro_line|#undef memset_io
 DECL|function|memset_io
 r_void
 id|memset_io

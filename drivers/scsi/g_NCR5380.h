@@ -62,7 +62,7 @@ mdefine_line|#define CAN_QUEUE 16
 macro_line|#endif
 macro_line|#ifdef HOSTS_C
 DECL|macro|GENERIC_NCR5380
-mdefine_line|#define GENERIC_NCR5380 {NULL, NULL, generic_proc_info, &quot;g_NCR5380&quot;,    &bslash;&n;&t;PROC_SCSI_GENERIC_NCR5380, &quot;Trantor T128/T128F/T228&quot;, &t;&t;&bslash;&n;&t;generic_NCR5380_detect, NULL, NULL, NULL, &t;&t;&t;&bslash;&n;&t;generic_NCR5380_queue_command, generic_NCR5380_abort, &t;&t;&bslash;&n;&t;generic_NCR5380_reset, NULL, &t;&t;&t;&t;&t;&bslash;&n;&t;NULL, /* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
+mdefine_line|#define GENERIC_NCR5380 {NULL, NULL, NULL, &quot;g_NCR5380&quot;,    &bslash;&n;&t;PROC_SCSI_GENERIC_NCR5380, &quot;Trantor T128/T128F/T228&quot;, &t;&t;&bslash;&n;&t;generic_NCR5380_detect, NULL, NULL, NULL, &t;&t;&t;&bslash;&n;&t;generic_NCR5380_queue_command, generic_NCR5380_abort, &t;&t;&bslash;&n;&t;generic_NCR5380_reset, NULL, &t;&t;&t;&t;&t;&bslash;&n;&t;NULL, /* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
 macro_line|#else
 DECL|macro|NCR5380_implementation_fields
 mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    int port

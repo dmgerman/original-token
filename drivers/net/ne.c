@@ -1,5 +1,5 @@
 multiline_comment|/* ne.c: A general non-shared-memory NS8390 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;&n;*/
+multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;    Paul Gortmaker&t;: new reset code, reset card after probe at boot.&n;&n;*/
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */
 DECL|variable|version
 r_static
@@ -229,8 +229,6 @@ DECL|macro|NESM_START_PG
 mdefine_line|#define NESM_START_PG&t;0x40&t;/* First page of TX buffer */
 DECL|macro|NESM_STOP_PG
 mdefine_line|#define NESM_STOP_PG&t;0x80&t;/* Last page +1 of RX ring */
-DECL|macro|NE_RDC_TIMEOUT
-mdefine_line|#define NE_RDC_TIMEOUT&t;0x02&t;/* Max wait in jiffies for Tx RDC */
 r_int
 id|ne_probe
 c_func
@@ -614,6 +612,90 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
+multiline_comment|/* Reset card. Who knows what dain-bramaged state it was left in. */
+(brace
+r_int
+r_int
+id|reset_start_time
+op_assign
+id|jiffies
+suffix:semicolon
+multiline_comment|/* DON&squot;T change these to inb_p/outb_p or reset will fail on clones. */
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|NE_RESET
+)paren
+comma
+id|ioaddr
+op_plus
+id|NE_RESET
+)paren
+suffix:semicolon
+multiline_comment|/* wait 20 ms for the dust to settle. */
+r_while
+c_loop
+(paren
+id|jiffies
+op_minus
+id|reset_start_time
+OL
+l_int|2
+op_star
+id|HZ
+op_div
+l_int|100
+)paren
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|inb_p
+c_func
+(paren
+id|ioaddr
+op_plus
+id|EN0_ISR
+)paren
+op_amp
+id|ENISR_RESET
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; not found (no reset ack).&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|ENODEV
+suffix:semicolon
+)brace
+id|outb_p
+c_func
+(paren
+l_int|0xff
+comma
+id|ioaddr
+op_plus
+id|EN0_ISR
+)paren
+suffix:semicolon
+multiline_comment|/* Ack all intr. */
+)brace
 multiline_comment|/* Read the 16 bytes of station address PROM.&n;       We must first initialize registers, similar to NS8390_init(eifdev, 0).&n;       We can&squot;t reliably read the SAPROM address without this.&n;       (I learned the hard way!). */
 (brace
 r_struct
@@ -1507,16 +1589,6 @@ id|dev
 )paren
 (brace
 r_int
-id|tmp
-op_assign
-id|inb_p
-c_func
-(paren
-id|NE_BASE
-op_plus
-id|NE_RESET
-)paren
-suffix:semicolon
 r_int
 id|reset_start_time
 op_assign
@@ -1537,6 +1609,23 @@ comma
 id|jiffies
 )paren
 suffix:semicolon
+multiline_comment|/* DON&squot;T change these to inb_p/outb_p or reset will fail on clones. */
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|NE_BASE
+op_plus
+id|NE_RESET
+)paren
+comma
+id|NE_BASE
+op_plus
+id|NE_RESET
+)paren
+suffix:semicolon
 id|ei_status.txing
 op_assign
 l_int|0
@@ -1544,16 +1633,6 @@ suffix:semicolon
 id|ei_status.dmaing
 op_assign
 l_int|0
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-id|tmp
-comma
-id|NE_BASE
-op_plus
-id|NE_RESET
-)paren
 suffix:semicolon
 multiline_comment|/* This check _should_not_ be necessary, omit eventually. */
 r_while
@@ -1581,6 +1660,10 @@ op_minus
 id|reset_start_time
 OG
 l_int|2
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 (brace
 id|printk
@@ -2365,9 +2448,14 @@ id|jiffies
 op_minus
 id|dma_start
 OG
-id|NE_RDC_TIMEOUT
+l_int|2
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 (brace
+multiline_comment|/* 20ms */
 id|printk
 c_func
 (paren

@@ -1978,6 +1978,8 @@ id|dev_alloc_skb
 c_func
 (paren
 id|size
+op_plus
+l_int|2
 )paren
 suffix:semicolon
 r_if
@@ -2017,6 +2019,15 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Yep! Go get it! */
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* Align */
 id|skb-&gt;dev
 op_assign
 id|dev

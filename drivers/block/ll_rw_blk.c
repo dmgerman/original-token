@@ -2715,54 +2715,6 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_CDU31A
-id|mem_start
-op_assign
-id|cdu31a_init
-c_func
-(paren
-id|mem_start
-comma
-id|mem_end
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_CDU535
-id|mem_start
-op_assign
-id|sony535_init
-c_func
-(paren
-id|mem_start
-comma
-id|mem_end
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MCD
-id|mem_start
-op_assign
-id|mcd_init
-c_func
-(paren
-id|mem_start
-comma
-id|mem_end
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AZTCD
-id|mem_start
-op_assign
-id|aztcd_init
-c_func
-(paren
-id|mem_start
-comma
-id|mem_end
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_FD
 id|floppy_init
 c_func
@@ -2779,6 +2731,42 @@ l_int|0x3f2
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_CDU31A
+id|mem_start
+op_assign
+id|cdu31a_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_CDU31A
+macro_line|#ifdef CONFIG_MCD
+id|mem_start
+op_assign
+id|mcd_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_MCD
+macro_line|#ifdef CONFIG_MCDX
+id|mem_start
+op_assign
+id|mcdx_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_MCDX
 macro_line|#ifdef CONFIG_SBPCD
 id|mem_start
 op_assign
@@ -2791,6 +2779,78 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SBPCD
+macro_line|#ifdef CONFIG_AZTCD
+id|mem_start
+op_assign
+id|aztcd_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_AZTCD
+macro_line|#ifdef CONFIG_CDU535
+id|mem_start
+op_assign
+id|sony535_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_CDU535
+macro_line|#ifdef CONFIG_GSCD
+id|mem_start
+op_assign
+id|gscd_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_GSCD
+macro_line|#ifdef CONFIG_CM206
+id|mem_start
+op_assign
+id|cm206_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_OPTCD
+id|mem_start
+op_assign
+id|optcd_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_OPTCD
+macro_line|#ifdef CONFIG_SJCD
+id|mem_start
+op_assign
+id|sjcd_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SJCD
 r_if
 c_cond
 (paren

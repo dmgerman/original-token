@@ -55,14 +55,12 @@ id|flags
 suffix:semicolon
 multiline_comment|/* Control status &t;&t;*/
 DECL|member|ip
-r_int
-r_int
+id|u32
 id|ip
 suffix:semicolon
 multiline_comment|/* ip address of entry &t;&t;*/
 DECL|member|mask
-r_int
-r_int
+id|u32
 id|mask
 suffix:semicolon
 multiline_comment|/* netmask - used for generalised proxy arps (tridge) &t;&t;*/
@@ -160,8 +158,7 @@ op_star
 id|arp_lookup
 c_func
 (paren
-r_int
-r_int
+id|u32
 id|paddr
 comma
 r_enum
@@ -653,8 +650,7 @@ comma
 r_int
 id|ptype
 comma
-r_int
-r_int
+id|u32
 id|dest_ip
 comma
 r_struct
@@ -662,8 +658,7 @@ id|device
 op_star
 id|dev
 comma
-r_int
-r_int
+id|u32
 id|src_ip
 comma
 r_int
@@ -1078,8 +1073,7 @@ OG
 l_int|0
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|ip
 op_assign
 id|entry-&gt;ip
@@ -1399,40 +1393,6 @@ id|skb-&gt;sk-&gt;priority
 )paren
 suffix:semicolon
 )brace
-r_else
-(brace
-multiline_comment|/* This routine is only ever called when &squot;entry&squot; is&n;&t;&t;&t;   complete. Thus this can&squot;t fail. */
-id|printk
-c_func
-(paren
-l_string|&quot;arp_send_q: The impossible occurred. Please notify Alan.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;arp_send_q: active entity %s&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|entry-&gt;ip
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;arp_send_q: failed to find %s&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|skb-&gt;raddr
-)paren
-)paren
-suffix:semicolon
-)brace
 )brace
 id|restore_flags
 c_func
@@ -1447,8 +1407,7 @@ r_void
 id|arp_destroy
 c_func
 (paren
-r_int
-r_int
+id|u32
 id|ip_addr
 comma
 r_int
@@ -1694,11 +1653,6 @@ id|MAX_ADDR_LEN
 suffix:semicolon
 multiline_comment|/* So we can enable ints again. */
 r_int
-id|sip
-comma
-id|tip
-suffix:semicolon
-r_int
 r_char
 op_star
 id|sha
@@ -1706,14 +1660,10 @@ comma
 op_star
 id|tha
 suffix:semicolon
-multiline_comment|/*&n; *&t;ARP carries the MAC addresses wrapped in the packet. We can&squot;t sanity&n; *&t;check this as proxy arp has them different.&n; */
-id|skb_pull
-c_func
-(paren
-id|skb
+id|u32
+id|sip
 comma
-id|dev-&gt;hard_header_len
-)paren
+id|tip
 suffix:semicolon
 multiline_comment|/*&n; *&t;The hardware length of the packet should match the hardware length&n; *&t;of the device.  Similarly, the hardware types should match.  The&n; *&t;device should be ARP-able.  Also, if pln is not 4, then the lookup&n; *&t;is not from an IP number.  We can&squot;t currently handle this, so toss&n; *&t;it. &n; */
 r_if
@@ -2428,6 +2378,118 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Find an arp mapping in the cache. If not found, return false.&n; */
+DECL|function|arp_query
+r_int
+id|arp_query
+c_func
+(paren
+r_int
+r_char
+op_star
+id|haddr
+comma
+id|u32
+id|paddr
+comma
+r_int
+r_int
+id|type
+)paren
+(brace
+r_struct
+id|arp_table
+op_star
+id|entry
+suffix:semicolon
+r_int
+r_int
+id|hash
+op_assign
+id|HASH
+c_func
+(paren
+id|paddr
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Find an entry&n;&t; */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|entry
+op_assign
+id|arp_tables
+(braket
+id|hash
+)braket
+suffix:semicolon
+id|entry
+op_ne
+l_int|NULL
+suffix:semicolon
+id|entry
+op_assign
+id|entry-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|entry-&gt;ip
+op_eq
+id|paddr
+op_logical_and
+id|entry-&gt;htype
+op_eq
+id|type
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|entry
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *&t;Update the record&n;&t;&t; */
+id|entry-&gt;last_used
+op_assign
+id|jiffies
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|haddr
+comma
+id|entry-&gt;ha
+comma
+id|entry-&gt;hlen
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Find an arp mapping in the cache. If not found, post a request.&n; */
 DECL|function|arp_find
 r_int
@@ -2439,8 +2501,7 @@ r_char
 op_star
 id|haddr
 comma
-r_int
-r_int
+id|u32
 id|paddr
 comma
 r_struct
@@ -2448,8 +2509,7 @@ id|device
 op_star
 id|dev
 comma
-r_int
-r_int
+id|u32
 id|saddr
 comma
 r_struct
@@ -2468,8 +2528,7 @@ r_int
 id|hash
 suffix:semicolon
 macro_line|#ifdef CONFIG_IP_MULTICAST
-r_int
-r_int
+id|u32
 id|taddr
 suffix:semicolon
 macro_line|#endif&t;
@@ -3343,8 +3402,7 @@ op_star
 id|arp_lookup
 c_func
 (paren
-r_int
-r_int
+id|u32
 id|paddr
 comma
 r_enum
@@ -3466,8 +3524,7 @@ r_char
 op_star
 id|dp
 comma
-r_int
-r_int
+id|u32
 id|daddr
 comma
 r_struct
@@ -3483,8 +3540,7 @@ op_star
 id|entry
 suffix:semicolon
 macro_line|#ifdef CONFIG_IP_MULTICAST
-r_int
-r_int
+id|u32
 id|taddr
 suffix:semicolon
 macro_line|#endif&t;
@@ -3695,14 +3751,13 @@ id|htype
 comma
 id|hlen
 suffix:semicolon
-r_int
-r_int
-id|ip
-suffix:semicolon
 r_struct
 id|rtable
 op_star
 id|rt
+suffix:semicolon
+id|u32
+id|ip
 suffix:semicolon
 id|memcpy_fromfs
 c_func

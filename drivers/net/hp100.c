@@ -2646,6 +2646,8 @@ comma
 id|skb_put
 c_func
 (paren
+id|skb
+comma
 id|pkt_len
 )paren
 comma

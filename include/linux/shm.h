@@ -160,7 +160,6 @@ id|swap_successes
 suffix:semicolon
 )brace
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_shmget
@@ -175,7 +174,6 @@ r_int
 id|flag
 )paren
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_shmat
@@ -195,7 +193,6 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_shmdt
@@ -205,7 +202,6 @@ op_star
 id|shmaddr
 )paren
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_shmctl

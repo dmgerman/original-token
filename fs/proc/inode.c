@@ -758,6 +758,31 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Special hook used when scsi is not present.&n;&t; */
+r_if
+c_cond
+(paren
+id|ino
+op_eq
+id|PROC_SCSI_NOT_PRESENT
+)paren
+(brace
+id|inode-&gt;i_mode
+op_assign
+id|S_IFREG
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|proc_scsi_inode_operations
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* files within /proc/scsi */
 r_if
 c_cond
@@ -983,6 +1008,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ino
+op_eq
+id|PROC_PID_INO
+op_logical_or
+(paren
 id|p-&gt;dumpable
 op_logical_and
 id|p-&gt;uid
@@ -992,6 +1022,7 @@ op_logical_and
 id|p-&gt;gid
 op_eq
 id|p-&gt;egid
+)paren
 )paren
 (brace
 id|inode-&gt;i_uid

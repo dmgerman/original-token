@@ -4421,6 +4421,8 @@ id|dev_alloc_skb
 c_func
 (paren
 id|rcv_size
+op_plus
+l_int|2
 )paren
 suffix:semicolon
 r_if
@@ -4448,6 +4450,14 @@ suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
+suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+l_int|2
+)paren
 suffix:semicolon
 id|insw
 c_func

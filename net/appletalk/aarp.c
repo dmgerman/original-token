@@ -22,7 +22,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
-macro_line|#include &lt;net/atalk.h&gt;
+macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#ifdef CONFIG_ATALK
 multiline_comment|/*&n; *&t;Lists of aarp entries&n; */
 DECL|struct|aarp_entry
@@ -232,19 +232,6 @@ r_struct
 id|elapaarp
 op_star
 id|eah
-op_assign
-(paren
-r_struct
-id|elapaarp
-op_star
-)paren
-(paren
-id|skb-&gt;data
-op_plus
-id|dev-&gt;hard_header_len
-op_plus
-id|aarp_dl-&gt;header_length
-)paren
 suffix:semicolon
 r_struct
 id|at_addr
@@ -273,6 +260,35 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Set up the buffer.&n;&t; */
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+op_plus
+id|aarp_dl-&gt;header_length
+)paren
+suffix:semicolon
+id|eah
+op_assign
+(paren
+r_struct
+id|elapaarp
+op_star
+)paren
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+r_struct
+id|elapaarp
+)paren
+)paren
+suffix:semicolon
 id|skb-&gt;arp
 op_assign
 l_int|1
@@ -280,14 +296,6 @@ suffix:semicolon
 id|skb-&gt;free
 op_assign
 l_int|1
-suffix:semicolon
-id|skb_put
-c_func
-(paren
-id|skb
-comma
-id|len
-)paren
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
@@ -456,19 +464,6 @@ r_struct
 id|elapaarp
 op_star
 id|eah
-op_assign
-(paren
-r_struct
-id|elapaarp
-op_star
-)paren
-(paren
-id|skb-&gt;data
-op_plus
-id|dev-&gt;hard_header_len
-op_plus
-id|aarp_dl-&gt;header_length
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -482,6 +477,35 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Set up the buffer.&n;&t; */
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+op_plus
+id|aarp_dl-&gt;header_length
+)paren
+suffix:semicolon
+id|eah
+op_assign
+(paren
+r_struct
+id|elapaarp
+op_star
+)paren
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+r_struct
+id|elapaarp
+)paren
+)paren
+suffix:semicolon
 id|skb-&gt;arp
 op_assign
 l_int|1
@@ -671,19 +695,6 @@ r_struct
 id|elapaarp
 op_star
 id|eah
-op_assign
-(paren
-r_struct
-id|elapaarp
-op_star
-)paren
-(paren
-id|skb-&gt;data
-op_plus
-id|dev-&gt;hard_header_len
-op_plus
-id|aarp_dl-&gt;header_length
-)paren
 suffix:semicolon
 r_static
 r_char
@@ -706,6 +717,35 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Set up the buffer.&n;&t; */
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+op_plus
+id|aarp_dl-&gt;header_length
+)paren
+suffix:semicolon
+id|eah
+op_assign
+(paren
+r_struct
+id|elapaarp
+op_star
+)paren
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+r_struct
+id|elapaarp
+)paren
+)paren
+suffix:semicolon
 id|skb-&gt;arp
 op_assign
 l_int|1
@@ -2012,14 +2052,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-id|dev-&gt;hard_header_len
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Frame size ok ?&n;&t; */
 r_if
 c_cond

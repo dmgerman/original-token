@@ -66,7 +66,7 @@ mdefine_line|#define _LINUX_SBPCD_H
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 DECL|macro|LONG_TIMING
-mdefine_line|#define LONG_TIMING 1 /* test against timeouts with &quot;gold&quot; CDs on CR-521 */
+mdefine_line|#define LONG_TIMING 0 /* test against timeouts with &quot;gold&quot; CDs on CR-521 */
 DECL|macro|FUTURE
 macro_line|#undef  FUTURE
 DECL|macro|TEST_UPC
@@ -83,10 +83,6 @@ DECL|macro|DDIOCSDBG
 mdefine_line|#define DDIOCSDBG&t;0x9000
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * &quot;private&quot; IOCTL functions&n; */
-DECL|macro|CDROMRESET
-mdefine_line|#define CDROMRESET&t;&t;0x5380 /* hard-rest the drive */
-DECL|macro|CDROMVOLREAD
-mdefine_line|#define CDROMVOLREAD&t;&t;0x5381 /* let the drive tell its volume settings */
 DECL|macro|CDROMAUDIOBUFSIZ
 mdefine_line|#define CDROMAUDIOBUFSIZ&t;0x5382 /* set the audio buffer size */
 multiline_comment|/*==========================================================================*/

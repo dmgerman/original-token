@@ -320,14 +320,6 @@ op_star
 id|tha
 suffix:semicolon
 multiline_comment|/* s for &quot;source&quot;, t for &quot;target&quot; */
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-id|dev-&gt;hard_header_len
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *&t;If this test doesn&squot;t pass, it&squot;s not IP, or we should ignore it anyway&n; */
 r_if
 c_cond

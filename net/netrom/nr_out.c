@@ -83,11 +83,6 @@ op_star
 id|skb
 )paren
 (brace
-r_int
-r_char
-op_star
-id|dptr
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -97,21 +92,17 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-id|dptr
-op_assign
 id|skb-&gt;data
-op_plus
-l_int|17
-suffix:semicolon
-op_star
-id|dptr
-op_increment
+(braket
+l_int|2
+)braket
 op_assign
 id|sk-&gt;nr-&gt;vs
 suffix:semicolon
-op_star
-id|dptr
-op_increment
+id|skb-&gt;data
+(braket
+l_int|3
+)braket
 op_assign
 id|sk-&gt;nr-&gt;vr
 suffix:semicolon
@@ -455,7 +446,7 @@ r_char
 op_star
 id|dptr
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Add the protocol byte&n;&t; */
+multiline_comment|/*&n;&t; *&t;Add the protocol byte and network header.&n;&t; */
 id|dptr
 op_assign
 id|skb_push
@@ -463,14 +454,8 @@ c_func
 (paren
 id|skb
 comma
-l_int|1
+id|NR_NETWORK_LEN
 )paren
-suffix:semicolon
-op_star
-id|dptr
-op_increment
-op_assign
-id|AX25_P_NETROM
 suffix:semicolon
 id|memcpy
 c_func
@@ -511,7 +496,7 @@ id|SSID_SPARE
 suffix:semicolon
 id|dptr
 op_add_assign
-l_int|7
+id|AX25_ADDR_LEN
 suffix:semicolon
 id|memcpy
 c_func
@@ -551,7 +536,7 @@ id|SSID_SPARE
 suffix:semicolon
 id|dptr
 op_add_assign
-l_int|7
+id|AX25_ADDR_LEN
 suffix:semicolon
 op_star
 id|dptr

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
@@ -68,6 +69,10 @@ comma
 id|ax25_address
 op_star
 id|ax25
+comma
+id|ax25_digi
+op_star
+id|ax25_digi
 comma
 r_struct
 id|device
@@ -240,6 +245,10 @@ id|ax25_address
 )paren
 )paren
 suffix:semicolon
+id|nr_neigh-&gt;digipeat
+op_assign
+l_int|NULL
+suffix:semicolon
 id|nr_neigh-&gt;dev
 op_assign
 id|dev
@@ -261,6 +270,68 @@ op_assign
 id|nr_neigh_no
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ax25_digi
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|nr_neigh-&gt;digipeat
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+op_star
+id|ax25_digi
+)paren
+comma
+id|GFP_KERNEL
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|kfree_s
+c_func
+(paren
+id|nr_neigh
+comma
+r_sizeof
+(paren
+op_star
+id|nr_neigh
+)paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|memcpy
+c_func
+(paren
+id|nr_neigh-&gt;digipeat
+comma
+id|ax25_digi
+comma
+r_sizeof
+(paren
+op_star
+id|ax25_digi
+)paren
+)paren
+suffix:semicolon
+)brace
 id|save_flags
 c_func
 (paren
@@ -1059,6 +1130,24 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_neigh-&gt;digipeat
+op_ne
+l_int|NULL
+)paren
+id|kfree_s
+c_func
+(paren
+id|nr_neigh-&gt;digipeat
+comma
+r_sizeof
+(paren
+id|ax25_digi
+)paren
+)paren
+suffix:semicolon
 id|kfree_s
 c_func
 (paren
@@ -1102,6 +1191,24 @@ id|restore_flags
 c_func
 (paren
 id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_neigh-&gt;digipeat
+op_ne
+l_int|NULL
+)paren
+id|kfree_s
+c_func
+(paren
+id|nr_neigh-&gt;digipeat
+comma
+r_sizeof
+(paren
+id|ax25_digi
+)paren
 )paren
 suffix:semicolon
 id|kfree_s
@@ -1490,6 +1597,10 @@ r_sizeof
 id|ax25_address
 )paren
 )paren
+suffix:semicolon
+id|nr_neigh-&gt;digipeat
+op_assign
+l_int|NULL
 suffix:semicolon
 id|nr_neigh-&gt;dev
 op_assign
@@ -2025,7 +2136,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; *&t;Check that the device given is a valid AX.25 interface that is &quot;up&quot;.&n; */
+multiline_comment|/*&n; *&t;Check that the device given is a valid AX.25 interface that is &quot;up&quot;.&n; *&t;Or a valid ethernet interface with an AX.25 callsign binding.&n; */
 DECL|function|nr_ax25_dev_get
 r_static
 r_struct
@@ -2043,6 +2154,9 @@ r_struct
 id|device
 op_star
 id|dev
+suffix:semicolon
+id|ax25_address
+id|callsign
 suffix:semicolon
 r_if
 c_cond
@@ -2074,6 +2188,41 @@ op_logical_and
 id|dev-&gt;type
 op_eq
 id|ARPHRD_AX25
+)paren
+r_return
+id|dev
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_UP
+)paren
+op_logical_and
+id|dev-&gt;type
+op_eq
+id|ARPHRD_ETHER
+)paren
+r_if
+c_cond
+(paren
+id|arp_query
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
+id|callsign
+comma
+id|dev-&gt;pa_addr
+comma
+id|ARPHRD_AX25
+)paren
 )paren
 r_return
 id|dev
@@ -2342,6 +2491,8 @@ comma
 op_amp
 id|nr_route.neighbour
 comma
+l_int|NULL
+comma
 id|dev
 comma
 id|nr_route.quality
@@ -2597,7 +2748,7 @@ id|nr_node-&gt;which
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Route a frame to an appropriate AX.25 connection. A NULL dev means&n; *&t;that the frame was generated internally.&n; */
+multiline_comment|/*&n; *&t;Route a frame to an appropriate AX.25 connection. A NULL ax25_cb&n; *&t;indicates an internally generated frame.&n; */
 DECL|function|nr_route_frame
 r_int
 id|nr_route_frame
@@ -2608,19 +2759,11 @@ id|sk_buff
 op_star
 id|skb
 comma
-r_struct
-id|device
+id|ax25_cb
 op_star
-id|device
+id|ax25
 )paren
 (brace
-id|ax25_address
-op_star
-id|ax25_src
-comma
-op_star
-id|ax25_dest
-suffix:semicolon
 id|ax25_address
 op_star
 id|nr_src
@@ -2643,29 +2786,10 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-id|ax25_dest
-op_assign
-(paren
-id|ax25_address
+r_int
+r_char
 op_star
-)paren
-(paren
-id|skb-&gt;data
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-id|ax25_src
-op_assign
-(paren
-id|ax25_address
-op_star
-)paren
-(paren
-id|skb-&gt;data
-op_plus
-l_int|8
-)paren
+id|dptr
 suffix:semicolon
 id|nr_src
 op_assign
@@ -2676,7 +2800,7 @@ op_star
 (paren
 id|skb-&gt;data
 op_plus
-l_int|17
+l_int|0
 )paren
 suffix:semicolon
 id|nr_dest
@@ -2688,13 +2812,13 @@ op_star
 (paren
 id|skb-&gt;data
 op_plus
-l_int|24
+l_int|7
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|device
+id|ax25
 op_ne
 l_int|NULL
 )paren
@@ -2705,9 +2829,12 @@ id|nr_src
 comma
 l_string|&quot;&quot;
 comma
-id|ax25_src
+op_amp
+id|ax25-&gt;dest_addr
 comma
-id|device
+id|ax25-&gt;digipeat
+comma
+id|ax25-&gt;device
 comma
 l_int|0
 comma
@@ -2746,7 +2873,7 @@ c_cond
 op_decrement
 id|skb-&gt;data
 (braket
-l_int|31
+l_int|14
 )braket
 op_eq
 l_int|0
@@ -2855,14 +2982,20 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&t;if (device != NULL)&n;&t;&t;skb-&gt;len += dev-&gt;hard_header_len;*/
+id|dptr
+op_assign
 id|skb_push
 c_func
 (paren
 id|skb
 comma
-l_int|17
+l_int|1
 )paren
+suffix:semicolon
+op_star
+id|dptr
+op_assign
+id|AX25_P_NETROM
 suffix:semicolon
 id|ax25_send_frame
 c_func
@@ -2877,6 +3010,8 @@ id|dev-&gt;dev_addr
 comma
 op_amp
 id|nr_neigh-&gt;callsign
+comma
+id|nr_neigh-&gt;digipeat
 comma
 id|nr_neigh-&gt;dev
 )paren
@@ -2969,7 +3104,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-9s %-7s  %d %d &quot;
+l_string|&quot;%-9s %-7s  %d %d&quot;
 comma
 id|ax2asc
 c_func
@@ -3011,7 +3146,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot; %3d   %d %05d&quot;
+l_string|&quot;  %3d   %d %05d&quot;
 comma
 id|nr_node-&gt;routes
 (braket
@@ -3175,7 +3310,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;addr  callsign  dev qual lock count&bslash;n&quot;
+l_string|&quot;addr  callsign  dev  qual lock count&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -3203,7 +3338,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%05d %-9s %-3s  %3d    %d   %3d&bslash;n&quot;
+l_string|&quot;%05d %-9s %-4s  %3d    %d   %3d&bslash;n&quot;
 comma
 id|nr_neigh-&gt;number
 comma

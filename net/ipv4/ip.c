@@ -156,9 +156,17 @@ c_func
 (paren
 id|skb
 comma
+(paren
 id|dev-&gt;hard_header_len
+op_plus
+l_int|15
+)paren
+op_amp
+op_complement
+l_int|15
 )paren
 suffix:semicolon
+multiline_comment|/* 16 byte aligned IP headers are good */
 id|mac
 op_assign
 id|dev
@@ -575,6 +583,10 @@ id|iph-&gt;version
 op_assign
 l_int|4
 suffix:semicolon
+id|iph-&gt;ihl
+op_assign
+l_int|5
+suffix:semicolon
 id|iph-&gt;tos
 op_assign
 id|tos
@@ -598,10 +610,6 @@ suffix:semicolon
 id|iph-&gt;protocol
 op_assign
 id|type
-suffix:semicolon
-id|iph-&gt;ihl
-op_assign
-l_int|5
 suffix:semicolon
 id|skb-&gt;ip_hdr
 op_assign
@@ -1189,15 +1197,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Allocate memory for the IP header (plus 8 octets for ICMP).&n;&t; */
 id|ihlen
 op_assign
-(paren
 id|iph-&gt;ihl
 op_star
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
+l_int|4
 suffix:semicolon
 id|qp-&gt;iph
 op_assign
@@ -1658,11 +1660,7 @@ c_func
 (paren
 id|iph-&gt;ihl
 op_star
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|4
 )paren
 op_plus
 id|count
@@ -1911,15 +1909,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Determine the position of this fragment.&n;&t; */
 id|ihl
 op_assign
-(paren
 id|iph-&gt;ihl
 op_star
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
+l_int|4
 suffix:semicolon
 id|end
 op_assign
@@ -2329,15 +2321,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Setup starting values.&n;&t; */
 id|hlen
 op_assign
-(paren
 id|iph-&gt;ihl
 op_star
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
+l_int|4
 suffix:semicolon
 id|left
 op_assign
@@ -2455,7 +2441,7 @@ c_func
 id|iph-&gt;frag_off
 )paren
 op_amp
-l_int|0x1fff
+id|IP_OFFSET
 )paren
 op_lshift
 l_int|3
@@ -2521,6 +2507,8 @@ c_func
 id|len
 op_plus
 id|hlen
+op_plus
+l_int|15
 comma
 id|GFP_ATOMIC
 )paren
@@ -3159,6 +3147,8 @@ c_func
 id|dev2-&gt;hard_header_len
 op_plus
 id|skb-&gt;len
+op_plus
+l_int|15
 comma
 id|GFP_ATOMIC
 )paren
@@ -3416,15 +3406,6 @@ r_int
 id|err
 suffix:semicolon
 macro_line|#endif&t;
-multiline_comment|/*&n;&t; *&t;IP is layered, throw away the&n;&t; *&t;MAC addresses.&n;&t; */
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-id|dev-&gt;hard_header_len
-)paren
-suffix:semicolon
 id|ip_statistics.IpInReceives
 op_increment
 suffix:semicolon
@@ -3610,6 +3591,11 @@ r_struct
 id|iphdr
 )paren
 suffix:semicolon
+id|skb-&gt;ip_summed
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Our free checksum is bogus for this case */
 r_while
 c_loop
 (paren
@@ -3864,7 +3850,7 @@ id|target_addr
 op_assign
 op_star
 (paren
-r_int
+id|u32
 op_star
 )paren
 (paren
@@ -3940,7 +3926,7 @@ suffix:semicolon
 )brace
 op_star
 (paren
-r_int
+id|u32
 op_star
 )paren
 (paren
@@ -4002,7 +3988,11 @@ c_cond
 (paren
 id|iph-&gt;frag_off
 op_amp
-l_int|0x0020
+id|htons
+c_func
+(paren
+id|IP_MF
+)paren
 )paren
 id|is_frag
 op_or_assign
@@ -4012,13 +4002,13 @@ multiline_comment|/*&n;&t;&t; *&t;Last fragment ?&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|ntohs
+id|iph-&gt;frag_off
+op_amp
+id|htons
 c_func
 (paren
-id|iph-&gt;frag_off
+id|IP_OFFSET
 )paren
-op_amp
-l_int|0x1fff
 )paren
 id|is_frag
 op_or_assign
@@ -5737,11 +5727,10 @@ suffix:semicolon
 )brace
 id|val
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -5750,7 +5739,7 @@ id|optval
 suffix:semicolon
 id|ucval
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 (paren
@@ -6674,13 +6663,12 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|len
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -6737,7 +6725,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 r_sizeof
@@ -6746,7 +6734,6 @@ r_int
 )paren
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -6778,13 +6765,12 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|val
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -7265,7 +7251,7 @@ r_char
 op_star
 id|data
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Get the memory we require.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Get the memory we require with some space left for alignment.&n;&t;&t; */
 id|skb
 op_assign
 id|sock_alloc_send_skb
@@ -7274,6 +7260,8 @@ c_func
 id|sk
 comma
 id|fraglen
+op_plus
+l_int|15
 comma
 l_int|0
 comma
@@ -7341,7 +7329,14 @@ c_func
 (paren
 id|skb
 comma
+(paren
 id|dev-&gt;hard_header_len
+op_plus
+l_int|15
+)paren
+op_amp
+op_complement
+l_int|15
 )paren
 suffix:semicolon
 id|data

@@ -3,7 +3,6 @@ DECL|macro|_ALPHA_CHECKSUM_H
 mdefine_line|#define _ALPHA_CHECKSUM_H
 multiline_comment|/*&n; *&t;This is a version of ip_compute_csum() optimized for IP headers,&n; *&t;which always checksum on 4 octet boundaries.&n; */
 r_extern
-r_inline
 r_int
 r_int
 id|ip_fast_csum
@@ -68,11 +67,10 @@ r_int
 id|sum
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * the same as csum_partial, but copies from fs:src while it&n; * checksums&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
-r_extern
+multiline_comment|/*&n; * the same as csum_partial, but copies from src while it&n; * checksums&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
 r_int
 r_int
-id|csum_partial_copyffs
+id|csum_partial_copy
 c_func
 (paren
 r_char
@@ -90,6 +88,9 @@ r_int
 id|sum
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * the same as csum_partial, but copies from user space (but on the alpha&n; * we have just one address space, so this is identical to the above)&n; */
+DECL|macro|csum_partial_copy_fromuser
+mdefine_line|#define csum_partial_copy_fromuser csum_partial_copy
 multiline_comment|/*&n; * this routine is used for miscellaneous IP-like checksums, mainly&n; * in icmp.c&n; */
 r_extern
 r_int

@@ -1,4 +1,17 @@
 multiline_comment|/*&n; * linux/drivers/scsi/scsi_proc.c&n; *&n; * The functions in this file provide an interface between&n; * the PROC file system and the SCSI device drivers&n; * It is mainly used for debugging, statistics and to pass &n; * information directly to the lowlevel driver.&n; *&n; * (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de &n; * Version: 0.99.5   last change: 95/06/28&n; * &n; * generic command parser provided by: &n; * Andreas Heilwagen &lt;crashcar@informatik.uni-koblenz.de&gt;&n; */
+macro_line|#ifdef MODULE
+multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
+DECL|macro|_SCSI_SYMS_VER_
+mdefine_line|#define _SCSI_SYMS_VER_
+macro_line|#include &lt;linux/autoconf.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -75,6 +88,7 @@ id|x
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;     * Danger - this has massive race conditions in it.&n;     * If the someone adds/removes entries from the scsi chain&n;     * while someone else is looking at /proc/scsi, unpredictable&n;     * results will be obtained.&n;     */
 r_while
 c_loop
 (paren
@@ -101,12 +115,22 @@ c_loop
 id|hpnt
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|hpnt-&gt;hostt
+op_eq
+id|tpnt
+)paren
+(brace
+multiline_comment|/* This gives us the correct index */
+id|x
+op_increment
+suffix:semicolon
+)brace
 id|hpnt
 op_assign
 id|hpnt-&gt;next
-suffix:semicolon
-id|x
-op_increment
 suffix:semicolon
 )brace
 id|tpnt
@@ -266,6 +290,9 @@ r_int
 id|func
 )paren
 (brace
+r_int
+id|retval
+suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
@@ -289,7 +316,24 @@ op_eq
 id|PROC_SCSI_SCSI
 )paren
 (brace
+multiline_comment|/*&n;             * If there are no hosts, tell the user to go away.&n;             */
+r_if
+c_cond
+(paren
+id|hpnt
+op_eq
+l_int|NULL
+)paren
+(brace
 r_return
+(paren
+op_minus
+id|ENOSYS
+)paren
+suffix:semicolon
+)brace
+id|retval
+op_assign
 id|scsi_proc_info
 c_func
 (paren
@@ -305,6 +349,9 @@ id|hpnt-&gt;host_no
 comma
 id|func
 )paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 r_while
@@ -324,6 +371,33 @@ op_plus
 id|PROC_SCSI_FILE
 )paren
 )paren
+r_if
+c_cond
+(paren
+id|hpnt-&gt;hostt-&gt;proc_info
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+id|generic_proc_info
+c_func
+(paren
+id|buffer
+comma
+id|start
+comma
+id|offset
+comma
+id|length
+comma
+id|hpnt-&gt;host_no
+comma
+id|func
+)paren
+suffix:semicolon
+)brace
+r_else
 r_return
 id|hpnt-&gt;hostt
 op_member_access_from_pointer
@@ -420,8 +494,6 @@ r_struct
 id|Scsi_Host
 op_star
 id|hpnt
-op_assign
-id|scsi_hostlist
 suffix:semicolon
 r_static
 r_char
@@ -507,6 +579,10 @@ dot
 id|name
 op_assign
 l_string|&quot;..&quot;
+suffix:semicolon
+id|hpnt
+op_assign
+id|scsi_hostlist
 suffix:semicolon
 r_while
 c_loop

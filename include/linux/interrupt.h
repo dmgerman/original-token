@@ -80,6 +80,9 @@ id|KEYBOARD_BH
 comma
 DECL|enumerator|CYCLADES_BH
 id|CYCLADES_BH
+comma
+DECL|enumerator|CM206_BH
+id|CM206_BH
 )brace
 suffix:semicolon
 DECL|function|mark_bh

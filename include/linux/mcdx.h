@@ -1,0 +1,139 @@
+multiline_comment|/*&n; * Definitions for the Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann&n; * VERSION: @VERSION@&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harris (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software Gmbh, they&n; *      improved the original driver)&n; *  John Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; *&t;The following lines are for user configuration&n; *&t;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&n; *&n; *&t;{0|1} -- 1 if you want the driver detect your drive, may crash and&n; *&t;needs a long time to seek.  The higher the address the longer the&n; *&t;seek.&n; *&n; *  WARNING: AUTOPROBE doesn&squot;t work.&n; */
+DECL|macro|MCDX_AUTOPROBE
+mdefine_line|#define MCDX_AUTOPROBE 0
+multiline_comment|/*&n; *&t;Drive specific settings according to the jumpers on the controller&n; *&t;board(s).&n; *&t;o&t;MCDX_NDRIVES  :  number of used entries of the following table&n; *&t;o&t;MCDX_DRIVEMAP :  table of {i/o base, irq} per controller&n; *&n; *&t;NOTE: I didn&squot;t get a drive at irq 9(2) working.  Not even alone.&n; */
+macro_line|#if MCDX_AUTOPROBE == 0
+DECL|macro|MCDX_NDRIVES
+mdefine_line|#define MCDX_NDRIVES 1
+DECL|macro|MCDX_DRIVEMAP
+mdefine_line|#define MCDX_DRIVEMAP {&t;&t;&bslash;&n;&t;&t;&t;{0x300, 10},&t;&bslash;&n;&t;&t;&t;{0x304, 05},  &t;&bslash;&n;&t;&t;&t;{0x000, 00},  &t;&bslash;&n;&t;&t;&t;{0x000, 00},  &t;&bslash;&n;&t;&t;&t;{0x000, 00},  &t;&bslash;&n;&t;  &t;}
+macro_line|#else
+macro_line|#error Autoprobing is not implemented yet.
+macro_line|#endif
+multiline_comment|/*&t;The name of the device */
+DECL|macro|MCD
+mdefine_line|#define MCD &quot;mcdx&quot;&t;
+macro_line|#ifdef NOWARN
+DECL|macro|WARN
+mdefine_line|#define WARN(x)
+macro_line|#else
+DECL|macro|WARN
+mdefine_line|#define WARN(x) warn x
+macro_line|#endif
+macro_line|#if MCDX_DEBUG
+DECL|macro|TRACE
+mdefine_line|#define TRACE(x) trace x
+DECL|macro|INIT
+mdefine_line|#define INIT &t;&t;0
+DECL|macro|MALLOC
+mdefine_line|#define MALLOC &t;&t;0
+DECL|macro|IOCTL
+mdefine_line|#define IOCTL &t;&t;0
+DECL|macro|OPENCLOSE
+mdefine_line|#define OPENCLOSE &t;0
+DECL|macro|HW
+mdefine_line|#define HW&t;&t;0
+DECL|macro|TALK
+mdefine_line|#define TALK&t;&t;0
+DECL|macro|IRQ
+mdefine_line|#define IRQ &t;&t;0
+DECL|macro|TRANSFER
+mdefine_line|#define TRANSFER &t;0
+DECL|macro|REQUEST
+mdefine_line|#define REQUEST&t; &t;0
+DECL|macro|MCDX_DEBUG_TALK
+mdefine_line|#define MCDX_DEBUG_TALK 0
+macro_line|#else
+DECL|macro|TRACE
+mdefine_line|#define TRACE(x)
+macro_line|#endif
+multiline_comment|/*&t;The following addresses are taken from the Mitsumi Reference &n; *  and describe the possible i/o range for the controller.&n; */
+DECL|macro|MCDX_IO_BEGIN
+mdefine_line|#define MCDX_IO_BEGIN&t;((char*) 0x300)&t;/* first base of i/o addr */
+DECL|macro|MCDX_IO_END
+mdefine_line|#define MCDX_IO_END&t;&t;((char*) 0x3fc)&t;/* last base of i/o addr */
+multiline_comment|/*&t;Per controller 4 bytes i/o are needed. */
+DECL|macro|MCDX_IO_SIZE
+mdefine_line|#define MCDX_IO_SIZE&t;&t;4
+multiline_comment|/*&n; *&t;The Ports &amp; bits&n; */
+DECL|macro|MCDX_RBIT_OPEN
+mdefine_line|#define MCDX_RBIT_OPEN       0x80
+DECL|macro|MCDX_RBIT_DISKSET
+mdefine_line|#define MCDX_RBIT_DISKSET    0x40
+DECL|macro|MCDX_RBIT_CHANGED
+mdefine_line|#define MCDX_RBIT_CHANGED    0x20
+DECL|macro|MCDX_RBIT_CHECK
+mdefine_line|#define MCDX_RBIT_CHECK      0x10
+DECL|macro|MCDX_RBIT_AUDIOTR
+mdefine_line|#define MCDX_RBIT_AUDIOTR    0x08
+DECL|macro|MCDX_RBIT_RDERR
+mdefine_line|#define MCDX_RBIT_RDERR      0x04
+DECL|macro|MCDX_RBIT_AUDIOBS
+mdefine_line|#define MCDX_RBIT_AUDIOBS    0x02
+DECL|macro|MCDX_RBIT_CMDERR
+mdefine_line|#define MCDX_RBIT_CMDERR     0x01
+DECL|macro|MCDX_RBIT_DOOR
+mdefine_line|#define MCDX_RBIT_DOOR       0x10
+DECL|macro|MCDX_RBIT_STEN
+mdefine_line|#define MCDX_RBIT_STEN       0x04
+DECL|macro|MCDX_RBIT_DTEN
+mdefine_line|#define MCDX_RBIT_DTEN       0x02
+multiline_comment|/*&n; *&t;The commands.&n; */
+DECL|macro|OPCODE
+mdefine_line|#define OPCODE&t;1&t;&t;/* offset of opcode */
+DECL|macro|MCDX_CMD_REQUEST_TOC
+mdefine_line|#define MCDX_CMD_REQUEST_TOC&t;&t;1, 0x10
+DECL|macro|MCDX_CMD_REQUEST_STATUS
+mdefine_line|#define MCDX_CMD_REQUEST_STATUS&t;&t;1, 0x40 
+DECL|macro|MCDX_CMD_RESET
+mdefine_line|#define MCDX_CMD_RESET&t;&t;&t;&t;1, 0x60
+DECL|macro|MCDX_CMD_REQUEST_DRIVE_MODE
+mdefine_line|#define MCDX_CMD_REQUEST_DRIVE_MODE&t;1, 0xc2
+DECL|macro|MCDX_CMD_SET_INTERLEAVE
+mdefine_line|#define MCDX_CMD_SET_INTERLEAVE&t;&t;2, 0xc8, 0
+DECL|macro|MCDX_CMD_DATAMODE_SET
+mdefine_line|#define MCDX_CMD_DATAMODE_SET&t;&t;2, 0xa0, 0
+DECL|macro|MCDX_DATAMODE1
+mdefine_line|#define MCDX_DATAMODE1&t;&t;0x01
+DECL|macro|MCDX_DATAMODE2
+mdefine_line|#define MCDX_DATAMODE2&t;&t;0x02
+DECL|macro|MCDX_CMD_LOCK_DOOR
+mdefine_line|#define MCDX_CMD_LOCK_DOOR&t;&t;2, 0xfe, 0
+DECL|macro|READ_AHEAD
+mdefine_line|#define READ_AHEAD&t;&t;&t;4&t;/* 8 Sectors (4K) */
+multiline_comment|/*&t;Useful macros */
+DECL|macro|e_door
+mdefine_line|#define e_door(x)&t;&t;((x) &amp; MCDX_RBIT_OPEN)
+DECL|macro|e_check
+mdefine_line|#define e_check(x)&t;&t;(~(x) &amp; MCDX_RBIT_CHECK)
+DECL|macro|e_notset
+mdefine_line|#define e_notset(x)&t;&t;(~(x) &amp; MCDX_RBIT_DISKSET)
+DECL|macro|e_changed
+mdefine_line|#define e_changed(x)&t;((x) &amp; MCDX_RBIT_CHANGED)
+DECL|macro|e_audio
+mdefine_line|#define e_audio(x)&t;&t;((x) &amp; MCDX_RBIT_AUDIOTR)
+DECL|macro|e_audiobusy
+mdefine_line|#define e_audiobusy(x)&t;((x) &amp; MCDX_RBIT_AUDIOBS)
+DECL|macro|e_cmderr
+mdefine_line|#define e_cmderr(x)&t;&t;((x) &amp; MCDX_RBIT_CMDERR)
+DECL|macro|e_readerr
+mdefine_line|#define e_readerr(x)&t;((x) &amp; MCDX_RBIT_RDERR)
+multiline_comment|/**&t;no drive specific */
+DECL|macro|MCDX_CDBLK
+mdefine_line|#define MCDX_CDBLK&t;2048&t;/* 2048 cooked data each blk */
+DECL|macro|MCDX_DATA_TIMEOUT
+mdefine_line|#define MCDX_DATA_TIMEOUT&t;10&t;/* jiffies */
+multiline_comment|/*&n; * Access to the msf array&n; */
+DECL|macro|MSF_MIN
+mdefine_line|#define MSF_MIN&t;&t;0&t;&t;&t;/* minute */
+DECL|macro|MSF_SEC
+mdefine_line|#define MSF_SEC&t;&t;1&t;&t;&t;/* second */
+DECL|macro|MSF_FRM
+mdefine_line|#define MSF_FRM&t;&t;2&t;&t;&t;/* frame  */
+multiline_comment|/*&n; * Errors&n; */
+DECL|macro|MCDX_E
+mdefine_line|#define MCDX_E&t;&t;1&t;&t;&t;/* unspec error */
+DECL|macro|MCDX_EOM
+mdefine_line|#define MCDX_EOM&t;2&t;&t;&t;/* end of media */
+eof

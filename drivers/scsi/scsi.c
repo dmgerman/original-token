@@ -1,4 +1,17 @@
 multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale ericy@cais.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel and wide scsi support added &n; *  by Michael Neuffer neuffer@goofy.zdv.uni-mainz.de&n; */
+macro_line|#ifdef MODULE
+multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
+DECL|macro|_SCSI_SYMS_VER_
+mdefine_line|#define _SCSI_SYMS_VER_
+macro_line|#include &lt;linux/autoconf.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -12,15 +25,6 @@ macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 DECL|macro|USE_STATIC_SCSI_MEMORY
 macro_line|#undef USE_STATIC_SCSI_MEMORY
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/scsi.c,v 1.5 1993/09/24 12:45:18 drew Exp drew $&quot;;&n;*/
@@ -1985,6 +1989,27 @@ l_int|7
 id|SDpnt-&gt;manufacturer
 op_assign
 id|SCSI_MAN_TOSHIBA
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|scsi_result
+op_plus
+l_int|8
+comma
+l_string|&quot;SONY&quot;
+comma
+l_int|4
+)paren
+)paren
+id|SDpnt-&gt;manufacturer
+op_assign
+id|SCSI_MAN_SONY
 suffix:semicolon
 r_else
 id|SDpnt-&gt;manufacturer
@@ -11304,170 +11329,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef MODULE
-multiline_comment|/* &n;extern int kernel_scsi_ioctl (Scsi_Device *dev, int cmd, void *arg);&n;extern int        scsi_ioctl (Scsi_Device *dev, int cmd, void *arg);&n;*/
-DECL|variable|scsi_symbol_table
-r_struct
-id|symbol_table
-id|scsi_symbol_table
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-macro_line|#ifdef CONFIG_MODVERSIONS
-(brace
-(paren
-r_void
-op_star
-)paren
-l_int|1
-multiline_comment|/* Version version :-) */
-comma
-l_string|&quot;_Using_Versions&quot;
-)brace
-comma
-macro_line|#endif
-id|X
-c_func
-(paren
-id|scsi_register_module
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_unregister_module
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_free
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_malloc
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_register
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_unregister
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsicam_bios_param
-)paren
-comma
-id|X
-c_func
-(paren
-id|allocate_device
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_do_cmd
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_command_size
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_init_malloc
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_init_free
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_ioctl
-)paren
-comma
-id|X
-c_func
-(paren
-id|print_command
-)paren
-comma
-id|X
-c_func
-(paren
-id|print_sense
-)paren
-comma
-id|X
-c_func
-(paren
-id|dma_free_sectors
-)paren
-comma
-id|X
-c_func
-(paren
-id|kernel_scsi_ioctl
-)paren
-comma
-id|X
-c_func
-(paren
-id|need_isa_buffer
-)paren
-comma
-id|X
-c_func
-(paren
-id|request_queueable
-)paren
-comma
-multiline_comment|/*&n; * These are here only while I debug the rest of the scsi stuff.&n; */
-id|X
-c_func
-(paren
-id|scsi_hostlist
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_hosts
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_devicelist
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_devices
-)paren
-comma
-multiline_comment|/********************************************************&n;     * Do not add anything below this line,&n;     * as the stacked modules depend on this!&n;     */
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
-suffix:semicolon
 DECL|variable|kernel_version
 r_char
 id|kernel_version
@@ -11475,6 +11336,11 @@ id|kernel_version
 )braket
 op_assign
 id|UTS_RELEASE
+suffix:semicolon
+r_extern
+r_struct
+id|symbol_table
+id|scsi_symbol_table
 suffix:semicolon
 DECL|function|init_module
 r_int
@@ -11484,6 +11350,19 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if CONFIG_PROC_FS 
+multiline_comment|/*&n;     * This will initialize the directory so that we do not have&n;     * random crap in there.&n;     */
+id|build_proc_dir_entries
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;     * This makes the real /proc/scsi visible.&n;     */
+id|dispatch_scsi_info_ptr
+op_assign
+id|dispatch_scsi_info
+suffix:semicolon
 id|timer_table
 (braket
 id|SCSI_TIMER

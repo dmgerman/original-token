@@ -1,4 +1,3 @@
-macro_line|#if&t;defined(CONFIG_WAVELAN)
 DECL|macro|WAVELAN_ADDR_SIZE
 mdefine_line|#define WAVELAN_ADDR_SIZE&t;6&t;/* Size of a MAC address */
 DECL|macro|SA_ADDR0
@@ -799,5 +798,4 @@ mdefine_line|#define&t;NRXBLOCKS&t;&t;((OFFSET_CU - OFFSET_RU) / RXBLOCKZ)
 DECL|macro|NTXBLOCKS
 mdefine_line|#define&t;NTXBLOCKS&t;&t;((OFFSET_SCB - OFFSET_CU) / TXBLOCKZ)
 multiline_comment|/*&n; * This software may only be used and distributed&n; * according to the terms of the GNU Public License.&n; *&n; * For more details, see wavelan.c.&n; */
-macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 eof

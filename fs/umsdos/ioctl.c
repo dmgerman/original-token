@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -40,6 +41,7 @@ r_void
 op_star
 id|buf
 comma
+r_const
 r_char
 op_star
 id|name
@@ -166,6 +168,38 @@ op_minus
 id|EPERM
 suffix:semicolon
 multiline_comment|/* #Specification: ioctl / acces&n;&t;&t;Only root (effective id) is allowed to do IOCTL on directory&n;&t;&t;in UMSDOS. EPERM is returned for other user.&n;&t;*/
+multiline_comment|/*&n;&t;&t;Well, not all case require write access, but it simplify the code&n;&t;&t;and let&squot;s face it, there is only one client (umssync) for all this&n;&t;*/
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|data
+comma
+r_sizeof
+(paren
+r_struct
+id|umsdos_ioctl
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren

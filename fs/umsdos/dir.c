@@ -87,6 +87,7 @@ r_void
 op_star
 id|buf
 comma
+r_const
 r_char
 op_star
 id|name
@@ -127,6 +128,7 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#if 0
 r_char
 id|zname
 (braket
@@ -149,10 +151,10 @@ id|name_len
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|PRINTK
+id|Printk
 (paren
 (paren
-l_string|&quot;dir_once :%s: offset %ld&bslash;n&quot;
+l_string|&quot;dir_once :%s: offset %Ld&bslash;n&quot;
 comma
 id|zname
 comma
@@ -160,6 +162,7 @@ id|offset
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ret
 op_assign
 id|d-&gt;filldir
@@ -391,6 +394,11 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|off_t
+id|start_fpos
+op_assign
+id|filp-&gt;f_pos
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -693,7 +701,7 @@ l_int|0
 )paren
 id|filp-&gt;f_pos
 op_assign
-id|UMSDOS_SPECIAL_DIRFPOS
+id|start_fpos
 suffix:semicolon
 id|iput
 c_func
@@ -712,7 +720,7 @@ suffix:semicolon
 id|PRINTK
 (paren
 (paren
-l_string|&quot;read dir %p pos %lu ret %d&bslash;n&quot;
+l_string|&quot;read dir %p pos %Ld ret %d&bslash;n&quot;
 comma
 id|dir
 comma
@@ -845,7 +853,7 @@ suffix:semicolon
 id|PRINTK
 (paren
 (paren
-l_string|&quot;UMSDOS_readdir out %d count %d pos %lu&bslash;n&quot;
+l_string|&quot;UMSDOS_readdir out %d count %d pos %Ld&bslash;n&quot;
 comma
 id|ret
 comma
@@ -977,6 +985,18 @@ id|inode-&gt;i_gid
 op_assign
 id|entry-&gt;gid
 suffix:semicolon
+multiline_comment|/* #Specification: umsdos / conversion mode&n;&t;&t;&t;&t;The msdos fs can do some inline conversion&n;&t;&t;&t;&t;of the data of a file. It can translate&n;&t;&t;&t;&t;silently from MsDOS text file format to Unix&n;&t;&t;&t;&t;one (crlf -&gt; lf) while reading, and the reverse&n;&t;&t;&t;&t;while writting. This is activated using the mount&n;&t;&t;&t;&t;option conv=....&n;&n;&t;&t;&t;&t;This is not useful for Linux file in promoted&n;&t;&t;&t;&t;directory. It can even be harmful. For this&n;&t;&t;&t;&t;reason, the binary (no conversion) mode is&n;&t;&t;&t;&t;always activated.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: umsdos / conversion mode / todo&n;&t;&t;&t;&t;A flag could be added to file and directories&n;&t;&t;&t;&t;forcing an automatic conversion mode (as&n;&t;&t;&t;&t;done with the msdos fs).&n;&t;&t;&t;&t;&n;&t;&t;&t;&t;This flag could be setup on a directory basis&n;&t;&t;&t;&t;(instead of file) and all file in it would&n;&t;&t;&t;&t;logically inherited. If the conversion mode&n;&t;&t;&t;&t;is active (conv=) then the i_binary flag would&n;&t;&t;&t;&t;be left untouched in those directories.&n;&t;&t;&t;&t;&n;&t;&t;&t;&t;It was proposed that the sticky bit was used&n;&t;&t;&t;&t;to set this. The problem is that new file would&n;&t;&t;&t;&t;be written incorrectly. The other problem is that&n;&t;&t;&t;&t;the sticky bit has a meaning for directories. So&n;&t;&t;&t;&t;another bit should be used (there is some space&n;&t;&t;&t;&t;in the EMD file for it) and a special utilities&n;&t;&t;&t;&t;would be used to assign the flag to a directory).&n;&t;&t;&t;&t;I don&squot;t think it is useful to assign this flag&n;&t;&t;&t;&t;on a single file.&n;&t;&t;&t;*/
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_binary
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/* #Specification: umsdos / i_nlink&n;&t;&t;&t;&t;The nlink field of an inode is maintain by the MSDOS file system&n;&t;&t;&t;&t;for directory and by UMSDOS for other file. The logic is that&n;&t;&t;&t;&t;MSDOS is already figuring out what to do for directories and&n;&t;&t;&t;&t;does nothing for other files. For MSDOS, there are no hard link&n;&t;&t;&t;&t;so all file carry nlink==1. UMSDOS use some info in the&n;&t;&t;&t;&t;EMD file to plug the correct value.&n;&t;&t;&t;*/
 r_if
 c_cond
@@ -1077,6 +1097,7 @@ r_void
 op_star
 id|buf
 comma
+r_const
 r_char
 op_star
 id|name
@@ -1144,6 +1165,7 @@ r_void
 op_star
 id|buf
 comma
+r_const
 r_char
 op_star
 id|name

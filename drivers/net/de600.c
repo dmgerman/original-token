@@ -1586,6 +1586,8 @@ id|dev_alloc_skb
 c_func
 (paren
 id|size
+op_plus
+l_int|2
 )paren
 suffix:semicolon
 id|sti
@@ -1619,6 +1621,15 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* Align */
 multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
 id|buffer
 op_assign

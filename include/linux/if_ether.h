@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the Ethernet IEEE 802.3 interface.&n; *&n; * Version:&t;@(#)if_ether.h&t;1.0.1a&t;02/08/94&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the Ethernet IEEE 802.3 interface.&n; *&n; * Version:&t;@(#)if_ether.h&t;1.0.1a&t;02/08/94&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;&t;Steve Whitehouse, &lt;gw7rrm@eeshack3.swan.ac.uk&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _LINUX_IF_ETHER_H
 DECL|macro|_LINUX_IF_ETHER_H
 mdefine_line|#define _LINUX_IF_ETHER_H
@@ -22,12 +22,30 @@ DECL|macro|ETH_P_PUP
 mdefine_line|#define ETH_P_PUP&t;0x0400&t;&t;/* Xerox PUP packet&t;&t;*/
 DECL|macro|ETH_P_IP
 mdefine_line|#define ETH_P_IP&t;0x0800&t;&t;/* Internet Protocol packet&t;*/
-DECL|macro|ETH_P_ARP
-mdefine_line|#define ETH_P_ARP&t;0x0806&t;&t;/* Address Resolution packet&t;*/
-DECL|macro|ETH_P_RARP
-mdefine_line|#define ETH_P_RARP      0x8035&t;&t;/* Reverse Addr Res packet&t;*/
 DECL|macro|ETH_P_X25
 mdefine_line|#define ETH_P_X25&t;0x0805&t;&t;/* CCITT X.25&t;&t;&t;*/
+DECL|macro|ETH_P_ARP
+mdefine_line|#define ETH_P_ARP&t;0x0806&t;&t;/* Address Resolution packet&t;*/
+DECL|macro|ETH_P_BPQ
+mdefine_line|#define&t;ETH_P_BPQ&t;0x08FF&t;&t;/* G8BPQ AX.25 Ethernet Packet&t;[ NOT AN OFFICIALLY REGISTERED ID ] */
+DECL|macro|ETH_P_DEC
+mdefine_line|#define ETH_P_DEC       0x6000          /* DEC Assigned proto           */
+DECL|macro|ETH_P_DNA_DL
+mdefine_line|#define ETH_P_DNA_DL    0x6001          /* DEC DNA Dump/Load            */
+DECL|macro|ETH_P_DNA_RC
+mdefine_line|#define ETH_P_DNA_RC    0x6002          /* DEC DNA Remote Console       */
+DECL|macro|ETH_P_DNA_RT
+mdefine_line|#define ETH_P_DNA_RT    0x6003          /* DEC DNA Routing              */
+DECL|macro|ETH_P_LAT
+mdefine_line|#define ETH_P_LAT       0x6004          /* DEC LAT                      */
+DECL|macro|ETH_P_DIAG
+mdefine_line|#define ETH_P_DIAG      0x6005          /* DEC Diagnostics              */
+DECL|macro|ETH_P_CUST
+mdefine_line|#define ETH_P_CUST      0x6006          /* DEC Customer use             */
+DECL|macro|ETH_P_SCA
+mdefine_line|#define ETH_P_SCA       0x6007          /* DEC Systems Comms Arch       */
+DECL|macro|ETH_P_RARP
+mdefine_line|#define ETH_P_RARP      0x8035&t;&t;/* Reverse Addr Res packet&t;*/
 DECL|macro|ETH_P_ATALK
 mdefine_line|#define ETH_P_ATALK&t;0x809B&t;&t;/* Appletalk DDP&t;&t;*/
 DECL|macro|ETH_P_AARP
@@ -44,6 +62,8 @@ DECL|macro|ETH_P_802_2
 mdefine_line|#define ETH_P_802_2&t;0x0004&t;&t;/* 802.2 frames &t;&t;*/
 DECL|macro|ETH_P_SNAP
 mdefine_line|#define ETH_P_SNAP&t;0x0005&t;&t;/* Internal only&t;&t;*/
+DECL|macro|ETH_P_DDCMP
+mdefine_line|#define ETH_P_DDCMP     0x0006          /* DEC DDCMP: Internal only     */
 multiline_comment|/* This is an Ethernet frame header. */
 DECL|struct|ethhdr
 r_struct

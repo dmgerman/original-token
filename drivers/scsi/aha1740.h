@@ -443,27 +443,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|generic_proc_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 DECL|macro|AHA1740_ECBS
 mdefine_line|#define AHA1740_ECBS 32
 DECL|macro|AHA1740_SCATTER
@@ -473,6 +452,6 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|AHA1740
-mdefine_line|#define AHA1740 {NULL,&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   generic_proc_info,                   &bslash;&n;&t;&t;   &quot;aha1740&quot;,                           &bslash;&n;&t;&t;   PROC_SCSI_AHA1740,                   &bslash;&n;&t;&t;   &quot;Adaptec 174x (EISA)&quot;,&t;&t;&bslash;&n;&t;&t;   aha1740_detect,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   NULL, &t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_command,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_queuecommand,&t;&t;&bslash;&n;&t;&t;   aha1740_abort,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_reset,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_biosparam,                   &bslash;&n;&t;&t;   AHA1740_ECBS, &t;&t;&t;&bslash;&n;&t;&t;   7, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   AHA1740_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;   1, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING}
+mdefine_line|#define AHA1740 {NULL,&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;                &bslash;&n;&t;&t;   &quot;aha1740&quot;,                           &bslash;&n;&t;&t;   PROC_SCSI_AHA1740,                   &bslash;&n;&t;&t;   &quot;Adaptec 174x (EISA)&quot;,&t;&t;&bslash;&n;&t;&t;   aha1740_detect,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   NULL, &t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_command,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_queuecommand,&t;&t;&bslash;&n;&t;&t;   aha1740_abort,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_reset,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_biosparam,                   &bslash;&n;&t;&t;   AHA1740_ECBS, &t;&t;&t;&bslash;&n;&t;&t;   7, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   AHA1740_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;   1, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING}
 macro_line|#endif
 eof

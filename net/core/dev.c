@@ -75,7 +75,7 @@ op_star
 )paren
 op_amp
 id|backlog
-macro_line|#ifdef CONFIG_SKB_CHECK
+macro_line|#if CONFIG_SKB_CHECK
 comma
 id|SK_HEAD_SKB
 macro_line|#endif
@@ -678,7 +678,7 @@ id|skb
 suffix:semicolon
 )brace
 multiline_comment|/* Shove a lock on the frame */
-macro_line|#ifdef CONFIG_SKB_CHECK 
+macro_line|#if CONFIG_SKB_CHECK 
 id|IS_SKB
 c_func
 (paren
@@ -1064,7 +1064,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Add it to the &quot;backlog&quot; queue. &n;&t; */
-macro_line|#ifdef CONFIG_SKB_CHECK
+macro_line|#if CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
@@ -1542,8 +1542,6 @@ multiline_comment|/*&n;&t;&t;*&t;Bump the pointer to the next structure.&n;&t;&t
 id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;data
-op_plus
-id|skb-&gt;dev-&gt;hard_header_len
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;* &t;Fetch the packet protocol ID. &n;&t;&t;*/
 id|type

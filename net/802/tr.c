@@ -472,6 +472,14 @@ id|trh_hdr
 )paren
 )paren
 suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

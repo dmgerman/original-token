@@ -19,7 +19,7 @@ macro_line|#ifdef CONFIG_IPX
 macro_line|#include &quot;ipx.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATALK
-macro_line|#include &quot;atalk.h&quot;
+macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/igmp.h&gt;
 DECL|macro|SOCK_ARRAY_SIZE

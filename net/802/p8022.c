@@ -12,6 +12,7 @@ id|p8022_list
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n; *&t;We don&squot;t handle the loopback SAP stuff, the extended&n; *&t;802.2 command set, multicast SAP identifiers and non UI&n; *&t;frames. We have the absolute minimum needed for IPX,&n; *&t;IP and Appletalk phase 2.&n; */
 r_static
 r_struct
 id|datalink_proto

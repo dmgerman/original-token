@@ -323,7 +323,6 @@ suffix:semicolon
 multiline_comment|/* array of adjustments, one per semaphore */
 )brace
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_semget
@@ -338,7 +337,6 @@ r_int
 id|semflg
 )paren
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_semop
@@ -355,7 +353,6 @@ r_int
 id|nsops
 )paren
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_semctl

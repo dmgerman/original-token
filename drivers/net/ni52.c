@@ -3633,6 +3633,8 @@ id|dev_alloc_skb
 c_func
 (paren
 id|totlen
+op_plus
+l_int|2
 )paren
 suffix:semicolon
 r_if
@@ -3647,6 +3649,15 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* 16 byte alignment */
 id|memcpy
 c_func
 (paren

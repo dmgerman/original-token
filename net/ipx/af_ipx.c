@@ -7279,15 +7279,6 @@ id|ipx_packet
 op_star
 id|ipx
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Throw away the MAC layer&n;&t; */
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-id|dev-&gt;hard_header_len
-)paren
-suffix:semicolon
 id|ipx
 op_assign
 (paren

@@ -20,6 +20,7 @@ mdefine_line|#define SECTOR_MASK (blksize_size[MAJOR_NR] &amp;&amp;     &bslash;
 macro_line|#endif /* IDE_DRIVER */
 DECL|macro|SUBSECTOR
 mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
+macro_line|#ifdef CONFIG_CDU31A
 r_extern
 r_int
 r_int
@@ -28,13 +29,13 @@ c_func
 (paren
 r_int
 r_int
-id|mem_start
 comma
 r_int
 r_int
-id|mem_end
 )paren
 suffix:semicolon
+macro_line|#endif CONFIG_CDU31A
+macro_line|#ifdef CONFIG_MCD
 r_extern
 r_int
 r_int
@@ -43,13 +44,42 @@ c_func
 (paren
 r_int
 r_int
-id|mem_start
 comma
 r_int
 r_int
-id|mem_end
 )paren
 suffix:semicolon
+macro_line|#endif CONFIG_MCD
+macro_line|#ifdef CONFIG_MCDX
+r_extern
+r_int
+r_int
+id|mcdx_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_MCDX
+macro_line|#ifdef CONFIG_SBPCD
+r_extern
+r_int
+r_int
+id|sbpcd_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SBPCD
 macro_line|#ifdef CONFIG_AZTCD
 r_extern
 r_int
@@ -59,14 +89,12 @@ c_func
 (paren
 r_int
 r_int
-id|mem_start
 comma
 r_int
 r_int
-id|mem_end
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif CONFIG_AZTCD
 macro_line|#ifdef CONFIG_CDU535
 r_extern
 r_int
@@ -76,14 +104,72 @@ c_func
 (paren
 r_int
 r_int
-id|mem_start
 comma
 r_int
 r_int
-id|mem_end
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif CONFIG_CDU535
+macro_line|#ifdef CONFIG_GSCD
+r_extern
+r_int
+r_int
+id|gscd_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_GSCD
+macro_line|#ifdef CONFIG_CM206
+r_extern
+r_int
+r_int
+id|cm206_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_CM206
+macro_line|#ifdef CONFIG_OPTCD
+r_extern
+r_int
+r_int
+id|optcd_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_OPTCD
+macro_line|#ifdef CONFIG_SJCD
+r_extern
+r_int
+r_int
+id|sjcd_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SJCD
 macro_line|#ifdef CONFIG_BLK_DEV_HD
 r_extern
 r_int
@@ -118,21 +204,6 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SBPCD
-r_extern
-r_int
-r_int
-id|sbpcd_init
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_SBPCD
 r_extern
 r_void
 id|set_device_ro
@@ -329,24 +400,12 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == AZTECH_CDROM_MAJOR)
+macro_line|#elif (MAJOR_NR == MITSUMI_X_CDROM_MAJOR)
 DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;Aztech CD-ROM&quot;
+mdefine_line|#define DEVICE_NAME &quot;Mitsumi CD-ROM&quot;
+multiline_comment|/* #define DEVICE_INTR do_mcdx */
 DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_aztcd_request
-DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device))
-DECL|macro|DEVICE_ON
-mdefine_line|#define DEVICE_ON(device)
-DECL|macro|DEVICE_OFF
-mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == CDU535_CDROM_MAJOR)
-DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;SONY-CDU535&quot;
-DECL|macro|DEVICE_INTR
-mdefine_line|#define DEVICE_INTR do_cdu535
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_cdu535_request
+mdefine_line|#define DEVICE_REQUEST do_mcdx_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON
@@ -391,6 +450,74 @@ DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;Matsushita CD-ROM controller #4&quot;
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_sbpcd4_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == AZTECH_CDROM_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Aztech CD-ROM&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_aztcd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == CDU535_CDROM_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;SONY-CDU535&quot;
+DECL|macro|DEVICE_INTR
+mdefine_line|#define DEVICE_INTR do_cdu535
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_cdu535_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == GOLDSTAR_CDROM_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Goldstar R420&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_gscd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == CM206_CDROM_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Philips/LMS cd-rom cm206&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_cm206_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == OPTICS_CDROM_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;DOLPHIN 8000AT CD-ROM&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_optcd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == SANYO_CDROM_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Sanyo H94A CD-ROM&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_sjcd_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON

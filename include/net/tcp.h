@@ -4,13 +4,13 @@ DECL|macro|_TCP_H
 mdefine_line|#define _TCP_H
 macro_line|#include &lt;linux/tcp.h&gt;
 DECL|macro|MAX_SYN_SIZE
-mdefine_line|#define MAX_SYN_SIZE&t;44 + MAX_HEADER
+mdefine_line|#define MAX_SYN_SIZE&t;44 + MAX_HEADER + 15
 DECL|macro|MAX_FIN_SIZE
-mdefine_line|#define MAX_FIN_SIZE&t;40 + MAX_HEADER
+mdefine_line|#define MAX_FIN_SIZE&t;40 + MAX_HEADER + 15
 DECL|macro|MAX_ACK_SIZE
-mdefine_line|#define MAX_ACK_SIZE&t;40 + MAX_HEADER
+mdefine_line|#define MAX_ACK_SIZE&t;40 + MAX_HEADER + 15
 DECL|macro|MAX_RESET_SIZE
-mdefine_line|#define MAX_RESET_SIZE&t;40 + MAX_HEADER
+mdefine_line|#define MAX_RESET_SIZE&t;40 + MAX_HEADER + 15
 DECL|macro|MAX_WINDOW
 mdefine_line|#define MAX_WINDOW&t;16384
 DECL|macro|MIN_WINDOW

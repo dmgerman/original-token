@@ -155,27 +155,6 @@ macro_line|#else
 DECL|macro|eata_pio_release
 mdefine_line|#define eata_pio_release NULL  
 macro_line|#endif
-r_extern
-r_int
-id|generic_proc_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 DECL|macro|EATA_PIO
 mdefine_line|#define EATA_PIO {&t;&t;     &bslash;&n;    NULL, NULL,&t;&t;&t; &bslash;&n;    eata_pio_proc_info,/* procinfo&t; */  &bslash;&n;    &quot;eata_pio&quot;,&t;       /* proc dir entry */  &bslash;&n;    PROC_SCSI_EATA_PIO,/* proc dir inode */  &bslash;&n;     &quot;EATA (Extended Attachment) PIO driver&quot;,&bslash;&n;    eata_pio_detect,&t;&t; &bslash;&n;    eata_pio_release,&t;&t; &bslash;&n;    NULL, NULL,&t;&t;&t; &bslash;&n;    eata_pio_queue,&t;&t; &bslash;&n;    eata_pio_abort,&t;&t; &bslash;&n;    eata_pio_reset,&t;&t; &bslash;&n;    NULL,   /* Slave attach */&t; &bslash;&n;    scsicam_bios_param,&t;&t; &bslash;&n;    0,&t;    /* Canqueue&t;    */&t; &bslash;&n;    0,&t;    /* this_id&t;    */&t; &bslash;&n;    0,&t;    /* sg_tablesize */&t; &bslash;&n;    0,&t;    /* cmd_per_lun  */&t; &bslash;&n;    0,&t;    /* present&t;    */&t; &bslash;&n;    1,&t;    /* True if ISA  */&t; &bslash;&n;    ENABLE_CLUSTERING }
 macro_line|#endif /* _EATA_PIO_H */

@@ -66,29 +66,8 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|generic_proc_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 DECL|macro|BUSLOGIC
-mdefine_line|#define BUSLOGIC { NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;   generic_proc_info,           &bslash;&n;&t;&t;   &quot;buslogic&quot;,                  &bslash;&n;&t;&t;   PROC_SCSI_BUSLOGIC,          &bslash;&n;&t;&t;   &quot;BusLogic&quot;,&t;&t;&t;&bslash;&n;&t;&t;   buslogic_detect,&t;&t;&bslash;&n;&t;&t;   0,&t;/* no release func */&t;&bslash;&n;&t;&t;   buslogic_info,&t;&t;&bslash;&n;&t;&t;   0,&t;/* no command func */&t;&bslash;&n;&t;&t;   buslogic_queuecommand,&t;&bslash;&n;&t;&t;   buslogic_abort,&t;&t;&bslash;&n;&t;&t;   buslogic_reset,&t;&t;&bslash;&n;&t;&t;   0,&t;/* slave_attach NYI */&t;&bslash;&n;&t;&t;   buslogic_biosparam,&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;&t;&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING&t;&t;&bslash;&n;&t;&t; }
+mdefine_line|#define BUSLOGIC { NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;        &bslash;&n;&t;&t;   &quot;buslogic&quot;,                  &bslash;&n;&t;&t;   PROC_SCSI_BUSLOGIC,          &bslash;&n;&t;&t;   &quot;BusLogic&quot;,&t;&t;&t;&bslash;&n;&t;&t;   buslogic_detect,&t;&t;&bslash;&n;&t;&t;   0,&t;/* no release func */&t;&bslash;&n;&t;&t;   buslogic_info,&t;&t;&bslash;&n;&t;&t;   0,&t;/* no command func */&t;&bslash;&n;&t;&t;   buslogic_queuecommand,&t;&bslash;&n;&t;&t;   buslogic_abort,&t;&t;&bslash;&n;&t;&t;   buslogic_reset,&t;&t;&bslash;&n;&t;&t;   0,&t;/* slave_attach NYI */&t;&bslash;&n;&t;&t;   buslogic_biosparam,&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;&t;&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING&t;&t;&bslash;&n;&t;&t; }
 macro_line|#ifdef BUSLOGIC_PRIVATE_H
 multiline_comment|/* ??? These don&squot;t really belong here */
 macro_line|#ifndef TRUE

@@ -997,7 +997,7 @@ id|writeb
 c_func
 (paren
 r_int
-r_int
+r_char
 id|b
 comma
 r_int

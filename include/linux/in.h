@@ -2,6 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_IN_H
 DECL|macro|_LINUX_IN_H
 mdefine_line|#define _LINUX_IN_H
+macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* Standard well-defined IP protocols.  */
 r_enum
 (brace
@@ -75,9 +76,7 @@ r_struct
 id|in_addr
 (brace
 DECL|member|s_addr
-r_int
-r_int
-r_int
+id|__u32
 id|s_addr
 suffix:semicolon
 )brace

@@ -198,7 +198,6 @@ DECL|macro|MSG_STAT
 mdefine_line|#define MSG_STAT 11
 DECL|macro|MSG_INFO
 mdefine_line|#define MSG_INFO 12
-r_extern
 id|asmlinkage
 r_int
 id|sys_msgget
@@ -210,7 +209,6 @@ r_int
 id|msgflg
 )paren
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_msgsnd
@@ -230,7 +228,6 @@ r_int
 id|msgflg
 )paren
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_msgrcv
@@ -253,7 +250,6 @@ r_int
 id|msgflg
 )paren
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_msgctl

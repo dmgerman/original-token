@@ -256,7 +256,7 @@ id|count
 (brace
 id|printk
 (paren
-l_string|&quot;UMSDOS: problem with EMD file. Can&squot;t read pos = %ld (%d != %d)&bslash;n&quot;
+l_string|&quot;UMSDOS: problem with EMD file. Can&squot;t read pos = %Ld (%d != %d)&bslash;n&quot;
 comma
 id|filp-&gt;f_pos
 comma

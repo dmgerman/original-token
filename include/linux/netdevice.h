@@ -94,6 +94,12 @@ r_int
 id|base_addr
 suffix:semicolon
 multiline_comment|/* device I/O address&t;*/
+DECL|member|tbusy
+r_int
+r_int
+id|tbusy
+suffix:semicolon
+multiline_comment|/* transmitter busy must be long for bitops */
 DECL|member|irq
 r_int
 r_char
@@ -108,10 +114,6 @@ r_char
 id|start
 comma
 multiline_comment|/* start an operation&t;*/
-DECL|member|tbusy
-id|tbusy
-comma
-multiline_comment|/* transmitter busy&t;*/
 DECL|member|interrupt
 id|interrupt
 suffix:semicolon

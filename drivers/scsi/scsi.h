@@ -339,6 +339,8 @@ DECL|macro|SCSI_MAN_TOSHIBA
 mdefine_line|#define SCSI_MAN_TOSHIBA     2
 DECL|macro|SCSI_MAN_NEC_OLDCDR
 mdefine_line|#define SCSI_MAN_NEC_OLDCDR  3
+DECL|macro|SCSI_MAN_SONY
+mdefine_line|#define SCSI_MAN_SONY        4
 multiline_comment|/*&n; *  As the scsi do command functions are intelligent, and may need to&n; *  redo a command, we need to keep track of the last command&n; *  executed on each one.&n; */
 DECL|macro|WAS_RESET
 mdefine_line|#define WAS_RESET       0x01

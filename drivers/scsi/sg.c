@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com), &n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *   &n; *  Borrows code from st driver.&n; */
 macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif /* MODULE */

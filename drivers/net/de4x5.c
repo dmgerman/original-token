@@ -4469,6 +4469,8 @@ id|dev_alloc_skb
 c_func
 (paren
 id|pkt_len
+op_plus
+l_int|2
 )paren
 )paren
 op_ne
@@ -4479,6 +4481,15 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* Align */
 r_if
 c_cond
 (paren
@@ -12398,7 +12409,7 @@ l_int|2
 )braket
 op_assign
 (paren
-id|s32
+r_int
 )paren
 id|lp-&gt;rx_ring
 suffix:semicolon
@@ -12414,7 +12425,7 @@ l_int|2
 )braket
 op_assign
 (paren
-id|s32
+r_int
 )paren
 id|lp-&gt;tx_ring
 suffix:semicolon
@@ -12455,7 +12466,7 @@ l_int|2
 )braket
 op_assign
 (paren
-id|s32
+r_int
 )paren
 op_amp
 id|lp-&gt;rx_ring
@@ -12479,7 +12490,7 @@ l_int|2
 )braket
 op_assign
 (paren
-id|s32
+r_int
 )paren
 op_amp
 id|lp-&gt;rx_ring
@@ -12526,7 +12537,7 @@ l_int|2
 )braket
 op_assign
 (paren
-id|s32
+r_int
 )paren
 op_amp
 id|lp-&gt;tx_ring
@@ -12550,7 +12561,7 @@ l_int|2
 )braket
 op_assign
 (paren
-id|s32
+r_int
 )paren
 op_amp
 id|lp-&gt;tx_ring

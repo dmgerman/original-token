@@ -1313,11 +1313,7 @@ op_assign
 r_void
 op_star
 )paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 id|ushort
 op_star
@@ -2546,11 +2542,7 @@ r_int
 r_int
 op_star
 )paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 id|printk
 c_func

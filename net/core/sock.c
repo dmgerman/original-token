@@ -1100,7 +1100,7 @@ id|s
 op_assign
 id|skb-&gt;truesize
 suffix:semicolon
-macro_line|#ifdef CONFIG_SKB_CHECK
+macro_line|#if CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
@@ -1179,7 +1179,7 @@ id|s
 op_assign
 id|skb-&gt;truesize
 suffix:semicolon
-macro_line|#ifdef CONFIG_SKB_CHECK
+macro_line|#if CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren

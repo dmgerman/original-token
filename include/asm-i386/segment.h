@@ -41,6 +41,8 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|__sd
 mdefine_line|#define __sd(x) ((struct __segment_dummy *) (x))
+DECL|macro|__const_sd
+mdefine_line|#define __const_sd(x) ((const struct __segment_dummy *) (x))
 DECL|function|__put_user
 r_static
 r_inline
@@ -230,7 +232,7 @@ suffix:colon
 l_string|&quot;m&quot;
 (paren
 op_star
-id|__sd
+id|__const_sd
 c_func
 (paren
 id|y
@@ -260,7 +262,7 @@ suffix:colon
 l_string|&quot;m&quot;
 (paren
 op_star
-id|__sd
+id|__const_sd
 c_func
 (paren
 id|y
@@ -290,7 +292,7 @@ suffix:colon
 l_string|&quot;m&quot;
 (paren
 op_star
-id|__sd
+id|__const_sd
 c_func
 (paren
 id|y

@@ -361,5 +361,24 @@ r_int
 id|count
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * The &quot;address&quot; in IO memory space is not clearly either a integer or a&n; * pointer. We will accept both, thus the casts.&n; */
+DECL|macro|readb
+mdefine_line|#define readb(addr) ((unsigned char) (readb)((unsigned long)(addr)))
+DECL|macro|readw
+mdefine_line|#define readw(addr) ((unsigned short) (readw)((unsigned long)(addr)))
+DECL|macro|readl
+mdefine_line|#define readl(addr) ((unsigned int) (readl)((unsigned long)(addr)))
+DECL|macro|writeb
+mdefine_line|#define writeb(b,addr) (writeb)((b),(unsigned long)(addr))
+DECL|macro|writew
+mdefine_line|#define writew(w,addr) (writew)((w),(unsigned long)(addr))
+DECL|macro|writel
+mdefine_line|#define writel(l,addr) (writel)((l),(unsigned long)(addr))
+DECL|macro|memset_io
+mdefine_line|#define memset_io(addr,c,len)&t;&t;(memset_io)((unsigned long)(addr),(c),(len))
+DECL|macro|memcpy_fromio
+mdefine_line|#define memcpy_fromio(to,from,len)&t;(memcpy_fromio)((to),(unsigned long)(from),(len))
+DECL|macro|memcpy_toio
+mdefine_line|#define memcpy_toio(to,from,len)&t;(memcpy_toio)((unsigned long)(to),(from),(len))
 macro_line|#endif
 eof

@@ -45,6 +45,9 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_MSDOS_FS) &amp;&amp; !defined(CONFIG_UMSDOS_FS)
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#endif
+macro_line|#if defined(CONFIG_PROC_FS)
+macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 r_extern
 r_char
@@ -157,6 +160,22 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Dirty hack */
+macro_line|#if defined(CONFIG_PROC_FS)
+r_extern
+r_struct
+id|proc_dir_entry
+id|scsi_dir
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_struct
+id|proc_dir_entry
+id|scsi_hba_dir
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|sys_tz
@@ -811,6 +830,12 @@ id|X
 c_func
 (paren
 id|bh_mask
+)paren
+comma
+id|X
+c_func
+(paren
+id|bh_base
 )paren
 comma
 id|X
@@ -1492,6 +1517,66 @@ id|X
 c_func
 (paren
 id|print_status
+)paren
+comma
+id|X
+c_func
+(paren
+id|gendisk_head
+)paren
+comma
+multiline_comment|/* Needed for sd.c */
+id|X
+c_func
+(paren
+id|resetup_one_dev
+)paren
+comma
+multiline_comment|/* Needed for sd.c */
+macro_line|#else
+multiline_comment|/*&n;&t; * With no scsi configured, we still need to export a few&n;&t; * symbols so that scsi can be loaded later via insmod.&n;&t; */
+id|X
+c_func
+(paren
+id|intr_count
+)paren
+comma
+id|X
+c_func
+(paren
+id|mem_map
+)paren
+comma
+id|X
+c_func
+(paren
+id|gendisk_head
+)paren
+comma
+id|X
+c_func
+(paren
+id|resetup_one_dev
+)paren
+comma
+macro_line|#if defined(CONFIG_PROC_FS)
+id|X
+c_func
+(paren
+id|scsi_dir
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_hba_dir
+)paren
+comma
+macro_line|#endif
+id|X
+c_func
+(paren
+id|dispatch_scsi_info_ptr
 )paren
 comma
 macro_line|#endif

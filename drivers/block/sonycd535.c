@@ -1,6 +1,5 @@
-multiline_comment|/*&n; * Sony CDU-535 interface device driver&n; *&n; * This is a modified version of the CDU-31A device driver (see below).&n; * Changes were made using documentation for the CDU-531 (which Sony&n; * assures me is very similar to the 535) and partial disassembly of the&n; * DOS driver.  I used Minyard&squot;s driver and replaced the the CDU-31A&n; * commands with the CDU-531 commands.  This was complicated by a different&n; * interface protocol with the drive.  The driver is still polled.&n; *&n; * Data transfer rate is about 110 Kb/sec, theoretical maximum is 150 Kb/sec.&n; * I tried polling without the sony_sleep during the data transfers but&n; * it did not speed things up any.&n; *&n; * 1993-05-23 (rgj) changed the major number to 21 to get rid of conflict&n; * with CDU-31A driver.  This is the also the number from the Linux&n; * Device Driver Registry for the Sony Drive.  Hope nobody else is using it.&n; *&n; * 1993-08-29 (rgj) remove the configuring of the interface board address&n; * from the top level configuration, you have to modify it in this file.&n; *&n; * 1995-01-26 Made module-capable (Joel Katz &lt;Stimpson@Panix.COM&gt;)&n; *&n; * 1995-05-20&n; *  Modified to support CDU-510/515 series&n; *      (Claudio Porfiri&lt;C.Porfiri@nisms.tei.ericsson.se&gt;)&n; *  Fixed to report verify_area() failures&n; *      (Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt;)&n; *&n; * 1995-06-01&n; *  More chages to support CDU-510/515 series&n; *      (Claudio Porfiri&lt;C.Porfiri@nisms.tei.ericsson.se&gt;)&n; *&n; * Things to do:&n; *  - handle errors and status better, put everything into a single word&n; *  - use interrupts (code mostly there, but a big hole still missing)&n; *  - handle multi-session CDs?&n; *  - use DMA?&n; *&n; *  Known Bugs:&n; *  -&n; *&n; *   Ken Pizzini (ken@halcyon.com)&n; *&n; * Original by:&n; *   Ron Jeppesen (ronj.an@site007.saic.com)&n; *&n; *&n; *------------------------------------------------------------------------&n; * Sony CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com) (CDU-535 complaints to Ken above)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/*&n; * Sony CDU-535 interface device driver&n; *&n; * This is a modified version of the CDU-31A device driver (see below).&n; * Changes were made using documentation for the CDU-531 (which Sony&n; * assures me is very similar to the 535) and partial disassembly of the&n; * DOS driver.  I used Minyard&squot;s driver and replaced the the CDU-31A&n; * commands with the CDU-531 commands.  This was complicated by a different&n; * interface protocol with the drive.  The driver is still polled.&n; *&n; * Data transfer rate is about 110 Kb/sec, theoretical maximum is 150 Kb/sec.&n; * I tried polling without the sony_sleep during the data transfers but&n; * it did not speed things up any.&n; *&n; * 1993-05-23 (rgj) changed the major number to 21 to get rid of conflict&n; * with CDU-31A driver.  This is the also the number from the Linux&n; * Device Driver Registry for the Sony Drive.  Hope nobody else is using it.&n; *&n; * 1993-08-29 (rgj) remove the configuring of the interface board address&n; * from the top level configuration, you have to modify it in this file.&n; *&n; * 1995-01-26 Made module-capable (Joel Katz &lt;Stimpson@Panix.COM&gt;)&n; *&n; * 1995-05-20&n; *  Modified to support CDU-510/515 series&n; *      (Claudio Porfiri&lt;C.Porfiri@nisms.tei.ericsson.se&gt;)&n; *  Fixed to report verify_area() failures&n; *      (Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt;)&n; *&n; * 1995-06-01&n; *  More changes to support CDU-510/515 series&n; *      (Claudio Porfiri&lt;C.Porfiri@nisms.tei.ericsson.se&gt;)&n; *&n; * Things to do:&n; *  - handle errors and status better, put everything into a single word&n; *  - use interrupts (code mostly there, but a big hole still missing)&n; *  - handle multi-session CDs?&n; *  - use DMA?&n; *&n; *  Known Bugs:&n; *  -&n; *&n; *   Ken Pizzini (ken@halcyon.com)&n; *&n; * Original by:&n; *   Ron Jeppesen (ronj.an@site007.saic.com)&n; *&n; *&n; *------------------------------------------------------------------------&n; * Sony CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com) (CDU-535 complaints to Ken above)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_CDU535) || defined(MODULE)
 macro_line|#ifdef MODULE
 macro_line|# include &lt;linux/module.h&gt;
 macro_line|# include &lt;linux/malloc.h&gt;
@@ -15,6 +14,11 @@ op_assign
 id|UTS_RELEASE
 suffix:semicolon
 macro_line|# endif
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+macro_line|# define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+macro_line|# define MOD_DEC_USE_COUNT
 macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -32,18 +36,12 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
-macro_line|#include &lt;linux/sonycd535.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR CDU535_CDROM_MAJOR
-macro_line|#ifdef MODULE
 macro_line|# include &quot;blk.h&quot;
-macro_line|#else
-macro_line|# include &quot;blk.h&quot;
-DECL|macro|MOD_INC_USE_COUNT
-macro_line|# define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-macro_line|# define MOD_DEC_USE_COUNT
-macro_line|#endif
+DECL|macro|sony535_cd_base_io
+mdefine_line|#define sony535_cd_base_io sonycd535 /* for compatible parameter passing with &quot;insmod&quot; */
+macro_line|#include &lt;linux/sonycd535.h&gt;
 multiline_comment|/*&n; * this is the base address of the interface card for the Sony CDU-535&n; * CDROM drive.  If your jumpers are set for an address other than&n; * this one (the default), change the following line to the&n; * proper address.&n; */
 macro_line|#ifndef CDU535_ADDRESS
 DECL|macro|CDU535_ADDRESS
@@ -5719,13 +5717,21 @@ r_int
 id|i
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Setting the base I/O address to 0xffff will disable it. */
+multiline_comment|/* Setting the base I/O address to 0 will disable it. */
 r_if
 c_cond
+(paren
 (paren
 id|sony535_cd_base_io
 op_eq
 l_int|0xffff
+)paren
+op_logical_or
+(paren
+id|sony535_cd_base_io
+op_eq
+l_int|0
+)paren
 )paren
 r_goto
 id|bail
@@ -6618,5 +6624,4 @@ l_string|&quot; module released&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* MODULE */
-macro_line|#endif&t;/* CONFIG_CDU535 */
 eof

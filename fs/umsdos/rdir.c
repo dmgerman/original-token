@@ -50,6 +50,7 @@ r_void
 op_star
 id|buf
 comma
+r_const
 r_char
 op_star
 id|name

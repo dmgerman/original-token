@@ -2257,6 +2257,17 @@ r_char
 op_star
 id|name
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;euid
+op_eq
+id|current-&gt;uid
+op_logical_and
+id|current-&gt;egid
+op_eq
+id|current-&gt;gid
+)paren
 id|current-&gt;dumpable
 op_assign
 l_int|1

@@ -69,27 +69,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|generic_proc_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/* number of queueable commands&n;   (unless we support more than 1 cmd_per_lun this should do) */
 DECL|macro|AHA152X_MAXQUEUE
 mdefine_line|#define AHA152X_MAXQUEUE&t;7&t;&t;
@@ -97,7 +76,7 @@ DECL|macro|AHA152X_REVID
 mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.9 $&quot;
 multiline_comment|/* Initial value of Scsi_Host entry */
 DECL|macro|AHA152X
-mdefine_line|#define AHA152X       { /* next */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* usage_count */  &t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;&t;&t;&t;generic_proc_info,          &bslash;&n;&t;&t;&t;&t;&t;&t;&quot;aha152x&quot;,                  &bslash;&n;&t;&t;&t;&t;&t;&t;PROC_SCSI_AHA152X,          &bslash;&n;&t;&t;&t;/* name */&t;&t;AHA152X_REVID, &t;&t;    &bslash;&n;&t;&t;&t;/* detect */&t;&t;aha152x_detect,             &bslash;&n;&t;&t;&t;/* release */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* info */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* command */&t;&t;aha152x_command,            &bslash;&n;&t;&t;&t;/* queuecommand */&t;aha152x_queue,              &bslash;&n;&t;&t;&t;/* abort */&t;&t;aha152x_abort,              &bslash;&n;&t;&t;&t;/* reset */&t;&t;aha152x_reset,              &bslash;&n;&t;&t;&t;/* slave_attach */&t;/* NULL */  0,              &bslash;&n;&t;&t;&t;/* bios_param */&t;aha152x_biosparam,          &bslash;&n;&t;&t;&t;/* can_queue */&t;&t;1,                          &bslash;&n;&t;&t;&t;/* this_id */&t;&t;7,                          &bslash;&n;&t;&t;&t;/* sg_tablesize */&t;SG_ALL,                     &bslash;&n;&t;&t;&t;/* cmd_per_lun */&t;1,                          &bslash;&n;&t;&t;&t;/* present */&t;&t;0,                          &bslash;&n;&t;&t;&t;/* unchecked_isa_dma */&t;0,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* use_clustering */&t;DISABLE_CLUSTERING }
+mdefine_line|#define AHA152X       { /* next */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* usage_count */  &t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;&t;&t;&t;NULL,&t;&t;            &bslash;&n;&t;&t;&t;&t;&t;&t;&quot;aha152x&quot;,                  &bslash;&n;&t;&t;&t;&t;&t;&t;PROC_SCSI_AHA152X,          &bslash;&n;&t;&t;&t;/* name */&t;&t;AHA152X_REVID, &t;&t;    &bslash;&n;&t;&t;&t;/* detect */&t;&t;aha152x_detect,             &bslash;&n;&t;&t;&t;/* release */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* info */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* command */&t;&t;aha152x_command,            &bslash;&n;&t;&t;&t;/* queuecommand */&t;aha152x_queue,              &bslash;&n;&t;&t;&t;/* abort */&t;&t;aha152x_abort,              &bslash;&n;&t;&t;&t;/* reset */&t;&t;aha152x_reset,              &bslash;&n;&t;&t;&t;/* slave_attach */&t;/* NULL */  0,              &bslash;&n;&t;&t;&t;/* bios_param */&t;aha152x_biosparam,          &bslash;&n;&t;&t;&t;/* can_queue */&t;&t;1,                          &bslash;&n;&t;&t;&t;/* this_id */&t;&t;7,                          &bslash;&n;&t;&t;&t;/* sg_tablesize */&t;SG_ALL,                     &bslash;&n;&t;&t;&t;/* cmd_per_lun */&t;1,                          &bslash;&n;&t;&t;&t;/* present */&t;&t;0,                          &bslash;&n;&t;&t;&t;/* unchecked_isa_dma */&t;0,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* use_clustering */&t;DISABLE_CLUSTERING }
 macro_line|#endif
 multiline_comment|/* port addresses */
 DECL|macro|SCSISEQ

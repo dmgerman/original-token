@@ -1177,6 +1177,7 @@ id|to
 op_assign
 op_star
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -1199,6 +1200,7 @@ id|to
 op_assign
 op_star
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -1221,6 +1223,7 @@ id|to
 op_assign
 op_star
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -1244,6 +1247,7 @@ op_star
 l_int|2
 op_plus
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -1267,6 +1271,7 @@ id|to
 op_assign
 op_star
 (paren
+r_const
 r_int
 r_int
 op_star

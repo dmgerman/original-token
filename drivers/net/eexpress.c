@@ -3827,6 +3827,8 @@ id|dev_alloc_skb
 c_func
 (paren
 id|pkt_len
+op_plus
+l_int|2
 )paren
 suffix:semicolon
 r_if
@@ -3854,6 +3856,14 @@ suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
+suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+l_int|2
+)paren
 suffix:semicolon
 id|outw
 c_func

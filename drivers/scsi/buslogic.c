@@ -5976,14 +5976,14 @@ id|ip
 l_int|0
 )braket
 op_assign
-l_int|256
+l_int|255
 suffix:semicolon
 id|ip
 (braket
 l_int|1
 )braket
 op_assign
-l_int|64
+l_int|63
 suffix:semicolon
 macro_line|#endif
 )brace

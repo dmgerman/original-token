@@ -219,34 +219,6 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
-id|mcd_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|aztcd_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|st_setup
 c_func
 (paren
@@ -413,22 +385,6 @@ op_star
 id|ints
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SBPCD
-r_extern
-r_void
-id|sbpcd_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_SBPCD
 macro_line|#ifdef CONFIG_CDU31A
 r_extern
 r_void
@@ -445,6 +401,70 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU31A
+macro_line|#ifdef CONFIG_MCD
+r_extern
+r_void
+id|mcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_MCD
+macro_line|#ifdef CONFIG_MCDX
+r_extern
+r_void
+id|mcdx_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_MCDX
+macro_line|#ifdef CONFIG_SBPCD
+r_extern
+r_void
+id|sbpcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SBPCD
+macro_line|#ifdef CONFIG_AZTCD
+r_extern
+r_void
+id|aztcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_AZTCD
 macro_line|#ifdef CONFIG_CDU535
 r_extern
 r_void
@@ -461,6 +481,70 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU535
+macro_line|#ifdef CONFIG_GSCD
+r_extern
+r_void
+id|gscd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_GSCD
+macro_line|#ifdef CONFIG_CM206
+r_extern
+r_void
+id|cm206_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_CM206
+macro_line|#ifdef CONFIG_OPTCD
+r_extern
+r_void
+id|optcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_OPTCD
+macro_line|#ifdef CONFIG_SJCD
+r_extern
+r_void
+id|sjcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SJCD
 r_void
 id|ramdisk_setup
 c_func
@@ -947,46 +1031,6 @@ id|floppy_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_MCD
-(brace
-l_string|&quot;mcd=&quot;
-comma
-id|mcd_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_AZTCD
-(brace
-l_string|&quot;aztcd=&quot;
-comma
-id|aztcd_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_CDU535
-(brace
-l_string|&quot;sonycd535=&quot;
-comma
-id|sonycd535_setup
-)brace
-comma
-macro_line|#endif CONFIG_CDU535
-macro_line|#ifdef CONFIG_SOUND
-(brace
-l_string|&quot;sound=&quot;
-comma
-id|sound_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_SBPCD
-(brace
-l_string|&quot;sbpcd=&quot;
-comma
-id|sbpcd_setup
-)brace
-comma
-macro_line|#endif CONFIG_SBPCD
 macro_line|#ifdef CONFIG_CDU31A
 (brace
 l_string|&quot;cdu31a=&quot;
@@ -995,6 +1039,86 @@ id|cdu31a_setup
 )brace
 comma
 macro_line|#endif CONFIG_CDU31A
+macro_line|#ifdef CONFIG_MCD
+(brace
+l_string|&quot;mcd=&quot;
+comma
+id|mcd_setup
+)brace
+comma
+macro_line|#endif CONFIG_MCD
+macro_line|#ifdef CONFIG_MCDX
+(brace
+l_string|&quot;mcdx=&quot;
+comma
+id|mcdx_setup
+)brace
+comma
+macro_line|#endif CONFIG_MCDX
+macro_line|#ifdef CONFIG_SBPCD
+(brace
+l_string|&quot;sbpcd=&quot;
+comma
+id|sbpcd_setup
+)brace
+comma
+macro_line|#endif CONFIG_SBPCD
+macro_line|#ifdef CONFIG_AZTCD
+(brace
+l_string|&quot;aztcd=&quot;
+comma
+id|aztcd_setup
+)brace
+comma
+macro_line|#endif CONFIG_AZTCD
+macro_line|#ifdef CONFIG_CDU535
+(brace
+l_string|&quot;sonycd535=&quot;
+comma
+id|sonycd535_setup
+)brace
+comma
+macro_line|#endif CONFIG_CDU535
+macro_line|#ifdef CONFIG_GSCD
+(brace
+l_string|&quot;gscd=&quot;
+comma
+id|gscd_setup
+)brace
+comma
+macro_line|#endif CONFIG_GSCD
+macro_line|#ifdef CONFIG_CM206
+(brace
+l_string|&quot;cm206=&quot;
+comma
+id|cm206_setup
+)brace
+comma
+macro_line|#endif CONFIG_CM206
+macro_line|#ifdef CONFIG_OPTCD
+(brace
+l_string|&quot;optcd=&quot;
+comma
+id|optcd_setup
+)brace
+comma
+macro_line|#endif CONFIG_OPTCD
+macro_line|#ifdef CONFIG_SJCD
+(brace
+l_string|&quot;sjcd=&quot;
+comma
+id|sjcd_setup
+)brace
+comma
+macro_line|#endif CONFIG_SJCD
+macro_line|#ifdef CONFIG_SOUND
+(brace
+l_string|&quot;sound=&quot;
+comma
+id|sound_setup
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|0
 comma

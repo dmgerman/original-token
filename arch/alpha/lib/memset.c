@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/arch/alpha/lib/memset.c&n; *&n; *  Copyright (C
 multiline_comment|/*&n; * These are only slightly optimized so far..&n; */
 macro_line|#include &lt;linux/types.h&gt;
 DECL|function|__constant_c_memset
+r_inline
 r_void
 op_star
 id|__constant_c_memset
@@ -132,27 +133,21 @@ r_int
 id|count
 )paren
 (brace
-r_char
-op_star
-id|xs
-op_assign
+id|__constant_c_memset
+c_func
 (paren
-r_char
-op_star
-)paren
 id|s
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|count
-op_decrement
-)paren
+comma
+l_int|0x0101010101010101UL
 op_star
-id|xs
-op_increment
-op_assign
+(paren
+r_int
+r_char
+)paren
 id|c
+comma
+id|count
+)paren
 suffix:semicolon
 r_return
 id|s
