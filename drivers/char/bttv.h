@@ -1,9 +1,9 @@
-multiline_comment|/* &n;    bttv - Bt848 frame grabber driver&n;&n;    Copyright (C) 1996,97 Ralph Metzler (rjkm@thp.uni-koeln.de)&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
+multiline_comment|/*&n;    bttv - Bt848 frame grabber driver&n;&n;    Copyright (C) 1996,97 Ralph Metzler (rjkm@thp.uni-koeln.de)&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
 macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,25) 
+mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,28) 
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
@@ -505,12 +505,15 @@ suffix:semicolon
 DECL|member|gq_in
 DECL|member|gq_out
 DECL|member|gq_grab
+DECL|member|gq_start
 r_int
 id|gq_in
 comma
 id|gq_out
 comma
 id|gq_grab
+comma
+id|gq_start
 suffix:semicolon
 DECL|member|fbuffer
 r_char
@@ -731,6 +734,18 @@ DECL|macro|BTTV_MAGICTVIEW063
 mdefine_line|#define BTTV_MAGICTVIEW063 0x26
 DECL|macro|BTTV_PINNACLERAVE
 mdefine_line|#define BTTV_PINNACLERAVE  0x27
+DECL|macro|BTTV_STB2
+mdefine_line|#define BTTV_STB2          0x28
+DECL|macro|BTTV_AVPHONE98
+mdefine_line|#define BTTV_AVPHONE98     0x29
+DECL|macro|BTTV_PV951
+mdefine_line|#define BTTV_PV951         0x2a
+DECL|macro|PLL_NONE
+mdefine_line|#define PLL_NONE 0
+DECL|macro|PLL_28
+mdefine_line|#define PLL_28   1
+DECL|macro|PLL_35
+mdefine_line|#define PLL_35   2
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO
@@ -757,12 +772,16 @@ DECL|macro|TEA6300
 mdefine_line|#define TEA6300            0x04
 DECL|macro|I2C_TSA5522
 mdefine_line|#define I2C_TSA5522        0xc2
+DECL|macro|I2C_TDA7432
+mdefine_line|#define I2C_TDA7432        0x8a
+DECL|macro|I2C_TDA8425
+mdefine_line|#define I2C_TDA8425        0x82
 DECL|macro|I2C_TDA9840
 mdefine_line|#define I2C_TDA9840        0x84
 DECL|macro|I2C_TDA9850
 mdefine_line|#define I2C_TDA9850        0xb6
-DECL|macro|I2C_TDA8425
-mdefine_line|#define I2C_TDA8425        0x82
+DECL|macro|I2C_TDA9875
+mdefine_line|#define I2C_TDA9875        0xb0
 DECL|macro|I2C_HAUPEE
 mdefine_line|#define I2C_HAUPEE         0xa0
 DECL|macro|I2C_STBEE

@@ -164,6 +164,13 @@ l_int|12
 suffix:semicolon
 multiline_comment|/* catalog B-tree&squot;s first 3 extents */
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*================ Global functions ================*/
 multiline_comment|/*&n; * hfs_mdb_get()&n; *&n; * Build the in-core MDB for a filesystem, including&n; * the B-trees and the volume bitmap.&n; */

@@ -1933,11 +1933,15 @@ id|cep-&gt;rx_bd_base
 suffix:semicolon
 id|ep-&gt;sen_genscc.scc_rfcr
 op_assign
-id|SCC_EB
+id|CPMFCR_GBL
+op_or
+id|CPMFCR_EB
 suffix:semicolon
 id|ep-&gt;sen_genscc.scc_tfcr
 op_assign
-id|SCC_EB
+id|CPMFCR_GBL
+op_or
+id|CPMFCR_EB
 suffix:semicolon
 multiline_comment|/* Set maximum bytes per receive buffer.&n;&t; * This appears to be an Ethernet frame size, not the buffer&n;&t; * fragment size.  It must be a multiple of four.&n;&t; */
 id|ep-&gt;sen_genscc.scc_mrblr

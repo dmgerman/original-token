@@ -1,0 +1,59 @@
+multiline_comment|/*&n; * linux/include/asm-arm/arch-l7200/system.h&n; *&n; * Copyright (c) 2000 Steven Hill (sjhill@cotw.com)&n; *&n; * Changelog&n; *  03-21-2000  SJH&t;Created&n; *  04-26-2000  SJH&t;Fixed functions&n; *  05-03-2000  SJH&t;Removed usage of obsolete &squot;iomd.h&squot;&n; */
+macro_line|#ifndef __ASM_ARCH_SYSTEM_H
+DECL|macro|__ASM_ARCH_SYSTEM_H
+mdefine_line|#define __ASM_ARCH_SYSTEM_H
+DECL|function|arch_idle
+r_extern
+id|__inline__
+r_void
+id|arch_idle
+c_func
+(paren
+r_void
+)paren
+(brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|current-&gt;need_resched
+op_logical_and
+op_logical_neg
+id|hlt_counter
+)paren
+(brace
+)brace
+suffix:semicolon
+multiline_comment|/*                outb(0, IOMD_SUSMODE);*/
+)brace
+DECL|macro|arch_power_off
+mdefine_line|#define arch_power_off()&t;do { } while (0)
+DECL|function|arch_reset
+r_extern
+r_inline
+r_void
+id|arch_reset
+c_func
+(paren
+r_char
+id|mode
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mode
+op_eq
+l_char|&squot;s&squot;
+)paren
+(brace
+id|cpu_reset
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
+eof

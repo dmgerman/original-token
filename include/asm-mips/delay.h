@@ -3,7 +3,6 @@ macro_line|#ifndef _ASM_DELAY_H
 DECL|macro|_ASM_DELAY_H
 mdefine_line|#define _ASM_DELAY_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 r_extern
 id|__inline__
 r_void

@@ -96,6 +96,7 @@ multiline_comment|/* 25 */
 multiline_comment|/* 33 */
 multiline_comment|/* 37.5 */
 multiline_comment|/* 41.5 */
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 (brace
 id|XFER_UDMA_4
 comma
@@ -256,6 +257,7 @@ comma
 l_int|0x00
 )brace
 comma
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 (brace
 id|XFER_PIO_4
 comma
@@ -390,6 +392,7 @@ multiline_comment|/* 25 */
 multiline_comment|/* 33 */
 multiline_comment|/* 37.5 */
 multiline_comment|/* 41.5 */
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 (brace
 id|XFER_UDMA_4
 comma
@@ -550,6 +553,7 @@ comma
 l_int|0x53
 )brace
 comma
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 (brace
 id|XFER_PIO_4
 comma
@@ -684,6 +688,7 @@ multiline_comment|/* 25 */
 multiline_comment|/* 33 */
 multiline_comment|/* 37.5 */
 multiline_comment|/* 41.5 */
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 (brace
 id|XFER_UDMA_4
 comma
@@ -844,6 +849,7 @@ comma
 l_int|0x53
 )brace
 comma
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 (brace
 id|XFER_PIO_4
 comma
@@ -978,6 +984,7 @@ multiline_comment|/* 25 */
 multiline_comment|/* 33 */
 multiline_comment|/* 37.5 */
 multiline_comment|/* 41.5 */
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 (brace
 id|XFER_UDMA_4
 comma
@@ -1138,6 +1145,7 @@ comma
 l_int|0x00
 )brace
 comma
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 (brace
 id|XFER_PIO_4
 comma
@@ -3866,30 +3874,12 @@ id|dev
 op_assign
 id|hwif-&gt;pci_dev
 suffix:semicolon
-id|byte
-id|unit
+r_struct
+id|chipset_bus_clock_list_entry
+op_star
+id|temp_table
 op_assign
-(paren
-id|drive-&gt;select.b.unit
-op_amp
-l_int|0x01
-)paren
-suffix:semicolon
-r_int
-id|drive_number
-op_assign
-(paren
-(paren
-id|hwif-&gt;channel
-ques
-c_cond
-l_int|2
-suffix:colon
-l_int|0
-)paren
-op_plus
-id|unit
-)paren
+l_int|NULL
 suffix:semicolon
 id|byte
 id|ata2_pci
@@ -3922,10 +3912,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|via82cxxx_table
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 r_switch
 c_cond
 (paren
-id|drive_number
+id|drive-&gt;dn
 )paren
 (brace
 r_case
@@ -3987,6 +3988,34 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|via82cxxx_table
+op_eq
+id|via82cxxx_type_four
+)paren
+op_logical_and
+(paren
+id|speed
+op_le
+id|XFER_UDMA_2
+)paren
+)paren
+(brace
+id|temp_table
+op_assign
+id|via82cxxx_type_three
+suffix:semicolon
+)brace
+r_else
+(brace
+id|temp_table
+op_assign
+id|via82cxxx_table
+suffix:semicolon
+)brace
 id|pci_read_config_byte
 c_func
 (paren
@@ -4007,7 +4036,7 @@ id|speed
 comma
 id|bus_speed
 comma
-id|via82cxxx_table
+id|temp_table
 )paren
 suffix:semicolon
 id|pci_write_config_byte
@@ -4040,7 +4069,7 @@ id|speed
 comma
 id|bus_speed
 comma
-id|via82cxxx_table
+id|temp_table
 )paren
 suffix:semicolon
 id|pci_write_config_byte
@@ -4053,6 +4082,16 @@ comma
 id|ultra
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|drive-&gt;init_speed
+)paren
+id|drive-&gt;init_speed
+op_assign
+id|speed
+suffix:semicolon
 id|err
 op_assign
 id|ide_config_drive_speed
@@ -4062,6 +4101,10 @@ id|drive
 comma
 id|speed
 )paren
+suffix:semicolon
+id|drive-&gt;current_speed
+op_assign
+id|speed
 suffix:semicolon
 r_return
 id|err
@@ -5014,6 +5057,14 @@ id|ata33
 comma
 id|ata66
 suffix:semicolon
+r_int
+id|bus_speed
+op_assign
+id|system_bus_clock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|byte
 id|revision
 op_assign
@@ -5161,6 +5212,15 @@ id|ata66
 op_assign
 l_int|0
 suffix:semicolon
+id|via82cxxx_table
+op_assign
+id|ApolloISAChipInfo
+(braket
+id|j
+)braket
+dot
+id|chipset_table
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5213,6 +5273,15 @@ op_amp
 id|VIA_FLAG_ATA_66
 )paren
 (brace
+id|byte
+id|ata66_0
+op_assign
+l_int|0
+comma
+id|ata66_1
+op_assign
+l_int|0
+suffix:semicolon
 id|ata33
 op_assign
 l_int|0
@@ -5221,6 +5290,62 @@ id|ata66
 op_assign
 l_int|1
 suffix:semicolon
+id|pci_read_config_byte
+c_func
+(paren
+id|dev
+comma
+l_int|0x50
+comma
+op_amp
+id|ata66_1
+)paren
+suffix:semicolon
+id|pci_read_config_byte
+c_func
+(paren
+id|dev
+comma
+l_int|0x52
+comma
+op_amp
+id|ata66_0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ata66_0
+op_amp
+l_int|0x04
+)paren
+op_logical_or
+(paren
+id|ata66_1
+op_amp
+l_int|0x04
+)paren
+)paren
+(brace
+id|via82cxxx_table
+op_assign
+(paren
+id|bus_speed
+op_eq
+l_int|33
+op_logical_or
+id|bus_speed
+op_eq
+l_int|37
+)paren
+ques
+c_cond
+id|via82cxxx_type_four
+suffix:colon
+id|via82cxxx_type_three
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -5241,15 +5366,6 @@ l_string|&quot;66&quot;
 suffix:colon
 l_string|&quot;33&quot;
 )paren
-suffix:semicolon
-id|via82cxxx_table
-op_assign
-id|ApolloISAChipInfo
-(braket
-id|j
-)braket
-dot
-id|chipset_table
 suffix:semicolon
 )brace
 id|printk
@@ -5359,6 +5475,11 @@ id|hwif-&gt;tuneproc
 op_assign
 op_amp
 id|via82cxxx_tune_drive
+suffix:semicolon
+id|hwif-&gt;speedproc
+op_assign
+op_amp
+id|via82cxxx_tune_chipset
 suffix:semicolon
 id|hwif-&gt;drives
 (braket

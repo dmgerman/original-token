@@ -1,6 +1,6 @@
 multiline_comment|/* Board specific functions for those embedded 8xx boards that do&n; * not have boot monitor support for board information.&n; */
 macro_line|#include &lt;sys/types.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#ifdef CONFIG_8xx
 macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#endif
@@ -806,24 +806,27 @@ macro_line|#if 1
 multiline_comment|/* This is actually provided by my boot rom.  I have it&n;&t; * here for those people that may load the kernel with&n;&t; * a JTAG/COP tool and not the rom monitor.&n;&t; */
 id|bd-&gt;bi_baudrate
 op_assign
-l_int|115200
+l_int|19200
 suffix:semicolon
 id|bd-&gt;bi_intfreq
 op_assign
-l_int|200
+l_int|165
 suffix:semicolon
 id|bd-&gt;bi_busfreq
 op_assign
-l_int|66
+l_int|33
 suffix:semicolon
 id|bd-&gt;bi_cpmfreq
 op_assign
-l_int|66
+l_int|132
 suffix:semicolon
 id|bd-&gt;bi_brgfreq
 op_assign
-l_int|33
+id|bd-&gt;bi_cpmfreq
+op_div
+l_int|2
 suffix:semicolon
+multiline_comment|/* BRGCLK = (CPM*2/4) */
 id|bd-&gt;bi_memsize
 op_assign
 l_int|16

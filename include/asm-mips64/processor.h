@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
 DECL|macro|current_text_addr
 mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if !defined (_LANGUAGE_ASSEMBLY)
 macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;

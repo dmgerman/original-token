@@ -217,6 +217,17 @@ DECL|macro|BD_SC_OV
 mdefine_line|#define BD_SC_OV&t;((ushort)0x0002)&t;/* Overrun */
 DECL|macro|BD_SC_CD
 mdefine_line|#define BD_SC_CD&t;((ushort)0x0001)&t;/* ?? */
+multiline_comment|/* Function code bits, usually generic to devices.&n;*/
+DECL|macro|CPMFCR_GBL
+mdefine_line|#define CPMFCR_GBL&t;((u_char)0x20)&t;/* Set memory snooping */
+DECL|macro|CPMFCR_EB
+mdefine_line|#define CPMFCR_EB&t;((u_char)0x10)&t;/* Set big endian byte order */
+DECL|macro|CPMFCR_TC2
+mdefine_line|#define CPMFCR_TC2&t;((u_char)0x04)&t;/* Transfer code 2 value */
+DECL|macro|CPMFCR_DTB
+mdefine_line|#define CPMFCR_DTB&t;((u_char)0x02)&t;/* Use local bus for data when set */
+DECL|macro|CPMFCR_BDB
+mdefine_line|#define CPMFCR_BDB&t;((u_char)0x01)&t;/* Use local bus for BD when set */
 multiline_comment|/* Parameter RAM offsets from the base.&n;*/
 DECL|macro|PROFF_SCC1
 mdefine_line|#define PROFF_SCC1&t;&t;((uint)0x8000)
@@ -383,15 +394,6 @@ DECL|typedef|smc_uart_t
 )brace
 id|smc_uart_t
 suffix:semicolon
-multiline_comment|/* Function code bits.&n;*/
-DECL|macro|SMC_GBL
-mdefine_line|#define SMC_GBL&t;((u_char)0x20)&t;/* Set memory snooping */
-DECL|macro|SMC_EB
-mdefine_line|#define SMC_EB&t;((u_char)0x10)&t;/* Set big endian byte order */
-DECL|macro|SMC_TC2
-mdefine_line|#define SMC_TC2&t;((u_char)0x04)&t;/* Transfer code 2 value */
-DECL|macro|SMC_DTB
-mdefine_line|#define SMC_DTB&t;((u_char)0x02)&t;/* Use local bus when set */
 multiline_comment|/* SMC uart mode register (Internal memory map).&n;*/
 DECL|macro|SMCMR_REN
 mdefine_line|#define&t;SMCMR_REN&t;((ushort)0x0001)
@@ -709,9 +711,6 @@ DECL|typedef|sccp_t
 )brace
 id|sccp_t
 suffix:semicolon
-multiline_comment|/* Function code bits.&n;*/
-DECL|macro|SCC_EB
-mdefine_line|#define SCC_EB&t;((u_char)0x10)&t;/* Set big endian byte order */
 multiline_comment|/* CPM Ethernet through SCC1.&n; */
 DECL|struct|scc_enet
 r_typedef

@@ -4,7 +4,6 @@ DECL|macro|_ASM_PROCESSOR_H
 mdefine_line|#define _ASM_PROCESSOR_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/isadep.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
 DECL|macro|current_text_addr
 mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})

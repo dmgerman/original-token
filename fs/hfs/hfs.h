@@ -190,6 +190,13 @@ l_int|31
 )braket
 suffix:semicolon
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 r_typedef
 r_struct
@@ -254,6 +261,13 @@ id|fdFldr
 suffix:semicolon
 DECL|typedef|hfs_finfo_t
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 id|hfs_finfo_t
 suffix:semicolon
 r_typedef
@@ -280,6 +294,13 @@ id|fdPutAway
 suffix:semicolon
 DECL|typedef|hfs_fxinfo_t
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 id|hfs_fxinfo_t
 suffix:semicolon
 r_typedef
@@ -303,6 +324,13 @@ id|frView
 suffix:semicolon
 DECL|typedef|hfs_dinfo_t
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 id|hfs_dinfo_t
 suffix:semicolon
 r_typedef
@@ -330,6 +358,13 @@ id|frPutAway
 suffix:semicolon
 DECL|typedef|hfs_dxinfo_t
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 id|hfs_dxinfo_t
 suffix:semicolon
 DECL|union|hfs_finder_info
@@ -385,6 +420,13 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* (KeyLen) bytes of key */
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* Cast to a pointer to a generic bkey */
 DECL|macro|HFS_BKEY
@@ -416,6 +458,13 @@ id|CName
 suffix:semicolon
 multiline_comment|/* The filename of the entry */
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* The key used in the extents b-tree: */
 DECL|struct|hfs_ext_key
@@ -443,6 +492,13 @@ id|FABN
 suffix:semicolon
 multiline_comment|/* allocation blocks number*/
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*======== Data structures kept in memory ========*/
 multiline_comment|/*&n; * struct hfs_mdb&n; *&n; * The fields from the MDB of an HFS filesystem&n; */

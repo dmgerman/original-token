@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: ip27-timer.c,v 1.3 2000/02/18 09:54:40 ulfc Exp $&n; *&n; * Copytight (C) 1999 Ralf Baechle (ralf@gnu.org)&n; * Copytight (C) 1999 Silicon Graphics, Inc.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

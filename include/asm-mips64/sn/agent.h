@@ -2,6 +2,7 @@ multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and condit
 macro_line|#ifndef _ASM_SGI_SN_AGENT_H
 DECL|macro|_ASM_SGI_SN_AGENT_H
 mdefine_line|#define _ASM_SGI_SN_AGENT_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sn/addrs.h&gt;
 macro_line|#include &lt;asm/sn/arch.h&gt;
 singleline_comment|//#include &lt;asm/sn/io.h&gt;

@@ -128,10 +128,5 @@ DECL|macro|NFS_MOUNT_NONLM
 mdefine_line|#define NFS_MOUNT_NONLM&t;&t;0x0200&t;/* 3 */
 DECL|macro|NFS_MOUNT_FLAGMASK
 mdefine_line|#define NFS_MOUNT_FLAGMASK&t;0xFFFF
-multiline_comment|/*&n; * Private flags - not to be set by mount program&n; */
-macro_line|#ifdef __KERNEL__
-DECL|macro|NFS_NONMONOTONE_COOKIES
-mdefine_line|#define NFS_NONMONOTONE_COOKIES&t;0x00010000
-macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

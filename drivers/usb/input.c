@@ -1019,6 +1019,11 @@ op_assign
 op_amp
 id|input_dev
 suffix:semicolon
+r_struct
+id|input_handle
+op_star
+id|dnext
+suffix:semicolon
 multiline_comment|/*&n; * Kill any pending repeat timers.&n; */
 id|del_timer
 c_func
@@ -1034,6 +1039,10 @@ c_loop
 id|handle
 )paren
 (brace
+id|dnext
+op_assign
+id|handle-&gt;dnext
+suffix:semicolon
 id|input_unlink_handle
 c_func
 (paren
@@ -1050,7 +1059,7 @@ id|handle
 suffix:semicolon
 id|handle
 op_assign
-id|handle-&gt;dnext
+id|dnext
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Remove the device.&n; */
@@ -1220,6 +1229,11 @@ id|handle
 op_assign
 id|handler-&gt;handle
 suffix:semicolon
+r_struct
+id|input_handle
+op_star
+id|hnext
+suffix:semicolon
 multiline_comment|/*&n; * Tell the handler to disconnect from all devices it keeps open.&n; */
 r_while
 c_loop
@@ -1227,6 +1241,10 @@ c_loop
 id|handle
 )paren
 (brace
+id|hnext
+op_assign
+id|handle-&gt;hnext
+suffix:semicolon
 id|input_unlink_handle
 c_func
 (paren
@@ -1243,7 +1261,7 @@ id|handle
 suffix:semicolon
 id|handle
 op_assign
-id|handle-&gt;hnext
+id|hnext
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Remove it.&n; */

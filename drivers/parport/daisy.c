@@ -834,7 +834,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;parport_device_num - convert device coordinates into a&n; *&t;&t;&t;     canonical device number&n; *&t;@parport: parallel port number&n; *&t;@mux: multiplexor port number (-1 for no multiplexor)&n; *&t;@daisy: daisy chain address (-1 for no daisy chain address)&n; *&n; *&t;This tries to locate a device on the given parallel port,&n; *&t;multiplexor port and daisy chain address, and returns its&n; *&t;device number or -NXIO if no device with those coordinates&n; *&t;exists.&n; **/
+multiline_comment|/**&n; *&t;parport_device_num - convert device coordinates&n; *&t;@parport: parallel port number&n; *&t;@mux: multiplexor port number (-1 for no multiplexor)&n; *&t;@daisy: daisy chain address (-1 for no daisy chain address)&n; *&n; *&t;This tries to locate a device on the given parallel port,&n; *&t;multiplexor port and daisy chain address, and returns its&n; *&t;device number or -NXIO if no device with those coordinates&n; *&t;exists.&n; **/
 DECL|function|parport_device_num
 r_int
 id|parport_device_num
@@ -891,7 +891,7 @@ r_return
 id|dev-&gt;devnum
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;parport_device_coords - convert a canonical device number into&n; *&t;&t;&t;&t;device coordinates&n; *&t;@devnum: device number&n; *&t;@parport: pointer to storage for parallel port number&n; *&t;@mux: pointer to storage for multiplexor port number&n; *&t;@daisy: pointer to storage for daisy chain address&n; *&n; *&t;This function converts a device number into its coordinates in&n; *&t;terms of which parallel port in the system it is attached to,&n; *&t;which multiplexor port it is attached to if there is a&n; *&t;multiplexor on that port, and which daisy chain address it has&n; *&t;if it is in a daisy chain.&n; *&n; *&t;The caller must allocate storage for @parport, @mux, and&n; *&t;@daisy.&n; *&n; *&t;If there is no device with the specified device number, -ENXIO&n; *&t;is returned.  Otherwise, the values pointed to by @parport,&n; *&t;@mux, and @daisy are set to the coordinates of the device,&n; *&t;with -1 for coordinates with no value.&n; *&n; *&t;This function is not actually very useful, but this interface&n; *&t;was suggested by IEEE 1284.3.&n; **/
+multiline_comment|/**&n; *&t;parport_device_coords - convert canonical device number&n; *&t;@devnum: device number&n; *&t;@parport: pointer to storage for parallel port number&n; *&t;@mux: pointer to storage for multiplexor port number&n; *&t;@daisy: pointer to storage for daisy chain address&n; *&n; *&t;This function converts a device number into its coordinates in&n; *&t;terms of which parallel port in the system it is attached to,&n; *&t;which multiplexor port it is attached to if there is a&n; *&t;multiplexor on that port, and which daisy chain address it has&n; *&t;if it is in a daisy chain.&n; *&n; *&t;The caller must allocate storage for @parport, @mux, and&n; *&t;@daisy.&n; *&n; *&t;If there is no device with the specified device number, -ENXIO&n; *&t;is returned.  Otherwise, the values pointed to by @parport,&n; *&t;@mux, and @daisy are set to the coordinates of the device,&n; *&t;with -1 for coordinates with no value.&n; *&n; *&t;This function is not actually very useful, but this interface&n; *&t;was suggested by IEEE 1284.3.&n; **/
 DECL|function|parport_device_coords
 r_int
 id|parport_device_coords
@@ -994,6 +994,11 @@ id|cmd
 r_int
 r_char
 id|s
+suffix:semicolon
+id|parport_data_forward
+(paren
+id|port
+)paren
 suffix:semicolon
 id|parport_write_data
 (paren
@@ -1243,6 +1248,11 @@ id|s
 suffix:semicolon
 r_int
 id|rc
+suffix:semicolon
+id|parport_data_forward
+(paren
+id|port
+)paren
 suffix:semicolon
 id|parport_write_data
 (paren
@@ -1580,6 +1590,11 @@ r_char
 op_star
 id|deviceid
 suffix:semicolon
+id|parport_data_forward
+(paren
+id|port
+)paren
+suffix:semicolon
 id|parport_write_data
 (paren
 id|port
@@ -1914,7 +1929,7 @@ id|thisdev
 suffix:semicolon
 )brace
 multiline_comment|/* Find a device with a particular manufacturer and model string,&n;   starting from a given device number.  Like the PCI equivalent,&n;   &squot;from&squot; itself is skipped. */
-multiline_comment|/**&n; *&t;parport_find_device - find a device with a specified&n; *&t;&t;&t;      manufacturer and model string&n; *&t;@mfg: required manufacturer string&n; *&t;@mdl: required model string&n; *&t;@from: previous device number found in search, or %NULL for&n; *&t;       new search&n; *&n; *&t;This walks through the list of parallel port devices looking&n; *&t;for a device whose &squot;MFG&squot; string matches @mfg and whose &squot;MDL&squot;&n; *&t;string matches @mdl in their IEEE 1284 Device ID.&n; *&n; *&t;When a device is found matching those requirements, its device&n; *&t;number is returned; if there is no matching device, a negative&n; *&t;value is returned.&n; *&n; *&t;A new search it initiated by passing %NULL as the @from&n; *&t;argument.  If @from is not %NULL, the search continues from&n; *&t;that device.&n; **/
+multiline_comment|/**&n; *&t;parport_find_device - find a specific device&n; *&t;@mfg: required manufacturer string&n; *&t;@mdl: required model string&n; *&t;@from: previous device number found in search, or %NULL for&n; *&t;       new search&n; *&n; *&t;This walks through the list of parallel port devices looking&n; *&t;for a device whose &squot;MFG&squot; string matches @mfg and whose &squot;MDL&squot;&n; *&t;string matches @mdl in their IEEE 1284 Device ID.&n; *&n; *&t;When a device is found matching those requirements, its device&n; *&t;number is returned; if there is no matching device, a negative&n; *&t;value is returned.&n; *&n; *&t;A new search it initiated by passing %NULL as the @from&n; *&t;argument.  If @from is not %NULL, the search continues from&n; *&t;that device.&n; **/
 DECL|function|parport_find_device
 r_int
 id|parport_find_device

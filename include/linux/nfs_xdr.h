@@ -358,12 +358,6 @@ DECL|struct|nfs_entry
 r_struct
 id|nfs_entry
 (brace
-DECL|member|page
-r_struct
-id|page
-op_star
-id|page
-suffix:semicolon
 DECL|member|ino
 id|__u64
 id|ino
@@ -399,14 +393,6 @@ DECL|member|fattr
 r_struct
 id|nfs_fattr
 id|fattr
-suffix:semicolon
-DECL|member|offset
-r_int
-r_int
-id|offset
-comma
-DECL|member|prev
-id|prev
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1291,7 +1277,7 @@ id|read
 )paren
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 r_struct
@@ -1322,7 +1308,7 @@ id|write
 )paren
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 r_struct

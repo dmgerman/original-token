@@ -309,6 +309,10 @@ DECL|macro|HDIO_GET_NICE
 mdefine_line|#define HDIO_GET_NICE&t;&t;0x030c&t;/* get nice flags */
 DECL|macro|HDIO_GET_IDENTITY
 mdefine_line|#define HDIO_GET_IDENTITY&t;0x030d&t;/* get IDE identification info */
+DECL|macro|HDIO_DRIVE_CMD_AEB
+mdefine_line|#define HDIO_DRIVE_CMD_AEB&t;0x031e
+DECL|macro|HDIO_DRIVE_TASK
+mdefine_line|#define HDIO_DRIVE_TASK&t;&t;0x031e
 DECL|macro|HDIO_DRIVE_CMD
 mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x031f&t;/* execute a special drive command */
 multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x032n/0x033n */
@@ -754,7 +758,7 @@ r_int
 r_int
 id|words94_125
 (braket
-l_int|31
+l_int|32
 )braket
 suffix:semicolon
 multiline_comment|/* reserved words 94-125 */
@@ -782,21 +786,35 @@ r_int
 id|csfo
 suffix:semicolon
 multiline_comment|/* current set features options&n;&t;&t;&t;&t;&t; * 15:4&t;reserved&n;&t;&t;&t;&t;&t; * 3&t;auto reassign&n;&t;&t;&t;&t;&t; * 2&t;reverting&n;&t;&t;&t;&t;&t; * 1&t;read-look-ahead&n;&t;&t;&t;&t;&t; * 0&t;write cache&n;&t;&t;&t;&t;&t; */
-DECL|member|words130_159
+DECL|member|words130_155
 r_int
 r_int
-id|words130_159
+id|words130_155
 (braket
-l_int|30
+l_int|26
 )braket
 suffix:semicolon
-multiline_comment|/* reserved vendor words 130-159 */
+multiline_comment|/* reserved vendor words 130-155 */
+DECL|member|word156
+r_int
+r_int
+id|word156
+suffix:semicolon
+DECL|member|words157_159
+r_int
+r_int
+id|words157_159
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* reserved vendor words 157-159 */
 DECL|member|words160_255
 r_int
 r_int
 id|words160_255
 (braket
-l_int|96
+l_int|95
 )braket
 suffix:semicolon
 multiline_comment|/* reserved words 160-255 */

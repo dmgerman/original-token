@@ -1498,7 +1498,13 @@ suffix:semicolon
 r_int
 id|num_vma
 suffix:semicolon
-multiline_comment|/* XXX we need to somehow lock vmlist between here&n;&t; * and after elf_kcore_store_hdr() returns.&n;&t; * For now assume that num_vma does not change (TA)&n;&t; */
+id|read_lock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 id|proc_root_kcore-&gt;size
 op_assign
 id|size
@@ -1525,9 +1531,18 @@ id|fpos
 op_ge
 id|size
 )paren
+(brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 multiline_comment|/* trim buflen to not go beyond EOF */
 r_if
 c_cond
@@ -1594,10 +1609,19 @@ c_cond
 op_logical_neg
 id|elf_buf
 )paren
+(brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -1616,6 +1640,13 @@ comma
 id|num_vma
 comma
 id|elf_buflen
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
 )paren
 suffix:semicolon
 r_if
@@ -1681,6 +1712,14 @@ r_return
 id|acc
 suffix:semicolon
 )brace
+r_else
+id|read_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 multiline_comment|/* where page 0 not mapped, write zeros into buffer */
 macro_line|#if defined (__i386__) || defined (__mc68000__)
 r_if

@@ -903,6 +903,13 @@ id|HFS_HDR_MAX
 )braket
 suffix:semicolon
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*================ File-local functions ================*/
 multiline_comment|/*&n; * dlength()&n; */

@@ -4,8 +4,6 @@ DECL|macro|IDEDISK_VERSION
 mdefine_line|#define IDEDISK_VERSION&t;&quot;1.09&quot;
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
-DECL|macro|_IDE_DISK_C
-mdefine_line|#define _IDE_DISK_C&t;&t;/* Tell linux/hdsmart.h it&squot;s really us */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3295,10 +3293,6 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3306,9 +3300,6 @@ id|ide_spin_wait_hwgroup
 c_func
 (paren
 id|drive
-comma
-op_amp
-id|flags
 )paren
 )paren
 r_return
@@ -3328,13 +3319,11 @@ id|BAD_R_STAT
 suffix:colon
 id|BAD_W_STAT
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|io_request_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -3667,6 +3656,37 @@ id|major
 (braket
 id|minor
 )braket
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|ide_add_setting
+c_func
+(paren
+id|drive
+comma
+l_string|&quot;lun&quot;
+comma
+id|SETTING_RW
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+id|TYPE_INT
+comma
+l_int|0
+comma
+l_int|7
+comma
+l_int|1
+comma
+l_int|1
+comma
+op_amp
+id|drive-&gt;lun
 comma
 l_int|NULL
 )paren

@@ -1,7 +1,7 @@
-multiline_comment|/**************************************************************************&n; *                                                                        *&n; *               Copyright (C) 1992-1997, Silicon Graphics, Inc.          *&n; *                                                                        *&n; *  These coded instructions, statements, and computer programs  contain  *&n; *  unpublished  proprietary  information of Silicon Graphics, Inc., and  *&n; *  are protected by Federal copyright law.  They  may  not be disclosed  *&n; *  to  third  parties  or copied or duplicated in any form, in whole or  *&n; *  in part, without the prior written consent of Silicon Graphics, Inc.  *&n; *                                                                        *&n; **************************************************************************/
-macro_line|#ifndef __SYS_SN_INTR_PUBLIC_H__
-DECL|macro|__SYS_SN_INTR_PUBLIC_H__
-mdefine_line|#define __SYS_SN_INTR_PUBLIC_H__
+multiline_comment|/* &n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1992 - 1997 Silicon Graphics, Inc.&n; */
+macro_line|#ifndef __ASM_SN_INTR_PUBLIC_H
+DECL|macro|__ASM_SN_INTR_PUBLIC_H
+mdefine_line|#define __ASM_SN_INTR_PUBLIC_H
 multiline_comment|/* REMEMBER: If you change these, the whole world needs to be recompiled.&n; * It would also require changing the hubspl.s code and SN0/intr.c&n; * Currently, the spl code has no support for multiple INTPEND1 masks.&n; */
 DECL|macro|N_INTPEND0_MASKS
 mdefine_line|#define&t;N_INTPEND0_MASKS&t;1
@@ -59,5 +59,5 @@ DECL|typedef|hub_intmasks_t
 id|hub_intmasks_t
 suffix:semicolon
 macro_line|#endif /* _LANGUAGE_C */
-macro_line|#endif /* __SYS_SN_INTR_PUBLIC_H__ */
+macro_line|#endif /* __ASM_SN_INTR_PUBLIC_H */
 eof

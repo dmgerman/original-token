@@ -15,6 +15,12 @@ DECL|macro|__prepdata
 mdefine_line|#define __prepdata __attribute__ ((__section__ (&quot;.data.prep&quot;)))
 DECL|macro|__prepfunc
 mdefine_line|#define __prepfunc(__argprep) &bslash;&n;&t;__argprep __prep; &bslash;&n;&t;__argprep
+DECL|macro|__chrp
+mdefine_line|#define __chrp __attribute__ ((__section__ (&quot;.text.chrp&quot;)))
+DECL|macro|__chrpdata
+mdefine_line|#define __chrpdata __attribute__ ((__section__ (&quot;.data.chrp&quot;)))
+DECL|macro|__chrpfunc
+mdefine_line|#define __chrpfunc(__argchrp) &bslash;&n;&t;__argchrp __chrp; &bslash;&n;&t;__argchrp
 DECL|macro|__apus
 mdefine_line|#define __apus __attribute__ ((__section__ (&quot;.text.apus&quot;)))
 DECL|macro|__apusdata

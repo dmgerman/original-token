@@ -6656,4 +6656,12 @@ c_func
 id|cyberpro_exit
 )paren
 suffix:semicolon
+id|MODULE_DEVICE_TABLE
+c_func
+(paren
+id|pci
+comma
+id|cyberpro_pci_table
+)paren
+suffix:semicolon
 eof

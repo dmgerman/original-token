@@ -211,7 +211,7 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -380,7 +380,7 @@ id|error
 r_goto
 id|out_free_success
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -487,7 +487,7 @@ l_int|0
 suffix:semicolon
 id|out_free_success
 suffix:colon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page

@@ -1164,6 +1164,13 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 (brace
 id|mpnt-&gt;vm_mm
 op_assign
@@ -1288,6 +1295,13 @@ op_add_assign
 id|PAGE_SIZE
 suffix:semicolon
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -1,4 +1,7 @@
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;asm/system.h&gt; /* for xmon definition */
+macro_line|#endif /* ndef __ASSEMBLY__ */
 macro_line|#ifndef _PPC_PAGE_H
 DECL|macro|_PPC_PAGE_H
 mdefine_line|#define _PPC_PAGE_H

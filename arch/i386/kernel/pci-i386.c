@@ -151,6 +151,7 @@ id|check
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * We need to avoid collisions with `mirrored&squot; VGA ports&n; * and other strange ISA hardware, so we always want the&n; * addresses to be allocated in the 0x000-0x0ff region&n; * modulo 0x400.&n; *&n; * Why? Because some silly external IO cards only decode&n; * the low 10 bits of the IO address. The 0x00-0xff region&n; * is reserved for motherboard devices that decode all 16&n; * bits, so it&squot;s ok to allocate at, say, 0x2800-0x28ff,&n; * but we want to try to avoid allocating at 0x2900-0x2bff&n; * which might have be mirrored at 0x0100-0x03ff..&n; */
 r_void
 DECL|function|pcibios_align_resource
 id|pcibios_align_resource
@@ -191,7 +192,6 @@ id|start
 op_assign
 id|res-&gt;start
 suffix:semicolon
-multiline_comment|/* We need to avoid collisions with `mirrored&squot; VGA ports&n;&t;&t;   and other strange ISA hardware, so we always want the&n;&t;&t;   addresses kilobyte aligned.  */
 r_if
 c_cond
 (paren
@@ -217,27 +217,30 @@ id|size
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|start
+op_amp
+l_int|0x300
+)paren
+(brace
 id|start
 op_assign
 (paren
 id|start
 op_plus
-l_int|1024
-op_minus
-l_int|1
+l_int|0x3ff
 )paren
 op_amp
 op_complement
-(paren
-l_int|1024
-op_minus
-l_int|1
-)paren
+l_int|0x3ff
 suffix:semicolon
 id|res-&gt;start
 op_assign
 id|start
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; *  Handle resources of PCI devices.  If the world were perfect, we could&n; *  just allocate all the resource regions and do nothing more.  It isn&squot;t.&n; *  On the other hand, we cannot just re-allocate all devices, as it would&n; *  require us to know lots of host bridge internals.  So we attempt to&n; *  keep as much of the original configuration as possible, but tweak it&n; *  when it&squot;s found to be wrong.&n; *&n; *  Known BIOS problems we have to work around:&n; *&t;- I/O or memory regions not configured&n; *&t;- regions configured, but not enabled in the command register&n; *&t;- bogus I/O addresses above 64K used&n; *&t;- expansion ROMs left enabled (this may sound harmless, but given&n; *&t;  the fact the PCI specs explicitly allow address decoders to be&n; *&t;  shared between expansion ROMs and other resource regions, it&squot;s&n; *&t;  at least dangerous)&n; *&n; *  Our solution:&n; *&t;(1) Allocate resources for all buses behind PCI-to-PCI bridges.&n; *&t;    This gives us fixed barriers on where we can allocate.&n; *&t;(2) Allocate resources for all enabled devices.  If there is&n; *&t;    a collision, just mark the resource as unallocated. Also&n; *&t;    disable expansion ROMs during this step.&n; *&t;(3) Try to allocate resources for disabled devices.  If the&n; *&t;    resources were assigned correctly, everything goes well,&n; *&t;    if they weren&squot;t, they won&squot;t disturb allocation of other&n; *&t;    resources.&n; *&t;(4) Assign new addresses to resources which were either&n; *&t;    not configured at all or misconfigured.  If explicitly&n; *&t;    requested by the user, configure expansion ROM address&n; *&t;    as well.&n; */

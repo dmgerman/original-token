@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/floppy.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1993, 1994  Alain Knaff&n; *  Copyright (C) 1998 Alan Cox&n; */
+multiline_comment|/*&n; *  linux/drivers/block/floppy.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1993, 1994  Alain Knaff&n; *  Copyright (C) 1998 Alan Cox&n; */
 multiline_comment|/*&n; * 02.12.91 - Changed to static variables to indicate need for reset&n; * and recalibrate. This makes some things easier (output_byte reset&n; * checking etc), and means less interrupt jumping in case of errors,&n; * so the code is hopefully easier to understand.&n; */
 multiline_comment|/*&n; * This file is certainly a mess. I&squot;ve tried my best to get it working,&n; * but I don&squot;t like programming floppies, and I have only one anyway.&n; * Urgel. I should check for more errors, and do more graceful error&n; * recovery. Seems there are problems with several drives. I&squot;ve tried to&n; * correct them. No promises.&n; */
 multiline_comment|/*&n; * As with hd.c, all routines within this file can (and will) be called&n; * by interrupts, so extreme caution is needed. A hardware interrupt&n; * handler may not sleep, or a kernel panic will happen. Thus I cannot&n; * call &quot;floppy-on&quot; directly, but have to set a special timer interrupt&n; * etc.&n; */
@@ -14,6 +14,7 @@ multiline_comment|/* 1994/9/17 -- Koen Holtman -- added logging of physical flop
 multiline_comment|/* 1995/4/24 -- Dan Fandrich -- added support for Commodore 1581 3.5&quot; disks&n; * by defining bit 1 of the &quot;stretch&quot; parameter to mean put sectors on the&n; * opposite side of the disk, leaving the sector IDs alone (i.e. Commodore&squot;s&n; * drives are &quot;upside-down&quot;).&n; */
 multiline_comment|/*&n; * 1995/8/26 -- Andreas Busse -- added Mips support.&n; */
 multiline_comment|/*&n; * 1995/10/18 -- Ralf Baechle -- Portability cleanup; move machine dependent&n; * features to asm/floppy.h.&n; */
+multiline_comment|/*&n; * 1998/05/07 -- Russell King -- More portability cleanups; moved definition of&n; * interrupt and dma channel to asm/floppy.h. Cleaned up some formatting &amp;&n; * use of &squot;0&squot; for NULL.&n; */
 multiline_comment|/*&n; * 1998/06/07 -- Alan Cox -- Merged the 2.0.34 fixes for resource allocation&n; * failures.&n; */
 multiline_comment|/*&n; * 1998/09/20 -- David Weinehall -- Added slow-down code for buggy PS/2-drives.&n; */
 multiline_comment|/*&n; * 1999/08/13 -- Paul Slootman -- floppy stopped working on Alpha after 24&n; * days, 6 hours, 32 minutes and 32 seconds (i.e. MAXINT jiffies; ints were&n; * being used to store jiffies, which are unsigned longs).&n; */
@@ -36,35 +37,6 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
-multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed. */
-DECL|variable|FLOPPY_IRQ
-r_static
-r_int
-id|FLOPPY_IRQ
-op_assign
-l_int|6
-suffix:semicolon
-DECL|variable|FLOPPY_DMA
-r_static
-r_int
-id|FLOPPY_DMA
-op_assign
-l_int|2
-suffix:semicolon
-DECL|variable|allowed_drive_mask
-r_static
-r_int
-id|allowed_drive_mask
-op_assign
-l_int|0x33
-suffix:semicolon
-DECL|variable|irqdma_allocated
-r_static
-r_int
-id|irqdma_allocated
-op_assign
-l_int|0
-suffix:semicolon
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -100,6 +72,20 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|variable|FLOPPY_IRQ
+r_static
+r_int
+id|FLOPPY_IRQ
+op_assign
+l_int|6
+suffix:semicolon
+DECL|variable|FLOPPY_DMA
+r_static
+r_int
+id|FLOPPY_DMA
+op_assign
+l_int|2
+suffix:semicolon
 DECL|variable|can_use_virtual_dma
 r_static
 r_int
@@ -112,8 +98,6 @@ DECL|variable|use_virtual_dma
 r_static
 r_int
 id|use_virtual_dma
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* =======&n; * use virtual DMA&n; * 0 using hard DMA&n; * 1 using virtual DMA&n; * This variable is set to virtual when a DMA mem problem arises, and&n; * reset back in floppy_grab_irq_and_dma.&n; * It is not safe to reset it in other circumstances, because the floppy&n; * driver may have several buffers in use at once, and we do currently not&n; * record each buffers capabilities&n; */
 DECL|variable|virtual_dma_port
@@ -175,6 +159,21 @@ suffix:semicolon
 DECL|macro|K_64
 mdefine_line|#define K_64&t;0x10000&t;&t;/* 64KB */
 macro_line|#include &lt;asm/floppy.h&gt;
+multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed. */
+DECL|variable|allowed_drive_mask
+r_static
+r_int
+id|allowed_drive_mask
+op_assign
+l_int|0x33
+suffix:semicolon
+DECL|variable|irqdma_allocated
+r_static
+r_int
+id|irqdma_allocated
+op_assign
+l_int|0
+suffix:semicolon
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR FLOPPY_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
@@ -216,10 +215,8 @@ c_cond
 op_star
 id|addr
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* we have the memory */
 r_if
 c_cond
@@ -228,10 +225,8 @@ id|can_use_virtual_dma
 op_ne
 l_int|2
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* no fallback allowed */
 id|printk
 c_func
@@ -1091,6 +1086,7 @@ comma
 id|default_raw_cmd
 suffix:semicolon
 multiline_comment|/*&n; * This struct defines the different floppy types.&n; *&n; * Bit 0 of &squot;stretch&squot; tells if the tracks need to be doubled for some&n; * types (e.g. 360kB diskette in 1.2MB drive, etc.).  Bit 1 of &squot;stretch&squot;&n; * tells if the disk is in Commodore 1581 format, which means side 0 sectors&n; * are located on side 1 of the disk but with a side 0 ID, and vice-versa.&n; * This is the same as the Sharp MZ-80 5.25&quot; CP/M disk format, except that the&n; * 1581&squot;s logical side 0 is on physical side 1, whereas the Sharp&squot;s logical&n; * side 0 is on physical side 0 (but with the misnamed sector IDs).&n; * &squot;stretch&squot; should probably be renamed to something more general, like&n; * &squot;options&squot;.  Other parameters should be self-explanatory (see also&n; * setfdprm(8)).&n; */
+multiline_comment|/*&n;&t;    Size&n;&t;     |  Sectors per track&n;&t;     |  | Head&n;&t;     |  | |  Tracks&n;&t;     |  | |  | Stretch&n;&t;     |  | |  | |  Gap 1 size&n;&t;     |  | |  | |    |  Data rate, | 0x40 for perp&n;&t;     |  | |  | |    |    |  Spec1 (stepping rate, head unload&n;&t;     |  | |  | |    |    |    |    /fmt gap (gap2) */
 DECL|variable|floppy_type
 r_static
 r_struct
@@ -1980,15 +1976,11 @@ r_static
 r_char
 op_star
 id|floppy_track_buffer
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|max_buffer_sectors
 r_static
 r_int
 id|max_buffer_sectors
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|errors
 r_static
@@ -2054,8 +2046,6 @@ DECL|variable|cont
 )brace
 op_star
 id|cont
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 r_void
@@ -2225,7 +2215,7 @@ r_int
 r_char
 id|in_sector_offset
 suffix:semicolon
-multiline_comment|/* offset within physical sector,&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;* expressed in units of 512 bytes */
+multiline_comment|/* offset within physical sector,&n;&t;&t;&t;&t;&t; * expressed in units of 512 bytes */
 macro_line|#ifndef fd_eject
 DECL|macro|fd_eject
 mdefine_line|#define fd_eject(x) -EINVAL
@@ -2382,31 +2372,23 @@ r_static
 r_int
 r_int
 id|interruptjiffies
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|resultjiffies
 r_static
 r_int
 r_int
 id|resultjiffies
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|resultsize
 r_static
 r_int
 id|resultsize
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|lastredo
 r_static
 r_int
 r_int
 id|lastredo
-op_assign
-l_int|0
 suffix:semicolon
 DECL|struct|output_log
 r_static
@@ -2439,8 +2421,6 @@ DECL|variable|output_log_pos
 r_static
 r_int
 id|output_log_pos
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|macro|CURRENTD
@@ -2572,11 +2552,9 @@ id|a
 OG
 id|b
 )paren
-(brace
 r_return
 id|a
 suffix:semicolon
-)brace
 r_else
 r_return
 id|b
@@ -2604,11 +2582,9 @@ id|a
 OL
 id|b
 )paren
-(brace
 r_return
 id|a
 suffix:semicolon
-)brace
 r_else
 r_return
 id|b
@@ -2711,6 +2687,10 @@ c_func
 id|drive
 )paren
 comma
+(paren
+r_int
+r_int
+)paren
 id|FDCS-&gt;dor
 )paren
 suffix:semicolon
@@ -4320,8 +4300,6 @@ DECL|variable|hlt_disabled
 r_static
 r_int
 id|hlt_disabled
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|floppy_disable_hlt
 r_static
@@ -4697,12 +4675,10 @@ c_cond
 (paren
 id|FDCS-&gt;reset
 )paren
-(brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -5082,12 +5058,10 @@ c_func
 OL
 l_int|0
 )paren
-(brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5284,11 +5258,9 @@ c_func
 op_ne
 id|MORE_OUTPUT
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|output_byte
 c_func
 (paren
@@ -7269,7 +7241,6 @@ c_cond
 (paren
 id|do_print
 )paren
-(brace
 id|print_result
 c_func
 (paren
@@ -7278,7 +7249,6 @@ comma
 id|inr
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7312,7 +7282,6 @@ c_cond
 (paren
 id|do_print
 )paren
-(brace
 id|print_result
 c_func
 (paren
@@ -7321,7 +7290,6 @@ comma
 id|inr
 )paren
 suffix:semicolon
-)brace
 id|max_sensei
 op_decrement
 suffix:semicolon
@@ -9691,12 +9659,10 @@ id|ST1
 op_amp
 id|ST1_EOC
 )paren
-(brace
 id|eoc
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 r_else
 id|eoc
 op_assign
@@ -9709,12 +9675,10 @@ id|COMMAND
 op_amp
 l_int|0x80
 )paren
-(brace
 id|heads
 op_assign
 l_int|2
 suffix:semicolon
-)brace
 r_else
 id|heads
 op_assign
@@ -10790,7 +10754,7 @@ id|SECT_PER_TRACK
 op_assign
 id|end_sector
 suffix:semicolon
-multiline_comment|/* make sure SECT_PER_TRACK points&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;  * to end of transfer */
+multiline_comment|/* make sure SECT_PER_TRACK points&n;&t;&t;&t;&t;&t;      * to end of transfer */
 )brace
 )brace
 multiline_comment|/*&n; * Formulate a read/write request.&n; * this routine decides where to load the data (directly to buffer, or to&n; * tmp floppy area), how much data to load (the size of the buffer, the whole&n; * track, or a single sector)&n; * All floppy_track_buffer handling goes in here. If we ever add track buffer&n; * allocation on the fly, it should be done here. No other part should need&n; * modification.&n; */
@@ -13027,12 +12991,10 @@ id|raw_cmd-&gt;reply_count
 OG
 id|MAX_REPLIES
 )paren
-(brace
 id|raw_cmd-&gt;reply_count
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -14575,12 +14537,10 @@ op_logical_neg
 op_star
 id|g
 )paren
-(brace
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -14944,13 +14904,11 @@ id|UDRS-&gt;fd_ref
 op_ne
 l_int|1
 )paren
-(brace
 multiline_comment|/* somebody else has this drive open */
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
 id|LOCK_FDC
 c_func
 (paren
@@ -15136,12 +15094,10 @@ id|ret
 op_amp
 id|FD_VERIFY
 )paren
-(brace
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15152,12 +15108,10 @@ op_amp
 id|FD_DISK_WRITABLE
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EROFS
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -16139,7 +16093,6 @@ c_cond
 (paren
 id|tmp
 )paren
-(brace
 id|fd_dma_mem_free
 c_func
 (paren
@@ -16154,7 +16107,6 @@ op_star
 l_int|1024
 )paren
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -17953,7 +17905,6 @@ id|i
 dot
 id|fn
 )paren
-(brace
 id|config_params
 (braket
 id|i
@@ -17974,7 +17925,6 @@ dot
 id|param2
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -18114,7 +18064,7 @@ id|drive
 suffix:semicolon
 id|raw_cmd
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|devfs_handle
 op_assign
@@ -18622,12 +18572,10 @@ id|FDCS-&gt;version
 OL
 id|FDC_82072A
 )paren
-(brace
 id|can_use_virtual_dma
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 id|have_no_fdc
 op_assign
 l_int|0
@@ -19383,7 +19331,7 @@ id|floppy_track_buffer
 suffix:semicolon
 id|floppy_track_buffer
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|max_buffer_sectors
 op_assign
@@ -19547,8 +19495,6 @@ DECL|variable|floppy
 r_char
 op_star
 id|floppy
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|parse_floppy_cfg_string
 r_static
@@ -19621,14 +19567,12 @@ c_cond
 op_star
 id|ptr
 )paren
-(brace
 id|floppy_setup
 c_func
 (paren
 id|ptr
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|function|init_module
@@ -19653,14 +19597,12 @@ c_cond
 (paren
 id|floppy
 )paren
-(brace
 id|parse_floppy_cfg_string
 c_func
 (paren
 id|floppy
 )paren
 suffix:semicolon
-)brace
 r_return
 id|floppy_init
 c_func
@@ -19774,10 +19716,8 @@ c_cond
 (paren
 id|have_no_fdc
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

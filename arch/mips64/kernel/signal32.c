@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: signal32.c,v 1.4 2000/03/15 22:46:55 kanoj Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1991, 1992  Linus Torvalds&n; * Copyright (C) 1994 - 1999  Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;

@@ -1,8 +1,15 @@
-multiline_comment|/*&n; *  linux/mm/vmalloc.c&n; *&n; *  Copyright (C) 1993  Linus Torvalds&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; */
+multiline_comment|/*&n; *  linux/mm/vmalloc.c&n; *&n; *  Copyright (C) 1993  Linus Torvalds&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; *  SMP-safe vmalloc/vfree/ioremap, Tigran Aivazian &lt;tigran@veritas.com&gt;, May 2000&n; */
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
+DECL|variable|vmlist_lock
+id|rwlock_t
+id|vmlist_lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 DECL|variable|vmlist
 r_struct
 id|vm_struct
@@ -885,6 +892,13 @@ id|addr
 op_assign
 id|VMALLOC_START
 suffix:semicolon
+id|write_lock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -941,6 +955,13 @@ op_minus
 id|size
 )paren
 (brace
+id|write_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -979,6 +1000,13 @@ op_star
 id|p
 op_assign
 id|area
+suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
 suffix:semicolon
 r_return
 id|area
@@ -1039,6 +1067,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|write_lock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1091,10 +1126,24 @@ c_func
 id|tmp
 )paren
 suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 )brace
+id|write_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1281,6 +1330,13 @@ r_int
 )paren
 id|addr
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1334,13 +1390,10 @@ l_int|0
 r_goto
 id|finished
 suffix:semicolon
-id|put_user
-c_func
-(paren
-l_char|&squot;&bslash;0&squot;
-comma
+op_star
 id|buf
-)paren
+op_assign
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 id|buf
 op_increment
@@ -1374,14 +1427,11 @@ l_int|0
 r_goto
 id|finished
 suffix:semicolon
-id|put_user
-c_func
-(paren
+op_star
+id|buf
+op_assign
 op_star
 id|addr
-comma
-id|buf
-)paren
 suffix:semicolon
 id|buf
 op_increment
@@ -1405,6 +1455,13 @@ suffix:semicolon
 )brace
 id|finished
 suffix:colon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
 r_return
 id|buf
 op_minus

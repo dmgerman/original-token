@@ -276,14 +276,14 @@ comma
 l_string|&quot;Intel 440MX&quot;
 )brace
 suffix:semicolon
-DECL|variable|__devinitdata
+DECL|variable|__initdata
 r_static
 r_struct
 id|pci_device_id
 id|i810_pci_tbl
 (braket
 )braket
-id|__devinitdata
+id|__initdata
 op_assign
 (brace
 (brace

@@ -363,6 +363,17 @@ l_string|&quot;hd&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|MD_MAJOR
+suffix:colon
+id|unit
+op_sub_assign
+l_char|&squot;a&squot;
+op_minus
+l_char|&squot;0&squot;
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 r_if
 c_cond

@@ -84,8 +84,6 @@ r_struct
 id|file_system_type
 op_star
 id|file_systems
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|file_systems_lock
 r_static

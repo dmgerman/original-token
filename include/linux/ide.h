@@ -51,6 +51,11 @@ macro_line|#endif  /* CONFIG_BLK_DEV_CMD640 */
 multiline_comment|/*&n; * IDE_DRIVE_CMD is used to implement many features of the hdparm utility&n; */
 DECL|macro|IDE_DRIVE_CMD
 mdefine_line|#define IDE_DRIVE_CMD&t;&t;99&t;/* (magic) undef to reduce kernel size*/
+multiline_comment|/*&n; * IDE_DRIVE_TASK is used to implement many features needed for raw tasks&n; */
+DECL|macro|IDE_DRIVE_TASK
+mdefine_line|#define IDE_DRIVE_TASK&t;&t;98
+DECL|macro|IDE_DRIVE_CMD_AEB
+mdefine_line|#define IDE_DRIVE_CMD_AEB&t;98
 multiline_comment|/*&n; *  &quot;No user-serviceable parts&quot; beyond this point  :)&n; *****************************************************************************/
 DECL|typedef|byte
 r_typedef
@@ -762,6 +767,26 @@ r_int
 id|forced_lun
 suffix:semicolon
 multiline_comment|/* if hdxlun was given at boot */
+DECL|member|lun
+r_int
+id|lun
+suffix:semicolon
+multiline_comment|/* logical unit */
+DECL|member|init_speed
+id|byte
+id|init_speed
+suffix:semicolon
+multiline_comment|/* transfer rate set at boot */
+DECL|member|current_speed
+id|byte
+id|current_speed
+suffix:semicolon
+multiline_comment|/* current transfer rate set */
+DECL|member|dn
+id|byte
+id|dn
+suffix:semicolon
+multiline_comment|/* now wide spread use */
 DECL|typedef|ide_drive_t
 )brace
 id|ide_drive_t
@@ -837,6 +862,19 @@ r_typedef
 r_void
 (paren
 id|ide_tuneproc_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+comma
+id|byte
+)paren
+suffix:semicolon
+DECL|typedef|ide_speedproc_t
+r_typedef
+r_int
+(paren
+id|ide_speedproc_t
 )paren
 (paren
 id|ide_drive_t
@@ -1000,6 +1038,12 @@ op_star
 id|tuneproc
 suffix:semicolon
 multiline_comment|/* routine to tune PIO mode for drives */
+DECL|member|speedproc
+id|ide_speedproc_t
+op_star
+id|speedproc
+suffix:semicolon
+multiline_comment|/* routine to retune DMA modes for drives */
 DECL|member|selectproc
 id|ide_selectproc_t
 op_star
@@ -1193,6 +1237,12 @@ id|byte
 id|straight8
 suffix:semicolon
 multiline_comment|/* Alan&squot;s straight 8 check */
+DECL|member|hwif_data
+r_void
+op_star
+id|hwif_data
+suffix:semicolon
+multiline_comment|/* extra hwif data */
 DECL|typedef|ide_hwif_t
 )brace
 id|ide_hwif_t
@@ -2310,6 +2360,18 @@ op_star
 id|buf
 )paren
 suffix:semicolon
+r_int
+id|ide_wait_cmd_task
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+id|byte
+op_star
+id|buf
+)paren
+suffix:semicolon
 r_void
 id|ide_delay_50ms
 (paren
@@ -2321,6 +2383,14 @@ id|system_bus_clock
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+id|byte
+id|ide_auto_reduce_xfer
+(paren
+id|ide_drive_t
+op_star
+id|drive
 )paren
 suffix:semicolon
 r_int
@@ -2338,13 +2408,13 @@ id|ide_drive_t
 op_star
 id|drive
 comma
-r_int
+id|byte
 id|cmd
 comma
-r_int
+id|byte
 id|nsect
 comma
-r_int
+id|byte
 id|feature
 )paren
 suffix:semicolon
@@ -2366,13 +2436,13 @@ id|ide_drive_t
 op_star
 id|drive
 comma
-r_int
+id|byte
 id|cmd
 comma
-r_int
+id|byte
 id|nsect
 comma
-r_int
+id|byte
 id|feature
 )paren
 suffix:semicolon
@@ -2429,16 +2499,10 @@ id|drive
 suffix:semicolon
 r_int
 id|ide_spin_wait_hwgroup
-c_func
 (paren
 id|ide_drive_t
 op_star
 id|drive
-comma
-r_int
-r_int
-op_star
-id|flags
 )paren
 suffix:semicolon
 r_void
@@ -2466,103 +2530,13 @@ id|regs
 )paren
 suffix:semicolon
 r_void
-id|do_ide0_request
+id|do_ide_request
 (paren
 id|request_queue_t
 op_star
 id|q
 )paren
 suffix:semicolon
-macro_line|#if MAX_HWIFS &gt; 1
-r_void
-id|do_ide1_request
-(paren
-id|request_queue_t
-op_star
-id|q
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if MAX_HWIFS &gt; 2
-r_void
-id|do_ide2_request
-(paren
-id|request_queue_t
-op_star
-id|q
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if MAX_HWIFS &gt; 3
-r_void
-id|do_ide3_request
-(paren
-id|request_queue_t
-op_star
-id|q
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if MAX_HWIFS &gt; 4
-r_void
-id|do_ide4_request
-(paren
-id|request_queue_t
-op_star
-id|q
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if MAX_HWIFS &gt; 5
-r_void
-id|do_ide5_request
-(paren
-id|request_queue_t
-op_star
-id|q
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if MAX_HWIFS &gt; 6
-r_void
-id|do_ide6_request
-(paren
-id|request_queue_t
-op_star
-id|q
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if MAX_HWIFS &gt; 7
-r_void
-id|do_ide7_request
-(paren
-id|request_queue_t
-op_star
-id|q
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if MAX_HWIFS &gt; 8
-r_void
-id|do_ide8_request
-(paren
-id|request_queue_t
-op_star
-id|q
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if MAX_HWIFS &gt; 9
-r_void
-id|do_ide9_request
-(paren
-id|request_queue_t
-op_star
-id|q
-)paren
-suffix:semicolon
-macro_line|#endif
 r_void
 id|ide_init_subdrivers
 (paren

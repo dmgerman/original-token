@@ -209,9 +209,9 @@ id|nfs_readpage_sync
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 comma
 r_struct
 id|page
@@ -219,6 +219,13 @@ op_star
 id|page
 )paren
 (brace
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
 r_struct
 id|inode
 op_star
@@ -357,7 +364,7 @@ op_member_access_from_pointer
 id|read
 c_func
 (paren
-id|dentry
+id|file
 comma
 op_amp
 id|fattr
@@ -712,9 +719,9 @@ id|nfs_readpage_async
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 comma
 r_struct
 id|page
@@ -727,7 +734,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_struct
 id|nfs_page
@@ -869,7 +876,7 @@ op_assign
 id|nfs_create_request
 c_func
 (paren
-id|dentry
+id|file
 comma
 id|page
 comma
@@ -2023,7 +2030,7 @@ id|req
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Read a page over NFS.&n; * We read the page synchronously in the following cases:&n; *  -&t;The file is a swap file. Swap-ins are always sync operations,&n; *&t;so there&squot;s no need bothering to make async reads 100% fail-safe.&n; *  -&t;The NFS rsize is smaller than PAGE_CACHE_SIZE. We could kludge our way&n; *&t;around this by creating several consecutive read requests, but&n; *&t;that&squot;s hardly worth it.&n; *  -&t;The error flag is set for this page. This happens only when a&n; *&t;previous async read operation failed.&n; *  -&t;The server is congested.&n; */
+multiline_comment|/*&n; * Read a page over NFS.&n; * We read the page synchronously in the following cases:&n; *  -&t;The NFS rsize is smaller than PAGE_CACHE_SIZE. We could kludge our way&n; *&t;around this by creating several consecutive read requests, but&n; *&t;that&squot;s hardly worth it.&n; *  -&t;The error flag is set for this page. This happens only when a&n; *&t;previous async read operation failed.&n; */
 r_int
 DECL|function|nfs_readpage
 id|nfs_readpage
@@ -2041,18 +2048,11 @@ id|page
 )paren
 (brace
 r_struct
-id|dentry
-op_star
-id|dentry
-op_assign
-id|file-&gt;f_dentry
-suffix:semicolon
-r_struct
 id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_int
 id|error
@@ -2118,7 +2118,7 @@ op_assign
 id|nfs_readpage_async
 c_func
 (paren
-id|dentry
+id|file
 comma
 id|page
 )paren
@@ -2138,7 +2138,7 @@ op_assign
 id|nfs_readpage_sync
 c_func
 (paren
-id|dentry
+id|file
 comma
 id|page
 )paren

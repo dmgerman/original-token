@@ -2223,7 +2223,7 @@ suffix:semicolon
 )brace
 DECL|macro|do_switch
 mdefine_line|#define do_switch(x,y) do { &bslash;&n;&t;__typeof__ (x) __tmp = x; &bslash;&n;&t;x = y; y = __tmp; } while (0)
-multiline_comment|/*&n; * When switching names, the actual string doesn&squot;t strictly have to&n; * be preserved in the target - because we&squot;re dropping the target&n; * anyway. As such, we can just do a simple memcpy() to copy over&n; * the new name before we switch.&n; *&n; * Note that we have to be a lot more careful about getting the hash&n; * switched - we have to switch the hash value properly even if it&n; * then no longer matches the actual (corrupted) string of the target.&n; * The has value has to match the hash queue that the dentry is on..&n; */
+multiline_comment|/*&n; * When switching names, the actual string doesn&squot;t strictly have to&n; * be preserved in the target - because we&squot;re dropping the target&n; * anyway. As such, we can just do a simple memcpy() to copy over&n; * the new name before we switch.&n; *&n; * Note that we have to be a lot more careful about getting the hash&n; * switched - we have to switch the hash value properly even if it&n; * then no longer matches the actual (corrupted) string of the target.&n; * The hash value has to match the hash queue that the dentry is on..&n; */
 DECL|function|switch_names
 r_static
 r_inline

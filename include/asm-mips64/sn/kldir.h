@@ -2,6 +2,7 @@ multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and condit
 macro_line|#ifndef _ASM_SN_KLDIR_H
 DECL|macro|_ASM_SN_KLDIR_H
 mdefine_line|#define _ASM_SN_KLDIR_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SGI_IO)
 macro_line|#include &lt;asm/hack.h&gt;
 macro_line|#endif

@@ -116,6 +116,13 @@ suffix:semicolon
 multiline_comment|/* reserved by Apple */
 DECL|typedef|FIL_REC
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 id|FIL_REC
 suffix:semicolon
 multiline_comment|/* the catalog record for a directory */
@@ -172,6 +179,13 @@ suffix:semicolon
 multiline_comment|/* reserved by Apple */
 DECL|typedef|DIR_REC
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 id|DIR_REC
 suffix:semicolon
 multiline_comment|/* the catalog record for a thread */
@@ -199,6 +213,13 @@ suffix:semicolon
 multiline_comment|/* The name of this entry */
 DECL|typedef|THD_REC
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 id|THD_REC
 suffix:semicolon
 multiline_comment|/* A catalog tree record */
@@ -235,6 +256,13 @@ DECL|member|u
 id|u
 suffix:semicolon
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*================ File-local variables ================*/
 r_static

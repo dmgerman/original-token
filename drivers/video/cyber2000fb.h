@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/video/cyber2000fb.h&n; *&n; * Integraphics Cyber2000 frame buffer device&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|cyber2000_outb
 mdefine_line|#define cyber2000_outb(dat,reg)&t;writeb(dat, CyberRegs + reg)
 DECL|macro|cyber2000_outw

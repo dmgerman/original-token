@@ -188,6 +188,11 @@ c_func
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|ret_to_user_hook
+suffix:semicolon
 DECL|variable|clear_page
 id|EXPORT_SYMBOL
 c_func
@@ -1369,6 +1374,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|debugger_fault_handler
+)paren
+suffix:semicolon
+DECL|variable|ret_to_user_hook
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ret_to_user_hook
 )paren
 suffix:semicolon
 eof

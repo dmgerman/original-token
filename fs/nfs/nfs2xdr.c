@@ -2258,30 +2258,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|p
-op_increment
-suffix:semicolon
-multiline_comment|/* EOF flag */
-r_if
-c_cond
-(paren
-id|p
-OG
-id|end
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;NFS: short packet in readdir reply!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|errno_NFSERR_IO
-suffix:semicolon
-)brace
 r_return
 id|nr
 suffix:semicolon

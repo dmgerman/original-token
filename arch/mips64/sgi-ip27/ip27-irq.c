@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: ip27-irq.c,v 1.9 2000/03/14 01:39:27 ralf Exp $&n; *&n; * ip27-irq.c: Highlevel interrupt handling for IP27 architecture.&n; *&n; * Copyright (C) 1999 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;

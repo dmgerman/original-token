@@ -1,7 +1,7 @@
 macro_line|#ifndef __LINUX_UHCI_H
 DECL|macro|__LINUX_UHCI_H
 mdefine_line|#define __LINUX_UHCI_H
-multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.54 2000/04/02 19:55:53 acher Exp $&n; */
+multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.55 2000/05/13 12:50:30 acher Exp $&n; */
 DECL|macro|MODNAME
 mdefine_line|#define MODNAME &quot;usb-uhci&quot;
 DECL|macro|UHCI_LATENCY_TIMER
@@ -355,9 +355,9 @@ DECL|member|use_loop
 r_char
 id|use_loop
 suffix:semicolon
-DECL|member|short_control_packet
+DECL|member|flags
 r_char
-id|short_control_packet
+id|flags
 suffix:semicolon
 DECL|typedef|urb_priv_t
 DECL|typedef|purb_priv_t

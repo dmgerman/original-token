@@ -105,7 +105,7 @@ id|page
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * ok, we can just forget about our highmem page since &n;&t; * we stored its data into the new regular_page.&n;&t; */
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -201,7 +201,7 @@ id|highpage
 )paren
 )paren
 (brace
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|highpage
@@ -255,7 +255,7 @@ op_assign
 id|page-&gt;mapping
 suffix:semicolon
 multiline_comment|/*&n;&t; * We can just forget the old page since &n;&t; * we stored its data into the new highmem-page.&n;&t; */
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page

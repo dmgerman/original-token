@@ -97,6 +97,13 @@ l_int|42
 )braket
 suffix:semicolon
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*================ File-local functions ================*/
 multiline_comment|/*&n; * parse_new_part_table()&n; *&n; * Parse a new style partition map looking for the&n; * start and length of the &squot;part&squot;th HFS partition.&n; */

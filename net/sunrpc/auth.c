@@ -284,6 +284,24 @@ op_star
 id|cred
 )paren
 (brace
+macro_line|#ifdef RPC_DEBUG
+r_if
+c_cond
+(paren
+id|cred-&gt;cr_magic
+op_ne
+id|RPCAUTH_CRED_MAGIC
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cred-&gt;cr_magic
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -796,6 +814,7 @@ c_cond
 op_logical_neg
 id|cred
 )paren
+(brace
 id|cred
 op_assign
 id|auth-&gt;au_ops
@@ -806,6 +825,18 @@ c_func
 id|taskflags
 )paren
 suffix:semicolon
+macro_line|#ifdef RPC_DEBUG
+r_if
+c_cond
+(paren
+id|cred
+)paren
+id|cred-&gt;cr_magic
+op_assign
+id|RPCAUTH_CRED_MAGIC
+suffix:semicolon
+macro_line|#endif
+)brace
 r_if
 c_cond
 (paren

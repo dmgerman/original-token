@@ -2900,6 +2900,9 @@ id|flags
 r_int
 id|written
 suffix:semicolon
+r_int
+id|r
+suffix:semicolon
 multiline_comment|/* Special case: a timeout of zero means we cannot call schedule(). */
 r_if
 c_cond
@@ -3074,6 +3077,8 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -3081,6 +3086,21 @@ comma
 id|PARPORT_STATUS_BUSY
 comma
 id|PARPORT_STATUS_BUSY
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: BUSY timeout (%d) in compat_write_block_pio&bslash;n&quot;
+comma
+id|port-&gt;name
+comma
+id|r
 )paren
 suffix:semicolon
 id|port-&gt;physport-&gt;ieee1284.phase
@@ -3116,6 +3136,9 @@ id|flags
 (brace
 r_int
 id|written
+suffix:semicolon
+r_int
+id|r
 suffix:semicolon
 multiline_comment|/* Special case: a timeout of zero means we cannot call schedule(). */
 r_if
@@ -3156,6 +3179,8 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Event 40: PError goes high. */
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -3163,6 +3188,22 @@ comma
 id|PARPORT_STATUS_PAPEROUT
 comma
 id|PARPORT_STATUS_PAPEROUT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: PError timeout (%d) &quot;
+l_string|&quot;in ecp_write_block_pio&bslash;n&quot;
+comma
+id|port-&gt;name
+comma
+id|r
 )paren
 suffix:semicolon
 )brace
@@ -3343,6 +3384,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -3350,6 +3393,22 @@ comma
 id|PARPORT_STATUS_PAPEROUT
 comma
 l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: PE,1 timeout (%d) &quot;
+l_string|&quot;in ecp_write_block_pio&bslash;n&quot;
+comma
+id|port-&gt;name
+comma
+id|r
 )paren
 suffix:semicolon
 id|parport_frob_control
@@ -3361,6 +3420,8 @@ comma
 id|PARPORT_CONTROL_INIT
 )paren
 suffix:semicolon
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -3368,9 +3429,27 @@ comma
 id|PARPORT_STATUS_PAPEROUT
 comma
 id|PARPORT_STATUS_PAPEROUT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: PE,2 timeout (%d) &quot;
+l_string|&quot;in ecp_write_block_pio&bslash;n&quot;
+comma
+id|port-&gt;name
+comma
+id|r
 )paren
 suffix:semicolon
 )brace
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -3380,6 +3459,23 @@ comma
 id|PARPORT_STATUS_BUSY
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+(brace
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: BUSY timeout (%d) in ecp_write_block_pio&bslash;n&quot;
+comma
+id|port-&gt;name
+comma
+id|r
+)paren
+suffix:semicolon
+)brace
 id|port-&gt;physport-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_FWD_IDLE
@@ -3415,6 +3511,9 @@ id|length
 suffix:semicolon
 r_int
 id|fifofull
+suffix:semicolon
+r_int
+id|r
 suffix:semicolon
 r_const
 r_int
@@ -3554,6 +3653,8 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Event 40: PError goes low */
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -3561,6 +3662,22 @@ comma
 id|PARPORT_STATUS_PAPEROUT
 comma
 l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: PE timeout Event 40 (%d) &quot;
+l_string|&quot;in ecp_read_block_pio&bslash;n&quot;
+comma
+id|port-&gt;name
+comma
+id|r
 )paren
 suffix:semicolon
 )brace
@@ -3837,6 +3954,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -3844,6 +3963,21 @@ comma
 id|PARPORT_STATUS_PAPEROUT
 comma
 id|PARPORT_STATUS_PAPEROUT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: PE timeout FWDIDLE (%d) in ecp_read_block_pio&bslash;n&quot;
+comma
+id|port-&gt;name
+comma
+id|r
 )paren
 suffix:semicolon
 id|port-&gt;ieee1284.phase
@@ -5233,7 +5367,7 @@ id|devid
 op_eq
 id|devrev
 )paren
-multiline_comment|/* simple heuristics, we happened to read some&n;                   non-winbond register */
+multiline_comment|/* simple heuristics, we happened to read some&n;                   non-smsc register */
 r_return
 suffix:semicolon
 id|func
@@ -5297,17 +5431,9 @@ r_else
 r_if
 c_cond
 (paren
-(paren
-id|id
+id|devid
 op_eq
-l_int|0x6502
-)paren
-op_logical_and
-(paren
-id|key
-op_eq
-l_int|0x44
-)paren
+l_int|0x65
 )paren
 id|type
 op_assign
@@ -5317,17 +5443,9 @@ r_else
 r_if
 c_cond
 (paren
-(paren
-id|id
+id|devid
 op_eq
-l_int|0x6502
-)paren
-op_logical_and
-(paren
-id|key
-op_eq
-l_int|0x55
-)paren
+l_int|0x66
 )paren
 id|type
 op_assign
@@ -9931,6 +10049,9 @@ comma
 DECL|enumerator|timedia_1889
 id|timedia_1889
 comma
+DECL|enumerator|syba_2p_epp
+id|syba_2p_epp
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* each element directly indexed from enum list, above &n; * (but offset by last_sio) */
@@ -9945,6 +10066,7 @@ id|numports
 suffix:semicolon
 r_struct
 (brace
+multiline_comment|/* BAR (base address registers) numbers in the config&n;                    space header */
 DECL|member|lo
 r_int
 id|lo
@@ -9953,7 +10075,7 @@ DECL|member|hi
 r_int
 id|hi
 suffix:semicolon
-multiline_comment|/* -ve if not there */
+multiline_comment|/* -1 if not there, &gt;6 for offset-method (max&n;                           BAR is 6) */
 DECL|member|addr
 )brace
 id|addr
@@ -10371,6 +10493,27 @@ l_int|2
 comma
 op_minus
 l_int|1
+)brace
+comma
+)brace
+)brace
+comma
+multiline_comment|/* SYBA uses fixed offsets in&n;                                           a 1K io window */
+multiline_comment|/* syba_2p_epp */
+(brace
+l_int|2
+comma
+(brace
+(brace
+l_int|0
+comma
+l_int|0x078
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0x178
 )brace
 comma
 )brace
@@ -10823,6 +10966,22 @@ id|timedia_1889
 )brace
 comma
 (brace
+l_int|0x1592
+comma
+l_int|0x0782
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|syba_2p_epp
+)brace
+comma
+(brace
 l_int|0
 comma
 )brace
@@ -10975,9 +11134,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|hi
 op_ge
 l_int|0
+)paren
+op_logical_and
+(paren
+id|hi
+op_le
+l_int|6
+)paren
 )paren
 id|io_hi
 op_assign
@@ -10988,7 +11155,45 @@ comma
 id|hi
 )paren
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|hi
+OG
+l_int|6
+)paren
+id|io_lo
+op_add_assign
+id|hi
+suffix:semicolon
+multiline_comment|/* Reinterpret the meaning of&n;                                        &quot;hi&quot; as an offset (see SYBA&n;                                        def.) */
 multiline_comment|/* TODO: test if sharing interrupts works */
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;PCI parallel port detected: %04x:%04x, &quot;
+l_string|&quot;I/O at %#lx(%#lx)&bslash;n&quot;
+comma
+id|parport_pc_pci_tbl
+(braket
+id|i
+)braket
+dot
+id|vendor
+comma
+id|parport_pc_pci_tbl
+(braket
+id|i
+)braket
+dot
+id|device
+comma
+id|io_lo
+comma
+id|io_hi
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

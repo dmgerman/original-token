@@ -17,10 +17,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/nvram.h&gt;
 macro_line|#include &lt;asm/cache.h&gt;
-multiline_comment|/* Fixme - Why is this here? - Corey */
-macro_line|#ifdef CONFIG_8xx
 macro_line|#include &lt;asm/8xx_immap.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &quot;time.h&quot;
 r_void
@@ -61,6 +58,11 @@ r_int
 id|count_period_den
 suffix:semicolon
 multiline_comment|/* count_period_num / count_period_den us */
+DECL|variable|last_tb
+r_int
+r_int
+id|last_tb
+suffix:semicolon
 multiline_comment|/*&n; * timer_interrupt - gets called when the decrementer overflows,&n; * with interrupts disabled.&n; * We set it up to overflow again in 1/HZ seconds.&n; */
 DECL|function|timer_interrupt
 r_int
@@ -192,6 +194,17 @@ c_func
 )paren
 op_eq
 id|dval
+)paren
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;mftb &t;%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|last_tb
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t play catchup between the call to time_init()&n;&t; * and sti() in init/main.c.&n;&t; *&n;&t; * This also means if we&squot;re delayed for &gt; HZ&n;&t; * we lose those ticks.  If we&squot;re delayed for &gt; HZ&n;&t; * then we have something wrong anyway, though.&n;&t; *&n;&t; * -- Cort&n;&t; */
@@ -337,6 +350,8 @@ id|tv
 r_int
 r_int
 id|flags
+comma
+id|diff
 suffix:semicolon
 id|save_flags
 c_func
@@ -356,37 +371,41 @@ id|xtime
 suffix:semicolon
 multiline_comment|/* XXX we don&squot;t seem to have the decrementers synced properly yet */
 macro_line|#ifndef CONFIG_SMP
+id|asm
+r_volatile
+(paren
+l_string|&quot;mftb %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|diff
+)paren
+)paren
+suffix:semicolon
+id|diff
+op_sub_assign
+id|last_tb
+suffix:semicolon
 id|tv-&gt;tv_usec
 op_add_assign
-(paren
-id|decrementer_count
-op_minus
-id|get_dec
-c_func
-(paren
-)paren
-)paren
+id|diff
 op_star
 id|count_period_num
 op_div
 id|count_period_den
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|tv-&gt;tv_usec
-op_ge
-l_int|1000000
-)paren
-(brace
-id|tv-&gt;tv_usec
-op_sub_assign
-l_int|1000000
-suffix:semicolon
 id|tv-&gt;tv_sec
-op_increment
+op_add_assign
+id|tv-&gt;tv_usec
+op_div
+l_int|1000000
 suffix:semicolon
-)brace
+id|tv-&gt;tv_usec
+op_assign
+id|tv-&gt;tv_usec
+op_mod
+l_int|1000000
+suffix:semicolon
 macro_line|#endif
 id|restore_flags
 c_func

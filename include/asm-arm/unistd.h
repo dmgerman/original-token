@@ -116,8 +116,6 @@ DECL|macro|__NR_setpgid
 mdefine_line|#define __NR_setpgid&t;&t;&t;(__NR_SYSCALL_BASE+ 57)
 DECL|macro|__NR_ulimit
 mdefine_line|#define __NR_ulimit&t;&t;&t;(__NR_SYSCALL_BASE+ 58)
-DECL|macro|__NR_oldolduname
-mdefine_line|#define __NR_oldolduname&t;&t;(__NR_SYSCALL_BASE+ 59)
 DECL|macro|__NR_umask
 mdefine_line|#define __NR_umask&t;&t;&t;(__NR_SYSCALL_BASE+ 60)
 DECL|macro|__NR_chroot
@@ -214,8 +212,6 @@ DECL|macro|__NR_lstat
 mdefine_line|#define __NR_lstat&t;&t;&t;(__NR_SYSCALL_BASE+107)
 DECL|macro|__NR_fstat
 mdefine_line|#define __NR_fstat&t;&t;&t;(__NR_SYSCALL_BASE+108)
-DECL|macro|__NR_olduname
-mdefine_line|#define __NR_olduname&t;&t;&t;(__NR_SYSCALL_BASE+109)
 DECL|macro|__NR_iopl
 mdefine_line|#define __NR_iopl&t;&t;&t;(__NR_SYSCALL_BASE+110)
 DECL|macro|__NR_vhangup

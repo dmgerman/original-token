@@ -1981,6 +1981,7 @@ comma
 id|speed
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
@@ -2123,6 +2124,11 @@ id|tmpbyte
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
+id|drive-&gt;current_speed
+op_assign
+id|speed
+suffix:semicolon
 r_return
 (paren
 id|err
@@ -2419,6 +2425,16 @@ id|drive
 comma
 id|speed
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|drive-&gt;init_speed
+)paren
+id|drive-&gt;init_speed
+op_assign
+id|speed
 suffix:semicolon
 id|rval
 op_assign
@@ -3397,9 +3413,9 @@ id|ata66mask
 )paren
 ques
 c_cond
-l_int|0
-suffix:colon
 l_int|1
+suffix:colon
+l_int|0
 suffix:semicolon
 id|__restore_flags
 c_func
@@ -3610,6 +3626,11 @@ dot
 id|autotune
 op_assign
 l_int|1
+suffix:semicolon
+id|hwif-&gt;speedproc
+op_assign
+op_amp
+id|ali15x3_tune_chipset
 suffix:semicolon
 macro_line|#ifndef CONFIG_BLK_DEV_IDEDMA
 id|hwif-&gt;autodma

@@ -1918,7 +1918,16 @@ id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* Call the client */
-id|nlmclnt_async_call
+id|nlm_get_host
+c_func
+(paren
+id|block-&gt;b_call.a_host
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nlmsvc_async_call
 c_func
 (paren
 op_amp
@@ -1927,6 +1936,14 @@ comma
 id|NLMPROC_GRANTED_MSG
 comma
 id|nlmsvc_grant_callback
+)paren
+OL
+l_int|0
+)paren
+id|nlm_release_host
+c_func
+(paren
+id|block-&gt;b_call.a_host
 )paren
 suffix:semicolon
 id|up

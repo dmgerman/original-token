@@ -9263,11 +9263,15 @@ suffix:semicolon
 multiline_comment|/* Set up the uart parameters in the&n;&t;&t;&t;&t; * parameter ram.&n;&t;&t;&t;&t; */
 id|up-&gt;smc_rfcr
 op_assign
-id|SMC_EB
+id|CPMFCR_GBL
+op_or
+id|CPMFCR_EB
 suffix:semicolon
 id|up-&gt;smc_tfcr
 op_assign
-id|SMC_EB
+id|CPMFCR_GBL
+op_or
+id|CPMFCR_EB
 suffix:semicolon
 multiline_comment|/* Set this to 1 for now, so we get single&n;&t;&t;&t;&t; * character interrupts.  Using idle charater&n;&t;&t;&t;&t; * time requires some additional tuning.&n;&t;&t;&t;&t; */
 id|up-&gt;smc_mrblr
@@ -9365,11 +9369,15 @@ suffix:semicolon
 multiline_comment|/* Set up the uart parameters in the&n;&t;&t;&t;&t; * parameter ram.&n;&t;&t;&t;&t; */
 id|sup-&gt;scc_genscc.scc_rfcr
 op_assign
-id|SMC_EB
+id|CPMFCR_GBL
+op_or
+id|CPMFCR_EB
 suffix:semicolon
 id|sup-&gt;scc_genscc.scc_tfcr
 op_assign
-id|SMC_EB
+id|CPMFCR_GBL
+op_or
+id|CPMFCR_EB
 suffix:semicolon
 multiline_comment|/* Set this to 1 for now, so we get single&n;&t;&t;&t;&t; * character interrupts.  Using idle charater&n;&t;&t;&t;&t; * time requires some additional tuning.&n;&t;&t;&t;&t; */
 id|sup-&gt;scc_genscc.scc_mrblr
@@ -9902,11 +9910,15 @@ suffix:semicolon
 multiline_comment|/* Base of xmt buffer desc. */
 id|up-&gt;smc_rfcr
 op_assign
-id|SMC_EB
+id|CPMFCR_GBL
+op_or
+id|CPMFCR_EB
 suffix:semicolon
 id|up-&gt;smc_tfcr
 op_assign
-id|SMC_EB
+id|CPMFCR_GBL
+op_or
+id|CPMFCR_EB
 suffix:semicolon
 multiline_comment|/* Set this to 1 for now, so we get single character interrupts.&n;&t;*/
 id|up-&gt;smc_mrblr

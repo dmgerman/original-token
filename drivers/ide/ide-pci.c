@@ -21,6 +21,8 @@ DECL|macro|DEVID_PIIX4
 mdefine_line|#define DEVID_PIIX4&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82371AB})
 DECL|macro|DEVID_PIIX4E
 mdefine_line|#define DEVID_PIIX4E&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82801AB_1})
+DECL|macro|DEVID_PIIX4E2
+mdefine_line|#define DEVID_PIIX4E2&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82443MX_1})
 DECL|macro|DEVID_PIIX4U
 mdefine_line|#define DEVID_PIIX4U&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82801AA_1})
 DECL|macro|DEVID_PIIX4U2
@@ -1130,6 +1132,42 @@ l_int|0
 comma
 (brace
 id|DEVID_PIIX4E
+comma
+l_string|&quot;PIIX4&quot;
+comma
+id|PCI_PIIX
+comma
+l_int|NULL
+comma
+id|INIT_PIIX
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x41
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+comma
+(brace
+l_int|0x43
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+)brace
+comma
+id|ON_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEVID_PIIX4E2
 comma
 l_string|&quot;PIIX4&quot;
 comma
@@ -3001,6 +3039,10 @@ id|mate
 op_assign
 l_int|NULL
 suffix:semicolon
+r_int
+r_int
+id|class_rev
+suffix:semicolon
 macro_line|#ifdef CONFIG_IDEDMA_AUTO
 id|autodma
 op_assign
@@ -3106,6 +3148,31 @@ c_func
 l_string|&quot;%s: device enabled (Linux)&bslash;n&quot;
 comma
 id|d-&gt;name
+)paren
+suffix:semicolon
+id|pci_read_config_dword
+c_func
+(paren
+id|dev
+comma
+id|PCI_CLASS_REVISION
+comma
+op_amp
+id|class_rev
+)paren
+suffix:semicolon
+id|class_rev
+op_and_assign
+l_int|0xff
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: chipset revision %d&bslash;n&quot;
+comma
+id|d-&gt;name
+comma
+id|class_rev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Can we trust the reported IRQ?&n;&t; */
@@ -3371,6 +3438,12 @@ id|DEVID_HPT366
 op_logical_and
 (paren
 id|port
+)paren
+op_logical_and
+(paren
+id|class_rev
+op_ne
+l_int|0x03
 )paren
 )paren
 r_return
@@ -4119,6 +4192,10 @@ id|pin2
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|class_rev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4132,6 +4209,37 @@ l_int|1
 )paren
 r_return
 suffix:semicolon
+id|pci_read_config_dword
+c_func
+(paren
+id|dev
+comma
+id|PCI_CLASS_REVISION
+comma
+op_amp
+id|class_rev
+)paren
+suffix:semicolon
+id|class_rev
+op_and_assign
+l_int|0xff
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|class_rev
+)paren
+(brace
+r_case
+l_int|3
+suffix:colon
+r_return
+suffix:semicolon
+r_default
+suffix:colon
+r_break
+suffix:semicolon
+)brace
 id|pci_read_config_byte
 c_func
 (paren

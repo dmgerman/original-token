@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * For the TDA9850 and TDA9855 chips&n; * (The TDA9855 is used on the Diamond DTV2000 and the TDA9850 is used &n; * on STB cards.  Other cards probably use these chips as well.)&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 1999 Gerd Knorr&n; * TDA9850 code and TDA9855.c merger by Eric Sandeen (eric_sandeen@bigfoot.com) &n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * OPTIONS:&n; * debug   - set to 1 if you&squot;d like to see debug messages&n; * chip    - set to 9850 or 9855 to select your chip (default 9855)&n; *&n; * TODO:&n; *   Fix channel change bug - sound goes out when changeing channels, mute&n; *                            and unmote to fix. - Is this still here?&n; *   Fine tune sound&n; *   Get rest of capabilities into video_audio struct...&n; * &n; *  Revision: 0.4 - check for correct chip= insmod value&n; *                  also cleaned up comments a bit&n; *  Revision: 0.3 - took out extraneous tda985x_write in tda985x_command&n; *  Revision: 0.2 - added insmod option chip=&n; *  Revision: 0.1 - original version&n; */
+multiline_comment|/*&n; * For the TDA9850 and TDA9855 chips&n; * (The TDA9855 is used on the Diamond DTV2000 and the TDA9850 is used &n; * on STB cards.  Other cards probably use these chips as well.)&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 1999 Gerd Knorr&n; * TDA9850 code and TDA9855.c merger by Eric Sandeen (eric_sandeen@bigfoot.com) &n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * OPTIONS:&n; * debug   - set to 1 if you&squot;d like to see debug messages&n; *         - set to 2 if you&squot;d like to be flooded with debug messages&n; * chip    - set to 9850 or 9855 to select your chip (default 9855)&n; *&n; * TODO:&n; *   Fix channel change bug - sound goes out when changeing channels, mute&n; *                            and unmote to fix. - Is this still here?&n; *   Fine tune sound&n; *   Get rest of capabilities into video_audio struct...&n; *&n; *  Revision  0.5 - cleaned up debugging messages, added debug level=2 &n; *  Revision: 0.4 - check for correct chip= insmod value&n; *                  also cleaned up comments a bit&n; *  Revision: 0.3 - took out extraneous tda985x_write in tda985x_command&n; *  Revision: 0.2 - added insmod option chip=&n; *  Revision: 0.1 - original version&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -251,6 +251,8 @@ id|client_template
 suffix:semicolon
 DECL|macro|dprintk
 mdefine_line|#define dprintk  if (debug) printk
+DECL|macro|d2printk
+mdefine_line|#define d2printk if (debug == 2) printk
 multiline_comment|/* The TDA9850 and TDA9855 are both made by Philips Semiconductor&n; * http://www.semiconductors.philips.com&n; * TDA9850: I2C-bus controlled BTSC stereo/SAP decoder&n; * TDA9855: I2C-bus controlled BTSC stereo/SAP decoder and audio processor&n; *&n; * The TDA9850 has more or less a subset of the functions that the TDA9855&n; * has.  As a result, we can re-use many of these defines.  Anything with&n; * TDA9855 is specific to that chip, anything with TDA9850 is specific&n; * to that chip, and anything with TDA985x is valid for either.&n; *&n; * To complicate things further, the TDA9850 uses labels C1 through C4&n; * for subaddresses 0x04 through 0x07, while the TDA9855 uses&n; * C1 through C3 for subadresses 0x05 through 0x07 - quite confusing.&n; * To help keep things straight, I have renamed the various C[1,4] labels&n; * to C[4,7] so that the numerical label matches the hex value of the&n; * subaddress for both chips.  At least the A[1,3] labels line up.  :)&n; */
 multiline_comment|/* subaddresses for TDA9855 */
 DECL|macro|TDA9855_VR
@@ -303,7 +305,7 @@ DECL|macro|TDA9855_LOUD
 mdefine_line|#define TDA9855_LOUD&t;1&lt;&lt;5 /* Loudness, 1==off */
 DECL|macro|TDA9855_SUR
 mdefine_line|#define TDA9855_SUR&t;1&lt;&lt;3 /* Surround / Subwoofer 1==.5(L-R) 0==.5(L+R) */
-multiline_comment|/* Bits 0 to 3 select various combinations&n;                                 * of line in and line out, only the &n;                                 * interesting ones are defined */
+multiline_comment|/* Bits 0 to 3 select various combinations&n;                              * of line in and line out, only the &n;                              * interesting ones are defined */
 DECL|macro|TDA9855_EXT
 mdefine_line|#define TDA9855_EXT&t;1&lt;&lt;2 /* Selects inputs LIR and LIL.  Pins 41 &amp; 12 */
 DECL|macro|TDA9855_INT
@@ -380,16 +382,16 @@ id|buffer
 l_int|2
 )braket
 suffix:semicolon
-id|dprintk
+id|d2printk
 c_func
 (paren
-l_string|&quot;In tda985x_write&bslash;n&quot;
+l_string|&quot;tda985x: In tda985x_write&bslash;n&quot;
 )paren
 suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;Writing %d 0x%x&bslash;n&quot;
+l_string|&quot;tda985x: Writing %d 0x%x&bslash;n&quot;
 comma
 id|subaddr
 comma
@@ -462,10 +464,10 @@ r_int
 r_char
 id|buffer
 suffix:semicolon
-id|dprintk
+id|d2printk
 c_func
 (paren
-l_string|&quot;In tda985x_read&bslash;n&quot;
+l_string|&quot;tda985x: In tda985x_read&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -500,7 +502,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;Read 0x%02x&bslash;n&quot;
+l_string|&quot;tda985x: Read 0x%02x&bslash;n&quot;
 comma
 id|buffer
 )paren
@@ -535,10 +537,10 @@ id|buf
 l_int|16
 )braket
 suffix:semicolon
-id|dprintk
+id|d2printk
 c_func
 (paren
-l_string|&quot;In tda985x_set&bslash;n&quot;
+l_string|&quot;tda985x: In tda985x_set&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -553,7 +555,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;tda985x_set(0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x)&bslash;n&quot;
+l_string|&quot;tda985x: tda985x_set(0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x)&bslash;n&quot;
 comma
 id|t-&gt;rvol
 comma
@@ -682,7 +684,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;tda9855: I/O error, trying tda985x_set&bslash;n&quot;
+l_string|&quot;tda985x: I/O error, trying tda985x_set&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -704,7 +706,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;tda985x_set(0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x)&bslash;n&quot;
+l_string|&quot;tda986x: tda985x_set(0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x)&bslash;n&quot;
 comma
 id|t-&gt;c4
 comma
@@ -797,7 +799,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;tda9850: I/O error, trying tda985x_set&bslash;n&quot;
+l_string|&quot;tda985x: I/O error, trying tda985x_set&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -829,10 +831,10 @@ id|t
 op_assign
 id|client-&gt;data
 suffix:semicolon
-id|dprintk
+id|d2printk
 c_func
 (paren
-l_string|&quot;In tda985x_init&bslash;n&quot;
+l_string|&quot;tda985x: In tda985x_init&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -846,7 +848,7 @@ l_int|9855
 id|printk
 c_func
 (paren
-l_string|&quot;Using tda9855 options&bslash;n&quot;
+l_string|&quot;tda985x: Using tda9855 options&bslash;n&quot;
 )paren
 suffix:semicolon
 id|t-&gt;rvol
@@ -920,7 +922,7 @@ l_int|9850
 id|printk
 c_func
 (paren
-l_string|&quot;Using tda9850 options&bslash;n&quot;
+l_string|&quot;tda985x: Using tda9850 options&bslash;n&quot;
 )paren
 suffix:semicolon
 id|t-&gt;c4
@@ -1000,10 +1002,10 @@ id|i2c_client
 op_star
 id|client
 suffix:semicolon
-id|dprintk
+id|d2printk
 c_func
 (paren
-l_string|&quot;In tda985x_attach&bslash;n&quot;
+l_string|&quot;tda985x: In tda985x_attach&bslash;n&quot;
 )paren
 suffix:semicolon
 id|client
@@ -1235,10 +1237,10 @@ id|t
 op_assign
 id|client-&gt;data
 suffix:semicolon
-id|dprintk
+id|d2printk
 c_func
 (paren
-l_string|&quot;In tda985x_command...&bslash;n&quot;
+l_string|&quot;tda985x: In tda985x_command&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -1271,7 +1273,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;VIDIOCGAUDIO&bslash;n&quot;
+l_string|&quot;tda985x: VIDIOCGAUDIO&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1437,7 +1439,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;VIDEOCSAUDIO...&bslash;n&quot;
+l_string|&quot;tda985x: VIDEOCSAUDIO&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1577,7 +1579,7 @@ suffix:colon
 id|dprintk
 c_func
 (paren
-l_string|&quot;VIDEO_SOUND_MONO&bslash;n&quot;
+l_string|&quot;tda985x: VIDEO_SOUND_MONO&bslash;n&quot;
 )paren
 suffix:semicolon
 id|t-&gt;c6
@@ -1608,7 +1610,7 @@ suffix:colon
 id|dprintk
 c_func
 (paren
-l_string|&quot;VIDEO_SOUND_STEREO&bslash;n&quot;
+l_string|&quot;tda985x: VIDEO_SOUND_STEREO&bslash;n&quot;
 )paren
 suffix:semicolon
 id|t-&gt;c6
@@ -1639,7 +1641,7 @@ suffix:colon
 id|dprintk
 c_func
 (paren
-l_string|&quot;VIDEO_SOUND_LANG1&bslash;n&quot;
+l_string|&quot;tda985x: VIDEO_SOUND_LANG1&bslash;n&quot;
 )paren
 suffix:semicolon
 id|t-&gt;c6
@@ -1674,10 +1676,10 @@ r_default
 suffix:colon
 multiline_comment|/* Not VIDEOCGAUDIO or VIDEOCSAUDIO */
 multiline_comment|/* nothing */
-id|dprintk
+id|d2printk
 c_func
 (paren
-l_string|&quot;Default&bslash;n&quot;
+l_string|&quot;tda985x: Default&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

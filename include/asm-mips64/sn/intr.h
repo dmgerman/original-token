@@ -1,7 +1,7 @@
-multiline_comment|/**************************************************************************&n; *                                                                        *&n; *               Copyright (C) 1992-1997, Silicon Graphics, Inc.          *&n; *                                                                        *&n; *  These coded instructions, statements, and computer programs  contain  *&n; *  unpublished  proprietary  information of Silicon Graphics, Inc., and  *&n; *  are protected by Federal copyright law.  They  may  not be disclosed  *&n; *  to  third  parties  or copied or duplicated in any form, in whole or  *&n; *  in part, without the prior written consent of Silicon Graphics, Inc.  *&n; *                                                                        *&n; **************************************************************************/
-macro_line|#ifndef __SYS_SN_INTR_H__
-DECL|macro|__SYS_SN_INTR_H__
-mdefine_line|#define __SYS_SN_INTR_H__
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1992 - 1997 Silicon Graphics, Inc.&n; */
+macro_line|#ifndef __ASM_SN_INTR_H
+DECL|macro|__ASM_SN_INTR_H
+mdefine_line|#define __ASM_SN_INTR_H
 multiline_comment|/* Number of interrupt levels associated with each interrupt register. */
 DECL|macro|N_INTPEND_BITS
 mdefine_line|#define N_INTPEND_BITS&t;&t;64
@@ -112,5 +112,5 @@ DECL|macro|NI_BRDCAST_ERR_B
 mdefine_line|#define NI_BRDCAST_ERR_B 40
 DECL|macro|NI_BRDCAST_ERR_A
 mdefine_line|#define NI_BRDCAST_ERR_A 39
-macro_line|#endif /* __SYS_SN_INTR_H__ */
+macro_line|#endif /* __ASM_SN_INTR_H */
 eof

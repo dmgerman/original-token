@@ -3649,7 +3649,7 @@ id|acpi_init_via
 comma
 )brace
 suffix:semicolon
-DECL|variable|__devinitdata
+DECL|variable|acpi_pci_tbl
 r_const
 r_static
 r_struct
@@ -3657,7 +3657,6 @@ id|pci_device_id
 id|acpi_pci_tbl
 (braket
 )braket
-id|__devinitdata
 op_assign
 (brace
 (brace

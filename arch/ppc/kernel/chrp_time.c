@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/nvram.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;time.h&quot;
 DECL|variable|nvram_as1
 r_static
@@ -103,6 +104,7 @@ suffix:semicolon
 )brace
 DECL|function|chrp_cmos_clock_read
 r_int
+id|__chrp
 id|chrp_cmos_clock_read
 c_func
 (paren
@@ -147,6 +149,7 @@ suffix:semicolon
 )brace
 DECL|function|chrp_cmos_clock_write
 r_void
+id|__chrp
 id|chrp_cmos_clock_write
 c_func
 (paren
@@ -197,6 +200,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Set the hardware clock. -- Cort&n; */
 DECL|function|chrp_set_rtc_time
 r_int
+id|__chrp
 id|chrp_set_rtc_time
 c_func
 (paren
@@ -411,6 +415,7 @@ suffix:semicolon
 DECL|function|chrp_get_rtc_time
 r_int
 r_int
+id|__chrp
 id|chrp_get_rtc_time
 c_func
 (paren

@@ -236,6 +236,8 @@ suffix:semicolon
 macro_line|#if defined(__alpha__)
 DECL|macro|START_DATA
 macro_line|#       define START_DATA(u)&t;(u.start_data)
+macro_line|#elif defined(__arm__)
+macro_line|#&t;define START_DATA(u)&t;((u.u_tsize &lt;&lt; PAGE_SHIFT) + u.start_code)
 macro_line|#elif defined(__sparc__)
 macro_line|#       define START_DATA(u)    (u.u_tsize)
 macro_line|#elif defined(__i386__) || defined(__mc68000__)
@@ -898,7 +900,7 @@ op_star
 )paren
 id|sp
 suffix:semicolon
-macro_line|#if defined(__i386__) || defined(__mc68000__)
+macro_line|#if defined(__i386__) || defined(__mc68000__) || defined(__arm__)
 id|put_user
 c_func
 (paren

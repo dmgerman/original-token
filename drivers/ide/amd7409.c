@@ -363,34 +363,14 @@ op_amp
 l_int|0x01
 )paren
 suffix:semicolon
-r_int
-id|drive_number
-op_assign
-(paren
-(paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|channel
-ques
-c_cond
-l_int|2
-suffix:colon
-l_int|0
-)paren
-op_plus
-id|unit
-)paren
-suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_int
 r_int
 id|dma_base
 op_assign
 id|hwif-&gt;dma_base
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|byte
 id|drive_pci
 op_assign
@@ -419,7 +399,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|drive_number
+id|drive-&gt;dn
 )paren
 (brace
 r_case
@@ -477,12 +457,8 @@ suffix:semicolon
 r_default
 suffix:colon
 r_return
-(paren
-(paren
-r_int
-)paren
-id|ide_dma_off_quietly
-)paren
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|pci_read_config_byte
@@ -550,7 +526,7 @@ op_complement
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -573,6 +549,7 @@ c_cond
 id|speed
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_case
 id|XFER_UDMA_4
 suffix:colon
@@ -589,7 +566,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -610,7 +587,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -631,7 +608,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -652,7 +629,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -673,7 +650,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -690,7 +667,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -707,7 +684,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -724,11 +701,12 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 r_case
 id|XFER_PIO_4
 suffix:colon
@@ -741,7 +719,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -758,7 +736,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -775,7 +753,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -792,7 +770,7 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
@@ -811,12 +789,23 @@ op_or_assign
 (paren
 l_int|0x03
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|drive-&gt;init_speed
+)paren
+id|drive-&gt;init_speed
+op_assign
+id|speed
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 id|pci_write_config_byte
 c_func
 (paren
@@ -827,6 +816,7 @@ comma
 id|ultra_timing
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|pci_write_config_byte
 c_func
 (paren
@@ -861,6 +851,7 @@ id|pio_timing
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
@@ -926,6 +917,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|err
 op_assign
 id|ide_config_drive_speed
@@ -935,6 +927,10 @@ id|drive
 comma
 id|speed
 )paren
+suffix:semicolon
+id|drive-&gt;current_speed
+op_assign
+id|speed
 suffix:semicolon
 r_return
 (paren
@@ -1176,6 +1172,10 @@ id|drive
 comma
 id|speed
 )paren
+suffix:semicolon
+id|drive-&gt;current_speed
+op_assign
+id|speed
 suffix:semicolon
 )brace
 DECL|function|amd7409_tune_drive
@@ -1986,6 +1986,11 @@ op_assign
 op_amp
 id|amd7409_tune_drive
 suffix:semicolon
+id|hwif-&gt;speedproc
+op_assign
+op_amp
+id|amd7409_tune_chipset
+suffix:semicolon
 macro_line|#ifndef CONFIG_BLK_DEV_IDEDMA
 id|hwif-&gt;drives
 (braket
@@ -2011,7 +2016,7 @@ l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2053,6 +2058,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 )brace
 DECL|function|ide_dmacapable_amd7409
 r_void

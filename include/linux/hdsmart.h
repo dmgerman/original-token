@@ -2,10 +2,21 @@ multiline_comment|/*&n; * linux/include/linux/hdsmart.h&n; *&n; * Copyright (C) 
 macro_line|#ifndef _LINUX_HDSMART_H
 DECL|macro|_LINUX_HDSMART_H
 mdefine_line|#define _LINUX_HDSMART_H
+DECL|macro|OFFLINE_FULL_SCAN
+mdefine_line|#define OFFLINE_FULL_SCAN&t;&t;0
+DECL|macro|SHORT_SELF_TEST
+mdefine_line|#define SHORT_SELF_TEST&t;&t;&t;1
+DECL|macro|EXTEND_SELF_TEST
+mdefine_line|#define EXTEND_SELF_TEST&t;&t;2
+DECL|macro|SHORT_CAPTIVE_SELF_TEST
+mdefine_line|#define SHORT_CAPTIVE_SELF_TEST&t;&t;129
+DECL|macro|EXTEND_CAPTIVE_SELF_TEST
+mdefine_line|#define EXTEND_CAPTIVE_SELF_TEST&t;130
 multiline_comment|/* smart_attribute is the vendor specific in SFF-8035 spec */
-DECL|struct|ata_smart_attribute
+DECL|struct|ata_smart_attribute_s
+r_typedef
 r_struct
-id|ata_smart_attribute
+id|ata_smart_attribute_s
 (brace
 DECL|member|id
 r_int
@@ -40,6 +51,7 @@ r_int
 r_char
 id|reserv
 suffix:semicolon
+DECL|typedef|ata_smart_attribute_t
 )brace
 id|__attribute__
 (paren
@@ -47,11 +59,13 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_attribute_t
 suffix:semicolon
 multiline_comment|/* smart_values is format of the read drive Atrribute command */
-DECL|struct|ata_smart_values
+DECL|struct|ata_smart_values_s
+r_typedef
 r_struct
-id|ata_smart_values
+id|ata_smart_values_s
 (brace
 DECL|member|revnumber
 r_int
@@ -59,8 +73,7 @@ r_int
 id|revnumber
 suffix:semicolon
 DECL|member|vendor_attributes
-r_struct
-id|ata_smart_attribute
+id|ata_smart_attribute_t
 id|vendor_attributes
 (braket
 l_int|30
@@ -137,6 +150,7 @@ r_int
 r_char
 id|chksum
 suffix:semicolon
+DECL|typedef|ata_smart_values_t
 )brace
 id|__attribute__
 (paren
@@ -144,12 +158,14 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_values_t
 suffix:semicolon
 multiline_comment|/* Smart Threshold data structures */
 multiline_comment|/* Vendor attribute of SMART Threshold */
-DECL|struct|ata_smart_threshold_entry
+DECL|struct|ata_smart_threshold_entry_s
+r_typedef
 r_struct
-id|ata_smart_threshold_entry
+id|ata_smart_threshold_entry_s
 (brace
 DECL|member|id
 r_int
@@ -169,6 +185,7 @@ id|reserved
 l_int|10
 )braket
 suffix:semicolon
+DECL|typedef|ata_smart_threshold_entry_t
 )brace
 id|__attribute__
 (paren
@@ -176,11 +193,13 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_threshold_entry_t
 suffix:semicolon
 multiline_comment|/* Format of Read SMART THreshold Command */
-DECL|struct|ata_smart_thresholds
+DECL|struct|ata_smart_thresholds_s
+r_typedef
 r_struct
-id|ata_smart_thresholds
+id|ata_smart_thresholds_s
 (brace
 DECL|member|revnumber
 r_int
@@ -188,8 +207,7 @@ r_int
 id|revnumber
 suffix:semicolon
 DECL|member|thres_entries
-r_struct
-id|ata_smart_threshold_entry
+id|ata_smart_threshold_entry_t
 id|thres_entries
 (braket
 l_int|30
@@ -208,6 +226,7 @@ r_int
 r_char
 id|chksum
 suffix:semicolon
+DECL|typedef|ata_smart_thresholds_t
 )brace
 id|__attribute__
 (paren
@@ -215,10 +234,12 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_thresholds_t
 suffix:semicolon
-DECL|struct|ata_smart_errorlog_command_struct
+DECL|struct|ata_smart_errorlog_command_struct_s
+r_typedef
 r_struct
-id|ata_smart_errorlog_command_struct
+id|ata_smart_errorlog_command_struct_s
 (brace
 DECL|member|devicecontrolreg
 r_int
@@ -265,6 +286,7 @@ r_int
 r_int
 id|timestamp
 suffix:semicolon
+DECL|typedef|ata_smart_errorlog_command_struct_t
 )brace
 id|__attribute__
 (paren
@@ -272,10 +294,12 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_errorlog_command_struct_t
 suffix:semicolon
-DECL|struct|ata_smart_errorlog_error_struct
+DECL|struct|ata_smart_errorlog_error_struct_s
+r_typedef
 r_struct
-id|ata_smart_errorlog_error_struct
+id|ata_smart_errorlog_error_struct_s
 (brace
 DECL|member|error_condition
 r_int
@@ -300,6 +324,7 @@ r_int
 r_int
 id|timestamp
 suffix:semicolon
+DECL|typedef|ata_smart_errorlog_error_struct_t
 )brace
 id|__attribute__
 (paren
@@ -307,24 +332,25 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_errorlog_error_struct_t
 suffix:semicolon
-DECL|struct|ata_smart_errorlog_struct
+DECL|struct|ata_smart_errorlog_struct_s
+r_typedef
 r_struct
-id|ata_smart_errorlog_struct
+id|ata_smart_errorlog_struct_s
 (brace
 DECL|member|commands
-r_struct
-id|ata_smart_errorlog_command_struct
+id|ata_smart_errorlog_command_struct_t
 id|commands
 (braket
 l_int|6
 )braket
 suffix:semicolon
 DECL|member|error_struct
-r_struct
-id|ata_smart_errorlog_error_struct
+id|ata_smart_errorlog_error_struct_t
 id|error_struct
 suffix:semicolon
+DECL|typedef|ata_smart_errorlog_struct_t
 )brace
 id|__attribute__
 (paren
@@ -332,10 +358,12 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_errorlog_struct_t
 suffix:semicolon
-DECL|struct|ata_smart_errorlog
+DECL|struct|ata_smart_errorlog_s
+r_typedef
 r_struct
-id|ata_smart_errorlog
+id|ata_smart_errorlog_s
 (brace
 DECL|member|revnumber
 r_int
@@ -348,8 +376,7 @@ r_char
 id|error_log_pointer
 suffix:semicolon
 DECL|member|errorlog_struct
-r_struct
-id|ata_smart_errorlog_struct
+id|ata_smart_errorlog_struct_t
 id|errorlog_struct
 (braket
 l_int|5
@@ -378,6 +405,12 @@ id|reserved
 l_int|53
 )braket
 suffix:semicolon
+DECL|member|chksum
+r_int
+r_char
+id|chksum
+suffix:semicolon
+DECL|typedef|ata_smart_errorlog_t
 )brace
 id|__attribute__
 (paren
@@ -385,10 +418,12 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_errorlog_t
 suffix:semicolon
-DECL|struct|ata_smart_selftestlog_struct
+DECL|struct|ata_smart_selftestlog_struct_s
+r_typedef
 r_struct
-id|ata_smart_selftestlog_struct
+id|ata_smart_selftestlog_struct_s
 (brace
 DECL|member|selftestnumber
 r_int
@@ -423,6 +458,7 @@ id|vendorspecific
 l_int|15
 )braket
 suffix:semicolon
+DECL|typedef|ata_smart_selftestlog_struct_t
 )brace
 id|__attribute__
 (paren
@@ -430,10 +466,12 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_selftestlog_struct_t
 suffix:semicolon
-DECL|struct|ata_smart_selftestlog
+DECL|struct|ata_smart_selftestlog_s
+r_typedef
 r_struct
-id|ata_smart_selftestlog
+id|ata_smart_selftestlog_s
 (brace
 DECL|member|revnumber
 r_int
@@ -441,8 +479,7 @@ r_int
 id|revnumber
 suffix:semicolon
 DECL|member|selftest_struct
-r_struct
-id|ata_smart_selftestlog_struct
+id|ata_smart_selftestlog_struct_t
 id|selftest_struct
 (braket
 l_int|21
@@ -474,6 +511,7 @@ r_int
 r_char
 id|chksum
 suffix:semicolon
+DECL|typedef|ata_smart_selftestlog_t
 )brace
 id|__attribute__
 (paren
@@ -481,64 +519,7 @@ id|__attribute__
 id|packed
 )paren
 )paren
+id|ata_smart_selftestlog_t
 suffix:semicolon
-macro_line|#if !defined(__KERNEL__) || defined(_IDE_DISK_C)
-multiline_comment|/* smartctl version number */
-DECL|macro|VERSION_MAJOR
-mdefine_line|#define VERSION_MAJOR           &t;&t;1
-DECL|macro|VERSION_MINOR
-mdefine_line|#define VERSION_MINOR           &t;&t;2
-multiline_comment|/* Number of ata device to scan */
-DECL|variable|numdevices
-r_int
-id|numdevices
-suffix:semicolon
-multiline_comment|/* how often SMART is checks in seconds */
-DECL|variable|checktime
-r_int
-id|checktime
-op_assign
-l_int|1800
-suffix:semicolon
-DECL|struct|atadevices_s
-r_typedef
-r_struct
-id|atadevices_s
-(brace
-DECL|member|fd
-r_int
-id|fd
-suffix:semicolon
-DECL|member|devicename
-r_char
-id|devicename
-(braket
-l_int|14
-)braket
-suffix:semicolon
-DECL|member|selftest
-r_int
-id|selftest
-suffix:semicolon
-DECL|member|drive
-r_struct
-id|hd_driveid
-id|drive
-suffix:semicolon
-DECL|member|smartval
-r_struct
-id|ata_smart_values
-id|smartval
-suffix:semicolon
-DECL|member|smartthres
-r_struct
-id|ata_smart_thresholds
-id|smartthres
-suffix:semicolon
-DECL|typedef|atadevices_t
-)brace
-id|atadevices_t
-suffix:semicolon
-macro_line|#endif /* !defined(__KERNEL__) || defined(_IDE_DISK_C) */
 macro_line|#endif&t;/* _LINUX_HDSMART_H */
 eof

@@ -3,6 +3,7 @@ DECL|macro|__LINUX_VMALLOC_H
 mdefine_line|#define __LINUX_VMALLOC_H
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* bits in vm_struct-&gt;flags */
 DECL|macro|VM_IOREMAP
@@ -112,6 +113,11 @@ r_int
 r_int
 id|size
 )paren
+suffix:semicolon
+multiline_comment|/* vmlist_lock is a read-write spinlock that protects vmlist &n; * Used in mm/vmalloc.c (get_vm_area() and vfree()) and fs/proc/kcore.c.&n; */
+r_extern
+id|rwlock_t
+id|vmlist_lock
 suffix:semicolon
 r_extern
 r_struct

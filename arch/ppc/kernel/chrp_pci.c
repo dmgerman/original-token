@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/gg2.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;pci.h&quot;
 multiline_comment|/* LongTrail */
 DECL|macro|pci_config_addr
@@ -29,6 +30,7 @@ suffix:semicolon
 multiline_comment|/*&n; * The VLSI Golden Gate II has only 512K of PCI configuration space, so we&n; * limit the bus number to 3 bits&n; */
 DECL|function|gg2_pcibios_read_config_byte
 r_int
+id|__chrp
 id|gg2_pcibios_read_config_byte
 c_func
 (paren
@@ -95,6 +97,7 @@ suffix:semicolon
 )brace
 DECL|function|gg2_pcibios_read_config_word
 r_int
+id|__chrp
 id|gg2_pcibios_read_config_word
 c_func
 (paren
@@ -161,6 +164,7 @@ suffix:semicolon
 )brace
 DECL|function|gg2_pcibios_read_config_dword
 r_int
+id|__chrp
 id|gg2_pcibios_read_config_dword
 c_func
 (paren
@@ -227,6 +231,7 @@ suffix:semicolon
 )brace
 DECL|function|gg2_pcibios_write_config_byte
 r_int
+id|__chrp
 id|gg2_pcibios_write_config_byte
 c_func
 (paren
@@ -284,6 +289,7 @@ suffix:semicolon
 )brace
 DECL|function|gg2_pcibios_write_config_word
 r_int
+id|__chrp
 id|gg2_pcibios_write_config_word
 c_func
 (paren
@@ -341,6 +347,7 @@ suffix:semicolon
 )brace
 DECL|function|gg2_pcibios_write_config_dword
 r_int
+id|__chrp
 id|gg2_pcibios_write_config_dword
 c_func
 (paren
@@ -411,6 +418,7 @@ l_int|0
 suffix:semicolon
 DECL|function|python_pcibios_read_config_byte
 r_int
+id|__chrp
 id|python_pcibios_read_config_byte
 c_func
 (paren
@@ -499,6 +507,7 @@ suffix:semicolon
 )brace
 DECL|function|python_pcibios_read_config_word
 r_int
+id|__chrp
 id|python_pcibios_read_config_word
 c_func
 (paren
@@ -589,6 +598,7 @@ suffix:semicolon
 )brace
 DECL|function|python_pcibios_read_config_dword
 r_int
+id|__chrp
 id|python_pcibios_read_config_dword
 c_func
 (paren
@@ -670,6 +680,7 @@ suffix:semicolon
 )brace
 DECL|function|python_pcibios_write_config_byte
 r_int
+id|__chrp
 id|python_pcibios_write_config_byte
 c_func
 (paren
@@ -750,6 +761,7 @@ suffix:semicolon
 )brace
 DECL|function|python_pcibios_write_config_word
 r_int
+id|__chrp
 id|python_pcibios_write_config_word
 c_func
 (paren
@@ -830,6 +842,7 @@ suffix:semicolon
 )brace
 DECL|function|python_pcibios_write_config_dword
 r_int
+id|__chrp
 id|python_pcibios_write_config_dword
 c_func
 (paren
@@ -908,6 +921,7 @@ suffix:semicolon
 )brace
 DECL|function|rtas_pcibios_read_config_byte
 r_int
+id|__chrp
 id|rtas_pcibios_read_config_byte
 c_func
 (paren
@@ -994,6 +1008,7 @@ suffix:semicolon
 )brace
 DECL|function|rtas_pcibios_read_config_word
 r_int
+id|__chrp
 id|rtas_pcibios_read_config_word
 c_func
 (paren
@@ -1080,6 +1095,7 @@ suffix:semicolon
 )brace
 DECL|function|rtas_pcibios_read_config_dword
 r_int
+id|__chrp
 id|rtas_pcibios_read_config_dword
 c_func
 (paren
@@ -1166,6 +1182,7 @@ suffix:semicolon
 )brace
 DECL|function|rtas_pcibios_write_config_byte
 r_int
+id|__chrp
 id|rtas_pcibios_write_config_byte
 c_func
 (paren
@@ -1251,6 +1268,7 @@ suffix:semicolon
 )brace
 DECL|function|rtas_pcibios_write_config_word
 r_int
+id|__chrp
 id|rtas_pcibios_write_config_word
 c_func
 (paren
@@ -1336,6 +1354,7 @@ suffix:semicolon
 )brace
 DECL|function|rtas_pcibios_write_config_dword
 r_int
+id|__chrp
 id|rtas_pcibios_write_config_dword
 c_func
 (paren

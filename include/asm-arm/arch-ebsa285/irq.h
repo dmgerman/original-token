@@ -90,7 +90,6 @@ id|irq
 op_eq
 id|isa_irq
 )paren
-(brace
 id|irq
 op_assign
 op_star
@@ -101,34 +100,6 @@ op_star
 )paren
 id|PCIIACK_BASE
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The NetWinder appears to randomly give wrong interrupt&n;&t;&t; * numbers from time to time.  When it does, map them to&n;&t;&t; * the unused IRQ 13&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|irq
-op_ge
-id|NR_IRQS
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;Strange interrupt %d?&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-id|irq
-op_assign
-id|_ISA_IRQ
-c_func
-(paren
-l_int|13
-)paren
-suffix:semicolon
-)brace
-)brace
 macro_line|#endif
 r_return
 id|irq

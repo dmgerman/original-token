@@ -119,6 +119,11 @@ comma
 id|ctl
 )paren
 suffix:semicolon
+id|parport_data_forward
+(paren
+id|port
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -816,6 +821,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* Event 14: Place data bus in high impedance state. */
+id|parport_data_reverse
+(paren
+id|port
+)paren
+suffix:semicolon
 multiline_comment|/* Event 7: Set nAutoFd low. */
 id|parport_frob_control
 (paren

@@ -146,6 +146,10 @@ DECL|member|gfp_mask
 r_int
 id|gfp_mask
 suffix:semicolon
+DECL|member|free_before_allocate
+id|atomic_t
+id|free_before_allocate
+suffix:semicolon
 DECL|typedef|zonelist_t
 )brace
 id|zonelist_t

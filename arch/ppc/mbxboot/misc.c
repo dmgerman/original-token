@@ -13,6 +13,15 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_8260
 macro_line|#include &lt;asm/mpc8260.h&gt;
 macro_line|#endif
+multiline_comment|/*&n; * The following references are needed to cause the linker to pull in the&n; * gzimage.o and rdimage.o files.  These object files are special,&n; * since they get placed into the .gzimage and .rdimage ELF sections &n; * of the zvmlinux and zvmlinux.initrd files.&n; */
+r_extern
+r_char
+id|dummy_for_gzimage
+suffix:semicolon
+r_extern
+r_char
+id|dummy_for_rdimage
+suffix:semicolon
 multiline_comment|/*&n; * Please send me load/board info and such data for hardware not&n; * listed here so I can keep track since things are getting tricky&n; * with the different load addrs with different firmware.  This will&n; * help to avoid breaking the load/boot process.&n; * -- Cort&n; */
 DECL|variable|avail_ram
 r_char

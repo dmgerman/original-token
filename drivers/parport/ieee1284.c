@@ -900,6 +900,11 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Event 0: Set data */
+id|parport_data_forward
+(paren
+id|port
+)paren
+suffix:semicolon
 id|parport_write_data
 (paren
 id|port
@@ -1942,7 +1947,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif /* IEEE1284 support */
 )brace
-multiline_comment|/**&n; *&t;parport_set_timeout - set the inactivity timeout for a device&n; *&t;                      on a port&n; *&t;@dev: device on a port&n; *&t;@inactivity: inactivity timeout (in jiffies)&n; *&n; *&t;This sets the inactivity timeout for a particular device on a&n; *&t;port.  This affects functions like parport_wait_peripheral().&n; *&t;The special value 0 means not to call schedule() while dealing&n; *&t;with this device.&n; *&n; *&t;The return value is the previous inactivity timeout.&n; *&n; *&t;Any callers of parport_wait_event() for this device are woken&n; *&t;up.&n; */
+multiline_comment|/**&n; *&t;parport_set_timeout - set the inactivity timeout for a device&n; *&t;@dev: device on a port&n; *&t;@inactivity: inactivity timeout (in jiffies)&n; *&n; *&t;This sets the inactivity timeout for a particular device on a&n; *&t;port.  This affects functions like parport_wait_peripheral().&n; *&t;The special value 0 means not to call schedule() while dealing&n; *&t;with this device.&n; *&n; *&t;The return value is the previous inactivity timeout.&n; *&n; *&t;Any callers of parport_wait_event() for this device are woken&n; *&t;up.&n; */
 DECL|function|parport_set_timeout
 r_int
 id|parport_set_timeout

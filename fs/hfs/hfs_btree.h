@@ -123,6 +123,13 @@ l_int|16
 suffix:semicolon
 multiline_comment|/* Reserved */
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * struct NodeDescriptor&n; *&n; * The B-tree node descriptor.&n; *&n; * This structure begins each node in the B-tree file.&t;It contains&n; * important information about the node&squot;s contents.  &squot;V&squot; and &squot;F&squot; in&n; * the comments indicate fields that are variable or fixed over the&n; * life of a node, where the &squot;life&squot; of a node is defined as the period&n; * between leaving and reentering the free pool.&n; *&n; * Reference: _Inside Macintosh: Files_ p. 2-64&n; */
 DECL|struct|NodeDescriptor
@@ -160,6 +167,13 @@ id|ndResv2
 suffix:semicolon
 multiline_comment|/* Reserved */
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * typedef hfs_cmpfn&n; *&n; * The type &squot;hfs_cmpfn&squot; is a comparison function taking 2 keys and&n; * returning a positive, negative or zero integer according to the&n; * ordering of the two keys (just like strcmp() does for strings).&n; */
 DECL|typedef|hfs_cmpfn

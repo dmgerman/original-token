@@ -133,10 +133,10 @@ id|default_exec_domain
 suffix:semicolon
 DECL|variable|exec_domains_lock
 r_static
-id|spinlock_t
+id|rwlock_t
 id|exec_domains_lock
 op_assign
-id|SPIN_LOCK_UNLOCKED
+id|RW_LOCK_UNLOCKED
 suffix:semicolon
 DECL|function|no_lcall7
 r_static
@@ -223,7 +223,7 @@ id|exec_domain
 op_star
 id|it
 suffix:semicolon
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -267,7 +267,7 @@ id|it-&gt;module
 )paren
 r_continue
 suffix:semicolon
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -278,7 +278,7 @@ r_return
 id|it
 suffix:semicolon
 )brace
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -334,7 +334,7 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|spin_lock
+id|write_lock
 c_func
 (paren
 op_amp
@@ -362,7 +362,7 @@ op_eq
 id|it
 )paren
 (brace
-id|spin_unlock
+id|write_unlock
 c_func
 (paren
 op_amp
@@ -382,7 +382,7 @@ id|exec_domains
 op_assign
 id|it
 suffix:semicolon
-id|spin_unlock
+id|write_unlock
 c_func
 (paren
 op_amp
@@ -415,7 +415,7 @@ op_assign
 op_amp
 id|exec_domains
 suffix:semicolon
-id|spin_lock
+id|write_lock
 c_func
 (paren
 op_amp
@@ -447,7 +447,7 @@ id|it-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|spin_unlock
+id|write_unlock
 c_func
 (paren
 op_amp
@@ -469,7 +469,7 @@ op_member_access_from_pointer
 id|next
 suffix:semicolon
 )brace
-id|spin_unlock
+id|write_unlock
 c_func
 (paren
 op_amp
@@ -671,7 +671,7 @@ id|exec_domain
 op_star
 id|e
 suffix:semicolon
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -722,7 +722,7 @@ suffix:colon
 l_string|&quot;kernel&quot;
 )paren
 suffix:semicolon
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp

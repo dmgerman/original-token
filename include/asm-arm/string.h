@@ -38,8 +38,40 @@ id|c
 suffix:semicolon
 DECL|macro|__HAVE_ARCH_MEMCPY
 mdefine_line|#define __HAVE_ARCH_MEMCPY
+r_extern
+r_void
+op_star
+id|memcpy
+c_func
+(paren
+r_void
+op_star
+comma
+r_const
+r_void
+op_star
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
 DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
+r_extern
+r_void
+op_star
+id|memmove
+c_func
+(paren
+r_void
+op_star
+comma
+r_const
+r_void
+op_star
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
 DECL|macro|__HAVE_ARCH_MEMCHR
 mdefine_line|#define __HAVE_ARCH_MEMCHR
 r_extern
@@ -51,19 +83,30 @@ c_func
 r_const
 r_void
 op_star
-id|cs
 comma
 r_int
-id|c
 comma
-r_int
-id|count
+id|__kernel_size_t
 )paren
 suffix:semicolon
 DECL|macro|__HAVE_ARCH_MEMZERO
 mdefine_line|#define __HAVE_ARCH_MEMZERO
 DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
+r_extern
+r_void
+op_star
+id|memset
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|__memzero

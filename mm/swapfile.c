@@ -1649,7 +1649,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page

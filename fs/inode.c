@@ -1222,7 +1222,7 @@ id|busy
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is a two-stage process. First we collect all&n; * offending inodes onto the throw-away list, and in&n; * the second stage we actually dispose of them. This&n; * is because we don&squot;t want to sleep while messing&n; * with the global lists..&n; */
-multiline_comment|/**&n; *&t;invalidate_inodes&t;- discard the inodes on a device&n; *&t;@sb: superblock&n; *&n; *&t;Discard all of the inodes for a given superblock. If the discard&n; *&t;fails because there are busy inodes then a non zero value is returned.&n; *&t;If the discard is successful all the inodes are dicarded.&n; */
+multiline_comment|/**&n; *&t;invalidate_inodes&t;- discard the inodes on a device&n; *&t;@sb: superblock&n; *&n; *&t;Discard all of the inodes for a given superblock. If the discard&n; *&t;fails because there are busy inodes then a non zero value is returned.&n; *&t;If the discard is successful all the inodes have been discarded.&n; */
 DECL|function|invalidate_inodes
 r_int
 id|invalidate_inodes
@@ -1542,7 +1542,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Called with the inode lock held.&n; * NOTE: we are not increasing the inode-refcount, you must call __iget()&n; * by hand after calling find_inode now! This simplify iunique and won&squot;t&n; * add any additional branch in the common code.&n; */
+multiline_comment|/*&n; * Called with the inode lock held.&n; * NOTE: we are not increasing the inode-refcount, you must call __iget()&n; * by hand after calling find_inode now! This simplifies iunique and won&squot;t&n; * add any additional branch in the common code.&n; */
 DECL|function|find_inode
 r_static
 r_struct

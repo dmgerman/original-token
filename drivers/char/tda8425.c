@@ -13,8 +13,6 @@ macro_line|#include &lt;linux/i2c-algo-bit.h&gt;
 macro_line|#include &quot;bttv.h&quot;
 macro_line|#include &quot;audiochip.h&quot;
 multiline_comment|/* Addresses to scan */
-DECL|macro|I2C_TDA8425
-mdefine_line|#define I2C_TDA8425        0x82
 DECL|variable|normal_i2c
 r_static
 r_int

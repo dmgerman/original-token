@@ -98,14 +98,14 @@ comma
 l_string|&quot;SiS 7016 PCI Fast Ethernet&quot;
 )brace
 suffix:semicolon
-DECL|variable|__devinitdata
+DECL|variable|__initdata
 r_static
 r_struct
 id|pci_device_id
 id|sis900_pci_tbl
 (braket
 )braket
-id|__devinitdata
+id|__initdata
 op_assign
 (brace
 (brace

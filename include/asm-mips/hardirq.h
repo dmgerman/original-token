@@ -3,7 +3,6 @@ macro_line|#ifndef _ASM_HARDIRQ_H
 DECL|macro|_ASM_HARDIRQ_H
 mdefine_line|#define _ASM_HARDIRQ_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 r_typedef

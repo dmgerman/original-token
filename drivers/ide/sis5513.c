@@ -1272,26 +1272,6 @@ id|dev
 op_assign
 id|hwif-&gt;pci_dev
 suffix:semicolon
-r_int
-id|drive_number
-op_assign
-(paren
-(paren
-id|hwif-&gt;channel
-ques
-c_cond
-l_int|2
-suffix:colon
-l_int|0
-)paren
-op_plus
-(paren
-id|drive-&gt;select.b.unit
-op_amp
-l_int|0x01
-)paren
-)paren
-suffix:semicolon
 id|byte
 id|reg4bh
 op_assign
@@ -1303,7 +1283,7 @@ op_assign
 (paren
 l_int|0x11
 op_lshift
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 id|pci_read_config_byte
@@ -1416,34 +1396,12 @@ id|xfer_pio
 op_assign
 id|drive-&gt;id-&gt;eide_pio_modes
 suffix:semicolon
-r_int
-id|drive_number
-op_assign
-(paren
-(paren
-id|hwif-&gt;channel
-ques
-c_cond
-l_int|2
-suffix:colon
-l_int|0
-)paren
-op_plus
-(paren
-id|drive-&gt;select.b.unit
-op_amp
-l_int|0x01
-)paren
-)paren
-suffix:semicolon
-macro_line|#if 0
 id|config_drive_art_rwp
 c_func
 (paren
 id|drive
 )paren
 suffix:semicolon
-macro_line|#endif
 id|pio
 op_assign
 id|ide_get_best_pio_mode
@@ -1551,7 +1509,7 @@ multiline_comment|/*&n; *               Mode 0       Mode 1     Mode 2     Mode 
 r_switch
 c_cond
 (paren
-id|drive_number
+id|drive-&gt;dn
 )paren
 (brace
 r_case
@@ -1809,7 +1767,7 @@ id|err
 suffix:semicolon
 )brace
 DECL|macro|SIS5513_TUNEPROC
-macro_line|#undef SIS5513_TUNEPROC
+mdefine_line|#define SIS5513_TUNEPROC
 macro_line|#ifdef SIS5513_TUNEPROC
 DECL|function|sis5513_tune_drive
 r_static
@@ -1916,22 +1874,6 @@ id|four_two
 op_assign
 l_int|0x00
 suffix:semicolon
-r_int
-id|drive_number
-op_assign
-(paren
-(paren
-id|hwif-&gt;channel
-ques
-c_cond
-l_int|2
-suffix:colon
-l_int|0
-)paren
-op_plus
-id|unit
-)paren
-suffix:semicolon
 id|byte
 id|udma_66
 op_assign
@@ -1993,7 +1935,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|drive_number
+id|drive-&gt;dn
 )paren
 (brace
 r_case
@@ -2593,7 +2535,7 @@ c_func
 id|speed
 )paren
 comma
-id|drive_number
+id|drive-&gt;dn
 )paren
 suffix:semicolon
 macro_line|#endif /* SIS5513_DEBUG_DRIVE_INFO */

@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *          Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *          Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *          Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.228 2000/04/02 19:55:51 acher Exp $&n; */
+multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *          Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *          Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *          Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.231 2000/05/13 15:34:17 acher Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -29,7 +29,7 @@ multiline_comment|/* This enables an extra UHCI slab for memory debugging */
 DECL|macro|DEBUG_SLAB
 mdefine_line|#define DEBUG_SLAB
 DECL|macro|VERSTR
-mdefine_line|#define VERSTR &quot;$Revision: 1.228 $ time &quot; __TIME__ &quot; &quot; __DATE__
+mdefine_line|#define VERSTR &quot;$Revision: 1.231 $ time &quot; __TIME__ &quot; &quot; __DATE__
 macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;usb-uhci.h&quot;
 macro_line|#include &quot;usb-uhci-debug.h&quot;
@@ -238,6 +238,10 @@ comma
 id|horizontal
 )paren
 suffix:semicolon
+id|q
+op_assign
+id|qh-&gt;horizontal.prev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -256,10 +260,6 @@ id|s
 comma
 id|qh
 )paren
-suffix:semicolon
-id|q
-op_assign
-id|qh-&gt;horizontal.prev
 suffix:semicolon
 )brace
 )brace
@@ -5068,26 +5068,6 @@ op_minus
 id|ENOENT
 suffix:semicolon
 singleline_comment|// now the urb is really dead
-id|usb_dec_dev_use
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#ifdef DEBUG_SLAB
-id|kmem_cache_free
-(paren
-id|urb_priv_kmem
-comma
-id|urb_priv
-)paren
-suffix:semicolon
-macro_line|#else
-id|kfree
-(paren
-id|urb_priv
-)paren
-suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -5114,6 +5094,26 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|usb_dec_dev_use
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG_SLAB
+id|kmem_cache_free
+(paren
+id|urb_priv_kmem
+comma
+id|urb_priv
+)paren
+suffix:semicolon
+macro_line|#else
+id|kfree
+(paren
+id|urb_priv
+)paren
+suffix:semicolon
+macro_line|#endif
 id|list_del
 (paren
 op_amp
@@ -5157,10 +5157,33 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|urb-&gt;status
 op_eq
 op_minus
 id|EINPROGRESS
+)paren
+op_logical_or
+(paren
+(paren
+id|usb_pipetype
+(paren
+id|urb-&gt;pipe
+)paren
+op_eq
+id|PIPE_INTERRUPT
+)paren
+op_logical_and
+(paren
+(paren
+id|urb_priv_t
+op_star
+)paren
+id|urb-&gt;hcpriv
+)paren
+op_member_access_from_pointer
+id|flags
+)paren
 )paren
 (brace
 (paren
@@ -7120,7 +7143,7 @@ op_amp
 id|urb_priv-&gt;desc_list
 )paren
 suffix:semicolon
-id|urb_priv-&gt;short_control_packet
+id|urb_priv-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
@@ -9584,7 +9607,7 @@ multiline_comment|/* if the status phase has been retriggered and the&n;&t;   qu
 r_if
 c_cond
 (paren
-id|urb_priv-&gt;short_control_packet
+id|urb_priv-&gt;flags
 op_logical_and
 (paren
 (paren
@@ -9845,10 +9868,11 @@ id|last_desc
 suffix:semicolon
 singleline_comment|//uhci_show_td (desc);
 singleline_comment|//uhci_show_td (last_desc);
-id|urb_priv-&gt;short_control_packet
+id|urb_priv-&gt;flags
 op_assign
 l_int|1
 suffix:semicolon
+singleline_comment|// mark as short control packet
 r_return
 l_int|0
 suffix:semicolon
@@ -10165,6 +10189,19 @@ id|urb-&gt;status
 op_assign
 id|status
 suffix:semicolon
+(paren
+(paren
+id|urb_priv_t
+op_star
+)paren
+id|urb-&gt;hcpriv
+)paren
+op_member_access_from_pointer
+id|flags
+op_assign
+l_int|1
+suffix:semicolon
+singleline_comment|// if unlink_urb is called during completion
 id|spin_unlock
 c_func
 (paren
@@ -10189,12 +10226,48 @@ op_amp
 id|s-&gt;urb_list_lock
 )paren
 suffix:semicolon
+(paren
+(paren
+id|urb_priv_t
+op_star
+)paren
+id|urb-&gt;hcpriv
+)paren
+op_member_access_from_pointer
+id|flags
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|urb-&gt;status
+op_ne
+op_minus
+id|ECONNABORTED
+)paren
+op_logical_and
+(paren
+id|urb-&gt;status
+op_ne
+id|ECONNRESET
+)paren
+op_logical_and
+(paren
+id|urb-&gt;status
+op_ne
+op_minus
+id|ENOENT
+)paren
+)paren
+(brace
 id|urb-&gt;status
 op_assign
 op_minus
 id|EINPROGRESS
 suffix:semicolon
-)brace
 singleline_comment|// Recycle INT-TD if interval!=0, else mark TD as one-shot
 r_if
 c_cond
@@ -10330,12 +10403,21 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|uhci_unlink_urb_async
+c_func
+(paren
+id|s
+comma
+id|urb
+)paren
+suffix:semicolon
 id|desc-&gt;hw.td.status
 op_and_assign
 op_complement
 id|TD_CTRL_IOC
 suffix:semicolon
 singleline_comment|// inactivate TD
+)brace
 )brace
 )brace
 r_return
@@ -10463,10 +10545,6 @@ op_ne
 op_amp
 id|urb_priv-&gt;desc_list
 suffix:semicolon
-id|p
-op_assign
-id|p-&gt;next
-comma
 id|i
 op_increment
 )paren
@@ -10728,14 +10806,18 @@ dot
 id|status
 )paren
 suffix:semicolon
-id|delete_desc
-(paren
-id|desc
-)paren
-suffix:semicolon
 id|list_del
 (paren
 id|p
+)paren
+suffix:semicolon
+id|p
+op_assign
+id|p-&gt;next
+suffix:semicolon
+id|delete_desc
+(paren
+id|desc
 )paren
 suffix:semicolon
 )brace

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sunrpc/debug.h&gt;
+macro_line|#include &lt;linux/sunrpc/auth.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/nfs2.h&gt;
 macro_line|#include &lt;linux/nfs3.h&gt;
@@ -91,8 +92,6 @@ mdefine_line|#define NFS_FSID(inode)&t;&t;&t;((inode)-&gt;u.nfs_i.fsid)
 multiline_comment|/* Inode Flags */
 DECL|macro|NFS_USE_READDIRPLUS
 mdefine_line|#define NFS_USE_READDIRPLUS(inode)&t;((NFS_FLAGS(inode) &amp; NFS_INO_ADVISE_RDPLUS) ? 1 : 0)
-DECL|macro|NFS_MONOTONE_COOKIES
-mdefine_line|#define NFS_MONOTONE_COOKIES(inode)&t;((NFS_SERVER(inode)-&gt;flags &amp; NFS_NONMONOTONE_COOKIES) ? 0 : 1)
 multiline_comment|/*&n; * These are the default flags for swap requests&n; */
 DECL|macro|NFS_RPC_SWAPFLAGS
 mdefine_line|#define NFS_RPC_SWAPFLAGS&t;&t;(RPC_TASK_SWAPPER|RPC_TASK_ROOTCREDS)
@@ -307,6 +306,55 @@ r_struct
 id|address_space_operations
 id|nfs_file_aops
 suffix:semicolon
+r_static
+id|__inline__
+r_struct
+id|rpc_cred
+op_star
+DECL|function|nfs_file_cred
+id|nfs_file_cred
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_struct
+id|rpc_cred
+op_star
+id|cred
+op_assign
+(paren
+r_struct
+id|rpc_cred
+op_star
+)paren
+(paren
+id|file-&gt;private_data
+)paren
+suffix:semicolon
+macro_line|#ifdef RPC_DEBUG
+r_if
+c_cond
+(paren
+id|cred
+op_logical_and
+id|cred-&gt;cr_magic
+op_ne
+id|RPCAUTH_CRED_MAGIC
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+id|cred
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * linux/fs/nfs/dir.c&n; */
 r_extern
 r_struct

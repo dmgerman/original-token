@@ -38,6 +38,7 @@ macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;time.h&quot;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;i8259.h&quot;
@@ -396,6 +397,7 @@ l_string|&quot;Transparent Mode&quot;
 )brace
 suffix:semicolon
 r_int
+id|__chrp
 DECL|function|chrp_get_cpuinfo
 id|chrp_get_cpuinfo
 c_func
@@ -1328,6 +1330,7 @@ suffix:semicolon
 )brace
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_event_scan
 id|chrp_event_scan
 c_func
@@ -1380,6 +1383,7 @@ id|ppc_md.heartbeat_reset
 suffix:semicolon
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_restart
 id|chrp_restart
 c_func
@@ -1416,6 +1420,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_power_off
 id|chrp_power_off
 c_func
@@ -1455,6 +1460,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_halt
 id|chrp_halt
 c_func
@@ -1469,6 +1475,7 @@ c_func
 suffix:semicolon
 )brace
 id|u_int
+id|__chrp
 DECL|function|chrp_irq_cannonicalize
 id|chrp_irq_cannonicalize
 c_func
@@ -1498,6 +1505,7 @@ suffix:semicolon
 )brace
 DECL|function|chrp_get_irq
 r_int
+id|__chrp
 id|chrp_get_irq
 c_func
 (paren
@@ -1582,6 +1590,7 @@ suffix:semicolon
 )brace
 DECL|function|chrp_post_irq
 r_void
+id|__chrp
 id|chrp_post_irq
 c_func
 (paren
@@ -1832,6 +1841,7 @@ id|ide_ioreg_t
 id|chrp_idedma_regbase
 suffix:semicolon
 r_void
+id|__chrp
 DECL|function|chrp_ide_probe
 id|chrp_ide_probe
 c_func
@@ -1904,6 +1914,7 @@ suffix:semicolon
 )brace
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_ide_insw
 id|chrp_ide_insw
 c_func
@@ -1933,6 +1944,7 @@ id|ns
 suffix:semicolon
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_ide_outsw
 id|chrp_ide_outsw
 c_func
@@ -1962,6 +1974,7 @@ id|ns
 suffix:semicolon
 )brace
 r_int
+id|__chrp
 DECL|function|chrp_ide_default_irq
 id|chrp_ide_default_irq
 c_func
@@ -1987,6 +2000,7 @@ id|chrp_ide_irq
 suffix:semicolon
 )brace
 id|ide_ioreg_t
+id|__chrp
 DECL|function|chrp_ide_default_io_base
 id|chrp_ide_default_io_base
 c_func
@@ -2015,6 +2029,7 @@ id|index
 suffix:semicolon
 )brace
 r_int
+id|__chrp
 DECL|function|chrp_ide_check_region
 id|chrp_ide_check_region
 c_func
@@ -2038,6 +2053,7 @@ id|extent
 suffix:semicolon
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_ide_request_region
 id|chrp_ide_request_region
 c_func
@@ -2067,6 +2083,7 @@ id|name
 suffix:semicolon
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_ide_release_region
 id|chrp_ide_release_region
 c_func
@@ -2089,6 +2106,7 @@ id|extent
 suffix:semicolon
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_ide_fix_driveid
 id|chrp_ide_fix_driveid
 c_func
@@ -2107,6 +2125,7 @@ id|id
 suffix:semicolon
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_ide_init_hwif_ports
 id|chrp_ide_init_hwif_ports
 c_func
@@ -2485,6 +2504,7 @@ l_int|0x0
 suffix:semicolon
 )brace
 r_void
+id|__chrp
 DECL|function|chrp_progress
 id|chrp_progress
 c_func

@@ -36,7 +36,7 @@ dot
 )paren
 suffix:semicolon
 DECL|macro|WQ_BUG
-mdefine_line|#define WQ_BUG() do { &bslash;&n;&t;printk(&quot;wq bug, forcing oops.&bslash;n&quot;); &bslash;&n;&t;*(int*)0 = 0; &bslash;&n;} while (0)
+mdefine_line|#define WQ_BUG() do { &bslash;&n;&t;printk(&quot;wq bug, forcing oops.&bslash;n&quot;); &bslash;&n;&t;BUG(); &bslash;&n;} while (0)
 DECL|macro|CHECK_MAGIC
 mdefine_line|#define CHECK_MAGIC(x) if (x != (long)&amp;(x)) &bslash;&n;&t;{ printk(&quot;bad magic %lx (should be %lx), &quot;, (long)x, (long)&amp;(x)); WQ_BUG(); }
 DECL|macro|CHECK_MAGIC_WQHEAD

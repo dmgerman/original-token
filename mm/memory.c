@@ -3699,7 +3699,7 @@ op_amp
 id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|new_page
@@ -4396,7 +4396,7 @@ id|new_page
 op_ne
 l_int|NULL
 )paren
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|new_page

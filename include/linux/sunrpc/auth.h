@@ -38,6 +38,14 @@ r_int
 id|cr_flags
 suffix:semicolon
 multiline_comment|/* various flags */
+macro_line|#ifdef RPC_DEBUG
+DECL|member|cr_magic
+r_int
+r_int
+id|cr_magic
+suffix:semicolon
+multiline_comment|/* 0x0f4aa4f0 */
+macro_line|#endif
 DECL|member|cr_uid
 id|uid_t
 id|cr_uid
@@ -51,6 +59,8 @@ DECL|macro|RPCAUTH_CRED_UPTODATE
 mdefine_line|#define RPCAUTH_CRED_UPTODATE&t;0x0002
 DECL|macro|RPCAUTH_CRED_DEAD
 mdefine_line|#define RPCAUTH_CRED_DEAD&t;0x0004
+DECL|macro|RPCAUTH_CRED_MAGIC
+mdefine_line|#define RPCAUTH_CRED_MAGIC&t;0x0f4aa4f0
 multiline_comment|/*&n; * Client authentication handle&n; */
 DECL|macro|RPC_CREDCACHE_NR
 mdefine_line|#define RPC_CREDCACHE_NR&t;8
