@@ -1,7 +1,8 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_inode.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_inode.c,v 1.9 1997/07/17 02:24:14 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_inode.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support on 19970406&n; * by Francois-Rene Rideau &lt;rideau@ens.fr&gt;&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &quot;ufs_swab.h&quot;
 DECL|function|ufs_print_inode
 r_void
 id|ufs_print_inode
@@ -155,6 +156,13 @@ suffix:semicolon
 r_int
 id|tmp
 suffix:semicolon
+id|__u32
+id|bytesex
+op_assign
+id|inode-&gt;i_sb-&gt;u.ufs_sb.s_flags
+op_amp
+id|UFS_BYTESEX
+suffix:semicolon
 multiline_comment|/* XXX Split in fsize big blocks (Can&squot;t bread 8Kb). */
 id|tmp
 op_assign
@@ -199,7 +207,7 @@ l_int|2
 suffix:semicolon
 id|tmp
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 (paren
@@ -636,6 +644,13 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
+id|__u32
+id|bytesex
+op_assign
+id|inode-&gt;i_sb-&gt;u.ufs_sb.s_flags
+op_amp
+id|UFS_BYTESEX
+suffix:semicolon
 id|sb
 op_assign
 id|inode-&gt;i_sb
@@ -775,7 +790,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Copy data to the in-core inode.&n;&t; */
 id|inode-&gt;i_mode
 op_assign
-id|ufs_swab16
+id|SWAB16
 c_func
 (paren
 id|ufsip-&gt;ui_mode
@@ -783,7 +798,7 @@ id|ufsip-&gt;ui_mode
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
-id|ufs_swab16
+id|SWAB16
 c_func
 (paren
 id|ufsip-&gt;ui_nlink
@@ -867,7 +882,7 @@ multiline_comment|/* XXX - debugging */
 r_if
 c_cond
 (paren
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_gen
@@ -921,7 +936,7 @@ multiline_comment|/*&n;&t; * Since Linux currently only has 16-bit uid_t and gid
 r_if
 c_cond
 (paren
-id|ufs_swab16
+id|SWAB16
 c_func
 (paren
 id|ufsip-&gt;ui_suid
@@ -940,7 +955,7 @@ c_func
 (paren
 l_string|&quot;ufs_read_inode: EFT uid %u ino %lu dev %u/%u, using %u&bslash;n&quot;
 comma
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_uid
@@ -968,7 +983,7 @@ r_else
 (brace
 id|inode-&gt;i_uid
 op_assign
-id|ufs_swab16
+id|SWAB16
 c_func
 (paren
 id|ufsip-&gt;ui_suid
@@ -978,7 +993,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ufs_swab16
+id|SWAB16
 c_func
 (paren
 id|ufsip-&gt;ui_sgid
@@ -997,7 +1012,7 @@ c_func
 (paren
 l_string|&quot;ufs_read_inode: EFT gid %u ino %lu dev %u/%u, using %u&bslash;n&quot;
 comma
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_gid
@@ -1025,46 +1040,20 @@ r_else
 (brace
 id|inode-&gt;i_gid
 op_assign
-id|ufs_swab16
+id|SWAB16
 c_func
 (paren
 id|ufsip-&gt;ui_sgid
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Linux i_size is 32 bits, so some files on a UFS filesystem may not&n;&t; * be readable.  I let people access the first 32 bits worth of them.&n;&t; * for the rw code, we may want to mark these inodes as read-only.&n;&t; * XXX - bug Linus to make i_size a __u64 instead of a __u32.&n;&t; */
+multiline_comment|/*&n;&t; * Linux i_size is 32 bits on most architectures,&n;&t; * so some files on a UFS filesystem may not&n;&t; * be readable.  I let people access the first 32 bits worth of them.&n;&t; * for the rw code, we may want to mark these inodes as read-only.&n;&t; * XXX - bug Linus to make i_size a __u64 instead of a __u32.&n;&t; */
 id|inode-&gt;u.ufs_i.i_size
 op_assign
-(paren
-(paren
-id|__u64
-)paren
-(paren
-id|ufs_swab32
+id|SWAB64
 c_func
 (paren
-id|ufsip-&gt;ui_size.val
-(braket
-l_int|0
-)braket
-)paren
-)paren
-op_lshift
-l_int|32
-)paren
-op_or
-(paren
-id|__u64
-)paren
-(paren
-id|ufs_swab32
-c_func
-(paren
-id|ufsip-&gt;ui_size.val
-(braket
-l_int|1
-)braket
-)paren
+id|ufsip-&gt;ui_size
 )paren
 suffix:semicolon
 multiline_comment|/* KRR - Just type cast inode-&gt;u.ufs_i.i_size into off_t and&n;&t; * worry about overflow later&n;         */
@@ -1078,15 +1067,27 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Linux doesn&squot;t keep tv_usec around in the kernel, so we discard it.&n;&t; * XXX - I&squot;m not sure what I should do about writing things.  I may&n;&t; * want to keep this data, but for the moment I think I&squot;ll just write&n;&t; * zeros for these fields when writing out inodes.&n;&t; */
 id|inode-&gt;i_atime
 op_assign
+id|SWAB32
+c_func
+(paren
 id|ufsip-&gt;ui_atime.tv_sec
+)paren
 suffix:semicolon
 id|inode-&gt;i_mtime
 op_assign
+id|SWAB32
+c_func
+(paren
 id|ufsip-&gt;ui_mtime.tv_sec
+)paren
 suffix:semicolon
 id|inode-&gt;i_ctime
 op_assign
+id|SWAB32
+c_func
+(paren
 id|ufsip-&gt;ui_ctime.tv_sec
+)paren
 suffix:semicolon
 id|inode-&gt;i_blksize
 op_assign
@@ -1094,7 +1095,7 @@ id|sb-&gt;u.ufs_sb.s_fsize
 suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_blocks
@@ -1291,7 +1292,7 @@ id|inode-&gt;u.ufs_i.i_data
 id|i
 )braket
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_db
@@ -1323,7 +1324,7 @@ op_plus
 id|i
 )braket
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_ib
@@ -1356,43 +1357,23 @@ op_assign
 (paren
 id|kdev_t
 )paren
-(paren
-(paren
-id|__u64
-)paren
-(paren
-id|ufs_swab32
+id|SWAB64
 c_func
 (paren
-id|ufsip-&gt;ui_db
-(braket
-l_int|0
-)braket
-)paren
-)paren
-op_lshift
-l_int|32
-)paren
-op_or
+op_star
 (paren
 id|__u64
+op_star
 )paren
-(paren
-id|ufs_swab32
-c_func
-(paren
+op_amp
 id|ufsip-&gt;ui_db
-(braket
-l_int|1
-)braket
-)paren
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* XXX - implement fast and slow symlinks */
 id|inode-&gt;u.ufs_i.i_flags
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_flags
@@ -1400,7 +1381,7 @@ id|ufsip-&gt;ui_flags
 suffix:semicolon
 id|inode-&gt;u.ufs_i.i_gen
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_gen
@@ -1409,7 +1390,7 @@ suffix:semicolon
 multiline_comment|/* XXX - is this i_version? */
 id|inode-&gt;u.ufs_i.i_shadow
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_shadow
@@ -1418,7 +1399,7 @@ suffix:semicolon
 multiline_comment|/* XXX */
 id|inode-&gt;u.ufs_i.i_uid
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_uid
@@ -1426,7 +1407,7 @@ id|ufsip-&gt;ui_uid
 suffix:semicolon
 id|inode-&gt;u.ufs_i.i_gid
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_gid
@@ -1434,7 +1415,7 @@ id|ufsip-&gt;ui_gid
 suffix:semicolon
 id|inode-&gt;u.ufs_i.i_oeftflag
 op_assign
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|ufsip-&gt;ui_oeftflag

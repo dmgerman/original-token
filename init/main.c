@@ -293,6 +293,20 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|console_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PRINTER
 r_extern
 r_void
@@ -1938,6 +1952,12 @@ comma
 l_string|&quot;panic=&quot;
 comma
 id|panic_setup
+)brace
+comma
+(brace
+l_string|&quot;console=&quot;
+comma
+id|console_setup
 )brace
 comma
 macro_line|#ifdef CONFIG_VT
@@ -4556,7 +4576,7 @@ r_void
 id|open
 c_func
 (paren
-l_string|&quot;/dev/tty1&quot;
+l_string|&quot;/dev/console&quot;
 comma
 id|O_RDWR
 comma
@@ -4885,7 +4905,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to open an initial console.&bslash;n&quot;
+l_string|&quot;Warning: unable to open an initial console.&bslash;n&quot;
 )paren
 suffix:semicolon
 (paren

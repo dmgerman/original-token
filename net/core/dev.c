@@ -3800,13 +3800,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;SIOCADDMULTI ioctl is deprecated&bslash;n&quot;
-)paren
-suffix:semicolon
 id|dev_mc_add
 c_func
 (paren
@@ -3842,13 +3835,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;SIOCDELMULTI ioctl is deprecated&bslash;n&quot;
-)paren
-suffix:semicolon
 id|dev_mc_delete
 c_func
 (paren

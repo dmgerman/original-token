@@ -423,10 +423,10 @@ id|bm-&gt;bm_bh-&gt;b_data
 l_int|0
 )braket
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 (paren
@@ -642,7 +642,7 @@ suffix:semicolon
 id|w
 op_assign
 op_complement
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|bm
@@ -817,7 +817,7 @@ op_assign
 op_complement
 id|w
 op_minus
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|bm
@@ -831,10 +831,10 @@ id|bm
 l_int|0
 )braket
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|bm
@@ -859,6 +859,10 @@ id|zone-&gt;z_bm-&gt;bm_bh
 comma
 l_int|1
 )paren
+suffix:semicolon
+id|sb-&gt;s_dirt
+op_assign
+l_int|1
 suffix:semicolon
 id|zone-&gt;z_lru_time
 op_assign
@@ -1031,17 +1035,6 @@ c_loop
 l_int|1
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|i
-op_ge
-id|sb-&gt;u.affs_sb.s_num_az
-)paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
 id|az
 op_assign
 op_amp
@@ -1110,6 +1103,17 @@ r_if
 c_cond
 (paren
 op_increment
+id|i
+op_ge
+id|sb-&gt;u.affs_sb.s_num_az
+)paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|i
 op_eq
 id|zone-&gt;z_az_no
@@ -1424,7 +1428,7 @@ id|inode-&gt;i_sb
 comma
 l_string|&quot;new_header&quot;
 comma
-l_string|&quot;Cannot read block %d&quot;
+l_string|&quot;Cannot get block %d&quot;
 comma
 id|block
 )paren
@@ -1813,7 +1817,7 @@ id|inode-&gt;i_sb
 comma
 l_string|&quot;new_data&quot;
 comma
-l_string|&quot;Cannot read block %d&quot;
+l_string|&quot;Cannot get block %d&quot;
 comma
 id|block
 )paren

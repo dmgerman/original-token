@@ -298,12 +298,60 @@ r_int
 id|arg
 )paren
 suffix:semicolon
-multiline_comment|/* The interface for /dev/console(s) and printk output */
+multiline_comment|/*&n; *&t;Array of consoles built from command line options (console=)&n; */
+DECL|struct|console_cmdline
+r_struct
+id|console_cmdline
+(brace
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* Name of the driver&t;    */
+DECL|member|index
+r_int
+id|index
+suffix:semicolon
+multiline_comment|/* Minor dev. to use&t;    */
+DECL|member|options
+r_char
+op_star
+id|options
+suffix:semicolon
+multiline_comment|/* Options for the driver   */
+)brace
+suffix:semicolon
+DECL|macro|MAX_CMDLINECONSOLES
+mdefine_line|#define MAX_CMDLINECONSOLES 8
+r_extern
+r_struct
+id|console_cmdline
+id|console_list
+(braket
+id|MAX_CMDLINECONSOLES
+)braket
+suffix:semicolon
+multiline_comment|/*&n; *&t;The interface for a console, or any other device that&n; *&t;wants to capture console messages (printer driver?)&n; */
+DECL|macro|CON_PRINTBUFFER
+mdefine_line|#define CON_PRINTBUFFER&t;(1)
+DECL|macro|CON_FIRST
+mdefine_line|#define CON_FIRST&t;(2)
+DECL|macro|CON_ENABLED
+mdefine_line|#define CON_ENABLED&t;(4)
 DECL|struct|console
 r_struct
 id|console
 (brace
-multiline_comment|/*&n;&t; * This function should not return before the string is written.&n;&t; */
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|8
+)braket
+suffix:semicolon
 DECL|member|write
 r_void
 (paren
@@ -311,6 +359,10 @@ op_star
 id|write
 )paren
 (paren
+r_struct
+id|console
+op_star
+comma
 r_const
 r_char
 op_star
@@ -318,7 +370,48 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* To unblank the console in case of panic */
+DECL|member|read
+r_int
+(paren
+op_star
+id|read
+)paren
+(paren
+r_struct
+id|console
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|device
+id|kdev_t
+(paren
+op_star
+id|device
+)paren
+(paren
+r_struct
+id|console
+op_star
+)paren
+suffix:semicolon
+DECL|member|wait_key
+r_int
+(paren
+op_star
+id|wait_key
+)paren
+(paren
+r_struct
+id|console
+op_star
+)paren
+suffix:semicolon
 DECL|member|unblank
 r_void
 (paren
@@ -329,29 +422,33 @@ id|unblank
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n;         * Only the console that was registered last with wait_key !=&n;&t; * NULL will be used. This blocks until there is a character&n;&t; * to give back, it does not schedule.&n;         */
-DECL|member|wait_key
+DECL|member|setup
 r_void
 (paren
 op_star
-id|wait_key
+id|setup
 )paren
 (paren
-r_void
+r_struct
+id|console
+op_star
+comma
+r_char
+op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Return the device to use when opening /dev/console. Only the&n;&t; * last registered console will do.&n;&t; */
-DECL|member|device
+DECL|member|flags
 r_int
-(paren
-op_star
-id|device
-)paren
-(paren
-r_void
-)paren
+id|flags
 suffix:semicolon
-multiline_comment|/* &n;&t; * For a linked list of consoles for multiple output. Any console&n;         * not at the head of the list is used only for output.&n;&t; */
+DECL|member|index
+r_int
+id|index
+suffix:semicolon
+DECL|member|cflag
+r_int
+id|cflag
+suffix:semicolon
 DECL|member|next
 r_struct
 id|console

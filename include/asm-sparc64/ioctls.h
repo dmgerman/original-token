@@ -132,6 +132,8 @@ DECL|macro|TIOCGPGRP
 mdefine_line|#define TIOCGPGRP&t;_IOR(&squot;t&squot;, 131, int)
 DECL|macro|TIOCSCTTY
 mdefine_line|#define TIOCSCTTY&t;_IO(&squot;t&squot;, 132)
+DECL|macro|TIOCGSID
+mdefine_line|#define TIOCGSID&t;_IOR(&squot;t&squot;, 133, int)
 multiline_comment|/* Little f */
 DECL|macro|FIOCLEX
 mdefine_line|#define FIOCLEX&t;&t;_IO(&squot;f&squot;, 1)

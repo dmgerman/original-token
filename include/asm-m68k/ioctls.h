@@ -85,6 +85,8 @@ DECL|macro|TIOCSBRK
 mdefine_line|#define TIOCSBRK&t;0x5427  /* BSD compatibility */
 DECL|macro|TIOCCBRK
 mdefine_line|#define TIOCCBRK&t;0x5428  /* BSD compatibility */
+DECL|macro|TIOCGSID
+mdefine_line|#define TIOCGSID&t;0x5429  /* Return the session ID of FD */
 DECL|macro|FIONCLEX
 mdefine_line|#define FIONCLEX&t;0x5450  /* these numbers need to be adjusted. */
 DECL|macro|FIOCLEX

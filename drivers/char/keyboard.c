@@ -71,12 +71,18 @@ id|keypress_wait
 op_assign
 l_int|NULL
 suffix:semicolon
+r_struct
+id|console
+suffix:semicolon
 DECL|function|keyboard_wait_for_keypress
-r_void
+r_int
 id|keyboard_wait_for_keypress
 c_func
 (paren
-r_void
+r_struct
+id|console
+op_star
+id|co
 )paren
 (brace
 id|sleep_on
@@ -85,6 +91,9 @@ c_func
 op_amp
 id|keypress_wait
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * global state includes the following, and various static variables&n; * in this module: prev_scancode, shift_state, diacr, npadch, dead_key_next.&n; * (last_console is now a global variable)&n; */

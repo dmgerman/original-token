@@ -35,6 +35,8 @@ DECL|macro|CONSOLE_DEV
 mdefine_line|#define CONSOLE_DEV MKDEV(TTY_MAJOR,0)
 DECL|macro|TTY_DEV
 mdefine_line|#define TTY_DEV MKDEV(TTYAUX_MAJOR,0)
+DECL|macro|SYSCONS_DEV
+mdefine_line|#define SYSCONS_DEV MKDEV(TTYAUX_MAJOR,1)
 DECL|macro|TTY_DEBUG_HANGUP
 macro_line|#undef TTY_DEBUG_HANGUP
 DECL|macro|TTY_PARANOIA_CHECK
@@ -1385,6 +1387,10 @@ c_cond
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 op_eq
 id|CONSOLE_DEV
+op_logical_or
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
+op_eq
+id|SYSCONS_DEV
 )paren
 r_continue
 suffix:semicolon
@@ -1948,20 +1954,6 @@ id|c
 op_assign
 id|console_drivers
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|c
-op_logical_and
-op_logical_neg
-id|c-&gt;wait_key
-)paren
-(brace
-id|c
-op_assign
-id|c-&gt;next
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1972,6 +1964,7 @@ op_member_access_from_pointer
 id|wait_key
 c_func
 (paren
+id|c
 )paren
 suffix:semicolon
 )brace
@@ -2563,6 +2556,7 @@ r_return
 op_minus
 id|ESPIPE
 suffix:semicolon
+multiline_comment|/*&n;&t; *      For now, we redirect writes from /dev/console as&n;&t; *      well as /dev/tty0.&n;&t; */
 id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
@@ -2570,6 +2564,10 @@ suffix:semicolon
 id|is_console
 op_assign
 (paren
+id|inode-&gt;i_rdev
+op_eq
+id|SYSCONS_DEV
+op_logical_or
 id|inode-&gt;i_rdev
 op_eq
 id|CONSOLE_DEV
@@ -4673,12 +4671,43 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t let /dev/tty block */
 multiline_comment|/* noctty = 1; */
 )brace
+macro_line|#ifdef CONFIG_VT
 r_if
 c_cond
 (paren
 id|device
 op_eq
 id|CONSOLE_DEV
+)paren
+(brace
+r_extern
+r_int
+id|fg_console
+suffix:semicolon
+id|device
+op_assign
+id|MKDEV
+c_func
+(paren
+id|TTY_MAJOR
+comma
+id|fg_console
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+id|noctty
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|device
+op_eq
+id|SYSCONS_DEV
 )paren
 (brace
 r_struct
@@ -4719,6 +4748,7 @@ op_member_access_from_pointer
 id|device
 c_func
 (paren
+id|c
 )paren
 suffix:semicolon
 id|noctty
@@ -5649,6 +5679,10 @@ c_cond
 id|tty-&gt;driver.type
 op_eq
 id|TTY_DRIVER_TYPE_CONSOLE
+op_logical_or
+id|tty-&gt;driver.type
+op_eq
+id|TTY_DRIVER_TYPE_SYSCONS
 )paren
 (brace
 r_if
@@ -6037,6 +6071,64 @@ id|pgrp
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|tiocgsid
+r_static
+r_int
+id|tiocgsid
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|tty_struct
+op_star
+id|real_tty
+comma
+id|pid_t
+op_star
+id|arg
+)paren
+(brace
+multiline_comment|/*&n;&t; * (tty == real_tty) is a cheap way of&n;&t; * testing if the tty is NOT a master pty.&n;&t;*/
+r_if
+c_cond
+(paren
+id|tty
+op_eq
+id|real_tty
+op_logical_and
+id|current-&gt;tty
+op_ne
+id|real_tty
+)paren
+r_return
+op_minus
+id|ENOTTY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|real_tty-&gt;session
+op_le
+l_int|0
+)paren
+r_return
+op_minus
+id|ENOTTY
+suffix:semicolon
+r_return
+id|put_user
+c_func
+(paren
+id|real_tty-&gt;session
+comma
+id|arg
+)paren
 suffix:semicolon
 )brace
 DECL|function|tiocttygstruct
@@ -6620,6 +6712,24 @@ id|TIOCSPGRP
 suffix:colon
 r_return
 id|tiocspgrp
+c_func
+(paren
+id|tty
+comma
+id|real_tty
+comma
+(paren
+id|pid_t
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+r_case
+id|TIOCGSID
+suffix:colon
+r_return
+id|tiocgsid
 c_func
 (paren
 id|tty
@@ -7865,6 +7975,16 @@ op_or
 id|IEXTEN
 suffix:semicolon
 multiline_comment|/*&n;&t; * set up the console device so that later boot sequences can &n;&t; * inform about problems etc..&n;&t; */
+macro_line|#ifdef CONFIG_VT
+id|kmem_start
+op_assign
+id|con_init
+c_func
+(paren
+id|kmem_start
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 id|kmem_start
 op_assign
@@ -7874,16 +7994,6 @@ c_func
 id|kmem_start
 comma
 id|kmem_end
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_VT
-id|kmem_start
-op_assign
-id|con_init
-c_func
-(paren
-id|kmem_start
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -7899,6 +8009,9 @@ id|tty_driver
 id|dev_tty_driver
 comma
 id|dev_console_driver
+comma
+DECL|variable|dev_syscons_driver
+id|dev_syscons_driver
 suffix:semicolon
 multiline_comment|/*&n; * Ok, now we can initialize the rest of the tty devices and can count&n; * on memory allocations, interrupts etc..&n; */
 DECL|function|__initfunc
@@ -8000,13 +8113,60 @@ c_func
 l_string|&quot;Couldn&squot;t register /dev/tty driver&bslash;n&quot;
 )paren
 suffix:semicolon
+id|dev_syscons_driver
+op_assign
+id|dev_tty_driver
+suffix:semicolon
+id|dev_syscons_driver.driver_name
+op_assign
+l_string|&quot;/dev/console&quot;
+suffix:semicolon
+id|dev_syscons_driver.name
+op_assign
+id|dev_syscons_driver.driver_name
+op_plus
+l_int|5
+suffix:semicolon
+id|dev_syscons_driver.major
+op_assign
+id|TTYAUX_MAJOR
+suffix:semicolon
+id|dev_syscons_driver.minor_start
+op_assign
+l_int|1
+suffix:semicolon
+id|dev_syscons_driver.type
+op_assign
+id|TTY_DRIVER_TYPE_SYSTEM
+suffix:semicolon
+id|dev_syscons_driver.subtype
+op_assign
+id|SYSTEM_TYPE_SYSCONS
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tty_register_driver
+c_func
+(paren
+op_amp
+id|dev_syscons_driver
+)paren
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Couldn&squot;t register /dev/console driver&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_VT
 id|dev_console_driver
 op_assign
 id|dev_tty_driver
 suffix:semicolon
 id|dev_console_driver.driver_name
 op_assign
-l_string|&quot;/dev/console&quot;
+l_string|&quot;/dev/tty0&quot;
 suffix:semicolon
 id|dev_console_driver.name
 op_assign
@@ -8039,10 +8199,9 @@ id|dev_console_driver
 id|panic
 c_func
 (paren
-l_string|&quot;Couldn&squot;t register /dev/console driver&bslash;n&quot;
+l_string|&quot;Couldn&squot;t register /dev/tty0 driver&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_VT
 id|kbd_init
 c_func
 (paren

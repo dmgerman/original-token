@@ -878,16 +878,7 @@ id|fn
 comma
 id|ide_hwif_t
 op_star
-id|hwifs
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|hwif-&gt;io_ports
-(braket
-id|IDE_DATA_OFFSET
-)braket
+id|hwif
 )paren
 (brace
 id|hwif-&gt;drives
@@ -913,6 +904,5 @@ op_assign
 op_amp
 id|opti621_tune_drive
 suffix:semicolon
-)brace
 )brace
 eof

@@ -1,4 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/affs/dir.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  affs directory handling functions&n; *&n; */
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG 0
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -31,18 +33,14 @@ c_func
 r_struct
 id|file
 op_star
-id|filp
 comma
 r_char
 op_star
-id|buf
 comma
 r_int
-id|count
 comma
 id|loff_t
 op_star
-id|ppos
 )paren
 suffix:semicolon
 DECL|variable|affs_dir_operations
@@ -126,6 +124,9 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
@@ -137,7 +138,16 @@ l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permissions */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+comma
+multiline_comment|/* updatepage */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 r_static
@@ -206,12 +216,9 @@ r_int
 id|ino
 suffix:semicolon
 r_int
-r_int
-id|old
-suffix:semicolon
-r_int
 id|stored
 suffix:semicolon
+r_int
 r_char
 op_star
 id|name
@@ -241,10 +248,14 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;AFFS: readdir(ino=%ld,f_pos=%lu)&bslash;n&quot;
+l_string|&quot;AFFS: readdir(ino=%lu,f_pos=%lu)&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
+(paren
+r_int
+r_int
+)paren
 id|filp-&gt;f_pos
 )paren
 suffix:semicolon
@@ -281,15 +292,9 @@ id|dir
 op_assign
 l_int|NULL
 suffix:semicolon
-id|old
+id|ino
 op_assign
-id|filp-&gt;f_pos
-op_amp
-l_int|0x80000000
-suffix:semicolon
-id|filp-&gt;f_pos
-op_and_assign
-l_int|0x7FFFFFFF
+id|inode-&gt;i_ino
 suffix:semicolon
 r_if
 c_cond
@@ -370,10 +375,6 @@ OL
 l_int|0
 )paren
 (brace
-id|filp-&gt;f_pos
-op_or_assign
-l_int|0x80000000
-suffix:semicolon
 r_return
 id|stored
 suffix:semicolon
@@ -386,35 +387,6 @@ id|stored
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/* Read original if this is a link */
-id|ino
-op_assign
-id|inode-&gt;u.affs_i.i_original
-ques
-c_cond
-id|inode-&gt;u.affs_i.i_original
-suffix:colon
-id|inode-&gt;i_ino
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|dir
-op_assign
-id|iget
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-id|ino
-)paren
-)paren
-)paren
-r_return
-id|stored
-suffix:semicolon
 id|chain_pos
 op_assign
 (paren
@@ -487,7 +459,7 @@ c_func
 (paren
 id|inode-&gt;i_dev
 comma
-id|ino
+id|inode-&gt;i_ino
 comma
 id|AFFS_I2BSIZE
 c_func
@@ -503,11 +475,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-op_logical_neg
-id|stored
-op_logical_or
-op_logical_neg
-id|old
+l_int|1
 )paren
 (brace
 r_while
@@ -550,12 +518,11 @@ c_func
 id|inode
 )paren
 )paren
-r_goto
-id|readdir_done
+r_break
 suffix:semicolon
 id|i
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 (paren
@@ -585,7 +552,7 @@ id|filp-&gt;private_data
 op_logical_and
 id|filp-&gt;f_version
 op_eq
-id|dir-&gt;i_version
+id|inode-&gt;i_version
 )paren
 (brace
 id|i
@@ -610,7 +577,7 @@ suffix:semicolon
 )brace
 id|filp-&gt;f_version
 op_assign
-id|dir-&gt;i_version
+id|inode-&gt;i_version
 suffix:semicolon
 id|pr_debug
 c_func
@@ -673,7 +640,7 @@ id|i
 suffix:semicolon
 id|i
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|FILE_END
@@ -736,7 +703,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;AFFS: readdir(): filldir(..,&bslash;&quot;%.*s&bslash;&quot;,ino=%lu), i=%d&bslash;n&quot;
+l_string|&quot;AFFS: readdir(): filldir(&bslash;&quot;%.*s&bslash;&quot;,ino=%lu), i=%d&bslash;n&quot;
 comma
 id|namelen
 comma
@@ -836,10 +803,6 @@ suffix:semicolon
 )brace
 id|readdir_done
 suffix:colon
-id|filp-&gt;f_pos
-op_or_assign
-id|old
-suffix:semicolon
 id|affs_brelse
 c_func
 (paren
@@ -850,12 +813,6 @@ id|affs_brelse
 c_func
 (paren
 id|fh_bh
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|dir
 )paren
 suffix:semicolon
 id|pr_debug

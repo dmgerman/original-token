@@ -17836,6 +17836,13 @@ comma
 l_string|&quot;fd&quot;
 )paren
 suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|fd_timeout
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV
@@ -17867,6 +17874,13 @@ c_func
 id|MAJOR_NR
 comma
 l_string|&quot;fd&quot;
+)paren
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|fd_timeout
 )paren
 suffix:semicolon
 r_return

@@ -112,7 +112,7 @@ op_star
 id|buf
 comma
 r_int
-id|count
+id|cnt
 comma
 id|loff_t
 op_star
@@ -181,7 +181,19 @@ id|affs_release_file
 comma
 multiline_comment|/* release */
 id|file_fsync
+comma
 multiline_comment|/* brute force, but works */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+l_int|NULL
+multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|affs_file_inode_operations
@@ -224,6 +236,9 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
 id|generic_readpage
 comma
 multiline_comment|/* readpage */
@@ -240,7 +255,13 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL
+comma
 multiline_comment|/* smap */
+l_int|NULL
+comma
+multiline_comment|/* updatepage */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|affs_file_operations_ofs
@@ -278,7 +299,19 @@ id|affs_release_file
 comma
 multiline_comment|/* release */
 id|file_fsync
+comma
 multiline_comment|/* brute force, but works */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+l_int|NULL
+multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|affs_file_inode_operations_ofs
@@ -323,6 +356,9 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
@@ -337,7 +373,13 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL
+comma
 multiline_comment|/* smap */
+l_int|NULL
+comma
+multiline_comment|/* updatepage */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|macro|AFFS_ISINDEX
@@ -1001,7 +1043,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Try to find the requested key in the cache.&n;&t; * In order to speed this up as much as possible,&n;&t; * the cache line lookup is done in a seperate&n;&t; * step.&n;&t; */
+multiline_comment|/* Try to find the requested key in the cache.&n;&t; * In order to speed this up as much as possible,&n;&t; * the cache line lookup is done in a separate&n;&t; * step.&n;&t; */
 r_for
 c_loop
 (paren
@@ -1268,7 +1310,7 @@ suffix:semicolon
 )brace
 id|nkey
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|FILE_END
@@ -1355,7 +1397,7 @@ id|kc-&gt;kc_keys
 id|i
 )braket
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|AFFS_BLOCK
@@ -1445,7 +1487,7 @@ id|nkey
 suffix:semicolon
 id|key
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|AFFS_BLOCK
@@ -1469,6 +1511,7 @@ r_return
 id|key
 suffix:semicolon
 )brace
+multiline_comment|/* With the affs, getting a random block from a file is not&n; * a simple business. Since this fs does not allow holes,&n; * it may be neccessary to allocate all the missing blocks&n; * inbetween, as well as some new extension blocks. The OFS&n; * is even worse: All data blocks contain pointers to the&n; * next ones, so you have to fix [n-1] after allocating [n].&n; * What a mess.&n; */
 r_static
 r_struct
 id|buffer_head
@@ -1613,6 +1656,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+multiline_comment|/* Loop over header block and extension blocks */
 id|bh
 op_assign
 id|affs_bread
@@ -1701,7 +1745,7 @@ suffix:semicolon
 )brace
 id|j
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 (paren
@@ -1763,7 +1807,7 @@ c_func
 (paren
 id|inode-&gt;i_dev
 comma
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|AFFS_BLOCK
@@ -1900,7 +1944,7 @@ comma
 id|j
 )paren
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|nkey
@@ -1981,7 +2025,7 @@ id|ebh
 op_member_access_from_pointer
 id|primary_type
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|T_DATA
@@ -1995,7 +2039,7 @@ id|ebh
 op_member_access_from_pointer
 id|header_key
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|inode-&gt;i_ino
@@ -2009,7 +2053,7 @@ id|ebh
 op_member_access_from_pointer
 id|sequence_number
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|inode-&gt;u.affs_i.i_lastblock
@@ -2031,7 +2075,7 @@ id|pbh
 op_member_access_from_pointer
 id|data_size
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|AFFS_I2BSIZE
@@ -2051,7 +2095,7 @@ id|pbh
 op_member_access_from_pointer
 id|next_data
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|nkey
@@ -2152,7 +2196,7 @@ id|bh-&gt;b_data
 op_member_access_from_pointer
 id|block_count
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|j
@@ -2235,7 +2279,7 @@ id|inode
 suffix:semicolon
 id|key
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|FILE_END
@@ -2327,7 +2371,7 @@ id|ebh-&gt;b_data
 op_member_access_from_pointer
 id|primary_type
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|T_LIST
@@ -2344,7 +2388,7 @@ id|ebh-&gt;b_data
 op_member_access_from_pointer
 id|own_key
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|key
@@ -2360,7 +2404,7 @@ id|inode
 op_member_access_from_pointer
 id|secondary_type
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|ST_FILE
@@ -2376,7 +2420,7 @@ id|inode
 op_member_access_from_pointer
 id|parent
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|inode-&gt;i_ino
@@ -2406,7 +2450,7 @@ id|inode
 op_member_access_from_pointer
 id|extension
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|key
@@ -2505,7 +2549,7 @@ id|ext
 suffix:semicolon
 id|kc-&gt;kc_next_key
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|FILE_END
@@ -2521,7 +2565,7 @@ id|extension
 suffix:semicolon
 id|key
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|AFFS_BLOCK
@@ -2629,6 +2673,7 @@ comma
 id|inode-&gt;i_ino
 comma
 (paren
+r_int
 r_int
 )paren
 op_star
@@ -2916,16 +2961,10 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|ino
-suffix:semicolon
 r_char
 op_star
 id|p
 suffix:semicolon
-multiline_comment|/* Not that I wanted to be POSIX compliant ... */
 r_if
 c_cond
 (paren
@@ -2952,10 +2991,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-id|ino
-op_assign
-l_int|NULL
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2981,53 +3016,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;u.affs_i.i_original
-)paren
-(brace
-id|ino
-op_assign
-id|iget
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-id|inode-&gt;u.affs_i.i_original
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ino
-)paren
-(brace
-id|affs_error
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-l_string|&quot;file_write&quot;
-comma
-l_string|&quot;Could not follow link from inode %lu to %d&quot;
-comma
-id|inode-&gt;i_ino
-comma
-id|inode-&gt;u.affs_i.i_original
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|inode
-op_assign
-id|ino
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 op_logical_neg
 id|S_ISREG
 c_func
@@ -3046,12 +3034,6 @@ comma
 l_string|&quot;Trying to write to non-regular file (mode=%07o)&quot;
 comma
 id|inode-&gt;i_mode
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|inode
 )paren
 suffix:semicolon
 r_return
@@ -3076,12 +3058,6 @@ id|inode
 )paren
 )paren
 (brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -3259,6 +3235,8 @@ id|blocksize
 op_plus
 id|bh-&gt;b_data
 suffix:semicolon
+id|c
+op_sub_assign
 id|copy_from_user
 c_func
 (paren
@@ -3269,6 +3247,33 @@ comma
 id|c
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|c
+)paren
+(brace
+id|affs_brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|written
+)paren
+id|written
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|update_vm_cache
 c_func
 (paren
@@ -3344,12 +3349,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|iput
-c_func
-(paren
-id|ino
-)paren
-suffix:semicolon
 r_return
 id|written
 suffix:semicolon
@@ -3401,11 +3400,6 @@ r_struct
 id|buffer_head
 op_star
 id|bh
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|ino
 suffix:semicolon
 r_char
 op_star
@@ -3459,57 +3453,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|ino
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode-&gt;u.affs_i.i_original
-)paren
-(brace
-id|ino
-op_assign
-id|iget
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-id|inode-&gt;u.affs_i.i_original
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ino
-)paren
-(brace
-id|affs_error
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-l_string|&quot;file_write_ofs&quot;
-comma
-l_string|&quot;Could not follow link from inode %lu to %d&quot;
-comma
-id|inode-&gt;i_ino
-comma
-id|inode-&gt;u.affs_i.i_original
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|inode
-op_assign
-id|ino
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3533,16 +3476,33 @@ comma
 id|inode-&gt;i_mode
 )paren
 suffix:semicolon
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode-&gt;u.affs_i.i_ec
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|alloc_ext_cache
+c_func
+(paren
+id|inode
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -3721,6 +3681,8 @@ id|bh-&gt;b_data
 op_plus
 l_int|24
 suffix:semicolon
+id|c
+op_sub_assign
 id|copy_from_user
 c_func
 (paren
@@ -3731,6 +3693,33 @@ comma
 id|c
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|c
+)paren
+(brace
+id|affs_brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|written
+)paren
+id|written
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|update_vm_cache
 c_func
 (paren
@@ -3763,10 +3752,10 @@ id|bh
 op_member_access_from_pointer
 id|data_size
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|DATA_FRONT
@@ -3846,12 +3835,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|iput
-c_func
-(paren
-id|ino
-)paren
-suffix:semicolon
 r_return
 id|written
 suffix:semicolon
@@ -3876,11 +3859,6 @@ r_struct
 id|buffer_head
 op_star
 id|ebh
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|ino
 suffix:semicolon
 r_struct
 id|affs_zone
@@ -3930,55 +3908,6 @@ comma
 id|inode-&gt;i_size
 )paren
 suffix:semicolon
-id|ino
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode-&gt;u.affs_i.i_original
-)paren
-(brace
-id|ino
-op_assign
-id|iget
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-id|inode-&gt;u.affs_i.i_original
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ino
-)paren
-(brace
-id|affs_error
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-l_string|&quot;truncate&quot;
-comma
-l_string|&quot;Cannot follow link from %lu to %d&quot;
-comma
-id|inode-&gt;i_ino
-comma
-id|inode-&gt;u.affs_i.i_original
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|inode
-op_assign
-id|ino
-suffix:semicolon
-)brace
 id|blocksize
 op_assign
 id|AFFS_I2BSIZE
@@ -4022,6 +3951,28 @@ op_minus
 l_int|1
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode-&gt;u.affs_i.i_ec
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|alloc_ext_cache
+c_func
+(paren
+id|inode
+)paren
+)paren
+(brace
+multiline_comment|/* Fine! No way to indicate an error. What can we do? */
+r_return
+suffix:semicolon
+)brace
+)brace
 id|bh
 op_assign
 id|affs_getblock
@@ -4152,7 +4103,7 @@ id|bh
 op_member_access_from_pointer
 id|data_size
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|rem
@@ -4190,12 +4141,6 @@ id|affs_brelse
 c_func
 (paren
 id|bh
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|ino
 )paren
 suffix:semicolon
 r_return
@@ -4255,7 +4200,7 @@ suffix:semicolon
 )brace
 id|ptype
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 (paren
@@ -4272,7 +4217,7 @@ id|primary_type
 suffix:semicolon
 id|stype
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|FILE_END
@@ -4415,7 +4360,7 @@ id|block
 suffix:semicolon
 id|key
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 op_star
@@ -4478,7 +4423,7 @@ id|extension
 suffix:semicolon
 id|key
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 op_star
@@ -4508,7 +4453,7 @@ id|bh-&gt;b_data
 op_member_access_from_pointer
 id|block_count
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|first
@@ -4539,7 +4484,7 @@ l_int|0
 (brace
 id|block
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|AFFS_BLOCK
@@ -4609,7 +4554,7 @@ id|blocksize
 suffix:semicolon
 id|rem
 op_assign
-id|ntohl
+id|cpu_to_be32
 c_func
 (paren
 id|rem
@@ -4810,12 +4755,6 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-id|iput
-c_func
-(paren
-id|ino
-)paren
-suffix:semicolon
 )brace
 r_static
 r_int
@@ -4944,6 +4883,14 @@ id|key
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|pr_debug
+c_func
+(paren
+l_string|&quot;AFFS: alloc_ext_cache(ino=%lu)&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+)paren
 suffix:semicolon
 id|lock_super
 c_func

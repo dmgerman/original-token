@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_dir.c,v 1.10 1997/06/05 01:29:06 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/ufs_fs.h&gt;
+macro_line|#include &quot;ufs_swab.h&quot;
 multiline_comment|/*&n; * This is blatantly stolen from ext2fs&n; */
 r_static
 r_int
@@ -60,6 +60,15 @@ id|super_block
 op_star
 id|sb
 suffix:semicolon
+r_int
+id|de_reclen
+suffix:semicolon
+id|__u32
+id|s_flags
+comma
+id|bytesex
+suffix:semicolon
+multiline_comment|/* Isn&squot;t that already done but the upper layer??? */
 r_if
 c_cond
 (paren
@@ -81,10 +90,20 @@ id|sb
 op_assign
 id|inode-&gt;i_sb
 suffix:semicolon
+id|s_flags
+op_assign
+id|sb-&gt;u.ufs_sb.s_flags
+suffix:semicolon
+id|bytesex
+op_assign
+id|s_flags
+op_amp
+id|UFS_BYTESEX
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|s_flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -183,7 +202,8 @@ multiline_comment|/* XXX - error - skip to the next block */
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_readdir: dir inode %lu has a hole at offset %lu&bslash;n&quot;
+l_string|&quot;ufs_readdir: &quot;
+l_string|&quot;dir inode %lu has a hole at offset %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -246,14 +266,18 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* It&squot;s too expensive to do a full&n;&t;&t;&t;&t; * dirent test each time round this&n;&t;&t;&t;&t; * loop, but we do have to test at&n;&t;&t;&t;&t; * least that it is non-zero.  A&n;&t;&t;&t;&t; * failure will be detected in the&n;&t;&t;&t;&t; * dirent test below. */
-r_if
-c_cond
-(paren
-id|ufs_swab16
+id|de_reclen
+op_assign
+id|SWAB16
 c_func
 (paren
 id|de-&gt;d_reclen
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|de_reclen
 OL
 l_int|1
 )paren
@@ -261,11 +285,7 @@ r_break
 suffix:semicolon
 id|i
 op_add_assign
-id|ufs_swab16
-c_func
-(paren
-id|de-&gt;d_reclen
-)paren
+id|de_reclen
 suffix:semicolon
 )brace
 id|offset
@@ -325,26 +345,19 @@ r_if
 c_cond
 (paren
 (paren
-id|ufs_swab16
-c_func
-(paren
 id|de-&gt;d_reclen
-)paren
 op_eq
 l_int|0
 )paren
 op_logical_or
 (paren
-id|ufs_swab16
-c_func
-(paren
 id|de-&gt;d_namlen
-)paren
 op_eq
 l_int|0
 )paren
 )paren
 (brace
+multiline_comment|/* SWAB16() was unneeded -- compare to 0 */
 id|filp-&gt;f_pos
 op_assign
 (paren
@@ -382,6 +395,7 @@ id|inode
 comma
 id|de
 comma
+multiline_comment|/* XXX - beware about de having to be swabped somehow */
 id|bh
 comma
 id|offset
@@ -415,7 +429,7 @@ suffix:semicolon
 macro_line|#endif /* XXX */
 id|offset
 op_add_assign
-id|ufs_swab16
+id|SWAB16
 c_func
 (paren
 id|de-&gt;d_reclen
@@ -424,13 +438,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ufs_swab32
-c_func
-(paren
 id|de-&gt;d_ino
 )paren
-)paren
 (brace
+multiline_comment|/* SWAB16() was unneeded -- compare to 0 */
 multiline_comment|/* We might block in the next section&n;&t;&t;&t;&t; * if the data destination is&n;&t;&t;&t;&t; * currently swapped out.  So, use a&n;&t;&t;&t;&t; * version stamp to detect whether or&n;&t;&t;&t;&t; * not the directory has been modified&n;&t;&t;&t;&t; * during the copy operation. */
 r_int
 r_int
@@ -441,7 +452,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|s_flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -453,7 +464,7 @@ l_string|&quot;ufs_readdir: filldir(%s,%u)&bslash;n&quot;
 comma
 id|de-&gt;d_name
 comma
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|de-&gt;d_ino
@@ -470,7 +481,7 @@ id|dirent
 comma
 id|de-&gt;d_name
 comma
-id|ufs_swab16
+id|SWAB16
 c_func
 (paren
 id|de-&gt;d_namlen
@@ -478,7 +489,7 @@ id|de-&gt;d_namlen
 comma
 id|filp-&gt;f_pos
 comma
-id|ufs_swab32
+id|SWAB32
 c_func
 (paren
 id|de-&gt;d_ino
@@ -508,7 +519,7 @@ suffix:semicolon
 )brace
 id|filp-&gt;f_pos
 op_add_assign
-id|ufs_swab16
+id|SWAB16
 c_func
 (paren
 id|de-&gt;d_reclen
@@ -572,7 +583,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* poll */
+multiline_comment|/* select */
 l_int|NULL
 comma
 multiline_comment|/* ioctl */

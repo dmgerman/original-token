@@ -228,6 +228,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|NCR
+comma
+id|NCR_53C876
+comma
+l_string|&quot;53c876&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|ATI
 comma
 id|ATI_68800
@@ -253,6 +263,16 @@ comma
 id|ATI_210888CX
 comma
 l_string|&quot;210888CX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
+id|ATI_215GB
+comma
+l_string|&quot;Mach64 GB&quot;
 )paren
 comma
 id|DEVICE
@@ -350,9 +370,29 @@ c_func
 (paren
 id|VLSI
 comma
+id|VLSI_82C541
+comma
+l_string|&quot;82C541 Lynx&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VLSI
+comma
+id|VLSI_82C543
+comma
+l_string|&quot;82C543 Lynx ISA&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VLSI
+comma
 id|VLSI_VAS96011
 comma
-l_string|&quot;VAS96011 PowerPC&quot;
+l_string|&quot;VAS96011 (Golden Gate II)&quot;
 )paren
 comma
 id|DEVICE
@@ -712,6 +752,16 @@ c_func
 (paren
 id|IBM
 comma
+id|IBM_TR
+comma
+l_string|&quot;Token Ring&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|IBM
+comma
 id|IBM_82G2675
 comma
 l_string|&quot;82G2675&quot;
@@ -785,6 +835,16 @@ comma
 id|TRIDENT_9660
 comma
 l_string|&quot;TG 9660&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
+id|TRIDENT_9750
+comma
+l_string|&quot;Image 975&quot;
 )paren
 comma
 id|DEVICE
@@ -895,6 +955,16 @@ comma
 id|MIRO_36050
 comma
 l_string|&quot;ZR36050&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|NEC
+comma
+id|NEC_PCX2
+comma
+l_string|&quot;PowerVR PCX2&quot;
 )paren
 comma
 id|DEVICE
@@ -1022,6 +1092,16 @@ c_func
 (paren
 id|SI
 comma
+id|SI_5597
+comma
+l_string|&quot;5597&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
 id|SI_7001
 comma
 l_string|&quot;7001&quot;
@@ -1122,6 +1202,36 @@ c_func
 (paren
 id|OPTI
 comma
+id|OPTI_82C700
+comma
+l_string|&quot;82C700&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|OPTI
+comma
+id|OPTI_82C701
+comma
+l_string|&quot;82C701 FireStar Plus&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|OPTI
+comma
+id|OPTI_82C814
+comma
+l_string|&quot;82C814 Firebridge 1&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|OPTI
+comma
 id|OPTI_82C822
 comma
 l_string|&quot;82C822&quot;
@@ -1175,6 +1285,26 @@ comma
 id|BUSLOGIC_FLASHPOINT
 comma
 l_string|&quot;FlashPoint&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|TI
+comma
+id|TI_TVP4010
+comma
+l_string|&quot;TVP4010 Permedia&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|TI
+comma
+id|TI_TVP4020
+comma
+l_string|&quot;TVP4020 Permedia 2&quot;
 )paren
 comma
 id|DEVICE
@@ -1940,6 +2070,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|SURECOM
+comma
+id|SURECOM_NE34
+comma
+l_string|&quot;NE-34PCI LAN&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|NEOMAGIC
 comma
 id|NEOMAGIC_MAGICGRAPH_NM2070
@@ -1965,6 +2105,16 @@ comma
 id|NEOMAGIC_MAGICGRAPH_128ZV
 comma
 l_string|&quot;MagicGraph 128ZV&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|NEOMAGIC
+comma
+id|NEOMAGIC_MAGICGRAPH_NM2160
+comma
+l_string|&quot;MagicGraph NM2160&quot;
 )paren
 comma
 id|DEVICE
@@ -2660,6 +2810,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|ALLIANCE
+comma
+id|ALLIANCE_AT3D
+comma
+l_string|&quot;AT3D&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|VMIC
 comma
 id|VMIC_VME
@@ -2750,6 +2910,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|LITEON
+comma
+id|LITEON_LNE100TX
+comma
+l_string|&quot;LNE100TX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|NP
 comma
 id|NP_PCI_FDDI
@@ -2775,6 +2945,16 @@ comma
 id|SPECIALIX_RIO
 comma
 l_string|&quot;RIO host&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AURAVISION
+comma
+id|AURAVISION_VXP524
+comma
+l_string|&quot;VXP524&quot;
 )paren
 comma
 id|DEVICE
@@ -3012,9 +3192,9 @@ comma
 id|DEVICE
 c_func
 (paren
-id|NVIDIA
+id|NVIDIA_SGS
 comma
-id|NVIDIA_RIVA128
+id|NVIDIA_SGS_RIVA128
 comma
 l_string|&quot;Riva 128&quot;
 )paren
@@ -3566,6 +3746,26 @@ c_func
 (paren
 id|INTEL
 comma
+id|INTEL_82443LX_0
+comma
+l_string|&quot;440LX - 82443LX PAC Host&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_82443LX_1
+comma
+l_string|&quot;440LX - 82443LX PAC AGP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
 id|INTEL_P6
 comma
 l_string|&quot;Orion P6&quot;
@@ -3609,6 +3809,16 @@ comma
 id|ADAPTEC_7855
 comma
 l_string|&quot;AIC-7855&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ADAPTEC
+comma
+id|ADAPTEC_5800
+comma
+l_string|&quot;AIC-5800&quot;
 )paren
 comma
 id|DEVICE
@@ -3679,6 +3889,16 @@ comma
 id|ADAPTEC_7874
 comma
 l_string|&quot;AIC-7874&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ADAPTEC
+comma
+id|ADAPTEC_7895
+comma
+l_string|&quot;AIC-7895U&quot;
 )paren
 comma
 id|DEVICE
@@ -4563,7 +4783,7 @@ r_case
 id|PCI_VENDOR_ID_ADL
 suffix:colon
 r_return
-l_string|&quot;Advance Logic&quot;
+l_string|&quot;Avance Logic&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_NS
@@ -4866,6 +5086,12 @@ r_return
 l_string|&quot;Mitsubishi&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_SURECOM
+suffix:colon
+r_return
+l_string|&quot;Surecom&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_NEOMAGIC
 suffix:colon
 r_return
@@ -4882,6 +5108,12 @@ id|PCI_VENDOR_ID_CERN
 suffix:colon
 r_return
 l_string|&quot;CERN&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_NVIDIA
+suffix:colon
+r_return
+l_string|&quot;NVidia&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_IMS
@@ -5028,6 +5260,12 @@ r_return
 l_string|&quot;Omega Micro&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_LITEON
+suffix:colon
+r_return
+l_string|&quot;LiteOn&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_NP
 suffix:colon
 r_return
@@ -5038,6 +5276,12 @@ id|PCI_VENDOR_ID_SPECIALIX
 suffix:colon
 r_return
 l_string|&quot;Specialix&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_AURAVISION
+suffix:colon
+r_return
+l_string|&quot;Auravision&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_IKON
@@ -5100,7 +5344,7 @@ r_return
 l_string|&quot;Picture Elements&quot;
 suffix:semicolon
 r_case
-id|PCI_VENDOR_ID_NVIDIA
+id|PCI_VENDOR_ID_NVIDIA_SGS
 suffix:colon
 r_return
 l_string|&quot;NVidia/SGS Thomson&quot;

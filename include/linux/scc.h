@@ -2,6 +2,7 @@ multiline_comment|/* $Id: scc.h,v 1.29 1997/04/02 14:56:45 jreuter Exp jreuter $
 macro_line|#ifndef&t;_SCC_H
 DECL|macro|_SCC_H
 mdefine_line|#define&t;_SCC_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* selection of hardware types */
 DECL|macro|PA0HZP
 mdefine_line|#define PA0HZP&t;&t;0x00&t;/* hardware type for PA0HZP SCC card and compatible */

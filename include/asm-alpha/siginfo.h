@@ -249,8 +249,8 @@ mdefine_line|#define NSIGFPE&t;&t;8
 multiline_comment|/*&n; * SIGSEGV si_codes&n; */
 DECL|macro|SEGV_MAPERR
 mdefine_line|#define SEGV_MAPERR&t;1&t;/* address not mapped to object */
-DECL|macro|SRGV_ACCERR
-mdefine_line|#define SRGV_ACCERR&t;2&t;/* invalid permissions for mapped object */
+DECL|macro|SEGV_ACCERR
+mdefine_line|#define SEGV_ACCERR&t;2&t;/* invalid permissions for mapped object */
 DECL|macro|NSIGSEGV
 mdefine_line|#define NSIGSEGV&t;2
 multiline_comment|/*&n; * SIGBUS si_codes&n; */

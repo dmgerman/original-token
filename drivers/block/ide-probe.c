@@ -328,6 +328,19 @@ c_func
 (paren
 id|id-&gt;model
 comma
+l_string|&quot;CD-ROM&quot;
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strstr
+c_func
+(paren
+id|id-&gt;model
+comma
 l_string|&quot;oppy&quot;
 )paren
 op_logical_and
@@ -370,6 +383,7 @@ l_string|&quot;FLOPPY&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 id|type
 op_assign

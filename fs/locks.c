@@ -1326,7 +1326,7 @@ op_logical_neg
 (paren
 id|filp-&gt;f_mode
 op_amp
-l_int|1
+id|FMODE_READ
 )paren
 )paren
 r_return
@@ -1347,7 +1347,7 @@ op_logical_neg
 (paren
 id|filp-&gt;f_mode
 op_amp
-l_int|2
+id|FMODE_WRITE
 )paren
 )paren
 r_return

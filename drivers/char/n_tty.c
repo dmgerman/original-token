@@ -19,6 +19,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|CONSOLE_DEV
 mdefine_line|#define CONSOLE_DEV MKDEV(TTY_MAJOR,0)
+DECL|macro|SYSCONS_DEV
+mdefine_line|#define SYSCONS_DEV  MKDEV(TTYAUX_MAJOR,1)
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
@@ -4331,6 +4333,10 @@ id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 op_ne
 id|CONSOLE_DEV
 op_logical_and
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
+op_ne
+id|SYSCONS_DEV
+op_logical_and
 id|current-&gt;tty
 op_eq
 id|tty
@@ -5150,6 +5156,10 @@ op_logical_and
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 op_ne
 id|CONSOLE_DEV
+op_logical_and
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
+op_ne
+id|SYSCONS_DEV
 )paren
 (brace
 id|retval

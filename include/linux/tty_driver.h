@@ -501,11 +501,15 @@ DECL|macro|TTY_DRIVER_TYPE_PTY
 mdefine_line|#define TTY_DRIVER_TYPE_PTY&t;&t;0x0004
 DECL|macro|TTY_DRIVER_TYPE_SCC
 mdefine_line|#define TTY_DRIVER_TYPE_SCC&t;&t;0x0005&t;/* scc driver */
+DECL|macro|TTY_DRIVER_TYPE_SYSCONS
+mdefine_line|#define TTY_DRIVER_TYPE_SYSCONS&t;&t;0x0006
 multiline_comment|/* system subtypes (magic, used by tty_io.c) */
 DECL|macro|SYSTEM_TYPE_TTY
 mdefine_line|#define SYSTEM_TYPE_TTY&t;&t;&t;0x0001
 DECL|macro|SYSTEM_TYPE_CONSOLE
 mdefine_line|#define SYSTEM_TYPE_CONSOLE&t;&t;0x0002
+DECL|macro|SYSTEM_TYPE_SYSCONS
+mdefine_line|#define SYSTEM_TYPE_SYSCONS&t;&t;0x0003
 multiline_comment|/* pty subtypes (magic, used by tty_io.c) */
 DECL|macro|PTY_TYPE_MASTER
 mdefine_line|#define PTY_TYPE_MASTER&t;&t;&t;0x0001

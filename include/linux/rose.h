@@ -2,8 +2,6 @@ multiline_comment|/*&n; * These are the public elements of the Linux kernel Rose
 macro_line|#ifndef&t;ROSE_KERNEL_H
 DECL|macro|ROSE_KERNEL_H
 mdefine_line|#define&t;ROSE_KERNEL_H
-DECL|macro|PF_ROSE
-mdefine_line|#define PF_ROSE&t;&t;AF_ROSE
 DECL|macro|ROSE_MTU
 mdefine_line|#define ROSE_MTU&t;251
 DECL|macro|ROSE_DEFER

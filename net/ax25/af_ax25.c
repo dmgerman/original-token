@@ -3299,6 +3299,12 @@ c_func
 id|sk-&gt;protinfo.ax25
 )paren
 suffix:semicolon
+id|ax25_stop_idletimer
+c_func
+(paren
+id|sk-&gt;protinfo.ax25
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif

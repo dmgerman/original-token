@@ -236,6 +236,14 @@ c_func
 id|ax25o
 )paren
 suffix:semicolon
+multiline_comment|/* do not start T3 for listening sockets (tnx DD8NE) */
+r_if
+c_cond
+(paren
+id|ax25o-&gt;state
+op_ne
+id|AX25_STATE_0
+)paren
 id|ax25_start_t3timer
 c_func
 (paren
@@ -577,16 +585,16 @@ op_star
 id|ax25
 )paren
 (brace
+id|ax25-&gt;condition
+op_and_assign
+op_complement
+id|AX25_COND_DAMA_MODE
+suffix:semicolon
 id|ax25_dev_dama_off
 c_func
 (paren
 id|ax25-&gt;ax25_dev
 )paren
-suffix:semicolon
-id|ax25-&gt;condition
-op_and_assign
-op_complement
-id|AX25_COND_DAMA_MODE
 suffix:semicolon
 )brace
 macro_line|#endif

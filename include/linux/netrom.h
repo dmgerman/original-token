@@ -2,8 +2,6 @@ multiline_comment|/*&n; * These are the public elements of the Linux kernel NET/
 macro_line|#ifndef&t;NETROM_KERNEL_H
 DECL|macro|NETROM_KERNEL_H
 mdefine_line|#define&t;NETROM_KERNEL_H
-DECL|macro|PF_NETROM
-mdefine_line|#define PF_NETROM&t;AF_NETROM
 DECL|macro|NETROM_MTU
 mdefine_line|#define NETROM_MTU&t;236
 DECL|macro|NETROM_T1

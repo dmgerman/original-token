@@ -2,6 +2,7 @@ multiline_comment|/*&n; *      specialix.c  -- specialix IO8+ multiport serial d
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;1.8&quot;
 multiline_comment|/*&n; * There is a bunch of documentation about the card, jumpers, config&n; * settings, restrictions, cables, device names and numbers in&n; * ../../Documentation/specialix.txt &n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -5727,10 +5728,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
 )paren
 (brace
 id|retval

@@ -548,6 +548,14 @@ id|second_hwif-&gt;chipset
 op_assign
 id|ide_pdc4030
 suffix:semicolon
+id|hwif-&gt;mate
+op_assign
+id|second_hwif
+suffix:semicolon
+id|second_hwif-&gt;mate
+op_assign
+id|hwif
+suffix:semicolon
 id|hwif-&gt;selectproc
 op_assign
 id|second_hwif-&gt;selectproc

@@ -22,7 +22,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* poll */
+multiline_comment|/* select */
 l_int|NULL
 comma
 multiline_comment|/* ioctl */

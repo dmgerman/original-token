@@ -2793,6 +2793,14 @@ id|cmd_hwif1-&gt;chipset
 op_assign
 id|ide_cmd640
 suffix:semicolon
+id|cmd_hwif0-&gt;mate
+op_assign
+id|cmd_hwif1
+suffix:semicolon
+id|cmd_hwif1-&gt;mate
+op_assign
+id|cmd_hwif0
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_CMD640_ENHANCED
 id|cmd_hwif1-&gt;tuneproc
 op_assign

@@ -195,7 +195,7 @@ DECL|macro|WAIT_CMD
 mdefine_line|#define WAIT_CMD&t;(10*HZ)&t;/* 10sec  - maximum wait for an IRQ to happen */
 DECL|macro|WAIT_MIN_SLEEP
 mdefine_line|#define WAIT_MIN_SLEEP&t;(2*HZ/100)&t;/* 20msec - minimum sleep time */
-macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PDC4030)
+macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PDC4030) || defined(CONFIG_BLK_DEV_TRM290)
 DECL|macro|SELECT_DRIVE
 mdefine_line|#define SELECT_DRIVE(hwif,drive)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;selectproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;selectproc(drive);&t;&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]); &bslash;&n;}
 macro_line|#else
@@ -686,7 +686,7 @@ comma
 id|byte
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is used to provide HT6560B &amp; PDC4030 interface support.&n; */
+multiline_comment|/*&n; * This is used to provide HT6560B &amp; PDC4030 &amp; TRM290 interface support.&n; */
 DECL|typedef|ide_selectproc_t
 r_typedef
 r_void
@@ -731,9 +731,15 @@ id|ide_ht6560b
 comma
 DECL|enumerator|ide_pdc4030
 DECL|enumerator|ide_rz1000
+DECL|enumerator|ide_trm290
 id|ide_pdc4030
 comma
 id|ide_rz1000
+comma
+id|ide_trm290
+comma
+DECL|enumerator|ide_4drives
+id|ide_4drives
 )brace
 DECL|typedef|hwif_chipset_t
 id|hwif_chipset_t
@@ -785,7 +791,7 @@ op_star
 id|tuneproc
 suffix:semicolon
 multiline_comment|/* routine to tune PIO mode for drives */
-macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PDC4030)
+macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PDC4030) || defined(CONFIG_BLK_DEV_TRM290)
 DECL|member|selectproc
 id|ide_selectproc_t
 op_star
@@ -806,6 +812,13 @@ op_star
 id|dmatable
 suffix:semicolon
 multiline_comment|/* dma physical region descriptor table */
+DECL|member|mate
+r_struct
+id|hwif_s
+op_star
+id|mate
+suffix:semicolon
+multiline_comment|/* other hwif from same PCI chip */
 DECL|member|dma_base
 r_int
 r_int
@@ -884,6 +897,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reset after probe */
+DECL|member|pci_port
+r_int
+id|pci_port
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* for dual-port chips: 0=primary, 1=secondary */
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
 DECL|member|last_time
 r_int
@@ -1733,6 +1753,43 @@ op_star
 id|drive
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
+r_int
+id|ide_build_dmatable
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+r_int
+id|ide_dmaproc
+(paren
+id|ide_dma_action_t
+id|func
+comma
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+r_void
+id|ide_setup_dma
+(paren
+id|ide_hwif_t
+op_star
+id|hwif
+comma
+r_int
+r_int
+id|dmabase
+comma
+r_int
+r_int
+id|num_ports
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_int
 id|ideprobe_init

@@ -1,7 +1,11 @@
-multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_fs.h,v 1.8 1997/07/17 02:17:54 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;rideau@ens.fr&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; */
 macro_line|#ifndef __LINUX_UFS_FS_H
 DECL|macro|__LINUX_UFS_FS_H
 mdefine_line|#define __LINUX_UFS_FS_H
+DECL|macro|UFS_HEAVY_DEBUG
+macro_line|#undef UFS_HEAVY_DEBUG
+multiline_comment|/*#define UFS_HEAVY_DEBUG 1*/
+multiline_comment|/* Uncomment the line above when hacking ufs code */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
@@ -16,6 +20,8 @@ DECL|macro|UFS_SBSIZE
 mdefine_line|#define UFS_SBSIZE 8192
 DECL|macro|UFS_MAGIC
 mdefine_line|#define UFS_MAGIC 0x00011954
+DECL|macro|UFS_CIGAM
+mdefine_line|#define UFS_CIGAM 0x54190100 /* byteswapped MAGIC */
 DECL|macro|UFS_FSIZE
 mdefine_line|#define UFS_FSIZE 1024
 DECL|macro|UFS_BSIZE
@@ -53,6 +59,20 @@ DECL|macro|UFS_DEBUG_NAMEI
 mdefine_line|#define UFS_DEBUG_NAMEI 0x00000004
 DECL|macro|UFS_DEBUG_LINKS
 mdefine_line|#define UFS_DEBUG_LINKS 0x00000008
+macro_line|#ifdef UFS_HEAVY_DEBUG
+DECL|macro|UFS_DEBUG_INITIAL
+macro_line|#  define UFS_DEBUG_INITIAL UFS_DEBUG
+macro_line|#else
+DECL|macro|UFS_DEBUG_INITIAL
+macro_line|#  define UFS_DEBUG_INITIAL 0
+macro_line|#endif
+multiline_comment|/* (!) HERE WE ASSUME EITHER BIG OR LITTLE ENDIAN UFSes */
+DECL|macro|UFS_LITTLE_ENDIAN
+mdefine_line|#define UFS_LITTLE_ENDIAN 0x00000000&t;/* 0x00010000 */
+DECL|macro|UFS_BIG_ENDIAN
+mdefine_line|#define UFS_BIG_ENDIAN    0x00010000&t;/* 0x00020000 */
+DECL|macro|UFS_BYTESEX
+mdefine_line|#define UFS_BYTESEX&t;  0x00010000&t;/* 0x00030000 */
 DECL|macro|UFS_ADDR_PER_BLOCK
 mdefine_line|#define UFS_ADDR_PER_BLOCK(sb)&t;&t;((sb)-&gt;u.ufs_sb.s_bsize &gt;&gt; 2)
 DECL|macro|UFS_ADDR_PER_BLOCK_BITS
@@ -141,22 +161,6 @@ suffix:semicolon
 multiline_comment|/* number of free frags */
 )brace
 suffix:semicolon
-DECL|struct|_ufsquad
-r_typedef
-r_struct
-id|_ufsquad
-(brace
-DECL|member|val
-id|__u32
-id|val
-(braket
-l_int|2
-)braket
-suffix:semicolon
-DECL|typedef|ufsquad
-)brace
-id|ufsquad
-suffix:semicolon
 multiline_comment|/*&n; * This is the actual superblock, as it is laid out on the disk.&n; */
 DECL|struct|ufs_superblock
 r_struct
@@ -203,10 +207,10 @@ id|fs_cgmask
 suffix:semicolon
 multiline_comment|/* used to calc mod fs_ntrak */
 DECL|member|fs_time
-id|time_t
+id|__u32
 id|fs_time
 suffix:semicolon
-multiline_comment|/* last time written */
+multiline_comment|/* last time written -- time_t */
 DECL|member|fs_size
 id|__u32
 id|fs_size
@@ -496,15 +500,15 @@ id|fs_state
 suffix:semicolon
 multiline_comment|/* file system state time stamp */
 DECL|member|fs_qbmask
-id|ufsquad
+id|__s64
 id|fs_qbmask
 suffix:semicolon
-multiline_comment|/* ~usb_bmask - for use with __s64 size */
+multiline_comment|/* ~usb_bmask */
 DECL|member|fs_qfmask
-id|ufsquad
+id|__s64
 id|fs_qfmask
 suffix:semicolon
-multiline_comment|/* ~usb_fmask - for use with __s64 size */
+multiline_comment|/* ~usb_fmask */
 DECL|member|fs_postblformat
 id|__s32
 id|fs_postblformat
@@ -566,29 +570,28 @@ id|ui_sgid
 suffix:semicolon
 multiline_comment|/*  0x6 */
 DECL|member|ui_size
-id|ufsquad
+id|__u64
 id|ui_size
 suffix:semicolon
 multiline_comment|/*  0x8 */
-multiline_comment|/* XXX - should be __u64 */
 DECL|member|ui_atime
 r_struct
 id|timeval
 id|ui_atime
 suffix:semicolon
-multiline_comment|/* 0x10 */
+multiline_comment|/* 0x10 access */
 DECL|member|ui_mtime
 r_struct
 id|timeval
 id|ui_mtime
 suffix:semicolon
-multiline_comment|/* 0x18 */
+multiline_comment|/* 0x18 modification */
 DECL|member|ui_ctime
 r_struct
 id|timeval
 id|ui_ctime
 suffix:semicolon
-multiline_comment|/* 0x20 */
+multiline_comment|/* 0x20 creation */
 DECL|member|ui_db
 id|__u32
 id|ui_db
@@ -609,7 +612,7 @@ DECL|member|ui_flags
 id|__u32
 id|ui_flags
 suffix:semicolon
-multiline_comment|/* 0x64 unused */
+multiline_comment|/* 0x64 unused -- &quot;status flags (chflags)&quot; ??? */
 DECL|member|ui_blocks
 id|__u32
 id|ui_blocks
@@ -697,12 +700,7 @@ id|inode
 op_star
 comma
 r_struct
-id|qstr
-op_star
-comma
-r_struct
-id|inode
-op_star
+id|dentry
 op_star
 )paren
 suffix:semicolon
@@ -783,99 +781,6 @@ r_struct
 id|file_operations
 id|ufs_symlink_operations
 suffix:semicolon
-multiline_comment|/* Byte swapping 32/16-bit quantities into little endian format. */
-r_extern
-r_int
-id|ufs_need_swab
-suffix:semicolon
-DECL|function|ufs_swab32
-r_extern
-id|__inline__
-id|__u32
-id|ufs_swab32
-c_func
-(paren
-id|__u32
-id|value
-)paren
-(brace
-r_return
-(paren
-id|ufs_need_swab
-ques
-c_cond
-(paren
-(paren
-id|value
-op_rshift
-l_int|24
-)paren
-op_or
-(paren
-(paren
-id|value
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0xff00
-)paren
-op_or
-(paren
-(paren
-id|value
-op_lshift
-l_int|8
-)paren
-op_amp
-l_int|0xff0000
-)paren
-op_or
-(paren
-id|value
-op_lshift
-l_int|24
-)paren
-)paren
-suffix:colon
-id|value
-)paren
-suffix:semicolon
-)brace
-DECL|function|ufs_swab16
-r_extern
-id|__inline__
-id|__u16
-id|ufs_swab16
-c_func
-(paren
-id|__u16
-id|value
-)paren
-(brace
-r_return
-(paren
-id|ufs_need_swab
-ques
-c_cond
-(paren
-(paren
-id|value
-op_rshift
-l_int|8
-)paren
-op_or
-(paren
-id|value
-op_lshift
-l_int|8
-)paren
-)paren
-suffix:colon
-id|value
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif /* __LINUX_UFS_FS_H */
 eof

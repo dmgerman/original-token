@@ -333,6 +333,10 @@ id|inode-&gt;i_dev
 comma
 id|inode-&gt;i_ino
 comma
+(paren
+r_int
+r_int
+)paren
 id|count
 comma
 (paren
@@ -580,6 +584,10 @@ id|inode-&gt;i_ino
 comma
 id|inode-&gt;i_count
 comma
+(paren
+r_int
+r_int
+)paren
 id|count
 comma
 (paren

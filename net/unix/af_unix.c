@@ -5870,6 +5870,7 @@ id|unix_create
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE
+macro_line|#ifdef CONFIG_SYSCTL
 r_extern
 r_void
 id|unix_sysctl_register
@@ -5886,6 +5887,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|function|init_module
 r_int
 id|init_module
@@ -5984,11 +5986,13 @@ id|unix_read_proc
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
+macro_line|#ifdef CONFIG_SYSCTL
 id|unix_sysctl_register
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -6009,11 +6013,13 @@ c_func
 id|AF_UNIX
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|unix_sysctl_unregister
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -g -D__KERNEL__ -Wall -O6 -I/usr/src/linux/include -c af_unix.c&quot;&n; * End:&n; */

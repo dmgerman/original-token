@@ -3,11 +3,13 @@ DECL|macro|AMIGAFFS_H
 mdefine_line|#define AMIGAFFS_H
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+multiline_comment|/* AmigaOS allows file names with up to 30 characters length.&n; * Names longer than that will be silently truncated. If you&n; * want to disallow this, comment out the following #define.&n; * Creating filesystem objects with longer names will then&n; * result in an error (ENAMETOOLONG).&n; */
+multiline_comment|/*#define AFFS_NO_TRUNCATE */
 multiline_comment|/* Ugly macros make the code more pretty. */
 DECL|macro|GET_END_PTR
 mdefine_line|#define GET_END_PTR(st,p,sz)&t;&t; ((st *)((char *)(p)+((sz)-sizeof(st))))
 DECL|macro|AFFS_GET_HASHENTRY
-mdefine_line|#define AFFS_GET_HASHENTRY(data,hashkey) htonl(((struct dir_front *)data)-&gt;hashtable[hashkey])
+mdefine_line|#define AFFS_GET_HASHENTRY(data,hashkey) be32_to_cpu(((struct dir_front *)data)-&gt;hashtable[hashkey])
 DECL|macro|AFFS_BLOCK
 mdefine_line|#define AFFS_BLOCK(data,ino,blk)&t; ((struct file_front *)data)-&gt;blocks[AFFS_I2HSIZE(ino)-1-(blk)]
 DECL|macro|FILE_END
@@ -22,6 +24,8 @@ DECL|macro|ROOT_END_S
 mdefine_line|#define ROOT_END_S(p,s)&t;GET_END_PTR(struct root_end,p,(s)-&gt;s_blocksize)
 DECL|macro|DATA_FRONT
 mdefine_line|#define DATA_FRONT(bh)&t;((struct data_front *)(bh)-&gt;b_data)
+DECL|macro|DIR_FRONT
+mdefine_line|#define DIR_FRONT(bh)&t;((struct dir_front *)(bh)-&gt;b_data)
 multiline_comment|/* Only for easier debugging if need be */
 DECL|macro|affs_bread
 mdefine_line|#define affs_bread&t;bread
@@ -609,18 +613,18 @@ mdefine_line|#define AFFS_UMAYWRITE(prot)&t;(((prot) &amp; (FIBF_WRITE|FIBF_DELE
 DECL|macro|AFFS_UMAYREAD
 mdefine_line|#define AFFS_UMAYREAD(prot)&t;((prot) &amp; FIBF_READ)
 DECL|macro|AFFS_UMAYEXECUTE
-mdefine_line|#define AFFS_UMAYEXECUTE(prot)&t;(((prot) &amp; (FIBF_SCRIPT|FIBF_READ)) == (FIBF_SCRIPT|FIBF_READ))
+mdefine_line|#define AFFS_UMAYEXECUTE(prot)&t;((prot) &amp; FIBF_EXECUTE)
 DECL|macro|AFFS_GMAYWRITE
 mdefine_line|#define AFFS_GMAYWRITE(prot)&t;(((prot)&amp;(FIBF_GRP_WRITE|FIBF_GRP_DELETE))==&bslash;&n;&t;&t;&t;&t;&t;&t;&t;(FIBF_GRP_WRITE|FIBF_GRP_DELETE))
 DECL|macro|AFFS_GMAYREAD
 mdefine_line|#define AFFS_GMAYREAD(prot)&t;((prot) &amp; FIBF_GRP_READ)
 DECL|macro|AFFS_GMAYEXECUTE
-mdefine_line|#define AFFS_GMAYEXECUTE(prot)&t;(((prot)&amp;(FIBF_SCRIPT|FIBF_GRP_READ))==(FIBF_SCRIPT|FIBF_GRP_READ))
+mdefine_line|#define AFFS_GMAYEXECUTE(prot)&t;((prot) &amp; FIBF_EXECUTE)
 DECL|macro|AFFS_OMAYWRITE
 mdefine_line|#define AFFS_OMAYWRITE(prot)&t;(((prot)&amp;(FIBF_OTR_WRITE|FIBF_OTR_DELETE))==&bslash;&n;&t;&t;&t;&t;&t;&t;&t;(FIBF_OTR_WRITE|FIBF_OTR_DELETE))
 DECL|macro|AFFS_OMAYREAD
 mdefine_line|#define AFFS_OMAYREAD(prot)&t;((prot) &amp; FIBF_OTR_READ)
 DECL|macro|AFFS_OMAYEXECUTE
-mdefine_line|#define AFFS_OMAYEXECUTE(prot)&t;(((prot)&amp;(FIBF_SCRIPT|FIBF_OTR_READ))==(FIBF_SCRIPT|FIBF_OTR_READ))
+mdefine_line|#define AFFS_OMAYEXECUTE(prot)&t;((prot) &amp; FIBF_EXECUTE)
 macro_line|#endif
 eof

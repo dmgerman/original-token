@@ -1,19 +1,12 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * $Id: ufs_super.c,v 1.25 1997/07/17 02:24:15 davem Exp $&n; *&n; */
-multiline_comment|/*&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
+multiline_comment|/*&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;rideau@ens.fr&gt;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|variable|ufs_need_swab
-r_int
-id|ufs_need_swab
-op_assign
-l_int|0
-suffix:semicolon
+macro_line|#include &quot;ufs_swab.h&quot;
 r_struct
 id|super_block
 op_star
@@ -42,7 +35,7 @@ op_star
 id|sb
 )paren
 suffix:semicolon
-r_void
+r_int
 id|ufs_statfs
 c_func
 (paren
@@ -71,12 +64,15 @@ id|ufs_read_inode
 comma
 l_int|NULL
 comma
-multiline_comment|/* notify_change() */
-l_int|NULL
-comma
 multiline_comment|/* XXX - ufs_write_inode() */
 id|ufs_put_inode
 comma
+l_int|NULL
+comma
+multiline_comment|/* XXX - ufs_delete_inode() */
+l_int|NULL
+comma
+multiline_comment|/* notify_change() */
 id|ufs_put_super
 comma
 l_int|NULL
@@ -105,16 +101,12 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+DECL|function|init_ufs_fs
 id|init_ufs_fs
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return
@@ -376,6 +368,7 @@ id|ufs_superblock
 op_star
 id|usb
 suffix:semicolon
+multiline_comment|/* normalized to local byteorder */
 r_struct
 id|buffer_head
 op_star
@@ -383,6 +376,11 @@ id|bh1
 comma
 op_star
 id|bh2
+suffix:semicolon
+id|__u32
+id|bytesex
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* sb-&gt;s_dev and sb-&gt;s_flags are set by our caller&n;&t; * data is the mystery argument to sys_mount()&n;&t; *&n;&t; * Our caller also sets s_dev, s_covered, s_rd_only, s_dirt,&n;&t; *   and s_type when we return.&n;&t; */
 id|MOD_INC_USE_COUNT
@@ -439,19 +437,12 @@ id|BLOCK_SIZE
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|bh1
-)paren
-(brace
 id|brelse
 c_func
 (paren
 id|bh1
 )paren
 suffix:semicolon
-)brace
 id|printk
 (paren
 l_string|&quot;ufs_read_super: unable to read superblock&bslash;n&quot;
@@ -552,52 +543,56 @@ c_func
 id|bh2
 )paren
 suffix:semicolon
-id|ufs_need_swab
-op_assign
-l_int|0
-suffix:semicolon
-id|sb-&gt;s_magic
-op_assign
-id|ufs_swab32
-c_func
-(paren
-id|usb-&gt;fs_magic
-)paren
-suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
-id|sb-&gt;s_magic
-op_ne
-id|UFS_MAGIC
-)paren
-(brace
-id|ufs_need_swab
-op_assign
-l_int|1
-suffix:semicolon
-id|sb-&gt;s_magic
-op_assign
-id|ufs_swab32
+id|le32_to_cpup
 c_func
 (paren
+op_amp
 id|usb-&gt;fs_magic
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sb-&gt;s_magic
-op_ne
-id|UFS_MAGIC
 )paren
 (brace
+r_case
+id|UFS_MAGIC
+suffix:colon
+id|bytesex
+op_assign
+id|UFS_LITTLE_ENDIAN
+suffix:semicolon
+id|ufs_superblock_le_to_cpus
+c_func
+(paren
+id|usb
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|UFS_CIGAM
+suffix:colon
+id|bytesex
+op_assign
+id|UFS_BIG_ENDIAN
+suffix:semicolon
+id|ufs_superblock_be_to_cpus
+c_func
+(paren
+id|usb
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* usb is now normalized to local byteorder */
+r_default
+suffix:colon
 id|printk
 (paren
-l_string|&quot;ufs_read_super: bad magic number 0x%8.8lx &quot;
+l_string|&quot;ufs_read_super: bad magic number 0x%8.8x &quot;
 l_string|&quot;on dev %d/%d&bslash;n&quot;
 comma
-id|sb-&gt;s_magic
+id|usb-&gt;fs_magic
 comma
 id|MAJOR
 c_func
@@ -616,17 +611,12 @@ r_goto
 id|ufs_read_super_lose
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* We found a UFS filesystem on this device. */
 multiline_comment|/* XXX - parse args */
 r_if
 c_cond
 (paren
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_bsize
-)paren
 op_ne
 id|UFS_BSIZE
 )paren
@@ -636,11 +626,7 @@ c_func
 (paren
 l_string|&quot;ufs_read_super: fs_bsize %d != %d&bslash;n&quot;
 comma
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_bsize
-)paren
 comma
 id|UFS_BSIZE
 )paren
@@ -652,11 +638,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fsize
-)paren
 op_ne
 id|UFS_FSIZE
 )paren
@@ -666,11 +648,7 @@ c_func
 (paren
 l_string|&quot;ufs_read_super: fs_fsize %d != %d&bslash;n&quot;
 comma
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fsize
-)paren
 comma
 id|UFS_FSIZE
 )paren
@@ -692,19 +670,11 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_state
-)paren
 op_eq
 id|UFS_FSOK
 op_minus
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_time
-)paren
 )paren
 (brace
 r_switch
@@ -805,19 +775,11 @@ multiline_comment|/* XXX - sanity check sb fields */
 multiline_comment|/* KRR - Why are we not using fs_bsize for blocksize? */
 id|sb-&gt;s_blocksize
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fsize
-)paren
 suffix:semicolon
 id|sb-&gt;s_blocksize_bits
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fshift
-)paren
 suffix:semicolon
 multiline_comment|/* XXX - sb-&gt;s_lock */
 id|sb-&gt;s_op
@@ -830,7 +792,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* XXX */
-multiline_comment|/* KRR - defined above - sb-&gt;s_magic = usb-&gt;fs_magic; */
+id|sb-&gt;s_magic
+op_assign
+id|usb-&gt;fs_magic
+suffix:semicolon
 multiline_comment|/* sb-&gt;s_time */
 multiline_comment|/* sb-&gt;s_wait */
 multiline_comment|/* XXX - sb-&gt;u.ufs_sb */
@@ -841,166 +806,88 @@ suffix:semicolon
 multiline_comment|/* XXX - maybe move this to the top */
 id|sb-&gt;u.ufs_sb.s_flags
 op_assign
-l_int|0
+id|bytesex
+op_or
+id|UFS_DEBUG_INITIAL
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_ncg
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_ncg
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_ipg
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_ipg
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_fpg
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fpg
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_fsize
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fsize
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_fmask
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fmask
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_fshift
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fshift
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_bsize
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_bsize
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_bmask
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_bmask
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_bshift
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_bshift
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_iblkno
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_iblkno
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_dblkno
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_dblkno
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_cgoffset
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_cgoffset
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_cgmask
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_cgmask
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_inopb
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_inopb
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_lshift
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_bshift
-)paren
 op_minus
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fshift
-)paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_lmask
 op_assign
 op_complement
 (paren
 (paren
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fmask
-)paren
 op_minus
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_bmask
 )paren
-)paren
 op_rshift
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_fshift
-)paren
 )paren
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_fsfrag
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|usb-&gt;fs_frag
-)paren
 suffix:semicolon
 multiline_comment|/* XXX - rename this later */
 id|sb-&gt;s_root
@@ -1094,6 +981,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* XXX - free allocated kernel memory */
+multiline_comment|/* includes freeing usb page */
 id|unlock_super
 (paren
 id|sb
@@ -1105,7 +993,7 @@ r_return
 suffix:semicolon
 )brace
 DECL|function|ufs_statfs
-r_void
+r_int
 id|ufs_statfs
 c_func
 (paren
@@ -1142,6 +1030,7 @@ id|fsb
 op_assign
 id|sb-&gt;u.ufs_sb.s_raw_sb
 suffix:semicolon
+multiline_comment|/* fsb was already normalized during mounting */
 r_int
 r_int
 id|used
@@ -1174,31 +1063,15 @@ id|sb-&gt;s_blocksize
 suffix:semicolon
 id|sp-&gt;f_blocks
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|fsb-&gt;fs_dsize
-)paren
 suffix:semicolon
 id|sp-&gt;f_bfree
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|fsb-&gt;fs_cstotal.cs_nbfree
-)paren
 op_star
-id|ufs_swab32
-c_func
-(paren
 id|fsb-&gt;fs_frag
-)paren
 op_plus
-id|ufs_swab32
-c_func
-(paren
 id|fsb-&gt;fs_cstotal.cs_nffree
-)paren
 suffix:semicolon
 id|avail
 op_assign
@@ -1210,11 +1083,7 @@ op_div
 l_int|100
 )paren
 op_star
-id|ufs_swab32
-c_func
-(paren
 id|fsb-&gt;fs_minfree
-)paren
 suffix:semicolon
 id|used
 op_assign
@@ -1248,44 +1117,33 @@ id|sb-&gt;u.ufs_sb.s_ipg
 suffix:semicolon
 id|sp-&gt;f_ffree
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|fsb-&gt;fs_cstotal.cs_nifree
-)paren
 suffix:semicolon
 id|sp-&gt;f_fsid.val
 (braket
 l_int|0
 )braket
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|fsb-&gt;fs_id
 (braket
 l_int|0
 )braket
-)paren
 suffix:semicolon
 id|sp-&gt;f_fsid.val
 (braket
 l_int|1
 )braket
 op_assign
-id|ufs_swab32
-c_func
-(paren
 id|fsb-&gt;fs_id
 (braket
 l_int|1
 )braket
-)paren
 suffix:semicolon
 id|sp-&gt;f_namelen
 op_assign
 id|UFS_MAXNAMLEN
 suffix:semicolon
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -1295,8 +1153,12 @@ id|sp
 comma
 id|bufsiz
 )paren
-suffix:semicolon
-r_return
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 eof

@@ -1370,12 +1370,34 @@ comma
 l_string|&quot;ddv_daemon&quot;
 )paren
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|sigfillset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-op_complement
-l_int|0UL
+)paren
 suffix:semicolon
 multiline_comment|/* block all signals */
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 multiline_comment|/* Give it a realtime priority. */
 id|current-&gt;policy
 op_assign

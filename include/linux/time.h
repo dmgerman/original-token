@@ -24,7 +24,7 @@ suffix:semicolon
 macro_line|#endif /* _STRUCT_TIMESPEC */
 multiline_comment|/*&n; * change timeval to jiffies, trying to avoid the&n; * most obvious overflows..&n; */
 r_static
-r_inline
+id|__inline__
 r_int
 r_int
 DECL|function|timespec_to_jiffies
@@ -96,7 +96,7 @@ id|nsec
 suffix:semicolon
 )brace
 r_static
-r_inline
+id|__inline__
 r_void
 DECL|function|jiffies_to_timespec
 id|jiffies_to_timespec

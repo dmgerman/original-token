@@ -3039,6 +3039,7 @@ suffix:semicolon
 id|spin_lock_irq
 c_func
 (paren
+op_amp
 id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon

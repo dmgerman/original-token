@@ -4478,7 +4478,7 @@ id|new_dentry
 suffix:semicolon
 id|rehash
 op_assign
-l_int|1
+id|update
 suffix:semicolon
 )brace
 id|error

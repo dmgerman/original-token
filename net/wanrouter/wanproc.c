@@ -68,15 +68,10 @@ r_int
 )paren
 suffix:semicolon
 r_static
-r_int
+id|ssize_t
 id|router_proc_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -87,8 +82,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 suffix:semicolon
 multiline_comment|/* Methods for preparing data for reading proc entries */
@@ -828,15 +826,10 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Read router proc directory entry.&n; *&t;This is universal routine for reading all entries in /proc/net/router&n; *&t;directory.  Each directory entry contains a pointer to the &squot;method&squot; for&n; *&t;preparing data for that entry.&n; *&t;o verify arguments&n; *&t;o allocate kernel buffer&n; *&t;o call get_info() to prepare data&n; *&t;o copy data to user space&n; *&t;o release kernel buffer&n; *&n; *&t;Return:&t;number of bytes copied to user space (0, if no data)&n; *&t;&t;&lt;0&t;error&n; */
 DECL|function|router_proc_read
 r_static
-r_int
+id|ssize_t
 id|router_proc_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -847,10 +840,18 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
 r_struct
 id|proc_dir_entry
 op_star

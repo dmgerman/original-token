@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/vfat/namei.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Windows95/Windows NT compatible extended MSDOS filesystem&n; *    by Gordon Chaffee Copyright (C) 1995.  Send bug reports for the&n; *    VFAT filesystem to &lt;chaffee@plateau.cs.berkeley.edu&gt;.  Specify&n; *    what file operation caused you trouble and if you can duplicate&n; *    the problem, send a script that demonstrates it.&n; */
+multiline_comment|/*&n; *  linux/fs/vfat/namei.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Windows95/Windows NT compatible extended MSDOS filesystem&n; *    by Gordon Chaffee Copyright (C) 1995.  Send bug reports for the&n; *    VFAT filesystem to &lt;chaffee@cs.berkeley.edu&gt;.  Specify&n; *    what file operation caused you trouble and if you can duplicate&n; *    the problem, send a script that demonstrates it.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/nls.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -26,9 +27,6 @@ macro_line|#else
 DECL|macro|CHECK_STACK
 macro_line|# define CHECK_STACK check_stack(__FILE__, __LINE__)
 macro_line|#endif
-multiline_comment|/*&n; * XXX: It would be better to use the tolower from linux/ctype.h,&n; * but _ctype is needed and it is not exported.&n; */
-DECL|macro|tolower
-mdefine_line|#define tolower(c) (((c) &gt;= &squot;A&squot; &amp;&amp; (c) &lt;= &squot;Z&squot;) ? (c)-(&squot;A&squot;-&squot;a&squot;) : (c))
 DECL|struct|vfat_find_info
 r_struct
 id|vfat_find_info
@@ -970,39 +968,72 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* MS-DOS &quot;device special files&quot; */
-DECL|variable|reserved_names
+DECL|variable|reserved3_names
 r_static
 r_const
 r_char
 op_star
-id|reserved_names
+id|reserved3_names
 (braket
 )braket
 op_assign
 (brace
-l_string|&quot;CON     &quot;
+l_string|&quot;con     &quot;
 comma
-l_string|&quot;PRN     &quot;
+l_string|&quot;prn     &quot;
 comma
-l_string|&quot;NUL     &quot;
+l_string|&quot;nul     &quot;
 comma
-l_string|&quot;AUX     &quot;
+l_string|&quot;aux     &quot;
 comma
-l_string|&quot;LPT1    &quot;
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|variable|reserved4_names
+r_static
+r_const
+r_char
+op_star
+id|reserved4_names
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;com1    &quot;
 comma
-l_string|&quot;LPT2    &quot;
+l_string|&quot;com2    &quot;
 comma
-l_string|&quot;LPT3    &quot;
+l_string|&quot;com3    &quot;
 comma
-l_string|&quot;LPT4    &quot;
+l_string|&quot;com4    &quot;
 comma
-l_string|&quot;COM1    &quot;
+l_string|&quot;com5    &quot;
 comma
-l_string|&quot;COM2    &quot;
+l_string|&quot;com6    &quot;
 comma
-l_string|&quot;COM3    &quot;
+l_string|&quot;com7    &quot;
 comma
-l_string|&quot;COM4    &quot;
+l_string|&quot;com8    &quot;
+comma
+l_string|&quot;com9    &quot;
+comma
+l_string|&quot;lpt1    &quot;
+comma
+l_string|&quot;lpt2    &quot;
+comma
+l_string|&quot;lpt3    &quot;
+comma
+l_string|&quot;lpt4    &quot;
+comma
+l_string|&quot;lpt5    &quot;
+comma
+l_string|&quot;lpt6    &quot;
+comma
+l_string|&quot;lpt7    &quot;
+comma
+l_string|&quot;lpt8    &quot;
+comma
+l_string|&quot;lpt9    &quot;
 comma
 l_int|NULL
 )brace
@@ -1056,7 +1087,135 @@ op_star
 id|sinfo_out
 )paren
 suffix:semicolon
-multiline_comment|/* Checks the validity of an long MS-DOS filename */
+DECL|function|strnicmp
+r_static
+r_int
+id|strnicmp
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s1
+comma
+r_const
+r_char
+op_star
+id|s2
+comma
+r_int
+id|len
+)paren
+(brace
+r_int
+id|n
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_star
+id|s1
+op_logical_and
+op_star
+id|s2
+op_logical_and
+(paren
+id|tolower
+c_func
+(paren
+op_star
+id|s1
+)paren
+op_eq
+id|tolower
+c_func
+(paren
+op_star
+id|s2
+)paren
+)paren
+)paren
+(brace
+id|s1
+op_increment
+suffix:semicolon
+id|s2
+op_increment
+suffix:semicolon
+id|n
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|n
+op_eq
+id|len
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_star
+id|s1
+op_eq
+l_int|0
+op_logical_and
+op_star
+id|s2
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|s1
+op_logical_and
+op_star
+id|s2
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+id|s1
+OG
+op_star
+id|s2
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_star
+id|s1
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Checks the validity of a long MS-DOS filename */
 multiline_comment|/* Returns negative number on error, 0 for a normal&n; * return, and 1 for . or .. */
 DECL|function|vfat_valid_longname
 r_static
@@ -1084,6 +1243,9 @@ r_char
 op_star
 op_star
 id|reserved
+comma
+op_star
+id|walk
 suffix:semicolon
 r_int
 r_char
@@ -1091,6 +1253,8 @@ id|c
 suffix:semicolon
 r_int
 id|i
+comma
+id|baselen
 suffix:semicolon
 r_if
 c_cond
@@ -1233,10 +1397,87 @@ r_if
 c_cond
 (paren
 id|len
+OL
+l_int|3
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|walk
+op_assign
+id|name
+suffix:semicolon
+op_star
+id|walk
+op_ne
+l_int|0
+op_logical_and
+op_star
+id|walk
+op_ne
+l_char|&squot;.&squot;
+suffix:semicolon
+id|walk
+op_increment
+)paren
+suffix:semicolon
+id|baselen
+op_assign
+id|walk
+op_minus
+id|name
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|baselen
 op_eq
 l_int|3
-op_logical_or
-id|len
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|reserved
+op_assign
+id|reserved3_names
+suffix:semicolon
+op_star
+id|reserved
+suffix:semicolon
+id|reserved
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strnicmp
+c_func
+(paren
+id|name
+comma
+op_star
+id|reserved
+comma
+id|baselen
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|baselen
 op_eq
 l_int|4
 )paren
@@ -1246,7 +1487,7 @@ c_loop
 (paren
 id|reserved
 op_assign
-id|reserved_names
+id|reserved4_names
 suffix:semicolon
 op_star
 id|reserved
@@ -1254,11 +1495,12 @@ suffix:semicolon
 id|reserved
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|strncmp
+id|strnicmp
 c_func
 (paren
 id|name
@@ -1266,13 +1508,14 @@ comma
 op_star
 id|reserved
 comma
-l_int|8
+id|baselen
 )paren
 )paren
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
@@ -1314,6 +1557,9 @@ id|c
 suffix:semicolon
 r_int
 id|space
+suffix:semicolon
+r_int
+id|baselen
 suffix:semicolon
 r_if
 c_cond
@@ -1577,6 +1823,12 @@ op_star
 id|walk
 op_increment
 suffix:semicolon
+id|baselen
+op_assign
+id|walk
+op_minus
+id|name
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1585,6 +1837,9 @@ op_eq
 l_char|&squot;.&squot;
 )paren
 (brace
+id|baselen
+op_decrement
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1732,12 +1987,20 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|baselen
+op_eq
+l_int|3
+)paren
+(brace
 r_for
 c_loop
 (paren
 id|reserved
 op_assign
-id|reserved_names
+id|reserved3_names
 suffix:semicolon
 op_star
 id|reserved
@@ -1749,7 +2012,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|strncmp
+id|strnicmp
 c_func
 (paren
 id|name
@@ -1757,13 +2020,56 @@ comma
 op_star
 id|reserved
 comma
-l_int|8
+id|baselen
 )paren
 )paren
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|baselen
+op_eq
+l_int|4
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|reserved
+op_assign
+id|reserved4_names
+suffix:semicolon
+op_star
+id|reserved
+suffix:semicolon
+id|reserved
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strnicmp
+c_func
+(paren
+id|name
+comma
+op_star
+id|reserved
+comma
+id|baselen
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2292,7 +2598,7 @@ c_loop
 (paren
 id|reserved
 op_assign
-id|reserved_names
+id|reserved3_names
 suffix:semicolon
 op_star
 id|reserved
@@ -2304,7 +2610,39 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|strncmp
+id|strnicmp
+c_func
+(paren
+id|res
+comma
+op_star
+id|reserved
+comma
+l_int|8
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|reserved
+op_assign
+id|reserved4_names
+suffix:semicolon
+op_star
+id|reserved
+suffix:semicolon
+id|reserved
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strnicmp
 c_func
 (paren
 id|res
@@ -3550,13 +3888,13 @@ op_member_access_from_pointer
 id|i_busy
 suffix:semicolon
 multiline_comment|/* PRINTK((&quot;inode %d still busy&bslash;n&quot;, ino)); */
-)brace
 id|iput
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -5929,11 +6267,6 @@ r_int
 id|res
 suffix:semicolon
 r_struct
-id|inode
-op_star
-id|next
-suffix:semicolon
-r_struct
 id|slot_info
 id|sinfo
 suffix:semicolon
@@ -6050,7 +6383,7 @@ c_func
 (paren
 id|dentry
 comma
-id|result
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -6095,91 +6428,12 @@ l_string|&quot;vfat_lookup 6&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|MSDOS_I
-c_func
-(paren
-id|result
-)paren
-op_member_access_from_pointer
-id|i_old
-)paren
-(brace
-id|next
-op_assign
-id|MSDOS_I
-c_func
-(paren
-id|result
-)paren
-op_member_access_from_pointer
-id|i_old
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|result
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|result
-op_assign
-id|iget
-c_func
-(paren
-id|next-&gt;i_sb
-comma
-id|next-&gt;i_ino
-)paren
-)paren
-)paren
-(brace
-id|fat_fs_panic
-c_func
-(paren
-id|dir-&gt;i_sb
-comma
-l_string|&quot;vfat_lookup: Can&squot;t happen&quot;
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
-)brace
-)brace
-id|PRINTK
-(paren
-(paren
-l_string|&quot;vfat_lookup 7&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 id|d_add
 c_func
 (paren
 id|dentry
 comma
 id|result
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-l_string|&quot;vfat_lookup 8&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -6503,6 +6757,11 @@ op_amp
 id|result
 )paren
 suffix:semicolon
+id|fat_unlock_creation
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6510,6 +6769,7 @@ id|res
 OL
 l_int|0
 )paren
+(brace
 id|PRINTK
 c_func
 (paren
@@ -6518,11 +6778,9 @@ l_string|&quot;vfat_create: unable to get new entry&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|fat_unlock_creation
-c_func
-(paren
-)paren
-suffix:semicolon
+)brace
+r_else
+(brace
 id|d_instantiate
 c_func
 (paren
@@ -6531,6 +6789,7 @@ comma
 id|result
 )paren
 suffix:semicolon
+)brace
 r_return
 id|res
 suffix:semicolon
@@ -6674,10 +6933,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|dot
 op_assign
 id|iget
@@ -6686,15 +6941,6 @@ c_func
 id|dir-&gt;i_sb
 comma
 id|ino
-)paren
-)paren
-op_ne
-l_int|NULL
-)paren
-id|vfat_read_inode
-c_func
-(paren
-id|dot
 )paren
 suffix:semicolon
 r_if
@@ -6706,6 +6952,12 @@ id|dot
 r_return
 op_minus
 id|EIO
+suffix:semicolon
+id|vfat_read_inode
+c_func
+(paren
+id|dot
+)paren
 suffix:semicolon
 id|dot-&gt;i_mtime
 op_assign
@@ -7118,6 +7370,14 @@ id|msdos_dir_entry
 op_star
 id|de
 suffix:semicolon
+multiline_comment|/*&n;&t; * Prune any child dentries, then verify that&n;&t; * the directory is empty and not in use.&n;&t; */
+id|shrink_dcache_sb
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
+multiline_comment|/* should be child prune */
 r_if
 c_cond
 (paren
@@ -7125,10 +7385,12 @@ id|dir-&gt;i_count
 OG
 l_int|1
 )paren
+(brace
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -7693,12 +7955,6 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;vfat_remove_entry: problem 1&bslash;n&quot;
-)paren
-suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -7765,47 +8021,6 @@ r_struct
 id|slot_info
 id|sinfo
 suffix:semicolon
-id|bh
-op_assign
-l_int|NULL
-suffix:semicolon
-id|res
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dentry-&gt;d_name.name
-(braket
-l_int|0
-)braket
-op_eq
-l_char|&squot;.&squot;
-op_logical_and
-(paren
-id|dentry-&gt;d_name.len
-op_eq
-l_int|1
-op_logical_or
-(paren
-id|dentry-&gt;d_name.len
-op_eq
-l_int|2
-op_logical_and
-id|dentry-&gt;d_name.name
-(braket
-l_int|1
-)braket
-op_eq
-l_char|&squot;.&squot;
-)paren
-)paren
-)paren
-r_goto
-id|rmdir_done
-suffix:semicolon
 id|res
 op_assign
 id|vfat_find
@@ -7838,6 +8053,10 @@ OG
 l_int|0
 )paren
 (brace
+id|bh
+op_assign
+l_int|NULL
+suffix:semicolon
 id|res
 op_assign
 id|vfat_remove_entry
@@ -7876,9 +8095,11 @@ op_assign
 op_increment
 id|event
 suffix:semicolon
-)brace
-id|rmdir_done
-suffix:colon
+r_if
+c_cond
+(paren
+id|bh
+)paren
 id|fat_brelse
 c_func
 (paren
@@ -7887,6 +8108,7 @@ comma
 id|bh
 )paren
 suffix:semicolon
+)brace
 r_return
 id|res
 suffix:semicolon
@@ -7921,12 +8143,21 @@ comma
 id|dentry
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|res
+op_ge
+l_int|0
+)paren
+(brace
 id|d_delete
 c_func
 (paren
 id|dentry
 )paren
 suffix:semicolon
+)brace
 r_return
 id|res
 suffix:semicolon
@@ -8041,6 +8272,11 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|bh
+)paren
 id|fat_brelse
 c_func
 (paren
@@ -8235,12 +8471,21 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|res
+op_ge
+l_int|0
+)paren
+(brace
 id|d_delete
 c_func
 (paren
 id|dentry
 )paren
 suffix:semicolon
+)brace
 r_return
 id|res
 suffix:semicolon
@@ -9507,5 +9752,4 @@ id|vfat_fs_type
 suffix:semicolon
 )brace
 macro_line|#endif /* ifdef MODULE */
-multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * End:&n; */
 eof
