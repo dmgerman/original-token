@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cypress.h,v 1.5 1996/04/25 06:12:51 davem Exp $&n; * cypress.h: Cypress module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: cypress.h,v 1.6 1996/08/29 09:48:09 davem Exp $&n; * cypress.h: Cypress module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_CYPRESS_H
 DECL|macro|_SPARC_CYPRESS_H
 mdefine_line|#define _SPARC_CYPRESS_H
@@ -30,7 +30,7 @@ DECL|macro|CYPRESS_MENABLE
 mdefine_line|#define CYPRESS_MENABLE   0x00000001
 DECL|function|cypress_flush_page
 r_extern
-r_inline
+id|__inline__
 r_void
 id|cypress_flush_page
 c_func
@@ -61,7 +61,7 @@ suffix:semicolon
 )brace
 DECL|function|cypress_flush_segment
 r_extern
-r_inline
+id|__inline__
 r_void
 id|cypress_flush_segment
 c_func
@@ -92,7 +92,7 @@ suffix:semicolon
 )brace
 DECL|function|cypress_flush_region
 r_extern
-r_inline
+id|__inline__
 r_void
 id|cypress_flush_region
 c_func
@@ -123,7 +123,7 @@ suffix:semicolon
 )brace
 DECL|function|cypress_flush_context
 r_extern
-r_inline
+id|__inline__
 r_void
 id|cypress_flush_context
 c_func

@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: traps.h,v 1.6 1996/04/25 06:13:33 davem Exp $&n; * traps.h:  Format of entries for the Sparc trap table.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.h,v 1.8 1996/05/17 10:38:53 davem Exp $&n; * traps.h:  Format of entries for the Sparc trap table.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TRAPS_H
 DECL|macro|_SPARC_TRAPS_H
 mdefine_line|#define _SPARC_TRAPS_H
 DECL|macro|NUM_SPARC_TRAPS
 mdefine_line|#define NUM_SPARC_TRAPS  255
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* This is for V8 and V9 compliant Sparc CPUS */
 DECL|struct|tt_entry
 r_struct
@@ -129,6 +130,7 @@ r_return
 id|tbr
 suffix:semicolon
 )brace
+macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* For patching the trap table at boot time, we need to know how to&n; * form various common Sparc instructions.  Thus these macros...&n; */
 DECL|macro|SPARC_MOV_CONST_L3
 mdefine_line|#define SPARC_MOV_CONST_L3(const) (0xa6102000 | (const&amp;0xfff))
@@ -137,6 +139,8 @@ DECL|macro|SPARC_BRANCH
 mdefine_line|#define SPARC_BRANCH(dest_addr, inst_addr) &bslash;&n;          (0x10800000 | (((dest_addr-inst_addr)&gt;&gt;2)&amp;0x3fffff))
 DECL|macro|SPARC_RD_PSR_L0
 mdefine_line|#define SPARC_RD_PSR_L0  (0xa1480000)
+DECL|macro|SPARC_RD_WIM_L3
+mdefine_line|#define SPARC_RD_WIM_L3  (0xa7500000)
 DECL|macro|SPARC_NOP
 mdefine_line|#define SPARC_NOP (0x01000000)
 multiline_comment|/* Various interesting trap levels. */

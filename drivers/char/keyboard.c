@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Keyboard driver for Linux v0.99 using Latin-1.&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * &n; */
+multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; */
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ 1
 DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
@@ -364,6 +364,9 @@ comma
 id|do_ignore
 )brace
 suffix:semicolon
+multiline_comment|/* Key types processed even in raw modes */
+DECL|macro|TYPES_ALLOWED_IN_RAW_MODE
+mdefine_line|#define TYPES_ALLOWED_IN_RAW_MODE ((1 &lt;&lt; KT_SPEC) | (1 &lt;&lt; KT_SHIFT))
 DECL|typedef|void_fnp
 r_typedef
 r_void
@@ -490,6 +493,8 @@ comma
 id|bare_num
 )brace
 suffix:semicolon
+DECL|macro|SPECIALS_ALLOWED_IN_RAW_MODE
+mdefine_line|#define SPECIALS_ALLOWED_IN_RAW_MODE (1 &lt;&lt; KVAL(K_SAK))
 multiline_comment|/* maximum values each key_handler can handle */
 DECL|variable|max_vals
 r_const
@@ -1847,13 +1852,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|raw_mode
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|kbd-&gt;kbdmode
 op_eq
 id|VC_MEDIUMRAW
@@ -1868,8 +1866,11 @@ op_plus
 id|up_flag
 )paren
 suffix:semicolon
-r_return
+id|raw_mode
+op_assign
+l_int|1
 suffix:semicolon
+multiline_comment|/* Most key classes will be ignored */
 )brace
 multiline_comment|/*&n;&t; * Small change in philosophy: earlier we defined repetition by&n;&t; *&t; rep = keycode == prev_keycode;&n;&t; *&t; prev_keycode = keycode;&n;&t; * but now by the fact that the depressed key was down already.&n;&t; * Does this ever make a difference? Yes.&n;&t; */
 multiline_comment|/*&n; &t; *  Repeat a key only if the input buffers are empty or the&n; &t; *  characters get echoed locally. This makes key repeat usable&n; &t; *  with slow applications and under heavy loads.&n;&t; */
@@ -1975,6 +1976,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|raw_mode
+op_logical_and
+op_logical_neg
+(paren
+id|TYPES_ALLOWED_IN_RAW_MODE
+op_amp
+(paren
+l_int|1
+op_lshift
+id|type
+)paren
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|type
 op_eq
 id|KT_LETTER
@@ -2058,6 +2077,9 @@ c_cond
 (paren
 op_logical_neg
 id|up_flag
+op_logical_and
+op_logical_neg
+id|raw_mode
 )paren
 id|to_utf8
 c_func
@@ -2870,20 +2892,20 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/*&n;&t; * SAK should also work in all raw modes and reset&n;&t; * them properly.&n;&t; */
 id|do_SAK
 c_func
 (paren
 id|tty
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n;&t; * Need to fix SAK handling to fix up RAW/MEDIUM_RAW and&n;&t; * vt_cons modes before we can enable RAW/MEDIUM_RAW SAK&n;&t; * handling.&n;&t; * &n;&t; * We should do this some day --- the whole point of a secure&n;&t; * attention key is that it should be guaranteed to always&n;&t; * work.&n;&t; */
 id|reset_vc
 c_func
 (paren
 id|fg_console
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|do_unblank_screen
 c_func
 (paren
@@ -2951,6 +2973,32 @@ id|SIZE
 c_func
 (paren
 id|spec_fn_table
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|kbd-&gt;kbdmode
+op_eq
+id|VC_RAW
+op_logical_or
+id|kbd-&gt;kbdmode
+op_eq
+id|VC_MEDIUMRAW
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|SPECIALS_ALLOWED_IN_RAW_MODE
+op_amp
+(paren
+l_int|1
+op_lshift
+id|value
+)paren
 )paren
 )paren
 r_return

@@ -89,6 +89,11 @@ DECL|macro|SHM_LOCK
 mdefine_line|#define SHM_LOCK &t;11
 DECL|macro|SHM_UNLOCK
 mdefine_line|#define SHM_UNLOCK &t;12
+multiline_comment|/* ipcs ctl commands */
+DECL|macro|SHM_STAT
+mdefine_line|#define SHM_STAT &t;13
+DECL|macro|SHM_INFO
+mdefine_line|#define SHM_INFO &t;14
 DECL|struct|shminfo
 r_struct
 id|shminfo
@@ -115,17 +120,6 @@ id|shmall
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
-multiline_comment|/* shm_mode upper byte flags */
-DECL|macro|SHM_DEST
-mdefine_line|#define&t;SHM_DEST&t;01000&t;/* segment will be destroyed on last detach */
-DECL|macro|SHM_LOCKED
-mdefine_line|#define SHM_LOCKED      02000   /* segment will not be swapped */
-multiline_comment|/* ipcs ctl commands */
-DECL|macro|SHM_STAT
-mdefine_line|#define SHM_STAT &t;13
-DECL|macro|SHM_INFO
-mdefine_line|#define SHM_INFO &t;14
 DECL|struct|shm_info
 r_struct
 id|shm_info
@@ -164,6 +158,12 @@ id|swap_successes
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* shm_mode upper byte flags */
+DECL|macro|SHM_DEST
+mdefine_line|#define&t;SHM_DEST&t;01000&t;/* segment will be destroyed on last detach */
+DECL|macro|SHM_LOCKED
+mdefine_line|#define SHM_LOCKED      02000   /* segment will not be swapped */
 id|asmlinkage
 r_int
 id|sys_shmget

@@ -25,9 +25,9 @@ macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;net/ax25.h&gt;
-macro_line|#ifdef CONFIG_NETROM
+macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;net/netrom.h&gt;
 macro_line|#endif
 macro_line|#endif
@@ -5342,8 +5342,8 @@ c_func
 id|dev-&gt;type
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25
-macro_line|#ifdef CONFIG_NETROM
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 id|arp-&gt;ar_pro
 op_assign
 (paren
@@ -5625,7 +5625,7 @@ c_cond
 id|dev-&gt;type
 )paren
 (brace
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 r_case
 id|ARPHRD_AX25
 suffix:colon
@@ -5656,7 +5656,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_NETROM
+macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 r_case
 id|ARPHRD_NETROM
 suffix:colon
@@ -7715,8 +7715,8 @@ id|entry-&gt;next
 )paren
 (brace
 multiline_comment|/*&n; *&t;Convert hardware address to XX:XX:XX:XX ... form.&n; */
-macro_line|#ifdef CONFIG_AX25
-macro_line|#ifdef CONFIG_NETROM
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 r_if
 c_cond
 (paren
@@ -7854,7 +7854,7 @@ id|k
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 )brace
 macro_line|#endif
 id|size
@@ -8159,4 +8159,154 @@ id|arpd_callback
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#ifdef CONFIG_AX25_MODULE
+multiline_comment|/*&n; *&t;ax25 -&gt; ascii conversion&n; */
+DECL|function|ax2asc
+r_char
+op_star
+id|ax2asc
+c_func
+(paren
+id|ax25_address
+op_star
+id|a
+)paren
+(brace
+r_static
+r_char
+id|buf
+(braket
+l_int|11
+)braket
+suffix:semicolon
+r_char
+id|c
+comma
+op_star
+id|s
+suffix:semicolon
+r_int
+id|n
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|n
+op_assign
+l_int|0
+comma
+id|s
+op_assign
+id|buf
+suffix:semicolon
+id|n
+OL
+l_int|6
+suffix:semicolon
+id|n
+op_increment
+)paren
+(brace
+id|c
+op_assign
+(paren
+id|a-&gt;ax25_call
+(braket
+id|n
+)braket
+op_rshift
+l_int|1
+)paren
+op_amp
+l_int|0x7F
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_ne
+l_char|&squot; &squot;
+)paren
+op_star
+id|s
+op_increment
+op_assign
+id|c
+suffix:semicolon
+)brace
+op_star
+id|s
+op_increment
+op_assign
+l_char|&squot;-&squot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|n
+op_assign
+(paren
+(paren
+id|a-&gt;ax25_call
+(braket
+l_int|6
+)braket
+op_rshift
+l_int|1
+)paren
+op_amp
+l_int|0x0F
+)paren
+)paren
+OG
+l_int|9
+)paren
+(brace
+op_star
+id|s
+op_increment
+op_assign
+l_char|&squot;1&squot;
+suffix:semicolon
+id|n
+op_sub_assign
+l_int|10
+suffix:semicolon
+)brace
+op_star
+id|s
+op_increment
+op_assign
+id|n
+op_plus
+l_char|&squot;0&squot;
+suffix:semicolon
+op_star
+id|s
+op_increment
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|buf
+op_eq
+l_char|&squot;&bslash;0&squot;
+op_logical_or
+op_star
+id|buf
+op_eq
+l_char|&squot;-&squot;
+)paren
+r_return
+l_string|&quot;*&quot;
+suffix:semicolon
+r_return
+id|buf
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

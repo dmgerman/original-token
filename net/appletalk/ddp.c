@@ -4011,6 +4011,10 @@ c_func
 (paren
 id|val
 comma
+(paren
+r_int
+op_star
+)paren
 id|optval
 )paren
 suffix:semicolon

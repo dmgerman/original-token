@@ -11,7 +11,7 @@ multiline_comment|/*&n; *&t;Locking the kernel &n; */
 multiline_comment|/* Knock knock... */
 DECL|function|lock_kernel
 r_extern
-id|__inline
+id|__inline__
 r_void
 id|lock_kernel
 c_func
@@ -111,7 +111,7 @@ suffix:semicolon
 multiline_comment|/* I want out... */
 DECL|function|unlock_kernel
 r_extern
-id|__inline
+id|__inline__
 r_void
 id|unlock_kernel
 c_func

@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/cdrom.h&gt;
+macro_line|#include &lt;linux/ucdrom.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -590,6 +592,26 @@ c_func
 id|tty_std_termios
 )paren
 comma
+macro_line|#if defined(CONFIG_BLK_DEV_IDECD) || &bslash;&n;    defined(CONFIG_BLK_DEV_SR) || &bslash;&n;    defined(CONFIG_CM206)
+id|X
+c_func
+(paren
+id|register_cdrom
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_cdrom
+)paren
+comma
+id|X
+c_func
+(paren
+id|cdrom_fops
+)paren
+comma
+macro_line|#endif
 multiline_comment|/* block device driver support */
 id|X
 c_func

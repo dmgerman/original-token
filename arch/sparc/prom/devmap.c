@@ -1,4 +1,7 @@
-multiline_comment|/* $Id: devmap.c,v 1.2 1995/11/25 00:59:56 davem Exp $&n; * promdevmap.c:  Map device/IO areas to virtual addresses.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: devmap.c,v 1.3 1996/09/19 20:27:19 davem Exp $&n; * promdevmap.c:  Map device/IO areas to virtual addresses.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* Just like the routines in palloc.c, these should not be used&n; * by the kernel at all.  Bootloader facility mainly.  And again,&n; * this is only available on V2 proms and above.&n; */
@@ -25,6 +28,25 @@ r_int
 id|num_bytes
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_char
+op_star
+id|ret
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -41,7 +63,8 @@ l_int|0
 )paren
 )paren
 (brace
-r_return
+id|ret
+op_assign
 (paren
 r_char
 op_star
@@ -49,7 +72,9 @@ op_star
 l_int|0x0
 suffix:semicolon
 )brace
-r_return
+r_else
+id|ret
+op_assign
 (paren
 op_star
 (paren
@@ -65,6 +90,37 @@ id|paddr
 comma
 id|num_bytes
 )paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current_set
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* Unmap an IO/device area that was mapped using the above routine. */
@@ -82,6 +138,10 @@ r_int
 id|num_bytes
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -93,6 +153,17 @@ l_int|0x0
 r_return
 suffix:semicolon
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 (paren
 op_star
 (paren
@@ -103,6 +174,34 @@ id|romvec-&gt;pv_v2devops.v2_dumb_munmap
 id|vaddr
 comma
 id|num_bytes
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current_set
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_return

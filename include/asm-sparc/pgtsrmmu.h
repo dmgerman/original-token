@@ -1,9 +1,12 @@
-multiline_comment|/* $Id: pgtsrmmu.h,v 1.17 1996/04/25 06:13:26 davem Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsrmmu.h,v 1.24 1996/10/07 03:03:06 davem Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSRMMU_H
 DECL|macro|_SPARC_PGTSRMMU_H
 mdefine_line|#define _SPARC_PGTSRMMU_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#if CONFIG_AP1000
+macro_line|#include &lt;asm/ap1000/apreg.h&gt;
+macro_line|#endif
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|SRMMU_PMD_SHIFT
 mdefine_line|#define SRMMU_PMD_SHIFT         18
@@ -35,7 +38,7 @@ mdefine_line|#define SRMMU_PMD_TABLE_SIZE    0x100 /* 64 entries, 4 bytes a piec
 DECL|macro|SRMMU_PGD_TABLE_SIZE
 mdefine_line|#define SRMMU_PGD_TABLE_SIZE    0x400 /* 256 entries, 4 bytes a piece */
 DECL|macro|SRMMU_VMALLOC_START
-mdefine_line|#define SRMMU_VMALLOC_START   (0xfe200000)
+mdefine_line|#define SRMMU_VMALLOC_START   (0xfe300000)
 multiline_comment|/* Definition of the values in the ET field of PTD&squot;s and PTE&squot;s */
 DECL|macro|SRMMU_ET_MASK
 mdefine_line|#define SRMMU_ET_MASK         0x3
@@ -72,7 +75,7 @@ mdefine_line|#define SRMMU_PRIV         0x1c
 DECL|macro|SRMMU_PRIV_RDONLY
 mdefine_line|#define SRMMU_PRIV_RDONLY  0x18
 DECL|macro|SRMMU_CHG_MASK
-mdefine_line|#define SRMMU_CHG_MASK    (SRMMU_REF | SRMMU_DIRTY | SRMMU_ET_PTE)
+mdefine_line|#define SRMMU_CHG_MASK    (0xffffff00 | SRMMU_REF | SRMMU_DIRTY)
 multiline_comment|/* Some day I will implement true fine grained access bits for&n; * user pages because the SRMMU gives us the capabilities to&n; * enforce all the protection levels that vma&squot;s can have.&n; * XXX But for now...&n; */
 DECL|macro|SRMMU_PAGE_NONE
 mdefine_line|#define SRMMU_PAGE_NONE    __pgprot(SRMMU_VALID | SRMMU_CACHE | &bslash;&n;&t;&t;&t;&t;    SRMMU_PRIV | SRMMU_REF)
@@ -83,7 +86,7 @@ mdefine_line|#define SRMMU_PAGE_COPY    __pgprot(SRMMU_VALID | SRMMU_CACHE | &bs
 DECL|macro|SRMMU_PAGE_RDONLY
 mdefine_line|#define SRMMU_PAGE_RDONLY  __pgprot(SRMMU_VALID | SRMMU_CACHE | &bslash;&n;&t;&t;&t;&t;    SRMMU_EXEC | SRMMU_REF)
 DECL|macro|SRMMU_PAGE_KERNEL
-mdefine_line|#define SRMMU_PAGE_KERNEL  __pgprot(SRMMU_VALID | SRMMU_CACHE | SRMMU_PRIV)
+mdefine_line|#define SRMMU_PAGE_KERNEL  __pgprot(SRMMU_VALID | SRMMU_CACHE | SRMMU_PRIV | &bslash;&n;&t;&t;&t;&t;    SRMMU_DIRTY | SRMMU_REF)
 multiline_comment|/* SRMMU Register addresses in ASI 0x4.  These are valid for all&n; * current SRMMU implementations that exist.&n; */
 DECL|macro|SRMMU_CTRL_REG
 mdefine_line|#define SRMMU_CTRL_REG           0x00000000
@@ -95,10 +98,18 @@ DECL|macro|SRMMU_FAULT_STATUS
 mdefine_line|#define SRMMU_FAULT_STATUS       0x00000300
 DECL|macro|SRMMU_FAULT_ADDR
 mdefine_line|#define SRMMU_FAULT_ADDR         0x00000400
+multiline_comment|/*&n; * &quot;normal&quot; sun systems have their memory on bus 0. This means the top&n; * 4 bits of 36 bit physical addresses are 0. We use this define to&n; * determine if a piece of memory might be normal memory, or if its&n; * definately some sort of device memory.  &n; *&n; * On the AP+ normal memory is on bus 8. Why? Ask Fujitsu :-)&n;*/
+macro_line|#if CONFIG_AP1000
+DECL|macro|MEM_BUS_SPACE
+mdefine_line|#define MEM_BUS_SPACE 8
+macro_line|#else
+DECL|macro|MEM_BUS_SPACE
+mdefine_line|#define MEM_BUS_SPACE 0
+macro_line|#endif
 multiline_comment|/* Accessing the MMU control register. */
 DECL|function|srmmu_get_mmureg
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|srmmu_get_mmureg
@@ -134,7 +145,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_set_mmureg
 r_extern
-r_inline
+id|__inline__
 r_void
 id|srmmu_set_mmureg
 c_func
@@ -167,7 +178,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_set_ctable_ptr
 r_extern
-r_inline
+id|__inline__
 r_void
 id|srmmu_set_ctable_ptr
 c_func
@@ -189,12 +200,11 @@ op_amp
 id|SRMMU_CTX_PMASK
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-multiline_comment|/* weird memory system on the AP1000 */
+macro_line|#if MEM_BUS_SPACE
 id|paddr
 op_or_assign
 (paren
-l_int|0x8
+id|MEM_BUS_SPACE
 op_lshift
 l_int|28
 )paren
@@ -228,7 +238,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_get_ctable_ptr
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|srmmu_get_ctable_ptr
@@ -275,7 +285,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_set_context
 r_extern
-r_inline
+id|__inline__
 r_void
 id|srmmu_set_context
 c_func
@@ -309,10 +319,21 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+multiline_comment|/* The AP1000+ message controller also needs to know&n;&t;   the current task&squot;s context. */
+id|MSC_OUT
+c_func
+(paren
+id|MSC_PID
+comma
+id|context
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|srmmu_get_context
 r_extern
-r_inline
+id|__inline__
 r_int
 id|srmmu_get_context
 c_func
@@ -352,7 +373,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_get_fstatus
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|srmmu_get_fstatus
@@ -393,7 +414,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_get_faddr
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|srmmu_get_faddr
@@ -435,7 +456,7 @@ suffix:semicolon
 multiline_comment|/* This is guaranteed on all SRMMU&squot;s. */
 DECL|function|srmmu_flush_whole_tlb
 r_extern
-r_inline
+id|__inline__
 r_void
 id|srmmu_flush_whole_tlb
 c_func
@@ -443,6 +464,21 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if CONFIG_AP1000
+r_extern
+r_void
+id|mc_tlb_flush_all
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|mc_tlb_flush_all
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -468,7 +504,7 @@ suffix:semicolon
 multiline_comment|/* These flush types are not available on all chips... */
 DECL|function|srmmu_flush_tlb_ctx
 r_extern
-r_inline
+id|__inline__
 r_void
 id|srmmu_flush_tlb_ctx
 c_func
@@ -476,6 +512,13 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if CONFIG_AP1000
+id|mc_tlb_flush_ctx
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -500,7 +543,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_flush_tlb_region
 r_extern
-r_inline
+id|__inline__
 r_void
 id|srmmu_flush_tlb_region
 c_func
@@ -510,6 +553,13 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if CONFIG_AP1000
+id|mc_tlb_flush_region
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|addr
 op_and_assign
 id|SRMMU_PGDIR_MASK
@@ -540,7 +590,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_flush_tlb_segment
 r_extern
-r_inline
+id|__inline__
 r_void
 id|srmmu_flush_tlb_segment
 c_func
@@ -550,6 +600,13 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if CONFIG_AP1000
+id|mc_tlb_flush_segment
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|addr
 op_and_assign
 id|SRMMU_PMD_MASK
@@ -580,7 +637,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_flush_tlb_page
 r_extern
-r_inline
+id|__inline__
 r_void
 id|srmmu_flush_tlb_page
 c_func
@@ -590,6 +647,14 @@ r_int
 id|page
 )paren
 (brace
+macro_line|#if CONFIG_AP1000
+id|mc_tlb_flush_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
 id|page
 op_and_assign
 id|PAGE_MASK
@@ -618,7 +683,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_hwprobe
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|srmmu_hwprobe

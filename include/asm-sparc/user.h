@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: user.h,v 1.3 1995/12/29 21:48:03 davem Exp $&n; * asm-sparc/user.h: Core file definitions for the Sparc.&n; *&n; * Copyright (C) 1995 (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: user.h,v 1.4 1996/07/24 23:17:14 miguel Exp $&n; * asm-sparc/user.h: Core file definitions for the Sparc.&n; *&n; * Keep in sync with reg.h.  Actually, we could get rid of this&n; * one, since we won&squot;t a.out core dump that much anyways - miguel.&n; * Copyright (C) 1995 (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_USER_H
 DECL|macro|_SPARC_USER_H
 mdefine_line|#define _SPARC_USER_H
+macro_line|#include &lt;asm/a.out.h&gt;
 DECL|struct|sunos_regs
 r_struct
 id|sunos_regs

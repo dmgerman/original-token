@@ -849,6 +849,7 @@ macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;sdla0_dev)
 macro_line|#endif
+macro_line|#ifdef CONFIG_AX25
 macro_line|#ifdef CONFIG_NETROM
 r_extern
 r_int
@@ -999,6 +1000,90 @@ DECL|macro|NEXT_DEV
 macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define&t;NEXT_DEV&t;(&amp;nr0_dev)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ROSE
+r_extern
+r_int
+id|rose_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|rose1_dev
+r_static
+r_struct
+id|device
+id|rose1_dev
+op_assign
+(brace
+l_string|&quot;rose1&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|rose_init
+comma
+)brace
+suffix:semicolon
+DECL|variable|rose0_dev
+r_static
+r_struct
+id|device
+id|rose0_dev
+op_assign
+(brace
+l_string|&quot;rose0&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|rose1_dev
+comma
+id|rose_init
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define&t;NEXT_DEV&t;(&amp;rose0_dev)
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* Run-time ATtachable (Pocket) devices have a different (not &quot;eth#&quot;) name. */
 macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
@@ -1542,6 +1627,56 @@ macro_line|#undef NEXT_DEV
 DECL|macro|NEXT_DEV
 mdefine_line|#define NEXT_DEV (&amp;slip_bootstrap)
 macro_line|#endif&t;/* SLIP */
+macro_line|#if defined(CONFIG_MKISS)
+multiline_comment|/* To be exact, this node just hooks the initialization&n;&t;   routines to the device structures.&t;&t;&t;*/
+r_extern
+r_int
+id|mkiss_init_ctrl_dev
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|mkiss_bootstrap
+r_static
+r_struct
+id|device
+id|mkiss_bootstrap
+op_assign
+(brace
+l_string|&quot;mkiss_proto&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|mkiss_init_ctrl_dev
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#undef NEXT_DEV
+DECL|macro|NEXT_DEV
+mdefine_line|#define NEXT_DEV (&amp;mkiss_bootstrap)
+macro_line|#endif&t;/* MKISS */
 macro_line|#if defined(CONFIG_STRIP)
 r_extern
 r_int

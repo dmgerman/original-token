@@ -1981,7 +1981,7 @@ op_assign
 id|htons
 c_func
 (paren
-id|ulen
+id|len
 )paren
 suffix:semicolon
 id|udh.uh.check

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tsunami.h,v 1.4 1996/04/04 12:51:32 davem Exp $&n; * tsunami.h:  Module specific definitions for Tsunami V8 Sparcs&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: tsunami.h,v 1.5 1996/08/29 09:49:03 davem Exp $&n; * tsunami.h:  Module specific definitions for Tsunami V8 Sparcs&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TSUNAMI_H
 DECL|macro|_SPARC_TSUNAMI_H
 mdefine_line|#define _SPARC_TSUNAMI_H
@@ -32,7 +32,7 @@ DECL|macro|TSUNAMI_ME
 mdefine_line|#define TSUNAMI_ME        0x00000001
 DECL|function|tsunami_flush_icache
 r_extern
-r_inline
+id|__inline__
 r_void
 id|tsunami_flush_icache
 c_func
@@ -58,7 +58,7 @@ suffix:semicolon
 )brace
 DECL|function|tsunami_flush_dcache
 r_extern
-r_inline
+id|__inline__
 r_void
 id|tsunami_flush_dcache
 c_func

@@ -38,6 +38,12 @@ multiline_comment|/* Return if keystrokes are being sent to /dev/kbd */
 multiline_comment|/* Set routing of keystrokes to /dev/kbd */
 DECL|macro|KIOCSDIRECT
 mdefine_line|#define KIOCSDIRECT _IOW(&squot;k&squot;, 10, int)
+multiline_comment|/* Set keyboard leds */
+DECL|macro|KIOCSLED
+mdefine_line|#define KIOCSLED    _IOW(&squot;k&squot;, 14, unsigned char)
+multiline_comment|/* Get keyboard leds */
+DECL|macro|KIOCGLED
+mdefine_line|#define KIOCGLED    _IOR(&squot;k&squot;, 15, unsigned char)
 multiline_comment|/* Top bit records if the key is up or down */
 DECL|macro|KBD_UP
 mdefine_line|#define KBD_UP      0x80

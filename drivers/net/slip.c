@@ -13,10 +13,6 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#ifdef CONFIG_AX25
-macro_line|#include &lt;linux/timer.h&gt;
-macro_line|#include &lt;net/ax25.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
@@ -936,19 +932,10 @@ id|sl-&gt;flags
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_AX25
-id|sl-&gt;mtu
-op_assign
-id|dev-&gt;mtu
-op_plus
-l_int|73
-suffix:semicolon
-macro_line|#else
 id|sl-&gt;mtu
 op_assign
 id|dev-&gt;mtu
 suffix:semicolon
-macro_line|#endif
 id|sl-&gt;buffsize
 op_assign
 id|len
@@ -1333,24 +1320,6 @@ id|skb-&gt;mac.raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sl-&gt;mode
-op_amp
-id|SL_MODE_AX25
-)paren
-(brace
-id|skb-&gt;protocol
-op_assign
-id|htons
-c_func
-(paren
-id|ETH_P_AX25
-)paren
-suffix:semicolon
-)brace
-r_else
 id|skb-&gt;protocol
 op_assign
 id|htons
@@ -1400,19 +1369,6 @@ id|actual
 comma
 id|count
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25
-r_if
-c_cond
-(paren
-id|sl-&gt;mtu
-op_ne
-id|sl-&gt;dev-&gt;mtu
-op_plus
-l_int|73
-)paren
-(brace
-multiline_comment|/* Someone has been ifconfigging */
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -1422,7 +1378,6 @@ id|sl-&gt;dev-&gt;mtu
 )paren
 (brace
 multiline_comment|/* Someone has been ifconfigging */
-macro_line|#endif
 id|sl_changedmtu
 c_func
 (paren
@@ -1903,58 +1858,6 @@ r_int
 id|len
 )paren
 (brace
-macro_line|#ifdef CONFIG_AX25
-macro_line|#ifdef CONFIG_INET
-r_struct
-id|slip
-op_star
-id|sl
-op_assign
-(paren
-r_struct
-id|slip
-op_star
-)paren
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sl-&gt;mode
-op_amp
-id|SL_MODE_AX25
-op_logical_and
-id|type
-op_ne
-id|htons
-c_func
-(paren
-id|ETH_P_AX25
-)paren
-)paren
-(brace
-r_return
-id|ax25_encapsulate
-c_func
-(paren
-id|skb
-comma
-id|dev
-comma
-id|type
-comma
-id|daddr
-comma
-id|saddr
-comma
-id|len
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1985,46 +1888,6 @@ op_star
 id|skb
 )paren
 (brace
-macro_line|#ifdef CONFIG_AX25
-macro_line|#ifdef CONFIG_INET
-r_struct
-id|slip
-op_star
-id|sl
-op_assign
-(paren
-r_struct
-id|slip
-op_star
-)paren
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sl-&gt;mode
-op_amp
-id|SL_MODE_AX25
-)paren
-(brace
-r_return
-id|ax25_rebuild_header
-c_func
-(paren
-id|buff
-comma
-id|dev
-comma
-id|raddr
-comma
-id|skb
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2209,19 +2072,10 @@ id|noslcomp
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_AX25
-id|sl-&gt;mtu
-op_assign
-id|dev-&gt;mtu
-op_plus
-l_int|73
-suffix:semicolon
-macro_line|#else
 id|sl-&gt;mtu
 op_assign
 id|dev-&gt;mtu
 suffix:semicolon
-macro_line|#endif
 id|sl-&gt;buffsize
 op_assign
 id|len
@@ -2501,18 +2355,6 @@ id|sl-&gt;dev-&gt;start
 r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; * Argh! mtu change time! - costs us the packet part received&n;&t; * at the change&n;&t; */
-macro_line|#ifdef CONFIG_AX25
-r_if
-c_cond
-(paren
-id|sl-&gt;mtu
-op_ne
-id|sl-&gt;dev-&gt;mtu
-op_plus
-l_int|73
-)paren
-(brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -2521,7 +2363,6 @@ op_ne
 id|sl-&gt;dev-&gt;mtu
 )paren
 (brace
-macro_line|#endif
 id|sl_changedmtu
 c_func
 (paren
@@ -2717,22 +2558,6 @@ id|ARPHRD_SLIP
 op_plus
 id|sl-&gt;mode
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25&t;
-r_if
-c_cond
-(paren
-id|sl-&gt;dev-&gt;type
-op_eq
-l_int|260
-)paren
-(brace
-multiline_comment|/* KISS */
-id|sl-&gt;dev-&gt;type
-op_assign
-id|ARPHRD_AX25
-suffix:semicolon
-)brace
-macro_line|#endif&t;
 multiline_comment|/* Perform the low-level SLIP initialization. */
 r_if
 c_cond
@@ -3669,100 +3494,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* CONFIG_SLIP_MODE_SLIP6 */
-macro_line|#ifdef CONFIG_AX25
-r_int
-DECL|function|sl_set_mac_address
-id|sl_set_mac_address
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_void
-op_star
-id|addr
-)paren
-(brace
-r_int
-id|err
-suffix:semicolon
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|addr
-comma
-id|AX25_ADDR_LEN
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
-r_return
-id|err
-suffix:semicolon
-)brace
-id|copy_from_user
-c_func
-(paren
-id|dev-&gt;dev_addr
-comma
-id|addr
-comma
-id|AX25_ADDR_LEN
-)paren
-suffix:semicolon
-multiline_comment|/* addr is an AX.25 shifted ASCII mac address */
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|sl_set_dev_mac_address
-id|sl_set_dev_mac_address
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_void
-op_star
-id|addr
-)paren
-(brace
-r_struct
-id|sockaddr
-op_star
-id|sa
-op_assign
-id|addr
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|dev-&gt;dev_addr
-comma
-id|sa-&gt;sa_data
-comma
-id|AX25_ADDR_LEN
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_AX25 */
 multiline_comment|/* Perform I/O control on an active SLIP channel. */
 r_static
 r_int
@@ -4024,56 +3755,6 @@ id|EINVAL
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifndef CONFIG_AX25
-r_if
-c_cond
-(paren
-id|tmp
-op_amp
-id|SL_MODE_AX25
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|tmp
-op_amp
-id|SL_MODE_AX25
-)paren
-(brace
-id|sl-&gt;dev-&gt;addr_len
-op_assign
-id|AX25_ADDR_LEN
-suffix:semicolon
-multiline_comment|/* sizeof an AX.25 addr */
-id|sl-&gt;dev-&gt;hard_header_len
-op_assign
-id|AX25_KISS_HEADER_LEN
-op_plus
-id|AX25_MAX_HEADER_LEN
-op_plus
-l_int|3
-suffix:semicolon
-)brace
-r_else
-(brace
-id|sl-&gt;dev-&gt;addr_len
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* No mac addr in slip mode */
-id|sl-&gt;dev-&gt;hard_header_len
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 id|sl-&gt;mode
 op_assign
 id|tmp
@@ -4084,43 +3765,16 @@ id|ARPHRD_SLIP
 op_plus
 id|sl-&gt;mode
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25&t;&t;
-r_if
-c_cond
-(paren
-id|sl-&gt;dev-&gt;type
-op_eq
-l_int|260
-)paren
-(brace
-id|sl-&gt;dev-&gt;type
-op_assign
-id|ARPHRD_AX25
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;
 r_return
 l_int|0
 suffix:semicolon
 r_case
 id|SIOCSIFHWADDR
 suffix:colon
-macro_line|#ifdef CONFIG_AX25
-r_return
-id|sl_set_mac_address
-c_func
-(paren
-id|sl-&gt;dev
-comma
-id|arg
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SLIP_SMART
 multiline_comment|/* VSV changes start here */
 r_case
@@ -4573,15 +4227,6 @@ l_string|&quot;CSLIP: code copyright 1989 Regents of the University of Californi
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_AX25
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;AX25: KISS encapsulation enabled.&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SLIP_SMART
 id|printk
 c_func
@@ -4797,82 +4442,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25
-r_static
-r_char
-id|ax25_bcast
-(braket
-id|AX25_ADDR_LEN
-)braket
-op_assign
-(brace
-l_char|&squot;Q&squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot;S&squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot;T&squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot; &squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot; &squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot; &squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot;0&squot;
-op_lshift
-l_int|1
-)brace
-suffix:semicolon
-r_static
-r_char
-id|ax25_test
-(braket
-id|AX25_ADDR_LEN
-)braket
-op_assign
-(brace
-l_char|&squot;L&squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot;I&squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot;N&squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot;U&squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot;X&squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot; &squot;
-op_lshift
-l_int|1
-comma
-l_char|&squot;1&squot;
-op_lshift
-l_int|1
-)brace
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4933,14 +4502,6 @@ id|dev-&gt;get_stats
 op_assign
 id|sl_get_stats
 suffix:semicolon
-macro_line|#ifdef HAVE_SET_MAC_ADDR
-macro_line|#ifdef CONFIG_AX25
-id|dev-&gt;set_mac_address
-op_assign
-id|sl_set_dev_mac_address
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 id|dev-&gt;hard_header_len
 op_assign
 l_int|0
@@ -4959,43 +4520,6 @@ id|dev-&gt;tx_queue_len
 op_assign
 l_int|10
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25
-r_if
-c_cond
-(paren
-id|sl-&gt;dev-&gt;type
-op_eq
-l_int|260
-)paren
-(brace
-id|sl-&gt;dev-&gt;type
-op_assign
-id|ARPHRD_AX25
-suffix:semicolon
-)brace
-id|memcpy
-c_func
-(paren
-id|dev-&gt;broadcast
-comma
-id|ax25_bcast
-comma
-id|AX25_ADDR_LEN
-)paren
-suffix:semicolon
-multiline_comment|/* Only activated in AX.25 mode */
-id|memcpy
-c_func
-(paren
-id|dev-&gt;dev_addr
-comma
-id|ax25_test
-comma
-id|AX25_ADDR_LEN
-)paren
-suffix:semicolon
-multiline_comment|/*    &quot;&quot;      &quot;&quot;       &quot;&quot;    &quot;&quot; */
-macro_line|#endif
 id|dev-&gt;rebuild_header
 op_assign
 id|sl_rebuild_header

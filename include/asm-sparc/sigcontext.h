@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.8 1996/03/01 07:20:59 davem Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.9 1996/10/27 08:55:42 davem Exp $ */
 macro_line|#ifndef _ASMsparc_SIGCONTEXT_H
 DECL|macro|_ASMsparc_SIGCONTEXT_H
 mdefine_line|#define _ASMsparc_SIGCONTEXT_H
@@ -23,9 +23,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* This is what SunOS does, so shall I. */
-DECL|struct|sigcontext_struct
+DECL|struct|sigcontext
 r_struct
-id|sigcontext_struct
+id|sigcontext
 (brace
 DECL|member|sigc_onstack
 r_int

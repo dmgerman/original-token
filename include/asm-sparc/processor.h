@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.43 1996/03/23 02:40:05 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.48 1996/10/27 08:55:36 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -24,7 +24,38 @@ DECL|macro|wp_works_ok__is_a_macro
 mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/* Whee, this is STACK_TOP and the lowest kernel address too... */
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;(KERNBASE)
+mdefine_line|#define TASK_SIZE&t;(page_offset)
+multiline_comment|/* Ok this is hot.  Sparc exception save area. */
+DECL|struct|exception_struct
+r_struct
+id|exception_struct
+(brace
+DECL|member|count
+r_int
+r_int
+id|count
+suffix:semicolon
+multiline_comment|/* Exception count */
+DECL|member|pc
+r_int
+r_int
+id|pc
+suffix:semicolon
+multiline_comment|/* Callers PC for copy/clear user */
+DECL|member|expc
+r_int
+r_int
+id|expc
+suffix:semicolon
+multiline_comment|/* Where to jump when exception signaled */
+DECL|member|address
+r_int
+r_int
+id|address
+suffix:semicolon
+multiline_comment|/* Saved user base address for transfer */
+)brace
+suffix:semicolon
 multiline_comment|/* The Sparc processor specific thread struct. */
 DECL|struct|thread_struct
 r_struct
@@ -222,6 +253,20 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+DECL|member|ex
+r_struct
+id|exception_struct
+id|ex
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
+suffix:semicolon
 DECL|member|current_ds
 r_int
 id|current_ds
@@ -236,14 +281,16 @@ multiline_comment|/* just what it says. */
 suffix:semicolon
 DECL|macro|SPARC_FLAG_KTHREAD
 mdefine_line|#define SPARC_FLAG_KTHREAD      0x1    /* task is a kernel thread */
+DECL|macro|SPARC_FLAG_UNALIGNED
+mdefine_line|#define SPARC_FLAG_UNALIGNED    0x2    /* is allowed to do unaligned accesses */
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, (0), (0), &bslash;&n;&t;&t;    __pgprot(0x0) , VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* sstk_info */ &bslash;&n;{ 0, 0, }, &bslash;&n;/* flags,              current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, USER_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* sstk_info */ &bslash;&n;{ 0, 0, }, &bslash;&n;/* flags,              ex,       current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, { 0, }, USER_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;}
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|thread_saved_pc
@@ -256,13 +303,13 @@ id|t
 )paren
 (brace
 r_return
-id|t-&gt;kregs-&gt;pc
+id|t-&gt;kpc
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
+multiline_comment|/* Do necessary setup to start up a newly executed thread. */
 DECL|function|start_thread
 r_extern
-r_inline
+id|__inline__
 r_void
 id|start_thread
 c_func
@@ -281,9 +328,17 @@ r_int
 id|sp
 )paren
 (brace
+r_register
 r_int
 r_int
-id|saved_psr
+id|zero
+id|asm
+c_func
+(paren
+l_string|&quot;g1&quot;
+)paren
+suffix:semicolon
+id|regs-&gt;psr
 op_assign
 (paren
 id|regs-&gt;psr
@@ -294,36 +349,6 @@ id|PSR_CWP
 )paren
 op_or
 id|PSR_S
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|16
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|regs-&gt;u_regs
-(braket
-id|i
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|regs-&gt;y
-op_assign
-l_int|0
 suffix:semicolon
 id|regs-&gt;pc
 op_assign
@@ -346,22 +371,75 @@ id|regs-&gt;pc
 op_plus
 l_int|4
 suffix:semicolon
-id|regs-&gt;psr
+id|regs-&gt;y
 op_assign
-id|saved_psr
+l_int|0
 suffix:semicolon
-id|regs-&gt;u_regs
-(braket
-id|UREG_FP
-)braket
+id|zero
 op_assign
+l_int|0
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;std&bslash;t%%g0, [%0 + %3 + 0x00]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g0, [%0 + %3 + 0x08]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g0, [%0 + %3 + 0x10]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g0, [%0 + %3 + 0x18]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g0, [%0 + %3 + 0x20]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g0, [%0 + %3 + 0x28]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g0, [%0 + %3 + 0x30]&bslash;n&bslash;t&quot;
+l_string|&quot;st&bslash;t%1, [%0 + %3 + 0x38]&bslash;n&bslash;t&quot;
+l_string|&quot;st&bslash;t%%g0, [%0 + %3 + 0x3c]&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|regs
+)paren
+comma
+l_string|&quot;r&quot;
 (paren
 id|sp
 op_minus
 id|REGWIN_SZ
 )paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|zero
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+(paren
+r_const
+r_int
+r_int
+)paren
+(paren
+op_amp
+(paren
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+l_int|0
+)paren
+op_member_access_from_pointer
+id|u_regs
+(braket
+l_int|0
+)braket
+)paren
+)paren
+)paren
 suffix:semicolon
 )brace
+DECL|macro|release_thread
+mdefine_line|#define release_thread(tsk)&t;&t;do { } while(0)
 macro_line|#ifdef __KERNEL__
 r_extern
 r_int

@@ -35,6 +35,9 @@ macro_line|#include &lt;net/ax25call.h&gt;
 macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;net/nrcall.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_ROSE
+macro_line|#include &lt;net/rosecall.h&gt;
+macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 macro_line|#if ! ( defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE) )
@@ -115,6 +118,7 @@ comma
 id|ax25_proto_init
 )brace
 comma
+multiline_comment|/* Amateur Radio AX.25 */
 macro_line|#ifdef CONFIG_NETROM
 (brace
 l_string|&quot;NET/ROM&quot;
@@ -122,6 +126,16 @@ comma
 id|nr_proto_init
 )brace
 comma
+multiline_comment|/* Amateur Radio NET/ROM */
+macro_line|#endif
+macro_line|#ifdef CONFIG_ROSE
+(brace
+l_string|&quot;Rose&quot;
+comma
+id|rose_proto_init
+)brace
+comma
+multiline_comment|/* Amateur Radio X.25 PLP */
 macro_line|#endif
 macro_line|#endif  
 macro_line|#ifdef&t;CONFIG_INET
@@ -159,6 +173,15 @@ id|atalk_proto_init
 )brace
 comma
 multiline_comment|/* Netatalk Appletalk driver&t;*/
+macro_line|#endif
+macro_line|#ifdef CONFIG_X25
+(brace
+l_string|&quot;X.25&quot;
+comma
+id|x25_proto_init
+)brace
+comma
+multiline_comment|/* CCITT X.25 Packet Layer */
 macro_line|#endif
 (brace
 l_int|NULL

@@ -5,8 +5,8 @@ mdefine_line|#define _SPARC_ATOPS_H
 macro_line|#ifdef __SMP__
 DECL|function|ldstub
 r_extern
-id|__inline
-r_volatile
+id|__inline__
+id|__volatile__
 r_int
 r_char
 id|ldstub

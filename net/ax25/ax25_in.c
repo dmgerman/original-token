@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *&t;AX.25 release 032&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX) Extracted AX25 control block from&n; *&t;&t;&t;&t;&t;the sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added IP mode registration.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added AX.25 fragment reception.&n; *&t;&t;&t;&t;&t;Upgraded state machine for SABME.&n; *&t;&t;&t;&t;&t;Added arbitrary protocol id support.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;HaJo(DD8NE)&t;Added Idle Disc Timer T5&n; *&t;&t;&t;Joerg(DL1BKE)   Renamed it to &quot;IDLE&quot; with a slightly&n; *&t;&t;&t;&t;&t;different behaviour. Fixed defrag&n; *&t;&t;&t;&t;&t;routine (I hope)&n; *&t;AX.25 032&t;Jonathan(G4KLX)&t;Remove auto-router.&n; *&t;&t;&t;Darryl(G7LED)&t;AX.25 segmentation fixed.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 033&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX) Extracted AX25 control block from&n; *&t;&t;&t;&t;&t;the sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added IP mode registration.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added AX.25 fragment reception.&n; *&t;&t;&t;&t;&t;Upgraded state machine for SABME.&n; *&t;&t;&t;&t;&t;Added arbitrary protocol id support.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;HaJo(DD8NE)&t;Added Idle Disc Timer T5&n; *&t;&t;&t;Joerg(DL1BKE)   Renamed it to &quot;IDLE&quot; with a slightly&n; *&t;&t;&t;&t;&t;different behaviour. Fixed defrag&n; *&t;&t;&t;&t;&t;routine (I hope)&n; *&t;AX.25 032&t;Darryl(G7LED)&t;AX.25 segmentation fixed.&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;Remove auto-router.&n; *&t;&t;&t;&t;&t;Modularisation changes.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -22,9 +22,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#ifdef CONFIG_NETROM
-macro_line|#include &lt;net/netrom.h&gt;
-macro_line|#endif
 r_static
 r_int
 id|ax25_rx_iframe
@@ -471,6 +468,20 @@ op_star
 id|skb
 )paren
 (brace
+r_int
+(paren
+op_star
+id|func
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+comma
+id|ax25_cb
+op_star
+)paren
+suffix:semicolon
 r_volatile
 r_int
 id|queued
@@ -500,55 +511,15 @@ op_assign
 op_star
 id|skb-&gt;data
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|pid
-)paren
-(brace
-macro_line|#ifdef CONFIG_NETROM
-r_case
-id|AX25_P_NETROM
-suffix:colon
+macro_line|#ifdef CONFIG_INET
 r_if
 c_cond
 (paren
-id|ax25_dev_get_value
-c_func
-(paren
-id|ax25-&gt;device
-comma
-id|AX25_VALUES_NETROM
-)paren
+id|pid
+op_eq
+id|AX25_P_IP
 )paren
 (brace
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* Remove PID */
-id|queued
-op_assign
-id|nr_route_frame
-c_func
-(paren
-id|skb
-comma
-id|ax25
-)paren
-suffix:semicolon
-)brace
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_INET
-r_case
-id|AX25_P_IP
-suffix:colon
 id|skb_pull
 c_func
 (paren
@@ -573,16 +544,19 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Wrong ptype */
-id|queued
-op_assign
+r_return
 l_int|1
 suffix:semicolon
-r_break
-suffix:semicolon
+)brace
 macro_line|#endif
-r_case
+r_if
+c_cond
+(paren
+id|pid
+op_eq
 id|AX25_P_SEGMENT
-suffix:colon
+)paren
+(brace
 id|skb_pull
 c_func
 (paren
@@ -592,8 +566,7 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Remove PID */
-id|queued
-op_assign
+r_return
 id|ax25_rx_fragment
 c_func
 (paren
@@ -602,11 +575,43 @@ comma
 id|skb
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|func
+op_assign
+id|ax25_protocol_function
+c_func
+(paren
+id|pid
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
 (brace
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* Remove PID */
+r_return
+(paren
+op_star
+id|func
+)paren
+(paren
+id|skb
+comma
+id|ax25
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -641,21 +646,14 @@ id|skb
 op_eq
 l_int|0
 )paren
-(brace
 id|queued
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 r_else
-(brace
 id|ax25-&gt;condition
 op_or_assign
 id|OWN_RX_BUSY_CONDITION
-suffix:semicolon
-)brace
-)brace
-r_break
 suffix:semicolon
 )brace
 r_return

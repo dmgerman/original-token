@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl.h,v 1.4 1995/11/25 02:31:52 davem Exp $ */
+multiline_comment|/* $Id: ioctl.h,v 1.5 1996/05/17 03:31:09 davem Exp $ */
 macro_line|#ifndef _SPARC_IOCTL_H
 DECL|macro|_SPARC_IOCTL_H
 mdefine_line|#define _SPARC_IOCTL_H
@@ -46,8 +46,8 @@ DECL|macro|_IOR
 mdefine_line|#define _IOR(type,nr,size)  _IOC(_IOC_READ,(type),(nr),sizeof(size))
 DECL|macro|_IOW
 mdefine_line|#define _IOW(type,nr,size)  _IOC(_IOC_WRITE,(type),(nr),sizeof(size))
-DECL|macro|_IORW
-mdefine_line|#define _IORW(type,nr,size) _IOC(_IOC_READ|_IOC_WRITE,(type),(nr),sizeof(size))
+DECL|macro|_IOWR
+mdefine_line|#define _IOWR(type,nr,size) _IOC(_IOC_READ|_IOC_WRITE,(type),(nr),sizeof(size))
 DECL|macro|_IOC_DIR
 mdefine_line|#define _IOC_DIR(nr)        (((nr) &gt;&gt; _IOC_DIRSHIFT) &amp; _IOC_DIRMASK)
 DECL|macro|_IOC_TYPE

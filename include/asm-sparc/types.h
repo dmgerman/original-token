@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: types.h,v 1.9 1996/04/04 12:51:34 davem Exp $ */
+multiline_comment|/* $Id: types.h,v 1.10 1996/08/29 09:49:04 davem Exp $ */
 macro_line|#ifndef _SPARC_TYPES_H
 DECL|macro|_SPARC_TYPES_H
 mdefine_line|#define _SPARC_TYPES_H
@@ -12,7 +12,7 @@ id|umode_t
 suffix:semicolon
 DECL|typedef|__s8
 r_typedef
-r_int
+id|__signed__
 r_char
 id|__s8
 suffix:semicolon
@@ -24,7 +24,7 @@ id|__u8
 suffix:semicolon
 DECL|typedef|__s16
 r_typedef
-r_int
+id|__signed__
 r_int
 id|__s16
 suffix:semicolon
@@ -36,7 +36,7 @@ id|__u16
 suffix:semicolon
 DECL|typedef|__s32
 r_typedef
-r_int
+id|__signed__
 r_int
 id|__s32
 suffix:semicolon
@@ -48,7 +48,7 @@ id|__u32
 suffix:semicolon
 DECL|typedef|__s64
 r_typedef
-r_int
+id|__signed__
 r_int
 r_int
 id|__s64
@@ -63,7 +63,7 @@ suffix:semicolon
 macro_line|#ifdef __KERNEL__
 DECL|typedef|s8
 r_typedef
-r_int
+id|__signed__
 r_char
 id|s8
 suffix:semicolon
@@ -75,7 +75,7 @@ id|u8
 suffix:semicolon
 DECL|typedef|s16
 r_typedef
-r_int
+id|__signed__
 r_int
 id|s16
 suffix:semicolon
@@ -87,7 +87,7 @@ id|u16
 suffix:semicolon
 DECL|typedef|s32
 r_typedef
-r_int
+id|__signed__
 r_int
 id|s32
 suffix:semicolon
@@ -99,7 +99,7 @@ id|u32
 suffix:semicolon
 DECL|typedef|s64
 r_typedef
-r_int
+id|__signed__
 r_int
 r_int
 id|s64

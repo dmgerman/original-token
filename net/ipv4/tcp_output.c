@@ -1390,9 +1390,11 @@ l_int|1
 suffix:semicolon
 id|avail
 op_assign
-id|skb-&gt;end
-op_minus
-id|skb-&gt;tail
+id|skb_tailroom
+c_func
+(paren
+id|skb
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  size of tcp payload&n;&t; */
 id|size1

@@ -183,15 +183,10 @@ id|CLOCK_INIT_DONE
 )paren
 )paren
 (brace
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|clk_init
@@ -229,15 +224,10 @@ l_int|1
 r_return
 suffix:semicolon
 multiline_comment|/* no speed up yet */
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* if SCSI DMA in progress, don&squot;t slow clock */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vaddrs.h,v 1.20 1996/04/25 06:13:40 davem Exp $ */
+multiline_comment|/* $Id: vaddrs.h,v 1.21 1996/10/07 03:03:02 davem Exp $ */
 macro_line|#ifndef _SPARC_VADDRS_H
 DECL|macro|_SPARC_VADDRS_H
 mdefine_line|#define _SPARC_VADDRS_H
@@ -8,9 +8,9 @@ multiline_comment|/* I can see only one reason why we should have statically def
 DECL|macro|IOBASE_VADDR
 mdefine_line|#define  IOBASE_VADDR   0xfe000000  /* Base for mapping pages */
 DECL|macro|IOBASE_LEN
-mdefine_line|#define  IOBASE_LEN     0x00200000  /* Length of the IO area */
+mdefine_line|#define  IOBASE_LEN     0x00300000  /* Length of the IO area */
 DECL|macro|IOBASE_END
-mdefine_line|#define  IOBASE_END     0xfe200000
+mdefine_line|#define  IOBASE_END     0xfe300000
 DECL|macro|DVMA_VADDR
 mdefine_line|#define  DVMA_VADDR     0xfff00000  /* Base area of the DVMA on suns */
 DECL|macro|DVMA_LEN

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.8 1995/11/25 02:31:50 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.10 1996/08/29 09:48:14 davem Exp $ */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H
@@ -8,7 +8,7 @@ macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Defines for io operations on the Sparc. Whether a memory access is going&n; * to i/o sparc is encoded in the pte. The type bits determine whether this&n; * is i/o sparc, on board memory, or VME space for VME cards. I think VME&n; * space only works on sun4&squot;s&n; */
 DECL|function|inb_local
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|inb_local
@@ -25,7 +25,7 @@ suffix:semicolon
 )brace
 DECL|function|outb_local
 r_extern
-r_inline
+id|__inline__
 r_void
 id|outb_local
 c_func
@@ -44,7 +44,7 @@ suffix:semicolon
 )brace
 DECL|function|inb
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|inb
@@ -61,7 +61,7 @@ suffix:semicolon
 )brace
 DECL|function|inw
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|inw
@@ -78,7 +78,7 @@ suffix:semicolon
 )brace
 DECL|function|inl
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|inl
@@ -95,7 +95,7 @@ suffix:semicolon
 )brace
 DECL|function|outb
 r_extern
-r_inline
+id|__inline__
 r_void
 id|outb
 c_func
@@ -114,7 +114,7 @@ suffix:semicolon
 )brace
 DECL|function|outw
 r_extern
-r_inline
+id|__inline__
 r_void
 id|outw
 c_func
@@ -133,7 +133,7 @@ suffix:semicolon
 )brace
 DECL|function|outl
 r_extern
-r_inline
+id|__inline__
 r_void
 id|outl
 c_func
@@ -153,7 +153,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Memory functions&n; */
 DECL|function|readb
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|readb
@@ -170,7 +170,7 @@ suffix:semicolon
 )brace
 DECL|function|readw
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|readw
@@ -187,7 +187,7 @@ suffix:semicolon
 )brace
 DECL|function|readl
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|readl
@@ -204,7 +204,7 @@ suffix:semicolon
 )brace
 DECL|function|writeb
 r_extern
-r_inline
+id|__inline__
 r_void
 id|writeb
 c_func
@@ -223,7 +223,7 @@ suffix:semicolon
 )brace
 DECL|function|writew
 r_extern
-r_inline
+id|__inline__
 r_void
 id|writew
 c_func
@@ -242,7 +242,7 @@ suffix:semicolon
 )brace
 DECL|function|writel
 r_extern
-r_inline
+id|__inline__
 r_void
 id|writel
 c_func
@@ -301,7 +301,7 @@ id|rdonly
 suffix:semicolon
 DECL|function|mapioaddr
 r_extern
-r_inline
+id|__inline__
 r_void
 id|mapioaddr
 c_func
@@ -401,6 +401,92 @@ suffix:semicolon
 )brace
 r_extern
 r_void
+id|srmmu_unmapioaddr
+c_func
+(paren
+r_int
+r_int
+id|virt
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sun4c_unmapioaddr
+c_func
+(paren
+r_int
+r_int
+id|virt
+)paren
+suffix:semicolon
+DECL|function|unmapioaddr
+r_extern
+id|__inline__
+r_void
+id|unmapioaddr
+c_func
+(paren
+r_int
+r_int
+id|virt_addr
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|sparc_cpu_model
+)paren
+(brace
+r_case
+id|sun4c
+suffix:colon
+id|sun4c_unmapioaddr
+c_func
+(paren
+id|virt_addr
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|sun4m
+suffix:colon
+r_case
+id|sun4d
+suffix:colon
+r_case
+id|sun4e
+suffix:colon
+id|srmmu_unmapioaddr
+c_func
+(paren
+id|virt_addr
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;unmapioaddr: sparc_cpu_model = %d, halt...&bslash;n&quot;
+comma
+id|sparc_cpu_model
+)paren
+suffix:semicolon
+id|halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_extern
+r_void
 op_star
 id|sparc_alloc_io
 (paren
@@ -416,6 +502,16 @@ r_char
 op_star
 comma
 r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sparc_free_io
+(paren
+r_void
+op_star
 comma
 r_int
 )paren

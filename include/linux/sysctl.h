@@ -147,6 +147,10 @@ DECL|macro|NET_BRIDGE
 mdefine_line|#define NET_BRIDGE&t;10
 DECL|macro|NET_IPV6
 mdefine_line|#define NET_IPV6&t;11
+DECL|macro|NET_ROSE
+mdefine_line|#define NET_ROSE&t;12
+DECL|macro|NET_X25
+mdefine_line|#define NET_X25&t;&t;13
 multiline_comment|/* /proc/sys/net/core */
 multiline_comment|/* /proc/sys/net/ethernet */
 multiline_comment|/* /proc/sys/net/802 */
@@ -176,7 +180,44 @@ mdefine_line|#define NET_IPV6_HOPLIMIT&t;&t;2
 multiline_comment|/* /proc/sys/net/ipx */
 multiline_comment|/* /proc/sys/net/appletalk */
 multiline_comment|/* /proc/sys/net/netrom */
+DECL|macro|NET_NETROM_DEFAULT_PATH_QUALITY
+mdefine_line|#define&t;NET_NETROM_DEFAULT_PATH_QUALITY&t;&t;&t;1
+DECL|macro|NET_NETROM_OBSOLESCENCE_COUNT_INITIALISER
+mdefine_line|#define&t;NET_NETROM_OBSOLESCENCE_COUNT_INITIALISER&t;2
+DECL|macro|NET_NETROM_NETWORK_TTL_INITIALISER
+mdefine_line|#define&t;NET_NETROM_NETWORK_TTL_INITIALISER&t;&t;3
+DECL|macro|NET_NETROM_TRANSPORT_TIMEOUT
+mdefine_line|#define&t;NET_NETROM_TRANSPORT_TIMEOUT&t;&t;&t;4
+DECL|macro|NET_NETROM_TRANSPORT_MAXIMUM_TRIES
+mdefine_line|#define&t;NET_NETROM_TRANSPORT_MAXIMUM_TRIES&t;&t;5
+DECL|macro|NET_NETROM_TRANSPORT_ACKNOWLEDGE_DELAY
+mdefine_line|#define&t;NET_NETROM_TRANSPORT_ACKNOWLEDGE_DELAY&t;&t;6
+DECL|macro|NET_NETROM_TRANSPORT_BUSY_DELAY
+mdefine_line|#define&t;NET_NETROM_TRANSPORT_BUSY_DELAY&t;&t;&t;7
+DECL|macro|NET_NETROM_TRANSPORT_REQUESTED_WINDOW_SIZE
+mdefine_line|#define&t;NET_NETROM_TRANSPORT_REQUESTED_WINDOW_SIZE&t;8
+DECL|macro|NET_NETROM_TRANSPORT_NO_ACTIVITY_TIMEOUT
+mdefine_line|#define&t;NET_NETROM_TRANSPORT_NO_ACTIVITY_TIMEOUT&t;9
+DECL|macro|NET_NETROM_TRANSPORT_PACKET_LENGTH
+mdefine_line|#define&t;NET_NETROM_TRANSPORT_PACKET_LENGTH&t;&t;10
+DECL|macro|NET_NETROM_ROUTING_CONTROL
+mdefine_line|#define&t;NET_NETROM_ROUTING_CONTROL&t;&t;&t;11
 multiline_comment|/* /proc/sys/net/ax25 */
+multiline_comment|/* Values are generated dynamically */
+multiline_comment|/* /proc/sys/net/rose */
+DECL|macro|NET_ROSE_RESTART_REQUEST_TIMEOUT
+mdefine_line|#define&t;NET_ROSE_RESTART_REQUEST_TIMEOUT&t;&t;1
+DECL|macro|NET_ROSE_CALL_REQUEST_TIMEOUT
+mdefine_line|#define&t;NET_ROSE_CALL_REQUEST_TIMEOUT&t;&t;&t;2
+DECL|macro|NET_ROSE_RESET_REQUEST_TIMEOUT
+mdefine_line|#define&t;NET_ROSE_RESET_REQUEST_TIMEOUT&t;&t;&t;3
+DECL|macro|NET_ROSE_CLEAR_REQUEST_TIMEOUT
+mdefine_line|#define&t;NET_ROSE_CLEAR_REQUEST_TIMEOUT&t;&t;&t;4
+DECL|macro|NET_ROSE_NO_ACTIVITY_TIMEOUT
+mdefine_line|#define&t;NET_ROSE_NO_ACTIVITY_TIMEOUT&t;&t;&t;5
+DECL|macro|NET_ROSE_ROUTING_CONTROL
+mdefine_line|#define&t;NET_ROSE_ROUTING_CONTROL&t;&t;&t;6
+multiline_comment|/* /proc/sys/net/x25 */
 multiline_comment|/* CTL_PROC names: */
 multiline_comment|/* CTL_FS names: */
 multiline_comment|/* CTL_DEBUG names: */

@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_subr.c&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Added G8BPQ NET/ROM extensions.&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 004&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_subr.c&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Added G8BPQ NET/ROM extensions.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_NETROM
+macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -83,7 +83,7 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|sk-&gt;nr-&gt;ack_queue
+id|sk-&gt;protinfo.nr-&gt;ack_queue
 )paren
 )paren
 op_ne
@@ -117,7 +117,7 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|sk-&gt;nr-&gt;reseq_queue
+id|sk-&gt;protinfo.nr-&gt;reseq_queue
 )paren
 )paren
 op_ne
@@ -143,7 +143,7 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|sk-&gt;nr-&gt;frag_queue
+id|sk-&gt;protinfo.nr-&gt;frag_queue
 )paren
 )paren
 op_ne
@@ -185,7 +185,7 @@ multiline_comment|/*&n;&t; * Remove all the ack-ed frames from the ack queue.&n;
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;va
+id|sk-&gt;protinfo.nr-&gt;va
 op_ne
 id|nr
 )paren
@@ -197,12 +197,12 @@ id|skb_peek
 c_func
 (paren
 op_amp
-id|sk-&gt;nr-&gt;ack_queue
+id|sk-&gt;protinfo.nr-&gt;ack_queue
 )paren
 op_ne
 l_int|NULL
 op_logical_and
-id|sk-&gt;nr-&gt;va
+id|sk-&gt;protinfo.nr-&gt;va
 op_ne
 id|nr
 )paren
@@ -213,7 +213,7 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|sk-&gt;nr-&gt;ack_queue
+id|sk-&gt;protinfo.nr-&gt;ack_queue
 )paren
 suffix:semicolon
 id|skb-&gt;sk
@@ -232,10 +232,10 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-id|sk-&gt;nr-&gt;va
+id|sk-&gt;protinfo.nr-&gt;va
 op_assign
 (paren
-id|sk-&gt;nr-&gt;va
+id|sk-&gt;protinfo.nr-&gt;va
 op_plus
 l_int|1
 )paren
@@ -277,7 +277,7 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|sk-&gt;nr-&gt;ack_queue
+id|sk-&gt;protinfo.nr-&gt;ack_queue
 )paren
 )paren
 op_ne
@@ -335,14 +335,14 @@ r_int
 r_int
 id|vc
 op_assign
-id|sk-&gt;nr-&gt;va
+id|sk-&gt;protinfo.nr-&gt;va
 suffix:semicolon
 r_while
 c_loop
 (paren
 id|vc
 op_ne
-id|sk-&gt;nr-&gt;vs
+id|sk-&gt;protinfo.nr-&gt;vs
 )paren
 (brace
 r_if
@@ -371,7 +371,7 @@ c_cond
 (paren
 id|nr
 op_eq
-id|sk-&gt;nr-&gt;vs
+id|sk-&gt;protinfo.nr-&gt;vs
 )paren
 r_return
 l_int|1
@@ -400,14 +400,14 @@ r_int
 r_int
 id|vc
 op_assign
-id|sk-&gt;nr-&gt;vr
+id|sk-&gt;protinfo.nr-&gt;vr
 suffix:semicolon
 r_int
 r_int
 id|vt
 op_assign
 (paren
-id|sk-&gt;nr-&gt;vl
+id|sk-&gt;protinfo.nr-&gt;vl
 op_plus
 id|sk-&gt;window
 )paren
@@ -510,7 +510,7 @@ suffix:colon
 id|len
 op_add_assign
 (paren
-id|sk-&gt;nr-&gt;bpqext
+id|sk-&gt;protinfo.nr-&gt;bpqext
 )paren
 ques
 c_cond
@@ -605,7 +605,7 @@ suffix:colon
 id|timeout
 op_assign
 (paren
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 op_div
 id|PR_SLOWHZ
 )paren
@@ -616,13 +616,13 @@ op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;my_index
+id|sk-&gt;protinfo.nr-&gt;my_index
 suffix:semicolon
 op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;my_id
+id|sk-&gt;protinfo.nr-&gt;my_id
 suffix:semicolon
 op_star
 id|dptr
@@ -654,7 +654,7 @@ c_func
 id|dptr
 comma
 op_amp
-id|sk-&gt;nr-&gt;user_addr
+id|sk-&gt;protinfo.nr-&gt;user_addr
 comma
 id|AX25_ADDR_LEN
 )paren
@@ -692,7 +692,7 @@ c_func
 id|dptr
 comma
 op_amp
-id|sk-&gt;nr-&gt;source_addr
+id|sk-&gt;protinfo.nr-&gt;source_addr
 comma
 id|AX25_ADDR_LEN
 )paren
@@ -749,25 +749,25 @@ op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;your_index
+id|sk-&gt;protinfo.nr-&gt;your_index
 suffix:semicolon
 op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;your_id
+id|sk-&gt;protinfo.nr-&gt;your_id
 suffix:semicolon
 op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;my_index
+id|sk-&gt;protinfo.nr-&gt;my_index
 suffix:semicolon
 op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;my_id
+id|sk-&gt;protinfo.nr-&gt;my_id
 suffix:semicolon
 op_star
 id|dptr
@@ -784,13 +784,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;bpqext
+id|sk-&gt;protinfo.nr-&gt;bpqext
 )paren
 op_star
 id|dptr
 op_increment
 op_assign
-id|nr_default.ttl
+id|sysctl_netrom_network_ttl_initialiser
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -804,13 +804,13 @@ op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;your_index
+id|sk-&gt;protinfo.nr-&gt;your_index
 suffix:semicolon
 op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;your_id
+id|sk-&gt;protinfo.nr-&gt;your_id
 suffix:semicolon
 op_star
 id|dptr
@@ -839,13 +839,13 @@ op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;your_index
+id|sk-&gt;protinfo.nr-&gt;your_index
 suffix:semicolon
 op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;your_id
+id|sk-&gt;protinfo.nr-&gt;your_id
 suffix:semicolon
 op_star
 id|dptr
@@ -857,7 +857,7 @@ op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;nr-&gt;vr
+id|sk-&gt;protinfo.nr-&gt;vr
 suffix:semicolon
 op_star
 id|dptr
@@ -1040,7 +1040,7 @@ op_star
 id|dptr
 op_increment
 op_assign
-id|nr_default.ttl
+id|sysctl_netrom_network_ttl_initialiser
 suffix:semicolon
 op_star
 id|dptr
@@ -1146,7 +1146,7 @@ l_int|0
 suffix:semicolon
 id|n
 OL
-id|sk-&gt;nr-&gt;n2count
+id|sk-&gt;protinfo.nr-&gt;n2count
 suffix:semicolon
 id|n
 op_increment
@@ -1169,7 +1169,7 @@ suffix:semicolon
 r_return
 id|t
 op_star
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Calculate the Round Trip Time&n; */
@@ -1187,24 +1187,24 @@ id|sk
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;t1timer
+id|sk-&gt;protinfo.nr-&gt;t1timer
 OG
 l_int|0
 op_logical_and
-id|sk-&gt;nr-&gt;n2count
+id|sk-&gt;protinfo.nr-&gt;n2count
 op_eq
 l_int|0
 )paren
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 op_assign
 (paren
 l_int|9
 op_star
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 op_plus
-id|sk-&gt;nr-&gt;t1
+id|sk-&gt;protinfo.nr-&gt;t1
 op_minus
-id|sk-&gt;nr-&gt;t1timer
+id|sk-&gt;protinfo.nr-&gt;t1timer
 )paren
 op_div
 l_int|10
@@ -1214,13 +1214,13 @@ multiline_comment|/* Don&squot;t go below one tenth of a second */
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 OL
 (paren
 id|NR_T1CLAMPLO
 )paren
 )paren
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 op_assign
 (paren
 id|NR_T1CLAMPLO
@@ -1230,11 +1230,11 @@ macro_line|#else   /* Failsafe - some people might have sub 1/10th RTTs :-) **/
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 op_eq
 l_int|0
 )paren
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 op_assign
 id|PR_SLOWHZ
 suffix:semicolon
@@ -1244,13 +1244,13 @@ multiline_comment|/* OR above clamped seconds **/
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 OG
 (paren
 id|NR_T1CLAMPHI
 )paren
 )paren
-id|sk-&gt;nr-&gt;rtt
+id|sk-&gt;protinfo.nr-&gt;rtt
 op_assign
 (paren
 id|NR_T1CLAMPHI

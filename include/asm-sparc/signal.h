@@ -1,8 +1,13 @@
-multiline_comment|/* $Id: signal.h,v 1.21 1996/04/25 06:13:28 davem Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.29 1996/10/27 08:55:45 davem Exp $ */
 macro_line|#ifndef _ASMSPARC_SIGNAL_H
 DECL|macro|_ASMSPARC_SIGNAL_H
 mdefine_line|#define _ASMSPARC_SIGNAL_H
 macro_line|#include &lt;asm/sigcontext.h&gt;
+macro_line|#ifdef __KERNEL__
+macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;linux/personality.h&gt;
+macro_line|#endif
+macro_line|#endif
 multiline_comment|/* On the Sparc the signal handlers get passed a &squot;sub-signal&squot; code&n; * for certain signal types, which we document here.&n; */
 DECL|macro|_NSIG
 mdefine_line|#define _NSIG             32
@@ -75,7 +80,7 @@ mdefine_line|#define    SUBSIG_PROTECTION    4
 DECL|macro|SUBSIG_SEGERROR
 mdefine_line|#define    SUBSIG_SEGERROR      5
 DECL|macro|SIGSYS
-mdefine_line|#define SIGSYS          12
+mdefine_line|#define SIGSYS&t;&t;12
 DECL|macro|SIGPIPE
 mdefine_line|#define SIGPIPE&t;&t;13
 DECL|macro|SIGALRM
@@ -197,7 +202,7 @@ comma
 r_int
 comma
 r_struct
-id|sigcontext_struct
+id|sigcontext
 op_star
 comma
 r_char
@@ -240,8 +245,24 @@ r_int
 r_int
 id|sa_flags
 suffix:semicolon
+DECL|member|sa_restorer
+r_void
+(paren
+op_star
+id|sa_restorer
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* not used by Linux/SPARC yet */
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* use the following macro to get the size of a sigaction struct&n;   when copying to/from userland */
+DECL|macro|SIGACTION_SIZE
+mdefine_line|#define SIGACTION_SIZE(personality) (((personality) &amp; PER_BSD)?&bslash;&n;&t;&t;&t;&t;     sizeof(struct sigaction)-sizeof(void *):&bslash;&n;&t;&t;&t;&t;     sizeof(struct sigaction))
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_ASMSPARC_SIGNAL_H) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mman.h,v 1.7 1996/04/25 06:13:15 davem Exp $ */
+multiline_comment|/* $Id: mman.h,v 1.8 1996/10/27 08:55:28 davem Exp $ */
 macro_line|#ifndef __SPARC_MMAN_H__
 DECL|macro|__SPARC_MMAN_H__
 mdefine_line|#define __SPARC_MMAN_H__

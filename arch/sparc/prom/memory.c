@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: memory.c,v 1.7 1996/04/25 06:09:46 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: memory.c,v 1.8 1996/07/12 05:14:56 tridge Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -1037,6 +1038,7 @@ suffix:semicolon
 r_case
 id|PROM_AP1000
 suffix:colon
+macro_line|#if CONFIG_AP1000
 multiline_comment|/* really simple memory map */
 id|prom_phys_total
 (braket
@@ -1054,9 +1056,11 @@ l_int|0
 dot
 id|num_bytes
 op_assign
-l_int|0x01000000
+id|ap_memory_size
+c_func
+(paren
+)paren
 suffix:semicolon
-multiline_comment|/* 16MB */
 id|prom_phys_total
 (braket
 l_int|0
@@ -1109,9 +1113,13 @@ l_int|0
 dot
 id|num_bytes
 op_assign
-l_int|0x01000000
+id|prom_phys_total
+(braket
+l_int|0
+)braket
+dot
+id|num_bytes
 suffix:semicolon
-multiline_comment|/* 16MB */
 id|prom_phys_avail
 (braket
 l_int|0
@@ -1139,12 +1147,7 @@ c_func
 id|prom_phys_avail
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Initialised AP1000 memory lists (forced 16MB)&bslash;n&quot;
-)paren
-suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace

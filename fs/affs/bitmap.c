@@ -710,7 +710,7 @@ c_loop
 (paren
 id|inode-&gt;u.affs_i.i_pa_cnt
 OL
-id|MAX_PREALLOC
+id|AFFS_MAX_PREALLOC
 op_logical_and
 op_increment
 id|fb
@@ -780,7 +780,7 @@ id|fb
 suffix:semicolon
 id|inode-&gt;u.affs_i.i_pa_last
 op_and_assign
-id|MAX_PREALLOC
+id|AFFS_MAX_PREALLOC
 op_minus
 l_int|1
 suffix:semicolon
@@ -1527,7 +1527,7 @@ op_increment
 suffix:semicolon
 id|inode-&gt;u.affs_i.i_pa_next
 op_and_assign
-id|MAX_PREALLOC
+id|AFFS_MAX_PREALLOC
 op_minus
 l_int|1
 suffix:semicolon

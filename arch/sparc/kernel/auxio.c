@@ -1,6 +1,7 @@
 multiline_comment|/* auxio.c: Probing for the Sparc AUXIO register at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/auxio.h&gt;
 multiline_comment|/* Probe and map in the Auxiliary I/O register */
 DECL|variable|auxio_register
 r_int
@@ -28,6 +29,21 @@ id|auxregs
 l_int|1
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4d
+)paren
+(brace
+id|auxio_register
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|node
 op_assign
 id|prom_getchild
@@ -212,5 +228,7 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
+id|TURN_ON_LED
+suffix:semicolon
 )brace
 eof

@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: pgtsun4c.h,v 1.24 1996/03/26 06:51:56 miguel Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsun4c.h,v 1.27 1996/10/30 06:01:32 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSUN4C_H
 DECL|macro|_SPARC_PGTSUN4C_H
 mdefine_line|#define _SPARC_PGTSUN4C_H
+macro_line|#include &lt;asm/contregs.h&gt;
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|SUN4C_PMD_SHIFT
 mdefine_line|#define SUN4C_PMD_SHIFT       22
@@ -38,7 +39,7 @@ DECL|macro|SUN4C_PTRS_PER_PGD
 mdefine_line|#define SUN4C_PTRS_PER_PGD    1024
 multiline_comment|/* On the sun4c the physical ram limit is 128MB.  We set up our I/O&n; * translations at KERNBASE + 128MB for 1MB, then we begin the VMALLOC&n; * area, makes sense.  This works out to the value below.&n; */
 DECL|macro|SUN4C_VMALLOC_START
-mdefine_line|#define SUN4C_VMALLOC_START   (0xfe200000)
+mdefine_line|#define SUN4C_VMALLOC_START   (0xfe300000)
 multiline_comment|/*&n; * Sparc SUN4C pte fields.&n; */
 DECL|macro|_SUN4C_PAGE_VALID
 mdefine_line|#define _SUN4C_PAGE_VALID     0x80000000   /* valid page */
@@ -56,6 +57,8 @@ DECL|macro|_SUN4C_PAGE_REF
 mdefine_line|#define _SUN4C_PAGE_REF       0x02000000   /* Page has been accessed/referenced */
 DECL|macro|_SUN4C_PAGE_DIRTY
 mdefine_line|#define _SUN4C_PAGE_DIRTY     0x01000000   /* Page has been modified, is dirty */
+DECL|macro|_SUN4C_PAGE_PRESENT
+mdefine_line|#define _SUN4C_PAGE_PRESENT   0x00400000   /* present (known) page */
 DECL|macro|_SUN4C_PAGE_CHG_MASK
 mdefine_line|#define _SUN4C_PAGE_CHG_MASK  (0xffff | _SUN4C_PAGE_REF | _SUN4C_PAGE_DIRTY)
 DECL|macro|SUN4C_PAGE_NONE

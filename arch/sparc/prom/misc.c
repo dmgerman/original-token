@@ -1,7 +1,11 @@
-multiline_comment|/* $Id: misc.c,v 1.8 1996/04/17 23:03:23 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: misc.c,v 1.11 1996/10/12 13:12:58 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;asm/auxio.h&gt;
 multiline_comment|/* Reset and reboot the machine with the command &squot;bcommand&squot;. */
 r_void
 DECL|function|prom_reboot
@@ -13,6 +17,21 @@ op_star
 id|bcommand
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 (paren
 op_star
 (paren
@@ -24,7 +43,33 @@ id|bcommand
 )paren
 suffix:semicolon
 multiline_comment|/* Never get here. */
-r_return
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current_set
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Forth evaluate the expression contained in &squot;fstring&squot;. */
@@ -38,6 +83,10 @@ op_star
 id|fstring
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -55,6 +104,17 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -91,11 +151,37 @@ id|romvec-&gt;pv_fortheval.v2_eval
 id|fstring
 )paren
 suffix:semicolon
-r_return
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current_set
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* We want to do this more nicely some day. */
-macro_line|#if CONFIG_SUN_CONSOLE
+macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_extern
 r_void
 id|console_restore_palette
@@ -119,8 +205,8 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Drop into the prom, with the chance to continue with the &squot;go&squot;&n; * prom command.&n; */
 r_void
-DECL|function|prom_halt
-id|prom_halt
+DECL|function|prom_cmdline
+id|prom_cmdline
 c_func
 (paren
 r_void
@@ -150,12 +236,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|kernel_enter_debugger
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_SUN_CONSOLE
+macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_if
 c_cond
 (paren
@@ -174,6 +264,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 (paren
 op_star
 (paren
@@ -183,12 +284,44 @@ id|romvec-&gt;pv_abort
 (paren
 )paren
 suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current_set
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|install_linux_ticker
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_SUN_CONSOLE
+macro_line|#ifdef CONFIG_SUN_AUXIO
+id|TURN_ON_LED
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_if
 c_cond
 (paren
@@ -202,18 +335,31 @@ id|set_palette
 suffix:semicolon
 )brace
 macro_line|#endif
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/* Drop into the prom, but completely terminate the program.&n; * No chance of continuing.&n; */
 r_void
-DECL|function|prom_die
-id|prom_die
+DECL|function|prom_halt
+id|prom_halt
 c_func
 (paren
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 (paren
 op_star
 (paren
@@ -224,7 +370,33 @@ id|romvec-&gt;pv_halt
 )paren
 suffix:semicolon
 multiline_comment|/* Never get here. */
-r_return
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current_set
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 DECL|typedef|sfunc_t
@@ -248,7 +420,7 @@ id|sfunc_t
 id|funcp
 )paren
 (brace
-macro_line|#if CONFIG_AP1000
+macro_line|#ifdef CONFIG_AP1000
 id|printk
 c_func
 (paren
@@ -273,14 +445,12 @@ id|romvec-&gt;pv_synchook
 op_assign
 id|funcp
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/* Get the idprom and stuff it into buffer &squot;idbuf&squot;.  Returns the&n; * format type.  &squot;num_bytes&squot; is the number of bytes that your idbuf&n; * has space for.  Returns 0xff on error.&n; */
 r_int
 r_char
-DECL|function|prom_getidp
-id|prom_getidp
+DECL|function|prom_get_idprom
+id|prom_get_idprom
 c_func
 (paren
 r_char

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.27 1996/04/25 06:13:06 davem Exp $ */
+multiline_comment|/* $Id: head.h,v 1.30 1996/07/29 21:00:28 miguel Exp $ */
 macro_line|#ifndef __SPARC_HEAD_H
 DECL|macro|__SPARC_HEAD_H
 mdefine_line|#define __SPARC_HEAD_H
@@ -48,6 +48,10 @@ mdefine_line|#define SUNOS_SYSCALL_TRAP &bslash;&n;        rd %psr, %l0; &bslash
 multiline_comment|/* Software trap for Slowaris system calls. */
 DECL|macro|SOLARIS_SYSCALL_TRAP
 mdefine_line|#define SOLARIS_SYSCALL_TRAP &bslash;&n;        sethi %hi(C_LABEL(sys_call_table)), %l7; &bslash;&n;        or %l7, %lo(C_LABEL(sys_call_table)), %l7; &bslash;&n;        b solaris_syscall; &bslash;&n;        rd %psr, %l0;
+DECL|macro|INDIRECT_SOLARIS_SYSCALL
+mdefine_line|#define INDIRECT_SOLARIS_SYSCALL(x) &bslash;&n;        sethi %hi(C_LABEL(sys_call_table)), %l7; &bslash;&n;&t;or %g0,%lo(x),%g1; &bslash;&n;&t;b solaris_indirect_syscall; &bslash;&n;        rd %psr, %l0; 
+DECL|macro|BREAKPOINT_TRAP
+mdefine_line|#define BREAKPOINT_TRAP &bslash;&n;&t;b breakpoint_trap; &bslash;&n;&t;rd %psr,%l0; &bslash;&n;&t;nop; &bslash;&n;&t;nop;
 multiline_comment|/* Software trap for Sparc-netbsd system calls. */
 DECL|macro|NETBSD_SYSCALL_TRAP
 mdefine_line|#define NETBSD_SYSCALL_TRAP &bslash;&n;        sethi %hi(C_LABEL(sys_call_table)), %l7; &bslash;&n;        or %l7, %lo(C_LABEL(sys_call_table)), %l7; &bslash;&n;        b bsd_syscall; &bslash;&n;        rd %psr, %l0;

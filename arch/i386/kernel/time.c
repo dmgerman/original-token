@@ -572,6 +572,25 @@ op_plus
 id|count
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * this is only used if we have fast gettimeoffset:&n; */
+DECL|function|do_x86_get_fast_time
+r_void
+id|do_x86_get_fast_time
+c_func
+(paren
+r_struct
+id|timeval
+op_star
+id|tv
+)paren
+(brace
+id|do_gettimeofday
+c_func
+(paren
+id|tv
+)paren
+suffix:semicolon
+)brace
 DECL|variable|do_gettimeoffset
 r_static
 r_int
@@ -1488,6 +1507,10 @@ id|do_gettimeoffset
 op_assign
 id|do_fast_gettimeoffset
 suffix:semicolon
+id|do_get_fast_time
+op_assign
+id|do_x86_get_fast_time
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1522,7 +1545,7 @@ multiline_comment|/* turn on cycle counters during power down */
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot; movl $0x83, %%ecx &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;rdmsr &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;orl $1,%%eax &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;wrmsr &bslash;n &quot;
+l_string|&quot; movl $0x83, %%ecx &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;.byte 0x0f,0x32 &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;orl $1,%%eax &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;.byte 0x0f,0x30 &bslash;n &quot;
 suffix:colon
 suffix:colon
 suffix:colon

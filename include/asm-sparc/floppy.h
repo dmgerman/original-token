@@ -603,7 +603,7 @@ suffix:semicolon
 multiline_comment|/* Common routines to all controller types on the Sparc. */
 DECL|function|virtual_dma_init
 r_static
-r_inline
+id|__inline__
 r_void
 id|virtual_dma_init
 c_func
@@ -615,7 +615,7 @@ multiline_comment|/* nothing... */
 )brace
 DECL|function|sun_fd_disable_dma
 r_static
-r_inline
+id|__inline__
 r_void
 id|sun_fd_disable_dma
 c_func
@@ -649,7 +649,7 @@ suffix:semicolon
 )brace
 DECL|function|sun_fd_set_dma_mode
 r_static
-r_inline
+id|__inline__
 r_void
 id|sun_fd_set_dma_mode
 c_func
@@ -702,7 +702,7 @@ suffix:semicolon
 )brace
 DECL|function|sun_fd_set_dma_addr
 r_static
-r_inline
+id|__inline__
 r_void
 id|sun_fd_set_dma_addr
 c_func
@@ -719,7 +719,7 @@ suffix:semicolon
 )brace
 DECL|function|sun_fd_set_dma_count
 r_static
-r_inline
+id|__inline__
 r_void
 id|sun_fd_set_dma_count
 c_func
@@ -735,7 +735,7 @@ suffix:semicolon
 )brace
 DECL|function|sun_fd_enable_dma
 r_static
-r_inline
+id|__inline__
 r_void
 id|sun_fd_enable_dma
 c_func
@@ -1205,10 +1205,9 @@ r_void
 id|set_dor
 c_func
 (paren
-l_int|0
+l_int|0x00
 comma
-op_complement
-l_int|0
+l_int|0xff
 comma
 l_int|0x90
 )paren
@@ -1222,12 +1221,11 @@ suffix:semicolon
 id|set_dor
 c_func
 (paren
-l_int|0
+l_int|0x00
 comma
-op_complement
-l_int|0x90
+l_int|0x6f
 comma
-l_int|0
+l_int|0x00
 )paren
 suffix:semicolon
 id|udelay

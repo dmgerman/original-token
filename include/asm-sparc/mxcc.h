@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mxcc.h,v 1.4 1996/04/25 06:13:21 davem Exp $&n; * mxcc.h:  Definitions of the Viking MXCC registers&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mxcc.h,v 1.6 1996/08/29 09:48:27 davem Exp $&n; * mxcc.h:  Definitions of the Viking MXCC registers&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MXCC_H
 DECL|macro|_SPARC_MXCC_H
 mdefine_line|#define _SPARC_MXCC_H
@@ -61,7 +61,7 @@ mdefine_line|#define MXCC_ERR_HPADDR 0x0000000f
 multiline_comment|/* The MXCC Port register:&n; *&n; * -----------------------------------------------------&n; * |                | MID |                            |&n; * -----------------------------------------------------&n; *  31            21 20-18 17                         0&n; *&n; * MID: The moduleID of the cpu your read this from.&n; */
 DECL|function|mxcc_set_stream_src
 r_extern
-r_inline
+id|__inline__
 r_void
 id|mxcc_set_stream_src
 c_func
@@ -126,7 +126,7 @@ suffix:semicolon
 )brace
 DECL|function|mxcc_set_stream_dst
 r_extern
-r_inline
+id|__inline__
 r_void
 id|mxcc_set_stream_dst
 c_func
@@ -186,6 +186,95 @@ suffix:colon
 l_string|&quot;g2&quot;
 comma
 l_string|&quot;g3&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|mxcc_get_creg
+r_extern
+id|__inline__
+r_int
+r_int
+id|mxcc_get_creg
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|mxcc_control
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;set -1, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;set -1, %%g3&bslash;n&bslash;t&quot;
+l_string|&quot;stda %%g2, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;lda [%3] %2, %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|mxcc_control
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|MXCC_EREG
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_M_MXCC
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|MXCC_CREG
+)paren
+suffix:colon
+l_string|&quot;g2&quot;
+comma
+l_string|&quot;g3&quot;
+)paren
+suffix:semicolon
+r_return
+id|mxcc_control
+suffix:semicolon
+)brace
+DECL|function|mxcc_set_creg
+r_extern
+id|__inline__
+r_void
+id|mxcc_set_creg
+c_func
+(paren
+r_int
+r_int
+id|mxcc_control
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;sta %0, [%1] %2&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|mxcc_control
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|MXCC_CREG
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_M_MXCC
+)paren
 )paren
 suffix:semicolon
 )brace

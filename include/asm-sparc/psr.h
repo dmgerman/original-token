@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psr.h,v 1.10 1996/03/01 07:20:57 davem Exp $&n; * psr.h: This file holds the macros for masking off various parts of&n; *        the processor status register on the Sparc. This is valid&n; *        for Version 8. On the V9 this is renamed to the PSTATE&n; *        register and its members are accessed as fields like&n; *        PSTATE.PRIV for the current CPU privilege level.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: psr.h,v 1.12 1996/09/30 02:23:19 davem Exp $&n; * psr.h: This file holds the macros for masking off various parts of&n; *        the processor status register on the Sparc. This is valid&n; *        for Version 8. On the V9 this is renamed to the PSTATE&n; *        register and its members are accessed as fields like&n; *        PSTATE.PRIV for the current CPU privilege level.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __LINUX_SPARC_PSR_H
 DECL|macro|__LINUX_SPARC_PSR_H
 mdefine_line|#define __LINUX_SPARC_PSR_H
@@ -38,7 +38,7 @@ macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Get the %psr register. */
 DECL|function|get_psr
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|get_psr
@@ -55,7 +55,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;rd %%psr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;rd&bslash;t%%psr, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -69,7 +69,7 @@ suffix:semicolon
 )brace
 DECL|function|put_psr
 r_extern
-r_inline
+id|__inline__
 r_void
 id|put_psr
 c_func
@@ -83,8 +83,8 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;wr %0, 0x0, %%psr&bslash;n&bslash;t&quot;
-l_string|&quot;nop; nop; nop;&bslash;n&bslash;t&quot;
+l_string|&quot;wr&bslash;t%0, 0x0, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;nop; nop; nop;&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -102,7 +102,7 @@ id|fsr_storage
 suffix:semicolon
 DECL|function|get_fsr
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|get_fsr
@@ -121,8 +121,8 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;st %%fsr, %1&bslash;n&bslash;t&quot;
-l_string|&quot;ld %1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;st&bslash;t%%fsr, %1&bslash;n&bslash;t&quot;
+l_string|&quot;ld&bslash;t%1, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: memreg.h,v 1.6 1996/04/25 06:13:13 davem Exp $ */
+multiline_comment|/* $Id: memreg.h,v 1.8 1996/08/29 09:48:23 davem Exp $ */
 macro_line|#ifndef _SPARC_MEMREG_H
 DECL|macro|_SPARC_MEMREG_H
 mdefine_line|#define _SPARC_MEMREG_H
@@ -29,5 +29,33 @@ DECL|macro|SUN4C_ASYNC_NOMEM
 mdefine_line|#define SUN4C_ASYNC_NOMEM   0x0020  /* write back pointed to bad phys addr */
 DECL|macro|SUN4C_ASYNC_BADWB
 mdefine_line|#define SUN4C_ASYNC_BADWB   0x0080  /* write back points to non-present page */
+multiline_comment|/* Memory parity error register with associated bit constants. */
+macro_line|#ifndef __ASSEMBLY__
+r_extern
+id|__volatile__
+r_int
+r_int
+op_star
+id|sun4c_memerr_reg
+suffix:semicolon
+macro_line|#endif
+DECL|macro|SUN4C_MPE_ERROR
+mdefine_line|#define&t;SUN4C_MPE_ERROR&t;0x80&t;/* Parity error detected. (ro) */
+DECL|macro|SUN4C_MPE_MULTI
+mdefine_line|#define&t;SUN4C_MPE_MULTI&t;0x40&t;/* Multiple parity errors detected. (ro) */
+DECL|macro|SUN4C_MPE_TEST
+mdefine_line|#define&t;SUN4C_MPE_TEST&t;0x20&t;/* Write inverse parity. (rw) */
+DECL|macro|SUN4C_MPE_CHECK
+mdefine_line|#define&t;SUN4C_MPE_CHECK&t;0x10&t;/* Enable parity checking. (rw) */
+DECL|macro|SUN4C_MPE_ERR00
+mdefine_line|#define&t;SUN4C_MPE_ERR00&t;0x08&t;/* Parity error in bits 0-7. (ro) */
+DECL|macro|SUN4C_MPE_ERR08
+mdefine_line|#define&t;SUN4C_MPE_ERR08&t;0x04&t;/* Parity error in bits 8-15. (ro) */
+DECL|macro|SUN4C_MPE_ERR16
+mdefine_line|#define&t;SUN4C_MPE_ERR16&t;0x02&t;/* Parity error in bits 16-23. (ro) */
+DECL|macro|SUN4C_MPE_ERR24
+mdefine_line|#define&t;SUN4C_MPE_ERR24&t;0x01&t;/* Parity error in bits 24-31. (ro) */
+DECL|macro|SUN4C_MPE_ERRS
+mdefine_line|#define&t;SUN4C_MPE_ERRS&t;0x0F&t;/* Bit mask for the error bits. (ro) */
 macro_line|#endif /* !(_SPARC_MEMREG_H) */
 eof

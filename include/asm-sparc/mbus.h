@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mbus.h,v 1.7 1996/04/25 06:13:12 davem Exp $&n; * mbus.h:  Various defines for MBUS modules.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mbus.h,v 1.8 1996/08/29 09:48:21 davem Exp $&n; * mbus.h:  Various defines for MBUS modules.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MBUS_H
 DECL|macro|_SPARC_MBUS_H
 mdefine_line|#define _SPARC_MBUS_H
@@ -159,7 +159,7 @@ DECL|macro|TBR_ID_SHIFT
 mdefine_line|#define TBR_ID_SHIFT            20
 DECL|function|get_cpuid
 r_extern
-r_inline
+id|__inline__
 r_int
 id|get_cpuid
 c_func
@@ -199,7 +199,7 @@ suffix:semicolon
 )brace
 DECL|function|get_modid
 r_extern
-r_inline
+id|__inline__
 r_int
 id|get_modid
 c_func

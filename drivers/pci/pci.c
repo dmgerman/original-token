@@ -321,9 +321,9 @@ c_func
 (paren
 id|DEC
 comma
-id|DEC_21052_AB
+id|DEC_21052
 comma
-l_string|&quot;DC21052-AB&quot;
+l_string|&quot;DC21052&quot;
 )paren
 comma
 id|DEVICE
@@ -331,9 +331,9 @@ c_func
 (paren
 id|DEC
 comma
-id|DEC_21152_AA
+id|DEC_21152
 comma
-l_string|&quot;DC21152-AA&quot;
+l_string|&quot;DC21152&quot;
 )paren
 comma
 id|DEVICE
@@ -503,7 +503,7 @@ id|MATROX
 comma
 id|MATROX_MIL
 comma
-l_string|&quot;Millenium&quot;
+l_string|&quot;Millennium&quot;
 )paren
 comma
 id|DEVICE

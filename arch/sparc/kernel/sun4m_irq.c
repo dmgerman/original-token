@@ -162,49 +162,49 @@ multiline_comment|/*  7 irq 15 */
 id|SUN4M_INT_SBUS
 c_func
 (paren
-l_int|1
+l_int|0
 )paren
 comma
 multiline_comment|/*  8 irq 2 */
 id|SUN4M_INT_SBUS
 c_func
 (paren
-l_int|2
+l_int|1
 )paren
 comma
 multiline_comment|/*  9 irq 3 */
 id|SUN4M_INT_SBUS
 c_func
 (paren
-l_int|3
+l_int|2
 )paren
 comma
 multiline_comment|/* 10 irq 5 */
 id|SUN4M_INT_SBUS
 c_func
 (paren
-l_int|4
+l_int|3
 )paren
 comma
 multiline_comment|/* 11 irq 7 */
 id|SUN4M_INT_SBUS
 c_func
 (paren
-l_int|5
+l_int|4
 )paren
 comma
 multiline_comment|/* 12 irq 9 */
 id|SUN4M_INT_SBUS
 c_func
 (paren
-l_int|6
+l_int|5
 )paren
 comma
 multiline_comment|/* 13 irq 11 */
 id|SUN4M_INT_SBUS
 c_func
 (paren
-l_int|7
+l_int|6
 )paren
 multiline_comment|/* 14 irq 13 */
 )brace
@@ -316,15 +316,10 @@ c_func
 id|irq_nr
 )paren
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -397,15 +392,10 @@ c_func
 id|irq_nr
 )paren
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -438,15 +428,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|sun4m_interrupts-&gt;clear
@@ -638,6 +623,7 @@ op_assign
 id|limit
 suffix:semicolon
 )brace
+macro_line|#if HANDLE_LVL14_IRQ
 DECL|function|sun4m_lvl14_handler
 r_static
 r_void
@@ -695,6 +681,7 @@ op_assign
 id|lvl14_resolution
 suffix:semicolon
 )brace
+macro_line|#endif /* HANDLE_LVL14_IRQ */
 DECL|function|sun4m_init_timers
 r_static
 r_void
@@ -1033,6 +1020,16 @@ op_lshift
 l_int|10
 )paren
 suffix:semicolon
+id|master_l10_counter
+op_assign
+op_amp
+id|sun4m_timers-&gt;l10_cur_count
+suffix:semicolon
+id|master_l10_limit
+op_assign
+op_amp
+id|sun4m_timers-&gt;l10_timer_limit
+suffix:semicolon
 id|irq
 op_assign
 id|request_irq
@@ -1074,7 +1071,7 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* Can&squot;t cope with multiple CPUS yet so no level14 tick events */
-macro_line|#if 0
+macro_line|#if HANDLE_LVL14_IRQ
 r_if
 c_cond
 (paren
@@ -1103,7 +1100,7 @@ comma
 id|lvl14_resolution
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* HANDLE_LVL14_IRQ */
 r_if
 c_cond
 (paren
@@ -1509,6 +1506,11 @@ suffix:semicolon
 macro_line|#endif
 id|irq_rcvreg
 op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
 op_amp
 id|sun4m_interrupts-&gt;undirected_target
 suffix:semicolon
@@ -1544,14 +1546,45 @@ suffix:semicolon
 macro_line|#ifdef __SMP__
 id|set_cpu_int
 op_assign
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+r_int
+comma
+r_int
+)paren
+)paren
 id|sun4m_send_ipi
 suffix:semicolon
 id|clear_cpu_int
 op_assign
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+r_int
+comma
+r_int
+)paren
+)paren
 id|sun4m_clear_ipi
 suffix:semicolon
 id|set_irq_udt
 op_assign
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+r_int
+)paren
+)paren
 id|sun4m_set_udt
 suffix:semicolon
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   pi2.c: Driver for the Ottawa Amateur Radio Club PI and PI2 interface.&n;   Copyright (c) 1994 David Perry&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License version 2, as&n;   published by the Free Software Foundation.&n;&n;   This program is distributed in the hope that it will be useful, but&n;   WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&n;   General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software Foundation,&n;   Inc., 675 Mass Ave, Cambridge MA 02139, USA.&n;&n;   The file skeleton.c by Donald Becker was used as a starting point&n;   for this driver.&n;&n;   Revision History&n;&n;   April 6, 1994  (dp) Created&n;&t;&t;       version 0.0 ALPHA&n;   April 10, 1994 (dp) Included cleanup, suggestions from J. P. Morrison.&n;                       version 0.1 ALPHA&n;   April 13, 1994 (dp) Included address probing from JPM, autoirq&n;&t;&t;       version 0.2 ALPHA&n;   April 14, 1994 (ac) Sketched in the NET3 changes.&n;   April 17, 1994 (dp) Finished the NET3 changes. Used init_etherdev()&n;&t;&t;       instead of kmalloc() to ensure that DMA buffers will&n;&t;&t;       reside under the 16 meg line.&n;&t;&t;       version 0.4 ALPHA&n;   April 18, 1994 (dp) Now using the kernel provided sk_buff handling functions.&n;&t;&t;       Fixed a nasty problem with DMA.&n;&t;&t;       version 0.5 ALPHA&n;   June 6, 1994 (ac)   Fixed to match the buffer locking changes. Added a hack to&n;   &t;&t;       fix a funny I see (search for HACK) and fixed the calls in&n;   &t;&t;       init() so it doesn&squot;t migrate module based ethernet cards up&n;   &t;&t;       to eth2 Took out the old module ideas as they are no longer&n;   &t;&t;       relevant to the PI driver.&n;   July 16, 1994 (dp)  Fixed the B channel rx overrun problem ac referred to &n;   &t;&t;       above. Also added a bit of a hack to improve the maximum&n;   &t;               baud rate on the B channel (Search for STUFF2). Included&n;   &t;&t;       ioctl stuff from John Paul Morrison. version 0.6 ALPHA&n;   Feb 9, 1995 (dp)    Updated for 1.1.90 kernel&n;                       version 0.7 ALPHA&n;   Apr 6, 1995 (ac)    Tweaks for NET3 pre snapshot 002 AX.25&n;   April 23, 1995 (dp) Fixed ioctl so it works properly with piconfig program&n;                       when changing the baud rate or clock mode.&n;                       version 0.8 ALPHA&n;   July 17, 1995 (ac)  Finally polishing of AX25.030+ support&n;   Oct  29, 1995 (ac)  A couple of minor fixes before this, and this release changes&n;   &t;&t;       to the proper set_mac_address semantics which will break &n;   &t;&t;       a few programs I suspect.&n;*/
+multiline_comment|/*&n;   pi2.c: Driver for the Ottawa Amateur Radio Club PI and PI2 interface.&n;   Copyright (c) 1994 David Perry&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License version 2, as&n;   published by the Free Software Foundation.&n;&n;   This program is distributed in the hope that it will be useful, but&n;   WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&n;   General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software Foundation,&n;   Inc., 675 Mass Ave, Cambridge MA 02139, USA.&n;&n;   The file skeleton.c by Donald Becker was used as a starting point&n;   for this driver.&n;&n;   Revision History&n;&n;   April 6, 1994  (dp) Created&n;&t;&t;       version 0.0 ALPHA&n;   April 10, 1994 (dp) Included cleanup, suggestions from J. P. Morrison.&n;                       version 0.1 ALPHA&n;   April 13, 1994 (dp) Included address probing from JPM, autoirq&n;&t;&t;       version 0.2 ALPHA&n;   April 14, 1994 (ac) Sketched in the NET3 changes.&n;   April 17, 1994 (dp) Finished the NET3 changes. Used init_etherdev()&n;&t;&t;       instead of kmalloc() to ensure that DMA buffers will&n;&t;&t;       reside under the 16 meg line.&n;&t;&t;       version 0.4 ALPHA&n;   April 18, 1994 (dp) Now using the kernel provided sk_buff handling functions.&n;&t;&t;       Fixed a nasty problem with DMA.&n;&t;&t;       version 0.5 ALPHA&n;   June 6, 1994 (ac)   Fixed to match the buffer locking changes. Added a hack to&n;   &t;&t;       fix a funny I see (search for HACK) and fixed the calls in&n;   &t;&t;       init() so it doesn&squot;t migrate module based ethernet cards up&n;   &t;&t;       to eth2 Took out the old module ideas as they are no longer&n;   &t;&t;       relevant to the PI driver.&n;   July 16, 1994 (dp)  Fixed the B channel rx overrun problem ac referred to &n;   &t;&t;       above. Also added a bit of a hack to improve the maximum&n;   &t;               baud rate on the B channel (Search for STUFF2). Included&n;   &t;&t;       ioctl stuff from John Paul Morrison. version 0.6 ALPHA&n;   Feb 9, 1995 (dp)    Updated for 1.1.90 kernel&n;                       version 0.7 ALPHA&n;   Apr 6, 1995 (ac)    Tweaks for NET3 pre snapshot 002 AX.25&n;   April 23, 1995 (dp) Fixed ioctl so it works properly with piconfig program&n;                       when changing the baud rate or clock mode.&n;                       version 0.8 ALPHA&n;   July 17, 1995 (ac)  Finally polishing of AX25.030+ support&n;   Oct  29, 1995 (ac)  A couple of minor fixes before this, and this release changes&n;   &t;&t;       to the proper set_mac_address semantics which will break &n;   &t;&t;       a few programs I suspect.&n;   Aug  18, 1996 (jsn) Converted to be used as a module.&n;*/
 multiline_comment|/* The following #define invokes a hack that will improve performance (baud)&n;   for the B port. The up side is it makes 9600 baud work ok on the B port.&n;   It may do 38400, depending on the host. The down side is it burns up&n;   CPU cycles with ints locked for up to 1 character time, at the beginning&n;   of each transmitted packet. If this causes you to lose sleep, #undefine it.&n;*/
 multiline_comment|/*#define STUFF2 1*/
 multiline_comment|/* The default configuration */
@@ -28,23 +28,10 @@ DECL|macro|DEF_B_SQUELDELAY
 mdefine_line|#define DEF_B_SQUELDELAY 3&t;/* 30 mS */
 DECL|macro|DEF_B_CLOCKMODE
 mdefine_line|#define DEF_B_CLOCKMODE 0&t;/* Normal clock mode */
-DECL|variable|version
-r_static
-r_const
-r_char
-op_star
-id|version
-op_assign
-l_string|&quot;PI: V0.8 ALPHA April 23 1995 David Perry (dp@hydra.carleton.ca)&bslash;n&quot;
-suffix:semicolon
 multiline_comment|/* The following #define is only really required for the PI card, not&n;   the PI2 - but it&squot;s safer to leave it in. */
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO 1
-DECL|macro|PI2_MODULE
-mdefine_line|#define PI2_MODULE 0
-macro_line|#if PI2_MODULE &gt; 0
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2275,6 +2262,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PI: %s: Memory squeeze, dropping packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2703,6 +2691,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PI: %s: Memory squeeze, dropping packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5629,7 +5618,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|version
+id|KERN_INFO
+l_string|&quot;PI: V0.8 ALPHA April 23 1995 David Perry (dp@hydra.carleton.ca)&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Only one card supported for now */
@@ -5676,6 +5666,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;PI: Probing for card at address %#3x&bslash;n&quot;
 comma
 id|ioaddr
@@ -5703,6 +5694,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;PI: Found a PI card at address %#3x&bslash;n&quot;
 comma
 id|ioaddr
@@ -5716,6 +5708,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;PI: Found a PI2 card at address %#3x&bslash;n&quot;
 comma
 id|ioaddr
@@ -5728,6 +5721,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PI: ERROR: No card found&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5909,12 +5903,23 @@ id|device
 op_star
 id|dev
 comma
+r_void
+op_star
+id|addr
+)paren
+(brace
 r_struct
 id|sockaddr
 op_star
 id|sa
+op_assign
+(paren
+r_struct
+id|sockaddr
+op_star
 )paren
-(brace
+id|addr
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -6316,6 +6321,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PI: DMA channel %d out of range&bslash;n&quot;
 comma
 id|lp-&gt;dmachan
@@ -6412,7 +6418,8 @@ id|dev-&gt;irq
 id|printk
 c_func
 (paren
-l_string|&quot;. Failed to detect IRQ line.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;PI: Failed to detect IRQ line.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6467,6 +6474,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;PI: Autodetected IRQ %d, assuming DMA %d.&bslash;n&quot;
 comma
 id|dev-&gt;irq
@@ -6503,6 +6511,7 @@ id|irqval
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PI: unable to get IRQ %d (irqval=%d).&bslash;n&quot;
 comma
 id|dev-&gt;irq
@@ -6827,6 +6836,8 @@ id|first_time
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6941,6 +6952,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PI: pi_interrupt(): irq %d for unknown device.&bslash;n&quot;
 comma
 id|irq
@@ -7287,6 +7299,8 @@ c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -7679,5 +7693,97 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_symtab
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+r_return
+id|pi_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|free_irq
+c_func
+(paren
+id|pi0a.irq
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* IRQs and IO Ports are shared */
+id|release_region
+c_func
+(paren
+id|pi0a.base_addr
+op_amp
+l_int|0x3f0
+comma
+id|PI_TOTAL_SIZE
+)paren
+suffix:semicolon
+id|irq2dev_map
+(braket
+id|pi0a.irq
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|pi0a.priv
+)paren
+suffix:semicolon
+id|pi0a.priv
+op_assign
+l_int|NULL
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|pi0a
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|pi0b.priv
+)paren
+suffix:semicolon
+id|pi0b.priv
+op_assign
+l_int|NULL
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|pi0b
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c skeleton.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 eof

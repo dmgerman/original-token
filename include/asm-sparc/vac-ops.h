@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vac-ops.h,v 1.11 1996/04/25 06:13:38 davem Exp $ */
+multiline_comment|/* $Id: vac-ops.h,v 1.12 1996/07/08 15:12:30 ecd Exp $ */
 macro_line|#ifndef _SPARC_VAC_OPS_H
 DECL|macro|_SPARC_VAC_OPS_H
 mdefine_line|#define _SPARC_VAC_OPS_H
@@ -30,7 +30,7 @@ DECL|macro|S4CVAC_BADBITS
 mdefine_line|#define S4CVAC_BADBITS     0x0000f000
 multiline_comment|/* The following is true if vaddr1 and vaddr2 would cause&n; * a &squot;bad alias&squot;.&n; */
 DECL|macro|S4CVAC_BADALIAS
-mdefine_line|#define S4CVAC_BADALIAS(vaddr1, vaddr2) &bslash;&n;        (((unsigned long) (vaddr1)) ^ ((unsigned long) (vaddr2)) &amp; &bslash;&n;&t; (S4CVAC_BADBITS))
+mdefine_line|#define S4CVAC_BADALIAS(vaddr1, vaddr2) &bslash;&n;        ((((unsigned long) (vaddr1)) ^ ((unsigned long) (vaddr2))) &amp; &bslash;&n;&t; (S4CVAC_BADBITS))
 multiline_comment|/* The following structure describes the characteristics of a sun4c&n; * VAC as probed from the prom during boot time.&n; */
 DECL|struct|sun4c_vac_props
 r_struct

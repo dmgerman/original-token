@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_timer.c&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 004&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_timer.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_NETROM
+macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -198,7 +198,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|sk-&gt;nr-&gt;state
+id|sk-&gt;protinfo.nr-&gt;state
 )paren
 (brace
 r_case
@@ -253,13 +253,13 @@ l_int|2
 )paren
 op_logical_and
 (paren
-id|sk-&gt;nr-&gt;condition
+id|sk-&gt;protinfo.nr-&gt;condition
 op_amp
 id|OWN_RX_BUSY_CONDITION
 )paren
 )paren
 (brace
-id|sk-&gt;nr-&gt;condition
+id|sk-&gt;protinfo.nr-&gt;condition
 op_and_assign
 op_complement
 id|OWN_RX_BUSY_CONDITION
@@ -272,14 +272,14 @@ comma
 id|NR_INFOACK
 )paren
 suffix:semicolon
-id|sk-&gt;nr-&gt;condition
+id|sk-&gt;protinfo.nr-&gt;condition
 op_and_assign
 op_complement
 id|ACK_PENDING_CONDITION
 suffix:semicolon
-id|sk-&gt;nr-&gt;vl
+id|sk-&gt;protinfo.nr-&gt;vl
 op_assign
-id|sk-&gt;nr-&gt;vr
+id|sk-&gt;protinfo.nr-&gt;vr
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -301,12 +301,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;t2timer
+id|sk-&gt;protinfo.nr-&gt;t2timer
 OG
 l_int|0
 op_logical_and
 op_decrement
-id|sk-&gt;nr-&gt;t2timer
+id|sk-&gt;protinfo.nr-&gt;t2timer
 op_eq
 l_int|0
 )paren
@@ -314,7 +314,7 @@ l_int|0
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;state
+id|sk-&gt;protinfo.nr-&gt;state
 op_eq
 id|NR_STATE_3
 )paren
@@ -322,12 +322,12 @@ id|NR_STATE_3
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;condition
+id|sk-&gt;protinfo.nr-&gt;condition
 op_amp
 id|ACK_PENDING_CONDITION
 )paren
 (brace
-id|sk-&gt;nr-&gt;condition
+id|sk-&gt;protinfo.nr-&gt;condition
 op_and_assign
 op_complement
 id|ACK_PENDING_CONDITION
@@ -344,17 +344,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;t4timer
+id|sk-&gt;protinfo.nr-&gt;t4timer
 OG
 l_int|0
 op_logical_and
 op_decrement
-id|sk-&gt;nr-&gt;t4timer
+id|sk-&gt;protinfo.nr-&gt;t4timer
 op_eq
 l_int|0
 )paren
 (brace
-id|sk-&gt;nr-&gt;condition
+id|sk-&gt;protinfo.nr-&gt;condition
 op_and_assign
 op_complement
 id|PEER_RX_BUSY_CONDITION
@@ -363,12 +363,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;t1timer
+id|sk-&gt;protinfo.nr-&gt;t1timer
 op_eq
 l_int|0
 op_logical_or
 op_decrement
-id|sk-&gt;nr-&gt;t1timer
+id|sk-&gt;protinfo.nr-&gt;t1timer
 OG
 l_int|0
 )paren
@@ -385,7 +385,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|sk-&gt;nr-&gt;state
+id|sk-&gt;protinfo.nr-&gt;state
 )paren
 (brace
 r_case
@@ -394,9 +394,9 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;n2count
+id|sk-&gt;protinfo.nr-&gt;n2count
 op_eq
-id|sk-&gt;nr-&gt;n2
+id|sk-&gt;protinfo.nr-&gt;n2
 )paren
 (brace
 id|nr_clear_queues
@@ -405,7 +405,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|sk-&gt;nr-&gt;state
+id|sk-&gt;protinfo.nr-&gt;state
 op_assign
 id|NR_STATE_0
 suffix:semicolon
@@ -438,7 +438,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|sk-&gt;nr-&gt;n2count
+id|sk-&gt;protinfo.nr-&gt;n2count
 op_increment
 suffix:semicolon
 id|nr_write_internal
@@ -458,9 +458,9 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;n2count
+id|sk-&gt;protinfo.nr-&gt;n2count
 op_eq
-id|sk-&gt;nr-&gt;n2
+id|sk-&gt;protinfo.nr-&gt;n2
 )paren
 (brace
 id|nr_clear_queues
@@ -469,7 +469,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|sk-&gt;nr-&gt;state
+id|sk-&gt;protinfo.nr-&gt;state
 op_assign
 id|NR_STATE_0
 suffix:semicolon
@@ -502,7 +502,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|sk-&gt;nr-&gt;n2count
+id|sk-&gt;protinfo.nr-&gt;n2count
 op_increment
 suffix:semicolon
 id|nr_write_internal
@@ -522,9 +522,9 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|sk-&gt;nr-&gt;n2count
+id|sk-&gt;protinfo.nr-&gt;n2count
 op_eq
-id|sk-&gt;nr-&gt;n2
+id|sk-&gt;protinfo.nr-&gt;n2
 )paren
 (brace
 id|nr_clear_queues
@@ -533,7 +533,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|sk-&gt;nr-&gt;state
+id|sk-&gt;protinfo.nr-&gt;state
 op_assign
 id|NR_STATE_0
 suffix:semicolon
@@ -566,7 +566,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|sk-&gt;nr-&gt;n2count
+id|sk-&gt;protinfo.nr-&gt;n2count
 op_increment
 suffix:semicolon
 id|nr_requeue_frames
@@ -579,9 +579,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|sk-&gt;nr-&gt;t1timer
+id|sk-&gt;protinfo.nr-&gt;t1timer
 op_assign
-id|sk-&gt;nr-&gt;t1
+id|sk-&gt;protinfo.nr-&gt;t1
 op_assign
 id|nr_calculate_t1
 c_func

@@ -1322,6 +1322,9 @@ id|output_method
 op_assign
 id|default_output_method
 suffix:semicolon
+r_int
+id|hlimit
+suffix:semicolon
 r_struct
 id|ipv6_pinfo
 op_star
@@ -1409,7 +1412,15 @@ c_cond
 id|addr_type
 op_amp
 id|IPV6_ADDR_MULTICAST
-op_logical_and
+)paren
+(brace
+id|hlimit
+op_assign
+id|np-&gt;mcast_hops
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|dev
 op_eq
 l_int|NULL
@@ -1420,6 +1431,12 @@ op_assign
 id|np-&gt;mc_if
 suffix:semicolon
 )brace
+)brace
+r_else
+id|hlimit
+op_assign
+id|np-&gt;hop_limit
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1865,7 +1882,7 @@ id|ipv6hdr
 suffix:semicolon
 id|hdr-&gt;hop_limit
 op_assign
-id|np-&gt;hop_limit
+id|hlimit
 suffix:semicolon
 id|memcpy
 c_func
@@ -2272,7 +2289,7 @@ id|ipv6hdr
 suffix:semicolon
 id|hdr-&gt;hop_limit
 op_assign
-id|np-&gt;hop_limit
+id|hlimit
 suffix:semicolon
 id|hdr-&gt;nexthdr
 op_assign

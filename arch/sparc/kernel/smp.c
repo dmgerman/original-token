@@ -4,6 +4,7 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -405,11 +406,8 @@ c_func
 (paren
 id|smp_buf
 comma
-l_string|&quot;&bslash;n        CPU0&bslash;t&bslash;tCPU1&bslash;t&bslash;tCPU2&bslash;t&bslash;tCPU3&bslash;n&quot;
-l_string|&quot;State: %s&bslash;t&bslash;t%s&bslash;t&bslash;t%s&bslash;t&bslash;t%s&bslash;n&quot;
-l_string|&quot;Lock:  %08lx&bslash;t&bslash;t%08lx&bslash;t%08lx&bslash;t%08lx&bslash;n&quot;
-l_string|&quot;&bslash;n&quot;
-l_string|&quot;klock: %x&bslash;n&quot;
+l_string|&quot;        CPU0&bslash;t&bslash;tCPU1&bslash;t&bslash;tCPU2&bslash;t&bslash;tCPU3&bslash;n&quot;
+l_string|&quot;State:  %s&bslash;t&bslash;t%s&bslash;t&bslash;t%s&bslash;t&bslash;t%s&bslash;n&quot;
 comma
 (paren
 id|cpu_present_map
@@ -498,28 +496,6 @@ l_string|&quot;online&quot;
 )paren
 suffix:colon
 l_string|&quot;offline&quot;
-comma
-id|smp_proc_in_lock
-(braket
-l_int|0
-)braket
-comma
-id|smp_proc_in_lock
-(braket
-l_int|1
-)braket
-comma
-id|smp_proc_in_lock
-(braket
-l_int|2
-)braket
-comma
-id|smp_proc_in_lock
-(braket
-l_int|3
-)braket
-comma
-id|kernel_flag
 )paren
 suffix:semicolon
 r_return
@@ -741,13 +717,36 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Fix idle thread fields. */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current_set
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+multiline_comment|/* paranoid */
+)paren
+suffix:semicolon
 id|current-&gt;mm-&gt;mmap-&gt;vm_page_prot
 op_assign
 id|PAGE_SHARED
 suffix:semicolon
 id|current-&gt;mm-&gt;mmap-&gt;vm_start
 op_assign
-id|KERNBASE
+id|PAGE_OFFSET
 suffix:semicolon
 id|current-&gt;mm-&gt;mmap-&gt;vm_end
 op_assign
@@ -831,7 +830,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Entering SparclinuxMultiPenguin(SMP) Mode...&bslash;n&quot;
+l_string|&quot;Entering SMP Mode...&bslash;n&quot;
 )paren
 suffix:semicolon
 id|penguin_ctable.which_io
@@ -1196,7 +1195,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Penguin %d is stuck in the bottle.&bslash;n&quot;
+l_string|&quot;Processor %d is stuck.&bslash;n&quot;
 comma
 id|i
 )paren
@@ -1250,7 +1249,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Error: only one Penguin found.&bslash;n&quot;
+l_string|&quot;Error: only one Processor found.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|cpu_present_map
@@ -1314,7 +1313,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Total of %d Penguins activated (%lu.%02lu PenguinMIPS).&bslash;n&quot;
+l_string|&quot;Total of %d Processors activated (%lu.%02lu BogoMIPS).&bslash;n&quot;
 comma
 id|cpucount
 op_plus
@@ -1416,7 +1415,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * A non wait message cannot pass data or cpu source info. This current&n; * setup is only safe because the kernel lock owner is the only person&n; * who can send a message.&n; *&n; * Wrapping this whole block in a spinlock is not the safe answer either.&n; * A processor may get stuck with irq&squot;s off waiting to send a message and&n; * thus not replying to the person spinning for a reply....&n; *&n; * In the end invalidate ought to be the NMI and a very very short&n; * function (to avoid the old IDE disk problems), and other messages sent&n; * with IRQ&squot;s enabled in a civilised fashion. That will also boost&n; * performance.&n; */
+multiline_comment|/*&n; * A non wait message cannot pass data or cpu source info. This current&n; * setup is only safe because the kernel lock owner is the only person&n; * who can send a message.&n; *&n; * Wrapping this whole block in a spinlock is not the safe answer either.&n; * A processor may get stuck with irq&squot;s off waiting to send a message and&n; * thus not replying to the person spinning for a reply....&n; *&n; * On the Sparc we use NMI&squot;s for all messages except reschedule.&n; */
 DECL|variable|message_cpu
 r_static
 r_volatile
@@ -1874,14 +1873,9 @@ id|p
 )braket
 op_decrement
 suffix:semicolon
-id|smp_swap
-c_func
-(paren
-op_amp
 id|message_cpu
-comma
+op_assign
 id|NO_PROC_ID
-)paren
 suffix:semicolon
 )brace
 DECL|struct|smp_funcall
@@ -2007,15 +2001,10 @@ c_cond
 id|smp_processors_ready
 )paren
 (brace
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -2263,16 +2252,10 @@ id|me
 )braket
 op_decrement
 suffix:semicolon
-id|smp_swap
-c_func
-(paren
-op_amp
 id|message_cpu
-comma
+op_assign
 id|NO_PROC_ID
-)paren
 suffix:semicolon
-multiline_comment|/* store buffers... */
 id|restore_flags
 c_func
 (paren
@@ -2746,15 +2729,10 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -2832,15 +2810,10 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if

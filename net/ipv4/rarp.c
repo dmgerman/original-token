@@ -25,7 +25,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/rarp.h&gt;
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -562,7 +562,7 @@ multiline_comment|/*&n; *&t;For now we will only deal with IP addresses.&n; */
 r_if
 c_cond
 (paren
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 (paren
 id|rarp-&gt;ar_pro
 op_ne
@@ -837,7 +837,7 @@ id|ETH_ALEN
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 r_case
 id|ARPHRD_AX25
 suffix:colon

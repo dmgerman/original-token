@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.16 1996/04/25 06:12:54 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.22 1996/10/17 05:29:01 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
@@ -27,28 +27,28 @@ r_struct
 id|sparc_dma_registers
 (brace
 DECL|member|cond_reg
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|cond_reg
 suffix:semicolon
 multiline_comment|/* DMA condition register */
 DECL|member|st_addr
-r_volatile
+id|__volatile__
 r_char
 op_star
 id|st_addr
 suffix:semicolon
 multiline_comment|/* Start address of this transfer */
 DECL|member|cnt
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|cnt
 suffix:semicolon
 multiline_comment|/* How many bytes to transfer */
 DECL|member|dma_test
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|dma_test
@@ -78,6 +78,9 @@ id|dvmarev3
 comma
 DECL|enumerator|dvmarevplus
 id|dvmarevplus
+comma
+DECL|enumerator|dvmahme
+id|dvmahme
 )brace
 suffix:semicolon
 DECL|macro|DMA_HASCOUNT
@@ -194,6 +197,8 @@ DECL|macro|DMA_VERS1
 mdefine_line|#define DMA_VERS1        0x80000000        /* DMA rev 1 */
 DECL|macro|DMA_VERS2
 mdefine_line|#define DMA_VERS2        0xa0000000        /* DMA rev 2 */
+DECL|macro|DMA_VERHME
+mdefine_line|#define DMA_VERHME       0xb0000000        /* DMA hme gate array */
 DECL|macro|DMA_VERSPLUS
 mdefine_line|#define DMA_VERSPLUS     0x90000000        /* DMA rev 1 PLUS */
 DECL|macro|DMA_HNDL_INTR
@@ -220,6 +225,10 @@ DECL|macro|DMA_ENABLE
 mdefine_line|#define DMA_ENABLE       0x00000200        /* Fire up DMA, handle requests */
 DECL|macro|DMA_PEND_READ
 mdefine_line|#define DMA_PEND_READ    0x00000400        /* DMA_VERS1/0/PLUS Pending Read */
+DECL|macro|DMA_ESC_BURST
+mdefine_line|#define DMA_ESC_BURST    0x00000800        /* 1=16byte 0=32byte */
+DECL|macro|DMA_READ_AHEAD
+mdefine_line|#define DMA_READ_AHEAD   0x00001800        /* DMA read ahead partial longword */
 DECL|macro|DMA_DSBL_RD_DRN
 mdefine_line|#define DMA_DSBL_RD_DRN  0x00001000        /* No EC drain on slave reads */
 DECL|macro|DMA_BCNT_ENAB
@@ -238,6 +247,14 @@ DECL|macro|DMA_E_BURST8
 mdefine_line|#define DMA_E_BURST8&t; 0x00040000&t;   /* ENET: SBUS r/w burst size */
 DECL|macro|DMA_BRST_SZ
 mdefine_line|#define DMA_BRST_SZ      0x000c0000        /* SCSI: SBUS r/w burst size */
+DECL|macro|DMA_BRST64
+mdefine_line|#define DMA_BRST64       0x00080000        /* SCSI: 64byte bursts (HME on UltraSparc only) */
+DECL|macro|DMA_BRST32
+mdefine_line|#define DMA_BRST32       0x00040000        /* SCSI: 32byte bursts */
+DECL|macro|DMA_BRST16
+mdefine_line|#define DMA_BRST16       0x00000000        /* SCSI: 16byte bursts */
+DECL|macro|DMA_BRST0
+mdefine_line|#define DMA_BRST0        0x00080000        /* SCSI: no bursts (non-HME gate arrays) */
 DECL|macro|DMA_ADDR_DISAB
 mdefine_line|#define DMA_ADDR_DISAB   0x00100000        /* No FIFO drains during addr */
 DECL|macro|DMA_2CLKS
@@ -252,6 +269,8 @@ DECL|macro|DMA_AUTO_NADDR
 mdefine_line|#define DMA_AUTO_NADDR   0x01000000        /* Use &quot;auto nxt addr&quot; feature */
 DECL|macro|DMA_SCSI_ON
 mdefine_line|#define DMA_SCSI_ON      0x02000000        /* Enable SCSI dma */
+DECL|macro|DMA_PARITY_OFF
+mdefine_line|#define DMA_PARITY_OFF   0x02000000        /* HME: disable parity checking */
 DECL|macro|DMA_LOADED_ADDR
 mdefine_line|#define DMA_LOADED_ADDR  0x04000000        /* Address has been loaded */
 DECL|macro|DMA_LOADED_NADDR
@@ -280,7 +299,7 @@ multiline_comment|/* Yes, I hack a lot of elisp in my spare time... */
 DECL|macro|DMA_ERROR_P
 mdefine_line|#define DMA_ERROR_P(regs)  ((((regs)-&gt;cond_reg) &amp; DMA_HNDL_ERROR))
 DECL|macro|DMA_IRQ_P
-mdefine_line|#define DMA_IRQ_P(regs)    ((((regs)-&gt;cond_reg) &amp; DMA_HNDL_INTR))
+mdefine_line|#define DMA_IRQ_P(regs)    ((((regs)-&gt;cond_reg) &amp; (DMA_HNDL_INTR | DMA_HNDL_ERROR)))
 DECL|macro|DMA_WRITE_P
 mdefine_line|#define DMA_WRITE_P(regs)  ((((regs)-&gt;cond_reg) &amp; DMA_ST_WRITE))
 DECL|macro|DMA_OFF
@@ -305,7 +324,7 @@ mdefine_line|#define DMA_IRQ_EXIT(dma, dregs) do { &bslash;&n;&t;if(DMA_ISBROKEN
 multiline_comment|/* Pause until counter runs out or BIT isn&squot;t set in the DMA condition&n; * register.&n; */
 DECL|function|sparc_dma_pause
 r_extern
-r_inline
+id|__inline__
 r_void
 id|sparc_dma_pause
 c_func
@@ -391,7 +410,7 @@ c_func
 r_int
 r_int
 comma
-r_const
+id|__const__
 r_char
 op_star
 )paren

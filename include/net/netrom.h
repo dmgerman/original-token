@@ -47,23 +47,25 @@ mdefine_line|#define NR_DEFAULT_T1&t;&t;(120 * PR_SLOWHZ)&t;/* Outstanding frame
 DECL|macro|NR_DEFAULT_T2
 mdefine_line|#define NR_DEFAULT_T2&t;&t;(5   * PR_SLOWHZ)&t;/* Response delay     - 5 seconds */
 DECL|macro|NR_DEFAULT_N2
-mdefine_line|#define NR_DEFAULT_N2&t;&t;3&t;&t;&t;/* Number of Retries */
+mdefine_line|#define NR_DEFAULT_N2&t;&t;3&t;&t;&t;/* Number of Retries - 3 */
 DECL|macro|NR_DEFAULT_T4
-mdefine_line|#define&t;NR_DEFAULT_T4&t;&t;(180 * PR_SLOWHZ)&t;/* Transport Busy Delay */
+mdefine_line|#define&t;NR_DEFAULT_T4&t;&t;(180 * PR_SLOWHZ)&t;/* Busy Delay - 180 seconds */
+DECL|macro|NR_DEFAULT_IDLE
+mdefine_line|#define&t;NR_DEFAULT_IDLE&t;&t;(20* 60 * PR_SLOWHZ)&t;/* No Activuty Timeout - 900 seconds*/
 DECL|macro|NR_DEFAULT_WINDOW
-mdefine_line|#define&t;NR_DEFAULT_WINDOW&t;4&t;&t;&t;/* Default Window Size&t;*/
+mdefine_line|#define&t;NR_DEFAULT_WINDOW&t;4&t;&t;&t;/* Default Window Size - 4 */
 DECL|macro|NR_DEFAULT_OBS
-mdefine_line|#define&t;NR_DEFAULT_OBS&t;&t;6&t;&t;&t;/* Default Obsolescence Count */
+mdefine_line|#define&t;NR_DEFAULT_OBS&t;&t;6&t;&t;&t;/* Default Obsolescence Count - 6 */
 DECL|macro|NR_DEFAULT_QUAL
-mdefine_line|#define&t;NR_DEFAULT_QUAL&t;&t;10&t;&t;&t;/* Default Neighbour Quality */
+mdefine_line|#define&t;NR_DEFAULT_QUAL&t;&t;10&t;&t;&t;/* Default Neighbour Quality - 10 */
 DECL|macro|NR_DEFAULT_TTL
-mdefine_line|#define&t;NR_DEFAULT_TTL&t;&t;16&t;&t;&t;/* Default Time To Live */
+mdefine_line|#define&t;NR_DEFAULT_TTL&t;&t;16&t;&t;&t;/* Default Time To Live - 16 */
 DECL|macro|NR_MODULUS
 mdefine_line|#define NR_MODULUS &t;&t;256
 DECL|macro|NR_MAX_WINDOW_SIZE
-mdefine_line|#define NR_MAX_WINDOW_SIZE&t;127&t;&t;&t;/* Maximum Window Allowable */
+mdefine_line|#define NR_MAX_WINDOW_SIZE&t;127&t;&t;&t;/* Maximum Window Allowable - 127 */
 DECL|macro|NR_DEFAULT_PACLEN
-mdefine_line|#define&t;NR_DEFAULT_PACLEN&t;236&t;&t;&t;/* Default Packet Length */
+mdefine_line|#define&t;NR_DEFAULT_PACLEN&t;236&t;&t;&t;/* Default Packet Length - 236 */
 r_typedef
 r_struct
 (brace
@@ -137,6 +139,8 @@ id|n2count
 suffix:semicolon
 DECL|member|t1
 DECL|member|t2
+DECL|member|t4
+DECL|member|idle
 DECL|member|rtt
 r_int
 r_int
@@ -144,11 +148,16 @@ id|t1
 comma
 id|t2
 comma
+id|t4
+comma
+id|idle
+comma
 id|rtt
 suffix:semicolon
 DECL|member|t1timer
 DECL|member|t2timer
 DECL|member|t4timer
+DECL|member|idletimer
 r_int
 r_int
 id|t1timer
@@ -156,6 +165,8 @@ comma
 id|t2timer
 comma
 id|t4timer
+comma
+id|idletimer
 suffix:semicolon
 DECL|member|fraglen
 DECL|member|paclen
@@ -303,9 +314,48 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* af_netrom.c */
 r_extern
-r_struct
-id|nr_parms_struct
-id|nr_default
+r_int
+id|sysctl_netrom_default_path_quality
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_obsolescence_count_initialiser
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_network_ttl_initialiser
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_transport_timeout
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_transport_maximum_tries
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_transport_acknowledge_delay
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_transport_busy_delay
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_transport_requested_window_size
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_transport_no_activity_timeout
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_transport_packet_length
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_routing_control
 suffix:semicolon
 r_extern
 r_int
@@ -562,6 +612,14 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|nr_rt_free
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* nr_subr.c */
 r_extern
 r_void
@@ -665,7 +723,7 @@ id|sock
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* ax25_timer */
+multiline_comment|/* nr_timer.c */
 r_extern
 r_void
 id|nr_set_timer
@@ -674,6 +732,23 @@ c_func
 r_struct
 id|sock
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* sysctl_net_netrom.c */
+r_extern
+r_void
+id|nr_register_sysctl
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_unregister_sysctl
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -3,6 +3,75 @@ macro_line|#ifndef LINUX_UCDROM_H
 DECL|macro|LINUX_UCDROM_H
 mdefine_line|#define LINUX_UCDROM_H
 macro_line|#ifdef __KERNEL__
+DECL|struct|cdrom_device_info
+r_struct
+id|cdrom_device_info
+(brace
+DECL|member|ops
+r_struct
+id|cdrom_device_ops
+op_star
+id|ops
+suffix:semicolon
+multiline_comment|/* link to device_ops */
+DECL|member|next
+r_struct
+id|cdrom_device_info
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* next device_info for this major */
+DECL|member|handle
+r_void
+op_star
+id|handle
+suffix:semicolon
+multiline_comment|/* driver-dependent data */
+multiline_comment|/* specifications */
+DECL|member|dev
+id|kdev_t
+id|dev
+suffix:semicolon
+multiline_comment|/* device number */
+DECL|member|mask
+r_int
+id|mask
+suffix:semicolon
+multiline_comment|/* mask of capability: disables them */
+DECL|member|speed
+r_const
+r_int
+id|speed
+suffix:semicolon
+multiline_comment|/* maximum speed for reading data */
+DECL|member|capacity
+r_const
+r_int
+id|capacity
+suffix:semicolon
+multiline_comment|/* number of discs in jukebox */
+multiline_comment|/* device-related storage */
+DECL|member|options
+r_int
+id|options
+suffix:colon
+l_int|30
+suffix:semicolon
+multiline_comment|/* options flags */
+DECL|member|mc_flags
+r_int
+id|mc_flags
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* media change buffer flags */
+DECL|member|use_count
+r_int
+id|use_count
+suffix:semicolon
+multiline_comment|/* number of times device opened */
+)brace
+suffix:semicolon
 DECL|struct|cdrom_device_ops
 r_struct
 id|cdrom_device_ops
@@ -15,7 +84,9 @@ op_star
 id|open
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 comma
 r_int
 )paren
@@ -27,20 +98,11 @@ op_star
 id|release
 )paren
 (paren
-id|kdev_t
-)paren
-suffix:semicolon
-DECL|member|open_files
-r_int
-(paren
+r_struct
+id|cdrom_device_info
 op_star
-id|open_files
-)paren
-(paren
-id|kdev_t
 )paren
 suffix:semicolon
-multiline_comment|/* number of open files */
 DECL|member|drive_status
 r_int
 (paren
@@ -48,7 +110,11 @@ op_star
 id|drive_status
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|disc_status
@@ -58,7 +124,9 @@ op_star
 id|disc_status
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 )paren
 suffix:semicolon
 DECL|member|media_changed
@@ -68,7 +136,11 @@ op_star
 id|media_changed
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|tray_move
@@ -78,7 +150,9 @@ op_star
 id|tray_move
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 comma
 r_int
 )paren
@@ -90,7 +164,9 @@ op_star
 id|lock_door
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 comma
 r_int
 )paren
@@ -102,7 +178,9 @@ op_star
 id|select_speed
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 comma
 r_int
 )paren
@@ -114,7 +192,9 @@ op_star
 id|select_disc
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 comma
 r_int
 )paren
@@ -126,7 +206,9 @@ op_star
 id|get_last_session
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 comma
 r_struct
 id|cdrom_multisession
@@ -140,13 +222,16 @@ op_star
 id|get_mcn
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 comma
 r_struct
 id|cdrom_mcn
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* hard reset device */
 DECL|member|reset
 r_int
 (paren
@@ -154,11 +239,12 @@ op_star
 id|reset
 )paren
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
 )paren
 suffix:semicolon
-multiline_comment|/* hard reset device */
+multiline_comment|/* play stuff */
 DECL|member|audio_ioctl
 r_int
 (paren
@@ -166,7 +252,9 @@ op_star
 id|audio_ioctl
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 comma
 r_int
 r_int
@@ -175,7 +263,7 @@ r_void
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* play stuff */
+multiline_comment|/* dev-specific */
 DECL|member|dev_ioctl
 r_int
 (paren
@@ -183,7 +271,9 @@ op_star
 id|dev_ioctl
 )paren
 (paren
-id|kdev_t
+r_struct
+id|cdrom_device_info
+op_star
 comma
 r_int
 r_int
@@ -192,48 +282,18 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* dev-specific */
-multiline_comment|/* specifications */
+multiline_comment|/* driver specifications */
 DECL|member|capability
 r_const
 r_int
 id|capability
 suffix:semicolon
 multiline_comment|/* capability flags */
-DECL|member|mask
+DECL|member|n_minors
 r_int
-id|mask
+id|n_minors
 suffix:semicolon
-multiline_comment|/* mask of capability: disables them */
-DECL|member|speed
-r_const
-r_int
-id|speed
-suffix:semicolon
-multiline_comment|/* maximum speed for reading data */
-DECL|member|minors
-r_const
-r_int
-id|minors
-suffix:semicolon
-multiline_comment|/* number of minor devs supported */
-DECL|member|capacity
-r_const
-r_int
-id|capacity
-suffix:semicolon
-multiline_comment|/* number of discs in jukebox */
-multiline_comment|/* device-related storage */
-DECL|member|options
-r_int
-id|options
-suffix:semicolon
-multiline_comment|/* options flags */
-DECL|member|mc_flags
-r_int
-id|mc_flags
-suffix:semicolon
-multiline_comment|/* media change buffer flags (2*16) */
+multiline_comment|/* number of active minor devices */
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -289,6 +349,12 @@ DECL|macro|CDO_LOCK
 mdefine_line|#define CDO_LOCK&t;0x8             /* lock tray on open files */
 DECL|macro|CDO_CHECK_TYPE
 mdefine_line|#define CDO_CHECK_TYPE&t;0x10            /* check type on open for data */
+multiline_comment|/* Special codes for specifying changer slots. */
+macro_line|#include &lt;limits.h&gt;
+DECL|macro|CDSL_NONE
+mdefine_line|#define CDSL_NONE       INT_MAX-1
+DECL|macro|CDSL_CURRENT
+mdefine_line|#define CDSL_CURRENT    INT_MAX
 multiline_comment|/* Some more ioctls to control these options */
 DECL|macro|CDROM_SET_OPTIONS
 mdefine_line|#define CDROM_SET_OPTIONS&t;0x5320
@@ -304,6 +370,8 @@ DECL|macro|CDROM_DRIVE_STATUS
 mdefine_line|#define CDROM_DRIVE_STATUS&t;0x5326  /* tray position, etc. */
 DECL|macro|CDROM_DISC_STATUS
 mdefine_line|#define CDROM_DISC_STATUS&t;0x5327  /* disc type etc. */
+DECL|macro|CDROM_CHANGER_NSLOTS
+mdefine_line|#define CDROM_CHANGER_NSLOTS    0x5328
 multiline_comment|/* Rename an old ioctl */
 DECL|macro|CDROM_GET_MCN
 mdefine_line|#define CDROM_GET_MCN&t;CDROM_GET_UPC&t;/* medium catalog number */
@@ -319,17 +387,14 @@ r_int
 id|register_cdrom
 c_func
 (paren
-r_int
-id|major
+r_struct
+id|cdrom_device_info
+op_star
+id|cdi
 comma
 r_char
 op_star
 id|name
-comma
-r_struct
-id|cdrom_device_ops
-op_star
-id|cdo
 )paren
 suffix:semicolon
 r_extern
@@ -337,12 +402,10 @@ r_int
 id|unregister_cdrom
 c_func
 (paren
-r_int
-id|major
-comma
-r_char
+r_struct
+id|cdrom_device_info
 op_star
-id|name
+id|cdi
 )paren
 suffix:semicolon
 macro_line|#endif

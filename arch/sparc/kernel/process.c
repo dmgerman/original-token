@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.51 1996/04/25 06:08:49 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: process.c,v 1.77 1996/11/03 08:25:43 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -11,12 +11,12 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/elf.h&gt;
 r_extern
 r_void
 id|fpsave
@@ -44,12 +45,6 @@ r_int
 r_int
 op_star
 )paren
-suffix:semicolon
-DECL|variable|active_ds
-r_int
-id|active_ds
-op_assign
-id|USER_DS
 suffix:semicolon
 macro_line|#ifndef __SMP__
 multiline_comment|/*&n; * the idle loop on a Sparc... ;)&n; */
@@ -167,11 +162,8 @@ c_cond
 (paren
 l_int|0
 op_eq
-id|read_smp_counter
-c_func
-(paren
+op_star
 id|spap
-)paren
 )paren
 (brace
 r_continue
@@ -202,6 +194,15 @@ op_eq
 op_minus
 l_int|1
 )paren
+r_while
+c_loop
+(paren
+op_star
+id|spap
+op_eq
+op_minus
+l_int|1
+)paren
 (brace
 suffix:semicolon
 )brace
@@ -214,7 +215,8 @@ id|cval
 )paren
 (brace
 multiline_comment|/* ho hum, release it. */
-id|smp_process_available
+op_star
+id|spap
 op_assign
 l_int|0
 suffix:semicolon
@@ -227,16 +229,13 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/* Something interesting happened, whee... */
-id|smp_swap
-c_func
-(paren
+op_star
 id|spap
-comma
+op_assign
 (paren
 id|cval
 op_minus
 l_int|1
-)paren
 )paren
 suffix:semicolon
 id|sti
@@ -254,13 +253,26 @@ suffix:semicolon
 macro_line|#endif
 r_extern
 r_char
-id|saved_command_line
+id|reboot_command
 (braket
 )braket
 suffix:semicolon
-DECL|function|hard_reset_now
+macro_line|#ifdef CONFIG_SUN_CONSOLE
+r_extern
 r_void
-id|hard_reset_now
+id|console_restore_palette
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|serial_console
+suffix:semicolon
+macro_line|#endif
+DECL|function|halt_now
+r_void
+id|halt_now
 c_func
 (paren
 r_void
@@ -282,8 +294,101 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|prom_feval
+macro_line|#ifdef CONFIG_SUN_CONSOLE
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial_console
+)paren
+id|console_restore_palette
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|prom_halt
 c_func
+(paren
+)paren
+suffix:semicolon
+id|panic
+c_func
+(paren
+l_string|&quot;Halt failed!&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|hard_reset_now
+r_void
+id|hard_reset_now
+c_func
+(paren
+r_void
+)paren
+(brace
+r_char
+op_star
+id|p
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|8000
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|p
+op_assign
+id|strchr
+(paren
+id|reboot_command
+comma
+l_char|&squot;&bslash;n&squot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p
+)paren
+op_star
+id|p
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef CONFIG_SUN_CONSOLE
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial_console
+)paren
+id|console_restore_palette
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+op_star
+id|reboot_command
+)paren
+id|prom_reboot
+(paren
+id|reboot_command
+)paren
+suffix:semicolon
+id|prom_feval
 (paren
 l_string|&quot;reset&quot;
 )paren
@@ -309,7 +414,8 @@ id|rw
 id|printk
 c_func
 (paren
-l_string|&quot;l0:%08lx l1:%08lx l2:%08lx l3:%08lx l4:%08lx l5:%08lx l6:%08lx l7:%08lx&bslash;n&quot;
+l_string|&quot;l0: %08lx l1: %08lx l2: %08lx l3: %08lx&bslash;n&quot;
+l_string|&quot;l4: %08lx l5: %08lx l6: %08lx l7: %08lx&bslash;n&quot;
 comma
 id|rw-&gt;locals
 (braket
@@ -355,7 +461,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;i0:%08lx i1:%08lx i2:%08lx i3:%08lx i4:%08lx i5:%08lx i6:%08lx i7:%08lx&bslash;n&quot;
+l_string|&quot;i0: %08lx i1: %08lx i2: %08lx i3: %08lx&bslash;n&quot;
+l_string|&quot;i4: %08lx i5: %08lx i6: %08lx i7: %08lx&bslash;n&quot;
 comma
 id|rw-&gt;ins
 (braket
@@ -396,6 +503,243 @@ id|rw-&gt;ins
 (braket
 l_int|7
 )braket
+)paren
+suffix:semicolon
+)brace
+DECL|function|show_stackframe
+r_void
+id|show_stackframe
+c_func
+(paren
+r_struct
+id|sparc_stackf
+op_star
+id|sf
+)paren
+(brace
+r_int
+r_int
+id|size
+suffix:semicolon
+r_int
+r_int
+op_star
+id|stk
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;l0: %08lx l1: %08lx l2: %08lx l3: %08lx&bslash;n&quot;
+l_string|&quot;l4: %08lx l5: %08lx l6: %08lx l7: %08lx&bslash;n&quot;
+comma
+id|sf-&gt;locals
+(braket
+l_int|0
+)braket
+comma
+id|sf-&gt;locals
+(braket
+l_int|1
+)braket
+comma
+id|sf-&gt;locals
+(braket
+l_int|2
+)braket
+comma
+id|sf-&gt;locals
+(braket
+l_int|3
+)braket
+comma
+id|sf-&gt;locals
+(braket
+l_int|4
+)braket
+comma
+id|sf-&gt;locals
+(braket
+l_int|5
+)braket
+comma
+id|sf-&gt;locals
+(braket
+l_int|6
+)braket
+comma
+id|sf-&gt;locals
+(braket
+l_int|7
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;i0: %08lx i1: %08lx i2: %08lx i3: %08lx&bslash;n&quot;
+l_string|&quot;i4: %08lx i5: %08lx fp: %08lx ret_pc: %08lx&bslash;n&quot;
+comma
+id|sf-&gt;ins
+(braket
+l_int|0
+)braket
+comma
+id|sf-&gt;ins
+(braket
+l_int|1
+)braket
+comma
+id|sf-&gt;ins
+(braket
+l_int|2
+)braket
+comma
+id|sf-&gt;ins
+(braket
+l_int|3
+)braket
+comma
+id|sf-&gt;ins
+(braket
+l_int|4
+)braket
+comma
+id|sf-&gt;ins
+(braket
+l_int|5
+)braket
+comma
+(paren
+r_int
+r_int
+)paren
+id|sf-&gt;fp
+comma
+id|sf-&gt;callers_pc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;sp: %08lx x0: %08lx x1: %08lx x2: %08lx&bslash;n&quot;
+l_string|&quot;x3: %08lx x4: %08lx x5: %08lx xx: %08lx&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|sf-&gt;structptr
+comma
+id|sf-&gt;xargs
+(braket
+l_int|0
+)braket
+comma
+id|sf-&gt;xargs
+(braket
+l_int|1
+)braket
+comma
+id|sf-&gt;xargs
+(braket
+l_int|2
+)braket
+comma
+id|sf-&gt;xargs
+(braket
+l_int|3
+)braket
+comma
+id|sf-&gt;xargs
+(braket
+l_int|4
+)braket
+comma
+id|sf-&gt;xargs
+(braket
+l_int|5
+)braket
+comma
+id|sf-&gt;xxargs
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|size
+op_assign
+(paren
+(paren
+r_int
+r_int
+)paren
+id|sf-&gt;fp
+)paren
+op_minus
+(paren
+(paren
+r_int
+r_int
+)paren
+id|sf
+)paren
+suffix:semicolon
+id|size
+op_sub_assign
+id|STACKFRAME_SZ
+suffix:semicolon
+id|stk
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|sf
+op_plus
+id|STACKFRAME_SZ
+)paren
+suffix:semicolon
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+r_do
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;s%d: %08lx&bslash;n&quot;
+comma
+id|i
+op_increment
+comma
+op_star
+id|stk
+op_increment
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|size
+op_sub_assign
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -427,7 +771,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%%g0: %08lx %%g1: %08lx %%g2: %08lx %%g3: %08lx&bslash;n&quot;
+l_string|&quot;g0: %08lx g1: %08lx g2: %08lx g3: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;u_regs
 (braket
@@ -453,7 +797,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%%g4: %08lx %%g5: %08lx %%g6: %08lx %%g7: %08lx&bslash;n&quot;
+l_string|&quot;g4: %08lx g5: %08lx g6: %08lx g7: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;u_regs
 (braket
@@ -479,7 +823,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%%o0: %08lx %%o1: %08lx %%o2: %08lx %%o3: %08lx&bslash;n&quot;
+l_string|&quot;o0: %08lx o1: %08lx o2: %08lx o3: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;u_regs
 (braket
@@ -505,7 +849,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%%o4: %08lx %%o5: %08lx %%sp: %08lx %%ret_pc: %08lx&bslash;n&quot;
+l_string|&quot;o4: %08lx o5: %08lx sp: %08lx ret_pc: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;u_regs
 (braket
@@ -528,6 +872,248 @@ l_int|15
 )braket
 )paren
 suffix:semicolon
+id|show_regwindow
+c_func
+(paren
+(paren
+r_struct
+id|reg_window
+op_star
+)paren
+id|regs-&gt;u_regs
+(braket
+l_int|14
+)braket
+)paren
+suffix:semicolon
+)brace
+DECL|function|show_thread
+r_void
+id|show_thread
+c_func
+(paren
+r_struct
+id|thread_struct
+op_star
+id|tss
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;uwinmask:          0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;uwinmask
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;kregs:             0x%08lx&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|tss-&gt;kregs
+)paren
+suffix:semicolon
+id|show_regs
+c_func
+(paren
+id|tss-&gt;kregs
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;sig_address:       0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;sig_address
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;sig_desc:          0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;sig_desc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ksp:               0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;ksp
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;kpc:               0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;kpc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;kpsr:              0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;kpsr
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;kwim:              0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;kwim
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;fork_kpsr:         0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;fork_kpsr
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;fork_kwim:         0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;fork_kwim
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NSWINS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tss-&gt;rwbuf_stkptrs
+(braket
+id|i
+)braket
+)paren
+r_continue
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;reg_window[%d]:&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;stack ptr:         0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;rwbuf_stkptrs
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|show_regwindow
+c_func
+(paren
+op_amp
+id|tss-&gt;reg_window
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;w_saved:           0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;w_saved
+)paren
+suffix:semicolon
+multiline_comment|/* XXX missing: float_regs */
+id|printk
+c_func
+(paren
+l_string|&quot;fsr:               0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;fsr
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;fpqdepth:          0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;fpqdepth
+)paren
+suffix:semicolon
+multiline_comment|/* XXX missing: fpqueue */
+id|printk
+c_func
+(paren
+l_string|&quot;sstk_info.stack:   0x%08lx&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|tss-&gt;sstk_info.the_stack
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;sstk_info.status:  0x%08lx&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|tss-&gt;sstk_info.cur_status
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;flags:             0x%08lx&bslash;n&quot;
+comma
+id|tss-&gt;flags
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;current_ds:        0x%08x&bslash;n&quot;
+comma
+id|tss-&gt;current_ds
+)paren
+suffix:semicolon
+multiline_comment|/* XXX missing: core_exec */
 )brace
 multiline_comment|/*&n; * Free current thread data structures etc..&n; */
 DECL|function|exit_thread
@@ -615,19 +1201,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Free old dead task when we know it can never be on the cpu again.&n; */
-DECL|function|release_thread
-r_void
-id|release_thread
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|dead_task
-)paren
-(brace
-)brace
 DECL|function|flush_thread
 r_void
 id|flush_thread
@@ -647,14 +1220,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|current-&gt;tss.uwinmask
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;tss.sig_address
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;tss.sig_desc
 op_assign
 l_int|0
 suffix:semicolon
@@ -732,50 +1297,6 @@ id|PF_USEDFPU
 suffix:semicolon
 macro_line|#endif
 )brace
-id|memset
-c_func
-(paren
-op_amp
-id|current-&gt;tss.reg_window
-(braket
-l_int|0
-)braket
-comma
-l_int|0
-comma
-(paren
-r_sizeof
-(paren
-r_struct
-id|reg_window
-)paren
-op_star
-id|NSWINS
-)paren
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|current-&gt;tss.rwbuf_stkptrs
-(braket
-l_int|0
-)braket
-comma
-l_int|0
-comma
-(paren
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-op_star
-id|NSWINS
-)paren
-)paren
-suffix:semicolon
 id|mmu_flush_hook
 c_func
 (paren
@@ -788,7 +1309,240 @@ op_complement
 id|SPARC_FLAG_KTHREAD
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Copy a Sparc thread.  The fork() return value conventions&n; * under SunOS are nothing short of bletcherous:&n; * Parent --&gt;  %o0 == childs  pid, %o1 == 0&n; * Child  --&gt;  %o0 == parents pid, %o1 == 1&n; *&n; * NOTE: We have a separate fork kpsr/kwim because&n; *       the parent could change these values between&n; *       sys_fork invocation and when we reach here&n; *       if the parent should sleep while trying to&n; *       allocate the task_struct and kernel stack in&n; *       do_fork().&n; */
+DECL|function|copy_regs
+r_static
+id|__inline__
+r_void
+id|copy_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|dst
+comma
+r_struct
+id|pt_regs
+op_star
+id|src
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldd&bslash;t[%1 + 0x00], %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x08], %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x10], %%o4&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g2, [%0 + 0x00]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g4, [%0 + 0x08]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%o4, [%0 + 0x10]&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x18], %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x20], %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x28], %%o4&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g2, [%0 + 0x18]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g4, [%0 + 0x20]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%o4, [%0 + 0x28]&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x30], %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x38], %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x40], %%o4&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g2, [%0 + 0x30]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g4, [%0 + 0x38]&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x48], %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%o4, [%0 + 0x40]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g2, [%0 + 0x48]&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|dst
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|src
+)paren
+suffix:colon
+l_string|&quot;g2&quot;
+comma
+l_string|&quot;g3&quot;
+comma
+l_string|&quot;g4&quot;
+comma
+l_string|&quot;g5&quot;
+comma
+l_string|&quot;o4&quot;
+comma
+l_string|&quot;o5&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|copy_regwin
+r_static
+id|__inline__
+r_void
+id|copy_regwin
+c_func
+(paren
+r_struct
+id|reg_window
+op_star
+id|dst
+comma
+r_struct
+id|reg_window
+op_star
+id|src
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldd&bslash;t[%1 + 0x00], %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x08], %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x10], %%o4&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g2, [%0 + 0x00]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g4, [%0 + 0x08]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%o4, [%0 + 0x10]&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x18], %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x20], %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x28], %%o4&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g2, [%0 + 0x18]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g4, [%0 + 0x20]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%o4, [%0 + 0x28]&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x30], %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;ldd&bslash;t[%1 + 0x38], %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g2, [%0 + 0x30]&bslash;n&bslash;t&quot;
+l_string|&quot;std&bslash;t%%g4, [%0 + 0x38]&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|dst
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|src
+)paren
+suffix:colon
+l_string|&quot;g2&quot;
+comma
+l_string|&quot;g3&quot;
+comma
+l_string|&quot;g4&quot;
+comma
+l_string|&quot;g5&quot;
+comma
+l_string|&quot;o4&quot;
+comma
+l_string|&quot;o5&quot;
+)paren
+suffix:semicolon
+)brace
+r_static
+id|__inline__
+r_struct
+id|sparc_stackf
+op_star
+DECL|function|clone_stackframe
+id|clone_stackframe
+c_func
+(paren
+r_struct
+id|sparc_stackf
+op_star
+id|dst
+comma
+r_struct
+id|sparc_stackf
+op_star
+id|src
+)paren
+(brace
+r_int
+r_int
+id|size
+suffix:semicolon
+r_struct
+id|sparc_stackf
+op_star
+id|sp
+suffix:semicolon
+id|size
+op_assign
+(paren
+(paren
+r_int
+r_int
+)paren
+id|src-&gt;fp
+)paren
+op_minus
+(paren
+(paren
+r_int
+r_int
+)paren
+id|src
+)paren
+suffix:semicolon
+id|sp
+op_assign
+(paren
+r_struct
+id|sparc_stackf
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|dst
+)paren
+op_minus
+id|size
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+id|sp
+comma
+id|src
+comma
+id|size
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|put_user
+c_func
+(paren
+id|dst
+comma
+op_amp
+id|sp-&gt;fp
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+id|sp
+suffix:semicolon
+)brace
+multiline_comment|/* Copy a Sparc thread.  The fork() return value conventions&n; * under SunOS are nothing short of bletcherous:&n; * Parent --&gt;  %o0 == childs  pid, %o1 == 0&n; * Child  --&gt;  %o0 == parents pid, %o1 == 1&n; *&n; * NOTE: We have a separate fork kpsr/kwim because&n; *       the parent could change these values between&n; *       sys_fork invocation and when we reach here&n; *       if the parent should sleep while trying to&n; *       allocate the task_struct and kernel stack in&n; *       do_fork().&n; */
 r_extern
 r_void
 id|ret_sys_call
@@ -798,7 +1552,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|function|copy_thread
-r_void
+r_int
 id|copy_thread
 c_func
 (paren
@@ -831,9 +1585,6 @@ id|childregs
 suffix:semicolon
 r_struct
 id|reg_window
-op_star
-id|old_stack
-comma
 op_star
 id|new_stack
 suffix:semicolon
@@ -902,35 +1653,13 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/* Calculate offset to stack_frame &amp; pt_regs */
-r_if
-c_cond
-(paren
-id|sparc_cpu_model
-op_eq
-id|sun4c
-)paren
-(brace
-id|stack_offset
-op_assign
-(paren
-(paren
-id|PAGE_SIZE
-op_star
-l_int|3
-)paren
-op_minus
-id|TRACEREG_SZ
-)paren
-suffix:semicolon
-)brace
-r_else
 id|stack_offset
 op_assign
 (paren
 (paren
 id|PAGE_SIZE
 op_lshift
-l_int|2
+l_int|1
 )paren
 op_minus
 id|TRACEREG_SZ
@@ -964,11 +1693,13 @@ id|stack_offset
 )paren
 )paren
 suffix:semicolon
-op_star
+id|copy_regs
+c_func
+(paren
 id|childregs
-op_assign
-op_star
+comma
 id|regs
+)paren
 suffix:semicolon
 id|new_stack
 op_assign
@@ -985,8 +1716,11 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|old_stack
-op_assign
+id|copy_regwin
+c_func
+(paren
+id|new_stack
+comma
 (paren
 (paren
 (paren
@@ -999,12 +1733,7 @@ id|regs
 op_minus
 l_int|1
 )paren
-suffix:semicolon
-op_star
-id|new_stack
-op_assign
-op_star
-id|old_stack
+)paren
 suffix:semicolon
 id|p-&gt;tss.ksp
 op_assign
@@ -1042,13 +1771,6 @@ id|p-&gt;tss.kregs
 op_assign
 id|childregs
 suffix:semicolon
-id|childregs-&gt;u_regs
-(braket
-id|UREG_FP
-)braket
-op_assign
-id|sp
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1057,30 +1779,155 @@ op_amp
 id|PSR_PS
 )paren
 (brace
-id|stack_offset
-op_add_assign
-id|TRACEREG_SZ
-suffix:semicolon
 id|childregs-&gt;u_regs
 (braket
 id|UREG_FP
 )braket
 op_assign
-id|p-&gt;kernel_stack_page
-op_plus
-id|stack_offset
+id|p-&gt;tss.ksp
 suffix:semicolon
 id|p-&gt;tss.flags
 op_or_assign
 id|SPARC_FLAG_KTHREAD
 suffix:semicolon
+id|p-&gt;tss.current_ds
+op_assign
+id|KERNEL_DS
+suffix:semicolon
+id|childregs-&gt;u_regs
+(braket
+id|UREG_G6
+)braket
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|p
+suffix:semicolon
 )brace
 r_else
+(brace
+id|childregs-&gt;u_regs
+(braket
+id|UREG_FP
+)braket
+op_assign
+id|sp
+suffix:semicolon
 id|p-&gt;tss.flags
 op_and_assign
 op_complement
 id|SPARC_FLAG_KTHREAD
 suffix:semicolon
+id|p-&gt;tss.current_ds
+op_assign
+id|USER_DS
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sp
+op_ne
+id|current-&gt;tss.kregs-&gt;u_regs
+(braket
+id|UREG_FP
+)braket
+)paren
+(brace
+r_struct
+id|sparc_stackf
+op_star
+id|childstack
+suffix:semicolon
+r_struct
+id|sparc_stackf
+op_star
+id|parentstack
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * This is a clone() call with supplied user stack.&n;&t;&t;&t; * Set some valid stack frames to give to the child.&n;&t;&t;&t; */
+id|childstack
+op_assign
+(paren
+r_struct
+id|sparc_stackf
+op_star
+)paren
+id|sp
+suffix:semicolon
+id|parentstack
+op_assign
+(paren
+r_struct
+id|sparc_stackf
+op_star
+)paren
+id|current-&gt;tss.kregs-&gt;u_regs
+(braket
+id|UREG_FP
+)braket
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;clone: parent stack:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|show_stackframe
+c_func
+(paren
+id|parentstack
+)paren
+suffix:semicolon
+macro_line|#endif
+id|childstack
+op_assign
+id|clone_stackframe
+c_func
+(paren
+id|childstack
+comma
+id|parentstack
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|childstack
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;clone: child stack:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|show_stackframe
+c_func
+(paren
+id|childstack
+)paren
+suffix:semicolon
+macro_line|#endif
+id|childregs-&gt;u_regs
+(braket
+id|UREG_FP
+)braket
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|childstack
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* Set the return value for the child. */
 id|childregs-&gt;u_regs
 (braket
@@ -1102,6 +1949,9 @@ id|regs-&gt;u_regs
 id|UREG_I1
 )braket
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace
@@ -1354,9 +2204,14 @@ DECL|function|dump_fpu
 r_int
 id|dump_fpu
 (paren
-r_void
+r_struct
+id|pt_regs
 op_star
-id|fpu_structure
+id|regs
+comma
+id|elf_fpregset_t
+op_star
+id|fpregs
 )paren
 (brace
 multiline_comment|/* Currently we report that we couldn&squot;t dump the fpu structure */
@@ -1379,16 +2234,32 @@ id|regs
 (brace
 r_int
 id|error
+comma
+id|base
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 op_star
 id|filename
 suffix:semicolon
-id|flush_user_windows
-c_func
+multiline_comment|/* Check for indirect call. */
+r_if
+c_cond
 (paren
+id|regs-&gt;u_regs
+(braket
+id|UREG_G1
+)braket
+op_eq
+l_int|0
 )paren
+(brace
+id|base
+op_assign
+l_int|1
 suffix:semicolon
+)brace
 id|error
 op_assign
 id|getname
@@ -1400,6 +2271,8 @@ op_star
 )paren
 id|regs-&gt;u_regs
 (braket
+id|base
+op_plus
 id|UREG_I0
 )braket
 comma
@@ -1431,6 +2304,8 @@ op_star
 )paren
 id|regs-&gt;u_regs
 (braket
+id|base
+op_plus
 id|UREG_I1
 )braket
 comma
@@ -1441,6 +2316,8 @@ op_star
 )paren
 id|regs-&gt;u_regs
 (braket
+id|base
+op_plus
 id|UREG_I2
 )braket
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.29 1996/04/03 02:17:52 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.42 1996/09/30 02:23:21 davem Exp $ */
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
@@ -104,20 +104,6 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|sparc_switch_to
-c_func
-(paren
-r_void
-op_star
-id|new_task
-)paren
-suffix:semicolon
-macro_line|#ifndef __SMP__
-DECL|macro|switch_to
-mdefine_line|#define switch_to(prev, next) do { &bslash;&n;&t;&t;&t;  flush_user_windows(); &bslash;&n;&t;&t;          switch_to_context(next); &bslash;&n;&t;&t;&t;  prev-&gt;tss.current_ds = active_ds; &bslash;&n;                          active_ds = next-&gt;tss.current_ds; &bslash;&n;&t;&t;&t;  if(last_task_used_math != next) &bslash;&n;&t;&t;&t;&t;  next-&gt;tss.kregs-&gt;psr &amp;= ~PSR_EF; &bslash;&n;                          sparc_switch_to(next); &bslash;&n;                     } while(0)
-macro_line|#else
-r_extern
-r_void
 id|fpsave
 c_func
 (paren
@@ -141,53 +127,134 @@ op_star
 id|fpqdepth
 )paren
 suffix:semicolon
-DECL|macro|switch_to
-mdefine_line|#define switch_to(prev, next) do { &bslash;&n;&t;&t;&t;  cli(); &bslash;&n;&t;&t;&t;  if(prev-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;                          &t;fpsave(&amp;prev-&gt;tss.float_regs[0], &amp;prev-&gt;tss.fsr, &bslash;&n;                          &t;       &amp;prev-&gt;tss.fpqueue[0], &amp;prev-&gt;tss.fpqdepth); &bslash;&n;                          &t;prev-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;                          &t;prev-&gt;tss.kregs-&gt;psr &amp;= ~PSR_EF; &bslash;&n;                          } &bslash;&n;&t;&t;&t;  prev-&gt;lock_depth = syscall_count; &bslash;&n;&t;&t;&t;  kernel_counter += (next-&gt;lock_depth - prev-&gt;lock_depth); &bslash;&n;&t;&t;&t;  syscall_count = next-&gt;lock_depth; &bslash;&n;&t;&t;&t;  flush_user_windows(); &bslash;&n;&t;&t;          switch_to_context(next); &bslash;&n;&t;&t;&t;  prev-&gt;tss.current_ds = active_ds; &bslash;&n;                          active_ds = next-&gt;tss.current_ds; &bslash;&n;                          sparc_switch_to(next); &bslash;&n;&t;&t;&t;  sti(); &bslash;&n;                     } while(0)
+macro_line|#ifdef __SMP__
+DECL|macro|SWITCH_ENTER
+mdefine_line|#define SWITCH_ENTER &bslash;&n;&t;cli(); &bslash;&n;&t;if(prev-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;&t;&t;fpsave(&amp;prev-&gt;tss.float_regs[0], &amp;prev-&gt;tss.fsr, &bslash;&n;&t;&t;       &amp;prev-&gt;tss.fpqueue[0], &amp;prev-&gt;tss.fpqdepth); &bslash;&n;&t;&t;prev-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;&t;prev-&gt;tss.kregs-&gt;psr &amp;= ~PSR_EF; &bslash;&n;&t;} &bslash;&n;&t;prev-&gt;lock_depth = syscall_count; &bslash;&n;&t;kernel_counter += (next-&gt;lock_depth - prev-&gt;lock_depth); &bslash;&n;&t;syscall_count = next-&gt;lock_depth;
+DECL|macro|SWITCH_EXIT
+mdefine_line|#define SWITCH_EXIT sti();
+DECL|macro|SWITCH_DO_LAZY_FPU
+mdefine_line|#define SWITCH_DO_LAZY_FPU
+macro_line|#else
+DECL|macro|SWITCH_ENTER
+mdefine_line|#define SWITCH_ENTER
+DECL|macro|SWITCH_EXIT
+mdefine_line|#define SWITCH_EXIT
+DECL|macro|SWITCH_DO_LAZY_FPU
+mdefine_line|#define SWITCH_DO_LAZY_FPU if(last_task_used_math != next) next-&gt;tss.kregs-&gt;psr&amp;=~PSR_EF;
 macro_line|#endif
-multiline_comment|/* Changing the IRQ level on the Sparc. */
+multiline_comment|/* Much care has gone into this code, do not touch it. */
+DECL|macro|switch_to
+mdefine_line|#define switch_to(prev, next) do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__label__ here;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_ENTER&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_DO_LAZY_FPU&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.globl&bslash;tflush_patch_switch&bslash;nflush_patch_switch:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;restore; restore; restore; restore; restore; restore; restore&quot;);&t;&t;&bslash;&n;&t;if(!(next-&gt;tss.flags &amp; SPARC_FLAG_KTHREAD) &amp;&amp;&t;&t;&t;&t;&t;&bslash;&n;&t;   !(next-&gt;flags &amp; PF_EXITING))&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;switch_to_context(next);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;here) - 0x8;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&bslash;t%%psr, %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&bslash;t%%sp, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&bslash;t%%wim, %%g5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&bslash;t%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&bslash;t%%g4, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&bslash;t%1, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%g6 + %2], %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&bslash;t%1, [%0]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&bslash;t%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%g6 + %3], %%sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&bslash;t%%g5, 0x0, %%wim&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x00], %%l0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x08], %%l2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x10], %%l4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x18], %%l6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x20], %%i0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x28], %%i2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x30], %%i4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x38], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&bslash;t%%g4, 0x0, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&bslash;t%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; nop&bslash;n&bslash;t&quot; : : &quot;r&quot; (&amp;(current_set[smp_processor_id()])), &quot;r&quot; (next),&t;&t;&bslash;&n;&t;&quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpsr)),&t;&t;&bslash;&n;&t;&quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&t;&bslash;&n;&t;&quot;r&quot; (task_pc) : &quot;g4&quot;, &quot;g5&quot;);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;here: SWITCH_EXIT } while(0)
+multiline_comment|/* Changing the IRQ level on the Sparc.   We now avoid writing the psr&n; * whenever possible.&n; */
 DECL|function|setipl
 r_extern
-r_inline
+id|__inline__
 r_void
 id|setipl
 c_func
 (paren
 r_int
-id|__new_ipl
+r_int
+id|__orig_psr
 )paren
 (brace
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;rd %%psr, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;andn %%g1, %1, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;sll %0, 8, %%g2&bslash;n&bslash;t&quot;
-l_string|&quot;and %%g2, %1, %%g2&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g1, %%g2, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;wr %%g1, 0x0, %%psr&bslash;n&bslash;t&quot;
-l_string|&quot;nop; nop; nop&bslash;n&bslash;t&quot;
+l_string|&quot;wr&bslash;t%0, 0x0, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;nop; nop; nop;&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-id|__new_ipl
+id|__orig_psr
 )paren
-comma
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|cli
+r_extern
+id|__inline__
+r_void
+id|cli
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rd&bslash;t%%psr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;andcc&bslash;t%0, %1, %%g0&bslash;n&bslash;t&quot;
+l_string|&quot;be,a&bslash;t1f&bslash;n&bslash;t&quot;
+l_string|&quot; wr&bslash;t%0, %1, %%psr&bslash;n&quot;
+l_string|&quot;1:&bslash;tnop; nop&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|tmp
+)paren
+suffix:colon
 l_string|&quot;i&quot;
 (paren
 id|PSR_PIL
 )paren
 suffix:colon
-l_string|&quot;g1&quot;
-comma
-l_string|&quot;g2&quot;
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|sti
+r_extern
+id|__inline__
+r_void
+id|sti
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rd&bslash;t%%psr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;andcc&bslash;t%0, %1, %%g0&bslash;n&bslash;t&quot;
+l_string|&quot;bne,a&bslash;t1f&bslash;n&bslash;t&quot;
+l_string|&quot; wr&bslash;t%0, %1, %%psr&bslash;n&quot;
+l_string|&quot;1:&bslash;tnop; nop&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|tmp
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|PSR_PIL
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
 DECL|function|getipl
 r_extern
-r_inline
+id|__inline__
+r_int
 r_int
 id|getipl
 c_func
@@ -196,24 +263,18 @@ r_void
 )paren
 (brace
 r_int
+r_int
 id|retval
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;rd %%psr, %0&bslash;n&bslash;t&quot;
-l_string|&quot;and %0, %1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;srl %0, 8, %0&bslash;n&bslash;t&quot;
+l_string|&quot;rd&bslash;t%%psr, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|retval
-)paren
-suffix:colon
-l_string|&quot;i&quot;
-(paren
-id|PSR_PIL
 )paren
 )paren
 suffix:semicolon
@@ -221,42 +282,57 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-DECL|function|swpipl
+DECL|function|swap_pil
 r_extern
-r_inline
+id|__inline__
 r_int
-id|swpipl
+r_int
+id|swap_pil
 c_func
 (paren
 r_int
-id|__new_ipl
+r_int
+id|__new_psr
 )paren
 (brace
 r_int
+r_int
 id|retval
+comma
+id|tmp1
+comma
+id|tmp2
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;rd %%psr, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;srl %%g1, 8, %0&bslash;n&bslash;t&quot;
-l_string|&quot;and %0, 15, %0&bslash;n&bslash;t&quot;
-l_string|&quot;andn %%g1, %2, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;and %1, 15, %%g2&bslash;n&bslash;t&quot;
-l_string|&quot;sll %%g2, 8, %%g2&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g1, %%g2, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;wr %%g1, 0x0, %%psr&bslash;n&bslash;t&quot;
-l_string|&quot;nop; nop; nop&bslash;n&bslash;t&quot;
+l_string|&quot;rd&bslash;t%%psr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;and&bslash;t%0, %4, %1&bslash;n&bslash;t&quot;
+l_string|&quot;and&bslash;t%3, %4, %2&bslash;n&bslash;t&quot;
+l_string|&quot;xorcc&bslash;t%1, %2, %%g0&bslash;n&bslash;t&quot;
+l_string|&quot;bne,a&bslash;t1f&bslash;n&bslash;t&quot;
+l_string|&quot; wr %0, %4, %%psr&bslash;n&quot;
+l_string|&quot;1:&bslash;tnop; nop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|retval
 )paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|tmp2
+)paren
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-id|__new_ipl
+id|__new_psr
 )paren
 comma
 l_string|&quot;i&quot;
@@ -264,9 +340,49 @@ l_string|&quot;i&quot;
 id|PSR_PIL
 )paren
 suffix:colon
-l_string|&quot;g1&quot;
-comma
-l_string|&quot;g2&quot;
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|function|read_psr_and_cli
+r_extern
+id|__inline__
+r_int
+r_int
+id|read_psr_and_cli
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rd&bslash;t%%psr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;andcc&bslash;t%0, %1, %%g0&bslash;n&bslash;t&quot;
+l_string|&quot;be,a&bslash;t1f&bslash;n&bslash;t&quot;
+l_string|&quot; wr&bslash;t%0, %1, %%psr&bslash;n&quot;
+l_string|&quot;1:&bslash;tnop; nop&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|PSR_PIL
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -280,25 +396,26 @@ id|spdeb_buf
 l_int|256
 )braket
 suffix:semicolon
-DECL|macro|cli
-mdefine_line|#define cli()&t;&t;&t;setipl(15)  /* 15 = no int&squot;s except nmi&squot;s */
-DECL|macro|sti
-mdefine_line|#define sti()&t;&t;&t;setipl(0)   /* I&squot;m scared */
 DECL|macro|save_flags
-mdefine_line|#define save_flags(flags)&t;do { flags = getipl(); } while (0)
+mdefine_line|#define save_flags(flags)&t;((flags) = getipl())
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(flags)&t;((flags) = read_psr_and_cli())
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(flags)&t;setipl(flags)
+mdefine_line|#define restore_flags(flags)&t;setipl((flags))
+multiline_comment|/* XXX Change this if we ever use a PSO mode kernel. */
+DECL|macro|mb
+mdefine_line|#define mb()  __asm__ __volatile__ (&quot;&quot; : : : &quot;memory&quot;)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;);
 DECL|function|xchg_u32
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|xchg_u32
 c_func
 (paren
-r_volatile
+id|__volatile__
 r_int
 r_int
 op_star
@@ -309,41 +426,128 @@ r_int
 id|val
 )paren
 (brace
-r_int
-r_int
-id|flags
+id|__asm__
+id|__volatile__
+c_func
+(paren
+"&quot;"
+id|rd
+op_mod
+op_mod
+id|psr
 comma
-id|retval
-suffix:semicolon
-id|save_flags
-c_func
+op_mod
+op_mod
+id|g3
+id|andcc
+op_mod
+op_mod
+id|g3
+comma
+op_mod
+l_int|3
+comma
+op_mod
+op_mod
+id|g0
+id|be
+comma
+id|a
+l_float|1f
+id|wr
+op_mod
+op_mod
+id|g3
+comma
+op_mod
+l_int|3
+comma
+op_mod
+op_mod
+id|psr
+l_int|1
+suffix:colon
+id|ld
+(braket
+op_mod
+l_int|1
+)braket
+comma
+op_mod
+op_mod
+id|g2
+id|andcc
+op_mod
+op_mod
+id|g3
+comma
+op_mod
+l_int|3
+comma
+op_mod
+op_mod
+id|g0
+id|st
+op_mod
+l_int|2
+comma
+(braket
+op_mod
+l_int|1
+)braket
+id|be
+comma
+id|a
+l_float|1f
+id|wr
+op_mod
+op_mod
+id|g3
+comma
+l_int|0x0
+comma
+op_mod
+op_mod
+id|psr
+l_int|1
+suffix:colon
+id|nop
+id|mov
+op_mod
+op_mod
+id|g2
+comma
+op_mod
+l_int|0
+"&quot;"
+suffix:colon
+l_string|&quot;=&amp;r&quot;
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|retval
-op_assign
-op_star
-id|m
-suffix:semicolon
-op_star
-id|m
-op_assign
 id|val
-suffix:semicolon
-id|restore_flags
-c_func
+)paren
+suffix:colon
+l_string|&quot;r&quot;
 (paren
-id|flags
+id|m
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|val
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|PSR_PIL
+)paren
+suffix:colon
+l_string|&quot;g2&quot;
+comma
+l_string|&quot;g3&quot;
 )paren
 suffix:semicolon
 r_return
-id|retval
+id|val
 suffix:semicolon
 )brace
 DECL|macro|xchg
@@ -360,7 +564,7 @@ r_void
 suffix:semicolon
 DECL|function|__xchg
 r_static
-r_inline
+id|__inline__
 r_int
 r_int
 id|__xchg
@@ -370,7 +574,7 @@ r_int
 r_int
 id|x
 comma
-r_volatile
+id|__volatile__
 r_void
 op_star
 id|ptr

@@ -329,6 +329,14 @@ comma
 l_string|&quot;No FPU&quot;
 )brace
 comma
+(brace
+l_int|9
+comma
+l_int|3
+comma
+l_string|&quot;Weitek on-chip FPU&quot;
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|NSPARCFPU
@@ -508,7 +516,31 @@ l_int|9
 comma
 l_int|0
 comma
-l_string|&quot;Fujitsu #3&quot;
+l_string|&quot;Weitek Power-UP&quot;
+)brace
+comma
+(brace
+l_int|9
+comma
+l_int|1
+comma
+l_string|&quot;Weitek Power-UP&quot;
+)brace
+comma
+(brace
+l_int|9
+comma
+l_int|2
+comma
+l_string|&quot;Weitek Power-UP&quot;
+)brace
+comma
+(brace
+l_int|9
+comma
+l_int|3
+comma
+l_string|&quot;Weitek Power-UP&quot;
 )brace
 comma
 (brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: msi.h,v 1.1 1996/04/20 10:14:32 davem Exp $&n; * msi.h:  Defines specific to the MBus - Sbus - Interface.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@pool.informatik.rwth-aachen.de)&n; */
+multiline_comment|/* $Id: msi.h,v 1.3 1996/08/29 09:48:25 davem Exp $&n; * msi.h:  Defines specific to the MBus - Sbus - Interface.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_MSI_H
 DECL|macro|_SPARC_MSI_H
 mdefine_line|#define _SPARC_MSI_H
@@ -10,7 +10,7 @@ DECL|macro|MSI_ASYNC_MODE
 mdefine_line|#define MSI_ASYNC_MODE  0x80000000&t;/* Operate the MSI asynchronously */
 DECL|function|msi_set_sync
 r_extern
-r_inline
+id|__inline__
 r_void
 id|msi_set_sync
 c_func

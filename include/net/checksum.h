@@ -260,14 +260,14 @@ id|proto
 suffix:semicolon
 id|csum
 op_add_assign
-id|proto
+id|uproto
 suffix:semicolon
 id|carry
 op_assign
 (paren
 id|csum
 OL
-id|proto
+id|uproto
 )paren
 suffix:semicolon
 id|csum

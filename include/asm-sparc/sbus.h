@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.9 1996/02/15 09:13:03 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.11 1996/10/31 06:29:12 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SBUS_H
 DECL|macro|_SPARC_SBUS_H
 mdefine_line|#define _SPARC_SBUS_H
@@ -13,7 +13,7 @@ mdefine_line|#define SBUS_OFF_MASK          0x01ffffff
 multiline_comment|/* These routines are used to calculate device address from slot&n; * numbers + offsets, and vice versa.&n; */
 DECL|function|sbus_devaddr
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|sbus_devaddr
@@ -51,7 +51,7 @@ suffix:semicolon
 )brace
 DECL|function|sbus_dev_slot
 r_extern
-r_inline
+id|__inline__
 r_int
 id|sbus_dev_slot
 c_func
@@ -80,7 +80,7 @@ suffix:semicolon
 )brace
 DECL|function|sbus_dev_offset
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|sbus_dev_offset
@@ -252,10 +252,22 @@ id|prom_name
 l_int|64
 )braket
 suffix:semicolon
-multiline_comment|/* Usually &quot;sbus&quot; */
+multiline_comment|/* Usually &quot;sbus&quot; or &quot;sbi&quot; */
 DECL|member|clock_freq
 r_int
 id|clock_freq
+suffix:semicolon
+DECL|member|sbus_ranges
+r_struct
+id|linux_prom_ranges
+id|sbus_ranges
+(braket
+id|PROMREG_MAX
+)braket
+suffix:semicolon
+DECL|member|num_sbus_ranges
+r_int
+id|num_sbus_ranges
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -266,7 +278,7 @@ op_star
 id|SBus_chain
 suffix:semicolon
 r_extern
-r_inline
+id|__inline__
 r_int
 DECL|function|sbus_is_slave
 id|sbus_is_slave
@@ -288,5 +300,27 @@ DECL|macro|for_each_sbus
 mdefine_line|#define for_each_sbus(bus) &bslash;&n;        for((bus) = SBus_chain; (bus); (bus)=(bus)-&gt;next)
 DECL|macro|for_each_sbusdev
 mdefine_line|#define for_each_sbusdev(device, bus) &bslash;&n;        for((device) = (bus)-&gt;devices; (device); (device)=(device)-&gt;next)
+DECL|macro|for_all_sbusdev
+mdefine_line|#define for_all_sbusdev(device, bus) &bslash;&n;&t;for((bus) = SBus_chain, (device) = (bus)-&gt;devices; (bus); (device)=((device)-&gt;next ? (device)-&gt;next : ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
+multiline_comment|/* Apply promlib probed SBUS ranges to registers. */
+r_extern
+r_void
+id|prom_apply_sbus_ranges
+c_func
+(paren
+r_struct
+id|linux_sbus
+op_star
+id|sbus
+comma
+r_struct
+id|linux_prom_registers
+op_star
+id|sbusregs
+comma
+r_int
+id|nregs
+)paren
+suffix:semicolon
 macro_line|#endif /* !(_SPARC_SBUS_H) */
 eof

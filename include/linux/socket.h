@@ -143,7 +143,8 @@ op_star
 id|cmsg
 )paren
 (brace
-r_void
+r_int
+r_char
 op_star
 id|ptr
 suffix:semicolon
@@ -181,6 +182,11 @@ c_cond
 (paren
 id|ptr
 op_ge
+(paren
+r_int
+r_char
+op_star
+)paren
 id|mhdr-&gt;msg_control
 op_plus
 id|mhdr-&gt;msg_controllen
@@ -189,6 +195,11 @@ r_return
 l_int|NULL
 suffix:semicolon
 r_return
+(paren
+r_struct
+id|cmsghdr
+op_star
+)paren
 id|ptr
 suffix:semicolon
 )brace
@@ -226,7 +237,7 @@ mdefine_line|#define AF_IPX&t;&t;4&t;/* Novell IPX &t;&t;&t;*/
 DECL|macro|AF_APPLETALK
 mdefine_line|#define AF_APPLETALK&t;5&t;/* Appletalk DDP &t;&t;*/
 DECL|macro|AF_NETROM
-mdefine_line|#define&t;AF_NETROM&t;6&t;/* Amateur radio NetROM &t;*/
+mdefine_line|#define AF_NETROM&t;6&t;/* Amateur Radio NET/ROM &t;*/
 DECL|macro|AF_BRIDGE
 mdefine_line|#define AF_BRIDGE&t;7&t;/* Multiprotocol bridge &t;*/
 DECL|macro|AF_AAL5
@@ -235,8 +246,10 @@ DECL|macro|AF_X25
 mdefine_line|#define AF_X25&t;&t;9&t;/* Reserved for X.25 project &t;*/
 DECL|macro|AF_INET6
 mdefine_line|#define AF_INET6&t;10&t;/* IP version 6&t;&t;&t;*/
+DECL|macro|AF_ROSE
+mdefine_line|#define AF_ROSE&t;&t;11&t;/* Amateur Radio X.25 PLP&t;*/
 DECL|macro|AF_MAX
-mdefine_line|#define AF_MAX&t;&t;12&t;/* For now.. */
+mdefine_line|#define AF_MAX&t;&t;13&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
 DECL|macro|PF_UNSPEC
 mdefine_line|#define PF_UNSPEC&t;AF_UNSPEC
@@ -260,6 +273,8 @@ DECL|macro|PF_X25
 mdefine_line|#define PF_X25&t;&t;AF_X25
 DECL|macro|PF_INET6
 mdefine_line|#define PF_INET6&t;AF_INET6
+DECL|macro|PR_ROSE
+mdefine_line|#define PR_ROSE&t;&t;AF_ROSE
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */
@@ -291,7 +306,9 @@ mdefine_line|#define SOL_AX25&t;257
 DECL|macro|SOL_ATALK
 mdefine_line|#define SOL_ATALK&t;258
 DECL|macro|SOL_NETROM
-mdefine_line|#define&t;SOL_NETROM&t;259
+mdefine_line|#define SOL_NETROM&t;259
+DECL|macro|SOL_ROSE
+mdefine_line|#define SOL_ROSE&t;260
 DECL|macro|SOL_TCP
 mdefine_line|#define SOL_TCP&t;&t;6
 DECL|macro|SOL_UDP

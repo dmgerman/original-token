@@ -927,6 +927,8 @@ DECL|macro|UC_CLEARPROF
 mdefine_line|#define UC_CLEARPROF&t;16
 DECL|macro|UF_TRACE
 mdefine_line|#define&t;UF_TRACE&t;(0x01)
+DECL|macro|UF_NODISC
+mdefine_line|#define&t;UF_NODISC&t;(0x02)
 multiline_comment|/*---------------------------------------&n;**&n;**&t;Timestamps for profiling&n;**&n;**---------------------------------------&n;*/
 DECL|struct|tstamp
 r_struct
@@ -8249,6 +8251,37 @@ id|np-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
+multiline_comment|/*&n;&t;**&t;Not allow disconnections for all targets if asked by config&n;&t;*/
+macro_line|#ifdef&t;SCSI_NCR_NO_DISCONNECT
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|MAX_TARGET
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|np-&gt;target
+(braket
+id|i
+)braket
+dot
+id|usrflag
+op_or_assign
+id|UF_NODISC
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t;**&t;After SCSI devices have been opened, we cannot&n;&t;**&t;reset the bus safely, so we do it here.&n;&t;**&t;Interrupt handler does the real work.&n;&t;*/
 id|OUTB
 (paren
@@ -8285,12 +8318,10 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifndef SCSI_NCR_NO_DISCONNECT
 id|np-&gt;disc
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t;**&t;The middle-level SCSI driver does not&n;&t;**&t;wait devices to settle.&n;&t;*/
 macro_line|#ifdef SCSI_NCR_SETTLE_TIME
 macro_line|#if    SCSI_NCR_SETTLE_TIME &gt; 2
@@ -9150,15 +9181,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|cp
 op_ne
 op_amp
 id|np-&gt;ccb
-)paren
 op_logical_and
 (paren
+(paren
 id|np-&gt;disc
+op_logical_and
+op_logical_neg
+(paren
+id|tp-&gt;usrflag
+op_amp
+id|UF_NODISC
+)paren
+)paren
+op_logical_or
+id|cp-&gt;tag
 )paren
 )paren
 id|idmsg
@@ -10078,12 +10118,10 @@ comma
 id|HS_RESET
 )paren
 suffix:semicolon
-macro_line|#ifndef SCSI_NCR_NO_DISCONNECT
 id|np-&gt;disc
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -13617,10 +13655,6 @@ id|np-&gt;user.data
 suffix:semicolon
 )brace
 suffix:semicolon
-id|np-&gt;disc
-op_assign
-l_int|1
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -13993,12 +14027,10 @@ comma
 id|HS_TIMEOUT
 )paren
 suffix:semicolon
-macro_line|#ifndef SCSI_NCR_NO_DISCONNECT
 id|np-&gt;disc
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
 id|np-&gt;heartbeat
 op_assign
 id|thistime
@@ -15580,12 +15612,10 @@ comma
 id|HS_FAIL
 )paren
 suffix:semicolon
-macro_line|#ifndef SCSI_NCR_NO_DISCONNECT
 id|np-&gt;disc
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*==========================================================&n;**&n;**&t;ncr chip exception handler for selection timeout&n;**&n;**==========================================================&n;**&n;**&t;There seems to be a bug in the 53c810.&n;**&t;Although a STO-Interrupt is pending,&n;**&t;it continues executing script commands.&n;**&t;But it will fail and interrupt (IID) on&n;**&t;the next instruction where it&squot;s looking&n;**&t;for a valid phase.&n;**&n;**----------------------------------------------------------&n;*/
 DECL|function|ncr_int_sto
@@ -15743,12 +15773,10 @@ comma
 id|HS_FAIL
 )paren
 suffix:semicolon
-macro_line|#ifndef SCSI_NCR_NO_DISCONNECT
 id|np-&gt;disc
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*==========================================================&n;**&n;**&n;**&t;ncr chip exception handler for phase errors.&n;**&n;**&n;**==========================================================&n;**&n;**&t;We have to construct a new transfer descriptor,&n;**&t;to transfer the rest of the current block.&n;**&n;**----------------------------------------------------------&n;*/
 DECL|function|ncr_int_ma
@@ -24106,9 +24134,53 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|arg_len
+op_assign
+id|is_keyword
+c_func
+(paren
+id|ptr
+comma
+id|len
+comma
+l_string|&quot;all&quot;
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|ptr
+op_add_assign
+id|arg_len
+suffix:semicolon
+id|len
+op_sub_assign
+id|arg_len
+suffix:semicolon
+id|uc-&gt;target
+op_assign
+op_complement
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
 id|GET_INT_ARG
 c_func
 (paren
+id|target
+)paren
+suffix:semicolon
+id|uc-&gt;target
+op_assign
+(paren
+l_int|1
+op_lshift
 id|target
 )paren
 suffix:semicolon
@@ -24122,25 +24194,7 @@ id|target
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|target
-OG
-id|MAX_TARGET
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-id|uc-&gt;target
-op_assign
-(paren
-l_int|1
-op_lshift
-id|target
-)paren
-suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -24585,6 +24639,28 @@ l_string|&quot;trace&quot;
 id|uc-&gt;data
 op_or_assign
 id|UF_TRACE
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|arg_len
+op_assign
+id|is_keyword
+c_func
+(paren
+id|ptr
+comma
+id|len
+comma
+l_string|&quot;no_disc&quot;
+)paren
+)paren
+)paren
+id|uc-&gt;data
+op_or_assign
+id|UF_NODISC
 suffix:semicolon
 r_else
 r_return

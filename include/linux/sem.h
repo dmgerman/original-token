@@ -20,6 +20,11 @@ DECL|macro|SETVAL
 mdefine_line|#define SETVAL  16       /* set semval */
 DECL|macro|SETALL
 mdefine_line|#define SETALL  17       /* set all semval&squot;s */
+multiline_comment|/* ipcs ctl cmds */
+DECL|macro|SEM_STAT
+mdefine_line|#define SEM_STAT 18
+DECL|macro|SEM_INFO
+mdefine_line|#define SEM_INFO 19
 multiline_comment|/* One semid data structure for each set of semaphores in the system. */
 DECL|struct|semid_ds
 r_struct
@@ -224,11 +229,6 @@ suffix:semicolon
 multiline_comment|/* pid of last operation */
 )brace
 suffix:semicolon
-multiline_comment|/* ipcs ctl cmds */
-DECL|macro|SEM_STAT
-mdefine_line|#define SEM_STAT 18
-DECL|macro|SEM_INFO
-mdefine_line|#define SEM_INFO 19
 multiline_comment|/* One queue for each semaphore set in the system. */
 DECL|struct|sem_queue
 r_struct

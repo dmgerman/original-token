@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: auxio.h,v 1.11 1996/04/25 06:12:45 davem Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: auxio.h,v 1.14 1996/10/31 06:29:10 davem Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_AUXIO_H
 DECL|macro|_SPARC_AUXIO_H
 mdefine_line|#define _SPARC_AUXIO_H
@@ -23,6 +23,8 @@ DECL|macro|AUXIO_EDGE_ON
 mdefine_line|#define AUXIO_EDGE_ON     0x10    /* sun4m - On means Jumper block is in. */
 DECL|macro|AUXIO_FLPY_DSEL
 mdefine_line|#define AUXIO_FLPY_DSEL   0x08    /* Drive select/start-motor. Write only. */
+DECL|macro|AUXIO_LINK_TEST
+mdefine_line|#define AUXIO_LINK_TEST   0x08    /* sun4m - On means TPE Carrier detect. */
 multiline_comment|/* Set the following to one, then zero, after doing a pseudo DMA transfer. */
 DECL|macro|AUXIO_FLPY_TCNT
 mdefine_line|#define AUXIO_FLPY_TCNT   0x04    /* Floppy terminal count. Write only. */
@@ -33,24 +35,25 @@ DECL|macro|AUXIO_LED
 mdefine_line|#define AUXIO_LED         0x01    /* On if set, off if unset. Read/Write */
 DECL|macro|AUXREG
 mdefine_line|#define AUXREG   ((volatile unsigned char *)(auxio_register))
+multiline_comment|/* These are available on sun4c */
 DECL|macro|TURN_ON_LED
-mdefine_line|#define TURN_ON_LED   *AUXREG = (*AUXREG | AUXIO_ORMEIN | AUXIO_LED)
+mdefine_line|#define TURN_ON_LED   if (AUXREG) *AUXREG = (*AUXREG | AUXIO_ORMEIN | AUXIO_LED)
 DECL|macro|TURN_OFF_LED
-mdefine_line|#define TURN_OFF_LED  *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_LED))
+mdefine_line|#define TURN_OFF_LED  if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_LED))
 DECL|macro|FLIP_LED
-mdefine_line|#define FLIP_LED      *AUXREG = ((*AUXREG | AUXIO_ORMEIN) ^ AUXIO_LED)
+mdefine_line|#define FLIP_LED      if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) ^ AUXIO_LED)
 DECL|macro|FLPY_MOTORON
-mdefine_line|#define FLPY_MOTORON  *AUXREG = ((*AUXREG | AUXIO_ORMEIN) | AUXIO_FLPY_DSEL)
+mdefine_line|#define FLPY_MOTORON  if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) | AUXIO_FLPY_DSEL)
 DECL|macro|FLPY_MOTOROFF
-mdefine_line|#define FLPY_MOTOROFF *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_FLPY_DSEL))
+mdefine_line|#define FLPY_MOTOROFF if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_FLPY_DSEL))
 DECL|macro|FLPY_TCNTON
-mdefine_line|#define FLPY_TCNTON   *AUXREG = ((*AUXREG | AUXIO_ORMEIN) | AUXIO_FLPY_TCNT)
+mdefine_line|#define FLPY_TCNTON   if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) | AUXIO_FLPY_TCNT)
 DECL|macro|FLPY_TCNTOFF
-mdefine_line|#define FLPY_TCNTOFF  *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_FLPY_TCNT))
+mdefine_line|#define FLPY_TCNTOFF  if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_FLPY_TCNT))
 macro_line|#ifndef __ASSEMBLY__
 DECL|function|set_auxio
 r_extern
-r_inline
+id|__inline__
 r_void
 id|set_auxio
 c_func

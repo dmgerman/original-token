@@ -10,11 +10,11 @@ DECL|macro|DEV_NUMBUFFS
 mdefine_line|#define DEV_NUMBUFFS&t;3
 DECL|macro|MAX_ADDR_LEN
 mdefine_line|#define MAX_ADDR_LEN&t;7
-macro_line|#if !defined(CONFIG_AX25) &amp;&amp; !defined(CONFIG_TR)
+macro_line|#if !defined(CONFIG_AX25) &amp;&amp; !defined(CONFIG_AX25_MODULE) &amp;&amp; !defined(CONFIG_TR)
 DECL|macro|LL_MAX_HEADER
 mdefine_line|#define LL_MAX_HEADER&t;32
 macro_line|#else
-macro_line|#if defined(CONFIG_AX25)
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 DECL|macro|LL_MAX_HEADER
 mdefine_line|#define LL_MAX_HEADER&t;96
 macro_line|#else

@@ -20,7 +20,7 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;net/ax25.h&gt;&t;/* For AX25_P_IP */
 macro_line|#endif
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -832,7 +832,7 @@ op_ne
 id|ARPHRD_AX25
 )paren
 op_logical_or
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 (paren
 id|rarp-&gt;ar_pro
 op_ne

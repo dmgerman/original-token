@@ -26,22 +26,6 @@ id|atalk_table
 )braket
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_NETROM
-r_extern
-id|ctl_table
-id|netrom_table
-(braket
-)braket
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AX25
-r_extern
-id|ctl_table
-id|ax25_table
-(braket
-)braket
-suffix:semicolon
-macro_line|#endif
 r_extern
 id|ctl_table
 id|core_table
@@ -190,38 +174,6 @@ comma
 l_int|0555
 comma
 id|atalk_table
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_NETROM
-(brace
-id|NET_NETROM
-comma
-l_string|&quot;netrom&quot;
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0555
-comma
-id|netrom_table
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_AX25
-(brace
-id|NET_AX25
-comma
-l_string|&quot;ax25&quot;
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0555
-comma
-id|ax25_table
 )brace
 comma
 macro_line|#endif

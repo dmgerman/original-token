@@ -23,6 +23,8 @@ DECL|macro|AX25_DIGI_HEADER_LEN
 mdefine_line|#define&t;AX25_DIGI_HEADER_LEN&t;(AX25_MAX_DIGIS * AX25_ADDR_LEN)
 DECL|macro|AX25_MAX_HEADER_LEN
 mdefine_line|#define&t;AX25_MAX_HEADER_LEN&t;(AX25_HEADER_LEN + AX25_DIGI_HEADER_LEN)
+DECL|macro|AX25_P_ROSE
+mdefine_line|#define AX25_P_ROSE&t;0x01
 DECL|macro|AX25_P_IP
 mdefine_line|#define AX25_P_IP&t;0xCC
 DECL|macro|AX25_P_ARP
@@ -117,42 +119,78 @@ DECL|macro|AX25_STATE_3
 mdefine_line|#define AX25_STATE_3&t;3
 DECL|macro|AX25_STATE_4
 mdefine_line|#define AX25_STATE_4&t;4
+DECL|macro|AX25_MAX_DEVICES
+mdefine_line|#define&t;AX25_MAX_DEVICES&t;20&t;/* Max No of AX.25 devices */
 DECL|macro|MODULUS
-mdefine_line|#define MODULUS &t;8&t;&t;&t;/*  Standard AX.25 modulus */
+mdefine_line|#define MODULUS &t;&t;8&t;/*  Standard AX.25 modulus */
 DECL|macro|EMODULUS
-mdefine_line|#define&t;EMODULUS&t;128&t;&t;&t;/*  Extended AX.25 modulus */
+mdefine_line|#define&t;EMODULUS&t;&t;128&t;/*  Extended AX.25 modulus */
+DECL|macro|AX25_DIGI_INBAND
+mdefine_line|#define&t;AX25_DIGI_INBAND&t;0x01&t;/* Allow digipeating within port **/
+DECL|macro|AX25_DIGI_XBAND
+mdefine_line|#define&t;AX25_DIGI_XBAND&t;&t;0x02&t;/* Allow digipeating across ports **/
+DECL|macro|AX25_VALUES_IPDEFMODE
+mdefine_line|#define&t;AX25_VALUES_IPDEFMODE&t;0&t;/* 0=DG 1=VC */
+DECL|macro|AX25_VALUES_AXDEFMODE
+mdefine_line|#define&t;AX25_VALUES_AXDEFMODE&t;1&t;/* 0=Normal 1=Extended Seq Nos */
+DECL|macro|AX25_VALUES_TEXT
+mdefine_line|#define&t;AX25_VALUES_TEXT&t;2&t;/* Allow PID=Text - 0=No 1=Yes */
+DECL|macro|AX25_VALUES_BACKOFF
+mdefine_line|#define&t;AX25_VALUES_BACKOFF&t;3&t;/* 0=Linear 1=Exponential */
+DECL|macro|AX25_VALUES_CONMODE
+mdefine_line|#define&t;AX25_VALUES_CONMODE&t;4&t;/* Allow connected modes - 0=No 1=Yes */
+DECL|macro|AX25_VALUES_WINDOW
+mdefine_line|#define&t;AX25_VALUES_WINDOW&t;5&t;/* Default window size for standard AX.25 */
+DECL|macro|AX25_VALUES_EWINDOW
+mdefine_line|#define&t;AX25_VALUES_EWINDOW&t;6&t;/* Default window size for extended AX.25 */
+DECL|macro|AX25_VALUES_T1
+mdefine_line|#define&t;AX25_VALUES_T1&t;&t;7&t;/* Default T1 timeout value */
+DECL|macro|AX25_VALUES_T2
+mdefine_line|#define&t;AX25_VALUES_T2&t;&t;8&t;/* Default T2 timeout value */
+DECL|macro|AX25_VALUES_T3
+mdefine_line|#define&t;AX25_VALUES_T3&t;&t;9&t;/* Default T3 timeout value */
+DECL|macro|AX25_VALUES_N2
+mdefine_line|#define&t;AX25_VALUES_N2&t;&t;10&t;/* Default N2 value */
+DECL|macro|AX25_VALUES_IDLE
+mdefine_line|#define AX25_VALUES_IDLE&t;11&t;/* mode vc idle timer */
+DECL|macro|AX25_VALUES_PACLEN
+mdefine_line|#define AX25_VALUES_PACLEN&t;12&t;/* AX.25 MTU */
+DECL|macro|AX25_VALUES_MAXQUEUE
+mdefine_line|#define AX25_VALUES_MAXQUEUE&t;13&t;/* Maximum number of buffers enqueued */
+DECL|macro|AX25_VALUES_DIGI
+mdefine_line|#define&t;AX25_VALUES_DIGI&t;14&t;/* Digipeat mode */
+DECL|macro|AX25_MAX_VALUES
+mdefine_line|#define&t;AX25_MAX_VALUES&t;&t;15
 DECL|macro|AX25_DEF_IPDEFMODE
-mdefine_line|#define&t;AX25_DEF_IPDEFMODE&t;&squot;D&squot;
+mdefine_line|#define&t;AX25_DEF_IPDEFMODE&t;0&t;&t;&t;/* Datagram */
 DECL|macro|AX25_DEF_AXDEFMODE
-mdefine_line|#define&t;AX25_DEF_AXDEFMODE&t;8
-DECL|macro|AX25_DEF_NETROM
-mdefine_line|#define&t;AX25_DEF_NETROM&t;&t;1
+mdefine_line|#define&t;AX25_DEF_AXDEFMODE&t;0&t;&t;&t;/* Normal */
 DECL|macro|AX25_DEF_TEXT
-mdefine_line|#define&t;AX25_DEF_TEXT&t;&t;1
+mdefine_line|#define&t;AX25_DEF_TEXT&t;&t;1&t;&t;&t;/* PID=Text allowed */
 DECL|macro|AX25_DEF_BACKOFF
-mdefine_line|#define&t;AX25_DEF_BACKOFF&t;&squot;E&squot;
+mdefine_line|#define&t;AX25_DEF_BACKOFF&t;1&t;&t;&t;/* Exponential backoff */
 DECL|macro|AX25_DEF_CONMODE
-mdefine_line|#define&t;AX25_DEF_CONMODE&t;1
+mdefine_line|#define&t;AX25_DEF_CONMODE&t;1&t;&t;&t;/* Connected mode allowed */
 DECL|macro|AX25_DEF_WINDOW
-mdefine_line|#define&t;AX25_DEF_WINDOW&t;&t;2
+mdefine_line|#define&t;AX25_DEF_WINDOW&t;&t;2&t;&t;&t;/* Window=2 */
 DECL|macro|AX25_DEF_EWINDOW
-mdefine_line|#define&t;AX25_DEF_EWINDOW&t;32
+mdefine_line|#define&t;AX25_DEF_EWINDOW&t;32&t;&t;&t;/* Module-128 Window=32 */
 DECL|macro|AX25_DEF_T1
-mdefine_line|#define&t;AX25_DEF_T1&t;&t;10
+mdefine_line|#define&t;AX25_DEF_T1&t;&t;(10 * PR_SLOWHZ)&t;/* T1=10s */
 DECL|macro|AX25_DEF_T2
-mdefine_line|#define&t;AX25_DEF_T2&t;&t;3
+mdefine_line|#define&t;AX25_DEF_T2&t;&t;(3 * PR_SLOWHZ)&t;&t;/* T2=3s  */
 DECL|macro|AX25_DEF_T3
-mdefine_line|#define&t;AX25_DEF_T3&t;&t;300
+mdefine_line|#define&t;AX25_DEF_T3&t;&t;(300 * PR_SLOWHZ)&t;/* T3=300s */
 DECL|macro|AX25_DEF_N2
-mdefine_line|#define&t;AX25_DEF_N2&t;&t;10
+mdefine_line|#define&t;AX25_DEF_N2&t;&t;10&t;&t;&t;/* N2=10 */
 DECL|macro|AX25_DEF_IDLE
-mdefine_line|#define AX25_DEF_IDLE&t;&t;20
+mdefine_line|#define AX25_DEF_IDLE&t;&t;(20 * 60 * PR_SLOWHZ)&t;/* Idle=20 mins */&t;&t;
 DECL|macro|AX25_DEF_PACLEN
-mdefine_line|#define AX25_DEF_PACLEN&t;&t;256
-DECL|macro|AX25_DEF_IPMAXQUEUE
-mdefine_line|#define AX25_DEF_IPMAXQUEUE&t;2&t;&t;/* 1 * ax25-&gt;window */
+mdefine_line|#define AX25_DEF_PACLEN&t;&t;256&t;&t;&t;/* Paclen=256 */
+DECL|macro|AX25_DEF_MAXQUEUE
+mdefine_line|#define AX25_DEF_MAXQUEUE&t;2&t;&t;&t;/* 1 * ax25-&gt;window */
 DECL|macro|AX25_DEF_DIGI
-mdefine_line|#define&t;AX25_DEF_DIGI&t;&t;(AX25_DIGI_INBAND|AX25_DIGI_XBAND)
+mdefine_line|#define&t;AX25_DEF_DIGI&t;&t;0x03&t;&t;&t;/* All digis alowed */
 DECL|struct|ax25_uid_assoc
 r_typedef
 r_struct
@@ -370,6 +408,32 @@ DECL|typedef|ax25_cb
 )brace
 id|ax25_cb
 suffix:semicolon
+DECL|struct|ax25_dev
+r_struct
+id|ax25_dev
+(brace
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|20
+)braket
+suffix:semicolon
+DECL|member|dev
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
+DECL|member|values
+r_int
+id|values
+(braket
+id|AX25_MAX_VALUES
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* af_ax25.c */
 r_extern
 id|ax25_address
@@ -382,6 +446,16 @@ id|ax2asc
 c_func
 (paren
 id|ax25_address
+op_star
+)paren
+suffix:semicolon
+r_extern
+id|ax25_address
+op_star
+id|asc2ax
+c_func
+(paren
+r_char
 op_star
 )paren
 suffix:semicolon
@@ -413,6 +487,22 @@ id|ax25_address
 op_star
 comma
 id|ax25_digi
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ax25_link_up
+c_func
+(paren
+id|ax25_address
+op_star
+comma
+id|ax25_address
 op_star
 comma
 r_struct
@@ -694,6 +784,13 @@ op_star
 suffix:semicolon
 multiline_comment|/* ax25_route.c */
 r_extern
+r_struct
+id|ax25_dev
+id|ax25_device
+(braket
+)braket
+suffix:semicolon
+r_extern
 r_int
 id|ax25_rt_get_info
 c_func
@@ -813,7 +910,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-r_int
 id|ax25_dev_get_value
 c_func
 (paren
@@ -845,57 +941,11 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|ax25_dev_ioctl
-c_func
-(paren
-r_int
-r_int
-comma
 r_void
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ax25_bpq_get_info
+id|ax25_rt_free
 c_func
 (paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-id|ax25_address
-op_star
-id|ax25_bpq_get_addr
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ax25_bpq_ioctl
-c_func
-(paren
-r_int
-r_int
-comma
 r_void
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/* ax25_subr.c */
@@ -1124,7 +1174,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* dl1bke 951121 */
-multiline_comment|/* ax25_timer */
+multiline_comment|/* ax25_timer.c */
 r_extern
 r_void
 id|ax25_set_timer
@@ -1143,12 +1193,171 @@ id|ax25_cb
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ax25_link_failed
+c_func
+(paren
+id|ax25_address
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|ax25_protocol_function
+c_func
+(paren
+r_int
+r_int
+)paren
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+comma
+id|ax25_cb
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ax25_listen_mine
+c_func
+(paren
+id|ax25_address
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* sysctl_net_ax25.c */
+r_extern
+r_void
+id|ax25_register_sysctl
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_unregister_sysctl
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* ... */
 r_extern
 id|ax25_cb
 op_star
 r_volatile
 id|ax25_list
+suffix:semicolon
+multiline_comment|/* support routines for modules that use AX.25, in ax25_timer.c */
+r_extern
+r_int
+id|ax25_protocol_register
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+(paren
+op_star
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+comma
+id|ax25_cb
+op_star
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_protocol_release
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ax25_linkfail_register
+c_func
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+id|ax25_address
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_linkfail_release
+c_func
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+id|ax25_address
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ax25_listen_register
+c_func
+(paren
+id|ax25_address
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_listen_release
+c_func
+(paren
+id|ax25_address
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
 suffix:semicolon
 macro_line|#endif
 eof

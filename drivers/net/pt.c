@@ -1,6 +1,6 @@
 DECL|macro|PT_DEBUG
 macro_line|#undef PT_DEBUG 1
-multiline_comment|/*&n; * pt.c: Linux device driver for the Gracilis PackeTwin.&n; * Copyright (c) 1995 Craig Small VK2XLZ (vk2xlz@vk2xlz.ampr.org.)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2, as&n; * published by the Free Software Foundation.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge MA 02139, USA.&n; *&n; * This driver is largely based upon the PI driver by David Perry.&n; *&n; * Revision History&n; * 23/02/95 cs  Started again on driver, last one scrapped&n; * 27/02/95 cs  Program works, we have chan A only.  Tx stays on&n; * 28/02/95 cs  Fix Tx problem (&amp; TxUIE instead of | )&n; *&t;&t;Fix Chan B Tx timer problem, used TMR2 instead of TMR1&n; * 03/03/95 cs  Painfully found out (after 3 days) SERIAL_CFG is write only&n; *              created image of it and DMA_CFG&n; * 21/06/95 cs  Upgraded to suit PI driver 0.8 ALPHA&n; * 22/08/95&t;cs&t;Changed it all around to make it like pi driver&n; * 23/08/95 cs  It now works, got caught again by TMR2 and we must have&n; *&t;&t;&t;&t;auto-enables for daughter boards.&n; * 07/10/95 cs  Fixed for 1.3.30 (hopefully)&n; * 26/11/95 cs  Fixed for 1.3.43, ala 29/10 for pi2.c by ac&n; * 21/12/95 cs  Got rid of those nasty warnings when compiling, for 1.3.48&n; */
+multiline_comment|/*&n; * pt.c: Linux device driver for the Gracilis PackeTwin.&n; * Copyright (c) 1995 Craig Small VK2XLZ (vk2xlz@vk2xlz.ampr.org.)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2, as&n; * published by the Free Software Foundation.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge MA 02139, USA.&n; *&n; * This driver is largely based upon the PI driver by David Perry.&n; *&n; * Revision History&n; * 23/02/95 cs  Started again on driver, last one scrapped&n; * 27/02/95 cs  Program works, we have chan A only.  Tx stays on&n; * 28/02/95 cs  Fix Tx problem (&amp; TxUIE instead of | )&n; *&t;&t;Fix Chan B Tx timer problem, used TMR2 instead of TMR1&n; * 03/03/95 cs  Painfully found out (after 3 days) SERIAL_CFG is write only&n; *              created image of it and DMA_CFG&n; * 21/06/95 cs  Upgraded to suit PI driver 0.8 ALPHA&n; * 22/08/95&t;cs&t;Changed it all around to make it like pi driver&n; * 23/08/95 cs  It now works, got caught again by TMR2 and we must have&n; *&t;&t;&t;&t;auto-enables for daughter boards.&n; * 07/10/95 cs  Fixed for 1.3.30 (hopefully)&n; * 26/11/95 cs  Fixed for 1.3.43, ala 29/10 for pi2.c by ac&n; * 21/12/95 cs  Got rid of those nasty warnings when compiling, for 1.3.48&n; * 08/08/96 jsn Convert to use as a module. Removed send_kiss, empty_scc and&n; *&t;&t;pt_loopback functions - they were unused.&n; */
 multiline_comment|/* &n; * default configuration of the PackeTwin,&n; * ie What Craig uses his PT for.&n; */
 DECL|macro|PT_DMA
 mdefine_line|#define PT_DMA 3
@@ -45,6 +45,7 @@ mdefine_line|#define&t;PARAM_HARDWARE&t;6
 DECL|macro|PARAM_RETURN
 mdefine_line|#define&t;PARAM_RETURN&t;255
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -69,14 +70,6 @@ macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &quot;pt.h&quot;
 macro_line|#include &quot;z8530.h&quot;
 macro_line|#include &lt;net/ax25.h&gt;
-DECL|variable|version
-r_static
-r_char
-op_star
-id|version
-op_assign
-l_string|&quot;PT: 0.41 ALPHA 07 October 1995 Craig Small (vk2xlz@vk2xlz.ampr.org)&bslash;n&quot;
-suffix:semicolon
 DECL|struct|mbuf
 r_struct
 id|mbuf
@@ -412,17 +405,6 @@ id|time
 suffix:semicolon
 r_static
 r_void
-id|empty_scc
-c_func
-(paren
-r_struct
-id|pt_local
-op_star
-id|lp
-)paren
-suffix:semicolon
-r_static
-r_void
 id|chipset_init
 c_func
 (paren
@@ -430,25 +412,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
-suffix:semicolon
-r_static
-r_void
-id|send_kiss
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_char
-id|arg
-comma
-r_int
-r_char
-id|val
 )paren
 suffix:semicolon
 DECL|variable|ax25_bcast
@@ -726,10 +689,12 @@ op_ge
 l_int|2
 )paren
 (brace
+macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Rx KISS... Control = %d, value = %d.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: Rx KISS... Control = %d, value = %d.&bslash;n&quot;
 comma
 id|ptr
 (braket
@@ -752,6 +717,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Kludge to get device */
 r_if
 c_cond
@@ -801,23 +767,6 @@ l_int|1
 op_star
 l_int|10
 suffix:semicolon
-id|send_kiss
-c_func
-(paren
-id|dev
-comma
-id|PARAM_TXDELAY
-comma
-(paren
-id|u_char
-)paren
-(paren
-id|lp-&gt;txdelay
-op_div
-l_int|10
-)paren
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -830,21 +779,6 @@ id|ptr
 l_int|1
 )braket
 suffix:semicolon
-id|send_kiss
-c_func
-(paren
-id|dev
-comma
-id|PARAM_PERSIST
-comma
-(paren
-id|u_char
-)paren
-(paren
-id|lp-&gt;persist
-)paren
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -856,23 +790,6 @@ id|ptr
 (braket
 l_int|1
 )braket
-suffix:semicolon
-id|send_kiss
-c_func
-(paren
-id|dev
-comma
-id|PARAM_SLOTTIME
-comma
-(paren
-id|u_char
-)paren
-(paren
-id|lp-&gt;slotime
-op_div
-l_int|10
-)paren
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -880,16 +797,6 @@ r_case
 id|PARAM_FULLDUP
 suffix:colon
 multiline_comment|/* Yeah right, you wish!  Fullduplex is a little while to&n;&t;&t;&t;&t; * go folks, but this is how you fire it up&n;&t;&t;&t;&t; */
-id|send_kiss
-c_func
-(paren
-id|dev
-comma
-id|PARAM_FULLDUP
-comma
-l_int|0
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 multiline_comment|/* Perhaps we should have txtail here?? */
@@ -941,7 +848,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd hardware_send_packet(): kickflag = %d (%d).&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: hardware_send_packet(): kickflag = %d (%d).&bslash;n&quot;
 comma
 id|kickflag
 comma
@@ -1349,102 +1257,6 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
-DECL|function|pt_loopback
-r_static
-r_void
-id|pt_loopback
-c_func
-(paren
-r_struct
-id|pt_local
-op_star
-id|lp
-comma
-r_int
-id|onoff
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|lp-&gt;base
-op_amp
-id|CHANA
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|onoff
-op_eq
-id|ON
-)paren
-id|outb_p
-c_func
-(paren
-id|pt_sercfg
-op_or_assign
-id|PT_LOOPA_ON
-comma
-id|lp-&gt;cardbase
-op_plus
-id|SERIAL_CFG
-)paren
-suffix:semicolon
-r_else
-id|outb_p
-c_func
-(paren
-id|pt_sercfg
-op_and_assign
-op_complement
-id|PT_LOOPA_ON
-comma
-id|lp-&gt;cardbase
-op_plus
-id|SERIAL_CFG
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* it&squot;s channel B */
-r_if
-c_cond
-(paren
-id|onoff
-op_eq
-id|ON
-)paren
-id|outb_p
-c_func
-(paren
-id|pt_sercfg
-op_or_assign
-id|PT_LOOPB_ON
-comma
-id|lp-&gt;cardbase
-op_plus
-id|SERIAL_CFG
-)paren
-suffix:semicolon
-r_else
-id|outb_p
-c_func
-(paren
-id|pt_sercfg
-op_and_assign
-op_complement
-id|PT_LOOPB_ON
-comma
-id|lp-&gt;cardbase
-op_plus
-id|SERIAL_CFG
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*pt_loopback */
 multiline_comment|/* Fill in the MAC-level header */
 DECL|function|pt_header
 r_static
@@ -1581,7 +1393,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd scc_init(): (%d).&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: scc_init(): (%d).&bslash;n&quot;
 comma
 id|lp-&gt;base
 op_amp
@@ -2210,7 +2023,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd chipset_init(): pt0a tstate = %d.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: chipset_init(): pt0a tstate = %d.&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2227,7 +2041,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PTd chipset_init(): pt0b tstate = %d.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: chipset_init(): pt0b tstate = %d.&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2325,7 +2140,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd chipset_init() Resetting SCC, called by ch (%d).&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: chipset_init() Resetting SCC, called by ch (%d).&bslash;n&quot;
 comma
 id|lp-&gt;base
 op_amp
@@ -2477,7 +2293,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|version
+id|KERN_INFO
+l_string|&quot;PT: 0.41 ALPHA 07 October 1995 Craig Small (vk2xlz@vk2xlz.ampr.org)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -2523,6 +2340,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;PT: Probing for card at address %#3x&bslash;n&quot;
 comma
 id|ioaddr
@@ -2547,6 +2365,7 @@ id|card_type
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;PT: Found a PT at address %#3x&bslash;n&quot;
 comma
 id|ioaddr
@@ -2558,6 +2377,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PT: ERROR: No card found.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3035,7 +2855,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_rts(): Transmitter status will be %d (%d).&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_rts(): Transmitter status will be %d (%d).&bslash;n&quot;
 comma
 id|x
 comma
@@ -3555,12 +3376,23 @@ id|device
 op_star
 id|dev
 comma
+r_void
+op_star
+id|addr
+)paren
+(brace
 r_struct
 id|sockaddr
 op_star
 id|sa
+op_assign
+(paren
+r_struct
+id|sockaddr
+op_star
 )paren
-(brace
+id|addr
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -4035,6 +3867,7 @@ id|dev-&gt;irq
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PT: ERROR: Failed to detect IRQ line, assuming IRQ7.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4043,6 +3876,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;PT: Autodetected IRQ %d, assuming DMA %d&bslash;n&quot;
 comma
 id|dev-&gt;irq
@@ -4079,6 +3913,7 @@ id|irqval
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PT: ERROR: Unable to get IRQ %d (irqval = %d).&bslash;n&quot;
 comma
 id|dev-&gt;irq
@@ -4431,6 +4266,8 @@ id|first_time
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4469,7 +4306,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_send_packet(): (%d)&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_send_packet(): (%d)&bslash;n&quot;
 comma
 id|lp-&gt;base
 op_amp
@@ -4621,7 +4459,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_close(): Closing down channel (%d).&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_close(): Closing down channel (%d).&bslash;n&quot;
 comma
 id|lp-&gt;base
 op_amp
@@ -4629,6 +4468,8 @@ id|CHANA
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5171,7 +5012,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_txisr(): tstate = %d (%d).&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_txisr(): tstate = %d (%d).&bslash;n&quot;
 comma
 id|lp-&gt;tstate
 comma
@@ -5614,6 +5456,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PT: pt_txisr(): Invalid tstate (%d) for chan %s.&bslash;n&quot;
 comma
 id|lp-&gt;tstate
@@ -5708,6 +5551,8 @@ r_struct
 id|mbuf
 op_star
 id|cur_buf
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 r_char
@@ -5742,7 +5587,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_rxisr(): R1 = %#3x. (%d)&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_rxisr(): R1 = %#3x. (%d)&bslash;n&quot;
 comma
 id|rse
 comma
@@ -5958,7 +5804,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_rxisr() Got end of a %u byte frame.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_rxisr() Got end of a %u byte frame.&bslash;n&quot;
 comma
 id|lp-&gt;rcvbuf-&gt;cnt
 )paren
@@ -6114,7 +5961,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_rxisr() %s error.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_rxisr() %s error.&bslash;n&quot;
 comma
 (paren
 id|rse
@@ -6206,6 +6054,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PT: %s: Memory squeeze, dropping packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -6355,52 +6204,6 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/* pt_rxisr() */
-multiline_comment|/* Read the SCC channel till no more data in receiver */
-DECL|function|empty_scc
-r_static
-r_void
-id|empty_scc
-c_func
-(paren
-r_struct
-id|pt_local
-op_star
-id|lp
-)paren
-(brace
-r_while
-c_loop
-(paren
-id|rdscc
-c_func
-(paren
-id|lp-&gt;cardbase
-comma
-id|lp-&gt;base
-op_plus
-id|CTL
-comma
-id|R0
-)paren
-op_amp
-id|Rx_CH_AV
-)paren
-(brace
-multiline_comment|/* Get data from Rx buffer and toss it */
-(paren
-r_void
-)paren
-id|inb_p
-c_func
-(paren
-id|lp-&gt;base
-op_plus
-id|DATA
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* empty_scc()*/
 multiline_comment|/*&n; * This handles the two timer interrupts.&n; * This is a real bugger, cause you have to rip it out of the pi&squot;s&n; * external status code.  They use the CTS line or something.&n; */
 DECL|function|pt_tmrisr
 r_static
@@ -6422,7 +6225,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_tmrisr(): tstate = %d (%d).&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_tmrisr(): tstate = %d (%d).&bslash;n&quot;
 comma
 id|lp-&gt;tstate
 comma
@@ -6482,6 +6286,7 @@ id|CHANA
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PT: pt_tmrisr(): Invalid tstate %d for Channel A&bslash;n&quot;
 comma
 id|lp-&gt;tstate
@@ -6491,6 +6296,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PT: pt_tmrisr(): Invalid tstate %d for Channel B&bslash;n&quot;
 comma
 id|lp-&gt;tstate
@@ -6617,7 +6423,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_interrupt(): R3 = %#3x&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_interrupt(): R3 = %#3x&quot;
 comma
 id|st
 )paren
@@ -6628,7 +6435,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot; R2 = %#3x.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PI: R2 = %#3x.&bslash;n&quot;
 comma
 id|st
 )paren
@@ -6965,7 +6773,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd exisr(): R0 = %#3x tstate = %d (%d).&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: exisr(): R0 = %#3x tstate = %d (%d).&bslash;n&quot;
 comma
 id|st
 comma
@@ -7033,7 +6842,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd exisr(): unexpected underrun detected.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: exisr(): unexpected underrun detected.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif&t;    
@@ -7661,7 +7471,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd exisr(): abort detected.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: exisr(): abort detected.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif        
@@ -7754,7 +7565,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd: pt_exisr(): DCD is now %s.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_exisr(): DCD is now %s.&bslash;n&quot;
 comma
 (paren
 id|st
@@ -7790,7 +7602,8 @@ macro_line|#ifdef PT_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PTd pt_exisr() dumping %u bytes from buffer.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;PT: pt_exisr() dumping %u bytes from buffer.&bslash;n&quot;
 comma
 id|lp-&gt;rcvbuf-&gt;cnt
 )paren
@@ -7896,114 +7709,96 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/* pt_exisr() */
-multiline_comment|/* This function is used to send the KISS params back to the kernel itself,&n; * just like the TNCs do (I think)&n; * It&squot;s a (bit of a) kludge&n; */
-DECL|function|send_kiss
-r_static
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
 r_void
-id|send_kiss
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_char
-id|arg
-comma
-r_int
-r_char
-id|val
 )paren
 (brace
-r_struct
-id|sk_buff
-op_star
-id|skb
-suffix:semicolon
-r_int
-r_char
-op_star
-id|cfix
-suffix:semicolon
-multiline_comment|/*&t;struct pt_local *lp = (struct pt_local*)dev-&gt;priv;*/
-id|skb
-op_assign
-id|dev_alloc_skb
+id|register_symtab
 c_func
 (paren
-l_int|2
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
 l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;PT: send_kiss(): Memory squeeze, dropping KISS reply.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-suffix:semicolon
-)brace
-id|skb-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
-id|cfix
-op_assign
-id|skb_put
+id|pt_init
 c_func
 (paren
-id|skb
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|free_irq
+c_func
+(paren
+id|pt0a.irq
 comma
-l_int|2
+l_int|NULL
 )paren
 suffix:semicolon
-id|cfix
+multiline_comment|/* IRQs and IO Ports are shared */
+id|release_region
+c_func
+(paren
+id|pt0a.base_addr
+op_amp
+l_int|0x3f0
+comma
+id|PT_TOTAL_SIZE
+)paren
+suffix:semicolon
+id|irq2dev_map
 (braket
-l_int|0
+id|pt0a.irq
 )braket
 op_assign
-id|arg
+l_int|NULL
 suffix:semicolon
-id|cfix
-(braket
-l_int|1
-)braket
-op_assign
-id|val
-suffix:semicolon
-id|skb-&gt;protocol
-op_assign
-id|htons
+id|kfree
 c_func
 (paren
-id|ETH_P_AX25
+id|pt0a.priv
 )paren
 suffix:semicolon
-id|skb-&gt;mac.raw
+id|pt0a.priv
 op_assign
-id|skb-&gt;data
+l_int|NULL
 suffix:semicolon
-id|IS_SKB
+id|unregister_netdev
 c_func
 (paren
-id|skb
+op_amp
+id|pt0a
 )paren
 suffix:semicolon
-id|netif_rx
+id|kfree
 c_func
 (paren
-id|skb
+id|pt0b.priv
+)paren
+suffix:semicolon
+id|pt0b.priv
+op_assign
+l_int|NULL
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|pt0b
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

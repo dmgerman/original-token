@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: termios.h,v 1.13 1996/04/04 12:51:30 davem Exp $ */
+multiline_comment|/* $Id: termios.h,v 1.20 1996/10/31 00:59:54 davem Exp $ */
 macro_line|#ifndef _SPARC_TERMIOS_H
 DECL|macro|_SPARC_TERMIOS_H
 mdefine_line|#define _SPARC_TERMIOS_H
 macro_line|#include &lt;asm/ioctls.h&gt;
 macro_line|#include &lt;asm/termbits.h&gt;
+macro_line|#if defined(__KERNEL__) || defined(__DEFINE_BSD_TERMIOS)
 DECL|struct|sgttyb
 r_struct
 id|sgttyb
@@ -90,6 +91,7 @@ id|t_lnextc
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 DECL|struct|sunos_ttysize
 r_struct
 id|sunos_ttysize
@@ -157,13 +159,19 @@ mdefine_line|#define N_MOUSE&t;&t;2
 DECL|macro|N_PPP
 mdefine_line|#define N_PPP&t;&t;3
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&t;intr=^C&t;&t;quit=^&bslash;&t;&t;erase=del&t;kill=^U&n;&t;eof/vmin=&bslash;1&t;eol/vtime=&bslash;0&t;eol2=&bslash;0&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;dsusp=^Y&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;*/
+multiline_comment|/*&n; * c_cc characters in the termio structure.  Oh, how I love being&n; * backwardly compatible.  Notice that character 4 and 5 are&n; * interpreted differently depending on whether ICANON is set in&n; * c_lflag.  If it&squot;s set, they are used as _VEOF and _VEOL, otherwise&n; * as _VMIN and V_TIME.  This is for compatibility with OSF/1 (which&n; * is compatible with sysV)...&n; */
+DECL|macro|_VMIN
+mdefine_line|#define _VMIN&t;4
+DECL|macro|_VTIME
+mdefine_line|#define _VTIME&t;5
+macro_line|#include &lt;linux/string.h&gt;
+multiline_comment|/*&t;intr=^C&t;&t;quit=^&bslash;&t;&t;erase=del&t;kill=^U&n;&t;eof=^D&t;&t;eol=&bslash;0&t;&t;eol2=&bslash;0&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;dsusp=^Y&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;&t;vmin=&bslash;1         vtime=&bslash;0&n;*/
 DECL|macro|INIT_C_CC
-mdefine_line|#define INIT_C_CC &quot;&bslash;003&bslash;034&bslash;177&bslash;025&bslash;001&bslash;000&bslash;000&bslash;000&bslash;021&bslash;023&bslash;032&bslash;031&bslash;022&bslash;025&bslash;027&bslash;026&quot;
+mdefine_line|#define INIT_C_CC &quot;&bslash;003&bslash;034&bslash;177&bslash;025&bslash;004&bslash;000&bslash;000&bslash;000&bslash;021&bslash;023&bslash;032&bslash;031&bslash;022&bslash;025&bslash;027&bslash;026&bslash;001&bslash;000&quot;
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */
 DECL|function|trans_from_termio
 r_extern
-r_inline
+id|__inline__
 r_void
 id|trans_from_termio
 c_func
@@ -216,7 +224,6 @@ suffix:semicolon
 DECL|macro|SET_LOW_BITS
 macro_line|#undef SET_LOW_BITS
 id|memcpy
-c_func
 (paren
 id|termios-&gt;c_cc
 comma
@@ -226,10 +233,10 @@ id|NCC
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Translate a &quot;termios&quot; structure into a &quot;termio&quot;. Ugh.&n; */
+multiline_comment|/*&n; * Translate a &quot;termios&quot; structure into a &quot;termio&quot;. Ugh.&n; *&n; * Note the &quot;fun&quot; _VMIN overloading.&n; */
 DECL|function|trans_to_termio
 r_extern
-r_inline
+id|__inline__
 r_void
 id|trans_to_termio
 c_func
@@ -275,6 +282,143 @@ comma
 id|NCC
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|termios-&gt;c_lflag
+op_amp
+id|ICANON
+)paren
+)paren
+(brace
+id|termio-&gt;c_cc
+(braket
+id|_VMIN
+)braket
+op_assign
+id|termios-&gt;c_cc
+(braket
+id|VMIN
+)braket
+suffix:semicolon
+id|termio-&gt;c_cc
+(braket
+id|_VTIME
+)braket
+op_assign
+id|termios-&gt;c_cc
+(braket
+id|VTIME
+)braket
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Note that in this case DEST is a user buffer and thus the checking&n; * and this ugly macro to avoid header file problems.&n; */
+DECL|macro|termios_to_userland
+mdefine_line|#define termios_to_userland(d, s) &bslash;&n;do { &bslash;&n;&t;struct termios *dest = (d); &bslash;&n;&t;struct termios *source = (s); &bslash;&n;&t;put_user(source-&gt;c_iflag, &amp;dest-&gt;c_iflag); &bslash;&n;&t;put_user(source-&gt;c_oflag, &amp;dest-&gt;c_oflag); &bslash;&n;&t;put_user(source-&gt;c_cflag, &amp;dest-&gt;c_cflag); &bslash;&n;&t;put_user(source-&gt;c_lflag, &amp;dest-&gt;c_lflag); &bslash;&n;&t;put_user(source-&gt;c_line, &amp;dest-&gt;c_line); &bslash;&n;&t;copy_to_user(dest-&gt;c_cc, source-&gt;c_cc, NCCS); &bslash;&n;&t;if (!(source-&gt;c_lflag &amp; ICANON)){ &bslash;&n;&t;&t;put_user(source-&gt;c_cc[VMIN], &amp;dest-&gt;c_cc[_VMIN]); &bslash;&n;&t;&t;put_user(source-&gt;c_cc[VTIME], &amp;dest-&gt;c_cc[_VTIME]); &bslash;&n;&t;} else { &bslash;&n;&t;&t;put_user(source-&gt;c_cc[VEOF], &amp;dest-&gt;c_cc[VEOF]); &bslash;&n;&t;&t;put_user(source-&gt;c_cc[VEOL], &amp;dest-&gt;c_cc[VEOL]); &bslash;&n;&t;} &bslash;&n;} while(0)
+multiline_comment|/* termios to termios handling SunOS overloading of eof,eol/vmin,vtime&n; * In this case we are only working with kernel buffers so direct&n; * accesses are ok.&n; */
+DECL|function|termios_from_userland
+r_extern
+id|__inline__
+r_void
+id|termios_from_userland
+c_func
+(paren
+r_struct
+id|termios
+op_star
+id|source
+comma
+r_struct
+id|termios
+op_star
+id|dest
+)paren
+(brace
+id|dest-&gt;c_iflag
+op_assign
+id|source-&gt;c_iflag
+suffix:semicolon
+id|dest-&gt;c_oflag
+op_assign
+id|source-&gt;c_oflag
+suffix:semicolon
+id|dest-&gt;c_cflag
+op_assign
+id|source-&gt;c_cflag
+suffix:semicolon
+id|dest-&gt;c_lflag
+op_assign
+id|source-&gt;c_lflag
+suffix:semicolon
+id|dest-&gt;c_line
+op_assign
+id|source-&gt;c_line
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|dest-&gt;c_cc
+comma
+id|source-&gt;c_cc
+comma
+id|NCCS
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dest-&gt;c_lflag
+op_amp
+id|ICANON
+)paren
+(brace
+id|dest-&gt;c_cc
+(braket
+id|VEOF
+)braket
+op_assign
+id|source-&gt;c_cc
+(braket
+id|VEOF
+)braket
+suffix:semicolon
+id|dest-&gt;c_cc
+(braket
+id|VEOL
+)braket
+op_assign
+id|source-&gt;c_cc
+(braket
+id|VEOL
+)braket
+suffix:semicolon
+)brace
+r_else
+(brace
+id|dest-&gt;c_cc
+(braket
+id|VMIN
+)braket
+op_assign
+id|source-&gt;c_cc
+(braket
+id|_VMIN
+)braket
+suffix:semicolon
+id|dest-&gt;c_cc
+(braket
+id|VTIME
+)braket
+op_assign
+id|source-&gt;c_cc
+(braket
+id|_VTIME
+)braket
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif /* _SPARC_TERMIOS_H */

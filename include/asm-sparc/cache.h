@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cache.h,v 1.4 1996/04/25 06:12:49 davem Exp $&n; * cache.h:  Cache specific code for the Sparc.  These include flushing&n; *           and direct tag/data line access.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: cache.h,v 1.5 1996/08/29 09:48:06 davem Exp $&n; * cache.h:  Cache specific code for the Sparc.  These include flushing&n; *           and direct tag/data line access.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_CACHE_H
 DECL|macro|_SPARC_CACHE_H
 mdefine_line|#define _SPARC_CACHE_H
@@ -7,7 +7,7 @@ multiline_comment|/* Direct access to the instruction cache is provided through 
 multiline_comment|/* First, cache-tag access. */
 DECL|function|get_icache_tag
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|get_icache_tag
@@ -76,7 +76,7 @@ suffix:semicolon
 )brace
 DECL|function|put_icache_tag
 r_extern
-r_inline
+id|__inline__
 r_void
 id|put_icache_tag
 c_func
@@ -147,7 +147,7 @@ suffix:semicolon
 multiline_comment|/* Second cache-data access.  The data is returned two-32bit quantities&n; * at a time.&n; */
 DECL|function|get_icache_data
 r_extern
-r_inline
+id|__inline__
 r_void
 id|get_icache_data
 c_func
@@ -257,7 +257,7 @@ suffix:semicolon
 )brace
 DECL|function|put_icache_data
 r_extern
-r_inline
+id|__inline__
 r_void
 id|put_icache_data
 c_func
@@ -373,7 +373,7 @@ multiline_comment|/* Different types of flushes with the ICACHE.  Some of the fl
 multiline_comment|/* Flushes which clear out both the on-chip and external caches */
 DECL|function|flush_ei_page
 r_extern
-r_inline
+id|__inline__
 r_void
 id|flush_ei_page
 c_func
@@ -406,7 +406,7 @@ suffix:semicolon
 )brace
 DECL|function|flush_ei_seg
 r_extern
-r_inline
+id|__inline__
 r_void
 id|flush_ei_seg
 c_func
@@ -439,7 +439,7 @@ suffix:semicolon
 )brace
 DECL|function|flush_ei_region
 r_extern
-r_inline
+id|__inline__
 r_void
 id|flush_ei_region
 c_func
@@ -472,7 +472,7 @@ suffix:semicolon
 )brace
 DECL|function|flush_ei_ctx
 r_extern
-r_inline
+id|__inline__
 r_void
 id|flush_ei_ctx
 c_func
@@ -505,7 +505,7 @@ suffix:semicolon
 )brace
 DECL|function|flush_ei_user
 r_extern
-r_inline
+id|__inline__
 r_void
 id|flush_ei_user
 c_func

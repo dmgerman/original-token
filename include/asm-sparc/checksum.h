@@ -1,9 +1,9 @@
-multiline_comment|/* $Id: checksum.h,v 1.13 1996/04/18 03:30:19 davem Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.22 1996/11/10 21:28:25 davem Exp $ */
 macro_line|#ifndef __SPARC_CHECKSUM_H
 DECL|macro|__SPARC_CHECKSUM_H
 mdefine_line|#define __SPARC_CHECKSUM_H
-multiline_comment|/*  checksum.h:  IP/UDP/TCP checksum routines on the Sparc.&n; *&n; *  Copyright(C) 1995 Linus Torvalds&n; *  Copyright(C) 1995 Miguel de Icaza&n; *  Copyright(C) 1996 David S. Miller&n; *&n; * derived from:&n; *&t;Alpha checksum c-code&n; *      ix86 inline assembly&n; *      RFC1071 Computing the Internet Checksum&n; */
-multiline_comment|/*&n; * computes the checksum of a memory block at buff, length len,&n; * and adds in &quot;sum&quot; (32-bit)&n; *&n; * returns a 32-bit number suitable for feeding into itself&n; * or csum_tcpudp_magic&n; *&n; * this function must be called with even lengths, except&n; * for the last fragment, which may be odd&n; *&n; * it&squot;s best to have buff aligned on a 32-bit boundary&n; */
+multiline_comment|/*  checksum.h:  IP/UDP/TCP checksum routines on the Sparc.&n; *&n; *  Copyright(C) 1995 Linus Torvalds&n; *  Copyright(C) 1995 Miguel de Icaza&n; *  Copyright(C) 1996 David S. Miller&n; *  Copyright(C) 1996 Eddie C. Dost&n; *&n; * derived from:&n; *&t;Alpha checksum c-code&n; *      ix86 inline assembly&n; *      RFC1071 Computing the Internet Checksum&n; */
+multiline_comment|/* computes the checksum of a memory block at buff, length len,&n; * and adds in &quot;sum&quot; (32-bit)&n; *&n; * returns a 32-bit number suitable for feeding into itself&n; * or csum_tcpudp_magic&n; *&n; * this function must be called with even lengths, except&n; * for the last fragment, which may be odd&n; *&n; * it&squot;s best to have buff aligned on a 32-bit boundary&n; */
 r_extern
 r_int
 r_int
@@ -23,7 +23,7 @@ r_int
 id|sum
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * the same as csum_partial, but copies from fs:src while it&n; * checksums&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
+multiline_comment|/* the same as csum_partial, but copies from fs:src while it&n; * checksums&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
 r_extern
 r_int
 r_int
@@ -47,16 +47,16 @@ id|sum
 suffix:semicolon
 DECL|macro|csum_partial_copy_fromuser
 mdefine_line|#define csum_partial_copy_fromuser(s, d, l, w)  &bslash;&n;                       csum_partial_copy((char *) (s), (d), (l), (w))
-multiline_comment|/* ihl is always 5 or greater, almost always is 5, iph is always word&n; * aligned but can fail to be dword aligned very often.&n; */
+multiline_comment|/* ihl is always 5 or greater, almost always is 5, and iph is word aligned&n; * the majority of the time.&n; */
 DECL|function|ip_fast_csum
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|ip_fast_csum
 c_func
 (paren
-r_const
+id|__const__
 r_int
 r_char
 op_star
@@ -69,256 +69,71 @@ id|ihl
 (brace
 r_int
 r_int
-id|tmp1
-comma
-id|tmp2
-suffix:semicolon
-r_int
-r_int
 id|sum
 suffix:semicolon
+multiline_comment|/* Note: We must read %2 before we touch %0 for the first time,&n;&t; *       because GCC can legitimately use the same register for&n;&t; *       both operands.&n;&t; */
 id|__asm__
 id|__volatile__
 c_func
 (paren
-"&quot;"
-id|ld
-(braket
-op_mod
-l_int|1
-op_plus
-l_int|0x00
-)braket
-comma
-op_mod
-l_int|0
-id|ld
-(braket
-op_mod
-l_int|1
-op_plus
-l_int|0x04
-)braket
-comma
-op_mod
-l_int|3
-id|sub
-op_mod
-l_int|2
-comma
-l_int|4
-comma
-op_mod
-l_int|2
-id|addcc
-op_mod
-l_int|3
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-id|ld
-(braket
-op_mod
-l_int|1
-op_plus
-l_int|0x08
-)braket
-comma
-op_mod
-l_int|4
-id|addxcc
-op_mod
-l_int|4
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-id|ld
-(braket
-op_mod
-l_int|1
-op_plus
-l_int|0x0c
-)braket
-comma
-op_mod
-l_int|3
-id|addxcc
-op_mod
-l_int|3
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-id|ld
-(braket
-op_mod
-l_int|1
-op_plus
-l_int|0x10
-)braket
-comma
-op_mod
-l_int|4
-id|addx
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|0
-l_int|1
+l_string|&quot;sub&bslash;t%2, 4, %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;ld&bslash;t[%1 + 0x00], %0&bslash;n&bslash;t&quot;
+l_string|&quot;ld&bslash;t[%1 + 0x04], %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;ld&bslash;t[%1 + 0x08], %%g3&bslash;n&bslash;t&quot;
+l_string|&quot;addcc&bslash;t%%g2, %0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addxcc&bslash;t%%g3, %0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;ld&bslash;t[%1 + 0x0c], %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;ld&bslash;t[%1 + 0x10], %%g3&bslash;n&bslash;t&quot;
+l_string|&quot;addxcc&bslash;t%%g2, %0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addx&bslash;t%0, %%g0, %0&bslash;n&quot;
+l_string|&quot;1:&bslash;taddcc&bslash;t%%g3, %0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;add&bslash;t%1, 4, %1&bslash;n&bslash;t&quot;
+l_string|&quot;addxcc&bslash;t%0, %%g0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;subcc&bslash;t%%g4, 1, %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;be,a&bslash;t2f&bslash;n&bslash;t&quot;
+l_string|&quot;sll&bslash;t%0, 16, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;b&bslash;t1b&bslash;n&bslash;t&quot;
+l_string|&quot;ld&bslash;t[%1 + 0x10], %%g3&bslash;n&quot;
+l_string|&quot;2:&bslash;taddcc&bslash;t%0, %%g2, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;srl&bslash;t%%g2, 16, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addx&bslash;t%0, %%g0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;xnor&bslash;t%%g0, %0, %0&quot;
 suffix:colon
-id|addcc
-op_mod
-l_int|4
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-id|add
-op_mod
-l_int|1
-comma
-l_int|4
-comma
-op_mod
-l_int|1
-id|addxcc
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|0
-id|subcc
-op_mod
-l_int|2
-comma
-l_int|1
-comma
-op_mod
-l_int|2
-id|be
-comma
-id|a
-l_float|2f
-id|sll
-op_mod
-l_int|0
-comma
-l_int|16
-comma
-op_mod
-l_int|3
-id|b
-l_int|1
-id|b
-id|ld
-(braket
-op_mod
-l_int|1
-op_plus
-l_int|0x10
-)braket
-comma
-op_mod
-l_int|4
-l_int|2
-suffix:colon
-id|addcc
-op_mod
-l_int|0
-comma
-op_mod
-l_int|3
-comma
-op_mod
-l_int|3
-id|srl
-op_mod
-l_int|3
-comma
-l_int|16
-comma
-op_mod
-l_int|0
-id|addx
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|0
-id|xnor
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-l_string|&quot; : &quot;
-op_assign
-id|r
-l_string|&quot; (sum), &quot;
-op_assign
-op_amp
-id|r
-l_string|&quot; (iph), &quot;
-op_assign
-op_amp
-id|r
-l_string|&quot; (ihl), &quot;
-op_assign
-id|r
-l_string|&quot; (tmp1), &quot;
-op_assign
-id|r
-"&quot;"
+l_string|&quot;=r&quot;
 (paren
-id|tmp2
+id|sum
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|iph
 )paren
 suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|ihl
+)paren
+comma
 l_string|&quot;1&quot;
 (paren
 id|iph
 )paren
+suffix:colon
+l_string|&quot;g2&quot;
 comma
-l_string|&quot;2&quot;
-(paren
-id|ihl
-)paren
+l_string|&quot;g3&quot;
+comma
+l_string|&quot;g4&quot;
 )paren
 suffix:semicolon
 r_return
 id|sum
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented&n; */
+multiline_comment|/* computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented&n; */
 DECL|function|csum_tcpudp_magic
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|csum_tcpudp_magic
@@ -349,96 +164,22 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-"&quot;"
-id|addcc
-op_mod
-l_int|1
+l_string|&quot;addcc&bslash;t%1, %0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addxcc&bslash;t%2, %0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addxcc&bslash;t%3, %0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addx&bslash;t%0, %%g0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;sll&bslash;t%0, 16, %1&bslash;n&bslash;t&quot;
+l_string|&quot;addcc&bslash;t%1, %0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;srl&bslash;t%0, 16, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addx&bslash;t%0, %%g0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;xnor&bslash;t%%g0, %0, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|sum
+)paren
 comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-id|addxcc
-op_mod
-l_int|2
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-id|addxcc
-op_mod
-l_int|3
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-id|addx
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|0
-id|sll
-op_mod
-l_int|0
-comma
-l_int|16
-comma
-op_mod
-l_int|1
-id|addcc
-op_mod
-l_int|1
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-id|srl
-op_mod
-l_int|0
-comma
-l_int|16
-comma
-op_mod
-l_int|0
-id|addx
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|0
-id|xnor
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-l_string|&quot; : &quot;
-op_assign
-id|r
-l_string|&quot; (sum), &quot;
-op_assign
-id|r
-"&quot;"
+l_string|&quot;=r&quot;
 (paren
 id|saddr
 )paren
@@ -474,10 +215,10 @@ r_return
 id|sum
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Fold a partial checksum without adding pseudo headers&n; */
+multiline_comment|/* Fold a partial checksum without adding pseudo headers. */
 DECL|function|csum_fold
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|csum_fold
@@ -496,52 +237,17 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-"&quot;"
-id|addcc
-op_mod
-l_int|0
+l_string|&quot;addcc&bslash;t%0, %1, %1&bslash;n&bslash;t&quot;
+l_string|&quot;srl&bslash;t%1, 16, %1&bslash;n&bslash;t&quot;
+l_string|&quot;addx&bslash;t%1, %%g0, %1&bslash;n&bslash;t&quot;
+l_string|&quot;xnor&bslash;t%%g0, %1, %0&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|sum
+)paren
 comma
-op_mod
-l_int|1
-comma
-op_mod
-l_int|1
-id|srl
-op_mod
-l_int|1
-comma
-l_int|16
-comma
-op_mod
-l_int|1
-id|addx
-op_mod
-l_int|1
-comma
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|1
-id|xnor
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|1
-comma
-op_mod
-l_int|0
-l_string|&quot; : &quot;
-op_assign
-op_amp
-id|r
-l_string|&quot; (sum), &quot;
-op_assign
-id|r
-"&quot;"
+l_string|&quot;=r&quot;
 (paren
 id|tmp
 )paren
@@ -872,10 +578,10 @@ id|sum
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * this routine is used for miscellaneous IP-like checksums, mainly&n; * in icmp.c&n; */
+multiline_comment|/* this routine is used for miscellaneous IP-like checksums, mainly in icmp.c */
 DECL|function|ip_compute_csum
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|ip_compute_csum

@@ -2,12 +2,12 @@ multiline_comment|/* cprefix.h:  This file is included by assembly source which 
 macro_line|#ifndef __SPARC_CPREFIX_H
 DECL|macro|__SPARC_CPREFIX_H
 mdefine_line|#define __SPARC_CPREFIX_H
-macro_line|#ifndef __svr4__
-DECL|macro|C_LABEL_PREFIX
-mdefine_line|#define C_LABEL_PREFIX _
-macro_line|#else
+macro_line|#if defined(__svr4__) || defined(__ELF__)
 DECL|macro|C_LABEL_PREFIX
 mdefine_line|#define C_LABEL_PREFIX
+macro_line|#else
+DECL|macro|C_LABEL_PREFIX
+mdefine_line|#define C_LABEL_PREFIX _
 macro_line|#endif
 DECL|macro|CONCAT
 mdefine_line|#define CONCAT(a, b) CONCAT2(a, b)

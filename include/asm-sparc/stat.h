@@ -1,11 +1,11 @@
-multiline_comment|/* $Id: stat.h,v 1.6 1995/11/25 02:32:53 davem Exp $ */
+multiline_comment|/* $Id: stat.h,v 1.7 1996/10/27 08:55:48 davem Exp $ */
 macro_line|#ifndef _SPARC_STAT_H
 DECL|macro|_SPARC_STAT_H
 mdefine_line|#define _SPARC_STAT_H
 macro_line|#include &lt;linux/types.h&gt;
-DECL|struct|old_stat
+DECL|struct|__old_kernel_stat
 r_struct
-id|old_stat
+id|__old_kernel_stat
 (brace
 DECL|member|st_dev
 r_int
@@ -64,9 +64,9 @@ id|st_ctime
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|new_stat
+DECL|struct|stat
 r_struct
-id|new_stat
+id|stat
 (brace
 DECL|member|st_dev
 id|dev_t

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: errno.h,v 1.4 1995/11/25 02:31:41 davem Exp $ */
+multiline_comment|/* $Id: errno.h,v 1.5 1996/07/13 02:05:13 tridge Exp $ */
 macro_line|#ifndef _SPARC_ERRNO_H
 DECL|macro|_SPARC_ERRNO_H
 mdefine_line|#define _SPARC_ERRNO_H
@@ -72,7 +72,7 @@ mdefine_line|#define&t;EDOM&t;&t;33&t;/* Math argument out of domain of func */
 DECL|macro|ERANGE
 mdefine_line|#define&t;ERANGE&t;&t;34&t;/* Math result not representable */
 DECL|macro|EWOULDBLOCK
-mdefine_line|#define&t;EWOULDBLOCK&t;35&t;/* Operation would block */
+mdefine_line|#define&t;EWOULDBLOCK&t;EAGAIN&t;/* Operation would block */
 DECL|macro|EINPROGRESS
 mdefine_line|#define&t;EINPROGRESS&t;36&t;/* Operation now in progress */
 DECL|macro|EALREADY

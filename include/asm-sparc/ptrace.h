@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.h,v 1.20 1996/04/24 09:10:02 davem Exp $ */
+multiline_comment|/* $Id: ptrace.h,v 1.22 1996/10/27 08:55:38 davem Exp $ */
 macro_line|#ifndef _SPARC_PTRACE_H
 DECL|macro|_SPARC_PTRACE_H
 mdefine_line|#define _SPARC_PTRACE_H
@@ -189,7 +189,7 @@ mdefine_line|#define STACKFRAME_SZ     0x60
 DECL|macro|REGWIN_SZ
 mdefine_line|#define REGWIN_SZ         0x40
 macro_line|#endif
-multiline_comment|/* First generic task_struct offsets. sizeof(task_struct)=1576 */
+multiline_comment|/* First generic task_struct offsets. sizeof(task_struct)=1616 */
 DECL|macro|TASK_STATE
 mdefine_line|#define TASK_STATE        0x000
 DECL|macro|TASK_PRIORITY
@@ -235,8 +235,20 @@ DECL|macro|THREAD_FSR
 mdefine_line|#define THREAD_FSR        0x560
 DECL|macro|THREAD_SIGSTK
 mdefine_line|#define THREAD_SIGSTK     0x5e8
+DECL|macro|THREAD_FLAGS
+mdefine_line|#define THREAD_FLAGS      0x5f0
+DECL|macro|THREAD_EX_COUNT
+mdefine_line|#define THREAD_EX_COUNT   0x5f8
+DECL|macro|THREAD_EX_PC
+mdefine_line|#define THREAD_EX_PC      0x5fc
+DECL|macro|THREAD_EX_EXPC
+mdefine_line|#define THREAD_EX_EXPC    0x600
+DECL|macro|THREAD_EX_ADDR
+mdefine_line|#define THREAD_EX_ADDR    0x604
+DECL|macro|THREAD_DS
+mdefine_line|#define THREAD_DS         0x608
 DECL|macro|THREAD_MM
-mdefine_line|#define THREAD_MM     0x620
+mdefine_line|#define THREAD_MM         0x638
 DECL|macro|THREAD_MM_CTX
 mdefine_line|#define THREAD_MM_CTX     0x008
 multiline_comment|/* These are for pt_regs. */

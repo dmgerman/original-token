@@ -274,7 +274,7 @@ multiline_comment|/* Last managed virtual address */
 suffix:semicolon
 DECL|function|iommu_invalidate
 r_extern
-r_inline
+id|__inline__
 r_void
 id|iommu_invalidate
 c_func
@@ -292,7 +292,7 @@ suffix:semicolon
 )brace
 DECL|function|iommu_invalidate_page
 r_extern
-r_inline
+id|__inline__
 r_void
 id|iommu_invalidate_page
 c_func

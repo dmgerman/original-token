@@ -260,6 +260,10 @@ DECL|macro|DC_TIME_RUN
 mdefine_line|#define DC_TIME_RUN&t;&t;(5*HZ)
 DECL|macro|DC_TIME_RETRY
 mdefine_line|#define DC_TIME_RETRY&t;&t;HZ
+DECL|macro|RT6_FILTER_NONE
+mdefine_line|#define RT6_FILTER_NONE&t;&t;0
+DECL|macro|RT6_FILTER_RTNODES
+mdefine_line|#define RT6_FILTER_RTNODES&t;1
 multiline_comment|/*&n; *&t;Prototypes&n; */
 multiline_comment|/*&n; *&t;check/obtain destination cache from routing table&n; */
 r_extern
@@ -368,6 +372,17 @@ id|ipv6_route_cleanup
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rt6_ifdown
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
 )paren
 suffix:semicolon
 r_extern

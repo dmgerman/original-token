@@ -39,6 +39,10 @@ DECL|macro|ARPHRD_RSRVD
 mdefine_line|#define ARPHRD_RSRVD&t;260&t;&t;/* Notional KISS type &t;&t;*/
 DECL|macro|ARPHRD_ADAPT
 mdefine_line|#define ARPHRD_ADAPT&t;264
+DECL|macro|ARPHRD_ROSE
+mdefine_line|#define ARPHRD_ROSE&t;270
+DECL|macro|ARPHRD_X25
+mdefine_line|#define ARPHRD_X25&t;271&t;&t;/* CCITT X.25&t;&t;&t;*/
 DECL|macro|ARPHRD_PPP
 mdefine_line|#define ARPHRD_PPP&t;512
 DECL|macro|ARPHRD_TUNNEL
@@ -54,7 +58,7 @@ mdefine_line|#define ARPHRD_LOOPBACK&t;772&t;&t;/* Loopback device&t;&t;*/
 DECL|macro|ARPHRD_LOCALTLK
 mdefine_line|#define ARPHRD_LOCALTLK 773&t;&t;/* Localtalk device&t;&t;*/
 DECL|macro|ARPHRD_SIT
-mdefine_line|#define ARPHRD_SIT&t;774&t;&t;/* sit0 device - IPv6-in-IPv4&t;*/
+mdefine_line|#define ARPHRD_SIT&t;776&t;&t;/* sit0 device - IPv6-in-IPv4&t;*/
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/

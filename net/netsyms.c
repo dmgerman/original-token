@@ -6,9 +6,6 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#ifdef CONFIG_AX25
-macro_line|#include &lt;net/ax25.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -605,7 +602,7 @@ comma
 id|X
 c_func
 (paren
-id|tcp_slow_timer
+id|__tcp_inc_slow_timer
 )paren
 comma
 id|X
@@ -790,20 +787,6 @@ id|unregister_net_alias_type
 comma
 macro_line|#endif
 multiline_comment|/* support for loadable net drivers */
-macro_line|#ifdef CONFIG_AX25
-id|X
-c_func
-(paren
-id|ax25_encapsulate
-)paren
-comma
-id|X
-c_func
-(paren
-id|ax25_rebuild_header
-)paren
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 id|X
 c_func
@@ -875,6 +858,12 @@ id|X
 c_func
 (paren
 id|skb_device_unlock
+)paren
+comma
+id|X
+c_func
+(paren
+id|skb_device_locked
 )paren
 comma
 id|X
@@ -971,6 +960,18 @@ id|X
 c_func
 (paren
 id|arp_query
+)paren
+comma
+id|X
+c_func
+(paren
+id|ip_rcv
+)paren
+comma
+id|X
+c_func
+(paren
+id|arp_rcv
 )paren
 comma
 macro_line|#endif  /* CONFIG_INET */

@@ -1,9 +1,16 @@
-multiline_comment|/* $Id: loadmmu.c,v 1.33 1996/04/21 10:32:26 davem Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: loadmmu.c,v 1.36 1996/10/27 08:36:46 davem Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+DECL|variable|page_offset
+r_int
+r_int
+id|page_offset
+op_assign
+l_int|0xf0000000
+suffix:semicolon
 DECL|variable|ctx_list_pool
 r_struct
 id|ctx_list
@@ -231,6 +238,21 @@ r_struct
 id|linux_sbus
 op_star
 id|sbus
+)paren
+suffix:semicolon
+DECL|variable|mmu_map_dma_area
+r_void
+(paren
+op_star
+id|mmu_map_dma_area
+)paren
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
 )paren
 suffix:semicolon
 DECL|variable|update_mmu_cache
@@ -805,6 +827,19 @@ comma
 id|pgprot_t
 )paren
 suffix:semicolon
+DECL|variable|mk_pte_phys
+id|pte_t
+(paren
+op_star
+id|mk_pte_phys
+)paren
+(paren
+r_int
+r_int
+comma
+id|pgprot_t
+)paren
+suffix:semicolon
 DECL|variable|mk_pte_io
 id|pte_t
 (paren
@@ -1164,9 +1199,6 @@ id|sun4m
 suffix:colon
 r_case
 id|sun4d
-suffix:colon
-r_case
-id|sun4e
 suffix:colon
 id|ld_mmu_srmmu
 c_func

@@ -15,7 +15,7 @@ multiline_comment|/*&n; * Use always 64k buffer size. There is no reason to use 
 DECL|macro|DSP_BUFFSIZE
 macro_line|#undef DSP_BUFFSIZE
 DECL|macro|DSP_BUFFSIZE
-mdefine_line|#define DSP_BUFFSIZE&t;&t;(16*1024)
+mdefine_line|#define DSP_BUFFSIZE&t;&t;(64*1024)
 macro_line|#ifndef DSP_BUFFCOUNT
 DECL|macro|DSP_BUFFCOUNT
 mdefine_line|#define DSP_BUFFCOUNT&t;&t;1&t;/* 1 is recommended. */

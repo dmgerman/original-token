@@ -106,6 +106,18 @@ id|NCCS
 )braket
 suffix:semicolon
 multiline_comment|/* control characters */
+macro_line|#ifdef __KERNEL__
+DECL|macro|SIZEOF_USER_TERMIOS
+mdefine_line|#define SIZEOF_USER_TERMIOS sizeof (struct termios) - (2*sizeof (cc_t))
+DECL|member|_x_cc
+id|cc_t
+id|_x_cc
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* We need them to hold vmin/vtime */
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* c_cc characters */
@@ -141,10 +153,18 @@ DECL|macro|VWERASE
 mdefine_line|#define VWERASE  14
 DECL|macro|VLNEXT
 mdefine_line|#define VLNEXT   15
+multiline_comment|/* Kernel keeps vmin/vtime separated, user apps assume vmin/vtime is&n; * shared with eof/eol&n; */
+macro_line|#ifdef __KERNEL__
+DECL|macro|VMIN
+mdefine_line|#define VMIN     16
+DECL|macro|VTIME
+mdefine_line|#define VTIME    17
+macro_line|#else
 DECL|macro|VMIN
 mdefine_line|#define VMIN     VEOF
 DECL|macro|VTIME
 mdefine_line|#define VTIME    VEOL
+macro_line|#endif
 multiline_comment|/* c_iflag bits */
 DECL|macro|IGNBRK
 mdefine_line|#define IGNBRK&t;0x00000001

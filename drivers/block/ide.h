@@ -1,3 +1,6 @@
+macro_line|#ifndef _IDE_H
+DECL|macro|_IDE_H
+mdefine_line|#define _IDE_H
 multiline_comment|/*&n; *  linux/drivers/block/ide.h&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
@@ -1632,4 +1635,5 @@ macro_line|#else
 DECL|macro|IS_PROMISE_DRIVE
 mdefine_line|#define IS_PROMISE_DRIVE (0)&t;/* auto-NULLs out Promise code */
 macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+macro_line|#endif /* _IDE_H */
 eof

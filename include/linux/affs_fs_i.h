@@ -1,10 +1,87 @@
 macro_line|#ifndef _AFFS_FS_I
 DECL|macro|_AFFS_FS_I
 mdefine_line|#define _AFFS_FS_I
-DECL|macro|EXT_CACHE_SIZE
-mdefine_line|#define EXT_CACHE_SIZE&t;12
-DECL|macro|MAX_PREALLOC
-mdefine_line|#define MAX_PREALLOC&t;8&t;/* MUST be a power of 2 */
+macro_line|#include &lt;linux/a.out.h&gt;
+macro_line|#include &lt;linux/time.h&gt;
+DECL|macro|AFFS_MAX_PREALLOC
+mdefine_line|#define AFFS_MAX_PREALLOC&t;16&t;/* MUST be a power of 2 */
+DECL|macro|AFFS_KCSIZE
+mdefine_line|#define AFFS_KCSIZE&t;&t;73&t;/* Allows for 1 extension block at 512 byte-blocks */
+DECL|struct|key_cache
+r_struct
+id|key_cache
+(brace
+DECL|member|kc_lru_time
+r_struct
+id|timeval
+id|kc_lru_time
+suffix:semicolon
+multiline_comment|/* Last time this cache was used */
+DECL|member|kc_first
+r_int
+id|kc_first
+suffix:semicolon
+multiline_comment|/* First cached key */
+DECL|member|kc_last
+r_int
+id|kc_last
+suffix:semicolon
+multiline_comment|/* Last cached key */
+DECL|member|kc_this_key
+r_int
+id|kc_this_key
+suffix:semicolon
+multiline_comment|/* Key of extension block this data block keys are from */
+DECL|member|kc_this_seq
+r_int
+id|kc_this_seq
+suffix:semicolon
+multiline_comment|/* Sequence number of this extension block */
+DECL|member|kc_next_key
+r_int
+id|kc_next_key
+suffix:semicolon
+multiline_comment|/* Key of next extension block */
+DECL|member|kc_keys
+r_int
+id|kc_keys
+(braket
+id|AFFS_KCSIZE
+)braket
+suffix:semicolon
+multiline_comment|/* Key cache */
+)brace
+suffix:semicolon
+DECL|macro|EC_SIZE
+mdefine_line|#define EC_SIZE&t;(PAGE_SIZE - 4 * sizeof(struct key_cache) - 4) / 4
+DECL|struct|ext_cache
+r_struct
+id|ext_cache
+(brace
+DECL|member|kc
+r_struct
+id|key_cache
+id|kc
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* The 4 key caches */
+DECL|member|ec
+id|__s32
+id|ec
+(braket
+id|EC_SIZE
+)braket
+suffix:semicolon
+multiline_comment|/* Keys of assorted extension blocks */
+DECL|member|max_ext
+r_int
+id|max_ext
+suffix:semicolon
+multiline_comment|/* Index of last known extension block */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * affs fs inode data in memory&n; */
 DECL|struct|affs_inode_info
 r_struct
@@ -25,32 +102,31 @@ id|__s32
 id|i_original
 suffix:semicolon
 multiline_comment|/* if != 0, this is the key of the original */
-DECL|member|i_ext
-id|__s32
-id|i_ext
-(braket
-id|EXT_CACHE_SIZE
-)braket
-suffix:semicolon
-multiline_comment|/* extension block numbers */
 DECL|member|i_data
 id|__s32
 id|i_data
 (braket
-id|MAX_PREALLOC
+id|AFFS_MAX_PREALLOC
 )braket
 suffix:semicolon
 multiline_comment|/* preallocated blocks */
+DECL|member|i_ec
+r_struct
+id|ext_cache
+op_star
+id|i_ec
+suffix:semicolon
+multiline_comment|/* Cache gets allocated dynamically */
+DECL|member|i_cache_users
+r_int
+id|i_cache_users
+suffix:semicolon
+multiline_comment|/* Cache cannot be freed while &gt; 0 */
 DECL|member|i_lastblock
 r_int
 id|i_lastblock
 suffix:semicolon
 multiline_comment|/* last allocated block */
-DECL|member|i_max_ext
-r_int
-id|i_max_ext
-suffix:semicolon
-multiline_comment|/* last known extension block */
 DECL|member|i_pa_cnt
 r_int
 id|i_pa_cnt

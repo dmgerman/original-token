@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#if defined(CONFIG_KERNELD) &amp;&amp; defined(CONFIG_NET)
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
 macro_line|#include &lt;net/netlink.h&gt;
@@ -1844,8 +1844,8 @@ c_func
 id|family
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
-multiline_comment|/* Attempt to load a protocol module if the find failed. */
+macro_line|#if defined(CONFIG_KERNELD) &amp;&amp; defined(CONFIG_NET)
+multiline_comment|/* Attempt to load a protocol module if the find failed. &n;&t; * &n;&t; * 12/09/1996 Marcin: But! this makes REALLY only sense, if the user &n;&t; * requested real, full-featured networking support upon configuration.&n;&t; * Otherwise module support will break!&n;&t; */
 r_if
 c_cond
 (paren

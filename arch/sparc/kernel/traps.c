@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.43 1996/04/24 09:09:42 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.c,v 1.47 1996/10/27 08:36:17 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -173,80 +173,38 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|die_if_kernel
+DECL|function|instruction_dump
 r_void
-id|die_if_kernel
-c_func
+id|instruction_dump
 (paren
-r_char
+r_int
+r_int
 op_star
-id|str
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
+id|pc
 )paren
 (brace
 r_int
-r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+(paren
 r_int
 r_int
-op_star
+)paren
 id|pc
-suffix:semicolon
-multiline_comment|/* Amuse the user. */
-id|printk
-c_func
-(paren
-l_string|&quot;              &bslash;&bslash;|/ ____ &bslash;&bslash;|/&bslash;n&quot;
-l_string|&quot;              &bslash;&quot;@&squot;/ ,. &bslash;&bslash;`@&bslash;&quot;&bslash;n&quot;
-l_string|&quot;              /_| &bslash;&bslash;__/ |_&bslash;&bslash;&bslash;n&quot;
-l_string|&quot;                 &bslash;&bslash;__U_/&bslash;n&quot;
 )paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s(%d): %s&bslash;n&quot;
-comma
-id|current-&gt;comm
-comma
-id|current-&gt;pid
-comma
-id|str
+op_amp
+l_int|3
 )paren
-suffix:semicolon
-id|show_regs
-c_func
-(paren
-id|regs
 )paren
+(brace
+r_return
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|ap_panic
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|printk
-c_func
-(paren
-l_string|&quot;Instruction DUMP:&quot;
-)paren
-suffix:semicolon
-id|pc
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|regs-&gt;pc
-suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -293,6 +251,73 @@ id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|die_if_kernel
+r_void
+id|die_if_kernel
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+multiline_comment|/* Amuse the user. */
+id|printk
+c_func
+(paren
+l_string|&quot;              &bslash;&bslash;|/ ____ &bslash;&bslash;|/&bslash;n&quot;
+l_string|&quot;              &bslash;&quot;@&squot;/ ,. &bslash;&bslash;`@&bslash;&quot;&bslash;n&quot;
+l_string|&quot;              /_| &bslash;&bslash;__/ |_&bslash;&bslash;&bslash;n&quot;
+l_string|&quot;                 &bslash;&bslash;__U_/&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s(%d): %s&bslash;n&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+comma
+id|str
+)paren
+suffix:semicolon
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|ap_panic
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;Instruction DUMP:&quot;
+)paren
+suffix:semicolon
+id|instruction_dump
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|regs-&gt;pc
 )paren
 suffix:semicolon
 r_if
@@ -380,6 +405,23 @@ l_int|1
 )paren
 suffix:semicolon
 r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|psr
+op_amp
+id|PSR_PS
+)paren
+(brace
+id|die_if_kernel
+c_func
+(paren
+l_string|&quot;Kernel bad trap&quot;
+comma
+id|current-&gt;tss.kregs
+)paren
 suffix:semicolon
 )brace
 id|current-&gt;tss.sig_desc
@@ -608,6 +650,28 @@ id|current-&gt;tss.sig_desc
 op_assign
 id|SUBSIG_PRIVINST
 suffix:semicolon
+macro_line|#if 0
+id|show_regs
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|instruction_dump
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|regs-&gt;pc
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;do_MNA!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|send_sig
 c_func
 (paren

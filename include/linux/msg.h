@@ -2,6 +2,11 @@ macro_line|#ifndef _LINUX_MSG_H
 DECL|macro|_LINUX_MSG_H
 mdefine_line|#define _LINUX_MSG_H
 macro_line|#include &lt;linux/ipc.h&gt;
+multiline_comment|/* ipcs ctl commands */
+DECL|macro|MSG_STAT
+mdefine_line|#define MSG_STAT 11
+DECL|macro|MSG_INFO
+mdefine_line|#define MSG_INFO 12
 multiline_comment|/* msgrcv options */
 DECL|macro|MSG_NOERROR
 mdefine_line|#define MSG_NOERROR     010000  /* no error if message is too big */
@@ -202,11 +207,6 @@ suffix:semicolon
 multiline_comment|/* message text size */
 )brace
 suffix:semicolon
-multiline_comment|/* ipcs ctl commands */
-DECL|macro|MSG_STAT
-mdefine_line|#define MSG_STAT 11
-DECL|macro|MSG_INFO
-mdefine_line|#define MSG_INFO 12
 id|asmlinkage
 r_int
 id|sys_msgget

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: timer.h,v 1.12 1996/03/24 20:21:29 davem Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: timer.h,v 1.13 1996/08/29 09:48:59 davem Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TIMER_H
 DECL|macro|_SPARC_TIMER_H
 mdefine_line|#define _SPARC_TIMER_H
@@ -10,25 +10,25 @@ r_struct
 id|sun4c_timer_info
 (brace
 DECL|member|cur_count10
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|cur_count10
 suffix:semicolon
 DECL|member|timer_limit10
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|timer_limit10
 suffix:semicolon
 DECL|member|cur_count14
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|cur_count14
 suffix:semicolon
 DECL|member|timer_limit14
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|timer_limit14
@@ -48,35 +48,35 @@ r_struct
 id|sun4m_timer_percpu_info
 (brace
 DECL|member|l14_timer_limit
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|l14_timer_limit
 suffix:semicolon
 multiline_comment|/* Initial value is 0x009c4000 */
 DECL|member|l14_cur_count
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|l14_cur_count
 suffix:semicolon
 multiline_comment|/* This register appears to be write only and/or inaccessible&n;   * on Uni-Processor sun4m machines.&n;   */
 DECL|member|l14_limit_noclear
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|l14_limit_noclear
 suffix:semicolon
 multiline_comment|/* Data access error is here */
 DECL|member|cntrl
-r_volatile
+id|__volatile__
 r_int
 r_int
 id|cntrl
 suffix:semicolon
 multiline_comment|/* =1 after POST on Aurora */
 DECL|member|space
-r_volatile
+id|__volatile__
 r_int
 r_char
 id|space
@@ -142,14 +142,14 @@ op_star
 id|sun4m_timers
 suffix:semicolon
 r_extern
-r_volatile
+id|__volatile__
 r_int
 r_int
 op_star
 id|master_l10_counter
 suffix:semicolon
 r_extern
-r_volatile
+id|__volatile__
 r_int
 r_int
 op_star

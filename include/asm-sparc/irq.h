@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.13 1996/04/25 06:13:09 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.14 1996/08/29 09:48:18 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
@@ -179,7 +179,7 @@ r_int
 r_int
 id|flags
 comma
-r_const
+id|__const__
 r_char
 op_star
 id|devname

@@ -35,6 +35,14 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* tadpole.c */
+r_extern
+r_void
+id|sun4c_probe_memerr_reg
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_int
 r_int
 DECL|function|device_scan
@@ -83,6 +91,7 @@ op_assign
 l_int|1
 suffix:semicolon
 r_return
+id|mem_start
 suffix:semicolon
 macro_line|#endif
 id|prom_getstring
@@ -331,6 +340,18 @@ suffix:semicolon
 )brace
 macro_line|#endif
 id|clock_stop_probe
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4c
+)paren
+id|sun4c_probe_memerr_reg
 c_func
 (paren
 )paren

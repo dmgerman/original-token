@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: a.out.h,v 1.8 1995/11/25 02:31:09 davem Exp $ */
+multiline_comment|/* $Id: a.out.h,v 1.9 1996/05/29 13:44:54 ecd Exp $ */
 macro_line|#ifndef __SPARC_A_OUT_H__
 DECL|macro|__SPARC_A_OUT_H__
 mdefine_line|#define __SPARC_A_OUT_H__
@@ -95,6 +95,147 @@ DECL|macro|N_DRSIZE
 mdefine_line|#define N_DRSIZE(a)&t;((a).a_drsize)
 DECL|macro|N_SYMSIZE
 mdefine_line|#define N_SYMSIZE(a)&t;((a).a_syms)
+multiline_comment|/*&n; * Sparc relocation types&n; */
+DECL|enum|reloc_type
+r_enum
+id|reloc_type
+(brace
+DECL|enumerator|RELOC_8
+id|RELOC_8
+comma
+DECL|enumerator|RELOC_16
+id|RELOC_16
+comma
+DECL|enumerator|RELOC_32
+id|RELOC_32
+comma
+multiline_comment|/* simplest relocs */
+DECL|enumerator|RELOC_DISP8
+id|RELOC_DISP8
+comma
+DECL|enumerator|RELOC_DISP16
+id|RELOC_DISP16
+comma
+DECL|enumerator|RELOC_DISP32
+id|RELOC_DISP32
+comma
+multiline_comment|/* Disp&squot;s (pc-rel) */
+DECL|enumerator|RELOC_WDISP30
+id|RELOC_WDISP30
+comma
+DECL|enumerator|RELOC_WDISP22
+id|RELOC_WDISP22
+comma
+multiline_comment|/* SR word disp&squot;s */
+DECL|enumerator|RELOC_HI22
+id|RELOC_HI22
+comma
+DECL|enumerator|RELOC_22
+id|RELOC_22
+comma
+multiline_comment|/* SR 22-bit relocs */
+DECL|enumerator|RELOC_13
+id|RELOC_13
+comma
+DECL|enumerator|RELOC_LO10
+id|RELOC_LO10
+comma
+multiline_comment|/* SR 13&amp;10-bit relocs */
+DECL|enumerator|RELOC_SFA_BASE
+id|RELOC_SFA_BASE
+comma
+DECL|enumerator|RELOC_SFA_OFF13
+id|RELOC_SFA_OFF13
+comma
+multiline_comment|/* SR S.F.A. relocs */
+DECL|enumerator|RELOC_BASE10
+id|RELOC_BASE10
+comma
+DECL|enumerator|RELOC_BASE13
+id|RELOC_BASE13
+comma
+DECL|enumerator|RELOC_BASE22
+id|RELOC_BASE22
+comma
+multiline_comment|/* base_relative pic */
+DECL|enumerator|RELOC_PC10
+id|RELOC_PC10
+comma
+DECL|enumerator|RELOC_PC22
+id|RELOC_PC22
+comma
+multiline_comment|/* special pc-rel pic */
+DECL|enumerator|RELOC_JMP_TBL
+id|RELOC_JMP_TBL
+comma
+multiline_comment|/* jmp_tbl_rel in pic */
+DECL|enumerator|RELOC_SEGOFF16
+id|RELOC_SEGOFF16
+comma
+multiline_comment|/* ShLib offset-in-seg */
+DECL|enumerator|RELOC_GLOB_DAT
+id|RELOC_GLOB_DAT
+comma
+DECL|enumerator|RELOC_JMP_SLOT
+id|RELOC_JMP_SLOT
+comma
+DECL|enumerator|RELOC_RELATIVE
+id|RELOC_RELATIVE
+multiline_comment|/* rtld relocs */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Format of a relocation datum.&n; */
+DECL|struct|relocation_info
+r_struct
+id|relocation_info
+multiline_comment|/* used when header.a_machtype == M_SPARC */
+(brace
+DECL|member|r_address
+r_int
+r_int
+id|r_address
+suffix:semicolon
+multiline_comment|/* relocation addr */
+DECL|member|r_index
+r_int
+r_int
+id|r_index
+suffix:colon
+l_int|24
+suffix:semicolon
+multiline_comment|/* segment index or symbol index */
+DECL|member|r_extern
+r_int
+r_int
+id|r_extern
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* if F, r_index==SEG#; if T, SYM idx */
+DECL|member|r_pad
+r_int
+id|r_pad
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* &lt;unused&gt; */
+DECL|member|r_type
+r_enum
+id|reloc_type
+id|r_type
+suffix:colon
+l_int|5
+suffix:semicolon
+multiline_comment|/* type of relocation to perform */
+DECL|member|r_addend
+r_int
+id|r_addend
+suffix:semicolon
+multiline_comment|/* addend for relocation value */
+)brace
+suffix:semicolon
+DECL|macro|N_RELOCATION_INFO_DECLARED
+mdefine_line|#define N_RELOCATION_INFO_DECLARED 1
 macro_line|#ifdef __KERNEL__
 DECL|macro|STACK_TOP
 mdefine_line|#define STACK_TOP&t;TASK_SIZE

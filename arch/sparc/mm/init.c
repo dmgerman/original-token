@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.37 1996/04/25 06:09:33 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: init.c,v 1.42 1996/10/27 08:36:44 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -11,6 +11,9 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;
@@ -32,6 +35,11 @@ id|sp_banks
 (braket
 id|SPARC_PHYS_BANKS
 )braket
+suffix:semicolon
+DECL|variable|sparc_unmapped_base
+r_int
+r_int
+id|sparc_unmapped_base
 suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving an inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; *&n; * ZERO_PAGE is a special page that is used for zero-initialized&n; * data and COW.&n; */
 DECL|function|__bad_pagetable
@@ -160,11 +168,7 @@ l_int|10
 suffix:semicolon
 id|i
 op_assign
-id|MAP_NR
-c_func
-(paren
-id|high_memory
-)paren
+id|max_mapnr
 suffix:semicolon
 r_while
 c_loop
@@ -463,6 +467,10 @@ comma
 id|end_mem
 )paren
 suffix:semicolon
+id|sparc_unmapped_base
+op_assign
+l_int|0xe0000000
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -480,6 +488,10 @@ id|start_mem
 comma
 id|end_mem
 )paren
+suffix:semicolon
+id|sparc_unmapped_base
+op_assign
+l_int|0x50000000
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -512,7 +524,7 @@ c_func
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Initialize the protection map with non-constant values&n;&t; * MMU dependent values.&n;&t; */
+multiline_comment|/* Initialize the protection map with non-constant, MMU dependent values. */
 id|protection_map
 (braket
 l_int|0
@@ -651,6 +663,15 @@ r_extern
 r_int
 id|free_pages_high
 suffix:semicolon
+r_extern
+r_void
+id|srmmu_frob_mem_map
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|variable|physmem_mapped_contig
 r_int
 id|physmem_mapped_contig
@@ -691,7 +712,7 @@ c_loop
 (paren
 id|addr
 op_assign
-id|start_mem
+id|PAGE_OFFSET
 suffix:semicolon
 id|addr
 OL
@@ -702,6 +723,23 @@ op_add_assign
 id|PAGE_SIZE
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|addr
+op_ge
+id|KERNBASE
+op_logical_and
+id|addr
+OL
+id|start_mem
+)paren
+(brace
+id|addr
+op_assign
+id|start_mem
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -806,6 +844,31 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4m
+)paren
+op_logical_or
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4d
+)paren
+)paren
+(brace
+id|srmmu_frob_mem_map
+c_func
+(paren
+id|start_mem
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 r_for
 c_loop
 (paren
@@ -840,6 +903,7 @@ op_lshift
 id|PG_reserved
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace
@@ -896,8 +960,20 @@ id|end_mem
 op_and_assign
 id|PAGE_MASK
 suffix:semicolon
+id|max_mapnr
+op_assign
+id|MAP_NR
+c_func
+(paren
+id|end_mem
+)paren
+suffix:semicolon
 id|high_memory
 op_assign
+(paren
+r_void
+op_star
+)paren
 id|end_mem
 suffix:semicolon
 id|start_mem
@@ -910,7 +986,7 @@ id|start_mem
 suffix:semicolon
 id|addr
 op_assign
-id|PAGE_OFFSET
+id|KERNBASE
 suffix:semicolon
 r_while
 c_loop
@@ -920,6 +996,40 @@ OL
 id|start_mem
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+id|initrd_below_start_ok
+op_logical_and
+id|addr
+op_ge
+id|initrd_start
+op_logical_and
+id|addr
+OL
+id|initrd_end
+)paren
+id|mem_map
+(braket
+id|MAP_NR
+c_func
+(paren
+id|addr
+)paren
+)braket
+dot
+id|flags
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|PG_reserved
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif&t;
 id|mem_map
 (braket
 id|MAP_NR
@@ -985,6 +1095,7 @@ id|addr
 r_if
 c_cond
 (paren
+(paren
 id|addr
 OL
 (paren
@@ -994,6 +1105,13 @@ r_int
 op_amp
 id|etext
 )paren
+op_logical_and
+(paren
+id|addr
+op_ge
+id|KERNBASE
+)paren
+)paren
 id|codepages
 op_increment
 suffix:semicolon
@@ -1001,9 +1119,17 @@ r_else
 r_if
 c_cond
 (paren
+(paren
 id|addr
 OL
 id|start_mem
+)paren
+op_logical_and
+(paren
+id|addr
+op_ge
+id|KERNBASE
+)paren
 )paren
 (brace
 id|datapages
@@ -1026,6 +1152,24 @@ id|count
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+op_logical_neg
+id|initrd_start
+op_logical_or
+(paren
+id|addr
+OL
+id|initrd_start
+op_logical_or
+id|addr
+op_ge
+id|initrd_end
+)paren
+)paren
+macro_line|#endif
 id|free_page
 c_func
 (paren
@@ -1042,7 +1186,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Memory: %luk available (%dk kernel code, %dk data)&bslash;n&quot;
+l_string|&quot;Memory: %luk available (%dk kernel code, %dk data) [%08lx,%08lx]&bslash;n&quot;
 comma
 id|tmp2
 op_rshift
@@ -1063,6 +1207,10 @@ id|PAGE_SHIFT
 op_minus
 l_int|10
 )paren
+comma
+id|PAGE_OFFSET
+comma
+id|end_mem
 )paren
 suffix:semicolon
 id|min_free_pages

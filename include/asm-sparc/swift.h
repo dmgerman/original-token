@@ -34,9 +34,10 @@ DECL|macro|SWIFT_NF
 mdefine_line|#define SWIFT_NF       0x00000002   /* No fault mode */
 DECL|macro|SWIFT_EN
 mdefine_line|#define SWIFT_EN       0x00000001   /* MMU enable */
+multiline_comment|/* Bits [13:5] select one of 512 instruction cache tags */
 DECL|function|swift_inv_insn_tag
 r_extern
-r_inline
+id|__inline__
 r_void
 id|swift_inv_insn_tag
 c_func
@@ -65,9 +66,10 @@ id|ASI_M_TXTC_TAG
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Bits [12:4] select one of 512 data cache tags */
 DECL|function|swift_inv_data_tag
 r_extern
-r_inline
+id|__inline__
 r_void
 id|swift_inv_data_tag
 c_func
@@ -98,7 +100,7 @@ suffix:semicolon
 )brace
 DECL|function|swift_flush_dcache
 r_extern
-r_inline
+id|__inline__
 r_void
 id|swift_flush_dcache
 c_func
@@ -119,15 +121,11 @@ l_int|0
 suffix:semicolon
 id|addr
 OL
-(paren
-id|PAGE_SIZE
-op_lshift
-l_int|2
-)paren
+l_int|0x2000
 suffix:semicolon
 id|addr
 op_add_assign
-l_int|16
+l_int|0x10
 )paren
 (brace
 id|swift_inv_data_tag
@@ -140,7 +138,7 @@ suffix:semicolon
 )brace
 DECL|function|swift_flush_icache
 r_extern
-r_inline
+id|__inline__
 r_void
 id|swift_flush_icache
 c_func
@@ -161,15 +159,11 @@ l_int|0
 suffix:semicolon
 id|addr
 OL
-(paren
-id|PAGE_SIZE
-op_lshift
-l_int|2
-)paren
+l_int|0x4000
 suffix:semicolon
 id|addr
 op_add_assign
-l_int|16
+l_int|0x20
 )paren
 (brace
 id|swift_inv_insn_tag
@@ -182,7 +176,7 @@ suffix:semicolon
 )brace
 DECL|function|swift_idflash_clear
 r_extern
-r_inline
+id|__inline__
 r_void
 id|swift_idflash_clear
 c_func
@@ -203,21 +197,19 @@ l_int|0
 suffix:semicolon
 id|addr
 OL
-(paren
-id|PAGE_SIZE
-op_lshift
-l_int|2
-)paren
+l_int|0x2000
 suffix:semicolon
 id|addr
 op_add_assign
-l_int|16
+l_int|0x10
 )paren
 (brace
 id|swift_inv_insn_tag
 c_func
 (paren
 id|addr
+op_lshift
+l_int|1
 )paren
 suffix:semicolon
 id|swift_inv_data_tag
@@ -231,7 +223,7 @@ suffix:semicolon
 multiline_comment|/* Swift is so broken, it isn&squot;t even safe to use the following. */
 DECL|function|swift_flush_page
 r_extern
-r_inline
+id|__inline__
 r_void
 id|swift_flush_page
 c_func
@@ -262,7 +254,7 @@ suffix:semicolon
 )brace
 DECL|function|swift_flush_segment
 r_extern
-r_inline
+id|__inline__
 r_void
 id|swift_flush_segment
 c_func
@@ -293,7 +285,7 @@ suffix:semicolon
 )brace
 DECL|function|swift_flush_region
 r_extern
-r_inline
+id|__inline__
 r_void
 id|swift_flush_region
 c_func
@@ -324,7 +316,7 @@ suffix:semicolon
 )brace
 DECL|function|swift_flush_context
 r_extern
-r_inline
+id|__inline__
 r_void
 id|swift_flush_context
 c_func

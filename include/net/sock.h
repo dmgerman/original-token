@@ -17,10 +17,13 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;&t;/* struct sk_buff */
 macro_line|#include &lt;net/protocol.h&gt;&t;&t;/* struct inet_protocol */
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;net/ax25.h&gt;
-macro_line|#ifdef CONFIG_NETROM
+macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;net/netrom.h&gt;
+macro_line|#endif
+macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
+macro_line|#include &lt;net/rose.h&gt;
 macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
@@ -858,20 +861,6 @@ r_char
 id|localroute
 suffix:semicolon
 multiline_comment|/* Route locally only */
-macro_line|#ifdef CONFIG_AX25
-DECL|member|ax25
-id|ax25_cb
-op_star
-id|ax25
-suffix:semicolon
-macro_line|#ifdef CONFIG_NETROM
-DECL|member|nr
-id|nr_cb
-op_star
-id|nr
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 multiline_comment|/*&n; *&t;This is where all the private (optional) areas that don&squot;t&n; *&t;overlap will eventually live. &n; */
 r_union
 (brace
@@ -907,6 +896,27 @@ id|tcp_opt
 id|af_tcp
 suffix:semicolon
 macro_line|#endif&t;&t;
+macro_line|#endif
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+DECL|member|ax25
+id|ax25_cb
+op_star
+id|ax25
+suffix:semicolon
+macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
+DECL|member|nr
+id|nr_cb
+op_star
+id|nr
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
+DECL|member|rose
+id|rose_cb
+op_star
+id|rose
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 DECL|member|protinfo
 )brace

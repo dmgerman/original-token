@@ -1,12 +1,12 @@
-multiline_comment|/*  $Id: smpprim.h,v 1.4 1995/11/25 02:32:47 davem Exp $&n; *  smpprim.h:  SMP locking primitives on the Sparc&n; *&n; *  God knows we won&squot;t be actually using this code for some time&n; *  but I thought I&squot;d write it since I knew how.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: smpprim.h,v 1.5 1996/08/29 09:48:49 davem Exp $&n; *  smpprim.h:  SMP locking primitives on the Sparc&n; *&n; *  God knows we won&squot;t be actually using this code for some time&n; *  but I thought I&squot;d write it since I knew how.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_SMPPRIM_H
 DECL|macro|__SPARC_SMPPRIM_H
 mdefine_line|#define __SPARC_SMPPRIM_H
 multiline_comment|/* Test and set the unsigned byte at ADDR to 1.  Returns the previous&n; * value.  On the Sparc we use the ldstub instruction since it is&n; * atomic.&n; */
 DECL|function|test_and_set
 r_extern
-r_inline
-r_volatile
+id|__inline__
+id|__volatile__
 r_char
 id|test_and_set
 c_func
@@ -56,8 +56,8 @@ suffix:semicolon
 multiline_comment|/* Initialize a spin-lock. */
 DECL|function|smp_initlock
 r_extern
-r_inline
-r_volatile
+id|__inline__
+id|__volatile__
 id|smp_initlock
 c_func
 (paren
@@ -85,8 +85,8 @@ suffix:semicolon
 multiline_comment|/* This routine spins until it acquires the lock at ADDR. */
 DECL|function|smp_lock
 r_extern
-r_inline
-r_volatile
+id|__inline__
+id|__volatile__
 id|smp_lock
 c_func
 (paren
@@ -116,8 +116,8 @@ suffix:semicolon
 multiline_comment|/* This routine releases the lock at ADDR. */
 DECL|function|smp_unlock
 r_extern
-r_inline
-r_volatile
+id|__inline__
+id|__volatile__
 id|smp_unlock
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openprom.h,v 1.16 1996/04/23 01:54:46 davem Exp $ */
+multiline_comment|/* $Id: openprom.h,v 1.19 1996/09/25 03:51:08 davem Exp $ */
 macro_line|#ifndef __SPARC_OPENPROM_H
 DECL|macro|__SPARC_OPENPROM_H
 mdefine_line|#define __SPARC_OPENPROM_H
@@ -326,7 +326,7 @@ id|nbytes
 )paren
 suffix:semicolon
 DECL|member|v2_dev_seek
-r_void
+r_int
 (paren
 op_star
 id|v2_dev_seek
@@ -642,7 +642,7 @@ op_star
 id|pv_printf
 )paren
 (paren
-r_const
+id|__const__
 r_char
 op_star
 id|fmt
@@ -663,6 +663,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|member|pv_ticks
+id|__volatile__
 r_int
 op_star
 id|pv_ticks

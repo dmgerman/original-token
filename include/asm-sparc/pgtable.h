@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.46 1996/04/21 11:01:53 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.51 1996/10/27 08:55:32 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -51,6 +51,23 @@ id|quick_kernel_fault
 (paren
 r_int
 r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Allocate a block of RAM which is aligned to its size.&n;   This procedure can be used until the call to mem_init(). */
+r_extern
+r_void
+op_star
+id|sparc_init_alloc
+c_func
+(paren
+r_int
+r_int
+op_star
+id|kbrk
+comma
+r_int
+r_int
+id|size
 )paren
 suffix:semicolon
 multiline_comment|/* mmu-specific process creation/cloning/etc hooks. */
@@ -134,21 +151,25 @@ DECL|struct|mmu_sglist
 r_struct
 id|mmu_sglist
 (brace
-multiline_comment|/* ick, I know... */
 DECL|member|addr
 r_char
 op_star
 id|addr
 suffix:semicolon
-DECL|member|alt_addr
+DECL|member|__dont_touch
 r_char
 op_star
-id|alt_addr
+id|__dont_touch
 suffix:semicolon
 DECL|member|len
 r_int
 r_int
 id|len
+suffix:semicolon
+DECL|member|dvma_addr
+r_char
+op_star
+id|dvma_addr
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -227,6 +248,21 @@ r_struct
 id|linux_sbus
 op_star
 id|sbus
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|mmu_map_dma_area
+)paren
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
 )paren
 suffix:semicolon
 r_extern
@@ -528,11 +564,6 @@ DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 r_extern
 r_int
-r_int
-id|high_memory
-suffix:semicolon
-r_extern
-r_int
 (paren
 op_star
 id|pte_none
@@ -741,6 +772,19 @@ id|pte_t
 (paren
 op_star
 id|mk_pte
+)paren
+(paren
+r_int
+r_int
+comma
+id|pgprot_t
+)paren
+suffix:semicolon
+r_extern
+id|pte_t
+(paren
+op_star
+id|mk_pte_phys
 )paren
 (paren
 r_int
@@ -1506,7 +1550,7 @@ DECL|macro|NO_CONTEXT
 mdefine_line|#define NO_CONTEXT     -1
 DECL|function|remove_from_ctx_list
 r_extern
-r_inline
+id|__inline__
 r_void
 id|remove_from_ctx_list
 c_func
@@ -1528,7 +1572,7 @@ suffix:semicolon
 )brace
 DECL|function|add_to_ctx_list
 r_extern
-r_inline
+id|__inline__
 r_void
 id|add_to_ctx_list
 c_func

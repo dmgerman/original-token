@@ -10,8 +10,7 @@ id|in6_addr
 r_union
 (brace
 DECL|member|u6_addr8
-r_int
-r_char
+id|__u8
 id|u6_addr8
 (braket
 l_int|16
@@ -24,14 +23,25 @@ id|u6_addr32
 l_int|4
 )braket
 suffix:semicolon
+macro_line|#if (~0UL) &gt; 0xffffffff
+DECL|member|u6_addr64
+id|__u64
+id|u6_addr64
+(braket
+l_int|2
+)braket
+suffix:semicolon
+macro_line|#endif
 DECL|member|in6_u
 )brace
 id|in6_u
 suffix:semicolon
-DECL|macro|s6_addr32
-mdefine_line|#define s6_addr32&t;&t;in6_u.u6_addr32
 DECL|macro|s6_addr
 mdefine_line|#define s6_addr&t;&t;&t;in6_u.u6_addr8
+DECL|macro|s6_addr32
+mdefine_line|#define s6_addr32&t;&t;in6_u.u6_addr32
+DECL|macro|s6_addr64
+mdefine_line|#define s6_addr64&t;&t;in6_u.u6_addr64
 )brace
 suffix:semicolon
 DECL|struct|sockaddr_in6
@@ -74,10 +84,9 @@ id|in6_addr
 id|ipv6mr_multiaddr
 suffix:semicolon
 multiline_comment|/* local IPv6 address of interface */
-DECL|member|ipv6mr_interface
-r_struct
-id|in6_addr
-id|ipv6mr_interface
+DECL|member|ipv6mr_ifindex
+r_int
+id|ipv6mr_ifindex
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -116,6 +116,8 @@ DECL|macro|N_PPP
 mdefine_line|#define N_PPP&t;&t;3
 DECL|macro|N_STRIP
 mdefine_line|#define N_STRIP&t;&t;4
+DECL|macro|N_AX25
+mdefine_line|#define N_AX25&t;&t;5
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */
 DECL|function|trans_from_termio

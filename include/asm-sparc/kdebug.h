@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: kdebug.h,v 1.8 1995/12/25 23:31:38 davem Exp $&n; * kdebug.h:  Defines and definitions for debugging the Linux kernel&n; *            under various kernel debuggers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: kdebug.h,v 1.9 1996/05/10 19:52:35 davem Exp $&n; * kdebug.h:  Defines and definitions for debugging the Linux kernel&n; *            under various kernel debuggers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_KDEBUG_H
 DECL|macro|_SPARC_KDEBUG_H
 mdefine_line|#define _SPARC_KDEBUG_H

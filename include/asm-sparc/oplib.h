@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.8 1996/04/25 06:13:23 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.12 1996/10/31 06:29:13 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
@@ -201,7 +201,7 @@ suffix:semicolon
 multiline_comment|/* Enter the prom, with possibility of continuation with the &squot;go&squot;&n; * command in newer proms.&n; */
 r_extern
 r_void
-id|prom_halt
+id|prom_cmdline
 c_func
 (paren
 r_void
@@ -210,7 +210,7 @@ suffix:semicolon
 multiline_comment|/* Enter the prom, with no chance of continuation for the stand-alone&n; * which calls this.&n; */
 r_extern
 r_void
-id|prom_die
+id|prom_halt
 c_func
 (paren
 r_void
@@ -241,7 +241,7 @@ multiline_comment|/* Acquire the IDPROM of the root node in the prom device tree
 r_extern
 r_int
 r_char
-id|prom_getidp
+id|prom_get_idprom
 c_func
 (paren
 r_char
@@ -633,6 +633,23 @@ op_star
 id|name
 )paren
 suffix:semicolon
+multiline_comment|/* Puts in buffer a prom name in the form name@x,y or name (x for which_io &n; * and y for first regs phys address&n; */
+r_extern
+r_int
+id|prom_getname
+c_func
+(paren
+r_int
+id|node
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|buflen
+)paren
+suffix:semicolon
 multiline_comment|/* Search all siblings starting at the passed node for &quot;name&quot; matching&n; * the given string.  Returns the node on success, zero on failure.&n; */
 r_extern
 r_int
@@ -708,6 +725,24 @@ r_int
 id|value_size
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|prom_pathtoinode
+c_func
+(paren
+r_char
+op_star
+id|path
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|prom_inst2pkg
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* Dorking with Bus ranges... */
 multiline_comment|/* Adjust reg values with the passed ranges. */
 r_extern
@@ -770,12 +805,18 @@ r_int
 id|nregs
 )paren
 suffix:semicolon
-multiline_comment|/* Apply promlib probed SBUS ranges to registers. */
+multiline_comment|/* Apply ranges of any prom node (and optionally parent node as well) to registers. */
 r_extern
 r_void
-id|prom_apply_sbus_ranges
+id|prom_apply_generic_ranges
 c_func
 (paren
+r_int
+id|node
+comma
+r_int
+id|parent
+comma
 r_struct
 id|linux_prom_registers
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.44 1996/04/25 06:08:46 davem Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.53 1996/10/16 12:30:18 zaitcev Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -20,6 +21,7 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * Dave Redman (djhr@tadpole.co.uk)&n; *&n; * IRQ numbers.. These are no longer restricted to 15..&n; *&n; * this is done to enable SBUS cards and onboard IO to be masked&n; * correctly. using the interrupt level isn&squot;t good enough.&n; *&n; * For example:&n; *   A device interrupting at sbus level6 and the Floppy both come in&n; *   at IRQ11, but enabling and disabling them requires writing to&n; *   different bits in the SLAVIO/SEC.&n; *&n; * As a result of these changes sun4m machines could now support&n; * directed CPU interrupts using the existing enable/disable irq code&n; * with tweaks.&n; *&n; */
 DECL|function|irq_panic
 r_static
@@ -616,15 +618,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -754,6 +751,12 @@ l_int|14
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|action
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -798,6 +801,7 @@ r_int
 id|action-&gt;handler
 )paren
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -878,15 +882,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-r_while
-c_loop
-(paren
-id|action
-)paren
+r_do
 (brace
 r_if
 c_cond
 (paren
+op_logical_neg
+id|action
+op_logical_or
 op_logical_neg
 id|action-&gt;handler
 )paren
@@ -895,12 +898,11 @@ c_func
 (paren
 id|irq
 comma
-id|action-&gt;dev_id
+l_int|0
 comma
 id|regs
 )paren
 suffix:semicolon
-r_else
 id|action
 op_member_access_from_pointer
 id|handler
@@ -918,110 +920,11 @@ op_assign
 id|action-&gt;next
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n; * do_IRQ handles IRQ&squot;s that have been installed without the&n; * SA_INTERRUPT flag: it uses the full signal-handling return&n; * and runs with other interrupts enabled. All relatively slow&n; * IRQ&squot;s should use this format: notably the keyboard/timer&n; * routines.&n; */
-DECL|function|do_IRQ
-id|asmlinkage
-r_void
-id|do_IRQ
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-r_struct
-id|irqaction
-op_star
-id|action
-suffix:semicolon
-r_int
-r_int
-id|cpu_irq
-suffix:semicolon
-id|cpu_irq
-op_assign
-id|irq
-op_amp
-id|NR_IRQS
-suffix:semicolon
-id|action
-op_assign
-op_star
-(paren
-id|cpu_irq
-op_plus
-id|irq_action
-)paren
-suffix:semicolon
-id|kstat.interrupts
-(braket
-id|cpu_irq
-)braket
-op_increment
-suffix:semicolon
 r_while
 c_loop
 (paren
 id|action
 )paren
-(brace
-id|action
-op_member_access_from_pointer
-id|handler
-c_func
-(paren
-id|irq
-comma
-id|action-&gt;dev_id
-comma
-id|regs
-)paren
-suffix:semicolon
-id|action
-op_assign
-id|action-&gt;next
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n; * do_fast_IRQ handles IRQ&squot;s that don&squot;t need the fancy interrupt return&n; * stuff - the handler is also running with interrupts disabled unless&n; * it explicitly enables them later.&n; */
-DECL|function|do_fast_IRQ
-id|asmlinkage
-r_void
-id|do_fast_IRQ
-c_func
-(paren
-r_int
-id|irq
-)paren
-(brace
-id|kstat.interrupts
-(braket
-id|irq
-op_amp
-id|NR_IRQS
-)braket
-op_increment
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Got FAST_IRQ number %04lx&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-r_int
-)paren
-id|irq
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Fast IRQ&squot;s on the Sparc can only have one routine attached to them,&n; * thus no sharing possible.&n; */
@@ -1073,6 +976,22 @@ r_int
 r_int
 id|cpu_irq
 suffix:semicolon
+macro_line|#ifdef __SMP__
+r_struct
+id|tt_entry
+op_star
+id|trap_table
+suffix:semicolon
+r_extern
+r_struct
+id|tt_entry
+id|trapbase_cpu1
+comma
+id|trapbase_cpu2
+comma
+id|trapbase_cpu3
+suffix:semicolon
+macro_line|#endif
 id|cpu_irq
 op_assign
 id|irq
@@ -1155,15 +1074,10 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* If this is flagged as statically allocated then we use our&n;&t; * private struct which is never freed.&n;&t; */
@@ -1246,91 +1160,52 @@ id|ENOMEM
 suffix:semicolon
 )brace
 multiline_comment|/* Dork with trap table if we get this far. */
-id|sparc_ttable
-(braket
-id|SP_TRAP_IRQ1
-op_plus
-(paren
-id|cpu_irq
-op_minus
-l_int|1
-)paren
-)braket
-dot
-id|inst_one
-op_assign
-id|SPARC_BRANCH
+DECL|macro|INSTANTIATE
+mdefine_line|#define INSTANTIATE(table) &bslash;&n;&t;table[SP_TRAP_IRQ1+(cpu_irq-1)].inst_one = SPARC_RD_PSR_L0; &bslash;&n;&t;table[SP_TRAP_IRQ1+(cpu_irq-1)].inst_two = &bslash;&n;&t;&t;SPARC_BRANCH((unsigned long) handler, &bslash;&n;&t;&t;&t;     (unsigned long) &amp;table[SP_TRAP_IRQ1+(cpu_irq-1)].inst_two);&bslash;&n;&t;table[SP_TRAP_IRQ1+(cpu_irq-1)].inst_three = SPARC_RD_WIM_L3; &bslash;&n;&t;table[SP_TRAP_IRQ1+(cpu_irq-1)].inst_four = SPARC_NOP;
+id|INSTANTIATE
 c_func
 (paren
-(paren
-r_int
-r_int
+id|sparc_ttable
 )paren
-id|handler
-comma
-(paren
-r_int
-r_int
-)paren
+macro_line|#ifdef __SMP__
+id|trap_table
+op_assign
 op_amp
-id|sparc_ttable
-(braket
-id|SP_TRAP_IRQ1
-op_plus
-(paren
-id|irq
-op_minus
-l_int|1
-)paren
-)braket
-dot
-id|inst_one
-)paren
+id|trapbase_cpu1
 suffix:semicolon
-id|sparc_ttable
-(braket
-id|SP_TRAP_IRQ1
-op_plus
+id|INSTANTIATE
+c_func
 (paren
-id|cpu_irq
-op_minus
-l_int|1
+id|trap_table
 )paren
-)braket
-dot
-id|inst_two
+id|trap_table
 op_assign
-id|SPARC_RD_PSR_L0
+op_amp
+id|trapbase_cpu2
 suffix:semicolon
-id|sparc_ttable
-(braket
-id|SP_TRAP_IRQ1
-op_plus
+id|INSTANTIATE
+c_func
 (paren
-id|cpu_irq
-op_minus
-l_int|1
+id|trap_table
 )paren
-)braket
-dot
-id|inst_three
+id|trap_table
 op_assign
-id|SPARC_NOP
+op_amp
+id|trapbase_cpu3
 suffix:semicolon
-id|sparc_ttable
-(braket
-id|SP_TRAP_IRQ1
-op_plus
+id|INSTANTIATE
+c_func
 (paren
-id|cpu_irq
-op_minus
-l_int|1
+id|trap_table
 )paren
-)braket
-dot
-id|inst_four
-op_assign
-id|SPARC_NOP
+macro_line|#endif
+DECL|macro|INSTANTIATE
+macro_line|#undef INSTANTIATE
+multiline_comment|/*&n;&t; * XXX Correct thing whould be to flush only I- and D-cache lines&n;&t; * which contain the handler in question. But as of time of the&n;&t; * writing we have no CPU-neutral interface to fine-grained flushes.&n;&t; */
+id|flush_cache_all
+c_func
+(paren
+)paren
 suffix:semicolon
 id|action-&gt;handler
 op_assign
@@ -1546,15 +1421,10 @@ id|EBUSY
 suffix:semicolon
 )brace
 )brace
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* If this is flagged as statically allocated then we use our&n;&t; * private struct which is never freed.&n;&t; */
