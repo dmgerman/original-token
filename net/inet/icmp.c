@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&n; * &n; *&t;FIXME:&n; *&t;&t;When 1.0.6 is out merge in the NET channel diffs for TIMESTAMP&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n;#include &lt;linux/string.h&gt;&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&n; * &n; *&t;FIXME:&n; *&t;&t;When 1.0.6 is out merge in the NET channel diffs for TIMESTAMP&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;snmp.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
@@ -960,8 +961,17 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+r_int
+id|source
 )paren
 (brace
+r_struct
+id|rtable
+op_star
+id|rt
+suffix:semicolon
 r_struct
 id|iphdr
 op_star
@@ -1028,7 +1038,44 @@ macro_line|#endif
 r_case
 id|ICMP_REDIR_HOST
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; *&t;Add better route to host&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Add better route to host.&n;&t;&t;&t; *&t;But first check that the redirect&n;&t;&t;&t; *&t;comes from the old gateway..&n;&t;&t;&t; */
+id|rt
+op_assign
+id|ip_rt_route
+c_func
+(paren
+id|ip
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rt
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rt-&gt;rt_gateway
+op_ne
+id|source
+)paren
+r_break
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;redirect from %08lx&bslash;n&quot;
+comma
+id|source
+)paren
+suffix:semicolon
 id|ip_rt_add
 c_func
 (paren
@@ -2267,6 +2314,8 @@ comma
 id|skb1
 comma
 id|dev
+comma
+id|saddr
 )paren
 suffix:semicolon
 r_return

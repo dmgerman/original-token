@@ -25,7 +25,7 @@ macro_line|#include &quot;arp.h&quot;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &quot;ax25.h&quot;
 macro_line|#endif
-multiline_comment|/*&n; *&t;This structure defines the ARP mapping cache. As long as we make changes&n; *&t;in this structure, we keep interrupts of. But normally we can copy the&n; *&t;hardware address and the device pointer in a local variable and then make&n; *&t;any &quot;long calls&quot; to send a packet out. &n; */
+multiline_comment|/*&n; *&t;This structure defines the ARP mapping cache. As long as we make changes&n; *&t;in this structure, we keep interrupts of. But normally we can copy the&n; *&t;hardware address and the device pointer in a local variable and then make&n; *&t;any &quot;long calls&quot; to send a packet out.&n; */
 DECL|struct|arp_table
 r_struct
 id|arp_table
@@ -83,7 +83,7 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Device the entry is tied to &t;*/
-multiline_comment|/*&n;&t; *&t;The following entries are only used for unresolved hw addresses. &n;&t; */
+multiline_comment|/*&n;&t; *&t;The following entries are only used for unresolved hw addresses.&n;&t; */
 DECL|member|timer
 r_struct
 id|timer_list
@@ -103,7 +103,7 @@ suffix:semicolon
 multiline_comment|/* list of queued packets &t;*/
 )brace
 suffix:semicolon
-multiline_comment|/* &n; *&t;This structure defines an ethernet arp header. &n; */
+multiline_comment|/*&n; *&t;This structure defines an ethernet arp header.&n; */
 DECL|struct|arphdr
 r_struct
 id|arphdr
@@ -176,16 +176,16 @@ macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Configurable Parameters (don&squot;t touch unless you know what you are doing&n; */
-multiline_comment|/*&n; *&t;If an arp request is send, ARP_RES_TIME is the timeout value until the&n; *&t;next request is send. &n; */
+multiline_comment|/*&n; *&t;If an arp request is send, ARP_RES_TIME is the timeout value until the&n; *&t;next request is send.&n; */
 DECL|macro|ARP_RES_TIME
 mdefine_line|#define ARP_RES_TIME&t;&t;(250*(HZ/10))
-multiline_comment|/*&n; *&t;The number of times an arp request is send, until the host is&n; *&t;considered unreachable. &n; */
+multiline_comment|/*&n; *&t;The number of times an arp request is send, until the host is&n; *&t;considered unreachable.&n; */
 DECL|macro|ARP_MAX_TRIES
 mdefine_line|#define ARP_MAX_TRIES&t;&t;3
-multiline_comment|/*&n; *&t;After that time, an unused entry is deleted from the arp table. &n; */
+multiline_comment|/*&n; *&t;After that time, an unused entry is deleted from the arp table.&n; */
 DECL|macro|ARP_TIMEOUT
 mdefine_line|#define ARP_TIMEOUT&t;&t;(600*HZ)
-multiline_comment|/*&n; *&t;How often is the function &squot;arp_check_retries&squot; called.&n; *&t;An entry is invalidated in the time between ARP_TIMEOUT and&n; *&t;(ARP_TIMEOUT+ARP_CHECK_INTERVAL). &n; */
+multiline_comment|/*&n; *&t;How often is the function &squot;arp_check_retries&squot; called.&n; *&t;An entry is invalidated in the time between ARP_TIMEOUT and&n; *&t;(ARP_TIMEOUT+ARP_CHECK_INTERVAL).&n; */
 DECL|macro|ARP_CHECK_INTERVAL
 mdefine_line|#define ARP_CHECK_INTERVAL&t;(60 * HZ)
 r_static
@@ -216,7 +216,7 @@ op_amp
 id|arp_check_expire
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * &t;The size of the hash table. Must be a power of two.&n; * &t;Maybe we should remove hashing in the future for arp and concentrate&n; * &t;on Patrick Schaaf&squot;s Host-Cache-Lookup... &n; */
+multiline_comment|/*&n; * &t;The size of the hash table. Must be a power of two.&n; * &t;Maybe we should remove hashing in the future for arp and concentrate&n; * &t;on Patrick Schaaf&squot;s Host-Cache-Lookup...&n; */
 DECL|macro|ARP_TABLE_SIZE
 mdefine_line|#define ARP_TABLE_SIZE  16
 DECL|variable|arp_tables
@@ -233,10 +233,10 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;The last bits in the IP address are used for the cache lookup. &n; */
+multiline_comment|/*&n; *&t;The last bits in the IP address are used for the cache lookup.&n; */
 DECL|macro|HASH
 mdefine_line|#define HASH(paddr) &t;&t;(htonl(paddr) &amp; (ARP_TABLE_SIZE - 1))
-multiline_comment|/*&n; *&t;Number of proxy arp entries. This is normally zero and we use it to do&n; *&t;some optimizing for normal uses&n; */
+multiline_comment|/*&n; *&t;Number of proxy arp entries. This is normally zero and we use it to do&n; *&t;some optimizing for normal uses.&n; */
 DECL|variable|proxies
 r_static
 r_int
@@ -244,7 +244,7 @@ id|proxies
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; *&t;Check if there are too old entries and remove them. If the ATF_PERM&n; *&t;flag is set, they are always left in the arp cache (permanent entry).&n; *&t;Note: Only fully resolved entries, which don&squot;t have any packets in&n; *&t;the queue, can be deleted, since ARP_TIMEOUT is much greater than&n; *&t;ARP_MAX_TRIES*ARP_RES_TIME. &n; */
+multiline_comment|/*&n; *&t;Check if there are too old entries and remove them. If the ATF_PERM&n; *&t;flag is set, they are always left in the arp cache (permanent entry).&n; *&t;Note: Only fully resolved entries, which don&squot;t have any packets in&n; *&t;the queue, can be deleted, since ARP_TIMEOUT is much greater than&n; *&t;ARP_MAX_TRIES*ARP_RES_TIME.&n; */
 DECL|function|arp_check_expire
 r_static
 r_void
@@ -396,7 +396,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Set the timer again. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Set the timer again.&n;&t; */
 id|del_timer
 c_func
 (paren
@@ -416,7 +416,7 @@ id|arp_timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Release all linked skb&squot;s and the memory for this entry. &n; */
+multiline_comment|/*&n; *&t;Release all linked skb&squot;s and the memory for this entry.&n; */
 DECL|function|arp_release_entry
 r_static
 r_void
@@ -498,7 +498,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Create and send an arp packet. If (dest_hw == NULL), we create a broadcast&n; *&t;message. &n; */
+multiline_comment|/*&n; *&t;Create and send an arp packet. If (dest_hw == NULL), we create a broadcast&n; *&t;message.&n; */
 DECL|function|arp_send
 r_static
 r_void
@@ -631,7 +631,7 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Fill the device header for the ARP frame &n;&t; */
+multiline_comment|/*&n;&t; *&t;Fill the device header for the ARP frame&n;&t; */
 id|dev
 op_member_access_from_pointer
 id|hard_header
@@ -684,7 +684,7 @@ c_func
 id|dev-&gt;type
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25&t;
+macro_line|#ifdef CONFIG_AX25
 id|arp-&gt;ar_pro
 op_assign
 (paren
@@ -715,7 +715,7 @@ c_func
 id|ETH_P_IP
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|arp-&gt;ar_hln
 op_assign
 id|dev-&gt;addr_len
@@ -828,7 +828,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This function is called, if an entry is not resolved in ARP_RES_TIME.&n; *&t;Either resend a request, or give it up and free the entry. &n; */
+multiline_comment|/*&n; *&t;This function is called, if an entry is not resolved in ARP_RES_TIME.&n; *&t;Either resend a request, or give it up and free the entry.&n; */
 DECL|function|arp_expire_request
 r_static
 r_void
@@ -876,7 +876,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Since all timeouts are handled with interrupts enabled, there is a&n;&t; *&t;small chance, that this entry has just been resolved by an incoming&n;&t; *&t;packet. This is the only race condition, but it is handled... &n;&t; */
+multiline_comment|/*&n;&t; *&t;Since all timeouts are handled with interrupts enabled, there is a&n;&t; *&t;small chance, that this entry has just been resolved by an incoming&n;&t; *&t;packet. This is the only race condition, but it is handled...&n;&t; */
 r_if
 c_cond
 (paren
@@ -960,7 +960,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Arp request timed out. Delete entry and all waiting packets.&n;&t; *&t;If we give each entry a pointer to itself, we don&squot;t have to&n;&t; *&t;loop through everything again. Maybe hash is good enough, but&n;&t; *&t;I will look at it later. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Arp request timed out. Delete entry and all waiting packets.&n;&t; *&t;If we give each entry a pointer to itself, we don&squot;t have to&n;&t; *&t;loop through everything again. Maybe hash is good enough, but&n;&t; *&t;I will look at it later.&n;&t; */
 id|hash
 op_assign
 id|HASH
@@ -1046,9 +1046,9 @@ c_func
 l_string|&quot;Possible ARP queue corruption.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We should never arrive here. &n;&t; */
+multiline_comment|/*&n;&t; *&t;We should never arrive here.&n;&t; */
 )brace
-multiline_comment|/*&n; *&t;This will try to retransmit everything on the queue. &n; */
+multiline_comment|/*&n; *&t;This will try to retransmit everything on the queue.&n; */
 DECL|function|arp_send_q
 r_static
 r_void
@@ -1211,7 +1211,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; *&t;Delete an ARP mapping entry in the cache. &n; */
+multiline_comment|/*&n; *&t;Delete an ARP mapping entry in the cache.&n; */
 DECL|function|arp_destroy
 r_void
 id|arp_destroy
@@ -1299,16 +1299,16 @@ id|pentry
 op_assign
 id|entry-&gt;next
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|del_timer
 c_func
 (paren
 op_amp
 id|entry-&gt;timer
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 id|arp_release_entry
@@ -1332,7 +1332,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Receive an arp request by the device layer. Maybe I rewrite it, to&n; *&t;use the incoming packet for the reply. The time for the current&n; *&t;&quot;overhead&quot; isn&squot;t that high... &n; */
+multiline_comment|/*&n; *&t;Receive an arp request by the device layer. Maybe I rewrite it, to&n; *&t;use the incoming packet for the reply. The time for the current&n; *&t;&quot;overhead&quot; isn&squot;t that high...&n; */
 DECL|function|arp_rcv
 r_int
 id|arp_rcv
@@ -1354,7 +1354,7 @@ op_star
 id|pt
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;We shouldn&squot;t use this type conversion. Check later. &n;&t; */
+multiline_comment|/*&n;&t; *&t;We shouldn&squot;t use this type conversion. Check later.&n;&t; */
 r_struct
 id|arphdr
 op_star
@@ -1454,11 +1454,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;For now we will only deal with IP addresses. &n;&t; */
+multiline_comment|/*&n;&t; *&t;For now we will only deal with IP addresses.&n;&t; */
 r_if
 c_cond
 (paren
-macro_line|#ifdef CONFIG_AX25&t;
+macro_line|#ifdef CONFIG_AX25
 (paren
 id|arp-&gt;ar_pro
 op_ne
@@ -1473,7 +1473,7 @@ op_eq
 id|ARPHRD_AX25
 )paren
 op_logical_or
-macro_line|#endif&t;&t;
+macro_line|#endif
 (paren
 id|arp-&gt;ar_pro
 op_ne
@@ -2029,7 +2029,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Find an arp mapping in the cache. If not found, post a request. &n; */
+multiline_comment|/*&n; *&t;Find an arp mapping in the cache. If not found, post a request.&n; */
 DECL|function|arp_find
 r_int
 id|arp_find
@@ -2138,7 +2138,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Find an entry &n;&t; */
+multiline_comment|/*&n;&t; *&t;Find an entry&n;&t; */
 r_for
 c_loop
 (paren
@@ -2186,7 +2186,7 @@ id|ATF_COM
 )paren
 )paren
 (brace
-multiline_comment|/* &n;&t;&t;&t; *&t;A request was already send, but no reply yet. Thus&n;&t;&t;&t; *&t;queue the packet with the previous attempt&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;A request was already send, but no reply yet. Thus&n;&t;&t;&t; *&t;queue the packet with the previous attempt&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2245,7 +2245,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Create a new unresolved entry. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Create a new unresolved entry.&n;&t; */
 id|entry
 op_assign
 (paren
@@ -2397,7 +2397,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;If we didn&squot;t find an entry, we will try to send an ARP packet. &n;&t; */
+multiline_comment|/*&n;&t; *&t;If we didn&squot;t find an entry, we will try to send an ARP packet.&n;&t; */
 id|arp_send
 c_func
 (paren
@@ -2418,7 +2418,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Write the contents of the ARP cache to a PROCfs file. &n; *&n; *&t;Will change soon to ASCII format&n; */
+multiline_comment|/*&n; *&t;Write the contents of the ARP cache to a PROCfs file.&n; *&n; *&t;Will change soon to ASCII format&n; */
 DECL|function|arp_get_info
 r_int
 id|arp_get_info
@@ -2675,7 +2675,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;This will find an entry in the ARP table by looking at the IP address.&n; *&t;Be careful, interrupts are turned off on exit!!!  &n; */
+multiline_comment|/*&n; *&t;This will find an entry in the ARP table by looking at the IP address.&n; *&t;Be careful, interrupts are turned off on exit!!!&n; */
 DECL|function|arp_lookup
 r_static
 r_struct
@@ -2740,7 +2740,7 @@ r_return
 id|entry
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Set (create) an ARP cache entry. &n; */
+multiline_comment|/*&n; *&t;Set (create) an ARP cache entry.&n; */
 DECL|function|arp_req_set
 r_static
 r_int
@@ -2839,7 +2839,7 @@ id|ETH_ALEN
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25&t;&t;&t;
+macro_line|#ifdef CONFIG_AX25
 r_case
 id|ARPHRD_AX25
 suffix:colon
@@ -2853,7 +2853,7 @@ l_int|7
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif&t;&t;&t;
+macro_line|#endif
 r_default
 suffix:colon
 r_return
@@ -2918,7 +2918,7 @@ r_return
 op_minus
 id|ENETUNREACH
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Is there an existing entry for this address? &n;&t; */
+multiline_comment|/*&n;&t; *&t;Is there an existing entry for this address?&n;&t; */
 id|hash
 op_assign
 id|HASH
@@ -3051,7 +3051,7 @@ id|ATF_PUBL
 id|proxies
 op_decrement
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We now have a pointer to an ARP entry.  Update it! &n;&t; */
+multiline_comment|/*&n;&t; *&t;We now have a pointer to an ARP entry.  Update it!&n;&t; */
 id|memcpy
 c_func
 (paren
@@ -3097,7 +3097,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Get an ARP cache entry. &n; */
+multiline_comment|/*&n; *&t;Get an ARP cache entry.&n; */
 DECL|function|arp_req_get
 r_static
 r_int
@@ -3124,7 +3124,7 @@ id|sockaddr_in
 op_star
 id|si
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We only understand about IP addresses... &n;&t; */
+multiline_comment|/*&n;&t; *&t;We only understand about IP addresses...&n;&t; */
 id|memcpy_fromfs
 c_func
 (paren
@@ -3150,7 +3150,7 @@ r_return
 op_minus
 id|EPFNOSUPPORT
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Is there an existing entry for this address? &n;&t; */
+multiline_comment|/*&n;&t; *&t;Is there an existing entry for this address?&n;&t; */
 id|si
 op_assign
 (paren
@@ -3187,7 +3187,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;We found it; copy into structure. &n;&t; */
+multiline_comment|/*&n;&t; *&t;We found it; copy into structure.&n;&t; */
 id|memcpy
 c_func
 (paren
@@ -3212,7 +3212,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Copy the information back &n;&t; */
+multiline_comment|/*&n;&t; *&t;Copy the information back&n;&t; */
 id|memcpy_tofs
 c_func
 (paren
@@ -3231,7 +3231,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Handle an ARP layer I/O control request. &n; */
+multiline_comment|/*&n; *&t;Handle an ARP layer I/O control request.&n; */
 DECL|function|arp_ioctl
 r_int
 id|arp_ioctl
@@ -3471,7 +3471,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Called once on startup. &n; */
+multiline_comment|/*&n; *&t;Called once on startup.&n; */
 DECL|variable|arp_packet_type
 r_static
 r_struct
