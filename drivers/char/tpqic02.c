@@ -349,6 +349,7 @@ id|exception_list_type
 DECL|member|mask
 DECL|member|code
 r_int
+r_int
 id|mask
 comma
 id|code
@@ -3206,7 +3207,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: ll_do_qic_cmd(%x, %d) failed&bslash;n&quot;
+l_string|&quot;: ll_do_qic_cmd(%x, %ld) failed&bslash;n&quot;
 comma
 id|cmd
 comma
@@ -3381,7 +3382,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: Exception persist in ll_do_qic_cmd[1](%x, %d)&quot;
+l_string|&quot;: Exception persist in ll_do_qic_cmd[1](%x, %ld)&quot;
 comma
 id|cmd
 comma
@@ -3501,7 +3502,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: Exception persist in ll_do_qic_cmd[2](%x, %d)&bslash;n&quot;
+l_string|&quot;: Exception persist in ll_do_qic_cmd[2](%x, %ld)&bslash;n&quot;
 comma
 id|cmd
 comma
@@ -5799,7 +5800,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: request READ, minor=%x, buf=%p, count=%x, pos=%x, flags=%x&bslash;n&quot;
+l_string|&quot;: request READ, minor=%x, buf=%p, count=%x, pos=%lx, flags=%x&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -5922,7 +5923,7 @@ id|YES
 id|printk
 c_func
 (paren
-l_string|&quot;read: return_read_eof==%d, reported_read_eof==%d, total_bytes_done==%d&bslash;n&quot;
+l_string|&quot;read: return_read_eof==%d, reported_read_eof==%d, total_bytes_done==%ld&bslash;n&quot;
 comma
 id|return_read_eof
 comma
@@ -6318,7 +6319,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: request WRITE, minor=%x, buf=%p, count=%x, pos=%x, flags=%x&bslash;n&quot;
+l_string|&quot;: request WRITE, minor=%x, buf=%p, count=%x, pos=%lx, flags=%x&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -6741,7 +6742,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: status_bytes_wr %x, buf %p, total_bytes_done %x, count %x&bslash;n&quot;
+l_string|&quot;: status_bytes_wr %x, buf %p, total_bytes_done %lx, count %x&bslash;n&quot;
 comma
 id|status_bytes_wr
 comma
@@ -7642,7 +7643,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: ioctl(%4x, %4x, %4x)&bslash;n&quot;
+l_string|&quot;: ioctl(%4x, %4x, %4lx)&bslash;n&quot;
 comma
 id|dev_maj
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/net.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  gjh 3/&squot;93 heim@peanuts.informatik.uni-tuebingen.de (Gerald J. Heim)&n; *            most of this file is stolen from base.c&n; *            it works, but you shouldn&squot;t use it as a guideline&n; *            for new proc-fs entries. once i&squot;ll make it better.&n; * fvk 3/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      cleaned up the whole thing, moved &quot;net&quot; specific code to&n; *&t;      the NET kernel layer (where it belonged in the first place).&n; * Michael K. Johnson (johnsonm@stolaf.edu) 3/93&n; *            Added support from my previous inet.c.  Cleaned things up&n; *            quite a bit, modularized the code.&n; * fvk 4/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      Renamed &quot;route_get_info()&quot; to &quot;rt_get_info()&quot; for consistency.&n; * Alan Cox (gw4pts@gw4pts.ampr.org) 4/94&n; *&t;      Dusted off the code and added IPX. Fixed the 4K limit.&n; *&n; *  proc net directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/proc/net.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  gjh 3/&squot;93 heim@peanuts.informatik.uni-tuebingen.de (Gerald J. Heim)&n; *            most of this file is stolen from base.c&n; *            it works, but you shouldn&squot;t use it as a guideline&n; *            for new proc-fs entries. once i&squot;ll make it better.&n; * fvk 3/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      cleaned up the whole thing, moved &quot;net&quot; specific code to&n; *&t;      the NET kernel layer (where it belonged in the first place).&n; * Michael K. Johnson (johnsonm@stolaf.edu) 3/93&n; *            Added support from my previous inet.c.  Cleaned things up&n; *            quite a bit, modularized the code.&n; * fvk 4/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      Renamed &quot;route_get_info()&quot; to &quot;rt_get_info()&quot; for consistency.&n; * Alan Cox (gw4pts@gw4pts.ampr.org) 4/94&n; *&t;      Dusted off the code and added IPX. Fixed the 4K limit.&n; * Erik Schoenfelder (schoenfr@ibr.cs.tu-bs.de)&n; *&t;      /proc/net/snmp.&n; *&n; *  proc net directory handling functions&n; */
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -194,6 +194,23 @@ suffix:semicolon
 r_extern
 r_int
 id|rt_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|snmp_get_info
 c_func
 (paren
 r_char
@@ -507,10 +524,18 @@ l_int|3
 comma
 l_string|&quot;udp&quot;
 )brace
-macro_line|#ifdef CONFIG_INET_RARP
 comma
 (brace
 l_int|135
+comma
+l_int|4
+comma
+l_string|&quot;snmp&quot;
+)brace
+macro_line|#ifdef CONFIG_INET_RARP
+comma
+(brace
+l_int|136
 comma
 l_int|4
 comma
@@ -521,7 +546,7 @@ macro_line|#endif&t;/* CONFIG_INET */
 macro_line|#ifdef CONFIG_IPX
 comma
 (brace
-l_int|136
+l_int|137
 comma
 l_int|9
 comma
@@ -529,7 +554,7 @@ l_string|&quot;ipx_route&quot;
 )brace
 comma
 (brace
-l_int|137
+l_int|138
 comma
 l_int|3
 comma
@@ -539,7 +564,7 @@ macro_line|#endif /* CONFIG_IPX */
 macro_line|#ifdef CONFIG_AX25
 comma
 (brace
-l_int|138
+l_int|139
 comma
 l_int|10
 comma
@@ -547,7 +572,7 @@ l_string|&quot;ax25_route&quot;
 )brace
 comma
 (brace
-l_int|139
+l_int|140
 comma
 l_int|4
 comma
@@ -556,7 +581,7 @@ l_string|&quot;ax25&quot;
 macro_line|#ifdef CONFIG_NETROM
 comma
 (brace
-l_int|140
+l_int|141
 comma
 l_int|8
 comma
@@ -564,7 +589,7 @@ l_string|&quot;nr_nodes&quot;
 )brace
 comma
 (brace
-l_int|141
+l_int|142
 comma
 l_int|8
 comma
@@ -572,7 +597,7 @@ l_string|&quot;nr_neigh&quot;
 )brace
 comma
 (brace
-l_int|142
+l_int|143
 comma
 l_int|2
 comma
@@ -1160,9 +1185,29 @@ id|thistime
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET_RARP&t;&t;&t;&t;
 r_case
 l_int|135
+suffix:colon
+id|length
+op_assign
+id|snmp_get_info
+c_func
+(paren
+id|page
+comma
+op_amp
+id|start
+comma
+id|file-&gt;f_pos
+comma
+id|thistime
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#ifdef CONFIG_INET_RARP&t;&t;&t;&t;
+r_case
+l_int|136
 suffix:colon
 id|length
 op_assign
@@ -1185,7 +1230,7 @@ macro_line|#endif /* CONFIG_INET_RARP */&t;&t;&t;&t;
 macro_line|#endif /* CONFIG_INET */
 macro_line|#ifdef CONFIG_IPX
 r_case
-l_int|136
+l_int|137
 suffix:colon
 id|length
 op_assign
@@ -1205,7 +1250,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|137
+l_int|138
 suffix:colon
 id|length
 op_assign
@@ -1227,7 +1272,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_IPX */
 macro_line|#ifdef CONFIG_AX25
 r_case
-l_int|138
+l_int|139
 suffix:colon
 id|length
 op_assign
@@ -1247,7 +1292,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|139
+l_int|140
 suffix:colon
 id|length
 op_assign
@@ -1268,7 +1313,7 @@ r_break
 suffix:semicolon
 macro_line|#ifdef CONFIG_NETROM
 r_case
-l_int|140
+l_int|141
 suffix:colon
 id|length
 op_assign
@@ -1288,7 +1333,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|141
+l_int|142
 suffix:colon
 id|length
 op_assign
@@ -1308,7 +1353,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|142
+l_int|143
 suffix:colon
 id|length
 op_assign

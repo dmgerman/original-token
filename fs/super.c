@@ -3117,7 +3117,19 @@ suffix:semicolon
 id|panic
 c_func
 (paren
-l_string|&quot;VFS: Unable to mount root&quot;
+l_string|&quot;VFS: Unable to mount root fs on %02x:%02x&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|ROOT_DEV
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|ROOT_DEV
+)paren
 )paren
 suffix:semicolon
 )brace

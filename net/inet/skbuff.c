@@ -1627,6 +1627,11 @@ id|skb-&gt;lock
 op_assign
 l_int|0
 suffix:semicolon
+id|skb-&gt;pkt_type
+op_assign
+id|PACKET_HOST
+suffix:semicolon
+multiline_comment|/* Default type */
 id|skb-&gt;truesize
 op_assign
 id|size

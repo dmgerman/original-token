@@ -794,7 +794,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* This function lives elsewhere (drivers/net/net_init.c but is related) */
+multiline_comment|/* These functions live elsewhere (drivers/net/net_init.c, but related) */
 r_extern
 r_void
 id|ether_setup
@@ -804,6 +804,22 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ether_config
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|ifmap
+op_star
+id|map
 )paren
 suffix:semicolon
 multiline_comment|/* Support for loadable net-drivers */

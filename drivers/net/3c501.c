@@ -24,6 +24,10 @@ macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#endif
 macro_line|#ifndef HAVE_AUTOIRQ
 multiline_comment|/* From auto_irq.c, should be in a *.h file. */
 r_extern
@@ -708,6 +712,10 @@ c_func
 l_string|&quot;finished el_open().&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif       
 r_return
 (paren
 l_int|0
@@ -1909,6 +1917,10 @@ id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif    
 r_return
 l_int|0
 suffix:semicolon
@@ -2020,4 +2032,105 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer  -m486 -c -o 3c501.o 3c501.c&quot;&n; *  kept-new-versions: 5&n; * End:&n; */
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_3c501
+r_static
+r_struct
+id|device
+id|dev_3c501
+op_assign
+(brace
+l_string|&quot;&quot;
+multiline_comment|/*&quot;3c501&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x280
+comma
+l_int|7
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|el1_probe
+)brace
+suffix:semicolon
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_3c501
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;3c501: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_3c501
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 eof

@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_TERMIOS_H
 DECL|macro|_LINUX_TERMIOS_H
 mdefine_line|#define _LINUX_TERMIOS_H
+macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* 0x54 is just a magic number to make these relatively uniqe (&squot;T&squot;) */
 DECL|macro|TCGETS
 mdefine_line|#define TCGETS&t;&t;0x5401

@@ -546,7 +546,15 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif&t;
+macro_line|#ifdef CONFIG_IPX
+id|ipxrtr_device_down
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 multiline_comment|/*&n;&t;&t; *&t;Blank the IP addresses&n;&t;&t; */
 id|dev-&gt;pa_addr
 op_assign

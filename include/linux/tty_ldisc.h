@@ -2,6 +2,8 @@ macro_line|#ifndef _LINUX_TTY_LDISC_H
 DECL|macro|_LINUX_TTY_LDISC_H
 mdefine_line|#define _LINUX_TTY_LDISC_H
 multiline_comment|/*&n; * Definitions for the tty line discipline&n; */
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 DECL|struct|tty_ldisc
 r_struct
 id|tty_ldisc

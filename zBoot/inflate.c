@@ -1352,10 +1352,6 @@ id|j
 suffix:semicolon
 multiline_comment|/* table entries for j-bit table */
 multiline_comment|/* allocate and link in new table */
-r_if
-c_cond
-(paren
-(paren
 id|q
 op_assign
 (paren
@@ -1378,47 +1374,7 @@ r_struct
 id|huft
 )paren
 )paren
-)paren
-op_eq
-(paren
-r_struct
-id|huft
-op_star
-)paren
-l_int|NULL
-)paren
-(brace
-id|DEBG1
-c_func
-(paren
-l_string|&quot;31 &quot;
-)paren
 suffix:semicolon
-id|error
-c_func
-(paren
-l_string|&quot;malloc failed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|h
-)paren
-id|huft_free
-c_func
-(paren
-id|u
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-r_return
-l_int|3
-suffix:semicolon
-multiline_comment|/* not enough memory */
-)brace
 id|DEBG1
 c_func
 (paren

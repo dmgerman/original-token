@@ -100,19 +100,19 @@ DECL|macro|frame_size_bit
 mdefine_line|#define frame_size_bit 0x01
 multiline_comment|/*&n; * disk states (bits of diskstate_flags):&n; */
 DECL|macro|upc_valid
-mdefine_line|#define upc_valid (DS[d].diskstate_flags&amp;upc_bit)
+mdefine_line|#define upc_valid (DriveStruct[d].diskstate_flags&amp;upc_bit)
 DECL|macro|volume_valid
-mdefine_line|#define volume_valid (DS[d].diskstate_flags&amp;volume_bit)
+mdefine_line|#define volume_valid (DriveStruct[d].diskstate_flags&amp;volume_bit)
 DECL|macro|toc_valid
-mdefine_line|#define toc_valid (DS[d].diskstate_flags&amp;toc_bit)
+mdefine_line|#define toc_valid (DriveStruct[d].diskstate_flags&amp;toc_bit)
 DECL|macro|multisession_valid
-mdefine_line|#define multisession_valid (DS[d].diskstate_flags&amp;multisession_bit)
+mdefine_line|#define multisession_valid (DriveStruct[d].diskstate_flags&amp;multisession_bit)
 DECL|macro|cd_size_valid
-mdefine_line|#define cd_size_valid (DS[d].diskstate_flags&amp;cd_size_bit)
+mdefine_line|#define cd_size_valid (DriveStruct[d].diskstate_flags&amp;cd_size_bit)
 DECL|macro|subq_valid
-mdefine_line|#define subq_valid (DS[d].diskstate_flags&amp;subq_bit)
+mdefine_line|#define subq_valid (DriveStruct[d].diskstate_flags&amp;subq_bit)
 DECL|macro|frame_size_valid
-mdefine_line|#define frame_size_valid (DS[d].diskstate_flags&amp;frame_size_bit)
+mdefine_line|#define frame_size_valid (DriveStruct[d].diskstate_flags&amp;frame_size_bit)
 multiline_comment|/*&n; * bits of the status_byte (result of xx_ReadStatus):&n; */
 DECL|macro|p_door_closed
 mdefine_line|#define p_door_closed 0x80
@@ -139,19 +139,19 @@ DECL|macro|p_busy_old
 mdefine_line|#define p_busy_old 0x04
 multiline_comment|/*&n; * used drive states:&n; */
 DECL|macro|st_door_closed
-mdefine_line|#define st_door_closed (DS[d].status_byte&amp;p_door_closed)
+mdefine_line|#define st_door_closed (DriveStruct[d].status_byte&amp;p_door_closed)
 DECL|macro|st_caddy_in
-mdefine_line|#define st_caddy_in (DS[d].status_byte&amp;p_caddy_in)
+mdefine_line|#define st_caddy_in (DriveStruct[d].status_byte&amp;p_caddy_in)
 DECL|macro|st_spinning
-mdefine_line|#define st_spinning (DS[d].status_byte&amp;p_spinning)
+mdefine_line|#define st_spinning (DriveStruct[d].status_byte&amp;p_spinning)
 DECL|macro|st_check
-mdefine_line|#define st_check (DS[d].status_byte&amp;p_check)
+mdefine_line|#define st_check (DriveStruct[d].status_byte&amp;p_check)
 DECL|macro|st_busy
-mdefine_line|#define st_busy (DS[d].status_byte&amp;p_busy_new)
+mdefine_line|#define st_busy (DriveStruct[d].status_byte&amp;p_busy_new)
 DECL|macro|st_door_locked
-mdefine_line|#define st_door_locked (DS[d].status_byte&amp;p_door_locked)
+mdefine_line|#define st_door_locked (DriveStruct[d].status_byte&amp;p_door_locked)
 DECL|macro|st_diskok
-mdefine_line|#define st_diskok (DS[d].status_byte&amp;p_disk_ok)
+mdefine_line|#define st_diskok (DriveStruct[d].status_byte&amp;p_disk_ok)
 multiline_comment|/*&n; * bits of the CDi_status register:&n; */
 DECL|macro|s_not_result_ready
 mdefine_line|#define s_not_result_ready 0x04  /* 0: &quot;result ready&quot; */
@@ -189,7 +189,7 @@ DECL|macro|drv_old
 mdefine_line|#define drv_old 0x00    /*  */
 multiline_comment|/*&n; * drv_099 and drv_100 are the &quot;new&quot; drives&n; */
 DECL|macro|new_drive
-mdefine_line|#define new_drive (DS[d].drv_type&amp;0x10)
+mdefine_line|#define new_drive (DriveStruct[d].drv_type&amp;0x10)
 multiline_comment|/*&n; * audio states:&n; */
 DECL|macro|audio_playing
 mdefine_line|#define audio_playing 2

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Holds initial configuration information for devices.&n; *&n; * NOTE:&t;This file is a nice idea, but its current format does not work&n; *&t;&t;well for drivers that support multiple units, like the SLIP&n; *&t;&t;driver.  We should actually have only one pointer to a driver&n; *&t;&t;here, with the driver knowing how many units it supports.&n; *&t;&t;Currently, the SLIP driver abuses the &quot;base_addr&quot; integer&n; *&t;&t;field of the &squot;device&squot; structure to store the unit number...&n; *&t;&t;-FvK&n; *&n; * Version:&t;@(#)Space.c&t;1.0.7&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 DECL|macro|LOOPBACK
 mdefine_line|#define LOOPBACK&t;&t;&t;/* always present, right?&t;*/
 DECL|macro|NEXT_DEV
@@ -377,6 +378,134 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PCMCIA_NET
+r_extern
+r_int
+id|dl_open
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|tc589_open
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ibmccae_open
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_int
+id|pc_eth_open
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+DECL|function|pc_eth_probe
+r_static
+r_int
+id|pc_eth_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|dev-&gt;open
+op_assign
+op_amp
+id|pc_eth_open
+suffix:semicolon
+id|dev-&gt;set_config
+op_assign
+op_amp
+id|ether_config
+suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|pc_eth_open
+r_static
+r_int
+id|pc_eth_open
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+l_int|1
+macro_line|#ifdef CONFIG_DE650
+op_logical_and
+id|dl_open
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_3C589
+op_logical_and
+id|tc589_open
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_IBMCCAE
+op_logical_and
+id|ibmccae_open
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+op_logical_and
+l_int|1
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+r_else
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_PCMCIA_NET */
 multiline_comment|/* Run-time ATtachable (Pocket) devices have a different (not &quot;eth#&quot;) name. */
 macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
 DECL|variable|atp_dev
@@ -418,6 +547,79 @@ macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;atp_dev)
 macro_line|#endif
+macro_line|#ifdef CONFIG_PCMCIA_NET
+DECL|variable|pc_eth1_dev
+r_static
+r_struct
+id|device
+id|pc_eth1_dev
+op_assign
+(brace
+l_string|&quot;pc_eth1&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|pc_eth_probe
+comma
+)brace
+suffix:semicolon
+DECL|variable|pc_eth0_dev
+r_static
+r_struct
+id|device
+id|pc_eth0_dev
+op_assign
+(brace
+l_string|&quot;pc_eth0&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|pc_eth1_dev
+comma
+id|pc_eth_probe
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define NEXT_DEV&t;(&amp;pc_eth0_dev)
+macro_line|#endif /* CONFIG_PCMCIA_NET */
 multiline_comment|/* The first device defaults to I/O base &squot;0&squot;, which means autoprobe. */
 macro_line|#ifndef ETH0_ADDR
 DECL|macro|ETH0_ADDR

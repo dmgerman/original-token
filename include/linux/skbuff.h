@@ -207,6 +207,7 @@ suffix:semicolon
 DECL|member|tries
 DECL|member|lock
 DECL|member|localroute
+DECL|member|pkt_type
 r_int
 r_char
 id|tries
@@ -214,7 +215,17 @@ comma
 id|lock
 comma
 id|localroute
+comma
+id|pkt_type
 suffix:semicolon
+DECL|macro|PACKET_HOST
+mdefine_line|#define PACKET_HOST&t;&t;0&t;&t;/* To us */
+DECL|macro|PACKET_BROADCAST
+mdefine_line|#define PACKET_BROADCAST&t;1
+DECL|macro|PACKET_MULTICAST
+mdefine_line|#define PACKET_MULTICAST&t;2
+DECL|macro|PACKET_OTHERHOST
+mdefine_line|#define PACKET_OTHERHOST&t;3&t;&t;/* Unmatched promiscuous */
 DECL|member|users
 r_int
 r_int

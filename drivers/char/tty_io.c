@@ -620,11 +620,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|retval
+op_ge
+l_int|0
 )paren
 r_return
-l_int|0
+id|retval
 suffix:semicolon
 id|tty-&gt;ldisc
 op_assign
@@ -639,12 +640,16 @@ c_cond
 (paren
 id|tty-&gt;ldisc.open
 op_logical_and
+(paren
 id|tty-&gt;ldisc
 dot
 id|open
 c_func
 (paren
 id|tty
+)paren
+OL
+l_int|0
 )paren
 )paren
 (brace
@@ -680,6 +685,8 @@ r_if
 c_cond
 (paren
 id|r
+OL
+l_int|0
 )paren
 id|panic
 c_func
@@ -1331,12 +1338,15 @@ r_if
 c_cond
 (paren
 id|i
+OL
+l_int|0
 )paren
 id|printk
 c_func
 (paren
 l_string|&quot;do_tty_hangup: N_TTY open: error %d&bslash;n&quot;
 comma
+op_minus
 id|i
 )paren
 suffix:semicolon
@@ -3309,6 +3319,8 @@ r_if
 c_cond
 (paren
 id|retval
+OL
+l_int|0
 )paren
 r_goto
 id|end_init
@@ -3411,6 +3423,8 @@ r_if
 c_cond
 (paren
 id|retval
+OL
+l_int|0
 )paren
 r_goto
 id|end_init

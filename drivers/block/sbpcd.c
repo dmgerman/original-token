@@ -536,7 +536,7 @@ id|d
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* DS index: drive number */
+multiline_comment|/* DriveStruct index: drive number */
 r_static
 r_struct
 (brace
@@ -805,9 +805,9 @@ DECL|member|in_SpinUp
 r_int
 id|in_SpinUp
 suffix:semicolon
-DECL|variable|DS
+DECL|variable|DriveStruct
 )brace
-id|DS
+id|DriveStruct
 (braket
 l_int|4
 )braket
@@ -1545,7 +1545,7 @@ op_minus
 l_int|12
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2199,7 +2199,7 @@ op_logical_neg
 id|new_drive
 )paren
 (brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2215,7 +2215,7 @@ id|st
 op_amp
 id|p_caddin_old
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2233,7 +2233,7 @@ id|st
 op_amp
 id|p_spinning
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2249,7 +2249,7 @@ id|st
 op_amp
 id|p_check
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2265,7 +2265,7 @@ id|st
 op_amp
 id|p_busy_old
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2281,7 +2281,7 @@ id|st
 op_amp
 id|p_disk_ok
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2293,7 +2293,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2755,7 +2755,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2804,7 +2804,7 @@ id|i
 op_assign
 l_int|1
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -2826,14 +2826,14 @@ l_string|&quot;SBPCD: xx_ReadError: infobuf[%d] is %d (%02X)&bslash;n&quot;
 comma
 id|i
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|error_byte
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3054,7 +3054,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3129,7 +3129,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3166,7 +3166,7 @@ id|f_ResponseStatus
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3298,7 +3298,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3327,7 +3327,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3571,7 +3571,7 @@ l_string|&quot;SBPCD: SpinUp.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3647,7 +3647,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3854,7 +3854,7 @@ id|control1
 comma
 id|value1
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3871,7 +3871,7 @@ c_func
 suffix:semicolon
 id|channel0
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3880,7 +3880,7 @@ id|vol_chan0
 suffix:semicolon
 id|volume0
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3891,7 +3891,7 @@ id|channel1
 op_assign
 id|control1
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3902,7 +3902,7 @@ id|volume1
 op_assign
 id|value1
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3920,7 +3920,7 @@ c_cond
 (paren
 (paren
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -3934,7 +3934,7 @@ l_int|0
 )paren
 op_logical_and
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4144,7 +4144,7 @@ r_else
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4245,7 +4245,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4378,7 +4378,7 @@ r_else
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4396,7 +4396,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4432,7 +4432,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4528,7 +4528,7 @@ r_return
 id|i
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4678,7 +4678,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4717,7 +4717,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4747,7 +4747,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4767,7 +4767,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -4881,7 +4881,7 @@ op_logical_neg
 id|st_diskok
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5117,7 +5117,7 @@ id|i
 comma
 id|j
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5308,28 +5308,28 @@ l_int|1
 )paren
 )paren
 (brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|SubQ_ctl_adr
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|SubQ_trk
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|SubQ_pnt_idx
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5338,14 +5338,14 @@ id|SubQ_whatisthis
 op_assign
 l_int|0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|SubQ_run_tot
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5361,7 +5361,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5377,7 +5377,7 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5393,7 +5393,7 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5423,7 +5423,7 @@ id|i
 op_assign
 l_int|5
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5478,7 +5478,7 @@ id|i
 op_assign
 l_int|9
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5519,7 +5519,7 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* msf-bin */
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5533,7 +5533,7 @@ op_plus
 l_int|3
 )braket
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5561,7 +5561,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5668,7 +5668,7 @@ c_cond
 (paren
 id|new_drive
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5681,7 +5681,7 @@ id|i
 op_increment
 )braket
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5762,7 +5762,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5792,7 +5792,7 @@ id|framesize
 r_int
 id|i
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5807,7 +5807,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5824,14 +5824,14 @@ id|DBG_XA
 comma
 l_string|&quot;SBPCD: xx_ModeSelect: %02X %04X&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|sense_byte
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5865,7 +5865,7 @@ id|drvcmd
 l_int|2
 )braket
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5878,7 +5878,7 @@ l_int|3
 )braket
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5895,7 +5895,7 @@ id|drvcmd
 l_int|4
 )braket
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5935,7 +5935,7 @@ l_int|2
 )braket
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -5952,7 +5952,7 @@ id|drvcmd
 l_int|3
 )braket
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6002,7 +6002,7 @@ r_return
 id|i
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6042,7 +6042,7 @@ id|chan1
 comma
 id|vol1
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6243,7 +6243,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6256,7 +6256,7 @@ id|drv_201
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6306,7 +6306,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6420,7 +6420,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6429,7 +6429,7 @@ id|vol_chan0
 op_assign
 id|chan0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6438,7 +6438,7 @@ id|vol_ctrl0
 op_assign
 id|vol0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6447,7 +6447,7 @@ id|vol_chan1
 op_assign
 id|chan1
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6456,7 +6456,7 @@ id|vol_ctrl1
 op_assign
 id|vol1
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6465,7 +6465,7 @@ id|vol_chan2
 op_assign
 l_int|2
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6474,7 +6474,7 @@ id|vol_ctrl2
 op_assign
 l_int|0xFF
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6483,7 +6483,7 @@ id|vol_chan3
 op_assign
 l_int|3
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6492,7 +6492,7 @@ id|vol_ctrl3
 op_assign
 l_int|0xFF
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6521,7 +6521,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6601,7 +6601,7 @@ r_return
 id|i
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6642,7 +6642,7 @@ c_cond
 (paren
 id|new_drive
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6652,7 +6652,7 @@ op_assign
 id|msf2blk
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6660,7 +6660,7 @@ dot
 id|CDsize_blk
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6668,7 +6668,7 @@ dot
 id|CDsize_frm
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6692,7 +6692,7 @@ l_int|4
 op_div
 id|CD_FRAMESIZE
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6701,7 +6701,7 @@ id|CDsize_blk
 op_add_assign
 l_int|151
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6729,7 +6729,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6809,7 +6809,7 @@ r_return
 id|i
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6821,7 +6821,7 @@ id|infobuf
 l_int|0
 )braket
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6833,7 +6833,7 @@ id|infobuf
 l_int|1
 )braket
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6845,7 +6845,7 @@ id|infobuf
 l_int|2
 )braket
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6881,7 +6881,7 @@ l_int|5
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6891,7 +6891,7 @@ op_assign
 id|msf2blk
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6899,7 +6899,7 @@ dot
 id|size_msf
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -6916,28 +6916,28 @@ id|DBG_TOC
 comma
 l_string|&quot;SBPCD: TocDesc: %02X %02X %02X %08X&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|xa_byte
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|n_first_track
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|n_last_track
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7050,7 +7050,7 @@ r_return
 id|i
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7062,7 +7062,7 @@ id|infobuf
 l_int|0
 )braket
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7078,7 +7078,7 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7090,7 +7090,7 @@ id|infobuf
 l_int|2
 )braket
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7116,7 +7116,7 @@ id|i
 op_assign
 l_int|5
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7164,35 +7164,35 @@ id|DBG_TOC
 comma
 l_string|&quot;SBPCD: TocEntry: %02X %02X %02X %02X %08X&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|TocEnt_nixbyte
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|TocEnt_ctl_adr
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|TocEnt_number
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|TocEnt_format
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7313,7 +7313,7 @@ c_cond
 (paren
 id|new_drive
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7333,7 +7333,7 @@ op_increment
 suffix:semicolon
 r_else
 (brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7355,7 +7355,7 @@ l_int|4
 op_amp
 l_int|0xFF
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7371,7 +7371,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7409,7 +7409,7 @@ comma
 id|checksum
 suffix:semicolon
 macro_line|#endif TEST_UPC
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7712,7 +7712,7 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#endif TEST_UPC
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7760,7 +7760,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7768,7 +7768,7 @@ dot
 id|UPC_ctl_adr
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7799,7 +7799,7 @@ id|DBG_UPC
 comma
 l_string|&quot;(%02X) &quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7831,7 +7831,7 @@ id|DBG_UPC
 comma
 l_string|&quot;%02X &quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7854,7 +7854,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7882,7 +7882,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -7892,7 +7892,7 @@ op_and_assign
 op_complement
 id|multisession_bit
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8005,7 +8005,7 @@ l_int|5
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8014,7 +8014,7 @@ id|f_multisession
 op_assign
 l_int|1
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8056,7 +8056,7 @@ l_int|3
 suffix:semicolon
 )brace
 )brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8110,7 +8110,7 @@ macro_line|#if 0
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8209,7 +8209,7 @@ id|cmd_type
 op_assign
 id|READ_SC
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8590,7 +8590,7 @@ op_eq
 l_int|4
 )paren
 (brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8606,7 +8606,7 @@ id|i
 op_increment
 )braket
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8622,7 +8622,7 @@ id|i
 op_increment
 )braket
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8634,7 +8634,7 @@ l_int|2
 op_assign
 l_char|&squot;-&squot;
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8646,7 +8646,7 @@ l_int|3
 op_assign
 l_char|&squot;x&squot;
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8700,7 +8700,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8712,7 +8712,7 @@ l_int|0
 op_assign
 l_char|&squot;2&squot;
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8724,7 +8724,7 @@ l_int|1
 op_assign
 l_char|&squot;x&squot;
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8736,7 +8736,7 @@ l_int|2
 op_assign
 l_char|&squot;-&squot;
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8748,7 +8748,7 @@ l_int|3
 op_assign
 l_char|&squot;x&squot;
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8772,7 +8772,7 @@ suffix:semicolon
 id|j
 op_increment
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8792,7 +8792,7 @@ suffix:semicolon
 id|j
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8808,7 +8808,7 @@ op_star
 l_int|100
 op_plus
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8824,7 +8824,7 @@ op_star
 l_int|10
 op_plus
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8850,7 +8850,7 @@ id|j
 OL
 l_int|100
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8860,7 +8860,7 @@ op_assign
 id|drv_099
 suffix:semicolon
 r_else
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8878,7 +8878,7 @@ id|j
 OL
 l_int|200
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8895,7 +8895,7 @@ id|j
 OL
 l_int|201
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8912,7 +8912,7 @@ id|j
 OL
 l_int|210
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8929,7 +8929,7 @@ id|j
 OL
 l_int|211
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8946,7 +8946,7 @@ id|j
 OL
 l_int|300
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -8956,7 +8956,7 @@ op_assign
 id|drv_211
 suffix:semicolon
 r_else
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -9032,7 +9032,7 @@ id|DBG_DID
 comma
 l_string|&quot;SBPCD: switch_drive: drive %d activated.&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -9098,7 +9098,7 @@ id|j
 op_increment
 )paren
 (brace
-id|DS
+id|DriveStruct
 (braket
 id|j
 )braket
@@ -9155,7 +9155,7 @@ l_int|0
 id|ndrives
 op_increment
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -9173,7 +9173,7 @@ c_cond
 op_logical_neg
 id|new_drive
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -9196,7 +9196,7 @@ l_string|&quot;%sDrive %d: %s%.4s (%.4s)&bslash;n&quot;
 comma
 id|printk_header
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -9205,14 +9205,14 @@ id|drv_minor
 comma
 id|drive_family
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|drive_model
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -9226,7 +9226,7 @@ l_string|&quot;       - &quot;
 suffix:semicolon
 )brace
 r_else
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10034,7 +10034,7 @@ op_assign
 id|msf2blk
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10088,7 +10088,7 @@ id|i
 comma
 id|j
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10098,7 +10098,7 @@ op_and_assign
 op_complement
 id|toc_bit
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10112,7 +10112,7 @@ c_loop
 (paren
 id|j
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10121,7 +10121,7 @@ id|n_first_track
 suffix:semicolon
 id|j
 op_le
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10152,7 +10152,7 @@ r_return
 id|i
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10164,14 +10164,14 @@ id|j
 dot
 id|nixbyte
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|TocEnt_nixbyte
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10183,14 +10183,14 @@ id|j
 dot
 id|ctl_adr
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|TocEnt_ctl_adr
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10202,14 +10202,14 @@ id|j
 dot
 id|number
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|TocEnt_number
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10221,14 +10221,14 @@ id|j
 dot
 id|format
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|TocEnt_format
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10240,21 +10240,21 @@ id|j
 dot
 id|address
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|TocEnt_address
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|ored_ctl_adr
 op_or_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10263,7 +10263,7 @@ id|TocEnt_ctl_adr
 suffix:semicolon
 )brace
 multiline_comment|/* fake entry for LeadOut Track */
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10277,7 +10277,7 @@ id|nixbyte
 op_assign
 l_int|0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10291,7 +10291,7 @@ id|ctl_adr
 op_assign
 l_int|0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10305,7 +10305,7 @@ id|number
 op_assign
 l_int|0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10319,7 +10319,7 @@ id|format
 op_assign
 l_int|0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10331,14 +10331,14 @@ id|j
 dot
 id|address
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|size_msf
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10663,7 +10663,7 @@ op_assign
 id|xx_ReadTocEntry
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10740,7 +10740,7 @@ id|new_drive
 )paren
 op_logical_and
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10826,7 +10826,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10838,7 +10838,7 @@ l_int|0xFF
 (brace
 macro_line|#if MANY_SESSION
 macro_line|#else
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10848,7 +10848,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif MANY_SESSION
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10908,7 +10908,7 @@ OL
 l_int|0
 )paren
 (brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10937,7 +10937,7 @@ id|st_diskok
 (brace
 macro_line|#if MANY_SESSION
 macro_line|#else
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10947,7 +10947,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif MANY_SESSION
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -10991,7 +10991,7 @@ id|st_busy
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11031,7 +11031,7 @@ r_else
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11045,7 +11045,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11079,7 +11079,7 @@ l_int|0
 (brace
 macro_line|#if MANY_SESSION
 macro_line|#else
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11089,7 +11089,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif MANY_SESSION
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11151,7 +11151,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11572,7 +11572,7 @@ multiline_comment|/* the drive will discontinue playing.                        
 r_switch
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11604,7 +11604,7 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11633,14 +11633,14 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|pos_audio_start
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11660,7 +11660,7 @@ op_assign
 id|xx_Seek
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11717,7 +11717,7 @@ multiline_comment|/* It will resume playing from the location saved in SubQ_run_
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11751,7 +11751,7 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11781,7 +11781,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11832,14 +11832,14 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|pos_audio_start
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11851,7 +11851,7 @@ op_assign
 id|xx_Seek
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11912,7 +11912,7 @@ id|cdrom_msf
 )paren
 suffix:semicolon
 multiline_comment|/* values come as msf-bin */
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11933,7 +11933,7 @@ l_int|8
 op_or
 id|msf.cdmsf_frame0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11962,14 +11962,14 @@ id|DBG_IOX
 comma
 l_string|&quot;SBPCD: ioctl: CDROMPLAYMSF %08X %08X&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|pos_audio_start
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -11983,14 +11983,14 @@ op_assign
 id|xx_PlayAudioMSF
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|pos_audio_start
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12025,7 +12025,7 @@ id|EIO
 )paren
 suffix:semicolon
 macro_line|#endif 0
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12056,7 +12056,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12174,7 +12174,7 @@ c_cond
 (paren
 id|ti.cdti_trk0
 OL
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12192,7 +12192,7 @@ c_cond
 (paren
 id|ti.cdti_trk0
 OG
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12221,7 +12221,7 @@ c_cond
 (paren
 id|ti.cdti_trk1
 OG
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12230,21 +12230,21 @@ id|n_last_track
 )paren
 id|ti.cdti_trk1
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|n_last_track
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|pos_audio_start
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12256,14 +12256,14 @@ id|ti.cdti_trk0
 dot
 id|address
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|pos_audio_end
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12282,14 +12282,14 @@ op_assign
 id|xx_PlayAudioMSF
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|pos_audio_start
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12312,7 +12312,7 @@ id|EIO
 )paren
 suffix:semicolon
 macro_line|#endif 0
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12342,7 +12342,7 @@ l_string|&quot;SBPCD: ioctl: CDROMREADTOCHDR entered.&bslash;n&quot;
 suffix:semicolon
 id|tochdr.cdth_trk0
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12351,7 +12351,7 @@ id|n_first_track
 suffix:semicolon
 id|tochdr.cdth_trk1
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12488,7 +12488,7 @@ id|CDROM_LEADOUT
 )paren
 id|i
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12502,7 +12502,7 @@ r_if
 c_cond
 (paren
 id|i
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12517,7 +12517,7 @@ id|EINVAL
 suffix:semicolon
 id|tocentry.cdte_adr
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12534,7 +12534,7 @@ suffix:semicolon
 id|tocentry.cdte_ctrl
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12553,7 +12553,7 @@ l_int|0x0F
 suffix:semicolon
 id|tocentry.cdte_datamode
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12577,7 +12577,7 @@ multiline_comment|/* MSF-bin required */
 id|tocentry.cdte_addr.msf.minute
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12597,7 +12597,7 @@ suffix:semicolon
 id|tocentry.cdte_addr.msf.second
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12616,7 +12616,7 @@ l_int|0x00FF
 suffix:semicolon
 id|tocentry.cdte_addr.msf.frame
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12645,7 +12645,7 @@ op_assign
 id|msf2blk
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12741,7 +12741,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#if WORKMAN
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12750,7 +12750,7 @@ id|CD_changed
 op_assign
 l_int|0xFF
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12772,7 +12772,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12814,7 +12814,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12853,7 +12853,7 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#if WORKMAN
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12862,7 +12862,7 @@ id|CD_changed
 op_assign
 l_int|0xFF
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12892,7 +12892,7 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12967,7 +12967,7 @@ id|volctrl
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12976,7 +12976,7 @@ id|vol_chan0
 op_assign
 l_int|0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12985,7 +12985,7 @@ id|vol_ctrl0
 op_assign
 id|volctrl.channel0
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -12994,7 +12994,7 @@ id|vol_chan1
 op_assign
 l_int|1
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13115,7 +13115,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13152,7 +13152,7 @@ suffix:semicolon
 )brace
 id|SC.cdsc_adr
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13161,7 +13161,7 @@ id|SubQ_ctl_adr
 suffix:semicolon
 id|SC.cdsc_ctrl
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13175,7 +13175,7 @@ op_assign
 id|bcd2bin
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13188,7 +13188,7 @@ op_assign
 id|bcd2bin
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13209,7 +13209,7 @@ op_assign
 id|msf2blk
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13222,7 +13222,7 @@ op_assign
 id|msf2blk
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13237,7 +13237,7 @@ multiline_comment|/* not only if (SC.cdsc_format==CDROM_MSF) */
 id|SC.cdsc_absaddr.msf.minute
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13252,7 +13252,7 @@ suffix:semicolon
 id|SC.cdsc_absaddr.msf.second
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13266,7 +13266,7 @@ l_int|0x00FF
 suffix:semicolon
 id|SC.cdsc_absaddr.msf.frame
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13278,7 +13278,7 @@ suffix:semicolon
 id|SC.cdsc_reladdr.msf.minute
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13293,7 +13293,7 @@ suffix:semicolon
 id|SC.cdsc_reladdr.msf.second
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13307,7 +13307,7 @@ l_int|0x00FF
 suffix:semicolon
 id|SC.cdsc_reladdr.msf.frame
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13456,7 +13456,7 @@ id|CURRENT-&gt;sector
 op_div
 l_int|4
 op_ge
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13469,7 +13469,7 @@ id|CURRENT-&gt;sector
 op_div
 l_int|4
 op_le
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13483,7 +13483,7 @@ op_assign
 (paren
 id|CURRENT-&gt;sector
 op_minus
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13500,7 +13500,7 @@ c_func
 (paren
 id|CURRENT-&gt;buffer
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -13973,7 +13973,7 @@ id|new_drive
 )paren
 op_logical_and
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14145,14 +14145,14 @@ suffix:semicolon
 r_int
 id|block
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|sbp_first_frame
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14196,7 +14196,7 @@ r_if
 c_cond
 (paren
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14220,7 +14220,7 @@ comma
 id|blk2msf
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14240,7 +14240,7 @@ id|block
 suffix:semicolon
 id|block
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14261,7 +14261,7 @@ l_int|166
 )paren
 op_logical_and
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14285,7 +14285,7 @@ comma
 id|blk2msf
 c_func
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14305,7 +14305,7 @@ id|block
 suffix:semicolon
 id|block
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14324,14 +14324,14 @@ id|block
 op_plus
 id|SBP_BUFFER_FRAMES
 op_le
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|CDsize_frm
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14342,14 +14342,14 @@ id|SBP_BUFFER_FRAMES
 suffix:semicolon
 r_else
 (brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|sbp_read_frames
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14362,7 +14362,7 @@ multiline_comment|/* avoid reading past end of data */
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14382,7 +14382,7 @@ l_string|&quot;SBPCD: requested frame %d, CD size %d ???&bslash;n&quot;
 comma
 id|block
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14391,7 +14391,7 @@ id|CDsize_frm
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14402,7 +14402,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14439,7 +14439,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14508,7 +14508,7 @@ id|drvcmd
 l_int|5
 )braket
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14536,7 +14536,7 @@ multiline_comment|/* &quot;read frames&quot; command for old drives */
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14640,7 +14640,7 @@ id|drvcmd
 l_int|5
 )braket
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14653,7 +14653,7 @@ l_int|6
 )braket
 op_assign
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14714,7 +14714,7 @@ id|drvcmd
 l_int|6
 )braket
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14828,7 +14828,7 @@ c_loop
 (paren
 id|frame
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -14837,7 +14837,7 @@ id|sbp_current
 suffix:semicolon
 id|frame
 OL
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15022,7 +15022,7 @@ r_if
 c_cond
 (paren
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15068,7 +15068,7 @@ l_int|0
 suffix:semicolon
 id|p
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15149,7 +15149,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15509,7 +15509,7 @@ id|DBG_INF
 comma
 l_string|&quot;SBPCD: xx_ReadStatus error after read: %02X&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15579,7 +15579,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15592,21 +15592,21 @@ id|sector
 op_div
 l_int|4
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|sbp_last_frame
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|sbp_first_frame
 op_plus
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15770,7 +15770,7 @@ id|DBG_STA
 comma
 l_string|&quot;SBPCD: sbpcd_open: status %02X&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15811,14 +15811,14 @@ id|DBG_LCK
 comma
 l_string|&quot;SBPCD: open_count: %d -&gt; %d&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|open_count
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15833,7 +15833,7 @@ r_if
 c_cond
 (paren
 op_increment
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15870,7 +15870,7 @@ r_if
 c_cond
 (paren
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15961,14 +15961,14 @@ c_func
 id|i
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|sbp_first_frame
 op_assign
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -15991,7 +15991,7 @@ c_func
 id|ip-&gt;i_rdev
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16010,14 +16010,14 @@ id|DBG_LCK
 comma
 l_string|&quot;SBPCD: open_count: %d -&gt; %d&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
 dot
 id|open_count
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16032,7 +16032,7 @@ r_if
 c_cond
 (paren
 op_decrement
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16717,7 +16717,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|j
 )braket
@@ -16751,7 +16751,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16762,7 +16762,7 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* First frame in buffer */
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16773,7 +16773,7 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* Last frame in buffer  */
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16783,7 +16783,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Number of frames being read to buffer */
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16793,7 +16793,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Frame being currently read */
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16802,7 +16802,7 @@ id|CD_changed
 op_assign
 l_int|1
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16899,7 +16899,7 @@ multiline_comment|/* to avoid possible &quot;printk&quot; bug */
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -16976,7 +16976,7 @@ id|i
 op_ge
 l_int|0
 )paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -17121,7 +17121,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|j
 )braket
@@ -17133,7 +17133,7 @@ l_int|1
 )paren
 r_continue
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|j
 )braket
@@ -17238,7 +17238,7 @@ id|DBG_CHK
 comma
 l_string|&quot;SBPCD: media_check: %02X&bslash;n&quot;
 comma
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -17275,7 +17275,7 @@ multiline_comment|/* status not obtainable */
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -17327,7 +17327,7 @@ l_string|&quot;SBPCD: media_check: door open.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -17354,7 +17354,7 @@ l_string|&quot;SBPCD: media_check: no disk in drive.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -17384,7 +17384,7 @@ macro_line|#if 0000
 r_if
 c_cond
 (paren
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket
@@ -17394,7 +17394,7 @@ op_eq
 l_int|0xFF
 )paren
 (brace
-id|DS
+id|DriveStruct
 (braket
 id|d
 )braket

@@ -1773,7 +1773,7 @@ id|mtu
 op_plus
 l_int|4
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|new_rbuff
@@ -1790,7 +1790,7 @@ id|mru
 op_plus
 l_int|4
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|new_cbuff
@@ -1807,7 +1807,7 @@ id|mru
 op_plus
 l_int|4
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *  If the buffers failed to allocate then complain.&n; */
@@ -2470,19 +2470,11 @@ id|ppp-&gt;dev-&gt;name
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef NEW_TTY_DRIVERS
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 (paren
 id|ppp-&gt;line
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* called when ppp interface goes &quot;up&quot;.  here this just means we start&n;   passing IP packets */
 r_static

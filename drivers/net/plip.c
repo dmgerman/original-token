@@ -1,12 +1,16 @@
 multiline_comment|/*&n; *&t; Plip.c: A parallel port &quot;network&quot; driver for linux. &n; */
-multiline_comment|/*&n; *&t;Developement History:&n; *&n; *&t;Original version and the name &squot;PLIP&squot; from Donald Becker  &lt;becker@super.org&gt;&n; *&t;&t;inspired by Russ Nelson&squot;s parallel port packet driver.&n; *&t;Further development by Tommy Thorn &lt;thorn@daimi.aau.dk&gt;&n; *&t;Some changes by Tanabe Hiroyasu &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;Upgraded for PL12 by Donald Becker&n; *&t;Minor hacks by Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt; to get it working&n; *&t;&t;more reliably (Ha!)&n; *     Changes even more Peter Bauer (100136.3530@compuserve.com)&n; *     Protocol changed back to original plip as in crynwr&squot;s packet-drivers.&n; *     Tested this against ncsa-telnet 2.3 and pcip_pkt using plip.com (which&n; *     contains &quot;version&t;equ&t;0&quot; and &quot;;History:562,1&quot; in the firts 2&n; *    source-lines&t;&t;&t;&t;&t;&t;28-Mar-94&n; *&t;&n; *&t;&n; *&n; *  This is parallel port packet pusher.  It&squot;s actually more general&n; *  than the &quot;IP&quot; in its name suggests -- but &squot;plip&squot; is just such a&n; *  great name!&n; * &n; *    &n; *   Bugs: Please read this: The PLIP driver is a nasty hack and like all nasty hacks &n; *&t;   has some &squot;features&squot;.&n; *&n; *&t;Can lock machines solid if one end goes down or crashes, or due to cable faults.&n; *&t;Can lock both machines solid on a broadcast collision.&n; *&t;Some laptops don&squot;t have all the wires we use.&n; *&t;Doesn&squot;t match the original Russ Nelson protocol so won&squot;t talk to Amiga or PC drivers.&n; *&t;Waits far too long with interrupts off [X is unbearable, forget action games, xntp is a joke]&n; *&t;Doesn&squot;t work on some fast 486DX machines&n; *&n; *&t;If it works be thankful, if not fix it!&n; *&n; *  Info:&n; *     &t;I &lt;Alan&gt; got 15K/second NFS throughput (about 20-25K second IP). I also got some ethernet cards&n; *&t;so don&squot;t ask me for help. This code needs a real major rewrite. Any volunteers ?&n; */
+multiline_comment|/*&n; *&t;Developement History:&n; *&n; *&t;Original version and the name &squot;PLIP&squot; from Donald Becker  &lt;becker@super.org&gt;&n; *&t;&t;inspired by Russ Nelson&squot;s parallel port packet driver.&n; *&t;Further development by Tommy Thorn &lt;thorn@daimi.aau.dk&gt;&n; *&t;Some changes by Tanabe Hiroyasu &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;Upgraded for PL12 by Donald Becker&n; *&t;Minor hacks by Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt; to get it working&n; *&t;&t;more reliably (Ha!)&n; *     Changes even more Peter Bauer (100136.3530@compuserve.com)&n; *     Protocol changed back to original plip as in crynwr&squot;s packet-drivers.&n; *     Tested this against ncsa-telnet 2.3 and pcip_pkt using plip.com (which&n; *     contains &quot;version&t;equ&t;0&quot; and &quot;;History:562,1&quot; in the firts 2&n; *    source-lines&t;&t;&t;&t;&t;&t;28-Mar-94&n; *&n; *&t;Modularised it (Alan Cox). Will upgrade to Niibe&squot;s PLIP once its settled&n; *&t;down better.&n; *&t;&n; *&n; *  This is parallel port packet pusher.  It&squot;s actually more general&n; *  than the &quot;IP&quot; in its name suggests -- but &squot;plip&squot; is just such a&n; *  great name!&n; * &n; *    &n; *   Bugs: Please read this: The PLIP driver is a nasty hack and like all nasty hacks &n; *&t;   has some &squot;features&squot;.&n; *&n; *&t;Can lock machines solid if one end goes down or crashes, or due to cable faults.&n; *&t;Can lock both machines solid on a broadcast collision.&n; *&t;Some laptops don&squot;t have all the wires we use.&n; *&t;Doesn&squot;t match the original Russ Nelson protocol so won&squot;t talk to Amiga or PC drivers.&n; *&t;Waits far too long with interrupts off [X is unbearable, forget action games, xntp is a joke]&n; *&t;Doesn&squot;t work on some fast 486DX machines&n; *&n; *&t;If it works be thankful, if not fix it!&n; *&n; *  Info:&n; *     &t;I &lt;Alan&gt; got 15K/second NFS throughput (about 20-25K second IP). I also got some ethernet cards&n; *&t;so don&squot;t ask me for help. This code needs a real major rewrite. Any volunteers ?&n; *&n; ***** So we can all compare loads of different PLIP drivers for a bit I&squot;ve modularised this beastie too.&n; ***** In addition a seperate bidirectional plip module can be done.&n; */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;NET3 PLIP.010 (from plip.c:v0.15 for 0.99pl12+, 8/11/93)&bslash;n&quot;
+l_string|&quot;NET3 &quot;
+macro_line|#ifdef MODULE
+l_string|&quot;MODULAR &quot;
+macro_line|#endif    
+l_string|&quot;PLIP.010 (from plip.c:v0.15 for 0.99pl12+, 8/11/93)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;&t;Ideas and protocols came from Russ Nelson&squot;s (nelson@crynwr.com)&n;&t;&quot;parallel.asm&quot; parallel port packet driver.&n;&t;TANABE Hiroyasu changes the protocol.&n;  The &quot;Crynwr&quot; parallel port standard specifies the following protocol:&n;   send header nibble &squot;8&squot;&n;   type octet &squot;0xfd&squot; or &squot;0xfc&squot;&n;   count-low octet&n;   count-high octet&n;   ... data octets&n;   checksum octet&n;Each octet is sent as &lt;wait for rx. &squot;0x1?&squot;&gt; &lt;send 0x10+(octet&amp;0x0F)&gt;&n;&t;&t;&t;&lt;wait for rx. &squot;0x0?&squot;&gt; &lt;send 0x00+((octet&gt;&gt;4)&amp;0x0F)&gt;&n;&n;The cable used is a de facto standard parallel null cable -- sold as&n;a &quot;LapLink&quot; cable by various places.  You&squot;ll need a 10-conductor cable to&n;make one yourself.  The wiring is:&n;    INIT&t;16 - 16&t;&t;SLCTIN&t;17 - 17&n;    GROUND&t;25 - 25&n;    D0-&gt;ERROR&t;2 - 15&t;&t;15 - 2&n;    D1-&gt;SLCT&t;3 - 13&t;&t;13 - 3&n;    D2-&gt;PAPOUT&t;4 - 12&t;&t;12 - 4&n;    D3-&gt;ACK&t;5 - 10&t;&t;10 - 5&n;    D4-&gt;BUSY&t;6 - 11&t;&t;11 - 6&n;  Do not connect the other pins.  They are&n;    D5,D6,D7 are 7,8,9&n;    STROBE is 1, FEED is 14&n;    extra grounds are 18,19,20,21,22,23,24&n;*/
@@ -25,6 +29,10 @@ macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#endif
 macro_line|#ifdef PRINTK
 DECL|macro|PRINTK
 macro_line|#undef PRINTK
@@ -553,9 +561,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* Open/initialize the board.  This is called (in the current kernel)&n;   sometime after booting when the &squot;config &lt;dev-&gt;name&gt;&squot; program is&n;   run.&n;&n;   This routine gets exclusive access to the parallel port by allocating&n;   its IRQ line.&n;   */
+DECL|function|plip_open
 r_static
 r_int
-DECL|function|plip_open
 id|plip_open
 c_func
 (paren
@@ -648,6 +656,10 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif        
 r_return
 l_int|0
 suffix:semicolon
@@ -705,6 +717,10 @@ id|dev-&gt;base_addr
 )paren
 suffix:semicolon
 multiline_comment|/* Release the interrupt. */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif        
 r_return
 l_int|0
 suffix:semicolon
@@ -3145,4 +3161,316 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -fomit-frame-pointer -x c++ -c plip.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_plip0
+r_static
+r_struct
+id|device
+id|dev_plip0
+op_assign
+(brace
+l_string|&quot;plip0&quot;
+multiline_comment|/*&quot;plip&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* memory */
+l_int|0x3BC
+comma
+l_int|5
+comma
+multiline_comment|/* base, irq */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|plip_init
+)brace
+suffix:semicolon
+DECL|variable|dev_plip1
+r_static
+r_struct
+id|device
+id|dev_plip1
+op_assign
+(brace
+l_string|&quot;plip1&quot;
+multiline_comment|/*&quot;plip&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* memory */
+l_int|0x378
+comma
+l_int|7
+comma
+multiline_comment|/* base, irq */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|plip_init
+)brace
+suffix:semicolon
+DECL|variable|dev_plip2
+r_static
+r_struct
+id|device
+id|dev_plip2
+op_assign
+(brace
+l_string|&quot;plip2&quot;
+multiline_comment|/*&quot;plip&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* memory */
+l_int|0x278
+comma
+l_int|2
+comma
+multiline_comment|/* base, irq */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|plip_init
+)brace
+suffix:semicolon
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|err
+op_assign
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_plip0
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+id|err
+op_assign
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_plip1
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+id|err
+op_assign
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_plip2
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|err
+op_eq
+op_minus
+id|EEXIST
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;plip devices already present. Module not loaded.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_return
+id|err
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;plip: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_plip0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev_plip0.priv
+)paren
+(brace
+id|kfree_s
+c_func
+(paren
+id|dev_plip0.priv
+comma
+r_sizeof
+(paren
+r_struct
+id|netstats
+)paren
+)paren
+suffix:semicolon
+id|dev_plip0.priv
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_plip1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev_plip1.priv
+)paren
+(brace
+id|kfree_s
+c_func
+(paren
+id|dev_plip1.priv
+comma
+r_sizeof
+(paren
+r_struct
+id|netstats
+)paren
+)paren
+suffix:semicolon
+id|dev_plip0.priv
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_plip2
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev_plip2.priv
+)paren
+(brace
+id|kfree_s
+c_func
+(paren
+id|dev_plip2.priv
+comma
+r_sizeof
+(paren
+r_struct
+id|netstats
+)paren
+)paren
+suffix:semicolon
+id|dev_plip2.priv
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+)brace
+macro_line|#endif /* MODULE */
 eof
