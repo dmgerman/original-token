@@ -1363,20 +1363,6 @@ c_func
 id|kbd_read_mask
 )paren
 comma
-macro_line|#ifdef CONFIG_TR
-id|X
-c_func
-(paren
-id|tr_setup
-)paren
-comma
-id|X
-c_func
-(paren
-id|tr_type_trans
-)paren
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDE_PCMCIA
 id|X
 c_func

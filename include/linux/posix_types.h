@@ -1,8 +1,6 @@
 macro_line|#ifndef _LINUX_POSIX_TYPES_H
 DECL|macro|_LINUX_POSIX_TYPES_H
 mdefine_line|#define _LINUX_POSIX_TYPES_H
-DECL|macro|_GNU_TYPES_H
-mdefine_line|#define _GNU_TYPES_H
 multiline_comment|/*&n; * This file is generally used by user-level software, so you need to&n; * be a little careful about namespace pollution etc.  Also, we cannot&n; * assume GCC is being used.&n; */
 macro_line|#ifndef NULL
 DECL|macro|NULL
@@ -43,35 +41,10 @@ id|fds_bits
 id|__FDSET_INTS
 )braket
 suffix:semicolon
-DECL|typedef|__fd_set
+DECL|typedef|__kernel_fd_set
 )brace
-id|__fd_set
+id|__kernel_fd_set
 suffix:semicolon
 macro_line|#include &lt;asm/posix_types.h&gt;
-multiline_comment|/* bsd */
-DECL|typedef|__u_char
-r_typedef
-r_int
-r_char
-id|__u_char
-suffix:semicolon
-DECL|typedef|__u_short
-r_typedef
-r_int
-r_int
-id|__u_short
-suffix:semicolon
-DECL|typedef|__u_int
-r_typedef
-r_int
-r_int
-id|__u_int
-suffix:semicolon
-DECL|typedef|__u_long
-r_typedef
-r_int
-r_int
-id|__u_long
-suffix:semicolon
 macro_line|#endif /* _LINUX_POSIX_TYPES_H */
 eof

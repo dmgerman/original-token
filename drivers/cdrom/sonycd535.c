@@ -6368,7 +6368,7 @@ c_cond
 (paren
 id|ints
 (braket
-l_int|0
+l_int|1
 )braket
 op_ne
 l_int|0

@@ -1532,7 +1532,11 @@ l_int|0
 )paren
 (brace
 r_return
+(paren
 id|total_count
+op_minus
+id|fpos
+)paren
 suffix:semicolon
 )brace
 r_if

@@ -5,7 +5,7 @@ macro_line|#ifndef _LINUX_TYPES_DONT_EXPORT
 macro_line|#include &lt;linux/posix_types.h&gt;
 DECL|typedef|fsid_t
 r_typedef
-id|__fsid_t
+id|__kernel_fsid_t
 id|fsid_t
 suffix:semicolon
 macro_line|#endif
@@ -51,7 +51,7 @@ r_int
 id|f_ffree
 suffix:semicolon
 DECL|member|f_fsid
-id|__fsid_t
+id|__kernel_fsid_t
 id|f_fsid
 suffix:semicolon
 multiline_comment|/* linux-specific entries start here.. */

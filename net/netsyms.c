@@ -309,6 +309,20 @@ id|NS8390_init
 )paren
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_TR
+id|X
+c_func
+(paren
+id|tr_setup
+)paren
+comma
+id|X
+c_func
+(paren
+id|tr_type_trans
+)paren
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#endif

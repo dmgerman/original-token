@@ -156,7 +156,7 @@ r_char
 op_star
 id|stl_drvversion
 op_assign
-l_string|&quot;1.0.6&quot;
+l_string|&quot;1.0.8&quot;
 suffix:semicolon
 DECL|variable|stl_serialname
 r_static

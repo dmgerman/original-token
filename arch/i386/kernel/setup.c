@@ -910,6 +910,59 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|function|i686model
+r_static
+r_const
+r_char
+op_star
+id|i686model
+c_func
+(paren
+r_int
+r_int
+id|nr
+)paren
+(brace
+r_static
+r_const
+r_char
+op_star
+id|model
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;PPro A-step&quot;
+comma
+l_string|&quot;Pentium Pro&quot;
+)brace
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr
+OL
+r_sizeof
+(paren
+id|model
+)paren
+op_div
+r_sizeof
+(paren
+r_char
+op_star
+)paren
+)paren
+r_return
+id|model
+(braket
+id|nr
+)braket
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 DECL|function|getmodel
 r_static
 r_const
@@ -964,6 +1017,19 @@ suffix:colon
 id|p
 op_assign
 id|i586model
+c_func
+(paren
+id|model
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|6
+suffix:colon
+id|p
+op_assign
+id|i686model
 c_func
 (paren
 id|model
@@ -1248,6 +1314,7 @@ comma
 l_string|&quot;fdiv_bug&bslash;t: %s&bslash;n&quot;
 l_string|&quot;hlt_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;fpu_exception&bslash;t: %s&bslash;n&quot;
 l_string|&quot;cpuid&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;wp&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;flags&bslash;t&bslash;t:&quot;
@@ -1278,6 +1345,21 @@ id|CD
 c_func
 (paren
 id|hard_math
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+(paren
+id|CD
+c_func
+(paren
+id|hard_math
+)paren
+op_logical_and
+id|ignore_irq13
 )paren
 ques
 c_cond

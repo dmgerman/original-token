@@ -27,8 +27,8 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
-macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;net/ax25.h&gt;&t;/* For AX25_P_IP */
 macro_line|#endif

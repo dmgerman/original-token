@@ -408,7 +408,7 @@ id|bdf_prm
 op_assign
 (brace
 (brace
-l_int|25
+l_int|60
 comma
 l_int|500
 comma

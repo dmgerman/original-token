@@ -105,6 +105,11 @@ id|request
 op_star
 id|current_request
 suffix:semicolon
+DECL|member|plug
+r_struct
+id|request
+id|plug
+suffix:semicolon
 DECL|member|plug_tq
 r_struct
 id|tq_struct
@@ -112,8 +117,6 @@ id|plug_tq
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|IS_PLUGGED
-mdefine_line|#define IS_PLUGGED(dev) ((dev)-&gt;plug_tq.sync)
 DECL|struct|sec_size
 r_struct
 id|sec_size
