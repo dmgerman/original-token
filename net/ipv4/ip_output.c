@@ -2860,6 +2860,11 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+r_else
+id|skb-&gt;arp
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Find where to start putting bytes.&n;&t;&t; */
 id|skb-&gt;ip_hdr
 op_assign

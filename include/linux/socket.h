@@ -193,6 +193,8 @@ DECL|macro|IPTOS_THROUGHPUT
 mdefine_line|#define&t;IPTOS_THROUGHPUT&t;0x08
 DECL|macro|IPTOS_RELIABILITY
 mdefine_line|#define&t;IPTOS_RELIABILITY&t;0x04
+DECL|macro|IPTOS_MINCOST
+mdefine_line|#define&t;IPTOS_MINCOST&t;&t;0x02
 DECL|macro|IP_TTL
 mdefine_line|#define IP_TTL&t;&t;2
 DECL|macro|IP_HDRINCL

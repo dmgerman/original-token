@@ -359,8 +359,10 @@ c_func
 )paren
 )paren
 r_return
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
+multiline_comment|/* Aieee!!! Out of swap space! */
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
@@ -1313,6 +1315,13 @@ id|wait
 )paren
 )paren
 (brace
+r_case
+op_minus
+l_int|1
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
 r_case
 l_int|0
 suffix:colon

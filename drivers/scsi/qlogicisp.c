@@ -19,7 +19,7 @@ macro_line|#include &quot;qlogicisp.h&quot;
 multiline_comment|/* Configuration section *****************************************************/
 multiline_comment|/* Set the following macro to 1 to reload the ISP1020&squot;s firmware.  This is&n;   the latest firmware provided by QLogic.  This may be an earlier/later&n;   revision than supplied by your board. */
 DECL|macro|RELOAD_FIRMWARE
-mdefine_line|#define RELOAD_FIRMWARE&t;&t;0
+mdefine_line|#define RELOAD_FIRMWARE&t;&t;1
 multiline_comment|/* Set the following macro to 1 to reload the ISP1020&squot;s defaults from nvram.&n;   If you are not sure of your settings, leave this alone, the driver will&n;   use a set of &squot;safe&squot; defaults */
 DECL|macro|USE_NVRAM_DEFAULTS
 mdefine_line|#define USE_NVRAM_DEFAULTS&t;0

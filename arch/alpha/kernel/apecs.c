@@ -2046,9 +2046,22 @@ op_star
 id|mchk_header
 suffix:semicolon
 r_struct
+id|el_procdata
+op_star
+id|mchk_procdata
+suffix:semicolon
+r_struct
 id|el_apecs_sysdata_mcheck
 op_star
 id|mchk_sysdata
+suffix:semicolon
+r_int
+r_int
+op_star
+id|ptr
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|mchk_header
 op_assign
@@ -2058,6 +2071,24 @@ id|el_common
 op_star
 )paren
 id|la_ptr
+suffix:semicolon
+id|mchk_procdata
+op_assign
+(paren
+r_struct
+id|el_procdata
+op_star
+)paren
+(paren
+id|la_ptr
+op_plus
+id|mchk_header-&gt;proc_offset
+op_minus
+r_sizeof
+(paren
+id|mchk_procdata-&gt;paltemp
+)paren
+)paren
 suffix:semicolon
 id|mchk_sysdata
 op_assign
@@ -2072,9 +2103,9 @@ op_plus
 id|mchk_header-&gt;sys_offset
 )paren
 suffix:semicolon
-id|DBG
+macro_line|#ifdef DEBUG
+id|printk
 c_func
-(paren
 (paren
 l_string|&quot;apecs_machine_check: vector=0x%lx la_ptr=0x%lx&bslash;n&quot;
 comma
@@ -2082,13 +2113,11 @@ id|vector
 comma
 id|la_ptr
 )paren
-)paren
 suffix:semicolon
-id|DBG
+id|printk
 c_func
 (paren
-(paren
-l_string|&quot;                     pc=0x%lx size=0x%x procoffset=0x%x sysoffset 0x%x&bslash;n&quot;
+l_string|&quot;        pc=0x%lx size=0x%x procoffset=0x%x sysoffset 0x%x&bslash;n&quot;
 comma
 id|regs-&gt;pc
 comma
@@ -2098,11 +2127,9 @@ id|mchk_header-&gt;proc_offset
 comma
 id|mchk_header-&gt;sys_offset
 )paren
-)paren
 suffix:semicolon
-id|DBG
+id|printk
 c_func
-(paren
 (paren
 l_string|&quot;apecs_machine_check: expected %d DCSR 0x%lx PEAR 0x%lx&bslash;n&quot;
 comma
@@ -2112,17 +2139,6 @@ id|mchk_sysdata-&gt;epic_dcsr
 comma
 id|mchk_sysdata-&gt;epic_pear
 )paren
-)paren
-suffix:semicolon
-macro_line|#ifdef DEBUG
-(brace
-r_int
-r_int
-op_star
-id|ptr
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 id|ptr
 op_assign
@@ -2180,16 +2196,45 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-)brace
 macro_line|#endif /* DEBUG */
 multiline_comment|/*&n;&t; * Check if machine check is due to a badaddr() and if so,&n;&t; * ignore the machine check.&n;&t; */
 macro_line|#ifdef CONFIG_ALPHA_MIKASA
-multiline_comment|/* for now on MIKASA, if it was expected, ignore it */
-multiline_comment|/* we need the details of the mcheck frame to really know... */
+DECL|macro|MCHK_NO_DEVSEL
+mdefine_line|#define MCHK_NO_DEVSEL 0x205L
+DECL|macro|MCHK_NO_TABT
+mdefine_line|#define MCHK_NO_TABT 0x204L
 r_if
 c_cond
 (paren
 id|apecs_mcheck_expected
+op_logical_and
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|mchk_procdata-&gt;paltemp
+(braket
+l_int|0
+)braket
+op_eq
+id|MCHK_NO_DEVSEL
+)paren
+op_logical_or
+(paren
+(paren
+r_int
+r_int
+)paren
+id|mchk_procdata-&gt;paltemp
+(braket
+l_int|0
+)braket
+op_eq
+id|MCHK_NO_TABT
+)paren
+)paren
 )paren
 (brace
 macro_line|#else
@@ -2245,6 +2290,163 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|DBG
+c_func
+(paren
+(paren
+l_string|&quot;apecs_machine_check: EXPECTED&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|vector
+op_eq
+l_int|0x620
+op_logical_or
+id|vector
+op_eq
+l_int|0x630
+)paren
+(brace
+id|wrmces
+c_func
+(paren
+l_int|0x1f
+)paren
+suffix:semicolon
+multiline_comment|/* disable correctable from now on */
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|draina
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;apecs_machine_check: HW correctable (0x%lx)&bslash;n&quot;
+comma
+id|vector
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;APECS machine check:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  vector=0x%lx la_ptr=0x%lx&bslash;n&quot;
+comma
+id|vector
+comma
+id|la_ptr
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  pc=0x%lx size=0x%x procoffset=0x%x sysoffset 0x%x&bslash;n&quot;
+comma
+id|regs-&gt;pc
+comma
+id|mchk_header-&gt;size
+comma
+id|mchk_header-&gt;proc_offset
+comma
+id|mchk_header-&gt;sys_offset
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  expected %d DCSR 0x%lx PEAR 0x%lx&bslash;n&quot;
+comma
+id|apecs_mcheck_expected
+comma
+id|mchk_sysdata-&gt;epic_dcsr
+comma
+id|mchk_sysdata-&gt;epic_pear
+)paren
+suffix:semicolon
+id|ptr
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|la_ptr
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|mchk_header-&gt;size
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+suffix:semicolon
+id|i
+op_add_assign
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; +%lx %lx %lx&bslash;n&quot;
+comma
+id|i
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+comma
+id|ptr
+(braket
+id|i
+)braket
+comma
+id|ptr
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+)paren
+suffix:semicolon
+)brace
+macro_line|#if 0
+multiline_comment|/* doesn&squot;t work with MILO */
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 macro_line|#endif /* CONFIG_ALPHA_APECS */

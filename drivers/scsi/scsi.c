@@ -133,6 +133,10 @@ r_int
 op_star
 id|max_scsi_dev
 comma
+r_int
+op_star
+id|sparse_lun
+comma
 id|Scsi_Device
 op_star
 op_star
@@ -494,6 +498,8 @@ DECL|macro|BLIST_SINGLELUN
 mdefine_line|#define BLIST_SINGLELUN 0x10
 DECL|macro|BLIST_NOTQ
 mdefine_line|#define BLIST_NOTQ&t;0x20
+DECL|macro|BLIST_SPARSELUN
+mdefine_line|#define BLIST_SPARSELUN 0x40
 DECL|struct|dev_info
 r_struct
 id|dev_info
@@ -967,6 +973,16 @@ comma
 l_string|&quot;*&quot;
 comma
 id|BLIST_SINGLELUN
+)brace
+comma
+(brace
+l_string|&quot;CANON&quot;
+comma
+l_string|&quot;IPUBJD&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_SPARSELUN
 )brace
 comma
 multiline_comment|/*&n; * Must be at end of list...&n; */
@@ -1491,6 +1507,8 @@ id|SDpnt
 suffix:semicolon
 r_int
 id|max_dev_lun
+comma
+id|sparse_lun
 suffix:semicolon
 id|Scsi_Cmnd
 op_star
@@ -1686,6 +1704,9 @@ op_amp
 id|max_dev_lun
 comma
 op_amp
+id|sparse_lun
+comma
+op_amp
 id|SDpnt
 comma
 id|SCpnt
@@ -1870,6 +1891,10 @@ suffix:colon
 id|shpnt-&gt;max_lun
 )paren
 suffix:semicolon
+id|sparse_lun
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1901,6 +1926,9 @@ op_amp
 id|max_dev_lun
 comma
 op_amp
+id|sparse_lun
+comma
+op_amp
 id|SDpnt
 comma
 id|SCpnt
@@ -1909,6 +1937,9 @@ id|shpnt
 comma
 id|scsi_result
 )paren
+op_logical_and
+op_logical_neg
+id|sparse_lun
 )paren
 r_break
 suffix:semicolon
@@ -2082,6 +2113,10 @@ comma
 r_int
 op_star
 id|max_dev_lun
+comma
+r_int
+op_star
+id|sparse_lun
 comma
 id|Scsi_Device
 op_star
@@ -3272,6 +3307,29 @@ id|SDpnt-&gt;single_lun
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;   * If this device is known to support sparse multiple units, override the&n;   * other settings, and scan all of them.&n;   */
+r_if
+c_cond
+(paren
+id|bflags
+op_amp
+id|BLIST_SPARSELUN
+)paren
+(brace
+op_star
+id|max_dev_lun
+op_assign
+l_int|8
+suffix:semicolon
+op_star
+id|sparse_lun
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;   * If this device is known to support multiple units, override the other&n;   * settings, and scan all of them.&n;   */
 r_if
 c_cond

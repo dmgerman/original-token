@@ -2460,9 +2460,13 @@ l_int|0
 )braket
 )paren
 op_assign
+id|htons
+c_func
+(paren
 id|request_size
 op_minus
 l_int|2
+)paren
 suffix:semicolon
 )brace
 id|h-&gt;type

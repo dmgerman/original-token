@@ -8202,7 +8202,7 @@ suffix:semicolon
 r_case
 id|NC
 suffix:colon
-macro_line|#ifndef __alpha__
+multiline_comment|/* default to TP for all */
 id|reset_init_sia
 c_func
 (paren
@@ -8215,21 +8215,6 @@ comma
 l_int|0x0000
 )paren
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* JAE: for Alpha, default to BNC/AUI, *not* TP */
-id|reset_init_sia
-c_func
-(paren
-id|dev
-comma
-l_int|0x8f09
-comma
-l_int|0x0705
-comma
-l_int|0x0006
-)paren
-suffix:semicolon
-macro_line|#endif  /* i386 */
 r_if
 c_cond
 (paren

@@ -10,7 +10,7 @@ r_int
 id|d_ino
 suffix:semicolon
 DECL|member|d_off
-id|off_t
+id|__kernel_off_t
 id|d_off
 suffix:semicolon
 DECL|member|d_reclen

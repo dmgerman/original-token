@@ -4528,6 +4528,7 @@ id|NOT_READY
 )paren
 (brace
 r_int
+r_int
 id|time1
 suffix:semicolon
 r_if
@@ -4681,6 +4682,8 @@ suffix:semicolon
 id|time1
 op_assign
 id|jiffies
+op_plus
+id|HZ
 suffix:semicolon
 r_while
 c_loop
@@ -4688,8 +4691,6 @@ c_loop
 id|jiffies
 OL
 id|time1
-op_plus
-id|HZ
 )paren
 (brace
 suffix:semicolon

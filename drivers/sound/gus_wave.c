@@ -6805,7 +6805,7 @@ id|samples
 id|sample
 )braket
 dot
-id|len
+id|loop_end
 comma
 (paren
 id|samples
@@ -6880,7 +6880,7 @@ id|samples
 id|sample
 )braket
 dot
-id|loop_end
+id|len
 op_minus
 l_int|1
 comma

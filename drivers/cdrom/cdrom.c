@@ -1926,7 +1926,7 @@ id|GETARG
 c_func
 (paren
 r_struct
-id|cdrom_mdf
+id|cdrom_msf
 comma
 id|msf
 )paren
@@ -1990,7 +1990,7 @@ id|GETARG
 c_func
 (paren
 r_struct
-id|cdrom_volctl
+id|cdrom_volctrl
 comma
 id|volume
 )paren
@@ -2040,7 +2040,7 @@ id|PUTARG
 c_func
 (paren
 r_struct
-id|cdrom_volctl
+id|cdrom_volctrl
 comma
 id|volume
 )paren

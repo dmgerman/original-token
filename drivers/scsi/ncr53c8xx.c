@@ -24153,7 +24153,6 @@ r_else
 r_if
 c_cond
 (paren
-op_star
 id|start
 )paren
 op_star
