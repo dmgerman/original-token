@@ -1410,11 +1410,6 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|info-&gt;disp-&gt;var
-op_assign
-op_star
-id|var
-suffix:semicolon
 r_for
 c_loop
 (paren

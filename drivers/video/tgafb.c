@@ -1040,6 +1040,7 @@ id|palette
 l_int|256
 )braket
 suffix:semicolon
+macro_line|#ifdef FBCON_HAS_CFB32
 DECL|variable|fbcon_cfb32_cmap
 r_static
 id|u32
@@ -1048,6 +1049,7 @@ id|fbcon_cfb32_cmap
 l_int|16
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|variable|fb_fix
 r_static
 r_struct

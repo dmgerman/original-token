@@ -5213,6 +5213,16 @@ id|SMC37c669_CONFIG_REGS
 op_star
 id|SMC_base
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5228,18 +5238,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SMC37c669 Super I/O Controller found @ 0x%lx&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|SMC_base
-)paren
-suffix:semicolon
 macro_line|#if SMC_DEBUG
 id|SMC37c669_config_mode
 c_func
@@ -5392,9 +5390,33 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SMC37c669 Super I/O Controller found @ 0x%lx&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|SMC_base
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 macro_line|#if SMC_DEBUG
 id|printk
 c_func

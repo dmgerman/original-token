@@ -10866,8 +10866,7 @@ l_string|&quot;rs_open&quot;
 )paren
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
+multiline_comment|/* MOD_DEC_USE_COUNT; &quot;info-&gt;tty&quot; will cause this */
 r_return
 op_minus
 id|ENODEV
@@ -10922,8 +10921,7 @@ op_logical_neg
 id|page
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
+multiline_comment|/* MOD_DEC_USE_COUNT; &quot;info-&gt;tty&quot; will cause this? */
 r_return
 op_minus
 id|ENOMEM
@@ -10982,8 +10980,7 @@ op_amp
 id|info-&gt;close_wait
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
+multiline_comment|/* MOD_DEC_USE_COUNT; &quot;info-&gt;tty&quot; will cause this? */
 macro_line|#ifdef SERIAL_DO_RESTART
 r_return
 (paren
@@ -11023,8 +11020,7 @@ c_cond
 id|retval
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
+multiline_comment|/* MOD_DEC_USE_COUNT; &quot;info-&gt;tty&quot; will cause this? */
 r_return
 id|retval
 suffix:semicolon
@@ -11047,8 +11043,7 @@ c_cond
 id|retval
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
+multiline_comment|/* MOD_DEC_USE_COUNT; &quot;info-&gt;tty&quot; will cause this? */
 macro_line|#ifdef SERIAL_DEBUG_OPEN
 id|printk
 c_func

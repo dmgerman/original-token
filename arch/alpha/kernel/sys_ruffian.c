@@ -194,6 +194,11 @@ l_int|16
 )paren
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* ... and read it back to make sure it got written.  */
 op_star
 (paren
@@ -273,7 +278,8 @@ op_eq
 l_int|7
 )paren
 (brace
-multiline_comment|/* Copy this bit from isa_device_interrupt cause&n;&t;&t;&t;   we need to hook into int 0 for the timer.  I&n;&t;&t;&t;   refuse to soil device_interrupt with ifdefs.  */
+multiline_comment|/* if ISA int */
+multiline_comment|/* Copy this code from isa_device_interrupt because&n;&t;&t;&t;   we need to hook into int 0 for the timer.  I&n;&t;&t;&t;   refuse to soil device_interrupt with ifdefs.  */
 multiline_comment|/* Generate a PCI interrupt acknowledge cycle.&n;&t;&t;&t;   The PIC will respond with the interrupt&n;&t;&t;&t;   vector of the highest priority interrupt&n;&t;&t;&t;   that is pending.  The PALcode sets up the&n;&t;&t;&t;   interrupts vectors such that irq level L&n;&t;&t;&t;   generates vector L.  */
 r_int
 r_int
@@ -317,16 +323,18 @@ op_eq
 l_int|0
 )paren
 (brace
-id|timer_interrupt
+id|handle_irq
 c_func
 (paren
-l_int|0
+l_int|8
 comma
-l_int|NULL
+op_minus
+l_int|1
 comma
 id|regs
 )paren
 suffix:semicolon
+multiline_comment|/* fake it */
 id|ruffian_ack_irq
 c_func
 (paren
@@ -350,7 +358,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* if not timer int */
+multiline_comment|/* if not an ISA int */
 id|handle_irq
 c_func
 (paren
@@ -598,6 +606,7 @@ r_void
 (brace
 multiline_comment|/* layout_all_busses(DEFAULT_IO_BASE, DEFAULT_MEM_BASE); */
 )brace
+macro_line|#ifdef BUILDING_FOR_MILO
 multiline_comment|/*&n; * The DeskStation Ruffian motherboard firmware does not place&n; * the memory size in the PALimpure area.  Therefore, we use&n; * the Bank Configuration Registers in PYXIS to obtain the size.&n; */
 r_static
 r_int
@@ -726,6 +735,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+macro_line|#endif /* BUILDING_FOR_MILO */
 r_static
 r_void
 id|__init
@@ -812,6 +822,8 @@ op_star
 id|reboot_cmd
 )paren
 (brace
+macro_line|#if 0
+multiline_comment|/* this only causes re-entry to ARCSBIOS */
 multiline_comment|/* Perhaps this works for other PYXIS as well?  */
 op_star
 (paren
@@ -826,6 +838,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|generic_kill_arch
 c_func
 (paren

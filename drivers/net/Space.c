@@ -759,6 +759,17 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|acenic_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Detachable devices (&quot;pocket adaptors&quot;) */
 r_extern
 r_int
@@ -1054,6 +1065,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_YELLOWFIN
 (brace
 id|yellowfin_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ACENIC
+(brace
+id|acenic_probe
 comma
 l_int|0
 )brace

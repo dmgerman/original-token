@@ -2626,7 +2626,7 @@ comma
 id|l
 )paren
 suffix:semicolon
-multiline_comment|/* Also clear out the upper 16 bits.  */
+multiline_comment|/*&n;&t;&t; * Also:&n;&t;&t; *       clear out the upper 16 bits of IO base/limit.&n;&t;&t; *       clear out the upper 32 bits of PREF base/limit.&n;&t;&t;*/
 id|pcibios_write_config_dword
 c_func
 (paren
@@ -2639,7 +2639,31 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Set up the top and bottom of the  PCI Memory segment&n;&t;&t; * for this bus.&n;&t;&t; */
+id|pcibios_write_config_dword
+c_func
+(paren
+id|bridge-&gt;bus-&gt;number
+comma
+id|bridge-&gt;devfn
+comma
+id|PCI_PREF_BASE_UPPER32
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|pcibios_write_config_dword
+c_func
+(paren
+id|bridge-&gt;bus-&gt;number
+comma
+id|bridge-&gt;devfn
+comma
+id|PCI_PREF_LIMIT_UPPER32
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Set up the top and bottom of the PCI Memory segment&n;&t;&t; * for this bus.&n;&t;&t; */
 id|l
 op_assign
 (paren
@@ -2674,7 +2698,18 @@ comma
 id|l
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Turn off downstream PF memory address range:&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Turn off downstream PF memory address range, unless&n;&t;&t; * there is a VGA behind this bridge, in which case, we&n;&t;&t; * enable the PREFETCH range to include BIOS ROM at C0000.&n;&t;&t; *&n;&t;&t; * NOTE: this is a bit of a hack, done with PREFETCH for&n;&t;&t; * simplicity, rather than having to add it into the above&n;&t;&t; * non-PREFETCH range, which could then be bigger than we want.&n;&t;&t; * We might assume that we could relocate the BIOS ROM, but&n;&t;&t; * that would depend on having it found by those who need it&n;&t;&t; * (the DEC BIOS emulator would find it, but I do not know&n;&t;&t; * about the Xservers). So, we do it this way for now... ;-}&n;&t;&t; */
+id|l
+op_assign
+(paren
+id|found_vga
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|0x0000ffff
+suffix:semicolon
 id|pcibios_write_config_dword
 c_func
 (paren
@@ -2684,39 +2719,34 @@ id|bridge-&gt;devfn
 comma
 id|PCI_PREF_MEMORY_BASE
 comma
-l_int|0x0000ffff
+id|l
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Tell bridge that there is an ISA bus in the system,&n;&t;&t; * and (possibly) a VGA as well.&n;&t;&t; */
-multiline_comment|/* ??? This appears to be a single-byte write into MIN_GNT.&n;&t;&t;   What is up with this?  */
 id|l
 op_assign
-l_int|0x00040000
-suffix:semicolon
-multiline_comment|/* ISA present */
-r_if
-c_cond
 (paren
 id|found_vga
 )paren
-id|l
-op_or_assign
-l_int|0x00080000
+ques
+c_cond
+l_int|0x0c
+suffix:colon
+l_int|0x04
 suffix:semicolon
-multiline_comment|/* VGA present */
-id|pcibios_write_config_dword
+id|pcibios_write_config_byte
 c_func
 (paren
 id|bridge-&gt;bus-&gt;number
 comma
 id|bridge-&gt;devfn
 comma
-l_int|0x3c
+id|PCI_BRIDGE_CONTROL
 comma
 id|l
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Clear status bits, enable I/O (for downstream I/O),&n;&t;&t; * turn on master enable (for upstream I/O), turn on&n;&t;&t; * memory enable (for downstream memory), turn on&n;&t;&t; * master enable (for upstream memory and I/O).&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Clear status bits,&n;&t;&t; * turn on I/O    enable (for downstream I/O),&n;&t;&t; * turn on memory enable (for downstream memory),&n;&t;&t; * turn on master enable (for upstream memory and I/O).&n;&t;&t; */
 id|pcibios_write_config_dword
 c_func
 (paren
@@ -2832,6 +2862,16 @@ id|ide_base
 r_int
 id|data
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -2887,6 +2927,12 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* turn on IDE, really! */
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Look for mis-configured devices&squot; I/O space addresses behind bridges.  */
 r_static

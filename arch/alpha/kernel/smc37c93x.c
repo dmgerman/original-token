@@ -876,6 +876,16 @@ r_int
 r_int
 id|SMCUltraBase
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -891,14 +901,6 @@ op_ne
 l_int|0UL
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SMC FDC37C93X Ultra I/O Controller found @ 0x%lx&bslash;n&quot;
-comma
-id|SMCUltraBase
-)paren
-suffix:semicolon
 macro_line|#if SMC_DEBUG
 id|SMCReportDeviceStatus
 c_func
@@ -1010,12 +1012,32 @@ c_func
 id|SMCUltraBase
 )paren
 suffix:semicolon
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SMC FDC37C93X Ultra I/O Controller found @ 0x%lx&bslash;n&quot;
+comma
+id|SMCUltraBase
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
 r_else
 (brace
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|DBG_DEVS
 c_func
 (paren

@@ -717,13 +717,6 @@ c_func
 id|__kernel_thread
 )paren
 suffix:semicolon
-DECL|variable|__down_interruptible
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__down_interruptible
-)paren
-suffix:semicolon
 DECL|variable|__cli
 id|EXPORT_SYMBOL
 c_func

@@ -1139,15 +1139,31 @@ DECL|macro|VT_CHIP_ID
 mdefine_line|#define VT_CHIP_ID&t;0x5654&t;/* mach64VT (ATI264VT) */
 DECL|macro|VU_CHIP_ID
 mdefine_line|#define VU_CHIP_ID&t;0x5655&t;/* mach64VTB (ATI264VTB) */
+DECL|macro|VV_CHIP_ID
+mdefine_line|#define VV_CHIP_ID&t;0x5656&t;/* mach64VT4 (ATI264VT4) */
 multiline_comment|/* mach64CT family / mach64GT (3D RAGE) class */
-DECL|macro|LT_CHIP_ID
-mdefine_line|#define LT_CHIP_ID&t;0x4c54&t;/* 3D RAGE LT */
+DECL|macro|LB_CHIP_ID
+mdefine_line|#define LB_CHIP_ID&t;0x4c42&t;/* RAGE LT PRO, AGP */
+DECL|macro|LD_CHIP_ID
+mdefine_line|#define LD_CHIP_ID&t;0x4c44&t;/* RAGE LT PRO */
 DECL|macro|LG_CHIP_ID
-mdefine_line|#define LG_CHIP_ID&t;0x4c47&t;/* 3D RAGE LG */
+mdefine_line|#define LG_CHIP_ID&t;0x4c47&t;/* RAGE LT PRO */
+DECL|macro|LI_CHIP_ID
+mdefine_line|#define LI_CHIP_ID&t;0x4c49&t;/* RAGE LT PRO */
+DECL|macro|LP_CHIP_ID
+mdefine_line|#define LP_CHIP_ID&t;0x4c50&t;/* RAGE LT PRO */
+DECL|macro|LT_CHIP_ID
+mdefine_line|#define LT_CHIP_ID&t;0x4c54&t;/* RAGE LT */
 DECL|macro|GT_CHIP_ID
-mdefine_line|#define GT_CHIP_ID&t;0x4754&t;/* 3D RAGE (GT) */
+mdefine_line|#define GT_CHIP_ID&t;0x4754&t;/* RAGE (GT) */
 DECL|macro|GU_CHIP_ID
-mdefine_line|#define GU_CHIP_ID&t;0x4755&t;/* 3D RAGE II/II+ (GTB) */
+mdefine_line|#define GU_CHIP_ID&t;0x4755&t;/* RAGE II/II+ (GTB) */
+DECL|macro|GV_CHIP_ID
+mdefine_line|#define GV_CHIP_ID&t;0x4756&t;/* RAGE IIC, PCI */
+DECL|macro|GW_CHIP_ID
+mdefine_line|#define GW_CHIP_ID&t;0x4757&t;/* RAGE IIC, AGP */
+DECL|macro|GZ_CHIP_ID
+mdefine_line|#define GZ_CHIP_ID&t;0x475a&t;/* RAGE IIC, AGP */
 DECL|macro|GB_CHIP_ID
 mdefine_line|#define GB_CHIP_ID&t;0x4742&t;/* RAGE PRO, BGA, AGP 1x and 2x */
 DECL|macro|GD_CHIP_ID

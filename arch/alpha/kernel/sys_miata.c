@@ -61,7 +61,7 @@ l_int|16
 )paren
 op_amp
 op_complement
-l_int|0x4000000000000e3bUL
+l_int|0x400000000000063bUL
 suffix:semicolon
 id|mb
 c_func
@@ -145,7 +145,7 @@ multiline_comment|/*&n;&t; * For now, AND off any bits we are not interested in:
 multiline_comment|/* Maybe HALT should only be used for SRM console boots? */
 id|pld
 op_and_assign
-l_int|0x00000000fffff1c4UL
+l_int|0x00000000fffff9c4UL
 suffix:semicolon
 multiline_comment|/*&n;&t; * Now for every possible bit set, work through them and call&n;&t; * the appropriate interrupt handler.&n;&t; */
 r_while
@@ -275,7 +275,7 @@ l_int|0x800
 op_rshift
 l_int|4
 suffix:semicolon
-multiline_comment|/*&n;&t; * I really hate to do this, but the MIATA SRM console ignores the&n;&t; *  low 8 bits in the interrupt summary register, and reports the&n;&t; *  vector 0x80 *lower* than I expected from the bit numbering in&n;&t; *  the documentation.&n;&t; * This was done because the low 8 summary bits really aren&squot;t used&n;&t; *  for reporting any interrupts (the PCI-ISA bridge, bit 7, isn&squot;t&n;&t; *  used for this purpose, as PIC interrupts are delivered as the&n;&t; *  vectors 0x800-0x8f0).&n;&t; * But I really don&squot;t want to change the fixup code for allocation&n;&t; *  of IRQs, nor the alpha_irq_mask maintenance stuff, both of which look&n;&t; *  nice and clean now.&n;&t; * So, here&squot;s this grotty hack... :-(&n;&t; */
+multiline_comment|/*&n;&t; * I really hate to do this, but the MIATA SRM console ignores the&n;&t; *  low 8 bits in the interrupt summary register, and reports the&n;&t; *  vector 0x80 *lower* than I expected from the bit numbering in&n;&t; *  the documentation.&n;&t; * This was done because the low 8 summary bits really aren&squot;t used&n;&t; *  for reporting any interrupts (the PCI-ISA bridge, bit 7, isn&squot;t&n;&t; *  used for this purpose, as PIC interrupts are delivered as the&n;&t; *  vectors 0x800-0x8f0).&n;&t; * But I really don&squot;t want to change the fixup code for allocation&n;&t; *  of IRQs, nor the alpha_irq_mask maintenance stuff, both of which&n;&t; *  look nice and clean now.&n;&t; * So, here&squot;s this grotty hack... :-(&n;&t; */
 r_if
 c_cond
 (paren
@@ -339,6 +339,9 @@ id|alpha_irq_mask
 op_rshift
 l_int|16
 )paren
+op_amp
+op_complement
+l_int|0x400000000000063bUL
 suffix:semicolon
 id|mb
 c_func
@@ -383,7 +386,7 @@ id|vulp
 )paren
 id|PYXIS_INT_REQ
 op_assign
-l_int|0x4000000000000000UL
+l_int|0x4000000000000180UL
 suffix:semicolon
 id|mb
 c_func
@@ -535,8 +538,6 @@ l_int|1
 )brace
 comma
 multiline_comment|/* IdSel 17,  none    */
-multiline_comment|/*&t;{16+11, 16+11, 16+11, 16+11, 16+11},*/
-multiline_comment|/* IdSel 17,  USB ??  */
 (brace
 op_minus
 l_int|1
@@ -655,7 +656,84 @@ l_int|19
 )brace
 comma
 multiline_comment|/* IdSel 23,  slot 5  */
-multiline_comment|/* The following are actually on bus 1, which is&n;&t;&t;   across the builtin PCI-PCI bridge.  */
+multiline_comment|/* the next 7 are actually on PCI bus 1, across the bridge */
+(brace
+l_int|16
+op_plus
+l_int|11
+comma
+l_int|16
+op_plus
+l_int|11
+comma
+l_int|16
+op_plus
+l_int|11
+comma
+l_int|16
+op_plus
+l_int|11
+comma
+l_int|16
+op_plus
+l_int|11
+)brace
+comma
+multiline_comment|/* IdSel 24,  QLISP/GL*/
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 25,  none    */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 26,  none    */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 27,  none    */
 (brace
 l_int|16
 op_plus
@@ -678,7 +756,7 @@ op_plus
 l_int|23
 )brace
 comma
-multiline_comment|/* IdSel 24,  slot 1  */
+multiline_comment|/* IdSel 28,  slot 1  */
 (brace
 l_int|16
 op_plus
@@ -701,7 +779,7 @@ op_plus
 l_int|27
 )brace
 comma
-multiline_comment|/* IdSel 25,  slot 2  */
+multiline_comment|/* IdSel 29,  slot 2  */
 (brace
 l_int|16
 op_plus
@@ -724,79 +802,8 @@ op_plus
 l_int|31
 )brace
 comma
-multiline_comment|/* IdSel 26,  slot 3  */
-(brace
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-)brace
-comma
-multiline_comment|/* IdSel 27,  none    */
-(brace
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-)brace
-comma
-multiline_comment|/* IdSel 28,  none    */
-(brace
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-)brace
-comma
-multiline_comment|/* IdSel 29,  none    */
-(brace
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-)brace
-comma
-multiline_comment|/* IdSel 30,  none    */
+multiline_comment|/* IdSel 30,  slot 3  */
+multiline_comment|/* this bridge is on the main bus of the later original MIATA */
 (brace
 op_minus
 l_int|1
@@ -893,7 +900,7 @@ c_func
 id|dev-&gt;devfn
 )paren
 op_plus
-l_int|5
+l_int|9
 suffix:semicolon
 )brace
 r_else
@@ -933,7 +940,7 @@ c_func
 id|dev-&gt;devfn
 )paren
 op_plus
-l_int|5
+l_int|9
 suffix:semicolon
 r_break
 suffix:semicolon

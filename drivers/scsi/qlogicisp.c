@@ -4284,13 +4284,14 @@ id|host-&gt;hostdata
 )paren
 op_member_access_from_pointer
 id|revision
-op_eq
+op_ge
 l_int|5
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : 1040B chip, firmware not (re)loaded&bslash;n&quot;
+l_string|&quot;qlogicisp : 1040B or later chip,&quot;
+l_string|&quot; firmware not (re)loaded&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else

@@ -338,12 +338,6 @@ multiline_comment|/* VGA text console */
 r_extern
 r_struct
 id|consw
-id|compat_con
-suffix:semicolon
-multiline_comment|/* console wrapper */
-r_extern
-r_struct
-id|consw
 id|prom_con
 suffix:semicolon
 multiline_comment|/* SPARC PROM console */

@@ -67,7 +67,7 @@ l_int|256
 )braket
 suffix:semicolon
 multiline_comment|/* Create a handle that is OR-ed into the reported I/O space address&n;   for a device.  We use this later to find the bus a device lives on.  */
-macro_line|#if defined(CONFIG_ALPHA_GENERIC) &bslash;&n;    || defined(CONFIG_ALPHA_MCPCIA) &bslash;&n;    /* || defined(CONFIG_ALPHA_TSUNAMI) */
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) &bslash;&n;    || defined(CONFIG_ALPHA_MCPCIA) &bslash;&n;    || defined(CONFIG_ALPHA_TSUNAMI)
 DECL|macro|PCI_HANDLE
 mdefine_line|#define PCI_HANDLE(bus)   ((bus2hose[bus]-&gt;pci_hose_index &amp; 3UL) &lt;&lt; 32)
 DECL|macro|DEV_IS_ON_PRIMARY

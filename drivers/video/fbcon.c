@@ -2187,6 +2187,40 @@ c_func
 id|p
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|p-&gt;var.yres
+op_mod
+id|fontheight
+c_func
+(paren
+id|p
+)paren
+)paren
+op_logical_and
+(paren
+id|p-&gt;var.yres_virtual
+op_mod
+id|fontheight
+c_func
+(paren
+id|p
+)paren
+OL
+id|p-&gt;var.yres
+op_mod
+id|fontheight
+c_func
+(paren
+id|p
+)paren
+)paren
+)paren
+id|p-&gt;vrows
+op_decrement
+suffix:semicolon
 id|conp-&gt;vc_can_do_color
 op_assign
 id|p-&gt;var.bits_per_pixel
@@ -6211,7 +6245,7 @@ op_member_access_from_pointer
 id|clear
 c_func
 (paren
-l_int|NULL
+id|conp
 comma
 id|p
 comma
@@ -6219,9 +6253,9 @@ l_int|0
 comma
 l_int|0
 comma
-id|p-&gt;conp-&gt;vc_rows
+id|conp-&gt;vc_rows
 comma
-id|p-&gt;conp-&gt;vc_cols
+id|conp-&gt;vc_cols
 )paren
 suffix:semicolon
 r_return
@@ -7077,6 +7111,28 @@ op_assign
 id|p-&gt;var.yres_virtual
 op_div
 id|h
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|p-&gt;var.yres
+op_mod
+id|h
+)paren
+op_logical_and
+(paren
+id|p-&gt;var.yres_virtual
+op_mod
+id|h
+OL
+id|p-&gt;var.yres
+op_mod
+id|h
+)paren
+)paren
+id|p-&gt;vrows
+op_decrement
 suffix:semicolon
 id|updatescrollmode
 c_func
@@ -9905,9 +9961,18 @@ id|plane
 op_assign
 id|p-&gt;next_plane
 suffix:semicolon
+macro_line|#if defined(CONFIG_FBCON_IPLAN2P2) || defined(CONFIG_FBCON_IPLAN2P4) || &bslash;&n;    defined(CONFIG_FBCON_IPLAN2P8)
+r_int
+id|line_length
+op_assign
+id|p-&gt;line_length
+suffix:semicolon
 multiline_comment|/* for support of Atari interleaved planes */
 DECL|macro|MAP_X
-mdefine_line|#define MAP_X(x)&t;(plane &gt; line ? x : (x &amp; ~1)*depth + (x &amp; 1))
+mdefine_line|#define MAP_X(x)&t;(line_length ? x : (x &amp; ~1)*depth + (x &amp; 1))
+macro_line|#else
+mdefine_line|#define MAP_X(x)&t;(x)
+macro_line|#endif
 multiline_comment|/* extract a bit from the source image */
 DECL|macro|BIT
 mdefine_line|#define&t;BIT(p,pix,bit)&t;(p[pix*logo_depth/8] &amp; &bslash;&n;&t;&t;&t; (1 &lt;&lt; ((8-((pix*logo_depth)&amp;7)-logo_depth) + bit)))
