@@ -400,10 +400,16 @@ id|dir-&gt;i_mode
 )paren
 )paren
 (brace
-r_goto
-id|done
+r_return
+op_minus
+id|ENOENT
 suffix:semicolon
 )brace
+id|dentry-&gt;d_op
+op_assign
+op_amp
+id|hfs_dentry_operations
+suffix:semicolon
 id|entry
 op_assign
 id|HFS_I
@@ -696,6 +702,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+multiline_comment|/* this does an hfs_cat_put */
 id|inode
 op_assign
 l_int|NULL
@@ -703,11 +710,6 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
-id|dentry-&gt;d_op
-op_assign
-op_amp
-id|hfs_dentry_operations
-suffix:semicolon
 id|d_add
 c_func
 (paren
@@ -1218,14 +1220,14 @@ r_void
 id|hfs_nat_drop_dentry
 c_func
 (paren
-r_const
-id|ino_t
-id|type
-comma
 r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_const
+id|ino_t
+id|type
 )paren
 (brace
 r_struct

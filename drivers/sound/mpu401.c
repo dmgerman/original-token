@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * sound/mpu401.c&n; *&n; * The low level driver for Roland MPU-401 compatible Midi cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer&t;ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;&t;modularisation, use normal request_irq, use dev_id&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|USE_SEQ_MACROS
@@ -42,7 +41,7 @@ DECL|member|opened
 r_int
 id|opened
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Open mode&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Open mode&n;&t;&t;&t;&t; */
 DECL|member|devno
 r_int
 id|devno
@@ -161,9 +160,9 @@ DECL|macro|COMDPORT
 mdefine_line|#define&t;COMDPORT(base)   (base+1)
 DECL|macro|STATPORT
 mdefine_line|#define&t;STATPORT(base)   (base+1)
+DECL|function|mpu401_status
 r_static
 r_int
-DECL|function|mpu401_status
 id|mpu401_status
 c_func
 (paren
@@ -189,9 +188,9 @@ DECL|macro|input_avail
 mdefine_line|#define input_avail(devc)&t;&t;(!(mpu401_status(devc)&amp;INPUT_AVAIL))
 DECL|macro|output_ready
 mdefine_line|#define output_ready(devc)&t;&t;(!(mpu401_status(devc)&amp;OUTPUT_READY))
+DECL|function|write_command
 r_static
 r_void
-DECL|function|write_command
 id|write_command
 c_func
 (paren
@@ -208,9 +207,7 @@ id|cmd
 id|outb
 c_func
 (paren
-(paren
 id|cmd
-)paren
 comma
 id|COMDPORT
 c_func
@@ -220,9 +217,9 @@ id|devc-&gt;base
 )paren
 suffix:semicolon
 )brace
+DECL|function|read_data
 r_static
 r_int
-DECL|function|read_data
 id|read_data
 c_func
 (paren
@@ -244,9 +241,9 @@ id|devc-&gt;base
 )paren
 suffix:semicolon
 )brace
+DECL|function|write_data
 r_static
 r_void
-DECL|function|write_data
 id|write_data
 c_func
 (paren
@@ -263,9 +260,7 @@ id|byte
 id|outb
 c_func
 (paren
-(paren
 id|byte
-)paren
 comma
 id|DATAPORT
 c_func
@@ -306,68 +301,6 @@ r_int
 id|n_mpu_devs
 op_assign
 l_int|0
-suffix:semicolon
-DECL|variable|irq2dev
-r_static
-r_volatile
-r_int
-id|irq2dev
-(braket
-l_int|17
-)braket
-op_assign
-(brace
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-)brace
 suffix:semicolon
 r_static
 r_int
@@ -523,7 +456,7 @@ DECL|macro|STORE
 mdefine_line|#define STORE(cmd)
 macro_line|#else
 DECL|macro|STORE
-mdefine_line|#define STORE(cmd) &bslash;&n;{ &bslash;&n;  int len; &bslash;&n;  unsigned char obuf[8]; &bslash;&n;  cmd; &bslash;&n;  seq_input_event(obuf, len); &bslash;&n;}
+mdefine_line|#define STORE(cmd) &bslash;&n;{ &bslash;&n;&t;int len; &bslash;&n;&t;unsigned char obuf[8]; &bslash;&n;&t;cmd; &bslash;&n;&t;seq_input_event(obuf, len); &bslash;&n;}
 macro_line|#endif
 DECL|macro|_seqbuf
 mdefine_line|#define _seqbuf obuf
@@ -531,9 +464,9 @@ DECL|macro|_seqbufptr
 mdefine_line|#define _seqbufptr 0
 DECL|macro|_SEQ_ADVBUF
 mdefine_line|#define _SEQ_ADVBUF(x) len=x
+DECL|function|mpu_input_scanner
 r_static
 r_int
-DECL|function|mpu_input_scanner
 id|mpu_input_scanner
 c_func
 (paren
@@ -599,8 +532,6 @@ l_int|0xfe
 suffix:colon
 r_return
 id|MPU_ACK
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 l_int|0xf0
@@ -969,7 +900,7 @@ id|devc-&gt;m_state
 op_assign
 id|ST_INIT
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;       *    Real time messages&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *    Real time messages&n;&t;&t;&t;&t;&t; */
 r_case
 l_int|0xf8
 suffix:colon
@@ -1268,9 +1199,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|mpu401_input_loop
 r_static
 r_void
-DECL|function|mpu401_input_loop
 id|mpu401_input_loop
 c_func
 (paren
@@ -1397,8 +1328,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|mpuintr
+r_void
 id|mpuintr
 c_func
 (paren
@@ -1422,112 +1353,17 @@ id|devc
 suffix:semicolon
 r_int
 id|dev
+op_assign
+(paren
+r_int
+)paren
+id|dev_id
 suffix:semicolon
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * FreeBSD (and some others) pass unit number to the interrupt handler.&n; * In this case we have to scan the table for first handler.&n; */
-r_if
-c_cond
-(paren
-id|irq
-template_param
-l_int|15
-)paren
-(brace
-id|dev
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_else
-id|dev
-op_assign
-id|irq2dev
-(braket
-id|irq
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
-r_int
-id|origirq
-op_assign
-id|irq
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|irq
-op_assign
-l_int|0
-suffix:semicolon
-id|irq
-op_le
-l_int|16
-suffix:semicolon
-id|irq
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|irq2dev
-(braket
-id|irq
-)braket
-op_ne
-op_minus
-l_int|1
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq
-OG
-l_int|15
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;MPU-401: Bogus interrupt #%d?&bslash;n&quot;
-comma
-id|origirq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev
-op_assign
-id|irq2dev
-(braket
-id|irq
-)braket
-suffix:semicolon
-id|devc
-op_assign
-op_amp
-id|dev_conf
-(braket
-id|dev
-)braket
-suffix:semicolon
-)brace
-r_else
 id|devc
 op_assign
 op_amp
@@ -1545,6 +1381,7 @@ c_func
 id|devc
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1579,9 +1416,10 @@ id|devc
 suffix:semicolon
 )brace
 )brace
+)brace
+DECL|function|mpu401_open
 r_static
 r_int
-DECL|function|mpu401_open
 id|mpu401_open
 c_func
 (paren
@@ -1659,19 +1497,11 @@ c_cond
 (paren
 id|devc-&gt;opened
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;MPU-401: Midi busy&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;   *  Verify that the device is really running.&n;&t;   *  Some devices (such as Ensoniq SoundScape don&squot;t&n;&t;   *  work before the on board processor (OBP) is initialized&n;&t;   *  by downloading its microcode.&n;&t; */
+multiline_comment|/*&n;&t; *  Verify that the device is really running.&n;&t; *  Some devices (such as Ensoniq SoundScape don&squot;t&n;&t; *  work before the on board processor (OBP) is initialized&n;&t; *  by downloading its microcode.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1695,7 +1525,8 @@ multiline_comment|/* Bus float */
 id|printk
 c_func
 (paren
-l_string|&quot;MPU-401: Device not initialized properly&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;mpu401: Device not initialized properly&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1710,13 +1541,6 @@ id|devc
 )paren
 suffix:semicolon
 )brace
-id|irq2dev
-(braket
-id|devc-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1727,6 +1551,7 @@ id|dev
 op_member_access_from_pointer
 id|coproc
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1767,6 +1592,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+)brace
 id|set_uart_mode
 c_func
 (paren
@@ -1803,9 +1629,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|mpu401_close
 r_static
 r_void
-DECL|function|mpu401_close
 id|mpu401_close
 c_func
 (paren
@@ -1881,9 +1707,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|mpu401_out
 r_static
 r_int
-DECL|function|mpu401_out
 id|mpu401_out
 c_func
 (paren
@@ -1963,7 +1789,8 @@ id|devc
 id|printk
 c_func
 (paren
-l_string|&quot;MPU-401: Send data timeout&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;mpu401: Send data timeout&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1994,9 +1821,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|mpu401_command
 r_static
 r_int
-DECL|function|mpu401_command
 id|mpu401_command
 c_func
 (paren
@@ -2047,7 +1874,8 @@ multiline_comment|/*&n;&t;&t;&t;&t; * Not possible in UART mode&n;&t;&t;&t;&t; *
 id|printk
 c_func
 (paren
-l_string|&quot;MPU-401 commands not possible in the UART mode&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;mpu401: commands not possible in the UART mode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2090,7 +1918,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;MPU-401: Command (0x%x) timeout&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;mpu401: Command (0x%x) timeout&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2164,6 +1993,7 @@ suffix:semicolon
 id|timeout
 op_decrement
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2226,6 +2056,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+)brace
 r_if
 c_cond
 (paren
@@ -2239,7 +2070,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*       printk( &quot;MPU: No ACK to command (0x%x)&bslash;n&quot;,  (int) cmd-&gt;cmd); */
 r_return
 op_minus
 id|EIO
@@ -2250,6 +2080,7 @@ c_cond
 (paren
 id|cmd-&gt;nr_args
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -2312,7 +2143,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;MPU: Command (0x%x), parm send failed.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;mpu401: Command (0x%x), parm send failed.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2324,6 +2156,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+)brace
 )brace
 )brace
 id|ret
@@ -2342,6 +2175,7 @@ c_cond
 (paren
 id|cmd-&gt;nr_returns
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -2417,11 +2251,11 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* printk( &quot;MPU: No response(%d) to command (0x%x)&bslash;n&quot;,  i,  (int) cmd-&gt;cmd);  */
 r_return
 op_minus
 id|EIO
 suffix:semicolon
+)brace
 )brace
 )brace
 id|restore_flags
@@ -2434,9 +2268,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+DECL|function|mpu_cmd
 r_static
 r_int
-DECL|function|mpu_cmd
 id|mpu_cmd
 c_func
 (paren
@@ -2514,11 +2348,9 @@ id|rec
 OL
 l_int|0
 )paren
-(brace
 r_return
 id|ret
 suffix:semicolon
-)brace
 r_return
 (paren
 r_int
@@ -2530,9 +2362,9 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
+DECL|function|mpu401_prefix_cmd
 r_static
 r_int
-DECL|function|mpu401_prefix_cmd
 id|mpu401_prefix_cmd
 c_func
 (paren
@@ -2586,11 +2418,9 @@ l_int|0
 OL
 l_int|0
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_return
 l_int|1
 suffix:semicolon
@@ -2619,15 +2449,11 @@ l_int|0
 OL
 l_int|0
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_return
 l_int|1
-suffix:semicolon
-r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -2636,9 +2462,9 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+DECL|function|mpu401_start_read
 r_static
 r_int
-DECL|function|mpu401_start_read
 id|mpu401_start_read
 c_func
 (paren
@@ -2650,9 +2476,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|mpu401_end_read
 r_static
 r_int
-DECL|function|mpu401_end_read
 id|mpu401_end_read
 c_func
 (paren
@@ -2725,7 +2551,8 @@ multiline_comment|/* No intelligent mode */
 id|printk
 c_func
 (paren
-l_string|&quot;MPU-401: Intelligent mode not supported by the HW&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;mpu401: Intelligent mode not supported by the HW&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2736,7 +2563,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -2772,7 +2599,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__copy_from_user
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2814,7 +2641,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_to_user
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -2843,9 +2670,9 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+DECL|function|mpu401_kick
 r_static
 r_void
-DECL|function|mpu401_kick
 id|mpu401_kick
 c_func
 (paren
@@ -2854,9 +2681,9 @@ id|dev
 )paren
 (brace
 )brace
+DECL|function|mpu401_buffer_status
 r_static
 r_int
-DECL|function|mpu401_buffer_status
 id|mpu401_buffer_status
 c_func
 (paren
@@ -2869,9 +2696,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * No data in buffers&n;&t;&t;&t;&t; */
 )brace
+DECL|function|mpu_synth_ioctl
 r_static
 r_int
-DECL|function|mpu_synth_ioctl
 id|mpu_synth_ioctl
 c_func
 (paren
@@ -2975,15 +2802,11 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_SYNTH_MEMAVL
 suffix:colon
 r_return
 l_int|0x7fffffff
-suffix:semicolon
-r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -2993,9 +2816,9 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+DECL|function|mpu_synth_open
 r_static
 r_int
-DECL|function|mpu_synth_open
 id|mpu_synth_open
 c_func
 (paren
@@ -3039,12 +2862,10 @@ id|midi_dev
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-)brace
 id|devc
 op_assign
 op_amp
@@ -3053,7 +2874,7 @@ id|dev_conf
 id|midi_dev
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;   *  Verify that the device is really running.&n;&t;   *  Some devices (such as Ensoniq SoundScape don&squot;t&n;&t;   *  work before the on board processor (OBP) is initialized&n;&t;   *  by downloading its microcode.&n;&t; */
+multiline_comment|/*&n;&t; *  Verify that the device is really running.&n;&t; *  Some devices (such as Ensoniq SoundScape don&squot;t&n;&t; *  work before the on board processor (OBP) is initialized&n;&t; *  by downloading its microcode.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3077,7 +2898,8 @@ multiline_comment|/* Bus float */
 id|printk
 c_func
 (paren
-l_string|&quot;MPU-401: Device not initialized properly&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;mpu401: Device not initialized properly&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3097,18 +2919,10 @@ c_cond
 (paren
 id|devc-&gt;opened
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;MPU-401: Midi busy&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
 id|devc-&gt;mode
 op_assign
 id|MODE_SYNTH
@@ -3120,13 +2934,6 @@ suffix:semicolon
 id|devc-&gt;inputintr
 op_assign
 l_int|NULL
-suffix:semicolon
-id|irq2dev
-(braket
-id|devc-&gt;irq
-)braket
-op_assign
-id|midi_dev
 suffix:semicolon
 r_if
 c_cond
@@ -3171,7 +2978,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;MPU-401: Can&squot;t access coprocessor device&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;mpu401: Can&squot;t access coprocessor device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3234,9 +3042,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|mpu_synth_close
 r_static
 r_void
-DECL|function|mpu_synth_close
 id|mpu_synth_close
 c_func
 (paren
@@ -3455,9 +3263,9 @@ id|mpu401_midi_operations
 id|MAX_MIDI_DEV
 )braket
 suffix:semicolon
+DECL|function|mpu401_chk_version
 r_static
 r_void
-DECL|function|mpu401_chk_version
 id|mpu401_chk_version
 c_func
 (paren
@@ -3593,8 +3401,8 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_mpu401
+r_void
 id|attach_mpu401
 c_func
 (paren
@@ -3735,13 +3543,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|irq2dev
-(braket
-id|devc-&gt;irq
-)braket
-op_assign
-id|m
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3783,19 +3584,26 @@ c_cond
 op_logical_neg
 id|devc-&gt;shared_irq
 )paren
+(brace
 r_if
 c_cond
 (paren
-id|snd_set_irq_handler
+id|request_irq
 c_func
 (paren
 id|devc-&gt;irq
 comma
 id|mpuintr
 comma
+l_int|0
+comma
 l_string|&quot;mpu401&quot;
 comma
-id|devc-&gt;osp
+(paren
+r_void
+op_star
+)paren
+id|m
 )paren
 OL
 l_int|0
@@ -3818,6 +3626,7 @@ id|m
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 id|save_flags
 c_func
@@ -3924,13 +3733,7 @@ r_struct
 id|synth_operations
 op_star
 )paren
-(paren
-id|sound_mem_blocks
-(braket
-id|sound_nblocks
-)braket
-op_assign
-id|vmalloc
+id|kmalloc
 c_func
 (paren
 r_sizeof
@@ -3938,30 +3741,9 @@ r_sizeof
 r_struct
 id|synth_operations
 )paren
+comma
+id|GFP_KERNEL
 )paren
-)paren
-suffix:semicolon
-id|sound_mem_sizes
-(braket
-id|sound_nblocks
-)braket
-op_assign
-r_sizeof
-(paren
-r_struct
-id|synth_operations
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sound_nblocks
-OL
-l_int|1024
-)paren
-id|sound_nblocks
-op_increment
-suffix:semicolon
 suffix:semicolon
 r_if
 c_cond
@@ -4362,13 +4144,6 @@ c_func
 id|m
 )paren
 suffix:semicolon
-id|irq2dev
-(braket
-id|devc-&gt;irq
-)braket
-op_assign
-id|m
-suffix:semicolon
 id|midi_devs
 (braket
 id|m
@@ -4393,9 +4168,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|reset_mpu401
 r_static
 r_int
-DECL|function|reset_mpu401
 id|reset_mpu401
 c_func
 (paren
@@ -4489,7 +4264,7 @@ id|MPU_RESET
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Send MPU-401 RESET Command&n;&t;&t;&t;&t;&t;&t;&t; */
-multiline_comment|/*&n;&t;&t;   * Wait at least 25 msec. This method is not accurate so let&squot;s make the&n;&t;&t;   * loop bit longer. Cannot sleep since this is called during boot.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Wait at least 25 msec. This method is not accurate so let&squot;s make the&n;&t;&t; * loop bit longer. Cannot sleep since this is called during boot.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -4577,9 +4352,9 @@ r_return
 id|ok
 suffix:semicolon
 )brace
+DECL|function|set_uart_mode
 r_static
 r_void
-DECL|function|set_uart_mode
 id|set_uart_mode
 c_func
 (paren
@@ -4607,10 +4382,8 @@ op_amp
 id|MPU_CAP_INTLG
 )paren
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4626,11 +4399,9 @@ op_eq
 l_int|0
 )paren
 )paren
-(brace
 r_return
 suffix:semicolon
 multiline_comment|/* Already set */
-)brace
 id|reset_mpu401
 c_func
 (paren
@@ -4663,9 +4434,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;MPU%d: Can&squot;t enter UART mode&bslash;n&quot;
-comma
-id|devc-&gt;devno
+id|KERN_ERR
+l_string|&quot;mpu401: Can&squot;t enter UART mode&bslash;n&quot;
 )paren
 suffix:semicolon
 id|devc-&gt;uart_mode
@@ -4681,8 +4451,8 @@ op_assign
 id|arg
 suffix:semicolon
 )brace
-r_int
 DECL|function|probe_mpu401
+r_int
 id|probe_mpu401
 c_func
 (paren
@@ -4716,7 +4486,8 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;nmpu401.c: I/O port %x already in use&bslash;n&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;mpu401: I/O port %x already in use&bslash;n&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
 )paren
@@ -4817,8 +4588,8 @@ r_return
 id|ok
 suffix:semicolon
 )brace
-r_void
 DECL|function|unload_mpu401
+r_void
 id|unload_mpu401
 c_func
 (paren
@@ -4828,6 +4599,18 @@ op_star
 id|hw_config
 )paren
 (brace
+r_void
+op_star
+id|p
+suffix:semicolon
+r_int
+id|n
+op_assign
+id|hw_config-&gt;slots
+(braket
+l_int|1
+)braket
+suffix:semicolon
 id|release_region
 c_func
 (paren
@@ -4847,19 +4630,29 @@ id|hw_config-&gt;irq
 OG
 l_int|0
 )paren
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|hw_config-&gt;irq
+comma
+(paren
+r_void
+op_star
 )paren
+id|n
+)paren
+suffix:semicolon
+id|p
+op_assign
+id|mpu401_synth_operations
+(braket
+id|n
+)braket
 suffix:semicolon
 id|sound_unload_mididev
 c_func
 (paren
-id|hw_config-&gt;slots
-(braket
-l_int|1
-)braket
+id|n
 )paren
 suffix:semicolon
 id|sound_unload_timerdev
@@ -4871,6 +4664,19 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*****************************************************&n; *      Timer stuff&n; ****************************************************/
 macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
@@ -4940,10 +4746,10 @@ r_static
 r_int
 id|metronome_mode
 suffix:semicolon
+DECL|function|clocks2ticks
 r_static
 r_int
 r_int
-DECL|function|clocks2ticks
 id|clocks2ticks
 c_func
 (paren
@@ -4952,7 +4758,7 @@ r_int
 id|clocks
 )paren
 (brace
-multiline_comment|/*&n;&t;   * The MPU-401 supports just a limited set of possible timebase values.&n;&t;   * Since the applications require more choices, the driver has to&n;&t;   * program the HW to do its best and to convert between the HW and&n;&t;   * actual timebases.&n;&t; */
+multiline_comment|/*&n;&t; * The MPU-401 supports just a limited set of possible timebase values.&n;&t; * Since the applications require more choices, the driver has to&n;&t; * program the HW to do its best and to convert between the HW and&n;&t; * actual timebases.&n;&t; */
 r_return
 (paren
 (paren
@@ -4971,9 +4777,9 @@ op_div
 id|hw_timebase
 suffix:semicolon
 )brace
+DECL|function|set_timebase
 r_static
 r_void
-DECL|function|set_timebase
 id|set_timebase
 c_func
 (paren
@@ -5059,7 +4865,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;MPU: Can&squot;t set HW timebase to %d&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;mpu401: Can&squot;t set HW timebase to %d&bslash;n&quot;
 comma
 id|hw_val
 op_star
@@ -5080,9 +4887,9 @@ op_assign
 id|val
 suffix:semicolon
 )brace
+DECL|function|tmr_reset
 r_static
 r_void
-DECL|function|tmr_reset
 id|tmr_reset
 c_func
 (paren
@@ -5130,9 +4937,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|set_timer_mode
 r_static
 r_void
-DECL|function|set_timer_mode
 id|set_timer_mode
 c_func
 (paren
@@ -5255,9 +5062,9 @@ suffix:semicolon
 multiline_comment|/* Use FSK sync */
 )brace
 )brace
+DECL|function|stop_metronome
 r_static
 r_void
-DECL|function|stop_metronome
 id|stop_metronome
 c_func
 (paren
@@ -5277,9 +5084,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Disable metronome */
 )brace
+DECL|function|setup_metronome
 r_static
 r_void
-DECL|function|setup_metronome
 id|setup_metronome
 c_func
 (paren
@@ -5410,9 +5217,9 @@ suffix:semicolon
 multiline_comment|/* Enable metronome without accents */
 )brace
 )brace
+DECL|function|mpu_start_timer
 r_static
 r_int
-DECL|function|mpu_start_timer
 id|mpu_start_timer
 c_func
 (paren
@@ -5518,9 +5325,9 @@ r_return
 id|TIMER_ARMED
 suffix:semicolon
 )brace
+DECL|function|mpu_timer_open
 r_static
 r_int
-DECL|function|mpu_timer_open
 id|mpu_timer_open
 c_func
 (paren
@@ -5623,9 +5430,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|mpu_timer_close
 r_static
 r_void
-DECL|function|mpu_timer_close
 id|mpu_timer_close
 c_func
 (paren
@@ -5689,9 +5496,9 @@ id|midi_dev
 )paren
 suffix:semicolon
 )brace
+DECL|function|mpu_timer_event
 r_static
 r_int
-DECL|function|mpu_timer_event
 id|mpu_timer_event
 c_func
 (paren
@@ -5810,8 +5617,6 @@ c_func
 id|midi_dev
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|TMR_STOP
 suffix:colon
@@ -5920,7 +5725,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;MPU: Can&squot;t set tempo to %d&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;mpu401: Can&squot;t set tempo to %d&bslash;n&quot;
 comma
 (paren
 r_int
@@ -5973,16 +5779,17 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-suffix:semicolon
+(brace
+)brace
 )brace
 r_return
 id|TIMER_NOT_ARMED
 suffix:semicolon
 )brace
+DECL|function|mpu_timer_get_time
 r_static
 r_int
 r_int
-DECL|function|mpu_timer_get_time
 id|mpu_timer_get_time
 c_func
 (paren
@@ -6003,9 +5810,9 @@ r_return
 id|curr_ticks
 suffix:semicolon
 )brace
+DECL|function|mpu_timer_ioctl
 r_static
 r_int
-DECL|function|mpu_timer_ioctl
 id|mpu_timer_ioctl
 c_func
 (paren
@@ -6133,8 +5940,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_TMR_STOP
 suffix:colon
@@ -6161,8 +5966,6 @@ id|midi_dev
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SNDCTL_TMR_CONTINUE
@@ -6192,8 +5995,6 @@ suffix:semicolon
 multiline_comment|/* Send MIDI continue */
 r_return
 l_int|0
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SNDCTL_TMR_TIMEBASE
@@ -6309,7 +6110,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;MPU: Can&squot;t set tempo to %d&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;mpu401: Can&squot;t set tempo to %d&bslash;n&quot;
 comma
 (paren
 r_int
@@ -6409,8 +6211,6 @@ op_assign
 id|curr_ticks
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_TMR_METRONOME
 suffix:colon
@@ -6432,20 +6232,19 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_break
-suffix:semicolon
 r_default
 suffix:colon
-suffix:semicolon
+(brace
+)brace
 )brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+DECL|function|mpu_timer_arm
 r_static
 r_void
-DECL|function|mpu_timer_arm
 id|mpu_timer_arm
 c_func
 (paren
@@ -6521,9 +6320,9 @@ comma
 id|mpu_timer_arm
 )brace
 suffix:semicolon
+DECL|function|mpu_timer_interrupt
 r_static
 r_void
-DECL|function|mpu_timer_interrupt
 id|mpu_timer_interrupt
 c_func
 (paren
@@ -6645,6 +6444,7 @@ c_cond
 op_logical_neg
 id|tmr_running
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -6676,6 +6476,7 @@ c_func
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 r_break
 suffix:semicolon

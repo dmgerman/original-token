@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; *&n; * Supported chips are:&n; *      CS4232&n; *      CS4236&n; *      CS4236B&n; */
+multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; *&n; * Supported chips are:&n; *      CS4232&n; *      CS4236&n; *      CS4236B&n; *&n; * Note: You will need a PnP config setup to initialise some CS4232 boards&n; * anyway.&n; *&n; * Changes&n; *&t;Alan Cox&t;Modularisation, Basic cleanups.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -271,7 +271,7 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* The card is already active */
-multiline_comment|/*&n;&t; * This version of the driver doesn&squot;t use the PnP method when configuring&n;&t; * the card but a simplified method defined by Crystal. This means that&n;&t; * just one CS4232 compatible device can exist on the system. Also this&n;&t; * method conflicts with possible PnP support in the OS. For this reason &n;&t; * driver is just a temporary kludge.&n;&t; */
+multiline_comment|/*&n;&t; * This version of the driver doesn&squot;t use the PnP method when configuring&n;&t; * the card but a simplified method defined by Crystal. This means that&n;&t; * just one CS4232 compatible device can exist on the system. Also this&n;&t; * method conflicts with possible PnP support in the OS. For this reason &n;&t; * driver is just a temporary kludge.&n;&t; *&n;&t; * Also the Cirrus/Crystal method doesnt always work. Try ISAPnP first ;)&n;&t; */
 multiline_comment|/*&n;&t; * Repeat initialization few times since it doesn&squot;t always succeed in&n;&t; * first time.&n;&t; */
 r_for
 c_loop
@@ -1010,8 +1010,8 @@ id|address_info
 id|cfg
 suffix:semicolon
 multiline_comment|/*&n; *&t;Install a CS4232 based card. Need to have ad1848 and mpu401&n; *&t;loaded ready.&n; */
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.56 1998/03/11 02:20:52 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.59 1998/03/13 08:02:20 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -21,10 +21,6 @@ macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|ICMP_PARANOIA
 mdefine_line|#define ICMP_PARANOIA
-r_extern
-r_int
-id|sysctl_tcp_sack
-suffix:semicolon
 r_extern
 r_int
 id|sysctl_tcp_timestamps
@@ -423,7 +419,7 @@ id|sk2
 suffix:semicolon
 id|sk2
 op_assign
-id|sk2-&gt;tp_pinfo.af_tcp.bind_next
+id|sk2-&gt;bind_next
 )paren
 (brace
 r_if
@@ -560,10 +556,14 @@ op_assign
 op_amp
 id|tcp_established_hash
 (braket
+(paren
+id|sk-&gt;hashent
+op_assign
 id|tcp_v6_sk_hashfn
 c_func
 (paren
 id|sk
+)paren
 )paren
 )braket
 suffix:semicolon
@@ -771,42 +771,22 @@ id|sk
 suffix:semicolon
 )brace
 r_else
-(brace
-r_int
-id|hash
+id|skp
+op_assign
+op_amp
+id|tcp_established_hash
+(braket
+(paren
+id|sk-&gt;hashent
 op_assign
 id|tcp_v6_sk_hashfn
 c_func
 (paren
 id|sk
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|state
-op_eq
-id|TCP_TIME_WAIT
 )paren
-(brace
-id|hash
-op_add_assign
-(paren
-id|TCP_HTABLE_SIZE
-op_div
-l_int|2
-)paren
-suffix:semicolon
-)brace
-id|skp
-op_assign
-op_amp
-id|tcp_established_hash
-(braket
-id|hash
 )braket
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -991,7 +971,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Until this is verified... -DaveM */
 multiline_comment|/* #define USE_QUICKSYNS */
-multiline_comment|/* Sockets in TCP_CLOSE state are _always_ taken out of the hash, so&n; * we need not check it for TCP lookups anymore, thanks Alexey. -DaveM&n; */
+multiline_comment|/* Sockets in TCP_CLOSE state are _always_ taken out of the hash, so&n; * we need not check it for TCP lookups anymore, thanks Alexey. -DaveM&n; * It is assumed that this code only gets called from within NET_BH.&n; */
 DECL|function|__tcp_v6_lookup
 r_static
 r_inline
@@ -1114,7 +1094,7 @@ r_goto
 id|hit
 suffix:semicolon
 )brace
-multiline_comment|/* Optimize here for direct hit, only listening connections can&n;&t; * have wildcards anyways.  It is assumed that this code only&n;&t; * gets called from within NET_BH.&n;&t; */
+multiline_comment|/* Optimize here for direct hit, only listening connections can&n;&t; * have wildcards anyways.&n;&t; */
 id|hash
 op_assign
 id|tcp_v6_hashfn
@@ -1246,14 +1226,30 @@ multiline_comment|/* address family */
 id|sk-&gt;dummy_th.dest
 op_eq
 id|sport
-op_logical_and
+)paren
+(brace
 multiline_comment|/* remote port    */
+r_struct
+id|tcp_tw_bucket
+op_star
+id|tw
+op_assign
+(paren
+r_struct
+id|tcp_tw_bucket
+op_star
+)paren
+id|sk
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|ipv6_addr_cmp
 c_func
 (paren
 op_amp
-id|sk-&gt;net_pinfo.af_inet6.daddr
+id|tw-&gt;v6_daddr
 comma
 id|saddr
 )paren
@@ -1263,7 +1259,7 @@ id|ipv6_addr_cmp
 c_func
 (paren
 op_amp
-id|sk-&gt;net_pinfo.af_inet6.rcv_saddr
+id|tw-&gt;v6_rcv_saddr
 comma
 id|daddr
 )paren
@@ -1272,6 +1268,7 @@ id|daddr
 r_goto
 id|hit
 suffix:semicolon
+)brace
 )brace
 macro_line|#ifdef USE_QUICKSYNS
 id|listener_shortcut
@@ -2269,8 +2266,6 @@ id|buff
 comma
 id|sk-&gt;mss
 comma
-id|sysctl_tcp_sack
-comma
 id|sysctl_tcp_timestamps
 comma
 id|sysctl_tcp_window_scaling
@@ -2720,6 +2715,10 @@ c_cond
 id|sk
 op_eq
 l_int|NULL
+op_logical_or
+id|sk-&gt;state
+op_eq
+id|TCP_TIME_WAIT
 )paren
 (brace
 multiline_comment|/* XXX: Update ICMP error count */
@@ -3479,8 +3478,6 @@ id|skb
 comma
 id|req-&gt;mss
 comma
-id|req-&gt;sack_ok
-comma
 id|req-&gt;tstamp_ok
 comma
 id|req-&gt;wscale_ok
@@ -3768,8 +3765,6 @@ id|isn
 suffix:semicolon
 id|tp.tstamp_ok
 op_assign
-id|tp.sack_ok
-op_assign
 id|tp.wscale_ok
 op_assign
 id|tp.snd_wscale
@@ -3807,10 +3802,6 @@ suffix:semicolon
 id|req-&gt;tstamp_ok
 op_assign
 id|tp.tstamp_ok
-suffix:semicolon
-id|req-&gt;sack_ok
-op_assign
-id|tp.sack_ok
 suffix:semicolon
 id|req-&gt;snd_wscale
 op_assign
@@ -4269,10 +4260,6 @@ id|newsk
 comma
 id|dst
 )paren
-suffix:semicolon
-id|newtp-&gt;sack_ok
-op_assign
-id|req-&gt;sack_ok
 suffix:semicolon
 id|newtp-&gt;tstamp_ok
 op_assign
@@ -5117,10 +5104,6 @@ r_goto
 id|no_tcp_socket
 suffix:semicolon
 )brace
-id|skb-&gt;sk
-op_assign
-id|sk
-suffix:semicolon
 id|skb-&gt;seq
 op_assign
 id|ntohl
@@ -5154,6 +5137,22 @@ suffix:semicolon
 id|skb-&gt;used
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_TIME_WAIT
+)paren
+(brace
+r_goto
+id|do_time_wait
+suffix:semicolon
+)brace
+id|skb-&gt;sk
+op_assign
+id|sk
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * We may need to add it to the backlog here.&n;&t; */
@@ -5378,6 +5377,47 @@ id|skb
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|do_time_wait
+suffix:colon
+r_if
+c_cond
+(paren
+id|tcp_timewait_state_process
+c_func
+(paren
+(paren
+r_struct
+id|tcp_tw_bucket
+op_star
+)paren
+id|sk
+comma
+id|skb
+comma
+id|th
+comma
+op_amp
+(paren
+id|IPCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|opt
+)paren
+comma
+id|skb-&gt;len
+)paren
+)paren
+(brace
+r_goto
+id|no_tcp_socket
+suffix:semicolon
+)brace
+r_goto
+id|discard_it
 suffix:semicolon
 )brace
 DECL|function|tcp_v6_rebuild_header
@@ -5948,19 +5988,11 @@ id|tp-&gt;tstamp_ok
 op_assign
 l_int|0
 suffix:semicolon
-id|tp-&gt;sack_ok
-op_assign
-l_int|0
-suffix:semicolon
 id|tp-&gt;wscale_ok
 op_assign
 l_int|0
 suffix:semicolon
 id|tp-&gt;snd_wscale
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;sacks
 op_assign
 l_int|0
 suffix:semicolon

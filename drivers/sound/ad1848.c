@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/ad1848.c&n; *&n; * The low level driver for the AD1848/CS4248 codec chip which&n; * is used for example in the MS Sound System.&n; *&n; * The CS4231 which is used in the GUS MAX and some other cards is&n; * upwards compatible with AD1848 and this driver is able to drive it.&n; *&n; * CS4231A and AD1845 are upward compatible with CS4231. However&n; * the new features of these chips are different.&n; *&n; * CS4232 is a PnP audio chip which contains a CS4231A (and SB, MPU).&n; * CS4232A is an improved version of CS4232.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; *&t;&t;     general sleep/wakeup clean up.&n; * Alan Cox&t;   : reformatted. Fixed SMP bugs. Moved to kernel alloc/free&n; *&t;&t;     of irqs. Use dev_id.&n; *&n; * Status:&n; *&t;&t;Tested. Believed fully functional.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
@@ -690,7 +690,7 @@ id|devc-&gt;base
 op_eq
 l_int|0x80
 )paren
-multiline_comment|/*Are we initializing */
+multiline_comment|/* Are we initializing */
 id|timeout
 op_decrement
 suffix:semicolon
@@ -8003,6 +8003,36 @@ op_or_assign
 id|DMA_DUPLEX
 suffix:semicolon
 )brace
+id|portc
+op_assign
+(paren
+id|ad1848_port_info
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+id|ad1848_port_info
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|portc
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -8043,54 +8073,21 @@ OL
 l_int|0
 )paren
 (brace
+id|kfree
+c_func
+(paren
+id|portc
+)paren
+suffix:semicolon
+id|portc
+op_assign
+l_int|NULL
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|portc
-op_assign
-(paren
-id|ad1848_port_info
-op_star
-)paren
-(paren
-id|sound_mem_blocks
-(braket
-id|sound_nblocks
-)braket
-op_assign
-id|vmalloc
-c_func
-(paren
-r_sizeof
-(paren
-id|ad1848_port_info
-)paren
-)paren
-)paren
-suffix:semicolon
-id|sound_mem_sizes
-(braket
-id|sound_nblocks
-)braket
-op_assign
-r_sizeof
-(paren
-id|ad1848_port_info
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sound_nblocks
-OL
-l_int|1024
-)paren
-id|sound_nblocks
-op_increment
-suffix:semicolon
-suffix:semicolon
 id|audio_devs
 (braket
 id|my_dev
@@ -8135,11 +8132,6 @@ OG
 l_int|0
 )paren
 (brace
-id|irq2dev
-(braket
-id|irq
-)braket
-op_assign
 id|devc-&gt;dev_no
 op_assign
 id|my_dev
@@ -8147,16 +8139,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|snd_set_irq_handler
+id|request_irq
 c_func
 (paren
 id|devc-&gt;irq
 comma
 id|adintr
 comma
+l_int|0
+comma
 id|devc-&gt;name
 comma
-l_int|NULL
+(paren
+r_void
+op_star
+)paren
+id|my_dev
 )paren
 OL
 l_int|0
@@ -8166,7 +8164,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;ad1848: IRQ in use&bslash;n&quot;
+l_string|&quot;ad1848: Unable to allocate IRQ&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -8223,6 +8221,7 @@ l_int|0x10
 )paren
 suffix:semicolon
 multiline_comment|/* Timer LSB */
+macro_line|#ifndef __SMP__
 id|ad_write
 c_func
 (paren
@@ -8302,6 +8301,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#else
+id|devc-&gt;irq_ok
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif&t;&t;&t;
 )brace
 r_else
 id|devc-&gt;irq_ok
@@ -8790,6 +8795,31 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|portc
+op_ne
+l_int|NULL
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|portc
+)paren
+suffix:semicolon
+)brace
 id|release_region
 c_func
 (paren
@@ -8812,10 +8842,12 @@ id|irq
 OG
 l_int|0
 )paren
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|devc-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|sound_free_dma
@@ -8917,101 +8949,13 @@ id|cnt
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq
-template_param
-l_int|15
-)paren
-(brace
 id|dev
 op_assign
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_else
-id|dev
-op_assign
-id|irq2dev
-(braket
-id|irq
-)braket
-suffix:semicolon
-r_if
-c_cond
 (paren
-id|dev
-OL
-l_int|0
-op_logical_or
-id|dev
-op_ge
-id|num_audiodevs
+r_int
 )paren
-(brace
-r_for
-c_loop
-(paren
-id|irq
-op_assign
-l_int|0
+id|dev_id
 suffix:semicolon
-id|irq
-OL
-l_int|17
-suffix:semicolon
-id|irq
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|irq2dev
-(braket
-id|irq
-)braket
-op_ne
-op_minus
-l_int|1
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq
-OG
-l_int|15
-)paren
-(brace
-multiline_comment|/* printk(&quot;ad1848.c: Bogus interrupt %d&bslash;n&quot;, irq); */
-r_return
-suffix:semicolon
-)brace
-id|dev
-op_assign
-id|irq2dev
-(braket
-id|irq
-)braket
-suffix:semicolon
-id|devc
-op_assign
-(paren
-id|ad1848_info
-op_star
-)paren
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|devc
-suffix:semicolon
-)brace
-r_else
 id|devc
 op_assign
 (paren
@@ -11627,6 +11571,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* I/O for a raw AD1848 card */
 id|MODULE_PARM
 c_func
 (paren
@@ -11635,6 +11580,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* IRQ to use */
 id|MODULE_PARM
 c_func
 (paren
@@ -11643,6 +11589,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* First DMA channel */
 id|MODULE_PARM
 c_func
 (paren
@@ -11651,6 +11598,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Second DMA channel */
 id|MODULE_PARM
 c_func
 (paren
@@ -11659,6 +11607,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Card type */
 id|MODULE_PARM
 c_func
 (paren
@@ -11667,6 +11616,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Special magic for Deskpro XL boxen */
 DECL|variable|io
 r_int
 id|io

@@ -293,7 +293,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * update_dirs_plus()&n; *&n; * Update the fields &squot;i_size&squot;, &squot;i_nlink&squot;, &squot;i_ctime&squot;, &squot;i_mtime&squot; and&n; * &squot;i_version&squot; of the inodes associated with a directory that has&n; * had a file (&squot;is_dir&squot;==0) or directory (&squot;is_dir&squot;!=0) removed.&n; */
+multiline_comment|/*&n; * update_dirs_minus()&n; *&n; * Update the fields &squot;i_size&squot;, &squot;i_nlink&squot;, &squot;i_ctime&squot;, &squot;i_mtime&squot; and&n; * &squot;i_version&squot; of the inodes associated with a directory that has&n; * had a file (&squot;is_dir&squot;==0) or directory (&squot;is_dir&squot;!=0) removed.&n; */
 DECL|function|update_dirs_minus
 r_static
 r_inline
@@ -476,13 +476,6 @@ id|de
 )paren
 )paren
 (brace
-id|entry-&gt;sys_entry
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|dget
 c_func
 (paren
@@ -722,6 +715,8 @@ op_member_access_from_pointer
 id|d_drop_op
 c_func
 (paren
+id|dentry
+comma
 id|HFS_I
 c_func
 (paren
@@ -729,8 +724,6 @@ id|dir
 )paren
 op_member_access_from_pointer
 id|file_type
-comma
-id|dentry
 )paren
 suffix:semicolon
 id|d_instantiate
@@ -1604,6 +1597,8 @@ op_member_access_from_pointer
 id|d_drop_op
 c_func
 (paren
+id|new_dentry
+comma
 id|HFS_I
 c_func
 (paren
@@ -1611,8 +1606,6 @@ id|new_dir
 )paren
 op_member_access_from_pointer
 id|file_type
-comma
-id|new_dentry
 )paren
 suffix:semicolon
 id|update_dirs_plus

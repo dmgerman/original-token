@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/pss.c&n; *&n; * The low level driver for the Personal Sound System (ECHO ESC614).&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * Thomas Sailer&t;ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;&t;modularisation, clean up.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -121,9 +121,9 @@ id|nonstandard_microcode
 op_assign
 l_int|0
 suffix:semicolon
+DECL|function|pss_write
 r_static
 r_void
-DECL|function|pss_write
 id|pss_write
 c_func
 (paren
@@ -140,6 +140,8 @@ id|limit
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 multiline_comment|/* The timeout is 0.1 seconds */
@@ -194,14 +196,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PSS: DSP Command (%04x) Timeout.&bslash;n&quot;
 comma
 id|data
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|probe_pss
+r_int
 id|probe_pss
 c_func
 (paren
@@ -332,9 +335,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|set_irq
 r_static
 r_int
-DECL|function|set_irq
 id|set_irq
 c_func
 (paren
@@ -445,6 +448,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PSS: Invalid IRQ %d&bslash;n&quot;
 comma
 id|irq
@@ -472,9 +476,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|set_io_base
 r_static
 r_int
-DECL|function|set_io_base
 id|set_io_base
 c_func
 (paren
@@ -535,9 +539,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|set_dma
 r_static
 r_int
-DECL|function|set_dma
 id|set_dma
 c_func
 (paren
@@ -632,6 +636,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PSS: Invalid DMA %d&bslash;n&quot;
 comma
 id|dma
@@ -659,9 +664,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|pss_reset_dsp
 r_static
 r_int
-DECL|function|pss_reset_dsp
 id|pss_reset_dsp
 c_func
 (paren
@@ -678,6 +683,8 @@ id|limit
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 id|outw
@@ -703,9 +710,13 @@ id|i
 OL
 l_int|32768
 op_logical_and
-id|jiffies
-OL
+(paren
 id|limit
+op_minus
+id|jiffies
+op_ge
+l_int|0
+)paren
 suffix:semicolon
 id|i
 op_increment
@@ -736,9 +747,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|pss_put_dspword
 r_static
 r_int
-DECL|function|pss_put_dspword
 id|pss_put_dspword
 c_func
 (paren
@@ -812,9 +823,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|pss_get_dspword
 r_static
 r_int
-DECL|function|pss_get_dspword
 id|pss_get_dspword
 c_func
 (paren
@@ -890,9 +901,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|pss_download_boot
 r_static
 r_int
-DECL|function|pss_download_boot
 id|pss_download_boot
 c_func
 (paren
@@ -946,6 +957,8 @@ id|limit
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 r_for
@@ -1134,6 +1147,8 @@ id|limit
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 r_for
@@ -1147,9 +1162,13 @@ id|i
 OL
 l_int|32768
 op_logical_and
-id|jiffies
-OL
+(paren
 id|limit
+op_minus
+id|jiffies
+op_ge
+l_int|0
+)paren
 suffix:semicolon
 id|i
 op_increment
@@ -1170,6 +1189,8 @@ id|limit
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 r_for
@@ -1183,9 +1204,13 @@ id|i
 OL
 l_int|32768
 op_logical_and
-id|jiffies
-OL
+(paren
 id|limit
+op_minus
+id|jiffies
+op_ge
+l_int|0
+)paren
 suffix:semicolon
 id|i
 op_increment
@@ -1279,8 +1304,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_pss
+r_void
 id|attach_pss
 c_func
 (paren
@@ -1420,7 +1445,7 @@ l_string|&quot;PSS&quot;
 id|printk
 c_func
 (paren
-l_string|&quot;pss.c: Can&squot;t allocate DMA channel&bslash;n&quot;
+l_string|&quot;pss.c: Can&squot;t allocate DMA channel.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1444,7 +1469,7 @@ id|devc-&gt;irq
 id|printk
 c_func
 (paren
-l_string|&quot;PSS: IRQ error&bslash;n&quot;
+l_string|&quot;PSS: IRQ allocation error.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1468,7 +1493,8 @@ id|devc-&gt;dma
 id|printk
 c_func
 (paren
-l_string|&quot;PSS: DRQ error&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;PSS: DMA allocation error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1498,9 +1524,9 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
+DECL|function|pss_init_speaker
 r_static
 r_void
-DECL|function|pss_init_speaker
 id|pss_init_speaker
 c_func
 (paren
@@ -1584,8 +1610,8 @@ l_int|0x00ce
 suffix:semicolon
 multiline_comment|/* Stereo switch? */
 )brace
-r_int
 DECL|function|probe_pss_mpu
+r_int
 id|probe_pss_mpu
 c_func
 (paren
@@ -1647,7 +1673,7 @@ id|hw_config-&gt;io_base
 id|printk
 c_func
 (paren
-l_string|&quot;PSS: MIDI base error.&bslash;n&quot;
+l_string|&quot;PSS: MIDI base could not be set.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1672,7 +1698,7 @@ id|hw_config-&gt;irq
 id|printk
 c_func
 (paren
-l_string|&quot;PSS: MIDI IRQ error.&bslash;n&quot;
+l_string|&quot;PSS: MIDI IRQ allocation error.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1689,6 +1715,7 @@ id|pss_synthLen
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PSS: Can&squot;t enable MPU. MIDI synth microcode not available.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1718,6 +1745,7 @@ id|CPF_LAST
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PSS: Unable to load MIDI synth microcode to DSP.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1730,7 +1758,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Finally wait until the DSP algorithm has initialized itself and&n; * deactivates receive interrupt.&n; */
+multiline_comment|/*&n;&t; * Finally wait until the DSP algorithm has initialized itself and&n;&t; * deactivates receive interrupt.&n;&t; */
 r_for
 c_loop
 (paren
@@ -1790,9 +1818,9 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|function|pss_coproc_open
 r_static
 r_int
-DECL|function|pss_coproc_open
 id|pss_coproc_open
 c_func
 (paren
@@ -1824,6 +1852,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PSS: MIDI synth microcode not available.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1859,6 +1888,7 @@ id|CPF_LAST
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PSS: Unable to load MIDI synth microcode to DSP.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1875,15 +1905,16 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-suffix:semicolon
+(brace
+)brace
 )brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|pss_coproc_close
 r_static
 r_void
-DECL|function|pss_coproc_close
 id|pss_coproc_close
 c_func
 (paren
@@ -1898,9 +1929,9 @@ id|sub_device
 r_return
 suffix:semicolon
 )brace
+DECL|function|pss_coproc_reset
 r_static
 r_void
-DECL|function|pss_coproc_reset
 id|pss_coproc_reset
 c_func
 (paren
@@ -1936,6 +1967,7 @@ id|CPF_LAST
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PSS: Unable to load MIDI synth microcode to DSP.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1945,9 +1977,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|download_boot_block
 r_static
 r_int
-DECL|function|download_boot_block
 id|download_boot_block
 c_func
 (paren
@@ -1998,6 +2030,7 @@ id|buf-&gt;flags
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PSS: Unable to load microcode block to DSP.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2116,7 +2149,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_from_user
+id|copy_from_user
 c_func
 (paren
 id|buf
@@ -2192,7 +2225,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_from_user
+id|copy_from_user
 c_func
 (paren
 id|mbuf
@@ -2282,7 +2315,7 @@ suffix:semicolon
 multiline_comment|/* feed back number of WORDs sent */
 id|err
 op_assign
-id|__copy_to_user
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -2440,7 +2473,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_to_user
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -2473,7 +2506,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__copy_from_user
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2596,7 +2629,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_to_user
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -2623,7 +2656,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__copy_from_user
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2757,7 +2790,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__copy_from_user
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2929,7 +2962,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__copy_from_user
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3087,7 +3120,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_to_user
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -3140,8 +3173,8 @@ op_amp
 id|pss_data
 )brace
 suffix:semicolon
-r_void
 DECL|function|attach_pss_mpu
+r_void
 id|attach_pss_mpu
 c_func
 (paren
@@ -3152,7 +3185,6 @@ id|hw_config
 )paren
 (brace
 macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
-(brace
 id|attach_mpu401
 c_func
 (paren
@@ -3185,11 +3217,10 @@ op_assign
 op_amp
 id|pss_coproc_operations
 suffix:semicolon
-)brace
 macro_line|#endif
 )brace
-r_int
 DECL|function|probe_pss_mss
+r_int
 id|probe_pss_mss
 c_func
 (paren
@@ -3227,7 +3258,8 @@ l_int|8
 id|printk
 c_func
 (paren
-l_string|&quot;PSS: WSS I/O port conflict&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;PSS: WSS I/O port conflicts.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3252,7 +3284,7 @@ id|hw_config-&gt;io_base
 id|printk
 c_func
 (paren
-l_string|&quot;PSS: WSS base error.&bslash;n&quot;
+l_string|&quot;PSS: WSS base not settable.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3277,7 +3309,7 @@ id|hw_config-&gt;irq
 id|printk
 c_func
 (paren
-l_string|&quot;PSS: WSS IRQ error.&bslash;n&quot;
+l_string|&quot;PSS: WSS IRQ allocation error.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3302,14 +3334,15 @@ id|hw_config-&gt;dma
 id|printk
 c_func
 (paren
-l_string|&quot;PSS: WSS DRQ error&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;PSS: WSS DMA allocation error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;   * For some reason the card returns 0xff in the WSS status register&n;&t;   * immediately after boot. Probably MIDI+SB emulation algorithm&n;&t;   * downloaded to the ADSP2115 spends some time initializing the card.&n;&t;   * Let&squot;s try to wait until it finishes this task.&n;&t; */
+multiline_comment|/*&n;&t; * For some reason the card returns 0xff in the WSS status register&n;&t; * immediately after boot. Probably MIDI+SB emulation algorithm&n;&t; * downloaded to the ADSP2115 spends some time initializing the card.&n;&t; * Let&squot;s try to wait until it finishes this task.&n;&t; */
 r_for
 c_loop
 (paren
@@ -3375,8 +3408,8 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_pss_mss
+r_void
 id|attach_pss_mss
 c_func
 (paren
@@ -3419,8 +3452,8 @@ op_amp
 id|pss_coproc_operations
 suffix:semicolon
 )brace
-r_void
 DECL|function|unload_pss
+r_void
 id|unload_pss
 c_func
 (paren
@@ -3431,8 +3464,8 @@ id|hw_config
 )paren
 (brace
 )brace
-r_void
 DECL|function|unload_pss_mpu
+r_void
 id|unload_pss_mpu
 c_func
 (paren
@@ -3451,8 +3484,8 @@ id|hw_config
 suffix:semicolon
 macro_line|#endif
 )brace
-r_void
 DECL|function|unload_pss_mss
+r_void
 id|unload_pss_mss
 c_func
 (paren
@@ -3474,31 +3507,36 @@ DECL|variable|pss_io
 r_int
 id|pss_io
 op_assign
-l_int|0x220
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|mss_io
 r_int
 id|mss_io
 op_assign
-l_int|0x530
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|mss_irq
 r_int
 id|mss_irq
 op_assign
-l_int|11
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|mss_dma
 r_int
 id|mss_dma
 op_assign
+op_minus
 l_int|1
 suffix:semicolon
 DECL|variable|mpu_io
 r_int
 id|mpu_io
 op_assign
-l_int|0x330
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|mpu_irq
 r_int
@@ -3630,15 +3668,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *    Load a PSS sound card module&n; */
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
 r_void
 )paren
 (brace
-macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -3647,12 +3684,17 @@ op_eq
 op_minus
 l_int|1
 op_logical_or
-id|irq
+id|mss_io
 op_eq
 op_minus
 l_int|1
 op_logical_or
-id|dma
+id|mss_irq
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|mss_dma
 op_eq
 op_minus
 l_int|1
@@ -3661,7 +3703,8 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;pss: dma, irq and io must be set.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;pss: mss_io, mss_dma, mss_irq and pss_io must be set.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3669,7 +3712,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#endif
 id|cfgpss.io_base
 op_assign
 id|pss_io
@@ -3796,8 +3838,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

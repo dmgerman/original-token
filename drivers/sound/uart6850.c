@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/uart6850.c&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; * Extended by Alan Cox for Red Hat Software. Now a loadable MIDI driver.&n; * 28/4/97 - (C) Copyright Alan Cox. Released under the GPL version 2.&n; *&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; * Extended by Alan Cox for Red Hat Software. Now a loadable MIDI driver.&n; * 28/4/97 - (C) Copyright Alan Cox. Released under the GPL version 2.&n; *&n; * Alan Cox:&t;Updated for new modular code. Removed snd_* irq handling. Now&n; *&t;&t;uses native linux resources&n; *&n; *&t;Status: Testing required&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
@@ -917,16 +917,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|snd_set_irq_handler
+id|request_irq
 c_func
 (paren
 id|uart6850_irq
 comma
 id|m6850intr
 comma
+l_int|0
+comma
 l_string|&quot;MIDI6850&quot;
 comma
-id|uart6850_osp
+l_int|NULL
 )paren
 OL
 l_int|0
@@ -960,10 +962,12 @@ op_star
 id|hw_config
 )paren
 (brace
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|hw_config-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|sound_unload_mididev

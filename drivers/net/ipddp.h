@@ -9,8 +9,6 @@ DECL|macro|SIOCDELIPDDPRT
 mdefine_line|#define SIOCDELIPDDPRT   (SIOCDEVPRIVATE+1)
 DECL|macro|SIOCFINDIPDDPRT
 mdefine_line|#define SIOCFINDIPDDPRT  (SIOCDEVPRIVATE+2)
-DECL|macro|SIOCPRINTIPDDPRT
-mdefine_line|#define SIOCPRINTIPDDPRT (SIOCDEVPRIVATE+3)
 DECL|struct|ipddp_route
 r_struct
 id|ipddp_route

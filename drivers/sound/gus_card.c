@@ -78,6 +78,8 @@ comma
 l_string|&quot;Gravis Ultrasound&quot;
 comma
 id|hw_config-&gt;osp
+comma
+id|hw_config
 )paren
 suffix:semicolon
 id|gus_wave_init
@@ -427,6 +429,8 @@ id|snd_release_irq
 c_func
 (paren
 id|hw_config-&gt;irq
+comma
+id|hw_config
 )paren
 suffix:semicolon
 id|sound_free_dma
@@ -480,6 +484,13 @@ r_extern
 r_int
 id|gus_timer_enabled
 suffix:semicolon
+r_struct
+id|address_info
+op_star
+id|hw_config
+op_assign
+id|dev_id
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -496,7 +507,14 @@ c_func
 (paren
 id|irq
 comma
-l_int|NULL
+(paren
+r_void
+op_star
+)paren
+id|hw_config-&gt;slots
+(braket
+l_int|3
+)braket
 comma
 l_int|NULL
 )paren

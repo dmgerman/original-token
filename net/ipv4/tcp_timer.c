@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_timer.c,v 1.38 1998/03/10 05:11:17 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_timer.c,v 1.39 1998/03/13 08:02:17 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 DECL|variable|sysctl_tcp_syn_retries
 r_int
@@ -289,6 +289,12 @@ r_case
 id|TIME_RETRANS
 suffix:colon
 multiline_comment|/* When seting the transmit timer the probe timer &n;&t;&t; * should not be set.&n;&t;&t; * The delayed ack timer can be set if we are changing the&n;&t;&t; * retransmit timer when removing acked frames.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|tp-&gt;probe_timer.prev
+)paren
+(brace
 id|del_timer
 c_func
 (paren
@@ -296,6 +302,13 @@ op_amp
 id|tp-&gt;probe_timer
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tp-&gt;retransmit_timer.prev
+)paren
+(brace
 id|del_timer
 c_func
 (paren
@@ -303,6 +316,7 @@ op_amp
 id|tp-&gt;retransmit_timer
 )paren
 suffix:semicolon
+)brace
 id|tp-&gt;retransmit_timer.expires
 op_assign
 id|jiffies
@@ -321,6 +335,12 @@ suffix:semicolon
 r_case
 id|TIME_DACK
 suffix:colon
+r_if
+c_cond
+(paren
+id|tp-&gt;delack_timer.prev
+)paren
+(brace
 id|del_timer
 c_func
 (paren
@@ -328,6 +348,7 @@ op_amp
 id|tp-&gt;delack_timer
 )paren
 suffix:semicolon
+)brace
 id|tp-&gt;delack_timer.expires
 op_assign
 id|jiffies
@@ -346,6 +367,12 @@ suffix:semicolon
 r_case
 id|TIME_PROBE0
 suffix:colon
+r_if
+c_cond
+(paren
+id|tp-&gt;probe_timer.prev
+)paren
+(brace
 id|del_timer
 c_func
 (paren
@@ -353,6 +380,7 @@ op_amp
 id|tp-&gt;probe_timer
 )paren
 suffix:semicolon
+)brace
 id|tp-&gt;probe_timer.expires
 op_assign
 id|jiffies
@@ -516,21 +544,10 @@ id|TCPF_CLOSING
 )paren
 )paren
 (brace
-id|tcp_set_state
+id|tcp_time_wait
 c_func
 (paren
 id|sk
-comma
-id|TCP_TIME_WAIT
-)paren
-suffix:semicolon
-id|tcp_reset_msl_timer
-(paren
-id|sk
-comma
-id|TIME_CLOSE
-comma
-id|TCP_TIMEWAIT_LEN
 )paren
 suffix:semicolon
 )brace
@@ -797,7 +814,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* Time wait the socket. */
 r_if
 c_cond
 (paren
@@ -816,21 +832,11 @@ id|TCPF_CLOSING
 )paren
 )paren
 (brace
-id|tcp_set_state
+multiline_comment|/* Time wait the socket. */
+id|tcp_time_wait
 c_func
 (paren
 id|sk
-comma
-id|TCP_TIME_WAIT
-)paren
-suffix:semicolon
-id|tcp_reset_msl_timer
-(paren
-id|sk
-comma
-id|TIME_CLOSE
-comma
-id|TCP_TIMEWAIT_LEN
 )paren
 suffix:semicolon
 )brace

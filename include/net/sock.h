@@ -338,20 +338,6 @@ DECL|struct|tcp_opt
 r_struct
 id|tcp_opt
 (brace
-multiline_comment|/* TCP bind bucket hash linkage. */
-DECL|member|bind_next
-r_struct
-id|sock
-op_star
-id|bind_next
-suffix:semicolon
-DECL|member|bind_pprev
-r_struct
-id|sock
-op_star
-op_star
-id|bind_pprev
-suffix:semicolon
 DECL|member|tcp_header_len
 r_int
 id|tcp_header_len
@@ -414,7 +400,7 @@ id|snd_wnd
 suffix:semicolon
 multiline_comment|/* The window we expect to receive&t;*/
 DECL|member|max_window
-id|__u16
+id|__u32
 id|max_window
 suffix:semicolon
 DECL|member|pending
@@ -546,12 +532,8 @@ comma
 multiline_comment|/* TIMESTAMP seen on SYN packet&t;&t;*/
 DECL|member|wscale_ok
 id|wscale_ok
-comma
-multiline_comment|/* Wscale seen on SYN packet&t;&t;*/
-DECL|member|sack_ok
-id|sack_ok
 suffix:semicolon
-multiline_comment|/* SACK_PERM seen on SYN packet&t;&t;*/
+multiline_comment|/* Wscale seen on SYN packet&t;&t;*/
 DECL|member|saw_tstamp
 r_char
 id|saw_tstamp
@@ -592,27 +574,6 @@ id|__u32
 id|ts_recent_stamp
 suffix:semicolon
 multiline_comment|/* Time we stored ts_recent (for aging) */
-DECL|member|sacks
-r_int
-id|sacks
-suffix:semicolon
-multiline_comment|/* Number of SACK blocks if any&t;&t;*/
-DECL|member|left_sack
-id|__u32
-id|left_sack
-(braket
-l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* Left edges of blocks         &t;*/
-DECL|member|right_sack
-id|__u32
-id|right_sack
-(braket
-l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* Right edges of blocks        &t;*/
 DECL|member|probe_timer
 r_struct
 id|timer_list
@@ -698,6 +659,20 @@ r_struct
 id|sock
 op_star
 id|sklist_prev
+suffix:semicolon
+multiline_comment|/* Local port binding hash linkage. */
+DECL|member|bind_next
+r_struct
+id|sock
+op_star
+id|bind_next
+suffix:semicolon
+DECL|member|bind_pprev
+r_struct
+id|sock
+op_star
+op_star
+id|bind_pprev
 suffix:semicolon
 multiline_comment|/* Main hash linkage for various protocol lookup tables. */
 DECL|member|next

@@ -2294,6 +2294,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; *&t;Called during bootup.  We don&squot;t actually have to initialise&n; *&t;too much for this.&n; */
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|tr_rif_proc
 r_static
 r_struct
@@ -2325,6 +2326,7 @@ comma
 id|rif_get_info
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2375,4 +2377,6 @@ id|tr_rif_proc
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
+)brace
 eof

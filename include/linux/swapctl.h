@@ -4,25 +4,10 @@ mdefine_line|#define _LINUX_SWAPCTL_H
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 multiline_comment|/* Swap tuning control */
-multiline_comment|/* First, enumerate the different reclaim policies */
-DECL|enum|RCL_POLICY
-DECL|enumerator|RCL_ROUND_ROBIN
-DECL|enumerator|RCL_BUFF_FIRST
-DECL|enumerator|RCL_PERSIST
-r_enum
-id|RCL_POLICY
-(brace
-id|RCL_ROUND_ROBIN
-comma
-id|RCL_BUFF_FIRST
-comma
-id|RCL_PERSIST
-)brace
-suffix:semicolon
-DECL|struct|swap_control_v5
+DECL|struct|swap_control_v6
 r_typedef
 r_struct
-id|swap_control_v5
+id|swap_control_v6
 (brace
 DECL|member|sc_max_page_age
 r_int
@@ -44,26 +29,6 @@ r_int
 r_int
 id|sc_page_initial_age
 suffix:semicolon
-DECL|member|sc_max_buff_age
-r_int
-r_int
-id|sc_max_buff_age
-suffix:semicolon
-DECL|member|sc_buff_advance
-r_int
-r_int
-id|sc_buff_advance
-suffix:semicolon
-DECL|member|sc_buff_decline
-r_int
-r_int
-id|sc_buff_decline
-suffix:semicolon
-DECL|member|sc_buff_initial_age
-r_int
-r_int
-id|sc_buff_initial_age
-suffix:semicolon
 DECL|member|sc_age_cluster_fract
 r_int
 r_int
@@ -84,34 +49,14 @@ r_int
 r_int
 id|sc_bufferout_weight
 suffix:semicolon
-DECL|member|sc_buffer_grace
-r_int
-r_int
-id|sc_buffer_grace
-suffix:semicolon
-DECL|member|sc_nr_buffs_to_free
-r_int
-r_int
-id|sc_nr_buffs_to_free
-suffix:semicolon
-DECL|member|sc_nr_pages_to_free
-r_int
-r_int
-id|sc_nr_pages_to_free
-suffix:semicolon
-DECL|member|sc_policy
-r_enum
-id|RCL_POLICY
-id|sc_policy
-suffix:semicolon
-DECL|typedef|swap_control_v5
+DECL|typedef|swap_control_v6
 )brace
-id|swap_control_v5
+id|swap_control_v6
 suffix:semicolon
 DECL|typedef|swap_control_t
 r_typedef
 r_struct
-id|swap_control_v5
+id|swap_control_v6
 id|swap_control_t
 suffix:semicolon
 r_extern
@@ -161,13 +106,71 @@ r_extern
 id|swapstat_t
 id|swapstats
 suffix:semicolon
-r_extern
+DECL|struct|buffer_mem_v1
+r_typedef
+r_struct
+id|buffer_mem_v1
+(brace
+DECL|member|min_percent
 r_int
-id|min_free_pages
-comma
-id|free_pages_low
-comma
-id|free_pages_high
+r_int
+id|min_percent
+suffix:semicolon
+DECL|member|borrow_percent
+r_int
+r_int
+id|borrow_percent
+suffix:semicolon
+DECL|member|max_percent
+r_int
+r_int
+id|max_percent
+suffix:semicolon
+DECL|typedef|buffer_mem_v1
+)brace
+id|buffer_mem_v1
+suffix:semicolon
+DECL|typedef|buffer_mem_t
+r_typedef
+id|buffer_mem_v1
+id|buffer_mem_t
+suffix:semicolon
+r_extern
+id|buffer_mem_t
+id|buffer_mem
+suffix:semicolon
+DECL|struct|freepages_v1
+r_typedef
+r_struct
+id|freepages_v1
+(brace
+DECL|member|min
+r_int
+r_int
+id|min
+suffix:semicolon
+DECL|member|low
+r_int
+r_int
+id|low
+suffix:semicolon
+DECL|member|high
+r_int
+r_int
+id|high
+suffix:semicolon
+DECL|typedef|freepages_v1
+)brace
+id|freepages_v1
+suffix:semicolon
+DECL|typedef|freepages_t
+r_typedef
+id|freepages_v1
+id|freepages_t
+suffix:semicolon
+r_extern
+id|freepages_t
+id|freepages
 suffix:semicolon
 DECL|macro|SC_VERSION
 mdefine_line|#define SC_VERSION&t;1
@@ -180,8 +183,6 @@ mdefine_line|#define RCL_MAXPRI 6
 multiline_comment|/* We use an extra priority in the swap accounting code to represent&n;   failure to free a resource at any priority */
 DECL|macro|RCL_FAILURE
 mdefine_line|#define RCL_FAILURE (RCL_MAXPRI + 1)
-DECL|macro|RCL_POLICY
-mdefine_line|#define RCL_POLICY&t;&t;(swap_control.sc_policy)
 DECL|macro|AGE_CLUSTER_FRACT
 mdefine_line|#define AGE_CLUSTER_FRACT&t;(swap_control.sc_age_cluster_fract)
 DECL|macro|AGE_CLUSTER_MIN
@@ -190,12 +191,6 @@ DECL|macro|PAGEOUT_WEIGHT
 mdefine_line|#define PAGEOUT_WEIGHT&t;&t;(swap_control.sc_pageout_weight)
 DECL|macro|BUFFEROUT_WEIGHT
 mdefine_line|#define BUFFEROUT_WEIGHT&t;(swap_control.sc_bufferout_weight)
-DECL|macro|NR_BUFFS_TO_FREE
-mdefine_line|#define NR_BUFFS_TO_FREE&t;(swap_control.sc_nr_buffs_to_free)
-DECL|macro|NR_PAGES_TO_FREE
-mdefine_line|#define NR_PAGES_TO_FREE&t;(swap_control.sc_nr_pages_to_free)
-DECL|macro|BUFFERMEM_GRACE
-mdefine_line|#define BUFFERMEM_GRACE&t;&t;(swap_control.sc_buffer_grace)
 multiline_comment|/* Page aging (see mm/swap.c) */
 DECL|macro|MAX_PAGE_AGE
 mdefine_line|#define MAX_PAGE_AGE&t;&t;(swap_control.sc_max_page_age)
@@ -205,14 +200,6 @@ DECL|macro|PAGE_DECLINE
 mdefine_line|#define PAGE_DECLINE&t;&t;(swap_control.sc_page_decline)
 DECL|macro|PAGE_INITIAL_AGE
 mdefine_line|#define PAGE_INITIAL_AGE&t;(swap_control.sc_page_initial_age)
-DECL|macro|MAX_BUFF_AGE
-mdefine_line|#define MAX_BUFF_AGE&t;&t;(swap_control.sc_max_buff_age)
-DECL|macro|BUFF_ADVANCE
-mdefine_line|#define BUFF_ADVANCE&t;&t;(swap_control.sc_buff_advance)
-DECL|macro|BUFF_DECLINE
-mdefine_line|#define BUFF_DECLINE&t;&t;(swap_control.sc_buff_decline)
-DECL|macro|BUFF_INITIAL_AGE
-mdefine_line|#define BUFF_INITIAL_AGE&t;(swap_control.sc_buff_initial_age)
 multiline_comment|/* Given a resource of N units (pages or buffers etc), we only try to&n; * age and reclaim AGE_CLUSTER_FRACT per 1024 resources each time we&n; * scan the resource list. */
 DECL|function|AGE_CLUSTER_SIZE
 r_static

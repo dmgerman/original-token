@@ -35,6 +35,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#ifdef CONFIG_MATH_EMULATION
 macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#endif
+macro_line|#include &quot;irq.h&quot;
 macro_line|#ifdef __SMP__
 id|asmlinkage
 r_void
@@ -813,6 +814,14 @@ op_star
 id|__unused
 )paren
 (brace
+macro_line|#if __SMP__
+multiline_comment|/*&n;&t; * turn off the IO-APIC, so we can do a clean reboot&n;&t; */
+id|init_pic_mode
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1700,40 +1709,14 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * a bitmap offset pointing outside of the TSS limit causes a nicely&n;&t; * controllable SIGSEGV. The first sys_ioperm() call sets up the&n;&t; * bitmap properly.&n;&t; */
 id|p-&gt;tss.bitmap
 op_assign
-m_offsetof
+r_sizeof
 (paren
 r_struct
 id|thread_struct
-comma
-id|io_bitmap
 )paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|IO_BITMAP_SIZE
-op_plus
-l_int|1
-suffix:semicolon
-id|i
-op_increment
-)paren
-multiline_comment|/* IO bitmap is actually SIZE+1 */
-id|p-&gt;tss.io_bitmap
-(braket
-id|i
-)braket
-op_assign
-op_complement
-l_int|0
 suffix:semicolon
 r_if
 c_cond

@@ -179,6 +179,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do acer notebook init */
+DECL|variable|mwave_bug
+r_int
+id|mwave_bug
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Using the dreadful mwave sb emulation */
 id|MODULE_PARM
 c_func
 (paren
@@ -255,6 +262,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|sm_games
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mwave_bug
 comma
 l_string|&quot;i&quot;
 )paren
@@ -420,8 +435,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren
@@ -474,7 +489,7 @@ id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 macro_line|#else
-macro_line|#ifdef SM_GAMES
+macro_line|#ifdef CONFIG_SM_GAMES
 DECL|variable|sm_games
 r_int
 id|sm_games
@@ -489,7 +504,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef SB_ACER
+macro_line|#ifdef CONFIG_SB_ACER
 DECL|variable|acer
 r_int
 id|acer
@@ -500,6 +515,21 @@ macro_line|#else
 DECL|variable|acer
 r_int
 id|acer
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SB_MWAVE
+DECL|variable|mwave_bug
+r_int
+id|mwave_bug
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+DECL|variable|mwave_bug
+r_int
+id|mwave_bug
 op_assign
 l_int|0
 suffix:semicolon

@@ -2212,9 +2212,16 @@ c_cond
 (paren
 id|err
 )paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_goto
 id|out_free
 suffix:semicolon
+)brace
 id|sk-&gt;stamp
 op_assign
 id|skb-&gt;stamp

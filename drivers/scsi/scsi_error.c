@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  scsi_error.c Copyright (C) 1997 Eric Youngdale&n; *&n; *  SCSI error/timeout handling&n; *      Initial versions: Eric Youngdale.  Based upon conversations with&n; *&t;&t;&t;  Leonard Zubkoff and David Miller at Linux Expo, &n; *&t;&t;&t;  ideas originating from all over the place.&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;

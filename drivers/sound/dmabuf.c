@@ -599,6 +599,7 @@ id|dmap-&gt;raw_buf
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Remember the buffer is deleted so we dont Oops later */
 id|dmap-&gt;fragment_size
 op_assign
 l_int|0
@@ -4225,7 +4226,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dmap-&gt;user_counter
+id|dmap-&gt;byte_counter
 op_ge
 id|dmap-&gt;max_byte_counter
 )paren
@@ -4234,23 +4235,21 @@ multiline_comment|/* Wrap the byte counters */
 r_int
 id|decr
 op_assign
-id|dmap-&gt;user_counter
+id|dmap-&gt;byte_counter
 suffix:semicolon
-id|dmap-&gt;user_counter
+id|dmap-&gt;byte_counter
 op_assign
 (paren
-id|dmap-&gt;user_counter
+id|dmap-&gt;byte_counter
 op_mod
 id|dmap-&gt;bytes_in_use
 )paren
-op_plus
-id|dmap-&gt;bytes_in_use
 suffix:semicolon
 id|decr
 op_sub_assign
-id|dmap-&gt;user_counter
-suffix:semicolon
 id|dmap-&gt;byte_counter
+suffix:semicolon
+id|dmap-&gt;user_counter
 op_sub_assign
 id|decr
 suffix:semicolon
@@ -4773,8 +4772,6 @@ id|dmap-&gt;byte_counter
 op_mod
 id|dmap-&gt;bytes_in_use
 )paren
-op_plus
-id|dmap-&gt;bytes_in_use
 suffix:semicolon
 id|decr
 op_sub_assign
@@ -4893,8 +4890,6 @@ id|dmap-&gt;byte_counter
 op_mod
 id|dmap-&gt;bytes_in_use
 )paren
-op_plus
-id|dmap-&gt;bytes_in_use
 suffix:semicolon
 id|decr
 op_sub_assign

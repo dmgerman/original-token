@@ -1097,7 +1097,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Allocate and initialize an mm_struct.&n; */
+multiline_comment|/*&n; * Allocate and initialize an mm_struct.&n; *&n; * NOTE! The mm mutex will be locked until the&n; * caller decides that all systems are go..&n; */
 DECL|function|mm_alloc
 r_struct
 id|mm_struct
@@ -1155,7 +1155,7 @@ l_int|0
 suffix:semicolon
 id|mm-&gt;mmap_sem
 op_assign
-id|MUTEX
+id|MUTEX_LOCKED
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Leave mm-&gt;pgd set to the parent&squot;s pgd&n;&t;&t; * so that pgd_offset() is always valid.&n;&t;&t; */
 id|mm-&gt;mmap
@@ -1341,6 +1341,13 @@ id|retval
 )paren
 r_goto
 id|free_pt
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
 suffix:semicolon
 r_return
 l_int|0

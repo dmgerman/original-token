@@ -1414,12 +1414,6 @@ op_amp
 id|entry-&gt;u.file.data_fork
 )paren
 suffix:semicolon
-id|hfs_cat_mark_dirty
-c_func
-(paren
-id|entry
-)paren
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -1447,12 +1441,6 @@ c_func
 (paren
 op_amp
 id|entry-&gt;u.file.rsrc_fork
-)paren
-suffix:semicolon
-id|hfs_cat_mark_dirty
-c_func
-(paren
-id|entry
 )paren
 suffix:semicolon
 )brace
@@ -2091,6 +2079,8 @@ comma
 id|entry
 )paren
 suffix:semicolon
+id|left
+op_sub_assign
 id|copy_to_user
 c_func
 (paren
@@ -2580,6 +2570,8 @@ c_cond
 id|p
 )paren
 (brace
+id|left
+op_sub_assign
 id|copy_to_user
 c_func
 (paren
@@ -3159,6 +3151,12 @@ c_func
 id|entry
 comma
 id|layout
+)paren
+suffix:semicolon
+id|hfs_cat_mark_dirty
+c_func
+(paren
+id|entry
 )paren
 suffix:semicolon
 )brace
@@ -4075,6 +4073,20 @@ op_star
 id|inode
 )paren
 (brace
+multiline_comment|/*struct inode *inode = dentry-&gt;d_inode;*/
+r_struct
+id|hfs_cat_entry
+op_star
+id|entry
+op_assign
+id|HFS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|entry
+suffix:semicolon
 r_struct
 id|hfs_hdr_layout
 op_star
@@ -4194,12 +4206,6 @@ id|HFS_HDR_RSRC
 id|fork
 op_assign
 op_amp
-id|HFS_I
-c_func
-(paren
-id|inode
-)paren
-op_member_access_from_pointer
 id|entry-&gt;u.file.rsrc_fork
 suffix:semicolon
 macro_line|#if 0
@@ -4217,12 +4223,6 @@ id|HFS_HDR_DATA
 id|fork
 op_assign
 op_amp
-id|HFS_I
-c_func
-(paren
-id|inode
-)paren
-op_member_access_from_pointer
 id|entry-&gt;u.file.data_fork
 suffix:semicolon
 macro_line|#endif

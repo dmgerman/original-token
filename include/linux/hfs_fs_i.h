@@ -60,12 +60,12 @@ op_star
 id|d_drop_op
 )paren
 (paren
-r_const
-id|ino_t
-comma
 r_struct
 id|dentry
 op_star
+comma
+r_const
+id|ino_t
 )paren
 suffix:semicolon
 )brace

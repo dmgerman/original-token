@@ -19,14 +19,6 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/* Adjust starting epoch if ARC console time is being used */
-macro_line|#ifdef CONFIG_RTC_ARC
-DECL|macro|ARCFUDGE
-mdefine_line|#define ARCFUDGE 20 
-macro_line|#else
-DECL|macro|ARCFUDGE
-mdefine_line|#define ARCFUDGE 0
-macro_line|#endif
 multiline_comment|/*&n; *&t;We sponge a minor off of the misc major. No need slurping&n; *&t;up another valuable major dev number for this. If you add&n; *&t;an ioctl, make sure you don&squot;t conflict with SPARC&squot;s RTC&n; *&t;ioctls.&n; */
 DECL|variable|rtc_wait
 r_static
@@ -250,8 +242,7 @@ comma
 l_int|31
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;A very tiny interrupt handler. It runs with SA_INTERRUPT set,&n; *&t;so that there is no possibility of conflicting with the&n; *&t;set_rtc_mmss() call that happens during some timer interrupts.&n; *&t;(See ./arch/XXXX/kernel/time.c for the set_rtc_mmss() function.)&n; *&n; *&t;On Alpha we won&squot;t get any interrupts anyway, as they all end up&n; *&t;in the system timer code.&n; */
-macro_line|#ifndef __alpha__
+multiline_comment|/*&n; *&t;A very tiny interrupt handler. It runs with SA_INTERRUPT set,&n; *&t;so that there is no possibility of conflicting with the&n; *&t;set_rtc_mmss() call that happens during some timer interrupts.&n; *&t;(See ./arch/XXXX/kernel/time.c for the set_rtc_mmss() function.)&n; */
 DECL|function|rtc_interrupt
 r_static
 r_void
@@ -338,8 +329,7 @@ id|rtc_irq_timer
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-multiline_comment|/*&n; *&t;Now all the various file operations that we export.&n; *      They are all useless on Alpha...  *sigh*.&n; */
+multiline_comment|/*&n; *&t;Now all the various file operations that we export.&n; */
 DECL|function|rtc_llseek
 r_static
 r_int
@@ -387,12 +377,6 @@ op_star
 id|ppos
 )paren
 (brace
-macro_line|#ifdef __alpha__
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-macro_line|#else
 r_struct
 id|wait_queue
 id|wait
@@ -548,7 +532,6 @@ suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|rtc_ioctl
 r_static
@@ -589,7 +572,6 @@ c_cond
 id|cmd
 )paren
 (brace
-macro_line|#ifndef __alpha__
 r_case
 id|RTC_AIE_OFF
 suffix:colon
@@ -760,7 +742,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 r_case
 id|RTC_ALM_READ
 suffix:colon
@@ -1045,8 +1026,6 @@ op_assign
 id|rtc_tm.tm_year
 op_plus
 l_int|1900
-op_plus
-id|ARCFUDGE
 suffix:semicolon
 id|mon
 op_assign
@@ -1423,7 +1402,6 @@ id|arg
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
 r_case
 id|RTC_IRQP_SET
 suffix:colon
@@ -1561,7 +1539,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else /* __alpha__ */
+macro_line|#ifdef __alpha__
 r_case
 id|RTC_EPOCH_READ
 suffix:colon
@@ -1651,7 +1629,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;We enforce only one user at a time here with the open/close.&n; *&t;Also clear the previous interrupt data on an open, and clean&n; *&t;up things on a close.&n; *&t;On Alpha we just open, for we don&squot;t mess with interrups anyway.&n; */
+multiline_comment|/*&n; *&t;We enforce only one user at a time here with the open/close.&n; *&t;Also clear the previous interrupt data on an open, and clean&n; *&t;up things on a close.&n; */
 DECL|function|rtc_open
 r_static
 r_int
@@ -1669,7 +1647,6 @@ op_star
 id|file
 )paren
 (brace
-macro_line|#ifndef __alpha__
 r_if
 c_cond
 (paren
@@ -1691,7 +1668,6 @@ id|rtc_irq_data
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1714,7 +1690,6 @@ id|file
 )paren
 (brace
 multiline_comment|/*&n;&t; * Turn off all interrupts once the device is no longer&n;&t; * in use, and clear the data.&n;&t; */
-macro_line|#ifndef __alpha__
 r_int
 r_char
 id|tmp
@@ -1807,12 +1782,10 @@ op_and_assign
 op_complement
 id|RTC_IS_OPEN
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
 DECL|function|rtc_poll
 r_static
 r_int
@@ -1857,7 +1830,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; *&t;The various file operations we support.&n; */
 DECL|variable|rtc_fops
 r_static
@@ -1876,14 +1848,8 @@ multiline_comment|/* No write */
 l_int|NULL
 comma
 multiline_comment|/* No readdir */
-macro_line|#ifdef __alpha__
-l_int|NULL
-comma
-multiline_comment|/* No select on Alpha */
-macro_line|#else
 id|rtc_poll
 comma
-macro_line|#endif
 id|rtc_ioctl
 comma
 l_int|NULL
@@ -1952,7 +1918,6 @@ comma
 id|RTC_VERSION
 )paren
 suffix:semicolon
-macro_line|#ifndef __alpha__
 r_if
 c_cond
 (paren
@@ -1986,7 +1951,6 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#endif
 id|misc_register
 c_func
 (paren
@@ -2146,14 +2110,14 @@ id|guess
 id|printk
 c_func
 (paren
-l_string|&quot;rtc: %s epoch (%ld) detected&bslash;n&quot;
+l_string|&quot;rtc: %s epoch (%lu) detected&bslash;n&quot;
 comma
 id|guess
 comma
 id|epoch
 )paren
 suffix:semicolon
-macro_line|#else
+macro_line|#endif
 id|init_timer
 c_func
 (paren
@@ -2211,13 +2175,11 @@ id|rtc_freq
 op_assign
 l_int|1024
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * &t;At IRQ rates &gt;= 4096Hz, an interrupt may get lost altogether.&n; *&t;(usually during an IDE disk interrupt, with IRQ unmasking off)&n; *&t;Since the interrupt handler doesn&squot;t get called, the IRQ status&n; *&t;byte doesn&squot;t get read, and the RTC stops generating interrupts.&n; *&t;A timer is set, and will call this function if/when that happens.&n; *&t;To get it out of this stalled state, we just read the status.&n; *&t;At least a jiffy of interrupts (rtc_freq/HZ) will have been lost.&n; *&t;(You *really* shouldn&squot;t be trying to use a non-realtime system &n; *&t;for something that requires a steady &gt; 1KHz signal anyways.)&n; */
-macro_line|#ifndef __alpha__
 DECL|function|rtc_dropped_irq
 r_void
 id|rtc_dropped_irq
@@ -2317,7 +2279,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; *&t;Info exported via &quot;/proc/rtc&quot;.&n; */
 DECL|function|get_rtc_status
 r_int
@@ -2403,6 +2364,7 @@ id|p
 comma
 l_string|&quot;rtc_time&bslash;t: %02d:%02d:%02d&bslash;n&quot;
 l_string|&quot;rtc_date&bslash;t: %04d-%02d-%02d&bslash;n&quot;
+l_string|&quot;rtc_epoch&bslash;t: %04lu&bslash;n&quot;
 comma
 id|tm.tm_hour
 comma
@@ -2419,6 +2381,8 @@ op_plus
 l_int|1
 comma
 id|tm.tm_mday
+comma
+id|epoch
 )paren
 suffix:semicolon
 id|get_rtc_alm_time
@@ -2875,9 +2839,11 @@ c_cond
 (paren
 id|rtc_tm-&gt;tm_year
 op_add_assign
+(paren
 id|epoch
 op_minus
 l_int|1900
+)paren
 )paren
 op_le
 l_int|69
@@ -2885,11 +2851,6 @@ l_int|69
 id|rtc_tm-&gt;tm_year
 op_add_assign
 l_int|100
-suffix:semicolon
-multiline_comment|/* if ARCFUDGE == 0, the optimizer should do away with this */
-id|rtc_tm-&gt;tm_year
-op_sub_assign
-id|ARCFUDGE
 suffix:semicolon
 id|rtc_tm-&gt;tm_mon
 op_decrement
@@ -2998,7 +2959,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Used to disable/enable interrupts for any one of UIE, AIE, PIE.&n; * Rumour has it that if you frob the interrupt enable/disable&n; * bits in RTC_CONTROL, you should read RTC_INTR_FLAGS, to&n; * ensure you actually start getting interrupts. Probably for&n; * compatibility with older/broken chipset RTC implementations.&n; * We also clear out any old irq data after an ioctl() that&n; * meddles with the interrupt enable/disable bits.&n; */
-macro_line|#ifndef __alpha__
 DECL|function|mask_rtc_irq_bit
 r_void
 id|mask_rtc_irq_bit
@@ -3132,5 +3092,4 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

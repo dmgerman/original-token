@@ -696,6 +696,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* These two are about to die.. */
 r_int
 id|snd_set_irq_handler
 (paren
@@ -725,6 +726,10 @@ comma
 r_int
 op_star
 id|osp
+comma
+r_void
+op_star
+id|dev_id
 )paren
 suffix:semicolon
 r_void
@@ -733,6 +738,10 @@ c_func
 (paren
 r_int
 id|vect
+comma
+r_void
+op_star
+id|ptr
 )paren
 suffix:semicolon
 r_void

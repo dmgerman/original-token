@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -2236,7 +2237,7 @@ id|dev
 op_rshift_assign
 l_int|4
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -2771,7 +2772,7 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 multiline_comment|/* Try to load the mixer... */
 r_if
 c_cond
@@ -2807,7 +2808,7 @@ id|modname
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_KERNELD */
+macro_line|#endif&t;/* CONFIG_KMOD */
 r_if
 c_cond
 (paren
@@ -3860,6 +3861,8 @@ id|snd_release_irq
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -4231,6 +4234,10 @@ comma
 r_int
 op_star
 id|osp
+comma
+r_void
+op_star
+id|dev_id
 )paren
 (brace
 r_int
@@ -4264,7 +4271,7 @@ l_int|0
 comma
 id|name
 comma
-l_int|NULL
+id|dev_id
 )paren
 suffix:semicolon
 r_if
@@ -4311,6 +4318,10 @@ c_func
 (paren
 r_int
 id|vect
+comma
+r_void
+op_star
+id|dev_id
 )paren
 (brace
 r_if
@@ -4343,7 +4354,7 @@ c_func
 (paren
 id|vect
 comma
-l_int|NULL
+id|dev_id
 )paren
 suffix:semicolon
 )brace

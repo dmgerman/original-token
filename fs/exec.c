@@ -1538,6 +1538,13 @@ id|retval
 r_goto
 id|fail_restore
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|mmput
 c_func
 (paren

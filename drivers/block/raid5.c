@@ -4544,6 +4544,7 @@ op_star
 r_int
 op_star
 )paren
+l_int|0
 op_assign
 l_int|0
 suffix:semicolon

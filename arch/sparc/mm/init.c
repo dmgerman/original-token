@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
@@ -701,18 +702,6 @@ op_star
 id|sparc_aliases
 suffix:semicolon
 r_extern
-r_int
-id|min_free_pages
-suffix:semicolon
-r_extern
-r_int
-id|free_pages_low
-suffix:semicolon
-r_extern
-r_int
-id|free_pages_high
-suffix:semicolon
-r_extern
 r_void
 id|srmmu_frob_mem_map
 c_func
@@ -1331,7 +1320,7 @@ comma
 id|end_mem
 )paren
 suffix:semicolon
-id|min_free_pages
+id|freepages.min
 op_assign
 id|nr_free_pages
 op_rshift
@@ -1340,31 +1329,31 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|min_free_pages
+id|freepages.min
 OL
 l_int|16
 )paren
 (brace
-id|min_free_pages
+id|freepages.min
 op_assign
 l_int|16
 suffix:semicolon
 )brace
-id|free_pages_low
+id|freepages.low
 op_assign
-id|min_free_pages
+id|freepages.min
 op_plus
 (paren
-id|min_free_pages
+id|freepages.min
 op_rshift
 l_int|1
 )paren
 suffix:semicolon
-id|free_pages_high
+id|freepages.high
 op_assign
-id|min_free_pages
+id|freepages.min
 op_plus
-id|min_free_pages
+id|freepages.min
 suffix:semicolon
 )brace
 DECL|function|free_initmem

@@ -495,10 +495,16 @@ id|dir-&gt;i_mode
 )paren
 )paren
 (brace
-r_goto
-id|done
+r_return
+op_minus
+id|ENOENT
 suffix:semicolon
 )brace
+id|dentry-&gt;d_op
+op_assign
+op_amp
+id|hfs_dentry_operations
+suffix:semicolon
 id|entry
 op_assign
 id|HFS_I
@@ -728,11 +734,6 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
-id|dentry-&gt;d_op
-op_assign
-op_amp
-id|hfs_dentry_operations
-suffix:semicolon
 id|d_add
 c_func
 (paren
@@ -1617,20 +1618,20 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/* due to the dcache caching negative dentries for non-existent files,&n; * we need to drop those entries when a file silently gets created.&n; * as far as i can tell, the calls that need to do this are the file&n; * related calls (create, rename, and mknod). the directory calls&n; * should be immune. the relevant calls in dir.c call drop_dentry &n; * upon successful completion. this allocates an array for %name&n; * on the first attempt to access it. */
+multiline_comment|/* due to the dcache caching negative dentries for non-existent files,&n; * we need to drop those entries when a file silently gets created.&n; * as far as i can tell, the calls that need to do this are the file&n; * related calls (create, rename, and mknod). the directory calls&n; * should be immune. the relevant calls in dir.c call drop_dentry &n; * upon successful completion. */
 DECL|function|hfs_dbl_drop_dentry
 r_void
 id|hfs_dbl_drop_dentry
 c_func
 (paren
-r_const
-id|ino_t
-id|type
-comma
 r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_const
+id|ino_t
+id|type
 )paren
 (brace
 r_int

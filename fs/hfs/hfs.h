@@ -3,11 +3,10 @@ macro_line|#ifndef _HFS_H
 DECL|macro|_HFS_H
 mdefine_line|#define _HFS_H
 macro_line|#include &lt;linux/hfs_sysdep.h&gt;
-macro_line|#include &lt;linux/hfs_fs.h&gt;
 DECL|macro|HFS_NEW
 mdefine_line|#define HFS_NEW(X)&t;((X) = hfs_malloc(sizeof(*(X))))
 DECL|macro|HFS_DELETE
-mdefine_line|#define HFS_DELETE(X)&t;{ hfs_free((X), sizeof(*(X))); (X) = NULL; }
+mdefine_line|#define HFS_DELETE(X)&t;do { hfs_free((X), sizeof(*(X))); (X) = NULL; } &bslash;&n;                        while (0)
 multiline_comment|/* offsets to various blocks */
 DECL|macro|HFS_DD_BLK
 mdefine_line|#define HFS_DD_BLK&t;&t;0 /* Driver Descriptor block */
@@ -739,7 +738,7 @@ id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * struct hfs_file &n; *&n; * This structure holds information about a&n; * file or directory in an HFS filesystem.&n; *&n; * &squot;wait&squot; must remain 1st and &squot;next&squot; 2nd since we do some pointer arithmetic.&n; */
+multiline_comment|/*&n; * struct hfs_file &n; *&n; * This structure holds information about a&n; * file or directory in an HFS filesystem.&n; *&n; * &squot;wait&squot; must remain 1st and &squot;hash&squot; 2nd since we do some pointer arithmetic.&n; */
 DECL|struct|hfs_cat_entry
 r_struct
 id|hfs_cat_entry
@@ -757,11 +756,6 @@ DECL|member|list
 r_struct
 id|list_head
 id|list
-suffix:semicolon
-DECL|member|dirty
-r_struct
-id|list_head
-id|dirty
 suffix:semicolon
 DECL|member|mdb
 r_struct
@@ -844,8 +838,6 @@ DECL|macro|HFS_LOCK
 mdefine_line|#define HFS_LOCK         4
 DECL|macro|HFS_DELETED
 mdefine_line|#define HFS_DELETED      8
-DECL|macro|HFS_SUPERBLK
-mdefine_line|#define HFS_SUPERBLK    16
 multiline_comment|/* &n; * struct hfs_bnode_ref&n; *&n; * A pointer to a (struct hfs_bnode) and the type of lock held on it.&n; */
 DECL|struct|hfs_bnode_ref
 r_struct
@@ -1599,17 +1591,6 @@ r_char
 op_star
 comma
 r_int
-)paren
-suffix:semicolon
-multiline_comment|/* sysdep.c */
-r_extern
-r_void
-id|hfs_cat_prune
-c_func
-(paren
-r_struct
-id|hfs_cat_entry
-op_star
 )paren
 suffix:semicolon
 r_extern

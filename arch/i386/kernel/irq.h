@@ -1,8 +1,7 @@
 macro_line|#ifndef __irq_h
 DECL|macro|__irq_h
 mdefine_line|#define __irq_h
-macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n; * Various low-level irq details needed by irq.c and smp.c&n; *&n; * Interrupt entry/exit code at both C and assembly level&n; */
+multiline_comment|/*&n; * Various low-level irq details needed by irq.c, process.c,&n; * time.c, io_apic.c and smp.c&n; *&n; * Interrupt entry/exit code at both C and assembly level&n; */
 r_void
 id|mask_irq
 c_func
@@ -94,6 +93,12 @@ id|dest
 comma
 r_int
 id|vector
+)paren
+suffix:semicolon
+r_void
+id|init_pic_mode
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern

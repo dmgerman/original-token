@@ -510,7 +510,8 @@ comma
 id|entry
 )paren
 suffix:semicolon
-multiline_comment|/* is copy_to_user guaranteed to write memcount? */
+id|memcount
+op_sub_assign
 id|copy_to_user
 c_func
 (paren
@@ -1042,6 +1043,7 @@ op_star
 id|inode
 )paren
 (brace
+multiline_comment|/*struct inode *inode = dentry-&gt;d_inode;*/
 r_if
 c_cond
 (paren

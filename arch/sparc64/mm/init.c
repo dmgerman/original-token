@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -4325,18 +4326,6 @@ id|start_mem
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_int
-id|min_free_pages
-suffix:semicolon
-r_extern
-r_int
-id|free_pages_low
-suffix:semicolon
-r_extern
-r_int
-id|free_pages_high
-suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -4910,7 +4899,7 @@ comma
 id|end_mem
 )paren
 suffix:semicolon
-id|min_free_pages
+id|freepages.low
 op_assign
 id|nr_free_pages
 op_rshift
@@ -4919,31 +4908,31 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|min_free_pages
+id|freepages.low
 OL
 l_int|16
 )paren
 (brace
-id|min_free_pages
+id|freepages.low
 op_assign
 l_int|16
 suffix:semicolon
 )brace
-id|free_pages_low
+id|freepages.low
 op_assign
-id|min_free_pages
+id|freepages.low
 op_plus
 (paren
-id|min_free_pages
+id|freepages.low
 op_rshift
 l_int|1
 )paren
 suffix:semicolon
-id|free_pages_high
+id|freepages.high
 op_assign
-id|min_free_pages
+id|freepages.low
 op_plus
-id|min_free_pages
+id|freepages.low
 suffix:semicolon
 )brace
 DECL|function|free_initmem

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  scsi_queue.c Copyright (C) 1997 Eric Youngdale&n; *&n; *  generic mid-level SCSI queueing.&n; *&n; *  The point of this is that we need to track when hosts are unable to&n; *  accept a command because they are busy.  In addition, we track devices&n; *  that cannot accept a command because of a QUEUE_FULL condition.  In both&n; *  of these cases, we enter the command in the queue.  At some later point,&n; *  we attempt to remove commands from the queue and retry them.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;

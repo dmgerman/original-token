@@ -152,6 +152,17 @@ r_int
 r_int
 id|usecs_per_tick
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The user is changing the timer rate before setting a timer&n;&t; *&t;slap, bad bad not allowed.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tmr
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 id|usecs_per_tick
 op_assign
 (paren

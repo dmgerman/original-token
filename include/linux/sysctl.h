@@ -220,6 +220,9 @@ DECL|enumerator|VM_OVERCOMMIT_MEMORY
 id|VM_OVERCOMMIT_MEMORY
 comma
 multiline_comment|/* Turn off the virtual memory safety limit */
+DECL|enumerator|VM_BUFFERMEM
+id|VM_BUFFERMEM
+multiline_comment|/* struct: Set cache memory thresholds */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_NET names: */
@@ -363,12 +366,6 @@ DECL|enumerator|NET_IPV4_TCP_HOE_RETRANSMITS
 id|NET_IPV4_TCP_HOE_RETRANSMITS
 op_assign
 l_int|32
-comma
-DECL|enumerator|NET_IPV4_TCP_SACK
-id|NET_IPV4_TCP_SACK
-comma
-DECL|enumerator|NET_IPV4_TCP_TSACK
-id|NET_IPV4_TCP_TSACK
 comma
 DECL|enumerator|NET_IPV4_TCP_TIMESTAMPS
 id|NET_IPV4_TCP_TIMESTAMPS

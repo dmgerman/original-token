@@ -5024,7 +5024,7 @@ comma
 id|size
 )paren
 suffix:semicolon
-multiline_comment|/* N.B. This could fail with -EFAULT */
+multiline_comment|/* N.B. This could fail with a non-zero value (which means -EFAULT&n;&t;&t; *      and the non-zero value is the number of bytes not copied).&n;&t;&t; */
 id|memcpy_toiovec
 c_func
 (paren

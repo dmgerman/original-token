@@ -725,6 +725,7 @@ op_star
 id|inode
 )paren
 (brace
+multiline_comment|/*struct inode *inode = dentry-&gt;d_inode;*/
 r_struct
 id|hfs_fork
 op_star
@@ -849,6 +850,8 @@ r_int
 id|count
 )paren
 (brace
+id|count
+op_sub_assign
 id|copy_from_user
 c_func
 (paren
@@ -1328,14 +1331,6 @@ op_minus
 id|offset
 suffix:semicolon
 )brace
-id|count
-op_sub_assign
-id|chars
-suffix:semicolon
-id|read
-op_add_assign
-id|chars
-suffix:semicolon
 id|p
 op_assign
 (paren
@@ -1366,6 +1361,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|chars
+op_sub_assign
 id|copy_to_user
 c_func
 (paren
@@ -1384,7 +1381,15 @@ op_star
 id|bhe
 )paren
 suffix:semicolon
+id|count
+op_sub_assign
+id|chars
+suffix:semicolon
 id|buf
+op_add_assign
+id|chars
+suffix:semicolon
+id|read
 op_add_assign
 id|chars
 suffix:semicolon
@@ -1713,6 +1718,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|c
+op_sub_assign
 id|copy_from_user
 c_func
 (paren

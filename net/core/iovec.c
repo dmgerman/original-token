@@ -229,9 +229,6 @@ id|len
 (brace
 r_int
 id|err
-op_assign
-op_minus
-id|EFAULT
 suffix:semicolon
 r_while
 c_loop
@@ -258,9 +255,8 @@ comma
 id|len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|err
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -270,6 +266,11 @@ id|kdata
 comma
 id|copy
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 r_goto
 id|out

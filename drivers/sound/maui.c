@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/maui.c&n; *&n; * The low level driver for Turtle Beach Maui and Tropez.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;&t;General clean up, use kernel IRQ &n; *&t;&t;&t;&t;&t;system&n; *&n; *&t;Status:&n; *&t;&t;Untested&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|USE_SEQ_MACROS
@@ -1341,16 +1341,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|snd_set_irq_handler
+id|request_irq
 c_func
 (paren
 id|hw_config-&gt;irq
 comma
 id|mauiintr
 comma
+l_int|0
+comma
 l_string|&quot;Maui&quot;
 comma
-id|maui_osp
+l_int|NULL
 )paren
 OL
 l_int|0
@@ -1423,10 +1425,12 @@ id|hw_config-&gt;irq
 )paren
 )paren
 (brace
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|hw_config-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -1453,10 +1457,12 @@ id|KERN_ERR
 l_string|&quot;No WaveFront firmware detected (card uninitialized?)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|hw_config-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -1498,10 +1504,12 @@ id|KERN_ERR
 l_string|&quot;No WaveFront firmware detected (card uninitialized?)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|hw_config-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -1520,10 +1528,12 @@ op_eq
 l_int|0xff
 )paren
 (brace
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|hw_config-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -1878,10 +1888,12 @@ id|irq
 OG
 l_int|0
 )paren
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -1912,7 +1924,7 @@ r_struct
 id|address_info
 id|cfg
 suffix:semicolon
-multiline_comment|/*&n; *&t;Install a CS4232 based card. Need to have ad1848 and mpu401&n; *&t;loaded ready.&n; */
+multiline_comment|/*&n; *&t;Install a Maui card. Needs mpu401 loaded already.&n; */
 DECL|function|init_module
 r_int
 id|init_module

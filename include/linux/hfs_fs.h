@@ -676,12 +676,12 @@ r_void
 id|hfs_cap_drop_dentry
 c_func
 (paren
-r_const
-id|ino_t
-comma
 r_struct
 id|dentry
 op_star
+comma
+r_const
+id|ino_t
 )paren
 suffix:semicolon
 multiline_comment|/* dir_dbl.c */
@@ -711,12 +711,12 @@ r_void
 id|hfs_dbl_drop_dentry
 c_func
 (paren
-r_const
-id|ino_t
-comma
 r_struct
 id|dentry
 op_star
+comma
+r_const
+id|ino_t
 )paren
 suffix:semicolon
 multiline_comment|/* dir_nat.c */
@@ -751,12 +751,12 @@ r_void
 id|hfs_nat_drop_dentry
 c_func
 (paren
-r_const
-id|ino_t
-comma
 r_struct
 id|dentry
 op_star
+comma
+r_const
+id|ino_t
 )paren
 suffix:semicolon
 multiline_comment|/* dir_sngl.c */
@@ -1157,18 +1157,6 @@ r_const
 r_struct
 id|hfs_name
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|hfs_tolower
-c_func
-(paren
-r_int
-r_char
-op_star
-comma
-r_int
 )paren
 suffix:semicolon
 DECL|macro|HFS_I

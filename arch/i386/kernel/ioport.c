@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/stddef.h&gt;
 multiline_comment|/* Set EXTENT bits starting at BASE in BITMAP to value TURN_ON. */
 DECL|function|set_bitmap
 r_static
@@ -207,6 +208,14 @@ r_int
 id|turn_on
 )paren
 (brace
+r_struct
+id|thread_struct
+op_star
+id|t
+op_assign
+op_amp
+id|current-&gt;tss
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -245,6 +254,38 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+multiline_comment|/*&n;&t; * If it&squot;s the first ioperm() call in this thread&squot;s lifetime, set the&n;&t; * IO bitmap up. ioperm() is much less timing critical than clone(),&n;&t; * this is why we delay this operation until now:&n;&t; */
+DECL|macro|IO_BITMAP_OFFSET
+mdefine_line|#define IO_BITMAP_OFFSET offsetof(struct thread_struct,io_bitmap)
+r_if
+c_cond
+(paren
+id|t-&gt;bitmap
+op_ne
+id|IO_BITMAP_OFFSET
+)paren
+(brace
+id|t-&gt;bitmap
+op_assign
+id|IO_BITMAP_OFFSET
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|t-&gt;io_bitmap
+comma
+l_int|0xff
+comma
+(paren
+id|IO_BITMAP_SIZE
+op_plus
+l_int|1
+)paren
+op_star
+l_int|4
+)paren
+suffix:semicolon
+)brace
 id|set_bitmap
 c_func
 (paren
@@ -253,7 +294,7 @@ r_int
 r_int
 op_star
 )paren
-id|current-&gt;tss.io_bitmap
+id|t-&gt;io_bitmap
 comma
 id|from
 comma

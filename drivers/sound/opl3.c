@@ -1,11 +1,8 @@
-multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; *&n;*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Changes&n; *&t;Thomas Sailer   ioctl code reworked (vmalloc/vfree removed)&n; *&t;Alan Cox&t;modularisation, fixed sound_mem allocs.&n; *&n; * Status&n; *&t;Believed to work. Badly needs rewriting a bit to support multiple&n; *&t;OPL3 devices.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; */
-multiline_comment|/*&n; * hooft@chem.ruu.nl&n; */
+multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; * hooft@chem.ruu.nl&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#if defined(CONFIG_YM3812) || defined(MODULE)
@@ -454,7 +451,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_from_user
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -487,6 +484,7 @@ id|SBFM_MAXINSTR
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;FM Error: Invalid instrument number %d&bslash;n&quot;
 comma
 id|ins.channel
@@ -526,7 +524,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_to_user
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -628,13 +626,7 @@ r_struct
 id|opl_devinfo
 op_star
 )paren
-(paren
-id|sound_mem_blocks
-(braket
-id|sound_nblocks
-)braket
-op_assign
-id|vmalloc
+id|kmalloc
 c_func
 (paren
 r_sizeof
@@ -642,30 +634,9 @@ r_sizeof
 op_star
 id|devc
 )paren
+comma
+id|GFP_KERNEL
 )paren
-)paren
-suffix:semicolon
-id|sound_mem_sizes
-(braket
-id|sound_nblocks
-)braket
-op_assign
-r_sizeof
-(paren
-op_star
-id|devc
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sound_nblocks
-OL
-l_int|1024
-)paren
-id|sound_nblocks
-op_increment
-suffix:semicolon
 suffix:semicolon
 r_if
 c_cond
@@ -3920,6 +3891,9 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -3951,7 +3925,13 @@ id|ins
 op_minus
 id|offs
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5539,6 +5519,12 @@ c_cond
 id|devc
 )paren
 (brace
+id|kfree
+c_func
+(paren
+id|devc
+)paren
+suffix:semicolon
 id|devc
 op_assign
 l_int|NULL

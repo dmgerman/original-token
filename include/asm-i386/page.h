@@ -1,6 +1,7 @@
 macro_line|#ifndef _I386_PAGE_H
 DECL|macro|_I386_PAGE_H
 mdefine_line|#define _I386_PAGE_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT&t;12

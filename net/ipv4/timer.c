@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;TIMER - implementation of software timers for IP.&n; *&n; * Version:&t;$Id: timer.c,v 1.9 1998/03/11 07:12:44 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;To avoid destroying a wait queue as we use it&n; *&t;&t;&t;&t;&t;we defer destruction until the destroy timer goes&n; *&t;&t;&t;&t;&t;off.&n; *&t;&t;Alan Cox&t;:&t;Destroy socket doesn&squot;t write a status value to the&n; *&t;&t;&t;&t;&t;socket buffer _AFTER_ freeing it! Also sock ensures&n; *&t;&t;&t;&t;&t;the socket will get removed BEFORE this is called&n; *&t;&t;&t;&t;&t;otherwise if the timer TIME_DESTROY occurs inside&n; *&t;&t;&t;&t;&t;of inet_bh() with this socket being handled it goes&n; *&t;&t;&t;&t;&t;BOOM! Have to stop timer going off if net_bh is&n; *&t;&t;&t;&t;&t;active or the destroy causes crashes.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up unused code.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;TIMER - implementation of software timers for IP.&n; *&n; * Version:&t;$Id: timer.c,v 1.10 1998/03/13 08:02:18 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;To avoid destroying a wait queue as we use it&n; *&t;&t;&t;&t;&t;we defer destruction until the destroy timer goes&n; *&t;&t;&t;&t;&t;off.&n; *&t;&t;Alan Cox&t;:&t;Destroy socket doesn&squot;t write a status value to the&n; *&t;&t;&t;&t;&t;socket buffer _AFTER_ freeing it! Also sock ensures&n; *&t;&t;&t;&t;&t;the socket will get removed BEFORE this is called&n; *&t;&t;&t;&t;&t;otherwise if the timer TIME_DESTROY occurs inside&n; *&t;&t;&t;&t;&t;of inet_bh() with this socket being handled it goes&n; *&t;&t;&t;&t;&t;BOOM! Have to stop timer going off if net_bh is&n; *&t;&t;&t;&t;&t;active or the destroy causes crashes.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up unused code.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -26,24 +26,6 @@ op_star
 id|t
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|t-&gt;timeout
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -57,10 +39,9 @@ id|t-&gt;timer
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
-(paren
-id|flags
-)paren
+id|t-&gt;timeout
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|net_reset_timer
@@ -89,25 +70,6 @@ id|t-&gt;timeout
 op_assign
 id|timeout
 suffix:semicolon
-macro_line|#if 1
-multiline_comment|/* FIXME: ??? */
-r_if
-c_cond
-(paren
-(paren
-r_int
-)paren
-id|len
-OL
-l_int|0
-)paren
-multiline_comment|/* prevent close to infinite timers. THEY _DO_ */
-id|len
-op_assign
-l_int|3
-suffix:semicolon
-multiline_comment|/* happen (negative values ?) - don&squot;t ask me why ! -FB */
-macro_line|#endif
 id|t-&gt;timer.expires
 op_assign
 id|jiffies
@@ -121,7 +83,7 @@ id|t-&gt;timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Now we will only be called whenever we need to do&n; *&t;something, but we must be sure to process all of the&n; *&t;sockets that need it.&n; */
+multiline_comment|/* Now we will only be called whenever we need to do&n; * something, but we must be sure to process all of the&n; * sockets that need it.&n; */
 DECL|function|net_timer
 r_void
 id|net_timer
@@ -175,7 +137,7 @@ multiline_comment|/* Always see if we need to send an ack. */
 r_if
 c_cond
 (paren
-id|sk-&gt;ack_backlog
+id|sk-&gt;tp_pinfo.af_tcp.delayed_acks
 op_logical_and
 op_logical_neg
 id|sk-&gt;zapped
@@ -213,7 +175,7 @@ id|why
 r_case
 id|TIME_DONE
 suffix:colon
-multiline_comment|/* If the socket hasn&squot;t been closed off, re-try a bit later */
+multiline_comment|/* If the socket hasn&squot;t been closed off, re-try a bit later. */
 r_if
 c_cond
 (paren
@@ -261,7 +223,7 @@ suffix:semicolon
 r_case
 id|TIME_DESTROY
 suffix:colon
-multiline_comment|/*&n;&t;&t; *&t;We&squot;ve waited for a while for all the memory associated with&n;&t;&t; *&t;the socket to be freed.&n;&t;&t; */
+multiline_comment|/* We&squot;ve waited for a while for all the memory associated with&n;&t;&t;&t; * the socket to be freed.&n;&t;&t;&t; */
 id|destroy_sock
 c_func
 (paren

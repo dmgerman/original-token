@@ -356,12 +356,10 @@ id|tmp.f_files
 op_assign
 id|mdb-&gt;fs_ablocks
 suffix:semicolon
-multiline_comment|/* According to the statfs manual page, -1 is the  */
 id|tmp.f_ffree
 op_assign
 id|mdb-&gt;free_ablocks
 suffix:semicolon
-multiline_comment|/* correct value when the meaning is undefined. */
 id|tmp.f_namelen
 op_assign
 id|HFS_NAMELEN
@@ -1794,23 +1792,7 @@ id|root_inode
 r_goto
 id|bail_no_root
 suffix:semicolon
-multiline_comment|/* cache the dentry in the inode */
 id|s-&gt;s_root
-op_assign
-id|HFS_I
-c_func
-(paren
-id|root_inode
-)paren
-op_member_access_from_pointer
-id|entry-&gt;sys_entry
-(braket
-id|HFS_ITYPE_TO_INT
-c_func
-(paren
-id|HFS_ITYPE_NORM
-)paren
-)braket
 op_assign
 id|d_alloc_root
 c_func
@@ -1829,16 +1811,23 @@ id|s-&gt;s_root
 r_goto
 id|bail_no_root
 suffix:semicolon
-multiline_comment|/* HFS_SUPERBLK prevents the root inode from being flushed &n;&t; * inadvertantly. */
+multiline_comment|/* fix up pointers. */
 id|HFS_I
 c_func
 (paren
 id|root_inode
 )paren
 op_member_access_from_pointer
-id|entry-&gt;state
+id|entry-&gt;sys_entry
+(braket
+id|HFS_ITYPE_TO_INT
+c_func
+(paren
+id|HFS_ITYPE_NORM
+)paren
+)braket
 op_assign
-id|HFS_SUPERBLK
+id|s-&gt;s_root
 suffix:semicolon
 id|s-&gt;s_root-&gt;d_op
 op_assign

@@ -630,7 +630,7 @@ r_else
 r_if
 c_cond
 (paren
-id|snd_set_irq_handler
+id|request_irq
 c_func
 (paren
 id|pas_irq
@@ -639,7 +639,9 @@ id|pasintr
 comma
 l_string|&quot;PAS16&quot;
 comma
-id|hw_config-&gt;osp
+l_int|0
+comma
+l_int|NULL
 )paren
 OL
 l_int|0
@@ -1279,10 +1281,12 @@ c_func
 id|hw_config-&gt;dma
 )paren
 suffix:semicolon
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|hw_config-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Removed kswapd_ctl limits, and swap out as many pages as needed&n; *  to bring the system back to free_pages_high: 2.4.97, Rik van Riel.&n; *  Version: $Id: vmscan.c,v 1.5 1998/02/23 22:14:28 sct Exp $&n; */
+multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Removed kswapd_ctl limits, and swap out as many pages as needed&n; *  to bring the system back to freepages.high: 2.4.97, Rik van Riel.&n; *  Version: $Id: vmscan.c,v 1.5 1998/02/23 22:14:28 sct Exp $&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -11,6 +11,8 @@ macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* &n; * When are we next due for a page scan? &n; */
@@ -1474,6 +1476,21 @@ id|stop
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|BUFFER_MEM
+OG
+id|buffer_mem.borrow_percent
+op_star
+id|num_physpages
+op_div
+l_int|100
+)paren
+id|state
+op_assign
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1488,6 +1505,16 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|BUFFER_MEM
+OG
+(paren
+id|buffer_mem.min_percent
+op_star
+id|num_physpages
+op_div
+l_int|100
+)paren
+op_logical_and
 id|shrink_mmap
 c_func
 (paren
@@ -1805,10 +1832,10 @@ suffix:semicolon
 id|swapstats.wakeups
 op_increment
 suffix:semicolon
-multiline_comment|/* Do the background pageout: &n;&t;&t; * When we&squot;ve got loads of memory, we try&n;&t;&t; * (free_pages_high - nr_free_pages) times to&n;&t;&t; * free memory. As memory gets tighter, kswapd&n;&t;&t; * gets more and more agressive. -- Rik.&n;&t;&t; */
+multiline_comment|/* Do the background pageout: &n;&t;&t; * When we&squot;ve got loads of memory, we try&n;&t;&t; * (freepages.high - nr_free_pages) times to&n;&t;&t; * free memory. As memory gets tighter, kswapd&n;&t;&t; * gets more and more agressive. -- Rik.&n;&t;&t; */
 id|tries
 op_assign
-id|free_pages_high
+id|freepages.high
 op_minus
 id|nr_free_pages
 suffix:semicolon
@@ -1817,27 +1844,22 @@ c_cond
 (paren
 id|tries
 OL
-id|min_free_pages
+id|freepages.min
 )paren
 (brace
 id|tries
 op_assign
-id|min_free_pages
+id|freepages.min
 suffix:semicolon
 )brace
-r_else
 r_if
 c_cond
 (paren
 id|nr_free_pages
 OL
-(paren
-id|free_pages_low
+id|freepages.high
 op_plus
-id|min_free_pages
-)paren
-op_div
-l_int|2
+id|freepages.low
 )paren
 id|tries
 op_lshift_assign
@@ -1945,7 +1967,7 @@ c_cond
 (paren
 id|pages
 OL
-id|free_pages_low
+id|freepages.low
 )paren
 id|memory_low
 op_assign
@@ -1957,9 +1979,17 @@ r_else
 r_if
 c_cond
 (paren
+(paren
 id|pages
-OL
-id|free_pages_high
+template_param
+(paren
+id|num_physpages
+op_star
+id|buffer_mem.max_percent
+op_div
+l_int|100
+)paren
+)paren
 op_logical_and
 id|jiffies
 op_ge

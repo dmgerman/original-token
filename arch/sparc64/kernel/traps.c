@@ -16,8 +16,8 @@ macro_line|#include &lt;asm/unistd.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/fpumacro.h&gt;
 macro_line|#include &lt;asm/lsu.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 multiline_comment|/* #define SYSCALL_TRACING */
 multiline_comment|/* #define VERBOSE_SYSCALL_TRACING */
@@ -2097,7 +2097,7 @@ l_int|14
 suffix:colon
 multiline_comment|/* unimplemented_FPop */
 macro_line|#ifdef CONFIG_MATHEMU_MODULE
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren

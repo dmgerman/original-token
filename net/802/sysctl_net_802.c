@@ -50,9 +50,6 @@ comma
 (brace
 l_int|0
 )brace
-(brace
-l_int|0
-)brace
 )brace
 suffix:semicolon
 macro_line|#endif
