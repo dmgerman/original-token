@@ -10,11 +10,11 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 r_extern
 r_void
@@ -46,30 +46,6 @@ c_func
 (paren
 r_void
 )paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|mm_phys_to_virt
-(paren
-r_int
-r_int
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|rd_start
-suffix:semicolon
-r_extern
-r_int
-id|rd_doload
-suffix:semicolon
-DECL|variable|ramdisk_length
-r_int
-r_int
-id|ramdisk_length
 suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving a inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; *&n; * ZERO_PAGE is a special page that is used for zero-initialized&n; * data and COW.&n; */
 DECL|variable|empty_bad_page_table
@@ -342,13 +318,14 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#if 0 /* The 68030 doesn&squot;t care about reserved bits. */
 multiline_comment|/*&n; * Bits to add to page descriptors for &quot;normal&quot; caching mode.&n; * For 68020/030 this is 0.&n; * For 68040, this is _PAGE_CACHE040 (cachable, copyback)&n; */
+DECL|variable|mm_cachebits
 r_int
 r_int
 id|mm_cachebits
+op_assign
+l_int|0
 suffix:semicolon
-macro_line|#endif
 DECL|function|kernel_page_table
 id|pte_t
 op_star
@@ -415,11 +392,6 @@ DECL|macro|ONEMEG
 mdefine_line|#define ONEMEG&t;(1024*1024)
 DECL|macro|L3TREESIZE
 mdefine_line|#define L3TREESIZE (256*1024)
-r_int
-id|is040
-op_assign
-id|m68k_is040or060
-suffix:semicolon
 r_static
 r_int
 r_int
@@ -561,7 +533,7 @@ multiline_comment|/*&n;&t; * if this is running on an &squot;040, we already all
 r_if
 c_cond
 (paren
-id|is040
+id|CPU_IS_040_OR_060
 op_logical_and
 id|mem_mapped
 op_eq
@@ -661,7 +633,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|is040
+id|CPU_IS_040_OR_060
 )paren
 (brace
 r_int
@@ -1025,131 +997,46 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n;&t; * Setup cache bits&n;&t; */
+multiline_comment|/* Fix the cache mode in the page descriptors for the 680[46]0.  */
+r_if
+c_cond
+(paren
+id|CPU_IS_040_OR_060
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
 id|mm_cachebits
 op_assign
-id|m68k_is040or060
-ques
-c_cond
 id|_PAGE_CACHE040
-suffix:colon
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Initialize protection map.  */
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|pgprot_val
+c_func
+(paren
 id|protection_map
 (braket
-l_int|0
+id|i
 )braket
-op_assign
-id|PAGE_READONLY
+)paren
+op_or_assign
+id|_PAGE_CACHE040
 suffix:semicolon
-id|protection_map
-(braket
-l_int|1
-)braket
-op_assign
-id|PAGE_READONLY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|2
-)braket
-op_assign
-id|PAGE_COPY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|3
-)braket
-op_assign
-id|PAGE_COPY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|4
-)braket
-op_assign
-id|PAGE_READONLY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|5
-)braket
-op_assign
-id|PAGE_READONLY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|6
-)braket
-op_assign
-id|PAGE_COPY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|7
-)braket
-op_assign
-id|PAGE_COPY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|8
-)braket
-op_assign
-id|PAGE_READONLY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|9
-)braket
-op_assign
-id|PAGE_READONLY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|10
-)braket
-op_assign
-id|PAGE_SHARED
-suffix:semicolon
-id|protection_map
-(braket
-l_int|11
-)braket
-op_assign
-id|PAGE_SHARED
-suffix:semicolon
-id|protection_map
-(braket
-l_int|12
-)braket
-op_assign
-id|PAGE_READONLY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|13
-)braket
-op_assign
-id|PAGE_READONLY
-suffix:semicolon
-id|protection_map
-(braket
-l_int|14
-)braket
-op_assign
-id|PAGE_SHARED
-suffix:semicolon
-id|protection_map
-(braket
-l_int|15
-)braket
-op_assign
-id|PAGE_SHARED
-suffix:semicolon
-macro_line|#endif
+)brace
 multiline_comment|/*&n;&t; * Map the physical memory available into the kernel virtual&n;&t; * address space.  It may allocate some memory for page&n;&t; * tables and thus modify availmem.&n;&t; */
 r_for
 c_loop
@@ -1374,9 +1261,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 id|asm
+id|__volatile__
 (paren
 l_string|&quot;movel %0,%/d0&bslash;n&bslash;t&quot;
 l_string|&quot;.long 0x4e7b0806&quot;
@@ -1402,12 +1290,15 @@ l_string|&quot;d0&quot;
 suffix:semicolon
 r_else
 id|asm
+id|__volatile__
 (paren
-l_string|&quot;pmove %0@,%/crp&quot;
+l_string|&quot;movel %0,%/a0&bslash;n&bslash;t&quot;
+l_string|&quot;.long 0xf0104c00&quot;
+multiline_comment|/* pmove %/a0@,%/crp */
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
-l_string|&quot;a&quot;
+l_string|&quot;g&quot;
 (paren
 id|task
 (braket
@@ -1416,6 +1307,8 @@ l_int|0
 op_member_access_from_pointer
 id|tss.crp
 )paren
+suffix:colon
+l_string|&quot;a0&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -1437,78 +1330,6 @@ id|printk
 l_string|&quot;before free_area_init&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
-macro_line|#ifndef CONFIG_BLK_DEV_INITRD
-multiline_comment|/*&n;&t; * Since the initialization of the ramdisk&squot;s has been changed&n;&t; * so it fits the new driver initialization scheme, we have to&n;&t; * make room for our preloaded image here, instead of doing it&n;&t; * in rd_init() as we cannot kmalloc() a block large enough&n;&t; * for the image.&n;&t; */
-id|ramdisk_length
-op_assign
-id|boot_info.ramdisk_size
-op_star
-l_int|1024
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|ramdisk_length
-OG
-l_int|0
-)paren
-op_logical_and
-(paren
-id|ROOT_DEV
-op_eq
-l_int|0
-)paren
-)paren
-(brace
-r_char
-op_star
-id|rdp
-suffix:semicolon
-multiline_comment|/* current location of ramdisk */
-id|rd_start
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|start_mem
-suffix:semicolon
-multiline_comment|/* get current address of ramdisk */
-id|rdp
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|mm_phys_to_virt
-(paren
-id|boot_info.ramdisk_addr
-)paren
-suffix:semicolon
-multiline_comment|/* copy the ram disk image */
-id|memcpy
-(paren
-id|rd_start
-comma
-id|rdp
-comma
-id|ramdisk_length
-)paren
-suffix:semicolon
-id|start_mem
-op_add_assign
-id|ramdisk_length
-suffix:semicolon
-id|rd_doload
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* tell rd_load to load this thing */
-)brace
-macro_line|#endif
 macro_line|#endif
 r_return
 id|free_area_init
@@ -1823,7 +1644,11 @@ op_logical_or
 (paren
 id|tmp
 OL
+(paren
 id|initrd_start
+op_amp
+id|PAGE_MASK
+)paren
 op_logical_or
 id|tmp
 op_ge

@@ -1,5 +1,7 @@
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;asm/amigatypes.h&gt;
+macro_line|#include &lt;asm/amigahw.h&gt;
 DECL|variable|mach_amiga_symbol_table
 r_static
 r_struct
@@ -9,6 +11,30 @@ op_assign
 (brace
 macro_line|#include &lt;linux/symtab_begin.h&gt;
 multiline_comment|/*&n;   * Add things here when you find the need for it.&n;   */
+id|X
+c_func
+(paren
+id|amiga_colorclock
+)paren
+comma
+id|X
+c_func
+(paren
+id|amiga_chip_alloc
+)paren
+comma
+id|X
+c_func
+(paren
+id|amiga_chip_free
+)paren
+comma
+id|X
+c_func
+(paren
+id|amiga_chip_avail
+)paren
+comma
 id|X
 c_func
 (paren
@@ -31,6 +57,12 @@ id|X
 c_func
 (paren
 id|zorro_unconfig_board
+)paren
+comma
+id|X
+c_func
+(paren
+id|zorro_unused_z2ram
 )paren
 comma
 multiline_comment|/* example&n;  X(something_you_need),&n;  */

@@ -151,7 +151,7 @@ multiline_comment|/*&n;**&t;Address translation&n;**&n;**&t;On Linux 1.3.X, virt
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
 DECL|macro|vtophys
 mdefine_line|#define vtophys(p)&t;virt_to_bus(p)
-multiline_comment|/*&n;**&t;Memory mapped IO&n;**&n;**&t;Linux 1.3.X allow to remap physical pages addresses greater than&n;**&t;the highest physical memory address to kernel virtual pages.&n;**&t;We must use vremap() to map the page and vfree() to unmap it.&n;**&t;The memory base of ncr chips is set by the bios at a high physical&n;**&t;address. Also we can map it, and MMIO is possible.&n;*/
+multiline_comment|/*&n;**&t;Memory mapped IO&n;**&n;**&t;Linux 1.3.X allow to remap physical pages addresses greater than&n;**&t;the highest physical memory address to kernel virtual pages.&n;**&t;We must use ioremap() to map the page and iounmap() to unmap it.&n;**&t;The memory base of ncr chips is set by the bios at a high physical&n;**&t;address. Also we can map it, and MMIO is possible.&n;*/
 DECL|function|remap_pci_mem
 r_static
 r_inline
@@ -196,7 +196,7 @@ op_assign
 (paren
 id|u_long
 )paren
-id|vremap
+id|ioremap
 c_func
 (paren
 id|page_base
@@ -243,7 +243,7 @@ c_cond
 (paren
 id|vaddr
 )paren
-id|vfree
+id|iounmap
 c_func
 (paren
 (paren
@@ -650,7 +650,7 @@ mdefine_line|#define INW(r)             IOM_INW(r)
 DECL|macro|INL
 mdefine_line|#define INL(r)             IOM_INL(r)
 DECL|macro|INL_OFF
-mdefine_line|#define INL_OFF(r)         IOM_INL_OFF(o)
+mdefine_line|#define INL_OFF(o)         IOM_INL_OFF(o)
 DECL|macro|OUTB
 mdefine_line|#define OUTB(r, val)       IOM_OUTB(r, val)
 DECL|macro|OUTW
@@ -8045,6 +8045,8 @@ id|irq
 comma
 id|ncr53c8xx_intr
 comma
+id|SA_INTERRUPT
+op_or
 id|SA_SHIRQ
 comma
 l_string|&quot;53c8xx&quot;
@@ -11717,6 +11719,14 @@ comma
 id|code
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;**&t;Remove Reset, abort ...&n;&t;*/
+id|OUTB
+(paren
+id|nc_istat
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Init chip.&n;&t;*/
 multiline_comment|/**&t;NCR53C810&t;&t;&t;**/
 r_if
@@ -11932,14 +11942,6 @@ op_assign
 l_int|0xc0
 suffix:semicolon
 macro_line|#endif
-id|OUTB
-(paren
-id|nc_istat
-comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/*  Remove Reset, abort ...&t;     */
 macro_line|#ifdef SCSI_NCR_DISABLE_PARITY_CHECK
 id|OUTB
 (paren
@@ -21768,13 +21770,6 @@ op_eq
 op_amp
 id|host_data-&gt;ncb_data
 )paren
-id|ncr_intr
-c_func
-(paren
-op_amp
-id|host_data-&gt;ncb_data
-)paren
-suffix:semicolon
 macro_line|#   endif
 macro_line|#endif
 id|ncr_intr

@@ -73,14 +73,6 @@ DECL|macro|LOCK_NB
 mdefine_line|#define LOCK_NB&t;&t;4&t;/* or&squot;d with one of the above to prevent&n;&t;&t;&t;&t;   blocking */
 DECL|macro|LOCK_UN
 mdefine_line|#define LOCK_UN&t;&t;8&t;/* remove lock */
-macro_line|#ifdef __KERNEL__
-DECL|macro|F_POSIX
-mdefine_line|#define F_POSIX&t;&t;1
-DECL|macro|F_FLOCK
-mdefine_line|#define F_FLOCK&t;&t;2
-DECL|macro|F_BROKEN
-mdefine_line|#define F_BROKEN&t;4&t;/* broken flock() emulation */
-macro_line|#endif /* __KERNEL__ */
 DECL|struct|flock
 r_struct
 id|flock

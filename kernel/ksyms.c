@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/sys.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
@@ -339,12 +340,6 @@ comma
 id|X
 c_func
 (paren
-id|vremap
-)paren
-comma
-id|X
-c_func
-(paren
 id|vfree
 )paren
 comma
@@ -358,6 +353,12 @@ id|X
 c_func
 (paren
 id|remap_page_range
+)paren
+comma
+id|X
+c_func
+(paren
+id|max_mapnr
 )paren
 comma
 id|X

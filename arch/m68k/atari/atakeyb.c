@@ -15,21 +15,19 @@ macro_line|#include &lt;asm/atari_mouse.h&gt;
 macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 r_extern
-r_int
-id|do_poke_blanked_console
-suffix:semicolon
-r_extern
 r_void
-id|process_keycode
+id|handle_scancode
+c_func
 (paren
 r_int
+r_char
 )paren
 suffix:semicolon
 r_extern
 r_int
 id|ovsc_switchmode
 suffix:semicolon
-DECL|variable|mach_keyboard_type
+r_extern
 r_int
 r_char
 id|mach_keyboard_type
@@ -72,11 +70,9 @@ r_char
 op_star
 )paren
 suffix:semicolon
-DECL|macro|ATAKEY_CAPS
-mdefine_line|#define ATAKEY_CAPS&t;(58)
 DECL|macro|BREAK_MASK
 mdefine_line|#define BREAK_MASK&t;(0x80)
-multiline_comment|/*&n; * ++roman: The following changes were applied manually:&n; *&n; *  - The Alt (= Meta) key works in combination with Shift and&n; *    Control, e.g. Alt+Shift+a sends Meta-A (0xc1), Alt+Control+A sends&n; *    Meta-Ctrl-A (0x81) ...&n; *&n; *  - The parentheses on the keypad send &squot;(&squot; and &squot;)&squot; with all&n; *    modifiers (as would do e.g. keypad &squot;+&squot;), but they cannot be used as&n; *    application keys (i.e. sending Esc O c).&n; *&n; *  - HELP and UNDO are mapped to be F21 and F24, resp, that send the&n; *    codes &quot;&bslash;E[M&quot; and &quot;&bslash;E[P&quot;. (This is better than the old mapping to&n; *    F11 and F12, because these codes are on Shift+F1/2 anyway.) This&n; *    way, applications that allow their own keyboard mappings&n; *    (e.g. tcsh, X Windows) can be configured to use them in the way&n; *    the label suggests (providing help or undoing).&n; *&n; *  - Console switching is done with Alt+Fx (consoles 1..10) and&n; *    Shift+Alt+Fx (consoles 11..20).&n; *&n; *  - The misc. special function implemented in the kernel are mapped&n; *    to the following key combinations:&n; *&n; *      ClrHome          -&gt; Home/Find&n; *      Shift + ClrHome  -&gt; End/Select&n; *      Shift + Up       -&gt; Page Up&n; *      Shift + Down     -&gt; Page Down&n; *      Alt + Help       -&gt; show system status&n; *      Shift + Help     -&gt; show memory info&n; *      Ctrl + Help      -&gt; show registers&n; *      Ctrl + Alt + Del -&gt; Reboot&n; *      Alt + Undo       -&gt; switch to last console&n; *      Shift + Undo     -&gt; send interrupt&n; *      Alt + Insert     -&gt; stop/start output (same as ^S/^Q)&n; *      Alt + Up         -&gt; Scroll back console (if implemented)&n; *      Alt + Down       -&gt; Scroll forward console (if implemented)&n; *      Alt + CapsLock   -&gt; NumLock&n; *&n; */
+multiline_comment|/*&n; * ++roman: The following changes were applied manually:&n; *&n; *  - The Alt (= Meta) key works in combination with Shift and&n; *    Control, e.g. Alt+Shift+a sends Meta-A (0xc1), Alt+Control+A sends&n; *    Meta-Ctrl-A (0x81) ...&n; *&n; *  - The parentheses on the keypad send &squot;(&squot; and &squot;)&squot; with all&n; *    modifiers (as would do e.g. keypad &squot;+&squot;), but they cannot be used as&n; *    application keys (i.e. sending Esc O c).&n; *&n; *  - HELP and UNDO are mapped to be F21 and F24, resp, that send the&n; *    codes &quot;&bslash;E[M&quot; and &quot;&bslash;E[P&quot;. (This is better than the old mapping to&n; *    F11 and F12, because these codes are on Shift+F1/2 anyway.) This&n; *    way, applications that allow their own keyboard mappings&n; *    (e.g. tcsh, X Windows) can be configured to use them in the way&n; *    the label suggests (providing help or undoing).&n; *&n; *  - Console switching is done with Alt+Fx (consoles 1..10) and&n; *    Shift+Alt+Fx (consoles 11..20).&n; *&n; *  - The misc. special function implemented in the kernel are mapped&n; *    to the following key combinations:&n; *&n; *      ClrHome          -&gt; Home/Find&n; *      Shift + ClrHome  -&gt; End/Select&n; *      Shift + Up       -&gt; Page Up&n; *      Shift + Down     -&gt; Page Down&n; *      Alt + Help       -&gt; show system status&n; *      Shift + Help     -&gt; show memory info&n; *      Ctrl + Help      -&gt; show registers&n; *      Ctrl + Alt + Del -&gt; Reboot&n; *      Alt + Undo       -&gt; switch to last console&n; *      Shift + Undo     -&gt; send interrupt&n; *      Alt + Insert     -&gt; stop/start output (same as ^S/^Q)&n; *      Alt + Up         -&gt; Scroll back console (if implemented)&n; *      Alt + Down       -&gt; Scroll forward console (if implemented)&n; *      Alt + CapsLock   -&gt; NumLock&n; *&n; * ++Andreas:&n; *&n; *  - Help mapped to K_HELP&n; *  - Undo mapped to K_UNDO (= K_F246)&n; *  - Keypad Left/Right Parenthesis mapped to new K_PPAREN[LR]&n; */
 DECL|variable|ataplain_map
 r_static
 id|u_short
@@ -280,13 +276,13 @@ l_int|0xf200
 comma
 l_int|0xf200
 comma
-l_int|0xf121
+l_int|0xf1ff
 comma
 l_int|0xf11b
 comma
-l_int|0xf028
+l_int|0xf312
 comma
-l_int|0xf029
+l_int|0xf313
 comma
 l_int|0xf30d
 comma
@@ -550,9 +546,9 @@ l_int|0xf205
 comma
 l_int|0xf203
 comma
-l_int|0xf028
+l_int|0xf312
 comma
-l_int|0xf029
+l_int|0xf313
 comma
 l_int|0xf30d
 comma
@@ -812,13 +808,13 @@ l_int|0xf200
 comma
 l_int|0xf200
 comma
-l_int|0xf121
+l_int|0xf1ff
 comma
 l_int|0xf202
 comma
-l_int|0xf028
+l_int|0xf312
 comma
-l_int|0xf029
+l_int|0xf313
 comma
 l_int|0xf30d
 comma
@@ -1082,9 +1078,9 @@ l_int|0xf200
 comma
 l_int|0xf200
 comma
-l_int|0xf028
+l_int|0xf312
 comma
-l_int|0xf029
+l_int|0xf313
 comma
 l_int|0xf30d
 comma
@@ -1348,9 +1344,9 @@ l_int|0xf206
 comma
 l_int|0xf204
 comma
-l_int|0xf028
+l_int|0xf312
 comma
-l_int|0xf029
+l_int|0xf313
 comma
 l_int|0xf30d
 comma
@@ -1614,9 +1610,9 @@ l_int|0xf200
 comma
 l_int|0xf200
 comma
-l_int|0xf028
+l_int|0xf312
 comma
-l_int|0xf029
+l_int|0xf313
 comma
 l_int|0xf30d
 comma
@@ -1876,13 +1872,13 @@ l_int|0xf200
 comma
 l_int|0xf200
 comma
-l_int|0xf121
+l_int|0xf1ff
 comma
 l_int|0xf202
 comma
-l_int|0xf028
+l_int|0xf312
 comma
-l_int|0xf029
+l_int|0xf313
 comma
 l_int|0xf30d
 comma
@@ -2146,9 +2142,9 @@ l_int|0xf200
 comma
 l_int|0xf200
 comma
-l_int|0xf028
+l_int|0xf312
 comma
-l_int|0xf029
+l_int|0xf313
 comma
 l_int|0xf30d
 comma
@@ -2328,7 +2324,7 @@ id|pt_regs
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Disable keyboard it for the time we call process_keycode(), else a race&n;&t; * in the keyboard tty queue may happen */
+multiline_comment|/* Disable keyboard for the time we call handle_scancode(), else a race&n;&t; * in the keyboard tty queue may happen */
 id|atari_disable_irq
 c_func
 (paren
@@ -2368,7 +2364,8 @@ op_amp
 id|atakeyb_rep_timer
 )paren
 suffix:semicolon
-id|process_keycode
+id|handle_scancode
+c_func
 (paren
 id|rep_scancode
 )paren
@@ -2391,14 +2388,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 id|u_char
@@ -2502,7 +2499,7 @@ id|scancode
 )paren
 )paren
 (brace
-multiline_comment|/* This code seem already to be the start of a new packet or a&n;&t;     * single keycode */
+multiline_comment|/* This code seem already to be the start of a new packet or a&n;&t;     * single scancode */
 id|kb_state.state
 op_assign
 id|KEYBOARD
@@ -2542,6 +2539,12 @@ op_assign
 id|acia.key_data
 suffix:semicolon
 multiline_comment|/* get it or reset the ACIA, I&squot;ll get it! */
+id|mark_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
 id|interpret_scancode
 suffix:colon
 r_switch
@@ -2701,27 +2704,11 @@ id|atakeyb_rep_timer
 )paren
 suffix:semicolon
 )brace
-id|process_keycode
+id|handle_scancode
 c_func
 (paren
 id|break_flag
 op_or
-id|scancode
-)paren
-suffix:semicolon
-id|do_poke_blanked_console
-op_assign
-l_int|1
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|CONSOLE_BH
-)paren
-suffix:semicolon
-id|add_keyboard_randomness
-c_func
-(paren
 id|scancode
 )paren
 suffix:semicolon
@@ -2956,7 +2943,7 @@ l_string|&quot;Error in keyboard communication&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* process_keycode() can take a lot of time, so check again if&n;&t; * some character arrived&n;&t; */
+multiline_comment|/* handle_scancode() can take a lot of time, so check again if&n;&t; * some character arrived&n;&t; */
 r_goto
 id|repeat
 suffix:semicolon
@@ -4110,7 +4097,7 @@ id|kb_state.len
 op_assign
 l_int|0
 suffix:semicolon
-id|add_isr
+id|request_irq
 c_func
 (paren
 id|IRQ_MFP_ACIA
@@ -4119,9 +4106,9 @@ id|keyboard_interrupt
 comma
 id|IRQ_TYPE_SLOW
 comma
-l_int|NULL
-comma
 l_string|&quot;keyboard/mouse/MIDI&quot;
+comma
+id|keyboard_interrupt
 )paren
 suffix:semicolon
 id|atari_turnoff_irq

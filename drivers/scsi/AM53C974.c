@@ -526,6 +526,27 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* LILO overrides */
+DECL|variable|proc_scsi_am53c974
+r_struct
+id|proc_dir_entry
+id|proc_scsi_am53c974
+op_assign
+(brace
+id|PROC_SCSI_AM53C974
+comma
+l_int|8
+comma
+l_string|&quot;am53c974&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 macro_line|#ifdef AM53C974_DEBUG
 DECL|variable|deb_stop
 r_static
@@ -2891,6 +2912,11 @@ r_int
 id|count
 suffix:semicolon
 multiline_comment|/* number of boards detected */
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_am53c974
+suffix:semicolon
 macro_line|#if defined (CONFIG_PCI)
 r_if
 c_cond
@@ -2969,8 +2995,7 @@ l_string|&quot;AM53C974: probe only enabled, aborting initialization&bslash;n&qu
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 macro_line|#endif
 id|instance
@@ -3364,8 +3389,7 @@ id|instance
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -3454,7 +3478,7 @@ id|instance
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*********************************************************************&n;* Function : AM53C974_config_after_reset(struct Scsi_Host *instance) *&n;*                                                                    *&n;* Purpose : initializes chip registers after reset                   *&n;*                                                                    *&n;* Inputs : instance - which AM53C974                                 *&n;*                                                                    *&n;* Returns : nothing                                                  *&n;**********************************************************************/
@@ -8906,6 +8930,21 @@ id|CMDREG_CFIFO
 suffix:semicolon
 multiline_comment|/* clear FIFO */
 )brace
+macro_line|#ifdef AM53C974_PROHIBIT_DISCONNECT
+id|tmp
+(braket
+l_int|0
+)braket
+op_assign
+id|IDENTIFY
+c_func
+(paren
+l_int|0
+comma
+id|cmd-&gt;lun
+)paren
+suffix:semicolon
+macro_line|#else
 id|tmp
 (braket
 l_int|0
@@ -8919,6 +8958,7 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef SCSI2
 r_if
 c_cond
@@ -9999,11 +10039,11 @@ c_func
 (paren
 id|DMASPA
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|data
+)paren
 )paren
 suffix:semicolon
 id|AM53C974_write_8
@@ -11048,4 +11088,14 @@ r_return
 id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|driver_template
+r_static
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|AM53C974
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 eof

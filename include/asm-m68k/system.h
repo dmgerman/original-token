@@ -62,7 +62,7 @@ id|usp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task ptr, first checking that&n; * ptr isn&squot;t the current task, in which case it does nothing.  This&n; * also clears the TS-flag if the task we switched to has used the&n; * math co-processor latest.&n; */
-multiline_comment|/*&n; * switch_to() saves the extra registers, that are not saved&n; * automatically by SAVE_SWITCH_STACK in resume(), ie. d0-d5 and&n; * a0-a1. Some of these are used by schedule() and its predecessors&n; * and so we might get see unexpected behaviors when a task returns&n; * with unexpected register values.&n; *&n; * syscall stores these registers itself and none of them are used&n; * by syscall after the function in the syscall has been called.&n; *&n; * Beware that resume now expects *next to be in d1 and the offset of&n; * tss to be in a1. This saves a few instructions as we no longer have&n; * to push them onto the stack and read them back right after.&n; *&n; * 02/17/96 - Jes Sorensen (jds@kom.auc.dk)&n; */
+multiline_comment|/*&n; * switch_to() saves the extra registers, that are not saved&n; * automatically by SAVE_SWITCH_STACK in resume(), ie. d0-d5 and&n; * a0-a1. Some of these are used by schedule() and its predecessors&n; * and so we might get see unexpected behaviors when a task returns&n; * with unexpected register values.&n; *&n; * syscall stores these registers itself and none of them are used&n; * by syscall after the function in the syscall has been called.&n; *&n; * Beware that resume now expects *next to be in d1 and the offset of&n; * tss to be in a1. This saves a few instructions as we no longer have&n; * to push them onto the stack and read them back right after.&n; *&n; * 02/17/96 - Jes Sorensen (jds@kom.auc.dk)&n; *&n; * Changed 96/09/19 by Andreas Schwab&n; * pass prev in a0, next in a1, offset of tss in d1, and whether&n; * the mm structures are shared in d2 (to avoid atc flushing).&n; */
 id|asmlinkage
 r_void
 id|resume
@@ -72,7 +72,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) { &bslash;&n;  register int k __asm__ (&quot;a1&quot;) = (int)&amp;((struct task_struct *)0)-&gt;tss; &bslash;&n;  register int n __asm__ (&quot;d1&quot;) = (int)next; &bslash;&n;  __asm__ __volatile__(&quot;jbsr &quot; SYMBOL_NAME_STR(resume) &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       : : &quot;a&quot; (k), &quot;d&quot; (n) &bslash;&n;&t;&t;       : &quot;d0&quot;, &quot;d1&quot;, &quot;d2&quot;, &quot;d3&quot;, &quot;d4&quot;, &quot;d5&quot;, &quot;a0&quot;, &quot;a1&quot;); &bslash;&n;}
+mdefine_line|#define switch_to(prev,next) { &bslash;&n;  register void *_prev __asm__ (&quot;a0&quot;) = (prev); &bslash;&n;  register void *_next __asm__ (&quot;a1&quot;) = (next); &bslash;&n;  register int _tssoff __asm__ (&quot;d1&quot;) = (int)&amp;((struct task_struct *)0)-&gt;tss; &bslash;&n;  register char _shared __asm__ (&quot;d2&quot;) = ((prev)-&gt;mm == (next)-&gt;mm); &bslash;&n;  __asm__ __volatile__(&quot;jbsr &quot; SYMBOL_NAME_STR(resume) &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       : : &quot;a&quot; (_prev), &quot;a&quot; (_next), &quot;d&quot; (_tssoff), &bslash;&n;&t;&t;           &quot;d&quot; (_shared) &bslash;&n;&t;&t;       : &quot;d0&quot;, &quot;d1&quot;, &quot;d2&quot;, &quot;d3&quot;, &quot;d4&quot;, &quot;d5&quot;, &quot;a0&quot;, &quot;a1&quot;); &bslash;&n;}
 DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 DECL|macro|tas
@@ -113,7 +113,7 @@ DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;movew %0,%/sr&quot;: /* no outputs */ :&quot;d&quot; (x) : &quot;memory&quot;)
 DECL|macro|iret
 mdefine_line|#define iret() __asm__ __volatile__ (&quot;rte&quot;: : :&quot;memory&quot;, &quot;sp&quot;, &quot;cc&quot;)
-macro_line|#if 1
+macro_line|#ifndef CONFIG_RMW_INSNS
 DECL|function|__xchg
 r_static
 r_inline

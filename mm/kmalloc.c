@@ -1709,7 +1709,7 @@ id|ptr
 op_plus
 l_int|1
 comma
-l_int|0xe0
+l_int|0x0e
 comma
 id|ptr-&gt;bh_length
 )paren

@@ -80,12 +80,12 @@ c_cond
 (paren
 id|file-&gt;f_op
 op_logical_and
-id|file-&gt;f_op-&gt;lseek
+id|file-&gt;f_op-&gt;llseek
 )paren
 r_return
 id|file-&gt;f_op
 op_member_access_from_pointer
-id|lseek
+id|llseek
 c_func
 (paren
 id|file-&gt;f_inode
@@ -307,34 +307,17 @@ op_or
 id|offset_low
 )paren
 suffix:semicolon
-multiline_comment|/* if there is a fs-specific handler, we can&squot;t just ignore it.. */
-multiline_comment|/* accept llseek() only for the signed long subset of long long */
 r_if
 c_cond
 (paren
 id|file-&gt;f_op
 op_logical_and
-id|file-&gt;f_op-&gt;lseek
+id|file-&gt;f_op-&gt;llseek
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|offset
-op_ne
-(paren
-r_int
-)paren
-id|offset
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
 r_return
 id|file-&gt;f_op
 op_member_access_from_pointer
-id|lseek
+id|llseek
 c_func
 (paren
 id|file-&gt;f_inode
@@ -346,7 +329,6 @@ comma
 id|origin
 )paren
 suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -460,6 +442,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -647,6 +630,7 @@ r_int
 r_int
 id|fd
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -1081,6 +1065,7 @@ r_char
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 DECL|function|do_readv_writev
@@ -1113,6 +1098,7 @@ r_int
 id|count
 )paren
 (brace
+r_int
 r_int
 id|tot_len
 suffix:semicolon
@@ -1442,6 +1428,7 @@ op_star
 id|vector
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -1529,6 +1516,7 @@ id|iovec
 op_star
 id|vector
 comma
+r_int
 r_int
 id|count
 )paren

@@ -24,7 +24,7 @@ mdefine_line|#define fd_clear_dma_ff()&t;&t;feature-&gt;fd_clear_dma_ff()
 DECL|macro|fd_set_dma_mode
 mdefine_line|#define fd_set_dma_mode(mode)&t;&t;feature-&gt;fd_set_dma_mode(mode)
 DECL|macro|fd_set_dma_addr
-mdefine_line|#define fd_set_dma_addr(addr)&t;&t;feature-&gt;fd_set_dma_addr(addr)
+mdefine_line|#define fd_set_dma_addr(addr)&t;&t;feature-&gt;fd_set_dma_addr(virt_to_bus(addr))
 DECL|macro|fd_set_dma_count
 mdefine_line|#define fd_set_dma_count(count)&t;&t;feature-&gt;fd_set_dma_count(count)
 DECL|macro|fd_get_dma_residue

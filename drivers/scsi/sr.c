@@ -2768,12 +2768,15 @@ multiline_comment|/* Thomas QUINOT &lt;thomas@melchior.cuivre.fdn.fr&gt; */
 r_case
 id|SCSI_MAN_PIONEER
 suffix:colon
+r_case
+id|SCSI_MAN_MATSHITA
+suffix:colon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;sr_photocd: use SONY/PIONEER code&bslash;n&quot;
+l_string|&quot;sr_photocd: use SONY/PIONEER/MATSHITA code&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2888,7 +2891,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;sr_photocd: ioctl error (SONY/PIONEER): 0x%x&bslash;n&quot;
+l_string|&quot;sr_photocd: ioctl error (SONY/PIONEER/MATSHITA): 0x%x&bslash;n&quot;
 comma
 id|rc
 )paren
@@ -2920,7 +2923,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;sr_photocd: (SONY/PIONEER) Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
+l_string|&quot;sr_photocd: (SONY/PIONEER/MATSHITA) Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
 )paren
 suffix:semicolon
 id|no_multi

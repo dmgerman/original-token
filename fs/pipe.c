@@ -36,6 +36,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -379,6 +380,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -695,6 +697,7 @@ suffix:semicolon
 DECL|function|pipe_lseek
 r_static
 r_int
+r_int
 id|pipe_lseek
 c_func
 (paren
@@ -708,7 +711,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -741,6 +745,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -770,6 +775,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -1199,6 +1205,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren

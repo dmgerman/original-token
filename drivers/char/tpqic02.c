@@ -6271,6 +6271,7 @@ multiline_comment|/* qic02_tape_interrupt */
 DECL|function|qic02_tape_lseek
 r_static
 r_int
+r_int
 id|qic02_tape_lseek
 c_func
 (paren
@@ -6284,7 +6285,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -6320,6 +6322,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -6386,7 +6389,7 @@ id|printk
 c_func
 (paren
 id|TPQIC02_NAME
-l_string|&quot;: request READ, minor=%x, buf=%p, count=%x, pos=%lx, flags=%x&bslash;n&quot;
+l_string|&quot;: request READ, minor=%x, buf=%p, count=%lx, pos=%lx, flags=%x&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -6465,6 +6468,9 @@ multiline_comment|/* This is rather ugly because it has to implement a finite st
 r_while
 c_loop
 (paren
+(paren
+r_int
+)paren
 id|count
 op_ge
 l_int|0
@@ -6874,6 +6880,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -6936,7 +6943,7 @@ id|printk
 c_func
 (paren
 id|TPQIC02_NAME
-l_string|&quot;: request WRITE, minor=%x, buf=%p, count=%x, pos=%lx, flags=%x&bslash;n&quot;
+l_string|&quot;: request WRITE, minor=%x, buf=%p, count=%lx, pos=%lx, flags=%x&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -7068,6 +7075,9 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
+r_int
+)paren
 id|count
 op_ge
 l_int|0
@@ -7378,7 +7388,7 @@ id|printk
 c_func
 (paren
 id|TPQIC02_NAME
-l_string|&quot;: status_bytes_wr %x, buf %p, total_bytes_done %lx, count %x&bslash;n&quot;
+l_string|&quot;: status_bytes_wr %x, buf %p, total_bytes_done %lx, count %lx&bslash;n&quot;
 comma
 id|status_bytes_wr
 comma

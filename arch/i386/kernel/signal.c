@@ -967,6 +967,10 @@ suffix:semicolon
 id|put_user
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|save_i387
 c_func
 (paren

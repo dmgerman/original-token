@@ -156,6 +156,7 @@ r_char
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 r_static
@@ -175,6 +176,7 @@ r_const
 r_char
 op_star
 comma
+r_int
 r_int
 )paren
 suffix:semicolon
@@ -1155,6 +1157,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -1183,6 +1186,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -1261,6 +1265,7 @@ suffix:semicolon
 DECL|function|tty_lseek
 r_static
 r_int
+r_int
 id|tty_lseek
 c_func
 (paren
@@ -1274,7 +1279,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -2595,6 +2601,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -2727,7 +2734,6 @@ c_cond
 (paren
 id|tty-&gt;ldisc.read
 )paren
-multiline_comment|/* XXX casts are for what kernel-wide prototypes should be. */
 id|i
 op_assign
 (paren
@@ -2738,17 +2744,8 @@ id|tty
 comma
 id|file
 comma
-(paren
-r_int
-r_char
-op_star
-)paren
 id|buf
 comma
-(paren
-r_int
-r_int
-)paren
 id|count
 )paren
 suffix:semicolon
@@ -2974,6 +2971,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren

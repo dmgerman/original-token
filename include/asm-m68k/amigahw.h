@@ -762,6 +762,15 @@ r_void
 op_star
 )paren
 suffix:semicolon
+r_int
+r_int
+id|amiga_chip_avail
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*MILAN*/
 DECL|struct|tod3000
 r_struct
 id|tod3000

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/amiga/amikeyb.c&n; *&n; * Amiga Keyboard driver for 680x0 Linux&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/arch/m68k/amiga/amikeyb.c&n; *&n; * Amiga Keyboard driver for Linux/m68k&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Amiga support by Hamish Macdonald&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,26 +9,27 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigatypes.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 r_extern
-r_int
-id|do_poke_blanked_console
-suffix:semicolon
-r_extern
 r_void
-id|process_keycode
+id|handle_scancode
+c_func
 (paren
 r_int
+r_char
 )paren
 suffix:semicolon
 DECL|macro|AMIKEY_CAPS
 mdefine_line|#define AMIKEY_CAPS&t;(0x62)
 DECL|macro|BREAK_MASK
 mdefine_line|#define BREAK_MASK&t;(0x80)
+DECL|macro|RESET_WARNING
+mdefine_line|#define RESET_WARNING&t;(0xf0)&t;/* before rotation */
 DECL|variable|amiplain_map
 r_static
 id|u_short
@@ -218,9 +219,9 @@ l_int|0xf108
 comma
 l_int|0xf109
 comma
-l_int|0xf208
+l_int|0xf312
 comma
-l_int|0xf209
+l_int|0xf313
 comma
 l_int|0xf30d
 comma
@@ -228,7 +229,7 @@ l_int|0xf30c
 comma
 l_int|0xf30a
 comma
-l_int|0xf10a
+l_int|0xf11b
 comma
 l_int|0xf700
 comma
@@ -487,7 +488,7 @@ l_int|0xf113
 comma
 l_int|0xf208
 comma
-l_int|0xf203
+l_int|0xf209
 comma
 l_int|0xf30d
 comma
@@ -495,7 +496,7 @@ l_int|0xf30c
 comma
 l_int|0xf30a
 comma
-l_int|0xf10a
+l_int|0xf203
 comma
 l_int|0xf700
 comma
@@ -754,7 +755,7 @@ l_int|0xf515
 comma
 l_int|0xf208
 comma
-l_int|0xf202
+l_int|0xf209
 comma
 l_int|0xf30d
 comma
@@ -762,7 +763,7 @@ l_int|0xf30c
 comma
 l_int|0xf30a
 comma
-l_int|0xf516
+l_int|0xf204
 comma
 l_int|0xf700
 comma
@@ -1021,7 +1022,7 @@ l_int|0xf109
 comma
 l_int|0xf208
 comma
-l_int|0xf204
+l_int|0xf209
 comma
 l_int|0xf30d
 comma
@@ -1029,7 +1030,7 @@ l_int|0xf30c
 comma
 l_int|0xf30a
 comma
-l_int|0xf10a
+l_int|0xf202
 comma
 l_int|0xf700
 comma
@@ -1288,7 +1289,7 @@ l_int|0xf200
 comma
 l_int|0xf208
 comma
-l_int|0xf200
+l_int|0xf209
 comma
 l_int|0xf30d
 comma
@@ -1563,7 +1564,7 @@ l_int|0xf30c
 comma
 l_int|0xf30a
 comma
-l_int|0xf50a
+l_int|0xf204
 comma
 l_int|0xf700
 comma
@@ -1822,7 +1823,7 @@ l_int|0xf200
 comma
 l_int|0xf208
 comma
-l_int|0xf200
+l_int|0xf209
 comma
 l_int|0xf30d
 comma
@@ -1928,6 +1929,7 @@ suffix:semicolon
 r_static
 r_void
 id|amikeyb_rep
+c_func
 (paren
 r_int
 r_int
@@ -1962,6 +1964,7 @@ DECL|function|amikeyb_rep
 r_static
 r_void
 id|amikeyb_rep
+c_func
 (paren
 r_int
 r_int
@@ -2006,7 +2009,8 @@ op_amp
 id|amikeyb_rep_timer
 )paren
 suffix:semicolon
-id|process_keycode
+id|handle_scancode
+c_func
 (paren
 id|rep_scancode
 )paren
@@ -2022,18 +2026,19 @@ DECL|function|keyboard_interrupt
 r_static
 r_void
 id|keyboard_interrupt
+c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dummy
 comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 r_int
@@ -2041,6 +2046,12 @@ r_char
 id|scancode
 comma
 id|break_flag
+suffix:semicolon
+r_static
+r_int
+id|reset_warning
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* save frame for register dump */
 id|pt_regs
@@ -2063,6 +2074,38 @@ id|ciaa.cra
 op_or_assign
 l_int|0x40
 suffix:semicolon
+multiline_comment|/*&n;     *  On receipt of the second RESET_WARNING, we must not pull KDAT high&n;     *  again to delay the hard reset as long as possible.&n;     *&n;     *  Note that not all keyboards send reset warnings...&n;     */
+r_if
+c_cond
+(paren
+id|reset_warning
+)paren
+r_if
+c_cond
+(paren
+id|scancode
+op_eq
+id|RESET_WARNING
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;amikeyb: Ctrl-Amiga-Amiga reset warning!!&bslash;n&quot;
+l_string|&quot;The system will be reset within 10 seconds!!&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Panic doesn&squot;t sync from within an interrupt, so we do nothing */
+r_return
+suffix:semicolon
+)brace
+r_else
+multiline_comment|/* Probably a mistake, cancel the alert */
+id|reset_warning
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* wait until 85 us have expired */
 id|udelay
 c_func
@@ -2075,6 +2118,12 @@ id|ciaa.cra
 op_and_assign
 op_complement
 l_int|0x40
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
 suffix:semicolon
 multiline_comment|/* rotate scan code to get up/down bit in proper position */
 id|__asm__
@@ -2093,7 +2142,7 @@ id|scancode
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * do machine independent keyboard processing of &quot;normalized&quot; scancode&n;     * A &quot;normalized&quot; scancode is one that an IBM PC might generate&n;     * Check make/break first&n;     */
+multiline_comment|/*&n;     * Check make/break first&n;     */
 id|break_flag
 op_assign
 id|scancode
@@ -2118,12 +2167,14 @@ id|AMIKEY_CAPS
 )paren
 (brace
 multiline_comment|/* if the key is CAPS, fake a press/release. */
-id|process_keycode
+id|handle_scancode
+c_func
 (paren
 id|AMIKEY_CAPS
 )paren
 suffix:semicolon
-id|process_keycode
+id|handle_scancode
+c_func
 (paren
 id|BREAK_MASK
 op_or
@@ -2132,6 +2183,13 @@ id|AMIKEY_CAPS
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|scancode
+OL
+l_int|0x78
+)paren
 (brace
 multiline_comment|/* handle repeat */
 r_if
@@ -2163,8 +2221,6 @@ id|amikeyb_rep_timer
 suffix:semicolon
 id|rep_scancode
 op_assign
-id|break_flag
-op_or
 id|scancode
 suffix:semicolon
 id|amikeyb_rep_timer.expires
@@ -2187,7 +2243,8 @@ id|amikeyb_rep_timer
 )paren
 suffix:semicolon
 )brace
-id|process_keycode
+id|handle_scancode
+c_func
 (paren
 id|break_flag
 op_or
@@ -2195,28 +2252,131 @@ id|scancode
 )paren
 suffix:semicolon
 )brace
-id|do_poke_blanked_console
-op_assign
-l_int|1
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|CONSOLE_BH
-)paren
-suffix:semicolon
-id|add_keyboard_randomness
-c_func
+r_else
+r_switch
+c_cond
 (paren
 id|scancode
 )paren
+(brace
+r_case
+l_int|0x78
+suffix:colon
+id|reset_warning
+op_assign
+l_int|1
 suffix:semicolon
-r_return
+r_break
 suffix:semicolon
+r_case
+l_int|0x79
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;amikeyb: keyboard lost sync&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x7a
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;amikeyb: keyboard buffer overflow&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#if 0 /* obsolete according to the HRM */
+r_case
+l_int|0x7b
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;amikeyb: keyboard controller failure&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_case
+l_int|0x7c
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;amikeyb: keyboard selftest failure&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x7d
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;amikeyb: initiate power-up key stream&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x7e
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;amikeyb: terminate power-up key stream&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#if 0 /* obsolete according to the HRM */
+r_case
+l_int|0x7f
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;amikeyb: keyboard interrupt&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;amikeyb: unknown keyboard communication code 0x%02x&bslash;n&quot;
+comma
+id|break_flag
+op_or
+id|scancode
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 DECL|function|amiga_keyb_init
 r_int
 id|amiga_keyb_init
+c_func
 (paren
 r_void
 )paren
@@ -2286,6 +2446,7 @@ op_assign
 id|amictrl_alt_map
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 id|plain_map
 comma
@@ -2305,7 +2466,8 @@ l_int|0x41
 suffix:semicolon
 multiline_comment|/* serial data in, turn off TA */
 multiline_comment|/*&n;     * arrange for processing of keyboard interrupt&n;     */
-id|add_isr
+id|request_irq
+c_func
 (paren
 id|IRQ_AMIGA_CIAA_SP
 comma
@@ -2313,9 +2475,9 @@ id|keyboard_interrupt
 comma
 l_int|0
 comma
-l_int|NULL
-comma
 l_string|&quot;keyboard&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

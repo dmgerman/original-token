@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -45,6 +46,12 @@ id|X
 c_func
 (paren
 id|dump_fpu
+)paren
+comma
+id|X
+c_func
+(paren
+id|ioremap
 )paren
 comma
 id|XNOVERS

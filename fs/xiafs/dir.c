@@ -24,6 +24,7 @@ r_char
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 r_static
@@ -163,6 +164,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&
 macro_line|#ifndef __ASM_I386_FLOPPY_H
 DECL|macro|__ASM_I386_FLOPPY_H
 mdefine_line|#define __ASM_I386_FLOPPY_H
+macro_line|#include &lt;linux/vmalloc.h&gt;
 DECL|macro|SW
 mdefine_line|#define SW fd_routine[use_virtual_dma&amp;1]
 DECL|macro|fd_inb
@@ -56,8 +57,8 @@ l_int|0
 suffix:semicolon
 DECL|variable|virtual_dma_addr
 r_static
-r_int
-r_int
+r_char
+op_star
 id|virtual_dma_addr
 op_assign
 l_int|0
@@ -356,10 +357,6 @@ id|virtual_dma_count
 comma
 id|lptr
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|virtual_dma_addr
 suffix:semicolon
 id|lcount
@@ -441,9 +438,6 @@ id|lcount
 suffix:semicolon
 id|virtual_dma_addr
 op_assign
-(paren
-r_int
-)paren
 id|lptr
 suffix:semicolon
 )brace
@@ -635,6 +629,34 @@ id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
 )brace
+DECL|function|hset_dma_addr
+r_static
+r_void
+id|hset_dma_addr
+c_func
+(paren
+r_int
+r_int
+id|no
+comma
+r_char
+op_star
+id|addr
+)paren
+(brace
+id|set_dma_addr
+c_func
+(paren
+id|no
+comma
+id|virt_to_bus
+c_func
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|vdma_set_dma_addr
 r_static
 r_void
@@ -645,8 +667,8 @@ r_int
 r_int
 id|dummy
 comma
-r_int
-r_int
+r_char
+op_star
 id|addr
 )paren
 (brace
@@ -952,8 +974,8 @@ r_int
 r_int
 id|dummy
 comma
-r_int
-r_int
+r_char
+op_star
 id|addr
 )paren
 suffix:semicolon
@@ -1075,7 +1097,7 @@ id|clear_dma_ff
 comma
 id|set_dma_mode
 comma
-id|set_dma_addr
+id|hset_dma_addr
 comma
 id|set_dma_count
 comma

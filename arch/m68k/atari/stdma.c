@@ -18,7 +18,7 @@ multiline_comment|/* (can be determined by looking at its status register).     
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
@@ -33,14 +33,27 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* the semaphore */
+multiline_comment|/* int func to be called */
 DECL|variable|stdma_isr
 r_static
-id|isrfunc
+r_void
+(paren
+op_star
 id|stdma_isr
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* int func to be called */
 DECL|variable|stdma_isr_data
 r_static
 r_void
@@ -68,14 +81,14 @@ id|stdma_int
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 suffix:semicolon
 multiline_comment|/************************* End of Prototypes **************************/
@@ -85,8 +98,21 @@ r_void
 id|stdma_lock
 c_func
 (paren
-id|isrfunc
-id|isr
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
 comma
 r_void
 op_star
@@ -130,7 +156,7 @@ l_int|1
 suffix:semicolon
 id|stdma_isr
 op_assign
-id|isr
+id|handler
 suffix:semicolon
 id|stdma_isr_data
 op_assign
@@ -237,7 +263,7 @@ id|stdma_isr
 op_assign
 l_int|NULL
 suffix:semicolon
-id|add_isr
+id|request_irq
 c_func
 (paren
 id|IRQ_MFP_FDC
@@ -246,9 +272,9 @@ id|stdma_int
 comma
 id|IRQ_TYPE_SLOW
 comma
-l_int|NULL
-comma
 l_string|&quot;ST-DMA: floppy/ACSI/IDE/Falcon-SCSI&quot;
+comma
+id|stdma_int
 )paren
 suffix:semicolon
 )brace
@@ -262,14 +288,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 r_if
@@ -284,9 +310,9 @@ id|stdma_isr
 (paren
 id|irq
 comma
-id|fp
-comma
 id|stdma_isr_data
+comma
+id|fp
 )paren
 suffix:semicolon
 )brace

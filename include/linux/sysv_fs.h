@@ -1447,6 +1447,7 @@ r_char
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 r_extern

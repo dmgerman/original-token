@@ -6,6 +6,10 @@ DECL|macro|REALLY_FAST_IO
 macro_line|#undef REALLY_FAST_IO&t;&t;&t;/* define if ide ports are perfect */
 DECL|macro|INITIAL_MULT_COUNT
 mdefine_line|#define INITIAL_MULT_COUNT&t;0&t;/* off=0; on=2,4,8,16,32, etc.. */
+macro_line|#ifndef SUPPORT_SLOW_DATA_PORTS&t;&t;/* 1 to support slow data ports */
+DECL|macro|SUPPORT_SLOW_DATA_PORTS
+mdefine_line|#define SUPPORT_SLOW_DATA_PORTS&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
 macro_line|#ifndef SUPPORT_VLB_SYNC&t;&t;/* 1 to support weird 32-bit chips */
 DECL|macro|SUPPORT_VLB_SYNC
 mdefine_line|#define SUPPORT_VLB_SYNC&t;1&t;/* 0 to reduce kernel size */
@@ -751,6 +755,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* flag: do not probe bios for drive */
+DECL|member|slow
+r_int
+id|slow
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: slow data port */
 DECL|member|autotune
 r_int
 id|autotune

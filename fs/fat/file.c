@@ -472,6 +472,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -564,7 +565,7 @@ op_ge
 id|inode-&gt;i_size
 op_logical_or
 id|count
-op_le
+op_eq
 l_int|0
 )paren
 r_return
@@ -1141,6 +1142,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -1274,7 +1276,7 @@ r_if
 c_cond
 (paren
 id|count
-op_le
+op_eq
 l_int|0
 )paren
 r_return

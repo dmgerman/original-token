@@ -1,13 +1,14 @@
-multiline_comment|/*&n; *  linux/atari/config.c&n; *&n; *  Copyright (C) 1994 Bj&#xfffd;rn Brauel&n; *&n; *  5/2/94 Roman Hodek:&n; *    Added setting of time_adj to get a better clock.&n; *&n; *  5/14/94 Roman Hodek:&n; *    gettod() for TT &n; *&n; *  5/15/94 Roman Hodek:&n; *    hard_reset_now() for Atari (and others?)&n; *&n; *  94/12/30 Andreas Schwab:&n; *    atari_sched_init fixed to get precise clock.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; *  linux/arch/m68k/atari/config.c&n; *&n; *  Copyright (C) 1994 Bjoern Brauel&n; *&n; *  5/2/94 Roman Hodek:&n; *    Added setting of time_adj to get a better clock.&n; *&n; *  5/14/94 Roman Hodek:&n; *    gettod() for TT &n; *&n; *  5/15/94 Roman Hodek:&n; *    hard_reset_now() for Atari (and others?)&n; *&n; *  94/12/30 Andreas Schwab:&n; *    atari_sched_init fixed to get precise clock.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Miscellaneous atari stuff&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atarihdreg.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
@@ -21,9 +22,23 @@ r_void
 id|atari_sched_init
 c_func
 (paren
-id|isrfunc
+r_void
+(paren
+op_star
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
 )paren
 suffix:semicolon
+multiline_comment|/* atari specific keyboard functions */
 r_extern
 r_int
 id|atari_keyb_init
@@ -49,42 +64,63 @@ r_int
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* atari specific irq functions */
 r_extern
 r_void
-id|atari_init_INTS
+id|atari_init_IRQ
 (paren
 r_void
 )paren
 suffix:semicolon
 r_extern
 r_int
-id|atari_add_isr
+id|atari_request_irq
 (paren
 r_int
 r_int
+id|irq
 comma
-id|isrfunc
-comma
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
 r_int
 comma
 r_void
 op_star
 comma
+r_struct
+id|pt_regs
+op_star
+)paren
+comma
+r_int
+r_int
+id|flags
+comma
+r_const
 r_char
 op_star
+id|devname
+comma
+r_void
+op_star
+id|dev_id
 )paren
 suffix:semicolon
 r_extern
 r_int
-id|atari_remove_isr
+id|atari_free_irq
 (paren
 r_int
 r_int
-comma
-id|isrfunc
+id|irq
 comma
 r_void
 op_star
+id|dev_id
 )paren
 suffix:semicolon
 r_extern
@@ -92,12 +128,14 @@ r_void
 id|atari_enable_irq
 (paren
 r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
 r_void
 id|atari_disable_irq
 (paren
+r_int
 r_int
 )paren
 suffix:semicolon
@@ -108,11 +146,9 @@ id|atari_get_irq_list
 r_char
 op_star
 id|buf
-comma
-r_int
-id|len
 )paren
 suffix:semicolon
+multiline_comment|/* atari specific timer functions */
 r_extern
 r_int
 r_int
@@ -728,17 +764,17 @@ id|mach_kbd_leds
 op_assign
 id|atari_kbd_leds
 suffix:semicolon
-id|mach_init_INTS
+id|mach_init_IRQ
 op_assign
-id|atari_init_INTS
+id|atari_init_IRQ
 suffix:semicolon
-id|mach_add_isr
+id|mach_request_irq
 op_assign
-id|atari_add_isr
+id|atari_request_irq
 suffix:semicolon
-id|mach_remove_isr
+id|mach_free_irq
 op_assign
-id|atari_remove_isr
+id|atari_free_irq
 suffix:semicolon
 id|mach_enable_irq
 op_assign
@@ -1631,7 +1667,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 multiline_comment|/* Now it seems to be safe to turn of the tt0 transparent&n;         * translation (the one that must not be turned off in&n;         * head.S...)&n;         */
 id|__asm__
@@ -1659,8 +1695,7 @@ multiline_comment|/* Set up a mapping for the VMEbus address region:&n;     *&n;
 r_if
 c_cond
 (paren
-op_logical_neg
-id|m68k_is040or060
+id|CPU_IS_020_OR_030
 )paren
 (brace
 r_int
@@ -1712,9 +1747,23 @@ suffix:semicolon
 DECL|function|atari_sched_init
 r_void
 id|atari_sched_init
+c_func
 (paren
-id|isrfunc
+r_void
+(paren
+op_star
 id|timer_routine
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
 )paren
 (brace
 multiline_comment|/* set Timer C data Register */
@@ -1734,7 +1783,8 @@ op_or
 l_int|0x60
 suffix:semicolon
 multiline_comment|/* install interrupt service routine for MFP Timer C */
-id|add_isr
+id|request_irq
+c_func
 (paren
 id|IRQ_MFP_TIMC
 comma
@@ -1742,9 +1792,9 @@ id|timer_routine
 comma
 id|IRQ_TYPE_SLOW
 comma
-l_int|NULL
-comma
 l_string|&quot;timer&quot;
+comma
+id|timer_routine
 )paren
 suffix:semicolon
 )brace
@@ -4429,7 +4479,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 r_int
@@ -4446,9 +4496,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m68k_is040or060
-op_eq
-l_int|6
+id|CPU_IS_060
 )paren
 (brace
 multiline_comment|/* 68060: clear PCR to turn off superscalar operation */

@@ -121,8 +121,12 @@ DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;0xFFFFFC0000000000UL
+DECL|macro|__pa
+mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long) (x) - PAGE_OFFSET)
+DECL|macro|__va
+mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long) (x) + PAGE_OFFSET))
 DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr)&t;&t;((((unsigned long) (addr)) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
+mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _ALPHA_PAGE_H */
 eof

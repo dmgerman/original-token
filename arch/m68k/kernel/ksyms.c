@@ -1,13 +1,15 @@
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 id|asmlinkage
 r_int
 r_int
@@ -111,6 +113,12 @@ comma
 id|X
 c_func
 (paren
+id|cache_push_v
+)paren
+comma
+id|X
+c_func
+(paren
 id|cache_clear
 )paren
 comma
@@ -135,13 +143,13 @@ comma
 id|X
 c_func
 (paren
-id|add_isr
+id|request_irq
 )paren
 comma
 id|X
 c_func
 (paren
-id|remove_isr
+id|free_irq
 )paren
 comma
 id|X
@@ -156,6 +164,12 @@ c_func
 id|dump_thread
 )paren
 comma
+id|X
+c_func
+(paren
+id|strnlen
+)paren
+comma
 multiline_comment|/* The following are special because they&squot;re not called&n;&t;   explicitly (the C compiler generates them).  Fortunately,&n;&t;   their interface isn&squot;t gonna change any time soon now, so&n;&t;   it&squot;s OK to leave it out of version control.  */
 id|XNOVERS
 c_func
@@ -167,6 +181,24 @@ id|XNOVERS
 c_func
 (paren
 id|memcpy
+)paren
+comma
+id|XNOVERS
+c_func
+(paren
+id|memset
+)paren
+comma
+id|XNOVERS
+c_func
+(paren
+id|down_failed
+)paren
+comma
+id|XNOVERS
+c_func
+(paren
+id|up_wakeup
 )paren
 comma
 macro_line|#include &lt;linux/symtab_end.h&gt;

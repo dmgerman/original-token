@@ -2797,6 +2797,7 @@ id|build_defines
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * IRQ and DMA settings&n;   */
+macro_line|#if 0&t;/* Disable this broken question. */
 id|ask_int_choice
 (paren
 id|B
@@ -2815,6 +2816,7 @@ comma
 l_string|&quot;220 or 240&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ask_int_choice
 (paren
 id|B

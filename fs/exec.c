@@ -1325,7 +1325,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file.f_op-&gt;lseek
+id|file.f_op-&gt;llseek
 )paren
 (brace
 r_if
@@ -1333,7 +1333,7 @@ c_cond
 (paren
 id|file.f_op
 op_member_access_from_pointer
-id|lseek
+id|llseek
 c_func
 (paren
 id|inode

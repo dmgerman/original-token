@@ -394,11 +394,7 @@ r_int
 r_int
 id|limit
 op_assign
-id|MAP_NR
-c_func
-(paren
-id|high_memory
-)paren
+id|max_mapnr
 suffix:semicolon
 r_struct
 id|buffer_head
@@ -1719,6 +1715,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren

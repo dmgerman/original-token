@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/m68k/kernel/process.c&n; *&n; *  Copyright (C) 1995  Hamish Macdonald&n; */
+multiline_comment|/*&n; *  linux/arch/m68k/kernel/process.c&n; *&n; *  Copyright (C) 1995  Hamish Macdonald&n; *&n; *  68060 fixes by Jesper Skov&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 id|asmlinkage
 r_void
 id|ret_from_exception
@@ -435,6 +436,14 @@ r_int
 )paren
 id|childstack
 suffix:semicolon
+multiline_comment|/*&n;&t; * Must save the current SFC/DFC value, NOT the value when&n;&t; * the parent was last descheduled - RGH  10-08-96&n;&t; */
+id|p-&gt;tss.fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Copy the current fpu state */
 id|asm
 r_volatile
@@ -456,11 +465,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+op_logical_neg
+id|CPU_IS_060
+op_logical_and
 id|p-&gt;tss.fpstate
 (braket
 l_int|0
 )braket
 )paren
+op_logical_or
+(paren
+id|CPU_IS_060
+op_logical_and
+id|p-&gt;tss.fpstate
+(braket
+l_int|2
+)braket
+)paren
+)paren
+(brace
 id|asm
 r_volatile
 (paren
@@ -487,6 +511,7 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Restore the state in case the fpu was busy */
 id|asm
 r_volatile
@@ -541,15 +566,32 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+op_logical_neg
+id|CPU_IS_060
+op_logical_and
 op_logical_neg
 id|fpustate
 (braket
 l_int|0
 )braket
 )paren
+op_logical_or
+(paren
+id|CPU_IS_060
+op_logical_and
+op_logical_neg
+id|fpustate
+(braket
+l_int|2
+)braket
+)paren
+)paren
+(brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|asm
 r_volatile
 (paren

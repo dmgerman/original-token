@@ -47,14 +47,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|regs
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 multiline_comment|/* last time the cmos clock got updated */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/amiga/config.c&n; *&n; *  Copyright (C) 1993 Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; *  linux/arch/m68k/amiga/config.c&n; *&n; *  Copyright (C) 1993 Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Miscellaneous Amiga stuff&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -8,10 +8,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
-macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -35,10 +34,24 @@ r_void
 id|amiga_sched_init
 c_func
 (paren
-id|isrfunc
+r_void
+(paren
+op_star
 id|handler
 )paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+)paren
 suffix:semicolon
+multiline_comment|/* amiga specific keyboard functions */
 r_extern
 r_int
 id|amiga_keyb_init
@@ -56,58 +69,87 @@ id|kbd_repeat
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* amiga specific irq functions */
 r_extern
 r_void
-id|amiga_init_INTS
+id|amiga_init_IRQ
 (paren
 r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|amiga_add_isr
+r_void
 (paren
-r_int
-r_int
-comma
-id|isrfunc
-comma
+op_star
+id|amiga_default_handler
+(braket
+)braket
+)paren
+(paren
 r_int
 comma
 r_void
 op_star
 comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|amiga_request_irq
+(paren
+r_int
+r_int
+id|irq
+comma
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+comma
+r_int
+r_int
+id|flags
+comma
+r_const
 r_char
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|amiga_remove_isr
-(paren
-r_int
-r_int
-comma
-id|isrfunc
+id|devname
 comma
 r_void
 op_star
+id|dev_id
 )paren
 suffix:semicolon
 r_extern
 r_int
-id|amiga_get_irq_list
+id|amiga_free_irq
 (paren
-r_char
-op_star
-comma
 r_int
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
 )paren
 suffix:semicolon
 r_extern
 r_void
 id|amiga_enable_irq
-c_func
 (paren
 r_int
 r_int
@@ -116,12 +158,20 @@ suffix:semicolon
 r_extern
 r_void
 id|amiga_disable_irq
-c_func
 (paren
 r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|amiga_get_irq_list
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* amiga specific timer functions */
 r_extern
 r_int
 r_int
@@ -834,7 +884,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;DENISE_HR&quot;
+l_string|&quot;DENISE_HR &quot;
 )paren
 suffix:semicolon
 r_break
@@ -1053,17 +1103,22 @@ id|mach_kbdrate
 op_assign
 id|amiga_kbdrate
 suffix:semicolon
-id|mach_init_INTS
+id|mach_init_IRQ
 op_assign
-id|amiga_init_INTS
+id|amiga_init_IRQ
 suffix:semicolon
-id|mach_add_isr
+id|mach_default_handler
 op_assign
-id|amiga_add_isr
+op_amp
+id|amiga_default_handler
 suffix:semicolon
-id|mach_remove_isr
+id|mach_request_irq
 op_assign
-id|amiga_remove_isr
+id|amiga_request_irq
+suffix:semicolon
+id|mach_free_irq
+op_assign
+id|amiga_free_irq
 suffix:semicolon
 id|mach_enable_irq
 op_assign
@@ -1252,152 +1307,46 @@ c_func
 suffix:semicolon
 macro_line|#endif /* CONFIG_ZORRO */
 )brace
-r_extern
-r_int
-id|time_finetune
-suffix:semicolon
-multiline_comment|/* from kernel/sched.c */
 DECL|variable|jiffy_ticks
 r_static
 r_int
 r_int
 id|jiffy_ticks
 suffix:semicolon
-macro_line|#if 1 /* ++1.3++ */
-DECL|function|timer_wrapper
-r_static
+DECL|function|amiga_sched_init
 r_void
-id|timer_wrapper
+id|amiga_sched_init
 c_func
 (paren
+r_void
+(paren
+op_star
+id|timer_routine
+)paren
+(paren
 r_int
-id|irq
+comma
+r_void
+op_star
 comma
 r_struct
 id|pt_regs
 op_star
-id|fp
-comma
-r_void
-op_star
-id|otimerf
+)paren
 )paren
 (brace
-r_int
-r_int
-id|flags
-comma
-id|old_flags
-suffix:semicolon
-id|ciab.icr
-op_assign
-l_int|0x01
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|old_flags
-op_assign
-(paren
-id|flags
-op_amp
-op_complement
-l_int|0x0700
-)paren
-op_or
-(paren
-id|fp-&gt;sr
-op_amp
-l_int|0x0700
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|old_flags
-)paren
-suffix:semicolon
-(paren
-op_star
-(paren
-id|isrfunc
-)paren
-id|otimerf
-)paren
-(paren
-id|irq
-comma
-id|fp
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|ciab.icr
-op_assign
-l_int|0x81
-suffix:semicolon
-)brace
-macro_line|#endif
-DECL|function|amiga_sched_init
-r_void
-id|amiga_sched_init
-(paren
-id|isrfunc
-id|timer_routine
-)paren
-(brace
-macro_line|#if 0 /* XXX */ /* I think finetune was removed by the 1.3.29 patch */
-r_float
-id|finetune
-suffix:semicolon
-macro_line|#endif
 id|jiffy_ticks
 op_assign
 (paren
 id|amiga_eclock
 op_plus
-l_int|50
-)paren
+id|HZ
 op_div
-l_int|100
-suffix:semicolon
-macro_line|#if 0 /* XXX */
-id|finetune
-op_assign
-(paren
-id|jiffy_ticks
-op_minus
-id|amiga_eclock
+l_int|2
+)paren
 op_div
 id|HZ
-)paren
-op_div
-id|amiga_eclock
-op_star
-l_int|1000000
-op_star
-(paren
-l_int|1
-op_lshift
-l_int|24
-)paren
 suffix:semicolon
-id|time_finetune
-op_assign
-id|finetune
-op_plus
-l_float|0.5
-suffix:semicolon
-macro_line|#endif
 id|ciab.cra
 op_and_assign
 l_int|0xC0
@@ -1415,46 +1364,25 @@ id|jiffy_ticks
 op_div
 l_int|256
 suffix:semicolon
-multiline_comment|/* CIA interrupts when counter underflows, so adjust ticks by 1 */
-id|jiffy_ticks
-op_sub_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* install interrupt service routine for CIAB Timer A */
-multiline_comment|/*&n;     * Please don&squot;t change this to use ciaa, as it interferes with the&n;     * SCSI code. We&squot;ll have to take a look at this later&n;     */
-macro_line|#if 0
-id|add_isr
+multiline_comment|/* install interrupt service routine for CIAB Timer A&n;&t; *&n;&t; * Please don&squot;t change this to use ciaa, as it interferes with the&n;&t; * SCSI code. We&squot;ll have to take a look at this later&n;&t; */
+id|request_irq
+c_func
 (paren
 id|IRQ_AMIGA_CIAB_TA
 comma
 id|timer_routine
 comma
-l_int|0
+id|IRQ_FLG_LOCK
+comma
+l_string|&quot;timer&quot;
 comma
 l_int|NULL
-comma
-l_string|&quot;timer&quot;
 )paren
 suffix:semicolon
-macro_line|#else
-id|add_isr
-(paren
-id|IRQ_AMIGA_CIAB_TA
-comma
-id|timer_wrapper
-comma
-l_int|0
-comma
-id|timer_routine
-comma
-l_string|&quot;timer&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* start timer */
 id|ciab.cra
 op_or_assign
-l_int|0x01
+l_int|0x11
 suffix:semicolon
 )brace
 DECL|macro|TICK_SIZE
@@ -1484,7 +1412,7 @@ id|offset
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* read CIA A timer A current value */
+multiline_comment|/* read CIA B timer A current value */
 id|hi
 op_assign
 id|ciab.tahi
@@ -1522,24 +1450,27 @@ l_int|8
 op_or
 id|lo
 suffix:semicolon
-macro_line|#if 0 /* XXX */
-multiline_comment|/* reading the ICR clears all interrupts.  bad idea! */
 r_if
 c_cond
 (paren
 id|ticks
 OG
 id|jiffy_ticks
-op_minus
-id|jiffy_ticks
 op_div
-l_int|100
+l_int|2
 )paren
 multiline_comment|/* check for pending interrupt */
 r_if
 c_cond
 (paren
-id|ciab.icr
+id|cia_set_irq
+c_func
+(paren
+op_amp
+id|ciab_base
+comma
+l_int|0
+)paren
 op_amp
 id|CIA_ICR_TA
 )paren
@@ -1547,14 +1478,9 @@ id|offset
 op_assign
 l_int|10000
 suffix:semicolon
-macro_line|#endif
 id|ticks
 op_assign
-(paren
 id|jiffy_ticks
-op_minus
-l_int|1
-)paren
 op_minus
 id|ticks
 suffix:semicolon
@@ -2804,7 +2730,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 multiline_comment|/* Setup transparent translation registers for mapping&n;     * of 16 MB kernel segment before disabling translation&n;     */
 id|__asm__

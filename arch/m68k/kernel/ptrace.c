@@ -920,6 +920,11 @@ id|PAGE_MASK
 op_assign
 id|data
 suffix:semicolon
+id|flush_page_to_ram
+(paren
+id|page
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* we&squot;re bypassing pagetables, so we have to set the dirty bit ourselves */
 multiline_comment|/* this should also re-instate whatever read-only mode there was before */
@@ -976,7 +981,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|addr
 )paren

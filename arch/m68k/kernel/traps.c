@@ -10,10 +10,10 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 multiline_comment|/* assembler routines */
@@ -295,13 +295,10 @@ op_assign
 id|nmihandler
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FPSP_040
 r_if
 c_cond
 (paren
-id|m68k_is040or060
-op_eq
-l_int|4
+id|CPU_IS_040
 )paren
 (brace
 multiline_comment|/* set up FPSP entry points */
@@ -484,14 +481,10 @@ op_assign
 id|unsupp_vec
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#ifdef CONFIG_IFPSP_060
 r_if
 c_cond
 (paren
-id|m68k_is040or060
-op_eq
-l_int|6
+id|CPU_IS_060
 )paren
 (brace
 multiline_comment|/* set up IFPSP entry points */
@@ -687,7 +680,6 @@ op_assign
 id|unimp_vec
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 DECL|function|set_evector
 r_void
@@ -925,6 +917,7 @@ op_star
 id|fp
 )paren
 suffix:semicolon
+macro_line|#if defined (CONFIG_M68060)
 DECL|function|access_error060
 r_static
 r_inline
@@ -1100,6 +1093,8 @@ id|fp
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* CONFIG_M68060 */
+macro_line|#if defined (CONFIG_M68040)
 DECL|function|probe040
 r_static
 r_int
@@ -1596,6 +1591,8 @@ id|fp
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_M68040 */
+macro_line|#if defined(CONFIG_M68020_OR_M68030)
 DECL|function|bus_error030
 r_static
 r_inline
@@ -1621,8 +1618,6 @@ r_int
 r_int
 id|addr
 comma
-id|desc
-comma
 id|errorcode
 suffix:semicolon
 r_int
@@ -1636,6 +1631,12 @@ id|user_space_fault
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#if DEBUG
+r_int
+r_int
+id|desc
+suffix:semicolon
+macro_line|#endif
 macro_line|#if DEBUG
 id|printk
 (paren
@@ -1901,12 +1902,17 @@ id|addr
 op_assign
 id|fp-&gt;un.fmtb.daddr
 suffix:semicolon
+id|mmusr
+op_assign
+id|MMU_I
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|user_space_fault
 )paren
 (brace
+macro_line|#if DEBUG
 id|asm
 r_volatile
 (paren
@@ -1930,16 +1936,32 @@ id|addr
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|asm
+r_volatile
+(paren
+l_string|&quot;ptestr #1,%1@,#7&bslash;n&bslash;t&quot;
+l_string|&quot;pmove %/psr,%0@&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+op_amp
+id|temp
+)paren
+comma
+l_string|&quot;a&quot;
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|mmusr
 op_assign
 id|temp
 suffix:semicolon
 )brace
-r_else
-id|mmusr
-op_assign
-id|MMU_I
-suffix:semicolon
 macro_line|#if DEBUG
 id|printk
 (paren
@@ -1989,7 +2011,6 @@ l_int|0
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* if (!(ssw &amp; RW)) updated to 1.2.13pl6 */
 r_if
 c_cond
 (paren
@@ -2013,44 +2034,10 @@ c_cond
 (paren
 id|mmusr
 op_amp
+(paren
 id|MMU_I
-)paren
-id|do_page_fault
-(paren
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-id|fp
-comma
-id|addr
-comma
-id|errorcode
-)paren
-suffix:semicolon
-multiline_comment|/* else if ((mmusr &amp; MMU_WP) &amp;&amp; !(ssw &amp; RW)) */
-r_else
-r_if
-c_cond
-(paren
-(paren
-id|mmusr
-op_amp
+op_or
 id|MMU_WP
-)paren
-op_logical_and
-(paren
-op_logical_neg
-(paren
-id|ssw
-op_amp
-id|RW
-)paren
-op_logical_or
-id|ssw
-op_amp
-id|RM
 )paren
 )paren
 id|do_page_fault
@@ -2127,7 +2114,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if 0
 r_static
 r_volatile
 r_int
@@ -2276,13 +2263,18 @@ id|RW
 id|asm
 r_volatile
 (paren
-l_string|&quot;ploadw #1,%0@&quot;
+l_string|&quot;ploadw %1,%0@&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
 l_string|&quot;a&quot;
 (paren
 id|addr
+)paren
+comma
+l_string|&quot;d&quot;
+(paren
+id|ssw
 )paren
 )paren
 suffix:semicolon
@@ -2290,7 +2282,7 @@ r_else
 id|asm
 r_volatile
 (paren
-l_string|&quot;ploadr #1,%0@&quot;
+l_string|&quot;ploadr %1,%0@&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -2298,8 +2290,14 @@ l_string|&quot;a&quot;
 (paren
 id|addr
 )paren
+comma
+l_string|&quot;d&quot;
+(paren
+id|ssw
+)paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* If this was a data fault due to an invalid page and a&n;&t;       prefetch is pending on the same page, simulate it (but&n;&t;       only if the page is now valid).  Otherwise we&squot;ll get an&n;&t;       weird insn access.  */
 r_if
 c_cond
@@ -2437,38 +2435,32 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif
 )brace
 multiline_comment|/* Now handle the instruction fault. */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ssw
+op_amp
+(paren
+id|FC
+op_or
+id|FB
+)paren
+)paren
+)paren
+r_return
+suffix:semicolon
 multiline_comment|/* get the fault address */
 r_if
 c_cond
 (paren
-(paren
 id|fp-&gt;ptregs.format
-)paren
 op_eq
-l_int|0xA
-)paren
-r_if
-c_cond
-(paren
-id|ssw
-op_amp
-id|FC
-)paren
-id|addr
-op_assign
-id|fp-&gt;ptregs.pc
-op_plus
-l_int|2
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|ssw
-op_amp
-id|FB
+l_int|10
 )paren
 id|addr
 op_assign
@@ -2477,9 +2469,10 @@ op_plus
 l_int|4
 suffix:semicolon
 r_else
-r_return
+id|addr
+op_assign
+id|fp-&gt;un.fmtb.baddr
 suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
@@ -2488,25 +2481,8 @@ op_amp
 id|FC
 )paren
 id|addr
-op_assign
-id|fp-&gt;un.fmtb.baddr
-op_minus
+op_sub_assign
 l_int|2
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|ssw
-op_amp
-id|FB
-)paren
-id|addr
-op_assign
-id|fp-&gt;un.fmtb.baddr
-suffix:semicolon
-r_else
-r_return
 suffix:semicolon
 r_if
 c_cond
@@ -2529,8 +2505,13 @@ id|PAGE_MASK
 op_eq
 l_int|0
 )paren
-multiline_comment|/* Insn fault on same page as data fault */
-r_return
+multiline_comment|/* Insn fault on same page as data fault.  But we&n;&t;&t;   should still create the ATC entry.  */
+r_goto
+id|create_atc_entry
+suffix:semicolon
+id|mmusr
+op_assign
+id|MMU_I
 suffix:semicolon
 r_if
 c_cond
@@ -2538,6 +2519,7 @@ c_cond
 id|user_space_fault
 )paren
 (brace
+macro_line|#if DEBUG
 id|asm
 r_volatile
 (paren
@@ -2561,16 +2543,32 @@ id|addr
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|asm
+r_volatile
+(paren
+l_string|&quot;ptestr #1,%1@,#7&bslash;n&bslash;t&quot;
+l_string|&quot;pmove %/psr,%0@&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+op_amp
+id|temp
+)paren
+comma
+l_string|&quot;a&quot;
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|mmusr
 op_assign
 id|temp
 suffix:semicolon
 )brace
-r_else
-id|mmusr
-op_assign
-id|MMU_I
-suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 (paren
@@ -2607,19 +2605,6 @@ id|desc
 )paren
 suffix:semicolon
 macro_line|#endif
-id|errorcode
-op_assign
-(paren
-id|mmusr
-op_amp
-id|MMU_I
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2638,7 +2623,7 @@ id|fp
 comma
 id|addr
 comma
-id|errorcode
+l_int|0
 )paren
 suffix:semicolon
 r_else
@@ -2697,6 +2682,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#if 0 /* stale ATC entry??  Ignore it */
 macro_line|#ifdef DEBUG
 r_static
 r_volatile
@@ -2828,12 +2814,15 @@ id|current
 suffix:semicolon
 r_return
 suffix:semicolon
+macro_line|#endif
 )brace
+id|create_atc_entry
+suffix:colon
 multiline_comment|/* setup an ATC entry for the access about to be retried */
 id|asm
 r_volatile
 (paren
-l_string|&quot;ploadr #1,%0@&quot;
+l_string|&quot;ploadr #2,%0@&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -2844,6 +2833,7 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_M68020_OR_M68030 */
 DECL|function|buserr_c
 id|asmlinkage
 r_void
@@ -2890,6 +2880,7 @@ c_cond
 id|fp-&gt;ptregs.format
 )paren
 (brace
+macro_line|#if defined (CONFIG_M68060)
 r_case
 l_int|4
 suffix:colon
@@ -2901,6 +2892,8 @@ id|fp
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
+macro_line|#if defined (CONFIG_M68040)
 r_case
 l_int|0x7
 suffix:colon
@@ -2912,6 +2905,8 @@ id|fp
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
+macro_line|#if defined (CONFIG_M68020_OR_M68030)
 r_case
 l_int|0xa
 suffix:colon
@@ -2925,6 +2920,7 @@ id|fp
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|die_if_kernel
@@ -3070,9 +3066,7 @@ id|printk
 c_func
 (paren
 (paren
-id|m68k_is040or060
-op_eq
-l_int|6
+id|CPU_IS_060
 ques
 c_cond
 l_string|&quot;fault addr=%08lx fslw=%08lx&bslash;n&quot;
@@ -3582,18 +3576,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-(paren
 id|fp-&gt;ptregs.vector
-)paren
 op_rshift
 l_int|2
-)paren
 op_eq
 id|VEC_ADDRERR
 op_logical_and
-op_logical_neg
-id|m68k_is040or060
+id|CPU_IS_020_OR_030
 )paren
 (brace
 r_int
@@ -4029,11 +4018,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|force_sig
+id|send_sig
 (paren
 id|sig
 comma
 id|current
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace

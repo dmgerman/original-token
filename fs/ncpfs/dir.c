@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -4933,6 +4934,15 @@ op_minus
 id|sys_tz.tz_minuteswest
 op_star
 l_int|60
+op_plus
+(paren
+id|sys_tz.tz_dsttime
+ques
+c_cond
+l_int|3600
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -4951,6 +4961,15 @@ op_plus
 id|sys_tz.tz_minuteswest
 op_star
 l_int|60
+op_minus
+(paren
+id|sys_tz.tz_dsttime
+ques
+c_cond
+l_int|3600
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Convert a MS-DOS time/date pair to a UNIX date (seconds since 1 1 70). */

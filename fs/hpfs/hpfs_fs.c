@@ -128,6 +128,7 @@ r_char
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 r_static
@@ -282,6 +283,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -947,6 +949,15 @@ op_plus
 id|sys_tz.tz_minuteswest
 op_star
 l_int|60
+op_minus
+(paren
+id|sys_tz.tz_dsttime
+ques
+c_cond
+l_int|3600
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 )brace
 "&f;"
@@ -3063,6 +3074,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -5356,6 +5368,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren

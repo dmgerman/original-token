@@ -378,9 +378,9 @@ multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM ar
 DECL|macro|VMALLOC_OFFSET
 mdefine_line|#define VMALLOC_OFFSET&t;(8*1024*1024)
 DECL|macro|VMALLOC_START
-mdefine_line|#define VMALLOC_START ((high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
+mdefine_line|#define VMALLOC_START&t;(((unsigned long) high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
 DECL|macro|VMALLOC_VMADDR
-mdefine_line|#define VMALLOC_VMADDR(x) (TASK_SIZE + (unsigned long)(x))
+mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 multiline_comment|/*&n; * The 4MB page is guessing..  Detailed in the infamous &quot;Chapter H&quot;&n; * of the Pentium details, but assuming intel did the straightforward&n; * thing, this bit set in the page directory entry just means that&n; * the page directory entry points directly to a 4MB-aligned block of&n; * memory. &n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x001
@@ -398,6 +398,8 @@ DECL|macro|_PAGE_4M
 mdefine_line|#define _PAGE_4M&t;0x080&t;/* 4 MB page, Pentium+.. */
 DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED | _PAGE_DIRTY)
+DECL|macro|_KERNPG_TABLE
+mdefine_line|#define _KERNPG_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK&t;(PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|PAGE_NONE
@@ -503,7 +505,7 @@ DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 multiline_comment|/* to set the page-dir */
 DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;(tsk)-&gt;tss.cr3 = (unsigned long) (pgdir); &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;r&quot; (pgdir)); &bslash;&n;} while (0)
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;unsigned long __pgdir = __pa(pgdir); &bslash;&n;&t;(tsk)-&gt;tss.cr3 = __pgdir; &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;r&quot; (__pgdir)); &bslash;&n;} while (0)
 DECL|macro|pte_none
 mdefine_line|#define pte_none(x)&t;(!pte_val(x))
 DECL|macro|pte_present
@@ -513,7 +515,7 @@ mdefine_line|#define pte_clear(xp)&t;do { pte_val(*(xp)) = 0; } while (0)
 DECL|macro|pmd_none
 mdefine_line|#define pmd_none(x)&t;(!pmd_val(x))
 DECL|macro|pmd_bad
-mdefine_line|#define&t;pmd_bad(x)&t;((pmd_val(x) &amp; ~PAGE_MASK) != _PAGE_TABLE)
+mdefine_line|#define&t;pmd_bad(x)&t;((pmd_val(x) &amp; (~PAGE_MASK &amp; ~_PAGE_USER)) != _KERNPG_TABLE)
 DECL|macro|pmd_present
 mdefine_line|#define pmd_present(x)&t;(pmd_val(x) &amp; _PAGE_PRESENT)
 DECL|macro|pmd_clear
@@ -919,42 +921,11 @@ id|pte
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
-DECL|function|mk_pte
-r_extern
-r_inline
-id|pte_t
-id|mk_pte
-c_func
-(paren
-r_int
-r_int
-id|page
-comma
-id|pgprot_t
-id|pgprot
-)paren
-(brace
-id|pte_t
-id|pte
-suffix:semicolon
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_assign
-id|page
-op_or
-id|pgprot_val
-c_func
-(paren
-id|pgprot
-)paren
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
+DECL|macro|mk_pte
+mdefine_line|#define mk_pte(page, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = __pa(page) + pgprot_val(pgprot); __pte; })
+multiline_comment|/* This takes a physical page address that is used by the remapping functions */
+DECL|macro|mk_pte_phys
+mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = physpage + pgprot_val(pgprot); __pte; })
 DECL|function|pte_modify
 r_extern
 r_inline
@@ -995,79 +966,13 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-DECL|function|pte_page
-r_extern
-r_inline
-r_int
-r_int
-id|pte_page
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|PAGE_MASK
-suffix:semicolon
-)brace
-DECL|function|pmd_page
-r_extern
-r_inline
-r_int
-r_int
-id|pmd_page
-c_func
-(paren
-id|pmd_t
-id|pmd
-)paren
-(brace
-r_return
-id|pmd_val
-c_func
-(paren
-id|pmd
-)paren
-op_amp
-id|PAGE_MASK
-suffix:semicolon
-)brace
+DECL|macro|pte_page
+mdefine_line|#define pte_page(pte) &bslash;&n;((unsigned long) __va(pte_val(pte) &amp; PAGE_MASK))
+DECL|macro|pmd_page
+mdefine_line|#define pmd_page(pmd) &bslash;&n;((unsigned long) __va(pmd_val(pmd) &amp; PAGE_MASK))
 multiline_comment|/* to find an entry in a page-table-directory */
-DECL|function|pgd_offset
-r_extern
-r_inline
-id|pgd_t
-op_star
-id|pgd_offset
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|mm-&gt;pgd
-op_plus
-(paren
-id|address
-op_rshift
-id|PGDIR_SHIFT
-)paren
-suffix:semicolon
-)brace
+DECL|macro|pgd_offset
+mdefine_line|#define pgd_offset(mm, address) &bslash;&n;((mm)-&gt;pgd + ((address) &gt;&gt; PGDIR_SHIFT))
 multiline_comment|/* Find an entry in the second-level page table.. */
 DECL|function|pmd_offset
 r_extern
@@ -1095,50 +1000,8 @@ id|dir
 suffix:semicolon
 )brace
 multiline_comment|/* Find an entry in the third-level page table.. */
-DECL|function|pte_offset
-r_extern
-r_inline
-id|pte_t
-op_star
-id|pte_offset
-c_func
-(paren
-id|pmd_t
-op_star
-id|dir
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-(paren
-id|pte_t
-op_star
-)paren
-id|pmd_page
-c_func
-(paren
-op_star
-id|dir
-)paren
-op_plus
-(paren
-(paren
-id|address
-op_rshift
-id|PAGE_SHIFT
-)paren
-op_amp
-(paren
-id|PTRS_PER_PTE
-op_minus
-l_int|1
-)paren
-)paren
-suffix:semicolon
-)brace
+DECL|macro|pte_offset
+mdefine_line|#define pte_offset(pmd, address) &bslash;&n;((pte_t *) (pmd_page(*pmd) + ((address&gt;&gt;10) &amp; ((PTRS_PER_PTE-1)&lt;&lt;2))))
 multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any.&n; */
 DECL|function|pte_free_kernel
 r_extern
@@ -1243,13 +1106,13 @@ op_star
 id|pmd
 )paren
 op_assign
-id|_PAGE_TABLE
-op_or
+id|_KERNPG_TABLE
+op_plus
+id|__pa
+c_func
 (paren
-r_int
-r_int
-)paren
 id|page
+)paren
 suffix:semicolon
 r_return
 id|page
@@ -1264,13 +1127,13 @@ op_star
 id|pmd
 )paren
 op_assign
-id|_PAGE_TABLE
-op_or
+id|_KERNPG_TABLE
+op_plus
+id|__pa
+c_func
 (paren
-r_int
-r_int
-)paren
 id|BAD_PAGETABLE
+)paren
 suffix:semicolon
 r_return
 l_int|NULL
@@ -1318,13 +1181,13 @@ op_star
 id|pmd
 )paren
 op_assign
-id|_PAGE_TABLE
-op_or
+id|_KERNPG_TABLE
+op_plus
+id|__pa
+c_func
 (paren
-r_int
-r_int
-)paren
 id|BAD_PAGETABLE
+)paren
 suffix:semicolon
 r_return
 l_int|NULL
@@ -1555,8 +1418,12 @@ id|pmd
 )paren
 op_assign
 id|_PAGE_TABLE
-op_or
+op_plus
+id|__pa
+c_func
+(paren
 id|page
+)paren
 suffix:semicolon
 r_return
 (paren
@@ -1606,12 +1473,12 @@ id|pmd
 )paren
 op_assign
 id|_PAGE_TABLE
-op_or
+op_plus
+id|__pa
+c_func
 (paren
-r_int
-r_int
-)paren
 id|BAD_PAGETABLE
+)paren
 suffix:semicolon
 r_return
 l_int|NULL

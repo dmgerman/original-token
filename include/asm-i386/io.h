@@ -17,7 +17,12 @@ macro_line|#else
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO __SLOW_DOWN_IO
 macro_line|#endif
-multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are trivial on the 1:1 Linux/i386 mapping (but if we ever&n; * make the kernel segment mapped at 0, we need to do translation&n; * on the i386 as well)&n; */
+macro_line|#include &lt;asm/page.h&gt;
+DECL|macro|__io_virt
+mdefine_line|#define __io_virt(x)&t;&t;((void *)(PAGE_OFFSET | (unsigned long)(x)))
+DECL|macro|__io_phys
+mdefine_line|#define __io_phys(x)&t;&t;((unsigned long)(x) &amp; ~PAGE_OFFSET)
+multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are pretty trivial&n; */
 DECL|function|virt_to_phys
 r_extern
 r_inline
@@ -33,11 +38,11 @@ id|address
 )paren
 (brace
 r_return
+id|__io_phys
+c_func
 (paren
-r_int
-r_int
-)paren
 id|address
+)paren
 suffix:semicolon
 )brace
 DECL|function|phys_to_virt
@@ -54,13 +59,38 @@ id|address
 )paren
 (brace
 r_return
+id|__io_virt
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+)brace
+r_extern
+r_void
+op_star
+id|ioremap
+c_func
+(paren
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|iounmap
+c_func
 (paren
 r_void
 op_star
+id|addr
 )paren
-id|address
 suffix:semicolon
-)brace
 multiline_comment|/*&n; * IO bus memory addresses are also 1:1 with the physical address&n; */
 DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus virt_to_phys
@@ -68,26 +98,26 @@ DECL|macro|bus_to_virt
 mdefine_line|#define bus_to_virt phys_to_virt
 multiline_comment|/*&n; * readX/writeX() are used to access memory mapped devices. On some&n; * architectures the memory mapped IO stuff needs to be accessed&n; * differently. On the x86 architecture, we just read/write the&n; * memory location directly.&n; */
 DECL|macro|readb
-mdefine_line|#define readb(addr) (*(volatile unsigned char *) (addr))
+mdefine_line|#define readb(addr) (*(volatile unsigned char *) __io_virt(addr))
 DECL|macro|readw
-mdefine_line|#define readw(addr) (*(volatile unsigned short *) (addr))
+mdefine_line|#define readw(addr) (*(volatile unsigned short *) __io_virt(addr))
 DECL|macro|readl
-mdefine_line|#define readl(addr) (*(volatile unsigned int *) (addr))
+mdefine_line|#define readl(addr) (*(volatile unsigned int *) __io_virt(addr))
 DECL|macro|writeb
-mdefine_line|#define writeb(b,addr) ((*(volatile unsigned char *) (addr)) = (b))
+mdefine_line|#define writeb(b,addr) (*(volatile unsigned char *) __io_virt(addr) = (b))
 DECL|macro|writew
-mdefine_line|#define writew(b,addr) ((*(volatile unsigned short *) (addr)) = (b))
+mdefine_line|#define writew(b,addr) (*(volatile unsigned short *) __io_virt(addr) = (b))
 DECL|macro|writel
-mdefine_line|#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
+mdefine_line|#define writel(b,addr) (*(volatile unsigned int *) __io_virt(addr) = (b))
 DECL|macro|memset_io
-mdefine_line|#define memset_io(a,b,c)&t;memset((void *)(a),(b),(c))
+mdefine_line|#define memset_io(a,b,c)&t;memset(__io_virt(a),(b),(c))
 DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),(void *)(b),(c))
+mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),__io_virt(b),(c))
 DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((void *)(a),(b),(c))
+mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy(__io_virt(a),(b),(c))
 multiline_comment|/*&n; * Again, i386 does not require mem IO specific function.&n; */
 DECL|macro|eth_io_copy_and_sum
-mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),(void *)(b),(c),(d))
+mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),__io_virt(b),(c),(d))
 multiline_comment|/*&n; * Talk about misusing macros..&n; */
 DECL|macro|__OUT1
 mdefine_line|#define __OUT1(s,x) &bslash;&n;extern inline void __out##s(unsigned x value, unsigned short port) {
@@ -221,5 +251,74 @@ DECL|macro|outl_p
 mdefine_line|#define outl_p(val,port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 256) ? &bslash;&n;&t;__outlc_p((val),(port)) : &bslash;&n;&t;__outl_p((val),(port)))
 DECL|macro|inl_p
 mdefine_line|#define inl_p(port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 256) ? &bslash;&n;&t;__inlc_p(port) : &bslash;&n;&t;__inl_p(port))
+DECL|function|check_signature
+r_static
+r_inline
+r_int
+id|check_signature
+c_func
+(paren
+r_int
+r_int
+id|io_addr
+comma
+r_const
+r_int
+r_char
+op_star
+id|signature
+comma
+r_int
+id|length
+)paren
+(brace
+r_int
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+id|readb
+c_func
+(paren
+id|io_addr
+)paren
+op_ne
+op_star
+id|signature
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|io_addr
+op_increment
+suffix:semicolon
+id|signature
+op_increment
+suffix:semicolon
+id|length
+op_decrement
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|length
+)paren
+suffix:semicolon
+id|retval
+op_assign
+l_int|1
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|retval
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

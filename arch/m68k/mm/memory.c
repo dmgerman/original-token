@@ -4,13 +4,13 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 r_extern
 id|pte_t
 op_star
@@ -1160,9 +1160,7 @@ multiline_comment|/* not in one of the memory chunks; get the actual&n;&t; * phy
 r_if
 c_cond
 (paren
-id|m68k_is040or060
-op_eq
-l_int|6
+id|CPU_IS_060
 )paren
 (brace
 r_int
@@ -1218,9 +1216,7 @@ r_else
 r_if
 c_cond
 (paren
-id|m68k_is040or060
-op_eq
-l_int|4
+id|CPU_IS_040
 )paren
 (brace
 r_int
@@ -1619,13 +1615,13 @@ DECL|macro|push040
 mdefine_line|#define&t;push040(paddr) __asm__ __volatile__ (&quot;movel %0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;nop&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;     &quot;.word 0xf4f0&quot;&bslash;&n;&t;&t;&t;&t;&t;     /* CPUSHP I/D (a0) */&bslash;&n;&t;&t;&t;&t;&t;     : : &quot;g&quot; ((paddr))&bslash;&n;&t;&t;&t;&t;&t;     : &quot;a0&quot;)
 multiline_comment|/* push and invalidate page in both caches */
 DECL|macro|pushcl040
-mdefine_line|#define&t;pushcl040(paddr) do { push040((paddr));&bslash;&n;&t;&t;&t;      if (m68k_is040or060 == 6) clear040((paddr));&bslash;&n;&t;&t;&t; } while(0)
+mdefine_line|#define&t;pushcl040(paddr) do { push040((paddr));&bslash;&n;&t;&t;&t;      if (CPU_IS_060) clear040((paddr));&bslash;&n;&t;&t;&t; } while(0)
 multiline_comment|/* push page in both caches, invalidate in i-cache */
 DECL|macro|pushcli040
-mdefine_line|#define&t;pushcli040(paddr) do { push040((paddr));&bslash;&n;&t;&t;&t;       if (m68k_is040or060 == 6) cleari040((paddr));&bslash;&n;&t;&t;&t;  } while(0)
+mdefine_line|#define&t;pushcli040(paddr) do { push040((paddr));&bslash;&n;&t;&t;&t;       if (CPU_IS_060) cleari040((paddr));&bslash;&n;&t;&t;&t;  } while(0)
 multiline_comment|/* push page defined by virtual address in both caches */
 DECL|macro|pushv040
-mdefine_line|#define&t;pushv040(vaddr) __asm__ __volatile__ (&quot;movel %0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* ptestr (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf568&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* movec mmusr,d0 */&bslash;&n;&t;&t;&t;&t;&t;      &quot;.long 0x4e7a0805&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;andw #0xf000,%/d0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;movel %/d0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* CPUSHP I/D (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;nop&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf4f0&quot;&bslash;&n;&t;&t;&t;&t;&t;      : : &quot;g&quot; ((vaddr))&bslash;&n;&t;&t;&t;&t;&t;      : &quot;a0&quot;, &quot;d0&quot;)
+mdefine_line|#define&t;pushv040(vaddr) __asm__ __volatile__ (&quot;movel %0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* ptestr (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;nop&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf568&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* movec mmusr,d0 */&bslash;&n;&t;&t;&t;&t;&t;      &quot;.long 0x4e7a0805&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;andw #0xf000,%/d0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;movel %/d0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* CPUSHP I/D (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;nop&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf4f0&quot;&bslash;&n;&t;&t;&t;&t;&t;      : : &quot;g&quot; ((vaddr))&bslash;&n;&t;&t;&t;&t;&t;      : &quot;a0&quot;, &quot;d0&quot;)
 multiline_comment|/* push page defined by virtual address in both caches */
 DECL|macro|pushv060
 mdefine_line|#define&t;pushv060(vaddr) __asm__ __volatile__ (&quot;movel %0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* plpar (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf5c8&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* CPUSHP I/D (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf4f0&quot;&bslash;&n;&t;&t;&t;&t;&t;      : : &quot;g&quot; ((vaddr))&bslash;&n;&t;&t;&t;&t;&t;      : &quot;a0&quot;)
@@ -1648,16 +1644,20 @@ id|len
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
-multiline_comment|/* ++roman: There have been too many problems with the CINV, it seems&n;&t; * to break the cache maintenance of DMAing drivers. I don&squot;t expect&n;&t; * too much overhead by using CPUSH instead.&n;&t; */
-r_while
-c_loop
+multiline_comment|/*&n;&t; * cwe need special treatment for the first page, in case it&n;&t; * is not page-aligned.&n;&t; */
+r_if
+c_cond
 (paren
-id|len
-OG
+id|paddr
+op_amp
+(paren
 id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
 )paren
 (brace
 id|pushcl040
@@ -1666,6 +1666,81 @@ c_func
 id|paddr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_le
+id|PAGE_SIZE
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|paddr
+op_plus
+id|len
+op_minus
+l_int|1
+)paren
+op_xor
+id|paddr
+)paren
+op_amp
+id|PAGE_MASK
+)paren
+(brace
+id|pushcl040
+c_func
+(paren
+id|paddr
+op_plus
+id|len
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_return
+suffix:semicolon
+)brace
+r_else
+(brace
+id|len
+op_sub_assign
+id|PAGE_SIZE
+suffix:semicolon
+id|paddr
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
+)brace
+)brace
+r_while
+c_loop
+(paren
+id|len
+OG
+id|PAGE_SIZE
+)paren
+(brace
+macro_line|#if 0
+id|pushcl040
+c_func
+(paren
+id|paddr
+)paren
+suffix:semicolon
+macro_line|#else
+id|clear040
+c_func
+(paren
+id|paddr
+)paren
+suffix:semicolon
+macro_line|#endif
 id|len
 op_sub_assign
 id|PAGE_SIZE
@@ -1721,82 +1796,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#if 0
-multiline_comment|/* on 68040, invalidate cache lines for pages in the range */
-r_while
-c_loop
-(paren
-id|len
-OG
-id|PAGE_SIZE
-)paren
-(brace
-id|clear040
-c_func
-(paren
-id|paddr
-)paren
-suffix:semicolon
-id|len
-op_sub_assign
-id|PAGE_SIZE
-suffix:semicolon
-id|paddr
-op_add_assign
-id|PAGE_SIZE
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|len
-OG
-l_int|0
-)paren
-(brace
-multiline_comment|/* 0 &lt; len &lt;= PAGE_SIZE */
-id|clear040
-c_func
-(paren
-id|paddr
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|paddr
-op_plus
-id|len
-op_minus
-l_int|1
-)paren
-op_div
-id|PAGE_SIZE
-)paren
-op_ne
-(paren
-id|paddr
-op_div
-id|PAGE_SIZE
-)paren
-)paren
-(brace
-multiline_comment|/* a page boundary gets crossed at the end */
-id|clear040
-c_func
-(paren
-id|paddr
-op_plus
-id|len
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 r_else
 multiline_comment|/* 68030 or 68020 */
 id|asm
@@ -1832,7 +1831,7 @@ id|len
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 multiline_comment|/*&n;         * on 68040 or 68060, push cache lines for pages in the range;&n;&t; * on the &squot;040 this also invalidates the pushed lines, but not on&n;&t; * the &squot;060!&n;&t; */
@@ -1873,30 +1872,6 @@ c_func
 id|paddr
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|paddr
-op_plus
-id|len
-op_minus
-l_int|1
-)paren
-op_div
-id|PAGE_SIZE
-)paren
-op_ne
-(paren
-id|paddr
-op_div
-id|PAGE_SIZE
-)paren
-)paren
-(brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1965,9 +1940,7 @@ id|len
 r_if
 c_cond
 (paren
-id|m68k_is040or060
-op_eq
-l_int|4
+id|CPU_IS_040
 )paren
 (brace
 multiline_comment|/* on 68040, push cache lines for pages in the range */
@@ -2008,30 +1981,6 @@ c_func
 id|vaddr
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|vaddr
-op_plus
-id|len
-op_minus
-l_int|1
-)paren
-op_div
-id|PAGE_SIZE
-)paren
-op_ne
-(paren
-id|vaddr
-op_div
-id|PAGE_SIZE
-)paren
-)paren
-(brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2068,9 +2017,7 @@ r_else
 r_if
 c_cond
 (paren
-id|m68k_is040or060
-op_eq
-l_int|6
+id|CPU_IS_060
 )paren
 (brace
 multiline_comment|/* on 68040, push cache lines for pages in the range */
@@ -2365,7 +2312,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 id|prot
@@ -2492,7 +2439,7 @@ id|pindex
 op_ne
 l_int|0
 op_logical_and
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 r_if
@@ -2677,7 +2624,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 r_int
@@ -3129,7 +3076,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 r_switch

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/arch/m68k/kernel/sys_m68k.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/m68k&n; * platform.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -8,8 +7,10 @@ macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
+macro_line|#include &lt;asm/traps.h&gt;
 multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix traditionally does this, though.&n; */
 DECL|function|sys_pipe
 id|asmlinkage
@@ -984,7 +985,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Convert virtual address VADDR to physical address PADDR, recording&n;   in VALID whether the virtual address is actually mapped.  */
 DECL|macro|virt_to_phys_040
-mdefine_line|#define virt_to_phys_040(vaddr, paddr, valid)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  register unsigned long _tmp1 __asm__ (&quot;a0&quot;) = (vaddr);&t;&t;&bslash;&n;  register unsigned long _tmp2 __asm__ (&quot;d0&quot;);&t;&t;&t;&t;&bslash;&n;  unsigned long _mmusr;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  __asm__ __volatile__ (&quot;.word 0xf568 /* ptestr (%1) */&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&quot;.long 0x4e7a0805 /* movec %%mmusr,%0 */&quot;&t;&bslash;&n;&t;&t;&t;: &quot;=d&quot; (_tmp2)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;a&quot; (_tmp1));&t;&t;&t;&t;&t;&bslash;&n;  _mmusr = _tmp2;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  if (0 /* XXX _mmusr &amp; MMU_?_040 */)&t;&t;&t;&t;&t;&bslash;&n;    (valid) = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  else&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      (valid) = 1;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      (paddr) = _mmusr &amp; ~0xfff;&t;&t;&t;&t;&t;&bslash;&n;    }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define virt_to_phys_040(vaddr, paddr, valid)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  register unsigned long _tmp1 __asm__ (&quot;a0&quot;) = (vaddr);&t;&t;&bslash;&n;  register unsigned long _tmp2 __asm__ (&quot;d0&quot;);&t;&t;&t;&t;&bslash;&n;  unsigned long _mmusr;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  __asm__ __volatile__ (&quot;.word 0xf568 /* ptestr (%1) */&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&quot;.long 0x4e7a0805 /* movec %%mmusr,%0 */&quot;&t;&bslash;&n;&t;&t;&t;: &quot;=d&quot; (_tmp2)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;a&quot; (_tmp1));&t;&t;&t;&t;&t;&bslash;&n;  _mmusr = _tmp2;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  if (!(_mmusr &amp; MMU_R_040))&t;&t;&t;&t;&t;&t;&bslash;&n;    (valid) = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  else&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      (valid) = 1;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      (paddr) = _mmusr &amp; PAGE_MASK;&t;&t;&t;&t;&t;&bslash;&n;    }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 r_static
 r_inline
 r_int
@@ -1077,6 +1078,7 @@ id|len
 op_rshift_assign
 l_int|4
 suffix:semicolon
+multiline_comment|/* Find the physical address of the first mapped page in the&n;&t; address range.  */
 r_for
 c_loop
 (paren
@@ -1114,13 +1116,27 @@ l_int|0
 suffix:semicolon
 id|len
 op_sub_assign
+(paren
 id|PAGE_SIZE
+op_minus
+(paren
+id|addr
+op_amp
+id|PAGE_MASK
+)paren
+)paren
 op_div
 l_int|16
 suffix:semicolon
 id|addr
-op_add_assign
+op_assign
+(paren
+id|addr
+op_plus
 id|PAGE_SIZE
+)paren
+op_amp
+id|PAGE_MASK
 suffix:semicolon
 )brace
 r_while
@@ -1268,13 +1284,27 @@ l_int|0
 suffix:semicolon
 id|len
 op_sub_assign
+(paren
 id|PAGE_SIZE
+op_minus
+(paren
+id|addr
+op_amp
+id|PAGE_MASK
+)paren
+)paren
 op_div
 l_int|16
 suffix:semicolon
 id|addr
-op_add_assign
+op_assign
+(paren
+id|addr
+op_plus
 id|PAGE_SIZE
+)paren
+op_amp
+id|PAGE_MASK
 suffix:semicolon
 )brace
 )brace
@@ -1503,6 +1533,7 @@ id|len
 op_rshift_assign
 l_int|4
 suffix:semicolon
+multiline_comment|/* Find the physical address of the first mapped page in the&n;&t; address range.  */
 r_for
 c_loop
 (paren
@@ -1540,13 +1571,27 @@ l_int|0
 suffix:semicolon
 id|len
 op_sub_assign
+(paren
 id|PAGE_SIZE
+op_minus
+(paren
+id|addr
+op_amp
+id|PAGE_MASK
+)paren
+)paren
 op_div
 l_int|16
 suffix:semicolon
 id|addr
-op_add_assign
+op_assign
+(paren
+id|addr
+op_plus
 id|PAGE_SIZE
+)paren
+op_amp
+id|PAGE_MASK
 suffix:semicolon
 )brace
 r_while
@@ -1694,13 +1739,27 @@ l_int|0
 suffix:semicolon
 id|len
 op_sub_assign
+(paren
 id|PAGE_SIZE
+op_minus
+(paren
+id|addr
+op_amp
+id|PAGE_MASK
+)paren
+)paren
 op_div
 l_int|16
 suffix:semicolon
 id|addr
-op_add_assign
+op_assign
+(paren
+id|addr
+op_plus
 id|PAGE_SIZE
+)paren
+op_amp
+id|PAGE_MASK
 suffix:semicolon
 )brace
 )brace
@@ -1907,7 +1966,7 @@ id|vma
 op_assign
 id|find_vma
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|addr
 )paren
@@ -1928,16 +1987,13 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-r_switch
+r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_020_OR_030
 )paren
 (brace
-r_default
-suffix:colon
-multiline_comment|/* 030 */
-multiline_comment|/* Always flush the whole cache, everything else would not be&n;&t; worth the hassle.  */
+multiline_comment|/* Always flush the whole cache, everything else would not be&n;       worth the hassle.  */
 id|__asm__
 id|__volatile__
 (paren
@@ -1978,10 +2034,13 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_case
-l_int|4
-suffix:colon
-multiline_comment|/* 040 */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|CPU_IS_040
+)paren
 r_return
 id|cache_flush_040
 (paren
@@ -1994,10 +2053,12 @@ comma
 id|len
 )paren
 suffix:semicolon
-r_case
-l_int|6
-suffix:colon
-multiline_comment|/* 060 */
+r_else
+r_if
+c_cond
+(paren
+id|CPU_IS_060
+)paren
 r_return
 id|cache_flush_060
 (paren
@@ -2010,6 +2071,5 @@ comma
 id|len
 )paren
 suffix:semicolon
-)brace
 )brace
 eof

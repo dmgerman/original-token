@@ -26,6 +26,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 suffix:semicolon
@@ -50,10 +51,12 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 suffix:semicolon
 r_static
+r_int
 r_int
 id|proc_scsilseek
 c_func
@@ -66,7 +69,8 @@ r_struct
 id|file
 op_star
 comma
-id|off_t
+r_int
+r_int
 comma
 r_int
 )paren
@@ -330,6 +334,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -360,20 +365,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|count
-OL
-op_minus
-l_int|1
-)paren
-multiline_comment|/* Normally I wouldn&squot;t do this, */
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-multiline_comment|/* but it saves some redundant code.&n;&t;&t;&t;&t;   * Now it is possible to seek to the &n;&t;&t;&t;&t;   * end of the file */
-r_if
-c_cond
-(paren
 op_logical_neg
 (paren
 id|page
@@ -399,11 +390,6 @@ c_loop
 id|bytes
 OG
 l_int|0
-op_logical_or
-id|count
-op_eq
-op_minus
-l_int|1
 )paren
 (brace
 id|thistime
@@ -416,11 +402,6 @@ c_cond
 id|bytes
 OG
 id|PROC_BLOCK_SIZE
-op_logical_or
-id|count
-op_eq
-op_minus
-l_int|1
 )paren
 (brace
 id|thistime
@@ -501,15 +482,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Copy the bytes, if we&squot;re not doing a seek to &n;&t; *&t;the end of the file &n;&t; */
-r_if
-c_cond
-(paren
-id|count
-op_ne
-op_minus
-l_int|1
-)paren
+multiline_comment|/*&n;&t; *  Copy the bytes&n;&t; */
 id|memcpy_tofs
 c_func
 (paren
@@ -582,6 +555,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -689,6 +663,7 @@ suffix:semicolon
 DECL|function|proc_scsilseek
 r_static
 r_int
+r_int
 id|proc_scsilseek
 c_func
 (paren
@@ -702,7 +677,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -738,34 +714,9 @@ suffix:semicolon
 r_case
 l_int|2
 suffix:colon
-multiline_comment|/* This ugly hack allows us to    */
-r_if
-c_cond
-(paren
-id|offset
-)paren
-multiline_comment|/* to determine the length of the */
 r_return
 op_minus
 id|EINVAL
-suffix:semicolon
-multiline_comment|/* file and then later safely to  */
-id|proc_readscsi
-c_func
-(paren
-id|inode
-comma
-id|file
-comma
-l_int|0
-comma
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* seek in it       */
-r_return
-id|file-&gt;f_pos
 suffix:semicolon
 r_default
 suffix:colon

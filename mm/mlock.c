@@ -985,11 +985,7 @@ c_cond
 (paren
 id|locked
 OG
-id|MAP_NR
-c_func
-(paren
-id|high_memory
-)paren
+id|max_mapnr
 op_div
 l_int|2
 )paren
@@ -1256,11 +1252,7 @@ c_cond
 (paren
 id|current-&gt;mm-&gt;total_vm
 OG
-id|MAP_NR
-c_func
-(paren
-id|high_memory
-)paren
+id|max_mapnr
 op_div
 l_int|2
 )paren

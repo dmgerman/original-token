@@ -1356,7 +1356,7 @@ c_cond
 (paren
 id|mem_ptr_virt
 op_assign
-id|vremap
+id|ioremap
 c_func
 (paren
 (paren
@@ -1374,7 +1374,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;hp100: vremap for high PCI memory at 0x%lx failed&bslash;n&quot;
+l_string|&quot;hp100: ioremap for high PCI memory at 0x%lx failed&bslash;n&quot;
 comma
 (paren
 id|u_long
@@ -5366,7 +5366,7 @@ id|dev_hp100.priv
 op_member_access_from_pointer
 id|mem_ptr_virt
 )paren
-id|vfree
+id|iounmap
 c_func
 (paren
 (paren

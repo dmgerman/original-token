@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|PCIBIOS_PCI_FUNCTION_ID
 mdefine_line|#define PCIBIOS_PCI_FUNCTION_ID &t;0xb1XX
@@ -332,6 +333,8 @@ id|PCI_SERVICE
 id|pci_indirect.address
 op_assign
 id|pcibios_entry
+op_or
+id|PAGE_OFFSET
 suffix:semicolon
 id|__asm__
 c_func
@@ -1440,7 +1443,11 @@ r_union
 id|bios32
 op_star
 )paren
+id|__va
+c_func
+(paren
 l_int|0xe0000
+)paren
 suffix:semicolon
 id|check
 op_le
@@ -1449,7 +1456,11 @@ r_union
 id|bios32
 op_star
 )paren
+id|__va
+c_func
+(paren
 l_int|0xffff0
+)paren
 suffix:semicolon
 op_increment
 id|check
@@ -1564,8 +1575,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|bios32_indirect.address
-op_assign
 id|bios32_entry
 op_assign
 id|check-&gt;fields.entry
@@ -1576,6 +1585,12 @@ l_string|&quot;pcibios_init : BIOS32 Service Directory entry at 0x%lx&bslash;n&q
 comma
 id|bios32_entry
 )paren
+suffix:semicolon
+id|bios32_indirect.address
+op_assign
+id|bios32_entry
+op_plus
+id|PAGE_OFFSET
 suffix:semicolon
 )brace
 )brace

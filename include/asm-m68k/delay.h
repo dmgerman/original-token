@@ -10,23 +10,24 @@ id|__delay
 c_func
 (paren
 r_int
+r_int
 id|loops
 )paren
 (brace
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;&bslash;n&bslash;tmovel %0,%/d0&bslash;n1:&bslash;tsubql #1,%/d0&bslash;n&bslash;t&quot;
-l_string|&quot;bpls 1b&bslash;n&quot;
+l_string|&quot;1: subql #1,%0; jcc 1b&quot;
 suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;=d&quot;
 (paren
 id|loops
 )paren
 suffix:colon
-l_string|&quot;d0&quot;
+l_string|&quot;0&quot;
+(paren
+id|loops
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -43,19 +44,27 @@ r_int
 id|usecs
 )paren
 (brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
 id|usecs
 op_mul_assign
-l_int|0x000010c6
+l_int|4295
 suffix:semicolon
 multiline_comment|/* 2**32 / 1000000 */
 id|__asm__
-id|__volatile__
 (paren
-l_string|&quot;mulul %1,%0:%2&quot;
+l_string|&quot;mulul %2,%0:%1&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren
 id|usecs
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|tmp
 )paren
 suffix:colon
 l_string|&quot;d&quot;
@@ -63,7 +72,7 @@ l_string|&quot;d&quot;
 id|usecs
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;1&quot;
 (paren
 id|loops_per_sec
 )paren
@@ -97,10 +106,19 @@ r_int
 id|c
 )paren
 (brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;mulul %1,%/d0:%0&bslash;n&bslash;tdivul %2,%/d0:%0&quot;
+l_string|&quot;mulul %2,%0:%1; divul %3,%0:%1&quot;
 suffix:colon
+l_string|&quot;=d&quot;
+(paren
+id|tmp
+)paren
+comma
 l_string|&quot;=d&quot;
 (paren
 id|a
@@ -116,12 +134,10 @@ l_string|&quot;d&quot;
 id|c
 )paren
 comma
-l_string|&quot;0&quot;
+l_string|&quot;1&quot;
 (paren
 id|a
 )paren
-suffix:colon
-l_string|&quot;d0&quot;
 )paren
 suffix:semicolon
 r_return

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/tpqic02.h&gt;
 macro_line|#include &lt;linux/ftape.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
@@ -64,6 +65,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -94,6 +96,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -123,6 +126,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -133,11 +137,11 @@ op_assign
 id|file-&gt;f_pos
 suffix:semicolon
 r_int
-id|read
+r_int
+id|end_mem
 suffix:semicolon
-id|p
-op_add_assign
-id|PAGE_OFFSET
+r_int
+id|read
 suffix:semicolon
 r_if
 c_cond
@@ -150,20 +154,20 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|MAP_NR
-c_func
-(paren
-id|p
-)paren
-op_ge
-id|MAP_NR
+id|end_mem
+op_assign
+id|__pa
 c_func
 (paren
 id|high_memory
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p
+op_ge
+id|end_mem
 )paren
 r_return
 l_int|0
@@ -173,13 +177,13 @@ c_cond
 (paren
 id|count
 OG
-id|high_memory
+id|end_mem
 op_minus
 id|p
 )paren
 id|count
 op_assign
-id|high_memory
+id|end_mem
 op_minus
 id|p
 suffix:semicolon
@@ -187,7 +191,7 @@ id|read
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(__i386__) || defined(__sparc__) /* we don&squot;t have page 0 mapped on x86/sparc.. */
+macro_line|#if defined(__sparc__) /* we don&squot;t have page 0 mapped on sparc.. */
 r_while
 c_loop
 (paren
@@ -223,11 +227,11 @@ c_func
 (paren
 id|buf
 comma
+id|__va
+c_func
 (paren
-r_void
-op_star
-)paren
 id|p
+)paren
 comma
 id|count
 )paren
@@ -266,6 +270,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -276,11 +281,11 @@ op_assign
 id|file-&gt;f_pos
 suffix:semicolon
 r_int
-id|written
+r_int
+id|end_mem
 suffix:semicolon
-id|p
-op_add_assign
-id|PAGE_OFFSET
+r_int
+id|written
 suffix:semicolon
 r_if
 c_cond
@@ -293,20 +298,20 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|MAP_NR
-c_func
-(paren
-id|p
-)paren
-op_ge
-id|MAP_NR
+id|end_mem
+op_assign
+id|__pa
 c_func
 (paren
 id|high_memory
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p
+op_ge
+id|end_mem
 )paren
 r_return
 l_int|0
@@ -316,13 +321,13 @@ c_cond
 (paren
 id|count
 OG
-id|high_memory
+id|end_mem
 op_minus
 id|p
 )paren
 id|count
 op_assign
-id|high_memory
+id|end_mem
 op_minus
 id|p
 suffix:semicolon
@@ -330,12 +335,10 @@ id|written
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(__i386__) || defined(__sparc__) /* we don&squot;t have page 0 mapped on x86/sparc.. */
+macro_line|#if defined(__sparc__) /* we don&squot;t have page 0 mapped on sparc.. */
 r_while
 c_loop
 (paren
-id|PAGE_OFFSET
-op_plus
 id|p
 template_param
 l_int|0
@@ -359,11 +362,11 @@ macro_line|#endif
 id|memcpy_fromfs
 c_func
 (paren
+id|__va
+c_func
 (paren
-r_void
-op_star
-)paren
 id|p
+)paren
 comma
 id|buf
 comma
@@ -404,10 +407,16 @@ op_star
 id|vma
 )paren
 (brace
+r_int
+r_int
+id|offset
+op_assign
+id|vma-&gt;vm_offset
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_offset
+id|offset
 op_amp
 op_complement
 id|PAGE_MASK
@@ -425,9 +434,13 @@ id|x86
 OG
 l_int|3
 op_logical_and
-id|vma-&gt;vm_offset
+id|offset
 op_ge
+id|__pa
+c_func
+(paren
 id|high_memory
+)paren
 )paren
 id|pgprot_val
 c_func
@@ -446,7 +459,7 @@ c_func
 (paren
 id|vma-&gt;vm_start
 comma
-id|vma-&gt;vm_offset
+id|offset
 comma
 id|vma-&gt;vm_end
 op_minus
@@ -490,6 +503,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -590,6 +604,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -668,6 +683,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -748,6 +764,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -777,6 +794,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -804,6 +822,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -929,6 +948,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -962,6 +982,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -973,6 +994,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Special lseek() function for /dev/null and /dev/zero.  Most notably, you can fopen()&n; * both devices with &quot;a&quot; now.  This was previously impossible.  SRB.&n; */
 DECL|function|null_lseek
 r_static
+r_int
 r_int
 id|null_lseek
 c_func
@@ -987,7 +1009,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -1004,6 +1027,7 @@ multiline_comment|/*&n; * The memory devices use the full 32/64 bits of the offs
 DECL|function|memory_lseek
 r_static
 r_int
+r_int
 id|memory_lseek
 c_func
 (paren
@@ -1017,7 +1041,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int

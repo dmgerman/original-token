@@ -88,6 +88,13 @@ id|checksum
 suffix:semicolon
 multiline_comment|/* checksum for bootable disks */
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|__packed__
+)paren
+)paren
 suffix:semicolon
 macro_line|#endif /* _LINUX_ATARI_ROOTSEC_H */
 eof

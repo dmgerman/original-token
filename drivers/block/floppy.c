@@ -4471,11 +4471,7 @@ suffix:semicolon
 id|fd_set_dma_addr
 c_func
 (paren
-id|virt_to_bus
-c_func
-(paren
 id|raw_cmd-&gt;kernel_data
-)paren
 )paren
 suffix:semicolon
 id|fd_set_dma_count
@@ -8819,13 +8815,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|_floppy-&gt;sect
-OG
-id|DP-&gt;interleave_sect
-op_logical_and
-id|F_SIZECODE
-op_eq
-l_int|2
+id|_floppy-&gt;fmt_gap
+OL
+l_int|0x22
 )paren
 id|il
 op_increment
@@ -15601,6 +15593,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -15667,6 +15660,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren

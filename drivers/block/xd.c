@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
-macro_line|#include &lt;linux/xd.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -14,6 +13,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR XT_DISK_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &quot;xd.h&quot;
 DECL|variable|xd_info
 id|XD_INFO
 id|xd_info
@@ -164,53 +164,25 @@ multiline_comment|/* Dirk Melchers, dirk@merlin.nbg.sub.org */
 suffix:semicolon
 DECL|variable|xd_bases
 r_static
-id|u_char
-op_star
+r_int
+r_int
 id|xd_bases
 (braket
 )braket
 op_assign
 (brace
-(paren
-id|u_char
-op_star
-)paren
 l_int|0xC8000
 comma
-(paren
-id|u_char
-op_star
-)paren
 l_int|0xCA000
 comma
-(paren
-id|u_char
-op_star
-)paren
 l_int|0xCC000
 comma
-(paren
-id|u_char
-op_star
-)paren
 l_int|0xCE000
 comma
-(paren
-id|u_char
-op_star
-)paren
 l_int|0xD0000
 comma
-(paren
-id|u_char
-op_star
-)paren
 l_int|0xD8000
 comma
-(paren
-id|u_char
-op_star
-)paren
 l_int|0xE0000
 )brace
 suffix:semicolon
@@ -492,8 +464,8 @@ id|u_char
 op_star
 id|controller
 comma
-id|u_char
-op_star
+r_int
+r_int
 op_star
 id|address
 )paren
@@ -521,7 +493,7 @@ suffix:semicolon
 op_star
 id|address
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 r_return
 l_int|1
@@ -590,8 +562,7 @@ op_increment
 r_if
 c_cond
 (paren
-op_logical_neg
-id|memcmp
+id|check_signature
 c_func
 (paren
 id|xd_bases
@@ -666,8 +637,9 @@ id|u_char
 id|i
 comma
 id|controller
-comma
-op_star
+suffix:semicolon
+r_int
+r_int
 id|address
 suffix:semicolon
 r_if
@@ -687,7 +659,7 @@ id|address
 id|printk
 c_func
 (paren
-l_string|&quot;xd_geninit: detected a%s controller (type %d) at address %p&bslash;n&quot;
+l_string|&quot;xd_geninit: detected a%s controller (type %d) at address %06x&bslash;n&quot;
 comma
 id|xd_sigs
 (braket
@@ -3147,17 +3119,14 @@ r_static
 r_void
 id|xd_dtc_init_controller
 (paren
-id|u_char
-op_star
+r_int
+r_int
 id|address
 )paren
 (brace
 r_switch
 c_cond
 (paren
-(paren
-id|u_long
-)paren
 id|address
 )paren
 (brace
@@ -3184,7 +3153,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;xd_dtc_init_controller: unsupported BIOS address %p&bslash;n&quot;
+l_string|&quot;xd_dtc_init_controller: unsupported BIOS address %06x&bslash;n&quot;
 comma
 id|address
 )paren
@@ -3520,17 +3489,14 @@ r_static
 r_void
 id|xd_wd_init_controller
 (paren
-id|u_char
-op_star
+r_int
+r_int
 id|address
 )paren
 (brace
 r_switch
 c_cond
 (paren
-(paren
-id|u_long
-)paren
 id|address
 )paren
 (brace
@@ -3593,7 +3559,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;xd_wd_init_controller: unsupported BIOS address %p&bslash;n&quot;
+l_string|&quot;xd_wd_init_controller: unsupported BIOS address %06x&bslash;n&quot;
 comma
 id|address
 )paren
@@ -3870,17 +3836,14 @@ r_static
 r_void
 id|xd_seagate_init_controller
 (paren
-id|u_char
-op_star
+r_int
+r_int
 id|address
 )paren
 (brace
 r_switch
 c_cond
 (paren
-(paren
-id|u_long
-)paren
 id|address
 )paren
 (brace
@@ -3925,7 +3888,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;xd_seagate_init_controller: unsupported BIOS address %p&bslash;n&quot;
+l_string|&quot;xd_seagate_init_controller: unsupported BIOS address %06x&bslash;n&quot;
 comma
 id|address
 )paren
@@ -4098,17 +4061,14 @@ r_static
 r_void
 id|xd_omti_init_controller
 (paren
-id|u_char
-op_star
+r_int
+r_int
 id|address
 )paren
 (brace
 r_switch
 c_cond
 (paren
-(paren
-id|u_long
-)paren
 id|address
 )paren
 (brace
@@ -4153,7 +4113,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;xd_omti_init_controller: unsupported BIOS address %p&bslash;n&quot;
+l_string|&quot;xd_omti_init_controller: unsupported BIOS address %06x&bslash;n&quot;
 comma
 id|address
 )paren

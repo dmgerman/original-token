@@ -46,6 +46,20 @@ id|vm_area_struct
 op_star
 id|vma
 suffix:semicolon
+r_struct
+id|task_struct
+op_star
+id|tsk
+op_assign
+id|current
+suffix:semicolon
+r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+id|tsk-&gt;mm
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 (paren
@@ -59,16 +73,23 @@ id|address
 comma
 id|error_code
 comma
-id|current-&gt;tss.pagedir_v
+id|tsk-&gt;tss.pagedir_v
 )paren
 suffix:semicolon
 macro_line|#endif
+id|down
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|vma
 op_assign
 id|find_vma
 c_func
 (paren
-id|current
+id|mm
 comma
 id|address
 )paren
@@ -214,7 +235,7 @@ l_int|1
 id|do_wp_page
 c_func
 (paren
-id|current
+id|tsk
 comma
 id|vma
 comma
@@ -223,6 +244,13 @@ comma
 id|error_code
 op_amp
 l_int|2
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return
@@ -232,7 +260,7 @@ suffix:semicolon
 id|do_no_page
 c_func
 (paren
-id|current
+id|tsk
 comma
 id|vma
 comma
@@ -243,10 +271,20 @@ op_amp
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* There seems to be a missing invalidate somewhere in do_no_page.&n;&t; * Until I found it, this one cures the problem and makes&n;&t; * 1.2 run on the 68040 (Martin Apel).&n;&t; */
-id|flush_tlb_all
+id|up
 c_func
 (paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+multiline_comment|/* There seems to be a missing invalidate somewhere in do_no_page.&n;&t; * Until I found it, this one cures the problem and makes&n;&t; * 1.2 run on the 68040 (Martin Apel).&n;&t; */
+id|flush_tlb_page
+c_func
+(paren
+id|vma
+comma
+id|address
 )paren
 suffix:semicolon
 r_return
@@ -255,6 +293,13 @@ suffix:semicolon
 multiline_comment|/*&n; * Something tried to access memory that isn&squot;t in our memory map..&n; * Fix it, but check if it&squot;s kernel or user first..&n; */
 id|bad_area
 suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -270,7 +315,7 @@ id|force_sig
 (paren
 id|SIGSEGV
 comma
-id|current
+id|tsk
 )paren
 suffix:semicolon
 r_return

@@ -500,6 +500,7 @@ op_ne
 l_int|0
 )paren
 id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;1:&bslash;t&quot;
 l_string|&quot;movel %1@+,%/d0&bslash;n&bslash;t&quot;
@@ -554,6 +555,7 @@ op_amp
 l_int|2
 )paren
 id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;movew %0@+,%/d0&bslash;n&bslash;t&quot;
 l_string|&quot;movesw %/d0,%1@+&bslash;n&bslash;t&quot;
@@ -1113,6 +1115,7 @@ op_ne
 l_int|0
 )paren
 id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;1:&bslash;t&quot;
 l_string|&quot;movesl %1@+,%/d0&bslash;n&bslash;t&quot;
@@ -1167,6 +1170,7 @@ op_amp
 l_int|2
 )paren
 id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;movesw %0@+,%/d0&bslash;n&bslash;t&quot;
 l_string|&quot;movew %/d0,%1@+&bslash;n&bslash;t&quot;

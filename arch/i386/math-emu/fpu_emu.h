@@ -115,8 +115,6 @@ DECL|member|selector
 r_int
 r_int
 id|selector
-suffix:colon
-l_int|16
 suffix:semicolon
 DECL|member|opcode
 r_int
@@ -124,10 +122,8 @@ r_int
 id|opcode
 suffix:colon
 l_int|11
-suffix:semicolon
+comma
 DECL|member|empty
-r_int
-r_int
 id|empty
 suffix:colon
 l_int|5

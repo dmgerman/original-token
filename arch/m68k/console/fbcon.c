@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/arch/m68k/console/fbcon.c -- Low level frame buffer based console&n; *                                    driver&n; *&n; *    Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *&n; * This file is based on the original Amiga console driver (amicon.c):&n; *&n; *    Copyright (C) 1993 Hamish Macdonald&n; *                       Greg Harp&n; *    Copyright (C) 1994 David Carter [carter@compsci.bristol.ac.uk]&n; *&n; *          with work by William Rucklidge (wjr@cs.cornell.edu)&n; *                       Geert Uytterhoeven&n; *                       Jes Sorensen (jds@kom.auc.dk)&n; *                       Martin Apel&n; *&n; * and on the original Atari console driver (atacon.c):&n; *&n; *    Copyright (C) 1993 Bjoern Brauel&n; *                       Roman Hodek&n; *&n; *          with work by Guenther Kelleter&n; *                       Martin Schaller&n; *                       Andreas Schwab&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * To do:&n; *  - Implement 16 plane mode.&n; *  - Add support for 16/24/32 bit packed pixels&n; *  - Hardware cursor&n; */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -9,7 +10,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
@@ -809,14 +810,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 suffix:semicolon
 r_static
@@ -2492,7 +2493,7 @@ id|AMIGA_CURSOR_BLINK_RATE
 suffix:semicolon
 id|irqres
 op_assign
-id|add_isr
+id|request_irq
 c_func
 (paren
 id|IRQ_AMIGA_VERTB
@@ -2501,9 +2502,9 @@ id|fbcon_vbl_handler
 comma
 l_int|0
 comma
-l_int|NULL
-comma
 l_string|&quot;console/cursor&quot;
+comma
+id|fbcon_vbl_handler
 )paren
 suffix:semicolon
 )brace
@@ -2521,7 +2522,7 @@ id|ATARI_CURSOR_BLINK_RATE
 suffix:semicolon
 id|irqres
 op_assign
-id|add_isr
+id|request_irq
 c_func
 (paren
 id|IRQ_AUTO_4
@@ -2530,9 +2531,9 @@ id|fbcon_vbl_handler
 comma
 id|IRQ_TYPE_PRIO
 comma
-l_int|NULL
-comma
 l_string|&quot;console/cursor&quot;
+comma
+id|fbcon_vbl_handler
 )paren
 suffix:semicolon
 )brace
@@ -2540,7 +2541,6 @@ macro_line|#endif /* CONFIG_ATARI */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|irqres
 )paren
 id|panic
@@ -5580,14 +5580,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 r_struct
@@ -6910,6 +6910,8 @@ suffix:semicolon
 r_int
 id|i
 comma
+id|j
+comma
 id|size
 comma
 id|alloc
@@ -6966,39 +6968,51 @@ r_return
 op_minus
 id|ENAMETOOLONG
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_for
+c_loop
 (paren
 id|i
 op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|data
-comma
-id|size
-)paren
-)paren
-)paren
-r_return
-id|i
+l_int|0
 suffix:semicolon
-id|memcpy_tofs
-c_func
-(paren
-id|data
-comma
-id|p-&gt;fontdata
-comma
-id|size
+id|i
+OL
+l_int|256
+suffix:semicolon
+id|i
+op_increment
 )paren
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|p-&gt;fontheight
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|data
+(braket
+id|i
+op_star
+l_int|32
+op_plus
+id|j
+)braket
+op_assign
+id|p-&gt;fontdata
+(braket
+id|i
+op_star
+id|p-&gt;fontheight
+op_plus
+id|j
+)braket
 suffix:semicolon
 r_return
 l_int|0
@@ -7046,6 +7060,8 @@ id|unit
 suffix:semicolon
 r_int
 id|i
+comma
+id|j
 comma
 id|size
 comma
@@ -7363,30 +7379,6 @@ id|userspace
 r_if
 c_cond
 (paren
-(paren
-id|i
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|data
-comma
-id|size
-)paren
-)paren
-)paren
-r_return
-id|i
-suffix:semicolon
-r_if
-c_cond
-(paren
 op_logical_neg
 (paren
 id|new_data
@@ -7425,15 +7417,51 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* usage counter */
-id|memcpy_fromfs
-c_func
+r_for
+c_loop
 (paren
-id|new_data
-comma
-id|data
-comma
-id|size
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|256
+suffix:semicolon
+id|i
+op_increment
 )paren
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|h
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|new_data
+(braket
+id|i
+op_star
+id|h
+op_plus
+id|j
+)braket
+op_assign
+id|data
+(braket
+id|i
+op_star
+l_int|32
+op_plus
+id|j
+)braket
 suffix:semicolon
 id|p-&gt;fontdata
 op_assign
@@ -7480,6 +7508,23 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* reset wrap/pan */
+multiline_comment|/* Adjust the virtual screen-size to fontheight*rows */
+id|p-&gt;var.yres_virtual
+op_assign
+(paren
+id|p-&gt;var.yres
+op_div
+id|h
+)paren
+op_star
+id|h
+suffix:semicolon
+id|p-&gt;vrows
+op_assign
+id|p-&gt;var.yres_virtual
+op_div
+id|h
+suffix:semicolon
 r_if
 c_cond
 (paren

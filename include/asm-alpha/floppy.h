@@ -20,7 +20,7 @@ mdefine_line|#define fd_clear_dma_ff()       clear_dma_ff(FLOPPY_DMA)
 DECL|macro|fd_set_dma_mode
 mdefine_line|#define fd_set_dma_mode(mode)   set_dma_mode(FLOPPY_DMA,mode)
 DECL|macro|fd_set_dma_addr
-mdefine_line|#define fd_set_dma_addr(addr)   set_dma_addr(FLOPPY_DMA,addr)
+mdefine_line|#define fd_set_dma_addr(addr)   set_dma_addr(FLOPPY_DMA,virt_to_bus(addr))
 DECL|macro|fd_set_dma_count
 mdefine_line|#define fd_set_dma_count(count) set_dma_count(FLOPPY_DMA,count)
 DECL|macro|fd_enable_irq

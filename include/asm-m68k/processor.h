@@ -22,7 +22,7 @@ DECL|macro|wp_works_ok
 mdefine_line|#define wp_works_ok 1
 multiline_comment|/* MAX floating point unit state size (FSAVE/FRESTORE) */
 DECL|macro|FPSTATESIZE
-mdefine_line|#define FPSTATESIZE   (216/sizeof(unsigned short))
+mdefine_line|#define FPSTATESIZE   (216/sizeof(unsigned char))
 multiline_comment|/* &n; * if you change this structure, you must change the code and offsets&n; * in m68k/machasm.S&n; */
 DECL|struct|thread_struct
 r_struct
@@ -101,7 +101,7 @@ suffix:semicolon
 multiline_comment|/* fp control regs */
 DECL|member|fpstate
 r_int
-r_int
+r_char
 id|fpstate
 (braket
 id|FPSTATESIZE
@@ -115,7 +115,7 @@ mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, __pgprot(_PAGE_PRE
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_kernel_stack) + (long) init_kernel_stack, 0, &bslash;&n;&t;PS_S, KERNEL_DS, &bslash;&n;&t;NULL, 0, {0, 0}, 0 &bslash;&n;}
 DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
+mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack
 mdefine_line|#define free_kernel_stack(page) free_page((page))
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */

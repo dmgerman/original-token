@@ -11,18 +11,19 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/ldt.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;asm/ldt.h&gt;
 id|asmlinkage
 r_void
 id|ret_from_sys_call
@@ -524,6 +525,52 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+DECL|variable|reboot_mode
+r_static
+r_int
+id|reboot_mode
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|reboot_setup
+r_void
+id|reboot_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+r_int
+id|mode
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* &quot;w&quot; for &quot;warm&quot; reboot (no memory testing etc) */
+r_if
+c_cond
+(paren
+id|str
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;w&squot;
+)paren
+id|mode
+op_assign
+l_int|0x1234
+suffix:semicolon
+id|reboot_mode
+op_assign
+id|mode
+suffix:semicolon
+)brace
 DECL|function|kb_wait
 r_static
 r_inline
@@ -587,14 +634,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* rebooting needs to touch the page at absolute addr 0 */
-id|pg0
-(braket
-l_int|0
-)braket
-op_assign
-l_int|7
-suffix:semicolon
 op_star
 (paren
 (paren
@@ -602,10 +641,14 @@ r_int
 r_int
 op_star
 )paren
+id|__va
+c_func
+(paren
 l_int|0x472
 )paren
+)paren
 op_assign
-l_int|0x1234
+id|reboot_mode
 suffix:semicolon
 r_for
 c_loop
@@ -664,7 +707,7 @@ multiline_comment|/* pulse reset low */
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -1124,6 +1167,14 @@ r_int
 r_int
 )paren
 id|ret_from_sys_call
+suffix:semicolon
+id|p-&gt;tss.ebx
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|p
 suffix:semicolon
 op_star
 id|childregs

@@ -164,11 +164,7 @@ c_func
 id|page
 )paren
 op_ge
-id|MAP_NR
-c_func
-(paren
-id|high_memory
-)paren
+id|max_mapnr
 )paren
 r_return
 l_int|0

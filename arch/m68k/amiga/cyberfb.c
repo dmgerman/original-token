@@ -6,11 +6,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/zorro.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
@@ -1426,6 +1424,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* This includes the video memory as well as the S3 register set */
 id|CyberMem
 op_assign
 id|kernel_map
@@ -1434,7 +1433,7 @@ id|board_addr
 op_plus
 l_int|0x01400000
 comma
-l_int|0x00400000
+l_int|0x01000000
 comma
 id|KERNELMAP_NOCACHE_SER
 comma
@@ -1483,17 +1482,10 @@ op_assign
 r_char
 op_star
 )paren
-id|kernel_map
 (paren
-id|board_addr
+id|CyberMem
 op_plus
-l_int|0x02000000
-comma
-l_int|0xf000
-comma
-id|KERNELMAP_NOCACHE_SER
-comma
-id|memstart
+l_int|0x00c00000
 )paren
 suffix:semicolon
 multiline_comment|/* Disable hardware cursor */
@@ -1975,10 +1967,17 @@ id|fix-&gt;smem_start
 op_assign
 id|CyberMem
 suffix:semicolon
+macro_line|#if 0
 id|fix-&gt;smem_len
 op_assign
 id|CyberSize
 suffix:semicolon
+macro_line|#else
+id|fix-&gt;smem_len
+op_assign
+l_int|0x01000000
+suffix:semicolon
+macro_line|#endif
 id|fix-&gt;type
 op_assign
 id|FB_TYPE_PACKED_PIXELS

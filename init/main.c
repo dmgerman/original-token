@@ -563,6 +563,20 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|reboot_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_CDU31A
 r_extern
 r_void
@@ -1455,6 +1469,12 @@ comma
 l_string|&quot;no387&quot;
 comma
 id|no_387
+)brace
+comma
+(brace
+l_string|&quot;reboot=&quot;
+comma
+id|reboot_setup
 )brace
 comma
 macro_line|#endif

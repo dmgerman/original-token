@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -8634,11 +8635,7 @@ suffix:semicolon
 r_int
 id|memsize
 op_assign
-id|MAP_NR
-c_func
-(paren
-id|high_memory
-)paren
+id|max_mapnr
 op_lshift
 id|PAGE_SHIFT
 suffix:semicolon

@@ -1157,6 +1157,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 suffix:semicolon
@@ -1180,6 +1181,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -2347,7 +2349,7 @@ id|brdp-&gt;memaddr
 op_ge
 l_int|0x100000
 )paren
-id|vfree
+id|iounmap
 c_func
 (paren
 id|brdp-&gt;membase
@@ -15145,7 +15147,7 @@ l_int|0x100000
 (brace
 id|brdp-&gt;membase
 op_assign
-id|vremap
+id|ioremap
 c_func
 (paren
 id|brdp-&gt;memaddr
@@ -15730,7 +15732,7 @@ l_int|0x100000
 (brace
 id|brdp-&gt;membase
 op_assign
-id|vremap
+id|ioremap
 c_func
 (paren
 id|brdp-&gt;memaddr
@@ -16929,7 +16931,7 @@ l_int|0x100000
 (brace
 id|brdp-&gt;membase
 op_assign
-id|vremap
+id|ioremap
 c_func
 (paren
 id|brdp-&gt;memaddr
@@ -17072,7 +17074,7 @@ id|brdp-&gt;memaddr
 op_ge
 l_int|0x100000
 )paren
-id|vfree
+id|iounmap
 c_func
 (paren
 id|brdp-&gt;membase
@@ -17885,6 +17887,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -17911,7 +17914,7 @@ macro_line|#if DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;stli_memread(ip=%x,fp=%x,buf=%x,count=%d)&bslash;n&quot;
+l_string|&quot;stli_memread(ip=%x,fp=%x,buf=%x,count=%lu)&bslash;n&quot;
 comma
 (paren
 r_int
@@ -18134,6 +18137,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -18164,7 +18168,7 @@ macro_line|#if DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;stli_memwrite(ip=%x,fp=%x,buf=%x,count=%x)&bslash;n&quot;
+l_string|&quot;stli_memwrite(ip=%x,fp=%x,buf=%x,count=%lx)&bslash;n&quot;
 comma
 (paren
 r_int

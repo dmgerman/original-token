@@ -221,7 +221,7 @@ id|nlong
 op_minus
 l_int|0x20
 suffix:semicolon
-multiline_comment|/* Later set to the vremap() of the APIC &t;&t;*/
+multiline_comment|/* Later set to the ioremap() of the APIC &t;&t;*/
 DECL|variable|apic_retval
 r_int
 r_int
@@ -2170,7 +2170,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Map the local APIC into kernel space&n;&t; */
 id|apic_reg
 op_assign
-id|vremap
+id|ioremap
 c_func
 (paren
 id|apic_addr

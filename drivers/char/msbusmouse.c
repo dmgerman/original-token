@@ -489,6 +489,7 @@ op_star
 id|buffer
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -517,6 +518,7 @@ r_char
 op_star
 id|buffer
 comma
+r_int
 r_int
 id|count
 )paren

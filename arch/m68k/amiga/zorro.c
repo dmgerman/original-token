@@ -3,9 +3,9 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/zorro.h&gt;
 macro_line|#ifdef CONFIG_ZORRO
 multiline_comment|/*&n;    *    Zorro Expansion Device Manufacturers and Products&n;    */
@@ -84,6 +84,39 @@ multiline_comment|/*&n;    *    Known Zorro Expansion Devices&n;    *&n;    *   
 id|BEGIN_PROD
 c_func
 (paren
+id|PACIFIC
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;SE 2000 A500&quot;
+comma
+id|SE_2000_A500
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;HD Controller&quot;
+comma
+id|PACIFIC_HD
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|KUPKE
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Golem RAM Box 2MB&quot;
+comma
+id|GOLEM_BOX_2
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|MEMPHIS
 )paren
 id|PROD
@@ -102,9 +135,23 @@ id|COMMODORE2
 id|PROD
 c_func
 (paren
-l_string|&quot;A2088 Bridgeboard&quot;
+l_string|&quot;A2088 XT Bridgeboard&quot;
 comma
 id|A2088
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A2286 AT Bridgeboard&quot;
+comma
+id|A2286
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A4091 SCSI Controller&quot;
+comma
+id|A4091_2
 )paren
 id|PROD
 c_func
@@ -206,6 +253,13 @@ id|A4091
 id|PROD
 c_func
 (paren
+l_string|&quot;A2065 Ethernet Card&quot;
+comma
+id|A2065_2
+)paren
+id|PROD
+c_func
+(paren
 l_string|&quot;Romulator Card&quot;
 comma
 id|ROMULATOR
@@ -220,6 +274,13 @@ id|A3000TESTFIX
 id|PROD
 c_func
 (paren
+l_string|&quot;A2386-SX Bridgeboard&quot;
+comma
+id|A2386SX_2
+)paren
+id|PROD
+c_func
+(paren
 l_string|&quot;A2065 Ethernet Card&quot;
 comma
 id|A2065
@@ -228,7 +289,54 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|COMMODORE3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A2090A Combitec/MacroSystem&quot;
+comma
+id|A2090A_CM
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|KCS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;KCS Power PC Board&quot;
+comma
+id|POWER_BOARD
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|CARDCO
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Kronos 2000 SCSI Controller&quot;
+comma
+id|KRONOS_2000_SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A1000 SCSI Controller&quot;
+comma
+id|A1000_SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Escort SCSI Controller&quot;
+comma
+id|ESCORT_SCSI
 )paren
 id|PROD
 c_func
@@ -241,7 +349,83 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|A_SQUARED
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Live! 2000&quot;
+comma
+id|LIVE_2000
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|COMSPEC
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;AX2000&quot;
+comma
+id|AX2000
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|ANAKIN
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Easyl Tablet&quot;
+comma
+id|EASYL
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|MICROBOTICS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;StarBoard II&quot;
+comma
+id|STARBOARD_II
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;StarDrive&quot;
+comma
+id|STARDRIVE
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;8-Up (Rev A)&quot;
+comma
+l_int|8
+id|_UP_A
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;8-Up (Rev Z)&quot;
+comma
+l_int|8
+id|_UP_Z
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;VXL RAM&quot;
+comma
+id|VXL_RAM
 )paren
 id|PROD
 c_func
@@ -250,11 +434,58 @@ l_string|&quot;VXL-30 Turbo Board&quot;
 comma
 id|VXL_30
 )paren
+id|PROD
+c_func
+(paren
+l_string|&quot;MBX 1200&quot;
+comma
+id|MBX_1200
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Hardframe 2000&quot;
+comma
+id|HARDFRAME_2000
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;MBX 1200&quot;
+comma
+id|MBX_1200_2
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|ACCESS
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|EXPANSION_TECH
+)paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
 id|ASDG
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Memory Expansion&quot;
+comma
+id|ASDG_MEMORY
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Memory Expansion&quot;
+comma
+id|ASDG_MEMORY_2
 )paren
 id|PROD
 c_func
@@ -266,9 +497,29 @@ id|LAN_ROVER
 id|PROD
 c_func
 (paren
-l_string|&quot;Dual Serial Card&quot;
+l_string|&quot;Twin-X Serial Card&quot;
 comma
-id|ASDG_DUAL_SERIAL
+id|TWIN_X
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|IMTRONICS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Hurricane 2800 68030&quot;
+comma
+id|HURRICANE_2800
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Hurricane 2800 68030&quot;
+comma
+id|HURRICANE_2800_2
 )paren
 id|END
 id|BEGIN_PROD
@@ -319,6 +570,48 @@ id|SUPRA
 id|PROD
 c_func
 (paren
+l_string|&quot;SupraDrive 4x4 SCSI Controller&quot;
+comma
+id|SUPRADRIVE_4x4
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;2000 DMA HD&quot;
+comma
+id|SUPRA_2000
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;500 HD/RAM&quot;
+comma
+id|SUPRA_500
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;500RX/2000 RAM&quot;
+comma
+id|SUPRA_500RX
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;500RX/2000 RAM&quot;
+comma
+id|SUPRA_500RX_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;2400zi Modem&quot;
+comma
+id|SUPRA_2400ZI
+)paren
+id|PROD
+c_func
+(paren
 l_string|&quot;Wordsync SCSI Controller&quot;
 comma
 id|WORDSYNC
@@ -333,9 +626,9 @@ id|WORDSYNC_II
 id|PROD
 c_func
 (paren
-l_string|&quot;2400 Modem&quot;
+l_string|&quot;2400zi+ Modem&quot;
 comma
-id|SUPRA_2400MODEM
+id|SUPRA_2400ZIPLUS
 )paren
 id|END
 id|BEGIN_PROD
@@ -362,14 +655,47 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|GVP3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Impact SCSI/Memory&quot;
+comma
+id|IMPACT
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|BYTEBOX
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A500&quot;
+comma
+id|BYTEBOX_A500
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|POWER_COMPUTING
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Viper II Turbo Board (DKB 1240)&quot;
+l_string|&quot;DKB 3128 RAM&quot;
 comma
-id|DKB_1240
+id|DKB_3128
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;DKB Cobra / Viper II Turbo Board&quot;
+comma
+id|VIPER_II_COBRA
 )paren
 id|END
 id|BEGIN_PROD
@@ -377,6 +703,35 @@ c_func
 (paren
 id|GVP
 )paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Impact Series-I SCSI 4K&quot;
+comma
+id|IMPACT_I_4K
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Impact Series-I SCSI 16K/2&quot;
+comma
+id|IMPACT_I_16K_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Impact Series-I SCSI 16K/3&quot;
+comma
+id|IMPACT_I_16K_3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Impact 3001 IDE&quot;
+comma
+id|IMPACT_3001_IDE
+)paren
+multiline_comment|/* PROD(&quot;Impact 3001 RAM&quot;, IMPACT_3001_RAM) */
 id|PROD
 c_func
 (paren
@@ -412,6 +767,7 @@ l_string|&quot;A2000 68030 Turbo Board&quot;
 comma
 id|GVP_A2000_030
 )paren
+multiline_comment|/* PROD(&quot;Impact 3001 IDE&quot;, IMPACT_3001_IDE_2) */
 id|PROD
 c_func
 (paren
@@ -426,7 +782,14 @@ l_string|&quot;IV-24 Graphics Board&quot;
 comma
 id|GVPIV_24
 )paren
-multiline_comment|/*&n;   PROD(&quot;I/O Extender&quot;, GVPIO_EXT)&n;*/
+id|PROD
+c_func
+(paren
+l_string|&quot;GFORCE 040 Turbo Board&quot;
+comma
+id|GFORCE_040
+)paren
+multiline_comment|/* PROD(&quot;I/O Extender&quot;, GVPIO_EXT) */
 id|END
 id|BEGIN_GVP_PROD
 id|GVP_PROD
@@ -531,6 +894,32 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|SYNERGY
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|XETEC
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;FastCard SCSI Controller&quot;
+comma
+id|FASTCARD_SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;FastCard RAM&quot;
+comma
+id|FASTCARD_RAM
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|PPI
 )paren
 id|PROD
@@ -572,6 +961,26 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|SPIRIT
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;HDA 506 Harddisk&quot;
+comma
+id|HDA_506
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;OctaByte RAM&quot;
+comma
+id|OCTABYTE_RAM
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|BSC
 )paren
 id|PROD
@@ -585,6 +994,26 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|BSC3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;ALF 2 SCSI Controller&quot;
+comma
+id|ALF_2_SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;ALF 3 SCSI Controller&quot;
+comma
+id|ALF_3_SCSI_2
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|C_LTD
 )paren
 id|PROD
@@ -593,6 +1022,13 @@ c_func
 l_string|&quot;Kronos SCSI Controller&quot;
 comma
 id|KRONOS_SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A1000 SCSI Controller&quot;
+comma
+id|A1000_SCSI_2
 )paren
 id|END
 id|BEGIN_PROD
@@ -624,33 +1060,47 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|GOLEM
+id|ICD
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Advantage 2000 SCSI Controller&quot;
+comma
+id|ADVANTAGE_2000
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|KUPKE2
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Golem SCSI-II Controller&quot;
 comma
-id|GOLEM_SCSI_II
-)paren
-id|END
-id|BEGIN_PROD
-c_func
-(paren
-id|HARDITAL_SYNTHES
+id|KUPKE_SCSI_II
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;SCSI Controller&quot;
+l_string|&quot;Golem Box&quot;
 comma
-id|HARDITAL_SCSI
+id|GOLEM_BOX
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Golem SCSI/AT Controller&quot;
+comma
+id|KUPKE_SCSI_AT
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|HARDITAL2
+id|HARDITAL
 )paren
 id|PROD
 c_func
@@ -675,7 +1125,7 @@ id|OKTAGON_SCSI
 id|PROD
 c_func
 (paren
-l_string|&quot;Tandem&quot;
+l_string|&quot;Tandem AT-2008/508 IDE Controller&quot;
 comma
 id|TANDEM
 )paren
@@ -710,9 +1160,16 @@ id|MULTIFACE_III
 id|PROD
 c_func
 (paren
-l_string|&quot;ISDN Master&quot;
+l_string|&quot;ISDN MasterCard&quot;
 comma
-id|ISDN_MASTER
+id|ISDN_MASTERCARD
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;ISDN MasterCard II&quot;
+comma
+id|ISDN_MASTERCARD_2
 )paren
 id|END
 id|BEGIN_PROD
@@ -738,21 +1195,55 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|IMPULSE
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;FireCracker 24&quot;
+comma
+id|FIRECRACKER_24
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|IVS
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Trumpcard 500 SCSI Controller&quot;
+l_string|&quot;GrandSlam RAM&quot;
 comma
-id|TRUMPCARD_500
+id|GRANDSLAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Trumpcard SCSI Controller&quot;
+l_string|&quot;OverDrive HD&quot;
 comma
-id|TRUMPCARD
+id|IVS_OVERDRIVE
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Trumpcard Classic SCSI Controller&quot;
+comma
+id|TRUMPCARD_CLASSIC
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Trumpcard Pro SCSI Controller&quot;
+comma
+id|TRUMPCARD_PRO
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Meta-4 RAM&quot;
+comma
+id|META_4
 )paren
 id|PROD
 c_func
@@ -765,7 +1256,34 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|VECTOR
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Connection Serial IO&quot;
+comma
+id|CONNECTION
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|XPERT_PRODEV
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Visiona Graphics Board (RAM)&quot;
+comma
+id|VISIONA_RAM
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Visiona Graphics Board (REG)&quot;
+comma
+id|VISIONA_REG
 )paren
 id|PROD
 c_func
@@ -798,7 +1316,33 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|DIG_MICRONICS
+id|SUNRIZE
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;AD516 Audio&quot;
+comma
+id|AD516
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|TRICERATOPS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Multi I/O Board&quot;
+comma
+id|TRICERATOPS
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|APPLIED_MAGIC
 )paren
 id|PROD
 c_func
@@ -806,6 +1350,53 @@ c_func
 l_string|&quot;DMI Resolver Graphics Board&quot;
 comma
 id|DMI_RESOLVER
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Digital Broadcaster&quot;
+comma
+id|DIGITAL_BCASTER
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|GFX_BASE
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;GDA-1 Graphics Board (RAM)&quot;
+comma
+id|GDA_1_RAM
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;GDA-1 Graphics Board (REG)&quot;
+comma
+id|GDA_1_REG
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|ROCTEC
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;RH 800C Hard Disk Controller&quot;
+comma
+id|RH_800C
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;RH 800C RAM&quot;
+comma
+id|RH_800C_RAM
 )paren
 id|END
 id|BEGIN_PROD
@@ -837,14 +1428,61 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|MASOBOSHI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Master Card RAM&quot;
+comma
+id|MASTER_CARD_RAM
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Master Card SCSI Controller&quot;
+comma
+id|MASTER_CARD_SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;MVD 819&quot;
+comma
+id|MVD_819
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|DELACOMP
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;RAM Expansion 2000&quot;
+comma
+id|DELACOMP_RAM_2000
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|VILLAGE_TRONIC
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Ariadne Ethernet Card&quot;
+l_string|&quot;Domino Graphics Board (RAM)&quot;
 comma
-id|ARIADNE
+id|DOMINO_RAM
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Domino Graphics Board (REG)&quot;
+comma
+id|DOMINO_REG
 )paren
 id|PROD
 c_func
@@ -859,6 +1497,20 @@ c_func
 l_string|&quot;Picasso II Graphics Board (REG)&quot;
 comma
 id|PICASSO_II_REG
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Picasso II Graphics Board (REG)&quot;
+comma
+id|PICASSO_II_REG_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Ariadne Ethernet Card&quot;
+comma
+id|ARIADNE
 )paren
 id|END
 id|BEGIN_PROD
@@ -884,6 +1536,26 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|AMITRIX
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Multi-IO&quot;
+comma
+id|AMITRIX_MULTI_IO
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;CD-RAM Memory&quot;
+comma
+id|AMITRIX_CD_RAM
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|MTEC
 )paren
 id|PROD
@@ -896,9 +1568,16 @@ id|MTEC_68030
 id|PROD
 c_func
 (paren
-l_string|&quot;T1230/28 Turbo Board&quot;
+l_string|&quot;A1200 T68030/42 RTC Turbo Board&quot;
 comma
 id|MTEC_T1230
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;8MB RAM&quot;
+comma
+id|MTEC_RAM
 )paren
 id|END
 id|BEGIN_PROD
@@ -909,14 +1588,14 @@ id|GVP2
 id|PROD
 c_func
 (paren
-l_string|&quot;Spectrum Graphics Board (RAM)&quot;
+l_string|&quot;EGS 28/24 Spectrum Graphics Board (RAM)&quot;
 comma
 id|SPECTRUM_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Spectrum Graphics Board (REG)&quot;
+l_string|&quot;EGS 28/24 Spectrum Graphics Board (REG)&quot;
 comma
 id|SPECTRUM_REG
 )paren
@@ -950,6 +1629,13 @@ id|PEGGY_PLUS
 id|PROD
 c_func
 (paren
+l_string|&quot;VideoCruncher&quot;
+comma
+id|VIDEOCRUNCHER
+)paren
+id|PROD
+c_func
+(paren
 l_string|&quot;SD64 Graphics Board (RAM)&quot;
 comma
 id|SD64_RAM
@@ -970,7 +1656,7 @@ id|MACROSYSTEMS
 id|PROD
 c_func
 (paren
-l_string|&quot;Warp Engine SCSI Controller&quot;
+l_string|&quot;Warp Engine 40xx SCSI Controller&quot;
 comma
 id|WARP_ENGINE
 )paren
@@ -978,7 +1664,27 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|ELBOX
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Elbox 1200/4 RAM&quot;
+comma
+id|ELBOX_1200
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|HARMS_PROF
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;030 plus&quot;
+comma
+id|HARMS_030_PLUS
 )paren
 id|PROD
 c_func
@@ -992,14 +1698,73 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|MICRONIK
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;RCA 120 RAM&quot;
+comma
+id|RCA_120
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|IMTRONICS2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Hurricane 2800 68030&quot;
+comma
+id|HURRICANE_2800_3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Hurricane 2800 68030&quot;
+comma
+id|HURRICANE_2800_4
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|KUPKE3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Golem HD 3000&quot;
+comma
+id|GOLEM_3000
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|INFORMATION
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;ISDN Engine I&quot;
+comma
+id|ISDN_ENGINE_I
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|VORTEX
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Golden Gate 80386 Board&quot;
+l_string|&quot;Golden Gate 80386SX Board&quot;
 comma
-id|GOLDEN_GATE_386
+id|GOLDEN_GATE_386SX
 )paren
 id|PROD
 c_func
@@ -1026,13 +1791,54 @@ c_func
 (paren
 l_string|&quot;4000SX SCSI Controller&quot;
 comma
-id|DATAFLYER_4000SX
+id|DATAFLYER_4000SXS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;4000SX RAM&quot;
+comma
+id|DATAFLYER_4000SXR
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|READYSOFT
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;AMax II/IV&quot;
+comma
+id|AMAX
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
 id|PHASE5
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Blizzard RAM&quot;
+comma
+id|BLIZZARD_RAM
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Blizzard&quot;
+comma
+id|BLIZZARD
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Blizzard 1220-IV Turbo Board&quot;
+comma
+id|BLIZZARD_1220_IV
 )paren
 id|PROD
 c_func
@@ -1044,14 +1850,14 @@ id|FASTLANE_RAM
 id|PROD
 c_func
 (paren
-l_string|&quot;FastLane/Blizzard 1230-II SCSI Controller&quot;
+l_string|&quot;FastLane/Blizzard 1230-II/CyberSCSI&quot;
 comma
 id|FASTLANE_SCSI
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;CyberStorm Fast SCSI-II Controller&quot;
+l_string|&quot;Blizzard 1220/CyberStorm&quot;
 comma
 id|CYBERSTORM_SCSI
 )paren
@@ -1065,9 +1871,23 @@ id|BLIZZARD_1230_III
 id|PROD
 c_func
 (paren
-l_string|&quot;Blizzard 1230-IV Turbo Board&quot;
+l_string|&quot;Blizzard 1230-IV/1260 Turbo Board&quot;
 comma
 id|BLIZZARD_1230_IV
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Blizzard 2060 SCSI Controller&quot;
+comma
+id|BLIZZARD_2060SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;CyberStorm&quot;
+comma
+id|CYBERSTORM
 )paren
 id|PROD
 c_func
@@ -1075,6 +1895,32 @@ c_func
 l_string|&quot;CyberVision64 Graphics Board&quot;
 comma
 id|CYBERVISION
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|DPS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Personal Animation Recorder&quot;
+comma
+id|DPS_PAR
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|APOLLO2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A620 68020 Accelerator&quot;
+comma
+id|A620
 )paren
 id|END
 id|BEGIN_PROD
@@ -1153,9 +1999,23 @@ id|MULTI_EVOLUTION
 id|PROD
 c_func
 (paren
+l_string|&quot;Toccata Sound Board&quot;
+comma
+id|TOCCATA
+)paren
+id|PROD
+c_func
+(paren
 l_string|&quot;Retina Z3 Graphics Board&quot;
 comma
 id|RETINA_Z3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;VLab Motion&quot;
+comma
+id|VLAB_MOTION
 )paren
 id|PROD
 c_func
@@ -1165,7 +2025,66 @@ comma
 id|FALCON_040
 )paren
 id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|COMBITEC
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|SKI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;SCSI / Dual Serial&quot;
+comma
+id|SKI_SCSI_SERIAL
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|CAMERON
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Scanner Interface&quot;
+comma
+id|CAMERON_SCANNER
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|REIS_WARE
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Handyscanner&quot;
+comma
+id|RW_HANDYSCANNER
+)paren
+id|END
 id|BEGIN_MANUF
+id|MANUF
+c_func
+(paren
+l_string|&quot;Pacific Peripherals&quot;
+comma
+id|PACIFIC
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Kupke&quot;
+comma
+id|KUPKE
+)paren
 id|MANUF
 c_func
 (paren
@@ -1190,9 +2109,44 @@ id|COMMODORE
 id|MANUF
 c_func
 (paren
+l_string|&quot;Commodore&quot;
+comma
+id|COMMODORE3
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Kolff Computer Supplies&quot;
+comma
+id|KCS
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;Cardco&quot;
 comma
 id|CARDCO
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;A-Squared&quot;
+comma
+id|A_SQUARED
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;ComSpec Communications&quot;
+comma
+id|COMSPEC
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Anakin&quot;
+comma
+id|ANAKIN
 )paren
 id|MANUF
 c_func
@@ -1204,9 +2158,30 @@ id|MICROBOTICS
 id|MANUF
 c_func
 (paren
+l_string|&quot;Access Associates&quot;
+comma
+id|ACCESS
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Expansion Technologies&quot;
+comma
+id|EXPANSION_TECH
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;ASDG&quot;
 comma
 id|ASDG
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Imtronics&quot;
+comma
+id|IMTRONICS
 )paren
 id|MANUF
 c_func
@@ -1239,6 +2214,20 @@ id|CSA
 id|MANUF
 c_func
 (paren
+l_string|&quot;Great Valley Products&quot;
+comma
+id|GVP3
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;ByteBox&quot;
+comma
+id|BYTEBOX
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;Power Computing&quot;
 comma
 id|POWER_COMPUTING
@@ -1253,6 +2242,20 @@ id|GVP
 id|MANUF
 c_func
 (paren
+l_string|&quot;Synergy&quot;
+comma
+id|SYNERGY
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Xetec&quot;
+comma
+id|XETEC
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;Progressive Peripherals&quot;
 comma
 id|PPI
@@ -1260,9 +2263,23 @@ id|PPI
 id|MANUF
 c_func
 (paren
+l_string|&quot;Spirit&quot;
+comma
+id|SPIRIT
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;BSC&quot;
 comma
 id|BSC
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;BSC&quot;
+comma
+id|BSC3
 )paren
 id|MANUF
 c_func
@@ -1288,23 +2305,23 @@ id|CHECKPOINT
 id|MANUF
 c_func
 (paren
-l_string|&quot;Golem&quot;
+l_string|&quot;ICD&quot;
 comma
-id|GOLEM
+id|ICD
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Kupke&quot;
+comma
+id|KUPKE2
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Hardital Synthesis&quot;
 comma
-id|HARDITAL_SYNTHES
-)paren
-id|MANUF
-c_func
-(paren
-l_string|&quot;Hardital Synthesis&quot;
-comma
-id|HARDITAL2
+id|HARDITAL
 )paren
 id|MANUF
 c_func
@@ -1323,9 +2340,23 @@ id|ADV_SYS_SOFT
 id|MANUF
 c_func
 (paren
+l_string|&quot;Impulse&quot;
+comma
+id|IMPULSE
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;IVS&quot;
 comma
 id|IVS
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Vector&quot;
+comma
+id|VECTOR
 )paren
 id|MANUF
 c_func
@@ -1344,9 +2375,37 @@ id|HYDRA_SYSTEMS
 id|MANUF
 c_func
 (paren
-l_string|&quot;Digital Micronics&quot;
+l_string|&quot;Sunrize Industries&quot;
 comma
-id|DIG_MICRONICS
+id|SUNRIZE
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Triceratops&quot;
+comma
+id|TRICERATOPS
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Applied Magic&quot;
+comma
+id|APPLIED_MAGIC
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;GFX-Base&quot;
+comma
+id|GFX_BASE
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;RocTec&quot;
+comma
+id|ROCTEC
 )paren
 id|MANUF
 c_func
@@ -1365,6 +2424,20 @@ id|SW_RESULT_ENTS
 id|MANUF
 c_func
 (paren
+l_string|&quot;Masoboshi&quot;
+comma
+id|MASOBOSHI
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;DelaComp&quot;
+comma
+id|DELACOMP
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;Village Tronic&quot;
 comma
 id|VILLAGE_TRONIC
@@ -1375,6 +2448,13 @@ c_func
 l_string|&quot;Utilities Unlimited&quot;
 comma
 id|UTILITIES_ULTD
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Amitrix&quot;
+comma
+id|AMITRIX
 )paren
 id|MANUF
 c_func
@@ -1407,9 +2487,44 @@ id|MACROSYSTEMS
 id|MANUF
 c_func
 (paren
+l_string|&quot;ElBox Computer&quot;
+comma
+id|ELBOX
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;Harms Professional&quot;
 comma
 id|HARMS_PROF
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Micronik&quot;
+comma
+id|MICRONIK
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Imtronics&quot;
+comma
+id|IMTRONICS2
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Kupke&quot;
+comma
+id|KUPKE3
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Information&quot;
+comma
+id|INFORMATION
 )paren
 id|MANUF
 c_func
@@ -1428,9 +2543,30 @@ id|DATAFLYER
 id|MANUF
 c_func
 (paren
+l_string|&quot;ReadySoft&quot;
+comma
+id|READYSOFT
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;Phase5&quot;
 comma
 id|PHASE5
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;DPS&quot;
+comma
+id|DPS
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Apollo&quot;
+comma
+id|APOLLO2
 )paren
 id|MANUF
 c_func
@@ -1452,6 +2588,34 @@ c_func
 l_string|&quot;MacroSystems&quot;
 comma
 id|MACROSYSTEMS2
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Combitec&quot;
+comma
+id|COMBITEC
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;SKI Peripherals&quot;
+comma
+id|SKI
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Cameron&quot;
+comma
+id|CAMERON
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Reis-Ware&quot;
+comma
+id|REIS_WARE
 )paren
 id|END
 DECL|macro|NUM_MANUF
@@ -2062,7 +3226,7 @@ op_plus
 l_int|0x8000
 )paren
 op_amp
-id|GVP_EPCMASK
+id|GVP_PRODMASK
 suffix:semicolon
 r_for
 c_loop

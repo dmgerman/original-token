@@ -43,28 +43,9 @@ r_int
 id|sum
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * the same as csum_partial_copy, but copies from user space.&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
-r_int
-r_int
-id|csum_partial_copy_fromuser
-c_func
-(paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dst
-comma
-r_int
-id|len
-comma
-r_int
-id|sum
-)paren
-suffix:semicolon
+multiline_comment|/*&n; * the same as csum_partial, but copies from user space (but on the x86&n; * we have just one address space, so this is identical to the above)&n; */
+DECL|macro|csum_partial_copy_fromuser
+mdefine_line|#define csum_partial_copy_fromuser csum_partial_copy
 multiline_comment|/*&n; *&t;This is a version of ip_compute_csum() optimized for IP headers,&n; *&t;which always checksum on 4 octet boundaries.&n; *&n; *&t;By Jorge Cwik &lt;jorge@laser.satlink.net&gt;, adapted for linux by&n; *&t;Arnt Gulbrandsen.&n; */
 DECL|function|ip_fast_csum
 r_static

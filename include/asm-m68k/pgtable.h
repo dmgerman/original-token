@@ -1,10 +1,44 @@
 macro_line|#ifndef _M68K_PGTABLE_H
 DECL|macro|_M68K_PGTABLE_H
 mdefine_line|#define _M68K_PGTABLE_H
+macro_line|#include&lt;asm/setup.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the m68k page table tree.&n; */
-DECL|macro|__flush_tlb
-mdefine_line|#define __flush_tlb() &bslash;&n;do { &t;&bslash;&n;&t;if (m68k_is040or060) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;.word 0xf510&bslash;n&quot;::); /* pflushan */ &bslash;&n;&t;else &bslash;&n;&t;&t;__asm__ __volatile__(&quot;pflusha&bslash;n&quot;::); &bslash;&n;} while (0)
+multiline_comment|/*&n; * flush all atc entries (user-space entries only for the 680[46]0).&n; */
+DECL|function|__flush_tlb
+r_static
+r_inline
+r_void
+id|__flush_tlb
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|CPU_IS_040_OR_060
+)paren
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.word 0xf510&bslash;n&quot;
+op_scope_resolution
+)paren
+suffix:semicolon
+multiline_comment|/* pflushan */
+r_else
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;pflusha&bslash;n&quot;
+op_scope_resolution
+)paren
+suffix:semicolon
+)brace
 DECL|function|__flush_tlb_one
 r_static
 r_inline
@@ -20,7 +54,7 @@ id|addr
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 r_register
@@ -66,8 +100,41 @@ suffix:semicolon
 )brace
 DECL|macro|flush_tlb
 mdefine_line|#define flush_tlb() __flush_tlb()
-DECL|macro|flush_tlb_all
-mdefine_line|#define flush_tlb_all() flush_tlb()
+multiline_comment|/*&n; * flush all atc entries (both kernel and user-space entries).&n; */
+DECL|function|flush_tlb_all
+r_static
+r_inline
+r_void
+id|flush_tlb_all
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|CPU_IS_040_OR_060
+)paren
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.word 0xf518&bslash;n&quot;
+op_scope_resolution
+)paren
+suffix:semicolon
+multiline_comment|/* pflusha */
+r_else
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;pflusha&bslash;n&quot;
+op_scope_resolution
+)paren
+suffix:semicolon
+)brace
 DECL|function|flush_tlb_mm
 r_static
 r_inline
@@ -161,7 +228,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
-mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
+mdefine_line|#define set_pte(pteptr, pteval) do{&t;&bslash;&n;&t;((*(pteptr)) = (pteval));&t;&bslash;&n;&t;if (CPU_IS_060)&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&quot;.word 0xf518&bslash;n&quot;::); /* pflusha */ &bslash;&n;&t;} while(0)
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;22
@@ -278,55 +345,69 @@ mdefine_line|#define _DESCTYPE_MASK&t;0x003
 DECL|macro|_CACHEMASK040
 mdefine_line|#define _CACHEMASK040&t;(~0x060)
 DECL|macro|_TABLE_MASK
-mdefine_line|#define _TABLE_MASK&t;(0xfffffff0)
+mdefine_line|#define _TABLE_MASK&t;(0xfffffe00)
 DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_SHORT)
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_NOCACHE)
 macro_line|#ifndef __ASSEMBLY__
+r_extern
+r_int
+r_int
+id|mm_cachebits
+suffix:semicolon
 DECL|macro|PAGE_NONE
-mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED | _PAGE_CACHE040)
+mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED | mm_cachebits)
 DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_CACHE040)
+mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED | mm_cachebits)
 DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED | _PAGE_CACHE040)
+mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED | mm_cachebits)
 DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED | _PAGE_CACHE040)
+mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED | mm_cachebits)
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_CACHE040)
+mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_DIRTY | _PAGE_ACCESSED | mm_cachebits)
+multiline_comment|/* Alternate definitions that are compile time constants, for&n;   initializing protection_map.  The cachebits are fixed later.  */
+DECL|macro|PAGE_NONE_C
+mdefine_line|#define PAGE_NONE_C&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED)
+DECL|macro|PAGE_SHARED_C
+mdefine_line|#define PAGE_SHARED_C&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED)
+DECL|macro|PAGE_COPY_C
+mdefine_line|#define PAGE_COPY_C&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED)
+DECL|macro|PAGE_READONLY_C
+mdefine_line|#define PAGE_READONLY_C&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED)
 multiline_comment|/*&n; * The m68k can&squot;t do page protection for execute, and considers that the same are read.&n; * Also, write permissions imply read permissions. This is the closest we can get..&n; */
 DECL|macro|__P000
-mdefine_line|#define __P000&t;PAGE_NONE
+mdefine_line|#define __P000&t;PAGE_NONE_C
 DECL|macro|__P001
-mdefine_line|#define __P001&t;PAGE_READONLY
+mdefine_line|#define __P001&t;PAGE_READONLY_C
 DECL|macro|__P010
-mdefine_line|#define __P010&t;PAGE_COPY
+mdefine_line|#define __P010&t;PAGE_COPY_C
 DECL|macro|__P011
-mdefine_line|#define __P011&t;PAGE_COPY
+mdefine_line|#define __P011&t;PAGE_COPY_C
 DECL|macro|__P100
-mdefine_line|#define __P100&t;PAGE_READONLY
+mdefine_line|#define __P100&t;PAGE_READONLY_C
 DECL|macro|__P101
-mdefine_line|#define __P101&t;PAGE_READONLY
+mdefine_line|#define __P101&t;PAGE_READONLY_C
 DECL|macro|__P110
-mdefine_line|#define __P110&t;PAGE_COPY
+mdefine_line|#define __P110&t;PAGE_COPY_C
 DECL|macro|__P111
-mdefine_line|#define __P111&t;PAGE_COPY
+mdefine_line|#define __P111&t;PAGE_COPY_C
 DECL|macro|__S000
-mdefine_line|#define __S000&t;PAGE_NONE
+mdefine_line|#define __S000&t;PAGE_NONE_C
 DECL|macro|__S001
-mdefine_line|#define __S001&t;PAGE_READONLY
+mdefine_line|#define __S001&t;PAGE_READONLY_C
 DECL|macro|__S010
-mdefine_line|#define __S010&t;PAGE_SHARED
+mdefine_line|#define __S010&t;PAGE_SHARED_C
 DECL|macro|__S011
-mdefine_line|#define __S011&t;PAGE_SHARED
+mdefine_line|#define __S011&t;PAGE_SHARED_C
 DECL|macro|__S100
-mdefine_line|#define __S100&t;PAGE_READONLY
+mdefine_line|#define __S100&t;PAGE_READONLY_C
 DECL|macro|__S101
-mdefine_line|#define __S101&t;PAGE_READONLY
+mdefine_line|#define __S101&t;PAGE_READONLY_C
 DECL|macro|__S110
-mdefine_line|#define __S110&t;PAGE_SHARED
+mdefine_line|#define __S110&t;PAGE_SHARED_C
 DECL|macro|__S111
-mdefine_line|#define __S111&t;PAGE_SHARED
+mdefine_line|#define __S111&t;PAGE_SHARED_C
 multiline_comment|/* zero page used for uninitialized stuff */
 r_extern
 r_int
@@ -1449,13 +1530,11 @@ id|current
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf510&bslash;n&bslash;t&quot;
-multiline_comment|/* pflushan */
 l_string|&quot;movel %0@,%/d0&bslash;n&bslash;t&quot;
 l_string|&quot;.long 0x4e7b0806&bslash;n&bslash;t&quot;
 multiline_comment|/* movec d0,urp */
@@ -1670,7 +1749,7 @@ id|vaddr
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 id|pgd_t
@@ -1685,6 +1764,32 @@ id|pte_t
 op_star
 id|ptep
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|CPU_IS_060
+)paren
+(brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;movel %0,%/a0&bslash;n&bslash;t&quot;
+l_string|&quot;.word 0xf470&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;g&quot;
+(paren
+id|VTOP
+c_func
+(paren
+id|vaddr
+)paren
+)paren
+suffix:colon
+l_string|&quot;a0&quot;
+)paren
+suffix:semicolon
+)brace
 id|dir
 op_assign
 id|pgd_offset_k
@@ -1739,7 +1844,7 @@ id|vaddr
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 id|pgd_t
@@ -2663,7 +2768,7 @@ id|get_pointer_table
 suffix:semicolon
 )brace
 DECL|macro|flush_icache
-mdefine_line|#define flush_icache() &bslash;&n;do { &bslash;&n;&t;if (m68k_is040or060) &bslash;&n;&t;&t;asm (&quot;nop; .word 0xf498 /* cinva %%ic */&quot;); &bslash;&n;&t;else &bslash;&n;&t;&t;asm (&quot;movec %/cacr,%/d0;&quot; &bslash;&n;&t;&t;     &quot;oriw %0,%/d0;&quot; &bslash;&n;&t;&t;     &quot;movec %/d0,%/cacr&quot; &bslash;&n;&t;&t;     : /* no outputs */ &bslash;&n;&t;&t;     : &quot;i&quot; (FLUSH_I) &bslash;&n;&t;&t;     : &quot;d0&quot;); &bslash;&n;} while (0)
+mdefine_line|#define flush_icache() &bslash;&n;do { &bslash;&n;&t;if (CPU_IS_040_OR_060) &bslash;&n;&t;&t;asm __volatile__ (&quot;nop; .word 0xf498 /* cinva %%ic */&quot;); &bslash;&n;&t;else &bslash;&n;&t;&t;asm __volatile__ (&quot;movec %/cacr,%/d0;&quot; &bslash;&n;&t;&t;     &quot;oriw %0,%/d0;&quot; &bslash;&n;&t;&t;     &quot;movec %/d0,%/cacr&quot; &bslash;&n;&t;&t;     : /* no outputs */ &bslash;&n;&t;&t;     : &quot;i&quot; (FLUSH_I) &bslash;&n;&t;&t;     : &quot;d0&quot;); &bslash;&n;} while (0)
 multiline_comment|/*&n; * invalidate the cache for the specified memory range.&n; * It starts at the physical address specified for&n; * the given number of bytes.&n; */
 r_extern
 r_void
@@ -2710,9 +2815,9 @@ DECL|macro|FLUSH_I
 mdefine_line|#define FLUSH_I &t;(0x00000008)
 multiline_comment|/* This is needed whenever the virtual mapping of the current&n;   process changes.  */
 DECL|macro|__flush_cache_all
-mdefine_line|#define __flush_cache_all()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (m68k_is040or060)&t;&t;&t;&t;&t;        &bslash;&n;               __asm__ __volatile__ (&quot;nop; .word 0xf478&bslash;n&quot; ::);         &bslash;&n;        else                                                            &bslash;&n;&t;       __asm__ __volatile__ (&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;orw %0,%%d0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;movec %%d0,%%cacr&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     : : &quot;di&quot; (FLUSH_I_AND_D) : &quot;d0&quot;);&t;&bslash;&n;    } while (0)
+mdefine_line|#define __flush_cache_all()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_040_OR_060)&t;&t;&t;&t;&t;        &bslash;&n;               __asm__ __volatile__ (&quot;nop; .word 0xf478&bslash;n&quot; ::);         &bslash;&n;        else                                                            &bslash;&n;&t;       __asm__ __volatile__ (&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;orw %0,%%d0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;movec %%d0,%%cacr&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     : : &quot;di&quot; (FLUSH_I_AND_D) : &quot;d0&quot;);&t;&bslash;&n;    } while (0)
 DECL|macro|__flush_cache_030
-mdefine_line|#define __flush_cache_030()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (m68k_is040or060 == 0)&t;&t;&t;&t;&t;&bslash;&n;&t;       __asm__ __volatile__ (&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;orw %0,%%d0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;movec %%d0,%%cacr&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     : : &quot;di&quot; (FLUSH_I_AND_D) : &quot;d0&quot;);&t;&bslash;&n;    } while (0)
+mdefine_line|#define __flush_cache_030()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_020_OR_030)&t;&t;&t;&t;&t;&bslash;&n;&t;       __asm__ __volatile__ (&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;orw %0,%%d0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;movec %%d0,%%cacr&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     : : &quot;di&quot; (FLUSH_I_AND_D) : &quot;d0&quot;);&t;&bslash;&n;    } while (0)
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all() __flush_cache_all()
 DECL|function|flush_cache_mm
@@ -2728,6 +2833,7 @@ op_star
 id|mm
 )paren
 (brace
+macro_line|#if FLUSH_VIRTUAL_CACHE_040
 r_if
 c_cond
 (paren
@@ -2740,6 +2846,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|mm
+op_eq
+id|current-&gt;mm
+)paren
+id|__flush_cache_030
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|flush_cache_range
 r_extern
@@ -2770,10 +2890,11 @@ op_eq
 id|current-&gt;mm
 )paren
 (brace
+macro_line|#if FLUSH_VIRTUAL_CACHE_040
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 id|cache_push_v
 c_func
@@ -2786,6 +2907,7 @@ id|start
 )paren
 suffix:semicolon
 r_else
+macro_line|#endif
 id|__flush_cache_030
 c_func
 (paren
@@ -2818,10 +2940,11 @@ op_eq
 id|current-&gt;mm
 )paren
 (brace
+macro_line|#if FLUSH_VIRTUAL_CACHE_040
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 id|cache_push_v
 c_func
@@ -2832,6 +2955,7 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 r_else
+macro_line|#endif
 id|__flush_cache_030
 c_func
 (paren
@@ -2854,7 +2978,7 @@ id|address
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 r_register
@@ -2923,7 +3047,7 @@ id|n
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 r_while

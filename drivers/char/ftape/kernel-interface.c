@@ -121,6 +121,7 @@ op_star
 id|buff
 comma
 r_int
+r_int
 id|req_len
 )paren
 suffix:semicolon
@@ -144,6 +145,7 @@ r_char
 op_star
 id|buff
 comma
+r_int
 r_int
 id|req_len
 )paren
@@ -1196,6 +1198,7 @@ op_star
 id|buff
 comma
 r_int
+r_int
 id|req_len
 )paren
 (brace
@@ -1223,6 +1226,9 @@ l_int|5
 comma
 l_string|&quot;called with count:&quot;
 comma
+(paren
+r_int
+)paren
 id|req_len
 )paren
 suffix:semicolon
@@ -1321,6 +1327,7 @@ op_star
 id|buff
 comma
 r_int
+r_int
 id|req_len
 )paren
 (brace
@@ -1348,6 +1355,9 @@ l_int|5
 comma
 l_string|&quot;called with count:&quot;
 comma
+(paren
+r_int
+)paren
 id|req_len
 )paren
 suffix:semicolon

@@ -5016,12 +5016,6 @@ multiline_comment|/* pass frame up our stack (this will */
 multiline_comment|/* happen in net_bh() in dev.c) */
 )brace
 multiline_comment|/* ok, forward this frame... */
-id|skb_device_lock
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 id|br_forward
 c_func

@@ -412,7 +412,6 @@ suffix:semicolon
 )brace
 macro_line|#else /* CONFIG_TGA_CONSOLE */
 multiline_comment|/*&n; * normal VGA console access&n; *&n; */
-macro_line|#ifdef __alpha__
 macro_line|#include &lt;asm/io.h&gt; 
 multiline_comment|/*&n; * NOTE: &quot;(long) addr &lt; 0&quot; tests for an Alpha kernel virtual address; this&n; *  indicates a VC&squot;s backing store; otherwise, it&squot;s a bus memory address, for&n; *  the VGA&squot;s screen memory, so we do the Alpha &quot;swizzle&quot;... :-)&n; */
 DECL|function|scr_writeb
@@ -587,93 +586,6 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* __alpha__ */
-multiline_comment|/*&n; * normal VGA console access&n; * &n; * NOTE: these do normal PC-style frame buffer accesses&n; */
-DECL|function|scr_writeb
-r_static
-r_inline
-r_void
-id|scr_writeb
-c_func
-(paren
-r_int
-r_char
-id|val
-comma
-r_int
-r_char
-op_star
-id|addr
-)paren
-(brace
-op_star
-id|addr
-op_assign
-id|val
-suffix:semicolon
-)brace
-DECL|function|scr_readb
-r_static
-r_inline
-r_int
-r_char
-id|scr_readb
-c_func
-(paren
-r_int
-r_char
-op_star
-id|addr
-)paren
-(brace
-r_return
-op_star
-id|addr
-suffix:semicolon
-)brace
-DECL|function|scr_writew
-r_static
-r_inline
-r_void
-id|scr_writew
-c_func
-(paren
-r_int
-r_int
-id|val
-comma
-r_int
-r_int
-op_star
-id|addr
-)paren
-(brace
-op_star
-id|addr
-op_assign
-id|val
-suffix:semicolon
-)brace
-DECL|function|scr_readw
-r_static
-r_inline
-r_int
-r_int
-id|scr_readw
-c_func
-(paren
-r_int
-r_int
-op_star
-id|addr
-)paren
-(brace
-r_return
-op_star
-id|addr
-suffix:semicolon
-)brace
-macro_line|#endif /* __alpha__ */
 macro_line|#endif /* CONFIG_TGA_CONSOLE */
 DECL|function|memsetw
 r_static

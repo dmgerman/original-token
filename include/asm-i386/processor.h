@@ -382,6 +382,7 @@ suffix:semicolon
 DECL|member|cr2
 DECL|member|trap_no
 DECL|member|error_code
+DECL|member|segment
 r_int
 r_int
 id|cr2
@@ -389,6 +390,8 @@ comma
 id|trap_no
 comma
 id|error_code
+comma
+id|segment
 suffix:semicolon
 multiline_comment|/* floating point info */
 DECL|member|i387
@@ -422,59 +425,15 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xC0000000, 0xFFFFF000, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t;KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0,0, &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0 /* vm86_info */ &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t;KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0, 0, KERNEL_DS, &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0 /* vm86_info */ &bslash;&n;}
 DECL|macro|alloc_kernel_stack
 mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack
 mdefine_line|#define free_kernel_stack(page) free_page((page))
-DECL|function|start_thread
-r_static
-r_inline
-r_void
-id|start_thread
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-r_int
-id|eip
-comma
-r_int
-r_int
-id|esp
-)paren
-(brace
-id|regs-&gt;cs
-op_assign
-id|USER_CS
-suffix:semicolon
-id|regs-&gt;ds
-op_assign
-id|regs-&gt;es
-op_assign
-id|regs-&gt;ss
-op_assign
-id|regs-&gt;fs
-op_assign
-id|regs-&gt;gs
-op_assign
-id|USER_DS
-suffix:semicolon
-id|regs-&gt;eip
-op_assign
-id|eip
-suffix:semicolon
-id|regs-&gt;esp
-op_assign
-id|esp
-suffix:semicolon
-)brace
+DECL|macro|start_thread
+mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&bslash;&n;&t;set_fs(USER_DS); &bslash;&n;&t;regs-&gt;cs = USER_CS; &bslash;&n;&t;regs-&gt;ds = regs-&gt;es = regs-&gt;ss = regs-&gt;fs = regs-&gt;gs = USER_DS; &bslash;&n;&t;regs-&gt;eip = new_eip; &bslash;&n;&t;regs-&gt;esp = new_esp; &bslash;&n;} while (0)
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern

@@ -115,6 +115,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 suffix:semicolon
@@ -138,6 +139,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -2307,12 +2309,11 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
 r_int
-id|error
-comma
 id|op
 suffix:semicolon
 r_struct
@@ -2327,6 +2328,9 @@ id|table
 suffix:semicolon
 r_int
 id|res
+suffix:semicolon
+r_int
+id|error
 suffix:semicolon
 id|error
 op_assign
@@ -2479,6 +2483,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -2519,6 +2524,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren

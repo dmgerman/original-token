@@ -44,6 +44,12 @@ DECL|member|ipx_checksum
 r_int
 r_int
 id|ipx_checksum
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|macro|IPX_NO_CHECKSUM
 mdefine_line|#define IPX_NO_CHECKSUM&t;0xFFFF
@@ -51,6 +57,12 @@ DECL|member|ipx_pktsize
 r_int
 r_int
 id|ipx_pktsize
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|member|ipx_tctrl
 r_int

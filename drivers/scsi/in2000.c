@@ -17,9 +17,9 @@ macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
 DECL|macro|IN2000_VERSION
-mdefine_line|#define IN2000_VERSION    &quot;1.28&quot;
+mdefine_line|#define IN2000_VERSION    &quot;1.29&quot;
 DECL|macro|IN2000_DATE
-mdefine_line|#define IN2000_DATE       &quot;07/May/1996&quot;
+mdefine_line|#define IN2000_DATE       &quot;24/Sep/1996&quot;
 DECL|macro|PROC_INTERFACE
 mdefine_line|#define PROC_INTERFACE     /* add code for /proc/scsi/in2000/xxx interface */
 DECL|macro|SYNC_DEBUG
@@ -6393,6 +6393,7 @@ comma
 l_int|2
 )brace
 suffix:semicolon
+multiline_comment|/* As of the 2.1.x kernel series, memory-mapped hardware such&n; * as the IN2000 EPROM and dip switch must be accessed through&n; * special macros declared in &squot;asm/io.h&squot;. We use readb() and&n; * readl() when reading from the card&squot;s BIOS area in in2000_detect().&n; */
 DECL|variable|bios_tab
 r_const
 r_int
@@ -6587,7 +6588,8 @@ r_else
 r_if
 c_cond
 (paren
-op_star
+id|readl
+c_func
 (paren
 id|bios_tab
 (braket
@@ -6599,7 +6601,8 @@ l_int|0x04
 op_eq
 l_int|0x41564f4e
 op_logical_or
-op_star
+id|readl
+c_func
 (paren
 id|bios_tab
 (braket
@@ -6633,7 +6636,8 @@ op_assign
 op_complement
 (paren
 (paren
-op_star
+id|readb
+c_func
 (paren
 id|bios_tab
 (braket
@@ -7066,7 +7070,8 @@ multiline_comment|/* Older BIOS&squot;s had a &squot;sync on/off&squot; switch -
 r_if
 c_cond
 (paren
-op_star
+id|readl
+c_func
 (paren
 id|bios_tab
 (braket
@@ -7672,6 +7677,8 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* This next little bit of code was intended to prevent the number of&n; * tracks from exceeding 1023. As Andries Brouwer (aeb@cwi.nl) pointed&n; * out in his &quot;Large Disk HOWTO&quot; (June 1996), this kind of DOS&n; * compatibility is pointless. And wasteful on disks larger than 8 gigs.&n; */
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -7689,42 +7696,12 @@ l_int|2
 op_assign
 l_int|1023
 suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef PROC_INTERFACE
-multiline_comment|/* Certain older compilers (such as a.out 2.5.8) choke and give a&n; * &quot;Too many reloads&quot; error when there are a lot of calls to &squot;strcat()&squot;&n; * in one function. Modern kernels define &squot;strcat()&squot; as an inline&n; * function - I _guess_ this is related to the problem. Regardless,&n; * we can make everyone happy by doing some macro fudging to force&n; * gcc to do calls instead of inline expansion.&n; */
-DECL|function|in2000_strcat
-r_char
-op_star
-id|in2000_strcat
-c_func
-(paren
-r_char
-op_star
-id|dest
-comma
-r_const
-r_char
-op_star
-id|src
-)paren
-(brace
-r_return
-id|strcat
-c_func
-(paren
-id|dest
-comma
-id|src
-)paren
-suffix:semicolon
-)brace
-DECL|macro|strcat
-mdefine_line|#define strcat(d,s) (in2000_strcat((d),(s)))
-macro_line|#endif
 DECL|function|in2000_proc_info
 r_int
 id|in2000_proc_info

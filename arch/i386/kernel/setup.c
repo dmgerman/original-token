@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -428,12 +427,10 @@ id|_end
 suffix:semicolon
 id|init_task.mm-&gt;start_code
 op_assign
-id|TASK_SIZE
+id|PAGE_OFFSET
 suffix:semicolon
 id|init_task.mm-&gt;end_code
 op_assign
-id|TASK_SIZE
-op_plus
 (paren
 r_int
 r_int
@@ -443,8 +440,6 @@ id|_etext
 suffix:semicolon
 id|init_task.mm-&gt;end_data
 op_assign
-id|TASK_SIZE
-op_plus
 (paren
 r_int
 r_int
@@ -454,8 +449,6 @@ id|_edata
 suffix:semicolon
 id|init_task.mm-&gt;brk
 op_assign
-id|TASK_SIZE
-op_plus
 (paren
 r_int
 r_int
@@ -669,6 +662,10 @@ id|cmdline_p
 op_assign
 id|command_line
 suffix:semicolon
+id|memory_end
+op_add_assign
+id|PAGE_OFFSET
+suffix:semicolon
 op_star
 id|memory_start_p
 op_assign
@@ -689,10 +686,12 @@ id|LOADER_TYPE
 id|initrd_start
 op_assign
 id|INITRD_START
+op_plus
+id|PAGE_OFFSET
 suffix:semicolon
 id|initrd_end
 op_assign
-id|INITRD_START
+id|initrd_start
 op_plus
 id|INITRD_SIZE
 suffix:semicolon

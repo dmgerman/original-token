@@ -688,5 +688,13 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_void
+id|atari_unregister_vme_int
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 macro_line|#endif /* linux/atariints.h */
 eof

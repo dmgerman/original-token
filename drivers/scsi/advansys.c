@@ -1,9 +1,9 @@
-multiline_comment|/* $Id: advansys.c,v 1.15 1996/08/12 17:20:23 bobf Exp bobf $ */
+multiline_comment|/* $Id: advansys.c,v 1.20 1996/09/26 00:47:54 bobf Exp bobf $ */
 multiline_comment|/*&n; * advansys.c - Linux Host Driver for AdvanSys SCSI Adapters&n; * &n; * Copyright (c) 1995-1996 Advanced System Products, Inc.&n; * All Rights Reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that redistributions of source&n; * code retain the above copyright notice and this comment without&n; * modification.&n; *&n; * The latest version of this driver is available at the AdvanSys&n; * FTP and BBS sites listed below.&n; *&n; * Please send questions, comments, bug reports to:&n; * bobf@advansys.com (Bob Frey)&n; */
-multiline_comment|/*&n; * The driver has been run with the v1.2.13, v1.3.57, and v2.0.11 kernels.&n; */
+multiline_comment|/*&n; * The driver has been run with the v1.2.13, v1.3.57, and v2.0.21 kernels.&n; */
 DECL|macro|ASC_VERSION
-mdefine_line|#define ASC_VERSION &quot;1.5&quot;    /* AdvanSys Driver Version */
-multiline_comment|/*&n;&n;  Documentation for the AdvanSys Driver&n;&n;  A. Adapters Supported by this Driver&n;  B. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;  C. Linux v1.3.X, v2.X.X - Directions for Adding the AdvanSys Driver&n;  D. Source Comments&n;  E. Driver Compile Time Options and Debugging&n;  F. Driver LILO Option&n;  G. Release History&n;  H. Known Problems or Issues&n;  I. Credits&n;  J. AdvanSys Contact Information&n;&n;  A. Adapters Supported by this Driver&n; &n;     AdvanSys (Advanced System Products, Inc.) manufactures the following&n;     Bus-Mastering SCSI-2 Host Adapters for the ISA, EISA, VL, and PCI&n;     buses. This Linux driver supports all of these adapters.&n;     &n;     The CDB counts below indicate the number of SCSI CDB (Command&n;     Descriptor Block) requests that can be stored in the RISC chip&n;     cache and board LRAM. A CDB is a single SCSI command. The driver&n;     detect routine will display the number of CDBs available for each&n;     adapter detected. This value can be lowered in the BIOS by changing&n;     the &squot;Host Queue Size&squot; adapter setting.&n;&n;     Connectivity Products:&n;        ABP510/5150 - Bus-Master ISA (240 CDB) (Footnote 1)&n;        ABP5140 - Bus-Master ISA PnP (16 CDB) (Footnote 1)&n;        ABP5142 - Bus-Master ISA PnP with floppy (16 CDB)&n;        ABP920 - Bus-Master PCI (16 CDB)&n;        ABP930 - Bus-Master PCI (16 CDB)&n;        ABP960 - Bus-Master PCI MAC/PC (16 CDB) (Footnote 2)&n;  &n;     Single Channel Products:&n;        ABP542 - Bus-Master ISA with floppy (240 CDB)&n;        ABP742 - Bus-Master EISA (240 CDB)&n;        ABP842 - Bus-Master VL (240 CDB)&n;        ABP940 - Bus-Master PCI (240 CDB)&n;        ABP940U - Bus-Master PCI Ultra (240 CDB)&n;        ABP970 - Bus-Master PCI MAC/PC (240 CDB)&n;     &n;     Dual Channel Products:&n;        ABP752 - Dual Channel Bus-Master EISA (240 CDB Per Channel)&n;        ABP852 - Dual Channel Bus-Master VL (240 CDB Per Channel)&n;        ABP950 - Dual Channel Bus-Master PCI (240 CDB Per Channel)&n;     &n;     Footnotes:&n;       1. These boards have been shipped by HP with the 4020i CD-R drive.&n;          They have no BIOS so they cannot control a boot device, but they&n;          can control secondary devices.&n;   &n;       2. This board has been shipped by Iomega with the Jaz Jet drive.&n;  &n;  B. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.2.13. For versions that follow v1.2.13.&n;     but precede v1.3.57 some of the changes for Linux v1.3.X listed&n;     below may need to be modified or included.&n; &n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;    &n;     1. Add the following line to /usr/src/linux/arch/i386/config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;    &n;          bool &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS y&n;    &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;    &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;    &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;    &n;          ifdef CONFIG_SCSI_ADVANSYS&n;          SCSI_SRCS := $(SCSI_SRCS) advansys.c&n;          SCSI_OBJS := $(SCSI_OBJS) advansys.o&n;          else&n;          SCSI_MODULE_OBJS := $(SCSI_MODULE_OBJS) advansys.o&n;          endif&n;&n;     4. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;&n;          extern void advansys_setup(char *str, int *ints);&n;&n;        and add the following lines to the bootsetups[] array.&n;&n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;&n;     5. If you have the HP 4020i CD-R driver and Linux v1.2.X you should&n;        add a fix to the CD-ROM target driver. This fix will allow&n;        you to mount CDs with the iso9660 file system. Linux v1.3.X&n;        already has this fix. In the file /usr/src/linux/drivers/scsi/sr.c&n;        and function get_sectorsize() after the line:&n;&n;        if(scsi_CDs[i].sector_size == 0) scsi_CDs[i].sector_size = 2048;&n;&n;        add the following line:&n;&n;        if(scsi_CDs[i].sector_size == 2340) scsi_CDs[i].sector_size = 2048;&n;&n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n; &n;  C. Linux v1.3.X, v2.X.X - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.3.57. For versions that precede v1.3.57&n;     some of these changes may need to be modified or eliminated. Beginning&n;     with v1.3.58 this driver is included with the Linux distribution.&n;&n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;   &n;     1. Add the following line to /usr/src/linux/drivers/scsi/Config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;   &n;          dep_tristate &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS $CONFIG_SCSI&n;   &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;   &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;   &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;   &n;          ifeq ($(CONFIG_SCSI_ADVANSYS),y)&n;          L_OBJS += advansys.o&n;          else&n;            ifeq ($(CONFIG_SCSI_ADVANSYS),m)&n;            M_OBJS += advansys.o&n;            endif&n;          endif&n;   &n;     4. Add the following line to /usr/src/linux/include/linux/proc_fs.h&n;        in the enum scsi_directory_inos array:&n;   &n;          PROC_SCSI_ADVANSYS,&n;   &n;     5. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;   &n;          extern void advansys_setup(char *str, int *ints);&n;   &n;        and add the following lines to the bootsetups[] array.&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;   &n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n;&n;  D. Source Comments&n; &n;     1. Use tab stops set to 4 for the source files. For vi use &squot;se tabstops=4&squot;.&n; &n;     2. This driver should be maintained in multiple files. But to make&n;        it easier to include with Linux and to follow Linux conventions,&n;        the whole driver is maintained in the source files advansys.h and&n;        advansys.c. In this file logical sections of the driver begin with&n;        a comment that contains &squot;---&squot;. The following are the logical sections&n;        of the driver below.&n; &n;           --- Linux Version&n;           --- Linux Include Files &n;           --- Driver Options&n;           --- Asc Library Constants and Macros&n;           --- Debugging Header&n;           --- Driver Constants and Macros&n;           --- Driver Structures&n;           --- Driver Data&n;           --- Driver Function Prototypes&n;           --- Linux &squot;Scsi_Host_Template&squot; and advansys_setup() Functions&n;           --- Loadable Driver Support&n;           --- Miscellaneous Driver Functions&n;           --- Functions Required by the Asc Library&n;           --- Tracing and Debugging Functions&n;           --- Asc Library Functions&n; &n;     3. The string &squot;XXX&squot; is used to flag code that needs to be re-written&n;        or that contains a problem that needs to be addressed.&n; &n;     4. I have stripped comments from and reformatted the source for the&n;        Asc Library which is included in this file. I haven&squot;t done this&n;        to obfuscate the code. Actually I have done this to deobfuscate&n;        the code. The Asc Library source can be found under the following&n;        headings.&n; &n;           --- Asc Library Constants and Macros&n;           --- Asc Library Functions&n; &n;  E. Driver Compile Time Options and Debugging&n; &n;     In this source file the following constants can be defined. They are&n;     defined in the source below. Both of these options are enabled by&n;     default.&n; &n;     1. ADVANSYS_DEBUG - enable for debugging and assertions&n; &n;        The amount of debugging output can be controlled with the global&n;        variable &squot;asc_dbglvl&squot;. The higher the number the more output. By&n;        default the debug level is 0.&n;        &n;        If the driver is loaded at boot time and the LILO Driver Option&n;        is included in the system, the debug level can be changed by&n;        specifying a 5th (ASC_NUM_BOARD_SUPPORTED + 1) I/O Port. The&n;        first three hex digits of the pseudo I/O Port must be set to&n;        &squot;deb&squot; and the fourth hex digit specifies the debug level: 0 - F.&n;        The following command line will look for an adapter at 0x330&n;        and set the debug level to 2.&n;&n;           linux advansys=0x330,0,0,0,0xdeb2&n;&n;        If the driver is built as a loadable module this variable can be&n;        defined when the driver is loaded. The following insmod command&n;        will set the debug level to one.&n;  &n;           insmod advansys.o asc_dbglvl=1&n; &n;        Debugging Message Levels:&n;           0: Errors Only&n;           1: High-Level Tracing&n;           2-N: Verbose Tracing&n; &n;        I don&squot;t know the approved way for turning on printk()s to the&n;        console. Here&squot;s a program I use to do this. Debug output is&n;        logged in /var/adm/messages.&n; &n;          main()&n;          {&n;                  syscall(103, 7, 0, 0);&n;          }&n; &n;        I found that increasing LOG_BUF_LEN to 40960 in kernel/printk.c&n;        prevents most level 1 debug messages from being lost.&n; &n;     2. ADVANSYS_STATS - enable statistics&n; &n;        Statistics are maintained on a per adapter basis. Driver entry&n;        point call counts and tranfer size counts are maintained.&n;        Statistics are only available for kernels greater than or equal&n;        to v1.3.0 with the CONFIG_PROC_FS (/proc) file system configured.&n;&n;        AdvanSys SCSI adapter files have the following path name format:&n;&n;           /proc/scsi/advansys/[0-(ASC_NUM_BOARD_SUPPORTED-1)]&n;&n;        This information can be displayed with cat. For example:&n;&n;           cat /proc/scsi/advansys/0&n;&n;        When ADVANSYS_STATS is not defined the AdvanSys /proc files only&n;        contain adapter and device configuration information.&n;&n;&n;  F. Driver LILO Option&n; &n;     If init/main.c is modified as described in the &squot;Directions for Adding&n;     the AdvanSys Driver to Linux&squot; section (B.4.) above, the driver will&n;     recognize the &squot;advansys&squot; LILO command line and /etc/lilo.conf option.&n;     This option can be used to either disable I/O port scanning or to limit&n;     scanning to 1 - 4 I/O ports. Regardless of the option setting EISA and&n;     PCI boards will still be searched for and detected. This option only&n;     affects searching for ISA and VL boards.&n;&n;     Examples:&n;       1. Eliminate I/O port scanning:&n;            boot: linux advansys=&n;              or&n;            boot: linux advansys=0x0&n;       2. Limit I/O port scanning to one I/O port:&n;            boot: linux advansys=0x110&n;       3. Limit I/O port scanning to four I/O ports:&n;            boot: linux advansys=0x110,0x210,0x230,0x330&n;&n;     For a loadable module the same effect can be achieved by setting&n;     the &squot;asc_iopflag&squot; variable and &squot;asc_ioport&squot; array when loading&n;     the driver, e.g.&n;&n;           insmod advansys.o asc_iopflag=1 asc_ioport=0x110,0x330&n;&n;     If ADVANSYS_DEBUG is defined a 5th (ASC_NUM_BOARD_SUPPORTED + 1)&n;     I/O Port may be added to specify the driver debug level. Refer to&n;     the &squot;Driver Compile Time Options and Debugging&squot; section above for&n;     more information.&n;&n;  G. Release History&n;&n;     BETA-1.0 (12/23/95): &n;         First Release&n;&n;     BETA-1.1 (12/28/95):&n;         1. Prevent advansys_detect() from being called twice.&n;         2. Add LILO 0xdeb[0-f] option to set &squot;asc_dbglvl&squot;.&n;&n;     1.2 (1/12/96):&n;         1. Prevent re-entrancy in the interrupt handler which&n;            resulted in the driver hanging Linux.&n;         2. Fix problem that prevented ABP-940 cards from being&n;            recognized on some PCI motherboards.&n;         3. Add support for the ABP-5140 PnP ISA card.&n;         4. Fix check condition return status.&n;         5. Add conditionally compiled code for Linux v1.3.X.&n;&n;     1.3 (2/23/96):&n;         1. Fix problem in advansys_biosparam() that resulted in the&n;            wrong drive geometry being returned for drives &gt; 1GB with&n;            extended translation enabled.&n;         2. Add additional tracing during device initialization.&n;         3. Change code that only applies to ISA PnP adapter.&n;         4. Eliminate &squot;make dep&squot; warning.&n;         5. Try to fix problem with handling resets by increasing their&n;            timeout value.&n;&n;     1.4 (5/8/96):&n;         1. Change definitions to eliminate conflicts with other subsystems.&n;         2. Add versioning code for the shared interrupt changes.&n;         3. Eliminate problem in asc_rmqueue() with iterating after removing&n;            a request.&n;         4. Remove reset request loop problem from the &quot;Known Problems or&n;            Issues&quot; section. This problem was isolated and fixed in the&n;            mid-level SCSI driver.&n;        &n;     1.5 (8/8/96):&n;         1. Add support for ABP-940U (PCI Ultra) adapter.&n;         2. Add support for IRQ sharing by setting the SA_SHIRQ flag for&n;            request_irq and supplying a dev_id pointer to both request_irq()&n;            and free_irq().&n;         3. In AscSearchIOPortAddr11() restore a call to check_region() which&n;            should be used before any I/O port probing.&n;         4. Fix bug in asc_prt_hex() which resulted in the displaying&n;            the wrong data.&n;         5. Incorporate miscellaneous Asc Library bug fixes and new microcode.&n;         6. Change driver versioning to be specific to each Linux sub-level.&n;         7. Change statistics gathering to be per adapter instead of global&n;            to the driver.&n;         8. Add more information and statistics to the adapter /proc file:&n;            /proc/scsi/advansys[0...].&n;         9. Remove &squot;cmd_per_lun&squot; from the &quot;Known Problems or Issues&quot; list.&n;            This problem has been addressed with the SCSI mid-level changes&n;            made in v1.3.89. The advansys_select_queue_depths() function&n;            was added for the v1.3.89 changes.&n;&n;  H. Known Problems or Issues&n;&n;     1. For the first scsi command sent to a device the driver increases&n;        the timeout value. This gives the driver more time to perform&n;        its own initialization for the board and each device. The timeout&n;        value is only changed on the first scsi command for each device&n;        and never thereafter. The same change is made for reset commands.&n;&n;  I. Credits&n;&n;     Nathan Hartwell &lt;mage@cdc3.cdc.net&gt; provided the directions and&n;     basis for the Linux v1.3.X changes which were included in the&n;     1.2 release.&n;&n;     Thomas E Zerucha &lt;zerucha@shell.portal.com&gt; pointed out a bug&n;     in advansys_biosparam() which was fixed in the 1.3 release.&n;&n;  J. AdvanSys Contact Information&n; &n;     Mail:                   Advanced System Products, Inc.&n;                             1150 Ringwood Court&n;                             San Jose, CA 95131&n;     Operator:               1-408-383-9400&n;     FAX:                    1-408-383-9612&n;     Tech Support:           1-800-525-7440/1-408-467-2930&n;     BBS:                    1-408-383-9540 (14400,N,8,1)&n;     Interactive FAX:        1-408-383-9753&n;     Customer Direct Sales:  1-800-883-1099/1-408-383-5777&n;     Tech Support E-Mail:    support@advansys.com&n;     FTP Site:               ftp.advansys.com (login: anonymous)&n;     Web Site:               http://www.advansys.com&n;*/
+mdefine_line|#define ASC_VERSION &quot;1.7&quot;    /* AdvanSys Driver Version */
+multiline_comment|/*&n;&n;  Documentation for the AdvanSys Driver&n;&n;  A. Adapters Supported by this Driver&n;  B. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;  C. Linux v1.3.1 - v1.3.57 - Directions for Adding the AdvanSys Driver&n;  D. Linux v1.3.58 and Newer - Upgrading the AdvanSys Driver&n;  E. Source Comments&n;  F. Driver Compile Time Options and Debugging&n;  G. Driver LILO Option&n;  H. Release History&n;  I. Known Problems or Issues&n;  J. Credits&n;  K. AdvanSys Contact Information&n;&n;  A. Adapters Supported by this Driver&n; &n;     AdvanSys (Advanced System Products, Inc.) manufactures the following&n;     Bus-Mastering SCSI-2 Host Adapters for the ISA, EISA, VL, and PCI&n;     buses. This Linux driver supports all of these adapters.&n;     &n;     The CDB counts below indicate the number of SCSI CDB (Command&n;     Descriptor Block) requests that can be stored in the RISC chip&n;     cache and board LRAM. A CDB is a single SCSI command. The driver&n;     detect routine will display the number of CDBs available for each&n;     adapter detected. The number of CDBs used by the driver can be&n;     lowered in the BIOS by changing the &squot;Host Queue Size&squot; adapter setting.&n;&n;     Connectivity Products:&n;        ABP510/5150 - Bus-Master ISA (240 CDB) (Footnote 1)&n;        ABP5140 - Bus-Master ISA PnP (16 CDB) (Footnote 1)&n;        ABP5142 - Bus-Master ISA PnP with floppy (16 CDB)&n;        ABP920 - Bus-Master PCI (16 CDB)&n;        ABP930 - Bus-Master PCI (16 CDB)&n;        ABP930U - Bus-Master PCI Ultra (16 CDB)&n;        ABP960 - Bus-Master PCI MAC/PC (16 CDB) (Footnote 2)&n;        ABP960U - Bus-Master PCI MAC/PC Ultra (16 CDB)&n;     &n;     Single Channel Products:&n;        ABP542 - Bus-Master ISA with floppy (240 CDB)&n;        ABP742 - Bus-Master EISA (240 CDB)&n;        ABP842 - Bus-Master VL (240 CDB)&n;        ABP940 - Bus-Master PCI (240 CDB)&n;        ABP940U - Bus-Master PCI Ultra (240 CDB)&n;        ABP970 - Bus-Master PCI MAC/PC (240 CDB)&n;        ABP970U - Bus-Master PCI MAC/PC Ultra (240 CDB)&n;     &n;     Dual Channel Products:&n;        ABP752 - Dual Channel Bus-Master EISA (240 CDB Per Channel)&n;        ABP852 - Dual Channel Bus-Master VL (240 CDB Per Channel)&n;        ABP950 - Dual Channel Bus-Master PCI (240 CDB Per Channel)&n;     &n;     Footnotes:&n;       1. This board has been shipped by HP with the 4020i CD-R drive.&n;          The board has no BIOS so it cannot control a boot device, but&n;          it can control any secondary SCSI device.&n;   &n;       2. This board has been sold by Iomega as a Jaz Jet PCI adapter.&n;  &n;  B. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.2.13. For versions that follow v1.2.13.&n;     but precede v1.3.57 some of the changes for Linux v1.3.X listed&n;     below may need to be modified or included. A patch is available&n;     for v1.2.13 from the AdvanSys WWW and FTP sites.&n; &n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;    &n;     1. Add the following line to /usr/src/linux/arch/i386/config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;    &n;          bool &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS y&n;    &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;    &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;    &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;    &n;          ifdef CONFIG_SCSI_ADVANSYS&n;          SCSI_SRCS := $(SCSI_SRCS) advansys.c&n;          SCSI_OBJS := $(SCSI_OBJS) advansys.o&n;          else&n;          SCSI_MODULE_OBJS := $(SCSI_MODULE_OBJS) advansys.o&n;          endif&n;&n;     4. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;&n;          extern void advansys_setup(char *str, int *ints);&n;&n;        and add the following lines to the bootsetups[] array.&n;&n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;&n;     5. If you have the HP 4020i CD-R driver and Linux v1.2.X you should&n;        add a fix to the CD-ROM target driver. This fix will allow&n;        you to mount CDs with the iso9660 file system. Linux v1.3.X&n;        already has this fix. In the file /usr/src/linux/drivers/scsi/sr.c&n;        and function get_sectorsize() after the line:&n;&n;        if(scsi_CDs[i].sector_size == 0) scsi_CDs[i].sector_size = 2048;&n;&n;        add the following line:&n;&n;        if(scsi_CDs[i].sector_size == 2340) scsi_CDs[i].sector_size = 2048;&n;&n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n; &n;  C. Linux v1.3.1 - v1.3.57 - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.3.57. For versions that precede v1.3.57&n;     some of these changes may need to be modified or eliminated. A patch&n;     is available for v1.3.57 from the AdvanSys WWW and FTP sites.&n;     Beginning with v1.3.58 this driver is included with the Linux&n;     distribution eliminating the need for making any changes.&n;&n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;   &n;     1. Add the following line to /usr/src/linux/drivers/scsi/Config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;   &n;          dep_tristate &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS $CONFIG_SCSI&n;   &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;   &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;   &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;   &n;          ifeq ($(CONFIG_SCSI_ADVANSYS),y)&n;          L_OBJS += advansys.o&n;          else&n;            ifeq ($(CONFIG_SCSI_ADVANSYS),m)&n;            M_OBJS += advansys.o&n;            endif&n;          endif&n;   &n;     4. Add the following line to /usr/src/linux/include/linux/proc_fs.h&n;        in the enum scsi_directory_inos array:&n;   &n;          PROC_SCSI_ADVANSYS,&n;   &n;     5. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;   &n;          extern void advansys_setup(char *str, int *ints);&n;   &n;        and add the following lines to the bootsetups[] array.&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;   &n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n;&n;  D. Linux v1.3.58 and Newer - Upgrading the AdvanSys Driver&n;&n;     To upgrade the AdvanSys driver in a Linux v1.3.58 and newer&n;     kernel, first check the version of the current driver. The&n;     version is defined by the manifest constant ASC_VERSION at&n;     the beginning of advansys.c. The new driver should have a&n;     ASC_VERSION value greater than the current version. To install&n;     the new driver rename advansys.c and advansys.h in the Linux&n;     kernel source tree drivers/scsi directory to different names&n;     or save them to a different directory in case you want to revert&n;     to the old version of the driver. After the old driver is saved&n;     copy the new advansys.c and advansys.h to drivers/scsi, rebuild&n;     the kernel, and install the new kernel. No other changes are needed.&n;&n;  E. Source Comments&n; &n;     1. Use tab stops set to 4 for the source files. For vi use &squot;se tabstops=4&squot;.&n; &n;     2. This driver should be maintained in multiple files. But to make&n;        it easier to include with Linux and to follow Linux conventions,&n;        the whole driver is maintained in the source files advansys.h and&n;        advansys.c. In this file logical sections of the driver begin with&n;        a comment that contains &squot;---&squot;. The following are the logical sections&n;        of the driver below.&n; &n;           --- Linux Version&n;           --- Linux Include Files &n;           --- Driver Options&n;           --- Asc Library Constants and Macros&n;           --- Debugging Header&n;           --- Driver Constants and Macros&n;           --- Driver Structures&n;           --- Driver Data&n;           --- Driver Function Prototypes&n;           --- Linux &squot;Scsi_Host_Template&squot; and advansys_setup() Functions&n;           --- Loadable Driver Support&n;           --- Miscellaneous Driver Functions&n;           --- Functions Required by the Asc Library&n;           --- Tracing and Debugging Functions&n;           --- Asc Library Functions&n; &n;     3. The string &squot;XXX&squot; is used to flag code that needs to be re-written&n;        or that contains a problem that needs to be addressed.&n; &n;     4. I have stripped comments from and reformatted the source for the&n;        Asc Library which is included in this file. I haven&squot;t done this&n;        to obfuscate the code. Actually I have done this to deobfuscate&n;        the code. The Asc Library source can be found under the following&n;        headings.&n; &n;           --- Asc Library Constants and Macros&n;           --- Asc Library Functions&n; &n;  F. Driver Compile Time Options and Debugging&n; &n;     In this source file the following constants can be defined. They are&n;     defined in the source below. Both of these options are enabled by&n;     default.&n; &n;     1. ADVANSYS_DEBUG - enable for debugging and assertions&n; &n;        The amount of debugging output can be controlled with the global&n;        variable &squot;asc_dbglvl&squot;. The higher the number the more output. By&n;        default the debug level is 0.&n;        &n;        If the driver is loaded at boot time and the LILO Driver Option&n;        is included in the system, the debug level can be changed by&n;        specifying a 5th (ASC_NUM_BOARD_SUPPORTED + 1) I/O Port. The&n;        first three hex digits of the pseudo I/O Port must be set to&n;        &squot;deb&squot; and the fourth hex digit specifies the debug level: 0 - F.&n;        The following command line will look for an adapter at 0x330&n;        and set the debug level to 2.&n;&n;           linux advansys=0x330,0,0,0,0xdeb2&n;&n;        If the driver is built as a loadable module this variable can be&n;        defined when the driver is loaded. The following insmod command&n;        will set the debug level to one.&n;  &n;           insmod advansys.o asc_dbglvl=1&n; &n;        Debugging Message Levels:&n;           0: Errors Only&n;           1: High-Level Tracing&n;           2-N: Verbose Tracing&n; &n;        I don&squot;t know the approved way for turning on printk()s to the&n;        console. Here&squot;s a program I use to do this. Debug output is&n;        logged in /var/adm/messages.&n; &n;          main()&n;          {&n;                  syscall(103, 7, 0, 0);&n;          }&n; &n;        I found that increasing LOG_BUF_LEN to 40960 in kernel/printk.c&n;        prevents most level 1 debug messages from being lost.&n; &n;     2. ADVANSYS_STATS - enable statistics&n; &n;        Statistics are maintained on a per adapter basis. Driver entry&n;        point call counts and transfer size counts are maintained.&n;        Statistics are only available for kernels greater than or equal&n;        to v1.3.0 with the CONFIG_PROC_FS (/proc) file system configured.&n;&n;        AdvanSys SCSI adapter files have the following path name format:&n;&n;           /proc/scsi/advansys/[0-(ASC_NUM_BOARD_SUPPORTED-1)]&n;&n;        This information can be displayed with cat. For example:&n;&n;           cat /proc/scsi/advansys/0&n;&n;        When ADVANSYS_STATS is not defined the AdvanSys /proc files only&n;        contain adapter and device configuration information.&n;&n;&n;  G. Driver LILO Option&n; &n;     If init/main.c is modified as described in the &squot;Directions for Adding&n;     the AdvanSys Driver to Linux&squot; section (B.4.) above, the driver will&n;     recognize the &squot;advansys&squot; LILO command line and /etc/lilo.conf option.&n;     This option can be used to either disable I/O port scanning or to limit&n;     scanning to 1 - 4 I/O ports. Regardless of the option setting EISA and&n;     PCI boards will still be searched for and detected. This option only&n;     affects searching for ISA and VL boards.&n;&n;     Examples:&n;       1. Eliminate I/O port scanning:&n;            boot: linux advansys=&n;              or&n;            boot: linux advansys=0x0&n;       2. Limit I/O port scanning to one I/O port:&n;            boot: linux advansys=0x110&n;       3. Limit I/O port scanning to four I/O ports:&n;            boot: linux advansys=0x110,0x210,0x230,0x330&n;&n;     For a loadable module the same effect can be achieved by setting&n;     the &squot;asc_iopflag&squot; variable and &squot;asc_ioport&squot; array when loading&n;     the driver, e.g.&n;&n;           insmod advansys.o asc_iopflag=1 asc_ioport=0x110,0x330&n;&n;     If ADVANSYS_DEBUG is defined a 5th (ASC_NUM_BOARD_SUPPORTED + 1)&n;     I/O Port may be added to specify the driver debug level. Refer to&n;     the &squot;Driver Compile Time Options and Debugging&squot; section above for&n;     more information.&n;&n;  H. Release History&n;&n;     BETA-1.0 (12/23/95): &n;         First Release&n;&n;     BETA-1.1 (12/28/95):&n;         1. Prevent advansys_detect() from being called twice.&n;         2. Add LILO 0xdeb[0-f] option to set &squot;asc_dbglvl&squot;.&n;&n;     1.2 (1/12/96):&n;         1. Prevent re-entrancy in the interrupt handler which&n;            resulted in the driver hanging Linux.&n;         2. Fix problem that prevented ABP-940 cards from being&n;            recognized on some PCI motherboards.&n;         3. Add support for the ABP-5140 PnP ISA card.&n;         4. Fix check condition return status.&n;         5. Add conditionally compiled code for Linux v1.3.X.&n;&n;     1.3 (2/23/96):&n;         1. Fix problem in advansys_biosparam() that resulted in the&n;            wrong drive geometry being returned for drives &gt; 1GB with&n;            extended translation enabled.&n;         2. Add additional tracing during device initialization.&n;         3. Change code that only applies to ISA PnP adapter.&n;         4. Eliminate &squot;make dep&squot; warning.&n;         5. Try to fix problem with handling resets by increasing their&n;            timeout value.&n;&n;     1.4 (5/8/96):&n;         1. Change definitions to eliminate conflicts with other subsystems.&n;         2. Add versioning code for the shared interrupt changes.&n;         3. Eliminate problem in asc_rmqueue() with iterating after removing&n;            a request.&n;         4. Remove reset request loop problem from the &quot;Known Problems or&n;            Issues&quot; section. This problem was isolated and fixed in the&n;            mid-level SCSI driver.&n;        &n;     1.5 (8/8/96):&n;         1. Add support for ABP-940U (PCI Ultra) adapter.&n;         2. Add support for IRQ sharing by setting the SA_SHIRQ flag for&n;            request_irq and supplying a dev_id pointer to both request_irq()&n;            and free_irq().&n;         3. In AscSearchIOPortAddr11() restore a call to check_region() which&n;            should be used before I/O port probing.&n;         4. Fix bug in asc_prt_hex() which resulted in the displaying&n;            the wrong data.&n;         5. Incorporate miscellaneous Asc Library bug fixes and new microcode.&n;         6. Change driver versioning to be specific to each Linux sub-level.&n;         7. Change statistics gathering to be per adapter instead of global&n;            to the driver.&n;         8. Add more information and statistics to the adapter /proc file:&n;            /proc/scsi/advansys[0...].&n;         9. Remove &squot;cmd_per_lun&squot; from the &quot;Known Problems or Issues&quot; list.&n;            This problem has been addressed with the SCSI mid-level changes&n;            made in v1.3.89. The advansys_select_queue_depths() function&n;            was added for the v1.3.89 changes.&n;&n;     1.6 (9/10/96):&n;         1. Incorporate miscellaneous Asc Library bug fixes and new microcode.&n;&n;     1.7 (9/25/96):&n;         1. Enable clustering and optimize the setting of the maximum number&n;            of scatter gather elements for any particular board. Clustering&n;            increases CPU utilization, but results in a relatively larger&n;            increase in I/O throughput.&n;         2. Improve the performance of the request queuing functions by&n;            adding a last pointer to the queue structure.&n;         3. Correct problems with reset and abort request handling that&n;            could have hung or crashed Linux.&n;         4. Add more information to the adapter /proc file:&n;            /proc/scsi/advansys[0...].&n;         5. Remove the request timeout issue form the driver issues list.&n;         6. Miscellaneous documentation additions and changes.&n;&n;  I. Known Problems or Issues&n;&n;         None&n;&n;  J. Credits&n;&n;     Nathan Hartwell &lt;mage@cdc3.cdc.net&gt; provided the directions and&n;     basis for the Linux v1.3.X changes which were included in the&n;     1.2 release.&n;&n;     Thomas E Zerucha &lt;zerucha@shell.portal.com&gt; pointed out a bug&n;     in advansys_biosparam() which was fixed in the 1.3 release.&n;&n;  K. AdvanSys Contact Information&n; &n;     Mail:                   Advanced System Products, Inc.&n;                             1150 Ringwood Court&n;                             San Jose, CA 95131&n;     Operator:               1-408-383-9400&n;     FAX:                    1-408-383-9612&n;     Tech Support:           1-800-525-7440/1-408-467-2930&n;     BBS:                    1-408-383-9540 (14400,N,8,1)&n;     Interactive FAX:        1-408-383-9753&n;     Customer Direct Sales:  1-800-883-1099/1-408-383-5777&n;     Tech Support E-Mail:    support@advansys.com&n;     FTP Site:               ftp.advansys.com (login: anonymous)&n;     Web Site:               http://www.advansys.com&n;*/
 multiline_comment|/*&n; * --- Linux Version&n; */
 multiline_comment|/* Convert Linux Version, Patch-level, Sub-level to LINUX_VERSION_CODE. */
 DECL|macro|ASC_LINUX_VERSION
@@ -56,9 +56,9 @@ multiline_comment|/*&n; * --- Asc Library Constants and Macros&n; */
 DECL|macro|ASC_LIB_VERSION_MAJOR
 mdefine_line|#define ASC_LIB_VERSION_MAJOR  1
 DECL|macro|ASC_LIB_VERSION_MINOR
-mdefine_line|#define ASC_LIB_VERSION_MINOR  21
+mdefine_line|#define ASC_LIB_VERSION_MINOR  22
 DECL|macro|ASC_LIB_SERIAL_NUMBER
-mdefine_line|#define ASC_LIB_SERIAL_NUMBER  88
+mdefine_line|#define ASC_LIB_SERIAL_NUMBER  89
 DECL|typedef|uchar
 r_typedef
 r_int
@@ -189,6 +189,14 @@ DECL|macro|ASC_PCI_ID2FUNC
 mdefine_line|#define ASC_PCI_ID2FUNC( id )   (((id) &gt;&gt; 8) &amp; 0x7)
 DECL|macro|ASC_PCI_MKID
 mdefine_line|#define ASC_PCI_MKID( bus, dev, func ) ((((dev) &amp; 0x1F) &lt;&lt; 11) | (((func) &amp; 0x7) &lt;&lt; 8) | ((bus) &amp; 0xFF))
+DECL|macro|Asc_DvcLib_Status
+mdefine_line|#define  Asc_DvcLib_Status   int
+DECL|macro|ASC_DVCLIB_CALL_DONE
+mdefine_line|#define  ASC_DVCLIB_CALL_DONE     (1)
+DECL|macro|ASC_DVCLIB_CALL_FAILED
+mdefine_line|#define  ASC_DVCLIB_CALL_FAILED   (0)
+DECL|macro|ASC_DVCLIB_CALL_ERROR
+mdefine_line|#define  ASC_DVCLIB_CALL_ERROR    (-1)
 DECL|macro|Lptr
 mdefine_line|#define Lptr
 DECL|macro|dosfar
@@ -212,9 +220,9 @@ mdefine_line|#define outpw(port, word)   outw((word), (port))
 DECL|macro|outpl
 mdefine_line|#define outpl(port, long)   outl((long), (port))
 DECL|macro|ASC_MAX_SG_QUEUE
-mdefine_line|#define ASC_MAX_SG_QUEUE&t;5
+mdefine_line|#define ASC_MAX_SG_QUEUE&t;7
 DECL|macro|ASC_MAX_SG_LIST
-mdefine_line|#define ASC_MAX_SG_LIST&t;&t;(1 + ((ASC_SG_LIST_PER_Q) * (ASC_MAX_SG_QUEUE)))
+mdefine_line|#define ASC_MAX_SG_LIST&t;&t;SG_ALL
 DECL|macro|CC_INIT_INQ_DISPLAY
 mdefine_line|#define CC_INIT_INQ_DISPLAY     FALSE
 DECL|macro|CC_CLEAR_LRAM_SRB_PTR
@@ -243,10 +251,6 @@ DECL|macro|CC_INCLUDE_EEP_CONFIG
 mdefine_line|#define CC_INCLUDE_EEP_CONFIG  TRUE
 DECL|macro|CC_PCI_ULTRA
 mdefine_line|#define CC_PCI_ULTRA           TRUE
-DECL|macro|CC_INIT_TARGET_READ_CAPACITY
-mdefine_line|#define CC_INIT_TARGET_READ_CAPACITY    TRUE
-DECL|macro|CC_INIT_TARGET_TEST_UNIT_READY
-mdefine_line|#define CC_INIT_TARGET_TEST_UNIT_READY  TRUE
 DECL|macro|CC_ASC_SCSI_Q_USRDEF
 mdefine_line|#define CC_ASC_SCSI_Q_USRDEF         FALSE
 DECL|macro|CC_ASC_SCSI_REQ_Q_USRDEF
@@ -263,10 +267,6 @@ DECL|macro|CC_INCLUDE_EEP_CONFIG
 mdefine_line|#define CC_INCLUDE_EEP_CONFIG        TRUE
 DECL|macro|CC_INIT_INQ_DISPLAY
 mdefine_line|#define CC_INIT_INQ_DISPLAY          FALSE
-DECL|macro|CC_INIT_TARGET_TEST_UNIT_READY
-mdefine_line|#define CC_INIT_TARGET_TEST_UNIT_READY  TRUE
-DECL|macro|CC_INIT_TARGET_START_UNIT
-mdefine_line|#define CC_INIT_TARGET_START_UNIT       TRUE
 DECL|macro|CC_PLEXTOR_VL
 mdefine_line|#define CC_PLEXTOR_VL                FALSE
 DECL|macro|CC_TMP_USE_EEP_SDTR
@@ -275,8 +275,6 @@ DECL|macro|CC_CHK_COND_REDO_SDTR
 mdefine_line|#define CC_CHK_COND_REDO_SDTR        TRUE
 DECL|macro|CC_SET_PCI_LATENCY_TIMER_ZERO
 mdefine_line|#define CC_SET_PCI_LATENCY_TIMER_ZERO  TRUE
-DECL|macro|CC_FIX_QUANTUM_XP34301_1071
-mdefine_line|#define CC_FIX_QUANTUM_XP34301_1071  FALSE
 DECL|macro|CC_DISABLE_ASYN_FIX_WANGTEK_TAPE
 mdefine_line|#define CC_DISABLE_ASYN_FIX_WANGTEK_TAPE  TRUE
 DECL|macro|ASC_CS_TYPE
@@ -349,6 +347,10 @@ DECL|macro|ASC_CHIP_VER_EISA_BIT
 mdefine_line|#define ASC_CHIP_VER_EISA_BIT (0x40)
 DECL|macro|ASC_CHIP_LATEST_VER_EISA
 mdefine_line|#define ASC_CHIP_LATEST_VER_EISA   ( ( ASC_CHIP_MIN_VER_EISA - 1 ) + 3 )
+DECL|macro|ASC_MAX_LIB_SUPPORTED_ISA_CHIP_VER
+mdefine_line|#define ASC_MAX_LIB_SUPPORTED_ISA_CHIP_VER   0x21
+DECL|macro|ASC_MAX_LIB_SUPPORTED_PCI_CHIP_VER
+mdefine_line|#define ASC_MAX_LIB_SUPPORTED_PCI_CHIP_VER   0x0A
 DECL|macro|ASC_MAX_VL_DMA_ADDR
 mdefine_line|#define ASC_MAX_VL_DMA_ADDR     (0x07FFFFFFL)
 DECL|macro|ASC_MAX_VL_DMA_COUNT
@@ -2217,6 +2219,8 @@ DECL|macro|ASC_IERR_SET_SDTR
 mdefine_line|#define ASC_IERR_SET_SDTR             0x1000
 DECL|macro|ASC_IERR_RW_LRAM
 mdefine_line|#define ASC_IERR_RW_LRAM              0x8000
+DECL|macro|ASC_DVCLIB_STATUS
+mdefine_line|#define ASC_DVCLIB_STATUS             0x00
 DECL|macro|ASC_DEF_IRQ_NO
 mdefine_line|#define ASC_DEF_IRQ_NO  10
 DECL|macro|ASC_MAX_IRQ_NO
@@ -2277,14 +2281,14 @@ DECL|macro|ASC_LIB_SCSIQ_WK_SP
 mdefine_line|#define ASC_LIB_SCSIQ_WK_SP        256
 DECL|macro|ASC_MAX_SYN_XFER_NO
 mdefine_line|#define ASC_MAX_SYN_XFER_NO        16
-DECL|macro|ASC_SYN_XFER_NO
-mdefine_line|#define ASC_SYN_XFER_NO            8
 DECL|macro|ASC_SYN_MAX_OFFSET
 mdefine_line|#define ASC_SYN_MAX_OFFSET         0x0F
 DECL|macro|ASC_DEF_SDTR_OFFSET
 mdefine_line|#define ASC_DEF_SDTR_OFFSET        0x0F
 DECL|macro|ASC_DEF_SDTR_INDEX
 mdefine_line|#define ASC_DEF_SDTR_INDEX         0x00
+DECL|macro|ASC_SDTR_ULTRA_PCI_10MB_INDEX
+mdefine_line|#define ASC_SDTR_ULTRA_PCI_10MB_INDEX  0x02
 DECL|macro|SYN_XFER_NS_0
 mdefine_line|#define SYN_XFER_NS_0  25
 DECL|macro|SYN_XFER_NS_1
@@ -2690,17 +2694,17 @@ DECL|member|max_sdtr_index
 id|uchar
 id|max_sdtr_index
 suffix:semicolon
-DECL|member|res4
+DECL|member|host_init_sdtr_index
 id|uchar
-id|res4
+id|host_init_sdtr_index
 suffix:semicolon
 DECL|member|drv_ptr
 id|ulong
 id|drv_ptr
 suffix:semicolon
-DECL|member|res6
+DECL|member|uc_break
 id|ulong
-id|res6
+id|uc_break
 suffix:semicolon
 DECL|member|res7
 id|ulong
@@ -2843,8 +2847,8 @@ DECL|macro|ASC_CNTL_SCSI_PARITY
 mdefine_line|#define ASC_CNTL_SCSI_PARITY       ( ushort )0x1000
 DECL|macro|ASC_CNTL_BURST_MODE
 mdefine_line|#define ASC_CNTL_BURST_MODE        ( ushort )0x2000
-DECL|macro|ASC_CNTL_USE_8_IOP_BASE
-mdefine_line|#define ASC_CNTL_USE_8_IOP_BASE    ( ushort )0x4000
+DECL|macro|ASC_CNTL_SDTR_ENABLE_ULTRA
+mdefine_line|#define ASC_CNTL_SDTR_ENABLE_ULTRA ( ushort )0x4000
 DECL|macro|ASC_EEP_DVC_CFG_BEG_VL
 mdefine_line|#define ASC_EEP_DVC_CFG_BEG_VL    2
 DECL|macro|ASC_EEP_MAX_DVC_ADDR_VL
@@ -2964,12 +2968,18 @@ DECL|macro|ASC_EEP_CMD_WRITE_DISABLE
 mdefine_line|#define ASC_EEP_CMD_WRITE_DISABLE 0x00
 DECL|macro|ASC_OVERRUN_BSIZE
 mdefine_line|#define ASC_OVERRUN_BSIZE  0x00000048UL
+DECL|macro|ASC_CTRL_BREAK_ONCE
+mdefine_line|#define ASC_CTRL_BREAK_ONCE        0x0001
+DECL|macro|ASC_CTRL_BREAK_STAY_IDLE
+mdefine_line|#define ASC_CTRL_BREAK_STAY_IDLE   0x0002
 DECL|macro|ASCV_MSGOUT_BEG
 mdefine_line|#define ASCV_MSGOUT_BEG         0x0000
 DECL|macro|ASCV_MSGOUT_SDTR_PERIOD
 mdefine_line|#define ASCV_MSGOUT_SDTR_PERIOD (ASCV_MSGOUT_BEG+3)
 DECL|macro|ASCV_MSGOUT_SDTR_OFFSET
 mdefine_line|#define ASCV_MSGOUT_SDTR_OFFSET (ASCV_MSGOUT_BEG+4)
+DECL|macro|ASCV_BREAK_SAVED_CODE
+mdefine_line|#define ASCV_BREAK_SAVED_CODE   ( ushort )0x0006
 DECL|macro|ASCV_MSGIN_BEG
 mdefine_line|#define ASCV_MSGIN_BEG          (ASCV_MSGOUT_BEG+8)
 DECL|macro|ASCV_MSGIN_SDTR_PERIOD
@@ -2982,6 +2992,14 @@ DECL|macro|ASCV_SDTR_DONE_BEG
 mdefine_line|#define ASCV_SDTR_DONE_BEG      (ASCV_SDTR_DATA_BEG+8)
 DECL|macro|ASCV_MAX_DVC_QNG_BEG
 mdefine_line|#define ASCV_MAX_DVC_QNG_BEG    ( ushort )0x0020
+DECL|macro|ASCV_BREAK_ADDR
+mdefine_line|#define ASCV_BREAK_ADDR           ( ushort )0x0028
+DECL|macro|ASCV_BREAK_NOTIFY_COUNT
+mdefine_line|#define ASCV_BREAK_NOTIFY_COUNT   ( ushort )0x002A
+DECL|macro|ASCV_BREAK_CONTROL
+mdefine_line|#define ASCV_BREAK_CONTROL        ( ushort )0x002C
+DECL|macro|ASCV_BREAK_HIT_COUNT
+mdefine_line|#define ASCV_BREAK_HIT_COUNT      ( ushort )0x002E
 DECL|macro|ASCV_ASCDVC_ERR_CODE_W
 mdefine_line|#define ASCV_ASCDVC_ERR_CODE_W  ( ushort )0x0030
 DECL|macro|ASCV_MCODE_CHKSUM_W
@@ -5642,7 +5660,12 @@ DECL|macro|ASC_NUM_BUS
 mdefine_line|#define ASC_NUM_BUS&t;&t;&t;&t;4
 multiline_comment|/* Reference Scsi_Host hostdata */
 DECL|macro|ASC_BOARDP
-mdefine_line|#define ASC_BOARDP(host) ((struct asc_board *) &amp;((host)-&gt;hostdata))
+mdefine_line|#define ASC_BOARDP(host) ((asc_board_t *) &amp;((host)-&gt;hostdata))
+multiline_comment|/* asc_board_t flags */
+DECL|macro|ASC_HOST_IN_RESET
+mdefine_line|#define ASC_HOST_IN_RESET&t;&t;0x01
+DECL|macro|ASC_HOST_IN_ABORT
+mdefine_line|#define ASC_HOST_IN_ABORT&t;&t;0x02
 DECL|macro|NO_ISA_DMA
 mdefine_line|#define NO_ISA_DMA&t;&t;&t;&t;0xff&t;&t;/* No ISA DMA Channel Used */
 DECL|macro|ASC_INFO_SIZE
@@ -5697,6 +5720,12 @@ DECL|macro|ASC_FRONT
 mdefine_line|#define ASC_FRONT&t;&t;1
 DECL|macro|ASC_BACK
 mdefine_line|#define ASC_BACK&t;&t;2
+multiline_comment|/* asc_dequeue_list() argument */
+DECL|macro|ASC_TID_ALL
+mdefine_line|#define ASC_TID_ALL&t;&t;(-1)
+multiline_comment|/* Return non-zero, if the queue is empty. */
+DECL|macro|ASC_QUEUE_EMPTY
+mdefine_line|#define ASC_QUEUE_EMPTY(ascq)&t;((ascq)-&gt;q_tidmask == 0)
 multiline_comment|/* PCI configuration declarations */
 DECL|macro|PCI_BASE_CLASS_PREDEFINED
 mdefine_line|#define PCI_BASE_CLASS_PREDEFINED&t;&t;&t;0x00
@@ -5945,6 +5974,11 @@ id|ulong
 id|callback
 suffix:semicolon
 multiline_comment|/* # calls asc_isr_callback() */
+DECL|member|done
+id|ulong
+id|done
+suffix:semicolon
+multiline_comment|/* # calls request scsi_done */
 multiline_comment|/* AscExeScsiQueue() Statistics */
 DECL|member|asc_noerror
 id|ulong
@@ -5991,7 +6025,7 @@ DECL|member|sg_xfer
 id|ulong
 id|sg_xfer
 suffix:semicolon
-multiline_comment|/* # scatter-gather tranfer 512-bytes */
+multiline_comment|/* # scatter-gather transfer 512-bytes */
 multiline_comment|/* Device SCSI Command Queuing Statistics */
 DECL|member|queue_full
 id|ASC_SCSI_BIT_ID_TYPE
@@ -6015,25 +6049,35 @@ r_typedef
 r_struct
 id|asc_queue
 (brace
-DECL|member|tidmask
+DECL|member|q_tidmask
 id|ASC_SCSI_BIT_ID_TYPE
-id|tidmask
+id|q_tidmask
 suffix:semicolon
 multiline_comment|/* queue mask */
-DECL|member|queue
+DECL|member|q_first
 id|REQP
-id|queue
+id|q_first
 (braket
 id|ASC_MAX_TID
 op_plus
 l_int|1
 )braket
 suffix:semicolon
-multiline_comment|/* queue linked list */
+multiline_comment|/* first queued request */
+DECL|member|q_last
+id|REQP
+id|q_last
+(braket
+id|ASC_MAX_TID
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* last queued request */
 macro_line|#ifdef ADVANSYS_STATS
-DECL|member|cur_count
+DECL|member|q_cur_cnt
 r_int
-id|cur_count
+id|q_cur_cnt
 (braket
 id|ASC_MAX_TID
 op_plus
@@ -6041,9 +6085,9 @@ l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* current queue count */
-DECL|member|max_count
+DECL|member|q_max_cnt
 r_int
-id|max_count
+id|q_max_cnt
 (braket
 id|ASC_MAX_TID
 op_plus
@@ -6058,6 +6102,7 @@ id|asc_queue_t
 suffix:semicolon
 multiline_comment|/*&n; * Structure allocated for each board.&n; *&n; * This structure is allocated by scsi_register() at the end&n; * of the &squot;Scsi_Host&squot; structure starting at the &squot;hostdata&squot;&n; * field. It is guaranteed to be allocated from DMA-able memory.&n; */
 DECL|struct|asc_board
+r_typedef
 r_struct
 id|asc_board
 (brace
@@ -6066,7 +6111,11 @@ r_int
 id|id
 suffix:semicolon
 multiline_comment|/* Board Id */
-multiline_comment|/* Asc Library */
+DECL|member|flags
+id|uint
+id|flags
+suffix:semicolon
+multiline_comment|/* Board flags */
 DECL|member|asc_dvc_var
 id|ASC_DVC_VAR
 id|asc_dvc_var
@@ -6077,40 +6126,36 @@ id|ASC_DVC_CFG
 id|asc_dvc_cfg
 suffix:semicolon
 multiline_comment|/* Device configuration */
-multiline_comment|/* Queued Commands */
 DECL|member|active
 id|asc_queue_t
 id|active
 suffix:semicolon
 multiline_comment|/* Active command queue */
-DECL|member|pending
+DECL|member|waiting
 id|asc_queue_t
-id|pending
+id|waiting
 suffix:semicolon
-multiline_comment|/* Pending command queue */
-multiline_comment|/* Target Initialization */
+multiline_comment|/* Waiting command queue */
 DECL|member|init_tidmask
 id|ASC_SCSI_BIT_ID_TYPE
 id|init_tidmask
 suffix:semicolon
 multiline_comment|/* Target initialized mask */
-DECL|member|scsireqq
-id|ASC_SCSI_REQ_Q
-id|scsireqq
-suffix:semicolon
-DECL|member|cap_info
-id|ASC_CAP_INFO
-id|cap_info
-suffix:semicolon
-DECL|member|inquiry
-id|ASC_SCSI_INQUIRY
-id|inquiry
-suffix:semicolon
 DECL|member|eep_config
 id|ASCEEP_CONFIG
 id|eep_config
 suffix:semicolon
 multiline_comment|/* EEPROM configuration */
+DECL|member|scsi_done_q
+id|asc_queue_t
+id|scsi_done_q
+suffix:semicolon
+multiline_comment|/* Completion command queue */
+DECL|member|reset_jiffies
+id|ulong
+id|reset_jiffies
+suffix:semicolon
+multiline_comment|/* Saved time of last reset */
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
 multiline_comment|/* /proc/scsi/advansys/[0...] */
 DECL|member|prtbuf
@@ -6128,7 +6173,9 @@ id|asc_stats
 suffix:semicolon
 multiline_comment|/* Board statistics */
 macro_line|#endif /* ADVANSYS_STATS */
+DECL|typedef|asc_board_t
 )brace
+id|asc_board_t
 suffix:semicolon
 multiline_comment|/*&n; * PCI configuration structures&n; */
 DECL|struct|_PCI_DATA_
@@ -6358,15 +6405,6 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* Global list of commands needing done function. */
-DECL|variable|asc_scsi_done
-id|STATIC
-id|Scsi_Cmnd
-op_star
-id|asc_scsi_done
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/* Overrun buffer shared between all boards. */
 DECL|variable|overrun_buf
 id|STATIC
@@ -6375,6 +6413,59 @@ id|overrun_buf
 (braket
 id|ASC_OVERRUN_BSIZE
 )braket
+op_assign
+(brace
+l_int|0
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Global structures used for device initialization.&n; */
+DECL|variable|asc_scsireqq
+id|STATIC
+id|ASC_SCSI_REQ_Q
+id|asc_scsireqq
+op_assign
+(brace
+(brace
+l_int|0
+)brace
+)brace
+suffix:semicolon
+DECL|variable|asc_cap_info
+id|STATIC
+id|ASC_CAP_INFO
+id|asc_cap_info
+op_assign
+(brace
+l_int|0
+)brace
+suffix:semicolon
+DECL|variable|asc_inquiry
+id|STATIC
+id|ASC_SCSI_INQUIRY
+id|asc_inquiry
+op_assign
+(brace
+(brace
+l_int|0
+)brace
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Global structures required to issue a command.&n; */
+DECL|variable|asc_scsi_q
+id|STATIC
+id|ASC_SCSI_Q
+id|asc_scsi_q
+op_assign
+(brace
+(brace
+l_int|0
+)brace
+)brace
+suffix:semicolon
+DECL|variable|asc_sg_head
+id|STATIC
+id|ASC_SG_HEAD
+id|asc_sg_head
 op_assign
 (brace
 l_int|0
@@ -6537,6 +6628,15 @@ op_star
 )paren
 suffix:semicolon
 id|STATIC
+r_void
+id|asc_scsi_done_list
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+id|STATIC
 r_int
 id|asc_execute_scsi_cmnd
 c_func
@@ -6658,6 +6758,19 @@ comma
 r_int
 )paren
 suffix:semicolon
+id|REQP
+id|asc_dequeue_list
+c_func
+(paren
+id|asc_queue_t
+op_star
+comma
+id|REQP
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 r_int
 id|asc_rmqueue
 c_func
@@ -6704,6 +6817,21 @@ suffix:semicolon
 id|STATIC
 r_int
 id|asc_prt_board_eeprom
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+id|STATIC
+r_int
+id|asc_prt_driver_conf
 c_func
 (paren
 r_struct
@@ -6913,8 +7041,7 @@ id|Scsi_Host
 op_star
 id|shp
 suffix:semicolon
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -7409,6 +7536,87 @@ id|curbuf
 op_add_assign
 id|cnt
 suffix:semicolon
+multiline_comment|/*&n;&t; * Display driver configuration and information for the board.&n;&t; */
+id|cp
+op_assign
+id|boardp-&gt;prtbuf
+suffix:semicolon
+id|cplen
+op_assign
+id|asc_prt_driver_conf
+c_func
+(paren
+id|shp
+comma
+id|cp
+comma
+id|ASC_PRTBUF_SIZE
+)paren
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|cplen
+OL
+id|ASC_PRTBUF_SIZE
+)paren
+suffix:semicolon
+id|cnt
+op_assign
+id|asc_proc_copy
+c_func
+(paren
+id|advoffset
+comma
+id|offset
+comma
+id|curbuf
+comma
+id|leftlen
+comma
+id|cp
+comma
+id|cplen
+)paren
+suffix:semicolon
+id|totcnt
+op_add_assign
+id|cnt
+suffix:semicolon
+id|leftlen
+op_sub_assign
+id|cnt
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|leftlen
+op_eq
+l_int|0
+)paren
+(brace
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_proc_info: totcnt %d&bslash;n&quot;
+comma
+id|totcnt
+)paren
+suffix:semicolon
+r_return
+id|totcnt
+suffix:semicolon
+)brace
+id|advoffset
+op_add_assign
+id|cplen
+suffix:semicolon
+id|curbuf
+op_add_assign
+id|cnt
+suffix:semicolon
 macro_line|#ifdef ADVANSYS_STATS
 multiline_comment|/*&n;&t; * Display driver statistics for the board.&n;&t; */
 id|cp
@@ -7616,8 +7824,7 @@ id|Scsi_Host
 op_star
 id|shp
 suffix:semicolon
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -8261,8 +8468,7 @@ id|tpnt
 comma
 r_sizeof
 (paren
-r_struct
-id|asc_board
+id|asc_board_t
 )paren
 )paren
 suffix:semicolon
@@ -8293,8 +8499,7 @@ l_int|0
 comma
 r_sizeof
 (paren
-r_struct
-id|asc_board
+id|asc_board_t
 )paren
 )paren
 suffix:semicolon
@@ -8348,7 +8553,7 @@ l_int|NULL
 id|ASC_PRINT3
 c_func
 (paren
-l_string|&quot;advansys_detect: Board %d: kmalloc(%d, %d) returned NULL&bslash;n&quot;
+l_string|&quot;advansys_detect: board %d: kmalloc(%d, %d) returned NULL&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -8463,7 +8668,7 @@ suffix:colon
 id|ASC_PRINT2
 c_func
 (paren
-l_string|&quot;advansys_detect: Board %d: unknown adapter type: %d&quot;
+l_string|&quot;advansys_detect: board %d: unknown adapter type: %d&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -8514,7 +8719,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitGetConfig: Board: %d: I/O port address modified&bslash;n&quot;
+l_string|&quot;AscInitGetConfig: board %d: I/O port address modified&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8527,7 +8732,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitGetConfig: Board %d: I/O port increment switch enabled&bslash;n&quot;
+l_string|&quot;AscInitGetConfig: board %d: I/O port increment switch enabled&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8540,7 +8745,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitGetConfig: Board %d: EEPROM checksum error&bslash;n&quot;
+l_string|&quot;AscInitGetConfig: board %d: EEPROM checksum error&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8553,7 +8758,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitGetConfig: Board %d: IRQ modified&bslash;n&quot;
+l_string|&quot;AscInitGetConfig: board %d: IRQ modified&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8566,7 +8771,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitGetConfig: Board %d: tag queuing enabled w/o disconnects&bslash;n&quot;
+l_string|&quot;AscInitGetConfig: board %d: tag queuing enabled w/o disconnects&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8578,7 +8783,7 @@ suffix:colon
 id|ASC_PRINT2
 c_func
 (paren
-l_string|&quot;AscInitGetConfig: Board %d: unknown warning: %x&bslash;n&quot;
+l_string|&quot;AscInitGetConfig: board %d: unknown warning: %x&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -8599,7 +8804,7 @@ l_int|0
 id|ASC_PRINT3
 c_func
 (paren
-l_string|&quot;AscInitGetConfig: Board %d error: init_state %x, err_code %x&bslash;n&quot;
+l_string|&quot;AscInitGetConfig: board %d error: init_state %x, err_code %x&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -8729,7 +8934,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitSetConfig: Board %d: I/O port address modified&bslash;n&quot;
+l_string|&quot;AscInitSetConfig: board %d: I/O port address modified&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8742,7 +8947,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitSetConfig: Board %d: I/O port increment switch enabled&bslash;n&quot;
+l_string|&quot;AscInitSetConfig: board %d: I/O port increment switch enabled&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8755,7 +8960,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitSetConfig: Board %d: EEPROM checksum error&bslash;n&quot;
+l_string|&quot;AscInitSetConfig: board %d: EEPROM checksum error&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8768,7 +8973,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitSetConfig: Board %d: IRQ modified&bslash;n&quot;
+l_string|&quot;AscInitSetConfig: board %d: IRQ modified&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8781,7 +8986,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;AscInitSetConfig: Board %d: tag queuing w/o disconnects&bslash;n&quot;
+l_string|&quot;AscInitSetConfig: board %d: tag queuing w/o disconnects&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -8793,7 +8998,7 @@ suffix:colon
 id|ASC_PRINT2
 c_func
 (paren
-l_string|&quot;AscInitSetConfig: Board %d: unknown warning: %x&bslash;n&quot;
+l_string|&quot;AscInitSetConfig: board %d: unknown warning: %x&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -8814,7 +9019,7 @@ l_int|0
 id|ASC_PRINT3
 c_func
 (paren
-l_string|&quot;AscInitSetConfig: Board %d error: init_state %x, err_code %x&bslash;n&quot;
+l_string|&quot;AscInitSetConfig: board %d error: init_state %x, err_code %x&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -8858,6 +9063,25 @@ op_assign
 id|asc_dvc_varp-&gt;irq_no
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; * One host supports one channel. There are two different&n;&t;&t;&t; * hosts for each channel of a dual channel board.&n;&t;&t;&t; */
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|shp-&gt;max_channel
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|shp-&gt;max_id
+op_assign
+id|ASC_MAX_TID
+op_plus
+l_int|1
+suffix:semicolon
+id|shp-&gt;max_lun
+op_assign
+id|ASC_MAX_LUN
+op_plus
+l_int|1
+suffix:semicolon
 id|shp-&gt;io_port
 op_assign
 id|asc_dvc_varp-&gt;iop_base
@@ -8917,11 +9141,40 @@ op_assign
 l_int|8
 suffix:semicolon
 macro_line|#else /* MODULE */
+multiline_comment|/*&n;&t;&t;&t; * Allow two commands with &squot;sg_tablesize&squot; scatter-gather&n;&t;&t;&t; * elements to be executed simultaneously. This value is&n;&t;&t;&t; * the theoretical hardware limit. It may be decreased&n;&t;&t;&t; * below.&n;&t;&t;&t; */
 id|shp-&gt;sg_tablesize
 op_assign
-id|ASC_MAX_SG_LIST
+(paren
+(paren
+(paren
+id|asc_dvc_varp-&gt;max_total_qng
+op_minus
+l_int|2
+)paren
+op_div
+l_int|2
+)paren
+op_star
+id|ASC_SG_LIST_PER_Q
+)paren
+op_plus
+l_int|1
 suffix:semicolon
 macro_line|#endif /* MODULE */
+multiline_comment|/*&n;&t;&t;&t; * The value of &squot;sg_tablesize&squot; can not exceed the SCSI&n;&t;&t;&t; * mid-level driver definition of SG_ALL. SG_ALL also&n;&t;&t;&t; * must not be exceeded, because it is used to define the&n;&t;&t;&t; * size of the scatter-gather table in &squot;struct asc_sg_head&squot;.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|shp-&gt;sg_tablesize
+OG
+id|SG_ALL
+)paren
+(brace
+id|shp-&gt;sg_tablesize
+op_assign
+id|SG_ALL
+suffix:semicolon
+)brace
 id|ASC_DBG1
 c_func
 (paren
@@ -9017,7 +9270,7 @@ l_int|0
 id|ASC_PRINT3
 c_func
 (paren
-l_string|&quot;advansys_detect: Board %d: request_dma() %d failed %d&bslash;n&quot;
+l_string|&quot;advansys_detect: board %d: request_dma() %d failed %d&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -9135,7 +9388,7 @@ macro_line|#endif /* version &gt;= v1.3.70 */
 id|ASC_PRINT2
 c_func
 (paren
-l_string|&quot;advansys_detect: Board %d: request_irq() failed %d&bslash;n&quot;
+l_string|&quot;advansys_detect: board %d: request_irq() failed %d&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -9207,7 +9460,7 @@ id|asc_dvc_varp
 id|ASC_PRINT3
 c_func
 (paren
-l_string|&quot;AscInitAsc1000Driver: Board %d error: init_state %x, err_code %x&bslash;n&quot;
+l_string|&quot;AscInitAsc1000Driver: board %d: error: init_state %x, err_code %x&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -9312,8 +9565,7 @@ op_star
 id|shp
 )paren
 (brace
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -9436,8 +9688,7 @@ id|info
 id|ASC_INFO_SIZE
 )braket
 suffix:semicolon
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -9478,14 +9729,40 @@ op_amp
 id|ASC_IS_ISA
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|asc_dvc_varp-&gt;bus_type
+op_amp
+id|ASC_IS_ISAPNP
+)paren
+op_eq
+id|ASC_IS_ISAPNP
+)paren
+(brace
+id|busname
+op_assign
+l_string|&quot;ISA PnP&quot;
+suffix:semicolon
+)brace
+r_else
+(brace
+id|busname
+op_assign
+l_string|&quot;ISA&quot;
+suffix:semicolon
+)brace
 id|sprintf
 c_func
 (paren
 id|info
 comma
-l_string|&quot;AdvanSys SCSI %s: ISA (%u CDB): BIOS %X, IO %X-%X, IRQ %u, DMA %u&quot;
+l_string|&quot;AdvanSys SCSI %s: %s %u CDB: BIOS %X, IO %X-%X, IRQ %u, DMA %u&quot;
 comma
 id|ASC_VERSION
+comma
+id|busname
 comma
 id|boardp-&gt;asc_dvc_var.max_total_qng
 comma
@@ -9548,10 +9825,30 @@ op_amp
 id|ASC_IS_PCI
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|asc_dvc_varp-&gt;bus_type
+op_amp
+id|ASC_IS_PCI_ULTRA
+)paren
+op_eq
+id|ASC_IS_PCI_ULTRA
+)paren
+(brace
+id|busname
+op_assign
+l_string|&quot;PCI Ultra&quot;
+suffix:semicolon
+)brace
+r_else
+(brace
 id|busname
 op_assign
 l_string|&quot;PCI&quot;
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -9562,7 +9859,7 @@ suffix:semicolon
 id|ASC_PRINT2
 c_func
 (paren
-l_string|&quot;advansys_info: Board %d: unknown bus type %d&bslash;n&quot;
+l_string|&quot;advansys_info: board %d: unknown bus type %d&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -9576,7 +9873,7 @@ c_func
 (paren
 id|info
 comma
-l_string|&quot;AdvanSys SCSI %s: %s (%u CDB): BIOS %X, IO %X-%X, IRQ %u&quot;
+l_string|&quot;AdvanSys SCSI %s: %s %u CDB: BIOS %X, IO %X-%X, IRQ %u&quot;
 comma
 id|ASC_VERSION
 comma
@@ -9725,18 +10022,16 @@ id|Scsi_Host
 op_star
 id|shp
 suffix:semicolon
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
 r_int
 id|flags
-op_assign
-l_int|0
 suffix:semicolon
-r_int
-id|interrupts_disabled
+id|Scsi_Cmnd
+op_star
+id|done_scp
 suffix:semicolon
 id|shp
 op_assign
@@ -9758,27 +10053,7 @@ comma
 id|queuecommand
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If there are any pending commands for this board before trying&n;&t; * to execute them, disable interrupts to preserve request ordering.&n;&t; *&n;&t; * The typical case will be no pending commands and interrupts&n;&t; * not disabled.&n;&t; */
-r_if
-c_cond
-(paren
-id|boardp-&gt;pending.tidmask
-op_eq
-l_int|0
-)paren
-(brace
-id|interrupts_disabled
-op_assign
-id|ASC_FALSE
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* Disable interrupts */
-id|interrupts_disabled
-op_assign
-id|ASC_TRUE
-suffix:semicolon
+multiline_comment|/*&n;&t; * Disable interrupts to preserve request ordering and provide&n;&t; * mutually exclusive access to global structures used to initiate&n;&t; * a request.&n;&t; */
 id|save_flags
 c_func
 (paren
@@ -9790,30 +10065,130 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Block new commands while handling a reset or abort request.&n;&t; */
+r_if
+c_cond
+(paren
+id|boardp-&gt;flags
+op_amp
+(paren
+id|ASC_HOST_IN_RESET
+op_or
+id|ASC_HOST_IN_ABORT
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|boardp-&gt;flags
+op_amp
+id|ASC_HOST_IN_RESET
+)paren
+(brace
 id|ASC_DBG1
 c_func
 (paren
 l_int|1
 comma
-l_string|&quot;advansys_queuecommand: asc_execute_queue() %x&bslash;n&quot;
+l_string|&quot;advansys_queuecommand: scp %x blocked for reset request&bslash;n&quot;
 comma
-id|boardp-&gt;pending.tidmask
+(paren
+r_int
+)paren
+id|scp
+)paren
+suffix:semicolon
+id|scp-&gt;result
+op_assign
+id|HOST_BYTE
+c_func
+(paren
+id|DID_RESET
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_queuecommand: scp %x blocked for abort request&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|scp
+)paren
+suffix:semicolon
+id|scp-&gt;result
+op_assign
+id|HOST_BYTE
+c_func
+(paren
+id|DID_ABORT
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * Add blocked requests to the board&squot;s &squot;scsi_done_q&squot;. The queued&n;&t;&t; * requests will be completed at the end of the abort or reset&n;&t;&t; * handling.&n;&t;&t; */
+id|asc_enqueue
+c_func
+(paren
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
+id|scp
+comma
+id|ASC_BACK
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Attempt to execute any waiting commands for the board.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ASC_QUEUE_EMPTY
+c_func
+(paren
+op_amp
+id|boardp-&gt;waiting
+)paren
+)paren
+(brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_queuecommand: before asc_execute_queue() waiting&bslash;n&quot;
 )paren
 suffix:semicolon
 id|asc_execute_queue
 c_func
 (paren
 op_amp
-id|boardp-&gt;pending
+id|boardp-&gt;waiting
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Save the function pointer to Linux mid-level &squot;done&squot; function and&n;&t; * execute the command.&n;&t; */
+multiline_comment|/*&n;&t; * Save the function pointer to Linux mid-level &squot;done&squot; function&n;&t; * and attempt to execute the command.&n;&t; *&n;&t; * If ASC_ERROR is returned the request has been added to the&n;&t; * board&squot;s &squot;active&squot; queue and will be completed by the interrupt&n;&t; * handler.&n;&t; *&n;&t; * If ASC_BUSY is returned add the request to the board&squot;s per&n;&t; * target waiting list.&n;&t; * &n;&t; * If an error occurred, the request will have been placed on the&n;&t; * board&squot;s &squot;scsi_done_q&squot; and must be completed before returning.&n;&t; */
 id|scp-&gt;scsi_done
 op_assign
 id|done
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|asc_execute_scsi_cmnd
@@ -9821,61 +10196,63 @@ c_func
 (paren
 id|scp
 )paren
-op_eq
+)paren
+(brace
+r_case
+id|ASC_NOERROR
+suffix:colon
+r_break
+suffix:semicolon
+r_case
 id|ASC_BUSY
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|interrupts_disabled
-op_eq
-id|ASC_FALSE
-)paren
-(brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|interrupts_disabled
-op_assign
-id|ASC_TRUE
-suffix:semicolon
-)brace
+suffix:colon
 id|asc_enqueue
 c_func
 (paren
 op_amp
-id|boardp-&gt;pending
+id|boardp-&gt;waiting
 comma
 id|scp
 comma
 id|ASC_BACK
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
+r_break
+suffix:semicolon
+r_case
+id|ASC_ERROR
+suffix:colon
+r_default
+suffix:colon
+id|done_scp
+op_assign
+id|asc_dequeue_list
+c_func
 (paren
-id|interrupts_disabled
-op_eq
-id|ASC_TRUE
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
+l_int|NULL
+comma
+id|ASC_TID_ALL
 )paren
-(brace
+suffix:semicolon
+multiline_comment|/* Interrupts could be enabled here. */
+id|asc_scsi_done_list
+c_func
+(paren
+id|done_scp
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -9892,7 +10269,11 @@ id|scp
 )paren
 (brace
 r_struct
-id|asc_board
+id|Scsi_Host
+op_star
+id|shp
+suffix:semicolon
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -9904,10 +10285,23 @@ r_int
 id|flags
 suffix:semicolon
 r_int
-m_abort
+id|status
+op_assign
+id|ASC_FALSE
+suffix:semicolon
+r_int
+id|abort_do_done
+op_assign
+id|ASC_FALSE
+suffix:semicolon
+id|Scsi_Cmnd
+op_star
+id|done_scp
 suffix:semicolon
 r_int
 id|ret
+op_assign
+id|ASC_ERROR
 suffix:semicolon
 id|ASC_DBG1
 c_func
@@ -9922,14 +10316,6 @@ r_int
 id|scp
 )paren
 suffix:semicolon
-id|ASC_STATS
-c_func
-(paren
-id|scp-&gt;host
-comma
-m_abort
-)paren
-suffix:semicolon
 multiline_comment|/* Save current flags and disable interrupts. */
 id|save_flags
 c_func
@@ -9942,6 +10328,25 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef ADVANSYS_STATS
+r_if
+c_cond
+(paren
+id|scp-&gt;host
+op_ne
+l_int|NULL
+)paren
+(brace
+id|ASC_STATS
+c_func
+(paren
+id|scp-&gt;host
+comma
+m_abort
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* ADVANSYS_STATS */
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
 r_if
 c_cond
@@ -9961,7 +10366,11 @@ macro_line|#endif /* version &gt;= v1.3.89 */
 r_if
 c_cond
 (paren
+(paren
+id|shp
+op_assign
 id|scp-&gt;host
+)paren
 op_eq
 l_int|NULL
 )paren
@@ -9980,14 +10389,57 @@ id|SCSI_ABORT_ERROR
 suffix:semicolon
 )brace
 r_else
-(brace
+r_if
+c_cond
+(paren
+(paren
 id|boardp
 op_assign
 id|ASC_BOARDP
 c_func
 (paren
-id|scp-&gt;host
+id|shp
 )paren
+)paren
+op_member_access_from_pointer
+id|flags
+op_amp
+(paren
+id|ASC_HOST_IN_RESET
+op_or
+id|ASC_HOST_IN_ABORT
+)paren
+)paren
+(brace
+id|ASC_PRINT2
+c_func
+(paren
+l_string|&quot;advansys_abort: board %d: Nested host reset or abort, flags 0x%x&bslash;n&quot;
+comma
+id|boardp-&gt;id
+comma
+id|boardp-&gt;flags
+)paren
+suffix:semicolon
+id|scp-&gt;result
+op_assign
+id|HOST_BYTE
+c_func
+(paren
+id|DID_ERROR
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|SCSI_ABORT_ERROR
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Set abort flag to avoid nested reset or abort requests. */
+id|boardp-&gt;flags
+op_or_assign
+id|ASC_HOST_IN_ABORT
 suffix:semicolon
 r_if
 c_cond
@@ -9996,7 +10448,7 @@ id|asc_rmqueue
 c_func
 (paren
 op_amp
-id|boardp-&gt;pending
+id|boardp-&gt;waiting
 comma
 id|scp
 )paren
@@ -10004,7 +10456,20 @@ op_eq
 id|ASC_TRUE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; &t; * If asc_rmqueue() found the command on the pending&n;&t;&t;&t; * queue, it had not been sent to the Asc Library.&n;&t;&t;&t; * After the queue is removed, no other handling is required.&n;&t;&t; &t; */
+multiline_comment|/*&n;&t;&t; &t; * If asc_rmqueue() found the command on the waiting&n;&t;&t;&t; * queue, it had not been sent to the device. After&n;&t;&t;&t; * the queue is removed, no other handling is required.&n;&t;&t; &t; */
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_abort: scp %x found on waiting queue&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|scp
+)paren
+suffix:semicolon
 id|scp-&gt;result
 op_assign
 id|HOST_BYTE
@@ -10034,7 +10499,7 @@ op_eq
 id|ASC_TRUE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; &t; * If asc_isqueued() found the command on the active&n;&t;&t;&t; * queue, it has been sent to the Asc Library. The&n;&t;&t;&t; * command should be returned through the interrupt&n;&t;&t;&t; * handler after calling AscAbortSRB().&n;&t;&t; &t; */
+multiline_comment|/*&n;&t;&t; &t; * If asc_isqueued() found the command on the active&n;&t;&t;&t; * queue, it has been sent to the device. The command&n;&t;&t;&t; * should be returned through the interrupt handler after&n;&t;&t;&t; * calling AscAbortSRB().&n;&t;&t; &t; */
 id|asc_dvc_varp
 op_assign
 op_amp
@@ -10048,16 +10513,29 @@ c_func
 id|DID_ABORT
 )paren
 suffix:semicolon
-multiline_comment|/* Must enable interrupts for AscAbortSRB() */
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Enable interrupts for AscAbortSRB(). */
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_abort: before AscAbortSRB(), scp %x&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|scp
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
-m_abort
+id|status
 op_assign
 id|AscAbortSRB
 c_func
@@ -10136,7 +10614,7 @@ multiline_comment|/*&n;&t;&t;&t; * If the abort failed, remove the request from 
 r_if
 c_cond
 (paren
-m_abort
+id|status
 op_ne
 id|ASC_TRUE
 )paren
@@ -10164,6 +10642,88 @@ c_func
 id|DID_ABORT
 )paren
 suffix:semicolon
+id|abort_do_done
+op_assign
+id|ASC_TRUE
+suffix:semicolon
+)brace
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t;&t; * The command was not found on the active or waiting queues.&n;&t;&t;&t; */
+id|ret
+op_assign
+id|SCSI_ABORT_NOT_RUNNING
+suffix:semicolon
+)brace
+multiline_comment|/* Clear abort flag. */
+id|boardp-&gt;flags
+op_and_assign
+op_complement
+id|ASC_HOST_IN_ABORT
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Because the ASC_HOST_IN_ABORT flag causes both&n;&t;&t; * &squot;advansys_interrupt&squot; and &squot;asc_isr_callback&squot; to&n;&t;&t; * queue requests to the board&squot;s &squot;scsi_done_q&squot; and&n;&t;&t; * prevents waiting commands from being executed,&n;&t;&t; * these queued requests must be handled here.&n;&t;&t; */
+id|done_scp
+op_assign
+id|asc_dequeue_list
+c_func
+(paren
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
+l_int|NULL
+comma
+id|ASC_TID_ALL
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Start any waiting commands for the board.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ASC_QUEUE_EMPTY
+c_func
+(paren
+op_amp
+id|boardp-&gt;waiting
+)paren
+)paren
+(brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_interrupt: before asc_execute_queue()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|asc_execute_queue
+c_func
+(paren
+op_amp
+id|boardp-&gt;waiting
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Interrupts could be enabled here. */
+multiline_comment|/*&n;&t;&t; * If needed, complete the aborted request.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|abort_do_done
+op_eq
+id|ASC_TRUE
+)paren
+(brace
+id|ASC_STATS
+c_func
+(paren
+id|scp-&gt;host
+comma
+id|done
+)paren
+suffix:semicolon
 id|scp
 op_member_access_from_pointer
 id|scsi_done
@@ -10173,23 +10733,14 @@ id|scp
 )paren
 suffix:semicolon
 )brace
-)brace
-)brace
-r_else
-(brace
-multiline_comment|/*&n;&t;&t;&t; * The command was not found on the active or pending queues.&n;&t;&t;&t; */
-id|ret
-op_assign
-id|SCSI_ABORT_NOT_RUNNING
-suffix:semicolon
-)brace
-)brace
-id|restore_flags
+multiline_comment|/*&n;&t;&t; * It is possible for the request done function to re-enable&n;&t;&t; * interrupts without confusing the driver. But here interrupts&n;&t;&t; * aren&squot;t enabled until all requests have been completed.&n;&t;&t; */
+id|asc_scsi_done_list
 c_func
 (paren
-id|flags
+id|done_scp
 )paren
 suffix:semicolon
+)brace
 id|ASC_DBG1
 c_func
 (paren
@@ -10198,6 +10749,21 @@ comma
 l_string|&quot;advansys_abort: ret %d&bslash;n&quot;
 comma
 id|ret
+)paren
+suffix:semicolon
+multiline_comment|/* Re-enable interrupts, if they were enabled on entry. */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|ret
+op_ne
+id|ASC_ERROR
 )paren
 suffix:semicolon
 r_return
@@ -10230,7 +10796,11 @@ id|reset_flags
 macro_line|#endif /* version &gt;= v1.3.89 */
 (brace
 r_struct
-id|asc_board
+id|Scsi_Host
+op_star
+id|shp
+suffix:semicolon
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -10243,20 +10813,42 @@ id|flags
 suffix:semicolon
 id|Scsi_Cmnd
 op_star
-id|tscp
+id|done_scp
+op_assign
+l_int|NULL
+comma
+op_star
+id|last_scp
+op_assign
+l_int|NULL
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|Scsi_Cmnd
+op_star
+id|tscp
+comma
+op_star
+id|new_last_scp
+suffix:semicolon
 r_int
 id|scp_found
 op_assign
 id|ASC_FALSE
 suffix:semicolon
-macro_line|#endif /* version &gt;= v1.3.89 */
 r_int
-id|i
+id|device_reset
+op_assign
+id|ASC_FALSE
+suffix:semicolon
+r_int
+id|status
+suffix:semicolon
+r_int
+id|target
 suffix:semicolon
 r_int
 id|ret
+op_assign
+id|ASC_ERROR
 suffix:semicolon
 id|ASC_DBG1
 c_func
@@ -10271,14 +10863,6 @@ r_int
 id|scp
 )paren
 suffix:semicolon
-id|ASC_STATS
-c_func
-(paren
-id|scp-&gt;host
-comma
-id|reset
-)paren
-suffix:semicolon
 multiline_comment|/* Save current flags and disable interrupts. */
 id|save_flags
 c_func
@@ -10291,6 +10875,25 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef ADVANSYS_STATS
+r_if
+c_cond
+(paren
+id|scp-&gt;host
+op_ne
+l_int|NULL
+)paren
+(brace
+id|ASC_STATS
+c_func
+(paren
+id|scp-&gt;host
+comma
+id|reset
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* ADVANSYS_STATS */
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
 r_if
 c_cond
@@ -10310,7 +10913,11 @@ macro_line|#endif /* version &gt;= v1.3.89 */
 r_if
 c_cond
 (paren
+(paren
+id|shp
+op_assign
 id|scp-&gt;host
+)paren
 op_eq
 l_int|NULL
 )paren
@@ -10329,35 +10936,106 @@ id|SCSI_RESET_ERROR
 suffix:semicolon
 )brace
 r_else
-(brace
+r_if
+c_cond
+(paren
+(paren
 id|boardp
 op_assign
 id|ASC_BOARDP
 c_func
 (paren
-id|scp-&gt;host
+id|shp
+)paren
+)paren
+op_member_access_from_pointer
+id|flags
+op_amp
+(paren
+id|ASC_HOST_IN_RESET
+op_or
+id|ASC_HOST_IN_ABORT
+)paren
+)paren
+(brace
+id|ASC_PRINT2
+c_func
+(paren
+l_string|&quot;advansys_reset: board %d: Nested host reset or abort, flags 0x%x&bslash;n&quot;
+comma
+id|boardp-&gt;id
+comma
+id|boardp-&gt;flags
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
-multiline_comment|/*&n;&t; &t; * If the request is on the target pending or active queue,&n;&t;&t; * note that it was found.&n;&t;&t; */
+id|scp-&gt;result
+op_assign
+id|HOST_BYTE
+c_func
+(paren
+id|DID_ERROR
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|SCSI_RESET_ERROR
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
+id|jiffies
+op_ge
+id|boardp-&gt;reset_jiffies
+op_logical_and
+id|jiffies
+OL
 (paren
-id|asc_isqueued
+id|boardp-&gt;reset_jiffies
+op_plus
+(paren
+l_int|10
+op_star
+id|HZ
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Don&squot;t allow a reset to be attempted within 10 seconds&n;&t;&t; * of the last reset.&n;&t;&t; *&n;&t;&t; * If &squot;jiffies&squot; wrapping occurs, the reset request will go&n;&t;&t; * through, because a wrapped &squot;jiffies&squot; would not pass the&n;&t;&t; * test above.&n;&t;&t; */
+id|ASC_DBG
 c_func
 (paren
-op_amp
-id|boardp-&gt;pending
+l_int|1
 comma
-id|scp
+l_string|&quot;advansys_reset: reset within 10 sec of last reset ignored&bslash;n&quot;
 )paren
-op_eq
-id|ASC_TRUE
-)paren
-op_logical_or
+suffix:semicolon
+id|scp-&gt;result
+op_assign
+id|HOST_BYTE
+c_func
 (paren
-id|asc_isqueued
+id|DID_ERROR
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|SCSI_RESET_ERROR
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Set reset flag to avoid nested reset or abort requests. */
+id|boardp-&gt;flags
+op_or_assign
+id|ASC_HOST_IN_RESET
+suffix:semicolon
+multiline_comment|/*&n;&t; &t; * If the request is on the target waiting or active queue,&n;&t;&t; * note that it was found and remove it from its queue.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|asc_rmqueue
 c_func
 (paren
 op_amp
@@ -10368,14 +11046,49 @@ id|scp
 op_eq
 id|ASC_TRUE
 )paren
-)paren
 (brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_reset: active scp_found = TRUE&bslash;n&quot;
+)paren
+suffix:semicolon
 id|scp_found
 op_assign
 id|ASC_TRUE
 suffix:semicolon
 )brace
-macro_line|#endif /* version &gt;= v1.3.89 */
+r_else
+r_if
+c_cond
+(paren
+id|asc_rmqueue
+c_func
+(paren
+op_amp
+id|boardp-&gt;waiting
+comma
+id|scp
+)paren
+op_eq
+id|ASC_TRUE
+)paren
+(brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_reset: waiting scp_found = TRUE&bslash;n&quot;
+)paren
+suffix:semicolon
+id|scp_found
+op_assign
+id|ASC_TRUE
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * If the suggest reset bus flags are set, reset the bus.&n;&t;&t; * Otherwise only reset the device.&n;&t;&t; */
 id|asc_dvc_varp
 op_assign
@@ -10396,74 +11109,196 @@ id|SCSI_RESET_SUGGEST_HOST_RESET
 )paren
 (brace
 macro_line|#endif /* version &gt;= v1.3.89 */
-multiline_comment|/*&n;&t;&t;&t; * Done all pending requests for all targets with DID_RESET.&n;&t;&t;&t; */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-op_le
-id|ASC_MAX_TID
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_while
-c_loop
-(paren
-(paren
-id|tscp
-op_assign
-id|asc_dequeue
-c_func
-(paren
-op_amp
-id|boardp-&gt;pending
-comma
-id|i
-)paren
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|tscp-&gt;result
-op_assign
-id|HOST_BYTE
-c_func
-(paren
-id|DID_RESET
-)paren
-suffix:semicolon
-id|tscp
-op_member_access_from_pointer
-id|scsi_done
-c_func
-(paren
-id|tscp
-)paren
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&n;&t;&t;&t; * Reset the target&squot;s SCSI bus.&n;&t;&t;&t; */
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_reset: before AscResetSB()&bslash;n&quot;
+)paren
+suffix:semicolon
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* Enable interrupts for AscResetSB(). */
-r_switch
-c_cond
-(paren
+id|status
+op_assign
 id|AscResetSB
 c_func
 (paren
 id|asc_dvc_varp
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|status
+)paren
+(brace
+r_case
+id|ASC_TRUE
+suffix:colon
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_reset: AscResetSB() success&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|SCSI_RESET_SUCCESS
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ASC_ERROR
+suffix:colon
+r_default
+suffix:colon
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_reset: AscResetSB() failed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|SCSI_RESET_ERROR
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t;&t; * Reset the specified device. If the device reset fails,&n;&t;&t;&t; * then reset the SCSI bus.&n;&t;&t;&t; */
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_reset: before AscResetDevice(), target %d&bslash;n&quot;
+comma
+id|scp-&gt;target
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Enable interrupts for AscResetDevice(). */
+id|status
+op_assign
+id|AscResetDevice
+c_func
+(paren
+id|asc_dvc_varp
+comma
+id|scp-&gt;target
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * If the device has been reset, try to initialize it.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|status
+op_eq
+id|ASC_TRUE
+)paren
+(brace
+id|status
+op_assign
+id|asc_init_dev
+c_func
+(paren
+id|asc_dvc_varp
+comma
+id|scp
+)paren
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|status
+)paren
+(brace
+r_case
+id|ASC_TRUE
+suffix:colon
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_reset: AscResetDevice() success&bslash;n&quot;
+)paren
+suffix:semicolon
+id|device_reset
+op_assign
+id|ASC_TRUE
+suffix:semicolon
+id|ret
+op_assign
+id|SCSI_RESET_SUCCESS
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ASC_ERROR
+suffix:colon
+r_default
+suffix:colon
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_reset: AscResetDevice() failed; Calling AscResetSB()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Enable interrupts for AscResetSB(). */
+id|status
+op_assign
+id|AscResetSB
+c_func
+(paren
+id|asc_dvc_varp
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|status
 )paren
 (brace
 r_case
@@ -10503,44 +11338,86 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|cli
+r_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* version &gt;= v1.3.89 */
+multiline_comment|/*&n;&t;&t; * Because the ASC_HOST_IN_RESET flag causes both&n;&t;&t; * &squot;advansys_interrupt&squot; and &squot;asc_isr_callback&squot; to&n;&t;&t; * queue requests to the board&squot;s &squot;scsi_done_q&squot; and&n;&t;&t; * prevents waiting commands from being executed,&n;&t;&t; * these queued requests must be handled here.&n;&t;&t; */
+id|done_scp
+op_assign
+id|asc_dequeue_list
 c_func
 (paren
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
+op_amp
+id|last_scp
+comma
+id|ASC_TID_ALL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Done all active requests for all targets with DID_RESET.&n;&t;&t;&t; */
-r_for
-c_loop
+multiline_comment|/*&n;&t;&t; * If a device reset was performed dequeue all waiting&n;&t;&t; * and active requests for the device and set the request&n;&t;&t; * status to DID_RESET.&n;&t;&t; *&n;&t;&t; * If a SCSI bus reset was performed dequeue all waiting&n;&t;&t; * and active requests for all devices and set the request&n;&t;&t; * status to DID_RESET.&n;&t;&t; */
+r_if
+c_cond
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-op_le
-id|ASC_MAX_TID
-suffix:semicolon
-id|i
-op_increment
+id|device_reset
+op_eq
+id|ASC_TRUE
 )paren
 (brace
-r_while
-c_loop
-(paren
-(paren
-id|tscp
+id|target
 op_assign
-id|asc_dequeue
+id|scp-&gt;target
+suffix:semicolon
+)brace
+r_else
+(brace
+id|target
+op_assign
+id|ASC_TID_ALL
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * Add active requests to &squot;done_scp&squot; and set the request status&n;&t;&t; * to DID_RESET.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|done_scp
+op_eq
+l_int|NULL
+)paren
+(brace
+id|done_scp
+op_assign
+id|asc_dequeue_list
 c_func
 (paren
 op_amp
 id|boardp-&gt;active
 comma
-id|i
+op_amp
+id|last_scp
+comma
+id|target
 )paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|tscp
+op_assign
+id|done_scp
+suffix:semicolon
+id|tscp
+suffix:semicolon
+id|tscp
+op_assign
+id|REQPNEXT
+c_func
+(paren
+id|tscp
 )paren
-op_ne
-l_int|NULL
 )paren
 (brace
 id|tscp-&gt;result
@@ -10551,38 +11428,76 @@ c_func
 id|DID_RESET
 )paren
 suffix:semicolon
-id|tscp
-op_member_access_from_pointer
-id|scsi_done
-c_func
-(paren
-id|tscp
-)paren
-suffix:semicolon
 )brace
-)brace
-macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Done all pending requests for the target with DID_RESET.&n;&t;&t;&t; */
-r_while
-c_loop
+id|ASC_ASSERT
+c_func
 (paren
+id|last_scp
+op_ne
+l_int|NULL
+)paren
+suffix:semicolon
+id|REQPNEXT
+c_func
 (paren
-id|tscp
+id|last_scp
+)paren
 op_assign
-id|asc_dequeue
+id|asc_dequeue_list
 c_func
 (paren
 op_amp
-id|boardp-&gt;pending
+id|boardp-&gt;active
 comma
-id|scp-&gt;target
+op_amp
+id|new_last_scp
+comma
+id|target
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_last_scp
+op_ne
+l_int|NULL
+)paren
+(brace
+id|ASC_ASSERT
+c_func
+(paren
+id|REQPNEXT
+c_func
+(paren
+id|last_scp
 )paren
 op_ne
 l_int|NULL
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|tscp
+op_assign
+id|REQPNEXT
+c_func
+(paren
+id|last_scp
+)paren
+suffix:semicolon
+id|tscp
+suffix:semicolon
+id|tscp
+op_assign
+id|REQPNEXT
+c_func
+(paren
+id|tscp
+)paren
 )paren
 (brace
 id|tscp-&gt;result
@@ -10593,93 +11508,199 @@ c_func
 id|DID_RESET
 )paren
 suffix:semicolon
+)brace
+id|last_scp
+op_assign
+id|new_last_scp
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t;&t; * Add waiting requests to &squot;done_scp&squot; and set the request status&n;&t;&t; * to DID_RESET.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|done_scp
+op_eq
+l_int|NULL
+)paren
+(brace
+id|done_scp
+op_assign
+id|asc_dequeue_list
+c_func
+(paren
+op_amp
+id|boardp-&gt;waiting
+comma
+op_amp
+id|last_scp
+comma
+id|target
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
 id|tscp
-op_member_access_from_pointer
-id|scsi_done
+op_assign
+id|done_scp
+suffix:semicolon
+id|tscp
+suffix:semicolon
+id|tscp
+op_assign
+id|REQPNEXT
 c_func
 (paren
 id|tscp
+)paren
+)paren
+(brace
+id|tscp-&gt;result
+op_assign
+id|HOST_BYTE
+c_func
+(paren
+id|DID_RESET
 )paren
 suffix:semicolon
 )brace
-id|sti
+)brace
+r_else
+(brace
+id|ASC_ASSERT
 c_func
 (paren
+id|last_scp
+op_ne
+l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* Enabled interrupts for AscResetDevice(). */
+id|REQPNEXT
+c_func
+(paren
+id|last_scp
+)paren
+op_assign
+id|asc_dequeue_list
+c_func
+(paren
+op_amp
+id|boardp-&gt;waiting
+comma
+op_amp
+id|new_last_scp
+comma
+id|target
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_last_scp
+op_ne
+l_int|NULL
+)paren
+(brace
+id|ASC_ASSERT
+c_func
+(paren
+id|REQPNEXT
+c_func
+(paren
+id|last_scp
+)paren
+op_ne
+l_int|NULL
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|tscp
+op_assign
+id|REQPNEXT
+c_func
+(paren
+id|last_scp
+)paren
+suffix:semicolon
+id|tscp
+suffix:semicolon
+id|tscp
+op_assign
+id|REQPNEXT
+c_func
+(paren
+id|tscp
+)paren
+)paren
+(brace
+id|tscp-&gt;result
+op_assign
+id|HOST_BYTE
+c_func
+(paren
+id|DID_RESET
+)paren
+suffix:semicolon
+)brace
+id|last_scp
+op_assign
+id|new_last_scp
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Save the time of the most recently completed reset. */
+id|boardp-&gt;reset_jiffies
+op_assign
+id|jiffies
+suffix:semicolon
+multiline_comment|/* Clear reset flag. */
+id|boardp-&gt;flags
+op_and_assign
+op_complement
+id|ASC_HOST_IN_RESET
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Start any waiting commands for the board.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ASC_QUEUE_EMPTY
+c_func
+(paren
+op_amp
+id|boardp-&gt;waiting
+)paren
+)paren
+(brace
 id|ASC_DBG
 c_func
 (paren
 l_int|1
 comma
-l_string|&quot;advansys_reset: AscResetDevice()&bslash;n&quot;
+l_string|&quot;advansys_interrupt: before asc_execute_queue()&bslash;n&quot;
 )paren
 suffix:semicolon
-(paren
-r_void
-)paren
-id|AscResetDevice
-c_func
-(paren
-id|asc_dvc_varp
-comma
-id|scp-&gt;target
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Done all active requests for the target with DID_RESET.&n;&t;&t;&t; */
-r_while
-c_loop
-(paren
-(paren
-id|tscp
-op_assign
-id|asc_dequeue
+id|asc_execute_queue
 c_func
 (paren
 op_amp
-id|boardp-&gt;active
-comma
-id|scp-&gt;target
-)paren
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|tscp-&gt;result
-op_assign
-id|HOST_BYTE
-c_func
-(paren
-id|DID_RESET
-)paren
-suffix:semicolon
-id|tscp
-op_member_access_from_pointer
-id|scsi_done
-c_func
-(paren
-id|tscp
+id|boardp-&gt;waiting
 )paren
 suffix:semicolon
 )brace
-)brace
-macro_line|#endif /* version &gt;= v1.3.89 */
+multiline_comment|/* Interrupts could be enabled here. */
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
-multiline_comment|/*&n;&t;&t; * If the command was not on the active or pending request&n;&t;&t; * queues and the SCSI_RESET_SYNCHRONOUS flag is set, then&n;&t;&t; * done the command now. If the command had been on the&n;&t;&t; * active or pending request queues it would have already&n;&t;&t; * been completed.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If the command was found on the active or waiting request&n;&t;&t; * queues or if the the SCSI_RESET_SYNCHRONOUS flag is set,&n;&t;&t; * then done the command now.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|scp_found
 op_eq
-id|ASC_FALSE
-op_logical_and
+id|ASC_TRUE
+op_logical_or
 (paren
 id|reset_flags
 op_amp
@@ -10695,12 +11716,54 @@ c_func
 id|DID_RESET
 )paren
 suffix:semicolon
+id|ASC_STATS
+c_func
+(paren
+id|scp-&gt;host
+comma
+id|done
+)paren
+suffix:semicolon
 id|scp
 op_member_access_from_pointer
 id|scsi_done
 c_func
 (paren
-id|tscp
+id|scp
+)paren
+suffix:semicolon
+)brace
+macro_line|#else /* version &gt;= v1.3.89 */
+r_if
+c_cond
+(paren
+id|scp_found
+op_eq
+id|ASC_TRUE
+)paren
+(brace
+id|scp-&gt;result
+op_assign
+id|HOST_BYTE
+c_func
+(paren
+id|DID_RESET
+)paren
+suffix:semicolon
+id|ASC_STATS
+c_func
+(paren
+id|scp-&gt;host
+comma
+id|done
+)paren
+suffix:semicolon
+id|scp
+op_member_access_from_pointer
+id|scsi_done
+c_func
+(paren
+id|scp
 )paren
 suffix:semicolon
 )brace
@@ -10709,13 +11772,14 @@ id|ret
 op_assign
 id|SCSI_RESET_SUCCESS
 suffix:semicolon
-)brace
-id|restore_flags
+multiline_comment|/*&n;&t;&t; * It is possible for the request done function to re-enable&n;&t;&t; * interrupts without confusing the driver. But here interrupts&n;&t;&t; * aren&squot;t enabled until requests have been completed.&n;&t;&t; */
+id|asc_scsi_done_list
 c_func
 (paren
-id|flags
+id|done_scp
 )paren
 suffix:semicolon
+)brace
 id|ASC_DBG1
 c_func
 (paren
@@ -10724,6 +11788,21 @@ comma
 l_string|&quot;advansys_reset: ret %d&quot;
 comma
 id|ret
+)paren
+suffix:semicolon
+multiline_comment|/* Re-enable interrupts, if they were enabled on entry. */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|ret
+op_ne
+id|ASC_ERROR
 )paren
 suffix:semicolon
 r_return
@@ -11095,7 +12174,7 @@ suffix:semicolon
 macro_line|# include &quot;scsi_module.c&quot;
 macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * --- Miscellaneous Driver Functions&n; */
-multiline_comment|/*&n; * First-level interrupt handler.&n; *&n; * For versions &gt; v1.3.70, &squot;dev_id&squot; is a pointer to the interrupting&n; * adapter&squot;s struct asc_board. Because all boards are currently checked&n; * for interrupts on each interrupt, &squot;dev_id&squot; is not referenced. &squot;dev_id&squot;&n; * could be used to identify an interrupt passed to the AdvanSys driver&n; * but actually for a device sharing an interrupt with an AdvanSys adapter.&n; */
+multiline_comment|/*&n; * First-level interrupt handler.&n; *&n; * For versions &gt; v1.3.70, &squot;dev_id&squot; is a pointer to the interrupting&n; * adapter&squot;s asc_board_t. Because all boards are currently checked&n; * for interrupts on each interrupt, &squot;dev_id&squot; is not referenced. &squot;dev_id&squot;&n; * could be used to identify an interrupt passed to the AdvanSys driver,&n; * which is for a device sharing an interrupt with an AdvanSys adapter.&n; */
 id|STATIC
 r_void
 macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(1,3,70)
@@ -11130,20 +12209,31 @@ id|regs
 macro_line|#endif /* version &gt;= v1.3.70 */
 (brace
 r_int
-id|i
-suffix:semicolon
-r_int
 id|flags
 suffix:semicolon
-id|Scsi_Cmnd
+r_int
+id|i
+suffix:semicolon
+id|asc_board_t
 op_star
-id|scp
+id|boardp
 suffix:semicolon
 id|Scsi_Cmnd
 op_star
-id|tscp
+id|done_scp
+op_assign
+l_int|NULL
+comma
+op_star
+id|last_scp
+op_assign
+l_int|NULL
 suffix:semicolon
-multiline_comment|/* Disable interrupts, if the aren&squot;t already disabled. */
+id|Scsi_Cmnd
+op_star
+id|new_last_scp
+suffix:semicolon
+multiline_comment|/* Disable interrupts, if they aren&squot;t already disabled. */
 id|save_flags
 c_func
 (paren
@@ -11190,6 +12280,17 @@ comma
 id|check_interrupt
 )paren
 suffix:semicolon
+id|boardp
+op_assign
+id|ASC_BOARDP
+c_func
+(paren
+id|asc_host
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -11228,38 +12329,144 @@ id|AscISR
 c_func
 (paren
 op_amp
-id|ASC_BOARDP
-c_func
-(paren
-id|asc_host
-(braket
-id|i
-)braket
-)paren
-op_member_access_from_pointer
-id|asc_dvc_var
+id|boardp-&gt;asc_dvc_var
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n;&t; * While interrupts are still disabled save the list of requests that&n;&t; * need their done function called. After re-enabling interrupts call&n;&t; * the done function which may re-enable interrupts anyway.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Start waiting requests and create a list of completed requests.&n;&t;&t; * &n;&t;&t; * If a reset or abort request is being performed for the board,&n;&t;&t; * the reset or abort handler will complete pending requests after&n;&t;&t; * it has completed.&n;&t;&t; */
 r_if
 c_cond
 (paren
 (paren
-id|scp
-op_assign
-id|asc_scsi_done
+id|boardp-&gt;flags
+op_amp
+(paren
+id|ASC_HOST_IN_RESET
+op_or
+id|ASC_HOST_IN_ABORT
 )paren
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Start any waiting commands for the board. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ASC_QUEUE_EMPTY
+c_func
+(paren
+op_amp
+id|boardp-&gt;waiting
+)paren
+)paren
+(brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;advansys_interrupt: before asc_execute_queue()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|asc_execute_queue
+c_func
+(paren
+op_amp
+id|boardp-&gt;waiting
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t;&t; * Add to the list of requests that must be completed.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|done_scp
+op_eq
+l_int|NULL
+)paren
+(brace
+id|done_scp
+op_assign
+id|asc_dequeue_list
+c_func
+(paren
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
+op_amp
+id|last_scp
+comma
+id|ASC_TID_ALL
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ASC_ASSERT
+c_func
+(paren
+id|last_scp
+op_ne
+l_int|NULL
+)paren
+suffix:semicolon
+id|REQPNEXT
+c_func
+(paren
+id|last_scp
+)paren
+op_assign
+id|asc_dequeue_list
+c_func
+(paren
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
+op_amp
+id|new_last_scp
+comma
+id|ASC_TID_ALL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_last_scp
 op_ne
 l_int|NULL
 )paren
 (brace
-id|asc_scsi_done
-op_assign
+id|ASC_ASSERT
+c_func
+(paren
+id|REQPNEXT
+c_func
+(paren
+id|last_scp
+)paren
+op_ne
 l_int|NULL
+)paren
+suffix:semicolon
+id|last_scp
+op_assign
+id|new_last_scp
 suffix:semicolon
 )brace
+)brace
+)brace
+)brace
+multiline_comment|/* Interrupts could be enabled here. */
+multiline_comment|/*&n;&t; * It is possible for the request done function to re-enable&n;&t; * interrupts without confusing the driver. But here interrupts&n;&t; * aren&squot;t enabled until all requests have been completed.&n;&t; */
+id|asc_scsi_done_list
+c_func
+(paren
+id|done_scp
+)paren
+suffix:semicolon
 multiline_comment|/* Re-enable interrupts, if they were enabled on entry. */
 id|restore_flags
 c_func
@@ -11267,33 +12474,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|scp
-)paren
-(brace
-id|tscp
-op_assign
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-id|scp-&gt;host_scribble
-suffix:semicolon
-id|scp
-op_member_access_from_pointer
-id|scsi_done
-c_func
-(paren
-id|scp
-)paren
-suffix:semicolon
-id|scp
-op_assign
-id|tscp
-suffix:semicolon
-)brace
 id|ASC_DBG
 c_func
 (paren
@@ -11327,8 +12507,7 @@ id|Scsi_Device
 op_star
 id|device
 suffix:semicolon
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -11424,7 +12603,71 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Execute a single &squot;Scsi_Cmnd&squot;.&n; *&n; * The function &squot;done&squot; is called when the request has been completed.&n; *&n; * Scsi_Cmnd:&n; *&n; *  host - board controlling device&n; *  device - device to send command&n; *  target - target of device&n; *  lun - lun of device&n; *  cmd_len - length of SCSI CDB&n; *&t;cmnd - buffer for SCSI 8, 10, or 12 byte CDB&n; *  use_sg - if non-zero indicates scatter-gather request with use_sg elements&n; *&n; *  if (use_sg == 0)&n; *&t;&t;request_buffer - buffer address for request&n; *&t;&t;request_bufflen - length of request buffer&n; *  else&n; *&t;&t;request_buffer - pointer to scatterlist structure&n; *&n; *  sense_buffer - sense command buffer&n; *&n; *  result (4 bytes of an int):&n; *   Byte Meaning&n; *   0&t;  SCSI Status Byte Code&n; *   1&t;  SCSI One Byte Message Code&n; *   2 &t;  Host Error Code&n; *   3&t;  Mid-Level Error Code&n; *&n; *  host driver fields:&n; *  SCp - Scsi_Pointer used for command processing status&n; *  scsi_done - used to save caller&squot;s done function&n; * &t;host_scribble - used for pointer to another Scsi_Cmnd&n; *&n; * If this function returns ASC_NOERROR or ASC_ERROR the done&n; * function has been called. If ASC_BUSY is returned the request&n; * must be enqueued by the caller and re-tried later.&n; */
+multiline_comment|/*&n; * Complete all requests on the singly linked list pointed&n; * to by &squot;scp&squot;.&n; *&n; * Interrupts can be enabled on entry.&n; */
+id|STATIC
+r_void
+DECL|function|asc_scsi_done_list
+id|asc_scsi_done_list
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|scp
+)paren
+(brace
+id|Scsi_Cmnd
+op_star
+id|tscp
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|scp
+op_ne
+l_int|NULL
+)paren
+(brace
+id|tscp
+op_assign
+id|REQPNEXT
+c_func
+(paren
+id|scp
+)paren
+suffix:semicolon
+id|REQPNEXT
+c_func
+(paren
+id|scp
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+id|ASC_STATS
+c_func
+(paren
+id|scp-&gt;host
+comma
+id|done
+)paren
+suffix:semicolon
+id|scp
+op_member_access_from_pointer
+id|scsi_done
+c_func
+(paren
+id|scp
+)paren
+suffix:semicolon
+id|scp
+op_assign
+id|tscp
+suffix:semicolon
+)brace
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Execute a single &squot;Scsi_Cmnd&squot;.&n; *&n; * The function &squot;done&squot; is called when the request has been completed.&n; *&n; * Scsi_Cmnd:&n; *&n; *  host - board controlling device&n; *  device - device to send command&n; *  target - target of device&n; *  lun - lun of device&n; *  cmd_len - length of SCSI CDB&n; *&t;cmnd - buffer for SCSI 8, 10, or 12 byte CDB&n; *  use_sg - if non-zero indicates scatter-gather request with use_sg elements&n; *&n; *  if (use_sg == 0)&n; *&t;&t;request_buffer - buffer address for request&n; *&t;&t;request_bufflen - length of request buffer&n; *  else&n; *&t;&t;request_buffer - pointer to scatterlist structure&n; *&n; *  sense_buffer - sense command buffer&n; *&n; *  result (4 bytes of an int):&n; *   Byte Meaning&n; *   0&t;  SCSI Status Byte Code&n; *   1&t;  SCSI One Byte Message Code&n; *   2 &t;  Host Error Code&n; *   3&t;  Mid-Level Error Code&n; *&n; *  host driver fields:&n; *  SCp - Scsi_Pointer used for command processing status&n; *  scsi_done - used to save caller&squot;s done function&n; * &t;host_scribble - used for pointer to another Scsi_Cmnd&n; *&n; * If this function returns ASC_NOERROR or ASC_ERROR the request&n; * has been enqueued on the board&squot;s &squot;scsi_done_q&squot; and must be&n; * completed by the caller.&n; *&n; * If ASC_BUSY is returned the request must be enqueued by the&n; * caller and re-tried later.&n; */
 id|STATIC
 r_int
 DECL|function|asc_execute_scsi_cmnd
@@ -11436,8 +12679,7 @@ op_star
 id|scp
 )paren
 (brace
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -11445,17 +12687,19 @@ id|ASC_DVC_VAR
 op_star
 id|asc_dvc_varp
 suffix:semicolon
-id|ASC_SCSI_Q
-id|scsiq
-suffix:semicolon
-id|ASC_SG_HEAD
-id|sghead
-suffix:semicolon
-r_int
-id|flags
-suffix:semicolon
 r_int
 id|ret
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|interrupts_enabled
+c_func
+(paren
+)paren
+op_eq
+id|ASC_FALSE
+)paren
 suffix:semicolon
 id|ASC_DBG2
 c_func
@@ -11527,12 +12771,15 @@ c_func
 id|DID_BAD_TARGET
 )paren
 suffix:semicolon
-id|scp
-op_member_access_from_pointer
-id|scsi_done
+id|asc_enqueue
 c_func
 (paren
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
 id|scp
+comma
+id|ASC_BACK
 )paren
 suffix:semicolon
 r_return
@@ -11548,11 +12795,12 @@ id|scp-&gt;target
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Mutually exclusive access is required to &squot;asc_scsi_q&squot; and&n;&t; * &squot;asc_sg_head&squot; until after the request is started.&n;&t; */
 id|memset
 c_func
 (paren
 op_amp
-id|scsiq
+id|asc_scsi_q
 comma
 l_int|0
 comma
@@ -11563,7 +12811,7 @@ id|ASC_SCSI_Q
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Point the ASC_SCSI_Q to the &squot;Scsi_Cmnd&squot;.&n;&t; */
-id|scsiq.q2.srb_ptr
+id|asc_scsi_q.q2.srb_ptr
 op_assign
 (paren
 id|ulong
@@ -11571,7 +12819,7 @@ id|ulong
 id|scp
 suffix:semicolon
 multiline_comment|/*&n;&t; * Build the ASC_SCSI_Q request.&n;&t; */
-id|scsiq.cdbptr
+id|asc_scsi_q.cdbptr
 op_assign
 op_amp
 id|scp-&gt;cmnd
@@ -11579,11 +12827,11 @@ id|scp-&gt;cmnd
 l_int|0
 )braket
 suffix:semicolon
-id|scsiq.q2.cdb_len
+id|asc_scsi_q.q2.cdb_len
 op_assign
 id|scp-&gt;cmd_len
 suffix:semicolon
-id|scsiq.q1.target_id
+id|asc_scsi_q.q1.target_id
 op_assign
 id|ASC_TID_TO_TARGET_ID
 c_func
@@ -11591,11 +12839,11 @@ c_func
 id|scp-&gt;target
 )paren
 suffix:semicolon
-id|scsiq.q1.target_lun
+id|asc_scsi_q.q1.target_lun
 op_assign
 id|scp-&gt;lun
 suffix:semicolon
-id|scsiq.q2.target_ix
+id|asc_scsi_q.q2.target_ix
 op_assign
 id|ASC_TIDLUN_TO_IX
 c_func
@@ -11605,7 +12853,7 @@ comma
 id|scp-&gt;lun
 )paren
 suffix:semicolon
-id|scsiq.q1.sense_addr
+id|asc_scsi_q.q1.sense_addr
 op_assign
 (paren
 id|ulong
@@ -11616,14 +12864,14 @@ id|scp-&gt;sense_buffer
 l_int|0
 )braket
 suffix:semicolon
-id|scsiq.q1.sense_len
+id|asc_scsi_q.q1.sense_len
 op_assign
 r_sizeof
 (paren
 id|scp-&gt;sense_buffer
 )paren
 suffix:semicolon
-id|scsiq.q2.tag_code
+id|asc_scsi_q.q2.tag_code
 op_assign
 id|M2_QTAG_MSG_SIMPLE
 suffix:semicolon
@@ -11646,14 +12894,14 @@ id|cont_cnt
 )paren
 suffix:semicolon
 multiline_comment|/* request_buffer is already a real address. */
-id|scsiq.q1.data_addr
+id|asc_scsi_q.q1.data_addr
 op_assign
 (paren
 id|ulong
 )paren
 id|scp-&gt;request_buffer
 suffix:semicolon
-id|scsiq.q1.data_cnt
+id|asc_scsi_q.q1.data_cnt
 op_assign
 id|scp-&gt;request_bufflen
 suffix:semicolon
@@ -11673,11 +12921,11 @@ l_int|512
 )paren
 )paren
 suffix:semicolon
-id|scsiq.q1.sg_queue_cnt
+id|asc_scsi_q.q1.sg_queue_cnt
 op_assign
 l_int|0
 suffix:semicolon
-id|scsiq.sg_head
+id|asc_scsi_q.sg_head
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -11698,19 +12946,19 @@ c_cond
 (paren
 id|scp-&gt;use_sg
 OG
-id|ASC_MAX_SG_LIST
+id|scp-&gt;host-&gt;sg_tablesize
 )paren
 (brace
 id|ASC_PRINT3
 c_func
 (paren
-l_string|&quot;asc_execute_scsi_cmnd: Board %d: use_sg %d &gt; %d&bslash;n&quot;
+l_string|&quot;asc_execute_scsi_cmnd: board %d: use_sg %d &gt; sg_tablesize %d&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
 id|scp-&gt;use_sg
 comma
-id|ASC_MAX_SG_LIST
+id|scp-&gt;host-&gt;sg_tablesize
 )paren
 suffix:semicolon
 id|scp-&gt;result
@@ -11721,12 +12969,15 @@ c_func
 id|DID_ERROR
 )paren
 suffix:semicolon
-id|scp
-op_member_access_from_pointer
-id|scsi_done
+id|asc_enqueue
 c_func
 (paren
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
 id|scp
+comma
+id|ASC_BACK
 )paren
 suffix:semicolon
 r_return
@@ -11746,7 +12997,7 @@ id|memset
 c_func
 (paren
 op_amp
-id|sghead
+id|asc_sg_head
 comma
 l_int|0
 comma
@@ -11756,26 +13007,26 @@ id|ASC_SG_HEAD
 )paren
 )paren
 suffix:semicolon
-id|scsiq.q1.cntl
+id|asc_scsi_q.q1.cntl
 op_or_assign
 id|QC_SG_HEAD
 suffix:semicolon
-id|scsiq.sg_head
+id|asc_scsi_q.sg_head
 op_assign
 op_amp
-id|sghead
+id|asc_sg_head
 suffix:semicolon
-id|scsiq.q1.data_cnt
+id|asc_scsi_q.q1.data_cnt
 op_assign
 l_int|0
 suffix:semicolon
-id|scsiq.q1.data_addr
+id|asc_scsi_q.q1.data_addr
 op_assign
 l_int|0
 suffix:semicolon
-id|sghead.entry_cnt
+id|asc_sg_head.entry_cnt
 op_assign
-id|scsiq.q1.sg_queue_cnt
+id|asc_scsi_q.q1.sg_queue_cnt
 op_assign
 id|scp-&gt;use_sg
 suffix:semicolon
@@ -11786,7 +13037,7 @@ id|scp-&gt;host
 comma
 id|sg_elem
 comma
-id|sghead.entry_cnt
+id|asc_sg_head.entry_cnt
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Convert scatter-gather list into ASC_SG_HEAD list.&n;&t;&t; */
@@ -11817,7 +13068,7 @@ id|slp
 op_increment
 )paren
 (brace
-id|sghead.sg_list
+id|asc_sg_head.sg_list
 (braket
 id|sgcnt
 )braket
@@ -11829,7 +13080,7 @@ id|ulong
 )paren
 id|slp-&gt;address
 suffix:semicolon
-id|sghead.sg_list
+id|asc_sg_head.sg_list
 (braket
 id|sgcnt
 )braket
@@ -11862,7 +13113,7 @@ c_func
 l_int|2
 comma
 op_amp
-id|scsiq
+id|asc_scsi_q
 )paren
 suffix:semicolon
 id|ASC_DBG_PRT_CDB
@@ -11875,18 +13126,7 @@ comma
 id|scp-&gt;cmd_len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Disable interrupts to issue the command and add the&n;&t; * command to the active queue if it is started.&n;&t; */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * Execute the command. If there is no error, add the command&n;&t; * to the active queue.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -11898,13 +13138,21 @@ c_func
 id|asc_dvc_varp
 comma
 op_amp
-id|scsiq
+id|asc_scsi_q
 )paren
 )paren
 (brace
 r_case
 id|ASC_NOERROR
 suffix:colon
+id|ASC_STATS
+c_func
+(paren
+id|scp-&gt;host
+comma
+id|asc_noerror
+)paren
+suffix:semicolon
 id|asc_enqueue
 c_func
 (paren
@@ -11914,14 +13162,6 @@ comma
 id|scp
 comma
 id|ASC_BACK
-)paren
-suffix:semicolon
-id|ASC_STATS
-c_func
-(paren
-id|scp-&gt;host
-comma
-id|asc_noerror
 )paren
 suffix:semicolon
 id|ASC_DBG
@@ -11954,7 +13194,7 @@ suffix:colon
 id|ASC_PRINT2
 c_func
 (paren
-l_string|&quot;asc_execute_scsi_cmnd: Board %d: AscExeScsiQueue() ASC_ERROR, err_code %x&bslash;n&quot;
+l_string|&quot;asc_execute_scsi_cmnd: board %d: AscExeScsiQueue() ASC_ERROR, err_code %x&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -11977,12 +13217,15 @@ c_func
 id|DID_ERROR
 )paren
 suffix:semicolon
-id|scp
-op_member_access_from_pointer
-id|scsi_done
+id|asc_enqueue
 c_func
 (paren
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
 id|scp
+comma
+id|ASC_BACK
 )paren
 suffix:semicolon
 r_break
@@ -11992,7 +13235,7 @@ suffix:colon
 id|ASC_PRINT2
 c_func
 (paren
-l_string|&quot;asc_execute_scsi_cmnd: Board %d: AscExeScsiQueue() unknown, err_code %x&bslash;n&quot;
+l_string|&quot;asc_execute_scsi_cmnd: board %d: AscExeScsiQueue() unknown, err_code %x&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -12015,29 +13258,37 @@ c_func
 id|DID_ERROR
 )paren
 suffix:semicolon
-id|scp
-op_member_access_from_pointer
-id|scsi_done
+id|asc_enqueue
 c_func
 (paren
+op_amp
+id|boardp-&gt;scsi_done_q
+comma
 id|scp
+comma
+id|ASC_BACK
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|ASC_DBG
 c_func
 (paren
 l_int|1
 comma
 l_string|&quot;asc_execute_scsi_cmnd: end&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|interrupts_enabled
+c_func
+(paren
+)paren
+op_eq
+id|ASC_FALSE
 )paren
 suffix:semicolon
 r_return
@@ -12059,8 +13310,7 @@ op_star
 id|qdonep
 )paren
 (brace
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -12073,10 +13323,8 @@ id|Scsi_Host
 op_star
 id|shp
 suffix:semicolon
-id|Scsi_Cmnd
-op_star
-op_star
-id|scpp
+r_int
+id|i
 suffix:semicolon
 id|ASC_ASSERT
 c_func
@@ -12147,16 +13395,85 @@ comma
 id|scp-&gt;cmd_len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|scp
+op_eq
+l_int|NULL
+)paren
+(brace
+id|ASC_PRINT
+c_func
+(paren
+l_string|&quot;asc_isr_callback: scp is NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * If the request&squot;s host pointer is not valid, display a&n;&t; * message and return.&n;&t; */
 id|shp
 op_assign
 id|scp-&gt;host
 suffix:semicolon
-id|ASC_ASSERT
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|asc_board_count
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|asc_host
+(braket
+id|i
+)braket
+op_eq
+id|shp
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+id|asc_board_count
+)paren
+(brace
+id|ASC_PRINT2
 c_func
 (paren
+l_string|&quot;asc_isr_callback: scp %x has bad host pointer, host %x&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|scp
+comma
+(paren
+r_int
+)paren
 id|shp
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|ASC_STATS
 c_func
 (paren
@@ -12178,6 +13495,7 @@ r_int
 id|shp
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * If the request isn&squot;t found on the active queue, it may&n;&t; * have been removed to handle a reset or abort request.&n;&t; * Display a message and return.&n;&t; */
 id|boardp
 op_assign
 id|ASC_BOARDP
@@ -12204,7 +13522,7 @@ id|ASC_FALSE
 id|ASC_PRINT2
 c_func
 (paren
-l_string|&quot;asc_isr_callback: Board %d: scp %x not on active queue&bslash;n&quot;
+l_string|&quot;asc_isr_callback: board %d: scp %x not on active queue&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -12213,6 +13531,8 @@ r_int
 )paren
 id|scp
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * &squot;qdonep&squot; contains the command&squot;s ending status.&n;&t; */
@@ -12446,83 +13766,17 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Before calling &squot;scsi_done&squot; for the current &squot;Scsi_Cmnd&squot; and possibly&n;&t; * triggering more commands to be issued, try to start any pending&n;&t; * commands.&n;&t; */
-r_if
-c_cond
-(paren
-id|boardp-&gt;pending.tidmask
-op_ne
-l_int|0
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * If there are any pending commands for this board before trying&n;&t; &t; * to execute them, disable interrupts to preserve request ordering.&n;&t;&t; */
-id|ASC_ASSERT
+multiline_comment|/* &n;&t; * Because interrupts may be enabled by the &squot;Scsi_Cmnd&squot; done&n;&t; * function, add the command to the end of the board&squot;s done queue.&n;&t; * The done function for the command will be called from&n;&t; * advansys_interrupt().&n;&t; */
+id|asc_enqueue
 c_func
 (paren
-id|interrupts_enabled
-c_func
-(paren
-)paren
-op_eq
-id|ASC_FALSE
-)paren
-suffix:semicolon
-id|ASC_DBG1
-c_func
-(paren
-l_int|1
+op_amp
+id|boardp-&gt;scsi_done_q
 comma
-l_string|&quot;asc_isr_callback: asc_execute_queue() %x&bslash;n&quot;
-comma
-id|boardp-&gt;pending.tidmask
-)paren
-suffix:semicolon
-id|asc_execute_queue
-c_func
-(paren
-op_amp
-id|boardp-&gt;pending
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* &n;&t; * Because interrupts may be enabled by the &squot;Scsi_Cmnd&squot; done function,&n;&t; * add the command to the end of the global done list. The done function&n;&t; * for the command will be called in advansys_interrupt().&n;&t; */
-r_for
-c_loop
-(paren
-id|scpp
-op_assign
-op_amp
-id|asc_scsi_done
-suffix:semicolon
-op_star
-id|scpp
-suffix:semicolon
-id|scpp
-op_assign
-(paren
-id|Scsi_Cmnd
-op_star
-op_star
-)paren
-op_amp
-(paren
-op_star
-id|scpp
-)paren
-op_member_access_from_pointer
-id|host_scribble
-)paren
-(brace
-suffix:semicolon
-)brace
-op_star
-id|scpp
-op_assign
 id|scp
-suffix:semicolon
-id|scp-&gt;host_scribble
-op_assign
-l_int|NULL
+comma
+id|ASC_BACK
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -12543,22 +13797,9 @@ op_star
 id|scp
 )paren
 (brace
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
-suffix:semicolon
-id|ASC_SCSI_REQ_Q
-op_star
-id|scsireqq
-suffix:semicolon
-id|ASC_CAP_INFO
-op_star
-id|cap_info
-suffix:semicolon
-id|ASC_SCSI_INQUIRY
-op_star
-id|inquiry
 suffix:semicolon
 r_int
 id|found
@@ -12591,7 +13832,7 @@ r_int
 id|scp-&gt;target
 )paren
 suffix:semicolon
-multiline_comment|/* The hosts&squot;s target id is set in init_tidmask during initialization. */
+multiline_comment|/* The host&squot;s target id is set in init_tidmask during initialization. */
 id|ASC_ASSERT
 c_func
 (paren
@@ -12608,22 +13849,12 @@ c_func
 id|scp-&gt;host
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * XXX - Host drivers should not modify the timeout field.&n;&t; * But on the first command only add some extra time to&n;&t; * allow the driver to complete its initialization for the&n;&t; * device.&n;&t; */
-id|scp-&gt;timeout
-op_add_assign
-l_int|2000
-suffix:semicolon
-multiline_comment|/* Add 5 seconds to the request timeout. */
 multiline_comment|/* Set-up AscInitPollTarget() arguments. */
-id|scsireqq
-op_assign
-op_amp
-id|boardp-&gt;scsireqq
-suffix:semicolon
 id|memset
 c_func
 (paren
-id|scsireqq
+op_amp
+id|asc_scsireqq
 comma
 l_int|0
 comma
@@ -12633,15 +13864,11 @@ id|ASC_SCSI_REQ_Q
 )paren
 )paren
 suffix:semicolon
-id|cap_info
-op_assign
-op_amp
-id|boardp-&gt;cap_info
-suffix:semicolon
 id|memset
 c_func
 (paren
-id|cap_info
+op_amp
+id|asc_cap_info
 comma
 l_int|0
 comma
@@ -12651,15 +13878,11 @@ id|ASC_CAP_INFO
 )paren
 )paren
 suffix:semicolon
-id|inquiry
-op_assign
-op_amp
-id|boardp-&gt;inquiry
-suffix:semicolon
 id|memset
 c_func
 (paren
-id|inquiry
+op_amp
+id|asc_inquiry
 comma
 l_int|0
 comma
@@ -12699,7 +13922,7 @@ id|asc_dvc_varp
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;asc_init_dev: Board %d: AscInitPollBegin() failed&bslash;n&quot;
+l_string|&quot;asc_init_dev: board %d: AscInitPollBegin() failed&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -12708,19 +13931,19 @@ r_return
 id|ASC_FALSE
 suffix:semicolon
 )brace
-id|scsireqq-&gt;sense_ptr
+id|asc_scsireqq.sense_ptr
 op_assign
 op_amp
-id|scsireqq-&gt;sense
+id|asc_scsireqq.sense
 (braket
 l_int|0
 )braket
 suffix:semicolon
-id|scsireqq-&gt;r1.sense_len
+id|asc_scsireqq.r1.sense_len
 op_assign
 id|ASC_MIN_SENSE_LEN
 suffix:semicolon
-id|scsireqq-&gt;r1.target_id
+id|asc_scsireqq.r1.target_id
 op_assign
 id|ASC_TID_TO_TARGET_ID
 c_func
@@ -12728,11 +13951,11 @@ c_func
 id|scp-&gt;target
 )paren
 suffix:semicolon
-id|scsireqq-&gt;r1.target_lun
+id|asc_scsireqq.r1.target_lun
 op_assign
 l_int|0
 suffix:semicolon
-id|scsireqq-&gt;r2.target_ix
+id|asc_scsireqq.r2.target_ix
 op_assign
 id|ASC_TIDLUN_TO_IX
 c_func
@@ -12764,11 +13987,14 @@ c_func
 (paren
 id|asc_dvc_varp
 comma
-id|scsireqq
+op_amp
+id|asc_scsireqq
 comma
-id|inquiry
+op_amp
+id|asc_inquiry
 comma
-id|cap_info
+op_amp
+id|asc_cap_info
 )paren
 )paren
 (brace
@@ -12795,9 +14021,9 @@ l_int|1
 comma
 l_string|&quot;asc_init_dev: lba %lu, blk_size %lu&bslash;n&quot;
 comma
-id|cap_info-&gt;lba
+id|asc_cap_info.lba
 comma
-id|cap_info-&gt;blk_size
+id|asc_cap_info.blk_size
 )paren
 suffix:semicolon
 id|ASC_DBG1
@@ -12807,7 +14033,7 @@ l_int|1
 comma
 l_string|&quot;asc_init_dev: peri_dvc_type %x&bslash;n&quot;
 comma
-id|inquiry-&gt;byte0.peri_dvc_type
+id|asc_inquiry.byte0.peri_dvc_type
 )paren
 suffix:semicolon
 r_if
@@ -12922,7 +14148,7 @@ suffix:colon
 id|ASC_PRINT1
 c_func
 (paren
-l_string|&quot;asc_init_dev: Board %d: AscInitPollTarget() ASC_ERROR&bslash;n&quot;
+l_string|&quot;asc_init_dev: board %d: AscInitPollTarget() ASC_ERROR&bslash;n&quot;
 comma
 id|boardp-&gt;id
 )paren
@@ -12934,7 +14160,7 @@ suffix:colon
 id|ASC_PRINT2
 c_func
 (paren
-l_string|&quot;asc_init_dev: Board %d: AscInitPollTarget() unknown ret %d&bslash;n&quot;
+l_string|&quot;asc_init_dev: board %d: AscInitPollTarget() unknown ret %d&bslash;n&quot;
 comma
 id|boardp-&gt;id
 comma
@@ -12965,6 +14191,16 @@ id|AscInitPollEnd
 c_func
 (paren
 id|asc_dvc_varp
+)paren
+suffix:semicolon
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;asc_init_dev: found %d&bslash;n&quot;
+comma
+id|found
 )paren
 suffix:semicolon
 r_return
@@ -14469,23 +15705,8 @@ r_int
 id|flag
 )paren
 (brace
-id|REQP
-op_star
-id|reqpp
-suffix:semicolon
 r_int
 id|tid
-suffix:semicolon
-id|ASC_ASSERT
-c_func
-(paren
-id|interrupts_enabled
-c_func
-(paren
-)paren
-op_eq
-id|ASC_FALSE
-)paren
 suffix:semicolon
 id|ASC_DBG3
 c_func
@@ -14507,12 +15728,23 @@ comma
 id|flag
 )paren
 suffix:semicolon
-id|tid
-op_assign
-id|REQPTID
+id|ASC_ASSERT
+c_func
+(paren
+id|interrupts_enabled
+c_func
+(paren
+)paren
+op_eq
+id|ASC_FALSE
+)paren
+suffix:semicolon
+id|ASC_ASSERT
 c_func
 (paren
 id|reqp
+op_ne
+l_int|NULL
 )paren
 suffix:semicolon
 id|ASC_ASSERT
@@ -14527,6 +15759,26 @@ op_eq
 id|ASC_BACK
 )paren
 suffix:semicolon
+id|tid
+op_assign
+id|REQPTID
+c_func
+(paren
+id|reqp
+)paren
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|tid
+op_ge
+l_int|0
+op_logical_and
+id|tid
+op_le
+id|ASC_MAX_TID
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -14541,12 +15793,31 @@ c_func
 id|reqp
 )paren
 op_assign
-id|ascq-&gt;queue
+id|ascq-&gt;q_first
 (braket
 id|tid
 )braket
 suffix:semicolon
-id|ascq-&gt;queue
+id|ascq-&gt;q_first
+(braket
+id|tid
+)braket
+op_assign
+id|reqp
+suffix:semicolon
+multiline_comment|/* If the queue was empty, set the last pointer. */
+r_if
+c_cond
+(paren
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+op_eq
+l_int|NULL
+)paren
+(brace
+id|ascq-&gt;q_last
 (braket
 id|tid
 )braket
@@ -14554,49 +15825,37 @@ op_assign
 id|reqp
 suffix:semicolon
 )brace
+)brace
 r_else
 (brace
 multiline_comment|/* ASC_BACK */
-r_for
-c_loop
+r_if
+c_cond
 (paren
-id|reqpp
-op_assign
-op_amp
-id|ascq-&gt;queue
+id|ascq-&gt;q_last
 (braket
 id|tid
 )braket
-suffix:semicolon
-op_star
-id|reqpp
-suffix:semicolon
-id|reqpp
-op_assign
-id|REQPNEXTP
-c_func
-(paren
-op_star
-id|reqpp
-)paren
+op_ne
+l_int|NULL
 )paren
 (brace
-id|ASC_ASSERT
+id|REQPNEXT
 c_func
 (paren
-id|ascq-&gt;tidmask
-op_amp
-id|ASC_TIX_TO_TARGET_ID
-c_func
-(paren
+id|ascq-&gt;q_last
+(braket
 id|tid
+)braket
 )paren
-)paren
-suffix:semicolon
+op_assign
+id|reqp
 suffix:semicolon
 )brace
-op_star
-id|reqpp
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
 op_assign
 id|reqp
 suffix:semicolon
@@ -14608,9 +15867,29 @@ id|reqp
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* If the queue was empty, set the first pointer. */
+r_if
+c_cond
+(paren
+id|ascq-&gt;q_first
+(braket
+id|tid
+)braket
+op_eq
+l_int|NULL
+)paren
+(brace
+id|ascq-&gt;q_first
+(braket
+id|tid
+)braket
+op_assign
+id|reqp
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* The queue has at least one entry, set its bit. */
-id|ascq-&gt;tidmask
+id|ascq-&gt;q_tidmask
 op_or_assign
 id|ASC_TIX_TO_TARGET_ID
 c_func
@@ -14619,8 +15898,8 @@ id|tid
 )paren
 suffix:semicolon
 macro_line|#ifdef ADVANSYS_STATS
-multiline_comment|/*&n;&t; * Maintain request queue statistics.&n;&t; */
-id|ascq-&gt;cur_count
+multiline_comment|/* Maintain request queue statistics. */
+id|ascq-&gt;q_cur_cnt
 (braket
 id|tid
 )braket
@@ -14629,23 +15908,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ascq-&gt;cur_count
+id|ascq-&gt;q_cur_cnt
 (braket
 id|tid
 )braket
 OG
-id|ascq-&gt;max_count
+id|ascq-&gt;q_max_cnt
 (braket
 id|tid
 )braket
 )paren
 (brace
-id|ascq-&gt;max_count
+id|ascq-&gt;q_max_cnt
 (braket
 id|tid
 )braket
 op_assign
-id|ascq-&gt;cur_count
+id|ascq-&gt;q_cur_cnt
 (braket
 id|tid
 )braket
@@ -14655,11 +15934,11 @@ c_func
 (paren
 l_int|1
 comma
-l_string|&quot;asc_enqueue: new max_count[%d] %d&bslash;n&quot;
+l_string|&quot;asc_enqueue: new q_max_cnt[%d] %d&bslash;n&quot;
 comma
 id|tid
 comma
-id|ascq-&gt;max_count
+id|ascq-&gt;q_max_cnt
 (braket
 id|tid
 )braket
@@ -14700,17 +15979,6 @@ id|tid
 id|REQP
 id|reqp
 suffix:semicolon
-id|ASC_ASSERT
-c_func
-(paren
-id|interrupts_enabled
-c_func
-(paren
-)paren
-op_eq
-id|ASC_FALSE
-)paren
-suffix:semicolon
 id|ASC_DBG2
 c_func
 (paren
@@ -14726,13 +15994,36 @@ comma
 id|tid
 )paren
 suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|interrupts_enabled
+c_func
+(paren
+)paren
+op_eq
+id|ASC_FALSE
+)paren
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|tid
+op_ge
+l_int|0
+op_logical_and
+id|tid
+op_le
+id|ASC_MAX_TID
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
 id|reqp
 op_assign
-id|ascq-&gt;queue
+id|ascq-&gt;q_first
 (braket
 id|tid
 )braket
@@ -14744,7 +16035,7 @@ l_int|NULL
 id|ASC_ASSERT
 c_func
 (paren
-id|ascq-&gt;tidmask
+id|ascq-&gt;q_tidmask
 op_amp
 id|ASC_TIX_TO_TARGET_ID
 c_func
@@ -14753,7 +16044,7 @@ id|tid
 )paren
 )paren
 suffix:semicolon
-id|ascq-&gt;queue
+id|ascq-&gt;q_first
 (braket
 id|tid
 )braket
@@ -14764,11 +16055,11 @@ c_func
 id|reqp
 )paren
 suffix:semicolon
-multiline_comment|/* If the queue is empty, clear its bit. */
+multiline_comment|/* If the queue is empty, clear its bit and the last pointer. */
 r_if
 c_cond
 (paren
-id|ascq-&gt;queue
+id|ascq-&gt;q_first
 (braket
 id|tid
 )braket
@@ -14776,7 +16067,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|ascq-&gt;tidmask
+id|ascq-&gt;q_tidmask
 op_and_assign
 op_complement
 id|ASC_TIX_TO_TARGET_ID
@@ -14785,29 +16076,37 @@ c_func
 id|tid
 )paren
 suffix:semicolon
-)brace
+id|ASC_ASSERT
+c_func
+(paren
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+op_eq
+id|reqp
+)paren
+suffix:semicolon
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 macro_line|#ifdef ADVANSYS_STATS
-multiline_comment|/*&n;&t; * Maintain request queue statistics.&n;&t; */
-r_if
-c_cond
-(paren
-id|reqp
-op_ne
-l_int|NULL
-)paren
-(brace
-id|ascq-&gt;cur_count
+multiline_comment|/* Maintain request queue statistics. */
+id|ascq-&gt;q_cur_cnt
 (braket
 id|tid
 )braket
 op_decrement
 suffix:semicolon
-)brace
 id|ASC_ASSERT
 c_func
 (paren
-id|ascq-&gt;cur_count
+id|ascq-&gt;q_cur_cnt
 (braket
 id|tid
 )braket
@@ -14816,6 +16115,7 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif /* ADVANSYS_STATS */
+)brace
 id|ASC_DBG1
 c_func
 (paren
@@ -14833,6 +16133,310 @@ r_return
 id|reqp
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Return a pointer to a singly linked list of all the requests queued&n; * for &squot;tid&squot; on the &squot;asc_queue_t&squot; pointed to by &squot;ascq&squot;.&n; *&n; * If &squot;lastpp&squot; is not NULL, &squot;*lastpp&squot; will be set to point to the &n; * the last request returned in the singly linked list.&n; *&n; * &squot;tid&squot; should either be a valid target id or if it is ASC_TID_ALL,&n; * then all queued requests are concatenated into one list and&n; * returned.&n; *&n; * Note: If &squot;lastpp&squot; is used to append a new list to the end of&n; * an old list, only change the old list last pointer if &squot;*lastpp&squot;&n; * (or the function return value) is not NULL, i.e. use a temporary&n; * variable for &squot;lastpp&squot; and check its value after the function return&n; * before assigning it to the list last pointer.&n; */
+id|REQP
+DECL|function|asc_dequeue_list
+id|asc_dequeue_list
+c_func
+(paren
+id|asc_queue_t
+op_star
+id|ascq
+comma
+id|REQP
+op_star
+id|lastpp
+comma
+r_int
+id|tid
+)paren
+(brace
+id|REQP
+id|firstp
+comma
+id|lastp
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|ASC_DBG2
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;asc_dequeue_list: ascq %x, tid %d&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|ascq
+comma
+id|tid
+)paren
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|interrupts_enabled
+c_func
+(paren
+)paren
+op_eq
+id|ASC_FALSE
+)paren
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+(paren
+id|tid
+op_eq
+id|ASC_TID_ALL
+)paren
+op_logical_or
+(paren
+id|tid
+op_ge
+l_int|0
+op_logical_and
+id|tid
+op_le
+id|ASC_MAX_TID
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * If &squot;tid&squot; is not ASC_TID_ALL, return requests only for&n;&t; * the specified &squot;tid&squot;. If &squot;tid&squot; is ASC_TID_ALL, return all&n;&t; * requests for all tids.&n;&t; */
+r_if
+c_cond
+(paren
+id|tid
+op_ne
+id|ASC_TID_ALL
+)paren
+(brace
+multiline_comment|/* Return all requests for the specified &squot;tid&squot;. */
+r_if
+c_cond
+(paren
+(paren
+id|ascq-&gt;q_tidmask
+op_amp
+id|ASC_TIX_TO_TARGET_ID
+c_func
+(paren
+id|tid
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* List is empty set first and last return pointers to NULL. */
+id|firstp
+op_assign
+id|lastp
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_else
+(brace
+id|firstp
+op_assign
+id|ascq-&gt;q_first
+(braket
+id|tid
+)braket
+suffix:semicolon
+id|lastp
+op_assign
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+suffix:semicolon
+id|ascq-&gt;q_first
+(braket
+id|tid
+)braket
+op_assign
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|ascq-&gt;q_tidmask
+op_and_assign
+op_complement
+id|ASC_TIX_TO_TARGET_ID
+c_func
+(paren
+id|tid
+)paren
+suffix:semicolon
+macro_line|#ifdef ADVANSYS_STATS
+id|ascq-&gt;q_cur_cnt
+(braket
+id|tid
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif /* ADVANSYS_STATS */
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* Return all requests for all tids. */
+id|firstp
+op_assign
+id|lastp
+op_assign
+l_int|NULL
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|ASC_MAX_TID
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ascq-&gt;q_tidmask
+op_amp
+id|ASC_TIX_TO_TARGET_ID
+c_func
+(paren
+id|i
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|firstp
+op_eq
+l_int|NULL
+)paren
+(brace
+id|firstp
+op_assign
+id|ascq-&gt;q_first
+(braket
+id|i
+)braket
+suffix:semicolon
+id|lastp
+op_assign
+id|ascq-&gt;q_last
+(braket
+id|i
+)braket
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ASC_ASSERT
+c_func
+(paren
+id|lastp
+op_ne
+l_int|NULL
+)paren
+suffix:semicolon
+id|REQPNEXT
+c_func
+(paren
+id|lastp
+)paren
+op_assign
+id|ascq-&gt;q_first
+(braket
+id|i
+)braket
+suffix:semicolon
+id|lastp
+op_assign
+id|ascq-&gt;q_last
+(braket
+id|i
+)braket
+suffix:semicolon
+)brace
+id|ascq-&gt;q_first
+(braket
+id|i
+)braket
+op_assign
+id|ascq-&gt;q_last
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|ascq-&gt;q_tidmask
+op_and_assign
+op_complement
+id|ASC_TIX_TO_TARGET_ID
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
+macro_line|#ifdef ADVANSYS_STATS
+id|ascq-&gt;q_cur_cnt
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif /* ADVANSYS_STATS */
+)brace
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|lastpp
+)paren
+(brace
+op_star
+id|lastpp
+op_assign
+id|lastp
+suffix:semicolon
+)brace
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;asc_dequeue_list: firstp %x&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|firstp
+)paren
+suffix:semicolon
+r_return
+id|firstp
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Remove the specified &squot;REQP&squot; from the specified queue for&n; * the specified target device. Clear the &squot;tidmask&squot; bit for the&n; * device if no more commands are left queued for it.&n; *&n; * &squot;REQPNEXT(reqp)&squot; returns reqp&squot;s the next pointer.&n; *&n; * Return ASC_TRUE if the command was found and removed,&n; * otherwise return ASC_FALSE.&n; */
 r_int
 DECL|function|asc_rmqueue
@@ -14848,14 +16452,35 @@ id|reqp
 )paren
 (brace
 id|REQP
-op_star
-id|reqpp
+id|currp
+comma
+id|prevp
 suffix:semicolon
 r_int
 id|tid
 suffix:semicolon
 r_int
 id|ret
+op_assign
+id|ASC_FALSE
+suffix:semicolon
+id|ASC_DBG2
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;asc_rmqueue: ascq %x, reqp %d&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|ascq
+comma
+(paren
+r_int
+)paren
+id|reqp
+)paren
 suffix:semicolon
 id|ASC_ASSERT
 c_func
@@ -14868,9 +16493,13 @@ op_eq
 id|ASC_FALSE
 )paren
 suffix:semicolon
-id|ret
-op_assign
-id|ASC_FALSE
+id|ASC_ASSERT
+c_func
+(paren
+id|reqp
+op_ne
+l_int|NULL
+)paren
 suffix:semicolon
 id|tid
 op_assign
@@ -14880,57 +16509,38 @@ c_func
 id|reqp
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|reqpp
-op_assign
-op_amp
-id|ascq-&gt;queue
-(braket
-id|tid
-)braket
-suffix:semicolon
-op_star
-id|reqpp
-suffix:semicolon
-id|reqpp
-op_assign
-id|REQPNEXTP
-c_func
-(paren
-op_star
-id|reqpp
-)paren
-)paren
-(brace
 id|ASC_ASSERT
 c_func
 (paren
-id|ascq-&gt;tidmask
-op_amp
-id|ASC_TIX_TO_TARGET_ID
-c_func
-(paren
 id|tid
-)paren
+op_ge
+l_int|0
+op_logical_and
+id|tid
+op_le
+id|ASC_MAX_TID
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Handle the common case of &squot;reqp&squot; being the first&n;&t; * entry on the queue.&n;&t; */
 r_if
 c_cond
 (paren
-op_star
-id|reqpp
-op_eq
 id|reqp
+op_eq
+id|ascq-&gt;q_first
+(braket
+id|tid
+)braket
 )paren
 (brace
 id|ret
 op_assign
 id|ASC_TRUE
 suffix:semicolon
-op_star
-id|reqpp
+id|ascq-&gt;q_first
+(braket
+id|tid
+)braket
 op_assign
 id|REQPNEXT
 c_func
@@ -14938,19 +16548,11 @@ c_func
 id|reqp
 )paren
 suffix:semicolon
-id|REQPNEXT
-c_func
-(paren
-id|reqp
-)paren
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* If the queue is now empty, clear its bit. */
+multiline_comment|/* If the queue is now empty, clear its bit and the last pointer. */
 r_if
 c_cond
 (paren
-id|ascq-&gt;queue
+id|ascq-&gt;q_first
 (braket
 id|tid
 )braket
@@ -14958,7 +16560,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|ascq-&gt;tidmask
+id|ascq-&gt;q_tidmask
 op_and_assign
 op_complement
 id|ASC_TIX_TO_TARGET_ID
@@ -14967,14 +16569,141 @@ c_func
 id|tid
 )paren
 suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+op_eq
+id|reqp
+)paren
+suffix:semicolon
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|ascq-&gt;q_first
+(braket
+id|tid
+)braket
+op_ne
+l_int|NULL
+)paren
+(brace
+id|ASC_ASSERT
+c_func
+(paren
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+op_ne
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Because the case of &squot;reqp&squot; being the first entry has been&n;&t;&t; * handled above and it is known the queue is not empty, if&n;&t;&t; * &squot;reqp&squot; is found on the queue it is guaranteed the queue will&n;&t;&t; * not become empty and that &squot;q_first[tid]&squot; will not be changed.&n;&t;&t; *&n;&t;&t; * Set &squot;prevp&squot; to the first entry, &squot;currp&squot; to the second entry,&n;&t;&t; * and search for &squot;reqp&squot;.&n;&t;&t; */
+r_for
+c_loop
+(paren
+id|prevp
+op_assign
+id|ascq-&gt;q_first
+(braket
+id|tid
+)braket
+comma
+id|currp
+op_assign
+id|REQPNEXT
+c_func
+(paren
+id|prevp
+)paren
+suffix:semicolon
+id|currp
+suffix:semicolon
+id|prevp
+op_assign
+id|currp
+comma
+id|currp
+op_assign
+id|REQPNEXT
+c_func
+(paren
+id|currp
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|currp
+op_eq
+id|reqp
+)paren
+(brace
+id|ret
+op_assign
+id|ASC_TRUE
+suffix:semicolon
+id|REQPNEXT
+c_func
+(paren
+id|prevp
+)paren
+op_assign
+id|REQPNEXT
+c_func
+(paren
+id|currp
+)paren
+suffix:semicolon
+id|REQPNEXT
+c_func
+(paren
+id|reqp
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+op_eq
+id|reqp
+)paren
+(brace
+id|ascq-&gt;q_last
+(braket
+id|tid
+)braket
+op_assign
+id|prevp
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-multiline_comment|/* Note: *reqpp may now be NULL, don&squot;t iterate. */
+)brace
 )brace
 )brace
 macro_line|#ifdef ADVANSYS_STATS
-multiline_comment|/*&n;&t; * Maintain request queue statistics.&n;&t; */
+multiline_comment|/* Maintain request queue statistics. */
 r_if
 c_cond
 (paren
@@ -14983,7 +16712,7 @@ op_eq
 id|ASC_TRUE
 )paren
 (brace
-id|ascq-&gt;cur_count
+id|ascq-&gt;q_cur_cnt
 (braket
 id|tid
 )braket
@@ -14993,7 +16722,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|ascq-&gt;cur_count
+id|ascq-&gt;q_cur_cnt
 (braket
 id|tid
 )braket
@@ -15036,14 +16765,33 @@ id|reqp
 )paren
 (brace
 id|REQP
-op_star
-id|reqpp
+id|treqp
 suffix:semicolon
 r_int
 id|tid
 suffix:semicolon
 r_int
 id|ret
+op_assign
+id|ASC_FALSE
+suffix:semicolon
+id|ASC_DBG2
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;asc_isqueued: ascq %x, reqp %x&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|ascq
+comma
+(paren
+r_int
+)paren
+id|reqp
+)paren
 suffix:semicolon
 id|ASC_ASSERT
 c_func
@@ -15056,9 +16804,13 @@ op_eq
 id|ASC_FALSE
 )paren
 suffix:semicolon
-id|ret
-op_assign
-id|ASC_FALSE
+id|ASC_ASSERT
+c_func
+(paren
+id|reqp
+op_ne
+l_int|NULL
+)paren
 suffix:semicolon
 id|tid
 op_assign
@@ -15068,34 +16820,43 @@ c_func
 id|reqp
 )paren
 suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|tid
+op_ge
+l_int|0
+op_logical_and
+id|tid
+op_le
+id|ASC_MAX_TID
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
-id|reqpp
+id|treqp
 op_assign
-op_amp
-id|ascq-&gt;queue
+id|ascq-&gt;q_first
 (braket
 id|tid
 )braket
 suffix:semicolon
-op_star
-id|reqpp
+id|treqp
 suffix:semicolon
-id|reqpp
+id|treqp
 op_assign
-id|REQPNEXTP
+id|REQPNEXT
 c_func
 (paren
-op_star
-id|reqpp
+id|treqp
 )paren
 )paren
 (brace
 id|ASC_ASSERT
 c_func
 (paren
-id|ascq-&gt;tidmask
+id|ascq-&gt;q_tidmask
 op_amp
 id|ASC_TIX_TO_TARGET_ID
 c_func
@@ -15107,8 +16868,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
-id|reqpp
+id|treqp
 op_eq
 id|reqp
 )paren
@@ -15145,17 +16905,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|ASC_ASSERT
-c_func
-(paren
-id|interrupts_enabled
-c_func
-(paren
-)paren
-op_eq
-id|ASC_FALSE
-)paren
-suffix:semicolon
 id|ASC_DBG1
 c_func
 (paren
@@ -15169,10 +16918,21 @@ r_int
 id|ascq
 )paren
 suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|interrupts_enabled
+c_func
+(paren
+)paren
+op_eq
+id|ASC_FALSE
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Execute queued commands for devices attached to&n;&t; * the current board in round-robin fashion.&n;&t; */
 id|scan_tidmask
 op_assign
-id|ascq-&gt;tidmask
+id|ascq-&gt;q_tidmask
 suffix:semicolon
 r_do
 (brace
@@ -15301,8 +17061,7 @@ r_int
 id|cplen
 )paren
 (brace
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -15475,8 +17234,7 @@ r_int
 id|cplen
 )paren
 (brace
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -15964,6 +17722,218 @@ r_return
 id|totlen
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * asc_prt_driver_conf()&n; *&n; * Note: no single line should be greater than ASC_PRTLINE_SIZE,&n; * cf. asc_prt_line().&n; *&n; * Return the number of characters copied into &squot;cp&squot;. No more than&n; * &squot;cplen&squot; characters will be copied to &squot;cp&squot;.&n; */
+id|STATIC
+r_int
+DECL|function|asc_prt_driver_conf
+id|asc_prt_driver_conf
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shp
+comma
+r_char
+op_star
+id|cp
+comma
+r_int
+id|cplen
+)paren
+(brace
+r_int
+id|leftlen
+suffix:semicolon
+r_int
+id|totlen
+suffix:semicolon
+r_int
+id|len
+suffix:semicolon
+id|leftlen
+op_assign
+id|cplen
+suffix:semicolon
+id|totlen
+op_assign
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+l_string|&quot;&bslash;nLinux Driver Configuration and Information for AdvanSys SCSI Host %d:&bslash;n&quot;
+comma
+id|shp-&gt;host_no
+)paren
+suffix:semicolon
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+l_string|&quot; host_busy %u, last_reset %u, max_id %u, max_lun %u, max_channel %u&bslash;n&quot;
+comma
+id|shp-&gt;host_busy
+comma
+id|shp-&gt;last_reset
+comma
+id|shp-&gt;max_id
+comma
+id|shp-&gt;max_lun
+comma
+id|shp-&gt;max_channel
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v1.3.89 */
+l_string|&quot; host_busy %u, last_reset %u, max_id %u, max_lun %u&bslash;n&quot;
+comma
+id|shp-&gt;host_busy
+comma
+id|shp-&gt;last_reset
+comma
+id|shp-&gt;max_id
+comma
+id|shp-&gt;max_lun
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,57)
+l_string|&quot; unique_id %d, can_queue %d, this_id %d, sg_tablesize %u, cmd_per_lun %u&bslash;n&quot;
+comma
+id|shp-&gt;unique_id
+comma
+id|shp-&gt;can_queue
+comma
+id|shp-&gt;this_id
+comma
+id|shp-&gt;sg_tablesize
+comma
+id|shp-&gt;cmd_per_lun
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v1.3.57 */
+l_string|&quot; can_queue %d, this_id %d, sg_tablesize %u, cmd_per_lun %u&bslash;n&quot;
+comma
+id|shp-&gt;can_queue
+comma
+id|shp-&gt;this_id
+comma
+id|shp-&gt;sg_tablesize
+comma
+id|shp-&gt;cmd_per_lun
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.57 */
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,57)
+l_string|&quot; unchecked_isa_dma %d, use_clustering %d, loaded_as_module %d&bslash;n&quot;
+comma
+id|shp-&gt;unchecked_isa_dma
+comma
+id|shp-&gt;use_clustering
+comma
+id|shp-&gt;loaded_as_module
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v1.3.57 */
+l_string|&quot; unchecked_isa_dma %d, loaded_as_module %d&bslash;n&quot;
+comma
+id|shp-&gt;unchecked_isa_dma
+comma
+id|shp-&gt;loaded_as_module
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.57 */
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+l_string|&quot; flags %x, reset_jiffies %x, jiffies %x&bslash;n&quot;
+comma
+id|ASC_BOARDP
+c_func
+(paren
+id|shp
+)paren
+op_member_access_from_pointer
+id|flags
+comma
+id|ASC_BOARDP
+c_func
+(paren
+id|shp
+)paren
+op_member_access_from_pointer
+id|reset_jiffies
+comma
+id|jiffies
+)paren
+suffix:semicolon
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|totlen
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * asc_prt_board_info()&n; *&n; * Print dynamic board configuration information.&n; *&n; * Note: no single line should be greater than ASC_PRTLINE_SIZE,&n; * cf. asc_prt_line().&n; *&n; * Return the number of characters copied into &squot;cp&squot;. No more than&n; * &squot;cplen&squot; characters will be copied to &squot;cp&squot;.&n; */
 id|STATIC
 r_int
@@ -15984,8 +17954,7 @@ r_int
 id|cplen
 )paren
 (brace
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -16072,7 +18041,7 @@ id|cp
 comma
 id|leftlen
 comma
-l_string|&quot; chip_version %u, lib_version %u, lib_serial_no %u mcode_date %u&bslash;n&quot;
+l_string|&quot; chip_version %u, lib_version %u, lib_serial_no %u, mcode_date %u&bslash;n&quot;
 comma
 id|c-&gt;chip_version
 comma
@@ -16109,7 +18078,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Current number of commands pending for the host. */
+multiline_comment|/* Current number of commands waiting for the host. */
 id|len
 op_assign
 id|asc_prt_line
@@ -16351,7 +18320,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Current number of commands pending for a device. */
+multiline_comment|/* Current number of commands waiting for a device. */
 id|len
 op_assign
 id|asc_prt_line
@@ -17658,7 +19627,7 @@ id|byte_data
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Return the BIOS address of the adatper at the specified&n; * I/O port and with the specified bus type.&n; *&n; * This function was formerly supplied by the library.&n; */
+multiline_comment|/*&n; * Return the BIOS address of the adapter at the specified&n; * I/O port and with the specified bus type.&n; *&n; * This function was formerly supplied by the library.&n; */
 id|ushort
 DECL|function|AscGetChipBiosAddress
 id|AscGetChipBiosAddress
@@ -17829,7 +19798,7 @@ id|active
 suffix:semicolon
 id|asc_queue_t
 op_star
-id|pending
+id|waiting
 suffix:semicolon
 id|leftlen
 op_assign
@@ -17909,13 +19878,15 @@ id|cp
 comma
 id|leftlen
 comma
-l_string|&quot; check_interrupt %lu, interrupt %lu, callback %lu&bslash;n&quot;
+l_string|&quot; check_interrupt %lu, interrupt %lu, callback %lu, done %lu&bslash;n&quot;
 comma
 id|s-&gt;check_interrupt
 comma
 id|s-&gt;interrupt
 comma
 id|s-&gt;callback
+comma
+id|s-&gt;done
 )paren
 suffix:semicolon
 id|ASC_PRT_NEXT
@@ -17977,7 +19948,7 @@ id|shp
 op_member_access_from_pointer
 id|active
 suffix:semicolon
-id|pending
+id|waiting
 op_assign
 op_amp
 id|ASC_BOARDP
@@ -17986,7 +19957,7 @@ c_func
 id|shp
 )paren
 op_member_access_from_pointer
-id|pending
+id|waiting
 suffix:semicolon
 r_for
 c_loop
@@ -18008,14 +19979,14 @@ op_increment
 r_if
 c_cond
 (paren
-id|active-&gt;max_count
+id|active-&gt;q_max_cnt
 (braket
 id|i
 )braket
 OG
 l_int|0
 op_logical_or
-id|pending-&gt;max_count
+id|waiting-&gt;q_max_cnt
 (braket
 id|i
 )braket
@@ -18032,26 +20003,26 @@ id|cp
 comma
 id|leftlen
 comma
-l_string|&quot;  target %d: active [cur %d, max %d], pending [cur %d, max %d]&bslash;n&quot;
+l_string|&quot;  target %d: active [cur %d, max %d], waiting [cur %d, max %d]&bslash;n&quot;
 comma
 id|i
 comma
-id|active-&gt;cur_count
+id|active-&gt;q_cur_cnt
 (braket
 id|i
 )braket
 comma
-id|active-&gt;max_count
+id|active-&gt;q_max_cnt
 (braket
 id|i
 )braket
 comma
-id|pending-&gt;cur_count
+id|waiting-&gt;q_cur_cnt
 (braket
 id|i
 )braket
 comma
-id|pending-&gt;max_count
+id|waiting-&gt;q_max_cnt
 (braket
 id|i
 )braket
@@ -21294,7 +23265,7 @@ id|sdtr_xmsg.xfer_period
 OL
 id|asc_dvc-&gt;sdtr_period_tbl
 (braket
-l_int|0
+id|asc_dvc-&gt;host_init_sdtr_index
 )braket
 )paren
 op_logical_or
@@ -21311,6 +23282,13 @@ id|asc_dvc-&gt;max_sdtr_index
 id|sdtr_accept
 op_assign
 id|FALSE
+suffix:semicolon
+id|sdtr_xmsg.xfer_period
+op_assign
+id|asc_dvc-&gt;sdtr_period_tbl
+(braket
+id|asc_dvc-&gt;host_init_sdtr_index
+)braket
 suffix:semicolon
 )brace
 r_if
@@ -21597,7 +23575,7 @@ op_amp
 id|uchar
 )paren
 (paren
-id|ASC_SYN_XFER_NO
+id|asc_dvc-&gt;max_sdtr_index
 op_minus
 l_int|1
 )paren
@@ -22088,8 +24066,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef ADVANSYS_STATS
 (brace
-r_struct
-id|asc_board
+id|asc_board_t
 op_star
 id|boardp
 suffix:semicolon
@@ -24120,11 +26097,11 @@ l_int|0x00
 comma
 l_int|0x00
 comma
-l_int|0xC4
+l_int|0x10
 comma
-l_int|0x0C
+l_int|0x0D
 comma
-l_int|0x08
+l_int|0x09
 comma
 l_int|0x05
 comma
@@ -24186,7 +26163,7 @@ l_int|0x23
 comma
 l_int|0x00
 comma
-l_int|0x20
+l_int|0x21
 comma
 l_int|0x00
 comma
@@ -24228,7 +26205,7 @@ l_int|0x00
 comma
 l_int|0x00
 comma
-l_int|0xE4
+l_int|0xDC
 comma
 l_int|0x88
 comma
@@ -24256,7 +26233,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0xC6
+l_int|0xC2
 comma
 l_int|0x00
 comma
@@ -24296,7 +26273,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0xC6
+l_int|0xC2
 comma
 l_int|0x00
 comma
@@ -24304,7 +26281,7 @@ l_int|0x92
 comma
 l_int|0x80
 comma
-l_int|0x20
+l_int|0x18
 comma
 l_int|0x98
 comma
@@ -24316,7 +26293,7 @@ l_int|0xF5
 comma
 l_int|0x00
 comma
-l_int|0x4A
+l_int|0x42
 comma
 l_int|0x98
 comma
@@ -24344,7 +26321,7 @@ l_int|0xF5
 comma
 l_int|0x00
 comma
-l_int|0x4A
+l_int|0x42
 comma
 l_int|0x98
 comma
@@ -24365,14 +26342,6 @@ comma
 l_int|0x80
 comma
 l_int|0x80
-comma
-l_int|0x62
-comma
-l_int|0x92
-comma
-l_int|0x80
-comma
-l_int|0x00
 comma
 l_int|0x62
 comma
@@ -24412,11 +26381,11 @@ l_int|0x00
 comma
 l_int|0xA3
 comma
-l_int|0xDA
+l_int|0xD6
 comma
 l_int|0x00
 comma
-l_int|0xA8
+l_int|0xA0
 comma
 l_int|0x97
 comma
@@ -24432,11 +26401,11 @@ l_int|0x84
 comma
 l_int|0x01
 comma
-l_int|0xD2
+l_int|0xCC
 comma
 l_int|0x84
 comma
-l_int|0xD0
+l_int|0xD2
 comma
 l_int|0xC1
 comma
@@ -24456,15 +26425,15 @@ l_int|0x00
 comma
 l_int|0xA3
 comma
-l_int|0xE6
+l_int|0xE2
 comma
 l_int|0x01
 comma
-l_int|0xA8
+l_int|0xA0
 comma
 l_int|0x97
 comma
-l_int|0xD2
+l_int|0xCE
 comma
 l_int|0x81
 comma
@@ -24476,7 +26445,7 @@ l_int|0x02
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -24496,7 +26465,7 @@ l_int|0x01
 comma
 l_int|0xA1
 comma
-l_int|0x06
+l_int|0x02
 comma
 l_int|0x01
 comma
@@ -24504,7 +26473,7 @@ l_int|0x4F
 comma
 l_int|0x00
 comma
-l_int|0x86
+l_int|0x7E
 comma
 l_int|0x97
 comma
@@ -24512,7 +26481,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x10
+l_int|0x0C
 comma
 l_int|0x01
 comma
@@ -24524,7 +26493,7 @@ l_int|0x03
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -24544,7 +26513,7 @@ l_int|0x05
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -24572,7 +26541,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x84
+l_int|0x80
 comma
 l_int|0x01
 comma
@@ -24584,11 +26553,11 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x30
+l_int|0x2C
 comma
 l_int|0x01
 comma
-l_int|0x84
+l_int|0x80
 comma
 l_int|0x81
 comma
@@ -24608,7 +26577,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x40
+l_int|0x3C
 comma
 l_int|0x01
 comma
@@ -24620,7 +26589,7 @@ l_int|0x04
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -24640,7 +26609,7 @@ l_int|0x0D
 comma
 l_int|0x23
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x98
 comma
@@ -24648,7 +26617,7 @@ l_int|0x4D
 comma
 l_int|0x04
 comma
-l_int|0xF0
+l_int|0xEA
 comma
 l_int|0x84
 comma
@@ -24660,7 +26629,7 @@ l_int|0x0D
 comma
 l_int|0x23
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x98
 comma
@@ -24672,7 +26641,7 @@ l_int|0x15
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
@@ -24700,7 +26669,7 @@ l_int|0x06
 comma
 l_int|0xA3
 comma
-l_int|0x6E
+l_int|0x6A
 comma
 l_int|0x01
 comma
@@ -24712,7 +26681,7 @@ l_int|0x0A
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -24724,7 +26693,7 @@ l_int|0x07
 comma
 l_int|0xA3
 comma
-l_int|0x7A
+l_int|0x76
 comma
 l_int|0x01
 comma
@@ -24736,7 +26705,7 @@ l_int|0x0B
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -24756,7 +26725,7 @@ l_int|0x1A
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -24764,7 +26733,7 @@ l_int|0x50
 comma
 l_int|0x04
 comma
-l_int|0x94
+l_int|0x90
 comma
 l_int|0x81
 comma
@@ -24772,11 +26741,11 @@ l_int|0x06
 comma
 l_int|0xAB
 comma
-l_int|0x8E
+l_int|0x8A
 comma
 l_int|0x01
 comma
-l_int|0x94
+l_int|0x90
 comma
 l_int|0x81
 comma
@@ -24788,7 +26757,7 @@ l_int|0x07
 comma
 l_int|0xA3
 comma
-l_int|0x9E
+l_int|0x9A
 comma
 l_int|0x01
 comma
@@ -24800,7 +26769,7 @@ l_int|0x00
 comma
 l_int|0xA3
 comma
-l_int|0x48
+l_int|0x44
 comma
 l_int|0x01
 comma
@@ -24808,11 +26777,11 @@ l_int|0x00
 comma
 l_int|0x05
 comma
-l_int|0x88
+l_int|0x84
 comma
 l_int|0x81
 comma
-l_int|0x48
+l_int|0x40
 comma
 l_int|0x97
 comma
@@ -24840,7 +26809,7 @@ l_int|0xA1
 comma
 l_int|0x01
 comma
-l_int|0xCA
+l_int|0xC6
 comma
 l_int|0x81
 comma
@@ -24872,7 +26841,7 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0xC0
+l_int|0xBC
 comma
 l_int|0x01
 comma
@@ -24896,7 +26865,7 @@ l_int|0x1B
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -24904,7 +26873,7 @@ l_int|0x06
 comma
 l_int|0x23
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x98
 comma
@@ -24912,7 +26881,7 @@ l_int|0xCD
 comma
 l_int|0x04
 comma
-l_int|0xD2
+l_int|0xCC
 comma
 l_int|0x84
 comma
@@ -24924,7 +26893,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0xE0
+l_int|0xDC
 comma
 l_int|0x01
 comma
@@ -24936,11 +26905,11 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0xE6
+l_int|0xE2
 comma
 l_int|0x01
 comma
-l_int|0xD2
+l_int|0xCC
 comma
 l_int|0x84
 comma
@@ -24952,7 +26921,7 @@ l_int|0xA0
 comma
 l_int|0x01
 comma
-l_int|0xD2
+l_int|0xCC
 comma
 l_int|0x84
 comma
@@ -24972,7 +26941,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x0E
+l_int|0x08
 comma
 l_int|0x02
 comma
@@ -24980,7 +26949,7 @@ l_int|0x04
 comma
 l_int|0x01
 comma
-l_int|0x0D
+l_int|0x0C
 comma
 l_int|0xDE
 comma
@@ -24996,11 +26965,11 @@ l_int|0x4F
 comma
 l_int|0x00
 comma
-l_int|0x86
+l_int|0x7E
 comma
 l_int|0x97
 comma
-l_int|0x08
+l_int|0x04
 comma
 l_int|0x82
 comma
@@ -25020,7 +26989,7 @@ l_int|0x4F
 comma
 l_int|0x00
 comma
-l_int|0x64
+l_int|0x5C
 comma
 l_int|0x97
 comma
@@ -25028,15 +26997,11 @@ l_int|0x48
 comma
 l_int|0x04
 comma
-l_int|0xFF
-comma
-l_int|0x23
-comma
 l_int|0x84
 comma
 l_int|0x80
 comma
-l_int|0xF2
+l_int|0xEA
 comma
 l_int|0x97
 comma
@@ -25080,7 +27045,7 @@ l_int|0x03
 comma
 l_int|0xEE
 comma
-l_int|0x66
+l_int|0x67
 comma
 l_int|0xEB
 comma
@@ -25088,15 +27053,15 @@ l_int|0x11
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
-l_int|0x06
+l_int|0xFE
 comma
-l_int|0x98
+l_int|0x97
 comma
-l_int|0xF8
+l_int|0xF4
 comma
 l_int|0x80
 comma
@@ -25112,7 +27077,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x3C
+l_int|0x36
 comma
 l_int|0x02
 comma
@@ -25124,7 +27089,7 @@ l_int|0x31
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -25136,19 +27101,19 @@ l_int|0x03
 comma
 l_int|0xD8
 comma
-l_int|0xB4
+l_int|0xAC
 comma
 l_int|0x98
 comma
-l_int|0x3E
+l_int|0x36
 comma
 l_int|0x96
 comma
-l_int|0x4E
+l_int|0x48
 comma
 l_int|0x82
 comma
-l_int|0xCE
+l_int|0xC6
 comma
 l_int|0x95
 comma
@@ -25172,7 +27137,7 @@ l_int|0x02
 comma
 l_int|0xA6
 comma
-l_int|0x78
+l_int|0x72
 comma
 l_int|0x02
 comma
@@ -25180,7 +27145,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x66
+l_int|0x60
 comma
 l_int|0x02
 comma
@@ -25188,7 +27153,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x6A
+l_int|0x64
 comma
 l_int|0x02
 comma
@@ -25196,7 +27161,7 @@ l_int|0x03
 comma
 l_int|0xA6
 comma
-l_int|0x6E
+l_int|0x68
 comma
 l_int|0x02
 comma
@@ -25208,23 +27173,23 @@ l_int|0x10
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x95
 comma
-l_int|0x50
+l_int|0x4A
 comma
 l_int|0x82
 comma
-l_int|0x34
+l_int|0x2C
 comma
 l_int|0x96
 comma
-l_int|0x50
+l_int|0x4A
 comma
 l_int|0x82
 comma
@@ -25244,7 +27209,7 @@ l_int|0xA1
 comma
 l_int|0x01
 comma
-l_int|0x28
+l_int|0x22
 comma
 l_int|0x84
 comma
@@ -25316,7 +27281,7 @@ l_int|0x02
 comma
 l_int|0xA6
 comma
-l_int|0xAA
+l_int|0xA4
 comma
 l_int|0x02
 comma
@@ -25324,7 +27289,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x66
+l_int|0x60
 comma
 l_int|0x02
 comma
@@ -25332,7 +27297,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x6A
+l_int|0x64
 comma
 l_int|0x02
 comma
@@ -25344,7 +27309,7 @@ l_int|0x12
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -25364,7 +27329,7 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0x98
+l_int|0x92
 comma
 l_int|0x02
 comma
@@ -25420,7 +27385,7 @@ l_int|0x00
 comma
 l_int|0x00
 comma
-l_int|0xEA
+l_int|0xE4
 comma
 l_int|0x82
 comma
@@ -25436,7 +27401,7 @@ l_int|0x18
 comma
 l_int|0xA0
 comma
-l_int|0xE2
+l_int|0xDC
 comma
 l_int|0x02
 comma
@@ -25456,7 +27421,7 @@ l_int|0x1F
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -25476,7 +27441,7 @@ l_int|0x0E
 comma
 l_int|0x3D
 comma
-l_int|0x80
+l_int|0x78
 comma
 l_int|0x98
 comma
@@ -25488,7 +27453,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x14
+l_int|0x0E
 comma
 l_int|0x03
 comma
@@ -25496,7 +27461,7 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0x14
+l_int|0x0E
 comma
 l_int|0x03
 comma
@@ -25504,7 +27469,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x0C
+l_int|0x06
 comma
 l_int|0x03
 comma
@@ -25512,7 +27477,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x10
+l_int|0x0A
 comma
 l_int|0x03
 comma
@@ -25520,7 +27485,7 @@ l_int|0x03
 comma
 l_int|0xA6
 comma
-l_int|0x0C
+l_int|0x06
 comma
 l_int|0x04
 comma
@@ -25528,7 +27493,7 @@ l_int|0x02
 comma
 l_int|0xA6
 comma
-l_int|0x78
+l_int|0x72
 comma
 l_int|0x02
 comma
@@ -25540,27 +27505,27 @@ l_int|0x33
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x95
 comma
-l_int|0xEE
+l_int|0xE8
 comma
 l_int|0x82
 comma
-l_int|0x34
+l_int|0x2C
 comma
 l_int|0x96
 comma
-l_int|0xEE
+l_int|0xE8
 comma
 l_int|0x82
 comma
-l_int|0x84
+l_int|0x7C
 comma
 l_int|0x98
 comma
@@ -25568,7 +27533,7 @@ l_int|0x80
 comma
 l_int|0x42
 comma
-l_int|0x80
+l_int|0x78
 comma
 l_int|0x98
 comma
@@ -25596,7 +27561,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x54
+l_int|0x4E
 comma
 l_int|0x03
 comma
@@ -25612,11 +27577,11 @@ l_int|0x05
 comma
 l_int|0x05
 comma
-l_int|0x88
+l_int|0x80
 comma
 l_int|0x98
 comma
-l_int|0x80
+l_int|0x78
 comma
 l_int|0x98
 comma
@@ -25624,7 +27589,7 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0x16
+l_int|0x10
 comma
 l_int|0x03
 comma
@@ -25632,7 +27597,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x4C
+l_int|0x46
 comma
 l_int|0x03
 comma
@@ -25640,7 +27605,7 @@ l_int|0x03
 comma
 l_int|0xA6
 comma
-l_int|0x28
+l_int|0x22
 comma
 l_int|0x04
 comma
@@ -25648,7 +27613,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x50
+l_int|0x4A
 comma
 l_int|0x03
 comma
@@ -25656,7 +27621,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x16
+l_int|0x10
 comma
 l_int|0x03
 comma
@@ -25668,23 +27633,23 @@ l_int|0x25
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x95
 comma
-l_int|0x32
+l_int|0x2C
 comma
 l_int|0x83
 comma
-l_int|0x34
+l_int|0x2C
 comma
 l_int|0x96
 comma
-l_int|0x32
+l_int|0x2C
 comma
 l_int|0x83
 comma
@@ -25708,7 +27673,7 @@ l_int|0x42
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -25724,7 +27689,7 @@ l_int|0xFF
 comma
 l_int|0xA2
 comma
-l_int|0x72
+l_int|0x6C
 comma
 l_int|0x03
 comma
@@ -25740,7 +27705,7 @@ l_int|0xB2
 comma
 l_int|0x01
 comma
-l_int|0x2E
+l_int|0x28
 comma
 l_int|0x83
 comma
@@ -25756,7 +27721,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x92
+l_int|0x8C
 comma
 l_int|0x03
 comma
@@ -25788,7 +27753,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x8E
+l_int|0x88
 comma
 l_int|0x03
 comma
@@ -25796,19 +27761,19 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0x8E
+l_int|0x88
 comma
 l_int|0x03
 comma
-l_int|0x02
+l_int|0xFC
 comma
-l_int|0x84
+l_int|0x83
 comma
 l_int|0x80
 comma
 l_int|0x42
 comma
-l_int|0x80
+l_int|0x78
 comma
 l_int|0x98
 comma
@@ -25816,7 +27781,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x9C
+l_int|0x96
 comma
 l_int|0x03
 comma
@@ -25824,15 +27789,15 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0xB4
+l_int|0xAE
 comma
 l_int|0x03
 comma
-l_int|0x02
+l_int|0xFC
 comma
-l_int|0x84
+l_int|0x83
 comma
-l_int|0xA8
+l_int|0xA0
 comma
 l_int|0x98
 comma
@@ -25844,7 +27809,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x9C
+l_int|0x96
 comma
 l_int|0x03
 comma
@@ -25852,19 +27817,19 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xAA
+l_int|0xA4
 comma
 l_int|0x03
 comma
-l_int|0xCC
+l_int|0xC6
 comma
 l_int|0x83
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x95
 comma
-l_int|0xA0
+l_int|0x9A
 comma
 l_int|0x83
 comma
@@ -25876,11 +27841,11 @@ l_int|0x2F
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
-l_int|0xA8
+l_int|0xA0
 comma
 l_int|0x98
 comma
@@ -25892,7 +27857,7 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0xB4
+l_int|0xAE
 comma
 l_int|0x03
 comma
@@ -25900,19 +27865,19 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xC2
+l_int|0xBC
 comma
 l_int|0x03
 comma
-l_int|0xCC
+l_int|0xC6
 comma
 l_int|0x83
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x95
 comma
-l_int|0xB8
+l_int|0xB2
 comma
 l_int|0x83
 comma
@@ -25924,7 +27889,7 @@ l_int|0x26
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -25956,9 +27921,9 @@ l_int|0xA1
 comma
 l_int|0x01
 comma
-l_int|0x02
+l_int|0xFC
 comma
-l_int|0x84
+l_int|0x83
 comma
 l_int|0x04
 comma
@@ -25976,7 +27941,7 @@ l_int|0x20
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -25984,15 +27949,15 @@ l_int|0x03
 comma
 l_int|0xA6
 comma
-l_int|0x00
+l_int|0xFA
 comma
-l_int|0x04
+l_int|0x03
 comma
 l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xF8
+l_int|0xF2
 comma
 l_int|0x03
 comma
@@ -26000,7 +27965,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0xFC
+l_int|0xF6
 comma
 l_int|0x03
 comma
@@ -26012,27 +27977,27 @@ l_int|0x17
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x95
 comma
-l_int|0xE6
+l_int|0xE0
 comma
 l_int|0x83
 comma
-l_int|0x34
+l_int|0x2C
 comma
 l_int|0x96
 comma
-l_int|0xE6
+l_int|0xE0
 comma
 l_int|0x83
 comma
-l_int|0x0C
+l_int|0x06
 comma
 l_int|0x84
 comma
@@ -26052,7 +28017,7 @@ l_int|0x20
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -26064,7 +28029,7 @@ l_int|0x03
 comma
 l_int|0xA6
 comma
-l_int|0x28
+l_int|0x22
 comma
 l_int|0x04
 comma
@@ -26072,7 +28037,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x20
+l_int|0x1A
 comma
 l_int|0x04
 comma
@@ -26080,7 +28045,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x24
+l_int|0x1E
 comma
 l_int|0x04
 comma
@@ -26092,23 +28057,23 @@ l_int|0x30
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x95
 comma
-l_int|0x0C
+l_int|0x06
 comma
 l_int|0x84
 comma
-l_int|0x34
+l_int|0x2C
 comma
 l_int|0x96
 comma
-l_int|0x0C
+l_int|0x06
 comma
 l_int|0x84
 comma
@@ -26156,7 +28121,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x46
+l_int|0x40
 comma
 l_int|0x04
 comma
@@ -26168,7 +28133,7 @@ l_int|0x18
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -26188,7 +28153,7 @@ l_int|0x07
 comma
 l_int|0xA4
 comma
-l_int|0x50
+l_int|0x4A
 comma
 l_int|0x04
 comma
@@ -26200,7 +28165,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x72
+l_int|0x6C
 comma
 l_int|0x04
 comma
@@ -26208,7 +28173,7 @@ l_int|0x0A
 comma
 l_int|0xA0
 comma
-l_int|0x62
+l_int|0x5C
 comma
 l_int|0x04
 comma
@@ -26224,7 +28189,7 @@ l_int|0x1D
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -26232,7 +28197,7 @@ l_int|0x0B
 comma
 l_int|0xA0
 comma
-l_int|0x6E
+l_int|0x68
 comma
 l_int|0x04
 comma
@@ -26248,7 +28213,7 @@ l_int|0x1E
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -26256,7 +28221,7 @@ l_int|0x42
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
@@ -26268,7 +28233,7 @@ l_int|0x22
 comma
 l_int|0xA3
 comma
-l_int|0xD2
+l_int|0xCC
 comma
 l_int|0x04
 comma
@@ -26280,7 +28245,7 @@ l_int|0x22
 comma
 l_int|0xA3
 comma
-l_int|0x8E
+l_int|0x88
 comma
 l_int|0x04
 comma
@@ -26292,7 +28257,7 @@ l_int|0x22
 comma
 l_int|0xA3
 comma
-l_int|0x9A
+l_int|0x94
 comma
 l_int|0x04
 comma
@@ -26304,7 +28269,7 @@ l_int|0x22
 comma
 l_int|0xA3
 comma
-l_int|0xB0
+l_int|0xAA
 comma
 l_int|0x04
 comma
@@ -26312,7 +28277,7 @@ l_int|0x42
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
@@ -26328,7 +28293,7 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0x9A
+l_int|0x94
 comma
 l_int|0x04
 comma
@@ -26336,23 +28301,23 @@ l_int|0x45
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
-l_int|0x06
+l_int|0xFE
 comma
-l_int|0x98
+l_int|0x97
 comma
 l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0xAC
+l_int|0xA6
 comma
 l_int|0x04
 comma
-l_int|0xB4
+l_int|0xAC
 comma
 l_int|0x98
 comma
@@ -26372,7 +28337,7 @@ l_int|0x81
 comma
 l_int|0x62
 comma
-l_int|0xF4
+l_int|0xF0
 comma
 l_int|0x81
 comma
@@ -26380,7 +28345,7 @@ l_int|0x47
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
@@ -26392,11 +28357,11 @@ l_int|0x0B
 comma
 l_int|0xDE
 comma
-l_int|0x06
+l_int|0xFE
 comma
-l_int|0x98
+l_int|0x97
 comma
-l_int|0xB4
+l_int|0xAC
 comma
 l_int|0x98
 comma
@@ -26424,7 +28389,7 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0x0E
+l_int|0x08
 comma
 l_int|0x02
 comma
@@ -26432,7 +28397,7 @@ l_int|0x43
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
@@ -26464,7 +28429,7 @@ l_int|0x03
 comma
 l_int|0xA3
 comma
-l_int|0xE0
+l_int|0xDA
 comma
 l_int|0x04
 comma
@@ -26476,7 +28441,7 @@ l_int|0x27
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -26504,11 +28469,11 @@ l_int|0xA0
 comma
 l_int|0x01
 comma
-l_int|0x06
+l_int|0xFE
 comma
-l_int|0x98
+l_int|0x97
 comma
-l_int|0x14
+l_int|0x0C
 comma
 l_int|0x95
 comma
@@ -26532,7 +28497,7 @@ l_int|0x00
 comma
 l_int|0xA3
 comma
-l_int|0x0E
+l_int|0x08
 comma
 l_int|0x05
 comma
@@ -26552,15 +28517,15 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x08
+l_int|0x02
 comma
 l_int|0x05
 comma
-l_int|0xF6
+l_int|0xF0
 comma
 l_int|0x84
 comma
-l_int|0x48
+l_int|0x40
 comma
 l_int|0x97
 comma
@@ -26568,17 +28533,13 @@ l_int|0xCD
 comma
 l_int|0x04
 comma
-l_int|0x12
+l_int|0x0A
 comma
 l_int|0x85
 comma
 l_int|0x48
 comma
 l_int|0x04
-comma
-l_int|0xFF
-comma
-l_int|0x23
 comma
 l_int|0x84
 comma
@@ -26600,7 +28561,7 @@ l_int|0x82
 comma
 l_int|0x01
 comma
-l_int|0x22
+l_int|0x1A
 comma
 l_int|0x85
 comma
@@ -26624,7 +28585,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x2E
+l_int|0x26
 comma
 l_int|0x05
 comma
@@ -26716,7 +28677,7 @@ l_int|0xFF
 comma
 l_int|0xA0
 comma
-l_int|0x4E
+l_int|0x46
 comma
 l_int|0x05
 comma
@@ -26760,7 +28721,7 @@ l_int|0x07
 comma
 l_int|0xA4
 comma
-l_int|0xCC
+l_int|0xC4
 comma
 l_int|0x05
 comma
@@ -26772,11 +28733,11 @@ l_int|0x02
 comma
 l_int|0xA0
 comma
-l_int|0x7C
+l_int|0x74
 comma
 l_int|0x05
 comma
-l_int|0xC8
+l_int|0xC0
 comma
 l_int|0x85
 comma
@@ -26788,7 +28749,7 @@ l_int|0x2D
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -26796,7 +28757,7 @@ l_int|0x04
 comma
 l_int|0xA0
 comma
-l_int|0xA2
+l_int|0x9A
 comma
 l_int|0x05
 comma
@@ -26816,7 +28777,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x8E
+l_int|0x86
 comma
 l_int|0x05
 comma
@@ -26844,11 +28805,11 @@ l_int|0x50
 comma
 l_int|0x00
 comma
-l_int|0x64
+l_int|0x5C
 comma
 l_int|0x97
 comma
-l_int|0xF0
+l_int|0xEA
 comma
 l_int|0x84
 comma
@@ -26864,7 +28825,7 @@ l_int|0x82
 comma
 l_int|0x01
 comma
-l_int|0xF0
+l_int|0xEA
 comma
 l_int|0x84
 comma
@@ -26872,11 +28833,11 @@ l_int|0x08
 comma
 l_int|0xA0
 comma
-l_int|0xA8
+l_int|0xA0
 comma
 l_int|0x05
 comma
-l_int|0xC8
+l_int|0xC0
 comma
 l_int|0x85
 comma
@@ -26884,11 +28845,11 @@ l_int|0x03
 comma
 l_int|0xA0
 comma
-l_int|0xAE
+l_int|0xA6
 comma
 l_int|0x05
 comma
-l_int|0xC8
+l_int|0xC0
 comma
 l_int|0x85
 comma
@@ -26896,7 +28857,7 @@ l_int|0x01
 comma
 l_int|0xA0
 comma
-l_int|0xBA
+l_int|0xB2
 comma
 l_int|0x05
 comma
@@ -26908,11 +28869,11 @@ l_int|0x80
 comma
 l_int|0x63
 comma
-l_int|0xB8
+l_int|0xB0
 comma
 l_int|0x96
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x85
 comma
@@ -26920,7 +28881,7 @@ l_int|0x07
 comma
 l_int|0xA0
 comma
-l_int|0xC6
+l_int|0xBE
 comma
 l_int|0x05
 comma
@@ -26928,7 +28889,7 @@ l_int|0x06
 comma
 l_int|0x23
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x98
 comma
@@ -26936,11 +28897,11 @@ l_int|0x48
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
-l_int|0xC8
+l_int|0xC0
 comma
 l_int|0x86
 comma
@@ -26948,7 +28909,7 @@ l_int|0x80
 comma
 l_int|0x63
 comma
-l_int|0x6A
+l_int|0x62
 comma
 l_int|0x85
 comma
@@ -26968,7 +28929,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x0A
+l_int|0x02
 comma
 l_int|0x06
 comma
@@ -27000,7 +28961,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0xEC
+l_int|0xE4
 comma
 l_int|0x05
 comma
@@ -27012,7 +28973,7 @@ l_int|0x37
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27028,7 +28989,7 @@ l_int|0x46
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
@@ -27048,9 +29009,9 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x04
+l_int|0xFC
 comma
-l_int|0x06
+l_int|0x05
 comma
 l_int|0x00
 comma
@@ -27060,7 +29021,7 @@ l_int|0x38
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27100,7 +29061,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x22
+l_int|0x1A
 comma
 l_int|0x06
 comma
@@ -27184,7 +29145,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x50
+l_int|0x48
 comma
 l_int|0x06
 comma
@@ -27192,7 +29153,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xA4
+l_int|0x9C
 comma
 l_int|0x06
 comma
@@ -27200,7 +29161,7 @@ l_int|0x02
 comma
 l_int|0xA6
 comma
-l_int|0xFC
+l_int|0xF4
 comma
 l_int|0x06
 comma
@@ -27212,7 +29173,7 @@ l_int|0x39
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27224,11 +29185,11 @@ l_int|0x01
 comma
 l_int|0xA0
 comma
-l_int|0x16
+l_int|0x0E
 comma
 l_int|0x07
 comma
-l_int|0xCE
+l_int|0xC6
 comma
 l_int|0x95
 comma
@@ -27244,7 +29205,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x64
+l_int|0x5C
 comma
 l_int|0x06
 comma
@@ -27252,7 +29213,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xA4
+l_int|0x9C
 comma
 l_int|0x06
 comma
@@ -27264,7 +29225,7 @@ l_int|0x01
 comma
 l_int|0xA0
 comma
-l_int|0x16
+l_int|0x0E
 comma
 l_int|0x07
 comma
@@ -27288,7 +29249,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x80
+l_int|0x78
 comma
 l_int|0x06
 comma
@@ -27296,7 +29257,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xA4
+l_int|0x9C
 comma
 l_int|0x06
 comma
@@ -27308,7 +29269,7 @@ l_int|0x3A
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27328,7 +29289,7 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0x72
+l_int|0x6A
 comma
 l_int|0x06
 comma
@@ -27336,7 +29297,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x98
+l_int|0x90
 comma
 l_int|0x06
 comma
@@ -27344,7 +29305,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xA4
+l_int|0x9C
 comma
 l_int|0x06
 comma
@@ -27356,7 +29317,7 @@ l_int|0x3B
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27376,7 +29337,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xA4
+l_int|0x9C
 comma
 l_int|0x06
 comma
@@ -27400,7 +29361,7 @@ l_int|0x01
 comma
 l_int|0xA2
 comma
-l_int|0xB8
+l_int|0xB0
 comma
 l_int|0x06
 comma
@@ -27408,7 +29369,7 @@ l_int|0x07
 comma
 l_int|0xA2
 comma
-l_int|0xFC
+l_int|0xF4
 comma
 l_int|0x06
 comma
@@ -27420,7 +29381,7 @@ l_int|0x35
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27428,7 +29389,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x06
 comma
@@ -27440,7 +29401,7 @@ l_int|0x2A
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27452,7 +29413,7 @@ l_int|0x03
 comma
 l_int|0xA2
 comma
-l_int|0xCE
+l_int|0xC6
 comma
 l_int|0x06
 comma
@@ -27464,7 +29425,7 @@ l_int|0x80
 comma
 l_int|0x00
 comma
-l_int|0x08
+l_int|0x00
 comma
 l_int|0x87
 comma
@@ -27484,7 +29445,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xDE
+l_int|0xD6
 comma
 l_int|0x06
 comma
@@ -27496,7 +29457,7 @@ l_int|0x29
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27508,7 +29469,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0xEA
+l_int|0xE2
 comma
 l_int|0x06
 comma
@@ -27520,7 +29481,7 @@ l_int|0x80
 comma
 l_int|0x63
 comma
-l_int|0xD4
+l_int|0xCC
 comma
 l_int|0x86
 comma
@@ -27596,7 +29557,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x5C
+l_int|0x54
 comma
 l_int|0x06
 comma
@@ -27608,7 +29569,7 @@ l_int|0x2C
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27616,11 +29577,11 @@ l_int|0x0C
 comma
 l_int|0xA2
 comma
-l_int|0x30
+l_int|0x28
 comma
 l_int|0x07
 comma
-l_int|0xCE
+l_int|0xC6
 comma
 l_int|0x95
 comma
@@ -27636,7 +29597,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x2E
+l_int|0x26
 comma
 l_int|0x07
 comma
@@ -27644,7 +29605,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xA4
+l_int|0x9C
 comma
 l_int|0x06
 comma
@@ -27656,7 +29617,7 @@ l_int|0x3D
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -27680,7 +29641,7 @@ l_int|0x0C
 comma
 l_int|0xA0
 comma
-l_int|0x46
+l_int|0x3E
 comma
 l_int|0x07
 comma
@@ -27688,7 +29649,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xA4
+l_int|0x9C
 comma
 l_int|0x06
 comma
@@ -27704,7 +29665,7 @@ l_int|0x84
 comma
 l_int|0x01
 comma
-l_int|0xD2
+l_int|0xCC
 comma
 l_int|0x84
 comma
@@ -27948,7 +29909,7 @@ l_int|0x03
 comma
 l_int|0xA1
 comma
-l_int|0xC6
+l_int|0xBE
 comma
 l_int|0x07
 comma
@@ -27960,7 +29921,7 @@ l_int|0x07
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -28016,7 +29977,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0xE6
+l_int|0xDE
 comma
 l_int|0x07
 comma
@@ -28024,7 +29985,7 @@ l_int|0x00
 comma
 l_int|0x05
 comma
-l_int|0xDC
+l_int|0xD4
 comma
 l_int|0x87
 comma
@@ -28116,11 +30077,11 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0x16
+l_int|0x0E
 comma
 l_int|0x08
 comma
-l_int|0x18
+l_int|0x10
 comma
 l_int|0x88
 comma
@@ -28176,7 +30137,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x46
+l_int|0x3E
 comma
 l_int|0x08
 comma
@@ -28204,19 +30165,19 @@ l_int|0x01
 comma
 l_int|0xA1
 comma
-l_int|0x26
+l_int|0x1E
 comma
 l_int|0x08
 comma
-l_int|0x06
+l_int|0xFE
 comma
-l_int|0x98
+l_int|0x97
 comma
-l_int|0x14
+l_int|0x0C
 comma
 l_int|0x95
 comma
-l_int|0x26
+l_int|0x1E
 comma
 l_int|0x88
 comma
@@ -28236,7 +30197,7 @@ l_int|0x75
 comma
 l_int|0x04
 comma
-l_int|0x5C
+l_int|0x54
 comma
 l_int|0x88
 comma
@@ -28248,19 +30209,19 @@ l_int|0x04
 comma
 l_int|0xD8
 comma
-l_int|0x48
+l_int|0x40
 comma
 l_int|0x97
 comma
-l_int|0x06
+l_int|0xFE
 comma
-l_int|0x98
+l_int|0x97
 comma
-l_int|0x14
+l_int|0x0C
 comma
 l_int|0x95
 comma
-l_int|0x4C
+l_int|0x44
 comma
 l_int|0x88
 comma
@@ -28272,7 +30233,7 @@ l_int|0x00
 comma
 l_int|0xA3
 comma
-l_int|0x66
+l_int|0x5E
 comma
 l_int|0x08
 comma
@@ -28280,7 +30241,7 @@ l_int|0x00
 comma
 l_int|0x05
 comma
-l_int|0x50
+l_int|0x48
 comma
 l_int|0x88
 comma
@@ -28304,7 +30265,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x78
+l_int|0x70
 comma
 l_int|0x08
 comma
@@ -28316,7 +30277,7 @@ l_int|0x3E
 comma
 l_int|0x00
 comma
-l_int|0xC2
+l_int|0xBA
 comma
 l_int|0x88
 comma
@@ -28340,7 +30301,7 @@ l_int|0x38
 comma
 l_int|0x2B
 comma
-l_int|0x9E
+l_int|0x96
 comma
 l_int|0x88
 comma
@@ -28348,7 +30309,7 @@ l_int|0x38
 comma
 l_int|0x2B
 comma
-l_int|0x94
+l_int|0x8C
 comma
 l_int|0x88
 comma
@@ -28360,7 +30321,7 @@ l_int|0x31
 comma
 l_int|0x05
 comma
-l_int|0x94
+l_int|0x8C
 comma
 l_int|0x98
 comma
@@ -28452,7 +30413,7 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0xB4
+l_int|0xAC
 comma
 l_int|0x08
 comma
@@ -28500,7 +30461,7 @@ l_int|0x13
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
@@ -28532,7 +30493,7 @@ l_int|0x81
 comma
 l_int|0x62
 comma
-l_int|0xE2
+l_int|0xDA
 comma
 l_int|0x88
 comma
@@ -28568,7 +30529,7 @@ l_int|0x41
 comma
 l_int|0x23
 comma
-l_int|0xF8
+l_int|0xF0
 comma
 l_int|0x88
 comma
@@ -28588,7 +30549,7 @@ l_int|0xA0
 comma
 l_int|0x01
 comma
-l_int|0xD2
+l_int|0xCC
 comma
 l_int|0x84
 comma
@@ -28607,7 +30568,7 @@ DECL|variable|_mcode_chksum
 id|ulong
 id|_mcode_chksum
 op_assign
-l_int|0x012CD3FFUL
+l_int|0x012BA2FAUL
 suffix:semicolon
 DECL|macro|ASC_SYN_OFFSET_ONE_DISABLE_LIST
 mdefine_line|#define ASC_SYN_OFFSET_ONE_DISABLE_LIST  16
@@ -28805,10 +30766,23 @@ id|scsiq-&gt;q1.q_no
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|scsiq-&gt;q2.tag_code
+op_amp
+id|ASC_TAG_FLAG_EXTRA_BYTES
+)paren
+op_eq
+l_int|0
+)paren
+(brace
 id|scsiq-&gt;q1.extra_bytes
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 id|sta
 op_assign
 l_int|0
@@ -28891,7 +30865,7 @@ op_amp
 id|uchar
 )paren
 (paren
-id|ASC_SYN_XFER_NO
+id|asc_dvc-&gt;max_sdtr_index
 op_minus
 l_int|1
 )paren
@@ -29406,9 +31380,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|extra_bytes
 op_ne
 l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+id|scsiq-&gt;q2.tag_code
+op_amp
+id|ASC_TAG_FLAG_EXTRA_BYTES
+)paren
+op_eq
+l_int|0
+)paren
 )paren
 (brace
 id|scsiq-&gt;q2.tag_code
@@ -29620,9 +31606,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|extra_bytes
 op_ne
 l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+id|scsiq-&gt;q2.tag_code
+op_amp
+id|ASC_TAG_FLAG_EXTRA_BYTES
+)paren
+op_eq
+l_int|0
+)paren
 )paren
 (brace
 r_if
@@ -30581,9 +32579,21 @@ l_int|1
 r_if
 c_cond
 (paren
+(paren
 id|n_qs
 OG
 id|asc_dvc-&gt;last_q_shortage
+)paren
+op_logical_and
+(paren
+id|n_qs
+op_le
+(paren
+id|asc_dvc-&gt;max_total_qng
+op_minus
+id|ASC_MIN_FREE_Q
+)paren
+)paren
 )paren
 (brace
 id|asc_dvc-&gt;last_q_shortage
@@ -30692,7 +32702,7 @@ l_int|4
 )paren
 op_amp
 (paren
-id|ASC_SYN_XFER_NO
+id|asc_dvc-&gt;max_sdtr_index
 op_minus
 l_int|1
 )paren
@@ -36990,11 +39000,7 @@ id|asc_dvc-&gt;res2
 op_assign
 l_int|0
 suffix:semicolon
-id|asc_dvc-&gt;res4
-op_assign
-l_int|0
-suffix:semicolon
-id|asc_dvc-&gt;res6
+id|asc_dvc-&gt;host_init_sdtr_index
 op_assign
 l_int|0
 suffix:semicolon
@@ -37371,24 +39377,6 @@ id|i
 )braket
 op_assign
 id|ASC_MAX_INRAM_TAG_QNG
-suffix:semicolon
-id|asc_dvc-&gt;cfg-&gt;sdtr_period_offset
-(braket
-id|i
-)braket
-op_assign
-(paren
-id|uchar
-)paren
-(paren
-id|ASC_DEF_SDTR_OFFSET
-op_or
-(paren
-id|ASC_DEF_SDTR_INDEX
-op_lshift
-l_int|4
-)paren
-)paren
 suffix:semicolon
 )brace
 r_return
@@ -37930,6 +39918,32 @@ id|asc_dvc-&gt;cfg-&gt;chip_scsi_id
 op_assign
 id|eep_config-&gt;chip_scsi_id
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|asc_dvc-&gt;bus_type
+op_amp
+id|ASC_IS_PCI_ULTRA
+)paren
+op_eq
+id|ASC_IS_PCI_ULTRA
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|asc_dvc-&gt;dvc_cntl
+op_amp
+id|ASC_CNTL_SDTR_ENABLE_ULTRA
+)paren
+)paren
+(brace
+id|asc_dvc-&gt;host_init_sdtr_index
+op_assign
+id|ASC_SDTR_ULTRA_PCI_10MB_INDEX
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -37973,6 +39987,24 @@ id|i
 )braket
 op_assign
 id|eep_config-&gt;max_tag_qng
+suffix:semicolon
+id|asc_dvc-&gt;cfg-&gt;sdtr_period_offset
+(braket
+id|i
+)braket
+op_assign
+(paren
+id|uchar
+)paren
+(paren
+id|ASC_DEF_SDTR_OFFSET
+op_or
+(paren
+id|asc_dvc-&gt;host_init_sdtr_index
+op_lshift
+l_int|4
+)paren
+)paren
 suffix:semicolon
 )brace
 id|eep_config-&gt;cfg_msw
@@ -38032,6 +40064,9 @@ id|warn_code
 suffix:semicolon
 id|ushort
 id|cfg_msw
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|iop_base
 op_assign
@@ -38097,10 +40132,46 @@ id|asc_dvc
 r_if
 c_cond
 (paren
+(paren
+(paren
 id|asc_dvc-&gt;bus_type
 op_amp
-id|ASC_IS_PCI
+id|ASC_IS_PCI_ULTRA
 )paren
+op_eq
+id|ASC_IS_PCI_ULTRA
+)paren
+)paren
+(brace
+id|asc_dvc-&gt;max_total_qng
+op_assign
+id|ASC_MAX_PCI_ULTRA_INRAM_TOTAL_QNG
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|ASC_MAX_TID
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|asc_dvc-&gt;cfg-&gt;max_tag_qng
+(braket
+id|i
+)braket
+op_assign
+id|ASC_MAX_PCI_ULTRA_INRAM_TAG_QNG
+suffix:semicolon
+)brace
+)brace
+r_else
 (brace
 id|cfg_msw
 op_or_assign
@@ -38118,10 +40189,30 @@ id|asc_dvc-&gt;max_total_qng
 op_assign
 id|ASC_MAX_PCI_INRAM_TOTAL_QNG
 suffix:semicolon
-)brace
-)brace
-r_else
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|ASC_MAX_TID
+suffix:semicolon
+id|i
+op_increment
+)paren
 (brace
+id|asc_dvc-&gt;cfg-&gt;max_tag_qng
+(braket
+id|i
+)braket
+op_assign
+id|ASC_MAX_INRAM_TAG_QNG
+suffix:semicolon
+)brace
+)brace
 )brace
 r_if
 c_cond
@@ -38424,6 +40515,14 @@ suffix:semicolon
 id|uchar
 id|i
 suffix:semicolon
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;AscInitPollIsrCallBack: begin&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -38557,6 +40656,14 @@ id|scsi_done_q
 suffix:semicolon
 )brace
 )brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;AscInitPollIsrCallBack: end&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -40011,6 +42118,14 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;AscInitPollTarget: before PollScsiInquiry&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -40189,57 +42304,6 @@ op_amp
 id|tid_bits
 )paren
 (brace
-macro_line|#if CC_FIX_QUANTUM_XP34301_1071
-r_if
-c_cond
-(paren
-(paren
-id|inq-&gt;add_len
-op_ge
-l_int|32
-)paren
-op_logical_and
-(paren
-id|AscCompareString
-c_func
-(paren
-id|inq-&gt;vendor_id
-comma
-(paren
-id|uchar
-op_star
-)paren
-l_string|&quot;QUANTUM XP34301&quot;
-comma
-l_int|15
-)paren
-op_eq
-l_int|0
-)paren
-op_logical_and
-(paren
-id|AscCompareString
-c_func
-(paren
-id|inq-&gt;product_rev_level
-comma
-(paren
-id|uchar
-op_star
-)paren
-l_string|&quot;1071&quot;
-comma
-l_int|4
-)paren
-op_eq
-l_int|0
-)paren
-)paren
-(brace
-)brace
-r_else
-(brace
-macro_line|#endif
 id|asc_dvc-&gt;use_tagged_qng
 op_or_assign
 id|tid_bits
@@ -40254,9 +42318,6 @@ id|asc_dvc-&gt;cfg-&gt;max_tag_qng
 id|tid_no
 )braket
 suffix:semicolon
-macro_line|#if CC_FIX_QUANTUM_XP34301_1071
-)brace
-macro_line|#endif
 )brace
 )brace
 r_if
@@ -40434,7 +42495,14 @@ id|sta
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if CC_INIT_TARGET_TEST_UNIT_READY
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;AscInitPollTarget: before InitTestUnitReady&bslash;n&quot;
+)paren
+suffix:semicolon
 id|sta
 op_assign
 id|InitTestUnitReady
@@ -40445,8 +42513,6 @@ comma
 id|scsiq
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if CC_INIT_TARGET_READ_CAPACITY
 r_if
 c_cond
 (paren
@@ -40467,6 +42533,14 @@ op_logical_and
 id|support_read_cap
 )paren
 (brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;AscInitPollTarget: before PollScsiReadCapacity&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -40497,7 +42571,6 @@ r_else
 )brace
 )brace
 )brace
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -40508,9 +42581,16 @@ id|tid_bits
 suffix:semicolon
 )brace
 )brace
-r_else
-(brace
-)brace
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;AscInitPollTarget: dvc_found %d&bslash;n&quot;
+comma
+id|dvc_found
+)paren
+suffix:semicolon
 r_return
 (paren
 id|dvc_found
@@ -40543,13 +42623,29 @@ id|status
 suffix:semicolon
 r_int
 id|retry
-suffix:semicolon
-id|retry
 op_assign
 l_int|0
 suffix:semicolon
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;PollQueueDone: timeout_sec %d&quot;
+comma
+id|timeout_sec
+)paren
+suffix:semicolon
 r_do
 (brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;PollQueueDone: before AscExeScsiQueue&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -40573,6 +42669,14 @@ op_eq
 l_int|1
 )paren
 (brace
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;PollQueueDone: before AscPollQDone&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -40666,15 +42770,32 @@ id|scsiq
 )paren
 suffix:semicolon
 )brace
+id|ASC_DBG1
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;PollQueueDone: done_stat %x&bslash;n&quot;
+comma
+id|scsiq-&gt;r3.done_stat
+)paren
+suffix:semicolon
 r_return
 (paren
 id|scsiq-&gt;r3.done_stat
 )paren
 suffix:semicolon
 )brace
+id|DvcSleepMilliSecond
+c_func
+(paren
+l_int|5
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop
+(paren
 (paren
 (paren
 id|status
@@ -40687,6 +42808,20 @@ id|status
 op_eq
 l_int|0x80
 )paren
+)paren
+op_logical_and
+id|retry
+op_increment
+OL
+id|ASC_MAX_INIT_BUSY_RETRY
+)paren
+suffix:semicolon
+id|ASC_DBG
+c_func
+(paren
+l_int|1
+comma
+l_string|&quot;PollQueueDone: done_stat QD_WITH_ERROR&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -40768,7 +42903,6 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#if CC_INIT_TARGET_START_UNIT
 r_int
 DECL|function|PollScsiStartUnit
 id|PollScsiStartUnit
@@ -40830,8 +42964,6 @@ l_int|40
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#if CC_INIT_TARGET_READ_CAPACITY
 r_int
 DECL|function|PollScsiReadCapacity
 id|PollScsiReadCapacity
@@ -40978,7 +43110,6 @@ id|QD_WITH_ERROR
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|ulong
 id|dosfar
 op_star
@@ -41054,7 +43185,6 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-macro_line|#if CC_INIT_TARGET_TEST_UNIT_READY
 r_int
 DECL|function|PollScsiTestUnitReady
 id|PollScsiTestUnitReady
@@ -41336,7 +43466,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_int
 DECL|function|AscPollQDone
 id|AscPollQDone
@@ -42362,7 +44491,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#if CC_INIT_TARGET_READ_CAPACITY
 r_int
 DECL|function|AscScsiReadCapacity
 id|AscScsiReadCapacity
@@ -42497,8 +44625,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#if CC_INIT_TARGET_TEST_UNIT_READY
 r_int
 DECL|function|AscScsiTestUnitReady
 id|AscScsiTestUnitReady
@@ -42610,8 +44736,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#if CC_INIT_TARGET_START_UNIT
 r_int
 DECL|function|AscScsiStartStopUnit
 id|AscScsiStartStopUnit
@@ -42726,5 +44850,4 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

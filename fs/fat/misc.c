@@ -1244,6 +1244,17 @@ id|sys_tz.tz_minuteswest
 op_star
 l_int|60
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sys_tz.tz_dsttime
+)paren
+(brace
+id|secs
+op_sub_assign
+l_int|3600
+suffix:semicolon
+)brace
 r_return
 id|secs
 suffix:semicolon

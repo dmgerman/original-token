@@ -26,6 +26,8 @@ id|to
 suffix:semicolon
 r_int
 id|temp
+comma
+id|temp1
 suffix:semicolon
 r_if
 c_cond
@@ -154,23 +156,64 @@ id|lfrom
 op_assign
 id|from
 suffix:semicolon
-id|temp
-op_decrement
-suffix:semicolon
-r_do
-op_star
-id|lto
-op_increment
-op_assign
-op_star
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;movel %2,%3&bslash;n&bslash;t&quot;
+l_string|&quot;andw  #7,%3&bslash;n&bslash;t&quot;
+l_string|&quot;lsrl  #3,%2&bslash;n&bslash;t&quot;
+l_string|&quot;negw  %3&bslash;n&bslash;t&quot;
+l_string|&quot;jmp   %%pc@(1f,%3:w:2)&bslash;n&bslash;t&quot;
+l_string|&quot;4:&bslash;t&quot;
+l_string|&quot;movel %0@+,%1@+&bslash;n&bslash;t&quot;
+l_string|&quot;movel %0@+,%1@+&bslash;n&bslash;t&quot;
+l_string|&quot;movel %0@+,%1@+&bslash;n&bslash;t&quot;
+l_string|&quot;movel %0@+,%1@+&bslash;n&bslash;t&quot;
+l_string|&quot;movel %0@+,%1@+&bslash;n&bslash;t&quot;
+l_string|&quot;movel %0@+,%1@+&bslash;n&bslash;t&quot;
+l_string|&quot;movel %0@+,%1@+&bslash;n&bslash;t&quot;
+l_string|&quot;movel %0@+,%1@+&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;t&quot;
+l_string|&quot;dbra  %2,4b&bslash;n&bslash;t&quot;
+l_string|&quot;clrw  %2&bslash;n&bslash;t&quot;
+l_string|&quot;subql #1,%2&bslash;n&bslash;t&quot;
+l_string|&quot;jpl   4b&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
 id|lfrom
-op_increment
-suffix:semicolon
-r_while
-c_loop
+)paren
+comma
+l_string|&quot;=a&quot;
+(paren
+id|lto
+)paren
+comma
+l_string|&quot;=d&quot;
 (paren
 id|temp
-op_decrement
+)paren
+comma
+l_string|&quot;=&amp;d&quot;
+(paren
+id|temp1
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|lfrom
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|lto
+)paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|temp
+)paren
 )paren
 suffix:semicolon
 id|to

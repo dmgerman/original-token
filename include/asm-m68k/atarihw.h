@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** linux/atarihw.h -- This header defines some macros and pointers for&n;**                    the various Atari custom hardware registers.&n;**&n;** Copyright 1994 by Bj&#xfffd;rn Brauel&n;**&n;** 5/1/94 Roman Hodek:&n;**   Added definitions for TT specific chips.&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
+multiline_comment|/*&n;** linux/atarihw.h -- This header defines some macros and pointers for&n;**                    the various Atari custom hardware registers.&n;**&n;** Copyright 1994 by Bj&#xfffd;rn Brauel&n;**&n;** 5/1/94 Roman Hodek:&n;**   Added definitions for TT specific chips.&n;**&n;** 1996-09-13 lars brinkhoff &lt;f93labr@dd.chalmers.se&gt;:&n;**   Finally added definitions for the matrix/codec and the DSP56001 host&n;**   interface.&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
 macro_line|#ifndef _LINUX_ATARIHW_H_
 DECL|macro|_LINUX_ATARIHW_H_
 mdefine_line|#define _LINUX_ATARIHW_H_
@@ -71,9 +71,7 @@ c_cond
 op_logical_neg
 id|is_medusa
 op_logical_or
-id|m68k_is040or060
-op_eq
-l_int|6
+id|CPU_IS_060
 )paren
 id|cache_push
 c_func
@@ -692,7 +690,120 @@ DECL|macro|tt_scsi
 mdefine_line|#define&t;tt_scsi&t;&t;&t;((*(volatile struct TT_5380 *)TT_5380_BAS))
 DECL|macro|tt_scsi_regp
 mdefine_line|#define&t;tt_scsi_regp&t;((volatile char *)TT_5380_BAS)
-multiline_comment|/* &n;** Falcon DMA Sound Subsystem&n;** not implemented yet&n; */
+multiline_comment|/* &n;** Falcon DMA Sound Subsystem&n; */
+DECL|macro|MATRIX_BASE
+mdefine_line|#define MATRIX_BASE (0xffff8930)
+DECL|struct|MATRIX
+r_struct
+id|MATRIX
+(brace
+DECL|member|source
+id|u_short
+id|source
+suffix:semicolon
+DECL|member|destination
+id|u_short
+id|destination
+suffix:semicolon
+DECL|member|external_frequency_divider
+id|u_char
+id|external_frequency_divider
+suffix:semicolon
+DECL|member|internal_frequency_divider
+id|u_char
+id|internal_frequency_divider
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|matrix
+mdefine_line|#define matrix (*(volatile struct MATRIX *)MATRIX_BASE)
+DECL|macro|CODEC_BASE
+mdefine_line|#define CODEC_BASE (0xffff8936)
+DECL|struct|CODEC
+r_struct
+id|CODEC
+(brace
+DECL|member|tracks
+id|u_char
+id|tracks
+suffix:semicolon
+DECL|member|input_source
+id|u_char
+id|input_source
+suffix:semicolon
+DECL|macro|CODEC_SOURCE_MATRIX
+mdefine_line|#define CODEC_SOURCE_MATRIX     1
+DECL|macro|CODEC_SOURCE_ADC
+mdefine_line|#define CODEC_SOURCE_ADC        2
+DECL|member|adc_source
+id|u_char
+id|adc_source
+suffix:semicolon
+DECL|macro|ADC_SOURCE_RIGHT_PSG
+mdefine_line|#define ADC_SOURCE_RIGHT_PSG    1
+DECL|macro|ADC_SOURCE_LEFT_PSG
+mdefine_line|#define ADC_SOURCE_LEFT_PSG     2
+DECL|member|gain
+id|u_char
+id|gain
+suffix:semicolon
+DECL|macro|CODEC_GAIN_RIGHT
+mdefine_line|#define CODEC_GAIN_RIGHT        0x0f
+DECL|macro|CODEC_GAIN_LEFT
+mdefine_line|#define CODEC_GAIN_LEFT         0xf0
+DECL|member|attenuation
+id|u_char
+id|attenuation
+suffix:semicolon
+DECL|macro|CODEC_ATTENUATION_RIGHT
+mdefine_line|#define CODEC_ATTENUATION_RIGHT 0x0f
+DECL|macro|CODEC_ATTENUATION_LEFT
+mdefine_line|#define CODEC_ATTENUATION_LEFT  0xf0
+DECL|member|unused1
+id|u_char
+id|unused1
+suffix:semicolon
+DECL|member|status
+id|u_char
+id|status
+suffix:semicolon
+DECL|macro|CODEC_OVERFLOW_RIGHT
+mdefine_line|#define CODEC_OVERFLOW_RIGHT    1
+DECL|macro|CODEC_OVERFLOW_LEFT
+mdefine_line|#define CODEC_OVERFLOW_LEFT     2
+DECL|member|unused2
+DECL|member|unused3
+DECL|member|unused4
+DECL|member|unused5
+id|u_char
+id|unused2
+comma
+id|unused3
+comma
+id|unused4
+comma
+id|unused5
+suffix:semicolon
+DECL|member|gpio_directions
+id|u_char
+id|gpio_directions
+suffix:semicolon
+DECL|macro|GPIO_IN
+mdefine_line|#define GPIO_IN                 0
+DECL|macro|GPIO_OUT
+mdefine_line|#define GPIO_OUT                1
+DECL|member|unused6
+id|u_char
+id|unused6
+suffix:semicolon
+DECL|member|gpio_data
+id|u_char
+id|gpio_data
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|codec
+mdefine_line|#define codec (*(volatile struct CODEC *)CODEC_BASE)
 multiline_comment|/*&n;** Falcon Blitter&n;*/
 DECL|macro|BLT_BAS
 mdefine_line|#define BLT_BAS (0xffff8a00)
@@ -810,14 +921,14 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|scc
 macro_line|# define scc ((*(volatile struct SCC*)SCC_BAS))
-multiline_comment|/* The ESCC (Z85230) in an Atari ST. The channels are revered! */
+multiline_comment|/* The ESCC (Z85230) in an Atari ST. The channels are reversed! */
 DECL|macro|st_escc
 macro_line|# define st_escc ((*(volatile struct SCC*)0xfffffa31))
 DECL|macro|st_escc_dsr
 macro_line|# define st_escc_dsr ((*(volatile char *)0xfffffa39))
 multiline_comment|/* TT SCC DMA Controller (same chip as SCSI DMA) */
 DECL|macro|TT_SCC_DMA_BAS
-mdefine_line|#define&t;TT_SCC_DMA_BAS&t;(0xffff8c01)
+mdefine_line|#define&t;TT_SCC_DMA_BAS&t;(0xffff8c00)
 DECL|macro|tt_scc_dma
 mdefine_line|#define&t;tt_scc_dma&t;((*(volatile struct TT_DMA *)TT_SCC_DMA_BAS))
 multiline_comment|/*&n;** VIDEL Palette Register &n; */
@@ -838,7 +949,89 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|videl_palette
 macro_line|# define videl_palette ((*(volatile struct VIDEL_PALETTE*)FPL_BAS))
-multiline_comment|/*&n;** Falcon DSP Host Interface&n;** not implemented yet&n; */
+multiline_comment|/*&n;** Falcon DSP Host Interface&n; */
+DECL|macro|DSP56K_HOST_INTERFACE_BASE
+mdefine_line|#define DSP56K_HOST_INTERFACE_BASE (0xffffa200)
+DECL|struct|DSP56K_HOST_INTERFACE
+r_struct
+id|DSP56K_HOST_INTERFACE
+(brace
+DECL|member|icr
+id|u_char
+id|icr
+suffix:semicolon
+DECL|macro|DSP56K_ICR_RREQ
+mdefine_line|#define DSP56K_ICR_RREQ&t;0x01
+DECL|macro|DSP56K_ICR_TREQ
+mdefine_line|#define DSP56K_ICR_TREQ&t;0x02
+DECL|macro|DSP56K_ICR_HF0
+mdefine_line|#define DSP56K_ICR_HF0&t;0x08
+DECL|macro|DSP56K_ICR_HF1
+mdefine_line|#define DSP56K_ICR_HF1&t;0x10
+DECL|macro|DSP56K_ICR_HM0
+mdefine_line|#define DSP56K_ICR_HM0&t;0x20
+DECL|macro|DSP56K_ICR_HM1
+mdefine_line|#define DSP56K_ICR_HM1&t;0x40
+DECL|macro|DSP56K_ICR_INIT
+mdefine_line|#define DSP56K_ICR_INIT&t;0x80
+DECL|member|cvr
+id|u_char
+id|cvr
+suffix:semicolon
+DECL|macro|DSP56K_CVR_HV_MASK
+mdefine_line|#define DSP56K_CVR_HV_MASK 0x1f
+DECL|macro|DSP56K_CVR_HC
+mdefine_line|#define DSP56K_CVR_HC&t;0x80
+DECL|member|isr
+id|u_char
+id|isr
+suffix:semicolon
+DECL|macro|DSP56K_ISR_RXDF
+mdefine_line|#define DSP56K_ISR_RXDF&t;0x01
+DECL|macro|DSP56K_ISR_TXDE
+mdefine_line|#define DSP56K_ISR_TXDE&t;0x02
+DECL|macro|DSP56K_ISR_TRDY
+mdefine_line|#define DSP56K_ISR_TRDY&t;0x04
+DECL|macro|DSP56K_ISR_HF2
+mdefine_line|#define DSP56K_ISR_HF2&t;0x08
+DECL|macro|DSP56K_ISR_HF3
+mdefine_line|#define DSP56K_ISR_HF3&t;0x10
+DECL|macro|DSP56K_ISR_DMA
+mdefine_line|#define DSP56K_ISR_DMA&t;0x40
+DECL|macro|DSP56K_ISR_HREQ
+mdefine_line|#define DSP56K_ISR_HREQ&t;0x80
+DECL|member|ivr
+id|u_char
+id|ivr
+suffix:semicolon
+r_union
+(brace
+DECL|member|b
+id|u_char
+id|b
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|w
+id|u_short
+id|w
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|l
+id|u_long
+id|l
+suffix:semicolon
+DECL|member|data
+)brace
+id|data
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|dsp56k_host_interface
+mdefine_line|#define dsp56k_host_interface ((*(volatile struct DSP56K_HOST_INTERFACE *)DSP56K_HOST_INTERFACE_BASE))
 multiline_comment|/*&n;** MFP 68901&n; */
 DECL|macro|MFP_BAS
 mdefine_line|#define MFP_BAS (0xfffffa01)

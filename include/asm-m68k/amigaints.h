@@ -3,8 +3,12 @@ macro_line|#ifndef _ASMm68k_AMIGAINTS_H_
 DECL|macro|_ASMm68k_AMIGAINTS_H_
 mdefine_line|#define _ASMm68k_AMIGAINTS_H_
 multiline_comment|/*&n;** Amiga Interrupt sources.&n;**&n;*/
-DECL|macro|NUM_AMIGA_SOURCES
-mdefine_line|#define NUM_AMIGA_SOURCES   (24)
+DECL|macro|AMI_IRQS
+mdefine_line|#define AMI_IRQS            (24)
+DECL|macro|AMI_STD_IRQS
+mdefine_line|#define AMI_STD_IRQS        (14)
+DECL|macro|CIA_IRQS
+mdefine_line|#define CIA_IRQS            (5)
 multiline_comment|/* vertical blanking interrupt */
 DECL|macro|IRQ_AMIGA_VERTB
 mdefine_line|#define IRQ_AMIGA_VERTB     (IRQ_MACHSPEC | 0)
@@ -33,33 +37,39 @@ DECL|macro|IRQ_AMIGA_RBF
 mdefine_line|#define IRQ_AMIGA_RBF&t;    (IRQ_MACHSPEC | 9)
 DECL|macro|IRQ_AMIGA_TBE
 mdefine_line|#define IRQ_AMIGA_TBE&t;    (IRQ_MACHSPEC | 10)
-multiline_comment|/* CIA interrupt sources */
-DECL|macro|IRQ_AMIGA_CIAA_TA
-mdefine_line|#define IRQ_AMIGA_CIAA_TA   (IRQ_MACHSPEC | 11)
-DECL|macro|IRQ_AMIGA_CIAA_TB
-mdefine_line|#define IRQ_AMIGA_CIAA_TB   (IRQ_MACHSPEC | 12)
-DECL|macro|IRQ_AMIGA_CIAA_ALRM
-mdefine_line|#define IRQ_AMIGA_CIAA_ALRM (IRQ_MACHSPEC | 13)
-DECL|macro|IRQ_AMIGA_CIAA_SP
-mdefine_line|#define IRQ_AMIGA_CIAA_SP   (IRQ_MACHSPEC | 14)
-DECL|macro|IRQ_AMIGA_CIAA_FLG
-mdefine_line|#define IRQ_AMIGA_CIAA_FLG  (IRQ_MACHSPEC | 15)
-DECL|macro|IRQ_AMIGA_CIAB_TA
-mdefine_line|#define IRQ_AMIGA_CIAB_TA   (IRQ_MACHSPEC | 16)
-DECL|macro|IRQ_AMIGA_CIAB_TB
-mdefine_line|#define IRQ_AMIGA_CIAB_TB   (IRQ_MACHSPEC | 17)
-DECL|macro|IRQ_AMIGA_CIAB_ALRM
-mdefine_line|#define IRQ_AMIGA_CIAB_ALRM (IRQ_MACHSPEC | 18)
-DECL|macro|IRQ_AMIGA_CIAB_SP
-mdefine_line|#define IRQ_AMIGA_CIAB_SP   (IRQ_MACHSPEC | 19)
-DECL|macro|IRQ_AMIGA_CIAB_FLG
-mdefine_line|#define IRQ_AMIGA_CIAB_FLG  (IRQ_MACHSPEC | 20)
+multiline_comment|/* software interrupts */
 DECL|macro|IRQ_AMIGA_SOFT
-mdefine_line|#define IRQ_AMIGA_SOFT      (IRQ_MACHSPEC | 21)
+mdefine_line|#define IRQ_AMIGA_SOFT      (IRQ_MACHSPEC | 11)
+multiline_comment|/* interrupts from external hardware */
 DECL|macro|IRQ_AMIGA_PORTS
-mdefine_line|#define IRQ_AMIGA_PORTS&t;    (IRQ_MACHSPEC | 22)
+mdefine_line|#define IRQ_AMIGA_PORTS&t;    (IRQ_MACHSPEC | 12)
 DECL|macro|IRQ_AMIGA_EXTER
-mdefine_line|#define IRQ_AMIGA_EXTER&t;    (IRQ_MACHSPEC | 23)
+mdefine_line|#define IRQ_AMIGA_EXTER&t;    (IRQ_MACHSPEC | 13)
+multiline_comment|/* CIA interrupt sources */
+DECL|macro|IRQ_AMIGA_CIAA
+mdefine_line|#define IRQ_AMIGA_CIAA      (IRQ_MACHSPEC | 14)
+DECL|macro|IRQ_AMIGA_CIAA_TA
+mdefine_line|#define IRQ_AMIGA_CIAA_TA   (IRQ_MACHSPEC | 14)
+DECL|macro|IRQ_AMIGA_CIAA_TB
+mdefine_line|#define IRQ_AMIGA_CIAA_TB   (IRQ_MACHSPEC | 15)
+DECL|macro|IRQ_AMIGA_CIAA_ALRM
+mdefine_line|#define IRQ_AMIGA_CIAA_ALRM (IRQ_MACHSPEC | 16)
+DECL|macro|IRQ_AMIGA_CIAA_SP
+mdefine_line|#define IRQ_AMIGA_CIAA_SP   (IRQ_MACHSPEC | 17)
+DECL|macro|IRQ_AMIGA_CIAA_FLG
+mdefine_line|#define IRQ_AMIGA_CIAA_FLG  (IRQ_MACHSPEC | 18)
+DECL|macro|IRQ_AMIGA_CIAB
+mdefine_line|#define IRQ_AMIGA_CIAB      (IRQ_MACHSPEC | 19)
+DECL|macro|IRQ_AMIGA_CIAB_TA
+mdefine_line|#define IRQ_AMIGA_CIAB_TA   (IRQ_MACHSPEC | 19)
+DECL|macro|IRQ_AMIGA_CIAB_TB
+mdefine_line|#define IRQ_AMIGA_CIAB_TB   (IRQ_MACHSPEC | 20)
+DECL|macro|IRQ_AMIGA_CIAB_ALRM
+mdefine_line|#define IRQ_AMIGA_CIAB_ALRM (IRQ_MACHSPEC | 21)
+DECL|macro|IRQ_AMIGA_CIAB_SP
+mdefine_line|#define IRQ_AMIGA_CIAB_SP   (IRQ_MACHSPEC | 22)
+DECL|macro|IRQ_AMIGA_CIAB_FLG
+mdefine_line|#define IRQ_AMIGA_CIAB_FLG  (IRQ_MACHSPEC | 23)
 DECL|macro|IRQ_FLOPPY
 mdefine_line|#define IRQ_FLOPPY&t;    IRQ_AMIGA_DSKBLK
 multiline_comment|/* INTREQR masks */
@@ -109,16 +119,107 @@ DECL|macro|IF_DSKBLK
 mdefine_line|#define IF_DSKBLK   0x0002&t;/* diskblock DMA finished */
 DECL|macro|IF_TBE
 mdefine_line|#define IF_TBE&t;    0x0001&t;/* serial transmit buffer empty interrupt */
+DECL|struct|irq_server
+r_struct
+id|irq_server
+(brace
+DECL|member|count
+DECL|member|reentrance
+r_int
+r_int
+id|count
+comma
+id|reentrance
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_void
+id|amiga_do_irq
+c_func
+(paren
+r_int
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|fp
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|amiga_do_irq_list
+c_func
+(paren
+r_int
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|fp
+comma
+r_struct
+id|irq_server
+op_star
+id|server
+)paren
+suffix:semicolon
 multiline_comment|/* CIA interrupt control register bits */
 DECL|macro|CIA_ICR_TA
-mdefine_line|#define CIA_ICR_TA   0x01
+mdefine_line|#define CIA_ICR_TA&t;0x01
 DECL|macro|CIA_ICR_TB
-mdefine_line|#define CIA_ICR_TB   0x02
+mdefine_line|#define CIA_ICR_TB&t;0x02
 DECL|macro|CIA_ICR_ALRM
-mdefine_line|#define CIA_ICR_ALRM 0x04
+mdefine_line|#define CIA_ICR_ALRM&t;0x04
 DECL|macro|CIA_ICR_SP
-mdefine_line|#define CIA_ICR_SP   0x08
+mdefine_line|#define CIA_ICR_SP&t;0x08
 DECL|macro|CIA_ICR_FLG
-mdefine_line|#define CIA_ICR_FLG  0x10
+mdefine_line|#define CIA_ICR_FLG&t;0x10
+DECL|macro|CIA_ICR_ALL
+mdefine_line|#define CIA_ICR_ALL&t;0x1f
+DECL|macro|CIA_ICR_SETCLR
+mdefine_line|#define CIA_ICR_SETCLR&t;0x80
+multiline_comment|/* to access the interrupt control registers of CIA&squot;s use only&n;** these functions, they behave exactly like the amiga os routines&n;*/
+r_extern
+r_struct
+id|ciabase
+id|ciaa_base
+comma
+id|ciab_base
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|cia_set_irq
+c_func
+(paren
+r_struct
+id|ciabase
+op_star
+id|base
+comma
+r_int
+r_char
+id|mask
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|cia_able_irq
+c_func
+(paren
+r_struct
+id|ciabase
+op_star
+id|base
+comma
+r_int
+r_char
+id|mask
+)paren
+suffix:semicolon
 macro_line|#endif /* asm-m68k/amigaints.h */
 eof

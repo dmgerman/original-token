@@ -95,11 +95,7 @@ id|nr_swap_pages
 suffix:semicolon
 id|freepages
 op_sub_assign
-id|MAP_NR
-c_func
-(paren
-id|high_memory
-)paren
+id|max_mapnr
 op_rshift
 l_int|4
 suffix:semicolon

@@ -2,16 +2,15 @@ multiline_comment|/*&n;linux/arch/m68k/atari/atasound.c&n;&n;++Geert: Moved almo
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 multiline_comment|/*&n; * stuff from the old atasound.c&n; */
 DECL|function|atari_nosound
 r_static
@@ -267,21 +266,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* convert from PC counter value (base frequency 1.193 MHz)&n;&t;&t; * to PSG period value (base frequency 125 kHz).&n;&t;&t; */
+multiline_comment|/* convert from frequency value&n;&t;&t; * to PSG period value (base frequency 125 kHz).&n;&t;&t; */
 r_int
 id|period
 op_assign
-(paren
 id|PSG_FREQ
-op_star
+op_div
 id|count
-op_plus
-id|PC_FREQ
-op_div
-l_int|2
-)paren
-op_div
-id|PC_FREQ
 suffix:semicolon
 r_if
 c_cond

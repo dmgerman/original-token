@@ -35,6 +35,7 @@ r_char
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the coh filesystem.&n; */
@@ -154,6 +155,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -797,6 +799,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren

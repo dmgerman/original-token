@@ -942,6 +942,14 @@ suffix:semicolon
 multiline_comment|/* needed for tty driver, and maybe others */
 )brace
 suffix:semicolon
+DECL|macro|FL_POSIX
+mdefine_line|#define FL_POSIX&t;1
+DECL|macro|FL_FLOCK
+mdefine_line|#define FL_FLOCK&t;2
+DECL|macro|FL_BROKEN
+mdefine_line|#define FL_BROKEN&t;4&t;/* broken flock() emulation */
+DECL|macro|FL_ACCESS
+mdefine_line|#define FL_ACCESS&t;8&t;/* for processes suspended by mandatory locking */
 DECL|struct|file_lock
 r_struct
 id|file_lock
@@ -967,11 +975,18 @@ op_star
 id|fl_prevlink
 suffix:semicolon
 multiline_comment|/* used to simplify lock removal */
-DECL|member|fl_block
+DECL|member|fl_nextblock
 r_struct
 id|file_lock
 op_star
-id|fl_block
+id|fl_nextblock
+suffix:semicolon
+multiline_comment|/* circular list of blocked processes */
+DECL|member|fl_prevblock
+r_struct
+id|file_lock
+op_star
+id|fl_prevblock
 suffix:semicolon
 DECL|member|fl_owner
 r_struct
@@ -992,10 +1007,12 @@ op_star
 id|fl_file
 suffix:semicolon
 DECL|member|fl_flags
+r_int
 r_char
 id|fl_flags
 suffix:semicolon
 DECL|member|fl_type
+r_int
 r_char
 id|fl_type
 suffix:semicolon
@@ -1455,11 +1472,12 @@ DECL|struct|file_operations
 r_struct
 id|file_operations
 (brace
-DECL|member|lseek
+DECL|member|llseek
+r_int
 r_int
 (paren
 op_star
-id|lseek
+id|llseek
 )paren
 (paren
 r_struct
@@ -1470,7 +1488,8 @@ r_struct
 id|file
 op_star
 comma
-id|off_t
+r_int
+r_int
 comma
 r_int
 )paren
@@ -1494,6 +1513,7 @@ r_char
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 DECL|member|write
@@ -1515,6 +1535,7 @@ r_const
 r_char
 op_star
 comma
+r_int
 r_int
 )paren
 suffix:semicolon
@@ -3397,6 +3418,28 @@ id|filesize
 suffix:semicolon
 r_extern
 r_int
+id|brw_page
+c_func
+(paren
+r_int
+comma
+r_struct
+id|page
+op_star
+comma
+id|kdev_t
+comma
+r_int
+(braket
+)braket
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|generic_readpage
 c_func
 (paren
@@ -3407,25 +3450,6 @@ comma
 r_struct
 id|page
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|generic_file_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-comma
-r_char
-op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern
@@ -3448,23 +3472,21 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|brw_page
+id|generic_file_read
 c_func
 (paren
-r_int
-comma
 r_struct
-id|page
+id|inode
 op_star
 comma
-id|kdev_t
+r_struct
+id|file
+op_star
+comma
+r_char
+op_star
 comma
 r_int
-(braket
-)braket
-comma
-r_int
-comma
 r_int
 )paren
 suffix:semicolon
@@ -3551,6 +3573,7 @@ r_char
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -3569,6 +3592,7 @@ comma
 r_char
 op_star
 comma
+r_int
 r_int
 )paren
 suffix:semicolon
@@ -3596,6 +3620,7 @@ r_char
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -3615,6 +3640,7 @@ r_const
 r_char
 op_star
 comma
+r_int
 r_int
 )paren
 suffix:semicolon

@@ -7,6 +7,10 @@ DECL|macro|OF
 mdefine_line|#define OF(args)  args
 DECL|macro|STATIC
 mdefine_line|#define STATIC static
+DECL|macro|memset
+macro_line|#undef memset
+DECL|macro|memcpy
+macro_line|#undef memcpy
 DECL|macro|memzero
 mdefine_line|#define memzero(s, n)     memset ((s), 0, (n))
 DECL|typedef|uch

@@ -245,6 +245,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -621,6 +622,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -698,9 +700,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|count
-op_le
-l_int|0
 )paren
 r_return
 l_int|0

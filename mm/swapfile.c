@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt; /* for blk_size */
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/segment.h&gt; /* for memcpy_to/fromfs */
@@ -655,11 +656,7 @@ c_cond
 (paren
 id|page_nr
 op_ge
-id|MAP_NR
-c_func
-(paren
-id|high_memory
-)paren
+id|max_mapnr
 )paren
 r_return
 l_int|0

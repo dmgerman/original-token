@@ -436,7 +436,7 @@ op_assign
 id|ulong
 op_star
 )paren
-id|vremap
+id|ioremap
 (paren
 id|priv-&gt;plxdma
 comma
@@ -453,7 +453,7 @@ id|priv-&gt;vplxdma
 id|printk
 c_func
 (paren
-l_string|&quot;%s: can&squot;t vremap() the DMA regs&quot;
+l_string|&quot;%s: can&squot;t ioremap() the DMA regs&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -2615,7 +2615,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Map in the dual port memory&n;&t; */
 id|priv-&gt;vmem
 op_assign
-id|vremap
+id|ioremap
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -2840,7 +2840,7 @@ id|dgrs_ncode
 )paren
 )paren
 (brace
-id|vfree
+id|iounmap
 c_func
 (paren
 id|priv-&gt;vmem
@@ -4543,7 +4543,7 @@ c_cond
 (paren
 id|priv-&gt;vmem
 )paren
-id|vfree
+id|iounmap
 c_func
 (paren
 id|priv-&gt;vmem
@@ -4554,7 +4554,7 @@ c_cond
 (paren
 id|priv-&gt;vplxdma
 )paren
-id|vfree
+id|iounmap
 c_func
 (paren
 (paren

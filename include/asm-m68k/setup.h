@@ -1,7 +1,8 @@
-multiline_comment|/*&n;** asm/bootinfo.h -- Definition of the Linux/68K boot information structure&n;**&n;** Copyright 1992 by Greg Harp&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;** Created 09/29/92 by Greg Harp&n;**&n;** 5/2/94 Roman Hodek:&n;**   Added bi_atari part of the machine dependent union bi_un; for now it&n;**&t; contains just a model field to distinguish between TT and Falcon.&n;*/
-macro_line|#ifndef BOOTINFO_H
-DECL|macro|BOOTINFO_H
-mdefine_line|#define BOOTINFO_H
+multiline_comment|/*&n;** asm/setup.h -- Definition of the Linux/m68k boot information structure&n;**&n;** Copyright 1992 by Greg Harp&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;** Created 09/29/92 by Greg Harp&n;**&n;** 5/2/94 Roman Hodek:&n;**   Added bi_atari part of the machine dependent union bi_un; for now it&n;**   contains just a model field to distinguish between TT and Falcon.&n;** 26/7/96 Roman Zippel:&n;**   Renamed to setup.h; added some useful macros to allow gcc some&n;**   optimizations if possible.&n;*/
+macro_line|#ifndef _M68K_SETUP_H
+DECL|macro|_M68K_SETUP_H
+mdefine_line|#define _M68K_SETUP_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/zorro.h&gt;
 multiline_comment|/*&n; * Amiga specific part of bootinfo structure.&n; */
 DECL|macro|NUM_AUTO
@@ -482,7 +483,7 @@ c_func
 id|ST_MFP
 )paren
 suffix:semicolon
-multiline_comment|/* The ST-MFP (there should&n;&t;&t;&t;&t;&t;   be no Atari without&n;&t;&t;&t;&t;&t;   it... but who knows?) */
+multiline_comment|/* The ST-MFP (there should&n;&t;&t;&t;&t;&t;&t;   be no Atari without&n;&t;&t;&t;&t;&t;&t;   it... but who knows?) */
 id|ATARIHW_DECLARE
 c_func
 (paren
@@ -510,7 +511,7 @@ c_func
 id|ANALOG_JOY
 )paren
 suffix:semicolon
-multiline_comment|/* Paddle Interface for STe&n;&t;&t;&t;&t;&t;   and Falcon */
+multiline_comment|/* Paddle Interface for STe&n;&t;&t;&t;&t;&t;&t;   and Falcon */
 id|ATARIHW_DECLARE
 c_func
 (paren
@@ -658,9 +659,9 @@ mdefine_line|#define FPUB_68881 5
 DECL|macro|FPUB_68882
 mdefine_line|#define FPUB_68882 6
 DECL|macro|FPUB_68040
-mdefine_line|#define FPUB_68040 7&t;/* Internal FPU */
+mdefine_line|#define FPUB_68040 7&t;&t;&t;&t;/* Internal FPU */
 DECL|macro|FPUB_68060
-mdefine_line|#define FPUB_68060 8&t;/* Internal FPU */
+mdefine_line|#define FPUB_68060 8&t;&t;&t;&t;/* Internal FPU */
 DECL|macro|CPU_68020
 mdefine_line|#define CPU_68020    (1&lt;&lt;CPUB_68020)
 DECL|macro|CPU_68030
@@ -676,16 +677,140 @@ mdefine_line|#define FPU_68881    (1&lt;&lt;FPUB_68881)
 DECL|macro|FPU_68882
 mdefine_line|#define FPU_68882    (1&lt;&lt;FPUB_68882)
 DECL|macro|FPU_68040
-mdefine_line|#define FPU_68040    (1&lt;&lt;FPUB_68040)&t;/* Internal FPU */
+mdefine_line|#define FPU_68040    (1&lt;&lt;FPUB_68040)&t;&t;/* Internal FPU */
 DECL|macro|FPU_68060
-mdefine_line|#define FPU_68060    (1&lt;&lt;FPUB_68060)&t;/* Internal FPU */
+mdefine_line|#define FPU_68060    (1&lt;&lt;FPUB_68060)&t;&t;/* Internal FPU */
+DECL|macro|FPU_MASK
+mdefine_line|#define FPU_MASK     (0xfe0)
 DECL|macro|CL_SIZE
 mdefine_line|#define CL_SIZE      (256)
-macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/*&n; * machine type definitions&n; */
+macro_line|#if !defined(CONFIG_AMIGA)
 DECL|macro|MACH_IS_AMIGA
-mdefine_line|#define MACH_IS_AMIGA&t;(boot_info.machtype == MACH_AMIGA)
+macro_line|#  define MACH_IS_AMIGA (0)
+macro_line|#elif defined(CONFIG_ATARI) || defined(CONFIG_MAC)
+DECL|macro|MACH_IS_AMIGA
+macro_line|#  define MACH_IS_AMIGA (boot_info.machtype == MACH_AMIGA)
+macro_line|#else
+DECL|macro|CONFIG_AMIGA_ONLY
+macro_line|#  define CONFIG_AMIGA_ONLY
+DECL|macro|MACH_IS_AMIGA
+macro_line|#  define MACH_IS_AMIGA (1)
+DECL|macro|MACH_TYPE
+macro_line|#  define MACH_TYPE (MACH_AMIGA)
+macro_line|#endif
+macro_line|#if !defined(CONFIG_ATARI)
 DECL|macro|MACH_IS_ATARI
-mdefine_line|#define MACH_IS_ATARI&t;(boot_info.machtype == MACH_ATARI)
+macro_line|#  define MACH_IS_ATARI (0)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC)
+DECL|macro|MACH_IS_ATARI
+macro_line|#  define MACH_IS_ATARI (boot_info.machtype == MACH_ATARI)
+macro_line|#else
+DECL|macro|CONFIG_ATARI_ONLY
+macro_line|#  define CONFIG_ATARI_ONLY
+DECL|macro|MACH_IS_ATARI
+macro_line|#  define MACH_IS_ATARI (1)
+DECL|macro|MACH_TYPE
+macro_line|#  define MACH_TYPE (MACH_ATARI)
+macro_line|#endif
+macro_line|#if defined(CONFIG_MAC)
+macro_line|#  error Currently no Mac support!
+macro_line|#endif
+macro_line|#ifndef MACH_TYPE
+DECL|macro|MACH_TYPE
+macro_line|#  define MACH_TYPE (boot_info.machtype)
+macro_line|#endif
+multiline_comment|/*&n; * cpu type definitions&n; */
+macro_line|#if !defined(CONFIG_M68020)
+DECL|macro|CPU_IS_020
+macro_line|#  define CPU_IS_020 (0)
+macro_line|#elif defined(CONFIG_M68030) || defined(CONFIG_M68040) || defined(CONFIG_M68060)
+DECL|macro|CPU_IS_020
+macro_line|#  define CPU_IS_020 (boot_info.cputype &amp; CPU_68020)
+macro_line|#else
+DECL|macro|CONFIG_M68020_ONLY
+macro_line|#  define CONFIG_M68020_ONLY
+DECL|macro|CPU_IS_020
+macro_line|#  define CPU_IS_020 (1)
+macro_line|#endif
+macro_line|#if !defined(CONFIG_M68030)
+DECL|macro|CPU_IS_030
+macro_line|#  define CPU_IS_030 (0)
+macro_line|#elif defined(CONFIG_M68020) || defined(CONFIG_M68040) || defined(CONFIG_M68060)
+DECL|macro|CPU_IS_030
+macro_line|#  define CPU_IS_030 (boot_info.cputype &amp; CPU_68030)
+macro_line|#else
+DECL|macro|CONFIG_M68030_ONLY
+macro_line|#  define CONFIG_M68030_ONLY
+DECL|macro|CPU_IS_030
+macro_line|#  define CPU_IS_030 (1)
+macro_line|#endif
+macro_line|#if !defined(CONFIG_M68040)
+DECL|macro|CPU_IS_040
+macro_line|#  define CPU_IS_040 (0)
+macro_line|#elif defined(CONFIG_M68020) || defined(CONFIG_M68030) || defined(CONFIG_M68060)
+DECL|macro|CPU_IS_040
+macro_line|#  define CPU_IS_040 (boot_info.cputype &amp; CPU_68040)
+macro_line|#else
+DECL|macro|CONFIG_M68040_ONLY
+macro_line|#  define CONFIG_M68040_ONLY
+DECL|macro|CPU_IS_040
+macro_line|#  define CPU_IS_040 (1)
+macro_line|#endif
+macro_line|#if !defined(CONFIG_M68060)
+DECL|macro|CPU_IS_060
+macro_line|#  define CPU_IS_060 (0)
+macro_line|#elif defined(CONFIG_M68020) || defined(CONFIG_M68030) || defined(CONFIG_M68040)
+DECL|macro|CPU_IS_060
+macro_line|#  define CPU_IS_060 (boot_info.cputype &amp; CPU_68060)
+macro_line|#else
+DECL|macro|CONFIG_M68060_ONLY
+macro_line|#  define CONFIG_M68060_ONLY
+DECL|macro|CPU_IS_060
+macro_line|#  define CPU_IS_060 (1)
+macro_line|#endif
+macro_line|#if !defined(CONFIG_M68020) &amp;&amp; !defined(CONFIG_M68030)
+DECL|macro|CPU_IS_020_OR_030
+macro_line|#  define CPU_IS_020_OR_030 (0)
+macro_line|#else
+DECL|macro|CONFIG_M68020_OR_M68030
+macro_line|#  define CONFIG_M68020_OR_M68030
+macro_line|#  if defined(CONFIG_M68040) || defined(CONFIG_M68060)
+DECL|macro|CPU_IS_020_OR_030
+macro_line|#    define CPU_IS_020_OR_030 (!m68k_is040or060)
+macro_line|#  else
+DECL|macro|CONFIG_M68020_OR_M68030_ONLY
+macro_line|#    define CONFIG_M68020_OR_M68030_ONLY
+DECL|macro|CPU_IS_020_OR_030
+macro_line|#    define CPU_IS_020_OR_030 (1)
+macro_line|#  endif
+macro_line|#endif
+macro_line|#if !defined(CONFIG_M68040) &amp;&amp; !defined(CONFIG_M68060)
+DECL|macro|CPU_IS_040_OR_060
+macro_line|#  define CPU_IS_040_OR_060 (0)
+macro_line|#else
+DECL|macro|CONFIG_M68040_OR_M68060
+macro_line|#  define CONFIG_M68040_OR_M68060
+macro_line|#  if defined(CONFIG_M68020) || defined(CONFIG_M68030)
+DECL|macro|CPU_IS_040_OR_060
+macro_line|#    define CPU_IS_040_OR_060 (m68k_is040or060)
+macro_line|#  else
+DECL|macro|CONFIG_M68040_OR_M68060_ONLY
+macro_line|#    define CONFIG_M68040_OR_M68060_ONLY
+DECL|macro|CPU_IS_040_OR_060
+macro_line|#    define CPU_IS_040_OR_060 (1)
+macro_line|#  endif
+macro_line|#endif
+DECL|macro|CPU_TYPE
+mdefine_line|#define CPU_TYPE (boot_info.cputype)
+macro_line|#ifndef __ASSEMBLY__
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n;&t; * m68k_is040or060 is != 0 for a &squot;040 or higher;&n;&t; * used numbers are 4 for 68040 and 6 for 68060.&n;&t; */
+r_extern
+r_int
+id|m68k_is040or060
+suffix:semicolon
+macro_line|#endif
 DECL|struct|bootinfo
 r_struct
 id|bootinfo
@@ -855,5 +980,5 @@ DECL|macro|AMIGA_BOOTI_VERSION
 mdefine_line|#define AMIGA_BOOTI_VERSION    MK_BI_VERSION( 1, 0 )
 DECL|macro|ATARI_BOOTI_VERSION
 mdefine_line|#define ATARI_BOOTI_VERSION    MK_BI_VERSION( 1, 0 )
-macro_line|#endif /* BOOTINFO_H */
+macro_line|#endif /* _M68K_SETUP_H */
 eof

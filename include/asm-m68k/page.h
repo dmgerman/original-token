@@ -132,11 +132,6 @@ mdefine_line|#define __pgd(x)&t;(x)
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif
-multiline_comment|/* m68k_is040or060 is != 0 for a &squot;040 or higher; used numbers are 4 for 68040&n; * and 6 for 68060 */
-r_extern
-r_int
-id|m68k_is040or060
-suffix:semicolon
 multiline_comment|/* This is the cache mode to be used for pages containing page descriptors for&n; * processors &gt;= &squot;040. It is in pte_mknocache(), and the variable is defined&n; * and initialized in head.S */
 r_extern
 r_int

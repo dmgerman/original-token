@@ -1,7 +1,7 @@
 multiline_comment|/*&n;**  linux/amiga/chipram.c&n;**&n;**      Modified 03-May-94 by Geert Uytterhoeven&n;**                           (Geert.Uytterhoeven@cs.kuleuven.ac.be)&n;**          - 64-bit aligned allocations for full AGA compatibility&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 DECL|struct|chip_desc
 r_struct
@@ -46,6 +46,37 @@ r_int
 r_int
 id|chipsize
 suffix:semicolon
+DECL|variable|chipavail
+r_static
+r_int
+r_int
+id|chipavail
+suffix:semicolon
+multiline_comment|/*MILAN*/
+multiline_comment|/*MILAN*/
+DECL|function|amiga_chip_avail
+r_int
+r_int
+id|amiga_chip_avail
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;chip_avail : %ld bytes&bslash;n&quot;
+comma
+id|chipavail
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+id|chipavail
+suffix:semicolon
+)brace
 DECL|function|amiga_chip_init
 r_void
 id|amiga_chip_init
@@ -136,6 +167,11 @@ op_star
 id|dp
 )paren
 suffix:semicolon
+id|chipavail
+op_assign
+id|dp-&gt;length
+suffix:semicolon
+multiline_comment|/*MILAN*/
 macro_line|#ifdef DEBUG
 id|printk
 (paren
@@ -181,6 +217,7 @@ l_int|7
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
+c_func
 (paren
 l_string|&quot;chip_alloc: allocate %ld bytes&bslash;n&quot;
 comma
@@ -479,6 +516,21 @@ c_func
 l_string|&quot;chip_alloc: alignment violation&bslash;n&quot;
 )paren
 suffix:semicolon
+id|chipavail
+op_sub_assign
+id|size
+op_plus
+(paren
+l_int|2
+op_star
+r_sizeof
+(paren
+op_star
+id|dp
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*MILAN*/
 r_return
 id|ptr
 suffix:semicolon
@@ -525,6 +577,32 @@ op_plus
 id|sdp-&gt;length
 )paren
 suffix:semicolon
+id|chipavail
+op_add_assign
+id|sdp-&gt;length
+op_plus
+(paren
+l_int|2
+op_star
+r_sizeof
+(paren
+id|sdp
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*MILAN*/
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;chip_free: free %ld bytes at %p&bslash;n&quot;
+comma
+id|sdp-&gt;length
+comma
+id|ptr
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* deallocate the chunk */
 id|sdp-&gt;alloced
 op_assign

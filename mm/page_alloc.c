@@ -414,11 +414,7 @@ c_cond
 (paren
 id|map_nr
 OL
-id|MAP_NR
-c_func
-(paren
-id|high_memory
-)paren
+id|max_mapnr
 )paren
 (brace
 id|mem_map_t

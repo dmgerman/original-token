@@ -54,6 +54,7 @@ suffix:semicolon
 )brace
 r_static
 r_int
+r_int
 DECL|function|vcs_lseek
 id|vcs_lseek
 c_func
@@ -68,7 +69,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -161,6 +163,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -267,8 +270,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|count
-template_param
+id|p
+OG
 id|size
 )paren
 r_return
@@ -547,6 +550,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -653,8 +657,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|count
-template_param
+id|p
+OG
 id|size
 )paren
 r_return

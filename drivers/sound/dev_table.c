@@ -2495,6 +2495,7 @@ op_assign
 id|num_audiodevs
 op_increment
 suffix:semicolon
+macro_line|#ifdef CONFIG_AUDIO
 id|DMAbuf_init
 (paren
 )paren
@@ -2503,6 +2504,7 @@ id|audio_init
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|num
 suffix:semicolon

@@ -1312,6 +1312,7 @@ op_star
 id|buffer
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -1324,8 +1325,6 @@ r_if
 c_cond
 (paren
 id|count
-OG
-l_int|0
 )paren
 (brace
 r_int
@@ -1452,6 +1451,7 @@ op_star
 id|buffer
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -1524,6 +1524,7 @@ r_char
 op_star
 id|buffer
 comma
+r_int
 r_int
 id|count
 )paren

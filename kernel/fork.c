@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -366,21 +365,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tmp-&gt;vm_ops
-op_logical_and
-id|tmp-&gt;vm_ops-&gt;open
-)paren
-id|tmp-&gt;vm_ops
-op_member_access_from_pointer
-id|open
-c_func
-(paren
-id|tmp
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|copy_page_range
 c_func
 (paren
@@ -403,6 +387,21 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|tmp-&gt;vm_ops
+op_logical_and
+id|tmp-&gt;vm_ops-&gt;open
+)paren
+id|tmp-&gt;vm_ops
+op_member_access_from_pointer
+id|open
+c_func
+(paren
+id|tmp
+)paren
+suffix:semicolon
 op_star
 id|p
 op_assign

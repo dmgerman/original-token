@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.7 - ALPHA&t;Sep  10, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.8 - ALPHA&t;Sep  26, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
 multiline_comment|/*&n; * Include file for the IDE ATAPI streaming tape driver.&n; *&n; * This file contains various ide-tape related structures and function&n; * prototypes which are already used in ide.h.&n; *&n; * The various compile time options are described below.&n; */
 macro_line|#ifndef IDETAPE_H
 DECL|macro|IDETAPE_H
@@ -49,6 +49,9 @@ multiline_comment|/*&n; *&t;DSC polling parameters.&n; *&n; *&t;Polling for DSC 
 multiline_comment|/*&n; *&t;Setting IDETAPE_ANTICIPATE_READ_WRITE_DSC to 1 will allow ide-tape&n; *&t;to cleverly select the lowest possible frequency which will&n; *&t;not affect performance, based on the tape parameters and our operation&n; *&t;mode. This has potential to dramatically decrease our polling load&n; *&t;on Linux.&n; *&n; *&t;However, for the cases in which our calculation fails, setting&n; *&t;the following option to 0 will force the use of the &quot;fallback&quot;&n; *&t;polling period defined below (defaults to 50 msec).&n; *&n; *&t;In any case, the frequency will be between the &quot;lowest&quot; value&n; *&t;to the &quot;fallback&quot; value, to ensure that our selected &quot;best&quot; frequency&n; *&t;is reasonable.&n; */
 DECL|macro|IDETAPE_ANTICIPATE_READ_WRITE_DSC
 mdefine_line|#define IDETAPE_ANTICIPATE_READ_WRITE_DSC&t;1
+multiline_comment|/*&n; *&t;The following parameter is used to select the point in the internal&n; *&t;tape fifo in which we will start to refill the buffer. Decreasing&n; *&t;the following parameter will improve the system&squot;s latency and&n; *&t;interactive response, while using a high value might improve sytem&n; *&t;throughput.&n; */
+DECL|macro|IDETAPE_FIFO_THRESHOLD
+mdefine_line|#define&t;IDETAPE_FIFO_THRESHOLD &t;&t;&t;2
 multiline_comment|/*&n; *&t;DSC timings.&n; */
 DECL|macro|IDETAPE_DSC_READ_WRITE_FALLBACK_FREQUENCY
 mdefine_line|#define&t;IDETAPE_DSC_READ_WRITE_FALLBACK_FREQUENCY   5*HZ/100&t;/* 50 msec */

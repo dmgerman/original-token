@@ -1,4 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
@@ -25,6 +24,12 @@ id|X
 c_func
 (paren
 id|atari_register_vme_int
+)paren
+comma
+id|X
+c_func
+(paren
+id|atari_unregister_vme_int
 )paren
 comma
 id|X

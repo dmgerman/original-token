@@ -171,7 +171,7 @@ multiline_comment|/*&n; * These are the only things you should do on a core-file
 DECL|macro|DUMP_WRITE
 mdefine_line|#define DUMP_WRITE(addr,nr) &bslash;&n;while (file.f_op-&gt;write(inode,&amp;file,(char *)(addr),(nr)) != (nr)) goto close_coredump
 DECL|macro|DUMP_SEEK
-mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file.f_op-&gt;lseek) { &bslash;&n;&t;if (file.f_op-&gt;lseek(inode,&amp;file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file.f_pos = (offset)&t;&t;
+mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file.f_op-&gt;llseek) { &bslash;&n;&t;if (file.f_op-&gt;llseek(inode,&amp;file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file.f_pos = (offset)&t;&t;
 multiline_comment|/*&n; * Routine writes a core dump image in the current directory.&n; * Currently only a stub-function.&n; *&n; * Note that setuid/setgid files won&squot;t make a core-dump if the uid/gid&n; * changed due to the set[u|g]id. It&squot;s enforced by the &quot;current-&gt;dumpable&quot;&n; * field, which also makes sure the core-dumps won&squot;t be recursive if the&n; * dumping of the process results in another error..&n; */
 r_static
 r_inline
@@ -824,11 +824,12 @@ op_star
 id|bprm
 )paren
 (brace
-r_int
-r_int
+r_char
+op_star
 op_star
 id|argv
 comma
+op_star
 op_star
 id|envp
 suffix:semicolon
@@ -965,6 +966,11 @@ l_int|1
 suffix:semicolon
 id|envp
 op_assign
+(paren
+r_char
+op_star
+op_star
+)paren
 id|sp
 suffix:semicolon
 id|sp
@@ -975,12 +981,21 @@ l_int|1
 suffix:semicolon
 id|argv
 op_assign
+(paren
+r_char
+op_star
+op_star
+)paren
 id|sp
 suffix:semicolon
 macro_line|#if defined(__i386__) || defined(__mc68000__)
 id|put_user
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|envp
 comma
 op_decrement
@@ -990,6 +1005,10 @@ suffix:semicolon
 id|put_user
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|argv
 comma
 op_decrement
@@ -2041,7 +2060,7 @@ multiline_comment|/* Seek into the file */
 r_if
 c_cond
 (paren
-id|file-&gt;f_op-&gt;lseek
+id|file-&gt;f_op-&gt;llseek
 )paren
 (brace
 r_if
@@ -2052,7 +2071,7 @@ id|error
 op_assign
 id|file-&gt;f_op
 op_member_access_from_pointer
-id|lseek
+id|llseek
 c_func
 (paren
 id|inode

@@ -32,6 +32,7 @@ suffix:semicolon
 macro_line|#endif
 r_static
 r_int
+r_int
 id|sock_lseek
 c_func
 (paren
@@ -45,7 +46,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -72,6 +74,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|size
 )paren
 suffix:semicolon
@@ -95,6 +98,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|size
 )paren
@@ -944,6 +948,7 @@ multiline_comment|/*&n; *&t;Sockets are not seekable.&n; */
 DECL|function|sock_lseek
 r_static
 r_int
+r_int
 id|sock_lseek
 c_func
 (paren
@@ -957,7 +962,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -990,6 +996,7 @@ r_char
 op_star
 id|ubuf
 comma
+r_int
 r_int
 id|size
 )paren
@@ -1150,6 +1157,7 @@ r_char
 op_star
 id|ubuf
 comma
+r_int
 r_int
 id|size
 )paren
