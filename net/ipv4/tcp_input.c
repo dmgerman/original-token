@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.136 1998/11/07 14:36:18 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.140 1998/11/12 06:45:15 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; *&t;&t;Andi Kleen:&t;&t;Process packets with PSH set in the&n; *&t;&t;&t;&t;&t;fast path.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -688,11 +688,6 @@ r_struct
 id|sock
 op_star
 id|sk
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
 )paren
 (brace
 id|sk-&gt;zapped
@@ -1728,7 +1723,13 @@ op_assign
 id|max
 c_func
 (paren
+id|min
+c_func
+(paren
+id|tp-&gt;snd_wnd
+comma
 id|tp-&gt;snd_cwnd
+)paren
 op_rshift
 l_int|1
 comma
@@ -1787,15 +1788,17 @@ id|tp-&gt;rto
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* 2. Each time another duplicate ACK arrives, increment &n;                 * cwnd by the segment size. [...] Transmit a packet...&n;                 *&n;                 * Packet transmission will be done on normal flow processing&n;                 * since we&squot;re not in &quot;retransmit mode&quot;.  We do not use duplicate&n;&t;&t; * ACKs to artificially inflate the congestion window when&n;&t;&t; * doing FACK.&n;                 */
+r_else
 r_if
 c_cond
 (paren
+op_increment
 id|tp-&gt;dup_acks
 OG
 l_int|3
 )paren
 (brace
+multiline_comment|/* 2. Each time another duplicate ACK arrives, increment &n;&t;&t;&t; * cwnd by the segment size. [...] Transmit a packet...&n;&t;&t;&t; *&n;&t;&t;&t; * Packet transmission will be done on normal flow processing&n;&t;&t;&t; * since we&squot;re not in &quot;retransmit mode&quot;.  We do not use&n;&t;&t;&t; * duplicate ACKs to artificially inflate the congestion&n;&t;&t;&t; * window when doing FACK.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1809,7 +1812,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Fill any further holes which may have appeared.&n;&t;&t;&t;&t; * We may want to change this to run every further&n;&t;&t;&t;&t; * multiple-of-3 dup ack increments, to be more robust&n;&t;&t;&t;&t; * against out-of-order packet delivery.  -DaveM&n;&t;&t;&t;&t; */
+multiline_comment|/* Fill any further holes which may have&n;&t;&t;&t;&t; * appeared.&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; * We may want to change this to run every&n;&t;&t;&t;&t; * further multiple-of-3 dup ack increments,&n;&t;&t;&t;&t; * to be more robust against out-of-order&n;&t;&t;&t;&t; * packet delivery.  -DaveM&n;&t;&t;&t;&t; */
 id|tcp_fack_retransmit
 c_func
 (paren
@@ -1955,6 +1958,7 @@ suffix:semicolon
 multiline_comment|/* This is Jacobson&squot;s slow start and congestion avoidance. &n; * SIGCOMM &squot;88, p. 328.&n; */
 DECL|function|tcp_cong_avoid
 r_static
+id|__inline__
 r_void
 id|tcp_cong_avoid
 c_func
@@ -2307,6 +2311,76 @@ id|HZ
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Should we open up the congestion window? */
+DECL|function|should_advance_cwnd
+r_static
+id|__inline__
+r_int
+id|should_advance_cwnd
+c_func
+(paren
+r_struct
+id|tcp_opt
+op_star
+id|tp
+comma
+r_int
+id|flag
+)paren
+(brace
+multiline_comment|/* Data must have been acked. */
+r_if
+c_cond
+(paren
+(paren
+id|flag
+op_amp
+id|FLAG_DATA_ACKED
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Some of the data acked was retransmitted somehow? */
+r_if
+c_cond
+(paren
+(paren
+id|flag
+op_amp
+id|FLAG_RETRANS_DATA_ACKED
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* We advance in all cases except during&n;&t;&t; * non-FACK fast retransmit/recovery.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|tp-&gt;fackets_out
+op_ne
+l_int|0
+op_logical_or
+id|tp-&gt;retransmits
+op_ne
+l_int|0
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* Non-FACK fast retransmit does it&squot;s own&n;&t;&t; * congestion window management, don&squot;t get&n;&t;&t; * in the way.&n;&t;&t; */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* New non-retransmitted data acked, always advance.  */
+r_return
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* Read draft-ietf-tcplw-high-performance before mucking&n; * with this code. (Superceeds RFC1323)&n; */
 DECL|function|tcp_ack_saw_tstamp
 r_static
@@ -2426,13 +2500,24 @@ c_func
 id|tp
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|should_advance_cwnd
+c_func
+(paren
+id|tp
+comma
+id|flag
+)paren
+)paren
 id|tcp_cong_avoid
 c_func
 (paren
 id|tp
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* NOTE: safe here so long as cong_ctl doesn&squot;t use rto */
 id|tcp_bound_rto
 c_func
@@ -2882,14 +2967,25 @@ id|tp
 )paren
 suffix:semicolon
 )brace
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|should_advance_cwnd
+c_func
+(paren
+id|tp
+comma
+id|flag
+)paren
+)paren
 id|tcp_cong_avoid
 c_func
 (paren
 id|tp
 )paren
 suffix:semicolon
-)brace
-)brace
 )brace
 r_if
 c_cond
@@ -6956,8 +7052,6 @@ id|tcp_reset
 c_func
 (paren
 id|sk
-comma
-id|skb
 )paren
 suffix:semicolon
 r_return
@@ -6974,8 +7068,6 @@ id|tcp_reset
 c_func
 (paren
 id|sk
-comma
-id|skb
 )paren
 suffix:semicolon
 r_goto
@@ -7522,8 +7614,6 @@ id|tcp_reset
 c_func
 (paren
 id|sk
-comma
-id|skb
 )paren
 suffix:semicolon
 r_goto
@@ -8012,8 +8102,6 @@ id|tcp_reset
 c_func
 (paren
 id|sk
-comma
-id|skb
 )paren
 suffix:semicolon
 r_goto
@@ -8042,8 +8130,6 @@ id|tcp_reset
 c_func
 (paren
 id|sk
-comma
-id|skb
 )paren
 suffix:semicolon
 r_return
@@ -8402,8 +8488,6 @@ id|tcp_reset
 c_func
 (paren
 id|sk
-comma
-id|skb
 )paren
 suffix:semicolon
 r_return

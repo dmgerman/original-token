@@ -55,14 +55,6 @@ l_int|8
 suffix:semicolon
 r_extern
 r_int
-id|adbdev_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|bus_mouse_init
 c_func
 (paren
@@ -104,14 +96,6 @@ suffix:semicolon
 r_extern
 r_int
 id|atari_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|mac_mouse_init
 c_func
 (paren
 r_void
@@ -776,13 +760,6 @@ op_assign
 id|misc_read_proc
 suffix:semicolon
 macro_line|#endif /* PROC_FS */
-macro_line|#ifdef CONFIG_MAC
-id|adbdev_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_BUSMOUSE
 id|bus_mouse_init
 c_func
@@ -825,13 +802,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_MACMOUSE
-id|mac_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_MOUSE
 id|sun_mouse_init
 c_func
@@ -839,7 +809,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_MACMOUSE
+macro_line|#ifdef CONFIG_ADBMOUSE
 id|adb_mouse_init
 c_func
 (paren

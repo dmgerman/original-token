@@ -631,22 +631,6 @@ c_func
 l_string|&quot;Entering SMP Mode...&bslash;n&quot;
 )paren
 suffix:semicolon
-id|smp_penguin_ctable.which_io
-op_assign
-l_int|0
-suffix:semicolon
-id|smp_penguin_ctable.phys_addr
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|srmmu_ctx_table_phys
-suffix:semicolon
-id|smp_penguin_ctable.reg_size
-op_assign
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -988,6 +972,23 @@ id|i
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Initialize the contexts table&n;&t;&t;&t; * Since the call to prom_startcpu() trashes the structure,&n;&t;&t;&t; * we need to re-initialize it for each cpu&n;&t;&t;&t; */
+id|smp_penguin_ctable.which_io
+op_assign
+l_int|0
+suffix:semicolon
+id|smp_penguin_ctable.phys_addr
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|srmmu_ctx_table_phys
+suffix:semicolon
+id|smp_penguin_ctable.reg_size
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* whirrr, whirrr, whirrrrrrrrr... */
 id|SMP_PRINTK
 c_func
@@ -1055,7 +1056,7 @@ l_int|0
 suffix:semicolon
 id|timeout
 OL
-l_int|5000000
+l_int|10000
 suffix:semicolon
 id|timeout
 op_increment
@@ -1076,7 +1077,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|100
+l_int|200
 )paren
 suffix:semicolon
 )brace

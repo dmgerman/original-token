@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.72 1998/10/22 15:15:08 ecd Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.73 1998/11/06 13:49:54 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -35,6 +35,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/a.out.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/io-unit.h&gt;
 DECL|struct|poll
 r_struct
 id|poll
@@ -618,6 +619,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|io_remap_page_range
+)paren
+suffix:semicolon
+DECL|variable|iounit_map_dma_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|iounit_map_dma_init
+)paren
+suffix:semicolon
+DECL|variable|iounit_map_dma_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|iounit_map_dma_page
 )paren
 suffix:semicolon
 multiline_comment|/* Btfixup stuff cannot have versions, it would be complicated too much */

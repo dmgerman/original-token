@@ -7,7 +7,7 @@ macro_line|#include &quot;autofs_i.h&quot;
 multiline_comment|/* We make this a static variable rather than a part of the superblock; it&n;   is better if we don&squot;t reassign numbers easily even across filesystems */
 DECL|variable|autofs_next_wait_queue
 r_static
-r_int
+id|autofs_wqt_t
 id|autofs_next_wait_queue
 op_assign
 l_int|1
@@ -704,8 +704,7 @@ id|autofs_sb_info
 op_star
 id|sbi
 comma
-r_int
-r_int
+id|autofs_wqt_t
 id|wait_queue_token
 comma
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-mips/namei.h&n; *&n; * Included from linux/fs/namei.c&n; *&n; * $Id: namei.h,v 1.9 1998/05/01 01:35:59 ralf Exp $&n; */
+multiline_comment|/*&n; * linux/include/asm-mips/namei.h&n; *&n; * Included from linux/fs/namei.c&n; *&n; * $Id: namei.h,v 1.10 1998/10/28 08:13:24 jj Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_NAMEI_H
 DECL|macro|__ASM_MIPS_NAMEI_H
 mdefine_line|#define __ASM_MIPS_NAMEI_H
@@ -21,7 +21,7 @@ op_star
 id|name
 comma
 r_int
-id|follow_link
+id|lookup_flags
 )paren
 (brace
 r_struct
@@ -55,7 +55,13 @@ id|dget
 id|current-&gt;fs-&gt;root
 )paren
 comma
-l_int|1
+(paren
+id|LOOKUP_FOLLOW
+op_or
+id|LOOKUP_DIRECTORY
+op_or
+id|LOOKUP_SLASHOK
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -77,7 +83,7 @@ id|name
 comma
 id|base
 comma
-id|follow_link
+id|lookup_flags
 )paren
 suffix:semicolon
 r_if
@@ -119,10 +125,10 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BINFMT_IRIX
 DECL|macro|__prefix_lookup_dentry
-mdefine_line|#define __prefix_lookup_dentry(name, follow_link)&t;&t;&t;&t;&bslash;&n;&t;dentry = __mips_lookup_dentry (name, follow_link);&t;&t;&t;&bslash;&n;&t;if (!IS_ERR (dentry)) return dentry;
+mdefine_line|#define __prefix_lookup_dentry(name, lookup_flags)&t;&t;&t;&t;&bslash;&n;&t;dentry = __mips_lookup_dentry (name, lookup_flags);&t;&t;&t;&bslash;&n;&t;if (!IS_ERR (dentry)) return dentry;
 macro_line|#else /* !defined(CONFIG_BINFMT_IRIX) */
 DECL|macro|__prefix_lookup_dentry
-mdefine_line|#define __prefix_lookup_dentry(name, follow_link) &bslash;&n;        do {} while (0)
+mdefine_line|#define __prefix_lookup_dentry(name, lookup_flags) &bslash;&n;        do {} while (0)
 macro_line|#endif /* !defined(CONFIG_BINFMT_IRIX) */
 macro_line|#endif /* __ASM_MIPS_NAMEI_H */
 eof

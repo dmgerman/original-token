@@ -86,6 +86,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
+r_extern
+r_void
+id|note_bootable_part
+c_func
+(paren
+id|kdev_t
+id|dev
+comma
+r_int
+id|part
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * disk_name() is used by genhd.c and md.c.&n; * It formats the devicename of the indicated disk&n; * into the supplied buffer, and returns a pointer&n; * to that same buffer (for convenience).&n; */
 DECL|function|disk_name
 r_char
@@ -3902,7 +3916,7 @@ suffix:semicolon
 r_int
 id|secsize
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_int
 id|first_bootable
 op_assign
@@ -4263,11 +4277,17 @@ l_int|512
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 multiline_comment|/*&n;&t;&t; * If this is the first bootable partition, tell the&n;&t;&t; * setup code, in case it wants to make this the root.&n;&t;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+op_logical_and
 id|first_bootable
 op_logical_and
 (paren
@@ -4304,7 +4324,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 op_increment
 id|current_minor
 suffix:semicolon

@@ -3647,7 +3647,7 @@ id|md_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_MACMOUSE
+macro_line|#ifdef CONFIG_ADBMOUSE
 (brace
 l_string|&quot;adb_buttons=&quot;
 comma
@@ -5208,7 +5208,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_CHRP)
+macro_line|#if defined(CONFIG_PPC)
 id|powermac_init
 c_func
 (paren

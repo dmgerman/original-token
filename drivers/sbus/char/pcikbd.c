@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.23 1998/10/07 11:35:24 jj Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.24 1998/11/08 11:15:24 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

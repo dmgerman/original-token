@@ -146,6 +146,7 @@ id|dev
 suffix:semicolon
 DECL|member|flags
 r_int
+r_int
 id|flags
 suffix:semicolon
 DECL|member|chars

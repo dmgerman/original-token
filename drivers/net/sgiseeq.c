@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sgiseeq.c: Seeq8003 ethernet driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: sgiseeq.c,v 1.5 1998/05/01 01:35:40 ralf Exp $&n; */
+multiline_comment|/*&n; * sgiseeq.c: Seeq8003 ethernet driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: sgiseeq.c,v 1.6 1998/10/14 17:29:44 ralf Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -117,7 +117,7 @@ r_int
 r_int
 id|_padding
 (braket
-l_int|14
+l_int|30
 )braket
 suffix:semicolon
 multiline_comment|/* Pad out to largest cache line size. */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.25 1998/10/19 21:52:26 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.26 1998/11/08 11:14:03 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -610,6 +610,10 @@ op_amp
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|handle_mm_fault
 c_func
 (paren
@@ -621,6 +625,9 @@ id|address
 comma
 id|write
 )paren
+)paren
+r_goto
+id|do_sigbus
 suffix:semicolon
 id|up
 c_func
@@ -641,6 +648,8 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+id|do_kernel_fault
+suffix:colon
 (brace
 r_int
 r_int
@@ -821,5 +830,42 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
+id|do_sigbus
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|current-&gt;tss.sig_address
+op_assign
+id|address
+suffix:semicolon
+id|current-&gt;tss.sig_desc
+op_assign
+id|SUBSIG_MISCERROR
+suffix:semicolon
+id|force_sig
+c_func
+(paren
+id|SIGBUS
+comma
+id|current
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|regs-&gt;tstate
+op_amp
+id|TSTATE_PRIV
+)paren
+r_goto
+id|do_kernel_fault
+suffix:semicolon
 )brace
 eof

@@ -4,6 +4,7 @@ DECL|macro|_SPARC_IO_UNIT_H
 mdefine_line|#define _SPARC_IO_UNIT_H
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* The io-unit handles all virtual to physical address translations&n; * that occur between the SBUS and physical memory.  Access by&n; * the cpu to IO registers and similar go over the xdbus so are&n; * translated by the on chip SRMMU.  The io-unit and the srmmu do&n; * not need to have the same translations at all, in fact most&n; * of the time the translations they handle are a disjunct set.&n; * Basically the io-unit handles all dvma sbus activity.&n; */
 multiline_comment|/* AIEEE, unlike the nice sun4m, these monsters have &n;   fixed DMA range 64M */
 DECL|macro|IOUNIT_DMA_BASE
@@ -93,5 +94,34 @@ DECL|macro|IOUNIT_BMAPM_START
 mdefine_line|#define IOUNIT_BMAPM_START&t;IOUNIT_BMAP2_END
 DECL|macro|IOUNIT_BMAPM_END
 mdefine_line|#define IOUNIT_BMAPM_END&t;((IOUNIT_DMA_SIZE - IOUNIT_DVMA_SIZE) &gt;&gt; PAGE_SHIFT)
+r_extern
+id|__u32
+id|iounit_map_dma_init
+c_func
+(paren
+r_struct
+id|linux_sbus
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|macro|iounit_map_dma_finish
+mdefine_line|#define iounit_map_dma_finish(sbus, addr, len) mmu_release_scsi_one(addr, len, sbus)
+r_extern
+id|__u32
+id|iounit_map_dma_page
+c_func
+(paren
+id|__u32
+comma
+r_void
+op_star
+comma
+r_struct
+id|linux_sbus
+op_star
+)paren
+suffix:semicolon
 macro_line|#endif /* !(_SPARC_IO_UNIT_H) */
 eof

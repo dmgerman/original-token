@@ -188,6 +188,7 @@ id|__u32
 op_star
 id|output_dma_handle
 comma
+op_star
 id|output_next_dma_handle
 suffix:semicolon
 multiline_comment|/* Current record buffer. */

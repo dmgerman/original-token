@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.95 1998/09/18 19:50:32 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.96 1998/11/08 11:13:56 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -941,6 +941,10 @@ id|bad_area
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|handle_mm_fault
 c_func
 (paren
@@ -952,6 +956,9 @@ id|address
 comma
 id|write
 )paren
+)paren
+r_goto
+id|do_sigbus
 suffix:semicolon
 id|up
 c_func
@@ -973,6 +980,8 @@ id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 multiline_comment|/* Is this in ex_table? */
+id|do_kernel_fault
+suffix:colon
 id|g2
 op_assign
 id|regs-&gt;u_regs
@@ -1185,6 +1194,42 @@ id|tsk
 comma
 id|regs
 )paren
+suffix:semicolon
+r_return
+suffix:semicolon
+id|do_sigbus
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|tsk-&gt;tss.sig_address
+op_assign
+id|address
+suffix:semicolon
+id|tsk-&gt;tss.sig_desc
+op_assign
+id|SUBSIG_MISCERROR
+suffix:semicolon
+id|force_sig
+c_func
+(paren
+id|SIGBUS
+comma
+id|tsk
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|from_user
+)paren
+r_goto
+id|do_kernel_fault
 suffix:semicolon
 )brace
 DECL|function|do_sun4c_fault
@@ -1707,6 +1752,10 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|handle_mm_fault
 c_func
 (paren
@@ -1718,6 +1767,9 @@ id|address
 comma
 id|write
 )paren
+)paren
+r_goto
+id|do_sigbus
 suffix:semicolon
 id|up
 c_func
@@ -1770,6 +1822,31 @@ l_int|1
 )paren
 suffix:semicolon
 r_return
+suffix:semicolon
+id|do_sigbus
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|tsk-&gt;tss.sig_address
+op_assign
+id|address
+suffix:semicolon
+id|tsk-&gt;tss.sig_desc
+op_assign
+id|SUBSIG_MISCERROR
+suffix:semicolon
+id|force_sig
+c_func
+(paren
+id|SIGBUS
+comma
+id|tsk
+)paren
 suffix:semicolon
 )brace
 DECL|function|window_overflow_fault

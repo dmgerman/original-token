@@ -1392,6 +1392,8 @@ op_star
 id|sun4c_buffers
 suffix:semicolon
 multiline_comment|/* CPU visible address.              */
+DECL|macro|sun4d_buffers
+mdefine_line|#define&t;sun4d_buffers&t;&t;  sun4c_buffers&t;  /* No need to make this a separate.  */
 DECL|member|s4c_buf_dvma
 id|__u32
 id|s4c_buf_dvma
@@ -2035,11 +2037,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|pcihme_write_txd
 r_extern
@@ -2076,11 +2073,6 @@ id|flip_dword
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.53 1998/10/26 08:01:01 jj Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.54 1998/11/11 17:09:04 jj Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -25,6 +25,7 @@ macro_line|#include &lt;linux/auto_fs.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
+macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;scsi/scsi.h&gt;
 multiline_comment|/* Ugly hack. */
 DECL|macro|__KERNEL__
@@ -47,6 +48,15 @@ DECL|macro|A
 mdefine_line|#define A(__x) ((unsigned long)(__x))
 DECL|macro|AA
 mdefine_line|#define AA(__x)&t;&t;&t;&t;&bslash;&n;({&t;unsigned long __ret;&t;&t;&bslash;&n;&t;__asm__ (&quot;srl&t;%0, 0, %0&quot;&t;&bslash;&n;&t;&t; : &quot;=r&quot; (__ret)&t;&t;&bslash;&n;&t;&t; : &quot;0&quot; (__x));&t;&t;&bslash;&n;&t;__ret;&t;&t;&t;&t;&bslash;&n;})
+multiline_comment|/* Aiee. Someone does not find a difference between int and long */
+DECL|macro|EXT2_IOC32_GETFLAGS
+mdefine_line|#define EXT2_IOC32_GETFLAGS               _IOR(&squot;f&squot;, 1, int)
+DECL|macro|EXT2_IOC32_SETFLAGS
+mdefine_line|#define EXT2_IOC32_SETFLAGS               _IOW(&squot;f&squot;, 2, int)
+DECL|macro|EXT2_IOC32_GETVERSION
+mdefine_line|#define EXT2_IOC32_GETVERSION             _IOR(&squot;v&squot;, 1, int)
+DECL|macro|EXT2_IOC32_SETVERSION
+mdefine_line|#define EXT2_IOC32_SETVERSION             _IOW(&squot;v&squot;, 2, int)
 r_extern
 id|asmlinkage
 r_int
@@ -259,6 +269,81 @@ id|EFAULT
 suffix:semicolon
 r_return
 id|err
+suffix:semicolon
+)brace
+DECL|function|do_ext2_ioctl
+r_static
+r_int
+id|do_ext2_ioctl
+c_func
+(paren
+r_int
+r_int
+id|fd
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+(brace
+multiline_comment|/* These are just misnamed, they actually get/put from/to user an int */
+r_switch
+c_cond
+(paren
+id|cmd
+)paren
+(brace
+r_case
+id|EXT2_IOC32_GETFLAGS
+suffix:colon
+id|cmd
+op_assign
+id|EXT2_IOC_GETFLAGS
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|EXT2_IOC32_SETFLAGS
+suffix:colon
+id|cmd
+op_assign
+id|EXT2_IOC_SETFLAGS
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|EXT2_IOC32_GETVERSION
+suffix:colon
+id|cmd
+op_assign
+id|EXT2_IOC_GETVERSION
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|EXT2_IOC32_SETVERSION
+suffix:colon
+id|cmd
+op_assign
+id|EXT2_IOC_SETVERSION
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_return
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|cmd
+comma
+id|arg
+)paren
 suffix:semicolon
 )brace
 DECL|struct|timeval32
@@ -10721,6 +10806,33 @@ r_struct
 id|console_font_op32
 op_star
 )paren
+id|arg
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+r_case
+id|EXT2_IOC32_GETFLAGS
+suffix:colon
+r_case
+id|EXT2_IOC32_SETFLAGS
+suffix:colon
+r_case
+id|EXT2_IOC32_GETVERSION
+suffix:colon
+r_case
+id|EXT2_IOC32_SETVERSION
+suffix:colon
+id|error
+op_assign
+id|do_ext2_ioctl
+c_func
+(paren
+id|fd
+comma
+id|cmd
+comma
 id|arg
 )paren
 suffix:semicolon

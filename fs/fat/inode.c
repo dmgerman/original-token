@@ -3869,11 +3869,15 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
-id|panic
+id|fat_fs_panic
 c_func
 (paren
+id|sb
+comma
 l_string|&quot;fat_read_inode: unable to read i-node block&quot;
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 id|raw_entry
@@ -4526,11 +4530,15 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
-id|panic
+id|fat_fs_panic
 c_func
 (paren
+id|sb
+comma
 l_string|&quot;msdos_write_inode: unable to read i-node block&quot;
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 id|raw_entry

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psycho.c,v 1.65 1998/10/20 14:41:28 ecd Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: psycho.c,v 1.66 1998/11/02 22:27:45 davem Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -6872,7 +6872,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|prom_printf
+id|dprintf
 c_func
 (paren
 l_string|&quot;%d[%016lx] &quot;
@@ -6887,7 +6887,7 @@ id|preg
 suffix:semicolon
 )brace
 )brace
-id|prom_printf
+id|dprintf
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
@@ -9120,7 +9120,7 @@ c_func
 id|devfn
 )paren
 OG
-l_int|4
+l_int|8
 )paren
 op_logical_or
 (paren
@@ -9143,7 +9143,7 @@ c_func
 id|devfn
 )paren
 OG
-l_int|6
+l_int|8
 )paren
 op_logical_or
 (paren

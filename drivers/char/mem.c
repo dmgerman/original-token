@@ -105,6 +105,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(CONFIG_PPC) || defined(CONFIG_MAC)
+r_extern
+r_void
+id|adbdev_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|do_write_mem
 r_static
 id|ssize_t
@@ -2069,6 +2079,7 @@ id|null_fops
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifndef CONFIG_PPC
 r_case
 l_int|4
 suffix:colon
@@ -2079,6 +2090,7 @@ id|port_fops
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 l_int|5
 suffix:colon
@@ -2325,6 +2337,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_BT848
 id|i2c_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_PPC) || defined(CONFIG_MAC)
+id|adbdev_init
 c_func
 (paren
 )paren

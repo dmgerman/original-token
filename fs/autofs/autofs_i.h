@@ -112,11 +112,6 @@ DECL|struct|autofs_wait_queue
 r_struct
 id|autofs_wait_queue
 (brace
-DECL|member|wait_queue_token
-r_int
-r_int
-id|wait_queue_token
-suffix:semicolon
 DECL|member|queue
 r_struct
 id|wait_queue
@@ -128,6 +123,10 @@ r_struct
 id|autofs_wait_queue
 op_star
 id|next
+suffix:semicolon
+DECL|member|wait_queue_token
+id|autofs_wqt_t
+id|wait_queue_token
 suffix:semicolon
 multiline_comment|/* We use the following to see what we are waiting for */
 DECL|member|hash
@@ -158,14 +157,14 @@ DECL|struct|autofs_symlink
 r_struct
 id|autofs_symlink
 (brace
-DECL|member|len
-r_int
-id|len
-suffix:semicolon
 DECL|member|data
 r_char
 op_star
 id|data
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
 suffix:semicolon
 DECL|member|mtime
 id|time_t
@@ -432,8 +431,7 @@ r_struct
 id|autofs_sb_info
 op_star
 comma
-r_int
-r_int
+id|autofs_wqt_t
 comma
 r_int
 )paren

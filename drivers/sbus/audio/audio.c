@@ -4343,6 +4343,9 @@ comma
 multiline_comment|/* sparcaudio_mmap */
 id|sparcaudio_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* sparcaudio_flush */
 id|sparcaudio_release
 )brace
 suffix:semicolon

@@ -1083,6 +1083,14 @@ op_eq
 l_char|&squot;/&squot;
 )paren
 suffix:semicolon
+id|__prefix_lookup_dentry
+c_func
+(paren
+id|name
+comma
+id|lookup_flags
+)paren
+suffix:semicolon
 id|base
 op_assign
 id|dget

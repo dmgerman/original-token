@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/if_ltalk.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
+macro_line|#include &lt;net/neighbour.h&gt;
 multiline_comment|/* The network devices currently exist only in the socket namespace, so these&n;   entries are unused.  The only ones that make sense are&n;    open&t;start the ethercard&n;    close&t;stop  the ethercard&n;    ioctl&t;To get statistics, perhaps set the interface port (AUI, BNC, etc.)&n;   One can also imagine getting raw packets using&n;    read &amp; write&n;   but this is probably better handled by a raw packet socket.&n;&n;   Given that almost all of these functions are handled in the current&n;   socket-based scheme, putting ethercard devices in /dev/ seems pointless.&n;   &n;   [Removed all support for /dev network devices. When someone adds&n;    streams then by magic we get them, but otherwise they are un-needed&n;&t;and a space waste]&n;*/
 multiline_comment|/* The list of used and available &quot;eth&quot; slots (for &quot;eth0&quot;, &quot;eth1&quot;, etc.) */
 DECL|macro|MAX_ETH_CARDS
@@ -738,6 +739,44 @@ r_return
 id|tmp_dev
 suffix:semicolon
 )brace
+DECL|function|hippi_neigh_setup_dev
+r_static
+r_int
+id|hippi_neigh_setup_dev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|neigh_parms
+op_star
+id|p
+)paren
+(brace
+multiline_comment|/* Never send broadcast/multicast ARP messages */
+id|p-&gt;mcast_probes
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* In IPv6 unicast probes are valid even on NBMA,&n;&t;* because they are encapsulated in normal IPv6 protocol.&n;&t;* Should be a generic flag. &n;&t;*/
+r_if
+c_cond
+(paren
+id|p-&gt;tbl-&gt;family
+op_ne
+id|AF_INET6
+)paren
+id|p-&gt;ucast_probes
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#endif
 DECL|function|ether_setup
 r_void
@@ -1026,6 +1065,10 @@ id|dev-&gt;header_cache_update
 op_assign
 l_int|NULL
 suffix:semicolon
+id|dev-&gt;neigh_setup
+op_assign
+id|hippi_neigh_setup_dev
+suffix:semicolon
 multiline_comment|/*&n;&t; * We don&squot;t support HIPPI `ARP&squot; for the time being, and probably&n;&t; * never will unless someone else implements it. However we&n;&t; * still need a fake ARPHRD to make ifconfig and friends play ball.&n;&t; */
 id|dev-&gt;type
 op_assign
@@ -1058,12 +1101,11 @@ comma
 id|HIPPI_ALEN
 )paren
 suffix:semicolon
-multiline_comment|/* New-style flags. */
+multiline_comment|/*&n;&t; * HIPPI doesn&squot;t support broadcast+multicast and we only use&n;&t; * static ARP tables. ARP is disabled by hippi_neigh_setup_dev. &n;&t; */
 id|dev-&gt;flags
 op_assign
-id|IFF_NODYNARP
+l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * HIPPI doesn&squot;t support&n;&t;&t;&t;&t;&t; * broadcast+multicast and we only&n;&t;&t;&t;&t;&t; * use static ARP tables.&n;&t;&t;&t;&t;&t; */
 id|dev_init_buffers
 c_func
 (paren

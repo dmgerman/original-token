@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.9 1998/10/26 20:03:15 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.10 1998/10/27 23:28:50 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC64_DMA_H
 DECL|macro|_ASM_SPARC64_DMA_H
 mdefine_line|#define _ASM_SPARC64_DMA_H
@@ -12,56 +12,10 @@ r_extern
 id|spinlock_t
 id|dma_spin_lock
 suffix:semicolon
-DECL|function|claim_dma_lock
-r_static
-id|__inline__
-r_int
-r_int
-id|claim_dma_lock
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|dma_spin_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-r_return
-id|flags
-suffix:semicolon
-)brace
-DECL|function|release_dma_lock
-r_static
-id|__inline__
-r_void
-id|release_dma_lock
-c_func
-(paren
-r_int
-r_int
-id|flags
-)paren
-(brace
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|dma_spin_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-)brace
+DECL|macro|claim_dma_lock
+mdefine_line|#define claim_dma_lock() &bslash;&n;({&t;unsigned long flags; &bslash;&n;&t;spin_lock_irqsave(&amp;dma_spin_lock, flags); &bslash;&n;&t;flags; &bslash;&n;})
+DECL|macro|release_dma_lock
+mdefine_line|#define release_dma_lock(__flags) &bslash;&n;&t;spin_unlock_irqrestore(&amp;dma_spin_lock, __flags);
 multiline_comment|/* These are irrelevant for Sparc DMA, but we leave it in so that&n; * things can compile.&n; */
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS 8

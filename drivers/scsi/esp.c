@@ -5683,13 +5683,6 @@ comma
 l_int|16
 )paren
 suffix:semicolon
-id|esp-&gt;config3
-(braket
-id|SCptr-&gt;target
-)braket
-op_or_assign
-id|ESP_CONFIG3_EWIDE
-suffix:semicolon
 id|SDptr-&gt;wide
 op_assign
 l_int|1

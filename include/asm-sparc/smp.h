@@ -618,10 +618,6 @@ r_void
 (brace
 r_int
 id|cpuid
-id|__asm__
-(paren
-l_string|&quot;g2&quot;
-)paren
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -630,6 +626,7 @@ c_func
 l_string|&quot;mov %%o7, %%g1&bslash;n&bslash;t&quot;
 l_string|&quot;call ___f___smp_processor_id&bslash;n&bslash;t&quot;
 l_string|&quot; nop&bslash;n&bslash;t&quot;
+l_string|&quot;mov %%g2, %0&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -638,6 +635,8 @@ id|cpuid
 suffix:colon
 suffix:colon
 l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: generic.c,v 1.2 1997/07/01 09:11:42 jj Exp $&n; * generic.c: Generic Sparc mm routines that are not dependent upon&n; *            MMU type but are Sparc specific.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: generic.c,v 1.3 1998/10/27 23:28:07 davem Exp $&n; * generic.c: Generic Sparc mm routines that are not dependent upon&n; *            MMU type but are Sparc specific.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
@@ -172,23 +172,12 @@ id|addr
 )paren
 r_return
 suffix:semicolon
-id|free_page
+multiline_comment|/* &n;&t;&t; * free_page() used to be able to clear swap cache&n;&t;&t; * entries.  We may now have to do it manually.  &n;&t;&t; */
+id|free_page_and_swap_cache
 c_func
 (paren
 id|addr
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;mm-&gt;rss
-op_le
-l_int|0
-)paren
-r_return
-suffix:semicolon
-id|current-&gt;mm-&gt;rss
-op_decrement
 suffix:semicolon
 r_return
 suffix:semicolon

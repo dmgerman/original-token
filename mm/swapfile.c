@@ -3063,6 +3063,9 @@ op_star
 op_amp
 id|swap_header-&gt;info.badpages
 (braket
+(paren
+r_int
+)paren
 id|swap_header-&gt;info.nr_badpages
 op_minus
 l_int|1

@@ -31,15 +31,21 @@ mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;save_and_cli(flags)
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
+DECL|member|lock
 DECL|typedef|rwlock_t
 r_typedef
 r_struct
 (brace
+r_volatile
+r_int
+r_int
+id|lock
+suffix:semicolon
 )brace
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { }
+mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
 DECL|macro|read_lock
 mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
 DECL|macro|read_unlock
@@ -93,7 +99,7 @@ id|_spinlock_debug
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED&t;{ 0, 0 }
+mdefine_line|#define SPIN_LOCK_UNLOCKED&t;(spinlock_t) { 0, 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lp)&t;do { (lp)-&gt;owner_pc = 0; (lp)-&gt;lock = 0; } while(0)
 DECL|macro|spin_unlock_wait
@@ -178,7 +184,7 @@ id|_rwlock_debug
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { 0, 0, {0} }
+mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0, 0, {0} }
 r_extern
 r_void
 id|_do_read_lock
@@ -750,7 +756,7 @@ suffix:semicolon
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { 0 }
+mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
 multiline_comment|/* Sort of like atomic_t&squot;s on Sparc, but even more clever.&n; *&n; *&t;------------------------------------&n; *&t;| 24-bit counter           | wlock |  rwlock_t&n; *&t;------------------------------------&n; *&t; 31                       8 7     0&n; *&n; * wlock signifies the one writer is in or somebody is updating&n; * counter. For a writer, if he successfully acquires the wlock,&n; * but counter is non-zero, he has to release the lock and wait,&n; * till both counter and wlock are zero.&n; *&n; * Unfortunately this scheme limits us to ~16,000,000 cpus.&n; */
 DECL|function|_read_lock
 r_extern

@@ -33,13 +33,12 @@ mdefine_line|#define spin_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
 DECL|typedef|rwlock_t
 r_typedef
-r_struct
-(brace
-)brace
+r_int
+r_int
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { }
+mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
 DECL|macro|read_lock
 mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
 DECL|macro|read_unlock
@@ -482,7 +481,7 @@ DECL|typedef|spinlock_t
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { 0, 0, NO_PROC_ID }
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0, 0, NO_PROC_ID }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(__lock)&t;&bslash;&n;do {&t;(__lock)-&gt;lock = 0; &bslash;&n;&t;(__lock)-&gt;owner_pc = 0; &bslash;&n;&t;(__lock)-&gt;owner_cpu = NO_PROC_ID; &bslash;&n;} while(0)
 DECL|macro|spin_is_locked
@@ -1170,7 +1169,7 @@ DECL|typedef|rwlock_t
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED&t;{ 0, 0, NO_PROC_ID, { 0, 0, 0, 0 } }
+mdefine_line|#define RW_LOCK_UNLOCKED&t;(rwlock_t) { 0, 0, NO_PROC_ID, { 0, 0, 0, 0 } }
 r_extern
 r_void
 id|_do_read_lock

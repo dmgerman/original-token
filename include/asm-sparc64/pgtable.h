@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.95 1998/10/22 03:05:57 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.96 1998/10/27 23:28:42 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -2094,6 +2094,24 @@ r_int
 r_int
 )paren
 id|_PAGE_CACHE
+suffix:semicolon
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_or_assign
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|space
+)paren
+op_lshift
+l_int|32
+)paren
 suffix:semicolon
 r_return
 id|pte

@@ -2270,6 +2270,9 @@ c_func
 (paren
 id|sbi
 comma
+(paren
+id|autofs_wqt_t
+)paren
 id|arg
 comma
 l_int|0
@@ -2285,6 +2288,9 @@ c_func
 (paren
 id|sbi
 comma
+(paren
+id|autofs_wqt_t
+)paren
 id|arg
 comma
 op_minus
