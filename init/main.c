@@ -463,6 +463,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|in2000_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|NCR53c406a_setup
 c_func
 (paren
@@ -1549,6 +1563,14 @@ macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
 l_string|&quot;fdomain=&quot;
 comma
 id|fdomain_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IN2000
+(brace
+l_string|&quot;in2000=&quot;
+comma
+id|in2000_setup
 )brace
 comma
 macro_line|#endif

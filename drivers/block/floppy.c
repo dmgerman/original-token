@@ -5,7 +5,7 @@ multiline_comment|/*&n; * As with hd.c, all routines within this file can (and w
 multiline_comment|/*&n; * 28.02.92 - made track-buffering routines, based on the routines written&n; * by entropy@wintermute.wpi.edu (Lawrence Foard). Linus.&n; */
 multiline_comment|/*&n; * Automatic floppy-detection and formatting written by Werner Almesberger&n; * (almesber@nessie.cs.id.ethz.ch), who also corrected some problems with&n; * the floppy-change signal detection.&n; */
 multiline_comment|/*&n; * 1992/7/22 -- Hennus Bergman: Added better error reporting, fixed&n; * FDC data overrun bug, added some preliminary stuff for vertical&n; * recording support.&n; *&n; * 1992/9/17: Added DMA allocation &amp; DMA functions. -- hhb.&n; *&n; * TODO: Errors are still not counted properly.&n; */
-multiline_comment|/* 1992/9/20&n; * Modifications for ``Sector Shifting&squot;&squot; by Rob Hooft (hooft@chem.ruu.nl)&n; * modelled after the freeware MS/DOS program fdformat/88 V1.8 by&n; * Christoph H. Hochst&bslash;&quot;atter.&n; * I have fixed the shift values to the ones I always use. Maybe a new&n; * ioctl() should be created to be able to modify them.&n; * There is a bug in the driver that makes it impossible to format a&n; * floppy as the first thing after bootup.&n; */
+multiline_comment|/* 1992/9/20&n; * Modifications for ``Sector Shifting&squot;&squot; by Rob Hooft (hooft@chem.ruu.nl)&n; * modeled after the freeware MS-DOS program fdformat/88 V1.8 by&n; * Christoph H. Hochst&bslash;&quot;atter.&n; * I have fixed the shift values to the ones I always use. Maybe a new&n; * ioctl() should be created to be able to modify them.&n; * There is a bug in the driver that makes it impossible to format a&n; * floppy as the first thing after bootup.&n; */
 multiline_comment|/*&n; * 1993/4/29 -- Linus -- cleaned up the timer handling in the kernel, and&n; * this helped the floppy driver as well. Much cleaner, and still seems to&n; * work.&n; */
 multiline_comment|/* 1994/6/24 --bbroad-- added the floppy table entries and made&n; * minor modifications to allow 2.88 floppies to be run.&n; */
 multiline_comment|/* 1994/7/13 -- Paul Vojta -- modified the probing code to allow three or more&n; * disk types.&n; */
@@ -66,7 +66,7 @@ mdefine_line|#define FDPATCHES
 macro_line|#include &lt;linux/fdreg.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
 DECL|macro|OLDFDRAWCMD
-mdefine_line|#define OLDFDRAWCMD 0x020d /* send a raw command to the fdc */
+mdefine_line|#define OLDFDRAWCMD 0x020d /* send a raw command to the FDC */
 DECL|struct|old_floppy_raw_cmd
 r_struct
 id|old_floppy_raw_cmd
@@ -151,7 +151,6 @@ id|virtual_dma_port
 op_assign
 l_int|0x3f0
 suffix:semicolon
-r_static
 r_void
 id|floppy_interrupt
 c_func
@@ -184,6 +183,17 @@ r_char
 id|data
 )paren
 suffix:semicolon
+r_static
+r_inline
+r_int
+id|__get_order
+c_func
+(paren
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
 macro_line|#include &lt;asm/floppy.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR FLOPPY_MAJOR
@@ -192,10 +202,6 @@ macro_line|#include &lt;linux/cdrom.h&gt; /* for the compatibility eject ioctl *
 macro_line|#ifndef FLOPPY_MOTOR_MASK
 DECL|macro|FLOPPY_MOTOR_MASK
 mdefine_line|#define FLOPPY_MOTOR_MASK 0xf0
-macro_line|#endif
-macro_line|#ifndef fd_eject
-DECL|macro|fd_eject
-mdefine_line|#define fd_eject(x) -EINVAL
 macro_line|#endif
 macro_line|#ifndef fd_get_dma_residue
 DECL|macro|fd_get_dma_residue
@@ -257,36 +263,14 @@ r_return
 id|order
 suffix:semicolon
 )brace
-DECL|function|dma_mem_alloc
-r_static
-r_int
-r_int
-id|dma_mem_alloc
-c_func
-(paren
-r_int
-id|size
-)paren
-(brace
-r_int
-id|order
-op_assign
-id|__get_order
-c_func
-(paren
-id|size
-)paren
-suffix:semicolon
-r_return
-id|__get_dma_pages
-c_func
-(paren
-id|GFP_KERNEL
-comma
-id|order
-)paren
-suffix:semicolon
-)brace
+macro_line|#ifndef fd_dma_mem_free
+DECL|macro|fd_dma_mem_free
+mdefine_line|#define fd_dma_mem_free(addr, size) free_pages(addr, __get_order(size))
+macro_line|#endif
+macro_line|#ifndef fd_dma_mem_alloc
+DECL|macro|fd_dma_mem_alloc
+mdefine_line|#define fd_dma_mem_alloc(size) __get_dma_pages(GFP_KERNEL,__get_order(size))
+macro_line|#endif
 multiline_comment|/* End dma memory related stuff */
 DECL|variable|fake_change
 r_static
@@ -2268,6 +2252,58 @@ r_char
 id|sector_t
 suffix:semicolon
 multiline_comment|/* sector in track */
+macro_line|#ifndef fd_eject
+macro_line|#ifdef __sparc__
+DECL|function|fd_eject
+r_static
+r_int
+id|fd_eject
+c_func
+(paren
+r_int
+id|drive
+)paren
+(brace
+id|set_dor
+c_func
+(paren
+l_int|0
+comma
+op_complement
+l_int|0
+comma
+l_int|0x90
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|500
+)paren
+suffix:semicolon
+id|set_dor
+c_func
+(paren
+l_int|0
+comma
+op_complement
+l_int|0x80
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|500
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
+DECL|macro|fd_eject
+mdefine_line|#define fd_eject(x) -EINVAL
+macro_line|#endif
+macro_line|#endif
 macro_line|#ifdef DEBUGT
 DECL|variable|debugtimer
 r_static
@@ -5042,12 +5078,19 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* perpendicular_mode */
-DECL|variable|fifo
+DECL|variable|fifo_depth
 r_static
 r_int
-id|fifo
+id|fifo_depth
 op_assign
 l_int|0xa
+suffix:semicolon
+DECL|variable|no_fifo
+r_static
+r_int
+id|no_fifo
+op_assign
+l_int|0
 suffix:semicolon
 DECL|function|fdc_configure
 r_static
@@ -5109,13 +5152,18 @@ c_func
 l_int|0x10
 op_or
 (paren
-id|fifo
+id|no_fifo
+op_amp
+l_int|0x20
+)paren
+op_or
+(paren
+id|fifo_depth
 op_amp
 l_int|0xf
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIFO on, polling off,&n;&t;&t;&t;&t;&t;     10 byte threshold */
 macro_line|#endif
 id|output_byte
 c_func
@@ -5123,7 +5171,7 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* precompensation from track &n;&t;&t;&t;   0 upwards */
+multiline_comment|/* pre-compensation from track &n;&t;&t;&t;   0 upwards */
 r_return
 l_int|1
 suffix:semicolon
@@ -5180,7 +5228,9 @@ c_cond
 (paren
 id|FDCS-&gt;need_configure
 op_logical_and
-id|FDCS-&gt;has_fifo
+id|FDCS-&gt;version
+op_ge
+id|FDC_82072A
 )paren
 (brace
 id|fdc_configure
@@ -5575,7 +5625,7 @@ id|R_SIZECODE
 suffix:semicolon
 )brace
 multiline_comment|/* tell_sector */
-multiline_comment|/*&n; * Ok, this error interpreting routine is called after a&n; * DMA read/write has succeeded&n; * or failed, so we check the results, and copy any buffers.&n; * hhb: Added better error reporting.&n; * ak: Made this into a separate routine.&n; */
+multiline_comment|/*&n; * OK, this error interpreting routine is called after a&n; * DMA read/write has succeeded&n; * or failed, so we check the results, and copy any buffers.&n; * hhb: Added better error reporting.&n; * ak: Made this into a separate routine.&n; */
 DECL|function|interpret_errors
 r_static
 r_int
@@ -5963,7 +6013,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This routine is called when everything should be correctly set up&n; * for the transfer (ie floppy motor is on, the correct floppy is&n; * selected, and the head is sitting on the right track).&n; */
+multiline_comment|/*&n; * This routine is called when everything should be correctly set up&n; * for the transfer (i.e. floppy motor is on, the correct floppy is&n; * selected, and the head is sitting on the right track).&n; */
 DECL|function|setup_rw_floppy
 r_static
 r_void
@@ -6939,6 +6989,11 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|FDCS-&gt;reset
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Allow SENSEI to be sent. */
 r_while
 c_loop
 (paren
@@ -7039,7 +7094,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* interrupt handler */
 DECL|function|floppy_interrupt
-r_static
 r_void
 id|floppy_interrupt
 c_func
@@ -7300,6 +7354,14 @@ l_string|&quot;reset interrupt:&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef __sparc__
+id|fdc_specify
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* P3: It gives us &quot;sector not found&quot; without this. */
+macro_line|#endif
 id|result
 c_func
 (paren
@@ -7337,7 +7399,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * reset is done by pulling bit 2 of DOR low for a while (old FDC&squot;s),&n; * or by setting the self clearing bit 7 of STATUS (newer FDC&squot;s)&n; */
+multiline_comment|/*&n; * reset is done by pulling bit 2 of DOR low for a while (old FDCs),&n; * or by setting the self clearing bit 7 of STATUS (newer FDCs)&n; */
 DECL|function|reset_fdc
 r_static
 r_void
@@ -8164,7 +8226,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ========================================================================&n; * here ends the bottom half. Exported routines are:&n; * floppy_start, floppy_off, floppy_ready, lock_fdc, unlock_fdc, set_fdc,&n; * start_motor, reset_fdc, reset_fdc_info, interpret_errors.&n; * Initialisation also uses output_byte, result, set_dor, floppy_interrupt&n; * and set_dor.&n; * ========================================================================&n; */
+multiline_comment|/*&n; * ========================================================================&n; * here ends the bottom half. Exported routines are:&n; * floppy_start, floppy_off, floppy_ready, lock_fdc, unlock_fdc, set_fdc,&n; * start_motor, reset_fdc, reset_fdc_info, interpret_errors.&n; * Initialization also uses output_byte, result, set_dor, floppy_interrupt&n; * and set_dor.&n; * ========================================================================&n; */
 multiline_comment|/*&n; * General purpose continuations.&n; * ==============================&n; */
 DECL|function|do_wakeup
 r_static
@@ -12943,7 +13005,7 @@ c_cond
 id|this-&gt;buffer_length
 )paren
 (brace
-id|free_pages
+id|fd_dma_mem_free
 c_func
 (paren
 (paren
@@ -12952,11 +13014,7 @@ r_int
 )paren
 id|this-&gt;kernel_data
 comma
-id|__get_order
-c_func
-(paren
 id|this-&gt;buffer_length
-)paren
 )paren
 suffix:semicolon
 id|this-&gt;buffer_length
@@ -13237,7 +13295,7 @@ op_assign
 r_char
 op_star
 )paren
-id|dma_mem_alloc
+id|fd_dma_mem_alloc
 c_func
 (paren
 id|ptr-&gt;length
@@ -14645,7 +14703,7 @@ id|cmd
 op_eq
 id|CDROMEJECT
 op_logical_or
-multiline_comment|/* CD-Rom eject */
+multiline_comment|/* CD-ROM eject */
 id|cmd
 op_eq
 l_int|0x6470
@@ -14872,13 +14930,6 @@ c_func
 (paren
 id|drive
 )paren
-)paren
-suffix:semicolon
-multiline_comment|/* switch the motor off, in order to make the&n;&t;&t;&t; * cached DOR status match the hard DOS status&n;&t;&t;&t; */
-id|motor_off_callback
-c_func
-(paren
-id|drive
 )paren
 suffix:semicolon
 id|USETF
@@ -15442,7 +15493,7 @@ suffix:semicolon
 r_int
 id|drive
 suffix:semicolon
-multiline_comment|/* read drive info out of physical cmos */
+multiline_comment|/* read drive info out of physical CMOS */
 id|drive
 op_assign
 l_int|0
@@ -15490,6 +15541,17 @@ id|drive
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|UDP-&gt;cmos
+op_ge
+l_int|16
+)paren
+id|UDP-&gt;cmos
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -16152,7 +16214,7 @@ op_assign
 r_char
 op_star
 )paren
-id|dma_mem_alloc
+id|fd_dma_mem_alloc
 c_func
 (paren
 l_int|1024
@@ -16186,7 +16248,7 @@ op_assign
 r_char
 op_star
 )paren
-id|dma_mem_alloc
+id|fd_dma_mem_alloc
 c_func
 (paren
 l_int|1024
@@ -16220,8 +16282,7 @@ c_cond
 (paren
 id|floppy_track_buffer
 )paren
-(brace
-id|free_pages
+id|fd_dma_mem_free
 c_func
 (paren
 (paren
@@ -16230,16 +16291,11 @@ r_int
 )paren
 id|tmp
 comma
-id|__get_order
-c_func
-(paren
 r_try
 op_star
 l_int|1024
 )paren
-)paren
 suffix:semicolon
-)brace
 r_else
 (brace
 id|buffer_min
@@ -16893,7 +16949,7 @@ comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Floppy Driver initialisation&n; * =============================&n; */
+multiline_comment|/*&n; * Floppy Driver initialization&n; * =============================&n; */
 multiline_comment|/* Determine the floppy disk controller type */
 multiline_comment|/* This routine was written by David C. Niemi */
 DECL|function|get_fdc_version
@@ -16907,10 +16963,6 @@ r_void
 (brace
 r_int
 id|r
-suffix:semicolon
-id|FDCS-&gt;has_fifo
-op_assign
-l_int|0
 suffix:semicolon
 id|output_byte
 c_func
@@ -17000,35 +17052,13 @@ r_return
 id|FDC_UNKNOWN
 suffix:semicolon
 )brace
-id|output_byte
-c_func
-(paren
-id|FD_VERSION
-)paren
-suffix:semicolon
-id|r
-op_assign
-id|result
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|fdc_configure
+c_func
 (paren
-id|r
-op_eq
-l_int|1
-)paren
-op_logical_and
-(paren
-id|reply_buffer
-(braket
-l_int|0
-)braket
-op_eq
-l_int|0x80
 )paren
 )paren
 (brace
@@ -17044,48 +17074,8 @@ suffix:semicolon
 r_return
 id|FDC_82072
 suffix:semicolon
-multiline_comment|/* 82072 doesn&squot;t know VERSION */
+multiline_comment|/* 82072 doesn&squot;t know CONFIGURE */
 )brace
-r_if
-c_cond
-(paren
-(paren
-id|r
-op_ne
-l_int|1
-)paren
-op_logical_or
-(paren
-id|reply_buffer
-(braket
-l_int|0
-)braket
-op_ne
-l_int|0x90
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;FDC %d init: VERSION: unexpected return of %d bytes.&bslash;n&quot;
-comma
-id|fdc
-comma
-id|r
-)paren
-suffix:semicolon
-r_return
-id|FDC_UNKNOWN
-suffix:semicolon
-)brace
-id|FDCS-&gt;has_fifo
-op_assign
-id|fdc_configure
-c_func
-(paren
-)paren
-suffix:semicolon
 id|output_byte
 c_func
 (paren
@@ -17686,6 +17676,7 @@ l_int|2
 op_le
 l_int|0
 op_logical_or
+(paren
 id|ints
 (braket
 l_int|2
@@ -17695,6 +17686,14 @@ id|NUMBER
 c_func
 (paren
 id|default_drive_params
+)paren
+op_logical_and
+id|ints
+(braket
+l_int|2
+)braket
+op_ne
+l_int|16
 )paren
 )paren
 (brace
@@ -18470,12 +18469,6 @@ l_string|&quot;fd&quot;
 )paren
 suffix:semicolon
 )brace
-r_else
-id|virtual_dma_init
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|have_no_fdc
 suffix:semicolon
@@ -18685,8 +18678,8 @@ macro_line|#endif
 r_int
 id|tmpsize
 suffix:semicolon
-r_void
-op_star
+r_int
+r_int
 id|tmpaddr
 suffix:semicolon
 id|cli
@@ -18782,8 +18775,8 @@ suffix:semicolon
 id|tmpaddr
 op_assign
 (paren
-r_void
-op_star
+r_int
+r_int
 )paren
 id|floppy_track_buffer
 suffix:semicolon
@@ -18802,20 +18795,12 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|free_pages
+id|fd_dma_mem_free
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|tmpaddr
 comma
-id|__get_order
-c_func
-(paren
 id|tmpsize
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -19373,5 +19358,51 @@ suffix:semicolon
 macro_line|#ifdef __cplusplus
 )brace
 macro_line|#endif
+macro_line|#else
+multiline_comment|/* eject the boot floppy (if we need the drive for a different root floppy) */
+multiline_comment|/* This should only be called at boot time when we&squot;re sure that there&squot;s no&n; * resource contention. */
+DECL|function|floppy_eject
+r_void
+id|floppy_eject
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|dummy
+suffix:semicolon
+id|floppy_grab_irq_and_dma
+c_func
+(paren
+)paren
+suffix:semicolon
+id|lock_fdc
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|dummy
+op_assign
+id|fd_eject
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|process_fd_request
+c_func
+(paren
+)paren
+suffix:semicolon
+id|floppy_release_irq_and_dma
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

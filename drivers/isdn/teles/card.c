@@ -3082,6 +3082,14 @@ r_case
 l_int|13
 )paren
 suffix:colon
+id|ph_command
+c_func
+(paren
+id|sp
+comma
+l_int|8
+)paren
+suffix:semicolon
 id|sp-&gt;ph_active
 op_assign
 l_int|5

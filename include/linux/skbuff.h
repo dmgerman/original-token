@@ -5,6 +5,7 @@ mdefine_line|#define _LINUX_SKBUFF_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/types.h&gt;
 DECL|macro|CONFIG_SKB_CHECK
 mdefine_line|#define CONFIG_SKB_CHECK 0
 DECL|macro|HAVE_ALLOC_SKB

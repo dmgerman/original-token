@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -85,6 +86,13 @@ id|NUM_RAMDISKS
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * Parameters for the boot-loading of the ramdisk.  These are set by&n; * init/main.c (from arguments to the kernel command line) or from the&n; * architecture-specific setup routine (from the stored bootsector&n; * information). &n; */
+DECL|variable|rd_size
+r_int
+id|rd_size
+op_assign
+l_int|4096
+suffix:semicolon
+multiline_comment|/* Size of the ramdisks */
 macro_line|#ifndef MODULE
 DECL|variable|rd_doload
 r_int
@@ -107,13 +115,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* starting block # of image */
-DECL|variable|rd_size
-r_int
-id|rd_size
-op_assign
-l_int|4096
-suffix:semicolon
-multiline_comment|/* Size of the ramdisks */
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 DECL|variable|initrd_start
 DECL|variable|initrd_end
@@ -1728,7 +1729,6 @@ l_int|16
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
 l_string|&quot;%c&bslash;b&quot;
 comma
 id|rotator
@@ -1835,6 +1835,13 @@ c_cond
 id|rd_prompt
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_FD
+id|floppy_eject
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren

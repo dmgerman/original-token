@@ -615,6 +615,15 @@ op_star
 id|buf
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|current-&gt;used_math
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
 macro_line|#ifndef CONFIG_MATH_EMULATION
 r_return
 id|save_i387_hard

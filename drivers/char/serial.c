@@ -10745,6 +10745,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s version %s with&quot;
 comma
 id|serial_name
@@ -12294,6 +12295,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;tty%02d%s at 0x%04x (irq = %d)&quot;
 comma
 id|info-&gt;line
@@ -12621,6 +12623,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;tty%02d at 0x%04x (irq = %d)&quot;
 comma
 id|info-&gt;line
@@ -12754,6 +12757,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;tty%02d unloaded&bslash;n&quot;
 comma
 id|info-&gt;line
@@ -12798,6 +12802,9 @@ r_int
 id|e1
 comma
 id|e2
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 multiline_comment|/* printk(&quot;Unloading %s: version %s&bslash;n&quot;, serial_name, serial_version); */
 id|save_flags
@@ -12888,6 +12895,47 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_PORTS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|rs_table
+(braket
+id|i
+)braket
+dot
+id|type
+op_ne
+id|PORT_UNKNOWN
+)paren
+id|release_region
+c_func
+(paren
+id|rs_table
+(braket
+id|i
+)braket
+dot
+id|port
+comma
+l_int|8
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* MODULE */
 eof

@@ -3481,6 +3481,7 @@ id|vt_pid
 op_assign
 id|current-&gt;pid
 suffix:semicolon
+multiline_comment|/* no switch is required -- saw@shade.msu.ru */
 id|vt_cons
 (braket
 id|console
@@ -3488,7 +3489,8 @@ id|console
 op_member_access_from_pointer
 id|vt_newvt
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 r_return
 l_int|0

@@ -341,6 +341,8 @@ op_star
 id|bh2
 suffix:semicolon
 multiline_comment|/* sb-&gt;s_dev and sb-&gt;s_flags are set by our caller&n;&t; * data is the mystery argument to sys_mount()&n;&t; *&n;&t; * Our caller also sets s_dev, s_covered, s_rd_only, s_dirt,&n;&t; *   and s_type when we return.&n;&t; */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|lock_super
 (paren
 id|sb
@@ -420,8 +422,10 @@ id|printk
 l_string|&quot;ufs_read_super: unable to read superblock&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* XXX - redo this so we can free it later... */
@@ -572,6 +576,8 @@ c_func
 id|sb-&gt;s_dev
 )paren
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -869,8 +875,10 @@ suffix:semicolon
 id|ufs_read_super_lose
 suffix:colon
 multiline_comment|/* XXX - clean up */
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|ufs_put_super

@@ -99,6 +99,10 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
+comma
+r_int
+r_int
+id|reset_flags
 )paren
 suffix:semicolon
 r_int

@@ -1866,6 +1866,7 @@ r_case
 id|SNDCTL_COPR_SENDMSG
 suffix:colon
 (brace
+multiline_comment|/* send buf-&gt;len words from buf-&gt;data to DSP */
 id|copr_msg
 op_star
 id|buf
@@ -1878,10 +1879,6 @@ r_int
 r_int
 op_star
 id|data
-suffix:semicolon
-r_int
-r_int
-id|tmp
 suffix:semicolon
 r_int
 id|i
@@ -1953,7 +1950,6 @@ op_star
 id|buf-&gt;data
 )paren
 suffix:semicolon
-multiline_comment|/* printk( &quot;SNDCTL_COPR_SENDMSG: data = %d&quot;, data ); */
 id|save_flags
 (paren
 id|flags
@@ -1978,12 +1974,6 @@ id|i
 op_increment
 )paren
 (brace
-id|tmp
-op_assign
-op_star
-id|data
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1992,7 +1982,9 @@ id|pss_put_dspword
 (paren
 id|devc
 comma
-id|tmp
+op_star
+id|data
+op_increment
 )paren
 )paren
 (brace
@@ -2001,33 +1993,41 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-id|buf-&gt;len
-op_assign
-id|i
-suffix:semicolon
 multiline_comment|/* feed back number of WORDs sent */
 id|memcpy_tofs
-(paren
-(paren
-op_amp
+c_func
 (paren
 (paren
 r_char
 op_star
 )paren
+(paren
+op_amp
+(paren
+(paren
+(paren
+id|copr_msg
+op_star
+)paren
 id|arg
 )paren
-(braket
-l_int|0
-)braket
+op_member_access_from_pointer
+id|len
+)paren
 )paren
 comma
+(paren
+r_char
+op_star
+)paren
+(paren
 op_amp
-id|buf
+id|i
+)paren
 comma
 r_sizeof
 (paren
-id|buf
+id|buf-&gt;len
 )paren
 )paren
 suffix:semicolon
@@ -2062,6 +2062,7 @@ r_case
 id|SNDCTL_COPR_RCVMSG
 suffix:colon
 (brace
+multiline_comment|/* try to read as much words as possible from DSP into buf */
 id|copr_msg
 op_star
 id|buf
@@ -2111,6 +2112,7 @@ r_return
 op_minus
 id|ENOSPC
 suffix:semicolon
+macro_line|#if 0
 id|memcpy_fromfs
 (paren
 (paren
@@ -2140,6 +2142,7 @@ id|buf
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|data
 op_assign
 (paren
@@ -2167,7 +2170,10 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|buf-&gt;len
+r_sizeof
+(paren
+id|buf-&gt;data
+)paren
 suffix:semicolon
 id|i
 op_increment
@@ -2193,12 +2199,38 @@ suffix:semicolon
 multiline_comment|/* feed back number of WORDs read */
 id|err
 op_assign
+(paren
+id|i
+op_eq
+l_int|0
+)paren
+ques
+c_cond
 op_minus
 id|EIO
+suffix:colon
+l_int|0
 suffix:semicolon
+multiline_comment|/* EIO only if no word read */
 r_break
 suffix:semicolon
 )brace
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+r_sizeof
+(paren
+id|buf-&gt;data
+)paren
+)paren
+(brace
+id|buf-&gt;len
+op_assign
+id|i
+suffix:semicolon
 )brace
 id|restore_flags
 (paren
@@ -2221,11 +2253,11 @@ l_int|0
 )braket
 )paren
 comma
-op_amp
 id|buf
 comma
 r_sizeof
 (paren
+op_star
 id|buf
 )paren
 )paren

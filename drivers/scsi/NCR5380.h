@@ -543,6 +543,7 @@ id|cmd
 comma
 r_int
 r_int
+id|reset_flags
 )paren
 suffix:semicolon
 macro_line|#ifndef NCR5380_queue_command

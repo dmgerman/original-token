@@ -302,6 +302,12 @@ c_func
 id|merge_segments
 )paren
 comma
+id|X
+c_func
+(paren
+id|exit_mm
+)paren
+comma
 multiline_comment|/* internal kernel memory management */
 id|X
 c_func

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -4677,6 +4678,11 @@ op_eq
 id|FLOPPY_MAJOR
 )paren
 (brace
+id|floppy_eject
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren

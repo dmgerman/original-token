@@ -886,7 +886,7 @@ id|f_count
 suffix:semicolon
 DECL|member|f_reada
 DECL|member|f_ramax
-DECL|member|f_rapos
+DECL|member|f_raend
 DECL|member|f_ralen
 DECL|member|f_rawin
 r_int
@@ -895,7 +895,7 @@ id|f_reada
 comma
 id|f_ramax
 comma
-id|f_rapos
+id|f_raend
 comma
 id|f_ralen
 comma
