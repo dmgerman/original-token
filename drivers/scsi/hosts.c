@@ -207,10 +207,6 @@ macro_line|#ifdef CONFIG_SCSI_QLOGIC_FAS
 id|QLOGICFAS
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_QLOGIC_ISP
-id|QLOGICISP
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PAS16
 id|MV_PAS16
 comma
@@ -249,6 +245,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AM53C974
 id|AM53C974
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_QLOGIC_ISP
+id|QLOGICISP
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PPA

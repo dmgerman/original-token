@@ -40,7 +40,17 @@ id|cache_A1
 op_assign
 l_int|0xff
 suffix:semicolon
-macro_line|#if NR_IRQS == 33
+macro_line|#if NR_IRQS == 48
+DECL|variable|cache_irq_mask
+r_static
+r_int
+r_int
+id|cache_irq_mask
+op_assign
+l_int|0x7fffffff
+suffix:semicolon
+multiline_comment|/* enable EISA */
+macro_line|#elif NR_IRQS == 33
 DECL|variable|cache_804
 r_static
 r_int
@@ -50,6 +60,16 @@ op_assign
 l_int|0x00ffffef
 suffix:semicolon
 macro_line|#elif NR_IRQS == 32
+macro_line|#ifdef CONFIG_ALPHA_MIKASA
+DECL|variable|cache_536
+r_static
+r_int
+r_int
+id|cache_536
+op_assign
+l_int|0xffff
+suffix:semicolon
+macro_line|#else
 DECL|variable|cache_26
 r_static
 r_int
@@ -66,6 +86,7 @@ id|cache_27
 op_assign
 l_int|0xff
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 DECL|function|mask_irq
 r_static
@@ -135,7 +156,37 @@ l_int|0xA1
 )paren
 suffix:semicolon
 )brace
-macro_line|#if NR_IRQS == 33
+macro_line|#if NR_IRQS == 48
+)brace
+r_else
+(brace
+id|mask
+op_assign
+l_int|1
+op_lshift
+(paren
+id|irq
+op_minus
+l_int|16
+)paren
+suffix:semicolon
+id|cache_irq_mask
+op_or_assign
+id|mask
+suffix:semicolon
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|GRU_INT_MASK
+op_assign
+op_complement
+id|cache_irq_mask
+suffix:semicolon
+multiline_comment|/* invert */
+macro_line|#elif NR_IRQS == 33
 )brace
 r_else
 (brace
@@ -162,6 +213,35 @@ l_int|0x804
 )paren
 suffix:semicolon
 macro_line|#elif NR_IRQS == 32
+macro_line|#ifdef CONFIG_ALPHA_MIKASA
+)brace
+r_else
+(brace
+id|mask
+op_assign
+l_int|1
+op_lshift
+(paren
+id|irq
+op_amp
+l_int|15
+)paren
+suffix:semicolon
+id|cache_536
+op_or_assign
+id|mask
+suffix:semicolon
+id|outw
+c_func
+(paren
+op_complement
+id|cache_536
+comma
+l_int|0x536
+)paren
+suffix:semicolon
+multiline_comment|/* note invert */
+macro_line|#else
 )brace
 r_else
 (brace
@@ -211,6 +291,7 @@ l_int|0x27
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 )brace
 )brace
@@ -286,7 +367,40 @@ l_int|0xA1
 )paren
 suffix:semicolon
 )brace
-macro_line|#if NR_IRQS == 33
+macro_line|#if NR_IRQS == 48
+)brace
+r_else
+(brace
+id|mask
+op_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+(paren
+id|irq
+op_minus
+l_int|16
+)paren
+)paren
+suffix:semicolon
+id|cache_irq_mask
+op_and_assign
+id|mask
+suffix:semicolon
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|GRU_INT_MASK
+op_assign
+op_complement
+id|cache_irq_mask
+suffix:semicolon
+multiline_comment|/* invert */
+macro_line|#elif NR_IRQS == 33
 )brace
 r_else
 (brace
@@ -316,6 +430,38 @@ l_int|0x804
 )paren
 suffix:semicolon
 macro_line|#elif NR_IRQS == 32
+macro_line|#ifdef CONFIG_ALPHA_MIKASA
+)brace
+r_else
+(brace
+id|mask
+op_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+(paren
+id|irq
+op_amp
+l_int|15
+)paren
+)paren
+suffix:semicolon
+id|cache_536
+op_and_assign
+id|mask
+suffix:semicolon
+id|outw
+c_func
+(paren
+op_complement
+id|cache_536
+comma
+l_int|0x536
+)paren
+suffix:semicolon
+multiline_comment|/* note invert */
+macro_line|#else
 )brace
 r_else
 (brace
@@ -368,6 +514,7 @@ l_int|0x27
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 )brace
 )brace
@@ -422,21 +569,6 @@ id|irq_nr
 r_int
 r_int
 id|flags
-comma
-id|mask
-suffix:semicolon
-id|mask
-op_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-(paren
-id|irq_nr
-op_amp
-l_int|7
-)paren
-)paren
 suffix:semicolon
 id|save_flags
 c_func
@@ -1541,8 +1673,8 @@ DECL|macro|IACK_SC
 macro_line|#&t;define IACK_SC&t;APECS_IACK_SC
 macro_line|#elif defined(CONFIG_ALPHA_LCA)
 macro_line|#&t;define IACK_SC&t;LCA_IACK_SC
-macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
-macro_line|#&t;define IACK_SC&t;ALCOR_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_CIA)
+macro_line|#&t;define IACK_SC&t;CIA_IACK_SC
 macro_line|#else
 multiline_comment|/*&n;&t; * This is bogus but necessary to get it to compile&n;&t; * on all platforms.  If you try to use this on any&n;&t; * other than the intended platforms, you&squot;ll notice&n;&t; * real fast...&n;&t; */
 macro_line|#&t;define IACK_SC&t;1L
@@ -2266,7 +2398,18 @@ r_int
 )paren
 id|cache_21
 suffix:semicolon
-macro_line|#if NR_IRQS == 33
+macro_line|#if NR_IRQS == 48
+id|irqmask
+op_or_assign
+(paren
+r_int
+r_int
+)paren
+id|cache_irq_mask
+op_lshift
+l_int|16
+suffix:semicolon
+macro_line|#elif NR_IRQS == 33
 id|irqmask
 op_or_assign
 (paren
@@ -2278,6 +2421,18 @@ op_lshift
 l_int|16
 suffix:semicolon
 macro_line|#elif NR_IRQS == 32
+macro_line|#ifdef CONFIG_ALPHA_MIKASA
+id|irqmask
+op_or_assign
+(paren
+r_int
+r_int
+)paren
+id|cache_536
+op_lshift
+l_int|16
+suffix:semicolon
+macro_line|#else
 id|irqmask
 op_or_assign
 (paren
@@ -2306,6 +2461,7 @@ l_int|24
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|irqs
 op_and_assign
@@ -2354,7 +2510,18 @@ r_int
 )paren
 id|cache_21
 suffix:semicolon
-macro_line|#if NR_IRQS == 33
+macro_line|#if NR_IRQS == 48
+id|irqmask
+op_or_assign
+(paren
+r_int
+r_int
+)paren
+id|cache_irq_mask
+op_lshift
+l_int|16
+suffix:semicolon
+macro_line|#elif NR_IRQS == 33
 id|irqmask
 op_or_assign
 (paren
@@ -2366,6 +2533,18 @@ op_lshift
 l_int|16
 suffix:semicolon
 macro_line|#elif NR_IRQS == 32
+macro_line|#ifdef CONFIG_ALPHA_MIKASA
+id|irqmask
+op_or_assign
+(paren
+r_int
+r_int
+)paren
+id|cache_536
+op_lshift
+l_int|16
+suffix:semicolon
+macro_line|#else
 id|irqmask
 op_or_assign
 (paren
@@ -2394,6 +2573,7 @@ l_int|24
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|irqs
 op_and_assign
@@ -2532,10 +2712,10 @@ comma
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
+macro_line|#elif defined(CONFIG_ALPHA_CIA)
 r_extern
 r_void
-id|alcor_machine_check
+id|cia_machine_check
 c_func
 (paren
 r_int
@@ -2552,7 +2732,7 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-id|alcor_machine_check
+id|cia_machine_check
 c_func
 (paren
 id|vector
@@ -2675,6 +2855,9 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#elif NR_IRQS == 32
+macro_line|#ifdef CONFIG_ALPHA_MIKASA
+macro_line|#&t;error  we got a problem here Charlie MIKASA should be SRM console
+macro_line|#else
 id|eb66_and_eb64p_device_interrupt
 c_func
 (paren
@@ -2684,6 +2867,7 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#elif NR_IRQS == 16
 id|isa_device_interrupt
 c_func
@@ -2790,7 +2974,20 @@ comma
 id|DMA2_CLR_MASK_REG
 )paren
 suffix:semicolon
-macro_line|#if NR_IRQS == 33
+macro_line|#if NR_IRQS == 48
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|GRU_INT_MASK
+op_assign
+op_complement
+id|cache_irq_mask
+suffix:semicolon
+multiline_comment|/* invert */
+macro_line|#elif NR_IRQS == 33
 id|outl
 c_func
 (paren
@@ -2800,6 +2997,18 @@ l_int|0x804
 )paren
 suffix:semicolon
 macro_line|#elif NR_IRQS == 32
+macro_line|#ifdef CONFIG_ALPHA_MIKASA
+id|outw
+c_func
+(paren
+op_complement
+id|cache_536
+comma
+l_int|0x536
+)paren
+suffix:semicolon
+multiline_comment|/* note invert */
+macro_line|#else
 id|outb
 c_func
 (paren
@@ -2816,6 +3025,7 @@ comma
 l_int|0x27
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|enable_irq
 c_func

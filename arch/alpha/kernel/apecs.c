@@ -2183,6 +2183,16 @@ suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG */
 multiline_comment|/*&n;&t; * Check if machine check is due to a badaddr() and if so,&n;&t; * ignore the machine check.&n;&t; */
+macro_line|#ifdef CONFIG_ALPHA_MIKASA
+multiline_comment|/* for now on MIKASA, if it was expected, ignore it */
+multiline_comment|/* we need the details of the mcheck frame to really know... */
+r_if
+c_cond
+(paren
+id|apecs_mcheck_expected
+)paren
+(brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2195,6 +2205,7 @@ l_int|0x0c00UL
 )paren
 )paren
 (brace
+macro_line|#endif
 id|apecs_mcheck_expected
 op_assign
 l_int|0

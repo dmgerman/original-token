@@ -13,9 +13,10 @@ multiline_comment|/*&n; * NOTES about DMA transfers:&n; *&n; *  controller 1: ch
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS&t;8
 macro_line|#ifdef CONFIG_ALPHA_XL
-multiline_comment|/* The maximum address that we can perform a DMA transfer to on Alpha XL,&n;   due to a hardware SIO (PCI&lt;-&gt;ISA bus bridge) chip limitation, is 64MB.&n;   see &lt;asm/apecs.h&gt; for more info */
+multiline_comment|/* The maximum address that we can perform a DMA transfer to on Alpha XL,&n;   due to a hardware SIO (PCI&lt;-&gt;ISA bus bridge) chip limitation, is 64MB.&n;   See &lt;asm/apecs.h&gt; for more info.&n;*/
+multiline_comment|/* NOTE: we must define the maximum as something less than 64Mb, to prevent &n;   virt_to_bus() from returning an address in the first window, for a&n;   data area that goes beyond the 64Mb first DMA window. Sigh...&n;   We MUST coordinate the maximum with &lt;asm/apecs.h&gt; for consistency.&n;   For now, this limit is set to 48Mb...&n;*/
 DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS&t;&t;(0xfffffc0004000000UL)
+mdefine_line|#define MAX_DMA_ADDRESS&t;&t;(0xfffffc0003000000UL)
 macro_line|#else /* CONFIG_ALPHA_XL */
 multiline_comment|/* The maximum address that we can perform a DMA transfer to on normal&n;   Alpha platforms */
 DECL|macro|MAX_DMA_ADDRESS

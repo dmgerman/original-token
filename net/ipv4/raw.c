@@ -221,7 +221,7 @@ multiline_comment|/* Charge it to the socket. */
 r_if
 c_cond
 (paren
-id|sock_queue_rcv_skb
+id|__sock_queue_rcv_skb
 c_func
 (paren
 id|sk

@@ -231,7 +231,7 @@ comma
 multiline_comment|/* 42-48 */
 id|unknown
 comma
-id|unknown
+l_string|&quot;Read TOC&quot;
 comma
 id|unknown
 comma
@@ -461,6 +461,20 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+(brace
+)brace
+r_if
+c_cond
+(paren
+id|table
+(braket
+id|opcode
+op_amp
+l_int|0x1f
+)braket
+op_ne
+id|unknown
+)paren
 id|printk
 c_func
 (paren
@@ -473,6 +487,19 @@ op_amp
 l_int|0x1f
 )braket
 )paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;%s(0x%02x) &quot;
+comma
+id|unknown
+comma
+id|opcode
+)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace

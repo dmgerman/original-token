@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; * &t;int rs_open(struct tty_struct * tty, struct file * filp)&n; */
+multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anhdupl 05/17/96.&n; * &n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; * &t;int rs_open(struct tty_struct * tty, struct file * filp)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -1663,12 +1663,14 @@ id|UART_LSR_BI
 )paren
 )paren
 (brace
+macro_line|#ifdef SERIAL_DEBUG_INTR
 id|printk
 c_func
 (paren
 l_string|&quot;handling break....&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 op_star
 id|tty-&gt;flip.flag_buf_ptr
 op_increment
@@ -5357,6 +5359,8 @@ id|info-&gt;IER
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up parity check flag&n;&t; */
+DECL|macro|RELEVANT_IFLAG
+mdefine_line|#define RELEVANT_IFLAG(iflag) (iflag &amp; (IGNBRK|BRKINT|IGNPAR|PARMRK|INPCK))
 id|info-&gt;read_status_mask
 op_assign
 id|UART_LSR_OE
@@ -5403,6 +5407,8 @@ id|info-&gt;ignore_status_mask
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* This should be safe, but for some broken bits of hardware... */
 r_if
 c_cond
 (paren
@@ -5426,6 +5432,7 @@ op_or
 id|UART_LSR_FE
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5458,10 +5465,20 @@ id|info-&gt;tty
 id|info-&gt;ignore_status_mask
 op_or_assign
 id|UART_LSR_OE
+op_or
+"&bslash;"
+id|UART_LSR_PE
+op_or
+id|UART_LSR_FE
 suffix:semicolon
 id|info-&gt;read_status_mask
 op_or_assign
 id|UART_LSR_OE
+op_or
+"&bslash;"
+id|UART_LSR_PE
+op_or
+id|UART_LSR_FE
 suffix:semicolon
 )brace
 )brace
@@ -9369,9 +9386,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|tty-&gt;termios-&gt;c_cflag
 op_eq
 id|old_termios-&gt;c_cflag
+)paren
+op_logical_and
+(paren
+id|RELEVANT_IFLAG
+c_func
+(paren
+id|tty-&gt;termios-&gt;c_iflag
+)paren
+op_eq
+id|RELEVANT_IFLAG
+c_func
+(paren
+id|old_termios-&gt;c_iflag
+)paren
+)paren
 )paren
 r_return
 suffix:semicolon

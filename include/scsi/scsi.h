@@ -104,6 +104,8 @@ DECL|macro|CHANGE_DEFINITION
 mdefine_line|#define CHANGE_DEFINITION     0x40
 DECL|macro|WRITE_SAME
 mdefine_line|#define WRITE_SAME            0x41
+DECL|macro|READ_TOC
+mdefine_line|#define READ_TOC              0x43
 DECL|macro|LOG_SELECT
 mdefine_line|#define LOG_SELECT            0x4c
 DECL|macro|LOG_SENSE

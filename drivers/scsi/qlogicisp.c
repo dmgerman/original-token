@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;qlogicisp.h&quot;
@@ -32,6 +33,8 @@ DECL|macro|DEBUG_ISP1020_INT
 mdefine_line|#define DEBUG_ISP1020_INT&t;0
 DECL|macro|DEBUG_ISP1020_SETUP
 mdefine_line|#define DEBUG_ISP1020_SETUP&t;0
+DECL|macro|DEFAULT_LOOP_COUNT
+mdefine_line|#define DEFAULT_LOOP_COUNT&t;1000000
 multiline_comment|/* End Configuration section *************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#if DEBUG_ISP1020
@@ -66,6 +69,10 @@ mdefine_line|#define DEBUG_INTR(x)
 macro_line|#endif /* DEBUG ISP1020_INTR */
 DECL|macro|ISP1020_REV_ID
 mdefine_line|#define ISP1020_REV_ID&t;1
+DECL|macro|MAX_TARGETS
+mdefine_line|#define MAX_TARGETS&t;16
+DECL|macro|MAX_LUNS
+mdefine_line|#define MAX_LUNS&t;8
 multiline_comment|/* host configuration and control registers */
 DECL|macro|HOST_HCCR
 mdefine_line|#define HOST_HCCR&t;0xc0&t;/* host command and control */
@@ -77,7 +84,7 @@ mdefine_line|#define PCI_ID_HIGH&t;0x02&t;/* device id */
 DECL|macro|ISP_CFG0
 mdefine_line|#define ISP_CFG0&t;0x04&t;/* configuration register #0 */
 DECL|macro|ISP_CFG1
-mdefine_line|#define ISP_CFG1&t;0x08&t;/* configuration register #1 */
+mdefine_line|#define ISP_CFG1&t;0x06&t;/* configuration register #1 */
 DECL|macro|PCI_INTF_CTL
 mdefine_line|#define PCI_INTF_CTL&t;0x08&t;/* pci interface control */
 DECL|macro|PCI_INTF_STS
@@ -117,8 +124,8 @@ DECL|macro|ASYNC_SCSI_BUS_RESET
 mdefine_line|#define ASYNC_SCSI_BUS_RESET&t;&t;0x8001
 DECL|macro|SYSTEM_ERROR
 mdefine_line|#define SYSTEM_ERROR&t;&t;&t;0x8002
-DECL|macro|REQUEST_TRANSFER
-mdefine_line|#define REQUEST_TRANSFER ERROR&t;&t;0x8003
+DECL|macro|REQUEST_TRANSFER_ERROR
+mdefine_line|#define REQUEST_TRANSFER_ERROR&t;&t;0x8003
 DECL|macro|RESPONSE_TRANSFER_ERROR
 mdefine_line|#define RESPONSE_TRANSFER_ERROR&t;&t;0x8004
 DECL|macro|REQUEST_QUEUE_WAKEUP
@@ -172,11 +179,11 @@ r_struct
 id|dataseg
 (brace
 DECL|member|d_base
-id|caddr_t
+id|u_int
 id|d_base
 suffix:semicolon
 DECL|member|d_count
-id|u_long
+id|u_int
 id|d_count
 suffix:semicolon
 )brace
@@ -191,7 +198,7 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|handle
-id|caddr_t
+id|u_int
 id|handle
 suffix:semicolon
 DECL|member|target_lun
@@ -276,7 +283,7 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|handle
-id|caddr_t
+id|u_int
 id|handle
 suffix:semicolon
 DECL|member|target_lun
@@ -326,7 +333,7 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|reserved
-id|u_long
+id|u_int
 id|reserved
 suffix:semicolon
 DECL|member|dataseg0
@@ -376,7 +383,7 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|reserved
-id|caddr_t
+id|u_int
 id|reserved
 suffix:semicolon
 DECL|member|target_lun
@@ -421,7 +428,7 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|handle
-id|caddr_t
+id|u_int
 id|handle
 suffix:semicolon
 DECL|member|scsi_status
@@ -449,7 +456,7 @@ id|u_short
 id|req_sense_len
 suffix:semicolon
 DECL|member|residual
-id|u_long
+id|u_int
 id|residual
 suffix:semicolon
 DECL|member|rsvd
@@ -543,6 +550,13 @@ DECL|macro|STF_TIMEOUT
 mdefine_line|#define STF_TIMEOUT&t;&t;&t;0x0040
 DECL|macro|STF_NEGOTIATION
 mdefine_line|#define STF_NEGOTIATION&t;&t;&t;0x0080
+multiline_comment|/* interface control commands */
+DECL|macro|ISP_RESET
+mdefine_line|#define ISP_RESET&t;&t;&t;0x0001
+DECL|macro|ISP_EN_INT
+mdefine_line|#define ISP_EN_INT&t;&t;&t;0x0002
+DECL|macro|ISP_EN_RISC
+mdefine_line|#define ISP_EN_RISC&t;&t;&t;0x0004
 multiline_comment|/* host control commands */
 DECL|macro|HCCR_NOP
 mdefine_line|#define HCCR_NOP&t;&t;&t;0x0000
@@ -562,10 +576,12 @@ DECL|macro|HCCR_CLEAR_RISC_INTR
 mdefine_line|#define HCCR_CLEAR_RISC_INTR&t;&t;0x7000
 DECL|macro|HCCR_BP_ENABLE
 mdefine_line|#define HCCR_BP_ENABLE&t;&t;&t;0x8000
-DECL|macro|HCCR_BIOS_ENABLE
-mdefine_line|#define HCCR_BIOS_ENABLE&t;&t;0x9000
+DECL|macro|HCCR_BIOS_DISABLE
+mdefine_line|#define HCCR_BIOS_DISABLE&t;&t;0x9000
 DECL|macro|HCCR_TEST_MODE
 mdefine_line|#define HCCR_TEST_MODE&t;&t;&t;0xf000
+DECL|macro|RISC_BUSY
+mdefine_line|#define RISC_BUSY&t;&t;&t;0x0004
 multiline_comment|/* mailbox commands */
 DECL|macro|MBOX_NO_OP
 mdefine_line|#define MBOX_NO_OP&t;&t;&t;0x0000
@@ -1366,6 +1382,11 @@ DECL|member|device_enable
 id|u_short
 id|device_enable
 suffix:semicolon
+DECL|member|reserved
+id|u_short
+id|reserved
+suffix:semicolon
+multiline_comment|/* pad */
 )brace
 suffix:semicolon
 DECL|macro|REQ_QUEUE_LEN
@@ -1378,6 +1399,10 @@ DECL|struct|isp1020_hostdata
 r_struct
 id|isp1020_hostdata
 (brace
+DECL|member|io_base
+id|u_int
+id|io_base
+suffix:semicolon
 DECL|member|irq
 id|u_char
 id|irq
@@ -1385,10 +1410,6 @@ suffix:semicolon
 DECL|member|bus
 id|u_char
 id|bus
-suffix:semicolon
-DECL|member|io_base
-id|u_long
-id|io_base
 suffix:semicolon
 DECL|member|revision
 id|u_char
@@ -1424,7 +1445,7 @@ r_struct
 id|dev_param
 id|dev_param
 (braket
-l_int|16
+id|MAX_TARGETS
 )braket
 suffix:semicolon
 DECL|member|res_queue
@@ -1455,7 +1476,7 @@ id|isp1020_hostdata
 op_star
 id|irq2host
 (braket
-l_int|16
+id|NR_IRQS
 )braket
 suffix:semicolon
 r_void
@@ -1594,10 +1615,34 @@ c_func
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
 )paren
+suffix:semicolon
+DECL|variable|proc_scsi_isp1020
+r_struct
+id|proc_dir_entry
+id|proc_scsi_isp1020
+op_assign
+(brace
+id|PROC_SCSI_QLOGICISP
+comma
+l_int|7
+comma
+l_string|&quot;isp1020&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
 suffix:semicolon
 DECL|function|isp1020_detect
 r_int
@@ -1637,6 +1682,11 @@ c_func
 (paren
 l_string|&quot;isp1020_detect&quot;
 )paren
+suffix:semicolon
+id|tmpt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_isp1020
 suffix:semicolon
 r_if
 c_cond
@@ -1806,7 +1856,7 @@ id|hostdata-&gt;irq
 comma
 id|isp1020_intr_handler
 comma
-l_int|0
+id|SA_INTERRUPT
 comma
 l_string|&quot;qlogicisp&quot;
 comma
@@ -1846,7 +1896,7 @@ l_int|0xff
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : i/o region 0x%04lx-0x%04lx already in use&bslash;n&quot;
+l_string|&quot;qlogicisp : i/o region 0x%04x-0x%04x already in use&bslash;n&quot;
 comma
 id|hostdata-&gt;io_base
 comma
@@ -1888,6 +1938,26 @@ id|hostdata-&gt;irq
 )braket
 op_assign
 id|hostdata
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x0
+comma
+id|hostdata-&gt;io_base
+op_plus
+id|PCI_SEMAPHORE
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|HCCR_CLEAR_RISC_INTR
+comma
+id|hostdata-&gt;io_base
+op_plus
+id|HOST_HCCR
+)paren
 suffix:semicolon
 id|isp1020_enable_irqs
 c_func
@@ -2021,7 +2091,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;QLogic ISP1020 SCSI on PCI bus %d, device %d, irq %d&quot;
+l_string|&quot;QLogic ISP1020 SCSI on PCI bus %d device %d irq %d base 0x%x&quot;
 comma
 id|hostdata-&gt;bus
 comma
@@ -2034,6 +2104,8 @@ op_rshift
 l_int|3
 comma
 id|hostdata-&gt;irq
+comma
+id|hostdata-&gt;io_base
 )paren
 suffix:semicolon
 id|LEAVE
@@ -2091,6 +2163,10 @@ id|isp1020_hostdata
 op_star
 id|hostdata
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|ENTER
 c_func
 (paren
@@ -2120,6 +2196,17 @@ id|Cmnd
 )paren
 suffix:semicolon
 )paren
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hostdata-&gt;req_queue_out_ptr
 op_assign
 id|inw
@@ -2144,6 +2231,12 @@ op_eq
 id|hostdata-&gt;req_queue_out_ptr
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2210,9 +2303,13 @@ suffix:semicolon
 id|cmd-&gt;handle
 op_assign
 (paren
-id|caddr_t
+id|u_int
 )paren
+id|virt_to_bus
+c_func
+(paren
 id|Cmnd
+)paren
 suffix:semicolon
 id|cmd-&gt;target_lun
 op_assign
@@ -2231,6 +2328,10 @@ op_assign
 id|CFLAG_READ
 op_or
 id|CFLAG_WRITE
+suffix:semicolon
+id|cmd-&gt;time_out
+op_assign
+l_int|30
 suffix:semicolon
 r_for
 c_loop
@@ -2311,12 +2412,16 @@ op_assign
 (paren
 r_int
 )paren
+id|virt_to_bus
+c_func
+(paren
 id|sg
 (braket
 id|i
 )braket
 dot
 id|address
+)paren
 suffix:semicolon
 op_star
 id|iptr
@@ -2336,14 +2441,18 @@ r_else
 id|cmd-&gt;dataseg0.d_base
 op_assign
 (paren
-id|caddr_t
+id|u_int
 )paren
+id|virt_to_bus
+c_func
+(paren
 id|Cmnd-&gt;request_buffer
+)paren
 suffix:semicolon
 id|cmd-&gt;dataseg0.d_count
 op_assign
 (paren
-id|u_long
+id|u_int
 )paren
 id|Cmnd-&gt;request_bufflen
 suffix:semicolon
@@ -2370,6 +2479,12 @@ comma
 id|hostdata-&gt;io_base
 op_plus
 id|MBOX4
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|LEAVE
@@ -2409,6 +2524,15 @@ r_int
 id|return_status
 op_assign
 id|SCSI_ABORT_SUCCESS
+suffix:semicolon
+id|u_int
+id|cmdaddr
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|Cmnd
+)paren
 suffix:semicolon
 id|ENTER
 c_func
@@ -2476,10 +2600,7 @@ id|param
 l_int|2
 )braket
 op_assign
-(paren
-id|u_long
-)paren
-id|Cmnd
+id|cmdaddr
 op_rshift
 l_int|16
 suffix:semicolon
@@ -2488,10 +2609,7 @@ id|param
 l_int|3
 )braket
 op_assign
-(paren
-id|u_long
-)paren
-id|Cmnd
+id|cmdaddr
 op_amp
 l_int|0xffff
 suffix:semicolon
@@ -2554,6 +2672,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|Cmnd
+comma
+r_int
+r_int
+id|reset_flags
 )paren
 (brace
 id|u_short
@@ -2655,7 +2777,8 @@ l_string|&quot;isp1020_reset&quot;
 )paren
 suffix:semicolon
 r_return
-id|SCSI_RESET_SUCCESS
+id|return_status
+suffix:semicolon
 suffix:semicolon
 )brace
 DECL|function|isp1020_biosparam
@@ -2667,7 +2790,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|n
 comma
 r_int
@@ -2799,6 +2922,9 @@ id|param
 l_int|6
 )braket
 suffix:semicolon
+r_int
+id|loop_count
+suffix:semicolon
 id|ENTER
 c_func
 (paren
@@ -2808,7 +2934,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x0001
+id|ISP_RESET
 comma
 id|hostdata-&gt;io_base
 op_plus
@@ -2838,27 +2964,58 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-id|HCCR_BIOS_ENABLE
+id|HCCR_BIOS_DISABLE
 comma
 id|hostdata-&gt;io_base
 op_plus
 id|HOST_HCCR
 )paren
 suffix:semicolon
+id|loop_count
+op_assign
+id|DEFAULT_LOOP_COUNT
+suffix:semicolon
 r_while
 c_loop
 (paren
+op_decrement
+id|loop_count
+op_logical_and
 id|inw
 c_func
 (paren
 id|hostdata-&gt;io_base
 op_plus
-id|MBOX0
+id|HOST_HCCR
 )paren
+op_eq
+id|RISC_BUSY
 )paren
 id|barrier
 c_func
 (paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|loop_count
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicisp: reset_hardware loop timeout&bslash;n&quot;
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0
+comma
+id|hostdata-&gt;io_base
+op_plus
+id|ISP_CFG1
 )paren
 suffix:semicolon
 macro_line|#if DEBUG_ISP1020
@@ -3207,7 +3364,7 @@ op_star
 id|sh
 )paren
 (brace
-id|u_long
+id|u_int
 id|io_base
 suffix:semicolon
 r_struct
@@ -3448,7 +3605,9 @@ id|ISP1020_REV_ID
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : warning : new isp1020 revision id&bslash;n&quot;
+l_string|&quot;qlogicisp : new isp1020 revision ID (%d)&bslash;n&quot;
+comma
+id|revision
 )paren
 suffix:semicolon
 r_if
@@ -3547,8 +3706,18 @@ c_func
 l_string|&quot;qlogicisp : nvram checksum failure&bslash;n&quot;
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicisp : attempting to use default parameters&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
-l_int|1
+id|isp1020_set_defaults
+c_func
+(paren
+id|hostdata
+)paren
 suffix:semicolon
 )brace
 id|value
@@ -3840,7 +4009,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|MAX_TARGETS
 suffix:semicolon
 id|i
 op_increment
@@ -4065,7 +4234,7 @@ l_int|0
 suffix:semicolon
 id|hostdata-&gt;host_param.retry_delay
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|hostdata-&gt;host_param.async_data_setup_time
 op_assign
@@ -4108,7 +4277,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|MAX_TARGETS
 suffix:semicolon
 id|i
 op_increment
@@ -4121,7 +4290,7 @@ id|i
 dot
 id|device_flags
 op_assign
-l_int|0xc4
+l_int|0xfd
 suffix:semicolon
 id|hostdata-&gt;dev_param
 (braket
@@ -4186,7 +4355,7 @@ id|i
 comma
 id|k
 suffix:semicolon
-id|u_long
+id|u_int
 id|queue_addr
 suffix:semicolon
 id|u_short
@@ -4198,10 +4367,25 @@ suffix:semicolon
 id|u_short
 id|isp_cfg1
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|ENTER
 c_func
 (paren
 l_string|&quot;isp1020_load_parameters&quot;
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 id|outw
@@ -4247,6 +4431,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4297,6 +4487,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4340,6 +4536,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4393,6 +4595,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4447,6 +4655,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4526,6 +4740,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4569,6 +4789,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4588,7 +4814,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|MAX_TARGETS
 suffix:semicolon
 id|i
 op_increment
@@ -4679,6 +4905,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4698,7 +4930,7 @@ l_int|0
 suffix:semicolon
 id|k
 OL
-l_int|8
+id|MAX_LUNS
 suffix:semicolon
 id|k
 op_increment
@@ -4762,6 +4994,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4777,8 +5015,11 @@ suffix:semicolon
 id|queue_addr
 op_assign
 (paren
-id|u_long
+id|u_int
 )paren
+id|virt_to_bus
+c_func
+(paren
 op_amp
 id|hostdata-&gt;res_queue
 (braket
@@ -4787,6 +5028,7 @@ l_int|0
 (braket
 l_int|0
 )braket
+)paren
 suffix:semicolon
 id|param
 (braket
@@ -4863,6 +5105,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4876,8 +5124,11 @@ suffix:semicolon
 id|queue_addr
 op_assign
 (paren
-id|u_long
+id|u_int
 )paren
+id|virt_to_bus
+c_func
+(paren
 op_amp
 id|hostdata-&gt;req_queue
 (braket
@@ -4886,6 +5137,7 @@ l_int|0
 (braket
 l_int|0
 )braket
+)paren
 suffix:semicolon
 id|param
 (braket
@@ -4955,6 +5207,12 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4965,6 +5223,12 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|LEAVE
 c_func
 (paren
@@ -4975,6 +5239,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * currently, this is only called during initialization or abort/reset,&n; * at which times interrupts are disabled, so polling is OK, I guess...&n; */
 DECL|function|isp1020_mbox_command
 r_int
 id|isp1020_mbox_command
@@ -4991,6 +5256,9 @@ id|param
 )braket
 )paren
 (brace
+r_int
+id|loop_count
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5007,9 +5275,16 @@ l_int|0
 r_return
 l_int|1
 suffix:semicolon
+id|loop_count
+op_assign
+id|DEFAULT_LOOP_COUNT
+suffix:semicolon
 r_while
 c_loop
 (paren
+op_decrement
+id|loop_count
+op_logical_and
 id|inw
 c_func
 (paren
@@ -5023,6 +5298,18 @@ l_int|0x0080
 id|barrier
 c_func
 (paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|loop_count
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicisp: mbox_command loop timeout #1&bslash;n&quot;
 )paren
 suffix:semicolon
 r_switch
@@ -5139,21 +5426,21 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-id|HCCR_CLEAR_RISC_INTR
-comma
-id|hostdata-&gt;io_base
-op_plus
-id|HOST_HCCR
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
 l_int|0x0
 comma
 id|hostdata-&gt;io_base
 op_plus
 id|PCI_SEMAPHORE
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|HCCR_CLEAR_RISC_INTR
+comma
+id|hostdata-&gt;io_base
+op_plus
+id|HOST_HCCR
 )paren
 suffix:semicolon
 id|outw
@@ -5166,9 +5453,16 @@ op_plus
 id|HOST_HCCR
 )paren
 suffix:semicolon
+id|loop_count
+op_assign
+id|DEFAULT_LOOP_COUNT
+suffix:semicolon
 r_while
 c_loop
 (paren
+op_decrement
+id|loop_count
+op_logical_and
 op_logical_neg
 (paren
 id|inw
@@ -5187,9 +5481,28 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|loop_count
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicisp: mbox_command loop timeout #2&bslash;n&quot;
+)paren
+suffix:semicolon
+id|loop_count
+op_assign
+id|DEFAULT_LOOP_COUNT
+suffix:semicolon
 r_while
 c_loop
 (paren
+op_decrement
+id|loop_count
+op_logical_and
 id|inw
 c_func
 (paren
@@ -5205,24 +5518,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outw
-c_func
+r_if
+c_cond
 (paren
-id|HCCR_CLEAR_RISC_INTR
-comma
-id|hostdata-&gt;io_base
-op_plus
-id|HOST_HCCR
+op_logical_neg
+id|loop_count
 )paren
-suffix:semicolon
-id|outw
+id|printk
 c_func
 (paren
-l_int|0x0
-comma
-id|hostdata-&gt;io_base
-op_plus
-id|PCI_SEMAPHORE
+l_string|&quot;qlogicisp: mbox_command loop timeout #3&bslash;n&quot;
 )paren
 suffix:semicolon
 r_switch
@@ -5336,12 +5641,32 @@ id|MBOX0
 )paren
 suffix:semicolon
 )brace
+id|outw
+c_func
+(paren
+l_int|0x0
+comma
+id|hostdata-&gt;io_base
+op_plus
+id|PCI_SEMAPHORE
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|HCCR_CLEAR_RISC_INTR
+comma
+id|hostdata-&gt;io_base
+op_plus
+id|HOST_HCCR
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|macro|RESPONSE_QUEUE_UPDATE
-mdefine_line|#define RESPONSE_QUEUE_UPDATE&t;0x01
+DECL|macro|MAILBOX_INTERRUPT
+mdefine_line|#define MAILBOX_INTERRUPT&t;0x01
 DECL|function|isp1020_intr_handler
 r_void
 id|isp1020_intr_handler
@@ -5349,6 +5674,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -5381,6 +5710,9 @@ r_struct
 id|isp1020_hostdata
 op_star
 id|hostdata
+suffix:semicolon
+r_int
+id|loop_count
 suffix:semicolon
 id|ENTER_INTR
 c_func
@@ -5426,9 +5758,16 @@ id|irq
 )paren
 suffix:semicolon
 )paren
+id|loop_count
+op_assign
+id|DEFAULT_LOOP_COUNT
+suffix:semicolon
 r_while
 c_loop
 (paren
+op_decrement
+id|loop_count
+op_logical_and
 op_logical_neg
 (paren
 id|inw
@@ -5447,6 +5786,40 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|loop_count
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicisp: intr_handler loop timeout&bslash;n&quot;
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|inw
+c_func
+(paren
+id|hostdata-&gt;io_base
+op_plus
+id|PCI_SEMAPHORE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_amp
+id|MAILBOX_INTERRUPT
+)paren
+op_eq
+l_int|0
+)paren
+(brace
 id|hostdata-&gt;res_queue_in_ptr
 op_assign
 id|inw
@@ -5467,28 +5840,6 @@ op_plus
 id|HOST_HCCR
 )paren
 suffix:semicolon
-id|status
-op_assign
-id|inw
-c_func
-(paren
-id|hostdata-&gt;io_base
-op_plus
-id|PCI_SEMAPHORE
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_amp
-id|RESPONSE_QUEUE_UPDATE
-)paren
-op_eq
-l_int|0
-)paren
-(brace
 id|DEBUG_INTR
 c_func
 (paren
@@ -5544,7 +5895,11 @@ op_assign
 id|Scsi_Cmnd
 op_star
 )paren
+id|bus_to_virt
+c_func
+(paren
 id|sts-&gt;handle
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -5649,16 +6004,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG_INTR
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;qlogicisp : mbox completion&bslash;n&quot;
-)paren
-suffix:semicolon
-)paren
 id|status
 op_assign
 id|inw
@@ -5667,16 +6012,6 @@ c_func
 id|hostdata-&gt;io_base
 op_plus
 id|MBOX0
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x0
-comma
-id|hostdata-&gt;io_base
-op_plus
-id|PCI_SEMAPHORE
 )paren
 suffix:semicolon
 id|DEBUG_INTR
@@ -5729,6 +6064,26 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|outw
+c_func
+(paren
+l_int|0x0
+comma
+id|hostdata-&gt;io_base
+op_plus
+id|PCI_SEMAPHORE
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|HCCR_CLEAR_RISC_INTR
+comma
+id|hostdata-&gt;io_base
+op_plus
+id|HOST_HCCR
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -5736,6 +6091,23 @@ c_cond
 id|add_marker
 )paren
 (brace
+macro_line|#if 0
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|DEBUG_INTR
 c_func
 (paren
@@ -5760,6 +6132,14 @@ op_eq
 id|hostdata-&gt;req_queue_out_ptr
 )paren
 (brace
+macro_line|#if 0
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -5831,7 +6211,21 @@ op_plus
 id|MBOX4
 )paren
 suffix:semicolon
+macro_line|#if 0
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
+id|isp1020_enable_irqs
+c_func
+(paren
+id|hostdata
+)paren
+suffix:semicolon
 id|LEAVE_INTR
 c_func
 (paren
@@ -5840,7 +6234,7 @@ l_string|&quot;isp1020_intr_handler&quot;
 suffix:semicolon
 )brace
 DECL|macro|NVRAM_DELAY
-mdefine_line|#define NVRAM_DELAY() { &bslash;&n;    int counter = 0; while (counter++ &lt; 0xc8) barrier(); }
+mdefine_line|#define NVRAM_DELAY() udelay(2) /* 2 microsecond delay */
 DECL|function|isp1020_read_nvram_word
 id|u_short
 id|isp1020_read_nvram_word
@@ -5977,10 +6371,8 @@ op_decrement
 )paren
 (brace
 id|value
-op_assign
-id|value
-op_lshift
-l_int|0x1
+op_lshift_assign
+l_int|1
 suffix:semicolon
 id|outw
 c_func
@@ -6036,7 +6428,7 @@ l_int|0x8
 )paren
 id|value
 op_or_assign
-l_int|0x1
+l_int|1
 suffix:semicolon
 )brace
 id|outw
@@ -6047,6 +6439,11 @@ comma
 id|hostdata-&gt;io_base
 op_plus
 id|PCI_NVRAM
+)paren
+suffix:semicolon
+id|NVRAM_DELAY
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -6197,7 +6594,9 @@ id|hostdata
 id|outw
 c_func
 (paren
-l_int|0x6
+id|ISP_EN_INT
+op_or
+id|ISP_EN_RISC
 comma
 id|hostdata-&gt;io_base
 op_plus
@@ -6287,7 +6686,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : residual transfer length = 0x%08lx&bslash;n&quot;
+l_string|&quot;qlogicisp : residual transfer length = 0x%08x&bslash;n&quot;
 comma
 id|status-&gt;residual
 )paren

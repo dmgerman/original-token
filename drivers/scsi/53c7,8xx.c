@@ -19964,6 +19964,10 @@ id|NCR53c7xx_reset
 id|Scsi_Cmnd
 op_star
 id|cmd
+comma
+r_int
+r_int
+id|reset_flags
 )paren
 (brace
 id|NCR53c7x0_local_declare

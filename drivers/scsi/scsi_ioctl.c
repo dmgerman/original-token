@@ -19,7 +19,7 @@ macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 5   
 DECL|macro|MAX_TIMEOUT
-mdefine_line|#define MAX_TIMEOUT 900
+mdefine_line|#define MAX_TIMEOUT (9 * HZ)
 DECL|macro|MAX_BUF
 mdefine_line|#define MAX_BUF 4096
 DECL|macro|max

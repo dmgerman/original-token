@@ -64,6 +64,9 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_int
@@ -73,7 +76,7 @@ c_func
 id|Disk
 op_star
 comma
-r_int
+id|kdev_t
 comma
 r_int
 (braket
@@ -84,6 +87,11 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL (0)
 macro_line|#endif
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_scsi_isp1020
+suffix:semicolon
 DECL|macro|QLOGICISP
 mdefine_line|#define QLOGICISP {&t;&t;&t;&t;&t;&bslash;&n;&t;/* next */&t;&t;NULL,&t;&t;&t;&bslash;&n;&t;/* usage_count */&t;NULL,&t;&t;&t;&bslash;&n;        /* proc dir */          NULL,                   &bslash;&n;        /* procfs info */       NULL,                   &bslash;&n;&t;/* name */&t;&t;NULL,&t;&t;&t;&bslash;&n;&t;/* detect */&t;&t;isp1020_detect,&t;&t;&bslash;&n;&t;/* release */&t;&t;isp1020_release,&t;&bslash;&n;&t;/* info */&t;&t;isp1020_info,&t;&t;&bslash;&n;&t;/* command */&t;&t;NULL,&t;&t; &t;&bslash;&n;&t;/* queuecommand */&t;isp1020_queuecommand,&t;&bslash;&n;&t;/* abort */&t;&t;isp1020_abort,&t;&t;&bslash;&n;&t;/* reset */&t;&t;isp1020_reset,&t;&t;&bslash;&n;&t;/* slave_attach */&t;NULL,&t;&t;&t;&bslash;&n;&t;/* bios_param */&t;isp1020_biosparam,&t;&bslash;&n;&t;/* can_queue */&t;&t;8,&t;&t;&t;&bslash;&n;&t;/* this_id */&t;&t;-1,&t;&t;&t;&bslash;&n;&t;/* sg_tablesize */&t;4,&t;&t;&t;&bslash;&n;&t;/* cmd_per_lun */&t;1,&t;&t;&t;&bslash;&n;&t;/* present */&t;&t;0,&t;&t;&t;&bslash;&n;&t;/* unchecked_isa_dma */&t;0,&t;&t;&t;&bslash;&n;&t;/* use_clustering */&t;DISABLE_CLUSTERING&t;&bslash;&n;}
 macro_line|#endif /* _QLOGICISP_H */

@@ -7,9 +7,12 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P) || defined(CONFIG_ALPHA_EB164) || defined(CONFIG_ALPHA_PC164)
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;33
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
+macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P) || defined(CONFIG_ALPHA_MIKASA)
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;32
+macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
+DECL|macro|NR_IRQS
+macro_line|# define NR_IRQS&t;48
 macro_line|#else
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;16

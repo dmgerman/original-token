@@ -149,13 +149,13 @@ id|addr
 suffix:semicolon
 multiline_comment|/* cached version */
 macro_line|#endif /* !__KERNEL__ */
-multiline_comment|/*&n; * There are different version of the Alpha PC motherboards:&n; */
+multiline_comment|/*&n; * There are different chipsets to interface the Alpha CPUs to the world.&n; */
 macro_line|#if defined(CONFIG_ALPHA_LCA)
 macro_line|# include &lt;asm/lca.h&gt;&t;&t;/* get chip-specific definitions */
 macro_line|#elif defined(CONFIG_ALPHA_APECS)
 macro_line|# include &lt;asm/apecs.h&gt;&t;&t;/* get chip-specific definitions */
-macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
-macro_line|# include &lt;asm/alcor.h&gt;&t;&t;/* get chip-specific definitions */
+macro_line|#elif defined(CONFIG_ALPHA_CIA)
+macro_line|# include &lt;asm/cia.h&gt;&t;&t;/* get chip-specific definitions */
 macro_line|#else
 macro_line|# include &lt;asm/jensen.h&gt;
 macro_line|#endif

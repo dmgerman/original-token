@@ -32,15 +32,15 @@ mdefine_line|#define BUSY_TIMEOUT&t;&t;10000000&t;/* for busy wait */
 DECL|macro|FAST_TIMEOUT
 mdefine_line|#define FAST_TIMEOUT&t;&t;100000&t;&t;/* ibid. for probing */
 DECL|macro|SLEEP_TIMEOUT
-mdefine_line|#define SLEEP_TIMEOUT&t;&t;3000&t;&t;/* for timer wait */
+mdefine_line|#define SLEEP_TIMEOUT&t;&t;6000&t;&t;/* for timer wait */
 DECL|macro|MULTI_SEEK_TIMEOUT
-mdefine_line|#define MULTI_SEEK_TIMEOUT&t;500&t;&t;/* for timer wait */
+mdefine_line|#define MULTI_SEEK_TIMEOUT&t;1000&t;&t;/* for timer wait */
 DECL|macro|READ_TIMEOUT
-mdefine_line|#define READ_TIMEOUT&t;&t;3000&t;&t;/* for poll wait */
+mdefine_line|#define READ_TIMEOUT&t;&t;6000&t;&t;/* for poll wait */
 DECL|macro|STOP_TIMEOUT
-mdefine_line|#define STOP_TIMEOUT&t;&t;1000&t;&t;/* for poll wait */
+mdefine_line|#define STOP_TIMEOUT&t;&t;2000&t;&t;/* for poll wait */
 DECL|macro|RESET_WAIT
-mdefine_line|#define RESET_WAIT&t;&t;1000&t;&t;/* busy wait at drive reset */
+mdefine_line|#define RESET_WAIT&t;&t;5000&t;&t;/* busy wait at drive reset */
 multiline_comment|/* # of buffers for block size conversion. 6 is optimal for my setup (P75),&n;   giving 280 kb/s, with 0.4% CPU usage. Experiment to find your optimal&n;   setting */
 DECL|macro|N_BUFS
 mdefine_line|#define N_BUFS&t;&t;6

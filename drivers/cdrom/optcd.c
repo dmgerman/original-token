@@ -1,6 +1,6 @@
 multiline_comment|/*&t;linux/drivers/cdrom/optcd.c - Optics Storage 8000 AT CDROM driver&n;&t;$Id: optcd.c,v 1.29 1996/02/22 22:38:30 root Exp $&n;&n;&t;Copyright (C) 1995 Leo Spiekman (spiekman@dutette.et.tudelft.nl)&n;&n;&n;&t;Based on Aztech CD268 CDROM driver by Werner Zimmermann and preworks&n;&t;by Eberhard Moenkeberg (emoenke@gwdg.de). &n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
 "&f;"
-multiline_comment|/*&t;Revision history&n;&n;&n;&t;14-5-95&t;&t;v0.0&t;Plays sound tracks. No reading of data CDs yet.&n;&t;&t;&t;&t;Detection of disk change doesn&squot;t work.&n;&t;21-5-95&t;&t;v0.1&t;First ALPHA version. CD can be mounted. The&n;&t;&t;&t;&t;device major nr is borrowed from the Aztech&n;&t;&t;&t;&t;driver. Speed is around 240 kb/s, as measured&n;&t;&t;&t;&t;with &quot;time dd if=/dev/cdrom of=/dev/null &bslash;&n;&t;&t;&t;&t;bs=2048 count=4096&quot;.&n;&t;24-6-95&t;&t;v0.2&t;Reworked the #defines for the command codes&n;&t;&t;&t;&t;and the like, as well as the structure of&n;&t;&t;&t;&t;the hardware communication protocol, to&n;&t;&t;&t;&t;reflect the &quot;official&quot; documentation, kindly&n;&t;&t;&t;&t;supplied by C.K. Tan, Optics Storage Pte. Ltd.&n;&t;&t;&t;&t;Also tidied up the state machine somewhat.&n;&t;28-6-95&t;&t;v0.3&t;Removed the ISP-16 interface code, as this&n;&t;&t;&t;&t;should go into its own driver. The driver now&n;&t;&t;&t;&t;has its own major nr.&n;&t;&t;&t;&t;Disk change detection now seems to work, too.&n;&t;&t;&t;&t;This version became part of the standard&n;&t;&t;&t;&t;kernel as of version 1.3.7&n;&t;24-9-95&t;&t;v0.4&t;Re-inserted ISP-16 interface code which I&n;&t;&t;&t;&t;copied from sjcd.c, with a few changes.&n;&t;&t;&t;&t;Updated README.optcd. Submitted for&n;&t;&t;&t;&t;inclusion in 1.3.21&n;&t;29-9-95&t;&t;v0.4a&t;Fixed bug that prevented compilation as module&n;&t;25-10-95&t;v0.5&t;Started multisession code. Implementation&n;&t;&t;&t;&t;copied from Werner Zimmermann, who copied it&n;&t;&t;&t;&t;from Heiko Schlittermann&squot;s mcdx.&n;&t;17-1-96&t;&t;v0.6&t;Multisession works; some cleanup too.&n;*/
+multiline_comment|/*&t;Revision history&n;&n;&n;&t;14-5-95&t;&t;v0.0&t;Plays sound tracks. No reading of data CDs yet.&n;&t;&t;&t;&t;Detection of disk change doesn&squot;t work.&n;&t;21-5-95&t;&t;v0.1&t;First ALPHA version. CD can be mounted. The&n;&t;&t;&t;&t;device major nr is borrowed from the Aztech&n;&t;&t;&t;&t;driver. Speed is around 240 kb/s, as measured&n;&t;&t;&t;&t;with &quot;time dd if=/dev/cdrom of=/dev/null &bslash;&n;&t;&t;&t;&t;bs=2048 count=4096&quot;.&n;&t;24-6-95&t;&t;v0.2&t;Reworked the #defines for the command codes&n;&t;&t;&t;&t;and the like, as well as the structure of&n;&t;&t;&t;&t;the hardware communication protocol, to&n;&t;&t;&t;&t;reflect the &quot;official&quot; documentation, kindly&n;&t;&t;&t;&t;supplied by C.K. Tan, Optics Storage Pte. Ltd.&n;&t;&t;&t;&t;Also tidied up the state machine somewhat.&n;&t;28-6-95&t;&t;v0.3&t;Removed the ISP-16 interface code, as this&n;&t;&t;&t;&t;should go into its own driver. The driver now&n;&t;&t;&t;&t;has its own major nr.&n;&t;&t;&t;&t;Disk change detection now seems to work, too.&n;&t;&t;&t;&t;This version became part of the standard&n;&t;&t;&t;&t;kernel as of version 1.3.7&n;&t;24-9-95&t;&t;v0.4&t;Re-inserted ISP-16 interface code which I&n;&t;&t;&t;&t;copied from sjcd.c, with a few changes.&n;&t;&t;&t;&t;Updated README.optcd. Submitted for&n;&t;&t;&t;&t;inclusion in 1.3.21&n;&t;29-9-95&t;&t;v0.4a&t;Fixed bug that prevented compilation as module&n;&t;25-10-95&t;v0.5&t;Started multisession code. Implementation&n;&t;&t;&t;&t;copied from Werner Zimmermann, who copied it&n;&t;&t;&t;&t;from Heiko Schlittermann&squot;s mcdx.&n;&t;17-1-96&t;&t;v0.6&t;Multisession works; some cleanup too.&n;&t;18-4-96&t;&t;v0.7&t;Increased some timing constants;&n;&t;&t;&t;&t;thanks to Luke McFarlane. Also tidied up some&n;&t;&t;&t;&t;printk behaviour. ISP16 initialization&n;&t;&t;&t;&t;is now handled by a separate driver.&n;*/
 "&f;"
 multiline_comment|/* Includes */
 macro_line|#include &lt;linux/module.h&gt;
@@ -75,6 +75,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;optcd: %s&bslash;n&quot;
 comma
 id|s
@@ -2424,6 +2425,7 @@ id|i
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;#%3d ctl %1x, adr %1x, track %2d index %3d&quot;
 l_string|&quot;  %2d:%02d.%02d %2d:%02d.%02d&bslash;n&quot;
 comma
@@ -3436,6 +3438,7 @@ id|disk_info.multi
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;optcd: Multisession support experimental, &quot;
 l_string|&quot;see linux/Documentation/cdrom/optcd&bslash;n&quot;
 )paren
@@ -3563,6 +3566,7 @@ macro_line|#if DEBUG_BUFFERS | DEBUG_REQUEST
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;optcd: executing transfer&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3931,6 +3935,7 @@ id|error
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: I/O error 0x%02x&bslash;n&quot;
 comma
 id|error
@@ -3952,7 +3957,9 @@ op_decrement
 id|printk
 c_func
 (paren
-l_string|&quot;optcd: read block %d failed; Giving up&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;optcd: read block %d failed;&quot;
+l_string|&quot; Giving up&bslash;n&quot;
 comma
 id|next_bn
 )paren
@@ -4030,7 +4037,9 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;optcd: %ld times in previous state&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;optcd: %ld times &quot;
+l_string|&quot;in previous state&bslash;n&quot;
 comma
 id|state_n
 )paren
@@ -4038,6 +4047,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;optcd: state %d&bslash;n&quot;
 comma
 id|state
@@ -4190,6 +4200,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
+l_string|&quot;optcd: %s&bslash;n&quot;
+comma
 (paren
 id|status
 op_amp
@@ -4197,9 +4210,9 @@ id|ST_DOOR_OPEN
 )paren
 ques
 c_cond
-l_string|&quot;optcd: door open&bslash;n&quot;
+l_string|&quot;door open&quot;
 suffix:colon
-l_string|&quot;optcd: disk removed&bslash;n&quot;
+l_string|&quot;disk removed&quot;
 )paren
 suffix:semicolon
 id|state
@@ -4360,6 +4373,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;optcd: flags:%x&bslash;n&quot;
 comma
 id|flags
@@ -4376,6 +4390,7 @@ id|FL_STEN
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;timeout cnt: %d&bslash;n&quot;
 comma
 id|timeout
@@ -4403,6 +4418,7 @@ op_decrement
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: read block %d failed; &quot;
 l_string|&quot;Giving up&bslash;n&quot;
 comma
@@ -4499,6 +4515,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;optcd: warning - try to read&quot;
 l_string|&quot; 0 frames&bslash;n&quot;
 )paren
@@ -4533,6 +4550,7 @@ multiline_comment|/* should be no waiting here!?? */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;read_count:%d &quot;
 l_string|&quot;CURRENT-&gt;nr_sectors:%ld &quot;
 l_string|&quot;buf_in:%d&bslash;n&quot;
@@ -4547,6 +4565,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;transfer active: %x&bslash;n&quot;
 comma
 id|transfer_is_active
@@ -4764,6 +4783,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: discard data=%x frames&bslash;n&quot;
 comma
 id|read_count
@@ -4916,6 +4936,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: invalid state %d&bslash;n&quot;
 comma
 id|state
@@ -4938,6 +4959,7 @@ op_decrement
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: timeout in state %d&bslash;n&quot;
 comma
 id|state
@@ -5025,7 +5047,8 @@ id|disk_info.audio
 id|printk
 c_func
 (paren
-l_string|&quot;optcd: Error: tried to mount an Audio CD&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;optcd: tried to mount an Audio CD&bslash;n&quot;
 )paren
 suffix:semicolon
 id|end_request
@@ -5784,31 +5807,6 @@ op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-id|entry
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-)paren
-r_return
-id|status
-suffix:semicolon
-id|status
-op_assign
-id|verify_area
-c_func
-(paren
 id|VERIFY_WRITE
 comma
 (paren
@@ -6105,31 +6103,6 @@ op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-id|subchnl
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-)paren
-r_return
-id|status
-suffix:semicolon
-id|status
-op_assign
-id|verify_area
-c_func
-(paren
 id|VERIFY_WRITE
 comma
 (paren
@@ -6265,31 +6238,6 @@ id|buf
 (braket
 id|CD_FRAMESIZE_RAWER
 )braket
-suffix:semicolon
-id|status
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-id|msf
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-)paren
-r_return
-id|status
 suffix:semicolon
 id|status
 op_assign
@@ -6545,31 +6493,6 @@ op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-id|ms
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-)paren
-r_return
-id|status
-suffix:semicolon
-id|status
-op_assign
-id|verify_area
-c_func
-(paren
 id|VERIFY_WRITE
 comma
 (paren
@@ -6681,6 +6604,7 @@ id|CDROM_MSF
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;optcd: multisession xa:%d, msf:%02d:%02d.%02d&bslash;n&quot;
 comma
 id|ms.xa_flag
@@ -6696,6 +6620,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;optcd: multisession %d, lba:0x%08x [%02d:%02d.%02d])&bslash;n&quot;
 comma
 id|ms.xa_flag
@@ -7585,6 +7510,7 @@ id|ST_DRVERR
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;optcd: no disk or door open&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8092,6 +8018,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;optcd: Device %s detected&bslash;n&quot;
 comma
 id|devname
@@ -8267,6 +8194,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;optcd: no Optics Storage CDROM Initialization&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8290,6 +8218,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: conflict, I/O port 0x%x already used&bslash;n&quot;
 comma
 id|optcd_port
@@ -8313,6 +8242,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: drive at 0x%x not ready&bslash;n&quot;
 comma
 id|optcd_port
@@ -8336,6 +8266,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: unknown drive detected; aborting&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8363,6 +8294,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: cannot init double speed mode&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8404,6 +8336,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: unable to get major %d&bslash;n&quot;
 comma
 id|MAJOR_NR
@@ -8495,6 +8428,7 @@ id|EINVAL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;optcd: what&squot;s that: can&squot;t unregister&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -501,11 +501,11 @@ op_star
 id|memory_end_p
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
+macro_line|#elif defined(CONFIG_ALPHA_CIA)
 op_star
 id|memory_start_p
 op_assign
-id|alcor_init
+id|cia_init
 c_func
 (paren
 op_star

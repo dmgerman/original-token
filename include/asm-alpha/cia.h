@@ -1,140 +1,159 @@
-macro_line|#ifndef __ALPHA_ALCOR__H__
-DECL|macro|__ALPHA_ALCOR__H__
-mdefine_line|#define __ALPHA_ALCOR__H__
+macro_line|#ifndef __ALPHA_CIA__H__
+DECL|macro|__ALPHA_CIA__H__
+mdefine_line|#define __ALPHA_CIA__H__
 macro_line|#include &lt;linux/types.h&gt;
-multiline_comment|/*&n; * ALCOR is the internal name for the 2117x chipset which provides&n; * memory controller and PCI access for the 21164 chip based systems.&n; *&n; * This file is based on:&n; *&n; * DECchip 21171 Core Logic Chipset &n; * Technical Reference Manual&n; *&n; * EC-QE18B-TE&n; *&n; * david.rusling@reo.mts.dec.com Initial Version.&n; *&n; */
+multiline_comment|/*&n; * CIA is the internal name for the 2117x chipset which provides&n; * memory controller and PCI access for the 21164 chip based systems.&n; *&n; * This file is based on:&n; *&n; * DECchip 21171 Core Logic Chipset &n; * Technical Reference Manual&n; *&n; * EC-QE18B-TE&n; *&n; * david.rusling@reo.mts.dec.com Initial Version.&n; *&n; */
 multiline_comment|/*------------------------------------------------------------------------**&n;**                                                                        **&n;**  EB164 I/O procedures                                                   **&n;**                                                                        **&n;**      inport[b|w|t|l], outport[b|w|t|l] 8:16:24:32 IO xfers             **&n;**&t;inportbxt: 8 bits only                                            **&n;**      inport:    alias of inportw                                       **&n;**      outport:   alias of outportw                                      **&n;**                                                                        **&n;**      inmem[b|w|t|l], outmem[b|w|t|l] 8:16:24:32 ISA memory xfers       **&n;**&t;inmembxt: 8 bits only                                             **&n;**      inmem:    alias of inmemw                                         **&n;**      outmem:   alias of outmemw                                        **&n;**                                                                        **&n;**------------------------------------------------------------------------*/
-multiline_comment|/* ALCOR ADDRESS BIT DEFINITIONS&n; *&n; *  3 3 3 3|3 3 3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * |1| | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |0|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &n; *  |                                                                        &bslash;_/ &bslash;_/&n; *  |                                                                         |   |&n; *  +-- IO space, not cached.                                   Byte Enable --+   |&n; *                                                              Transfer Length --+&n; *&n; *&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
+multiline_comment|/* CIA ADDRESS BIT DEFINITIONS&n; *&n; *  3 3 3 3|3 3 3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * |1| | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |0|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &n; *  |                                                                        &bslash;_/ &bslash;_/&n; *  |                                                                         |   |&n; *  +-- IO space, not cached.                                   Byte Enable --+   |&n; *                                                              Transfer Length --+&n; *&n; *&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
 DECL|macro|BYTE_ENABLE_SHIFT
 mdefine_line|#define BYTE_ENABLE_SHIFT 5
 DECL|macro|TRANSFER_LENGTH_SHIFT
 mdefine_line|#define TRANSFER_LENGTH_SHIFT 3
 DECL|macro|MEM_SP1_MASK
 mdefine_line|#define MEM_SP1_MASK 0x1fffffff  /* Mem sparse space 1 mask is 29 bits */
-DECL|macro|ALCOR_DMA_WIN_BASE
-mdefine_line|#define ALCOR_DMA_WIN_BASE&t;(1024UL*1024UL*1024UL)
-DECL|macro|ALCOR_DMA_WIN_SIZE
-mdefine_line|#define ALCOR_DMA_WIN_SIZE&t;(1024*1024*1024)
+DECL|macro|CIA_DMA_WIN_BASE
+mdefine_line|#define CIA_DMA_WIN_BASE&t;(1024UL*1024UL*1024UL)
+DECL|macro|CIA_DMA_WIN_SIZE
+mdefine_line|#define CIA_DMA_WIN_SIZE&t;(1024*1024*1024)
 multiline_comment|/*&n; * 21171-CA Control and Status Registers (p4-1)&n; */
-DECL|macro|ALCOR_IOC_CIA_REV
-mdefine_line|#define ALCOR_IOC_CIA_REV               (IDENT_ADDR + 0x8740000080UL)
-DECL|macro|ALCOR_IOC_PCI_LAT
-mdefine_line|#define ALCOR_IOC_PCI_LAT               (IDENT_ADDR + 0x87400000C0UL)
-DECL|macro|ALCOR_IOC_CIA_CTRL
-mdefine_line|#define ALCOR_IOC_CIA_CTRL              (IDENT_ADDR + 0x8740000100UL)
-DECL|macro|ALCOR_IOC_HAE_MEM
-mdefine_line|#define ALCOR_IOC_HAE_MEM               (IDENT_ADDR + 0x8740000400UL)
-DECL|macro|ALCOR_IOC_HAE_IO
-mdefine_line|#define ALCOR_IOC_HAE_IO                (IDENT_ADDR + 0x8740000440UL)
-DECL|macro|ALCOR_IOC_CFG
-mdefine_line|#define ALCOR_IOC_CFG                   (IDENT_ADDR + 0x8740000480UL)
-DECL|macro|ALCOR_IOC_CACK_EN
-mdefine_line|#define ALCOR_IOC_CACK_EN               (IDENT_ADDR + 0x8740000600UL)
+DECL|macro|CIA_IOC_CIA_REV
+mdefine_line|#define CIA_IOC_CIA_REV               (IDENT_ADDR + 0x8740000080UL)
+DECL|macro|CIA_IOC_PCI_LAT
+mdefine_line|#define CIA_IOC_PCI_LAT               (IDENT_ADDR + 0x87400000C0UL)
+DECL|macro|CIA_IOC_CIA_CTRL
+mdefine_line|#define CIA_IOC_CIA_CTRL              (IDENT_ADDR + 0x8740000100UL)
+DECL|macro|CIA_IOC_HAE_MEM
+mdefine_line|#define CIA_IOC_HAE_MEM               (IDENT_ADDR + 0x8740000400UL)
+DECL|macro|CIA_IOC_HAE_IO
+mdefine_line|#define CIA_IOC_HAE_IO                (IDENT_ADDR + 0x8740000440UL)
+DECL|macro|CIA_IOC_CFG
+mdefine_line|#define CIA_IOC_CFG                   (IDENT_ADDR + 0x8740000480UL)
+DECL|macro|CIA_IOC_CACK_EN
+mdefine_line|#define CIA_IOC_CACK_EN               (IDENT_ADDR + 0x8740000600UL)
 multiline_comment|/*&n; * 21171-CA Diagnostic Registers (p4-2)&n; */
-DECL|macro|ALCOR_IOC_CIA_DIAG
-mdefine_line|#define ALCOR_IOC_CIA_DIAG              (IDENT_ADDR + 0x8740002000UL)
-DECL|macro|ALCOR_IOC_DIAG_CHECK
-mdefine_line|#define ALCOR_IOC_DIAG_CHECK            (IDENT_ADDR + 0x8740003000UL)
+DECL|macro|CIA_IOC_CIA_DIAG
+mdefine_line|#define CIA_IOC_CIA_DIAG              (IDENT_ADDR + 0x8740002000UL)
+DECL|macro|CIA_IOC_DIAG_CHECK
+mdefine_line|#define CIA_IOC_DIAG_CHECK            (IDENT_ADDR + 0x8740003000UL)
 multiline_comment|/*&n; * 21171-CA Performance Monitor registers (p4-3)&n; */
-DECL|macro|ALCOR_IOC_PERF_MONITOR
-mdefine_line|#define ALCOR_IOC_PERF_MONITOR          (IDENT_ADDR + 0x8740004000UL)
-DECL|macro|ALCOR_IOC_PERF_CONTROL
-mdefine_line|#define ALCOR_IOC_PERF_CONTROL          (IDENT_ADDR + 0x8740004040UL)
+DECL|macro|CIA_IOC_PERF_MONITOR
+mdefine_line|#define CIA_IOC_PERF_MONITOR          (IDENT_ADDR + 0x8740004000UL)
+DECL|macro|CIA_IOC_PERF_CONTROL
+mdefine_line|#define CIA_IOC_PERF_CONTROL          (IDENT_ADDR + 0x8740004040UL)
 multiline_comment|/*&n; * 21171-CA Error registers (p4-3)&n; */
-DECL|macro|ALCOR_IOC_CPU_ERR0
-mdefine_line|#define ALCOR_IOC_CPU_ERR0              (IDENT_ADDR + 0x8740008000UL)
-DECL|macro|ALCOR_IOC_CPU_ERR1
-mdefine_line|#define ALCOR_IOC_CPU_ERR1              (IDENT_ADDR + 0x8740008040UL)
-DECL|macro|ALCOR_IOC_CIA_ERR
-mdefine_line|#define ALCOR_IOC_CIA_ERR               (IDENT_ADDR + 0x8740008200UL)
-DECL|macro|ALCOR_IOC_CIA_STAT
-mdefine_line|#define ALCOR_IOC_CIA_STAT              (IDENT_ADDR + 0x8740008240UL)
-DECL|macro|ALCOR_IOC_ERR_MASK
-mdefine_line|#define ALCOR_IOC_ERR_MASK              (IDENT_ADDR + 0x8740008280UL)
-DECL|macro|ALCOR_IOC_CIA_SYN
-mdefine_line|#define ALCOR_IOC_CIA_SYN               (IDENT_ADDR + 0x8740008300UL)
-DECL|macro|ALCOR_IOC_MEM_ERR0
-mdefine_line|#define ALCOR_IOC_MEM_ERR0              (IDENT_ADDR + 0x8740008400UL)
-DECL|macro|ALCOR_IOC_MEM_ERR1
-mdefine_line|#define ALCOR_IOC_MEM_ERR1              (IDENT_ADDR + 0x8740008440UL)
-DECL|macro|ALCOR_IOC_PCI_ERR0
-mdefine_line|#define ALCOR_IOC_PCI_ERR0              (IDENT_ADDR + 0x8740008800UL)
-DECL|macro|ALCOR_IOC_PCI_ERR1
-mdefine_line|#define ALCOR_IOC_PCI_ERR1              (IDENT_ADDR + 0x8740008840UL)
-DECL|macro|ALCOR_IOC_PCI_ERR3
-mdefine_line|#define ALCOR_IOC_PCI_ERR3              (IDENT_ADDR + 0x8740008880UL)
+DECL|macro|CIA_IOC_CPU_ERR0
+mdefine_line|#define CIA_IOC_CPU_ERR0              (IDENT_ADDR + 0x8740008000UL)
+DECL|macro|CIA_IOC_CPU_ERR1
+mdefine_line|#define CIA_IOC_CPU_ERR1              (IDENT_ADDR + 0x8740008040UL)
+DECL|macro|CIA_IOC_CIA_ERR
+mdefine_line|#define CIA_IOC_CIA_ERR               (IDENT_ADDR + 0x8740008200UL)
+DECL|macro|CIA_IOC_CIA_STAT
+mdefine_line|#define CIA_IOC_CIA_STAT              (IDENT_ADDR + 0x8740008240UL)
+DECL|macro|CIA_IOC_ERR_MASK
+mdefine_line|#define CIA_IOC_ERR_MASK              (IDENT_ADDR + 0x8740008280UL)
+DECL|macro|CIA_IOC_CIA_SYN
+mdefine_line|#define CIA_IOC_CIA_SYN               (IDENT_ADDR + 0x8740008300UL)
+DECL|macro|CIA_IOC_MEM_ERR0
+mdefine_line|#define CIA_IOC_MEM_ERR0              (IDENT_ADDR + 0x8740008400UL)
+DECL|macro|CIA_IOC_MEM_ERR1
+mdefine_line|#define CIA_IOC_MEM_ERR1              (IDENT_ADDR + 0x8740008440UL)
+DECL|macro|CIA_IOC_PCI_ERR0
+mdefine_line|#define CIA_IOC_PCI_ERR0              (IDENT_ADDR + 0x8740008800UL)
+DECL|macro|CIA_IOC_PCI_ERR1
+mdefine_line|#define CIA_IOC_PCI_ERR1              (IDENT_ADDR + 0x8740008840UL)
+DECL|macro|CIA_IOC_PCI_ERR3
+mdefine_line|#define CIA_IOC_PCI_ERR3              (IDENT_ADDR + 0x8740008880UL)
 multiline_comment|/*&n; * 2117A-CA PCI Address Translation Registers.   I&squot;ve only defined&n; * the first window fully as that&squot;s the only one that we&squot;re currently using.&n; * The other window bases are needed to disable the windows.&n; */
-DECL|macro|ALCOR_IOC_PCI_TBIA
-mdefine_line|#define ALCOR_IOC_PCI_TBIA              (IDENT_ADDR + 0x8760000100UL)
-DECL|macro|ALCOR_IOC_PCI_W0_BASE
-mdefine_line|#define ALCOR_IOC_PCI_W0_BASE           (IDENT_ADDR + 0x8760000400UL)
-DECL|macro|ALCOR_IOC_PCI_W0_MASK
-mdefine_line|#define ALCOR_IOC_PCI_W0_MASK           (IDENT_ADDR + 0x8760000440UL)
-DECL|macro|ALCOR_IOC_PCI_T0_BASE
-mdefine_line|#define ALCOR_IOC_PCI_T0_BASE           (IDENT_ADDR + 0x8760000480UL)
-DECL|macro|ALCOR_IOC_PCI_W1_BASE
-mdefine_line|#define ALCOR_IOC_PCI_W1_BASE           (IDENT_ADDR + 0x8760000500UL)
-DECL|macro|ALCOR_IOC_PCI_W2_BASE
-mdefine_line|#define ALCOR_IOC_PCI_W2_BASE           (IDENT_ADDR + 0x8760000600UL)
-DECL|macro|ALCOR_IOC_PCI_W3_BASE
-mdefine_line|#define ALCOR_IOC_PCI_W3_BASE           (IDENT_ADDR + 0x8760000700UL)
+DECL|macro|CIA_IOC_PCI_TBIA
+mdefine_line|#define CIA_IOC_PCI_TBIA              (IDENT_ADDR + 0x8760000100UL)
+DECL|macro|CIA_IOC_PCI_W0_BASE
+mdefine_line|#define CIA_IOC_PCI_W0_BASE           (IDENT_ADDR + 0x8760000400UL)
+DECL|macro|CIA_IOC_PCI_W0_MASK
+mdefine_line|#define CIA_IOC_PCI_W0_MASK           (IDENT_ADDR + 0x8760000440UL)
+DECL|macro|CIA_IOC_PCI_T0_BASE
+mdefine_line|#define CIA_IOC_PCI_T0_BASE           (IDENT_ADDR + 0x8760000480UL)
+DECL|macro|CIA_IOC_PCI_W1_BASE
+mdefine_line|#define CIA_IOC_PCI_W1_BASE           (IDENT_ADDR + 0x8760000500UL)
+DECL|macro|CIA_IOC_PCI_W2_BASE
+mdefine_line|#define CIA_IOC_PCI_W2_BASE           (IDENT_ADDR + 0x8760000600UL)
+DECL|macro|CIA_IOC_PCI_W3_BASE
+mdefine_line|#define CIA_IOC_PCI_W3_BASE           (IDENT_ADDR + 0x8760000700UL)
 multiline_comment|/*&n; * 21171-CA System configuration registers (p4-3)&n; */
-DECL|macro|ALCOR_IOC_MCR
-mdefine_line|#define ALCOR_IOC_MCR                   (IDENT_ADDR + 0x8750000000UL)
-DECL|macro|ALCOR_IOC_MBA0
-mdefine_line|#define ALCOR_IOC_MBA0                  (IDENT_ADDR + 0x8750000600UL)
-DECL|macro|ALCOR_IOC_MBA2
-mdefine_line|#define ALCOR_IOC_MBA2                  (IDENT_ADDR + 0x8750000680UL)
-DECL|macro|ALCOR_IOC_MBA4
-mdefine_line|#define ALCOR_IOC_MBA4                  (IDENT_ADDR + 0x8750000700UL)
-DECL|macro|ALCOR_IOC_MBA6
-mdefine_line|#define ALCOR_IOC_MBA6                  (IDENT_ADDR + 0x8750000780UL)
-DECL|macro|ALCOR_IOC_MBA8
-mdefine_line|#define ALCOR_IOC_MBA8                  (IDENT_ADDR + 0x8750000800UL)
-DECL|macro|ALCOR_IOC_MBAA
-mdefine_line|#define ALCOR_IOC_MBAA                  (IDENT_ADDR + 0x8750000880UL)
-DECL|macro|ALCOR_IOC_MBAC
-mdefine_line|#define ALCOR_IOC_MBAC                  (IDENT_ADDR + 0x8750000900UL)
-DECL|macro|ALCOR_IOC_MBAE
-mdefine_line|#define ALCOR_IOC_MBAE                  (IDENT_ADDR + 0x8750000980UL)
-DECL|macro|ALCOR_IOC_TMG0
-mdefine_line|#define ALCOR_IOC_TMG0                  (IDENT_ADDR + 0x8750000B00UL)
-DECL|macro|ALCOR_IOC_TMG1
-mdefine_line|#define ALCOR_IOC_TMG1                  (IDENT_ADDR + 0x8750000B40UL)
-DECL|macro|ALCOR_IOC_TMG2
-mdefine_line|#define ALCOR_IOC_TMG2                  (IDENT_ADDR + 0x8750000B80UL)
+DECL|macro|CIA_IOC_MCR
+mdefine_line|#define CIA_IOC_MCR                   (IDENT_ADDR + 0x8750000000UL)
+DECL|macro|CIA_IOC_MBA0
+mdefine_line|#define CIA_IOC_MBA0                  (IDENT_ADDR + 0x8750000600UL)
+DECL|macro|CIA_IOC_MBA2
+mdefine_line|#define CIA_IOC_MBA2                  (IDENT_ADDR + 0x8750000680UL)
+DECL|macro|CIA_IOC_MBA4
+mdefine_line|#define CIA_IOC_MBA4                  (IDENT_ADDR + 0x8750000700UL)
+DECL|macro|CIA_IOC_MBA6
+mdefine_line|#define CIA_IOC_MBA6                  (IDENT_ADDR + 0x8750000780UL)
+DECL|macro|CIA_IOC_MBA8
+mdefine_line|#define CIA_IOC_MBA8                  (IDENT_ADDR + 0x8750000800UL)
+DECL|macro|CIA_IOC_MBAA
+mdefine_line|#define CIA_IOC_MBAA                  (IDENT_ADDR + 0x8750000880UL)
+DECL|macro|CIA_IOC_MBAC
+mdefine_line|#define CIA_IOC_MBAC                  (IDENT_ADDR + 0x8750000900UL)
+DECL|macro|CIA_IOC_MBAE
+mdefine_line|#define CIA_IOC_MBAE                  (IDENT_ADDR + 0x8750000980UL)
+DECL|macro|CIA_IOC_TMG0
+mdefine_line|#define CIA_IOC_TMG0                  (IDENT_ADDR + 0x8750000B00UL)
+DECL|macro|CIA_IOC_TMG1
+mdefine_line|#define CIA_IOC_TMG1                  (IDENT_ADDR + 0x8750000B40UL)
+DECL|macro|CIA_IOC_TMG2
+mdefine_line|#define CIA_IOC_TMG2                  (IDENT_ADDR + 0x8750000B80UL)
 multiline_comment|/*&n; * Memory spaces:&n; */
-DECL|macro|ALCOR_IACK_SC
-mdefine_line|#define ALCOR_IACK_SC&t;&t;        (IDENT_ADDR + 0x8720000000UL)
-DECL|macro|ALCOR_CONF
-mdefine_line|#define ALCOR_CONF&t;&t;        (IDENT_ADDR + 0x8700000000UL)
-DECL|macro|ALCOR_IO
-mdefine_line|#define ALCOR_IO&t;&t;&t;(IDENT_ADDR + 0x8580000000UL)
-DECL|macro|ALCOR_SPARSE_MEM
-mdefine_line|#define ALCOR_SPARSE_MEM&t;&t;(IDENT_ADDR + 0x8000000000UL)
-DECL|macro|ALCOR_DENSE_MEM
-mdefine_line|#define ALCOR_DENSE_MEM&t;&t;        (IDENT_ADDR + 0x8600000000UL)
+DECL|macro|CIA_IACK_SC
+mdefine_line|#define CIA_IACK_SC&t;&t;        (IDENT_ADDR + 0x8720000000UL)
+DECL|macro|CIA_CONF
+mdefine_line|#define CIA_CONF&t;&t;        (IDENT_ADDR + 0x8700000000UL)
+DECL|macro|CIA_IO
+mdefine_line|#define CIA_IO&t;&t;&t;&t;(IDENT_ADDR + 0x8580000000UL)
+DECL|macro|CIA_SPARSE_MEM
+mdefine_line|#define CIA_SPARSE_MEM&t;&t;&t;(IDENT_ADDR + 0x8000000000UL)
+DECL|macro|CIA_DENSE_MEM
+mdefine_line|#define CIA_DENSE_MEM&t;&t;        (IDENT_ADDR + 0x8600000000UL)
+multiline_comment|/*&n; * ALCOR&squot;s GRU ASIC registers&n; */
+DECL|macro|GRU_INT_REQ
+mdefine_line|#define GRU_INT_REQ&t;&t;&t;(IDENT_ADDR + 0x8780000000UL)
+DECL|macro|GRU_INT_MASK
+mdefine_line|#define GRU_INT_MASK&t;&t;&t;(IDENT_ADDR + 0x8780000040UL)
+DECL|macro|GRU_INT_EDGE
+mdefine_line|#define GRU_INT_EDGE&t;&t;&t;(IDENT_ADDR + 0x8780000080UL)
+DECL|macro|GRU_INT_HILO
+mdefine_line|#define GRU_INT_HILO&t;&t;&t;(IDENT_ADDR + 0x87800000C0UL)
+DECL|macro|GRU_INT_CLEAR
+mdefine_line|#define GRU_INT_CLEAR&t;&t;&t;(IDENT_ADDR + 0x8780000100UL)
+DECL|macro|GRU_CACHE_CNFG
+mdefine_line|#define GRU_CACHE_CNFG&t;&t;&t;(IDENT_ADDR + 0x8780000200UL)
+DECL|macro|GRU_SCR
+mdefine_line|#define GRU_SCR&t;&t;&t;&t;(IDENT_ADDR + 0x8780000300UL)
+DECL|macro|GRU_LED
+mdefine_line|#define GRU_LED&t;&t;&t;&t;(IDENT_ADDR + 0x8780000800UL)
+DECL|macro|GRU_RESET
+mdefine_line|#define GRU_RESET&t;&t;&t;(IDENT_ADDR + 0x8780000900UL)
 multiline_comment|/*&n; * Bit definitions for I/O Controller status register 0:&n; */
-DECL|macro|ALCOR_IOC_STAT0_CMD
-mdefine_line|#define ALCOR_IOC_STAT0_CMD&t;&t;0xf
-DECL|macro|ALCOR_IOC_STAT0_ERR
-mdefine_line|#define ALCOR_IOC_STAT0_ERR&t;&t;(1&lt;&lt;4)
-DECL|macro|ALCOR_IOC_STAT0_LOST
-mdefine_line|#define ALCOR_IOC_STAT0_LOST&t;&t;(1&lt;&lt;5)
-DECL|macro|ALCOR_IOC_STAT0_THIT
-mdefine_line|#define ALCOR_IOC_STAT0_THIT&t;&t;(1&lt;&lt;6)
-DECL|macro|ALCOR_IOC_STAT0_TREF
-mdefine_line|#define ALCOR_IOC_STAT0_TREF&t;&t;(1&lt;&lt;7)
-DECL|macro|ALCOR_IOC_STAT0_CODE_SHIFT
-mdefine_line|#define ALCOR_IOC_STAT0_CODE_SHIFT&t;8
-DECL|macro|ALCOR_IOC_STAT0_CODE_MASK
-mdefine_line|#define ALCOR_IOC_STAT0_CODE_MASK&t;0x7
-DECL|macro|ALCOR_IOC_STAT0_P_NBR_SHIFT
-mdefine_line|#define ALCOR_IOC_STAT0_P_NBR_SHIFT&t;13
-DECL|macro|ALCOR_IOC_STAT0_P_NBR_MASK
-mdefine_line|#define ALCOR_IOC_STAT0_P_NBR_MASK&t;0x7ffff
+DECL|macro|CIA_IOC_STAT0_CMD
+mdefine_line|#define CIA_IOC_STAT0_CMD&t;&t;0xf
+DECL|macro|CIA_IOC_STAT0_ERR
+mdefine_line|#define CIA_IOC_STAT0_ERR&t;&t;(1&lt;&lt;4)
+DECL|macro|CIA_IOC_STAT0_LOST
+mdefine_line|#define CIA_IOC_STAT0_LOST&t;&t;(1&lt;&lt;5)
+DECL|macro|CIA_IOC_STAT0_THIT
+mdefine_line|#define CIA_IOC_STAT0_THIT&t;&t;(1&lt;&lt;6)
+DECL|macro|CIA_IOC_STAT0_TREF
+mdefine_line|#define CIA_IOC_STAT0_TREF&t;&t;(1&lt;&lt;7)
+DECL|macro|CIA_IOC_STAT0_CODE_SHIFT
+mdefine_line|#define CIA_IOC_STAT0_CODE_SHIFT&t;8
+DECL|macro|CIA_IOC_STAT0_CODE_MASK
+mdefine_line|#define CIA_IOC_STAT0_CODE_MASK&t;&t;0x7
+DECL|macro|CIA_IOC_STAT0_P_NBR_SHIFT
+mdefine_line|#define CIA_IOC_STAT0_P_NBR_SHIFT&t;13
+DECL|macro|CIA_IOC_STAT0_P_NBR_MASK
+mdefine_line|#define CIA_IOC_STAT0_P_NBR_MASK&t;0x7ffff
 DECL|macro|HAE_ADDRESS
-mdefine_line|#define HAE_ADDRESS&t;                ALCOR_IOC_HAE_MEM
+mdefine_line|#define HAE_ADDRESS&t;                CIA_IOC_HAE_MEM
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
 DECL|function|virt_to_bus
@@ -157,7 +176,7 @@ c_func
 id|address
 )paren
 op_plus
-id|ALCOR_DMA_WIN_BASE
+id|CIA_DMA_WIN_BASE
 suffix:semicolon
 )brace
 DECL|function|bus_to_virt
@@ -179,11 +198,11 @@ c_func
 (paren
 id|address
 op_minus
-id|ALCOR_DMA_WIN_BASE
+id|CIA_DMA_WIN_BASE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * I/O functions:&n; *&n; * Alcor (the 2117x PCI/memory support chipset for the EV5 (21164)&n; * series of processors uses a sparse address mapping scheme to&n; * get at PCI memory and I/O.&n; */
+multiline_comment|/*&n; * I/O functions:&n; *&n; * CIA (the 2117x PCI/memory support chipset for the EV5 (21164)&n; * series of processors uses a sparse address mapping scheme to&n; * get at PCI memory and I/O.&n; */
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
 DECL|function|__inb
@@ -213,7 +232,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_IO
+id|CIA_IO
 op_plus
 l_int|0x00
 )paren
@@ -287,7 +306,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_IO
+id|CIA_IO
 op_plus
 l_int|0x00
 )paren
@@ -327,7 +346,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_IO
+id|CIA_IO
 op_plus
 l_int|0x08
 )paren
@@ -401,7 +420,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_IO
+id|CIA_IO
 op_plus
 l_int|0x08
 )paren
@@ -439,7 +458,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_IO
+id|CIA_IO
 op_plus
 l_int|0x18
 )paren
@@ -472,7 +491,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_IO
+id|CIA_IO
 op_plus
 l_int|0x18
 )paren
@@ -555,7 +574,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_SPARSE_MEM
+id|CIA_SPARSE_MEM
 op_plus
 l_int|0x00
 )paren
@@ -639,7 +658,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_SPARSE_MEM
+id|CIA_SPARSE_MEM
 op_plus
 l_int|0x08
 )paren
@@ -675,7 +694,7 @@ id|vuip
 (paren
 id|addr
 op_plus
-id|ALCOR_DENSE_MEM
+id|CIA_DENSE_MEM
 )paren
 suffix:semicolon
 )brace
@@ -735,7 +754,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_SPARSE_MEM
+id|CIA_SPARSE_MEM
 op_plus
 l_int|0x00
 )paren
@@ -801,7 +820,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|ALCOR_SPARSE_MEM
+id|CIA_SPARSE_MEM
 op_plus
 l_int|0x08
 )paren
@@ -834,7 +853,7 @@ id|vuip
 (paren
 id|addr
 op_plus
-id|ALCOR_DENSE_MEM
+id|CIA_DENSE_MEM
 )paren
 op_assign
 id|b
@@ -853,7 +872,7 @@ macro_line|#undef vuip
 r_extern
 r_int
 r_int
-id|alcor_init
+id|cia_init
 (paren
 r_int
 r_int
@@ -865,10 +884,10 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
-multiline_comment|/*&n; * Data structure for handling ALCOR machine checks:&n; */
-DECL|struct|el_ALCOR_sysdata_mcheck
+multiline_comment|/*&n; * Data structure for handling CIA machine checks:&n; */
+DECL|struct|el_CIA_sysdata_mcheck
 r_struct
-id|el_ALCOR_sysdata_mcheck
+id|el_CIA_sysdata_mcheck
 (brace
 DECL|member|coma_gcr
 id|u_long
@@ -1042,5 +1061,5 @@ DECL|macro|RTC_ADDR
 mdefine_line|#define RTC_ADDR(x)&t;(0x80 | (x))
 DECL|macro|RTC_ALWAYS_BCD
 mdefine_line|#define RTC_ALWAYS_BCD&t;0
-macro_line|#endif /* __ALPHA_ALCOR__H__ */
+macro_line|#endif /* __ALPHA_CIA__H__ */
 eof

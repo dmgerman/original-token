@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Code common to all ALCOR chips.&n; *&n; * Written by David A Rusling (david.rusling@reo.mts.dec.com).&n; * December 1995.&n; *&n; */
+multiline_comment|/*&n; * Code common to all CIA chips.&n; *&n; * Written by David A Rusling (david.rusling@reo.mts.dec.com).&n; * December 1995.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -32,7 +32,7 @@ r_int
 id|alpha_sys_type
 suffix:semicolon
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-macro_line|#ifdef CONFIG_ALPHA_ALCOR
+macro_line|#ifdef CONFIG_ALPHA_CIA
 macro_line|#ifdef DEBUG 
 DECL|macro|DBG
 macro_line|# define DBG(args)&t;printk args
@@ -44,37 +44,37 @@ DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int  *
-DECL|variable|ALCOR_mcheck_expected
+DECL|variable|CIA_mcheck_expected
 r_static
 r_volatile
 r_int
 r_int
-id|ALCOR_mcheck_expected
+id|CIA_mcheck_expected
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|ALCOR_mcheck_taken
+DECL|variable|CIA_mcheck_taken
 r_static
 r_volatile
 r_int
 r_int
-id|ALCOR_mcheck_taken
+id|CIA_mcheck_taken
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|ALCOR_jd
-DECL|variable|ALCOR_jd1
-DECL|variable|ALCOR_jd2
+DECL|variable|CIA_jd
+DECL|variable|CIA_jd1
+DECL|variable|CIA_jd2
 r_static
 r_int
 r_int
-id|ALCOR_jd
+id|CIA_jd
 comma
-id|ALCOR_jd1
+id|CIA_jd1
 comma
-id|ALCOR_jd2
+id|CIA_jd2
 suffix:semicolon
-multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the ALCOR_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | |D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., scsi and ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
+multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the CIA_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | |D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., scsi and ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 DECL|function|mk_conf_addr
 r_static
 r_int
@@ -297,7 +297,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 suffix:semicolon
 op_star
@@ -308,7 +308,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 op_assign
 id|stat0
@@ -322,7 +322,7 @@ id|DBG
 c_func
 (paren
 (paren
-l_string|&quot;conf_read: ALCOR CIA ERR was 0x%x&bslash;n&quot;
+l_string|&quot;conf_read: CIA ERR was 0x%x&bslash;n&quot;
 comma
 id|stat0
 )paren
@@ -344,7 +344,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CFG
+id|CIA_IOC_CFG
 )paren
 suffix:semicolon
 id|mb
@@ -359,7 +359,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CFG
+id|CIA_IOC_CFG
 )paren
 op_assign
 id|cia_cfg
@@ -380,11 +380,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|ALCOR_mcheck_expected
+id|CIA_mcheck_expected
 op_assign
 l_int|1
 suffix:semicolon
-id|ALCOR_mcheck_taken
+id|CIA_mcheck_taken
 op_assign
 l_int|0
 suffix:semicolon
@@ -420,10 +420,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ALCOR_mcheck_taken
+id|CIA_mcheck_taken
 )paren
 (brace
-id|ALCOR_mcheck_taken
+id|CIA_mcheck_taken
 op_assign
 l_int|0
 suffix:semicolon
@@ -437,7 +437,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|ALCOR_mcheck_expected
+id|CIA_mcheck_expected
 op_assign
 l_int|0
 suffix:semicolon
@@ -463,14 +463,14 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 suffix:semicolon
 id|DBG
 c_func
 (paren
 (paren
-l_string|&quot;conf_read: ALCOR CIA ERR after read 0x%x&bslash;n&quot;
+l_string|&quot;conf_read: CIA ERR after read 0x%x&bslash;n&quot;
 comma
 id|stat0
 )paren
@@ -500,7 +500,7 @@ l_int|0x0080
 id|printk
 c_func
 (paren
-l_string|&quot;ALCOR.c:conf_read: got stat0=%x&bslash;n&quot;
+l_string|&quot;CIA.c:conf_read: got stat0=%x&bslash;n&quot;
 comma
 id|stat0
 )paren
@@ -515,7 +515,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 op_assign
 id|stat0
@@ -552,7 +552,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CFG
+id|CIA_IOC_CFG
 )paren
 op_assign
 id|cia_cfg
@@ -641,7 +641,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 suffix:semicolon
 op_star
@@ -652,7 +652,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 op_assign
 id|stat0
@@ -666,7 +666,7 @@ id|DBG
 c_func
 (paren
 (paren
-l_string|&quot;conf_write: ALCOR CIA ERR was 0x%x&bslash;n&quot;
+l_string|&quot;conf_write: CIA ERR was 0x%x&bslash;n&quot;
 comma
 id|stat0
 )paren
@@ -688,7 +688,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CFG
+id|CIA_IOC_CFG
 )paren
 suffix:semicolon
 id|mb
@@ -703,7 +703,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CFG
+id|CIA_IOC_CFG
 )paren
 op_assign
 id|cia_cfg
@@ -724,7 +724,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|ALCOR_mcheck_expected
+id|CIA_mcheck_expected
 op_assign
 l_int|1
 suffix:semicolon
@@ -757,7 +757,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|ALCOR_mcheck_expected
+id|CIA_mcheck_expected
 op_assign
 l_int|0
 suffix:semicolon
@@ -783,14 +783,14 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 suffix:semicolon
 id|DBG
 c_func
 (paren
 (paren
-l_string|&quot;conf_write: ALCOR CIA ERR after write 0x%x&bslash;n&quot;
+l_string|&quot;conf_write: CIA ERR after write 0x%x&bslash;n&quot;
 comma
 id|stat0
 )paren
@@ -820,7 +820,7 @@ l_int|0x0080
 id|printk
 c_func
 (paren
-l_string|&quot;ALCOR.c:conf_read: got stat0=%x&bslash;n&quot;
+l_string|&quot;CIA.c:conf_read: got stat0=%x&bslash;n&quot;
 comma
 id|stat0
 )paren
@@ -835,7 +835,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 op_assign
 id|stat0
@@ -872,7 +872,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CFG
+id|CIA_IOC_CFG
 )paren
 op_assign
 id|cia_cfg
@@ -927,7 +927,7 @@ r_int
 r_int
 id|addr
 op_assign
-id|ALCOR_CONF
+id|CIA_CONF
 suffix:semicolon
 r_int
 r_int
@@ -1029,7 +1029,7 @@ r_int
 r_int
 id|addr
 op_assign
-id|ALCOR_CONF
+id|CIA_CONF
 suffix:semicolon
 r_int
 r_int
@@ -1141,7 +1141,7 @@ r_int
 r_int
 id|addr
 op_assign
-id|ALCOR_CONF
+id|CIA_CONF
 suffix:semicolon
 r_int
 r_int
@@ -1242,7 +1242,7 @@ r_int
 r_int
 id|addr
 op_assign
-id|ALCOR_CONF
+id|CIA_CONF
 suffix:semicolon
 r_int
 r_int
@@ -1337,7 +1337,7 @@ r_int
 r_int
 id|addr
 op_assign
-id|ALCOR_CONF
+id|CIA_CONF
 suffix:semicolon
 r_int
 r_int
@@ -1432,7 +1432,7 @@ r_int
 r_int
 id|addr
 op_assign
-id|ALCOR_CONF
+id|CIA_CONF
 suffix:semicolon
 r_int
 r_int
@@ -1502,10 +1502,10 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|alcor_init
+DECL|function|cia_init
 r_int
 r_int
-id|alcor_init
+id|cia_init
 c_func
 (paren
 r_int
@@ -1528,7 +1528,7 @@ op_star
 (paren
 id|vuip
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 suffix:semicolon
 id|cia_err
 op_or_assign
@@ -1543,7 +1543,7 @@ op_star
 (paren
 id|vuip
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 op_assign
 id|cia_err
 suffix:semicolon
@@ -1557,12 +1557,12 @@ op_star
 (paren
 id|vuip
 )paren
-id|ALCOR_IOC_PCI_W0_BASE
+id|CIA_IOC_PCI_W0_BASE
 op_assign
 l_int|1U
 op_or
 (paren
-id|ALCOR_DMA_WIN_BASE
+id|CIA_DMA_WIN_BASE
 op_amp
 l_int|0xfff00000U
 )paren
@@ -1571,10 +1571,10 @@ op_star
 (paren
 id|vuip
 )paren
-id|ALCOR_IOC_PCI_W0_MASK
+id|CIA_IOC_PCI_W0_MASK
 op_assign
 (paren
-id|ALCOR_DMA_WIN_SIZE
+id|CIA_DMA_WIN_SIZE
 op_minus
 l_int|1
 )paren
@@ -1585,7 +1585,7 @@ op_star
 (paren
 id|vuip
 )paren
-id|ALCOR_IOC_PCI_T0_BASE
+id|CIA_IOC_PCI_T0_BASE
 op_assign
 l_int|0
 suffix:semicolon
@@ -1593,7 +1593,7 @@ op_star
 (paren
 id|vuip
 )paren
-id|ALCOR_IOC_PCI_W1_BASE
+id|CIA_IOC_PCI_W1_BASE
 op_assign
 l_int|0x0
 suffix:semicolon
@@ -1601,7 +1601,7 @@ op_star
 (paren
 id|vuip
 )paren
-id|ALCOR_IOC_PCI_W2_BASE
+id|CIA_IOC_PCI_W2_BASE
 op_assign
 l_int|0x0
 suffix:semicolon
@@ -1609,7 +1609,7 @@ op_star
 (paren
 id|vuip
 )paren
-id|ALCOR_IOC_PCI_W3_BASE
+id|CIA_IOC_PCI_W3_BASE
 op_assign
 l_int|0x0
 suffix:semicolon
@@ -1625,7 +1625,7 @@ id|MAX_ASN
 id|printk
 c_func
 (paren
-l_string|&quot;alcor_init: max ASN from HWRPB is bad (0x%lx)&bslash;n&quot;
+l_string|&quot;CIA_init: max ASN from HWRPB is bad (0x%lx)&bslash;n&quot;
 comma
 id|hwrpb-&gt;max_asn
 )paren
@@ -1649,7 +1649,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CFG
+id|CIA_IOC_CFG
 )paren
 suffix:semicolon
 id|mb
@@ -1665,7 +1665,7 @@ id|cia_cfg
 id|printk
 c_func
 (paren
-l_string|&quot;alcor_init: CFG was 0x%x&bslash;n&quot;
+l_string|&quot;CIA_init: CFG was 0x%x&bslash;n&quot;
 comma
 id|cia_cfg
 )paren
@@ -1678,7 +1678,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CFG
+id|CIA_IOC_CFG
 )paren
 op_assign
 l_int|0
@@ -1693,15 +1693,15 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-DECL|function|ALCOR_pci_clr_err
+DECL|function|cia_pci_clr_err
 r_int
-id|ALCOR_pci_clr_err
+id|cia_pci_clr_err
 c_func
 (paren
 r_void
 )paren
 (brace
-id|ALCOR_jd
+id|CIA_jd
 op_assign
 op_star
 (paren
@@ -1710,16 +1710,16 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 suffix:semicolon
 id|DBG
 c_func
 (paren
 (paren
-l_string|&quot;ALCOR_pci_clr_err: ALCOR CIA ERR after read 0x%x&bslash;n&quot;
+l_string|&quot;CIA_pci_clr_err: CIA ERR after read 0x%x&bslash;n&quot;
 comma
-id|ALCOR_jd
+id|CIA_jd
 )paren
 )paren
 suffix:semicolon
@@ -1730,7 +1730,7 @@ r_int
 r_int
 op_star
 )paren
-id|ALCOR_IOC_CIA_ERR
+id|CIA_IOC_CIA_ERR
 )paren
 op_assign
 l_int|0x0080
@@ -1744,9 +1744,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|alcor_machine_check
+DECL|function|cia_machine_check
 r_void
-id|alcor_machine_check
+id|cia_machine_check
 c_func
 (paren
 r_int
@@ -1767,7 +1767,7 @@ macro_line|#if 1
 id|printk
 c_func
 (paren
-l_string|&quot;ALCOR machine check&bslash;n&quot;
+l_string|&quot;CIA machine check&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -1777,7 +1777,7 @@ op_star
 id|mchk_header
 suffix:semicolon
 r_struct
-id|el_ALCOR_sysdata_mcheck
+id|el_CIA_sysdata_mcheck
 op_star
 id|mchk_sysdata
 suffix:semicolon
@@ -1794,7 +1794,7 @@ id|mchk_sysdata
 op_assign
 (paren
 r_struct
-id|el_ALCOR_sysdata_mcheck
+id|el_CIA_sysdata_mcheck
 op_star
 )paren
 (paren
@@ -1807,7 +1807,7 @@ id|DBG
 c_func
 (paren
 (paren
-l_string|&quot;ALCOR_machine_check: vector=0x%lx la_ptr=0x%lx&bslash;n&quot;
+l_string|&quot;cia_machine_check: vector=0x%lx la_ptr=0x%lx&bslash;n&quot;
 comma
 id|vector
 comma
@@ -1835,9 +1835,9 @@ id|DBG
 c_func
 (paren
 (paren
-l_string|&quot;ALCOR_machine_check: expected %d DCSR 0x%lx PEAR 0x%lx&bslash;n&quot;
+l_string|&quot;cia_machine_check: expected %d DCSR 0x%lx PEAR 0x%lx&bslash;n&quot;
 comma
-id|ALCOR_mcheck_expected
+id|CIA_mcheck_expected
 comma
 id|mchk_sysdata-&gt;epic_dcsr
 comma
@@ -1917,7 +1917,7 @@ multiline_comment|/*&n;&t; * Check if machine check is due to a badaddr() and if
 r_if
 c_cond
 (paren
-id|ALCOR_mcheck_expected
+id|CIA_mcheck_expected
 op_logical_and
 (paren
 id|mchk_sysdata-&gt;epic_dcsr
@@ -1926,11 +1926,11 @@ l_int|0x0c00UL
 )paren
 )paren
 (brace
-id|ALCOR_mcheck_expected
+id|CIA_mcheck_expected
 op_assign
 l_int|0
 suffix:semicolon
-id|ALCOR_mcheck_taken
+id|CIA_mcheck_taken
 op_assign
 l_int|1
 suffix:semicolon
@@ -1944,7 +1944,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|ALCOR_pci_clr_err
+id|cia_pci_clr_err
 c_func
 (paren
 )paren
@@ -1968,5 +1968,5 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#endif /* CONFIG_ALPHA_ALCOR */
+macro_line|#endif /* CONFIG_ALPHA_CIA */
 eof
