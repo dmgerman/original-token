@@ -3500,6 +3500,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|buf-&gt;b_count
+op_assign
+l_int|0
+suffix:semicolon
 id|remove_from_queues
 c_func
 (paren

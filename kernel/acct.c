@@ -594,6 +594,8 @@ id|filp_close
 c_func
 (paren
 id|old_acct
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -613,6 +615,8 @@ id|filp_close
 c_func
 (paren
 id|file
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_goto

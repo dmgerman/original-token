@@ -2798,6 +2798,7 @@ id|child-&gt;sgid
 )paren
 op_logical_or
 (paren
+op_logical_neg
 id|cap_issubset
 c_func
 (paren

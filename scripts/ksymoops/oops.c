@@ -1262,6 +1262,7 @@ c_cond
 id|errno
 )paren
 (brace
+macro_line|#if 0
 multiline_comment|/* Try strtoull also, e.g. sparc binutils print &lt;_PC+0xfffffffffffffd58&gt; */
 id|errno
 op_assign
@@ -1282,6 +1283,7 @@ comma
 l_int|16
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

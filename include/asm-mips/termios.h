@@ -227,6 +227,8 @@ DECL|macro|N_IRDA
 mdefine_line|#define N_IRDA&t;&t;11&t;/* Linux IrDa - http://www.cs.uit.no/~dagb/irda/irda.html */
 DECL|macro|N_SMSBLOCK
 mdefine_line|#define N_SMSBLOCK&t;12&t;/* SMS block mode - for talking to GSM data cards about SMS messages */
+DECL|macro|N_HDLC
+mdefine_line|#define N_HDLC&t;&t;13&t;/* synchronous HDLC */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */
