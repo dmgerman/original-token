@@ -12647,6 +12647,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|uhci_init
+r_static
 r_int
 id|__init
 id|uhci_init
@@ -12866,6 +12867,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|uhci_cleanup
+r_static
 r_void
 id|__exit
 id|uhci_cleanup
@@ -12935,23 +12937,11 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-(paren
+DECL|function|uhci_exit
+r_static
 r_void
-)paren
-(brace
-r_return
-id|uhci_init
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|uhci_exit
 (paren
 r_void
 )paren
@@ -12966,6 +12956,20 @@ id|uhci_cleanup
 )paren
 suffix:semicolon
 )brace
+DECL|variable|uhci_init
+id|module_init
+c_func
+(paren
+id|uhci_init
+)paren
+suffix:semicolon
+DECL|variable|uhci_exit
+id|module_exit
+c_func
+(paren
+id|uhci_exit
+)paren
+suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -12978,6 +12982,4 @@ c_func
 l_string|&quot;USB Universal Host Controller Interface driver&quot;
 )paren
 suffix:semicolon
-macro_line|#endif 
-singleline_comment|//MODULE
 eof

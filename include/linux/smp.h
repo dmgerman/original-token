@@ -4,6 +4,7 @@ mdefine_line|#define __LINUX_SMP_H
 multiline_comment|/*&n; *&t;Generic SMP support&n; *&t;&t;Alan Cox. &lt;alan@redhat.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SMP
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 multiline_comment|/*&n; * main cross-CPU interfaces, handles INIT, TLB flush, STOP, etc.&n; * (defined in asm header):&n; */
 multiline_comment|/*&n; * stops all CPUs but the current one:&n; */

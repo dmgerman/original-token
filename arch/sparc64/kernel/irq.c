@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.92 2000/08/26 02:42:28 anton Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.93 2000/08/31 10:00:39 anton Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2303,7 +2303,7 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SMP
-multiline_comment|/* Who has global_irq_lock. */
+multiline_comment|/* Who has the global irq brlock */
 DECL|variable|global_irq_holder
 r_int
 r_char

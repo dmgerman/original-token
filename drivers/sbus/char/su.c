@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.38 2000/04/22 00:45:16 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.41 2000/09/04 19:41:27 ecd Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 multiline_comment|/*&n; * Configuration section.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
@@ -7732,10 +7732,6 @@ id|timeout
 r_break
 suffix:semicolon
 )brace
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_RS_WAIT_UNTIL_SENT
 id|printk
 c_func
@@ -8334,10 +8330,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
 id|remove_wait_queue
 c_func
 (paren
@@ -8796,6 +8788,20 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;port
+op_eq
+l_int|0
+op_logical_or
+id|info-&gt;type
+op_eq
+id|PORT_UNKNOWN
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|ret
 op_assign
 id|sprintf
@@ -8803,7 +8809,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;%d: uart:%s port:%X irq:%s&quot;
+l_string|&quot;%u: uart:%s port:%lX irq:%s&quot;
 comma
 id|info-&gt;line
 comma
@@ -8816,6 +8822,7 @@ id|name
 comma
 (paren
 r_int
+r_int
 )paren
 id|info-&gt;port
 comma
@@ -8826,34 +8833,6 @@ id|info-&gt;irq
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|info-&gt;port
-op_eq
-l_int|0
-op_logical_or
-id|info-&gt;type
-op_eq
-id|PORT_UNKNOWN
-)paren
-(brace
-id|ret
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|ret
-comma
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|ret
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Figure out the current RS-232 lines&n;&t; */
 id|save_flags
 c_func
@@ -9016,7 +8995,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; baud:%d&quot;
+l_string|&quot; baud:%u&quot;
 comma
 id|info-&gt;baud_base
 op_div
@@ -9033,7 +9012,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; tx:%d rx:%d&quot;
+l_string|&quot; tx:%u rx:%u&quot;
 comma
 id|info-&gt;icount.tx
 comma
@@ -9054,7 +9033,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; fe:%d&quot;
+l_string|&quot; fe:%u&quot;
 comma
 id|info-&gt;icount.frame
 )paren
@@ -9073,7 +9052,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; pe:%d&quot;
+l_string|&quot; pe:%u&quot;
 comma
 id|info-&gt;icount.parity
 )paren
@@ -9092,7 +9071,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; brk:%d&quot;
+l_string|&quot; brk:%u&quot;
 comma
 id|info-&gt;icount.brk
 )paren
@@ -9111,7 +9090,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; oe:%d&quot;
+l_string|&quot; oe:%u&quot;
 comma
 id|info-&gt;icount.overrun
 )paren
@@ -9329,7 +9308,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.38 $&quot;
+l_string|&quot;$Revision: 1.41 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -10254,6 +10233,13 @@ id|su_num_ports
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|su_num_ports
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|su_num_ports
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
 DECL|function|su_serial_init
 r_int
@@ -10309,10 +10295,17 @@ id|serial_driver.driver_name
 op_assign
 l_string|&quot;su&quot;
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|serial_driver.name
 op_assign
-l_string|&quot;ttys/%d&quot;
+l_string|&quot;tts/%d&quot;
 suffix:semicolon
+macro_line|#else
+id|serial_driver.name
+op_assign
+l_string|&quot;ttyS&quot;
+suffix:semicolon
+macro_line|#endif
 id|serial_driver.major
 op_assign
 id|TTY_MAJOR
@@ -10451,10 +10444,17 @@ id|callout_driver
 op_assign
 id|serial_driver
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|callout_driver.name
 op_assign
 l_string|&quot;cua/%d&quot;
 suffix:semicolon
+macro_line|#else
+id|callout_driver.name
+op_assign
+l_string|&quot;cua&quot;
+suffix:semicolon
+macro_line|#endif
 id|callout_driver.major
 op_assign
 id|TTYAUX_MAJOR
@@ -11055,6 +11055,35 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef __sparc_v9__
+multiline_comment|/*&n;&t;&t;&t;&t; * Do not attempt to use the truncated&n;&t;&t;&t;&t; * keyboard/mouse ports as serial ports&n;&t;&t;&t;&t; * on Ultras with PC keyboard attached.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|prom_getbool
+c_func
+(paren
+id|sunode
+comma
+l_string|&quot;mouse&quot;
+)paren
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|prom_getbool
+c_func
+(paren
+id|sunode
+comma
+l_string|&quot;keyboard&quot;
+)paren
+)paren
+r_continue
+suffix:semicolon
+macro_line|#endif
 id|info-&gt;port_type
 op_assign
 id|SU_PORT_PORT

@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|RTL8139_VERSION
-mdefine_line|#define RTL8139_VERSION &quot;0.9.7&quot;
+mdefine_line|#define RTL8139_VERSION &quot;0.9.8&quot;
 DECL|macro|RTL8139_MODULE_NAME
 mdefine_line|#define RTL8139_MODULE_NAME &quot;8139too&quot;
 DECL|macro|RTL8139_DRIVER_NAME
@@ -4099,6 +4099,9 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_int
+id|retval
+suffix:semicolon
 macro_line|#ifdef RTL8139_DEBUG
 r_void
 op_star
@@ -4114,14 +4117,12 @@ l_string|&quot;ENTER&bslash;n&quot;
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|retval
+op_assign
 id|request_irq
 (paren
 id|dev-&gt;irq
 comma
-op_amp
 id|rtl8139_interrupt
 comma
 id|SA_SHIRQ
@@ -4130,18 +4131,24 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
 )paren
 (brace
 id|DPRINTK
 (paren
-l_string|&quot;EXIT, returning -EBUSY&bslash;n&quot;
+l_string|&quot;EXIT, returning %d&bslash;n&quot;
+comma
+id|retval
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-op_minus
-id|EBUSY
+id|retval
 suffix:semicolon
 )brace
 id|tp-&gt;tx_bufs
@@ -5342,7 +5349,6 @@ comma
 l_int|5
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -5440,7 +5446,6 @@ id|Cfg9346_Lock
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 id|rtl8139_tune_twister
 (paren
 id|dev
@@ -5718,25 +5723,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rp-&gt;skb
-)paren
-(brace
-id|dev_kfree_skb
-(paren
-id|rp-&gt;skb
-)paren
-suffix:semicolon
-id|rp-&gt;skb
-op_assign
-l_int|NULL
-suffix:semicolon
-id|tp-&gt;stats.tx_dropped
-op_increment
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|rp-&gt;mapping
 op_ne
 l_int|0
@@ -5756,6 +5742,25 @@ suffix:semicolon
 id|rp-&gt;mapping
 op_assign
 l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|rp-&gt;skb
+)paren
+(brace
+id|dev_kfree_skb
+(paren
+id|rp-&gt;skb
+)paren
+suffix:semicolon
+id|rp-&gt;skb
+op_assign
+l_int|NULL
+suffix:semicolon
+id|tp-&gt;stats.tx_dropped
+op_increment
 suffix:semicolon
 )brace
 )brace
@@ -6216,6 +6221,51 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Free the original skb. */
+r_if
+c_cond
+(paren
+id|tp-&gt;tx_info
+(braket
+id|entry
+)braket
+dot
+id|mapping
+op_ne
+l_int|0
+)paren
+(brace
+id|pci_unmap_single
+c_func
+(paren
+id|tp-&gt;pci_dev
+comma
+id|tp-&gt;tx_info
+(braket
+id|entry
+)braket
+dot
+id|mapping
+comma
+id|tp-&gt;tx_info
+(braket
+id|entry
+)braket
+dot
+id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
+)paren
+suffix:semicolon
+id|tp-&gt;tx_info
+(braket
+id|entry
+)braket
+dot
+id|mapping
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|dev_kfree_skb_irq
 (paren
 id|tp-&gt;tx_info
@@ -6723,11 +6773,18 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+r_int
+id|pkt_size
+op_assign
+id|rx_size
+op_minus
+l_int|4
+suffix:semicolon
 id|skb
 op_assign
 id|dev_alloc_skb
 (paren
-id|rx_size
+id|pkt_size
 op_plus
 l_int|2
 )paren
@@ -6743,7 +6800,7 @@ l_int|NULL
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: Memory squeeze, deferring packet.&bslash;n&quot;
+l_string|&quot;%s: Memory squeeze, dropping packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -6815,14 +6872,14 @@ id|skb_put
 (paren
 id|skb
 comma
-id|rx_size
+id|pkt_size
 op_minus
 id|semi_count
 )paren
 comma
 id|rx_ring
 comma
-id|rx_size
+id|pkt_size
 op_minus
 id|semi_count
 )paren
@@ -6897,9 +6954,7 @@ op_plus
 l_int|4
 )braket
 comma
-id|rx_size
-op_minus
-l_int|4
+id|pkt_size
 comma
 l_int|0
 )paren
@@ -6908,9 +6963,7 @@ id|skb_put
 (paren
 id|skb
 comma
-id|rx_size
-op_minus
-l_int|4
+id|pkt_size
 )paren
 suffix:semicolon
 )brace
@@ -6930,7 +6983,7 @@ id|skb
 suffix:semicolon
 id|tp-&gt;stats.rx_bytes
 op_add_assign
-id|rx_size
+id|pkt_size
 suffix:semicolon
 id|tp-&gt;stats.rx_packets
 op_increment
@@ -7341,7 +7394,7 @@ c_cond
 (paren
 id|status
 op_eq
-l_int|0xFFFFFFFF
+l_int|0xFFFF
 )paren
 r_break
 suffix:semicolon
@@ -7626,6 +7679,12 @@ id|IntrStatus
 )paren
 )paren
 suffix:semicolon
+id|del_timer_sync
+(paren
+op_amp
+id|tp-&gt;timer
+)paren
+suffix:semicolon
 id|spin_lock_irqsave
 (paren
 op_amp
@@ -7678,12 +7737,6 @@ op_amp
 id|tp-&gt;lock
 comma
 id|flags
-)paren
-suffix:semicolon
-id|del_timer
-(paren
-op_amp
-id|tp-&gt;timer
 )paren
 suffix:semicolon
 multiline_comment|/* snooze for a small bit */

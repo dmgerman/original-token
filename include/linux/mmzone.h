@@ -233,6 +233,9 @@ suffix:semicolon
 DECL|macro|memclass
 mdefine_line|#define memclass(pgzone, tzone)&t;(((pgzone)-&gt;zone_pgdat == (tzone)-&gt;zone_pgdat) &bslash;&n;&t;&t;&t;&amp;&amp; (((pgzone) - (pgzone)-&gt;zone_pgdat-&gt;node_zones) &lt;= &bslash;&n;&t;&t;&t;((tzone) - (pgzone)-&gt;zone_pgdat-&gt;node_zones)))
 multiline_comment|/*&n; * The following two are not meant for general usage. They are here as&n; * prototypes for the discontig memory code.&n; */
+r_struct
+id|page
+suffix:semicolon
 r_extern
 r_void
 id|show_free_areas_core
@@ -272,6 +275,11 @@ r_int
 r_int
 op_star
 id|zholes_size
+comma
+r_struct
+id|page
+op_star
+id|pmap
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_DISCONTIGMEM

@@ -5017,6 +5017,8 @@ l_int|0
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|zones_size
 comma
 id|phys_base

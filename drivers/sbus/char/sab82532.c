@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.c,v 1.47 2000/08/16 21:12:14 ecd Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
+multiline_comment|/* $Id: sab82532.c,v 1.51 2000/09/04 19:41:26 ecd Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -64,12 +64,16 @@ DECL|macro|SERIAL_DEBUG_OPEN
 macro_line|#undef SERIAL_DEBUG_OPEN
 DECL|macro|SERIAL_DEBUG_FLOW
 macro_line|#undef SERIAL_DEBUG_FLOW
+DECL|macro|SERIAL_DEBUG_MODEM
+macro_line|#undef SERIAL_DEBUG_MODEM
 DECL|macro|SERIAL_DEBUG_WAIT_UNTIL_SENT
 macro_line|#undef SERIAL_DEBUG_WAIT_UNTIL_SENT
 DECL|macro|SERIAL_DEBUG_SEND_BREAK
 macro_line|#undef SERIAL_DEBUG_SEND_BREAK
 DECL|macro|SERIAL_DEBUG_INTR
 macro_line|#undef SERIAL_DEBUG_INTR
+DECL|macro|SERIAL_DEBUG_OVERFLOW
+mdefine_line|#define SERIAL_DEBUG_OVERFLOW 1
 multiline_comment|/* Trace things on serial device, useful for console debugging: */
 DECL|macro|SERIAL_LOG_DEVICE
 macro_line|#undef SERIAL_LOG_DEVICE
@@ -151,6 +155,10 @@ id|sab82532_termios_locked
 id|NR_PORTS
 )braket
 suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|macro|CONFIG_SERIAL_CONSOLE
+macro_line|#undef CONFIG_SERIAL_CONSOLE
+macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 r_extern
 r_int
@@ -168,6 +176,17 @@ id|sab82532_console_init
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|batten_down_hatches
+c_func
+(paren
+r_struct
+id|sab82532
+op_star
+id|info
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -716,6 +735,22 @@ id|SAB82532_STAR_XFW
 r_goto
 id|out
 suffix:semicolon
+id|info-&gt;interrupt_mask1
+op_and_assign
+op_complement
+(paren
+id|SAB82532_IMR1_ALLS
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|info-&gt;interrupt_mask1
+comma
+op_amp
+id|info-&gt;regs-&gt;w.imr1
+)paren
+suffix:semicolon
 id|info-&gt;all_sent
 op_assign
 l_int|0
@@ -961,160 +996,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|batten_down_hatches
-r_static
-r_void
-id|batten_down_hatches
-c_func
-(paren
-r_struct
-id|sab82532
-op_star
-id|info
-)paren
-(brace
-r_int
-r_char
-id|saved_rfc
-comma
-id|tmp
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|stop_a_enabled
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* If we are doing kadb, we call the debugger&n;&t; * else we just drop into the boot monitor.&n;&t; * Note that we must flush the user windows&n;&t; * first before giving up control.&n;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|flush_user_windows
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Set FIFO to single character mode.&n;&t; */
-id|saved_rfc
-op_assign
-id|readb
-c_func
-(paren
-op_amp
-id|info-&gt;regs-&gt;r.rfc
-)paren
-suffix:semicolon
-id|tmp
-op_assign
-id|readb
-c_func
-(paren
-op_amp
-id|info-&gt;regs-&gt;rw.rfc
-)paren
-suffix:semicolon
-id|tmp
-op_and_assign
-op_complement
-(paren
-id|SAB82532_RFC_RFDF
-)paren
-suffix:semicolon
-id|writeb
-c_func
-(paren
-id|tmp
-comma
-op_amp
-id|info-&gt;regs-&gt;rw.rfc
-)paren
-suffix:semicolon
-id|sab82532_cec_wait
-c_func
-(paren
-id|info
-)paren
-suffix:semicolon
-id|writeb
-c_func
-(paren
-id|SAB82532_CMDR_RRES
-comma
-op_amp
-id|info-&gt;regs-&gt;w.cmdr
-)paren
-suffix:semicolon
-macro_line|#ifndef __sparc_v9__
-r_if
-c_cond
-(paren
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|linux_dbvec
-)paren
-op_ge
-id|DEBUG_FIRSTVADDR
-)paren
-op_logical_and
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|linux_dbvec
-)paren
-op_le
-id|DEBUG_LASTVADDR
-)paren
-)paren
-id|sp_enter_debugger
-c_func
-(paren
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif
-id|prom_cmdline
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Reset FIFO to character + status mode.&n;&t; */
-id|writeb
-c_func
-(paren
-id|saved_rfc
-comma
-op_amp
-id|info-&gt;regs-&gt;w.rfc
-)paren
-suffix:semicolon
-id|sab82532_cec_wait
-c_func
-(paren
-id|info
-)paren
-suffix:semicolon
-id|writeb
-c_func
-(paren
-id|SAB82532_CMDR_RRES
-comma
-op_amp
-id|info-&gt;regs-&gt;w.cmdr
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * ----------------------------------------------------------------------&n; *&n; * Here starts the interrupt handling routines.  All of the following&n; * subroutines are declared as inline and are folded into&n; * sab82532_interrupt().  They were separated out for readability&squot;s sake.&n; *&n; * Note: sab82532_interrupt() is a &quot;fast&quot; interrupt, which means that it&n; * runs with interrupts turned off.  People who may want to modify&n; * sab82532_interrupt() should try to keep the interrupt handler as fast as&n; * possible.  After you are done making modifications, it is not a bad&n; * idea to do:&n; * &n; * gcc -S -DKERNEL -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer serial.c&n; *&n; * and look at the resulting assemble code in serial.s.&n; *&n; * &t;&t;&t;&t;- Ted Ts&squot;o (tytso@mit.edu), 7-Mar-93&n; * -----------------------------------------------------------------------&n; */
 multiline_comment|/*&n; * This routine is used by the interrupt handler to schedule&n; * processing in the software interrupt portion of the driver.&n; */
 DECL|function|sab82532_sched_event
@@ -1272,12 +1153,7 @@ op_amp
 id|info-&gt;regs-&gt;w.cmdr
 )paren
 suffix:semicolon
-multiline_comment|/* Wait for command execution, to catch the TCD below. */
-id|sab82532_cec_wait
-c_func
-(paren
-id|info
-)paren
+r_return
 suffix:semicolon
 )brace
 r_if
@@ -1288,7 +1164,7 @@ op_amp
 id|SAB82532_ISR0_RFO
 )paren
 (brace
-macro_line|#if 1
+macro_line|#ifdef SERIAL_DEBUG_OVERFLOW
 id|printk
 c_func
 (paren
@@ -1353,6 +1229,7 @@ id|info-&gt;regs-&gt;w.cmdr
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 r_if
 c_cond
 (paren
@@ -1365,6 +1242,7 @@ op_amp
 id|keypress_wait
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1394,7 +1272,7 @@ op_ge
 id|TTY_FLIPBUF_SIZE
 )paren
 (brace
-macro_line|#if 1
+macro_line|#ifdef SERIAL_DEBUG_OVERFLOW
 id|printk
 c_func
 (paren
@@ -1537,23 +1415,33 @@ id|stat-&gt;sreg.isr1
 op_amp
 id|SAB82532_ISR1_ALLS
 )paren
+(brace
+id|info-&gt;interrupt_mask1
+op_or_assign
+id|SAB82532_IMR1_ALLS
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|info-&gt;interrupt_mask1
+comma
+op_amp
+id|info-&gt;regs-&gt;w.imr1
+)paren
+suffix:semicolon
 id|info-&gt;all_sent
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 op_logical_neg
 (paren
-id|readb
-c_func
-(paren
+id|stat-&gt;sreg.isr1
 op_amp
-id|info-&gt;regs-&gt;r.star
-)paren
-op_amp
-id|SAB82532_STAR_XFW
+id|SAB82532_ISR1_XPR
 )paren
 )paren
 r_return
@@ -1611,11 +1499,27 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Stuff 32 bytes into Transmit FIFO. */
+id|info-&gt;interrupt_mask1
+op_and_assign
+op_complement
+(paren
+id|SAB82532_IMR1_ALLS
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|info-&gt;interrupt_mask1
+comma
+op_amp
+id|info-&gt;regs-&gt;w.imr1
+)paren
+suffix:semicolon
 id|info-&gt;all_sent
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Stuff 32 bytes into Transmit FIFO. */
 r_for
 c_loop
 (paren
@@ -1774,6 +1678,7 @@ op_amp
 id|SAB82532_ISR1_BRK
 )paren
 (brace
+macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 r_if
 c_cond
 (paren
@@ -1789,6 +1694,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1907,7 +1813,7 @@ suffix:semicolon
 id|modem_change
 op_increment
 suffix:semicolon
-macro_line|#if 0
+macro_line|#ifdef SERIAL_DEBUG_MODEM
 id|printk
 c_func
 (paren
@@ -1943,7 +1849,7 @@ suffix:semicolon
 id|modem_change
 op_increment
 suffix:semicolon
-macro_line|#if 0
+macro_line|#ifdef SERIAL_DEBUG_MODEM
 id|printk
 c_func
 (paren
@@ -2002,7 +1908,7 @@ suffix:semicolon
 id|modem_change
 op_increment
 suffix:semicolon
-macro_line|#if 0
+macro_line|#ifdef SERIAL_DEBUG_MODEM
 id|printk
 c_func
 (paren
@@ -3243,6 +3149,8 @@ id|info-&gt;interrupt_mask1
 op_assign
 id|SAB82532_IMR1_BRKT
 op_or
+id|SAB82532_IMR1_ALLS
+op_or
 id|SAB82532_IMR1_XOFF
 op_or
 id|SAB82532_IMR1_TIN
@@ -3261,6 +3169,10 @@ comma
 op_amp
 id|info-&gt;regs-&gt;w.imr1
 )paren
+suffix:semicolon
+id|info-&gt;all_sent
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -3399,6 +3311,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 r_if
 c_cond
 (paren
@@ -3477,6 +3390,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Disable Interrupts */
 id|info-&gt;interrupt_mask0
 op_assign
@@ -5238,31 +5152,6 @@ id|tty
 )paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|tty-&gt;termios-&gt;c_cflag
-op_amp
-id|CRTSCTS
-)paren
-id|writeb
-c_func
-(paren
-id|readb
-c_func
-(paren
-op_amp
-id|info-&gt;regs-&gt;rw.mode
-)paren
-op_or
-id|SAB82532_MODE_RTS
-comma
-op_amp
-id|info-&gt;regs-&gt;rw.mode
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|sab82532_unthrottle
 r_static
@@ -5366,34 +5255,6 @@ id|tty
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|tty-&gt;termios-&gt;c_cflag
-op_amp
-id|CRTSCTS
-)paren
-id|writeb
-c_func
-(paren
-id|readb
-c_func
-(paren
-op_amp
-id|info-&gt;regs-&gt;rw.mode
-)paren
-op_amp
-op_complement
-(paren
-id|SAB82532_MODE_RTS
-)paren
-comma
-op_amp
-id|info-&gt;regs-&gt;rw.mode
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * ------------------------------------------------------------&n; * sab82532_ioctl() and friends&n; * ------------------------------------------------------------&n; */
 DECL|function|get_serial_info
@@ -7052,32 +6913,6 @@ id|tty
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/*&n;&t; * No need to wake up processes in open wait, since they&n;&t; * sample the CLOCAL flag once, and don&squot;t recheck it.&n;&t; * XXX  It&squot;s not clear whether the current behavior is correct&n;&t; * or not.  Hence, this may change.....&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|old_termios-&gt;c_cflag
-op_amp
-id|CLOCAL
-)paren
-op_logical_and
-(paren
-id|tty-&gt;termios-&gt;c_cflag
-op_amp
-id|CLOCAL
-)paren
-)paren
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|info-&gt;open_wait
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * ------------------------------------------------------------&n; * sab82532_close()&n; * &n; * This routine is called when the serial port gets closed.  First, we&n; * wait for the last remaining data to be sent.  Then, we unlink its&n; * async structure from the interrupt chain if necessary, and we free&n; * that IRQ if nothing is left in the chain.&n; * ------------------------------------------------------------&n; */
 DECL|function|sab82532_close
@@ -7310,27 +7145,6 @@ op_amp
 id|info-&gt;regs-&gt;w.imr0
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|writeb
-c_func
-(paren
-id|readb
-c_func
-(paren
-op_amp
-id|info-&gt;regs-&gt;rw.mode
-)paren
-op_amp
-op_complement
-(paren
-id|SAB82532_MODE_RAC
-)paren
-comma
-op_amp
-id|info-&gt;regs-&gt;rw.mode
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7617,10 +7431,6 @@ id|timeout
 r_break
 suffix:semicolon
 )brace
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_WAIT_UNTIL_SENT
 id|printk
 c_func
@@ -7676,6 +7486,7 @@ l_string|&quot;sab82532_hangup&quot;
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 r_if
 c_cond
 (paren
@@ -7683,6 +7494,7 @@ id|info-&gt;is_console
 )paren
 r_return
 suffix:semicolon
+macro_line|#endif
 id|sab82532_flush_buffer
 c_func
 (paren
@@ -8245,10 +8057,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
 id|remove_wait_queue
 c_func
 (paren
@@ -8741,7 +8549,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;%d: uart:SAB82532 &quot;
+l_string|&quot;%u: uart:SAB82532 &quot;
 comma
 id|info-&gt;line
 )paren
@@ -9050,9 +8858,25 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; baud:%d&quot;
+l_string|&quot; baud:%u&quot;
 comma
 id|info-&gt;baud
+)paren
+suffix:semicolon
+id|ret
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|ret
+comma
+l_string|&quot; tx:%u rx:%u&quot;
+comma
+id|info-&gt;icount.tx
+comma
+id|info-&gt;icount.rx
 )paren
 suffix:semicolon
 r_if
@@ -9069,7 +8893,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; fe:%d&quot;
+l_string|&quot; fe:%u&quot;
 comma
 id|info-&gt;icount.frame
 )paren
@@ -9088,7 +8912,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; pe:%d&quot;
+l_string|&quot; pe:%u&quot;
 comma
 id|info-&gt;icount.parity
 )paren
@@ -9107,7 +8931,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; brk:%d&quot;
+l_string|&quot; brk:%u&quot;
 comma
 id|info-&gt;icount.brk
 )paren
@@ -9126,7 +8950,7 @@ id|buf
 op_plus
 id|ret
 comma
-l_string|&quot; oe:%d&quot;
+l_string|&quot; oe:%u&quot;
 comma
 id|info-&gt;icount.overrun
 )paren
@@ -9602,6 +9426,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
 DECL|function|sab82532_kgdb_hook
 r_static
 r_void
@@ -9625,6 +9450,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|show_serial_version
 r_static
 r_inline
@@ -9640,7 +9466,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.47 $&quot;
+l_string|&quot;$Revision: 1.51 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9924,10 +9750,17 @@ id|callout_driver
 op_assign
 id|serial_driver
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|callout_driver.name
 op_assign
 l_string|&quot;cua/%d&quot;
 suffix:semicolon
+macro_line|#else
+id|callout_driver.name
+op_assign
+l_string|&quot;cua&quot;
+suffix:semicolon
+macro_line|#endif
 id|callout_driver.major
 op_assign
 id|TTYAUX_MAJOR
@@ -10558,6 +10391,7 @@ id|sab82532_console_init
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef MODULE
 id|sunserial_setinitfunc
 c_func
 (paren
@@ -10568,6 +10402,7 @@ id|rs_ops.rs_kgdb_hook
 op_assign
 id|sab82532_kgdb_hook
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -10725,6 +10560,25 @@ id|sab
 op_assign
 id|sab-&gt;next
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sab-&gt;line
+op_amp
+l_int|0x01
+)paren
+)paren
+id|free_irq
+c_func
+(paren
+id|sab-&gt;irq
+comma
+id|sab
+)paren
+suffix:semicolon
 id|iounmap
 c_func
 (paren
@@ -10732,8 +10586,163 @@ id|sab-&gt;regs
 )paren
 suffix:semicolon
 )brace
+)brace
 macro_line|#endif /* MODULE */
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
+r_static
+r_void
+DECL|function|batten_down_hatches
+id|batten_down_hatches
+c_func
+(paren
+r_struct
+id|sab82532
+op_star
+id|info
+)paren
+(brace
+r_int
+r_char
+id|saved_rfc
+comma
+id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|stop_a_enabled
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* If we are doing kadb, we call the debugger&n;&t; * else we just drop into the boot monitor.&n;&t; * Note that we must flush the user windows&n;&t; * first before giving up control.&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|flush_user_windows
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Set FIFO to single character mode.&n;&t; */
+id|saved_rfc
+op_assign
+id|readb
+c_func
+(paren
+op_amp
+id|info-&gt;regs-&gt;r.rfc
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+id|readb
+c_func
+(paren
+op_amp
+id|info-&gt;regs-&gt;rw.rfc
+)paren
+suffix:semicolon
+id|tmp
+op_and_assign
+op_complement
+(paren
+id|SAB82532_RFC_RFDF
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|tmp
+comma
+op_amp
+id|info-&gt;regs-&gt;rw.rfc
+)paren
+suffix:semicolon
+id|sab82532_cec_wait
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|SAB82532_CMDR_RRES
+comma
+op_amp
+id|info-&gt;regs-&gt;w.cmdr
+)paren
+suffix:semicolon
+macro_line|#ifndef __sparc_v9__
+r_if
+c_cond
+(paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|linux_dbvec
+)paren
+op_ge
+id|DEBUG_FIRSTVADDR
+)paren
+op_logical_and
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|linux_dbvec
+)paren
+op_le
+id|DEBUG_LASTVADDR
+)paren
+)paren
+id|sp_enter_debugger
+c_func
+(paren
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif
+id|prom_cmdline
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Reset FIFO to character + status mode.&n;&t; */
+id|writeb
+c_func
+(paren
+id|saved_rfc
+comma
+op_amp
+id|info-&gt;regs-&gt;w.rfc
+)paren
+suffix:semicolon
+id|sab82532_cec_wait
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|SAB82532_CMDR_RRES
+comma
+op_amp
+id|info-&gt;regs-&gt;w.cmdr
+)paren
+suffix:semicolon
+)brace
 r_static
 id|__inline__
 r_void

@@ -992,6 +992,8 @@ l_int|0
 comma
 l_int|0
 comma
+l_int|0
+comma
 id|zones_size
 comma
 id|__MEMORY_START

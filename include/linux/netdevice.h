@@ -1366,17 +1366,6 @@ id|skb
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|dev_loopback_xmit
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|register_netdevice
 c_func

@@ -10546,6 +10546,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
 multiline_comment|/*-------------------------------------------------------------------------*/
 DECL|function|ohci_hcd_init
+r_static
 r_int
 id|__init
 id|ohci_hcd_init
@@ -10581,9 +10582,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/*-------------------------------------------------------------------------*/
 DECL|function|ohci_hcd_cleanup
+r_static
 r_void
 id|__exit
 id|ohci_hcd_cleanup
@@ -10618,7 +10619,6 @@ id|module_exit
 id|ohci_hcd_cleanup
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
 id|MODULE_AUTHOR
 (paren
 l_string|&quot;Roman Weissgaerber &lt;weissg@vienna.at&gt;&quot;

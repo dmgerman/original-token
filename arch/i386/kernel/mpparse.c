@@ -33,12 +33,6 @@ id|mp_bus_id_to_type
 (braket
 id|MAX_MP_BUSSES
 )braket
-op_assign
-(brace
-op_minus
-l_int|1
-comma
-)brace
 suffix:semicolon
 DECL|variable|mp_bus_id_to_pci_bus
 r_int
@@ -517,9 +511,14 @@ c_func
 (paren
 id|str
 comma
-l_string|&quot;ISA&quot;
+id|BUSTYPE_ISA
 comma
-l_int|3
+r_sizeof
+(paren
+id|BUSTYPE_ISA
+)paren
+op_minus
+l_int|1
 )paren
 op_eq
 l_int|0
@@ -542,9 +541,14 @@ c_func
 (paren
 id|str
 comma
-l_string|&quot;EISA&quot;
+id|BUSTYPE_EISA
 comma
-l_int|4
+r_sizeof
+(paren
+id|BUSTYPE_EISA
+)paren
+op_minus
+l_int|1
 )paren
 op_eq
 l_int|0
@@ -567,9 +571,14 @@ c_func
 (paren
 id|str
 comma
-l_string|&quot;PCI&quot;
+id|BUSTYPE_PCI
 comma
-l_int|3
+r_sizeof
+(paren
+id|BUSTYPE_PCI
+)paren
+op_minus
+l_int|1
 )paren
 op_eq
 l_int|0
@@ -602,9 +611,14 @@ c_func
 (paren
 id|str
 comma
-l_string|&quot;MCA&quot;
+id|BUSTYPE_MCA
 comma
-l_int|3
+r_sizeof
+(paren
+id|BUSTYPE_MCA
+)paren
+op_minus
+l_int|1
 )paren
 op_eq
 l_int|0
@@ -623,15 +637,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Unknown bustype %s&bslash;n&quot;
+l_string|&quot;Unknown bustype %s - ignoring&bslash;n&quot;
 comma
 id|str
-)paren
-suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;cannot handle bus - mail to linux-smp@vger.kernel.org&quot;
 )paren
 suffix:semicolon
 )brace

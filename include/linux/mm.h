@@ -1018,6 +1018,11 @@ id|pg_data_t
 op_star
 id|pgdat
 comma
+r_struct
+id|page
+op_star
+id|pmap
+comma
 r_int
 r_int
 op_star

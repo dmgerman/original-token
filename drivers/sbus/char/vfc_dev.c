@@ -23,6 +23,12 @@ mdefine_line|#define VFC_IOCTL_DEBUG
 macro_line|#endif
 macro_line|#include &quot;vfc.h&quot;
 macro_line|#include &lt;asm/vfc_ioctls.h&gt;
+DECL|variable|vfc_fops
+r_static
+r_struct
+id|file_operations
+id|vfc_fops
+suffix:semicolon
 DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.103 2000/08/26 02:42:28 anton Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.104 2000/09/06 05:43:00 anton Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -526,6 +526,28 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__global_restore_flags
+)paren
+suffix:semicolon
+multiline_comment|/* Misc SMP information */
+DECL|variable|smp_num_cpus
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|smp_num_cpus
+)paren
+suffix:semicolon
+DECL|variable|__cpu_number_map
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__cpu_number_map
+)paren
+suffix:semicolon
+DECL|variable|__cpu_logical_map
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__cpu_logical_map
 )paren
 suffix:semicolon
 macro_line|#endif

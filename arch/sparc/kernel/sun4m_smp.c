@@ -1846,6 +1846,21 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* First, run local copy. */
+id|func
+c_func
+(paren
+id|arg1
+comma
+id|arg2
+comma
+id|arg3
+comma
+id|arg4
+comma
+id|arg5
+)paren
+suffix:semicolon
 (brace
 r_register
 r_int
@@ -1929,6 +1944,24 @@ comma
 id|flags
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|func
+c_func
+(paren
+id|arg1
+comma
+id|arg2
+comma
+id|arg3
+comma
+id|arg4
+comma
+id|arg5
+)paren
+suffix:semicolon
+multiline_comment|/* Just need to run local copy. */
 )brace
 )brace
 multiline_comment|/* Running cross calls. */

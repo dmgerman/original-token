@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications, Inc.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: intrep.c,v 1.39 2000/08/09 13:23:36 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications, Inc.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: intrep.c,v 1.69 2000/08/24 09:35:47 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
 multiline_comment|/* This file contains the code for the internal structure of the&n;   Journaling Flash File System, JFFS.  */
 multiline_comment|/*&n; * Todo list:&n; *&n; * memcpy_to_flash() and memcpy_from_flash() functions.&n; *&n; * Implementation of hard links.&n; *&n; * Organize the source code in a better way. Against the VFS we could&n; * have jffs_ext.c, and against the block device jffs_int.c.&n; * A better file-internal organization too.&n; *&n; * A better checksum algorithm.&n; *&n; * Consider endianness stuff. ntohl() etc.&n; *&n; * Are we handling the atime, mtime, ctime members of the inode right?&n; *&n; * Remove some duplicated code. Take a look at jffs_write_node() and&n; * jffs_rewrite_data() for instance.&n; *&n; * Implement more meaning of the nlink member in various data structures.&n; * nlink could be used in conjunction with hard links for instance.&n; *&n; * Better memory management. Allocate data structures in larger chunks&n; * if possible.&n; *&n; * If too much meta data is stored, a garbage collect should be issued.&n; * We have experienced problems with too much meta data with for instance&n; * log files.&n; *&n; * Improve the calls to jffs_ioctl(). We would like to retrieve more&n; * information to be able to debug (or to supervise) JFFS during run-time.&n; *&n; */
 DECL|macro|__NO_VERSION__
@@ -740,6 +740,11 @@ id|count
 r_int
 id|retlen
 suffix:semicolon
+r_int
+id|res
+suffix:semicolon
+id|res
+op_assign
 id|MTD_READ
 c_func
 (paren
@@ -766,11 +771,18 @@ id|count
 id|printk
 c_func
 (paren
-l_string|&quot;Didn&squot;t read all bytes in flash_safe_read()&bslash;n&quot;
+l_string|&quot;Didn&squot;t read all bytes in flash_safe_read(). Returned %d&bslash;n&quot;
+comma
+id|res
 )paren
 suffix:semicolon
 )brace
 r_return
+id|res
+ques
+c_cond
+id|res
+suffix:colon
 id|retlen
 suffix:semicolon
 )brace
@@ -795,6 +807,11 @@ suffix:semicolon
 id|__u32
 id|ret
 suffix:semicolon
+r_int
+id|res
+suffix:semicolon
+id|res
+op_assign
 id|MTD_READ
 c_func
 (paren
@@ -827,7 +844,9 @@ l_int|4
 id|printk
 c_func
 (paren
-l_string|&quot;Didn&squot;t read all bytes in flash_read_u32()&bslash;n&quot;
+l_string|&quot;Didn&squot;t read all bytes in flash_read_u32(). Returned %d&bslash;n&quot;
+comma
+id|res
 )paren
 suffix:semicolon
 r_return
@@ -859,6 +878,11 @@ suffix:semicolon
 id|__u8
 id|ret
 suffix:semicolon
+r_int
+id|res
+suffix:semicolon
+id|res
+op_assign
 id|MTD_READ
 c_func
 (paren
@@ -886,7 +910,9 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Didn&squot;t read a byte in flash_read_u8()&bslash;n&quot;
+l_string|&quot;Didn&squot;t read a byte in flash_read_u8(). Returned %d&bslash;n&quot;
+comma
+id|res
 )paren
 suffix:semicolon
 r_return
@@ -923,6 +949,11 @@ id|count
 r_int
 id|retlen
 suffix:semicolon
+r_int
+id|res
+suffix:semicolon
+id|res
+op_assign
 id|MTD_WRITE
 c_func
 (paren
@@ -949,11 +980,18 @@ id|count
 id|printk
 c_func
 (paren
-l_string|&quot;Didn&squot;t write all bytes in flash_safe_write()&bslash;n&quot;
+l_string|&quot;Didn&squot;t write all bytes in flash_safe_write(). Returned %d&bslash;n&quot;
+comma
+id|res
 )paren
 suffix:semicolon
 )brace
 r_return
+id|res
+ques
+c_cond
+id|res
+suffix:colon
 id|retlen
 suffix:semicolon
 )brace
@@ -1188,10 +1226,11 @@ id|u_long
 op_amp
 id|wait_q
 suffix:semicolon
+multiline_comment|/* FIXME: Use TASK_INTERRUPTIBLE and deal with being interrupted */
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|add_wait_queue
@@ -1271,7 +1310,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Wait for flash to finish. */
-multiline_comment|/* FIXME: We could have been interrupted here. We don&squot;t deal with it */
 id|remove_wait_queue
 c_func
 (paren
@@ -1483,13 +1521,7 @@ op_star
 id|fmc
 )paren
 (brace
-id|down
-c_func
-(paren
-op_amp
-id|fmc-&gt;wlock
-)paren
-suffix:semicolon
+singleline_comment|//&t;down(&amp;fmc-&gt;wlock);
 )brace
 DECL|function|jffs_fm_write_unlock
 r_static
@@ -1504,13 +1536,7 @@ op_star
 id|fmc
 )paren
 (brace
-id|up
-c_func
-(paren
-op_amp
-id|fmc-&gt;wlock
-)paren
-suffix:semicolon
+singleline_comment|//&t;up(&amp;fmc-&gt;wlock);
 )brace
 multiline_comment|/* Create and initialize a new struct jffs_file.  */
 r_static
@@ -1708,6 +1734,10 @@ op_increment
 )paren
 suffix:semicolon
 id|c-&gt;root
+op_assign
+l_int|0
+suffix:semicolon
+id|c-&gt;gc_task
 op_assign
 l_int|0
 suffix:semicolon
@@ -2741,6 +2771,75 @@ op_mod
 id|fmc-&gt;sector_size
 )paren
 (brace
+multiline_comment|/* If there was free space in previous &n;&t;&t;&t;&t;   sectors, don&squot;t mark that dirty too - &n;&t;&t;&t;&t;   only from the beginning of this sector&n;&t;&t;&t;&t;   (or from start) &n;&t;&t;&t;&t;*/
+r_if
+c_cond
+(paren
+id|start
+OL
+(paren
+id|pos
+op_amp
+op_complement
+(paren
+id|fmc-&gt;sector_size
+op_minus
+l_int|1
+)paren
+)paren
+)paren
+(brace
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;Reducing start to 0x%x from 0x%x&bslash;n&quot;
+comma
+id|pos
+op_amp
+op_complement
+(paren
+id|fmc-&gt;sector_size
+op_minus
+l_int|1
+)paren
+comma
+id|start
+)paren
+)paren
+suffix:semicolon
+id|start
+op_assign
+id|pos
+op_amp
+op_complement
+(paren
+id|fmc-&gt;sector_size
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+)brace
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;Dirty space: 0x%x for 0x%x bytes&bslash;n&quot;
+comma
+id|start
+comma
+(paren
+id|pos
+op_minus
+id|start
+)paren
+)paren
+)paren
+suffix:semicolon
 id|jffs_fmalloced
 c_func
 (paren
@@ -2890,6 +2989,8 @@ l_int|128
 )paren
 )paren
 suffix:semicolon
+id|cont_dirty
+suffix:colon
 r_for
 c_loop
 (paren
@@ -2946,6 +3047,132 @@ suffix:semicolon
 r_goto
 id|cont_scan
 suffix:semicolon
+r_case
+id|JFFS_EMPTY_BITMASK
+suffix:colon
+multiline_comment|/* First, mark as dirty the region&n;&t;&t;&t;&t;&t;   which really does contain crap. */
+id|jffs_fmalloced
+c_func
+(paren
+id|fmc
+comma
+(paren
+id|__u32
+)paren
+id|start
+comma
+(paren
+id|__u32
+)paren
+(paren
+id|pos
+op_minus
+id|start
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Then, scan the region which looks free.&n;&t;&t;&t;&t;&t;   Depending on how large it is, we may&n;&t;&t;&t;&t;&t;   mark it dirty too.&n;&t;&t;&t;&t;&t;*/
+id|start
+op_assign
+id|pos
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|pos
+OL
+id|end
+suffix:semicolon
+id|pos
+op_add_assign
+l_int|4
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|flash_read_u32
+c_func
+(paren
+id|fmc-&gt;mtd
+comma
+id|pos
+)paren
+)paren
+(brace
+r_case
+id|JFFS_MAGIC_BITMASK
+suffix:colon
+r_if
+c_cond
+(paren
+id|pos
+op_minus
+id|start
+OL
+id|fmc-&gt;max_chunk_size
+)paren
+(brace
+multiline_comment|/* Not much free space. Mark it dirty. */
+id|jffs_fmalloced
+c_func
+(paren
+id|fmc
+comma
+(paren
+id|__u32
+)paren
+id|start
+comma
+(paren
+id|__u32
+)paren
+id|pos
+op_minus
+id|start
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_goto
+id|cont_scan
+suffix:semicolon
+r_case
+id|JFFS_EMPTY_BITMASK
+suffix:colon
+multiline_comment|/* More empty space */
+r_continue
+suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
+multiline_comment|/* i.e. more dirt */
+r_if
+c_cond
+(paren
+id|pos
+op_minus
+id|start
+OL
+id|fmc-&gt;max_chunk_size
+)paren
+(brace
+multiline_comment|/* There wasn&squot;t much before the dirt&n;&t;&t;&t;&t;&t;&t;&t;&t;   started again. Just mark it all dirty&n;&t;&t;&t;&t;&t;&t;&t;&t;*/
+r_goto
+id|cont_dirty
+suffix:semicolon
+)brace
+multiline_comment|/* There was quite a lot of free space. Leave it&n;&t;&t;&t;&t;&t;&t;&t;   free.&n;&t;&t;&t;&t;&t;&t;&t;*/
+r_goto
+id|cont_scan
+suffix:semicolon
+)brace
+)brace
 r_default
 suffix:colon
 r_break
@@ -3166,6 +3393,14 @@ OG
 id|JFFS_MAX_NAME_LEN
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_scan_flash: Found a &quot;
+l_string|&quot;JFFS node with name too large&bslash;n&quot;
+)paren
+suffix:semicolon
 r_goto
 id|bad_inode
 suffix:semicolon
@@ -3213,6 +3448,18 @@ OG
 id|fmc-&gt;max_chunk_size
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_scan_flash: Found a &quot;
+l_string|&quot;JFFS node with dsize (0x%x) &gt; max_chunk_size (0x%x)&bslash;n&quot;
+comma
+id|raw_inode.dsize
+comma
+id|fmc-&gt;max_chunk_size
+)paren
+suffix:semicolon
 r_goto
 id|bad_inode
 suffix:semicolon
@@ -3856,7 +4103,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;jffs_insert_node(): ino = %u, version = %u, &quot;
-l_string|&quot;name = &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
+l_string|&quot;name = &bslash;&quot;%s&bslash;&quot;, deleted = %d&bslash;n&quot;
 comma
 id|raw_inode-&gt;ino
 comma
@@ -3875,6 +4122,8 @@ id|name
 suffix:colon
 l_string|&quot;&quot;
 )paren
+comma
+id|raw_inode-&gt;deleted
 )paren
 )paren
 suffix:semicolon
@@ -5661,6 +5910,14 @@ r_int
 r_char
 op_star
 id|data
+comma
+r_int
+id|recoverable
+comma
+r_struct
+id|jffs_file
+op_star
+id|f
 )paren
 (brace
 r_struct
@@ -5682,6 +5939,11 @@ id|pos
 suffix:semicolon
 r_int
 id|err
+suffix:semicolon
+id|__u32
+id|slack
+op_assign
+l_int|0
 suffix:semicolon
 id|__u32
 id|total_name_size
@@ -5717,6 +5979,17 @@ op_plus
 id|total_name_size
 op_plus
 id|total_data_size
+suffix:semicolon
+multiline_comment|/* If this node isn&squot;t something that will eventually let&n;&t;   GC free even more space, then don&squot;t allow it unless&n;&t;   there&squot;s at least max_chunk_size space still available&n;&t;*/
+r_if
+c_cond
+(paren
+op_logical_neg
+id|recoverable
+)paren
+id|slack
+op_assign
+id|fmc-&gt;max_chunk_size
 suffix:semicolon
 multiline_comment|/* Fire the retrorockets and shoot the fruiton torpedoes, sir!  */
 id|ASSERT
@@ -5776,7 +6049,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;jffs_write_node(): filename = &bslash;&quot;%s&bslash;&quot;, ino = %u, &quot;
-l_string|&quot;version = %u, total_size = %u&bslash;n&quot;
+l_string|&quot;total_size = %u&bslash;n&quot;
 comma
 (paren
 id|name
@@ -5788,8 +6061,6 @@ l_string|&quot;&quot;
 )paren
 comma
 id|raw_inode-&gt;ino
-comma
-id|raw_inode-&gt;version
 comma
 id|total_size
 )paren
@@ -5808,6 +6079,50 @@ op_logical_neg
 id|fm
 )paren
 (brace
+multiline_comment|/* Deadlocks suck. */
+r_while
+c_loop
+(paren
+id|fmc-&gt;free_size
+OL
+id|fmc-&gt;min_free_size
+op_plus
+id|total_size
+op_plus
+id|slack
+)paren
+(brace
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|JFFS_ENOUGH_SPACE
+c_func
+(paren
+id|c
+comma
+id|total_size
+op_plus
+id|slack
+)paren
+)paren
+r_return
+op_minus
+id|ENOSPC
+suffix:semicolon
+id|jffs_fm_write_lock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* First try to allocate some flash memory.  */
 id|err
 op_assign
@@ -6043,6 +6358,34 @@ id|pos
 op_assign
 id|node-&gt;fm-&gt;offset
 suffix:semicolon
+multiline_comment|/* Increment the version number here. We can&squot;t let the caller&n;&t;   set it beforehand, because we might have had to do GC on a node&n;&t;   of this file - and we&squot;d end up reusing version numbers.&n;&t;*/
+r_if
+c_cond
+(paren
+id|f
+)paren
+(brace
+id|raw_inode-&gt;version
+op_assign
+id|f-&gt;highest_version
+op_plus
+l_int|1
+suffix:semicolon
+id|D1
+c_func
+(paren
+id|printk
+(paren
+id|KERN_NOTICE
+l_string|&quot;jffs_write_node(): setting version of %s to %d&bslash;n&quot;
+comma
+id|f-&gt;name
+comma
+id|raw_inode-&gt;version
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Compute the checksum for the data and name chunks.  */
 id|raw_inode-&gt;dchksum
 op_assign
@@ -6348,6 +6691,7 @@ id|jffs_node
 op_star
 id|node
 comma
+r_int
 r_char
 op_star
 id|buf
@@ -6467,6 +6811,7 @@ id|jffs_file
 op_star
 id|f
 comma
+r_int
 r_char
 op_star
 id|buf
@@ -6500,7 +6845,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Number of bytes traversed.  */
-id|D1
+id|D2
 c_func
 (paren
 id|printk
@@ -7760,10 +8105,31 @@ op_assign
 id|n-&gt;range_next
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|node-&gt;removed_size
+OG
+(paren
+id|f-&gt;size
+op_minus
+id|node-&gt;data_offset
+)paren
+)paren
+(brace
+multiline_comment|/* It&squot;s possible that the removed_size is in fact&n;&t;&t; * greater than the amount of data we actually thought&n;&t;&t; * were present in the first place - some of the nodes &n;&t;&t; * which this node originally obsoleted may already have&n;&t;&t; * been deleted from the flash by subsequent garbage &n;&t;&t; * collection.&n;&t;&t; *&n;&t;&t; * If this is the case, don&squot;t let f-&gt;size go negative.&n;&t;&t; * Bad things would happen :)&n;&t;&t; */
+id|f-&gt;size
+op_assign
+id|node-&gt;data_offset
+suffix:semicolon
+)brace
+r_else
+(brace
 id|f-&gt;size
 op_sub_assign
 id|node-&gt;removed_size
 suffix:semicolon
+)brace
 id|D3
 c_func
 (paren
@@ -7898,7 +8264,7 @@ op_assign
 id|n-&gt;range_next
 )paren
 (brace
-id|D1
+id|D2
 c_func
 (paren
 id|printk
@@ -9768,7 +10134,7 @@ ques
 c_cond
 id|f-&gt;name
 suffix:colon
-l_string|&quot;&quot;
+l_string|&quot;(null)&quot;
 )paren
 comma
 id|size
@@ -9835,9 +10201,7 @@ id|size
 suffix:semicolon
 id|total_name_size
 op_assign
-id|f-&gt;nsize
-op_plus
-id|JFFS_GET_PAD_BYTES
+id|JFFS_PAD
 c_func
 (paren
 id|f-&gt;nsize
@@ -9845,9 +10209,7 @@ id|f-&gt;nsize
 suffix:semicolon
 id|total_data_size
 op_assign
-id|size
-op_plus
-id|JFFS_GET_PAD_BYTES
+id|JFFS_PAD
 c_func
 (paren
 id|size
@@ -9945,7 +10307,19 @@ op_logical_neg
 id|fm-&gt;nodes
 )paren
 (brace
-multiline_comment|/* The jffs_fm struct that we got is not good enough.  */
+multiline_comment|/* The jffs_fm struct that we got is not big enough.  */
+multiline_comment|/* This should never happen, because we deal with this case&n;&t;&t;   in jffs_garbage_collect_next().*/
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_rewrite_data(): Allocated node is too small (%d bytes of %d)&bslash;n&quot;
+comma
+id|fm-&gt;size
+comma
+id|total_size
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9964,6 +10338,26 @@ OL
 l_int|0
 )paren
 (brace
+id|D
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;jffs_rewrite_data(): &quot;
+l_string|&quot;jffs_write_dummy_node() Failed!&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|err
+op_assign
+op_minus
+id|ENOSPC
+suffix:semicolon
+)brace
 id|DJM
 c_func
 (paren
@@ -9977,17 +10371,6 @@ c_func
 id|fmc
 )paren
 suffix:semicolon
-id|D
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;jffs_rewrite_data(): &quot;
-l_string|&quot;jffs_write_dummy_node() Failed!&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -9998,80 +10381,9 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/* Get a new one.  */
-r_if
-c_cond
-(paren
-(paren
-id|err
-op_assign
-id|jffs_fmalloc
-c_func
-(paren
-id|fmc
-comma
-id|total_size
-comma
-id|node
-comma
-op_amp
-id|fm
-)paren
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|jffs_fm_write_unlock
-c_func
-(paren
-id|fmc
-)paren
-suffix:semicolon
-id|D
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;jffs_rewrite_data(): Second &quot;
-l_string|&quot;jffs_fmalloc(0x%p, %u) failed!&bslash;n&quot;
-comma
-id|fmc
-comma
-id|total_size
-)paren
-)paren
-suffix:semicolon
-r_return
-id|err
-suffix:semicolon
-)brace
-)brace
 id|new_node-&gt;fm
 op_assign
 id|fm
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-r_if
-(paren
-id|new_node-&gt;fm-&gt;nodes
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;jffs_rewrite_data(): &quot;
-l_string|&quot;new_node-&gt;fm-&gt;nodes == 0&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-)paren
 suffix:semicolon
 multiline_comment|/* Initialize the raw inode.  */
 id|raw_inode.magic
@@ -10774,6 +11086,10 @@ id|f
 suffix:semicolon
 r_int
 id|size
+comma
+id|err
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|data_size
@@ -10781,16 +11097,11 @@ suffix:semicolon
 r_int
 id|total_name_size
 suffix:semicolon
-r_int
-id|free_size
-op_assign
-id|fmc-&gt;flash_size
-op_minus
-(paren
-id|fmc-&gt;used_size
-op_plus
-id|fmc-&gt;dirty_size
-)paren
+id|__u32
+id|extra_available
+suffix:semicolon
+id|__u32
+id|space_needed
 suffix:semicolon
 id|__u32
 id|free_chunk_size1
@@ -10840,9 +11151,13 @@ l_string|&quot;JFFS: jffs_garbage_collect_next: &quot;
 l_string|&quot;No oldest node found!&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 op_minus
 l_int|1
+suffix:semicolon
+r_goto
+id|jffs_garbage_collect_next_end
 suffix:semicolon
 )brace
 )paren
@@ -10858,17 +11173,14 @@ comma
 id|node-&gt;ino
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
 r_if
+c_cond
 (paren
 op_logical_neg
 id|f
 )paren
 (brace
 id|printk
-c_func
 (paren
 id|KERN_ERR
 l_string|&quot;JFFS: jffs_garbage_collect_next: &quot;
@@ -10878,11 +11190,23 @@ comma
 id|node-&gt;ino
 )paren
 suffix:semicolon
-r_return
+multiline_comment|/* FIXME: Free the offending node and recover. */
+id|err
+op_assign
 op_minus
 l_int|1
 suffix:semicolon
+r_goto
+id|jffs_garbage_collect_next_end
+suffix:semicolon
 )brace
+multiline_comment|/* We always write out the name. Theoretically, we don&squot;t need&n;&t;   to, but for now it&squot;s easier - because otherwise we&squot;d have&n;&t;   to keep track of how many times the current name exists on&n;&t;   the flash and make sure it never reaches zero.&n;&n;&t;   The current approach means that would be possible to cause&n;&t;   the GC to end up eating its tail by writing lots of nodes&n;&t;   with no name for it to garbage-collect. Hence the change in&n;&t;   inode.c to write names with _every_ node.&n;&n;&t;   It sucks, but it _should_ work.&n;&t;*/
+id|total_name_size
+op_assign
+id|JFFS_PAD
+c_func
+(paren
+id|f-&gt;nsize
 )paren
 suffix:semicolon
 id|D1
@@ -10892,7 +11216,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;jffs_garbage_collect_next(): &bslash;&quot;%s&bslash;&quot;, &quot;
-l_string|&quot;ino: %u, version: %u&bslash;n&quot;
+l_string|&quot;ino: %u, version: %u, location 0x%x, dsize %u&bslash;n&quot;
 comma
 (paren
 id|f-&gt;name
@@ -10906,26 +11230,21 @@ comma
 id|node-&gt;ino
 comma
 id|node-&gt;version
+comma
+id|node-&gt;fm-&gt;offset
+comma
+id|node-&gt;data_size
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Compute how much we want to rewrite at the moment.  */
+multiline_comment|/* Compute how many data it&squot;s possible to rewrite at the moment.  */
 id|data_size
 op_assign
 id|f-&gt;size
 op_minus
 id|node-&gt;data_offset
 suffix:semicolon
-id|total_name_size
-op_assign
-id|f-&gt;nsize
-op_plus
-id|JFFS_GET_PAD_BYTES
-c_func
-(paren
-id|f-&gt;nsize
-)paren
-suffix:semicolon
+multiline_comment|/* And from that, the total size of the chunk we want to write */
 id|size
 op_assign
 r_sizeof
@@ -10943,6 +11262,316 @@ c_func
 (paren
 id|data_size
 )paren
+suffix:semicolon
+multiline_comment|/* If that&squot;s more than max_chunk_size, reduce it accordingly */
+r_if
+c_cond
+(paren
+id|size
+OG
+id|fmc-&gt;max_chunk_size
+)paren
+(brace
+id|size
+op_assign
+id|fmc-&gt;max_chunk_size
+suffix:semicolon
+id|data_size
+op_assign
+id|size
+op_minus
+r_sizeof
+(paren
+r_struct
+id|jffs_raw_inode
+)paren
+op_minus
+id|total_name_size
+suffix:semicolon
+)brace
+multiline_comment|/* If we&squot;re asking to take up more space than free_chunk_size1&n;&t;   but we _could_ fit in it, shrink accordingly.&n;&t;*/
+r_if
+c_cond
+(paren
+id|size
+OG
+id|free_chunk_size1
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|free_chunk_size1
+OL
+(paren
+r_sizeof
+(paren
+r_struct
+id|jffs_raw_inode
+)paren
+op_plus
+id|total_name_size
+op_plus
+id|BLOCK_SIZE
+)paren
+)paren
+(brace
+multiline_comment|/* The space left is too small to be of any&n;&t;&t;&t;   use really.  */
+r_struct
+id|jffs_fm
+op_star
+id|dirty_fm
+op_assign
+id|jffs_fmalloced
+c_func
+(paren
+id|fmc
+comma
+id|fmc-&gt;tail-&gt;offset
+op_plus
+id|fmc-&gt;tail-&gt;size
+comma
+id|free_chunk_size1
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dirty_fm
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;JFFS: &quot;
+l_string|&quot;jffs_garbage_collect_next: &quot;
+l_string|&quot;Failed to allocate `dirty&squot; &quot;
+l_string|&quot;flash memory!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|err
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_goto
+id|jffs_garbage_collect_next_end
+suffix:semicolon
+)brace
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;Dirtying end of flash - too small&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|jffs_write_dummy_node
+c_func
+(paren
+id|c
+comma
+id|dirty_fm
+)paren
+suffix:semicolon
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|jffs_garbage_collect_next_end
+suffix:semicolon
+)brace
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;Reducing size of new node from %d to %d to avoid &quot;
+l_string|&quot; exceeding free_chunk_size1&bslash;n&quot;
+comma
+id|size
+comma
+id|free_chunk_size1
+)paren
+)paren
+suffix:semicolon
+id|size
+op_assign
+id|free_chunk_size1
+suffix:semicolon
+id|data_size
+op_assign
+id|size
+op_minus
+r_sizeof
+(paren
+r_struct
+id|jffs_raw_inode
+)paren
+op_minus
+id|total_name_size
+suffix:semicolon
+)brace
+multiline_comment|/* Calculate the amount of space needed to hold the nodes&n;&t;   which are remaining in the tail */
+id|space_needed
+op_assign
+id|fmc-&gt;min_free_size
+op_minus
+(paren
+id|node-&gt;fm-&gt;offset
+op_mod
+id|fmc-&gt;sector_size
+)paren
+suffix:semicolon
+multiline_comment|/* From that, calculate how much &squot;extra&squot; space we can use to&n;&t;   increase the size of the node we&squot;re writing from the size&n;&t;   of the node we&squot;re obsoleting&n;&t;*/
+r_if
+c_cond
+(paren
+id|space_needed
+OG
+id|fmc-&gt;free_size
+)paren
+(brace
+multiline_comment|/* If we&squot;ve gone below min_free_size for some reason,&n;&t;&t;   don&squot;t fuck up. This is why we have &n;&t;&t;   min_free_size &gt; sector_size. Whinge about it though,&n;&t;&t;   just so I can convince myself my maths is right.&n;&t;&t;*/
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_garbage_collect_next(): &quot;
+l_string|&quot;space_needed %d exceeded free_size %d&bslash;n&quot;
+comma
+id|space_needed
+comma
+id|fmc-&gt;free_size
+)paren
+)paren
+suffix:semicolon
+id|extra_available
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|extra_available
+op_assign
+id|fmc-&gt;free_size
+op_minus
+id|space_needed
+suffix:semicolon
+)brace
+multiline_comment|/* Check that we don&squot;t use up any more &squot;extra&squot; space than&n;&t;   what&squot;s available */
+r_if
+c_cond
+(paren
+id|size
+OG
+id|JFFS_PAD
+c_func
+(paren
+id|node-&gt;data_size
+)paren
+op_plus
+id|total_name_size
+op_plus
+r_sizeof
+(paren
+r_struct
+id|jffs_raw_inode
+)paren
+op_plus
+id|extra_available
+)paren
+(brace
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;Reducing size of new node from %d to %ld to avoid &quot;
+l_string|&quot;catching our tail&bslash;n&quot;
+comma
+id|size
+comma
+id|JFFS_PAD
+c_func
+(paren
+id|node-&gt;data_size
+)paren
+op_plus
+id|JFFS_PAD
+c_func
+(paren
+id|node-&gt;name_size
+)paren
+op_plus
+r_sizeof
+(paren
+r_struct
+id|jffs_raw_inode
+)paren
+op_plus
+id|extra_available
+)paren
+)paren
+suffix:semicolon
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;space_needed = %d, extra_available = %d&bslash;n&quot;
+comma
+id|space_needed
+comma
+id|extra_available
+)paren
+)paren
+suffix:semicolon
+id|size
+op_assign
+id|JFFS_PAD
+c_func
+(paren
+id|node-&gt;data_size
+)paren
+op_plus
+id|total_name_size
+op_plus
+r_sizeof
+(paren
+r_struct
+id|jffs_raw_inode
+)paren
+op_plus
+id|extra_available
+suffix:semicolon
+id|data_size
+op_assign
+id|size
+op_minus
+r_sizeof
+(paren
+r_struct
+id|jffs_raw_inode
+)paren
+op_minus
+id|total_name_size
+suffix:semicolon
+)brace
 suffix:semicolon
 id|D2
 c_func
@@ -11055,188 +11684,32 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|size
-OG
-id|fmc-&gt;max_chunk_size
-)paren
-(brace
-id|size
+(paren
+id|err
 op_assign
-id|fmc-&gt;max_chunk_size
-suffix:semicolon
-id|data_size
-op_assign
-id|size
-op_minus
-r_sizeof
-(paren
-r_struct
-id|jffs_raw_inode
-)paren
-op_minus
-id|total_name_size
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|size
-OG
-id|free_chunk_size1
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|free_chunk_size1
-OL
-(paren
-r_sizeof
-(paren
-r_struct
-id|jffs_raw_inode
-)paren
-op_plus
-id|f-&gt;nsize
-op_plus
-id|BLOCK_SIZE
-)paren
-)paren
-(brace
-multiline_comment|/* The space left is too small to be of any&n;&t;&t;&t;   use really.  */
-r_struct
-id|jffs_fm
-op_star
-id|dirty_fm
-op_assign
-id|jffs_fmalloced
+id|jffs_rewrite_data
 c_func
 (paren
-id|fmc
+id|f
 comma
-id|fmc-&gt;tail-&gt;offset
-op_plus
-id|fmc-&gt;tail-&gt;size
+id|node
 comma
-id|free_chunk_size1
-comma
-l_int|NULL
+id|data_size
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dirty_fm
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;JFFS: &quot;
-l_string|&quot;jffs_garbage_collect_next: &quot;
-l_string|&quot;Failed to allocate `dirty&squot; &quot;
-l_string|&quot;flash memory!&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;jffs_rewrite_data() failed: %d&bslash;n&quot;
+comma
+id|err
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-id|jffs_write_dummy_node
-c_func
-(paren
-id|c
-comma
-id|dirty_fm
-)paren
-suffix:semicolon
-r_goto
-id|jffs_garbage_collect_next_end
-suffix:semicolon
-)brace
-id|size
-op_assign
-id|free_chunk_size1
-suffix:semicolon
-id|data_size
-op_assign
-id|size
-op_minus
-r_sizeof
-(paren
-r_struct
-id|jffs_raw_inode
-)paren
-op_minus
-id|total_name_size
-suffix:semicolon
-)brace
-id|D2
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;  size: %u (again)&bslash;n&quot;
-comma
-id|size
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|free_size
-op_minus
-id|size
-OL
-id|fmc-&gt;sector_size
-)paren
-(brace
-multiline_comment|/* Just rewrite that node (or even less).  */
-id|jffs_rewrite_data
-c_func
-(paren
-id|f
-comma
-id|node
-comma
-id|jffs_min
-c_func
-(paren
-id|node-&gt;data_size
-comma
-id|data_size
-)paren
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|size
-op_sub_assign
-(paren
-r_sizeof
-(paren
-r_struct
-id|jffs_raw_inode
-)paren
-op_plus
-id|f-&gt;nsize
-)paren
-suffix:semicolon
-id|jffs_rewrite_data
-c_func
-(paren
-id|f
-comma
-id|node
-comma
-id|data_size
-)paren
+id|err
 suffix:semicolon
 )brace
 id|jffs_garbage_collect_next_end
@@ -11252,7 +11725,7 @@ l_string|&quot;jffs_garbage_collect_next: Leaving...&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/* jffs_garbage_collect_next */
@@ -11793,12 +12266,9 @@ op_assign
 id|c-&gt;fmc
 suffix:semicolon
 r_int
-id|erased_total
+id|erased
 op_assign
 l_int|0
-suffix:semicolon
-r_int
-id|erased
 suffix:semicolon
 r_int
 id|result
@@ -11820,9 +12290,23 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;***jffs_garbage_collect_now(): fmc-&gt;dirty_size = %u&bslash;n&quot;
+l_string|&quot;***jffs_garbage_collect_now(): fmc-&gt;dirty_size = %u, fmc-&gt;free_size = 0x%x&bslash;n, fcs1=0x%x, fcs2=0x%x&quot;
 comma
 id|fmc-&gt;dirty_size
+comma
+id|fmc-&gt;free_size
+comma
+id|jffs_free_size1
+c_func
+(paren
+id|fmc
+)paren
+comma
+id|jffs_free_size2
+c_func
+(paren
+id|fmc
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -11836,20 +12320,14 @@ id|fmc
 )paren
 )paren
 suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|fmc-&gt;gclock
-)paren
-suffix:semicolon
+singleline_comment|//&t;down(&amp;fmc-&gt;gclock);
 multiline_comment|/* If it is possible to garbage collect, do so.  */
-r_if
-c_cond
+r_while
+c_loop
 (paren
-id|fmc-&gt;dirty_size
-op_ge
-id|fmc-&gt;sector_size
+id|erased
+op_eq
+l_int|0
 )paren
 (brace
 id|D1
@@ -11878,7 +12356,6 @@ id|fmc
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* At least one sector should be able to free now.  */
 r_if
 c_cond
 (paren
@@ -11911,34 +12388,54 @@ r_goto
 id|gc_end
 suffix:semicolon
 )brace
-r_else
 r_if
 c_cond
 (paren
 id|erased
-op_eq
-l_int|0
 )paren
-(brace
-id|__u32
-id|free_size
-op_assign
-id|fmc-&gt;flash_size
-op_minus
-(paren
-id|fmc-&gt;used_size
-op_plus
-id|fmc-&gt;dirty_size
-)paren
+r_break
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|free_size
-OG
+id|fmc-&gt;free_size
+op_eq
 l_int|0
 )paren
 (brace
+multiline_comment|/* Argh */
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;jffs_garbage_collect_now(): free_size == 0. This is BAD.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|result
+op_assign
+op_minus
+id|ENOSPC
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|fmc-&gt;dirty_size
+OL
+id|fmc-&gt;sector_size
+)paren
+(brace
+multiline_comment|/* Actually, we _may_ have been able to free some, &n;&t;&t;&t; * if there are many overlapping nodes which aren&squot;t&n;&t;&t;&t; * actually marked dirty because they still have&n;&t;&t;&t; * some valid data in each.&n;&t;&t;&t; */
+id|result
+op_assign
+op_minus
+id|ENOSPC
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* Let&squot;s dare to make a garbage collect.  */
 r_if
 c_cond
@@ -11969,35 +12466,6 @@ r_goto
 id|gc_end
 suffix:semicolon
 )brace
-)brace
-r_else
-(brace
-multiline_comment|/* What should we do here?  */
-id|D
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;   jffs_garbage_collect_now(): &quot;
-l_string|&quot;erased: %ld, free_size: %u&bslash;n&quot;
-comma
-id|erased
-comma
-id|free_size
-)paren
-)paren
-suffix:semicolon
-id|result
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-r_goto
-id|gc_end
-suffix:semicolon
-)brace
-)brace
 id|D1
 c_func
 (paren
@@ -12009,10 +12477,6 @@ comma
 id|erased
 )paren
 )paren
-suffix:semicolon
-id|erased_total
-op_add_assign
-id|erased
 suffix:semicolon
 id|DJM
 c_func
@@ -12026,13 +12490,7 @@ suffix:semicolon
 )brace
 id|gc_end
 suffix:colon
-id|up
-c_func
-(paren
-op_amp
-id|fmc-&gt;gclock
-)paren
-suffix:semicolon
+singleline_comment|//&t;up(&amp;fmc-&gt;gclock);
 id|D3
 c_func
 (paren
@@ -12048,15 +12506,15 @@ c_func
 (paren
 r_if
 (paren
-id|erased_total
+id|erased
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;erased_total = %ld&bslash;n&quot;
+l_string|&quot;jffs_g_c_now(): erased = %ld&bslash;n&quot;
 comma
-id|erased_total
+id|erased
 )paren
 suffix:semicolon
 id|jffs_print_fmcontrol
@@ -12072,7 +12530,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|erased_total
+id|erased
 op_logical_and
 op_logical_neg
 id|result
@@ -12099,15 +12557,6 @@ op_star
 id|c
 )paren
 (brace
-id|__u32
-id|nfree
-op_assign
-id|c-&gt;fmc-&gt;flash_size
-op_minus
-id|c-&gt;fmc-&gt;used_size
-op_minus
-id|c-&gt;fmc-&gt;dirty_size
-suffix:semicolon
 id|D1
 c_func
 (paren
@@ -12116,7 +12565,7 @@ id|printk
 id|KERN_NOTICE
 l_string|&quot;thread_should_wake(): free=%d, dirty=%d, blocksize=%d.&bslash;n&quot;
 comma
-id|nfree
+id|c-&gt;fmc-&gt;free_size
 comma
 id|c-&gt;fmc-&gt;dirty_size
 comma
@@ -12139,7 +12588,7 @@ multiline_comment|/* If there are fewer free bytes than the threshold, GC */
 r_if
 c_cond
 (paren
-id|nfree
+id|c-&gt;fmc-&gt;dirty_size
 OL
 id|c-&gt;gc_minfree_threshold
 )paren
@@ -12227,11 +12676,6 @@ op_assign
 id|c-&gt;fmc
 suffix:semicolon
 r_int
-id|erased_total
-op_assign
-l_int|0
-suffix:semicolon
-r_int
 id|erased
 suffix:semicolon
 r_int
@@ -12300,7 +12744,7 @@ op_or
 id|sigmask
 c_func
 (paren
-id|SIGQUIT
+id|SIGKILL
 )paren
 op_or
 id|sigmask
@@ -12376,7 +12820,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Yes, we do this even if we want to go&n;&t;&t;&t;&t;       on immediately - we&squot;re a low priority &n;&t;&t;&t;&t;       background task. */
-multiline_comment|/* Put_super will send a SIGQUIT and then wait on the sem. &n;&t;&t; */
+multiline_comment|/* Put_super will send a SIGKILL and then wait on the sem. &n;&t;&t; */
 r_while
 c_loop
 (paren
@@ -12453,7 +12897,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|SIGQUIT
+id|SIGKILL
 suffix:colon
 id|D1
 c_func
@@ -12461,7 +12905,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;jffs_garbage_collect_thread(): SIGQUIT received.&bslash;n&quot;
+l_string|&quot;jffs_garbage_collect_thread(): SIGKILL received.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -12496,29 +12940,6 @@ l_string|&quot;jffs_garbage_collect_thread(): collecting.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-singleline_comment|//&t;&t;printk (KERN_NOTICE &quot;free=%d, dirty=%d, blocksize=%ld.&bslash;n&quot;, count_free_bytes(c), count_dirty_bytes(c), c-&gt;sb-&gt;s_blocksize);
-id|D2
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;***jffs_garbage_collect_thread(): fmc-&gt;dirty_size = %u&bslash;n&quot;
-comma
-id|fmc-&gt;dirty_size
-)paren
-)paren
-suffix:semicolon
-id|D2
-c_func
-(paren
-id|jffs_print_fmcontrol
-c_func
-(paren
-id|fmc
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -12527,6 +12948,9 @@ OL
 id|fmc-&gt;sector_size
 )paren
 (brace
+id|D1
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -12535,15 +12959,26 @@ l_string|&quot;jffs_garbage_collect_thread with insufficient dirty space (0x%x)&
 comma
 id|fmc-&gt;dirty_size
 )paren
+)paren
 suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|D3
+c_func
+(paren
+id|printk
+(paren
+id|KERN_NOTICE
+l_string|&quot;g_c_thread(): down biglock&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|down
 c_func
 (paren
 op_amp
-id|c-&gt;fmc-&gt;gclock
+id|fmc-&gt;biglock
 )paren
 suffix:semicolon
 id|D1
@@ -12572,7 +13007,6 @@ id|fmc
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* At least one sector should be able to free now.  */
 r_if
 c_cond
 (paren
@@ -12594,45 +13028,51 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;JFFS: Error in &quot;
-l_string|&quot;garbage collector.&bslash;n&quot;
+l_string|&quot;garbage collector: %ld.&bslash;n&quot;
+comma
+id|erased
 )paren
 suffix:semicolon
-id|result
-op_assign
-id|erased
-suffix:semicolon
-r_goto
-id|gc_end
-suffix:semicolon
 )brace
-r_else
 r_if
 c_cond
 (paren
 id|erased
+)paren
+r_goto
+id|gc_end
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fmc-&gt;free_size
 op_eq
 l_int|0
 )paren
 (brace
-id|__u32
-id|free_size
-op_assign
-id|fmc-&gt;flash_size
-op_minus
+multiline_comment|/* Argh. Might as well commit suicide. */
+id|printk
+c_func
 (paren
-id|fmc-&gt;used_size
-op_plus
-id|fmc-&gt;dirty_size
+id|KERN_ERR
+l_string|&quot;jffs_garbage_collect_thread(): free_size == 0. This is BAD.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|send_sig
+c_func
 (paren
-id|free_size
-OG
-l_int|0
+id|SIGQUIT
+comma
+id|c-&gt;gc_task
+comma
+l_int|1
 )paren
-(brace
+suffix:semicolon
+singleline_comment|// panic()
+r_goto
+id|gc_end
+suffix:semicolon
+)brace
 multiline_comment|/* Let&squot;s dare to make a garbage collect.  */
 r_if
 c_cond
@@ -12656,109 +13096,29 @@ c_func
 id|KERN_ERR
 l_string|&quot;JFFS: Something &quot;
 l_string|&quot;has gone seriously wrong &quot;
-l_string|&quot;with a garbage collect.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|gc_end
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-multiline_comment|/* What should we do here?  */
-id|D
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;   jffs_garbage_collect(): &quot;
-l_string|&quot;erased: %ld, free_size: %u&bslash;n&quot;
+l_string|&quot;with a garbage collect: %d&bslash;n&quot;
 comma
-id|erased
-comma
-id|free_size
-)paren
-)paren
-suffix:semicolon
 id|result
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-r_goto
-id|gc_end
+)paren
 suffix:semicolon
 )brace
-)brace
-id|D1
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;   jffs_garbage_collect(): erased: %ld&bslash;n&quot;
-comma
-id|erased
-)paren
-)paren
-suffix:semicolon
-id|erased_total
-op_add_assign
-id|erased
-suffix:semicolon
-id|DJM
-c_func
-(paren
-id|jffs_print_memory_allocation_statistics
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
 id|gc_end
 suffix:colon
-id|up
-c_func
-(paren
-op_amp
-id|c-&gt;fmc-&gt;gclock
-)paren
-suffix:semicolon
 id|D3
 c_func
 (paren
 id|printk
-c_func
 (paren
-l_string|&quot;   jffs_garbage_collect(): Leaving...&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;g_c_thread(): up biglock&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|D1
+id|up
 c_func
 (paren
-r_if
-(paren
-id|erased_total
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;erased_total = %ld&bslash;n&quot;
-comma
-id|erased_total
-)paren
-suffix:semicolon
-id|jffs_print_fmcontrol
-c_func
-(paren
-id|fmc
-)paren
-suffix:semicolon
-)brace
+op_amp
+id|fmc-&gt;biglock
 )paren
 suffix:semicolon
 )brace

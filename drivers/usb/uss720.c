@@ -2590,10 +2590,8 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|parport_uss720_dec_use_count
 r_void
@@ -2603,10 +2601,8 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|parport_uss720_ops

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs_fm.c,v 1.14 2000/08/09 14:26:35 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs_fm.c,v 1.18 2000/08/21 10:41:45 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -175,6 +175,10 @@ id|fmc-&gt;dirty_size
 op_assign
 l_int|0
 suffix:semicolon
+id|fmc-&gt;free_size
+op_assign
+id|mtd-&gt;size
+suffix:semicolon
 id|fmc-&gt;sector_size
 op_assign
 id|mtd-&gt;erasesize
@@ -185,26 +189,16 @@ id|fmc-&gt;sector_size
 op_rshift
 l_int|1
 suffix:semicolon
+multiline_comment|/* min_free_size:&n;&t;   1 sector, obviously.&n;&t;   + 1 x max_chunk_size, for when a nodes overlaps the end of a sector&n;&t;   + 1 x max_chunk_size again, which ought to be enough to handle &n;&t;&t;   the case where a rename causes a name to grow, and GC has&n;&t;&t;   to write out larger nodes than the ones it&squot;s obsoleting.&n;&t;&t;   We should fix it so it doesn&squot;t have to write the name&n;&t;&t;   _every_ time. Later.&n;&t;*/
 id|fmc-&gt;min_free_size
 op_assign
-(paren
 id|fmc-&gt;sector_size
 op_lshift
 l_int|1
-)paren
-op_minus
-id|fmc-&gt;max_chunk_size
 suffix:semicolon
 id|fmc-&gt;mtd
 op_assign
 id|mtd
-suffix:semicolon
-id|init_MUTEX
-c_func
-(paren
-op_amp
-id|fmc-&gt;gclock
-)paren
 suffix:semicolon
 id|fmc-&gt;c
 op_assign
@@ -230,7 +224,7 @@ id|init_MUTEX
 c_func
 (paren
 op_amp
-id|fmc-&gt;wlock
+id|fmc-&gt;biglock
 )paren
 suffix:semicolon
 r_return
@@ -690,6 +684,37 @@ c_func
 id|fmc
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|free_chunk_size1
+op_plus
+id|free_chunk_size2
+op_ne
+id|fmc-&gt;free_size
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Free size accounting screwed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;free_chunk_size1 == 0x%x, free_chunk_size2 == 0x%x, fmc-&gt;free_size == 0x%x&bslash;n&quot;
+comma
+id|free_chunk_size1
+comma
+id|free_chunk_size2
+comma
+id|fmc-&gt;free_size
+)paren
+suffix:semicolon
+)brace
 id|D3
 c_func
 (paren
@@ -851,6 +876,10 @@ id|fm-&gt;size
 op_assign
 id|size
 suffix:semicolon
+id|fmc-&gt;free_size
+op_sub_assign
+id|size
+suffix:semicolon
 id|fmc-&gt;used_size
 op_add_assign
 id|size
@@ -908,6 +937,10 @@ suffix:semicolon
 id|fm-&gt;nodes
 op_assign
 l_int|0
+suffix:semicolon
+id|fmc-&gt;free_size
+op_sub_assign
+id|fm-&gt;size
 suffix:semicolon
 id|fmc-&gt;dirty_size
 op_add_assign
@@ -1427,12 +1460,20 @@ id|fmc-&gt;used_size
 op_add_assign
 id|size
 suffix:semicolon
+id|fmc-&gt;free_size
+op_sub_assign
+id|size
+suffix:semicolon
 )brace
 r_else
 (brace
 multiline_comment|/* If there is no node, then this is just a chunk of dirt.  */
 id|fmc-&gt;dirty_size
 op_add_assign
+id|size
+suffix:semicolon
+id|fmc-&gt;free_size
+op_sub_assign
 id|size
 suffix:semicolon
 )brace
@@ -1882,6 +1923,10 @@ suffix:semicolon
 suffix:semicolon
 id|fmc-&gt;dirty_size
 op_sub_assign
+id|erased_size
+suffix:semicolon
+id|fmc-&gt;free_size
+op_add_assign
 id|erased_size
 suffix:semicolon
 r_for
@@ -2610,6 +2655,18 @@ c_func
 l_string|&quot;        %u, /* dirty_size  */&bslash;n&quot;
 comma
 id|fmc-&gt;dirty_size
+)paren
+)paren
+suffix:semicolon
+id|D
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;        %u, /* free_size  */&bslash;n&quot;
+comma
+id|fmc-&gt;free_size
 )paren
 )paren
 suffix:semicolon

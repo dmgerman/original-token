@@ -117,6 +117,8 @@ l_string|&quot;0&quot;
 (paren
 l_int|0
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -181,6 +183,9 @@ c_func
 id|lock
 )paren
 )paren
+suffix:colon
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
@@ -239,6 +244,9 @@ c_func
 id|lock
 )paren
 )paren
+suffix:colon
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace

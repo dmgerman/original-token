@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel CPU Microcode Update driver for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to P6 family - PentiumPro, Pentium II, &n; *&t;Pentium III, Xeon etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium III Manual, &n; *&t;Order Number 243192 or free download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentiumii/manuals/243192.htm&n; *&n; *&t;For more information, go to http://www.urbanmyth.org/microcode&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; *&t;1.02&t;21 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added &squot;device trimming&squot; support. open(O_WRONLY) zeroes&n; *&t;&t;and frees the saved copy of applied microcode.&n; *&t;1.03&t;29 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Made to use devfs (/dev/cpu/microcode) + cleanups.&n; *&t;1.04&t;06 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Added misc device support (now uses both devfs and misc).&n; *&t;&t;Added MICROCODE_IOCFREE ioctl to clear memory.&n; *&t;1.05&t;09 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Messages for error cases (non intel &amp; no suitable microcode).&n; *&t;1.06&t;03 Aug 2000, Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;&t;Removed -&gt;release(). Removed exclusive open and status bitmap.&n; *&t;&t;Added microcode_rwsem to serialize read()/write()/ioctl().&n; *&t;&t;Removed global kernel lock usage.&n; */
+multiline_comment|/*&n; *&t;Intel CPU Microcode Update driver for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to P6 family - PentiumPro, Pentium II, &n; *&t;Pentium III, Xeon etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium III Manual, &n; *&t;Order Number 243192 or free download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentiumii/manuals/243192.htm&n; *&n; *&t;For more information, go to http://www.urbanmyth.org/microcode&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; *&t;1.02&t;21 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added &squot;device trimming&squot; support. open(O_WRONLY) zeroes&n; *&t;&t;and frees the saved copy of applied microcode.&n; *&t;1.03&t;29 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Made to use devfs (/dev/cpu/microcode) + cleanups.&n; *&t;1.04&t;06 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Added misc device support (now uses both devfs and misc).&n; *&t;&t;Added MICROCODE_IOCFREE ioctl to clear memory.&n; *&t;1.05&t;09 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Messages for error cases (non intel &amp; no suitable microcode).&n; *&t;1.06&t;03 Aug 2000, Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;&t;Removed -&gt;release(). Removed exclusive open and status bitmap.&n; *&t;&t;Added microcode_rwsem to serialize read()/write()/ioctl().&n; *&t;&t;Removed global kernel lock usage.&n; *&t;1.07&t;07 Sep 2000, Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;&t;Write 0 to 0x8B msr and then cpuid before reading revision,&n; *&t;&t;so that it works even if there were no update done by the&n; *&t;&t;BIOS. Otherwise, reading from 0x8B gives junk (which happened&n; *&t;&t;to be 0 on my machine which is why it worked even when I&n; *&t;&t;disabled update by the BIOS)&n; *&t;&t;Thanks to Eric W. Biederman &lt;ebiederman@lnxi.com&gt; for the fix.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -10,7 +10,7 @@ macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|MICROCODE_VERSION
-mdefine_line|#define MICROCODE_VERSION &t;&quot;1.06&quot;
+mdefine_line|#define MICROCODE_VERSION &t;&quot;1.07&quot;
 id|MODULE_DESCRIPTION
 c_func
 (paren
@@ -758,6 +758,32 @@ l_int|1
 id|found
 op_assign
 l_int|1
+suffix:semicolon
+id|wrmsr
+c_func
+(paren
+l_int|0x8B
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;cpuid&quot;
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;ax&quot;
+comma
+l_string|&quot;bx&quot;
+comma
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;dx&quot;
+)paren
 suffix:semicolon
 id|rdmsr
 c_func

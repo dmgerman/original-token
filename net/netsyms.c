@@ -802,11 +802,11 @@ c_func
 id|inet_del_protocol
 )paren
 suffix:semicolon
-DECL|variable|ip_route_output
+DECL|variable|ip_route_output_key
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|ip_route_output
+id|ip_route_output_key
 )paren
 suffix:semicolon
 DECL|variable|ip_route_input
@@ -1736,13 +1736,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|tcp_write_xmit
-)paren
-suffix:semicolon
-DECL|variable|dev_loopback_xmit
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dev_loopback_xmit
 )paren
 suffix:semicolon
 DECL|variable|tcp_v4_remember_stamp

@@ -1098,7 +1098,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*======================================================================&n;&n;    Low-level PC Card interface drivers need to register with Card&n;    Services using these calls.&n;    &n;======================================================================*/
 r_static
-r_void
+r_int
 id|setup_socket
 c_func
 (paren
@@ -1963,9 +1963,10 @@ id|s-&gt;c_region
 suffix:semicolon
 )brace
 multiline_comment|/* shutdown_socket */
+multiline_comment|/*&n; * Return zero if we think the card isn&squot;t actually present&n; */
 DECL|function|setup_socket
 r_static
-r_void
+r_int
 id|setup_socket
 c_func
 (paren
@@ -1976,6 +1977,8 @@ id|s
 (brace
 r_int
 id|val
+comma
+id|ret
 suffix:semicolon
 r_int
 id|setup_timeout
@@ -2037,7 +2040,12 @@ comma
 id|s
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2156,8 +2164,13 @@ c_func
 id|s
 )paren
 suffix:semicolon
+id|ret
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_else
+(brace
 id|DEBUG
 c_func
 (paren
@@ -2167,6 +2180,16 @@ l_string|&quot;cs: setup_socket(%p): no card!&bslash;n&quot;
 comma
 id|s
 )paren
+suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|out
+suffix:colon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* setup_socket */
@@ -2296,9 +2319,9 @@ c_func
 (paren
 l_int|2
 comma
-l_string|&quot;cs: socket %ld not ready yet&bslash;n&quot;
+l_string|&quot;cs: socket %d not ready yet&bslash;n&quot;
 comma
-id|i
+id|s-&gt;sock
 )paren
 suffix:semicolon
 r_if
@@ -2807,11 +2830,21 @@ c_func
 id|setup_delay
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|setup_socket
 c_func
 (paren
 id|s
 )paren
+op_eq
+l_int|0
+)paren
+id|s-&gt;state
+op_and_assign
+op_complement
+id|SOCKET_SETUP_PENDING
 suffix:semicolon
 )brace
 )brace
@@ -6379,11 +6412,21 @@ id|s-&gt;state
 op_or_assign
 id|SOCKET_SETUP_PENDING
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|setup_socket
 c_func
 (paren
 id|s
 )paren
+op_eq
+l_int|0
+)paren
+id|s-&gt;state
+op_and_assign
+op_complement
+id|SOCKET_SETUP_PENDING
 suffix:semicolon
 )brace
 )brace
@@ -9649,17 +9692,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|status
 op_amp
 id|SS_DETECT
 )paren
+op_eq
+l_int|0
+op_logical_or
+(paren
 id|setup_socket
 c_func
 (paren
 id|s
 )paren
-suffix:semicolon
-r_else
+op_eq
+l_int|0
+)paren
+)paren
 (brace
 id|s-&gt;state
 op_and_assign

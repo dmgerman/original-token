@@ -35,8 +35,6 @@ DECL|macro|ATOMIC_INIT
 mdefine_line|#define ATOMIC_INIT(i)  { (i) }
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#ifndef CONFIG_SMP
 DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)          ((v)-&gt;counter)

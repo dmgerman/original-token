@@ -1847,6 +1847,8 @@ id|node
 comma
 id|pgdat
 comma
+l_int|0
+comma
 id|zone_size
 comma
 id|bdata-&gt;node_boot_start

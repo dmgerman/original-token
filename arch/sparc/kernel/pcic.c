@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcic.c,v 1.16 2000/07/11 01:38:57 davem Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
+multiline_comment|/* $Id: pcic.c,v 1.17 2000/09/05 06:49:44 anton Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3986,11 +3986,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -4100,11 +4095,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_return
 id|err

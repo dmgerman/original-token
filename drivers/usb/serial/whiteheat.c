@@ -379,16 +379,16 @@ op_star
 id|urb
 )paren
 (brace
+macro_line|#ifdef DEBUG
+r_int
+id|i
+suffix:semicolon
 r_int
 r_char
 op_star
 id|data
 op_assign
 id|urb-&gt;transfer_buffer
-suffix:semicolon
-macro_line|#ifdef DEBUG
-r_int
-id|i
 suffix:semicolon
 macro_line|#endif
 id|dbg

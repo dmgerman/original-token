@@ -1546,7 +1546,6 @@ op_amp
 id|TimerInt
 )paren
 (brace
-macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -1580,7 +1579,6 @@ op_plus
 id|CSR7
 )paren
 suffix:semicolon
-macro_line|#endif
 id|tp-&gt;ttimer
 op_assign
 l_int|0
@@ -1633,8 +1631,39 @@ id|oi
 )paren
 suffix:semicolon
 multiline_comment|/* Acknowledge all interrupt sources. */
-macro_line|#if 0
-multiline_comment|/* Clear all interrupting sources, set timer to re-enable. */
+id|outl
+c_func
+(paren
+l_int|0x8001ffff
+comma
+id|ioaddr
+op_plus
+id|CSR5
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tp-&gt;flags
+op_amp
+id|HAS_INTR_MITIGATION
+)paren
+(brace
+multiline_comment|/* Josip Loncaric at ICASE did extensive experimentation &n;&t;&t;&t;to develop a good interrupt mitigation setting.*/
+id|outl
+c_func
+(paren
+l_int|0x8b240000
+comma
+id|ioaddr
+op_plus
+id|CSR11
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Mask all interrupting sources, set timer to &n;&t;&t;&t;&t;re-enable. */
 id|outl
 c_func
 (paren
@@ -1646,8 +1675,6 @@ id|csr5
 op_amp
 l_int|0x0001ebef
 )paren
-op_or
-id|NormalIntr
 op_or
 id|AbnormalIntr
 op_or
@@ -1661,18 +1688,14 @@ suffix:semicolon
 id|outl
 c_func
 (paren
-l_int|12
+l_int|0x0012
 comma
 id|ioaddr
 op_plus
 id|CSR11
 )paren
 suffix:semicolon
-id|tp-&gt;ttimer
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
+)brace
 r_break
 suffix:semicolon
 )brace

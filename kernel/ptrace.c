@@ -192,6 +192,21 @@ op_star
 id|pgtable
 )paren
 suffix:semicolon
+multiline_comment|/* ZERO_PAGE is special: reads from it are ok even though it&squot;s marked reserved */
+r_if
+c_cond
+(paren
+id|page
+op_ne
+id|ZERO_PAGE
+c_func
+(paren
+id|addr
+)paren
+op_logical_or
+id|write
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -213,6 +228,7 @@ id|page
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|flush_cache_page
 c_func
 (paren

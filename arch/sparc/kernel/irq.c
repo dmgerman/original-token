@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.107 2000/08/26 02:42:28 anton Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.109 2000/08/31 10:00:39 anton Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -682,7 +682,7 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SMP
-multiline_comment|/* Who has global_irq_lock. */
+multiline_comment|/* Who has the global irq brlock */
 DECL|variable|global_irq_holder
 r_int
 r_char
@@ -1172,9 +1172,13 @@ r_int
 r_int
 id|flags
 comma
-id|local_enabled
-comma
 id|retval
+suffix:semicolon
+r_int
+r_int
+id|local_enabled
+op_assign
+l_int|0
 suffix:semicolon
 id|__save_flags
 c_func

@@ -44,6 +44,11 @@ id|pg_data_t
 op_star
 id|pgdat
 comma
+r_struct
+id|page
+op_star
+id|pmap
+comma
 r_int
 r_int
 op_star
@@ -78,6 +83,8 @@ comma
 id|zone_start_paddr
 comma
 id|zholes_size
+comma
+id|pmap
 )paren
 suffix:semicolon
 )brace
@@ -188,6 +195,11 @@ id|pg_data_t
 op_star
 id|pgdat
 comma
+r_struct
+id|page
+op_star
+id|pmap
+comma
 r_int
 r_int
 op_star
@@ -249,6 +261,8 @@ comma
 id|zone_start_paddr
 comma
 id|zholes_size
+comma
+id|pmap
 )paren
 suffix:semicolon
 id|pgdat-&gt;node_id

@@ -1,5 +1,5 @@
 multiline_comment|/* epic100.c: A SMC 83c170 EPIC/100 Fast Ethernet driver for Linux. */
-multiline_comment|/*&n;&t;Written/copyright 1997-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;This driver is for the SMC83c170/175 &quot;EPIC&quot; series, as used on the&n;&t;SMC EtherPower II 9432 PCI adapter, and several CardBus cards.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Information and updates available at&n;&t;http://www.scyld.com/network/epic100.html&n;&n;&t;---------------------------------------------------------------------&n;&t;&n;&t;Linux kernel-specific changes:&n;&t;&n;&t;LK1.1.2 (jgarzik):&n;&t;* Merge becker version 1.09 (4/08/2000)&n;&n;&t;LK1.1.3:&n;&t;* Major bugfix to 1.09 driver (Francis Romieu)&n;&t;&n;&t;LK1.1.4 (jgarzik):&n;&t;* Merge becker test version 1.09 (5/29/2000)&n;&n;*/
+multiline_comment|/*&n;&t;Written/copyright 1997-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;This driver is for the SMC83c170/175 &quot;EPIC&quot; series, as used on the&n;&t;SMC EtherPower II 9432 PCI adapter, and several CardBus cards.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Information and updates available at&n;&t;http://www.scyld.com/network/epic100.html&n;&n;&t;---------------------------------------------------------------------&n;&t;&n;&t;Linux kernel-specific changes:&n;&t;&n;&t;LK1.1.2 (jgarzik):&n;&t;* Merge becker version 1.09 (4/08/2000)&n;&n;&t;LK1.1.3:&n;&t;* Major bugfix to 1.09 driver (Francis Romieu)&n;&t;&n;&t;LK1.1.4 (jgarzik):&n;&t;* Merge becker test version 1.09 (5/29/2000)&n;&n;&t;LK1.1.5 (jgarzik):&n;&t;* Fix locking&n;&t;* Limit 83c175 probe to ethernet-class PCI devices&n;&n;*/
 multiline_comment|/* These identify the driver base version and may not be removed. */
 DECL|variable|version
 r_static
@@ -29,7 +29,7 @@ id|version3
 (braket
 )braket
 op_assign
-l_string|&quot; (unofficial 2.4.x kernel port, version 1.1.4, August 10, 2000)&bslash;n&quot;
+l_string|&quot; (unofficial 2.4.x kernel port, version 1.1.5, September 7, 2000)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* The user-configurable values.&n;   These may be modified when a driver module is loaded.*/
 DECL|variable|debug
@@ -2209,21 +2209,9 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-id|err_out_iounmap
-suffix:colon
 macro_line|#ifndef USE_IO_OPS
-id|iounmap
-(paren
-(paren
-r_void
-op_star
-)paren
-id|ioaddr
-)paren
-suffix:semicolon
 id|err_out_free_mmio
 suffix:colon
-macro_line|#endif
 id|release_mem_region
 (paren
 id|pci_resource_start
@@ -2241,6 +2229,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|err_out_free_pio
 suffix:colon
 id|release_region

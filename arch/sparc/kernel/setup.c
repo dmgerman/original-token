@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.118 2000/05/09 17:40:13 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.119 2000/08/31 10:24:17 anton Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -142,39 +142,7 @@ id|prom_tbr
 comma
 id|flags
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
-id|global_irq_holder
-op_assign
-id|NO_PROC_ID
-suffix:semicolon
-op_star
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-op_amp
-id|global_irq_lock
-)paren
-op_assign
-l_int|0
-suffix:semicolon
-op_star
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-op_amp
-id|global_bh_lock
-)paren
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-id|__save_and_cli
+id|save_and_cli
 c_func
 (paren
 id|flags
@@ -241,7 +209,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|__sti
+id|sti
 c_func
 (paren
 )paren
@@ -251,7 +219,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|__cli
+id|cli
 c_func
 (paren
 )paren
@@ -279,7 +247,7 @@ id|prom_tbr
 )paren
 )paren
 suffix:semicolon
-id|__restore_flags
+id|restore_flags
 c_func
 (paren
 id|flags

@@ -1,4 +1,4 @@
-multiline_comment|/* A driver for the D-Link DSB-R100 USB radio.  The R100 plugs&n; into both the USB and an analog audio input, so this thing&n; only deals with initialisation and frequency setting, the&n; audio data has to be handled by a sound driver.&n;&n; Major issue: I can&squot;t find out where the device reports the signal&n; strength, and indeed the windows software appearantly just looks&n; at the stereo indicator as well.  So, scanning will only find&n; stereo stations.  Sad, but I can&squot;t help it.&n;&n; Also, the windows program sends oodles of messages over to the&n; device, and I couldn&squot;t figure out their meaning.  My suspicion&n; is that they don&squot;t have any:-)&n;&n; You might find some interesting stuff about this module at&n; http://unimut.fsk.uni-heidelberg.de/unimut/demi/dsbr&n;&n; Copyright (c) 2000 Markus Demleitner &lt;msdemlei@tucana.harvard.edu&gt;&n;&n; This program is free software; you can redistribute it and/or modify&n; it under the terms of the GNU General Public License as published by&n; the Free Software Foundation; either version 2 of the License, or&n; (at your option) any later version.&n;&n; This program is distributed in the hope that it will be useful,&n; but WITHOUT ANY WARRANTY; without even the implied warranty of&n; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; GNU General Public License for more details.&n;&n; You should have received a copy of the GNU General Public License&n; along with this program; if not, write to the Free Software&n; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n;&n; History:&n;&n; Version 0.23:&n; &t;Markus: Sign extension bug fixed by declaring transfer_buffer unsigned&n;&n; Version 0.22:&n; &t;Markus: Some (brown bag) cleanup in what VIDIOCSTUNER returns, &n;&t;thanks to Mike Cox for pointing the problem out.&n;&n; Version 0.21:&n; &t;Markus: Minor cleanup, warnings if something goes wrong, lame attempt&n;&t;to adhere to Documentation/CodingStyle&n;&n; Version 0.2: &n; &t;Brad Hards &lt;bradh@dynamite.com.au&gt;: Fixes to make it work as non-module&n;&t;Markus: Copyright clarification&n;&n; Version 0.01: Markus: initial release&n;&n;*/
+multiline_comment|/* A driver for the D-Link DSB-R100 USB radio.  The R100 plugs&n; into both the USB and an analog audio input, so this thing&n; only deals with initialisation and frequency setting, the&n; audio data has to be handled by a sound driver.&n;&n; Major issue: I can&squot;t find out where the device reports the signal&n; strength, and indeed the windows software appearantly just looks&n; at the stereo indicator as well.  So, scanning will only find&n; stereo stations.  Sad, but I can&squot;t help it.&n;&n; Also, the windows program sends oodles of messages over to the&n; device, and I couldn&squot;t figure out their meaning.  My suspicion&n; is that they don&squot;t have any:-)&n;&n; You might find some interesting stuff about this module at&n; http://unimut.fsk.uni-heidelberg.de/unimut/demi/dsbr&n;&n; Copyright (c) 2000 Markus Demleitner &lt;msdemlei@tucana.harvard.edu&gt;&n;&n; This program is free software; you can redistribute it and/or modify&n; it under the terms of the GNU General Public License as published by&n; the Free Software Foundation; either version 2 of the License, or&n; (at your option) any later version.&n;&n; This program is distributed in the hope that it will be useful,&n; but WITHOUT ANY WARRANTY; without even the implied warranty of&n; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; GNU General Public License for more details.&n;&n; You should have received a copy of the GNU General Public License&n; along with this program; if not, write to the Free Software&n; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n;&n; History:&n;&n; Version 0.24:&n; &t;Markus: Hope I got these silly VIDEO_TUNER_LOW issues finally&n;&t;right.  Some minor cleanup, improved standalone compilation&n;&n; Version 0.23:&n; &t;Markus: Sign extension bug fixed by declaring transfer_buffer unsigned&n;&n; Version 0.22:&n; &t;Markus: Some (brown bag) cleanup in what VIDIOCSTUNER returns, &n;&t;thanks to Mike Cox for pointing the problem out.&n;&n; Version 0.21:&n; &t;Markus: Minor cleanup, warnings if something goes wrong, lame attempt&n;&t;to adhere to Documentation/CodingStyle&n;&n; Version 0.2: &n; &t;Brad Hards &lt;bradh@dynamite.com.au&gt;: Fixes to make it work as non-module&n;&t;Markus: Copyright clarification&n;&n; Version 0.01: Markus: initial release&n;&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -396,11 +396,13 @@ id|freq
 op_assign
 (paren
 id|freq
+op_div
+l_int|16
 op_star
 l_int|80
 )paren
 op_div
-l_int|16
+l_int|1000
 op_plus
 l_int|856
 suffix:semicolon
@@ -426,11 +428,11 @@ l_int|0xC0
 comma
 (paren
 id|freq
-op_amp
-l_int|0xff00
-)paren
 op_rshift
 l_int|8
+)paren
+op_amp
+l_int|0x00ff
 comma
 id|freq
 op_amp
@@ -673,7 +675,7 @@ id|ifnum
 suffix:semicolon
 id|radio-&gt;curfreq
 op_assign
-l_int|1454
+l_int|1454000
 suffix:semicolon
 r_return
 (paren
@@ -892,13 +894,13 @@ id|v.rangelow
 op_assign
 l_int|87
 op_star
-l_int|16
+l_int|16000
 suffix:semicolon
 id|v.rangehigh
 op_assign
 l_int|108
 op_star
-l_int|16
+l_int|16000
 suffix:semicolon
 id|v.flags
 op_assign

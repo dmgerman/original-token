@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.63 2000/06/04 06:23:52 anton Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 2000 Jakub Jelinek (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: traps.c,v 1.64 2000/09/03 15:00:49 anton Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 2000 Jakub Jelinek (jakub@redhat.com)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -511,11 +511,6 @@ id|pc
 id|siginfo_t
 id|info
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -596,11 +591,6 @@ comma
 id|current
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_illegal_instruction
 r_void
@@ -627,11 +617,6 @@ id|psr
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -703,8 +688,7 @@ comma
 id|pc
 )paren
 )paren
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 id|info.si_signo
@@ -742,13 +726,6 @@ comma
 id|current
 )paren
 suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_priv_instruction
 r_void
@@ -775,11 +752,6 @@ id|psr
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -833,11 +805,6 @@ comma
 id|current
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* XXX User may want to be allowed to do this. XXX */
 DECL|function|do_memaccess_unaligned
@@ -865,11 +832,6 @@ id|psr
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -960,11 +922,6 @@ op_amp
 id|info
 comma
 id|current
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1156,11 +1113,6 @@ r_int
 id|psr
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Sanity check... */
 r_if
 c_cond
@@ -1204,8 +1156,7 @@ op_eq
 id|current
 )paren
 (brace
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 r_if
@@ -1337,15 +1288,6 @@ op_or_assign
 id|PF_USEDFPU
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef CONFIG_SMP
-id|out
-suffix:colon
-macro_line|#endif
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|variable|fake_regs
 r_static
@@ -1467,11 +1409,6 @@ op_assign
 id|current
 suffix:semicolon
 macro_line|#endif
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|put_psr
 c_func
 (paren
@@ -1532,8 +1469,7 @@ op_and_assign
 op_complement
 id|PSR_EF
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 id|fpsave
@@ -1748,8 +1684,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 id|fsr
@@ -1891,13 +1826,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|handle_tag_overflow
 r_void
@@ -1924,11 +1852,6 @@ id|psr
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1982,11 +1905,6 @@ comma
 id|current
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|handle_watchpoint
 r_void
@@ -2011,11 +1929,6 @@ r_int
 id|psr
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef TRAP_DEBUG
 id|printk
 c_func
@@ -2046,11 +1959,6 @@ l_string|&quot;with such a beast...&quot;
 )paren
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|handle_reg_access
 r_void
@@ -2077,11 +1985,6 @@ id|psr
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#ifdef TRAP_DEBUG
 id|printk
@@ -2132,11 +2035,6 @@ comma
 id|current
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|handle_cp_disabled
 r_void
@@ -2163,11 +2061,6 @@ id|psr
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|info.si_signo
 op_assign
@@ -2204,11 +2097,6 @@ comma
 id|current
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|handle_cp_exception
 r_void
@@ -2235,11 +2123,6 @@ id|psr
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#ifdef TRAP_DEBUG
 id|printk
@@ -2290,11 +2173,6 @@ comma
 id|current
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|handle_hw_divzero
 r_void
@@ -2321,11 +2199,6 @@ id|psr
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|info.si_signo
 op_assign
@@ -2360,11 +2233,6 @@ op_amp
 id|info
 comma
 id|current
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

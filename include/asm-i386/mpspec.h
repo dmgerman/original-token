@@ -246,6 +246,7 @@ id|packed
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* List of Bus Type string values, Intel MP Spec. */
 DECL|macro|BUSTYPE_EISA
 mdefine_line|#define BUSTYPE_EISA&t;&quot;EISA&quot;
 DECL|macro|BUSTYPE_ISA
@@ -260,6 +261,28 @@ DECL|macro|BUSTYPE_PCI
 mdefine_line|#define BUSTYPE_PCI&t;&quot;PCI&quot;
 DECL|macro|BUSTYPE_PCMCIA
 mdefine_line|#define BUSTYPE_PCMCIA&t;&quot;PCMCIA&quot;
+DECL|macro|BUSTYPE_CBUS
+mdefine_line|#define BUSTYPE_CBUS&t;&quot;CBUS&quot;
+DECL|macro|BUSTYPE_CBUSII
+mdefine_line|#define BUSTYPE_CBUSII&t;&quot;CBUSII&quot;
+DECL|macro|BUSTYPE_FUTURE
+mdefine_line|#define BUSTYPE_FUTURE&t;&quot;FUTURE&quot;
+DECL|macro|BUSTYPE_MBI
+mdefine_line|#define BUSTYPE_MBI&t;&quot;MBI&quot;
+DECL|macro|BUSTYPE_MBII
+mdefine_line|#define BUSTYPE_MBII&t;&quot;MBII&quot;
+DECL|macro|BUSTYPE_MPI
+mdefine_line|#define BUSTYPE_MPI&t;&quot;MPI&quot;
+DECL|macro|BUSTYPE_MPSA
+mdefine_line|#define BUSTYPE_MPSA&t;&quot;MPSA&quot;
+DECL|macro|BUSTYPE_NUBUS
+mdefine_line|#define BUSTYPE_NUBUS&t;&quot;NUBUS&quot;
+DECL|macro|BUSTYPE_TC
+mdefine_line|#define BUSTYPE_TC&t;&quot;TC&quot;
+DECL|macro|BUSTYPE_VME
+mdefine_line|#define BUSTYPE_VME&t;&quot;VME&quot;
+DECL|macro|BUSTYPE_XPRESS
+mdefine_line|#define BUSTYPE_XPRESS&t;&quot;XPRESS&quot;
 DECL|struct|mpc_config_ioapic
 r_struct
 id|mpc_config_ioapic
@@ -419,6 +442,8 @@ id|mp_bustype
 (brace
 DECL|enumerator|MP_BUS_ISA
 id|MP_BUS_ISA
+op_assign
+l_int|1
 comma
 DECL|enumerator|MP_BUS_EISA
 id|MP_BUS_EISA

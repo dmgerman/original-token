@@ -3567,7 +3567,6 @@ id|dabusb_driver
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 (paren
 l_string|&quot;Deti Fliegl, deti@fliegl.de&quot;
@@ -3604,6 +3603,5 @@ id|module_exit
 id|dabusb_cleanup
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 eof

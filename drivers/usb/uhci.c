@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Universal Host Controller Interface driver for USB.&n;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -10427,7 +10428,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|uhci_init
+r_static
 r_int
+id|__init
 id|uhci_init
 c_func
 (paren
@@ -10852,25 +10855,11 @@ l_string|&quot;uhci: not all TD&squot;s were freed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|uhci_exit
+r_static
 r_void
-)paren
-(brace
-r_return
-id|uhci_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|uhci_exit
 c_func
 (paren
 r_void
@@ -10888,6 +10877,20 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|variable|uhci_init
+id|module_init
+c_func
+(paren
+id|uhci_init
+)paren
+suffix:semicolon
+DECL|variable|uhci_exit
+id|module_exit
+c_func
+(paren
+id|uhci_exit
+)paren
+suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -10900,6 +10903,4 @@ c_func
 l_string|&quot;USB Universal Host Controller Interface driver&quot;
 )paren
 suffix:semicolon
-macro_line|#endif 
-singleline_comment|//MODULE
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: intrep.h,v 1.6 2000/08/04 14:29:17 dwmw2 Exp $&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: intrep.h,v 1.11 2000/08/17 22:46:46 bmatthews Exp $&n; *&n; */
 macro_line|#ifndef __LINUX_JFFS_INTREP_H__
 DECL|macro|__LINUX_JFFS_INTREP_H__
 mdefine_line|#define __LINUX_JFFS_INTREP_H__
@@ -286,6 +286,14 @@ r_int
 r_char
 op_star
 id|buf
+comma
+r_int
+id|recoverable
+comma
+r_struct
+id|jffs_file
+op_star
+id|f
 )paren
 suffix:semicolon
 r_int
@@ -297,6 +305,7 @@ id|jffs_file
 op_star
 id|f
 comma
+r_int
 r_char
 op_star
 id|buf
@@ -350,6 +359,9 @@ r_struct
 id|jffs_control
 op_star
 id|c
+comma
+id|__u32
+id|space
 )paren
 (brace
 r_struct
@@ -379,6 +391,8 @@ id|fmc-&gt;dirty_size
 )paren
 op_ge
 id|fmc-&gt;min_free_size
+op_plus
+id|space
 )paren
 (brace
 r_return
@@ -395,12 +409,30 @@ id|fmc-&gt;sector_size
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|jffs_garbage_collect_now
 c_func
 (paren
 id|c
 )paren
+)paren
+(brace
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;JFFS_ENOUGH_SPACE: jffs_garbage_collect_now() failed.&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/* For debugging purposes.  */

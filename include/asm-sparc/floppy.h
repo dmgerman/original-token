@@ -22,7 +22,7 @@ mdefine_line|#define release_region(X, Y)&t;do { } while(0)
 DECL|macro|check_region
 mdefine_line|#define check_region(X, Y)&t;(0)
 DECL|macro|request_region
-mdefine_line|#define request_region(X, Y, Z)&t;do { } while(0)
+mdefine_line|#define request_region(X, Y, Z)&t;(1)
 multiline_comment|/* References:&n; * 1) Netbsd Sun floppy driver.&n; * 2) NCR 82077 controller manual&n; * 3) Intel 82077 controller manual&n; */
 DECL|struct|sun_flpy_controller
 r_struct
