@@ -699,7 +699,18 @@ id|clgenfb_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_FB_ATY
+(brace
+l_string|&quot;atyfb&quot;
+comma
+id|atyfb_init
+comma
+id|atyfb_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_OF
+multiline_comment|/*&n;&t; * Offb must be initialized _after_ all other frame buffer devices&n;&t; * that use PCI probing and PCI resources! [ Geert ]&n;&t; */
 (brace
 l_string|&quot;offb&quot;
 comma
@@ -716,16 +727,6 @@ comma
 id|sbusfb_init
 comma
 id|sbusfb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_ATY
-(brace
-l_string|&quot;atyfb&quot;
-comma
-id|atyfb_init
-comma
-id|atyfb_setup
 )brace
 comma
 macro_line|#endif

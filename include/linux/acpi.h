@@ -392,6 +392,10 @@ id|acpi_control_wait
 suffix:semicolon
 )brace
 )brace
+r_extern
+r_int
+id|acpi_active
+suffix:semicolon
 macro_line|#else /* CONFIG_ACPI */
 r_extern
 r_inline

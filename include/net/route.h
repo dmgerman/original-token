@@ -4,6 +4,7 @@ DECL|macro|_ROUTE_H
 mdefine_line|#define _ROUTE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
+macro_line|#include &lt;net/inetpeer.h&gt;
 macro_line|#include &lt;linux/in_route.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
@@ -53,6 +54,9 @@ id|__u8
 id|scope
 suffix:semicolon
 )brace
+suffix:semicolon
+r_struct
+id|inet_peer
 suffix:semicolon
 DECL|struct|rtable
 r_struct
@@ -114,6 +118,13 @@ id|__u32
 id|rt_spec_dst
 suffix:semicolon
 multiline_comment|/* RFC1122 specific destination */
+DECL|member|peer
+r_struct
+id|inet_peer
+op_star
+id|peer
+suffix:semicolon
+multiline_comment|/* long-living peer info */
 macro_line|#ifdef CONFIG_IP_ROUTE_NAT
 DECL|member|rt_src_map
 id|__u32
@@ -530,6 +541,55 @@ id|tos
 comma
 id|oif
 )paren
+suffix:semicolon
+)brace
+r_extern
+r_void
+id|rt_bind_peer
+c_func
+(paren
+r_struct
+id|rtable
+op_star
+id|rt
+comma
+r_int
+id|create
+)paren
+suffix:semicolon
+DECL|function|rt_get_peer
+r_extern
+id|__inline__
+r_struct
+id|inet_peer
+op_star
+id|rt_get_peer
+c_func
+(paren
+r_struct
+id|rtable
+op_star
+id|rt
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|rt-&gt;peer
+)paren
+r_return
+id|rt-&gt;peer
+suffix:semicolon
+id|rt_bind_peer
+c_func
+(paren
+id|rt
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+id|rt-&gt;peer
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* _ROUTE_H */

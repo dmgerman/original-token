@@ -1310,7 +1310,10 @@ l_int|1
 )paren
 suffix:colon
 (paren
+id|le16_to_cpu
+(paren
 id|ohci-&gt;hcca.frame_no
+)paren
 op_plus
 l_int|10
 )paren
@@ -1493,13 +1496,17 @@ id|current-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|schedule_timeout
 (paren
 id|HZ
 op_div
 l_int|10
 )paren
-suffix:semicolon
+)paren
+(brace
 multiline_comment|/* wait until all TDs are deleted */
 id|remove_wait_queue
 (paren
@@ -1508,6 +1515,15 @@ id|op_wakeup
 comma
 op_amp
 id|wait
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+(paren
+id|KERN_ERR
+id|MODSTR
+l_string|&quot;unlink URB timeout!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1801,7 +1817,10 @@ op_assign
 id|usb_dev-&gt;bus-&gt;hcpriv
 suffix:semicolon
 r_return
+id|le16_to_cpu
+(paren
 id|ohci-&gt;hcca.frame_no
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------------*/
@@ -3419,7 +3438,10 @@ suffix:semicolon
 multiline_comment|/* enable sof interrupt */
 id|frame
 op_assign
+id|le16_to_cpu
+(paren
 id|ohci-&gt;hcca.frame_no
+)paren
 op_amp
 l_int|0x1
 suffix:semicolon
@@ -7037,7 +7059,6 @@ suffix:semicolon
 id|writel
 (paren
 id|virt_to_bus
-c_func
 (paren
 op_amp
 id|ohci-&gt;hcca
@@ -7246,7 +7267,10 @@ l_int|0
 op_logical_and
 op_logical_neg
 (paren
+id|le32_to_cpu
+(paren
 id|ohci-&gt;hcca.done_head
+)paren
 op_amp
 l_int|0x01
 )paren
@@ -7293,7 +7317,10 @@ l_string|&quot;Interrupt: %x frame: %x &bslash;n&quot;
 comma
 id|ints
 comma
+id|le16_to_cpu
+(paren
 id|ohci-&gt;hcca.frame_no
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -7367,6 +7394,7 @@ r_int
 r_int
 id|frame
 op_assign
+id|le16_to_cpu
 (paren
 id|ohci-&gt;hcca.frame_no
 )paren

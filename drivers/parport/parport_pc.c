@@ -7597,18 +7597,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Look for parallel controllers that we don&squot;t know about. */
-r_for
-c_loop
+id|pci_for_each_dev
+c_func
 (paren
 id|pcidev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|pcidev
-suffix:semicolon
-id|pcidev
-op_assign
-id|pcidev-&gt;next
 )paren
 (brace
 r_const

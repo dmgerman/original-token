@@ -233,6 +233,27 @@ c_func
 id|__up_wakeup
 )paren
 suffix:semicolon
+DECL|variable|__down_write_failed
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_write_failed
+)paren
+suffix:semicolon
+DECL|variable|__down_read_failed
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_read_failed
+)paren
+suffix:semicolon
+DECL|variable|__rwsem_wake
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__rwsem_wake
+)paren
+suffix:semicolon
 multiline_comment|/* Networking helper routines. */
 DECL|variable|csum_partial_copy
 id|EXPORT_SYMBOL

@@ -52,11 +52,11 @@ c_func
 id|pci_devices
 )paren
 suffix:semicolon
-DECL|variable|pci_root
+DECL|variable|pci_root_buses
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|pci_root
+id|pci_root_buses
 )paren
 suffix:semicolon
 DECL|variable|pci_enable_device
@@ -113,6 +113,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pci_assign_resource
+)paren
+suffix:semicolon
+DECL|variable|pci_setup_device
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_setup_device
 )paren
 suffix:semicolon
 macro_line|#ifdef&t;CONFIG_PROC_FS

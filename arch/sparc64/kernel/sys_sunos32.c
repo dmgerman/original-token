@@ -3059,7 +3059,9 @@ r_int
 id|do_mount
 c_func
 (paren
-id|kdev_t
+r_struct
+id|block_device
+op_star
 comma
 r_const
 r_char
@@ -3459,9 +3461,6 @@ id|sunos_mount
 op_assign
 id|data
 suffix:semicolon
-id|dev_t
-id|dev
-suffix:semicolon
 multiline_comment|/* Ok, here comes the fun part: Linux&squot;s nfs mount needs a&n;&t; * socket connection to the server, but SunOS mount does not&n;&t; * require this, so we use the information on the destination&n;&t; * address to create a socket and bind it to a reserved&n;&t; * port on this system&n;&t; */
 id|server_fd
 op_assign
@@ -3621,17 +3620,10 @@ id|putname
 id|the_name
 )paren
 suffix:semicolon
-id|dev
-op_assign
-id|get_unnamed_dev
-(paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
+r_return
 id|do_mount
 (paren
-id|dev
+l_int|NULL
 comma
 l_string|&quot;&quot;
 comma
@@ -3644,20 +3636,6 @@ comma
 op_amp
 id|linux_nfs_mount
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-id|put_unnamed_dev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* XXXXXXXXXXXXXXXXXXXX */

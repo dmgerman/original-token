@@ -574,7 +574,7 @@ op_star
 id|FASTCALL
 c_func
 (paren
-id|down_read_failed
+id|__down_read_failed
 c_func
 (paren
 r_struct
@@ -591,7 +591,7 @@ op_star
 id|FASTCALL
 c_func
 (paren
-id|down_write_failed
+id|__down_write_failed
 c_func
 (paren
 r_struct
@@ -608,7 +608,7 @@ op_star
 id|FASTCALL
 c_func
 (paren
-id|rwsem_wake
+id|__rwsem_wake
 c_func
 (paren
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Low-Level PCI Support for SGI Visual Workstation&n; *&n; *&t;(c) 1999 Martin Mares &lt;mj@suse.cz&gt;&n; */
+multiline_comment|/*&n; *&t;Low-Level PCI Support for SGI Visual Workstation&n; *&n; *&t;(c) 1999--2000 Martin Mares &lt;mj@suse.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -360,18 +360,10 @@ suffix:semicolon
 r_int
 id|irq
 suffix:semicolon
-r_for
-c_loop
+id|pci_for_each_dev
+c_func
 (paren
 id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
 )paren
 (brace
 id|pci_read_config_byte

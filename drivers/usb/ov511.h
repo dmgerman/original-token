@@ -93,8 +93,8 @@ DECL|macro|OV511_REG_SYSTEM_RESET
 mdefine_line|#define OV511_REG_SYSTEM_RESET&t;&t;&t;&t;0x50
 DECL|macro|OV511_RESET_UDC
 mdefine_line|#define &t;OV511_RESET_UDC&t;&t;&t;&t;0x01
-DECL|macro|OV511_RESET_I2O
-mdefine_line|#define &t;OV511_RESET_I2O&t;&t;&t;&t;0x02
+DECL|macro|OV511_RESET_I2C
+mdefine_line|#define &t;OV511_RESET_I2C&t;&t;&t;&t;0x02
 DECL|macro|OV511_RESET_FIFO
 mdefine_line|#define &t;OV511_RESET_FIFO&t;&t;&t;0x04
 DECL|macro|OV511_RESET_OMNICE
@@ -172,7 +172,7 @@ mdefine_line|#define SCRATCH_BUF_SIZE (STREAM_BUF_SIZE * 2)
 DECL|macro|FRAMES_PER_DESC
 mdefine_line|#define FRAMES_PER_DESC&t;&t;10  /* FIXME - What should this be? */
 DECL|macro|FRAME_SIZE_PER_DESC
-mdefine_line|#define FRAME_SIZE_PER_DESC&t;960&t;/* FIXME - Shouldn&squot;t be hardcoded */
+mdefine_line|#define FRAME_SIZE_PER_DESC&t;512&t;/* FIXME - Shouldn&squot;t be hardcoded */
 singleline_comment|// FIXME - should this be 0x81 (endpoint address) or 0x01 (endpoint number)?
 DECL|macro|OV511_ENDPOINT_ADDRESS
 mdefine_line|#define OV511_ENDPOINT_ADDRESS 0x81 /* Address of isoc endpoint */
@@ -182,6 +182,8 @@ DECL|macro|OV7610_I2C_WRITE_ID
 mdefine_line|#define OV7610_I2C_WRITE_ID 0x42
 DECL|macro|OV7610_I2C_READ_ID
 mdefine_line|#define OV7610_I2C_READ_ID  0x43
+DECL|macro|OV511_I2C_CLOCK_PRESCALER
+mdefine_line|#define OV511_I2C_CLOCK_PRESCALER 0x03
 multiline_comment|/* Prototypes */
 r_int
 id|usb_ov511_reg_read
@@ -333,6 +335,10 @@ r_int
 id|curline
 suffix:semicolon
 multiline_comment|/* Line of frame we&squot;re working on */
+DECL|member|curpix
+r_int
+id|curpix
+suffix:semicolon
 DECL|member|scanlength
 r_int
 id|scanlength

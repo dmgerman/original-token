@@ -427,6 +427,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;asm/pci.h&gt;
 DECL|macro|DEVICE_COUNT_COMPATIBLE
 mdefine_line|#define DEVICE_COUNT_COMPATIBLE&t;4
@@ -441,16 +442,18 @@ DECL|struct|pci_dev
 r_struct
 id|pci_dev
 (brace
-DECL|member|active
-r_int
-id|active
+DECL|member|global_list
+r_struct
+id|list_head
+id|global_list
 suffix:semicolon
-multiline_comment|/* device is active */
-DECL|member|ro
-r_int
-id|ro
+multiline_comment|/* node in list of all PCI devices */
+DECL|member|bus_list
+r_struct
+id|list_head
+id|bus_list
 suffix:semicolon
-multiline_comment|/* Read/Only */
+multiline_comment|/* node in per-bus list */
 DECL|member|bus
 r_struct
 id|pci_bus
@@ -465,20 +468,6 @@ op_star
 id|subordinate
 suffix:semicolon
 multiline_comment|/* bus this device bridges to */
-DECL|member|sibling
-r_struct
-id|pci_dev
-op_star
-id|sibling
-suffix:semicolon
-multiline_comment|/* next device on this bus */
-DECL|member|next
-r_struct
-id|pci_dev
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* chain of all devices */
 DECL|member|sysdata
 r_void
 op_star
@@ -603,6 +592,16 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* Slot name */
+DECL|member|active
+r_int
+id|active
+suffix:semicolon
+multiline_comment|/* device is active */
+DECL|member|ro
+r_int
+id|ro
+suffix:semicolon
+multiline_comment|/* Read/Only */
 DECL|member|prepare
 r_int
 (paren
@@ -644,6 +643,10 @@ id|dev
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|pci_dev_g
+mdefine_line|#define pci_dev_g(n) list_entry(n, struct pci_dev, global_list)
+DECL|macro|pci_dev_b
+mdefine_line|#define pci_dev_b(n) list_entry(n, struct pci_dev, bus_list)
 multiline_comment|/*&n; *  For PCI devices, the region numbers are assigned this way:&n; *&n; *&t;0-5&t;standard PCI regions&n; *&t;6&t;expansion ROM&n; *&t;7-10&t;bridges: address space assigned to buses behind the bridge&n; */
 DECL|macro|PCI_ROM_RESOURCE
 mdefine_line|#define PCI_ROM_RESOURCE 6
@@ -657,6 +660,12 @@ DECL|struct|pci_bus
 r_struct
 id|pci_bus
 (brace
+DECL|member|node
+r_struct
+id|list_head
+id|node
+suffix:semicolon
+multiline_comment|/* node in list of buses */
 DECL|member|parent
 r_struct
 id|pci_bus
@@ -666,25 +675,16 @@ suffix:semicolon
 multiline_comment|/* parent bus this bridge is on */
 DECL|member|children
 r_struct
-id|pci_bus
-op_star
+id|list_head
 id|children
 suffix:semicolon
-multiline_comment|/* chain of P2P bridges on this bus */
-DECL|member|next
+multiline_comment|/* list of child buses */
+DECL|member|devices
 r_struct
-id|pci_bus
-op_star
-id|next
+id|list_head
+id|devices
 suffix:semicolon
-multiline_comment|/* chain of all PCI buses */
-DECL|member|ops
-r_struct
-id|pci_ops
-op_star
-id|ops
-suffix:semicolon
-multiline_comment|/* configuration access functions */
+multiline_comment|/* list of devices on this bus */
 DECL|member|self
 r_struct
 id|pci_dev
@@ -692,21 +692,6 @@ op_star
 id|self
 suffix:semicolon
 multiline_comment|/* bridge device as seen by parent */
-DECL|member|devices
-r_struct
-id|pci_dev
-op_star
-id|devices
-suffix:semicolon
-multiline_comment|/* devices behind this bridge */
-DECL|member|last_dev_p
-r_struct
-id|pci_dev
-op_star
-op_star
-id|last_dev_p
-suffix:semicolon
-multiline_comment|/* where should next device be linked to */
 DECL|member|resource
 r_struct
 id|resource
@@ -717,6 +702,13 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* address space routed to this bus */
+DECL|member|ops
+r_struct
+id|pci_ops
+op_star
+id|ops
+suffix:semicolon
+multiline_comment|/* configuration access functions */
 DECL|member|sysdata
 r_void
 op_star
@@ -802,17 +794,17 @@ id|pad1
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|pci_bus_b
+mdefine_line|#define pci_bus_b(n) list_entry(n, struct pci_bus, node)
 r_extern
 r_struct
-id|pci_bus
-op_star
-id|pci_root
+id|list_head
+id|pci_root_buses
 suffix:semicolon
-multiline_comment|/* root bus */
+multiline_comment|/* list of all known PCI buses */
 r_extern
 r_struct
-id|pci_dev
-op_star
+id|list_head
 id|pci_devices
 suffix:semicolon
 multiline_comment|/* list of all devices */
@@ -1365,6 +1357,16 @@ op_star
 id|res
 )paren
 suffix:semicolon
+r_int
+id|pci_setup_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Generic PCI functions exported to card drivers */
 r_struct
 id|pci_dev
@@ -1555,16 +1557,6 @@ id|val
 )paren
 suffix:semicolon
 r_int
-id|pci_setup_device
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_int
 id|pci_enable_device
 c_func
 (paren
@@ -1610,6 +1602,10 @@ r_int
 id|i
 )paren
 suffix:semicolon
+DECL|macro|__pcidev
+mdefine_line|#define __pcidev(entry)&t;list_entry(entry, struct pci_dev, global_list)
+DECL|macro|pci_for_each_dev
+mdefine_line|#define pci_for_each_dev(dev) &bslash;&n;&t;for(dev = __pcidev(pci_devices.next); dev != __pcidev(&amp;pci_devices); dev = __pcidev(dev-&gt;global_list.next))
 multiline_comment|/* Helper functions for low-level code (drivers/pci/setup.c) */
 r_int
 id|pci_claim_resource

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * OmniVision OV511 Camera-to-USB Bridge Driver&n; * Copyright 1999 Mark W. McClelland&n; *&n; * Based on the Linux CPiA driver.&n; * &n; * Released under GPL v.2 license.&n; *&n; * Important keywords in comments:&n; *    CAMERA SPECIFIC - Camera specific code; may not work with other cameras.&n; *    DEBUG - Debugging code.&n; *    FIXME - Something that is broken or needs improvement.&n; *&n; * Version History:&n; *    Version 1.00 - Initial version&n; */
+multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 multiline_comment|/* Handle mangled (versioned) external symbols */
@@ -24,15 +25,17 @@ macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;ov511.h&quot;
+DECL|macro|OV511_I2C_RETRIES
+mdefine_line|#define OV511_I2C_RETRIES 3
 multiline_comment|/* Video Size 384 x 288 x 3 bytes for RGB */
 DECL|macro|MAX_FRAME_SIZE
-mdefine_line|#define MAX_FRAME_SIZE (384 * 288 * 3)
+mdefine_line|#define MAX_FRAME_SIZE (320 * 240 * 3)
 singleline_comment|// FIXME - Force CIF to make some apps happy for the moment. Should find a 
 singleline_comment|//         better way to do this.
 DECL|macro|DEFAULT_WIDTH
-mdefine_line|#define DEFAULT_WIDTH 384
+mdefine_line|#define DEFAULT_WIDTH 320
 DECL|macro|DEFAULT_HEIGHT
-mdefine_line|#define DEFAULT_HEIGHT 288
+mdefine_line|#define DEFAULT_HEIGHT 240
 DECL|variable|kernel_version
 r_char
 id|kernel_version
@@ -637,9 +640,9 @@ id|mem
 )paren
 suffix:semicolon
 )brace
-DECL|function|usb_ov511_reg_write
+DECL|function|ov511_reg_write
 r_int
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 r_struct
@@ -699,7 +702,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;reg write: 0x%X:0x%X&bslash;n&quot;
+l_string|&quot;reg write: 0x%02X:0x%02X&bslash;n&quot;
 comma
 id|reg
 comma
@@ -711,9 +714,9 @@ id|rc
 suffix:semicolon
 )brace
 multiline_comment|/* returns: negative is error, pos or zero is data */
-DECL|function|usb_ov511_reg_read
+DECL|function|ov511_reg_read
 r_int
-id|usb_ov511_reg_read
+id|ov511_reg_read
 c_func
 (paren
 r_struct
@@ -777,7 +780,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;reg read: 0x%X:0x%X&bslash;n&quot;
+l_string|&quot;reg read: 0x%02X:0x%02X&bslash;n&quot;
 comma
 id|reg
 comma
@@ -807,9 +810,9 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
-DECL|function|usb_ov511_cam_reg_write
+DECL|function|ov511_i2c_write
 r_int
-id|usb_ov511_cam_reg_write
+id|ov511_i2c_write
 c_func
 (paren
 r_struct
@@ -828,36 +831,34 @@ id|value
 (brace
 r_int
 id|rc
+comma
+id|retries
 suffix:semicolon
-singleline_comment|// Three byte write cycle
-singleline_comment|//    Set slave ID (This might only need to be done once)
-singleline_comment|//    (CAMERA SPECIFIC (OV7610/OV7110))
-id|rc
-op_assign
-id|usb_ov511_reg_write
+id|PDEBUG
 c_func
 (paren
-id|dev
+l_string|&quot;i2c write: 0x%02X:0x%02X&bslash;n&quot;
 comma
-id|OV511_REG_I2C_SLAVE_ID_WRITE
+id|reg
 comma
-id|OV7610_I2C_WRITE_ID
+id|value
 )paren
 suffix:semicolon
-r_if
-c_cond
+multiline_comment|/* Three byte write cycle */
+r_for
+c_loop
 (paren
-id|rc
-OL
-l_int|0
-)paren
-r_return
-id|rc
+id|retries
+op_assign
+id|OV511_I2C_RETRIES
 suffix:semicolon
-singleline_comment|//    Select camera register (I2C sub-address)
+suffix:semicolon
+)paren
+(brace
+multiline_comment|/* Select camera register */
 id|rc
 op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|dev
@@ -877,10 +878,10 @@ l_int|0
 r_return
 id|rc
 suffix:semicolon
-singleline_comment|//    Write &quot;value&quot; to I2C data port of OV511
+multiline_comment|/* Write &quot;value&quot; to I2C data port of OV511 */
 id|rc
 op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|dev
@@ -900,11 +901,10 @@ l_int|0
 r_return
 id|rc
 suffix:semicolon
-singleline_comment|// FIXME - should ensure bus is idle before continuing
-singleline_comment|//    Initiate 3-byte write cycle
+multiline_comment|/* Initiate 3-byte write cycle */
 id|rc
 op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|dev
@@ -914,14 +914,106 @@ comma
 l_int|0x01
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rc
+OL
+l_int|0
+)paren
 r_return
 id|rc
 suffix:semicolon
+r_do
+id|rc
+op_assign
+id|ov511_reg_read
+c_func
+(paren
+id|dev
+comma
+id|OV511_REG_I2C_CONTROL
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|rc
+OG
+l_int|0
+op_logical_and
+(paren
+(paren
+id|rc
+op_amp
+l_int|1
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
+multiline_comment|/* Retry until idle */
+r_if
+c_cond
+(paren
+id|rc
+OL
+l_int|0
+)paren
+r_return
+id|rc
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|rc
+op_amp
+l_int|2
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Ack? */
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* I2C abort */
+id|ov511_reg_write
+c_func
+(paren
+id|dev
+comma
+id|OV511_REG_I2C_CONTROL
+comma
+l_int|0x10
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|retries
+OL
+l_int|0
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/* returns: negative is error, pos or zero is data */
-DECL|function|usb_ov511_cam_reg_read
+DECL|function|ov511_i2c_read
 r_int
-id|usb_ov511_cam_reg_read
+id|ov511_i2c_read
 c_func
 (paren
 r_struct
@@ -936,36 +1028,26 @@ id|reg
 (brace
 r_int
 id|rc
+comma
+id|value
+comma
+id|retries
 suffix:semicolon
-singleline_comment|// Two byte write cycle
-singleline_comment|//    Set slave ID (This might only need to be done once)
-singleline_comment|//    (CAMERA SPECIFIC (OV7610/OV7110))
+multiline_comment|/* Two byte write cycle */
+r_for
+c_loop
+(paren
+id|retries
+op_assign
+id|OV511_I2C_RETRIES
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+multiline_comment|/* Select camera register */
 id|rc
 op_assign
-id|usb_ov511_reg_write
-c_func
-(paren
-id|dev
-comma
-id|OV511_REG_I2C_SLAVE_ID_WRITE
-comma
-id|OV7610_I2C_WRITE_ID
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rc
-OL
-l_int|0
-)paren
-r_return
-id|rc
-suffix:semicolon
-singleline_comment|//    Select camera register (I2C sub-address)
-id|rc
-op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|dev
@@ -985,10 +1067,10 @@ l_int|0
 r_return
 id|rc
 suffix:semicolon
-singleline_comment|//    Initiate 2-byte write cycle
+multiline_comment|/* Initiate 2-byte write cycle */
 id|rc
 op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|dev
@@ -1008,21 +1090,38 @@ l_int|0
 r_return
 id|rc
 suffix:semicolon
-singleline_comment|// Two byte read cycle
-singleline_comment|//    Set slave ID (This might only need to be done once)
-singleline_comment|//    (CAMERA SPECIFIC (OV7610/OV7110))
+r_do
 id|rc
 op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_read
 c_func
 (paren
 id|dev
 comma
-id|OV511_REG_I2C_SLAVE_ID_READ
-comma
-id|OV7610_I2C_READ_ID
+id|OV511_REG_I2C_CONTROL
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+id|rc
+OG
+l_int|0
+op_logical_and
+(paren
+(paren
+id|rc
+op_amp
+l_int|1
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
+multiline_comment|/* Retry until idle */
 r_if
 c_cond
 (paren
@@ -1033,10 +1132,61 @@ l_int|0
 r_return
 id|rc
 suffix:semicolon
-singleline_comment|//    Initiate 2-byte read cycle
+r_if
+c_cond
+(paren
+(paren
+id|rc
+op_amp
+l_int|2
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Ack? */
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* I2C abort */
+id|ov511_reg_write
+c_func
+(paren
+id|dev
+comma
+id|OV511_REG_I2C_CONTROL
+comma
+l_int|0x10
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|retries
+OL
+l_int|0
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Two byte read cycle */
+r_for
+c_loop
+(paren
+id|retries
+op_assign
+id|OV511_I2C_RETRIES
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+multiline_comment|/* Initiate 2-byte read cycle */
 id|rc
 op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|dev
@@ -1056,10 +1206,103 @@ l_int|0
 r_return
 id|rc
 suffix:semicolon
-singleline_comment|// FIXME - should check I2C bus status here before reading data!
-singleline_comment|//    Write &quot;value&quot; to I2C data port of OV511
+r_do
+id|rc
+op_assign
+id|ov511_reg_read
+c_func
+(paren
+id|dev
+comma
+id|OV511_REG_I2C_CONTROL
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|rc
+OG
+l_int|0
+op_logical_and
+(paren
+(paren
+id|rc
+op_amp
+l_int|1
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
+multiline_comment|/* Retry until idle */
+r_if
+c_cond
+(paren
+id|rc
+OL
+l_int|0
+)paren
 r_return
-id|usb_ov511_reg_read
+id|rc
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|rc
+op_amp
+l_int|2
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Ack? */
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* I2C abort */
+id|rc
+op_assign
+id|ov511_reg_write
+c_func
+(paren
+id|dev
+comma
+id|OV511_REG_I2C_CONTROL
+comma
+l_int|0x10
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rc
+OL
+l_int|0
+)paren
+r_return
+id|rc
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|retries
+OL
+l_int|0
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|value
+op_assign
+id|ov511_reg_read
 c_func
 (paren
 id|dev
@@ -1067,10 +1310,48 @@ comma
 id|OV511_REG_I2C_DATA_PORT
 )paren
 suffix:semicolon
+id|PDEBUG
+c_func
+(paren
+l_string|&quot;i2c read: 0x%02X:0x%02X&bslash;n&quot;
+comma
+id|reg
+comma
+id|value
+)paren
+suffix:semicolon
+multiline_comment|/* This is needed to make ov511_i2c_write() work */
+id|rc
+op_assign
+id|ov511_reg_write
+c_func
+(paren
+id|dev
+comma
+id|OV511_REG_I2C_CONTROL
+comma
+l_int|0x05
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rc
+OL
+l_int|0
+)paren
+r_return
+id|rc
+suffix:semicolon
+r_return
+(paren
+id|value
+)paren
+suffix:semicolon
 )brace
-DECL|function|usb_ov511_reset
+DECL|function|ov511_reset
 r_int
-id|usb_ov511_reset
+id|ov511_reset
 c_func
 (paren
 r_struct
@@ -1096,7 +1377,7 @@ id|reset_type
 suffix:semicolon
 id|rc
 op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|dev
@@ -1122,7 +1403,7 @@ l_string|&quot;ov511: reset: command failed&bslash;n&quot;
 suffix:semicolon
 id|rc
 op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|dev
@@ -1150,9 +1431,9 @@ r_return
 id|rc
 suffix:semicolon
 )brace
-DECL|function|usb_ov511_set_packet_size
+DECL|function|ov511_set_packet_size
 r_int
-id|usb_ov511_set_packet_size
+id|ov511_set_packet_size
 c_func
 (paren
 r_struct
@@ -1207,7 +1488,7 @@ l_int|1
 suffix:semicolon
 id|multiplier
 op_assign
-l_int|32
+l_int|31
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1233,7 +1514,7 @@ l_int|3
 suffix:semicolon
 id|multiplier
 op_assign
-l_int|25
+l_int|24
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1259,7 +1540,7 @@ l_int|5
 suffix:semicolon
 id|multiplier
 op_assign
-l_int|17
+l_int|16
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1272,7 +1553,7 @@ l_int|6
 suffix:semicolon
 id|multiplier
 op_assign
-l_int|9
+l_int|8
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1308,7 +1589,7 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|ov511-&gt;dev
@@ -1372,7 +1653,7 @@ singleline_comment|// FIXME - Should we only reset the FIFO?
 r_if
 c_cond
 (paren
-id|usb_ov511_reset
+id|ov511_reset
 c_func
 (paren
 id|ov511-&gt;dev
@@ -1393,31 +1674,10 @@ suffix:semicolon
 multiline_comment|/* How much data is left in the scratch buf? */
 DECL|macro|scratch_left
 mdefine_line|#define scratch_left(x)&t;(ov511-&gt;scratchlen - (int)((char *)x - (char *)ov511-&gt;scratch))
-singleline_comment|// FIXME - Useless stub
-DECL|function|ov511_parse_data
-r_static
-r_void
-id|ov511_parse_data
-c_func
-(paren
-r_struct
-id|usb_ov511
-op_star
-id|ov511
-)paren
-(brace
-id|PDEBUG
-c_func
-(paren
-l_string|&quot;ov511_parse_data not implemented&bslash;n&quot;
-)paren
-suffix:semicolon
-singleline_comment|// TEMPORARY CODE
-)brace
-DECL|function|ov511_compress_isochronous
+DECL|function|ov511_move_data
 r_static
 r_int
-id|ov511_compress_isochronous
+id|ov511_move_data
 c_func
 (paren
 r_struct
@@ -1434,9 +1694,6 @@ r_int
 r_char
 op_star
 id|cdata
-comma
-op_star
-id|data
 suffix:semicolon
 r_int
 id|i
@@ -1445,12 +1702,30 @@ id|totlen
 op_assign
 l_int|0
 suffix:semicolon
-id|data
-op_assign
-id|ov511-&gt;scratch
-op_plus
-id|ov511-&gt;scratchlen
+r_int
+id|aPackNum
+(braket
+l_int|10
+)braket
 suffix:semicolon
+r_struct
+id|ov511_frame
+op_star
+id|frame
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ov511-&gt;curframe
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -1500,6 +1775,30 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|n
+)paren
+r_continue
+suffix:semicolon
+id|aPackNum
+(braket
+id|i
+)braket
+op_assign
+id|n
+ques
+c_cond
+id|cdata
+(braket
+l_int|512
+)braket
+suffix:colon
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|st
 )paren
 (brace
@@ -1517,62 +1816,396 @@ id|st
 )paren
 suffix:semicolon
 )brace
+id|frame
+op_assign
+op_amp
+id|ov511-&gt;frame
+(braket
+id|ov511-&gt;curframe
+)braket
+suffix:semicolon
+multiline_comment|/* Can we find a frame end */
 r_if
 c_cond
 (paren
 (paren
-id|ov511-&gt;scratchlen
-op_plus
-id|n
+id|cdata
+(braket
+l_int|0
+)braket
+op_or
+id|cdata
+(braket
+l_int|1
+)braket
+op_or
+id|cdata
+(braket
+l_int|2
+)braket
+op_or
+id|cdata
+(braket
+l_int|3
+)braket
+op_or
+id|cdata
+(braket
+l_int|4
+)braket
+op_or
+id|cdata
+(braket
+l_int|5
+)braket
+op_or
+id|cdata
+(braket
+l_int|6
+)braket
+op_or
+id|cdata
+(braket
+l_int|7
+)braket
 )paren
-OG
-id|SCRATCH_BUF_SIZE
+op_eq
+l_int|0
+op_logical_and
+(paren
+id|cdata
+(braket
+l_int|8
+)braket
+op_amp
+l_int|8
+)paren
+op_logical_and
+(paren
+id|cdata
+(braket
+l_int|8
+)braket
+op_amp
+l_int|0x80
+)paren
 )paren
 (brace
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;scratch buf overflow!scr_len: %d, n: %d&bslash;n&quot;
+l_string|&quot;Found Frame End!, packnum = %d&bslash;n&quot;
 comma
-id|ov511-&gt;scratchlen
-comma
-id|n
+(paren
+r_int
+)paren
+(paren
+id|cdata
+(braket
+l_int|512
+)braket
+)paren
 )paren
 suffix:semicolon
-r_return
-id|totlen
+id|PDEBUG
+c_func
+(paren
+l_string|&quot;Current frame = %d&bslash;n&quot;
+comma
+id|ov511-&gt;curframe
+)paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
-id|n
+id|frame-&gt;scanstate
+op_eq
+id|STATE_LINES
 )paren
 (brace
-id|memmove
+r_if
+c_cond
+(paren
+id|waitqueue_active
 c_func
 (paren
-id|data
-comma
-id|cdata
-comma
-id|n
+op_amp
+id|frame-&gt;wq
+)paren
+)paren
+(brace
+id|PDEBUG
+c_func
+(paren
+l_string|&quot;About to wake up waiting processes&bslash;n&quot;
 )paren
 suffix:semicolon
-id|data
-op_add_assign
-id|n
+id|frame-&gt;grabstate
+op_assign
+id|FRAME_DONE
 suffix:semicolon
-id|totlen
-op_add_assign
-id|n
-suffix:semicolon
-id|ov511-&gt;scratchlen
-op_add_assign
-id|n
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|frame-&gt;wq
+)paren
 suffix:semicolon
 )brace
 )brace
+)brace
+multiline_comment|/* Can we find a frame start */
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|cdata
+(braket
+l_int|0
+)braket
+op_or
+id|cdata
+(braket
+l_int|1
+)braket
+op_or
+id|cdata
+(braket
+l_int|2
+)braket
+op_or
+id|cdata
+(braket
+l_int|3
+)braket
+op_or
+id|cdata
+(braket
+l_int|4
+)braket
+op_or
+id|cdata
+(braket
+l_int|5
+)braket
+op_or
+id|cdata
+(braket
+l_int|6
+)braket
+op_or
+id|cdata
+(braket
+l_int|7
+)braket
+)paren
+op_eq
+l_int|0
+op_logical_and
+(paren
+id|cdata
+(braket
+l_int|8
+)braket
+op_amp
+l_int|8
+)paren
+)paren
+(brace
+id|PDEBUG
+c_func
+(paren
+l_string|&quot;ov511: Found Frame Start!, packnum = %d&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+(paren
+id|cdata
+(braket
+l_int|512
+)braket
+)paren
+)paren
+suffix:semicolon
+id|frame-&gt;scanstate
+op_assign
+id|STATE_LINES
+suffix:semicolon
+id|frame-&gt;curpix
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Are we in a frame? */
+r_else
+r_if
+c_cond
+(paren
+id|frame-&gt;scanstate
+op_eq
+id|STATE_LINES
+)paren
+(brace
+r_int
+r_char
+op_star
+id|f
+op_assign
+id|frame-&gt;data
+op_plus
+l_int|3
+op_star
+id|frame-&gt;curpix
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|frame-&gt;curpix
+op_le
+l_int|320
+op_star
+l_int|240
+op_minus
+l_int|256
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|256
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+op_star
+id|f
+op_increment
+op_assign
+op_star
+id|cdata
+suffix:semicolon
+op_star
+id|f
+op_increment
+op_assign
+op_star
+id|cdata
+suffix:semicolon
+op_star
+id|f
+op_increment
+op_assign
+op_star
+id|cdata
+op_increment
+suffix:semicolon
+op_star
+id|f
+op_increment
+op_assign
+op_star
+id|cdata
+suffix:semicolon
+op_star
+id|f
+op_increment
+op_assign
+op_star
+id|cdata
+suffix:semicolon
+op_star
+id|f
+op_increment
+op_assign
+op_star
+id|cdata
+op_increment
+suffix:semicolon
+)brace
+id|frame-&gt;curpix
+op_add_assign
+l_int|512
+suffix:semicolon
+)brace
+r_else
+(brace
+id|PDEBUG
+c_func
+(paren
+l_string|&quot;Too many pixels!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+id|PDEBUG
+c_func
+(paren
+l_string|&quot;pn: %d %d %d %d %d %d %d %d %d %d&bslash;n&quot;
+comma
+id|aPackNum
+(braket
+l_int|0
+)braket
+comma
+id|aPackNum
+(braket
+l_int|1
+)braket
+comma
+id|aPackNum
+(braket
+l_int|2
+)braket
+comma
+id|aPackNum
+(braket
+l_int|3
+)braket
+comma
+id|aPackNum
+(braket
+l_int|4
+)braket
+comma
+id|aPackNum
+(braket
+l_int|5
+)braket
+comma
+id|aPackNum
+(braket
+l_int|6
+)braket
+comma
+id|aPackNum
+(braket
+l_int|7
+)braket
+comma
+id|aPackNum
+(braket
+l_int|8
+)braket
+comma
+id|aPackNum
+(braket
+l_int|9
+)braket
+)paren
+suffix:semicolon
 r_return
 id|totlen
 suffix:semicolon
@@ -1607,6 +2240,31 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#if 0
+r_static
+r_int
+id|last_status
+comma
+id|last_error_count
+comma
+id|last_actual_length
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|last_status
+op_ne
+id|urb-&gt;status
+op_logical_or
+id|last_error_count
+op_ne
+id|urb-&gt;error_count
+op_logical_or
+id|last_actual_length
+op_ne
+id|urb-&gt;actual_length
+)paren
+(brace
 id|PDEBUG
 c_func
 (paren
@@ -1621,6 +2279,20 @@ comma
 id|urb-&gt;actual_length
 )paren
 suffix:semicolon
+id|last_status
+op_assign
+id|urb-&gt;status
+suffix:semicolon
+id|last_error_count
+op_assign
+id|urb-&gt;error_count
+suffix:semicolon
+id|last_actual_length
+op_assign
+id|urb-&gt;actual_length
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1645,11 +2317,10 @@ id|ov511-&gt;sbuf
 id|ov511-&gt;cursbuf
 )braket
 suffix:semicolon
-singleline_comment|//&t;usb_kill_isoc(sbuf-&gt;isodesc);
 multiline_comment|/* Copy the data received into our scratch buffer */
 id|len
 op_assign
-id|ov511_compress_isochronous
+id|ov511_move_data
 c_func
 (paren
 id|ov511
@@ -1657,6 +2328,7 @@ comma
 id|urb
 )paren
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* If we don&squot;t have a frame we&squot;re current working on, complain */
 r_if
 c_cond
@@ -1688,6 +2360,7 @@ id|ov511
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1733,8 +2406,6 @@ l_int|1
 op_mod
 id|OV511_NUMSBUF
 suffix:semicolon
-multiline_comment|/* Reschedule this block of Isochronous desc */
-singleline_comment|//&t;usb_run_isoc(sbuf-&gt;isodesc, ov511-&gt;sbuf[ov511-&gt;cursbuf].isodesc);
 r_return
 suffix:semicolon
 )brace
@@ -1783,8 +2454,7 @@ id|ov511-&gt;scratchlen
 op_assign
 l_int|0
 suffix:semicolon
-singleline_comment|// FIXME - is this the proper size?
-id|usb_ov511_set_packet_size
+id|ov511_set_packet_size
 c_func
 (paren
 id|ov511
@@ -1792,6 +2462,111 @@ comma
 l_int|512
 )paren
 suffix:semicolon
+DECL|macro|OV511_COLOR_BAR_TEST
+mdefine_line|#define OV511_COLOR_BAR_TEST
+macro_line|#ifdef OV511_COLOR_BAR_TEST
+(brace
+r_int
+id|rc
+suffix:semicolon
+id|rc
+op_assign
+id|ov511_i2c_read
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+l_int|0x12
+)paren
+suffix:semicolon
+id|rc
+op_assign
+id|ov511_i2c_write
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+l_int|0x12
+comma
+l_int|0x3f
+)paren
+suffix:semicolon
+id|rc
+op_assign
+id|ov511_i2c_read
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+l_int|0x12
+)paren
+suffix:semicolon
+id|rc
+op_assign
+id|ov511_i2c_read
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+l_int|0x13
+)paren
+suffix:semicolon
+id|rc
+op_assign
+id|ov511_i2c_write
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+l_int|0x14
+comma
+l_int|0x4
+)paren
+suffix:semicolon
+id|rc
+op_assign
+id|ov511_i2c_read
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+l_int|0x14
+)paren
+suffix:semicolon
+id|rc
+op_assign
+id|ov511_i2c_write
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+l_int|0x28
+comma
+l_int|0x60
+)paren
+suffix:semicolon
+id|rc
+op_assign
+id|ov511_i2c_read
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+l_int|0x28
+)paren
+suffix:semicolon
+id|ov511_reg_write
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+id|OV511_REG_CAMERA_DATA_INPUT_SELECT
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* We double buffer the Iso lists */
 id|urb
 op_assign
@@ -2137,13 +2912,7 @@ id|ov511-&gt;streaming
 )paren
 r_return
 suffix:semicolon
-singleline_comment|// FIXME - Figure out how to do this with the ov511 (Does the below do it?)
-singleline_comment|//&t;/* Turn off continuous grab */
-singleline_comment|//&t;if (usb_cpia_set_grab_mode(cpia-&gt;dev, 0) &lt; 0) {
-singleline_comment|//&t;&t;printk(KERN_ERR &quot;cpia_set_grab_mode error&bslash;n&quot;);
-singleline_comment|//&t;&t;return /* -EBUSY */;
-singleline_comment|//&t;}
-id|usb_ov511_set_packet_size
+id|ov511_set_packet_size
 c_func
 (paren
 id|ov511
@@ -2353,31 +3122,8 @@ op_star
 l_int|4
 suffix:semicolon
 multiline_comment|/* Multiple of 4 */
-singleline_comment|// FIXME - Don&squot;t know how to implement the equivalent of this for the ov511
-singleline_comment|//&t;/* Set the ROI they want */
-singleline_comment|//&t;if (usb_cpia_set_roi(cpia-&gt;dev, 0, width / 8, 0, height / 4) &lt; 0)
-singleline_comment|//&t;&t;return -EBUSY;
-singleline_comment|//&t;if (usb_cpia_set_compression(cpia-&gt;dev, cpia-&gt;compress ?
-singleline_comment|//&t;&t;&t;COMP_AUTO : COMP_DISABLED, DONT_DECIMATE) &lt; 0) {
-singleline_comment|//&t;&t;printk(KERN_ERR &quot;cpia_set_compression error&bslash;n&quot;);
-singleline_comment|//&t;&t;return -EBUSY;
-singleline_comment|//&t;}
-multiline_comment|/* We want a fresh frame every 30 we get */
-id|ov511-&gt;compress
-op_assign
-(paren
-id|ov511-&gt;compress
-op_plus
-l_int|1
-)paren
-op_mod
-l_int|30
-suffix:semicolon
-singleline_comment|//&t;/* Grab the frame */
-singleline_comment|//&t;if (usb_cpia_upload_frame(cpia-&gt;dev, WAIT_FOR_NEXT_FRAME) &lt; 0) {
-singleline_comment|//&t;&t;printk(KERN_ERR &quot;cpia_upload_frame error&bslash;n&quot;);
-singleline_comment|//&t;&t;return -EBUSY;
-singleline_comment|//&t;}
+singleline_comment|//&t;/* We want a fresh frame every 30 we get */
+singleline_comment|//&t;ov511-&gt;compress = (ov511-&gt;compress + 1) % 30;
 r_return
 l_int|0
 suffix:semicolon
@@ -4515,10 +5261,10 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|usb_ov511_configure
+DECL|function|ov511_configure
 r_static
 r_int
-id|usb_ov511_configure
+id|ov511_configure
 c_func
 (paren
 r_struct
@@ -4634,40 +5380,28 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-singleline_comment|// Disable compression
+multiline_comment|/* Reset in case driver was unloaded and reloaded without unplug */
 r_if
 c_cond
 (paren
-id|usb_ov511_reg_write
+id|ov511_reset
 c_func
 (paren
 id|dev
 comma
-id|OV511_OMNICE_ENABLE
-comma
-l_int|0x00
+id|OV511_RESET_ALL
 )paren
 OL
 l_int|0
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;ov511: disable compression: command failed&bslash;n&quot;
-)paren
-suffix:semicolon
 r_goto
 id|error
 suffix:semicolon
-)brace
-singleline_comment|// Initialize system
-singleline_comment|// FIXME - This should be moved to a function
+multiline_comment|/* Initialize system */
 r_if
 c_cond
 (paren
-id|usb_ov511_reg_write
+id|ov511_reg_write
 c_func
 (paren
 id|dev
@@ -4691,10 +5425,79 @@ r_goto
 id|error
 suffix:semicolon
 )brace
+multiline_comment|/* This seems to be necessary */
 r_if
 c_cond
 (paren
-id|usb_ov511_reset
+id|ov511_reset
+c_func
+(paren
+id|dev
+comma
+id|OV511_RESET_ALL
+)paren
+OL
+l_int|0
+)paren
+r_goto
+id|error
+suffix:semicolon
+multiline_comment|/* Disable compression */
+r_if
+c_cond
+(paren
+id|ov511_reg_write
+c_func
+(paren
+id|dev
+comma
+id|OV511_OMNICE_ENABLE
+comma
+l_int|0x00
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ov511: disable compression: command failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|error
+suffix:semicolon
+)brace
+singleline_comment|// FIXME - error checking needed
+id|ov511_reg_write
+c_func
+(paren
+id|dev
+comma
+id|OV511_REG_I2C_SLAVE_ID_WRITE
+comma
+id|OV7610_I2C_WRITE_ID
+)paren
+suffix:semicolon
+id|ov511_reg_write
+c_func
+(paren
+id|dev
+comma
+id|OV511_REG_I2C_SLAVE_ID_READ
+comma
+id|OV7610_I2C_READ_ID
+)paren
+suffix:semicolon
+singleline_comment|// DEBUG CODE
+singleline_comment|//&t;usb_ov511_reg_write(dev, OV511_REG_I2C_CLOCK_PRESCALER,
+singleline_comment|//&t;&t;&t;&t;&t;&t; OV511_I2C_CLOCK_PRESCALER);
+r_if
+c_cond
+(paren
+id|ov511_reset
 c_func
 (paren
 id|dev
@@ -4707,23 +5510,34 @@ l_int|0
 r_goto
 id|error
 suffix:semicolon
+multiline_comment|/* Dummy read to sync I2C */
+id|ov511_i2c_read
+c_func
+(paren
+id|dev
+comma
+l_int|0x1C
+)paren
+suffix:semicolon
 singleline_comment|// DEBUG - TEST CODE FOR CAMERA REG READ
 id|temprc
 op_assign
-id|usb_ov511_cam_reg_read
+id|ov511_i2c_read
+c_func
+(paren
+id|dev
+comma
+l_int|0x1C
+)paren
+suffix:semicolon
+id|temprc
+op_assign
+id|ov511_i2c_read
 c_func
 (paren
 id|dev
 comma
 l_int|0x1D
-)paren
-suffix:semicolon
-id|PDEBUG
-c_func
-(paren
-l_string|&quot;Camera reg 0x1D: 0x%X&bslash;n&quot;
-comma
-id|temprc
 )paren
 suffix:semicolon
 singleline_comment|// END DEBUG CODE
@@ -4934,7 +5748,7 @@ id|interface-&gt;bInterfaceNumber
 suffix:semicolon
 id|rc
 op_assign
-id|usb_ov511_reg_read
+id|ov511_reg_read
 c_func
 (paren
 id|dev
@@ -4969,7 +5783,7 @@ op_eq
 l_int|3
 )paren
 (brace
-singleline_comment|// D-Link DSB-C300
+multiline_comment|/* D-Link DSB-C300 */
 id|printk
 c_func
 (paren
@@ -4990,7 +5804,7 @@ op_eq
 l_int|21
 )paren
 (brace
-singleline_comment|// Creative Labs WebCam 3
+multiline_comment|/* Creative Labs WebCam 3 */
 id|printk
 c_func
 (paren
@@ -5028,28 +5842,11 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-singleline_comment|// Reset in case driver was unloaded and reloaded without unplug
-r_if
-c_cond
-(paren
-id|usb_ov511_reset
-c_func
-(paren
-id|dev
-comma
-id|OV511_RESET_ALL
-)paren
-OL
-l_int|0
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|usb_ov511_configure
+id|ov511_configure
 c_func
 (paren
 id|ov511

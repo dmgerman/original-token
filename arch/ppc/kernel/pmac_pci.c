@@ -2789,18 +2789,10 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/*&n;&t; * FIXME: This is broken: We should not assign IRQ&squot;s to IRQless&n;&t; *&t;  devices (look at PCI_INTERRUPT_PIN) and we also should&n;&t; *&t;  honor the existence of multi-function devices where&n;&t; *&t;  different functions have different interrupt pins. [mj]&n;&t; */
-r_for
-c_loop
+id|pci_for_each_dev
+c_func
 (paren
 id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Open Firmware often doesn&squot;t initialize the,&n;&t;&t; * PCI_INTERRUPT_LINE config register properly, so we&n;&t;&t; * should find the device node and se if it has an&n;&t;&t; * AAPL,interrupts property.&n;&t;&t; */

@@ -1951,6 +1951,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|bdev_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|inode_init
 c_func
 (paren

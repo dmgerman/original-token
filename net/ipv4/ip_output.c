@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.75 1999/12/21 04:05:04 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;&t;Andi Kleen&t;: &t;Replace ip_reply with ip_send_reply.&n; *&t;&t;Andi Kleen&t;:&t;Split fast and slow ip_build_xmit path &n; *&t;&t;&t;&t;&t;for decreased register pressure on x86 &n; *&t;&t;&t;&t;&t;and more readibility. &n; *&t;&t;Marc Boucher&t;:&t;When call_out_firewall returns FW_QUEUE,&n; *&t;&t;&t;&t;&t;silently drop skb instead of failing with -EPERM.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.76 2000/01/06 00:41:57 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;&t;Andi Kleen&t;: &t;Replace ip_reply with ip_send_reply.&n; *&t;&t;Andi Kleen&t;:&t;Split fast and slow ip_build_xmit path &n; *&t;&t;&t;&t;&t;for decreased register pressure on x86 &n; *&t;&t;&t;&t;&t;and more readibility. &n; *&t;&t;Marc Boucher&t;:&t;When call_out_firewall returns FW_QUEUE,&n; *&t;&t;&t;&t;&t;silently drop skb instead of failing with -EPERM.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -29,6 +29,7 @@ macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/raw.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
+macro_line|#include &lt;net/inetpeer.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
@@ -37,12 +38,6 @@ multiline_comment|/*&n; *      Shall we try to damage output packets if routing 
 DECL|variable|sysctl_ip_dynaddr
 r_int
 id|sysctl_ip_dynaddr
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|ip_id_count
-r_int
-id|ip_id_count
 op_assign
 l_int|0
 suffix:semicolon
@@ -432,13 +427,13 @@ c_func
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|iph-&gt;id
-op_assign
-id|htons
+id|ip_select_ident
 c_func
 (paren
-id|ip_id_count
-op_increment
+id|iph
+comma
+op_amp
+id|rt-&gt;u.dst
 )paren
 suffix:semicolon
 id|skb-&gt;nh.iph
@@ -1128,6 +1123,15 @@ c_func
 id|IP_DF
 )paren
 suffix:semicolon
+id|ip_select_ident
+c_func
+(paren
+id|iph
+comma
+op_amp
+id|rt-&gt;u.dst
+)paren
+suffix:semicolon
 multiline_comment|/* Add an IP checksum. */
 id|ip_send_check
 c_func
@@ -1210,6 +1214,15 @@ op_minus
 id|EMSGSIZE
 suffix:semicolon
 )brace
+id|ip_select_ident
+c_func
+(paren
+id|iph
+comma
+op_amp
+id|rt-&gt;u.dst
+)paren
+suffix:semicolon
 r_return
 id|ip_fragment
 c_func
@@ -1466,15 +1479,6 @@ c_func
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|iph-&gt;id
-op_assign
-id|htons
-c_func
-(paren
-id|ip_id_count
-op_increment
-)paren
-suffix:semicolon
 r_return
 id|NF_HOOK
 c_func
@@ -1578,9 +1582,10 @@ suffix:semicolon
 r_int
 id|mtu
 suffix:semicolon
-r_int
-r_int
+id|u16
 id|id
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|hh_len
@@ -1799,7 +1804,9 @@ id|offset
 OG
 l_int|0
 op_logical_and
-id|df
+id|sk-&gt;protinfo.af_inet.pmtudisc
+op_eq
+id|IP_PMTUDISC_DO
 )paren
 (brace
 id|ip_local_error
@@ -1830,16 +1837,6 @@ id|MSG_PROBE
 )paren
 r_goto
 id|out
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Get an identifier&n;&t; */
-id|id
-op_assign
-id|htons
-c_func
-(paren
-id|ip_id_count
-op_increment
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Begin outputting the bytes.&n;&t; */
 r_do
@@ -1996,10 +1993,6 @@ op_star
 l_int|4
 )paren
 suffix:semicolon
-id|iph-&gt;id
-op_assign
-id|id
-suffix:semicolon
 id|iph-&gt;frag_off
 op_assign
 id|htons
@@ -2009,13 +2002,56 @@ id|offset
 op_rshift
 l_int|3
 )paren
-suffix:semicolon
-id|iph-&gt;frag_off
-op_or_assign
+op_or
 id|mf
 op_or
 id|df
 suffix:semicolon
+id|iph-&gt;id
+op_assign
+id|id
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mf
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|offset
+op_logical_or
+op_logical_neg
+id|df
+)paren
+(brace
+multiline_comment|/* Select an unpredictable ident only&n;&t;&t;&t;&t;&t; * for packets without DF or having&n;&t;&t;&t;&t;&t; * been fragmented.&n;&t;&t;&t;&t;&t; */
+id|__ip_select_ident
+c_func
+(paren
+id|iph
+comma
+op_amp
+id|rt-&gt;u.dst
+)paren
+suffix:semicolon
+id|id
+op_assign
+id|iph-&gt;id
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Any further fragments will have MF set.&n;&t;&t;&t;&t; */
+id|mf
+op_assign
+id|htons
+c_func
+(paren
+id|IP_MF
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2068,15 +2104,6 @@ op_add_assign
 id|iph-&gt;ihl
 op_star
 l_int|4
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Any further fragments will have MF set.&n;&t;&t;&t; */
-id|mf
-op_assign
-id|htons
-c_func
-(paren
-id|IP_MF
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;User data callback&n;&t;&t; */
@@ -2520,15 +2547,6 @@ c_func
 id|length
 )paren
 suffix:semicolon
-id|iph-&gt;id
-op_assign
-id|htons
-c_func
-(paren
-id|ip_id_count
-op_increment
-)paren
-suffix:semicolon
 id|iph-&gt;frag_off
 op_assign
 id|df
@@ -2536,6 +2554,15 @@ suffix:semicolon
 id|iph-&gt;ttl
 op_assign
 id|sk-&gt;protinfo.af_inet.mc_ttl
+suffix:semicolon
+id|ip_select_ident
+c_func
+(paren
+id|iph
+comma
+op_amp
+id|rt-&gt;u.dst
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3558,6 +3585,11 @@ id|ip_packet_type
 )paren
 suffix:semicolon
 id|ip_rt_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|inet_initpeers
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: compat.c,v 1.1 1998/02/16 10:35:50 mj Exp $&n; *&n; *&t;PCI Bus Services -- Function For Backward Compatibility&n; *&n; *&t;Copyright 1998, 1999 Martin Mares &lt;mj@suse.cz&gt;&n; */
+multiline_comment|/*&n; *&t;$Id: compat.c,v 1.1 1998/02/16 10:35:50 mj Exp $&n; *&n; *&t;PCI Bus Services -- Function For Backward Compatibility&n; *&n; *&t;Copyright 1998--2000 Martin Mares &lt;mj@suse.cz&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -11,8 +11,9 @@ r_void
 )paren
 (brace
 r_return
-op_logical_neg
-op_logical_neg
+id|pci_devices.next
+op_ne
+op_amp
 id|pci_devices
 suffix:semicolon
 )brace

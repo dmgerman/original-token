@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  acpi.c - Linux ACPI driver&n; *&n; *  Copyright (C) 1
 multiline_comment|/*&n; * See http://www.geocities.com/SiliconValley/Hardware/3165/&n; * for the user-level ACPI stuff&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
@@ -342,6 +343,19 @@ DECL|variable|acpi_p_lvl3_tested
 r_static
 r_int
 id|acpi_p_lvl3_tested
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|acpi_disabled
+r_static
+r_int
+id|acpi_disabled
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|acpi_active
+r_int
+id|acpi_active
 op_assign
 l_int|0
 suffix:semicolon
@@ -4885,6 +4899,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef CONFIG_ACPI_S1_SLEEP
 id|acpi_enter_sx
 c_func
 (paren
@@ -4897,6 +4912,7 @@ c_func
 id|ACPI_S0
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|file-&gt;f_pos
 op_add_assign
@@ -4924,6 +4940,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|acpi_disabled
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|acpi_find_tables
 c_func
 (paren
@@ -4941,7 +4966,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    &t; * Are the latencies in uS or in ticks in the tables? &n;    &t; * Maybe this should do ACPI_uS_TO_TMR_TICKS?&n;    &t; *&n;    &t; * Whatever. Internally we always keep them in timer&n;    &t; * ticks, which is simpler and more consistent (what is&n;    &t; * an uS to us?). Besides, that gives people more&n;    &t; * control in the /proc interfaces.&n;    &t; */
+multiline_comment|/*&n;    &t; * Internally we always keep latencies in timer&n;    &t; * ticks, which is simpler and more consistent (what is&n;    &t; * an uS to us?). Besides, that gives people more&n;    &t; * control in the /proc interfaces.&n;    &t; */
 r_if
 c_cond
 (paren
@@ -4954,13 +4979,21 @@ id|ACPI_MAX_P_LVL2_LAT
 (brace
 id|acpi_p_lvl2_lat
 op_assign
+id|ACPI_uS_TO_TMR_TICKS
+c_func
+(paren
 id|acpi_facp-&gt;p_lvl2_lat
+)paren
 suffix:semicolon
 id|acpi_enter_lvl2_lat
 op_assign
+id|ACPI_uS_TO_TMR_TICKS
+c_func
+(paren
 id|ACPI_TMR_HZ
 op_div
 l_int|1000
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -4975,13 +5008,21 @@ id|ACPI_MAX_P_LVL3_LAT
 (brace
 id|acpi_p_lvl3_lat
 op_assign
+id|ACPI_uS_TO_TMR_TICKS
+c_func
+(paren
 id|acpi_facp-&gt;p_lvl3_lat
+)paren
 suffix:semicolon
 id|acpi_enter_lvl3_lat
 op_assign
+id|ACPI_uS_TO_TMR_TICKS
+c_func
+(paren
 id|acpi_facp-&gt;p_lvl3_lat
 op_star
 l_int|5
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -5060,6 +5101,10 @@ suffix:semicolon
 id|acpi_power_off
 op_assign
 id|acpi_power_off_handler
+suffix:semicolon
+id|acpi_active
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up the ACPI idle function. Note that we can&squot;t really&n;&t; * do this with multiple CPU&squot;s, we&squot;d need a per-CPU ACPI&n;&t; * device..&n;&t; */
 macro_line|#ifdef __SMP__
@@ -5143,6 +5188,104 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|acpi_setup
+r_static
+r_int
+id|__init
+id|acpi_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|str
+op_logical_and
+op_star
+id|str
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+id|str
+comma
+l_string|&quot;off&quot;
+comma
+l_int|3
+)paren
+op_eq
+l_int|0
+)paren
+id|acpi_disabled
+op_assign
+l_int|1
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+id|str
+comma
+l_string|&quot;on&quot;
+comma
+l_int|2
+)paren
+op_eq
+l_int|0
+)paren
+id|acpi_disabled
+op_assign
+l_int|0
+suffix:semicolon
+id|str
+op_assign
+id|strpbrk
+c_func
+(paren
+id|str
+comma
+l_string|&quot;,&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|str
+)paren
+id|str
+op_add_assign
+id|strspn
+c_func
+(paren
+id|str
+comma
+l_string|&quot;,&quot;
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;acpi=&quot;
+comma
+id|acpi_setup
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Register a device with the ACPI subsystem&n; */
 DECL|function|acpi_register
 r_struct

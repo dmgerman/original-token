@@ -1450,14 +1450,19 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
+multiline_comment|/* dentry will be wired, so... */
 id|error
 op_assign
-id|blkdev_open
+id|blkdev_get
 c_func
 (paren
-id|inode
+id|inode-&gt;i_bdev
 comma
-id|file
+id|file-&gt;f_mode
+comma
+id|file-&gt;f_flags
+comma
+id|BDEV_FILE
 )paren
 suffix:semicolon
 id|lo-&gt;lo_device
@@ -1905,9 +1910,12 @@ c_func
 id|dentry-&gt;d_inode-&gt;i_mode
 )paren
 )paren
-id|blkdev_release
+id|blkdev_put
+c_func
 (paren
-id|dentry-&gt;d_inode
+id|dentry-&gt;d_inode-&gt;i_bdev
+comma
+id|BDEV_FILE
 )paren
 suffix:semicolon
 id|lo-&gt;lo_dentry

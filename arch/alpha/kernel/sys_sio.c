@@ -311,18 +311,10 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Iterate through the devices, collecting IRQ levels.  */
-r_for
-c_loop
+id|pci_for_each_dev
+c_func
 (paren
 id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
 )paren
 (brace
 r_if

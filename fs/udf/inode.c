@@ -5929,7 +5929,7 @@ id|inode
 comma
 id|inode-&gt;i_mode
 op_or
-id|S_FIFO
+id|S_IFIFO
 comma
 l_int|0
 )paren

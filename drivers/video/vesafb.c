@@ -2365,12 +2365,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__request_region
+id|request_mem_region
 c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 id|video_base
 comma
 id|video_size
@@ -2900,12 +2897,9 @@ l_int|256
 suffix:semicolon
 )brace
 multiline_comment|/* request failure does not faze us, as vgacon probably has this&n;&t; * region already (FIXME) */
-id|__request_region
+id|request_region
 c_func
 (paren
-op_amp
-id|ioport_resource
-comma
 l_int|0x3c0
 comma
 l_int|32

@@ -3444,18 +3444,10 @@ id|OpenPIC
 )paren
 (brace
 multiline_comment|/* PCI interrupts are controlled by the OpenPIC */
-r_for
-c_loop
+id|pci_for_each_dev
+c_func
 (paren
 id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
 )paren
 (brace
 r_if
@@ -3498,18 +3490,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_for
-c_loop
+id|pci_for_each_dev
+c_func
 (paren
 id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Use our old hard-coded kludge to figure out what&n;&t;&t; * irq this device uses.  This is necessary on things&n;&t;&t; * without residual data. -- Cort&n;&t;&t; */

@@ -20132,6 +20132,12 @@ id|tp
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
+op_star
+id|devp
+op_assign
+op_star
+id|next
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
@@ -20149,12 +20155,6 @@ c_func
 (paren
 id|tp
 )paren
-suffix:semicolon
-op_star
-id|devp
-op_assign
-op_star
-id|next
 suffix:semicolon
 id|kfree
 c_func

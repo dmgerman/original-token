@@ -90,14 +90,8 @@ DECL|macro|PCI_DEVICE_ID_NEOMAGIC_NM256AV_AUDIO
 mdefine_line|#define PCI_DEVICE_ID_NEOMAGIC_NM256AV_AUDIO 0x8005
 DECL|macro|PCI_DEVICE_ID_NEOMAGIC_NM256ZX_AUDIO
 mdefine_line|#define PCI_DEVICE_ID_NEOMAGIC_NM256ZX_AUDIO 0x8006
-multiline_comment|/* eeeew. */
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,0)
 DECL|macro|RSRCADDRESS
 mdefine_line|#define RSRCADDRESS(dev,num) ((dev)-&gt;resource[(num)].start)
-macro_line|#else
-DECL|macro|RSRCADDRESS
-mdefine_line|#define RSRCADDRESS(dev,num) ((dev)-&gt;base_address[(num)] &bslash;&n;&t;&t;&t;      &amp; PCI_BASE_ADDRESS_MEM_MASK)
-macro_line|#endif
 multiline_comment|/* List of cards.  */
 DECL|variable|nmcard_list
 r_static

@@ -4218,6 +4218,13 @@ c_func
 r_void
 )paren
 (brace
+id|misc_deregister
+c_func
+(paren
+op_amp
+id|agp_miscdev
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

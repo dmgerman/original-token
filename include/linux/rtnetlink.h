@@ -416,6 +416,20 @@ DECL|member|rta_used
 id|__u32
 id|rta_used
 suffix:semicolon
+DECL|macro|RTNETLINK_HAVE_PEERINFO
+mdefine_line|#define RTNETLINK_HAVE_PEERINFO 1
+DECL|member|rta_id
+id|__u32
+id|rta_id
+suffix:semicolon
+DECL|member|rta_ts
+id|__u32
+id|rta_ts
+suffix:semicolon
+DECL|member|rta_tsage
+id|__u32
+id|rta_tsage
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* RTM_METRICS --- array of struct rtattr with types of RTAX_* */

@@ -2408,6 +2408,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
 multiline_comment|/* Wait to make sure it&squot;s not being used on another CPU */
 r_while
 c_loop
@@ -2426,6 +2427,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|kfree
 c_func
 (paren

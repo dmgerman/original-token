@@ -957,7 +957,9 @@ r_int
 id|udf_get_last_session
 c_func
 (paren
-id|kdev_t
+r_struct
+id|super_block
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -966,7 +968,9 @@ r_int
 id|udf_get_last_block
 c_func
 (paren
-id|kdev_t
+r_struct
+id|super_block
+op_star
 comma
 r_int
 op_star

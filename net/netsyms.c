@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/hippidevice.h&gt;
 macro_line|#endif
 macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#ifdef CONFIG_BRIDGE
 macro_line|#include &lt;net/br.h&gt;
 macro_line|#endif
@@ -885,11 +886,11 @@ c_func
 id|arp_broken_ops
 )paren
 suffix:semicolon
-DECL|variable|ip_id_count
+DECL|variable|__ip_select_ident
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|ip_id_count
+id|__ip_select_ident
 )paren
 suffix:semicolon
 DECL|variable|ip_send_check
@@ -1734,6 +1735,22 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sysctl_max_syn_backlog
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined (CONFIG_IPV6_MODULE)
+DECL|variable|secure_tcpv6_sequence_number
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|secure_tcpv6_sequence_number
+)paren
+suffix:semicolon
+DECL|variable|secure_ipv6_id
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|secure_ipv6_id
 )paren
 suffix:semicolon
 macro_line|#endif

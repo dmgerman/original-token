@@ -767,20 +767,10 @@ id|KERN_INFO
 l_string|&quot;i2o: Checking for PCI I2O controllers...&bslash;n&quot;
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|pci_for_each_dev
+c_func
 (paren
 id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-op_ne
-l_int|NULL
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
 )paren
 (brace
 r_if

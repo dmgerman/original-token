@@ -683,22 +683,4 @@ comma
 multiline_comment|/* default file operations */
 )brace
 suffix:semicolon
-multiline_comment|/* Goner. Filesystems do not use it anymore. */
-DECL|function|init_fifo
-r_void
-id|init_fifo
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-id|inode-&gt;i_op
-op_assign
-op_amp
-id|fifo_inode_operations
-suffix:semicolon
-)brace
 eof

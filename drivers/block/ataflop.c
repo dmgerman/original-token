@@ -6141,12 +6141,6 @@ r_int
 id|param
 )paren
 (brace
-DECL|macro|IOCTL_MODE_BIT
-mdefine_line|#define IOCTL_MODE_BIT 8
-DECL|macro|OPEN_WRITE_BIT
-mdefine_line|#define OPEN_WRITE_BIT 16
-DECL|macro|IOCTL_ALLOWED
-mdefine_line|#define IOCTL_ALLOWED (filp &amp;&amp; (filp-&gt;f_mode &amp; IOCTL_MODE_BIT))
 r_int
 id|drive
 comma
@@ -6421,16 +6415,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|IOCTL_ALLOWED
-)paren
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -7663,38 +7647,6 @@ id|old_dev
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Allow ioctls if we have write-permissions even if read-only open */
-r_if
-c_cond
-(paren
-id|filp-&gt;f_mode
-op_amp
-l_int|2
-op_logical_or
-id|permission
-(paren
-id|inode
-comma
-l_int|2
-)paren
-op_eq
-l_int|0
-)paren
-id|filp-&gt;f_mode
-op_or_assign
-id|IOCTL_MODE_BIT
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|filp-&gt;f_mode
-op_amp
-l_int|2
-)paren
-id|filp-&gt;f_mode
-op_or_assign
-id|OPEN_WRITE_BIT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7782,22 +7734,6 @@ id|inode-&gt;i_rdev
 op_amp
 l_int|3
 suffix:semicolon
-multiline_comment|/*&n;&t; * If filp is NULL, we&squot;re being called from blkdev_release&n;&t; * or after a failed mount attempt.  In the former case the&n;&t; * device has already been sync&squot;ed, and in the latter no&n;&t; * sync is required.  Otherwise, sync if filp is writable.&n;&t; */
-r_if
-c_cond
-(paren
-id|filp
-op_logical_and
-(paren
-id|filp-&gt;f_mode
-op_amp
-(paren
-l_int|2
-op_or
-id|OPEN_WRITE_BIT
-)paren
-)paren
-)paren
 id|block_fsync
 (paren
 id|filp

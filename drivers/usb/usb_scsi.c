@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB SCSI-like devices&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999 Matthew Dharm (mdharm@one-eyed-alien.net)&n; *&n; * This driver is schizoid  - it makes a USB device appear as both a SCSI&n; * device and a character device. The latter is only available if the device&n; * has an interrupt endpoint, and is used specifically to receive interrupt&n; * events.&n; *&n; * In order to support various &squot;strange&squot; devices, this module supports plug-in&n; * device-specific filter modules, which can do their own thing when required.&n; *&n; * Further reference.&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the transformation of SCSI command blocks to the&n; *&t;equivalent USB control and data transfer required.&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on SCSI commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WEIRD!!&n; *&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * In order to support various &squot;strange&squot; devices, this module supports plug-in&n; * device-specific filter modules, which can do their own thing when required.&n; *&n; * Further reference:&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the protocol used to communicate with such&n; *      devices.  Clearly, the designers had SCSI commands in mind when they&n; *      created this document.  The commands are all similar to commands&n; *      in the SCSI-II specification.&n; *&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WEIRD!!&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -17,7 +17,7 @@ macro_line|#include &quot;../scsi/hosts.h&quot;
 macro_line|#include &quot;../scsi/sd.h&quot;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usb_scsi.h&quot;
-multiline_comment|/* direction table (what a pain) */
+multiline_comment|/* direction table -- this indicates the direction of the data&n; * transfer for each command code -- a 1 indicates input&n; */
 DECL|variable|us_direction
 r_int
 r_char
@@ -29,7 +29,69 @@ l_int|8
 )braket
 op_assign
 (brace
-macro_line|#include &quot;usb_scsi_dt.c&quot;
+l_int|0x28
+comma
+l_int|0x81
+comma
+l_int|0x14
+comma
+l_int|0x14
+comma
+l_int|0x20
+comma
+l_int|0x01
+comma
+l_int|0x90
+comma
+l_int|0x77
+comma
+l_int|0x0C
+comma
+l_int|0x20
+comma
+l_int|0x00
+comma
+l_int|0x04
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x01
+comma
+l_int|0x00
+comma
+l_int|0x01
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
 )brace
 suffix:semicolon
 macro_line|#ifdef REWRITE_PROJECT

@@ -5069,6 +5069,24 @@ suffix:semicolon
 id|APM_INIT_ERROR_RETURN
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_ACPI
+r_if
+c_cond
+(paren
+id|acpi_active
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;apm: overridden by ACPI.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|APM_INIT_ERROR_RETURN
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * Set up a segment that references the real mode segment 0x40&n;&t; * that extends up to the end of page zero (that we have reserved).&n;&t; * This is for buggy BIOS&squot;s that refer to (real mode) segment 0x40&n;&t; * even though they are called in protected mode.&n;&t; */
 id|set_base
 c_func

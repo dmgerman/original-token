@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/video/rivafb.c - nVidia RIVA 128/TNT/TNT2 fb driver&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@pobox.com&gt;&n; *&n; * Contributors:&n; *&n; *&t;ani joshi:  Lots of debugging and cleanup work, really helped&n; *&t;get the driver going&n; *&n; * Initial template from skeletonfb.c, created 28 Dec 1997 by Geert Uytterhoeven&n; * Includes riva_hw.c from nVidia, see copyright below.&n; * KGI code provided the basis for state storage, init, and mode switching.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/drivers/video/rivafb.c - nVidia RIVA 128/TNT/TNT2 fb driver&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Contributors:&n; *&n; *&t;ani joshi:  Lots of debugging and cleanup work, really helped&n; *&t;get the driver going&n; *&n; * Initial template from skeletonfb.c, created 28 Dec 1997 by Geert Uytterhoeven&n; * Includes riva_hw.c from nVidia, see copyright below.&n; * KGI code provided the basis for state storage, init, and mode switching.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/* version number of this driver */
 DECL|macro|RIVAFB_VERSION
 mdefine_line|#define RIVAFB_VERSION &quot;0.6.5&quot;
@@ -2292,12 +2292,9 @@ l_int|1
 dot
 id|start
 suffix:semicolon
-id|__request_region
+id|request_region
 c_func
 (paren
-op_amp
-id|ioport_resource
-comma
 l_int|0x3C0
 comma
 l_int|32
@@ -2309,11 +2306,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__request_region
+id|request_mem_region
+c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 id|rinfo-&gt;ctrl_base_phys
 comma
 id|rinfo-&gt;base0_region_size
@@ -2322,11 +2317,9 @@ l_string|&quot;rivafb&quot;
 )paren
 op_logical_or
 op_logical_neg
-id|__request_region
+id|request_mem_region
+c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 id|rinfo-&gt;fb_base_phys
 comma
 id|rinfo-&gt;base1_region_size

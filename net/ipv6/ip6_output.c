@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 output functions&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_output.c,v 1.22 1999/08/20 11:06:21 davem Exp $&n; *&n; *&t;Based on linux/net/ipv4/ip_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes:&n; *&t;A.N.Kuznetsov&t;:&t;airthmetics in fragmentation.&n; *&t;&t;&t;&t;extension headers are implemented.&n; *&t;&t;&t;&t;route changes now work.&n; *&t;&t;&t;&t;ip6_forward does not confuse sniffers.&n; *&t;&t;&t;&t;etc.&n; *&n; *      H. von Brand    :       Added missing #include &lt;linux/string.h&gt;&n; */
+multiline_comment|/*&n; *&t;IPv6 output functions&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_output.c,v 1.23 2000/01/06 00:42:07 davem Exp $&n; *&n; *&t;Based on linux/net/ipv4/ip_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes:&n; *&t;A.N.Kuznetsov&t;:&t;airthmetics in fragmentation.&n; *&t;&t;&t;&t;extension headers are implemented.&n; *&t;&t;&t;&t;route changes now work.&n; *&t;&t;&t;&t;ip6_forward does not confuse sniffers.&n; *&t;&t;&t;&t;etc.&n; *&n; *      H. von Brand    :       Added missing #include &lt;linux/string.h&gt;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -17,13 +17,67 @@ macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/rawv6.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
-DECL|variable|ipv6_fragmentation_id
+DECL|function|ipv6_select_ident
+r_static
+id|__inline__
+r_void
+id|ipv6_select_ident
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|frag_hdr
+op_star
+id|fhdr
+)paren
+(brace
 r_static
 id|u32
 id|ipv6_fragmentation_id
 op_assign
 l_int|1
 suffix:semicolon
+r_static
+id|spinlock_t
+id|ip6_id_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|ip6_id_lock
+)paren
+suffix:semicolon
+id|fhdr-&gt;identification
+op_assign
+id|ipv6_fragmentation_id
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|ipv6_fragmentation_id
+op_eq
+l_int|0
+)paren
+id|ipv6_fragmentation_id
+op_assign
+l_int|1
+suffix:semicolon
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|ip6_id_lock
+)paren
+suffix:semicolon
+)brace
 DECL|function|ip6_output
 r_int
 id|ip6_output
@@ -912,10 +966,13 @@ c_func
 id|offset
 )paren
 suffix:semicolon
-id|fhdr-&gt;identification
-op_assign
-id|ipv6_fragmentation_id
-op_increment
+id|ipv6_select_ident
+c_func
+(paren
+id|skb
+comma
+id|fhdr
+)paren
 suffix:semicolon
 r_return
 op_amp

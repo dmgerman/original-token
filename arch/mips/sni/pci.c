@@ -21,18 +21,10 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
-r_for
-c_loop
+id|pci_for_each_dev
+c_func
 (paren
 id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * TODO: Take care of RM300 revision D boards for where the&n;&t;&t; * network slot became an ordinary PCI slot.&n;&t;&t; */

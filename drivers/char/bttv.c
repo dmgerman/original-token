@@ -18962,8 +18962,6 @@ r_struct
 id|pci_dev
 op_star
 id|dev
-op_assign
-id|pci_devices
 suffix:semicolon
 r_int
 id|result
@@ -18974,8 +18972,8 @@ id|bttv_num
 op_assign
 l_int|0
 suffix:semicolon
-r_while
-c_loop
+id|pci_for_each_dev
+c_func
 (paren
 id|dev
 )paren
@@ -19032,10 +19030,6 @@ id|result
 )paren
 r_return
 id|result
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
 suffix:semicolon
 )brace
 r_if

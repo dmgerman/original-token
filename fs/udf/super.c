@@ -6407,7 +6407,7 @@ op_assign
 id|udf_get_last_session
 c_func
 (paren
-id|sb-&gt;s_dev
+id|sb
 )paren
 suffix:semicolon
 r_else
@@ -6447,7 +6447,7 @@ op_assign
 id|udf_get_last_block
 c_func
 (paren
-id|sb-&gt;s_dev
+id|sb
 comma
 op_amp
 (paren

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#endif
@@ -1276,19 +1277,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FB_ATY
-r_extern
-r_void
-id|atyfb_of_init
-c_func
-(paren
-r_struct
-id|device_node
-op_star
-id|dp
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_FB_ATY */
 macro_line|#ifdef CONFIG_FB_ATY128
 r_extern
 r_void
@@ -1904,6 +1892,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     *  This function is intended to go away as soon as all OF-aware frame&n;     *  buffer device drivers have been converted to use PCI probing and PCI&n;     *  resources. [ Geert ]&n;     */
 DECL|function|offb_init_driver
 r_static
 r_int
@@ -1944,33 +1933,6 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_ATY
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|dp-&gt;name
-comma
-l_string|&quot;ATY&quot;
-comma
-l_int|3
-)paren
-)paren
-(brace
-id|atyfb_of_init
-c_func
-(paren
-id|dp
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_FB_ATY */
 macro_line|#ifdef CONFIG_FB_S3TRIO
 r_if
 c_cond
@@ -2456,7 +2418,13 @@ id|i
 dot
 id|size
 op_ge
-id|len
+id|pitch
+op_star
+id|height
+op_star
+id|depth
+op_div
+l_int|8
 )paren
 r_break
 suffix:semicolon
@@ -2586,6 +2554,40 @@ id|fb_info_offb
 op_star
 id|info
 suffix:semicolon
+r_int
+r_int
+id|res_start
+op_assign
+id|address
+suffix:semicolon
+r_int
+r_int
+id|res_size
+op_assign
+id|pitch
+op_star
+id|height
+op_star
+id|depth
+op_div
+l_int|8
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|res_start
+comma
+id|res_size
+comma
+l_string|&quot;offb&quot;
+)paren
+)paren
+r_return
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2632,6 +2634,14 @@ comma
 id|depth
 )paren
 suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|res_start
+comma
+id|res_size
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2656,8 +2666,18 @@ id|info
 op_eq
 l_int|0
 )paren
+(brace
+id|release_mem_region
+c_func
+(paren
+id|res_start
+comma
+id|res_size
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -3479,6 +3499,14 @@ id|kfree
 c_func
 (paren
 id|info
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|res_start
+comma
+id|res_size
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/video/clgenfb.c - driver for Cirrus Logic chipsets&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@pobox.com&gt;&n; *&n; * Contributors (thanks, all!)&n; *&n; *      Jeff Rugen:&n; *      Major contributions;  Motorola PowerStack (PPC and PCI) support,&n; *      GD54xx, 1280x1024 mode support, change MCLK based on VCLK.&n; *&n; *&t;Geert Uytterhoeven:&n; *&t;Excellent code review.&n; *&n; *&t;Lars Hecking:&n; *&t;Amiga updates and testing.&n; *&n; * Original clgenfb author:  Frank Neumann&n; *&n; * Based on retz3fb.c and clgen.c:&n; *      Copyright (C) 1997 Jes Sorensen&n; *      Copyright (C) 1996 Frank Neumann&n; *&n; ***************************************************************&n; *&n; * Format this code with GNU indent &squot;-kr -i8 -pcs&squot; options.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
+multiline_comment|/*&n; * drivers/video/clgenfb.c - driver for Cirrus Logic chipsets&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Contributors (thanks, all!)&n; *&n; *      Jeff Rugen:&n; *      Major contributions;  Motorola PowerStack (PPC and PCI) support,&n; *      GD54xx, 1280x1024 mode support, change MCLK based on VCLK.&n; *&n; *&t;Geert Uytterhoeven:&n; *&t;Excellent code review.&n; *&n; *&t;Lars Hecking:&n; *&t;Amiga updates and testing.&n; *&n; * Original clgenfb author:  Frank Neumann&n; *&n; * Based on retz3fb.c and clgen.c:&n; *      Copyright (C) 1997 Jes Sorensen&n; *      Copyright (C) 1996 Frank Neumann&n; *&n; ***************************************************************&n; *&n; * Format this code with GNU indent &squot;-kr -i8 -pcs&squot; options.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
 DECL|macro|CLGEN_VERSION
 mdefine_line|#define CLGEN_VERSION &quot;1.9.4.4&quot;
 macro_line|#include &lt;linux/config.h&gt;
@@ -10819,21 +10819,17 @@ id|info-&gt;fbmem
 )paren
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,13)
-id|__release_region
+id|release_mem_region
+c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 id|info-&gt;fbmem_phys
 comma
 id|info-&gt;size
 )paren
 suffix:semicolon
-id|__release_region
+id|release_mem_region
+c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 l_int|0xA0000
 comma
 l_int|65535
@@ -10844,11 +10840,9 @@ c_cond
 (paren
 id|release_io_ports
 )paren
-id|__release_region
+id|release_region
+c_func
 (paren
-op_amp
-id|ioport_resource
-comma
 l_int|0x3C0
 comma
 l_int|32
@@ -11165,11 +11159,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__request_region
+id|request_mem_region
+c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 id|board_addr
 comma
 id|board_size
@@ -11205,11 +11197,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__request_region
+id|request_mem_region
+c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 l_int|0xA0000
 comma
 l_int|65535
@@ -11236,12 +11226,9 @@ comma
 l_int|0xA0000L
 )paren
 suffix:semicolon
-id|__release_region
+id|release_mem_region
 c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 id|board_addr
 comma
 id|board_size
@@ -11255,12 +11242,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__request_region
+id|request_region
 c_func
 (paren
-op_amp
-id|ioport_resource
-comma
 l_int|0x3C0
 comma
 l_int|32
@@ -11494,12 +11478,9 @@ id|info
 )paren
 (brace
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,13)
-id|__release_region
+id|release_mem_region
 c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 id|info-&gt;board_addr
 comma
 id|info-&gt;board_size
@@ -11682,12 +11663,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__request_region
+id|request_mem_region
 c_func
 (paren
-op_amp
-id|iomem_resource
-comma
 id|board_addr
 comma
 id|board_size
@@ -12585,7 +12563,7 @@ macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Copyright 1999 Jeff Garzik &lt;jgarzik@pobox.com&gt;&quot;
+l_string|&quot;Copyright 1999 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
