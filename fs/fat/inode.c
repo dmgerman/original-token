@@ -3697,6 +3697,10 @@ op_member_access_from_pointer
 id|fat_wait
 )paren
 suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
 id|MSDOS_SB
 c_func
 (paren
@@ -3704,8 +3708,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|fat_lock
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 id|MSDOS_SB
 c_func

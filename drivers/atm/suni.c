@@ -1574,11 +1574,9 @@ comma
 id|suni_int
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|suni_init
 r_int
+id|__init
 id|suni_init
 c_func
 (paren
@@ -1586,7 +1584,6 @@ r_struct
 id|atm_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

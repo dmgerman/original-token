@@ -61,6 +61,7 @@ mdefine_line|#define NF_IP_POST_ROUTING&t;4
 DECL|macro|NF_IP_NUMHOOKS
 mdefine_line|#define NF_IP_NUMHOOKS&t;&t;5
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
+macro_line|#ifdef __KERNEL__
 r_void
 id|debug_print_hooks_ip
 c_func
@@ -100,6 +101,7 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /*__KERNEL__*/
+macro_line|#endif /*CONFIG_NETFILTER_DEBUG*/
 macro_line|#endif /*__LINUX_IP_NETFILTER_H*/
 eof

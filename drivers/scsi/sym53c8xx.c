@@ -46,9 +46,9 @@ macro_line|#ifndef&t;__initdata
 DECL|macro|__initdata
 mdefine_line|#define&t;__initdata
 macro_line|#endif
-macro_line|#ifndef&t;__initfunc
-DECL|macro|__initfunc
-mdefine_line|#define&t;__initfunc(__arginit) __arginit
+macro_line|#ifndef&t;__init
+DECL|macro|__init
+mdefine_line|#define&t;__init
 macro_line|#endif
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt;= LinuxVersionCode(2,1,92)
@@ -603,12 +603,10 @@ macro_line|#else&t;/* __sparc__ */
 DECL|macro|pcivtobus
 mdefine_line|#define pcivtobus(p)&t;&t;&t;(p)
 macro_line|#if !defined(NCR_IOMAPPED) || defined(__i386__)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|remap_pci_mem
 r_static
 id|u_long
+id|__init
 id|remap_pci_mem
 c_func
 (paren
@@ -617,7 +615,6 @@ id|base
 comma
 id|u_long
 id|size
-)paren
 )paren
 (brace
 id|u_long
@@ -673,12 +670,10 @@ suffix:colon
 l_int|0UL
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|unmap_pci_mem
 r_static
 r_void
+id|__init
 id|unmap_pci_mem
 c_func
 (paren
@@ -687,7 +682,6 @@ id|vaddr
 comma
 id|u_long
 id|size
-)paren
 )paren
 (brace
 r_if
@@ -8918,11 +8912,9 @@ multiline_comment|/*--------------------------------------------------------*/
 )brace
 suffix:semicolon
 multiline_comment|/*==========================================================&n;**&n;**&n;**&t;Fill in #define dependent parts of the script&n;**&n;**&n;**==========================================================&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_script_fill
 r_void
+id|__init
 id|ncr_script_fill
 (paren
 r_struct
@@ -8934,7 +8926,6 @@ r_struct
 id|scripth
 op_star
 id|scrh
-)paren
 )paren
 (brace
 r_int
@@ -9306,12 +9297,10 @@ id|scr-&gt;data_out
 suffix:semicolon
 )brace
 multiline_comment|/*==========================================================&n;**&n;**&n;**&t;Copy and rebind a script.&n;**&n;**&n;**==========================================================&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_script_copy_and_bind
 r_static
 r_void
+id|__init
 id|ncr_script_copy_and_bind
 (paren
 id|ncb_p
@@ -9327,7 +9316,6 @@ id|dst
 comma
 r_int
 id|len
-)paren
 )paren
 (brace
 id|ncrcmd
@@ -10166,12 +10154,10 @@ suffix:semicolon
 )brace
 macro_line|#ifdef SCSI_NCR_NVRAM_SUPPORT
 multiline_comment|/*&n;**&t;Get target set-up from Symbios format NVRAM.&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|ncr_Symbios_setup_target
 id|ncr_Symbios_setup_target
 c_func
 (paren
@@ -10184,7 +10170,6 @@ comma
 id|Symbios_nvram
 op_star
 id|nvram
-)paren
 )paren
 (brace
 id|tcb_p
@@ -10275,12 +10260,10 @@ id|UF_NOSCAN
 suffix:semicolon
 )brace
 multiline_comment|/*&n;**&t;Get target set-up from Tekram format NVRAM.&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|ncr_Tekram_setup_target
 id|ncr_Tekram_setup_target
 c_func
 (paren
@@ -10293,7 +10276,6 @@ comma
 id|Tekram_nvram
 op_star
 id|nvram
-)paren
 )paren
 (brace
 id|tcb_p
@@ -10409,12 +10391,10 @@ suffix:semicolon
 multiline_comment|/* SCSI parity checking disabled */
 )brace
 macro_line|#endif /* SCSI_NCR_NVRAM_SUPPORT */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_prepare_setting
 r_static
 r_int
+id|__init
 id|ncr_prepare_setting
 c_func
 (paren
@@ -10424,7 +10404,6 @@ comma
 id|ncr_nvram
 op_star
 id|nvram
-)paren
 )paren
 (brace
 id|u_char
@@ -11630,11 +11609,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef SCSI_NCR_DEBUG_NVRAM
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_display_Symbios_nvram
 r_void
+id|__init
 id|ncr_display_Symbios_nvram
 c_func
 (paren
@@ -11644,7 +11621,6 @@ comma
 id|Symbios_nvram
 op_star
 id|nvram
-)paren
 )paren
 (brace
 r_int
@@ -11844,11 +11820,9 @@ comma
 l_int|120
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_display_Tekram_nvram
 r_void
+id|__init
 id|ncr_display_Tekram_nvram
 c_func
 (paren
@@ -11858,7 +11832,6 @@ comma
 id|Tekram_nvram
 op_star
 id|nvram
-)paren
 )paren
 (brace
 r_int
@@ -12189,12 +12162,10 @@ suffix:semicolon
 )brace
 macro_line|#endif /* SCSI_NCR_DEBUG_NVRAM */
 multiline_comment|/*&n;**&t;Host attach and initialisations.&n;**&n;**&t;Allocate host data and ncb structure.&n;**&t;Request IO region and remap MMIO region.&n;**&t;Do chip initialization.&n;**&t;If all is OK, install interrupt handling and&n;**&t;start the timer daemon.&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_attach
 r_static
 r_int
+id|__init
 id|ncr_attach
 (paren
 id|Scsi_Host_Template
@@ -12207,7 +12178,6 @@ comma
 id|ncr_device
 op_star
 id|device
-)paren
 )paren
 (brace
 r_struct
@@ -27118,19 +27088,16 @@ suffix:semicolon
 )brace
 multiline_comment|/*==========================================================&n;**&n;**&n;**&t;Test the pci bus snoop logic :-(&n;**&n;**&t;Has to be called with interrupts disabled.&n;**&n;**&n;**==========================================================&n;*/
 macro_line|#ifndef NCR_IOMAPPED
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_regtest
 r_static
 r_int
+id|__init
 id|ncr_regtest
 (paren
 r_struct
 id|ncb
 op_star
 id|np
-)paren
 )paren
 (brace
 r_register
@@ -27218,19 +27185,16 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_snooptest
 r_static
 r_int
+id|__init
 id|ncr_snooptest
 (paren
 r_struct
 id|ncb
 op_star
 id|np
-)paren
 )paren
 (brace
 id|u_int32
@@ -28133,12 +28097,10 @@ suffix:semicolon
 multiline_comment|/* Restart scsi clock &t;&t;*/
 )brace
 multiline_comment|/*&n; *&t;calculate NCR SCSI clock frequency (in KHz)&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncrgetfreq
 r_static
 r_int
+id|__init
 id|ncrgetfreq
 (paren
 id|ncb_p
@@ -28146,7 +28108,6 @@ id|np
 comma
 r_int
 id|gen
-)paren
 )paren
 (brace
 r_int
@@ -28305,12 +28266,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Get/probe NCR SCSI clock frequency&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_getclock
 r_static
 r_void
+id|__init
 id|ncr_getclock
 (paren
 id|ncb_p
@@ -28318,7 +28277,6 @@ id|np
 comma
 r_int
 id|mult
-)paren
 )paren
 (brace
 r_int
@@ -28708,19 +28666,16 @@ macro_line|#else
 DECL|macro|ARG_SEP
 mdefine_line|#define&t;ARG_SEP&t;&squot;,&squot;
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_setup_token
 r_static
 r_int
+id|__init
 id|get_setup_token
 c_func
 (paren
 r_char
 op_star
 id|p
-)paren
 )paren
 (brace
 r_char
@@ -28794,11 +28749,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sym53c8xx_setup
 r_void
+id|__init
 id|sym53c8xx_setup
 c_func
 (paren
@@ -28809,7 +28762,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 macro_line|#ifdef SCSI_NCR_BOOT_COMMAND_LINE_SUPPORT
@@ -29294,17 +29246,14 @@ id|device
 )paren
 suffix:semicolon
 multiline_comment|/*&n;**   Linux entry point for SYM53C8XX devices detection routine.&n;**&n;**   Called by the middle-level scsi drivers at initialization time,&n;**   or at module installation.&n;**&n;**   Read the PCI configuration and try to attach each&n;**   detected NCR board.&n;**&n;**   If NVRAM is present, try to attach boards according to &n;**   the used defined boot order.&n;**&n;**   Returns the number of boards successfully attached.&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_print_driver_setup
 r_static
 r_void
+id|__init
 id|ncr_print_driver_setup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 DECL|macro|YesNo
@@ -29432,17 +29381,14 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_detect_pqs_pds
 r_static
 r_void
+id|__init
 id|ncr_detect_pqs_pds
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -29584,18 +29530,15 @@ suffix:semicolon
 )brace
 macro_line|#endif /* SCSI_NCR_PQS_PDS_SUPPORT */
 multiline_comment|/*===================================================================&n;**    Detect all 53c8xx hosts and then attach them.&n;**&n;**    If we are using NVRAM, once all hosts are detected, we need to &n;**    check any NVRAM for boot order in case detect and boot order &n;**    differ and attach them using the order in the NVRAM.&n;**&n;**    If no NVRAM is found or data appears invalid attach boards in &n;**    the the order they are detected.&n;**===================================================================&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sym53c8xx_detect
 r_int
+id|__init
 id|sym53c8xx_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_int
@@ -30216,12 +30159,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*===================================================================&n;**   Generically read a base address from the PCI configuration space.&n;**   Return the offset immediately after the base address that has &n;**   been read. Btw, we blindly assume that the high 32 bits of 64 bit &n;**   base addresses are set to zero on 32 bit architectures.&n;**===================================================================&n;*/
 macro_line|#if LINUX_VERSION_CODE &lt;= LinuxVersionCode(2,1,92)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|pci_read_base_address
 id|pci_read_base_address
 c_func
 (paren
@@ -30237,7 +30178,6 @@ comma
 id|u_long
 op_star
 id|base
-)paren
 )paren
 (brace
 id|u_int32
@@ -30322,12 +30262,10 @@ id|offset
 suffix:semicolon
 )brace
 macro_line|#else&t;/* LINUX_VERSION_CODE &gt; LinuxVersionCode(2,1,92) */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|pci_get_base_address
 id|pci_get_base_address
 c_func
 (paren
@@ -30342,7 +30280,6 @@ comma
 id|u_long
 op_star
 id|base
-)paren
 )paren
 (brace
 multiline_comment|/* FIXME! This is just unbelieably horrible backwards compatibility code */
@@ -30390,12 +30327,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*===================================================================&n;**   Read and check the PCI configuration for any detected NCR &n;**   boards and save data for attaching after all boards have &n;**   been detected.&n;**===================================================================&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sym53c8xx_pci_init
 r_static
 r_int
+id|__init
 id|sym53c8xx_pci_init
 c_func
 (paren
@@ -30412,7 +30347,6 @@ comma
 id|ncr_device
 op_star
 id|device
-)paren
 )paren
 (brace
 id|u_short
@@ -31800,12 +31734,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*===================================================================&n;**    Detect and try to read SYMBIOS and TEKRAM NVRAM.&n;**&n;**    Data can be used to order booting of boards.&n;**&n;**    Data is saved in ncr_device structure if NVRAM found. This&n;**    is then used to find drive boot order for ncr_attach().&n;**&n;**    NVRAM data is passed to Scsi_Host_Template later during &n;**    ncr_attach() for any device set up.&n;*===================================================================&n;*/
 macro_line|#ifdef SCSI_NCR_NVRAM_SUPPORT
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_get_nvram
 r_static
 r_void
+id|__init
 id|ncr_get_nvram
 c_func
 (paren
@@ -31816,7 +31748,6 @@ comma
 id|ncr_nvram
 op_star
 id|nvp
-)paren
 )paren
 (brace
 id|devp-&gt;nvram
@@ -35587,12 +35518,10 @@ r_int
 id|bit_mode
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_get_Symbios_nvram
 r_static
 r_int
+id|__init
 id|ncr_get_Symbios_nvram
 (paren
 id|ncr_slot
@@ -35602,7 +35531,6 @@ comma
 id|Symbios_nvram
 op_star
 id|nvram
-)paren
 )paren
 (brace
 r_static
@@ -36027,12 +35955,10 @@ id|retv
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read Symbios NvRAM data and compute checksum.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_read_data
 r_static
 id|u_short
+id|__init
 id|nvram_read_data
 c_func
 (paren
@@ -36054,7 +35980,6 @@ comma
 id|u_char
 op_star
 id|gpcntl
-)paren
 )paren
 (brace
 r_int
@@ -36135,12 +36060,10 @@ id|csum
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Send START condition to NVRAM to wake it up.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_start
 r_static
 r_void
+id|__init
 id|nvram_start
 c_func
 (paren
@@ -36151,7 +36074,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 id|nvram_setBit
@@ -36204,12 +36126,10 @@ id|CLR_CLK
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * WRITE a byte to the NVRAM and then get an ACK to see it was accepted OK,&n; * GPIO0 must already be set as an output&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_write_byte
 r_static
 r_void
+id|__init
 id|nvram_write_byte
 c_func
 (paren
@@ -36231,7 +36151,6 @@ comma
 id|u_char
 op_star
 id|gpcntl
-)paren
 )paren
 (brace
 r_int
@@ -36287,12 +36206,10 @@ id|gpcntl
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * READ a byte from the NVRAM and then send an ACK to say we have got it,&n; * GPIO0 must already be set as an input&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_read_byte
 r_static
 r_void
+id|__init
 id|nvram_read_byte
 c_func
 (paren
@@ -36314,7 +36231,6 @@ comma
 id|u_char
 op_star
 id|gpcntl
-)paren
 )paren
 (brace
 r_int
@@ -36388,12 +36304,10 @@ id|gpcntl
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Output an ACK to the NVRAM after reading,&n; * change GPIO0 to output and when done back to an input&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_writeAck
 r_static
 r_void
+id|__init
 id|nvram_writeAck
 c_func
 (paren
@@ -36411,7 +36325,6 @@ comma
 id|u_char
 op_star
 id|gpcntl
-)paren
 )paren
 (brace
 id|OUTB
@@ -36446,12 +36359,10 @@ id|gpcntl
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Input an ACK from NVRAM after writing,&n; * change GPIO0 to input and when done back to an output&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_readAck
 r_static
 r_void
+id|__init
 id|nvram_readAck
 c_func
 (paren
@@ -36470,7 +36381,6 @@ comma
 id|u_char
 op_star
 id|gpcntl
-)paren
 )paren
 (brace
 id|OUTB
@@ -36505,12 +36415,10 @@ id|gpcntl
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read or write a bit to the NVRAM,&n; * read if GPIO0 input else write if GPIO0 output&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_doBit
 r_static
 r_void
+id|__init
 id|nvram_doBit
 c_func
 (paren
@@ -36528,7 +36436,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 id|nvram_setBit
@@ -36594,12 +36501,10 @@ id|CLR_BIT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Send STOP condition to NVRAM - puts NVRAM to sleep... ZZzzzz!!&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_stop
 r_static
 r_void
+id|__init
 id|nvram_stop
 c_func
 (paren
@@ -36610,7 +36515,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 id|nvram_setBit
@@ -36639,12 +36543,10 @@ id|SET_BIT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set/clear data/clock bit in GPIO0&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_setBit
 r_static
 r_void
+id|__init
 id|nvram_setBit
 c_func
 (paren
@@ -36661,7 +36563,6 @@ id|gpreg
 comma
 r_int
 id|bit_mode
-)paren
 )paren
 (brace
 id|UDELAY
@@ -36862,12 +36763,10 @@ op_star
 id|gpreg
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ncr_get_Tekram_nvram
 r_static
 r_int
+id|__init
 id|ncr_get_Tekram_nvram
 (paren
 id|ncr_slot
@@ -36877,7 +36776,6 @@ comma
 id|Tekram_nvram
 op_star
 id|nvram
-)paren
 )paren
 (brace
 id|u_char
@@ -36999,12 +36897,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read Tekram NvRAM data and compute checksum.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|Tnvram_read_data
 r_static
 id|u_short
+id|__init
 id|Tnvram_read_data
 c_func
 (paren
@@ -37022,7 +36918,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 id|u_char
@@ -37115,12 +37010,10 @@ id|csum
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Send read command and address to NVRAM&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|Tnvram_Send_Command
 r_static
 r_void
+id|__init
 id|Tnvram_Send_Command
 c_func
 (paren
@@ -37138,7 +37031,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 r_int
@@ -37190,12 +37082,10 @@ id|nc_gpreg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * READ a byte from the NVRAM&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|Tnvram_Read_Word
 r_static
 r_void
+id|__init
 id|Tnvram_Read_Word
 c_func
 (paren
@@ -37210,7 +37100,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 r_int
@@ -37288,12 +37177,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* &n; * Read bit from NVRAM&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|Tnvram_Read_Bit
 r_static
 r_void
+id|__init
 id|Tnvram_Read_Bit
 c_func
 (paren
@@ -37308,7 +37195,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 id|UDELAY
@@ -37334,12 +37220,10 @@ id|nc_gpreg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write bit to GPIO0&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|Tnvram_Write_Bit
 r_static
 r_void
+id|__init
 id|Tnvram_Write_Bit
 c_func
 (paren
@@ -37353,7 +37237,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 r_if
@@ -37402,12 +37285,10 @@ id|gpreg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Send STOP condition to NVRAM - puts NVRAM to sleep... ZZZzzz!!&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|Tnvram_Stop
 r_static
 r_void
+id|__init
 id|Tnvram_Stop
 c_func
 (paren
@@ -37418,7 +37299,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 op_star
@@ -37449,12 +37329,10 @@ id|gpreg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Pulse clock bit in GPIO0&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|Tnvram_Clk
 r_static
 r_void
+id|__init
 id|Tnvram_Clk
 c_func
 (paren
@@ -37465,7 +37343,6 @@ comma
 id|u_char
 op_star
 id|gpreg
-)paren
 )paren
 (brace
 id|OUTB

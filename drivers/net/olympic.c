@@ -378,11 +378,9 @@ id|dev
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|olympic_probe
 r_int
+id|__init
 id|olympic_probe
 c_func
 (paren
@@ -390,7 +388,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -414,12 +411,10 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|olympic_scan
 r_static
 r_int
+id|__init
 id|olympic_scan
 c_func
 (paren
@@ -427,7 +422,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -769,12 +763,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|olympic_init
 r_static
 r_int
+id|__init
 id|olympic_init
 c_func
 (paren
@@ -782,7 +774,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct

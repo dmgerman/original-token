@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/hpt366.c&t;&t;Version 0.11&t;August 04, 1999&n; *&n; * Copyright (C) 1999&t;&t;&t;Andre Hedrick&n; *&n; * drive_number&n; *&t;= ((HWIF(drive)-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; *&t;= ((hwif-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; */
+multiline_comment|/*&n; * linux/drivers/block/hpt366.c&t;&t;Version 0.12&t;August 16, 1999&n; *&n; * Copyright (C) 1999&t;&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; *&n; * drive_number&n; *&t;= ((HWIF(drive)-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; *&t;= ((hwif-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -24,8 +24,6 @@ id|bad_ata66_4
 op_assign
 (brace
 l_string|&quot;WDC AC310200R&quot;
-comma
-l_string|&quot;QUANTUM FIREBALLP KA13.6&quot;
 comma
 l_int|NULL
 )brace
@@ -434,7 +432,7 @@ suffix:semicolon
 DECL|macro|HPT366_DEBUG_DRIVE_INFO
 mdefine_line|#define HPT366_DEBUG_DRIVE_INFO&t;&t;0
 DECL|macro|HPT366_ALLOW_ATA66_4
-mdefine_line|#define HPT366_ALLOW_ATA66_4&t;&t;1
+mdefine_line|#define HPT366_ALLOW_ATA66_4&t;&t;0
 DECL|macro|HPT366_ALLOW_ATA66_3
 mdefine_line|#define HPT366_ALLOW_ATA66_3&t;&t;1
 DECL|macro|HPT366_ALLOW_ATA33_2
@@ -2114,7 +2112,7 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * hpt34x_dmaproc() initiates/aborts (U)DMA read/write operations on a drive.&n; *&n; * This is specific to the HPT343 UDMA bios-less chipset&n; * and HPT345 UDMA bios chipset (stamped HPT363)&n; * by HighPoint|Triones Technologies, Inc.&n; */
+multiline_comment|/*&n; * hpt366_dmaproc() initiates/aborts (U)DMA read/write operations on a drive.&n; *&n; * This is specific to the HPT366 UDMA bios chipset&n; * by HighPoint|Triones Technologies, Inc.&n; */
 DECL|function|hpt366_dmaproc
 r_int
 id|hpt366_dmaproc
@@ -2381,12 +2379,10 @@ id|drive
 suffix:semicolon
 multiline_comment|/* use standard DMA stuff */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_init_hpt366
 r_int
 r_int
+id|__init
 id|pci_init_hpt366
 (paren
 r_struct
@@ -2398,7 +2394,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 id|byte
@@ -2465,17 +2460,14 @@ r_return
 id|dev-&gt;irq
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_init_hpt366
 r_void
+id|__init
 id|ide_init_hpt366
 (paren
 id|ide_hwif_t
 op_star
 id|hwif
-)paren
 )paren
 (brace
 id|hwif-&gt;tuneproc

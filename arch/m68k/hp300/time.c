@@ -203,11 +203,9 @@ op_div
 id|INTVAL
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hp300_sched_init
 r_void
+id|__init
 id|hp300_sched_init
 c_func
 (paren
@@ -225,7 +223,6 @@ comma
 r_struct
 id|pt_regs
 op_star
-)paren
 )paren
 )paren
 (brace

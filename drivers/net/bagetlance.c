@@ -1287,11 +1287,9 @@ r_return
 id|dst
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|bagetlance_probe
 r_int
+id|__init
 id|bagetlance_probe
 c_func
 (paren
@@ -1299,7 +1297,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -1365,12 +1362,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* Derived from hwreg_present() in vme/config.c: */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|addr_accessible
 r_static
 r_int
+id|__init
 id|addr_accessible
 c_func
 (paren
@@ -1384,7 +1379,6 @@ id|wordflag
 comma
 r_int
 id|writeflag
-)paren
 )paren
 (brace
 multiline_comment|/* We have a fine function to do it */
@@ -1424,13 +1418,11 @@ DECL|macro|IRQ_TYPE_PRIO
 mdefine_line|#define IRQ_TYPE_PRIO SA_INTERRUPT
 DECL|macro|IRQ_SOURCE_TO_VECTOR
 mdefine_line|#define IRQ_SOURCE_TO_VECTOR(x) (x)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lance_probe1
 r_static
 r_int
 r_int
+id|__init
 id|lance_probe1
 c_func
 (paren
@@ -1443,7 +1435,6 @@ r_struct
 id|lance_addr
 op_star
 id|init_rec
-)paren
 )paren
 (brace
 r_volatile

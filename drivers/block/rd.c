@@ -31,11 +31,6 @@ DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR RAMDISK_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/blkpg.h&gt;
-multiline_comment|/*&n; * We use a block size of 512 bytes in comparision to BLOCK_SIZE&n; * defined in include/linux/blk.h. This because of the finer&n; * granularity for filling up a RAM disk.&n; */
-DECL|macro|RDBLK_SIZE_BITS
-mdefine_line|#define RDBLK_SIZE_BITS&t;&t;9
-DECL|macro|RDBLK_SIZE
-mdefine_line|#define RDBLK_SIZE&t;&t;(1&lt;&lt;RDBLK_SIZE_BITS)
 multiline_comment|/* The RAM disk size is now a parameter */
 DECL|macro|NUM_RAMDISKS
 mdefine_line|#define NUM_RAMDISKS 16&t;&t;/* This cannot be overridden (yet) */ 
@@ -122,6 +117,14 @@ r_int
 id|rd_size
 op_assign
 l_int|4096
+suffix:semicolon
+multiline_comment|/* Size of the RAM disks */
+multiline_comment|/*&n; * It would be very desiderable to have a soft-blocksize (that in the case&n; * of the ramdisk driver is also the hardblocksize ;) of PAGE_SIZE because&n; * doing that we&squot;ll achieve a far better MM footprint. Using a rd_blocksize of&n; * BLOCK_SIZE in the worst case we&squot;ll make PAGE_SIZE/BLOCK_SIZE buffer-pages&n; * unfreeable. With a rd_blocksize of PAGE_SIZE instead we are sure that only&n; * 1 page will be protected. Depending on the size of the ramdisk you&n; * may want to change the ramdisk blocksize to achieve a better or worse MM&n; * behaviour. The default is still BLOCK_SIZE (needed by rd_load_image that&n; * supposes the filesystem in the image uses a BLOCK_SIZE blocksize).&n; */
+DECL|variable|rd_blocksize
+r_int
+id|rd_blocksize
+op_assign
+id|BLOCK_SIZE
 suffix:semicolon
 multiline_comment|/* Size of the RAM disks */
 macro_line|#ifndef MODULE
@@ -396,14 +399,6 @@ id|len
 suffix:semicolon
 id|repeat
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|CURRENT
-)paren
-r_return
-suffix:semicolon
 id|INIT_REQUEST
 suffix:semicolon
 id|minor
@@ -436,13 +431,13 @@ id|offset
 op_assign
 id|CURRENT-&gt;sector
 op_lshift
-id|RDBLK_SIZE_BITS
+l_int|9
 suffix:semicolon
 id|len
 op_assign
 id|CURRENT-&gt;current_nr_sectors
 op_lshift
-id|RDBLK_SIZE_BITS
+l_int|9
 suffix:semicolon
 r_if
 c_cond
@@ -641,12 +636,12 @@ r_return
 id|put_user
 c_func
 (paren
-id|rd_length
+id|rd_kbsize
 (braket
 id|minor
 )braket
-op_rshift
-id|RDBLK_SIZE_BITS
+op_lshift
+l_int|1
 comma
 (paren
 r_int
@@ -1025,6 +1020,41 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|rd_blocksize
+OG
+id|PAGE_SIZE
+op_logical_or
+id|rd_blocksize
+OL
+l_int|512
+op_logical_or
+(paren
+id|rd_blocksize
+op_amp
+(paren
+id|rd_blocksize
+op_minus
+l_int|1
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;RAMDISK: wrong blocksize %d, reverting to defaults&bslash;n&quot;
+comma
+id|rd_blocksize
+)paren
+suffix:semicolon
+id|rd_blocksize
+op_assign
+id|BLOCK_SIZE
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|register_blkdev
 c_func
 (paren
@@ -1081,39 +1111,30 @@ id|rd_length
 id|i
 )braket
 op_assign
-(paren
 id|rd_size
 op_lshift
-id|BLOCK_SIZE_BITS
-)paren
+l_int|10
 suffix:semicolon
 id|rd_hardsec
 (braket
 id|i
 )braket
 op_assign
-id|RDBLK_SIZE
+id|rd_blocksize
 suffix:semicolon
 id|rd_blocksizes
 (braket
 id|i
 )braket
 op_assign
-id|BLOCK_SIZE
+id|rd_blocksize
 suffix:semicolon
 id|rd_kbsize
 (braket
 id|i
 )braket
 op_assign
-(paren
-id|rd_length
-(braket
-id|i
-)braket
-op_rshift
-id|BLOCK_SIZE_BITS
-)paren
+id|rd_size
 suffix:semicolon
 )brace
 id|hardsect_size
@@ -1143,11 +1164,14 @@ multiline_comment|/* Size of the RAM disk in kB  */
 id|printk
 c_func
 (paren
-l_string|&quot;RAM disk driver initialized:  %d RAM disks of %dK size&bslash;n&quot;
+l_string|&quot;RAMDISK driver initialized: &quot;
+l_string|&quot;%d RAM disks of %dK size %d blocksize&bslash;n&quot;
 comma
 id|NUM_RAMDISKS
 comma
 id|rd_size
+comma
+id|rd_blocksize
 )paren
 suffix:semicolon
 r_return
@@ -1168,7 +1192,22 @@ c_func
 (paren
 id|rd_size
 comma
-l_string|&quot;Size of each RAM disk.&quot;
+l_string|&quot;Size of each RAM disk in kbytes.&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+(paren
+id|rd_blocksize
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|rd_blocksize
+comma
+l_string|&quot;Blocksize of each RAM disk in bytes.&quot;
 )paren
 suffix:semicolon
 DECL|function|init_module
@@ -2001,6 +2040,7 @@ r_goto
 id|done
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * NOTE NOTE: nblocks suppose that the blocksize is BLOCK_SIZE, so&n;&t; * rd_load_image will work only with filesystem BLOCK_SIZE wide!&n;&t; * So make sure to use 1k blocksize while generating ext2fs&n;&t; * ramdisk-images.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2012,7 +2052,7 @@ id|rd_length
 id|unit
 )braket
 op_rshift
-id|RDBLK_SIZE_BITS
+id|BLOCK_SIZE_BITS
 )paren
 )paren
 (brace
@@ -2028,7 +2068,7 @@ id|rd_length
 id|unit
 )braket
 op_rshift
-id|RDBLK_SIZE_BITS
+id|BLOCK_SIZE_BITS
 )paren
 suffix:semicolon
 r_goto

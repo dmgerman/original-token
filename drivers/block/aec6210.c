@@ -13,12 +13,10 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_init_aec6210
 r_int
 r_int
+id|__init
 id|pci_init_aec6210
 (paren
 r_struct
@@ -31,12 +29,16 @@ r_char
 op_star
 id|name
 )paren
-)paren
 (brace
 r_if
 c_cond
 (paren
-id|dev-&gt;rom_address
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 )paren
 (brace
 id|pci_write_config_dword
@@ -46,7 +48,12 @@ id|dev
 comma
 id|PCI_ROM_ADDRESS
 comma
-id|dev-&gt;rom_address
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 op_or
 id|PCI_ROM_ADDRESS_ENABLE
 )paren
@@ -58,7 +65,12 @@ l_string|&quot;%s: ROM enabled at 0x%08lx&bslash;n&quot;
 comma
 id|name
 comma
-id|dev-&gt;rom_address
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 )paren
 suffix:semicolon
 )brace

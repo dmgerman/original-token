@@ -324,10 +324,10 @@ comma
 l_int|7
 )brace
 suffix:semicolon
-DECL|function|bus_mouse_init
+DECL|function|logi_busmouse_init
 r_int
 id|__init
-id|bus_mouse_init
+id|logi_busmouse_init
 c_func
 (paren
 r_void
@@ -461,7 +461,7 @@ r_void
 )paren
 (brace
 r_return
-id|bus_mouse_init
+id|logi_busmouse_init
 c_func
 (paren
 )paren

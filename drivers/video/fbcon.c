@@ -765,7 +765,7 @@ r_struct
 id|display_switch
 id|fbcon_dummy
 suffix:semicolon
-multiline_comment|/* NOTE: fbcon cannot be __initfunc: it may be called from take_over_console later */
+multiline_comment|/* NOTE: fbcon cannot be __init: it may be called from take_over_console later */
 DECL|function|fbcon_startup
 r_static
 r_const

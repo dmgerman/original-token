@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;added cpuinfo&n; *&t;&t;&t;&lt;dth@cistron.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; *&n; * Bruno Haible      :  remove 4K limit for the maps file&n; *&t;&t;&t;&lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;&n; *&n; * Yves Arrouye      :  remove removal of trailing spaces in get_array.&n; *&t;&t;&t;&lt;Yves.Arrouye@marin.fdn.fr&gt;&n; *&n; * Jerome Forissier  :  added per-CPU time information to /proc/stat&n; *                      and /proc/&lt;pid&gt;/cpu extension&n; *                      &lt;forissier@isia.cma.fr&gt;&n; *&t;&t;&t;- Incorporation and non-SMP safe operation&n; *&t;&t;&t;of forissier patch in 2.1.78 by&n; *&t;&t;&t;Hans Marcus &lt;crowbar@concepts.nl&gt;&n; *&n; * aeb@cwi.nl        :  /proc/partitions&n; *&n; *&n; * Alan Cox&t;     :  security fixes.&n; *&t;&t;&t;&lt;Alan.Cox@linux.org&gt;&n; *&n; * Al Viro           :  safe handling of mm_struct&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;added cpuinfo&n; *&t;&t;&t;&lt;dth@cistron.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; *&n; * Bruno Haible      :  remove 4K limit for the maps file&n; *&t;&t;&t;&lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;&n; *&n; * Yves Arrouye      :  remove removal of trailing spaces in get_array.&n; *&t;&t;&t;&lt;Yves.Arrouye@marin.fdn.fr&gt;&n; *&n; * Jerome Forissier  :  added per-CPU time information to /proc/stat&n; *                      and /proc/&lt;pid&gt;/cpu extension&n; *                      &lt;forissier@isia.cma.fr&gt;&n; *&t;&t;&t;- Incorporation and non-SMP safe operation&n; *&t;&t;&t;of forissier patch in 2.1.78 by&n; *&t;&t;&t;Hans Marcus &lt;crowbar@concepts.nl&gt;&n; *&n; * aeb@cwi.nl        :  /proc/partitions&n; *&n; *&n; * Alan Cox&t;     :  security fixes.&n; *&t;&t;&t;&lt;Alan.Cox@linux.org&gt;&n; *&n; * Al Viro           :  safe handling of mm_struct&n; *&n; * Gerhard Wichert   :  added BIGMEM support&n; * Siemens AG           &lt;Gerhard.Wichert@pdb.siemens.de&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -870,13 +870,9 @@ id|total_forks
 suffix:semicolon
 r_int
 r_int
-id|ticks
-suffix:semicolon
-id|ticks
+id|jif
 op_assign
 id|jiffies
-op_star
-id|smp_num_cpus
 suffix:semicolon
 r_for
 c_loop
@@ -916,7 +912,7 @@ id|kstat.cpu_nice
 comma
 id|kstat.cpu_system
 comma
-id|jiffies
+id|jif
 op_star
 id|smp_num_cpus
 op_minus
@@ -983,7 +979,7 @@ id|i
 )paren
 )braket
 comma
-id|jiffies
+id|jif
 op_minus
 (paren
 id|kstat.per_cpu_user
@@ -1058,7 +1054,9 @@ id|kstat.cpu_nice
 comma
 id|kstat.cpu_system
 comma
-id|ticks
+id|jif
+op_star
+id|smp_num_cpus
 op_minus
 (paren
 id|kstat.cpu_user
@@ -1229,7 +1227,7 @@ id|kstat.context_swtch
 comma
 id|xtime.tv_sec
 op_minus
-id|jiffies
+id|jif
 op_div
 id|HZ
 comma
@@ -1451,6 +1449,8 @@ l_string|&quot;MemFree:   %8lu kB&bslash;n&quot;
 l_string|&quot;MemShared: %8lu kB&bslash;n&quot;
 l_string|&quot;Buffers:   %8lu kB&bslash;n&quot;
 l_string|&quot;Cached:    %8u kB&bslash;n&quot;
+l_string|&quot;BigTotal:  %8lu kB&bslash;n&quot;
+l_string|&quot;BigFree:   %8lu kB&bslash;n&quot;
 l_string|&quot;SwapTotal: %8lu kB&bslash;n&quot;
 l_string|&quot;SwapFree:  %8lu kB&bslash;n&quot;
 comma
@@ -1482,6 +1482,14 @@ id|PAGE_SHIFT
 op_minus
 l_int|10
 )paren
+comma
+id|i.totalbig
+op_rshift
+l_int|10
+comma
+id|i.freebig
+op_rshift
+l_int|10
 comma
 id|i.totalswap
 op_rshift
@@ -1745,6 +1753,7 @@ id|PAGE_MASK
 )paren
 suffix:semicolon
 )brace
+macro_line|#include &lt;linux/bigmem.h&gt;
 DECL|function|get_array
 r_static
 r_int
@@ -1821,6 +1830,16 @@ id|addr
 r_return
 id|result
 suffix:semicolon
+id|addr
+op_assign
+id|kmap
+c_func
+(paren
+id|addr
+comma
+id|KM_READ
+)paren
+suffix:semicolon
 r_do
 (brace
 id|c
@@ -1858,9 +1877,19 @@ op_assign
 id|c
 suffix:semicolon
 r_else
+(brace
+id|kunmap
+c_func
+(paren
+id|addr
+comma
+id|KM_READ
+)paren
+suffix:semicolon
 r_return
 id|result
 suffix:semicolon
+)brace
 id|addr
 op_increment
 suffix:semicolon
@@ -1877,9 +1906,19 @@ id|start
 op_ge
 id|end
 )paren
+(brace
+id|kunmap
+c_func
+(paren
+id|addr
+comma
+id|KM_READ
+)paren
+suffix:semicolon
 r_return
 id|result
 suffix:semicolon
+)brace
 )brace
 r_while
 c_loop
@@ -1888,6 +1927,14 @@ id|addr
 op_amp
 op_complement
 id|PAGE_MASK
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|addr
+comma
+id|KM_READ
 )paren
 suffix:semicolon
 )brace
@@ -2177,11 +2224,7 @@ op_logical_neg
 id|stack_page
 op_logical_or
 id|esp
-OL
-id|stack_page
-op_logical_or
-id|esp
-op_ge
+template_param
 l_int|8188
 op_plus
 id|stack_page
@@ -2206,12 +2249,8 @@ r_if
 c_cond
 (paren
 id|ebp
-OL
-id|stack_page
-op_logical_or
-id|ebp
-op_ge
-l_int|8188
+template_param
+l_int|8184
 op_plus
 id|stack_page
 )paren

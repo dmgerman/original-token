@@ -1,9 +1,10 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      qos.h&n; * Version:       0.1&n; * Description:   Quality of Service definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Sep 19 23:21:09 1997&n; * Modified at:   Wed Dec  9 10:32:47 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
-macro_line|#ifndef QOS_H
-DECL|macro|QOS_H
-mdefine_line|#define QOS_H
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      qos.h&n; * Version:       1.0&n; * Description:   Quality of Service definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Sep 19 23:21:09 1997&n; * Modified at:   Mon Aug 16 10:00:18 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+macro_line|#ifndef IRDA_QOS_H
+DECL|macro|IRDA_QOS_H
+mdefine_line|#define IRDA_QOS_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;net/irda/parameters.h&gt;
 DECL|macro|PI_BAUD_RATE
 mdefine_line|#define PI_BAUD_RATE     0x01
 DECL|macro|PI_MAX_TURN_TIME
@@ -24,30 +25,32 @@ DECL|macro|IR_115200_MAX
 mdefine_line|#define IR_115200_MAX 0x3f
 multiline_comment|/* Baud rates (first byte) */
 DECL|macro|IR_2400
-mdefine_line|#define IR_2400    0x01
+mdefine_line|#define IR_2400     0x01
 DECL|macro|IR_9600
-mdefine_line|#define IR_9600    0x02
+mdefine_line|#define IR_9600     0x02
 DECL|macro|IR_19200
-mdefine_line|#define IR_19200   0x04
+mdefine_line|#define IR_19200    0x04
 DECL|macro|IR_38400
-mdefine_line|#define IR_38400   0x08
+mdefine_line|#define IR_38400    0x08
 DECL|macro|IR_57600
-mdefine_line|#define IR_57600   0x10
+mdefine_line|#define IR_57600    0x10
 DECL|macro|IR_115200
-mdefine_line|#define IR_115200  0x20
+mdefine_line|#define IR_115200   0x20
 DECL|macro|IR_576000
-mdefine_line|#define IR_576000  0x40
+mdefine_line|#define IR_576000   0x40
 DECL|macro|IR_1152000
-mdefine_line|#define IR_1152000 0x80
+mdefine_line|#define IR_1152000  0x80
 multiline_comment|/* Baud rates (second byte) */
 DECL|macro|IR_4000000
-mdefine_line|#define IR_4000000 0x01
+mdefine_line|#define IR_4000000  0x01
+DECL|macro|IR_16000000
+mdefine_line|#define IR_16000000 0x02
 multiline_comment|/* Quality of Service information */
 r_typedef
 r_struct
 (brace
 DECL|member|value
-r_int
+id|__u32
 id|value
 suffix:semicolon
 DECL|member|bits
@@ -110,31 +113,31 @@ macro_line|#endif
 )brace
 suffix:semicolon
 r_extern
-r_int
+id|__u32
 id|baud_rates
 (braket
 )braket
 suffix:semicolon
 r_extern
-r_int
+id|__u32
 id|data_size
 (braket
 )braket
 suffix:semicolon
 r_extern
-r_int
+id|__u32
 id|min_turn_time
 (braket
 )braket
 suffix:semicolon
 r_extern
-r_int
+id|__u32
 id|add_bofs
 (braket
 )braket
 suffix:semicolon
 r_extern
-r_int
+id|__u32
 id|compression
 (braket
 )braket
@@ -163,47 +166,14 @@ op_star
 )paren
 suffix:semicolon
 r_int
-id|irda_insert_qos_negotiation_params
-c_func
-(paren
-r_struct
-id|qos_info
-op_star
-id|qos
-comma
-id|__u8
-op_star
-id|fp
-)paren
-suffix:semicolon
-r_void
-id|irda_qos_negotiate
-c_func
-(paren
-r_struct
-id|qos_info
-op_star
-id|qos_rx
-comma
-r_struct
-id|qos_info
-op_star
-id|qos_tx
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_int
 id|msb_index
+c_func
 (paren
 id|__u16
 id|byte
 )paren
 suffix:semicolon
-r_int
+id|__u32
 id|byte_value
 c_func
 (paren
@@ -219,7 +189,7 @@ r_int
 id|value_index
 c_func
 (paren
-r_int
+id|__u32
 id|value
 comma
 r_int
@@ -227,7 +197,7 @@ op_star
 id|array
 )paren
 suffix:semicolon
-r_int
+id|__u32
 id|index_value
 c_func
 (paren

@@ -437,13 +437,9 @@ suffix:semicolon
 singleline_comment|//        #warning kernel 2.1.110 tested
 DECL|macro|myATOMIC_INIT
 mdefine_line|#define myATOMIC_INIT(a,b) atomic_set(&amp;(a),b)
-DECL|macro|__initfunctio
-mdefine_line|#define __initfunctio(a)                __initfunc(a)
 macro_line|#else
 DECL|macro|test_and_set_bit
 mdefine_line|#define test_and_set_bit&t;set_bit
-DECL|macro|__initfunctio
-mdefine_line|#define __initfunctio(a)        a
 macro_line|#if LINUX_VERSION_CODE != 0x20024
 singleline_comment|//        #warning kernel  2.0.36  tested
 macro_line|#endif
@@ -5283,18 +5279,15 @@ op_assign
 l_int|0xbe000
 suffix:semicolon
 multiline_comment|/*&n; * This is the real probe routine. Linux has a history of friendly device&n; * probes on the ISA bus. A good device probes avoids doing writes, and&n; * verifies that the correct device exists and functions.&n; */
-DECL|function|__initfunctio
-id|__initfunctio
-c_func
-(paren
+DECL|function|arlan_check_fingerprint
 r_static
 r_int
+id|__init
 id|arlan_check_fingerprint
 c_func
 (paren
 r_int
 id|memaddr
-)paren
 )paren
 (brace
 r_static
@@ -5378,11 +5371,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunctio
-id|__initfunctio
-c_func
-(paren
+DECL|function|arlan_probe_everywhere
 r_int
+id|__init
 id|arlan_probe_everywhere
 c_func
 (paren
@@ -5390,7 +5381,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -5537,16 +5527,13 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunctio
-id|__initfunctio
-c_func
-(paren
+DECL|function|arlan_find_devices
 r_int
+id|__init
 id|arlan_find_devices
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -5792,12 +5779,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunctio
-id|__initfunctio
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|arlan_allocate_device
 id|arlan_allocate_device
 c_func
 (paren
@@ -5808,7 +5793,6 @@ r_struct
 id|net_device
 op_star
 id|devs
-)paren
 )paren
 (brace
 r_struct
@@ -6114,11 +6098,9 @@ r_int
 id|dev
 suffix:semicolon
 )brace
-DECL|function|__initfunctio
-id|__initfunctio
-c_func
-(paren
+DECL|function|arlan_probe_here
 r_int
+id|__init
 id|arlan_probe_here
 c_func
 (paren
@@ -6129,7 +6111,6 @@ id|dev
 comma
 r_int
 id|memaddr
-)paren
 )paren
 (brace
 r_volatile
@@ -9670,11 +9651,9 @@ l_string|&quot;arlan_set_multicast&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunctio
-id|__initfunctio
-c_func
-(paren
+DECL|function|arlan_probe
 r_int
+id|__init
 id|arlan_probe
 c_func
 (paren
@@ -9682,7 +9661,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|printk

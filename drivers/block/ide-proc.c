@@ -1001,6 +1001,7 @@ macro_line|#endif&t;/* CONFIG_BLK_DEV_IDEPCI */
 r_else
 (brace
 multiline_comment|/* not pci */
+macro_line|#ifndef CONFIG_Q40
 r_switch
 c_cond
 (paren
@@ -1047,6 +1048,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif&t;/* CONFIG_Q40 */
 )brace
 )brace
 )brace

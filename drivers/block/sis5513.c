@@ -1846,12 +1846,10 @@ id|drive
 suffix:semicolon
 multiline_comment|/* use standard DMA stuff */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_init_sis5513
 r_int
 r_int
+id|__init
 id|pci_init_sis5513
 (paren
 r_struct
@@ -1863,7 +1861,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_struct
@@ -2154,17 +2151,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_init_sis5513
 r_void
+id|__init
 id|ide_init_sis5513
 (paren
 id|ide_hwif_t
 op_star
 id|hwif
-)paren
 )paren
 (brace
 id|byte

@@ -135,11 +135,9 @@ id|irq
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Probe for a SONIC ethernet controller on a Mips Jazz board.&n; * Actually probing is superfluous but we&squot;re paranoid.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sonic_probe
 r_int
+id|__init
 id|sonic_probe
 c_func
 (paren
@@ -147,7 +145,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -278,12 +275,10 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sonic_probe1
 r_static
 r_int
+id|__init
 id|sonic_probe1
 c_func
 (paren
@@ -299,7 +294,6 @@ comma
 r_int
 r_int
 id|irq
-)paren
 )paren
 (brace
 r_static

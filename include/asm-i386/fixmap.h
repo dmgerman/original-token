@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * fixmap.h: compile-time virtual memory allocation&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998 Ingo Molnar&n; */
+multiline_comment|/*&n; * fixmap.h: compile-time virtual memory allocation&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998 Ingo Molnar&n; *&n; * Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; */
 macro_line|#ifndef _ASM_FIXMAP_H
 DECL|macro|_ASM_FIXMAP_H
 mdefine_line|#define _ASM_FIXMAP_H
@@ -6,6 +6,10 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/apic.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#ifdef CONFIG_BIGMEM
+macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;asm/kmap_types.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Here we define all the compile-time &squot;special&squot; virtual&n; * addresses. The point is to have a constant address at&n; * compile time, but to set the physical address only&n; * in the boot process. We allocate these special  addresses&n; * from the end of virtual memory (0xfffff000) backwards.&n; * Also this lets us do fail-safe vmalloc(), we&n; * can guarantee that these special addresses and&n; * vmalloc()-ed addresses never overlap.&n; *&n; * these &squot;compile-time allocated&squot; memory buffers are&n; * fixed-size 4k pages. (or larger if used with an increment&n; * bigger than 1) use fixmap_set(idx,phys) to associate&n; * physical memory with fixmap indices.&n; *&n; * TLB entries of such buffers will not be flushed across&n; * task switches.&n; */
 multiline_comment|/*&n; * on UP currently we will have no trace of the fixmap mechanizm,&n; * no page table allocations, etc. This might change in the&n; * future, say framebuffers for the console driver(s) could be&n; * fix-mapped?&n; */
 DECL|enum|fixed_addresses
@@ -49,6 +53,25 @@ DECL|enumerator|FIX_LI_PCIB
 id|FIX_LI_PCIB
 comma
 multiline_comment|/* Lithium PCI Bridge B */
+macro_line|#endif
+macro_line|#ifdef CONFIG_BIGMEM
+DECL|enumerator|FIX_KMAP_BEGIN
+id|FIX_KMAP_BEGIN
+comma
+multiline_comment|/* reserved pte&squot;s for temporary kernel mappings */
+DECL|enumerator|FIX_KMAP_END
+id|FIX_KMAP_END
+op_assign
+id|FIX_KMAP_BEGIN
+op_plus
+(paren
+id|KM_TYPE_NR
+op_star
+id|NR_CPUS
+)paren
+op_minus
+l_int|1
+comma
 macro_line|#endif
 DECL|enumerator|__end_of_fixed_addresses
 id|__end_of_fixed_addresses

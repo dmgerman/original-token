@@ -6229,14 +6229,11 @@ DECL|macro|NO_ISA_DMA
 mdefine_line|#define NO_ISA_DMA              0xff        /* No ISA DMA Channel Used */
 multiline_comment|/*&n; * If the Linux kernel version supports freeing initialization code&n; * and data after loading, define macros for this purpose. These macros&n; * are not used when the driver is built as a module, cf. linux/init.h.&n; */
 macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,1,23)
-DECL|macro|ASC_INITFUNC
-mdefine_line|#define ASC_INITFUNC(func)      func
 DECL|macro|ASC_INITDATA
 mdefine_line|#define ASC_INITDATA
 DECL|macro|ASC_INIT
 mdefine_line|#define ASC_INIT
 macro_line|#else /* version &gt;= v2.1.23 */
-mdefine_line|#define ASC_INITFUNC(func)      __initfunc(func)
 mdefine_line|#define ASC_INITDATA            __initdata
 mdefine_line|#define ASC_INIT                __init
 macro_line|#endif /* version &gt;= v2.1.23 */
@@ -8989,18 +8986,15 @@ macro_line|#endif /* CONFIG_PROC_FS */
 )brace
 macro_line|#endif /* version &gt;= v1.3.0 */
 multiline_comment|/*&n; * advansys_detect()&n; *&n; * Detect function for AdvanSys adapters.&n; *&n; * Argument is a pointer to the host driver&squot;s scsi_hosts entry.&n; *&n; * Return number of adapters found.&n; *&n; * Note: Because this function is called during system initialization&n; * it must not call SCSI mid-level functions including scsi_malloc()&n; * and scsi_free().&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 r_int
+id|ASC_INIT
+DECL|function|advansys_detect
 id|advansys_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_static
@@ -15691,11 +15685,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * advansys_setup()&n; *&n; * This function is called from init/main.c at boot time.&n; * It it passed LILO parameters that can be set from the&n; * LILO command line or in /etc/lilo.conf.&n; *&n; * It is used by the AdvanSys driver to either disable I/O&n; * port scanning or to limit scanning to 1 - 4 I/O ports.&n; * Regardless of the option setting EISA and PCI boards&n; * will still be searched for and detected. This option&n; * only affects searching for ISA and VL boards.&n; *&n; * If ADVANSYS_DEBUG is defined the driver debug level may&n; * be set using the 5th (ASC_NUM_IOPORT_PROBE + 1) I/O Port.&n; *&n; * Examples:&n; * 1. Eliminate I/O port scanning:&n; *         boot: linux advansys=&n; *       or&n; *         boot: linux advansys=0x0&n; * 2. Limit I/O port scanning to one I/O port:&n; *        boot: linux advansys=0x110&n; * 3. Limit I/O port scanning to four I/O ports:&n; *        boot: linux advansys=0x110,0x210,0x230,0x330&n; * 4. If ADVANSYS_DEBUG, limit I/O port scanning to four I/O ports and&n; *    set the driver debug level to 2.&n; *        boot: linux advansys=0x110,0x210,0x230,0x330,0xdeb2&n; *&n; * ints[0] - number of arguments&n; * ints[1] - first argument&n; * ints[2] - second argument&n; * ...&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 r_void
+id|ASC_INIT
+DECL|function|advansys_setup
 id|advansys_setup
 c_func
 (paren
@@ -15706,7 +15698,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -19746,19 +19737,16 @@ suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,1,93)
 macro_line|#ifdef ASC_CONFIG_PCI
 multiline_comment|/*&n; * Search for an AdvanSys PCI device in the PCI configuration space.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_int
+id|ASC_INIT
+DECL|function|asc_srch_pci_dev
 id|asc_srch_pci_dev
 c_func
 (paren
 id|PCI_DEVICE
 op_star
 id|pciDevice
-)paren
 )paren
 (brace
 r_int
@@ -19916,17 +19904,14 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Determine the access method to be used for &squot;pciDevice&squot;.&n; */
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|asc_scan_method
 id|asc_scan_method
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|ushort
@@ -20063,19 +20048,16 @@ id|type
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check for an AdvanSys PCI device in &squot;pciDevice&squot;.&n; *&n; * Return PCI_DEVICE_FOUND if found, otherwise return PCI_DEVICE_NOT_FOUND.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_int
+id|ASC_INIT
+DECL|function|asc_pci_find_dev
 id|asc_pci_find_dev
 c_func
 (paren
 id|PCI_DEVICE
 op_star
 id|pciDevice
-)paren
 )paren
 (brace
 id|PCI_DATA
@@ -20308,12 +20290,10 @@ id|PCI_DEVICE_NOT_FOUND
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read PCI configuration data into &squot;pciConfig&squot;.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|asc_get_pci_cfg
 id|asc_get_pci_cfg
 c_func
 (paren
@@ -20324,7 +20304,6 @@ comma
 id|PCI_CONFIG_SPACE
 op_star
 id|pciConfig
-)paren
 )paren
 (brace
 id|PCI_DATA
@@ -20430,11 +20409,9 @@ id|counter
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a word (16 bits) from the PCI configuration space.&n; *&n; * The configuration mechanism is checked for the correct access method.&n; */
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|asc_get_cfg_word
 id|asc_get_cfg_word
 c_func
@@ -20442,7 +20419,6 @@ c_func
 id|PCI_DATA
 op_star
 id|pciData
-)paren
 )paren
 (brace
 id|ushort
@@ -20709,11 +20685,9 @@ id|tmp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Reads a byte from the PCI configuration space.&n; *&n; * The configuration mechanism is checked for the correct access method.&n; */
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|asc_get_cfg_byte
 id|asc_get_cfg_byte
 c_func
@@ -20721,7 +20695,6 @@ c_func
 id|PCI_DATA
 op_star
 id|pciData
-)paren
 )paren
 (brace
 id|uchar
@@ -20978,12 +20951,10 @@ id|tmp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write a byte to the PCI configuration space.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|asc_put_cfg_byte
 id|asc_put_cfg_byte
 c_func
 (paren
@@ -20993,7 +20964,6 @@ id|pciData
 comma
 id|uchar
 id|byte_data
-)paren
 )paren
 (brace
 id|ulong
@@ -28349,11 +28319,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a PCI configuration byte.&n; */
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|DvcReadPCIConfigByte
 id|DvcReadPCIConfigByte
 c_func
@@ -28365,7 +28333,6 @@ id|asc_dvc
 comma
 id|ushort
 id|offset
-)paren
 )paren
 (brace
 macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,1,93)
@@ -28465,12 +28432,10 @@ macro_line|#endif /* CONFIG_PCI */
 macro_line|#endif /* version &gt;= v2.1.93 */ 
 )brace
 multiline_comment|/*&n; * Write a PCI configuration byte.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|DvcWritePCIConfigByte
 id|DvcWritePCIConfigByte
 c_func
 (paren
@@ -28484,7 +28449,6 @@ id|offset
 comma
 id|uchar
 id|byte_data
-)paren
 )paren
 (brace
 macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,1,93)
@@ -28570,11 +28534,9 @@ macro_line|#endif /* CONFIG_PCI */
 macro_line|#endif /* version &gt;= v2.1.93 */ 
 )brace
 multiline_comment|/*&n; * Return the BIOS address of the adapter at the specified&n; * I/O port and with the specified bus type.&n; */
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscGetChipBiosAddress
 id|AscGetChipBiosAddress
 c_func
@@ -28584,7 +28546,6 @@ id|iop_base
 comma
 id|ushort
 id|bus_type
-)paren
 )paren
 (brace
 id|ushort
@@ -28785,11 +28746,9 @@ id|paddr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a PCI configuration byte.&n; */
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|DvcAdvReadPCIConfigByte
 id|DvcAdvReadPCIConfigByte
 c_func
@@ -28800,7 +28759,6 @@ id|asc_dvc
 comma
 id|ushort
 id|offset
-)paren
 )paren
 (brace
 macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,1,93)
@@ -28900,12 +28858,10 @@ macro_line|#endif /* CONFIG_PCI */
 macro_line|#endif /* version &gt;= v2.1.93 */ 
 )brace
 multiline_comment|/*&n; * Write a PCI configuration byte.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|DvcAdvWritePCIConfigByte
 id|DvcAdvWritePCIConfigByte
 c_func
 (paren
@@ -28918,7 +28874,6 @@ id|offset
 comma
 id|uchar
 id|byte_data
-)paren
 )paren
 (brace
 macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,1,93)
@@ -31611,18 +31566,15 @@ suffix:semicolon
 )brace
 macro_line|#endif /* ADVANSYS_ASSERT */
 multiline_comment|/*&n; * --- Asc Library Functions&n; */
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscGetEisaChipCfg
 id|AscGetEisaChipCfg
 c_func
 (paren
 id|PortAddr
 id|iop_base
-)paren
 )paren
 (brace
 id|PortAddr
@@ -31656,11 +31608,9 @@ id|eisa_cfg_iop
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|AscSetChipScsiID
 id|AscSetChipScsiID
 c_func
@@ -31670,7 +31620,6 @@ id|iop_base
 comma
 id|uchar
 id|new_host_id
-)paren
 )paren
 (brace
 id|ushort
@@ -31739,18 +31688,15 @@ id|iop_base
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|AscGetChipScsiCtrl
 id|AscGetChipScsiCtrl
 c_func
 (paren
 id|PortAddr
 id|iop_base
-)paren
 )paren
 (brace
 id|uchar
@@ -31788,11 +31734,9 @@ id|sc
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|AscGetChipVersion
 id|AscGetChipVersion
 c_func
@@ -31802,7 +31746,6 @@ id|iop_base
 comma
 id|ushort
 id|bus_type
-)paren
 )paren
 (brace
 r_if
@@ -31874,18 +31817,15 @@ id|iop_base
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscGetChipBusType
 id|AscGetChipBusType
 c_func
 (paren
 id|PortAddr
 id|iop_base
-)paren
 )paren
 (brace
 id|ushort
@@ -32016,11 +31956,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ulong
+id|ASC_INIT
 DECL|function|AscLoadMicroCode
 id|AscLoadMicroCode
 c_func
@@ -32037,7 +31975,6 @@ id|mcode_buf
 comma
 id|ushort
 id|mcode_size
-)paren
 )paren
 (brace
 id|ulong
@@ -32156,18 +32093,15 @@ id|chksum
 )paren
 suffix:semicolon
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_int
+id|ASC_INIT
+DECL|function|AscFindSignature
 id|AscFindSignature
 c_func
 (paren
 id|PortAddr
 id|iop_base
-)paren
 )paren
 (brace
 id|ushort
@@ -32272,11 +32206,9 @@ comma
 id|ASC_IOADR_8
 )brace
 suffix:semicolon
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|PortAddr
+id|ASC_INIT
 DECL|function|AscSearchIOPortAddr
 id|AscSearchIOPortAddr
 c_func
@@ -32286,7 +32218,6 @@ id|iop_beg
 comma
 id|ushort
 id|bus_type
-)paren
 )paren
 (brace
 r_if
@@ -32454,18 +32385,15 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|PortAddr
+id|ASC_INIT
 DECL|function|AscSearchIOPortAddr11
 id|AscSearchIOPortAddr11
 c_func
 (paren
 id|PortAddr
 id|s_addr
-)paren
 )paren
 (brace
 r_int
@@ -32583,18 +32511,15 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|AscToggleIRQAct
 id|AscToggleIRQAct
 c_func
 (paren
 id|PortAddr
 id|iop_base
-)paren
 )paren
 (brace
 id|AscSetChipStatus
@@ -32616,17 +32541,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|AscSetISAPNPWaitForKey
 id|AscSetISAPNPWaitForKey
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|outp
@@ -32648,11 +32570,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|AscGetChipIRQ
 id|AscGetChipIRQ
 c_func
@@ -32662,7 +32582,6 @@ id|iop_base
 comma
 id|ushort
 id|bus_type
-)paren
 )paren
 (brace
 id|ushort
@@ -32872,11 +32791,9 @@ id|ASC_MIN_IRQ_NO
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|AscSetChipIRQ
 id|AscSetChipIRQ
 c_func
@@ -32889,7 +32806,6 @@ id|irq_no
 comma
 id|ushort
 id|bus_type
-)paren
 )paren
 (brace
 id|ushort
@@ -33136,18 +33052,15 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|AscEnableIsaDma
 id|AscEnableIsaDma
 c_func
 (paren
 id|uchar
 id|dma_channel
-)paren
 )paren
 (brace
 r_if
@@ -46401,18 +46314,15 @@ l_int|1000
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ulong
+id|ASC_INIT
 DECL|function|AscGetEisaProductID
 id|AscGetEisaProductID
 c_func
 (paren
 id|PortAddr
 id|iop_base
-)paren
 )paren
 (brace
 id|PortAddr
@@ -46476,18 +46386,15 @@ id|product_id
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|PortAddr
+id|ASC_INIT
 DECL|function|AscSearchIOPortAddrEISA
 id|AscSearchIOPortAddrEISA
 c_func
 (paren
 id|PortAddr
 id|iop_base
-)paren
 )paren
 (brace
 id|ulong
@@ -47307,18 +47214,15 @@ id|iop_base
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ulong
+id|ASC_INIT
 DECL|function|AscGetMaxDmaCount
 id|AscGetMaxDmaCount
 c_func
 (paren
 id|ushort
 id|bus_type
-)paren
 )paren
 (brace
 r_if
@@ -47356,18 +47260,15 @@ id|ASC_MAX_PCI_DMA_COUNT
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscGetIsaDmaChannel
 id|AscGetIsaDmaChannel
 c_func
 (paren
 id|PortAddr
 id|iop_base
-)paren
 )paren
 (brace
 id|ushort
@@ -47416,11 +47317,9 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscSetIsaDmaChannel
 id|AscSetIsaDmaChannel
 c_func
@@ -47430,7 +47329,6 @@ id|iop_base
 comma
 id|ushort
 id|dma_channel
-)paren
 )paren
 (brace
 id|ushort
@@ -47511,11 +47409,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|AscSetIsaDmaSpeed
 id|AscSetIsaDmaSpeed
 c_func
@@ -47525,7 +47421,6 @@ id|iop_base
 comma
 id|uchar
 id|speed_value
-)paren
 )paren
 (brace
 id|speed_value
@@ -47566,18 +47461,15 @@ id|iop_base
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|uchar
+id|ASC_INIT
 DECL|function|AscGetIsaDmaSpeed
 id|AscGetIsaDmaSpeed
 c_func
 (paren
 id|PortAddr
 id|iop_base
-)paren
 )paren
 (brace
 id|uchar
@@ -47617,11 +47509,9 @@ id|speed_value
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscReadPCIConfigWord
 id|AscReadPCIConfigWord
 c_func
@@ -47633,7 +47523,6 @@ id|asc_dvc
 comma
 id|ushort
 id|pci_config_offset
-)paren
 )paren
 (brace
 id|uchar
@@ -47680,11 +47569,9 @@ id|lsb
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscInitGetConfig
 id|AscInitGetConfig
 c_func
@@ -47693,7 +47580,6 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|ushort
@@ -48007,11 +47893,9 @@ r_return
 id|warn_code
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscInitSetConfig
 id|AscInitSetConfig
 c_func
@@ -48020,7 +47904,6 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|ushort
@@ -48080,11 +47963,9 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscInitFromAscDvcVar
 id|AscInitFromAscDvcVar
 c_func
@@ -48093,7 +47974,6 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|PortAddr
@@ -48379,11 +48259,9 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscInitAsc1000Driver
 id|AscInitAsc1000Driver
 c_func
@@ -48392,7 +48270,6 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|ushort
@@ -48582,11 +48459,9 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscInitAscDvcVar
 id|AscInitAscDvcVar
 c_func
@@ -48595,7 +48470,6 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 r_int
@@ -49190,11 +49064,9 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscInitFromEEP
 id|AscInitFromEEP
 c_func
@@ -49203,7 +49075,6 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|ASCEEP_CONFIG
@@ -50011,11 +49882,9 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscInitMicroCodeVar
 id|AscInitMicroCodeVar
 c_func
@@ -50024,7 +49893,6 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 r_int
@@ -50254,12 +50122,10 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_int
+id|ASC_INIT
+DECL|function|AscTestExternalLram
 id|AscTestExternalLram
 c_func
 (paren
@@ -50267,7 +50133,6 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|PortAddr
@@ -50371,12 +50236,10 @@ id|sta
 )paren
 suffix:semicolon
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_int
+id|ASC_INIT
+DECL|function|AscWriteEEPCmdReg
 id|AscWriteEEPCmdReg
 c_func
 (paren
@@ -50385,7 +50248,6 @@ id|iop_base
 comma
 id|uchar
 id|cmd_reg
-)paren
 )paren
 (brace
 id|uchar
@@ -50457,12 +50319,10 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_int
+id|ASC_INIT
+DECL|function|AscWriteEEPDataReg
 id|AscWriteEEPDataReg
 c_func
 (paren
@@ -50471,7 +50331,6 @@ id|iop_base
 comma
 id|ushort
 id|data_reg
-)paren
 )paren
 (brace
 id|ushort
@@ -50543,17 +50402,14 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|AscWaitEEPRead
 id|AscWaitEEPRead
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|DvcSleepMilliSecond
@@ -50565,17 +50421,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|AscWaitEEPWrite
 id|AscWaitEEPWrite
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|DvcSleepMilliSecond
@@ -50587,11 +50440,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscReadEEPWord
 id|AscReadEEPWord
 c_func
@@ -50601,7 +50452,6 @@ id|iop_base
 comma
 id|uchar
 id|addr
-)paren
 )paren
 (brace
 id|ushort
@@ -50661,11 +50511,9 @@ id|read_wval
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscWriteEEPWord
 id|AscWriteEEPWord
 c_func
@@ -50678,7 +50526,6 @@ id|addr
 comma
 id|ushort
 id|word_val
-)paren
 )paren
 (brace
 id|ushort
@@ -50782,11 +50629,9 @@ id|read_wval
 )paren
 suffix:semicolon
 )brace
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AscGetEEPConfig
 id|AscGetEEPConfig
 c_func
@@ -50800,7 +50645,6 @@ id|cfg_buf
 comma
 id|ushort
 id|bus_type
-)paren
 )paren
 (brace
 id|ushort
@@ -50979,12 +50823,10 @@ id|sum
 )paren
 suffix:semicolon
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_int
+id|ASC_INIT
+DECL|function|AscSetEEPConfigOnce
 id|AscSetEEPConfigOnce
 c_func
 (paren
@@ -50997,7 +50839,6 @@ id|cfg_buf
 comma
 id|ushort
 id|bus_type
-)paren
 )paren
 (brace
 r_int
@@ -51289,12 +51130,10 @@ id|n_error
 )paren
 suffix:semicolon
 )brace
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_int
+id|ASC_INIT
+DECL|function|AscSetEEPConfig
 id|AscSetEEPConfig
 c_func
 (paren
@@ -51307,7 +51146,6 @@ id|cfg_buf
 comma
 id|ushort
 id|bus_type
-)paren
 )paren
 (brace
 r_int
@@ -62050,18 +61888,15 @@ multiline_comment|/* num_of_err */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the ADV_DVC_VAR structure.&n; *&n; * On failure set the ADV_DVC_VAR field &squot;err_code&squot; and return ADV_ERROR.&n; *&n; * For a non-fatal error return a warning code. If there are no warnings&n; * then 0 is returned.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 r_int
+id|ASC_INIT
+DECL|function|AdvInitGetConfig
 id|AdvInitGetConfig
 c_func
 (paren
 id|ADV_DVC_VAR
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|ushort
@@ -62325,18 +62160,15 @@ id|warn_code
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize the ASC3550.&n; *&n; * On failure set the ADV_DVC_VAR field &squot;err_code&squot; and return ADV_ERROR.&n; *&n; * For a non-fatal error return a warning code. If there are no warnings&n; * then 0 is returned.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 r_int
+id|ASC_INIT
+DECL|function|AdvInitAsc3550Driver
 id|AdvInitAsc3550Driver
 c_func
 (paren
 id|ADV_DVC_VAR
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|AdvPortAddr
@@ -63185,19 +63017,16 @@ id|warn_code
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read the board&squot;s EEPROM configuration. Set fields in ADV_DVC_VAR and&n; * ADV_DVC_CFG based on the EEPROM settings. The chip is stopped while&n; * all of this is done.&n; *&n; * On failure set the ADV_DVC_VAR field &squot;err_code&squot; and return ADV_ERROR.&n; *&n; * For a non-fatal error return a warning code. If there are no warnings&n; * then 0 is returned.&n; *&n; * Note: Chip is stopped on entry.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_int
+id|ASC_INIT
+DECL|function|AdvInitFromEEP
 id|AdvInitFromEEP
 c_func
 (paren
 id|ADV_DVC_VAR
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|AdvPortAddr
@@ -63597,11 +63426,9 @@ id|warn_code
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read EEPROM configuration into the specified buffer.&n; *&n; * Return a checksum based on the EEPROM configuration read.&n; */
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AdvGetEEPConfig
 id|AdvGetEEPConfig
 c_func
@@ -63612,7 +63439,6 @@ comma
 id|ADVEEP_CONFIG
 op_star
 id|cfg_buf
-)paren
 )paren
 (brace
 id|ushort
@@ -63726,11 +63552,9 @@ id|chksum
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read the EEPROM from specified location&n; */
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 id|ushort
+id|ASC_INIT
 DECL|function|AdvReadEEPWord
 id|AdvReadEEPWord
 c_func
@@ -63740,7 +63564,6 @@ id|iop_base
 comma
 r_int
 id|eep_word_addr
-)paren
 )paren
 (brace
 id|AdvWriteWordRegister
@@ -63772,18 +63595,15 @@ id|IOPW_EE_DATA
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Wait for EEPROM command to complete&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|AdvWaitEEPCmd
 id|AdvWaitEEPCmd
 c_func
 (paren
 id|AdvPortAddr
 id|iop_base
-)paren
 )paren
 (brace
 r_int
@@ -63857,12 +63677,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write the EEPROM from &squot;cfg_buf&squot;.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|AdvSetEEPConfig
 id|AdvSetEEPConfig
 c_func
 (paren
@@ -63872,7 +63690,6 @@ comma
 id|ADVEEP_CONFIG
 op_star
 id|cfg_buf
-)paren
 )paren
 (brace
 id|ushort
@@ -64074,19 +63891,16 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function resets the chip and SCSI bus&n; *&n; * It is up to the caller to add a delay to let the bus settle after&n; * calling this function.&n; *&n; * The SCSI_CFG0, SCSI_CFG1, and MEM_CFG registers are set-up in&n; * AdvInitAsc3550Driver(). Here when doing a write to one of these&n; * registers read first and then write.&n; *&n; * Note: A SCSI Bus Reset can not be done until after the EEPROM&n; * configuration is read to determine whether SCSI Bus Resets&n; * should be performed.&n; */
-DECL|function|ASC_INITFUNC
-id|ASC_INITFUNC
-c_func
-(paren
 id|STATIC
 r_void
+id|ASC_INIT
+DECL|function|AdvResetChip
 id|AdvResetChip
 c_func
 (paren
 id|ADV_DVC_VAR
 op_star
 id|asc_dvc
-)paren
 )paren
 (brace
 id|AdvPortAddr

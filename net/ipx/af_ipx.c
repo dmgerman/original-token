@@ -2614,6 +2614,9 @@ op_assign
 id|intrfc-&gt;if_netnum
 suffix:semicolon
 multiline_comment|/* insert recvd netnum into list */
+id|ipx-&gt;ipx_tctrl
+op_increment
+suffix:semicolon
 multiline_comment|/* xmit on all other interfaces... */
 r_for
 c_loop

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      litelink.c&n; * Version:       1.0&n; * Description:   Driver for the Parallax LiteLink dongle&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri May  7 12:50:33 1999&n; * Modified at:   Wed May 19 07:25:15 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      litelink.c&n; * Version:       1.0&n; * Description:   Driver for the Parallax LiteLink dongle&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri May  7 12:50:33 1999&n; * Modified at:   Sat Jun 26 17:01:05 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -47,8 +47,7 @@ id|irda_device
 op_star
 id|dev
 comma
-r_int
-id|baudrate
+id|__u32
 )paren
 suffix:semicolon
 r_static
@@ -81,7 +80,7 @@ suffix:semicolon
 multiline_comment|/* These are the baudrates supported */
 DECL|variable|baud_rates
 r_static
-r_int
+id|__u32
 id|baud_rates
 (braket
 )braket
@@ -213,7 +212,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function litelink_change_speed (tty, baud)&n; *&n; *    Change speed of the Litelink dongle. To cycle through the available &n; *    baud rates, pulse RTS low for a few ms.  &n; */
+multiline_comment|/*&n; * Function litelink_change_speed (idev, speed)&n; *&n; *    Change speed of the Litelink dongle. To cycle through the available &n; *    baud rates, pulse RTS low for a few ms.  &n; */
 DECL|function|litelink_change_speed
 r_static
 r_void
@@ -225,8 +224,8 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
-id|baudrate
+id|__u32
+id|speed
 )paren
 (brace
 r_int
@@ -307,7 +306,7 @@ id|baud_rates
 id|i
 )braket
 op_ne
-id|baudrate
+id|speed
 suffix:semicolon
 id|i
 op_increment

@@ -1148,11 +1148,9 @@ multiline_comment|/* no ioctl yet */
 id|uPD98402_int
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|uPD98402_init
 r_int
+id|__init
 id|uPD98402_init
 c_func
 (paren
@@ -1160,7 +1158,6 @@ r_struct
 id|atm_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|DPRINTK

@@ -312,19 +312,16 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *  Extract IP address from the parameter string if needed. Note that we&n; *  need to have root_server_addr set _before_ IPConfig gets called as it&n; *  can override it.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_parse_addr
 r_static
 r_void
+id|__init
 id|root_nfs_parse_addr
 c_func
 (paren
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_int
@@ -467,12 +464,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *  Parse option string.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_parse
 r_static
 r_void
+id|__init
 id|root_nfs_parse
 c_func
 (paren
@@ -483,7 +478,6 @@ comma
 r_char
 op_star
 id|buf
-)paren
 )paren
 (brace
 r_char
@@ -697,19 +691,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *  Prepare the NFS data structure and parse all options.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_name
 r_static
 r_int
+id|__init
 id|root_nfs_name
 c_func
 (paren
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_char
@@ -862,17 +853,14 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Get NFS server address.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_addr
 r_static
 r_int
+id|__init
 id|root_nfs_addr
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if
@@ -932,17 +920,14 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Tell the user what&squot;s going on.&n; */
 macro_line|#ifdef NFSROOT_DEBUG
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_print
 r_static
 r_void
+id|__init
 id|root_nfs_print
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk
@@ -1001,16 +986,13 @@ id|nfs_data.flags
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_init
 r_int
+id|__init
 id|root_nfs_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef NFSROOT_DEBUG
@@ -1054,11 +1036,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Parse NFS server and directory information passed on the kernel&n; *  command line.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nfs_root_setup
 r_void
+id|__init
 id|nfs_root_setup
 c_func
 (paren
@@ -1069,7 +1049,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 id|ROOT_DEV
@@ -1240,12 +1219,10 @@ id|port
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Query server portmapper for the port of a daemon program.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_getport
 r_static
 r_int
+id|__init
 id|root_nfs_getport
 c_func
 (paren
@@ -1254,7 +1231,6 @@ id|program
 comma
 r_int
 id|version
-)paren
 )paren
 (brace
 r_struct
@@ -1305,17 +1281,14 @@ id|IPPROTO_UDP
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Use portmapper to find mountd and nfsd port numbers if not overriden&n; *  by the user. Use defaults if portmapper is not available.&n; *  XXX: Is there any nfs server with no portmapper?&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_ports
 r_static
+id|__init
 r_int
 id|root_nfs_ports
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -1430,17 +1403,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Get a file handle from the server for the directory which is to be&n; *  mounted.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_get_handle
 r_static
 r_int
+id|__init
 id|root_nfs_get_handle
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -1499,12 +1469,10 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Now actually mount the given directory.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|root_nfs_do_mount
 r_static
 r_int
+id|__init
 id|root_nfs_do_mount
 c_func
 (paren
@@ -1512,7 +1480,6 @@ r_struct
 id|super_block
 op_star
 id|sb
-)paren
 )paren
 (brace
 multiline_comment|/* Pass the server address to NFS */
@@ -1558,11 +1525,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Get the NFS port numbers and file handle, and then read the super-&n; *  block for mounting.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nfs_root_mount
 r_int
+id|__init
 id|nfs_root_mount
 c_func
 (paren
@@ -1570,7 +1535,6 @@ r_struct
 id|super_block
 op_star
 id|sb
-)paren
 )paren
 (brace
 r_if

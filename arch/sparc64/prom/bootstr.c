@@ -29,17 +29,14 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_char
 op_star
+id|__init
+DECL|function|prom_getbootargs
 id|prom_getbootargs
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* This check saves us from a panic when bootfd patches args. */

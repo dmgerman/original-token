@@ -5732,6 +5732,10 @@ id|select_unit_reg
 )paren
 suffix:semicolon
 multiline_comment|/* wait for 40 18 Hz ticks (reverse-engineered from DOS driver) */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 id|schedule_timeout
 c_func
 (paren

@@ -1,0 +1,163 @@
+macro_line|#ifndef _LINUX_BIGMEM_H
+DECL|macro|_LINUX_BIGMEM_H
+mdefine_line|#define _LINUX_BIGMEM_H
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_BIGMEM
+macro_line|#include &lt;asm/bigmem.h&gt;
+multiline_comment|/* declarations for linux/mm/bigmem.c */
+r_extern
+r_int
+r_int
+id|bigmem_mapnr
+suffix:semicolon
+r_extern
+r_int
+id|nr_free_bigpages
+suffix:semicolon
+r_extern
+r_struct
+id|page
+op_star
+id|prepare_bigmem_swapout
+c_func
+(paren
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|page
+op_star
+id|replace_with_bigmem
+c_func
+(paren
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+macro_line|#else /* CONFIG_BIGMEM */
+DECL|macro|prepare_bigmem_swapout
+mdefine_line|#define prepare_bigmem_swapout(page) page
+DECL|macro|replace_with_bigmem
+mdefine_line|#define replace_with_bigmem(page) page
+DECL|macro|kmap
+mdefine_line|#define kmap(kaddr, type) kaddr
+DECL|macro|kunmap
+mdefine_line|#define kunmap(vaddr, type) do { } while (0)
+DECL|macro|nr_free_bigpages
+mdefine_line|#define nr_free_bigpages 0
+macro_line|#endif /* CONFIG_BIGMEM */
+multiline_comment|/* when CONFIG_BIGMEM is not set these will be plain clear/copy_page */
+DECL|function|clear_bigpage
+r_extern
+r_inline
+r_void
+id|clear_bigpage
+c_func
+(paren
+r_int
+r_int
+id|kaddr
+)paren
+(brace
+r_int
+r_int
+id|vaddr
+suffix:semicolon
+id|vaddr
+op_assign
+id|kmap
+c_func
+(paren
+id|kaddr
+comma
+id|KM_WRITE
+)paren
+suffix:semicolon
+id|clear_page
+c_func
+(paren
+id|vaddr
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|vaddr
+comma
+id|KM_WRITE
+)paren
+suffix:semicolon
+)brace
+DECL|function|copy_bigpage
+r_extern
+r_inline
+r_void
+id|copy_bigpage
+c_func
+(paren
+r_int
+r_int
+id|to
+comma
+r_int
+r_int
+id|from
+)paren
+(brace
+r_int
+r_int
+id|vfrom
+comma
+id|vto
+suffix:semicolon
+id|vfrom
+op_assign
+id|kmap
+c_func
+(paren
+id|from
+comma
+id|KM_READ
+)paren
+suffix:semicolon
+id|vto
+op_assign
+id|kmap
+c_func
+(paren
+id|to
+comma
+id|KM_WRITE
+)paren
+suffix:semicolon
+id|copy_page
+c_func
+(paren
+id|vto
+comma
+id|vfrom
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|vfrom
+comma
+id|KM_READ
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|vto
+comma
+id|KM_WRITE
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* _LINUX_BIGMEM_H */
+eof

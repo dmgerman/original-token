@@ -3,10 +3,12 @@ macro_line|#ifndef _LINUX_MCA_H
 DECL|macro|_LINUX_MCA_H
 mdefine_line|#define _LINUX_MCA_H
 multiline_comment|/* The detection of MCA bus is done in the real mode (using BIOS).&n; * The information is exported to the protected code, where this &n; * variable is set to one in case MCA bus was detected.&n;*/
+macro_line|#ifndef MCA_bus__is_a_macro
 r_extern
 r_int
 id|MCA_bus
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* maximal number of MCA slots - actually, some machines have less, but&n;they all have sufficient number of POS registers to cover 8. */
 DECL|macro|MCA_MAX_SLOT_NR
 mdefine_line|#define MCA_MAX_SLOT_NR  8

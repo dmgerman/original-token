@@ -618,18 +618,15 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* The following two functions do a quick&squot;n&squot;dirty initialization of the MFP or&n; * SCC serial ports. They&squot;re used by the debugging interface, kgdb, and the&n; * serial console code. */
 macro_line|#ifndef CONFIG_SERIAL_CONSOLE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_init_mfp_port
 r_static
 r_void
+id|__init
 id|atari_init_mfp_port
 c_func
 (paren
 r_int
 id|cflag
-)paren
 )paren
 macro_line|#else
 r_void
@@ -797,18 +794,15 @@ multiline_comment|/* loops_per_sec isn&squot;t initialized yet, so we can&squot;
 DECL|macro|LONG_DELAY
 mdefine_line|#define LONG_DELAY()&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&bslash;&n;&t;for( i = 100; i &gt; 0; --i )&t;&t;&bslash;&n;&t;    MFPDELAY();&t;&t;&t;&t;&bslash;&n;    } while(0)
 macro_line|#ifndef CONFIG_SERIAL_CONSOLE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_init_scc_port
 r_static
 r_void
+id|__init
 id|atari_init_scc_port
 c_func
 (paren
 r_int
 id|cflag
-)paren
 )paren
 macro_line|#else
 r_void
@@ -1265,18 +1259,15 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_SERIAL_CONSOLE 
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_init_midi_port
 r_static
 r_void
+id|__init
 id|atari_init_midi_port
 c_func
 (paren
 r_int
 id|cflag
-)paren
 )paren
 macro_line|#else
 r_void
@@ -1411,16 +1402,13 @@ id|ACIA_RLTID
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_debug_init
 r_void
+id|__init
 id|atari_debug_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_KGDB

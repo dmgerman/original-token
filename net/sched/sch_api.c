@@ -4870,16 +4870,13 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#if PSCHED_CLOCK_SOURCE == PSCHED_CPU
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|psched_calibrate_clock
 r_int
+id|__init
 id|psched_calibrate_clock
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|psched_time_t
@@ -5061,16 +5058,13 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pktsched_init
 r_int
+id|__init
 id|pktsched_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_RTNETLINK

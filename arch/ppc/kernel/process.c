@@ -2042,10 +2042,8 @@ suffix:semicolon
 )brace
 macro_line|#if 0
 multiline_comment|/*&n; * Low level print for debugging - Cort&n; */
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
 id|ll_printk
 c_func
 (paren
@@ -2057,7 +2055,6 @@ comma
 dot
 dot
 dot
-)paren
 )paren
 (brace
 id|va_list
@@ -2191,10 +2188,8 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|ll_puts
 c_func
 (paren
@@ -2202,7 +2197,6 @@ r_const
 r_char
 op_star
 id|s
-)paren
 )paren
 (brace
 r_int

@@ -955,11 +955,9 @@ id|mac_default_handler
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Parse a Macintosh-specific record in the bootinfo&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mac_parse_bootinfo
 r_int
+id|__init
 id|mac_parse_bootinfo
 c_func
 (paren
@@ -968,7 +966,6 @@ r_struct
 id|bi_record
 op_star
 id|record
-)paren
 )paren
 (brace
 r_int
@@ -1187,16 +1184,13 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|config_mac
 r_void
+id|__init
 id|config_mac
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

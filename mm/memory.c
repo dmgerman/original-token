@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  linux/mm/memory.c&n; *&n; *  Copyright (C) 1991, 1992
 multiline_comment|/*&n; * demand-loading started 01.12.91 - seems it is high on the list of&n; * things wanted, and it should be easy to implement. - Linus&n; */
 multiline_comment|/*&n; * Ok, demand-loading was easy, shared pages a little bit tricker. Shared&n; * pages started 02.12.91, seems to work. - Linus.&n; *&n; * Tested sharing by executing about 30 /bin/sh: under the old kernel it&n; * would have taken more than the 6M I have free, but it worked well as&n; * far as I could see.&n; *&n; * Also corrected some &quot;invalidate()&quot;s - I wasn&squot;t doing enough of them.&n; */
 multiline_comment|/*&n; * Real VM (paging to/from disk) started 18.12.91. Much more work and&n; * thought has to go into this. Oh, well..&n; * 19.12.91  -  works, somewhat. Sometimes I get faults, don&squot;t know why.&n; *&t;&t;Found it. Everything seems to work now.&n; * 20.12.91  -  Ok, making the swap-device changeable like the root.&n; */
-multiline_comment|/*&n; * 05.04.94  -  Multi-page memory management added for v1.1.&n; * &t;&t;Idea by Alex Bligh (alex@cconcepts.co.uk)&n; */
+multiline_comment|/*&n; * 05.04.94  -  Multi-page memory management added for v1.1.&n; * &t;&t;Idea by Alex Bligh (alex@cconcepts.co.uk)&n; *&n; * 16.07.99  -  Support of BIGMEM added by Gerhard Wichert, Siemens AG&n; *&t;&t;(Gerhard.Wichert@pdb.siemens.de)&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/iobuf.h&gt;
+macro_line|#include &lt;linux/bigmem.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|variable|max_mapnr
@@ -62,7 +63,7 @@ id|to
 )paren
 )paren
 (brace
-id|clear_page
+id|clear_bigpage
 c_func
 (paren
 id|to
@@ -71,7 +72,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|copy_page
+id|copy_bigpage
 c_func
 (paren
 id|to
@@ -3470,7 +3471,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_USER
+id|GFP_BIGUSER
 )paren
 suffix:semicolon
 r_if
@@ -4412,6 +4413,28 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|page
+op_assign
+id|replace_with_bigmem
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|pte
+op_assign
+id|mk_pte
+c_func
+(paren
+id|page_address
+c_func
+(paren
+id|page
+)paren
+comma
+id|vma-&gt;vm_page_prot
+)paren
+suffix:semicolon
 id|pte
 op_assign
 id|pte_mkwrite
@@ -4509,7 +4532,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_USER
+id|GFP_BIGUSER
 )paren
 suffix:semicolon
 r_if
@@ -4522,7 +4545,7 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-id|clear_page
+id|clear_bigpage
 c_func
 (paren
 id|page

@@ -4059,16 +4059,13 @@ l_int|6
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The original code sometimes left the interrupt line of &n; * the ACIAs low forever. I hope, it is fixed now.&n; *&n; * Martin Rogge, 20 Aug 1995&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_keyb_init
 r_int
+id|__init
 id|atari_keyb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* setup key map */

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol (IrLAN) Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Mon May 31 14:19:34 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol (IrLAN) Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Jul  8 13:50:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -120,8 +120,8 @@ r_void
 id|irlan_client_kick_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 (brace
@@ -235,8 +235,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -422,9 +422,6 @@ r_struct
 id|irlan_cb
 op_star
 id|self
-comma
-op_star
-id|entry
 suffix:semicolon
 id|__u32
 id|saddr
@@ -655,6 +652,15 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* Ready for a new command */
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), clearing tx_busy&bslash;n&quot;
+)paren
+suffix:semicolon
 id|self-&gt;client.tx_busy
 op_assign
 id|FALSE
@@ -702,6 +708,11 @@ r_struct
 id|tsap_cb
 op_star
 id|tsap
+suffix:semicolon
+r_struct
+id|sk_buff
+op_star
+id|skb
 suffix:semicolon
 id|DEBUG
 c_func
@@ -787,6 +798,33 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Remove frames queued on the control channel */
+r_while
+c_loop
+(paren
+(paren
+id|skb
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|self-&gt;client.txq
+)paren
+)paren
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
+id|self-&gt;client.tx_busy
+op_assign
+id|FALSE
+suffix:semicolon
 id|irlan_do_client_event
 c_func
 (paren
@@ -811,13 +849,12 @@ id|self
 )paren
 (brace
 r_struct
-id|notify_t
-id|notify
-suffix:semicolon
-r_struct
 id|tsap_cb
 op_star
 id|tsap
+suffix:semicolon
+id|notify_t
+id|notify
 suffix:semicolon
 id|DEBUG
 c_func

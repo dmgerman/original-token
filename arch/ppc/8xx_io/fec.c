@@ -2546,16 +2546,13 @@ macro_line|#endif
 )brace
 )brace
 multiline_comment|/* Initialize the FECC Ethernet on 860T.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|m8xx_enet_init
 r_int
+id|__init
 id|m8xx_enet_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

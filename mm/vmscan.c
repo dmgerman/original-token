@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/bigmem.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * The swap-out functions return 1 if they successfully&n; * threw something out, and we got a free page. It returns&n; * zero if it couldn&squot;t do anything, and any other value&n; * indicates it decreased rss, but the page was shared.&n; *&n; * NOTE! If it sleeps, it *must* return 1 to make sure we&n; * don&squot;t continue with the swap-out. Otherwise we may be&n; * using a process that no longer actually exists (it might&n; * have died while we slept).&n; */
 DECL|function|try_to_swap_out
@@ -184,6 +185,21 @@ id|__GFP_DMA
 op_logical_and
 op_logical_neg
 id|PageDMA
+c_func
+(paren
+id|page
+)paren
+)paren
+op_logical_or
+(paren
+op_logical_neg
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_BIGMEM
+)paren
+op_logical_and
+id|PageBIGMEM
 c_func
 (paren
 id|page
@@ -379,6 +395,23 @@ r_goto
 id|out_failed_unlock
 suffix:semicolon
 multiline_comment|/* No swap space left */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|page
+op_assign
+id|prepare_bigmem_swapout
+c_func
+(paren
+id|page
+)paren
+)paren
+)paren
+r_goto
+id|out_swap_free_unlock
+suffix:semicolon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
@@ -458,6 +491,24 @@ id|vma-&gt;vm_mm-&gt;page_table_lock
 suffix:semicolon
 id|out_failed
 suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+id|out_swap_free_unlock
+suffix:colon
+id|swap_free
+c_func
+(paren
+id|entry
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|vma-&gt;vm_mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1039,6 +1090,16 @@ suffix:semicolon
 r_int
 id|counter
 suffix:semicolon
+r_int
+id|__ret
+op_assign
+l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* &n;&t; * We make one or two passes through the task list, indexed by &n;&t; * assign = {0, 1}:&n;&t; *   Pass 1: select the swappable task with maximal RSS that has&n;&t; *         not yet been swapped out. &n;&t; *   Pass 2: re-assign rss swap_cnt values, then select as above.&n;&t; *&n;&t; * With this approach, there&squot;s no need to remember the last task&n;&t; * swapped out.  If the swap-out fails, we clear swap_cnt so the &n;&t; * task won&squot;t be selected again until all others have been tried.&n;&t; *&n;&t; * Think of swap_cnt as a &quot;shadow rss&quot; - it tells us which process&n;&t; * we want to page out (always try largest first).&n;&t; */
 id|counter
 op_assign
@@ -1278,15 +1339,24 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_return
+id|__ret
+op_assign
 l_int|1
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
 id|out
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|__ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We need to make the locks finer granularity, but right&n; * now we need this so that we can do page allocations&n; * without holding the kernel lock etc.&n; *&n; * We want to try to free &quot;count&quot; pages, and we need to &n; * cluster them so that we get good swap-out behaviour. See&n; * the &quot;free_memory()&quot; macro for details.&n; */
@@ -1308,11 +1378,6 @@ r_int
 id|count
 op_assign
 id|SWAP_CLUSTER_MAX
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/* Always trim SLAB caches when memory gets low. */
 id|kmem_cache_reap
@@ -1427,11 +1492,6 @@ l_int|0
 suffix:semicolon
 id|done
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|priority
 op_ge
@@ -1504,10 +1564,13 @@ l_int|1
 multiline_comment|/*&n;&t;&t; * Wake up once a second to see if we need to make&n;&t;&t; * more memory available.&n;&t;&t; *&n;&t;&t; * If we actually get into a low-memory situation,&n;&t;&t; * the processes needing more memory will wake us&n;&t;&t; * up on a more timely basis.&n;&t;&t; */
 r_do
 (brace
+multiline_comment|/* kswapd is critical to provide GFP_ATOMIC&n;&t;&t;&t;   allocations (not GFP_BIGMEM ones). */
 r_if
 c_cond
 (paren
 id|nr_free_pages
+op_minus
+id|nr_free_bigpages
 op_ge
 id|freepages.high
 )paren

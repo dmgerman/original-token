@@ -49,9 +49,6 @@ macro_line|#endif
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &gt;= 131343) /* 2.1.15 -- XX get correct version */
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(x)&t;x
 macro_line|#endif
 macro_line|#include &quot;rocket_int.h&quot;
 macro_line|#ifdef LOCAL_ROCKET_H

@@ -26,9 +26,6 @@ id|page
 comma
 r_int
 id|wait
-comma
-r_int
-id|dolock
 )paren
 (brace
 r_int
@@ -280,12 +277,6 @@ r_else
 id|kstat.pswpout
 op_increment
 suffix:semicolon
-id|get_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -418,12 +409,6 @@ id|KERN_ERR
 l_string|&quot;rw_swap_page: no swap file or device&bslash;n&quot;
 )paren
 suffix:semicolon
-id|put_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -451,37 +436,6 @@ id|nr_async_pages
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|dolock
-)paren
-(brace
-id|set_bit
-c_func
-(paren
-id|PG_free_swap_after
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
-id|p-&gt;swap_map
-(braket
-id|offset
-)braket
-op_increment
-suffix:semicolon
-)brace
-id|set_bit
-c_func
-(paren
-id|PG_free_after
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
 multiline_comment|/* block_size == PAGE_SIZE/zones_used */
 id|brw_page
 c_func
@@ -650,12 +604,10 @@ comma
 id|page
 comma
 id|wait
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * shmfs needs a version that doesn&squot;t put the page in the page cache!&n; * The swap lock map insists that pages be in the page cache!&n; * Therefore we can&squot;t use it.  Later when we can remove the need for the&n; * lock map and we can reduce the number of functions exported.&n; */
+multiline_comment|/*&n; * The swap lock map insists that pages be in the page cache!&n; * Therefore we can&squot;t use it.  Later when we can remove the need for the&n; * lock map and we can reduce the number of functions exported.&n; */
 DECL|function|rw_swap_page_nolock
 r_void
 id|rw_swap_page_nolock
@@ -730,8 +682,6 @@ comma
 id|page
 comma
 id|wait
-comma
-l_int|0
 )paren
 suffix:semicolon
 )brace

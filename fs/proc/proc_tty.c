@@ -771,16 +771,13 @@ id|ent
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called by proc_root_init() to initialize the /proc/tty subtree&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|proc_tty_init
 r_void
+id|__init
 id|proc_tty_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

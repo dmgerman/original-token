@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      tekram.c&n; * Version:       1.2&n; * Description:   Implementation of the Tekram IrMate IR-210B dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Sun May 16 14:33:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      tekram.c&n; * Version:       1.2&n; * Description:   Implementation of the Tekram IrMate IR-210B dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Thu Jul 15 01:17:53 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -54,8 +54,8 @@ id|irda_device
 op_star
 id|dev
 comma
-r_int
-id|baud
+id|__u32
+id|speed
 )paren
 suffix:semicolon
 r_static
@@ -201,7 +201,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function tekram_change_speed (tty, baud)&n; *&n; *    Set the speed for the Tekram IRMate 210 type dongle. Warning, this &n; *    function must be called with a process context!&n; *&n; *    Algorithm&n; *    1. clear DTR &n; *    2. set RTS, and wait at least 7 us&n; *    3. send Control Byte to the IR-210 through TXD to set new baud rate&n; *       wait until the stop bit of Control Byte is sent (for 9600 baud rate, &n; *       it takes about 100 msec)&n; *    5. clear RTS (return to NORMAL Operation)&n; *    6. wait at least 50 us, new setting (baud rate, etc) takes effect here &n; *       after&n; */
+multiline_comment|/*&n; * Function tekram_change_speed (tty, speed)&n; *&n; *    Set the speed for the Tekram IRMate 210 type dongle. Warning, this &n; *    function must be called with a process context!&n; *&n; *    Algorithm&n; *    1. clear DTR &n; *    2. set RTS, and wait at least 7 us&n; *    3. send Control Byte to the IR-210 through TXD to set new baud rate&n; *       wait until the stop bit of Control Byte is sent (for 9600 baud rate, &n; *       it takes about 100 msec)&n; *    5. clear RTS (return to NORMAL Operation)&n; *    6. wait at least 50 us, new setting (baud rate, etc) takes effect here &n; *       after&n; */
 DECL|function|tekram_change_speed
 r_static
 r_void
@@ -213,8 +213,8 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
-id|baud
+id|__u32
+id|speed
 )paren
 (brace
 id|__u8
@@ -254,7 +254,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|baud
+id|speed
 )paren
 (brace
 r_default
@@ -337,7 +337,7 @@ multiline_comment|/* Wait at least 7us */
 id|udelay
 c_func
 (paren
-l_int|7
+l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/* Write control byte */

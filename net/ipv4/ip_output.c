@@ -3575,16 +3575,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif&t;
 multiline_comment|/*&n; *&t;IP registers the packet type and then calls the subprotocol initialisers&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ip_init
 r_void
+id|__init
 id|ip_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|dev_add_pack

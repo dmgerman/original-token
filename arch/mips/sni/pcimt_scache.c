@@ -7,16 +7,13 @@ DECL|macro|cacheconf
 mdefine_line|#define cacheconf (*(volatile unsigned int *)PCIMT_CACHECONF)
 DECL|macro|invspace
 mdefine_line|#define invspace (*(volatile unsigned int *)PCIMT_INVSPACE)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sni_pcimt_sc_init
 r_void
+id|__init
 id|sni_pcimt_sc_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

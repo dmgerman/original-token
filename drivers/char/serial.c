@@ -13091,16 +13091,13 @@ id|unregister_serial
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|rs_init
 r_int
+id|__init
 id|rs_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -14580,12 +14577,10 @@ id|c-&gt;index
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Setup initial baud/bits/parity. We do two things here:&n; *&t;- construct a cflag setting for the first rs_open()&n; *&t;- initialize the serial port&n; *&t;Return non-zero if we didn&squot;t find a serial port.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|serial_console_setup
 r_static
 r_int
+id|__init
 id|serial_console_setup
 c_func
 (paren
@@ -14597,7 +14592,6 @@ comma
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_struct
@@ -15037,10 +15031,9 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|serial_console_init
 r_int
+id|__init
 id|serial_console_init
 c_func
 (paren
@@ -15049,7 +15042,6 @@ id|kmem_start
 comma
 r_int
 id|kmem_end
-)paren
 )paren
 (brace
 id|register_console

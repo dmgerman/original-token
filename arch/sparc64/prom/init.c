@@ -63,11 +63,9 @@ r_void
 op_star
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_init
 r_void
+id|__init
 id|prom_init
 c_func
 (paren
@@ -78,7 +76,6 @@ comma
 r_void
 op_star
 id|cif_stack
-)paren
 )paren
 (brace
 r_char

@@ -1111,18 +1111,15 @@ c_func
 suffix:semicolon
 )brace
 singleline_comment|// Some functions to keep track of what irq&squot;s we have
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|is_valid_irq
 id|is_valid_irq
 c_func
 (paren
 r_int
 id|irq
-)paren
 )paren
 (brace
 r_int
@@ -1160,18 +1157,15 @@ id|i
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|mark_requested_irq
 id|mark_requested_irq
 c_func
 (paren
 r_char
 id|irq
-)paren
 )paren
 (brace
 id|rirqs
@@ -1183,18 +1177,15 @@ op_assign
 id|irq
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|clear_requested_irq
 id|clear_requested_irq
 c_func
 (paren
 r_char
 id|irq
-)paren
 )paren
 (brace
 r_int
@@ -1242,18 +1233,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|have_requested_irq
 id|have_requested_irq
 c_func
 (paren
 r_char
 id|irq
-)paren
 )paren
 (brace
 singleline_comment|// array init to zeros so 0 irq will not be requested as a side effect
@@ -1726,16 +1714,13 @@ multiline_comment|/* SA_SHIRQ    - for shared irq PCI or maybe EISA only */
 multiline_comment|/* SA_RANDOM   - can be source for cert. random number generators */
 DECL|macro|IP2_SA_FLAGS
 mdefine_line|#define IP2_SA_FLAGS&t;0
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|old_ip2_init
 id|old_ip2_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -3026,18 +3011,15 @@ multiline_comment|/* This function initializes the specified board. The loadware
 multiline_comment|/* the board, the channel structures are initialized, and the board details   */
 multiline_comment|/* are reported on the console.                                               */
 multiline_comment|/******************************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|ip2_init_board
 id|ip2_init_board
 c_func
 (paren
 r_int
 id|boardnum
-)paren
 )paren
 (brace
 r_int
@@ -3641,19 +3623,16 @@ multiline_comment|/* from the specified slot number. If the motherboard is not i
 multiline_comment|/* EISA motherboard, or no valid board ID is selected it returns 0. Otherwise */
 multiline_comment|/* it returns the base address of the controller.                             */
 multiline_comment|/******************************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
 r_int
+id|__init
+DECL|function|find_eisa_board
 id|find_eisa_board
 c_func
 (paren
 r_int
 id|start_slot
-)paren
 )paren
 (brace
 r_int

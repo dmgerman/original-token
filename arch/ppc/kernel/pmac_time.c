@@ -261,16 +261,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Calibrate the decrementer register using VIA timer 1.&n; * This is used both on powermacs and CHRP machines.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|via_calibrate_decr
 r_int
+id|__init
 id|via_calibrate_decr
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -641,16 +638,13 @@ l_int|100
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
 multiline_comment|/*&n; * Query the OF and get the decr frequency.&n; * This was taken from the pmac time_init() when merging the prep/pmac&n; * time functions.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pmac_calibrate_decr
 r_void
+id|__init
 id|pmac_calibrate_decr
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

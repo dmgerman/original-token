@@ -1829,15 +1829,12 @@ l_int|7
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|a5kkbd_init_hw
 r_void
+id|__init
 id|a5kkbd_init_hw
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

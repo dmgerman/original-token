@@ -36,8 +36,6 @@ DECL|macro|__init
 mdefine_line|#define __init
 DECL|macro|__initdata
 mdefine_line|#define __initdata
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(x) x
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20138
 DECL|macro|test_and_set_bit

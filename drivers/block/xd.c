@@ -670,8 +670,8 @@ suffix:semicolon
 multiline_comment|/* xd_detect: scan the possible BIOS ROM locations for the signature strings */
 DECL|function|xd_detect
 r_static
-id|__init
 id|u_char
+id|__init
 id|xd_detect
 (paren
 id|u_char
@@ -7614,5 +7614,20 @@ l_int|0x200
 suffix:semicolon
 )brace
 )brace
+macro_line|#else
+id|__setup
+(paren
+l_string|&quot;xd=&quot;
+comma
+id|xd_setup
+)paren
+suffix:semicolon
+id|__setup
+(paren
+l_string|&quot;xd_geo=&quot;
+comma
+id|xd_manual_geo_init
+)paren
+suffix:semicolon
 macro_line|#endif /* MODULE */
 eof

@@ -99,8 +99,8 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#endif
 macro_line|#ifndef TWO_THREE
 multiline_comment|/* These are new in 2.3. The source now uses 2.3 syntax, and here is &n;   the compatibility define... */
-DECL|macro|waitq_head_t
-mdefine_line|#define waitq_head_t struct wait_queue *
+DECL|macro|wait_queue_head_t
+mdefine_line|#define wait_queue_head_t struct wait_queue *
 DECL|macro|DECLARE_MUTEX
 mdefine_line|#define DECLARE_MUTEX(name) struct semaphore name = MUTEX
 DECL|macro|DECLARE_WAITQUEUE

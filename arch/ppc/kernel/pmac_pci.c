@@ -1831,12 +1831,10 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * For a bandit bridge, turn on cache coherency if necessary.&n; * N.B. we can&squot;t use pcibios_*_config_* here because bridges[]&n; * is not initialized yet.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_bandit
 r_static
 r_void
+id|__init
 id|init_bandit
 c_func
 (paren
@@ -1844,7 +1842,6 @@ r_struct
 id|bridge_data
 op_star
 id|bp
-)paren
 )paren
 (brace
 r_int
@@ -2109,12 +2106,10 @@ id|bp-&gt;io_base
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pmac_find_bridges
 r_int
 r_int
+id|__init
 id|pmac_find_bridges
 c_func
 (paren
@@ -2125,7 +2120,6 @@ comma
 r_int
 r_int
 id|mem_end
-)paren
 )paren
 (brace
 r_int
@@ -2270,12 +2264,10 @@ id|mem_start
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We assume that if we have a G3 powermac, we have one bridge called&n; * &quot;pci&quot; (a MPC106) and no bandit or chaos bridges, and contrariwise,&n; * if we have one or more bandit or chaos bridges, we don&squot;t have a MPC106.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|add_bridges
 r_static
 r_void
+id|__init
 id|add_bridges
 c_func
 (paren
@@ -2288,7 +2280,6 @@ r_int
 r_int
 op_star
 id|mem_ptr
-)paren
 )paren
 (brace
 r_int
@@ -2673,16 +2664,13 @@ id|bp
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|pmac_pcibios_fixup
 id|pmac_pcibios_fixup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -2750,16 +2738,13 @@ id|dev
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|pmac_setup_pci_ptrs
 id|pmac_setup_pci_ptrs
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

@@ -384,6 +384,11 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* atomic flags, some possibly updated asynchronously */
+DECL|member|lru
+r_struct
+id|list_head
+id|lru
+suffix:semicolon
 DECL|member|wait
 id|wait_queue_head_t
 id|wait
@@ -430,12 +435,8 @@ DECL|macro|PG_referenced
 mdefine_line|#define PG_referenced&t;&t; 2
 DECL|macro|PG_uptodate
 mdefine_line|#define PG_uptodate&t;&t; 3
-DECL|macro|PG_free_after
-mdefine_line|#define PG_free_after&t;&t; 4
 DECL|macro|PG_decr_after
 mdefine_line|#define PG_decr_after&t;&t; 5
-DECL|macro|PG_free_swap_after
-mdefine_line|#define PG_free_swap_after&t; 6
 DECL|macro|PG_DMA
 mdefine_line|#define PG_DMA&t;&t;&t; 7
 DECL|macro|PG_Slab
@@ -446,6 +447,8 @@ DECL|macro|PG_skip
 mdefine_line|#define PG_skip&t;&t;&t;10
 DECL|macro|PG_swap_entry
 mdefine_line|#define PG_swap_entry&t;&t;11
+DECL|macro|PG_BIGMEM
+mdefine_line|#define PG_BIGMEM&t;&t;12
 multiline_comment|/* bits 21-30 unused */
 DECL|macro|PG_reserved
 mdefine_line|#define PG_reserved&t;&t;31
@@ -472,12 +475,8 @@ DECL|macro|ClearPageError
 mdefine_line|#define ClearPageError(page)&t;do { if (!test_and_clear_bit(PG_error, &amp;(page)-&gt;flags)) BUG(); } while (0)
 DECL|macro|PageReferenced
 mdefine_line|#define PageReferenced(page)&t;(test_bit(PG_referenced, &amp;(page)-&gt;flags))
-DECL|macro|PageFreeAfter
-mdefine_line|#define PageFreeAfter(page)&t;(test_bit(PG_free_after, &amp;(page)-&gt;flags))
 DECL|macro|PageDecrAfter
 mdefine_line|#define PageDecrAfter(page)&t;(test_bit(PG_decr_after, &amp;(page)-&gt;flags))
-DECL|macro|PageSwapUnlockAfter
-mdefine_line|#define PageSwapUnlockAfter(page) (test_bit(PG_free_swap_after, &amp;(page)-&gt;flags))
 DECL|macro|PageDMA
 mdefine_line|#define PageDMA(page)&t;&t;(test_bit(PG_DMA, &amp;(page)-&gt;flags))
 DECL|macro|PageSlab
@@ -498,7 +497,14 @@ DECL|macro|PageClearSwapCache
 mdefine_line|#define PageClearSwapCache(page)(clear_bit(PG_swap_cache, &amp;(page)-&gt;flags))
 DECL|macro|PageTestandClearSwapCache
 mdefine_line|#define PageTestandClearSwapCache(page)&t;&bslash;&n;&t;&t;&t;(test_and_clear_bit(PG_swap_cache, &amp;(page)-&gt;flags))
-multiline_comment|/*&n; * Various page-&gt;flags bits:&n; *&n; * PG_reserved is set for a page which must never be accessed (which&n; * may not even be present).&n; *&n; * PG_DMA is set for those pages which lie in the range of&n; * physical addresses capable of carrying DMA transfers.&n; *&n; * Multiple processes may &quot;see&quot; the same page. E.g. for untouched&n; * mappings of /dev/null, all processes see the same page full of&n; * zeroes, and text pages of executables and shared libraries have&n; * only one copy in memory, at most, normally.&n; *&n; * For the non-reserved pages, page-&gt;count denotes a reference count.&n; *   page-&gt;count == 0 means the page is free.&n; *   page-&gt;count == 1 means the page is used for exactly one purpose&n; *   (e.g. a private data page of one process).&n; *&n; * A page may be used for kmalloc() or anyone else who does a&n; * get_free_page(). In this case the page-&gt;count is at least 1, and&n; * all other fields are unused but should be 0 or NULL. The&n; * management of this page is the responsibility of the one who uses&n; * it.&n; *&n; * The other pages (we may call them &quot;process pages&quot;) are completely&n; * managed by the Linux memory manager: I/O, buffers, swapping etc.&n; * The following discussion applies only to them.&n; *&n; * A page may belong to an inode&squot;s memory mapping. In this case,&n; * page-&gt;inode is the pointer to the inode, and page-&gt;offset is the&n; * file offset of the page (not necessarily a multiple of PAGE_SIZE).&n; *&n; * A page may have buffers allocated to it. In this case,&n; * page-&gt;buffers is a circular list of these buffer heads. Else,&n; * page-&gt;buffers == NULL.&n; *&n; * For pages belonging to inodes, the page-&gt;count is the number of&n; * attaches, plus 1 if buffers are allocated to the page.&n; *&n; * All pages belonging to an inode make up a doubly linked list&n; * inode-&gt;i_pages, using the fields page-&gt;next and page-&gt;prev. (These&n; * fields are also used for freelist management when page-&gt;count==0.)&n; * There is also a hash table mapping (inode,offset) to the page&n; * in memory if present. The lists for this hash table use the fields&n; * page-&gt;next_hash and page-&gt;pprev_hash.&n; *&n; * All process pages can do I/O:&n; * - inode pages may need to be read from disk,&n; * - inode pages which have been modified and are MAP_SHARED may need&n; *   to be written to disk,&n; * - private pages which have been modified may need to be swapped out&n; *   to swap space and (later) to be read back into memory.&n; * During disk I/O, PG_locked is used. This bit is set before I/O&n; * and reset when I/O completes. page-&gt;wait is a wait queue of all&n; * tasks waiting for the I/O on this page to complete.&n; * PG_uptodate tells whether the page&squot;s contents is valid.&n; * When a read completes, the page becomes uptodate, unless a disk I/O&n; * error happened.&n; * When a write completes, and PG_free_after is set, the page is&n; * freed without any further delay.&n; *&n; * For choosing which pages to swap out, inode pages carry a&n; * PG_referenced bit, which is set any time the system accesses&n; * that page through the (inode,offset) hash table.&n; *&n; * PG_skip is used on sparc/sparc64 architectures to &quot;skip&quot; certain&n; * parts of the address space.&n; *&n; * PG_error is set to indicate that an I/O error occurred on this page.&n; */
+macro_line|#ifdef CONFIG_BIGMEM
+DECL|macro|PageBIGMEM
+mdefine_line|#define PageBIGMEM(page)&t;(test_bit(PG_BIGMEM, &amp;(page)-&gt;flags))
+macro_line|#else
+DECL|macro|PageBIGMEM
+mdefine_line|#define PageBIGMEM(page) 0 /* needed to optimize away at compile time */
+macro_line|#endif
+multiline_comment|/*&n; * Various page-&gt;flags bits:&n; *&n; * PG_reserved is set for a page which must never be accessed (which&n; * may not even be present).&n; *&n; * PG_DMA is set for those pages which lie in the range of&n; * physical addresses capable of carrying DMA transfers.&n; *&n; * Multiple processes may &quot;see&quot; the same page. E.g. for untouched&n; * mappings of /dev/null, all processes see the same page full of&n; * zeroes, and text pages of executables and shared libraries have&n; * only one copy in memory, at most, normally.&n; *&n; * For the non-reserved pages, page-&gt;count denotes a reference count.&n; *   page-&gt;count == 0 means the page is free.&n; *   page-&gt;count == 1 means the page is used for exactly one purpose&n; *   (e.g. a private data page of one process).&n; *&n; * A page may be used for kmalloc() or anyone else who does a&n; * get_free_page(). In this case the page-&gt;count is at least 1, and&n; * all other fields are unused but should be 0 or NULL. The&n; * management of this page is the responsibility of the one who uses&n; * it.&n; *&n; * The other pages (we may call them &quot;process pages&quot;) are completely&n; * managed by the Linux memory manager: I/O, buffers, swapping etc.&n; * The following discussion applies only to them.&n; *&n; * A page may belong to an inode&squot;s memory mapping. In this case,&n; * page-&gt;inode is the pointer to the inode, and page-&gt;offset is the&n; * file offset of the page (not necessarily a multiple of PAGE_SIZE).&n; *&n; * A page may have buffers allocated to it. In this case,&n; * page-&gt;buffers is a circular list of these buffer heads. Else,&n; * page-&gt;buffers == NULL.&n; *&n; * For pages belonging to inodes, the page-&gt;count is the number of&n; * attaches, plus 1 if buffers are allocated to the page.&n; *&n; * All pages belonging to an inode make up a doubly linked list&n; * inode-&gt;i_pages, using the fields page-&gt;next and page-&gt;prev. (These&n; * fields are also used for freelist management when page-&gt;count==0.)&n; * There is also a hash table mapping (inode,offset) to the page&n; * in memory if present. The lists for this hash table use the fields&n; * page-&gt;next_hash and page-&gt;pprev_hash.&n; *&n; * All process pages can do I/O:&n; * - inode pages may need to be read from disk,&n; * - inode pages which have been modified and are MAP_SHARED may need&n; *   to be written to disk,&n; * - private pages which have been modified may need to be swapped out&n; *   to swap space and (later) to be read back into memory.&n; * During disk I/O, PG_locked is used. This bit is set before I/O&n; * and reset when I/O completes. page-&gt;wait is a wait queue of all&n; * tasks waiting for the I/O on this page to complete.&n; * PG_uptodate tells whether the page&squot;s contents is valid.&n; * When a read completes, the page becomes uptodate, unless a disk I/O&n; * error happened.&n; *&n; * For choosing which pages to swap out, inode pages carry a&n; * PG_referenced bit, which is set any time the system accesses&n; * that page through the (inode,offset) hash table.&n; *&n; * PG_skip is used on sparc/sparc64 architectures to &quot;skip&quot; certain&n; * parts of the address space.&n; *&n; * PG_error is set to indicate that an I/O error occurred on this page.&n; */
 r_extern
 id|mem_map_t
 op_star
@@ -1131,12 +1137,21 @@ DECL|macro|__GFP_IO
 mdefine_line|#define __GFP_IO&t;0x10
 DECL|macro|__GFP_SWAP
 mdefine_line|#define __GFP_SWAP&t;0x20
+macro_line|#ifdef CONFIG_BIGMEM
+DECL|macro|__GFP_BIGMEM
+mdefine_line|#define __GFP_BIGMEM&t;0x40
+macro_line|#else
+DECL|macro|__GFP_BIGMEM
+mdefine_line|#define __GFP_BIGMEM&t;0x0 /* noop */
+macro_line|#endif
 DECL|macro|__GFP_DMA
 mdefine_line|#define __GFP_DMA&t;0x80
 DECL|macro|GFP_BUFFER
 mdefine_line|#define GFP_BUFFER&t;(__GFP_LOW | __GFP_WAIT)
 DECL|macro|GFP_ATOMIC
 mdefine_line|#define GFP_ATOMIC&t;(__GFP_HIGH)
+DECL|macro|GFP_BIGUSER
+mdefine_line|#define GFP_BIGUSER&t;(__GFP_LOW | __GFP_WAIT | __GFP_IO | __GFP_BIGMEM)
 DECL|macro|GFP_USER
 mdefine_line|#define GFP_USER&t;(__GFP_LOW | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_KERNEL
@@ -1148,6 +1163,9 @@ mdefine_line|#define GFP_KSWAPD&t;(__GFP_IO | __GFP_SWAP)
 multiline_comment|/* Flag - indicates that the buffer will be suitable for DMA.  Ignored on some&n;   platforms, used as appropriate on others */
 DECL|macro|GFP_DMA
 mdefine_line|#define GFP_DMA&t;&t;__GFP_DMA
+multiline_comment|/* Flag - indicates that the buffer can be taken from big memory which is not&n;   directly addressable by the kernel */
+DECL|macro|GFP_BIGMEM
+mdefine_line|#define GFP_BIGMEM&t;__GFP_BIGMEM
 multiline_comment|/* vma is the first one with  address &lt; vma-&gt;vm_end,&n; * and even  address &lt; vma-&gt;vm_start. Have to extend vma. */
 DECL|function|expand_stack
 r_static

@@ -1204,7 +1204,7 @@ r_if
 c_cond
 (paren
 id|lp-&gt;sdev
-op_assign
+op_eq
 l_int|NULL
 )paren
 (brace

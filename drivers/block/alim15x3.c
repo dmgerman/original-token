@@ -413,12 +413,10 @@ id|flags
 suffix:semicolon
 multiline_comment|/*&n;&t; * setup   active  rec&n;&t; * { 70,   165,    365 },   PIO Mode 0&n;&t; * { 50,   125,    208 },   PIO Mode 1&n;&t; * { 30,   100,    110 },   PIO Mode 2&n;&t; * { 30,   80,     70  },   PIO Mode 3 with IORDY&n;&t; * { 25,   70,     25  },   PIO Mode 4 with IORDY  ns&n;&t; * { 20,   50,     30  }    PIO Mode 5 with IORDY (nonstandard)&n;&t; */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_init_ali15x3
 r_int
 r_int
+id|__init
 id|pci_init_ali15x3
 (paren
 r_struct
@@ -430,7 +428,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 id|byte
@@ -934,17 +931,14 @@ id|drive
 suffix:semicolon
 multiline_comment|/* use standard DMA stuff */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_init_ali15x3
 r_void
+id|__init
 id|ide_init_ali15x3
 (paren
 id|ide_hwif_t
 op_star
 id|hwif
-)paren
 )paren
 (brace
 r_struct

@@ -49,6 +49,11 @@ r_int
 r_int
 id|nr_sectors
 suffix:semicolon
+DECL|member|nr_segments
+r_int
+r_int
+id|nr_segments
+suffix:semicolon
 DECL|member|current_nr_sectors
 r_int
 r_int
@@ -312,8 +317,18 @@ id|max_sectors
 id|MAX_BLKDEV
 )braket
 suffix:semicolon
+r_extern
+r_int
+op_star
+id|max_segments
+(braket
+id|MAX_BLKDEV
+)braket
+suffix:semicolon
 DECL|macro|MAX_SECTORS
-mdefine_line|#define MAX_SECTORS 244 /* 254 ? */
+mdefine_line|#define MAX_SECTORS 128
+DECL|macro|MAX_SEGMENTS
+mdefine_line|#define MAX_SEGMENTS MAX_SECTORS
 DECL|macro|PageAlignSize
 mdefine_line|#define PageAlignSize(size) (((size) + PAGE_SIZE -1) &amp; PAGE_MASK)
 macro_line|#if 0  /* small readahead */
@@ -321,7 +336,7 @@ mdefine_line|#define MAX_READAHEAD PageAlignSize(4096*7)
 mdefine_line|#define MIN_READAHEAD PageAlignSize(4096*2)
 macro_line|#else /* large readahead */
 DECL|macro|MAX_READAHEAD
-mdefine_line|#define MAX_READAHEAD PageAlignSize(4096*18)
+mdefine_line|#define MAX_READAHEAD PageAlignSize(4096*31)
 DECL|macro|MIN_READAHEAD
 mdefine_line|#define MIN_READAHEAD PageAlignSize(4096*3)
 macro_line|#endif

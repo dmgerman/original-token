@@ -717,16 +717,13 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|proc_base_init
 r_void
+id|__init
 id|proc_base_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#if CONFIG_AP1000

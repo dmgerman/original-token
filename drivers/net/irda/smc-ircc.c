@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.1&n; * Description:   Driver for the SMC Infrared Communications Controller (SMC)&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Wed May 19 15:30:08 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Thomas Davis, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, admit no liability nor provide warranty for any&n; *     of this software. This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Fujitsu Lifebook 635t&n; *&t;&t;&t;   Sony PCG-505TX (gets DMA wrong.)&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.1&n; * Description:   Driver for the SMC Infrared Communications Controller (SMC)&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Tue Aug 24 13:33:22 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Thomas Davis, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, admit no liability nor provide warranty for any&n; *     of this software. This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Fujitsu Lifebook 635t&n; *&t;&t;&t;   Sony PCG-505TX (gets DMA wrong.)&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -191,8 +191,8 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
-id|baud
+id|__u32
+id|speed
 )paren
 suffix:semicolon
 r_static
@@ -1415,7 +1415,7 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
+id|__u32
 id|speed
 )paren
 (brace
@@ -3599,17 +3599,11 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* Ready to play! */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|irda_device_net_open
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* turn on interrupts */
 id|MOD_INC_USE_COUNT
@@ -3657,15 +3651,6 @@ comma
 id|__FUNCTION__
 l_string|&quot; --&gt;&bslash;n&quot;
 )paren
-suffix:semicolon
-multiline_comment|/* Stop device */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 id|ASSERT
 c_func
@@ -3716,6 +3701,12 @@ suffix:semicolon
 id|iobase
 op_assign
 id|idev-&gt;io.iobase
+suffix:semicolon
+id|irda_device_net_close
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|disable_dma
 c_func

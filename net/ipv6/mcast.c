@@ -3175,11 +3175,9 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|igmp6_init
 r_int
+id|__init
 id|igmp6_init
 c_func
 (paren
@@ -3187,7 +3185,6 @@ r_struct
 id|net_proto_family
 op_star
 id|ops
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS

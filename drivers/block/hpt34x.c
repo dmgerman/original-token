@@ -1686,12 +1686,10 @@ multiline_comment|/* use standard DMA stuff */
 multiline_comment|/*&n; * If the BIOS does not set the IO base addaress to XX00, 343 will fail.&n; */
 DECL|macro|HPT34X_PCI_INIT_REG
 mdefine_line|#define&t;HPT34X_PCI_INIT_REG&t;&t;0x80
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_init_hpt34x
 r_int
 r_int
+id|__init
 id|pci_init_hpt34x
 (paren
 r_struct
@@ -1703,7 +1701,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_int
@@ -1742,7 +1739,12 @@ id|PCI_COMMAND_MEMORY
 r_if
 c_cond
 (paren
-id|dev-&gt;rom_address
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 )paren
 (brace
 id|pci_write_config_byte
@@ -1752,7 +1754,12 @@ id|dev
 comma
 id|PCI_ROM_ADDRESS
 comma
-id|dev-&gt;rom_address
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 op_or
 id|PCI_ROM_ADDRESS_ENABLE
 )paren
@@ -1763,7 +1770,12 @@ c_func
 id|KERN_INFO
 l_string|&quot;HPT345: ROM enabled at 0x%08lx&bslash;n&quot;
 comma
-id|dev-&gt;rom_address
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 )paren
 suffix:semicolon
 )brace
@@ -1972,17 +1984,14 @@ r_return
 id|dev-&gt;irq
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_init_hpt34x
 r_void
+id|__init
 id|ide_init_hpt34x
 (paren
 id|ide_hwif_t
 op_star
 id|hwif
-)paren
 )paren
 (brace
 id|hwif-&gt;tuneproc
@@ -2014,6 +2023,7 @@ id|pcicmd
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_HPT34X_DMA
+macro_line|#if 0
 id|hwif-&gt;autodma
 op_assign
 (paren
@@ -2027,6 +2037,7 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* CONFIG_BLK_DEV_HPT34X_DMA */
 id|hwif-&gt;dmaproc
 op_assign

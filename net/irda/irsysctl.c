@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irsysctl.c&n; * Version:       1.0&n; * Description:   Sysctl interface for IrDA&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 24 22:12:06 1998&n; * Modified at:   Thu May  6 21:32:46 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irsysctl.c&n; * Version:       1.0&n; * Description:   Sysctl interface for IrDA&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 24 22:12:06 1998&n; * Modified at:   Fri Jun  4 02:50:15 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
@@ -12,7 +12,7 @@ DECL|enumerator|DEVNAME
 DECL|enumerator|COMPRESSION
 DECL|enumerator|DEBUG
 DECL|enumerator|SLOTS
-DECL|enumerator|SLOT_TIMEOUT
+DECL|enumerator|DISCOVERY_TIMEOUT
 r_enum
 (brace
 id|DISCOVERY
@@ -27,6 +27,9 @@ id|DEBUG
 comma
 id|SLOTS
 comma
+id|DISCOVERY_TIMEOUT
+comma
+DECL|enumerator|SLOT_TIMEOUT
 id|SLOT_TIMEOUT
 )brace
 suffix:semicolon
@@ -37,6 +40,10 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_discovery_slots
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_discovery_timeout
 suffix:semicolon
 r_extern
 r_int
@@ -189,6 +196,27 @@ l_string|&quot;discovery_slots&quot;
 comma
 op_amp
 id|sysctl_discovery_slots
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+(brace
+id|DISCOVERY_TIMEOUT
+comma
+l_string|&quot;discovery_timeout&quot;
+comma
+op_amp
+id|sysctl_discovery_timeout
 comma
 r_sizeof
 (paren

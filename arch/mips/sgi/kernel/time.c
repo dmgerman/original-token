@@ -8,16 +8,13 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|time_init
 r_void
+id|__init
 id|time_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* XXX assume INDY for now XXX */

@@ -129,22 +129,22 @@ id|__kernel_time_t
 id|msg_ctime
 suffix:semicolon
 multiline_comment|/* last change time */
+DECL|member|msg_lcbytes
+r_int
+r_int
+id|msg_lcbytes
+suffix:semicolon
+multiline_comment|/* Reuse junk fields for 32 bit */
+DECL|member|msg_lqbytes
+r_int
+r_int
+id|msg_lqbytes
+suffix:semicolon
+multiline_comment|/* ditto */
 DECL|member|msg_cbytes
 r_int
 r_int
 id|msg_cbytes
-suffix:semicolon
-multiline_comment|/* Reuse junk fields for 32 bit */
-DECL|member|msg_qbytes
-r_int
-r_int
-id|msg_qbytes
-suffix:semicolon
-multiline_comment|/* ditto */
-DECL|member|msg_cbytes_old
-r_int
-r_int
-id|msg_cbytes_old
 suffix:semicolon
 multiline_comment|/* current number of bytes on queue */
 DECL|member|msg_qnum
@@ -153,10 +153,10 @@ r_int
 id|msg_qnum
 suffix:semicolon
 multiline_comment|/* number of messages in queue */
-DECL|member|msg_qbytes_old
+DECL|member|msg_qbytes
 r_int
 r_int
-id|msg_qbytes_old
+id|msg_qbytes
 suffix:semicolon
 multiline_comment|/* max number of bytes on queue */
 DECL|member|msg_lspid

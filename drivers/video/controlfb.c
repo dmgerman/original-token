@@ -642,7 +642,7 @@ op_assign
 id|CMODE_NVRAM
 suffix:semicolon
 multiline_comment|/*&n; * Exported functions&n; */
-r_void
+r_int
 id|control_init
 c_func
 (paren
@@ -842,12 +842,8 @@ id|control_ioctl
 )brace
 suffix:semicolon
 multiline_comment|/********************  The functions for controlfb_ops ********************/
-macro_line|#ifndef MODULE
-id|__openfirmware
-macro_line|#endif
 multiline_comment|/**********  Dummies for loading control as a module  **********/
 DECL|function|control_open
-r_static
 r_int
 id|control_open
 c_func
@@ -3417,7 +3413,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 )brace
 DECL|function|control_init
-r_void
+r_int
 id|__init
 id|control_init
 c_func
@@ -3453,6 +3449,9 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_OF */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|control_of_init
 r_void
@@ -3806,10 +3805,16 @@ c_cond
 (paren
 id|p-&gt;control_use_bank2
 )paren
+(brace
 id|p-&gt;frame_buffer
 op_add_assign
 l_int|0x600000
 suffix:semicolon
+id|p-&gt;frame_buffer_phys
+op_add_assign
+l_int|0x600000
+suffix:semicolon
+)brace
 id|init_control
 c_func
 (paren

@@ -113,12 +113,10 @@ DECL|macro|ETHERH_STOP_PAGE
 mdefine_line|#define ETHERH_STOP_PAGE&t;0x7f
 multiline_comment|/* --------------------------------------------------------------------------- */
 multiline_comment|/*&n; * Read the ethernet address string from the on board rom.&n; * This is an ascii string...&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|etherh_addr
 id|etherh_addr
 c_func
 (paren
@@ -130,7 +128,6 @@ r_struct
 id|expansion_card
 op_star
 id|ec
-)paren
 )paren
 (brace
 r_struct
@@ -1277,12 +1274,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the real probe routine.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|etherh_probe1
 id|etherh_probe1
 c_func
 (paren
@@ -1290,7 +1285,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static
@@ -1804,12 +1798,10 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|etherh_initdev
 id|etherh_initdev
 c_func
 (paren
@@ -1821,7 +1813,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|ecard_claim
@@ -1954,11 +1945,9 @@ id|ec
 suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|etherh_probe
 id|etherh_probe
 c_func
 (paren
@@ -1966,7 +1955,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_if

@@ -1246,16 +1246,13 @@ l_int|NULL
 multiline_comment|/* lock */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_coda
 r_int
+id|__init
 id|init_coda
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

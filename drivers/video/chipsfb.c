@@ -2942,10 +2942,6 @@ suffix:semicolon
 singleline_comment|// 1MB
 id|p-&gt;fix.mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|p-&gt;io_base_phys
 suffix:semicolon
 id|p-&gt;fix.type

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.4&n; * Description:   Driver for the Extended Systems JetEye PC dongle&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Sun May 16 14:35:21 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998-1999, Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.4&n; * Description:   Driver for the Extended Systems JetEye PC dongle&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Sat Jun 26 16:50:17 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998-1999, Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -44,8 +44,8 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
-id|baud
+id|__u32
+id|speed
 )paren
 suffix:semicolon
 r_static
@@ -190,7 +190,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function esi_change_speed (tty, baud)&n; *&n; *    Set the speed for the Extended Systems JetEye PC ESI-9680 type dongle&n; *&n; */
+multiline_comment|/*&n; * Function esi_change_speed (idev, speed)&n; *&n; *    Set the speed for the Extended Systems JetEye PC ESI-9680 type dongle&n; *&n; */
 DECL|function|esi_change_speed
 r_static
 r_void
@@ -202,8 +202,8 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
-id|baud
+id|__u32
+id|speed
 )paren
 (brace
 r_int
@@ -236,7 +236,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|baud
+id|speed
 )paren
 (brace
 r_case

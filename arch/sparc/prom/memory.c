@@ -76,12 +76,10 @@ id|linux_mem_v0
 id|prom_memlist
 suffix:semicolon
 multiline_comment|/* Internal Prom library routine to sort a linux_mlist_v0 memory&n; * list.  Used below in initialization.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|prom_sortmemlist
 id|prom_sortmemlist
 c_func
 (paren
@@ -89,7 +87,6 @@ r_struct
 id|linux_mlist_v0
 op_star
 id|thislist
-)paren
 )paren
 (brace
 r_int
@@ -296,16 +293,13 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the memory lists based upon the prom version. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_meminit
 r_void
+id|__init
 id|prom_meminit
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

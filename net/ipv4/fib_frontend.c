@@ -2857,16 +2857,13 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ip_fib_init
 r_void
+id|__init
 id|ip_fib_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS

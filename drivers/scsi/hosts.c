@@ -88,6 +88,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AIC7XXX
 macro_line|#include &quot;aic7xxx.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IPS
+macro_line|#include &quot;ips.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
 macro_line|#include &quot;BusLogic.h&quot;
 macro_line|#endif
@@ -382,6 +385,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AIC7XXX
 id|AIC7XXX
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IPS
+id|IPS
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FD_MCS

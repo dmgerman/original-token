@@ -92,12 +92,10 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_console_setup
 r_static
 r_int
+id|__init
 id|prom_console_setup
 c_func
 (paren
@@ -109,7 +107,6 @@ comma
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_return
@@ -172,11 +169,9 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *    Register console.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sgi_prom_console_init
 r_int
+id|__init
 id|sgi_prom_console_init
 c_func
 (paren
@@ -185,7 +180,6 @@ id|kmem_start
 comma
 r_int
 id|kmem_end
-)paren
 )paren
 (brace
 id|register_console

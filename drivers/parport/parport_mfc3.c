@@ -1199,16 +1199,13 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* ----------- Initialisation code --------------------------------- */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|parport_mfc3_init
 r_int
+id|__init
 id|parport_mfc3_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

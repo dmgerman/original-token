@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Sun May  9 11:01:34 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Thu Jul  8 13:44:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLMP_H
 DECL|macro|IRLMP_H
 mdefine_line|#define IRLMP_H
@@ -162,7 +162,7 @@ id|queue
 suffix:semicolon
 multiline_comment|/* Must be first */
 DECL|member|magic
-r_int
+id|magic_t
 id|magic
 suffix:semicolon
 DECL|member|connected
@@ -206,7 +206,6 @@ id|lsap_state
 suffix:semicolon
 multiline_comment|/* Connection state */
 DECL|member|notify
-r_struct
 id|notify_t
 id|notify
 suffix:semicolon
@@ -237,7 +236,7 @@ id|queue
 suffix:semicolon
 multiline_comment|/* Must be first */
 DECL|member|magic
-r_int
+id|magic_t
 id|magic
 suffix:semicolon
 DECL|member|reason
@@ -323,7 +322,7 @@ r_struct
 id|irlmp_cb
 (brace
 DECL|member|magic
-r_int
+id|magic_t
 id|magic
 suffix:semicolon
 DECL|member|conflict_flag
@@ -421,7 +420,6 @@ c_func
 id|__u8
 id|slsap
 comma
-r_struct
 id|notify_t
 op_star
 id|notify
@@ -509,7 +507,6 @@ comma
 id|__u32
 id|saddr
 comma
-r_struct
 id|notify_t
 op_star
 )paren
@@ -563,7 +560,7 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-r_void
+r_int
 id|irlmp_connect_response
 c_func
 (paren
@@ -623,7 +620,7 @@ op_star
 id|userdata
 )paren
 suffix:semicolon
-r_void
+r_int
 id|irlmp_disconnect_request
 c_func
 (paren
@@ -670,7 +667,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_void
+r_int
 id|irlmp_data_request
 c_func
 (paren
@@ -794,6 +791,10 @@ id|lmp_reasons
 suffix:semicolon
 r_extern
 r_int
+id|sysctl_discovery_timeout
+suffix:semicolon
+r_extern
+r_int
 id|sysctl_discovery_slots
 suffix:semicolon
 r_extern
@@ -819,6 +820,63 @@ r_void
 (brace
 r_return
 id|irlmp-&gt;cachelog
+suffix:semicolon
+)brace
+DECL|function|irlmp_get_lap_tx_queue_len
+r_static
+r_inline
+r_int
+id|irlmp_get_lap_tx_queue_len
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+id|self
+)paren
+(brace
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+l_int|0
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;lap
+op_ne
+l_int|NULL
+comma
+r_return
+l_int|0
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;lap-&gt;irlap
+op_ne
+l_int|NULL
+comma
+r_return
+l_int|0
+suffix:semicolon
+)paren
+suffix:semicolon
+r_return
+id|irlap_get_tx_queue_len
+c_func
+(paren
+id|self-&gt;lap-&gt;irlap
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif

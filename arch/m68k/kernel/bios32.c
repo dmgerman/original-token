@@ -746,12 +746,10 @@ id|FIRST_MEM_ADDR
 suffix:semicolon
 multiline_comment|/* Skip first 32M. */
 multiline_comment|/*&n; * Disable PCI device DEV so that it does not respond to I/O or memory&n; * accesses.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|disable_dev
 r_static
 r_void
+id|__init
 id|disable_dev
 c_func
 (paren
@@ -759,7 +757,6 @@ r_struct
 id|pci_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -846,12 +843,10 @@ suffix:semicolon
 multiline_comment|/*&n; * Layout memory and I/O for a device:&n; */
 DECL|macro|MAX
 mdefine_line|#define MAX(val1, val2) ( ((val1) &gt; (val2)) ? val1 : val2)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|layout_dev
 r_static
 r_void
+id|__init
 id|layout_dev
 c_func
 (paren
@@ -867,7 +862,6 @@ comma
 r_int
 r_int
 id|pci_io_base
-)paren
 )paren
 (brace
 r_struct
@@ -1355,12 +1349,10 @@ r_class
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|layout_bus
 r_static
 r_void
+id|__init
 id|layout_bus
 c_func
 (paren
@@ -1376,7 +1368,6 @@ comma
 r_int
 r_int
 id|pci_io_base
-)paren
 )paren
 (brace
 r_struct
@@ -1721,16 +1712,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcibios_init
 r_void
+id|__init
 id|pcibios_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk
@@ -1761,18 +1749,15 @@ l_int|0xB0000000
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * static inline void hades_fixup(void)&n; *&n; * Assign IRQ numbers as used by Linux to the interrupt pins&n; * of the PCI cards.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hades_fixup
 r_static
 r_inline
 r_void
+id|__init
 id|hades_fixup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_char
@@ -1864,16 +1849,13 @@ macro_line|#endif
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcibios_fixup
 r_void
+id|__init
 id|pcibios_fixup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#if PCI_MODIFY
@@ -1927,11 +1909,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcibios_fixup_bus
 r_void
+id|__init
 id|pcibios_fixup_bus
 c_func
 (paren
@@ -1940,22 +1920,18 @@ id|pci_bus
 op_star
 id|bus
 )paren
-)paren
 (brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcibios_setup
 r_char
 op_star
+id|__init
 id|pcibios_setup
 c_func
 (paren
 r_char
 op_star
 id|str
-)paren
 )paren
 (brace
 r_return

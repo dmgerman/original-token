@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Wed May 19 08:44:48 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Tue Aug 24 13:58:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_DEVICE_H
 DECL|macro|IRDA_DEVICE_H
 mdefine_line|#define IRDA_DEVICE_H
@@ -107,7 +107,7 @@ id|direction
 suffix:semicolon
 multiline_comment|/* Link direction, used by some FIR drivers */
 DECL|member|baudrate
-r_int
+id|__u32
 id|baudrate
 suffix:semicolon
 multiline_comment|/* Currently used baudrate */
@@ -183,7 +183,7 @@ id|q
 suffix:semicolon
 multiline_comment|/* Must be first */
 DECL|member|magic
-r_int
+id|magic_t
 id|magic
 suffix:semicolon
 multiline_comment|/* Our magic bullet */
@@ -222,7 +222,7 @@ id|enet_statistics
 id|stats
 suffix:semicolon
 DECL|member|flags
-r_int
+id|__u32
 id|flags
 suffix:semicolon
 multiline_comment|/* Interface flags (see defs above) */
@@ -275,7 +275,11 @@ r_struct
 id|timer_list
 id|media_busy_timer
 suffix:semicolon
-multiline_comment|/* Callbacks for driver specific implementation */
+DECL|member|raw_mode
+r_int
+id|raw_mode
+suffix:semicolon
+multiline_comment|/* Callbacks to driver specific implementations */
 DECL|member|change_speed
 r_void
 (paren
@@ -288,8 +292,8 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
-id|baud
+id|__u32
+id|speed
 )paren
 suffix:semicolon
 DECL|member|is_receiving
@@ -324,6 +328,22 @@ r_int
 id|rts
 )paren
 suffix:semicolon
+DECL|member|set_raw_mode
+r_void
+(paren
+op_star
+id|set_raw_mode
+)paren
+(paren
+r_struct
+id|irda_device
+op_star
+id|dev
+comma
+r_int
+id|mode
+)paren
+suffix:semicolon
 DECL|member|raw_write
 r_int
 (paren
@@ -342,6 +362,29 @@ id|buf
 comma
 r_int
 id|len
+)paren
+suffix:semicolon
+DECL|member|raw_read
+r_int
+(paren
+op_star
+id|raw_read
+)paren
+(paren
+r_struct
+id|irda_device
+op_star
+id|idev
+comma
+id|__u8
+op_star
+id|buf
+comma
+r_int
+id|len
+comma
+r_int
+id|timeout
 )paren
 suffix:semicolon
 DECL|member|wait_until_sent
@@ -520,6 +563,19 @@ id|dongle
 )paren
 suffix:semicolon
 r_int
+id|irda_device_set_raw_mode
+c_func
+(paren
+r_struct
+id|irda_device
+op_star
+id|self
+comma
+r_int
+id|status
+)paren
+suffix:semicolon
+r_int
 id|irda_device_setup
 c_func
 (paren
@@ -547,6 +603,26 @@ r_int
 id|mode
 )paren
 suffix:semicolon
+r_int
+id|irda_device_net_open
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_int
+id|irda_device_net_close
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Function irda_get_mtt (skb)&n; *&n; *    Utility function for getting the minimum turnaround time out of &n; *    the skb, where it has been hidden in the cb field.&n; */
 DECL|function|irda_get_mtt
 r_extern
@@ -570,7 +646,7 @@ c_cond
 (paren
 (paren
 r_struct
-id|irlap_skb_cb
+id|irda_skb_cb
 op_star
 )paren
 (paren
@@ -592,7 +668,7 @@ op_assign
 (paren
 (paren
 r_struct
-id|irlap_skb_cb
+id|irda_skb_cb
 op_star
 )paren
 (paren

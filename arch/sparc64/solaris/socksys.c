@@ -740,16 +740,13 @@ comma
 multiline_comment|/* release */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|init_socksys
 id|init_socksys
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

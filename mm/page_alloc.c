@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/mm/page_alloc.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *  Swap reorganised 29.12.95, Stephen Tweedie&n; */
+multiline_comment|/*&n; *  linux/mm/page_alloc.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *  Swap reorganised 29.12.95, Stephen Tweedie&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/bigmem.h&gt; /* export bigmem vars */
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -21,6 +22,17 @@ r_int
 id|nr_free_pages
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|nr_lru_pages
+r_int
+id|nr_lru_pages
+suffix:semicolon
+DECL|variable|lru_cache
+id|LIST_HEAD
+c_func
+(paren
+id|lru_cache
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Free area management&n; *&n; * The free_area_list arrays point to the queue heads of the free areas&n; * of different sizes&n; */
 macro_line|#if CONFIG_AP1000
@@ -58,6 +70,21 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|memory_head
 mdefine_line|#define memory_head(x) ((struct page *)(x))
+macro_line|#ifdef CONFIG_BIGMEM
+DECL|macro|BIGMEM_LISTS_OFFSET
+mdefine_line|#define BIGMEM_LISTS_OFFSET&t;NR_MEM_LISTS
+DECL|variable|free_area
+r_static
+r_struct
+id|free_area_struct
+id|free_area
+(braket
+id|NR_MEM_LISTS
+op_star
+l_int|2
+)braket
+suffix:semicolon
+macro_line|#else
 DECL|variable|free_area
 r_static
 r_struct
@@ -67,6 +94,7 @@ id|free_area
 id|NR_MEM_LISTS
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|function|init_mem_queue
 r_static
 r_inline
@@ -250,6 +278,25 @@ id|flags
 suffix:semicolon
 DECL|macro|list
 mdefine_line|#define list(x) (mem_map+(x))
+macro_line|#ifdef CONFIG_BIGMEM
+r_if
+c_cond
+(paren
+id|map_nr
+op_ge
+id|bigmem_mapnr
+)paren
+(brace
+id|area
+op_add_assign
+id|BIGMEM_LISTS_OFFSET
+suffix:semicolon
+id|nr_free_bigpages
+op_sub_assign
+id|mask
+suffix:semicolon
+)brace
+macro_line|#endif
 id|map_nr
 op_and_assign
 id|mask
@@ -399,15 +446,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|page-&gt;flags
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|PG_referenced
-)paren
-suffix:semicolon
 id|free_pages_ok
 c_func
 (paren
@@ -513,15 +551,6 @@ c_func
 id|map
 )paren
 suffix:semicolon
-id|map-&gt;flags
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|PG_referenced
-)paren
-suffix:semicolon
 id|free_pages_ok
 c_func
 (paren
@@ -546,6 +575,10 @@ DECL|macro|CAN_DMA
 mdefine_line|#define CAN_DMA(x) (PageDMA(x))
 DECL|macro|ADDRESS
 mdefine_line|#define ADDRESS(x) (PAGE_OFFSET + ((x) &lt;&lt; PAGE_SHIFT))
+macro_line|#ifdef CONFIG_BIGMEM
+DECL|macro|RMQUEUEBIG
+mdefine_line|#define RMQUEUEBIG(order, gfp_mask) &bslash;&n;if (gfp_mask &amp; __GFP_BIGMEM) { &bslash;&n;&t;struct free_area_struct * area = free_area+order+BIGMEM_LISTS_OFFSET; &bslash;&n;&t;unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = memory_head(area), *ret = prev-&gt;next; &bslash;&n;&t;&t;if (memory_head(area) != ret) { &bslash;&n;&t;&t;&t;unsigned long map_nr; &bslash;&n;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;map_nr = ret - mem_map; &bslash;&n;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;nr_free_bigpages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;spin_unlock_irqrestore(&amp;page_alloc_lock, flags); &bslash;&n;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;}
+macro_line|#endif
 DECL|macro|RMQUEUE
 mdefine_line|#define RMQUEUE(order, gfp_mask) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = memory_head(area), *ret = prev-&gt;next; &bslash;&n;&t;&t;while (memory_head(area) != ret) { &bslash;&n;&t;&t;&t;if (!(gfp_mask &amp; __GFP_DMA) || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;map_nr = ret - mem_map; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;spin_unlock_irqrestore(&amp;page_alloc_lock,flags);&bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;&t;ret = ret-&gt;next; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
 DECL|macro|EXPAND
@@ -648,6 +681,7 @@ id|low_on_memory
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef CONFIG_BIGMEM
 r_if
 c_cond
 (paren
@@ -686,6 +720,106 @@ id|low_on_memory
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#else
+r_static
+r_int
+id|low_on_bigmemory
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_BIGMEM
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|nr_free_pages
+OG
+id|freepages.min
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|low_on_bigmemory
+)paren
+r_goto
+id|ok_to_allocate
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_free_pages
+op_ge
+id|freepages.high
+)paren
+(brace
+id|low_on_bigmemory
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|ok_to_allocate
+suffix:semicolon
+)brace
+)brace
+id|low_on_bigmemory
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|nr_free_pages
+op_minus
+id|nr_free_bigpages
+OG
+id|freepages.min
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|low_on_memory
+)paren
+r_goto
+id|ok_to_allocate
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_free_pages
+op_minus
+id|nr_free_bigpages
+op_ge
+id|freepages.high
+)paren
+(brace
+id|low_on_memory
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|ok_to_allocate
+suffix:semicolon
+)brace
+)brace
+id|low_on_memory
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 id|current-&gt;flags
 op_or_assign
 id|PF_MEMALLOC
@@ -735,6 +869,16 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BIGMEM
+id|RMQUEUEBIG
+c_func
+(paren
+id|order
+comma
+id|gfp_mask
+)paren
+suffix:semicolon
+macro_line|#endif
 id|RMQUEUE
 c_func
 (paren
@@ -801,9 +945,17 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Free pages:      %6dkB&bslash;n ( &quot;
+l_string|&quot;Free pages:      %6dkB (%6dkB BigMem)&bslash;n ( &quot;
 comma
 id|nr_free_pages
+op_lshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|10
+)paren
+comma
+id|nr_free_bigpages
 op_lshift
 (paren
 id|PAGE_SHIFT
@@ -815,9 +967,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Free: %d (%d %d %d)&bslash;n&quot;
+l_string|&quot;Free: %d, lru_cache: %d (%d %d %d)&bslash;n&quot;
 comma
 id|nr_free_pages
+comma
+id|nr_lru_pages
 comma
 id|freepages.min
 comma
@@ -892,6 +1046,43 @@ id|nr
 op_increment
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BIGMEM
+r_for
+c_loop
+(paren
+id|tmp
+op_assign
+id|free_area
+(braket
+id|BIGMEM_LISTS_OFFSET
+op_plus
+id|order
+)braket
+dot
+id|next
+suffix:semicolon
+id|tmp
+op_ne
+id|memory_head
+c_func
+(paren
+id|free_area
+op_plus
+id|BIGMEM_LISTS_OFFSET
+op_plus
+id|order
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+id|tmp-&gt;next
+)paren
+(brace
+id|nr
+op_increment
+suffix:semicolon
+)brace
+macro_line|#endif
 id|total
 op_add_assign
 id|nr
@@ -1160,6 +1351,18 @@ op_plus
 id|i
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BIGMEM
+id|init_mem_queue
+c_func
+(paren
+id|free_area
+op_plus
+id|BIGMEM_LISTS_OFFSET
+op_plus
+id|i
+)paren
+suffix:semicolon
+macro_line|#endif
 id|mask
 op_add_assign
 id|mask
@@ -1239,6 +1442,42 @@ id|start_mem
 op_add_assign
 id|bitmap_size
 suffix:semicolon
+macro_line|#ifdef CONFIG_BIGMEM
+id|free_area
+(braket
+id|BIGMEM_LISTS_OFFSET
+op_plus
+id|i
+)braket
+dot
+id|map
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|start_mem
+suffix:semicolon
+id|memset
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|start_mem
+comma
+l_int|0
+comma
+id|bitmap_size
+)paren
+suffix:semicolon
+id|start_mem
+op_add_assign
+id|bitmap_size
+suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 id|start_mem

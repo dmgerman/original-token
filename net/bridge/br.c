@@ -3686,16 +3686,13 @@ id|br_tree_get_info
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|br_init
 r_void
+id|__init
 id|br_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* (4.8.1)&t; */

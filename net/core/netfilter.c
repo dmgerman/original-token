@@ -2830,16 +2830,13 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_NETFILTER_DEBUG */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|netfilter_init
 r_void
+id|__init
 id|netfilter_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

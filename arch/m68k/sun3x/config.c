@@ -71,16 +71,13 @@ l_string|&quot;reset&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun3x_keyb_init
 r_int
+id|__init
 id|sun3x_keyb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return
@@ -222,16 +219,13 @@ id|irq
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun3x_init_IRQ
 r_void
+id|__init
 id|sun3x_init_IRQ
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* disable all interrupts initially */
@@ -257,16 +251,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Setup the sun3x configuration info&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|config_sun3x
 r_void
+id|__init
 id|config_sun3x
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|mach_get_irq_list

@@ -2371,16 +2371,13 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialise HIL. &n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hp300_keyb_init
 r_int
+id|__init
 id|hp300_keyb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

@@ -49,15 +49,16 @@ DECL|variable|irq_controller_lock
 id|spinlock_t
 id|irq_controller_lock
 op_assign
-initialization_block
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/*&n; * Controller mappings for all interrupt sources:&n; */
-DECL|variable|irq_desc
+DECL|variable|__cacheline_aligned
 id|irq_desc_t
 id|irq_desc
 (braket
 id|NR_IRQS
 )braket
+id|__cacheline_aligned
 op_assign
 (brace
 (braket
@@ -395,6 +396,12 @@ suffix:semicolon
 DECL|variable|global_bh_lock
 id|atomic_t
 id|global_bh_lock
+suffix:semicolon
+DECL|variable|i386_bh_lock
+id|spinlock_t
+id|i386_bh_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/*&n; * &quot;global_cli()&quot; is a special case, in that it can hold the&n; * interrupts disabled for a longish time, and also because&n; * we may be doing TLB invalidates when holding the global&n; * IRQ lock for historical reasons. Thus we may need to check&n; * SMP invalidate events specially by hand here (but not in&n; * any normal spinlocks)&n; */
 DECL|function|check_smp_invalidate
@@ -2175,6 +2182,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|irq_desc
 (braket
 id|irq
@@ -2182,8 +2190,7 @@ id|irq
 dot
 id|action
 )paren
-r_break
-suffix:semicolon
+(brace
 id|irq_desc
 (braket
 id|irq
@@ -2206,19 +2213,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;Trying to free free IRQ%d&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
 )brace
 id|spin_unlock_irqrestore
 c_func
@@ -2229,6 +2223,53 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* Wait to make sure it&squot;s not being used on another CPU */
+r_while
+c_loop
+(paren
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|status
+op_amp
+id|IRQ_INPROGRESS
+)paren
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|action
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;Trying to free free IRQ%d&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|irq_controller_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * IRQ autodetection code..&n; *&n; * This depends on the fact that any interrupt that&n; * comes in on to an unassigned handler will get stuck&n; * with &quot;IRQ_WAITING&quot; cleared and the interrupt&n; * disabled.&n; */
 DECL|function|probe_irq_on

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian&n; *         Many improvements/fixes by Bruno Haible.&n; * Replaced `struct shm_desc&squot; by `struct vm_area_struct&squot;, July 1994.&n; * Fixed the shm swap deallocation (shm_unuse()), August 1998 Andrea Arcangeli.&n; *&n; * /proc/sysvipc/shm support (c) 1999 Dragos Acostachioaie &lt;dragos@iname.com&gt;&n; */
+multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian&n; *         Many improvements/fixes by Bruno Haible.&n; * Replaced `struct shm_desc&squot; by `struct vm_area_struct&squot;, July 1994.&n; * Fixed the shm swap deallocation (shm_unuse()), August 1998 Andrea Arcangeli.&n; *&n; * /proc/sysvipc/shm support (c) 1999 Dragos Acostachioaie &lt;dragos@iname.com&gt;&n; * BIGMEM support, Andrea Arcangeli &lt;andrea@suse.de&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/bigmem.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
@@ -3150,10 +3151,10 @@ id|pte
 (brace
 id|page
 op_assign
-id|get_free_page
+id|__get_free_page
 c_func
 (paren
-id|GFP_USER
+id|GFP_BIGUSER
 )paren
 suffix:semicolon
 r_if
@@ -3164,6 +3165,12 @@ id|page
 )paren
 r_goto
 id|oom
+suffix:semicolon
+id|clear_bigpage
+c_func
+(paren
+id|page
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3266,6 +3273,22 @@ r_goto
 id|oom
 suffix:semicolon
 id|delete_from_swap_cache
+c_func
+(paren
+id|page_map
+)paren
+suffix:semicolon
+id|page_map
+op_assign
+id|replace_with_bigmem
+c_func
+(paren
+id|page_map
+)paren
+suffix:semicolon
+id|page
+op_assign
+id|page_address
 c_func
 (paren
 id|page_map
@@ -3449,6 +3472,16 @@ id|page
 op_star
 id|page_map
 suffix:semicolon
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|counter
 op_assign
 id|shm_rss
@@ -3471,8 +3504,8 @@ c_func
 )paren
 )paren
 )paren
-r_return
-l_int|0
+r_goto
+id|out_unlock
 suffix:semicolon
 id|check_id
 suffix:colon
@@ -3615,6 +3648,25 @@ id|page_map
 r_goto
 id|check_table
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_BIGMEM
+)paren
+op_logical_and
+id|PageBIGMEM
+c_func
+(paren
+id|page_map
+)paren
+)paren
+r_goto
+id|check_table
+suffix:semicolon
 id|swap_attempts
 op_increment
 suffix:semicolon
@@ -3635,8 +3687,8 @@ id|swap_free
 id|swap_nr
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|out_unlock
 suffix:semicolon
 )brace
 r_if
@@ -3659,6 +3711,23 @@ id|page
 )paren
 op_ne
 l_int|1
+)paren
+r_goto
+id|check_table
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|page_map
+op_assign
+id|prepare_bigmem_swapout
+c_func
+(paren
+id|page_map
+)paren
+)paren
 )paren
 r_goto
 id|check_table
@@ -3709,8 +3778,19 @@ suffix:semicolon
 id|shm_rss
 op_decrement
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|1
+suffix:semicolon
+id|out_unlock
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free the swap entry and set the new pte for the shm page.&n; */

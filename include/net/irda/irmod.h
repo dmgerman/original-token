@@ -252,7 +252,6 @@ r_void
 id|irda_notify_init
 c_func
 (paren
-r_struct
 id|notify_t
 op_star
 id|notify

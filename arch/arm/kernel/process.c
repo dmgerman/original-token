@@ -142,11 +142,9 @@ id|reboot_mode
 op_assign
 l_char|&squot;h&squot;
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|reboot_setup
 r_void
+id|__init
 id|reboot_setup
 c_func
 (paren
@@ -157,7 +155,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 id|reboot_mode

@@ -415,6 +415,13 @@ c_func
 id|global_irq_holder
 )paren
 suffix:semicolon
+DECL|variable|i386_bh_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|i386_bh_lock
+)paren
+suffix:semicolon
 DECL|variable|__global_cli
 id|EXPORT_SYMBOL
 c_func

@@ -407,16 +407,13 @@ comma
 l_int|7
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|adb_mouse_init
 r_int
+id|__init
 id|adb_mouse_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef __powerpc__
@@ -495,11 +492,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * XXX this function is misnamed.&n; * It is called if the kernel is booted with the adb_buttons=xxx&n; * option, which is about using ADB keyboard buttons to emulate&n; * mouse buttons. -- paulus&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|adb_mouse_setup
 r_void
+id|__init
 id|adb_mouse_setup
 c_func
 (paren
@@ -510,7 +505,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if

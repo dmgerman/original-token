@@ -440,12 +440,10 @@ suffix:semicolon
 multiline_comment|/*-------------------------------------------------------------------------&n; * Early initialisation routines for various configurable items in the&n; * kernel.  Each one either supplies a setup_ function, or defines this&n; * symbol to be empty if not configured.&n; */
 multiline_comment|/*&n; * initial ram disk&n; */
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|check_initrd
 id|check_initrd
 c_func
 (paren
@@ -456,7 +454,6 @@ comma
 r_int
 r_int
 id|mem_end
-)paren
 )paren
 (brace
 r_if
@@ -487,16 +484,13 @@ macro_line|#else
 DECL|macro|check_initrd
 mdefine_line|#define check_initrd(ms,me)
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|setup_processor
 id|setup_processor
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|armidindex
@@ -595,12 +589,10 @@ id|saved_command_line
 id|COMMAND_LINE_SIZE
 )braket
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|setup_mem
 id|setup_mem
 c_func
 (paren
@@ -617,7 +609,6 @@ r_int
 r_int
 op_star
 id|mem_sz
-)paren
 )paren
 (brace
 r_char
@@ -815,12 +806,10 @@ op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|setup_ram
 id|setup_ram
 c_func
 (paren
@@ -832,7 +821,6 @@ id|prompt
 comma
 r_int
 id|image_start
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
@@ -863,12 +851,10 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * initial ram disk&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|setup_initrd
 id|setup_initrd
 c_func
 (paren
@@ -879,7 +865,6 @@ comma
 r_int
 r_int
 id|size
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
@@ -966,11 +951,9 @@ l_char|&squot;b&squot;
 suffix:semicolon
 DECL|macro|ENDIANNESS
 mdefine_line|#define ENDIANNESS ((char)endian_test.l)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|setup_arch
 id|setup_arch
 c_func
 (paren
@@ -988,7 +971,6 @@ r_int
 r_int
 op_star
 id|memory_end_p
-)paren
 )paren
 (brace
 r_struct

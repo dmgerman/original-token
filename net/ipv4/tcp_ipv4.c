@@ -9074,11 +9074,9 @@ l_int|0
 multiline_comment|/* highestinuse */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|tcp_v4_init
 r_void
+id|__init
 id|tcp_v4_init
 c_func
 (paren
@@ -9086,7 +9084,6 @@ r_struct
 id|net_proto_family
 op_star
 id|ops
-)paren
 )paren
 (brace
 r_int

@@ -457,11 +457,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*********************************************************** SETUP */
 multiline_comment|/* From arch/m68k/kernel/setup.c. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|apus_setup_arch
 r_void
+id|__init
 id|apus_setup_arch
 c_func
 (paren
@@ -474,7 +472,6 @@ r_int
 r_int
 op_star
 id|memory_end_p
-)paren
 )paren
 (brace
 r_extern
@@ -1140,11 +1137,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*********************************************************** FLOPPY */
 macro_line|#if defined(CONFIG_AMIGA_FLOPPY) || defined(CONFIG_ATARI_FLOPPY)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|floppy_setup
 r_void
+id|__init
 id|floppy_setup
 c_func
 (paren
@@ -1155,7 +1150,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if
@@ -2403,11 +2397,9 @@ id|id
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|apus_ide_init_hwif_ports
 id|apus_ide_init_hwif_ports
 (paren
 id|hw_regs_t
@@ -2424,7 +2416,6 @@ r_int
 op_star
 id|irq
 )paren
-)paren
 (brace
 id|m68k_ide_init_hwif_ports
 c_func
@@ -2440,16 +2431,13 @@ id|irq
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|apus_local_init_IRQ
 id|apus_local_init_IRQ
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|ppc_md.mask_irq
@@ -2466,11 +2454,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|apus_init
 id|apus_init
 c_func
 (paren
@@ -2493,7 +2479,6 @@ comma
 r_int
 r_int
 id|r7
-)paren
 )paren
 (brace
 multiline_comment|/* Parse bootinfo. The bootinfo is located right after&n;           the kernel bss */

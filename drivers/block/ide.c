@@ -5110,6 +5110,11 @@ op_logical_and
 id|hwif
 op_ne
 id|hwgroup-&gt;hwif
+op_logical_and
+id|hwif-&gt;io_ports
+(braket
+id|IDE_CONTROL_OFFSET
+)braket
 )paren
 multiline_comment|/* set nIEN for previous hwif */
 id|OUT_BYTE
@@ -10382,6 +10387,11 @@ comma
 id|drive
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IDE_CONTROL_REG
+)paren
 id|OUT_BYTE
 c_func
 (paren

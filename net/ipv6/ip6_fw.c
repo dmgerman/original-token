@@ -1355,16 +1355,13 @@ macro_line|#ifdef MODULE
 DECL|macro|ip6_fw_init
 mdefine_line|#define ip6_fw_init module_init
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ip6_fw_init
 r_void
+id|__init
 id|ip6_fw_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_NETLINK

@@ -2494,11 +2494,9 @@ op_assign
 id|eregs-&gt;esp_intrpt
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|detect_one_esp
 r_int
+id|__init
 id|detect_one_esp
 (paren
 id|Scsi_Host_Template
@@ -2525,7 +2523,6 @@ id|id
 comma
 r_int
 id|hme
-)paren
 )paren
 (brace
 r_struct
@@ -3906,18 +3903,15 @@ suffix:semicolon
 multiline_comment|/* Detecting ESP chips on the machine.  This is the simple and easy&n; * version.&n; */
 macro_line|#ifdef CONFIG_SUN4
 macro_line|#include &lt;asm/sun4paddr.h&gt;
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|esp_detect
 r_int
+id|__init
 id|esp_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_static
@@ -4011,18 +4005,15 @@ id|esps_in_use
 suffix:semicolon
 )brace
 macro_line|#else /* !CONFIG_SUN4 */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|esp_detect
 r_int
+id|__init
 id|esp_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_struct

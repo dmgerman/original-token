@@ -1,10 +1,10 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Fri May 14 13:46:02 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Wed Aug 11 08:53:56 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irlap.h&gt;
@@ -18,6 +18,7 @@ macro_line|#include &lt;net/irda/irttp.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 macro_line|#include &lt;net/irda/wrapper.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
+macro_line|#include &lt;net/irda/parameters.h&gt;
 r_extern
 r_struct
 id|proc_dir_entry
@@ -131,7 +132,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|irvtd_init
+id|ircomm_tty_init
 c_func
 (paren
 r_void
@@ -420,6 +421,41 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|proc_irda
+)paren
+suffix:semicolon
+DECL|variable|irda_param_insert
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_param_insert
+)paren
+suffix:semicolon
+DECL|variable|irda_param_extract
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_param_extract
+)paren
+suffix:semicolon
+DECL|variable|irda_param_extract_all
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_param_extract_all
+)paren
+suffix:semicolon
+DECL|variable|irda_param_pack
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_param_pack
+)paren
+suffix:semicolon
+DECL|variable|irda_param_unpack
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_param_unpack
 )paren
 suffix:semicolon
 multiline_comment|/* IrIAP/IrIAS */
@@ -750,6 +786,20 @@ c_func
 id|irda_device_txqueue_empty
 )paren
 suffix:semicolon
+DECL|variable|irda_device_net_open
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_device_net_open
+)paren
+suffix:semicolon
+DECL|variable|irda_device_net_close
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_device_net_close
+)paren
+suffix:semicolon
 DECL|variable|irda_device_init_dongle
 id|EXPORT_SYMBOL
 c_func
@@ -792,7 +842,6 @@ c_func
 id|irda_start_timer
 )paren
 suffix:semicolon
-multiline_comment|/* EXPORT_SYMBOL(irda_get_mtt); */
 DECL|variable|setup_dma
 id|EXPORT_SYMBOL
 c_func
@@ -822,24 +871,28 @@ c_func
 id|irtty_unregister_dongle
 )paren
 suffix:semicolon
-macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
+DECL|variable|irtty_set_packet_mode
+id|EXPORT_SYMBOL
 c_func
 (paren
+id|irtty_set_packet_mode
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|function|irda_init
 r_int
+id|__init
 id|irda_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;IrDA (tm) Protocols for Linux-2.2 (Dag Brattli)&bslash;n&quot;
+l_string|&quot;IrDA (tm) Protocols for Linux-2.3 (Dag Brattli)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlmp_init
@@ -852,11 +905,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 id|irda_device_init
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Called by init/main.c when non-modular */
+macro_line|#endif
 id|iriap_init
 c_func
 (paren
@@ -881,6 +937,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|irda.wait_queue
+)paren
+suffix:semicolon
 id|irda.dev.minor
 op_assign
 id|MISC_DYNAMIC_MINOR
@@ -926,21 +989,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|irvtd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_IRLPT_CLIENT
-id|irlpt_client_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_IRLPT_SERVER
-id|irlpt_server_init
+id|ircomm_tty_init
 c_func
 (paren
 )paren
@@ -1069,7 +1118,6 @@ r_void
 id|irda_notify_init
 c_func
 (paren
-r_struct
 id|notify_t
 op_star
 id|notify
@@ -1749,6 +1797,15 @@ c_func
 op_amp
 id|irda.event_queue
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|event
+)paren
+r_return
+l_int|0
 suffix:semicolon
 id|len
 op_assign

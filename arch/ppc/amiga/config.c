@@ -742,17 +742,14 @@ id|unknown
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Identify builtin hardware&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|amiga_identify
 r_static
 r_void
+id|__init
 id|amiga_identify
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* Fill in some default values, if necessary */
@@ -1473,16 +1470,13 @@ DECL|macro|AMIGAHW_ANNOUNCE
 macro_line|#undef AMIGAHW_ANNOUNCE
 )brace
 multiline_comment|/*&n;     *  Setup the Amiga configuration info&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|config_amiga
 r_void
+id|__init
 id|config_amiga
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|amiga_debug_init
@@ -1764,12 +1758,10 @@ r_int
 r_int
 id|jiffy_ticks
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|amiga_sched_init
 r_static
 r_void
+id|__init
 id|amiga_sched_init
 c_func
 (paren
@@ -1787,7 +1779,6 @@ comma
 r_struct
 id|pt_regs
 op_star
-)paren
 )paren
 )paren
 (brace
@@ -3519,17 +3510,14 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|amiga_debug_init
 r_static
 r_void
+id|__init
 id|amiga_debug_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

@@ -1370,16 +1370,13 @@ l_string|&quot;nicstar: cleanup_module() returned.&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nicstar_detect
 r_int
+id|__init
 id|nicstar_detect
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -1896,14 +1893,12 @@ op_assign
 (paren
 id|u32
 )paren
-(paren
-id|pcidev-&gt;base_address
+id|pcidev-&gt;resource
 (braket
 l_int|1
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
-)paren
+dot
+id|start
 suffix:semicolon
 macro_line|#ifdef __powerpc__
 multiline_comment|/* Compensate for different memory map between host CPU and PCI bus.&n;      Shouldn&squot;t we use a macro for this? */

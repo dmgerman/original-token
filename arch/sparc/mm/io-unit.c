@@ -22,11 +22,9 @@ DECL|macro|IOPERM
 mdefine_line|#define IOPERM        (IOUPTE_CACHE | IOUPTE_WRITE | IOUPTE_VALID)
 DECL|macro|MKIOPTE
 mdefine_line|#define MKIOPTE(phys) __iopte((((phys)&gt;&gt;4) &amp; IOUPTE_PAGE) | IOPERM)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|iounit_init
 id|iounit_init
 c_func
 (paren
@@ -40,7 +38,6 @@ r_struct
 id|linux_sbus
 op_star
 id|sbus
-)paren
 )paren
 (brace
 id|iopte_t
@@ -1363,16 +1360,13 @@ id|len
 (brace
 multiline_comment|/* FIXME: Write this */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ld_mmu_iounit
 r_void
+id|__init
 id|ld_mmu_iounit
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|BTFIXUPSET_CALL

@@ -52,19 +52,16 @@ id|MAPPING
 suffix:semicolon
 DECL|macro|SIZEOFMAP
 mdefine_line|#define SIZEOFMAP (sizeof(mapping) / sizeof(mapping[0]))
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|setup_io_pagetables
 r_int
 r_int
+id|__init
 id|setup_io_pagetables
 c_func
 (paren
 r_int
 r_int
 id|start_mem
-)paren
 )paren
 (brace
 r_const

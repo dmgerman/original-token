@@ -3671,10 +3671,6 @@ l_string|&quot;valkyrie&quot;
 suffix:semicolon
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|p-&gt;valkyrie_regs_phys
 suffix:semicolon
 id|fix-&gt;mmio_len

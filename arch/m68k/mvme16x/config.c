@@ -587,16 +587,13 @@ DECL|macro|PccSCCTICR
 mdefine_line|#define PccSCCTICR&t;0x1e
 DECL|macro|PccSCCRICR
 mdefine_line|#define PccSCCRICR&t;0x1f
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|config_mvme16x
 r_void
+id|__init
 id|config_mvme16x
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|p_bdid

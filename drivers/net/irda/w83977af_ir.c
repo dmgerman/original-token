@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       1.0&n; * Description:   FIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Fri May 21 22:18:19 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Corel Computer Corp.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       1.0&n; * Description:   FIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Wed Aug 11 09:27:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Corel Computer Corp.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -252,8 +252,8 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
-id|baud
+id|__u32
+id|speed
 )paren
 suffix:semicolon
 r_static
@@ -1339,7 +1339,7 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
+id|__u32
 id|speed
 )paren
 (brace
@@ -4539,19 +4539,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/* Ready to play! */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* Save current set */
 id|set
 op_assign
@@ -4619,6 +4606,13 @@ op_plus
 id|SSR
 )paren
 suffix:semicolon
+multiline_comment|/* Ready to play! */
+id|irda_device_net_open
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -4657,15 +4651,6 @@ comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
-suffix:semicolon
-multiline_comment|/* Stop device */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 id|ASSERT
 c_func
@@ -4716,6 +4701,13 @@ suffix:semicolon
 id|iobase
 op_assign
 id|idev-&gt;io.iobase
+suffix:semicolon
+multiline_comment|/* Stop device */
+id|irda_device_net_close
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|disable_dma
 c_func

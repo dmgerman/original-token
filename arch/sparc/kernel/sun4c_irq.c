@@ -387,12 +387,10 @@ id|limit
 (brace
 multiline_comment|/* Errm.. not sure how to do this.. */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun4c_init_timers
 r_static
 r_void
+id|__init
 id|sun4c_init_timers
 c_func
 (paren
@@ -410,7 +408,6 @@ comma
 r_struct
 id|pt_regs
 op_star
-)paren
 )paren
 )paren
 (brace
@@ -568,16 +565,13 @@ r_int
 id|irq
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun4c_init_IRQ
 r_void
+id|__init
 id|sun4c_init_IRQ
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

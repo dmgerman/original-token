@@ -3,6 +3,7 @@ macro_line|#ifndef _VIDEO_FBCON_H
 DECL|macro|_VIDEO_FBCON_H
 mdefine_line|#define _VIDEO_FBCON_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;linux/vt_buffer.h&gt;
 multiline_comment|/*                                  &n;     *  `switch&squot; for the Low Level Operations&n;     */
@@ -1753,17 +1754,17 @@ DECL|macro|fb_writel
 mdefine_line|#define fb_writel __raw_writel
 macro_line|#else
 DECL|macro|fb_readb
-mdefine_line|#define fb_readb(addr) (*(volatile unsigned char *) __io_virt(addr))
+mdefine_line|#define fb_readb(addr) (*(volatile u8 *) (addr))
 DECL|macro|fb_readw
-mdefine_line|#define fb_readw(addr) (*(volatile unsigned short *) __io_virt(addr))
+mdefine_line|#define fb_readw(addr) (*(volatile u16 *) (addr))
 DECL|macro|fb_readl
-mdefine_line|#define fb_readl(addr) (*(volatile unsigned int *) __io_virt(addr))
+mdefine_line|#define fb_readl(addr) (*(volatile u32 *) (addr))
 DECL|macro|fb_writeb
-mdefine_line|#define fb_writeb(b,addr) (*(volatile unsigned char *) __io_virt(addr) = (b))
+mdefine_line|#define fb_writeb(b,addr) (*(volatile u8 *) (addr) = (b))
 DECL|macro|fb_writew
-mdefine_line|#define fb_writew(b,addr) (*(volatile unsigned short *) __io_virt(addr) = (b))
+mdefine_line|#define fb_writew(b,addr) (*(volatile u16 *) (addr) = (b))
 DECL|macro|fb_writel
-mdefine_line|#define fb_writel(b,addr) (*(volatile unsigned int *) __io_virt(addr) = (b))
+mdefine_line|#define fb_writel(b,addr) (*(volatile u32 *) (addr) = (b))
 macro_line|#endif
 macro_line|#endif /* _VIDEO_FBCON_H */
 eof

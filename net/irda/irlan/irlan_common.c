@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Mon May 31 14:25:19 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Tue Aug 17 15:30:40 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -212,14 +212,14 @@ op_star
 id|proc_irda
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
-multiline_comment|/*&n; * Function irlan_watchdog_timer_expired (data)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irlan_watchdog_timer_expired (data)&n; *&n; *    Something has gone wrong during the connection establishment&n; *&n; */
 DECL|function|irlan_watchdog_timer_expired
 r_void
 id|irlan_watchdog_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 (brace
@@ -326,39 +326,7 @@ id|__FUNCTION__
 l_string|&quot;(), closing instance!&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|self-&gt;netdev_registered
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), removing netdev!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-op_amp
-id|self-&gt;dev
-)paren
-suffix:semicolon
-id|self-&gt;netdev_registered
-op_assign
-id|FALSE
-suffix:semicolon
-)brace
-id|irlan_close
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
+multiline_comment|/*irlan_close(self);*/
 )brace
 )brace
 multiline_comment|/*&n; * Function irlan_start_watchdog_timer (self, timeout)&n; *&n; *    &n; *&n; */
@@ -394,8 +362,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -433,7 +401,7 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Allocate master array */
+multiline_comment|/* Allocate master structure */
 id|irlan
 op_assign
 id|hashbin_new
@@ -926,6 +894,11 @@ op_star
 id|self
 )paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -978,6 +951,29 @@ c_func
 id|self
 )paren
 suffix:semicolon
+multiline_comment|/* Remove frames queued on the control channel */
+r_while
+c_loop
+(paren
+(paren
+id|skb
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|self-&gt;client.txq
+)paren
+)paren
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1668,13 +1664,12 @@ id|self
 )paren
 (brace
 r_struct
-id|notify_t
-id|notify
-suffix:semicolon
-r_struct
 id|tsap_cb
 op_star
 id|tsap
+suffix:semicolon
+id|notify_t
+id|notify
 suffix:semicolon
 id|DEBUG
 c_func
@@ -2159,6 +2154,15 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|3
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2199,12 +2203,21 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Check that it&squot;s really possible to send commands */
 r_if
 c_cond
+(paren
 (paren
 id|self-&gt;client.tsap_ctrl
 op_eq
 l_int|NULL
+)paren
+op_logical_or
+(paren
+id|self-&gt;client.state
+op_eq
+id|IRLAN_IDLE
+)paren
 )paren
 (brace
 id|self-&gt;client.tx_busy
@@ -2222,6 +2235,15 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|DEBUG
+c_func
+(paren
+l_int|3
+comma
+id|__FUNCTION__
+l_string|&quot;(), sending ...&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 id|irttp_data_request
 c_func
@@ -2249,6 +2271,15 @@ op_star
 id|skb
 )paren
 (brace
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Queue command */
 id|skb_queue_tail
 c_func
@@ -2640,7 +2671,6 @@ comma
 id|self-&gt;dtsap_sel_data
 )paren
 suffix:semicolon
-multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
 id|irlan_ctrl_data_request
 c_func
 (paren

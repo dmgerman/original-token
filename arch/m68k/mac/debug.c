@@ -911,12 +911,10 @@ multiline_comment|/* Mac: loops_per_sec min. 1900000 ^= .5 us; MFPDELAY was 0.6 
 DECL|macro|LONG_DELAY
 mdefine_line|#define LONG_DELAY()&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&bslash;&n;&t;for( i = 60*uSEC; i &gt; 0; --i )&t;&t;&bslash;&n;&t;    barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
 macro_line|#ifndef CONFIG_SERIAL_CONSOLE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mac_init_scc_port
 r_static
 r_void
+id|__init
 id|mac_init_scc_port
 c_func
 (paren
@@ -925,7 +923,6 @@ id|cflag
 comma
 r_int
 id|port
-)paren
 )paren
 macro_line|#else
 r_void
@@ -1466,16 +1463,13 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG_SERIAL */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mac_debug_init
 r_void
+id|__init
 id|mac_debug_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_KGDB

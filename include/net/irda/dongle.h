@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      dongle.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 22:47:12 1998&n; * Modified at:   Sun May 16 13:40:03 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      dongle.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 22:47:12 1998&n; * Modified at:   Sat Jun 26 16:58:44 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef DONGLE_H
 DECL|macro|DONGLE_H
 mdefine_line|#define DONGLE_H
@@ -24,6 +24,9 @@ id|GIRBIL_DONGLE
 comma
 DECL|enumerator|LITELINK_DONGLE
 id|LITELINK_DONGLE
+comma
+DECL|enumerator|AIRPORT_DONGLE
+id|AIRPORT_DONGLE
 comma
 DECL|typedef|IRDA_DONGLE
 )brace
@@ -90,8 +93,8 @@ r_struct
 id|irda_device
 op_star
 comma
-r_int
-id|baudrate
+id|__u32
+id|speed
 )paren
 suffix:semicolon
 DECL|member|qos_init

@@ -1443,14 +1443,12 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|init_umsdos_fs
 r_int
+id|__init
 id|init_umsdos_fs
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return

@@ -6628,17 +6628,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Finally, routines used to initialize the serial driver. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|show_serial_version
 r_static
 r_void
+id|__init
 id|show_serial_version
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk
@@ -6649,17 +6646,14 @@ l_string|&quot;DECstation Z8530 serial driver version 0.03&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*  Initialize Z8530s zs_channels&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|probe_sccs
 r_static
 r_void
+id|__init
 id|probe_sccs
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -6985,16 +6979,13 @@ suffix:semicolon
 multiline_comment|/*&t;save_and_cli(flags);&n;&t;for (n = 0; n &lt; zs_channels_found; n++) {&n;&t;&t;if (((int)zs_channels[n].control &amp; 0xf) == 1) {&n;&t;&t;&t;write_zsreg(zs_soft[channel].zs_chan_a, R9, FHWRES);&n;&t;&t;&t;udelay(10000);&n;&t;&t;&t;write_zsreg(zs_soft[channel].zs_chan_a, R9, 0);&n;&t;&t;}&n;&t;&t;load_zsregs(zs_soft[n].zs_channel, zs_soft[n].zs_channel-&gt;curregs);&n;&t;} &n;&t;restore_flags(flags); */
 )brace
 multiline_comment|/* zs_init inits the driver */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zs_init
 r_int
+id|__init
 id|zs_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -7782,12 +7773,10 @@ id|c-&gt;index
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Setup initial baud/bits/parity. We do two things here:&n; *&t;- construct a cflag setting for the first rs_open()&n; *&t;- initialize the serial port&n; *&t;Return non-zero if we didn&squot;t find a serial port.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|serial_console_setup
 r_static
 r_int
+id|__init
 id|serial_console_setup
 c_func
 (paren
@@ -7799,7 +7788,6 @@ comma
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_struct
@@ -8278,10 +8266,9 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|zs_serial_console_init
 r_int
+id|__init
 id|zs_serial_console_init
 c_func
 (paren
@@ -8290,7 +8277,6 @@ id|kmem_start
 comma
 r_int
 id|kmem_end
-)paren
 )paren
 (brace
 id|register_console
@@ -8619,17 +8605,14 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* This is called at boot time to prime the kgdb serial debugging&n; * serial line.  The &squot;tty_num&squot; argument is 0 for /dev/ttya and 1&n; * for /dev/ttyb which is determined in setup_arch() from the&n; * boot command line flags.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zs_kgdb_hook
 r_void
+id|__init
 id|zs_kgdb_hook
 c_func
 (paren
 r_int
 id|tty_num
-)paren
 )paren
 (brace
 multiline_comment|/* Find out how many Z8530 SCCs we have */

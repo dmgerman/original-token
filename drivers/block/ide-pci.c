@@ -267,6 +267,21 @@ mdefine_line|#define&t;INIT_ALI15X3&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_CY82C693
 r_extern
+r_int
+r_int
+id|pci_init_cy82c693
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ide_init_cy82c693
 c_func
@@ -275,9 +290,13 @@ id|ide_hwif_t
 op_star
 )paren
 suffix:semicolon
+DECL|macro|PCI_CY82C693
+mdefine_line|#define PCI_CY82C693&t;&amp;pci_init_cy82c693
 DECL|macro|INIT_CY82C693
 mdefine_line|#define&t;INIT_CY82C693&t;&amp;ide_init_cy82c693
 macro_line|#else
+DECL|macro|PCI_CY82C693
+mdefine_line|#define PCI_CY82C693&t;NULL
 DECL|macro|INIT_CY82C693
 mdefine_line|#define&t;INIT_CY82C693&t;NULL
 macro_line|#endif
@@ -1595,7 +1614,7 @@ id|DEVID_CY82C693
 comma
 l_string|&quot;CY82C693&quot;
 comma
-l_int|NULL
+id|PCI_CY82C693
 comma
 id|INIT_CY82C693
 comma
@@ -1809,7 +1828,6 @@ id|PCI_COMMAND_MEMORY
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * FIXME - this is too ugly, and looks senseless.&n;&t;&t;&t;&t;&t; * Why not just use resource[4]?&n;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t; * This was a cleaner/quicker way to get the ioports&n;&t;&t;&t;&t;&t; * that the are not decode do to a flaw in the chipset&n;&t;&t;&t;&t;&t; * design.&n;&t;&t;&t;&t;&t; */
 r_int
 id|i
 suffix:semicolon
@@ -2866,7 +2884,6 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* FIXME! This really should check that it really gets the IO/MEM part right! */
 id|ctl
 op_assign
 id|dev-&gt;resource
@@ -2893,6 +2910,38 @@ id|port
 dot
 id|start
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ctl
+op_amp
+id|PCI_BASE_ADDRESS_IO_MASK
+)paren
+op_logical_or
+op_logical_neg
+(paren
+id|base
+op_amp
+id|PCI_BASE_ADDRESS_IO_MASK
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: IO baseregs (BIOS) are reported as MEM, report to &lt;andre@suse.com&gt;.&bslash;n&quot;
+comma
+id|d-&gt;name
+)paren
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* FIXME! This really should check that it really gets the IO/MEM part right! */
+r_continue
+suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 r_if
 c_cond
@@ -3435,12 +3484,10 @@ id|d-&gt;name
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hpt366_device_order_fixup
 r_static
 r_void
+id|__init
 id|hpt366_device_order_fixup
 (paren
 r_struct
@@ -3451,7 +3498,6 @@ comma
 id|ide_pci_device_t
 op_star
 id|d
-)paren
 )paren
 (brace
 r_struct
@@ -3617,6 +3663,9 @@ r_if
 c_cond
 (paren
 id|dev2
+op_logical_and
+op_logical_neg
+id|hpt363_shared_irq
 )paren
 (brace
 id|printk

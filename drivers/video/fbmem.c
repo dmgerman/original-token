@@ -437,6 +437,23 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|control_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|control_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|g364fb_init
 c_func
 (paren
@@ -763,6 +780,16 @@ id|hpfb_setup
 )brace
 comma
 macro_line|#endif 
+macro_line|#ifdef CONFIG_FB_CONTROL
+(brace
+l_string|&quot;controlfb&quot;
+comma
+id|control_init
+comma
+id|control_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_VALKYRIE
 (brace
 l_string|&quot;valkyriefb&quot;

@@ -147,6 +147,8 @@ DECL|macro|__va
 mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x)+PAGE_OFFSET))
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
+DECL|macro|PHYSMAP_NR
+mdefine_line|#define PHYSMAP_NR(addr)&t;((unsigned long)(addr) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _I386_PAGE_H */
 eof

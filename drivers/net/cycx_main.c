@@ -11,7 +11,7 @@ macro_line|#include &lt;linux/tqueue.h&gt;&t;/* for kernel task queues */
 macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router definitions */
 macro_line|#include &lt;linux/cyclomx.h&gt;&t;/* cyclomx common user API definitions */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* kernel &lt;-&gt; user copy */
-macro_line|#include &lt;linux/init.h&gt;         /* __initfunc (when not using as a module) */
+macro_line|#include &lt;linux/init.h&gt;         /* __init (when not using as a module) */
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
@@ -163,14 +163,11 @@ id|init_module
 r_void
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
 id|cyclomx_init
 (paren
 r_void
-)paren
 )paren
 macro_line|#endif
 (brace

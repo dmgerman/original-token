@@ -2205,16 +2205,13 @@ id|skb-&gt;len
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|tc_filter_init
 r_int
+id|__init
 id|tc_filter_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_RTNETLINK

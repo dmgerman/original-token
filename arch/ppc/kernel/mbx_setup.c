@@ -187,11 +187,9 @@ r_void
 )paren
 (brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|mbx_setup_arch
 id|mbx_setup_arch
 c_func
 (paren
@@ -204,7 +202,6 @@ r_int
 r_int
 op_star
 id|memory_end_p
-)paren
 )paren
 (brace
 r_int
@@ -416,16 +413,13 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* The decrementer counts at the system (internal) clock frequency divided by&n; * sixteen, or external oscillator divided by four.  Currently, we only&n; * support the MBX, which is system clock divided by sixteen.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mbx_calibrate_decr
 r_void
+id|__init
 id|mbx_calibrate_decr
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|bd_t
@@ -1040,15 +1034,12 @@ id|irq
 suffix:semicolon
 )brace
 multiline_comment|/* On MBX8xx, the interrupt control (SIEL) was set by EPPC-bug.  External&n; * interrupts can be either edge or level triggered, but there is no&n; * reason for us to change the EPPC-bug values (it would not work if we did).&n; */
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|mbx_init_IRQ
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -1404,10 +1395,8 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#endif
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|mbx_init
 c_func
 (paren
@@ -1430,7 +1419,6 @@ comma
 r_int
 r_int
 id|r7
-)paren
 )paren
 (brace
 r_if

@@ -941,11 +941,9 @@ id|u32
 op_star
 id|sysctrl_regs
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|pmac_setup_arch
 id|pmac_setup_arch
 c_func
 (paren
@@ -958,7 +956,6 @@ r_int
 r_int
 op_star
 id|memory_end_p
-)paren
 )paren
 (brace
 r_struct
@@ -1290,17 +1287,14 @@ id|DEFAULT_ROOT_DEVICE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Tweak the PCI-PCI bridge chip on the blue &amp; white G3s.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_p2pbridge
 r_static
 r_void
+id|__init
 id|init_p2pbridge
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -1413,17 +1407,14 @@ id|val
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ohare_init
 r_static
 r_void
+id|__init
 id|ohare_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; * Turn on the L2 cache.&n;&t; * We assume that we have a PSX memory controller iff&n;&t; * we have an ohare I/O controller.&n;&t; */
@@ -1520,16 +1511,13 @@ DECL|variable|boot_dev
 id|kdev_t
 id|boot_dev
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|pmac_init2
 id|pmac_init2
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|adb_init
@@ -1549,11 +1537,9 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SCSI
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|note_scsi_host
 id|note_scsi_host
 c_func
 (paren
@@ -1565,7 +1551,6 @@ comma
 r_void
 op_star
 id|host
-)paren
 )paren
 (brace
 r_int
@@ -1736,15 +1721,12 @@ l_int|89
 )brace
 suffix:semicolon
 DECL|function|find_ide_boot
-id|__initfunc
-c_func
-(paren
 id|kdev_t
+id|__init
 id|find_ide_boot
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_char
@@ -1862,16 +1844,13 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_IDE_PMAC */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|find_boot_device
 r_void
+id|__init
 id|find_boot_device
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_SCSI
@@ -2411,11 +2390,9 @@ id|irq
 )brace
 macro_line|#endif
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|pmac_init
 id|pmac_init
 c_func
 (paren
@@ -2438,7 +2415,6 @@ comma
 r_int
 r_int
 id|r7
-)paren
 )paren
 (brace
 id|pmac_setup_pci_ptrs

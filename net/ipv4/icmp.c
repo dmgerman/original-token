@@ -2990,11 +2990,9 @@ comma
 )brace
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|icmp_init
 r_void
+id|__init
 id|icmp_init
 c_func
 (paren
@@ -3002,7 +3000,6 @@ r_struct
 id|net_proto_family
 op_star
 id|ops
-)paren
 )paren
 (brace
 r_int

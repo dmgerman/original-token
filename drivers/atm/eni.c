@@ -9006,12 +9006,10 @@ DECL|macro|SET_SEPROM
 mdefine_line|#define SET_SEPROM &bslash;&n;  ({ if (!error &amp;&amp; !pci_error) { &bslash;&n;    pci_error = pci_write_config_byte(eni_dev-&gt;pci_dev,PCI_TONGA_CTRL,tonga); &bslash;&n;    udelay(10); /* 10 usecs */ &bslash;&n;  } })
 DECL|macro|GET_SEPROM
 mdefine_line|#define GET_SEPROM &bslash;&n;  ({ if (!error &amp;&amp; !pci_error) { &bslash;&n;    pci_error = pci_read_config_byte(eni_dev-&gt;pci_dev,PCI_TONGA_CTRL,&amp;tonga); &bslash;&n;    udelay(10); /* 10 usecs */ &bslash;&n;  } })
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_esi_asic
 r_static
 r_int
+id|__init
 id|get_esi_asic
 c_func
 (paren
@@ -9019,7 +9017,6 @@ r_struct
 id|atm_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -9398,12 +9395,10 @@ DECL|macro|SET_SEPROM
 macro_line|#undef SET_SEPROM
 DECL|macro|GET_SEPROM
 macro_line|#undef GET_SEPROM
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_esi_fpga
 r_static
 r_int
+id|__init
 id|get_esi_fpga
 c_func
 (paren
@@ -9415,7 +9410,6 @@ comma
 r_int
 r_int
 id|base
-)paren
 )paren
 (brace
 r_int
@@ -9472,12 +9466,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eni_init
 r_static
 r_int
+id|__init
 id|eni_init
 c_func
 (paren
@@ -9485,7 +9477,6 @@ r_struct
 id|atm_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -9552,14 +9543,13 @@ id|eni_dev-&gt;pci_dev
 suffix:semicolon
 id|real_base
 op_assign
-id|pci_dev-&gt;base_address
+id|pci_dev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|MEM_VALID
+dot
+id|start
 suffix:semicolon
-multiline_comment|/* strip flags */
 id|eni_dev-&gt;irq
 op_assign
 id|pci_dev-&gt;irq
@@ -10108,12 +10098,10 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eni_start
 r_static
 r_int
+id|__init
 id|eni_start
 c_func
 (paren
@@ -10121,7 +10109,6 @@ r_struct
 id|atm_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -12691,16 +12678,13 @@ multiline_comment|/* no free_rx_skb */
 id|eni_proc_read
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eni_detect
 r_int
+id|__init
 id|eni_detect
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

@@ -150,6 +150,7 @@ multiline_comment|/* Insert and remove kernel modules */
 DECL|macro|CAP_SYS_MODULE
 mdefine_line|#define CAP_SYS_MODULE       16
 multiline_comment|/* Allow ioperm/iopl access */
+multiline_comment|/* Allow sending USB messages to any device via /proc/bus/usb */
 DECL|macro|CAP_SYS_RAWIO
 mdefine_line|#define CAP_SYS_RAWIO        17
 multiline_comment|/* Allow use of chroot() */

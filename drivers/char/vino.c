@@ -851,11 +851,9 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_vino
 r_int
+id|__init
 id|init_vino
 c_func
 (paren
@@ -863,7 +861,6 @@ r_struct
 id|video_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

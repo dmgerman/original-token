@@ -26,10 +26,8 @@ dot
 dot
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|prom_printf
 c_func
 (paren
@@ -40,7 +38,6 @@ comma
 dot
 dot
 dot
-)paren
 )paren
 macro_line|#endif
 (brace

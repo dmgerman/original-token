@@ -260,11 +260,9 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun3x_sched_init
 r_void
+id|__init
 id|sun3x_sched_init
 c_func
 (paren
@@ -282,7 +280,6 @@ comma
 r_struct
 id|pt_regs
 op_star
-)paren
 )paren
 )paren
 (brace

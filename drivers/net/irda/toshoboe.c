@@ -1473,7 +1473,7 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
+id|__u32
 id|speed
 )paren
 (brace
@@ -1876,17 +1876,11 @@ id|sti
 (paren
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|irda_device_net_open
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -1966,13 +1960,11 @@ l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|irda_device_net_close
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|self
 op_assign
@@ -2843,7 +2835,7 @@ id|pci_dev
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;ToshOboe: Found 701 chip at 0x%0lx irq %d&bslash;n&quot;
+l_string|&quot;ToshOboe: Found 701 chip at 0x%0lx irq %ld&bslash;n&quot;
 comma
 id|pci_dev-&gt;resource
 (braket

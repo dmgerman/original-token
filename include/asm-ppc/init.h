@@ -6,8 +6,6 @@ DECL|macro|__init
 mdefine_line|#define __init __attribute__ ((__section__ (&quot;.text.init&quot;)))
 DECL|macro|__initdata
 mdefine_line|#define __initdata __attribute__ ((__section__ (&quot;.data.init&quot;)))
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(__arginit) &bslash;&n;&t;__arginit __init; &bslash;&n;&t;__arginit
 DECL|macro|__pmac
 mdefine_line|#define __pmac __attribute__ ((__section__ (&quot;.text.pmac&quot;)))
 DECL|macro|__pmacdata
@@ -40,8 +38,6 @@ DECL|macro|__init
 mdefine_line|#define __init
 DECL|macro|__initdata
 mdefine_line|#define __initdata
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(x) x
 DECL|macro|__INIT
 mdefine_line|#define __INIT
 DECL|macro|__FINIT

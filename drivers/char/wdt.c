@@ -43,11 +43,9 @@ suffix:semicolon
 DECL|macro|WD_TIMO
 mdefine_line|#define WD_TIMO (100*60)&t;&t;/* 1 minute */
 multiline_comment|/*&n; *&t;Setup options&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|wdt_setup
 r_void
+id|__init
 id|wdt_setup
 c_func
 (paren
@@ -58,7 +56,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if
@@ -1230,16 +1227,13 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|wdt_init
 r_int
+id|__init
 id|wdt_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk

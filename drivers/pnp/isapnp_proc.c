@@ -971,17 +971,14 @@ l_int|NULL
 multiline_comment|/* permission */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|isapnp_proc_init
 r_static
 r_int
+id|__init
 id|isapnp_proc_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

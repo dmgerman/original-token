@@ -740,16 +740,13 @@ multiline_comment|/* byte_read_data */
 )brace
 suffix:semicolon
 multiline_comment|/* ----------- Initialisation code --------------------------------- */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|parport_amiga_init
 r_int
+id|__init
 id|parport_amiga_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

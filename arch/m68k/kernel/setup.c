@@ -644,12 +644,10 @@ r_void
 suffix:semicolon
 DECL|macro|MASK_256K
 mdefine_line|#define MASK_256K 0xfffc0000
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|m68k_parse_bootinfo
 r_static
 r_void
+id|__init
 id|m68k_parse_bootinfo
 c_func
 (paren
@@ -658,7 +656,6 @@ r_struct
 id|bi_record
 op_star
 id|record
-)paren
 )paren
 (brace
 r_while
@@ -925,11 +922,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|setup_arch
 r_void
+id|__init
 id|setup_arch
 c_func
 (paren
@@ -947,7 +942,6 @@ r_int
 r_int
 op_star
 id|memory_end_p
-)paren
 )paren
 (brace
 r_extern
@@ -2100,11 +2094,9 @@ macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_AMIGA_FLOPPY) || defined(CONFIG_ATARI_FLOPPY) || defined(CONFIG_BLK_DEV_FD)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|floppy_setup
 r_void
+id|__init
 id|floppy_setup
 c_func
 (paren
@@ -2115,7 +2107,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if
@@ -2152,11 +2143,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|kbd_reset_setup
 r_void
+id|__init
 id|kbd_reset_setup
 c_func
 (paren
@@ -2167,7 +2156,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 )brace

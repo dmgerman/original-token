@@ -767,7 +767,7 @@ id|proc_misc-&gt;read_proc
 op_assign
 id|misc_read_proc
 suffix:semicolon
-macro_line|#ifdef CONFIG_MOUSE
+macro_line|#ifdef CONFIG_BUSMOUSE
 id|bus_mouse_init
 c_func
 (paren

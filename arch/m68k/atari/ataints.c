@@ -604,16 +604,13 @@ r_int
 id|atari_SCC_reset_done
 suffix:semicolon
 multiline_comment|/*&n; * void atari_init_IRQ (void)&n; *&n; * Parameters:&t;None&n; *&n; * Returns:&t;Nothing&n; *&n; * This function should be called during kernel startup to initialize&n; * the atari IRQ handling routines.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_init_IRQ
 r_void
+id|__init
 id|atari_init_IRQ
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

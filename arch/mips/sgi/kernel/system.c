@@ -92,19 +92,16 @@ id|CPU_R5000A
 suffix:semicolon
 DECL|macro|NUM_CPUS
 mdefine_line|#define NUM_CPUS 9 /* for now */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|string_to_cpu
 r_static
 r_int
+id|__init
 id|string_to_cpu
 c_func
 (paren
 r_char
 op_star
 id|s
-)paren
 )paren
 (brace
 r_int
@@ -184,16 +181,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We&squot; call this early before loadmmu().  If we do the other way around&n; * the firmware will crash and burn.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sgi_sysinit
 r_void
+id|__init
 id|sgi_sysinit
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|pcomponent

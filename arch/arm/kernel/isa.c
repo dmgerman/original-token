@@ -158,11 +158,9 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|register_isa_ports
 id|register_isa_ports
 c_func
 (paren
@@ -177,7 +175,6 @@ comma
 r_int
 r_int
 id|portshift
-)paren
 )paren
 (brace
 id|isa_membase

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.h&n; * Version:       0.9&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Fri Apr 23 09:33:55 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.h&n; * Version:       0.9&n; * Description:   IrLAP frame declarations&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Mon Aug 23 09:38:46 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRLAP_FRAME_H
 DECL|macro|IRLAP_FRAME_H
 mdefine_line|#define IRLAP_FRAME_H
@@ -94,13 +94,6 @@ DECL|member|version
 id|__u8
 id|version
 suffix:semicolon
-DECL|member|discovery_info
-id|__u8
-id|discovery_info
-(braket
-l_int|0
-)braket
-suffix:semicolon
 DECL|variable|PACK
 )brace
 id|PACK
@@ -128,14 +121,6 @@ id|__u32
 id|daddr
 suffix:semicolon
 multiline_comment|/* Destination device address */
-DECL|member|info
-id|__u8
-id|info
-(braket
-l_int|0
-)braket
-suffix:semicolon
-multiline_comment|/* Information */
 DECL|variable|PACK
 )brace
 id|PACK
@@ -162,13 +147,6 @@ id|__u32
 id|daddr
 suffix:semicolon
 multiline_comment|/* Dest device address */
-DECL|member|params
-id|__u8
-id|params
-(braket
-l_int|0
-)braket
-suffix:semicolon
 DECL|variable|PACK
 )brace
 id|PACK
@@ -184,13 +162,6 @@ suffix:semicolon
 DECL|member|control
 id|__u8
 id|control
-suffix:semicolon
-DECL|member|data
-id|__u8
-id|data
-(braket
-l_int|0
-)braket
 suffix:semicolon
 DECL|variable|PACK
 )brace
@@ -220,48 +191,9 @@ DECL|member|ncaddr
 id|__u8
 id|ncaddr
 suffix:semicolon
-DECL|member|params
-id|__u8
-id|params
-(braket
-l_int|0
-)braket
-suffix:semicolon
 DECL|variable|PACK
 )brace
 id|PACK
-suffix:semicolon
-multiline_comment|/* Per-packet information we need to hide inside sk_buff */
-DECL|struct|irlap_skb_cb
-r_struct
-id|irlap_skb_cb
-(brace
-DECL|member|magic
-r_int
-id|magic
-suffix:semicolon
-multiline_comment|/* Be sure that we can trust the information */
-DECL|member|mtt
-r_int
-id|mtt
-suffix:semicolon
-multiline_comment|/* minimum turn around time */
-DECL|member|xbofs
-r_int
-id|xbofs
-suffix:semicolon
-multiline_comment|/* number of xbofs required */
-DECL|member|vs
-r_int
-id|vs
-suffix:semicolon
-multiline_comment|/* next frame to send */
-DECL|member|vr
-r_int
-id|vr
-suffix:semicolon
-multiline_comment|/* next frame to receive */
-)brace
 suffix:semicolon
 r_void
 id|irlap_send_discovery_xid_frame
@@ -471,6 +403,22 @@ op_star
 comma
 r_int
 id|command
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|irlap_insert_qos_negotiation_params
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+id|self
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -177,17 +177,14 @@ op_star
 id|irq
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_irq_setup
 r_static
 r_void
+id|__init
 id|dec_irq_setup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_switch
@@ -308,12 +305,10 @@ id|decstation_handle_int
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * enable the periodic interrupts&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_time_init
 r_static
 r_void
+id|__init
 id|dec_time_init
 c_func
 (paren
@@ -321,7 +316,6 @@ r_struct
 id|irqaction
 op_star
 id|irq
-)paren
 )paren
 (brace
 multiline_comment|/*&n;     * Here we go, enable periodic rtc interrupts.&n;     */
@@ -366,16 +360,13 @@ id|irq
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|decstation_setup
 r_void
+id|__init
 id|decstation_setup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|irq_setup
@@ -410,16 +401,13 @@ id|dec_rtc_ops
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Machine-specific initialisation for kn01, aka Pmax, aka DS2100, DS3100,&n; * and possibly also the DS5100.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_init_kn01
 r_void
+id|__init
 id|dec_init_kn01
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;     * Setup some memory addresses.&n;     */
@@ -627,16 +615,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* dec_init_kn01 */
 multiline_comment|/*&n; * Machine-specific initialisation for kn230, aka MIPSmate, aka DS5100&n; *&n; * There are a lot of experiments to do, this is definitely incomplete.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_init_kn230
 r_void
+id|__init
 id|dec_init_kn230
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;     * Setup some memory addresses.&n;     */
@@ -716,16 +701,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* dec_init_kn230 */
 multiline_comment|/*&n; * Machine-specific initialisation for kn02, aka 3max, aka DS5000/2xx.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_init_kn02
 r_void
+id|__init
 id|dec_init_kn02
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;     * Setup some memory addresses. FIXME: probably incomplete!&n;     */
@@ -1080,16 +1062,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* dec_init_kn02 */
 multiline_comment|/*&n; * Machine-specific initialisation for kn02ba, aka 3min, aka DS5000/1xx.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_init_kn02ba
 r_void
+id|__init
 id|dec_init_kn02ba
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;     * Setup some memory addresses.&n;     */
@@ -1505,16 +1484,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* dec_init_kn02ba */
 multiline_comment|/*&n; * Machine-specific initialisation for kn02ca, aka maxine, aka DS5000/2x.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_init_kn02ca
 r_void
+id|__init
 id|dec_init_kn02ca
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;     * Setup some memory addresses. FIXME: probably incomplete!&n;     */
@@ -1898,16 +1874,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* dec_init_kn02ca */
 multiline_comment|/*&n; * Machine-specific initialisation for kn03, aka 3max+, aka DS5000/240.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_init_kn03
 r_void
+id|__init
 id|dec_init_kn03
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;     * Setup some memory addresses. FIXME: probably incomplete!&n;     */

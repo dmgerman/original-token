@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/kernel/ptrace.c&n; *&n; * (C) Copyright 1999 Lin
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/bigmem.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Access another process&squot; address space, one page at a time.&n; */
@@ -248,6 +249,42 @@ op_assign
 id|buf
 suffix:semicolon
 )brace
+id|src
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|kmap
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|src
+comma
+id|KM_READ
+)paren
+suffix:semicolon
+id|dst
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|kmap
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|dst
+comma
+id|KM_WRITE
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -256,6 +293,30 @@ comma
 id|src
 comma
 id|len
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|src
+comma
+id|KM_READ
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|dst
+comma
+id|KM_WRITE
 )paren
 suffix:semicolon
 )brace

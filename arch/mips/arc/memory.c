@@ -10,13 +10,11 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 multiline_comment|/* #define DEBUG */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_getmdesc
 r_struct
 id|linux_mdesc
 op_star
+id|__init
 id|prom_getmdesc
 c_func
 (paren
@@ -24,7 +22,6 @@ r_struct
 id|linux_mdesc
 op_star
 id|curr
-)paren
 )paren
 (brace
 r_return
@@ -104,18 +101,15 @@ id|prom_pblocks
 id|PROM_MAX_PMEMBLOCKS
 )braket
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_getpblock_array
 r_struct
 id|prom_pmemblock
 op_star
+id|__init
 id|prom_getpblock_array
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return
@@ -219,17 +213,14 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_setup_memupper
 r_static
 r_void
+id|__init
 id|prom_setup_memupper
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -311,16 +302,13 @@ id|mips_memory_upper
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_meminit
 r_void
+id|__init
 id|prom_meminit
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -599,11 +587,9 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* Called from mem_init() to fixup the mem_map page settings. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_fixup_mem_map
 r_void
+id|__init
 id|prom_fixup_mem_map
 c_func
 (paren
@@ -614,7 +600,6 @@ comma
 r_int
 r_int
 id|end
-)paren
 )paren
 (brace
 r_struct

@@ -1086,14 +1086,13 @@ c_cond
 id|c-&gt;page_frame
 )paren
 (brace
-suffix:semicolon
-)brace
 id|kfree
 c_func
 (paren
 id|c-&gt;page_frame
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

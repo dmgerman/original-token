@@ -297,17 +297,14 @@ comma
 id|sgi_read_status
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sgi_irq_setup
 r_static
 r_void
+id|__init
 id|sgi_irq_setup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|sgint_init
@@ -334,16 +331,13 @@ suffix:semicolon
 multiline_comment|/* you may move this line to whereever you want :-) */
 macro_line|#endif
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sgi_setup
 r_void
+id|__init
 id|sgi_setup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE

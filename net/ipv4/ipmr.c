@@ -7565,16 +7565,13 @@ multiline_comment|/* name&t;&t;&t;*/
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;Setup for IP multicast routing&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ip_mr_init
 r_void
+id|__init
 id|ip_mr_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk

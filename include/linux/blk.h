@@ -12,7 +12,7 @@ id|io_request_lock
 suffix:semicolon
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; */
 DECL|macro|NR_REQUEST
-mdefine_line|#define NR_REQUEST&t;64
+mdefine_line|#define NR_REQUEST&t;128
 multiline_comment|/*&n; * This is used in the elevator algorithm.  We don&squot;t prioritise reads&n; * over writes any more --- although reads are more time-critical than&n; * writes, by treating them equally we increase filesystem throughput.&n; * This turns out to give better overall performance.  -- sct&n; */
 DECL|macro|IN_ORDER
 mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;rq_dev &lt; (s2)-&gt;rq_dev || (((s1)-&gt;rq_dev == (s2)-&gt;rq_dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))
@@ -336,6 +336,34 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; * end_request() and friends. Must be called with the request queue spinlock&n; * acquired. All functions called within end_request() _must_be_ atomic.&n; *&n; * Several drivers define their own end_request and call&n; * end_that_request_first() and end_that_request_last()&n; * for parts of the original function. This prevents&n; * code duplication in drivers.&n; */
+r_int
+id|end_that_request_first
+c_func
+(paren
+r_struct
+id|request
+op_star
+id|req
+comma
+r_int
+id|uptodate
+comma
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+r_void
+id|end_that_request_last
+c_func
+(paren
+r_struct
+id|request
+op_star
+id|req
+)paren
+suffix:semicolon
 macro_line|#if defined(MAJOR_NR) || defined(IDE_DRIVER)
 multiline_comment|/*&n; * Add entries as needed.&n; */
 macro_line|#ifdef IDE_DRIVER
@@ -719,6 +747,19 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == COMPAQ_SMART2_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;ida&quot;
+DECL|macro|TIMEOUT_VALUE
+mdefine_line|#define TIMEOUT_VALUE (25*HZ)
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_ida_request0
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 4)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
 macro_line|#endif /* MAJOR_NR == whatever */
 macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
 macro_line|#if !defined(IDE_DRIVER)
@@ -777,34 +818,6 @@ macro_line|#endif
 DECL|macro|INIT_REQUEST
 mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!buffer_locked(CURRENT-&gt;bh)) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif /* !defined(IDE_DRIVER) */
-multiline_comment|/*&n; * end_request() and friends. Must be called with the request queue spinlock&n; * acquired. All functions called within end_request() _must_be_ atomic.&n; *&n; * Several drivers define their own end_request and call end_that_request_first()&n; * and end_that_request_last() for parts of the original function. This prevents&n; * code duplication in drivers.&n; */
-r_int
-id|end_that_request_first
-c_func
-(paren
-r_struct
-id|request
-op_star
-id|req
-comma
-r_int
-id|uptodate
-comma
-r_char
-op_star
-id|name
-)paren
-suffix:semicolon
-r_void
-id|end_that_request_last
-c_func
-(paren
-r_struct
-id|request
-op_star
-id|req
-)paren
-suffix:semicolon
 macro_line|#ifndef LOCAL_END_REQUEST&t;/* If we have our own end_request, we do not want to include this mess */
 macro_line|#if ! SCSI_BLK_MAJOR(MAJOR_NR) &amp;&amp; (MAJOR_NR != COMPAQ_SMART2_MAJOR)
 DECL|function|end_request

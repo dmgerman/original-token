@@ -4,11 +4,9 @@ macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|atari_sched_init
 id|atari_sched_init
 c_func
 (paren
@@ -26,7 +24,6 @@ comma
 r_struct
 id|pt_regs
 op_star
-)paren
 )paren
 )paren
 (brace

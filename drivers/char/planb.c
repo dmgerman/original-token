@@ -9065,6 +9065,13 @@ c_func
 (paren
 id|CAP_SYS_ADMIN
 )paren
+op_logical_or
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SYS_RAWIO
+)paren
 )paren
 r_return
 op_minus

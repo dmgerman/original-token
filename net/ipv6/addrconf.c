@@ -8921,16 +8921,13 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; *&t;Init / cleanup code&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|addrconf_init
 r_void
+id|__init
 id|addrconf_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef MODULE

@@ -3,19 +3,16 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_getenv
 r_char
 op_star
+id|__init
 id|prom_getenv
 c_func
 (paren
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_return
@@ -28,11 +25,9 @@ id|name
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_setenv
 r_int
+id|__init
 id|prom_setenv
 c_func
 (paren
@@ -43,7 +38,6 @@ comma
 r_char
 op_star
 id|value
-)paren
 )paren
 (brace
 r_return

@@ -421,17 +421,14 @@ suffix:semicolon
 )brace
 multiline_comment|/* -------- Global Operations ---------------------------------------------- */
 multiline_comment|/*&n;     *  Initialize the OpenPIC&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|openpic_init
 r_void
+id|__init
 id|openpic_init
 c_func
 (paren
 r_int
 id|main_pic
-)paren
 )paren
 (brace
 id|u_int

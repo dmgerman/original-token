@@ -199,7 +199,8 @@ id|wait_queue_head_t
 id|fat_wait
 suffix:semicolon
 DECL|member|fat_lock
-r_int
+r_struct
+id|semaphore
 id|fat_lock
 suffix:semicolon
 DECL|member|prev_free

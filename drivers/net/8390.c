@@ -3366,7 +3366,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Initialize the rest of the 8390 device structure.  Do NOT __initfunc&n; * this, as it is used by 8390 based modular drivers too.&n; */
+multiline_comment|/*&n; * Initialize the rest of the 8390 device structure.  Do NOT __init&n; * this, as it is used by 8390 based modular drivers too.&n; */
 DECL|function|ethdev_init
 r_int
 id|ethdev_init

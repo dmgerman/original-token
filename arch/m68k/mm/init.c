@@ -437,13 +437,11 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|kernel_page_table
 r_static
 id|pte_t
 op_star
+id|__init
 id|kernel_page_table
 c_func
 (paren
@@ -451,7 +449,6 @@ r_int
 r_int
 op_star
 id|memavailp
-)paren
 )paren
 (brace
 id|pte_t
@@ -533,13 +530,11 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|kernel_ptr_table
 r_static
 id|pmd_t
 op_star
+id|__init
 id|kernel_ptr_table
 c_func
 (paren
@@ -547,7 +542,6 @@ r_int
 r_int
 op_star
 id|memavailp
-)paren
 )paren
 (brace
 r_if
@@ -732,13 +726,11 @@ r_return
 id|last_pgtable
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
 r_int
+id|__init
+DECL|function|map_chunk
 id|map_chunk
 (paren
 r_int
@@ -752,7 +744,6 @@ r_int
 r_int
 op_star
 id|memavailp
-)paren
 )paren
 (brace
 DECL|macro|PTRTREESIZE
@@ -1242,12 +1233,10 @@ comma
 id|__init_end
 suffix:semicolon
 multiline_comment|/*&n; * paging_init() continues the virtual memory environment setup which&n; * was begun by the code in arch/head.S.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|paging_init
 r_int
 r_int
+id|__init
 id|paging_init
 c_func
 (paren
@@ -1258,7 +1247,6 @@ comma
 r_int
 r_int
 id|end_mem
-)paren
 )paren
 (brace
 r_int
@@ -1545,11 +1533,9 @@ id|end_mem
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mem_init
 r_void
+id|__init
 id|mem_init
 c_func
 (paren
@@ -1560,7 +1546,6 @@ comma
 r_int
 r_int
 id|end_mem
-)paren
 )paren
 (brace
 r_int

@@ -33,11 +33,9 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|acorn_ethif_probe
 r_int
+id|__init
 id|acorn_ethif_probe
 c_func
 (paren
@@ -45,7 +43,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_if

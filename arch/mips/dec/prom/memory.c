@@ -69,17 +69,14 @@ multiline_comment|/* So we know an error occured */
 multiline_comment|/*&n; * Probe memory in 4MB chunks, waiting for an error to tell us we&squot;ve fallen&n; * off the end of real memory.  Only suitable for the 2100/3100&squot;s (PMAX).&n; */
 DECL|macro|CHUNK_SIZE
 mdefine_line|#define CHUNK_SIZE 0x400000
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pmax_get_memory_size
 r_int
 r_int
+id|__init
 id|pmax_get_memory_size
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_volatile
@@ -218,17 +215,14 @@ id|CHUNK_SIZE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Use the REX prom calls to get hold of the memory bitmap, and thence&n; * determine memory size.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|rex_get_memory_size
 r_int
 r_int
+id|__init
 id|rex_get_memory_size
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -304,18 +298,15 @@ id|mem_size
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_meminit
 r_void
+id|__init
 id|prom_meminit
 c_func
 (paren
 r_int
 r_int
 id|magic
-)paren
 )paren
 (brace
 r_if
@@ -356,11 +347,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/* Called from mem_init() to fixup the mem_map page settings. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_fixup_mem_map
 r_void
+id|__init
 id|prom_fixup_mem_map
 c_func
 (paren
@@ -371,7 +360,6 @@ comma
 r_int
 r_int
 id|end
-)paren
 )paren
 (brace
 )brace

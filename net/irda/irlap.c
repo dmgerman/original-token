@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       1.0&n; * Description:   IrLAP implementation for Linux&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon May 31 21:43:55 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       1.0&n; * Description:   IrLAP implementation for Linux&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon Aug 23 12:05:26 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -92,16 +92,13 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|irlap_init
 r_int
+id|__init
 id|irlap_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* Allocate master array */
@@ -324,7 +321,7 @@ comma
 id|LAP_OFFLINE
 )paren
 suffix:semicolon
-multiline_comment|/* Initialize transmitt queue */
+multiline_comment|/* Initialize transmit queue */
 id|skb_queue_head_init
 c_func
 (paren
@@ -1206,17 +1203,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_IRDA_COMPRESSION
 r_if
 c_cond
@@ -1443,6 +1429,28 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Don&squot;t disconnect until all data frames are successfully sent */
+r_if
+c_cond
+(paren
+id|skb_queue_len
+c_func
+(paren
+op_amp
+id|self-&gt;tx_list
+)paren
+OG
+l_int|0
+)paren
+(brace
+id|self-&gt;disconnect_pending
+op_assign
+id|TRUE
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Check if we are in the right state for disconnecting */
 r_switch
 c_cond
 (paren
@@ -1487,7 +1495,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), disconnect pending!&bslash;n&quot;
@@ -1738,6 +1746,31 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Check if last discovery request finished in time */
+r_if
+c_cond
+(paren
+id|self-&gt;discovery_log
+op_ne
+l_int|NULL
+)paren
+(brace
+id|hashbin_delete
+c_func
+(paren
+id|self-&gt;discovery_log
+comma
+(paren
+id|FREE_FUNC
+)paren
+id|kfree
+)paren
+suffix:semicolon
+id|self-&gt;discovery_log
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *  Discovery is only possible in NDM mode&n;&t; */
 r_if
 c_cond
@@ -1747,17 +1780,6 @@ op_eq
 id|LAP_NDM
 )paren
 (brace
-id|ASSERT
-c_func
-(paren
-id|self-&gt;discovery_log
-op_eq
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|self-&gt;discovery_log
 op_assign
 id|hashbin_new
@@ -1948,11 +1970,6 @@ id|self-&gt;notify.instance
 comma
 id|discovery_log
 )paren
-suffix:semicolon
-multiline_comment|/* &n;&t; *  IrLMP has now the responsibilities for the discovery_log &n;&t; */
-id|self-&gt;discovery_log
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_discovery_indication (log)&n; *&n; *    Somebody is trying to discover us!&n; *&n; */
@@ -2277,48 +2294,7 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/*&n;         * Remove all the ack-ed frames from the window queue.&n;         */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;--&gt; wx_list=%d, va=%d, nr=%d&bslash;n&quot;
-comma
-id|skb_queue_len
-c_func
-(paren
-op_amp
-id|self-&gt;wx_list
-)paren
-comma
-id|self-&gt;va
-comma
-id|nr
-)paren
-suffix:semicolon
 multiline_comment|/* &n;&t; *  Optimize for the common case. It is most likely that the receiver&n;&t; *  will acknowledge all the frames we have sent! So in that case we&n;&t; *  delete all frames stored in window.&n;&t; */
 r_if
 c_cond
@@ -2421,35 +2397,6 @@ id|count
 op_increment
 suffix:semicolon
 )brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlap_update_nr_received(), removed %d&bslash;n&quot;
-comma
-id|count
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;wx_list=%d, va=%d, nr=%d --&gt;&bslash;n&quot;
-comma
-id|skb_queue_len
-c_func
-(paren
-op_amp
-id|self-&gt;wx_list
-)paren
-comma
-id|self-&gt;va
-comma
-id|nr
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* Advance window */
 id|self-&gt;window
@@ -2479,32 +2426,6 @@ r_int
 id|ns
 )paren
 (brace
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-op_minus
-id|EBADR
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/*  ns as expected?  */
 r_if
 c_cond
@@ -2513,20 +2434,9 @@ id|ns
 op_eq
 id|self-&gt;vr
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), expected!&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|NS_EXPECTED
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *  Stations are allowed to treat invalid NS as unexpected NS&n;&t; *  IrLAP, Recv ... with-invalid-Ns. p. 84&n;&t; */
 r_return
 id|NS_UNEXPECTED
@@ -2548,32 +2458,6 @@ r_int
 id|nr
 )paren
 (brace
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-op_minus
-id|EBADR
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/*  nr as expected?  */
 r_if
 c_cond
@@ -2899,7 +2783,7 @@ id|irlap_cb
 op_star
 id|self
 comma
-r_int
+id|__u32
 id|speed
 )paren
 (brace
@@ -3603,6 +3487,59 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+)brace
+multiline_comment|/*&n; * Function irlap_set_local_busy (self, status)&n; *&n; *    &n; *&n; */
+DECL|function|irlap_set_local_busy
+r_void
+id|irlap_set_local_busy
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+id|self
+comma
+r_int
+id|status
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|self-&gt;local_busy
+op_assign
+id|status
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+)paren
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), local busy ON&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), local busy OFF&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/*&n; * Function irlap_proc_read (buf, start, offset, len, unused)&n; *&n; *    Give some info to the /proc file system&n; *&n; */

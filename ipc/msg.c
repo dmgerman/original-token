@@ -2135,11 +2135,11 @@ id|tbuf.msg_ctime
 op_assign
 id|msq-&gt;msg_ctime
 suffix:semicolon
-id|tbuf.msg_cbytes_old
+id|tbuf.msg_cbytes
 op_assign
 id|msq-&gt;msg_cbytes
 suffix:semicolon
-id|tbuf.msg_cbytes
+id|tbuf.msg_lcbytes
 op_assign
 id|msq-&gt;msg_cbytes
 suffix:semicolon
@@ -2147,7 +2147,7 @@ id|tbuf.msg_qnum
 op_assign
 id|msq-&gt;msg_qnum
 suffix:semicolon
-id|tbuf.msg_qbytes_old
+id|tbuf.msg_lqbytes
 op_assign
 id|msq-&gt;msg_qbytes
 suffix:semicolon
@@ -2356,7 +2356,7 @@ id|tbuf.msg_ctime
 op_assign
 id|msq-&gt;msg_ctime
 suffix:semicolon
-id|tbuf.msg_cbytes_old
+id|tbuf.msg_lcbytes
 op_assign
 id|msq-&gt;msg_cbytes
 suffix:semicolon
@@ -2368,7 +2368,7 @@ id|tbuf.msg_qnum
 op_assign
 id|msq-&gt;msg_qnum
 suffix:semicolon
-id|tbuf.msg_qbytes_old
+id|tbuf.msg_lqbytes
 op_assign
 id|msq-&gt;msg_qbytes
 suffix:semicolon

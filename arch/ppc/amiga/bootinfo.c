@@ -64,11 +64,9 @@ id|bi_record
 op_star
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|parse_bootinfo
 r_void
+id|__init
 id|parse_bootinfo
 c_func
 (paren
@@ -77,7 +75,6 @@ r_struct
 id|bi_record
 op_star
 id|record
-)paren
 )paren
 (brace
 r_while

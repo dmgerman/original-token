@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sun May  9 15:59:05 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Fri Aug 20 10:26:39 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -195,16 +195,13 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function iriap_init (void)&n; *&n; *    Initializes the IrIAP layer, called by the module initialization code&n; *    in irmod.c &n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|iriap_init
 r_int
+id|__init
 id|iriap_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|__u16
@@ -214,15 +211,6 @@ r_struct
 id|ias_object
 op_star
 id|obj
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* Allocate master array */
 id|iriap
@@ -236,9 +224,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|iriap
-op_eq
-l_int|NULL
 )paren
 r_return
 op_minus
@@ -255,16 +242,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|objects
-op_eq
-l_int|NULL
 )paren
 (brace
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;IrIAP: Can&squot;t allocate objects hashbin!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Can&squot;t allocate objects hashbin!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -396,13 +382,12 @@ op_star
 id|self
 suffix:semicolon
 r_struct
-id|notify_t
-id|notify
-suffix:semicolon
-r_struct
 id|lsap_cb
 op_star
 id|lsap
+suffix:semicolon
+id|notify_t
+id|notify
 suffix:semicolon
 id|DEBUG
 c_func
@@ -430,17 +415,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|self
-op_eq
-l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;iriap_open(), Unable to kmalloc!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unable to kmalloc!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -532,12 +515,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;iriap_open: Unable to allocated LSAP!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unable to allocated LSAP!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -547,17 +529,6 @@ suffix:semicolon
 id|slsap_sel
 op_assign
 id|lsap-&gt;slsap_sel
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), source LSAP sel=%02x&bslash;n&quot;
-comma
-id|slsap_sel
-)paren
 suffix:semicolon
 id|self-&gt;magic
 op_assign
@@ -598,6 +569,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+multiline_comment|/* Initialize state machines */
 id|iriap_next_client_state
 c_func
 (paren
@@ -712,15 +684,6 @@ r_struct
 id|iriap_cb
 op_star
 id|entry
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1201,10 +1164,6 @@ id|iriap_cb
 op_star
 id|self
 suffix:semicolon
-id|__u8
-op_star
-id|frame
-suffix:semicolon
 r_int
 id|name_len
 comma
@@ -1216,14 +1175,18 @@ op_assign
 id|LSAP_ANY
 suffix:semicolon
 multiline_comment|/* Source LSAP to use */
-id|DEBUG
-c_func
+id|__u8
+op_star
+id|frame
+suffix:semicolon
+multiline_comment|/* Client must supply the destination device address */
+r_if
+c_cond
 (paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+op_logical_neg
+id|daddr
 )paren
+r_return
 suffix:semicolon
 id|self
 op_assign
@@ -1426,9 +1389,6 @@ op_star
 id|value
 suffix:semicolon
 r_int
-id|n
-suffix:semicolon
-r_int
 id|charset
 suffix:semicolon
 id|__u32
@@ -1449,6 +1409,9 @@ suffix:semicolon
 id|__u8
 op_star
 id|fp
+suffix:semicolon
+r_int
+id|n
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1553,8 +1516,6 @@ id|n
 op_add_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/* &t;memcpy(&amp;obj_id, fp+n, 2); n += 2; */
-multiline_comment|/* &t;be16_to_cpus(&amp;obj_id); */
 id|type
 op_assign
 id|fp
@@ -1771,18 +1732,6 @@ suffix:semicolon
 id|n
 op_add_assign
 l_int|2
-suffix:semicolon
-multiline_comment|/* FIXME:should be 1024, but.... */
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;():octet sequence:len=%d&bslash;n&quot;
-comma
-id|value_len
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -2304,12 +2253,15 @@ op_star
 id|skb
 )paren
 (brace
-id|__u8
+r_struct
+id|ias_object
 op_star
-id|fp
+id|obj
 suffix:semicolon
-r_int
-id|n
+r_struct
+id|ias_attrib
+op_star
+id|attrib
 suffix:semicolon
 r_int
 id|name_len
@@ -2329,15 +2281,12 @@ id|attr
 l_int|64
 )braket
 suffix:semicolon
-r_struct
-id|ias_object
+id|__u8
 op_star
-id|obj
+id|fp
 suffix:semicolon
-r_struct
-id|ias_attrib
-op_star
-id|attrib
+r_int
+id|n
 suffix:semicolon
 id|DEBUG
 c_func
@@ -3013,25 +2962,25 @@ c_cond
 op_complement
 id|opcode
 op_amp
-l_int|0x80
+id|IAP_LST
 )paren
 (brace
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;IrIAS multiframe commands or results is &quot;
-l_string|&quot;not implemented yet!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), IrIAS multiframe commands or &quot;
+l_string|&quot;results is not implemented yet!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Check for ack frames since they don&squot;t contain any data */
 r_if
 c_cond
 (paren
-op_complement
 id|opcode
 op_amp
 id|IAP_ACK
@@ -3040,13 +2989,15 @@ id|IAP_ACK
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;() Got ack frame!&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* &t;return; */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 id|opcode
 op_and_assign
@@ -3076,14 +3027,6 @@ suffix:semicolon
 r_case
 id|GET_VALUE_BY_CLASS
 suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;IrLMP GetValueByClass&bslash;n&quot;
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -3109,11 +3052,11 @@ suffix:semicolon
 r_case
 id|IAS_CLASS_UNKNOWN
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;IrIAP No such class!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), No such class!&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Finished, close connection! */
@@ -3147,11 +3090,11 @@ suffix:semicolon
 r_case
 id|IAS_ATTRIB_UNKNOWN
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;IrIAP No such attribute!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), No such attribute!&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Finished, close connection! */
@@ -3308,12 +3251,12 @@ op_amp
 l_int|0x80
 )paren
 (brace
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;IrIAS multiframe commands or results is &quot;
-l_string|&quot;not implemented yet!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), IrIAS multiframe commands or results&quot;
+l_string|&quot;is not implemented yet!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3333,12 +3276,11 @@ id|opcode
 r_case
 id|GET_INFO_BASE
 suffix:colon
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;IrLMP GetInfoBaseDetails not implemented!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), GetInfoBaseDetails not implemented yet!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -3358,14 +3300,14 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function iriap_watchdog_timer_expired (data)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function iriap_watchdog_timer_expired (data)&n; *&n; *    Query has taken to long time, so abort&n; *&n; */
 DECL|function|iriap_watchdog_timer_expired
 r_void
 id|iriap_watchdog_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 (brace
@@ -3401,15 +3343,6 @@ id|IAS_MAGIC
 comma
 r_return
 suffix:semicolon
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;() Timeout! closing myself!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|iriap_close

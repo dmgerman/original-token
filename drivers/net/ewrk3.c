@@ -6082,10 +6082,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;   ** If at end of eth device list and can&squot;t use current entry, malloc&n;   ** one up. If memory could not be allocated, print an error message.&n; */
 r_static
-id|__init
 r_struct
 id|net_device
 op_star
+id|__init
 DECL|function|insert_device
 id|insert_device
 c_func

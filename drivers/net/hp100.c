@@ -60,10 +60,6 @@ id|enet_statistics
 id|hp100_stats_t
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef __initfunc
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(__initarg) __initarg
-macro_line|#endif
 macro_line|#include &quot;hp100.h&quot;
 multiline_comment|/*&n; *  defines&n; */
 DECL|macro|HP100_BUS_ISA

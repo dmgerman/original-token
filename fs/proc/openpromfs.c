@@ -5675,17 +5675,14 @@ suffix:semicolon
 )brace
 multiline_comment|/* {{{ init section */
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|check_space
 r_static
 r_int
+id|__init
 id|check_space
 (paren
 id|u16
 id|n
-)paren
 )paren
 macro_line|#else
 r_static
@@ -5803,12 +5800,10 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_nodes
 r_static
 id|u16
+id|__init
 id|get_nodes
 (paren
 id|u16
@@ -5816,7 +5811,6 @@ id|parent
 comma
 id|u32
 id|node
-)paren
 )paren
 macro_line|#else
 r_static
@@ -6437,15 +6431,12 @@ macro_line|#endif
 macro_line|#ifndef MODULE
 DECL|macro|RET
 mdefine_line|#define RET(x)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|openpromfs_init
 r_void
+id|__init
 id|openpromfs_init
 (paren
 r_void
-)paren
 )paren
 macro_line|#else
 id|EXPORT_NO_SYMBOLS

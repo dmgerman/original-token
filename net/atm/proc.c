@@ -16,7 +16,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/atmclip.h&gt;
 macro_line|#include &lt;linux/atmarp.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
-macro_line|#include &lt;linux/init.h&gt; /* for __initfunc */
+macro_line|#include &lt;linux/init.h&gt; /* for __init */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/param.h&gt; /* for HZ */
 macro_line|#include &quot;resources.h&quot;
@@ -3271,16 +3271,13 @@ id|dev-&gt;proc_name
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atm_proc_init
 r_int
+id|__init
 id|atm_proc_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

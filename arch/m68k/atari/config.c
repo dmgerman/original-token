@@ -390,11 +390,9 @@ r_int
 suffix:semicolon
 multiline_comment|/* I&squot;ve moved hwreg_present() and hwreg_present_bywrite() out into&n; * mm/hwtest.c, to avoid having multiple copies of the same routine&n; * in the kernel [I wanted them in hp300 and they were already used&n; * in the nubus code. NB: I don&squot;t have an Atari so this might (just&n; * conceivably) break something.&n; * I&squot;ve preserved the #if 0 version of hwreg_present_bywrite() here&n; * for posterity.&n; *   -- Peter Maydell &lt;pmaydell@chiark.greenend.org.uk&gt;, 05/1998&n; */
 macro_line|#if 0
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
 id|hwreg_present_bywrite
 c_func
 (paren
@@ -406,7 +404,6 @@ comma
 r_int
 r_char
 id|val
-)paren
 )paren
 (brace
 r_int
@@ -516,12 +513,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* ++roman: This is a more elaborate test for an SCC chip, since the plain&n; * Medusa board generates DTACK at the SCC&squot;s standard addresses, but a SCC&n; * board in the Medusa is possible. Also, the addresses where the ST_ESCC&n; * resides generate DTACK without the chip, too.&n; * The method is to write values into the interrupt vector register, that&n; * should be readable without trouble (from channel A!).&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|scc_test
 r_static
 r_int
+id|__init
 id|scc_test
 c_func
 (paren
@@ -529,7 +524,6 @@ r_volatile
 r_char
 op_star
 id|ctla
-)paren
 )paren
 (brace
 r_if
@@ -642,11 +636,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Parse an Atari-specific record in the bootinfo&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_parse_bootinfo
 r_int
+id|__init
 id|atari_parse_bootinfo
 c_func
 (paren
@@ -655,7 +647,6 @@ r_struct
 id|bi_record
 op_star
 id|record
-)paren
 )paren
 (brace
 r_int
@@ -708,11 +699,9 @@ id|unknown
 suffix:semicolon
 )brace
 multiline_comment|/* Parse the Atari-specific switches= option. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_switches_setup
 r_void
+id|__init
 id|atari_switches_setup
 c_func
 (paren
@@ -723,7 +712,6 @@ id|str
 comma
 r_int
 id|len
-)paren
 )paren
 (brace
 r_char
@@ -911,16 +899,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;     *  Setup the Atari configuration info&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|config_atari
 r_void
+id|__init
 id|config_atari
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

@@ -2007,12 +2007,10 @@ id|sync_timer
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zatm_clock_init
 r_static
 r_void
+id|__init
 id|zatm_clock_init
 c_func
 (paren
@@ -2020,7 +2018,6 @@ r_struct
 id|zatm_dev
 op_star
 id|zatm_dev
-)paren
 )paren
 (brace
 r_static
@@ -7090,12 +7087,10 @@ multiline_comment|/* @@@ handle RCRn */
 )brace
 )brace
 multiline_comment|/*----------------------------- (E)EPROM access -----------------------------*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eprom_set
 r_static
 r_void
+id|__init
 id|eprom_set
 c_func
 (paren
@@ -7111,7 +7106,6 @@ comma
 r_int
 r_int
 id|cmd
-)paren
 )paren
 (brace
 r_int
@@ -7145,13 +7139,11 @@ id|error
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eprom_get
 r_static
 r_int
 r_int
+id|__init
 id|eprom_get
 c_func
 (paren
@@ -7163,7 +7155,6 @@ comma
 r_int
 r_int
 id|cmd
-)paren
 )paren
 (brace
 r_int
@@ -7205,12 +7196,10 @@ r_return
 id|value
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eprom_put_bits
 r_static
 r_void
+id|__init
 id|eprom_put_bits
 c_func
 (paren
@@ -7229,7 +7218,6 @@ comma
 r_int
 r_int
 id|cmd
-)paren
 )paren
 (brace
 r_int
@@ -7311,12 +7299,10 @@ id|cmd
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eprom_get_byte
 r_static
 r_void
+id|__init
 id|eprom_get_byte
 c_func
 (paren
@@ -7333,7 +7319,6 @@ comma
 r_int
 r_int
 id|cmd
-)paren
 )paren
 (brace
 r_int
@@ -7414,13 +7399,11 @@ id|cmd
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eprom_try_esi
 r_static
 r_int
 r_char
+id|__init
 id|eprom_try_esi
 c_func
 (paren
@@ -7438,7 +7421,6 @@ id|offset
 comma
 r_int
 id|swap
-)paren
 )paren
 (brace
 r_int
@@ -7584,12 +7566,10 @@ id|ESI_LEN
 suffix:semicolon
 multiline_comment|/* assumes ESI_LEN == 6 */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eprom_get_esi
 r_static
 r_void
+id|__init
 id|eprom_get_esi
 c_func
 (paren
@@ -7597,7 +7577,6 @@ r_struct
 id|atm_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_if
@@ -7634,12 +7613,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*--------------------------------- entries ---------------------------------*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zatm_init
 r_static
 r_int
+id|__init
 id|zatm_init
 c_func
 (paren
@@ -7647,7 +7624,6 @@ r_struct
 id|atm_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -7703,12 +7679,12 @@ id|zatm_dev-&gt;pci_dev
 suffix:semicolon
 id|zatm_dev-&gt;base
 op_assign
-id|pci_dev-&gt;base_address
+id|pci_dev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
+dot
+id|start
 suffix:semicolon
 id|zatm_dev-&gt;irq
 op_assign
@@ -8242,12 +8218,10 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zatm_start
 r_static
 r_int
+id|__init
 id|zatm_start
 c_func
 (paren
@@ -8255,7 +8229,6 @@ r_struct
 id|atm_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -10423,16 +10396,13 @@ l_int|NULL
 multiline_comment|/* no proc_read */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zatm_detect
 r_int
+id|__init
 id|zatm_detect
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

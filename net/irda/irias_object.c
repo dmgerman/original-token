@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irias_object.c&n; * Version:       0.3&n; * Description:   IAS object database and functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct  1 22:50:04 1998&n; * Modified at:   Mon Mar 22 13:22:35 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irias_object.c&n; * Version:       0.3&n; * Description:   IAS object database and functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct  1 22:50:04 1998&n; * Modified at:   Mon Jun 21 16:11:13 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/irda.h&gt;
@@ -285,7 +285,6 @@ id|attrib
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irias_delete_object (obj)&n; *&n; *    Remove object from hashbin and deallocate all attributes assosiated with&n; *    with this object and the object itself&n; *&n; */
 DECL|function|__irias_delete_object
 r_void
 id|__irias_delete_object
@@ -353,43 +352,50 @@ id|obj
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irias_remove_object (obj)&n; *&n; *    Remove object with give name from the LM-IAS object database&n; *&n; */
+multiline_comment|/*&n; * Function irias_delete_object (obj)&n; *&n; *    Remove object from hashbin and deallocate all attributes assosiated with&n; *    with this object and the object itself&n; *&n; */
 DECL|function|irias_delete_object
-r_void
+r_int
 id|irias_delete_object
 c_func
 (paren
-r_char
+r_struct
+id|ias_object
 op_star
-id|obj_name
+id|obj
 )paren
 (brace
 r_struct
 id|ias_object
 op_star
-id|obj
+id|node
 suffix:semicolon
-id|DEBUG
+id|ASSERT
 c_func
 (paren
-l_int|4
+id|obj
+op_ne
+l_int|NULL
 comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 )paren
 suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|obj_name
-op_ne
-l_int|NULL
+id|obj-&gt;magic
+op_eq
+id|IAS_OBJECT_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|obj
+id|node
 op_assign
 id|hashbin_remove
 c_func
@@ -398,14 +404,27 @@ id|objects
 comma
 l_int|0
 comma
-id|obj_name
+id|obj-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|node
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Already removed */
 id|__irias_delete_object
 c_func
 (paren
-id|obj
+id|node
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irias_insert_object (obj)&n; *&n; *    Insert an object into the LM-IAS database&n; *&n; */
@@ -853,15 +872,6 @@ id|ias_attrib
 op_star
 id|attrib
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1006,37 +1016,6 @@ r_struct
 id|ias_attrib
 op_star
 id|attrib
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;: name=%s&bslash;n&quot;
-comma
-id|name
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;: len=%d&bslash;n&quot;
-comma
-id|len
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1202,37 +1181,6 @@ r_struct
 id|ias_attrib
 op_star
 id|attrib
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;: name=%s&bslash;n&quot;
-comma
-id|name
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;: name=%s&bslash;n&quot;
-comma
-id|value
-)paren
 suffix:semicolon
 id|ASSERT
 c_func

@@ -1056,6 +1056,29 @@ suffix:semicolon
 macro_line|#endif /* CY82C693_DEBUG_INFO */
 )brace
 multiline_comment|/*&n; * this function is called during init and is used to setup the cy82c693 chip&n; */
+multiline_comment|/*&n; * FIXME! &quot;pci_init_cy82c693&quot; really should replace&n; * the &quot;init_cy82c693_chip&quot;, it is the correct location to tinker/setup&n; * the device prior to INIT.&n; */
+DECL|function|pci_init_cy82c693
+r_int
+r_int
+id|__init
+id|pci_init_cy82c693
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_const
+r_char
+op_star
+id|name
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|init_cy82c693_chip
 r_static
 r_void
@@ -1162,18 +1185,15 @@ macro_line|#endif /* CY82C693_DEBUG_INFO */
 macro_line|#endif /* CY82C693_SETDMA_CLOCK */ 
 )brace
 multiline_comment|/*&n; * the init function - called for each ide channel once&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_init_cy82c693
 r_void
+id|__init
 id|ide_init_cy82c693
 c_func
 (paren
 id|ide_hwif_t
 op_star
 id|hwif
-)paren
 )paren
 (brace
 id|hwif-&gt;chipset

@@ -619,18 +619,15 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_indy_time
 r_static
 r_int
 r_int
+id|__init
 id|get_indy_time
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -816,16 +813,13 @@ suffix:semicolon
 )brace
 DECL|macro|ALLINTS
 mdefine_line|#define ALLINTS (IE_IRQ0 | IE_IRQ1 | IE_IRQ2 | IE_IRQ3 | IE_IRQ4 | IE_IRQ5)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|indy_timer_init
 r_void
+id|__init
 id|indy_timer_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

@@ -53,16 +53,13 @@ id|autofs_fs_type
 suffix:semicolon
 )brace
 macro_line|#else /* MODULE */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_autofs_fs
 r_int
+id|__init
 id|init_autofs_fs
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return

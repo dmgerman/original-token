@@ -179,7 +179,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCH_ACORN
 r_extern
 r_void
 id|ecard_init
@@ -188,7 +187,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#if defined(CONFIG_SYSVIPC)
 r_extern
 r_void
@@ -2416,6 +2414,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA
+id|irda_device_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Must be done after protocol initialization */
+macro_line|#endif
 multiline_comment|/* Mount the root filesystem.. */
 id|mount_root
 c_func

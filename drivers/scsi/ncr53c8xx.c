@@ -38,10 +38,6 @@ macro_line|#ifndef&t;__initdata
 DECL|macro|__initdata
 mdefine_line|#define&t;__initdata
 macro_line|#endif
-macro_line|#ifndef&t;__initfunc
-DECL|macro|__initfunc
-mdefine_line|#define&t;__initfunc(__arginit) __arginit
-macro_line|#endif
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt;= LinuxVersionCode(2,1,92)
 macro_line|#include &lt;linux/bios32.h&gt;
@@ -29079,13 +29075,32 @@ id|base
 op_assign
 id|pdev-&gt;resource
 (braket
-op_increment
 id|index
 )braket
 dot
 id|start
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|pdev-&gt;resource
+(braket
+id|index
+)braket
+dot
+id|flags
+op_amp
+l_int|0x7
+)paren
+op_eq
+l_int|0x4
+)paren
+op_increment
+id|index
+suffix:semicolon
 r_return
+op_increment
 id|index
 suffix:semicolon
 )brace
@@ -30228,7 +30243,7 @@ id|latency_timer
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* __sparc__ */
-multiline_comment|/*&n;&t; * Check availability of IO space, memory space and master capability.&n;&t; */
+multiline_comment|/*&n;&t; * Check availability of IO space, memory space and master capability.&n;&t; * No need to test BARs flags since they are hardwired to the&n;&t; * expected value.&n;&t; */
 r_if
 c_cond
 (paren
@@ -30236,42 +30251,10 @@ id|command
 op_amp
 id|PCI_COMMAND_IO
 )paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|io_port
-op_amp
-l_int|3
-)paren
-op_ne
-l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ncr53c8xx: disabling I/O mapping since base address 0 (0x%x)&bslash;n&quot;
-l_string|&quot;           bits 0..1 indicate a non-IO mapping&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|io_port
-)paren
-suffix:semicolon
-id|io_port
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
 id|io_port
 op_and_assign
 id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
-)brace
 r_else
 id|io_port
 op_assign
@@ -30284,37 +30267,10 @@ id|command
 op_amp
 id|PCI_COMMAND_MEMORY
 )paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|base
-op_amp
-id|PCI_BASE_ADDRESS_SPACE
-)paren
-op_ne
-id|PCI_BASE_ADDRESS_SPACE_MEMORY
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ncr53c8xx: disabling memory mapping since base address 1&bslash;n&quot;
-l_string|&quot;            contains a non-memory mapping&bslash;n&quot;
-)paren
-suffix:semicolon
-id|base
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
 id|base
 op_and_assign
 id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
-)brace
 r_else
 id|base
 op_assign

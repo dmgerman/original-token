@@ -50,16 +50,13 @@ macro_line|#endif
 macro_line|#endif
 multiline_comment|/* rs_init - starts up the serial interface -&n;   handle normal case of starting up the serial interface */
 macro_line|#ifdef CONFIG_SERIAL
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|rs_init
 r_int
+id|__init
 id|rs_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#if defined(CONFIG_ZS) &amp;&amp; defined(CONFIG_DZ)
@@ -103,11 +100,9 @@ macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 multiline_comment|/* serial_console_init handles the special case of starting&n; *   up the console on the serial port&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|serial_console_init
 r_int
+id|__init
 id|serial_console_init
 c_func
 (paren
@@ -116,7 +111,6 @@ id|kmem_start
 comma
 r_int
 id|kmem_end
-)paren
 )paren
 (brace
 macro_line|#if defined(CONFIG_ZS) &amp;&amp; defined(CONFIG_DZ)

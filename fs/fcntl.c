@@ -988,15 +988,12 @@ suffix:semicolon
 r_case
 id|F_SETSIG
 suffix:colon
+multiline_comment|/* arg == 0 restores default behaviour. */
 r_if
 c_cond
 (paren
 id|arg
-op_le
-l_int|0
-op_logical_or
-id|arg
-OG
+template_param
 id|_NSIG
 )paren
 (brace

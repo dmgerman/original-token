@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Mon May 10 09:51:13 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Thu Jul  8 12:53:35 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef NET_IRDA_H
 DECL|macro|NET_IRDA_H
 mdefine_line|#define NET_IRDA_H
@@ -15,6 +15,10 @@ macro_line|#ifndef FALSE
 DECL|macro|FALSE
 mdefine_line|#define FALSE 0
 macro_line|#endif
+macro_line|#ifndef MIN
+DECL|macro|MIN
+mdefine_line|#define MIN(a, b) (((a) &lt; (b)) ? (a) : (b))
+macro_line|#endif
 DECL|macro|ALIGN
 mdefine_line|#define ALIGN __attribute__((aligned))
 DECL|macro|PACK
@@ -28,7 +32,7 @@ multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug *
 DECL|macro|IRDA_DEBUG_LEVEL
 mdefine_line|#define IRDA_DEBUG_LEVEL 0
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args...) if (irda_debug &gt;= (n)) printk(KERN_DEBUG args)
+mdefine_line|#define DEBUG(n, args...) (irda_debug &gt;= (n)) ? (printk(KERN_DEBUG args)) : 0
 DECL|macro|ASSERT
 mdefine_line|#define ASSERT(expr, func) &bslash;&n;if(!(expr)) { &bslash;&n;        printk( &quot;Assertion failed! %s,%s,%s,line=%d&bslash;n&quot;,&bslash;&n;        #expr,__FILE__,__FUNCTION__,__LINE__); &bslash;&n;        ##func}
 macro_line|#else
@@ -44,8 +48,13 @@ mdefine_line|#define MESSAGE(args...) printk(KERN_INFO args)
 DECL|macro|ERROR
 mdefine_line|#define ERROR(args...)   printk(KERN_ERR args)
 DECL|macro|MSECS_TO_JIFFIES
-mdefine_line|#define MSECS_TO_JIFFIES(ms) (ms*HZ/1000)
+mdefine_line|#define MSECS_TO_JIFFIES(ms) (((ms)*HZ+999)/1000)
 multiline_comment|/*&n; *  Magic numbers used by Linux/IR. Random numbers which must be unique to &n; *  give the best protection&n; */
+DECL|typedef|magic_t
+r_typedef
+id|__u32
+id|magic_t
+suffix:semicolon
 DECL|macro|IRTTY_MAGIC
 mdefine_line|#define IRTTY_MAGIC        0x2357
 DECL|macro|LAP_MAGIC
@@ -228,6 +237,53 @@ suffix:semicolon
 DECL|typedef|__u16_host_order
 )brace
 id|__u16_host_order
+suffix:semicolon
+multiline_comment|/* Per-packet information we need to hide inside sk_buff */
+DECL|struct|irda_skb_cb
+r_struct
+id|irda_skb_cb
+(brace
+DECL|member|magic
+id|magic_t
+id|magic
+suffix:semicolon
+multiline_comment|/* Be sure that we can trust the information */
+DECL|member|mtt
+r_int
+id|mtt
+suffix:semicolon
+multiline_comment|/* minimum turn around time */
+DECL|member|xbofs
+r_int
+id|xbofs
+suffix:semicolon
+multiline_comment|/* number of xbofs required, used by SIR mode */
+DECL|member|line
+r_int
+id|line
+suffix:semicolon
+multiline_comment|/* Used by IrCOMM in IrLPT mode */
+DECL|member|instance
+r_void
+op_star
+id|instance
+suffix:semicolon
+multiline_comment|/* Used by IrTTP */
+DECL|member|destructor
+r_void
+(paren
+op_star
+id|destructor
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* Used for flow control */
+)brace
 suffix:semicolon
 multiline_comment|/*&n; *  Information monitored by some layers&n; */
 DECL|struct|irda_statistics
@@ -468,9 +524,8 @@ suffix:semicolon
 DECL|macro|LM_UNKNOWN
 mdefine_line|#define LM_UNKNOWN 0xff       /* Unspecified disconnect reason */
 multiline_comment|/*&n; *  Notify structure used between transport and link management layers&n; */
-DECL|struct|notify_t
+r_typedef
 r_struct
-id|notify_t
 (brace
 DECL|member|data_indication
 r_int
@@ -634,7 +689,9 @@ l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* Name of layer */
+DECL|typedef|notify_t
 )brace
+id|notify_t
 suffix:semicolon
 DECL|macro|NOTIFY_MAX_NAME
 mdefine_line|#define NOTIFY_MAX_NAME 16

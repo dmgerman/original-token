@@ -60,16 +60,13 @@ l_int|NULL
 multiline_comment|/* remount */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_efs_fs
 r_int
+id|__init
 id|init_efs_fs
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return

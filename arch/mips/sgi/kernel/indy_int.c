@@ -1961,16 +1961,13 @@ id|irq
 suffix:semicolon
 multiline_comment|/* Sane hardware, sane code ... */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_IRQ
 r_void
+id|__init
 id|init_IRQ
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|irq_cannonicalize
@@ -2428,16 +2425,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sgint_init
 r_void
+id|__init
 id|sgint_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

@@ -4686,17 +4686,14 @@ multiline_comment|/* Will point to the next filesystem in the kernel table */
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/* When this code is not compiled as a module, this is the main entry point,&n; * called by do_sys_setup() in fs/filesystems.c&n; *&n; * NOTE : __initfunc() is a macro used to remove this function from memory&n; * once initialization is done&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+multiline_comment|/* When this code is not compiled as a module, this is the main entry point,&n; * called by do_sys_setup() in fs/filesystems.c&n; *&n; * NOTE : __init is a macro used to remove this function from memory&n; * once initialization is done&n; */
+DECL|function|init_ntfs_fs
 r_int
+id|__init
 id|init_ntfs_fs
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* Comment this if you trust klogd. There are reasons not to trust it&n;&t; */

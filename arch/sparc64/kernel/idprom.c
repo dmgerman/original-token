@@ -17,13 +17,11 @@ id|idprom
 id|idprom_buffer
 suffix:semicolon
 multiline_comment|/* Calculate the IDPROM checksum (xor of the data bytes). */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|calc_idprom_cksum
 r_static
 r_int
 r_char
+id|__init
 id|calc_idprom_cksum
 c_func
 (paren
@@ -31,7 +29,6 @@ r_struct
 id|idprom
 op_star
 id|idprom
-)paren
 )paren
 (brace
 r_int
@@ -77,16 +74,13 @@ id|cksum
 suffix:semicolon
 )brace
 multiline_comment|/* Create a local IDPROM copy and verify integrity. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|idprom_init
 r_void
+id|__init
 id|idprom_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|prom_get_idprom

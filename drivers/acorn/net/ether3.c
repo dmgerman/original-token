@@ -517,12 +517,10 @@ id|REG_CONFIG2
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read the ethernet address string from the on board rom.&n; * This is an ascii string!!!&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|ether3_addr
 id|ether3_addr
 c_func
 (paren
@@ -534,7 +532,6 @@ r_struct
 id|expansion_card
 op_star
 id|ec
-)paren
 )paren
 (brace
 r_struct
@@ -660,12 +657,10 @@ l_int|6
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------------- */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|ether3_ramtest
 id|ether3_ramtest
 c_func
 (paren
@@ -677,7 +672,6 @@ comma
 r_int
 r_char
 id|byte
-)paren
 )paren
 (brace
 r_int
@@ -966,12 +960,10 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------------- */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|ether3_init_2
 id|ether3_init_2
 c_func
 (paren
@@ -979,7 +971,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -1616,12 +1607,10 @@ id|val
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the real probe routine.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|ether3_probe1
 id|ether3_probe1
 c_func
 (paren
@@ -1629,7 +1618,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static
@@ -1966,12 +1954,10 @@ r_return
 id|error
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|ether3_get_dev
 id|ether3_get_dev
 c_func
 (paren
@@ -1984,7 +1970,6 @@ r_struct
 id|expansion_card
 op_star
 id|ec
-)paren
 )paren
 (brace
 id|ecard_claim
@@ -2054,11 +2039,9 @@ id|ec
 suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|ether3_probe
 id|ether3_probe
 c_func
 (paren
@@ -2066,7 +2049,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct

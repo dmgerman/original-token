@@ -2373,12 +2373,10 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * Scan a region for a piece of a given size with the required alignment.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
 op_star
+id|__init
+DECL|function|find_mem_piece
 id|find_mem_piece
 c_func
 (paren
@@ -2387,7 +2385,6 @@ id|size
 comma
 r_int
 id|align
-)paren
 )paren
 (brace
 r_int
@@ -2504,12 +2501,10 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Remove some memory from an array of pieces&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|remove_mem_piece
 id|remove_mem_piece
 c_func
 (paren
@@ -2526,7 +2521,6 @@ id|size
 comma
 r_int
 id|must_exist
-)paren
 )paren
 (brace
 r_int
@@ -2828,12 +2822,10 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|print_mem_pieces
 r_static
 r_void
+id|__init
 id|print_mem_pieces
 c_func
 (paren
@@ -2841,7 +2833,6 @@ r_struct
 id|mem_pieces
 op_star
 id|mp
-)paren
 )paren
 (brace
 r_int
@@ -2896,12 +2887,10 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Add some memory to an array of pieces&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|append_mem_piece
 id|append_mem_piece
 c_func
 (paren
@@ -2915,7 +2904,6 @@ id|start
 comma
 r_int
 id|size
-)paren
 )paren
 (brace
 r_struct
@@ -3140,12 +3128,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sort_mem_pieces
 r_static
 r_void
+id|__init
 id|sort_mem_pieces
 c_func
 (paren
@@ -3153,7 +3139,6 @@ r_struct
 id|mem_pieces
 op_star
 id|mp
-)paren
 )paren
 (brace
 r_int
@@ -3268,12 +3253,10 @@ id|s
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|coalesce_mem_pieces
 r_static
 r_void
+id|__init
 id|coalesce_mem_pieces
 c_func
 (paren
@@ -3281,7 +3264,6 @@ r_struct
 id|mem_pieces
 op_star
 id|mp
-)paren
 )paren
 (brace
 r_int
@@ -3423,12 +3405,10 @@ id|d
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read in a property describing some pieces of memory.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_mem_prop
 r_static
 r_void
+id|__init
 id|get_mem_prop
 c_func
 (paren
@@ -3440,7 +3420,6 @@ r_struct
 id|mem_pieces
 op_star
 id|mp
-)paren
 )paren
 (brace
 r_struct
@@ -3530,11 +3509,9 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
 macro_line|#ifndef CONFIG_8xx
 multiline_comment|/*&n; * Set up one of the I/D BAT (block address translation) register pairs.&n; * The parameters are not checked; in particular size must be a power&n; * of 2 between 128k and 256M.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|setbat
 r_void
+id|__init
 id|setbat
 c_func
 (paren
@@ -3555,7 +3532,6 @@ id|size
 comma
 r_int
 id|flags
-)paren
 )paren
 (brace
 r_int
@@ -3855,17 +3831,14 @@ macro_line|#endif /* CONFIG_8xx */
 multiline_comment|/*&n; * Map in all of physical memory starting at KERNELBASE.&n; */
 DECL|macro|PAGE_KERNEL_RO
 mdefine_line|#define PAGE_KERNEL_RO&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mapin_ram
 r_static
 r_void
+id|__init
 id|mapin_ram
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -4375,16 +4348,13 @@ r_return
 id|p
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|free_initmem
 r_void
+id|__init
 id|free_initmem
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -4602,16 +4572,13 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Do very early mm setup such as finding the size of memory&n; * and setting up the hash table.&n; * A lot of this is prep/pmac specific but a lot of it could&n; * still be merged.&n; * -- Cort&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|MMU_init
 r_void
+id|__init
 id|MMU_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef __SMP__
@@ -5025,17 +4992,14 @@ l_int|0x211
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find some memory for setup_arch to return.&n; * We use the largest chunk of available memory as the area&n; * that setup_arch returns, making sure that there are at&n; * least 32 pages unused before this for MMU_get_page to use.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|find_available_memory
 r_int
 r_int
+id|__init
 id|find_available_memory
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -5233,12 +5197,10 @@ id|avail_start
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * paging_init() sets up the page tables - in fact we&squot;ve already done this.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|paging_init
 r_int
 r_int
+id|__init
 id|paging_init
 c_func
 (paren
@@ -5249,7 +5211,6 @@ comma
 r_int
 r_int
 id|end_mem
-)paren
 )paren
 (brace
 r_extern
@@ -5303,11 +5264,9 @@ r_return
 id|start_mem
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mem_init
 r_void
+id|__init
 id|mem_init
 c_func
 (paren
@@ -5318,7 +5277,6 @@ comma
 r_int
 r_int
 id|end_mem
-)paren
 )paren
 (brace
 r_int
@@ -5867,18 +5825,15 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_MBX
 multiline_comment|/*&n; * This is a big hack right now, but it may turn into something real&n; * someday.&n; *&n; * For the MBX860 (at this time anyway), there is nothing to initialize&n; * associated the PROM.  Rather than include all of the prom.c&n; * functions in the image just to get prom_init, all we really need right&n; * now is the initialization of the physical memory region.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mbx_find_end_of_memory
 r_int
 r_int
 op_star
+id|__init
 id|mbx_find_end_of_memory
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -6029,18 +5984,15 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_MBX */
 macro_line|#ifndef CONFIG_8xx
 multiline_comment|/*&n; * On systems with Open Firmware, collect information about&n; * physical RAM and which pieces are already in use.&n; * At this point, we have (at least) the first 8MB mapped with a BAT.&n; * Our text, data, bss use something over 1MB, starting at 0.&n; * Open Firmware may be using 1MB at the 4MB point.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pmac_find_end_of_memory
 r_int
 r_int
 op_star
+id|__init
 id|pmac_find_end_of_memory
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -6405,18 +6357,15 @@ id|total
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This finds the amount of physical ram and does necessary&n; * setup for prep.  This is pretty architecture specific so&n; * this will likely stay separate from the pmac.&n; * -- Cort&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prep_find_end_of_memory
 r_int
 r_int
 op_star
+id|__init
 id|prep_find_end_of_memory
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -6536,18 +6485,15 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|HARDWARE_MAPPED_SIZE
 mdefine_line|#define HARDWARE_MAPPED_SIZE (512*1024)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|apus_find_end_of_memory
 r_int
 r_int
 op_star
+id|__init
 id|apus_find_end_of_memory
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -6793,17 +6739,14 @@ suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_APUS */
 multiline_comment|/*&n; * Initialize the hash table and patch the instructions in head.S.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hash_init
 r_static
 r_void
+id|__init
 id|hash_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

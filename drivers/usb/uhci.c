@@ -603,13 +603,11 @@ c_func
 (paren
 id|status
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|tmp-&gt;info
 )paren
-op_xor
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2130,8 +2128,6 @@ id|uhci-&gt;io_addr
 op_plus
 id|USBFRNUM
 )paren
-op_amp
-l_int|0x3ff
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * uhci_init_isoc()&n; *&n; * Checks bus bandwidth allocation for this USB bus.&n; * Allocates some data structures.&n; * Initializes parts of them from the function parameters.&n; *&n; * It does not associate any data/buffer pointers or&n; * driver (caller) callback functions with the allocated&n; * data structures.  Such associations are left until&n; * uhci_run_isoc().&n; *&n; * Returns 0 for success or negative value for error.&n; * Sets isocdesc before successful return.&n; */
@@ -2598,19 +2594,29 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Check start_frame for inside a valid range.&n;&t; * Only allow transfer requests to be made 1.000 second&n;&t; * into the future.&n;&t; */
+id|cur_frame
+op_assign
+id|uhci_get_current_frame_number
+(paren
+id|isocdesc-&gt;usb_dev
+)paren
+suffix:semicolon
 multiline_comment|/* if not START_ASAP (i.e., RELATIVE or ABSOLUTE): */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|pr_isocdesc
-op_logical_and
+)paren
+r_if
+c_cond
 (paren
 id|isocdesc-&gt;start_type
-op_ne
-id|START_ASAP
+op_eq
+id|START_RELATIVE
 )paren
-)paren
+(brace
 r_if
 c_cond
 (paren
@@ -2623,7 +2629,7 @@ op_logical_or
 (paren
 id|isocdesc-&gt;start_frame
 OG
-l_int|1000
+id|CAN_SCHEDULE_FRAMES
 )paren
 )paren
 (brace
@@ -2642,20 +2648,91 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Set the start/end frame numbers.&n;&t; */
+)brace
+multiline_comment|/* end START_RELATIVE */
+r_else
 r_if
 c_cond
 (paren
-op_logical_neg
-id|pr_isocdesc
+id|isocdesc-&gt;start_type
+op_eq
+id|START_ABSOLUTE
 )paren
-id|cur_frame
-op_assign
-id|uhci_get_current_frame_number
+(brace
+r_if
+c_cond
 (paren
-id|isocdesc-&gt;usb_dev
+id|isocdesc-&gt;start_frame
+OG
+id|cur_frame
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|isocdesc-&gt;start_frame
+op_minus
+id|cur_frame
+)paren
+OG
+id|CAN_SCHEDULE_FRAMES
+)paren
+(brace
+macro_line|#ifdef CONFIG_USB_DEBUG_ISOC
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;uhci_init_isoc: bad start_frame value (%d)&bslash;n&quot;
+comma
+id|isocdesc-&gt;start_frame
 )paren
 suffix:semicolon
+macro_line|#endif
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+)brace
+r_else
+multiline_comment|/* start_frame &lt;= cur_frame */
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|isocdesc-&gt;start_frame
+op_plus
+id|UHCI_MAX_SOF_NUMBER
+op_plus
+l_int|1
+op_minus
+id|cur_frame
+)paren
+OG
+id|CAN_SCHEDULE_FRAMES
+)paren
+(brace
+macro_line|#ifdef CONFIG_USB_DEBUG_ISOC
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;uhci_init_isoc: bad start_frame value (%d)&bslash;n&quot;
+comma
+id|isocdesc-&gt;start_frame
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+)brace
+)brace
+multiline_comment|/* end START_ABSOLUTE */
+multiline_comment|/*&n;&t; * Set the start/end frame numbers.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2668,17 +2745,6 @@ id|pr_isocdesc-&gt;end_frame
 op_plus
 l_int|1
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|isocdesc-&gt;start_type
-op_eq
-id|START_ABSOLUTE
-)paren
-(brace
-multiline_comment|/* Use start_frame as is. */
 )brace
 r_else
 r_if
@@ -2721,17 +2787,18 @@ op_plus
 id|START_FRAME_FUDGE
 suffix:semicolon
 )brace
+multiline_comment|/* else for start_type == START_ABSOLUTE, use start_frame as is. */
 multiline_comment|/* and see if start_frame needs any correction */
 r_if
 c_cond
 (paren
 id|isocdesc-&gt;start_frame
 op_ge
-l_int|1000
+id|UHCI_NUMFRAMES
 )paren
 id|isocdesc-&gt;start_frame
 op_sub_assign
-l_int|1000
+id|UHCI_NUMFRAMES
 suffix:semicolon
 multiline_comment|/* and fix the end_frame value */
 id|isocdesc-&gt;end_frame
@@ -2747,11 +2814,11 @@ c_cond
 (paren
 id|isocdesc-&gt;end_frame
 op_ge
-l_int|1000
+id|UHCI_NUMFRAMES
 )paren
 id|isocdesc-&gt;end_frame
 op_sub_assign
-l_int|1000
+id|UHCI_NUMFRAMES
 suffix:semicolon
 id|isocdesc-&gt;prev_completed_frame
 op_assign
@@ -2836,9 +2903,6 @@ id|td
 op_increment
 comma
 id|fd
-op_increment
-comma
-id|cur_frame
 op_increment
 )paren
 (brace
@@ -2927,7 +2991,7 @@ id|td-&gt;isoc_td_number
 op_assign
 id|ix
 suffix:semicolon
-multiline_comment|/* 0-based; does not wrap 999 -&gt; 0 */
+multiline_comment|/* 0-based; does not wrap/overflow back to 0 */
 r_if
 c_cond
 (paren
@@ -2988,14 +3052,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_increment
 id|cur_frame
 op_ge
-l_int|999
+id|UHCI_NUMFRAMES
 )paren
 id|cur_frame
 op_assign
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* end for ix */
@@ -3075,7 +3139,7 @@ op_logical_or
 (paren
 id|isocdesc-&gt;start_frame
 op_ge
-l_int|1000
+id|UHCI_NUMFRAMES
 )paren
 )paren
 (brace
@@ -3142,7 +3206,7 @@ c_cond
 op_increment
 id|cur_frame
 op_ge
-l_int|1000
+id|UHCI_NUMFRAMES
 )paren
 id|cur_frame
 op_assign
@@ -5898,13 +5962,11 @@ c_func
 id|td-&gt;info
 )paren
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|td-&gt;info
 )paren
-op_xor
-l_int|1
 )paren
 op_lshift
 l_int|19
@@ -5972,13 +6034,11 @@ c_func
 id|td-&gt;info
 )paren
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|td-&gt;info
 )paren
-op_xor
-l_int|1
 )paren
 suffix:semicolon
 id|uhci_remove_qh

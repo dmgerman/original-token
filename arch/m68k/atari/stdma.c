@@ -248,16 +248,13 @@ id|stdma_locked
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function: void stdma_init( void )&n; *&n; * Purpose: Initialize the ST-DMA chip access controlling.&n; *   It sets up the interrupt and its service routine. The int is registered&n; *   as slow int, client devices have to live with that (no problem&n; *   currently).&n; *&n; * Inputs: none&n; *&n; * Return: nothing&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|stdma_init
 r_void
+id|__init
 id|stdma_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|stdma_isr

@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/bigmem.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -546,6 +547,24 @@ id|i
 op_assign
 id|scount
 suffix:semicolon
+id|page
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|kmap
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|page
+comma
+id|KM_READ
+)paren
+suffix:semicolon
 id|copy_to_user
 c_func
 (paren
@@ -554,6 +573,18 @@ comma
 id|page
 comma
 id|i
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|page
+comma
+id|KM_READ
 )paren
 suffix:semicolon
 id|addr
@@ -876,6 +907,24 @@ id|i
 op_assign
 id|count
 suffix:semicolon
+id|page
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|kmap
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|page
+comma
+id|KM_WRITE
+)paren
+suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -884,6 +933,18 @@ comma
 id|tmp
 comma
 id|i
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|page
+comma
+id|KM_WRITE
 )paren
 suffix:semicolon
 id|addr

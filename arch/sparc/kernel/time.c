@@ -380,17 +380,14 @@ suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
 multiline_comment|/* Kick start a stopped clock (procedure from the Sun NVRAM/hostid FAQ). */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|kick_start_clock
 r_static
 r_void
+id|__init
 id|kick_start_clock
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_register
@@ -1391,16 +1388,13 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sbus_time_init
 r_void
+id|__init
 id|sbus_time_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -1770,16 +1764,13 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|time_init
 r_void
+id|__init
 id|time_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI

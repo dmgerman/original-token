@@ -73,15 +73,12 @@ r_return
 id|chipavail
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|amiga_chip_init
 r_void
+id|__init
 id|amiga_chip_init
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

@@ -5016,7 +5016,6 @@ id|file_operations
 id|msp3400c_mixer_fops
 op_assign
 (brace
-op_amp
 id|msp3400c_mixer_llseek
 comma
 l_int|NULL
@@ -5031,18 +5030,15 @@ multiline_comment|/* readdir */
 l_int|NULL
 comma
 multiline_comment|/* poll */
-op_amp
 id|msp3400c_mixer_ioctl
 comma
 l_int|NULL
 comma
 multiline_comment|/* mmap */
-op_amp
 id|msp3400c_mixer_open
 comma
 l_int|NULL
 comma
-op_amp
 id|msp3400c_mixer_release
 comma
 l_int|NULL

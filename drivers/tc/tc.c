@@ -323,12 +323,10 @@ id|info-&gt;clk_period
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Probing for TURBOchannel modules&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|my_dbe_handler
 r_static
 r_void
+id|__init
 id|my_dbe_handler
 c_func
 (paren
@@ -337,19 +335,16 @@ id|pt_regs
 op_star
 id|regs
 )paren
-)paren
 (brace
 id|regs-&gt;cp0_epc
 op_add_assign
 l_int|4
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|tc_probe
 r_static
 r_void
+id|__init
 id|tc_probe
 c_func
 (paren
@@ -363,7 +358,6 @@ id|size
 comma
 r_int
 id|max_slot
-)paren
 )paren
 (brace
 r_int
@@ -750,16 +744,13 @@ id|old_be_handler
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * the main entry&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|tc_init
 r_void
+id|__init
 id|tc_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

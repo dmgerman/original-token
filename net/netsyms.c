@@ -23,6 +23,16 @@ macro_line|#include &lt;net/scm.h&gt;
 macro_line|#ifdef CONFIG_BRIDGE
 macro_line|#include &lt;net/br.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET
+r_extern
+id|__u32
+id|sysctl_wmem_max
+suffix:semicolon
+r_extern
+id|__u32
+id|sysctl_rmem_max
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
@@ -39,14 +49,6 @@ r_extern
 r_struct
 id|net_proto_family
 id|inet_family_ops
-suffix:semicolon
-r_extern
-id|__u32
-id|sysctl_wmem_max
-suffix:semicolon
-r_extern
-id|__u32
-id|sysctl_rmem_max
 suffix:semicolon
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE) || defined (CONFIG_KHTTPD) || defined (CONFIG_KHTTPD_MODULE)
 macro_line|#include &lt;linux/in6.h&gt;
@@ -815,13 +817,6 @@ c_func
 id|inet_del_protocol
 )paren
 suffix:semicolon
-DECL|variable|init_etherdev
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|init_etherdev
-)paren
-suffix:semicolon
 DECL|variable|ip_route_output
 id|EXPORT_SYMBOL
 c_func
@@ -1145,6 +1140,13 @@ c_func
 id|inet_sock_destruct
 )paren
 suffix:semicolon
+DECL|variable|inet_sock_release
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|inet_sock_release
+)paren
+suffix:semicolon
 multiline_comment|/* Socket demultiplexing. */
 DECL|variable|tcp_ehash
 id|EXPORT_SYMBOL
@@ -1287,6 +1289,13 @@ c_func
 id|udp_connect
 )paren
 suffix:semicolon
+DECL|variable|udp_disconnect
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|udp_disconnect
+)paren
+suffix:semicolon
 DECL|variable|udp_sendmsg
 id|EXPORT_SYMBOL
 c_func
@@ -1299,6 +1308,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|tcp_close
+)paren
+suffix:semicolon
+DECL|variable|tcp_disconnect
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_disconnect
 )paren
 suffix:semicolon
 DECL|variable|tcp_accept
@@ -1453,6 +1469,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|tcp_timewait_state_process
+)paren
+suffix:semicolon
+DECL|variable|tcp_timewait_cachep
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_timewait_cachep
+)paren
+suffix:semicolon
+DECL|variable|tcp_timewait_kill
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_timewait_kill
 )paren
 suffix:semicolon
 DECL|variable|tcp_do_sendmsg
@@ -1616,6 +1646,13 @@ c_func
 id|tcp_tw_death_row_slot
 )paren
 suffix:semicolon
+DECL|variable|tcp_tw_deschedule
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_tw_deschedule
+)paren
+suffix:semicolon
 DECL|variable|sysctl_local_port_range
 id|EXPORT_SYMBOL
 c_func
@@ -1776,6 +1813,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|rtnetlink_dump_ifinfo
+)paren
+suffix:semicolon
+DECL|variable|rtnetlink_put_metrics
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|rtnetlink_put_metrics
 )paren
 suffix:semicolon
 DECL|variable|rtnl
@@ -2000,6 +2044,13 @@ id|unregister_netdevice_notifier
 suffix:semicolon
 multiline_comment|/* support for loadable net drivers */
 macro_line|#ifdef CONFIG_NET
+DECL|variable|init_etherdev
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|init_etherdev
+)paren
+suffix:semicolon
 DECL|variable|loopback_dev
 id|EXPORT_SYMBOL
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; * &n; * Filename:&t;  irport.c&n; * Version:&t;  1.0&n; * Description:   Half duplex serial port SIR driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Tue Jun  1 10:02:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; * &n; *     Copyright (c) 1997, 1998, 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     This driver is ment to be a small half duplex serial driver to be&n; *     used for IR-chipsets that has a UART (16550) compatibility mode. &n; *     Eventually it will replace irtty, because of irtty has some &n; *     problems that is hard to get around when we don&squot;t have control&n; *     over the serial driver. This driver may also be used by FIR &n; *     drivers to handle SIR mode for them.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; * &n; * Filename:&t;  irport.c&n; * Version:&t;  1.0&n; * Description:   Half duplex serial port SIR driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Wed Aug 11 09:24:46 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; * &n; *     Copyright (c) 1997, 1998, 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     This driver is ment to be a small half duplex serial driver to be&n; *     used for IR-chipsets that has a UART (16550) compatibility mode. &n; *     Eventually it will replace irtty, because of irtty has some &n; *     problems that is hard to get around when we don&squot;t have control&n; *     over the serial driver. This driver may also be used by FIR &n; *     drivers to handle SIR mode for them.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -920,7 +920,7 @@ id|irda_device
 op_star
 id|idev
 comma
-r_int
+id|__u32
 id|speed
 )paren
 (brace
@@ -1100,11 +1100,9 @@ multiline_comment|/* Turn on interrups */
 id|outb
 c_func
 (paren
-id|UART_IER_RLSI
-op_or
+multiline_comment|/*UART_IER_RLSI|*/
 id|UART_IER_RDI
-op_or
-id|UART_IER_THRI
+multiline_comment|/*|UART_IER_THRI*/
 comma
 id|iobase
 op_plus
@@ -1268,8 +1266,7 @@ multiline_comment|/* Turn on receive interrupts */
 id|outb
 c_func
 (paren
-id|UART_IER_RLSI
-op_or
+multiline_comment|/* UART_IER_RLSI| */
 id|UART_IER_RDI
 comma
 id|iobase
@@ -1488,9 +1485,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|tickssofar
 OL
 l_int|5
+)paren
+op_logical_or
+op_logical_neg
+id|dev-&gt;start
 )paren
 r_return
 op_minus
@@ -1590,7 +1592,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irport_receive (void)&n; *&n; *    Receive one frame from the infrared port&n; *&n; */
+multiline_comment|/*&n; * Function irport_receive (idev)&n; *&n; *    Receive one frame from the infrared port&n; *&n; */
 DECL|function|irport_receive
 r_static
 r_void
@@ -1815,7 +1817,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), RLSI&bslash;n&quot;
@@ -1826,13 +1828,7 @@ suffix:semicolon
 r_case
 id|UART_IIR_RDI
 suffix:colon
-r_if
-c_cond
-(paren
-id|lsr
-op_amp
-id|UART_LSR_DR
-)paren
+singleline_comment|//if (lsr &amp; UART_LSR_DR)
 multiline_comment|/* Receive interrupt */
 id|irport_receive
 c_func
@@ -1884,7 +1880,7 @@ c_cond
 id|boguscount
 op_increment
 OG
-l_int|32
+l_int|100
 )paren
 r_break
 suffix:semicolon
@@ -2017,20 +2013,11 @@ comma
 id|iobase
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-multiline_comment|/* Ready to play! */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|irda_device_net_open
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Change speed to make sure dongles follow us again */
 r_if
@@ -2047,6 +2034,8 @@ id|idev
 comma
 l_int|9600
 )paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -2073,6 +2062,15 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -2095,27 +2093,40 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|DEBUG
+id|ASSERT
 c_func
 (paren
-l_int|4
+id|idev
+op_ne
+l_int|NULL
 comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 )paren
 suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|idev-&gt;magic
+op_eq
+id|IRDA_DEVICE_MAGIC
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
 id|iobase
 op_assign
 id|idev-&gt;io.iobase2
 suffix:semicolon
-multiline_comment|/* Stop device */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|irda_device_net_close
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|irport_stop
 c_func
@@ -2222,7 +2233,7 @@ id|OUTSIDE_FRAME
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irtty_set_dtr_rts (tty, dtr, rts)&n; *&n; *    This function can be used by dongles etc. to set or reset the status&n; *    of the dtr and rts lines&n; */
+multiline_comment|/*&n; * Function irport_set_dtr_rts (tty, dtr, rts)&n; *&n; *    This function can be used by dongles etc. to set or reset the status&n; *    of the dtr and rts lines&n; */
 DECL|function|irport_set_dtr_rts
 r_static
 r_void

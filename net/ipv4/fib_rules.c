@@ -2349,16 +2349,13 @@ id|skb-&gt;len
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_RTNETLINK */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fib_rules_init
 r_void
+id|__init
 id|fib_rules_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|register_netdevice_notifier

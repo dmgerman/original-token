@@ -61,16 +61,13 @@ r_void
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* Dummy function for when there is no keyboard. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hp300_keyb_init
 r_int
+id|__init
 id|hp300_keyb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 )brace
@@ -154,16 +151,13 @@ l_string|&quot;HP9000/300&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|config_hp300
 r_void
+id|__init
 id|config_hp300
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|mach_sched_init

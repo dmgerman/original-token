@@ -934,13 +934,12 @@ suffix:semicolon
 multiline_comment|/* Get I/O base address from PCI Configuration Space */
 id|port
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|1
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
+dot
+id|start
 multiline_comment|/* Verify port address range is not already being used */
 id|port_len
 op_assign

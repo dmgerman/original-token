@@ -1325,8 +1325,10 @@ DECL|macro|AS_LOOP_DOWN
 mdefine_line|#define AS_LOOP_DOWN           0
 DECL|macro|AS_LOOP_GOOD
 mdefine_line|#define AS_LOOP_GOOD           1
-DECL|macro|AS_REDO_PORTDB
-mdefine_line|#define AS_REDO_PORTDB         2
+DECL|macro|AS_REDO_FABRIC_PORTDB
+mdefine_line|#define AS_REDO_FABRIC_PORTDB  2
+DECL|macro|AS_REDO_LOOP_PORTDB
+mdefine_line|#define AS_REDO_LOOP_PORTDB    4
 DECL|struct|isp2x00_hostdata
 r_struct
 id|isp2x00_hostdata
@@ -3170,6 +3172,14 @@ comma
 id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hostdata-&gt;adapter_state
+op_amp
+id|AS_REDO_LOOP_PORTDB
+)paren
+(brace
 id|memset
 c_func
 (paren
@@ -3367,6 +3377,7 @@ comma
 id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
+)brace
 id|port_id
 op_assign
 id|hostdata-&gt;port_id
@@ -4243,19 +4254,23 @@ r_if
 c_cond
 (paren
 id|hostdata-&gt;adapter_state
-op_eq
-id|AS_REDO_PORTDB
+op_amp
+id|AS_REDO_FABRIC_PORTDB
+op_logical_or
+id|hostdata-&gt;adapter_state
+op_amp
+id|AS_REDO_LOOP_PORTDB
 )paren
 (brace
-id|hostdata-&gt;adapter_state
-op_assign
-id|AS_LOOP_GOOD
-suffix:semicolon
 id|isp2x00_make_portdb
 c_func
 (paren
 id|host
 )paren
+suffix:semicolon
+id|hostdata-&gt;adapter_state
+op_assign
+id|AS_LOOP_GOOD
 suffix:semicolon
 id|printk
 c_func
@@ -5112,6 +5127,14 @@ l_int|0
 )paren
 (brace
 r_case
+id|TEST_UNIT_READY
+suffix:colon
+r_case
+id|START_STOP
+suffix:colon
+r_break
+suffix:semicolon
+r_case
 id|WRITE_10
 suffix:colon
 r_case
@@ -5610,7 +5633,9 @@ id|hostdata-&gt;host_id
 suffix:semicolon
 id|hostdata-&gt;adapter_state
 op_assign
-id|AS_REDO_PORTDB
+id|AS_REDO_FABRIC_PORTDB
+op_or
+id|AS_REDO_LOOP_PORTDB
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5651,10 +5676,23 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|LIP_OCCURED
-suffix:colon
-r_case
 id|CHANGE_NOTIFICATION
+suffix:colon
+r_if
+c_cond
+(paren
+id|hostdata-&gt;adapter_state
+op_eq
+id|AS_LOOP_GOOD
+)paren
+id|hostdata-&gt;adapter_state
+op_assign
+id|AS_REDO_FABRIC_PORTDB
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|LIP_OCCURED
 suffix:colon
 r_case
 id|PORT_DB_CHANGED
@@ -5671,7 +5709,7 @@ id|AS_LOOP_GOOD
 )paren
 id|hostdata-&gt;adapter_state
 op_assign
-id|AS_REDO_PORTDB
+id|AS_REDO_LOOP_PORTDB
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -9560,16 +9560,13 @@ l_string|&quot;TCPv6&quot;
 multiline_comment|/* name&t;&t;&t;*/
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|tcpv6_init
 r_void
+id|__init
 id|tcpv6_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* register inet6 protocol */

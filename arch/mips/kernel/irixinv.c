@@ -185,15 +185,12 @@ id|inventory_t
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_inventory
 r_void
+id|__init
 id|init_inventory
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* gross hack while we put the right bits all over the kernel&n;&t; * most likely this will not let just anyone run the X server&n;&t; * until we put the right values all over the place&n;&t; */

@@ -270,12 +270,10 @@ op_assign
 l_string|&quot;Garbled CALL/INT patch at %p[%08x,%08x,%08x]=%08x&bslash;n&quot;
 suffix:semicolon
 macro_line|#ifdef BTFIXUP_OPTIMIZE_OTHER
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|set_addr
 r_static
 r_void
+id|__init
 id|set_addr
 c_func
 (paren
@@ -294,7 +292,6 @@ comma
 r_int
 r_int
 id|value
-)paren
 )paren
 (brace
 r_if
@@ -433,16 +430,13 @@ id|value
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|btfixup
 r_void
+id|__init
 id|btfixup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

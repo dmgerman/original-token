@@ -433,12 +433,10 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * paging_init() sets up the page tables...&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|paging_init
 r_int
 r_int
+id|__init
 id|paging_init
 c_func
 (paren
@@ -449,7 +447,6 @@ comma
 r_int
 r_int
 id|end_mem
-)paren
 )paren
 (brace
 r_extern
@@ -572,11 +569,9 @@ id|end_mem
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * mem_init() marks the free areas in the mem_map and tells us how much&n; * memory is free.  This is done after various parts of the system have&n; * claimed their memory after the kernel image.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mem_init
 r_void
+id|__init
 id|mem_init
 c_func
 (paren
@@ -587,7 +582,6 @@ comma
 r_int
 r_int
 id|end_mem
-)paren
 )paren
 (brace
 r_extern

@@ -496,12 +496,10 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mark_region
 r_static
 r_void
+id|__init
 id|mark_region
 c_func
 (paren
@@ -513,7 +511,6 @@ id|size
 comma
 r_int
 id|flag
-)paren
 )paren
 (brace
 id|u32
@@ -656,16 +653,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;     *  Initialization&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zorro_init
 r_void
+id|__init
 id|zorro_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|u_int

@@ -179,11 +179,9 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Initialise the one and only on-board 7990 */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mvme147lance_probe
 r_int
+id|__init
 id|mvme147lance_probe
 c_func
 (paren
@@ -191,7 +189,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static

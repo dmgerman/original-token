@@ -1,16 +1,13 @@
 multiline_comment|/*&n; * SBus helper functions&n; *&n; * Sun3x don&squot;t have a sbus, but many of the used devices are also&n; * used on Sparc machines with sbus. To avoid having a lot of&n; * duplicate code, we provide necessary glue stuff to make using&n; * of the sbus driver code possible.&n; *&n; * (C) 1999 Thomas Bogendoerfer (tsbogend@alpha.franken.de)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sbus_init
 r_void
+id|__init
 id|sbus_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 )brace

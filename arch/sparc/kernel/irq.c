@@ -2722,16 +2722,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* djhr&n; * This could probably be made indirect too and assigned in the CPU&n; * bits of the code. That would be much nicer I think and would also&n; * fit in with the idea of being able to tune your kernel for your machine&n; * by removing unrequired machine and device support.&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_IRQ
 r_void
+id|__init
 id|init_IRQ
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_extern

@@ -27,7 +27,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|bus_mouse_init
+id|logi_busmouse_init
 c_func
 (paren
 r_void
@@ -1609,20 +1609,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|bus_mouse_init
 id|bus_mouse_init
 c_func
 (paren
 r_void
 )paren
-)paren
 (brace
-macro_line|#ifdef CONFIG_BUSMOUSE
-id|bus_mouse_init
+macro_line|#ifdef CONFIG_LOGIBUSMOUSE
+id|logi_busmouse_init
 c_func
 (paren
 )paren

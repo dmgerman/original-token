@@ -89,7 +89,11 @@ mdefine_line|#define UHCI_PTR_QH&t;&t;0x0002
 DECL|macro|UHCI_PTR_DEPTH
 mdefine_line|#define UHCI_PTR_DEPTH&t;&t;0x0004
 DECL|macro|UHCI_NUMFRAMES
-mdefine_line|#define UHCI_NUMFRAMES&t;&t;1024
+mdefine_line|#define UHCI_NUMFRAMES&t;&t;1024&t;/* in the frame list [array] */
+DECL|macro|UHCI_MAX_SOF_NUMBER
+mdefine_line|#define UHCI_MAX_SOF_NUMBER&t;2047&t;/* in an SOF packet */
+DECL|macro|CAN_SCHEDULE_FRAMES
+mdefine_line|#define CAN_SCHEDULE_FRAMES&t;1000&t;/* how far future frames can be scheduled */
 r_struct
 id|uhci_td
 suffix:semicolon
@@ -160,7 +164,7 @@ DECL|member|frame
 id|__u32
 id|frame
 (braket
-l_int|1024
+id|UHCI_NUMFRAMES
 )braket
 suffix:semicolon
 )brace
@@ -214,25 +218,6 @@ mdefine_line|#define uhci_ptr_to_virt(x)&t;bus_to_virt(x &amp; ~UHCI_PTR_BITS)
 multiline_comment|/*&n; * for TD &lt;flags&gt;:&n; */
 DECL|macro|UHCI_TD_REMOVE
 mdefine_line|#define UHCI_TD_REMOVE&t;&t;0x0001&t;&t;/* Remove when done */
-multiline_comment|/*&n; * for TD &lt;info&gt;: (a.k.a. Token)&n; */
-DECL|macro|TD_TOKEN_TOGGLE
-mdefine_line|#define TD_TOKEN_TOGGLE&t;&t;19
-DECL|macro|uhci_maxlen
-mdefine_line|#define uhci_maxlen(token)&t;((token) &gt;&gt; 21)
-DECL|macro|uhci_toggle
-mdefine_line|#define uhci_toggle(token)&t;(((token) &gt;&gt; TD_TOKEN_TOGGLE) &amp; 1)
-DECL|macro|uhci_endpoint
-mdefine_line|#define uhci_endpoint(token)&t;(((token) &gt;&gt; 15) &amp; 0xf)
-DECL|macro|uhci_devaddr
-mdefine_line|#define uhci_devaddr(token)&t;(((token) &gt;&gt; 8) &amp; 0x7f)
-DECL|macro|uhci_devep
-mdefine_line|#define uhci_devep(token)&t;(((token) &gt;&gt; 8) &amp; 0x7ff)
-DECL|macro|uhci_packetid
-mdefine_line|#define uhci_packetid(token)&t;((token) &amp; 0xff)
-DECL|macro|uhci_packetout
-mdefine_line|#define uhci_packetout(token)&t;(uhci_packetid(token) != USB_PID_IN)
-DECL|macro|uhci_packetin
-mdefine_line|#define uhci_packetin(token)&t;(uhci_packetid(token) == USB_PID_IN)
 multiline_comment|/*&n; * for TD &lt;info&gt;: (a.k.a. Token)&n; */
 DECL|macro|TD_TOKEN_TOGGLE
 mdefine_line|#define TD_TOKEN_TOGGLE&t;&t;19
@@ -339,45 +324,6 @@ l_int|16
 )paren
 )paren
 )paren
-suffix:semicolon
-DECL|struct|uhci_iso_td
-r_struct
-id|uhci_iso_td
-(brace
-DECL|member|num
-r_int
-id|num
-suffix:semicolon
-multiline_comment|/* Total number of TD&squot;s */
-DECL|member|data
-r_char
-op_star
-id|data
-suffix:semicolon
-multiline_comment|/* Beginning of buffer */
-DECL|member|maxsze
-r_int
-id|maxsze
-suffix:semicolon
-multiline_comment|/* Maximum size of each data block */
-DECL|member|td
-r_struct
-id|uhci_td
-op_star
-id|td
-suffix:semicolon
-multiline_comment|/* Pointer to first TD */
-DECL|member|frame
-r_int
-id|frame
-suffix:semicolon
-multiline_comment|/* Beginning frame */
-DECL|member|endframe
-r_int
-id|endframe
-suffix:semicolon
-multiline_comment|/* End frame */
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * Note the alignment requirements of the entries&n; *&n; * Each UHCI device has pre-allocated QH and TD entries.&n; * You can use more than the pre-allocated ones, but I&n; * don&squot;t see you usually needing to.&n; */
 r_struct

@@ -8232,10 +8232,9 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|console_8xx_init
 r_int
+id|__init
 id|console_8xx_init
 c_func
 (paren
@@ -8244,7 +8243,6 @@ id|kmem_start
 comma
 r_int
 id|kmem_end
-)paren
 )paren
 (brace
 id|register_console
@@ -8260,16 +8258,13 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|rs_8xx_init
 r_int
+id|__init
 id|rs_8xx_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -9435,12 +9430,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* This must always be called before the rs_8xx_init() function, otherwise&n; * it blows away the port control information.&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|serial_console_setup
 r_static
 r_int
+id|__init
 id|serial_console_setup
 c_func
 (paren
@@ -9452,7 +9445,6 @@ comma
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_struct

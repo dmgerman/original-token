@@ -2090,6 +2090,11 @@ comma
 id|drive
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IDE_CONTROL_REG
+)paren
 id|OUT_BYTE
 (paren
 id|drive-&gt;ctl

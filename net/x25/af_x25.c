@@ -4262,7 +4262,7 @@ suffix:semicolon
 r_int
 id|amount
 op_assign
-l_int|0L
+l_int|0
 suffix:semicolon
 multiline_comment|/* These two are safe on a single CPU system as only user tasks fiddle here */
 r_if
@@ -5290,11 +5290,9 @@ id|x25_routes_get_info
 )brace
 suffix:semicolon
 macro_line|#endif&t;
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|x25_proto_init
 r_void
+id|__init
 id|x25_proto_init
 c_func
 (paren
@@ -5302,7 +5300,6 @@ r_struct
 id|net_proto
 op_star
 id|pro
-)paren
 )paren
 (brace
 id|sock_register

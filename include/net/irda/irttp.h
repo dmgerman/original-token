@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Mon May 10 19:14:51 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Tue Aug 24 09:27:05 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRTTP_H
 DECL|macro|IRTTP_H
 mdefine_line|#define IRTTP_H
@@ -22,13 +22,13 @@ mdefine_line|#define TTP_PARAMETERS         0x80
 DECL|macro|TTP_MORE
 mdefine_line|#define TTP_MORE               0x80
 DECL|macro|DEFAULT_INITIAL_CREDIT
-mdefine_line|#define DEFAULT_INITIAL_CREDIT 22
+mdefine_line|#define DEFAULT_INITIAL_CREDIT 14
 DECL|macro|LOW_THRESHOLD
-mdefine_line|#define LOW_THRESHOLD   4
+mdefine_line|#define LOW_THRESHOLD           4
 DECL|macro|HIGH_THRESHOLD
-mdefine_line|#define HIGH_THRESHOLD  8
+mdefine_line|#define HIGH_THRESHOLD         10
 DECL|macro|TTP_MAX_QUEUE
-mdefine_line|#define TTP_MAX_QUEUE  22
+mdefine_line|#define TTP_MAX_QUEUE          14
 multiline_comment|/* Some priorities for disconnect requests */
 DECL|macro|P_NORMAL
 mdefine_line|#define P_NORMAL    0
@@ -38,6 +38,9 @@ DECL|macro|SAR_DISABLE
 mdefine_line|#define SAR_DISABLE 0
 DECL|macro|SAR_UNBOUND
 mdefine_line|#define SAR_UNBOUND 0xffffffff
+multiline_comment|/* Parameters */
+DECL|macro|TTP_MAX_SDU_SIZE
+mdefine_line|#define TTP_MAX_SDU_SIZE 0x01
 multiline_comment|/*&n; *  This structure contains all data assosiated with one instance of a TTP &n; *  connection.&n; */
 DECL|struct|tsap_cb
 r_struct
@@ -49,7 +52,7 @@ id|queue
 suffix:semicolon
 multiline_comment|/* For linking it into the hashbin */
 DECL|member|magic
-r_int
+id|magic_t
 id|magic
 suffix:semicolon
 multiline_comment|/* Just in case */
@@ -125,7 +128,6 @@ id|spinlock_t
 id|lock
 suffix:semicolon
 DECL|member|notify
-r_struct
 id|notify_t
 id|notify
 suffix:semicolon
@@ -197,7 +199,7 @@ r_struct
 id|irttp_cb
 (brace
 DECL|member|magic
-r_int
+id|magic_t
 id|magic
 suffix:semicolon
 DECL|member|tsaps
@@ -233,7 +235,6 @@ comma
 r_int
 id|credit
 comma
-r_struct
 id|notify_t
 op_star
 id|notify
@@ -311,7 +312,7 @@ op_star
 id|userdata
 )paren
 suffix:semicolon
-r_void
+r_int
 id|irttp_connect_response
 c_func
 (paren
@@ -329,23 +330,7 @@ op_star
 id|userdata
 )paren
 suffix:semicolon
-r_struct
-id|tsap_cb
-op_star
-id|irttp_dup
-c_func
-(paren
-r_struct
-id|tsap_cb
-op_star
-id|self
-comma
-r_void
-op_star
-id|instance
-)paren
-suffix:semicolon
-r_void
+r_int
 id|irttp_disconnect_request
 c_func
 (paren
@@ -374,6 +359,22 @@ id|self
 comma
 id|LOCAL_FLOW
 id|flow
+)paren
+suffix:semicolon
+r_struct
+id|tsap_cb
+op_star
+id|irttp_dup
+c_func
+(paren
+r_struct
+id|tsap_cb
+op_star
+id|self
+comma
+r_void
+op_star
+id|instance
 )paren
 suffix:semicolon
 DECL|function|irttp_get_saddr

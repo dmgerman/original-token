@@ -1364,15 +1364,6 @@ c_func
 (paren
 id|SI
 comma
-id|SI_501
-comma
-l_string|&quot;85C501&quot;
-)paren
-id|DEVICE
-c_func
-(paren
-id|SI
-comma
 id|SI_496
 comma
 l_string|&quot;85C496&quot;
@@ -1382,9 +1373,36 @@ c_func
 (paren
 id|SI
 comma
+id|SI_501
+comma
+l_string|&quot;85C501&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
+id|SI_530
+comma
+l_string|&quot;530 Host&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
 id|SI_601
 comma
 l_string|&quot;85C601&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
+id|SI_620
+comma
+l_string|&quot;620 Host&quot;
 )paren
 id|DEVICE
 c_func
@@ -1411,7 +1429,7 @@ id|SI
 comma
 id|SI_5513
 comma
-l_string|&quot;85C5513&quot;
+l_string|&quot;85C5513 IDE&quot;
 )paren
 id|DEVICE
 c_func
@@ -1439,6 +1457,33 @@ comma
 id|SI_5597
 comma
 l_string|&quot;5597/5598 Host&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
+id|SI_5600
+comma
+l_string|&quot;5600 Host&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
+id|SI_6306
+comma
+l_string|&quot;3D-AGP 6306 VGA&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
+id|SI_6326
+comma
+l_string|&quot;3D-AGP 6326 VGA&quot;
 )paren
 id|DEVICE
 c_func
@@ -3527,7 +3572,16 @@ id|TTI
 comma
 id|TTI_HPT343
 comma
-l_string|&quot;HPT343&quot;
+l_string|&quot;HPT343 IDE UltraDMA/33&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TTI
+comma
+id|TTI_HPT366
+comma
+l_string|&quot;HPT366 IDE UltraDMA/66&quot;
 )paren
 id|ENDVENDOR
 c_func
@@ -3608,6 +3662,15 @@ c_func
 (paren
 id|VIA
 comma
+id|VIA_82C596
+comma
+l_string|&quot;VT 82C596 Apollo Mobile&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
 id|VIA_82C597_0
 comma
 l_string|&quot;VT 82C597 Apollo VP3&quot;
@@ -3620,6 +3683,42 @@ comma
 id|VIA_82C598_0
 comma
 l_string|&quot;VT 82C598 Apollo MVP3&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C680
+comma
+l_string|&quot;VT 82C680 Apollo P6&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C686
+comma
+l_string|&quot;VT 82C686 Apollo Super&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C691
+comma
+l_string|&quot;VT 82C691 Apollo Pro&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C693
+comma
+l_string|&quot;VT 82C693 Apollo Pro Plus&quot;
 )paren
 id|DEVICE
 c_func
@@ -3665,6 +3764,33 @@ comma
 id|VIA_82C586_3
 comma
 l_string|&quot;VT 82C586B Apollo ACPI&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C686_4
+comma
+l_string|&quot;VT 82C686 Apollo Super ACPI&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C686_5
+comma
+l_string|&quot;VT 82C686 Apollo Super AC97/Audio&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C686_6
+comma
+l_string|&quot;VT 82C686 Apollo Super AC97/Modem&quot;
 )paren
 id|DEVICE
 c_func
@@ -5133,6 +5259,26 @@ c_func
 id|VENDOR
 c_func
 (paren
+id|ESS
+comma
+l_string|&quot;ESS Technologies&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|ESS
+comma
+id|ESS_AUDIOPCI
+comma
+l_string|&quot;3D Audio 1969&quot;
+)paren
+id|ENDVENDOR
+c_func
+(paren
+)paren
+id|VENDOR
+c_func
+(paren
 id|SATSAGEM
 comma
 l_string|&quot;SatSagem&quot;
@@ -5809,6 +5955,15 @@ comma
 id|INTEL_82557
 comma
 l_string|&quot;EtherExpress Pro100&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_82559ER
+comma
+l_string|&quot;82559ER&quot;
 )paren
 id|DEVICE
 c_func

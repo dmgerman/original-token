@@ -218,11 +218,9 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Detect which PROM&squot;s the DECSTATION has, and set the callback vectors&n; * appropriately.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|which_prom
 r_void
+id|__init
 id|which_prom
 c_func
 (paren
@@ -233,7 +231,6 @@ comma
 r_int
 op_star
 id|prom_vec
-)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; * No sign of the REX PROM&squot;s magic number means we assume a non-REX&n;&t; * machine (i.e. we&squot;re on a DS2100/3100, DS5100 or DS5000/2xx)&n;&t; */
@@ -553,11 +550,9 @@ id|PMAX_PROM_CLOSE
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_init
 r_int
+id|__init
 id|prom_init
 c_func
 (paren
@@ -576,7 +571,6 @@ comma
 r_int
 op_star
 id|prom_vec
-)paren
 )paren
 (brace
 multiline_comment|/* Determine which PROM&squot;s we have (and therefore which machine we&squot;re on!) */

@@ -4047,12 +4047,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_lance_init
 r_static
 r_int
+id|__init
 id|dec_lance_init
 c_func
 (paren
@@ -4064,7 +4062,6 @@ comma
 r_const
 r_int
 id|type
-)paren
 )paren
 (brace
 r_static
@@ -4947,11 +4944,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Find all the lance cards on the system and initialize them */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dec_lance_probe
 r_int
+id|__init
 id|dec_lance_probe
 c_func
 (paren
@@ -4959,7 +4954,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irqueue.c&n; * Version:       0.3&n; * Description:   General queue implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jun  9 13:29:31 1998&n; * Modified at:   Thu Mar 11 13:27:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (C) 1998, Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; *     Copyright (C) 1998, Dag Brattli, &n; *     All Rights Reserved.&n; *&n; *     This code is taken from the Vortex Operating System written by Aage&n; *     Kvalnes. Aage has agreed that this code can use the GPL licence,&n; *     although he does not use that licence in his own code.&n; *     &n; *     This copyright does however _not_ include the ELF hash() function&n; *     which I currently don&squot;t know which licence or copyright it&n; *     has. Please inform me if you know.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irqueue.c&n; * Version:       0.3&n; * Description:   General queue implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jun  9 13:29:31 1998&n; * Modified at:   Thu Jun 10 11:00:12 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (C) 1998-1999, Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; *     Copyright (C) 1998, Dag Brattli, &n; *     All Rights Reserved.&n; *&n; *     This code is taken from the Vortex Operating System written by Aage&n; *     Kvalnes. Aage has agreed that this code can use the GPL licence,&n; *     although he does not use that licence in his own code.&n; *     &n; *     This copyright does however _not_ include the ELF hash() function&n; *     which I currently don&squot;t know which licence or copyright it&n; *     has. Please inform me if you know.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
@@ -45,15 +45,6 @@ id|hashbin
 suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Allocate new hashbin&n;&t; */
 id|hashbin
@@ -266,19 +257,37 @@ id|FREE_FUNC
 id|free_func
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 id|QUEUE
 op_star
 id|queue
 suffix:semicolon
-id|DEBUG
+r_int
+id|i
+suffix:semicolon
+id|ASSERT
 c_func
 (paren
-l_int|4
+id|hashbin
+op_ne
+l_int|NULL
 comma
-l_string|&quot;hashbin_destroy()&bslash;n&quot;
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|hashbin-&gt;magic
+op_eq
+id|HB_MAGIC
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Free the entries in the hashbin, TODO: use hashbin_clear when&n;&t; *  it has been shown to work&n;&t; */

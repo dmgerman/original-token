@@ -6041,16 +6041,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Initialisation&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|tgafb_init
 r_int
+id|__init
 id|tgafb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

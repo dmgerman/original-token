@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.6&n; * Description:   IrDA sockets implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Wed May 19 16:12:06 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.7&n; * Description:   IrDA sockets implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Mon Aug 23 09:44:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
@@ -1028,18 +1028,8 @@ op_star
 id|name
 )paren
 (brace
-r_struct
 id|notify_t
 id|notify
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* Initialize callbacks to be used by the IrDA stack */
 id|irda_notify_init
@@ -1458,15 +1448,6 @@ l_int|0
 suffix:semicolon
 r_int
 id|err
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|self
 op_assign
@@ -2035,15 +2016,6 @@ id|self
 op_assign
 id|sk-&gt;protinfo.irda
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2463,6 +2435,13 @@ id|irda_sock
 )paren
 )paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|self-&gt;ias_wait
+)paren
+suffix:semicolon
 id|self-&gt;sk
 op_assign
 id|sk
@@ -2597,7 +2576,7 @@ id|self-&gt;ias_obj
 id|irias_delete_object
 c_func
 (paren
-id|self-&gt;ias_obj-&gt;name
+id|self-&gt;ias_obj
 )paren
 suffix:semicolon
 r_if
@@ -4173,15 +4152,6 @@ suffix:semicolon
 r_int
 id|opt
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|self
 op_assign
 id|sk-&gt;protinfo.irda
@@ -4376,15 +4346,6 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|self
 op_assign
 id|sk-&gt;protinfo.irda
@@ -4424,15 +4385,6 @@ id|optname
 r_case
 id|IRLMP_ENUMDEVICES
 suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;(), IRLMP_ENUMDEVICES&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Tell IrLMP we want to be notified */
 id|irlmp_update_client
 c_func
@@ -4453,31 +4405,7 @@ c_func
 id|self-&gt;nslots
 )paren
 suffix:semicolon
-multiline_comment|/* Devices my be discovered already */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|cachelog
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), no log!&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Sleep until device(s) discovered */
-id|interruptible_sleep_on
-c_func
-(paren
-op_amp
-id|discovery_wait
-)paren
-suffix:semicolon
+multiline_comment|/* Check if the we got some results */
 r_if
 c_cond
 (paren
@@ -4486,9 +4414,8 @@ id|cachelog
 )paren
 r_return
 op_minus
-l_int|1
+id|EAGAIN
 suffix:semicolon
-)brace
 id|list
 op_assign
 (paren
@@ -4596,9 +4523,9 @@ id|i
 dot
 id|info
 comma
-id|discovery-&gt;info
+id|discovery-&gt;nickname
 comma
-l_int|22
+id|NICKNAME_MAX_LEN
 )paren
 suffix:semicolon
 r_if
@@ -5024,11 +4951,9 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Function irda_proto_init (pro)&n; *&n; *    Initialize IrDA protocol layer&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|irda_proto_init
 r_void
+id|__init
 id|irda_proto_init
 c_func
 (paren
@@ -5037,17 +4962,7 @@ id|net_proto
 op_star
 id|pro
 )paren
-)paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 id|sock_register
 c_func
 (paren
@@ -5093,15 +5008,6 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irda_packet_type.type
 op_assign
 id|htons

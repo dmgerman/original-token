@@ -1885,15 +1885,12 @@ c_func
 r_void
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
 id|teql_init
 c_func
 (paren
 r_void
-)paren
 )paren
 macro_line|#endif
 (brace

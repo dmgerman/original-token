@@ -5312,11 +5312,9 @@ id|ndisc_get_info
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif&t;/* CONFIG_PROC_FS */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ndisc_init
 r_int
+id|__init
 id|ndisc_init
 c_func
 (paren
@@ -5324,7 +5322,6 @@ r_struct
 id|net_proto_family
 op_star
 id|ops
-)paren
 )paren
 (brace
 r_struct

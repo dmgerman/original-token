@@ -4385,13 +4385,7 @@ c_func
 (paren
 id|dev
 comma
-id|usb_rcvctrlpipe
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
+id|pipe
 comma
 op_amp
 id|dr

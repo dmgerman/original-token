@@ -214,11 +214,9 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Not supported on Sparc yet. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_setup
 r_void
+id|__init
 id|smp_setup
 c_func
 (paren
@@ -230,21 +228,17 @@ r_int
 op_star
 id|ints
 )paren
-)paren
 (brace
 )brace
 multiline_comment|/*&n; *&t;The bootstrap kernel entry code has set these up. Save them for&n; *&t;a given CPU&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_store_cpu_info
 r_void
+id|__init
 id|smp_store_cpu_info
 c_func
 (paren
 r_int
 id|id
-)paren
 )paren
 (brace
 id|cpu_data
@@ -258,16 +252,13 @@ id|loops_per_sec
 suffix:semicolon
 multiline_comment|/* this is it on sparc. */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_commence
 r_void
+id|__init
 id|smp_commence
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Lets the callin&squot;s below out of their loop.&n;&t; */
@@ -297,16 +288,13 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* Only broken Intel needs this, thus it should not even be referenced&n; * globally...&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|initialize_secondary
 r_void
+id|__init
 id|initialize_secondary
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 )brace
@@ -390,16 +378,13 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_boot_cpus
 r_void
+id|__init
 id|smp_boot_cpus
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_extern

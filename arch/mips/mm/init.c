@@ -1078,12 +1078,10 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|paging_init
 r_int
 r_int
+id|__init
 id|paging_init
 c_func
 (paren
@@ -1094,7 +1092,6 @@ comma
 r_int
 r_int
 id|end_mem
-)paren
 )paren
 (brace
 multiline_comment|/* Initialize the entire pgd.  */
@@ -1132,11 +1129,9 @@ id|end_mem
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mem_init
 r_void
+id|__init
 id|mem_init
 c_func
 (paren
@@ -1147,7 +1142,6 @@ comma
 r_int
 r_int
 id|end_mem
-)paren
 )paren
 (brace
 r_int
@@ -1706,12 +1700,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Fixup an immediate instruction  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|__i_insn_fixup
 r_static
 r_void
+id|__init
 id|__i_insn_fixup
 c_func
 (paren
@@ -1730,7 +1722,6 @@ comma
 r_int
 r_int
 id|i_const
-)paren
 )paren
 (brace
 r_int
@@ -1779,11 +1770,9 @@ suffix:semicolon
 DECL|macro|i_insn_fixup
 mdefine_line|#define i_insn_fixup(section, const)&t;&t;&t;&t;&t;  &bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;extern unsigned int *__start_ ## section;&t;&t;&t;  &bslash;&n;&t;extern unsigned int *__stop_ ## section;&t;&t;&t;  &bslash;&n;&t;__i_insn_fixup(&amp;__start_ ## section, &amp;__stop_ ## section, const); &bslash;&n;} while(0)
 multiline_comment|/* Caller is assumed to flush the caches before the first context switch.  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|__asid_setup
 r_void
+id|__init
 id|__asid_setup
 c_func
 (paren
@@ -1802,7 +1791,6 @@ comma
 r_int
 r_int
 id|first_version
-)paren
 )paren
 (brace
 id|i_insn_fixup

@@ -30,11 +30,9 @@ id|arcs_cmdline
 id|CL_SIZE
 )braket
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_init_cmdline
 r_void
+id|__init
 id|prom_init_cmdline
 c_func
 (paren
@@ -49,7 +47,6 @@ comma
 r_int
 r_int
 id|magic
-)paren
 )paren
 (brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      timer.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Thu Feb  4 10:49:38 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      timer.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Sat Jun 26 17:03:22 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -11,8 +11,8 @@ r_void
 id|irlap_slot_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 suffix:semicolon
@@ -21,8 +21,8 @@ r_void
 id|irlap_query_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 suffix:semicolon
@@ -31,8 +31,8 @@ r_void
 id|irlap_final_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 suffix:semicolon
@@ -41,8 +41,8 @@ r_void
 id|irlap_wd_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 suffix:semicolon
@@ -51,8 +51,8 @@ r_void
 id|irlap_backoff_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 suffix:semicolon
@@ -61,8 +61,8 @@ r_void
 id|irda_device_media_busy_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 suffix:semicolon
@@ -80,7 +80,8 @@ comma
 r_int
 id|timeout
 comma
-r_int
+r_void
+op_star
 id|data
 comma
 id|TIMER_CALLBACK
@@ -101,8 +102,19 @@ r_int
 )paren
 id|data
 suffix:semicolon
+multiline_comment|/* &n;&t; * For most architectures void * is the same as unsigned long, but&n;&t; * at least we try to use void * as long as possible. Since the &n;&t; * timer functions use unsigned long, we cast the function here&n;&t; */
 id|ptimer-&gt;function
 op_assign
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+r_int
+r_int
+)paren
+)paren
 id|callback
 suffix:semicolon
 id|ptimer-&gt;expires
@@ -142,8 +154,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -175,8 +187,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -208,8 +220,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -241,8 +253,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -274,8 +286,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -304,8 +316,8 @@ comma
 id|MEDIABUSY_TIMEOUT
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -337,8 +349,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -370,8 +382,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -403,8 +415,8 @@ comma
 id|timeout
 comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|self
 comma
@@ -419,8 +431,8 @@ r_void
 id|irlap_slot_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 (brace
@@ -486,8 +498,8 @@ r_void
 id|irlap_query_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 (brace
@@ -553,8 +565,8 @@ r_void
 id|irlap_final_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 (brace
@@ -620,8 +632,8 @@ r_void
 id|irlap_wd_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 (brace
@@ -687,8 +699,8 @@ r_void
 id|irlap_backoff_timer_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 (brace
@@ -753,8 +765,8 @@ r_void
 id|irda_device_media_busy_expired
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|data
 )paren
 (brace

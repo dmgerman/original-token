@@ -392,18 +392,15 @@ DECL|macro|PAGE_PD
 mdefine_line|#define PAGE_PD(page) ((ptable_desc *)&amp;mem_map[MAP_NR(page)])
 DECL|macro|PTABLE_SIZE
 mdefine_line|#define PTABLE_SIZE (PTRS_PER_PMD * sizeof(pmd_t))
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_pointer_table
 r_void
+id|__init
 id|init_pointer_table
 c_func
 (paren
 r_int
 r_int
 id|ptable
-)paren
 )paren
 (brace
 id|ptable_desc
