@@ -28,6 +28,7 @@ suffix:semicolon
 )brace
 DECL|function|assert_server_locked
 r_static
+r_inline
 r_void
 id|assert_server_locked
 c_func
@@ -49,7 +50,6 @@ l_int|0
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: server not locked!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -337,7 +337,6 @@ l_int|255
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: string too long: %s&bslash;n&quot;
 comma
 id|s
@@ -371,6 +370,7 @@ suffix:semicolon
 )brace
 DECL|function|ncp_init_request
 r_static
+r_inline
 r_void
 id|ncp_init_request
 c_func
@@ -444,6 +444,7 @@ l_int|1
 suffix:semicolon
 )brace
 r_static
+r_inline
 r_char
 op_star
 DECL|function|ncp_reply_data
@@ -1000,7 +1001,6 @@ id|NCP_VOLNAME_LEN
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: volume name too long: %d&bslash;n&quot;
 comma
 id|len
@@ -1153,17 +1153,15 @@ op_member_access_from_pointer
 id|file_handle
 )paren
 suffix:semicolon
-macro_line|#ifdef NCPFS_PARANOIA
 r_if
 c_cond
 (paren
 op_logical_neg
 id|err
 )paren
-id|printk
+id|PPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_make_closed: volnum=%d, dirent=%u, error=%d&bslash;n&quot;
 comma
 id|NCP_FINFO
@@ -1185,7 +1183,6 @@ comma
 id|err
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|err
 suffix:semicolon
@@ -1838,7 +1835,6 @@ l_int|0
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;get_namespaces: found %d on %d&bslash;n&quot;
 comma
 op_star
@@ -2244,7 +2240,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_lookup_volume: looking up vol %s&bslash;n&quot;
 comma
 id|volname
@@ -2433,7 +2428,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;lookup_vol: namespace[%d] = %d&bslash;n&quot;
 comma
 id|volnum
@@ -2841,10 +2835,9 @@ id|inode
 )paren
 (brace
 macro_line|#if CONFIG_NCPFS_DEBUGDENTRY
-id|printk
+id|PRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: ncpdel2: dentry-&gt;d_inode == NULL&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -147,7 +147,7 @@ r_int
 r_int
 id|offset
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 suffix:semicolon
@@ -708,7 +708,7 @@ c_func
 id|dentry
 )paren
 comma
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 comma
@@ -859,7 +859,7 @@ id|page
 comma
 id|PAGE_SIZE
 comma
-id|page-&gt;pg_offset
+id|page-&gt;index
 )paren
 suffix:semicolon
 id|get_page

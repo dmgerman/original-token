@@ -269,22 +269,35 @@ DECL|macro|NCP_MAXNAMELEN
 mdefine_line|#define NCP_MAXNAMELEN 14
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* undef because public define in umsdos_fs.h (ncp_fs.h isn&squot;t public) */
+DECL|macro|PRINTK
+macro_line|#undef PRINTK
+multiline_comment|/* define because it is easy to change PRINTK to {*}PRINTK */
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK(format, args...) printk(KERN_DEBUG format , ## args)
 DECL|macro|NCPFS_PARANOIA
 macro_line|#undef NCPFS_PARANOIA
+macro_line|#ifdef NCPFS_PARANOIA
+DECL|macro|PPRINTK
+mdefine_line|#define PPRINTK(format, args...) PRINTK(format , ## args)
+macro_line|#else
+DECL|macro|PPRINTK
+mdefine_line|#define PPRINTK(format, args...)
+macro_line|#endif
 macro_line|#ifndef DEBUG_NCP
 DECL|macro|DEBUG_NCP
 mdefine_line|#define DEBUG_NCP 0
 macro_line|#endif
 macro_line|#if DEBUG_NCP &gt; 0
 DECL|macro|DPRINTK
-mdefine_line|#define DPRINTK(format, args...) printk(format , ## args)
+mdefine_line|#define DPRINTK(format, args...) PRINTK(format , ## args)
 macro_line|#else
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(format, args...)
 macro_line|#endif
 macro_line|#if DEBUG_NCP &gt; 1
 DECL|macro|DDPRINTK
-mdefine_line|#define DDPRINTK(format, args...) printk(format , ## args)
+mdefine_line|#define DDPRINTK(format, args...) PRINTK(format , ## args)
 macro_line|#else
 DECL|macro|DDPRINTK
 mdefine_line|#define DDPRINTK(format, args...)

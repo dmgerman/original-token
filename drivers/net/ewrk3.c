@@ -3103,7 +3103,7 @@ id|skb-&gt;len
 )paren
 suffix:semicolon
 multiline_comment|/* Write the XCT flag */
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|buf
@@ -3123,7 +3123,7 @@ id|EWRK3_TQ
 )paren
 suffix:semicolon
 multiline_comment|/* Start sending pkt */
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|buf
@@ -3203,13 +3203,9 @@ id|buf
 op_add_assign
 l_int|1
 suffix:semicolon
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 id|buf
 comma
 id|skb-&gt;data
@@ -4071,7 +4067,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|p
@@ -7978,20 +7974,14 @@ comma
 id|EWRK3_MPR
 )paren
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|tmp.addr
 comma
-(paren
-r_char
-op_star
-)paren
-(paren
 id|lp-&gt;shmem_base
 op_plus
 id|PAGE0_HTE
-)paren
 comma
 (paren
 id|HASH_TABLE_LEN

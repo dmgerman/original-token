@@ -113,7 +113,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_make_open: opened=%d, volume # %u, dir entry # %u&bslash;n&quot;
 comma
 id|NCP_FINFO
@@ -261,17 +260,14 @@ c_cond
 id|result
 )paren
 (brace
-macro_line|#ifdef NCPFS_PARANOIA
-id|printk
+id|PPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_make_open: failed, result=%d&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out_unlock
 suffix:semicolon
@@ -299,17 +295,14 @@ id|inode
 op_member_access_from_pointer
 id|access
 suffix:semicolon
-macro_line|#ifdef NCPFS_PARANOIA
-id|printk
+id|PPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_make_open: file open, access=%x&bslash;n&quot;
 comma
 id|access
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -400,7 +393,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_file_read: enter %s/%s&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
@@ -424,7 +416,6 @@ l_int|NULL
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_file_read: inode = NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -473,7 +464,6 @@ id|inode-&gt;i_mode
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_file_read: read from non-file, mode %07o&bslash;n&quot;
 comma
 id|inode-&gt;i_mode
@@ -718,7 +708,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_file_read: exit %s/%s&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
@@ -796,7 +785,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_file_write: enter %s/%s&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
@@ -815,7 +803,6 @@ l_int|NULL
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_file_write: inode = NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -860,7 +847,6 @@ id|inode-&gt;i_mode
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_file_write: write to non-file, mode %07o&bslash;n&quot;
 comma
 id|inode-&gt;i_mode
@@ -1116,7 +1102,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_file_write: exit %s/%s&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name

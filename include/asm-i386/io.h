@@ -365,8 +365,8 @@ mdefine_line|#define isa_memcpy_toio(a,b,c)&t;&t;memcpy_toio(__ISA_IO_base + (a)
 multiline_comment|/*&n; * Again, i386 does not require mem IO specific function.&n; */
 DECL|macro|eth_io_copy_and_sum
 mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;&t;eth_copy_and_sum((a),__io_virt(b),(c),(d))
-DECL|macro|isa_eth_io_copy_and_csum
-mdefine_line|#define isa_eth_io_copy_and_csum(a,b,c,d)&t;eth_copy_and_sum((a),__io_virt(__ISA_IO_base + (b)),(c),(d))
+DECL|macro|isa_eth_io_copy_and_sum
+mdefine_line|#define isa_eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),__io_virt(__ISA_IO_base + (b)),(c),(d))
 DECL|function|check_signature
 r_static
 r_inline

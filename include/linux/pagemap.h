@@ -55,7 +55,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * We use a power-of-two hash table to avoid a modulus,&n; * and get a reasonable hash by knowing roughly how the&n; * inode pointer and offsets are distributed (ie, we&n; * roughly know which bits are &quot;significant&quot;)&n; *&n; * For the time being it will work for struct address_space too (most of&n; * them sitting inside the inodes). We might want to change it later.&n; */
+multiline_comment|/*&n; * We use a power-of-two hash table to avoid a modulus,&n; * and get a reasonable hash by knowing roughly how the&n; * inode pointer and indexes are distributed (ie, we&n; * roughly know which bits are &quot;significant&quot;)&n; *&n; * For the time being it will work for struct address_space too (most of&n; * them sitting inside the inodes). We might want to change it later.&n; */
 DECL|function|_page_hashfn
 r_extern
 r_inline
@@ -71,7 +71,7 @@ id|mapping
 comma
 r_int
 r_int
-id|offset
+id|index
 )paren
 (brace
 DECL|macro|i
@@ -84,7 +84,7 @@ c_func
 (paren
 id|i
 op_plus
-id|offset
+id|index
 )paren
 op_amp
 (paren
@@ -101,7 +101,7 @@ DECL|macro|s
 macro_line|#undef s
 )brace
 DECL|macro|page_hash
-mdefine_line|#define page_hash(mapping,offset) (page_hash_table+_page_hashfn(mapping,offset))
+mdefine_line|#define page_hash(mapping,index) (page_hash_table+_page_hashfn(mapping,index))
 r_extern
 r_struct
 id|page
@@ -115,7 +115,7 @@ id|mapping
 comma
 r_int
 r_int
-id|offset
+id|index
 comma
 r_struct
 id|page
@@ -125,7 +125,7 @@ id|hash
 )paren
 suffix:semicolon
 DECL|macro|find_get_page
-mdefine_line|#define find_get_page(mapping, offset) &bslash;&n;&t;&t;__find_get_page(mapping, offset, page_hash(mapping, offset))
+mdefine_line|#define find_get_page(mapping, index) &bslash;&n;&t;&t;__find_get_page(mapping, index, page_hash(mapping, index))
 r_extern
 r_struct
 id|page
@@ -139,7 +139,7 @@ id|mapping
 comma
 r_int
 r_int
-id|offset
+id|index
 comma
 r_struct
 id|page
@@ -160,7 +160,7 @@ id|page
 )paren
 suffix:semicolon
 DECL|macro|find_lock_page
-mdefine_line|#define find_lock_page(mapping, offset) &bslash;&n;&t;&t;__find_lock_page(mapping, offset, page_hash(mapping, offset))
+mdefine_line|#define find_lock_page(mapping, index) &bslash;&n;&t;&t;__find_lock_page(mapping, index, page_hash(mapping, index))
 r_extern
 r_void
 id|__add_page_to_hash_queue
@@ -195,7 +195,7 @@ id|mapping
 comma
 r_int
 r_int
-id|offset
+id|index
 )paren
 suffix:semicolon
 r_extern
@@ -215,7 +215,7 @@ id|mapping
 comma
 r_int
 r_int
-id|offset
+id|index
 comma
 r_struct
 id|page
@@ -243,7 +243,7 @@ id|inode
 comma
 r_int
 r_int
-id|offset
+id|index
 )paren
 (brace
 id|__add_page_to_hash_queue
@@ -257,7 +257,7 @@ c_func
 op_amp
 id|inode-&gt;i_data
 comma
-id|offset
+id|index
 )paren
 )paren
 suffix:semicolon

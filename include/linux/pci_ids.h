@@ -1546,6 +1546,8 @@ DECL|macro|PCI_DEVICE_ID_LAVA_DUAL_PAR_A
 mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_A&t;0x8002 /* The Lava Dual Parallel is */
 DECL|macro|PCI_DEVICE_ID_LAVA_DUAL_PAR_B
 mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_B&t;0x8003 /* two PCI devices on a card */
+DECL|macro|PCI_DEVICE_ID_LAVA_BOCA_IOPPAR
+mdefine_line|#define PCI_DEVICE_ID_LAVA_BOCA_IOPPAR&t;0x8800
 DECL|macro|PCI_VENDOR_ID_PANACOM
 mdefine_line|#define PCI_VENDOR_ID_PANACOM&t;&t;0x14d4
 DECL|macro|PCI_DEVICE_ID_PANACOM_QUADMODEM

@@ -35,10 +35,6 @@ DECL|member|si_lasti
 id|__u32
 id|si_lasti
 suffix:semicolon
-DECL|member|si_imap_len
-id|__u32
-id|si_imap_len
-suffix:semicolon
 DECL|member|si_imap
 id|__u8
 op_star

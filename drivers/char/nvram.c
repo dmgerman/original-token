@@ -1033,7 +1033,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#ifndef CONFIG_PROC_FS
 DECL|function|nvram_read_proc
 r_static
 r_int
@@ -1064,6 +1064,9 @@ op_star
 id|data
 )paren
 (brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#else
 DECL|function|nvram_read_proc

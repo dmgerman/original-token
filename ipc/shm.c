@@ -879,7 +879,7 @@ r_if
 c_cond
 (paren
 id|size
-template_param
+OG
 id|shmmax
 )paren
 (brace
@@ -2442,6 +2442,10 @@ c_func
 (paren
 id|addr
 comma
+(paren
+r_int
+r_int
+)paren
 id|shp-&gt;u.shm_segsz
 )paren
 )paren
@@ -2590,6 +2594,10 @@ id|addr
 comma
 id|addr
 op_plus
+(paren
+r_int
+r_int
+)paren
 id|shp-&gt;u.shm_segsz
 )paren
 )paren
@@ -4317,6 +4325,36 @@ op_ne
 id|IPC_UNUSED
 )paren
 (brace
+DECL|macro|SMALL_STRING
+mdefine_line|#define SMALL_STRING &quot;%10d %10d  %4o %10u %5u %5u  %5d %5u %5u %5u %5u %10lu %10lu %10lu&bslash;n&quot;
+DECL|macro|BIG_STRING
+mdefine_line|#define BIG_STRING   &quot;%10d %10d  %4o %21u %5u %5u  %5d %5u %5u %5u %5u %10lu %10lu %10lu&bslash;n&quot;
+r_char
+op_star
+id|format
+suffix:semicolon
+r_if
+c_cond
+(paren
+r_sizeof
+(paren
+r_int
+)paren
+op_le
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+id|format
+op_assign
+id|SMALL_STRING
+suffix:semicolon
+r_else
+id|format
+op_assign
+id|BIG_STRING
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -4326,7 +4364,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%10d %10d  %4o %10d %5u %5u  %5d %5u %5u %5u %5u %10lu %10lu %10lu&bslash;n&quot;
+id|format
 comma
 id|shm_segs
 (braket

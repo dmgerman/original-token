@@ -236,11 +236,9 @@ id|nwinfo-&gt;file_handle
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef NCPFS_DEBUG_VERBOSE
-id|printk
+id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_update_inode: updated %s, volnum=%d, dirent=%u&bslash;n&quot;
 comma
 id|nwinfo-&gt;i.entryName
@@ -262,7 +260,6 @@ op_member_access_from_pointer
 id|dirEntNum
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|ncp_update_inode2
 r_void
@@ -716,12 +713,7 @@ id|NCP_MOUNT_SYMLINKS
 r_if
 c_cond
 (paren
-(paren
-id|inode-&gt;i_size
-op_ge
-id|NCP_MIN_SYMLINK_SIZE
-)paren
-op_logical_and
+multiline_comment|/* (inode-&gt;i_size &gt;= NCP_MIN_SYMLINK_SIZE)&n;&t;&t;&t;&t;&t;&t; &amp;&amp; */
 (paren
 id|inode-&gt;i_size
 op_le
@@ -808,7 +800,6 @@ suffix:semicolon
 id|DDPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_read_inode: inode-&gt;i_mode = %u&bslash;n&quot;
 comma
 id|inode-&gt;i_mode
@@ -1122,7 +1113,6 @@ id|inode-&gt;i_mode
 id|DDPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_delete_inode: put directory %ld&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
@@ -1375,7 +1365,7 @@ c_cond
 (paren
 id|server-&gt;m.time_out
 OL
-l_int|10
+l_int|1
 )paren
 (brace
 id|server-&gt;m.time_out
@@ -1390,6 +1380,14 @@ l_string|&quot;You need to recompile your ncpfs utils..&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|server-&gt;m.time_out
+op_assign
+id|server-&gt;m.time_out
+op_star
+id|HZ
+op_div
+l_int|100
+suffix:semicolon
 id|server-&gt;m.file_mode
 op_assign
 (paren
@@ -1501,7 +1499,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_read_super: NCP_SBP(sb) = %x&bslash;n&quot;
 comma
 (paren
@@ -1616,7 +1613,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: bufsize = %d&bslash;n&quot;
 comma
 id|server-&gt;buffer_size
@@ -1738,7 +1734,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_read_super: root vol=%d&bslash;n&quot;
 comma
 id|NCP_FINFO
@@ -2813,7 +2808,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: trying to change size to %ld&bslash;n&quot;
 comma
 id|attr-&gt;ia_size
@@ -2944,7 +2938,6 @@ r_void
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: init_module called&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2976,7 +2969,6 @@ r_void
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: cleanup_module called&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2988,19 +2980,17 @@ id|ncp_fs_type
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_NCP_MALLOC
-id|printk
+id|PRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_malloced: %d&bslash;n&quot;
 comma
 id|ncp_malloced
 )paren
 suffix:semicolon
-id|printk
+id|PRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_current_malloced: %d&bslash;n&quot;
 comma
 id|ncp_current_malloced

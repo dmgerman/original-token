@@ -233,9 +233,9 @@ id|KM_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* Preserve the caching of the swap_entry. */
-id|highpage-&gt;pg_offset
+id|highpage-&gt;index
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 suffix:semicolon
 id|highpage-&gt;mapping
 op_assign

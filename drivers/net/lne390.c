@@ -1298,7 +1298,7 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|hdr
@@ -1381,7 +1381,7 @@ id|dev-&gt;rmem_end
 op_minus
 id|xfer_start
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb-&gt;data
@@ -1395,7 +1395,7 @@ id|count
 op_sub_assign
 id|semi_count
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb-&gt;data
@@ -1411,7 +1411,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Packet is in one chunk. */
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb-&gt;data
@@ -1475,7 +1475,7 @@ op_complement
 l_int|3
 suffix:semicolon
 multiline_comment|/* Round up to doubleword */
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|shmem

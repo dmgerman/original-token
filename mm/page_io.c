@@ -441,7 +441,7 @@ id|entry
 suffix:semicolon
 id|entry.val
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 suffix:semicolon
 r_if
 c_cond

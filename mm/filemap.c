@@ -445,7 +445,7 @@ id|curr-&gt;next
 suffix:semicolon
 id|offset
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 suffix:semicolon
 multiline_comment|/* page wholly truncated - free it */
 r_if
@@ -1219,7 +1219,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_eq
 id|offset
 )paren
@@ -1505,7 +1505,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_ge
 id|end
 )paren
@@ -1514,7 +1514,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 OL
 id|start
 )paren
@@ -1744,7 +1744,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_assign
 id|offset
 suffix:semicolon
@@ -5215,7 +5215,7 @@ c_func
 (paren
 id|file
 comma
-id|page-&gt;pg_offset
+id|page-&gt;index
 comma
 id|page
 comma
@@ -5491,7 +5491,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_ne
 id|pgoff
 )paren
@@ -5499,11 +5499,11 @@ id|pgoff
 id|printk
 c_func
 (paren
-l_string|&quot;weirdness: pgoff=%lu pg_offset=%lu address=%lu vm_start=%lu vm_pgoff=%lu&bslash;n&quot;
+l_string|&quot;weirdness: pgoff=%lu index=%lu address=%lu vm_start=%lu vm_pgoff=%lu&bslash;n&quot;
 comma
 id|pgoff
 comma
-id|page-&gt;pg_offset
+id|page-&gt;index
 comma
 id|address
 comma

@@ -153,7 +153,7 @@ id|dentry-&gt;d_name.name
 comma
 id|count
 comma
-id|page-&gt;pg_offset
+id|page-&gt;index
 comma
 id|offset
 )paren
@@ -174,7 +174,7 @@ id|offset
 suffix:semicolon
 id|offset
 op_add_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 suffix:semicolon
@@ -870,7 +870,7 @@ comma
 id|dentry-&gt;d_name.name
 comma
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 )paren
@@ -1481,7 +1481,7 @@ comma
 id|count
 comma
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 )paren
@@ -2043,7 +2043,7 @@ suffix:semicolon
 id|req-&gt;wb_args.offset
 op_assign
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 )paren

@@ -5693,6 +5693,53 @@ c_func
 id|VENDOR
 c_func
 (paren
+id|LAVA
+comma
+l_string|&quot;Lava Computer MFG&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|LAVA
+comma
+id|LAVA_PARALLEL
+comma
+l_string|&quot;Lava Parallel&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|LAVA
+comma
+id|LAVA_DUAL_PAR_A
+comma
+l_string|&quot;Lava Dual Parallel (A)&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|LAVA
+comma
+id|LAVA_DUAL_PAR_B
+comma
+l_string|&quot;Lava Dual Parallel (B)&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|LAVA
+comma
+id|LAVA_BOCA_IOPPAR
+comma
+l_string|&quot;BOCA Research IOPPAR&quot;
+)paren
+id|ENDVENDOR
+c_func
+(paren
+)paren
+id|VENDOR
+c_func
+(paren
 id|SYMPHONY
 comma
 l_string|&quot;Symphony&quot;

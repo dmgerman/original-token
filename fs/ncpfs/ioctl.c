@@ -366,7 +366,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_ioctl: copy %d bytes&bslash;n&quot;
 comma
 id|result
@@ -547,7 +546,6 @@ id|NCP_GET_FS_INFO_VERSION
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;info.version invalid: %d&bslash;n&quot;
 comma
 id|info.version
@@ -794,7 +792,6 @@ r_else
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: s_root-&gt;d_inode==NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -803,7 +800,6 @@ r_else
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: s_root==NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1066,7 +1062,6 @@ r_else
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: s_root-&gt;d_inode==NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1075,7 +1070,6 @@ r_else
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: s_root==NULL&bslash;n&quot;
 )paren
 suffix:semicolon

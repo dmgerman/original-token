@@ -364,7 +364,7 @@ l_int|0
 suffix:semicolon
 id|entry.val
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 suffix:semicolon
 r_if
 c_cond
@@ -582,7 +582,7 @@ id|entry
 suffix:semicolon
 id|entry.val
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
 id|swap_cache_del_total

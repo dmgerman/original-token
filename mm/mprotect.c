@@ -364,6 +364,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 r_do
 (brace
 id|change_pmd_range
@@ -404,6 +411,13 @@ id|start
 OL
 id|end
 )paren
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|flush_tlb_range

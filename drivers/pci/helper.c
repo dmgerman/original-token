@@ -6,6 +6,7 @@ DECL|function|pci_simple_probe
 r_int
 id|pci_simple_probe
 (paren
+r_const
 r_struct
 id|pci_simple_probe_entry
 op_star
@@ -27,6 +28,7 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
+r_const
 r_struct
 id|pci_simple_probe_entry
 op_star

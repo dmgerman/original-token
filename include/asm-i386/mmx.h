@@ -27,7 +27,8 @@ r_void
 id|mmx_clear_page
 c_func
 (paren
-r_int
+r_void
+op_star
 id|page
 )paren
 suffix:semicolon
@@ -36,10 +37,12 @@ r_void
 id|mmx_copy_page
 c_func
 (paren
-r_int
+r_void
+op_star
 id|to
 comma
-r_int
+r_void
+op_star
 id|from
 )paren
 suffix:semicolon

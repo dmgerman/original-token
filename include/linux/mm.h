@@ -344,7 +344,7 @@ op_star
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * A swap entry has to fit into a &quot;unsigned long&quot;, as&n; * the entry is hidden in the &quot;pg_offset&quot; field of the&n; * swapper address space.&n; */
+multiline_comment|/*&n; * A swap entry has to fit into a &quot;unsigned long&quot;, as&n; * the entry is hidden in the &quot;index&quot; field of the&n; * swapper address space.&n; */
 r_typedef
 r_struct
 (brace
@@ -375,10 +375,10 @@ id|address_space
 op_star
 id|mapping
 suffix:semicolon
-DECL|member|pg_offset
+DECL|member|index
 r_int
 r_int
-id|pg_offset
+id|index
 suffix:semicolon
 DECL|member|next_hash
 r_struct

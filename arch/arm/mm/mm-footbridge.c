@@ -8,6 +8,8 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &quot;map.h&quot;
+DECL|macro|SIZE
+mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
 multiline_comment|/*&n; * The first entry allows us to fiddle with the EEPROM from user-space.&n; *  This entry will go away in time, once the fmu32 can mmap() the&n; *  flash.  It can&squot;t at the moment.&n; *&n; * If you want to fiddle with PCI VGA cards from user space, then&n; * change the &squot;0, 1 }&squot; for the PCI MEM and PCI IO to &squot;1, 1 }&squot;&n; * You can then access the PCI bus at 0xe0000000 and 0xffe00000.&n; */
 macro_line|#ifdef CONFIG_HOST_FOOTBRIDGE
 multiline_comment|/*&n; * The mapping when the footbridge is in host mode.&n; */
@@ -149,8 +151,6 @@ op_assign
 id|MAPPING
 )brace
 suffix:semicolon
-DECL|macro|SIZE
-mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
 DECL|variable|io_desc_size
 r_int
 r_int

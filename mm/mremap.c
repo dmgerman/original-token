@@ -441,18 +441,6 @@ op_plus
 id|len
 )paren
 suffix:semicolon
-id|flush_tlb_range
-c_func
-(paren
-id|mm
-comma
-id|old_addr
-comma
-id|old_addr
-op_plus
-id|len
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * This is not the clever way to do this, but we&squot;re taking the&n;&t; * easy way out on the assumption that most remappings will be&n;&t; * only a few pages.. This also makes error recovery easier.&n;&t; */
 r_while
 c_loop
@@ -485,6 +473,18 @@ r_goto
 id|oops_we_failed
 suffix:semicolon
 )brace
+id|flush_tlb_range
+c_func
+(paren
+id|mm
+comma
+id|old_addr
+comma
+id|old_addr
+op_plus
+id|len
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

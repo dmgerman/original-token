@@ -5239,7 +5239,18 @@ id|bh
 )paren
 (brace
 macro_line|#if 0
+r_if
+c_cond
+(paren
+id|buffer_new
+c_func
+(paren
 id|bh
+)paren
+)paren
+(brace
+r_struct
+id|old_bh
 op_assign
 id|get_hash_table
 c_func
@@ -5254,22 +5265,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|bh
+id|old_bh
 )paren
 (brace
 id|unmap_buffer
 c_func
 (paren
-id|bh
+id|old_bh
 )paren
 suffix:semicolon
-multiline_comment|/* Here we could run brelse or bforget. We use&n;&t;&t;   bforget because it will try to put the buffer&n;&t;&t;   in the freelist. */
+multiline_comment|/* Here we could run brelse or bforget. We use&n;&t;&t;&t;   bforget because it will try to put the buffer&n;&t;&t;&t;   in the freelist. */
 id|__bforget
 c_func
 (paren
-id|bh
+id|old_bh
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 )brace
@@ -5359,7 +5371,7 @@ suffix:semicolon
 multiline_comment|/* The page cache is now PAGE_CACHE_SIZE aligned, period.  We handle old a.out&n;&t; * and others via unaligned private mappings.&n;&t; */
 id|block
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 (paren
 id|PAGE_CACHE_SHIFT
@@ -5641,7 +5653,7 @@ id|inode-&gt;i_sb-&gt;s_blocksize_bits
 suffix:semicolon
 id|block
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 (paren
 id|PAGE_CACHE_SHIFT
@@ -6263,7 +6275,7 @@ op_assign
 id|inode-&gt;i_size
 op_minus
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 )paren
@@ -6271,7 +6283,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 OG
 (paren
 id|inode-&gt;i_size
@@ -6374,7 +6386,7 @@ id|inode-&gt;i_sb-&gt;s_blocksize_bits
 suffix:semicolon
 id|block
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 (paren
 id|PAGE_CACHE_SHIFT
@@ -8296,7 +8308,7 @@ id|inode-&gt;i_sb-&gt;s_blocksize_bits
 suffix:semicolon
 id|iblock
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 (paren
 id|PAGE_CACHE_SHIFT

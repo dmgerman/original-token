@@ -9787,6 +9787,8 @@ comma
 l_int|0
 comma
 id|ip_rt_acct_read
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif

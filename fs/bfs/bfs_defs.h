@@ -12,8 +12,6 @@ DECL|macro|su_lf_sblk
 mdefine_line|#define su_lf_sblk&t;u.bfs_sb.si_lf_sblk
 DECL|macro|su_lf_eblk
 mdefine_line|#define su_lf_eblk&t;u.bfs_sb.si_lf_eblk
-DECL|macro|su_imap_len
-mdefine_line|#define su_imap_len&t;u.bfs_sb.si_imap_len
 DECL|macro|su_imap
 mdefine_line|#define su_imap&t;&t;u.bfs_sb.si_imap
 DECL|macro|su_sbh

@@ -518,14 +518,14 @@ c_func
 (paren
 id|s-&gt;su_imap
 comma
-id|s-&gt;su_imap_len
+id|s-&gt;su_lasti
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|ino
-op_ge
+OG
 id|s-&gt;su_lasti
 )paren
 (brace

@@ -4,6 +4,8 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &quot;map.h&quot;
+DECL|macro|SIZE
+mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
 DECL|variable|__initdata
 r_const
 r_struct
@@ -53,14 +55,16 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|macro|SIZEOFMAP
-mdefine_line|#define SIZEOFMAP (sizeof(mapping) / sizeof(mapping[0]))
 DECL|variable|io_desc_size
 r_int
 r_int
 id|__initdata
 id|io_desc_size
 op_assign
-id|SIZEOFMAP
+id|SIZE
+c_func
+(paren
+id|io_desc
+)paren
 suffix:semicolon
 eof

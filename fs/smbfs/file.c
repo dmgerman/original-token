@@ -110,7 +110,7 @@ r_int
 r_int
 id|offset
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 suffix:semicolon
@@ -445,7 +445,7 @@ l_int|0
 suffix:semicolon
 id|offset
 op_add_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 suffix:semicolon
@@ -703,7 +703,7 @@ comma
 id|count
 comma
 (paren
-id|page-&gt;pg_offset
+id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 )paren

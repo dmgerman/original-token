@@ -121,7 +121,7 @@ op_star
 id|link
 suffix:semicolon
 macro_line|#ifdef DEBUG
-id|printk
+id|PRINTK
 c_func
 (paren
 l_string|&quot;ncp_follow_link(dentry=%p,base=%p,follow=%u)&bslash;n&quot;
@@ -421,7 +421,7 @@ comma
 id|error
 suffix:semicolon
 macro_line|#ifdef DEBUG
-id|printk
+id|PRINTK
 c_func
 (paren
 l_string|&quot;ncp_readlink(dentry=%p,buffer=%p,buflen=%d)&bslash;n&quot;
@@ -681,7 +681,7 @@ op_star
 id|link
 suffix:semicolon
 macro_line|#ifdef DEBUG
-id|printk
+id|PRINTK
 c_func
 (paren
 l_string|&quot;ncp_symlink(dir=%p,dentry=%p,symname=%s)&bslash;n&quot;

@@ -6483,7 +6483,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 )paren
 r_return
 op_minus

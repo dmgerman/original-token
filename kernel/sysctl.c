@@ -1037,7 +1037,7 @@ comma
 l_int|NULL
 comma
 op_amp
-id|proc_dointvec
+id|proc_doulongvec_minmax
 )brace
 comma
 macro_line|#endif

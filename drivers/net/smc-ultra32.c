@@ -1308,7 +1308,7 @@ id|RamReg
 suffix:semicolon
 macro_line|#ifdef notdef
 multiline_comment|/* Officially this is what we are doing, but the readl() is faster */
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|hdr
@@ -1335,7 +1335,7 @@ id|hdr
 l_int|0
 )braket
 op_assign
-id|readl
+id|isa_readl
 c_func
 (paren
 id|hdr_start
@@ -1424,7 +1424,7 @@ op_amp
 l_int|0x1FFF
 )paren
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb-&gt;data
@@ -1471,7 +1471,7 @@ comma
 id|RamReg
 )paren
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb-&gt;data
@@ -1495,7 +1495,7 @@ comma
 id|RamReg
 )paren
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb-&gt;data
@@ -1512,7 +1512,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Packet is in one chunk -- we can copy + cksum. */
-id|eth_io_copy_and_sum
+id|isa_eth_io_copy_and_sum
 c_func
 (paren
 id|skb
@@ -1581,7 +1581,7 @@ comma
 id|RamReg
 )paren
 suffix:semicolon
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|xfer_start

@@ -548,11 +548,10 @@ op_lshift_assign
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;DDPRINTK(KERN_DEBUG &quot;ncpfs: %08lX:%02X%02X%02X%02X%02X%02X:%04X&bslash;n&quot;,&n;&t;&t;&t; htonl(server-&gt;m.serv_addr.sipx_network),&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[0],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[1],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[2],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[3],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[4],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[5],&n;&t;&t;&t; ntohs(server-&gt;m.serv_addr.sipx_port));&n;&t;&t;*/
+multiline_comment|/*&n;&t;&t;DDPRINTK(&quot;ncpfs: %08lX:%02X%02X%02X%02X%02X%02X:%04X&bslash;n&quot;,&n;&t;&t;&t; htonl(server-&gt;m.serv_addr.sipx_network),&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[0],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[1],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[2],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[3],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[4],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[5],&n;&t;&t;&t; ntohs(server-&gt;m.serv_addr.sipx_port));&n;&t;&t;*/
 id|DDPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: req.typ: %04X, con: %d, &quot;
 l_string|&quot;seq: %d&quot;
 comma
@@ -572,7 +571,6 @@ suffix:semicolon
 id|DDPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot; func: %d&bslash;n&quot;
 comma
 id|request.function
@@ -878,7 +876,6 @@ id|EAGAIN
 id|DDPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_rpc_call: bad select ready&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -898,7 +895,6 @@ id|ECONNREFUSED
 id|DPRINTK
 c_func
 (paren
-id|KERN_WARNING
 l_string|&quot;ncp_rpc_call: server playing coy&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -952,7 +948,6 @@ multiline_comment|/* Throw away the packet */
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_rpc_call: got positive acknowledge&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -995,7 +990,6 @@ suffix:semicolon
 id|DDPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncpfs: rep.typ: %04X, con: %d, tsk: %d,&quot;
 l_string|&quot;seq: %d&bslash;n&quot;
 comma
@@ -1101,7 +1095,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_WARNING
 l_string|&quot;ncp_rpc_call: reply mismatch&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1317,7 +1310,6 @@ suffix:semicolon
 id|DDPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;do_ncp_rpc_call returned %d&bslash;n&quot;
 comma
 id|result
@@ -1505,7 +1497,6 @@ l_int|0
 id|DPRINTK
 c_func
 (paren
-id|KERN_WARNING
 l_string|&quot;ncp_request_error: %d&bslash;n&quot;
 comma
 id|result
@@ -1541,7 +1532,6 @@ id|result
 op_assign
 id|reply-&gt;completion_code
 suffix:semicolon
-macro_line|#ifdef NCPFS_PARANOIA
 r_if
 c_cond
 (paren
@@ -1549,16 +1539,14 @@ id|result
 op_ne
 l_int|0
 )paren
-id|printk
+id|PPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_request: completion code=%x&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 id|out
 suffix:colon
 r_return
@@ -1786,7 +1774,6 @@ l_int|0
 id|DPRINTK
 c_func
 (paren
-id|KERN_WARNING
 l_string|&quot;ncpfs: server locked!!!&bslash;n&quot;
 )paren
 suffix:semicolon

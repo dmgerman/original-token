@@ -195,7 +195,7 @@ id|page
 (brace
 id|entry.val
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 suffix:semicolon
 id|swap_duplicate
 c_func

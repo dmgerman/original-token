@@ -1617,6 +1617,7 @@ suffix:semicolon
 r_int
 id|pci_simple_probe
 (paren
+r_const
 r_struct
 id|pci_simple_probe_entry
 op_star

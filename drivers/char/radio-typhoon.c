@@ -180,7 +180,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_RADIO_TYPHOON_PROC_FS
 r_static
 r_int
-id|typhoon_read_proc
+id|typhoon_get_info
 c_func
 (paren
 r_char
@@ -1173,10 +1173,10 @@ l_int|NULL
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_RADIO_TYPHOON_PROC_FS
-DECL|function|typhoon_read_proc
+DECL|function|typhoon_get_info
 r_static
 r_int
-id|typhoon_read_proc
+id|typhoon_get_info
 c_func
 (paren
 r_char
@@ -1618,7 +1618,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|create_proc_read_entry
+id|create_proc_info_entry
 c_func
 (paren
 l_string|&quot;driver/radio-typhoon&quot;
@@ -1627,9 +1627,7 @@ l_int|0
 comma
 l_int|NULL
 comma
-id|typhoon_read_proc
-comma
-l_int|NULL
+id|typhoon_get_info
 )paren
 )paren
 id|printk
@@ -1659,6 +1657,8 @@ id|remove_proc_entry
 c_func
 (paren
 l_string|&quot;driver/radio-typhoon&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif

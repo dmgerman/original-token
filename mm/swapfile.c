@@ -709,14 +709,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|page-&gt;pg_offset
+id|page-&gt;index
 )paren
 r_goto
 id|new_swap_entry
 suffix:semicolon
 id|entry.val
 op_assign
-id|page-&gt;pg_offset
+id|page-&gt;index
 suffix:semicolon
 id|type
 op_assign

@@ -1015,7 +1015,7 @@ id|descr.Status
 op_assign
 l_int|0
 suffix:semicolon
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -1098,7 +1098,7 @@ id|descr.Len
 op_assign
 l_int|0
 suffix:semicolon
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -1123,7 +1123,7 @@ id|LANCE_RxDescr
 )paren
 )paren
 suffix:semicolon
-id|memset_io
+id|isa_memset_io
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -1584,7 +1584,7 @@ op_lshift
 l_int|29
 )paren
 suffix:semicolon
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -1748,7 +1748,7 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* read descriptor */
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 op_amp
@@ -1886,7 +1886,7 @@ op_increment
 suffix:semicolon
 r_else
 (brace
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb_put
@@ -1949,7 +1949,7 @@ op_or_assign
 id|RXDSCR_FLAGS_OWN
 suffix:semicolon
 multiline_comment|/* update descriptor in shared RAM */
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -2073,7 +2073,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* read descriptor */
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 op_amp
@@ -2871,7 +2871,7 @@ id|LANCE_TxDescr
 )paren
 )paren
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 op_amp
@@ -2946,7 +2946,7 @@ OL
 id|tmplen
 )paren
 (brace
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -2967,7 +2967,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* do the real data copying */
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -3043,7 +3043,7 @@ id|TXCOUNT
 )paren
 suffix:semicolon
 multiline_comment|/* write descriptor back to RAM */
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -3187,7 +3187,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* ...then modify the initialization block... */
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 op_amp
@@ -3306,7 +3306,7 @@ l_int|7
 suffix:semicolon
 )brace
 )brace
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dev-&gt;mem_start

@@ -6,6 +6,8 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &quot;map.h&quot;
+DECL|macro|SIZE
+mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
 multiline_comment|/*    Logical    Physical&n; * 0xffff1000&t;0x00100000&t;DMA registers&n; * 0xffff2000&t;0x00200000&t;MPEG&n; * 0xffff3000&t;0x00300000&t;FPGA1 local control&n; * 0xffff4000&t;0x00400000&t;External serial&n; * 0xffff5000&t;0x00500000&t;Internal serial&n; * 0xffff6000&t;0x00600000&t;Parallel&n; * 0xffff7000&t;0x00700000&t;Interrupt control&n; * 0xffff8000&t;0x00800000&t;Computer video&n; * 0xffff9000&t;0x00900000&t;Control register 0&n; * 0xffffs000&t;0x00a00000&t;Control register 1&n; * 0xffffb000&t;0x00b00000&t;Control register 2&n; * 0xffffc000&t;0x00c00000&t;FPGA2 local control&n; * 0xffffd000&t;0x00d00000&t;Interrupt reset&n; * 0xffffe000&t;0x00e00000&t;MPEG DMA throttle&n; */
 DECL|variable|__initdata
 r_const
@@ -306,14 +308,16 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|macro|SIZEOFMAP
-mdefine_line|#define SIZEOFMAP (sizeof(mapping) / sizeof(mapping[0]))
 DECL|variable|io_desc_size
 r_int
 r_int
 id|__initdata
 id|io_desc_size
 op_assign
-id|SIZEOFMAP
+id|SIZE
+c_func
+(paren
+id|io_desc
+)paren
 suffix:semicolon
 eof

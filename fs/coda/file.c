@@ -334,7 +334,7 @@ id|coda_inode-&gt;i_ino
 comma
 id|cii-&gt;c_ovp-&gt;i_ino
 comma
-id|page-&gt;offset
+id|page-&gt;index
 )paren
 suffix:semicolon
 id|block_read_full_page

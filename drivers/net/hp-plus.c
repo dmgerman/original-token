@@ -1612,7 +1612,7 @@ op_plus
 id|HPP_OPTION
 )paren
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|hdr
@@ -1718,7 +1718,7 @@ id|HPP_OPTION
 )paren
 suffix:semicolon
 multiline_comment|/* Caution: this relies on get_8390_hdr() rounding up count!&n;&t;   Also note that we *can&squot;t* use eth_io_copy_and_sum() because&n;&t;   it will not always copy &quot;count&quot; bytes (e.g. padded IP).  */
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb-&gt;data
@@ -1875,7 +1875,7 @@ op_plus
 id|HPP_OPTION
 )paren
 suffix:semicolon
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dev-&gt;mem_start

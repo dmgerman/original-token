@@ -47,14 +47,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|nvram_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif
 macro_line|#endif  /* _LINUX_NVRAM_H */
 eof

@@ -1926,10 +1926,11 @@ r_return
 id|inode
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * Uhhuh, somebody else created the same inode under&n;&t;&t; * us. Use the old inode instead of the one we just&n;&t;&t; * allocated.&n;&t;&t; */
 id|__iget
 c_func
 (paren
-id|inode
+id|old
 )paren
 suffix:semicolon
 id|spin_unlock

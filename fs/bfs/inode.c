@@ -1,7 +1,8 @@
 multiline_comment|/*&n; *&t;fs/bfs/inode.c&n; *&t;BFS superblock and inode operations.&n; *&t;Copyright (C) 1999 Tigran Aivazian &lt;tigran@ocston.org&gt;&n; *&t;From fs/minix, Copyright (C) 1991, 1992 Linus Torvalds.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/bfs_fs.h&gt;
@@ -1065,22 +1066,28 @@ id|s
 macro_line|#if 0
 r_int
 id|i
-comma
-id|hibit
-op_assign
-l_int|8
-op_star
-(paren
-id|s-&gt;su_imap_len
-)paren
-op_minus
-l_int|1
 suffix:semicolon
 r_char
+op_star
 id|tmpbuf
-(braket
-l_int|400
-)braket
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tmpbuf
+)paren
+r_return
 suffix:semicolon
 id|memset
 c_func
@@ -1097,7 +1104,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|hibit
+id|s-&gt;su_lasti
 suffix:semicolon
 id|i
 op_ge
@@ -1112,7 +1119,9 @@ c_cond
 (paren
 id|i
 OG
-l_int|390
+id|PAGE_SIZE
+op_minus
+l_int|100
 )paren
 r_break
 suffix:semicolon
@@ -1149,15 +1158,23 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;BFS-fs: %s: lasti=%d &lt;%s&gt; (%d*8 bits)&bslash;n&quot;
+l_string|&quot;BFS-fs: %s: lasti=%d &lt;%s&gt;&bslash;n&quot;
 comma
 id|prefix
 comma
 id|s-&gt;su_lasti
 comma
 id|tmpbuf
-comma
-id|s-&gt;su_imap_len
+)paren
+suffix:semicolon
+id|free_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|tmpbuf
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1202,8 +1219,9 @@ op_star
 id|inode
 suffix:semicolon
 r_int
-r_int
 id|i
+comma
+id|imap_len
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -1366,7 +1384,7 @@ id|BFS_ROOT_INO
 op_minus
 l_int|1
 suffix:semicolon
-id|s-&gt;su_imap_len
+id|imap_len
 op_assign
 id|s-&gt;su_lasti
 op_div
@@ -1374,13 +1392,12 @@ l_int|8
 op_plus
 l_int|1
 suffix:semicolon
-multiline_comment|/* 1 byte is 8 bit */
 id|s-&gt;su_imap
 op_assign
 id|kmalloc
 c_func
 (paren
-id|s-&gt;su_imap_len
+id|imap_len
 comma
 id|GFP_KERNEL
 )paren
@@ -1401,7 +1418,7 @@ id|s-&gt;su_imap
 comma
 l_int|0
 comma
-id|s-&gt;su_imap_len
+id|imap_len
 )paren
 suffix:semicolon
 r_for

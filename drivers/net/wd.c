@@ -1910,7 +1910,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Packet is in one chunk -- we can copy + cksum. */
-id|isa_eth_io_copy_and_csum
+id|isa_eth_io_copy_and_sum
 c_func
 (paren
 id|skb

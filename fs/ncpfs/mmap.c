@@ -41,8 +41,9 @@ suffix:semicolon
 multiline_comment|/*&n; * Fill in the supplied page for mmap&n; */
 DECL|function|ncp_file_mmap_nopage
 r_static
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|ncp_file_mmap_nopage
 c_func
 (paren
@@ -56,7 +57,7 @@ r_int
 id|address
 comma
 r_int
-id|no_share
+id|write_access
 )paren
 (brace
 r_struct
@@ -80,9 +81,14 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-r_int
-r_int
+r_struct
 id|page
+op_star
+id|page
+suffix:semicolon
+r_int
+r_int
+id|pg_addr
 suffix:semicolon
 r_int
 r_int
@@ -100,10 +106,12 @@ id|pos
 suffix:semicolon
 id|page
 op_assign
-id|__get_free_page
+id|__get_pages
 c_func
 (paren
 id|GFP_KERNEL
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -115,6 +123,14 @@ id|page
 r_return
 id|page
 suffix:semicolon
+id|pg_addr
+op_assign
+id|page_address
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|address
 op_and_assign
 id|PAGE_MASK
@@ -125,7 +141,11 @@ id|address
 op_minus
 id|area-&gt;vm_start
 op_plus
-id|area-&gt;vm_offset
+(paren
+id|area-&gt;vm_pgoff
+op_lshift
+id|PAGE_SHIFT
+)paren
 suffix:semicolon
 id|count
 op_assign
@@ -242,7 +262,7 @@ r_char
 op_star
 )paren
 (paren
-id|page
+id|pg_addr
 op_plus
 id|already_read
 )paren
@@ -295,7 +315,7 @@ r_char
 op_star
 )paren
 (paren
-id|page
+id|pg_addr
 op_plus
 id|already_read
 )paren
@@ -372,7 +392,6 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;ncp_mmap: called&bslash;n&quot;
 )paren
 suffix:semicolon
