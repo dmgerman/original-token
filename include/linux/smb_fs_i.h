@@ -41,6 +41,12 @@ r_int
 id|oldmtime
 suffix:semicolon
 multiline_comment|/* last time refreshed */
+DECL|member|closed
+r_int
+r_int
+id|closed
+suffix:semicolon
+multiline_comment|/* timestamp when closed */
 DECL|member|dentry
 r_void
 op_star

@@ -1516,7 +1516,7 @@ op_star
 (paren
 id|packet
 op_plus
-l_int|9
+id|smb_rcls
 )paren
 suffix:semicolon
 id|server-&gt;err
@@ -1526,7 +1526,7 @@ c_func
 (paren
 id|packet
 comma
-l_int|11
+id|smb_err
 )paren
 suffix:semicolon
 macro_line|#ifdef SMBFS_DEBUG_VERBOSE

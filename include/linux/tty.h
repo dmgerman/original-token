@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/tty_driver.h&gt;
 macro_line|#include &lt;linux/tty_ldisc.h&gt;
+macro_line|#include &lt;linux/serialP.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Note: don&squot;t mess with NR_PTYS until you understand the tty minor &n; * number allocation game...&n; * (Note: the *_driver.minor_start values 1, 64, 128, 192 are&n; * hardcoded at present.)&n; */
 DECL|macro|NR_PTYS
@@ -439,6 +440,13 @@ id|packet
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|low_latency
+r_int
+r_char
+id|low_latency
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|ctrl_status
 r_int
 r_char
@@ -465,6 +473,11 @@ DECL|member|max_flip_cnt
 r_int
 id|max_flip_cnt
 suffix:semicolon
+DECL|member|alt_speed
+r_int
+id|alt_speed
+suffix:semicolon
+multiline_comment|/* For magic substitution of 38400 bps */
 DECL|member|write_wait
 r_struct
 id|wait_queue
@@ -476,6 +489,11 @@ r_struct
 id|wait_queue
 op_star
 id|read_wait
+suffix:semicolon
+DECL|member|tq_hangup
+r_struct
+id|tq_struct
+id|tq_hangup
 suffix:semicolon
 DECL|member|disc_data
 r_void
@@ -1041,6 +1059,28 @@ c_func
 (paren
 r_int
 id|priv
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|tty_flip_buffer_push
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|tty_get_baud_rate
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
 )paren
 suffix:semicolon
 multiline_comment|/* n_tty.c */

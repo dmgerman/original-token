@@ -212,15 +212,10 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Write a message to the kernel side of a communication link&n; */
 DECL|function|netlink_write
 r_static
-r_int
+id|ssize_t
 id|netlink_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -232,8 +227,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -246,7 +244,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_struct
@@ -305,15 +303,10 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Read a message from the kernel side of the communication link&n; */
 DECL|function|netlink_read
 r_static
-r_int
+id|ssize_t
 id|netlink_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -324,8 +317,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -338,7 +334,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_struct

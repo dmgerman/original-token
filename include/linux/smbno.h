@@ -3,17 +3,17 @@ DECL|macro|_SMBNO_H_
 mdefine_line|#define _SMBNO_H_
 multiline_comment|/* these define the attribute byte as seen by DOS */
 DECL|macro|aRONLY
-mdefine_line|#define aRONLY (1L&lt;&lt;0)
+mdefine_line|#define aRONLY&t;(1L&lt;&lt;0)
 DECL|macro|aHIDDEN
-mdefine_line|#define aHIDDEN (1L&lt;&lt;1)
+mdefine_line|#define aHIDDEN&t;(1L&lt;&lt;1)
 DECL|macro|aSYSTEM
-mdefine_line|#define aSYSTEM (1L&lt;&lt;2)
+mdefine_line|#define aSYSTEM&t;(1L&lt;&lt;2)
 DECL|macro|aVOLID
-mdefine_line|#define aVOLID (1L&lt;&lt;3)
+mdefine_line|#define aVOLID&t;(1L&lt;&lt;3)
 DECL|macro|aDIR
-mdefine_line|#define aDIR (1L&lt;&lt;4)
+mdefine_line|#define aDIR&t;(1L&lt;&lt;4)
 DECL|macro|aARCH
-mdefine_line|#define aARCH (1L&lt;&lt;5)
+mdefine_line|#define aARCH&t;(1L&lt;&lt;5)
 multiline_comment|/* error classes */
 DECL|macro|SUCCESS
 mdefine_line|#define SUCCESS 0  /* The request was successful. */
@@ -180,6 +180,15 @@ DECL|macro|ERRsharebufexc
 mdefine_line|#define ERRsharebufexc 36       /* share buffer exceeded */
 DECL|macro|ERRdiskfull
 mdefine_line|#define ERRdiskfull 39
+multiline_comment|/*&n; * Access modes when opening a file&n; */
+DECL|macro|SMB_ACCMASK
+mdefine_line|#define SMB_ACCMASK&t;0x0003
+DECL|macro|SMB_O_RDONLY
+mdefine_line|#define SMB_O_RDONLY&t;0x0000
+DECL|macro|SMB_O_WRONLY
+mdefine_line|#define SMB_O_WRONLY&t;0x0001
+DECL|macro|SMB_O_RDWR
+mdefine_line|#define SMB_O_RDWR&t;0x0002
 multiline_comment|/* offsets into message for common items */
 DECL|macro|smb_com
 mdefine_line|#define smb_com 8

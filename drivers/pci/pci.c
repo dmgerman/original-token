@@ -2192,9 +2192,9 @@ c_func
 (paren
 id|VIA
 comma
-id|VIA_82C416
+id|VIA_82C926
 comma
-l_string|&quot;VT 82C416MV&quot;
+l_string|&quot;VT 82C926 Amazon&quot;
 )paren
 comma
 id|DEVICE
@@ -2202,9 +2202,9 @@ c_func
 (paren
 id|VIA
 comma
-id|VIA_82C926
+id|VIA_82C416
 comma
-l_string|&quot;VT 82C926 Amazon&quot;
+l_string|&quot;VT 82C416MV&quot;
 )paren
 comma
 id|DEVICE

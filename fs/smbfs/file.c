@@ -5,35 +5,16 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/smbno.h&gt;
+macro_line|#include &lt;linux/smb_fs.h&gt;
 DECL|macro|SMBFS_PARANOIA
 mdefine_line|#define SMBFS_PARANOIA 1
 multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
 multiline_comment|/* #define pr_debug printk */
-r_extern
-r_int
-id|smb_get_rsize
-c_func
-(paren
-r_struct
-id|smb_sb_info
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|smb_get_wsize
-c_func
-(paren
-r_struct
-id|smb_sb_info
-op_star
-)paren
-suffix:semicolon
 r_static
 r_inline
 r_int
@@ -246,7 +227,7 @@ c_func
 (paren
 id|dentry
 comma
-id|O_RDONLY
+id|SMB_O_RDONLY
 )paren
 suffix:semicolon
 r_if
@@ -256,9 +237,25 @@ id|result
 OL
 l_int|0
 )paren
+(brace
+macro_line|#ifdef SMBFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;smb_readpage_sync: %s/%s open failed, error=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|result
+)paren
+suffix:semicolon
+macro_line|#endif
 r_goto
 id|io_error
 suffix:semicolon
+)brace
 r_do
 (brace
 r_if
@@ -307,6 +304,10 @@ suffix:semicolon
 id|buffer
 op_add_assign
 id|result
+suffix:semicolon
+id|inode-&gt;i_atime
+op_assign
+id|CURRENT_TIME
 suffix:semicolon
 r_if
 c_cond
@@ -508,10 +509,6 @@ suffix:semicolon
 r_int
 id|result
 comma
-id|refresh
-op_assign
-l_int|0
-comma
 id|written
 op_assign
 l_int|0
@@ -590,21 +587,9 @@ id|result
 OL
 l_int|0
 )paren
-(brace
-multiline_comment|/* Must mark the page invalid after I/O error */
-id|clear_bit
-c_func
-(paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
 r_goto
 id|io_error
 suffix:semicolon
-)brace
 multiline_comment|/* N.B. what if result &lt; wsize?? */
 macro_line|#ifdef SMBFS_PARANOIA
 r_if
@@ -625,10 +610,6 @@ id|result
 )paren
 suffix:semicolon
 macro_line|#endif
-id|refresh
-op_assign
-l_int|1
-suffix:semicolon
 id|buffer
 op_add_assign
 id|wsize
@@ -645,6 +626,28 @@ id|count
 op_sub_assign
 id|wsize
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Update the inode now rather than waiting for a refresh.&n;&t;&t; */
+id|inode-&gt;i_mtime
+op_assign
+id|inode-&gt;i_atime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|offset
+OG
+id|inode-&gt;i_size
+)paren
+id|inode-&gt;i_size
+op_assign
+id|offset
+suffix:semicolon
+id|inode-&gt;u.smbfs_i.cache_valid
+op_or_assign
+id|SMB_F_LOCALWRITE
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -652,21 +655,8 @@ c_loop
 id|count
 )paren
 suffix:semicolon
-id|io_error
+id|out
 suffix:colon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|refresh
-)paren
-id|smb_refresh_inode
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-macro_line|#endif
 id|smb_unlock_page
 c_func
 (paren
@@ -680,6 +670,21 @@ c_cond
 id|written
 suffix:colon
 id|result
+suffix:semicolon
+id|io_error
+suffix:colon
+multiline_comment|/* Must mark the page invalid after I/O error */
+id|clear_bit
+c_func
+(paren
+id|PG_uptodate
+comma
+op_amp
+id|page-&gt;flags
+)paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write a page to the server. This will be used for NFS swapping only&n; * (for now), and we currently do this synchronously only.&n; */
@@ -977,6 +982,20 @@ op_star
 id|ppos
 )paren
 (brace
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 id|ssize_t
 id|status
 suffix:semicolon
@@ -986,10 +1005,14 @@ c_func
 (paren
 l_string|&quot;smb_file_read: file %s/%s, count=%lu@%lu&bslash;n&quot;
 comma
-id|file-&gt;f_dentry-&gt;d_parent-&gt;d_name.name
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|file-&gt;f_dentry-&gt;d_name.name
+id|dentry-&gt;d_name.name
 comma
+(paren
+r_int
+r_int
+)paren
 id|count
 comma
 (paren
@@ -1006,17 +1029,49 @@ op_assign
 id|smb_revalidate_inode
 c_func
 (paren
-id|file-&gt;f_dentry-&gt;d_inode
+id|inode
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|status
-op_ge
-l_int|0
 )paren
 (brace
+macro_line|#ifdef SMBFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;smb_file_read: %s/%s validation failed, error=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|status
+)paren
+suffix:semicolon
+macro_line|#endif
+r_goto
+id|out
+suffix:semicolon
+)brace
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
+c_func
+(paren
+l_string|&quot;smb_file_read: before read, size=%ld, pages=%ld, flags=%x, atime=%ld&bslash;n&quot;
+comma
+id|inode-&gt;i_size
+comma
+id|inode-&gt;i_nrpages
+comma
+id|inode-&gt;i_flags
+comma
+id|inode-&gt;i_atime
+)paren
+suffix:semicolon
+macro_line|#endif
 id|status
 op_assign
 id|generic_file_read
@@ -1031,7 +1086,8 @@ comma
 id|ppos
 )paren
 suffix:semicolon
-)brace
+id|out
+suffix:colon
 r_return
 id|status
 suffix:semicolon
@@ -1076,9 +1132,9 @@ c_func
 (paren
 l_string|&quot;smb_file_mmap: file %s/%s, address %lu - %lu&bslash;n&quot;
 comma
-id|file-&gt;f_dentry-&gt;d_parent-&gt;d_name.name
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|file-&gt;f_dentry-&gt;d_name.name
+id|dentry-&gt;d_name.name
 comma
 id|vma-&gt;vm_start
 comma
@@ -1098,10 +1154,26 @@ r_if
 c_cond
 (paren
 id|status
-op_ge
-l_int|0
 )paren
 (brace
+macro_line|#ifdef SMBFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;smb_file_mmap: %s/%s validation failed, error=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|status
+)paren
+suffix:semicolon
+macro_line|#endif
+r_goto
+id|out
+suffix:semicolon
+)brace
 id|status
 op_assign
 id|generic_file_mmap
@@ -1112,7 +1184,8 @@ comma
 id|vma
 )paren
 suffix:semicolon
-)brace
+id|out
+suffix:colon
 r_return
 id|status
 suffix:semicolon
@@ -1142,6 +1215,20 @@ op_star
 id|ppos
 )paren
 (brace
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 id|ssize_t
 id|result
 suffix:semicolon
@@ -1151,10 +1238,14 @@ c_func
 (paren
 l_string|&quot;smb_file_write: file %s/%s, count=%lu@%lu&bslash;n&quot;
 comma
-id|file-&gt;f_dentry-&gt;d_parent-&gt;d_name.name
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|file-&gt;f_dentry-&gt;d_name.name
+id|dentry-&gt;d_name.name
 comma
+(paren
+r_int
+r_int
+)paren
 id|count
 comma
 (paren
@@ -1166,43 +1257,12 @@ id|ppos
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef SMBFS_PARANOIA
-multiline_comment|/* Should be impossible now that inodes can&squot;t change mode */
-id|result
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|S_ISREG
-c_func
-(paren
-id|file-&gt;f_dentry-&gt;d_inode-&gt;i_mode
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;smb_file_write: write to non-file, mode %07o&bslash;n&quot;
-comma
-id|file-&gt;f_dentry-&gt;d_inode-&gt;i_mode
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
-macro_line|#endif
 id|result
 op_assign
 id|smb_revalidate_inode
 c_func
 (paren
-id|file-&gt;f_dentry-&gt;d_inode
+id|inode
 )paren
 suffix:semicolon
 r_if
@@ -1210,17 +1270,33 @@ c_cond
 (paren
 id|result
 )paren
+(brace
+macro_line|#ifdef SMBFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;smb_file_write: %s/%s validation failed, error=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|result
+)paren
+suffix:semicolon
+macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
+)brace
 id|result
 op_assign
 id|smb_open
 c_func
 (paren
-id|file-&gt;f_dentry
+id|dentry
 comma
-id|O_WRONLY
+id|SMB_O_WRONLY
 )paren
 suffix:semicolon
 r_if
@@ -1253,19 +1329,25 @@ comma
 id|ppos
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-OG
-l_int|0
-)paren
-id|smb_refresh_inode
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
 c_func
 (paren
-id|file-&gt;f_dentry-&gt;d_inode
+l_string|&quot;smb_file_write: pos=%ld, size=%ld, mtime=%ld, atime=%ld&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|file-&gt;f_pos
+comma
+id|inode-&gt;i_size
+comma
+id|inode-&gt;i_mtime
+comma
+id|inode-&gt;i_atime
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|out
 suffix:colon
@@ -1294,11 +1376,13 @@ macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;smb_file_open: inode=%p, file=%p&bslash;n&quot;
+l_string|&quot;smb_file_open: opening %s/%s, d_count=%d&bslash;n&quot;
 comma
-id|inode
+id|file-&gt;f_dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|file
+id|file-&gt;f_dentry-&gt;d_name.name
+comma
+id|file-&gt;f_dentry-&gt;d_count
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1334,7 +1418,7 @@ macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;smb_file_release: closing file %s/%s, d_count=%d&bslash;n&quot;
+l_string|&quot;smb_file_release: closing %s/%s, d_count=%d&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
@@ -1361,6 +1445,71 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Check whether the required access is compatible with&n; * an inode&squot;s permission. SMB doesn&squot;t recognize superuser&n; * privileges, so we need our own check for this.&n; */
+r_static
+r_int
+DECL|function|smb_file_permission
+id|smb_file_permission
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|mask
+)paren
+(brace
+r_int
+id|mode
+op_assign
+id|inode-&gt;i_mode
+suffix:semicolon
+r_int
+id|error
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
+c_func
+(paren
+l_string|&quot;smb_file_permission: mode=%x, mask=%x&bslash;n&quot;
+comma
+id|mode
+comma
+id|mask
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Look at user permissions */
+id|mode
+op_rshift_assign
+l_int|6
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|mode
+op_amp
+l_int|7
+op_amp
+id|mask
+)paren
+op_ne
+id|mask
+)paren
+id|error
+op_assign
+op_minus
+id|EACCES
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 DECL|variable|smb_file_operations
@@ -1468,7 +1617,7 @@ multiline_comment|/* bmap */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
-l_int|NULL
+id|smb_file_permission
 comma
 multiline_comment|/* permission */
 l_int|NULL

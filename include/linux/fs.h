@@ -2882,6 +2882,15 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|fs_may_mount
+c_func
+(paren
+id|kdev_t
+id|dev
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|file
 op_star

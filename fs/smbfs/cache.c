@@ -906,8 +906,8 @@ multiline_comment|/*&n;&t; * Fill the cache, starting at position 2.&n;&t; */
 id|retry
 suffix:colon
 id|inode-&gt;u.smbfs_i.cache_valid
-op_assign
-l_int|1
+op_or_assign
+id|SMB_F_CACHEVALID
 suffix:semicolon
 id|result
 op_assign
@@ -948,7 +948,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|inode-&gt;u.smbfs_i.cache_valid
+op_amp
+id|SMB_F_CACHEVALID
+)paren
 )paren
 (brace
 macro_line|#ifdef SMBFS_PARANOIA
@@ -1020,6 +1024,11 @@ id|dir
 )paren
 suffix:semicolon
 id|dir-&gt;u.smbfs_i.cache_valid
+op_and_assign
+op_complement
+id|SMB_F_CACHEVALID
+suffix:semicolon
+id|dir-&gt;u.smbfs_i.oldmtime
 op_assign
 l_int|0
 suffix:semicolon

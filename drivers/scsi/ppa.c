@@ -1048,7 +1048,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/* end of ppa.c */
 r_static
 r_int
 id|device_check
@@ -4112,12 +4111,26 @@ l_int|0xff
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|cmd-&gt;SCp.phase
+OG
+l_int|1
+)paren
 id|ppa_disconnect
 c_func
 (paren
 id|cmd-&gt;host-&gt;unique_id
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd-&gt;SCp.phase
+OG
+l_int|0
+)paren
 id|ppa_pb_release
 c_func
 (paren

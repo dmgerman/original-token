@@ -1,8 +1,10 @@
-multiline_comment|/* &n; * linux/mtio.h header file for Linux. Written by H. Bergman&n; */
+multiline_comment|/* &n; * linux/mtio.h header file for Linux. Written by H. Bergman&n; *&n; * Modified for special ioctls provided by zftape in September 1997&n; * by C.-J. Heine.&n; */
 macro_line|#ifndef _LINUX_MTIO_H
 DECL|macro|_LINUX_MTIO_H
 mdefine_line|#define _LINUX_MTIO_H
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;linux/qic117.h&gt;
 multiline_comment|/*&n; * Structures and definitions for mag tape io control commands&n; */
 multiline_comment|/* structure for MTIOCTOP - mag tape op command */
 DECL|struct|mtop
@@ -168,7 +170,7 @@ DECL|macro|MT_ISSCSI1
 mdefine_line|#define MT_ISSCSI1&t;&t;0x71&t;/* Generic ANSI SCSI-1 tape unit */
 DECL|macro|MT_ISSCSI2
 mdefine_line|#define MT_ISSCSI2&t;&t;0x72&t;/* Generic ANSI SCSI-2 tape unit */
-multiline_comment|/* QIC-40/80/3010/3020 ftape supported drives.&n; * 20bit vendor ID + 0x800000 (see vendors.h in ftape distribution)&n; */
+multiline_comment|/* QIC-40/80/3010/3020 ftape supported drives.&n; * 20bit vendor ID + 0x800000 (see ftape-vendors.h)&n; */
 DECL|macro|MT_ISFTAPE_UNKNOWN
 mdefine_line|#define MT_ISFTAPE_UNKNOWN&t;0x800000 /* obsolete */
 DECL|macro|MT_ISFTAPE_FLAG
@@ -324,6 +326,308 @@ l_int|10
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*  structure for MTIOCVOLINFO, query information about the volume&n; *  currently positioned at (zftape)&n; */
+DECL|struct|mtvolinfo
+r_struct
+id|mtvolinfo
+(brace
+DECL|member|mt_volno
+r_int
+r_int
+id|mt_volno
+suffix:semicolon
+multiline_comment|/* vol-number */
+DECL|member|mt_blksz
+r_int
+r_int
+id|mt_blksz
+suffix:semicolon
+multiline_comment|/* blocksize used when recording */
+DECL|member|mt_rawsize
+r_int
+r_int
+id|mt_rawsize
+suffix:semicolon
+multiline_comment|/* raw tape space consumed, in kb */
+DECL|member|mt_size
+r_int
+r_int
+id|mt_size
+suffix:semicolon
+multiline_comment|/* volume size after decompression, in kb */
+DECL|member|mt_cmpr
+r_int
+r_int
+id|mt_cmpr
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* this volume has been compressed */
+)brace
+suffix:semicolon
+multiline_comment|/* raw access to a floppy drive, read and write an arbitrary segment.&n; * For ftape/zftape to support formatting etc.&n; */
+DECL|macro|MT_FT_RD_SINGLE
+mdefine_line|#define MT_FT_RD_SINGLE  0
+DECL|macro|MT_FT_RD_AHEAD
+mdefine_line|#define MT_FT_RD_AHEAD   1
+DECL|macro|MT_FT_WR_ASYNC
+mdefine_line|#define MT_FT_WR_ASYNC   0 /* start tape only when all buffers are full     */
+DECL|macro|MT_FT_WR_MULTI
+mdefine_line|#define MT_FT_WR_MULTI   1 /* start tape, continue until buffers are empty  */
+DECL|macro|MT_FT_WR_SINGLE
+mdefine_line|#define MT_FT_WR_SINGLE  2 /* write a single segment and stop afterwards    */
+DECL|macro|MT_FT_WR_DELETE
+mdefine_line|#define MT_FT_WR_DELETE  3 /* write deleted data marks, one segment at time */
+DECL|struct|mtftseg
+r_struct
+id|mtftseg
+(brace
+DECL|member|mt_segno
+r_int
+id|mt_segno
+suffix:semicolon
+multiline_comment|/* the segment to read or write */
+DECL|member|mt_mode
+r_int
+id|mt_mode
+suffix:semicolon
+multiline_comment|/* modes for read/write (sync/async etc.) */
+DECL|member|mt_result
+r_int
+id|mt_result
+suffix:semicolon
+multiline_comment|/* result of r/w request, not of the ioctl */
+DECL|member|mt_data
+r_void
+op_star
+id|mt_data
+suffix:semicolon
+multiline_comment|/* User space buffer: must be 29kb */
+)brace
+suffix:semicolon
+multiline_comment|/* get tape capacity (ftape/zftape)&n; */
+DECL|struct|mttapesize
+r_struct
+id|mttapesize
+(brace
+DECL|member|mt_capacity
+r_int
+r_int
+id|mt_capacity
+suffix:semicolon
+multiline_comment|/* entire, uncompressed capacity &n;&t;&t;&t;&t;    * of a cartridge&n;&t;&t;&t;&t;    */
+DECL|member|mt_used
+r_int
+r_int
+id|mt_used
+suffix:semicolon
+multiline_comment|/* what has been used so far, raw &n;&t;&t;&t;&t;    * uncompressed amount&n;&t;&t;&t;&t;    */
+)brace
+suffix:semicolon
+multiline_comment|/*  possible values of the ftfmt_op field&n; */
+DECL|macro|FTFMT_SET_PARMS
+mdefine_line|#define FTFMT_SET_PARMS&t;&t;1 /* set software parms */
+DECL|macro|FTFMT_GET_PARMS
+mdefine_line|#define FTFMT_GET_PARMS&t;&t;2 /* get software parms */
+DECL|macro|FTFMT_FORMAT_TRACK
+mdefine_line|#define FTFMT_FORMAT_TRACK&t;3 /* start formatting a tape track   */
+DECL|macro|FTFMT_STATUS
+mdefine_line|#define FTFMT_STATUS&t;&t;4 /* monitor formatting a tape track */
+DECL|macro|FTFMT_VERIFY
+mdefine_line|#define FTFMT_VERIFY&t;&t;5 /* verify the given segment        */
+DECL|struct|ftfmtparms
+r_struct
+id|ftfmtparms
+(brace
+DECL|member|ft_qicstd
+r_int
+r_char
+id|ft_qicstd
+suffix:semicolon
+multiline_comment|/* QIC-40/QIC-80/QIC-3010/QIC-3020 */
+DECL|member|ft_fmtcode
+r_int
+r_char
+id|ft_fmtcode
+suffix:semicolon
+multiline_comment|/* Refer to the QIC specs */
+DECL|member|ft_fhm
+r_int
+r_char
+id|ft_fhm
+suffix:semicolon
+multiline_comment|/* floppy head max */
+DECL|member|ft_ftm
+r_int
+r_char
+id|ft_ftm
+suffix:semicolon
+multiline_comment|/* floppy track max */
+DECL|member|ft_spt
+r_int
+r_int
+id|ft_spt
+suffix:semicolon
+multiline_comment|/* segments per track */
+DECL|member|ft_tpc
+r_int
+r_int
+id|ft_tpc
+suffix:semicolon
+multiline_comment|/* tracks per cartridge */
+)brace
+suffix:semicolon
+DECL|struct|ftfmttrack
+r_struct
+id|ftfmttrack
+(brace
+DECL|member|ft_track
+r_int
+r_int
+id|ft_track
+suffix:semicolon
+multiline_comment|/* track to format */
+DECL|member|ft_gap3
+r_int
+r_char
+id|ft_gap3
+suffix:semicolon
+multiline_comment|/* size of gap3, for FORMAT_TRK */
+)brace
+suffix:semicolon
+DECL|struct|ftfmtstatus
+r_struct
+id|ftfmtstatus
+(brace
+DECL|member|ft_segment
+r_int
+r_int
+id|ft_segment
+suffix:semicolon
+multiline_comment|/* segment currently being formatted */
+)brace
+suffix:semicolon
+DECL|struct|ftfmtverify
+r_struct
+id|ftfmtverify
+(brace
+DECL|member|ft_segment
+r_int
+r_int
+id|ft_segment
+suffix:semicolon
+multiline_comment|/* segment to verify */
+DECL|member|ft_bsm
+r_int
+r_int
+id|ft_bsm
+suffix:semicolon
+multiline_comment|/* bsm as result of VERIFY cmd */
+)brace
+suffix:semicolon
+DECL|struct|mtftformat
+r_struct
+id|mtftformat
+(brace
+DECL|member|fmt_op
+r_int
+r_int
+id|fmt_op
+suffix:semicolon
+multiline_comment|/* operation to perform */
+DECL|union|fmt_arg
+r_union
+id|fmt_arg
+(brace
+DECL|member|fmt_parms
+r_struct
+id|ftfmtparms
+id|fmt_parms
+suffix:semicolon
+multiline_comment|/* format parameters */
+DECL|member|fmt_track
+r_struct
+id|ftfmttrack
+id|fmt_track
+suffix:semicolon
+multiline_comment|/* ctrl while formatting */
+DECL|member|fmt_status
+r_struct
+id|ftfmtstatus
+id|fmt_status
+suffix:semicolon
+DECL|member|fmt_verify
+r_struct
+id|ftfmtverify
+id|fmt_verify
+suffix:semicolon
+multiline_comment|/* for verifying */
+DECL|member|fmt_arg
+)brace
+id|fmt_arg
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|mtftcmd
+r_struct
+id|mtftcmd
+(brace
+DECL|member|ft_wait_before
+r_int
+r_int
+id|ft_wait_before
+suffix:semicolon
+multiline_comment|/* timeout to wait for drive to get ready &n;&t;&t;&t;&t;      * before command is sent. Milliseconds&n;&t;&t;&t;&t;      */
+DECL|member|ft_cmd
+id|qic117_cmd_t
+id|ft_cmd
+suffix:semicolon
+multiline_comment|/* command to send */
+DECL|member|ft_parm_cnt
+r_int
+r_char
+id|ft_parm_cnt
+suffix:semicolon
+multiline_comment|/* zero: no parm is sent. */
+DECL|member|ft_parms
+r_int
+r_char
+id|ft_parms
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* parameter(s) to send to&n;&t;&t;&t;&t;      * the drive. The parms are nibbles&n;&t;&t;&t;&t;      * driver sends cmd + 2 step pulses */
+DECL|member|ft_result_bits
+r_int
+r_int
+id|ft_result_bits
+suffix:semicolon
+multiline_comment|/* if non zero, number of bits&n;&t;&t;&t;&t;      *&t;returned by the tape drive&n;&t;&t;&t;&t;      */
+DECL|member|ft_result
+r_int
+r_int
+id|ft_result
+suffix:semicolon
+multiline_comment|/* the result returned by the tape drive*/
+DECL|member|ft_wait_after
+r_int
+r_int
+id|ft_wait_after
+suffix:semicolon
+multiline_comment|/* timeout to wait for drive to get ready&n;&t;&t;&t;&t;      * after command is sent. 0: don&squot;t wait */
+DECL|member|ft_status
+r_int
+id|ft_status
+suffix:semicolon
+multiline_comment|/* status returned by ready wait&n;&t;&t;&t;&t;      * undefined if timeout was 0.&n;&t;&t;&t;&t;      */
+DECL|member|ft_error
+r_int
+id|ft_error
+suffix:semicolon
+multiline_comment|/* error code if error status was set by &n;&t;&t;&t;&t;      * command&n;&t;&t;&t;&t;      */
+)brace
+suffix:semicolon
 multiline_comment|/* mag tape io control commands */
 DECL|macro|MTIOCTOP
 mdefine_line|#define&t;MTIOCTOP&t;_IOW(&squot;m&squot;, 1, struct mtop)&t;/* do a mag tape op */
@@ -336,6 +640,19 @@ DECL|macro|MTIOCGETCONFIG
 mdefine_line|#define&t;MTIOCGETCONFIG&t;_IOR(&squot;m&squot;, 4, struct mtconfiginfo) /* get tape config */
 DECL|macro|MTIOCSETCONFIG
 mdefine_line|#define&t;MTIOCSETCONFIG&t;_IOW(&squot;m&squot;, 5, struct mtconfiginfo) /* set tape config */
+multiline_comment|/* the next six are used by the floppy ftape drivers and its frontends&n; * sorry, but MTIOCTOP commands are write only.&n; */
+DECL|macro|MTIOCRDFTSEG
+mdefine_line|#define&t;MTIOCRDFTSEG    _IOWR(&squot;m&squot;, 6, struct mtftseg)  /* read a segment */
+DECL|macro|MTIOCWRFTSEG
+mdefine_line|#define&t;MTIOCWRFTSEG    _IOWR(&squot;m&squot;, 7, struct mtftseg)   /* write a segment */
+DECL|macro|MTIOCVOLINFO
+mdefine_line|#define MTIOCVOLINFO&t;_IOR(&squot;m&squot;,  8, struct mtvolinfo) /* info about volume */
+DECL|macro|MTIOCGETSIZE
+mdefine_line|#define MTIOCGETSIZE    _IOR(&squot;m&squot;,  9, struct mttapesize)/* get cartridge size*/
+DECL|macro|MTIOCFTFORMAT
+mdefine_line|#define MTIOCFTFORMAT   _IOWR(&squot;m&squot;, 10, struct mtftformat) /* format ftape */
+DECL|macro|MTIOCFTCMD
+mdefine_line|#define MTIOCFTCMD&t;_IOWR(&squot;m&squot;, 11, struct mtftcmd) /* send QIC-117 cmd */
 multiline_comment|/* Generic Mag Tape (device independent) status macros for examining&n; * mt_gstat -- HP-UX compatible.&n; * There is room for more generic status bits here, but I don&squot;t&n; * know which of them are reserved. At least three or so should&n; * be added to make this really useful.&n; */
 DECL|macro|GMT_EOF
 mdefine_line|#define GMT_EOF(x)              ((x) &amp; 0x80000000)

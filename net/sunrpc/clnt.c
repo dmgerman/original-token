@@ -1273,6 +1273,13 @@ c_cond
 op_logical_neg
 id|task-&gt;tk_rqstp
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;RPC: task has no request, exit EIO&bslash;n&quot;
+)paren
+suffix:semicolon
 id|rpc_exit
 c_func
 (paren
@@ -1282,6 +1289,7 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * 2.&t;Allocate the buffer. For details, see sched.c:rpc_malloc.&n; *&t;(Note: buffer memory is freed in rpc_task_release).&n; */
 r_static
@@ -1590,6 +1598,12 @@ id|task
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;RPC: call_header failed, exit EIO&bslash;n&quot;
+)paren
+suffix:semicolon
 id|rpc_exit
 c_func
 (paren
@@ -2959,6 +2973,12 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;RPC: garbage, exit EIO&bslash;n&quot;
+)paren
+suffix:semicolon
 id|rpc_exit
 c_func
 (paren
