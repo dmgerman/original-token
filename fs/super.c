@@ -1225,6 +1225,12 @@ comma
 l_string|&quot;,noatime&quot;
 )brace
 comma
+(brace
+id|MS_NODIRATIME
+comma
+l_string|&quot;,nodiratime&quot;
+)brace
+comma
 macro_line|#ifdef MS_NOSUB&t;&t;&t;/* Can&squot;t find this except in mount.c */
 (brace
 id|MS_NOSUB

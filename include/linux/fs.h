@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
@@ -108,9 +109,11 @@ DECL|macro|S_IMMUTABLE
 mdefine_line|#define S_IMMUTABLE&t;512&t;/* Immutable file */
 DECL|macro|MS_NOATIME
 mdefine_line|#define MS_NOATIME&t;1024&t;/* Do not update access times. */
+DECL|macro|MS_NODIRATIME
+mdefine_line|#define MS_NODIRATIME   2048    /* Do not update directory access times */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
-mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME)
+mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME|MS_NODIRATIME)
 multiline_comment|/*&n; * Magic mount flag number. Has to be or-ed to the flag values.&n; */
 DECL|macro|MS_MGC_VAL
 mdefine_line|#define MS_MGC_VAL 0xC0ED0000&t;/* magic flag number to indicate &quot;new&quot; flags */
@@ -137,8 +140,20 @@ DECL|macro|IS_IMMUTABLE
 mdefine_line|#define IS_IMMUTABLE(inode) ((inode)-&gt;i_flags &amp; S_IMMUTABLE)
 DECL|macro|IS_NOATIME
 mdefine_line|#define IS_NOATIME(inode) ((inode)-&gt;i_flags &amp; MS_NOATIME)
+DECL|macro|IS_NODIRATIME
+mdefine_line|#define IS_NODIRATIME(inode) ((inode)-&gt;i_flags &amp; MS_NODIRATIME)
+r_extern
+r_void
+id|update_atime
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
 DECL|macro|UPDATE_ATIME
-mdefine_line|#define UPDATE_ATIME(inode) &bslash;&n;&t;if (!IS_NOATIME(inode) &amp;&amp; !IS_RDONLY(inode)) { &bslash;&n;&t;&t;inode-&gt;i_atime = CURRENT_TIME; &bslash;&n;&t;&t;mark_inode_dirty(inode); &bslash;&n;&t;}
+mdefine_line|#define UPDATE_ATIME(inode) update_atime (inode)
 multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
 DECL|macro|BLKROSET
 mdefine_line|#define BLKROSET   _IO(0x12,93)&t;/* set device read-only (0 = read-write) */
@@ -671,6 +686,8 @@ DECL|macro|ATTR_FLAG_APPEND
 mdefine_line|#define ATTR_FLAG_APPEND&t;4 &t;/* Append-only file */
 DECL|macro|ATTR_FLAG_IMMUTABLE
 mdefine_line|#define ATTR_FLAG_IMMUTABLE&t;8 &t;/* Immutable file */
+DECL|macro|ATTR_FLAG_NODIRATIME
+mdefine_line|#define ATTR_FLAG_NODIRATIME&t;16 &t;/* Don&squot;t update atime for directory */
 macro_line|#include &lt;linux/quota.h&gt;
 DECL|struct|inode
 r_struct

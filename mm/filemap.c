@@ -2458,6 +2458,7 @@ c_func
 (paren
 id|inode
 )paren
+suffix:semicolon
 r_if
 c_cond
 (paren
