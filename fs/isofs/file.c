@@ -117,6 +117,12 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
 id|isofs_bmap
 comma
 multiline_comment|/* bmap */

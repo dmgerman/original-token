@@ -8858,6 +8858,24 @@ l_int|13
 r_continue
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_int|8
+)paren
+(brace
+multiline_comment|/* backspace */
+id|bs
+c_func
+(paren
+id|currcons
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|scr_writew
 c_func
 (paren

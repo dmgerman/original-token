@@ -301,9 +301,25 @@ macro_line|#ifndef inb_p
 DECL|macro|inb_p
 macro_line|# define inb_p&t;&t;inb
 macro_line|#endif
+macro_line|#ifndef inw_p
+DECL|macro|inw_p
+macro_line|# define inw_p&t;&t;inw
+macro_line|#endif
+macro_line|#ifndef inl_p
+DECL|macro|inl_p
+macro_line|# define inl_p&t;&t;inl
+macro_line|#endif
 macro_line|#ifndef outb_p
 DECL|macro|outb_p
 macro_line|# define outb_p&t;&t;outb
+macro_line|#endif
+macro_line|#ifndef outw_p
+DECL|macro|outw_p
+macro_line|# define outw_p&t;&t;outw
+macro_line|#endif
+macro_line|#ifndef outl_p
+DECL|macro|outl_p
+macro_line|# define outl_p&t;&t;outl
 macro_line|#endif
 macro_line|#ifndef inw_p
 DECL|macro|inw_p

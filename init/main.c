@@ -58,6 +58,15 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|bdflush
+c_func
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|init_IRQ
 c_func
@@ -551,6 +560,7 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SJCD
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
 r_static
 r_void
 id|ramdisk_start_setup
@@ -593,6 +603,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#endif CONFIG_BLK_DEV_RAM
 macro_line|#ifdef CONFIG_SYSVIPC
 r_extern
 r_void
@@ -639,6 +650,7 @@ id|rows
 comma
 id|cols
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
 r_extern
 r_int
 id|rd_doload
@@ -654,6 +666,7 @@ r_int
 id|rd_image_start
 suffix:semicolon
 multiline_comment|/* starting block # of image */
+macro_line|#endif
 DECL|variable|root_mountflags
 r_int
 id|root_mountflags
@@ -980,6 +993,7 @@ comma
 id|profile_setup
 )brace
 comma
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
 (brace
 l_string|&quot;ramdisk_start=&quot;
 comma
@@ -987,17 +1001,18 @@ id|ramdisk_start_setup
 )brace
 comma
 (brace
-l_string|&quot;load_ramdisk&quot;
+l_string|&quot;load_ramdisk=&quot;
 comma
 id|load_ramdisk
 )brace
 comma
 (brace
-l_string|&quot;prompt_ramdisk&quot;
+l_string|&quot;prompt_ramdisk=&quot;
 comma
 id|prompt_ramdisk
 )brace
 comma
+macro_line|#endif
 (brace
 l_string|&quot;swap=&quot;
 comma
@@ -1261,6 +1276,7 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
 DECL|function|ramdisk_start_setup
 r_static
 r_void
@@ -1316,8 +1332,30 @@ op_star
 id|ints
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ints
+(braket
+l_int|0
+)braket
+OG
+l_int|0
+op_logical_and
+id|ints
+(braket
+l_int|1
+)braket
+op_ge
+l_int|0
+)paren
 id|rd_doload
 op_assign
+id|ints
+(braket
+l_int|1
+)braket
+op_amp
 l_int|1
 suffix:semicolon
 )brace
@@ -1336,11 +1374,34 @@ op_star
 id|ints
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ints
+(braket
+l_int|0
+)braket
+OG
+l_int|0
+op_logical_and
+id|ints
+(braket
+l_int|1
+)braket
+op_ge
+l_int|0
+)paren
 id|rd_prompt
 op_assign
+id|ints
+(braket
+l_int|1
+)braket
+op_amp
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|checksetup
 r_static
 r_int
@@ -3079,6 +3140,17 @@ r_int
 id|pid
 comma
 id|i
+suffix:semicolon
+multiline_comment|/* Launch bdflush from here, instead of the old syscall way. */
+id|kernel_thread
+c_func
+(paren
+id|bdflush
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
 suffix:semicolon
 id|setup
 c_func

@@ -1654,6 +1654,9 @@ DECL|macro|IACK_SC
 macro_line|#&t;define IACK_SC&t;APECS_IACK_SC
 macro_line|#elif defined(CONFIG_ALPHA_LCA)
 macro_line|#&t;define IACK_SC&t;LCA_IACK_SC
+macro_line|#else
+multiline_comment|/*&n;&t; * This is bogus but necessary to get it to compile&n;&t; * on all platforms.  If you try to use this on any&n;&t; * other than the intended platforms, you&squot;ll notice&n;&t; * real fast...&n;&t; */
+macro_line|#&t;define IACK_SC&t;1L
 macro_line|#endif
 r_int
 id|j
@@ -2510,7 +2513,11 @@ macro_line|#endif
 id|irqs
 op_and_assign
 id|irqmask
+op_amp
+op_complement
+l_int|1
 suffix:semicolon
+multiline_comment|/* always mask out irq 0---it&squot;s the unused timer */
 r_if
 c_cond
 (paren

@@ -999,6 +999,18 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|instance-&gt;irq
+op_assign
+id|irq
+suffix:semicolon
+id|instance-&gt;io_port
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|base_address
+suffix:semicolon
 macro_line|#ifdef SLOW_HANDSHAKE
 id|borken_init
 c_func

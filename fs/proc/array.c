@@ -1190,6 +1190,35 @@ id|buffer
 )paren
 suffix:semicolon
 )brace
+DECL|function|get_cmdline
+r_static
+r_int
+id|get_cmdline
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+(brace
+r_extern
+r_char
+id|saved_command_line
+(braket
+)braket
+suffix:semicolon
+r_return
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|saved_command_line
+)paren
+suffix:semicolon
+)brace
 DECL|function|get_task
 r_static
 r_struct
@@ -3830,6 +3859,16 @@ id|page
 )paren
 suffix:semicolon
 macro_line|#endif
+r_case
+id|PROC_CMDLINE
+suffix:colon
+r_return
+id|get_cmdline
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 )brace
 r_return
 op_minus
@@ -4302,6 +4341,12 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
+l_int|NULL
+comma
 multiline_comment|/* bmap */
 l_int|NULL
 comma
@@ -4468,6 +4513,12 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
 l_int|NULL
 comma
 multiline_comment|/* bmap */

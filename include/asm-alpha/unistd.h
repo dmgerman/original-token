@@ -212,6 +212,12 @@ DECL|macro|__NR_shmdt
 mdefine_line|#define __NR_shmdt&t;&t;211
 DECL|macro|__NR_shmget
 mdefine_line|#define __NR_shmget&t;&t;212
+DECL|macro|__NR_getsid
+mdefine_line|#define __NR_getsid&t;&t;234
+DECL|macro|__NR_getsysinfo
+mdefine_line|#define __NR_getsysinfo&t;&t;256
+DECL|macro|__NR_setsysinfo
+mdefine_line|#define __NR_setsysinfo&t;&t;257
 multiline_comment|/*&n; * Linux-specific system calls begin at 300&n; */
 DECL|macro|__NR_bdflush
 mdefine_line|#define __NR_bdflush&t;&t;300
@@ -241,6 +247,14 @@ DECL|macro|__NR_clone
 mdefine_line|#define __NR_clone&t;&t;312
 DECL|macro|__NR_uselib
 mdefine_line|#define __NR_uselib&t;&t;313
+DECL|macro|__NR_mlock
+mdefine_line|#define __NR_mlock&t;&t;314
+DECL|macro|__NR_munlock
+mdefine_line|#define __NR_munlock&t;&t;315
+DECL|macro|__NR_mlockall
+mdefine_line|#define __NR_mlockall&t;&t;316
+DECL|macro|__NR_munlockall
+mdefine_line|#define __NR_munlockall&t;&t;317
 macro_line|#ifdef __LIBRARY__
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

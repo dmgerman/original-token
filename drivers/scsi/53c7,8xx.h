@@ -79,10 +79,10 @@ mdefine_line|#define NCR53c7xx_release NULL
 macro_line|#endif
 macro_line|#ifdef LINUX_1_2
 DECL|macro|NCR53c7xx
-mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 13)&quot;, NCR53c7xx_detect,&bslash;&n;&t;NULL, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 24, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 3, &t;&t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 14)&quot;, NCR53c7xx_detect,&bslash;&n;&t;NULL, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 24, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 3, &t;&t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
 macro_line|#else
 DECL|macro|NCR53c7xx
-mdefine_line|#define NCR53c7xx {NULL, NULL, NULL, NULL, &bslash;&n;        &quot;NCR53c{7,8}xx (rel 13)&quot;, NCR53c7xx_detect,&bslash;&n;        NULL, /* info */ NULL, /* command, deprecated */ NULL,&t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 24, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 3, &t;&t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+mdefine_line|#define NCR53c7xx {NULL, NULL, NULL, NULL, &bslash;&n;        &quot;NCR53c{7,8}xx (rel 14)&quot;, NCR53c7xx_detect,&bslash;&n;        NULL, /* info */ NULL, /* command, deprecated */ NULL,&t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 24, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 3, &t;&t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
 macro_line|#endif
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
@@ -1151,8 +1151,6 @@ DECL|macro|OPTION_DEBUG_DISCONNECT
 mdefine_line|#define OPTION_DEBUG_DISCONNECT 0x10000000&t;
 DECL|macro|OPTION_ALWAYS_SYNCHRONOUS
 mdefine_line|#define OPTION_ALWAYS_SYNCHRONOUS 0x20000000&t;/* Negotiate sync. transfers&n;&t;&t;&t;&t;&t;&t;   on power up */
-DECL|macro|OPTION_SCSI_MALLOC
-mdefine_line|#define OPTION_SCSI_MALLOC&t;0x40000000&t;/* Use scsi_malloc instead of&n;&t;&t;&t;&t;&t;&t;   kmalloc() to allocate NCR&n;&t;&t;&t;&t;&t;&t;   command structures after &n;&t;&t;&t;&t;&t;&t;   boot */
 DECL|macro|OPTION_DEBUG_QUEUES
 mdefine_line|#define OPTION_DEBUG_QUEUES&t;0x80000000&t;
 DECL|macro|OPTION_DEBUG_ALLOCATION
@@ -1507,13 +1505,6 @@ r_int
 id|size
 suffix:semicolon
 multiline_comment|/* Size of entire Scsi_Host&n;&t;&t;&t;&t;&t;   structure */
-DECL|member|next
-r_struct
-id|Scsi_Host
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* next of this type */
 DECL|member|board
 r_int
 id|board
@@ -2163,6 +2154,12 @@ DECL|member|talked_to
 r_volatile
 id|u16
 id|talked_to
+suffix:semicolon
+multiline_comment|/* Bit fielded list of targets that answered */
+DECL|member|answered
+r_volatile
+id|u16
+id|answered
 suffix:semicolon
 multiline_comment|/* Array of bit-fielded lun lists that we need to request_sense */
 DECL|member|request_sense

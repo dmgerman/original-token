@@ -89,12 +89,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* starting block # of image */
-DECL|variable|rd_loading
-r_int
-id|rd_loading
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n; *  Basically, my strategy here is to set up a buffer-head which can&squot;t be&n; *  deleted, and make that my Ramdisk.  If the request is outside of the&n; *  allocated size, we must get rid of it...&n; *&n; */
 DECL|function|rd_request
 r_static
@@ -805,14 +799,6 @@ id|done
 suffix:semicolon
 )brace
 multiline_comment|/* Try ext2 */
-id|printk
-c_func
-(paren
-l_string|&quot;ext2 magic = %d&bslash;n&quot;
-comma
-id|ext2sb-&gt;s_magic
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -990,6 +976,28 @@ suffix:semicolon
 r_char
 op_star
 id|buf
+suffix:semicolon
+r_int
+r_int
+id|rotate
+op_assign
+l_int|0
+suffix:semicolon
+r_char
+id|rotator
+(braket
+l_int|4
+)braket
+op_assign
+(brace
+l_char|&squot;|&squot;
+comma
+l_char|&squot;/&squot;
+comma
+l_char|&squot;-&squot;
+comma
+l_char|&squot;&bslash;&bslash;&squot;
+)brace
 suffix:semicolon
 r_if
 c_cond
@@ -1175,10 +1183,6 @@ c_func
 id|KERNEL_DS
 )paren
 suffix:semicolon
-id|rd_loading
-op_assign
-l_int|1
-suffix:semicolon
 id|nblocks
 op_assign
 id|identify_ramdisk_image
@@ -1307,6 +1311,15 @@ r_goto
 id|done
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;RAMDISK: Loading %d blocks into ram disk... &quot;
+comma
+id|nblocks
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1352,7 +1365,41 @@ comma
 id|BLOCK_SIZE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|i
+op_mod
+l_int|16
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%c&bslash;b&quot;
+comma
+id|rotator
+(braket
+id|rotate
+op_amp
+l_int|0x3
+)braket
+)paren
+suffix:semicolon
+id|rotate
+op_increment
+suffix:semicolon
 )brace
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;done.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -1400,13 +1447,8 @@ c_func
 id|fs
 )paren
 suffix:semicolon
-id|rd_loading
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 macro_line|#ifdef BUILD_CRAMDISK
-macro_line|#include &lt;string.h&gt;
 multiline_comment|/*&n; * gzip declarations&n; */
 DECL|macro|OF
 mdefine_line|#define OF(args)  args

@@ -137,6 +137,12 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
+l_int|NULL
+comma
 multiline_comment|/* bmap */
 l_int|NULL
 comma
@@ -229,6 +235,12 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
 l_int|NULL
 comma
 multiline_comment|/* bmap */
@@ -682,6 +694,12 @@ multiline_comment|/* readlink */
 id|proc_self_followlink
 comma
 multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
 l_int|NULL
 comma
 multiline_comment|/* bmap */
@@ -1346,6 +1364,37 @@ comma
 )paren
 suffix:semicolon
 macro_line|#endif
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_CMDLINE
+comma
+l_int|7
+comma
+l_string|&quot;cmdline&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+)brace
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -69,6 +69,13 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+DECL|variable|saved_command_line
+r_char
+id|saved_command_line
+(braket
+id|COMMAND_LINE_SIZE
+)braket
+suffix:semicolon
 multiline_comment|/*&n; * The format of &quot;screen_info&quot; is strange, and due to early&n; * i386-setup code. This is just enough to make the console&n; * code think we&squot;re on a VGA color display.&n; */
 DECL|variable|screen_info
 r_struct
@@ -114,6 +121,86 @@ l_int|16
 multiline_comment|/* orig-video-points */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Initialize Programmable Interval Timers with standard values.  Some&n; * drivers depend on them being initialized (e.g., joystick driver).&n; */
+DECL|function|init_pit
+r_static
+r_void
+id|init_pit
+(paren
+r_void
+)paren
+(brace
+macro_line|#if 0
+multiline_comment|/*&n;     * Leave refresh timer alone---nobody should depend on&n;     * a particular value anyway.&n;     */
+id|outb
+c_func
+(paren
+l_int|0x54
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* counter 1: refresh timer */
+id|outb
+c_func
+(paren
+l_int|0x18
+comma
+l_int|0x41
+)paren
+suffix:semicolon
+macro_line|#endif
+id|outb
+c_func
+(paren
+l_int|0x36
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* counter 0: system timer */
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0xb6
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* counter 2: speaker */
+id|outb
+c_func
+(paren
+l_int|0x31
+comma
+l_int|0x42
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x13
+comma
+l_int|0x42
+)paren
+suffix:semicolon
+)brace
 DECL|function|find_end_memory
 r_static
 r_int
@@ -254,6 +341,11 @@ r_extern
 r_int
 id|_end
 suffix:semicolon
+id|init_pit
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hwrpb
 op_assign
 (paren
@@ -303,6 +395,14 @@ id|strcpy
 c_func
 (paren
 id|command_line
+comma
+id|COMMAND_LINE
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|saved_command_line
 comma
 id|COMMAND_LINE
 )paren

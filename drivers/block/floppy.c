@@ -15726,6 +15726,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|buffer_min
+op_assign
+id|buffer_max
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|floppy_track_buffer
 op_assign
 id|tmp
@@ -18055,6 +18062,13 @@ suffix:semicolon
 id|max_buffer_sectors
 op_assign
 l_int|0
+suffix:semicolon
+id|buffer_min
+op_assign
+id|buffer_max
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|free_pages
 c_func

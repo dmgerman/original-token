@@ -990,7 +990,11 @@ id|size
 id|printk
 c_func
 (paren
-l_string|&quot;Illegal symbol table! Rejected!&bslash;n&quot;
+l_string|&quot;Rejecting illegal symbol table (n_symbols=%d,n_refs=%d)&bslash;n&quot;
+comma
+id|newtab-&gt;n_symbols
+comma
+id|newtab-&gt;n_refs
 )paren
 suffix:semicolon
 id|kfree_s
@@ -1058,7 +1062,7 @@ id|sym-&gt;name
 id|printk
 c_func
 (paren
-l_string|&quot;Illegal symbol table! Rejected!&bslash;n&quot;
+l_string|&quot;Rejecting illegal symbol table&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree_s

@@ -80,7 +80,10 @@ id|PROC_APM
 comma
 DECL|enumerator|PROC_PROFILE
 id|PROC_PROFILE
+comma
 multiline_comment|/* whether enabled or not */
+DECL|enumerator|PROC_CMDLINE
+id|PROC_CMDLINE
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos

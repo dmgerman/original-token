@@ -544,6 +544,13 @@ l_int|256
 )braket
 suffix:semicolon
 multiline_comment|/* Should be enough */
+DECL|variable|saved_command_line
+r_char
+id|saved_command_line
+(braket
+l_int|256
+)braket
+suffix:semicolon
 DECL|variable|sparc_cpu_model
 r_enum
 id|sparc_cpu
@@ -598,6 +605,15 @@ op_assign
 id|prom_getbootargs
 c_func
 (paren
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|saved_command_line
+comma
+op_star
+id|cmdline_p
 )paren
 suffix:semicolon
 multiline_comment|/* Set sparc_cpu_model */

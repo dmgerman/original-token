@@ -264,7 +264,7 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;Unable to handle kernel paging request at virtual address %08lx&bslash;n&quot;
+l_string|&quot;Unable to handle kernel paging request at virtual address %016lx&bslash;n&quot;
 comma
 id|address
 )paren

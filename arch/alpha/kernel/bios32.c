@@ -1952,7 +1952,7 @@ op_minus
 l_int|1
 )brace
 comma
-multiline_comment|/* idsel 13 KN25_PCI_SLOT2 ??? */
+multiline_comment|/* idsel 13 KN25_PCI_SLOT2 */
 macro_line|#endif /* CONFIG_ALPHA_AVANTI */
 )brace
 suffix:semicolon
@@ -1965,10 +1965,12 @@ op_assign
 l_int|0x0b0a090f
 suffix:semicolon
 r_int
+r_int
+id|level_bits
+suffix:semicolon
+r_int
 r_char
 id|pin
-comma
-id|level_bits
 suffix:semicolon
 r_int
 id|pirq
@@ -2171,17 +2173,12 @@ op_amp
 l_int|0xff
 suffix:semicolon
 multiline_comment|/* must set the PCI IRQs to level triggered */
-multiline_comment|/* assume they are all &gt;= 8 */
 id|level_bits
 op_or_assign
 (paren
 l_int|1
 op_lshift
-(paren
 id|dev-&gt;irq
-op_minus
-l_int|8
-)paren
 )paren
 suffix:semicolon
 macro_line|#if PCI_MODIFY
@@ -2206,12 +2203,12 @@ c_cond
 (paren
 id|level_bits
 )paren
-id|outb
+id|outw
 c_func
 (paren
 id|level_bits
 comma
-l_int|0x4d1
+l_int|0x4d0
 )paren
 suffix:semicolon
 macro_line|#if PCI_MODIFY

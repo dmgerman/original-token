@@ -3,7 +3,7 @@ DECL|macro|_ASMAXP_PARAM_H
 mdefine_line|#define _ASMAXP_PARAM_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef HZ
-macro_line|# if defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB66P) || &bslash;&n;     defined(CONFIG_ALPHA_EB64) || defined(CONFIG_ALPHA_EB64P)
+macro_line|# if defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB66P) || &bslash;&n;     defined(CONFIG_ALPHA_EB64P)
 DECL|macro|HZ
 macro_line|#  define HZ&t; 977&t;/* Evaluation Boards seem to be a little odd */
 macro_line|# else

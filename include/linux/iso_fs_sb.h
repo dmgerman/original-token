@@ -1,7 +1,7 @@
 macro_line|#ifndef _ISOFS_FS_SB
 DECL|macro|_ISOFS_FS_SB
 mdefine_line|#define _ISOFS_FS_SB
-multiline_comment|/*&n; * minix super-block data in memory&n; */
+multiline_comment|/*&n; * iso9660 super-block data in memory&n; */
 DECL|struct|isofs_sb_info
 r_struct
 id|isofs_sb_info
@@ -52,6 +52,12 @@ r_int
 r_char
 id|s_rock
 suffix:semicolon
+DECL|member|s_name_check
+r_int
+r_char
+id|s_name_check
+suffix:semicolon
+multiline_comment|/* r = relaxed, s = strict */
 DECL|member|s_cruft
 r_int
 r_char

@@ -6,6 +6,19 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef __alpha__
+multiline_comment|/*&n; * On the Alpha, we get unaligned access exceptions on&n; *  p-&gt;nr_sects and p-&gt;start_sect, when the partition table&n; *  is not on a 4-byte boundary, which is frequently the case.&n; * This code uses unaligned load instructions to prevent&n; *  such exceptions.&n; */
+macro_line|#include &lt;asm/unaligned.h&gt;
+DECL|macro|NR_SECTS
+mdefine_line|#define NR_SECTS(p)&t;ldl_u(&amp;p-&gt;nr_sects)
+DECL|macro|START_SECT
+mdefine_line|#define START_SECT(p)&t;ldl_u(&amp;p-&gt;start_sect)
+macro_line|#else /* __alpha__ */
+DECL|macro|NR_SECTS
+mdefine_line|#define NR_SECTS(p)&t;p-&gt;nr_sects
+DECL|macro|START_SECT
+mdefine_line|#define START_SECT(p)&t;p-&gt;start_sect
+macro_line|#endif /* __alpha__ */
 DECL|variable|gendisk_head
 r_struct
 id|gendisk
@@ -461,7 +474,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|p-&gt;nr_sects
+id|NR_SECTS
+c_func
+(paren
+id|p
+)paren
 op_logical_or
 id|is_extended_partition
 c_func
@@ -479,16 +496,28 @@ id|i
 op_ge
 l_int|2
 op_logical_and
-id|p-&gt;start_sect
+id|START_SECT
+c_func
+(paren
+id|p
+)paren
 op_plus
-id|p-&gt;nr_sects
+id|NR_SECTS
+c_func
+(paren
+id|p
+)paren
 OG
 id|this_size
 op_logical_and
 (paren
 id|this_sector
 op_plus
-id|p-&gt;start_sect
+id|START_SECT
+c_func
+(paren
+id|p
+)paren
 template_param
 id|first_sector
 op_plus
@@ -506,9 +535,17 @@ id|current_minor
 comma
 id|this_sector
 op_plus
-id|p-&gt;start_sect
+id|START_SECT
+c_func
+(paren
+id|p
+)paren
 comma
-id|p-&gt;nr_sects
+id|NR_SECTS
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 id|current_minor
@@ -554,7 +591,11 @@ op_increment
 r_if
 c_cond
 (paren
-id|p-&gt;nr_sects
+id|NR_SECTS
+c_func
+(paren
+id|p
+)paren
 op_logical_and
 id|is_extended_partition
 c_func
@@ -584,7 +625,11 @@ id|current_minor
 dot
 id|nr_sects
 op_assign
-id|p-&gt;nr_sects
+id|NR_SECTS
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|hd-&gt;part
 (braket
@@ -595,13 +640,21 @@ id|start_sect
 op_assign
 id|first_sector
 op_plus
-id|p-&gt;start_sect
+id|START_SECT
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|this_sector
 op_assign
 id|first_sector
 op_plus
-id|p-&gt;start_sect
+id|START_SECT
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|dev
 op_assign
@@ -1006,7 +1059,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|p-&gt;nr_sects
+id|NR_SECTS
+c_func
+(paren
+id|p
+)paren
 )paren
 r_continue
 suffix:semicolon
@@ -1019,9 +1076,17 @@ id|minor
 comma
 id|first_sector
 op_plus
-id|p-&gt;start_sect
+id|START_SECT
+c_func
+(paren
+id|p
+)paren
 comma
-id|p-&gt;nr_sects
+id|NR_SECTS
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1174,9 +1239,17 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|p-&gt;start_sect
+id|START_SECT
+c_func
+(paren
+id|p
+)paren
 op_logical_and
-id|p-&gt;nr_sects
+id|NR_SECTS
+c_func
+(paren
+id|p
+)paren
 )paren
 )paren
 r_continue
@@ -1188,9 +1261,17 @@ id|hd
 comma
 id|current_minor
 comma
-id|p-&gt;start_sect
+id|START_SECT
+c_func
+(paren
+id|p
+)paren
 comma
-id|p-&gt;nr_sects
+id|NR_SECTS
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -2444,10 +2525,12 @@ op_add_assign
 id|p-&gt;nr_real
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
 id|rd_load
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 eof

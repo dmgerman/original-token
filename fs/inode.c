@@ -572,6 +572,14 @@ id|wait_queue
 op_star
 id|wait
 suffix:semicolon
+id|invalidate_inode_pages
+c_func
+(paren
+id|inode
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|wait_on_inode
 c_func
 (paren

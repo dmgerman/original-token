@@ -593,7 +593,7 @@ id|BUSLOGIC
 comma
 id|BUSLOGIC_946C_2
 comma
-l_string|&quot;946C&quot;
+l_string|&quot;BT-946C&quot;
 )paren
 comma
 id|DEVICE
@@ -603,7 +603,7 @@ id|BUSLOGIC
 comma
 id|BUSLOGIC_946C
 comma
-l_string|&quot;946C&quot;
+l_string|&quot;BT-946C&quot;
 )paren
 comma
 id|DEVICE

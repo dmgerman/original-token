@@ -1502,7 +1502,7 @@ id|ip_forward
 )paren
 comma
 macro_line|#endif
-macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;
+macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)
 multiline_comment|/* If 8390 NIC support is built in, we will need these. */
 id|X
 c_func
@@ -1579,6 +1579,9 @@ c_func
 id|slhc_toss
 )paren
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_ALIAS
+macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#endif
 macro_line|#endif
 multiline_comment|/* Device callback registration */

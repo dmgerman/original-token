@@ -153,4 +153,10 @@ r_return
 id|s
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * gcc-2.7.1 and newer generate calls to memset and memcpy.  So we&n; * need to define that here:&n; */
+id|asm
+(paren
+l_string|&quot;.weakext memset, __memset&quot;
+)paren
+suffix:semicolon
 eof

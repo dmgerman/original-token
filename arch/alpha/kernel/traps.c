@@ -3,8 +3,10 @@ multiline_comment|/*&n; * This file initializes the trap entry points&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;asm/unaligned.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/gentrap.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|function|die_if_kernel
 r_void
 id|die_if_kernel
@@ -269,10 +271,55 @@ id|pt_regs
 id|regs
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|summary
+op_amp
+l_int|1
+)paren
+)paren
+(brace
+r_extern
+r_int
+id|alpha_fp_emul_imprecise
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+r_int
+id|write_mask
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Software-completion summary bit is set, so try to&n;&t;&t; * emulate the instruction.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|alpha_fp_emul_imprecise
+c_func
+(paren
+op_amp
+id|regs
+comma
+id|write_mask
+)paren
+)paren
+(brace
+r_return
+suffix:semicolon
+multiline_comment|/* emulation was successful */
+)brace
+)brace
 id|printk
 c_func
 (paren
-l_string|&quot;Arithmetic trap: %02lx %016lx&bslash;n&quot;
+l_string|&quot;Arithmetic trap at %016lx: %02lx %016lx&bslash;n&quot;
+comma
+id|regs.pc
 comma
 id|summary
 comma
@@ -519,10 +566,92 @@ r_case
 l_int|3
 suffix:colon
 multiline_comment|/* FEN fault */
+id|send_sig
+c_func
+(paren
+id|SIGILL
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 l_int|4
 suffix:colon
 multiline_comment|/* opDEC */
+macro_line|#ifdef CONFIG_ALPHA_NEED_ROUNDING_EMULATION
+(brace
+r_extern
+r_int
+id|alpha_fp_emul
+(paren
+r_int
+r_int
+id|pc
+)paren
+suffix:semicolon
+r_int
+r_int
+id|opcode
+suffix:semicolon
+multiline_comment|/* get opcode of faulting instruction: */
+id|opcode
+op_assign
+id|get_user
+c_func
+(paren
+(paren
+id|__u32
+op_star
+)paren
+(paren
+id|regs.pc
+op_minus
+l_int|4
+)paren
+)paren
+op_rshift
+l_int|26
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|opcode
+op_eq
+l_int|0x16
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * It&squot;s a FLTI instruction, emulate it&n;&t;&t;&t;&t; * (we don&squot;t do no stinkin&squot; VAX fp...)&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|alpha_fp_emul
+c_func
+(paren
+id|regs.pc
+op_minus
+l_int|4
+)paren
+)paren
+id|send_sig
+c_func
+(paren
+id|SIGFPE
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 id|send_sig
 c_func
 (paren
@@ -855,7 +984,7 @@ id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Handle user-level unaligned fault.  Handling user-level unaligned&n; * faults is *extremely* slow and produces nasty messages.  A user&n; * program *should* fix unaligned faults ASAP.&n; *&n; * Notice that we have (almost) the regular kernel stack layout here,&n; * so finding the appropriate registers is a little more difficult&n; * than in the kernel case.&n; *&n; * Finally, we handle regular integer load/stores only.  In&n; * particular, load-linked/store-conditionally and floating point&n; * load/stores are not supported.  The former make no sense with&n; * unaligned faults (they are guaranteed to fail) and I don&squot;t think&n; * the latter will occur in any decent program.&n; */
+multiline_comment|/*&n; * Handle user-level unaligned fault.  Handling user-level unaligned&n; * faults is *extremely* slow and produces nasty messages.  A user&n; * program *should* fix unaligned faults ASAP.&n; *&n; * Notice that we have (almost) the regular kernel stack layout here,&n; * so finding the appropriate registers is a little more difficult&n; * than in the kernel case.&n; *&n; * Finally, we handle regular integer load/stores only.  In&n; * particular, load-linked/store-conditionally and floating point&n; * load/stores are not supported.  The former make no sense with&n; * unaligned faults (they are guaranteed to fail) and I don&squot;t think&n; * the latter will occur in any decent program.&n; *&n; * Sigh. We *do* have to handle some FP operations, because GCC will&n; * uses them as temporary storage for integer memory to memory copies.&n; * However, we need to deal with stt/ldt only as they are the only&n; * fp load/stores that preserve the bit pattern.&n; */
 DECL|function|do_entUnaUser
 id|asmlinkage
 r_void
@@ -1019,11 +1148,11 @@ r_if
 c_cond
 (paren
 id|opcode
-OG
-l_int|0x29
+op_amp
+l_int|0x4
 )paren
 (brace
-multiline_comment|/* it&squot;s a stl or stq */
+multiline_comment|/* it&squot;s a stl, stq, or stt */
 id|dir
 op_assign
 id|VERIFY_WRITE
@@ -1038,7 +1167,7 @@ c_cond
 (paren
 id|opcode
 op_amp
-l_int|1
+l_int|0x1
 )paren
 (brace
 multiline_comment|/* it&squot;s a quadword op */
@@ -1084,6 +1213,15 @@ id|reg_addr
 op_assign
 id|frame
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|opcode
+op_ge
+l_int|0x28
+)paren
+(brace
+multiline_comment|/* it&squot;s an integer load/store */
 r_if
 c_cond
 (paren
@@ -1220,12 +1358,49 @@ r_break
 suffix:semicolon
 )brace
 )brace
+)brace
 r_switch
 c_cond
 (paren
 id|opcode
 )paren
 (brace
+r_case
+l_int|0x23
+suffix:colon
+id|alpha_write_fp_reg
+c_func
+(paren
+id|reg
+comma
+id|ldq_u
+c_func
+(paren
+id|va
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* ldt */
+r_case
+l_int|0x27
+suffix:colon
+id|stq_u
+c_func
+(paren
+id|alpha_read_fp_reg
+c_func
+(paren
+id|reg
+)paren
+comma
+id|va
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* stt */
 r_case
 l_int|0x28
 suffix:colon
@@ -1313,6 +1488,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|opcode
+op_ge
+l_int|0x28
+op_logical_and
 id|reg
 op_eq
 l_int|30

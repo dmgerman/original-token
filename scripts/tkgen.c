@@ -1823,9 +1823,6 @@ r_case
 id|tok_choose
 suffix:colon
 r_case
-id|tok_choice
-suffix:colon
-r_case
 id|tok_sound
 suffix:colon
 id|tot
@@ -1833,6 +1830,9 @@ op_increment
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|tok_choice
+suffix:colon
 r_default
 suffix:colon
 r_break
@@ -2015,9 +2015,6 @@ r_case
 id|tok_choose
 suffix:colon
 r_case
-id|tok_choice
-suffix:colon
-r_case
 id|tok_sound
 suffix:colon
 multiline_comment|/*&n;&t;   * If we have overfilled the menu, then go to the next one.&n;&t;   */
@@ -2064,6 +2061,9 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+r_case
+id|tok_choice
+suffix:colon
 r_default
 suffix:colon
 r_break

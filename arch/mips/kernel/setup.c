@@ -627,6 +627,13 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+DECL|variable|saved_command_line
+r_char
+id|saved_command_line
+(braket
+id|CL_SIZE
+)braket
+suffix:semicolon
 macro_line|#if 0
 multiline_comment|/*&n; * Code for easy access to new style bootinfo&n; *&n; * Parameter:  tag      -- taglist entry&n; *&n; * returns  :  (tag *) -- pointer to taglist entry, NULL for not found&n; */
 id|tag
@@ -862,6 +869,25 @@ id|ramdisk_size
 op_lshift
 l_int|10
 )paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|saved_command_line
+comma
+id|command_line
+comma
+id|CL_SIZE
+)paren
+suffix:semicolon
+id|saved_command_line
+(braket
+id|CL_SIZE
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 op_star
 id|cmdline_p

@@ -10,15 +10,11 @@ macro_line|#  undef  MODVERSIONS
 DECL|macro|MODVERSIONS
 macro_line|#  define MODVERSIONS
 macro_line|#else /* ! __GENKSYMS__ */
-macro_line|# ifdef MODVERSIONS
-macro_line|#  ifndef MODULE
-macro_line|#   ifdef EXPORT_SYMTAB
+macro_line|# if defined(MODVERSIONS) &amp;&amp; !defined(MODULE) &amp;&amp; defined(EXPORT_SYMTAB)
 DECL|macro|_set_ver
-macro_line|#    define _set_ver(sym,vers) sym
-macro_line|#    include &lt;linux/modversions.h&gt;
-macro_line|#   endif /* EXPORT_SYMTAB */
-macro_line|#  endif /* MODULE */
-macro_line|# endif /* MODVERSIONS */
+macro_line|#   define _set_ver(sym,vers) sym
+macro_line|#   include &lt;linux/modversions.h&gt;
+macro_line|# endif
 macro_line|#endif /* __GENKSYMS__ */
 multiline_comment|/* values of module.state */
 DECL|macro|MOD_UNINITIALIZED

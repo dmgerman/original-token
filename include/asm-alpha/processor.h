@@ -53,6 +53,7 @@ r_int
 r_int
 id|unique
 suffix:semicolon
+multiline_comment|/*&n;&t; * bit  0.. 0: floating point enable (used by PALcode)&n;&t; * bit  1.. 5: IEEE_TRAP_ENABLE bits (see fpu.h)&n;&t; */
 DECL|member|flags
 r_int
 r_int

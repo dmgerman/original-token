@@ -135,6 +135,7 @@ r_int
 r_char
 id|aux_device_present
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
 r_extern
 r_int
 id|rd_doload
@@ -150,6 +151,7 @@ r_int
 id|rd_image_start
 suffix:semicolon
 multiline_comment|/* starting block # of image */
+macro_line|#endif
 r_extern
 r_int
 id|root_mountflags
@@ -212,6 +214,13 @@ op_assign
 l_int|0
 comma
 )brace
+suffix:semicolon
+DECL|variable|saved_command_line
+r_char
+id|saved_command_line
+(braket
+id|COMMAND_LINE_SIZE
+)braket
 suffix:semicolon
 DECL|function|setup_arch
 r_void
@@ -326,6 +335,7 @@ id|memory_end
 op_and_assign
 id|PAGE_MASK
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
 id|rd_image_start
 op_assign
 id|RAMDISK_FLAGS
@@ -356,6 +366,7 @@ op_ne
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_MAX_16M
 r_if
 c_cond
@@ -433,6 +444,26 @@ r_int
 )paren
 op_amp
 id|_end
+suffix:semicolon
+multiline_comment|/* Save unparsed command line copy for /proc/cmdline */
+id|memcpy
+c_func
+(paren
+id|saved_command_line
+comma
+id|COMMAND_LINE
+comma
+id|COMMAND_LINE_SIZE
+)paren
+suffix:semicolon
+id|saved_command_line
+(braket
+id|COMMAND_LINE_SIZE
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 r_for
 c_loop

@@ -2354,7 +2354,7 @@ l_int|3
 id|printk
 c_func
 (paren
-l_string|&quot;0x%8.8x  &quot;
+l_string|&quot;0x%8.8lx  &quot;
 comma
 id|readl
 c_func
@@ -2374,7 +2374,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;...0x%8.8x&bslash;n&quot;
+l_string|&quot;...0x%8.8lx&bslash;n&quot;
 comma
 id|readl
 c_func
@@ -2421,7 +2421,7 @@ l_int|3
 id|printk
 c_func
 (paren
-l_string|&quot;0x%8.8x  &quot;
+l_string|&quot;0x%8.8lx  &quot;
 comma
 id|readl
 c_func
@@ -2441,7 +2441,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;...0x%8.8x&bslash;n&quot;
+l_string|&quot;...0x%8.8lx&bslash;n&quot;
 comma
 id|readl
 c_func
@@ -2475,7 +2475,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tmode: 0x%4.4x&bslash;n&quot;
+l_string|&quot;&bslash;tmode: 0x%4.4lx&bslash;n&quot;
 comma
 id|readw
 c_func
@@ -2616,7 +2616,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;trx_ring at: 0x%8.8x&bslash;n&quot;
+l_string|&quot;&bslash;trx_ring at: 0x%8.8lx&bslash;n&quot;
 comma
 id|readl
 c_func
@@ -2629,7 +2629,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;ttx_ring at: 0x%8.8x&bslash;n&quot;
+l_string|&quot;&bslash;ttx_ring at: 0x%8.8lx&bslash;n&quot;
 comma
 id|readl
 c_func

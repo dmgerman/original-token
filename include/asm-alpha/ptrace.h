@@ -192,6 +192,7 @@ id|fp
 l_int|32
 )braket
 suffix:semicolon
+multiline_comment|/* fp[31] is fpcr */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

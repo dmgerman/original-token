@@ -247,6 +247,17 @@ r_int
 id|address
 )paren
 (brace
+multiline_comment|/*&n;&t; * This check is a sanity check but also ensures that bus&n;&t; * address 0 maps to virtual address 0 which is useful to&n;&t; * detect null &quot;pointers&quot; (the NCR driver is much simpler if&n;&t; * NULL pointers are preserved).&n;&t; */
+r_if
+c_cond
+(paren
+id|address
+OL
+id|APECS_DMA_WIN_BASE
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_return
 id|phys_to_virt
 c_func
