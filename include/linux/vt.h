@@ -43,6 +43,8 @@ DECL|macro|VT_AUTO
 mdefine_line|#define&t;&t;VT_AUTO&t;&t;0x00&t;/* auto vt switching */
 DECL|macro|VT_PROCESS
 mdefine_line|#define&t;&t;VT_PROCESS&t;0x01&t;/* process controls switching */
+DECL|macro|VT_ACKACQ
+mdefine_line|#define&t;&t;VT_ACKACQ&t;0x02&t;/* acknowledge switch */
 DECL|struct|vt_stat
 r_struct
 id|vt_stat
@@ -72,5 +74,7 @@ DECL|macro|VT_RELDISP
 mdefine_line|#define VT_RELDISP&t;0x5605&t;/* release display */
 DECL|macro|VT_ACTIVATE
 mdefine_line|#define VT_ACTIVATE&t;0x5606&t;/* make vt active */
+DECL|macro|VT_WAITACTIVE
+mdefine_line|#define VT_WAITACTIVE&t;0x5607&t;/* wait for vt active */
 macro_line|#endif /* _LINUX_VT_H */
 eof

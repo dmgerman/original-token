@@ -524,7 +524,7 @@ id|proc_link_inode_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
-l_int|3
+l_int|64
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
@@ -620,7 +620,7 @@ id|proc_link_inode_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
-l_int|3
+l_int|64
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
@@ -653,7 +653,7 @@ id|proc_link_inode_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
-l_int|3
+l_int|64
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign

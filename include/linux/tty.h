@@ -170,11 +170,15 @@ DECL|member|custom_divisor
 r_int
 id|custom_divisor
 suffix:semicolon
+DECL|member|baud_base
+r_int
+id|baud_base
+suffix:semicolon
 DECL|member|reserved
 r_int
 id|reserved
 (braket
-l_int|8
+l_int|7
 )braket
 suffix:semicolon
 )brace
@@ -193,8 +197,6 @@ mdefine_line|#define PORT_16550A&t;4
 DECL|macro|PORT_MAX
 mdefine_line|#define PORT_MAX&t;4
 multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
-DECL|macro|ASYNC_NOSCRATCH
-mdefine_line|#define ASYNC_NOSCRATCH&t;0x0001&t;/* 16XXX UART with no scratch register */
 DECL|macro|ASYNC_FOURPORT
 mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
 DECL|macro|ASYNC_SAK
@@ -208,7 +210,10 @@ mdefine_line|#define ASYNC_SPD_VHI&t;0x0020  /* Use 115200 instead of 38400 bps 
 DECL|macro|ASYNC_SPD_CUST
 mdefine_line|#define ASYNC_SPD_CUST&t;0x0030  /* Use user-specified divisor */
 DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x0037&t;/* Possible legal async flags */
+mdefine_line|#define ASYNC_FLAGS&t;0x0036&t;/* Possible legal async flags */
+multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
+DECL|macro|ASYNC_NO_IRQ
+mdefine_line|#define ASYNC_NO_IRQ&t;0x80000000 /* No IRQ was initialized */
 DECL|macro|IS_A_CONSOLE
 mdefine_line|#define IS_A_CONSOLE(min)&t;(((min) &amp; 0xC0) == 0x00)
 DECL|macro|IS_A_SERIAL
@@ -533,6 +538,8 @@ DECL|macro|TTY_SQ_THROTTLED
 mdefine_line|#define TTY_SQ_THROTTLED 3
 DECL|macro|TTY_RQ_THROTTLED
 mdefine_line|#define TTY_RQ_THROTTLED 4
+DECL|macro|TTY_IO_ERROR
+mdefine_line|#define TTY_IO_ERROR 5
 DECL|macro|TTY_WRITE_FLUSH
 mdefine_line|#define TTY_WRITE_FLUSH(tty) tty_write_flush((tty))
 DECL|macro|TTY_READ_FLUSH

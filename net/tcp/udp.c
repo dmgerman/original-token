@@ -28,10 +28,10 @@ macro_line|#undef PRINTK
 macro_line|#endif
 macro_line|#ifdef UDP_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 DECL|macro|min
 mdefine_line|#define min(a,b) ((a)&lt;(b)?(a):(b))
@@ -57,7 +57,9 @@ l_int|NULL
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;(NULL)&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -65,6 +67,7 @@ suffix:semicolon
 )brace
 id|PRINTK
 c_func
+(paren
 (paren
 l_string|&quot;source = %d, dest = %d&bslash;n&quot;
 comma
@@ -80,9 +83,11 @@ c_func
 id|uh-&gt;dest
 )paren
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
 c_func
+(paren
 (paren
 l_string|&quot;len = %d, check = %d&bslash;n&quot;
 comma
@@ -96,6 +101,7 @@ id|net16
 c_func
 (paren
 id|uh-&gt;check
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -248,7 +254,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;udp_err (err=%d, header=%X, daddr=%X, saddr=%X, ip_protocl=%X)&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|th
@@ -391,6 +399,7 @@ id|sum
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;udp_check (uh=%X, len = %d, saddr = %X, daddr = %X)&bslash;n&quot;
 comma
 id|uh
@@ -400,6 +409,7 @@ comma
 id|saddr
 comma
 id|daddr
+)paren
 )paren
 suffix:semicolon
 id|print_uh
@@ -745,7 +755,9 @@ l_int|1
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;udp_loopback &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|pair
@@ -1088,9 +1100,11 @@ l_int|0
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sendto len = %d&bslash;n&quot;
 comma
 id|len
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* get and verify the address. */
@@ -1521,6 +1535,7 @@ id|dev-&gt;mtu
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;amt = %d, dev = %X, dev-&gt;mtu = %d&bslash;n&quot;
 comma
 id|amt
@@ -1528,6 +1543,7 @@ comma
 id|dev
 comma
 id|dev-&gt;mtu
+)paren
 )paren
 suffix:semicolon
 id|skb-&gt;len
@@ -2629,7 +2645,9 @@ id|daddr
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;bad udp checksum&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|skb-&gt;sk
@@ -2783,7 +2801,9 @@ suffix:semicolon
 multiline_comment|/* At this point we should print the thing out. */
 id|PRINTK
 (paren
+(paren
 l_string|&quot;&lt;&lt; &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|print_sk

@@ -1180,6 +1180,10 @@ op_and_assign
 op_complement
 id|S_ISGID
 suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
 l_int|1
@@ -1316,6 +1320,10 @@ id|inode-&gt;i_mode
 op_and_assign
 op_complement
 id|S_ISGID
+suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
+id|CURRENT_TIME
 suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
@@ -1482,6 +1490,10 @@ id|inode-&gt;i_gid
 op_assign
 id|group
 suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
 l_int|1
@@ -1632,6 +1644,10 @@ suffix:semicolon
 id|inode-&gt;i_gid
 op_assign
 id|group
+suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
+id|CURRENT_TIME
 suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
@@ -2370,17 +2386,6 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-multiline_comment|/* send the SIGHUP signal. */
-id|kill_pg
-c_func
-(paren
-id|current-&gt;pgrp
-comma
-id|SIGHUP
-comma
-l_int|0
-)paren
-suffix:semicolon
 multiline_comment|/* See if there is a controlling tty. */
 r_if
 c_cond
@@ -2391,6 +2396,34 @@ l_int|0
 )paren
 r_return
 l_int|0
+suffix:semicolon
+multiline_comment|/* send the SIGHUP signal. */
+id|tty
+op_assign
+id|TTY_TABLE
+c_func
+(paren
+id|current-&gt;tty
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tty
+op_logical_and
+id|tty-&gt;pgrp
+OG
+l_int|0
+)paren
+id|kill_pg
+c_func
+(paren
+id|tty-&gt;pgrp
+comma
+id|SIGHUP
+comma
+l_int|0
+)paren
 suffix:semicolon
 r_for
 c_loop

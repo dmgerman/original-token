@@ -1,6 +1,9 @@
 macro_line|#ifndef __LINUX_KEYBOARD_H
 DECL|macro|__LINUX_KEYBOARD_H
 mdefine_line|#define __LINUX_KEYBOARD_H
+macro_line|#include &lt;linux/interrupt.h&gt;
+DECL|macro|set_leds
+mdefine_line|#define set_leds() mark_bh(KEYBOARD_BH)
 multiline_comment|/*&n; * Global flags: things that don&squot;t change between virtual consoles.&n; * This includes things like &quot;key-down&quot; flags - if the shift key is&n; * down when you change a console, it&squot;s down in both.&n; *&n; * Note that the KG_CAPSLOCK flags is NOT the flag that decides if&n; * capslock is on or not: it&squot;s just a flag about the key being&n; * physically down. The actual capslock status is in the local flags.&n; */
 r_extern
 r_int
@@ -88,10 +91,6 @@ DECL|macro|VC_META
 mdefine_line|#define VC_META&t;&t;9&t;/* 0 - meta, 1 - meta=prefix with ESC */
 DECL|macro|LED_MASK
 mdefine_line|#define LED_MASK&t;7
-macro_line|#ifndef KBD_DEFFLAGS
-DECL|macro|KBD_DEFFLAGS
-mdefine_line|#define KBD_DEFFLAGS ((1 &lt;&lt; VC_NUMLOCK) | (1 &lt;&lt; VC_REPEAT))
-macro_line|#endif
 r_extern
 r_int
 r_int

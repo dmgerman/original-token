@@ -348,13 +348,31 @@ op_star
 )paren
 id|OVERRIDE
 suffix:semicolon
+multiline_comment|/* CONTROLLER is used to override controller (SEAGATE or FD). PM: 07/01/93 */
+macro_line|#ifdef CONTROLLER
+id|controller_type
+op_assign
+id|CONTROLLER
+suffix:semicolon
+macro_line|#else
+macro_line|#error Please use -DCONTROLLER=SEAGATE or -DCONTROLLER=FD to override controller type
+macro_line|#endif
 macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Base address overridden to %x&bslash;n&quot;
+l_string|&quot;Base address overridden to %x, controller type is %s&bslash;n&quot;
 comma
 id|base_address
+comma
+id|controller_type
+op_eq
+id|SEAGATE
+ques
+c_cond
+l_string|&quot;SEAGATE&quot;
+suffix:colon
+l_string|&quot;FD&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -793,6 +811,20 @@ id|temp
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|SCint
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;SCint == NULL in seagate&quot;
+)paren
+suffix:semicolon
+)brace
 id|SCint-&gt;result
 op_assign
 id|temp
@@ -801,6 +833,10 @@ id|done_fn
 (paren
 id|SCint
 )paren
+suffix:semicolon
+id|SCint
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 r_else
@@ -910,6 +946,10 @@ id|done_fn
 (paren
 id|SCpnt
 )paren
+suffix:semicolon
+id|SCint
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 l_int|1

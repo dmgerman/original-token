@@ -57,7 +57,7 @@ id|_REG0_
 comma
 id|_REG0_
 comma
-id|_null_
+id|_NONE_
 comma
 id|_null_
 comma
@@ -73,7 +73,7 @@ id|_null_
 comma
 id|_PUSH_
 comma
-id|_null_
+id|_NONE_
 comma
 id|_null_
 comma

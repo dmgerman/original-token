@@ -23,10 +23,10 @@ macro_line|#undef PRINTK
 macro_line|#endif
 macro_line|#ifdef TIMER_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 DECL|variable|timer_base
 r_static
@@ -59,9 +59,11 @@ id|tm
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;delete_timer (t=%X)&bslash;n&quot;
 comma
 id|t
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -209,6 +211,7 @@ id|t-&gt;len
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;reset_timer (t=%X) when = %d jiffies = %d&bslash;n&quot;
 comma
 id|t
@@ -216,6 +219,7 @@ comma
 id|t-&gt;when
 comma
 id|jiffies
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -443,11 +447,13 @@ id|sk-&gt;timeout
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;net_timer: found sk=%X why = %d&bslash;n&quot;
 comma
 id|sk
 comma
 id|why
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -557,9 +563,11 @@ suffix:colon
 multiline_comment|/* we&squot;ve waited for a while for all&n;&t;&t;&t;&t;  the memory assosiated with the&n;&t;&t;&t;&t;  socket to be freed.  We need to&n;&t;&t;&t;&t;  print an error message. */
 id|PRINTK
 (paren
+(paren
 l_string|&quot;possible memory leak.  sk = %X&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -687,7 +695,9 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;retransmitting.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;prot-&gt;retransmit
@@ -707,7 +717,9 @@ id|TCP_RETR1
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;timer.c TIME_WRITE time-out 1&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|arp_destroy
@@ -731,7 +743,9 @@ id|TCP_RETR2
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;timer.c TIME_WRITE time-out 2&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;err
@@ -867,7 +881,9 @@ id|TCP_RETR1
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;timer.c TIME_KEEPOPEN time-out 1&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|arp_destroy
@@ -898,7 +914,9 @@ id|TCP_RETR2
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;timer.c TIME_KEEPOPEN time-out 2&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|arp_destroy

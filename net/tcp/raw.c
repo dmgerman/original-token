@@ -26,10 +26,10 @@ DECL|macro|RAW_DEBUG
 macro_line|#undef RAW_DEBUG
 macro_line|#ifdef RAW_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 r_extern
 r_struct
@@ -105,7 +105,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw_err (err=%d, header=%X, daddr=%X, saddr=%X, ip_protocl=%X)&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -226,6 +228,7 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw_rcv (skb=%X, dev=%X, opt=%X, daddr=%X,&bslash;n&quot;
 l_string|&quot;         len=%d, saddr=%X, redo=%d, protocol=%X)&bslash;n&quot;
 comma
@@ -244,6 +247,7 @@ comma
 id|redo
 comma
 id|protocol
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -346,7 +350,9 @@ id|sk-&gt;inuse
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw_rcv adding to backlog. &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -555,6 +561,7 @@ id|tmp
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw_sendto (sk=%X, from=%X, len=%d, noblock=%d, flags=%X,&bslash;n&quot;
 l_string|&quot;            usin=%X, addr_len = %d)&bslash;n&quot;
 comma
@@ -571,6 +578,7 @@ comma
 id|usin
 comma
 id|addr_len
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* check the flags. */
@@ -742,7 +750,9 @@ id|tmp
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw_sendto: write buffer full?&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -884,7 +894,9 @@ l_int|0
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw_sendto: error building ip header.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;prot-&gt;wfree
@@ -1028,6 +1040,7 @@ id|TCP_CLOSE
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw_close: deleting ip_protocol %d&bslash;n&quot;
 comma
 (paren
@@ -1040,6 +1053,7 @@ id|sk-&gt;pair
 )paren
 op_member_access_from_pointer
 id|protocol
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1059,7 +1073,9 @@ l_int|0
 )paren
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw_close: delete_ip_protocol failed. &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|kfree_s
@@ -1168,9 +1184,11 @@ id|p
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw init added protocol %d&bslash;n&quot;
 comma
 id|sk-&gt;protocol
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1226,6 +1244,7 @@ id|skb
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;raw_recvfrom (sk=%X, to=%X, len=%d, noblock=%d, flags=%X,&bslash;n&quot;
 l_string|&quot;              sin=%X, addr_len=%X)&bslash;n&quot;
 comma
@@ -1242,6 +1261,7 @@ comma
 id|sin
 comma
 id|addr_len
+)paren
 )paren
 suffix:semicolon
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/* fdomain.c -- Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:53:19 1992 by faith&n; * Revised: Wed Dec  9 21:34:53 1992 by root&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992 Rickard E. Faith&n; *&n; * $Log$&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; * WARNING: THIS IS A BETA VERSION!&n; *          USE AT YOUR OWN RISK!&n; *          BACKUP YOUR SYSTEM BEFORE USING!&n;&n; * I would like to thank Maxtor, whose *free* 206 page manual on the LXT&n; * drives was very helpful: &quot;LXT SCSI Products: Specifications and OEM&n; * Technical Manual (Revision B/September 1991)&quot;&n;&n; * I wish that I could thank Future Domain for the necessary documentation,&n; * but I can&squot;t.  I used the $25 &quot;TMC-1800 SCSI Chip Specification&quot; document&n; * (FDC-1800T), which documents the *chip* and not the board.  Without it,&n; * I would have been totally lost, but it would have been nice to have some&n; * example source.  (The DOS BIOS source cost $250 and the UN*X driver&n; * source was $750 [both required a non-disclosure agreement].  Ever wonder&n; * why there are no freely available Future Domain drivers?)&n;&n; * Thanks to: Todd Carrico (todd@wutc.wustl.edu), Dan Poirier&n; * (poirier@cs.unc.edu ), Ken Corey (kenc@sol.acs.unt.edu), C. de Bruin&n; * (bruin@dutiba.tudelft.nl) and Sakari Aaltonen (sakaria@vipunen.hit.fi)&n; * for alpha testing.  Also thanks to Drew Eckhardt (drew@cs.colorado.edu)&n; * and Eric Youngdale (eric@tantalus.nrl.navy.mil) for answering questions,&n; * and to Doug Hoffman (hoffman@cs.unc.edu) for lending me SCSI devices to&n; * make the driver more robust. */
+multiline_comment|/* fdomain.c -- Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:53:19 1992 by faith&n; * Revised: Sun Jan 10 01:23:29 1993 by root&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993 Rickard E. Faith&n; *&n; * $Log$&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; **************************************************************************&n;&n;&n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; and TMC-1670 SCSI host adapters.&n;&n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (eric@tantalus.nrl.navy.mil), 1992.&n;&n;&n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manual is $25.  It documents the chip, not the TMC-16x0&n; boards, so some information I had to guess at.  Future Domain sells DOS&n; BIOS source for $250 and the UN*X driver source was $750, but these&n; require a non-disclosure agreement, so even if I could afford them, they&n; would *not* have been useful for writing this publically distributable&n; driver.  Future Domain technical support has provided some information on&n; the phone, and this has been somewhat helpful.&n;&n;&n; ALPHA TESTERS:&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@dutiba.tudelft.nl),&n; Sakari Aaltonen (sakaria@vipunen.hit.fi), John Rice&n; (rice@xanth.cs.odu.edu), and Brad Yearwood (brad@optilink.com).&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug informaiton.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; QUEUE: Enable &quot;command queueing.&quot;  This is supported by the higher level&n; SCSI code, and allows the kernel to continue to schedule tasks while the&n; SCSI request is pending.  If this option is turned off, then everything&n; will &quot;freeze&quot; during SCSI requests, and system performance will become&n; unbearable.  Later, this will allow multiple outstanding SCSI requests.  I&n; have received reports that if this option is turned off, the driver will&n; no longer function correctly.  I have not had time to track down this bug,&n; since I hope to make the driver work for everyone with QUEUE on.&n;&n; FIFO_COUNT: The host adapter has an 8K cache.  When this many 512 byte&n; blocks are filled by the SCSI device, an interrupt will be raised.&n; Therefore, this could be as low as 0, or as high as 16.  Note, however,&n; that values which are too high or too low seem to prevent any interrupts&n; from occuring, and thereby lock up the machine.  I have found that 2 is a&n; good number, but throughput may be increased by changing this value to&n; values which are close to 2.  Please let me know if you try any different&n; values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having toruble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: DO *NOT* USE THIS OPTION!  This turns on SCSI device&n; disconnect and reselection, which does not work at this time.  When I get&n; this working, it will support multiple outstanding SCSI commands.&n;&n; **************************************************************************/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../blk.h&quot;
@@ -8,7 +8,7 @@ macro_line|#include &quot;fdomain.h&quot;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION          &quot;3.2&quot;&t;/* Change with each revision */
+mdefine_line|#define VERSION          &quot;3.3&quot;&t;/* Change with each revision */
 multiline_comment|/* START OF USER DEFINABLE OPTIONS */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG            1&t;/* Enable debugging output */
@@ -17,7 +17,7 @@ mdefine_line|#define ENABLE_PARITY    1&t;/* Enable SCSI Parity */
 DECL|macro|QUEUE
 mdefine_line|#define QUEUE            1&t;/* Enable command queueing */
 DECL|macro|FIFO_COUNT
-mdefine_line|#define FIFO_COUNT       2      /* Number of 512 byte blocks before INTR */
+mdefine_line|#define FIFO_COUNT       2&t;/* Number of 512 byte blocks before INTR */
 DECL|macro|DO_DETECT
 mdefine_line|#define DO_DETECT        0&t;/* Do device detection here (see scsi.c) */
 DECL|macro|RESELECTION
@@ -31,9 +31,9 @@ mdefine_line|#define ERRORS_ONLY      1&t;/* Only write a line if there is an er
 DECL|macro|DEBUG_DETECT
 mdefine_line|#define DEBUG_DETECT     0&t;/* Debug fdomain_16x0_detect() */
 DECL|macro|DEBUG_MESSAGES
-mdefine_line|#define DEBUG_MESSAGES   0      /* Debug MESSAGE IN PHASE */
+mdefine_line|#define DEBUG_MESSAGES   0&t;/* Debug MESSAGE IN PHASE */
 DECL|macro|DEBUG_ABORT
-mdefine_line|#define DEBUG_ABORT      1    /* Debug abort() routine */
+mdefine_line|#define DEBUG_ABORT      1&t;/* Debug abort() routine */
 macro_line|#else
 DECL|macro|EVERY_ACCESS
 mdefine_line|#define EVERY_ACCESS     0&t;/* LEAVE THESE ALONE--CHANGE THE ONES ABOVE */
@@ -415,7 +415,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&n;  READ THIS BEFORE YOU ADD A SIGNATURE!&n;&n;  READING THIS SHORT NOTE CAN SAVE YOU LOTS OF TIME!&n;&n;  READ EVERY WORD, ESPECIALLY THE WORD *NOT*&n;&n;  This driver works *ONLY* for Future Domain cards using the&n;  TMC-1800 chip.  This includes models TMC-1660 and TMC-1680&n;  *ONLY*.&n;&n;  The following BIOS signatures have been tried with this driver.  These&n;  signatures are for boards which do *NOT* work with this driver (but the&n;  first one should work with the Seagate driver):&n;&n;  FUTURE DOMAIN COPR. (C) 1986-1989 V6.0A7/28/90&n;&n;  FUTURE DOMAIN CORP. (C) 1986-1990 V6.0209/18/90&n;&n;  FUTURE DOMAIN CORP. (C) 1986-1990 V7.009/18/90&n;&n;  */
+multiline_comment|/*&n;&n;  READ THIS BEFORE YOU ADD A SIGNATURE!&n;&n;  READING THIS SHORT NOTE CAN SAVE YOU LOTS OF TIME!&n;&n;  READ EVERY WORD, ESPECIALLY THE WORD *NOT*&n;&n;  This driver works *ONLY* for Future Domain cards using the TMC-1800 chip.&n;  This includes models TMC-1660, 1670, and 1680 *ONLY*.&n;&n;  The following BIOS signatures have been tried with this driver.  These&n;  signatures are for boards which do *NOT* work with this driver (but the&n;  first one should work with the Seagate driver):&n;&n;      FUTURE DOMAIN COPR. (C) 1986-1989 V6.0A7/28/90&n;      FUTURE DOMAIN CORP. (C) 1986-1990 V6.0209/18/90&n;      FUTURE DOMAIN CORP. (C) 1986-1990 V7.009/18/90&n;&n;  */
 DECL|struct|signature
 r_struct
 id|signature
@@ -440,8 +440,10 @@ id|signatures
 )braket
 op_assign
 (brace
+multiline_comment|/*          1         2         3         4         5         6 */
+multiline_comment|/* 123456789012345678901234567890123456789012345678901234567890 */
 (brace
-l_string|&quot;FUTURE DOMAIN CORP. (C) 1986-1990 1800-V2.0 7/28/89&quot;
+l_string|&quot;FUTURE DOMAIN CORP. (C) 1986-1990 1800-V2.07/28/89&quot;
 comma
 l_int|5
 comma
@@ -449,11 +451,11 @@ l_int|50
 )brace
 comma
 (brace
-l_string|&quot;FUTURE DOMAIN CORP. (C) 1986-1990 1800&quot;
+l_string|&quot;FUTURE DOMAIN CORP. (C) 1992 V3.00.004/02/92&quot;
 comma
 l_int|5
 comma
-l_int|37
+l_int|44
 )brace
 comma
 multiline_comment|/* READ NOTICE ABOVE *BEFORE* YOU WASTE YOUR TIME ADDING A SIGANTURE */
@@ -2020,7 +2022,7 @@ id|buffer
 (braket
 )braket
 op_assign
-l_string|&quot;Future Domain TMC-1660/TMC-1680 SCSI driver version &quot;
+l_string|&quot;Future Domain TMC-16x0 SCSI driver version &quot;
 id|VERSION
 l_string|&quot;&bslash;n&quot;
 suffix:semicolon

@@ -749,6 +749,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_alloc: socket 0x%x, inode 0x%x&bslash;n&quot;
 comma
 id|sock
@@ -757,6 +758,7 @@ id|SOCK_INODE
 c_func
 (paren
 id|sock
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -781,7 +783,9 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_alloc: no free sockets, sleeping...&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|interruptible_sleep_on
@@ -803,7 +807,9 @@ id|current-&gt;blocked
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_alloc: sleep was interrupted&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -813,7 +819,9 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_alloc: wakeup... trying again...&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -868,6 +876,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_release: socket 0x%x, inode 0x%x&bslash;n&quot;
 comma
 id|sock
@@ -876,6 +885,7 @@ id|SOCK_INODE
 c_func
 (paren
 id|sock
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1010,12 +1020,14 @@ id|whence
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_lseek: huh?&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
 op_minus
-id|EBADF
+id|ESPIPE
 suffix:semicolon
 )brace
 r_static
@@ -1050,11 +1062,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_read: buf=0x%x, size=%d&bslash;n&quot;
 comma
 id|ubuf
 comma
 id|size
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1146,11 +1160,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_write: buf=0x%x, size=%d&bslash;n&quot;
 comma
 id|ubuf
 comma
 id|size
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1238,7 +1254,9 @@ id|count
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_readdir: huh?&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1278,6 +1296,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_ioctl: inode=0x%x cmd=0x%x arg=%d&bslash;n&quot;
 comma
 id|inode
@@ -1285,6 +1304,7 @@ comma
 id|cmd
 comma
 id|arg
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1359,6 +1379,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_select: inode = 0x%x, kind = %s&bslash;n&quot;
 comma
 id|inode
@@ -1382,6 +1403,7 @@ c_cond
 l_string|&quot;out&quot;
 suffix:colon
 l_string|&quot;ex&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1458,11 +1480,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_close: inode=0x%x (cnt=%d)&bslash;n&quot;
 comma
 id|inode
 comma
 id|inode-&gt;i_count
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * it&squot;s possible the inode is NULL if we&squot;re closing an unfinished&n;&t; * socket.&n;&t; */
@@ -1529,11 +1553,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_awaitconn: trying to connect socket 0x%x to 0x%x&bslash;n&quot;
 comma
 id|mysock
 comma
 id|servsock
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1550,7 +1576,9 @@ id|SO_ACCEPTCON
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_awaitconn: server not accepting connections&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1744,6 +1772,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_socket: family = %d (%s), type = %d, protocol = %d&bslash;n&quot;
 comma
 id|family
@@ -1757,6 +1786,7 @@ comma
 id|type
 comma
 id|protocol
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * locate the correct protocol family&n;&t; */
@@ -1799,7 +1829,9 @@ id|NPROTO
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_socket: family not found&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1986,6 +2018,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_socketpair: family = %d, type = %d, protocol = %d&bslash;n&quot;
 comma
 id|family
@@ -1993,6 +2026,7 @@ comma
 id|type
 comma
 id|protocol
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * obtain the first socket and check if the underlying protocol&n;&t; * supports the socketpair call&n;&t; */
@@ -2211,9 +2245,11 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_bind: fd = %d&bslash;n&quot;
 comma
 id|fd
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2261,7 +2297,9 @@ l_int|0
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_bind: bind failed&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2294,9 +2332,11 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_listen: fd = %d&bslash;n&quot;
 comma
 id|fd
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2330,7 +2370,9 @@ id|SS_UNCONNECTED
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_listen: socket isn&squot;t unconnected&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2349,7 +2391,9 @@ id|SO_ACCEPTCON
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_listen: socket already accepting connections!&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2418,9 +2462,11 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_accept: fd = %d&bslash;n&quot;
 comma
 id|fd
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2455,7 +2501,9 @@ id|SS_UNCONNECTED
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_accept: socket isn&squot;t unconnected&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2477,7 +2525,9 @@ id|SO_ACCEPTCON
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_accept: socket not accepting connections!&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2617,11 +2667,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_accept: connected socket 0x%x via 0x%x&bslash;n&quot;
 comma
 id|sock
 comma
 id|newsock
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2682,9 +2734,11 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_connect: fd = %d&bslash;n&quot;
 comma
 id|fd
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2755,7 +2809,9 @@ suffix:colon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_connect: socket not unconnected&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2790,7 +2846,9 @@ l_int|0
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_connect: connect failed&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2828,9 +2886,11 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_getsockname: fd = %d&bslash;n&quot;
 comma
 id|fd
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2896,9 +2956,11 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_getpeername: fd = %d&bslash;n&quot;
 comma
 id|fd
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2971,6 +3033,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_send (fd = %d, buff = %X, len = %d, flags = %X)&bslash;n&quot;
 comma
 id|fd
@@ -2980,6 +3043,7 @@ comma
 id|len
 comma
 id|flags
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3096,6 +3160,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_sendto (fd = %d, buff = %X, len = %d, flags = %X,&quot;
 l_string|&quot; addr=%X, alen = %d&bslash;n&quot;
 comma
@@ -3110,6 +3175,7 @@ comma
 id|addr
 comma
 id|addr_len
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3222,6 +3288,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_recv (fd = %d, buff = %X, len = %d, flags = %X)&bslash;n&quot;
 comma
 id|fd
@@ -3231,6 +3298,7 @@ comma
 id|len
 comma
 id|flags
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3348,6 +3416,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_recvfrom (fd = %d, buff = %X, len = %d, flags = %X,&quot;
 l_string|&quot; addr=%X, alen=%X&bslash;n&quot;
 comma
@@ -3362,6 +3431,7 @@ comma
 id|addr
 comma
 id|addr_len
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3475,6 +3545,7 @@ id|file
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sys_setsockopt(fd=%d, level=%d, optname=%d,&bslash;n&quot;
 comma
 id|fd
@@ -3483,14 +3554,17 @@ id|level
 comma
 id|optname
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;               optval = %X, optlen = %d)&bslash;n&quot;
 comma
 id|optval
 comma
 id|optlen
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3597,6 +3671,7 @@ id|file
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sys_getsockopt(fd=%d, level=%d, optname=%d,&bslash;n&quot;
 comma
 id|fd
@@ -3605,14 +3680,17 @@ id|level
 comma
 id|optname
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;               optval = %X, optlen = %X)&bslash;n&quot;
 comma
 id|optval
 comma
 id|optlen
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3667,14 +3745,23 @@ op_minus
 id|ENOTSOCK
 )paren
 suffix:semicolon
-r_return
+r_if
+c_cond
 (paren
-l_int|0
+op_logical_neg
+id|sock-&gt;ops
+op_logical_or
+op_logical_neg
+id|sock-&gt;ops-&gt;getsockopt
 )paren
+r_return
+l_int|0
 suffix:semicolon
 r_return
-(paren
-id|sock-&gt;ops-&gt;getsockopt
+id|sock-&gt;ops
+op_member_access_from_pointer
+id|getsockopt
+c_func
 (paren
 id|sock
 comma
@@ -3685,7 +3772,6 @@ comma
 id|optval
 comma
 id|optlen
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3715,11 +3801,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_shutdown (fd = %d, how = %d)&bslash;n&quot;
 comma
 id|fd
 comma
 id|how
+)paren
 )paren
 suffix:semicolon
 id|file

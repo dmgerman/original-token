@@ -609,10 +609,10 @@ id|servsock
 suffix:semicolon
 macro_line|#ifdef SOCK_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK (void)
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 macro_line|#endif /* _KERN_SOCK_H */
 eof

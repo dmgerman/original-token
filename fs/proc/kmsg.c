@@ -8,6 +8,17 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_extern
 r_int
+r_int
+id|log_size
+suffix:semicolon
+r_extern
+r_struct
+id|wait_queue
+op_star
+id|log_wait
+suffix:semicolon
+r_extern
+r_int
 id|sys_syslog
 c_func
 (paren
@@ -118,6 +129,61 @@ id|count
 )paren
 suffix:semicolon
 )brace
+DECL|function|kmsg_select
+r_static
+r_int
+id|kmsg_select
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+id|sel_type
+comma
+id|select_table
+op_star
+id|wait
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sel_type
+op_ne
+id|SEL_IN
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|log_size
+)paren
+r_return
+l_int|1
+suffix:semicolon
+id|select_wait
+c_func
+(paren
+op_amp
+id|log_wait
+comma
+id|wait
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|variable|proc_kmsg_operations
 r_static
 r_struct
@@ -136,7 +202,7 @@ multiline_comment|/* kmsg_write */
 l_int|NULL
 comma
 multiline_comment|/* kmsg_readdir */
-l_int|NULL
+id|kmsg_select
 comma
 multiline_comment|/* kmsg_select */
 l_int|NULL
@@ -197,7 +263,10 @@ l_int|NULL
 comma
 multiline_comment|/* bmap */
 l_int|NULL
+comma
 multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
 )brace
 suffix:semicolon
 eof

@@ -1,62 +1,4 @@
 multiline_comment|/*&n; * include/linux/serial.h&n; *&n; * Copyright (C) 1992 by Theodore Ts&squot;o.&n; * &n; * Redistribution of this file is permitted under the terms of the GNU &n; * Public License (GPL)&n; */
-multiline_comment|/*&n; * This our internal structure for keeping track of interrupt service&n; * routines. &n; */
-DECL|typedef|async_ISR
-r_typedef
-r_struct
-id|struct_ISR
-op_star
-id|async_ISR
-suffix:semicolon
-DECL|struct|struct_ISR
-r_struct
-id|struct_ISR
-(brace
-DECL|member|irq
-r_int
-id|irq
-suffix:semicolon
-multiline_comment|/* The IRQ assigned for this device */
-DECL|member|port
-r_int
-id|port
-suffix:semicolon
-multiline_comment|/* The base port for this device */
-multiline_comment|/* (use is ISR specific) */
-DECL|member|ISR_proc
-r_void
-(paren
-op_star
-id|ISR_proc
-)paren
-(paren
-id|async_ISR
-comma
-r_int
-)paren
-suffix:semicolon
-DECL|member|line
-r_int
-id|line
-suffix:semicolon
-multiline_comment|/* The serial line (or base */
-multiline_comment|/* serial line)  */
-DECL|member|refcnt
-r_int
-id|refcnt
-suffix:semicolon
-multiline_comment|/* How many devices are depending on */
-multiline_comment|/* this interrupt (multiport boards) */
-DECL|member|next_ISR
-id|async_ISR
-id|next_ISR
-suffix:semicolon
-multiline_comment|/* For the linked list */
-DECL|member|prev_ISR
-id|async_ISR
-id|prev_ISR
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
 DECL|struct|async_struct
 r_struct
@@ -70,9 +12,9 @@ DECL|member|port
 r_int
 id|port
 suffix:semicolon
-DECL|member|ISR
-id|async_ISR
-id|ISR
+DECL|member|irq
+r_int
+id|irq
 suffix:semicolon
 DECL|member|flags
 r_int
@@ -117,6 +59,19 @@ suffix:semicolon
 DECL|member|line
 r_int
 id|line
+suffix:semicolon
+DECL|member|next_port
+r_struct
+id|async_struct
+op_star
+id|next_port
+suffix:semicolon
+multiline_comment|/* For the linked list */
+DECL|member|prev_port
+r_struct
+id|async_struct
+op_star
+id|prev_port
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -178,7 +133,7 @@ mdefine_line|#define UART_FCR_TRIGGER_14&t;0xC0 /* Mask for trigger set at 14 */
 DECL|macro|UART_FCR_CLEAR_CMD
 mdefine_line|#define UART_FCR_CLEAR_CMD&t;(UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT)
 DECL|macro|UART_FCR_SETUP_CMD
-mdefine_line|#define UART_FCR_SETUP_CMD&t;(UART_FCR_ENABLE_FIFO | UART_FCR_TRIGGER_14)
+mdefine_line|#define UART_FCR_SETUP_CMD&t;(UART_FCR_ENABLE_FIFO | UART_FCR_TRIGGER_8)
 multiline_comment|/*&n; * These are the definitions for the Line Control Register&n; * &n; * Note: if the word length is 5 bits (UART_LCR_WLEN5), then setting &n; * UART_LCR_STOP will select 1.5 stop bits, not 2 stop bits.&n; */
 DECL|macro|UART_LCR_DLAB
 mdefine_line|#define UART_LCR_DLAB&t;0x80&t;/* Devisor latch access bit */

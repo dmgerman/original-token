@@ -26,10 +26,10 @@ DECL|macro|ICMP_DEBUG
 macro_line|#undef ICMP_DEBUG
 macro_line|#ifdef ICMP_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 DECL|macro|min
 mdefine_line|#define min(a,b) ((a)&lt;(b)?(a):(b))
@@ -133,6 +133,7 @@ id|icmph
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;  type = %d, code = %d, checksum = %X&bslash;n&quot;
 comma
 id|icmph-&gt;type
@@ -141,12 +142,15 @@ id|icmph-&gt;code
 comma
 id|icmph-&gt;checksum
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot; gateway = %X&bslash;n&quot;
 comma
 id|icmph-&gt;un.gateway
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -195,6 +199,7 @@ id|len
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;icmp_reply (skb_in = %X, type = %d, code = %d, dev=%X)&bslash;n&quot;
 comma
 id|skb_in
@@ -204,6 +209,7 @@ comma
 id|code
 comma
 id|dev
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* get some memory for the reply. */
@@ -567,7 +573,9 @@ multiline_comment|/* Failed checksum! */
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;ICMP ECHO failed checksum!&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|skb1-&gt;sk
@@ -942,7 +950,9 @@ multiline_comment|/* Problems building header */
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;Could not build IP Header for ICMP ECHO Response&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|kfree_s
@@ -1087,9 +1097,11 @@ suffix:colon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;Unsupported ICMP type = x%x&bslash;n&quot;
 comma
 id|icmph-&gt;type
+)paren
 )paren
 suffix:semicolon
 id|skb1-&gt;sk

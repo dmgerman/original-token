@@ -30,10 +30,10 @@ DECL|macro|TCP_DEBUG
 macro_line|#undef TCP_DEBUG
 macro_line|#ifdef TCP_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 DECL|macro|tmax
 mdefine_line|#define tmax(a,b) (before ((a),(b)) ? (b) : (a))
@@ -106,10 +106,13 @@ l_int|1
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp header:&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  source=%d, dest=%d, seq =%d, ack_seq = %d&bslash;n&quot;
 comma
@@ -137,8 +140,10 @@ c_func
 id|th-&gt;ack_seq
 )paren
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  fin=%d, syn=%d, rst=%d, psh=%d, ack=%d, urg=%d res1=%d res2=%d&bslash;n&quot;
 comma
@@ -158,8 +163,10 @@ id|th-&gt;res1
 comma
 id|th-&gt;res2
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  window = %d, check = %d urg_ptr = %d&bslash;n&quot;
 comma
@@ -181,15 +188,19 @@ c_func
 id|th-&gt;urg_ptr
 )paren
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  doff = %d&bslash;n&quot;
 comma
 id|th-&gt;doff
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;options = %d %d %d %d&bslash;n&quot;
 comma
@@ -212,6 +223,7 @@ id|ptr
 (braket
 l_int|3
 )braket
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -485,6 +497,7 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_err(err=%d, header=%X, daddr=%X saddr=%X, protocol=%X)&bslash;n&quot;
 comma
 id|err
@@ -496,6 +509,7 @@ comma
 id|saddr
 comma
 id|protocol
+)paren
 )paren
 suffix:semicolon
 id|th
@@ -1040,6 +1054,7 @@ id|arg
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_ioctl (sk=%X, cmd = %d, arg=%X)&bslash;n&quot;
 comma
 id|sk
@@ -1047,6 +1062,7 @@ comma
 id|cmd
 comma
 id|arg
+)paren
 )paren
 suffix:semicolon
 r_switch
@@ -1117,9 +1133,11 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;returning %d&bslash;n&quot;
 comma
 id|amount
+)paren
 )paren
 suffix:semicolon
 id|verify_area
@@ -1723,20 +1741,24 @@ id|sk-&gt;cong_window
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sk-&gt;cong_window = %d, sk-&gt;packets_out = %d&bslash;n&quot;
 comma
 id|sk-&gt;cong_window
 comma
 id|sk-&gt;packets_out
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;sk-&gt;send_seq = %d, sk-&gt;window_seq = %d&bslash;n&quot;
 comma
 id|sk-&gt;send_seq
 comma
 id|sk-&gt;window_seq
+)paren
 )paren
 suffix:semicolon
 id|skb-&gt;next
@@ -2382,6 +2404,7 @@ l_int|NULL
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write (sk=%X, from=%X, len=%d, nonblock=%d, flags=%X)&bslash;n&quot;
 comma
 id|sk
@@ -2393,6 +2416,7 @@ comma
 id|nonblock
 comma
 id|flags
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -2449,7 +2473,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write: return 1&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2519,7 +2545,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write: return 2&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2587,7 +2615,9 @@ c_func
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write: return 3&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2940,7 +2970,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write: return 4&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3018,7 +3050,9 @@ c_func
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write: return 5&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3129,7 +3163,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write: return 6&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3212,7 +3248,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write: return 7&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3361,20 +3399,24 @@ id|sk-&gt;cong_window
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sk-&gt;cong_window = %d, sk-&gt;packets_out = %d&bslash;n&quot;
 comma
 id|sk-&gt;cong_window
 comma
 id|sk-&gt;packets_out
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;sk-&gt;send_seq = %d, sk-&gt;window_seq = %d&bslash;n&quot;
 comma
 id|sk-&gt;send_seq
 comma
 id|sk-&gt;window_seq
+)paren
 )paren
 suffix:semicolon
 id|skb-&gt;next
@@ -3436,7 +3478,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write: return 8&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3613,7 +3657,9 @@ r_return
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;in tcp read wakeup&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* we need to put code here to prevent this routine from being called. */
@@ -3904,7 +3950,7 @@ op_star
 id|sk
 )paren
 (brace
-multiline_comment|/*   PRINTK (&quot;cleaning rbuf for sk=%X&bslash;n&quot;,sk);*/
+multiline_comment|/*   PRINTK ((&quot;cleaning rbuf for sk=%X&bslash;n&quot;,sk));*/
 multiline_comment|/* we have to loop through all the buffer headers, and &n;     try to free up all the space we can. */
 r_while
 c_loop
@@ -3970,6 +4016,7 @@ suffix:semicolon
 multiline_comment|/* at this point we should send an ack if the difference in&n;      the window, and the amount of space is bigger than&n;      TCP_WINDOW_DIFF */
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sk-&gt;window left = %d, sk-&gt;prot-&gt;rspace(sk)=%d&bslash;n&quot;
 comma
 id|sk-&gt;window
@@ -3982,6 +4029,7 @@ id|rspace
 c_func
 (paren
 id|sk
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -4103,6 +4151,7 @@ id|skb
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_read_urg(sk=%X, to=%X, len=%d, flags=%X)&bslash;n&quot;
 comma
 id|sk
@@ -4112,6 +4161,7 @@ comma
 id|len
 comma
 id|flags
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -4624,6 +4674,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;tcp_read (sk=%X, to=%X, len=%d, nonblock=%d, flags=%X)&bslash;n&quot;
 comma
 id|sk
@@ -4635,6 +4686,7 @@ comma
 id|nonblock
 comma
 id|flags
+)paren
 )paren
 suffix:semicolon
 r_while
@@ -4668,9 +4720,11 @@ multiline_comment|/* skb-&gt;used just checks to see if we&squot;ve&n;&t;&t;&t; 
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;skb = %X:&bslash;n&quot;
 comma
 id|skb
+)paren
 )paren
 suffix:semicolon
 id|print_skb
@@ -4861,9 +4915,11 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_read about to sleep. state = %d&bslash;n&quot;
 comma
 id|sk-&gt;state
+)paren
 )paren
 suffix:semicolon
 id|release_sock
@@ -4962,7 +5018,9 @@ c_func
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_read woke up. &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;inuse
@@ -5218,9 +5276,11 @@ id|EAGAIN
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_read returning %d&bslash;n&quot;
 comma
 id|copied
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -5361,9 +5421,11 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;tcp_shutdown_send buff = %X&bslash;n&quot;
 comma
 id|buff
+)paren
 )paren
 suffix:semicolon
 id|buff-&gt;mem_addr
@@ -5453,7 +5515,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;Unable to build header for fin.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -5868,9 +5932,11 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;tcp_reset buff = %X&bslash;n&quot;
 comma
 id|buff
+)paren
 )paren
 suffix:semicolon
 id|buff-&gt;mem_addr
@@ -6146,6 +6212,7 @@ id|skb-&gt;h.th
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_conn_request (sk = %X, skb = %X, daddr = %X, sadd4= %X, &bslash;n&quot;
 l_string|&quot;                  opt = %X, dev = %X)&bslash;n&quot;
 comma
@@ -6160,6 +6227,7 @@ comma
 id|opt
 comma
 id|dev
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* if the socket is dead, don&squot;t accept the connection. */
@@ -6181,7 +6249,9 @@ r_else
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_conn_request on dead socket&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|tcp_reset
@@ -6265,9 +6335,11 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;newsk = %X&bslash;n&quot;
 comma
 id|newsk
+)paren
 )paren
 suffix:semicolon
 id|memcpy
@@ -6952,9 +7024,11 @@ id|TCP_CONNECT_TIME
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;newsk-&gt;time_wait.sk = %X&bslash;n&quot;
 comma
 id|newsk-&gt;time_wait.sk
+)paren
 )paren
 suffix:semicolon
 id|reset_timer
@@ -7081,11 +7155,13 @@ id|tmp
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_close ((struct sock *)%X, %d)&bslash;n&quot;
 comma
 id|sk
 comma
 id|timeout
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -7478,7 +7554,9 @@ id|buff-&gt;mem_len
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;Unable to build header for fin.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|release_sock
@@ -7735,9 +7813,11 @@ id|skb
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_write_xmit (sk=%X)&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 r_while
@@ -7792,10 +7872,12 @@ id|TCP_WRITE_QUEUE_MAGIC
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp.c skb with bad magic (%X) on write queue. Squashing &quot;
 l_string|&quot;queue&bslash;n&quot;
 comma
 id|skb-&gt;magic
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;wfront
@@ -7816,7 +7898,9 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;Sending a packet.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;prot-&gt;queue_xmit
@@ -7868,6 +7952,7 @@ id|th-&gt;ack_seq
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_ack ack=%d, window=%d, &quot;
 l_string|&quot;sk-&gt;rcv_ack_seq=%d, sk-&gt;window_seq = %d&bslash;n&quot;
 comma
@@ -7882,6 +7967,7 @@ comma
 id|sk-&gt;rcv_ack_seq
 comma
 id|sk-&gt;window_seq
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -8271,7 +8357,9 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_ack: Updating rcv ack sequence. &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;rcv_ack_seq
@@ -8311,9 +8399,11 @@ op_decrement
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;skb=%X acked&bslash;n&quot;
 comma
 id|sk-&gt;send_head
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* wake up the process, it can probably&n;&t;     write more. */
@@ -8536,7 +8626,9 @@ l_int|NULL
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;retransmitting&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;prot-&gt;retransmit
@@ -8605,7 +8697,9 @@ id|sk-&gt;keepopen
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;Nothing to do, going to sleep.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -8805,9 +8899,11 @@ r_else
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_ack closing socket - %X&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -8841,7 +8937,9 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;leaving tcp_ack&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -8911,11 +9009,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;tcp_data len = %d sk = %X:&bslash;n&quot;
 comma
 id|skb-&gt;len
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -9026,9 +9126,11 @@ id|SHUTDOWN_MASK
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_data: closing socket - %X&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -9071,9 +9173,11 @@ l_int|NULL
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_data: skb = %X:&bslash;n&quot;
 comma
 id|skb
+)paren
 )paren
 suffix:semicolon
 id|print_skb
@@ -9102,9 +9206,11 @@ r_else
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_data adding to chain sk = %X:&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -9127,9 +9233,11 @@ id|skb1-&gt;prev
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;skb1=%X&bslash;n&quot;
 comma
 id|skb1
+)paren
 )paren
 suffix:semicolon
 id|print_skb
@@ -9140,9 +9248,11 @@ id|skb1
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;skb1-&gt;h.th-&gt;seq = %d&bslash;n&quot;
 comma
 id|skb1-&gt;h.th-&gt;seq
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -9223,9 +9333,11 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;skb = %X:&bslash;n&quot;
 comma
 id|skb
+)paren
 )paren
 suffix:semicolon
 id|print_skb
@@ -9235,7 +9347,9 @@ id|skb
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sk now equals:&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -9543,7 +9657,9 @@ r_else
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;data received on dead socket. &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -9565,9 +9681,11 @@ id|sk-&gt;send_seq
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_data: entering last_ack state sk = %X&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -9785,6 +9903,7 @@ id|dev
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_fin (sk=%X, th=%X, saddr=%X, dev=%X)&bslash;n&quot;
 comma
 id|sk
@@ -9794,6 +9913,7 @@ comma
 id|saddr
 comma
 id|dev
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -10231,11 +10351,13 @@ id|skb
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_accept(sk=%X, flags=%X)&bslash;n&quot;
 comma
 id|sk
 comma
 id|flags
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -10912,6 +11034,7 @@ id|saddr
 multiline_comment|/* this isn&squot;t quite right.  sk-&gt;acked_seq could be more recent&n;      than sk-&gt;window.  This is however close enough.  We will accept&n;      slightly more packets than we should, but it should not cause&n;      problems unless someone is trying to forge packets. */
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_sequence (sk=%X, th=%X, len = %d, opt=%d, saddr=%X)&bslash;n&quot;
 comma
 id|sk
@@ -10923,6 +11046,7 @@ comma
 id|opt
 comma
 id|saddr
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -10995,7 +11119,9 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp_sequence: rejecting packet. &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* if it&squot;s too far ahead, send an ack to let the other end&n;     know what we expect. */
@@ -11246,7 +11372,9 @@ id|skb
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp.c: tcp_rcv skb = NULL&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -11265,7 +11393,9 @@ id|protocol
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp.c: tcp_rcv protocol = NULL&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -11284,7 +11414,9 @@ multiline_comment|/* it&squot;s ok for opt to be NULL */
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp.c: tcp_rcv opt = NULL&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -11298,7 +11430,9 @@ id|dev
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp.c: tcp_rcv dev = NULL&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -11336,11 +11470,14 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;&lt;&lt;&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|PRINTK
 c_func
+(paren
 (paren
 l_string|&quot;len = %d, redo = %d, skb=%X&bslash;n&quot;
 comma
@@ -11349,6 +11486,7 @@ comma
 id|redo
 comma
 id|skb
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -11359,9 +11497,11 @@ id|sk
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sk = %X:&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -11400,7 +11540,9 @@ l_int|NULL
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;packet dropped with bad checksum.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|kfree_skb
@@ -11589,7 +11731,9 @@ id|sk
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp.c: tcp_rcv bug sk=NULL redo = 1&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -11608,7 +11752,9 @@ id|sk-&gt;prot
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;tcp.c: tcp_rcv sk-&gt;prot = NULL &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -11634,7 +11780,9 @@ l_int|NULL
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;dropping packet due to lack of buffer space.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|kfree_skb
@@ -11661,7 +11809,9 @@ id|skb-&gt;mem_len
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;About to do switch. &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* now deal with it. */
@@ -12100,7 +12250,9 @@ id|sk-&gt;daddr
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;packet received for closed,dead socket&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|kfree_skb
@@ -12933,7 +13085,9 @@ id|sk
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;in tcp_write_wakeup&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|t1

@@ -1,6 +1,10 @@
 multiline_comment|/* Copyright (C) 1992 by Jim Weigand, Linus Torvalds, and Michael K. Johnson&n;*/
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/lp.h&gt;
-multiline_comment|/* sched.h is included from lp.h */
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/* &n; * All my debugging code assumes that you debug with only one printer at&n; * a time. RWWH&n; */
 DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
@@ -18,7 +22,7 @@ r_int
 id|testvalue
 suffix:semicolon
 multiline_comment|/* reset value */
-id|outb
+id|outb_p
 c_func
 (paren
 l_int|0
@@ -45,7 +49,7 @@ id|testvalue
 op_increment
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|LP_PSELECP
@@ -104,7 +108,7 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|lpchar
@@ -221,7 +225,7 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* control port takes strobe high */
-id|outb
+id|outb_p
 c_func
 (paren
 (paren
@@ -252,7 +256,7 @@ op_decrement
 suffix:semicolon
 )brace
 multiline_comment|/* take strobe low */
-id|outb
+id|outb_p
 c_func
 (paren
 (paren
@@ -760,7 +764,7 @@ id|origin
 (brace
 r_return
 op_minus
-id|EINVAL
+id|ESPIPE
 suffix:semicolon
 )brace
 DECL|function|lp_open
@@ -1130,7 +1134,7 @@ op_increment
 )paren
 (brace
 multiline_comment|/* write to port &amp; read back to check */
-id|outb
+id|outb_p
 c_func
 (paren
 id|LP_DUMMY
@@ -1159,7 +1163,7 @@ op_increment
 suffix:semicolon
 id|testvalue
 op_assign
-id|inb
+id|inb_p
 c_func
 (paren
 id|LP_B

@@ -8,6 +8,16 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/keyboard.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifndef KBD_DEFFLAGS
+macro_line|#ifdef CONFIG_KBD_META
+DECL|macro|KBD_DEFFLAGS
+mdefine_line|#define KBD_DEFFLAGS ((1 &lt;&lt; VC_NUMLOCK) | (1 &lt;&lt; VC_REPEAT) | (1 &lt;&lt; VC_META))
+macro_line|#else
+DECL|macro|KBD_DEFFLAGS
+mdefine_line|#define KBD_DEFFLAGS ((1 &lt;&lt; VC_NUMLOCK) | (1 &lt;&lt; VC_REPEAT))
+macro_line|#endif
+macro_line|#endif
 multiline_comment|/*&n; * The default IO slowdown is doing &squot;inb()&squot;s from 0x61, which should be&n; * safe. But as that is the keyboard controller chip address, we do our&n; * slowdowns here by doing short jumps: the keyboard controller should&n; * be able to keep up&n; */
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
@@ -61,6 +71,14 @@ r_int
 id|kbd_prev_dead_keys
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|want_console
+r_static
+r_int
+id|want_console
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|kbd_table
 r_struct
@@ -144,13 +162,6 @@ id|put_queue
 c_func
 (paren
 r_int
-)paren
-suffix:semicolon
-r_void
-id|set_leds
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 r_static
@@ -550,15 +561,16 @@ id|scancode
 suffix:semicolon
 id|end_kbd_intr
 suffix:colon
-id|do_keyboard_interrupt
-c_func
-(paren
-)paren
-suffix:semicolon
 id|send_cmd
 c_func
 (paren
 l_int|0xAE
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|KEYBOARD_BH
 )paren
 suffix:semicolon
 )brace
@@ -998,11 +1010,6 @@ comma
 id|VC_CAPSLOCK
 )paren
 suffix:semicolon
-id|set_leds
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|uncaps
 r_static
@@ -1199,7 +1206,6 @@ c_func
 )paren
 suffix:semicolon
 r_else
-(brace
 id|chg_vc_kbd_flag
 c_func
 (paren
@@ -1208,12 +1214,6 @@ comma
 id|VC_SCROLLOCK
 )paren
 suffix:semicolon
-id|set_leds
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 )brace
 DECL|function|num
 r_static
@@ -1243,7 +1243,6 @@ l_int|0x50
 )paren
 suffix:semicolon
 r_else
-(brace
 id|chg_vc_kbd_flag
 c_func
 (paren
@@ -1252,12 +1251,6 @@ comma
 id|VC_NUMLOCK
 )paren
 suffix:semicolon
-id|set_leds
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 )brace
 DECL|function|applkey
 r_static
@@ -12036,11 +12029,9 @@ c_func
 id|KG_ALT
 )paren
 )paren
-id|change_console
-c_func
-(paren
+id|want_console
+op_assign
 id|sc
-)paren
 suffix:semicolon
 r_else
 r_if
@@ -12415,6 +12406,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This routine is the bottom half of the keyboard interrupt&n; * routine, and runs with all interrupts enabled. It does&n; * console changing, led setting and copy_to_cooked, which can&n; * take a reasonably long time.&n; *&n; * Aside from timing (which isn&squot;t really that important for&n; * keyboard interrupts as they happen often), using the software&n; * interrupt routines for this thing allows us to easily mask&n; * this when we don&squot;t want any of the above to happen. Not yet&n; * used, but this allows for easy and efficient race-condition&n; * prevention later on.&n; */
 DECL|function|kbd_bh
 r_static
 r_void
@@ -12451,11 +12443,10 @@ r_if
 c_cond
 (paren
 id|leds
-op_eq
+op_ne
 id|old_leds
 )paren
-r_return
-suffix:semicolon
+(brace
 id|old_leds
 op_assign
 id|leds
@@ -12485,18 +12476,29 @@ l_int|0xf4
 suffix:semicolon
 multiline_comment|/* re-enable kbd if any errors */
 )brace
-DECL|function|set_leds
-r_void
-id|set_leds
-c_func
+r_if
+c_cond
 (paren
-r_void
+id|want_console
+op_ge
+l_int|0
 )paren
 (brace
-id|mark_bh
+id|change_console
 c_func
 (paren
-id|KEYBOARD_BH
+id|want_console
+)paren
+suffix:semicolon
+id|want_console
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|do_keyboard_interrupt
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -12535,7 +12537,7 @@ id|pg0
 l_int|1024
 )braket
 suffix:semicolon
-id|cli
+id|sti
 c_func
 (paren
 )paren

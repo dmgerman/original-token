@@ -31,10 +31,10 @@ DECL|macro|IP_DEBUG
 macro_line|#undef IP_DEBUG
 macro_line|#ifdef IP_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(X) printk X
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(X) /**/
 macro_line|#endif
 DECL|variable|rt_base
 r_static
@@ -84,9 +84,11 @@ id|p
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;get_protocol (%d)&bslash;n &quot;
 comma
 id|prot
+)paren
 )paren
 suffix:semicolon
 id|hash
@@ -120,9 +122,11 @@ id|p-&gt;next
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;trying protocol %d&bslash;n&quot;
 comma
 id|p-&gt;protocol
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -590,20 +594,24 @@ id|rt
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;net = %08X router = %08X&bslash;n&quot;
 comma
 id|rt-&gt;net
 comma
 id|rt-&gt;router
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;dev = %X, next = %X&bslash;n&quot;
 comma
 id|rt-&gt;dev
 comma
 id|rt-&gt;next
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -619,6 +627,7 @@ id|ipprot
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;handler = %X, protocol = %d, copy=%d &bslash;n&quot;
 comma
 id|ipprot-&gt;handler
@@ -626,6 +635,7 @@ comma
 id|ipprot-&gt;protocol
 comma
 id|ipprot-&gt;copy
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -687,6 +697,19 @@ id|daddr
 )paren
 )paren
 (brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;IP: %X via %s (%X)&bslash;n&quot;
+comma
+id|daddr
+comma
+id|rt-&gt;dev-&gt;name
+comma
+id|rt-&gt;router
+)paren
+)paren
+suffix:semicolon
 op_star
 id|raddr
 op_assign
@@ -731,9 +754,11 @@ id|r1
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;add_route (rt=%X):&bslash;n&quot;
 comma
 id|rt
+)paren
 )paren
 suffix:semicolon
 id|print_rt
@@ -804,9 +829,11 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;mask = %X&bslash;n&quot;
 comma
 id|mask
+)paren
 )paren
 suffix:semicolon
 id|r1
@@ -892,11 +919,12 @@ id|mask
 )paren
 (brace
 id|PRINTK
-c_func
+(paren
 (paren
 l_string|&quot;adding before r=%X&bslash;n&quot;
 comma
 id|r
+)paren
 )paren
 suffix:semicolon
 id|print_rt
@@ -942,9 +970,11 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;adding after r1=%X&bslash;n&quot;
 comma
 id|r1
+)paren
 )paren
 suffix:semicolon
 id|print_rt
@@ -1060,6 +1090,17 @@ op_minus
 l_int|1
 )paren
 (brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;new broadcast for %s: %08X&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|ipc.net
+)paren
+)paren
+suffix:semicolon
 id|arp_add_broad
 (paren
 id|ipc.net
@@ -1121,6 +1162,17 @@ op_minus
 l_int|1
 )paren
 (brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;new router for %s: %08X&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|ipc.router
+)paren
+)paren
+suffix:semicolon
 id|rt
 op_assign
 id|kmalloc
@@ -1171,6 +1223,15 @@ c_cond
 id|dev-&gt;loopback
 )paren
 (brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;new loopback addr: %08X&bslash;n&quot;
+comma
+id|ipc.paddr
+)paren
+)paren
+suffix:semicolon
 id|rt
 op_assign
 id|kmalloc
@@ -1224,6 +1285,16 @@ id|my_ip_addr
 id|ipc.paddr
 )paren
 )paren
+(brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;new identity: %08X&bslash;n&quot;
+comma
+id|ipc.paddr
+)paren
+)paren
+suffix:semicolon
 id|ip_addr
 (braket
 id|ip_ads
@@ -1232,6 +1303,7 @@ op_increment
 op_assign
 id|ipc.paddr
 suffix:semicolon
+)brace
 id|dev-&gt;up
 op_assign
 id|ipc.up
@@ -1415,6 +1487,7 @@ id|MY_IP_ADDR
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;ip_build_header (skb=%X, saddr=%X, daddr=%X, *dev=%X,&bslash;n&quot;
 l_string|&quot;                 type=%d, opt=%X, len = %d)&bslash;n&quot;
 comma
@@ -1432,6 +1505,7 @@ comma
 id|opt
 comma
 id|len
+)paren
 )paren
 suffix:semicolon
 id|buff
@@ -2835,9 +2909,10 @@ op_assign
 id|skb-&gt;h.iph
 suffix:semicolon
 id|PRINTK
-c_func
+(paren
 (paren
 l_string|&quot;&lt;&lt;&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|print_iph
@@ -2869,7 +2944,9 @@ l_int|4
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;ip packet thrown out. &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|skb-&gt;sk
@@ -2904,7 +2981,9 @@ id|iph-&gt;daddr
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;packet meant for someone else.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|skb-&gt;sk
@@ -3018,9 +3097,11 @@ r_continue
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;Using protocol = %X:&bslash;n&quot;
 comma
 id|ipprot
+)paren
 )paren
 suffix:semicolon
 id|print_ipprot
@@ -3251,9 +3332,10 @@ op_assign
 id|jiffies
 suffix:semicolon
 id|PRINTK
-c_func
+(paren
 (paren
 l_string|&quot;&gt;&gt;&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|ptr
@@ -3651,10 +3733,13 @@ id|ip
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;ip header:&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  ihl = %d, version = %d, tos = %d, tot_len = %d&bslash;n&quot;
 comma
@@ -3670,8 +3755,10 @@ c_func
 id|ip-&gt;tot_len
 )paren
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  id = %x, ttl = %d, prot = %d, check=%x&bslash;n&quot;
 comma
@@ -3683,21 +3770,26 @@ id|ip-&gt;protocol
 comma
 id|ip-&gt;check
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot; frag_off=%d&bslash;n&quot;
 comma
 id|ip-&gt;frag_off
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  saddr = %X, daddr = %X&bslash;n&quot;
 comma
 id|ip-&gt;saddr
 comma
 id|ip-&gt;daddr
+)paren
 )paren
 suffix:semicolon
 )brace

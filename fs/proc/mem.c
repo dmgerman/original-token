@@ -5,6 +5,9 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+multiline_comment|/*&n; * mem_write isn&squot;t really a good idea right now. It needs&n; * to check a lot more: if the process we try to write to &n; * dies in the middle right now, mem_write will overwrite&n; * kernel memory.. This disables it altogether.&n; */
+DECL|macro|mem_write
+mdefine_line|#define mem_write NULL
 DECL|function|mem_read
 r_static
 r_int
@@ -293,6 +296,7 @@ op_minus
 id|buf
 suffix:semicolon
 )brace
+macro_line|#ifndef mem_write
 DECL|function|mem_write
 r_static
 r_int
@@ -629,6 +633,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|mem_lseek
 r_static
 r_int
@@ -765,7 +770,10 @@ l_int|NULL
 comma
 multiline_comment|/* bmap */
 l_int|NULL
+comma
 multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
 )brace
 suffix:semicolon
 eof

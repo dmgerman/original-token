@@ -58,7 +58,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|log_size
-r_static
 r_int
 r_int
 id|log_size
@@ -66,7 +65,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|log_wait
-r_static
 r_struct
 id|wait_queue
 op_star

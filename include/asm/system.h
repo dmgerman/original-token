@@ -27,7 +27,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;xchg %0,%1&quot;
+l_string|&quot;xchgb %0,%1&quot;
 suffix:colon
 l_string|&quot;=q&quot;
 (paren

@@ -10,6 +10,24 @@ macro_line|#include &quot;exception.h&quot;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|__BAD__
 mdefine_line|#define __BAD__ Un_impl   /* Not implemented */
+DECL|macro|_d9_d8_
+mdefine_line|#define _d9_d8_ fstp_i    /* unofficial code (19) */
+DECL|macro|_dc_d0_
+mdefine_line|#define _dc_d0_ fcom_st   /* unofficial code (14) */
+DECL|macro|_dc_d8_
+mdefine_line|#define _dc_d8_ fcompst   /* unofficial code (1c) */
+DECL|macro|_dd_c8_
+mdefine_line|#define _dd_c8_ fxch_i    /* unofficial code (0d) */
+DECL|macro|_de_d0_
+mdefine_line|#define _de_d0_ fcompst   /* unofficial code (16) */
+DECL|macro|_df_c0_
+mdefine_line|#define _df_c0_ ffreep    /* unofficial code (07) ffree + pop */
+DECL|macro|_df_c8_
+mdefine_line|#define _df_c8_ fxch_i    /* unofficial code (0f) */
+DECL|macro|_df_d0_
+mdefine_line|#define _df_d0_ fstp_i    /* unofficial code (17) */
+DECL|macro|_df_d8_
+mdefine_line|#define _df_d8_ fstp_i    /* unofficial code (1f) */
 DECL|variable|st_instr_table
 r_static
 id|FUNC
@@ -33,7 +51,7 @@ id|ffree_
 comma
 id|faddp_
 comma
-id|__BAD__
+id|_df_c0_
 comma
 id|fmul__
 comma
@@ -45,11 +63,11 @@ id|__BAD__
 comma
 id|fmul_i
 comma
-id|__BAD__
+id|_dd_c8_
 comma
 id|fmulp_
 comma
-id|__BAD__
+id|_df_c8_
 comma
 id|fcom_st
 comma
@@ -59,29 +77,29 @@ id|__BAD__
 comma
 id|__BAD__
 comma
-id|__BAD__
+id|_dc_d0_
 comma
 id|fst_i_
 comma
-id|__BAD__
+id|_de_d0_
 comma
-id|__BAD__
+id|_df_d0_
 comma
 id|fcompst
 comma
-id|__BAD__
+id|_d9_d8_
 comma
 id|__BAD__
 comma
 id|__BAD__
 comma
-id|__BAD__
+id|_dc_d8_
 comma
 id|fstp_i
 comma
 id|fcompp
 comma
-id|__BAD__
+id|_df_d8_
 comma
 id|fsub__
 comma
@@ -185,7 +203,7 @@ id|_REGi_
 comma
 id|_REGI_
 comma
-id|_null_
+id|_REGi_
 comma
 id|_REGI_
 comma
@@ -197,11 +215,11 @@ id|_null_
 comma
 id|_REGI_
 comma
-id|_null_
+id|_REGI_
 comma
 id|_REGI_
 comma
-id|_null_
+id|_REGI_
 comma
 id|_REGI_
 comma
@@ -211,7 +229,15 @@ id|_null_
 comma
 id|_null_
 comma
-id|_null_
+id|_REGI_
+comma
+id|_REG0_
+comma
+id|_REGI_
+comma
+id|_REG0_
+comma
+id|_REGI_
 comma
 id|_REG0_
 comma
@@ -221,19 +247,11 @@ id|_null_
 comma
 id|_REGI_
 comma
-id|_null_
-comma
-id|_null_
-comma
-id|_null_
-comma
-id|_null_
-comma
 id|_REG0_
 comma
 id|_REGI_
 comma
-id|_null_
+id|_REG0_
 comma
 id|_REGI_
 comma

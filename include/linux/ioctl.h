@@ -20,7 +20,7 @@ mdefine_line|#define IOCCMD_MASK&t;0x0000ffff&t;/* command code */
 DECL|macro|IOCCMD_SHIFT
 mdefine_line|#define IOCCMD_SHIFT&t;0
 DECL|macro|_IO
-mdefine_line|#define _IO(c,d)&t;(IOC_VOID | (d)&lt;&lt;16) | c) /* param encoded */
+mdefine_line|#define _IO(c,d)&t;(IOC_VOID | ((d)&lt;&lt;16) | c) /* param encoded */
 multiline_comment|/* use _IOXX(magic, subcode, arg_t) where arg_t is the type of the&n; * (last) argument field in the ioctl call, if present.&n; */
 DECL|macro|_IOW
 mdefine_line|#define _IOW(c,d,t)&t;(IOC_IN | ((sizeof(t)&lt;&lt;16) &amp; IOCSIZE_MASK) | &bslash;&n;&t;&t;&t;&t;  (c&lt;&lt;8) | d)
@@ -28,6 +28,6 @@ DECL|macro|_IOR
 mdefine_line|#define _IOR(c,d,t)&t;(IOC_OUT | ((sizeof(t)&lt;&lt;16) &amp; IOCSIZE_MASK) | &bslash;&n;&t;&t;&t;&t;   (c&lt;&lt;8) | d)
 multiline_comment|/* WR rather than RW to avoid conflict with stdio.h */
 DECL|macro|_IOWR
-mdefine_line|#define _IOWR(c,d,t)&t;(IOC_INOUT | (sizeof(t)&lt;&lt;16) &amp; IOCSIZE_MASK) | &bslash;&n;&t;&t;&t;&t;     (c&lt;&lt;8) | d)
+mdefine_line|#define _IOWR(c,d,t)&t;(IOC_INOUT | ((sizeof(t)&lt;&lt;16) &amp; IOCSIZE_MASK) | &bslash;&n;&t;&t;&t;&t;     (c&lt;&lt;8) | d)
 macro_line|#endif /* _LINUX_IOCTL_H */
 eof

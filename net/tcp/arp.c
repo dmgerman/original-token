@@ -19,10 +19,10 @@ DECL|macro|ARP_DEBUG
 macro_line|#undef ARP_DEBUG
 macro_line|#ifdef  ARP_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 DECL|variable|arp_table
 r_static
@@ -308,7 +308,9 @@ id|ptr
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;arp: &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -321,13 +323,16 @@ l_int|NULL
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;(null)&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|PRINTK
+(paren
 (paren
 l_string|&quot;   hrd = %d&bslash;n&quot;
 comma
@@ -337,8 +342,10 @@ c_func
 id|arp-&gt;hrd
 )paren
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;   pro = %d&bslash;n&quot;
 comma
@@ -348,8 +355,10 @@ c_func
 id|arp-&gt;pro
 )paren
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;   hlen = %d plen = %d&bslash;n&quot;
 comma
@@ -357,8 +366,10 @@ id|arp-&gt;hlen
 comma
 id|arp-&gt;plen
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;   op = %d&bslash;n&quot;
 comma
@@ -366,6 +377,7 @@ id|net16
 c_func
 (paren
 id|arp-&gt;op
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -384,7 +396,9 @@ l_int|1
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;   sender haddr = &quot;
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -404,11 +418,13 @@ op_increment
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;0x%02X &quot;
 comma
 op_star
 id|ptr
 op_increment
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -421,12 +437,14 @@ op_star
 id|ptr
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot; send paddr = %X&bslash;n&quot;
 comma
 op_star
 id|lptr
 )paren
+)paren
 suffix:semicolon
 id|lptr
 op_increment
@@ -441,7 +459,9 @@ id|lptr
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;   destination haddr = &quot;
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -461,11 +481,13 @@ op_increment
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;0x%02X &quot;
 comma
 op_star
 id|ptr
 op_increment
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -479,10 +501,12 @@ id|ptr
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot; destination paddr = %X&bslash;n&quot;
 comma
 op_star
 id|lptr
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1029,7 +1053,9 @@ l_int|NULL
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;&gt;&gt;&quot;
+)paren
 )paren
 suffix:semicolon
 id|print_arp
@@ -1078,9 +1104,11 @@ id|apt
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;arp_lookup(paddr=%X)&bslash;n&quot;
 comma
 id|paddr
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* we don&squot;t want to arp ourselves. */
@@ -1193,9 +1221,11 @@ id|lapt
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;arp_destroy (paddr=%X)&bslash;n&quot;
 comma
 id|paddr
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* we don&squot;t want to destroy are own arp */
@@ -1518,7 +1548,9 @@ id|ret
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;&lt;&lt;&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|arp
@@ -1780,6 +1812,7 @@ id|tmp
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;arp_snd (paddr=%X, dev=%X, saddr=%X)&bslash;n&quot;
 comma
 id|paddr
@@ -1787,6 +1820,7 @@ comma
 id|dev
 comma
 id|saddr
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* first we build a dummy arp table entry. */
@@ -2055,7 +2089,9 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;&gt;&gt;&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|print_arp
@@ -2105,6 +2141,7 @@ id|apt
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;arp_find(haddr=%X, paddr=%X, dev=%X, saddr=%X)&bslash;n&quot;
 comma
 id|haddr
@@ -2114,6 +2151,7 @@ comma
 id|dev
 comma
 id|saddr
+)paren
 )paren
 suffix:semicolon
 r_if

@@ -854,7 +854,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;fnclex&quot;
+l_string|&quot;fninit&quot;
 )paren
 suffix:semicolon
 )brace

@@ -1,11 +1,6 @@
 macro_line|#ifndef _LINUX_LP_H
 DECL|macro|_LINUX_LP_H
 mdefine_line|#define _LINUX_LP_H
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * usr/include/linux/lp.h c.1991-1992 James Wiegand&n; * many modifications copyright (C) 1992 Michael K. Johnson&n; */
 multiline_comment|/*&n; * Per POSIX guidelines, this module reserves the LP and lp prefixes&n; * These are the lp_table[minor].flags flags...&n; */
 DECL|macro|LP_EXIST
@@ -48,7 +43,7 @@ mdefine_line|#define LP_B(minor)&t;lp_table[(minor)].base&t;&t;/* IO address */
 DECL|macro|LP_F
 mdefine_line|#define LP_F(minor)&t;lp_table[(minor)].flags&t;&t;/* flags for busy, etc. */
 DECL|macro|LP_S
-mdefine_line|#define LP_S(minor)&t;inb(LP_B((minor)) + 1)&t;&t;/* status port */
+mdefine_line|#define LP_S(minor)&t;inb_p(LP_B((minor)) + 1)&t;/* status port */
 DECL|macro|LP_C
 mdefine_line|#define LP_C(minor)&t;(lp_table[(minor)].base + 2)&t;/* control port */
 DECL|macro|LP_CHAR

@@ -53,7 +53,10 @@ l_int|NULL
 comma
 multiline_comment|/* bmap */
 l_int|NULL
+comma
 multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
 )brace
 suffix:semicolon
 eof

@@ -107,7 +107,10 @@ id|isofs_bmap
 comma
 multiline_comment|/* bmap */
 l_int|NULL
+comma
 multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
 )brace
 suffix:semicolon
 multiline_comment|/* This is used to speed up lookup.  Without this we would need to&n;make a linear search of the directory to find the file that the&n;directory read just returned.  This is a single element cache. */

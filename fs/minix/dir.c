@@ -136,7 +136,10 @@ l_int|NULL
 comma
 multiline_comment|/* bmap */
 id|minix_truncate
+comma
 multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
 )brace
 suffix:semicolon
 DECL|function|minix_readdir

@@ -1,4 +1,4 @@
-multiline_comment|/* fdomain.h -- Header for Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:47:33 1992&n; * Revised: Fri Nov 27 22:12:55 1992 by root&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992 Rickard E. Faith&n; * This program comes with ABSOLUTELY NO WARRANTY.&n; *&n; * $Log$&n; */
+multiline_comment|/* fdomain.h -- Header for Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:47:33 1992&n; * Revised: Sun Jan 10 00:54:29 1993 by root&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993 Rickard E. Faith&n; * This program comes with ABSOLUTELY NO WARRANTY.&n; *&n; * $Log$&n; */
 macro_line|#ifndef _FDOMAIN_H
 DECL|macro|_FDOMAIN_H
 mdefine_line|#define _FDOMAIN_H
@@ -74,6 +74,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|FDOMAIN_16X0
-mdefine_line|#define FDOMAIN_16X0  { &quot;Future Domain TMC-1660/TMC-1680&quot;, &bslash;&n;&t;&t;&t; fdomain_16x0_detect,              &bslash;&n;&t;&t;&t; fdomain_16x0_info,                &bslash;&n;&t;&t;&t; fdomain_16x0_command,             &bslash;&n;&t;&t;&t; fdomain_16x0_queue,               &bslash;&n;&t;&t;         fdomain_16x0_abort,               &bslash;&n;&t;&t;&t; fdomain_16x0_reset,               &bslash;&n;&t;&t;&t; NULL,                             &bslash;&n;&t;&t;&t; fdomain_16x0_biosparam,           &bslash;&n;&t;&t;&t; 1, 6, 64 /* SG_NONE */, 1 ,0, 0}
+mdefine_line|#define FDOMAIN_16X0  { &quot;Future Domain TMC-16x0&quot;,          &bslash;&n;&t;&t;&t; fdomain_16x0_detect,              &bslash;&n;&t;&t;&t; fdomain_16x0_info,                &bslash;&n;&t;&t;&t; fdomain_16x0_command,             &bslash;&n;&t;&t;&t; fdomain_16x0_queue,               &bslash;&n;&t;&t;         fdomain_16x0_abort,               &bslash;&n;&t;&t;&t; fdomain_16x0_reset,               &bslash;&n;&t;&t;&t; NULL,                             &bslash;&n;&t;&t;&t; fdomain_16x0_biosparam,           &bslash;&n;&t;&t;&t; 1, 6, 64 /* SG_NONE */, 1 ,0, 0}
 macro_line|#endif
 eof

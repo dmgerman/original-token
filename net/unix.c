@@ -1131,11 +1131,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_data_ref: refing data 0x%x (%d)&bslash;n&quot;
 comma
 id|upd
 comma
 id|upd-&gt;refcnt
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1162,9 +1164,11 @@ l_int|1
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_data_deref: releasing data 0x%x&bslash;n&quot;
 comma
 id|upd
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1223,11 +1227,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_create: socket 0x%x, proto %d&bslash;n&quot;
 comma
 id|sock
 comma
 id|protocol
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1241,7 +1247,9 @@ l_int|0
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_create: protocol != 0&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1329,9 +1337,11 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_create: allocated data 0x%x&bslash;n&quot;
 comma
 id|upd
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1407,11 +1417,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_release: socket 0x%x, unix_data 0x%x&bslash;n&quot;
 comma
 id|sock
 comma
 id|upd
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1451,9 +1463,11 @@ id|upd-&gt;inode
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_release: releasing inode 0x%x&bslash;n&quot;
 comma
 id|upd-&gt;inode
+)paren
 )paren
 suffix:semicolon
 id|iput
@@ -1562,11 +1576,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_bind: socket 0x%x, len=%d&bslash;n&quot;
 comma
 id|sock
 comma
 id|sockaddr_len
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1588,9 +1604,11 @@ id|sockaddr_un
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_bind: bad length %d&bslash;n&quot;
 comma
 id|sockaddr_len
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1647,11 +1665,13 @@ id|AF_UNIX
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_bind: family is %d, not AF_UNIX (%d)&bslash;n&quot;
 comma
 id|upd-&gt;sockaddr_un.sun_family
 comma
 id|AF_UNIX
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1768,7 +1788,9 @@ multiline_comment|/* now its legal */
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_bind: bound socket address: &quot;
+)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef SOCK_DEBUG
@@ -1785,9 +1807,11 @@ macro_line|#endif
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;to inode 0x%x&bslash;n&quot;
 comma
 id|upd-&gt;inode
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1862,11 +1886,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_connect: socket 0x%x, servlen=%d&bslash;n&quot;
 comma
 id|sock
 comma
 id|sockaddr_len
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1888,9 +1914,11 @@ id|sockaddr_un
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_connect: bad length %d&bslash;n&quot;
 comma
 id|sockaddr_len
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1954,11 +1982,13 @@ id|AF_UNIX
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_connect: family is %d, not AF_UNIX (%d)&bslash;n&quot;
 comma
 id|sockun.sun_family
 comma
 id|AF_UNIX
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2038,9 +2068,11 @@ l_int|0
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_connect: can&squot;t open socket %s&bslash;n&quot;
 comma
 id|fname
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2076,11 +2108,13 @@ id|serv_upd
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_connect: can&squot;t locate peer %s at inode 0x%x&bslash;n&quot;
 comma
 id|fname
 comma
 id|inode
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2109,7 +2143,9 @@ l_int|0
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_connect: can&squot;t await connection&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2236,11 +2272,13 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_accept: socket 0x%x accepted via socket 0x%x&bslash;n&quot;
 comma
 id|sock
 comma
 id|newsock
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * if there aren&squot;t any sockets awaiting connection, then wait for&n;&t; * one, unless nonblocking&n;&t; */
@@ -2284,7 +2322,9 @@ id|current-&gt;blocked
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sys_accept: sleep was interrupted&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2451,6 +2491,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_getname: socket 0x%x for %s&bslash;n&quot;
 comma
 id|sock
@@ -2461,6 +2502,7 @@ c_cond
 l_string|&quot;peer&quot;
 suffix:colon
 l_string|&quot;self&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2480,7 +2522,9 @@ id|SS_CONNECTED
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_getname: socket not connected&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2667,7 +2711,9 @@ id|SS_CONNECTED
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_read: socket not connected&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2687,7 +2733,9 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_read: no data available...&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2717,7 +2765,9 @@ id|current-&gt;blocked
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_read: interrupted&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2736,7 +2786,9 @@ id|SS_DISCONNECTING
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_read: disconnected&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2763,7 +2815,9 @@ l_int|0
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_read: AVAIL IS NEGATIVE!!!&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|send_sig
@@ -2816,6 +2870,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_read: avail=%d, todo=%d, cando=%d&bslash;n&quot;
 comma
 id|avail
@@ -2823,6 +2878,7 @@ comma
 id|todo
 comma
 id|cando
+)paren
 )paren
 suffix:semicolon
 id|verify_area
@@ -2961,7 +3017,9 @@ id|SS_CONNECTED
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_write: socket not connected&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3021,7 +3079,9 @@ id|pupd
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_write: no space left...&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3051,7 +3111,9 @@ id|current-&gt;blocked
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_write: interrupted&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3070,7 +3132,9 @@ id|SS_DISCONNECTING
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_write: disconnected (SIGPIPE)&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|send_sig
@@ -3108,7 +3172,9 @@ l_int|0
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_write: SPACE IS NEGATIVE!!!&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|send_sig
@@ -3185,6 +3251,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_write: space=%d, todo=%d, cando=%d&bslash;n&quot;
 comma
 id|space
@@ -3192,6 +3259,7 @@ comma
 id|todo
 comma
 id|cando
+)paren
 )paren
 suffix:semicolon
 id|verify_area
@@ -3319,6 +3387,7 @@ id|SEL_IN
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_select: %sconnections pending&bslash;n&quot;
 comma
 id|sock-&gt;iconn
@@ -3327,6 +3396,7 @@ c_cond
 l_string|&quot;&quot;
 suffix:colon
 l_string|&quot;no &quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3357,7 +3427,9 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;sock_select: nothing else for server socket&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|select_wait
@@ -3391,6 +3463,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_select: there is%s data available&bslash;n&quot;
 comma
 id|UN_BUF_AVAIL
@@ -3403,6 +3476,7 @@ c_cond
 l_string|&quot;&quot;
 suffix:colon
 l_string|&quot; no&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3430,7 +3504,9 @@ id|SS_CONNECTED
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_select: socket not connected (read EOF)&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3468,7 +3544,9 @@ id|SS_CONNECTED
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_select: socket not connected (write EOF)&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3486,6 +3564,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_select: there is%s space available&bslash;n&quot;
 comma
 id|UN_BUF_SPACE
@@ -3498,6 +3577,7 @@ c_cond
 l_string|&quot;&quot;
 suffix:colon
 l_string|&quot; no&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3530,7 +3610,9 @@ multiline_comment|/* SEL_EX */
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_select: there are no exceptions here?!&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3767,7 +3849,9 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
+(paren
 l_string|&quot;unix_proto_init: initializing...&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_for

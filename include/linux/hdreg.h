@@ -63,17 +63,17 @@ DECL|macro|WIN_SPECIFY
 mdefine_line|#define WIN_SPECIFY&t;&t;0x91
 multiline_comment|/* Bits for HD_ERROR */
 DECL|macro|MARK_ERR
-mdefine_line|#define MARK_ERR&t;0x01&t;/* Bad address mark ? */
+mdefine_line|#define MARK_ERR&t;0x01&t;/* Bad address mark */
 DECL|macro|TRK0_ERR
 mdefine_line|#define TRK0_ERR&t;0x02&t;/* couldn&squot;t find track 0 */
 DECL|macro|ABRT_ERR
-mdefine_line|#define ABRT_ERR&t;0x04&t;/* ? */
+mdefine_line|#define ABRT_ERR&t;0x04&t;/* Command aborted */
 DECL|macro|ID_ERR
-mdefine_line|#define ID_ERR&t;&t;0x10&t;/* ? */
+mdefine_line|#define ID_ERR&t;&t;0x10&t;/* ID field not found */
 DECL|macro|ECC_ERR
-mdefine_line|#define ECC_ERR&t;&t;0x40&t;/* ? */
+mdefine_line|#define ECC_ERR&t;&t;0x40&t;/* Uncorrectable ECC error */
 DECL|macro|BBD_ERR
-mdefine_line|#define&t;BBD_ERR&t;&t;0x80&t;/* ? */
+mdefine_line|#define&t;BBD_ERR&t;&t;0x80&t;/* block marked bad */
 multiline_comment|/* HDIO_GETGEO is the preferred choice - HDIO_REQ will be removed at some&n;   later date */
 DECL|macro|HDIO_REQ
 mdefine_line|#define HDIO_REQ 0x301

@@ -25,14 +25,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|set_leds
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|video_num_columns
 r_int
 r_int

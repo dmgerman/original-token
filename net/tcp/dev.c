@@ -25,10 +25,10 @@ DECL|macro|DEV_DEBUG
 macro_line|#undef DEV_DEBUG
 macro_line|#ifdef DEV_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 r_static
 r_int
@@ -311,6 +311,7 @@ id|skb2
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;dev_queue_xmit (skb=%X, dev=%X, pri = %d)&bslash;n&quot;
 comma
 id|skb
@@ -318,6 +319,7 @@ comma
 id|dev
 comma
 id|pri
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -403,6 +405,7 @@ suffix:semicolon
 multiline_comment|/* put skb into a bidirectional circular linked list. */
 id|PRINTK
 (paren
+(paren
 l_string|&quot;dev_queue_xmit dev-&gt;buffs[%d]=%X&bslash;n&quot;
 comma
 id|pri
@@ -411,6 +414,7 @@ id|dev-&gt;buffs
 (braket
 id|pri
 )braket
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* interrupts should already be cleared by hard_start_xmit. */
@@ -1061,9 +1065,11 @@ id|flag
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;discarding packet type = %X&bslash;n&quot;
 comma
 id|type
+)paren
 )paren
 suffix:semicolon
 id|kfree_skb
@@ -1368,7 +1374,9 @@ id|tmp
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;&gt;&gt;&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|print_eth
@@ -1445,7 +1453,9 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;dev_tint returning 0 &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return

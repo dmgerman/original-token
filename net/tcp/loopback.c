@@ -29,10 +29,10 @@ macro_line|#undef PRINTK
 macro_line|#endif
 macro_line|#ifdef LOOPBACK_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 r_static
 r_int
@@ -83,9 +83,11 @@ id|tmp
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;loopback_xmit (dev = %X)&bslash;n&quot;
 comma
 id|dev
+)paren
 )paren
 suffix:semicolon
 id|cli
@@ -207,7 +209,9 @@ l_int|0
 multiline_comment|/* print out the buffer. */
 id|PRINTK
 (paren
+(paren
 l_string|&quot;loopback xmit: &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|eth

@@ -137,7 +137,10 @@ l_int|NULL
 comma
 multiline_comment|/* bmap */
 id|ext_truncate
+comma
 multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
 )brace
 suffix:semicolon
 DECL|function|ext_readdir

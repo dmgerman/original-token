@@ -195,6 +195,23 @@ l_string|&quot;921&quot;
 comma
 multiline_comment|/* Responds to all lun */
 (brace
+l_string|&quot;SONY&quot;
+comma
+l_string|&quot;CD-ROM CDU-541&quot;
+comma
+l_string|&quot;4.3d&quot;
+)brace
+comma
+(brace
+l_string|&quot;DENON&quot;
+comma
+l_string|&quot;DRD-25X&quot;
+comma
+l_string|&quot;V&quot;
+)brace
+comma
+multiline_comment|/* A cdrom that locks up when probed at lun != 0 */
+(brace
 l_int|NULL
 comma
 l_int|NULL
@@ -1764,11 +1781,19 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
+(brace
 id|SCpnt-&gt;request.dev
 op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Busy, but no request */
+id|SCpnt-&gt;request.waiting
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* And no one is waiting for the device either */
+)brace
+suffix:semicolon
 id|SCpnt-&gt;use_sg
 op_assign
 l_int|0
@@ -2101,6 +2126,11 @@ op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Busy */
+id|SCpnt-&gt;request.waiting
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* And no one is waiting for this to complete */
 )brace
 suffix:semicolon
 id|sti

@@ -31,17 +31,17 @@ macro_line|#undef PRINTK
 macro_line|#endif
 macro_line|#ifdef ISOCK_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 macro_line|#ifdef MEM_DEBUG
 DECL|macro|MPRINTK
-mdefine_line|#define MPRINTK printk
+mdefine_line|#define MPRINTK(x) printk x
 macro_line|#else
 DECL|macro|MPRINTK
-mdefine_line|#define MPRINTK dummy_routine
+mdefine_line|#define MPRINTK(x) /**/
 macro_line|#endif
 DECL|macro|min
 mdefine_line|#define min(a,b) ((a)&lt;(b)?(a):(b))
@@ -571,7 +571,9 @@ id|sk
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;  print_sk(NULL)&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -579,33 +581,42 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;  wmem_alloc = %d&bslash;n&quot;
 comma
 id|sk-&gt;wmem_alloc
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  rmem_alloc = %d&bslash;n&quot;
 comma
 id|sk-&gt;rmem_alloc
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  send_head = %X&bslash;n&quot;
 comma
 id|sk-&gt;send_head
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  state = %d&bslash;n&quot;
 comma
 id|sk-&gt;state
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  wback = %X, rqueue = %X&bslash;n&quot;
 comma
@@ -613,15 +624,19 @@ id|sk-&gt;wback
 comma
 id|sk-&gt;rqueue
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  wfront = %X&bslash;n&quot;
 comma
 id|sk-&gt;wfront
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  daddr = %X, saddr = %X&bslash;n&quot;
 comma
@@ -629,22 +644,28 @@ id|sk-&gt;daddr
 comma
 id|sk-&gt;saddr
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  num = %d&quot;
 comma
 id|sk-&gt;num
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot; next = %X&bslash;n&quot;
 comma
 id|sk-&gt;next
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  send_seq = %d, acked_seq = %d, copied_seq = %d&bslash;n&quot;
 comma
@@ -654,8 +675,10 @@ id|sk-&gt;acked_seq
 comma
 id|sk-&gt;copied_seq
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  rcv_ack_seq = %d, window_seq = %d, fin_seq = %d&bslash;n&quot;
 comma
@@ -665,15 +688,19 @@ id|sk-&gt;window_seq
 comma
 id|sk-&gt;fin_seq
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  prot = %X&bslash;n&quot;
 comma
 id|sk-&gt;prot
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  pair = %X, back_log = %X&bslash;n&quot;
 comma
@@ -681,8 +708,10 @@ id|sk-&gt;pair
 comma
 id|sk-&gt;back_log
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  inuse = %d , blog = %d&bslash;n&quot;
 comma
@@ -690,8 +719,10 @@ id|sk-&gt;inuse
 comma
 id|sk-&gt;blog
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  dead = %d delay_acks=%d&bslash;n&quot;
 comma
@@ -699,8 +730,10 @@ id|sk-&gt;dead
 comma
 id|sk-&gt;delay_acks
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  retransmits = %d, timeout = %d&bslash;n&quot;
 comma
@@ -708,14 +741,17 @@ id|sk-&gt;retransmits
 comma
 id|sk-&gt;timeout
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  cong_window = %d, packets_out = %d&bslash;n&quot;
 comma
 id|sk-&gt;cong_window
 comma
 id|sk-&gt;packets_out
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -739,7 +775,9 @@ id|skb
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;  print_skb(NULL)&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -747,14 +785,17 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;  prev = %X, next = %X&bslash;n&quot;
 comma
 id|skb-&gt;prev
 comma
 id|skb-&gt;next
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  sk = %X link3 = %X&bslash;n&quot;
 comma
@@ -762,8 +803,10 @@ id|skb-&gt;sk
 comma
 id|skb-&gt;link3
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  mem_addr = %X, mem_len = %d&bslash;n&quot;
 comma
@@ -771,14 +814,17 @@ id|skb-&gt;mem_addr
 comma
 id|skb-&gt;mem_len
 )paren
+)paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;  used = %d free = %d&bslash;n&quot;
 comma
 id|skb-&gt;used
 comma
 id|skb-&gt;free
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1188,6 +1234,7 @@ l_int|1024
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;get_new_socknum returning %d, start = %d&bslash;n&quot;
 comma
 id|i
@@ -1197,6 +1244,7 @@ op_plus
 l_int|1
 comma
 id|start
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1250,6 +1298,7 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;get_new_socknum returning %d, start = %d&bslash;n&quot;
 comma
 id|best
@@ -1259,6 +1308,7 @@ op_plus
 l_int|1
 comma
 id|start
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1304,11 +1354,13 @@ id|mask
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;put_sock (num = %d, sk = %X&bslash;n&quot;
 comma
 id|num
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;num
@@ -1408,9 +1460,11 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;mask = %X&bslash;n&quot;
 comma
 id|mask
+)paren
 )paren
 suffix:semicolon
 id|cli
@@ -1539,9 +1593,11 @@ id|sk2
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;remove_sock(sk1=%X)&bslash;n&quot;
 comma
 id|sk1
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1667,7 +1723,9 @@ l_int|0
 )paren
 id|PRINTK
 (paren
+(paren
 l_string|&quot;remove_sock: sock  not found.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1690,9 +1748,11 @@ id|skb
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;destroying socket %X&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* just to be safe. */
@@ -2327,9 +2387,11 @@ multiline_comment|/* this should never happen. */
 multiline_comment|/* actually it can if an ack has just been sent. */
 id|PRINTK
 (paren
+(paren
 l_string|&quot;possible memory leak in socket = %X&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -2371,7 +2433,9 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;leaving destroy_sock&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -4054,11 +4118,13 @@ l_int|0
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;ip_proto_release (sock = %X, peer = %X)&bslash;n&quot;
 comma
 id|sock
 comma
 id|peer
+)paren
 )paren
 suffix:semicolon
 id|wake_up
@@ -4095,7 +4161,9 @@ r_else
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sk-&gt;linger set.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;prot
@@ -4174,7 +4242,9 @@ l_int|NULL
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;ip_proto_release returning&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -4317,11 +4387,13 @@ id|addr.sin_port
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;bind sk =%X to port = %d&bslash;n&quot;
 comma
 id|sk
 comma
 id|snum
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -4402,6 +4474,7 @@ id|addr.sin_addr.s_addr
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sock_array[%d] = %X:&bslash;n&quot;
 comma
 id|snum
@@ -4422,6 +4495,7 @@ op_minus
 l_int|1
 )paren
 )braket
+)paren
 )paren
 suffix:semicolon
 id|print_sk
@@ -6385,7 +6459,9 @@ l_int|NULL
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;select on non-selectable socket. &bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -6463,7 +6539,9 @@ suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;in ip_proto_ioctl&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_switch
@@ -6671,6 +6749,7 @@ suffix:semicolon
 )brace
 id|MPRINTK
 (paren
+(paren
 l_string|&quot;sock_wmalloc(%X,%d,%d,%d) returning NULL&bslash;n&quot;
 comma
 id|sk
@@ -6680,6 +6759,7 @@ comma
 id|force
 comma
 id|priority
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -6768,6 +6848,7 @@ suffix:semicolon
 )brace
 id|MPRINTK
 (paren
+(paren
 l_string|&quot;sock_rmalloc(%X,%d,%d,%d) returning NULL&bslash;n&quot;
 comma
 id|sk
@@ -6777,6 +6858,7 @@ comma
 id|force
 comma
 id|priority
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -6955,6 +7037,7 @@ id|size
 (brace
 id|MPRINTK
 (paren
+(paren
 l_string|&quot;sock_wfree (sk=%X, mem=%X, size=%d)&bslash;n&quot;
 comma
 id|sk
@@ -6962,6 +7045,7 @@ comma
 id|mem
 comma
 id|size
+)paren
 )paren
 suffix:semicolon
 id|kfree_s
@@ -7010,9 +7094,11 @@ l_int|0
 (brace
 id|MPRINTK
 (paren
+(paren
 l_string|&quot;recovered lost memory, destroying sock = %X&bslash;n&quot;
 comma
 id|sk
+)paren
 )paren
 suffix:semicolon
 id|delete_timer
@@ -7067,6 +7153,7 @@ id|size
 (brace
 id|MPRINTK
 (paren
+(paren
 l_string|&quot;sock_rfree (sk=%X, mem=%X, size=%d)&bslash;n&quot;
 comma
 id|sk
@@ -7074,6 +7161,7 @@ comma
 id|mem
 comma
 id|size
+)paren
 )paren
 suffix:semicolon
 id|kfree_s
@@ -7174,6 +7262,7 @@ id|s
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;get_sock (prot=%X, num=%d, raddr=%X, rnum=%d, laddr=%X)&bslash;n&quot;
 comma
 id|prot
@@ -7185,6 +7274,7 @@ comma
 id|rnum
 comma
 id|laddr
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* SOCK_ARRAY_SIZE must be a power of two.  This will work better&n;     than a prime unless 3 or more sockets end up using the same&n;     array entry.  This should not be a problem because most&n;     well known sockets don&squot;t overlap that much, and for&n;     the other ones, we can just be careful about picking our&n;     socket number when we choose an arbitrary one. */
@@ -7355,9 +7445,11 @@ id|sk-&gt;back_log
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;release_sock: skb = %X:&bslash;n&quot;
 comma
 id|skb
+)paren
 )paren
 suffix:semicolon
 id|print_skb
@@ -7401,9 +7493,11 @@ c_func
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;sk-&gt;back_log = %X&bslash;n&quot;
 comma
 id|sk-&gt;back_log
+)paren
 )paren
 suffix:semicolon
 r_if

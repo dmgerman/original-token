@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux&n;&n;  Version 0.02 for Linux 0.98.4 and Eric Youngdale&squot;s new scsi driver&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;&n;  Features:&n;  - support for different block sizes and internal buffering&n;  - *nix-style ioctl with codes from mtio.h from the QIC-02 driver by&n;    Hennus Bergman (command MTSETBLK added)&n;  - character device&n;  - rewind and non-rewind devices&n;  - capability to handle several tape drives simultaneously&n;  - one buffer if one drive, two buffers if more than one drive (limits the&n;    number of simultaneously open drives to two)&n;  - write behind&n;  - seek and tell (Tandberg compatible and SCSI-2)&n;&n;  Devices:&n;  Autorewind devices have minor numbers equal to the tape numbers (0 &gt; ).&n;  Nonrewind device has the minor number equal to tape number + 128.&n;&n;  Problems:&n;  The end of media detection may not work correctly because of the buffering.&n;  If you want to do multiple tape backups relying on end of tape detection,&n;  you should disable write behind and in addition to that check that the&n;  tapes are readable.&n;&n;  Kai Makisara, Nov 9, 1992  email makisara@vtinsx.ins.vtt.fi or&n;                                    Kai.Makisara@vtt.fi&n;  Last changes Dec 19, 1992.&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux&n;&n;  Version 0.02 for Linux 0.98.4 and Eric Youngdale&squot;s new scsi driver&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;&n;  Features:&n;  - support for different block sizes and internal buffering&n;  - *nix-style ioctl with codes from mtio.h from the QIC-02 driver by&n;    Hennus Bergman (command MTSETBLK added)&n;  - character device&n;  - rewind and non-rewind devices&n;  - capability to handle several tape drives simultaneously&n;  - one buffer if one drive, two buffers if more than one drive (limits the&n;    number of simultaneously open drives to two)&n;  - write behind&n;  - seek and tell (Tandberg compatible and SCSI-2)&n;&n;  Devices:&n;  Autorewind devices have minor numbers equal to the tape numbers (0 &gt; ).&n;  Nonrewind device has the minor number equal to tape number + 128.&n;&n;  Problems:&n;  The end of media detection may not work correctly because of the buffering.&n;  If you want to do multiple tape backups relying on end of tape detection,&n;  you should disable write behind and in addition to that check that the&n;  tapes are readable.&n;&n;  Kai Makisara, Nov 9, 1992  email makisara@vtinsx.ins.vtt.fi or&n;                                    Kai.Makisara@vtt.fi&n;  Last changes Jan 3, 1993.&n;*/
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -4835,23 +4835,6 @@ id|dev
 op_amp
 l_int|127
 suffix:semicolon
-id|SCpnt
-op_assign
-id|allocate_device
-c_func
-(paren
-l_int|NULL
-comma
-id|scsi_tapes
-(braket
-id|dev
-)braket
-dot
-id|device-&gt;index
-comma
-l_int|1
-)paren
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -5195,11 +5178,6 @@ l_int|4
 )braket
 op_assign
 id|ltmp
-suffix:semicolon
-id|SCpnt-&gt;result
-op_assign
-op_minus
-l_int|1
 suffix:semicolon
 macro_line|#ifdef DEBUG
 r_if
@@ -5997,12 +5975,6 @@ comma
 id|cmd_in
 )paren
 suffix:semicolon
-id|SCpnt-&gt;request.dev
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* Mark as not busy */
 r_return
 (paren
 op_minus
@@ -6010,6 +5982,23 @@ id|ENOSYS
 )paren
 suffix:semicolon
 )brace
+id|SCpnt
+op_assign
+id|allocate_device
+c_func
+(paren
+l_int|NULL
+comma
+id|scsi_tapes
+(braket
+id|dev
+)braket
+dot
+id|device-&gt;index
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|0

@@ -510,6 +510,7 @@ l_int|0x10
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* struct user */
 id|DUMP_WRITE
 c_func
 (paren
@@ -522,26 +523,13 @@ id|dump
 )paren
 )paren
 suffix:semicolon
-id|DUMP_SEEK
-c_func
-(paren
-r_sizeof
-(paren
-id|dump
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Dump the task struct.  Not be used by gdb, but could be useful */
+multiline_comment|/* name of the executable */
 id|DUMP_WRITE
 c_func
 (paren
-id|current
+id|current-&gt;comm
 comma
-r_sizeof
-(paren
-op_star
-id|current
-)paren
+l_int|16
 )paren
 suffix:semicolon
 multiline_comment|/* Now dump all of the user data.  Include malloced stuff as well */
@@ -626,6 +614,34 @@ id|dump_size
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
+multiline_comment|/* Finally dump the task struct.  Not be used by gdb, but could be useful */
+id|__asm__
+c_func
+(paren
+l_string|&quot;mov %0,%%fs&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+(paren
+r_int
+r_int
+)paren
+l_int|0x10
+)paren
+)paren
+suffix:semicolon
+id|DUMP_WRITE
+c_func
+(paren
+id|current
+comma
+r_sizeof
+(paren
+op_star
+id|current
+)paren
+)paren
 suffix:semicolon
 id|close_coredump
 suffix:colon

@@ -1,7 +1,8 @@
 multiline_comment|/*&n; *  linux/fs/nfs/proc.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  OS-independent nfs remote procedure call functions&n; */
 multiline_comment|/*&n; * Defining NFS_PROC_DEBUG causes a lookup of a file named&n; * &quot;xyzzy&quot; to toggle debugging.  Just cd to an NFS-mounted&n; * filesystem and type &squot;ls xyzzy&squot; to turn on debugging.&n; */
-DECL|macro|NFS_PROC_DEBUG
+macro_line|#if 0
 mdefine_line|#define NFS_PROC_DEBUG
+macro_line|#endif
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -10,7 +11,6 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;netinet/in.h&gt;
-macro_line|#ifdef NFS_PROC_DEBUG
 DECL|variable|proc_debug
 r_static
 r_int
@@ -18,11 +18,12 @@ id|proc_debug
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef NFS_PROC_DEBUG
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK if (proc_debug) printk
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK (void)
+mdefine_line|#define PRINTK if (0) printk
 macro_line|#endif
 r_static
 r_int
@@ -4357,12 +4358,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|n
+op_assign
 id|ntohl
 c_func
 (paren
 op_star
 id|p
 op_increment
+)paren
 )paren
 op_ne
 id|RPC_REPLY
@@ -4371,7 +4376,9 @@ id|RPC_REPLY
 id|printk
 c_func
 (paren
-l_string|&quot;not an RPC reply&bslash;n&quot;
+l_string|&quot;nfs_rpc_verify: not an RPC reply: %d&bslash;n&quot;
+comma
+id|n
 )paren
 suffix:semicolon
 r_return
@@ -4381,12 +4388,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|n
+op_assign
 id|ntohl
 c_func
 (paren
 op_star
 id|p
 op_increment
+)paren
 )paren
 op_ne
 id|RPC_MSG_ACCEPTED
@@ -4395,7 +4406,9 @@ id|RPC_MSG_ACCEPTED
 id|printk
 c_func
 (paren
-l_string|&quot;RPC call rejected&bslash;n&quot;
+l_string|&quot;nfs_rpc_verify: RPC call rejected: %d&bslash;n&quot;
+comma
+id|n
 )paren
 suffix:semicolon
 r_return
@@ -4427,7 +4440,9 @@ id|RPC_AUTH_UNIX
 id|printk
 c_func
 (paren
-l_string|&quot;reply with unknown RPC authentication type&bslash;n&quot;
+l_string|&quot;nfs_rpc_verify: bad RPC authentication type: %d&bslash;n&quot;
+comma
+id|n
 )paren
 suffix:semicolon
 r_return
@@ -4457,12 +4472,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|n
+op_assign
 id|ntohl
 c_func
 (paren
 op_star
 id|p
 op_increment
+)paren
 )paren
 op_ne
 id|RPC_SUCCESS
@@ -4471,7 +4490,9 @@ id|RPC_SUCCESS
 id|printk
 c_func
 (paren
-l_string|&quot;RPC call failed&bslash;n&quot;
+l_string|&quot;nfs_rpc_verify: RPC call failed: %d&bslash;n&quot;
+comma
+id|n
 )paren
 suffix:semicolon
 r_return
@@ -4608,12 +4629,14 @@ comma
 id|ESTALE
 )brace
 comma
+macro_line|#ifdef EWFLUSH
 (brace
 id|NFSERR_WFLUSH
 comma
-id|EIO
+id|EWFLUSH
 )brace
 comma
+macro_line|#endif
 (brace
 op_minus
 l_int|1
@@ -4633,14 +4656,7 @@ id|stat
 )paren
 (brace
 r_int
-id|errno
-suffix:semicolon
-r_int
 id|i
-suffix:semicolon
-id|errno
-op_assign
-id|EIO
 suffix:semicolon
 r_for
 c_loop
@@ -4675,9 +4691,7 @@ id|stat
 op_eq
 id|stat
 )paren
-(brace
-id|errno
-op_assign
+r_return
 id|nfs_errtbl
 (braket
 id|i
@@ -4685,11 +4699,21 @@ id|i
 dot
 id|errno
 suffix:semicolon
-r_break
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_stat_to_errno: bad nfs status return value: %d&bslash;n&quot;
+comma
+id|stat
+)paren
 suffix:semicolon
-)brace
-)brace
 r_return
+id|nfs_errtbl
+(braket
+id|i
+)braket
+dot
 id|errno
 suffix:semicolon
 )brace

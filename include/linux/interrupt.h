@@ -26,7 +26,13 @@ suffix:semicolon
 suffix:semicolon
 r_extern
 r_int
+r_int
 id|bh_active
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|bh_mask
 suffix:semicolon
 r_extern
 r_struct
@@ -56,12 +62,6 @@ comma
 DECL|enumerator|KEYBOARD_BH
 id|KEYBOARD_BH
 )brace
-suffix:semicolon
-r_void
-id|do_bottom_half
-c_func
-(paren
-)paren
 suffix:semicolon
 DECL|function|mark_bh
 r_extern

@@ -1,9 +1,8 @@
-multiline_comment|/* $Id: dma.h,v 1.5 1992/11/18 02:37:20 root Exp root $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; */
+multiline_comment|/* $Id: dma.h,v 1.7 1992/12/14 00:29:34 root Exp root $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; */
 macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* need byte IO */
-macro_line|#include &lt;linux/kernel.h&gt;&t;/* need panic() [FIXME] */
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
 DECL|macro|outb
 mdefine_line|#define outb&t;outb_p
@@ -194,7 +193,7 @@ id|DMA2_MASK_REG
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Clear the &squot;DMA Pointer Flip Flop&squot;.&n; * Write 0 for LSB/MSB, 1 for MSB/LSB access.&n; * Use this once to initialize the FF to a know state.&n; * After that, keep track of it. :-) In order to do that,&n; * dma_set_addr() and dma_set_count() should only be used wile&n; * interrupts are disbled.&n; */
+multiline_comment|/* Clear the &squot;DMA Pointer Flip Flop&squot;.&n; * Write 0 for LSB/MSB, 1 for MSB/LSB access.&n; * Use this once to initialize the FF to a know state.&n; * After that, keep track of it. :-)&n; * --- In order to do that, the DMA routines below should ---&n; * --- only be used while interrupts are disbled! ---&n; */
 DECL|function|clear_dma_ff
 r_static
 id|__inline__
@@ -534,7 +533,7 @@ id|IO_DMA2_BASE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Set transfer size (max 64k for DMA1..3, 128k for DMA5..7) for&n; * a specific DMA channel.&n; * You must ensure the parameters are valid.&n; * NOTE: from a manual: &quot;the number of transfers is one more&n; * than the initial word count&quot;! This is taken into account.&n; * Assumes dma flip-flop is clear.&n; * NOTE 2: &quot;count&quot; must represent _words_ for channels 5-7.&n; */
+multiline_comment|/* Set transfer size (max 64k for DMA1..3, 128k for DMA5..7) for&n; * a specific DMA channel.&n; * You must ensure the parameters are valid.&n; * NOTE: from a manual: &quot;the number of transfers is one more&n; * than the initial word count&quot;! This is taken into account.&n; * Assumes dma flip-flop is clear.&n; * NOTE 2: &quot;count&quot; represents _bytes_ and must be even for channels 5-7.&n; */
 DECL|function|set_dma_count
 r_static
 id|__inline__
@@ -616,7 +615,11 @@ r_else
 id|outb
 c_func
 (paren
+(paren
 id|count
+op_rshift
+l_int|1
+)paren
 op_amp
 l_int|0xff
 comma
@@ -641,7 +644,7 @@ c_func
 (paren
 id|count
 op_rshift
-l_int|8
+l_int|9
 )paren
 op_amp
 l_int|0xff
@@ -663,11 +666,10 @@ id|IO_DMA2_BASE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Get DMA residue count. After a DMA transfer, this&n; * should return zero. Reading this while a DMA transfer is&n; * should return zero. Reading this while a DMA transfer is&n; * still in progress will return unpredictable results.&n; * If called before the channel has been used, it may return 1.&n; * Otherwise, it returns the number of bytes (or words) left to&n; * transfer, minus 1, modulo 64k.&n; * Assumes DMA flip-flop is clear.&n; */
+multiline_comment|/* Get DMA residue count. After a DMA transfer, this&n; * should return zero. Reading this while a DMA transfer is&n; * still in progress will return unpredictable results.&n; * If called before the channel has been used, it may return 1.&n; * Otherwise, it returns the number of _bytes_ left to transfer.&n; *&n; * Assumes DMA flip-flop is clear.&n; */
 DECL|function|get_dma_residue
 r_static
 id|__inline__
-r_int
 r_int
 id|get_dma_residue
 c_func
@@ -677,20 +679,17 @@ r_int
 id|dmanr
 )paren
 (brace
-r_if
-c_cond
+r_int
+r_int
+id|io_port
+op_assign
 (paren
 id|dmanr
 op_le
 l_int|3
 )paren
-(brace
-r_return
-l_int|1
-op_plus
-id|inb
-c_func
-(paren
+ques
+c_cond
 (paren
 (paren
 id|dmanr
@@ -704,12 +703,7 @@ op_plus
 l_int|1
 op_plus
 id|IO_DMA1_BASE
-)paren
-op_plus
-(paren
-id|inb
-c_func
-(paren
+suffix:colon
 (paren
 (paren
 id|dmanr
@@ -717,64 +711,51 @@ op_amp
 l_int|3
 )paren
 op_lshift
-l_int|1
+l_int|2
 )paren
 op_plus
+l_int|2
+op_plus
+id|IO_DMA2_BASE
+suffix:semicolon
+multiline_comment|/* using short to get 16-bit wrap around */
+r_int
+id|count
+op_assign
 l_int|1
 op_plus
-id|IO_DMA1_BASE
+id|inb
+c_func
+(paren
+id|io_port
+)paren
+op_plus
+(paren
+id|inb
+c_func
+(paren
+id|io_port
 )paren
 op_lshift
 l_int|8
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
 r_return
+(paren
+id|dmanr
+op_le
+l_int|3
+)paren
+ques
+c_cond
+id|count
+suffix:colon
+(paren
+id|count
+op_lshift
 l_int|1
-op_plus
-id|inb
-c_func
-(paren
-(paren
-(paren
-id|dmanr
-op_amp
-l_int|3
-)paren
-op_lshift
-l_int|2
-)paren
-op_plus
-l_int|2
-op_plus
-id|IO_DMA2_BASE
-)paren
-op_plus
-(paren
-id|inb
-c_func
-(paren
-(paren
-(paren
-id|dmanr
-op_amp
-l_int|3
-)paren
-op_lshift
-l_int|2
-)paren
-op_plus
-l_int|2
-op_plus
-id|IO_DMA2_BASE
-)paren
-op_lshift
-l_int|8
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* These are in kernel/dma.c: */
 r_extern

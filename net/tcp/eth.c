@@ -23,10 +23,10 @@ DECL|macro|ETH_DEBUG
 macro_line|#undef ETH_DEBUG
 macro_line|#ifdef ETH_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK printk
+mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK dummy_routine
+mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 r_void
 DECL|function|print_eth
@@ -43,7 +43,9 @@ id|i
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;ether source addr: &quot;
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -62,6 +64,7 @@ op_increment
 )paren
 (brace
 id|PRINTK
+(paren
 (paren
 l_string|&quot;0x%2X &quot;
 comma
@@ -70,16 +73,21 @@ id|eth-&gt;saddr
 id|i
 )braket
 )paren
+)paren
 suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|PRINTK
 (paren
+(paren
 l_string|&quot;ether dest addr: &quot;
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -99,6 +107,7 @@ op_increment
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;0x%2X &quot;
 comma
 id|eth-&gt;daddr
@@ -106,14 +115,18 @@ id|eth-&gt;daddr
 id|i
 )braket
 )paren
+)paren
 suffix:semicolon
 )brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|PRINTK
+(paren
 (paren
 l_string|&quot;ethertype = %X&bslash;n&quot;
 comma
@@ -121,6 +134,7 @@ id|net16
 c_func
 (paren
 id|eth-&gt;type
+)paren
 )paren
 )paren
 suffix:semicolon

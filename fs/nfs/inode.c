@@ -583,28 +583,6 @@ op_amp
 id|buf-&gt;f_bavail
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|put_fs_long
-c_func
-(paren
-op_minus
-l_int|1
-comma
-op_amp
-id|buf-&gt;f_files
-)paren
-suffix:semicolon
-id|put_fs_long
-c_func
-(paren
-op_minus
-l_int|1
-comma
-op_amp
-id|buf-&gt;f_ffree
-)paren
-suffix:semicolon
-macro_line|#else
 id|put_fs_long
 c_func
 (paren
@@ -623,7 +601,6 @@ op_amp
 id|buf-&gt;f_ffree
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * This is our own version of iget that looks up inodes by file handle&n; * instead of inode number.  We use this technique instead of using&n; * the vfs read_inode function because there is no way to pass the&n; * file handle or current attributes into the read_inode function.&n; * We just have to be careful not to subvert iget&squot;s special handling&n; * of mount points.&n; */
 DECL|function|nfs_fhget

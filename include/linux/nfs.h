@@ -1,8 +1,6 @@
 macro_line|#ifndef _LINUX_NFS_H
 DECL|macro|_LINUX_NFS_H
 mdefine_line|#define _LINUX_NFS_H
-DECL|macro|RPC_VERSION
-mdefine_line|#define RPC_VERSION 2
 DECL|macro|NFS_PORT
 mdefine_line|#define NFS_PORT 2049
 DECL|macro|NFS_MAXDATA
@@ -35,6 +33,9 @@ DECL|macro|NFSMODE_SOCK
 mdefine_line|#define NFSMODE_SOCK 0140000
 DECL|macro|NFSMODE_FIFO
 mdefine_line|#define NFSMODE_FIFO 0010000
+macro_line|#ifdef KERNEL&t;/* user programs should get these from the rpc header files */
+DECL|macro|RPC_VERSION
+mdefine_line|#define RPC_VERSION 2
 DECL|enum|rpc_auth_flavor
 r_enum
 id|rpc_auth_flavor
@@ -83,6 +84,8 @@ l_int|0
 comma
 DECL|enumerator|RPC_MSG_DENIED
 id|RPC_MSG_DENIED
+op_assign
+l_int|1
 comma
 )brace
 suffix:semicolon
@@ -164,6 +167,7 @@ l_int|5
 comma
 )brace
 suffix:semicolon
+macro_line|#endif /* KERNEL */
 DECL|enum|nfs_stat
 r_enum
 id|nfs_stat
