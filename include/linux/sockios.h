@@ -50,9 +50,9 @@ mdefine_line|#define SIOCGIFMTU&t;0x8921&t;&t;/* get MTU size&t;&t;&t;*/
 DECL|macro|SIOCSIFMTU
 mdefine_line|#define SIOCSIFMTU&t;0x8922&t;&t;/* set MTU size&t;&t;&t;*/
 DECL|macro|SIOCSIFHWADDR
-mdefine_line|#define&t;SIOCSIFHWADDR&t;0x8924&t;&t;/* set hardware address (NI)&t;*/
+mdefine_line|#define&t;SIOCSIFHWADDR&t;0x8924&t;&t;/* set hardware address &t;*/
 DECL|macro|SIOCGIFENCAP
-mdefine_line|#define SIOCGIFENCAP&t;0x8925&t;&t;/* get/set slip encapsulation   */
+mdefine_line|#define SIOCGIFENCAP&t;0x8925&t;&t;/* get/set encapsulations       */
 DECL|macro|SIOCSIFENCAP
 mdefine_line|#define SIOCSIFENCAP&t;0x8926&t;&t;
 DECL|macro|SIOCGIFHWADDR
@@ -83,6 +83,10 @@ DECL|macro|SIOCGIFBR
 mdefine_line|#define SIOCGIFBR&t;0x8940&t;&t;/* Bridging support&t;&t;*/
 DECL|macro|SIOCSIFBR
 mdefine_line|#define SIOCSIFBR&t;0x8941&t;&t;/* Set bridging options &t;*/
+DECL|macro|SIOCGIFTXQLEN
+mdefine_line|#define SIOCGIFTXQLEN&t;0x8942&t;&t;/* Get the tx queue length&t;*/
+DECL|macro|SIOCSIFTXQLEN
+mdefine_line|#define SIOCSIFTXQLEN&t;0x8943&t;&t;/* Set the tx queue length &t;*/
 multiline_comment|/* ARP cache control calls. */
 multiline_comment|/*  0x8950 - 0x8952  * obsolete calls, don&squot;t re-use */
 DECL|macro|SIOCDARP

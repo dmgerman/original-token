@@ -63,7 +63,7 @@ r_static
 r_int
 id|max_interrupt_work
 op_assign
-l_int|20
+l_int|200
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE

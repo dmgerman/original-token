@@ -4918,21 +4918,13 @@ suffix:semicolon
 multiline_comment|/* high bit indicates that compression was performed */
 id|comp
 op_assign
-id|NTFS_GETU8
+id|NTFS_GETU16
 c_func
 (paren
 id|src
 )paren
 op_amp
-l_int|0x80
-suffix:semicolon
-id|comp
-op_assign
-(paren
-id|head
-op_eq
-l_int|0xFFF
-)paren
+l_int|0x8000
 suffix:semicolon
 id|src
 op_add_assign

@@ -3054,7 +3054,7 @@ macro_line|#ifdef CONFIG_MATH_EMULATION
 r_if
 c_cond
 (paren
-id|hard_math
+id|boot_cpu_data.hard_math
 )paren
 (brace
 macro_line|#endif
@@ -3181,7 +3181,7 @@ macro_line|#ifdef CONFIG_MATH_EMULATION
 r_if
 c_cond
 (paren
-id|hard_math
+id|boot_cpu_data.hard_math
 )paren
 (brace
 macro_line|#endif

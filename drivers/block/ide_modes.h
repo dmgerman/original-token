@@ -4,7 +4,7 @@ mdefine_line|#define _IDE_MODES_H
 multiline_comment|/*&n; *  linux/drivers/block/ide_modes.h&n; *&n; *  Copyright (C) 1996  Linus Torvalds, Igor Abramov, and Mark Lord&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Shared data/functions for determining best PIO mode for an IDE drive.&n; * Most of this stuff originally lived in cmd640.c, and changes to the&n; * ide_pio_blacklist[] table should be made with EXTREME CAUTION to avoid&n; * breaking the fragile cmd640.c support.&n; */
-macro_line|#if defined(CONFIG_BLK_DEV_CMD640) || defined(CONFIG_IDE_CHIPSETS)
+macro_line|#if defined(CONFIG_BLK_DEV_CMD640) || defined(CONFIG_IDE_CHIPSETS) || defined(CONFIG_BLK_DEV_OPTI621)
 multiline_comment|/*&n; * Standard (generic) timings for PIO modes, from ATA2 specification.&n; * These timings are for access to the IDE data port register *only*.&n; * Some drives may specify a mode, while also specifying a different&n; * value for cycle_time (from drive identification data).&n; */
 DECL|struct|ide_pio_timings_s
 r_typedef
@@ -844,6 +844,6 @@ id|pio_mode
 suffix:semicolon
 )brace
 macro_line|#endif /* _IDE_C */
-macro_line|#endif /* defined(CONFIG_BLK_DEV_CMD640) || defined(CONFIG_IDE_CHIPSETS) */
+macro_line|#endif /* defined(CONFIG_BLK_DEV_CMD640) || defined(CONFIG_IDE_CHIPSETS) || defined(CONFIG_BLK_DEV_OPTI621) */
 macro_line|#endif /* _IDE_MODES_H */
 eof

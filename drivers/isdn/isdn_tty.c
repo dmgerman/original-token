@@ -9948,6 +9948,9 @@ comma
 r_char
 op_star
 id|q
+comma
+r_int
+id|cnt
 )paren
 (brace
 r_int
@@ -9955,6 +9958,12 @@ id|first
 op_assign
 l_int|1
 suffix:semicolon
+r_int
+id|limit
+op_assign
+l_int|39
+suffix:semicolon
+multiline_comment|/* MUST match the size in isdn_tty_parse to avoid&n;&t;&t;&t;&t;buffer overflow */
 r_while
 c_loop
 (paren
@@ -9969,6 +9978,11 @@ id|p
 op_logical_and
 op_star
 id|p
+op_logical_and
+op_decrement
+id|cnt
+OG
+l_int|0
 )paren
 (brace
 r_if
@@ -10007,6 +10021,17 @@ suffix:semicolon
 id|p
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|limit
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
 id|first
 op_assign
 l_int|0
@@ -10701,7 +10726,7 @@ c_func
 (paren
 id|rb
 comma
-l_string|&quot;&bslash;r&bslash;nEAZ/MSN: %s&bslash;r&bslash;n&quot;
+l_string|&quot;&bslash;r&bslash;nEAZ/MSN: %.50s&bslash;r&bslash;n&quot;
 comma
 id|strlen
 c_func
@@ -12957,6 +12982,9 @@ c_func
 op_increment
 id|p
 comma
+id|ds
+comma
+r_sizeof
 id|ds
 )paren
 suffix:semicolon

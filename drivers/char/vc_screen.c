@@ -80,34 +80,6 @@ id|inode
 r_int
 id|size
 suffix:semicolon
-macro_line|#ifdef CONFIG_MULTIMON
-r_int
-id|currcons
-op_assign
-id|MINOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-op_amp
-l_int|127
-suffix:semicolon
-multiline_comment|/* Multimon patch&t;*/
-r_if
-c_cond
-(paren
-op_logical_neg
-id|vc_cons
-(braket
-id|currcons
-)braket
-dot
-id|d
-)paren
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_FB_CONSOLE
 r_int
 id|cons

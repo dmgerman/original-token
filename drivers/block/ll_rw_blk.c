@@ -2955,26 +2955,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#ifdef CONFIG_BLK_DEV_EZ
-r_extern
-r_void
-id|ez_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BPCD
-r_extern
-r_void
-id|bpcd_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -3179,11 +3159,22 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_EZ
-id|ez_init
+macro_line|#ifdef CONFIG_PARIDE
+(brace
+r_extern
+r_void
+id|paride_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|paride_init
 c_func
 (paren
 )paren
+suffix:semicolon
+)brace
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MAC_FLOPPY
@@ -3267,13 +3258,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_GSCD
-macro_line|#ifdef CONFIG_BPCD
-id|bpcd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_BPCD
 macro_line|#ifdef CONFIG_CM206
 id|cm206_init
 c_func

@@ -2014,11 +2014,7 @@ suffix:semicolon
 id|set_fs
 c_func
 (paren
-id|MAKE_MM_SEG
-c_func
-(paren
-id|seg
-)paren
+id|USER_DS
 )paren
 suffix:semicolon
 id|regs-&gt;xds
@@ -2415,11 +2411,7 @@ suffix:semicolon
 id|set_fs
 c_func
 (paren
-id|MAKE_MM_SEG
-c_func
-(paren
-id|seg
-)paren
+id|USER_DS
 )paren
 suffix:semicolon
 id|regs-&gt;xds

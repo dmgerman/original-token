@@ -1,9 +1,7 @@
-multiline_comment|/*&n; * The Linux BAYCOM driver for the Baycom serial 1200 baud modem&n; * and the parallel 9600 baud modem&n; * (C) 1997 by Thomas Sailer, HB9JNX/AE4WA&n; */
+multiline_comment|/*&n; * The Linux BAYCOM driver for the Baycom serial 1200 baud modem&n; * and the parallel 9600 baud modem&n; * (C) 1997-1998 by Thomas Sailer, HB9JNX/AE4WA&n; */
 macro_line|#ifndef _BAYCOM_H
 DECL|macro|_BAYCOM_H
 mdefine_line|#define _BAYCOM_H
-macro_line|#include &lt;linux/sockios.h&gt;
-macro_line|#include &lt;linux/if_ether.h&gt;
 multiline_comment|/* -------------------------------------------------------------------- */
 multiline_comment|/*&n; * structs for the IOCTL commands&n; */
 DECL|struct|baycom_debug_data

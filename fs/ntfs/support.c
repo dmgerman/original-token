@@ -96,6 +96,7 @@ id|ap
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef ntfs_malloc
 multiline_comment|/* Verbose kmalloc */
 DECL|function|ntfs_malloc
 r_void
@@ -137,6 +138,8 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef ntfs_free
 multiline_comment|/* Verbose kfree() */
 DECL|function|ntfs_free
 r_void
@@ -165,6 +168,7 @@ id|block
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#else
 DECL|function|ntfs_debug
 r_void
@@ -185,6 +189,7 @@ dot
 )paren
 (brace
 )brace
+macro_line|#ifndef ntfs_malloc
 DECL|function|ntfs_malloc
 r_void
 op_star
@@ -205,6 +210,8 @@ id|GFP_KERNEL
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef ntfs_free
 DECL|function|ntfs_free
 r_void
 id|ntfs_free
@@ -222,6 +229,7 @@ id|block
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif /* DEBUG */
 DECL|function|ntfs_bzero
 r_void

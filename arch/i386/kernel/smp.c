@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium&n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;Matthias Sattler&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michel Lespinasse&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michael Chastain&t;:&t;Change trampoline.S to gnu as.&n; *&t;&t;Alan Cox&t;:&t;Dumb bug: &squot;B&squot; step PPro&squot;s are fine&n; *&t;&t;Ingo Molnar&t;:&t;Added APIC timers, based on code&n; *&t;&t;&t;&t;&t;from Jose Renau&n; */
+multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium&n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;Matthias Sattler&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michel Lespinasse&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michael Chastain&t;:&t;Change trampoline.S to gnu as.&n; *&t;&t;Alan Cox&t;:&t;Dumb bug: &squot;B&squot; step PPro&squot;s are fine&n; *&t;&t;Ingo Molnar&t;:&t;Added APIC timers, based on code&n; *&t;&t;&t;&t;&t;from Jose Renau&n; *&t;&t;Alan Cox&t;:&t;Added EBDA scanning&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -3309,6 +3309,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SMP mode deactivated, forcing use of dummy APIC emulation.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3697,6 +3698,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Total of %d processors activated (%lu.%02lu BogoMIPS).&bslash;n&quot;
 comma
 id|cpucount

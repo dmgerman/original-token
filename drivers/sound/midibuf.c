@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * sound/midibuf.c&n; *&n; * Device file manager for /dev/midi#&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|MIDIBUF_C
 mdefine_line|#define MIDIBUF_C
@@ -1900,8 +1901,8 @@ r_return
 id|c
 suffix:semicolon
 )brace
-r_int
 DECL|function|MIDIbuf_ioctl
+r_int
 id|MIDIbuf_ioctl
 c_func
 (paren
@@ -1982,7 +1983,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_else
 id|printk
 c_func
 (paren
@@ -2006,14 +2006,24 @@ id|cmd
 r_case
 id|SNDCTL_MIDI_PRETIME
 suffix:colon
+r_if
+c_cond
+(paren
+id|__get_user
+c_func
+(paren
 id|val
-op_assign
-op_star
+comma
 (paren
 r_int
 op_star
 )paren
 id|arg
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -2046,21 +2056,37 @@ op_assign
 id|val
 suffix:semicolon
 r_return
+id|__put_user
+c_func
 (paren
-op_star
+id|val
+comma
 (paren
 r_int
 op_star
 )paren
 id|arg
-op_assign
-id|val
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_default
 suffix:colon
+(brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|midi_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|ioctl
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 r_return
 id|midi_devs
 (braket

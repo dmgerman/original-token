@@ -466,7 +466,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;TRM290: chip config base at 0x%04x&bslash;n&quot;
+l_string|&quot;TRM290: chip config base at 0x%04lx&bslash;n&quot;
 comma
 id|hwif-&gt;config_data
 )paren
@@ -476,12 +476,12 @@ r_else
 (brace
 id|hwif-&gt;config_data
 op_assign
-l_int|0x3df4
+l_int|0x3df0
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;TRM290: using default config base at 0x%04x&bslash;n&quot;
+l_string|&quot;TRM290: using default config base at 0x%04lx&bslash;n&quot;
 comma
 id|hwif-&gt;config_data
 )paren
@@ -607,17 +607,19 @@ c_func
 id|hwif
 comma
 (paren
+id|hwif-&gt;config_data
+op_plus
+l_int|4
+)paren
+op_xor
+(paren
 id|hwif-&gt;channel
 ques
 c_cond
-id|hwif-&gt;config_data
-op_xor
 l_int|0x0080
 suffix:colon
-id|hwif-&gt;config_data
+l_int|0x0000
 )paren
-op_plus
-l_int|4
 comma
 l_int|2
 )paren

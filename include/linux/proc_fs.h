@@ -127,6 +127,9 @@ comma
 multiline_comment|/* whether enabled or not */
 DECL|enumerator|PROC_PPC_HTAB
 id|PROC_PPC_HTAB
+comma
+DECL|enumerator|PROC_SOUND
+id|PROC_SOUND
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos

@@ -4,13 +4,18 @@ DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/isdn.h&gt;
-macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x020117)
+macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#endif
 macro_line|#include &quot;isdn_common.h&quot;
 macro_line|#include &quot;isdn_net.h&quot;
 macro_line|#ifdef CONFIG_ISDN_PPP
 macro_line|#include &quot;isdn_ppp.h&quot;
+macro_line|#endif
+macro_line|#ifndef DEV_NUMBUFFS
+macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#endif
 multiline_comment|/* Prototypes */
 r_int
@@ -66,6 +71,7 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef DEV_NUMBUFFS
 r_static
 r_void
 id|dev_purge_queues
@@ -78,6 +84,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* move this to net/core/dev.c */
+macro_line|#endif
 DECL|variable|isdn_net_revision
 r_char
 op_star
@@ -235,7 +242,7 @@ id|i
 op_assign
 l_int|0xfc
 suffix:semicolon
-id|memcpy
+id|memset
 c_func
 (paren
 op_amp
@@ -246,8 +253,7 @@ id|i
 )braket
 )paren
 comma
-op_amp
-id|dev-&gt;pa_addr
+l_int|0
 comma
 r_sizeof
 (paren
@@ -445,6 +451,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#ifdef DEV_NUMBUFFS
 r_if
 c_cond
 (paren
@@ -459,6 +466,24 @@ op_amp
 id|lp-&gt;netdev-&gt;dev
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;master
+)paren
+(brace
+multiline_comment|/* reset only master device */
+multiline_comment|/* Moral equivalent of dev_purge_queues():&n;&t;&t;   BEWARE! This chunk of code cannot be called from hardware&n;&t;&t;   interrupt handler. I hope it is true. --ANK&n;&t;&t; */
+id|qdisc_reset
+c_func
+(paren
+id|lp-&gt;netdev-&gt;dev.qdisc
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|lp-&gt;dialstate
 op_assign
 l_int|0
@@ -3502,12 +3527,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|dev_tint
-c_func
-(paren
-id|ndev
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5301,10 +5320,8 @@ suffix:semicolon
 id|ndev-&gt;flags
 op_assign
 id|IFF_NOARP
-suffix:semicolon
-id|ndev-&gt;family
-op_assign
-id|AF_INET
+op_or
+id|IFF_POINTOPOINT
 suffix:semicolon
 id|ndev-&gt;type
 op_assign
@@ -5313,22 +5330,6 @@ suffix:semicolon
 id|ndev-&gt;addr_len
 op_assign
 id|ETH_ALEN
-suffix:semicolon
-id|ndev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|ndev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|ndev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|ndev-&gt;pa_alen
-op_assign
-l_int|4
 suffix:semicolon
 r_for
 c_loop
@@ -5351,6 +5352,7 @@ id|i
 op_assign
 l_int|0xff
 suffix:semicolon
+macro_line|#ifdef DEV_NUMBUFFS
 r_for
 c_loop
 (paren
@@ -5375,6 +5377,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* The ISDN-specific entries in the device structure. */
 id|ndev-&gt;open
 op_assign
@@ -8692,6 +8695,8 @@ suffix:semicolon
 id|p-&gt;dev.flags
 op_assign
 id|IFF_NOARP
+op_or
+id|IFF_POINTOPOINT
 suffix:semicolon
 )brace
 r_else
@@ -8750,6 +8755,8 @@ suffix:semicolon
 id|p-&gt;dev.flags
 op_assign
 id|IFF_NOARP
+op_or
+id|IFF_POINTOPOINT
 suffix:semicolon
 )brace
 )brace
@@ -10121,6 +10128,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef DEV_NUMBUFFS
 multiline_comment|/*&n; * helper function to flush device queues&n; * the better place would be net/core/dev.c&n; */
 r_static
 r_void
@@ -10184,4 +10192,5 @@ id|FREE_WRITE
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 eof

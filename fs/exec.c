@@ -1883,7 +1883,7 @@ c_cond
 id|retval
 )paren
 r_goto
-id|flush_failed
+id|mmap_failed
 suffix:semicolon
 multiline_comment|/* This is the point of no return */
 id|release_old_signals
@@ -2009,6 +2009,21 @@ id|current-&gt;files
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|mmap_failed
+suffix:colon
+r_if
+c_cond
+(paren
+id|current-&gt;sig
+op_ne
+id|oldsig
+)paren
+id|kfree
+c_func
+(paren
+id|current-&gt;sig
+)paren
 suffix:semicolon
 id|flush_failed
 suffix:colon

@@ -1,6 +1,6 @@
-multiline_comment|/* cm206.c. A linux-driver for the cm206 cdrom player with cm260 adapter card.&n;   Copyright (c) 1995, 1996 David van Leeuwen.&n;   &n;     This program is free software; you can redistribute it and/or modify&n;     it under the terms of the GNU General Public License as published by&n;     the Free Software Foundation; either version 2 of the License, or&n;     (at your option) any later version.&n;     &n;     This program is distributed in the hope that it will be useful,&n;     but WITHOUT ANY WARRANTY; without even the implied warranty of&n;     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;     GNU General Public License for more details.&n;     &n;     You should have received a copy of the GNU General Public License&n;     along with this program; if not, write to the Free Software&n;     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;History:&n; Started 25 jan 1994. Waiting for documentation...&n; 22 feb 1995: 0.1a first reasonably safe polling driver.&n;&t;      Two major bugs, one in read_sector and one in &n;&t;      do_cm206_request, happened to cancel!&n; 25 feb 1995: 0.2a first reasonable interrupt driven version of above.&n;              uart writes are still done in polling mode. &n; 25 feb 1995: 0.21a writes also in interrupt mode, still some&n;&t;      small bugs to be found... Larger buffer. &n;  2 mrt 1995: 0.22 Bug found (cd-&gt; nowhere, interrupt was called in&n;              initialization), read_ahead of 16. Timeouts implemented.&n;&t;      unclear if they do something...&n;  7 mrt 1995: 0.23 Start of background read-ahead.&n; 18 mrt 1995: 0.24 Working background read-ahead. (still problems)&n; 26 mrt 1995: 0.25 Multi-session ioctl added (kernel v1.2).&n;              Statistics implemented, though separate stats206.h.&n;&t;      Accessible trough ioctl 0x1000 (just a number).&n;&t;      Hard to choose between v1.2 development and 1.1.75.&n;&t;      Bottom-half doesn&squot;t work with 1.2...&n;&t;      0.25a: fixed... typo. Still problems...&n;  1 apr 1995: 0.26 Module support added. Most bugs found. Use kernel 1.2.n.&n;  5 apr 1995: 0.27 Auto-probe for the adapter card base address.&n;              Auto-probe for the adaptor card irq line.&n;  7 apr 1995: 0.28 Added lilo setup support for base address and irq.&n;              Use major number 32 (not in this source), officially&n;&t;      assigned to this driver.&n;  9 apr 1995: 0.29 Added very limited audio support. Toc_header, stop, pause,&n;              resume, eject. Play_track ignores track info, because we can&squot;t &n;&t;      read a table-of-contents entry. Toc_entry is implemented&n;&t;      as a `placebo&squot; function: always returns start of disc. &n;  3 may 1995: 0.30 Audio support completed. The get_toc_entry function&n;              is implemented as a binary search. &n; 15 may 1995: 0.31 More work on audio stuff. Workman is not easy to &n;              satisfy; changed binary search into linear search.&n;&t;      Auto-probe for base address somewhat relaxed.&n;  1 jun 1995: 0.32 Removed probe_irq_on/off for module version.&n; 10 jun 1995: 0.33 Workman still behaves funny, but you should be&n;              able to eject and substitute another disc.&n;&n; An adaptation of 0.33 is included in linux-1.3.7 by Eberhard Moenkeberg&n;&n; 18 jul 1995: 0.34 Patch by Heiko Eissfeldt included, mainly considering &n;              verify_area&squot;s in the ioctls. Some bugs introduced by &n;&t;      EM considering the base port and irq fixed. &n;&n; 18 dec 1995: 0.35 Add some code for error checking... no luck...&n;&n; We jump to reach our goal: version 1.0 in the next stable linux kernel.&n;&n; 19 mar 1996: 0.95 Different implementation of CDROM_GET_UPC, on&n;&t;      request of Thomas Quinot. &n; 25 mar 1996: 0.96 Interpretation of opening with O_WRONLY or O_RDWR:&n;&t;      open only for ioctl operation, e.g., for operation of&n;&t;      tray etc.&n; 4 apr 1996:  0.97 First implementation of layer between VFS and cdrom&n;              driver, a Uniform interface. Much of the functionality&n;&t;      of cm206_open() and cm206_ioctl() is transferred to a&n;&t;      new file cdrom.c and its header cdrom.h. &n;&n;&t;      Upgrade to Linux kernel 1.3.78. &n;&n; 11 apr 1996  0.98 Upgrade to Linux kernel 1.3.85&n;              More code moved to cdrom.c&n;&n;&t;      0.99 Some more small changes to decrease number&n;&t;      of oopses at module load; &n;&n;&t;      Branch from here:&n;&n;&t;      0.99.1.0 Update to kernel release 2.0.10 dev_t -&gt; kdev_t&n;&t;      (emoenke) various typos found by others.  extra&n;&t;      module-load oops protection.&n;&n;&t;      0.99.1.1 Initialization constant cdrom_dops.speed&n;&t;      changed from float (2.0) to int (2); Cli()-sti() pair&n;&t;      around cm260_reset() in module initialization code.&n;&n;&t;      0.99.1.2 Changes literally as proposed by Scott Snyder&n;&t;      &lt;snyder@d0sgif.fnal.gov&gt;, which have to do mainly with&n;&t;      the poor minor support i had. The major new concept is&n;&t;      to change a cdrom driver&squot;s operations struct from the&n;&t;      capabilities struct. This reflects the fact that there&n;&t;      is one major for a driver, whilst there can be many&n;&t;      minors whith completely different capabilities.&n;&n;&t;      0.99.1.3 More changes for operations/info separation.&n;&n;&t;      0.99.1.4 Added speed selection (someone had to do this&n;&t;      first).&n; * &n; * Parts of the code are based upon lmscd.c written by Kai Petzke,&n; * sbpcd.c written by Eberhard Moenkeberg, and mcd.c by Martin&n; * Harriss, but any off-the-shelf dynamic programming algorithm won&squot;t&n; * be able to find them.&n; *&n; * The cm206 drive interface and the cm260 adapter card seem to be &n; * sufficiently different from their cm205/cm250 counterparts&n; * in order to write a complete new driver.&n; * &n; * I call all routines connected to the Linux kernel something&n; * with `cm206&squot; in it, as this stuff is too series-dependent. &n; * &n; * Currently, my limited knowledge is based on:&n; * - The Linux Kernel Hacker&squot;s guide, v. 0.5, by Michael K. Johnson&n; * - Linux Kernel Programmierung, by Michael Beck and others&n; * - Philips/LMS cm206 and cm226 product specification&n; * - Philips/LMS cm260 product specification&n; *&n; *                       David van Leeuwen, david@tm.tno.nl.  */
-DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;$Id: cm206.c,v 0.99.1.4 1996/12/23 21:46:13 david Exp $&quot;
+multiline_comment|/* cm206.c. A linux-driver for the cm206 cdrom player with cm260 adapter card.&n;   Copyright (c) 1995--1997 David A. van Leeuwen.&n;   $Id: cm206.c,v 1.5 1997/12/26 11:02:51 david Exp $&n;   &n;     This program is free software; you can redistribute it and/or modify&n;     it under the terms of the GNU General Public License as published by&n;     the Free Software Foundation; either version 2 of the License, or&n;     (at your option) any later version.&n;     &n;     This program is distributed in the hope that it will be useful,&n;     but WITHOUT ANY WARRANTY; without even the implied warranty of&n;     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;     GNU General Public License for more details.&n;     &n;     You should have received a copy of the GNU General Public License&n;     along with this program; if not, write to the Free Software&n;     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;History:&n; Started 25 jan 1994. Waiting for documentation...&n; 22 feb 1995: 0.1a first reasonably safe polling driver.&n;&t;      Two major bugs, one in read_sector and one in &n;&t;      do_cm206_request, happened to cancel!&n; 25 feb 1995: 0.2a first reasonable interrupt driven version of above.&n;              uart writes are still done in polling mode. &n; 25 feb 1995: 0.21a writes also in interrupt mode, still some&n;&t;      small bugs to be found... Larger buffer. &n;  2 mrt 1995: 0.22 Bug found (cd-&gt; nowhere, interrupt was called in&n;              initialization), read_ahead of 16. Timeouts implemented.&n;&t;      unclear if they do something...&n;  7 mrt 1995: 0.23 Start of background read-ahead.&n; 18 mrt 1995: 0.24 Working background read-ahead. (still problems)&n; 26 mrt 1995: 0.25 Multi-session ioctl added (kernel v1.2).&n;              Statistics implemented, though separate stats206.h.&n;&t;      Accessible trough ioctl 0x1000 (just a number).&n;&t;      Hard to choose between v1.2 development and 1.1.75.&n;&t;      Bottom-half doesn&squot;t work with 1.2...&n;&t;      0.25a: fixed... typo. Still problems...&n;  1 apr 1995: 0.26 Module support added. Most bugs found. Use kernel 1.2.n.&n;  5 apr 1995: 0.27 Auto-probe for the adapter card base address.&n;              Auto-probe for the adaptor card irq line.&n;  7 apr 1995: 0.28 Added lilo setup support for base address and irq.&n;              Use major number 32 (not in this source), officially&n;&t;      assigned to this driver.&n;  9 apr 1995: 0.29 Added very limited audio support. Toc_header, stop, pause,&n;              resume, eject. Play_track ignores track info, because we can&squot;t &n;&t;      read a table-of-contents entry. Toc_entry is implemented&n;&t;      as a `placebo&squot; function: always returns start of disc. &n;  3 may 1995: 0.30 Audio support completed. The get_toc_entry function&n;              is implemented as a binary search. &n; 15 may 1995: 0.31 More work on audio stuff. Workman is not easy to &n;              satisfy; changed binary search into linear search.&n;&t;      Auto-probe for base address somewhat relaxed.&n;  1 jun 1995: 0.32 Removed probe_irq_on/off for module version.&n; 10 jun 1995: 0.33 Workman still behaves funny, but you should be&n;              able to eject and substitute another disc.&n;&n; An adaptation of 0.33 is included in linux-1.3.7 by Eberhard Moenkeberg&n;&n; 18 jul 1995: 0.34 Patch by Heiko Eissfeldt included, mainly considering &n;              verify_area&squot;s in the ioctls. Some bugs introduced by &n;&t;      EM considering the base port and irq fixed. &n;&n; 18 dec 1995: 0.35 Add some code for error checking... no luck...&n;&n; We jump to reach our goal: version 1.0 in the next stable linux kernel.&n;&n; 19 mar 1996: 0.95 Different implementation of CDROM_GET_UPC, on&n;&t;      request of Thomas Quinot. &n; 25 mar 1996: 0.96 Interpretation of opening with O_WRONLY or O_RDWR:&n;&t;      open only for ioctl operation, e.g., for operation of&n;&t;      tray etc.&n; 4 apr 1996:  0.97 First implementation of layer between VFS and cdrom&n;              driver, a generic interface. Much of the functionality&n;&t;      of cm206_open() and cm206_ioctl() is transferred to a&n;&t;      new file cdrom.c and its header ucdrom.h. &n;&n;&t;      Upgrade to Linux kernel 1.3.78. &n;&n; 11 apr 1996  0.98 Upgrade to Linux kernel 1.3.85&n;              More code moved to cdrom.c&n; &n; &t;      0.99 Some more small changes to decrease number&n; &t;      of oopses at module load; &n; &n; 27 jul 1996  0.100 Many hours of debugging, kernel change from 1.2.13&n;&t;      to 2.0.7 seems to have introduced some weird behavior&n;&t;      in (interruptible_)sleep_on(&amp;cd-&gt;data): the process&n;&t;      seems to be woken without any explicit wake_up in my own&n;&t;      code. Patch to try 100x in case such untriggered wake_up&squot;s &n;&t;      occur. &n;&n; 28 jul 1996  0.101 Rewriting of the code that receives the command echo,&n;&t;      using a fifo to store echoed bytes. &n;&n; &t;      Branch from 0.99:&n; &n; &t;      0.99.1.0 Update to kernel release 2.0.10 dev_t -&gt; kdev_t&n; &t;      (emoenke) various typos found by others.  extra&n; &t;      module-load oops protection.&n; &n; &t;      0.99.1.1 Initialization constant cdrom_dops.speed&n; &t;      changed from float (2.0) to int (2); Cli()-sti() pair&n; &t;      around cm260_reset() in module initialization code.&n; &n; &t;      0.99.1.2 Changes literally as proposed by Scott Snyder&n; &t;      &lt;snyder@d0sgif.fnal.gov&gt; for the 2.1 kernel line, which&n; &t;      have to do mainly with the poor minor support i had. The&n; &t;      major new concept is to change a cdrom driver&squot;s&n; &t;      operations struct from the capabilities struct. This&n; &t;      reflects the fact that there is one major for a driver,&n; &t;      whilst there can be many minors whith completely&n; &t;      different capabilities.&n;&n;&t;      0.99.1.3 More changes for operations/info separation.&n;&n;&t;      0.99.1.4 Added speed selection (someone had to do this&n;&t;      first).&n;&n;  23 jan 1997 0.99.1.5 MODULE_PARMS call added.&n;&n;  23 jan 1997 0.100.1.2--0.100.1.5 following similar lines as &n;  &t;      0.99.1.1--0.99.1.5. I get too many complaints about the&n;&t;      drive making read errors. What&squot;t wrong with the 2.0+&n;&t;      kernel line? Why get i (and othe cm206 owners) weird&n;&t;      results? Why were things good in the good old 1.1--1.2 &n;&t;      era? Why don&squot;t i throw away the drive?&n;&n; 2 feb 1997   0.102 Added `volatile&squot; to values in cm206_struct. Seems to &n; &t;      reduce many of the problems. Rewrote polling routines&n;&t;      to use fixed delays between polls. &n;&t;      0.103 Changed printk behavior. &n;&t;      0.104 Added a 0.100 -&gt; 0.100.1.1 change&n;&n;11 feb 1997   0.105 Allow auto_probe during module load, disable&n;              with module option &quot;auto_probe=0&quot;. Moved some debugging&n;&t;      statements to lower priority. Implemented select_speed()&n;&t;      function. &n;&n;13 feb 1997   1.0 Final version for 2.0 kernel line. &n;&n;&t;      All following changes will be for the 2.1 kernel line. &n;&n;15 feb 1997   1.1 Keep up with kernel 2.1.26, merge in changes from &n;              cdrom.c 0.100.1.1--1.0. Add some more MODULE_PARMS. &n;&n;14 sep 1997   1.2 Upgrade to Linux 2.1.55.  Added blksize_size[], patch&n;              sent by James Bottomley &lt;James.Bottomley@columbiasc.ncr.com&gt;.&n;&n;21 dec 1997   1.4 Upgrade to Linux 2.1.72.  &n;&n; * &n; * Parts of the code are based upon lmscd.c written by Kai Petzke,&n; * sbpcd.c written by Eberhard Moenkeberg, and mcd.c by Martin&n; * Harriss, but any off-the-shelf dynamic programming algorithm won&squot;t&n; * be able to find them.&n; *&n; * The cm206 drive interface and the cm260 adapter card seem to be &n; * sufficiently different from their cm205/cm250 counterparts&n; * in order to write a complete new driver.&n; * &n; * I call all routines connected to the Linux kernel something&n; * with `cm206&squot; in it, as this stuff is too series-dependent. &n; * &n; * Currently, my limited knowledge is based on:&n; * - The Linux Kernel Hacker&squot;s guide, v. 0.5, by Michael K. Johnson&n; * - Linux Kernel Programmierung, by Michael Beck and others&n; * - Philips/LMS cm206 and cm226 product specification&n; * - Philips/LMS cm260 product specification&n; *&n; * David van Leeuwen, david@tm.tno.nl.  */
+DECL|macro|REVISION
+mdefine_line|#define REVISION &quot;$Revision: 1.5 $&quot;
 macro_line|#include &lt;linux/module.h&gt;&t;
 macro_line|#include &lt;linux/errno.h&gt;&t;/* These include what we really need */
 macro_line|#include &lt;linux/delay.h&gt;
@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+multiline_comment|/* #include &lt;linux/ucdrom.h&gt; */
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR CM206_CDROM_MAJOR
@@ -22,7 +23,7 @@ macro_line|#undef DEBUG
 DECL|macro|STATISTICS
 mdefine_line|#define STATISTICS&t;&t;/* record times and frequencies of events */
 DECL|macro|AUTO_PROBE_MODULE
-macro_line|#undef AUTO_PROBE_MODULE
+mdefine_line|#define AUTO_PROBE_MODULE
 DECL|macro|USE_INSW
 mdefine_line|#define USE_INSW
 macro_line|#include &quot;cm206.h&quot;
@@ -57,6 +58,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* base */
 id|MODULE_PARM
 c_func
 (paren
@@ -65,8 +67,27 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* irq */
+id|MODULE_PARM
+c_func
+(paren
+id|cm206
+comma
+l_string|&quot;1-2i&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* base,irq or irq,base */
+id|MODULE_PARM
+c_func
+(paren
+id|auto_probe
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* auto probe base and irq */
 DECL|macro|POLLOOP
-mdefine_line|#define POLLOOP 10000
+mdefine_line|#define POLLOOP 100&t;&t;/* milliseconds */
 DECL|macro|READ_AHEAD
 mdefine_line|#define READ_AHEAD 1&t;&t;/* defines private buffer, waste! */
 DECL|macro|BACK_AHEAD
@@ -77,6 +98,8 @@ DECL|macro|UART_TIMEOUT
 mdefine_line|#define UART_TIMEOUT (5*HZ/100)
 DECL|macro|DSB_TIMEOUT
 mdefine_line|#define DSB_TIMEOUT (7*HZ)&t;/* time for the slowest command to finish */
+DECL|macro|UR_SIZE
+mdefine_line|#define UR_SIZE 4&t;&t;/* uart receive buffer fifo size */
 DECL|macro|LINUX_BLOCK_SIZE
 mdefine_line|#define LINUX_BLOCK_SIZE 512&t;/* WHERE is this defined? */
 DECL|macro|RAW_SECTOR_SIZE
@@ -92,14 +115,16 @@ DECL|macro|stats
 mdefine_line|#define stats(i) { ++cd-&gt;stats[st_ ## i]; &bslash;&n;&t;&t;     cd-&gt;last_stat[st_ ## i] = cd-&gt;stat_counter++; &bslash;&n;&t;&t; }
 macro_line|#else
 DECL|macro|stats
-mdefine_line|#define stats(i) (void) 0
+mdefine_line|#define stats(i) (void) 0;
 macro_line|#endif
-macro_line|#ifdef DEBUG&t;&t;&t;/* from lmscd.c */
+DECL|macro|Debug
+mdefine_line|#define Debug(a) {printk (KERN_DEBUG); printk a;}
+macro_line|#ifdef DEBUG
 DECL|macro|debug
-mdefine_line|#define debug(a) printk a
+mdefine_line|#define debug(a) Debug(a)
 macro_line|#else
 DECL|macro|debug
-mdefine_line|#define debug(a) (void) 0
+mdefine_line|#define debug(a) (void) 0;
 macro_line|#endif
 DECL|typedef|uch
 r_typedef
@@ -135,37 +160,61 @@ id|q0
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|variable|cm206_blocksizes
+r_static
+r_int
+id|cm206_blocksizes
+(braket
+l_int|1
+)braket
+op_assign
+(brace
+l_int|2048
+)brace
+suffix:semicolon
 DECL|struct|cm206_struct
 r_struct
 id|cm206_struct
 (brace
 DECL|member|intr_ds
+r_volatile
 id|ush
 id|intr_ds
 suffix:semicolon
 multiline_comment|/* data status read on last interrupt */
 DECL|member|intr_ls
+r_volatile
 id|ush
 id|intr_ls
 suffix:semicolon
 multiline_comment|/* uart line status read on last interrupt*/
-DECL|member|intr_ur
+DECL|member|ur
+r_volatile
 id|uch
-id|intr_ur
+id|ur
+(braket
+id|UR_SIZE
+)braket
 suffix:semicolon
-multiline_comment|/* uart receive buffer */
+multiline_comment|/* uart receive buffer fifo */
+DECL|member|ur_w
+DECL|member|ur_r
+r_volatile
+id|uch
+id|ur_w
+comma
+id|ur_r
+suffix:semicolon
+multiline_comment|/* write/read buffer index */
 DECL|member|dsb
 DECL|member|cc
+r_volatile
 id|uch
 id|dsb
 comma
 id|cc
 suffix:semicolon
 multiline_comment|/* drive status byte and condition (error) code */
-DECL|member|fool
-id|uch
-id|fool
-suffix:semicolon
 DECL|member|command
 r_int
 id|command
@@ -194,14 +243,14 @@ id|sector_first
 comma
 id|sector_last
 suffix:semicolon
-multiline_comment|/* range of these sector */
+multiline_comment|/* range of these sectors */
 DECL|member|uart
 r_struct
 id|wait_queue
 op_star
 id|uart
 suffix:semicolon
-multiline_comment|/* wait for interrupt */
+multiline_comment|/* wait queues for interrupt */
 DECL|member|data
 r_struct
 id|wait_queue
@@ -223,6 +272,7 @@ r_int
 r_char
 id|max_sectors
 suffix:semicolon
+multiline_comment|/* number of sectors that fit in adapter mem */
 DECL|member|wait_back
 r_char
 id|wait_back
@@ -358,9 +408,18 @@ id|loop
 OG
 l_int|0
 )paren
+(brace
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
+multiline_comment|/* one millisec delay */
 op_decrement
 id|loop
 suffix:semicolon
+)brace
 id|outw
 c_func
 (paren
@@ -401,9 +460,17 @@ id|loop
 OG
 l_int|0
 )paren
+(brace
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 op_decrement
 id|loop
 suffix:semicolon
+)brace
 r_return
 (paren
 (paren
@@ -438,6 +505,71 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+DECL|function|clear_ur
+r_inline
+r_void
+id|clear_ur
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cd-&gt;ur_r
+op_ne
+id|cd-&gt;ur_w
+)paren
+(brace
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;Deleting bytes from fifo:&quot;
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|cd-&gt;ur_r
+op_ne
+id|cd-&gt;ur_w
+suffix:semicolon
+id|cd-&gt;ur_r
+op_increment
+comma
+id|cd-&gt;ur_r
+op_mod_assign
+id|UR_SIZE
+)paren
+(brace
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot; 0x%x&quot;
+comma
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_r
+)braket
+)paren
+)paren
+suffix:semicolon
+)brace
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* The interrupt handler. When the cm260 generates an interrupt, very&n;   much care has to be taken in reading out the registers in the right&n;   order; in case of a receive_buffer_full interrupt, first the&n;   uart_receive must be read, and then the line status again to&n;   de-assert the interrupt line. It took me a couple of hours to find&n;   this out:-( &n;&n;   The function reset_cm206 appears to cause an interrupt, because&n;   pulling up the INIT line clears both the uart-write-buffer /and/&n;   the uart-write-buffer-empty mask. We call this a `lost interrupt,&squot;&n;   as there seems so reason for this to happen.&n;*/
 DECL|function|cm206_interrupt
@@ -482,6 +614,20 @@ id|r_line_status
 )paren
 suffix:semicolon
 multiline_comment|/* resets overrun bit */
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;Intr, 0x%x 0x%x, %d&bslash;n&quot;
+comma
+id|cd-&gt;intr_ds
+comma
+id|cd-&gt;intr_ls
+comma
+id|cd-&gt;background
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -504,7 +650,10 @@ op_amp
 id|ls_receive_buffer_full
 )paren
 (brace
-id|cd-&gt;intr_ur
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_w
+)braket
 op_assign
 id|inb
 c_func
@@ -522,14 +671,60 @@ id|r_line_status
 )paren
 suffix:semicolon
 multiline_comment|/* resets rbf interrupt */
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;receiving #%d: 0x%x&bslash;n&quot;
+comma
+id|cd-&gt;ur_w
+comma
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_w
+)braket
+)paren
+)paren
+suffix:semicolon
+id|cd-&gt;ur_w
+op_increment
+suffix:semicolon
+id|cd-&gt;ur_w
+op_mod_assign
+id|UR_SIZE
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|cd-&gt;background
-op_logical_and
-id|cd-&gt;uart
+id|cd-&gt;ur_w
+op_eq
+id|cd-&gt;ur_r
 )paren
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;cd-&gt;ur overflow!&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cd-&gt;uart
+op_logical_and
+id|cd-&gt;background
+OL
+l_int|2
+)paren
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|cd-&gt;timer
+)paren
+suffix:semicolon
 id|wake_up_interruptible
 c_func
 (paren
@@ -537,6 +732,7 @@ op_amp
 id|cd-&gt;uart
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* data ready in fifo? */
 r_else
@@ -559,15 +755,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|cd-&gt;data
+op_logical_and
 (paren
 id|cd-&gt;wait_back
 op_logical_or
 op_logical_neg
 id|cd-&gt;background
 )paren
-op_logical_and
-id|cd-&gt;data
 )paren
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|cd-&gt;timer
+)paren
+suffix:semicolon
 id|wake_up_interruptible
 c_func
 (paren
@@ -575,6 +779,7 @@ op_amp
 id|cd-&gt;data
 )paren
 suffix:semicolon
+)brace
 id|stats
 c_func
 (paren
@@ -832,6 +1037,14 @@ id|cd-&gt;timed_out
 op_assign
 l_int|1
 suffix:semicolon
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;Timing out&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|wake_up_interruptible
 c_func
 (paren
@@ -861,6 +1074,10 @@ r_int
 id|timeout
 )paren
 (brace
+id|cd-&gt;timed_out
+op_assign
+l_int|0
+suffix:semicolon
 id|cd-&gt;timer.data
 op_assign
 (paren
@@ -880,6 +1097,14 @@ c_func
 (paren
 op_amp
 id|cd-&gt;timer
+)paren
+suffix:semicolon
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;going to sleep&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|interruptible_sleep_on
@@ -920,7 +1145,7 @@ id|cm206_delay
 c_func
 (paren
 r_int
-id|jiffies
+id|nr_jiffies
 )paren
 (brace
 r_struct
@@ -936,7 +1161,7 @@ c_func
 op_amp
 id|wait
 comma
-id|jiffies
+id|nr_jiffies
 )paren
 suffix:semicolon
 )brace
@@ -949,6 +1174,16 @@ r_int
 id|command
 )paren
 (brace
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;Sending 0x%x&bslash;n&quot;
+comma
+id|command
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1031,6 +1266,14 @@ id|r_uart_transmit
 )paren
 suffix:semicolon
 )brace
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;Write commmand delayed&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 )brace
 r_else
 id|outw
@@ -1042,38 +1285,92 @@ id|r_uart_transmit
 )paren
 suffix:semicolon
 )brace
-DECL|function|receive_echo
+DECL|function|receive_byte
 id|uch
-id|receive_echo
+id|receive_byte
 c_func
 (paren
-r_void
+r_int
+id|timeout
 )paren
 (brace
+id|uch
+id|ret
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;cli&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_r
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|inw
+id|cd-&gt;ur_r
+op_ne
+id|cd-&gt;ur_w
+)paren
+(brace
+id|sti
 c_func
 (paren
-id|r_line_status
 )paren
-op_amp
-id|ls_receive_buffer_full
+suffix:semicolon
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;returning #%d: 0x%x&bslash;n&quot;
+comma
+id|cd-&gt;ur_r
+comma
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_r
+)braket
 )paren
-op_logical_and
+)paren
+suffix:semicolon
+id|cd-&gt;ur_r
+op_increment
+suffix:semicolon
+id|cd-&gt;ur_r
+op_mod_assign
+id|UR_SIZE
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
 id|sleep_or_timeout
 c_func
 (paren
 op_amp
 id|cd-&gt;uart
 comma
-id|UART_TIMEOUT
+id|timeout
 )paren
 )paren
 (brace
+multiline_comment|/* does sti() */
 id|debug
 c_func
 (paren
@@ -1082,27 +1379,80 @@ l_string|&quot;Time out on receive-buffer&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef STATISTICS
+r_if
+c_cond
+(paren
+id|timeout
+op_eq
+id|UART_TIMEOUT
+)paren
 id|stats
 c_func
 (paren
 id|receive_timeout
 )paren
-suffix:semicolon
-r_return
-(paren
-(paren
-id|uch
-)paren
-id|inw
+multiline_comment|/* no `;&squot;! */
+r_else
+id|stats
 c_func
 (paren
-id|r_uart_receive
+id|dsb_timeout
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0xda
+suffix:semicolon
+)brace
+id|ret
+op_assign
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_r
+)braket
+suffix:semicolon
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;slept; returning #%d: 0x%x&bslash;n&quot;
+comma
+id|cd-&gt;ur_r
+comma
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_r
+)braket
 )paren
 )paren
 suffix:semicolon
-)brace
+id|cd-&gt;ur_r
+op_increment
+suffix:semicolon
+id|cd-&gt;ur_r
+op_mod_assign
+id|UR_SIZE
+suffix:semicolon
 r_return
-id|cd-&gt;intr_ur
+id|ret
+suffix:semicolon
+)brace
+DECL|function|receive_echo
+r_inline
+id|uch
+id|receive_echo
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|receive_byte
+c_func
+(paren
+id|UART_TIMEOUT
+)paren
 suffix:semicolon
 )brace
 DECL|function|send_receive
@@ -1129,6 +1479,7 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|wait_dsb
+r_inline
 id|uch
 id|wait_dsb
 c_func
@@ -1136,59 +1487,12 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|inw
+r_return
+id|receive_byte
 c_func
 (paren
-id|r_line_status
-)paren
-op_amp
-id|ls_receive_buffer_full
-)paren
-op_logical_and
-id|sleep_or_timeout
-c_func
-(paren
-op_amp
-id|cd-&gt;uart
-comma
 id|DSB_TIMEOUT
 )paren
-)paren
-(brace
-id|debug
-c_func
-(paren
-(paren
-l_string|&quot;Time out on Drive Status Byte&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|stats
-c_func
-(paren
-id|dsb_timeout
-)paren
-suffix:semicolon
-r_return
-(paren
-(paren
-id|uch
-)paren
-id|inw
-c_func
-(paren
-id|r_uart_receive
-)paren
-)paren
-suffix:semicolon
-)brace
-r_return
-id|cd-&gt;intr_ur
 suffix:semicolon
 )brace
 DECL|function|type_0_command
@@ -1205,6 +1509,11 @@ id|expect_dsb
 (brace
 r_int
 id|e
+suffix:semicolon
+id|clear_ur
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1330,8 +1639,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This function resets the adapter card. We&squot;d better not do this too */
-multiline_comment|/* often, because it tends to generate `lost interrupts.&squot; */
+multiline_comment|/* This function resets the adapter card. We&squot;d better not do this too&n; * often, because it tends to generate `lost interrupts.&squot; */
 DECL|function|reset_cm260
 r_void
 id|reset_cm260
@@ -1370,7 +1678,7 @@ id|r_data_control
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* fsm: frame-sec-min from linear address */
+multiline_comment|/* fsm: frame-sec-min from linear address; one of many */
 DECL|function|fsm
 r_void
 id|fsm
@@ -1525,6 +1833,11 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+id|clear_ur
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1582,10 +1895,47 @@ c_func
 id|echo
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|e
+op_eq
+l_int|0xff
+)paren
+(brace
+multiline_comment|/* this seems to happen often */
+id|e
+op_assign
+id|receive_echo
+c_func
+(paren
+)paren
+suffix:semicolon
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;Second try %x&bslash;n&quot;
+comma
+id|e
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|e
+op_ne
+id|read_sector
+(braket
+id|i
+)braket
+)paren
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
@@ -1599,6 +1949,9 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|e
+suffix:semicolon
 id|type_0_command
 c_func
 (paren
@@ -1610,9 +1963,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|e
+op_assign
 id|receive_echo
 c_func
 (paren
+)paren
 )paren
 op_ne
 l_int|0xff
@@ -1622,7 +1979,9 @@ id|debug
 c_func
 (paren
 (paren
-l_string|&quot;c_stop didn&squot;t send 0xff&bslash;n&quot;
+l_string|&quot;c_stop didn&squot;t send 0xff, but 0x%x&bslash;n&quot;
+comma
+id|e
 )paren
 )paren
 suffix:semicolon
@@ -1765,6 +2124,8 @@ id|port
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|macro|MAX_TRIES
+mdefine_line|#define MAX_TRIES 100
 DECL|function|read_sector
 r_int
 id|read_sector
@@ -1774,6 +2135,11 @@ r_int
 id|start
 )paren
 (brace
+r_int
+id|tries
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1819,6 +2185,8 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+r_do
+(brace
 r_if
 c_cond
 (paren
@@ -1858,6 +2226,52 @@ op_minus
 l_int|3
 suffix:semicolon
 )brace
+id|tries
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|cd-&gt;intr_ds
+op_amp
+id|ds_fifo_empty
+op_logical_and
+id|tries
+OL
+id|MAX_TRIES
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tries
+OG
+l_int|1
+)paren
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;Took me some tries&bslash;n&quot;
+)paren
+)paren
+r_else
+r_if
+c_cond
+(paren
+id|tries
+op_eq
+id|MAX_TRIES
+)paren
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;MAX_TRIES tries for read sector&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|transport_data
 c_func
 (paren
@@ -2014,7 +2428,18 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|cd-&gt;intr_ur
+id|cd-&gt;ur_r
+op_ne
+id|cd-&gt;ur_w
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_r
+)braket
 op_ne
 id|c_stop
 )paren
@@ -2025,7 +2450,10 @@ c_func
 (paren
 l_string|&quot;cm206_bh: c_stop echoed 0x%x&bslash;n&quot;
 comma
-id|cd-&gt;intr_ur
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_r
+)braket
 )paren
 )paren
 suffix:semicolon
@@ -2034,6 +2462,14 @@ c_func
 (paren
 id|echo
 )paren
+suffix:semicolon
+)brace
+id|cd-&gt;ur_r
+op_increment
+suffix:semicolon
+id|cd-&gt;ur_r
+op_mod_assign
+id|UR_SIZE
 suffix:semicolon
 )brace
 id|cd-&gt;background
@@ -2047,7 +2483,18 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|cd-&gt;intr_ur
+id|cd-&gt;ur_r
+op_ne
+id|cd-&gt;ur_w
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_r
+)braket
 op_ne
 l_int|0xff
 )paren
@@ -2058,7 +2505,10 @@ c_func
 (paren
 l_string|&quot;cm206_bh: c_stop reacted with 0x%x&bslash;n&quot;
 comma
-id|cd-&gt;intr_ur
+id|cd-&gt;ur
+(braket
+id|cd-&gt;ur_r
+)braket
 )paren
 )paren
 suffix:semicolon
@@ -2067,6 +2517,14 @@ c_func
 (paren
 id|stop_0xff
 )paren
+suffix:semicolon
+)brace
+id|cd-&gt;ur_r
+op_increment
+suffix:semicolon
+id|cd-&gt;ur_r
+op_mod_assign
+id|UR_SIZE
 suffix:semicolon
 )brace
 id|cd-&gt;background
@@ -2573,6 +3031,11 @@ id|i
 op_increment
 )paren
 (brace
+r_int
+id|e1
+comma
+id|e2
+suffix:semicolon
 id|cd_sec_no
 op_assign
 (paren
@@ -2655,17 +3118,25 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
+id|e1
+op_assign
 id|try_adapter
 c_func
 (paren
 id|cd_sec_no
 )paren
+)paren
 op_logical_or
 op_logical_neg
+(paren
+id|e2
+op_assign
 id|read_sector
 c_func
 (paren
 id|cd_sec_no
+)paren
 )paren
 )paren
 (brace
@@ -2701,6 +3172,18 @@ r_else
 id|error
 op_assign
 l_int|1
+suffix:semicolon
+id|debug
+c_func
+(paren
+(paren
+l_string|&quot;cm206_request: %d %d&bslash;n&quot;
+comma
+id|e1
+comma
+id|e2
+)paren
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2843,7 +3326,7 @@ r_return
 id|track
 suffix:semicolon
 )brace
-multiline_comment|/* This function does a binary search for track start. It records all&n; * tracks seen in the process. Input $track$ must be between 1 and&n; * #-of-tracks+1 */
+multiline_comment|/* This function does a binary search for track start. It records all&n; * tracks seen in the process. Input $track$ must be between 1 and&n; * #-of-tracks+1.  Note that the start of the disc must be in toc[1].fsm. &n; */
 DECL|function|get_toc_lba
 r_int
 id|get_toc_lba
@@ -2866,7 +3349,16 @@ l_int|150
 comma
 id|min
 op_assign
-l_int|0
+id|fsm2lba
+c_func
+(paren
+id|cd-&gt;toc
+(braket
+l_int|1
+)braket
+dot
+id|fsm
+)paren
 suffix:semicolon
 r_int
 id|i
@@ -2903,6 +3395,7 @@ l_int|60
 op_star
 l_int|75
 suffix:semicolon
+multiline_comment|/* 3 minutes */
 r_for
 c_loop
 (paren
@@ -2950,7 +3443,6 @@ id|min
 op_plus
 id|skip
 suffix:semicolon
-multiline_comment|/* 3 minutes */
 r_do
 (brace
 id|seek
@@ -3251,13 +3743,8 @@ r_if
 c_cond
 (paren
 id|hp
-op_logical_and
-id|DISC_STATUS
-op_amp
-id|cds_all_audio
 )paren
 (brace
-multiline_comment|/* all audio */
 r_int
 id|i
 suffix:semicolon
@@ -3268,15 +3755,6 @@ suffix:semicolon
 id|hp-&gt;cdth_trk1
 op_assign
 id|LAST_TRACK
-suffix:semicolon
-id|cd-&gt;toc
-(braket
-l_int|1
-)braket
-dot
-id|track
-op_assign
-l_int|1
 suffix:semicolon
 multiline_comment|/* fill in first track position */
 r_for
@@ -4369,7 +4847,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-multiline_comment|/* The new Uniform cdrom support. Routines should be concise, most of&n;   the logic should be in cdrom.c */
+multiline_comment|/* The new generic cdrom support. Routines should be concise, most of&n;   the logic should be in cdrom.c */
 multiline_comment|/* returns number of times device is in use */
 DECL|function|cm206_open_files
 r_int
@@ -4502,6 +4980,97 @@ r_return
 id|CDS_DISC_OK
 suffix:semicolon
 )brace
+multiline_comment|/* gives current state of disc in drive */
+DECL|function|cm206_disc_status
+r_int
+id|cm206_disc_status
+c_func
+(paren
+r_struct
+id|cdrom_device_info
+op_star
+id|cdi
+)paren
+(brace
+id|uch
+id|xa
+suffix:semicolon
+id|get_drive_status
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|cd-&gt;dsb
+op_amp
+id|dsb_not_useful
+)paren
+op_or
+op_logical_neg
+(paren
+id|cd-&gt;dsb
+op_amp
+id|dsb_disc_present
+)paren
+)paren
+r_return
+id|CDS_NO_DISC
+suffix:semicolon
+id|get_disc_status
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|DISC_STATUS
+op_amp
+id|cds_all_audio
+)paren
+r_return
+id|CDS_AUDIO
+suffix:semicolon
+id|xa
+op_assign
+id|DISC_STATUS
+op_rshift
+l_int|4
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|xa
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+r_return
+id|CDS_DATA_1
+suffix:semicolon
+multiline_comment|/* can we detect CDS_DATA_2? */
+r_case
+l_int|1
+suffix:colon
+r_return
+id|CDS_XA_2_1
+suffix:semicolon
+multiline_comment|/* untested */
+r_case
+l_int|2
+suffix:colon
+r_return
+id|CDS_XA_2_2
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* locks or unlocks door lock==1: lock; return 0 upon success */
 DECL|function|cm206_lock_door
 r_int
@@ -4553,7 +5122,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Although a session start should be in LBA format, we return it in &n;   MSF format because it is slightly easier, and the new Uniform ioctl&n;   will take care of the necessary conversion. */
+multiline_comment|/* Although a session start should be in LBA format, we return it in &n;   MSF format because it is slightly easier, and the new generic ioctl&n;   will take care of the necessary conversion. */
 DECL|function|cm206_get_last_session
 r_int
 id|cm206_get_last_session
@@ -4994,6 +5563,12 @@ op_or
 id|CDC_MCN
 op_or
 id|CDC_PLAY_AUDIO
+op_or
+id|CDC_SELECT_SPEED
+op_or
+id|CDC_IOCTLS
+op_or
+id|CDC_DRIVE_STATUS
 comma
 multiline_comment|/* capability */
 l_int|1
@@ -5413,7 +5988,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-id|VERSION
+l_string|&quot;cm206 cdrom driver &quot;
+id|REVISION
 )paren
 suffix:semicolon
 id|cm206_base
@@ -5554,7 +6130,7 @@ multiline_comment|/* Now, the problem here is that reset_cm260 can generate an&n
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|1000
 )paren
 suffix:semicolon
 id|outw
@@ -5596,6 +6172,7 @@ id|c_drive_configuration
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot; drive not there&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5729,6 +6306,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Cannot register for major %d!&bslash;n&quot;
 comma
 id|MAJOR_NR
@@ -5761,6 +6339,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Cannot register for cdrom %d!&bslash;n&quot;
 comma
 id|MAJOR_NR
@@ -5785,6 +6364,13 @@ dot
 id|request_fn
 op_assign
 id|DEVICE_REQUEST
+suffix:semicolon
+id|blksize_size
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+id|cm206_blocksizes
 suffix:semicolon
 id|read_ahead
 (braket
@@ -6157,5 +6743,5 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* MODULE */
-multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -DMODULE -D__KERNEL__ -I. -I/usr/src/linux/include/linux -Wall -Wstrict-prototypes -O2 -m486 -c cm206.c -o cm206.o&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -D__SMP__ -pipe -fno-strength-reduce -m486 -DCPU=486 -D__SMP__ -DMODULE -DMODVERSIONS -include /usr/src/linux/include/linux/modversions.h  -c -o cm206.o cm206.c&quot;&n; * End:&n; */
 eof

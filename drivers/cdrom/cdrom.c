@@ -14,9 +14,9 @@ macro_line|#include &lt;asm/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;$Id: cdrom.c,v 2.0 1997/11/20 01:58:03 erik Exp $&quot;
+mdefine_line|#define VERSION &quot;$Id: cdrom.c,v 2.1 1997/12/28 15:11:47 david Exp $&quot;
 DECL|macro|REVISION
-mdefine_line|#define REVISION &quot;revision 2.0&quot;
+mdefine_line|#define REVISION &quot;$Revision: 2.1 $&quot;
 DECL|macro|FM_WRITE
 mdefine_line|#define FM_WRITE&t;0x2                 /* file mode write bit */
 multiline_comment|/* When VERBOSE_STATUS_INFO is not defined, the debugging printks don&squot;t &n;   get compiled in */
@@ -449,9 +449,8 @@ op_or
 id|CDO_USE_FFLAGS
 op_or
 id|CDO_LOCK
-op_or
-id|CDO_CHECK_TYPE
 suffix:semicolon
+multiline_comment|/* default compatibility mode */
 id|cdi-&gt;mc_flags
 op_assign
 l_int|0
@@ -1026,8 +1025,7 @@ r_goto
 id|clean_up_and_return
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* this breaks CD-Players which don&squot;t use O_NONBLOCK, workman&n;&t; * for example, probably others too */
+multiline_comment|/* CD-Players which don&squot;t use O_NONBLOCK, workman&n;&t; * for example, need bit CDO_CHECK_TYPE cleared! */
 r_if
 c_cond
 (paren
@@ -1057,7 +1055,6 @@ r_goto
 id|clean_up_and_return
 suffix:semicolon
 )brace
-macro_line|#endif
 id|cdinfo
 c_func
 (paren
@@ -2883,7 +2880,7 @@ id|arg
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Ok, this is where problems start.  The current interface for the&n;&t;   CDROM_DISC_STATUS ioctl is flawed.  It makes the false assumption&n;&t;   that CDs are all CDS_DATA_1 or all CDS_AUDIO, etc.  Unfortunatly,&n;&t;   while this is often the case, it is also very common for CDs to&n;&t;   have some tracks with data, and some tracks with audio.  Just &n;&t;   because I feel like it, I declare the following to be the best&n;&t;   way to cope.  If the CD has ANY data tracks on it, it will be&n;&t;   returned as a data CD.  If it has any XA tracks, I will return&n;&t;   it as that.  Now I could simplify this interface by combining these &n;&t;   returns with the above, but this more clearly demonstrates&n;&t;   the problem with the current interface.  Too bad this wasn&squot;t &n;&t;   designed to use bitmasks...         -Erik &n;&t;*/
+multiline_comment|/* Ok, this is where problems start.  The current interface for the&n;&t;   CDROM_DISC_STATUS ioctl is flawed.  It makes the false assumption&n;&t;   that CDs are all CDS_DATA_1 or all CDS_AUDIO, etc.  Unfortunatly,&n;&t;   while this is often the case, it is also very common for CDs to&n;&t;   have some tracks with data, and some tracks with audio.  Just &n;&t;   because I feel like it, I declare the following to be the best&n;&t;   way to cope.  If the CD has ANY data tracks on it, it will be&n;&t;   returned as a data CD.  If it has any XA tracks, I will return&n;&t;   it as that.  Now I could simplify this interface by combining these &n;&t;   returns with the above, but this more clearly demonstrates&n;&t;   the problem with the current interface.  Too bad this wasn&squot;t &n;&t;   designed to use bitmasks...         -Erik &n;&n;&t;   Well, now we have the option CDS_MIXED: a mixed-type CD. &n;&t;   User level programmers might feel the ioctl is not very useful.&n;&t;   &t;&t;&t;&t;&t;---david&n;&t;*/
 r_case
 id|CDROM_DISC_STATUS
 suffix:colon
@@ -2923,7 +2920,11 @@ c_cond
 id|tracks.audio
 OG
 l_int|0
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|tracks.data
 op_eq
 l_int|0
@@ -2939,6 +2940,11 @@ l_int|0
 r_return
 id|CDS_AUDIO
 suffix:semicolon
+r_else
+r_return
+id|CDS_MIXED
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

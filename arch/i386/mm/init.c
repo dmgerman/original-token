@@ -536,6 +536,11 @@ l_int|0x400
 )paren
 )paren
 multiline_comment|/* Scan the top 1K of base RAM */
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|smp_scan_config
 c_func
 (paren
@@ -543,10 +548,42 @@ l_int|0xF0000
 comma
 l_int|0x10000
 )paren
-suffix:semicolon
+)paren
 multiline_comment|/* Scan the 64K of bios */
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;If it is an SMP machine we should know now, unless the configuration&n;&t;&t;&t;&t; *&t;is in an EISA/MCA bus machine with an extended bios data area. &n;&t;&t;&t;&t; */
+id|address
+op_assign
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|phys_to_virt
+c_func
+(paren
+l_int|0x40E
+)paren
+suffix:semicolon
+multiline_comment|/* EBDA */
+id|address
+op_lshift_assign
+l_int|4
+suffix:semicolon
+multiline_comment|/* Real mode segments to physical */
+id|smp_scan_config
+c_func
+(paren
+id|address
+comma
+l_int|0x1000
+)paren
+suffix:semicolon
+multiline_comment|/* Scan the EBDA */
 )brace
-multiline_comment|/*&n;&t; *&t;If it is an SMP machine we should know now, unless the configuration&n;&t; *&t;is in an EISA/MCA bus machine with an extended bios data area. I don&squot;t&n;&t; *&t;have such a machine so someone else can fill in the check of the EBDA&n;&t; *&t;here.&n;&t; */
+)brace
+)brace
 multiline_comment|/*&t;smp_alloc_memory(8192); */
 macro_line|#endif
 id|start_mem

@@ -6402,6 +6402,11 @@ suffix:colon
 r_case
 id|TIOCCBRK
 suffix:colon
+r_if
+c_cond
+(paren
+id|tty-&gt;driver.ioctl
+)paren
 r_return
 id|tty-&gt;driver
 dot
@@ -6417,6 +6422,10 @@ comma
 id|arg
 )paren
 suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 multiline_comment|/* These two ioctl&squot;s always return success; even if */
 multiline_comment|/* the driver doesn&squot;t support them. */
 r_case
@@ -6425,6 +6434,15 @@ suffix:colon
 r_case
 id|TCSBRKP
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tty-&gt;driver.ioctl
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|retval
 op_assign
 id|tty-&gt;driver

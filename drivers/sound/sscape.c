@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq SoundScape&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -2181,9 +2182,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sscape_coproc_ioctl
 r_static
 r_int
-DECL|function|sscape_coproc_ioctl
 id|sscape_coproc_ioctl
 c_func
 (paren
@@ -2202,6 +2203,13 @@ r_int
 id|local
 )paren
 (brace
+id|copr_buffer
+op_star
+id|buf
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2220,19 +2228,9 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_COPR_LOAD
 suffix:colon
-(brace
-id|copr_buffer
-op_star
-id|buf
-suffix:semicolon
-r_int
-id|err
-suffix:semicolon
 id|buf
 op_assign
 (paren
@@ -2259,36 +2257,34 @@ r_return
 op_minus
 id|ENOSPC
 suffix:semicolon
-id|memcpy
+r_if
+c_cond
+(paren
+id|__copy_from_user
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 id|buf
 comma
-(paren
-op_amp
-(paren
-(paren
-r_char
-op_star
-)paren
 id|arg
-)paren
-(braket
-l_int|0
-)braket
-)paren
 comma
 r_sizeof
 (paren
-op_star
+id|copr_buffer
+)paren
+)paren
+)paren
+(brace
+id|vfree
+c_func
+(paren
 id|buf
 )paren
-)paren
 suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 id|err
 op_assign
 id|download_boot_block
@@ -2307,9 +2303,6 @@ id|buf
 suffix:semicolon
 r_return
 id|err
-suffix:semicolon
-)brace
-r_break
 suffix:semicolon
 r_default
 suffix:colon

@@ -1275,12 +1275,9 @@ id|temp_miscdev
 )paren
 suffix:semicolon
 macro_line|#endif&t;
-id|notifier_chain_unregister
+id|unregister_reboot_notifier
 c_func
 (paren
-op_amp
-id|reboot_notifier_list
-comma
 op_amp
 id|wdt_notifier
 )paren
@@ -1382,12 +1379,9 @@ comma
 l_string|&quot;wdt501p&quot;
 )paren
 suffix:semicolon
-id|notifier_chain_register
+id|register_reboot_notifier
 c_func
 (paren
-op_amp
-id|reboot_notifier_list
-comma
 op_amp
 id|wdt_notifier
 )paren

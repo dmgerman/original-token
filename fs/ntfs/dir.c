@@ -3922,6 +3922,12 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|ntfs_free
+c_func
+(paren
+id|buf
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

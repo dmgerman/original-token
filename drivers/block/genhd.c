@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Code extracted from&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  Support for DiskManager v6.0x added by Mark Lord,&n; *  with information provided by OnTrack.  This now works for linux fdisk&n; *  and LILO, as well as loadlin and bootln.  Note that disks other than&n; *  /dev/hda *must* have a &quot;DOS&quot; type 0x51 partition in the first slot (hda1).&n; *&n; *  More flexible handling of extended partitions - aeb, 950831&n; *&n; *  Check partition table on IDE disks for common CHS translations&n; */
+multiline_comment|/*&n; *  Code extracted from&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991-1998  Linus Torvalds&n; *&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  Support for DiskManager v6.0x added by Mark Lord,&n; *  with information provided by OnTrack.  This now works for linux fdisk&n; *  and LILO, as well as loadlin and bootln.  Note that disks other than&n; *  /dev/hda *must* have a &quot;DOS&quot; type 0x51 partition in the first slot (hda1).&n; *&n; *  More flexible handling of extended partitions - aeb, 950831&n; *&n; *  Check partition table on IDE disks for common CHS translations&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
@@ -296,6 +296,14 @@ id|p
 )paren
 op_eq
 id|DOS_EXTENDED_PARTITION
+op_logical_or
+id|SYS_IND
+c_func
+(paren
+id|p
+)paren
+op_eq
+id|WIN98_EXTENDED_PARTITION
 op_logical_or
 id|SYS_IND
 c_func

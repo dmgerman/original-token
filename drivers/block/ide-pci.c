@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-pci.c&t;Version 1.00  December 8, 1997&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
-multiline_comment|/*&n; * This modules provides support for automatic detection and&n; * configuration of all PCI IDE interfaces present in a system.  &n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-pci.c&t;Version 1.02  December 29, 1997&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; *  This module provides support for automatic detection and&n; *  configuration of all PCI IDE interfaces present in a system.  &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -45,6 +45,8 @@ DECL|macro|DEVID_NS87415
 mdefine_line|#define DEVID_NS87415&t;((ide_pci_devid_t){PCI_VENDOR_ID_NS,      PCI_DEVICE_ID_NS_87415})
 DECL|macro|DEVID_HT6565
 mdefine_line|#define DEVID_HT6565&t;((ide_pci_devid_t){PCI_VENDOR_ID_HOLTEK,  PCI_DEVICE_ID_HOLTEK_6565})
+DECL|macro|DEVID_AEC6210
+mdefine_line|#define DEVID_AEC6210&t;((ide_pci_devid_t){0x1191,                0x0005})
 DECL|macro|IDE_IGNORE
 mdefine_line|#define IDE_IGNORE&t;((void *)-1)
 macro_line|#ifdef CONFIG_BLK_DEV_TRM290
@@ -578,6 +580,32 @@ comma
 l_string|&quot;NS87415&quot;
 comma
 id|INIT_NS87415
+comma
+(brace
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+)brace
+)brace
+comma
+(brace
+id|DEVID_AEC6210
+comma
+l_string|&quot;AEC6210&quot;
+comma
+l_int|NULL
 comma
 (brace
 (brace
@@ -1226,6 +1254,10 @@ r_int
 id|pcicmd
 op_assign
 l_int|0
+comma
+id|tried_config
+op_assign
+l_int|0
 suffix:semicolon
 id|byte
 id|tmp
@@ -1249,6 +1281,8 @@ id|mate
 op_assign
 l_int|NULL
 suffix:semicolon
+id|check_if_enabled
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1319,6 +1353,9 @@ multiline_comment|/*&n;&t;&t; * PnP BIOS was *supposed* to have set this device 
 r_if
 c_cond
 (paren
+id|tried_config
+op_increment
+op_logical_or
 id|ide_setup_pci_baseregs
 c_func
 (paren
@@ -1342,26 +1379,6 @@ id|pcicmd
 op_or
 l_int|1
 )paren
-op_logical_or
-id|pcibios_read_config_word
-c_func
-(paren
-id|bus
-comma
-id|fn
-comma
-l_int|0x04
-comma
-op_amp
-id|pcicmd
-)paren
-op_logical_or
-op_logical_neg
-(paren
-id|pcicmd
-op_amp
-l_int|1
-)paren
 )paren
 (brace
 id|printk
@@ -1380,6 +1397,15 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* default DMA off if we had to configure it here */
+r_goto
+id|check_if_enabled
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tried_config
+)paren
 id|printk
 c_func
 (paren
@@ -1388,7 +1414,61 @@ comma
 id|d-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Can we trust the reported IRQ?&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|ccode
+op_rshift
+l_int|16
+)paren
+op_ne
+id|PCI_CLASS_STORAGE_IDE
+op_logical_or
+(paren
+id|progif
+op_amp
+l_int|5
+)paren
+op_ne
+l_int|5
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: not 100%% native mode: will probe irqs later&bslash;n&quot;
+comma
+id|d-&gt;name
+)paren
+suffix:semicolon
+id|pciirq
+op_assign
+l_int|0
+suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|tried_config
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: will probe irqs later&bslash;n&quot;
+comma
+id|d-&gt;name
+)paren
+suffix:semicolon
+id|pciirq
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -1400,23 +1480,10 @@ op_ge
 id|NR_IRQS
 )paren
 (brace
-multiline_comment|/* is pciirq invalid? */
-r_if
-c_cond
-(paren
-id|pciirq
-op_logical_or
-(paren
-id|progif
-op_amp
-l_int|0x5
-)paren
-)paren
-multiline_comment|/* don&squot;t complain if using &quot;legacy&quot; mode */
 id|printk
 c_func
 (paren
-l_string|&quot;%s: BIOS returned %d for IRQ (ignored)&bslash;n&quot;
+l_string|&quot;%s: bad irq from BIOS (%d): will probe later&bslash;n&quot;
 comma
 id|d-&gt;name
 comma
@@ -1427,7 +1494,19 @@ id|pciirq
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* probe for it instead */
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: 100%% native mode on irq %d&bslash;n&quot;
+comma
+id|d-&gt;name
+comma
+id|pciirq
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Set up the IDE ports&n;&t; */
 r_for
@@ -1651,6 +1730,12 @@ id|hwif-&gt;channel
 op_assign
 id|port
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hwif-&gt;irq
+)paren
 id|hwif-&gt;irq
 op_assign
 id|pciirq
@@ -1841,7 +1926,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s Bus-Master DMA disabled (BIOS), pcicmd=0x%04x, ccode=0x%04x, dma_base=0x%04x&bslash;n&quot;
+l_string|&quot;%s: %s Bus-Master DMA disabled (BIOS), pcicmd=0x%04x, ccode=0x%04x, dma_base=0x%04lx&bslash;n&quot;
 comma
 id|hwif-&gt;name
 comma
@@ -2097,7 +2182,7 @@ id|IDE_PCI_DEVID_NULL
 id|printk
 c_func
 (paren
-l_string|&quot;%s: unknown IDE device on PCI bus %d function %d, VID=%04x, DID=%04x&bslash;n&quot;
+l_string|&quot;%s: unknown IDE controller on PCI bus %d function %d, VID=%04x, DID=%04x&bslash;n&quot;
 comma
 id|d-&gt;name
 comma
@@ -2114,7 +2199,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;%s: PCI bus %d function %d&bslash;n&quot;
+l_string|&quot;%s: IDE controller on PCI bus %d function %d&bslash;n&quot;
 comma
 id|d-&gt;name
 comma

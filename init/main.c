@@ -463,10 +463,42 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_EZ
+macro_line|#ifdef CONFIG_PARIDE_PD
 r_extern
 r_void
-id|ez_setup
+id|pd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PF
+r_extern
+r_void
+id|pf_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PCD
+r_extern
+r_void
+id|pcd_setup
 c_func
 (paren
 r_char
@@ -1013,22 +1045,6 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_GSCD
-macro_line|#ifdef CONFIG_BPCD
-r_extern
-r_void
-id|bpcd_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_BPCD
 macro_line|#ifdef CONFIG_CM206
 r_extern
 r_void
@@ -2125,20 +2141,6 @@ comma
 l_int|0x2400
 )brace
 comma
-(brace
-l_string|&quot;eza&quot;
-comma
-l_int|0x2800
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_BPCD
-(brace
-l_string|&quot;bpcd&quot;
-comma
-l_int|0x2900
-)brace
-comma
 macro_line|#endif
 macro_line|#if CONFIG_APBLOCK
 (brace
@@ -2748,14 +2750,6 @@ id|xd_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_EZ
-(brace
-l_string|&quot;ez=&quot;
-comma
-id|ez_setup
-)brace
-comma
-macro_line|#endif
 macro_line|#if defined(CONFIG_BLK_DEV_FD) || defined(CONFIG_AMIGA_FLOPPY) || defined(CONFIG_ATARI_FLOPPY)
 (brace
 l_string|&quot;floppy=&quot;
@@ -2834,14 +2828,6 @@ id|gscd_setup
 )brace
 comma
 macro_line|#endif CONFIG_GSCD
-macro_line|#ifdef CONFIG_BPCD
-(brace
-l_string|&quot;bpcd=&quot;
-comma
-id|bpcd_setup
-)brace
-comma
-macro_line|#endif CONFIG_BPCD
 macro_line|#ifdef CONFIG_CM206
 (brace
 l_string|&quot;cm206=&quot;
@@ -3136,6 +3122,30 @@ macro_line|#ifdef CONFIG_IP_PNP
 l_string|&quot;ip=&quot;
 comma
 id|ip_auto_config_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PD
+(brace
+l_string|&quot;pd.&quot;
+comma
+id|pd_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PCD
+(brace
+l_string|&quot;pcd.&quot;
+comma
+id|pcd_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PF
+(brace
+l_string|&quot;pf.&quot;
+comma
+id|pf_setup
 )brace
 comma
 macro_line|#endif

@@ -1281,7 +1281,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;baycom_par: parport at 0x%x has no irq&bslash;n&quot;
+l_string|&quot;baycom_par: parport at 0x%lx has no irq&bslash;n&quot;
 comma
 id|pp-&gt;base
 )paren
@@ -1340,7 +1340,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;baycom_par: cannot register parport at 0x%x&bslash;n&quot;
+l_string|&quot;baycom_par: cannot register parport at 0x%lx&bslash;n&quot;
 comma
 id|pp-&gt;base
 )paren
@@ -1364,7 +1364,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;baycom_par: parport at 0x%x busy&bslash;n&quot;
+l_string|&quot;baycom_par: parport at 0x%lx busy&bslash;n&quot;
 comma
 id|pp-&gt;base
 )paren

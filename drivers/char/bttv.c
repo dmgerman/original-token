@@ -5867,10 +5867,10 @@ c_cond
 id|copy_to_user
 c_func
 (paren
+id|arg
+comma
 op_amp
 id|v
-comma
-id|arg
 comma
 r_sizeof
 (paren

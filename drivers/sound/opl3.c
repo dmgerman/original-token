@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; */
@@ -429,6 +430,10 @@ id|caddr_t
 id|arg
 )paren
 (brace
+r_struct
+id|sbi_instrument
+id|ins
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -438,11 +443,6 @@ id|cmd
 r_case
 id|SNDCTL_FM_LOAD_INSTR
 suffix:colon
-(brace
-r_struct
-id|sbi_instrument
-id|ins
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -450,35 +450,26 @@ id|KERN_WARNING
 l_string|&quot;Warning: Obsolete ioctl(SNDCTL_FM_LOAD_INSTR) used. Fix the program.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|memcpy
+r_if
+c_cond
+(paren
+id|__copy_from_user
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 op_amp
 id|ins
 comma
-(paren
-op_amp
-(paren
-(paren
-r_char
-op_star
-)paren
 id|arg
-)paren
-(braket
-l_int|0
-)braket
-)paren
 comma
 r_sizeof
 (paren
 id|ins
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -515,7 +506,6 @@ op_amp
 id|ins
 )paren
 suffix:semicolon
-)brace
 r_case
 id|SNDCTL_SYNTH_INFO
 suffix:colon
@@ -532,27 +522,12 @@ l_int|6
 suffix:colon
 id|devc-&gt;nr_voice
 suffix:semicolon
-id|memcpy
+r_return
+id|__copy_to_user
 c_func
 (paren
-(paren
-op_amp
-(paren
-(paren
-r_char
-op_star
-)paren
 id|arg
-)paren
-(braket
-l_int|0
-)braket
-)paren
 comma
-(paren
-r_char
-op_star
-)paren
 op_amp
 id|devc-&gt;fm_info
 comma
@@ -561,9 +536,6 @@ r_sizeof
 id|devc-&gt;fm_info
 )paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 r_case
 id|SNDCTL_SYNTH_MEMAVL

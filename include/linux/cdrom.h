@@ -534,6 +534,8 @@ DECL|macro|CDS_XA_2_1
 mdefine_line|#define CDS_XA_2_1&t;&t;103
 DECL|macro|CDS_XA_2_2
 mdefine_line|#define CDS_XA_2_2&t;&t;104
+DECL|macro|CDS_MIXED
+mdefine_line|#define CDS_MIXED&t;&t;105
 multiline_comment|/* User-configurable behavior options for the uniform CD-ROM driver */
 DECL|macro|CDO_AUTO_CLOSE
 mdefine_line|#define CDO_AUTO_CLOSE&t;&t;0x1     /* close tray on first open() */

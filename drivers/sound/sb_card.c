@@ -53,7 +53,7 @@ l_int|16
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;nsb_dsp.c: I/O port %x already in use&bslash;n&bslash;n&quot;
+l_string|&quot;&bslash;n&bslash;nsb_card.c: I/O port %x is already in use&bslash;n&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
 )paren
@@ -273,8 +273,8 @@ id|smw_free
 op_assign
 l_int|NULL
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -284,6 +284,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Soundblaster audio driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -325,7 +326,8 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;I/O, IRQ, DMA and type are mandatory&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;I/O, IRQ, and DMA are mandatory&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

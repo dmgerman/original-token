@@ -13,11 +13,13 @@ macro_line|#if defined(__sparc__) || defined(CONFIG_SMD_DISKLABEL)
 DECL|macro|CONFIG_SUN_PARTITION
 mdefine_line|#define CONFIG_SUN_PARTITION 1
 macro_line|#endif
-multiline_comment|/* These two have identical behaviour; use the second one if DOS fdisk gets&n;   confused about extended/logical partitions starting past cylinder 1023. */
+multiline_comment|/* These three have identical behaviour; use the second one if DOS fdisk gets&n;   confused about extended/logical partitions starting past cylinder 1023. */
 DECL|macro|DOS_EXTENDED_PARTITION
 mdefine_line|#define DOS_EXTENDED_PARTITION 5
 DECL|macro|LINUX_EXTENDED_PARTITION
 mdefine_line|#define LINUX_EXTENDED_PARTITION 0x85
+DECL|macro|WIN98_EXTENDED_PARTITION
+mdefine_line|#define WIN98_EXTENDED_PARTITION 0x0f
 DECL|macro|DM6_PARTITION
 mdefine_line|#define DM6_PARTITION&t;&t;0x54&t;/* has DDO: use xlated geom &amp; offset */
 DECL|macro|EZD_PARTITION

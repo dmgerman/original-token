@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Linux Socket Filter - Kernel level socket filtering&n; *&n; * Author:&n; *     Jay Schulist &lt;Jay.Schulist@spacs.k12.wi.us&gt;&n; *&n; * Based on the design of:&n; *     - The Berkely Packet Filter&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * Linux Socket Filter - Kernel level socket filtering&n; *&n; * Author:&n; *     Jay Schulist &lt;Jay.Schulist@spacs.k12.wi.us&gt;&n; *&n; * Based on the design of:&n; *     - The Berkeley Packet Filter&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_FILTER)
 macro_line|#include &lt;linux/module.h&gt;

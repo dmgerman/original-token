@@ -1022,6 +1022,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

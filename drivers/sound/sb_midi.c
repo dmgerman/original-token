@@ -369,9 +369,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* why -EPERM and not -EINVAL?? */
+DECL|function|sb_midi_ioctl
 r_static
 r_int
-DECL|function|sb_midi_ioctl
 id|sb_midi_ioctl
 c_func
 (paren

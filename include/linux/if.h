@@ -235,6 +235,8 @@ DECL|macro|ifr_ifindex
 mdefine_line|#define ifr_ifindex&t;ifr_ifru.ifru_ivalue&t;/* interface index&t;*/
 DECL|macro|ifr_bandwidth
 mdefine_line|#define ifr_bandwidth&t;ifr_ifru.ifru_ivalue    /* link bandwidth&t;*/
+DECL|macro|ifr_qlen
+mdefine_line|#define ifr_qlen&t;ifr_ifru.ifru_ivalue&t;/* Queue length &t;*/
 multiline_comment|/*&n; * Structure used in SIOCGIFCONF request.&n; * Used to retrieve interface configuration&n; * for machine (useful for programs which&n; * must know all networks accessible).&n; */
 DECL|struct|ifconf
 r_struct

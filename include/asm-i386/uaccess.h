@@ -11,24 +11,17 @@ multiline_comment|/*&n; * The fs value determines whether argument validity chec
 DECL|macro|MAKE_MM_SEG
 mdefine_line|#define MAKE_MM_SEG(s)&t;((mm_segment_t) { (s) })
 DECL|macro|KERNEL_DS
-mdefine_line|#define KERNEL_DS&t;MAKE_MM_SEG(0)
+mdefine_line|#define KERNEL_DS&t;MAKE_MM_SEG(0xFFFFFFFF)
 DECL|macro|USER_DS
-mdefine_line|#define USER_DS&t;&t;MAKE_MM_SEG(3)
+mdefine_line|#define USER_DS&t;&t;MAKE_MM_SEG(0xC0000000)
 DECL|macro|get_ds
 mdefine_line|#define get_ds()&t;(KERNEL_DS)
 DECL|macro|get_fs
-mdefine_line|#define get_fs()&t;(current-&gt;tss.segment)
+mdefine_line|#define get_fs()&t;(current-&gt;addr_limit)
 DECL|macro|set_fs
-mdefine_line|#define set_fs(x)&t;(current-&gt;tss.segment = (x))
+mdefine_line|#define set_fs(x)&t;(current-&gt;addr_limit = (x))
 DECL|macro|segment_eq
 mdefine_line|#define segment_eq(a,b)&t;((a).seg == (b).seg)
-multiline_comment|/*&n; * Address Ok:&n; *&n; *&t;&t;&t;&t;     segment&n; *&t;&t;&t;00 (kernel)&t;&t;11 (user)&n; *&n; * high&t;&t;00&t;1&t;&t;&t;1&n; * two &t;&t;01&t;1&t;&t;&t;1&n; * bits of&t;10&t;1&t;&t;&t;1&n; * address&t;11&t;1&t;&t;&t;0&n; */
-DECL|macro|__addr_ok
-mdefine_line|#define __addr_ok(x) &bslash;&n;&t;((((unsigned long)(x)&gt;&gt;30)&amp;get_fs().seg) != 3)
-DECL|macro|__user_ok
-mdefine_line|#define __user_ok(addr,size) &bslash;&n;&t;((size &lt;= 0xC0000000UL) &amp;&amp; (addr &lt;= 0xC0000000UL - size))
-DECL|macro|__kernel_ok
-mdefine_line|#define __kernel_ok &bslash;&n;&t;(!get_fs().seg)
 r_extern
 r_int
 id|__verify_write
@@ -42,15 +35,18 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|macro|__addr_ok
+mdefine_line|#define __addr_ok(addr) ((unsigned long)(addr) &lt; (current-&gt;addr_limit.seg))
+multiline_comment|/*&n; * Uhhuh, this needs 33-bit arithmetic. We have a carry..&n; */
+DECL|macro|__range_ok
+mdefine_line|#define __range_ok(addr,size) ({ &bslash;&n;&t;unsigned long flag,sum; &bslash;&n;&t;asm(&quot;addl %3,%1 ; sbbl %0,%0; cmpl %1,%4; sbbl $0,%0&quot; &bslash;&n;&t;&t;:&quot;=&amp;r&quot; (flag), &quot;=r&quot; (sum) &bslash;&n;&t;&t;:&quot;1&quot; (addr),&quot;g&quot; (size),&quot;g&quot; (current-&gt;addr_limit.seg)); &bslash;&n;&t;flag; })
 macro_line|#if CPU &gt; 386
-DECL|macro|__access_ok
-mdefine_line|#define __access_ok(type,addr,size) &bslash;&n;&t;(__kernel_ok || __user_ok(addr,size))
-macro_line|#else
-DECL|macro|__access_ok
-mdefine_line|#define __access_ok(type,addr,size) &bslash;&n;&t;(__kernel_ok || (__user_ok(addr,size) &amp;&amp; &bslash;&n;&t;&t;&t; ((type) == VERIFY_READ || boot_cpu_data.wp_works_ok || &bslash;&n;&t;&t;&t;  __verify_write((void *)(addr),(size)))))
-macro_line|#endif /* CPU */
 DECL|macro|access_ok
-mdefine_line|#define access_ok(type,addr,size) &bslash;&n;&t;__access_ok((type),(unsigned long)(addr),(size))
+mdefine_line|#define access_ok(type,addr,size) (__range_ok(addr,size) == 0)
+macro_line|#else
+DECL|macro|access_ok
+mdefine_line|#define access_ok(type,addr,size) ( (__range_ok(addr,size) == 0) &amp;&amp; &bslash;&n;&t;&t;&t; ((type) == VERIFY_READ || boot_cpu_data.wp_works_ok || &bslash;&n;&t;&t;&t;  __verify_write((void *)(addr),(size))))
+macro_line|#endif /* CPU */
 DECL|function|verify_area
 r_extern
 r_inline

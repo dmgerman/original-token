@@ -21,6 +21,13 @@ dot
 dot
 )paren
 suffix:semicolon
+macro_line|#ifdef NTFS_IN_LINUX_KERNEL
+macro_line|#include &lt;linux/slab.h&gt;
+DECL|macro|ntfs_malloc
+mdefine_line|#define ntfs_malloc(size)  kmalloc(size,GFP_KERNEL)
+DECL|macro|ntfs_free
+mdefine_line|#define ntfs_free(ptr)     kfree(ptr)
+macro_line|#else
 r_void
 op_star
 id|ntfs_malloc
@@ -39,6 +46,7 @@ op_star
 id|block
 )paren
 suffix:semicolon
+macro_line|#endif
 r_void
 id|ntfs_bzero
 c_func

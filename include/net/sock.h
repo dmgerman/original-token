@@ -2909,7 +2909,7 @@ id|sk-&gt;filter
 )paren
 r_return
 op_minus
-l_int|1
+id|EPERM
 suffix:semicolon
 multiline_comment|/* Toss packet */
 )brace

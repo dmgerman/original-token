@@ -1,9 +1,7 @@
-multiline_comment|/*&n; * The Linux soundcard driver for 1200 baud and 9600 baud packet radio&n; * (C) 1996 by Thomas Sailer, HB9JNX/AE4WA&n; */
+multiline_comment|/*&n; * The Linux soundcard driver for 1200 baud and 9600 baud packet radio&n; * (C) 1996-1998 by Thomas Sailer, HB9JNX/AE4WA&n; */
 macro_line|#ifndef _SOUNDMODEM_H
 DECL|macro|_SOUNDMODEM_H
 mdefine_line|#define _SOUNDMODEM_H
-macro_line|#include &lt;linux/sockios.h&gt;
-macro_line|#include &lt;linux/if_ether.h&gt;
 multiline_comment|/* -------------------------------------------------------------------- */
 multiline_comment|/*&n; * structs for the IOCTL commands&n; */
 DECL|struct|sm_debug_data

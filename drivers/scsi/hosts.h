@@ -664,6 +664,17 @@ op_star
 id|i
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|scsi_mark_host_reset
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|Host
+)paren
+suffix:semicolon
 DECL|macro|BLANK_HOST
 mdefine_line|#define BLANK_HOST {&quot;&quot;, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 DECL|struct|Scsi_Device_Template

@@ -1,5 +1,6 @@
 multiline_comment|/* &n; * sound/softoss.c&n; *&n; * Software based MIDI synthsesizer driver.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * When POLLED_MODE is defined, the resampling loop is run using a timer&n; * callback routine. Normally the resampling loop is executed inside&n; * audio buffer interrupt handler which doesn&squot;t work with single mode DMA.&n; */
@@ -2952,9 +2953,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|function|start_engine
 r_static
 r_void
-DECL|function|start_engine
 id|start_engine
 c_func
 (paren
@@ -2967,6 +2968,14 @@ r_struct
 id|dma_buffparms
 op_star
 id|dmap
+suffix:semicolon
+r_int
+id|trig
+comma
+id|n
+suffix:semicolon
+id|mm_segment_t
+id|fs
 suffix:semicolon
 r_if
 c_cond
@@ -3032,16 +3041,27 @@ op_eq
 id|ES_STOPPED
 )paren
 (brace
-r_int
-id|trig
-comma
 id|n
+op_assign
+id|trig
 op_assign
 l_int|0
 suffix:semicolon
-id|trig
+id|fs
 op_assign
-l_int|0
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|get_ds
+c_func
+(paren
+)paren
+)paren
 suffix:semicolon
 id|dma_ioctl
 c_func
@@ -3058,8 +3078,6 @@ id|trig
 )paren
 suffix:semicolon
 macro_line|#ifdef POLLED_MODE
-suffix:semicolon
-(brace
 id|poll_timer.expires
 op_assign
 (paren
@@ -3074,8 +3092,6 @@ c_func
 op_amp
 id|poll_timer
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 multiline_comment|/* Start polling */
 macro_line|#else
@@ -3145,14 +3161,19 @@ id|trig
 OL
 l_int|0
 )paren
-(brace
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;SoftOSS: Trigger failed&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
+id|set_fs
+c_func
+(paren
+id|fs
+)paren
+suffix:semicolon
 )brace
 )brace
 r_static
@@ -3304,9 +3325,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|softsyn_ioctl
 r_static
 r_int
-DECL|function|softsyn_ioctl
 id|softsyn_ioctl
 c_func
 (paren
@@ -3334,27 +3355,12 @@ id|softsyn_info.nr_voices
 op_assign
 id|devc-&gt;maxvoice
 suffix:semicolon
-id|memcpy
+r_return
+id|__copy_to_user
 c_func
 (paren
-(paren
-op_amp
-(paren
-(paren
-r_char
-op_star
-)paren
 id|arg
-)paren
-(braket
-l_int|0
-)braket
-)paren
 comma
-(paren
-r_char
-op_star
-)paren
 op_amp
 id|softsyn_info
 comma
@@ -3363,11 +3369,6 @@ r_sizeof
 id|softsyn_info
 )paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SNDCTL_SEQ_RESETSAMPLES
@@ -3387,8 +3388,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_SYNTH_MEMAVL
 suffix:colon
@@ -3396,8 +3395,6 @@ r_return
 id|devc-&gt;ram_size
 op_minus
 id|devc-&gt;ram_used
-suffix:semicolon
-r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -4323,9 +4320,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|softsyn_open
 r_static
 r_int
-DECL|function|softsyn_open
 id|softsyn_open
 c_func
 (paren
@@ -4349,6 +4346,9 @@ op_assign
 l_int|0x7fff0007
 suffix:semicolon
 multiline_comment|/* fragment size of 128 bytes */
+id|mm_segment_t
+id|fs
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4532,6 +4532,22 @@ id|devc-&gt;channels
 )paren
 )paren
 suffix:semicolon
+id|fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|get_ds
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
 id|dma_ioctl
 c_func
 (paren
@@ -4558,6 +4574,12 @@ id|caddr_t
 )paren
 op_amp
 id|devc-&gt;fragsize
+)paren
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|fs
 )paren
 suffix:semicolon
 r_if
@@ -4650,9 +4672,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|softsyn_close
 r_static
 r_void
-DECL|function|softsyn_close
 id|softsyn_close
 c_func
 (paren
@@ -4660,6 +4682,9 @@ r_int
 id|synthdev
 )paren
 (brace
+id|mm_segment_t
+id|fs
+suffix:semicolon
 id|devc-&gt;engine_state
 op_assign
 id|ES_STOPPED
@@ -4672,8 +4697,23 @@ op_amp
 id|poll_timer
 )paren
 suffix:semicolon
-suffix:semicolon
 macro_line|#endif
+id|fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|get_ds
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
 id|dma_ioctl
 c_func
 (paren
@@ -4682,6 +4722,12 @@ comma
 id|SNDCTL_DSP_RESET
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|fs
 )paren
 suffix:semicolon
 r_if

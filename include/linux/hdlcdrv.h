@@ -1,14 +1,7 @@
-multiline_comment|/*&n; * hdlcdrv.h  -- HDLC packet radio network driver.&n; * The Linux soundcard driver for 1200 baud and 9600 baud packet radio&n; * (C) 1996 by Thomas Sailer, HB9JNX/AE4WA&n; */
+multiline_comment|/*&n; * hdlcdrv.h  -- HDLC packet radio network driver.&n; * The Linux soundcard driver for 1200 baud and 9600 baud packet radio&n; * (C) 1996-1998 by Thomas Sailer, HB9JNX/AE4WA&n; */
 macro_line|#ifndef _HDLCDRV_H
 DECL|macro|_HDLCDRV_H
 mdefine_line|#define _HDLCDRV_H
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;linux/sockios.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20119
-macro_line|#include &lt;linux/if_ether.h&gt;
-macro_line|#endif
-macro_line|#include &lt;linux/netdevice.h&gt;
 multiline_comment|/* -------------------------------------------------------------------- */
 multiline_comment|/*&n; * structs for the IOCTL commands&n; */
 DECL|struct|hdlcdrv_params
@@ -93,13 +86,6 @@ DECL|member|ptt_keyed
 r_int
 id|ptt_keyed
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-DECL|member|stats
-r_struct
-id|enet_statistics
-id|stats
-suffix:semicolon
-macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|hdlcdrv_channel_state
@@ -249,6 +235,8 @@ DECL|macro|HDLCDRV_PARMASK_MIDIIOBASE
 mdefine_line|#define HDLCDRV_PARMASK_MIDIIOBASE  (1&lt;&lt;6)
 multiline_comment|/* -------------------------------------------------------------------- */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/if.h&gt;
 DECL|macro|HDLCDRV_MAGIC
 mdefine_line|#define HDLCDRV_MAGIC      0x5ac6e778
 DECL|macro|HDLCDRV_IFNAMELEN

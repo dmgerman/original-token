@@ -3,35 +3,36 @@ DECL|macro|_SOUNDMODULE_H
 mdefine_line|#define _SOUNDMODULE_H
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/notifier.h&gt;
-macro_line|#ifdef SOUND_CORE
-DECL|variable|sound_locker
-r_struct
-id|notifier_block
-op_star
-id|sound_locker
-op_assign
-(paren
-r_struct
-id|notifier_block
-op_star
-)paren
-l_int|0
-suffix:semicolon
-DECL|macro|SOUND_INC_USE_COUNT
-mdefine_line|#define SOUND_INC_USE_COUNT&t;notifier_call_chain(&amp;sound_locker, 1, 0)
-DECL|macro|SOUND_DEC_USE_COUNT
-mdefine_line|#define SOUND_DEC_USE_COUNT&t;notifier_call_chain(&amp;sound_locker, 0, 0)
-macro_line|#else
-DECL|macro|SOUND_LOCK
-mdefine_line|#define SOUND_LOCK&t;&t;notifier_chain_register(&amp;sound_locker, &amp;sound_notifier)
-DECL|macro|SOUND_LOCK_END
-mdefine_line|#define SOUND_LOCK_END&t;&t;notifier_chain_unregister(&amp;sound_locker, &amp;sound_notifier)
 r_extern
 r_struct
 id|notifier_block
 op_star
 id|sound_locker
 suffix:semicolon
+r_extern
+r_void
+id|sound_notifier_chain_register
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|lock_depth
+suffix:semicolon
+macro_line|#ifdef SOUND_CORE
+DECL|macro|SOUND_INC_USE_COUNT
+mdefine_line|#define SOUND_INC_USE_COUNT&t;do { notifier_call_chain(&amp;sound_locker, 1, 0); lock_depth++; } while(0);
+DECL|macro|SOUND_DEC_USE_COUNT
+mdefine_line|#define SOUND_DEC_USE_COUNT&t;do { notifier_call_chain(&amp;sound_locker, 0, 0); lock_depth--; } while(0);
+macro_line|#else
+DECL|macro|SOUND_LOCK
+mdefine_line|#define SOUND_LOCK&t;&t;sound_notifier_chain_register(&amp;sound_notifier); 
+DECL|macro|SOUND_LOCK_END
+mdefine_line|#define SOUND_LOCK_END&t;&t;notifier_chain_unregister(&amp;sound_locker, &amp;sound_notifier)
 DECL|function|my_notifier_call
 r_static
 r_int

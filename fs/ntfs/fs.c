@@ -2505,6 +2505,12 @@ id|S_IFREG
 op_or
 id|S_IRUGO
 suffix:semicolon
+macro_line|#ifdef CONFIG_NTFS_RW
+id|r-&gt;i_mode
+op_or_assign
+id|S_IWUGO
+suffix:semicolon
+macro_line|#endif
 id|r-&gt;i_mode
 op_and_assign
 op_complement
@@ -3199,16 +3205,25 @@ op_assign
 id|S_IFREG
 op_or
 id|S_IRUGO
-op_or
-id|S_IMMUTABLE
-suffix:semicolon
-id|inode-&gt;i_mode
-op_assign
-id|S_IFREG
-op_or
-id|S_IRUGO
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NTFS_RW
+r_if
+c_cond
+(paren
+op_logical_neg
+id|data
+op_logical_or
+op_logical_neg
+id|data-&gt;compressed
+)paren
+(brace
+id|inode-&gt;i_mode
+op_or_assign
+id|S_IWUGO
+suffix:semicolon
+)brace
+macro_line|#endif
 id|inode-&gt;i_mode
 op_and_assign
 op_complement
@@ -4169,12 +4184,14 @@ l_string|&quot;unlock_super&bslash;n&quot;
 suffix:semicolon
 id|ntfs_read_super_vol
 suffix:colon
+macro_line|#ifndef NTFS_IN_LINUX_KERNEL
 id|ntfs_free
 c_func
 (paren
 id|vol
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ntfs_read_super_dec
 suffix:colon
 id|ntfs_debug
