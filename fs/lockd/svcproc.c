@@ -218,6 +218,9 @@ id|file-&gt;f_file
 suffix:semicolon
 id|lock-&gt;fl.fl_owner
 op_assign
+(paren
+id|fl_owner_t
+)paren
 id|host
 suffix:semicolon
 )brace

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -142,16 +143,16 @@ id|vma
 )paren
 (brace
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 op_assign
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry
+id|file
 )paren
 (brace
 r_if
@@ -161,7 +162,7 @@ id|vma-&gt;vm_flags
 op_amp
 id|VM_DENYWRITE
 )paren
-id|dentry-&gt;d_inode-&gt;i_writecount
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_writecount
 op_increment
 suffix:semicolon
 r_if
@@ -949,7 +950,7 @@ id|vma-&gt;vm_offset
 op_assign
 id|off
 suffix:semicolon
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1431,12 +1432,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|area-&gt;vm_dentry
+id|area-&gt;vm_file
 )paren
-id|dput
+id|fput
 c_func
 (paren
-id|area-&gt;vm_dentry
+id|area-&gt;vm_file
 )paren
 suffix:semicolon
 r_return
@@ -1525,13 +1526,17 @@ op_minus
 id|area-&gt;vm_start
 )paren
 suffix:semicolon
-id|mpnt-&gt;vm_dentry
+id|mpnt-&gt;vm_file
 op_assign
-id|dget
-c_func
+id|area-&gt;vm_file
+suffix:semicolon
+r_if
+c_cond
 (paren
-id|area-&gt;vm_dentry
+id|mpnt-&gt;vm_file
 )paren
+id|mpnt-&gt;vm_file-&gt;f_count
+op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -2206,12 +2211,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mpnt-&gt;vm_dentry
+id|mpnt-&gt;vm_file
 )paren
-id|dput
+id|fput
 c_func
 (paren
-id|mpnt-&gt;vm_dentry
+id|mpnt-&gt;vm_file
 )paren
 suffix:semicolon
 id|kmem_cache_free
@@ -2269,9 +2274,9 @@ op_amp
 id|mm-&gt;mmap
 suffix:semicolon
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 suffix:semicolon
 id|mm-&gt;map_count
 op_increment
@@ -2338,14 +2343,14 @@ id|vmp-&gt;vm_pprev
 op_assign
 id|pprev
 suffix:semicolon
-id|dentry
+id|file
 op_assign
-id|vmp-&gt;vm_dentry
+id|vmp-&gt;vm_file
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry
+id|file
 )paren
 (brace
 r_struct
@@ -2353,7 +2358,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -2513,14 +2518,14 @@ id|next
 op_assign
 id|mpnt-&gt;vm_next
 suffix:semicolon
-multiline_comment|/* To share, we must have the same dentry, operations.. */
+multiline_comment|/* To share, we must have the same file, operations.. */
 r_if
 c_cond
 (paren
 (paren
-id|mpnt-&gt;vm_dentry
+id|mpnt-&gt;vm_file
 op_ne
-id|prev-&gt;vm_dentry
+id|prev-&gt;vm_file
 )paren
 op_logical_or
 (paren
@@ -2549,12 +2554,12 @@ id|mpnt-&gt;vm_start
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * If we have a dentry or it&squot;s a shared memory area&n;&t;&t; * the offsets must be contiguous..&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If we have a file or it&squot;s a shared memory area&n;&t;&t; * the offsets must be contiguous..&n;&t;&t; */
 r_if
 c_cond
 (paren
 (paren
-id|mpnt-&gt;vm_dentry
+id|mpnt-&gt;vm_file
 op_ne
 l_int|NULL
 )paren
@@ -2646,12 +2651,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mpnt-&gt;vm_dentry
+id|mpnt-&gt;vm_file
 )paren
-id|dput
+id|fput
 c_func
 (paren
-id|mpnt-&gt;vm_dentry
+id|mpnt-&gt;vm_file
 )paren
 suffix:semicolon
 id|kmem_cache_free

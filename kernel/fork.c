@@ -906,9 +906,9 @@ id|mpnt-&gt;vm_next
 )paren
 (brace
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 suffix:semicolon
 id|retval
 op_assign
@@ -956,21 +956,18 @@ id|tmp-&gt;vm_next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|dentry
+id|file
 op_assign
-id|tmp-&gt;vm_dentry
+id|tmp-&gt;vm_file
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry
+id|file
 )paren
 (brace
-id|dget
-c_func
-(paren
-id|dentry
-)paren
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -979,7 +976,7 @@ id|tmp-&gt;vm_flags
 op_amp
 id|VM_DENYWRITE
 )paren
-id|dentry-&gt;d_inode-&gt;i_writecount
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_writecount
 op_decrement
 suffix:semicolon
 multiline_comment|/* insert tmp into the share list, just after mpnt */

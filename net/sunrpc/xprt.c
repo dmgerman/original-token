@@ -13,10 +13,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#endif
 DECL|macro|SOCK_HAS_USER_DATA
 mdefine_line|#define SOCK_HAS_USER_DATA
 multiline_comment|/*&n; * Local variables&n; */
@@ -1162,7 +1161,7 @@ c_cond
 (paren
 id|xprt-&gt;file
 )paren
-id|close_fp
+id|fput
 c_func
 (paren
 id|xprt-&gt;file

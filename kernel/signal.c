@@ -3042,6 +3042,10 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+id|info.si_signo
+op_assign
+id|sig
+suffix:semicolon
 multiline_comment|/* POSIX.1b doesn&squot;t mention process groups.  */
 r_return
 id|kill_proc_info
@@ -3421,14 +3425,12 @@ suffix:semicolon
 r_case
 id|SIG_SETMASK
 suffix:colon
-id|siginitset
-c_func
-(paren
-op_amp
-id|current-&gt;blocked
-comma
+id|current-&gt;blocked.sig
+(braket
+l_int|0
+)braket
+op_assign
 id|new_set
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon

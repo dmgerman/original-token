@@ -3620,6 +3620,8 @@ id|wait
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|queue-&gt;proc_list
 comma

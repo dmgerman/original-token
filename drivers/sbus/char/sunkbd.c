@@ -5625,6 +5625,8 @@ id|wait
 id|poll_wait
 c_func
 (paren
+id|f
+comma
 op_amp
 id|kbd_wait
 comma

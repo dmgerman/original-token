@@ -1125,6 +1125,14 @@ DECL|macro|FL_ACCESS
 mdefine_line|#define FL_ACCESS&t;8&t;/* for processes suspended by mandatory locking */
 DECL|macro|FL_LOCKD
 mdefine_line|#define FL_LOCKD&t;16&t;/* lock held by rpc.lockd */
+multiline_comment|/*&n; * The POSIX file lock owner is determined by&n; * the &quot;struct files_struct&quot; in the thread group&n; * (or NULL for no owner - BSD locks).&n; */
+DECL|typedef|fl_owner_t
+r_typedef
+r_struct
+id|files_struct
+op_star
+id|fl_owner_t
+suffix:semicolon
 DECL|struct|file_lock
 r_struct
 id|file_lock
@@ -1164,11 +1172,9 @@ op_star
 id|fl_prevblock
 suffix:semicolon
 DECL|member|fl_owner
-r_void
-op_star
+id|fl_owner_t
 id|fl_owner
 suffix:semicolon
-multiline_comment|/* usu. the process&squot; task_struct */
 DECL|member|fl_pid
 r_int
 r_int
@@ -1278,12 +1284,11 @@ id|locks_remove_posix
 c_func
 (paren
 r_struct
-id|task_struct
-op_star
-comma
-r_struct
 id|file
 op_star
+comma
+id|fl_owner_t
+id|id
 )paren
 suffix:semicolon
 r_extern
@@ -2236,7 +2241,7 @@ id|readpage
 )paren
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 r_struct
@@ -2252,7 +2257,7 @@ id|writepage
 )paren
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 r_struct
@@ -2322,7 +2327,7 @@ id|updatepage
 )paren
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 r_struct
@@ -2746,6 +2751,9 @@ c_func
 r_struct
 id|file
 op_star
+comma
+id|fl_owner_t
+id|id
 )paren
 suffix:semicolon
 r_extern
@@ -3820,7 +3828,7 @@ id|generic_readpage
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 r_struct

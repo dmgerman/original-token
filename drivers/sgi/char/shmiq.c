@@ -1335,6 +1335,8 @@ l_int|0
 suffix:semicolon
 id|poll_wait
 (paren
+id|filp
+comma
 op_amp
 id|shmiqs
 (braket

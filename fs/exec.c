@@ -1112,7 +1112,7 @@ id|mpnt-&gt;vm_offset
 op_assign
 l_int|0
 suffix:semicolon
-id|mpnt-&gt;vm_dentry
+id|mpnt-&gt;vm_file
 op_assign
 l_int|NULL
 suffix:semicolon

@@ -540,7 +540,7 @@ id|fl
 suffix:semicolon
 id|fl-&gt;fl_owner
 op_assign
-id|current
+id|current-&gt;files
 suffix:semicolon
 id|fl-&gt;fl_pid
 op_assign

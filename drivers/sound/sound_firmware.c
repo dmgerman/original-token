@@ -5,6 +5,11 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|variable|errno
+r_static
+r_int
+id|errno
+suffix:semicolon
 DECL|function|do_mod_firmware_load
 r_static
 r_int

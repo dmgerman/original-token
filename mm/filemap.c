@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1010,9 +1011,9 @@ id|try_to_read_ahead
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 comma
 r_int
 r_int
@@ -1028,7 +1029,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_struct
 id|page
@@ -1141,7 +1142,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|dentry
+id|file
 comma
 id|page
 )paren
@@ -1706,7 +1707,7 @@ op_assign
 id|try_to_read_ahead
 c_func
 (paren
-id|filp-&gt;f_dentry
+id|filp
 comma
 id|raend
 op_plus
@@ -2355,7 +2356,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|dentry
+id|filp
 comma
 id|page
 )paren
@@ -2387,7 +2388,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|dentry
+id|filp
 comma
 id|page
 )paren
@@ -2502,11 +2503,18 @@ id|no_share
 )paren
 (brace
 r_struct
+id|file
+op_star
+id|file
+op_assign
+id|area-&gt;vm_file
+suffix:semicolon
+r_struct
 id|dentry
 op_star
 id|dentry
 op_assign
-id|area-&gt;vm_dentry
+id|file-&gt;f_dentry
 suffix:semicolon
 r_struct
 id|inode
@@ -2795,7 +2803,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|dentry
+id|file
 comma
 id|page
 )paren
@@ -2820,7 +2828,7 @@ op_assign
 id|try_to_read_ahead
 c_func
 (paren
-id|dentry
+id|file
 comma
 id|offset
 op_plus
@@ -2863,7 +2871,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|dentry
+id|file
 comma
 id|page
 )paren
@@ -3094,6 +3102,7 @@ id|result
 suffix:semicolon
 r_struct
 id|file
+op_star
 id|file
 suffix:semicolon
 r_struct
@@ -3166,58 +3175,31 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|file
+op_assign
+id|vma-&gt;vm_file
+suffix:semicolon
 id|dentry
 op_assign
-id|vma-&gt;vm_dentry
+id|file-&gt;f_dentry
 suffix:semicolon
 id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-id|file.f_op
-op_assign
-id|inode-&gt;i_op-&gt;default_file_ops
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|file.f_op-&gt;write
+id|file-&gt;f_op-&gt;write
 )paren
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-id|file.f_mode
-op_assign
-l_int|3
-suffix:semicolon
-id|file.f_flags
-op_assign
-l_int|0
-suffix:semicolon
-id|file.f_count
-op_assign
-l_int|1
-suffix:semicolon
-id|file.f_dentry
-op_assign
-id|dentry
-suffix:semicolon
-id|file.f_pos
-op_assign
-id|offset
-suffix:semicolon
-id|file.f_reada
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; * If a task terminates while we&squot;re swapping the page, the vma and&n;&t; * and dentry could be released ... increment the count to be safe.&n;&t; */
-id|dget
-c_func
-(paren
-id|dentry
-)paren
+multiline_comment|/*&n;&t; * If a task terminates while we&squot;re swapping the page, the vma and&n;&t; * and file could be released ... increment the count to be safe.&n;&t; */
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 id|down
 c_func
@@ -3233,7 +3215,6 @@ c_func
 (paren
 id|inode
 comma
-op_amp
 id|file
 comma
 (paren
@@ -3253,10 +3234,10 @@ op_amp
 id|inode-&gt;i_sem
 )paren
 suffix:semicolon
-id|dput
+id|fput
 c_func
 (paren
-id|dentry
+id|file
 )paren
 suffix:semicolon
 r_return
@@ -4416,13 +4397,12 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-c_func
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign
@@ -4459,7 +4439,7 @@ id|flags
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_logical_and
 id|vma-&gt;vm_ops
 op_logical_and
@@ -4501,18 +4481,25 @@ id|MS_SYNC
 )paren
 (brace
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 op_assign
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry
+id|file
 )paren
 (brace
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
 r_struct
 id|inode
 op_star
@@ -4532,7 +4519,7 @@ op_assign
 id|file_fsync
 c_func
 (paren
-l_int|NULL
+id|file
 comma
 id|dentry
 )paren
@@ -5118,7 +5105,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|dentry
+id|file
 comma
 id|page
 )paren
@@ -5183,7 +5170,7 @@ op_member_access_from_pointer
 id|updatepage
 c_func
 (paren
-id|dentry
+id|file
 comma
 id|page
 comma

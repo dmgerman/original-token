@@ -1534,6 +1534,8 @@ id|wait
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|sunmouse.proc_list
 comma

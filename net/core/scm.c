@@ -360,7 +360,7 @@ suffix:semicolon
 id|i
 op_decrement
 )paren
-id|close_fp
+id|fput
 c_func
 (paren
 id|fpl-&gt;fp

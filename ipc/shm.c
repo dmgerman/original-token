@@ -2826,7 +2826,7 @@ op_or
 id|VM_WRITE
 )paren
 suffix:semicolon
-id|shmd-&gt;vm_dentry
+id|shmd-&gt;vm_file
 op_assign
 l_int|NULL
 suffix:semicolon

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 id|asmlinkage
 r_void
 id|sys_sync
@@ -148,6 +149,22 @@ c_func
 (paren
 id|KERN_EMERG
 l_string|&quot;In swapper task - not syncing&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_EMERG
+l_string|&quot;In interrupt handler - not syncing&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else

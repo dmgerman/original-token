@@ -788,6 +788,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 (paren
 id|cdev-&gt;recv_wait

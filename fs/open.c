@@ -3395,6 +3395,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * &quot;id&quot; is the POSIX thread ID. We use the&n; * files pointer for this..&n; */
 DECL|function|close_fp
 r_int
 id|close_fp
@@ -3404,6 +3405,9 @@ r_struct
 id|file
 op_star
 id|filp
+comma
+id|fl_owner_t
+id|id
 )paren
 (brace
 r_struct
@@ -3439,9 +3443,9 @@ id|dentry-&gt;d_inode
 id|locks_remove_posix
 c_func
 (paren
-id|current
-comma
 id|filp
+comma
+id|id
 )paren
 suffix:semicolon
 r_return
@@ -3538,6 +3542,8 @@ id|close_fp
 c_func
 (paren
 id|filp
+comma
+id|files
 )paren
 suffix:semicolon
 )brace

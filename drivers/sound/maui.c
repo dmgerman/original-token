@@ -785,7 +785,7 @@ id|HOST_CTRL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* Cause interrupt */
-macro_line|#ifndef __SMP__
+macro_line|#ifdef __SMP__
 r_for
 c_loop
 (paren

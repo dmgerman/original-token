@@ -619,6 +619,8 @@ id|close_fp
 c_func
 (paren
 id|file
+comma
+id|files
 )paren
 suffix:semicolon
 )brace

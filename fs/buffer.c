@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1116,22 +1117,13 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fd
-op_ge
-id|NR_OPEN
-)paren
-r_goto
-id|out
-suffix:semicolon
 id|file
 op_assign
-id|current-&gt;files-&gt;fd
-(braket
+id|fget
+c_func
+(paren
 id|fd
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1153,7 +1145,7 @@ op_logical_neg
 id|dentry
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 id|inode
 op_assign
@@ -1166,7 +1158,7 @@ op_logical_neg
 id|inode
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 id|err
 op_assign
@@ -1183,7 +1175,7 @@ op_logical_neg
 id|file-&gt;f_op-&gt;fsync
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 multiline_comment|/* We need to protect against concurrent writers.. */
 id|down
@@ -1202,7 +1194,7 @@ c_func
 (paren
 id|file
 comma
-id|file-&gt;f_dentry
+id|dentry
 )paren
 suffix:semicolon
 id|up
@@ -1210,6 +1202,14 @@ c_func
 (paren
 op_amp
 id|inode-&gt;i_sem
+)paren
+suffix:semicolon
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|file
 )paren
 suffix:semicolon
 id|out
@@ -1262,22 +1262,13 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fd
-op_ge
-id|NR_OPEN
-)paren
-r_goto
-id|out
-suffix:semicolon
 id|file
 op_assign
-id|current-&gt;files-&gt;fd
-(braket
+id|fget
+c_func
+(paren
 id|fd
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1299,7 +1290,7 @@ op_logical_neg
 id|dentry
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 id|inode
 op_assign
@@ -1312,7 +1303,7 @@ op_logical_neg
 id|inode
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 id|err
 op_assign
@@ -1329,7 +1320,7 @@ op_logical_neg
 id|file-&gt;f_op-&gt;fsync
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 multiline_comment|/* this needs further work, at the moment it is identical to fsync() */
 id|err
@@ -1341,7 +1332,15 @@ c_func
 (paren
 id|file
 comma
-id|file-&gt;f_dentry
+id|dentry
+)paren
+suffix:semicolon
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|file
 )paren
 suffix:semicolon
 id|out
@@ -5929,9 +5928,9 @@ id|generic_readpage
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 comma
 r_struct
 id|page
@@ -5939,6 +5938,13 @@ op_star
 id|page
 )paren
 (brace
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
 r_struct
 id|inode
 op_star

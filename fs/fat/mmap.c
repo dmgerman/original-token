@@ -40,7 +40,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|area-&gt;vm_dentry-&gt;d_inode
+id|area-&gt;vm_file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_int
 r_int
@@ -403,13 +403,12 @@ id|inode
 )paren
 suffix:semicolon
 )brace
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-c_func
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign
