@@ -48,7 +48,14 @@ multiline_comment|/*                                                            
 multiline_comment|/**************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-multiline_comment|/* #define NDEBUG (NDEBUG_DMA) */
+DECL|macro|NDEBUG
+mdefine_line|#define NDEBUG (0)
+DECL|macro|NDEBUG_ABORT
+mdefine_line|#define NDEBUG_ABORT&t;0x800000
+DECL|macro|NDEBUG_TAGS
+mdefine_line|#define NDEBUG_TAGS&t;0x1000000
+DECL|macro|NDEBUG_MERGING
+mdefine_line|#define NDEBUG_MERGING&t;0x2000000
 DECL|macro|AUTOSENSE
 mdefine_line|#define AUTOSENSE
 multiline_comment|/* For the Atari version, use only polled IO or REAL_DMA */
@@ -80,7 +87,7 @@ macro_line|#include &quot;NCR5380.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include&lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 DECL|variable|proc_scsi_atari
 r_struct
 id|proc_dir_entry
@@ -136,24 +143,6 @@ c_func
 r_int
 r_char
 id|dma_stat
-)paren
-suffix:semicolon
-r_static
-r_void
-id|scsi_dma_buserr
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 suffix:semicolon
 r_static
@@ -543,7 +532,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|scsi_dma_buserr
+macro_line|#if 0
+multiline_comment|/* Dead code... wasn&squot;t called anyway :-) and causes some trouble, because at&n; * end-of-DMA, both SCSI ints are triggered simultaneously, so the NCR int has&n; * to clear the DMA int pending bit before it allows other level 6 interrupts.&n; */
 r_static
 r_void
 id|scsi_dma_buserr
@@ -636,6 +626,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+macro_line|#endif
 DECL|function|scsi_tt_intr
 r_static
 r_void
@@ -654,58 +645,15 @@ op_star
 id|dummy
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 macro_line|#ifdef REAL_DMA
 r_int
 id|dma_stat
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/* If we got this interrupt, we don&squot;t need the other one from the DMA any&n;&t; * more. So clear it. */
-id|atari_clear_pending_irq
-c_func
-(paren
-id|IRQ_TT_MFP_SCSIDMA
-)paren
-suffix:semicolon
-multiline_comment|/* After this has been done, we can make this int handler &quot;slow&quot;, i.e.&n;&t; * mask the NCR int and lower the IPL, as a slow int would do (see&n;&t; * arch/m68k/atari/ataints.c) */
-id|atari_disable_irq
-c_func
-(paren
-id|IRQ_TT_MFP_SCSI
-)paren
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|flags
-op_and_assign
-l_int|0xf8ff
-suffix:semicolon
-id|flags
-op_or_assign
-id|fp-&gt;sr
-op_amp
-l_int|0x0700
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#ifdef REAL_DMA
 id|dma_stat
 op_assign
 id|tt_scsi_dma.dma_ctrl
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
-id|printk
+id|INT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: NCR5380 interrupt, DMA status = %02x&bslash;n&quot;
@@ -717,7 +665,6 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Look if it was the DMA that has interrupted: First possibility&n;&t; * is that a bus error occurred...&n;&t; */
 r_if
 c_cond
@@ -741,6 +688,7 @@ id|dma_stat
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;SCSI DMA caused bus error near 0x%08lx&bslash;n&quot;
 comma
 id|SCSI_DMA_READ_P
@@ -750,9 +698,10 @@ id|dma_addr
 )paren
 )paren
 suffix:semicolon
-id|panic
+id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;SCSI DMA bus error -- bad DMA programming!&quot;
 )paren
 suffix:semicolon
@@ -790,8 +739,7 @@ op_minus
 id|atari_dma_startaddr
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
 l_string|&quot;SCSI DMA: There are %ld residual bytes.&bslash;n&quot;
@@ -799,7 +747,6 @@ comma
 id|atari_dma_residual
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -845,11 +792,11 @@ op_amp
 l_int|0x1ff
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
-l_string|&quot;SCSI DMA: DMA bug corrected, difference %ld bytes&bslash;n&quot;
+l_string|&quot;SCSI DMA: DMA bug corrected, &quot;
+l_string|&quot;difference %ld bytes&bslash;n&quot;
 comma
 l_int|512
 op_minus
@@ -860,7 +807,6 @@ l_int|0x1ff
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|atari_dma_residual
 op_assign
 (paren
@@ -923,6 +869,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* To be sure the int is not masked */
 id|atari_enable_irq
 c_func
@@ -930,6 +877,7 @@ c_func
 id|IRQ_TT_MFP_SCSI
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|scsi_falcon_intr
 r_static
@@ -978,6 +926,7 @@ multiline_comment|/* DMA error */
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;SCSI DMA error near 0x%08lx!&bslash;n&quot;
 comma
 id|SCSI_DMA_GETADR
@@ -1024,7 +973,9 @@ l_int|15
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI DMA error: %ld bytes lost in ST-DMA fifo :-((&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;SCSI DMA error: %ld bytes lost in &quot;
+l_string|&quot;ST-DMA fifo&bslash;n&quot;
 comma
 id|transferred
 op_amp
@@ -1037,8 +988,7 @@ id|HOSTDATA_DMALEN
 op_minus
 id|transferred
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
 l_string|&quot;SCSI DMA: There are %ld residual bytes.&bslash;n&quot;
@@ -1046,7 +996,6 @@ comma
 id|atari_dma_residual
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 id|atari_dma_residual
@@ -1168,8 +1117,7 @@ op_complement
 l_int|3
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
 l_string|&quot;SCSI DMA: there are %d rest bytes for phys addr 0x%08lx&quot;
@@ -1182,7 +1130,6 @@ r_int
 id|dst
 )paren
 suffix:semicolon
-macro_line|#endif
 id|dst
 op_assign
 (paren
@@ -1196,8 +1143,7 @@ id|dst
 )paren
 suffix:semicolon
 multiline_comment|/* The content of the DMA pointer&n;&t;&t;&t;&t;&t;   * is a physical address! */
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
 l_string|&quot; = virt addr 0x%08lx&bslash;n&quot;
@@ -1208,7 +1154,6 @@ r_int
 id|dst
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1930,7 +1875,7 @@ id|IRQ_TT_MFP_SCSI
 comma
 id|scsi_tt_intr
 comma
-id|IRQ_TYPE_PRIO
+id|IRQ_TYPE_SLOW
 comma
 l_int|NULL
 comma
@@ -1943,27 +1888,6 @@ l_int|0x80
 suffix:semicolon
 multiline_comment|/* SCSI int on L-&gt;H */
 macro_line|#ifdef REAL_DMA
-multiline_comment|/* On the TT, we got a second interrupt for DMA ready and DMA buserror.&n;&t;&t; * Since on DMA ready we get a &quot;normal&quot; interrupt, too, the service&n;&t;&t; * routine for the second int just checks for buserrs.&n;&t;&t; */
-id|add_isr
-c_func
-(paren
-id|IRQ_TT_MFP_SCSIDMA
-comma
-id|scsi_dma_buserr
-comma
-id|IRQ_TYPE_SLOW
-comma
-l_int|NULL
-comma
-l_string|&quot;SCSI DMA&quot;
-)paren
-suffix:semicolon
-id|tt_mfp.active_edge
-op_and_assign
-op_complement
-l_int|0x20
-suffix:semicolon
-multiline_comment|/* DMA int on H-&gt;L */
 id|tt_scsi_dma.dma_ctrl
 op_assign
 l_int|0
@@ -2019,6 +1943,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;scsi%d: options CAN_QUEUE=%d CMD_PER_LUN=%d SCAT-GAT=%d &quot;
 macro_line|#ifdef SUPPORT_TAGS
 l_string|&quot;TAGGED-QUEUING=%s &quot;
@@ -2082,7 +2007,6 @@ c_func
 (paren
 )paren
 )paren
-(brace
 id|remove_isr
 (paren
 id|IRQ_TT_MFP_SCSI
@@ -2090,16 +2014,6 @@ comma
 id|scsi_tt_intr
 )paren
 suffix:semicolon
-macro_line|#ifdef REAL_DMA
-id|remove_isr
-(paren
-id|IRQ_TT_MFP_SCSIDMA
-comma
-id|scsi_dma_buserr
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
 r_if
 c_cond
 (paren
@@ -2733,10 +2647,11 @@ c_func
 id|data
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
+c_func
 (paren
-l_string|&quot;scsi%d: setting up dma, data = %p, phys = %lx, count = %ld, dir = %d&bslash;n&quot;
+l_string|&quot;scsi%d: setting up dma, data = %p, phys = %lx, count = %ld, &quot;
+l_string|&quot;dir = %d&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 comma
@@ -2749,7 +2664,6 @@ comma
 id|dir
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2819,6 +2733,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;SCSI warning: DMA programmed for 0 bytes !&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3221,25 +3136,17 @@ id|possible_len
 op_assign
 id|limit
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-r_if
-c_cond
-(paren
-id|possible_len
-op_ne
-id|wanted_len
-)paren
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
-l_string|&quot;Sorry, must cut DMA transfer size to %ld bytes instead of %ld&bslash;n&quot;
+l_string|&quot;Sorry, must cut DMA transfer size to %ld bytes instead &quot;
+l_string|&quot;of %ld&bslash;n&quot;
 comma
 id|possible_len
 comma
 id|wanted_len
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|possible_len
 suffix:semicolon

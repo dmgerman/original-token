@@ -66,14 +66,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|variable|module_init_flag
-r_static
-r_int
-id|module_init_flag
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Hmm... */
 r_extern
 r_struct
 id|symbol_table
@@ -512,6 +504,7 @@ l_int|0xb0000000
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;warning: you are using an old insmod, no symbols will be inserted!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -894,6 +887,7 @@ id|size
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Rejecting illegal symbol table (n_symbols=%d,n_refs=%d)&bslash;n&quot;
 comma
 id|newtab-&gt;n_symbols
@@ -966,6 +960,7 @@ id|sym-&gt;name
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Rejecting illegal symbol table&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1062,6 +1057,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Non-module reference! Rejected!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1084,11 +1080,14 @@ id|mp
 suffix:semicolon
 )brace
 )brace
-id|module_init_flag
-op_assign
+id|GET_USE_COUNT
+c_func
+(paren
+id|mp
+)paren
+op_add_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Hmm... */
 r_if
 c_cond
 (paren
@@ -1102,21 +1101,27 @@ op_ne
 l_int|0
 )paren
 (brace
-id|module_init_flag
+id|GET_USE_COUNT
+c_func
+(paren
+id|mp
+)paren
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Hmm... */
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|module_init_flag
-op_assign
-l_int|0
+id|GET_USE_COUNT
+c_func
+(paren
+id|mp
+)paren
+op_sub_assign
+l_int|1
 suffix:semicolon
-multiline_comment|/* Hmm... */
 id|mp-&gt;state
 op_assign
 id|MOD_RUNNING
@@ -1229,7 +1234,11 @@ id|mp
 )paren
 op_amp
 op_complement
+(paren
 id|MOD_AUTOCLEAN
+op_or
+id|MOD_VISITED
+)paren
 )paren
 op_ne
 l_int|0
@@ -1246,7 +1255,11 @@ id|mp
 )paren
 op_and_assign
 op_complement
+(paren
 id|MOD_AUTOCLEAN
+op_or
+id|MOD_VISITED
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1302,21 +1315,57 @@ l_int|NULL
 )paren
 op_logical_and
 (paren
+id|mp-&gt;state
+op_eq
+id|MOD_RUNNING
+)paren
+op_logical_and
+(paren
+(paren
 id|GET_USE_COUNT
 c_func
 (paren
 id|mp
 )paren
-op_eq
-id|MOD_AUTOCLEAN
-)paren
-op_logical_and
+op_amp
+op_complement
 (paren
-id|mp-&gt;state
+id|MOD_AUTOCLEAN
+op_or
+id|MOD_VISITED
+)paren
+)paren
 op_eq
-id|MOD_RUNNING
+l_int|0
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|GET_USE_COUNT
+c_func
+(paren
+id|mp
+)paren
+op_amp
+id|MOD_VISITED
+)paren
+)paren
+(brace
+multiline_comment|/* Don&squot;t reap until one &quot;cycle&quot; after last _use_ */
+id|GET_USE_COUNT
+c_func
+(paren
+id|mp
+)paren
+op_and_assign
+op_complement
+id|MOD_VISITED
+suffix:semicolon
+)brace
+r_else
 (brace
 id|GET_USE_COUNT
 c_func
@@ -1325,7 +1374,11 @@ id|mp
 )paren
 op_and_assign
 op_complement
+(paren
 id|MOD_AUTOCLEAN
+op_or
+id|MOD_VISITED
+)paren
 suffix:semicolon
 (paren
 op_star
@@ -1338,6 +1391,7 @@ id|mp-&gt;state
 op_assign
 id|MOD_DELETED
 suffix:semicolon
+)brace
 )brace
 )brace
 id|free_modules
@@ -2311,7 +2365,11 @@ id|mp
 )paren
 op_amp
 op_complement
+(paren
 id|MOD_AUTOCLEAN
+op_or
+id|MOD_VISITED
+)paren
 comma
 (paren
 (paren
@@ -2702,27 +2760,79 @@ op_add_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if 1
-r_if
-c_cond
+r_for
+c_loop
 (paren
-id|module_init_flag
-op_eq
-l_int|0
+id|mp
+op_assign
+id|module_list
+suffix:semicolon
+id|intab
+op_logical_and
+id|mp
+op_ne
+op_amp
+id|kernel_module
+suffix:semicolon
+id|mp
+op_assign
+id|mp-&gt;next
 )paren
 (brace
-multiline_comment|/* Hmm... */
-macro_line|#else
+multiline_comment|/*&n;&t;&t; * New table stored within memory belonging to a module?&n;&t;&t; * (Always true for a module)&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|module_list
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+id|mp-&gt;addr
+)paren
+OL
+(paren
+r_int
+r_int
+)paren
+id|intab
+)paren
+op_logical_and
+(paren
+(paren
+r_int
+r_int
+)paren
+id|intab
+OL
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+id|mp-&gt;addr
+)paren
+op_plus
+id|mp-&gt;size
+op_star
+id|PAGE_SIZE
+)paren
+)paren
+)paren
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|mp
 op_eq
 op_amp
 id|kernel_module
 )paren
 (brace
-macro_line|#endif
 multiline_comment|/* Aha! Called from an &quot;internal&quot; module */
 r_if
 c_cond
@@ -2761,6 +2871,7 @@ multiline_comment|/* panic time! */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Out of memory for new symbol table!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2809,11 +2920,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* else ******** Called from a loadable module **********/
 multiline_comment|/*&n;&t; * This call should _only_ be done in the context of the&n;&t; * call to  init_module  i.e. when loading the module!!&n;&t; * Or else...&n;&t; */
-id|mp
-op_assign
-id|module_list
-suffix:semicolon
-multiline_comment|/* true when doing init_module! */
 multiline_comment|/* Any table there before? */
 r_if
 c_cond
@@ -2842,24 +2948,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* else  ****** we have to replace the module symbol table ******/
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|oldtab-&gt;n_symbols
-OG
-l_int|0
-)paren
-(brace
-multiline_comment|/* Oh dear, I have to drop the old ones... */
-id|printk
-c_func
-(paren
-l_string|&quot;Warning, dropping old symbols&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2952,6 +3040,7 @@ multiline_comment|/* panic time! */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Out of memory for new symbol table!&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -1,8 +1,6 @@
 multiline_comment|/* &n; * NCR 5380 generic driver routines.  These should make it *trivial*&n; * &t;to implement 5380 SCSI drivers under Linux with a non-trantor&n; *&t;architecture.&n; *&n; *&t;Note that these routines also work with NR53c400 family chips.&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 6. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
-multiline_comment|/*&n; * ++roman: To port the 5380 driver to the Atari, I had to do some changes in&n; * this file, too:&n; *&n; *  - Some of the debug statements were incorrect (undefined variables and the&n; *    like). I fixed that.&n; *&n; *  - In information_transfer(), I think a #ifdef was wrong. Looking at the&n; *    possible DMA transfer size should also happen for REAL_DMA. I added this&n; *    in the #if statement.&n; *&n; *  - When using real DMA, information_transfer() should return in a DATAOUT&n; *    phase after starting the DMA. It has nothing more to do.&n; *&n; *  - The interrupt service routine should run main after end of DMA, too (not&n; *    only after RESELECTION interrupts). Additionally, it should _not_ test&n; *    for more interrupts after running main, since a DMA process may have&n; *    been started and interrupts are turned on now. The new int could happen&n; *    inside the execution of NCR5380_intr(), leading to recursive&n; *    calls.&n; *&n; *  - I&squot;ve added a function merge_consecutive_buffers() that tries to&n; *    merge scatter-gather buffers that are located at consecutive&n; *    physical addresses and can be processed with the same DMA setup.&n; *    Since most scatter-gather operations work on a page (4K) of&n; *    4 buffers (1K), in more than 90% of all cases three interrupts and&n; *    DMA setup actions are saved.&n; * &n; */
-multiline_comment|/*&n; * +++roman: I&squot;ve deleted all the stuff for AUTOPROBE_IRQ, REAL_DMA_POLL,&n; * PSEUDO_DMA and USLEEP, because these were messing up&n; * readability and will never be needed for Atari SCSI.&n; */
-multiline_comment|/*&n; * $Log: atari_NCR5380.c,v $&n; * Revision 1.2  1996/04/04 13:30:22  root&n; * interrupts more like the pc&n; *&n; * Revision 1.1  1996/03/20 17:51:35  root&n; * Initial revision&n; *&n; * Revision 1.2  1994/11/26  03:38:32  hamish&n; * v0.9pl4&n; *&n; * Revision 1.1  1994/11/08  03:25:43  hamish&n; * Initial revision&n; *&n; * Revision 1.5  1994/01/19  09:14:57  drew&n; * Fixed udelay() hack that was being used on DATAOUT phases&n; * instead of a proper wait for the final handshake.&n; *&n; * Revision 1.4  1994/01/19  06:44:25  drew&n; * *** empty log message ***&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; *&n; */
-multiline_comment|/*&n; * Further development / testing that should be done : &n; * 1.  Cleanup the NCR5380_transfer_dma function and DMA operation complete&n; *     code so that everything does the same thing that&squot;s done at the &n; *     end of a pseudo-DMA read operation.&n; *&n; * 2.  Fix REAL_DMA (interrupt driven, polled works fine) -&n; *     basically, transfer size needs to be reduced by one &n; *     and the last byte read as is done with PSEUDO_DMA.&n; * &n; * 3.  Test USLEEP code &n; *&n; * 4.  Test SCSI-II tagged queueing (I have no devices which support &n; *&t;tagged queueing)&n; *&n; * 5.  Test linked command handling code after Eric is ready with &n; *      the high level code.&n; */
+multiline_comment|/*&n; * ++roman: To port the 5380 driver to the Atari, I had to do some changes in&n; * this file, too:&n; *&n; *  - Some of the debug statements were incorrect (undefined variables and the&n; *    like). I fixed that.&n; *&n; *  - In information_transfer(), I think a #ifdef was wrong. Looking at the&n; *    possible DMA transfer size should also happen for REAL_DMA. I added this&n; *    in the #if statement.&n; *&n; *  - When using real DMA, information_transfer() should return in a DATAOUT&n; *    phase after starting the DMA. It has nothing more to do.&n; *&n; *  - The interrupt service routine should run main after end of DMA, too (not&n; *    only after RESELECTION interrupts). Additionally, it should _not_ test&n; *    for more interrupts after running main, since a DMA process may have&n; *    been started and interrupts are turned on now. The new int could happen&n; *    inside the execution of NCR5380_intr(), leading to recursive&n; *    calls.&n; *&n; *  - I&squot;ve added a function merge_consecutive_buffers() that tries to&n; *    merge scatter-gather buffers that are located at consecutive&n; *    physical addresses and can be processed with the same DMA setup.&n; *    Since most scatter-gather operations work on a page (4K) of&n; *    4 buffers (1K), in more than 90% of all cases three interrupts and&n; *    DMA setup actions are saved.&n; *&n; * - I&squot;ve deleted all the stuff for AUTOPROBE_IRQ, REAL_DMA_POLL, PSEUDO_DMA&n; *    and USLEEP, because these were messing up readability and will never be&n; *    needed for Atari SCSI.&n; * &n; * - I&squot;ve revised the NCR5380_main() calling scheme (relax the &squot;main_running&squot;&n; *   stuff), and &squot;main&squot; is executed in a bottom half if awoken by an&n; *   interrupt.&n; *&n; * - The code was quite cluttered up by &quot;#if (NDEBUG &amp; NDEBUG_*) printk...&quot;&n; *   constructs. In my eyes, this made the source rather unreadable, so I&n; *   finally replaced that by the *_PRINTK() macros.&n; *&n; */
+multiline_comment|/*&n; * Further development / testing that should be done : &n; * 1.  Test linked command handling code after Eric is ready with &n; *     the high level code.&n; */
 macro_line|#if (NDEBUG &amp; NDEBUG_LISTS)
 DECL|macro|LIST
 mdefine_line|#define LIST(x,y) &bslash;&n;  { printk(&quot;LINE:%d   Adding %p to %p&bslash;n&quot;, __LINE__, (void*)(x), (void*)(y)); &bslash;&n;    if ((x)==(y)) udelay(5); }
@@ -266,8 +264,7 @@ dot
 id|queue_size
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_TAGS)
-id|printk
+id|TAG_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: target %d lun %d: no free tags&bslash;n&quot;
@@ -283,7 +280,6 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -342,11 +338,11 @@ op_lshift
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_TAGS)
-id|printk
+id|TAG_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: target %d lun %d now allocated by untagged command&bslash;n&quot;
+l_string|&quot;scsi%d: target %d lun %d now allocated by untagged &quot;
+l_string|&quot;command&bslash;n&quot;
 comma
 id|H_NO
 c_func
@@ -359,7 +355,6 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -399,8 +394,7 @@ suffix:semicolon
 id|ta-&gt;nr_allocated
 op_increment
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_TAGS)
-id|printk
+id|TAG_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: using tag %d for target %d lun %d &quot;
@@ -421,7 +415,6 @@ comma
 id|ta-&gt;nr_allocated
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 multiline_comment|/* Mark the tag of command &squot;cmd&squot; as free, or in case of an untagged command,&n; * unlock the LUN.&n; */
@@ -462,8 +455,7 @@ op_lshift
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_TAGS)
-id|printk
+id|TAG_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: target %d lun %d untagged cmd finished&bslash;n&quot;
@@ -479,7 +471,6 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 r_if
@@ -493,6 +484,7 @@ id|MAX_TAGS
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;scsi%d: trying to free bad tag %d!&bslash;n&quot;
 comma
 id|H_NO
@@ -532,8 +524,7 @@ suffix:semicolon
 id|ta-&gt;nr_allocated
 op_decrement
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_TAGS)
-id|printk
+id|TAG_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: freed tag %d for target %d lun %d&bslash;n&quot;
@@ -551,10 +542,10 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
-macro_line|#if 0
+macro_line|#if 1
+DECL|function|free_all_tags
 r_static
 r_void
 id|free_all_tags
@@ -708,8 +699,7 @@ l_int|1
 suffix:semicolon
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_MERGING)
-id|printk
+id|MER_PRINTK
 c_func
 (paren
 l_string|&quot;%08lx == %08lx -&gt; merging&bslash;n&quot;
@@ -729,6 +719,7 @@ comma
 id|endadr
 )paren
 suffix:semicolon
+macro_line|#if (NDEBUG &amp; NDEBUG_MERGING)
 op_increment
 id|cnt
 suffix:semicolon
@@ -756,7 +747,7 @@ id|oldlen
 op_ne
 id|cmd-&gt;SCp.this_residual
 )paren
-id|printk
+id|MER_PRINTK
 c_func
 (paren
 l_string|&quot;merged %d buffers from %08lx, new length %08lx&bslash;n&quot;
@@ -856,7 +847,7 @@ suffix:semicolon
 )brace
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#ifdef NDEBUG
+macro_line|#if NDEBUG
 r_static
 r_struct
 (brace
@@ -1468,6 +1459,7 @@ id|SR_REQ
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;scsi%d: REQ not asserted, phase unknown.&bslash;n&quot;
 comma
 id|HOSTNO
@@ -1515,6 +1507,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;scsi%d: phase %s&bslash;n&quot;
 comma
 id|HOSTNO
@@ -1529,8 +1522,40 @@ id|name
 suffix:semicolon
 )brace
 )brace
+macro_line|#else /* !NDEBUG */
+multiline_comment|/* dummys... */
+DECL|function|NCR5380_print
+id|__inline__
+r_void
+id|NCR5380_print
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+)paren
+(brace
+)brace
+suffix:semicolon
+DECL|function|NCR5380_print_phase
+id|__inline__
+r_void
+id|NCR5380_print_phase
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+)paren
+(brace
+)brace
+suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * We need to have our coroutine active given these constraints : &n; * 1.  The mutex flag, main_running, can only be set when the main &n; *     routine can actually process data, otherwise SCSI commands&n; *     will never get issued.&n; *&n; * 2.  NCR5380_main() shouldn&squot;t be called before it has exited, because&n; *     other drivers have had kernel stack overflows in similar&n; *     situations.&n; *&n; * 3.  We don&squot;t want to inline NCR5380_main() because of space concerns,&n; *     even though it is only called in two places.&n; *&n; * So, the solution is to set the mutex in an inline wrapper for the &n; * main coroutine, and have the main coroutine exit with interrupts &n; * disabled after the final search through the queues so that no race &n; * conditions are possible.&n; */
+multiline_comment|/*&n; * ++roman: New scheme of calling NCR5380_main()&n; * &n; * If we&squot;re not in an interrupt, we can call our main directly, it cannot be&n; * already running. Else, we queue it on a task queue, if not &squot;main_running&squot;&n; * tells us that a lower level is already executing it. This way,&n; * &squot;main_running&squot; needs not be protected in a special way.&n; *&n; * queue_main() is a utility function for putting our main onto the task&n; * queue, if main_running is false. It should be called only from a&n; * interrupt or bottom half.&n; */
+macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 DECL|variable|main_running
 r_static
 r_volatile
@@ -1539,41 +1564,46 @@ id|main_running
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n; * Function : run_main(void)&n; * &n; * Purpose : insure that the coroutine is running and will process our &n; * &t;request.  main_running is checked/set here (in an inline function)&n; *&t;rather than in NCR5380_main itself to reduce the chances of stack&n; *&t;overflow.&n; *&n; */
+DECL|variable|NCR5380_tqueue
 r_static
-r_void
-id|NCR5380_main_a
+r_struct
+id|tq_struct
+id|NCR5380_tqueue
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* next */
+l_int|0
+comma
+multiline_comment|/* sync */
 (paren
-r_int
-r_int
-id|flags
+r_void
+(paren
+op_star
 )paren
+(paren
+r_void
+op_star
+)paren
+)paren
+id|NCR5380_main
+comma
+multiline_comment|/* routine, must have (void *) arg... */
+l_int|NULL
+multiline_comment|/* data */
+)brace
 suffix:semicolon
-DECL|function|run_main
+DECL|function|queue_main
 r_static
 id|__inline__
 r_void
-id|run_main
+id|queue_main
 c_func
 (paren
 r_void
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1581,24 +1611,25 @@ op_logical_neg
 id|main_running
 )paren
 (brace
-id|main_running
-op_assign
-l_int|1
-suffix:semicolon
-id|NCR5380_main_a
+multiline_comment|/* If in interrupt and NCR5380_main() not already running,&n;&t;   queue it on the &squot;immediate&squot; task queue, to be processed&n;&t;   immediately after the current interrupt processing has&n;&t;   finished. */
+id|queue_task_irq
 c_func
 (paren
-id|flags
+op_amp
+id|NCR5380_tqueue
+comma
+op_amp
+id|tq_immediate
 )paren
 suffix:semicolon
-multiline_comment|/* &n;         * main_running is cleared in NCR5380_main once it can&squot;t do &n;&t; * more work, and NCR5380_main exits with interrupts disabled.&n;&t; */
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
+)paren
+suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/* else: nothing to do: the running NCR5380_main() will pick up&n;       any newly queued command. */
 )brace
 DECL|function|NCR5380_all_init
 r_static
@@ -1621,14 +1652,12 @@ op_logical_neg
 id|done
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_INIT)
-id|printk
+id|INI_PRINTK
 c_func
 (paren
 l_string|&quot;scsi : NCR5380_all_init()&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|done
 op_assign
 l_int|1
@@ -1699,31 +1728,18 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-id|printk
+id|NCR_PRINT
 c_func
 (paren
-l_string|&quot;NCR5380: coroutine is%s running.&bslash;n&quot;
-comma
-id|main_running
-ques
-c_cond
-l_string|&quot;&quot;
-suffix:colon
-l_string|&quot;n&squot;t&quot;
+id|NDEBUG_ANY
 )paren
 suffix:semicolon
-macro_line|#ifdef NDEBUG
-id|NCR5380_print
+id|NCR_PRINT_PHASE
+c_func
 (paren
-id|instance
+id|NDEBUG_ANY
 )paren
 suffix:semicolon
-id|NCR5380_print_phase
-(paren
-id|instance
-)paren
-suffix:semicolon
-macro_line|#endif
 id|len
 op_assign
 id|NCR5380_proc_info
@@ -2590,6 +2606,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;scsi%d: WRITE attempted with NO_WRITE debugging flag set&bslash;n&quot;
 comma
 id|H_NO
@@ -2877,8 +2894,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_QUEUES)
-id|printk
+id|QU_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: command added to %s of queue&bslash;n&quot;
@@ -2904,9 +2920,21 @@ suffix:colon
 l_string|&quot;tail&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Run the coroutine if it isn&squot;t already running. */
-id|run_main
+multiline_comment|/* If queue_command() is called from an interrupt (real one or bottom&n;     * half), we let queue_main() do the job of taking care about main. If it&n;     * is already running, this is a no-op, else main will be queued.&n;     *&n;     * If we&squot;re not in an interrupt, we can call NCR5380_main()&n;     * unconditionally, because it cannot be already running.&n;     */
+r_if
+c_cond
+(paren
+id|intr_count
+OG
+l_int|0
+)paren
+id|queue_main
+c_func
+(paren
+)paren
+suffix:semicolon
+r_else
+id|NCR5380_main
 c_func
 (paren
 )paren
@@ -2918,21 +2946,10 @@ suffix:semicolon
 multiline_comment|/*&n; * Function : NCR5380_main (void) &n; *&n; * Purpose : NCR5380_main is a coroutine that runs as long as more work can &n; *&t;be done on the NCR5380 host adapters in a system.  Both &n; *&t;NCR5380_queue_command() and NCR5380_intr() will try to start it &n; *&t;in case it is not running.&n; * &n; * NOTE : NCR5380_main exits with interrupts *disabled*, the caller should &n; *  reenable them.  This prevents reentrancy and kernel stack overflow.&n; */
 DECL|function|NCR5380_main
 r_static
-r_inline
 r_void
 id|NCR5380_main
 (paren
-)paren
-(brace
-)brace
-DECL|function|NCR5380_main_a
-r_static
 r_void
-id|NCR5380_main_a
-(paren
-r_int
-r_int
-id|flags
 )paren
 (brace
 id|Scsi_Cmnd
@@ -2963,7 +2980,22 @@ suffix:semicolon
 r_int
 id|done
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/*&n;     * We run (with interrupts disabled) until we&squot;re sure that none of &n;     * the host adapters have anything that can be done, at which point &n;     * we set main_running to 0 and exit.&n;     *&n;     * Interrupts are enabled before doing various other internal &n;     * instructions, after we&squot;ve decided that we need to run through&n;     * the loop again.&n;     *&n;     * this should prevent any race conditions.&n;     * &n;     * ++roman: Just disabling the NCR interrupt isn&squot;t sufficient here,&n;     * because also a timer int can trigger an abort or reset, which can&n;     * alter queues and touch the Falcon lock.&n;     */
+multiline_comment|/* Tell int handlers main() is now already executing.  Note that&n;       no races are possible here. If an int comes in before&n;       &squot;main_running&squot; is set here, and queues/executes main via the&n;       task queue, it doesn&squot;t do any harm, just this instance of main&n;       won&squot;t find any work left to do. */
+id|main_running
+op_assign
+l_int|1
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_do
 (brace
 id|cli
@@ -2983,8 +3015,7 @@ op_logical_neg
 id|hostdata-&gt;connected
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_MAIN)
-id|printk
+id|MAIN_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: not connected&bslash;n&quot;
@@ -2992,7 +3023,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t;     * Search through the issue_queue for a command destined&n;&t;     * for a target that&squot;s not busy.&n;&t;     */
 macro_line|#if (NDEBUG &amp; NDEBUG_LISTS)
 r_for
@@ -3235,10 +3265,13 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t;&t;     * Attempt to establish an I_T_L nexus here. &n;&t;&t;     * On success, instance-&gt;hostdata-&gt;connected is set.&n;&t;&t;     * On failure, we must add the command back to the&n;&t;&t;     *   issue queue so we can keep trying.&t;&n;&t;&t;     */
-macro_line|#if (NDEBUG &amp; (NDEBUG_MAIN | NDEBUG_QUEUES))
-id|printk
+id|DPRINTK
 c_func
 (paren
+id|NDEBUG_MAIN
+op_or
+id|NDEBUG_QUEUES
+comma
 l_string|&quot;scsi%d: main(): command for target %d lun %d &quot;
 l_string|&quot;removed from issue_queue&bslash;n&quot;
 comma
@@ -3249,7 +3282,6 @@ comma
 id|tmp-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* &n;&t;&t;     * REQUEST SENSE commands are issued without tagged&n;&t;&t;     * queueing, even on SCSI-II devices because the &n;&t;&t;     * contingent allegiance condition exists for the &n;&t;&t;     * entire unit.&n;&t;&t;     */
 multiline_comment|/* ++roman: ...and the standard also requires that&n;&t;&t;     * REQUEST SENSE command are untagged.&n;&t;&t;     */
 macro_line|#ifdef SUPPORT_TAGS
@@ -3351,17 +3383,19 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; (NDEBUG_MAIN | NDEBUG_QUEUES))
-id|printk
+id|DPRINTK
 c_func
 (paren
+id|NDEBUG_MAIN
+op_or
+id|NDEBUG_QUEUES
+comma
 l_string|&quot;scsi%d: main(): select() failed, &quot;
 l_string|&quot;returned to issue_queue&bslash;n&quot;
 comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3393,46 +3427,31 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_MAIN)
-id|printk
+id|MAIN_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: main() : performing information transfer&bslash;n&quot;
+l_string|&quot;scsi%d: main: performing information transfer&bslash;n&quot;
 comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_information_transfer
 c_func
 (paren
 id|instance
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_MAIN)
-id|printk
+id|MAIN_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: main() : done set false&bslash;n&quot;
+l_string|&quot;scsi%d: main: done set false&bslash;n&quot;
 comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|done
 op_assign
 l_int|0
-suffix:semicolon
-)brace
-r_else
-(brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* ++guenther: be sure to protect main_running */
-r_break
 suffix:semicolon
 )brace
 )brace
@@ -3443,9 +3462,16 @@ op_logical_neg
 id|done
 )paren
 suffix:semicolon
+multiline_comment|/* Better allow ints _after_ &squot;main_running&squot; has been cleared, else&n;       an interrupt could believe we&squot;ll pick up the work it left for&n;       us, but we won&squot;t see it anymore here... */
 id|main_running
 op_assign
 l_int|0
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef REAL_DMA
@@ -3506,7 +3532,9 @@ id|hostdata-&gt;connected
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: received end of DMA interrupt with no connected cmd&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;scsi%d: received end of DMA interrupt with &quot;
+l_string|&quot;no connected cmd&bslash;n&quot;
 comma
 id|HOSTNO
 )paren
@@ -3578,8 +3606,7 @@ id|overrun
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: read overrun handled&bslash;n&quot;
@@ -3587,12 +3614,10 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 )brace
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: real DMA transfer complete, basr 0x%X, sr 0x%X&bslash;n&quot;
@@ -3612,7 +3637,6 @@ id|STATUS_REG
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 (paren
 r_void
 )paren
@@ -3722,14 +3746,12 @@ c_cond
 id|overrun
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
 l_string|&quot;Got an input overrun, using saved byte&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 op_star
 (paren
 op_star
@@ -3752,8 +3774,7 @@ id|toPIO
 op_decrement
 suffix:semicolon
 )brace
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
 l_string|&quot;Doing %d-byte PIO to 0x%08lx&bslash;n&quot;
@@ -3767,7 +3788,6 @@ op_star
 id|data
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_transfer_pio
 c_func
 (paren
@@ -3828,8 +3848,7 @@ r_int
 r_char
 id|basr
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
-id|printk
+id|INT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: NCR5380 irq triggered&bslash;n&quot;
@@ -3837,7 +3856,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Look for pending interrupts */
 id|basr
 op_assign
@@ -3847,8 +3865,7 @@ c_func
 id|BUS_AND_STATUS_REG
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
-id|printk
+id|INT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: BASR=%02x&bslash;n&quot;
@@ -3858,7 +3875,6 @@ comma
 id|basr
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* dispatch to appropriate routine if found and done=0 */
 r_if
 c_cond
@@ -3868,14 +3884,12 @@ op_amp
 id|BASR_IRQ
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
-id|NCR5380_print
+id|NCR_PRINT
 c_func
 (paren
-id|instance
+id|NDEBUG_INTR
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3909,8 +3923,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
-id|printk
+id|INT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: SEL interrupt&bslash;n&quot;
@@ -3918,7 +3931,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_reselect
 c_func
 (paren
@@ -3944,8 +3956,7 @@ op_amp
 id|BASR_PARITY_ERROR
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
-id|printk
+id|INT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: PARITY interrupt&bslash;n&quot;
@@ -3953,7 +3964,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 (paren
 r_void
 )paren
@@ -3981,8 +3991,7 @@ op_eq
 id|SR_RST
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
-id|printk
+id|INT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: RESET interrupt&bslash;n&quot;
@@ -3990,7 +3999,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 (paren
 r_void
 )paren
@@ -4035,8 +4043,7 @@ id|BASR_PHASE_MATCH
 )paren
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
-id|printk
+id|INT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: PHASE MISM or EOP interrupt&bslash;n&quot;
@@ -4044,7 +4051,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_dma_complete
 c_func
 (paren
@@ -4064,7 +4070,6 @@ suffix:semicolon
 r_else
 macro_line|#endif /* REAL_DMA */
 (brace
-macro_line|#if 1 || (NDEBUG &amp; NDEBUG_INTR)
 multiline_comment|/* MS: Ignore unknown phase mismatch interrupts (caused by EOP interrupt) */
 r_if
 c_cond
@@ -4076,6 +4081,7 @@ id|BASR_PHASE_MATCH
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;scsi%d: unknown interrupt, &quot;
 l_string|&quot;BASR 0x%x, MR 0x%x, SR 0x%x&bslash;n&quot;
 comma
@@ -4096,7 +4102,6 @@ id|STATUS_REG
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 (paren
 r_void
 )paren
@@ -4113,10 +4118,10 @@ multiline_comment|/* if !(SELECTION || PARITY) */
 multiline_comment|/* BASR &amp; IRQ */
 r_else
 (brace
-macro_line|#if 1 || (NDEBUG &amp; NDEBUG_INTR)
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;scsi%d: interrupt without IRQ bit set in BASR, &quot;
 l_string|&quot;BASR 0x%X, MR 0x%X, SR 0x%x&bslash;n&quot;
 comma
@@ -4137,7 +4142,6 @@ id|STATUS_REG
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 (paren
 r_void
 )paren
@@ -4155,8 +4159,7 @@ op_logical_neg
 id|done
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
-id|printk
+id|INT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: in int routine, calling main&bslash;n&quot;
@@ -4164,8 +4167,8 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
-id|run_main
+multiline_comment|/* Put a call to NCR5380_main() on the queue... */
+id|queue_main
 c_func
 (paren
 )paren
@@ -4316,14 +4319,13 @@ id|hostdata-&gt;restart_select
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined (NDEBUG) &amp;&amp; (NDEBUG &amp; NDEBUG_ARBITRATION) 
-id|NCR5380_print
+id|NCR_PRINT
 c_func
 (paren
-id|instance
+id|NDEBUG_ARBITRATION
 )paren
 suffix:semicolon
-id|printk
+id|ARB_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: starting arbitration, id = %d&bslash;n&quot;
@@ -4333,7 +4335,6 @@ comma
 id|instance-&gt;this_id
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* &n;     * Set the phase bits to 0, otherwise the NCR5380 won&squot;t drive the &n;     * data bus during SELECTION.&n;     */
 id|save_flags
 c_func
@@ -4487,8 +4488,7 @@ id|hostdata-&gt;connected
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if (NDEBUG &amp; NDEBUG_ARBITRATION) 
-id|printk
+id|ARB_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: arbitration complete&bslash;n&quot;
@@ -4496,14 +4496,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-multiline_comment|/* Avoid GCC 2.4.5 asm needs to many reloads error */
-id|__asm__
-c_func
-(paren
-l_string|&quot;nop&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4575,8 +4567,7 @@ comma
 id|MR_BASE
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_ARBITRATION)
-id|printk
+id|ARB_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: lost arbitration, deasserting MR_ARBITRATE&bslash;n&quot;
@@ -4584,7 +4575,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 l_int|1
@@ -4636,8 +4626,7 @@ comma
 id|ICR_BASE
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_ARBITRATION)
-id|printk
+id|ARB_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: lost arbitration, deasserting ICR_ASSERT_SEL&bslash;n&quot;
@@ -4645,7 +4634,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 l_int|1
@@ -4695,8 +4683,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if (NDEBUG &amp; NDEBUG_ARBITRATION)
-id|printk
+id|ARB_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: won arbitration&bslash;n&quot;
@@ -4704,7 +4691,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* &n;     * Now that we have won arbitration, start Selection process, asserting &n;     * the host and target ID&squot;s on the SCSI bus.&n;     */
 id|NCR5380_write
 c_func
@@ -4809,8 +4795,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_SELECTION)
-id|printk
+id|SEL_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: selecting target %d&bslash;n&quot;
@@ -4820,7 +4805,6 @@ comma
 id|cmd-&gt;target
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* &n;     * The SCSI specification calls for a 250 ms timeout for the actual &n;     * selection.&n;     */
 id|timeout
 op_assign
@@ -4896,6 +4880,7 @@ id|instance
 suffix:semicolon
 id|printk
 (paren
+id|KERN_ERR
 l_string|&quot;scsi%d: reselection after won arbitration?&bslash;n&quot;
 comma
 id|HOSTNO
@@ -4992,6 +4977,7 @@ id|cmd-&gt;target
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;scsi%d: weirdness&bslash;n&quot;
 comma
 id|HOSTNO
@@ -5005,16 +4991,16 @@ id|hostdata-&gt;restart_select
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;&bslash;trestart select&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef NDEBUG
-id|NCR5380_print
+id|NCR_PRINT
+c_func
 (paren
-id|instance
+id|NDEBUG_ANY
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -5068,8 +5054,7 @@ comma
 id|hostdata-&gt;id_mask
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_SELECTION)
-id|printk
+id|SEL_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: target did not respond within 250ms&bslash;n&quot;
@@ -5077,7 +5062,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -5115,8 +5099,7 @@ id|SR_REQ
 )paren
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_SELECTION)
-id|printk
+id|SEL_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: target %d selected, going into MESSAGE OUT phase.&bslash;n&quot;
@@ -5126,7 +5109,6 @@ comma
 id|cmd-&gt;target
 )paren
 suffix:semicolon
-macro_line|#endif
 id|tmp
 (braket
 l_int|0
@@ -5209,8 +5191,7 @@ op_amp
 id|data
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_SELECTION)
-id|printk
+id|SEL_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: nexus established.&bslash;n&quot;
@@ -5218,7 +5199,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* XXX need to handle errors here */
 id|hostdata-&gt;connected
 op_assign
@@ -5337,8 +5317,7 @@ id|SR_REQ
 )paren
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_HANDSHAKE)
-id|printk
+id|HSH_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: REQ detected&bslash;n&quot;
@@ -5346,7 +5325,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Check for phase mismatch */
 r_if
 c_cond
@@ -5360,8 +5338,7 @@ op_ne
 id|p
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_PIO)
-id|printk
+id|PIO_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: phase mismatch&bslash;n&quot;
@@ -5369,13 +5346,12 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-id|NCR5380_print_phase
+id|NCR_PRINT_PHASE
 c_func
 (paren
-id|instance
+id|NDEBUG_PIO
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -5451,14 +5427,12 @@ op_or
 id|ICR_ASSERT_DATA
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_PIO)
-id|NCR5380_print
+id|NCR_PRINT
 c_func
 (paren
-id|instance
+id|NDEBUG_PIO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -5486,14 +5460,12 @@ op_or
 id|ICR_ASSERT_ATN
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_PIO)
-id|NCR5380_print
+id|NCR_PRINT
 c_func
 (paren
-id|instance
+id|NDEBUG_PIO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -5512,14 +5484,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_PIO)
-id|NCR5380_print
+id|NCR_PRINT
 c_func
 (paren
-id|instance
+id|NDEBUG_PIO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -5543,8 +5513,7 @@ op_amp
 id|SR_REQ
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_HANDSHAKE)
-id|printk
+id|HSH_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: req false, handshake complete&bslash;n&quot;
@@ -5552,7 +5521,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * We have several special cases to consider during REQ/ACK handshaking : &n; * 1.  We were in MSGOUT phase, and we are on the last byte of the &n; *&t;message.  ATN must be dropped as ACK is dropped.&n; *&n; * 2.  We are in a MSGIN phase, and we are on the last byte of the  &n; *&t;message.  We must exit with ACK asserted, so that the calling&n; *&t;code may raise ATN before dropping ACK to reject the message.&n; *&n; * 3.  ACK and ATN are clear and the target may proceed as normal.&n; */
 r_if
 c_cond
@@ -5608,8 +5576,7 @@ op_decrement
 id|c
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_PIO) 
-id|printk
+id|PIO_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: residual %d&bslash;n&quot;
@@ -5619,7 +5586,6 @@ comma
 id|c
 )paren
 suffix:semicolon
-macro_line|#endif
 op_star
 id|count
 op_assign
@@ -5961,15 +5927,12 @@ op_sub_assign
 id|atari_read_overruns
 suffix:semicolon
 )brace
-macro_line|#if (NDEBUG &amp; NDEBUG_DMA)
-id|printk
+id|DMA_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: initializing DMA channel %d for %s, %d bytes %s %0x&bslash;n&quot;
+l_string|&quot;scsi%d: initializing DMA for %s, %d bytes %s %p&bslash;n&quot;
 comma
 id|HOSTNO
-comma
-id|instance-&gt;dma_channel
 comma
 (paren
 id|p
@@ -5995,13 +5958,9 @@ l_string|&quot;to&quot;
 suffix:colon
 l_string|&quot;from&quot;
 comma
-(paren
-r_int
-)paren
 id|d
 )paren
 suffix:semicolon
-macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -6301,14 +6260,12 @@ id|old_phase
 op_assign
 id|phase
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_INFORMATION)
-id|NCR5380_print_phase
+id|NCR_PRINT_PHASE
 c_func
 (paren
-id|instance
+id|NDEBUG_INFORMATION
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -6455,8 +6412,7 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_INFORMATION)
-id|printk
+id|INF_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: %d bytes and %d buffers left&bslash;n&quot;
@@ -6468,7 +6424,6 @@ comma
 id|cmd-&gt;SCp.buffers_residual
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n;&t;&t; * The preferred transfer method is going to be &n;&t;&t; * PSEUDO-DMA for systems that are strictly PIO,&n;&t;&t; * since we can let the hardware do the handshaking.&n;&t;&t; *&n;&t;&t; * For this to work, we need to know the transfersize&n;&t;&t; * ahead of time, since the pseudo-DMA code will sit&n;&t;&t; * in an unconditional loop.&n;&t;&t; */
 multiline_comment|/* ++roman: I suggest, this should be&n; *   #if def(REAL_DMA)&n; * instead of leaving REAL_DMA out.&n; */
@@ -6533,8 +6488,9 @@ multiline_comment|/*&n;&t;&t;&t; * If the watchdog timer fires, all future&n;&t;
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: switching target %d lun %d to slow &quot;
-l_string|&quot;handshake&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;scsi%d: switching target %d &quot;
+l_string|&quot;lun %d to slow handshake&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -6691,11 +6647,11 @@ comma
 id|ICR_BASE
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_LINKED) 
-id|printk
+id|LNK_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: target %d lun %d linked command complete.&bslash;n&quot;
+l_string|&quot;scsi%d: target %d lun %d linked command &quot;
+l_string|&quot;complete.&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -6704,7 +6660,6 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Enable reselect interrupts */
 id|NCR5380_write
 c_func
@@ -6725,8 +6680,9 @@ id|cmd-&gt;next_link
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: target %d lun %d linked command &quot;
-l_string|&quot;complete, no next_link&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;scsi%d: target %d lun %d &quot;
+l_string|&quot;linked command complete, no next_link&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -6768,12 +6724,11 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_LINKED) 
-id|printk
+id|LNK_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: target %d lun %d linked request done, &quot;
-l_string|&quot;calling scsi_done().&bslash;n&quot;
+l_string|&quot;scsi%d: target %d lun %d linked request &quot;
+l_string|&quot;done, calling scsi_done().&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -6782,7 +6737,6 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef NCR5380_STATS
 id|collect_stats
 c_func
@@ -6831,11 +6785,11 @@ id|hostdata-&gt;connected
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_QUEUES)
-id|printk
+id|QU_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: command for target %d, lun %d completed&bslash;n&quot;
+l_string|&quot;scsi%d: command for target %d, lun %d &quot;
+l_string|&quot;completed&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -6844,7 +6798,6 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef SUPPORT_TAGS
 id|cmd_free_tag
 c_func
@@ -6874,8 +6827,7 @@ id|cmd-&gt;target
 id|cmd-&gt;lun
 )braket
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_TAGS)
-id|printk
+id|TAG_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: target %d lun %d returned &quot;
@@ -6890,7 +6842,6 @@ comma
 id|ta-&gt;nr_allocated
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6993,8 +6944,7 @@ id|CHECK_CONDITION
 )paren
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_AUTOSENSE) 
-id|printk
+id|ASEN_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: performing request sense&bslash;n&quot;
@@ -7002,7 +6952,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|cmd-&gt;cmnd
 (braket
 l_int|0
@@ -7112,8 +7061,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_QUEUES)
-id|printk
+id|QU_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: REQUEST SENSE added to head of &quot;
@@ -7126,7 +7074,6 @@ id|cmd
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 macro_line|#endif /* def AUTOSENSE */
@@ -7256,12 +7203,12 @@ id|cmd-&gt;tag
 op_assign
 id|TAG_NONE
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_TAGS)
-id|printk
+id|TAG_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: target %d lun %d rejected QUEUE_TAG &quot;
-l_string|&quot;message; tagged queuing disabled&bslash;n&quot;
+l_string|&quot;scsi%d: target %d lun %d rejected &quot;
+l_string|&quot;QUEUE_TAG message; tagged queuing &quot;
+l_string|&quot;disabled&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -7270,7 +7217,6 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -7333,12 +7279,12 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_QUEUES)
-id|printk
+id|QU_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: command for target %d lun %d was moved from connected to&quot;
-l_string|&quot;  the disconnected_queue&bslash;n&quot;
+l_string|&quot;scsi%d: command for target %d lun %d was &quot;
+l_string|&quot;moved from connected to the &quot;
+l_string|&quot;disconnected_queue&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -7347,7 +7293,6 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* &n;&t;&t;     * Restore phase bits to 0 so an interrupted selection, &n;&t;&t;     * arbitration can resume.&n;&t;&t;     */
 id|NCR5380_write
 c_func
@@ -7437,8 +7382,7 @@ comma
 id|ICR_BASE
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_EXTENDED)
-id|printk
+id|EXT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: receiving extended message&bslash;n&quot;
@@ -7446,7 +7390,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|len
 op_assign
 l_int|2
@@ -7476,8 +7419,7 @@ op_amp
 id|data
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_EXTENDED)
-id|printk
+id|EXT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: length=%d, code=0x%02x&bslash;n&quot;
@@ -7501,7 +7443,6 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7566,8 +7507,7 @@ op_amp
 id|data
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_EXTENDED)
-id|printk
+id|EXT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: message received, residual %d&bslash;n&quot;
@@ -7577,7 +7517,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -7615,7 +7554,9 @@ id|len
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: error receiving extended message&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;scsi%d: error receiving &quot;
+l_string|&quot;extended message&bslash;n&quot;
 comma
 id|HOSTNO
 )paren
@@ -7630,7 +7571,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: extended message code %02x length %d is too long&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;scsi%d: extended message &quot;
+l_string|&quot;code %02x length %d is too long&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -7666,6 +7609,7 @@ id|tmp
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;scsi%d: rejecting message &quot;
 comma
 id|HOSTNO
@@ -7694,7 +7638,9 @@ id|EXTENDED_MESSAGE
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: rejecting unknown message %02x from target %d, lun %d&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;scsi%d: rejecting unknown &quot;
+l_string|&quot;message %02x from target %d, lun %d&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -7709,7 +7655,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: rejecting unknown extended message &quot;
+id|KERN_DEBUG
+l_string|&quot;scsi%d: rejecting unknown &quot;
+l_string|&quot;extended message &quot;
 l_string|&quot;code %02x, length %d from target %d, lun %d&bslash;n&quot;
 comma
 id|HOSTNO
@@ -7932,14 +7880,12 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#ifdef NDEBUG
-id|NCR5380_print
+id|NCR_PRINT
 c_func
 (paren
-id|instance
+id|NDEBUG_ANY
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* switch(phase) */
 )brace
@@ -8032,8 +7978,7 @@ op_complement
 id|hostdata-&gt;id_mask
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_RESELECTION)
-id|printk
+id|RSL_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: reselect&bslash;n&quot;
@@ -8041,7 +7986,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* &n;     * At this point, we have detected that our SCSI ID is on the bus,&n;     * SEL is true and BSY was false for at least one bus settle delay&n;     * (400 ns).&n;     *&n;     * We must assert BSY ourselves, until the target drops the SEL&n;     * signal.&n;     */
 id|NCR5380_write
 c_func
@@ -8131,6 +8075,7 @@ l_int|0x80
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;scsi%d: expecting IDENTIFY message, got &quot;
 comma
 id|HOSTNO
@@ -8230,11 +8175,11 @@ id|msg
 l_int|2
 )braket
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_TAGS)
-id|printk
+id|TAG_PRINTK
 c_func
 (paren
-l_string|&quot;scsi%d: target mask %02x, lun %d sent tag %d at reselection&bslash;n&quot;
+l_string|&quot;scsi%d: target mask %02x, lun %d sent tag %d at &quot;
+l_string|&quot;reselection&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -8245,7 +8190,6 @@ comma
 id|tag
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif
 multiline_comment|/* &n;     * Find the command corresponding to the I_T_L or I_T_L_Q  nexus we &n;     * just reestablished, and remove it from the disconnected queue.&n;     */
@@ -8400,6 +8344,7 @@ id|tmp
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;scsi%d: warning: target bitmask %02x lun %d &quot;
 macro_line|#ifdef SUPPORT_TAGS
 l_string|&quot;tag %d &quot;
@@ -8440,8 +8385,7 @@ id|hostdata-&gt;connected
 op_assign
 id|tmp
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_RESELECTION)
-id|printk
+id|RSL_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: nexus established, target = %d, lun = %d, tag = %d&bslash;n&quot;
@@ -8455,7 +8399,6 @@ comma
 id|tmp-&gt;tag
 )paren
 suffix:semicolon
-macro_line|#endif
 id|falcon_dont_release
 op_decrement
 suffix:semicolon
@@ -8501,6 +8444,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;scsi%d: aborting command&bslash;n&quot;
 comma
 id|HOSTNO
@@ -8542,13 +8486,13 @@ id|falcon_got_lock
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;scsi%d: !!BINGO!! Falcon has no lock in NCR5380_abort&bslash;n&quot;
 comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
-id|printk
+id|ABRT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: abort called basr 0x%02x, sr 0x%02x&bslash;n&quot;
@@ -8568,8 +8512,7 @@ id|STATUS_REG
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if 0
+macro_line|#if 1
 multiline_comment|/* &n; * Case 1 : If the command is the currently executing command, &n; * we&squot;ll set the aborted flag and return control so that &n; * information transfer routine can exit cleanly.&n; */
 r_if
 c_cond
@@ -8579,8 +8522,10 @@ op_eq
 id|cmd
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
-id|printk
+r_int
+id|rv
+suffix:semicolon
+id|ABRT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: aborting connected command&bslash;n&quot;
@@ -8588,24 +8533,88 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|hostdata-&gt;aborted
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n; * We should perform BSY checking, and make sure we haven&squot;t slipped&n; * into BUS FREE.&n; */
-id|NCR5380_write
+multiline_comment|/*&t;NCR5380_write(INITIATOR_COMMAND_REG, ICR_ASSERT_ATN); */
+multiline_comment|/* &n; * Since we can&squot;t change phases until we&squot;ve completed the current &n; * handshake, we have to source or sink a byte of data if the current&n; * phase is not MSGOUT.&n; */
+multiline_comment|/* &n; * MSch: use the do_abort function instead ... unless there is need to wait&n; * a longer period for the target to go into MSGOUT.&n; */
+id|rv
+op_assign
+id|do_abort
 c_func
 (paren
-id|INITIATOR_COMMAND_REG
-comma
-id|ICR_ASSERT_ATN
+id|instance
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Since we can&squot;t change phases until we&squot;ve completed the current &n; * handshake, we have to source or sink a byte of data if the current&n; * phase is not MSGOUT.&n; */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cmd-&gt;result
+op_assign
+id|DID_ABORT
+op_lshift
+l_int|16
+suffix:semicolon
+macro_line|#ifdef SUPPORT_TAGS
+id|cmd_free_tag
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
+macro_line|#else
+id|hostdata-&gt;busy
+(braket
+id|cmd-&gt;target
+)braket
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|cmd-&gt;lun
+)paren
+suffix:semicolon
+macro_line|#endif
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cmd
+op_member_access_from_pointer
+id|done
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
+id|falcon_release_lock_if_possible
+c_func
+(paren
+id|hostdata
+)paren
+suffix:semicolon
 multiline_comment|/* &n; * Return control to the executing NCR drive so we can clear the&n; * aborted flag and get back into our main loop.&n; */
 r_return
-l_int|0
+id|rv
+ques
+c_cond
+id|SCSI_ABORT_SUCCESS
+suffix:colon
+id|SCSI_ABORT_ERROR
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -8707,8 +8716,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
-id|printk
+id|ABRT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: abort removed command from issue queue.&bslash;n&quot;
@@ -8716,7 +8724,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Tagged queuing note: no tag to free here, hasn&squot;t been assigned&n;&t;     * yet... */
 id|tmp
 op_member_access_from_pointer
@@ -8749,8 +8756,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
-id|printk
+id|ABRT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: abort failed, command connected.&bslash;n&quot;
@@ -8758,9 +8764,8 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
-id|SCSI_ABORT_NOT_RUNNING
+id|SCSI_ABORT_SNOOZE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Case 4: If the command is currently disconnected from the bus, and &n; * &t;there are no connected commands, we reconnect the I_T_L or &n; *&t;I_T_L_Q nexus associated with it, go into message out, and send &n; *      an abort message.&n; *&n; * This case is especially ugly. In order to reestablish the nexus, we&n; * need to call NCR5380_select().  The easiest way to implement this &n; * function was to abort if the bus was busy, and let the interrupt&n; * handler triggered on the SEL for reselect take care of lost arbitrations&n; * where necessary, meaning interrupts need to be enabled.&n; *&n; * When interrupts are enabled, the queues may change - so we &n; * can&squot;t remove it from the disconnected queue before selecting it&n; * because that could cause a failure in hashing the nexus if that &n; * device reselected.&n; * &n; * Since the queues may change, we can&squot;t use the pointers from when we&n; * first locate it.&n; *&n; * So, we must first locate the command, and if NCR5380_select()&n; * succeeds, then issue the abort, relocate the command and remove&n; * it from the disconnected queue.&n; */
@@ -8799,8 +8804,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
-id|printk
+id|ABRT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: aborting disconnected command.&bslash;n&quot;
@@ -8808,7 +8812,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -8827,8 +8830,7 @@ id|cmd-&gt;tag
 r_return
 id|SCSI_ABORT_BUSY
 suffix:semicolon
-macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
-id|printk
+id|ABRT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: nexus reestablished.&bslash;n&quot;
@@ -8836,7 +8838,6 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-macro_line|#endif
 id|do_abort
 (paren
 id|instance
@@ -8999,7 +9000,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;scsi%d: warning : SCSI command probably completed successfully&bslash;n&quot;
+id|KERN_INFO
 l_string|&quot;        before abortion&bslash;n&quot;
 comma
 id|HOSTNO
@@ -9032,7 +9035,6 @@ r_int
 id|reset_flags
 )paren
 (brace
-macro_line|#if 0
 id|SETUP_HOSTDATA
 c_func
 (paren
@@ -9053,7 +9055,6 @@ comma
 op_star
 id|disconnected_queue
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9069,6 +9070,7 @@ id|falcon_got_lock
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;scsi%d: !!BINGO!! Falcon has no lock in NCR5380_reset&bslash;n&quot;
 comma
 id|H_NO
@@ -9159,7 +9161,7 @@ c_func
 id|RESET_PARITY_INTERRUPT_REG
 )paren
 suffix:semicolon
-macro_line|#if 0 /* XXX Now done by midlevel code XXX */
+macro_line|#if 1 /* XXX Should now be done by midlevel code, bug isn&squot;t XXX */
 multiline_comment|/* After the reset, there are no more connected or disconnected commands&n;     * and no busy units; to avoid problems with re-inserting the commands&n;     * into the issue_queue (via scsi_done()), the aborted commands are&n;     * remembered in local variables first.&n;     */
 id|save_flags
 c_func
@@ -9248,8 +9250,7 @@ id|connected
 )paren
 )paren
 (brace
-macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
-id|printk
+id|ABRT_PRINTK
 c_func
 (paren
 l_string|&quot;scsi%d: reset aborted a connected command&bslash;n&quot;
@@ -9261,7 +9262,6 @@ id|cmd
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|cmd-&gt;result
 op_assign
 (paren
@@ -9341,7 +9341,6 @@ id|cmd
 )paren
 suffix:semicolon
 )brace
-macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
 r_if
 c_cond
 (paren
@@ -9349,19 +9348,18 @@ id|i
 OG
 l_int|0
 )paren
-id|printk
+id|ABRT_PRINTK
 c_func
 (paren
-l_string|&quot;scsi : reset aborted %d disconnected command(s)&bslash;n&quot;
+l_string|&quot;scsi: reset aborted %d disconnected command(s)&bslash;n&quot;
 comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* The Falcon lock should be released after a reset...&n; */
 multiline_comment|/* ++guenther: moved to atari_scsi_reset(), to prevent a race between&n; * unlocking and enabling dma interrupt.&n; */
 multiline_comment|/*    falcon_release_lock_if_possible( hostdata );*/
-macro_line|#endif /* 0 */
+macro_line|#endif /* 1 */
 r_return
 id|SCSI_RESET_WAKEUP
 suffix:semicolon

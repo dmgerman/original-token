@@ -128,7 +128,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m-&gt;msg_accrights
+id|m-&gt;msg_control
 op_ne
 l_int|NULL
 )paren
@@ -140,9 +140,9 @@ c_func
 (paren
 id|mode
 comma
-id|m-&gt;msg_accrights
+id|m-&gt;msg_control
 comma
-id|m-&gt;msg_accrightslen
+id|m-&gt;msg_controllen
 )paren
 suffix:semicolon
 r_if

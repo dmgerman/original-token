@@ -1497,6 +1497,16 @@ suffix:semicolon
 id|tcp_statistics.TcpRetransSegs
 op_increment
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Record the high sequence number to help avoid doing&n;&t;&t; * to much fast retransmission.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;retransmits
+)paren
+id|sk-&gt;high_seq
+op_assign
+id|sk-&gt;sent_seq
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Only one retransmit requested.&n;&t;&t; */
 r_if
 c_cond
@@ -2650,7 +2660,7 @@ id|tcp_statistics.TcpOutSegs
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Set up the timers for sending a delayed ack..&n; *&n; *      rules for delaying an ack:&n; *      - delay time &lt;= 0.5 HZ&n; *      - must send at least every 2 full sized packets&n; *      - we don&squot;t have a window update to send&n; */
+multiline_comment|/*&n; *&t;Set up the timers for sending a delayed ack..&n; *&n; *      rules for delaying an ack:&n; *      - delay time &lt;= 0.5 HZ&n; *      - must send at least every 2 full sized packets&n; *      - we don&squot;t have a window update to send&n; *&n; * &t;additional thoughts:&n; *&t;- we should not delay sending an ACK if we have ato &gt; 0.5 HZ.&n; *&t;  My thinking about this is that in this case we will just be&n; *&t;  systematically skewing the RTT calculation. (The rule about&n; *&t;  sending every two full sized packets will never need to be&n; *&t;  invoked, the delayed ack will be sent before the ATO timeout&n; *&t;  every time. Of course, the relies on our having a good estimate&n; *&t;  for packet interarrival times.&n; */
 DECL|function|tcp_send_delayed_ack
 r_void
 id|tcp_send_delayed_ack
@@ -2663,12 +2673,14 @@ id|sk
 comma
 r_int
 id|max_timeout
+comma
+r_int
+r_int
+id|timeout
 )paren
 (brace
 r_int
 r_int
-id|timeout
-comma
 id|now
 suffix:semicolon
 multiline_comment|/* Calculate new timeout */
@@ -2676,30 +2688,15 @@ id|now
 op_assign
 id|jiffies
 suffix:semicolon
-id|timeout
-op_assign
-id|sk-&gt;ato
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|timeout
 OG
 id|max_timeout
-)paren
-id|timeout
-op_assign
-id|max_timeout
-suffix:semicolon
-id|timeout
-op_add_assign
-id|now
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_or
 id|sk-&gt;bytes_rcv
-OG
+op_ge
 id|sk-&gt;max_unacked
 )paren
 (brace
@@ -2712,6 +2709,13 @@ c_func
 (paren
 id|TIMER_BH
 )paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|timeout
+op_add_assign
+id|now
 suffix:semicolon
 )brace
 multiline_comment|/* Use new timeout only if there wasn&squot;t a older one earlier  */
@@ -2866,6 +2870,10 @@ id|tcp_send_delayed_ack
 c_func
 (paren
 id|sk
+comma
+id|HZ
+op_div
+l_int|2
 comma
 id|HZ
 op_div

@@ -2,11 +2,11 @@ multiline_comment|/*&n;** asm/bootinfo.h -- Definition of the Linux/68K boot inf
 macro_line|#ifndef BOOTINFO_H
 DECL|macro|BOOTINFO_H
 mdefine_line|#define BOOTINFO_H
-macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/zorro.h&gt;
 multiline_comment|/*&n; * Amiga specific part of bootinfo structure.&n; */
 DECL|macro|NUM_AUTO
 mdefine_line|#define NUM_AUTO    16
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|AMIGAHW_DECLARE
 mdefine_line|#define AMIGAHW_DECLARE(name)&t;unsigned name : 1
 DECL|macro|AMIGAHW_SET
@@ -36,6 +36,25 @@ id|NUM_AUTO
 )braket
 suffix:semicolon
 multiline_comment|/* up to 16 autoconfig devices */
+macro_line|#ifdef HACKER_KERNEL
+DECL|member|exit_func
+r_void
+(paren
+op_star
+id|exit_func
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* addr of function to exit kernel */
+DECL|member|chip_addr
+r_int
+r_int
+id|chip_addr
+suffix:semicolon
+multiline_comment|/* start of chip memory (bytes) */
+macro_line|#endif
 DECL|member|chip_size
 r_int
 r_int
@@ -283,16 +302,87 @@ id|hw_present
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#else&t;/* __ASSEMBLY__ */
+id|BI_amiga_model
+op_assign
+id|BI_un
+id|BI_amiga_num_autcon
+op_assign
+id|BI_amiga_model
+op_plus
+l_int|4
+id|BI_amiga_autocon
+op_assign
+id|BI_amiga_num_autcon
+op_plus
+l_int|4
+macro_line|#ifdef HACKER_KERNEL
+id|BI_amiga_exit_func
+op_assign
+id|BI_amiga_autocon
+op_plus
+(paren
+id|CD_sizeof
+op_star
+id|NUM_AUTO
+)paren
+id|BI_amiga_chip_addr
+op_assign
+id|BI_amiga_exit_func
+op_plus
+l_int|4
+id|BI_amiga_chip_size
+op_assign
+id|BI_amiga_chip_addr
+op_plus
+l_int|4
+macro_line|#else
+id|BI_amiga_chip_size
+op_assign
+id|BI_amiga_autocon
+op_plus
+(paren
+id|CD_sizeof
+op_star
+id|NUM_AUTO
+)paren
+macro_line|#endif
+id|BI_amiga_vblank
+op_assign
+id|BI_amiga_chip_size
+op_plus
+l_int|4
+id|BI_amiga_psfreq
+op_assign
+id|BI_amiga_vblank
+op_plus
+l_int|1
+id|BI_amiga_eclock
+op_assign
+id|BI_amiga_psfreq
+op_plus
+l_int|1
+id|BI_amiga_chipset
+op_assign
+id|BI_amiga_eclock
+op_plus
+l_int|4
+id|BI_amiga_hw_present
+op_assign
+id|BI_amiga_chipset
+op_plus
+l_int|4
+macro_line|#endif&t;/* __ASSEMBLY__ */
 multiline_comment|/* Atari specific part of bootinfo */
 multiline_comment|/*&n; * Define several Hardware-Chips for indication so that for the ATARI we do&n; * no longer decide whether it is a Falcon or other machine . It&squot;s just&n; * important what hardware the machine uses&n; */
 multiline_comment|/* ++roman 08/08/95: rewritten from ORing constants to a C bitfield */
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|ATARIHW_DECLARE
 mdefine_line|#define ATARIHW_DECLARE(name)&t;unsigned name : 1
 DECL|macro|ATARIHW_SET
 mdefine_line|#define ATARIHW_SET(name)&t;(boot_info.bi_atari.hw_present.name = 1)
 DECL|macro|ATARIHW_PRESENT
 mdefine_line|#define ATARIHW_PRESENT(name)&t;(boot_info.bi_atari.hw_present.name)
-DECL|struct|bi_Atari
 r_struct
 id|bi_Atari
 (brace
@@ -494,11 +584,9 @@ id|VME
 )paren
 suffix:semicolon
 multiline_comment|/* VME Bus */
-DECL|member|hw_present
 )brace
 id|hw_present
 suffix:semicolon
-DECL|member|mch_cookie
 r_int
 r_int
 id|mch_cookie
@@ -515,25 +603,6 @@ DECL|macro|ATARI_MCH_TT
 mdefine_line|#define&t;ATARI_MCH_TT&t;&t;2
 DECL|macro|ATARI_MCH_FALCON
 mdefine_line|#define&t;ATARI_MCH_FALCON&t;3
-multiline_comment|/*&n; * CPU and FPU types&n; */
-DECL|macro|CPU_68020
-mdefine_line|#define CPU_68020    (1)
-DECL|macro|CPU_68030
-mdefine_line|#define CPU_68030    (2)
-DECL|macro|CPU_68040
-mdefine_line|#define CPU_68040    (4)
-DECL|macro|CPU_68060
-mdefine_line|#define CPU_68060    (8)
-DECL|macro|CPU_MASK
-mdefine_line|#define CPU_MASK     (31)
-DECL|macro|FPU_68881
-mdefine_line|#define FPU_68881    (32)
-DECL|macro|FPU_68882
-mdefine_line|#define FPU_68882    (64)
-DECL|macro|FPU_68040
-mdefine_line|#define FPU_68040    (128)&t;/* Internal FPU */
-DECL|macro|FPU_68060
-mdefine_line|#define FPU_68060    (256)&t;/* Internal FPU */
 DECL|struct|mem_info
 r_struct
 id|mem_info
@@ -552,22 +621,71 @@ suffix:semicolon
 multiline_comment|/* length of memory chunk (in bytes) */
 )brace
 suffix:semicolon
+macro_line|#else&t;/* __ASSEMBLY__ */
+id|MI_addr
+op_assign
+l_int|0
+id|MI_size
+op_assign
+id|MI_addr
+op_plus
+l_int|4
+id|MI_sizeof
+op_assign
+id|MI_size
+op_plus
+l_int|4
+macro_line|#endif /* __ASSEMBLY__ */
 DECL|macro|NUM_MEMINFO
 mdefine_line|#define NUM_MEMINFO  4
-macro_line|#endif /* __ASSEMBLY__ */
 DECL|macro|MACH_AMIGA
 mdefine_line|#define MACH_AMIGA   1
 DECL|macro|MACH_ATARI
 mdefine_line|#define MACH_ATARI   2
 DECL|macro|MACH_MAC
 mdefine_line|#define MACH_MAC     3
+multiline_comment|/*&n; * CPU and FPU types&n; */
+DECL|macro|CPUB_68020
+mdefine_line|#define CPUB_68020 0
+DECL|macro|CPUB_68030
+mdefine_line|#define CPUB_68030 1
+DECL|macro|CPUB_68040
+mdefine_line|#define CPUB_68040 2
+DECL|macro|CPUB_68060
+mdefine_line|#define CPUB_68060 3
+DECL|macro|FPUB_68881
+mdefine_line|#define FPUB_68881 5
+DECL|macro|FPUB_68882
+mdefine_line|#define FPUB_68882 6
+DECL|macro|FPUB_68040
+mdefine_line|#define FPUB_68040 7&t;/* Internal FPU */
+DECL|macro|FPUB_68060
+mdefine_line|#define FPUB_68060 8&t;/* Internal FPU */
+DECL|macro|CPU_68020
+mdefine_line|#define CPU_68020    (1&lt;&lt;CPUB_68020)
+DECL|macro|CPU_68030
+mdefine_line|#define CPU_68030    (1&lt;&lt;CPUB_68030)
+DECL|macro|CPU_68040
+mdefine_line|#define CPU_68040    (1&lt;&lt;CPUB_68040)
+DECL|macro|CPU_68060
+mdefine_line|#define CPU_68060    (1&lt;&lt;CPUB_68060)
+DECL|macro|CPU_MASK
+mdefine_line|#define CPU_MASK     (31)
+DECL|macro|FPU_68881
+mdefine_line|#define FPU_68881    (1&lt;&lt;FPUB_68881)
+DECL|macro|FPU_68882
+mdefine_line|#define FPU_68882    (1&lt;&lt;FPUB_68882)
+DECL|macro|FPU_68040
+mdefine_line|#define FPU_68040    (1&lt;&lt;FPUB_68040)&t;/* Internal FPU */
+DECL|macro|FPU_68060
+mdefine_line|#define FPU_68060    (1&lt;&lt;FPUB_68060)&t;/* Internal FPU */
+DECL|macro|CL_SIZE
+mdefine_line|#define CL_SIZE      (256)
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|MACH_IS_AMIGA
 mdefine_line|#define MACH_IS_AMIGA&t;(boot_info.machtype == MACH_AMIGA)
 DECL|macro|MACH_IS_ATARI
 mdefine_line|#define MACH_IS_ATARI&t;(boot_info.machtype == MACH_ATARI)
-DECL|macro|CL_SIZE
-mdefine_line|#define CL_SIZE      (256)
 DECL|struct|bootinfo
 r_struct
 id|bootinfo
@@ -649,6 +767,49 @@ r_struct
 id|bootinfo
 id|boot_info
 suffix:semicolon
+macro_line|#else&t;/* __ASSEMBLY__ */
+id|BI_machtype
+op_assign
+l_int|0
+id|BI_cputype
+op_assign
+id|BI_machtype
+op_plus
+l_int|4
+id|BI_memory
+op_assign
+id|BI_cputype
+op_plus
+l_int|4
+id|BI_num_memory
+op_assign
+id|BI_memory
+op_plus
+(paren
+id|MI_sizeof
+op_star
+id|NUM_MEMINFO
+)paren
+id|BI_ramdisk_size
+op_assign
+id|BI_num_memory
+op_plus
+l_int|4
+id|BI_ramdisk_addr
+op_assign
+id|BI_ramdisk_size
+op_plus
+l_int|4
+id|BI_command_line
+op_assign
+id|BI_ramdisk_addr
+op_plus
+l_int|4
+id|BI_un
+op_assign
+id|BI_command_line
+op_plus
+id|CL_SIZE
 macro_line|#endif /* __ASSEMBLY__ */
 multiline_comment|/*&n; * Stuff for bootinfo interface versioning&n; *&n; * At the start of kernel code, a &squot;struct bootversion&squot; is located. bootstrap&n; * checks for a matching version of the interface before booting a kernel, to&n; * avoid user confusion if kernel and bootstrap don&squot;t work together :-)&n; *&n; * If incompatible changes are made to the bootinfo interface, the major&n; * number below should be stepped (and the minor reset to 0) for the&n; * appropriate machine. If a change is backward-compatible, the minor should&n; * be stepped. &quot;Backwards-compatible&quot; means that booting will work, but&n; * certain features may not.&n; */
 DECL|macro|BOOTINFOV_MAGIC
@@ -660,33 +821,27 @@ mdefine_line|#define BI_VERSION_MAJOR(v)&t;&t;(((v) &gt;&gt; 16) &amp; 0xffff)
 DECL|macro|BI_VERSION_MINOR
 mdefine_line|#define BI_VERSION_MINOR(v)&t;&t;((v) &amp; 0xffff)
 macro_line|#ifndef __ASSEMBLY__
-DECL|struct|bootversion
 r_struct
 id|bootversion
 (brace
-DECL|member|branch
 r_int
 r_int
 id|branch
 suffix:semicolon
-DECL|member|magic
 r_int
 r_int
 id|magic
 suffix:semicolon
 r_struct
 (brace
-DECL|member|machtype
 r_int
 r_int
 id|machtype
 suffix:semicolon
-DECL|member|version
 r_int
 r_int
 id|version
 suffix:semicolon
-DECL|member|machversions
 )brace
 id|machversions
 (braket

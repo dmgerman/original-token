@@ -3867,19 +3867,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;3c509: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -3912,7 +3899,6 @@ comma
 id|EL3_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

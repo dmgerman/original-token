@@ -248,8 +248,8 @@ DECL|macro|__NR_setdomainname
 mdefine_line|#define __NR_setdomainname&t;121
 DECL|macro|__NR_uname
 mdefine_line|#define __NR_uname&t;&t;122
-DECL|macro|__NR_modify_ldt
-mdefine_line|#define __NR_modify_ldt&t;&t;123
+DECL|macro|__NR_cacheflush
+mdefine_line|#define __NR_cacheflush&t;&t;123
 DECL|macro|__NR_adjtimex
 mdefine_line|#define __NR_adjtimex&t;&t;124
 DECL|macro|__NR_mprotect

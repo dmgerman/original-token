@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/affs/namei.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Heavily hacked up.&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
+multiline_comment|/*&n; *  linux/fs/affs/namei.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/affs_fs.h&gt;
 macro_line|#include &lt;linux/amigaffs.h&gt;
@@ -1191,14 +1191,27 @@ op_minus
 id|ENOSPC
 suffix:semicolon
 )brace
+id|inode-&gt;i_mode
+op_assign
+id|mode
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dir-&gt;i_sb-&gt;u.affs_sb.s_flags
+op_amp
+id|SF_OFS
+)paren
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|affs_file_inode_operations_ofs
+suffix:semicolon
+r_else
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|affs_file_inode_operations
-suffix:semicolon
-id|inode-&gt;i_mode
-op_assign
-id|mode
 suffix:semicolon
 id|error
 op_assign
@@ -3202,7 +3215,7 @@ r_goto
 id|end_rename
 suffix:semicolon
 )brace
-multiline_comment|/* Unlink destination if existent */
+multiline_comment|/* Unlink destination if existant */
 r_if
 c_cond
 (paren

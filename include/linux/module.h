@@ -29,6 +29,8 @@ mdefine_line|#define MOD_MAX_NAME 64
 multiline_comment|/* magic marker for modules inserted from kerneld, to be auto-reaped */
 DECL|macro|MOD_AUTOCLEAN
 mdefine_line|#define MOD_AUTOCLEAN 0x40000000 /* big enough, but no sign problems... */
+DECL|macro|MOD_VISITED
+mdefine_line|#define MOD_VISITED   0x20000000 /* Thanks Jacques! */
 multiline_comment|/* maximum length of symbol name */
 DECL|macro|SYM_MAX_NAME
 mdefine_line|#define SYM_MAX_NAME 60
@@ -233,11 +235,11 @@ r_int
 id|mod_use_count_
 suffix:semicolon
 DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT      mod_use_count_++
+mdefine_line|#define MOD_INC_USE_COUNT      (mod_use_count_++, mod_use_count_ |= MOD_VISITED)
 DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT      mod_use_count_--
+mdefine_line|#define MOD_DEC_USE_COUNT      (mod_use_count_--, mod_use_count_ |= MOD_VISITED)
 DECL|macro|MOD_IN_USE
-mdefine_line|#define MOD_IN_USE&t;       ((mod_use_count_ &amp; ~MOD_AUTOCLEAN) != 0)
+mdefine_line|#define MOD_IN_USE&t;       ((mod_use_count_ &amp; ~(MOD_AUTOCLEAN | MOD_VISITED)) != 0)
 macro_line|#ifndef __NO_VERSION__
 macro_line|#include &lt;linux/version.h&gt;
 DECL|variable|kernel_version

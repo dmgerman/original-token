@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 2.2&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensively tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; * &n; * 2.1  1996/04/29 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *      Far too many bugfixes/changes to mention them all separately.&n; * 2.2  1996/05/06 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *      Mostly fixes to some silly bugs in the previous release :-).&n; *      (Hi Michael Thimm! Thank&squot;s for lending me Your&squot;s double speed drive.)&n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 2.3&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensively tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; * &n; * 2.1  1996/04/29 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *      Far too many bugfixes/changes to mention them all separately.&n; * 2.2  1996/05/06 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *      Mostly fixes to some silly bugs in the previous release :-).&n; *      (Hi Michael Thimm! Thank&squot;s for lending me Your&squot;s double speed drive.)&n; * 2.3  1996/05/15 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *&t;Fixed stereo support. &n; * NOTE:&n; *&t;There will be propably a 3.0 adhering to the new generic non ATAPI&n; *&t;cdrom interface in the unforseen future.&n; */
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;2.2&quot;
+mdefine_line|#define VERSION &quot;2.3&quot;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -3525,7 +3525,7 @@ id|volctrl.channel1
 op_assign
 id|volctrl.channel3
 op_assign
-l_int|0xff
+l_int|0x00
 suffix:semicolon
 r_return
 id|talk
@@ -5242,14 +5242,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|printk
-c_func
-(paren
-l_string|&quot;%d&bslash;n&quot;
-comma
-id|MCDX_NDRIVES
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren

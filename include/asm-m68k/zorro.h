@@ -2,6 +2,7 @@ multiline_comment|/*&n; * asm-m68k/zorro.h -- Amiga AutoConfig (Zorro) Expansion
 macro_line|#ifndef _ASM_M68K_ZORRO_H_
 DECL|macro|_ASM_M68K_ZORRO_H_
 mdefine_line|#define _ASM_M68K_ZORRO_H_
+macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/amigatypes.h&gt;
 multiline_comment|/*&n; * Defined Board Manufacturers&n; *&n; * Please update arch/m68k/amiga/zorro.c if you make changes here&n; * Many IDs were obtained by using ExpName V1.4 ((C) Richard K&#xfffd;rber)&n; * and by looking at the NetBSD-Amiga kernel source&n; */
@@ -594,6 +595,157 @@ suffix:semicolon
 multiline_comment|/* for whatever the driver wants */
 )brace
 suffix:semicolon
+macro_line|#else&t;/* __ASSEMBLY__ */
+id|LN_Succ
+op_assign
+l_int|0
+id|LN_Pred
+op_assign
+id|LN_Succ
+op_plus
+l_int|4
+id|LN_Type
+op_assign
+id|LN_Pred
+op_plus
+l_int|4
+id|LN_Pri
+op_assign
+id|LN_Type
+op_plus
+l_int|1
+id|LN_Name
+op_assign
+id|LN_Pri
+op_plus
+l_int|1
+id|LN_sizeof
+op_assign
+id|LN_Name
+op_plus
+l_int|4
+id|ER_Type
+op_assign
+l_int|0
+id|ER_Product
+op_assign
+id|ER_Type
+op_plus
+l_int|1
+id|ER_Flags
+op_assign
+id|ER_Product
+op_plus
+l_int|1
+id|ER_Reserved03
+op_assign
+id|ER_Flags
+op_plus
+l_int|1
+id|ER_Manufacturer
+op_assign
+id|ER_Reserved03
+op_plus
+l_int|1
+id|ER_SerialNumber
+op_assign
+id|ER_Manufacturer
+op_plus
+l_int|2
+id|ER_InitDiagVec
+op_assign
+id|ER_SerialNumber
+op_plus
+l_int|4
+id|ER_Reserved0c
+op_assign
+id|ER_InitDiagVec
+op_plus
+l_int|2
+id|ER_Reserved0d
+op_assign
+id|ER_Reserved0c
+op_plus
+l_int|1
+id|ER_Reserved0e
+op_assign
+id|ER_Reserved0d
+op_plus
+l_int|1
+id|ER_Reserved0f
+op_assign
+id|ER_Reserved0e
+op_plus
+l_int|1
+id|ER_sizeof
+op_assign
+id|ER_Reserved0f
+op_plus
+l_int|1
+id|CD_Node
+op_assign
+l_int|0
+id|CD_Flags
+op_assign
+id|CD_Node
+op_plus
+id|LN_sizeof
+id|CD_Pad
+op_assign
+id|CD_Flags
+op_plus
+l_int|1
+id|CD_Rom
+op_assign
+id|CD_Pad
+op_plus
+l_int|1
+id|CD_BoardAddr
+op_assign
+id|CD_Rom
+op_plus
+id|ER_sizeof
+id|CD_BoardSize
+op_assign
+id|CD_BoardAddr
+op_plus
+l_int|4
+id|CD_SlotAddr
+op_assign
+id|CD_BoardSize
+op_plus
+l_int|4
+id|CD_SlotSize
+op_assign
+id|CD_SlotAddr
+op_plus
+l_int|2
+id|CD_Driver
+op_assign
+id|CD_SlotSize
+op_plus
+l_int|2
+id|CD_NextCD
+op_assign
+id|CD_Driver
+op_plus
+l_int|4
+id|CD_Unused
+op_assign
+id|CD_NextCD
+op_plus
+l_int|4
+id|CD_sizeof
+op_assign
+id|CD_Unused
+op_plus
+(paren
+l_int|4
+op_star
+l_int|4
+)paren
+macro_line|#endif&t;/* __ASSEMBLY__ */
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Zorro Functions&n; */
 r_extern
 r_int
@@ -689,5 +841,6 @@ id|buffer
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_ZORRO
+macro_line|#endif&t;/* __ASSEMBLY__ */
 macro_line|#endif /* _ASM_M68K_ZORRO_H_ */
 eof

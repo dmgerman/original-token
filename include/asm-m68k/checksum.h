@@ -141,87 +141,7 @@ op_complement
 id|sum
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented&n; */
-r_static
-r_inline
-r_int
-r_int
-r_int
-DECL|function|csum_tcpudp_magic
-id|csum_tcpudp_magic
-c_func
-(paren
-r_int
-r_int
-id|saddr
-comma
-r_int
-r_int
-id|daddr
-comma
-r_int
-r_int
-id|len
-comma
-r_int
-r_int
-id|proto
-comma
-r_int
-r_int
-id|sum
-)paren
-(brace
-id|__asm__
-(paren
-l_string|&quot;addl  %1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;addxl %4,%0&bslash;n&bslash;t&quot;
-l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
-l_string|&quot;movl  %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;swap  %1&bslash;n&bslash;t&quot;
-l_string|&quot;addxw %1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;clrw  %1&bslash;n&bslash;t&quot;
-l_string|&quot;addxw %1,%0&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=&amp;d&quot;
-(paren
-id|sum
-)paren
-comma
-l_string|&quot;=&amp;d&quot;
-(paren
-id|saddr
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|daddr
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|saddr
-)paren
-comma
-l_string|&quot;d&quot;
-(paren
-id|len
-op_plus
-id|proto
-)paren
-comma
-l_string|&quot;d&quot;
-(paren
-id|sum
-)paren
-)paren
-suffix:semicolon
-r_return
-op_complement
-id|sum
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Fold a partial checksum without adding pseudo headers&n; */
+multiline_comment|/*&n; *&t;Fold a partial checksum&n; */
 DECL|function|csum_fold
 r_static
 r_inline
@@ -275,6 +195,86 @@ op_complement
 id|sum
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented&n; */
+r_static
+r_inline
+r_int
+r_int
+r_int
+DECL|function|csum_tcpudp_magic
+id|csum_tcpudp_magic
+c_func
+(paren
+r_int
+r_int
+id|saddr
+comma
+r_int
+r_int
+id|daddr
+comma
+r_int
+r_int
+id|len
+comma
+r_int
+r_int
+id|proto
+comma
+r_int
+r_int
+id|sum
+)paren
+(brace
+id|__asm__
+(paren
+l_string|&quot;addl  %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %4,%0&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
+l_string|&quot;clrl %1&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %1,%0&quot;
+suffix:colon
+l_string|&quot;=&amp;d&quot;
+(paren
+id|sum
+)paren
+comma
+l_string|&quot;=&amp;d&quot;
+(paren
+id|saddr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|daddr
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|saddr
+)paren
+comma
+l_string|&quot;d&quot;
+(paren
+id|len
+op_plus
+id|proto
+)paren
+comma
+l_string|&quot;d&quot;
+(paren
+id|sum
+)paren
+)paren
+suffix:semicolon
+r_return
+id|csum_fold
+c_func
+(paren
+id|sum
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * this routine is used for miscellaneous IP-like checksums, mainly&n; * in icmp.c&n; */
 r_static
 r_inline
@@ -293,34 +293,8 @@ r_int
 id|len
 )paren
 (brace
-r_int
-r_int
-id|sum
-suffix:semicolon
-r_int
-r_int
-id|scratch
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movel %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;swap  %1&bslash;n&bslash;t&quot;
-l_string|&quot;addw  %1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;clrw  %1&bslash;n&bslash;t&quot;
-l_string|&quot;addxw %1,%0&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=d&quot;
-(paren
-id|sum
-)paren
-comma
-l_string|&quot;=d&quot;
-(paren
-id|scratch
-)paren
-suffix:colon
-l_string|&quot;0&quot;
+r_return
+id|csum_fold
 (paren
 id|csum_partial
 c_func
@@ -332,11 +306,6 @@ comma
 l_int|0
 )paren
 )paren
-)paren
-suffix:semicolon
-r_return
-op_complement
-id|sum
 suffix:semicolon
 )brace
 macro_line|#endif /* _M68K_CHECKSUM_H */

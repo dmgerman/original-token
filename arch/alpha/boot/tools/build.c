@@ -3,7 +3,7 @@ macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
-macro_line|#include &lt;a.out.h&gt;
+macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|MAXSECT
 mdefine_line|#define MAXSECT 10

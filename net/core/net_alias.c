@@ -1582,7 +1582,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ERROR: net_alias_dev_delete(): incorrect non-alias device after maindev&bslash;n&quot;
+l_string|&quot;net_alias_dev_delete(): incorrect non-alias device after maindev&bslash;n&quot;
 )paren
 suffix:semicolon
 r_continue
@@ -1697,7 +1697,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ERROR: net_alias_dev_delete(%s): unhashed alias!&bslash;n&quot;
+l_string|&quot;net_alias_dev_delete(%s): unhashed alias!&bslash;n&quot;
 comma
 id|alias-&gt;name
 )paren
@@ -2375,7 +2375,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ERROR: net_alias_rehash(): NULL sockaddr passed&bslash;n&quot;
+l_string|&quot;net_alias_rehash(): NULL sockaddr passed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2400,7 +2400,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ERROR: net_alias_rehash for %s: NULL maindev&bslash;n&quot;
+l_string|&quot;net_alias_rehash for %s: NULL maindev&bslash;n&quot;
 comma
 id|alias-&gt;name
 )paren
@@ -2426,7 +2426,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ERROR: net_alias_rehash for %s: NULL alias_info&bslash;n&quot;
+l_string|&quot;net_alias_rehash for %s: NULL alias_info&bslash;n&quot;
 comma
 id|alias-&gt;name
 )paren
@@ -2452,7 +2452,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ERROR: net_alias_rehash(%s): unbound alias.&bslash;n&quot;
+l_string|&quot;net_alias_rehash(%s): unbound alias.&bslash;n&quot;
 comma
 id|alias-&gt;name
 )paren
@@ -2495,7 +2495,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ERROR: net_alias_rehash(%s): unreg family==%d.&bslash;n&quot;
+l_string|&quot;net_alias_rehash(%s): unreg family==%d.&bslash;n&quot;
 comma
 id|alias-&gt;name
 comma
@@ -2606,7 +2606,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ERROR: net_alias_rehash(%s): unhashed alias!&bslash;n&quot;
+l_string|&quot;net_alias_rehash(%s): unhashed alias!&bslash;n&quot;
 comma
 id|alias-&gt;name
 )paren

@@ -625,6 +625,9 @@ id|fw_res
 op_eq
 id|FW_MASQUERADE
 )paren
+r_if
+c_cond
+(paren
 id|ip_fw_masquerade
 c_func
 (paren
@@ -633,7 +636,27 @@ id|skb
 comma
 id|dev2
 )paren
+OL
+l_int|0
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * Masquerading failed; silently discard this packet.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|rt
+)paren
+id|ip_rt_put
+c_func
+(paren
+id|rt
+)paren
 suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 macro_line|#endif
 id|IS_SKB
 c_func

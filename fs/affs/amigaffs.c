@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/affs/amigaffs.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Modified for larger blocks.&n; *&n; *  (C) 1993  Ray Burr - Amiga FFS filesystem.&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/affs/amigaffs.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - rewritten&n; *&n; *  (C) 1993  Ray Burr - Amiga FFS filesystem.&n; *&n; */
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/affs_fs.h&gt;

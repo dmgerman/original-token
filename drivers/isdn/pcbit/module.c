@@ -297,22 +297,6 @@ r_void
 r_int
 id|board
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;pcbit: device busy, remove cancelled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_for
 c_loop
 (paren

@@ -613,7 +613,8 @@ id|kdev_t
 id|i_rdev
 suffix:semicolon
 DECL|member|i_size
-id|off_t
+r_int
+r_int
 id|i_size
 suffix:semicolon
 DECL|member|i_atime
@@ -1064,7 +1065,6 @@ DECL|macro|FLOCK_VERIFY_READ
 mdefine_line|#define FLOCK_VERIFY_READ  1
 DECL|macro|FLOCK_VERIFY_WRITE
 mdefine_line|#define FLOCK_VERIFY_WRITE 2
-macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
 r_extern
 r_int
 id|locks_mandatory_locked
@@ -1103,7 +1103,6 @@ r_int
 id|count
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|function|locks_verify_locked
 r_extern
 r_inline

@@ -224,7 +224,7 @@ id|msg.msg_namelen
 op_assign
 id|salen
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -357,7 +357,7 @@ r_sizeof
 id|sa
 )paren
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon

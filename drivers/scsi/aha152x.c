@@ -7194,6 +7194,34 @@ macro_line|#endif
 r_break
 suffix:semicolon
 r_case
+id|RESTORE_POINTERS
+suffix:colon
+macro_line|#if defined(DEBUG_MSGI)
+r_if
+c_cond
+(paren
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|debug
+op_amp
+id|debug_msgi
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;inbound message (RESTORE DATA POINTERS), &quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_break
+suffix:semicolon
+r_case
 id|EXTENDED_MESSAGE
 suffix:colon
 (brace

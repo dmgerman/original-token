@@ -270,8 +270,8 @@ DECL|macro|__NR_munlockall
 mdefine_line|#define __NR_munlockall&t;&t;317
 DECL|macro|__NR_sysinfo
 mdefine_line|#define __NR_sysinfo&t;&t;318
-DECL|macro|__NR_sysctl
-mdefine_line|#define __NR_sysctl&t;&t;319
+DECL|macro|__NR__sysctl
+mdefine_line|#define __NR__sysctl&t;&t;319
 DECL|macro|__NR_idle
 mdefine_line|#define __NR_idle&t;&t;320
 DECL|macro|__NR_umount

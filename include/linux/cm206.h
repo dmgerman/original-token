@@ -2,6 +2,7 @@ multiline_comment|/* cm206.h Header file for cm206.c.&n;   Copyright (c) 1995 Da
 macro_line|#ifndef LINUX_CM206_H
 DECL|macro|LINUX_CM206_H
 mdefine_line|#define LINUX_CM206_H
+macro_line|#include &lt;linux/ioctl.h&gt;
 multiline_comment|/* First, the cm260 stuff */
 multiline_comment|/* The ports and irq used. Although CM206_BASE and CM206_IRQ are defined&n;   below, the values are not used unless autoprobing is turned off and &n;   no LILO boot options or module command line options are given. Change&n;   these values to your own as last resort if autoprobing and options&n;   don&squot;t work. */
 DECL|macro|CM206_BASE
@@ -184,15 +185,15 @@ DECL|macro|cds_xa_mode
 mdefine_line|#define cds_xa_mode 0xf0
 multiline_comment|/* finally some ioctls for the driver */
 DECL|macro|CM206CTL_GET_STAT
-mdefine_line|#define CM206CTL_GET_STAT 0x2000
+mdefine_line|#define CM206CTL_GET_STAT _IO( 0x20, 0 )
 DECL|macro|CM206CTL_GET_LAST_STAT
-mdefine_line|#define CM206CTL_GET_LAST_STAT 0x2001
+mdefine_line|#define CM206CTL_GET_LAST_STAT _IO( 0x20, 1 )
 multiline_comment|/* for kernel 1.2.n */
 macro_line|#if !defined(CDROM_GET_UPC)
 DECL|macro|CDROM_GET_UPC
-mdefine_line|#define CDROM_GET_UPC 0x5311
+mdefine_line|#define CDROM_GET_UPC _IO( &squot;S&squot;, 0x11 )
 DECL|macro|CDROMRESET
-mdefine_line|#define CDROMRESET 0x5312
+mdefine_line|#define CDROMRESET _IO( &squot;S&squot;, 0x12 )
 macro_line|#endif
 macro_line|#ifdef STATISTICS
 multiline_comment|/* This is an ugly way to guarantee that the names of the statistics&n; * are the same in the code and in the diagnostics program.  */

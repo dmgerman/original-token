@@ -403,14 +403,12 @@ DECL|member|send_head
 r_struct
 id|sk_buff
 op_star
-r_volatile
 id|send_head
 suffix:semicolon
 DECL|member|send_tail
 r_struct
 id|sk_buff
 op_star
-r_volatile
 id|send_tail
 suffix:semicolon
 DECL|member|back_log
@@ -483,15 +481,18 @@ id|__u32
 id|lastwin_seq
 suffix:semicolon
 multiline_comment|/* sequence number when we last updated the window we offer */
+DECL|member|high_seq
+id|__u32
+id|high_seq
+suffix:semicolon
+multiline_comment|/* sequence number when we did current fast retransmit */
 DECL|member|ato
-r_volatile
 r_int
 r_int
 id|ato
 suffix:semicolon
 multiline_comment|/* ack timeout */
 DECL|member|lrcvtime
-r_volatile
 r_int
 r_int
 id|lrcvtime
@@ -510,21 +511,18 @@ id|mtu
 suffix:semicolon
 multiline_comment|/* mss negotiated in the syn&squot;s */
 DECL|member|mss
-r_volatile
 r_int
 r_int
 id|mss
 suffix:semicolon
 multiline_comment|/* current eff. mss - can change */
 DECL|member|user_mss
-r_volatile
 r_int
 r_int
 id|user_mss
 suffix:semicolon
 multiline_comment|/* mss requested by user in ioctl */
 DECL|member|max_window
-r_volatile
 r_int
 r_int
 id|max_window
@@ -534,62 +532,53 @@ r_int
 r_int
 id|window_clamp
 suffix:semicolon
+DECL|member|ssthresh
+r_int
+r_int
+id|ssthresh
+suffix:semicolon
 DECL|member|num
 r_int
 r_int
 id|num
 suffix:semicolon
 DECL|member|cong_window
-r_volatile
 r_int
 r_int
 id|cong_window
 suffix:semicolon
 DECL|member|cong_count
-r_volatile
 r_int
 r_int
 id|cong_count
 suffix:semicolon
-DECL|member|ssthresh
-r_volatile
-r_int
-r_int
-id|ssthresh
-suffix:semicolon
 DECL|member|packets_out
-r_volatile
 r_int
 r_int
 id|packets_out
 suffix:semicolon
 DECL|member|shutdown
-r_volatile
 r_int
 r_int
 id|shutdown
 suffix:semicolon
 DECL|member|rtt
-r_volatile
 r_int
 r_int
 id|rtt
 suffix:semicolon
 DECL|member|mdev
-r_volatile
 r_int
 r_int
 id|mdev
 suffix:semicolon
 DECL|member|rto
-r_volatile
 r_int
 r_int
 id|rto
 suffix:semicolon
 multiline_comment|/*&n; *&t;currently backoff isn&squot;t used, but I&squot;m maintaining it in case&n; *&t;we want to go back to a backoff formula that needs it&n; */
 DECL|member|backoff
-r_volatile
 r_int
 r_int
 id|backoff
@@ -1372,7 +1361,7 @@ op_star
 id|sk
 )paren
 (brace
-macro_line|#if 1
+macro_line|#if 0
 multiline_comment|/* debugging code: the test isn&squot;t even 100% correct, but it can catch bugs */
 multiline_comment|/* Note that a double lock is ok in theory - it&squot;s just _usually_ a bug */
 r_if
@@ -1424,7 +1413,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 multiline_comment|/* debugging code: remove me when ok */
 r_if
 c_cond
@@ -1457,9 +1446,15 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-op_logical_neg
-op_decrement
+(paren
 id|sk-&gt;users
+op_assign
+id|sk-&gt;users
+op_minus
+l_int|1
+)paren
+op_eq
+l_int|0
 )paren
 id|__release_sock
 c_func

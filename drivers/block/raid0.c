@@ -1387,17 +1387,6 @@ id|cleanup_module
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-(paren
-l_string|&quot;md raid0 : module still busy...&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
 id|unregister_md_personality
 (paren
 id|RAID0

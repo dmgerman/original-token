@@ -9876,18 +9876,6 @@ id|nopowersave
 r_int
 id|currcons
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
-r_if
-c_cond
-(paren
-id|apm_display_blank
-c_func
-(paren
-)paren
-)paren
-r_return
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10016,6 +10004,18 @@ id|fg_console
 op_plus
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+r_if
+c_cond
+(paren
+id|apm_display_blank
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10047,18 +10047,6 @@ suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
-r_if
-c_cond
-(paren
-id|apm_display_unblank
-c_func
-(paren
-)paren
-)paren
-r_return
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10214,6 +10202,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+r_if
+c_cond
+(paren
+id|apm_display_unblank
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * If a blank_screen is due to a timer, then a power save is allowed.&n; * If it is related to console_switching, then avoid vesa_blank().&n; */
 DECL|function|blank_screen

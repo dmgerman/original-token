@@ -1119,7 +1119,7 @@ id|msg.msg_iovlen
 op_assign
 l_int|1
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1279,7 +1279,7 @@ id|msg.msg_iovlen
 op_assign
 l_int|1
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -3545,7 +3545,7 @@ id|msg.msg_iovlen
 op_assign
 l_int|1
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -3760,7 +3760,7 @@ id|msg.msg_iovlen
 op_assign
 l_int|1
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -3937,7 +3937,7 @@ id|msg.msg_iovlen
 op_assign
 l_int|1
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -4130,7 +4130,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon

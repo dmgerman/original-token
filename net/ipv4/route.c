@@ -6617,6 +6617,8 @@ op_star
 id|dev
 )paren
 (brace
+multiline_comment|/*&n; *&t;This causes too much grief to do now.&n; */
+macro_line|#ifdef COMING_IN_2_1
 r_if
 c_cond
 (paren
@@ -6676,5 +6678,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 )brace
 eof

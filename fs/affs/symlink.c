@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/affs/symlink.c&n; *&n; *  1995  Hans-Joachim Widmaier - modified for AFFS.&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  affs symlink handling code&n; */
+multiline_comment|/*&n; *  linux/fs/affs/symlink.c&n; *&n; *  1995  Hans-Joachim Widmaier - modified for affs.&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  affs symlink handling code&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;

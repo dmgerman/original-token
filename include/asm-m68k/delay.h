@@ -14,9 +14,10 @@ id|loops
 )paren
 (brace
 id|__asm__
-c_func
+id|__volatile__
 (paren
-l_string|&quot;&bslash;n&bslash;tmovel %0,%/d0&bslash;n1:&bslash;tsubql #1,%/d0&bslash;n&bslash;tbpls 1b&bslash;n&quot;
+l_string|&quot;&bslash;n&bslash;tmovel %0,%/d0&bslash;n1:&bslash;tsubql #1,%/d0&bslash;n&bslash;t&quot;
+l_string|&quot;bpls 1b&bslash;n&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -47,7 +48,8 @@ op_mul_assign
 l_int|0x000010c6
 suffix:semicolon
 multiline_comment|/* 2**32 / 1000000 */
-id|asm
+id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;mulul %1,%0:%2&quot;
 suffix:colon
@@ -96,7 +98,6 @@ id|c
 )paren
 (brace
 id|__asm__
-c_func
 (paren
 l_string|&quot;mulul %1,%/d0:%0&bslash;n&bslash;tdivul %2,%/d0:%0&quot;
 suffix:colon

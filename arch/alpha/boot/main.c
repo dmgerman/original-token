@@ -926,10 +926,15 @@ r_if
 c_cond
 (paren
 id|nbytes
-OG
+OL
 l_int|0
 )paren
 (brace
+id|nbytes
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|envval
 (braket
 id|nbytes
@@ -949,7 +954,6 @@ comma
 id|envval
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren

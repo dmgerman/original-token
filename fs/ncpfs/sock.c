@@ -90,7 +90,7 @@ op_assign
 op_star
 id|addr_len
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -190,7 +190,7 @@ id|msg.msg_namelen
 op_assign
 id|addr_len
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon

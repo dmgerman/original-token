@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * SDLA&t;&t;An implementation of a driver for the Sangoma S502/S508 series&n; *&t;&t;multi-protocol PC interface card.  Initial offering is with &n; *&t;&t;the DLCI driver, providing Frame Relay support for linux.&n; *&n; *&t;&t;Global definitions for the Frame relay interface.&n; *&n; * Version:&t;@(#)sdla.c   0.20&t;13 Apr 1996&n; *&n; * Credits:&t;Sangoma Technologies, for the use of 2 cards for an extended&n; *&t;&t;&t;period of time.&n; *&t;&t;David Mandelstam &lt;dm@sangoma.com&gt; for getting me started on &n; *&t;&t;&t;this project, and incentive to complete it.&n; *&t;&t;Gene Kozen &lt;74604.152@compuserve.com&gt; for providing me with&n; *&t;&t;&t;important information about the cards.&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; * Changes:&n; *&t;&t;0.15&t;Mike McLagan&t;Improved error handling, packet dropping&n; *&t;&t;0.20&t;Mike McLagan&t;New transmit/receive flags for config&n; *&t;&t;&t;&t;&t;If in FR mode, don&squot;t accept packets from&n; *&t;&t;&t;&t;&t;non-DLCI devices.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * SDLA&t;&t;An implementation of a driver for the Sangoma S502/S508 series&n; *&t;&t;multi-protocol PC interface card.  Initial offering is with &n; *&t;&t;the DLCI driver, providing Frame Relay support for linux.&n; *&n; *&t;&t;Global definitions for the Frame relay interface.&n; *&n; * Version:&t;@(#)sdla.c   0.25&t;14 May 1996&n; *&n; * Credits:&t;Sangoma Technologies, for the use of 2 cards for an extended&n; *&t;&t;&t;period of time.&n; *&t;&t;David Mandelstam &lt;dm@sangoma.com&gt; for getting me started on &n; *&t;&t;&t;this project, and incentive to complete it.&n; *&t;&t;Gene Kozen &lt;74604.152@compuserve.com&gt; for providing me with&n; *&t;&t;&t;important information about the cards.&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; * Changes:&n; *&t;&t;0.15&t;Mike McLagan&t;Improved error handling, packet dropping&n; *&t;&t;0.20&t;Mike McLagan&t;New transmit/receive flags for config&n; *&t;&t;&t;&t;&t;If in FR mode, don&squot;t accept packets from&n; *&t;&t;&t;&t;&t;non DLCI devices.&n; *&t;&t;0.25&t;Mike McLagan&t;Fixed problem with rejecting packets&n; *&t;&t;&t;&t;&t;from non DLCI devices.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -28,7 +28,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;SDLA driver v0.20, 13 Apr 1996, mike.mclagan@linux.org&quot;
+l_string|&quot;SDLA driver v0.25, 14 May 1996, mike.mclagan@linux.org&quot;
 suffix:semicolon
 DECL|variable|devname
 r_static
@@ -1276,6 +1276,11 @@ suffix:semicolon
 r_char
 op_star
 id|state
+comma
+id|line
+(braket
+l_int|30
+)braket
 suffix:semicolon
 r_switch
 c_cond
@@ -1435,10 +1440,22 @@ op_assign
 l_string|&quot;active&quot;
 suffix:semicolon
 r_else
+(brace
+id|sprintf
+c_func
+(paren
+id|line
+comma
+l_string|&quot;uknown status: %02X&quot;
+comma
+id|pstatus-&gt;flags
+)paren
+suffix:semicolon
 id|state
 op_assign
-l_string|&quot;unknown status&quot;
+id|line
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -2759,6 +2776,8 @@ r_int
 id|ret
 comma
 id|addr
+comma
+id|accept
 suffix:semicolon
 r_int
 id|size
@@ -2779,6 +2798,10 @@ suffix:semicolon
 id|ret
 op_assign
 l_int|0
+suffix:semicolon
+id|accept
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -2828,6 +2851,10 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n;       * stupid GateD insists on setting up the multicast router thru us&n;       * and we&squot;re ill equipped to handle a non Frame Relay packet at this&n;       * time!&n;       */
+id|accept
+op_assign
+l_int|1
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2849,20 +2876,15 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: FRAD module accepts packets from DLCI ONLY!&bslash;n&quot;
+l_string|&quot;%s: Non DLCI device, type %i, tried to send on FRAD module.&bslash;n&quot;
 comma
 id|dev-&gt;name
-)paren
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
 comma
-id|FREE_WRITE
+id|skb-&gt;dev-&gt;type
 )paren
 suffix:semicolon
-r_return
+id|accept
+op_assign
 l_int|0
 suffix:semicolon
 )brace
@@ -2881,18 +2903,19 @@ comma
 id|dev-&gt;type
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-r_return
+id|accept
+op_assign
 l_int|0
 suffix:semicolon
+r_break
+suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|accept
+)paren
+(brace
 multiline_comment|/* this is frame specific, but till there&squot;s a PPP module, it&squot;s the default */
 r_switch
 c_cond
@@ -3107,6 +3130,7 @@ id|DLCI_RET_ERR
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 id|dev-&gt;tbusy
 op_assign

@@ -40,6 +40,7 @@ suffix:semicolon
 multiline_comment|/* How long to linger for&t;*/
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;As we do 4.4BSD message passing we use a 4.4BSD message passing&n; *&t;system, not 4.3. Thus msg_accrights(len) are now missing. They&n; *&t;belong in an obscure libc emulation or the bin.&n; */
 DECL|struct|msghdr
 r_struct
 id|msghdr
@@ -67,24 +68,24 @@ r_int
 id|msg_iovlen
 suffix:semicolon
 multiline_comment|/* Number of blocks&t;&t;*/
-DECL|member|msg_accrights
+DECL|member|msg_control
 r_void
 op_star
-id|msg_accrights
+id|msg_control
 suffix:semicolon
 multiline_comment|/* Per protocol magic (eg BSD file descriptor passing) */
-DECL|member|msg_accrightslen
+DECL|member|msg_controllen
 r_int
-id|msg_accrightslen
+id|msg_controllen
 suffix:semicolon
 multiline_comment|/* Length of rights list */
+DECL|member|msg_flags
+r_int
+id|msg_flags
+suffix:semicolon
+multiline_comment|/* 4.4 BSD item we dont use      */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;4.4BSD changed to these new names for no apparent reason.&n; */
-DECL|macro|msg_control
-mdefine_line|#define msg_control&t;msg_accrights&t;
-DECL|macro|msg_controllen
-mdefine_line|#define msg_controllen&t;msg_accrightslen
 multiline_comment|/* Control Messages */
 DECL|macro|SCM_RIGHTS
 mdefine_line|#define SCM_RIGHTS&t;&t;1

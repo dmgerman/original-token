@@ -4491,6 +4491,7 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;moveq #0,%/d0&bslash;n&bslash;t&quot;
+l_string|&quot;nop&bslash;n&bslash;t&quot;
 l_string|&quot;.word 0xf4d8&bslash;n&bslash;t&quot;
 multiline_comment|/* cinva i/d */
 l_string|&quot;.word 0xf518&bslash;n&bslash;t&quot;

@@ -8003,7 +8003,7 @@ c_cond
 (paren
 id|flags
 op_logical_or
-id|msg-&gt;msg_accrights
+id|msg-&gt;msg_control
 )paren
 r_return
 op_minus

@@ -7,9 +7,6 @@ macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
-macro_line|#if 0
-macro_line|#include &lt;asm/atari_acsi.h&gt;
-macro_line|#endif
 DECL|variable|mach_atari_symbol_table
 r_static
 r_struct
@@ -102,54 +99,6 @@ c_func
 id|ikbd_mouse_disable
 )paren
 comma
-macro_line|#if 0
-macro_line|#ifdef CONFIG_ATARI_ACSI
-id|X
-c_func
-(paren
-id|acsi_wait_for_IRQ
-)paren
-comma
-id|X
-c_func
-(paren
-id|acsi_wait_for_noIRQ
-)paren
-comma
-id|X
-c_func
-(paren
-id|acsicmd_nodma
-)paren
-comma
-id|X
-c_func
-(paren
-id|acsi_getstatus
-)paren
-comma
-macro_line|#ifdef CONFIG_ATARI_SLM
-id|X
-c_func
-(paren
-id|acsi_extstatus
-)paren
-comma
-id|X
-c_func
-(paren
-id|acsi_end_extstatus
-)paren
-comma
-id|X
-c_func
-(paren
-id|acsi_extcmd
-)paren
-comma
-macro_line|#endif
-macro_line|#endif
-macro_line|#endif /* 0 */
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon

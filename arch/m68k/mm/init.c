@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
@@ -29,6 +29,14 @@ id|pt_regs
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|init_kpointer_table
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -1012,6 +1020,11 @@ id|end_mem
 suffix:semicolon
 )brace
 macro_line|#endif
+id|init_kpointer_table
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#if 0
 multiline_comment|/*&n;&t; * Setup cache bits&n;&t; */
 id|mm_cachebits
@@ -1425,6 +1438,7 @@ l_string|&quot;before free_area_init&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#ifndef CONFIG_BLK_DEV_INITRD
 multiline_comment|/*&n;&t; * Since the initialization of the ramdisk&squot;s has been changed&n;&t; * so it fits the new driver initialization scheme, we have to&n;&t; * make room for our preloaded image here, instead of doing it&n;&t; * in rd_init() as we cannot kmalloc() a block large enough&n;&t; * for the image.&n;&t; */
 id|ramdisk_length
@@ -1494,6 +1508,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* tell rd_load to load this thing */
 )brace
+macro_line|#endif
 macro_line|#endif
 r_return
 id|free_area_init

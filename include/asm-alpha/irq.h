@@ -4,7 +4,7 @@ mdefine_line|#define _ALPHA_IRQ_H
 multiline_comment|/*&n; *&t;linux/include/alpha/irq.h&n; *&n; *&t;(C) 1994 Linus Torvalds&n; */
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P) || defined(CONFIG_ALPHA_EB164)
+macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P) || defined(CONFIG_ALPHA_EB164) || defined(CONFIG_ALPHA_PC164)
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;33
 macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)

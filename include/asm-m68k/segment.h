@@ -591,6 +591,7 @@ op_amp
 l_int|1
 )paren
 id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;moveb %0@,%/d0&bslash;n&bslash;t&quot;
 l_string|&quot;movesb %/d0,%1@&bslash;n&bslash;t&quot;
@@ -1203,6 +1204,7 @@ op_amp
 l_int|1
 )paren
 id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;movesb %0@,%/d0&bslash;n&bslash;t&quot;
 l_string|&quot;moveb %/d0,%1@&bslash;n&bslash;t&quot;

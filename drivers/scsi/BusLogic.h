@@ -153,6 +153,13 @@ mdefine_line|#define BusLogic_DefaultBusSettleTime&t;&t;2
 multiline_comment|/*&n;  Define the possible Local Options.&n;*/
 DECL|macro|BusLogic_InhibitTargetInquiry
 mdefine_line|#define BusLogic_InhibitTargetInquiry&t;&t;1
+multiline_comment|/*&n;  Define the possible Probe Options.&n;*/
+DECL|macro|BusLogic_NoProbe
+mdefine_line|#define BusLogic_NoProbe&t;&t;&t;1
+DECL|macro|BusLogic_NoProbeISA
+mdefine_line|#define BusLogic_NoProbeISA&t;&t;&t;2
+DECL|macro|BusLogic_NoSortPCI
+mdefine_line|#define BusLogic_NoSortPCI&t;&t;&t;4
 multiline_comment|/*&n;  Define the possible Global Options.&n;*/
 DECL|macro|BusLogic_TraceProbe
 mdefine_line|#define BusLogic_TraceProbe&t;&t;&t;1

@@ -473,11 +473,11 @@ id|TIME_BAD
 suffix:semicolon
 id|time_maxerror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
 id|time_esterror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
 id|sti
 c_func

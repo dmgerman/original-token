@@ -1,6 +1,7 @@
 macro_line|#ifndef _M68K_PGTABLE_H
 DECL|macro|_M68K_PGTABLE_H
 mdefine_line|#define _M68K_PGTABLE_H
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the m68k page table tree.&n; */
 DECL|macro|__flush_tlb
 mdefine_line|#define __flush_tlb() &bslash;&n;do { &t;&bslash;&n;&t;if (m68k_is040or060) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;.word 0xf510&bslash;n&quot;::); /* pflushan */ &bslash;&n;&t;else &bslash;&n;&t;&t;__asm__ __volatile__(&quot;pflusha&bslash;n&quot;::); &bslash;&n;} while (0)
@@ -185,6 +186,60 @@ mdefine_line|#define PTRS_PER_PGD&t;128
 multiline_comment|/* the no. of pointers that fit on a page: this will go away */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;(PAGE_SIZE/sizeof(void*))
+DECL|typedef|pgd_table
+r_typedef
+id|pgd_t
+id|pgd_table
+(braket
+id|PTRS_PER_PGD
+)braket
+suffix:semicolon
+DECL|typedef|pmd_table
+r_typedef
+id|pmd_t
+id|pmd_table
+(braket
+id|PTRS_PER_PMD
+)braket
+suffix:semicolon
+DECL|typedef|pte_table
+r_typedef
+id|pte_t
+id|pte_table
+(braket
+id|PTRS_PER_PTE
+)braket
+suffix:semicolon
+DECL|macro|PGD_TABLES_PER_PAGE
+mdefine_line|#define PGD_TABLES_PER_PAGE (PAGE_SIZE/sizeof(pgd_table))
+DECL|macro|PMD_TABLES_PER_PAGE
+mdefine_line|#define PMD_TABLES_PER_PAGE (PAGE_SIZE/sizeof(pmd_table))
+DECL|macro|PTE_TABLES_PER_PAGE
+mdefine_line|#define PTE_TABLES_PER_PAGE (PAGE_SIZE/sizeof(pte_table))
+DECL|typedef|pgd_tablepage
+r_typedef
+id|pgd_table
+id|pgd_tablepage
+(braket
+id|PGD_TABLES_PER_PAGE
+)braket
+suffix:semicolon
+DECL|typedef|pmd_tablepage
+r_typedef
+id|pmd_table
+id|pmd_tablepage
+(braket
+id|PMD_TABLES_PER_PAGE
+)braket
+suffix:semicolon
+DECL|typedef|pte_tablepage
+r_typedef
+id|pte_table
+id|pte_tablepage
+(braket
+id|PTE_TABLES_PER_PAGE
+)braket
+suffix:semicolon
 multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
 DECL|macro|VMALLOC_OFFSET
 mdefine_line|#define VMALLOC_OFFSET&t;(8*1024*1024)
@@ -192,6 +247,7 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START ((high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
+macro_line|#endif /* __ASSEMBLY__ */
 multiline_comment|/*&n; * Definitions for MMU descriptors&n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x001
@@ -227,6 +283,7 @@ DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_SHORT)
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_NOCACHE)
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|PAGE_NONE
 mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED | _PAGE_CACHE040)
 DECL|macro|PAGE_SHARED
@@ -853,14 +910,14 @@ c_loop
 (paren
 id|i
 op_assign
+l_int|15
+suffix:semicolon
+id|i
+op_ge
 l_int|0
 suffix:semicolon
 id|i
-OL
-l_int|16
-suffix:semicolon
-id|i
-op_increment
+op_decrement
 )paren
 id|pmdp-&gt;pmd
 (braket
@@ -1737,6 +1794,34 @@ id|ptep
 suffix:semicolon
 )brace
 )brace
+r_extern
+r_const
+r_char
+id|PgtabStr_bad_pmd
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_const
+r_char
+id|PgtabStr_bad_pgd
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_const
+r_char
+id|PgtabStr_bad_pmdk
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_const
+r_char
+id|PgtabStr_bad_pgdk
+(braket
+)braket
+suffix:semicolon
 DECL|function|pte_free
 r_extern
 r_inline
@@ -1904,7 +1989,7 @@ id|pmd
 id|printk
 c_func
 (paren
-l_string|&quot;Bad pmd in pte_alloc: %08lx&bslash;n&quot;
+id|PgtabStr_bad_pmd
 comma
 id|pmd_val
 c_func
@@ -2110,7 +2195,7 @@ id|pgd
 id|printk
 c_func
 (paren
-l_string|&quot;Bad pgd in pmd_alloc: %08lx&bslash;n&quot;
+id|PgtabStr_bad_pgd
 comma
 id|pgd_val
 c_func
@@ -2318,7 +2403,7 @@ id|pmd
 id|printk
 c_func
 (paren
-l_string|&quot;Bad pmd in pte_alloc_kernel: %08lx&bslash;n&quot;
+id|PgtabStr_bad_pmdk
 comma
 id|pmd_val
 c_func
@@ -2493,7 +2578,7 @@ id|pgd
 id|printk
 c_func
 (paren
-l_string|&quot;Bad pgd in pmd_alloc_kernel: %08lx&bslash;n&quot;
+id|PgtabStr_bad_pgdk
 comma
 id|pgd_val
 c_func
@@ -2578,7 +2663,7 @@ id|get_pointer_table
 suffix:semicolon
 )brace
 DECL|macro|flush_icache
-mdefine_line|#define flush_icache() &bslash;&n;do { &bslash;&n;&t;if (m68k_is040or060) &bslash;&n;&t;&t;asm (&quot;.word 0xf498&quot;); /* CINVA I */ &bslash;&n;&t;else &bslash;&n;&t;&t;asm (&quot;movec %/cacr,%/d0;&quot; &bslash;&n;&t;&t;     &quot;oriw %0,%/d0;&quot; &bslash;&n;&t;&t;     &quot;movec %/d0,%/cacr&quot; &bslash;&n;&t;&t;     : /* no outputs */ &bslash;&n;&t;&t;     : &quot;i&quot; (FLUSH_I) &bslash;&n;&t;&t;     : &quot;d0&quot;); &bslash;&n;} while (0)
+mdefine_line|#define flush_icache() &bslash;&n;do { &bslash;&n;&t;if (m68k_is040or060) &bslash;&n;&t;&t;asm (&quot;nop; .word 0xf498 /* cinva %%ic */&quot;); &bslash;&n;&t;else &bslash;&n;&t;&t;asm (&quot;movec %/cacr,%/d0;&quot; &bslash;&n;&t;&t;     &quot;oriw %0,%/d0;&quot; &bslash;&n;&t;&t;     &quot;movec %/d0,%/cacr&quot; &bslash;&n;&t;&t;     : /* no outputs */ &bslash;&n;&t;&t;     : &quot;i&quot; (FLUSH_I) &bslash;&n;&t;&t;     : &quot;d0&quot;); &bslash;&n;} while (0)
 multiline_comment|/*&n; * invalidate the cache for the specified memory range.&n; * It starts at the physical address specified for&n; * the given number of bytes.&n; */
 r_extern
 r_void
@@ -2618,36 +2703,289 @@ r_int
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Could someone take a look at these?&n; */
-r_extern
-r_void
-id|flush_cache_all
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|macro|flush_cache_mm
-mdefine_line|#define flush_cache_mm(mm)&t;&t;   flush_cache_all()
-DECL|macro|flush_cache_range
-mdefine_line|#define flush_cache_range(mm, start, end)  flush_cache_all()
-DECL|macro|flush_cache_page
-mdefine_line|#define flush_cache_page(vma, addr)&t;   flush_cache_all()
-r_extern
-r_void
-id|flush_page_to_ram
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-suffix:semicolon
 multiline_comment|/* cache code */
 DECL|macro|FLUSH_I_AND_D
 mdefine_line|#define FLUSH_I_AND_D&t;(0x00000808)
 DECL|macro|FLUSH_I
 mdefine_line|#define FLUSH_I &t;(0x00000008)
+multiline_comment|/* This is needed whenever the virtual mapping of the current&n;   process changes.  */
+DECL|macro|__flush_cache_all
+mdefine_line|#define __flush_cache_all()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (m68k_is040or060)&t;&t;&t;&t;&t;        &bslash;&n;               __asm__ __volatile__ (&quot;nop; .word 0xf478&bslash;n&quot; ::);         &bslash;&n;        else                                                            &bslash;&n;&t;       __asm__ __volatile__ (&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;orw %0,%%d0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;movec %%d0,%%cacr&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     : : &quot;di&quot; (FLUSH_I_AND_D) : &quot;d0&quot;);&t;&bslash;&n;    } while (0)
+DECL|macro|__flush_cache_030
+mdefine_line|#define __flush_cache_030()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (m68k_is040or060 == 0)&t;&t;&t;&t;&t;&bslash;&n;&t;       __asm__ __volatile__ (&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;orw %0,%%d0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;movec %%d0,%%cacr&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     : : &quot;di&quot; (FLUSH_I_AND_D) : &quot;d0&quot;);&t;&bslash;&n;    } while (0)
+DECL|macro|flush_cache_all
+mdefine_line|#define flush_cache_all() __flush_cache_all()
+DECL|function|flush_cache_mm
+r_extern
+r_inline
+r_void
+id|flush_cache_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mm
+op_eq
+id|current-&gt;mm
+)paren
+id|__flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|flush_cache_range
+r_extern
+r_inline
+r_void
+id|flush_cache_range
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mm
+op_eq
+id|current-&gt;mm
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|m68k_is040or060
+)paren
+id|cache_push_v
+c_func
+(paren
+id|start
+comma
+id|end
+op_minus
+id|start
+)paren
+suffix:semicolon
+r_else
+id|__flush_cache_030
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|flush_cache_page
+r_extern
+r_inline
+r_void
+id|flush_cache_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|vmaddr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_mm
+op_eq
+id|current-&gt;mm
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|m68k_is040or060
+)paren
+id|cache_push_v
+c_func
+(paren
+id|vmaddr
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+r_else
+id|__flush_cache_030
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Push the page at kernel virtual address and clear the icache */
+DECL|function|flush_page_to_ram
+r_extern
+r_inline
+r_void
+id|flush_page_to_ram
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|m68k_is040or060
+)paren
+(brace
+r_register
+r_int
+r_int
+id|tmp
+id|__asm
+(paren
+l_string|&quot;a0&quot;
+)paren
+op_assign
+id|VTOP
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;.word 0xf470 /* cpushp %%dc,(%0) */&bslash;n&bslash;t&quot;
+l_string|&quot;.word 0xf490 /* cinvp %%ic,(%0) */&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|tmp
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+id|__asm
+r_volatile
+(paren
+l_string|&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;
+l_string|&quot;orw %0,%%d0&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%d0,%%cacr&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;di&quot;
+(paren
+id|FLUSH_I
+)paren
+suffix:colon
+l_string|&quot;d0&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Push n pages at kernel virtual address and clear the icache */
+DECL|function|flush_pages_to_ram
+r_extern
+r_inline
+r_void
+id|flush_pages_to_ram
+(paren
+r_int
+r_int
+id|address
+comma
+r_int
+id|n
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|m68k_is040or060
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|n
+op_decrement
+)paren
+(brace
+r_register
+r_int
+r_int
+id|tmp
+id|__asm
+(paren
+l_string|&quot;a0&quot;
+)paren
+op_assign
+id|VTOP
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;.word 0xf470 /* cpushp %%dc,(%0) */&bslash;n&bslash;t&quot;
+l_string|&quot;.word 0xf490 /* cinvp %%ic,(%0) */&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|tmp
+)paren
+)paren
+suffix:semicolon
+id|address
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
+)brace
+)brace
+r_else
+id|__asm
+r_volatile
+(paren
+l_string|&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;
+l_string|&quot;orw %0,%%d0&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%d0,%%cacr&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;di&quot;
+(paren
+id|FLUSH_I
+)paren
+suffix:colon
+l_string|&quot;d0&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Check if the addr/len goes up to the end of a physical&n; * memory chunk.  Used for DMA functions.&n; */
 r_int
 id|mm_end_of_chunk
@@ -2745,5 +3083,6 @@ mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; PAGE_SHIFT)
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; PAGE_SHIFT))
 macro_line|#endif
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* _M68K_PGTABLE_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/affs/inode.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Modified for larger blocks.&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; * &n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
+multiline_comment|/*&n; *  linux/fs/affs/inode.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; * &n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -12,8 +12,8 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
-macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/amigaffs.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 r_extern
@@ -28,8 +28,8 @@ r_struct
 id|timezone
 id|sys_tz
 suffix:semicolon
-DECL|function|affs_put_super
 r_void
+DECL|function|affs_put_super
 id|affs_put_super
 c_func
 (paren
@@ -190,9 +190,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|affs_write_super
 r_static
 r_void
+DECL|function|affs_write_super
 id|affs_write_super
 c_func
 (paren
@@ -361,8 +361,8 @@ l_int|NULL
 multiline_comment|/* remount */
 )brace
 suffix:semicolon
-DECL|function|affs_parent_ino
 r_int
+DECL|function|affs_parent_ino
 id|affs_parent_ino
 c_func
 (paren
@@ -1618,6 +1618,7 @@ id|root_block
 OL
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1648,11 +1649,14 @@ l_int|1
 op_div
 l_int|2
 suffix:semicolon
+)brace
 r_else
+(brace
 id|s-&gt;u.affs_sb.s_root_block
 op_assign
 id|root_block
 suffix:semicolon
+)brace
 id|pr_debug
 c_func
 (paren
@@ -2433,7 +2437,8 @@ multiline_comment|/*&amp;&amp;&n;&t;&t;&t;&t;    !(s-&gt;s_flags &amp; MS_RDONLY
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: Bitmap (%d,key=%lu) invalid - mounting %s read only.&bslash;n&quot;
+l_string|&quot;AFFS: Bitmap (%d,key=%lu) invalid - &quot;
+l_string|&quot;mounting %s read only.&bslash;n&quot;
 comma
 id|mapidx
 comma
@@ -2652,7 +2657,7 @@ id|stype
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Next block of bitmap pointers */
+multiline_comment|/* Next block of bitmap pointers&t;*/
 id|ptype
 op_assign
 l_int|0
@@ -3345,6 +3350,11 @@ id|inode-&gt;u.affs_i.i_max_ext
 op_assign
 l_int|0
 suffix:semicolon
+id|inode-&gt;u.affs_i.i_lastblock
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
 l_int|1
@@ -3682,6 +3692,48 @@ c_func
 id|file_end-&gt;byte_size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_sb-&gt;u.affs_sb.s_flags
+op_amp
+id|SF_OFS
+)paren
+id|block
+op_assign
+id|AFFS_I2BSIZE
+c_func
+(paren
+id|inode
+)paren
+op_minus
+l_int|24
+suffix:semicolon
+r_else
+id|block
+op_assign
+id|AFFS_I2BSIZE
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|inode-&gt;u.affs_i.i_lastblock
+op_assign
+(paren
+(paren
+id|inode-&gt;i_size
+op_plus
+id|block
+op_minus
+l_int|1
+)paren
+op_div
+id|block
+)paren
+op_minus
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3789,17 +3841,21 @@ id|inode-&gt;i_sb-&gt;u.affs_sb.s_flags
 op_amp
 id|SF_OFS
 )paren
+(brace
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|affs_file_inode_operations_ofs
 suffix:semicolon
+)brace
 r_else
+(brace
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|affs_file_inode_operations
 suffix:semicolon
+)brace
 )brace
 r_else
 r_if
@@ -4519,6 +4575,11 @@ suffix:semicolon
 id|inode-&gt;u.affs_i.i_max_ext
 op_assign
 l_int|0
+suffix:semicolon
+id|inode-&gt;u.affs_i.i_lastblock
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|insert_inode_hash
 c_func

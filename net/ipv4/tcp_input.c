@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * FIXES&n; *&t;&t;Pedro Roque&t;:&t;Double ACK bug&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * FIXES&n; *&t;&t;Pedro Roque&t;:&t;Double ACK bug&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 multiline_comment|/*&n; *&t;Policy code extracted so it&squot;s now separate&n; */
@@ -62,16 +62,13 @@ id|m
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* Yikes. This used to test if m was larger than rtt/8.&n;&t;&t; * Maybe on a long delay high speed link this would be&n;&t;         * good initial guess, but over a slow link where the&n;&t;         * delay is dominated by transmission time this will&n;&t;         * be very bad, since ato will almost always be something&n;&t;&t; * more like rtt/2. Better to discard data points that&n;&t;&t; * are larger than the rtt estimate.&n;&t;         */
 r_if
 c_cond
 (paren
 id|m
 OG
-(paren
 id|sk-&gt;rtt
-op_rshift
-l_int|3
-)paren
 )paren
 (brace
 id|sk-&gt;ato
@@ -84,6 +81,7 @@ multiline_comment|/*&n;&t;&t;&t; * printk(KERN_DEBUG &quot;ato: rtt %lu&bslash;n
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t; &t; * Very fast acting estimator.&n;&t;&t; &t; * May fluctuate too much. Probably we should be&n;&t;&t;&t; * doing something like the rtt estimator here.&n;&t;&t;&t; */
 id|sk-&gt;ato
 op_assign
 (paren
@@ -206,7 +204,7 @@ id|sk-&gt;mdev
 op_assign
 id|m
 op_lshift
-l_int|2
+l_int|1
 suffix:semicolon
 multiline_comment|/* make sure rto = 3*rtt */
 )brace
@@ -214,16 +212,12 @@ multiline_comment|/*&n;&t; *&t;Now update timeout.  Note that this removes any b
 id|sk-&gt;rto
 op_assign
 (paren
-(paren
 id|sk-&gt;rtt
 op_rshift
-l_int|2
+l_int|3
 )paren
 op_plus
 id|sk-&gt;mdev
-)paren
-op_rshift
-l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -481,7 +475,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;4.3reno machines look for these kind of acks so they can do fast&n;&t; *&t;recovery. Three identical &squot;old&squot; acks lets it know that one frame has&n;&t; *&t;been lost and should be resent. Because this is before the whole window&n;&t; *&t;of data has timed out it can take one lost frame per window without&n;&t; *&t;stalling. [See Jacobson RFC1323, Stevens TCP/IP illus vol2]&n;&t; */
+multiline_comment|/*&n;&t; * &t;This packet is old news. Usually this is just a resend&n;&t; * &t;from the far end, but sometimes it means the far end lost&n;&t; *&t;an ACK we send, so we better send an ACK.&n;&t; */
 id|tcp_send_ack
 c_func
 (paren
@@ -1263,7 +1257,6 @@ id|newsk-&gt;rtt
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*TCP_CONNECT_TIME&lt;&lt;3*/
 id|newsk-&gt;rto
 op_assign
 id|TCP_TIMEOUT_INIT
@@ -1271,13 +1264,12 @@ suffix:semicolon
 id|newsk-&gt;mdev
 op_assign
 id|TCP_TIMEOUT_INIT
-op_lshift
-l_int|1
 suffix:semicolon
 id|newsk-&gt;max_window
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; * See draft-stevens-tcpca-spec-01 for discussion of the&n;&t; * initialization of these values.&n;&t; */
 id|newsk-&gt;cong_window
 op_assign
 l_int|1
@@ -1287,6 +1279,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|newsk-&gt;ssthresh
+op_assign
+l_int|0x7fffffff
+suffix:semicolon
+id|newsk-&gt;high_seq
 op_assign
 l_int|0
 suffix:semicolon
@@ -2096,7 +2092,7 @@ r_if
 c_cond
 (paren
 id|sk-&gt;cong_window
-OL
+op_le
 id|sk-&gt;ssthresh
 )paren
 multiline_comment|/* &n;&t;&t;&t; *&t;In &quot;safe&quot; area, increase&n;&t;&t;&t; */
@@ -2129,7 +2125,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Remember the highest ack received and update the&n;&t; *&t;right hand window edge of the host.&n;&t; *&t;We do a bit of work here to track number of times we&squot;ve&n;&t; *&t;seen this ack without a change in the right edge of the&n;&t; *&t;window and no data in the packet.&n;&t; *&t;This will allow us to do fast retransmits.&n;&t; */
-multiline_comment|/* We are looking for duplicate ACKs here.&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * I&squot;ve tried to order these in occurrence of most likely to fail&n;&t; * to least likely to fail.&n;&t; * [These are the rules BSD stacks use to determine if an ACK is a&n;&t; *  duplicate.]&n;&t; */
+multiline_comment|/* We are looking for duplicate ACKs here.&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * (5) [From Floyds paper on fast retransmit wars]&n;&t; *     The packet acked data after high_seq;&n;&t; * I&squot;ve tried to order these in occurrence of most likely to fail&n;&t; * to least likely to fail.&n;&t; * [These are the rules BSD stacks use to determine if an ACK is a&n;&t; *  duplicate.]&n;&t; */
 r_if
 c_cond
 (paren
@@ -2154,6 +2150,14 @@ c_func
 id|ack
 comma
 id|sk-&gt;sent_seq
+)paren
+op_logical_and
+id|after
+c_func
+(paren
+id|ack
+comma
+id|sk-&gt;high_seq
 )paren
 )paren
 (brace
@@ -2191,6 +2195,10 @@ id|MAX_DUP_ACKS
 op_plus
 l_int|1
 suffix:semicolon
+multiline_comment|/* FIXME:&n;&t;&t;&t; * reduce the count. We don&squot;t want to be&n;&t;&t;&t; * seen to be in &quot;retransmit&quot; mode if we&n;&t;&t;&t; * are doing a fast retransmit.&n;&t;&t;&t; * This is also a signal to tcp_do_retransmit&n;&t;&t;&t; * not to set sk-&gt;high_seq.&n;&t;&t;&t; * This is a horrible ugly hack.&n;&t;&t;&t; */
+id|sk-&gt;retransmits
+op_decrement
+suffix:semicolon
 id|tcp_do_retransmit
 c_func
 (paren
@@ -2198,10 +2206,6 @@ id|sk
 comma
 l_int|0
 )paren
-suffix:semicolon
-multiline_comment|/* reduce the count. We don&squot;t want to be&n;&t;&t;&t;* seen to be in &quot;retransmit&quot; mode if we&n;&t;&t;&t;* are doing a fast retransmit.&n;&t;&t;&t;*/
-id|sk-&gt;retransmits
-op_decrement
 suffix:semicolon
 )brace
 r_else
@@ -2295,19 +2299,16 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Recompute rto from rtt.  this eliminates any backoff.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Appendix C of Van Jacobson&squot;s final version of&n;&t;&t;&t; * the SIGCOMM 88 paper states that although&n;&t;&t;&t; * the original paper suggested that&n;&t;&t;&t; *  RTO = R*2V&n;&t;&t;&t; * was the correct calculation experience showed&n;&t;&t;&t; * better results using&n;&t;&t;&t; *  RTO = R*4V&n;&t;&t;&t; * In particular this gives better performance over&n;&t;&t;&t; * slow links, and should not effect fast links.&n;&t;&t;&t; */
 id|sk-&gt;rto
 op_assign
 (paren
-(paren
 id|sk-&gt;rtt
 op_rshift
-l_int|2
+l_int|3
 )paren
 op_plus
 id|sk-&gt;mdev
-)paren
-op_rshift
-l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -3718,6 +3719,8 @@ c_func
 id|sk
 comma
 id|delay
+comma
+id|sk-&gt;ato
 )paren
 suffix:semicolon
 )brace
@@ -3768,14 +3771,15 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;     * We need to be very careful here. We must&n;&t;&t;     * not violate Jacobsons packet conservation condition.&n;&t;&t;     * This means we should only send an ACK when a packet&n;&t;&t;     * leaves the network. We can say a packet left the&n;&t;&t;     * network when we see a packet leave the network, or&n;&t;&t;     * when an rto measure expires.&n;&t;&t;     */
 id|tcp_send_delayed_ack
 c_func
 (paren
 id|sk
 comma
-id|HZ
-op_div
-l_int|2
+id|sk-&gt;rto
+comma
+id|sk-&gt;rto
 )paren
 suffix:semicolon
 )brace
@@ -4030,6 +4034,13 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+multiline_comment|/*&n;  &t; * We should only call this if there is data in the frame.&n; &t; */
+id|tcp_delack_estimator
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|tcp_queue
 c_func
 (paren
@@ -5459,12 +5470,6 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-id|tcp_delack_estimator
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Process the ACK&n;&t; */
 r_if
 c_cond

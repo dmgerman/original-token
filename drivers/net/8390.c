@@ -1,5 +1,5 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;  Paul Gortmaker&t;: rewrite Rx overrun handling as per NS specs.&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
 DECL|variable|version
 r_static
 r_const
@@ -1283,6 +1283,18 @@ op_plus
 id|ENTSR_FU
 )paren
 suffix:semicolon
+r_struct
+id|ei_device
+op_star
+id|ei_local
+op_assign
+(paren
+r_struct
+id|ei_device
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 macro_line|#ifdef VERBOSE_ERROR_DUMP
 id|printk
 c_func
@@ -1388,6 +1400,18 @@ c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+multiline_comment|/*&n;     * Note: NCR reads zero on 16 collisions so we add them&n;     * in by hand. Somebody might care...&n;     */
+r_if
+c_cond
+(paren
+id|txsr
+op_amp
+id|ENTSR_ABT
+)paren
+id|ei_local-&gt;stat.collisions
+op_add_assign
+l_int|16
 suffix:semicolon
 )brace
 multiline_comment|/* We have finished a transmit: check for errors and then trigger the next&n;   packet to be sent. */
@@ -2235,7 +2259,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* We have a receiver overrun: we have to kick the 8390 to get it started&n;   again.*/
+multiline_comment|/* &n; * We have a receiver overrun: we have to kick the 8390 to get it started&n; * again. Problem is that you have to kick it exactly as NS prescribes in&n; * the updated datasheets, or &quot;the NIC may act in an unpredictable manner.&quot;&n; * This includes causing &quot;the NIC to defer indefinitely when it is stopped&n; * on a busy network.&quot;  Ugh.&n; */
 DECL|function|ei_rx_overrun
 r_static
 r_void
@@ -2254,9 +2278,16 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 r_int
-id|reset_start_time
+r_int
+id|wait_start_time
+suffix:semicolon
+r_int
+r_char
+id|was_txing
+comma
+id|must_resend
 op_assign
-id|jiffies
+l_int|0
 suffix:semicolon
 r_struct
 id|ei_device
@@ -2270,7 +2301,19 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-multiline_comment|/* We should already be stopped and in page0.  Remove after testing. */
+multiline_comment|/*&n;     * Record whether a Tx was in progress and then issue the&n;     * stop command.&n;     */
+id|was_txing
+op_assign
+id|inb_p
+c_func
+(paren
+id|e8390_base
+op_plus
+id|E8390_CMD
+)paren
+op_amp
+id|E8390_TRANS
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -2303,12 +2346,61 @@ suffix:semicolon
 id|ei_local-&gt;stat.rx_over_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* The old Biro driver does dummy = inb_p( RBCR[01] ); at this point.&n;       It might mean something -- magic to speed up a reset?  A 8390 bug?*/
-multiline_comment|/* Wait for the reset to complete.&t;This should happen almost instantly,&n;&t;   but could take up to 1.5msec in certain rare instances.  There is no&n;&t;   easy way of timing something in that range, so we use &squot;jiffies&squot; as&n;&t;   a sanity check. */
+multiline_comment|/* &n;     * Wait a full Tx time (1.2ms) + some guard time, NS says 1.6ms total.&n;     * Early datasheets said to poll the reset bit, but now they say that&n;     * it &quot;is not a reliable indicator and subequently should be ignored.&quot;&n;     * We wait at least 10ms.&n;     */
+id|wait_start_time
+op_assign
+id|jiffies
+suffix:semicolon
 r_while
 c_loop
 (paren
+id|jiffies
+op_minus
+id|wait_start_time
+op_le
+l_int|1
+op_star
+id|HZ
+op_div
+l_int|100
+)paren
+id|barrier
+c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     * Reset RBCR[01] back to zero as per magic incantation.&n;     */
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|e8390_base
+op_plus
+id|EN0_RCNTLO
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|e8390_base
+op_plus
+id|EN0_RCNTHI
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     * See if any Tx was interrupted or not. According to NS, this&n;     * step is vital, and skipping it will cause no end of havoc.&n;     */
+r_if
+c_cond
+(paren
+id|was_txing
+)paren
+(brace
+r_int
+r_char
+id|tx_completed
+op_assign
 id|inb_p
 c_func
 (paren
@@ -2317,45 +2409,49 @@ op_plus
 id|EN0_ISR
 )paren
 op_amp
-id|ENISR_RESET
+(paren
+id|ENISR_TX
+op_plus
+id|ENISR_TX_ERR
 )paren
-op_eq
-l_int|0
-)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|jiffies
-op_minus
-id|reset_start_time
-OG
-l_int|2
-op_star
-id|HZ
-op_div
-l_int|100
+op_logical_neg
+id|tx_completed
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: reset did not complete at ei_rx_overrun.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|NS8390_init
-c_func
-(paren
-id|dev
-comma
+id|must_resend
+op_assign
 l_int|1
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Remove packets right away. */
+multiline_comment|/*&n;     * Have to enter loopback mode and then restart the NIC before&n;     * you are allowed to slurp packets up off the ring.&n;     */
+id|outb_p
+c_func
+(paren
+id|E8390_TXOFF
+comma
+id|e8390_base
+op_plus
+id|EN0_TXCR
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|E8390_NODMA
+op_plus
+id|E8390_PAGE0
+op_plus
+id|E8390_START
+comma
+id|e8390_base
+op_plus
+id|E8390_CMD
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     * Clear the Rx ring of all the debris, and ack the interrupt.&n;     */
 id|ei_receive
 c_func
 (paren
@@ -2372,21 +2468,7 @@ op_plus
 id|EN0_ISR
 )paren
 suffix:semicolon
-multiline_comment|/* Generic 8390 insns to start up again, same as in open_8390(). */
-id|outb_p
-c_func
-(paren
-id|E8390_NODMA
-op_plus
-id|E8390_PAGE0
-op_plus
-id|E8390_START
-comma
-id|e8390_base
-op_plus
-id|E8390_CMD
-)paren
-suffix:semicolon
+multiline_comment|/*&n;     * Leave loopback mode, and resend any packet that got stopped.&n;     */
 id|outb_p
 c_func
 (paren
@@ -2397,7 +2479,27 @@ op_plus
 id|EN0_TXCR
 )paren
 suffix:semicolon
-multiline_comment|/* xmit on. */
+r_if
+c_cond
+(paren
+id|must_resend
+)paren
+id|outb_p
+c_func
+(paren
+id|E8390_NODMA
+op_plus
+id|E8390_PAGE0
+op_plus
+id|E8390_START
+op_plus
+id|E8390_TRANS
+comma
+id|e8390_base
+op_plus
+id|E8390_CMD
+)paren
+suffix:semicolon
 )brace
 DECL|function|get_stats
 r_static

@@ -1533,15 +1533,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|MOD_IN_USE
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|chrdev_registered
 )paren
 id|module_unregister_chrdev

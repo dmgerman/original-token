@@ -112,7 +112,7 @@ c_func
 (paren
 l_string|&quot;&bslash;nOut of memory for %s.&bslash;n&quot;
 comma
-id|current-&gt;comm
+id|task-&gt;comm
 )paren
 suffix:semicolon
 id|task-&gt;sig-&gt;action

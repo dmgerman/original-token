@@ -1108,7 +1108,7 @@ id|error_code
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Allow the process which triggered the interrupt to recover the error&n; * condition.&n; *  - the status word is saved in the cs selector.&n; *  - the tag word is saved in the operand selector.&n; *  - the status word is then cleared and the tags all set to Empty.&n; *&n; * This will give sufficient information for complete recovery provided that&n; * the affected process knows or can deduce the code and data segments&n; * which were in force when the exception condition arose.&n; *&n; * Note that we play around with the &squot;TS&squot; bit to hopefully get&n; * the correct behaviour even in the presence of the asynchronous&n; * IRQ13 behaviour&n; */
+multiline_comment|/*&n; * Note that we play around with the &squot;TS&squot; bit to hopefully get&n; * the correct behaviour even in the presence of the asynchronous&n; * IRQ13 behaviour&n; */
 DECL|function|math_error
 r_void
 id|math_error

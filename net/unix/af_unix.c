@@ -1197,6 +1197,14 @@ c_func
 suffix:semicolon
 multiline_comment|/* Garbage collect fds */
 multiline_comment|/*&n;&t; *&t;FIXME: BSD difference: In BSD all sockets connected to use get ECONNRESET and we die on the spot. In&n;&t; *&t;Linux we behave like files and pipes do and wait for the last dereference.&n;&t; */
+id|sock-&gt;data
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sk-&gt;socket
+op_assign
+l_int|NULL
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3542,7 +3550,7 @@ multiline_comment|/*&n;&t; *&t;A control message has been attached.&n;&t; */
 r_if
 c_cond
 (paren
-id|msg-&gt;msg_accrights
+id|msg-&gt;msg_control
 )paren
 (brace
 r_struct
@@ -3553,9 +3561,9 @@ op_assign
 id|unix_copyrights
 c_func
 (paren
-id|msg-&gt;msg_accrights
+id|msg-&gt;msg_control
 comma
-id|msg-&gt;msg_accrightslen
+id|msg-&gt;msg_controllen
 )paren
 suffix:semicolon
 r_if
@@ -3565,7 +3573,7 @@ id|cm
 op_eq
 l_int|NULL
 op_logical_or
-id|msg-&gt;msg_accrightslen
+id|msg-&gt;msg_controllen
 OL
 r_sizeof
 (paren
@@ -3581,7 +3589,7 @@ id|cm-&gt;cmsg_level
 op_ne
 id|SOL_SOCKET
 op_logical_or
-id|msg-&gt;msg_accrightslen
+id|msg-&gt;msg_controllen
 op_ne
 id|cm-&gt;cmsg_len
 )paren
@@ -4176,7 +4184,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|msg-&gt;msg_accrights
+id|msg-&gt;msg_control
 )paren
 (brace
 id|cm
@@ -4184,15 +4192,15 @@ op_assign
 id|unix_copyrights
 c_func
 (paren
-id|msg-&gt;msg_accrights
+id|msg-&gt;msg_control
 comma
-id|msg-&gt;msg_accrightslen
+id|msg-&gt;msg_controllen
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|msg-&gt;msg_accrightslen
+id|msg-&gt;msg_controllen
 OL
 r_sizeof
 (paren
@@ -4210,7 +4218,7 @@ id|cm-&gt;cmsg_level
 op_ne
 id|SOL_SOCKET
 op_logical_or
-id|msg-&gt;msg_accrightslen
+id|msg-&gt;msg_controllen
 op_ne
 id|cm-&gt;cmsg_len
 macro_line|#endif
@@ -4222,7 +4230,7 @@ c_func
 id|cm
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;&t;printk(&quot;recvmsg: Bad msg_accrights&bslash;n&quot;);*/
+multiline_comment|/*&t;&t;&t;printk(&quot;recvmsg: Bad msg_control&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -4574,9 +4582,9 @@ id|cm
 id|unix_returnrights
 c_func
 (paren
-id|msg-&gt;msg_accrights
+id|msg-&gt;msg_control
 comma
-id|msg-&gt;msg_accrightslen
+id|msg-&gt;msg_controllen
 comma
 id|cm
 )paren

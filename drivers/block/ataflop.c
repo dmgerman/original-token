@@ -2167,6 +2167,7 @@ id|MAX_ERRORS
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;fd%d: too many errors.&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -2191,6 +2192,7 @@ id|RECALIBRATE_ERRORS
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;fd%d: recalibrating&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -2959,6 +2961,7 @@ id|FDCSTAT_RECNF
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;fd%d: restore failed&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -3139,6 +3142,7 @@ id|FDCSTAT_RECNF
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;fd%d: seek error (to track %d)&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -3981,6 +3985,7 @@ l_int|0x01
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;fd%d: DMA error&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -4013,6 +4018,7 @@ id|FDCSTAT_WPROT
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;fd%d: is write protected&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -4086,6 +4092,7 @@ id|FTD_MSG
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fd%d: Auto-detected floppy type %s&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -4181,6 +4188,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;fd%d: sector %d not found (side %d, track %d)&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -4210,6 +4218,7 @@ id|FDCSTAT_CRC
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;fd%d: CRC error (side %d, track %d, sector %d)&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -4239,6 +4248,7 @@ id|FDCSTAT_LOST
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;fd%d: lost data (side %d, track %d, sector %d)&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -4709,6 +4719,7 @@ id|FDCSTAT_WPROT
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;fd%d: is write protected&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -4729,6 +4740,7 @@ id|FDCSTAT_LOST
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;fd%d: lost data (side %d, track %d)&bslash;n&quot;
 comma
 id|SelectedDrive
@@ -4822,6 +4834,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;floppy timeout&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5125,6 +5138,7 @@ id|MAJOR_NR
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;floppy_changed: not a floppy&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5558,6 +5572,7 @@ multiline_comment|/* drive not connected */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unknown Device: fd%d&bslash;n&quot;
 comma
 id|drive
@@ -5631,6 +5646,7 @@ id|NUM_DISK_MINORS
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;fd%d: invalid disk format&quot;
 comma
 id|drive
@@ -5662,6 +5678,7 @@ id|DriveType
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;fd%d: unsupported disk format&quot;
 comma
 id|drive
@@ -6674,6 +6691,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Probing floppy drive(s):&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6707,6 +6725,7 @@ id|UD.connected
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fd%d&bslash;n&quot;
 comma
 id|drive
@@ -7005,6 +7024,8 @@ id|filp-&gt;f_mode
 op_or_assign
 id|OPEN_WRITE_BIT
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7144,6 +7165,7 @@ op_decrement
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;floppy_release with fd_ref == 0&quot;
 )paren
 suffix:semicolon
@@ -7155,6 +7177,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 DECL|variable|floppy_fops
 r_static
@@ -7232,6 +7256,7 @@ id|floppy_fops
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unable to get major %d for floppy&bslash;n&quot;
 comma
 id|MAJOR_NR
@@ -7309,6 +7334,7 @@ id|DMABuffer
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;atari_floppy_init: cannot get dma buffer&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7498,6 +7524,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Atari floppy driver: max. %cD, %strack buffering&bslash;n&quot;
 comma
 id|DriveType
@@ -7564,6 +7591,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ataflop_setup: no arguments!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7587,6 +7615,7 @@ id|FD_MAX_UNITS
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ataflop_setup: too many arguments&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7604,6 +7633,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ataflop_setup: bad drive type&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7694,6 +7724,7 @@ l_int|12
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ataflop_setup: bad steprate&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7720,6 +7751,16 @@ id|init_module
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_ATARI
+)paren
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
 r_return
 id|atari_floppy_init
 (paren
@@ -7773,17 +7814,6 @@ id|kfree
 id|DMABuffer
 )paren
 suffix:semicolon
-)brace
-macro_line|#else
-multiline_comment|/*&n; * This is just a dummy function to keep fs/super.c happy.&n; */
-DECL|function|floppy_eject
-r_void
-id|floppy_eject
-c_func
-(paren
-r_void
-)paren
-(brace
 )brace
 macro_line|#endif
 eof

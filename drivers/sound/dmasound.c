@@ -10535,6 +10535,10 @@ suffix:semicolon
 )brace
 id|free_pages
 (paren
+(paren
+r_int
+r_int
+)paren
 id|obj
 comma
 id|order

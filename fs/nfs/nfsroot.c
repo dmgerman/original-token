@@ -2004,7 +2004,7 @@ id|msg.msg_iovlen
 op_assign
 l_int|1
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2113,7 +2113,7 @@ id|msg.msg_iovlen
 op_assign
 l_int|1
 suffix:semicolon
-id|msg.msg_accrights
+id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
