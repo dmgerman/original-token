@@ -881,6 +881,7 @@ id|board
 op_eq
 id|TANGENT
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -915,6 +916,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

@@ -185,7 +185,7 @@ r_char
 op_star
 id|stli_drvversion
 op_assign
-l_string|&quot;5.4.5&quot;
+l_string|&quot;5.4.6&quot;
 suffix:semicolon
 DECL|variable|stli_serialname
 r_static
@@ -5470,6 +5470,12 @@ c_func
 id|brdp
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -5501,12 +5507,6 @@ id|stli_tmpwritebuf
 (braket
 l_int|0
 )braket
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;All data is now local, shove as much as possible into shared memory.&n; */

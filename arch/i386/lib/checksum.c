@@ -588,6 +588,7 @@ op_mod
 op_mod
 id|esi
 id|jmp
+op_star
 op_mod
 op_mod
 id|ebx
@@ -1806,6 +1807,7 @@ op_mod
 op_mod
 id|esi
 id|jmp
+op_star
 op_mod
 op_mod
 id|ebx

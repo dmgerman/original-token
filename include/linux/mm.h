@@ -960,8 +960,9 @@ r_int
 id|page_unuse
 c_func
 (paren
-r_int
-r_int
+r_struct
+id|page
+op_star
 )paren
 suffix:semicolon
 r_extern

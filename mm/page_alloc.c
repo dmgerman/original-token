@@ -527,6 +527,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -546,9 +548,17 @@ id|page-&gt;count
 op_eq
 l_int|1
 )paren
-id|panic
+id|printk
+c_func
 (paren
-l_string|&quot;Releasing swap cache page&quot;
+id|KERN_WARNING
+l_string|&quot;VM: Releasing swap cache page at %p&quot;
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -657,9 +667,11 @@ id|map-&gt;count
 op_eq
 l_int|1
 )paren
-id|panic
+id|printk
+c_func
 (paren
-l_string|&quot;Releasing swap cache pages at %p&quot;
+id|KERN_WARNING
+l_string|&quot;VM: Releasing swap cache pages at %p&quot;
 comma
 id|__builtin_return_address
 c_func
