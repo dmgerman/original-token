@@ -531,7 +531,6 @@ op_star
 )paren
 id|buf
 )paren
-)paren
 ques
 c_cond
 suffix:colon

@@ -3578,7 +3578,7 @@ c_func
 (paren
 id|old-&gt;d_parent
 comma
-id|old-&gt;d_len
+id|old-&gt;d_name.len
 comma
 l_int|1
 )paren
@@ -3594,9 +3594,9 @@ id|qstr
 id|copy
 op_assign
 (brace
-id|old-&gt;d_name
+id|old-&gt;d_name.name
 comma
-id|old-&gt;d_len
+id|old-&gt;d_name.len
 )brace
 suffix:semicolon
 id|d_add

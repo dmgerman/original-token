@@ -719,7 +719,10 @@ comma
 id|ide_ht6560b
 comma
 DECL|enumerator|ide_promise
+DECL|enumerator|ide_via
 id|ide_promise
+comma
+id|ide_via
 )brace
 DECL|typedef|hwif_chipset_t
 id|hwif_chipset_t

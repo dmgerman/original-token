@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/* Prefixes for routines (having no effect), but indicate what&n; * the routine may do. This can greatly ease reasoning about routines...&n; */
 DECL|macro|blocking
 mdefine_line|#define blocking /*routine may schedule()*/

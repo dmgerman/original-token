@@ -4432,9 +4432,9 @@ id|qstr
 id|entname
 op_assign
 (brace
-id|entry-&gt;d_name
+id|entry-&gt;d_name.name
 comma
-id|entry-&gt;d_len
+id|entry-&gt;d_name.len
 )brace
 suffix:semicolon
 r_struct

@@ -3,7 +3,7 @@ DECL|macro|DALLOC_H
 mdefine_line|#define DALLOC_H
 multiline_comment|/*&n; * $Id: dalloc.h,v 1.3 1997/06/13 04:39:34 davem Exp $&n; *&n; * include/linux/dalloc.h - alloc routines for dcache&n; * alloc / free space for pathname strings&n; * Copyright (C) 1997, Thomas Schoebel-Theuer,&n; * &lt;schoebel@informatik.uni-stuttgart.de&gt;.&n; */
 DECL|macro|D_MAXLEN
-mdefine_line|#define D_MAXLEN   1024
+mdefine_line|#define D_MAXLEN 1024
 multiline_comment|/* public flags for d_add() */
 DECL|macro|D_NORMAL
 mdefine_line|#define D_NORMAL     0
@@ -23,6 +23,22 @@ DECL|macro|D_NO_CLEAR_INODE
 mdefine_line|#define D_NO_CLEAR_INODE 1
 DECL|macro|IS_ROOT
 mdefine_line|#define IS_ROOT(x) ((x) == (x)-&gt;d_parent)
+multiline_comment|/* &quot;quick string&quot; -- I introduced this to shorten the parameter list&n; * of many routines. Think of it as a (str,stlen) pair.&n; * Storing the len instead of doing strlen() very often is performance&n; * critical.&n; */
+DECL|struct|qstr
+r_struct
+id|qstr
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|dentry
 r_struct
 id|dentry
@@ -91,38 +107,15 @@ id|dentry
 op_star
 id|d_basket_prev
 suffix:semicolon
-DECL|member|d_len
-r_int
-id|d_len
-suffix:semicolon
-multiline_comment|/* set by dalloc() */
-DECL|member|d_flag
-r_int
-id|d_flag
-suffix:semicolon
 DECL|member|d_name
-r_char
-id|d_name
-(braket
-id|D_MAXLEN
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* &quot;quick string&quot; -- I introduced this to shorten the parameter list&n; * of many routines. Think of it as a (str,stlen) pair.&n; * Storing the len instead of doing strlen() very often is performance&n; * critical.&n; */
-DECL|struct|qstr
 r_struct
 id|qstr
-(brace
-DECL|member|name
-r_const
-r_char
-op_star
-id|name
+id|d_name
 suffix:semicolon
-DECL|member|len
+DECL|member|d_flag
 r_int
-id|len
+r_int
+id|d_flag
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -1252,9 +1252,9 @@ c_func
 op_amp
 id|buf
 comma
-id|ptr-&gt;d_name
+id|ptr-&gt;d_name.name
 comma
-id|ptr-&gt;d_len
+id|ptr-&gt;d_name.len
 comma
 id|file-&gt;f_pos
 comma

@@ -1680,7 +1680,7 @@ c_func
 (paren
 id|VIA
 comma
-id|VIA_82C586_0
+id|VIA_82C586
 comma
 l_string|&quot;VT 82C586 Apollo VP-1&quot;
 )paren
