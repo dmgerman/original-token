@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/string.h&gt;&t;/* inline memset(), etc. */
 macro_line|#include &lt;linux/malloc.h&gt;&t;/* kmalloc(), kfree() */
 macro_line|#include &lt;linux/router.h&gt;&t;/* WAN router definitions */
 macro_line|#include &lt;linux/wanpipe.h&gt;&t;/* WANPIPE common user API definitions */
+macro_line|#include &lt;linux/init.h&gt;&t;&t;/* __initfunc et al. */
 macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
 DECL|macro|_GNUC_
 mdefine_line|#define&t;_GNUC_
@@ -868,7 +869,10 @@ suffix:semicolon
 multiline_comment|/****** Global Data **********************************************************&n; * Note: All data must be explicitly initialized!!!&n; */
 multiline_comment|/****** Public Functions ****************************************************/
 multiline_comment|/*============================================================================&n; * X.25 Protocol Initialization routine.&n; *&n; * This routine is called by the main WANPIPE module during setup.  At this&n; * point adapter is completely initialized and X.25 firmware is running.&n; *  o read firmware version (to make sure it&squot;s alive)&n; *  o configure adapter&n; *  o initialize protocol-specific fields of the adapter data space.&n; *&n; * Return:&t;0&t;o.k.&n; *&t;&t;&lt; 0&t;failure.&n; */
-DECL|function|wpx_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|wpx_init
 (paren
@@ -879,6 +883,7 @@ comma
 id|wandev_conf_t
 op_star
 id|conf
+)paren
 )paren
 (brace
 r_union

@@ -417,11 +417,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* SMP safe, global irq locking makes it work. */
 id|sys_tz
 op_assign
 id|new_tz
@@ -448,11 +444,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -460,21 +451,12 @@ c_cond
 id|tv
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* SMP safe, again the code in arch/foo/time.c should&n;&t;&t; * globally block out interrupts when it runs.&n;&t;&t; */
 id|do_settimeofday
 c_func
 (paren
 op_amp
 id|new_tv
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -696,16 +678,12 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* SMP: global cli() is enough protection. */
 multiline_comment|/* Save for later - semantics of adjtime is to return old value */
 id|save_adjust
 op_assign
@@ -1132,11 +1110,6 @@ op_assign
 id|pps_stbcnt
 suffix:semicolon
 id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-id|unlock_kernel
 c_func
 (paren
 )paren

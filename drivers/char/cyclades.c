@@ -32,6 +32,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|small_delay
 mdefine_line|#define small_delay(x) for(j=0;j&lt;x;j++)k++;
 DECL|macro|SERIAL_PARANOIA_CHECK
@@ -11012,6 +11013,7 @@ multiline_comment|/* cy_open */
 multiline_comment|/*&n; * ---------------------------------------------------------------------&n; * cy_init() and friends&n; *&n; * cy_init() is called at boot-time to initialize the serial driver.&n; * ---------------------------------------------------------------------&n; */
 multiline_comment|/*&n; * This routine prints out the appropriate serial driver version&n; * number, and identifies which options were configured into this&n; * driver.&n; */
 r_static
+r_inline
 r_void
 DECL|function|show_version
 id|show_version
@@ -11031,8 +11033,12 @@ suffix:semicolon
 )brace
 multiline_comment|/* show_version */
 multiline_comment|/* initialize chips on card -- return number of valid&n;   chips (which is number of ports/4) */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
 r_int
-DECL|function|cy_init_card
 id|cy_init_card
 c_func
 (paren
@@ -11043,6 +11049,7 @@ id|true_base_addr
 comma
 r_int
 id|index
+)paren
 )paren
 (brace
 r_int
@@ -11264,12 +11271,16 @@ suffix:semicolon
 )brace
 multiline_comment|/* cy_init_card */
 multiline_comment|/* The serial driver boot-time initialization code!&n;    Hardware I/O ports are mapped to character special devices on a&n;    first found, first allocated manner.  That is, this code searches&n;    for Cyclom cards in the system.  As each is found, it is probed&n;    to discover how many chips (and thus how many ports) are present.&n;    These ports are mapped to the tty ports 32 and upward in monotonic&n;    fashion.  If an 8-port card is replaced with a 16-port card, the&n;    port mapping on a following card will shift.&n;&n;    This approach is different from what is used in the other serial&n;    device driver because the Cyclom is more properly a multiplexer,&n;    not just an aggregation of serial ports on one card.&n;&n;    If there are more cards with more ports than have been statically&n;    allocated above, a warning is printed and the extra ports are ignored.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|cy_init
 id|cy_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -11889,7 +11900,28 @@ r_void
 )paren
 (brace
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|i
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|remove_bh
+c_func
+(paren
+id|CYCLADES_BH
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -11921,6 +11953,12 @@ id|printk
 c_func
 (paren
 l_string|&quot;Couldn&squot;t unregister Cyclom serial driver&bslash;n&quot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_for
@@ -11969,11 +12007,15 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * ---------------------------------------------------------------------&n; * cy_detect_isa() - Probe for Cyclom-Y/ISA boards.&n; * sets global variables and return the number of ISA boards found.&n; * ---------------------------------------------------------------------&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|cy_detect_isa
 id|cy_detect_isa
 c_func
 (paren
+)paren
 )paren
 (brace
 r_int
@@ -12322,11 +12364,15 @@ id|nboard
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * ---------------------------------------------------------------------&n; * cy_detect_pci() - Test PCI bus presence and Cyclom-Ye/PCI.&n; * sets global variables and return the number of PCI boards found.&n; * ---------------------------------------------------------------------&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|cy_detect_pci
 id|cy_detect_pci
 c_func
 (paren
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI

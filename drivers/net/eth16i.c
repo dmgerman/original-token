@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -287,13 +288,14 @@ mdefine_line|#define ID_ROM_7               31
 DECL|macro|RESET
 mdefine_line|#define RESET                  ID_ROM_0
 multiline_comment|/* This is the I/O address list to be probed when seeking the card */
-DECL|variable|eth16i_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|eth16i_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x260
@@ -315,13 +317,14 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|eth32i_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|eth32i_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x1000
@@ -358,13 +361,14 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* This is the Interrupt lookup table for Eth16i card */
-DECL|variable|eth16i_irqmap
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|eth16i_irqmap
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|9
@@ -377,13 +381,14 @@ l_int|15
 )brace
 suffix:semicolon
 multiline_comment|/* This is the Interrupt lookup table for Eth32i card */
-DECL|variable|eth32i_irqmap
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|eth32i_irqmap
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|3
@@ -750,7 +755,10 @@ id|eth16i_probe_list
 )brace
 suffix:semicolon
 macro_line|#else  /* Not HAVE_DEVLIST */
-DECL|function|eth16i_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|eth16i_probe
 c_func
@@ -759,6 +767,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -942,7 +951,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* Not HAVE_DEVLIST */
-DECL|function|eth16i_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|eth16i_probe1
@@ -955,6 +967,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_static

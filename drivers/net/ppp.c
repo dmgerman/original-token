@@ -37,6 +37,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|typedef|sk_buff
 r_typedef
 r_struct
@@ -1450,12 +1451,16 @@ suffix:semicolon
 )brace
 multiline_comment|/*************************************************************&n; * INITIALIZATION&n; *************************************************************/
 multiline_comment|/* This procedure is called once and once only to define who we are to&n; * the operating system and the various procedures that it may use in&n; * accessing the ppp protocol.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|ppp_first_time
 id|ppp_first_time
 (paren
 r_void
+)paren
 )paren
 (brace
 r_static

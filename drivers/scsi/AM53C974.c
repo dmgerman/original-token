@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -861,6 +862,7 @@ r_void
 )paren
 suffix:semicolon
 r_static
+id|__inline__
 r_int
 id|AM53C974_bios_detect
 c_func
@@ -871,6 +873,7 @@ id|tpnt
 )paren
 suffix:semicolon
 r_static
+id|__inline__
 r_int
 id|AM53C974_nobios_detect
 c_func
@@ -2549,6 +2552,8 @@ suffix:semicolon
 macro_line|#if defined (CONFIG_PCI)
 multiline_comment|/**************************************************************************&n;* Function : int AM53C974_bios_detect(Scsi_Host_Template *tpnt)&n;*&n;* Purpose : detects and initializes AM53C974 SCSI chips with PCI Bios&n;*&n;* Inputs : tpnt - host template&n;* &n;* Returns : number of host adapters detected&n;**************************************************************************/
 DECL|function|AM53C974_bios_detect
+r_static
+id|__inline__
 r_int
 id|AM53C974_bios_detect
 c_func
@@ -2955,6 +2960,8 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/**************************************************************************&n;* Function : int AM53C974_nobios_detect(Scsi_Host_Template *tpnt)&n;*&n;* Purpose : detects and initializes AM53C974 SCSI chips using PCI config 2 &n;*&n;* Inputs : tpnt - host template&n;* &n;* Returns : number of host adapters detected&n;*&n;* NOTE : This code assumes the controller on PCI bus 0.&n;*&n;* Origin: Robin Cutshaw (robin@xfree86.org)&n;**************************************************************************/
 DECL|function|AM53C974_nobios_detect
+r_static
+id|__inline__
 r_int
 id|AM53C974_nobios_detect
 c_func
@@ -3581,7 +3588,10 @@ id|count
 suffix:semicolon
 )brace
 multiline_comment|/**************************************************************************&n;* Function : int AM53C974_detect(Scsi_Host_Template *tpnt)&n;*&n;* Purpose : detects and initializes AM53C974 SCSI chips&n;*&n;* Inputs : tpnt - host template&n;* &n;* Returns : number of host adapters detected&n;**************************************************************************/
-DECL|function|AM53C974_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|AM53C974_detect
 c_func
@@ -3589,6 +3599,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_int
@@ -3634,7 +3645,10 @@ id|count
 suffix:semicolon
 )brace
 multiline_comment|/**************************************************************************&n;* Function : int AM53C974_init(Scsi_Host_Template *tpnt, pci_config_t pci_config)&n;*&n;* Purpose : initializes instance and corresponding AM53/79C974 chip,&n;*&n;* Inputs : tpnt - template, pci_config - PCI configuration,&n;* &n;* Returns : 1 on success, 0 on failure.&n;* &n;* NOTE: If no override for the controller&squot;s SCSI id is given and AM53C974_SCSI_ID &n;*       is not defined we assume that the SCSI address of this controller is correctly&n;*       set up by the BIOS (as reflected by contents of register CNTLREG1).&n;*       This is the only BIOS assistance we need.&n;**************************************************************************/
-DECL|function|AM53C974_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|AM53C974_init
@@ -3646,6 +3660,7 @@ id|tpnt
 comma
 id|pci_config_t
 id|pci_config
+)paren
 )paren
 (brace
 id|AM53C974_local_declare

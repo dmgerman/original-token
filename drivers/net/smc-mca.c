@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -133,7 +134,10 @@ DECL|macro|ULTRA_IO_EXTENT
 mdefine_line|#define ULTRA_IO_EXTENT 32
 DECL|macro|EN0_ERWCNT
 mdefine_line|#define EN0_ERWCNT      0x08  /* Early receive warning count. */
-DECL|function|ultramca_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ultramca_probe
 c_func
@@ -142,6 +146,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int

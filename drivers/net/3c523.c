@@ -17,6 +17,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;3c523.h&quot;
 multiline_comment|/*************************************************************************/
 DECL|macro|DEBUG
@@ -31,12 +32,13 @@ DECL|macro|make16
 mdefine_line|#define make16(ptr32) ((unsigned short) ((unsigned long) (ptr32) - (unsigned long) p-&gt;memtop ))
 multiline_comment|/*************************************************************************/
 multiline_comment|/*&n;    Tables to which we can map values in the configuration registers.&n;*/
-DECL|variable|irq_table
+DECL|variable|__initdata
 r_static
 r_int
 id|irq_table
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|12
@@ -48,12 +50,13 @@ comma
 l_int|9
 )brace
 suffix:semicolon
-DECL|variable|csr_table
+DECL|variable|__initdata
 r_static
 r_int
 id|csr_table
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x300
@@ -65,12 +68,13 @@ comma
 l_int|0x3300
 )brace
 suffix:semicolon
-DECL|variable|shm_table
+DECL|variable|__initdata
 r_static
 r_int
 id|shm_table
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x0c0000
@@ -681,9 +685,12 @@ suffix:semicolon
 multiline_comment|/* most done by init */
 )brace
 multiline_comment|/**********************************************&n; * Check to see if there&squot;s an 82586 out there.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|check586
 id|check586
 c_func
 (paren
@@ -698,6 +705,7 @@ id|where
 comma
 r_int
 id|size
+)paren
 )paren
 (brace
 r_struct
@@ -1078,9 +1086,12 @@ id|scb_struct
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|elmc_getinfo
 id|elmc_getinfo
 c_func
 (paren
@@ -1094,6 +1105,7 @@ comma
 r_void
 op_star
 id|d
+)paren
 )paren
 (brace
 r_int
@@ -1299,8 +1311,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* elmc_getinfo() */
 multiline_comment|/*****************************************************************/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|elmc_probe
 id|elmc_probe
 c_func
 (paren
@@ -1308,6 +1323,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_static

@@ -1187,14 +1187,6 @@ id|sk
 op_assign
 id|skb-&gt;sk
 suffix:semicolon
-macro_line|#if CONFIG_SKB_CHECK
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#if 1
 r_if
 c_cond
@@ -1251,14 +1243,6 @@ id|sk
 op_assign
 id|skb-&gt;sk
 suffix:semicolon
-macro_line|#if CONFIG_SKB_CHECK
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 macro_line|#if 1
 r_if
 c_cond

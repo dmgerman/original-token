@@ -355,6 +355,11 @@ id|__u32
 id|rcv_wup
 suffix:semicolon
 multiline_comment|/* rcv_nxt on last window update sent&t;*/
+DECL|member|fin_seq
+id|__u32
+id|fin_seq
+suffix:semicolon
+multiline_comment|/* XXX This one should go, we don&squot;t need it. -DaveM */
 DECL|member|srtt
 id|__u32
 id|srtt
@@ -386,6 +391,95 @@ id|__u32
 id|snd_ssthresh
 suffix:semicolon
 multiline_comment|/* Slow start size threshold&t;&t;*/
+DECL|member|snd_cwnd_cnt
+id|__u16
+id|snd_cwnd_cnt
+suffix:semicolon
+DECL|member|max_window
+id|__u16
+id|max_window
+suffix:semicolon
+multiline_comment|/*&n; *      Options received (usually on last packet, some only on SYN packets).&n; */
+DECL|member|tstamp_ok
+r_char
+id|tstamp_ok
+comma
+multiline_comment|/* TIMESTAMP seen on SYN packet&t;&t;*/
+DECL|member|sack_ok
+id|sack_ok
+suffix:semicolon
+multiline_comment|/* SACK_PERM seen on SYN packet&t;&t;*/
+DECL|member|saw_tstamp
+r_char
+id|saw_tstamp
+suffix:semicolon
+multiline_comment|/* Saw TIMESTAMP on last packet&t;&t;*/
+DECL|member|in_mss
+id|__u16
+id|in_mss
+suffix:semicolon
+multiline_comment|/* MSS option received from sender&t;*/
+DECL|member|snd_wscale
+id|__u8
+id|snd_wscale
+suffix:semicolon
+multiline_comment|/* Window scaling received from sender&t;*/
+DECL|member|rcv_wscale
+id|__u8
+id|rcv_wscale
+suffix:semicolon
+multiline_comment|/* Window scaling to send to receiver&t;*/
+DECL|member|rcv_tsval
+id|__u32
+id|rcv_tsval
+suffix:semicolon
+multiline_comment|/* Time stamp value             &t;*/
+DECL|member|rcv_tsecr
+id|__u32
+id|rcv_tsecr
+suffix:semicolon
+multiline_comment|/* Time stamp echo reply        &t;*/
+DECL|member|ts_recent
+id|__u32
+id|ts_recent
+suffix:semicolon
+multiline_comment|/* Time stamp to echo next&t;&t;*/
+DECL|member|ts_recent_stamp
+id|__u32
+id|ts_recent_stamp
+suffix:semicolon
+multiline_comment|/* Time we stored ts_recent (for aging) */
+DECL|member|last_ack_sent
+id|__u32
+id|last_ack_sent
+suffix:semicolon
+multiline_comment|/* last ack we sent&t;&t;&t;*/
+DECL|member|sacks
+r_int
+id|sacks
+suffix:semicolon
+multiline_comment|/* Number of SACK blocks if any&t;&t;*/
+DECL|member|left_sack
+id|__u32
+id|left_sack
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* Left edges of blocks         &t;*/
+DECL|member|right_sack
+id|__u32
+id|right_sack
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* Right edges of blocks        &t;*/
+DECL|member|tcp_header_len
+r_int
+id|tcp_header_len
+suffix:semicolon
+multiline_comment|/* Bytes of tcp header to send &t;*/
 multiline_comment|/*&n; *&t;Timers used by the TCP protocol layer&n; */
 DECL|member|delack_timer
 r_struct
@@ -422,6 +516,21 @@ id|__u32
 id|basertt
 suffix:semicolon
 multiline_comment|/* Vegas baseRTT */
+DECL|member|packets_out
+id|__u32
+id|packets_out
+suffix:semicolon
+multiline_comment|/* Packets which are &quot;in flight&quot; */
+DECL|member|window_clamp
+id|__u32
+id|window_clamp
+suffix:semicolon
+multiline_comment|/* XXX Document this... -DaveM */
+DECL|member|pending
+id|__u8
+id|pending
+suffix:semicolon
+multiline_comment|/* pending events */
 DECL|member|delayed_acks
 id|__u8
 id|delayed_acks
@@ -429,6 +538,11 @@ suffix:semicolon
 DECL|member|dup_acks
 id|__u8
 id|dup_acks
+suffix:semicolon
+multiline_comment|/* Consequetive duplicate acks seen from other end */
+DECL|member|retransmits
+id|__u8
+id|retransmits
 suffix:semicolon
 DECL|member|lrcvtime
 id|__u32
@@ -459,6 +573,7 @@ DECL|member|high_seq
 id|__u32
 id|high_seq
 suffix:semicolon
+multiline_comment|/* highest sequence number sent by onset of congestion */
 multiline_comment|/*&n; *&t;new send pointers&n; */
 DECL|member|send_head
 r_struct
@@ -473,11 +588,6 @@ op_star
 id|retrans_head
 suffix:semicolon
 multiline_comment|/* retrans head can be &n;&t;&t;&t;&t;&t;&t; * different to the head of&n;&t;&t;&t;&t;&t;&t; * write queue if we are doing&n;&t;&t;&t;&t;&t;&t; * fast retransmit&n;&t;&t;&t;&t;&t;&t; */
-multiline_comment|/*&n; * pending events&n; */
-DECL|member|pending
-id|__u8
-id|pending
-suffix:semicolon
 multiline_comment|/*&n; *&t;Header prediction flags&n; *&t;0x5?10 &lt;&lt; 16 + snd_wnd in net byte order&n; */
 DECL|member|pred_flags
 id|__u32
@@ -498,6 +608,13 @@ r_struct
 id|open_request
 op_star
 id|syn_wait_queue
+suffix:semicolon
+DECL|member|syn_wait_last
+r_struct
+id|open_request
+op_star
+op_star
+id|syn_wait_last
 suffix:semicolon
 DECL|member|af_specific
 r_struct
@@ -551,6 +668,7 @@ r_int
 id|allocation
 suffix:semicolon
 multiline_comment|/* Allocation mode */
+multiline_comment|/* The following stuff should probably move to the tcp private area */
 DECL|member|write_seq
 id|__u32
 id|write_seq
@@ -558,10 +676,6 @@ suffix:semicolon
 DECL|member|copied_seq
 id|__u32
 id|copied_seq
-suffix:semicolon
-DECL|member|fin_seq
-id|__u32
-id|fin_seq
 suffix:semicolon
 DECL|member|syn_seq
 id|__u32
@@ -575,19 +689,17 @@ DECL|member|urg_data
 id|__u32
 id|urg_data
 suffix:semicolon
+DECL|member|delayed_acks
+r_int
+r_char
+id|delayed_acks
+suffix:semicolon
+multiline_comment|/* End of block to move */
 DECL|member|sock_readers
 r_int
 id|sock_readers
 suffix:semicolon
 multiline_comment|/* user count */
-DECL|member|delayed_acks
-r_int
-r_char
-id|delayed_acks
-comma
-DECL|member|dup_acks
-id|dup_acks
-suffix:semicolon
 multiline_comment|/*&n;   *&t;Not all are volatile, but some are, so we&n;   * &t;might as well say they all are.&n;   */
 DECL|member|dead
 r_volatile
@@ -596,9 +708,6 @@ id|dead
 comma
 DECL|member|urginline
 id|urginline
-comma
-DECL|member|intr
-id|intr
 comma
 DECL|member|done
 id|done
@@ -614,9 +723,6 @@ id|linger
 comma
 DECL|member|destroy
 id|destroy
-comma
-DECL|member|ack_timed
-id|ack_timed
 comma
 DECL|member|no_check
 id|no_check
@@ -685,31 +791,10 @@ id|sock
 op_star
 id|pair
 suffix:semicolon
-DECL|member|send_head
-r_struct
-id|sk_buff
-op_star
-id|send_head
-suffix:semicolon
 DECL|member|back_log
 r_struct
 id|sk_buff_head
 id|back_log
-suffix:semicolon
-DECL|member|partial
-r_struct
-id|sk_buff
-op_star
-id|partial
-suffix:semicolon
-DECL|member|partial_timer
-r_struct
-id|timer_list
-id|partial_timer
-suffix:semicolon
-DECL|member|retransmits
-id|atomic_t
-id|retransmits
 suffix:semicolon
 DECL|member|write_queue
 r_struct
@@ -768,11 +853,6 @@ r_int
 r_int
 id|max_unacked
 suffix:semicolon
-DECL|member|bytes_rcv
-r_int
-r_int
-id|bytes_rcv
-suffix:semicolon
 multiline_comment|/*&n; *&t;mss is min(mtu, max_window) &n; */
 DECL|member|mtu
 r_int
@@ -792,39 +872,10 @@ r_int
 id|user_mss
 suffix:semicolon
 multiline_comment|/* mss requested by user in ioctl */
-DECL|member|max_window
-r_int
-r_int
-id|max_window
-suffix:semicolon
-DECL|member|window_clamp
-r_int
-r_int
-id|window_clamp
-suffix:semicolon
-DECL|member|ssthresh
-r_int
-r_int
-id|ssthresh
-suffix:semicolon
 DECL|member|num
 r_int
 r_int
 id|num
-suffix:semicolon
-DECL|member|cong_window
-r_int
-r_int
-id|cong_window
-suffix:semicolon
-DECL|member|cong_count
-r_int
-r_int
-id|cong_count
-suffix:semicolon
-DECL|member|packets_out
-r_int
-id|packets_out
 suffix:semicolon
 DECL|member|shutdown
 r_int
@@ -862,8 +913,6 @@ DECL|member|tp_pinfo
 )brace
 id|tp_pinfo
 suffix:semicolon
-multiline_comment|/*&n; *&t;currently backoff isn&squot;t used, but I&squot;m maintaining it in case&n; *&t;we want to go back to a backoff formula that needs it&n; */
-multiline_comment|/* &n;&t;unsigned short&t;&t;backoff;&n; */
 DECL|member|err
 DECL|member|err_soft
 r_int
@@ -1028,29 +1077,6 @@ r_struct
 id|tcphdr
 id|dummy_th
 suffix:semicolon
-DECL|member|keepalive_timer
-r_struct
-id|timer_list
-id|keepalive_timer
-suffix:semicolon
-multiline_comment|/* TCP keepalive hack */
-DECL|member|retransmit_timer
-r_struct
-id|timer_list
-id|retransmit_timer
-suffix:semicolon
-multiline_comment|/* TCP retransmit timer */
-DECL|member|delack_timer
-r_struct
-id|timer_list
-id|delack_timer
-suffix:semicolon
-multiline_comment|/* TCP delayed ack timer */
-DECL|member|ip_xmit_timeout
-r_int
-id|ip_xmit_timeout
-suffix:semicolon
-multiline_comment|/* Why the timeout is running */
 DECL|member|opt
 r_struct
 id|ip_options
@@ -1108,7 +1134,7 @@ r_struct
 id|timer_list
 id|timer
 suffix:semicolon
-multiline_comment|/* This is the TIME_WAIT/receive timer&n;&t;&t;&t;&t;&t; * when we are doing IP&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* This is the TIME_WAIT/receive timer&n;&t;&t;&t;&t;&t;&t; * when we are doing IP&n;&t;&t;&t;&t;&t;&t; */
 DECL|member|stamp
 r_struct
 id|timeval

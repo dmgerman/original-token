@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -9983,6 +9984,7 @@ multiline_comment|/*&n; * ------------------------------------------------------
 multiline_comment|/*&n; * This routine prints out the appropriate serial driver version&n; * number, and identifies which options were configured into this&n; * driver.&n; */
 DECL|function|show_serial_version
 r_static
+id|_INLINE_
 r_void
 id|show_serial_version
 c_func
@@ -10266,12 +10268,16 @@ id|port_detected
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
-DECL|function|espserial_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|espserial_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -11132,6 +11138,12 @@ suffix:semicolon
 id|cli
 c_func
 (paren
+)paren
+suffix:semicolon
+id|remove_bh
+c_func
+(paren
+id|ESP_BH
 )paren
 suffix:semicolon
 r_if

@@ -17,17 +17,19 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
-DECL|variable|hpplus_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|hpplus_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x200
@@ -360,7 +362,10 @@ id|hpplus_portlist
 )brace
 suffix:semicolon
 macro_line|#else
-DECL|function|hp_plus_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|hp_plus_probe
 c_func
@@ -369,6 +374,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -473,7 +479,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Do the interesting part of the probe at a single address. */
-DECL|function|hpp_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|hpp_probe1
 c_func
@@ -485,6 +494,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;net/br.h&gt;
@@ -3334,12 +3335,16 @@ multiline_comment|/* (4.7.8.1)&t; */
 )brace
 multiline_comment|/* (4.6.1.2.3)&t; */
 )brace
-DECL|function|br_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|br_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/* (4.8.1)&t; */

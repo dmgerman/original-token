@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/if_slip.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;slip.h&quot;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
@@ -4137,6 +4138,9 @@ c_func
 r_void
 )paren
 macro_line|#else&t;/* !MODULE */
+id|__initfunc
+c_func
+(paren
 r_int
 id|slip_init_ctrl_dev
 c_func
@@ -4145,6 +4149,7 @@ r_struct
 id|device
 op_star
 id|dummy
+)paren
 )paren
 macro_line|#endif&t;/* !MODULE */
 (brace

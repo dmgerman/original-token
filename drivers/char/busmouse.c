@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -867,12 +868,16 @@ op_amp
 id|bus_mouse_fops
 )brace
 suffix:semicolon
-DECL|function|bus_mouse_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|bus_mouse_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

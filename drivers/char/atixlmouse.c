@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -775,12 +776,16 @@ op_amp
 id|atixl_busmouse_fops
 )brace
 suffix:semicolon
-DECL|function|atixl_busmouse_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|atixl_busmouse_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

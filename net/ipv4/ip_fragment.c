@@ -513,12 +513,6 @@ id|xp
 op_assign
 id|fp-&gt;next
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|fp-&gt;skb
-)paren
-suffix:semicolon
 id|frag_kfree_skb
 c_func
 (paren

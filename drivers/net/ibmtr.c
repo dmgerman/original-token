@@ -165,6 +165,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -176,13 +177,14 @@ DECL|macro|DPRINTD
 mdefine_line|#define DPRINTD(format, args...) DummyCall(&quot;%s: &quot; format, dev-&gt;name , ## args)
 macro_line|#if TR_NEWFORMAT
 multiline_comment|/* this allows displaying full adapter information */
-DECL|variable|channel_def
+DECL|variable|__initdata
 r_const
 r_char
 op_star
 id|channel_def
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_string|&quot;ISA&quot;
@@ -192,7 +194,10 @@ comma
 l_string|&quot;ISA P&amp;P&quot;
 )brace
 suffix:semicolon
-DECL|function|adapter_def
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_char
 op_star
 id|adapter_def
@@ -200,6 +205,7 @@ c_func
 (paren
 r_char
 id|type
+)paren
 )paren
 (brace
 r_switch
@@ -470,13 +476,14 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|variable|ibmtr_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|ibmtr_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0xa20
@@ -493,7 +500,10 @@ id|ibmtr_mem_base
 op_assign
 l_int|0xd0000
 suffix:semicolon
-DECL|function|PrtChanID
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|PrtChanID
@@ -505,6 +515,7 @@ id|pcid
 comma
 r_int
 id|stride
+)paren
 )paren
 (brace
 r_int
@@ -559,7 +570,10 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|HWPrtChanID
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|HWPrtChanID
@@ -569,6 +583,7 @@ id|pcid
 comma
 r_int
 id|stride
+)paren
 )paren
 (brace
 r_int
@@ -627,7 +642,10 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;ibmtr_probe():  Routine specified in the network device structure&n; *&t;to probe for an IBM Token Ring Adapter.  Routine outline:&n; *&t;I.    Interrogate hardware to determine if an adapter exists&n; *&t;      and what the speeds and feeds are&n; *&t;II.   Setup data structures to control execution based upon&n; *&t;      adapter characteristics.&n; *&t;III.  Initialize adapter operation&n; *&n; *&t;We expect ibmtr_probe to be called once for each device entry&n; *&t;which references it.&n; */
-DECL|function|ibmtr_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ibmtr_probe
 c_func
@@ -636,6 +654,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -771,7 +790,10 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|ibmtr_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ibmtr_probe1
@@ -784,6 +806,7 @@ id|dev
 comma
 r_int
 id|PIOaddr
+)paren
 )paren
 (brace
 r_int
@@ -2352,7 +2375,11 @@ suffix:semicolon
 multiline_comment|/* Return 0 to indicate we have found a Token Ring card. */
 )brace
 multiline_comment|/* query the adapter for the size of shared RAM  */
-DECL|function|get_sram_size
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
 r_int
 r_char
 id|get_sram_size
@@ -2362,6 +2389,7 @@ r_struct
 id|tok_info
 op_star
 id|adapt_info
+)paren
 )paren
 (brace
 r_int
@@ -2427,7 +2455,11 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-DECL|function|trdev_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
 r_int
 id|trdev_init
 c_func
@@ -2436,6 +2468,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_struct

@@ -867,11 +867,11 @@ c_cond
 (paren
 id|i
 OL
-l_int|16
+l_int|48
 )paren
 id|i
 op_assign
-l_int|16
+l_int|48
 suffix:semicolon
 id|min_free_pages
 op_assign

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -486,7 +487,10 @@ suffix:semicolon
 macro_line|#endif
 "&f;"
 multiline_comment|/* The Z-Note probe is pretty easy.  The NETIDBLK exists in the safe-to-probe&n;   BIOS area.  We just scan for the signature, and pull the vital parameters&n;   out of the structure. */
-DECL|function|znet_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|znet_probe
 c_func
@@ -495,6 +499,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int

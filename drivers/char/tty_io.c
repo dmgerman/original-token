@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -7616,12 +7617,16 @@ comma
 id|dev_console_driver
 suffix:semicolon
 multiline_comment|/*&n; * Ok, now we can initialize the rest of the tty devices and can count&n; * on memory allocations, interrupts etc..&n; */
-DECL|function|tty_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|tty_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

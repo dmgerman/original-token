@@ -29,6 +29,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/* use 0 for production, 1 for verification, 2..7 for debug */
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
@@ -43,13 +44,14 @@ op_assign
 id|NET_DEBUG
 suffix:semicolon
 multiline_comment|/* A zero-terminated list of common I/O addresses to be probed. */
-DECL|variable|netcard_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|netcard_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x300
@@ -524,7 +526,10 @@ id|netcard_portlist
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;&t;If dev-&gt;base_addr == 0, probe all likely locations.&n;&t;If dev-&gt;base_addr == 1, always return failure.&n;&t;If dev-&gt;base_addr == 2, (detachable devices only) allocate space for the&n;&t;device and return success.&n;&t;*/
-DECL|function|el16_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|el16_probe
 c_func
@@ -533,6 +538,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -635,7 +641,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|el16_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|el16_probe1
 c_func
@@ -647,6 +656,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_static

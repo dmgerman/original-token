@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.55 1997/04/17 03:28:56 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.56 1997/04/18 05:44:35 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
@@ -327,6 +327,43 @@ c_func
 id|__sparc_bh_counter
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+DECL|variable|_irq_enter
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_irq_enter
+)paren
+suffix:semicolon
+DECL|variable|_irq_exit
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_irq_exit
+)paren
+suffix:semicolon
+DECL|variable|_global_restore_flags
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_global_restore_flags
+)paren
+suffix:semicolon
+DECL|variable|_global_sti
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_global_sti
+)paren
+suffix:semicolon
+DECL|variable|_global_cli
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_global_cli
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|page_offset
 id|EXPORT_SYMBOL
 c_func
@@ -434,34 +471,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|global_irq_count
-)paren
-suffix:semicolon
-DECL|variable|__global_cli
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__global_cli
-)paren
-suffix:semicolon
-DECL|variable|__global_sti
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__global_sti
-)paren
-suffix:semicolon
-DECL|variable|__global_save_flags
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__global_save_flags
-)paren
-suffix:semicolon
-DECL|variable|__global_restore_flags
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__global_restore_flags
 )paren
 suffix:semicolon
 DECL|variable|synchronize_irq

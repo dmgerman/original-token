@@ -393,6 +393,8 @@ DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x040
 DECL|macro|_PAGE_4M
 mdefine_line|#define _PAGE_4M&t;0x080&t;/* 4 MB page, Pentium+.. */
+DECL|macro|_PAGE_GLOBAL
+mdefine_line|#define _PAGE_GLOBAL&t;0x100&t;/* Global TLB entry PPro+ */
 DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|_KERNPG_TABLE
@@ -1026,6 +1028,13 @@ id|pte
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_const
+r_char
+id|bad_pmd_string
+(braket
+)braket
+suffix:semicolon
 DECL|function|pte_alloc_kernel
 r_extern
 r_inline
@@ -1164,7 +1173,7 @@ id|pmd
 id|printk
 c_func
 (paren
-l_string|&quot;Bad pmd in pte_alloc: %08lx&bslash;n&quot;
+id|bad_pmd_string
 comma
 id|pmd_val
 c_func
@@ -1453,7 +1462,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Bad pmd in pte_alloc: %08lx&bslash;n&quot;
+id|bad_pmd_string
 comma
 id|pmd_val
 c_func

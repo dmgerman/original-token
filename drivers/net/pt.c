@@ -69,6 +69,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/pt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;z8530.h&quot;
 macro_line|#include &lt;net/ax25.h&gt;
 DECL|struct|mbuf
@@ -2139,12 +2140,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* chipset_init() */
-DECL|function|pt_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|pt_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -2413,7 +2418,10 @@ suffix:semicolon
 )brace
 multiline_comment|/* pt_init() */
 multiline_comment|/*&n; * Probe for PT card.  Also initialises the timers&n; */
-DECL|function|hw_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|hw_probe
@@ -2421,6 +2429,7 @@ c_func
 (paren
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int
@@ -6009,12 +6018,6 @@ suffix:semicolon
 id|lp-&gt;stats.rx_bytes
 op_add_assign
 id|skb-&gt;len
-suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
 suffix:semicolon
 id|netif_rx
 c_func

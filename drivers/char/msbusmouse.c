@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -746,12 +747,16 @@ op_amp
 id|ms_bus_mouse_fops
 )brace
 suffix:semicolon
-DECL|function|ms_bus_mouse_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ms_bus_mouse_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

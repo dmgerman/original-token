@@ -224,7 +224,7 @@ id|what
 r_case
 id|TIME_RETRANS
 suffix:colon
-multiline_comment|/*&n;&t;&t; * When seting the transmit timer the probe timer &n;&t;&t; * should not be set.&n;&t;&t; * The delayed ack timer can be set if we are changing the&n;&t;&t; * retransmit timer when removing acked frames.&n;&t;&t; */
+multiline_comment|/* When seting the transmit timer the probe timer &n;&t;&t; * should not be set.&n;&t;&t; * The delayed ack timer can be set if we are changing the&n;&t;&t; * retransmit timer when removing acked frames.&n;&t;&t; */
 id|del_timer
 c_func
 (paren
@@ -326,6 +326,7 @@ l_string|&quot;bug: unknown timer value&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
 )brace
 DECL|function|tcp_clear_xmit_timer
 r_void
@@ -401,6 +402,7 @@ l_string|&quot;bug: unknown timer value&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
 )brace
 DECL|function|tcp_timer_is_set
 r_int
@@ -470,6 +472,7 @@ l_string|&quot;bug: unknown timer value&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -528,6 +531,16 @@ op_star
 id|sk
 )paren
 (brace
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+(paren
+id|sk-&gt;tp_pinfo.af_tcp
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Look for a &squot;soft&squot; timeout.&n;&t; */
 r_if
 c_cond
@@ -537,21 +550,12 @@ id|sk-&gt;state
 op_eq
 id|TCP_ESTABLISHED
 op_logical_and
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;retransmits
-)paren
+multiline_comment|/* Eric, what the heck is this doing?!?! */
+id|tp-&gt;retransmits
 op_logical_and
 op_logical_neg
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;retransmits
-)paren
+id|tp-&gt;retransmits
 op_amp
 l_int|7
 )paren
@@ -562,18 +566,13 @@ id|sk-&gt;state
 op_ne
 id|TCP_ESTABLISHED
 op_logical_and
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;retransmits
-)paren
+id|tp-&gt;retransmits
 OG
 id|TCP_RETR1
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Attempt to recover if arp has changed (unlikely!) or&n;&t;&t; *&t;a route has shifted (not supported prior to 1.3).&n;&t;&t; */
+multiline_comment|/*&t;Attempt to recover if arp has changed (unlikely!) or&n;&t;&t; *&t;a route has shifted (not supported prior to 1.3).&n;&t;&t; */
 id|ip_rt_advice
 c_func
 (paren
@@ -590,16 +589,11 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Have we tried to SYN too many times (repent repent 8))&n;&t; */
+multiline_comment|/* Have we tried to SYN too many times (repent repent 8)) */
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;retransmits
-)paren
+id|tp-&gt;retransmits
 OG
 id|TCP_SYN_RETRIES
 op_logical_and
@@ -664,16 +658,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Has it gone just too far ?&n;&t; */
+multiline_comment|/* Has it gone just too far? */
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;retransmits
-)paren
+id|tp-&gt;retransmits
 OG
 id|TCP_RETR2
 )paren
@@ -708,7 +697,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Time wait the socket &n;&t;&t; */
+multiline_comment|/* Time wait the socket. */
 r_if
 c_cond
 (paren
@@ -745,7 +734,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Clean up time.&n;&t;&t;&t; */
+multiline_comment|/* Clean up time. */
 id|tcp_set_state
 c_func
 (paren
@@ -797,16 +786,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;delayed_acks
+id|sk-&gt;tp_pinfo.af_tcp.delayed_acks
 )paren
-(brace
 id|tcp_read_wakeup
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|tcp_probe_timer
 r_void
@@ -853,7 +840,7 @@ c_cond
 id|sk-&gt;sock_readers
 )paren
 (brace
-multiline_comment|/* &n;&t;&t; * Try again in second &n;&t;&t; */
+multiline_comment|/* Try again in second. */
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -900,7 +887,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Time wait the socket &n;&t;&t; */
+multiline_comment|/* Time wait the socket. */
 r_if
 c_cond
 (paren
@@ -937,7 +924,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Clean up time.&n;&t;&t;&t; */
+multiline_comment|/* Clean up time. */
 id|tcp_set_state
 c_func
 (paren
@@ -1075,7 +1062,7 @@ multiline_comment|/*&n; *&t;Check all sockets for keepalive timer&n; *&t;Called 
 multiline_comment|/*&n; *&t;don&squot;t send over 5 keepopens at a time to avoid burstiness &n; *&t;on big servers [AC]&n; */
 DECL|macro|MAX_KA_PROBES
 mdefine_line|#define MAX_KA_PROBES&t;5
-multiline_comment|/* Keepopen&squot;s are only valid for &quot;established&quot; TCP&squot;s, nicely our listener&n; * hash gets rid of most of the useless testing, so we run through a couple&n; * of the established hash chains each clock tick.  -DaveM&n; */
+multiline_comment|/* Keepopen&squot;s are only valid for &quot;established&quot; TCP&squot;s, nicely our listener&n; * hash gets rid of most of the useless testing, so we run through a couple&n; * of the established hash chains each clock tick.  -DaveM&n; *&n; * And now, even more magic... TIME_WAIT TCP&squot;s cannot have keepalive probes&n; * going off for them, so we only need check the first half of the established&n; * hash table, even less testing under heavy load.&n; *&n; * I _really_ would rather do this by adding a new timer_struct to struct sock,&n; * and this way only those who set the keepalive option will get the overhead.&n; * The idea is you set it for 2 hours when the sock is first connected, when it&n; * does fire off (if at all, most sockets die earlier) you check for the keepalive&n; * option and also if the sock has been idle long enough to start probing.&n; */
 DECL|function|tcp_keepalive
 r_static
 r_void
@@ -1114,7 +1101,11 @@ OL
 id|chain_start
 op_plus
 (paren
+(paren
 id|TCP_HTABLE_SIZE
+op_div
+l_int|2
+)paren
 op_rshift
 l_int|2
 )paren
@@ -1182,14 +1173,22 @@ op_assign
 id|chain_start
 op_plus
 (paren
+(paren
 id|TCP_HTABLE_SIZE
+op_div
+l_int|2
+)paren
 op_rshift
 l_int|2
 )paren
 )paren
 op_amp
 (paren
+(paren
 id|TCP_HTABLE_SIZE
+op_div
+l_int|2
+)paren
 op_minus
 l_int|1
 )paren
@@ -1227,7 +1226,7 @@ op_assign
 op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We are reset. We will send no more retransmits.&n;&t; */
+multiline_comment|/* We are reset. We will send no more retransmits. */
 r_if
 c_cond
 (paren
@@ -1251,7 +1250,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Clear delay ack timer&n;&t; */
+multiline_comment|/* Clear delay ack timer. */
 id|tcp_clear_xmit_timer
 c_func
 (paren
@@ -1260,7 +1259,7 @@ comma
 id|TIME_DACK
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Retransmission&n;&t; */
+multiline_comment|/* Retransmission. */
 id|tp-&gt;retrans_head
 op_assign
 l_int|NULL
@@ -1268,18 +1267,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;retransmits
-)paren
+id|tp-&gt;retransmits
 op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * remember window where we lost&n;&t;&t; * &quot;one half of the current window but at least 2 segments&quot;&n;&t;&t; */
-id|sk-&gt;ssthresh
+multiline_comment|/* remember window where we lost&n;&t;&t; * &quot;one half of the current window but at least 2 segments&quot;&n;&t;&t; */
+id|tp-&gt;snd_ssthresh
 op_assign
 id|max
 c_func
@@ -1291,7 +1285,7 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-id|sk-&gt;cong_count
+id|tp-&gt;snd_cwnd_cnt
 op_assign
 l_int|0
 suffix:semicolon
@@ -1300,12 +1294,16 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|sk-&gt;retransmits
-)paren
+id|tp-&gt;retransmits
+op_increment
+suffix:semicolon
+id|tp-&gt;dup_acks
+op_assign
+l_int|0
+suffix:semicolon
+id|tp-&gt;high_seq
+op_assign
+id|tp-&gt;snd_nxt
 suffix:semicolon
 id|tcp_do_retransmit
 c_func
@@ -1315,10 +1313,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Increase the timeout each time we retransmit.  Note that&n;&t; * we do not increase the rtt estimate.  rto is initialized&n;&t; * from rtt, but increases here.  Jacobson (SIGCOMM 88) suggests&n;&t; * that doubling rto each time is the least we can get away with.&n;&t; * In KA9Q, Karn uses this for the first few times, and then&n;&t; * goes to quadratic.  netBSD doubles, but only goes up to *64,&n;&t; * and clamps at 1 to 64 sec afterwards.  Note that 120 sec is&n;&t; * defined in the protocol as the maximum possible RTT.  I guess&n;&t; * we&squot;ll have to use something other than TCP to talk to the&n;&t; * University of Mars.&n;&t; *&n;&t; * PAWS allows us longer timeouts and large windows, so once&n;&t; * implemented ftp to mars will work nicely. We will have to fix&n;&t; * the 120 second clamps though!&n;&t; */
+multiline_comment|/* Increase the timeout each time we retransmit.  Note that&n;&t; * we do not increase the rtt estimate.  rto is initialized&n;&t; * from rtt, but increases here.  Jacobson (SIGCOMM 88) suggests&n;&t; * that doubling rto each time is the least we can get away with.&n;&t; * In KA9Q, Karn uses this for the first few times, and then&n;&t; * goes to quadratic.  netBSD doubles, but only goes up to *64,&n;&t; * and clamps at 1 to 64 sec afterwards.  Note that 120 sec is&n;&t; * defined in the protocol as the maximum possible RTT.  I guess&n;&t; * we&squot;ll have to use something other than TCP to talk to the&n;&t; * University of Mars.&n;&t; *&n;&t; * PAWS allows us longer timeouts and large windows, so once&n;&t; * implemented ftp to mars will work nicely. We will have to fix&n;&t; * the 120 second clamps though!&n;&t; */
 id|tp-&gt;backoff
 op_increment
 suffix:semicolon
+multiline_comment|/* FIXME: always same as retransmits? -- erics */
 id|tp-&gt;rto
 op_assign
 id|min
@@ -1605,8 +1604,6 @@ r_while
 c_loop
 (paren
 id|req
-op_ne
-id|tp-&gt;syn_wait_queue
 )paren
 suffix:semicolon
 )brace
@@ -1809,12 +1806,10 @@ op_amp
 id|tcp_slow_timer
 )paren
 )paren
-(brace
 id|next
 op_assign
 id|tcp_slow_timer.expires
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1833,12 +1828,10 @@ OL
 l_int|0
 )paren
 )paren
-(brace
 id|when
 op_assign
 id|next
 suffix:semicolon
-)brace
 id|tcp_slow_timer.expires
 op_assign
 id|when

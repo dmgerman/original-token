@@ -56,6 +56,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/pi2.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;z8530.h&quot;
 macro_line|#include &lt;net/ax25.h&gt;
 DECL|struct|mbuf
@@ -2331,12 +2332,6 @@ id|skb-&gt;mac.raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|netif_rx
 c_func
 (paren
@@ -2755,12 +2750,6 @@ suffix:semicolon
 id|skb-&gt;mac.raw
 op_assign
 id|skb-&gt;data
-suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
 suffix:semicolon
 id|netif_rx
 c_func
@@ -4075,7 +4064,10 @@ suffix:semicolon
 )brace
 multiline_comment|/* Probe for a PI card. */
 multiline_comment|/* This routine also initializes the timer chip */
-DECL|function|hw_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|hw_probe
@@ -4083,6 +4075,7 @@ c_func
 (paren
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int
@@ -5482,12 +5475,16 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|pi_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|pi_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

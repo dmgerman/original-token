@@ -27,6 +27,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -456,11 +457,12 @@ DECL|member|sig_length
 r_int
 id|sig_length
 suffix:semicolon
-DECL|variable|signatures
+DECL|variable|__initdata
 )brace
 id|signatures
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*          1         2         3         4         5         6 */
@@ -1440,15 +1442,19 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif USE_PIO
-r_int
-DECL|function|NCR53c406a_detect
+DECL|function|__initfunc
 (def_block
+id|__initfunc
+c_func
+(paren
+r_int
 id|NCR53c406a_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_struct
@@ -2158,7 +2164,10 @@ suffix:semicolon
 )brace
 )def_block
 multiline_comment|/* called from init/main.c */
-DECL|function|NCR53c406a_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|NCR53c406a_setup
 c_func
@@ -2170,6 +2179,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_static
@@ -4220,11 +4230,15 @@ id|SYNCOFF
 suffix:semicolon
 multiline_comment|/* synchronous mode */
 )brace
-DECL|function|calc_port_addr
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|calc_port_addr
 c_func
 (paren
+)paren
 )paren
 (brace
 multiline_comment|/* Control Register Set 0 */

@@ -22,6 +22,8 @@ DECL|macro|clear_active_bhs
 mdefine_line|#define clear_active_bhs(x)&t;(bh_active &amp;= ~(x))
 DECL|macro|init_bh
 mdefine_line|#define init_bh(nr, routine)&t;&bslash;&n;do {&t;int ent = nr;&t;&t;&bslash;&n;&t;bh_base[ent] = routine;&t;&bslash;&n;&t;bh_mask_count[ent] = 0;&t;&bslash;&n;&t;bh_mask |= 1 &lt;&lt; ent;&t;&bslash;&n;} while(0)
+DECL|macro|remove_bh
+mdefine_line|#define remove_bh(nr)&t;&t;&bslash;&n;do {&t;int ent = nr;&t;&t;&bslash;&n;&t;bh_base[ent] = NULL;&t;&bslash;&n;&t;bh_mask &amp;= ~(1 &lt;&lt; ent);&t;&bslash;&n;} while(0)
 DECL|macro|mark_bh
 mdefine_line|#define mark_bh(nr)&t;&t;(bh_active |= (1 &lt;&lt; (nr)))
 DECL|macro|disable_bh

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.57 1997/04/15 09:03:45 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.58 1997/04/18 05:44:54 davem Exp $ */
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
@@ -186,7 +186,9 @@ op_mod
 op_mod
 id|psr
 id|nop
+suffix:semicolon
 id|nop
+suffix:semicolon
 id|nop
 "&quot;"
 suffix:colon
@@ -229,7 +231,7 @@ id|psr
 comma
 op_mod
 l_int|0
-id|andcc
+op_logical_or
 op_mod
 l_int|0
 comma
@@ -237,26 +239,21 @@ op_mod
 l_int|1
 comma
 op_mod
-op_mod
-id|g0
-id|bne
-l_float|1f
-id|nop
+l_int|0
 id|wr
 op_mod
 l_int|0
 comma
-op_mod
-l_int|1
+l_int|0x0
 comma
 op_mod
 op_mod
 id|psr
 id|nop
+suffix:semicolon
 id|nop
+suffix:semicolon
 id|nop
-l_int|1
-suffix:colon
 l_string|&quot;&t;&t;: &quot;
 op_assign
 id|r
@@ -300,7 +297,7 @@ id|psr
 comma
 op_mod
 l_int|0
-id|andcc
+id|andn
 op_mod
 l_int|0
 comma
@@ -308,26 +305,21 @@ op_mod
 l_int|1
 comma
 op_mod
-op_mod
-id|g0
-id|be
-l_float|1f
-id|nop
+l_int|0
 id|wr
 op_mod
 l_int|0
 comma
-op_mod
-l_int|1
+l_int|0x0
 comma
 op_mod
 op_mod
 id|psr
 id|nop
+suffix:semicolon
 id|nop
+suffix:semicolon
 id|nop
-l_int|1
-suffix:colon
 l_string|&quot;&t;&t;: &quot;
 op_assign
 id|r
@@ -515,7 +507,7 @@ id|psr
 comma
 op_mod
 l_int|0
-id|andcc
+op_logical_or
 op_mod
 l_int|0
 comma
@@ -524,25 +516,22 @@ l_int|1
 comma
 op_mod
 op_mod
-id|g0
-id|bne
-l_float|1f
-id|nop
+id|g1
 id|wr
 op_mod
-l_int|0
-comma
 op_mod
-l_int|1
+id|g1
+comma
+l_int|0x0
 comma
 op_mod
 op_mod
 id|psr
 id|nop
+suffix:semicolon
 id|nop
+suffix:semicolon
 id|nop
-l_int|1
-suffix:colon
 l_string|&quot;&t;&t;: &quot;
 op_assign
 id|r
@@ -556,6 +545,8 @@ l_string|&quot;i&quot;
 id|PSR_PIL
 )paren
 suffix:colon
+l_string|&quot;g1&quot;
+comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -563,13 +554,6 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-r_extern
-r_char
-id|spdeb_buf
-(braket
-l_int|256
-)braket
-suffix:semicolon
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;((flags) = getipl())
 DECL|macro|__save_and_cli
@@ -577,50 +561,22 @@ mdefine_line|#define __save_and_cli(flags)&t;((flags) = read_psr_and_cli())
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(flags)&t;setipl((flags))
 macro_line|#ifdef __SMP__
-r_extern
-r_void
-id|__global_cli
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|__global_sti
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|__global_save_flags
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|__global_restore_flags
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
+multiline_comment|/* Visit arch/sparc/lib/irqlock.S for all the fun details... */
 DECL|macro|cli
-mdefine_line|#define cli() __global_cli()
+mdefine_line|#define cli()      __asm__ __volatile__(&quot;mov&t;%%o7, %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&quot;call&t;___global_cli&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&quot; rd&t;%%tbr, %%g7&quot; : :&t;&t;&bslash;&n;&t;&t;&t;&t;&t;: &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g4&quot;, &quot;g5&quot;, &quot;g7&quot;,&t;&bslash;&n;&t;&t;&t;&t;&t;  &quot;memory&quot;, &quot;cc&quot;)
 DECL|macro|sti
-mdefine_line|#define sti() __global_sti()
+mdefine_line|#define sti()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;register unsigned long bits asm(&quot;g7&quot;);&t;&t;&t;&bslash;&n;&t;bits = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;mov&t;%%o7, %%g4&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;     &quot;call&t;___global_sti&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;     &quot; rd&t;%%tbr, %%g2&quot;&t;&t;&bslash;&n;&t;&t;&t;     : /* no outputs */&t;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;r&quot; (bits)&t;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g4&quot;, &quot;g5&quot;,&t;&bslash;&n;&t;&t;&t;       &quot;memory&quot;, &quot;cc&quot;);&t;&t;&t;&bslash;&n;} while(0)
+r_extern
+r_int
+r_char
+id|global_irq_holder
+suffix:semicolon
 DECL|macro|save_flags
-mdefine_line|#define save_flags(x)&t;  ((x)=__global_save_flags())
+mdefine_line|#define save_flags(x) &bslash;&n;do {&t;int cpuid; &bslash;&n;&t;__asm__ __volatile__(&quot;rd %%tbr, %0; srl %0, 12, %0; and %0, 3, %0&quot; &bslash;&n;&t;&t;&t;     : &quot;=r&quot; (cpuid)); &bslash;&n;&t;((x) = ((global_irq_holder == (unsigned char) cpuid) ? 1 : &bslash;&n;&t;&t;((getipl() &amp; PSR_PIL) ? 2 : 0))); &bslash;&n;} while(0)
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(x)  __global_restore_flags(x)
+mdefine_line|#define restore_flags(flags)&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;register unsigned long bits asm(&quot;g7&quot;);&t;&t;&t;&t;&bslash;&n;&t;bits = flags;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;mov&t;%%o7, %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;     &quot;call&t;___global_restore_flags&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;     &quot; andcc&t;%%g7, 0x1, %%g0&quot;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;=&amp;r&quot; (bits)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;0&quot; (bits)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g4&quot;, &quot;g5&quot;,&t;&t;&bslash;&n;&t;&t;&t;       &quot;memory&quot;, &quot;cc&quot;);&t;&t;&t;&t;&bslash;&n;} while(0)
 DECL|macro|save_and_cli
-mdefine_line|#define save_and_cli(x)   do { (x)=__global_save_flags(); __global_cli(); } while(0)
+mdefine_line|#define save_and_cli(flags)   do { save_flags(flags); cli(); } while(0)
 macro_line|#else
 DECL|macro|cli
 mdefine_line|#define cli() __cli()

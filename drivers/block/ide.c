@@ -10680,6 +10680,18 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|ide_probe_pci
+(paren
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_82371AB
+comma
+op_amp
+id|ide_init_triton
+comma
+l_int|0
+)paren
+suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
 macro_line|#ifdef CONFIG_BLK_DEV_OPTI621
 id|ide_probe_pci

@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;3c505.h&quot;
 multiline_comment|/*********************************************************&n; *&n; *  define debug messages here as common strings to reduce space&n; *&n; *********************************************************/
 DECL|variable|filename
@@ -127,13 +128,14 @@ DECL|macro|FALSE
 mdefine_line|#define&t;FALSE&t;0
 macro_line|#endif
 multiline_comment|/*****************************************************************&n; *&n; * List of I/O-addresses we try to auto-sense&n; * Last element MUST BE 0!&n; *****************************************************************/
-DECL|variable|addr_list
+DECL|variable|__initdata
 r_static
 r_const
 r_int
 id|addr_list
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x300
@@ -4629,6 +4631,7 @@ suffix:semicolon
 multiline_comment|/******************************************************&n; *&n; * initialise Etherlink Plus board&n; *&n; ******************************************************/
 DECL|function|elp_init
 r_static
+r_inline
 r_void
 id|elp_init
 c_func
@@ -4709,7 +4712,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/************************************************************&n; *&n; * A couple of tests to see if there&squot;s 3C505 or not&n; * Called only by elp_autodetect&n; ************************************************************/
-DECL|function|elp_sense
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|elp_sense
@@ -4719,6 +4725,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -4996,7 +5003,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*************************************************************&n; *&n; * Search through addr_list[] and try to find a 3C505&n; * Called only by eplus_probe&n; *************************************************************/
-DECL|function|elp_autodetect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|elp_autodetect
@@ -5006,6 +5016,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -5091,7 +5102,10 @@ multiline_comment|/* Because of this, the layer above will return -ENODEV */
 )brace
 multiline_comment|/******************************************************&n; *&n; * probe for an Etherlink Plus board at the specified address&n; *&n; ******************************************************/
 multiline_comment|/* There are three situations we need to be able to detect here:&n;&n; *  a) the card is idle&n; *  b) the card is still booting up&n; *  c) the card is stuck in a strange state (some DOS drivers do this)&n; *&n; * In case (a), all is well.  In case (b), we wait 10 seconds to see if the&n; * card finishes booting, and carry on if so.  In case (c), we do a hard reset,&n; * loop round, and hope for the best.&n; *&n; * This is all very unpleasant, but hopefully avoids the problems with the old&n; * probe code (which had a 15-second delay if the card was idle, and didn&squot;t&n; * work at all if it was in a weird state).&n; */
-DECL|function|elplus_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|elplus_probe
 c_func
@@ -5100,6 +5114,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|elp_device

@@ -533,7 +533,7 @@ DECL|macro|SCSI_RESET
 mdefine_line|#define SCSI_RESET 0x040
 multiline_comment|/*&n; * Pause the sequencer and wait for it to actually stop - this&n; * is important since the sequencer can disable pausing for critical&n; * sections.&n; */
 DECL|macro|PAUSE_SEQUENCER
-mdefine_line|#define PAUSE_SEQUENCER(p) &bslash;&n;  outb(p-&gt;pause, HCNTRL + p-&gt;base);&t;&t;&t;&bslash;&n;  while ((inb(HCNTRL + p-&gt;base) &amp; PAUSE) == 0)&t;&t;&bslash;&n;    ;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;
+mdefine_line|#define PAUSE_SEQUENCER(p) &bslash;&n;  synchronize_irq();&t;&t;&t;&t;&t;&bslash;&n;  outb(p-&gt;pause, HCNTRL + p-&gt;base);&t;&t;&t;&bslash;&n;  while ((inb(HCNTRL + p-&gt;base) &amp; PAUSE) == 0)&t;&t;&bslash;&n;    ;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;
 multiline_comment|/*&n; * Unpause the sequencer. Unremarkable, yet done often enough to&n; * warrant an easy way to do it.&n; */
 DECL|macro|UNPAUSE_SEQUENCER
 mdefine_line|#define UNPAUSE_SEQUENCER(p) &bslash;&n;  outb(p-&gt;unpause, HCNTRL + p-&gt;base)

@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#include &lt;linux/lapb.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|bcast_addr
 r_static
 r_char
@@ -1478,7 +1479,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|lapbeth_dev_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|lapbeth_dev_init
@@ -1488,6 +1492,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_return

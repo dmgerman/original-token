@@ -41,6 +41,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -1070,7 +1071,10 @@ id|scb_struct
 suffix:semicolon
 )brace
 multiline_comment|/**********************************************&n; * probe the ni5210-card&n; */
-DECL|function|ni52_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ni52_probe
 c_func
@@ -1079,6 +1083,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 macro_line|#ifndef MODULE
@@ -1362,7 +1367,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|ni52_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ni52_probe1
@@ -1375,6 +1383,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int

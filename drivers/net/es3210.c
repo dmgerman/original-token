@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -186,13 +187,14 @@ DECL|macro|ED_D_IRQ
 mdefine_line|#define ED_D_IRQ&t;0x08
 DECL|macro|ES_DEBUG
 mdefine_line|#define ES_DEBUG&t;0
-DECL|variable|lo_irq_map
+DECL|variable|__initdata
 r_static
 r_int
 r_char
 id|lo_irq_map
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|3
@@ -210,13 +212,14 @@ comma
 l_int|10
 )brace
 suffix:semicolon
-DECL|variable|hi_irq_map
+DECL|variable|__initdata
 r_static
 r_int
 r_char
 id|hi_irq_map
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|11
@@ -237,7 +240,10 @@ l_int|15
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Probe for the card. The best way is to read the EISA ID if it&n; *&t;is known. Then we check the prefix of the station address&n; *&t;PROM for a match against the Racal-Interlan assigned value.&n; */
-DECL|function|es_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|es_probe
 c_func
@@ -246,6 +252,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -355,7 +362,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|es_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|es_probe1
 c_func
@@ -367,6 +377,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int

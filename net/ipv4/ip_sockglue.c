@@ -1356,12 +1356,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren

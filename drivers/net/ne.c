@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -34,13 +35,14 @@ multiline_comment|/* Do we have a non std. amount of memory? (in units of 256 by
 multiline_comment|/* #define PACKETBUF_MEMSIZE&t;0x40 */
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed at boot. */
 macro_line|#ifndef MODULE
-DECL|variable|netcard_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|netcard_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x300
@@ -52,6 +54,8 @@ comma
 l_int|0x340
 comma
 l_int|0x360
+comma
+l_int|0x380
 comma
 l_int|0
 )brace
@@ -71,10 +75,11 @@ comma
 id|dev_id
 suffix:semicolon
 )brace
-DECL|variable|pci_clone_list
+DECL|variable|__initdata
 id|pci_clone_list
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -132,10 +137,11 @@ l_int|4
 )braket
 suffix:semicolon
 )brace
-DECL|variable|bad_clone_list
+DECL|variable|__initdata
 id|bad_clone_list
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -495,7 +501,10 @@ id|netcard_portlist
 suffix:semicolon
 macro_line|#else
 multiline_comment|/*&n; * Note that at boot, this probe only picks up one card at a time, even for&n; * multiple PCI ne2k cards. Use &quot;ether=0,0,eth1&quot; if you have a second PCI&n; * ne2k card.  This keeps things consistent regardless of the bus type of&n; * the card.&n; */
-DECL|function|ne_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ne_probe
 c_func
@@ -504,6 +513,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -635,7 +645,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
-DECL|function|ne_probe_pci
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ne_probe_pci
@@ -645,6 +658,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -876,7 +890,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif  /* CONFIG_PCI */
-DECL|function|ne_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ne_probe1
@@ -889,6 +906,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int

@@ -36,7 +36,8 @@ macro_line|#include &quot;g_NCR5380.h&quot;
 macro_line|#include &quot;NCR5380.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
-macro_line|#include&lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|proc_scsi_g_ncr5380
 r_struct
 id|proc_dir_entry
@@ -116,18 +117,20 @@ r_int
 id|board
 suffix:semicolon
 multiline_comment|/* Use NCR53c400, Ricoh, etc. extensions ? */
-DECL|variable|overrides
 )brace
 id|overrides
 macro_line|#ifdef GENERIC_NCR5380_OVERRIDE 
+DECL|variable|__initdata
 (braket
 )braket
+id|__initdata
 op_assign
 id|GENERIC_NCR5380_OVERRIDE
 macro_line|#else
 (braket
 l_int|1
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -141,6 +144,9 @@ macro_line|#endif
 DECL|macro|NO_OVERRIDES
 mdefine_line|#define NO_OVERRIDES (sizeof(overrides) / sizeof(struct override))
 multiline_comment|/*&n; * Function : static internal_setup(int board, char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : board - either BOARD_NCR5380 for a normal NCR5380 board, &n; * &t;or BOARD_NCR53C400 for a NCR53C400 board. str - unused, ints - &n; *&t;array of integer parameters with ints[0] equal to the number of ints.&n; *&n; */
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|internal_setup
@@ -156,6 +162,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_static
@@ -318,6 +325,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Function : generic_NCR5380_setup (char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0] &n; * &t;equal to the number of ints.&n; */
+id|__initfunc
+c_func
+(paren
 r_void
 id|generic_NCR5380_setup
 (paren
@@ -328,6 +338,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 id|internal_setup
@@ -341,6 +352,9 @@ id|ints
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function : generic_NCR53C400_setup (char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0] &n; * &t;equal to the number of ints.&n; */
+id|__initfunc
+c_func
+(paren
 r_void
 id|generic_NCR53C400_setup
 (paren
@@ -351,6 +365,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 id|internal_setup
@@ -364,6 +379,9 @@ id|ints
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Function : int generic_NCR5380_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : initializes generic NCR5380 driver based on the &n; *&t;command line / compile time port and irq definitions.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
+id|__initfunc
+c_func
+(paren
 r_int
 id|generic_NCR5380_detect
 c_func
@@ -371,6 +389,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_static

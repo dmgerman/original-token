@@ -355,7 +355,12 @@ c_func
 suffix:semicolon
 multiline_comment|/* start lockd */
 multiline_comment|/*&n;&t; * The main request loop&n;&t; */
-r_do
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
 (brace
 multiline_comment|/*&n;&t;&t; * Find a socket with data available and call its&n;&t;&t; * recvfrom routine.&n;&t;&t; */
 r_while
@@ -470,14 +475,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-id|err
-op_ge
-l_int|0
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -92,11 +92,18 @@ id|pgd_t
 id|entry
 )paren
 (brace
-macro_line|#ifndef __mc68000__
+macro_line|#if !defined(__mc68000__) &amp;&amp; !defined(__sparc_v9__)
 r_struct
 id|task_struct
 op_star
 id|p
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
 suffix:semicolon
 id|for_each_task
 c_func
@@ -124,6 +131,13 @@ op_assign
 id|entry
 suffix:semicolon
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#endif

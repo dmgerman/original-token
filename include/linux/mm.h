@@ -419,11 +419,12 @@ id|wait_queue
 op_star
 id|wait
 suffix:semicolon
-DECL|member|prev_hash
+DECL|member|pprev_hash
 r_struct
 id|page
 op_star
-id|prev_hash
+op_star
+id|pprev_hash
 suffix:semicolon
 DECL|member|buffers
 r_struct

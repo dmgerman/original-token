@@ -25,6 +25,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -293,8 +294,11 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/* Check for a network adapter of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|atp_init
 id|atp_init
 c_func
 (paren
@@ -302,6 +306,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -422,7 +427,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|atp_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|atp_probe1
@@ -435,6 +443,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int
@@ -847,7 +856,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Read the station address PROM, usually a word-wide EEPROM. */
-DECL|function|get_node_ID
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|get_node_ID
@@ -857,6 +869,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -961,7 +974,10 @@ id|CMR2_NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  An EEPROM read command starts by shifting out 0x60+address, and then&n;  shifting in the serial data. See the NatSemi databook for details.&n; *&t;&t;   ________________&n; * CS : __|&n; *&t;&t;&t;   ___&t;   ___&n; * CLK: ______|&t;  |___|&t;  |&n; *&t;&t; __ _______ _______&n; * DI :&t; __X_______X_______X&n; * DO :&t; _________X_______X&n; */
-DECL|function|eeprom_op
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 r_int
@@ -974,6 +990,7 @@ comma
 r_int
 r_int
 id|cmd
+)paren
 )paren
 (brace
 r_int

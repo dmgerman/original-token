@@ -74,6 +74,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1187,7 +1188,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-DECL|function|eepro100_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|eepro100_init
 c_func
@@ -1196,6 +1200,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -1478,7 +1483,10 @@ r_return
 id|cards_found
 suffix:semicolon
 )brace
-DECL|function|speedo_found1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|speedo_found1
@@ -1497,6 +1505,7 @@ id|irq
 comma
 r_int
 id|options
+)paren
 )paren
 (brace
 r_static
@@ -2577,7 +2586,10 @@ DECL|macro|EE_READ_CMD
 mdefine_line|#define EE_READ_CMD&t;&t;(6 &lt;&lt; 6)
 DECL|macro|EE_ERASE_CMD
 mdefine_line|#define EE_ERASE_CMD&t;(7 &lt;&lt; 6)
-DECL|function|read_eeprom
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|read_eeprom
@@ -2588,6 +2600,7 @@ id|ioaddr
 comma
 r_int
 id|location
+)paren
 )paren
 (brace
 r_int
@@ -7631,7 +7644,10 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else   /* not MODULE */
-DECL|function|eepro100_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|eepro100_probe
 c_func
@@ -7640,6 +7656,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int

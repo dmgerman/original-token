@@ -20,19 +20,21 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-DECL|variable|pcnet32_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|pcnet32_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x300
@@ -412,7 +414,10 @@ id|dev
 )paren
 suffix:semicolon
 "&f;"
-DECL|function|pcnet32_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|pcnet32_probe
 (paren
@@ -420,6 +425,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -760,7 +766,11 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* pcnet32_probe1 */
-DECL|function|pcnet32_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
 r_int
 id|pcnet32_probe1
 c_func
@@ -780,6 +790,7 @@ id|irq_line
 comma
 r_int
 id|shared
+)paren
 )paren
 (brace
 r_struct

@@ -73,6 +73,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|current
 macro_line|#undef current
 macro_line|#include &quot;scsi.h&quot;
@@ -1841,6 +1842,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* &n; * Function : static int NCR53c7x0_init (struct Scsi_Host *host)&n; *&n; * Purpose :  initialize the internal structures for a given SCSI host&n; *&n; * Inputs : host - pointer to this host adapter&squot;s structure&n; *&n; * Preconditions : when this function is called, the chip_type &n; * &t;field of the hostdata structure MUST have been set.&n; *&n; * Returns : 0 on success, -1 on failure.&n; */
 r_static
+r_inline
 r_int
 DECL|function|NCR53c7x0_init
 id|NCR53c7x0_init
@@ -2830,9 +2832,12 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Function : static int normal_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, u32 base, int io_port, int irq, int dma, int pcivalid,&n; *&t;unsigned char pci_bus, unsigned char pci_device_fn,&n; *&t;long long options);&n; *&n; * Purpose : initializes a NCR53c7,8x0 based on base addresses,&n; *&t;IRQ, and DMA channel.&t;&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|normal_init
 id|normal_init
 (paren
 id|Scsi_Host_Template
@@ -2871,6 +2876,7 @@ comma
 r_int
 r_int
 id|options
+)paren
 )paren
 (brace
 r_struct
@@ -3481,9 +3487,12 @@ id|instance
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Function : static int ncr_pci_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, int bus, int device_fn, long long options)&n; *&n; * Purpose : initializes a NCR53c800 family based on the PCI&n; *&t;bus, device, and function location of it.  Allows &n; * &t;reprogramming of latency timer and determining addresses&n; *&t;and whether bus mastering, etc. are OK.&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|ncr_pci_init
 id|ncr_pci_init
 (paren
 id|Scsi_Host_Template
@@ -3507,6 +3516,7 @@ comma
 r_int
 r_int
 id|options
+)paren
 )paren
 (brace
 r_int
@@ -4122,14 +4132,18 @@ id|options
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Function : int NCR53c7xx_detect(Scsi_Host_Template *tpnt)&n; *&n; * Purpose : detects and initializes NCR53c7,8x0 SCSI chips&n; *&t;that were autoprobed, overridden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter&n; * &n; * Returns : number of host adapters detected&n; *&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|NCR53c7xx_detect
 id|NCR53c7xx_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_int

@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
@@ -878,7 +879,10 @@ r_return
 id|dst
 suffix:semicolon
 )brace
-DECL|function|atarilance_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|atarilance_probe
 c_func
@@ -887,6 +891,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -955,7 +960,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* Derived from hwreg_present() in atari/config.c: */
-DECL|function|addr_accessible
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|addr_accessible
@@ -971,6 +979,7 @@ id|wordflag
 comma
 r_int
 id|writeflag
+)paren
 )paren
 (brace
 r_int
@@ -1097,7 +1106,10 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|lance_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 r_int
@@ -1113,6 +1125,7 @@ r_struct
 id|lance_addr
 op_star
 id|init_rec
+)paren
 )paren
 (brace
 r_volatile

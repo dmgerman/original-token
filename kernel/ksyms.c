@@ -118,6 +118,24 @@ op_star
 id|inode
 )paren
 suffix:semicolon
+macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
+r_extern
+r_int
+(paren
+op_star
+id|do_nfsservctl
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 op_star
@@ -710,6 +728,15 @@ c_func
 id|posix_unblock_lock
 )paren
 suffix:semicolon
+macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
+DECL|variable|do_nfsservctl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|do_nfsservctl
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* device registration */
 DECL|variable|register_chrdev
 id|EXPORT_SYMBOL

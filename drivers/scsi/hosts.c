@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#ifndef NULL
 DECL|macro|NULL
@@ -689,12 +690,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|scsi_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|scsi_init
 c_func
 (paren
+r_void
+)paren
 )paren
 (brace
 r_static

@@ -16,17 +16,19 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
-DECL|variable|hppclan_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|hppclan_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x300
@@ -200,14 +202,15 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* The map from IRQ number to HP_CONFIGURE register setting. */
-multiline_comment|/* My default is IRQ5&t;   0  1&t; 2  3  4  5  6&t;7  8  9 10 11 */
-DECL|variable|irqmap
+multiline_comment|/* My default is IRQ5&t;             0  1  2  3  4  5  6  7  8  9 10 11 */
+DECL|variable|__initdata
 r_static
 r_char
 id|irqmap
 (braket
 l_int|16
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0
@@ -262,7 +265,10 @@ id|hppclan_portlist
 )brace
 suffix:semicolon
 macro_line|#else
-DECL|function|hp_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|hp_probe
 c_func
@@ -271,6 +277,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -374,7 +381,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|hp_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|hp_probe1
 c_func
@@ -386,6 +396,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int

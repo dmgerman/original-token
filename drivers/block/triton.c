@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/triton.c&t;Version 2.00  March 9, 1997&n; *&n; *  Copyright (c) 1995-1997  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
-multiline_comment|/*&n; * This module provides support for the bus-master IDE DMA function&n; * of the Intel PCI Triton chipset families, which use the PIIX (i82371FB,&n; * for the 430 FX chipset), and the enhanced PIIX3 (i82371SB for the 430 HX/VX&n; * and 440 chipsets).&n; *&n; * &quot;PIIX&quot; stands for &quot;PCI ISA IDE Xcellerator&quot;.&n; *&n; * Pretty much the same code could work for other IDE PCI bus-mastering chipsets.&n; * Look for DMA support for this someday in the not too distant future.&n; *&n; * DMA is supported for all IDE devices (disk drives, cdroms, tapes, floppies).&n; *&n; * Up to four drives may be enabled for DMA, and the PIIX/PIIX3 chips&n; * will arbitrate the PCI bus among them.  Note that the PIIX/PIIX3&n; * provides a single &quot;line buffer&quot; for the BM IDE function, so performance of&n; * multiple (two) drives doing DMA simultaneously will suffer somewhat,&n; * as they contest for that resource bottleneck.  This is handled transparently&n; * inside the PIIX/PIIX3.&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which support DMA mode2 (multi/single word), or which are&n; * recognized as &quot;good&quot; (see table below).  Drives with only mode0 or mode1&n; * (multi/single word) DMA should also work with this chipset/driver (eg. MC2112A)&n; * but are not enabled by default.  Use &quot;hdparm -i&quot; to view modes supported&n; * by a given drive.&n; *&n; * The hdparm-2.4 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing has been done with a rather extensive number of drives,&n; * with Quantum &amp; Western Digital models generally outperforming the pack,&n; * and Fujitsu &amp; Conner (and some Seagate which are really Conner) drives&n; * showing more lackluster throughput.&n; *&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * Thanks to &quot;Christopher J. Reimer&quot; &lt;reimer@doe.carleton.ca&gt; for fixing the&n; * problem with some (all?) ACER motherboards/BIOSs.&n; *&n; * And, yes, Intel Zappa boards really *do* use both PIIX IDE ports.&n; */
+multiline_comment|/*&n; *  linux/drivers/block/triton.c&t;Version 2.10  April 22, 1997&n; *&n; *  Copyright (c) 1995-1997  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; * This module provides support for the bus-master IDE DMA function&n; * of the Intel PCI Triton chipset families, which use the PIIX (i82371FB,&n; * for the 430 FX chipset), the PIIX3 (i82371SB for the 430 HX/VX and &n; * 440 chipsets), and the PIIX4 (i82371AB for the 430 TX chipset).&n; *&n; * &quot;PIIX&quot; stands for &quot;PCI ISA IDE Xcellerator&quot;.&n; *&n; * Pretty much the same code could work for other IDE PCI bus-mastering chipsets.&n; * Look for DMA support for this someday in the not too distant future.&n; *&n; * DMA is supported for all IDE devices (disk drives, cdroms, tapes, floppies).&n; *&n; * Up to four drives may be enabled for DMA, and the PIIX* chips&n; * will arbitrate the PCI bus among them.  Note that the PIIX/PIIX3&n; * provides a single &quot;line buffer&quot; for the BM IDE function, so performance of&n; * multiple (two) drives doing DMA simultaneously will suffer somewhat,&n; * as they contest for that resource bottleneck.  This is handled transparently&n; * inside the PIIX/PIIX3.  The PIIX4 does not have this problem.&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which support DMA mode2 (multi/single word), or which are&n; * recognized as &quot;good&quot; (see table below).  Drives with only mode0 or mode1&n; * (multi/single word) DMA should also work with this chipset/driver (eg. MC2112A)&n; * but are not enabled by default.  Use &quot;hdparm -i&quot; to view modes supported&n; * by a given drive.&n; *&n; * The hdparm-2.4 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing has been done with a rather extensive number of drives,&n; * with Quantum &amp; Western Digital models generally outperforming the pack,&n; * and Fujitsu &amp; Conner (and some Seagate which are really Conner) drives&n; * showing more lackluster throughput.&n; *&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * Thanks to &quot;Christopher J. Reimer&quot; &lt;reimer@doe.carleton.ca&gt; for fixing the&n; * problem with some (all?) ACER motherboards/BIOSs.&n; *&n; * Thanks to &quot;Benoit Poulot-Cazajous&quot; &lt;poulot@chorus.fr&gt; for testing&n; * &quot;TX&quot; chipset compatibility and for providing patches for the &quot;TX&quot; chipset.&n; *&n; * And, yes, Intel Zappa boards really *do* use both PIIX IDE ports.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -1161,7 +1161,7 @@ id|drive
 suffix:semicolon
 )brace
 macro_line|#ifdef DISPLAY_PIIX_TIMINGS
-multiline_comment|/*&n; * print_piix_drive_flags() displays the currently programmed options&n; * in the PIIX/PIIX3 for a given drive.&n; */
+multiline_comment|/*&n; * print_piix_drive_flags() displays the currently programmed options&n; * in the PIIX/PIIX3/PIIX4 for a given drive.&n; */
 DECL|function|print_piix_drive_flags
 r_static
 r_void
@@ -1697,17 +1697,32 @@ id|devid
 r_goto
 id|quit
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|devid
+op_eq
+id|PCI_DEVICE_ID_INTEL_82371AB
+)paren
 id|chipset
 op_assign
+l_string|&quot;PIIX4&quot;
+suffix:semicolon
+r_else
+r_if
+c_cond
 (paren
 id|devid
 op_eq
 id|PCI_DEVICE_ID_INTEL_82371SB_1
 )paren
-ques
-c_cond
+id|chipset
+op_assign
 l_string|&quot;PIIX3&quot;
-suffix:colon
+suffix:semicolon
+r_else
+id|chipset
+op_assign
 l_string|&quot;PIIX&quot;
 suffix:semicolon
 id|printk
@@ -2223,9 +2238,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|devid
 op_eq
 id|PCI_DEVICE_ID_INTEL_82371SB_1
+op_logical_or
+id|devid
+op_eq
+id|PCI_DEVICE_ID_INTEL_82371AB
+)paren
 op_logical_and
 id|timing.sidetim_enabled
 op_logical_and
@@ -2251,7 +2272,7 @@ id|slave
 op_assign
 l_string|&quot;&quot;
 suffix:semicolon
-multiline_comment|/* PIIX3 */
+multiline_comment|/* PIIX3 and later */
 r_else
 id|slave
 op_assign

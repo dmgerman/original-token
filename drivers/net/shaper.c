@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &quot;shaper.h&quot;
 DECL|variable|sh_debug
@@ -1700,7 +1701,10 @@ id|sh
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Add a shaper device to the system&n; */
-DECL|function|shaper_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|shaper_probe
 c_func
@@ -1709,6 +1713,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Set up the shaper.&n;&t; */

@@ -1,7 +1,23 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.35 1997/04/16 09:18:53 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.42 1997/04/22 01:06:33 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
-multiline_comment|/*&n; *&t;Get rid of any delayed acks, we sent one already..&n; */
+r_extern
+r_int
+id|sysctl_tcp_sack
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_tsack
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_timestamps
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_window_scaling
+suffix:semicolon
+multiline_comment|/* Get rid of any delayed acks, we sent one already.. */
 DECL|function|clear_delayed_acks
 r_static
 id|__inline__
@@ -15,15 +31,21 @@ op_star
 id|sk
 )paren
 (brace
-id|sk-&gt;delayed_acks
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+(paren
+id|sk-&gt;tp_pinfo.af_tcp
+)paren
+suffix:semicolon
+id|tp-&gt;delayed_acks
 op_assign
 l_int|0
 suffix:semicolon
 id|sk-&gt;ack_backlog
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;bytes_rcv
 op_assign
 l_int|0
 suffix:semicolon
@@ -74,12 +96,10 @@ op_star
 op_amp
 id|sk-&gt;write_queue
 )paren
-(brace
 id|tp-&gt;send_head
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 )brace
 DECL|function|tcp_snd_test
 r_static
@@ -117,7 +137,7 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;RFC 1122 - section 4.2.3.4&n;&t; *&n;&t; *&t;We must queue if&n;&t; *&n;&t; *&t;a) The right edge of this frame exceeds the window&n;&t; *&t;b) There are packets in flight and we have a small segment&n;&t; *&t;   [SWS avoidance and Nagle algorithm]&n;&t; *&t;   (part of SWS is done on packetization)&n;&t; *&t;c) We are retransmiting [Nagle]&n;&t; *&t;d) We have too many packets &squot;in flight&squot;&n;&t; */
+multiline_comment|/*&t;RFC 1122 - section 4.2.3.4&n;&t; *&n;&t; *&t;We must queue if&n;&t; *&n;&t; *&t;a) The right edge of this frame exceeds the window&n;&t; *&t;b) There are packets in flight and we have a small segment&n;&t; *&t;   [SWS avoidance and Nagle algorithm]&n;&t; *&t;   (part of SWS is done on packetization)&n;&t; *&t;c) We are retransmiting [Nagle]&n;&t; *&t;d) We have too many packets &squot;in flight&squot;&n;&t; */
 id|len
 op_assign
 id|skb-&gt;end_seq
@@ -138,19 +158,17 @@ op_rshift
 l_int|1
 )paren
 op_logical_and
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 )paren
-(brace
 id|nagle_check
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 r_return
 (paren
 id|nagle_check
 op_logical_and
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 OL
 id|tp-&gt;snd_cwnd
 op_logical_and
@@ -165,16 +183,131 @@ op_plus
 id|tp-&gt;snd_wnd
 )paren
 op_logical_and
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;retransmits
-)paren
+id|tp-&gt;retransmits
 op_eq
 l_int|0
 )paren
 suffix:semicolon
+)brace
+DECL|function|tcp_build_options
+r_static
+id|__inline__
+r_void
+id|tcp_build_options
+c_func
+(paren
+id|__u32
+op_star
+id|ptr
+comma
+r_struct
+id|tcp_opt
+op_star
+id|tp
+)paren
+(brace
+multiline_comment|/* FIXME: We will still need to do SACK here. */
+r_if
+c_cond
+(paren
+id|tp-&gt;tstamp_ok
+)paren
+(brace
+op_star
+id|ptr
+op_increment
+op_assign
+id|ntohl
+c_func
+(paren
+(paren
+id|TCPOPT_NOP
+op_lshift
+l_int|24
+)paren
+op_or
+(paren
+id|TCPOPT_NOP
+op_lshift
+l_int|16
+)paren
+op_or
+(paren
+id|TCPOPT_TIMESTAMP
+op_lshift
+l_int|8
+)paren
+op_or
+id|TCPOLEN_TIMESTAMP
+)paren
+suffix:semicolon
+multiline_comment|/* WARNING: If HZ is ever larger than 1000 on some system,&n;&t; &t; * then we will be violating RFC1323 here because our timestamps&n;&t; &t; * will be moving too fast.&n;&t;&t; * FIXME: code TCP so it uses at most ~ 1000 ticks a second?&n;&t;&t; * (I notice alpha is 1024 ticks now). -- erics&n;&t; &t; */
+op_star
+id|ptr
+op_increment
+op_assign
+id|htonl
+c_func
+(paren
+id|jiffies
+)paren
+suffix:semicolon
+op_star
+id|ptr
+op_assign
+id|htonl
+c_func
+(paren
+id|tp-&gt;ts_recent
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|tcp_update_options
+r_static
+id|__inline__
+r_void
+id|tcp_update_options
+c_func
+(paren
+id|__u32
+op_star
+id|ptr
+comma
+r_struct
+id|tcp_opt
+op_star
+id|tp
+)paren
+(brace
+multiline_comment|/* FIXME: We will still need to do SACK here. */
+r_if
+c_cond
+(paren
+id|tp-&gt;tstamp_ok
+)paren
+(brace
+op_star
+op_increment
+id|ptr
+op_assign
+id|htonl
+c_func
+(paren
+id|jiffies
+)paren
+suffix:semicolon
+op_star
+op_increment
+id|ptr
+op_assign
+id|htonl
+c_func
+(paren
+id|tp-&gt;ts_recent
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;This is the main buffer sending routine. We queue the buffer&n; *&t;having checked it is sane seeming.&n; */
 DECL|function|tcp_send_skb
@@ -213,7 +346,7 @@ suffix:semicolon
 r_int
 id|size
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;length of packet (not counting length of pre-tcp headers) &n;&t; */
+multiline_comment|/* Length of packet (not counting length of pre-tcp headers). */
 id|size
 op_assign
 id|skb-&gt;len
@@ -229,7 +362,7 @@ op_minus
 id|skb-&gt;data
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Sanity check it..&n;&t; */
+multiline_comment|/* Sanity check it.. */
 r_if
 c_cond
 (paren
@@ -242,7 +375,8 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;tcp_send_skb: bad skb (skb = %p, data = %p, th = %p, len = %u)&bslash;n&quot;
+l_string|&quot;tcp_send_skb: bad skb &quot;
+l_string|&quot;(skb = %p, data = %p, th = %p, len = %u)&bslash;n&quot;
 comma
 id|skb
 comma
@@ -265,7 +399,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;If we have queued a header size packet.. (these crash a few&n;&t; *&t;tcp stacks if ack is not set)&n;&t; */
+multiline_comment|/* If we have queued a header size packet.. (these crash a few&n;&t; * tcp stacks if ack is not set)&n;&t; * FIXME: What is the equivalent below when we have options?&n;&t; */
 r_if
 c_cond
 (paren
@@ -278,7 +412,7 @@ id|tcphdr
 )paren
 )paren
 (brace
-multiline_comment|/* &n;                 * If it&squot;s got a syn or fin discard&n;                 */
+multiline_comment|/* If it&squot;s got a syn or fin discard. */
 r_if
 c_cond
 (paren
@@ -309,7 +443,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Actual processing.&n;&t; */
+multiline_comment|/* Actual processing. */
 id|skb-&gt;seq
 op_assign
 id|ntohl
@@ -358,7 +492,9 @@ id|sk_buff
 op_star
 id|buff
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;This is going straight out&n;&t;&t; */
+multiline_comment|/* This is going straight out. */
+id|tp-&gt;last_ack_sent
+op_assign
 id|th-&gt;ack_seq
 op_assign
 id|htonl
@@ -377,6 +513,22 @@ c_func
 (paren
 id|sk
 )paren
+)paren
+suffix:semicolon
+id|tcp_update_options
+c_func
+(paren
+(paren
+id|__u32
+op_star
+)paren
+(paren
+id|th
+op_plus
+l_int|1
+)paren
+comma
+id|tp
 )paren
 suffix:semicolon
 id|tp-&gt;af_specific
@@ -410,11 +562,9 @@ id|buff
 op_eq
 l_int|NULL
 )paren
-(brace
 r_goto
 id|queue
 suffix:semicolon
-)brace
 id|clear_delayed_acks
 c_func
 (paren
@@ -433,7 +583,7 @@ id|tp-&gt;snd_nxt
 op_assign
 id|skb-&gt;end_seq
 suffix:semicolon
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_increment
 suffix:semicolon
 id|skb-&gt;when
@@ -479,7 +629,7 @@ suffix:semicolon
 )brace
 id|queue
 suffix:colon
-multiline_comment|/* &n;&t; *&t;Remember where we must start sending&n;&t; */
+multiline_comment|/* Remember where we must start sending. */
 r_if
 c_cond
 (paren
@@ -494,7 +644,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_eq
 l_int|0
 op_logical_and
@@ -575,7 +725,7 @@ id|th
 op_assign
 id|skb-&gt;h.th
 suffix:semicolon
-multiline_comment|/* size of new segment */
+multiline_comment|/* Size of new segment. */
 id|nsize
 op_assign
 id|skb-&gt;tail
@@ -588,9 +738,9 @@ op_star
 )paren
 (paren
 id|th
-op_plus
-l_int|1
 )paren
+op_plus
+id|tp-&gt;tcp_header_len
 )paren
 op_minus
 id|len
@@ -615,7 +765,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Get a new skb... force flag on&n;&t; */
+multiline_comment|/* Get a new skb... force flag on. */
 id|buff
 op_assign
 id|sock_wmalloc
@@ -647,7 +797,7 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Put headers on the new packet&n;&t; */
+multiline_comment|/* Put headers on the new packet. */
 id|tmp
 op_assign
 id|tp-&gt;af_specific
@@ -681,7 +831,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Move the TCP header over&n;&t; */
+multiline_comment|/* Move the TCP header over. */
 id|nth
 op_assign
 (paren
@@ -694,11 +844,7 @@ c_func
 (paren
 id|buff
 comma
-r_sizeof
-(paren
-op_star
-id|th
-)paren
+id|tp-&gt;tcp_header_len
 )paren
 suffix:semicolon
 id|buff-&gt;h.th
@@ -712,14 +858,11 @@ id|nth
 comma
 id|th
 comma
-r_sizeof
-(paren
-op_star
-id|th
-)paren
+id|tp-&gt;tcp_header_len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Correct the new header&n;&t; */
+multiline_comment|/* FIXME: Make sure this gets tcp options right. */
+multiline_comment|/* Correct the new header. */
 id|buff-&gt;seq
 op_assign
 id|skb-&gt;seq
@@ -744,7 +887,7 @@ l_int|0
 suffix:semicolon
 id|nth-&gt;doff
 op_assign
-l_int|5
+id|th-&gt;doff
 suffix:semicolon
 multiline_comment|/* urg data is always an headache */
 r_if
@@ -778,7 +921,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Copy TCP options and data start to our new buffer&n;&t; */
+multiline_comment|/* Copy data tail to our new buffer. */
 id|buff-&gt;csum
 op_assign
 id|csum_partial_copy
@@ -791,9 +934,9 @@ op_star
 )paren
 (paren
 id|th
-op_plus
-l_int|1
 )paren
+op_plus
+id|tp-&gt;tcp_header_len
 )paren
 op_plus
 id|len
@@ -825,7 +968,7 @@ op_minus
 id|nsize
 )paren
 suffix:semicolon
-multiline_comment|/* remember to checksum this packet afterwards */
+multiline_comment|/* Remember to checksum this packet afterwards. */
 id|th-&gt;check
 op_assign
 l_int|0
@@ -841,9 +984,9 @@ op_star
 )paren
 (paren
 id|th
-op_plus
-l_int|1
 )paren
+op_plus
+id|tp-&gt;tcp_header_len
 comma
 id|skb-&gt;tail
 op_minus
@@ -854,9 +997,9 @@ op_star
 )paren
 (paren
 id|th
-op_plus
-l_int|1
 )paren
+op_plus
+id|tp-&gt;tcp_header_len
 )paren
 comma
 l_int|0
@@ -891,15 +1034,20 @@ op_star
 id|skb
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;This is acked data. We can discard it. This &n;&t; *&t;cannot currently occur.&n;&t; */
-id|atomic_set
-c_func
-(paren
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
 op_amp
-id|sk-&gt;retransmits
-comma
-l_int|0
+(paren
+id|sk-&gt;tp_pinfo.af_tcp
 )paren
+suffix:semicolon
+multiline_comment|/* This is acked data. We can discard it. This cannot currently occur. */
+id|tp-&gt;retransmits
+op_assign
+l_int|0
 suffix:semicolon
 id|printk
 c_func
@@ -1002,7 +1150,7 @@ id|tp-&gt;send_head
 op_assign
 id|skb
 suffix:semicolon
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_decrement
 suffix:semicolon
 r_return
@@ -1012,7 +1160,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* &n;&t;&t; * If tcp_fragment succeded then&n;&t;&t; * the send head is the resulting&n;&t;&t; * fragment&n;&t;&t; */
+multiline_comment|/* If tcp_fragment succeded then&n;&t;&t; * the send head is the resulting&n;&t;&t; * fragment&n;&t;&t; */
 id|tp-&gt;send_head
 op_assign
 id|skb-&gt;next
@@ -1045,7 +1193,9 @@ op_star
 id|tp
 op_assign
 op_amp
+(paren
 id|sk-&gt;tp_pinfo.af_tcp
+)paren
 suffix:semicolon
 id|u16
 id|rcv_wnd
@@ -1055,7 +1205,7 @@ id|sent_pkts
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The bytes will have to remain here. In time closedown will&n;&t; *&t;empty the write queue and all will be happy&n;&t; */
+multiline_comment|/* The bytes will have to remain here. In time closedown will&n;&t; * empty the write queue and all will be happy.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1065,7 +1215,7 @@ id|sk-&gt;zapped
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Anything on the transmit queue that fits the window can&n;&t; *&t;be added providing we are:&n;&t; *&n;&t; *&t;a) following SWS avoidance [and Nagle algorithm]&n;&t; *&t;b) not exceeding our congestion window.&n;&t; *&t;c) not retransmiting [Nagle]&n;&t; */
+multiline_comment|/*&t;Anything on the transmit queue that fits the window can&n;&t; *&t;be added providing we are:&n;&t; *&n;&t; *&t;a) following SWS avoidance [and Nagle algorithm]&n;&t; *&t;b) not exceeding our congestion window.&n;&t; *&t;c) not retransmiting [Nagle]&n;&t; */
 id|rcv_wnd
 op_assign
 id|htons
@@ -1109,13 +1259,7 @@ suffix:semicolon
 r_int
 id|size
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;See if we really need to send the packet.&n;&t;&t; *&t;(debugging code)&n;&t;&t; */
+multiline_comment|/* See if we really need to send the packet. (debugging code) */
 r_if
 c_cond
 (paren
@@ -1140,7 +1284,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *&t;Put in the ack seq and window at this point rather&n;&t;&t; *&t;than earlier, in order to keep them monotonic.&n;&t;&t; *&t;We really want to avoid taking back window allocations.&n;&t;&t; *&t;That&squot;s legal, but RFC1122 says it&squot;s frowned on.&n;&t;&t; *&t;Ack and window will in general have changed since&n;&t;&t; *&t;this packet was put on the write queue.&n;&t;&t; */
+multiline_comment|/*&t;Put in the ack seq and window at this point rather&n;&t;&t; *&t;than earlier, in order to keep them monotonic.&n;&t;&t; *&t;We really want to avoid taking back window allocations.&n;&t;&t; *&t;That&squot;s legal, but RFC1122 says it&squot;s frowned on.&n;&t;&t; *&t;Ack and window will in general have changed since&n;&t;&t; *&t;this packet was put on the write queue.&n;&t;&t; */
 id|th
 op_assign
 id|skb-&gt;h.th
@@ -1192,6 +1336,8 @@ id|size
 r_break
 suffix:semicolon
 )brace
+id|tp-&gt;last_ack_sent
+op_assign
 id|th-&gt;ack_seq
 op_assign
 id|htonl
@@ -1203,6 +1349,22 @@ suffix:semicolon
 id|th-&gt;window
 op_assign
 id|rcv_wnd
+suffix:semicolon
+id|tcp_update_options
+c_func
+(paren
+(paren
+id|__u32
+op_star
+)paren
+(paren
+id|th
+op_plus
+l_int|1
+)paren
+comma
+id|tp
+)paren
 suffix:semicolon
 id|tp-&gt;af_specific
 op_member_access_from_pointer
@@ -1258,7 +1420,7 @@ l_int|NULL
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Advance the send_head. This one is going out.&n;&t;&t; */
+multiline_comment|/* Advance the send_head.  This one is going out. */
 id|update_send_head
 c_func
 (paren
@@ -1271,7 +1433,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_increment
 suffix:semicolon
 id|skb_set_owner_w
@@ -1317,7 +1479,6 @@ comma
 id|TIME_RETRANS
 )paren
 )paren
-(brace
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -1328,7 +1489,6 @@ comma
 id|tp-&gt;rto
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; *      This function returns the amount that we can raise the&n; *      usable window based on the following constraints&n; *  &n; *&t;1. The window can never be shrunk once it is offered (RFC 793)&n; *&t;2. We limit memory per socket&n; */
 DECL|function|tcp_select_window
@@ -1367,17 +1527,15 @@ id|sk
 suffix:semicolon
 r_int
 id|window
-suffix:semicolon
-r_int
+comma
 id|cur_win
-suffix:semicolon
-r_int
+comma
 id|usable
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;window_clamp
+id|tp-&gt;window_clamp
 )paren
 (brace
 id|free_space
@@ -1385,7 +1543,7 @@ op_assign
 id|min
 c_func
 (paren
-id|sk-&gt;window_clamp
+id|tp-&gt;window_clamp
 comma
 id|free_space
 )paren
@@ -1395,13 +1553,13 @@ op_assign
 id|min
 c_func
 (paren
-id|sk-&gt;window_clamp
+id|tp-&gt;window_clamp
 comma
 id|mss
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * compute the actual window i.e.&n;&t; * old_window - received_bytes_on_that_win&n;&t; */
+multiline_comment|/* compute the actual window i.e.&n;&t; * old_window - received_bytes_on_that_win&n;&t; */
 id|cur_win
 op_assign
 id|tp-&gt;rcv_wup
@@ -1443,7 +1601,7 @@ id|tp-&gt;rcv_wup
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * RFC 1122:&n;&t; * &quot;the suggested [SWS] avoidance algoritm for the receiver is to keep&n;&t; *  RECV.NEXT + RCV.WIN fixed until:&n;&t; *  RCV.BUFF - RCV.USER - RCV.WINDOW &gt;= min(1/2 RCV.BUFF, MSS)&quot;&n;&t; *&n;&t; * i.e. don&squot;t raise the right edge of the window until you can&squot;t raise&n;&t; * it MSS bytes&n;&t; */
-multiline_comment|/*&n;&t; * It would be a good idea if it didn&squot;t break header prediction.&n;&t; * and BSD made the header predition standard...&n;&t; * It expects the same value in the header i.e. th-&gt;window to be&n;&t; * constant&n;&t; */
+multiline_comment|/* It would be a good idea if it didn&squot;t break header prediction.&n;&t; * and BSD made the header predition standard...&n;&t; * It expects the same value in the header i.e. th-&gt;window to be&n;&t; * constant&n;&t; */
 id|usable
 op_assign
 id|free_space
@@ -1457,12 +1615,10 @@ id|usable
 OL
 l_int|0
 )paren
-(brace
 id|usable
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1471,7 +1627,7 @@ OL
 id|usable
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Window is not blocking the sender&n;&t;&t; *&t;and we have enought free space for it&n;&t;&t; */
+multiline_comment|/*&t;Window is not blocking the sender&n;&t;&t; *&t;and we have enought free space for it&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1495,7 +1651,7 @@ op_ge
 id|usable
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;We are offering too much, cut it down... &n;&t;&t; *&t;but don&squot;t shrink the window&n;&t;&t; */
+multiline_comment|/*&t;We are offering too much, cut it down... &n;&t;&t; *&t;but don&squot;t shrink the window&n;&t;&t; */
 id|window
 op_assign
 id|max
@@ -1520,12 +1676,10 @@ id|window
 op_ge
 id|mss
 )paren
-(brace
 id|window
 op_add_assign
 id|mss
 suffix:semicolon
-)brace
 )brace
 id|out
 suffix:colon
@@ -1558,6 +1712,16 @@ op_star
 id|skb
 )paren
 (brace
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+(paren
+id|sk-&gt;tp_pinfo.af_tcp
+)paren
+suffix:semicolon
 r_struct
 id|tcphdr
 op_star
@@ -1601,19 +1765,25 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  size of tcp payload&n;&t; */
+multiline_comment|/* Size of TCP payload. */
 id|size1
 op_assign
 id|skb-&gt;tail
 op_minus
+(paren
 (paren
 id|u8
 op_star
 )paren
 (paren
 id|th1
+)paren
 op_plus
-l_int|1
+(paren
+id|th1-&gt;doff
+op_lshift
+l_int|2
+)paren
 )paren
 suffix:semicolon
 id|th2
@@ -1625,13 +1795,19 @@ op_assign
 id|buff-&gt;tail
 op_minus
 (paren
+(paren
 id|u8
 op_star
 )paren
 (paren
 id|th2
+)paren
 op_plus
-l_int|1
+(paren
+id|th2-&gt;doff
+op_lshift
+l_int|2
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1651,7 +1827,7 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *  ok. we will be able to collapse the packet&n;&t; */
+multiline_comment|/* Ok.  We will be able to collapse the packet. */
 id|skb_unlink
 c_func
 (paren
@@ -1686,7 +1862,7 @@ comma
 id|size2
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * update sizes on original skb. both TCP and IP&n;&t; */
+multiline_comment|/* Update sizes on original skb, both TCP and IP. */
 id|skb-&gt;end_seq
 op_add_assign
 id|size2
@@ -1708,7 +1884,7 @@ op_plus
 id|size1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * ... and off you go.&n;&t; */
+multiline_comment|/* ... and off you go. */
 id|kfree_skb
 c_func
 (paren
@@ -1717,10 +1893,10 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_decrement
 suffix:semicolon
-multiline_comment|/* &n;&t; *&t;Header checksum will be set by the retransmit procedure&n;&t; *&t;after calling rebuild header&n;&t; */
+multiline_comment|/* Header checksum will be set by the retransmit procedure&n;&t; * after calling rebuild header.&n;&t; */
 id|th1-&gt;check
 op_assign
 l_int|0
@@ -1736,8 +1912,12 @@ op_star
 )paren
 (paren
 id|th1
+)paren
 op_plus
-l_int|1
+(paren
+id|th1-&gt;doff
+op_lshift
+l_int|2
 )paren
 comma
 id|size1
@@ -1841,13 +2021,7 @@ suffix:semicolon
 r_int
 id|size
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * In general it&squot;s OK just to use the old packet.  However we&n;&t;&t; * need to use the current ack and window fields.  Urg and&n;&t;&t; * urg_ptr could possibly stand to be updated as well, but we&n;&t;&t; * don&squot;t keep the necessary data.  That shouldn&squot;t be a problem,&n;&t;&t; * if the other end is doing the right thing.  Since we&squot;re&n;&t;&t; * changing the packet, we have to issue a new IP identifier.&n;&t;&t; */
+multiline_comment|/* In general it&squot;s OK just to use the old packet.  However we&n;&t;&t; * need to use the current ack and window fields.  Urg and&n;&t;&t; * urg_ptr could possibly stand to be updated as well, but we&n;&t;&t; * don&squot;t keep the necessary data.  That shouldn&squot;t be a problem,&n;&t;&t; * if the other end is doing the right thing.  Since we&squot;re&n;&t;&t; * changing the packet, we have to issue a new IP identifier.&n;&t;&t; */
 id|th
 op_assign
 id|skb-&gt;h.th
@@ -1864,9 +2038,9 @@ op_star
 )paren
 (paren
 id|th
-op_plus
-l_int|1
 )paren
+op_plus
+id|tp-&gt;tcp_header_len
 )paren
 suffix:semicolon
 r_if
@@ -1901,7 +2075,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_increment
 suffix:semicolon
 )brace
@@ -1933,7 +2107,6 @@ op_star
 op_amp
 id|sk-&gt;write_queue
 )paren
-(brace
 id|tcp_retrans_try_collapse
 c_func
 (paren
@@ -1942,7 +2115,6 @@ comma
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1977,7 +2149,9 @@ comma
 l_string|&quot;retransmit sending&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;update ack and window&n;&t;&t; */
+multiline_comment|/* Update ack and window. */
+id|tp-&gt;last_ack_sent
+op_assign
 id|th-&gt;ack_seq
 op_assign
 id|htonl
@@ -1996,6 +2170,22 @@ c_func
 (paren
 id|sk
 )paren
+)paren
+suffix:semicolon
+id|tcp_update_options
+c_func
+(paren
+(paren
+id|__u32
+op_star
+)paren
+(paren
+id|th
+op_plus
+l_int|1
+)paren
+comma
+id|tp
 )paren
 suffix:semicolon
 id|size
@@ -2068,22 +2258,17 @@ c_func
 id|buff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Count retransmissions&n;&t;&t; */
+multiline_comment|/* Count retransmissions. */
 id|ct
 op_increment
 suffix:semicolon
 id|sk-&gt;prot-&gt;retransmits
 op_increment
 suffix:semicolon
-multiline_comment|/* ???: atomic_t necessary here? -DaveM */
 id|tcp_statistics.TcpRetransSegs
 op_increment
 suffix:semicolon
-id|tp-&gt;high_seq
-op_assign
-id|tp-&gt;snd_nxt
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Only one retransmit requested.&n;&t;&t; */
+multiline_comment|/* Only one retransmit requested. */
 r_if
 c_cond
 (paren
@@ -2092,7 +2277,7 @@ id|all
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;This should cut it off before we send too many packets.&n;&t;&t; */
+multiline_comment|/* This should cut it off before we send too many packets. */
 r_if
 c_cond
 (paren
@@ -2102,7 +2287,7 @@ id|tp-&gt;snd_cwnd
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Advance the pointer&n;&t;&t; */
+multiline_comment|/* Advance the pointer. */
 id|tp-&gt;retrans_head
 op_assign
 id|skb-&gt;next
@@ -2128,12 +2313,10 @@ op_amp
 id|sk-&gt;write_queue
 )paren
 )paren
-(brace
 id|tp-&gt;retrans_head
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/*&n; *&t;Send a fin.&n; */
@@ -2191,7 +2374,9 @@ c_func
 (paren
 id|sk
 comma
-id|MAX_RESET_SIZE
+id|BASE_ACK_SIZE
+op_plus
+id|tp-&gt;tcp_header_len
 comma
 l_int|1
 comma
@@ -2206,7 +2391,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* This is a disaster if it occurs */
+multiline_comment|/* FIXME: This is a disaster if it occurs. */
 id|printk
 c_func
 (paren
@@ -2217,12 +2402,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Administrivia&n;&t; */
+multiline_comment|/* Administrivia. */
 id|buff-&gt;csum
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Put in the IP header and routing stuff. &n;&t; */
+multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp
 op_assign
 id|tp-&gt;af_specific
@@ -2246,7 +2431,7 @@ l_int|0
 r_int
 id|t
 suffix:semicolon
-multiline_comment|/*&n;  &t;&t; *&t;Finish anyway, treat this as a send that got lost. &n;  &t;&t; *&t;(Not good).&n;  &t;&t; */
+multiline_comment|/* FIXME: We must not throw this out. Eventually we must&n;                 * put a FIN into the queue, otherwise it never gets queued.&n;  &t;&t; */
 id|kfree_skb
 c_func
 (paren
@@ -2272,7 +2457,6 @@ c_cond
 (paren
 id|t
 )paren
-(brace
 id|add_timer
 c_func
 (paren
@@ -2280,7 +2464,6 @@ op_amp
 id|sk-&gt;timer
 )paren
 suffix:semicolon
-)brace
 r_else
 id|tcp_reset_msl_timer
 c_func
@@ -2295,7 +2478,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;We ought to check if the end of the queue is a buffer and&n;&t; *&t;if so simply add the fin to that buffer, not send it ahead.&n;&t; */
+multiline_comment|/* We ought to check if the end of the queue is a buffer and&n;&t; * if so simply add the fin to that buffer, not send it ahead.&n;&t; */
 id|t1
 op_assign
 (paren
@@ -2308,16 +2491,28 @@ c_func
 (paren
 id|buff
 comma
-r_sizeof
-(paren
-r_struct
-id|tcphdr
-)paren
+id|tp-&gt;tcp_header_len
 )paren
 suffix:semicolon
 id|buff-&gt;h.th
 op_assign
 id|t1
+suffix:semicolon
+id|tcp_build_options
+c_func
+(paren
+(paren
+id|__u32
+op_star
+)paren
+(paren
+id|t1
+op_plus
+l_int|1
+)paren
+comma
+id|tp
+)paren
 suffix:semicolon
 id|memcpy
 c_func
@@ -2385,16 +2580,12 @@ id|sk
 comma
 id|t1
 comma
-r_sizeof
-(paren
-op_star
-id|t1
-)paren
+id|tp-&gt;tcp_header_len
 comma
 id|buff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The fin can only be transmited after the data.&n; &t; */
+multiline_comment|/* The fin can only be transmited after the data. */
 id|skb_queue_tail
 c_func
 (paren
@@ -2417,7 +2608,7 @@ id|sk_buff
 op_star
 id|skb1
 suffix:semicolon
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_increment
 suffix:semicolon
 id|tp-&gt;snd_nxt
@@ -2522,11 +2713,6 @@ op_star
 id|th
 suffix:semicolon
 r_int
-r_char
-op_star
-id|ptr
-suffix:semicolon
-r_int
 id|tmp
 suffix:semicolon
 id|skb
@@ -2550,12 +2736,10 @@ id|skb
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|tmp
 op_assign
 id|tp-&gt;af_specific
@@ -2668,6 +2852,8 @@ c_func
 id|tp-&gt;rcv_wnd
 )paren
 suffix:semicolon
+id|tp-&gt;last_ack_sent
+op_assign
 id|th-&gt;ack_seq
 op_assign
 id|htonl
@@ -2676,79 +2862,44 @@ c_func
 id|tp-&gt;rcv_nxt
 )paren
 suffix:semicolon
+id|tmp
+op_assign
+id|tcp_syn_build_options
+c_func
+(paren
+id|skb
+comma
+id|sk-&gt;mss
+comma
+id|tp-&gt;sack_ok
+comma
+id|tp-&gt;tstamp_ok
+comma
+id|tp-&gt;snd_wscale
+ques
+c_cond
+id|tp-&gt;rcv_wscale
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+id|skb-&gt;csum
+op_assign
+l_int|0
+suffix:semicolon
 id|th-&gt;doff
 op_assign
+(paren
 r_sizeof
 (paren
 op_star
 id|th
 )paren
-op_div
-l_int|4
 op_plus
-l_int|1
-suffix:semicolon
-id|ptr
-op_assign
-id|skb_put
-c_func
-(paren
-id|skb
-comma
-id|TCPOLEN_MSS
-)paren
-suffix:semicolon
-id|ptr
-(braket
-l_int|0
-)braket
-op_assign
-id|TCPOPT_MSS
-suffix:semicolon
-id|ptr
-(braket
-l_int|1
-)braket
-op_assign
-id|TCPOLEN_MSS
-suffix:semicolon
-id|ptr
-(braket
-l_int|2
-)braket
-op_assign
-(paren
-(paren
-id|sk-&gt;mss
+id|tmp
 )paren
 op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0xff
-suffix:semicolon
-id|ptr
-(braket
-l_int|3
-)braket
-op_assign
-(paren
-id|sk-&gt;mss
-)paren
-op_amp
-l_int|0xff
-suffix:semicolon
-id|skb-&gt;csum
-op_assign
-id|csum_partial
-c_func
-(paren
-id|ptr
-comma
-id|TCPOLEN_MSS
-comma
-l_int|0
-)paren
+l_int|2
 suffix:semicolon
 id|tp-&gt;af_specific
 op_member_access_from_pointer
@@ -2765,7 +2916,7 @@ op_star
 id|th
 )paren
 op_plus
-l_int|4
+id|tmp
 comma
 id|skb
 )paren
@@ -2803,7 +2954,7 @@ comma
 id|sk
 )paren
 suffix:semicolon
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_increment
 suffix:semicolon
 id|skb-&gt;when
@@ -2865,7 +3016,7 @@ id|timeout
 comma
 id|now
 suffix:semicolon
-multiline_comment|/* Calculate new timeout */
+multiline_comment|/* Calculate new timeout. */
 id|now
 op_assign
 id|jiffies
@@ -2881,7 +3032,12 @@ id|timeout
 OG
 id|max_timeout
 op_logical_or
-id|sk-&gt;bytes_rcv
+(paren
+(paren
+id|tp-&gt;rcv_nxt
+op_minus
+id|tp-&gt;rcv_wup
+)paren
 OG
 (paren
 id|sk-&gt;mss
@@ -2889,18 +3045,17 @@ op_lshift
 l_int|2
 )paren
 )paren
-(brace
+)paren
 id|timeout
 op_assign
 id|now
 suffix:semicolon
-)brace
 r_else
 id|timeout
 op_add_assign
 id|now
 suffix:semicolon
-multiline_comment|/* Use new timeout only if there wasn&squot;t a older one earlier  */
+multiline_comment|/* Use new timeout only if there wasn&squot;t a older one earlier. */
 r_if
 c_cond
 (paren
@@ -2916,12 +3071,10 @@ id|timeout
 OL
 id|tp-&gt;delack_timer.expires
 )paren
-(brace
 id|tp-&gt;delack_timer.expires
 op_assign
 id|timeout
 suffix:semicolon
-)brace
 id|add_timer
 c_func
 (paren
@@ -2971,11 +3124,11 @@ c_cond
 id|sk-&gt;zapped
 )paren
 (brace
-multiline_comment|/* We have been reset, we may not send again */
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We need to grab some memory, and put together an ack,&n;&t; * and then put it into the queue to be sent.&n;&t; */
+multiline_comment|/* We have been reset, we may not send again. */
+multiline_comment|/* We need to grab some memory, and put together an ack,&n;&t; * and then put it into the queue to be sent.&n;&t; * FIXME: is it better to waste memory here and use a&n;&t; * constant sized ACK?&n;&t; */
 id|buff
 op_assign
 id|sock_wmalloc
@@ -2983,7 +3136,9 @@ c_func
 (paren
 id|sk
 comma
-id|MAX_ACK_SIZE
+id|BASE_ACK_SIZE
+op_plus
+id|tp-&gt;tcp_header_len
 comma
 l_int|1
 comma
@@ -2998,7 +3153,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* &n;&t;&t; *&t;Force it to send an ack. We don&squot;t have to do this&n;&t;&t; *&t;(ACK is unreliable) but it&squot;s much better use of &n;&t;&t; *&t;bandwidth on slow links to send a spare ack than&n;&t;&t; *&t;resend packets. &n;&t;&t; */
+multiline_comment|/*&t;Force it to send an ack. We don&squot;t have to do this&n;&t;&t; *&t;(ACK is unreliable) but it&squot;s much better use of&n;&t;&t; *&t;bandwidth on slow links to send a spare ack than&n;&t;&t; *&t;resend packets.&n;&t;&t; */
 id|tcp_send_delayed_ack
 c_func
 (paren
@@ -3018,12 +3173,12 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Assemble a suitable TCP frame&n;&t; */
+multiline_comment|/* Assemble a suitable TCP frame. */
 id|buff-&gt;csum
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t; *&t;Put in the IP header and routing stuff. &n;&t; */
+multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp
 op_assign
 id|tp-&gt;af_specific
@@ -3067,11 +3222,7 @@ c_func
 (paren
 id|buff
 comma
-r_sizeof
-(paren
-r_struct
-id|tcphdr
-)paren
+id|tp-&gt;tcp_header_len
 )paren
 suffix:semicolon
 id|memcpy
@@ -3089,7 +3240,23 @@ id|tcphdr
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Swap the send and the receive. &n;&t; */
+id|tcp_build_options
+c_func
+(paren
+(paren
+id|__u32
+op_star
+)paren
+(paren
+id|th
+op_plus
+l_int|1
+)paren
+comma
+id|tp
+)paren
+suffix:semicolon
+multiline_comment|/* Swap the send and the receive. */
 id|th-&gt;window
 op_assign
 id|ntohs
@@ -3110,6 +3277,8 @@ c_func
 id|tp-&gt;snd_nxt
 )paren
 suffix:semicolon
+id|tp-&gt;last_ack_sent
+op_assign
 id|th-&gt;ack_seq
 op_assign
 id|ntohl
@@ -3118,7 +3287,7 @@ c_func
 id|tp-&gt;rcv_nxt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;  &t; *&t;Fill in the packet and send it&n;  &t; */
+multiline_comment|/* Fill in the packet and send it. */
 id|tp-&gt;af_specific
 op_member_access_from_pointer
 id|send_check
@@ -3128,11 +3297,7 @@ id|sk
 comma
 id|th
 comma
-r_sizeof
-(paren
-r_struct
-id|tcphdr
-)paren
+id|tp-&gt;tcp_header_len
 comma
 id|buff
 )paren
@@ -3206,8 +3371,8 @@ id|sk-&gt;zapped
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* After a valid reset we can send no more */
-multiline_comment|/*&n;&t; *&t;Write data can still be transmitted/retransmitted in the&n;&t; *&t;following states.  If any other state is encountered, return.&n;&t; *&t;[listen/close will never occur here anyway]&n;&t; */
+multiline_comment|/* After a valid reset we can send no more. */
+multiline_comment|/*&t;Write data can still be transmitted/retransmitted in the&n;&t; *&t;following states.  If any other state is encountered, return.&n;&t; *&t;[listen/close will never occur here anyway]&n;&t; */
 r_if
 c_cond
 (paren
@@ -3231,10 +3396,8 @@ id|sk-&gt;state
 op_ne
 id|TCP_CLOSING
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3255,7 +3418,6 @@ id|tp-&gt;send_head
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;    &t; * We are probing the opening of a window&n;&t;    &t; * but the window size is != 0&n;&t;    &t; * must have been a result SWS avoidance ( sender )&n;&t;    &t; */
 r_struct
 id|tcphdr
 op_star
@@ -3265,6 +3427,7 @@ r_int
 r_int
 id|win_size
 suffix:semicolon
+multiline_comment|/* We are probing the opening of a window&n;&t;    &t; * but the window size is != 0&n;&t;    &t; * must have been a result SWS avoidance ( sender )&n;&t;    &t; */
 id|win_size
 op_assign
 id|tp-&gt;snd_wnd
@@ -3350,10 +3513,8 @@ id|buff
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|skb_set_owner_w
 c_func
 (paren
@@ -3362,7 +3523,7 @@ comma
 id|sk
 )paren
 suffix:semicolon
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_increment
 suffix:semicolon
 id|clear_delayed_acks
@@ -3437,7 +3598,7 @@ id|buff-&gt;csum
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Put in the IP header and routing stuff. &n;&t;&t; */
+multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp
 op_assign
 id|tp-&gt;af_specific
@@ -3507,7 +3668,8 @@ id|t1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Use a previous sequence.&n;&t;&t; *&t;This should cause the other end to send an ack.&n;&t;&t; */
+multiline_comment|/* FIXME: should zero window probes have SACK and/or TIMESTAMP data?&n;&t;&t; * If so we have to tack them on here.&n;&t;&t; */
+multiline_comment|/*&t;Use a previous sequence.&n;&t;&t; *&t;This should cause the other end to send an ack.&n;&t;&t; */
 id|t1-&gt;seq
 op_assign
 id|htonl
@@ -3539,6 +3701,17 @@ id|sk
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Value from dummy_th may be larger. */
+id|t1-&gt;doff
+op_assign
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+op_div
+l_int|4
+suffix:semicolon
 id|tp-&gt;af_specific
 op_member_access_from_pointer
 id|send_check
@@ -3558,7 +3731,7 @@ id|buff
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Send it.&n;&t; */
+multiline_comment|/* Send it. */
 id|tp-&gt;af_specific
 op_member_access_from_pointer
 id|queue_xmit
@@ -3600,7 +3773,7 @@ id|sk-&gt;zapped
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* After a valid reset we can send no more */
+multiline_comment|/* After a valid reset we can send no more. */
 id|tcp_write_wakeup
 c_func
 (paren

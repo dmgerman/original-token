@@ -28,6 +28,8 @@ macro_line|# define copy_to_user&t;&t;memcpy_tofs
 DECL|macro|access_ok
 macro_line|# define access_ok&t;&t;!verify_area
 macro_line|#endif
+macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;asm/smp_lock.h&gt;
 r_extern
 r_int
 id|sys_call_table
@@ -403,10 +405,14 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NFSD
+DECL|macro|handle_sys_nfsservctl
+mdefine_line|#define handle_sys_nfsservctl sys_nfsservctl
+macro_line|#endif
 r_int
-DECL|function|sys_nfsservctl
+DECL|function|handle_sys_nfsservctl
 id|asmlinkage
-id|sys_nfsservctl
+id|handle_sys_nfsservctl
 c_func
 (paren
 r_int
@@ -440,6 +446,10 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|lock_kernel
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -460,10 +470,16 @@ c_func
 (paren
 )paren
 )paren
-r_return
+(brace
+id|err
+op_assign
 op_minus
 id|EPERM
 suffix:semicolon
+r_goto
+id|done
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -501,10 +517,16 @@ id|resp
 )paren
 )paren
 )paren
-r_return
+(brace
+id|err
+op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
+r_goto
+id|done
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -762,6 +784,10 @@ c_func
 id|res
 )paren
 suffix:semicolon
+id|unlock_kernel
+(paren
+)paren
+suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -784,6 +810,22 @@ r_int
 r_int
 id|old_syscallvec
 suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|do_nfsservctl
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Initialize the module&n; */
 r_int
 DECL|function|init_module
@@ -799,28 +841,14 @@ c_func
 l_string|&quot;Installing knfsd (copyright (C) 1996 okir@monad.swb.de).&bslash;n&quot;
 )paren
 suffix:semicolon
-id|old_syscallvec
-op_assign
-id|sys_call_table
-(braket
-id|__NR_nfsservctl
-)braket
-suffix:semicolon
-id|sys_call_table
-(braket
-id|__NR_nfsservctl
-)braket
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|sys_nfsservctl
-suffix:semicolon
 id|nfsd_init
 c_func
 (paren
 )paren
+suffix:semicolon
+id|do_nfsservctl
+op_assign
+id|handle_sys_nfsservctl
 suffix:semicolon
 r_return
 l_int|0
@@ -850,12 +878,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|sys_call_table
-(braket
-id|__NR_nfsservctl
-)braket
+id|do_nfsservctl
 op_assign
-id|old_syscallvec
+l_int|NULL
 suffix:semicolon
 id|nfsd_export_shutdown
 c_func

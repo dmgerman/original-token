@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/watchdog.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|WATCHDOG_MINOR
 mdefine_line|#define WATCHDOG_MINOR&t;130
@@ -450,12 +451,16 @@ op_amp
 id|softdog_fops
 )brace
 suffix:semicolon
-DECL|function|watchdog_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|watchdog_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|misc_register

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|apm_register_callback
 id|EXPORT_SYMBOL
 c_func
@@ -764,6 +765,7 @@ macro_line|#ifdef CONFIG_APM_DO_ENABLE
 multiline_comment|/* Called by apm_setup if apm_enabled will be true. */
 DECL|function|apm_enable_power_management
 r_static
+r_inline
 r_int
 id|apm_enable_power_management
 c_func
@@ -867,6 +869,7 @@ suffix:semicolon
 )brace
 DECL|function|apm_engage_power_management
 r_static
+r_inline
 r_int
 id|apm_engage_power_management
 c_func
@@ -3304,12 +3307,16 @@ id|buf
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|apm_bios_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|apm_bios_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

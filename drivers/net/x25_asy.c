@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/x25.h&gt;
 macro_line|#include &lt;linux/lapb.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;x25_asy.h&quot;
 DECL|struct|x25_ctrl
 r_typedef
@@ -3053,6 +3054,9 @@ c_func
 r_void
 )paren
 macro_line|#else&t;/* !MODULE */
+id|__initfunc
+c_func
+(paren
 r_int
 id|x25_asy_init_ctrl_dev
 c_func
@@ -3061,6 +3065,7 @@ r_struct
 id|device
 op_star
 id|dummy
+)paren
 )paren
 macro_line|#endif&t;/* !MODULE */
 (brace

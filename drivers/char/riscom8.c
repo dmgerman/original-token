@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;riscom8.h&quot;
 macro_line|#include &quot;riscom8_reg.h&quot;
@@ -876,7 +877,10 @@ suffix:semicolon
 suffix:semicolon
 )brace
 multiline_comment|/* Reset and setup CD180 chip */
-DECL|function|rc_init_CD180
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|rc_init_CD180
@@ -887,6 +891,7 @@ id|riscom_board
 r_const
 op_star
 id|bp
+)paren
 )paren
 (brace
 r_int
@@ -1056,7 +1061,10 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/* Main probing routine, also sets irq. */
-DECL|function|rc_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|rc_probe
@@ -1066,6 +1074,7 @@ r_struct
 id|riscom_board
 op_star
 id|bp
+)paren
 )paren
 (brace
 r_int
@@ -8689,6 +8698,7 @@ suffix:semicolon
 )brace
 DECL|function|rc_init_drivers
 r_static
+r_inline
 r_int
 id|rc_init_drivers
 c_func
@@ -9128,6 +9138,27 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|remove_bh
+c_func
+(paren
+id|RISCOM8_BH
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -9150,6 +9181,12 @@ c_func
 (paren
 op_amp
 id|riscom_callout_driver
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -9225,12 +9262,16 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* &n; * This routine must be called by kernel at boot time &n; */
-DECL|function|riscom8_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|riscom8_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

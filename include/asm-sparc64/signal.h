@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.2 1997/03/03 16:51:57 jj Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.3 1997/04/18 14:34:47 jj Exp $ */
 macro_line|#ifndef _ASMSPARC64_SIGNAL_H
 DECL|macro|_ASMSPARC64_SIGNAL_H
 mdefine_line|#define _ASMSPARC64_SIGNAL_H
@@ -129,11 +129,11 @@ r_int
 r_int
 id|sigset_t
 suffix:semicolon
-DECL|typedef|sigset32_t
+DECL|typedef|sigset_t32
 r_typedef
 r_int
 r_int
-id|sigset32_t
+id|sigset_t32
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/sigcontext.h&gt;
@@ -274,7 +274,7 @@ r_int
 id|sa_handler
 suffix:semicolon
 DECL|member|sa_mask
-id|sigset32_t
+id|sigset_t32
 id|sa_mask
 suffix:semicolon
 DECL|member|sa_flags
@@ -282,7 +282,6 @@ r_int
 r_int
 id|sa_flags
 suffix:semicolon
-multiline_comment|/* XXX 32-bit func ptr... */
 DECL|member|sa_restorer
 r_int
 id|sa_restorer

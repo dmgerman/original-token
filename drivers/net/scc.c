@@ -46,6 +46,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/scc.h&gt;
 macro_line|#include &quot;z8530.h&quot;
 macro_line|#include &lt;net/ax25.h&gt;
@@ -8584,11 +8585,15 @@ macro_line|#endif
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* * &t;&t;&t;Init SCC driver &t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
-DECL|function|scc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|scc_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

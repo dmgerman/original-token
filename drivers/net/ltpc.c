@@ -35,6 +35,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -3577,7 +3578,10 @@ r_int
 r_int
 id|irqhitmask
 suffix:semicolon
-DECL|function|lt_probe_handler
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|lt_probe_handler
@@ -3595,6 +3599,7 @@ id|pt_regs
 op_star
 id|reg_ptr
 )paren
+)paren
 (brace
 id|irqhitmask
 op_or_assign
@@ -3603,7 +3608,10 @@ op_lshift
 id|irq
 suffix:semicolon
 )brace
-DECL|function|ltpc_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ltpc_probe
 c_func
@@ -3612,6 +3620,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int

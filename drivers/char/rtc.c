@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -2032,12 +2033,16 @@ op_amp
 id|rtc_fops
 )brace
 suffix:semicolon
-DECL|function|rtc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|rtc_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

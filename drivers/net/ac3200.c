@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;8390.h&quot;
@@ -46,7 +47,7 @@ DECL|macro|AC_IO_EXTENT
 mdefine_line|#define AC_IO_EXTENT 0x10&t;&t;/* IS THIS REALLY TRUE ??? */
 multiline_comment|/* Actually accessed is:&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_NIC_BASE (0-15)&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_SA_PROM (0-5)&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_ID_PORT (0-3)&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_RESET_PORT&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_CONFIG&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 multiline_comment|/* Decoding of the configuration register. */
-DECL|variable|config2irqmap
+DECL|variable|__initdata
 r_static
 r_int
 r_char
@@ -54,6 +55,7 @@ id|config2irqmap
 (braket
 l_int|8
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|15
@@ -255,7 +257,10 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/*&t;Probe for the AC3200.&n;&n;&t;The AC3200 can be identified by either the EISA configuration registers,&n;&t;or the unique value in the station address PROM.&n;&t;*/
-DECL|function|ac3200_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ac3200_probe
 c_func
@@ -264,6 +269,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -361,7 +367,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|ac_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ac_probe1
@@ -374,6 +383,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int

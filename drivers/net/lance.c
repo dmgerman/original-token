@@ -20,19 +20,21 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-DECL|variable|lance_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|lance_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x300
@@ -609,12 +611,16 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/* This lance probe is unlike the other board probes in 1.0.*.  The LANCE may&n;   have to allocate a contiguous low-memory region for bounce buffers.&n;   This requirement is satisfied by having the lance initialization occur&n;   before the memory management system is started, and thus well before the&n;   other probes. */
-DECL|function|lance_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|lance_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -913,13 +919,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|lance_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|lance_probe1
 c_func
 (paren
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_struct

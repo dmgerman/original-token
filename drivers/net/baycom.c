@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/baycom.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
 macro_line|#include &lt;linux/version.h&gt;
@@ -3854,12 +3855,16 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|baycom_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|baycom_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -4289,7 +4294,10 @@ suffix:semicolon
 macro_line|#else /* MODULE */
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * format: baycom=io,irq,mode&n; * mode: {ser12,par96}[*]&n; * * indicates sofware DCD&n; */
-DECL|function|baycom_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|baycom_setup
 c_func
@@ -4301,6 +4309,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int

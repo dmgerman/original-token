@@ -27,6 +27,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#endif /* version &gt;= v1.3.0 */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -7860,14 +7861,18 @@ suffix:semicolon
 )brace
 macro_line|#endif /* version &gt;= v1.3.0 */
 multiline_comment|/*&n; * advansys_detect()&n; *&n; * Detect function for AdvanSys adapters.&n; *&n; * Argument is a pointer to the host driver&squot;s scsi_hosts entry.&n; *&n; * Return number of adapters found.&n; *&n; * Note: Because this function is called during system initialization&n; * it must not call SCSI mid-level functions including scsi_malloc()&n; * and scsi_free().&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|advansys_detect
 id|advansys_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_static
@@ -14878,15 +14883,19 @@ id|found
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Search for an AdvanSys PCI device in the PCI configuration space.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 id|STATIC
 r_int
-DECL|function|asc_srch_pci_dev
 id|asc_srch_pci_dev
 c_func
 (paren
 id|PCI_DEVICE
 op_star
 id|pciDevice
+)paren
 )paren
 (brace
 r_int
@@ -15042,6 +15051,9 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Determine the access method to be used for &squot;pciDevice&squot;.&n; */
+id|__initfunc
+c_func
+(paren
 id|STATIC
 id|uchar
 DECL|function|asc_scan_method
@@ -15049,6 +15061,7 @@ id|asc_scan_method
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|ushort
@@ -15185,15 +15198,19 @@ id|type
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check for an AdvanSys PCI device in &squot;pciDevice&squot;.&n; *&n; * Return PCI_DEVICE_FOUND if found, otherwise return PCI_DEVICE_NOT_FOUND.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 id|STATIC
 r_int
-DECL|function|asc_pci_find_dev
 id|asc_pci_find_dev
 c_func
 (paren
 id|PCI_DEVICE
 op_star
 id|pciDevice
+)paren
 )paren
 (brace
 id|PCI_DATA
@@ -15420,9 +15437,12 @@ id|PCI_DEVICE_NOT_FOUND
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read PCI configuration data into &squot;pciConfig&squot;.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 id|STATIC
 r_void
-DECL|function|asc_get_pci_cfg
 id|asc_get_pci_cfg
 c_func
 (paren
@@ -15433,6 +15453,7 @@ comma
 id|PCI_CONFIG_SPACE
 op_star
 id|pciConfig
+)paren
 )paren
 (brace
 id|PCI_DATA
@@ -15538,6 +15559,9 @@ id|counter
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a word (16 bits) from the PCI configuration space.&n; *&n; * The configuration mechanism is checked for the correct access method.&n; */
+id|__initfunc
+c_func
+(paren
 id|STATIC
 id|ushort
 DECL|function|asc_get_cfg_word
@@ -15547,6 +15571,7 @@ c_func
 id|PCI_DATA
 op_star
 id|pciData
+)paren
 )paren
 (brace
 id|ushort
@@ -15813,6 +15838,9 @@ id|tmp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Reads a byte from the PCI configuration space.&n; *&n; * The configuration mechanism is checked for the correct access method.&n; */
+id|__initfunc
+c_func
+(paren
 id|STATIC
 id|uchar
 DECL|function|asc_get_cfg_byte
@@ -15822,6 +15850,7 @@ c_func
 id|PCI_DATA
 op_star
 id|pciData
+)paren
 )paren
 (brace
 id|uchar
@@ -16078,8 +16107,11 @@ id|tmp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write a byte to the PCI configuration space.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|asc_put_cfg_byte
 id|asc_put_cfg_byte
 c_func
 (paren
@@ -16089,6 +16121,7 @@ id|pciData
 comma
 id|uchar
 id|byte_data
+)paren
 )paren
 (brace
 id|ulong
@@ -20644,6 +20677,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a PCI configuration byte.&n; */
+id|__initfunc
+c_func
+(paren
 id|uchar
 DECL|function|DvcReadPCIConfigByte
 id|DvcReadPCIConfigByte
@@ -20656,6 +20692,7 @@ id|asc_dvc
 comma
 id|ushort
 id|offset
+)paren
 )paren
 (brace
 id|PCI_DATA
@@ -20703,8 +20740,11 @@ id|pciData
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write a PCI configuration byte.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|DvcWritePCIConfigByte
 id|DvcWritePCIConfigByte
 c_func
 (paren
@@ -20718,6 +20758,7 @@ id|offset
 comma
 id|uchar
 id|byte_data
+)paren
 )paren
 (brace
 id|PCI_DATA
@@ -20766,6 +20807,9 @@ id|byte_data
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return the BIOS address of the adapter at the specified&n; * I/O port and with the specified bus type.&n; */
+id|__initfunc
+c_func
+(paren
 id|ushort
 DECL|function|AscGetChipBiosAddress
 id|AscGetChipBiosAddress
@@ -20776,6 +20820,7 @@ id|iop_base
 comma
 id|ushort
 id|bus_type
+)paren
 )paren
 (brace
 id|ushort
@@ -22942,6 +22987,9 @@ id|sc
 )paren
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|uchar
 DECL|function|AscGetChipVersion
 id|AscGetChipVersion
@@ -22952,6 +23000,7 @@ id|iop_base
 comma
 id|ushort
 id|bus_type
+)paren
 )paren
 (brace
 r_if
@@ -23160,6 +23209,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|ulong
 DECL|function|AscLoadMicroCode
 id|AscLoadMicroCode
@@ -23178,6 +23230,7 @@ id|mcode_buf
 comma
 id|ushort
 id|mcode_size
+)paren
 )paren
 (brace
 id|ulong
@@ -23296,13 +23349,17 @@ id|chksum
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|AscFindSignature
 id|AscFindSignature
 c_func
 (paren
 id|PortAddr
 id|iop_base
+)paren
 )paren
 (brace
 id|ushort
@@ -23403,6 +23460,9 @@ comma
 id|ASC_IOADR_8
 )brace
 suffix:semicolon
+id|__initfunc
+c_func
+(paren
 id|PortAddr
 DECL|function|AscSearchIOPortAddr
 id|AscSearchIOPortAddr
@@ -23413,6 +23473,7 @@ id|iop_beg
 comma
 id|ushort
 id|bus_type
+)paren
 )paren
 (brace
 r_if
@@ -23580,6 +23641,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|PortAddr
 DECL|function|AscSearchIOPortAddr11
 id|AscSearchIOPortAddr11
@@ -23587,6 +23651,7 @@ c_func
 (paren
 id|PortAddr
 id|s_addr
+)paren
 )paren
 (brace
 r_int
@@ -23775,12 +23840,16 @@ l_char|&squot;F&squot;
 )brace
 suffix:semicolon
 macro_line|#endif
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|AscSetISAPNPWaitForKey
 id|AscSetISAPNPWaitForKey
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|outp
@@ -27496,11 +27565,12 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|variable|_mcode_buf
+DECL|variable|__initdata
 id|uchar
 id|_mcode_buf
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x01
@@ -38435,6 +38505,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|ulong
 DECL|function|AscGetEisaProductID
 id|AscGetEisaProductID
@@ -38442,6 +38515,7 @@ c_func
 (paren
 id|PortAddr
 id|iop_base
+)paren
 )paren
 (brace
 id|PortAddr
@@ -38505,6 +38579,9 @@ id|product_id
 )paren
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|PortAddr
 DECL|function|AscSearchIOPortAddrEISA
 id|AscSearchIOPortAddrEISA
@@ -38512,6 +38589,7 @@ c_func
 (paren
 id|PortAddr
 id|iop_base
+)paren
 )paren
 (brace
 id|ulong
@@ -39597,6 +39675,9 @@ id|speed_value
 )paren
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|ushort
 DECL|function|AscInitGetConfig
 id|AscInitGetConfig
@@ -39606,6 +39687,7 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
+)paren
 )paren
 (brace
 id|ushort
@@ -39719,6 +39801,9 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|ushort
 DECL|function|AscInitSetConfig
 id|AscInitSetConfig
@@ -39728,6 +39813,7 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
+)paren
 )paren
 (brace
 id|ushort
@@ -39789,6 +39875,9 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|ushort
 DECL|function|AscInitFromAscDvcVar
 id|AscInitFromAscDvcVar
@@ -39798,6 +39887,7 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
+)paren
 )paren
 (brace
 id|PortAddr
@@ -40149,6 +40239,9 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|ushort
 DECL|function|AscInitAsc1000Driver
 id|AscInitAsc1000Driver
@@ -40158,6 +40251,7 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
+)paren
 )paren
 (brace
 id|ushort
@@ -40348,6 +40442,9 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
+id|__initfunc
+c_func
+(paren
 id|ushort
 DECL|function|AscInitAscDvcVar
 id|AscInitAscDvcVar
@@ -40357,6 +40454,7 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
+)paren
 )paren
 (brace
 r_int

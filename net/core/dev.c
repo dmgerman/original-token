@@ -1197,14 +1197,6 @@ suffix:semicolon
 multiline_comment|/* used to say if the packet should go&t;*/
 multiline_comment|/* at the front or the back of the&t;*/
 multiline_comment|/* queue - front is a retransmit try&t;*/
-macro_line|#if CONFIG_SKB_CHECK 
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-macro_line|#endif    
 multiline_comment|/*&n;&t; *&t;Negative priority is used to flag a frame that is being pulled from the&n;&t; *&t;queue front as a retransmit attempt. It therefore goes back on the queue&n;&t; *&t;start on a failure.&n;&t; */
 r_if
 c_cond
@@ -1439,14 +1431,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_SKB_CHECK 
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-macro_line|#endif    
 multiline_comment|/*&n;&t; *&t;If the address has not been resolved. Call the device header rebuilder.&n;&t; *&t;This can cover all protocols and technically not just ARP either.&n;&t; */
 r_if
 c_cond
@@ -1683,14 +1667,6 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Add it to the &quot;backlog&quot; queue. &n;&t; */
-macro_line|#if CONFIG_SKB_CHECK
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 id|skb_queue_tail
 c_func
 (paren

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/*#define TUNNEL_DEBUG*/
 multiline_comment|/* &n; *&t;Our header is a simple IP packet with no options&n; */
 DECL|macro|tunnel_hlen
@@ -598,7 +599,10 @@ id|dev-&gt;priv
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Called when a new tunnel device is initialized.&n; *&t;The new tunnel device structure is passed to us.&n; */
-DECL|function|tunnel_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|tunnel_init
 c_func
@@ -607,6 +611,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 multiline_comment|/* Oh, just say we&squot;re here, in case anyone cares */

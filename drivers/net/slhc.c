@@ -25,6 +25,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;net/slhc_vj.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
@@ -2919,12 +2920,16 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#else /* MODULE */
-DECL|function|slhc_install
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|slhc_install
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 )brace

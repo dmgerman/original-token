@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1851,12 +1852,16 @@ op_amp
 id|psaux_fops
 )brace
 suffix:semicolon
-DECL|function|psaux_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|psaux_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -2415,13 +2420,17 @@ suffix:semicolon
 multiline_comment|/* Read the data */
 )brace
 multiline_comment|/*&n; * See if we can find a 82C710 device. Read mouse address.&n; */
-DECL|function|probe_qp
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|probe_qp
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|outb_p

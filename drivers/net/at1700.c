@@ -24,16 +24,18 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/* This unusual address order is used to verify the CONFIG register. */
-DECL|variable|at1700_probe_list
+DECL|variable|__initdata
 r_static
 r_int
 id|at1700_probe_list
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x260
@@ -307,8 +309,11 @@ id|at1700_probe_list
 )brace
 suffix:semicolon
 macro_line|#else
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|at1700_probe
 id|at1700_probe
 c_func
 (paren
@@ -316,6 +321,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -420,7 +426,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* The Fujitsu datasheet suggests that the NIC be probed for by checking its&n;   &quot;signature&quot;, the default bit pattern after a reset.  This *doesn&squot;t* work --&n;   there is no way to reset the bus interface without a complete power-cycle!&n;&n;   It turns out that ATI came to the same conclusion I did: the only thing&n;   that can be done is checking a few bits and then diving right into an&n;   EEPROM read. */
-DECL|function|at1700_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|at1700_probe1
 c_func
@@ -432,6 +441,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_char
@@ -998,7 +1008,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|read_eeprom
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|read_eeprom
@@ -1009,6 +1022,7 @@ id|ioaddr
 comma
 r_int
 id|location
+)paren
 )paren
 (brace
 r_int

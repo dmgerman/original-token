@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_mouse.h&gt;
@@ -675,12 +676,16 @@ op_amp
 id|atari_mouse_fops
 )brace
 suffix:semicolon
-DECL|function|atari_mouse_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|atari_mouse_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|mouse.active

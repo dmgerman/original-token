@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.28 1997/04/15 09:01:10 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
+multiline_comment|/* $Id: time.c,v 1.29 1997/04/18 09:48:44 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1443,15 +1443,12 @@ id|g0
 id|bne
 l_int|1
 id|b
-id|subcc
+id|cmp
 op_mod
 id|o1
 comma
-l_int|0x0
-comma
-op_mod
-id|g0
-id|bpos
+l_int|0
+id|bge
 l_float|1f
 id|srl
 op_mod
@@ -1466,21 +1463,23 @@ op_mod
 id|hi
 c_func
 (paren
-l_int|0x2710
+id|tick
 )paren
 comma
 op_mod
 id|o3
-op_logical_or
+id|ld
+(braket
 op_mod
 id|o3
-comma
+op_plus
 op_mod
 id|lo
 c_func
 (paren
-l_int|0x2710
+id|tick
 )paren
+)braket
 comma
 op_mod
 id|o3

@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -934,6 +935,7 @@ id|arg
 )paren
 suffix:semicolon
 r_static
+r_inline
 r_int
 id|stl_initbrds
 c_func
@@ -952,6 +954,7 @@ id|brdp
 )paren
 suffix:semicolon
 r_static
+r_inline
 r_int
 id|stl_initeio
 c_func
@@ -962,6 +965,7 @@ id|brdp
 )paren
 suffix:semicolon
 r_static
+r_inline
 r_int
 id|stl_initech
 c_func
@@ -1202,6 +1206,7 @@ id|portnr
 suffix:semicolon
 macro_line|#ifdef&t;CONFIG_PCI
 r_static
+r_inline
 r_int
 id|stl_findpcibrds
 c_func
@@ -7580,7 +7585,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Map in interrupt vector to this driver. Check that we don&squot;t&n; *&t;already have this vector mapped, we might be sharing this&n; *&t;interrupt across multiple boards.&n; */
-DECL|function|stl_mapirq
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|stl_mapirq
@@ -7588,6 +7596,7 @@ c_func
 (paren
 r_int
 id|irq
+)paren
 )paren
 (brace
 r_int
@@ -7699,7 +7708,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Initialize all the ports on a panel.&n; */
-DECL|function|stl_initports
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|stl_initports
@@ -7712,6 +7724,7 @@ comma
 id|stlpanel_t
 op_star
 id|panelp
+)paren
 )paren
 (brace
 id|stlport_t
@@ -7915,6 +7928,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;Try to find and initialize an EasyIO board.&n; */
 DECL|function|stl_initeio
 r_static
+r_inline
 r_int
 id|stl_initeio
 c_func
@@ -8329,6 +8343,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;Try to find an ECH board and initialize it. This code is capable of&n; *&t;dealing with all types of ECH board.&n; */
 DECL|function|stl_initech
 r_static
+r_inline
 r_int
 id|stl_initech
 c_func
@@ -9253,7 +9268,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Initialize and configure the specified board.&n; *&t;Scan through all the boards in the configuration and see what we&n; *&t;can find. Handle EIO and the ECH boards a little differently here&n; *&t;since the initial search and setup is very different.&n; */
-DECL|function|stl_brdinit
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|stl_brdinit
@@ -9262,6 +9280,7 @@ c_func
 id|stlbrd_t
 op_star
 id|brdp
+)paren
 )paren
 (brace
 r_int
@@ -9441,6 +9460,7 @@ multiline_comment|/*&n; *&t;Find any ECH-PCI boards that might be installed. Ini
 macro_line|#ifdef&t;CONFIG_PCI
 DECL|function|stl_findpcibrds
 r_static
+r_inline
 r_int
 id|stl_findpcibrds
 c_func
@@ -9826,6 +9846,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;Scan through all the boards in the configuration and see what we&n; *&t;can find. Handle EIO and the ECH boards a little differently here&n; *&t;since the initial search and setup is too different.&n; */
 DECL|function|stl_initbrds
 r_static
+r_inline
 r_int
 id|stl_initbrds
 c_func
@@ -11219,12 +11240,16 @@ id|rc
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-DECL|function|stl_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|stl_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|printk

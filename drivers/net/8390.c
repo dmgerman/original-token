@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
@@ -3059,7 +3060,10 @@ id|EN0_RXCR
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the rest of the 8390 device structure. */
-DECL|function|ethdev_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ethdev_init
 c_func
@@ -3068,6 +3072,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_if

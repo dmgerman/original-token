@@ -25,7 +25,8 @@ mdefine_line|#define AUTOPROBE_IRQ
 macro_line|#include &quot;NCR5380.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
-macro_line|#include&lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|proc_scsi_pas16
 r_struct
 id|proc_dir_entry
@@ -102,11 +103,12 @@ l_int|11
 )brace
 suffix:semicolon
 multiline_comment|/* The default_irqs array contains values used to set the irq into the&n; * board via software (as must be done on newer model boards without&n; * irq jumpers on the board).  The first value in the array will be&n; * assigned to logical board 0, the next to board 1, etc.&n; */
-DECL|variable|default_irqs
+DECL|variable|__initdata
 r_int
 id|default_irqs
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 id|PAS16_DEFAULT_BOARD_1_IRQ
@@ -132,12 +134,13 @@ DECL|member|irq
 r_int
 id|irq
 suffix:semicolon
-DECL|variable|overrides
 )brace
 id|overrides
 macro_line|#ifdef PAS16_OVERRIDE
+DECL|variable|__initdata
 (braket
 )braket
+id|__initdata
 op_assign
 id|PAS16_OVERRIDE
 suffix:semicolon
@@ -145,6 +148,7 @@ macro_line|#else
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -189,11 +193,12 @@ DECL|member|noauto
 r_int
 id|noauto
 suffix:semicolon
-DECL|variable|bases
+DECL|variable|__initdata
 )brace
 id|bases
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -269,7 +274,11 @@ DECL|macro|rtrc
 mdefine_line|#define rtrc(i) {}
 macro_line|#endif
 multiline_comment|/*&n; * Function : enable_board( int  board_num, unsigned short port )&n; *&n; * Purpose :  set address in new model board&n; *&n; * Inputs : board_num - logical board number 0-3, port - base address&n; *&n; */
-DECL|function|enable_board
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
 r_void
 id|enable_board
 c_func
@@ -280,6 +289,7 @@ comma
 r_int
 r_int
 id|port
+)paren
 )paren
 (brace
 id|outb
@@ -304,7 +314,10 @@ id|MASTER_ADDRESS_PTR
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function : init_board( unsigned short port, int irq )&n; *&n; * Purpose :  Set the board up to handle the SCSI interface&n; *&n; * Inputs : port - base address of the board,&n; *&t;    irq - irq to assign to the SCSI port&n; *&t;    force_irq - set it even if it conflicts with sound driver&n; *&n; */
-DECL|function|init_board
+DECL|function|__initfunc
+id|__initfunc
+(paren
+r_static
 r_void
 id|init_board
 c_func
@@ -318,6 +331,7 @@ id|irq
 comma
 r_int
 id|force_irq
+)paren
 )paren
 (brace
 r_int
@@ -475,7 +489,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Function : pas16_hw_detect( unsigned short board_num )&n; *&n; * Purpose : determine if a pas16 board is present&n; * &n; * Inputs : board_num - logical board number ( 0 - 3 )&n; *&n; * Returns : 0 if board not found, 1 if found.&n; */
-DECL|function|pas16_hw_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
 r_int
 id|pas16_hw_detect
 c_func
@@ -483,6 +501,7 @@ c_func
 r_int
 r_int
 id|board_num
+)paren
 )paren
 (brace
 r_int
@@ -676,7 +695,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function : pas16_setup(char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0]&n; *&t;equal to the number of ints.&n; *&n; */
-DECL|function|pas16_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|pas16_setup
 c_func
@@ -688,6 +710,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_static
@@ -804,7 +827,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* &n; * Function : int pas16_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : detects and initializes PAS16 controllers&n; *&t;that were autoprobed, overridden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
-DECL|function|pas16_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|pas16_detect
 c_func
@@ -812,6 +838,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_static

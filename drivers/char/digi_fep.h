@@ -1,11 +1,12 @@
 multiline_comment|/* DigiBoard PCXX Bios */
-DECL|variable|pcxx_cook
+DECL|variable|__initdata
 r_static
 r_int
 r_char
 id|pcxx_cook
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x4f

@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/module.h&gt;&t;/* support for loadable modules */
 macro_line|#include &lt;linux/sched.h&gt;&t;/* for jiffies, HZ, etc. */
 macro_line|#include &lt;linux/sdladrv.h&gt;&t;/* API definitions */
 macro_line|#include &lt;linux/sdlasfm.h&gt;&t;/* SDLA firmware module definitions */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* for inb(), outb(), etc. */
 DECL|macro|_INB
 mdefine_line|#define _INB(port)&t;&t;(inb(port))
@@ -1155,18 +1156,24 @@ suffix:semicolon
 multiline_comment|/******* Kernel Loadable Module Entry Points ********************************/
 multiline_comment|/*============================================================================&n; * Module &squot;insert&squot; entry point.&n; * o print announcement&n; * o initialize static data&n; * o calibrate SDLA shared memory access delay.&n; *&n; * Return:&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; * Context:&t;process&n; */
 macro_line|#ifdef MODULE
+DECL|function|init_module
 r_int
 id|init_module
 (paren
 r_void
 )paren
 macro_line|#else
+id|__initfunc
+c_func
+(paren
 r_int
 id|wanpipe_init
 c_func
 (paren
 r_void
 )paren
+)paren
+macro_line|#endif
 (brace
 id|printk
 c_func
@@ -1210,6 +1217,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/*============================================================================&n; * Module &squot;remove&squot; entry point.&n; * o release all remaining system resources&n; */
+DECL|function|cleanup_module
 r_void
 id|cleanup_module
 (paren
@@ -1220,6 +1228,7 @@ r_void
 macro_line|#endif
 multiline_comment|/******* Kernel APIs ********************************************************/
 multiline_comment|/*============================================================================&n; * Set up adapter.&n; * o detect adapter type&n; * o verify hardware configuration options&n; * o check for hardware conflicts&n; * o set up adapter shared memory&n; * o test adapter memory&n; * o load firmware&n; * Return:&t;0&t;ok.&n; *&t;&t;&lt; 0&t;error&n; */
+DECL|function|sdla_setup
 r_int
 id|sdla_setup
 (paren
@@ -1651,6 +1660,7 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Shut down SDLA: disable shared memory access and interrupts, stop CPU, etc.&n; */
+DECL|function|sdla_down
 r_int
 id|sdla_down
 (paren
@@ -1823,6 +1833,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Map shared memory window into SDLA adress space.&n; */
+DECL|function|sdla_mapmem
 r_int
 id|sdla_mapmem
 (paren
@@ -2075,6 +2086,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Enable interrupt generation.&n; */
+DECL|function|sdla_inten
 r_int
 id|sdla_inten
 (paren
@@ -2300,6 +2312,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Disable interrupt generation.&n; */
+DECL|function|sdla_intde
 r_int
 id|sdla_intde
 (paren
@@ -2516,6 +2529,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Acknowledge SDLA hardware interrupt.&n; */
+DECL|function|sdla_intack
 r_int
 id|sdla_intack
 (paren
@@ -2677,6 +2691,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Generate an interrupt to adapter&squot;s CPU.&n; */
+DECL|function|sdla_intr
 r_int
 id|sdla_intr
 (paren
@@ -2826,6 +2841,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Execute Adapter Command.&n; * o Set exec flag.&n; * o Busy-wait until flag is reset.&n; * o Return number of loops made, or 0 if command timed out.&n; */
+DECL|function|sdla_exec
 r_int
 id|sdla_exec
 (paren
@@ -2914,6 +2930,7 @@ id|nloops
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Read absolute adapter memory.&n; * Transfer data from adapter&squot;s memory to data buffer.&n; *&n; * Note:&n; * Care should be taken when crossing dual-port memory window boundary.&n; * This function is not atomic, so caller must disable interrupt if&n; * interrupt routines are accessing adapter shared memory.&n; */
+DECL|function|sdla_peek
 r_int
 id|sdla_peek
 (paren
@@ -3082,6 +3099,7 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Write Absolute Adapter Memory.&n; * Transfer data from data buffer to adapter&squot;s memory.&n; *&n; * Note:&n; * Care should be taken when crossing dual-port memory window boundary.&n; * This function is not atomic, so caller must disable interrupt if&n; * interrupt routines are accessing adapter shared memory.&n; */
+DECL|function|sdla_poke
 r_int
 id|sdla_poke
 (paren
@@ -3251,6 +3269,7 @@ macro_line|#ifdef&t;DONT_COMPIPLE_THIS
 macro_line|#endif&t;/* DONT_COMPIPLE_THIS */
 multiline_comment|/****** Hardware-Specific Functions *****************************************/
 multiline_comment|/*============================================================================&n; * Detect adapter type.&n; * o if adapter type is specified then call detection routine for that adapter&n; *   type.  Otherwise call detection routines for every adapter types until&n; *   adapter is detected.&n; *&n; * Notes:&n; * 1) Detection tests are destructive! Adapter will be left in shutdown state&n; *    after the test.&n; */
+DECL|function|sdla_detect
 r_static
 r_int
 id|sdla_detect
@@ -3471,6 +3490,7 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Autoselect memory region. &n; * o try all available DMP address options from the top down until success.&n; */
+DECL|function|sdla_autodpm
 r_static
 r_int
 id|sdla_autodpm
@@ -3577,6 +3597,7 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Set up adapter dual-port memory window. &n; * o shut down adapter&n; * o make sure that no physical memory exists in this region, i.e entire&n; *   region reads 0xFF and is not writable when adapter is shut down.&n; * o initialize adapter hardware&n; * o make sure that region is usable with SDLA card, i.e. we can write to it&n; *   when adapter is configured.&n; */
+DECL|function|sdla_setdpm
 r_static
 r_int
 id|sdla_setdpm
@@ -3670,6 +3691,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Load adapter from the memory image of the SDLA firmware module. &n; * o verify firmware integrity and compatibility&n; * o start adapter up&n; */
+DECL|function|sdla_load
 r_static
 r_int
 id|sdla_load
@@ -4009,6 +4031,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Initialize SDLA hardware: setup memory window, IRQ, etc.&n; */
+DECL|function|sdla_init
 r_static
 r_int
 id|sdla_init
@@ -4105,6 +4128,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Test adapter on-board memory.&n; * o slide DPM window from the bottom up and test adapter memory segment by&n; *   segment.&n; * Return adapter memory size.&n; */
+DECL|function|sdla_memtest
 r_static
 r_int
 r_int
@@ -4172,6 +4196,7 @@ id|memsize
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Prepare boot-time firmware configuration data.&n; * o position DPM window&n; * o initialize configuration data area&n; */
+DECL|function|sdla_bootcfg
 r_static
 r_int
 id|sdla_bootcfg
@@ -4342,6 +4367,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Prepare configuration byte identifying adapter type and CPU clock rate.&n; */
+DECL|function|make_config_byte
 r_static
 r_int
 r_char
@@ -4440,6 +4466,7 @@ id|byte
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Start adapter&squot;s CPU.&n; * o calculate a pointer to adapter&squot;s cold boot entry point&n; * o position DPM window&n; * o place boot instruction (jp addr) at cold boot entry point&n; * o start CPU&n; */
+DECL|function|sdla_start
 r_static
 r_int
 id|sdla_start
@@ -4880,6 +4907,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Initialize S502A adapter.&n; */
+DECL|function|init_s502a
 r_static
 r_int
 id|init_s502a
@@ -5015,6 +5043,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Initialize S502E adapter.&n; */
+DECL|function|init_s502e
 r_static
 r_int
 id|init_s502e
@@ -5175,6 +5204,7 @@ id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Initialize S503 adapter.&n; * ---------------------------------------------------------------------------&n; */
+DECL|function|init_s503
 r_static
 r_int
 id|init_s503
@@ -5306,6 +5336,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Initialize S507 adapter.&n; */
+DECL|function|init_s507
 r_static
 r_int
 id|init_s507
@@ -5557,6 +5588,7 @@ id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Initialize S508 adapter.&n; */
+DECL|function|init_s508
 r_static
 r_int
 id|init_s508
@@ -5693,6 +5725,7 @@ id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Detect S502A adapter.&n; *&t;Following tests are used to detect S502A adapter:&n; *&t;1. All registers other than status (BASE) should read 0xFF&n; *&t;2. After writing 00001000b to control register, status register should&n; *&t;   read 01000000b.&n; *&t;3. After writing 0 to control register, status register should still&n; *&t;   read  01000000b.&n; *&t;4. After writing 00000100b to control register, status register should&n; *&t;   read 01000100b.&n; *&t;Return 1 if detected o.k. or 0 if failed.&n; *&t;Note:&t;This test is destructive! Adapter will be left in shutdown&n; *&t;&t;state after the test.&n; */
+DECL|function|detect_s502a
 r_static
 r_int
 id|detect_s502a
@@ -5940,6 +5973,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Detect S502E adapter.&n; *&t;Following tests are used to verify adapter presence:&n; *&t;1. All registers other than status (BASE) should read 0xFF.&n; *&t;2. After writing 0 to CPU control register (BASE+3), status register&n; *&t;   (BASE) should read 11111000b.&n; *&t;3. After writing 00000100b to port BASE (set bit 2), status register&n; *&t;   (BASE) should read 11111100b.&n; *&t;Return 1 if detected o.k. or 0 if failed.&n; *&t;Note:&t;This test is destructive! Adapter will be left in shutdown&n; *&t;&t;state after the test.&n; */
+DECL|function|detect_s502e
 r_static
 r_int
 id|detect_s502e
@@ -6112,6 +6146,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Detect s503 adapter.&n; *&t;Following tests are used to verify adapter presence:&n; *&t;1. All registers other than status (BASE) should read 0xFF.&n; *&t;2. After writing 0 to control register (BASE), status register (BASE)&n; *&t;   should read 11110000b.&n; *&t;3. After writing 00000100b (set bit 2) to control register (BASE),&n; *&t;   status register should read 11110010b.&n; *&t;Return 1 if detected o.k. or 0 if failed.&n; *&t;Note:&t;This test is destructive! Adapter will be left in shutdown&n; *&t;&t;state after the test.&n; */
+DECL|function|detect_s503
 r_static
 r_int
 id|detect_s503
@@ -6282,6 +6317,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Detect s507 adapter.&n; *&t;Following tests are used to detect s507 adapter:&n; *&t;1. All ports should read the same value.&n; *&t;2. After writing 0x00 to control register, status register should read&n; *&t;   ?011000?b.&n; *&t;3. After writing 0x01 to control register, status register should read&n; *&t;   ?011001?b.&n; *&t;Return 1 if detected o.k. or 0 if failed.&n; *&t;Note:&t;This test is destructive! Adapter will be left in shutdown&n; *&t;&t;state after the test.&n; */
+DECL|function|detect_s507
 r_static
 r_int
 id|detect_s507
@@ -6466,6 +6502,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Detect s508 adapter.&n; *&t;Following tests are used to detect s508 adapter:&n; *&t;1. After writing 0x00 to control register, status register should read&n; *&t;   ??000000b.&n; *&t;2. After writing 0x10 to control register, status register should read&n; *&t;   ??010000b&n; *&t;Return 1 if detected o.k. or 0 if failed.&n; *&t;Note:&t;This test is destructive! Adapter will be left in shutdown&n; *&t;&t;state after the test.&n; */
+DECL|function|detect_s508
 r_static
 r_int
 id|detect_s508
@@ -6595,6 +6632,7 @@ suffix:semicolon
 )brace
 multiline_comment|/******* Miscellaneous ******************************************************/
 multiline_comment|/*============================================================================&n; * Calibrate SDLA memory access delay.&n; * Count number of idle loops made within 1 second and then calculate the&n; * number of loops that should be made to achive desired delay.&n; */
+DECL|function|calibrate_delay
 r_static
 r_int
 id|calibrate_delay
@@ -6647,6 +6685,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Get option&squot;s index into the options list.&n; *&t;Return option&squot;s index (1 .. N) or zero if option is invalid.&n; */
+DECL|function|get_option_index
 r_static
 r_int
 id|get_option_index
@@ -6697,6 +6736,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Check memory region to see if it&squot;s available. &n; * Return:&t;0&t;ok.&n; */
+DECL|function|check_memregion
 r_static
 r_int
 id|check_memregion
@@ -6769,6 +6809,7 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Test memory region.&n; * Return:&t;size of the region that passed the test.&n; * Note:&t;Region size must be multiple of 2 !&n; */
+DECL|function|test_memregion
 r_static
 r_int
 id|test_memregion
@@ -6959,6 +7000,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Calculate 16-bit CRC using CCITT polynomial.&n; */
+DECL|function|checksum
 r_static
 r_int
 r_int

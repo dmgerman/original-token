@@ -837,12 +837,6 @@ suffix:semicolon
 r_int
 id|ip_length
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|dest
-)paren
-suffix:semicolon
 id|eth
 op_assign
 (paren

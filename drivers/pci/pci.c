@@ -2263,6 +2263,16 @@ c_func
 (paren
 id|INTEL
 comma
+id|INTEL_82371AB
+comma
+l_string|&quot;82371AB 430TX PIIX4&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
 id|INTEL_P6
 comma
 l_string|&quot;Orion P6&quot;

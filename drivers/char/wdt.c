@@ -17,6 +17,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|wdt_is_open
 r_static
 r_int
@@ -1227,95 +1228,8 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;WDT501-P module at %X(Interrupt %d)&bslash;n&quot;
-comma
-id|io
-comma
-id|irq
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|irq
-comma
-id|wdt_interrupt
-comma
-id|SA_INTERRUPT
-comma
-l_string|&quot;wdt501p&quot;
-comma
-l_int|NULL
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;IRQ %d is not free.&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-id|misc_register
-c_func
-(paren
-op_amp
-id|wdt_miscdev
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_WDT_501&t;
-id|misc_register
-c_func
-(paren
-op_amp
-id|temp_miscdev
-)paren
-suffix:semicolon
-macro_line|#endif&t;
-id|request_region
-c_func
-(paren
-id|io
-comma
-l_int|8
-comma
-l_string|&quot;wdt501&quot;
-)paren
-suffix:semicolon
-id|notifier_chain_register
-c_func
-(paren
-op_amp
-id|boot_notifier_list
-comma
-op_amp
-id|wdt_notifier
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
+DECL|macro|wdt_init
+mdefine_line|#define wdt_init init_module
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -1367,13 +1281,17 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|function|wdt_init
+macro_line|#endif
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|wdt_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|printk
@@ -1457,5 +1375,4 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

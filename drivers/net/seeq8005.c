@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -31,13 +32,14 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;seeq8005.h&quot;
 multiline_comment|/* First, a few definitions that the brave might change. */
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
-DECL|variable|seeq8005_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|seeq8005_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x300
@@ -278,8 +280,11 @@ id|seeq8005_portlist
 )brace
 suffix:semicolon
 macro_line|#else
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|seeq8005_probe
 id|seeq8005_probe
 c_func
 (paren
@@ -287,6 +292,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -391,7 +397,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* This is the real probe routine.  Linux has a history of friendly device&n;   probes on the ISA bus.  A good device probes avoids doing writes, and&n;   verifies that the correct device exists and functions.  */
-DECL|function|seeq8005_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|seeq8005_probe1
@@ -404,6 +413,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_static

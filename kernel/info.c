@@ -44,7 +44,7 @@ id|sysinfo
 )paren
 )paren
 suffix:semicolon
-id|lock_kernel
+id|cli
 c_func
 (paren
 )paren
@@ -109,6 +109,11 @@ id|nr_tasks
 op_minus
 l_int|1
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|si_meminfo
 c_func
 (paren
@@ -121,11 +126,6 @@ c_func
 (paren
 op_amp
 id|val
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if

@@ -18,7 +18,8 @@ mdefine_line|#define AUTOPROBE_IRQ
 macro_line|#include &quot;NCR5380.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
-macro_line|#include&lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|proc_scsi_t128
 r_struct
 id|proc_dir_entry
@@ -55,12 +56,13 @@ DECL|member|irq
 r_int
 id|irq
 suffix:semicolon
-DECL|variable|overrides
 )brace
 id|overrides
 macro_line|#ifdef T128_OVERRIDE
+DECL|variable|__initdata
 (braket
 )braket
+id|__initdata
 op_assign
 id|T128_OVERRIDE
 suffix:semicolon
@@ -68,6 +70,7 @@ macro_line|#else
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -113,11 +116,12 @@ DECL|member|noauto
 r_int
 id|noauto
 suffix:semicolon
-DECL|variable|bases
+DECL|variable|__initdata
 )brace
 id|bases
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -183,11 +187,12 @@ DECL|member|offset
 r_int
 id|offset
 suffix:semicolon
-DECL|variable|signatures
+DECL|variable|__initdata
 )brace
 id|signatures
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -201,7 +206,10 @@ suffix:semicolon
 DECL|macro|NO_SIGNATURES
 mdefine_line|#define NO_SIGNATURES (sizeof (signatures) /  sizeof (struct signature))
 multiline_comment|/*&n; * Function : t128_setup(char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0]&n; *&t;equal to the number of ints.&n; *&n; */
-DECL|function|t128_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|t128_setup
 c_func
@@ -213,6 +221,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_static
@@ -331,7 +340,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* &n; * Function : int t128_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : detects and initializes T128,T128F, or T228 controllers&n; *&t;that were autoprobed, overridden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
-DECL|function|t128_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|t128_detect
 c_func
@@ -339,6 +351,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_static

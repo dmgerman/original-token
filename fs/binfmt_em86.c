@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|EM86_INTERP
 mdefine_line|#define EM86_INTERP&t;&quot;/usr/bin/em86&quot;
 DECL|macro|EM86_I_NAME

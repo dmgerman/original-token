@@ -26,16 +26,18 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|BLOCKOUT_2
 mdefine_line|#define BLOCKOUT_2
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed.&n;   The 3c501 can be at many locations, but here are the popular ones. */
-DECL|variable|netcard_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|netcard_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x280
@@ -304,7 +306,10 @@ id|netcard_portlist
 )brace
 suffix:semicolon
 macro_line|#else
-DECL|function|el1_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|el1_probe
 c_func
@@ -313,6 +318,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -417,7 +423,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; *&t;The actual probe.&n; */
-DECL|function|el1_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|el1_probe1
@@ -430,6 +439,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_const

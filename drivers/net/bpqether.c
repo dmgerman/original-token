@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/bpqether.h&gt;
@@ -2247,12 +2248,16 @@ suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------ */
 multiline_comment|/*&n; * Initialize driver. To be called from af_ax25 if not compiled as a&n; * module&n; */
-DECL|function|bpq_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|bpq_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;&t;/* kmalloc(), kfree() */
 macro_line|#include &lt;linux/router.h&gt;&t;/* WAN router definitions */
 macro_line|#include &lt;linux/wanpipe.h&gt;&t;/* WANPIPE common user API definitions */
 macro_line|#include &lt;linux/if_arp.h&gt;&t;/* ARPHRD_* defines */
+macro_line|#include &lt;linux/init.h&gt;&t;&t;/* __initfunc et al. */
 macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* for inb(), outb(), etc. */
 DECL|macro|_GNUC_
@@ -591,7 +592,10 @@ id|len
 suffix:semicolon
 multiline_comment|/****** Public Functions ****************************************************/
 multiline_comment|/*============================================================================&n; * Frame relay protocol initialization routine.&n; *&n; * This routine is called by the main WANPIPE module during setup.  At this&n; * point adapter is completely initialized and firmware is running.&n; *  o read firmware version (to make sure it&squot;s alive)&n; *  o configure adapter&n; *  o initialize protocol-specific fields of the adapter data space.&n; *&n; * Return:&t;0&t;o.k.&n; *&t;&t;&lt; 0&t;failure.&n; */
-DECL|function|wpf_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|wpf_init
 (paren
@@ -602,6 +606,7 @@ comma
 id|wandev_conf_t
 op_star
 id|conf
+)paren
 )paren
 (brace
 r_union

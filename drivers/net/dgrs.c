@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -2741,9 +2742,12 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Download the board firmware&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|dgrs_download
 id|dgrs_download
 c_func
 (paren
@@ -2751,6 +2755,7 @@ r_struct
 id|device
 op_star
 id|dev0
+)paren
 )paren
 (brace
 id|DGRS_PRIV
@@ -3365,8 +3370,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Probe (init) a board&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|dgrs_probe1
 id|dgrs_probe1
 c_func
 (paren
@@ -3374,6 +3382,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|DGRS_PRIV
@@ -3663,8 +3672,11 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|dgrs_initclone
 id|dgrs_initclone
 c_func
 (paren
@@ -3672,6 +3684,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|DGRS_PRIV
@@ -3741,9 +3754,12 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|dgrs_found_device
 id|dgrs_found_device
 c_func
 (paren
@@ -3766,6 +3782,7 @@ id|plxreg
 comma
 id|ulong
 id|plxdma
+)paren
 )paren
 (brace
 id|DGRS_PRIV
@@ -4212,9 +4229,12 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Scan for all boards&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|dgrs_scan
 id|dgrs_scan
 c_func
 (paren
@@ -4222,6 +4242,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -4584,6 +4605,7 @@ id|is2iv
 (braket
 l_int|8
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0
@@ -5194,8 +5216,11 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|dgrs_probe
 id|dgrs_probe
 c_func
 (paren
@@ -5203,6 +5228,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int

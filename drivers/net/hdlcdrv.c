@@ -1255,12 +1255,6 @@ id|skb-&gt;mac.raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|netif_rx
 c_func
 (paren

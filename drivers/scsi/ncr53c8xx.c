@@ -2975,7 +2975,7 @@ r_static
 r_char
 id|name
 (braket
-l_int|10
+l_int|16
 )braket
 suffix:semicolon
 id|sprintf

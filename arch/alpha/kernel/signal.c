@@ -252,9 +252,11 @@ r_int
 r_int
 id|oldmask
 suffix:semicolon
-id|lock_kernel
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 id|oldmask
@@ -266,6 +268,13 @@ op_assign
 id|mask
 op_amp
 id|_BLOCKABLE
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -299,21 +308,11 @@ comma
 l_int|0
 )paren
 )paren
-r_goto
-id|out
-suffix:semicolon
-)brace
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINTR
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Do a signal return; undo the signal stack.&n; */
 DECL|function|do_sigreturn
@@ -350,11 +349,6 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* verify that it&squot;s a good sigcontext before using it */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -372,13 +366,13 @@ id|sc
 )paren
 )paren
 )paren
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|give_sigsegv
 suffix:semicolon
-id|get_user
+r_if
+c_cond
+(paren
+id|__get_user
 c_func
 (paren
 id|ps
@@ -386,21 +380,18 @@ comma
 op_amp
 id|sc-&gt;sc_ps
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_or
 id|ps
 op_ne
 l_int|8
 )paren
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|give_sigsegv
 suffix:semicolon
-id|get_user
+r_if
+c_cond
+(paren
+id|__get_user
 c_func
 (paren
 id|mask
@@ -408,23 +399,19 @@ comma
 op_amp
 id|sc-&gt;sc_mask
 )paren
-suffix:semicolon
-r_if
-c_cond
+op_logical_or
 (paren
 id|mask
 op_amp
 op_complement
 id|_BLOCKABLE
 )paren
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
 )paren
+r_goto
+id|give_sigsegv
 suffix:semicolon
 multiline_comment|/* ok, looks fine, start restoring */
-id|get_user
+id|__get_user
 c_func
 (paren
 id|usp
@@ -440,7 +427,7 @@ c_func
 id|usp
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;pc
@@ -461,7 +448,7 @@ id|current-&gt;blocked
 op_assign
 id|mask
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r0
@@ -471,7 +458,7 @@ op_plus
 l_int|0
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r1
@@ -481,7 +468,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r2
@@ -491,7 +478,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r3
@@ -501,7 +488,7 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r4
@@ -511,7 +498,7 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r5
@@ -521,7 +508,7 @@ op_plus
 l_int|5
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r6
@@ -531,7 +518,7 @@ op_plus
 l_int|6
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r7
@@ -541,7 +528,7 @@ op_plus
 l_int|7
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r8
@@ -551,7 +538,7 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|sw-&gt;r9
@@ -561,7 +548,7 @@ op_plus
 l_int|9
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|sw-&gt;r10
@@ -571,7 +558,7 @@ op_plus
 l_int|10
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|sw-&gt;r11
@@ -581,7 +568,7 @@ op_plus
 l_int|11
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|sw-&gt;r12
@@ -591,7 +578,7 @@ op_plus
 l_int|12
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|sw-&gt;r13
@@ -601,7 +588,7 @@ op_plus
 l_int|13
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|sw-&gt;r14
@@ -611,7 +598,7 @@ op_plus
 l_int|14
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|sw-&gt;r15
@@ -621,7 +608,7 @@ op_plus
 l_int|15
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r16
@@ -631,7 +618,7 @@ op_plus
 l_int|16
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r17
@@ -641,7 +628,7 @@ op_plus
 l_int|17
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r18
@@ -651,7 +638,7 @@ op_plus
 l_int|18
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r19
@@ -661,7 +648,7 @@ op_plus
 l_int|19
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r20
@@ -671,7 +658,7 @@ op_plus
 l_int|20
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r21
@@ -681,7 +668,7 @@ op_plus
 l_int|21
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r22
@@ -691,7 +678,7 @@ op_plus
 l_int|22
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r23
@@ -701,7 +688,7 @@ op_plus
 l_int|23
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r24
@@ -711,7 +698,7 @@ op_plus
 l_int|24
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r25
@@ -721,7 +708,7 @@ op_plus
 l_int|25
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r26
@@ -731,7 +718,7 @@ op_plus
 l_int|26
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r27
@@ -741,7 +728,7 @@ op_plus
 l_int|27
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;r28
@@ -751,7 +738,7 @@ op_plus
 l_int|28
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|regs-&gt;gp
@@ -775,7 +762,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|get_user
+id|__get_user
 c_func
 (paren
 id|sw-&gt;fp
@@ -789,6 +776,11 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* send SIGTRAP if we&squot;re single-stepping: */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -805,6 +797,26 @@ comma
 id|current
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+id|give_sigsegv
+suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 id|unlock_kernel
@@ -909,7 +921,7 @@ r_int
 id|sc
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|oldmask
@@ -918,7 +930,7 @@ op_amp
 id|sc-&gt;sc_mask
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|8
@@ -927,7 +939,7 @@ op_amp
 id|sc-&gt;sc_ps
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;pc
@@ -936,7 +948,7 @@ op_amp
 id|sc-&gt;sc_pc
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|oldsp
@@ -946,7 +958,7 @@ op_plus
 l_int|30
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r0
@@ -956,7 +968,7 @@ op_plus
 l_int|0
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r1
@@ -966,7 +978,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r2
@@ -976,7 +988,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r3
@@ -986,7 +998,7 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r4
@@ -996,7 +1008,7 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r5
@@ -1006,7 +1018,7 @@ op_plus
 l_int|5
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r6
@@ -1016,7 +1028,7 @@ op_plus
 l_int|6
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r7
@@ -1026,7 +1038,7 @@ op_plus
 l_int|7
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r8
@@ -1036,7 +1048,7 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|sw-&gt;r9
@@ -1046,7 +1058,7 @@ op_plus
 l_int|9
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|sw-&gt;r10
@@ -1056,7 +1068,7 @@ op_plus
 l_int|10
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|sw-&gt;r11
@@ -1066,7 +1078,7 @@ op_plus
 l_int|11
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|sw-&gt;r12
@@ -1076,7 +1088,7 @@ op_plus
 l_int|12
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|sw-&gt;r13
@@ -1086,7 +1098,7 @@ op_plus
 l_int|13
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|sw-&gt;r14
@@ -1096,7 +1108,7 @@ op_plus
 l_int|14
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|sw-&gt;r15
@@ -1106,7 +1118,7 @@ op_plus
 l_int|15
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r16
@@ -1116,7 +1128,7 @@ op_plus
 l_int|16
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r17
@@ -1126,7 +1138,7 @@ op_plus
 l_int|17
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r18
@@ -1136,7 +1148,7 @@ op_plus
 l_int|18
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r19
@@ -1146,7 +1158,7 @@ op_plus
 l_int|19
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r20
@@ -1156,7 +1168,7 @@ op_plus
 l_int|20
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r21
@@ -1166,7 +1178,7 @@ op_plus
 l_int|21
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r22
@@ -1176,7 +1188,7 @@ op_plus
 l_int|22
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r23
@@ -1186,7 +1198,7 @@ op_plus
 l_int|23
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r24
@@ -1196,7 +1208,7 @@ op_plus
 l_int|24
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r25
@@ -1206,7 +1218,7 @@ op_plus
 l_int|25
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r26
@@ -1216,7 +1228,7 @@ op_plus
 l_int|26
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r27
@@ -1226,7 +1238,7 @@ op_plus
 l_int|27
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;r28
@@ -1236,7 +1248,7 @@ op_plus
 l_int|28
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;gp
@@ -1260,7 +1272,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_user
+id|__put_user
 c_func
 (paren
 id|sw-&gt;fp
@@ -1273,7 +1285,7 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;trap_a0
@@ -1282,7 +1294,7 @@ op_amp
 id|sc-&gt;sc_traparg_a0
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;trap_a1
@@ -1291,7 +1303,7 @@ op_amp
 id|sc-&gt;sc_traparg_a1
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;trap_a2
@@ -1301,7 +1313,7 @@ id|sc-&gt;sc_traparg_a2
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * The following is:&n;&t; *&n;&t; * bis $30,$30,$16&n;&t; * addq $31,0x67,$0&n;&t; * call_pal callsys&n;&t; *&n;&t; * ie, &quot;sigreturn(stack-pointer)&quot;&n;&t; */
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|0x43ecf40047de0410
@@ -1311,7 +1323,7 @@ op_plus
 l_int|0
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|0x0000000000000083

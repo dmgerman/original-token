@@ -1623,6 +1623,7 @@ op_eq
 id|ICMP_SOURCE_QUENCH
 )paren
 (brace
+macro_line|#if 0 /* FIXME:&t;If you check the rest of the code, this is a NOP!&n;       * &t;Someone figure out what we were trying to be doing&n;       * &t;here.  Besides, cong_window is a TCP thing and thus&n;       * &t;I moved it out of normal sock and into tcp_opt.&n;       */
 multiline_comment|/* Slow down! */
 r_if
 c_cond
@@ -1637,6 +1638,7 @@ id|sk-&gt;cong_window
 op_div
 l_int|2
 suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace

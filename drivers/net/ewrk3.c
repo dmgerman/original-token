@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -633,7 +634,10 @@ multiline_comment|/*&n;** Miscellaneous defines...&n;*/
 DECL|macro|INIT_EWRK3
 mdefine_line|#define INIT_EWRK3 {&bslash;&n;    outb(EEPROM_INIT, EWRK3_IOPR);&bslash;&n;    udelay(1000);&bslash;&n;}
 "&f;"
-DECL|function|ewrk3_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ewrk3_probe
 c_func
@@ -642,6 +646,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -779,9 +784,12 @@ r_return
 id|status
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|ewrk3_hw_init
 id|ewrk3_hw_init
 c_func
 (paren
@@ -792,6 +800,7 @@ id|dev
 comma
 id|u_long
 id|iobase
+)paren
 )paren
 (brace
 r_struct
@@ -5465,7 +5474,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** ISA bus I/O device probe&n;*/
-DECL|function|isa_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|isa_probe
@@ -5478,6 +5490,7 @@ id|dev
 comma
 id|u_long
 id|ioaddr
+)paren
 )paren
 (brace
 r_int
@@ -5658,7 +5671,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** EISA bus I/O device probe. Probe from slot 1 since slot 0 is usually&n;** the motherboard.&n;*/
-DECL|function|eisa_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|eisa_probe
@@ -5671,6 +5687,7 @@ id|dev
 comma
 id|u_long
 id|ioaddr
+)paren
 )paren
 (brace
 r_int
@@ -5885,11 +5902,14 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Search the entire &squot;eth&squot; device list for a fixed probe. If a match isn&squot;t&n;** found then check for an autoprobe or unused device location. If they&n;** are not available then insert a new device structure at the end of&n;** the current list.&n;*/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_struct
 id|device
 op_star
-DECL|function|alloc_device
 id|alloc_device
 c_func
 (paren
@@ -5900,6 +5920,7 @@ id|dev
 comma
 id|u_long
 id|iobase
+)paren
 )paren
 (brace
 r_struct
@@ -6128,11 +6149,14 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** If at end of eth device list and can&squot;t use current entry, malloc&n;** one up. If memory could not be allocated, print an error message.&n;*/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_struct
 id|device
 op_star
-DECL|function|insert_device
 id|insert_device
 c_func
 (paren
@@ -6153,6 +6177,7 @@ id|init
 r_struct
 id|device
 op_star
+)paren
 )paren
 )paren
 (brace
@@ -6278,15 +6303,19 @@ r_return
 id|dev
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|ewrk3_dev_index
 id|ewrk3_dev_index
 c_func
 (paren
 r_char
 op_star
 id|s
+)paren
 )paren
 (brace
 r_int
@@ -6559,7 +6588,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Look for a particular board name in the on-board EEPROM.&n;*/
-DECL|function|EthwrkSignature
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|EthwrkSignature
@@ -6572,6 +6604,7 @@ comma
 r_char
 op_star
 id|eeprom_image
+)paren
 )paren
 (brace
 id|u_long
@@ -6739,7 +6772,10 @@ suffix:semicolon
 multiline_comment|/* return the device name string */
 )brace
 multiline_comment|/*&n;** Look for a special sequence in the Ethernet station address PROM that&n;** is common across all EWRK3 products.&n;**&n;** Search the Ethernet address ROM for the signature. Since the ROM address&n;** counter can start at an arbitrary point, the search must include the entire&n;** probe sequence length plus the (length_of_the_signature - 1).&n;** Stop the search IMMEDIATELY after the signature is found so that the&n;** PROM address counter is correctly positioned at the start of the&n;** ethernet address for later read out.&n;*/
-DECL|function|DevicePresent
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|DevicePresent
@@ -6747,6 +6783,7 @@ c_func
 (paren
 id|u_long
 id|iobase
+)paren
 )paren
 (brace
 r_union
@@ -6906,7 +6943,10 @@ r_return
 id|status
 suffix:semicolon
 )brace
-DECL|function|get_hw_addr
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|u_char
 id|get_hw_addr
@@ -6923,6 +6963,7 @@ id|eeprom_image
 comma
 r_char
 id|chipType
+)paren
 )paren
 (brace
 r_int
@@ -7266,7 +7307,10 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Look for a particular board name in the EISA configuration space&n;*/
-DECL|function|EISA_signature
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|EISA_signature
@@ -7278,6 +7322,7 @@ id|name
 comma
 id|s32
 id|eisa_id
+)paren
 )paren
 (brace
 id|u_long

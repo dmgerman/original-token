@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -28,12 +29,13 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-DECL|variable|fmv18x_probe_list
+DECL|variable|__initdata
 r_static
 r_int
 id|fmv18x_probe_list
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x220
@@ -290,8 +292,11 @@ id|fmv18x_probe_list
 )brace
 suffix:semicolon
 macro_line|#else
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|fmv18x_probe
 id|fmv18x_probe
 c_func
 (paren
@@ -299,6 +304,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -403,7 +409,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* The Fujitsu datasheet suggests that the NIC be probed for by checking its&n;   &quot;signature&quot;, the default bit pattern after a reset.  This *doesn&squot;t* work --&n;   there is no way to reset the bus interface without a complete power-cycle!&n;&n;   It turns out that ATI came to the same conclusion I did: the only thing&n;   that can be done is checking a few bits and then diving right into MAC&n;   address check. */
-DECL|function|fmv18x_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|fmv18x_probe1
 c_func
@@ -415,6 +424,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_char

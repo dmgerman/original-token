@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &quot;kbd_kern.h&quot;
@@ -3527,12 +3528,16 @@ id|leds
 suffix:semicolon
 )brace
 )brace
-DECL|function|kbd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|kbd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

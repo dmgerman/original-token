@@ -20,12 +20,13 @@ id|dgrs_firmdate
 op_assign
 l_string|&quot;11/16/96 03:45:15&quot;
 suffix:semicolon
-DECL|variable|dgrs_code
+DECL|variable|__initdata
 r_int
 r_char
 id|dgrs_code
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|213

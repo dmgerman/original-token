@@ -351,15 +351,7 @@ id|timer_expires
 op_minus
 id|jiffies
 comma
-(paren
-r_int
-)paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sp-&gt;retransmits
-)paren
+id|tp-&gt;retransmits
 comma
 id|sp-&gt;socket
 ques

@@ -20,6 +20,15 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+DECL|variable|bad_pmd_string
+r_const
+r_char
+id|bad_pmd_string
+(braket
+)braket
+op_assign
+l_string|&quot;Bad pmd in pte_alloc: %08lx&bslash;n&quot;
+suffix:semicolon
 r_extern
 r_void
 id|die_if_kernel
@@ -367,6 +376,69 @@ id|__init_begin
 comma
 id|__init_end
 suffix:semicolon
+DECL|macro|X86_CR4_VME
+mdefine_line|#define X86_CR4_VME&t;&t;0x0001&t;&t;/* enable vm86 extensions */
+DECL|macro|X86_CR4_PVI
+mdefine_line|#define X86_CR4_PVI&t;&t;0x0002&t;&t;/* virtual interrupts flag enable */
+DECL|macro|X86_CR4_TSD
+mdefine_line|#define X86_CR4_TSD&t;&t;0x0004&t;&t;/* disable time stamp at ipl 3 */
+DECL|macro|X86_CR4_DE
+mdefine_line|#define X86_CR4_DE&t;&t;0x0008&t;&t;/* enable debugging extensions */
+DECL|macro|X86_CR4_PSE
+mdefine_line|#define X86_CR4_PSE&t;&t;0x0010&t;&t;/* enable page size extensions */
+DECL|macro|X86_CR4_PAE
+mdefine_line|#define X86_CR4_PAE&t;&t;0x0020&t;&t;/* enable physical address extensions */
+DECL|macro|X86_CR4_MCE
+mdefine_line|#define X86_CR4_MCE&t;&t;0x0040&t;&t;/* Machine check enable */
+DECL|macro|X86_CR4_PGE
+mdefine_line|#define X86_CR4_PGE&t;&t;0x0080&t;&t;/* enable global pages */
+DECL|macro|X86_CR4_PCE
+mdefine_line|#define X86_CR4_PCE&t;&t;0x0100&t;&t;/* enable performance counters at ipl 3 */
+DECL|macro|X86_FEATURE_FPU
+mdefine_line|#define X86_FEATURE_FPU&t;&t;0x0001&t;&t;/* internal FPU */
+DECL|macro|X86_FEATURE_VME
+mdefine_line|#define X86_FEATURE_VME&t;&t;0x0002&t;&t;/* vm86 extensions */
+DECL|macro|X86_FEATURE_DE
+mdefine_line|#define X86_FEATURE_DE&t;&t;0x0004&t;&t;/* debugging extensions */
+DECL|macro|X86_FEATURE_PSE
+mdefine_line|#define X86_FEATURE_PSE&t;&t;0x0008&t;&t;/* Page size extensions */
+DECL|macro|X86_FEATURE_TSC
+mdefine_line|#define X86_FEATURE_TSC&t;&t;0x0010&t;&t;/* Time stamp counter */
+DECL|macro|X86_FEATURE_MSR
+mdefine_line|#define X86_FEATURE_MSR&t;&t;0x0020&t;&t;/* RDMSR/WRMSR */
+DECL|macro|X86_FEATURE_PAE
+mdefine_line|#define X86_FEATURE_PAE&t;&t;0x0040&t;&t;/* Physical address extension */
+DECL|macro|X86_FEATURE_MCE
+mdefine_line|#define X86_FEATURE_MCE&t;&t;0x0080&t;&t;/* Machine check exception */
+DECL|macro|X86_FEATURE_CXS
+mdefine_line|#define X86_FEATURE_CXS&t;&t;0x0100&t;&t;/* cmpxchg8 available */
+DECL|macro|X86_FEATURE_APIC
+mdefine_line|#define X86_FEATURE_APIC&t;0x0200&t;&t;/* internal APIC */
+DECL|macro|X86_FEATURE_10
+mdefine_line|#define X86_FEATURE_10&t;&t;0x0400
+DECL|macro|X86_FEATURE_11
+mdefine_line|#define X86_FEATURE_11&t;&t;0x0800
+DECL|macro|X86_FEATURE_MTRR
+mdefine_line|#define X86_FEATURE_MTRR&t;0x1000&t;&t;/* memory type registers */
+DECL|macro|X86_FEATURE_PGE
+mdefine_line|#define X86_FEATURE_PGE&t;&t;0x2000&t;&t;/* Global page */
+DECL|macro|X86_FEATURE_MCA
+mdefine_line|#define X86_FEATURE_MCA&t;&t;0x4000&t;&t;/* Machine Check Architecture */
+DECL|macro|X86_FEATURE_CMOV
+mdefine_line|#define X86_FEATURE_CMOV&t;0x8000&t;&t;/* Cmov/fcomi */
+macro_line|#ifdef GAS_KNOWS_CR4
+DECL|macro|read_cr4
+mdefine_line|#define read_cr4&t;&quot;movl %%cr4,%%eax&quot;
+DECL|macro|write_cr4
+mdefine_line|#define write_cr4&t;&quot;movl %%eax,%%cr4&quot;
+macro_line|#else
+DECL|macro|read_cr4
+mdefine_line|#define read_cr4&t;&quot;.byte 0x0f,0x20,0xe0&quot;
+DECL|macro|write_cr4
+mdefine_line|#define write_cr4&t;&quot;.byte 0x0f,0x22,0xe0&quot;
+macro_line|#endif
+DECL|macro|set_in_cr4
+mdefine_line|#define set_in_cr4(x) &bslash;&n;__asm__(read_cr4 &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orl %0,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;write_cr4 &bslash;&n;&t;: : &quot;i&quot; (x) &bslash;&n;&t;:&quot;ax&quot;);
 multiline_comment|/*&n; * paging_init() sets up the page tables - note that the first 4MB are&n; * already mapped by head.S.&n; *&n; * This routines also unmaps the page at virtual kernel address 0, so&n; * that we can trap those pesky NULL-reference errors in the kernel.&n; */
 DECL|function|__initfunc
 id|__initfunc
@@ -507,46 +579,61 @@ OL
 id|end_mem
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * If we&squot;re running on a Pentium CPU, we can use the 4MB&n;&t;&t; * page tables. &n;&t;&t; *&n;&t;&t; * The page tables we create span up to the next 4MB&n;&t;&t; * virtual memory boundary, but that&squot;s OK as we won&squot;t&n;&t;&t; * use that memory anyway.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|x86_capability
 op_amp
-l_int|8
+id|X86_FEATURE_PSE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * If we&squot;re running on a Pentium CPU, we can use the 4MB&n;&t;&t;&t; * page tables. &n;&t;&t;&t; *&n;&t;&t;&t; * The page tables we create span up to the next 4MB&n;&t;&t;&t; * virtual memory boundary, but that&squot;s OK as we won&squot;t&n;&t;&t;&t; * use that memory anyway.&n;&t;&t;&t; */
-macro_line|#ifdef GAS_KNOWS_CR4
-id|__asm__
+r_int
+r_int
+id|__pe
+suffix:semicolon
+id|set_in_cr4
 c_func
 (paren
-l_string|&quot;movl %%cr4,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;orl $16,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%eax,%%cr4&quot;
-suffix:colon
-suffix:colon
-suffix:colon
-l_string|&quot;ax&quot;
+id|X86_CR4_PSE
 )paren
 suffix:semicolon
-macro_line|#else
-id|__asm__
-c_func
-(paren
-l_string|&quot;.byte 0x0f,0x20,0xe0&bslash;n&bslash;t&quot;
-l_string|&quot;orl $16,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;.byte 0x0f,0x22,0xe0&quot;
-suffix:colon
-suffix:colon
-suffix:colon
-l_string|&quot;ax&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|wp_works_ok
 op_assign
 l_int|1
 suffix:semicolon
+id|__pe
+op_assign
+id|_PAGE_TABLE
+op_plus
+id|_PAGE_4M
+op_plus
+id|__pa
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+multiline_comment|/* Make it &quot;global&quot; too if supported */
+r_if
+c_cond
+(paren
+id|x86_capability
+op_amp
+id|X86_FEATURE_PGE
+)paren
+(brace
+id|set_in_cr4
+c_func
+(paren
+id|X86_CR4_PGE
+)paren
+suffix:semicolon
+id|__pe
+op_add_assign
+id|_PAGE_GLOBAL
+suffix:semicolon
+)brace
 id|pgd_val
 c_func
 (paren

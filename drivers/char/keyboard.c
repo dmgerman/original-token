@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &quot;kbd_kern.h&quot;
 macro_line|#include &quot;diacr.h&quot;
@@ -4850,12 +4851,16 @@ suffix:semicolon
 multiline_comment|/* re-enable kbd if any errors */
 )brace
 )brace
-DECL|function|kbd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|kbd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -5158,13 +5163,17 @@ id|address
 suffix:semicolon
 multiline_comment|/* write out the data*/
 )brace
-DECL|function|initialize_kbd
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|initialize_kbd
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -12615,6 +12616,7 @@ multiline_comment|/*&n; * ------------------------------------------------------
 multiline_comment|/*&n; * This routine prints out the appropriate serial driver version&n; * number, and identifies which options were configured into this&n; * driver.&n; */
 DECL|function|show_serial_version
 r_static
+id|_INLINE_
 r_void
 id|show_serial_version
 c_func
@@ -13924,12 +13926,16 @@ id|unregister_serial
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
-DECL|function|rs_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|rs_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -14821,6 +14827,12 @@ dot
 id|expires
 op_assign
 l_int|0
+suffix:semicolon
+id|remove_bh
+c_func
+(paren
+id|SERIAL_BH
+)paren
 suffix:semicolon
 r_if
 c_cond

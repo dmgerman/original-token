@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -748,12 +749,13 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|# else
-DECL|variable|de1xx_irq
+DECL|variable|__initdata
 r_static
 id|u_char
 id|de1xx_irq
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|2
@@ -771,12 +773,13 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|de2xx_irq
+DECL|variable|__initdata
 r_static
 id|u_char
 id|de2xx_irq
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|5
@@ -792,12 +795,13 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|de422_irq
+DECL|variable|__initdata
 r_static
 id|u_char
 id|de422_irq
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|5
@@ -871,7 +875,10 @@ multiline_comment|/*&n;** Miscellaneous defines...&n;*/
 DECL|macro|STOP_DEPCA
 mdefine_line|#define STOP_DEPCA &bslash;&n;    outw(CSR0, DEPCA_ADDR);&bslash;&n;    outw(STOP, DEPCA_DATA)
 "&f;"
-DECL|function|depca_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|depca_probe
 c_func
@@ -880,6 +887,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -1015,9 +1023,12 @@ r_return
 id|status
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|depca_hw_init
 id|depca_hw_init
 c_func
 (paren
@@ -1028,6 +1039,7 @@ id|dev
 comma
 id|u_long
 id|ioaddr
+)paren
 )paren
 (brace
 r_struct
@@ -4881,7 +4893,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** ISA bus I/O device probe&n;*/
-DECL|function|isa_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|isa_probe
@@ -4894,6 +4909,7 @@ id|dev
 comma
 id|u_long
 id|ioaddr
+)paren
 )paren
 (brace
 r_int
@@ -5103,7 +5119,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** EISA bus I/O device probe. Probe from slot 1 since slot 0 is usually&n;** the motherboard. Upto 15 EISA devices are supported.&n;*/
-DECL|function|eisa_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|eisa_probe
@@ -5116,6 +5135,7 @@ id|dev
 comma
 id|u_long
 id|ioaddr
+)paren
 )paren
 (brace
 r_int
@@ -5349,11 +5369,14 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Search the entire &squot;eth&squot; device list for a fixed probe. If a match isn&squot;t&n;** found then check for an autoprobe or unused device location. If they&n;** are not available then insert a new device structure at the end of&n;** the current list.&n;*/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_struct
 id|device
 op_star
-DECL|function|alloc_device
 id|alloc_device
 c_func
 (paren
@@ -5364,6 +5387,7 @@ id|dev
 comma
 id|u_long
 id|iobase
+)paren
 )paren
 (brace
 r_struct
@@ -5592,11 +5616,14 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** If at end of eth device list and can&squot;t use current entry, malloc&n;** one up. If memory could not be allocated, print an error message.&n;*/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_struct
 id|device
 op_star
-DECL|function|insert_device
 id|insert_device
 c_func
 (paren
@@ -5617,6 +5644,7 @@ id|init
 r_struct
 id|device
 op_star
+)paren
 )paren
 )paren
 (brace
@@ -5742,15 +5770,19 @@ r_return
 id|dev
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|depca_dev_index
 id|depca_dev_index
 c_func
 (paren
 r_char
 op_star
 id|s
+)paren
 )paren
 (brace
 r_int
@@ -5818,7 +5850,10 @@ id|i
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Look for a particular board name in the on-board Remote Diagnostics&n;** and Boot (readb) ROM. This will also give us a clue to the network RAM&n;** base address.&n;*/
-DECL|function|DepcaSignature
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|DepcaSignature
@@ -5830,6 +5865,7 @@ id|name
 comma
 id|u_long
 id|paddr
+)paren
 )paren
 (brace
 id|u_int
@@ -6057,7 +6093,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Look for a special sequence in the Ethernet station address PROM that&n;** is common across all DEPCA products. Note that the original DEPCA needs&n;** its ROM address counter to be initialized and enabled. Only enable&n;** if the first address octet is a 0x08 - this minimises the chances of&n;** messing around with some other hardware, but it assumes that this DEPCA&n;** card initialized itself correctly.&n;**&n;** Search the Ethernet address ROM for the signature. Since the ROM address&n;** counter can start at an arbitrary point, the search must include the entire&n;** probe sequence length plus the (length_of_the_signature - 1).&n;** Stop the search IMMEDIATELY after the signature is found so that the&n;** PROM address counter is correctly positioned at the start of the&n;** ethernet address for later read out.&n;*/
-DECL|function|DevicePresent
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|DevicePresent
@@ -6065,6 +6104,7 @@ c_func
 (paren
 id|u_long
 id|ioaddr
+)paren
 )paren
 (brace
 r_union
@@ -6279,7 +6319,10 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** The DE100 and DE101 PROM accesses were made non-standard for some bizarre&n;** reason: access the upper half of the PROM with x=0; access the lower half&n;** with x=1.&n;*/
-DECL|function|get_hw_addr
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|get_hw_addr
@@ -6289,6 +6332,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|u_long
@@ -6978,7 +7022,10 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Look for a particular board name in the EISA configuration space&n;*/
-DECL|function|EISA_signature
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|EISA_signature
@@ -6990,6 +7037,7 @@ id|name
 comma
 id|s32
 id|eisa_id
+)paren
 )paren
 (brace
 id|u_int

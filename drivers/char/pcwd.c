@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/watchdog.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * These are the auto-probe addresses available.&n; *&n; * Revision A only uses ports 0x270 and 0x370.  Revision C introduced 0x350.&n; * Revision A has an address range of 2 addresses, while Revision C has 3.&n; */
@@ -88,13 +89,17 @@ comma
 id|mode_debug
 suffix:semicolon
 multiline_comment|/*&n; * PCWD_CHECKCARD&n; *&n; * This routine checks the &quot;current_readport&quot; to see if the card lies there.&n; * If it does, it returns accordingly.&n; */
-DECL|function|pcwd_checkcard
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|pcwd_checkcard
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -1288,6 +1293,7 @@ suffix:semicolon
 )brace
 DECL|function|get_support
 r_static
+r_inline
 r_void
 id|get_support
 c_func
@@ -1313,6 +1319,7 @@ suffix:semicolon
 )brace
 DECL|function|get_revision
 r_static
+r_inline
 r_int
 id|get_revision
 c_func
@@ -1354,7 +1361,10 @@ r_return
 id|PCWD_REVISION_C
 suffix:semicolon
 )brace
-DECL|function|send_command
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|send_command
@@ -1362,6 +1372,7 @@ c_func
 (paren
 r_int
 id|cmd
+)paren
 )paren
 (brace
 r_int
@@ -1405,6 +1416,7 @@ suffix:semicolon
 )brace
 DECL|function|get_firmware
 r_static
+r_inline
 r_char
 op_star
 id|get_firmware
@@ -1693,11 +1705,15 @@ c_func
 r_void
 )paren
 macro_line|#else
+id|__initfunc
+c_func
+(paren
 r_int
 id|pcwatchdog_init
 c_func
 (paren
 r_void
+)paren
 )paren
 macro_line|#endif
 (brace

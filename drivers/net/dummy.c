@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -98,7 +99,10 @@ id|dev
 )paren
 (brace
 )brace
-DECL|function|dummy_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|dummy_init
 c_func
@@ -107,6 +111,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 multiline_comment|/* Initialize the device structure. */
@@ -269,7 +274,10 @@ id|stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|function|dummy_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|dummy_probe
@@ -279,6 +287,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|dummy_init

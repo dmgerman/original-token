@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;8390.h&quot;
@@ -274,7 +275,10 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/*  Probe for the E2100 series ethercards.  These cards have an 8390 at the&n;&t;base address and the station address at both offset 0x10 and 0x18.  I read&n;&t;the station address from offset 0x18 to avoid the dataport of NE2000&n;&t;ethercards, and look for Ctron&squot;s unique ID (first three octets of the&n;&t;station address).&n; */
-DECL|function|e2100_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|e2100_probe
 c_func
@@ -283,6 +287,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -373,7 +378,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|e21_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|e21_probe1
 c_func
@@ -385,6 +393,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int

@@ -4961,12 +4961,16 @@ r_int
 id|ticks
 )paren
 suffix:semicolon
-DECL|function|kbd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|kbd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

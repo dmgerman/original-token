@@ -1771,7 +1771,7 @@ comma
 id|in_ntoa
 c_func
 (paren
-id|iph-&gt;daddr
+id|skb-&gt;nh.iph-&gt;saddr
 )paren
 )paren
 suffix:semicolon

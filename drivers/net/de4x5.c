@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -2879,8 +2880,11 @@ DECL|macro|PHY_HARD_RESET
 mdefine_line|#define PHY_HARD_RESET {&bslash;&n;    outl(GEP_HRST, DE4X5_GEP);           /* Hard RESET the PHY dev. */&bslash;&n;    udelay(1000);                        /* Assert for 1ms */&bslash;&n;    outl(0x00, DE4X5_GEP);&bslash;&n;    udelay(2000);                        /* Wait for 2ms */&bslash;&n;}
 "&f;"
 multiline_comment|/*&n;** Autoprobing in modules is allowed here. See the top of the file for&n;** more info. Until I fix (un)register_netdevice() we won&squot;t be able to use it&n;** though.&n;*/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|de4x5_probe
 id|de4x5_probe
 c_func
 (paren
@@ -2888,6 +2892,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -2963,9 +2968,12 @@ r_return
 id|status
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|de4x5_hw_init
 id|de4x5_hw_init
 c_func
 (paren
@@ -2976,6 +2984,7 @@ id|dev
 comma
 id|u_long
 id|iobase
+)paren
 )paren
 (brace
 r_struct
@@ -7532,9 +7541,12 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** EISA bus I/O device probe. Probe from slot 1 since slot 0 is usually&n;** the motherboard. Upto 15 EISA devices are supported.&n;*/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
-DECL|function|eisa_probe
 id|eisa_probe
 c_func
 (paren
@@ -7545,6 +7557,7 @@ id|dev
 comma
 id|u_long
 id|ioaddr
+)paren
 )paren
 (brace
 r_int
@@ -7909,9 +7922,12 @@ DECL|macro|PCI_DEVICE
 mdefine_line|#define PCI_DEVICE    (dev_num &lt;&lt; 3)
 DECL|macro|PCI_LAST_DEV
 mdefine_line|#define PCI_LAST_DEV  32
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
-DECL|function|pci_probe
 id|pci_probe
 c_func
 (paren
@@ -7922,6 +7938,7 @@ id|dev
 comma
 id|u_long
 id|ioaddr
+)paren
 )paren
 (brace
 id|u_char
@@ -8480,11 +8497,14 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Search the entire &squot;eth&squot; device list for a fixed probe. If a match isn&squot;t&n;** found then check for an autoprobe or unused device location. If they&n;** are not available then insert a new device structure at the end of&n;** the current list.&n;*/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_struct
 id|device
 op_star
-DECL|function|alloc_device
 id|alloc_device
 c_func
 (paren
@@ -8495,6 +8515,7 @@ id|dev
 comma
 id|u_long
 id|iobase
+)paren
 )paren
 (brace
 r_struct
@@ -8756,11 +8777,14 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** If at end of eth device list and can&squot;t use current entry, malloc&n;** one up. If memory could not be allocated, print an error message.&n;*/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_struct
 id|device
 op_star
-DECL|function|insert_device
 id|insert_device
 c_func
 (paren
@@ -8781,6 +8805,7 @@ id|init
 r_struct
 id|device
 op_star
+)paren
 )paren
 )paren
 (brace
@@ -8939,15 +8964,19 @@ r_return
 r_new
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|de4x5_dev_index
 id|de4x5_dev_index
 c_func
 (paren
 r_char
 op_star
 id|s
+)paren
 )paren
 (brace
 r_int
@@ -9014,9 +9043,12 @@ r_return
 id|i
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
-DECL|function|link_modules
 id|link_modules
 c_func
 (paren
@@ -9029,6 +9061,7 @@ r_struct
 id|device
 op_star
 id|tmp
+)paren
 )paren
 (brace
 r_struct

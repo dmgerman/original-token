@@ -34,8 +34,9 @@ mdefine_line|#define AUTOPROBE_IRQ
 macro_line|#include &quot;NCR5380.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
-macro_line|#include&lt;linux/stat.h&gt;
-macro_line|#include&lt;linux/string.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|DTC_PUBLIC_RELEASE
 mdefine_line|#define DTC_PUBLIC_RELEASE 2
 multiline_comment|/*#define DTCDEBUG 0x1*/
@@ -120,12 +121,13 @@ DECL|member|irq
 r_int
 id|irq
 suffix:semicolon
-DECL|variable|overrides
 )brace
 id|overrides
 macro_line|#ifdef OVERRIDE
+DECL|variable|__initdata
 (braket
 )braket
+id|__initdata
 op_assign
 id|OVERRIDE
 suffix:semicolon
@@ -133,6 +135,7 @@ macro_line|#else
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -177,11 +180,12 @@ DECL|member|noauto
 r_int
 id|noauto
 suffix:semicolon
-DECL|variable|bases
+DECL|variable|__initdata
 )brace
 id|bases
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -245,7 +249,10 @@ suffix:semicolon
 DECL|macro|NO_SIGNATURES
 mdefine_line|#define NO_SIGNATURES (sizeof (signatures) /  sizeof (struct signature))
 multiline_comment|/*&n; * Function : dtc_setup(char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0]&n; *&t;equal to the number of ints.&n; *&n;*/
-DECL|function|dtc_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|dtc_setup
 c_func
@@ -257,6 +264,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_static
@@ -365,7 +373,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* &n; * Function : int dtc_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : detects and initializes DTC 3180/3280 controllers&n; *&t;that were autoprobed, overridden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n;*/
-DECL|function|dtc_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|dtc_detect
 c_func
@@ -373,6 +384,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_static

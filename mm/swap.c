@@ -22,19 +22,19 @@ DECL|variable|min_free_pages
 r_int
 id|min_free_pages
 op_assign
-l_int|20
+l_int|48
 suffix:semicolon
 DECL|variable|free_pages_low
 r_int
 id|free_pages_low
 op_assign
-l_int|30
+l_int|72
 suffix:semicolon
 DECL|variable|free_pages_high
 r_int
 id|free_pages_high
 op_assign
-l_int|40
+l_int|96
 suffix:semicolon
 multiline_comment|/* We track the number of pages currently being asynchronously swapped&n;   out, so that we don&squot;t try to swap TOO many pages out at once */
 DECL|variable|nr_async_pages

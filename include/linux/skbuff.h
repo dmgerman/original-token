@@ -6,8 +6,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
-DECL|macro|CONFIG_SKB_CHECK
-mdefine_line|#define CONFIG_SKB_CHECK 0
 DECL|macro|HAVE_ALLOC_SKB
 mdefine_line|#define HAVE_ALLOC_SKB&t;&t;/* For the drivers to know */
 DECL|macro|HAVE_ALIGNABLE_SKB
@@ -43,12 +41,6 @@ id|__u32
 id|qlen
 suffix:semicolon
 multiline_comment|/* Must be same length as a pointer&n;&t;&t;&t;&t;&t;   for using debugging */
-macro_line|#if CONFIG_SKB_CHECK
-DECL|member|magic_debug_cookie
-r_int
-id|magic_debug_cookie
-suffix:semicolon
-macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|sk_buff
@@ -76,12 +68,6 @@ op_star
 id|list
 suffix:semicolon
 multiline_comment|/* List we are on&t;&t;&t;&t;*/
-macro_line|#if CONFIG_SKB_CHECK
-DECL|member|magic_debug_cookie
-r_int
-id|magic_debug_cookie
-suffix:semicolon
-macro_line|#endif
 DECL|member|sk
 r_struct
 id|sock
@@ -253,13 +239,9 @@ r_int
 id|csum
 suffix:semicolon
 multiline_comment|/* Checksum &t;&t;&t;&t;&t;*/
-DECL|member|acked
+DECL|member|used
 r_volatile
 r_char
-id|acked
-comma
-multiline_comment|/* Are we acked ?&t;&t;&t;&t;*/
-DECL|member|used
 id|used
 comma
 multiline_comment|/* Are we in use ?&t;&t;&t;&t;*/
@@ -421,14 +403,6 @@ DECL|macro|SK_WMEM_MAX
 mdefine_line|#define SK_WMEM_MAX&t;32767
 DECL|macro|SK_RMEM_MAX
 mdefine_line|#define SK_RMEM_MAX&t;32767
-macro_line|#endif
-macro_line|#if CONFIG_SKB_CHECK
-DECL|macro|SK_FREED_SKB
-mdefine_line|#define SK_FREED_SKB&t;0x0DE2C0DE
-DECL|macro|SK_GOOD_SKB
-mdefine_line|#define SK_GOOD_SKB&t;0xDEC0DED1
-DECL|macro|SK_HEAD_SKB
-mdefine_line|#define SK_HEAD_SKB&t;0x12231298
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; *&t;Handling routines are only of interest to the kernel&n; */
@@ -1017,34 +991,6 @@ r_return
 id|list_-&gt;qlen
 suffix:semicolon
 )brace
-macro_line|#if CONFIG_SKB_CHECK
-r_extern
-r_int
-id|skb_check
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_int
-comma
-r_int
-comma
-r_char
-op_star
-)paren
-suffix:semicolon
-DECL|macro|IS_SKB
-mdefine_line|#define IS_SKB(skb)&t;&t;skb_check((skb), 0, __LINE__,__FILE__)
-DECL|macro|IS_SKB_HEAD
-mdefine_line|#define IS_SKB_HEAD(skb)&t;skb_check((skb), 1, __LINE__,__FILE__)
-macro_line|#else
-DECL|macro|IS_SKB
-mdefine_line|#define IS_SKB(skb)&t;&t;
-DECL|macro|IS_SKB_HEAD
-mdefine_line|#define IS_SKB_HEAD(skb)&t;
 DECL|function|skb_queue_head_init
 r_extern
 id|__inline__
@@ -2116,7 +2062,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#endif
 r_extern
 r_struct
 id|sk_buff

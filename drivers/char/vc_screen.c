@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;vt_kern.h&quot;
 macro_line|#include &quot;selection.h&quot;
@@ -1248,12 +1249,16 @@ l_int|NULL
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|function|vcs_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|vcs_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

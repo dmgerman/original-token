@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -2370,12 +2371,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|dlci_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|dlci_setup
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

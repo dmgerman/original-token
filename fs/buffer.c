@@ -2,7 +2,8 @@ multiline_comment|/*&n; *  linux/fs/buffer.c&n; *&n; *  Copyright (C) 1991, 1992
 multiline_comment|/*&n; *  &squot;buffer.c&squot; implements the buffer-cache functions. Race-conditions have&n; * been avoided by NEVER letting an interrupt change a buffer (except for the&n; * data, of course), but instead letting the caller do it.&n; */
 multiline_comment|/* Some bdflush() changes for the dynamic ramdisk - Paul Gortmaker, 12/94 */
 multiline_comment|/* Start bdflush() with kernel_thread not syscall - Paul Gortmaker, 12/95 */
-multiline_comment|/* Removed a lot of unnecessary code and simplified things now that&n;   the buffer cache isn&squot;t our primary cache - Andrew Tridgell 12/96 */
+multiline_comment|/* Removed a lot of unnecessary code and simplified things now that&n; * the buffer cache isn&squot;t our primary cache - Andrew Tridgell 12/96&n; */
+multiline_comment|/* Speed up hash, lru, and free list operations.  Use gfp() for allocating&n; * hash table, use SLAB cache for buffer heads. -DaveM&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -10,6 +11,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
@@ -87,6 +89,8 @@ DECL|macro|MAX_UNUSED_BUFFERS
 mdefine_line|#define MAX_UNUSED_BUFFERS 30 /* don&squot;t ever have more than this number of &n;&t;&t;&t;&t; unused buffer heads */
 DECL|macro|HASH_PAGES
 mdefine_line|#define HASH_PAGES         4  /* number of pages to use for the hash table */
+DECL|macro|HASH_PAGES_ORDER
+mdefine_line|#define HASH_PAGES_ORDER   2
 DECL|macro|NR_HASH
 mdefine_line|#define NR_HASH (HASH_PAGES*PAGE_SIZE/sizeof(struct buffer_head *))
 DECL|macro|HASH_MASK
@@ -140,6 +144,12 @@ op_assign
 l_int|NULL
 comma
 )brace
+suffix:semicolon
+DECL|variable|bh_cachep
+r_static
+id|kmem_cache_t
+op_star
+id|bh_cachep
 suffix:semicolon
 DECL|variable|unused_list
 r_static
@@ -210,7 +220,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Set NZ when a buffer freelist is refilled &n;&t;&t;&t;&t;  this is used by the loop device */
-multiline_comment|/* this is used by some architectures to estimate available memory */
+multiline_comment|/* This is used by some architectures to estimate available memory. */
 DECL|variable|buffermem
 r_int
 id|buffermem
@@ -228,7 +238,7 @@ r_int
 suffix:semicolon
 DECL|macro|N_PARAM
 mdefine_line|#define N_PARAM 9
-multiline_comment|/* the dummy values in this structure are left in there for compatibility&n;   with old programs that play with the /proc entries */
+multiline_comment|/* The dummy values in this structure are left in there for compatibility&n; * with old programs that play with the /proc entries.&n; */
 DECL|union|bdflush_param
 r_union
 id|bdflush_param
@@ -462,8 +472,8 @@ op_assign
 id|TASK_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/* Call sync_buffers with wait!=0 to ensure that the call does not&n;   return until all buffer writes have completed.  Sync() may return&n;   before the writes have finished; fsync() may not. */
-multiline_comment|/* Godamity-damn.  Some buffers (bitmaps for filesystems)&n;   spontaneously dirty themselves without ever brelse being called.&n;   We will ultimately want to put these in a separate list, but for&n;   now we search all of the lists for dirty buffers */
+multiline_comment|/* Call sync_buffers with wait!=0 to ensure that the call does not&n; * return until all buffer writes have completed.  Sync() may return&n; * before the writes have finished; fsync() may not.&n; */
+multiline_comment|/* Godamity-damn.  Some buffers (bitmaps for filesystems)&n; * spontaneously dirty themselves without ever brelse being called.&n; * We will ultimately want to put these in a separate list, but for&n; * now we search all of the lists for dirty buffers.&n; */
 DECL|function|sync_buffers
 r_static
 r_int
@@ -498,7 +508,7 @@ comma
 op_star
 id|next
 suffix:semicolon
-multiline_comment|/* One pass for no-wait, three for wait:&n;&t;   0) write out all dirty, unlocked buffers;&n;&t;   1) write out all dirty buffers, waiting if locked;&n;&t;   2) wait for completion by waiting for all buffers to unlock. */
+multiline_comment|/* One pass for no-wait, three for wait:&n;&t; * 0) write out all dirty, unlocked buffers;&n;&t; * 1) write out all dirty buffers, waiting if locked;&n;&t; * 2) wait for completion by waiting for all buffers to unlock.&n;&t; */
 r_do
 (brace
 id|retry
@@ -507,7 +517,7 @@ l_int|0
 suffix:semicolon
 id|repeat
 suffix:colon
-multiline_comment|/* We search all lists as a failsafe mechanism, not because we expect&n;&t;   there to be dirty buffers on any of the other lists. */
+multiline_comment|/* We search all lists as a failsafe mechanism, not because we expect&n;&t;&t; * there to be dirty buffers on any of the other lists.&n;&t;&t; */
 id|bh
 op_assign
 id|lru_list
@@ -592,7 +602,7 @@ id|bh
 )paren
 )paren
 (brace
-multiline_comment|/* Buffer is locked; skip it unless wait is&n;&t;&t;&t;&t;   requested AND pass &gt; 0. */
+multiline_comment|/* Buffer is locked; skip it unless wait is&n;&t;&t;&t;&t; * requested AND pass &gt; 0.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -619,7 +629,7 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-multiline_comment|/* If an unlocked buffer is not uptodate, there has&n;&t;&t;&t;    been an IO error. Skip it. */
+multiline_comment|/* If an unlocked buffer is not uptodate, there has&n;&t;&t;&t; * been an IO error. Skip it.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -660,7 +670,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* Don&squot;t write clean buffers.  Don&squot;t write ANY buffers&n;&t;&t;&t;   on the third pass. */
+multiline_comment|/* Don&squot;t write clean buffers.  Don&squot;t write ANY buffers&n;&t;&t;&t; * on the third pass.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -677,7 +687,7 @@ l_int|2
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* don&squot;t bother about locked buffers */
+multiline_comment|/* Don&squot;t bother about locked buffers.&n;&t;&t;&t; *&n;&t;&t;&t; * XXX We checked if it was locked above and there is no&n;&t;&t;&t; * XXX way we could have slept in between. -DaveM&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -806,7 +816,7 @@ id|bh
 )paren
 )paren
 (brace
-multiline_comment|/* Buffer is locked; skip it unless wait is&n;&t;&t;&t;&t;   requested AND pass &gt; 0. */
+multiline_comment|/* Buffer is locked; skip it unless wait is&n;&t;&t;&t;&t; * requested AND pass &gt; 0.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -834,7 +844,7 @@ id|repeat2
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* If we are waiting for the sync to succeed, and if any dirty&n;&t;   blocks were written, then repeat; on the second pass, only&n;&t;   wait for buffers being written (do not pass to write any&n;&t;   more buffers on the second pass). */
+multiline_comment|/* If we are waiting for the sync to succeed, and if any dirty&n;&t;&t; * blocks were written, then repeat; on the second pass, only&n;&t;&t; * wait for buffers being written (do not pass to write any&n;&t;&t; * more buffers on the second pass).&n;&t;&t; */
 )brace
 r_while
 c_loop
@@ -1372,50 +1382,30 @@ id|bh
 r_if
 c_cond
 (paren
-id|bh-&gt;b_next
+id|bh-&gt;b_pprev
 )paren
-id|bh-&gt;b_next-&gt;b_prev
-op_assign
-id|bh-&gt;b_prev
-suffix:semicolon
+(brace
 r_if
 c_cond
 (paren
-id|bh-&gt;b_prev
+id|bh-&gt;b_next
 )paren
-id|bh-&gt;b_prev-&gt;b_next
+(brace
+id|bh-&gt;b_next-&gt;b_pprev
+op_assign
+id|bh-&gt;b_pprev
+suffix:semicolon
+)brace
+op_star
+id|bh-&gt;b_pprev
 op_assign
 id|bh-&gt;b_next
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|hash
-c_func
-(paren
-id|bh-&gt;b_dev
-comma
-id|bh-&gt;b_blocknr
-)paren
-op_eq
-id|bh
-)paren
-id|hash
-c_func
-(paren
-id|bh-&gt;b_dev
-comma
-id|bh-&gt;b_blocknr
-)paren
-op_assign
-id|bh-&gt;b_next
-suffix:semicolon
-id|bh-&gt;b_next
-op_assign
-id|bh-&gt;b_prev
+id|bh-&gt;b_pprev
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 )brace
 DECL|function|remove_from_lru_list
 r_static
@@ -1701,26 +1691,32 @@ id|bh
 r_if
 c_cond
 (paren
-op_logical_neg
 id|bh
 )paren
-r_return
+(brace
+r_struct
+id|buffer_head
+op_star
+op_star
+id|bhp
+op_assign
+op_amp
+id|lru_list
+(braket
+id|bh-&gt;b_list
+)braket
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|bh
 op_eq
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+op_star
+id|bhp
 )paren
 (brace
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+op_star
+id|bhp
 op_assign
 id|bh-&gt;b_next_free
 suffix:semicolon
@@ -1742,34 +1738,30 @@ l_string|&quot;Wrong block for lru list&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Add to back of free list. */
 id|remove_from_lru_list
 c_func
 (paren
 id|bh
 )paren
 suffix:semicolon
-multiline_comment|/* add to back of free list */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+op_star
+id|bhp
 )paren
 (brace
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+op_star
+id|bhp
 op_assign
 id|bh
 suffix:semicolon
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free
 op_assign
@@ -1778,38 +1770,37 @@ suffix:semicolon
 )brace
 id|bh-&gt;b_next_free
 op_assign
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+op_star
+id|bhp
 suffix:semicolon
 id|bh-&gt;b_prev_free
 op_assign
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free
 suffix:semicolon
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free-&gt;b_next_free
 op_assign
 id|bh
 suffix:semicolon
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free
 op_assign
 id|bh
 suffix:semicolon
+)brace
 )brace
 DECL|function|put_last_free
 r_static
@@ -1824,45 +1815,44 @@ op_star
 id|bh
 )paren
 (brace
-r_int
-id|isize
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|bh
 )paren
-r_return
-suffix:semicolon
-id|isize
+(brace
+r_struct
+id|buffer_head
+op_star
+op_star
+id|bhp
 op_assign
+op_amp
+id|free_list
+(braket
 id|BUFSIZE_INDEX
 c_func
 (paren
 id|bh-&gt;b_size
 )paren
+)braket
 suffix:semicolon
 id|bh-&gt;b_dev
 op_assign
 id|B_FREE
 suffix:semicolon
-multiline_comment|/* So it is obvious we are on the free list */
-multiline_comment|/* add to back of free list */
+multiline_comment|/* So it is obvious we are on the free list. */
+multiline_comment|/* Add to back of free list. */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|free_list
-(braket
-id|isize
-)braket
+op_star
+id|bhp
 )paren
 (brace
-id|free_list
-(braket
-id|isize
-)braket
+op_star
+id|bhp
 op_assign
 id|bh
 suffix:semicolon
@@ -1873,38 +1863,37 @@ suffix:semicolon
 )brace
 id|bh-&gt;b_next_free
 op_assign
-id|free_list
-(braket
-id|isize
-)braket
+op_star
+id|bhp
 suffix:semicolon
 id|bh-&gt;b_prev_free
 op_assign
-id|free_list
-(braket
-id|isize
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free
 suffix:semicolon
-id|free_list
-(braket
-id|isize
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free-&gt;b_next_free
 op_assign
 id|bh
 suffix:semicolon
-id|free_list
-(braket
-id|isize
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free
 op_assign
 id|bh
 suffix:semicolon
+)brace
 )brace
 DECL|function|insert_into_queues
 r_static
@@ -1934,23 +1923,31 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+r_else
+(brace
+r_struct
+id|buffer_head
+op_star
+op_star
+id|bhp
+op_assign
+op_amp
+id|lru_list
+(braket
+id|bh-&gt;b_list
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+op_star
+id|bhp
 )paren
 (brace
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+op_star
+id|bhp
 op_assign
 id|bh
 suffix:semicolon
@@ -1972,33 +1969,31 @@ l_string|&quot;VFS: buffer LRU pointers corrupted&quot;
 suffix:semicolon
 id|bh-&gt;b_next_free
 op_assign
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+op_star
+id|bhp
 suffix:semicolon
 id|bh-&gt;b_prev_free
 op_assign
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free
 suffix:semicolon
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free-&gt;b_next_free
 op_assign
 id|bh
 suffix:semicolon
-id|lru_list
-(braket
-id|bh-&gt;b_list
-)braket
+(paren
+op_star
+id|bhp
+)paren
 op_member_access_from_pointer
 id|b_prev_free
 op_assign
@@ -2010,27 +2005,20 @@ id|bh-&gt;b_list
 )braket
 op_increment
 suffix:semicolon
-multiline_comment|/* put the buffer in new hash-queue if it has a device */
-id|bh-&gt;b_prev
-op_assign
-l_int|NULL
-suffix:semicolon
-id|bh-&gt;b_next
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/* Put the buffer in new hash-queue if it has a device. */
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
 id|bh-&gt;b_dev
 )paren
-)paren
-r_return
-suffix:semicolon
-id|bh-&gt;b_next
+(brace
+r_struct
+id|buffer_head
+op_star
+op_star
+id|bhp
 op_assign
+op_amp
 id|hash
 c_func
 (paren
@@ -2039,25 +2027,48 @@ comma
 id|bh-&gt;b_blocknr
 )paren
 suffix:semicolon
-id|hash
-c_func
-(paren
-id|bh-&gt;b_dev
-comma
-id|bh-&gt;b_blocknr
-)paren
-op_assign
-id|bh
-suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|bh-&gt;b_next
+op_assign
+op_star
+id|bhp
 )paren
-id|bh-&gt;b_next-&gt;b_prev
+op_ne
+l_int|NULL
+)paren
+(brace
+(paren
+op_star
+id|bhp
+)paren
+op_member_access_from_pointer
+id|b_pprev
+op_assign
+op_amp
+id|bh-&gt;b_next
+suffix:semicolon
+)brace
+op_star
+id|bhp
 op_assign
 id|bh
 suffix:semicolon
+id|bh-&gt;b_pprev
+op_assign
+id|bhp
+suffix:semicolon
+multiline_comment|/* Exists in bh hashes. */
+)brace
+r_else
+id|bh-&gt;b_pprev
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Not in bh hashes. */
+)brace
 )brace
 DECL|function|find_buffer
 r_static
@@ -2115,6 +2126,7 @@ id|tmp-&gt;b_dev
 op_eq
 id|dev
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2125,8 +2137,6 @@ id|size
 r_return
 id|tmp
 suffix:semicolon
-r_else
-(brace
 id|printk
 c_func
 (paren
@@ -2240,12 +2250,7 @@ id|kdev_t
 id|dev
 )paren
 (brace
-r_int
-id|blksize
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;   * Get the hard sector size for the given device.  If we don&squot;t know&n;   * what it is, return 0.&n;   */
+multiline_comment|/*&n;&t; * Get the hard sector size for the given device.  If we don&squot;t know&n;&t; * what it is, return 0.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2261,6 +2266,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_int
 id|blksize
 op_assign
 id|hardsect_size
@@ -2286,13 +2292,11 @@ id|blksize
 op_ne
 l_int|0
 )paren
-(brace
 r_return
 id|blksize
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n;   * We don&squot;t know what the hardware sector size for this device is.&n;   * Return 0 indicating that we don&squot;t know.&n;   */
+multiline_comment|/*&n;&t; * We don&squot;t know what the hardware sector size for this device is.&n;&t; * Return 0 indicating that we don&squot;t know.&n;&t; */
 r_return
 l_int|0
 suffix:semicolon
@@ -2482,7 +2486,7 @@ id|dev
 op_assign
 id|size
 suffix:semicolon
-multiline_comment|/* We need to be quite careful how we do this - we are moving entries&n;     around on the free list, and we can get in a loop if we are not careful.*/
+multiline_comment|/* We need to be quite careful how we do this - we are moving entries&n;&t; * around on the free list, and we can get in a loop if we are not careful.&n;&t; */
 r_for
 c_loop
 (paren
@@ -2618,7 +2622,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* check if a buffer is OK to be reclaimed */
+multiline_comment|/* Check if a buffer is OK to be reclaimed. */
 DECL|function|can_reclaim
 r_static
 r_inline
@@ -2711,7 +2715,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* find a candidate buffer to be reclaimed */
+multiline_comment|/* Find a candidate buffer to be reclaimed. */
 DECL|function|find_candidate
 r_static
 r_struct
@@ -2773,7 +2777,7 @@ op_ne
 id|bh-&gt;b_size
 )paren
 (brace
-multiline_comment|/* this provides a mechanism for freeing blocks&n;&t;&t;&t;   of other sizes, this is necessary now that we&n;&t;&t;&t;   no longer have the lav code. */
+multiline_comment|/* This provides a mechanism for freeing blocks&n;&t;&t;&t; * of other sizes, this is necessary now that we&n;&t;&t;&t; * no longer have the lav code.&n;&t;&t;&t; */
 id|try_to_free_buffer
 c_func
 (paren
@@ -2784,6 +2788,14 @@ id|bh
 comma
 l_int|1
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bh
+)paren
+r_break
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -2808,7 +2820,7 @@ id|BUF_LOCKED1
 )paren
 )paren
 (brace
-multiline_comment|/* Buffers are written in the order they are placed &n;&t;&t;&t;   on the locked list. If we encounter a locked&n;&t;&t;&t;   buffer here, this means that the rest of them&n;&t;&t;&t;   are also locked */
+multiline_comment|/* Buffers are written in the order they are placed &n;&t;&t;&t; * on the locked list. If we encounter a locked&n;&t;&t;&t; * buffer here, this means that the rest of them&n;&t;&t;&t; * are also locked.&n;&t;&t;&t; */
 (paren
 op_star
 id|list_len
@@ -2884,8 +2896,8 @@ id|refilled
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* If there are too many dirty buffers, we wake up the update process&n;&t;   now so as to ensure that there are still clean buffers available&n;&t;   for user processes to use (and dirty) */
-multiline_comment|/* We are going to try to locate this much memory */
+multiline_comment|/* If there are too many dirty buffers, we wake up the update process&n;&t; * now so as to ensure that there are still clean buffers available&n;&t; * for user processes to use (and dirty).&n;&t; */
+multiline_comment|/* We are going to try to locate this much memory. */
 id|needed
 op_assign
 id|bdf_prm.b_un.nrefill
@@ -2895,15 +2907,19 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 id|nr_free_pages
 OG
 id|min_free_pages
 op_star
 l_int|2
+)paren
 op_logical_and
+(paren
 id|needed
 OG
 l_int|0
+)paren
 op_logical_and
 id|grow_buffers
 c_func
@@ -2913,16 +2929,13 @@ comma
 id|size
 )paren
 )paren
-(brace
 id|needed
 op_sub_assign
 id|PAGE_SIZE
 suffix:semicolon
-)brace
 id|repeat
 suffix:colon
-multiline_comment|/* OK, we cannot grow the buffer cache, now try to get some&n;&t;   from the lru list */
-multiline_comment|/* First set the candidate pointers to usable buffers.  This&n;&t;   should be quick nearly all of the time. */
+multiline_comment|/* OK, we cannot grow the buffer cache, now try to get some&n;&t; * from the lru list.&n;&t; *&n;&t; * First set the candidate pointers to usable buffers.  This&n;&t; * should be quick nearly all of the time.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2982,7 +2995,7 @@ id|size
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Now see which candidate wins the election */
+multiline_comment|/* Now see which candidate wins the election. */
 id|winner
 op_assign
 id|best_time
@@ -3045,7 +3058,7 @@ id|i
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* If we have a winner, use it, and then get a new candidate from that list */
+multiline_comment|/* If we have a winner, use it, and then get a new candidate from that list. */
 r_if
 c_cond
 (paren
@@ -3243,9 +3256,8 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-multiline_comment|/* and repeat until we find something good */
+multiline_comment|/* And repeat until we find something good. */
 r_if
 c_cond
 (paren
@@ -3304,7 +3316,7 @@ c_func
 id|size
 )paren
 suffix:semicolon
-multiline_comment|/* If there are too many dirty buffers, we wake up the update process&n;&t;   now so as to ensure that there are still clean buffers available&n;&t;   for user processes to use (and dirty) */
+multiline_comment|/* If there are too many dirty buffers, we wake up the update process&n;&t; * now so as to ensure that there are still clean buffers available&n;&t; * for user processes to use (and dirty).&n;&t; */
 id|repeat
 suffix:colon
 id|bh
@@ -3415,8 +3427,7 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-multiline_comment|/* OK, FINALLY we know that this buffer is the only one of its kind, */
-multiline_comment|/* and that it&squot;s unused (b_count=0), unlocked (buffer_locked=0), and clean */
+multiline_comment|/* OK, FINALLY we know that this buffer is the only one of its kind,&n;&t; * and that it&squot;s unused (b_count=0), unlocked (buffer_locked=0), and clean.&n;&t; */
 id|bh-&gt;b_count
 op_assign
 l_int|1
@@ -3478,7 +3489,7 @@ id|buf
 )paren
 )paren
 (brace
-multiline_comment|/* Move buffer to dirty list if jiffies is clear */
+multiline_comment|/* Move buffer to dirty list if jiffies is clear. */
 id|newtime
 op_assign
 id|jiffies
@@ -3660,8 +3671,18 @@ op_eq
 id|BUF_DIRTY
 )paren
 (brace
-multiline_comment|/* This buffer is dirty, maybe we need to start flushing. */
-multiline_comment|/* If too high a percentage of the buffers are dirty... */
+r_int
+id|too_many
+op_assign
+(paren
+id|nr_buffers
+op_star
+id|bdf_prm.b_un.nfract
+op_div
+l_int|100
+)paren
+suffix:semicolon
+multiline_comment|/* This buffer is dirty, maybe we need to start flushing.&n;&t;&t;&t; * If too high a percentage of the buffers are dirty...&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3670,11 +3691,7 @@ id|nr_buffers_type
 id|BUF_DIRTY
 )braket
 OG
-id|nr_buffers
-op_star
-id|bdf_prm.b_un.nfract
-op_div
-l_int|100
+id|too_many
 )paren
 id|wakeup_bdflush
 c_func
@@ -3682,8 +3699,7 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* If this is a loop device, and&n;&t;&t; * more than half of the buffers are dirty... */
-multiline_comment|/* (Prevents no-free-buffers deadlock with loop device.) */
+multiline_comment|/* If this is a loop device, and&n;&t;&t;&t; * more than half of the buffers are dirty...&n;&t;&t;&t; * (Prevents no-free-buffers deadlock with loop device.)&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3731,7 +3747,7 @@ c_func
 id|buf
 )paren
 suffix:semicolon
-multiline_comment|/* If dirty, mark the time this buffer should be written back */
+multiline_comment|/* If dirty, mark the time this buffer should be written back. */
 id|set_writetime
 c_func
 (paren
@@ -4167,7 +4183,7 @@ op_assign
 id|bh
 suffix:semicolon
 )brace
-multiline_comment|/* Request the read for these buffers, and then release them */
+multiline_comment|/* Request the read for these buffers, and then release them. */
 r_if
 c_cond
 (paren
@@ -4216,7 +4232,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Wait for this buffer, and then continue on */
+multiline_comment|/* Wait for this buffer, and then continue on. */
 id|bh
 op_assign
 id|bhlist
@@ -4275,9 +4291,11 @@ id|MAX_UNUSED_BUFFERS
 id|nr_buffer_heads
 op_decrement
 suffix:semicolon
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|bh_cachep
+comma
 id|bh
 )paren
 suffix:semicolon
@@ -4338,31 +4356,23 @@ op_logical_neg
 id|unused_list
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * This is critical.  We can&squot;t swap out pages to get&n;&t;&t; * more buffer heads, because the swap-out may need&n;&t;&t; * more buffer-heads itself.  Thus GFP_ATOMIC.&n;&t;&t; */
-multiline_comment|/* we now use kmalloc() here instead of gfp as we want&n;                   to be able to easily release buffer heads - they&n;                   took up quite a bit of memory (tridge) */
-id|bh
-op_assign
-(paren
-r_struct
-id|buffer_head
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-op_star
-id|bh
-)paren
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
+multiline_comment|/* This is critical.  We can&squot;t swap out pages to get&n;&t;&t; * more buffer heads, because the swap-out may need&n;&t;&t; * more buffer-heads itself.  Thus SLAB_ATOMIC.&n;&t;&t; */
 r_if
 c_cond
 (paren
+(paren
 id|bh
+op_assign
+id|kmem_cache_alloc
+c_func
+(paren
+id|bh_cachep
+comma
+id|SLAB_ATOMIC
+)paren
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 id|put_unused_buffer_head
@@ -4377,7 +4387,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Uhhuh. We&squot;re _really_ low on memory. Now we just&n;&t;&t; * wait for old buffer heads to become free due to&n;&t;&t; * finishing IO..&n;&t;&t; */
+multiline_comment|/* Uhhuh. We&squot;re _really_ low on memory. Now we just&n;&t;&t; * wait for old buffer heads to become free due to&n;&t;&t; * finishing IO..&n;&t;&t; */
 id|run_task_queue
 c_func
 (paren
@@ -6420,7 +6430,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 multiline_comment|/* ===================== Init ======================= */
-multiline_comment|/*&n; * allocate the hash table and init the free list&n; */
+multiline_comment|/*&n; * allocate the hash table and init the free list&n; * Use gfp() for the hash table to decrease TLB misses, use&n; * SLAB cache for buffer heads.&n; */
 DECL|function|buffer_init
 r_void
 id|buffer_init
@@ -6437,17 +6447,14 @@ id|buffer_head
 op_star
 op_star
 )paren
-id|vmalloc
+id|__get_free_pages
 c_func
 (paren
-id|NR_HASH
-op_star
-r_sizeof
-(paren
-r_struct
-id|buffer_head
-op_star
-)paren
+id|GFP_ATOMIC
+comma
+id|HASH_PAGES_ORDER
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -6479,6 +6486,48 @@ op_star
 )paren
 )paren
 suffix:semicolon
+id|bh_cachep
+op_assign
+id|kmem_cache_create
+c_func
+(paren
+l_string|&quot;buffer_head&quot;
+comma
+r_sizeof
+(paren
+r_struct
+id|buffer_head
+)paren
+comma
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+op_star
+l_int|4
+comma
+id|SLAB_HWCACHE_ALIGN
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bh_cachep
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;Cannot create buffer head SLAB cache&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|lru_list
 (braket
 id|BUF_CLEAN
@@ -7474,5 +7523,4 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * End:&n; */
 eof

@@ -1237,6 +1237,7 @@ suffix:semicolon
 macro_line|#endif /* def USLEEP */
 DECL|function|NCR5380_all_init
 r_static
+r_inline
 r_void
 id|NCR5380_all_init
 (paren
@@ -1292,12 +1293,16 @@ macro_line|#endif
 )brace
 macro_line|#ifdef AUTOPROBE_IRQ
 multiline_comment|/*&n; * Function : int NCR5380_probe_irq (struct Scsi_Host *instance, int possible)&n; * &n; * Purpose : autoprobe for the IRQ line used by the NCR5380.  &n; *&n; * Inputs : instance - pointer to this instance of the NCR5380 driver,&n; *          possible - bitmask of permissible interrupts.&n; *&n; * Returns : number of the IRQ selected, IRQ_NONE if no interrupt fired.&n; * &n; * XXX no effort is made to deal with spurious interrupts. &n; */
-DECL|variable|probe_irq
+DECL|variable|__initdata
 r_static
 r_int
 id|probe_irq
+id|__initdata
 suffix:semicolon
-DECL|function|probe_intr
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|probe_intr
@@ -1314,6 +1319,7 @@ id|pt_regs
 op_star
 id|regs
 )paren
+)paren
 (brace
 id|probe_irq
 op_assign
@@ -1321,7 +1327,10 @@ id|irq
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|function|NCR5380_probe_irq
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|NCR5380_probe_irq
@@ -1333,6 +1342,7 @@ id|instance
 comma
 r_int
 id|possible
+)paren
 )paren
 (brace
 id|NCR5380_local_declare
@@ -1547,7 +1557,10 @@ suffix:semicolon
 )brace
 macro_line|#endif /* AUTOPROBE_IRQ */
 multiline_comment|/*&n; * Function : void NCR58380_print_options (struct Scsi_Host *instance)&n; *&n; * Purpose : called by probe code indicating the NCR5380 driver&n; *&t;     options that were selected.&n; *&n; * Inputs : instance, pointer to this instance.  Unused.&n; */
-DECL|function|NCR5380_print_options
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|NCR5380_print_options
@@ -1556,6 +1569,7 @@ r_struct
 id|Scsi_Host
 op_star
 id|instance
+)paren
 )paren
 (brace
 id|printk
@@ -2418,7 +2432,10 @@ id|pos
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Function : void NCR5380_init (struct Scsi_Host *instance, flags)&n; *&n; * Purpose : initializes *instance and corresponding 5380 chip,&n; *&t;with flags OR&squot;d into the initial flags value.&n; *&n; * Inputs : instance - instantiation of the 5380 driver.  &n; *&n; * Notes : I assume that the host, hostno, and id bits have been&n; * &t;set correctly.  I don&squot;t care about the irq and other fields. &n; * &n; */
-DECL|function|NCR5380_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|NCR5380_init
@@ -2430,6 +2447,7 @@ id|instance
 comma
 r_int
 id|flags
+)paren
 )paren
 (brace
 id|NCR5380_local_declare

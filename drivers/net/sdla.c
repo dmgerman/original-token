@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -40,13 +41,14 @@ id|devname
 op_assign
 l_string|&quot;sdla&quot;
 suffix:semicolon
-DECL|variable|valid_port
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|valid_port
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x250
@@ -66,13 +68,14 @@ comma
 l_int|0x390
 )brace
 suffix:semicolon
-DECL|variable|valid_mem
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|valid_mem
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0xA0000
@@ -7365,7 +7368,10 @@ op_amp
 id|flp-&gt;stats
 suffix:semicolon
 )brace
-DECL|function|sdla_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|sdla_init
 c_func
@@ -7374,6 +7380,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_struct
@@ -7549,12 +7556,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|sdla_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sdla_setup
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|printk

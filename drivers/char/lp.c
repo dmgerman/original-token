@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -3622,12 +3623,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|lp_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|lp_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

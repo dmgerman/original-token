@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -2774,7 +2775,10 @@ l_int|13
 )paren
 suffix:semicolon
 )brace
-DECL|function|apricot_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|apricot_probe
 c_func
@@ -2783,6 +2787,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -4390,13 +4395,14 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef HAVE_DEVLIST
-DECL|variable|apricot_portlist
+DECL|variable|__initdata
 r_static
 r_int
 r_int
 id|apricot_portlist
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x300

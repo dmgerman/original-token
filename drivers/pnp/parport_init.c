@@ -2978,10 +2978,9 @@ r_return
 l_int|1
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|parport_proc_register
+id|parport_proc_init
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif

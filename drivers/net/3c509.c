@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_MCA */
 macro_line|#include &lt;linux/delay.h&gt;&t;/* for udelay() */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef EL3_DEBUG
@@ -472,7 +473,10 @@ id|dev
 suffix:semicolon
 macro_line|#endif
 "&f;"
-DECL|function|el3_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|el3_probe
 c_func
@@ -481,6 +485,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -1353,7 +1358,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Read a word from the EEPROM using the regular EEPROM access register.&n;   Assume that we are in register window zero.&n; */
-DECL|function|read_eeprom
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|ushort
 id|read_eeprom
@@ -1364,6 +1372,7 @@ id|ioaddr
 comma
 r_int
 id|index
+)paren
 )paren
 (brace
 id|outw
@@ -1395,7 +1404,10 @@ l_int|12
 suffix:semicolon
 )brace
 multiline_comment|/* Read a word from the EEPROM when in the ISA ID probe state. */
-DECL|function|id_read_eeprom
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|ushort
 id|id_read_eeprom
@@ -1403,6 +1415,7 @@ c_func
 (paren
 r_int
 id|index
+)paren
 )paren
 (brace
 r_int

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.31 1997/04/16 09:18:50 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
-multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.39 1997/04/22 02:53:14 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -9,6 +9,22 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+r_extern
+r_int
+id|sysctl_tcp_sack
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_tsack
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_timestamps
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_window_scaling
+suffix:semicolon
 r_static
 r_void
 id|tcp_v4_send_reset
@@ -43,7 +59,7 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* This is for sockets with full identity only.  Sockets here will always&n; * be without wildcards and will have the following invariant:&n; *          TCP_ESTABLISHED &lt;= sk-&gt;state &lt; TCP_CLOSE&n; */
+multiline_comment|/* This is for sockets with full identity only.  Sockets here will always&n; * be without wildcards and will have the following invariant:&n; *          TCP_ESTABLISHED &lt;= sk-&gt;state &lt; TCP_CLOSE&n; *&n; * First half of the table is for sockets not in TIME_WAIT, second half&n; * is for TIME_WAIT sockets only.&n; */
 DECL|variable|tcp_established_hash
 r_struct
 id|sock
@@ -53,7 +69,7 @@ id|tcp_established_hash
 id|TCP_HTABLE_SIZE
 )braket
 suffix:semicolon
-multiline_comment|/* All sockets in TCP_LISTEN state will be in here.  This is the only table&n; * where wildcard&squot;d TCP sockets can exist.  Hash function here is just local&n; * port number.  XXX Fix or we&squot;ll lose with thousands of IP aliases...&n; */
+multiline_comment|/* All sockets in TCP_LISTEN state will be in here.  This is the only table&n; * where wildcard&squot;d TCP sockets can exist.  Hash function here is just local&n; * port number.&n; */
 DECL|variable|tcp_listening_hash
 r_struct
 id|sock
@@ -109,7 +125,11 @@ id|fport
 )paren
 op_amp
 (paren
+(paren
 id|TCP_HTABLE_SIZE
+op_div
+l_int|2
+)paren
 op_minus
 l_int|1
 )paren
@@ -953,18 +973,42 @@ id|sk
 suffix:semicolon
 )brace
 r_else
-id|skp
+(brace
+r_int
+id|hash
 op_assign
-op_amp
-id|tcp_established_hash
-(braket
 id|tcp_sk_hashfn
 c_func
 (paren
 id|sk
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|state
+op_eq
+id|TCP_TIME_WAIT
+)paren
+(brace
+id|hash
+op_add_assign
+(paren
+id|TCP_HTABLE_SIZE
+op_div
+l_int|2
+)paren
+suffix:semicolon
+)brace
+id|skp
+op_assign
+op_amp
+id|tcp_established_hash
+(braket
+id|hash
 )braket
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1011,13 +1055,13 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Don&squot;t inline this cruft.  Here are some nice properties to&n; * exploit here.  The BSD API does not allow a listening TCP&n; * to specify the remote port nor the remote address for the&n; * connection.  So always assume those are both wildcarded&n; * during the search since they can never be otherwise.&n; *&n; * XXX Later on, hash on both local port _and_ local address,&n; * XXX to handle a huge IP alias&squot;d box.  Keep in mind that&n; * XXX such a scheme will require us to run through the listener&n; * XXX hash twice, once for local addresses bound, and once for&n; * XXX the local address wildcarded (because the hash is different).&n; */
-DECL|function|tcp_v4_lookup_longway
+multiline_comment|/* Don&squot;t inline this cruft.  Here are some nice properties to&n; * exploit here.  The BSD API does not allow a listening TCP&n; * to specify the remote port nor the remote address for the&n; * connection.  So always assume those are both wildcarded&n; * during the search since they can never be otherwise.&n; */
+DECL|function|tcp_v4_lookup_listener
 r_static
 r_struct
 id|sock
 op_star
-id|tcp_v4_lookup_longway
+id|tcp_v4_lookup_listener
 c_func
 (paren
 id|u32
@@ -1032,15 +1076,6 @@ r_struct
 id|sock
 op_star
 id|sk
-op_assign
-id|tcp_listening_hash
-(braket
-id|tcp_lhashfn
-c_func
-(paren
-id|hnum
-)paren
-)braket
 suffix:semicolon
 r_struct
 id|sock
@@ -1052,6 +1087,16 @@ suffix:semicolon
 r_for
 c_loop
 (paren
+id|sk
+op_assign
+id|tcp_listening_hash
+(braket
+id|tcp_lhashfn
+c_func
+(paren
+id|hnum
+)paren
+)braket
 suffix:semicolon
 id|sk
 suffix:semicolon
@@ -1155,11 +1200,9 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-multiline_comment|/* Optimize here for direct hit, only listening connections can&n;&t; * have wildcards anyways.  It is assumed that this code only&n;&t; * gets called from within NET_BH.&n;&t; */
-id|sk
+r_int
+id|hash
 op_assign
-id|tcp_established_hash
-(braket
 id|tcp_hashfn
 c_func
 (paren
@@ -1171,11 +1214,17 @@ id|saddr
 comma
 id|sport
 )paren
-)braket
 suffix:semicolon
+multiline_comment|/* Optimize here for direct hit, only listening connections can&n;&t; * have wildcards anyways.  It is assumed that this code only&n;&t; * gets called from within NET_BH.&n;&t; */
 r_for
 c_loop
 (paren
+id|sk
+op_assign
+id|tcp_established_hash
+(braket
+id|hash
+)braket
 suffix:semicolon
 id|sk
 suffix:semicolon
@@ -1212,9 +1261,60 @@ id|hit
 suffix:semicolon
 )brace
 multiline_comment|/* You sunk my battleship! */
+multiline_comment|/* Must check for a TIME_WAIT&squot;er before going to listener hash. */
+r_for
+c_loop
+(paren
 id|sk
 op_assign
-id|tcp_v4_lookup_longway
+id|tcp_established_hash
+(braket
+id|hash
+op_plus
+(paren
+id|TCP_HTABLE_SIZE
+op_div
+l_int|2
+)paren
+)braket
+suffix:semicolon
+id|sk
+suffix:semicolon
+id|sk
+op_assign
+id|sk-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|sk-&gt;daddr
+op_eq
+id|saddr
+op_logical_and
+multiline_comment|/* remote address */
+id|sk-&gt;dummy_th.dest
+op_eq
+id|sport
+op_logical_and
+multiline_comment|/* remote port    */
+id|sk-&gt;num
+op_eq
+id|hnum
+op_logical_and
+multiline_comment|/* local port     */
+id|sk-&gt;rcv_saddr
+op_eq
+id|daddr
+)paren
+(brace
+multiline_comment|/* local address  */
+r_goto
+id|hit
+suffix:semicolon
+)brace
+id|sk
+op_assign
+id|tcp_v4_lookup_listener
 c_func
 (paren
 id|daddr
@@ -1681,10 +1781,73 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
-r_break
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Must check TIME_WAIT&squot;ers too. */
+id|sk
+op_assign
+id|tcp_established_hash
+(braket
+id|hashent
+op_plus
+(paren
+id|TCP_HTABLE_SIZE
+op_div
+l_int|2
+)paren
+)braket
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|sk
+op_ne
+l_int|NULL
+suffix:semicolon
+id|sk
+op_assign
+id|sk-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;daddr
+op_eq
+id|daddr
+op_logical_and
+multiline_comment|/* remote address */
+id|sk-&gt;dummy_th.dest
+op_eq
+id|dnum
+op_logical_and
+multiline_comment|/* remote port */
+id|sk-&gt;num
+op_eq
+id|snum
+op_logical_and
+multiline_comment|/* local port */
+id|sk-&gt;saddr
+op_eq
+id|saddr
+)paren
+(brace
+multiline_comment|/* local address */
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+)brace
+id|out
+suffix:colon
 id|SOCKHASH_UNLOCK
 c_func
 (paren
@@ -1723,11 +1886,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb1
-suffix:semicolon
-r_int
-r_char
-op_star
-id|ptr
 suffix:semicolon
 r_int
 id|tmp
@@ -1775,7 +1933,7 @@ r_return
 op_minus
 id|EISCONN
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Don&squot;t allow a double connect.&n;&t; */
+multiline_comment|/* Don&squot;t allow a double connect. */
 r_if
 c_cond
 (paren
@@ -2050,7 +2208,7 @@ op_minus
 id|ENOBUFS
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Put in the IP header and routing stuff.&n;&t; */
+multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp
 op_assign
 id|ip_build_header
@@ -2169,12 +2327,8 @@ id|t1-&gt;syn
 op_assign
 l_int|1
 suffix:semicolon
-id|t1-&gt;doff
-op_assign
-l_int|6
-suffix:semicolon
-multiline_comment|/* use 512 or whatever user asked for */
-id|sk-&gt;window_clamp
+multiline_comment|/* Use 512 or whatever user asked for. */
+id|tp-&gt;window_clamp
 op_assign
 id|rt-&gt;u.dst.window
 suffix:semicolon
@@ -2251,64 +2405,44 @@ id|tcphdr
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Put in the TCP options to say MSS.&n;&t; */
-id|ptr
+id|tmp
 op_assign
-id|skb_put
+id|tcp_syn_build_options
 c_func
 (paren
 id|buff
 comma
-l_int|4
-)paren
-suffix:semicolon
-id|ptr
-(braket
+id|sk-&gt;mss
+comma
+id|sysctl_tcp_sack
+comma
+id|sysctl_tcp_timestamps
+comma
+id|sysctl_tcp_window_scaling
+ques
+c_cond
+id|tp-&gt;rcv_wscale
+suffix:colon
 l_int|0
-)braket
-op_assign
-id|TCPOPT_MSS
-suffix:semicolon
-id|ptr
-(braket
-l_int|1
-)braket
-op_assign
-id|TCPOLEN_MSS
-suffix:semicolon
-id|ptr
-(braket
-l_int|2
-)braket
-op_assign
-(paren
-id|sk-&gt;mss
 )paren
-op_rshift
-l_int|8
-suffix:semicolon
-id|ptr
-(braket
-l_int|3
-)braket
-op_assign
-(paren
-id|sk-&gt;mss
-)paren
-op_amp
-l_int|0xff
 suffix:semicolon
 id|buff-&gt;csum
 op_assign
-id|csum_partial
-c_func
-(paren
-id|ptr
-comma
-l_int|4
-comma
 l_int|0
+suffix:semicolon
+id|t1-&gt;doff
+op_assign
+(paren
+r_sizeof
+(paren
+op_star
+id|t1
 )paren
+op_plus
+id|tmp
+)paren
+op_rshift
+l_int|2
 suffix:semicolon
 id|tcp_v4_send_check
 c_func
@@ -2323,7 +2457,7 @@ r_struct
 id|tcphdr
 )paren
 op_plus
-l_int|4
+id|tmp
 comma
 id|buff
 )paren
@@ -2353,15 +2487,10 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* Now works the right way instead of a hacked initial setting */
-id|atomic_set
-c_func
-(paren
-op_amp
-id|sk-&gt;retransmits
-comma
+multiline_comment|/* Now works the right way instead of a hacked initial setting. */
+id|tp-&gt;retransmits
+op_assign
 l_int|0
-)paren
 suffix:semicolon
 id|skb_queue_tail
 c_func
@@ -2372,7 +2501,7 @@ comma
 id|buff
 )paren
 suffix:semicolon
-id|sk-&gt;packets_out
+id|tp-&gt;packets_out
 op_increment
 suffix:semicolon
 id|buff-&gt;when
@@ -2395,7 +2524,7 @@ c_func
 id|skb1
 )paren
 suffix:semicolon
-multiline_comment|/* Timer for repeating the SYN until an answer  */
+multiline_comment|/* Timer for repeating the SYN until an answer. */
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -2448,7 +2577,7 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Do sanity checking for sendmsg/sendto/send&n;&t; */
+multiline_comment|/* Do sanity checking for sendmsg/sendto/send. */
 r_if
 c_cond
 (paren
@@ -2634,6 +2763,11 @@ l_int|2
 )paren
 )paren
 suffix:semicolon
+r_struct
+id|tcp_opt
+op_star
+id|tp
+suffix:semicolon
 r_int
 id|type
 op_assign
@@ -2672,6 +2806,11 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+id|tp
+op_assign
+op_amp
+id|sk-&gt;tp_pinfo.af_tcp
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2680,15 +2819,7 @@ op_eq
 id|ICMP_SOURCE_QUENCH
 )paren
 (brace
-r_struct
-id|tcp_opt
-op_star
-id|tp
-op_assign
-op_amp
-id|sk-&gt;tp_pinfo.af_tcp
-suffix:semicolon
-id|sk-&gt;ssthresh
+id|tp-&gt;snd_ssthresh
 op_assign
 id|max
 c_func
@@ -2702,9 +2833,7 @@ l_int|2
 suffix:semicolon
 id|tp-&gt;snd_cwnd
 op_assign
-id|sk-&gt;ssthresh
-op_plus
-l_int|3
+id|tp-&gt;snd_ssthresh
 suffix:semicolon
 id|tp-&gt;high_seq
 op_assign
@@ -2734,6 +2863,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* FIXME: What about the IP layer options size here? */
 r_if
 c_cond
 (paren
@@ -2765,11 +2895,7 @@ r_struct
 id|iphdr
 )paren
 op_minus
-r_sizeof
-(paren
-r_struct
-id|tcphdr
-)paren
+id|tp-&gt;tcp_header_len
 suffix:semicolon
 r_if
 c_cond
@@ -2788,7 +2914,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If we&squot;ve already connected we will keep trying&n;&t; * until we time out, or the user gives up.&n;&t; */
+multiline_comment|/* If we&squot;ve already connected we will keep trying&n;&t; * until we time out, or the user gives up.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2923,11 +3049,9 @@ op_star
 )paren
 id|th
 comma
-r_sizeof
-(paren
-op_star
-id|th
-)paren
+id|th-&gt;doff
+op_lshift
+l_int|2
 comma
 id|skb-&gt;csum
 )paren
@@ -3029,7 +3153,7 @@ id|th1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Swap the send and the receive.&n;&t; */
+multiline_comment|/* Swap the send and the receive. */
 id|th1-&gt;dest
 op_assign
 id|th-&gt;source
@@ -3133,6 +3257,7 @@ comma
 id|skb1-&gt;csum
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: should this carry an options packet? */
 id|ip_queue_xmit
 c_func
 (paren
@@ -3261,9 +3386,7 @@ op_star
 id|th
 suffix:semicolon
 r_int
-r_char
-op_star
-id|ptr
+id|tmp
 suffix:semicolon
 r_int
 id|mss
@@ -3376,6 +3499,17 @@ id|tcphdr
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Don&squot;t offer more than they did.&n;&t; * This way we don&squot;t have to memorize who said what.&n;&t; */
+id|req-&gt;mss
+op_assign
+id|min
+c_func
+(paren
+id|mss
+comma
+id|req-&gt;mss
+)paren
+suffix:semicolon
 multiline_comment|/* Yuck, make this header setup more efficient... -DaveM */
 id|memset
 c_func
@@ -3435,18 +3569,6 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|th-&gt;doff
-op_assign
-r_sizeof
-(paren
-op_star
-id|th
-)paren
-op_div
-l_int|4
-op_plus
-l_int|1
-suffix:semicolon
 id|th-&gt;window
 op_assign
 id|ntohs
@@ -3455,64 +3577,47 @@ c_func
 id|tp-&gt;rcv_wnd
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: csum_partial() of a four byte quantity is itself! -DaveM */
-id|ptr
+multiline_comment|/* XXX Partial csum of 4 byte quantity is itself! -DaveM&n;&t; * Yes, but it&squot;s a bit harder to special case now. It&squot;s&n;&t; * now computed inside the tcp_v4_send_check() to clean up&n;&t; * updating the options fields in the mainline send code.&n;&t; * If someone thinks this is really bad let me know and&n;&t; * I&squot;ll try to do it a different way. -- erics&n;&t; */
+id|tmp
 op_assign
-id|skb_put
+id|tcp_syn_build_options
 c_func
 (paren
 id|skb
 comma
-id|TCPOLEN_MSS
-)paren
-suffix:semicolon
-id|ptr
-(braket
-l_int|0
-)braket
-op_assign
-id|TCPOPT_MSS
-suffix:semicolon
-id|ptr
-(braket
-l_int|1
-)braket
-op_assign
-id|TCPOLEN_MSS
-suffix:semicolon
-id|ptr
-(braket
-l_int|2
-)braket
-op_assign
+id|req-&gt;mss
+comma
+id|req-&gt;sack_ok
+comma
+id|req-&gt;tstamp_ok
+comma
 (paren
-id|mss
-op_rshift
-l_int|8
+id|req-&gt;snd_wscale
 )paren
-op_amp
-l_int|0xff
-suffix:semicolon
-id|ptr
-(braket
-l_int|3
-)braket
-op_assign
-id|mss
-op_amp
-l_int|0xff
+ques
+c_cond
+id|tp-&gt;rcv_wscale
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 id|skb-&gt;csum
 op_assign
-id|csum_partial
-c_func
-(paren
-id|ptr
-comma
-id|TCPOLEN_MSS
-comma
 l_int|0
+suffix:semicolon
+id|th-&gt;doff
+op_assign
+(paren
+r_sizeof
+(paren
+op_star
+id|th
 )paren
+op_plus
+id|tmp
+)paren
+op_rshift
+l_int|2
 suffix:semicolon
 id|th-&gt;check
 op_assign
@@ -3527,7 +3632,7 @@ op_star
 id|th
 )paren
 op_plus
-id|TCPOLEN_MSS
+id|tmp
 comma
 id|req-&gt;af.v4_req.loc_addr
 comma
@@ -3547,6 +3652,8 @@ r_sizeof
 op_star
 id|th
 )paren
+op_plus
+id|tmp
 comma
 id|skb-&gt;csum
 )paren
@@ -3671,6 +3778,16 @@ op_star
 id|ptr
 suffix:semicolon
 r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+(paren
+id|sk-&gt;tp_pinfo.af_tcp
+)paren
+suffix:semicolon
+r_struct
 id|open_request
 op_star
 id|req
@@ -3691,9 +3808,6 @@ id|__u32
 id|daddr
 op_assign
 id|skb-&gt;nh.iph-&gt;daddr
-suffix:semicolon
-id|__u16
-id|req_mss
 suffix:semicolon
 multiline_comment|/* If the socket is dead, don&squot;t accept the connection.&t;*/
 r_if
@@ -3798,27 +3912,56 @@ id|req-&gt;snt_isn
 op_assign
 id|isn
 suffix:semicolon
-id|req_mss
+id|tp-&gt;tstamp_ok
 op_assign
+id|tp-&gt;sack_ok
+op_assign
+id|tp-&gt;snd_wscale
+op_assign
+l_int|0
+suffix:semicolon
 id|tcp_parse_options
 c_func
 (paren
 id|th
+comma
+id|tp
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|req_mss
+id|tp-&gt;saw_tstamp
 )paren
-id|req_mss
+(brace
+id|tp-&gt;ts_recent
 op_assign
-l_int|536
+id|tp-&gt;rcv_tsval
 suffix:semicolon
+id|tp-&gt;ts_recent_stamp
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
 id|req-&gt;mss
 op_assign
-id|req_mss
+id|tp-&gt;in_mss
+suffix:semicolon
+id|req-&gt;tstamp_ok
+op_assign
+id|tp-&gt;tstamp_ok
+suffix:semicolon
+id|req-&gt;sack_ok
+op_assign
+id|tp-&gt;sack_ok
+suffix:semicolon
+id|req-&gt;snd_wscale
+op_assign
+id|tp-&gt;snd_wscale
+suffix:semicolon
+id|req-&gt;ts_recent
+op_assign
+id|tp-&gt;ts_recent
 suffix:semicolon
 id|req-&gt;rmt_port
 op_assign
@@ -4081,11 +4224,7 @@ op_amp
 id|newsk-&gt;error_queue
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Unused&n;&t; */
-id|newsk-&gt;send_head
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/* Unused */
 id|newtp
 op_assign
 op_amp
@@ -4120,21 +4259,11 @@ c_func
 id|newsk
 )paren
 suffix:semicolon
-id|newsk-&gt;cong_count
+id|newtp-&gt;snd_cwnd_cnt
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0 /* Don&squot;t mess up the initialization we did in the init routine! */
-id|newsk-&gt;ssthresh
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|newtp-&gt;backoff
-op_assign
-l_int|0
-suffix:semicolon
-id|newsk-&gt;intr
 op_assign
 l_int|0
 suffix:semicolon
@@ -4145,10 +4274,6 @@ suffix:semicolon
 id|newsk-&gt;done
 op_assign
 l_int|0
-suffix:semicolon
-id|newsk-&gt;partial
-op_assign
-l_int|NULL
 suffix:semicolon
 id|newsk-&gt;pair
 op_assign
@@ -4194,7 +4319,7 @@ id|newsk-&gt;ack_backlog
 op_assign
 l_int|0
 suffix:semicolon
-id|newsk-&gt;fin_seq
+id|newtp-&gt;fin_seq
 op_assign
 id|req-&gt;rcv_isn
 suffix:semicolon
@@ -4210,10 +4335,6 @@ id|newsk-&gt;timeout
 op_assign
 l_int|0
 suffix:semicolon
-id|newsk-&gt;ip_xmit_timeout
-op_assign
-l_int|0
-suffix:semicolon
 id|newsk-&gt;write_seq
 op_assign
 id|req-&gt;snt_isn
@@ -4226,7 +4347,7 @@ c_func
 id|skb-&gt;h.th-&gt;window
 )paren
 suffix:semicolon
-id|newsk-&gt;max_window
+id|newtp-&gt;max_window
 op_assign
 id|newtp-&gt;snd_wnd
 suffix:semicolon
@@ -4251,18 +4372,13 @@ id|newsk-&gt;urg_data
 op_assign
 l_int|0
 suffix:semicolon
-id|newsk-&gt;packets_out
+id|newtp-&gt;packets_out
 op_assign
 l_int|0
 suffix:semicolon
-id|atomic_set
-c_func
-(paren
-op_amp
-id|newsk-&gt;retransmits
-comma
+id|newtp-&gt;retransmits
+op_assign
 l_int|0
-)paren
 suffix:semicolon
 id|newsk-&gt;linger
 op_assign
@@ -4310,6 +4426,8 @@ id|newsk-&gt;sock_readers
 op_assign
 l_int|0
 suffix:semicolon
+id|newtp-&gt;last_ack_sent
+op_assign
 id|newtp-&gt;rcv_nxt
 op_assign
 id|req-&gt;rcv_isn
@@ -4344,7 +4462,7 @@ id|newsk-&gt;rcv_saddr
 op_assign
 id|req-&gt;af.v4_req.loc_addr
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;options / mss / route_cache&n;&t; */
+multiline_comment|/* options / mss / route_cache */
 id|newsk-&gt;opt
 op_assign
 id|req-&gt;af.v4_req.opt
@@ -4390,7 +4508,7 @@ op_assign
 op_amp
 id|rt-&gt;u.dst
 suffix:semicolon
-id|newsk-&gt;window_clamp
+id|newtp-&gt;window_clamp
 op_assign
 id|rt-&gt;u.dst.window
 suffix:semicolon
@@ -4398,10 +4516,12 @@ id|snd_mss
 op_assign
 id|rt-&gt;u.dst.pmtu
 suffix:semicolon
+multiline_comment|/* FIXME: is mtu really the same as snd_mss? */
 id|newsk-&gt;mtu
 op_assign
 id|snd_mss
 suffix:semicolon
+multiline_comment|/* FIXME: where does mtu get used after this? */
 multiline_comment|/* sanity check */
 r_if
 c_cond
@@ -4414,6 +4534,59 @@ id|newsk-&gt;mtu
 op_assign
 l_int|64
 suffix:semicolon
+id|newtp-&gt;sack_ok
+op_assign
+id|req-&gt;sack_ok
+suffix:semicolon
+id|newtp-&gt;tstamp_ok
+op_assign
+id|req-&gt;tstamp_ok
+suffix:semicolon
+id|newtp-&gt;snd_wscale
+op_assign
+id|req-&gt;snd_wscale
+suffix:semicolon
+id|newtp-&gt;ts_recent
+op_assign
+id|req-&gt;ts_recent
+suffix:semicolon
+id|newtp-&gt;ts_recent_stamp
+op_assign
+id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|newtp-&gt;tstamp_ok
+)paren
+(brace
+id|newtp-&gt;tcp_header_len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+op_plus
+l_int|12
+suffix:semicolon
+multiline_comment|/* FIXME: define constant! */
+id|newsk-&gt;dummy_th.doff
+op_add_assign
+l_int|3
+suffix:semicolon
+)brace
+r_else
+(brace
+id|newtp-&gt;tcp_header_len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+suffix:semicolon
+)brace
 id|snd_mss
 op_sub_assign
 r_sizeof
@@ -4443,6 +4616,7 @@ comma
 id|sk-&gt;user_mss
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure our mtu is adjusted for headers. */
 id|newsk-&gt;mss
 op_assign
 id|min
@@ -4452,6 +4626,14 @@ id|req-&gt;mss
 comma
 id|snd_mss
 )paren
+op_plus
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+op_minus
+id|newtp-&gt;tcp_header_len
 suffix:semicolon
 id|tcp_v4_hash
 c_func
@@ -4511,10 +4693,16 @@ c_cond
 op_logical_neg
 id|req
 )paren
+(brace
 r_return
 id|sk
 suffix:semicolon
-r_do
+)brace
+r_while
+c_loop
+(paren
+id|req
+)paren
 (brace
 r_if
 c_cond
@@ -4644,19 +4832,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-)brace
-r_while
-c_loop
-(paren
-(paren
 id|req
 op_assign
 id|req-&gt;dl_next
-)paren
-op_ne
-id|tp-&gt;syn_wait_queue
-)paren
 suffix:semicolon
+)brace
 id|skb_orphan
 c_func
 (paren
@@ -4749,7 +4929,7 @@ id|sock
 op_star
 id|nsk
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;find possible connection requests&n;&t;&t; */
+multiline_comment|/* Find possible connection requests. */
 id|nsk
 op_assign
 id|tcp_v4_check_req
@@ -4767,11 +4947,9 @@ id|nsk
 op_eq
 l_int|NULL
 )paren
-(brace
 r_goto
 id|discard_it
 suffix:semicolon
-)brace
 id|release_sock
 c_func
 (paren
@@ -4821,7 +4999,7 @@ id|skb
 suffix:semicolon
 id|discard_it
 suffix:colon
-multiline_comment|/*&n;&t; *&t;Discard frame&n;&t; */
+multiline_comment|/* Discard frame. */
 id|kfree_skb
 c_func
 (paren
@@ -4892,7 +5070,7 @@ id|PACKET_HOST
 r_goto
 id|discard_it
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Pull up the IP header.&n;&t; */
+multiline_comment|/* Pull up the IP header. */
 id|skb_pull
 c_func
 (paren
@@ -4903,7 +5081,7 @@ op_minus
 id|skb-&gt;data
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Try to use the device checksum if provided.&n;&t; */
+multiline_comment|/* Try to use the device checksum if provided. */
 r_switch
 c_cond
 (paren
@@ -4961,7 +5139,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;TCPv4 bad checksum from %08x:%04x to %08x:%04x, len=%d/%d/%d&bslash;n&quot;
+l_string|&quot;TCPv4 bad checksum from %08x:%04x to %08x:%04x, ack = %u, seq = %u, len=%d/%d/%d&bslash;n&quot;
 comma
 id|saddr
 comma
@@ -4972,6 +5150,18 @@ id|th-&gt;source
 )paren
 comma
 id|daddr
+comma
+id|ntohl
+c_func
+(paren
+id|th-&gt;ack_seq
+)paren
+comma
+id|ntohl
+c_func
+(paren
+id|th-&gt;seq
+)paren
 comma
 id|ntohs
 c_func
@@ -5114,10 +5304,6 @@ c_func
 id|th-&gt;ack_seq
 )paren
 suffix:semicolon
-id|skb-&gt;acked
-op_assign
-l_int|0
-suffix:semicolon
 id|skb-&gt;used
 op_assign
 l_int|0
@@ -5159,7 +5345,7 @@ id|skb
 suffix:semicolon
 id|discard_it
 suffix:colon
-multiline_comment|/*&n; &t; *&t;Discard frame&n;&t; */
+multiline_comment|/* Discard frame. */
 id|kfree_skb
 c_func
 (paren
@@ -5304,7 +5490,7 @@ op_amp
 id|rt-&gt;u.dst
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Discard the surplus MAC header&n;&t; */
+multiline_comment|/* Discard the surplus MAC header. */
 id|skb_pull
 c_func
 (paren
@@ -5511,12 +5697,36 @@ id|tp-&gt;rcv_wnd
 op_assign
 l_int|8192
 suffix:semicolon
+id|tp-&gt;tstamp_ok
+op_assign
+l_int|0
+suffix:semicolon
+id|tp-&gt;sack_ok
+op_assign
+l_int|0
+suffix:semicolon
+id|tp-&gt;in_mss
+op_assign
+l_int|0
+suffix:semicolon
+id|tp-&gt;snd_wscale
+op_assign
+l_int|0
+suffix:semicolon
+id|tp-&gt;sacks
+op_assign
+l_int|0
+suffix:semicolon
+id|tp-&gt;saw_tstamp
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * See draft-stevens-tcpca-spec-01 for discussion of the&n;&t; * initialization of these values.&n;&t; */
 id|tp-&gt;snd_cwnd
 op_assign
 l_int|1
 suffix:semicolon
-id|sk-&gt;ssthresh
+id|tp-&gt;snd_ssthresh
 op_assign
 l_int|0x7fffffff
 suffix:semicolon
@@ -5529,7 +5739,7 @@ id|sk-&gt;state
 op_assign
 id|TCP_CLOSE
 suffix:semicolon
-multiline_comment|/* this is how many unacked bytes we will accept for this socket.  */
+multiline_comment|/* This is how many unacked bytes we will accept for this socket. */
 id|sk-&gt;max_unacked
 op_assign
 l_int|2048
@@ -5547,16 +5757,7 @@ id|sk-&gt;mss
 op_assign
 l_int|536
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Speed up by setting some standard state for the dummy_th.&n;&t; */
-id|sk-&gt;dummy_th.doff
-op_assign
-r_sizeof
-(paren
-id|sk-&gt;dummy_th
-)paren
-op_div
-l_int|4
-suffix:semicolon
+multiline_comment|/* Speed up by setting some standard state for the dummy_th. */
 id|sk-&gt;dummy_th.ack
 op_assign
 l_int|1
@@ -5570,6 +5771,16 @@ id|tcphdr
 )paren
 op_rshift
 l_int|2
+suffix:semicolon
+multiline_comment|/* Init SYN queue. */
+id|tp-&gt;syn_wait_queue
+op_assign
+l_int|NULL
+suffix:semicolon
+id|tp-&gt;syn_wait_last
+op_assign
+op_amp
+id|tp-&gt;syn_wait_queue
 suffix:semicolon
 id|sk-&gt;tp_pinfo.af_tcp.af_specific
 op_assign
@@ -5608,15 +5819,13 @@ c_cond
 (paren
 id|sk-&gt;keepopen
 )paren
-(brace
 id|tcp_dec_slow_timer
 c_func
 (paren
 id|TCP_SLT_KEEPALIVE
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *&t;Cleanup up the write buffer.&n;&t; */
+multiline_comment|/* Cleanup up the write buffer. */
 r_while
 c_loop
 (paren
@@ -5634,12 +5843,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -5649,7 +5852,7 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Cleans up our, hopefuly empty, out_of_order_queue&n;&t; */
+multiline_comment|/* Cleans up our, hopefuly empty, out_of_order_queue. */
 r_while
 c_loop
 (paren
@@ -5667,12 +5870,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|IS_SKB
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren

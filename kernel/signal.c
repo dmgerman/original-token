@@ -213,9 +213,11 @@ r_int
 id|ret
 suffix:semicolon
 multiline_comment|/* fill in &quot;set&quot; with signals pending but blocked. */
-id|lock_kernel
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 id|ret
@@ -230,9 +232,11 @@ comma
 id|set
 )paren
 suffix:semicolon
-id|unlock_kernel
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 r_return

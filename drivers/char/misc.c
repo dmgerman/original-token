@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
@@ -684,12 +685,16 @@ op_star
 id|proc_misc
 suffix:semicolon
 macro_line|#endif
-DECL|function|misc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|misc_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#ifndef MODULE

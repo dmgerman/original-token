@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -716,12 +717,16 @@ id|random_state
 )paren
 suffix:semicolon
 )brace
-DECL|function|rand_initialize
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|rand_initialize
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -7479,7 +7484,10 @@ id|low
 )paren
 suffix:semicolon
 )brace
-DECL|function|initialize_benchmark
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|initialize_benchmark
@@ -7497,6 +7505,7 @@ id|descr
 comma
 r_int
 id|unit
+)paren
 )paren
 (brace
 id|bench-&gt;times

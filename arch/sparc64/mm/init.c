@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.23 1997/04/16 10:27:18 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.24 1997/04/17 21:49:41 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -3658,26 +3658,6 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-id|printk
-(paren
-l_string|&quot;Freeing unused kernel memory: %dk freed&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-(paren
-(paren
-op_amp
-id|__init_end
-op_minus
-op_amp
-id|__init_begin
-)paren
-op_rshift
-l_int|10
-)paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|si_meminfo
 r_void

@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/tty_driver.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifndef MODULE
 macro_line|#include &lt;linux/ctype.h&gt; /* We only need it for parsing the &quot;digi=&quot;-line */
 macro_line|#endif
@@ -845,6 +846,12 @@ dot
 id|expires
 op_assign
 l_int|0
+suffix:semicolon
+id|remove_bh
+c_func
+(paren
+id|DIGI_BH
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4792,12 +4799,16 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * function to initialize the driver with the given parameters, which are either&n; * the default values from this file or the parameters given at boot.&n; */
-DECL|function|pcxe_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|pcxe_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|ulong

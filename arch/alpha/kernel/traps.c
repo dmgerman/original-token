@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/gentrap.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
+macro_line|#include &lt;asm/sysinfo.h&gt;
+macro_line|#include &lt;asm/smp_lock.h&gt;
 DECL|function|die_if_kernel
 r_void
 id|die_if_kernel
@@ -465,6 +467,11 @@ suffix:semicolon
 multiline_comment|/* emulation was successful */
 )brace
 )brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -498,6 +505,11 @@ c_func
 id|SIGFPE
 comma
 id|current
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -544,6 +556,11 @@ r_struct
 id|task_struct
 op_star
 id|who
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|die_if_kernel
@@ -818,6 +835,11 @@ l_string|&quot;do_entIF: unexpected instruction-fault type&quot;
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * entUna has a different register layout to be reasonably simple. It&n; * needs access to all the integer registers (the kernel doesn&squot;t use&n; * fp-regs), and it needs to have them in order for simpler access.&n; *&n; * Due to the non-standard register layout (and because we don&squot;t want&n; * to handle floating-point regs), user-mode unaligned accesses are&n; * handled separately by do_entUnaUser below.&n; *&n; * Oh, btw, we don&squot;t handle the &quot;gp&quot; register correctly, but if we fault&n; * on a gp-register unaligned load/store, something is _very_ wrong&n; * in the kernel anyway..&n; */
 DECL|struct|allregs
@@ -914,18 +936,6 @@ id|allregs
 id|regs
 )paren
 (brace
-r_static
-r_int
-id|cnt
-op_assign
-l_int|0
-suffix:semicolon
-r_static
-r_int
-id|last_time
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 id|error
 comma
@@ -947,55 +957,6 @@ l_int|4
 suffix:semicolon
 r_int
 id|fixup
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cnt
-op_ge
-l_int|5
-op_logical_and
-id|jiffies
-op_minus
-id|last_time
-OG
-l_int|5
-op_star
-id|HZ
-)paren
-(brace
-id|cnt
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_increment
-id|cnt
-OL
-l_int|5
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;kernel: unaligned trap at %016lx: %p %lx %ld&bslash;n&quot;
-comma
-id|pc
-comma
-id|va
-comma
-id|opcode
-comma
-id|reg
-)paren
-suffix:semicolon
-)brace
-id|last_time
-op_assign
-id|jiffies
 suffix:semicolon
 id|unaligned
 (braket
@@ -1034,7 +995,6 @@ c_cond
 id|opcode
 )paren
 (brace
-macro_line|#ifdef __HAVE_CPU_BWX
 r_case
 l_int|0x0c
 suffix:colon
@@ -1101,7 +1061,6 @@ id|tmp2
 suffix:semicolon
 r_return
 suffix:semicolon
-macro_line|#endif
 r_case
 l_int|0x28
 suffix:colon
@@ -1240,7 +1199,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 multiline_comment|/* Note that the store sequences do not indicate that they change&n;&t;   memory because it _should_ be affecting nothing in this context.&n;&t;   (Otherwise we have other, much larger, problems.)  */
-macro_line|#ifdef __HAVE_CPU_BWX
 r_case
 l_int|0x0d
 suffix:colon
@@ -1326,7 +1284,6 @@ id|got_exception
 suffix:semicolon
 r_return
 suffix:semicolon
-macro_line|#endif
 r_case
 l_int|0x2c
 suffix:colon
@@ -1498,6 +1455,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1516,6 +1478,11 @@ id|do_exit
 c_func
 (paren
 id|SIGSEGV
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -1555,6 +1522,11 @@ comma
 id|pc
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1563,6 +1535,11 @@ comma
 id|pc
 comma
 id|newpc
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 (paren
@@ -1578,6 +1555,11 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Yikes!  No one to forward the exception to.  */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1601,6 +1583,11 @@ id|do_exit
 c_func
 (paren
 id|SIGSEGV
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1783,6 +1770,10 @@ l_int|34
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Handle user-level unaligned fault.  Handling user-level unaligned&n; * faults is *extremely* slow and produces nasty messages.  A user&n; * program *should* fix unaligned faults ASAP.&n; *&n; * Notice that we have (almost) the regular kernel stack layout here,&n; * so finding the appropriate registers is a little more difficult&n; * than in the kernel case.&n; *&n; * Finally, we handle regular integer load/stores only.  In&n; * particular, load-linked/store-conditionally and floating point&n; * load/stores are not supported.  The former make no sense with&n; * unaligned faults (they are guaranteed to fail) and I don&squot;t think&n; * the latter will occur in any decent program.&n; *&n; * Sigh. We *do* have to handle some FP operations, because GCC will&n; * uses them as temporary storage for integer memory to memory copies.&n; * However, we need to deal with stt/ldt and sts/lds only.&n; */
+DECL|macro|OP_INT_MASK
+mdefine_line|#define OP_INT_MASK&t;( 1L &lt;&lt; 0x28 | 1L &lt;&lt; 0x2c   /* ldl stl */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x29 | 1L &lt;&lt; 0x2d   /* ldq stq */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x0c | 1L &lt;&lt; 0x0d ) /* ldwu stw */
+DECL|macro|OP_WRITE_MASK
+mdefine_line|#define OP_WRITE_MASK&t;( 1L &lt;&lt; 0x26 | 1L &lt;&lt; 0x27   /* sts stt */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x2c | 1L &lt;&lt; 0x2d   /* stl stq */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0xd )&t;&t;    /* stw */
 DECL|function|do_entUnaUser
 id|asmlinkage
 r_void
@@ -1807,37 +1798,6 @@ op_star
 id|frame
 )paren
 (brace
-r_int
-id|dir
-comma
-id|size
-suffix:semicolon
-r_int
-r_int
-op_star
-id|reg_addr
-comma
-op_star
-id|pc_addr
-comma
-id|usp
-comma
-id|zero
-op_assign
-l_int|0
-suffix:semicolon
-r_static
-r_int
-id|cnt
-op_assign
-l_int|0
-suffix:semicolon
-r_static
-r_int
-id|last_time
-op_assign
-l_int|0
-suffix:semicolon
 r_extern
 r_void
 id|alpha_write_fp_reg
@@ -1861,6 +1821,45 @@ r_int
 id|reg
 )paren
 suffix:semicolon
+r_static
+r_int
+id|cnt
+op_assign
+l_int|0
+suffix:semicolon
+r_static
+r_int
+id|last_time
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+r_int
+id|tmp1
+comma
+id|tmp2
+comma
+id|tmp3
+comma
+id|tmp4
+suffix:semicolon
+r_int
+r_int
+op_star
+id|reg_addr
+comma
+op_star
+id|pc_addr
+comma
+id|fake_reg
+suffix:semicolon
+r_int
+r_int
+id|uac_bits
+suffix:semicolon
+r_int
+id|error
+suffix:semicolon
 id|pc_addr
 op_assign
 id|frame
@@ -1872,6 +1871,28 @@ op_plus
 l_int|1
 suffix:semicolon
 multiline_comment|/* pc in PAL frame */
+multiline_comment|/* Check the UAC bits to decide what the user wants us to do&n;&t;   with the unaliged access.  */
+id|uac_bits
+op_assign
+(paren
+id|current-&gt;tss.flags
+op_rshift
+id|UAC_SHIFT
+)paren
+op_amp
+id|UAC_BITMASK
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|uac_bits
+op_amp
+id|UAC_NOPRINT
+)paren
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -1902,6 +1923,11 @@ OL
 l_int|5
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1923,10 +1949,62 @@ comma
 id|reg
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 id|last_time
 op_assign
 id|jiffies
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|uac_bits
+op_amp
+id|UAC_SIGBUS
+)paren
+(brace
+r_goto
+id|give_sigbus
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|uac_bits
+op_amp
+id|UAC_NOFIX
+)paren
+(brace
+multiline_comment|/* Not sure why you&squot;d want to use this, but... */
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Don&squot;t bother reading ds in the access check since we already&n;&t;   know that this came from the user.  Also rely on the fact that&n;&t;   the page at TASK_SIZE is unmapped and so can&squot;t be touched anyway. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|__access_ok
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|va
+comma
+l_int|0
+comma
+id|USER_DS
+)paren
+)paren
+r_goto
+id|give_sigsegv
 suffix:semicolon
 op_increment
 id|unaligned
@@ -1948,8 +2026,6 @@ r_int
 r_int
 )paren
 id|va
-op_minus
-l_int|4
 suffix:semicolon
 id|unaligned
 (braket
@@ -1960,74 +2036,9 @@ id|pc
 op_assign
 op_star
 id|pc_addr
-suffix:semicolon
-id|dir
-op_assign
-id|VERIFY_READ
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|opcode
-op_amp
-l_int|0x4
-)paren
-(brace
-multiline_comment|/* it&squot;s a stl, stq, stt, or sts */
-id|dir
-op_assign
-id|VERIFY_WRITE
-suffix:semicolon
-)brace
-id|size
-op_assign
+op_minus
 l_int|4
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|opcode
-op_amp
-l_int|0x1
-)paren
-(brace
-multiline_comment|/* it&squot;s a quadword op */
-id|size
-op_assign
-l_int|8
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|verify_area
-c_func
-(paren
-id|dir
-comma
-id|va
-comma
-id|size
-)paren
-)paren
-(brace
-op_star
-id|pc_addr
-op_sub_assign
-l_int|4
-suffix:semicolon
-multiline_comment|/* make pc point to faulting insn */
-id|force_sig
-c_func
-(paren
-id|SIGSEGV
-comma
-id|current
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|reg_addr
 op_assign
 id|frame
@@ -2035,9 +2046,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+l_int|1L
+op_lshift
 id|opcode
-op_ge
-l_int|0x28
+)paren
+op_amp
+id|OP_INT_MASK
 )paren
 (brace
 multiline_comment|/* it&squot;s an integer load/store */
@@ -2204,7 +2219,7 @@ r_case
 l_int|30
 suffix:colon
 multiline_comment|/* usp in PAL regs */
-id|usp
+id|fake_reg
 op_assign
 id|rdusp
 c_func
@@ -2214,7 +2229,7 @@ suffix:semicolon
 id|reg_addr
 op_assign
 op_amp
-id|usp
+id|fake_reg
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2222,15 +2237,20 @@ r_case
 l_int|31
 suffix:colon
 multiline_comment|/* zero &quot;register&quot; */
+id|fake_reg
+op_assign
+l_int|0
+suffix:semicolon
 id|reg_addr
 op_assign
 op_amp
-id|zero
+id|fake_reg
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* We don&squot;t want to use the generic get/put unaligned macros as&n;&t;   we want to trap exceptions.  Only if we actually get an&n;&t;   exception will we decide whether we should have caught it.  */
 r_switch
 c_cond
 (paren
@@ -2238,9 +2258,122 @@ id|opcode
 )paren
 (brace
 r_case
+l_int|0x0c
+suffix:colon
+multiline_comment|/* ldwu */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_u %1,0(%3)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %2,1(%3)&bslash;n&quot;
+l_string|&quot;&t;extwl %1,%3,%1&bslash;n&quot;
+l_string|&quot;&t;extwh %2,%3,%2&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|error
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
+op_star
+id|reg_addr
+op_assign
+id|tmp1
+op_or
+id|tmp2
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|0x22
 suffix:colon
 multiline_comment|/* lds */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_u %1,0(%3)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %2,3(%3)&bslash;n&quot;
+l_string|&quot;&t;extll %1,%3,%1&bslash;n&quot;
+l_string|&quot;&t;extlh %2,%3,%2&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|error
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
 id|alpha_write_fp_reg
 c_func
 (paren
@@ -2249,28 +2382,305 @@ comma
 id|s_mem_to_reg
 c_func
 (paren
-id|get_unaligned
+(paren
+r_int
+)paren
+(paren
+id|tmp1
+op_or
+id|tmp2
+)paren
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+r_case
+l_int|0x23
+suffix:colon
+multiline_comment|/* ldt */
+id|__asm__
+id|__volatile__
 c_func
 (paren
+l_string|&quot;1:&t;ldq_u %1,0(%3)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %2,7(%3)&bslash;n&quot;
+l_string|&quot;&t;extql %1,%3,%1&bslash;n&quot;
+l_string|&quot;&t;extqh %2,%3,%2&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=r&quot;
 (paren
-r_int
-r_int
-op_star
+id|error
 )paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
 id|va
 )paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
 )paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
+id|alpha_write_fp_reg
+c_func
+(paren
+id|reg
+comma
+id|tmp1
+op_or
+id|tmp2
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+r_case
+l_int|0x28
+suffix:colon
+multiline_comment|/* ldl */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_u %1,0(%3)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %2,3(%3)&bslash;n&quot;
+l_string|&quot;&t;extll %1,%3,%1&bslash;n&quot;
+l_string|&quot;&t;extlh %2,%3,%2&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|error
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
+op_star
+id|reg_addr
+op_assign
+(paren
+r_int
+)paren
+(paren
+id|tmp1
+op_or
+id|tmp2
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+l_int|0x29
+suffix:colon
+multiline_comment|/* ldq */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_u %1,0(%3)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %2,7(%3)&bslash;n&quot;
+l_string|&quot;&t;extql %1,%3,%1&bslash;n&quot;
+l_string|&quot;&t;extqh %2,%3,%2&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|error
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
+op_star
+id|reg_addr
+op_assign
+id|tmp1
+op_or
+id|tmp2
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* Note that the store sequences do not indicate that they change&n;&t;   memory because it _should_ be affecting nothing in this context.&n;&t;   (Otherwise we have other, much larger, problems.)  */
+r_case
+l_int|0x0d
+suffix:colon
+multiline_comment|/* stw */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_u %2,1(%5)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;&t;inswh %6,%5,%4&bslash;n&quot;
+l_string|&quot;&t;inswl %6,%5,%3&bslash;n&quot;
+l_string|&quot;&t;mskwh %2,%5,%2&bslash;n&quot;
+l_string|&quot;&t;mskwl %1,%5,%1&bslash;n&quot;
+l_string|&quot;&t;or %2,%4,%2&bslash;n&quot;
+l_string|&quot;&t;or %1,%3,%1&bslash;n&quot;
+l_string|&quot;3:&t;stq_u %2,1(%5)&bslash;n&quot;
+l_string|&quot;4:&t;stq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;5:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %2,5b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %1,5b-2b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 3b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-3b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 4b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-4b(%0)&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|error
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp3
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp4
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+op_star
+id|reg_addr
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
+r_return
+suffix:semicolon
+r_case
 l_int|0x26
 suffix:colon
 multiline_comment|/* sts */
-id|put_unaligned
-c_func
-(paren
+id|fake_reg
+op_assign
 id|s_reg_to_mem
 c_func
 (paren
@@ -2280,140 +2690,219 @@ c_func
 id|reg
 )paren
 )paren
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-id|va
-)paren
 suffix:semicolon
-r_break
+id|reg_addr
+op_assign
+op_amp
+id|fake_reg
 suffix:semicolon
+multiline_comment|/* FALLTHRU */
 r_case
-l_int|0x23
+l_int|0x2c
 suffix:colon
-multiline_comment|/* ldt */
-id|alpha_write_fp_reg
+multiline_comment|/* stl */
+id|__asm__
+id|__volatile__
 c_func
 (paren
-id|reg
-comma
-id|get_unaligned
-c_func
+l_string|&quot;1:&t;ldq_u %2,3(%5)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;&t;inslh %6,%5,%4&bslash;n&quot;
+l_string|&quot;&t;insll %6,%5,%3&bslash;n&quot;
+l_string|&quot;&t;msklh %2,%5,%2&bslash;n&quot;
+l_string|&quot;&t;mskll %1,%5,%1&bslash;n&quot;
+l_string|&quot;&t;or %2,%4,%2&bslash;n&quot;
+l_string|&quot;&t;or %1,%3,%1&bslash;n&quot;
+l_string|&quot;3:&t;stq_u %2,3(%5)&bslash;n&quot;
+l_string|&quot;4:&t;stq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;5:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %2,5b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %1,5b-2b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 3b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-3b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 4b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-4b(%0)&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=r&quot;
 (paren
-(paren
-r_int
-r_int
-op_star
+id|error
 )paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp3
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp4
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
 id|va
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+op_star
+id|reg_addr
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
 )paren
 )paren
 suffix:semicolon
-r_break
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
+r_return
 suffix:semicolon
 r_case
 l_int|0x27
 suffix:colon
 multiline_comment|/* stt */
-id|put_unaligned
-c_func
-(paren
+id|fake_reg
+op_assign
 id|alpha_read_fp_reg
 c_func
 (paren
 id|reg
 )paren
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-id|va
-)paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x28
-suffix:colon
-multiline_comment|/* ldl */
-op_star
 id|reg_addr
 op_assign
-id|get_unaligned
-c_func
-(paren
-(paren
-r_int
-op_star
-)paren
-id|va
-)paren
+op_amp
+id|fake_reg
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x2c
-suffix:colon
-multiline_comment|/* stl */
-id|put_unaligned
-c_func
-(paren
-op_star
-id|reg_addr
-comma
-(paren
-r_int
-op_star
-)paren
-id|va
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x29
-suffix:colon
-multiline_comment|/* ldq */
-op_star
-id|reg_addr
-op_assign
-id|get_unaligned
-c_func
-(paren
-(paren
-r_int
-op_star
-)paren
-id|va
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
+multiline_comment|/* FALLTHRU */
 r_case
 l_int|0x2d
 suffix:colon
 multiline_comment|/* stq */
-id|put_unaligned
+id|__asm__
+id|__volatile__
 c_func
+(paren
+l_string|&quot;1:&t;ldq_u %2,7(%5)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;&t;insqh %6,%5,%4&bslash;n&quot;
+l_string|&quot;&t;insql %6,%5,%3&bslash;n&quot;
+l_string|&quot;&t;mskqh %2,%5,%2&bslash;n&quot;
+l_string|&quot;&t;mskql %1,%5,%1&bslash;n&quot;
+l_string|&quot;&t;or %2,%4,%2&bslash;n&quot;
+l_string|&quot;&t;or %1,%3,%1&bslash;n&quot;
+l_string|&quot;3:&t;stq_u %2,7(%5)&bslash;n&quot;
+l_string|&quot;4:&t;stq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;5:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %2,5b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %1,5b-2b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 3b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-3b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 4b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-4b(%0)&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|error
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp3
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp4
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+comma
+l_string|&quot;r&quot;
 (paren
 op_star
 id|reg_addr
-comma
-(paren
-r_int
-op_star
 )paren
-id|va
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
-r_break
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
+r_return
 suffix:semicolon
 r_default
+suffix:colon
+multiline_comment|/* What instruction were you trying to use, exactly?  */
+r_goto
+id|give_sigbus
+suffix:semicolon
+)brace
+multiline_comment|/* Only integer loads should get here; everyone else returns early. */
+r_if
+c_cond
+(paren
+id|reg
+op_eq
+l_int|30
+)paren
+id|wrusp
+c_func
+(paren
+id|fake_reg
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+id|give_sigsegv
 suffix:colon
 op_star
 id|pc_addr
@@ -2421,6 +2910,38 @@ op_sub_assign
 l_int|4
 suffix:semicolon
 multiline_comment|/* make pc point to faulting insn */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|force_sig
+c_func
+(paren
+id|SIGSEGV
+comma
+id|current
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+id|give_sigbus
+suffix:colon
+op_star
+id|pc_addr
+op_sub_assign
+l_int|4
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|force_sig
 c_func
 (paren
@@ -2429,32 +2950,13 @@ comma
 id|current
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|opcode
-op_ge
-l_int|0x28
-op_logical_and
-id|reg
-op_eq
-l_int|30
-op_logical_and
-id|dir
-op_eq
-id|VERIFY_WRITE
-)paren
-(brace
-id|wrusp
+id|unlock_kernel
 c_func
 (paren
-id|usp
 )paren
 suffix:semicolon
-)brace
+r_return
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * DEC means people to use the &quot;retsys&quot; instruction for return from&n; * a system call, but they are clearly misguided about this. We use&n; * &quot;rti&quot; in all cases, and fill in the stack with the return values.&n; * That should make signal handling etc much cleaner.&n; *&n; * Even more horribly, DEC doesn&squot;t allow system calls from kernel mode.&n; * &quot;Security&quot; features letting the user do something the kernel can&squot;t&n; * are a thinko. DEC palcode is strange. The PAL-code designers probably&n; * got terminally tainted by VMS at some point.&n; */
 DECL|function|do_entSys
@@ -2492,12 +2994,22 @@ id|pt_regs
 id|regs
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Only report OSF system calls.  */
 r_if
 c_cond
 (paren
 id|regs.r0
 op_ne
 l_int|112
+op_logical_and
+id|regs.r0
+OL
+l_int|300
 )paren
 id|printk
 c_func
@@ -2511,6 +3023,11 @@ comma
 id|a1
 comma
 id|a2
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2563,6 +3080,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_register
+r_int
+r_int
+id|gptr
+id|__asm__
+c_func
+(paren
+l_string|&quot;$29&quot;
+)paren
+suffix:semicolon
 DECL|function|trap_init
 r_void
 id|trap_init
@@ -2571,23 +3098,7 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|gptr
-suffix:semicolon
-multiline_comment|/*&n;&t; * Tell PAL-code what global pointer we want in the kernel..&n;&t; */
-id|__asm__
-c_func
-(paren
-l_string|&quot;br %0,___tmp&bslash;n&quot;
-l_string|&quot;___tmp:&bslash;tldgp %0,0(%0)&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|gptr
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* Tell PAL-code what global pointer we want in the kernel.  */
 id|wrkgp
 c_func
 (paren

@@ -26,6 +26,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
@@ -94,12 +95,13 @@ l_int|1
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
-DECL|variable|product_ids
+DECL|variable|__initdata
 r_static
 r_int
 id|product_ids
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x5900
@@ -1304,7 +1306,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#else
-DECL|function|tc59x_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|tc59x_probe
 c_func
@@ -1313,6 +1318,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -1354,7 +1360,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif  /* not MODULE */
-DECL|function|vortex_scan
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|vortex_scan
@@ -1364,6 +1373,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -1752,7 +1762,10 @@ r_return
 id|cards_found
 suffix:semicolon
 )brace
-DECL|function|vortex_found_device
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|vortex_found_device
@@ -1774,6 +1787,7 @@ id|product_index
 comma
 r_int
 id|options
+)paren
 )paren
 (brace
 r_struct
@@ -2132,7 +2146,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|vortex_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|vortex_probe1
@@ -2142,6 +2159,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int

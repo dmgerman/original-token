@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -9432,12 +9433,16 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * scsi_dev_init() is our initialization routine, which in turn calls host&n; * initialization, bus scanning, and sd/st initialization routines.&n; */
-DECL|function|scsi_dev_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|scsi_dev_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|Scsi_Device

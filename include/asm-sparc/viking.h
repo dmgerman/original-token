@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: viking.h,v 1.18 1997/04/11 00:42:23 davem Exp $&n; * viking.h:  Defines specific to the GNU/Viking MBUS module.&n; *            This is SRMMU stuff.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: viking.h,v 1.19 1997/04/20 14:11:48 ecd Exp $&n; * viking.h:  Defines specific to the GNU/Viking MBUS module.&n; *            This is SRMMU stuff.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_VIKING_H
 DECL|macro|_SPARC_VIKING_H
 mdefine_line|#define _SPARC_VIKING_H
@@ -42,6 +42,7 @@ DECL|macro|VIKING_PTAG_DIRTY
 mdefine_line|#define VIKING_PTAG_DIRTY   0x00010000   /* Block has been modified */
 DECL|macro|VIKING_PTAG_SHARED
 mdefine_line|#define VIKING_PTAG_SHARED  0x00000100   /* Shared with some other cache */
+macro_line|#ifndef __ASSEMBLY__
 DECL|function|viking_flush_icache
 r_extern
 id|__inline__
@@ -613,5 +614,6 @@ r_return
 id|val
 suffix:semicolon
 )brace
+macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif /* !(_SPARC_VIKING_H) */
 eof

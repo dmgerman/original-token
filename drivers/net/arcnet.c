@@ -28,6 +28,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1382,7 +1383,10 @@ macro_line|#endif
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
 macro_line|#ifdef RIM_I_MODE
 multiline_comment|/* We cannot probe for a RIM I card; one reason is I don&squot;t know how to reset&n; * them.  In fact, we can&squot;t even get their node ID automatically.  So, we&n; * need to be passed a specific shmem address, IRQ, and node ID (stored in&n; * dev-&gt;base_addr)&n; */
-DECL|function|arcnet_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|arcnet_probe
 c_func
@@ -1391,6 +1395,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|BUGLVL
@@ -1494,23 +1499,7 @@ suffix:semicolon
 )brace
 macro_line|#else /* not RIM_I_MODE, so use a real autoprobe */
 multiline_comment|/* Check for an ARCnet network adaptor, and return &squot;0&squot; if one exists.&n; *  If dev-&gt;base_addr == 0, probe all likely locations.&n; *  If dev-&gt;base_addr == 1, always return failure.&n; *  If dev-&gt;base_addr == 2, allocate space for the device and return success&n; *  &t;&t;&t;    (detachable devices only).&n; *&n; * NOTE: the list of possible ports/shmems is static, so it is retained&n; * across calls to arcnet_probe.  So, if more than one ARCnet probe is made,&n; * values that were discarded once will not even be tried again.&n; *&n; * FIXME: grab all devices in one shot and eliminate the big static array.&n; */
-DECL|function|arcnet_probe
-r_int
-id|arcnet_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_static
-r_int
-id|init_once
-op_assign
-l_int|0
-suffix:semicolon
+DECL|variable|__initdata
 r_static
 r_int
 id|ports
@@ -1525,7 +1514,9 @@ l_int|16
 op_plus
 l_int|1
 )braket
+id|__initdata
 suffix:semicolon
+DECL|variable|__initdata
 r_static
 id|u_long
 id|shmems
@@ -1540,6 +1531,28 @@ l_int|2048
 op_plus
 l_int|1
 )braket
+id|__initdata
+suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|arcnet_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+)paren
+(brace
+r_static
+r_int
+id|init_once
+op_assign
+l_int|0
 suffix:semicolon
 r_static
 r_int
@@ -3138,7 +3151,10 @@ suffix:semicolon
 )brace
 macro_line|#endif /* !RIM_I_MODE */
 multiline_comment|/* Set up the struct device associated with this card.  Called after&n; * probing succeeds.&n; */
-DECL|function|arcnet_found
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|arcnet_found
 c_func
@@ -3156,6 +3172,7 @@ id|airq
 comma
 id|u_long
 id|shmem
+)paren
 )paren
 (brace
 id|u_long

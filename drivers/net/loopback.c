@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -227,7 +228,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the rest of the LOOPBACK device. */
-DECL|function|loopback_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|loopback_init
 c_func
@@ -236,6 +240,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|dev-&gt;mtu

@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -342,7 +343,10 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_CreateMailboxes allocates the Outgoing and Incoming Mailboxes for&n;  Host Adapter.&n;*/
-DECL|function|BusLogic_CreateMailboxes
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|boolean
 id|BusLogic_CreateMailboxes
@@ -351,6 +355,7 @@ c_func
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
+)paren
 )paren
 (brace
 multiline_comment|/*&n;    FlashPoint Host Adapters do not use Outgoing and Incoming Mailboxes.&n;  */
@@ -616,7 +621,10 @@ l_bool|true
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_CreateInitialCCBs allocates the initial CCBs for Host Adapter.&n;*/
-DECL|function|BusLogic_CreateInitialCCBs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|boolean
 id|BusLogic_CreateInitialCCBs
@@ -625,6 +633,7 @@ c_func
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
+)paren
 )paren
 (brace
 r_int
@@ -991,7 +1000,10 @@ id|CCB
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_CreateTargetDeviceStatistics creates the Target Device Statistics&n;  structure for Host Adapter.&n;*/
-DECL|function|BusLogic_CreateTargetDeviceStatistics
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|boolean
 id|BusLogic_CreateTargetDeviceStatistics
@@ -1000,6 +1012,7 @@ c_func
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
+)paren
 )paren
 (brace
 id|HostAdapter-&gt;TargetDeviceStatistics
@@ -1821,6 +1834,7 @@ suffix:semicolon
 multiline_comment|/*&n;  BusLogic_InitializeProbeInfoListISA initializes the list of I/O Address and&n;  Bus Probe Information to be checked for potential BusLogic SCSI Host Adapters&n;  only from the list of standard BusLogic MultiMaster ISA I/O Addresses.&n;*/
 DECL|function|BusLogic_InitializeProbeInfoListISA
 r_static
+r_inline
 r_void
 id|BusLogic_InitializeProbeInfoListISA
 c_func
@@ -1897,7 +1911,10 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n;  BusLogic_SortProbeInfo sorts a section of BusLogic_ProbeInfoList in order&n;  of increasing PCI Bus and Device Number.&n;*/
-DECL|function|BusLogic_SortProbeInfo
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|BusLogic_SortProbeInfo
@@ -1909,6 +1926,7 @@ id|ProbeInfoList
 comma
 r_int
 id|ProbeInfoCount
+)paren
 )paren
 (brace
 r_int
@@ -2048,13 +2066,17 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;  BusLogic_InitializeMultiMasterProbeInfo initializes the list of I/O Address&n;  and Bus Probe Information to be checked for potential BusLogic MultiMaster&n;  SCSI Host Adapters by interrogating the PCI Configuration Space on PCI&n;  machines as well as from the list of standard BusLogic MultiMaster ISA&n;  I/O Addresses.  It returns the number of PCI MultiMaster Host Adapters found.&n;*/
-DECL|function|BusLogic_InitializeMultiMasterProbeInfo
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|BusLogic_InitializeMultiMasterProbeInfo
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|boolean
@@ -2818,13 +2840,17 @@ id|PCIMultiMasterCount
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_InitializeFlashPointProbeInfo initializes the list of I/O Address&n;  and Bus Probe Information to be checked for potential BusLogic FlashPoint&n;  Host Adapters by interrogating the PCI Configuration Space.  It returns the&n;  number of FlashPoint Host Adapters found.&n;*/
-DECL|function|BusLogic_InitializeFlashPointProbeInfo
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|BusLogic_InitializeFlashPointProbeInfo
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3227,6 +3253,7 @@ suffix:semicolon
 multiline_comment|/*&n;  BusLogic_InitializeProbeInfoList initializes the list of I/O Address and Bus&n;  Probe Information to be checked for potential BusLogic SCSI Host Adapters by&n;  interrogating the PCI Configuration Space on PCI machines as well as from the&n;  list of standard BusLogic MultiMaster ISA I/O Addresses.  By default, if both&n;  FlashPoint and PCI MultiMaster Host Adapters are present, this driver will&n;  probe for FlashPoint Host Adapters first unless the BIOS primary disk is&n;  controlled by the first PCI MultiMaster Host Adapter, in which case&n;  MultiMaster Host Adapters will be probed first.  The Kernel Command Line&n;  options &quot;MultiMasterFirst&quot; and &quot;FlashPointFirst&quot; can be used to force a&n;  particular probe order.&n;*/
 DECL|function|BusLogic_InitializeProbeInfoList
 r_static
+r_inline
 r_void
 id|BusLogic_InitializeProbeInfoList
 c_func
@@ -3584,7 +3611,10 @@ l_bool|false
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_ProbeHostAdapter probes for a BusLogic Host Adapter.&n;*/
-DECL|function|BusLogic_ProbeHostAdapter
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|boolean
 id|BusLogic_ProbeHostAdapter
@@ -3593,6 +3623,7 @@ c_func
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
+)paren
 )paren
 (brace
 id|BusLogic_StatusRegister_T
@@ -4149,7 +4180,10 @@ l_bool|true
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_CheckHostAdapter checks to be sure this really is a BusLogic&n;  Host Adapter.  It also determines the IRQ Channel for non-PCI Host Adapters.&n;*/
-DECL|function|BusLogic_CheckHostAdapter
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|boolean
 id|BusLogic_CheckHostAdapter
@@ -4158,6 +4192,7 @@ c_func
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
+)paren
 )paren
 (brace
 id|BusLogic_Configuration_T
@@ -4368,7 +4403,10 @@ id|Result
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_ReadHostAdapterConfiguration reads the Configuration Information&n;  from Host Adapter and initializes the Host Adapter structure.&n;*/
-DECL|function|BusLogic_ReadHostAdapterConfiguration
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|boolean
 id|BusLogic_ReadHostAdapterConfiguration
@@ -4377,6 +4415,7 @@ c_func
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
+)paren
 )paren
 (brace
 id|BusLogic_BoardID_T
@@ -6041,7 +6080,10 @@ l_bool|true
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_ReportHostAdapterConfiguration reports the configuration of&n;  Host Adapter.&n;*/
-DECL|function|BusLogic_ReportHostAdapterConfiguration
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|boolean
 id|BusLogic_ReportHostAdapterConfiguration
@@ -6050,6 +6092,7 @@ c_func
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
+)paren
 )paren
 (brace
 r_int
@@ -7215,7 +7258,10 @@ l_bool|true
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_AcquireResources acquires the system resources necessary to use&n;  Host Adapter.&n;*/
-DECL|function|BusLogic_AcquireResources
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|boolean
 id|BusLogic_AcquireResources
@@ -7224,6 +7270,7 @@ c_func
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
+)paren
 )paren
 (brace
 id|BusLogic_HostAdapter_T
@@ -7457,7 +7504,10 @@ id|HostAdapter-&gt;DMA_Channel
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_TestInterrupts tests for proper functioning of the Host Adapter&n;  Interrupt Register and that interrupts generated by the Host Adapter are&n;  getting through to the Interrupt Handler.  A large proportion of initial&n;  problems with installing PCI Host Adapters are due to configuration problems&n;  where either the Host Adapter or Motherboard is configured incorrectly, and&n;  interrupts do not get through as a result.&n;*/
-DECL|function|BusLogic_TestInterrupts
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|boolean
 id|BusLogic_TestInterrupts
@@ -7466,6 +7516,7 @@ c_func
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
+)paren
 )paren
 (brace
 r_int
@@ -8494,7 +8545,10 @@ l_bool|true
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_InitializeHostStructure initializes the fields in the SCSI Host&n;  structure.  The base, io_port, n_io_ports, irq, and dma_channel fields in the&n;  SCSI Host structure are intentionally left uninitialized, as this driver&n;  handles acquisition and release of these resources explicitly, as well as&n;  ensuring exclusive access to the Host Adapter hardware and data structures&n;  through explicit acquisition and release of the Host Adapter&squot;s Lock.&n;*/
-DECL|function|BusLogic_InitializeHostStructure
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|BusLogic_InitializeHostStructure
@@ -8507,6 +8561,7 @@ comma
 id|SCSI_Host_T
 op_star
 id|Host
+)paren
 )paren
 (brace
 id|Host-&gt;max_id
@@ -8761,7 +8816,10 @@ l_bool|false
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_DetectHostAdapter probes for BusLogic Host Adapters at the standard&n;  I/O Addresses where they may be located, initializing, registering, and&n;  reporting the configuration of each BusLogic Host Adapter it finds.  It&n;  returns the number of BusLogic Host Adapters successfully initialized and&n;  registered.&n;*/
-DECL|function|BusLogic_DetectHostAdapter
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|BusLogic_DetectHostAdapter
 c_func
@@ -8769,6 +8827,7 @@ c_func
 id|SCSI_Host_Template_T
 op_star
 id|HostTemplate
+)paren
 )paren
 (brace
 r_int

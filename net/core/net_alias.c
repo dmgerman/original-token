@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
@@ -4262,12 +4263,16 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; *&t;Net_alias initialisation called from net_dev_init().&n; */
-DECL|function|net_alias_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|net_alias_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Register device events notifier&n;&t; */

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -2941,7 +2942,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|a2065_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|a2065_probe
 c_func
@@ -2950,6 +2954,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int

@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1069,6 +1070,7 @@ id|tty
 )paren
 suffix:semicolon
 r_static
+r_inline
 r_int
 id|stli_initbrds
 c_func
@@ -1087,6 +1089,7 @@ id|brdp
 )paren
 suffix:semicolon
 r_static
+r_inline
 r_int
 id|stli_initecp
 c_func
@@ -1097,6 +1100,7 @@ id|brdp
 )paren
 suffix:semicolon
 r_static
+r_inline
 r_int
 id|stli_initonb
 c_func
@@ -1117,6 +1121,7 @@ id|brdp
 )paren
 suffix:semicolon
 r_static
+r_inline
 r_int
 id|stli_findeisabrds
 c_func
@@ -1125,6 +1130,7 @@ r_void
 )paren
 suffix:semicolon
 r_static
+r_inline
 r_int
 id|stli_initports
 c_func
@@ -12426,6 +12432,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;All panels and ports actually attached have been worked out. All&n; *&t;we need to do here is set up the appropriate per port data structures.&n; */
 DECL|function|stli_initports
 r_static
+r_inline
 r_int
 id|stli_initports
 c_func
@@ -14906,6 +14913,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;Try to find an ECP board and initialize it. This handles only ECP&n; *&t;board types.&n; */
 DECL|function|stli_initecp
 r_static
+r_inline
 r_int
 id|stli_initecp
 c_func
@@ -15428,6 +15436,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;Try to find an ONboard, Brumby or Stallion board and initialize it.&n; *&t;This handles only these board types.&n; */
 DECL|function|stli_initonb
 r_static
+r_inline
 r_int
 id|stli_initonb
 c_func
@@ -16495,7 +16504,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Probe and initialize the specified board.&n; */
-DECL|function|stli_brdinit
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|stli_brdinit
@@ -16504,6 +16516,7 @@ c_func
 id|stlibrd_t
 op_star
 id|brdp
+)paren
 )paren
 (brace
 macro_line|#if DEBUG
@@ -16701,7 +16714,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Probe around trying to find where the EISA boards shared memory&n; *&t;might be. This is a bit if hack, but it is the best we can do.&n; */
-DECL|function|stli_eisamemprobe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|stli_eisamemprobe
@@ -16710,6 +16726,7 @@ c_func
 id|stlibrd_t
 op_star
 id|brdp
+)paren
 )paren
 (brace
 id|cdkecpsig_t
@@ -17165,6 +17182,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;Probe around and try to find any EISA boards in system. The biggest&n; *&t;problem here is finding out what memory address is associated with&n; *&t;an EISA board after it is found. The registers of the ECPE and&n; *&t;ONboardE are not readable - so we can&squot;t read them from there. We&n; *&t;don&squot;t have access to the EISA CMOS (or EISA BIOS) so we don&squot;t&n; *&t;actually have any way to find out the real value. The best we can&n; *&t;do is go probing around in the usual places hoping we can find it.&n; */
 DECL|function|stli_findeisabrds
 r_static
+r_inline
 r_int
 id|stli_findeisabrds
 c_func
@@ -17510,6 +17528,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;Scan through all the boards in the configuration and see what we&n; *&t;can find.&n; */
 DECL|function|stli_initbrds
 r_static
+r_inline
 r_int
 id|stli_initbrds
 c_func
@@ -19905,11 +19924,15 @@ id|rc
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-DECL|function|stli_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|stli_init
 c_func
 (paren
+)paren
 )paren
 (brace
 id|printk

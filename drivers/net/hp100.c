@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -408,7 +409,10 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *  probe functions&n; */
-DECL|function|hp100_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|hp100_probe
 c_func
@@ -417,6 +421,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -832,7 +837,10 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|hp100_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|hp100_probe1
@@ -848,6 +856,7 @@ id|ioaddr
 comma
 r_int
 id|bus
+)paren
 )paren
 (brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mxcc.h,v 1.6 1996/08/29 09:48:27 davem Exp $&n; * mxcc.h:  Definitions of the Viking MXCC registers&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mxcc.h,v 1.7 1997/04/20 14:11:46 ecd Exp $&n; * mxcc.h:  Definitions of the Viking MXCC registers&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MXCC_H
 DECL|macro|_SPARC_MXCC_H
 mdefine_line|#define _SPARC_MXCC_H
@@ -59,6 +59,7 @@ mdefine_line|#define MXCC_ERR_PRIV   0x00000040
 DECL|macro|MXCC_ERR_HPADDR
 mdefine_line|#define MXCC_ERR_HPADDR 0x0000000f
 multiline_comment|/* The MXCC Port register:&n; *&n; * -----------------------------------------------------&n; * |                | MID |                            |&n; * -----------------------------------------------------&n; *  31            21 20-18 17                         0&n; *&n; * MID: The moduleID of the cpu your read this from.&n; */
+macro_line|#ifndef __ASSEMBLY__
 DECL|function|mxcc_set_stream_src
 r_extern
 id|__inline__
@@ -278,5 +279,6 @@ id|ASI_M_MXCC
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif /* !(_SPARC_MXCC_H) */
 eof

@@ -27,6 +27,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;              
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
@@ -506,7 +507,10 @@ suffix:semicolon
 multiline_comment|/*  */
 "&f;"
 multiline_comment|/* struct device * interface functions &n;   ---------------------------------------------------------&n;   */
-DECL|function|eql_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|eql_init
 c_func
@@ -515,6 +519,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_static

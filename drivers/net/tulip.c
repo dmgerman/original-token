@@ -47,6 +47,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1254,9 +1255,12 @@ id|CSR13
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   card_type returns 1 if the card is &squot;etherarray&squot;&n;*/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|card_type
 id|card_type
 c_func
 (paren
@@ -1270,6 +1274,7 @@ id|device_id
 comma
 r_int
 id|vendor_id
+)paren
 )paren
 (brace
 r_int
@@ -1367,9 +1372,12 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|read_eeprom
 id|read_eeprom
 c_func
 (paren
@@ -1380,6 +1388,7 @@ r_struct
 id|eeprom
 op_star
 id|eepp
+)paren
 )paren
 (brace
 r_int
@@ -5014,8 +5023,11 @@ id|dev
 suffix:semicolon
 )brace
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|tulip_hwinit
 id|tulip_hwinit
 c_func
 (paren
@@ -5032,6 +5044,7 @@ id|irq
 comma
 r_int
 id|device_id
+)paren
 )paren
 (brace
 multiline_comment|/* See note below on the Znyx 315 etherarray. */
@@ -5665,7 +5678,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|tulip_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|tulip_probe
 c_func
@@ -5674,6 +5690,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_static

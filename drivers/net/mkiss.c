@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -3289,12 +3290,16 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize AX25 control device -- register AX25 line discipline */
-DECL|function|mkiss_init_ctrl_dev
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|mkiss_init_ctrl_dev
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -4173,13 +4178,17 @@ multiline_comment|/* we don&squot;t do termios */
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* * &t;&t;&t;Init MKISS driver &t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
-DECL|function|mkiss_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|mkiss_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|memset
