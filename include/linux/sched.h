@@ -1341,6 +1341,9 @@ r_struct
 id|task_struct
 op_star
 id|tsk
+comma
+r_int
+id|signal
 )paren
 suffix:semicolon
 r_extern
