@@ -281,10 +281,10 @@ id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * load_block_bitmap loads the block bitmap for a blocks group&n; *&n; * It maintains a cache for the last bitmaps loaded.  This cache is managed&n; * with a LRU algorithm.&n; *&n; * Notes:&n; * 1/ There is one cache per mounted file system.&n; * 2/ If the file system contains less than EXT2_MAX_GROUP_LOADED groups,&n; *    this function reads the bitmap without maintaining a LRU cache.&n; * &n; * Return the slot used to store the bitmap, or a -ve error code.&n; */
-DECL|function|load__block_bitmap
+DECL|function|__load_block_bitmap
 r_static
 r_int
-id|load__block_bitmap
+id|__load_block_bitmap
 (paren
 r_struct
 id|super_block
@@ -369,7 +369,7 @@ id|ext2_error
 (paren
 id|sb
 comma
-l_string|&quot;load_block_bitmap&quot;
+l_string|&quot;__load_block_bitmap&quot;
 comma
 l_string|&quot;block_group != block_bitmap_number&quot;
 )paren
@@ -605,7 +605,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Load the block bitmap for a given block group.  First of all do a couple&n; * of fast lookups for common cases and then pass the request onto the guts&n; * of the bitmap loader.&n; *&n; * Return the slot number of the group in the superblock bitmap cache&squot;s on&n; * success, or a -ve error code.&n; *&n; * There is still one inconsistancy here --- if the number of groups in this&n; * filesystems is &lt;= EXT2_MAX_GROUP_LOADED, then we have no way of &n; * differentiating between a group for which we have never performed a bitmap&n; * IO request, and a group for which the last bitmap read request failed.&n; */
+multiline_comment|/*&n; * Load the block bitmap for a given block group.  First of all do a couple&n; * of fast lookups for common cases and then pass the request onto the guts&n; * of the bitmap loader.&n; *&n; * Return the slot number of the group in the superblock bitmap cache&squot;s on&n; * success, or a -ve error code.&n; *&n; * There is still one inconsistency here --- if the number of groups in this&n; * filesystems is &lt;= EXT2_MAX_GROUP_LOADED, then we have no way of &n; * differentiating between a group for which we have never performed a bitmap&n; * IO request, and a group for which the last bitmap read request failed.&n; */
 DECL|function|load_block_bitmap
 r_static
 r_inline
@@ -682,7 +682,7 @@ r_else
 (brace
 id|slot
 op_assign
-id|load__block_bitmap
+id|__load_block_bitmap
 (paren
 id|sb
 comma

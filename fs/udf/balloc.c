@@ -348,10 +348,10 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-DECL|function|load__block_bitmap
+DECL|function|__load_block_bitmap
 r_static
 r_int
-id|load__block_bitmap
+id|__load_block_bitmap
 c_func
 (paren
 r_struct
@@ -912,7 +912,7 @@ r_else
 (brace
 id|slot
 op_assign
-id|load__block_bitmap
+id|__load_block_bitmap
 c_func
 (paren
 id|sb
