@@ -5535,6 +5535,12 @@ id|ENXIO
 )brace
 comma
 (brace
+id|NFSERR_EAGAIN
+comma
+id|EAGAIN
+)brace
+comma
+(brace
 id|NFSERR_ACCES
 comma
 id|EACCES

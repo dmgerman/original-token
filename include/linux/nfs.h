@@ -191,6 +191,11 @@ id|NFSERR_NXIO
 op_assign
 l_int|6
 comma
+DECL|enumerator|NFSERR_EAGAIN
+id|NFSERR_EAGAIN
+op_assign
+l_int|11
+comma
 DECL|enumerator|NFSERR_ACCES
 id|NFSERR_ACCES
 op_assign

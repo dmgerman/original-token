@@ -278,7 +278,7 @@ id|sign
 comma
 id|tmp
 (braket
-l_int|36
+l_int|66
 )braket
 suffix:semicolon
 r_const

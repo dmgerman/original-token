@@ -24,7 +24,6 @@ mdefine_line|#define DEBUGT 2
 DECL|macro|DCL_DEBUG
 mdefine_line|#define DCL_DEBUG /* debug disk change line */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_BLK_DEV_FD
 macro_line|#ifndef FD_MODULE
 multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed. */
 DECL|variable|ALLOWED_DRIVE_MASK
@@ -15397,5 +15396,4 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#endif
 eof

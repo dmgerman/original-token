@@ -240,6 +240,7 @@ r_int
 r_int
 id|gptr
 suffix:semicolon
+multiline_comment|/*&n;&t; * Tell PAL-code what global pointer we want in the kernel..&n;&t; */
 id|__asm__
 c_func
 (paren

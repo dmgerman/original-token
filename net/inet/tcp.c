@@ -1032,6 +1032,14 @@ id|sk-&gt;err
 op_assign
 id|ETIMEDOUT
 suffix:semicolon
+id|sk
+op_member_access_from_pointer
+id|error_report
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Time wait the socket &n;&t;&t; */
 r_if
 c_cond

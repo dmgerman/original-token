@@ -339,8 +339,6 @@ id|ICMP_PARAMETERPROB
 r_return
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
 )brace
 id|icmp_statistics.IcmpOutMsgs
 op_increment

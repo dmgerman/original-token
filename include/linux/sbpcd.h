@@ -422,8 +422,6 @@ DECL|macro|CMD1_RESET
 mdefine_line|#define CMD1_RESET&t;0x0a
 DECL|macro|CMD2_RESET
 mdefine_line|#define CMD2_RESET&t;0x01
-DECL|macro|CMDL_RESET
-mdefine_line|#define CMDL_RESET&t;0x0a
 DECL|macro|CMDT_RESET
 mdefine_line|#define CMDT_RESET&t;0xc0
 DECL|macro|CMD1_LOCK_CTL
@@ -444,8 +442,6 @@ DECL|macro|CMDT_TRAY_CTL
 mdefine_line|#define CMDT_TRAY_CTL&t;0x1b
 DECL|macro|CMD1_MULTISESS
 mdefine_line|#define CMD1_MULTISESS&t;0x8d
-DECL|macro|CMD2_MULTISESS
-mdefine_line|#define CMD2_MULTISESS&t;0x43
 DECL|macro|CMDL_MULTISESS
 mdefine_line|#define CMDL_MULTISESS&t;0x8c
 DECL|macro|CMD1_SUBCHANINF
@@ -625,7 +621,7 @@ mdefine_line|#define CMD0_DISKINFO&t;0x8b
 DECL|macro|CMD1_DISKINFO
 mdefine_line|#define CMD1_DISKINFO&t;0x8b
 DECL|macro|CMD2_DISKINFO
-mdefine_line|#define CMD2_DISKINFO&t;0x
+mdefine_line|#define CMD2_DISKINFO&t;0x43
 DECL|macro|CMDL_DISKINFO
 mdefine_line|#define CMDL_DISKINFO&t;0x8b
 DECL|macro|CMDT_DISKINFO

@@ -11,8 +11,8 @@ DECL|macro|BOOT_SIZE
 mdefine_line|#define BOOT_SIZE&t;(16*1024)
 DECL|macro|KERNEL_START
 mdefine_line|#define KERNEL_START&t;0xfffffc0000300000
-DECL|macro|INIT_PCB
-mdefine_line|#define INIT_PCB&t;0xfffffc0000300000
+DECL|macro|SWAPPER_PGD
+mdefine_line|#define SWAPPER_PGD&t;0xfffffc0000300000
 DECL|macro|INIT_STACK
 mdefine_line|#define INIT_STACK&t;0xfffffc0000302000
 DECL|macro|EMPTY_PGT
@@ -21,8 +21,6 @@ DECL|macro|EMPTY_PGE
 mdefine_line|#define EMPTY_PGE&t;0xfffffc0000308000
 DECL|macro|ZERO_PGE
 mdefine_line|#define ZERO_PGE&t;0xfffffc000030A000
-DECL|macro|SWAPPER_PGD
-mdefine_line|#define SWAPPER_PGD&t;0xfffffc000030C000
 DECL|macro|START_ADDR
 mdefine_line|#define START_ADDR&t;0xfffffc0000310000
 DECL|macro|START_SIZE

@@ -115,6 +115,10 @@ id|im-&gt;timer.expires
 op_assign
 id|tv
 suffix:semicolon
+id|im-&gt;tm_running
+op_assign
+l_int|1
+suffix:semicolon
 id|add_timer
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Wed Jan 11 22:02:20 1995 by root@kai.home&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Thu Jan 19 23:28:05 1995 by makisara@kai.home&n;*/
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -8213,6 +8213,7 @@ op_logical_neg
 id|ioctl_result
 )paren
 (brace
+multiline_comment|/* SCSI command successful */
 r_if
 c_cond
 (paren
@@ -8452,6 +8453,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* SCSI command was not completely successful */
 r_if
 c_cond
 (paren
@@ -8463,6 +8465,25 @@ op_amp
 l_int|0x40
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|cmd_in
+op_ne
+id|MTBSF
+op_logical_and
+id|cmd_in
+op_ne
+id|MTBSFM
+op_logical_and
+id|cmd_in
+op_ne
+id|MTBSR
+op_logical_and
+id|cmd_in
+op_ne
+id|MTBSS
+)paren
 id|STp-&gt;eof
 op_assign
 id|ST_EOM_OK
@@ -10236,10 +10257,6 @@ suffix:semicolon
 id|Scsi_Tape
 op_star
 id|STp
-suffix:semicolon
-id|Scsi_Device
-op_star
-id|SDp
 suffix:semicolon
 r_static
 r_int
