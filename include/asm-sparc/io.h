@@ -293,9 +293,7 @@ id|PTE_V
 op_or
 id|PTE_ACC
 op_or
-id|PTE_W
-op_or
-id|PTE_P
+id|PTE_NC
 op_or
 id|PTE_IO
 )paren
@@ -304,9 +302,9 @@ multiline_comment|/* kernel io addr */
 id|put_pte
 c_func
 (paren
-id|page_entry
-comma
 id|virt_addr
+comma
+id|page_entry
 )paren
 suffix:semicolon
 r_return

@@ -131,6 +131,8 @@ l_int|14
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|TIMER_PHYSADDR
+mdefine_line|#define TIMER_PHYSADDR   0xf3000000
 multiline_comment|/* YUCK YUCK YUCK, grrr... */
 DECL|macro|TIMER_STRUCT
 mdefine_line|#define  TIMER_STRUCT  ((struct sparc_timer_info *)((struct sparc_clock_info *) TIMER_VADDR))

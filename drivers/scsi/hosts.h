@@ -290,7 +290,6 @@ suffix:semicolon
 DECL|member|io_port
 r_int
 r_int
-r_int
 id|io_port
 suffix:semicolon
 DECL|member|n_io_port
@@ -659,4 +658,5 @@ mdefine_line|#define SR_EXTRA_DEVS 2
 DECL|macro|SG_EXTRA_DEVS
 mdefine_line|#define SG_EXTRA_DEVS (SD_EXTRA_DEVS + SR_EXTRA_DEVS + ST_EXTRA_DEVS)
 macro_line|#endif
+multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * End:&n; */
 eof

@@ -10359,9 +10359,11 @@ op_ne
 l_int|8
 )paren
 op_logical_and
+(paren
 id|sstat0_sist0
-op_logical_and
+op_amp
 id|SSTAT0_700_STO
+)paren
 )paren
 )paren
 (brace

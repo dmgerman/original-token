@@ -1,10 +1,7 @@
 multiline_comment|/*----------------------------------------------------------------*/
-multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.39a&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
+multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.40a&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* Configuration */
-multiline_comment|/* The following option is normally left alone.  PCMCIA support needs to&n;   change this to adapt to the different way the interrupt pin works.&n;   &n;   Set the following to 2 to use normal interrupt (active high/totempole-&n;   tristate), otherwise use 0 (REQUIRED FOR PCMCIA) for active low, open&n;   drain */
-DECL|macro|QL_INT_ACTIVE_HIGH
-mdefine_line|#define QL_INT_ACTIVE_HIGH 2
 multiline_comment|/* Set the following to 1 to enable the use of interrupts.  Note that 0 tends&n;   to be more stable, but slower (or ties up the system more) */
 DECL|macro|QL_USE_IRQ
 mdefine_line|#define QL_USE_IRQ 1
@@ -13,32 +10,40 @@ DECL|macro|QL_TURBO_PDMA
 mdefine_line|#define QL_TURBO_PDMA 1
 multiline_comment|/* This will reset all devices when the driver is initialized (during bootup).&n;   The other linux drivers don&squot;t do this, but the DOS drivers do, and after&n;   using DOS or some kind of crash or lockup this will bring things back&n;   without requiring a cold boot.  It does take some time to recover from a&n;   reset, so it is slower, and I have seen timeouts so that devices weren&squot;t&n;   recognized when this was set. */
 DECL|macro|QL_RESET_AT_START
-mdefine_line|#define QL_RESET_AT_START 1
-multiline_comment|/* This will set fast (10Mhz) synchronous timing, FASTCLK must also be 1 */
+mdefine_line|#define QL_RESET_AT_START 0
+multiline_comment|/* crystal frequency in megahertz (for offset 5 and 9) */
+DECL|macro|XTALFREQ
+mdefine_line|#define XTALFREQ&t;40
+multiline_comment|/*****/
+multiline_comment|/* offset 0xc */
+multiline_comment|/* This will set fast (10Mhz) synchronous timing when set to 1&n;   FASTCLK must also be 0 */
 DECL|macro|FASTSCSI
 mdefine_line|#define FASTSCSI  0
-multiline_comment|/* This will set a faster sync transfer rate */
+multiline_comment|/* This when set to 1 will set a faster sync transfer rate */
 DECL|macro|FASTCLK
 mdefine_line|#define FASTCLK   0
-multiline_comment|/* This bit needs to be set to 1 if your cabling is long or noisy */
+multiline_comment|/*****/
+multiline_comment|/* config register 1 (offset 8) options */
+multiline_comment|/* This needs to be set to 1 if your cabling is long or noisy */
 DECL|macro|SLOWCABLE
 mdefine_line|#define SLOWCABLE 0
+multiline_comment|/* This should be 1 to enable parity detection */
+DECL|macro|QL_ENABLE_PARITY
+mdefine_line|#define QL_ENABLE_PARITY 1
+multiline_comment|/*****/
+multiline_comment|/* offset 6 */
 multiline_comment|/* This is the sync transfer divisor, 40Mhz/X will be the data rate&n;&t;The power on default is 5, the maximum normal value is 5 */
 DECL|macro|SYNCXFRPD
 mdefine_line|#define SYNCXFRPD 4
+multiline_comment|/*****/
+multiline_comment|/* offset 7 */
 multiline_comment|/* This is the count of how many synchronous transfers can take place&n;&t;i.e. how many reqs can occur before an ack is given.&n;&t;The maximum value for this is 15, the upper bits can modify&n;&t;REQ/ACK assertion and deassertion during synchronous transfers&n;&t;If this is 0, the bus will only transfer asynchronously */
 DECL|macro|SYNCOFFST
 mdefine_line|#define SYNCOFFST 0
 multiline_comment|/* for the curious, bits 7&amp;6 control the deassertion delay in 1/2 cycles&n;&t;of the 40Mhz clock. If FASTCLK is 1, specifying 01 (1/2) will&n;&t;cause the deassertion to be early by 1/2 clock.  Bits 5&amp;4 control&n;&t;the assertion delay, also in 1/2 clocks (FASTCLK is ignored here). */
-multiline_comment|/* PCMCIA option adjustment */
-macro_line|#ifdef PCMCIA
-DECL|macro|QL_INT_ACTIVE_HIGH
-macro_line|#undef QL_INT_ACTIVE_HIGH
-DECL|macro|QL_INT_ACTIVE_HIGH
-mdefine_line|#define QL_INT_ACTIVE_HIGH 0
-macro_line|#endif
 multiline_comment|/*----------------------------------------------------------------*/
-macro_line|#ifdef MODULE
+macro_line|#if defined(MODULE) || defined(PCMCIA)
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
 macro_line|#include &quot;../block/blk.h&quot;&t;/* to get disk capacity */
@@ -58,6 +63,8 @@ DECL|variable|qbase
 r_static
 r_int
 id|qbase
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Port */
 DECL|variable|qinitid
@@ -76,6 +83,9 @@ DECL|variable|qlirq
 r_static
 r_int
 id|qlirq
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/* IRQ being used */
 DECL|variable|qinfo
@@ -94,12 +104,87 @@ op_star
 id|qlcmd
 suffix:semicolon
 multiline_comment|/* current command being processed */
+DECL|variable|qlcfg5
+r_static
+r_int
+id|qlcfg5
+op_assign
+(paren
+id|XTALFREQ
+op_lshift
+l_int|5
+)paren
+suffix:semicolon
+multiline_comment|/* 15625/512 */
+DECL|variable|qlcfg6
+r_static
+r_int
+id|qlcfg6
+op_assign
+id|SYNCXFRPD
+suffix:semicolon
+DECL|variable|qlcfg7
+r_static
+r_int
+id|qlcfg7
+op_assign
+id|SYNCOFFST
+suffix:semicolon
+DECL|variable|qlcfg8
+r_static
+r_int
+id|qlcfg8
+op_assign
+(paren
+id|SLOWCABLE
+op_lshift
+l_int|7
+)paren
+op_or
+(paren
+id|QL_ENABLE_PARITY
+op_lshift
+l_int|4
+)paren
+suffix:semicolon
+DECL|variable|qlcfg9
+r_static
+r_int
+id|qlcfg9
+op_assign
+(paren
+(paren
+id|XTALFREQ
+op_plus
+l_int|4
+)paren
+op_div
+l_int|5
+)paren
+suffix:semicolon
+DECL|variable|qlcfgc
+r_static
+r_int
+id|qlcfgc
+op_assign
+(paren
+id|FASTCLK
+op_lshift
+l_int|3
+)paren
+op_or
+(paren
+id|FASTSCSI
+op_lshift
+l_int|4
+)paren
+suffix:semicolon
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* The qlogic card uses two register maps - These macros select which one */
 DECL|macro|REG0
 mdefine_line|#define REG0 ( outb( inb( qbase + 0xd ) &amp; 0x7f , qbase + 0xd ), outb( 4 , qbase + 0xd ))
 DECL|macro|REG1
-mdefine_line|#define REG1 ( outb( inb( qbase + 0xd ) | 0x80 , qbase + 0xd ), outb( 0xb4 | QL_INT_ACTIVE_HIGH , qbase + 0xd ))
+mdefine_line|#define REG1 ( outb( inb( qbase + 0xd ) | 0x80 , qbase + 0xd ), outb( 0xb6 , qbase + 0xd ))
 multiline_comment|/* following is watchdog timeout in microseconds */
 DECL|macro|WATCHDOG
 mdefine_line|#define WATCHDOG 5000000
@@ -985,49 +1070,23 @@ l_int|0xb
 suffix:semicolon
 multiline_comment|/* enable features */
 multiline_comment|/* configurables */
-macro_line|#if FASTSCSI
-macro_line|#if FASTCLK
 id|outb
 c_func
 (paren
-l_int|0x18
+id|qlcfgc
 comma
 id|qbase
 op_plus
 l_int|0xc
 )paren
 suffix:semicolon
-macro_line|#else
+multiline_comment|/* config: no reset interrupt, (initiator) bus id */
 id|outb
 c_func
 (paren
-l_int|0x10
-comma
-id|qbase
-op_plus
-l_int|0xc
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#else
-macro_line|#if FASTCLK
-id|outb
-c_func
-(paren
-l_int|8
-comma
-id|qbase
-op_plus
-l_int|0xc
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
-macro_line|#if SLOWCABLE
-id|outb
-c_func
-(paren
-l_int|0xd0
+l_int|0x40
+op_or
+id|qlcfg8
 op_or
 id|qinitid
 comma
@@ -1036,26 +1095,10 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-multiline_comment|/* (initiator) bus id */
-macro_line|#else
 id|outb
 c_func
 (paren
-l_int|0x50
-op_or
-id|qinitid
-comma
-id|qbase
-op_plus
-l_int|8
-)paren
-suffix:semicolon
-multiline_comment|/* (initiator) bus id */
-macro_line|#endif
-id|outb
-c_func
-(paren
-id|SYNCOFFST
+id|qlcfg7
 comma
 id|qbase
 op_plus
@@ -1065,7 +1108,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|SYNCXFRPD
+id|qlcfg6
 comma
 id|qbase
 op_plus
@@ -1076,14 +1119,28 @@ multiline_comment|/**/
 id|outb
 c_func
 (paren
-l_int|0x99
+id|qlcfg5
 comma
 id|qbase
 op_plus
 l_int|5
 )paren
 suffix:semicolon
-multiline_comment|/* timer */
+multiline_comment|/* select timer */
+id|outb
+c_func
+(paren
+id|qlcfg9
+op_amp
+l_int|7
+comma
+id|qbase
+op_plus
+l_int|9
+)paren
+suffix:semicolon
+multiline_comment|/* prescaler */
+multiline_comment|/*&t;outb(0x99, qbase + 5);&t;*/
 id|outb
 c_func
 (paren
@@ -2200,6 +2257,32 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef PCMCIA
+multiline_comment|/*----------------------------------------------------------------*/
+multiline_comment|/* allow PCMCIA code to preset the port */
+multiline_comment|/* port should be 0 and irq to -1 respectively for autoprobing */
+DECL|function|qlogic_preset
+r_void
+id|qlogic_preset
+c_func
+(paren
+r_int
+id|port
+comma
+r_int
+id|irq
+)paren
+(brace
+id|qbase
+op_assign
+id|port
+suffix:semicolon
+id|qlirq
+op_assign
+id|irq
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* look for qlogic card and init if found */
 DECL|function|qlogic_detect
@@ -2233,6 +2316,13 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Qlogic Cards only exist at 0x230 or 0x330 (the chip itself decodes the&n;   address - I check 230 first since MIDI cards are typically at 330&n;&n;   Theoretically, two Qlogic cards can coexist in the same system.  This&n;   should work by simply using this as a loadable module for the second&n;   card, but I haven&squot;t tested this.&n;*/
+r_if
+c_cond
+(paren
+op_logical_neg
+id|qbase
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -2326,6 +2416,16 @@ l_int|0x430
 r_return
 l_int|0
 suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;Ql: Using preset base address of %03x&bslash;n&quot;
+comma
+id|qbase
+)paren
+suffix:semicolon
 id|qltyp
 op_assign
 id|inb
@@ -2370,7 +2470,9 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0xd0
+l_int|0x40
+op_or
+id|qlcfg8
 op_or
 id|qinitid
 comma
@@ -2383,7 +2485,7 @@ multiline_comment|/* (ini) bus id, disable scsi rst */
 id|outb
 c_func
 (paren
-l_int|0x99
+id|qlcfg5
 comma
 id|qbase
 op_plus
@@ -2391,6 +2493,17 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* select timer */
+id|outb
+c_func
+(paren
+id|qlcfg9
+comma
+id|qbase
+op_plus
+l_int|9
+)paren
+suffix:semicolon
+multiline_comment|/* prescaler */
 id|qlirq
 op_assign
 op_minus
@@ -2430,6 +2543,15 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if QL_USE_IRQ
 multiline_comment|/* IRQ probe - toggle pin and check request pending */
+r_if
+c_cond
+(paren
+id|qlirq
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
 id|save_flags
 c_func
 (paren
@@ -2489,9 +2611,7 @@ op_decrement
 id|outb
 c_func
 (paren
-l_int|0xb0
-op_or
-id|QL_INT_ACTIVE_HIGH
+l_int|0xb2
 comma
 id|qbase
 op_plus
@@ -2524,9 +2644,7 @@ multiline_comment|/* find IRQ off */
 id|outb
 c_func
 (paren
-l_int|0xb4
-op_or
-id|QL_INT_ACTIVE_HIGH
+l_int|0xb6
 comma
 id|qbase
 op_plus
@@ -2613,6 +2731,16 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;Ql: Using preset IRQ of %d&bslash;n&quot;
+comma
+id|qlirq
+)paren
+suffix:semicolon
 macro_line|#endif
 id|request_region
 c_func
@@ -2667,15 +2795,13 @@ c_func
 (paren
 id|qinfo
 comma
-l_string|&quot;Qlogic Driver version 0.39a, chip %02X at %03X, IRQ %d, Opts:%d%d&quot;
+l_string|&quot;Qlogic Driver version 0.40a, chip %02X at %03X, IRQ %d, TPdma:%d&quot;
 comma
 id|qltyp
 comma
 id|qbase
 comma
 id|qlirq
-comma
-id|QL_INT_ACTIVE_HIGH
 comma
 id|QL_TURBO_PDMA
 )paren

@@ -84,6 +84,16 @@ id|overflow
 suffix:colon
 l_int|4
 suffix:semicolon
+macro_line|#elif defined(__sparc__)
+id|__u8
+id|overflow
+suffix:colon
+l_int|4
+comma
+id|flags
+suffix:colon
+l_int|4
+suffix:semicolon
 macro_line|#else
 macro_line|#error&t;&quot;Adjust this structure to match your CPU&quot;
 macro_line|#endif&t;&t;&t;&t;&t;&t;
@@ -231,6 +241,16 @@ suffix:colon
 l_int|4
 comma
 id|version
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#elif defined (__sparc__)
+id|__u8
+id|version
+suffix:colon
+l_int|4
+comma
+id|ihl
 suffix:colon
 l_int|4
 suffix:semicolon

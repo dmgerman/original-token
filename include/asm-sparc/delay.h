@@ -27,7 +27,7 @@ l_string|&quot;&bslash;n1:&bslash;tcmp %0, 0&bslash;n&bslash;t&quot;
 l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
 l_string|&quot;sub %0, 1, %0&bslash;n&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|loops
 )paren

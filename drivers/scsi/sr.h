@@ -27,11 +27,11 @@ r_int
 id|mpcd_sector
 suffix:semicolon
 multiline_comment|/* for reading multisession-CD&squot;s        */
-DECL|member|is_xa
+DECL|member|xa_flags
 r_char
-id|is_xa
+id|xa_flags
 suffix:semicolon
-multiline_comment|/* is it an XA-CD ?                     */
+multiline_comment|/* some flags for handling XA-CD&squot;s      */
 DECL|member|sector_bit_size
 r_int
 r_char

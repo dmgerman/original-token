@@ -3181,6 +3181,23 @@ op_logical_neg
 id|bios32_entry
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|check-&gt;fields.entry
+op_ge
+l_int|0x100000
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;bios32_init: entry in high memory, unable to access&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|bios32_indirect.address
 op_assign
 id|bios32_entry
@@ -3194,6 +3211,7 @@ comma
 id|bios32_entry
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace

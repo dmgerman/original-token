@@ -11,6 +11,8 @@ macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
+DECL|macro|USE_STATIC_SCSI_MEMORY
+macro_line|#undef USE_STATIC_SCSI_MEMORY
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/scsi.c,v 1.5 1993/09/24 12:45:18 drew Exp drew $&quot;;&n;*/
 multiline_comment|/* Command groups 3 and 4 are reserved and should never be used.  */
 DECL|variable|scsi_command_size
@@ -297,6 +299,15 @@ l_string|&quot;V&quot;
 )brace
 comma
 multiline_comment|/* A cdrom that locks up when probed at lun != 0 */
+(brace
+l_string|&quot;HITACHI&quot;
+comma
+l_string|&quot;DK312C&quot;
+comma
+l_string|&quot;CM81&quot;
+)brace
+comma
+multiline_comment|/* Responds to all lun - dtg */
 (brace
 l_string|&quot;HITACHI&quot;
 comma
@@ -678,10 +689,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 )def_block
-suffix:semicolon
 multiline_comment|/*&n; *&t;As the actual SCSI command runs in the background, we must set up a&n; *&t;flag that tells scan_scsis() when the result it has is valid.&n; *&t;scan_scsis can set the_result to -1, and watch for it to become the&n; *&t;actual return code for that call.  the scan_scsis_done function() is&n; *&t;our user specified completion function that is passed on to the&n; *&t;scsi_do_cmd() function.&n; */
 DECL|variable|in_scan_scsis
 r_volatile
@@ -1031,21 +1040,8 @@ op_star
 id|sdtpnt
 suffix:semicolon
 id|Scsi_Cmnd
-id|SCmd
-suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|SCmd
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|SCmd
-)paren
-)paren
+op_star
+id|SCpnt
 suffix:semicolon
 op_increment
 id|in_scan_scsis
@@ -1059,13 +1055,24 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|SCmd.next
+id|SCpnt
 op_assign
-l_int|NULL
-suffix:semicolon
-id|SCmd.prev
-op_assign
-l_int|NULL
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+id|scsi_init_malloc
+c_func
+(paren
+r_sizeof
+(paren
+id|Scsi_Cmnd
+)paren
+comma
+id|GFP_ATOMIC
+op_or
+id|GFP_DMA
+)paren
 suffix:semicolon
 id|SDpnt
 op_assign
@@ -1084,24 +1091,6 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-id|SCmd.device
-op_assign
-id|SDpnt
-suffix:semicolon
-multiline_comment|/* This was really needed! (DB) */
-id|memset
-c_func
-(paren
-id|SDpnt
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|Scsi_Device
-)paren
-)paren
-suffix:semicolon
 id|SDtail
 op_assign
 id|scsi_devices
@@ -1111,7 +1100,6 @@ c_cond
 (paren
 id|scsi_devices
 )paren
-(brace
 r_while
 c_loop
 (paren
@@ -1122,7 +1110,6 @@ id|SDtail
 op_assign
 id|SDtail-&gt;next
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Make sure we have something that is valid for DMA purposes */
 id|scsi_result
@@ -1156,10 +1143,9 @@ l_int|512
 suffix:semicolon
 id|shpnt-&gt;host_queue
 op_assign
-op_amp
-id|SCmd
+id|SCpnt
 suffix:semicolon
-multiline_comment|/* We need this so that&n;&t;&t;&t;&t;&t; commands can time out */
+multiline_comment|/* We need this so that commands can time out */
 r_for
 c_loop
 (paren
@@ -1197,6 +1183,19 @@ op_increment
 id|lun
 )paren
 (brace
+id|memset
+c_func
+(paren
+id|SDpnt
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|Scsi_Device
+)paren
+)paren
+suffix:semicolon
 id|SDpnt-&gt;host
 op_assign
 id|shpnt
@@ -1209,17 +1208,11 @@ id|SDpnt-&gt;lun
 op_assign
 id|lun
 suffix:semicolon
-id|SDpnt-&gt;device_wait
+multiline_comment|/* Some low level driver could use device-&gt;type (DB) */
+id|SDpnt-&gt;type
 op_assign
-l_int|NULL
-suffix:semicolon
-id|SDpnt-&gt;next
-op_assign
-l_int|NULL
-suffix:semicolon
-id|SDpnt-&gt;attached
-op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n; * Assume that the device will have handshaking problems, and then&n; * fix this field later if it turns out it doesn&squot;t.&n; */
 id|SDpnt-&gt;borken
@@ -1254,64 +1247,58 @@ l_int|3
 op_assign
 id|scsi_cmd
 (braket
+l_int|4
+)braket
+op_assign
+id|scsi_cmd
+(braket
 l_int|5
 )braket
 op_assign
 l_int|0
 suffix:semicolon
-id|scsi_cmd
-(braket
-l_int|4
-)braket
-op_assign
+id|memset
+c_func
+(paren
+id|SCpnt
+comma
 l_int|0
+comma
+r_sizeof
+(paren
+id|Scsi_Cmnd
+)paren
+)paren
 suffix:semicolon
-id|SCmd.host
+id|SCpnt-&gt;host
 op_assign
-id|shpnt
+id|SDpnt-&gt;host
 suffix:semicolon
-id|SCmd.target
+id|SCpnt-&gt;device
 op_assign
-id|dev
+id|SDpnt
 suffix:semicolon
-id|SCmd.lun
+id|SCpnt-&gt;target
 op_assign
-id|lun
+id|SDpnt-&gt;id
 suffix:semicolon
-id|SCmd.request.sem
+id|SCpnt-&gt;lun
+op_assign
+id|SDpnt-&gt;lun
+suffix:semicolon
+multiline_comment|/* Used for mutex if loading devices after boot */
+id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Used for mutex if loading devices after boot */
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Mark not busy */
-id|SCmd.use_sg
-op_assign
-l_int|0
-suffix:semicolon
-id|SCmd.cmd_len
-op_assign
-l_int|0
-suffix:semicolon
-id|SCmd.old_use_sg
-op_assign
-l_int|0
-suffix:semicolon
-id|SCmd.transfersize
-op_assign
-l_int|0
-suffix:semicolon
-id|SCmd.underflow
-op_assign
-l_int|0
-suffix:semicolon
 id|scsi_do_cmd
 (paren
-op_amp
-id|SCmd
+id|SCpnt
 comma
 (paren
 r_void
@@ -1336,7 +1323,7 @@ comma
 l_int|5
 )paren
 suffix:semicolon
-multiline_comment|/* Wait for command to finish.  Use simple wait if we are booting, else&n;&t;     do it right and use a mutex */
+multiline_comment|/* Wait for command to finish. Use simple wait if we are booting, else&n;&t;     do it right and use a mutex */
 r_if
 c_cond
 (paren
@@ -1347,22 +1334,19 @@ id|task
 l_int|0
 )braket
 )paren
-(brace
 r_while
 c_loop
 (paren
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 r_if
 c_cond
 (paren
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
@@ -1373,7 +1357,7 @@ id|sem
 op_assign
 id|MUTEX_LOCKED
 suffix:semicolon
-id|SCmd.request.sem
+id|SCpnt-&gt;request.sem
 op_assign
 op_amp
 id|sem
@@ -1389,7 +1373,7 @@ multiline_comment|/* Hmm.. Have to ask about this one */
 r_while
 c_loop
 (paren
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
@@ -1398,7 +1382,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#if defined(DEBUG) || defined(DEBUG_INIT)
 id|printk
@@ -1416,14 +1399,14 @@ c_func
 (paren
 l_string|&quot;scsi: return code %08x&bslash;n&quot;
 comma
-id|SCmd.result
+id|SCpnt-&gt;result
 )paren
 suffix:semicolon
 macro_line|#endif
 r_if
 c_cond
 (paren
-id|SCmd.result
+id|SCpnt-&gt;result
 )paren
 (brace
 r_if
@@ -1433,7 +1416,7 @@ c_cond
 id|driver_byte
 c_func
 (paren
-id|SCmd.result
+id|SCpnt-&gt;result
 )paren
 op_amp
 id|DRIVER_SENSE
@@ -1441,7 +1424,7 @@ id|DRIVER_SENSE
 op_logical_and
 (paren
 (paren
-id|SCmd.sense_buffer
+id|SCpnt-&gt;sense_buffer
 (braket
 l_int|0
 )braket
@@ -1458,7 +1441,7 @@ l_int|7
 r_if
 c_cond
 (paren
-id|SCmd.sense_buffer
+id|SCpnt-&gt;sense_buffer
 (braket
 l_int|2
 )braket
@@ -1473,7 +1456,7 @@ c_cond
 (paren
 (paren
 (paren
-id|SCmd.sense_buffer
+id|SCpnt-&gt;sense_buffer
 (braket
 l_int|2
 )braket
@@ -1486,7 +1469,7 @@ id|NOT_READY
 op_logical_and
 (paren
 (paren
-id|SCmd.sense_buffer
+id|SCpnt-&gt;sense_buffer
 (braket
 l_int|2
 )braket
@@ -1506,7 +1489,6 @@ r_else
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 macro_line|#if defined (DEBUG) || defined(DEBUG_INIT)
 id|printk
 c_func
@@ -1564,19 +1546,18 @@ l_int|5
 op_assign
 l_int|0
 suffix:semicolon
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Mark not busy */
-id|SCmd.cmd_len
+id|SCpnt-&gt;cmd_len
 op_assign
 l_int|0
 suffix:semicolon
 id|scsi_do_cmd
 (paren
-op_amp
-id|SCmd
+id|SCpnt
 comma
 (paren
 r_void
@@ -1609,22 +1590,19 @@ id|task
 l_int|0
 )braket
 )paren
-(brace
 r_while
 c_loop
 (paren
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 r_if
 c_cond
 (paren
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
@@ -1635,7 +1613,7 @@ id|sem
 op_assign
 id|MUTEX_LOCKED
 suffix:semicolon
-id|SCmd.request.sem
+id|SCpnt-&gt;request.sem
 op_assign
 op_amp
 id|sem
@@ -1651,7 +1629,7 @@ multiline_comment|/* Hmm.. Have to ask about this one */
 r_while
 c_loop
 (paren
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
@@ -1661,10 +1639,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
-)brace
 id|the_result
 op_assign
-id|SCmd.result
+id|SCpnt-&gt;result
 suffix:semicolon
 macro_line|#if defined(DEBUG) || defined(DEBUG_INIT)
 r_if
@@ -2258,19 +2235,18 @@ l_int|5
 op_assign
 l_int|0
 suffix:semicolon
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Mark not busy */
-id|SCmd.cmd_len
+id|SCpnt-&gt;cmd_len
 op_assign
 l_int|0
 suffix:semicolon
 id|scsi_do_cmd
 (paren
-op_amp
-id|SCmd
+id|SCpnt
 comma
 (paren
 r_void
@@ -2303,22 +2279,19 @@ id|task
 l_int|0
 )braket
 )paren
-(brace
 r_while
 c_loop
 (paren
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 r_if
 c_cond
 (paren
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
@@ -2329,7 +2302,7 @@ id|sem
 op_assign
 id|MUTEX_LOCKED
 suffix:semicolon
-id|SCmd.request.sem
+id|SCpnt-&gt;request.sem
 op_assign
 op_amp
 id|sem
@@ -2345,7 +2318,7 @@ multiline_comment|/* Hmm.. Have to ask about this one */
 r_while
 c_loop
 (paren
-id|SCmd.request.dev
+id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
@@ -2354,7 +2327,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/* Add this device to the linked list at the end */
@@ -2479,6 +2451,21 @@ comma
 r_sizeof
 (paren
 id|Scsi_Device
+)paren
+)paren
+suffix:semicolon
+id|scsi_init_free
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|SCpnt
+comma
+r_sizeof
+(paren
+id|Scsi_Cmnd
 )paren
 )paren
 suffix:semicolon
@@ -2725,7 +2712,6 @@ op_assign
 id|SCpnt-&gt;next
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2850,7 +2836,6 @@ op_assign
 id|bhp
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2915,7 +2900,6 @@ id|wait_for_request
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -2930,7 +2914,6 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* And no one is waiting for the device either */
 )brace
-suffix:semicolon
 id|SCpnt-&gt;use_sg
 op_assign
 l_int|0
@@ -3123,13 +3106,11 @@ r_break
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 id|SCpnt
 op_assign
 id|SCpnt-&gt;next
 suffix:semicolon
 )brace
-suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -3172,7 +3153,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3226,7 +3206,6 @@ l_string|&quot;No device found in allocate_device&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 id|SCSI_SLEEP
 c_func
 (paren
@@ -3346,7 +3325,6 @@ op_assign
 id|bhp
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3416,7 +3394,6 @@ id|wait_for_request
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -3431,7 +3408,6 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* And no one is waiting for this to complete */
 )brace
-suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -3441,9 +3417,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 id|SCpnt-&gt;use_sg
 op_assign
 l_int|0
@@ -3686,8 +3660,6 @@ comma
 id|host-&gt;host_no
 comma
 id|temp
-comma
-id|done
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3942,7 +3914,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 macro_line|#endif
 r_if
 c_cond
@@ -4245,7 +4216,6 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|check_sense
@@ -5427,7 +5397,6 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -6110,7 +6079,6 @@ op_assign
 id|SCpnt1-&gt;next
 suffix:semicolon
 )brace
-suffix:semicolon
 id|host-&gt;last_reset
 op_assign
 id|jiffies
@@ -6432,7 +6400,6 @@ c_func
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 )brace
 r_while
 c_loop
@@ -6538,7 +6505,6 @@ op_plus
 id|used
 suffix:semicolon
 )brace
-suffix:semicolon
 id|least
 op_assign
 l_int|0xffffffff
@@ -6613,7 +6579,6 @@ id|SCpnt-&gt;timeout
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 multiline_comment|/*&n;&t;If something is due to timeout again, then we will set the next timeout&n;&t;interrupt to occur.  Otherwise, timeouts are disabled.&n;*/
 r_if
 c_cond
@@ -6956,9 +6921,7 @@ l_int|9
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -7301,7 +7264,8 @@ r_int
 r_int
 id|retval
 suffix:semicolon
-macro_line|#if 0 /* Use the statically allocated memory instead of kmalloc  (DB) */
+multiline_comment|/* Use the statically allocated memory instead of kmalloc  (DB) */
+macro_line|#if defined(USE_STATIC_SCSI_MEMORY)
 r_if
 c_cond
 (paren
@@ -7388,6 +7352,20 @@ id|size
 suffix:semicolon
 )brace
 )brace
+id|memset
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|retval
+comma
+l_int|0
+comma
+id|size
+)paren
+suffix:semicolon
 r_return
 (paren
 r_void
@@ -7846,11 +7824,8 @@ op_assign
 id|SCpnt
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7958,9 +7933,7 @@ id|need_isa_buffer
 op_increment
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 id|dma_sectors
 op_assign
 (paren
@@ -8107,34 +8080,43 @@ id|scsi_loadable_module_flag
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if 0   /* This allocates statically some extra memory to be used for modules,&n;           until the kmalloc problem is fixed (DB) */
+multiline_comment|/* This allocates statically some extra memory to be used for modules,&n;   until the kmalloc problem is fixed (DB) */
+macro_line|#if defined(USE_STATIC_SCSI_MEMORY)
 id|scsi_memory_upper_value
 op_assign
 id|scsi_init_memory_start
 op_plus
-l_int|2
+l_int|256
 op_star
+l_int|1024
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;SCSI memory: total %ldKb, used %ldKb, free %ldKb.&bslash;n&quot;
+comma
+(paren
+id|scsi_memory_upper_value
+op_minus
+id|scsi_memory_lower_value
+)paren
+op_div
+l_int|1024
+comma
 (paren
 id|scsi_init_memory_start
 op_minus
 id|scsi_memory_lower_value
 )paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;scsi memory: lower %p, upper %p.&bslash;n&quot;
+op_div
+l_int|1024
 comma
 (paren
-r_void
-op_star
-)paren
-id|scsi_memory_lower_value
-comma
-(paren
-r_void
-op_star
-)paren
 id|scsi_memory_upper_value
+op_minus
+id|scsi_init_memory_start
+)paren
+op_div
+l_int|1024
 )paren
 suffix:semicolon
 r_return
@@ -8861,9 +8843,7 @@ id|SCpnt
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 multiline_comment|/* Next, check to see if we need to extend the DMA buffer pool */
 (brace
@@ -8979,9 +8959,7 @@ id|new_need_isa_buffer
 op_increment
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 id|new_dma_sectors
 op_assign
 (paren
@@ -9211,6 +9189,37 @@ id|sdtpnt-&gt;finish
 suffix:semicolon
 )brace
 )brace
+macro_line|#if defined(USE_STATIC_SCSI_MEMORY)
+id|printk
+(paren
+l_string|&quot;SCSI memory: total %ldKb, used %ldKb, free %ldKb.&bslash;n&quot;
+comma
+(paren
+id|scsi_memory_upper_value
+op_minus
+id|scsi_memory_lower_value
+)paren
+op_div
+l_int|1024
+comma
+(paren
+id|scsi_init_memory_start
+op_minus
+id|scsi_memory_lower_value
+)paren
+op_div
+l_int|1024
+comma
+(paren
+id|scsi_memory_upper_value
+op_minus
+id|scsi_init_memory_start
+)paren
+op_div
+l_int|1024
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -9402,6 +9411,12 @@ op_assign
 l_int|0xffe0
 suffix:semicolon
 multiline_comment|/* Mark as busy */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Next we detach the high level drivers from the Scsi_Device structures */
@@ -9734,6 +9749,37 @@ suffix:colon
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
+macro_line|#if defined(USE_STATIC_SCSI_MEMORY)
+id|printk
+(paren
+l_string|&quot;SCSI memory: total %ldKb, used %ldKb, free %ldKb.&bslash;n&quot;
+comma
+(paren
+id|scsi_memory_upper_value
+op_minus
+id|scsi_memory_lower_value
+)paren
+op_div
+l_int|1024
+comma
+(paren
+id|scsi_init_memory_start
+op_minus
+id|scsi_memory_lower_value
+)paren
+op_div
+l_int|1024
+comma
+(paren
+id|scsi_memory_upper_value
+op_minus
+id|scsi_init_memory_start
+)paren
+op_div
+l_int|1024
+)paren
+suffix:semicolon
+macro_line|#endif
 id|scsi_make_blocked_list
 c_func
 (paren
@@ -10016,7 +10062,6 @@ id|SCpnt-&gt;result
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -10115,4 +10160,5 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * End:&n; */
 eof

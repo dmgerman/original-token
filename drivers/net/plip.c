@@ -325,6 +325,15 @@ r_int
 r_char
 id|lsb
 suffix:semicolon
+macro_line|#elif defined(__sparc__)
+r_int
+r_char
+id|msb
+suffix:semicolon
+r_int
+r_char
+id|lsb
+suffix:semicolon
 macro_line|#elif defined(__MIPSEL__)
 r_int
 r_char

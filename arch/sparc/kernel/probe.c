@@ -88,6 +88,10 @@ op_star
 id|value
 )paren
 suffix:semicolon
+DECL|variable|first_descent
+r_int
+id|first_descent
+suffix:semicolon
 multiline_comment|/* Cpu-type information and manufacturer strings */
 DECL|struct|cpu_iu_info
 r_struct
@@ -1297,7 +1301,7 @@ comma
 r_int
 r_int
 )paren
-l_int|0xf3000000
+id|TIMER_PHYSADDR
 comma
 (paren
 r_int
@@ -1313,7 +1317,7 @@ c_func
 r_int
 r_int
 )paren
-l_int|0xf3000000
+id|TIMER_PHYSADDR
 comma
 (paren
 r_int
@@ -1327,21 +1331,9 @@ op_assign
 (paren
 (paren
 (paren
-l_int|10000
-)paren
-op_lshift
-l_int|10
-)paren
-op_or
-l_int|0x80000000
-)paren
-suffix:semicolon
-id|TIMER_STRUCT-&gt;timer_limit10
-op_assign
-(paren
-(paren
-(paren
-l_int|10000
+l_int|1000000
+op_div
+id|HZ
 )paren
 op_lshift
 l_int|10
@@ -1957,8 +1949,6 @@ r_void
 r_register
 r_int
 id|nd
-comma
-id|first_descent
 suffix:semicolon
 r_register
 r_char
@@ -2117,12 +2107,6 @@ suffix:semicolon
 id|probe_mmu
 c_func
 (paren
-)paren
-suffix:semicolon
-id|probe_clock
-c_func
-(paren
-id|first_descent
 )paren
 suffix:semicolon
 multiline_comment|/*&n;  printk(&quot;PROM Root Child Node: 0x%x Name: %s &bslash;n&quot;, nd,&n;&t; get_str_from_prom(nd, &quot;name&quot;, promstr_buf));&n;&n;  while((nd = node_get_sibling(nd)) != 0)&n;    {&n;&n;      printk(&quot;Node: 0x%x Name: %s&bslash;n&quot;, nd,&n;&t;     get_str_from_prom(nd, &quot;name&quot;, promstr_buf));&n;&n;    }&n;&n;  printk(&quot;&bslash;nProbing SBUS:&bslash;n&quot;);&n;  probe_sbus(first_descent);&n;*/

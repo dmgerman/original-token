@@ -923,7 +923,16 @@ id|seagate_reconnect_intr
 comma
 id|SA_INTERRUPT
 comma
+(paren
+id|controller_type
+op_eq
+id|SEAGATE
+)paren
+ques
+c_cond
 l_string|&quot;seagate&quot;
+suffix:colon
+l_string|&quot;tmc-8xx&quot;
 )paren
 )paren
 (brace

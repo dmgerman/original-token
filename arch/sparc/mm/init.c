@@ -502,7 +502,7 @@ suffix:semicolon
 multiline_comment|/* Ok, since now mapped in all contexts, we can free up&n;&t; * context zero to be used amongst user processes.&n;&t; */
 multiline_comment|/* free context 0 here TODO */
 multiline_comment|/* invalidate all user pages and initialize the pte struct &n;&t; * for userland. TODO&n;&t; */
-multiline_comment|/* Make the kernel text unwritable and cacheable, the prom&n;&t; * loaded out text as writable, only sneaky sunos kernels need&n;&t; * self-modifying code.&n;&t; */
+multiline_comment|/* Make the kernel text unwritable and cacheable, the prom&n;&t; * loaded our text as writable, only sneaky sunos kernels need&n;&t; * self-modifying code.&n;&t; */
 id|a
 op_assign
 (paren

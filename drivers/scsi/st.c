@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Mon Jan 30 23:20:07 1995 by root@kai.home&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sat Feb 18 10:51:25 1995 by root@kai.home&n;*/
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -59,6 +59,8 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 0
+DECL|macro|MAX_WRITE_RETRIES
+mdefine_line|#define MAX_WRITE_RETRIES 0
 DECL|macro|MAX_READY_RETRIES
 mdefine_line|#define MAX_READY_RETRIES 5
 DECL|macro|NO_TAPE
@@ -229,6 +231,8 @@ op_star
 id|sense
 op_assign
 id|SCpnt-&gt;sense_buffer
+comma
+id|scode
 suffix:semicolon
 r_char
 op_star
@@ -239,13 +243,7 @@ c_cond
 (paren
 op_logical_neg
 id|result
-op_logical_and
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|0
-)braket
-op_eq
-l_int|0
+multiline_comment|/* &amp;&amp; SCpnt-&gt;sense_buffer[0] == 0 */
 )paren
 r_return
 l_int|0
@@ -319,8 +317,103 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
+r_else
 macro_line|#endif
-multiline_comment|/*  if ((sense[0] &amp; 0x70) == 0x70 &amp;&amp;&n;       ((sense[2] &amp; 0x80) ))&n;    return 0; */
+id|scode
+op_assign
+id|sense
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x0f
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|driver_byte
+c_func
+(paren
+id|result
+)paren
+op_amp
+id|DRIVER_SENSE
+)paren
+op_logical_or
+(paren
+(paren
+id|sense
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x70
+)paren
+op_eq
+l_int|0x70
+op_logical_and
+id|scode
+op_ne
+id|NO_SENSE
+op_logical_and
+id|scode
+op_ne
+id|RECOVERED_ERROR
+op_logical_and
+id|scode
+op_ne
+id|UNIT_ATTENTION
+op_logical_and
+id|scode
+op_ne
+id|BLANK_CHECK
+op_logical_and
+id|scode
+op_ne
+id|VOLUME_OVERFLOW
+)paren
+)paren
+(brace
+multiline_comment|/* Abnormal conditions for tape */
+id|printk
+c_func
+(paren
+l_string|&quot;st%d: Error %x. &quot;
+comma
+id|dev
+comma
+id|result
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|driver_byte
+c_func
+(paren
+id|result
+)paren
+op_amp
+id|DRIVER_SENSE
+)paren
+id|print_sense
+c_func
+(paren
+l_string|&quot;st&quot;
+comma
+id|SCpnt
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -335,10 +428,7 @@ l_int|0x70
 op_eq
 l_int|0x70
 op_logical_and
-id|sense
-(braket
-l_int|2
-)braket
+id|scode
 op_eq
 id|RECOVERED_ERROR
 macro_line|#ifdef ST_RECOVERED_WRITE_FATAL
@@ -1323,7 +1413,7 @@ id|st_sleep_done
 comma
 id|ST_TIMEOUT
 comma
-id|MAX_RETRIES
+id|MAX_WRITE_RETRIES
 )paren
 suffix:semicolon
 r_if
@@ -2234,16 +2324,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;st%d: Error %x.&bslash;n&quot;
-comma
-id|dev
-comma
-id|SCpnt-&gt;result
-)paren
-suffix:semicolon
 (paren
 id|STp-&gt;mt_status
 )paren
@@ -2306,6 +2386,27 @@ op_assign
 id|STp-&gt;drv_block
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scsi_tapes
+(braket
+id|dev
+)braket
+dot
+id|device-&gt;host-&gt;hostt-&gt;usage_count
+)paren
+(paren
+op_star
+id|scsi_tapes
+(braket
+id|dev
+)braket
+dot
+id|device-&gt;host-&gt;hostt-&gt;usage_count
+)paren
+op_increment
 suffix:semicolon
 r_return
 l_int|0
@@ -3246,7 +3347,7 @@ id|st_sleep_done
 comma
 id|ST_TIMEOUT
 comma
-id|MAX_RETRIES
+id|MAX_WRITE_RETRIES
 )paren
 suffix:semicolon
 r_if
@@ -4058,7 +4159,7 @@ id|st_sleep_done
 comma
 id|ST_TIMEOUT
 comma
-id|MAX_RETRIES
+id|MAX_WRITE_RETRIES
 )paren
 suffix:semicolon
 r_if
@@ -4702,7 +4803,7 @@ id|st_sleep_done
 comma
 id|ST_TIMEOUT
 comma
-id|MAX_RETRIES
+id|MAX_WRITE_RETRIES
 )paren
 suffix:semicolon
 )brace

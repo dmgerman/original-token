@@ -11,6 +11,11 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
+macro_line|#include &lt;asm/vaddrs.h&gt;
+macro_line|#include &lt;asm/clock.h&gt;
+macro_line|#include &lt;asm/openprom.h&gt;
+DECL|macro|DEBUG_IRQ
+mdefine_line|#define DEBUG_IRQ
 DECL|function|disable_irq
 r_void
 id|disable_irq
@@ -45,6 +50,7 @@ multiline_comment|/* We have mapped the irq enable register in head.S and all we
 id|int_reg
 op_assign
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -229,7 +235,7 @@ r_int
 id|flags
 suffix:semicolon
 r_int
-r_int
+r_char
 op_star
 id|int_reg
 suffix:semicolon
@@ -249,11 +255,21 @@ id|int_reg
 op_assign
 (paren
 r_int
-r_int
+r_char
 op_star
 )paren
 id|IRQ_ENA_ADR
 suffix:semicolon
+macro_line|#ifdef DEBUG_IRQ
+id|printk
+c_func
+(paren
+l_string|&quot; --- Enabling IRQ level %d ---&bslash;n&quot;
+comma
+id|irq_nr
+)paren
+suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -718,7 +734,7 @@ multiline_comment|/* 14 irq levels on the sparc */
 id|printk
 c_func
 (paren
-l_string|&quot;Trying to free IRQ%d&bslash;n&quot;
+l_string|&quot;Trying to free IRQ %d&bslash;n&quot;
 comma
 id|irq
 )paren
@@ -815,7 +831,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|unexpected_irq
-r_static
 r_void
 id|unexpected_irq
 c_func
@@ -1002,6 +1017,60 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Since we need to special things to clear up the clock chip around&n; * the do_timer() call we have a special version of do_IRQ for the&n; * level 14 interrupt which does these things.&n; */
+DECL|function|do_sparc_timer
+id|asmlinkage
+r_void
+id|do_sparc_timer
+c_func
+(paren
+r_int
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_struct
+id|irqaction
+op_star
+id|action
+op_assign
+id|irq
+op_plus
+id|irq_action
+suffix:semicolon
+r_register
+r_volatile
+r_int
+id|clear
+suffix:semicolon
+id|kstat.interrupts
+(braket
+id|irq
+)braket
+op_increment
+suffix:semicolon
+multiline_comment|/* I do the following already in the entry code, better safe than&n;   * sorry for now. Reading the limit register clears the interrupt.&n;   */
+id|clear
+op_assign
+id|TIMER_STRUCT-&gt;timer_limit14
+suffix:semicolon
+id|action
+op_member_access_from_pointer
+id|handler
+c_func
+(paren
+id|irq
+comma
+id|regs
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * do_fast_IRQ handles IRQ&squot;s that don&squot;t need the fancy interrupt return&n; * stuff - the handler is also running with interrupts disabled unless&n; * it explicitly enables them later.&n; */
 DECL|function|do_fast_IRQ
 id|asmlinkage
@@ -1035,6 +1104,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_extern
+r_int
+id|first_descent
+suffix:semicolon
+r_extern
+r_void
+id|probe_clock
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
 DECL|function|request_irq
 r_int
 id|request_irq
@@ -1097,11 +1178,17 @@ id|irq
 op_eq
 l_int|0
 )paren
-(brace
 multiline_comment|/* sched_init() requesting the timer IRQ */
+(brace
 id|irq
 op_assign
 l_int|14
+suffix:semicolon
+id|probe_clock
+c_func
+(paren
+id|first_descent
+)paren
 suffix:semicolon
 )brace
 id|action

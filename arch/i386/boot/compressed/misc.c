@@ -386,7 +386,7 @@ suffix:semicolon
 id|puts
 c_func
 (paren
-l_string|&quot;memory is tight...&quot;
+l_string|&quot;large kernel, low 1M tight...&quot;
 )paren
 suffix:semicolon
 id|free_mem_ptr

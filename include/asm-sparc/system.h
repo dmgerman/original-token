@@ -65,7 +65,7 @@ mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long psr, retval; 
 DECL|macro|cli
 mdefine_line|#define cli()&t;&t;&t;swpipl(15)  /* 15 = no int&squot;s except nmi&squot;s */
 DECL|macro|sti
-mdefine_line|#define sti()&t;&t;&t;swpipl(0)   /* same as alpha */
+mdefine_line|#define sti()&t;&t;&t;swpipl(0)   /* I&squot;m scared */
 DECL|macro|save_flags
 mdefine_line|#define save_flags(flags)&t;do { flags = swpipl(15); } while (0)
 DECL|macro|restore_flags
