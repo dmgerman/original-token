@@ -140,9 +140,8 @@ op_div
 id|scale
 suffix:semicolon
 )brace
-r_static
-r_void
 DECL|function|reprogram_timer
+r_void
 id|reprogram_timer
 c_func
 (paren

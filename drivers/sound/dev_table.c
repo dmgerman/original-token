@@ -190,13 +190,11 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef FIXME
 id|sound_preinit_lowlevel_drivers
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * Check the number of cards actually defined in the table&n; */

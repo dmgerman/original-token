@@ -1241,6 +1241,7 @@ mdefine_line|#define SCSI_MLQUEUE_HOST_BUSY   0x1055
 DECL|macro|SCSI_MLQUEUE_DEVICE_BUSY
 mdefine_line|#define SCSI_MLQUEUE_DEVICE_BUSY 0x1056
 r_extern
+r_int
 id|scsi_mlqueue_insert
 c_func
 (paren
@@ -1253,6 +1254,7 @@ id|reason
 )paren
 suffix:semicolon
 r_extern
+r_int
 id|scsi_mlqueue_finish
 c_func
 (paren

@@ -559,6 +559,14 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|RO_IOCTLS
+c_func
+(paren
+id|dev
+comma
+id|arg
+)paren
+suffix:semicolon
 r_default
 suffix:colon
 r_return

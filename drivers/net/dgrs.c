@@ -757,6 +757,8 @@ id|csr
 op_assign
 (paren
 r_volatile
+r_int
+r_int
 )paren
 id|priv-&gt;vplxdma
 (braket
@@ -2318,6 +2320,7 @@ c_cond
 (paren
 (paren
 r_volatile
+r_int
 )paren
 id|privN-&gt;bcomm-&gt;bc_filter_cmd
 op_le

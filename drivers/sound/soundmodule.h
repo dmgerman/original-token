@@ -1,7 +1,6 @@
 macro_line|#ifndef _SOUNDMODULE_H
 DECL|macro|_SOUNDMODULE_H
 mdefine_line|#define _SOUNDMODULE_H
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/notifier.h&gt;
 r_extern
 r_struct
@@ -23,6 +22,7 @@ r_extern
 r_int
 id|lock_depth
 suffix:semicolon
+macro_line|#ifdef MODULE
 macro_line|#ifdef SOUND_CORE
 DECL|macro|SOUND_INC_USE_COUNT
 mdefine_line|#define SOUND_INC_USE_COUNT&t;do { notifier_call_chain(&amp;sound_locker, 1, 0); lock_depth++; } while(0);

@@ -1202,6 +1202,12 @@ id|code
 op_eq
 id|BPF_RET
 )paren
+ques
+c_cond
+l_int|0
+suffix:colon
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Attach the user&squot;s filter code. We first run some sanity checks on&n; * it to make sure it does not explode on us later.&n; */
@@ -1281,6 +1287,8 @@ comma
 id|fprog-&gt;len
 )paren
 )paren
+op_eq
+l_int|0
 )paren
 (brace
 multiline_comment|/* If existing filter, remove it first */

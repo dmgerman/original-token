@@ -1438,6 +1438,7 @@ id|P_DATA_REG_OFFSET
 )paren
 suffix:semicolon
 r_register
+r_int
 id|i
 op_assign
 id|len
@@ -1569,6 +1570,7 @@ id|P_DATA_REG_OFFSET
 )paren
 suffix:semicolon
 r_register
+r_int
 id|i
 op_assign
 id|len

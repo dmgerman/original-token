@@ -2355,12 +2355,15 @@ r_int
 id|flags
 suffix:semicolon
 r_int
-id|i
-comma
 id|bits
 comma
 id|baud
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &lt; 131393) /* Linux 2.1.65 */
+r_int
+id|i
+suffix:semicolon
+macro_line|#endif
 id|CHANNEL_t
 op_star
 id|cp

@@ -1,10 +1,10 @@
-multiline_comment|/*&n; * $Id: dmascc.c,v 1.2 1997/12/02 16:49:49 oe1kib Exp $&n; *&n; * Driver for high-speed SCC boards (those with DMA support)&n; * Copyright (C) 1997 Klaus Kudielka&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; * $Id: dmascc.c,v 1.2.1.3 1997/12/19 13:40:15 oe1kib Exp $&n; *&n; * Driver for high-speed SCC boards (those with DMA support)&n; * Copyright (C) 1997 Klaus Kudielka&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/dmascc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -19,10 +19,95 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &quot;z8530.h&quot;
+multiline_comment|/* Linux 2.0 compatibility */
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
+DECL|macro|__init
+mdefine_line|#define __init
+DECL|macro|__initdata
+mdefine_line|#define __initdata
+DECL|macro|__initfunc
+mdefine_line|#define __initfunc(x) x
+DECL|macro|MODULE_AUTHOR
+mdefine_line|#define MODULE_AUTHOR(x)
+DECL|macro|MODULE_DESCRIPTION
+mdefine_line|#define MODULE_DESCRIPTION(x)
+DECL|macro|MODULE_PARM
+mdefine_line|#define MODULE_PARM(x,y)
+DECL|macro|copy_to_user
+mdefine_line|#define copy_to_user(x,y,z) memcpy_tofs(x,y,z)
+DECL|macro|copy_from_user
+mdefine_line|#define copy_from_user(x,y,z) memcpy_fromfs(x,y,z)
+DECL|macro|test_and_set_bit
+mdefine_line|#define test_and_set_bit(x,y) set_bit(x,y)
+DECL|macro|register_netdevice
+mdefine_line|#define register_netdevice(x) register_netdev(x)
+DECL|macro|unregister_netdevice
+mdefine_line|#define unregister_netdevice(x) unregister_netdev(x)
+DECL|function|dmascc_dev_init
+r_static
+r_int
+id|dmascc_dev_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|dev_init_buffers
+r_static
+r_void
+id|dev_init_buffers
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|DEV_NUMBUFFS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|dev-&gt;buffs
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|dmascc_dev_init
+mdefine_line|#define dmascc_dev_init NULL
+macro_line|#endif
 multiline_comment|/* Number of buffers per channel */
 DECL|macro|NUM_TX_BUF
 mdefine_line|#define NUM_TX_BUF      2          /* NUM_TX_BUF &gt;= 1 (2 recommended) */
@@ -68,7 +153,7 @@ DECL|macro|SCCA_CMD
 mdefine_line|#define SCCA_CMD        0x02
 DECL|macro|SCCA_DATA
 mdefine_line|#define SCCA_DATA       0x03
-multiline_comment|/* 8254 registers relative to card base */
+multiline_comment|/* 8253/8254 registers relative to card base */
 DECL|macro|TMR_CNT0
 mdefine_line|#define TMR_CNT0        0x00
 DECL|macro|TMR_CNT1
@@ -852,7 +937,7 @@ id|i
 dot
 id|name
 )paren
-id|unregister_netdev
+id|unregister_netdevice
 c_func
 (paren
 op_amp
@@ -1016,19 +1101,30 @@ comma
 id|j
 comma
 id|n
-comma
+suffix:semicolon
+r_int
 id|base
 (braket
 id|MAX_NUM_DEVS
 )braket
 comma
 id|tcmd
+(braket
+id|MAX_NUM_DEVS
+)braket
 comma
 id|t0
+(braket
+id|MAX_NUM_DEVS
+)braket
 comma
 id|t1
-comma
-id|status
+(braket
+id|MAX_NUM_DEVS
+)braket
+suffix:semicolon
+r_int
+id|t_val
 suffix:semicolon
 r_int
 r_int
@@ -1039,7 +1135,12 @@ id|start
 id|MAX_NUM_DEVS
 )braket
 comma
-id|stop
+id|delay
+(braket
+id|MAX_NUM_DEVS
+)braket
+comma
+id|counting
 (braket
 id|MAX_NUM_DEVS
 )braket
@@ -1053,6 +1154,22 @@ multiline_comment|/* Cards found = 0 */
 id|n
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* Warning message */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|io
+(braket
+l_int|0
+)braket
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;dmascc: autoprobing (dangerous)&bslash;n&quot;
+)paren
 suffix:semicolon
 multiline_comment|/* Run autodetection for each card type */
 r_for
@@ -1186,6 +1303,7 @@ id|io
 id|i
 )braket
 )paren
+(brace
 id|base
 (braket
 id|j
@@ -1196,6 +1314,7 @@ id|io
 id|i
 )braket
 suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -1220,6 +1339,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 id|base
 (braket
 id|i
@@ -1241,6 +1361,7 @@ id|h
 dot
 id|io_delta
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Check valid I/O address regions */
 r_for
@@ -1269,7 +1390,10 @@ id|base
 (braket
 id|i
 )braket
-op_logical_and
+)paren
+r_if
+c_cond
+(paren
 id|check_region
 c_func
 (paren
@@ -1293,6 +1417,66 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+r_else
+(brace
+id|tcmd
+(braket
+id|i
+)braket
+op_assign
+id|base
+(braket
+id|i
+)braket
+op_plus
+id|hw
+(braket
+id|h
+)braket
+dot
+id|tmr_offset
+op_plus
+id|TMR_CTRL
+suffix:semicolon
+id|t0
+(braket
+id|i
+)braket
+op_assign
+id|base
+(braket
+id|i
+)braket
+op_plus
+id|hw
+(braket
+id|h
+)braket
+dot
+id|tmr_offset
+op_plus
+id|TMR_CNT0
+suffix:semicolon
+id|t1
+(braket
+id|i
+)braket
+op_assign
+id|base
+(braket
+id|i
+)braket
+op_plus
+id|hw
+(braket
+id|h
+)braket
+dot
+id|tmr_offset
+op_plus
+id|TMR_CNT1
+suffix:semicolon
+)brace
 multiline_comment|/* Start timers */
 r_for
 c_loop
@@ -1322,54 +1506,6 @@ id|i
 )braket
 )paren
 (brace
-id|tcmd
-op_assign
-id|base
-(braket
-id|i
-)braket
-op_plus
-id|hw
-(braket
-id|h
-)braket
-dot
-id|tmr_offset
-op_plus
-id|TMR_CTRL
-suffix:semicolon
-id|t0
-op_assign
-id|base
-(braket
-id|i
-)braket
-op_plus
-id|hw
-(braket
-id|h
-)braket
-dot
-id|tmr_offset
-op_plus
-id|TMR_CNT0
-suffix:semicolon
-id|t1
-op_assign
-id|base
-(braket
-id|i
-)braket
-op_plus
-id|hw
-(braket
-id|h
-)braket
-dot
-id|tmr_offset
-op_plus
-id|TMR_CNT1
-suffix:semicolon
 multiline_comment|/* Timer 0: LSB+MSB, Mode 3, TMR_0_HZ */
 id|outb_p
 c_func
@@ -1377,6 +1513,9 @@ c_func
 l_int|0x36
 comma
 id|tcmd
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 id|outb_p
@@ -1396,6 +1535,9 @@ op_amp
 l_int|0xFF
 comma
 id|t0
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 id|outb_p
@@ -1415,6 +1557,9 @@ op_rshift
 l_int|8
 comma
 id|t0
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 multiline_comment|/* Timer 1: LSB+MSB, Mode 0, HZ/10 */
@@ -1424,6 +1569,9 @@ c_func
 l_int|0x70
 comma
 id|tcmd
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 id|outb_p
@@ -1440,6 +1588,9 @@ op_amp
 l_int|0xFF
 comma
 id|t1
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 id|outb_p
@@ -1456,7 +1607,31 @@ op_rshift
 l_int|8
 comma
 id|t1
+(braket
+id|i
+)braket
 )paren
+suffix:semicolon
+id|start
+(braket
+id|i
+)braket
+op_assign
+id|jiffies
+suffix:semicolon
+id|delay
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|counting
+(braket
+id|i
+)braket
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/* Timer 2: LSB+MSB, Mode 0 */
 id|outb_p
@@ -1465,39 +1640,24 @@ c_func
 l_int|0xb0
 comma
 id|tcmd
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Initialize start values in case we miss the null count bit */
 id|time
 op_assign
 id|jiffies
 suffix:semicolon
-r_for
-c_loop
+multiline_comment|/* Wait until counter registers are loaded */
+id|udelay
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|hw
-(braket
-id|h
-)braket
-dot
-id|num_devs
-suffix:semicolon
-id|i
-op_increment
+l_int|2000000
+op_div
+id|TMR_0_HZ
 )paren
-id|start
-(braket
-id|i
-)braket
-op_assign
-id|time
 suffix:semicolon
 multiline_comment|/* Timing loop */
 r_while
@@ -1507,7 +1667,7 @@ id|jiffies
 op_minus
 id|time
 OL
-l_int|12
+l_int|13
 )paren
 (brace
 r_for
@@ -1536,95 +1696,83 @@ id|base
 (braket
 id|i
 )braket
-)paren
-(brace
-multiline_comment|/* Read back Timer 1: Status */
-id|outb_p
-c_func
-(paren
-l_int|0xE4
-comma
-id|base
+op_logical_and
+id|counting
 (braket
 id|i
 )braket
-op_plus
-id|hw
+)paren
+(brace
+multiline_comment|/* Read back Timer 1: latch; read LSB; read MSB */
+id|outb_p
+c_func
+(paren
+l_int|0x40
+comma
+id|tcmd
 (braket
-id|h
+id|i
 )braket
-dot
-id|tmr_offset
-op_plus
-id|TMR_CTRL
 )paren
 suffix:semicolon
-id|status
+id|t_val
 op_assign
 id|inb_p
 c_func
 (paren
-id|base
+id|t1
 (braket
 id|i
 )braket
+)paren
 op_plus
-id|hw
+(paren
+id|inb_p
+c_func
+(paren
+id|t1
 (braket
-id|h
+id|i
 )braket
-dot
-id|tmr_offset
-op_plus
-id|TMR_CNT1
+)paren
+op_lshift
+l_int|8
 )paren
 suffix:semicolon
+multiline_comment|/* Also check whether counter did wrap */
 r_if
 c_cond
 (paren
-(paren
-id|status
-op_amp
-l_int|0x3F
+id|t_val
+op_eq
+l_int|0
+op_logical_or
+id|t_val
+OG
+id|TMR_0_HZ
+op_div
+id|HZ
+op_star
+l_int|10
 )paren
-op_ne
-l_int|0x30
-)paren
-id|base
+id|counting
 (braket
 id|i
 )braket
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-op_amp
-l_int|0x40
-)paren
+id|delay
+(braket
+id|i
+)braket
+op_assign
+id|jiffies
+op_minus
 id|start
 (braket
 id|i
 )braket
-op_assign
-id|jiffies
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_complement
-id|status
-op_amp
-l_int|0x80
-)paren
-id|stop
-(braket
-id|i
-)braket
-op_assign
-id|jiffies
 suffix:semicolon
 )brace
 )brace
@@ -1657,34 +1805,23 @@ id|i
 )braket
 )paren
 (brace
-id|time
-op_assign
-id|stop
-(braket
-id|i
-)braket
-op_minus
-id|start
-(braket
-id|i
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|time
-template_param
-l_int|11
-)paren
-multiline_comment|/* The time expired doesn&squot;t match */
-id|base
+id|delay
 (braket
 id|i
 )braket
-op_assign
-l_int|0
-suffix:semicolon
-r_else
+op_ge
+l_int|9
+op_logical_and
+id|delay
+(braket
+id|i
+)braket
+op_le
+l_int|11
+)paren
 (brace
 multiline_comment|/* Ok, we have found an adapter */
 r_if
@@ -2478,6 +2615,10 @@ id|dev-&gt;set_mac_address
 op_assign
 id|scc_set_mac_address
 suffix:semicolon
+id|dev-&gt;init
+op_assign
+id|dmascc_dev_init
+suffix:semicolon
 id|dev-&gt;type
 op_assign
 id|ARPHRD_AX25
@@ -2518,10 +2659,6 @@ comma
 l_int|7
 )paren
 suffix:semicolon
-id|dev-&gt;flags
-op_assign
-l_int|0
-suffix:semicolon
 id|dev_init_buffers
 c_func
 (paren
@@ -2531,7 +2668,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_netdev
+id|register_netdevice
 c_func
 (paren
 id|dev

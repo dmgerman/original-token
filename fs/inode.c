@@ -666,7 +666,7 @@ l_string|&quot;write_inode_now: no super block&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is called by the filesystem to tell us&n; * that the inode is no longer useful. We just&n; * terminate it with extreme predjudice.&n; */
+multiline_comment|/*&n; * This is called by the filesystem to tell us&n; * that the inode is no longer useful. We just&n; * terminate it with extreme prejudice.&n; */
 DECL|function|clear_inode
 r_void
 id|clear_inode

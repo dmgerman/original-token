@@ -2358,8 +2358,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
-comma
-id|scmd
 )paren
 )paren
 suffix:semicolon

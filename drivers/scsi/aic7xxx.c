@@ -22911,7 +22911,7 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-macro_line|#ifdef 0   /* AIC7XXX_DEBUG_ABORT */
+macro_line|#if 0   /* AIC7XXX_DEBUG_ABORT */
 r_if
 c_cond
 (paren

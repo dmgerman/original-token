@@ -380,6 +380,7 @@ c_func
 suffix:semicolon
 )brace
 r_static
+r_int
 id|do_vm86_irq_handling
 c_func
 (paren

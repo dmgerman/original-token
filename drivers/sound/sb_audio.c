@@ -4437,7 +4437,7 @@ id|sb_set_output_parms
 comma
 id|sb_set_input_parms
 comma
-id|sb_audio_ioctl
+l_int|NULL
 comma
 id|sb1_audio_prepare_for_input
 comma
@@ -4480,7 +4480,7 @@ id|sb_set_output_parms
 comma
 id|sb_set_input_parms
 comma
-id|sb_audio_ioctl
+l_int|NULL
 comma
 id|sb1_audio_prepare_for_input
 comma
@@ -4523,7 +4523,7 @@ id|sb_set_output_parms
 comma
 id|sb_set_input_parms
 comma
-id|sb_audio_ioctl
+l_int|NULL
 comma
 id|sbpro_audio_prepare_for_input
 comma
@@ -4566,7 +4566,7 @@ id|sb_set_output_parms
 comma
 id|sb_set_input_parms
 comma
-id|sb_audio_ioctl
+l_int|NULL
 comma
 id|sbpro_audio_prepare_for_input
 comma
@@ -4609,7 +4609,7 @@ id|sb_set_output_parms
 comma
 id|sb_set_input_parms
 comma
-id|sb_audio_ioctl
+l_int|NULL
 comma
 id|sb16_audio_prepare_for_input
 comma
@@ -4652,7 +4652,7 @@ id|sb_set_output_parms
 comma
 id|sb_set_input_parms
 comma
-id|sb_audio_ioctl
+l_int|NULL
 comma
 id|ess_audio_prepare_for_input
 comma

@@ -918,7 +918,7 @@ l_int|14
 )braket
 suffix:semicolon
 multiline_comment|/* mask bits */
-macro_line|#ifdef 0
+macro_line|#if 0
 id|unchar
 id|rsvd
 (braket

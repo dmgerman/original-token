@@ -7311,9 +7311,6 @@ suffix:semicolon
 id|u16
 id|gen_ctl
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 id|u32
 id|io
 suffix:semicolon

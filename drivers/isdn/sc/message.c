@@ -5,6 +5,7 @@ macro_line|#include &quot;includes.h&quot;
 macro_line|#include &quot;hardware.h&quot;
 macro_line|#include &quot;message.h&quot;
 macro_line|#include &quot;card.h&quot;
+macro_line|#include &lt;asm/io.h&gt;
 r_extern
 id|board
 op_star
@@ -800,7 +801,7 @@ op_amp
 id|WF_NOT_FULL
 )paren
 )paren
-id|SLOW_DOWN_IO
+id|__SLOW_DOWN_IO
 suffix:semicolon
 multiline_comment|/*&n;&t; * Disable interrupts and map in shared memory&n;&t; */
 id|save_flags

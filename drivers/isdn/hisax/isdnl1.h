@@ -101,6 +101,7 @@ id|sp
 )paren
 suffix:semicolon
 r_extern
+r_int
 id|get_irq
 c_func
 (paren

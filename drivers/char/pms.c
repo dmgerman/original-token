@@ -3061,7 +3061,7 @@ id|tmp
 (braket
 id|dw
 op_plus
-l_int|16
+l_int|32
 )braket
 suffix:semicolon
 multiline_comment|/* using a temp buffer is faster than direct  */
@@ -3132,10 +3132,10 @@ id|src
 comma
 id|dw
 op_plus
-l_int|16
+l_int|32
 )paren
 suffix:semicolon
-multiline_comment|/* discard 8 word   */
+multiline_comment|/* discard 16 word   */
 id|cnt
 op_sub_assign
 id|dev-&gt;height
@@ -3182,7 +3182,7 @@ id|buf
 comma
 id|tmp
 op_plus
-l_int|16
+l_int|32
 comma
 id|dt
 )paren
@@ -4000,24 +4000,32 @@ id|pms_brightness
 c_func
 (paren
 id|p.brightness
+op_rshift
+l_int|8
 )paren
 suffix:semicolon
 id|pms_hue
 c_func
 (paren
 id|p.hue
+op_rshift
+l_int|8
 )paren
 suffix:semicolon
 id|pms_colour
 c_func
 (paren
 id|p.colour
+op_rshift
+l_int|8
 )paren
 suffix:semicolon
 id|pms_contrast
 c_func
 (paren
 id|p.contrast
+op_rshift
+l_int|8
 )paren
 suffix:semicolon
 r_return

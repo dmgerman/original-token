@@ -1,7 +1,7 @@
 multiline_comment|/* $Id: plip.c,v 1.3.6.2 1997/04/16 15:07:56 phil Exp $ */
 multiline_comment|/* PLIP: A parallel port &quot;network&quot; driver for Linux. */
 multiline_comment|/* This driver is for parallel port with 5-bit cable (LapLink (R) cable). */
-multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;Modularization and ifreq/ifmap support by Alan Cox.&n; *&t;&t;Rewritten by Niibe Yutaka.&n; *              parport-sharing awareness code by Philip Blundell.&n; *&n; * Fixes:&n; *&t;&t;Niibe Yutaka&n; *&t;&t;  - Module initialization.  You can specify I/O addr and IRQ:&n; *&t;&t;&t;# insmod plip.o io=0x3bc irq=7&n; *&t;&t;  - MTU fix.&n; *&t;&t;  - Make sure other end is OK, before sending a packet.&n; *&t;&t;  - Fix immediate timer problem.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;Modularization and ifreq/ifmap support by Alan Cox.&n; *&t;&t;Rewritten by Niibe Yutaka.&n; *              parport-sharing awareness code by Philip Blundell.&n; *&t;&t;SMP locking by Niibe Yutaka.&n; *&n; * Fixes:&n; *&t;&t;Niibe Yutaka&n; *&t;&t;  - Module initialization.&n; *&t;&t;  - MTU fix.&n; *&t;&t;  - Make sure other end is OK, before sending a packet.&n; *&t;&t;  - Fix immediate timer problem.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Original version and the name &squot;PLIP&squot; from Donald Becker &lt;becker@super.org&gt;&n; * inspired by Russ Nelson&squot;s parallel port packet driver.&n; *&n; * NOTE:&n; *     Tanabe Hiroyasu had changed the protocol, and it was in Linux v1.0.&n; *     Because of the necessity to communicate to DOS machines with the&n; *     Crynwr packet driver, Peter Bauer changed the protocol again&n; *     back to original protocol.&n; *&n; *     This version follows original PLIP protocol.&n; *     So, this PLIP can&squot;t communicate the PLIP of Linux v1.0.&n; */
 multiline_comment|/*&n; *     To use with DOS box, please do (Turn on ARP switch):&n; *&t;# ifconfig plip[0-2] arp&n; */
 DECL|variable|version
@@ -11,7 +11,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;NET3 PLIP version 2.2-parport gniibe@mri.co.jp&bslash;n&quot;
+l_string|&quot;NET3 PLIP version 2.3-parport gniibe@mri.co.jp&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Sources:&n;&t;Ideas and protocols came from Russ Nelson&squot;s &lt;nelson@crynwr.com&gt;&n;&t;&quot;parallel.asm&quot; parallel port packet driver.&n;&n;  The &quot;Crynwr&quot; parallel port standard specifies the following protocol:&n;    Trigger by sending &squot;0x08&squot; (this cause interrupt on other end)&n;    count-low octet&n;    count-high octet&n;    ... data octets&n;    checksum octet&n;  Each octet is sent as &lt;wait for rx. &squot;0x1?&squot;&gt; &lt;send 0x10+(octet&amp;0x0F)&gt;&n;&t;&t;&t;&lt;wait for rx. &squot;0x0?&squot;&gt; &lt;send 0x00+((octet&gt;&gt;4)&amp;0x0F)&gt;&n;&n;  The packet is encapsulated as if it were ethernet.&n;&n;  The cable used is a de facto standard parallel null cable -- sold as&n;  a &quot;LapLink&quot; cable by various places.  You&squot;ll need a 12-conductor cable to&n;  make one yourself.  The wiring is:&n;    SLCTIN&t;17 - 17&n;    GROUND&t;25 - 25&n;    D0-&gt;ERROR&t;2 - 15&t;&t;15 - 2&n;    D1-&gt;SLCT&t;3 - 13&t;&t;13 - 3&n;    D2-&gt;PAPOUT&t;4 - 12&t;&t;12 - 4&n;    D3-&gt;ACK&t;5 - 10&t;&t;10 - 5&n;    D4-&gt;BUSY&t;6 - 11&t;&t;11 - 6&n;  Do not connect the other pins.  They are&n;    D5,D6,D7 are 7,8,9&n;    STROBE is 1, FEED is 14, INIT is 16&n;    extra grounds are 18,19,20,21,22,23,24&n;*/
 macro_line|#include &lt;linux/module.h&gt;
@@ -41,6 +41,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 multiline_comment|/* Maximum number of devices to support. */
 DECL|macro|PLIP_MAX
@@ -457,6 +458,10 @@ op_star
 id|skb
 )paren
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 )brace
 suffix:semicolon
 "&f;"
@@ -751,6 +756,13 @@ suffix:semicolon
 id|nl-&gt;deferred.data
 op_assign
 id|dev
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|nl-&gt;lock
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -1152,9 +1164,11 @@ r_int
 r_char
 id|c0
 suffix:semicolon
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_if
@@ -1195,9 +1209,11 @@ op_le
 l_int|3
 )paren
 (brace
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 multiline_comment|/* Try again later */
@@ -1255,9 +1271,11 @@ id|PLIP_PK_TRIGGER
 )paren
 (brace
 multiline_comment|/* Transmission was interrupted. */
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_return
@@ -1282,9 +1300,11 @@ op_le
 l_int|3
 )paren
 (brace
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 multiline_comment|/* Try again later */
@@ -1367,10 +1387,22 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|nl-&gt;lock
+)paren
+suffix:semicolon
 id|disable_irq
 c_func
 (paren
 id|dev-&gt;irq
+)paren
+suffix:semicolon
+id|synchronize_irq
+c_func
+(paren
 )paren
 suffix:semicolon
 id|outb
@@ -1403,11 +1435,6 @@ c_func
 (paren
 id|dev
 )paren
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -1756,6 +1783,7 @@ c_func
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+multiline_comment|/* Don&squot;t need to synchronize irq, as we can safely ignore it */
 id|outb
 c_func
 (paren
@@ -2182,9 +2210,11 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_if
@@ -2199,9 +2229,11 @@ id|nl-&gt;connection
 op_assign
 id|PLIP_CN_SEND
 suffix:semicolon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 id|queue_task
@@ -2248,9 +2280,11 @@ id|nl-&gt;connection
 op_assign
 id|PLIP_CN_NONE
 suffix:semicolon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 id|outb
@@ -2658,9 +2692,11 @@ c_func
 id|PLIP_DELAY_UNIT
 )paren
 suffix:semicolon
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_if
@@ -2671,29 +2707,16 @@ op_eq
 id|PLIP_CN_RECEIVE
 )paren
 (brace
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
-multiline_comment|/* interrupted */
+multiline_comment|/* Interrupted. */
 id|nl-&gt;enet_stats.collisions
 op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|net_debug
-OG
-l_int|1
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: collision.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
 suffix:semicolon
 r_return
 id|OK
@@ -2719,12 +2742,40 @@ op_amp
 l_int|0x08
 )paren
 (brace
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|nl-&gt;lock
+)paren
+suffix:semicolon
 id|disable_irq
 c_func
 (paren
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+id|synchronize_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nl-&gt;connection
+op_eq
+id|PLIP_CN_RECEIVE
+)paren
+(brace
+multiline_comment|/* Interrupted.&n;&t;&t;&t;&t;&t;   We don&squot;t need to enable irq,&n;&t;&t;&t;&t;&t;   as it is soon disabled.    */
+id|nl-&gt;enet_stats.collisions
+op_increment
+suffix:semicolon
+r_return
+id|OK
+suffix:semicolon
+)brace
 id|outb
 c_func
 (paren
@@ -2764,17 +2815,14 @@ id|nl-&gt;timeout_count
 op_assign
 l_int|0
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_if
@@ -3051,9 +3099,11 @@ op_star
 id|rcv
 )paren
 (brace
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_if
@@ -3079,9 +3129,11 @@ id|NET_BH
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_if
@@ -3291,6 +3343,7 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;plip_interrupt: irq %d for unknown device.&bslash;n&quot;
 comma
@@ -3382,9 +3435,11 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_switch
@@ -3438,9 +3493,11 @@ c_func
 id|IMMEDIATE_BH
 )paren
 suffix:semicolon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_break
@@ -3448,17 +3505,12 @@ suffix:semicolon
 r_case
 id|PLIP_CN_RECEIVE
 suffix:colon
-id|sti
+multiline_comment|/* May occur because there is race condition&n;&t;&t;   around test and set of dev-&gt;interrupt.&n;&t;&t;   Ignore this interrupt. */
+id|spin_unlock_irq
 c_func
 (paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: receive interrupt when receiving packet&bslash;n&quot;
-comma
-id|dev-&gt;name
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_break
@@ -3466,9 +3518,11 @@ suffix:semicolon
 r_case
 id|PLIP_CN_ERROR
 suffix:colon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 id|printk
@@ -3719,9 +3773,11 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 id|dev-&gt;trans_start
@@ -3773,9 +3829,11 @@ c_func
 id|IMMEDIATE_BH
 )paren
 suffix:semicolon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|nl-&gt;lock
 )paren
 suffix:semicolon
 r_return
@@ -3888,7 +3946,7 @@ id|nl-&gt;is_deferred
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Fill in the MAC-level header. */
+multiline_comment|/* Fill in the MAC-level header.&n;&t;   (ab)Use &quot;dev-&gt;broadcast&quot; to store point-to-point MAC address.&n;&n;&t;   PLIP doesn&squot;t have a real mac address, but we need to create one&n;&t;   to be DOS compatible.  */
 id|memset
 c_func
 (paren
@@ -3899,7 +3957,16 @@ comma
 id|ETH_ALEN
 )paren
 suffix:semicolon
-multiline_comment|/* Now PLIP doesnt have a real mac addr which is a pain..&n;&t;   we need to create one, and to be DOS compatible its a good&n;&t;   idea to use the same rules. Layering purists please look away */
+id|memset
+c_func
+(paren
+id|dev-&gt;broadcast
+comma
+l_int|0xfc
+comma
+id|ETH_ALEN
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3912,7 +3979,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Any address wil do - we take the first&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Any address will do - we take the first&n;&t;&t; */
 r_struct
 id|in_ifaddr
 op_star
@@ -3937,6 +4004,19 @@ l_int|2
 comma
 op_amp
 id|ifa-&gt;ifa_local
+comma
+l_int|4
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|dev-&gt;broadcast
+op_plus
+l_int|2
+comma
+op_amp
+id|ifa-&gt;ifa_address
 comma
 l_int|4
 )paren
@@ -4010,12 +4090,13 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-id|cli
+id|disable_irq
 c_func
 (paren
+id|dev-&gt;irq
 )paren
 suffix:semicolon
-id|sti
+id|synchronize_irq
 c_func
 (paren
 )paren
@@ -4361,6 +4442,25 @@ op_star
 id|map
 )paren
 (brace
+r_struct
+id|net_local
+op_star
+id|nl
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_struct
+id|pardevice
+op_star
+id|pardev
+op_assign
+id|nl-&gt;pardev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4372,28 +4472,17 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|map-&gt;base_addr
-op_ne
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
-op_logical_and
-id|map-&gt;base_addr
-op_ne
-id|dev-&gt;base_addr
-)paren
 id|printk
 c_func
 (paren
-l_string|&quot;%s: You cannot change base_addr of this interface (ignored).&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|KERN_WARNING
+l_string|&quot;plip: Warning, changing irq with ifconfig will be obsoleted.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;plip: Next time, please set with /proc/parport/*/irq instead.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -4408,10 +4497,29 @@ r_char
 op_minus
 l_int|1
 )paren
+(brace
+id|pardev-&gt;port-&gt;irq
+op_assign
 id|dev-&gt;irq
 op_assign
 id|map-&gt;irq
 suffix:semicolon
+multiline_comment|/* Dummy request */
+id|request_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|plip_interrupt
+comma
+id|SA_INTERRUPT
+comma
+id|pardev-&gt;name
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -5240,5 +5348,5 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -DMODULE -DMODVERSIONS -D__KERNEL__ -Wall -Wstrict-prototypes -O2 -g -fomit-frame-pointer -pipe -m486 -c plip.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -DMODULE -DMODVERSIONS -D__KERNEL__ -Wall -Wstrict-prototypes -O2 -g -fomit-frame-pointer -pipe -c plip.c&quot;&n; * End:&n; */
 eof

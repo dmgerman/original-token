@@ -719,6 +719,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|devc
+r_static
 id|softsyn_devc
 op_star
 id|devc

@@ -153,7 +153,7 @@ r_char
 op_star
 id|buf
 comma
-r_const
+r_int
 id|start_page
 )paren
 suffix:semicolon
@@ -217,7 +217,7 @@ r_char
 op_star
 id|buf
 comma
-r_const
+r_int
 id|start_page
 )paren
 suffix:semicolon
@@ -1800,7 +1800,7 @@ r_char
 op_star
 id|buf
 comma
-r_const
+r_int
 id|start_page
 )paren
 (brace

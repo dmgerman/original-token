@@ -100,6 +100,14 @@ r_int
 id|chn
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|reporgram_timer
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|RUNTIME_DMA_ALLOC
 mdefine_line|#define RUNTIME_DMA_ALLOC
 DECL|macro|USE_AUTOINIT_DMA

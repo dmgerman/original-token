@@ -19119,8 +19119,6 @@ r_void
 )paren
 (brace
 r_int
-id|fdc
-comma
 id|dummy
 suffix:semicolon
 id|unregister_blkdev

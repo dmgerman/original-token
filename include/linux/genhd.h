@@ -20,6 +20,12 @@ DECL|macro|LINUX_EXTENDED_PARTITION
 mdefine_line|#define LINUX_EXTENDED_PARTITION 0x85
 DECL|macro|WIN98_EXTENDED_PARTITION
 mdefine_line|#define WIN98_EXTENDED_PARTITION 0x0f
+DECL|macro|LINUX_SWAP_PARTITION
+mdefine_line|#define LINUX_SWAP_PARTITION&t;0x82
+macro_line|#ifdef CONFIG_SOLARIS_X86_PARTITION
+DECL|macro|SOLARIS_X86_PARTITION
+mdefine_line|#define SOLARIS_X86_PARTITION&t;LINUX_SWAP_PARTITION
+macro_line|#endif
 DECL|macro|DM6_PARTITION
 mdefine_line|#define DM6_PARTITION&t;&t;0x54&t;/* has DDO: use xlated geom &amp; offset */
 DECL|macro|EZD_PARTITION
@@ -184,6 +190,117 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_SOLARIS_X86_PARTITION
+DECL|macro|SOLARIS_X86_NUMSLICE
+mdefine_line|#define SOLARIS_X86_NUMSLICE&t;8
+DECL|macro|SOLARIS_X86_VTOC_SANE
+mdefine_line|#define SOLARIS_X86_VTOC_SANE&t;(0x600DDEEEUL)
+DECL|struct|solaris_x86_slice
+r_struct
+id|solaris_x86_slice
+(brace
+DECL|member|s_tag
+id|ushort
+id|s_tag
+suffix:semicolon
+multiline_comment|/* ID tag of partition */
+DECL|member|s_flag
+id|ushort
+id|s_flag
+suffix:semicolon
+multiline_comment|/* permision flags */
+DECL|member|s_start
+id|daddr_t
+id|s_start
+suffix:semicolon
+multiline_comment|/* start sector no of partition */
+DECL|member|s_size
+r_int
+id|s_size
+suffix:semicolon
+multiline_comment|/* # of blocks in partition */
+)brace
+suffix:semicolon
+DECL|struct|solaris_x86_vtoc
+r_struct
+id|solaris_x86_vtoc
+(brace
+DECL|member|v_bootinfo
+r_int
+r_int
+id|v_bootinfo
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* info needed by mboot (unsupported) */
+DECL|member|v_sanity
+r_int
+r_int
+id|v_sanity
+suffix:semicolon
+multiline_comment|/* to verify vtoc sanity */
+DECL|member|v_version
+r_int
+r_int
+id|v_version
+suffix:semicolon
+multiline_comment|/* layout version */
+DECL|member|v_volume
+r_char
+id|v_volume
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* volume name */
+DECL|member|v_sectorsz
+id|ushort
+id|v_sectorsz
+suffix:semicolon
+multiline_comment|/* sector size in bytes */
+DECL|member|v_nparts
+id|ushort
+id|v_nparts
+suffix:semicolon
+multiline_comment|/* number of partitions */
+DECL|member|v_reserved
+r_int
+r_int
+id|v_reserved
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* free space */
+r_struct
+id|solaris_x86_slice
+DECL|member|v_slice
+id|v_slice
+(braket
+id|SOLARIS_X86_NUMSLICE
+)braket
+suffix:semicolon
+multiline_comment|/* slice headers */
+DECL|member|timestamp
+id|time_t
+id|timestamp
+(braket
+id|SOLARIS_X86_NUMSLICE
+)braket
+suffix:semicolon
+multiline_comment|/* timestamp (unsupported) */
+DECL|member|v_asciilabel
+r_char
+id|v_asciilabel
+(braket
+l_int|128
+)braket
+suffix:semicolon
+multiline_comment|/* for compatibility */
+)brace
+suffix:semicolon
+macro_line|#endif /* CONFIG_SOLARIS_X86_PARTITION */
 macro_line|#ifdef CONFIG_BSD_DISKLABEL
 multiline_comment|/*&n; * BSD disklabel support by Yossi Gottlieb &lt;yogo@math.tau.ac.il&gt;&n; */
 DECL|macro|BSD_PARTITION

@@ -3512,6 +3512,12 @@ op_amp
 id|MOD_RUNNING
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|mod-&gt;cleanup
+)paren
+(brace
 id|mod
 op_member_access_from_pointer
 id|cleanup
@@ -3519,6 +3525,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 id|mod-&gt;flags
 op_and_assign
 op_complement

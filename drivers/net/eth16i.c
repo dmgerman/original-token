@@ -27,6 +27,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 multiline_comment|/* Few macros */
 DECL|macro|BIT
 mdefine_line|#define BIT(a)&t;&t;        ( (1 &lt;&lt; (a)) )
@@ -2625,7 +2626,7 @@ op_and_assign
 l_int|0x7F
 suffix:semicolon
 multiline_comment|/* Mask DCLEN bit */
-macro_line|#ifdef 0
+macro_line|#if 0
 multiline_comment|/*&n;&t;This was removed because the card was sometimes left to state&n;  &t;from which it couldn&squot;t be find anymore. If there is need&n;&t;to have a more strict check still this have to be fixed.&n;*/
 r_if
 c_cond

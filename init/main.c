@@ -438,6 +438,7 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_XD
 r_extern
 r_void
 id|xd_setup
@@ -452,6 +453,21 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|xd_manual_geo_init
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_extern
 r_void
@@ -2747,6 +2763,12 @@ macro_line|#ifdef CONFIG_BLK_DEV_XD
 l_string|&quot;xd=&quot;
 comma
 id|xd_setup
+)brace
+comma
+(brace
+l_string|&quot;xd_geo=&quot;
+comma
+id|xd_manual_geo_init
 )brace
 comma
 macro_line|#endif

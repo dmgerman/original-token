@@ -707,6 +707,14 @@ c_func
 id|net_ratelimit
 )paren
 suffix:semicolon
+multiline_comment|/* needed for ip_gre -cw */
+DECL|variable|ip_statistics
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ip_statistics
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_IPV6_MODULE
 multiline_comment|/* inet functions common to v4 and v6 */
 DECL|variable|inet_stream_ops

@@ -11849,7 +11849,6 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*      unregister_symtab(&amp;ad1848_syms); */
 )brace
 macro_line|#else
 r_void
@@ -11860,13 +11859,6 @@ c_func
 r_void
 )paren
 (brace
-id|register_symtab
-c_func
-(paren
-op_amp
-id|ad1848_syms
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#endif

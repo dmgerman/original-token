@@ -69,7 +69,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_AEDSP16
+macro_line|#if defined(CONFIG_AEDSP16) &amp;&amp; !defined(MODULE)
 id|init_aedsp16
 c_func
 (paren

@@ -1194,7 +1194,6 @@ l_int|1
 multiline_comment|/* Return current settings */
 id|level
 op_assign
-op_assign
 op_logical_neg
 (paren
 id|pas_read

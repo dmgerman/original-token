@@ -6,6 +6,7 @@ macro_line|#include &quot;hardware.h&quot;
 macro_line|#include &quot;message.h&quot;
 macro_line|#include &quot;card.h&quot;
 r_extern
+r_int
 id|indicate_status
 c_func
 (paren

@@ -3387,6 +3387,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_const
+r_int
 id|skip
 op_assign
 l_int|3

@@ -13,6 +13,7 @@ multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-frames schem
 DECL|variable|rx_copybreak
 r_static
 r_const
+r_int
 id|rx_copybreak
 op_assign
 l_int|200
@@ -21,6 +22,7 @@ multiline_comment|/* Allow setting MTU to a larger size, bypassing the normal et
 DECL|variable|mtu
 r_static
 r_const
+r_int
 id|mtu
 op_assign
 l_int|1500

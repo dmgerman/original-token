@@ -866,6 +866,7 @@ op_assign
 id|dst
 suffix:semicolon
 r_register
+r_int
 id|i
 op_assign
 id|len
@@ -1045,6 +1046,7 @@ op_assign
 id|src
 suffix:semicolon
 r_register
+r_int
 id|i
 op_assign
 id|len

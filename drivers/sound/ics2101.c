@@ -444,6 +444,9 @@ id|caddr_t
 id|arg
 )paren
 (brace
+r_int
+id|val
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -472,9 +475,6 @@ op_amp
 id|_SIOC_WRITE
 )paren
 (brace
-r_int
-id|val
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -814,10 +814,6 @@ op_minus
 l_int|1
 )paren
 (brace
-id|n
-op_assign
-id|num_mixers
-suffix:semicolon
 id|mixer_devs
 (braket
 id|n

@@ -61,6 +61,8 @@ DECL|macro|CMD_ST11GETGEOM
 mdefine_line|#define CMD_ST11GETGEOM 0xF8&t;/* get geometry data (Seagate ST11R/M only?) */
 DECL|macro|CMD_WDSETPARAM
 mdefine_line|#define CMD_WDSETPARAM&t;0x0C&t;/* set drive parameters (WD 1004A27X only?) */
+DECL|macro|CMD_XBSETPARAM
+mdefine_line|#define CMD_XBSETPARAM&t;0x0C&t;/* set drive parameters (XEBEC only?) */
 multiline_comment|/* Bits for command status byte */
 DECL|macro|CSB_ERROR
 mdefine_line|#define CSB_ERROR&t;0x02&t;/* error */
@@ -555,6 +557,23 @@ suffix:semicolon
 r_static
 r_void
 id|xd_omti_init_drive
+(paren
+id|u_char
+id|drive
+)paren
+suffix:semicolon
+r_static
+r_void
+id|xd_xebec_init_controller
+(paren
+r_int
+r_int
+id|address
+)paren
+suffix:semicolon
+r_static
+r_void
+id|xd_xebec_init_drive
 (paren
 id|u_char
 id|drive
