@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * binfmt_elf32.c: Support 32-bit Sparc ELF binaries on Ultra.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 David S. Miller&t;(davem@dm.cobaltmicro.com)&n; * Copyright (C) 1995, 1996, 1997, 1998 Jakub Jelinek&t;(jj@ultra.linux.cz)&n; */
+multiline_comment|/*&n; * binfmt_elf32.c: Support 32-bit Sparc ELF binaries on Ultra.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 David S. Miller&t;(davem@redhat.com)&n; * Copyright (C) 1995, 1996, 1997, 1998 Jakub Jelinek&t;(jj@ultra.linux.cz)&n; */
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;&t;EM_SPARC
 DECL|macro|ELF_CLASS

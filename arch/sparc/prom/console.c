@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.20 1998/09/21 05:05:50 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Pete Zaitcev &lt;zaitcev@metabyte.com&gt;&n; */
+multiline_comment|/* $Id: console.c,v 1.21 2000/01/29 01:09:12 anton Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Pete Zaitcev &lt;zaitcev@metabyte.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -132,9 +132,6 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-r_case
-id|PROM_AP1000
-suffix:colon
 r_default
 suffix:colon
 id|i
@@ -268,33 +265,6 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|PROM_AP1000
-suffix:colon
-macro_line|#if CONFIG_AP1000
-(brace
-r_extern
-r_void
-id|ap_putchar
-c_func
-(paren
-r_char
-)paren
-suffix:semicolon
-id|ap_putchar
-c_func
-(paren
-id|c
-)paren
-suffix:semicolon
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 r_break
 suffix:semicolon
 r_default
@@ -688,12 +658,6 @@ suffix:semicolon
 r_return
 id|PROMDEV_I_UNK
 suffix:semicolon
-r_case
-id|PROM_AP1000
-suffix:colon
-r_return
-id|PROMDEV_I_UNK
-suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Query for output device type */
@@ -1015,9 +979,6 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-r_case
-id|PROM_AP1000
-suffix:colon
 r_default
 suffix:colon
 (brace

@@ -1461,14 +1461,6 @@ c_func
 id|tsk
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|exit_msc
-c_func
-(paren
-id|tsk
-)paren
-suffix:semicolon
-macro_line|#endif
 id|__exit_files
 c_func
 (paren

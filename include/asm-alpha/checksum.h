@@ -251,7 +251,7 @@ id|in6_addr
 op_star
 id|daddr
 comma
-id|__u16
+id|__u32
 id|len
 comma
 r_int

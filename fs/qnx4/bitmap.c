@@ -308,33 +308,13 @@ id|total
 op_add_assign
 id|QNX4_BLOCK_SIZE
 suffix:semicolon
+id|offset
+op_increment
+suffix:semicolon
 )brace
 r_return
 id|total_free
 suffix:semicolon
-)brace
-DECL|function|qnx4_count_free_inodes
-r_int
-r_int
-id|qnx4_count_free_inodes
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-)paren
-(brace
-r_return
-id|qnx4_count_free_blocks
-c_func
-(paren
-id|sb
-)paren
-op_star
-id|QNX4_INODES_PER_BLOCK
-suffix:semicolon
-multiline_comment|/* FIXME */
 )brace
 macro_line|#ifdef CONFIG_QNX4FS_RW
 DECL|function|qnx4_is_free

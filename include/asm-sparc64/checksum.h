@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.15 2000/01/19 04:06:09 davem Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.16 2000/01/31 01:26:54 davem Exp $ */
 macro_line|#ifndef __SPARC64_CHECKSUM_H
 DECL|macro|__SPARC64_CHECKSUM_H
 mdefine_line|#define __SPARC64_CHECKSUM_H
@@ -924,7 +924,7 @@ id|in6_addr
 op_star
 id|daddr
 comma
-id|__u16
+id|__u32
 id|len
 comma
 r_int
@@ -1176,12 +1176,7 @@ l_string|&quot;r&quot;
 id|htonl
 c_func
 (paren
-(paren
-id|__u32
-)paren
-(paren
 id|len
-)paren
 )paren
 )paren
 comma

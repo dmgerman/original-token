@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: types.h,v 1.2 1997/12/22 13:28:33 mj Exp $ */
+multiline_comment|/* $Id: types.h,v 1.3 2000/01/28 13:43:15 jj Exp $ */
 macro_line|#ifndef _SPARC64_TYPES_H
 DECL|macro|_SPARC64_TYPES_H
 mdefine_line|#define _SPARC64_TYPES_H

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.13 1999/08/31 06:54:45 davem Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: init.c,v 1.14 2000/01/29 01:09:12 anton Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -96,25 +96,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if CONFIG_AP1000
-r_extern
-r_struct
-id|linux_romvec
-op_star
-id|ap_prom_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-id|rp
-op_assign
-id|ap_prom_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|romvec
 op_assign
 id|rp
@@ -158,16 +139,6 @@ suffix:colon
 id|prom_vers
 op_assign
 id|PROM_SUN4
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|42
-suffix:colon
-multiline_comment|/* why not :-) */
-id|prom_vers
-op_assign
-id|PROM_AP1000
 suffix:semicolon
 r_break
 suffix:semicolon

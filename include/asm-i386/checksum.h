@@ -594,7 +594,7 @@ id|in6_addr
 op_star
 id|daddr
 comma
-id|__u16
+id|__u32
 id|len
 comma
 r_int
@@ -722,12 +722,7 @@ l_string|&quot;r&quot;
 id|htonl
 c_func
 (paren
-(paren
-id|__u32
-)paren
-(paren
 id|len
-)paren
 )paren
 )paren
 comma

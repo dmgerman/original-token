@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: devops.c,v 1.11 1998/03/09 14:04:24 jj Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: devops.c,v 1.12 2000/01/29 01:09:12 anton Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -98,9 +98,6 @@ id|dstr
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|PROM_AP1000
-suffix:colon
 r_default
 suffix:colon
 id|handle
@@ -191,9 +188,6 @@ id|dhandle
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|PROM_AP1000
-suffix:colon
 r_default
 suffix:colon
 r_break
@@ -295,9 +289,6 @@ id|seeklo
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|PROM_AP1000
-suffix:colon
 r_default
 suffix:colon
 r_break

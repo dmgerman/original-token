@@ -1932,6 +1932,10 @@ op_assign
 id|wait_table
 suffix:semicolon
 )brace
+id|fds
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren

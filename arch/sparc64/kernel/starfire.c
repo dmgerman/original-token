@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: starfire.c,v 1.4 1999/09/21 14:35:25 davem Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@dm.cobaltmicro.com)&n; */
+multiline_comment|/* $Id: starfire.c,v 1.5 2000/01/31 04:59:12 davem Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;

@@ -129,7 +129,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-suffix:semicolon
 (brace
 id|r
 (braket

@@ -465,13 +465,6 @@ r_struct
 id|inode_operations
 id|proc_kmsg_inode_operations
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-r_extern
-r_struct
-id|inode_operations
-id|proc_ringbuf_inode_operations
-suffix:semicolon
-macro_line|#endif
 r_extern
 r_struct
 id|inode_operations

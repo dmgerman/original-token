@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: printf.c,v 1.5 1996/04/04 16:31:07 tridge Exp $&n; * printf.c:  Internal prom library printf facility.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: printf.c,v 1.6 2000/01/29 01:09:12 anton Exp $&n; * printf.c:  Internal prom library printf facility.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* This routine is internal to the prom library, no one else should know&n; * about or use it!  It&squot;s simple and smelly anyway....&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -62,22 +62,6 @@ id|bptr
 op_assign
 id|ppbuf
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|ap_write
-c_func
-(paren
-l_int|1
-comma
-id|bptr
-comma
-id|strlen
-c_func
-(paren
-id|bptr
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
 r_while
 c_loop
 (paren
@@ -116,7 +100,6 @@ id|ch
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|va_end
 c_func
 (paren

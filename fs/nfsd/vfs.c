@@ -6613,7 +6613,7 @@ c_cond
 (paren
 id|exp-&gt;ex_flags
 op_amp
-id|NFSEXP_NONLMAUTH
+id|NFSEXP_NOAUTHNLM
 )paren
 r_return
 l_int|0

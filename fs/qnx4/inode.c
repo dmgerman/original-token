@@ -1265,17 +1265,16 @@ id|tmp.f_bfree
 suffix:semicolon
 id|tmp.f_files
 op_assign
-l_int|0x00
+op_minus
+l_int|1
 suffix:semicolon
-multiline_comment|/* change this !!! */
+multiline_comment|/* we don&squot;t count files */
 id|tmp.f_ffree
 op_assign
-id|qnx4_count_free_inodes
-c_func
-(paren
-id|sb
-)paren
+op_minus
+l_int|1
 suffix:semicolon
+multiline_comment|/* inodes are allocated dynamically */
 id|tmp.f_namelen
 op_assign
 id|QNX4_NAME_MAX

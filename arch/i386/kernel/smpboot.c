@@ -2286,6 +2286,14 @@ r_int
 r_int
 id|cachesize
 suffix:semicolon
+multiline_comment|/* kB   */
+r_int
+r_int
+id|bandwidth
+op_assign
+l_int|350
+suffix:semicolon
+multiline_comment|/* MB/s */
 multiline_comment|/*&n;&t; * Rough estimation for SMP scheduling, this is the number of&n;&t; * cycles it takes for a fully memory-limited process to flush&n;&t; * the SMP-local cache.&n;&t; *&n;&t; * (For a P5 this pretty much means we will choose another idle&n;&t; *  CPU almost always at wakeup time (this is due to the small&n;&t; *  L1 cache), on PIIs it&squot;s around 50-100 usecs, depending on&n;&t; *  the cache size)&n;&t; */
 r_if
 c_cond
@@ -2316,20 +2324,32 @@ op_eq
 op_minus
 l_int|1
 )paren
+(brace
 id|cachesize
 op_assign
-l_int|8
+l_int|16
 suffix:semicolon
-multiline_comment|/* Pentiums */
+multiline_comment|/* Pentiums, 2x8kB cache */
+id|bandwidth
+op_assign
+l_int|100
+suffix:semicolon
+)brace
 id|cacheflush_time
 op_assign
+(paren
 id|cpu_hz
-op_div
-l_int|1024
+op_rshift
+l_int|20
+)paren
 op_star
+(paren
 id|cachesize
+op_lshift
+l_int|10
+)paren
 op_div
-l_int|5000
+id|bandwidth
 suffix:semicolon
 )brace
 id|printk

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.57 2000/01/21 11:38:42 jj Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.59 2000/01/29 07:40:10 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1770,21 +1770,4 @@ r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_AP1000
-multiline_comment|/* only AP+ systems have sys_aplib */
-DECL|function|sys_aplib
-id|asmlinkage
-r_int
-id|sys_aplib
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

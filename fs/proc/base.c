@@ -2227,11 +2227,6 @@ comma
 DECL|enumerator|PROC_PID_MAPS
 id|PROC_PID_MAPS
 comma
-macro_line|#if CONFIG_AP1000
-DECL|enumerator|PROC_PID_RINGBUF
-id|PROC_PID_RINGBUF
-comma
-macro_line|#endif
 DECL|enumerator|PROC_PID_CPU
 id|PROC_PID_CPU
 comma
@@ -2339,22 +2334,6 @@ comma
 id|S_IFREG
 op_or
 id|S_IRUGO
-)paren
-comma
-macro_line|#endif
-macro_line|#if CONFIG_AP1000
-id|E
-c_func
-(paren
-id|PROC_PID_RINGBUF
-comma
-l_string|&quot;ringbuf&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-op_or
-id|S_IWUSR
 )paren
 comma
 macro_line|#endif
@@ -3838,18 +3817,6 @@ suffix:semicolon
 id|inode-&gt;u.proc_i.op.proc_read
 op_assign
 id|proc_pid_cpu
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#if CONFIG_AP1000
-r_case
-id|PROC_PID_RINGBUF
-suffix:colon
-id|inode-&gt;i_op
-op_assign
-op_amp
-id|proc_ringbuf_inode_operations
 suffix:semicolon
 r_break
 suffix:semicolon

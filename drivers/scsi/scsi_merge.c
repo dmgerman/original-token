@@ -61,7 +61,7 @@ multiline_comment|/*&n;&t; * Dump the information that we have.  We know we have
 id|printk
 c_func
 (paren
-l_string|&quot;nr_segments is %lx&bslash;n&quot;
+l_string|&quot;nr_segments is %x&bslash;n&quot;
 comma
 id|req-&gt;nr_segments
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Name                         : qnx4_fs.h&n; *  Author                       : Richard Frowijn&n; *  Function                     : qnx4 global filesystem definitions&n; *  Version                      : 1.0.2&n; *  Last modified                : 2000-01-06&n; *&n; *  History                      : 23-03-1998 created&n; */
+multiline_comment|/*&n; *  Name                         : qnx4_fs.h&n; *  Author                       : Richard Frowijn&n; *  Function                     : qnx4 global filesystem definitions&n; *  Version                      : 1.0.2&n; *  Last modified                : 2000-01-31&n; *&n; *  History                      : 23-03-1998 created&n; */
 macro_line|#ifndef _LINUX_QNX4_FS_H
 DECL|macro|_LINUX_QNX4_FS_H
 mdefine_line|#define _LINUX_QNX4_FS_H
@@ -32,8 +32,12 @@ DECL|macro|QNX4_ERROR_FS
 mdefine_line|#define QNX4_ERROR_FS&t;&t;0x0002&t;/* fs has errors. */
 DECL|macro|QNX4_BLOCK_SIZE
 mdefine_line|#define QNX4_BLOCK_SIZE         0x200&t;/* blocksize of 512 bytes */
+DECL|macro|QNX4_BLOCK_SIZE_BITS
+mdefine_line|#define QNX4_BLOCK_SIZE_BITS    9&t;/* blocksize shift */
 DECL|macro|QNX4_DIR_ENTRY_SIZE
-mdefine_line|#define QNX4_DIR_ENTRY_SIZE     0x040&t;/* dir entry size */
+mdefine_line|#define QNX4_DIR_ENTRY_SIZE     0x040&t;/* dir entry size of 64 bytes */
+DECL|macro|QNX4_DIR_ENTRY_SIZE_BITS
+mdefine_line|#define QNX4_DIR_ENTRY_SIZE_BITS 6&t;/* dir entry size shift */
 DECL|macro|QNX4_XBLK_ENTRY_SIZE
 mdefine_line|#define QNX4_XBLK_ENTRY_SIZE    0x200&t;/* xblk entry size */
 DECL|macro|QNX4_INODES_PER_BLOCK
@@ -251,18 +255,6 @@ r_struct
 id|dentry
 op_star
 id|dentry
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|qnx4_count_free_inodes
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
 )paren
 suffix:semicolon
 r_extern

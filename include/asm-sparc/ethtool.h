@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ethtool.h,v 1.1 1998/12/19 15:09:38 davem Exp $&n; * ethtool.h: Defines for SparcLinux ethtool.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@dm.cobaltmicro.com)&n; */
+multiline_comment|/* $Id: ethtool.h,v 1.2 2000/01/31 04:59:17 davem Exp $&n; * ethtool.h: Defines for SparcLinux ethtool.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef _SPARC_ETHTOOL_H
 DECL|macro|_SPARC_ETHTOOL_H
 mdefine_line|#define _SPARC_ETHTOOL_H

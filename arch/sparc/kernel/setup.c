@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.113 1999/12/16 14:37:35 anton Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.114 2000/01/29 01:08:57 anton Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -620,19 +620,6 @@ id|prom_printf
 c_func
 (paren
 l_string|&quot;KGDB: Using serial line /dev/ttyb.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AP1000
-r_case
-l_char|&squot;c&squot;
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;KGDB: AP1000+ debugging&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1299,21 +1286,6 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if CONFIG_AP1000
-id|sparc_cpu_model
-op_assign
-id|ap1000
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-op_amp
-id|cputypval
-comma
-l_string|&quot;ap+&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1388,24 +1360,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;SUN4U&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ap1000
-suffix:colon
-id|register_console
-c_func
-(paren
-op_amp
-id|prom_console
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;AP1000&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break

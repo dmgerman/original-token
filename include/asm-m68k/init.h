@@ -1,7 +1,6 @@
 macro_line|#ifndef _M68K_INIT_H
 DECL|macro|_M68K_INIT_H
 mdefine_line|#define _M68K_INIT_H
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__init
 mdefine_line|#define __init __attribute__ ((__section__ (&quot;.text.init&quot;)))
 DECL|macro|__initdata

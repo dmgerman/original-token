@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: types.h,v 1.11 1997/12/22 13:28:22 mj Exp $ */
+multiline_comment|/* $Id: types.h,v 1.12 2000/01/29 02:23:25 anton Exp $ */
 macro_line|#ifndef _SPARC_TYPES_H
 DECL|macro|_SPARC_TYPES_H
 mdefine_line|#define _SPARC_TYPES_H
@@ -113,6 +113,11 @@ id|u64
 suffix:semicolon
 DECL|macro|BITS_PER_LONG
 mdefine_line|#define BITS_PER_LONG 32
+DECL|typedef|dma_addr_t
+r_typedef
+id|u32
+id|dma_addr_t
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* defined(_SPARC_TYPES_H) */
 eof

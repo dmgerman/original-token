@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: loadmmu.c,v 1.53 2000/01/09 10:46:50 anton Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: loadmmu.c,v 1.54 2000/01/29 01:09:07 anton Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -87,18 +87,6 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|ap1000
-suffix:colon
-macro_line|#if CONFIG_AP1000
-id|ld_mmu_apmmu
-c_func
-(paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 id|prom_printf

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * atari_SCC.h: Definitions for the Am8530 Serial Communi
 macro_line|#ifndef _SCC_H
 DECL|macro|_SCC_H
 mdefine_line|#define _SCC_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 multiline_comment|/* Special configuration ioctls for the Atari SCC5380 Serial&n; * Communications Controller&n; */
 multiline_comment|/* ioctl command codes */

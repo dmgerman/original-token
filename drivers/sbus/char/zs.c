@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.52 1999/12/15 14:29:20 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.53 2000/01/29 01:29:38 anton Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -8267,7 +8267,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.52 $&quot;
+l_string|&quot;$Revision: 1.53 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9117,17 +9117,6 @@ id|chipid
 op_assign
 id|chip
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;No zs chip&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 id|iospace
 op_assign
 l_int|0
@@ -10967,17 +10956,6 @@ suffix:semicolon
 r_char
 id|dummy
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;not doing zs_init()&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Setup base handler, and timer table. */
 id|init_bh
 c_func

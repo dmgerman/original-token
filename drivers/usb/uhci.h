@@ -12,11 +12,10 @@ DECL|member|lock
 id|spinlock_t
 id|lock
 suffix:semicolon
-DECL|member|pid
-r_volatile
-r_int
-r_int
-id|pid
+DECL|member|uniq
+r_void
+op_star
+id|uniq
 suffix:semicolon
 DECL|member|count
 r_int
@@ -26,11 +25,11 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|nested_init
-mdefine_line|#define nested_init(snl) &bslash;&n;&t;spin_lock_init(&amp;(snl)-&gt;lock); &bslash;&n;&t;(snl)-&gt;pid = 0; &bslash;&n;&t;(snl)-&gt;count = 0;
+mdefine_line|#define nested_init(snl) &bslash;&n;&t;spin_lock_init(&amp;(snl)-&gt;lock); &bslash;&n;&t;(snl)-&gt;uniq = NULL; &bslash;&n;&t;(snl)-&gt;count = 0;
 DECL|macro|nested_lock
-mdefine_line|#define nested_lock(snl, flags) &bslash;&n;&t;if ((snl)-&gt;pid == current-&gt;pid) { &bslash;&n;&t;&t;(snl)-&gt;count++; &bslash;&n;&t;&t;flags = 0; &bslash;&n;&t;} else { &bslash;&n;&t;&t;spin_lock_irqsave(&amp;(snl)-&gt;lock, flags); &bslash;&n;&t;&t;(snl)-&gt;count++; &bslash;&n;&t;&t;(snl)-&gt;pid = current-&gt;pid; &bslash;&n;&t;}
+mdefine_line|#define nested_lock(snl, flags) &bslash;&n;&t;if ((snl)-&gt;uniq == current) { &bslash;&n;&t;&t;(snl)-&gt;count++; &bslash;&n;&t;&t;flags = 0; /* No warnings */ &bslash;&n;&t;} else { &bslash;&n;&t;&t;spin_lock_irqsave(&amp;(snl)-&gt;lock, flags); &bslash;&n;&t;&t;(snl)-&gt;count++; &bslash;&n;&t;&t;(snl)-&gt;uniq = current; &bslash;&n;&t;}
 DECL|macro|nested_unlock
-mdefine_line|#define nested_unlock(snl, flags) &bslash;&n;&t;if (!--(snl)-&gt;count) { &bslash;&n;&t;&t;(snl)-&gt;pid = 0; &bslash;&n;&t;&t;spin_unlock_irqrestore(&amp;(snl)-&gt;lock, flags); &bslash;&n;&t;}
+mdefine_line|#define nested_unlock(snl, flags) &bslash;&n;&t;if (!--(snl)-&gt;count) { &bslash;&n;&t;&t;(snl)-&gt;uniq = NULL; &bslash;&n;&t;&t;spin_unlock_irqrestore(&amp;(snl)-&gt;lock, flags); &bslash;&n;&t;}
 multiline_comment|/*&n; * Universal Host Controller Interface data structures and defines&n; */
 multiline_comment|/* Command register */
 DECL|macro|USBCMD

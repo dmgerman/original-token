@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.12 1999/12/20 14:08:25 jj Exp $&n; * sbus.h: Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.13 2000/01/28 13:43:14 jj Exp $&n; * sbus.h: Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef _SPARC64_SBUS_H
 DECL|macro|_SPARC64_SBUS_H
 mdefine_line|#define _SPARC64_SBUS_H

@@ -1,5 +1,5 @@
 multiline_comment|/* net/sched/sch_dsmark.c - Differentiated Services field marker */
-multiline_comment|/* Written 1998,1999 by Werner Almesberger, EPFL ICA */
+multiline_comment|/* Written 1998-2000 by Werner Almesberger, EPFL ICA */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -214,6 +214,13 @@ r_struct
 id|dsmark_qdisc_data
 op_star
 id|p
+id|__attribute__
+c_func
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 id|PRIV
 c_func

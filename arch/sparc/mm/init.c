@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.78 2000/01/24 03:22:38 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/*  $Id: init.c,v 1.79 2000/01/29 01:09:06 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -853,30 +853,6 @@ l_int|0x50000000
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|ap1000
-suffix:colon
-macro_line|#if CONFIG_AP1000
-id|apmmu_paging_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|sparc_unmapped_base
-op_assign
-l_int|0x50000000
-suffix:semicolon
-id|BTFIXUPSET_SETHI
-c_func
-(paren
-id|sparc_unmapped_base
-comma
-l_int|0x50000000
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 id|prom_printf
