@@ -5988,7 +5988,7 @@ id|file_lock
 comma
 id|cmd
 op_eq
-id|F_SETLKW
+id|F_SETLKW64
 )paren
 suffix:semicolon
 id|out_putf

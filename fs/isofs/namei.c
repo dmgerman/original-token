@@ -686,18 +686,6 @@ id|page
 op_star
 id|page
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;lookup: %x %s&bslash;n&quot;
-comma
-id|dir-&gt;i_ino
-comma
-id|dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-macro_line|#endif
 id|dentry-&gt;d_op
 op_assign
 id|dir-&gt;i_sb-&gt;s_root-&gt;d_op
@@ -708,6 +696,20 @@ id|alloc_page
 c_func
 (paren
 id|GFP_USER
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|page
+)paren
+r_return
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOMEM
 )paren
 suffix:semicolon
 id|ino

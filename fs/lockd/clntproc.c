@@ -189,7 +189,7 @@ comma
 id|NFS_FH
 c_func
 (paren
-id|fl-&gt;fl_file-&gt;f_dentry
+id|fl-&gt;fl_file-&gt;f_dentry-&gt;d_inode
 )paren
 comma
 r_sizeof

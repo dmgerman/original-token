@@ -2070,7 +2070,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;erase : 0x%lx 0x%lx 0x%x 0x%x&bslash;n&quot;
+l_string|&quot;erase : 0x%lx 0x%lx 0x%x 0x%lx&bslash;n&quot;
 comma
 id|adr
 comma

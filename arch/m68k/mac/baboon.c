@@ -42,10 +42,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|console_loglevel
-suffix:semicolon
-r_extern
-r_int
 id|macide_ack_intr
 c_func
 (paren

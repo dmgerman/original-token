@@ -75,6 +75,7 @@ r_volatile
 r_int
 id|global_irq_lock
 suffix:semicolon
+multiline_comment|/* long for set_bit -RR */
 DECL|function|irqs_running
 r_static
 r_inline

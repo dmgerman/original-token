@@ -8978,7 +8978,7 @@ l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu_exception&bslash;t: %s&bslash;n&quot;
 l_string|&quot;cpuid level&bslash;t: %d&bslash;n&quot;
 l_string|&quot;wp&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;features&bslash;t:&quot;
+l_string|&quot;flags&bslash;t:&quot;
 comma
 id|c-&gt;fdiv_bug
 ques

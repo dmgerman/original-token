@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bkm_a8.c,v 1.14.6.1 2000/11/28 12:02:46 kai Exp $&n; * bkm_a8.c     low level stuff for Scitel Quadro (4*S0, passive)&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: bkm_a8.c,v 1.14.6.2 2000/11/29 16:00:14 kai Exp $&n; * bkm_a8.c     low level stuff for Scitel Quadro (4*S0, passive)&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -28,7 +28,7 @@ id|sct_quadro_revision
 (braket
 )braket
 op_assign
-l_string|&quot;$Revision: 1.14.6.1 $&quot;
+l_string|&quot;$Revision: 1.14.6.2 $&quot;
 suffix:semicolon
 DECL|variable|sct_quadro_subtypes
 r_static
@@ -1316,36 +1316,48 @@ id|pci_dev
 op_star
 id|dev_a8
 id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u16
 id|sub_vendor_id
 id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u16
 id|sub_sys_id
 id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u_char
 id|pci_bus
 id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u_char
 id|pci_device_fn
 id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u_char
 id|pci_irq
 id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#endif /* CONFIG_PCI */
 r_int

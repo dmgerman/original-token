@@ -520,6 +520,12 @@ id|eql
 op_assign
 l_int|0
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -736,8 +742,6 @@ id|slave_queue_t
 op_star
 id|new_queue
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 macro_line|#ifdef EQL_DEBUG
 r_if
 c_cond
@@ -818,8 +822,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -887,8 +889,6 @@ id|eql_delete_slave_queue
 (paren
 id|eql-&gt;queue
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -3439,17 +3439,6 @@ r_static
 r_struct
 id|net_device
 id|dev_eql
-op_assign
-(brace
-id|name
-suffix:colon
-l_string|&quot;eql&quot;
-comma
-id|init
-suffix:colon
-id|eql_init
-comma
-)brace
 suffix:semicolon
 DECL|function|eql_init_module
 r_static
@@ -3461,6 +3450,18 @@ c_func
 r_void
 )paren
 (brace
+id|strcpy
+c_func
+(paren
+id|dev_eql.name
+comma
+l_string|&quot;eql&quot;
+)paren
+suffix:semicolon
+id|dev_eql.init
+op_assign
+id|eql_init
+suffix:semicolon
 r_if
 c_cond
 (paren

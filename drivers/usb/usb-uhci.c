@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999-2000 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *               Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *               Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *               Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; * (c) 2000      Yggdrasil Computing, Inc. (port of new PCI interface support&n; *               from usb-ohci.c by Adam Richter, adam@yggdrasil.com).&n; * (C) 2000      David Brownell, david-b@pacbell.net (usb-ohci.c)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; * (C) Copyright 1999 Gregory P. Smith&n; *&n; * $Id: usb-uhci.c,v 1.249 2000/11/21 12:03:34 acher Exp $&n; */
+multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999-2000 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *               Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *               Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *               Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; * (c) 2000      Yggdrasil Computing, Inc. (port of new PCI interface support&n; *               from usb-ohci.c by Adam Richter, adam@yggdrasil.com).&n; * (C) 2000      David Brownell, david-b@pacbell.net (usb-ohci.c)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; * (C) Copyright 1999 Gregory P. Smith&n; *&n; * $Id: usb-uhci.c,v 1.251 2000/11/30 09:47:54 acher Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -29,7 +29,7 @@ multiline_comment|/* This enables an extra UHCI slab for memory debugging */
 DECL|macro|DEBUG_SLAB
 mdefine_line|#define DEBUG_SLAB
 DECL|macro|VERSTR
-mdefine_line|#define VERSTR &quot;$Revision: 1.249 $ time &quot; __TIME__ &quot; &quot; __DATE__
+mdefine_line|#define VERSTR &quot;$Revision: 1.251 $ time &quot; __TIME__ &quot; &quot; __DATE__
 macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;usb-uhci.h&quot;
 macro_line|#include &quot;usb-uhci-debug.h&quot;
@@ -2354,6 +2354,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|qh-&gt;hw.qh.element
+op_and_assign
+op_complement
+id|UHCI_PTR_TERM
+suffix:semicolon
+singleline_comment|// remove TERM bit
 id|s-&gt;td1ms
 op_assign
 id|td
@@ -12997,6 +13003,16 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* Enable PIRQ */
+id|pci_write_config_word
+(paren
+id|dev
+comma
+id|USBLEGSUP
+comma
+id|USBLEGSUP_DEFAULT
+)paren
+suffix:semicolon
 id|s-&gt;irq
 op_assign
 id|irq
@@ -13131,7 +13147,7 @@ id|i
 dot
 id|flags
 op_amp
-l_int|1
+id|IORESOURCE_IO
 )paren
 )paren
 r_continue
@@ -13156,7 +13172,7 @@ id|dev
 comma
 id|USBLEGSUP
 comma
-id|USBLEGSUP_DEFAULT
+l_int|0
 )paren
 suffix:semicolon
 r_return

@@ -345,7 +345,7 @@ id|prev-&gt;active_mm
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is ugly, but reschedule_idle() is very timing-critical.&n; * We `are called with the runqueue spinlock held and we must&n; * not claim the tasklist_lock.&n; */
+multiline_comment|/*&n; * This is ugly, but reschedule_idle() is very timing-critical.&n; * We are called with the runqueue spinlock held and we must&n; * not claim the tasklist_lock.&n; */
 r_static
 id|FASTCALL
 c_func
@@ -638,9 +638,15 @@ op_ne
 op_minus
 l_int|1ULL
 )paren
+(brace
+id|best_cpu
+op_assign
+id|tsk-&gt;processor
+suffix:semicolon
 r_goto
 id|send_now_idle
 suffix:semicolon
+)brace
 id|tsk-&gt;need_resched
 op_assign
 l_int|1
@@ -1163,6 +1169,7 @@ c_func
 id|prev
 )paren
 suffix:semicolon
+multiline_comment|/* Synchronise here with release_task() if prev is TASK_ZOMBIE */
 r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; * Slow path - we &squot;push&squot; the previous process and&n;&t; * reschedule_idle() will attempt to find a new&n;&t; * processor for it. (but it might preempt the&n;&t; * current process as well.) We must take the runqueue&n;&t; * lock and re-check prev-&gt;state to be correct. It might&n;&t; * still happen that this process has a preemption&n;&t; * &squot;in progress&squot; already - but this is not a problem and&n;&t; * might happen in other circumstances as well.&n;&t; */

@@ -367,10 +367,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* debug level 10 required for ADB logging (should be &amp;&amp; debug_adb, ideally) */
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
 multiline_comment|/* Check for MacII style ADB */
 DECL|function|macii_probe
 r_static

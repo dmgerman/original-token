@@ -309,6 +309,13 @@ r_int
 id|chipshift
 suffix:semicolon
 multiline_comment|/* Because they&squot;re of the same type */
+DECL|member|im_name
+r_const
+r_char
+op_star
+id|im_name
+suffix:semicolon
+multiline_comment|/* inter_module name for cmdset_setup */
 DECL|member|chips
 r_struct
 id|flchip
@@ -318,13 +325,7 @@ l_int|0
 )braket
 suffix:semicolon
 multiline_comment|/* per-chip data structure for each chip */
-DECL|member|im_name
-r_const
-r_char
-op_star
-id|im_name
-suffix:semicolon
-multiline_comment|/* inter_module name for cmdset_setup */
+multiline_comment|/* do not add extra fields after &quot;chips&quot; */
 )brace
 suffix:semicolon
 DECL|macro|MAX_CFI_CHIPS

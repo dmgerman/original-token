@@ -16,45 +16,6 @@ macro_line|#include &lt;asm/watch.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
-DECL|function|console_silent
-r_static
-r_inline
-r_void
-id|console_silent
-c_func
-(paren
-r_void
-)paren
-(brace
-id|console_loglevel
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|console_verbose
-r_static
-r_inline
-r_void
-id|console_verbose
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|console_loglevel
-)paren
-id|console_loglevel
-op_assign
-l_int|15
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Machine specific interrupt handlers&n; */
 r_extern
 id|asmlinkage

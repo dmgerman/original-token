@@ -14,9 +14,10 @@ r_typedef
 r_struct
 (brace
 DECL|member|buffer_status
-id|u32
+r_int
 id|buffer_status
 suffix:semicolon
+multiline_comment|/* long req&squot;d for set_bit() --RR */
 DECL|member|num_dwords
 r_int
 id|num_dwords
@@ -102,9 +103,10 @@ r_struct
 id|_drm_mga_private
 (brace
 DECL|member|dispatch_status
-id|u32
+r_int
 id|dispatch_status
 suffix:semicolon
+multiline_comment|/* long req&squot;d for set_bit() --RR */
 DECL|member|next_prim_age
 r_int
 r_int

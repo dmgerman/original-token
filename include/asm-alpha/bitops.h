@@ -5,12 +5,10 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 multiline_comment|/*&n; * Copyright 1994, Linus Torvalds.&n; */
 multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. All bit operations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * To get proper branch prediction for the main line, we must branch&n; * forward to code at the end of this object&squot;s .text section, then&n; * branch back to restart the operation.&n; *&n; * bit 0 is the LSB of addr; bit 64 is the LSB of (addr+1).&n; */
-DECL|macro|BITOPS_NO_BRANCH
-mdefine_line|#define BITOPS_NO_BRANCH
-DECL|function|set_bit
 r_extern
 id|__inline__
 r_void
+DECL|function|set_bit
 id|set_bit
 c_func
 (paren
@@ -24,24 +22,16 @@ op_star
 id|addr
 )paren
 (brace
-macro_line|#ifndef BITOPS_NO_BRANCH
-r_int
-r_int
-id|oldbit
-suffix:semicolon
-macro_line|#endif
 r_int
 r_int
 id|temp
 suffix:semicolon
-r_int
 r_int
 op_star
 id|m
 op_assign
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -54,57 +44,6 @@ op_rshift
 l_int|5
 )paren
 suffix:semicolon
-macro_line|#ifndef BITOPS_NO_BRANCH
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;1:&t;ldl_l %0,%4&bslash;n&quot;
-l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
-l_string|&quot;&t;bne %2,2f&bslash;n&quot;
-l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
-l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
-l_string|&quot;&t;beq %0,3f&bslash;n&quot;
-l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.subsection 2&bslash;n&quot;
-l_string|&quot;3:&t;br 1b&bslash;n&quot;
-l_string|&quot;.previous&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|temp
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-op_star
-id|m
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|oldbit
-)paren
-suffix:colon
-l_string|&quot;Ir&quot;
-(paren
-l_int|1UL
-op_lshift
-(paren
-id|nr
-op_amp
-l_int|31
-)paren
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-id|m
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
 id|__asm__
 id|__volatile__
 c_func
@@ -146,13 +85,12 @@ id|m
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * WARNING: non atomic version.&n; */
-DECL|function|__set_bit
 r_extern
 id|__inline__
 r_void
+DECL|function|__set_bit
 id|__set_bit
 c_func
 (paren
@@ -167,13 +105,11 @@ id|addr
 )paren
 (brace
 r_int
-r_int
 op_star
 id|m
 op_assign
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -186,49 +122,6 @@ op_rshift
 l_int|5
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Asm and C produces the same thing so let&n;&t; * the compiler to do its good work.&n;&t; */
-macro_line|#if 0
-r_int
-id|tmp
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;ldl %0,%3&bslash;n&bslash;t&quot;
-l_string|&quot;bis %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stl %0,%1&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|tmp
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-op_star
-id|m
-)paren
-suffix:colon
-l_string|&quot;Ir&quot;
-(paren
-l_int|1UL
-op_lshift
-(paren
-id|nr
-op_amp
-l_int|31
-)paren
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-id|m
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
 op_star
 id|m
 op_or_assign
@@ -240,16 +133,15 @@ op_amp
 l_int|31
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|macro|smp_mb__before_clear_bit
 mdefine_line|#define smp_mb__before_clear_bit()&t;smp_mb()
 DECL|macro|smp_mb__after_clear_bit
 mdefine_line|#define smp_mb__after_clear_bit()&t;smp_mb()
-DECL|function|clear_bit
 r_extern
 id|__inline__
 r_void
+DECL|function|clear_bit
 id|clear_bit
 c_func
 (paren
@@ -263,24 +155,16 @@ op_star
 id|addr
 )paren
 (brace
-macro_line|#ifndef BITOPS_NO_BRANCH
-r_int
-r_int
-id|oldbit
-suffix:semicolon
-macro_line|#endif
 r_int
 r_int
 id|temp
 suffix:semicolon
-r_int
 r_int
 op_star
 id|m
 op_assign
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -293,57 +177,6 @@ op_rshift
 l_int|5
 )paren
 suffix:semicolon
-macro_line|#ifndef BITOPS_NO_BRANCH
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;1:&t;ldl_l %0,%4&bslash;n&quot;
-l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
-l_string|&quot;&t;beq %2,2f&bslash;n&quot;
-l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
-l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
-l_string|&quot;&t;beq %0,3f&bslash;n&quot;
-l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.subsection 2&bslash;n&quot;
-l_string|&quot;3:&t;br 1b&bslash;n&quot;
-l_string|&quot;.previous&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|temp
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-op_star
-id|m
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|oldbit
-)paren
-suffix:colon
-l_string|&quot;Ir&quot;
-(paren
-l_int|1UL
-op_lshift
-(paren
-id|nr
-op_amp
-l_int|31
-)paren
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-id|m
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
 id|__asm__
 id|__volatile__
 c_func
@@ -388,12 +221,11 @@ id|m
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
-DECL|function|change_bit
 r_extern
 id|__inline__
 r_void
+DECL|function|change_bit
 id|change_bit
 c_func
 (paren
@@ -412,13 +244,11 @@ r_int
 id|temp
 suffix:semicolon
 r_int
-r_int
 op_star
 id|m
 op_assign
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -473,10 +303,10 @@ id|m
 )paren
 suffix:semicolon
 )brace
-DECL|function|test_and_set_bit
 r_extern
 id|__inline__
 r_int
+DECL|function|test_and_set_bit
 id|test_and_set_bit
 c_func
 (paren
@@ -499,13 +329,11 @@ r_int
 id|temp
 suffix:semicolon
 r_int
-r_int
 op_star
 id|m
 op_assign
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -528,10 +356,10 @@ l_string|&quot;&t;bne %2,2f&bslash;n&quot;
 l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
 macro_line|#ifdef CONFIG_SMP
 l_string|&quot;&t;mb&bslash;n&quot;
 macro_line|#endif
-l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -579,10 +407,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * WARNING: non atomic version.&n; */
-DECL|function|__test_and_set_bit
 r_extern
 id|__inline__
 r_int
+DECL|function|__test_and_set_bit
 id|__test_and_set_bit
 c_func
 (paren
@@ -598,20 +426,22 @@ id|addr
 (brace
 r_int
 r_int
-id|oldbit
+id|mask
+op_assign
+l_int|1
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|0x1f
+)paren
 suffix:semicolon
-r_int
-r_int
-id|temp
-suffix:semicolon
-r_int
 r_int
 op_star
 id|m
 op_assign
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -624,61 +454,33 @@ op_rshift
 l_int|5
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;&t;ldl %0,%4&bslash;n&quot;
-l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
-l_string|&quot;&t;bne %2,1f&bslash;n&quot;
-l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
-l_string|&quot;&t;stl %0,%1&bslash;n&quot;
-l_string|&quot;1:&bslash;n&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|temp
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
+r_int
+id|old
+op_assign
 op_star
 id|m
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|oldbit
-)paren
-suffix:colon
-l_string|&quot;Ir&quot;
-(paren
-l_int|1UL
-op_lshift
-(paren
-id|nr
-op_amp
-l_int|31
-)paren
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
+suffix:semicolon
 op_star
 id|m
-)paren
-)paren
+op_assign
+id|old
+op_or
+id|mask
 suffix:semicolon
 r_return
-id|oldbit
+(paren
+id|old
+op_amp
+id|mask
+)paren
 op_ne
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|test_and_clear_bit
 r_extern
 id|__inline__
 r_int
+DECL|function|test_and_clear_bit
 id|test_and_clear_bit
 c_func
 (paren
@@ -701,13 +503,11 @@ r_int
 id|temp
 suffix:semicolon
 r_int
-r_int
 op_star
 id|m
 op_assign
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -730,10 +530,10 @@ l_string|&quot;&t;beq %2,2f&bslash;n&quot;
 l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
 macro_line|#ifdef CONFIG_SMP
 l_string|&quot;&t;mb&bslash;n&quot;
 macro_line|#endif
-l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -781,10 +581,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * WARNING: non atomic version.&n; */
-DECL|function|__test_and_clear_bit
 r_extern
 id|__inline__
 r_int
+DECL|function|__test_and_clear_bit
 id|__test_and_clear_bit
 c_func
 (paren
@@ -800,20 +600,22 @@ id|addr
 (brace
 r_int
 r_int
-id|oldbit
+id|mask
+op_assign
+l_int|1
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|0x1f
+)paren
 suffix:semicolon
-r_int
-r_int
-id|temp
-suffix:semicolon
-r_int
 r_int
 op_star
 id|m
 op_assign
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -826,61 +628,34 @@ op_rshift
 l_int|5
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;&t;ldl %0,%4&bslash;n&quot;
-l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
-l_string|&quot;&t;beq %2,1f&bslash;n&quot;
-l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
-l_string|&quot;&t;stl %0,%1&bslash;n&quot;
-l_string|&quot;1:&bslash;n&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|temp
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
+r_int
+id|old
+op_assign
 op_star
 id|m
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|oldbit
-)paren
-suffix:colon
-l_string|&quot;Ir&quot;
-(paren
-l_int|1UL
-op_lshift
-(paren
-id|nr
+suffix:semicolon
+op_star
+id|m
+op_assign
+id|old
 op_amp
-l_int|31
-)paren
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-id|m
-)paren
-)paren
+op_complement
+id|mask
 suffix:semicolon
 r_return
-id|oldbit
+(paren
+id|old
+op_amp
+id|mask
+)paren
 op_ne
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|test_and_change_bit
 r_extern
 id|__inline__
 r_int
+DECL|function|test_and_change_bit
 id|test_and_change_bit
 c_func
 (paren
@@ -903,13 +678,11 @@ r_int
 id|temp
 suffix:semicolon
 r_int
-r_int
 op_star
 id|m
 op_assign
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -980,10 +753,10 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|test_bit
 r_extern
 id|__inline__
 r_int
+DECL|function|test_bit
 id|test_bit
 c_func
 (paren
@@ -1107,7 +880,7 @@ id|word
 )paren
 (brace
 macro_line|#if defined(__alpha_cix__) &amp;&amp; defined(__alpha_fix__)
-multiline_comment|/* Whee.  EV6 can calculate it directly.  */
+multiline_comment|/* Whee.  EV67 can calculate it directly.  */
 r_int
 r_int
 id|result
@@ -1245,7 +1018,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
 macro_line|#if defined(__alpha_cix__) &amp;&amp; defined(__alpha_fix__)
-multiline_comment|/* Whee.  EV6 can calculate it directly.  */
+multiline_comment|/* Whee.  EV67 can calculate it directly.  */
 DECL|function|hweight64
 r_extern
 id|__inline__
@@ -1299,11 +1072,11 @@ mdefine_line|#define hweight8(x)  generic_hweight8(x)
 macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * Find next zero bit in a bitmap reasonably efficiently..&n; */
-DECL|function|find_next_zero_bit
 r_extern
 r_inline
 r_int
 r_int
+DECL|function|find_next_zero_bit
 id|find_next_zero_bit
 c_func
 (paren

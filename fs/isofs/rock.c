@@ -22,7 +22,7 @@ mdefine_line|#define CHECK_CE&t;       &t;&t;&t;&bslash;&n;      {cont_extent = 
 DECL|macro|SETUP_ROCK_RIDGE
 mdefine_line|#define SETUP_ROCK_RIDGE(DE,CHR,LEN)&t;      &t;&t;      &t;&bslash;&n;  {LEN= sizeof(struct iso_directory_record) + DE-&gt;name_len[0];&t;&bslash;&n;  if(LEN &amp; 1) LEN++;&t;&t;&t;&t;&t;&t;&bslash;&n;  CHR = ((unsigned char *) DE) + LEN;&t;&t;&t;&t;&bslash;&n;  LEN = *((unsigned char *) DE) - LEN;}
 DECL|macro|MAYBE_CONTINUE
-mdefine_line|#define MAYBE_CONTINUE(LABEL,DEV) &bslash;&n;  {if (buffer) kfree(buffer); &bslash;&n;  if (cont_extent){ &bslash;&n;    int block, offset, offset1; &bslash;&n;    struct buffer_head * pbh; &bslash;&n;    buffer = kmalloc(cont_size,GFP_KERNEL); &bslash;&n;    if (!buffer) goto out; &bslash;&n;    block = cont_extent; &bslash;&n;    offset = cont_offset; &bslash;&n;    offset1 = 0; &bslash;&n;    pbh = bread(DEV-&gt;i_dev, block, ISOFS_BUFFER_SIZE(DEV)); &bslash;&n;    if(pbh){       &bslash;&n;      memcpy(buffer + offset1, pbh-&gt;b_data + offset, cont_size - offset1); &bslash;&n;      brelse(pbh); &bslash;&n;      chr = (unsigned char *) buffer; &bslash;&n;      len = cont_size; &bslash;&n;      cont_extent = 0; &bslash;&n;      cont_size = 0; &bslash;&n;      cont_offset = 0; &bslash;&n;      goto LABEL; &bslash;&n;    };    &bslash;&n;    printk(&quot;Unable to read rock-ridge attributes&bslash;n&quot;);    &bslash;&n;  }}
+mdefine_line|#define MAYBE_CONTINUE(LABEL,DEV) &bslash;&n;  {if (buffer) kfree(buffer); &bslash;&n;  if (cont_extent){ &bslash;&n;    int block, offset, offset1; &bslash;&n;    struct buffer_head * pbh; &bslash;&n;    buffer = kmalloc(cont_size,GFP_KERNEL); &bslash;&n;    if (!buffer) goto out; &bslash;&n;    block = cont_extent; &bslash;&n;    offset = cont_offset; &bslash;&n;    offset1 = 0; &bslash;&n;    pbh = bread(DEV-&gt;i_dev, block, ISOFS_BUFFER_SIZE(DEV)); &bslash;&n;    if(pbh){       &bslash;&n;      memcpy(buffer + offset1, pbh-&gt;b_data + offset, cont_size - offset1); &bslash;&n;      brelse(pbh); &bslash;&n;      chr = (unsigned char *) buffer; &bslash;&n;      len = cont_size; &bslash;&n;      cont_extent = 0; &bslash;&n;      cont_size = 0; &bslash;&n;      cont_offset = 0; &bslash;&n;      goto LABEL; &bslash;&n;    }    &bslash;&n;    printk(&quot;Unable to read rock-ridge attributes&bslash;n&quot;);    &bslash;&n;  }}
 multiline_comment|/* This is the inner layer of the get filename routine, and is called&n;   for each system area and continuation record related to the file */
 DECL|function|find_rock_ridge_relocation
 r_int
@@ -257,14 +257,6 @@ comma
 l_char|&squot;L&squot;
 )paren
 suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;RR: CL&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -285,7 +277,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -297,14 +288,6 @@ comma
 l_char|&squot;L&squot;
 )paren
 suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;RR: PL&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -325,7 +308,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -348,9 +330,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 id|MAYBE_CONTINUE
 c_func
 (paren
@@ -624,7 +604,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -650,7 +629,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 id|strncat
 c_func
 (paren
@@ -680,16 +658,6 @@ comma
 l_char|&squot;E&squot;
 )paren
 suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;RR: RE (%x)&bslash;n&quot;
-comma
-id|inode-&gt;i_ino
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -711,7 +679,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 )brace
 id|MAYBE_CONTINUE
 c_func
@@ -996,7 +963,6 @@ id|p
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1124,7 +1090,6 @@ id|low
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -1352,7 +1317,6 @@ l_string|&quot;Symlink component flag not implemented&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 id|slen
 op_sub_assign
 id|slp-&gt;len
@@ -1428,12 +1392,9 @@ multiline_comment|/*&n;&t;    * If this component record isn&squot;t continued, 
 r_if
 c_cond
 (paren
-(paren
 op_logical_neg
 id|rootflag
-)paren
 op_logical_and
-(paren
 (paren
 id|oldslp-&gt;flags
 op_amp
@@ -1442,13 +1403,10 @@ l_int|1
 op_eq
 l_int|0
 )paren
-)paren
-(brace
 id|inode-&gt;i_size
 op_add_assign
 l_int|1
 suffix:semicolon
-)brace
 )brace
 )brace
 id|symlink_len
@@ -1469,6 +1427,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Attempt to read inode for relocated directory&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1484,16 +1443,6 @@ comma
 l_char|&squot;L&squot;
 )paren
 suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;RR CL (%x)&bslash;n&quot;
-comma
-id|inode-&gt;i_ino
-)paren
-suffix:semicolon
-macro_line|#endif
 id|inode-&gt;u.isofs_i.i_first_extent
 op_assign
 id|isonum_733
@@ -1579,7 +1528,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 )brace
 id|MAYBE_CONTINUE
 c_func

@@ -30,10 +30,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
 r_int
 id|ns8390_probe1
 c_func

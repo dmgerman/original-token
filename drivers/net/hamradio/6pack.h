@@ -228,10 +228,11 @@ suffix:semicolon
 multiline_comment|/* Max buffers sizes            */
 DECL|member|flags
 r_int
-r_char
+r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Flag values/ mode etc&t;*/
+multiline_comment|/* long req&squot;d for set_bit --RR */
 DECL|member|mode
 r_int
 r_char

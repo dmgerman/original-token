@@ -37,10 +37,7 @@ id|dma
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2439,46 +2436,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|function|ltpc_open
-r_static
-r_int
-id|ltpc_open
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|ltpc_close
-r_static
-r_int
-id|ltpc_close
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|read_30
 r_static
 r_int
@@ -3265,14 +3222,6 @@ id|dev-&gt;get_stats
 op_assign
 id|ltpc_get_stats
 suffix:semicolon
-id|dev-&gt;open
-op_assign
-id|ltpc_open
-suffix:semicolon
-id|dev-&gt;stop
-op_assign
-id|ltpc_close
-suffix:semicolon
 multiline_comment|/* add the ltpc-specific things */
 id|dev-&gt;do_ioctl
 op_assign
@@ -3645,6 +3594,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* initialization stuff */
 DECL|function|ltpc_probe_dma
+r_static
 r_int
 id|__init
 id|ltpc_probe_dma
@@ -4098,6 +4048,12 @@ suffix:semicolon
 r_int
 r_int
 id|f
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|save_flags
 c_func
@@ -4998,32 +4954,6 @@ r_static
 r_struct
 id|net_device
 id|dev_ltpc
-op_assign
-(brace
-l_string|&quot;&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0x0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-id|ltpc_probe
-)brace
 suffix:semicolon
 macro_line|#ifdef MODULE
 id|MODULE_PARM
@@ -5089,6 +5019,10 @@ l_string|&quot;ltpc: Autoprobing is not recommended for modules&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/* Find a name for this unit */
+id|dev_ltpc.init
+op_assign
+id|ltpc_probe
+suffix:semicolon
 id|err
 op_assign
 id|dev_alloc_name

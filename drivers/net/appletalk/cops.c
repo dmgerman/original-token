@@ -12,7 +12,6 @@ multiline_comment|/*&n; *  Sources:&n; *      COPS Localtalk SDK. This provides 
 multiline_comment|/*&n; * insmod/modprobe configurable stuff.&n; *&t;- IO Port, choose one your card supports or 0 if you dare.&n; *&t;- IRQ, also choose one your card supports or nothing and let&n; *&t;  the driver figure it out.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -462,12 +461,13 @@ suffix:semicolon
 r_int
 id|base_addr
 op_assign
-id|dev
-ques
-c_cond
 id|dev-&gt;base_addr
-suffix:colon
-l_int|0
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -534,30 +534,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
-r_int
-id|ioaddr
-op_assign
-id|cops_portlist
-(braket
-id|i
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-id|ioaddr
-comma
-id|COPS_IO_EXTENT
-)paren
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -566,7 +542,10 @@ c_func
 (paren
 id|dev
 comma
-id|ioaddr
+id|cops_portlist
+(braket
+id|i
+)braket
 )paren
 op_eq
 l_int|0
@@ -575,7 +554,6 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-)brace
 )brace
 r_return
 op_minus
@@ -607,13 +585,14 @@ suffix:semicolon
 r_static
 r_int
 id|version_printed
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|board
 op_assign
 id|board_type
+suffix:semicolon
+r_int
+id|retval
 suffix:semicolon
 r_if
 c_cond
@@ -635,6 +614,25 @@ id|version
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Grab the region so no one else tries to probe our ioports. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|COPS_IO_EXTENT
+comma
+id|dev-&gt;name
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 multiline_comment|/*&n;         * Since this board has jumpered interrupts, allocate the interrupt&n;         * vector now. There is no point in waiting since no other device&n;         * can use the interrupt, and this marks the irq as busy. Jumpered&n;         * interrupts are typically not reported by the boards, and we must&n;         * used AutoIRQ to find them.&n;&t; */
 r_switch
 c_cond
@@ -663,22 +661,26 @@ op_logical_neg
 id|dev-&gt;irq
 )paren
 (brace
-r_return
+id|retval
+op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 multiline_comment|/* No IRQ found on this port */
-r_break
+r_goto
+id|err_out
 suffix:semicolon
+)brace
 r_case
 l_int|1
 suffix:colon
-r_return
+id|retval
+op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-r_break
+r_goto
+id|err_out
 suffix:semicolon
 multiline_comment|/* Fixup for users that don&squot;t know that IRQ 2 is really&n;&t;&t; * IRQ 9, or don&squot;t know which one to set.&n;&t;&t; */
 r_case
@@ -710,7 +712,10 @@ r_if
 c_cond
 (paren
 id|dev-&gt;irq
-op_logical_and
+)paren
+(brace
+id|retval
+op_assign
 id|request_irq
 c_func
 (paren
@@ -721,28 +726,20 @@ id|cops_interrupt
 comma
 l_int|0
 comma
-id|cardname
+id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
 )paren
-(brace
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|err_out
 suffix:semicolon
 )brace
-multiline_comment|/* Grab the region so no one else tries to probe our ioports. */
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|COPS_IO_EXTENT
-comma
-id|cardname
-)paren
-suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
@@ -770,9 +767,26 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_return
+r_if
+c_cond
+(paren
+id|dev-&gt;irq
+)paren
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
+id|retval
+op_assign
 op_minus
 id|ENOMEM
+suffix:semicolon
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 id|lp
@@ -921,6 +935,19 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+id|err_out
+suffix:colon
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|COPS_IO_EXTENT
+)paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 DECL|function|cops_irq
@@ -1235,10 +1262,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3628,10 +3651,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3809,19 +3828,12 @@ op_amp
 id|cops0_dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|cops0_dev.priv
-)paren
-(brace
 id|kfree
 c_func
 (paren
 id|cops0_dev.priv
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

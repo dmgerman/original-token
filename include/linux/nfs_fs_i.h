@@ -3,6 +3,7 @@ DECL|macro|_NFS_FS_I
 mdefine_line|#define _NFS_FS_I
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
+macro_line|#include &lt;linux/nfs.h&gt;
 multiline_comment|/*&n; * nfs fs inode data in memory&n; */
 DECL|struct|nfs_inode_info
 r_struct
@@ -16,6 +17,12 @@ suffix:semicolon
 DECL|member|fileid
 id|__u64
 id|fileid
+suffix:semicolon
+multiline_comment|/*&n;&t; * NFS file handle&n;&t; */
+DECL|member|fh
+r_struct
+id|nfs_fh
+id|fh
 suffix:semicolon
 multiline_comment|/*&n;&t; * Various flags&n;&t; */
 DECL|member|flags
@@ -117,6 +124,8 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Legal inode flag values&n; */
+DECL|macro|NFS_INO_STALE
+mdefine_line|#define NFS_INO_STALE&t;&t;0x0001&t;&t;/* possible stale inode */
 DECL|macro|NFS_INO_ADVISE_RDPLUS
 mdefine_line|#define NFS_INO_ADVISE_RDPLUS   0x0002          /* advise readdirplus */
 DECL|macro|NFS_INO_REVALIDATING

@@ -79,10 +79,6 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
 multiline_comment|/*&n; * Initialize the OSS&n; *&n; * The OSS &quot;detection&quot; code is actually in via_init() which is always called&n; * before us. Thus we can count on oss_present being valid on entry.&n; */
 DECL|function|oss_init
 r_void

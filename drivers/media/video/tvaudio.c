@@ -1187,10 +1187,12 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|up
+id|up_and_exit
 c_func
 (paren
 id|chip-&gt;notify
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

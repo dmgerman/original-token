@@ -149,10 +149,6 @@ multiline_comment|/*&n; * This handles the memory map.. We could make this a con
 DECL|macro|__PAGE_OFFSET
 mdefine_line|#define __PAGE_OFFSET&t;&t;(0xC0000000)
 macro_line|#ifndef __ASSEMBLY__
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
 multiline_comment|/*&n; * Tell the user there is some problem. Beep too, so we can&n; * see^H^H^Hhear bugs in early bootup as well!&n; */
 DECL|macro|BUG
 mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;__asm__ __volatile__(&quot;.byte 0x0f,0x0b&quot;); &bslash;&n;} while (0)

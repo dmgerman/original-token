@@ -588,6 +588,7 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
+suffix:semicolon
 )brace
 )brace
 DECL|function|siginitsetinv
@@ -662,6 +663,7 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
+suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* __HAVE_ARCH_SIG_SETOPS */

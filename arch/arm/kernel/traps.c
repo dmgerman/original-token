@@ -134,25 +134,6 @@ comma
 l_string|&quot;interrupt&quot;
 )brace
 suffix:semicolon
-DECL|function|console_verbose
-r_static
-r_inline
-r_void
-id|console_verbose
-c_func
-(paren
-r_void
-)paren
-(brace
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
-id|console_loglevel
-op_assign
-l_int|15
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Stack pointers should always be within the kernels view of&n; * physical memory.  If it is not there, then we can&squot;t dump&n; * out any information relating to the stack.&n; */
 DECL|function|verify_stack
 r_static

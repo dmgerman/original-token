@@ -768,6 +768,16 @@ id|q
 r_if
 c_cond
 (paren
+id|q-&gt;plugged
+)paren
+(brace
+id|q-&gt;plugged
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|list_empty
 c_func
@@ -776,11 +786,6 @@ op_amp
 id|q-&gt;queue_head
 )paren
 )paren
-(brace
-id|q-&gt;plugged
-op_assign
-l_int|0
-suffix:semicolon
 id|q
 op_member_access_from_pointer
 id|request_fn
@@ -921,7 +926,6 @@ id|q-&gt;request_lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_init_queue  - prepare a request queue for use with a block device&n; * @q:    The &amp;request_queue_t to be initialised&n; * @rfn:  The function to be called to process requests that have been&n; *        placed on the queue.&n; *&n; * Description:&n; *    If a block device wishes to use the standard request handling procedures,&n; *    which sorts requests and coalesces adjacent requests, then it must&n; *    call blk_init_queue().  The function @rfn will be called when there&n; *    are requests on the queue that need to be processed.  If the device&n; *    supports plugging, then @rfn may not be called immediately when requests&n; *    are available on the queue, but may be called at some time later instead.&n; *    Plugged queues are generally unplugged when a buffer belonging to one&n; *    of the requests on the queue is needed, or due to memory pressure.&n; *&n; *    @rfn is not required, or even expected, to remove all requests off the&n; *    queue, but only as many as it can handle at a time.  If it does leave&n; *    requests on the queue, it is responsible for arranging that the requests&n; *    get dealt with eventually.&n; *&n; *    A global spin lock $io_request_lock must be held while manipulating the&n; *    requests on the request queue.&n; *&n; *    The request on the head of the queue is by default assumed to be&n; *    potentially active, and it is not considered for re-ordering or merging&n; *    whenever the given queue is unplugged. This behaviour can be changed with&n; *    blk_queue_headactive().&n; *&n; * Note:&n; *    blk_init_queue() must be paired with a blk_cleanup-queue() call&n; *    when the block device is deactivated (such as at module unload).&n; **/
 r_static
 r_int
 id|__make_request
@@ -940,6 +944,7 @@ op_star
 id|bh
 )paren
 suffix:semicolon
+multiline_comment|/**&n; * blk_init_queue  - prepare a request queue for use with a block device&n; * @q:    The &amp;request_queue_t to be initialised&n; * @rfn:  The function to be called to process requests that have been&n; *        placed on the queue.&n; *&n; * Description:&n; *    If a block device wishes to use the standard request handling procedures,&n; *    which sorts requests and coalesces adjacent requests, then it must&n; *    call blk_init_queue().  The function @rfn will be called when there&n; *    are requests on the queue that need to be processed.  If the device&n; *    supports plugging, then @rfn may not be called immediately when requests&n; *    are available on the queue, but may be called at some time later instead.&n; *    Plugged queues are generally unplugged when a buffer belonging to one&n; *    of the requests on the queue is needed, or due to memory pressure.&n; *&n; *    @rfn is not required, or even expected, to remove all requests off the&n; *    queue, but only as many as it can handle at a time.  If it does leave&n; *    requests on the queue, it is responsible for arranging that the requests&n; *    get dealt with eventually.&n; *&n; *    A global spin lock $io_request_lock must be held while manipulating the&n; *    requests on the request queue.&n; *&n; *    The request on the head of the queue is by default assumed to be&n; *    potentially active, and it is not considered for re-ordering or merging&n; *    whenever the given queue is unplugged. This behaviour can be changed with&n; *    blk_queue_headactive().&n; *&n; * Note:&n; *    blk_init_queue() must be paired with a blk_cleanup-queue() call&n; *    when the block device is deactivated (such as at module unload).&n; **/
 DECL|function|blk_init_queue
 r_void
 id|blk_init_queue

@@ -98,6 +98,7 @@ DECL|member|event
 r_int
 id|event
 suffix:semicolon
+multiline_comment|/* long req&squot;d for set_bit --RR */
 DECL|member|timeout
 r_int
 id|timeout

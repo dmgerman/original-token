@@ -45,6 +45,7 @@ r_static
 r_int
 id|mixcomwd_opened
 suffix:semicolon
+multiline_comment|/* long req&squot;d for setbit --RR */
 DECL|variable|watchdog_port
 r_static
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Universal Host Controller Interface driver for USB.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999-2000 Johannes Erdfelt, jerdfelt@sventech.com&n; * (C) Copyright 1999 Randy Dunlap&n; * (C) Copyright 1999 Georg Acher, acher@in.tum.de&n; * (C) Copyright 1999 Deti Fliegl, deti@fliegl.de&n; * (C) Copyright 1999 Thomas Sailer, sailer@ife.ee.ethz.ch&n; * (C) Copyright 1999 Roman Weissgaerber, weissg@vienna.at&n; * (C) Copyright 2000 Yggdrasil Computing, Inc. (port of new PCI interface&n; *               support from usb-ohci.c by Adam Richter, adam@yggdrasil.com).&n; * (C) Copyright 1999 Gregory P. Smith (from usb-ohci.c)&n; *&n; *&n; * Intel documents this fairly well, and as far as I know there&n; * are no royalties or anything like that, but even so there are&n; * people who decided that they want to do the same thing in a&n; * completely different way.&n; *&n; * WARNING! The USB documentation is downright evil. Most of it&n; * is just crap, written by a committee. You&squot;re better off ignoring&n; * most of it, the important stuff is:&n; *  - the low-level protocol (fairly simple but lots of small details)&n; *  - working around the horridness of the rest&n; */
+multiline_comment|/*&n; * Universal Host Controller Interface driver for USB.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999-2000 Johannes Erdfelt, johannes@erdfelt.com&n; * (C) Copyright 1999 Randy Dunlap&n; * (C) Copyright 1999 Georg Acher, acher@in.tum.de&n; * (C) Copyright 1999 Deti Fliegl, deti@fliegl.de&n; * (C) Copyright 1999 Thomas Sailer, sailer@ife.ee.ethz.ch&n; * (C) Copyright 1999 Roman Weissgaerber, weissg@vienna.at&n; * (C) Copyright 2000 Yggdrasil Computing, Inc. (port of new PCI interface&n; *               support from usb-ohci.c by Adam Richter, adam@yggdrasil.com).&n; * (C) Copyright 1999 Gregory P. Smith (from usb-ohci.c)&n; *&n; *&n; * Intel documents this fairly well, and as far as I know there&n; * are no royalties or anything like that, but even so there are&n; * people who decided that they want to do the same thing in a&n; * completely different way.&n; *&n; * WARNING! The USB documentation is downright evil. Most of it&n; * is just crap, written by a committee. You&squot;re better off ignoring&n; * most of it, the important stuff is:&n; *  - the low-level protocol (fairly simple but lots of small details)&n; *  - working around the horridness of the rest&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10117,6 +10117,16 @@ id|uhci-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|dev
+comma
+id|USBLEGSUP
+comma
+id|USBLEGSUP_DEFAULT
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10156,11 +10166,12 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|function|uhci_pci_probe
 r_static
 r_int
 id|__devinit
-DECL|function|uhci_pci_probe
 id|uhci_pci_probe
+c_func
 (paren
 r_struct
 id|pci_dev
@@ -10185,7 +10196,7 @@ id|dev
 comma
 id|USBLEGSUP
 comma
-id|USBLEGSUP_DEFAULT
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -10313,11 +10324,12 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+DECL|function|uhci_pci_remove
 r_static
 r_void
 id|__devexit
-DECL|function|uhci_pci_remove
 id|uhci_pci_remove
+c_func
 (paren
 r_struct
 id|pci_dev
@@ -10377,10 +10389,11 @@ id|uhci
 )paren
 suffix:semicolon
 )brace
+DECL|function|uhci_pci_suspend
 r_static
 r_void
-DECL|function|uhci_pci_suspend
 id|uhci_pci_suspend
+c_func
 (paren
 r_struct
 id|pci_dev
@@ -10400,10 +10413,11 @@ id|dev-&gt;driver_data
 )paren
 suffix:semicolon
 )brace
+DECL|function|uhci_pci_resume
 r_static
 r_void
-DECL|function|uhci_pci_resume
 id|uhci_pci_resume
+c_func
 (paren
 r_struct
 id|pci_dev

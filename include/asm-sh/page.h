@@ -141,10 +141,6 @@ mdefine_line|#define virt_to_page(kaddr)&t;(mem_map + ((__pa(kaddr)-__MEMORY_STA
 DECL|macro|VALID_PAGE
 mdefine_line|#define VALID_PAGE(page)&t;((page - mem_map) &lt; max_mapnr)
 macro_line|#ifndef __ASSEMBLY__
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
 multiline_comment|/*&n; * Tell the user there is some problem.&n; */
 DECL|macro|BUG
 mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;asm volatile(&quot;nop&quot;); &bslash;&n;} while (0)

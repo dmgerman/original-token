@@ -448,8 +448,9 @@ id|page
 )paren
 suffix:semicolon
 r_return
-id|error
+l_int|1
 suffix:semicolon
+multiline_comment|/* We released page_table_lock */
 )brace
 multiline_comment|/*&n;&t; * This is a dirty, swappable page.  First of all,&n;&t; * get a suitable swap entry for it, and make sure&n;&t; * we have the swap cache set up to associate the&n;&t; * page with that swap entry.&n;&t; */
 id|entry
@@ -2127,6 +2128,12 @@ c_func
 (paren
 l_int|NULL
 comma
+id|page
+)paren
+suffix:semicolon
+id|UnlockPage
+c_func
+(paren
 id|page
 )paren
 suffix:semicolon

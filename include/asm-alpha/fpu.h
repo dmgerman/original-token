@@ -321,6 +321,7 @@ id|ret
 suffix:semicolon
 macro_line|#if defined(__alpha_cix__) || defined(__alpha_fix__)
 id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;ftoit $f0,%0&bslash;n&bslash;t&quot;
 l_string|&quot;mf_fpcr $f0&bslash;n&bslash;t&quot;
@@ -340,6 +341,7 @@ id|ret
 suffix:semicolon
 macro_line|#else
 id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;stt $f0,%0&bslash;n&bslash;t&quot;
 l_string|&quot;mf_fpcr $f0&bslash;n&bslash;t&quot;

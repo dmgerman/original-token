@@ -184,10 +184,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|console_loglevel
-suffix:semicolon
-r_extern
-r_int
 id|oss_present
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the VIAs&n; *&n; * First we figure out where they actually _are_ as well as what type of&n; * VIA we have for VIA2 (it could be a real VIA or an RBV or even an OSS.)&n; * Then we pretty much clear them out and disable all IRQ sources.&n; *&n; * Note: the OSS is actually &quot;detected&quot; here and not in oss_init(). It just&n; *&t; seems more logical to do it here since via_init() needs to know&n; *&t; these things anyways.&n; */

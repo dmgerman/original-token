@@ -569,9 +569,10 @@ id|pid_t
 id|my_pid
 suffix:semicolon
 DECL|member|access_flags
-id|u32
+r_int
 id|access_flags
 suffix:semicolon
+multiline_comment|/* long req&squot;d for set_bit --RR */
 DECL|typedef|agp_file_private
 )brace
 id|agp_file_private

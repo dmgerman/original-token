@@ -2494,7 +2494,7 @@ suffix:semicolon
 id|DRM_INFO
 c_func
 (paren
-l_string|&quot;Process %d dead (ctx %d, d_s = 0x%02x)&bslash;n&quot;
+l_string|&quot;Process %d dead (ctx %d, d_s = 0x%02lx)&bslash;n&quot;
 comma
 id|current-&gt;pid
 comma

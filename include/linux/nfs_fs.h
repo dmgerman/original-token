@@ -42,9 +42,7 @@ multiline_comment|/*&n; * superblock magic number for NFS&n; */
 DECL|macro|NFS_SUPER_MAGIC
 mdefine_line|#define NFS_SUPER_MAGIC&t;&t;&t;0x6969
 DECL|macro|NFS_FH
-mdefine_line|#define NFS_FH(dentry)&t;&t;&t;((struct nfs_fh *) ((dentry)-&gt;d_fsdata))
-DECL|macro|NFS_DSERVER
-mdefine_line|#define NFS_DSERVER(dentry)&t;&t;(&amp;(dentry)-&gt;d_sb-&gt;u.nfs_sb.s_server)
+mdefine_line|#define NFS_FH(inode)&t;&t;&t;(&amp;(inode)-&gt;u.nfs_i.fh)
 DECL|macro|NFS_SERVER
 mdefine_line|#define NFS_SERVER(inode)&t;&t;(&amp;(inode)-&gt;i_sb-&gt;u.nfs_sb.s_server)
 DECL|macro|NFS_CLIENT
@@ -236,6 +234,18 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|nfs_permission
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|nfs_open
 c_func
 (paren
@@ -272,7 +282,7 @@ id|nfs_server
 op_star
 comma
 r_struct
-id|dentry
+id|inode
 op_star
 )paren
 suffix:semicolon
@@ -843,18 +853,11 @@ op_star
 id|server
 comma
 r_struct
-id|dentry
+id|inode
 op_star
-id|dentry
+id|inode
 )paren
 (brace
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|dentry-&gt;d_inode
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -885,7 +888,7 @@ c_func
 (paren
 id|server
 comma
-id|dentry
+id|inode
 )paren
 suffix:semicolon
 )brace

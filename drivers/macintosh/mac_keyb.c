@@ -2410,10 +2410,6 @@ suffix:semicolon
 multiline_comment|/* right option key */
 macro_line|#endif
 r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
-r_extern
 r_struct
 id|kbd_struct
 id|kbd_table

@@ -239,6 +239,7 @@ DECL|member|locks
 r_int
 id|locks
 suffix:semicolon
+multiline_comment|/* long req&squot;d for set_bit --RR */
 DECL|member|____end_marker____
 r_char
 id|____end_marker____

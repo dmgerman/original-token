@@ -31,10 +31,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
 multiline_comment|/* Constants */
 multiline_comment|/* This is, of course, the size in bytelanes, rather than the size in&n;   actual bytes */
 DECL|macro|FORMAT_BLOCK_SIZE
@@ -4027,6 +4023,13 @@ l_int|0
 suffix:semicolon
 r_int
 id|slot
+comma
+id|size
+suffix:semicolon
+r_struct
+id|nubus_board
+op_star
+id|board
 suffix:semicolon
 id|len
 op_assign
@@ -4140,7 +4143,7 @@ op_sub_assign
 id|begin
 suffix:semicolon
 op_star
-id|strat
+id|start
 op_assign
 id|buf
 op_plus

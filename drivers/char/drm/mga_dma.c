@@ -501,7 +501,7 @@ suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;dispatch_status = 0x%02x&bslash;n&quot;
+l_string|&quot;dispatch_status = 0x%02lx&bslash;n&quot;
 comma
 id|dev_priv-&gt;dispatch_status
 )paren
@@ -577,7 +577,7 @@ suffix:semicolon
 id|DRM_ERROR
 c_func
 (paren
-l_string|&quot;lockup: dispatch_status = 0x%02x,&quot;
+l_string|&quot;lockup: dispatch_status = 0x%02lx,&quot;
 l_string|&quot; jiffies = %lu, end = %lu&bslash;n&quot;
 comma
 id|dev_priv-&gt;dispatch_status
@@ -737,7 +737,7 @@ suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;exit, dispatch_status = 0x%02x&bslash;n&quot;
+l_string|&quot;exit, dispatch_status = 0x%02lx&bslash;n&quot;
 comma
 id|dev_priv-&gt;dispatch_status
 )paren

@@ -327,6 +327,12 @@ comma
 id|tun-&gt;name
 )paren
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|dev-&gt;open
 op_assign
 id|tun_net_open
@@ -1756,8 +1762,6 @@ id|tun-&gt;dev.priv
 op_assign
 id|tun
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1850,8 +1854,6 @@ suffix:semicolon
 id|file-&gt;private_data
 op_assign
 l_int|NULL
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

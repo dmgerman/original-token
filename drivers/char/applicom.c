@@ -64,9 +64,9 @@ DECL|macro|PCI_DEVICE_ID_APPLICOM_PCI2000IBS_CAN
 mdefine_line|#define PCI_DEVICE_ID_APPLICOM_PCI2000IBS_CAN 0x0002
 DECL|macro|PCI_DEVICE_ID_APPLICOM_PCI2000PFB
 mdefine_line|#define PCI_DEVICE_ID_APPLICOM_PCI2000PFB     0x0003
+macro_line|#endif
 DECL|macro|MAX_PCI_DEVICE_NUM
 mdefine_line|#define MAX_PCI_DEVICE_NUM 3
-macro_line|#endif
 DECL|variable|applicom_pci_devnames
 r_static
 r_char

@@ -42,10 +42,6 @@ macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
-r_extern
 r_void
 id|set_device_ro
 c_func
@@ -784,6 +780,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|permission
+)paren
+suffix:semicolon
+DECL|variable|vfs_permission
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|vfs_permission
 )paren
 suffix:semicolon
 DECL|variable|inode_setattr

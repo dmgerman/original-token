@@ -1,4 +1,4 @@
-multiline_comment|/* This version ported to the Linux-MTD system by dwmw2@infradead.org&n; * $Id: ftl.c,v 1.20 2000/06/23 15:17:53 dwmw2 Exp $&n; * Based on:&n; */
+multiline_comment|/* This version ported to the Linux-MTD system by dwmw2@infradead.org&n; *&n; * - Based on Id: ftl.c,v 1.21 2000/08/01 13:07:49 dwmw2 Exp&n; * - With the Franz Galiana&squot;s set_bam_entry fix from v1.23&n; * - Perhaps it&squot;s about time I made a branch for the 2.4 series.&n;&n; * Originally based on:&n; */
 multiline_comment|/*======================================================================&n;&n;    A Flash Translation Layer memory card driver&n;&n;    This driver implements a disk-like block device driver with an&n;    apparent block size of 512 bytes for flash memory cards.&n;&n;    ftl_cs.c 1.62 2000/02/01 00:59:04&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;&n;    LEGAL NOTE: The FTL format is patented by M-Systems.  They have&n;    granted a license for its use with PCMCIA devices:&n;&n;     &quot;M-Systems grants a royalty-free, non-exclusive license under&n;      any presently existing M-Systems intellectual property rights&n;      necessary for the design and development of FTL-compatible&n;      drivers, file systems and utilities using the data formats with&n;      PCMCIA PC Cards as described in the PCMCIA Flash Translation&n;      Layer (FTL) Specification.&quot;&n;&n;    Use of the FTL format for non-PCMCIA applications may be an&n;    infringement of these patents.  For additional information,&n;    contact M-Systems (http://www.m-sys.com) directly.&n;      &n;======================================================================*/
 DECL|macro|FTL_DEBUG
 mdefine_line|#define FTL_DEBUG 5
@@ -544,6 +544,8 @@ id|header
 suffix:semicolon
 id|loff_t
 id|offset
+comma
+id|max_offset
 suffix:semicolon
 r_int
 id|ret
@@ -551,6 +553,19 @@ suffix:semicolon
 id|part-&gt;header.FormattedSize
 op_assign
 l_int|0
+suffix:semicolon
+id|max_offset
+op_assign
+(paren
+l_int|0x100000
+OL
+id|part-&gt;mtd-&gt;size
+)paren
+ques
+c_cond
+l_int|0x100000
+suffix:colon
+id|part-&gt;mtd-&gt;size
 suffix:semicolon
 multiline_comment|/* Search first megabyte for a valid FTL header */
 r_for
@@ -562,7 +577,7 @@ l_int|0
 suffix:semicolon
 id|offset
 OL
-l_int|0x100000
+id|max_offset
 suffix:semicolon
 id|offset
 op_add_assign
@@ -633,7 +648,7 @@ c_cond
 (paren
 id|offset
 op_eq
-l_int|0x100000
+id|max_offset
 )paren
 (brace
 id|printk
@@ -3966,6 +3981,8 @@ id|u_int32_t
 id|bsize
 comma
 id|blk
+comma
+id|le_virt_addr
 suffix:semicolon
 macro_line|#ifdef PSYCHO_DEBUG
 id|u_int32_t
@@ -4193,6 +4210,14 @@ id|EIO
 suffix:semicolon
 )brace
 macro_line|#endif
+id|le_virt_addr
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+id|virt_addr
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4271,11 +4296,7 @@ id|part-&gt;bam_cache
 id|blk
 )braket
 op_assign
-id|cpu_to_le32
-c_func
-(paren
-id|virt_addr
-)paren
+id|le_virt_addr
 suffix:semicolon
 )brace
 id|ret
@@ -4302,10 +4323,7 @@ id|u_char
 op_star
 )paren
 op_amp
-id|part-&gt;bam_cache
-(braket
-id|blk
-)braket
+id|le_virt_addr
 )paren
 suffix:semicolon
 r_if
@@ -5959,14 +5977,6 @@ r_sizeof
 (paren
 id|myparts
 )paren
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;$Id: ftl.c,v 1.20 2000/06/23 15:17:53 dwmw2 Exp $&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

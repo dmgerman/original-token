@@ -466,10 +466,6 @@ id|vector
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
 macro_line|#if 0
 r_void
 id|mac_waitbut

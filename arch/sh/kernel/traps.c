@@ -17,25 +17,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
-DECL|function|console_verbose
-r_static
-r_inline
-r_void
-id|console_verbose
-c_func
-(paren
-r_void
-)paren
-(brace
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
-id|console_loglevel
-op_assign
-l_int|15
-suffix:semicolon
-)brace
 DECL|macro|DO_ERROR
 mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(unsigned long r4, unsigned long r5, &bslash;&n;&t;&t;&t;  unsigned long r6, unsigned long r7, &bslash;&n;&t;&t;&t;  struct pt_regs regs) &bslash;&n;{ &bslash;&n;&t;unsigned long error_code; &bslash;&n; &bslash;&n;&t;asm volatile(&quot;stc&t;$r2_bank, %0&quot;: &quot;=r&quot; (error_code)); &bslash;&n;&t;sti(); &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_no_fixup(str,&amp;regs,error_code); &bslash;&n;}
 multiline_comment|/*&n; * These constants are for searching for possible module text&n; * segments.  VMALLOC_OFFSET comes from mm/vmalloc.c; MODULE_RANGE is&n; * a guess of how much space is likely to be vmalloced.&n; */

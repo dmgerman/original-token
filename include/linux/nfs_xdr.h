@@ -1183,7 +1183,7 @@ id|getattr
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1199,7 +1199,7 @@ id|setattr
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1219,7 +1219,7 @@ id|lookup
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1243,7 +1243,7 @@ id|access
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_int
@@ -1259,7 +1259,7 @@ id|readlink
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_void
@@ -1277,7 +1277,11 @@ id|read
 )paren
 (paren
 r_struct
-id|file
+id|inode
+op_star
+comma
+r_struct
+id|rpc_cred
 op_star
 comma
 r_struct
@@ -1308,7 +1312,11 @@ id|write
 )paren
 (paren
 r_struct
-id|file
+id|inode
+op_star
+comma
+r_struct
+id|rpc_cred
 op_star
 comma
 r_struct
@@ -1340,7 +1348,7 @@ id|commit
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1362,7 +1370,7 @@ id|create
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1392,7 +1400,7 @@ id|remove
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1444,7 +1452,7 @@ id|rename
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1452,7 +1460,7 @@ id|qstr
 op_star
 comma
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1468,11 +1476,11 @@ id|link
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1488,7 +1496,7 @@ id|symlink
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1520,7 +1528,7 @@ id|mkdir
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1548,7 +1556,7 @@ id|rmdir
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct
@@ -1564,11 +1572,14 @@ id|readdir
 )paren
 (paren
 r_struct
-id|file
+id|inode
+op_star
+comma
+r_struct
+id|rpc_cred
 op_star
 comma
 id|u64
-id|cookie
 comma
 r_void
 op_star
@@ -1587,7 +1598,7 @@ id|mknod
 )paren
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 r_struct

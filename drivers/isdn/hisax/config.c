@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: config.c,v 2.57.6.2 2000/11/28 23:45:42 kai Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: config.c,v 2.57.6.3 2000/11/29 17:48:59 kai Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -580,6 +580,11 @@ id|HiSaxID
 l_int|64
 )braket
 id|__devinitdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|variable|__devinitdata
 r_char
@@ -599,6 +604,11 @@ id|type
 l_int|8
 )braket
 id|__devinitdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static
@@ -608,6 +618,11 @@ id|protocol
 l_int|8
 )braket
 id|__devinitdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static
@@ -617,6 +632,11 @@ id|io
 l_int|8
 )braket
 id|__devinitdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|macro|IO0_IO1
 macro_line|#undef IO0_IO1
@@ -639,6 +659,11 @@ id|io0
 l_int|8
 )braket
 id|__devinitdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static
@@ -648,6 +673,11 @@ id|io1
 l_int|8
 )braket
 id|__devinitdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 macro_line|#endif
 DECL|variable|__devinitdata
@@ -658,6 +688,11 @@ id|irq
 l_int|8
 )braket
 id|__devinitdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static
@@ -667,6 +702,11 @@ id|mem
 l_int|8
 )braket
 id|__devinitdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static

@@ -565,6 +565,7 @@ r_volatile
 r_int
 id|global_irq_lock
 suffix:semicolon
+multiline_comment|/* pendantic: long for set_bit --RR */
 r_extern
 r_void
 id|show_stack

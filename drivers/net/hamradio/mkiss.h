@@ -130,10 +130,11 @@ suffix:semicolon
 multiline_comment|/* Max buffers sizes            */
 DECL|member|flags
 r_int
-r_char
+r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Flag values/ mode etc&t;*/
+multiline_comment|/* long req&squot;d: used by set_bit --RR */
 DECL|macro|AXF_INUSE
 mdefine_line|#define AXF_INUSE&t;0&t;&t;/* Channel in use               */
 DECL|macro|AXF_ESCAPE

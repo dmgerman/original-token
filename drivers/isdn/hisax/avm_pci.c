@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: avm_pci.c,v 1.22.6.1 2000/11/28 12:02:46 kai Exp $&n; *&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: avm_pci.c,v 1.22.6.2 2000/11/29 16:00:14 kai Exp $&n; *&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -23,7 +23,7 @@ r_char
 op_star
 id|avm_pci_rev
 op_assign
-l_string|&quot;$Revision: 1.22.6.1 $&quot;
+l_string|&quot;$Revision: 1.22.6.2 $&quot;
 suffix:semicolon
 DECL|macro|AVM_FRITZ_PCI
 mdefine_line|#define  AVM_FRITZ_PCI&t;&t;1
@@ -4099,6 +4099,8 @@ id|pci_dev
 op_star
 id|dev_avm
 id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|__init

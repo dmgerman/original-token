@@ -6510,9 +6510,8 @@ id|page
 )paren
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
-multiline_comment|/* We might have slept */
 )brace
 multiline_comment|/*&n; * page not present ... go through shm_dir&n; */
 DECL|function|shm_nopage_core

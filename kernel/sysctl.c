@@ -23,8 +23,6 @@ id|panic_timeout
 suffix:semicolon
 r_extern
 r_int
-id|console_loglevel
-comma
 id|C_A_D
 suffix:semicolon
 r_extern

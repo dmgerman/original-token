@@ -34,7 +34,7 @@ mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
 macro_line|#endif
 DECL|macro|RS_EVENT_WRITE_WAKEUP
 mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
-DECL|variable|tq_riscom
+r_static
 id|DECLARE_TASK_QUEUE
 c_func
 (paren
@@ -433,7 +433,7 @@ suffix:semicolon
 multiline_comment|/*&n; * &n; *  Service functions for RISCom/8 driver.&n; * &n; */
 multiline_comment|/* Get board number from pointer */
 DECL|function|board_No
-r_extern
+r_static
 r_inline
 r_int
 id|board_No
@@ -453,7 +453,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Get port number from pointer */
 DECL|function|port_No
-r_extern
+r_static
 r_inline
 r_int
 id|port_No
@@ -477,7 +477,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Get pointer to board from pointer to port */
 DECL|function|port_Board
-r_extern
+r_static
 r_inline
 r_struct
 id|riscom_board
@@ -508,7 +508,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Input Byte from CL CD180 register */
 DECL|function|rc_in
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -542,7 +542,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Output Byte to CL CD180 register */
 DECL|function|rc_out
-r_extern
+r_static
 r_inline
 r_void
 id|rc_out
@@ -580,7 +580,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Wait for Channel Command Register ready */
 DECL|function|rc_wait_CCR
-r_extern
+r_static
 r_inline
 r_void
 id|rc_wait_CCR
@@ -639,7 +639,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  RISCom/8 probe functions.&n; */
 DECL|function|rc_check_io_range
-r_extern
+r_static
 r_inline
 r_int
 id|rc_check_io_range
@@ -713,7 +713,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|rc_request_io_range
-r_extern
+r_static
 r_inline
 r_void
 id|rc_request_io_range
@@ -764,7 +764,7 @@ l_string|&quot;RISCom/8&quot;
 suffix:semicolon
 )brace
 DECL|function|rc_release_io_range
-r_extern
+r_static
 r_inline
 r_void
 id|rc_release_io_range
@@ -814,7 +814,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Must be called with enabled interrupts */
 DECL|function|rc_long_delay
-r_extern
+r_static
 r_inline
 r_void
 id|rc_long_delay
@@ -1399,7 +1399,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* &n; * &n; *  Interrupt processing routines.&n; * &n; */
 DECL|function|rc_mark_event
-r_extern
+r_static
 r_inline
 r_void
 id|rc_mark_event
@@ -1442,7 +1442,7 @@ id|RISCOM8_BH
 suffix:semicolon
 )brace
 DECL|function|rc_get_port
-r_extern
+r_static
 r_inline
 r_struct
 id|riscom_port
@@ -1542,7 +1542,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|rc_receive_exc
-r_extern
+r_static
 r_inline
 r_void
 id|rc_receive_exc
@@ -1853,7 +1853,7 @@ id|tq_timer
 suffix:semicolon
 )brace
 DECL|function|rc_receive
-r_extern
+r_static
 r_inline
 r_void
 id|rc_receive
@@ -1997,7 +1997,7 @@ id|tq_timer
 suffix:semicolon
 )brace
 DECL|function|rc_transmit
-r_extern
+r_static
 r_inline
 r_void
 id|rc_transmit
@@ -2399,7 +2399,7 @@ id|RS_EVENT_WRITE_WAKEUP
 suffix:semicolon
 )brace
 DECL|function|rc_check_modem
-r_extern
+r_static
 r_inline
 r_void
 id|rc_check_modem
@@ -2983,7 +2983,7 @@ multiline_comment|/* Clear timeout flag    */
 multiline_comment|/*&n; *  Routines for open &amp; close processing.&n; */
 multiline_comment|/* Called with disabled interrupts */
 DECL|function|rc_setup_board
-r_extern
+r_static
 r_inline
 r_int
 id|rc_setup_board
@@ -3078,7 +3078,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Called with disabled interrupts */
 DECL|function|rc_shutdown_board
-r_extern
+r_static
 r_inline
 r_void
 id|rc_shutdown_board
@@ -6894,7 +6894,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|rc_send_break
-r_extern
+r_static
 r_inline
 r_void
 id|rc_send_break
@@ -7016,7 +7016,7 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|rc_set_serial_info
-r_extern
+r_static
 r_inline
 r_int
 id|rc_set_serial_info
@@ -7304,7 +7304,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|rc_get_serial_info
-r_extern
+r_static
 r_inline
 r_int
 id|rc_get_serial_info
@@ -9180,6 +9180,7 @@ suffix:semicolon
 macro_line|#ifndef MODULE
 multiline_comment|/*&n; * Called at boot time.&n; * &n; * You can specify IO base for up to RC_NBOARD cards,&n; * using line &quot;riscom8=0xiobase1,0xiobase2,..&quot; at LILO prompt.&n; * Note that there will be no probing at default&n; * addresses in this case.&n; *&n; */
 DECL|function|riscom8_setup
+r_static
 r_void
 id|__init
 id|riscom8_setup
@@ -9248,9 +9249,18 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;riscom8=&quot;
+comma
+id|riscom8_setup
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* &n; * This routine must be called by kernel at boot time &n; */
 DECL|function|riscom8_init
+r_static
 r_int
 id|__init
 id|riscom8_init
@@ -9352,28 +9362,24 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|variable|iobase
+r_static
 r_int
 id|iobase
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|iobase1
+r_static
 r_int
 id|iobase1
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|iobase2
+r_static
 r_int
 id|iobase2
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|iobase3
+r_static
 r_int
 id|iobase3
-op_assign
-l_int|0
 suffix:semicolon
 id|MODULE_PARM
 c_func
@@ -9407,15 +9413,18 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * You can setup up to 4 boards (current value of RC_NBOARD)&n; * by specifying &quot;iobase=0xXXX iobase1=0xXXX ...&quot; as insmod parameter.&n; *&n; */
-DECL|function|init_module
+DECL|function|riscom8_init_module
+r_static
 r_int
-id|init_module
-c_func
+id|__init
+id|riscom8_init_module
 (paren
 r_void
 )paren
 (brace
+macro_line|#ifdef MODULE
 r_int
 id|i
 suffix:semicolon
@@ -9513,6 +9522,7 @@ id|base
 op_assign
 id|iobase3
 suffix:semicolon
+macro_line|#endif /* MODULE */
 r_return
 id|riscom8_init
 c_func
@@ -9520,10 +9530,11 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|riscom8_exit_module
+r_static
 r_void
-id|cleanup_module
-c_func
+id|__exit
+id|riscom8_exit_module
 (paren
 r_void
 )paren
@@ -9573,5 +9584,18 @@ id|i
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|riscom8_init_module
+id|module_init
+c_func
+(paren
+id|riscom8_init_module
+)paren
+suffix:semicolon
+DECL|variable|riscom8_exit_module
+id|module_exit
+c_func
+(paren
+id|riscom8_exit_module
+)paren
+suffix:semicolon
 eof

@@ -35,11 +35,11 @@ id|file
 op_star
 id|wb_file
 suffix:semicolon
-DECL|member|wb_dentry
+DECL|member|wb_inode
 r_struct
-id|dentry
+id|inode
 op_star
-id|wb_dentry
+id|wb_inode
 suffix:semicolon
 DECL|member|wb_cred
 r_struct
@@ -103,6 +103,11 @@ r_struct
 id|file
 op_star
 id|file
+comma
+r_struct
+id|inode
+op_star
+id|inode
 comma
 r_struct
 id|page

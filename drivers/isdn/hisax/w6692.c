@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: w6692.c,v 1.12.6.1 2000/11/28 12:02:46 kai Exp $&n; *&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: w6692.c,v 1.12.6.2 2000/11/29 16:00:14 kai Exp $&n; *&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|__NO_VERSION__
@@ -88,7 +88,7 @@ r_char
 op_star
 id|w6692_revision
 op_assign
-l_string|&quot;$Revision: 1.12.6.1 $&quot;
+l_string|&quot;$Revision: 1.12.6.2 $&quot;
 suffix:semicolon
 DECL|macro|DBUSY_TIMER_VALUE
 mdefine_line|#define DBUSY_TIMER_VALUE 80
@@ -5464,6 +5464,8 @@ id|pci_dev
 op_star
 id|dev_w6692
 id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|__init

@@ -265,10 +265,6 @@ r_int
 suffix:semicolon
 multiline_comment|/*&n; * console_loglevel determines NMI handler function&n; */
 r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
-r_extern
 r_void
 id|mac_bang
 c_func

@@ -292,6 +292,7 @@ DECL|member|event
 r_int
 id|event
 suffix:semicolon
+multiline_comment|/* long req&squot;d for set_bit --RR */
 DECL|member|asyncflags
 r_int
 id|asyncflags

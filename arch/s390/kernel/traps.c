@@ -69,25 +69,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|console_verbose
-r_static
-r_inline
-r_void
-id|console_verbose
-c_func
-(paren
-r_void
-)paren
-(brace
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
-id|console_loglevel
-op_assign
-l_int|15
-suffix:semicolon
-)brace
 DECL|macro|DO_ERROR
 mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;        tsk-&gt;thread.error_code = error_code; &bslash;&n;        tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;die_if_no_fixup(str,regs,error_code); &bslash;&n;        force_sig(signr, tsk); &bslash;&n;}
 multiline_comment|/* TODO: define these as &squot;pgm_check_handler_t xxx;&squot;&n;asmlinkage void divide_error(void);&n;asmlinkage void debug(void);&n;asmlinkage void nmi(void);&n;asmlinkage void int3(void);&n;asmlinkage void overflow(void);&n;asmlinkage void bounds(void);&n;asmlinkage void invalid_op(void);&n;asmlinkage void device_not_available(void);&n;asmlinkage void double_fault(void);&n;asmlinkage void coprocessor_segment_overrun(void);&n;asmlinkage void invalid_TSS(void);&n;asmlinkage void segment_not_present(void);&n;asmlinkage void stack_segment(void);&n;asmlinkage void general_protection(void);&n;asmlinkage void coprocessor_error(void);&n;asmlinkage void reserved(void);&n;asmlinkage void alignment_check(void);&n;asmlinkage void spurious_interrupt_bug(void);&n;*/

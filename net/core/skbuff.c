@@ -1260,7 +1260,7 @@ r_return
 id|n
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;skb_copy&t;-&t;copy and expand sk_buff&n; *&t;@skb: buffer to copy&n; *&t;@newheadroom: new free bytes at head&n; *&t;@newtailroom: new free bytes at tail&n; *&t;@gfp_mask: allocation priority&n; *&n; *&t;Make a copy of both an &amp;sk_buff and its data and while doing so &n; *&t;allocate additional space.&n; *&n; *&t;This is used when the caller wishes to modify the data and needs a &n; *&t;private copy of the data to alter as well as more space for new fields.&n; *&t;Returns %NULL on failure or the pointer to the buffer&n; *&t;on success. The returned buffer has a reference count of 1.&n; *&n; *&t;You must pass %GFP_ATOMIC as the allocation priority if this function&n; *&t;is called from an interrupt.&n; */
+multiline_comment|/**&n; *&t;skb_copy_expand&t;-&t;copy and expand sk_buff&n; *&t;@skb: buffer to copy&n; *&t;@newheadroom: new free bytes at head&n; *&t;@newtailroom: new free bytes at tail&n; *&t;@gfp_mask: allocation priority&n; *&n; *&t;Make a copy of both an &amp;sk_buff and its data and while doing so &n; *&t;allocate additional space.&n; *&n; *&t;This is used when the caller wishes to modify the data and needs a &n; *&t;private copy of the data to alter as well as more space for new fields.&n; *&t;Returns %NULL on failure or the pointer to the buffer&n; *&t;on success. The returned buffer has a reference count of 1.&n; *&n; *&t;You must pass %GFP_ATOMIC as the allocation priority if this function&n; *&t;is called from an interrupt.&n; */
 DECL|function|skb_copy_expand
 r_struct
 id|sk_buff

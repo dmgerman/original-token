@@ -2893,10 +2893,22 @@ multiline_comment|/*&n;&t; * If we couldn&squot;t find a local APIC, then get ou
 r_if
 c_cond
 (paren
-op_logical_neg
-id|verify_local_APIC
+id|APIC_INTEGRATED
 c_func
 (paren
+id|apic_version
+(braket
+id|boot_cpu_id
+)braket
+)paren
+op_logical_and
+op_logical_neg
+id|test_bit
+c_func
+(paren
+id|X86_FEATURE_APIC
+comma
+id|boot_cpu_data.x86_capability
 )paren
 )paren
 (brace
@@ -2904,9 +2916,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;BIOS bug, local APIC at 0x%lX not detected!...&bslash;n&quot;
+l_string|&quot;BIOS bug, local APIC #%d not detected!...&bslash;n&quot;
 comma
-id|mp_lapic_addr
+id|boot_cpu_id
 )paren
 suffix:semicolon
 id|printk
@@ -2936,6 +2948,11 @@ r_goto
 id|smp_done
 suffix:semicolon
 )brace
+id|verify_local_APIC
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * If SMP should be disabled, then really disable it!&n;&t; */
 r_if
 c_cond

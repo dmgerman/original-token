@@ -139,7 +139,7 @@ op_star
 id|ipx_internal_net
 suffix:semicolon
 DECL|macro|IPX_REFCNT_DEBUG
-mdefine_line|#define IPX_REFCNT_DEBUG
+macro_line|#undef IPX_REFCNT_DEBUG
 macro_line|#ifdef IPX_REFCNT_DEBUG
 DECL|variable|ipx_sock_nr
 id|atomic_t

@@ -1987,8 +1987,6 @@ op_amp
 id|sl-&gt;lock
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2044,8 +2042,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -2339,6 +2335,12 @@ suffix:semicolon
 id|dev-&gt;tx_queue_len
 op_assign
 l_int|10
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|dev_init_buffers
 c_func

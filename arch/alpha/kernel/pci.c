@@ -114,6 +114,8 @@ op_member_access_from_pointer
 r_class
 op_assign
 id|PCI_CLASS_BRIDGE_EISA
+op_lshift
+l_int|8
 suffix:semicolon
 )brace
 r_static
@@ -134,6 +136,8 @@ op_member_access_from_pointer
 r_class
 op_assign
 id|PCI_CLASS_BRIDGE_ISA
+op_lshift
+l_int|8
 suffix:semicolon
 )brace
 r_static
@@ -1133,7 +1137,6 @@ suffix:semicolon
 )brace
 )brace
 r_void
-id|__init
 DECL|function|pcibios_update_resource
 id|pcibios_update_resource
 c_func

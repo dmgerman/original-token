@@ -32,10 +32,6 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
-r_extern
 r_struct
 id|list_head
 id|super_blocks

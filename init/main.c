@@ -41,15 +41,8 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_MAC
-r_extern
-r_void
-id|nubus_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+macro_line|#ifdef CONFIG_NUBUS
+macro_line|#include &lt;linux/nubus.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_ISAPNP
 macro_line|#include &lt;linux/isapnp.h&gt;
@@ -74,10 +67,6 @@ r_extern
 r_char
 op_star
 id|linux_banner
-suffix:semicolon
-r_extern
-r_int
-id|console_loglevel
 suffix:semicolon
 r_static
 r_int
@@ -2707,7 +2696,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_MAC
+macro_line|#ifdef CONFIG_NUBUS
 id|nubus_init
 c_func
 (paren

@@ -1,4 +1,4 @@
-singleline_comment|// $Id: nj_s.c,v 2.7 2000/11/24 17:05:38 kai Exp $
+singleline_comment|// $Id: nj_s.c,v 2.7.6.1 2000/11/29 16:00:14 kai Exp $
 singleline_comment|//
 singleline_comment|// This file is (c) under GNU PUBLIC LICENSE
 singleline_comment|//
@@ -19,7 +19,7 @@ r_char
 op_star
 id|NETjet_S_revision
 op_assign
-l_string|&quot;$Revision: 2.7 $&quot;
+l_string|&quot;$Revision: 2.7.6.1 $&quot;
 suffix:semicolon
 DECL|function|dummyrr
 r_static
@@ -627,6 +627,8 @@ id|pci_dev
 op_star
 id|dev_netjet
 id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|__init

@@ -56,10 +56,6 @@ r_extern
 r_int
 id|adb_button3_keycode
 suffix:semicolon
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
 multiline_comment|/*&n; *    XXX: need to figure out what ADB mouse packets mean ... &n; *      This is the stuff stolen from the Atari driver ...&n; */
 DECL|function|adb_mouse_interrupt
 r_static

@@ -35,10 +35,6 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
 multiline_comment|/*&n; * Debugging dump, used in various places to see what&squot;s going on.&n; */
 DECL|function|psc_debug_dump
 r_void
