@@ -552,6 +552,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * NOTE! When we get the inode, we&squot;re the only people&n; * that have access to it, and as such there are no&n; * race conditions we have to worry about. The inode&n; * is not on the hash-lists, and it cannot be reached&n; * through the filesystem because the directory entry&n; * has been deleted earlier.&n; *&n; * HOWEVER: we must make sure that we get no aliases,&n; * which means that we have to call &quot;clear_inode()&quot;&n; * _before_ we mark the inode not in use in the inode&n; * bitmaps. Otherwise a newly created file might use&n; * the same inode number (not actually the same pointer&n; * though), and then we&squot;d have two inodes sharing the&n; * same inode number and space on the harddisk.&n; */
 DECL|function|ext2_free_inode
 r_void
 id|ext2_free_inode
@@ -783,6 +784,7 @@ c_func
 id|inode-&gt;i_mode
 )paren
 suffix:semicolon
+multiline_comment|/* Do this BEFORE marking the inode not in use */
 r_if
 c_cond
 (paren
@@ -800,6 +802,7 @@ id|clear_inode
 id|inode
 )paren
 suffix:semicolon
+multiline_comment|/* Ok, now we can actually update the inode bitmaps.. */
 r_if
 c_cond
 (paren

@@ -1,4 +1,5 @@
 multiline_comment|/* -*- linux-c -*-&n; * sysctl_net_atalk.c: sysctl interface to net Appletalk subsystem.&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/atalk directory entry (empty =) ). [MS]&n; * Dynamic registration, added aarp entries. (5/30/97 Chris Horn)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 r_extern

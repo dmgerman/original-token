@@ -1101,7 +1101,7 @@ l_int|NULL
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|inode-&gt;i_writecount
 op_assign

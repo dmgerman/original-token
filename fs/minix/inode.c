@@ -11,9 +11,10 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-DECL|function|minix_put_inode
+DECL|function|minix_delete_inode
+r_static
 r_void
-id|minix_put_inode
+id|minix_delete_inode
 c_func
 (paren
 r_struct
@@ -22,13 +23,6 @@ op_star
 id|inode
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_nlink
-)paren
-r_return
-suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -253,12 +247,16 @@ op_assign
 (brace
 id|minix_read_inode
 comma
-l_int|NULL
-comma
 id|minix_write_inode
 comma
-id|minix_put_inode
+l_int|NULL
 comma
+multiline_comment|/* put_inode */
+id|minix_delete_inode
+comma
+l_int|NULL
+comma
+multiline_comment|/* notify_change */
 id|minix_put_super
 comma
 id|minix_write_super

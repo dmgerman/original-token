@@ -970,6 +970,22 @@ id|private_data
 suffix:semicolon
 )brace
 suffix:semicolon
+r_extern
+r_int
+id|init_private_file
+c_func
+(paren
+r_struct
+id|file
+op_star
+comma
+r_struct
+id|dentry
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|macro|FL_POSIX
 mdefine_line|#define FL_POSIX&t;1
 DECL|macro|FL_FLOCK
