@@ -138,7 +138,7 @@ id|ac3200_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -152,7 +152,7 @@ r_int
 id|ioaddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -163,7 +163,7 @@ id|ac_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -174,7 +174,7 @@ id|ac_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -185,7 +185,7 @@ id|ac_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -207,7 +207,7 @@ id|ac_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -232,7 +232,7 @@ id|ac_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -251,7 +251,7 @@ id|ac_close_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -265,7 +265,7 @@ id|ac3200_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -375,7 +375,7 @@ r_int
 id|ioaddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1118,7 +1118,7 @@ id|ac_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1171,7 +1171,7 @@ id|ac_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1244,7 +1244,7 @@ id|ac_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1296,7 +1296,7 @@ id|ac_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1395,7 +1395,7 @@ id|ac_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1446,7 +1446,7 @@ id|ac_close_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1531,7 +1531,7 @@ suffix:semicolon
 DECL|variable|dev_ac32
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_ac32
 (braket
 id|MAX_AC32_CARDS
@@ -1679,7 +1679,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1829,7 +1829,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

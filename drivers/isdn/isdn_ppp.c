@@ -5308,7 +5308,7 @@ id|proto
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -6024,13 +6024,13 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|netdev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|mdev
 op_assign
@@ -8588,7 +8588,7 @@ op_star
 id|ifr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8785,7 +8785,7 @@ id|isdn_ppp_dev_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9076,7 +9076,7 @@ op_star
 id|lp
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|sdev
 suffix:semicolon
@@ -9200,7 +9200,7 @@ op_star
 id|lp
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|sdev
 suffix:semicolon

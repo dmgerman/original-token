@@ -53,7 +53,7 @@ id|lance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -63,7 +63,7 @@ id|lance_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -504,7 +504,7 @@ id|lance_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -515,7 +515,7 @@ id|lance_open_fail
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -526,7 +526,7 @@ id|lance_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -545,7 +545,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -556,7 +556,7 @@ id|lance_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -585,7 +585,7 @@ id|lance_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -598,7 +598,7 @@ id|lance_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -609,7 +609,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -723,7 +723,7 @@ suffix:semicolon
 DECL|variable|dev_lance
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_lance
 (braket
 id|MAX_CARDS
@@ -789,7 +789,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -939,7 +939,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -998,7 +998,7 @@ id|lance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1301,7 +1301,7 @@ id|lance_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2926,7 +2926,7 @@ id|lance_open_fail
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2944,7 +2944,7 @@ id|lance_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3372,7 +3372,7 @@ id|lance_purge_tx_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3443,7 +3443,7 @@ id|lance_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3720,7 +3720,7 @@ id|lance_restart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3809,7 +3809,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4462,7 +4462,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -5029,7 +5029,7 @@ id|lance_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5408,7 +5408,7 @@ id|lance_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5667,7 +5667,7 @@ id|lance_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5780,7 +5780,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

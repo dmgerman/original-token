@@ -552,7 +552,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -602,7 +602,7 @@ id|whitehole_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -628,7 +628,7 @@ suffix:semicolon
 DECL|variable|whitehole_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|whitehole_dev
 op_assign
 (brace
@@ -665,7 +665,7 @@ id|whitehole_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -700,7 +700,7 @@ id|whitehole_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -903,7 +903,7 @@ id|whitehole_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -933,7 +933,7 @@ id|whitehole_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

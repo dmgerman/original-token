@@ -197,7 +197,7 @@ mdefine_line|#define NR_PORTS 4
 DECL|variable|sm_device
 r_static
 r_struct
-id|device
+id|net_device
 id|sm_device
 (braket
 id|NR_PORTS
@@ -1404,7 +1404,7 @@ id|sm_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1415,7 +1415,7 @@ id|sm_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1426,7 +1426,7 @@ id|sm_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1472,7 +1472,7 @@ id|sm_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1615,7 +1615,7 @@ id|sm_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1733,7 +1733,7 @@ id|sethw
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1934,7 +1934,7 @@ id|sm_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3064,7 +3064,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3601,7 +3601,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

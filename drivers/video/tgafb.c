@@ -230,10 +230,22 @@ l_int|0x00000000
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Predefined video modes&n;     *  This is a subset of the standard VESA modes, recalculated from XFree86.&n;     *&n;     *  XXX Should we store these in terms of the encoded par structs? Even better,&n;     *      fbcon should provide a general mechanism for doing something like this.&n;     */
-DECL|variable|__initdata
 r_static
 r_struct
-id|fb_videomode
+(brace
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|var
+r_struct
+id|fb_var_screeninfo
+id|var
+suffix:semicolon
+DECL|variable|__initdata
+)brace
 id|tgafb_predefined
 (braket
 )braket
@@ -5866,18 +5878,15 @@ id|fbgen_ioctl
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Setup&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|tgafb_setup
 r_int
+id|__init
 id|tgafb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_char

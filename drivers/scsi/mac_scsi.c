@@ -2129,7 +2129,7 @@ r_int
 r_int
 id|addr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|data
@@ -2500,7 +2500,7 @@ op_logical_neg
 id|STRAM_ADDR
 c_func
 (paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|cmd-&gt;SCp.ptr

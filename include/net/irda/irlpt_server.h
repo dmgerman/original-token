@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
-multiline_comment|/* int  server_init( struct device *dev); */
+multiline_comment|/* int  server_init( struct net_device *dev); */
 r_extern
 r_struct
 id|irlpt_cb

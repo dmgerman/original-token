@@ -2070,7 +2070,7 @@ op_star
 id|neigh
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

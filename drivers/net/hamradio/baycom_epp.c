@@ -76,7 +76,7 @@ mdefine_line|#define NR_PORTS 4
 DECL|variable|baycom_device
 r_static
 r_struct
-id|device
+id|net_device
 id|baycom_device
 (braket
 id|NR_PORTS
@@ -2924,7 +2924,7 @@ id|do_rxpacket
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3081,7 +3081,7 @@ id|receive
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3454,7 +3454,7 @@ id|epp_bh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4152,7 +4152,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4206,7 +4206,7 @@ id|baycom_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4252,7 +4252,7 @@ id|baycom_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4300,13 +4300,13 @@ id|handle
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|handle
@@ -4371,7 +4371,7 @@ id|epp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5143,7 +5143,7 @@ id|epp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5540,7 +5540,7 @@ id|baycom_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6141,7 +6141,7 @@ id|baycom_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6434,7 +6434,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -6519,7 +6519,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -6759,7 +6759,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

@@ -284,7 +284,7 @@ id|neigh
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -736,7 +736,7 @@ op_assign
 id|dst-&gt;neighbour
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1083,7 +1083,7 @@ op_assign
 id|dst-&gt;neighbour
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1363,7 +1363,7 @@ op_assign
 id|dst-&gt;neighbour
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2218,7 +2218,7 @@ id|dn_neigh_elist
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

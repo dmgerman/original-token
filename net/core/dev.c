@@ -157,7 +157,7 @@ id|dev_clear_backlog
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -413,7 +413,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/* &n; *&t;Find an interface by name.&n; */
 DECL|function|dev_get
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_get
 c_func
@@ -425,7 +425,7 @@ id|name
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -484,7 +484,7 @@ suffix:semicolon
 )brace
 DECL|function|dev_get_by_index
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_get_by_index
 c_func
@@ -494,7 +494,7 @@ id|ifindex
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -547,7 +547,7 @@ suffix:semicolon
 )brace
 DECL|function|dev_getbyhwaddr
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_getbyhwaddr
 c_func
@@ -562,7 +562,7 @@ id|ha
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -632,7 +632,7 @@ id|dev_alloc_name
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -696,7 +696,7 @@ multiline_comment|/* Over 100 of the things .. bail out! */
 )brace
 DECL|function|dev_alloc
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_alloc
 c_func
@@ -712,7 +712,7 @@ id|err
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -722,7 +722,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 l_int|16
@@ -801,7 +801,7 @@ id|netdev_state_change
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -925,7 +925,7 @@ id|dev_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1032,7 +1032,7 @@ id|dev_do_clear_fastroute
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1082,7 +1082,7 @@ id|dev_clear_fastroute
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1145,7 +1145,7 @@ id|dev_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1298,7 +1298,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1557,7 +1557,7 @@ id|skb
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1831,13 +1831,13 @@ id|stimul
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1854,7 +1854,7 @@ id|netdev_register_fc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1865,7 +1865,7 @@ id|stimul
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2120,7 +2120,7 @@ id|dev_clear_backlog
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2985,7 +2985,7 @@ id|arg
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3094,7 +3094,7 @@ id|ifconf
 id|ifc
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3374,7 +3374,7 @@ op_star
 id|buffer
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3526,7 +3526,7 @@ r_int
 id|size
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3801,7 +3801,7 @@ op_star
 id|buffer
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3955,7 +3955,7 @@ r_int
 id|size
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4108,7 +4108,7 @@ id|dev_set_promiscuity
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4208,7 +4208,7 @@ id|dev_set_allmulti
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4262,7 +4262,7 @@ id|dev_change_flags
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4522,7 +4522,7 @@ id|cmd
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -5698,13 +5698,13 @@ id|register_netdevice
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 comma
@@ -5965,13 +5965,13 @@ id|unregister_netdevice
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 comma
@@ -6295,7 +6295,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

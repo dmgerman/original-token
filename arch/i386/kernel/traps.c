@@ -29,7 +29,7 @@ macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;asm/cobalt.h&gt;
 macro_line|#include &lt;asm/lithium.h&gt;
 macro_line|#endif
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &lt;linux/irq.h&gt;
 id|asmlinkage
 r_int
 id|system_call
@@ -1933,16 +1933,13 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_MATH_EMULATION */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|trap_init_f00f_bug
 r_void
+id|__init
 id|trap_init_f00f_bug
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

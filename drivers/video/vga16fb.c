@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-vga-planes.h&gt;
+macro_line|#include &quot;vga.h&quot;
 DECL|macro|dac_reg
 mdefine_line|#define dac_reg&t;(0x3c8)
 DECL|macro|dac_val
@@ -132,156 +133,6 @@ DECL|variable|vga16fb
 )brace
 id|vga16fb
 suffix:semicolon
-multiline_comment|/* Some of the code below is taken from SVGAlib.  The original,&n;   unmodified copyright notice for that code is below. */
-multiline_comment|/* VGAlib version 1.2 - (c) 1993 Tommy Frandsen                    */
-multiline_comment|/*                                                                 */
-multiline_comment|/* This library is free software; you can redistribute it and/or   */
-multiline_comment|/* modify it without any restrictions. This library is distributed */
-multiline_comment|/* in the hope that it will be useful, but without any warranty.   */
-multiline_comment|/* Multi-chipset support Copyright 1993 Harm Hanemaayer */
-multiline_comment|/* partially copyrighted (C) 1993 by Hartmut Schirmer */
-multiline_comment|/* VGA data register ports */
-DECL|macro|CRT_DC
-mdefine_line|#define CRT_DC  0x3D5&t;&t;/* CRT Controller Data Register - color emulation */
-DECL|macro|CRT_DM
-mdefine_line|#define CRT_DM  0x3B5&t;&t;/* CRT Controller Data Register - mono emulation */
-DECL|macro|ATT_R
-mdefine_line|#define ATT_R   0x3C1&t;&t;/* Attribute Controller Data Read Register */
-DECL|macro|GRA_D
-mdefine_line|#define GRA_D   0x3CF&t;&t;/* Graphics Controller Data Register */
-DECL|macro|SEQ_D
-mdefine_line|#define SEQ_D   0x3C5&t;&t;/* Sequencer Data Register */
-DECL|macro|MIS_R
-mdefine_line|#define MIS_R   0x3CC&t;&t;/* Misc Output Read Register */
-DECL|macro|MIS_W
-mdefine_line|#define MIS_W   0x3C2&t;&t;/* Misc Output Write Register */
-DECL|macro|IS1_RC
-mdefine_line|#define IS1_RC  0x3DA&t;&t;/* Input Status Register 1 - color emulation */
-DECL|macro|IS1_RM
-mdefine_line|#define IS1_RM  0x3BA&t;&t;/* Input Status Register 1 - mono emulation */
-DECL|macro|PEL_D
-mdefine_line|#define PEL_D   0x3C9&t;&t;/* PEL Data Register */
-DECL|macro|PEL_MSK
-mdefine_line|#define PEL_MSK 0x3C6&t;&t;/* PEL mask register */
-multiline_comment|/* EGA-specific registers */
-DECL|macro|GRA_E0
-mdefine_line|#define GRA_E0&t;0x3CC&t;&t;/* Graphics enable processor 0 */
-DECL|macro|GRA_E1
-mdefine_line|#define GRA_E1&t;0x3CA&t;&t;/* Graphics enable processor 1 */
-multiline_comment|/* VGA index register ports */
-DECL|macro|CRT_IC
-mdefine_line|#define CRT_IC  0x3D4&t;&t;/* CRT Controller Index - color emulation */
-DECL|macro|CRT_IM
-mdefine_line|#define CRT_IM  0x3B4&t;&t;/* CRT Controller Index - mono emulation */
-DECL|macro|ATT_IW
-mdefine_line|#define ATT_IW  0x3C0&t;&t;/* Attribute Controller Index &amp; Data Write Register */
-DECL|macro|GRA_I
-mdefine_line|#define GRA_I   0x3CE&t;&t;/* Graphics Controller Index */
-DECL|macro|SEQ_I
-mdefine_line|#define SEQ_I   0x3C4&t;&t;/* Sequencer Index */
-DECL|macro|PEL_IW
-mdefine_line|#define PEL_IW  0x3C8&t;&t;/* PEL Write Index */
-DECL|macro|PEL_IR
-mdefine_line|#define PEL_IR  0x3C7&t;&t;/* PEL Read Index */
-multiline_comment|/* standard VGA indexes max counts */
-DECL|macro|CRT_C
-mdefine_line|#define CRT_C   24&t;&t;/* 24 CRT Controller Registers */
-DECL|macro|ATT_C
-mdefine_line|#define ATT_C   21&t;&t;/* 21 Attribute Controller Registers */
-DECL|macro|GRA_C
-mdefine_line|#define GRA_C   9&t;&t;/* 9  Graphics Controller Registers */
-DECL|macro|SEQ_C
-mdefine_line|#define SEQ_C   5&t;&t;/* 5  Sequencer Registers */
-DECL|macro|MIS_C
-mdefine_line|#define MIS_C   1&t;&t;/* 1  Misc Output Register */
-DECL|macro|CRTC_H_TOTAL
-mdefine_line|#define CRTC_H_TOTAL&t;&t;0
-DECL|macro|CRTC_H_DISP
-mdefine_line|#define CRTC_H_DISP&t;&t;1
-DECL|macro|CRTC_H_BLANK_START
-mdefine_line|#define CRTC_H_BLANK_START&t;2
-DECL|macro|CRTC_H_BLANK_END
-mdefine_line|#define CRTC_H_BLANK_END&t;3
-DECL|macro|CRTC_H_SYNC_START
-mdefine_line|#define CRTC_H_SYNC_START&t;4
-DECL|macro|CRTC_H_SYNC_END
-mdefine_line|#define CRTC_H_SYNC_END&t;&t;5
-DECL|macro|CRTC_V_TOTAL
-mdefine_line|#define CRTC_V_TOTAL&t;&t;6
-DECL|macro|CRTC_OVERFLOW
-mdefine_line|#define CRTC_OVERFLOW&t;&t;7
-DECL|macro|CRTC_PRESET_ROW
-mdefine_line|#define CRTC_PRESET_ROW&t;&t;8
-DECL|macro|CRTC_MAX_SCAN
-mdefine_line|#define CRTC_MAX_SCAN&t;&t;9
-DECL|macro|CRTC_CURSOR_START
-mdefine_line|#define CRTC_CURSOR_START&t;0x0A
-DECL|macro|CRTC_CURSOR_END
-mdefine_line|#define CRTC_CURSOR_END&t;&t;0x0B
-DECL|macro|CRTC_START_HI
-mdefine_line|#define CRTC_START_HI&t;&t;0x0C
-DECL|macro|CRTC_START_LO
-mdefine_line|#define CRTC_START_LO&t;&t;0x0D
-DECL|macro|CRTC_CURSOR_HI
-mdefine_line|#define CRTC_CURSOR_HI&t;&t;0x0E
-DECL|macro|CRTC_CURSOR_LO
-mdefine_line|#define CRTC_CURSOR_LO&t;&t;0x0F
-DECL|macro|CRTC_V_SYNC_START
-mdefine_line|#define CRTC_V_SYNC_START&t;0x10
-DECL|macro|CRTC_V_SYNC_END
-mdefine_line|#define CRTC_V_SYNC_END&t;&t;0x11
-DECL|macro|CRTC_V_DISP_END
-mdefine_line|#define CRTC_V_DISP_END&t;&t;0x12
-DECL|macro|CRTC_OFFSET
-mdefine_line|#define CRTC_OFFSET&t;&t;0x13
-DECL|macro|CRTC_UNDERLINE
-mdefine_line|#define CRTC_UNDERLINE&t;&t;0x14
-DECL|macro|CRTC_V_BLANK_START
-mdefine_line|#define CRTC_V_BLANK_START&t;0x15
-DECL|macro|CRTC_V_BLANK_END
-mdefine_line|#define CRTC_V_BLANK_END&t;0x16
-DECL|macro|CRTC_MODE
-mdefine_line|#define CRTC_MODE&t;&t;0x17
-DECL|macro|CRTC_LINE_COMPARE
-mdefine_line|#define CRTC_LINE_COMPARE&t;0x18
-DECL|macro|CRTC_REGS
-mdefine_line|#define CRTC_REGS&t;&t;0x19
-DECL|macro|ATC_MODE
-mdefine_line|#define ATC_MODE&t;&t;0x10
-DECL|macro|ATC_OVERSCAN
-mdefine_line|#define ATC_OVERSCAN&t;&t;0x11
-DECL|macro|ATC_PLANE_ENABLE
-mdefine_line|#define ATC_PLANE_ENABLE&t;0x12
-DECL|macro|ATC_PEL
-mdefine_line|#define ATC_PEL&t;&t;&t;0x13
-DECL|macro|ATC_COLOR_PAGE
-mdefine_line|#define ATC_COLOR_PAGE&t;&t;0x14
-DECL|macro|SEQ_CLOCK_MODE
-mdefine_line|#define SEQ_CLOCK_MODE&t;&t;0x01
-DECL|macro|SEQ_PLANE_WRITE
-mdefine_line|#define SEQ_PLANE_WRITE&t;&t;0x02
-DECL|macro|SEQ_CHARACTER_MAP
-mdefine_line|#define SEQ_CHARACTER_MAP&t;0x03
-DECL|macro|SEQ_MEMORY_MODE
-mdefine_line|#define SEQ_MEMORY_MODE&t;&t;0x04
-DECL|macro|GDC_SR_VALUE
-mdefine_line|#define GDC_SR_VALUE&t;&t;0x00
-DECL|macro|GDC_SR_ENABLE
-mdefine_line|#define GDC_SR_ENABLE&t;&t;0x01
-DECL|macro|GDC_COMPARE_VALUE
-mdefine_line|#define GDC_COMPARE_VALUE&t;0x02
-DECL|macro|GDC_DATA_ROTATE
-mdefine_line|#define GDC_DATA_ROTATE&t;&t;0x03
-DECL|macro|GDC_PLANE_READ
-mdefine_line|#define GDC_PLANE_READ&t;&t;0x04
-DECL|macro|GDC_MODE
-mdefine_line|#define GDC_MODE&t;&t;0x05
-DECL|macro|GDC_MISC
-mdefine_line|#define GDC_MISC&t;&t;0x06
-DECL|macro|GDC_COMPARE_MASK
-mdefine_line|#define GDC_COMPARE_MASK&t;0x07
-DECL|macro|GDC_BIT_MASK
-mdefine_line|#define GDC_BIT_MASK&t;&t;0x08
 DECL|struct|vga16fb_par
 r_struct
 id|vga16fb_par
@@ -290,28 +141,28 @@ DECL|member|crtc
 id|u8
 id|crtc
 (braket
-id|CRTC_REGS
+id|VGA_CRT_C
 )braket
 suffix:semicolon
 DECL|member|atc
 id|u8
 id|atc
 (braket
-id|ATT_C
+id|VGA_ATT_C
 )braket
 suffix:semicolon
 DECL|member|gdc
 id|u8
 id|gdc
 (braket
-id|GRA_C
+id|VGA_GFX_C
 )braket
 suffix:semicolon
 DECL|member|seq
 id|u8
 id|seq
 (braket
-id|SEQ_C
+id|VGA_SEQ_C
 )braket
 suffix:semicolon
 DECL|member|misc
@@ -554,9 +405,9 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|CRTC_START_HI
+id|VGA_CRTC_START_HI
 comma
-id|CRT_IC
+id|VGA_CRT_IC
 )paren
 suffix:semicolon
 id|outb
@@ -566,15 +417,15 @@ id|pos
 op_rshift
 l_int|8
 comma
-id|CRT_DC
+id|VGA_CRT_DC
 )paren
 suffix:semicolon
 id|outb
 c_func
 (paren
-id|CRTC_START_LO
+id|VGA_CRTC_START_LO
 comma
-id|CRT_IC
+id|VGA_CRT_IC
 )paren
 suffix:semicolon
 id|outb
@@ -584,7 +435,7 @@ id|pos
 op_amp
 l_int|0xFF
 comma
-id|CRT_DC
+id|VGA_CRT_DC
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -592,16 +443,16 @@ multiline_comment|/* if someone supports xoffset in bit resolution */
 id|inb
 c_func
 (paren
-id|IS1_RC
+id|VGA_IS1_RC
 )paren
 suffix:semicolon
 multiline_comment|/* reset flip-flop */
 id|outb
 c_func
 (paren
-id|ATC_PEL
+id|VGA_ATC_PEL
 comma
-id|ATT_IW
+id|VGA_ATT_IW
 )paren
 suffix:semicolon
 id|outb
@@ -611,13 +462,13 @@ id|xoffset
 op_amp
 l_int|7
 comma
-id|ATT_IW
+id|VGA_ATT_IW
 )paren
 suffix:semicolon
 id|inb
 c_func
 (paren
-id|IS1_RC
+id|VGA_IS1_RC
 )paren
 suffix:semicolon
 id|outb
@@ -625,7 +476,7 @@ c_func
 (paren
 l_int|0x20
 comma
-id|ATT_IW
+id|VGA_ATT_IW
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1154,7 +1005,7 @@ id|best-&gt;misc
 suffix:semicolon
 id|par-&gt;seq
 (braket
-id|SEQ_CLOCK_MODE
+id|VGA_SEQ_CLOCK_MODE
 )braket
 op_or_assign
 id|best-&gt;seq_clock_mode
@@ -1434,7 +1285,7 @@ l_string|&quot;hblank too big&quot;
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_H_TOTAL
+id|VGA_CRTC_H_TOTAL
 )braket
 op_assign
 id|xtotal
@@ -1443,7 +1294,7 @@ l_int|5
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_H_BLANK_START
+id|VGA_CRTC_H_BLANK_START
 )braket
 op_assign
 id|xres
@@ -1452,7 +1303,7 @@ l_int|1
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_H_DISP
+id|VGA_CRTC_H_DISP
 )braket
 op_assign
 id|xres
@@ -1467,7 +1318,7 @@ id|right
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_H_SYNC_START
+id|VGA_CRTC_H_SYNC_START
 )braket
 op_assign
 id|pos
@@ -1478,7 +1329,7 @@ id|hslen
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_H_SYNC_END
+id|VGA_CRTC_H_SYNC_END
 )braket
 op_assign
 id|pos
@@ -1494,7 +1345,7 @@ suffix:semicolon
 multiline_comment|/* blank_end + 2 &lt;= total + 5 */
 id|par-&gt;crtc
 (braket
-id|CRTC_H_BLANK_END
+id|VGA_CRTC_H_BLANK_END
 )braket
 op_assign
 (paren
@@ -1514,7 +1365,7 @@ l_int|0x20
 )paren
 id|par-&gt;crtc
 (braket
-id|CRTC_H_SYNC_END
+id|VGA_CRTC_H_SYNC_END
 )braket
 op_or_assign
 l_int|0x80
@@ -1722,7 +1573,7 @@ l_string|&quot;vslen too big&quot;
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_V_TOTAL
+id|VGA_CRTC_V_TOTAL
 )braket
 op_assign
 id|ytotal
@@ -1758,14 +1609,14 @@ l_int|0x20
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_PRESET_ROW
+id|VGA_CRTC_PRESET_ROW
 )braket
 op_assign
 l_int|0
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_MAX_SCAN
+id|VGA_CRTC_MAX_SCAN
 )braket
 op_assign
 l_int|0x40
@@ -1784,21 +1635,21 @@ id|FB_VMODE_DOUBLE
 )paren
 id|par-&gt;crtc
 (braket
-id|CRTC_MAX_SCAN
+id|VGA_CRTC_MAX_SCAN
 )braket
 op_or_assign
 l_int|0x80
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_CURSOR_START
+id|VGA_CRTC_CURSOR_START
 )braket
 op_assign
 l_int|0x20
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_CURSOR_END
+id|VGA_CRTC_CURSOR_END
 )braket
 op_assign
 l_int|0x00
@@ -1817,7 +1668,7 @@ l_int|3
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_START_HI
+id|VGA_CRTC_START_HI
 )braket
 op_assign
 id|pos
@@ -1826,7 +1677,7 @@ l_int|8
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_START_LO
+id|VGA_CRTC_START_LO
 )braket
 op_assign
 id|pos
@@ -1835,14 +1686,14 @@ l_int|0xFF
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_CURSOR_HI
+id|VGA_CRTC_CURSOR_HI
 )braket
 op_assign
 l_int|0x00
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_CURSOR_LO
+id|VGA_CRTC_CURSOR_LO
 )braket
 op_assign
 l_int|0x00
@@ -1855,7 +1706,7 @@ l_int|1
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_V_DISP_END
+id|VGA_CRTC_V_DISP_END
 )braket
 op_assign
 id|pos
@@ -1864,7 +1715,7 @@ l_int|0xFF
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_V_BLANK_START
+id|VGA_CRTC_V_BLANK_START
 )braket
 op_assign
 id|pos
@@ -1898,7 +1749,7 @@ suffix:semicolon
 multiline_comment|/* 0x40 -&gt; DISP_END */
 id|par-&gt;crtc
 (braket
-id|CRTC_MAX_SCAN
+id|VGA_CRTC_MAX_SCAN
 )braket
 op_or_assign
 l_int|0x20
@@ -1911,7 +1762,7 @@ id|lower
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_V_SYNC_START
+id|VGA_CRTC_V_SYNC_START
 )braket
 op_assign
 id|pos
@@ -1946,7 +1797,7 @@ id|vslen
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_V_SYNC_END
+id|VGA_CRTC_V_SYNC_END
 )braket
 op_assign
 (paren
@@ -1967,7 +1818,7 @@ suffix:semicolon
 multiline_comment|/* blank_end + 1 &lt;= ytotal + 2 */
 id|par-&gt;crtc
 (braket
-id|CRTC_V_BLANK_END
+id|VGA_CRTC_V_BLANK_END
 )braket
 op_assign
 id|pos
@@ -1990,7 +1841,7 @@ l_string|&quot;vxres too long&quot;
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_OFFSET
+id|VGA_CRTC_OFFSET
 )braket
 op_assign
 id|vxres
@@ -1999,14 +1850,14 @@ l_int|1
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_UNDERLINE
+id|VGA_CRTC_UNDERLINE
 )braket
 op_assign
 l_int|0x1F
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_MODE
+id|VGA_CRTC_MODE
 )braket
 op_assign
 id|rMode
@@ -2015,14 +1866,14 @@ l_int|0xE3
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_LINE_COMPARE
+id|VGA_CRTC_LINE_COMPARE
 )braket
 op_assign
 l_int|0xFF
 suffix:semicolon
 id|par-&gt;crtc
 (braket
-id|CRTC_OVERFLOW
+id|VGA_CRTC_OVERFLOW
 )braket
 op_assign
 id|r7
@@ -2055,14 +1906,14 @@ id|i
 suffix:semicolon
 id|par-&gt;atc
 (braket
-id|ATC_MODE
+id|VGA_ATC_MODE
 )braket
 op_assign
 l_int|0x81
 suffix:semicolon
 id|par-&gt;atc
 (braket
-id|ATC_OVERSCAN
+id|VGA_ATC_OVERSCAN
 )braket
 op_assign
 l_int|0x00
@@ -2070,14 +1921,14 @@ suffix:semicolon
 multiline_comment|/* 0 for EGA, 0xFF for VGA */
 id|par-&gt;atc
 (braket
-id|ATC_PLANE_ENABLE
+id|VGA_ATC_PLANE_ENABLE
 )braket
 op_assign
 l_int|0x0F
 suffix:semicolon
 id|par-&gt;atc
 (braket
-id|ATC_PEL
+id|VGA_ATC_PEL
 )braket
 op_assign
 id|xoffset
@@ -2086,7 +1937,7 @@ l_int|7
 suffix:semicolon
 id|par-&gt;atc
 (braket
-id|ATC_COLOR_PAGE
+id|VGA_ATC_COLOR_PAGE
 )braket
 op_assign
 l_int|0x00
@@ -2126,91 +1977,91 @@ l_int|0x80
 suffix:semicolon
 id|par-&gt;seq
 (braket
-id|SEQ_CLOCK_MODE
+id|VGA_SEQ_CLOCK_MODE
 )braket
 op_assign
 l_int|0x01
 suffix:semicolon
 id|par-&gt;seq
 (braket
-id|SEQ_PLANE_WRITE
+id|VGA_SEQ_PLANE_WRITE
 )braket
 op_assign
 l_int|0x0F
 suffix:semicolon
 id|par-&gt;seq
 (braket
-id|SEQ_CHARACTER_MAP
+id|VGA_SEQ_CHARACTER_MAP
 )braket
 op_assign
 l_int|0x00
 suffix:semicolon
 id|par-&gt;seq
 (braket
-id|SEQ_MEMORY_MODE
+id|VGA_SEQ_MEMORY_MODE
 )braket
 op_assign
 l_int|0x06
 suffix:semicolon
 id|par-&gt;gdc
 (braket
-id|GDC_SR_VALUE
+id|VGA_GFX_SR_VALUE
 )braket
 op_assign
 l_int|0x00
 suffix:semicolon
 id|par-&gt;gdc
 (braket
-id|GDC_SR_ENABLE
+id|VGA_GFX_SR_ENABLE
 )braket
 op_assign
 l_int|0x0F
 suffix:semicolon
 id|par-&gt;gdc
 (braket
-id|GDC_COMPARE_VALUE
+id|VGA_GFX_COMPARE_VALUE
 )braket
 op_assign
 l_int|0x00
 suffix:semicolon
 id|par-&gt;gdc
 (braket
-id|GDC_DATA_ROTATE
+id|VGA_GFX_DATA_ROTATE
 )braket
 op_assign
 l_int|0x20
 suffix:semicolon
 id|par-&gt;gdc
 (braket
-id|GDC_PLANE_READ
+id|VGA_GFX_PLANE_READ
 )braket
 op_assign
 l_int|0
 suffix:semicolon
 id|par-&gt;gdc
 (braket
-id|GDC_MODE
+id|VGA_GFX_MODE
 )braket
 op_assign
 l_int|0x00
 suffix:semicolon
 id|par-&gt;gdc
 (braket
-id|GDC_MISC
+id|VGA_GFX_MISC
 )braket
 op_assign
 l_int|0x05
 suffix:semicolon
 id|par-&gt;gdc
 (braket
-id|GDC_COMPARE_MASK
+id|VGA_GFX_COMPARE_MASK
 )braket
 op_assign
 l_int|0x0F
 suffix:semicolon
 id|par-&gt;gdc
 (braket
-id|GDC_BIT_MASK
+id|VGA_GFX_BIT_MASK
 )braket
 op_assign
 l_int|0xFF
@@ -2317,12 +2168,12 @@ c_func
 id|inb
 c_func
 (paren
-id|MIS_R
+id|VGA_MIS_R
 )paren
 op_or
 l_int|0x01
 comma
-id|MIS_W
+id|VGA_MIS_W
 )paren
 suffix:semicolon
 multiline_comment|/* Enable graphics register modification */
@@ -2338,7 +2189,7 @@ c_func
 (paren
 l_int|0x00
 comma
-id|GRA_E0
+id|EGA_GFX_E0
 )paren
 suffix:semicolon
 id|outb
@@ -2346,7 +2197,7 @@ c_func
 (paren
 l_int|0x01
 comma
-id|GRA_E1
+id|EGA_GFX_E1
 )paren
 suffix:semicolon
 )brace
@@ -2356,7 +2207,7 @@ c_func
 (paren
 id|par-&gt;misc
 comma
-id|MIS_W
+id|VGA_MIS_W
 )paren
 suffix:semicolon
 multiline_comment|/* synchronous reset on */
@@ -2365,7 +2216,7 @@ c_func
 (paren
 l_int|0x00
 comma
-id|SEQ_I
+id|VGA_SEQ_I
 )paren
 suffix:semicolon
 id|outb
@@ -2373,7 +2224,7 @@ c_func
 (paren
 l_int|0x01
 comma
-id|SEQ_D
+id|VGA_SEQ_D
 )paren
 suffix:semicolon
 multiline_comment|/* write sequencer registers */
@@ -2382,7 +2233,7 @@ c_func
 (paren
 l_int|1
 comma
-id|SEQ_I
+id|VGA_SEQ_I
 )paren
 suffix:semicolon
 id|outb
@@ -2395,7 +2246,7 @@ l_int|1
 op_or
 l_int|0x20
 comma
-id|SEQ_D
+id|VGA_SEQ_D
 )paren
 suffix:semicolon
 r_for
@@ -2407,7 +2258,7 @@ l_int|2
 suffix:semicolon
 id|i
 OL
-id|SEQ_C
+id|VGA_SEQ_C
 suffix:semicolon
 id|i
 op_increment
@@ -2418,7 +2269,7 @@ c_func
 (paren
 id|i
 comma
-id|SEQ_I
+id|VGA_SEQ_I
 )paren
 suffix:semicolon
 id|outb
@@ -2429,7 +2280,7 @@ id|par-&gt;seq
 id|i
 )braket
 comma
-id|SEQ_D
+id|VGA_SEQ_D
 )paren
 suffix:semicolon
 )brace
@@ -2439,7 +2290,7 @@ c_func
 (paren
 l_int|0x00
 comma
-id|SEQ_I
+id|VGA_SEQ_I
 )paren
 suffix:semicolon
 id|outb
@@ -2447,7 +2298,7 @@ c_func
 (paren
 l_int|0x03
 comma
-id|SEQ_D
+id|VGA_SEQ_D
 )paren
 suffix:semicolon
 multiline_comment|/* deprotect CRT registers 0-7 */
@@ -2456,7 +2307,7 @@ c_func
 (paren
 l_int|0x11
 comma
-id|CRT_IC
+id|VGA_CRT_IC
 )paren
 suffix:semicolon
 id|outb
@@ -2467,7 +2318,7 @@ id|par-&gt;crtc
 l_int|0x11
 )braket
 comma
-id|CRT_DC
+id|VGA_CRT_DC
 )paren
 suffix:semicolon
 multiline_comment|/* write CRT registers */
@@ -2480,7 +2331,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|CRTC_REGS
+id|VGA_CRT_C
 suffix:semicolon
 id|i
 op_increment
@@ -2491,7 +2342,7 @@ c_func
 (paren
 id|i
 comma
-id|CRT_IC
+id|VGA_CRT_IC
 )paren
 suffix:semicolon
 id|outb
@@ -2502,7 +2353,7 @@ id|par-&gt;crtc
 id|i
 )braket
 comma
-id|CRT_DC
+id|VGA_CRT_DC
 )paren
 suffix:semicolon
 )brace
@@ -2516,7 +2367,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|GRA_C
+id|VGA_GFX_C
 suffix:semicolon
 id|i
 op_increment
@@ -2527,7 +2378,7 @@ c_func
 (paren
 id|i
 comma
-id|GRA_I
+id|VGA_GFX_I
 )paren
 suffix:semicolon
 id|outb
@@ -2538,7 +2389,7 @@ id|par-&gt;gdc
 id|i
 )braket
 comma
-id|GRA_D
+id|VGA_GFX_D
 )paren
 suffix:semicolon
 )brace
@@ -2552,7 +2403,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|ATT_C
+id|VGA_ATT_C
 suffix:semicolon
 id|i
 op_increment
@@ -2561,7 +2412,7 @@ op_increment
 id|inb_p
 c_func
 (paren
-id|IS1_RC
+id|VGA_IS1_RC
 )paren
 suffix:semicolon
 multiline_comment|/* reset flip-flop */
@@ -2570,7 +2421,7 @@ c_func
 (paren
 id|i
 comma
-id|ATT_IW
+id|VGA_ATT_IW
 )paren
 suffix:semicolon
 id|outb_p
@@ -2581,7 +2432,7 @@ id|par-&gt;atc
 id|i
 )braket
 comma
-id|ATT_IW
+id|VGA_ATT_IW
 )paren
 suffix:semicolon
 )brace
@@ -2597,7 +2448,7 @@ c_func
 (paren
 l_int|0x01
 comma
-id|SEQ_I
+id|VGA_SEQ_I
 )paren
 suffix:semicolon
 id|outb
@@ -2608,13 +2459,13 @@ id|par-&gt;seq
 l_int|1
 )braket
 comma
-id|SEQ_D
+id|VGA_SEQ_D
 )paren
 suffix:semicolon
 id|inb
 c_func
 (paren
-id|IS1_RC
+id|VGA_IS1_RC
 )paren
 suffix:semicolon
 id|outb
@@ -2622,7 +2473,7 @@ c_func
 (paren
 l_int|0x20
 comma
-id|ATT_IW
+id|VGA_ATT_IW
 )paren
 suffix:semicolon
 r_return

@@ -76,7 +76,7 @@ id|hp_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -86,7 +86,7 @@ id|hp_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -100,7 +100,7 @@ id|hp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -111,7 +111,7 @@ id|hp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -122,7 +122,7 @@ id|hp_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -133,7 +133,7 @@ id|hp_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -152,7 +152,7 @@ id|hp_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -174,7 +174,7 @@ id|hp_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -197,7 +197,7 @@ id|hp_init_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -273,7 +273,7 @@ id|hp_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -386,7 +386,7 @@ id|hp_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -975,7 +975,7 @@ id|hp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -999,7 +999,7 @@ id|hp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1023,7 +1023,7 @@ id|hp_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1150,7 +1150,7 @@ id|hp_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1332,7 +1332,7 @@ id|hp_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1631,7 +1631,7 @@ id|hp_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1977,7 +1977,7 @@ id|hp_init_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2040,7 +2040,7 @@ suffix:semicolon
 DECL|variable|dev_hp
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_hp
 (braket
 id|MAX_HP_CARDS
@@ -2162,7 +2162,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2316,7 +2316,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

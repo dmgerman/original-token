@@ -19,7 +19,7 @@ id|ethertap_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -30,7 +30,7 @@ id|ethertap_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -46,7 +46,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -57,7 +57,7 @@ id|ethertap_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -70,7 +70,7 @@ id|ethertap_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -96,7 +96,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -112,7 +112,7 @@ suffix:semicolon
 DECL|variable|tap_map
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|tap_map
 (braket
@@ -152,7 +152,7 @@ id|ethertap_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -277,7 +277,7 @@ id|ethertap_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -424,7 +424,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -538,7 +538,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -843,7 +843,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1189,7 +1189,7 @@ id|len
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1275,7 +1275,7 @@ id|ethertap_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1354,7 +1354,7 @@ id|ethertap_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1406,7 +1406,7 @@ suffix:semicolon
 DECL|variable|dev_ethertap
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_ethertap
 op_assign
 (brace

@@ -690,7 +690,7 @@ id|__u32
 id|info
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1609,7 +1609,7 @@ id|len
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

@@ -238,20 +238,20 @@ id|ne2k_pci_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|ne2k_pci_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -271,7 +271,7 @@ id|ne2k_pci_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -282,7 +282,7 @@ id|ne2k_pci_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -293,7 +293,7 @@ id|ne2k_pci_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -304,7 +304,7 @@ id|ne2k_pci_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -323,7 +323,7 @@ id|ne2k_pci_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -345,7 +345,7 @@ id|ne2k_pci_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -378,7 +378,7 @@ id|next
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -464,7 +464,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -551,7 +551,7 @@ id|ne2k_pci_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -908,14 +908,14 @@ suffix:semicolon
 DECL|function|ne2k_pci_probe1
 r_static
 r_struct
-id|device
+id|net_device
 id|__init
 op_star
 id|ne2k_pci_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1629,7 +1629,7 @@ id|ne2k_pci_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1674,7 +1674,7 @@ id|ne2k_pci_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1707,7 +1707,7 @@ id|ne2k_pci_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1818,7 +1818,7 @@ id|ne2k_pci_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2020,7 +2020,7 @@ id|ne2k_pci_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2321,7 +2321,7 @@ id|ne2k_pci_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

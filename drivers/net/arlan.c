@@ -12,7 +12,7 @@ l_string|&quot;C.Jennigs 97 &amp; Elmer.Joandi@ut.ee  Oct&squot;98, http://www.y
 suffix:semicolon
 DECL|variable|arlan_device
 r_struct
-id|device
+id|net_device
 op_star
 id|arlan_device
 (braket
@@ -470,7 +470,7 @@ id|arlan_probe_here
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -484,7 +484,7 @@ id|arlan_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -500,7 +500,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -529,7 +529,7 @@ id|arlan_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -541,7 +541,7 @@ op_star
 id|arlan_statistics
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -551,7 +551,7 @@ r_void
 id|arlan_set_multicast
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -561,7 +561,7 @@ r_int
 id|arlan_hw_tx
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -578,7 +578,7 @@ r_int
 id|arlan_hw_config
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -588,7 +588,7 @@ r_void
 id|arlan_tx_done_interrupt
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -601,7 +601,7 @@ r_void
 id|arlan_rx_interrupt
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -618,7 +618,7 @@ r_void
 id|arlan_process_interrupt
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -629,7 +629,7 @@ id|arlan_command
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -722,7 +722,7 @@ id|arlan_drop_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -836,7 +836,7 @@ id|arlan_command
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2397,7 +2397,7 @@ id|arlan_command_process
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2478,7 +2478,7 @@ id|arlan_retransmit_now
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2661,13 +2661,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -3115,7 +3115,7 @@ id|arlan_print_registers
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3282,7 +3282,7 @@ id|arlan_hw_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4132,7 +4132,7 @@ id|arlan_hw_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4682,7 +4682,7 @@ id|arlan_read_card_configuration
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5387,7 +5387,7 @@ id|arlan_probe_everywhere
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5626,7 +5626,7 @@ id|arlan_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5737,7 +5737,7 @@ id|arlan_mac_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5805,14 +5805,14 @@ r_int
 id|num
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|devs
 )paren
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -6123,7 +6123,7 @@ id|arlan_probe_here
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6274,7 +6274,7 @@ id|arlan_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6604,7 +6604,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6884,7 +6884,7 @@ id|DoNotReTransmitCrap
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6931,7 +6931,7 @@ id|DoNotWaitReTransmitCrap
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6978,7 +6978,7 @@ id|arlan_queue_retransmit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7040,7 +7040,7 @@ id|RetryOrFail
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7123,7 +7123,7 @@ id|arlan_tx_done_interrupt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7614,7 +7614,7 @@ id|arlan_rx_interrupt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -8545,7 +8545,7 @@ id|arlan_process_interrupt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9076,7 +9076,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -9170,7 +9170,7 @@ id|arlan_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9335,7 +9335,7 @@ id|arlan_statistics
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9524,7 +9524,7 @@ id|arlan_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9679,7 +9679,7 @@ id|arlan_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

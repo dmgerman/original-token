@@ -39,13 +39,13 @@ macro_line|#include &lt;asm/atari_acsi.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|init_etherdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -154,7 +154,7 @@ id|bionet_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -165,7 +165,7 @@ id|bionet_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -181,7 +181,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -192,7 +192,7 @@ id|bionet_poll_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -202,7 +202,7 @@ id|bionet_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -215,7 +215,7 @@ id|net_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -961,7 +961,7 @@ id|bionet_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1289,7 +1289,7 @@ id|bionet_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1398,7 +1398,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1855,7 +1855,7 @@ id|bionet_poll_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2413,13 +2413,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -2501,7 +2501,7 @@ id|bionet_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2587,7 +2587,7 @@ id|net_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2621,7 +2621,7 @@ suffix:semicolon
 DECL|variable|bio_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|bio_dev
 op_assign
 (brace

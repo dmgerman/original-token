@@ -7872,13 +7872,13 @@ id|ptr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|ptr
@@ -7942,7 +7942,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct

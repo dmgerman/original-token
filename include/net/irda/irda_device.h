@@ -212,7 +212,7 @@ suffix:semicolon
 multiline_comment|/* The link layer we are connected to  */
 DECL|member|netdev
 r_struct
-id|device
+id|net_device
 id|netdev
 suffix:semicolon
 multiline_comment|/* Yes! we are some kind of netdevice */
@@ -524,7 +524,7 @@ id|irda_device_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

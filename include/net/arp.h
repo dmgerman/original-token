@@ -28,7 +28,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -83,7 +83,7 @@ id|u32
 id|dest_ip
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -130,7 +130,7 @@ op_star
 id|haddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -144,7 +144,7 @@ id|arp_ifdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

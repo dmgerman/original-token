@@ -693,7 +693,7 @@ id|lance_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -709,7 +709,7 @@ id|lance_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -720,7 +720,7 @@ id|lance_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -736,7 +736,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -765,7 +765,7 @@ id|lance_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -776,7 +776,7 @@ id|lance_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -789,7 +789,7 @@ id|lance_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -800,7 +800,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -811,7 +811,7 @@ id|lance_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1296,7 +1296,7 @@ id|bagetlance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1435,7 +1435,7 @@ id|lance_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2567,7 +2567,7 @@ id|lance_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2769,7 +2769,7 @@ id|lance_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3015,7 +3015,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3770,7 +3770,7 @@ id|fp
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -4311,7 +4311,7 @@ id|lance_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5003,7 +5003,7 @@ id|lance_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5073,7 +5073,7 @@ id|lance_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5103,7 +5103,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5294,7 +5294,7 @@ id|lance_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5490,7 +5490,7 @@ suffix:semicolon
 DECL|variable|bagetlance_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|bagetlance_dev
 op_assign
 (brace

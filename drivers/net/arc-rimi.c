@@ -37,7 +37,7 @@ id|arcrimi_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -48,7 +48,7 @@ id|arcrimi_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -62,7 +62,7 @@ id|arcrimi_found
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -81,7 +81,7 @@ r_void
 id|arcrimi_inthandler
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -91,7 +91,7 @@ r_int
 id|arcrimi_reset
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -104,7 +104,7 @@ r_void
 id|arcrimi_setmask
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -117,7 +117,7 @@ r_void
 id|arcrimi_command
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -130,7 +130,7 @@ id|u_char
 id|arcrimi_status
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -141,7 +141,7 @@ id|arcrimi_prepare_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -258,7 +258,7 @@ id|ints
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 id|arcnet_devs
 (braket
 )braket
@@ -325,7 +325,7 @@ id|arcrimi_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -426,7 +426,7 @@ id|dev-&gt;mem_start
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set up the struct device associated with this card.  Called after&n; * probing succeeds.&n; */
+multiline_comment|/* Set up the struct net_device associated with this card.  Called after&n; * probing succeeds.&n; */
 DECL|function|arcrimi_found
 r_int
 id|__init
@@ -434,7 +434,7 @@ id|arcrimi_found
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -887,7 +887,7 @@ id|arcrimi_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1059,7 +1059,7 @@ id|arcrimi_setmask
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1088,7 +1088,7 @@ id|arcrimi_status
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1111,7 +1111,7 @@ id|arcrimi_command
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1141,7 +1141,7 @@ id|arcrimi_inthandler
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1858,7 +1858,7 @@ id|arcrimi_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2072,7 +2072,7 @@ id|arcrimi_prepare_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2499,7 +2499,7 @@ suffix:semicolon
 DECL|variable|thiscard
 r_static
 r_struct
-id|device
+id|net_device
 id|thiscard
 op_assign
 (brace
@@ -2539,7 +2539,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2670,7 +2670,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2778,7 +2778,7 @@ id|ints
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

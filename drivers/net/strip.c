@@ -585,7 +585,7 @@ suffix:semicolon
 multiline_comment|/* Dynamically generated name&t;*/
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* Our device structure&t;&t;*/
@@ -1052,7 +1052,7 @@ id|u32
 id|paddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2648,7 +2648,7 @@ id|strip_info
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2811,7 +2811,7 @@ op_assign
 id|strip_info-&gt;mtu
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -5831,7 +5831,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6143,7 +6143,7 @@ l_int|NULL
 comma
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|parameter
@@ -6163,7 +6163,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7814,7 +7814,7 @@ suffix:semicolon
 DECL|function|get_strip_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|get_strip_dev
 c_func
@@ -7863,7 +7863,7 @@ id|zero_address
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -9588,7 +9588,7 @@ id|dev_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9652,7 +9652,7 @@ id|strip_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9735,7 +9735,7 @@ id|strip_open_low
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9884,7 +9884,7 @@ id|strip_close_low
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -10002,7 +10002,7 @@ id|strip_dev_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -10801,7 +10801,7 @@ id|strip_init_ctrl_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dummy
 )paren

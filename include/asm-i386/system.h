@@ -326,14 +326,14 @@ mdefine_line|#define rmb()&t;mb()
 DECL|macro|wmb
 mdefine_line|#define wmb()&t;__asm__ __volatile__ (&quot;&quot;: : :&quot;memory&quot;)
 multiline_comment|/* interrupt control.. */
-DECL|macro|__sti
-mdefine_line|#define __sti() __asm__ __volatile__ (&quot;sti&quot;: : :&quot;memory&quot;)
-DECL|macro|__cli
-mdefine_line|#define __cli() __asm__ __volatile__ (&quot;cli&quot;: : :&quot;memory&quot;)
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)
+mdefine_line|#define __save_flags(x)&t;&t;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)
 DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;g&quot; (x):&quot;memory&quot;)
+mdefine_line|#define __restore_flags(x) &t;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;g&quot; (x):&quot;memory&quot;)
+DECL|macro|__cli
+mdefine_line|#define __cli() &t;&t;__asm__ __volatile__(&quot;cli&quot;: : :&quot;memory&quot;)
+DECL|macro|__sti
+mdefine_line|#define __sti()&t;&t;&t;__asm__ __volatile__(&quot;sti&quot;: : :&quot;memory&quot;)
 multiline_comment|/* For spinlocks etc */
 DECL|macro|local_irq_save
 mdefine_line|#define local_irq_save(x)&t;__asm__ __volatile__(&quot;pushfl ; popl %0 ; cli&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)

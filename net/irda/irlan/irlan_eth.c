@@ -18,7 +18,7 @@ id|irlan_eth_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -194,7 +194,7 @@ id|irlan_eth_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -290,7 +290,7 @@ id|irlan_eth_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -401,7 +401,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -725,7 +725,7 @@ op_star
 id|self
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -823,7 +823,7 @@ op_star
 id|buff
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -878,7 +878,7 @@ id|irlan_eth_send_gratuitous_arp
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -931,7 +931,7 @@ id|irlan_eth_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1129,7 +1129,7 @@ id|irlan_eth_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

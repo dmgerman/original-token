@@ -13,7 +13,7 @@ id|TLanIntVectorFunc
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -23,7 +23,7 @@ macro_line|#ifdef MODULE
 DECL|variable|TLanDevices
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|TLanDevices
 op_assign
@@ -315,7 +315,7 @@ id|TLan_Init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -325,7 +325,7 @@ id|TLan_Open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -340,7 +340,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -365,7 +365,7 @@ id|TLan_Close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -377,7 +377,7 @@ id|TLan_GetStats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -387,7 +387,7 @@ id|TLan_SetMulticastList
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -397,7 +397,7 @@ id|TLan_HandleInvalid
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -409,7 +409,7 @@ id|TLan_HandleTxEOF
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -421,7 +421,7 @@ id|TLan_HandleStatOverflow
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -433,7 +433,7 @@ id|TLan_HandleRxEOF
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -445,7 +445,7 @@ id|TLan_HandleDummy
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -457,7 +457,7 @@ id|TLan_HandleTxEOC
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -469,7 +469,7 @@ id|TLan_HandleStatusCheck
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -481,7 +481,7 @@ id|TLan_HandleRxEOC
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -502,7 +502,7 @@ id|TLan_ResetLists
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -512,7 +512,7 @@ id|TLan_FreeLists
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -544,7 +544,7 @@ id|TLan_ReadAndClearStats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -556,7 +556,7 @@ id|TLan_ResetAdapter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -566,7 +566,7 @@ id|TLan_FinishReset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -576,7 +576,7 @@ id|TLan_SetMac
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -593,7 +593,7 @@ id|TLan_PhyPrint
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -603,7 +603,7 @@ id|TLan_PhyDetect
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -613,7 +613,7 @@ id|TLan_PhyPowerDown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -623,7 +623,7 @@ id|TLan_PhyPowerUp
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -633,7 +633,7 @@ id|TLan_PhyReset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -643,7 +643,7 @@ id|TLan_PhyStartLink
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -653,18 +653,18 @@ id|TLan_PhyFinishAutoNeg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;static int&t;TLan_PhyNop( struct device * );&n;static int&t;TLan_PhyInternalCheck( struct device * );&n;static int&t;TLan_PhyInternalService( struct device * );&n;static int&t;TLan_PhyDp83840aCheck( struct device * );&n;*/
+multiline_comment|/*&n;static int&t;TLan_PhyNop( struct net_device * );&n;static int&t;TLan_PhyInternalCheck( struct net_device * );&n;static int&t;TLan_PhyInternalService( struct net_device * );&n;static int&t;TLan_PhyDp83840aCheck( struct net_device * );&n;*/
 r_static
 r_int
 id|TLan_MiiReadReg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -701,7 +701,7 @@ id|TLan_MiiWriteReg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u16
@@ -750,7 +750,7 @@ id|TLan_EeReadByte
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|u8
@@ -794,7 +794,7 @@ id|TLan_SetTimer
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -889,7 +889,7 @@ op_star
 id|priv
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -979,7 +979,7 @@ op_assign
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 r_sizeof
@@ -1018,7 +1018,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -1071,7 +1071,7 @@ op_plus
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 suffix:semicolon
 id|dev-&gt;name
@@ -1271,7 +1271,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1355,7 +1355,7 @@ id|tlan_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2008,7 +2008,7 @@ id|TLan_Init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2319,7 +2319,7 @@ id|TLan_Open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2484,7 +2484,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2926,7 +2926,7 @@ id|u32
 id|ack
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2943,7 +2943,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -3061,7 +3061,7 @@ id|TLan_Close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3156,7 +3156,7 @@ id|TLan_GetStats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3312,7 +3312,7 @@ id|TLan_SetMulticastList
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3601,7 +3601,7 @@ id|TLan_HandleInvalid
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3626,7 +3626,7 @@ id|TLan_HandleTxEOF
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3891,7 +3891,7 @@ id|TLan_HandleStatOverflow
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3923,7 +3923,7 @@ id|TLan_HandleRxEOF
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4436,7 +4436,7 @@ id|TLan_HandleDummy
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4468,7 +4468,7 @@ id|TLan_HandleTxEOC
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4576,7 +4576,7 @@ id|TLan_HandleStatusCheck
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4889,7 +4889,7 @@ id|TLan_HandleRxEOC
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4988,13 +4988,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -5178,7 +5178,7 @@ id|TLan_ResetLists
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5511,7 +5511,7 @@ id|TLan_FreeLists
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5857,7 +5857,7 @@ id|TLan_ReadAndClearStats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6254,7 +6254,7 @@ id|TLan_ResetAdapter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6615,7 +6615,7 @@ id|TLan_FinishReset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6991,7 +6991,7 @@ id|TLan_SetMac
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7091,7 +7091,7 @@ id|TLan_PhyPrint
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7304,7 +7304,7 @@ id|TLan_PhyDetect
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7563,7 +7563,7 @@ id|TLan_PhyPowerDown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7689,7 +7689,7 @@ id|TLan_PhyPowerUp
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7761,7 +7761,7 @@ id|TLan_PhyReset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7889,7 +7889,7 @@ id|TLan_PhyStartLink
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8271,7 +8271,7 @@ id|TLan_PhyFinishAutoNeg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8583,7 +8583,7 @@ id|TLan_MiiReadReg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9158,7 +9158,7 @@ id|TLan_MiiWriteReg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9819,7 +9819,7 @@ id|TLan_EeReadByte
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

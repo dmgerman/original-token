@@ -393,7 +393,7 @@ op_assign
 id|qep-&gt;qe_block
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1128,7 +1128,7 @@ id|qe_status
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2730,7 +2730,7 @@ id|channel
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2916,7 +2916,7 @@ id|channel
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3037,7 +3037,7 @@ id|qe_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3088,7 +3088,7 @@ id|qe_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3136,7 +3136,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3388,7 +3388,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3631,7 +3631,7 @@ id|qe_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3664,7 +3664,7 @@ id|qe_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4111,7 +4111,7 @@ id|qec_ether_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4128,7 +4128,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|qe_devs
 (braket
@@ -5781,7 +5781,7 @@ id|qec_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

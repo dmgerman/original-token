@@ -103,7 +103,7 @@ id|pt0_preprobe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -116,7 +116,7 @@ multiline_comment|/* Dummy probe function */
 DECL|variable|pt0a
 r_static
 r_struct
-id|device
+id|net_device
 id|pt0a
 op_assign
 (brace
@@ -148,7 +148,7 @@ suffix:semicolon
 DECL|variable|pt0b
 r_static
 r_struct
-id|device
+id|net_device
 id|pt0b
 op_assign
 (brace
@@ -205,7 +205,7 @@ id|pt_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -216,7 +216,7 @@ id|pt_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -232,7 +232,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -261,7 +261,7 @@ id|pt_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -272,7 +272,7 @@ id|pt_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -293,7 +293,7 @@ id|pt_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -318,7 +318,7 @@ id|pt_rxisr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -411,7 +411,7 @@ id|chipset_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -667,7 +667,7 @@ op_star
 id|ptr
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1248,7 +1248,7 @@ id|scc_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1886,7 +1886,7 @@ id|chipset_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3258,7 +3258,7 @@ id|pt_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3393,7 +3393,7 @@ id|pt_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3923,7 +3923,7 @@ id|pt_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4121,7 +4121,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4175,7 +4175,7 @@ id|pt_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4299,7 +4299,7 @@ id|pt_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4654,7 +4654,7 @@ id|pt_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5320,7 +5320,7 @@ id|pt_rxisr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6151,7 +6151,7 @@ id|regs
 (brace
 multiline_comment|/* It&squot;s a tad dodgy here, but we assume pt0a until proven otherwise */
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

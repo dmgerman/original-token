@@ -494,7 +494,7 @@ id|sprt-&gt;u.next
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2314,7 +2314,7 @@ id|ipv6_get_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2352,7 +2352,7 @@ id|ipv6_get_hoplimit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2404,7 +2404,7 @@ op_star
 id|rt
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3374,7 +3374,7 @@ op_star
 id|gw
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3908,7 +3908,7 @@ op_star
 id|saddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4320,7 +4320,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4414,7 +4414,7 @@ op_star
 id|gwaddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4776,7 +4776,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4929,7 +4929,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5500,7 +5500,7 @@ id|rt6_ifdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5525,7 +5525,7 @@ id|rt6_mtu_change_arg
 (brace
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -5596,7 +5596,7 @@ id|rt6_mtu_change
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7474,7 +7474,7 @@ id|iif
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

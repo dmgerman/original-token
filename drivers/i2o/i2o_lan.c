@@ -27,7 +27,7 @@ mdefine_line|#define MAX_LAN_CARDS 4
 DECL|variable|i2o_landevs
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|i2o_landevs
 (braket
@@ -88,7 +88,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -106,7 +106,7 @@ id|i2o_lan_receive_post
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -117,7 +117,7 @@ id|i2o_lan_receive_post_reply
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -213,7 +213,7 @@ l_int|16
 suffix:semicolon
 singleline_comment|// InitiatorContext
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -755,7 +755,7 @@ id|i2o_lan_receive_post_reply
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1140,7 +1140,7 @@ id|i2o_lan_receive_post
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1463,7 +1463,7 @@ id|i2o_lan_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1590,7 +1590,7 @@ id|i2o_lan_suspend
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1725,7 +1725,7 @@ id|i2o_set_batch_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1886,7 +1886,7 @@ id|i2o_lan_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2008,7 +2008,7 @@ id|i2o_lan_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2103,7 +2103,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2335,7 +2335,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2526,7 +2526,7 @@ id|i2o_lan_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3334,7 +3334,7 @@ id|i2o_lan_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3790,7 +3790,7 @@ suffix:semicolon
 )brace
 DECL|function|i2o_lan_register_device
 r_struct
-id|device
+id|net_device
 op_star
 id|i2o_lan_register_device
 c_func
@@ -3802,7 +3802,7 @@ id|i2o_dev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3833,7 +3833,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -3844,7 +3844,7 @@ id|unregister_dev
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3956,7 +3956,7 @@ op_assign
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 r_sizeof
@@ -3974,7 +3974,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -4305,7 +4305,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4566,7 +4566,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

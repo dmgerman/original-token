@@ -402,7 +402,7 @@ id|RXCV
 suffix:semicolon
 DECL|variable|bmac_devs
 r_struct
-id|device
+id|net_device
 op_star
 id|bmac_devs
 op_assign
@@ -444,7 +444,7 @@ id|bmac_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -455,7 +455,7 @@ id|bmac_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -471,7 +471,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -484,7 +484,7 @@ id|bmac_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -495,7 +495,7 @@ id|bmac_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -506,7 +506,7 @@ id|bmac_reset_and_enable
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -520,7 +520,7 @@ id|bmac_start_chip
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -531,7 +531,7 @@ id|bmac_init_chip
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -542,7 +542,7 @@ id|bmac_init_registers
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -553,7 +553,7 @@ id|bmac_reset_chip
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -564,7 +564,7 @@ id|bmac_set_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -633,7 +633,7 @@ id|bmac_set_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -682,7 +682,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -693,7 +693,7 @@ id|bmac_start
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1061,7 +1061,7 @@ id|bmwrite
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1098,7 +1098,7 @@ id|bmread
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1128,7 +1128,7 @@ id|bmac_reset_chip
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1226,7 +1226,7 @@ id|bmac_mif_readbits
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1328,7 +1328,7 @@ id|bmac_mif_writebits
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1405,7 +1405,7 @@ id|bmac_mif_read
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1519,7 +1519,7 @@ id|bmac_mif_write
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1613,7 +1613,7 @@ id|bmac_init_registers
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2106,7 +2106,7 @@ id|bmac_disable_interrupts
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2128,7 +2128,7 @@ id|bmac_enable_interrupts
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2152,7 +2152,7 @@ id|bmac_start_chip
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2247,7 +2247,7 @@ id|bmac_init_chip
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2353,7 +2353,7 @@ id|bmac_set_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2497,7 +2497,7 @@ id|bmac_set_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3072,7 +3072,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3232,13 +3232,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -3619,13 +3619,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -3846,7 +3846,7 @@ id|bmac_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4445,7 +4445,7 @@ id|bmac_rx_off
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4508,7 +4508,7 @@ id|bmac_rx_on
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4619,7 +4619,7 @@ id|bmac_update_hash_table_mask
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4693,7 +4693,7 @@ id|bmac_add_multi
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4758,7 +4758,7 @@ id|bmac_remove_multi
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4824,7 +4824,7 @@ id|bmac_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5145,7 +5145,7 @@ id|bmac_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5552,13 +5552,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -5723,7 +5723,7 @@ id|bmac_clock_out_bit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5807,7 +5807,7 @@ id|bmac_clock_in_bit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5905,7 +5905,7 @@ id|reset_and_select_srom
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5961,7 +5961,7 @@ id|read_srom
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6081,7 +6081,7 @@ id|bmac_verify_checksum
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6143,7 +6143,7 @@ id|bmac_get_station_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6242,7 +6242,7 @@ id|bmac_reset_and_enable
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6427,7 +6427,7 @@ id|bmac_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7243,7 +7243,7 @@ id|bmac_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7275,7 +7275,7 @@ id|bmac_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7559,7 +7559,7 @@ id|bmac_start
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7671,7 +7671,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7713,13 +7713,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data

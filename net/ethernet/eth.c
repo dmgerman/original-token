@@ -41,7 +41,7 @@ l_int|5
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 suffix:semicolon
@@ -197,7 +197,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -368,7 +368,7 @@ op_star
 id|skb-&gt;data
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -444,7 +444,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -674,7 +674,7 @@ l_int|2
 )paren
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -739,7 +739,7 @@ op_star
 id|hh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

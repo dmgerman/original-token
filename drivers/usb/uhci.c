@@ -1684,6 +1684,11 @@ r_int
 id|uhci_release_irq
 c_func
 (paren
+r_struct
+id|usb_device
+op_star
+id|usb
+comma
 r_void
 op_star
 id|handle

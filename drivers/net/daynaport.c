@@ -27,7 +27,7 @@ id|ns8390_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -51,7 +51,7 @@ id|ns8390_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -62,7 +62,7 @@ id|ns8390_no_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -73,7 +73,7 @@ id|ns8390_close_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -84,7 +84,7 @@ id|interlan_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -95,7 +95,7 @@ id|dayna_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -114,7 +114,7 @@ id|dayna_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -136,7 +136,7 @@ id|dayna_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -160,7 +160,7 @@ id|sane_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -179,7 +179,7 @@ id|sane_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -201,7 +201,7 @@ id|sane_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -225,7 +225,7 @@ id|slow_sane_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -244,7 +244,7 @@ id|slow_sane_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -266,7 +266,7 @@ id|slow_sane_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -738,7 +738,7 @@ id|match
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1529,7 +1529,7 @@ id|ns8390_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2040,7 +2040,7 @@ id|ns8390_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2064,7 +2064,7 @@ id|ns8390_no_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2111,7 +2111,7 @@ id|ns8390_close_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2158,7 +2158,7 @@ id|interlan_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2227,7 +2227,7 @@ id|dayna_cpu_memcpy
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2336,7 +2336,7 @@ id|cpu_dayna_memcpy
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2447,7 +2447,7 @@ id|dayna_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2513,7 +2513,7 @@ id|dayna_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2624,7 +2624,7 @@ id|dayna_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2673,7 +2673,7 @@ id|sane_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2743,7 +2743,7 @@ id|sane_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2861,7 +2861,7 @@ id|sane_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3031,7 +3031,7 @@ id|slow_sane_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3101,7 +3101,7 @@ id|slow_sane_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3219,7 +3219,7 @@ id|slow_sane_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

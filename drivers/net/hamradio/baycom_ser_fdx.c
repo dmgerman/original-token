@@ -50,7 +50,7 @@ mdefine_line|#define NR_PORTS 4
 DECL|variable|baycom_device
 r_static
 r_struct
-id|device
+id|net_device
 id|baycom_device
 (braket
 id|NR_PORTS
@@ -290,7 +290,7 @@ id|ser12_set_divisor
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -568,7 +568,7 @@ id|ser12_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -829,13 +829,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -1626,7 +1626,7 @@ id|ser12_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1914,7 +1914,7 @@ id|ser12_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2013,7 +2013,7 @@ id|baycom_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2143,7 +2143,7 @@ id|baycom_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2597,7 +2597,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2880,7 +2880,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

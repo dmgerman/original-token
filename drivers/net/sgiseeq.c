@@ -318,7 +318,7 @@ id|seeq_load_eaddr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -376,7 +376,7 @@ id|seeq_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -631,7 +631,7 @@ suffix:semicolon
 DECL|variable|gdev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|gdev
 suffix:semicolon
@@ -933,7 +933,7 @@ id|init_seeq
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1181,7 +1181,7 @@ id|sgiseeq_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1563,7 +1563,7 @@ id|sgiseeq_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1784,7 +1784,7 @@ op_star
 id|sp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1837,13 +1837,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -1940,7 +1940,7 @@ id|sgiseeq_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2060,7 +2060,7 @@ id|sgiseeq_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2122,7 +2122,7 @@ id|sgiseeq_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2211,7 +2211,7 @@ op_star
 id|sp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2331,7 +2331,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2579,7 +2579,7 @@ id|sgiseeq_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2608,7 +2608,7 @@ id|sgiseeq_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2805,7 +2805,7 @@ id|sgiseeq_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3335,7 +3335,7 @@ id|sgiseeq_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

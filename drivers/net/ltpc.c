@@ -73,7 +73,7 @@ id|do_read
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -97,7 +97,7 @@ r_int
 id|sendup_buffer
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -573,7 +573,7 @@ id|wait_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -733,7 +733,7 @@ id|handlefc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -854,7 +854,7 @@ id|handlefd
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -979,7 +979,7 @@ id|handlewrite
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1121,7 +1121,7 @@ id|handleread
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1242,7 +1242,7 @@ id|handlecommand
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1395,7 +1395,7 @@ id|idle
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2158,7 +2158,7 @@ id|do_write
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2311,7 +2311,7 @@ id|do_read
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2475,7 +2475,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2488,7 +2488,7 @@ id|ltpc_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2500,7 +2500,7 @@ id|ltpc_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2520,7 +2520,7 @@ id|ltpc_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2539,7 +2539,7 @@ r_int
 id|read_30
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2578,7 +2578,7 @@ r_int
 id|set_30
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2625,7 +2625,7 @@ r_int
 id|sendup_buffer
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2948,7 +2948,7 @@ id|reg_ptr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2999,7 +2999,7 @@ id|ltpc_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3178,7 +3178,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3197,7 +3197,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3245,7 +3245,7 @@ id|ltpc_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3365,13 +3365,13 @@ id|l
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|l
@@ -3455,7 +3455,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3671,7 +3671,7 @@ id|ltpc_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4122,7 +4122,7 @@ id|ltpc_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5032,7 +5032,7 @@ suffix:semicolon
 DECL|variable|dev_ltpc
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_ltpc
 op_assign
 (brace

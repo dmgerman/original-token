@@ -3,14 +3,14 @@ macro_line|#include &quot;arlan.h&quot;
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-multiline_comment|/* void enableReceive(struct device* dev);&n;*/
+multiline_comment|/* void enableReceive(struct net_device* dev);&n;*/
 r_static
 r_int
 id|arlan_command
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -54,7 +54,7 @@ id|arlan_diagnostic_info_string
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -232,7 +232,7 @@ id|arlan_hardware_type_string
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -467,7 +467,7 @@ id|arlan_print_diagnostic_info
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -837,7 +837,7 @@ id|arlan_hw_test_memory
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1196,7 +1196,7 @@ id|arlan_setup_card_by_book
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1618,7 +1618,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

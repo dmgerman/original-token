@@ -1998,7 +1998,7 @@ id|info
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2701,7 +2701,7 @@ op_star
 id|uh
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

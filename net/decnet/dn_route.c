@@ -1192,7 +1192,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1737,7 +1737,7 @@ op_star
 id|dst
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2287,7 +2287,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2766,7 +2766,7 @@ op_star
 id|skb-&gt;cb
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3655,7 +3655,7 @@ id|iif
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

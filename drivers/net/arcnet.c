@@ -96,7 +96,7 @@ id|arc90xx_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -108,7 +108,7 @@ id|arcnet_tx_done
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -130,7 +130,7 @@ id|arcnet_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -149,7 +149,7 @@ id|arcnetA_continue_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -159,7 +159,7 @@ id|arcnet_go_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -276,7 +276,7 @@ id|arcnet_dump_skb
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -307,7 +307,7 @@ id|arcnet_dump_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -341,7 +341,7 @@ id|arcnet_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -352,7 +352,7 @@ id|arcnet_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -368,7 +368,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -410,7 +410,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -426,7 +426,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -437,7 +437,7 @@ id|arcnetA_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -463,7 +463,7 @@ id|arcnet_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -480,7 +480,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -493,7 +493,7 @@ id|arcnetE_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -504,7 +504,7 @@ id|arcnetE_open_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -520,7 +520,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -531,7 +531,7 @@ id|arcnetE_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -558,7 +558,7 @@ id|arcnetS_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -569,7 +569,7 @@ id|arcnetS_open_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -585,7 +585,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -596,7 +596,7 @@ id|arcnetS_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -625,7 +625,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -668,7 +668,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -683,7 +683,7 @@ id|arcnet_dump_skb
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -799,7 +799,7 @@ id|arcnet_dump_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -911,14 +911,14 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* Setup a struct device for ARCnet.  This should really be in net_init.c&n; * but since there are three different ARCnet devices ANYWAY... &lt;gargle&gt;&n; *&n; * Actually, the whole idea of having all this kernel-dependent stuff (ie.&n; * &quot;new-style flags&quot;) setup per-net-device is kind of weird anyway.&n; *&n; * Intelligent defaults?!  Nah.&n; */
+multiline_comment|/* Setup a struct net_device for ARCnet.  This should really be in net_init.c&n; * but since there are three different ARCnet devices ANYWAY... &lt;gargle&gt;&n; *&n; * Actually, the whole idea of having all this kernel-dependent stuff (ie.&n; * &quot;new-style flags&quot;) setup per-net-device is kind of weird anyway.&n; *&n; * Intelligent defaults?!  Nah.&n; */
 DECL|function|arcnet_setup
 r_void
 id|arcnet_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -989,7 +989,7 @@ id|arcnet_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1075,7 +1075,7 @@ id|lp-&gt;edev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -1084,7 +1084,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 comma
 id|GFP_KERNEL
@@ -1111,7 +1111,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -1183,7 +1183,7 @@ id|lp-&gt;sdev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -1192,7 +1192,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 l_int|10
@@ -1240,7 +1240,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -1330,7 +1330,7 @@ id|arcnet_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1548,7 +1548,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1946,7 +1946,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2390,7 +2390,7 @@ id|arcnetA_continue_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2598,7 +2598,7 @@ id|arcnet_go_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2729,7 +2729,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2936,7 +2936,7 @@ id|arcnet_tx_done
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3025,7 +3025,7 @@ id|daddr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3192,7 +3192,7 @@ id|arcnetA_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4207,7 +4207,7 @@ id|arcnet_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4242,7 +4242,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4524,7 +4524,7 @@ op_star
 id|skb-&gt;data
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -4656,7 +4656,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4818,7 +4818,7 @@ id|arcnetE_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4894,7 +4894,7 @@ id|arcnetE_open_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4916,7 +4916,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5225,7 +5225,7 @@ id|arcnetE_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5379,7 +5379,7 @@ id|arcnetS_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5464,7 +5464,7 @@ id|arcnetS_open_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5486,7 +5486,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5713,7 +5713,7 @@ id|arcnetS_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5943,7 +5943,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6146,7 +6146,7 @@ id|skb
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -6252,7 +6252,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6443,7 +6443,7 @@ id|open
 )brace
 DECL|variable|arcnet_devs
 r_struct
-id|device
+id|net_device
 id|arcnet_devs
 (braket
 id|MAX_ARCNET_DEVS
@@ -6751,7 +6751,7 @@ id|device
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

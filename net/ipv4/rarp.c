@@ -86,7 +86,7 @@ suffix:semicolon
 multiline_comment|/* Type of hardware in use     */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -111,7 +111,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -270,7 +270,7 @@ id|rarp_destroy_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -379,7 +379,7 @@ c_func
 (paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|ptr
@@ -494,7 +494,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -830,7 +830,7 @@ op_star
 id|rt
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

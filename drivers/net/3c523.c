@@ -136,7 +136,7 @@ id|elmc_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -147,7 +147,7 @@ id|elmc_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -162,7 +162,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -174,7 +174,7 @@ id|elmc_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -186,7 +186,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -199,7 +199,7 @@ id|init586
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -210,7 +210,7 @@ id|check586
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -228,7 +228,7 @@ id|alloc586
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -239,7 +239,7 @@ id|startrecv586
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -251,7 +251,7 @@ id|alloc_rfa
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -266,7 +266,7 @@ id|elmc_rcv_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -277,7 +277,7 @@ id|elmc_xmt_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -288,7 +288,7 @@ id|elmc_rnr_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -554,7 +554,7 @@ id|elmc_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -597,7 +597,7 @@ id|elmc_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -697,7 +697,7 @@ id|check586
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -909,7 +909,7 @@ id|alloc586
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1121,13 +1121,13 @@ op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|d
@@ -1323,7 +1323,7 @@ id|elmc_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1994,7 +1994,7 @@ id|init586
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3329,7 +3329,7 @@ id|alloc_rfa
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3623,13 +3623,13 @@ id|reg_ptr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -3915,7 +3915,7 @@ id|elmc_rcv_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4177,7 +4177,7 @@ id|elmc_rnr_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4257,7 +4257,7 @@ id|elmc_xmt_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4471,7 +4471,7 @@ id|startrecv586
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4526,7 +4526,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5179,7 +5179,7 @@ id|elmc_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5269,7 +5269,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5339,7 +5339,7 @@ suffix:semicolon
 DECL|variable|dev_elmc
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_elmc
 (braket
 id|MAX_3C523_CARDS
@@ -5461,7 +5461,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -5607,7 +5607,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

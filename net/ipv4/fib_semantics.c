@@ -432,7 +432,7 @@ id|u32
 id|gw
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1126,7 +1126,7 @@ id|RTNH_F_ONLINK
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3165,7 +3165,7 @@ id|colon
 suffix:semicolon
 macro_line|#endif
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3687,7 +3687,7 @@ id|u32
 id|local
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3840,7 +3840,7 @@ id|fib_sync_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

@@ -476,7 +476,7 @@ id|open
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -488,7 +488,7 @@ id|close
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -500,7 +500,7 @@ id|ioctl
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -1206,7 +1206,7 @@ id|hdlcdrv_receiver
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -1219,7 +1219,7 @@ id|hdlcdrv_transmitter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -1232,7 +1232,7 @@ id|hdlcdrv_arbitrate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -1245,7 +1245,7 @@ id|hdlcdrv_register_hdlcdrv
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1281,7 +1281,7 @@ id|hdlcdrv_unregister_hdlcdrv
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

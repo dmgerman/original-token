@@ -140,7 +140,7 @@ id|ndisc_send_ns
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -171,7 +171,7 @@ id|ndisc_send_rs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -238,7 +238,7 @@ op_star
 id|buf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -331,7 +331,7 @@ id|ndisc_get_neigh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

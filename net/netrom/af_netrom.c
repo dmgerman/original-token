@@ -361,7 +361,7 @@ id|nr_kill_by_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -426,13 +426,13 @@ id|ptr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|ptr
@@ -2099,7 +2099,7 @@ op_star
 id|uaddr
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2367,7 +2367,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3050,7 +3050,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4555,7 +4555,7 @@ op_star
 id|s
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -5032,7 +5032,7 @@ macro_line|#endif&t;
 DECL|variable|dev_nr
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_nr
 suffix:semicolon
@@ -5068,7 +5068,7 @@ op_star
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 comma
 id|GFP_KERNEL
@@ -5100,7 +5100,7 @@ op_star
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon

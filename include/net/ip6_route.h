@@ -152,7 +152,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -168,7 +168,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -197,7 +197,7 @@ op_star
 id|gw
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -252,7 +252,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -270,7 +270,7 @@ op_star
 id|gwaddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -324,7 +324,7 @@ op_star
 id|saddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -420,7 +420,7 @@ id|rt6_ifdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -431,7 +431,7 @@ id|rt6_mtu_change
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

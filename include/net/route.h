@@ -194,7 +194,7 @@ id|u8
 id|tos
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -265,7 +265,7 @@ id|u8
 id|tos
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|devin
 )paren

@@ -35,7 +35,7 @@ macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#ifdef CONFIG_MATH_EMULATION
 macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#endif
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &lt;linux/irq.h&gt;
 DECL|variable|semaphore_wake_lock
 id|spinlock_t
 id|semaphore_wake_lock

@@ -86,7 +86,7 @@ id|atalk_route
 (brace
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -118,7 +118,7 @@ id|atalk_iface
 (brace
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -498,7 +498,7 @@ id|atalk_find_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -515,14 +515,14 @@ id|atalk_find_dev_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|atrtr_get_dev
 c_func
@@ -539,7 +539,7 @@ id|aarp_send_ddp
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -564,7 +564,7 @@ id|aarp_send_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -580,7 +580,7 @@ id|aarp_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

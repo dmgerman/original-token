@@ -24,7 +24,7 @@ id|ultra32_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -34,7 +34,7 @@ id|ultra32_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -48,7 +48,7 @@ id|ultra32_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -59,7 +59,7 @@ id|ultra32_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -70,7 +70,7 @@ id|ultra32_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -89,7 +89,7 @@ id|ultra32_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -111,7 +111,7 @@ id|ultra32_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -135,7 +135,7 @@ id|ultra32_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -183,7 +183,7 @@ id|ultra32_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -349,7 +349,7 @@ id|ultra32_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -919,7 +919,7 @@ id|ultra32_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1055,7 +1055,7 @@ id|ultra32_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1142,7 +1142,7 @@ id|ultra32_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1248,7 +1248,7 @@ id|ultra32_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1351,7 +1351,7 @@ id|ultra32_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1533,7 +1533,7 @@ id|ultra32_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1616,7 +1616,7 @@ suffix:semicolon
 DECL|variable|dev_ultra
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_ultra
 (braket
 id|MAX_ULTRA32_CARDS
@@ -1683,7 +1683,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1789,7 +1789,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

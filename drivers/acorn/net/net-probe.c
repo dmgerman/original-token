@@ -8,7 +8,7 @@ r_int
 id|ether1_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -18,7 +18,7 @@ r_int
 id|ether3_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -28,7 +28,7 @@ r_int
 id|etherh_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -42,7 +42,7 @@ id|acorn_ethif_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

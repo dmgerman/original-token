@@ -50,7 +50,7 @@ suffix:semicolon
 multiline_comment|/* 6pack things&t;&t;&t;*/
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* the device&t;&t;&t;*/
@@ -1275,7 +1275,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1522,7 +1522,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1612,7 +1612,7 @@ id|sp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1827,7 +1827,7 @@ id|sp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2310,7 +2310,7 @@ id|sp_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2398,7 +2398,7 @@ id|sp_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2454,7 +2454,7 @@ id|sp_set_dev_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2763,7 +2763,7 @@ id|sp_open_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2816,7 +2816,7 @@ id|sixpack_init_ctrl_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dummy
 )paren
@@ -3038,7 +3038,7 @@ id|sixpack_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

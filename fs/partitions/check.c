@@ -17,6 +17,14 @@ macro_line|#include &quot;sgi.h&quot;
 macro_line|#include &quot;sun.h&quot;
 r_extern
 r_void
+id|device_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|md_setup_drive
 c_func
 (paren

@@ -36,7 +36,7 @@ id|qops
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 DECL|member|slaves
@@ -111,7 +111,7 @@ id|sch
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -270,7 +270,7 @@ l_int|NULL
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|m
 op_assign
@@ -585,7 +585,7 @@ id|opt
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -844,7 +844,7 @@ op_star
 id|skb_res
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1072,7 +1072,7 @@ op_star
 id|skb_res
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1119,7 +1119,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1196,7 +1196,7 @@ suffix:semicolon
 r_do
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 op_assign
@@ -1459,7 +1459,7 @@ id|teql_master_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1514,7 +1514,7 @@ suffix:semicolon
 r_do
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 op_assign
@@ -1648,7 +1648,7 @@ id|teql_master_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1668,7 +1668,7 @@ id|teql_master_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1696,7 +1696,7 @@ id|teql_master_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1787,7 +1787,7 @@ id|teql_master_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

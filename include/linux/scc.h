@@ -603,7 +603,7 @@ suffix:semicolon
 multiline_comment|/* channel exists? */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

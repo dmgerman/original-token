@@ -38,7 +38,7 @@ mdefine_line|#define BIF_MTU 10240
 DECL|variable|bif_device
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|bif_device
 op_assign
@@ -58,7 +58,7 @@ id|bif_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -68,7 +68,7 @@ id|bif_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -84,7 +84,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -104,7 +104,7 @@ id|bif_stop
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -117,7 +117,7 @@ id|bif_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -134,7 +134,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -197,7 +197,7 @@ op_star
 id|buff
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -240,7 +240,7 @@ id|bif_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -268,7 +268,7 @@ id|bif_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -283,7 +283,7 @@ id|bif_do_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -315,7 +315,7 @@ id|bif_set_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -344,7 +344,7 @@ id|bif_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -514,7 +514,7 @@ id|bif_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -801,7 +801,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1081,7 +1081,7 @@ id|bif_stop
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1114,7 +1114,7 @@ id|bif_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

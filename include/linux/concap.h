@@ -19,7 +19,7 @@ id|concap_proto
 (brace
 DECL|member|net_dev
 r_struct
-id|device
+id|net_device
 op_star
 id|net_dev
 suffix:semicolon
@@ -148,7 +148,7 @@ op_star
 id|cprot
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|ndev
 comma

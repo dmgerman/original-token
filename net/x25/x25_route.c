@@ -52,7 +52,7 @@ r_int
 id|sigdigits
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -314,7 +314,7 @@ r_int
 id|sigdigits
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -388,7 +388,7 @@ id|x25_route_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -437,7 +437,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Check that the device given is a valid X.25 interface that is &quot;up&quot;.&n; */
 DECL|function|x25_dev_get
 r_struct
-id|device
+id|net_device
 op_star
 id|x25_dev_get
 c_func
@@ -448,7 +448,7 @@ id|devname
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -501,7 +501,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Find a device given an X.25 address.&n; */
 DECL|function|x25_get_route
 r_struct
-id|device
+id|net_device
 op_star
 id|x25_get_route
 c_func
@@ -616,7 +616,7 @@ id|x25_route_struct
 id|x25_route
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

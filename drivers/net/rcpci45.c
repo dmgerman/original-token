@@ -93,7 +93,7 @@ r_struct
 multiline_comment|/* &n;     *    pointer to the device structure which is part&n;     * of the interface to the Linux kernel.&n;     */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -137,7 +137,7 @@ suffix:semicolon
 multiline_comment|/* the statistics structure */
 DECL|member|next
 r_struct
-id|device
+id|net_device
 op_star
 id|next
 suffix:semicolon
@@ -258,7 +258,7 @@ id|RCinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -269,7 +269,7 @@ id|RCscan
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -280,7 +280,7 @@ id|RCfound_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -302,7 +302,7 @@ id|RCopen
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -316,7 +316,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -341,7 +341,7 @@ id|RCclose
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -354,7 +354,7 @@ id|RCget_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -364,7 +364,7 @@ id|RCioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -380,7 +380,7 @@ id|RCconfig
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -452,7 +452,7 @@ id|RC_allocate_and_post_buffers
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -462,7 +462,7 @@ multiline_comment|/* A list of all installed RC devices, for removing the driver
 DECL|variable|root_RCdev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|root_RCdev
 op_assign
@@ -482,7 +482,7 @@ id|rcpci_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -538,7 +538,7 @@ id|RCscan
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -765,7 +765,7 @@ id|RCinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -811,7 +811,7 @@ id|RCfound_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -852,13 +852,13 @@ suffix:semicolon
 r_int
 id|init_status
 suffix:semicolon
-multiline_comment|/* &n;     * Allocate and fill new device structure. &n;     * We need enough for struct device plus DPA plus the LAN API private&n;     * area, which requires a minimum of 16KB.  The top of the allocated&n;     * area will be assigned to struct device; the next chunk will be&n;     * assigned to DPA; and finally, the rest will be assigned to the&n;     * the LAN API layer.&n;     */
+multiline_comment|/* &n;     * Allocate and fill new device structure. &n;     * We need enough for struct net_device plus DPA plus the LAN API private&n;     * area, which requires a minimum of 16KB.  The top of the allocated&n;     * area will be assigned to struct net_device; the next chunk will be&n;     * assigned to DPA; and finally, the rest will be assigned to the&n;     * the LAN API layer.&n;     */
 macro_line|#ifdef MODULE
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -917,7 +917,7 @@ op_plus
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 l_int|15
@@ -936,7 +936,7 @@ id|dev-&gt;priv
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -1433,7 +1433,7 @@ id|RCopen
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1626,7 +1626,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1847,7 +1847,7 @@ id|PDPA
 id|pDpa
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2013,7 +2013,7 @@ id|PDPA
 id|pDpa
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2310,7 +2310,7 @@ op_star
 id|skb
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2836,13 +2836,13 @@ id|PDPA
 id|pDpa
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 (paren
@@ -2947,13 +2947,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -3292,7 +3292,7 @@ id|RCclose
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3391,7 +3391,7 @@ id|RCget_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3792,7 +3792,7 @@ id|RCioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4676,7 +4676,7 @@ id|RCconfig
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4746,7 +4746,7 @@ id|PDPA
 id|pDpa
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|next
 suffix:semicolon
@@ -4856,7 +4856,7 @@ id|RC_allocate_and_post_buffers
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

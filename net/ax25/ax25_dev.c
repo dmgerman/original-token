@@ -36,7 +36,7 @@ id|ax25_dev_ax25dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -135,7 +135,7 @@ id|ax25_dev_device_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -346,7 +346,7 @@ id|ax25_dev_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -656,13 +656,13 @@ suffix:semicolon
 )brace
 DECL|function|ax25_fwd_dev
 r_struct
-id|device
+id|net_device
 op_star
 id|ax25_fwd_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

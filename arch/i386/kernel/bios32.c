@@ -13,7 +13,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &lt;linux/irq.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 macro_line|#ifdef DEBUG
@@ -1182,11 +1182,9 @@ id|pci_conf2_write_config_dword
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Before we decide to use direct hardware access mechanisms, we try to do some&n; * trivial checks to ensure it at least _seems_ to be working -- we just test&n; * whether bus 00 contains a host bridge (this is similar to checking&n; * techniques used in XFree86, but ours should be more reliable since we&n; * attempt to make use of direct access hints provided by the PCI BIOS).&n; *&n; * This should be close to trivial, but it isn&squot;t, because there are buggy&n; * chipsets (yes, you guessed it, by Intel and Compaq) that have no class ID.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_sanity_check
 r_int
+id|__init
 id|pci_sanity_check
 c_func
 (paren
@@ -1194,7 +1192,6 @@ r_struct
 id|pci_access
 op_star
 id|a
-)paren
 )paren
 (brace
 id|u16
@@ -1304,19 +1301,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_check_direct
 r_static
 r_struct
 id|pci_access
 op_star
+id|__init
 id|pci_check_direct
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -1799,17 +1793,14 @@ r_static
 r_int
 id|pci_bios_present
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|check_pcibios
 r_static
 r_int
+id|__init
 id|check_pcibios
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|u32
@@ -2153,12 +2144,10 @@ l_int|8
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_bios_find_device
 r_static
 r_int
+id|__init
 id|pci_bios_find_device
 (paren
 r_int
@@ -2182,7 +2171,6 @@ r_int
 r_char
 op_star
 id|device_fn
-)paren
 )paren
 (brace
 r_int
@@ -2867,19 +2855,16 @@ id|pci_bios_write_config_dword
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Try to find PCI BIOS.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_find_bios
 r_static
 r_struct
 id|pci_access
 op_star
+id|__init
 id|pci_find_bios
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_union
@@ -5021,16 +5006,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Arch-dependent fixups.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcibios_fixup
 r_void
+id|__init
 id|pcibios_fixup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if
@@ -5077,11 +5059,9 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcibios_fixup_bus
 r_void
+id|__init
 id|pcibios_fixup_bus
 c_func
 (paren
@@ -5089,7 +5069,6 @@ r_struct
 id|pci_bus
 op_star
 id|b
-)paren
 )paren
 (brace
 id|pcibios_fixup_ghosts
@@ -5106,16 +5085,13 @@ id|b
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialization. Try all known PCI access methods. Note that we support&n; * using both PCI BIOS and direct access: in such cases, we use I/O ports&n; * to access config space, but we still keep BIOS order of cards to be&n; * compatible with 2.0.X. This should go away in 2.3.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcibios_init
 r_void
+id|__init
 id|pcibios_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

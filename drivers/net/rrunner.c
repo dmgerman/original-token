@@ -59,7 +59,7 @@ id|__init
 id|rr_hippi_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -473,7 +473,7 @@ macro_line|#endif
 DECL|variable|root_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|root_dev
 op_assign
@@ -541,7 +541,7 @@ op_star
 id|rr
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|next
 suffix:semicolon
@@ -807,7 +807,7 @@ id|rr_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2017,7 +2017,7 @@ id|rr_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2269,7 +2269,7 @@ id|rr_init1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2938,7 +2938,7 @@ id|rr_handle_event
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3316,7 +3316,7 @@ id|rx_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3680,13 +3680,13 @@ op_star
 id|regs
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -4025,7 +4025,7 @@ id|rr_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4347,7 +4347,7 @@ id|rr_dump
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4796,7 +4796,7 @@ id|rr_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5158,7 +5158,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5493,7 +5493,7 @@ id|rr_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5525,7 +5525,7 @@ id|rr_load_firmware
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6148,7 +6148,7 @@ id|rr_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

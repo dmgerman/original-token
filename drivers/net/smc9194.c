@@ -167,7 +167,7 @@ id|smc_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -179,7 +179,7 @@ id|smc_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -196,7 +196,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -208,7 +208,7 @@ id|smc_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -222,7 +222,7 @@ id|smc_query_statistics
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -235,7 +235,7 @@ id|smc_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -254,7 +254,7 @@ id|smc_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -304,7 +304,7 @@ id|smc_rcv
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -317,7 +317,7 @@ id|smc_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -340,7 +340,7 @@ id|smc_initcard
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -370,7 +370,7 @@ id|smc_hardware_send_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -387,7 +387,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -467,13 +467,13 @@ macro_line|#endif
 macro_line|#ifdef SUPPORT_OLD_KERNEL
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|init_etherdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1052,7 +1052,7 @@ id|crc_value
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; . Function: smc_wait_to_send_packet( struct sk_buff * skb, struct device * )&n; . Purpose:&n; .    Attempt to allocate memory for a packet, if chip-memory is not&n; .    available, then tell the card to generate an interrupt when it&n; .    is available.&n; .&n; . Algorithm:&n; .&n; . o&t;if the saved_skb is not currently null, then drop this packet&n; .&t;on the floor.  This should never happen, because of TBUSY.&n; . o&t;if the saved_skb is null, then replace it with the current packet,&n; . o&t;See if I can sending it now.&n; . o &t;(NO): Enable interrupts and let the interrupt handler deal with it.&n; . o&t;(YES):Send it now.&n;*/
+multiline_comment|/*&n; . Function: smc_wait_to_send_packet( struct sk_buff * skb, struct net_device * )&n; . Purpose:&n; .    Attempt to allocate memory for a packet, if chip-memory is not&n; .    available, then tell the card to generate an interrupt when it&n; .    is available.&n; .&n; . Algorithm:&n; .&n; . o&t;if the saved_skb is not currently null, then drop this packet&n; .&t;on the floor.  This should never happen, because of TBUSY.&n; . o&t;if the saved_skb is null, then replace it with the current packet,&n; . o&t;See if I can sending it now.&n; . o &t;(NO): Enable interrupts and let the interrupt handler deal with it.&n; . o&t;(YES):Send it now.&n;*/
 DECL|function|smc_wait_to_send_packet
 r_static
 r_int
@@ -1065,7 +1065,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1283,7 +1283,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; . Function:  smc_hardware_send_packet(struct device * )&n; . Purpose:&n; .&t;This sends the actual packet to the SMC9xxx chip.&n; .&n; . Algorithm:&n; . &t;First, see if a saved_skb is available.&n; .&t;&t;( this should NOT be called if there is no &squot;saved_skb&squot;&n; .&t;Now, find the packet number that the chip allocated&n; .&t;Point the data pointers at it in memory&n; .&t;Set the length word in the chip&squot;s memory&n; .&t;Dump the packet to chip memory&n; .&t;Check if a last byte is needed ( odd length packet )&n; .&t;&t;if so, set the control flag right&n; . &t;Tell the card to send it&n; .&t;Enable the transmit interrupt, so I know if it failed&n; . &t;Free the kernel data if I actually sent it.&n;*/
+multiline_comment|/*&n; . Function:  smc_hardware_send_packet(struct net_device * )&n; . Purpose:&n; .&t;This sends the actual packet to the SMC9xxx chip.&n; .&n; . Algorithm:&n; . &t;First, see if a saved_skb is available.&n; .&t;&t;( this should NOT be called if there is no &squot;saved_skb&squot;&n; .&t;Now, find the packet number that the chip allocated&n; .&t;Point the data pointers at it in memory&n; .&t;Set the length word in the chip&squot;s memory&n; .&t;Dump the packet to chip memory&n; .&t;Check if a last byte is needed ( odd length packet )&n; .&t;&t;if so, set the control flag right&n; . &t;Tell the card to send it&n; .&t;Enable the transmit interrupt, so I know if it failed&n; . &t;Free the kernel data if I actually sent it.&n;*/
 DECL|function|smc_hardware_send_packet
 r_static
 r_void
@@ -1291,7 +1291,7 @@ id|smc_hardware_send_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1709,7 +1709,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*-------------------------------------------------------------------------&n; |&n; | smc_init( struct device * dev )&n; |   Input parameters:&n; |&t;dev-&gt;base_addr == 0, try to find all possible locations&n; |&t;dev-&gt;base_addr == 1, return failure code&n; |&t;dev-&gt;base_addr == 2, always allocate space,  and return success&n; |&t;dev-&gt;base_addr == &lt;anything else&gt;   this is the address to check&n; |&n; |   Output:&n; |&t;0 --&gt; there is a device&n; |&t;anything else, error&n; |&n; ---------------------------------------------------------------------------&n;*/
+multiline_comment|/*-------------------------------------------------------------------------&n; |&n; | smc_init( struct net_device * dev )&n; |   Input parameters:&n; |&t;dev-&gt;base_addr == 0, try to find all possible locations&n; |&t;dev-&gt;base_addr == 1, return failure code&n; |&t;dev-&gt;base_addr == 2, always allocate space,  and return success&n; |&t;dev-&gt;base_addr == &lt;anything else&gt;   this is the address to check&n; |&n; |   Output:&n; |&t;0 --&gt; there is a device&n; |&t;anything else, error&n; |&n; ---------------------------------------------------------------------------&n;*/
 DECL|function|smc_init
 r_int
 id|__init
@@ -1717,7 +1717,7 @@ id|smc_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2201,7 +2201,7 @@ id|smc_initcard
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3016,7 +3016,7 @@ id|smc_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3211,7 +3211,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3383,7 +3383,7 @@ id|regs
 macro_line|#endif
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3943,7 +3943,7 @@ id|smc_rcv
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4427,7 +4427,7 @@ id|smc_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4658,7 +4658,7 @@ id|smc_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4697,7 +4697,7 @@ id|smc_query_statistics
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4728,7 +4728,7 @@ id|smc_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4746,7 +4746,7 @@ id|smc_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5025,7 +5025,7 @@ suffix:semicolon
 DECL|variable|devSMC9194
 r_static
 r_struct
-id|device
+id|net_device
 id|devSMC9194
 op_assign
 (brace

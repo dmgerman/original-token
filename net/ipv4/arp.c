@@ -320,7 +320,7 @@ op_star
 id|haddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -407,7 +407,7 @@ op_star
 id|neigh-&gt;primary_key
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -687,7 +687,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -861,7 +861,7 @@ id|u32
 id|paddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -951,7 +951,7 @@ id|skb
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1133,7 +1133,7 @@ id|dst
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1228,7 +1228,7 @@ id|u32
 id|dest_ip
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1655,7 +1655,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2492,7 +2492,7 @@ op_star
 id|r
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2888,7 +2888,7 @@ op_star
 id|r
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3014,7 +3014,7 @@ op_star
 id|r
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3286,7 +3286,7 @@ id|arpreq
 id|r
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3729,7 +3729,7 @@ id|n-&gt;next
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -4017,7 +4017,7 @@ id|n-&gt;next
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -4180,7 +4180,7 @@ id|arp_ifdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

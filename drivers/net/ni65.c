@@ -411,7 +411,7 @@ id|ni65_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -442,7 +442,7 @@ id|ni65_recv_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -455,7 +455,7 @@ id|ni65_xmit_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -468,7 +468,7 @@ id|ni65_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -479,7 +479,7 @@ id|ni65_lance_reinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -514,7 +514,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -525,7 +525,7 @@ id|ni65_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -536,7 +536,7 @@ id|ni65_alloc_buffer
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -560,7 +560,7 @@ id|ni65_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -570,7 +570,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -773,7 +773,7 @@ id|ni65_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -891,7 +891,7 @@ id|ni65_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1007,7 +1007,7 @@ id|ni65_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1110,7 +1110,7 @@ id|ni65_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2251,7 +2251,7 @@ id|ni65_alloc_mem
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2456,7 +2456,7 @@ id|ni65_alloc_buffer
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2877,7 +2877,7 @@ id|ni65_stop_start
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3281,7 +3281,7 @@ id|ni65_lance_reinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3741,7 +3741,7 @@ r_int
 id|csr0
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -4387,7 +4387,7 @@ id|ni65_xmit_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4709,7 +4709,7 @@ id|ni65_recv_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5254,7 +5254,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5661,7 +5661,7 @@ id|ni65_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5755,7 +5755,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5803,7 +5803,7 @@ suffix:semicolon
 DECL|variable|dev_ni65
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_ni65
 op_assign
 (brace

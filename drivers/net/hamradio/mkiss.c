@@ -82,7 +82,7 @@ suffix:semicolon
 multiline_comment|/* &t;&t;&t;&t;*/
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* the device&t;&t;&t;*/
@@ -167,7 +167,7 @@ id|ax25_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1259,7 +1259,7 @@ id|ax
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2239,7 +2239,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2502,7 +2502,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2591,7 +2591,7 @@ id|ax_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2758,7 +2758,7 @@ id|ax_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3273,7 +3273,7 @@ id|ax_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3813,7 +3813,7 @@ id|ax_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3850,7 +3850,7 @@ id|ax_set_dev_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4055,7 +4055,7 @@ id|ax_open_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4301,7 +4301,7 @@ id|ax25_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

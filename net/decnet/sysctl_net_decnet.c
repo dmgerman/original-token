@@ -1312,7 +1312,7 @@ r_int
 id|len
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1544,7 +1544,7 @@ r_int
 id|len
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

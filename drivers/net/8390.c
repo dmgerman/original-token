@@ -34,7 +34,7 @@ mdefine_line|#define NS8390_CORE
 macro_line|#include &quot;8390.h&quot;
 DECL|macro|BUG_83C690
 mdefine_line|#define BUG_83C690
-multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;void get_8390_hdr(struct device *dev, struct e8390_hdr *hdr, int ring_page)&n;&t;&t;Read the 4 byte, page aligned 8390 header. *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;&t;void block_input(struct device *dev, int count, struct sk_buff *skb, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into the skb data area. Start &n;&t;&t;reading from RING_OFFSET, the address as the 8390 sees it.  This will always&n;&t;&t;follow the read of the 8390 header. &n;*/
+multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct net_device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct net_device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;void get_8390_hdr(struct net_device *dev, struct e8390_hdr *hdr, int ring_page)&n;&t;&t;Read the 4 byte, page aligned 8390 header. *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;&t;void block_input(struct net_device *dev, int count, struct sk_buff *skb, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into the skb data area. Start &n;&t;&t;reading from RING_OFFSET, the address as the 8390 sees it.  This will always&n;&t;&t;follow the read of the 8390 header. &n;*/
 DECL|macro|ei_reset_8390
 mdefine_line|#define ei_reset_8390 (ei_local-&gt;reset_8390)
 DECL|macro|ei_block_output
@@ -59,7 +59,7 @@ id|ei_tx_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -70,7 +70,7 @@ id|ei_tx_err
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -81,7 +81,7 @@ id|ei_receive
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -92,7 +92,7 @@ id|ei_rx_overrun
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -104,7 +104,7 @@ id|NS8390_trigger_send
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -122,7 +122,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -133,7 +133,7 @@ id|do_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -147,7 +147,7 @@ id|ei_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -238,7 +238,7 @@ id|ei_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -306,7 +306,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1014,7 +1014,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1461,7 +1461,7 @@ id|ei_tx_err
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1658,7 +1658,7 @@ id|ei_tx_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2003,7 +2003,7 @@ id|ei_receive
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2537,7 +2537,7 @@ id|ei_rx_overrun
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2764,7 +2764,7 @@ id|get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2959,7 +2959,7 @@ op_star
 id|bits
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3073,7 +3073,7 @@ id|do_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3320,7 +3320,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3373,7 +3373,7 @@ id|ethdev_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3494,7 +3494,7 @@ id|NS8390_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3906,7 +3906,7 @@ id|NS8390_trigger_send
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

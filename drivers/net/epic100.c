@@ -180,7 +180,7 @@ multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibili
 multiline_comment|/* The rest of these values should never change. */
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|epic_probe1
 c_func
@@ -192,7 +192,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -290,7 +290,7 @@ id|min_latency
 suffix:semicolon
 DECL|member|probe1
 r_struct
-id|device
+id|net_device
 op_star
 (paren
 op_star
@@ -304,7 +304,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -678,7 +678,7 @@ id|product_name
 suffix:semicolon
 DECL|member|next_module
 r_struct
-id|device
+id|net_device
 op_star
 id|next_module
 suffix:semicolon
@@ -921,7 +921,7 @@ id|epic_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -977,7 +977,7 @@ id|epic_restart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -998,7 +998,7 @@ id|epic_tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1009,7 +1009,7 @@ id|epic_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1025,7 +1025,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1036,7 +1036,7 @@ id|epic_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1065,7 +1065,7 @@ id|mii_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1084,7 +1084,7 @@ id|epic_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1097,7 +1097,7 @@ id|epic_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1108,7 +1108,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1118,7 +1118,7 @@ multiline_comment|/* A list of all installed EPIC devices, for removing the driv
 DECL|variable|root_epic_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|root_epic_dev
 op_assign
@@ -1131,7 +1131,7 @@ id|epic100_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1694,7 +1694,7 @@ macro_line|#endif  /* not CARDBUS */
 DECL|function|epic_probe1
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|epic_probe1
 c_func
@@ -1706,7 +1706,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2823,7 +2823,7 @@ id|epic_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3342,7 +3342,7 @@ id|epic_pause
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3447,7 +3447,7 @@ id|epic_restart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3796,13 +3796,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -4022,7 +4022,7 @@ id|epic_tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4153,7 +4153,7 @@ id|epic_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4407,7 +4407,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4742,13 +4742,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_instance
@@ -5439,7 +5439,7 @@ id|epic_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5877,7 +5877,7 @@ id|epic_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6150,7 +6150,7 @@ id|epic_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6324,7 +6324,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6606,7 +6606,7 @@ id|mii_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6940,7 +6940,7 @@ id|loc
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -7147,7 +7147,7 @@ id|node
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 op_star
 id|devp
@@ -7270,7 +7270,7 @@ id|node
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 op_star
 id|devp
@@ -7372,7 +7372,7 @@ id|node
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 op_star
 id|devp
@@ -7555,7 +7555,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|next_dev
 suffix:semicolon

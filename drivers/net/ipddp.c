@@ -90,7 +90,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -103,7 +103,7 @@ id|ipddp_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -149,7 +149,7 @@ id|ipddp_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -169,7 +169,7 @@ id|ipddp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -189,7 +189,7 @@ id|ipddp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -208,7 +208,7 @@ id|ipddp_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -382,7 +382,7 @@ id|ipddp_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -409,7 +409,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -982,7 +982,7 @@ id|ipddp_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1098,7 +1098,7 @@ macro_line|#ifdef MODULE&t;/* Module specific functions for ipddp.c */
 DECL|variable|dev_ipddp
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_ipddp
 op_assign
 (brace

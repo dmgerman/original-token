@@ -221,7 +221,7 @@ id|load_sharing
 (brace
 DECL|member|dev_ptr
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_ptr
 suffix:semicolon

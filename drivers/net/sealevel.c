@@ -129,7 +129,7 @@ id|sealevel_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -274,7 +274,7 @@ id|sealevel_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -354,7 +354,7 @@ id|sealevel_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 comma
@@ -389,7 +389,7 @@ id|sealevel_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -433,7 +433,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -497,7 +497,7 @@ id|sealevel_neigh_setup_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -540,7 +540,7 @@ id|return_0
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -1070,7 +1070,7 @@ l_int|NULL
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 op_assign

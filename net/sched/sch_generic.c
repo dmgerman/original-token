@@ -56,7 +56,7 @@ id|qdisc_restart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -458,7 +458,7 @@ r_int
 id|res
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -671,7 +671,7 @@ id|lh
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1375,7 +1375,7 @@ id|qdisc_create_dflt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1551,7 +1551,7 @@ op_assign
 id|qdisc-&gt;ops
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1688,7 +1688,7 @@ id|dev_activate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1860,7 +1860,7 @@ id|dev_deactivate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1935,7 +1935,7 @@ id|dev_init_scheduler
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1989,7 +1989,7 @@ id|dev_shutdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

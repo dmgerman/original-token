@@ -299,7 +299,7 @@ id|stats
 suffix:semicolon
 DECL|member|slave
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 suffix:semicolon
@@ -326,7 +326,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -344,7 +344,7 @@ suffix:semicolon
 multiline_comment|/* devices which this FRAD is slaved to */
 DECL|member|master
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 (braket
@@ -382,11 +382,11 @@ id|activate
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -398,11 +398,11 @@ id|deactivate
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -414,11 +414,11 @@ id|assoc
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -430,11 +430,11 @@ id|deassoc
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -446,11 +446,11 @@ id|dlci_conf
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int

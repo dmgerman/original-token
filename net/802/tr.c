@@ -35,7 +35,7 @@ op_star
 id|trh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -51,7 +51,7 @@ op_star
 id|trh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -171,7 +171,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -449,7 +449,7 @@ id|trh_hdr
 )paren
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -536,7 +536,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -771,7 +771,7 @@ op_star
 id|trh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1219,7 +1219,7 @@ op_star
 id|trh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

@@ -94,7 +94,7 @@ id|S_ethdev_init
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -108,7 +108,7 @@ id|S_NS8390_init
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -125,7 +125,7 @@ id|S_ei_open
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -139,7 +139,7 @@ id|S_ei_close
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -510,7 +510,7 @@ id|ethdev_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -521,7 +521,7 @@ id|NS8390_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -535,7 +535,7 @@ id|ei_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -546,7 +546,7 @@ id|ei_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -570,7 +570,7 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Most of these entries should be in &squot;struct device&squot; (or most of the&n;   things in there should be here!) */
+multiline_comment|/* Most of these entries should be in &squot;struct net_device&squot; (or most of the&n;   things in there should be here!) */
 multiline_comment|/* You have one of these per-board */
 DECL|struct|ei_device
 r_struct
@@ -590,7 +590,7 @@ id|reset_8390
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -602,7 +602,7 @@ id|get_8390_hdr
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -620,7 +620,7 @@ id|block_output
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -641,7 +641,7 @@ id|block_input
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int

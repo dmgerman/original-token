@@ -951,7 +951,7 @@ id|hdlc_rx_flag
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1096,7 +1096,7 @@ id|hdlcdrv_receiver
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1592,7 +1592,7 @@ id|hdlcdrv_transmitter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2100,7 +2100,7 @@ id|start_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2185,7 +2185,7 @@ id|hdlcdrv_arbitrate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2297,7 +2297,7 @@ id|hdlcdrv_paranoia_check
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2361,7 +2361,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2419,7 +2419,7 @@ id|hdlcdrv_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2465,7 +2465,7 @@ id|hdlcdrv_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2513,7 +2513,7 @@ id|hdlcdrv_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2673,7 +2673,7 @@ id|hdlcdrv_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2784,7 +2784,7 @@ id|hdlcdrv_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3305,7 +3305,7 @@ id|hdlcdrv_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3564,7 +3564,7 @@ id|hdlcdrv_register_hdlcdrv
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3642,7 +3642,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -3777,7 +3777,7 @@ id|hdlcdrv_unregister_hdlcdrv
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

@@ -110,6 +110,24 @@ r_extern
 r_int
 id|tcp_port_rover
 suffix:semicolon
+r_extern
+r_struct
+id|sock
+op_star
+id|tcp_v4_lookup_listener
+c_func
+(paren
+id|u32
+id|addr
+comma
+r_int
+r_int
+id|hnum
+comma
+r_int
+id|dif
+)paren
+suffix:semicolon
 multiline_comment|/* Level-1 socket-demux cache. */
 DECL|macro|TCP_NUM_REGS
 mdefine_line|#define TCP_NUM_REGS&t;&t;32

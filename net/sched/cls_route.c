@@ -161,7 +161,7 @@ id|route4_reset_fastmap
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

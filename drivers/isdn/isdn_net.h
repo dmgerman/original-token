@@ -125,7 +125,7 @@ r_char
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -247,7 +247,7 @@ id|isdn_net_hangup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -301,7 +301,7 @@ id|isdn_net_send_skb
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|isdn_net_local

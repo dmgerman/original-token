@@ -782,6 +782,10 @@ op_star
 id|release_irq
 )paren
 (paren
+r_struct
+id|usb_device
+op_star
+comma
 r_void
 op_star
 id|handle

@@ -3,7 +3,7 @@ macro_line|#ifndef IRLPT_CLIENT_H
 DECL|macro|IRLPT_CLIENT_H
 mdefine_line|#define IRLPT_CLIENT_H
 multiline_comment|/* Debug function */
-multiline_comment|/* int  client_init( struct device *dev); */
+multiline_comment|/* int  client_init( struct net_device *dev); */
 multiline_comment|/*&n; * if it&squot;s static, it doesn&squot;t go in here.&n; */
 r_void
 id|irlpt_client_get_value_confirm

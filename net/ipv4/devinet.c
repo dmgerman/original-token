@@ -246,7 +246,7 @@ id|inetdev_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -973,7 +973,7 @@ id|inet_set_ifa
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1065,7 +1065,7 @@ id|ifindex
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1386,7 +1386,7 @@ op_assign
 id|arg
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1826,7 +1826,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2671,7 +2671,7 @@ id|inet_gifconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2861,7 +2861,7 @@ c_func
 (paren
 r_const
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3095,7 +3095,7 @@ id|ptr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3553,7 +3553,7 @@ comma
 id|s_ip_idx
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4061,7 +4061,7 @@ c_func
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4634,7 +4634,7 @@ r_int
 id|i
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

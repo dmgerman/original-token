@@ -246,7 +246,7 @@ id|on
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|apfddi_device
 suffix:semicolon

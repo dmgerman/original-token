@@ -33,7 +33,7 @@ suffix:semicolon
 multiline_comment|/* ptr to TTY structure&t;&t;*/
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -159,7 +159,7 @@ id|x25_asy_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

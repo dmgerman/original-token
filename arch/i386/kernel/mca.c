@@ -584,16 +584,13 @@ l_int|0x107
 suffix:semicolon
 DECL|macro|MCA_STANDARD_RESOURCES
 mdefine_line|#define MCA_STANDARD_RESOURCES&t;(sizeof(mca_standard_resources)/sizeof(struct resource))
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mca_init
 r_void
+id|__init
 id|mca_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -2562,16 +2559,13 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/*--------------------------------------------------------------------*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mca_do_proc_init
 r_void
+id|__init
 id|mca_do_proc_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

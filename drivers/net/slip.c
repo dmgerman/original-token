@@ -53,7 +53,7 @@ suffix:semicolon
 multiline_comment|/* SLIP things&t;&t;&t;*/
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* the device&t;&t;&t;*/
@@ -188,7 +188,7 @@ id|sl_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -667,7 +667,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1686,7 +1686,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1873,7 +1873,7 @@ id|sl_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1949,7 +1949,7 @@ id|sl_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2009,7 +2009,7 @@ id|sl_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2072,7 +2072,7 @@ id|sl_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2210,7 +2210,7 @@ id|sl_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4573,7 +4573,7 @@ id|sl_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4942,7 +4942,7 @@ id|slip_init_ctrl_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dummy
 )paren

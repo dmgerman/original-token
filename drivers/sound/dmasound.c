@@ -84,6 +84,7 @@ id|sound_buffers
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 DECL|variable|sound_read_buffers
 r_static
 r_char
@@ -93,6 +94,7 @@ id|sound_read_buffers
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI
 r_extern
 r_void
@@ -1056,6 +1058,7 @@ id|bufSize
 op_assign
 l_int|32
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 DECL|variable|numReadBufs
 DECL|variable|readbufSize
 r_static
@@ -1068,6 +1071,7 @@ id|readbufSize
 op_assign
 l_int|32
 suffix:semicolon
+macro_line|#endif
 id|MODULE_PARM
 c_func
 (paren
@@ -6691,6 +6695,7 @@ id|ssize_t
 id|frameLeft
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 r_static
 id|ssize_t
 id|sound_copy_translate_read
@@ -6717,6 +6722,7 @@ id|ssize_t
 id|frameLeft
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * /dev/mixer abstraction&n; */
 DECL|struct|sound_mixer
 r_struct
@@ -6825,12 +6831,14 @@ r_struct
 id|sound_queue
 id|sq
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 DECL|variable|read_sq
 r_static
 r_struct
 id|sound_queue
 id|read_sq
 suffix:semicolon
+macro_line|#endif
 DECL|macro|sq_block_address
 mdefine_line|#define sq_block_address(i)&t;(sq.buffers[i])
 DECL|macro|SIGNAL_RECEIVED
@@ -6929,12 +6937,6 @@ id|value
 comma
 id|addr
 )paren
-ques
-c_cond
-op_minus
-id|EFAULT
-suffix:colon
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*** Config &amp; Setup **********************************************************/
@@ -16694,7 +16696,7 @@ multiline_comment|/* end might not be a legal virtual address. */
 id|DMASNDSetEnd
 c_func
 (paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|end
@@ -16708,7 +16710,7 @@ suffix:semicolon
 id|DMASNDSetBase
 c_func
 (paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|start
@@ -22193,6 +22195,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PPC
 DECL|function|sound_copy_translate_read
 r_static
 id|ssize_t
@@ -22347,6 +22350,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * /dev/mixer abstraction&n; */
 DECL|macro|RECLEVEL_VOXWARE_TO_GAIN
 mdefine_line|#define RECLEVEL_VOXWARE_TO_GAIN(v) &bslash;&n;&t;((v) &lt; 0 ? 0 : (v) &gt; 100 ? 15 : (v) * 3 / 20)
@@ -25640,6 +25644,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_PPC
 DECL|function|sq_allocate_read_buffers
 r_static
 r_int
@@ -25816,7 +25821,6 @@ c_cond
 id|sound_read_buffers
 )paren
 (brace
-macro_line|#if CONFIG_PPC
 id|cp
 op_assign
 id|awacs_rx_cmds
@@ -25850,7 +25854,6 @@ id|DBDMA_STOP
 suffix:semicolon
 )brace
 multiline_comment|/* We should probably wait for the thing to stop before we&n;&t;&t;   release the memory */
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -25888,6 +25891,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|function|sq_setup
 r_static
 r_void
@@ -26094,6 +26098,7 @@ id|awacs_tx_cmds
 suffix:semicolon
 macro_line|#endif /* CONFIG_PPC */
 )brace
+macro_line|#ifdef CONFIG_PPC
 DECL|function|read_sq_setup
 r_static
 r_void
@@ -26112,7 +26117,6 @@ op_star
 id|read_buffers
 )paren
 (brace
-macro_line|#ifdef CONFIG_PPC
 r_int
 id|i
 suffix:semicolon
@@ -26122,7 +26126,6 @@ id|dbdma_cmd
 op_star
 id|cp
 suffix:semicolon
-macro_line|#endif /* CONFIG_PPC */
 id|read_sq.max_count
 op_assign
 id|numBufs
@@ -26161,27 +26164,6 @@ id|read_sq.active
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_ATARI
-id|read_sq.ignore_int
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
-macro_line|#ifdef CONFIG_AMIGA
-id|read_sq.block_size_half
-op_assign
-id|read_sq.block_size
-op_rshift
-l_int|1
-suffix:semicolon
-id|read_sq.block_size_quarter
-op_assign
-id|read_sq.block_size_half
-op_rshift
-l_int|1
-suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PPC
 id|cp
 op_assign
 id|awacs_rx_cmds
@@ -26333,8 +26315,8 @@ id|awacs_rx_cmds
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_PPC */
 )brace
+macro_line|#endif /* CONFIG_PPC */
 DECL|function|sq_play
 r_static
 r_void
@@ -26649,6 +26631,7 @@ id|uWritten
 suffix:semicolon
 )brace
 multiline_comment|/***********/
+macro_line|#ifdef CONFIG_PPC
 multiline_comment|/* Here is how the values are used for reading.&n; * The value &squot;active&squot; simply indicates the DMA is running.  This is&n; * done so the driver semantics are DMA starts when the first read is&n; * posted.  The value &squot;front&squot; indicates the buffer we should next&n; * send to the user.  The value &squot;rear&squot; indicates the buffer the DMA is&n; * currently filling.  When &squot;front&squot; == &squot;rear&squot; the buffer &quot;ring&quot; is&n; * empty (we always have an empty available).  The &squot;rear_size&squot; is used&n; * to track partial offsets into the current buffer.  Right now, I just keep&n; * the DMA running.  If the reader can&squot;t keep up, the interrupt tosses&n; * the oldest buffer.  We could also shut down the DMA in this case.&n; */
 DECL|function|sq_read
 r_static
@@ -26862,6 +26845,7 @@ r_return
 id|uRead
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sq_open
 r_static
 r_int
@@ -26979,6 +26963,7 @@ op_assign
 id|file-&gt;f_mode
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PCC
 r_if
 c_cond
 (paren
@@ -27075,6 +27060,7 @@ op_assign
 id|file-&gt;f_mode
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI
 id|sq.ignore_int
 op_assign
@@ -27180,6 +27166,7 @@ id|sq.open_queue
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PCC
 r_if
 c_cond
 (paren
@@ -27199,6 +27186,7 @@ id|read_sq.open_queue
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|err_out
 suffix:colon
 id|MOD_DEC_USE_COUNT
@@ -27365,11 +27353,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 id|sq_release_read_buffers
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sq_release_buffers
 c_func
 (paren
@@ -27379,6 +27369,7 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* There is probably a DOS atack here. They change the mode flag. */
 multiline_comment|/* XXX add check here */
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -27398,6 +27389,7 @@ id|read_sq.open_queue
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -27910,9 +27902,15 @@ op_assign
 (brace
 id|sound_lseek
 comma
+macro_line|#ifdef CONFIG_PPC
 id|sq_read
 comma
 multiline_comment|/* sq_read */
+macro_line|#else
+l_int|NULL
+comma
+multiline_comment|/* sq_read */
+macro_line|#endif
 id|sq_write
 comma
 l_int|NULL
@@ -27992,6 +27990,7 @@ op_amp
 id|sq.sync_queue
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 id|init_waitqueue_head
 c_func
 (paren
@@ -28013,14 +28012,17 @@ op_amp
 id|read_sq.sync_queue
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sq.busy
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 id|read_sq.busy
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* whatever you like as startup mode for /dev/dsp,&n;&t; * (/dev/audio hasn&squot;t got a startup mode). note that&n;&t; * once changed a new open() will *not* restore these!&n;&t; */
 id|sound.dsp.format
 op_assign
@@ -28128,12 +28130,15 @@ op_star
 id|mach
 op_assign
 l_string|&quot;&quot;
-comma
+suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
+r_char
 id|awacs_buf
 (braket
 l_int|50
 )braket
 suffix:semicolon
+macro_line|#endif
 r_int
 id|len
 op_assign

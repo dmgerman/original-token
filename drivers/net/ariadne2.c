@@ -57,7 +57,7 @@ id|ariadne2_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -68,7 +68,7 @@ id|ariadne2_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -87,7 +87,7 @@ id|ariadne2_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -98,7 +98,7 @@ id|ariadne2_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -109,7 +109,7 @@ id|ariadne2_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -120,7 +120,7 @@ id|ariadne2_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -139,7 +139,7 @@ id|ariadne2_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -161,7 +161,7 @@ id|ariadne2_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -187,7 +187,7 @@ id|ariadne2_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -297,7 +297,7 @@ id|ariadne2_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -941,7 +941,7 @@ id|ariadne2_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -965,7 +965,7 @@ id|ariadne2_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1005,7 +1005,7 @@ id|ariadne2_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1118,7 +1118,7 @@ id|ariadne2_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1328,7 +1328,7 @@ id|ariadne2_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1559,7 +1559,7 @@ id|ariadne2_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1848,7 +1848,7 @@ suffix:semicolon
 DECL|variable|ariadne2_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|ariadne2_dev
 op_assign
 (brace

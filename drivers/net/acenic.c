@@ -165,7 +165,7 @@ suffix:semicolon
 DECL|variable|root_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|root_dev
 op_assign
@@ -185,7 +185,7 @@ id|__init
 id|acenic_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -906,7 +906,7 @@ op_star
 id|regs
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|next
 suffix:semicolon
@@ -1204,7 +1204,7 @@ id|ace_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3017,13 +3017,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -3146,7 +3146,7 @@ id|ace_load_std_rx_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3403,7 +3403,7 @@ id|ace_load_jumbo_rx_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3623,7 +3623,7 @@ id|ace_flush_jumbo_rx_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3769,7 +3769,7 @@ id|ace_handle_event
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4024,7 +4024,7 @@ id|ace_rx_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4654,13 +4654,13 @@ op_star
 id|regs
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -4989,7 +4989,7 @@ id|ace_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5218,7 +5218,7 @@ id|ace_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5458,7 +5458,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5683,7 +5683,7 @@ id|ace_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5825,7 +5825,7 @@ id|ace_set_mac_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5961,7 +5961,7 @@ id|ace_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6217,7 +6217,7 @@ id|ace_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6572,7 +6572,7 @@ id|ace_load_firmware
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

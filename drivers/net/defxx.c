@@ -42,7 +42,7 @@ id|dfx_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -50,13 +50,13 @@ suffix:semicolon
 multiline_comment|/* Define module-wide (static) routines */
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|dfx_alloc_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -70,7 +70,7 @@ id|dfx_bus_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -91,7 +91,7 @@ id|dfx_driver_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -112,7 +112,7 @@ id|dfx_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -123,7 +123,7 @@ id|dfx_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -184,7 +184,7 @@ id|dfx_ctl_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -195,7 +195,7 @@ id|dfx_ctl_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -206,7 +206,7 @@ id|dfx_ctl_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -335,7 +335,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -536,7 +536,7 @@ id|dfx_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1063,14 +1063,14 @@ suffix:semicolon
 multiline_comment|/*&n; * ====================&n; * = dfx_alloc_device =&n; * ====================&n; *   &n; * Overview:&n; *   Allocate new device structure for adapter&n; *  &n; * Returns:&n; *   Pointer to device structure for this adapter or NULL if&n; *   none are available or could not allocate memory for&n; *   private board structure.&n; *       &n; * Arguments:&n; *   dev    - pointer to device information for last device&n; *   iobase - base I/O address of new adapter&n; *&n; * Functional Description:&n; *   The algorithm for allocating a new device structure is&n; *   fairly simple.  Since we&squot;re presently the only FDDI driver&n; *   under Linux, we&squot;ll find the first device structure with an&n; *   &quot;fddi*&quot; device name that&squot;s free.  If we run out of devices,&n; *   we&squot;ll fail on error.  This is simpler than trying to&n; *   allocate the memory for a new device structure, determine&n; *   the next free number (beyond 7) and link it into the chain&n; *   of devices.  A user can always modify drivers/net/Space.c&n; *   to add new FDDI device structures if necessary.&n; *&n; *   Beyond finding a free FDDI device structure, this routine&n; *   initializes most of the fields, resource tags, and dispatch&n; *   pointers in the device structure and calls the common&n; *   fddi_setup() routine to perform the rest of the device&n; *   structure initialization.&n; *&n; * Return Codes:&n; *   None&n; *&n; * Assumptions:&n; *   If additional FDDI drivers are integrated into Linux,&n; *   we&squot;ll likely need to use a different approach to&n; *   allocate a device structure.  Perhaps one that is&n; *   similar to what the Ethernet drivers use.&n; *&n; * Side Effects:&n; *   None&n; */
 DECL|function|dfx_alloc_device
 r_struct
-id|device
+id|net_device
 id|__init
 op_star
 id|dfx_alloc_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1079,7 +1079,7 @@ id|iobase
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|tmp_dev
 suffix:semicolon
@@ -1333,7 +1333,7 @@ id|dfx_bus_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1750,7 +1750,7 @@ id|dfx_driver_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2823,7 +2823,7 @@ id|dfx_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2993,7 +2993,7 @@ id|dfx_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3702,13 +3702,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -3916,7 +3916,7 @@ id|dfx_ctl_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4825,7 +4825,7 @@ id|dfx_ctl_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5030,7 +5030,7 @@ id|dfx_ctl_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6874,7 +6874,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

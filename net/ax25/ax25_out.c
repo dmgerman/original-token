@@ -49,7 +49,7 @@ op_star
 id|digi
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

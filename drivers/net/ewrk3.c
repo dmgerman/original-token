@@ -229,7 +229,7 @@ id|ewrk3_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -245,7 +245,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -274,7 +274,7 @@ id|ewrk3_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -287,7 +287,7 @@ id|ewrk3_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -298,7 +298,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -309,7 +309,7 @@ id|ewrk3_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -329,7 +329,7 @@ id|ewrk3_hw_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -343,7 +343,7 @@ id|ewrk3_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -354,7 +354,7 @@ id|ewrk3_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -365,7 +365,7 @@ id|ewrk3_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -399,7 +399,7 @@ id|SetMulticastFilter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -450,7 +450,7 @@ id|get_hw_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -468,7 +468,7 @@ id|isa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -482,7 +482,7 @@ id|eisa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -492,13 +492,13 @@ id|iobase
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|alloc_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -518,13 +518,13 @@ id|s
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|insert_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -538,7 +538,7 @@ id|init
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 )paren
@@ -641,7 +641,7 @@ id|ewrk3_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -789,7 +789,7 @@ id|ewrk3_hw_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2051,7 +2051,7 @@ id|ewrk3_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2390,7 +2390,7 @@ id|ewrk3_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2514,7 +2514,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3352,7 +3352,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3575,7 +3575,7 @@ id|ewrk3_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4417,7 +4417,7 @@ id|ewrk3_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4582,7 +4582,7 @@ id|ewrk3_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4707,7 +4707,7 @@ id|ewrk3_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4738,7 +4738,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4864,7 +4864,7 @@ id|SetMulticastFilter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5423,7 +5423,7 @@ id|isa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5617,7 +5617,7 @@ id|eisa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5839,7 +5839,7 @@ suffix:semicolon
 multiline_comment|/*&n;   ** Search the entire &squot;eth&squot; device list for a fixed probe. If a match isn&squot;t&n;   ** found then check for an autoprobe or unused device location. If they&n;   ** are not available then insert a new device structure at the end of&n;   ** the current list.&n; */
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|__init
 DECL|function|alloc_device
@@ -5847,7 +5847,7 @@ id|alloc_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5856,7 +5856,7 @@ id|iobase
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|adev
 op_assign
@@ -6084,14 +6084,14 @@ multiline_comment|/*&n;   ** If at end of eth device list and can&squot;t use cu
 r_static
 id|__init
 r_struct
-id|device
+id|net_device
 op_star
 DECL|function|insert_device
 id|insert_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6105,13 +6105,13 @@ id|init
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 r_new
 suffix:semicolon
@@ -6119,7 +6119,7 @@ r_new
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -6128,7 +6128,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 l_int|8
@@ -6871,7 +6871,7 @@ id|get_hw_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7507,7 +7507,7 @@ id|ewrk3_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -8700,7 +8700,7 @@ suffix:semicolon
 DECL|variable|thisEthwrk
 r_static
 r_struct
-id|device
+id|net_device
 id|thisEthwrk
 op_assign
 (brace

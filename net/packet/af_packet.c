@@ -161,7 +161,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -327,7 +327,7 @@ op_star
 id|skb
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -628,7 +628,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -853,7 +853,7 @@ op_star
 id|skb
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1476,7 +1476,7 @@ op_star
 id|sk
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1629,7 +1629,7 @@ l_int|15
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1738,7 +1738,7 @@ op_assign
 id|sock-&gt;sk
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2297,7 +2297,7 @@ id|peer
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2394,7 +2394,7 @@ id|peer
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2504,7 +2504,7 @@ id|packet_dev_mc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2599,7 +2599,7 @@ id|packet_dev_mclist
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2668,7 +2668,7 @@ op_star
 id|i
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2955,7 +2955,7 @@ l_int|0
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3041,7 +3041,7 @@ l_int|NULL
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3251,13 +3251,13 @@ op_star
 id|po
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data

@@ -95,7 +95,7 @@ r_int
 id|ether1_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -110,7 +110,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -137,7 +137,7 @@ r_int
 id|ether1_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -149,7 +149,7 @@ op_star
 id|ether1_getstats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -159,7 +159,7 @@ r_void
 id|ether1_setmulticastlist
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

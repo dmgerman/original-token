@@ -18,7 +18,7 @@ mdefine_line|#define MAX_CMD_RETRY&t;5
 DECL|macro|X25_CHAN_MTU
 mdefine_line|#define X25_CHAN_MTU&t;2048&t;/* unfragmented logical channel MTU */
 multiline_comment|/* Data Structures */
-multiline_comment|/* This is an extention of the &squot;struct device&squot; we create for each network&n;   interface to keep the rest of X.25 channel-specific data. */
+multiline_comment|/* This is an extention of the &squot;struct net_device&squot; we create for each network&n;   interface to keep the rest of X.25 channel-specific data. */
 DECL|struct|x25_channel
 r_typedef
 r_struct
@@ -131,7 +131,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -147,7 +147,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -158,7 +158,7 @@ r_int
 id|if_init
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -166,7 +166,7 @@ comma
 id|if_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -174,7 +174,7 @@ comma
 id|if_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -187,7 +187,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -222,7 +222,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -234,7 +234,7 @@ op_star
 id|if_stats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -422,7 +422,7 @@ r_int
 id|chan_connect
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -430,7 +430,7 @@ comma
 id|chan_send
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -445,7 +445,7 @@ r_void
 id|set_chan_state
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -473,7 +473,7 @@ comma
 id|reset_timer
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -481,7 +481,7 @@ comma
 id|chan_disc
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -523,7 +523,7 @@ id|len
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|get_dev_by_lcn
 (paren
@@ -537,7 +537,7 @@ id|lcn
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|get_dev_by_dte_addr
 (paren
@@ -1167,7 +1167,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1579,7 +1579,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1669,7 +1669,7 @@ r_int
 id|if_init
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1833,7 +1833,7 @@ r_int
 id|if_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1889,7 +1889,7 @@ r_int
 id|if_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1949,7 +1949,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2004,7 +2004,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2179,7 +2179,7 @@ op_star
 id|if_stats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2468,7 +2468,7 @@ id|cmd
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2562,7 +2562,7 @@ op_amp
 id|card-&gt;wandev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2910,7 +2910,7 @@ op_amp
 id|card-&gt;wandev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3154,7 +3154,7 @@ op_amp
 id|card-&gt;wandev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3321,7 +3321,7 @@ op_amp
 id|card-&gt;wandev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3421,7 +3421,7 @@ op_amp
 id|card-&gt;wandev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -5308,7 +5308,7 @@ multiline_comment|/* Find network device by its channel number.  */
 DECL|function|get_dev_by_lcn
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|get_dev_by_lcn
 (paren
@@ -5321,7 +5321,7 @@ id|lcn
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -5362,7 +5362,7 @@ multiline_comment|/* Find network device by its remote dte address. */
 DECL|function|get_dev_by_dte_addr
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|get_dev_by_dte_addr
 (paren
@@ -5376,7 +5376,7 @@ id|dte
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -5424,7 +5424,7 @@ r_int
 id|chan_connect
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5519,7 +5519,7 @@ r_void
 id|chan_disc
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5581,13 +5581,13 @@ id|d
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|d
@@ -5637,7 +5637,7 @@ r_void
 id|set_chan_state
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5836,7 +5836,7 @@ r_int
 id|chan_send
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6178,7 +6178,7 @@ id|reset_timer
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6496,7 +6496,7 @@ id|wandev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

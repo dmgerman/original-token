@@ -138,7 +138,7 @@ id|up
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -150,7 +150,7 @@ id|down
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -162,7 +162,7 @@ id|timer1
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -174,7 +174,7 @@ id|timer3
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -222,7 +222,7 @@ id|ifa_list
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -853,7 +853,7 @@ id|dn_dev_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -863,13 +863,13 @@ id|dn_dev_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|decnet_default_device
 suffix:semicolon
@@ -881,7 +881,7 @@ id|dn_dev_islocal
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

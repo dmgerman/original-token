@@ -30,7 +30,7 @@ id|slave
 (brace
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -81,7 +81,7 @@ id|num_slaves
 suffix:semicolon
 DECL|member|master_dev
 r_struct
-id|device
+id|net_device
 op_star
 id|master_dev
 suffix:semicolon

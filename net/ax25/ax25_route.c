@@ -40,7 +40,7 @@ id|ax25_address
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -108,7 +108,7 @@ id|ax25_rt_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1272,7 +1272,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1669,7 +1669,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

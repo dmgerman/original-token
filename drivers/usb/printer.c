@@ -1145,7 +1145,21 @@ suffix:semicolon
 )brace
 id|interface
 op_assign
-id|dev-&gt;config-&gt;altsetting-&gt;interface
+op_amp
+id|dev-&gt;config
+(braket
+l_int|0
+)braket
+dot
+id|interface
+(braket
+l_int|0
+)braket
+dot
+id|altsetting
+(braket
+l_int|0
+)braket
 suffix:semicolon
 multiline_comment|/* Lets be paranoid (for the moment)*/
 r_if

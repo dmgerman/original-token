@@ -270,6 +270,16 @@ op_star
 id|espdev
 )paren
 suffix:semicolon
+DECL|variable|cmd_buffer
+r_volatile
+r_int
+r_char
+id|cmd_buffer
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* This is where all commands are put&n;&t;&t;&t;&t; * before they are transfered to the ESP chip&n;&t;&t;&t;&t; * via PIO.&n;&t;&t;&t;&t; */
 DECL|variable|esp_initialized
 r_static
 r_int
@@ -1201,6 +1211,17 @@ r_int
 id|timeout
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|esp_initialized
+OG
+l_int|0
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 multiline_comment|/* what do we have in this machine... */
 r_if
 c_cond
@@ -1484,6 +1505,27 @@ id|esp-&gt;do_pio_cmds
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* Set the command buffer */
+id|esp-&gt;esp_command
+op_assign
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|cmd_buffer
+suffix:semicolon
+id|esp-&gt;esp_command_dvma
+op_assign
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|cmd_buffer
+suffix:semicolon
 multiline_comment|/* various functions */
 id|esp-&gt;dma_bytes_sent
 op_assign
@@ -1748,7 +1790,11 @@ suffix:semicolon
 r_int
 id|sreg
 op_assign
+id|esp_read
+c_func
+(paren
 id|esp-&gt;eregs-&gt;esp_status
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_MAC_ESP
 id|printk
@@ -1860,7 +1906,11 @@ suffix:semicolon
 r_int
 id|sreg
 op_assign
+id|esp_read
+c_func
+(paren
 id|esp-&gt;eregs-&gt;esp_status
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_MAC_ESP
 id|printk
@@ -2156,7 +2206,11 @@ id|esp
 r_int
 id|i
 op_assign
+id|esp_read
+c_func
+(paren
 id|esp-&gt;eregs-&gt;esp_status
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_MAC_ESP
 id|printk
@@ -2207,7 +2261,11 @@ suffix:semicolon
 r_int
 id|sreg
 op_assign
+id|esp_read
+c_func
+(paren
 id|esp-&gt;eregs-&gt;esp_status
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_MAC_ESP
 id|printk

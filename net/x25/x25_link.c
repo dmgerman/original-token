@@ -977,7 +977,7 @@ id|x25_link_device_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1224,7 +1224,7 @@ id|x25_link_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1279,7 +1279,7 @@ id|x25_get_neigh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1343,7 +1343,7 @@ op_star
 id|x25_neigh
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

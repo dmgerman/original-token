@@ -159,7 +159,7 @@ multiline_comment|/* Shortcuts */
 DECL|typedef|device
 r_typedef
 r_struct
-id|device
+id|net_device
 id|device
 suffix:semicolon
 DECL|typedef|en_stats

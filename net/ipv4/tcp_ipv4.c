@@ -1312,7 +1312,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* Don&squot;t inline this cruft.  Here are some nice properties to&n; * exploit here.  The BSD API does not allow a listening TCP&n; * to specify the remote port nor the remote address for the&n; * connection.  So always assume those are both wildcarded&n; * during the search since they can never be otherwise.&n; */
 DECL|function|tcp_v4_lookup_listener
-r_static
 r_struct
 id|sock
 op_star
@@ -1777,7 +1776,7 @@ r_int
 id|laddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

@@ -2059,7 +2059,7 @@ suffix:semicolon
 multiline_comment|/* Shared info page */
 DECL|member|next
 r_struct
-id|device
+id|net_device
 op_star
 id|next
 suffix:semicolon
@@ -2123,7 +2123,7 @@ id|rr_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2134,7 +2134,7 @@ id|rr_init1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2163,7 +2163,7 @@ id|rr_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2179,7 +2179,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2190,7 +2190,7 @@ id|rr_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2203,7 +2203,7 @@ id|rr_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2214,7 +2214,7 @@ id|rr_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2273,7 +2273,7 @@ id|rr_load_firmware
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

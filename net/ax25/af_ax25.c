@@ -213,7 +213,7 @@ id|ax25_kill_by_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -304,13 +304,13 @@ id|ptr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|ptr
@@ -432,7 +432,7 @@ r_int
 id|digi
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -686,7 +686,7 @@ op_star
 id|digi
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

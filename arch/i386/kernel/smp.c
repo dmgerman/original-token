@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#include &lt;asm/msr.h&gt;
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &lt;linux/irq.h&gt;
 DECL|macro|JIFFIE_TIMEOUT
 mdefine_line|#define JIFFIE_TIMEOUT 100
 r_extern
@@ -356,46 +356,6 @@ mdefine_line|#define APIC_DEFAULT_PHYS_BASE 0xfee00000
 DECL|macro|CLEAR_TSC
 mdefine_line|#define CLEAR_TSC wrmsr(0x10, 0x00001000, 0x00001000)
 multiline_comment|/*&n; *&t;Setup routine for controlling SMP activation&n; *&n; *&t;Command-line option of &quot;nosmp&quot; or &quot;maxcpus=0&quot; will disable SMP&n; *      activation entirely (the MPS table probe still happens, though).&n; *&n; *&t;Command-line option of &quot;maxcpus=&lt;NUM&gt;&quot;, where &lt;NUM&gt; is an integer&n; *&t;greater than 0, limits the maximum number of CPUs activated in&n; *&t;SMP mode to &lt;NUM&gt;.&n; */
-DECL|function|smp_setup
-r_void
-id|__init
-id|smp_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ints
-op_logical_and
-id|ints
-(braket
-l_int|0
-)braket
-OG
-l_int|0
-)paren
-id|max_cpus
-op_assign
-id|ints
-(braket
-l_int|1
-)braket
-suffix:semicolon
-r_else
-id|max_cpus
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|nosmp
 r_static
 r_int
@@ -453,7 +413,7 @@ suffix:semicolon
 id|__setup
 c_func
 (paren
-l_string|&quot;maxcpus&quot;
+l_string|&quot;maxcpus=&quot;
 comma
 id|maxcpus
 )paren
@@ -2874,6 +2834,36 @@ suffix:semicolon
 )brace
 id|stack_start
 suffix:semicolon
+DECL|function|fork_by_hand
+r_static
+r_int
+id|__init
+id|fork_by_hand
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|pt_regs
+id|regs
+suffix:semicolon
+multiline_comment|/* don&squot;t care about the eip and regs settings since we&squot;ll never&n;&t;   reschedule the forked task. */
+r_return
+id|do_fork
+c_func
+(paren
+id|CLONE_VM
+op_or
+id|CLONE_PID
+comma
+l_int|0
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
+)brace
 DECL|function|do_boot_cpu
 r_static
 r_void
@@ -2914,19 +2904,27 @@ r_int
 r_int
 id|start_eip
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We need an idle process for each processor.&n;&t; */
-id|kernel_thread
-c_func
-(paren
-id|start_secondary
-comma
-l_int|NULL
-comma
-id|CLONE_PID
-)paren
-suffix:semicolon
 id|cpucount
 op_increment
+suffix:semicolon
+multiline_comment|/* We can&squot;t use kernel_thread since we must _avoid_ to reschedule&n;&t;   the child. */
+r_if
+c_cond
+(paren
+id|fork_by_hand
+c_func
+(paren
+)paren
+OL
+l_int|0
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;failed fork for CPU %d&quot;
+comma
+id|i
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We remove it from the pidhash and the runqueue&n;&t; * once we got the process:&n;&t; */
 id|idle

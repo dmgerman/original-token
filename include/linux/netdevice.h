@@ -338,10 +338,10 @@ r_int
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;The DEVICE structure.&n; *&t;Actually, this whole structure is a big mistake.  It mixes I/O&n; *&t;data with strictly &quot;high-level&quot; data, and it has to know about&n; *&t;almost every data structure used in the INET module.&n; *&n; *&t;FIXME: cleanup struct device such that network protocol info&n; *&t;moves out.&n; */
-DECL|struct|device
+multiline_comment|/*&n; *&t;The DEVICE structure.&n; *&t;Actually, this whole structure is a big mistake.  It mixes I/O&n; *&t;data with strictly &quot;high-level&quot; data, and it has to know about&n; *&t;almost every data structure used in the INET module.&n; *&n; *&t;FIXME: cleanup struct net_device such that network protocol info&n; *&t;moves out.&n; */
+DECL|struct|net_device
 r_struct
-id|device
+id|net_device
 (brace
 multiline_comment|/*&n;&t; * This is the first field of the &quot;visible&quot; part of this structure&n;&t; * (i.e. as seen by users in the &quot;Space.c&quot; file).  It is the name&n;&t; * the interface.&n;&t; */
 DECL|member|name
@@ -409,7 +409,7 @@ suffix:semicolon
 multiline_comment|/* transmitter busy */
 DECL|member|next
 r_struct
-id|device
+id|net_device
 op_star
 id|next
 suffix:semicolon
@@ -422,7 +422,7 @@ id|init
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -435,7 +435,7 @@ id|destructor
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -472,7 +472,7 @@ id|get_stats
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -487,7 +487,7 @@ id|get_wireless_stats
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -600,7 +600,7 @@ suffix:semicolon
 multiline_comment|/* Packets queued&t;*/
 DECL|member|slave
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 suffix:semicolon
@@ -682,7 +682,7 @@ id|open
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -695,7 +695,7 @@ id|stop
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -713,7 +713,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -731,7 +731,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -774,7 +774,7 @@ id|set_multicast_list
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -789,7 +789,7 @@ id|set_mac_address
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -808,7 +808,7 @@ id|do_ioctl
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -831,7 +831,7 @@ id|set_config
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -874,7 +874,7 @@ op_star
 id|hh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -894,7 +894,7 @@ id|change_mtu
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -928,7 +928,7 @@ id|neigh_setup
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -945,7 +945,7 @@ id|accept_fastpath
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -988,7 +988,7 @@ suffix:semicolon
 multiline_comment|/* This is really htons(ether_type).&t;*/
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1005,7 +1005,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -1031,13 +1031,13 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 r_extern
 r_struct
-id|device
+id|net_device
 id|loopback_dev
 suffix:semicolon
 multiline_comment|/* The loopback */
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_base
 suffix:semicolon
@@ -1057,7 +1057,7 @@ id|net_cpu_congestion
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_getbyhwaddr
 c_func
@@ -1095,7 +1095,7 @@ id|pt
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_get
 c_func
@@ -1108,7 +1108,7 @@ id|name
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_alloc
 c_func
@@ -1129,7 +1129,7 @@ id|dev_alloc_name
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1145,7 +1145,7 @@ id|dev_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1156,7 +1156,7 @@ id|dev_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1189,7 +1189,7 @@ id|register_netdevice
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1200,7 +1200,7 @@ id|unregister_netdevice
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1237,7 +1237,7 @@ r_void
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_get_by_index
 c_func
@@ -1252,7 +1252,7 @@ id|dev_restart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1264,7 +1264,7 @@ id|gifconf_func_t
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1376,7 +1376,7 @@ id|dev_change_flags
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -1393,7 +1393,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1493,7 +1493,7 @@ id|dev_init_buffers
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1507,7 +1507,7 @@ id|ether_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1518,7 +1518,7 @@ id|fddi_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1529,7 +1529,7 @@ id|tr_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1540,7 +1540,7 @@ id|tr_freedev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1551,7 +1551,7 @@ id|ether_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1568,7 +1568,7 @@ id|register_netdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1579,7 +1579,7 @@ id|unregister_netdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1590,7 +1590,7 @@ id|register_trdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1601,7 +1601,7 @@ id|unregister_trdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1613,7 +1613,7 @@ id|dev_mc_upload
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1624,7 +1624,7 @@ id|dev_mc_delete
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1645,7 +1645,7 @@ id|dev_mc_add
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1666,7 +1666,7 @@ id|dev_mc_discard
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1677,7 +1677,7 @@ id|dev_set_promiscuity
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1691,7 +1691,7 @@ id|dev_set_allmulti
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1705,7 +1705,7 @@ id|netdev_state_change
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1736,7 +1736,7 @@ id|netdev_register_fc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1747,7 +1747,7 @@ id|stimul
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1794,7 +1794,7 @@ id|dev_clear_fastroute
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

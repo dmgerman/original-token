@@ -43,7 +43,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -123,14 +123,14 @@ suffix:semicolon
 multiline_comment|/* ether device name */
 DECL|member|ethdev
 r_struct
-id|device
+id|net_device
 op_star
 id|ethdev
 suffix:semicolon
 multiline_comment|/* link to ethernet device */
 DECL|member|axdev
 r_struct
-id|device
+id|net_device
 id|axdev
 suffix:semicolon
 multiline_comment|/* lapbeth device (lapb#) */
@@ -153,13 +153,13 @@ DECL|function|lapbeth_get_ether_dev
 r_static
 id|__inline__
 r_struct
-id|device
+id|net_device
 op_star
 id|lapbeth_get_ether_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -196,13 +196,13 @@ DECL|function|lapbeth_get_x25_dev
 r_static
 id|__inline__
 r_struct
-id|device
+id|net_device
 op_star
 id|lapbeth_get_x25_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -250,7 +250,7 @@ id|dev_is_ethdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -281,7 +281,7 @@ id|lapbeth_check_devices
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -414,7 +414,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -640,7 +640,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -869,7 +869,7 @@ op_star
 id|ptr
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1168,7 +1168,7 @@ id|lapbeth_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1200,7 +1200,7 @@ id|lapbeth_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1242,7 +1242,7 @@ id|lapbeth_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1268,7 +1268,7 @@ id|lapbeth_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1394,7 +1394,7 @@ id|lapbeth_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1461,7 +1461,7 @@ id|lapbeth_dev_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1479,7 +1479,7 @@ id|lapbeth_new_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1601,7 +1601,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|odev
 suffix:semicolon
@@ -1820,13 +1820,13 @@ id|ptr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|ptr
@@ -1926,7 +1926,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

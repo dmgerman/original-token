@@ -312,7 +312,7 @@ id|eepro_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -323,7 +323,7 @@ id|eepro_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -337,7 +337,7 @@ id|eepro_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -353,7 +353,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -382,7 +382,7 @@ id|eepro_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -393,7 +393,7 @@ id|eepro_transmit_interrupt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -404,7 +404,7 @@ id|eepro_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -417,7 +417,7 @@ id|eepro_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -428,7 +428,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -451,7 +451,7 @@ id|hardware_send_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -469,7 +469,7 @@ id|eepro_grab_irq
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -680,7 +680,7 @@ id|eepro_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1407,7 +1407,7 @@ id|eepro_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2297,7 +2297,7 @@ id|eepro_grab_irq
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2601,7 +2601,7 @@ id|eepro_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3637,7 +3637,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3939,18 +3939,18 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
 suffix:semicolon
-multiline_comment|/* (struct device *)(irq2dev_map[irq]);*/
+multiline_comment|/* (struct net_device *)(irq2dev_map[irq]);*/
 r_struct
 id|eepro_local
 op_star
@@ -4208,7 +4208,7 @@ id|eepro_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4378,7 +4378,7 @@ id|eepro_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4408,7 +4408,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5376,7 +5376,7 @@ id|hardware_send_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6004,7 +6004,7 @@ id|eepro_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6480,7 +6480,7 @@ id|eepro_transmit_interrupt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6691,7 +6691,7 @@ suffix:semicolon
 DECL|variable|dev_eepro
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_eepro
 (braket
 id|MAX_EEPRO
@@ -6908,7 +6908,7 @@ l_int|0
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 op_assign
@@ -7003,7 +7003,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 op_assign

@@ -1137,7 +1137,7 @@ id|product_name
 suffix:semicolon
 DECL|member|next_module
 r_struct
-id|device
+id|net_device
 op_star
 id|next_module
 suffix:semicolon
@@ -1381,7 +1381,7 @@ multiline_comment|/* Used for 8-byte alignment */
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|tulip_probe1
 c_func
@@ -1393,7 +1393,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1410,7 +1410,7 @@ id|parse_eeprom
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1433,7 +1433,7 @@ id|mdio_read
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1450,7 +1450,7 @@ id|mdio_write
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1470,7 +1470,7 @@ id|select_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1484,7 +1484,7 @@ id|tulip_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1505,7 +1505,7 @@ id|tulip_tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1516,7 +1516,7 @@ id|tulip_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1532,7 +1532,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1543,7 +1543,7 @@ id|tulip_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1573,7 +1573,7 @@ id|tulip_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1586,7 +1586,7 @@ id|tulip_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1598,7 +1598,7 @@ id|private_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1619,7 +1619,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1631,7 +1631,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1649,7 +1649,7 @@ multiline_comment|/* A list of all installed Tulip devices, for removing the dri
 DECL|variable|root_tulip_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|root_tulip_dev
 op_assign
@@ -1662,7 +1662,7 @@ id|tulip_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2158,7 +2158,7 @@ suffix:semicolon
 DECL|function|tulip_probe1
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|tulip_probe1
 c_func
@@ -2170,7 +2170,7 @@ r_int
 id|pci_device_fn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4031,7 +4031,7 @@ id|parse_eeprom
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5403,7 +5403,7 @@ id|mdio_read
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5738,7 +5738,7 @@ id|mdio_write
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6028,7 +6028,7 @@ id|tulip_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6979,7 +6979,7 @@ id|select_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -8417,13 +8417,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -9631,13 +9631,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -10099,7 +10099,7 @@ id|t21142_lnk_change
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -10402,13 +10402,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -10498,13 +10498,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -11033,7 +11033,7 @@ id|tulip_tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -11598,7 +11598,7 @@ id|tulip_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -11872,7 +11872,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -12126,26 +12126,26 @@ id|regs
 (brace
 macro_line|#ifdef SA_SHIRQ&t;&t;/* Use the now-standard shared IRQ implementation. */
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_instance
 suffix:semicolon
 macro_line|#else
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 (paren
@@ -13025,7 +13025,7 @@ id|tulip_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13624,7 +13624,7 @@ id|tulip_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13935,7 +13935,7 @@ id|tulip_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13988,7 +13988,7 @@ id|private_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -14537,7 +14537,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -14548,7 +14548,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -15183,7 +15183,7 @@ comma
 id|devfn
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -15325,7 +15325,7 @@ id|node
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 op_star
 id|devp
@@ -15588,7 +15588,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|next_dev
 suffix:semicolon

@@ -2354,7 +2354,7 @@ r_struct
 id|switch_stack
 op_star
 )paren
-id|p-&gt;tss.ksp
+id|p-&gt;thread.ksp
 )paren
 op_member_access_from_pointer
 id|a6
@@ -2789,9 +2789,9 @@ DECL|macro|KSTK_ESP
 macro_line|# define KSTK_ESP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1020])
 macro_line|#elif defined(__mc68000__)
 DECL|macro|KSTK_EIP
-mdefine_line|#define&t;KSTK_EIP(tsk)&t;&bslash;&n;    ({&t;&t;&t;&bslash;&n;&t;unsigned long eip = 0;&t; &bslash;&n;&t;if ((tsk)-&gt;tss.esp0 &gt; PAGE_SIZE &amp;&amp; &bslash;&n;&t;    MAP_NR((tsk)-&gt;tss.esp0) &lt; max_mapnr) &bslash;&n;&t;      eip = ((struct pt_regs *) (tsk)-&gt;tss.esp0)-&gt;pc;&t; &bslash;&n;&t;eip; })
+mdefine_line|#define&t;KSTK_EIP(tsk)&t;&bslash;&n;    ({&t;&t;&t;&bslash;&n;&t;unsigned long eip = 0;&t; &bslash;&n;&t;if ((tsk)-&gt;thread.esp0 &gt; PAGE_SIZE &amp;&amp; &bslash;&n;&t;    MAP_NR((tsk)-&gt;thread.esp0) &lt; max_mapnr) &bslash;&n;&t;      eip = ((struct pt_regs *) (tsk)-&gt;thread.esp0)-&gt;pc; &bslash;&n;&t;eip; })
 DECL|macro|KSTK_ESP
-mdefine_line|#define&t;KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
+mdefine_line|#define&t;KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;thread.usp)
 macro_line|#elif defined(__powerpc__)
 DECL|macro|KSTK_EIP
 mdefine_line|#define KSTK_EIP(tsk)&t;((tsk)-&gt;tss.regs-&gt;nip)

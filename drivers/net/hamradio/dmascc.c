@@ -64,7 +64,7 @@ id|dmascc_dev_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -80,7 +80,7 @@ id|dev_init_buffers
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -447,7 +447,7 @@ id|twin_serial_cfg
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 (braket
 l_int|2
@@ -529,7 +529,7 @@ id|scc_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -540,7 +540,7 @@ id|scc_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -551,7 +551,7 @@ id|scc_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -575,7 +575,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -588,7 +588,7 @@ id|scc_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -599,7 +599,7 @@ id|scc_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -644,7 +644,7 @@ id|rx_isr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -655,7 +655,7 @@ id|special_condition
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -679,7 +679,7 @@ id|tx_isr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -690,7 +690,7 @@ id|es_isr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -701,7 +701,7 @@ id|tm_isr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -713,7 +713,7 @@ id|delay
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1906,7 +1906,7 @@ op_star
 id|info
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2816,7 +2816,7 @@ id|scc_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3422,7 +3422,7 @@ id|scc_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3587,7 +3587,7 @@ id|scc_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3752,7 +3752,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4013,7 +4013,7 @@ id|scc_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4037,7 +4037,7 @@ id|scc_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4404,7 +4404,7 @@ id|rx_isr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4540,7 +4540,7 @@ id|special_condition
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4861,7 +4861,7 @@ id|arg
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -5135,7 +5135,7 @@ id|tx_isr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5240,7 +5240,7 @@ id|es_isr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6046,7 +6046,7 @@ id|tm_isr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6406,7 +6406,7 @@ id|delay
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

@@ -1569,7 +1569,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1641,7 +1641,7 @@ l_int|4
 suffix:semicolon
 DECL|member|happy_meals
 r_struct
-id|device
+id|net_device
 op_star
 id|happy_meals
 (braket

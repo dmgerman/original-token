@@ -88,7 +88,7 @@ id|plip_kick_bh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -99,7 +99,7 @@ id|plip_bh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -146,7 +146,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -157,7 +157,7 @@ id|plip_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -168,7 +168,7 @@ id|plip_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -181,7 +181,7 @@ id|plip_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -192,7 +192,7 @@ id|plip_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -208,7 +208,7 @@ id|plip_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -468,7 +468,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 "&f;"
-multiline_comment|/* Entry point of PLIP driver.&n;   Probe the hardware, and register/initialize the driver.&n;&n;   PLIP is rather weird, because of the way it interacts with the parport&n;   system.  It is _not_ initialised from Space.c.  Instead, plip_init()&n;   is called, and that function makes up a &quot;struct device&quot; for each port, and&n;   then calls us here.&n;&n;   */
+multiline_comment|/* Entry point of PLIP driver.&n;   Probe the hardware, and register/initialize the driver.&n;&n;   PLIP is rather weird, because of the way it interacts with the parport&n;   system.  It is _not_ initialised from Space.c.  Instead, plip_init()&n;   is called, and that function makes up a &quot;struct net_device&quot; for each port, and&n;   then calls us here.&n;&n;   */
 r_int
 id|__init
 DECL|function|plip_init_dev
@@ -476,7 +476,7 @@ id|plip_init_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -791,7 +791,7 @@ id|plip_kick_bh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -839,7 +839,7 @@ id|plip_none
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -861,7 +861,7 @@ id|plip_receive_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -883,7 +883,7 @@ id|plip_send_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -905,7 +905,7 @@ id|plip_connection_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -927,7 +927,7 @@ id|plip_error
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -949,7 +949,7 @@ id|plip_bh_timeout_error
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -989,7 +989,7 @@ id|plip_func
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1036,7 +1036,7 @@ id|plip_bh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1153,7 +1153,7 @@ id|plip_bh_timeout_error
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1478,7 +1478,7 @@ id|plip_none
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1756,7 +1756,7 @@ id|plip_receive_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2589,7 +2589,7 @@ id|plip_send_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3129,7 +3129,7 @@ id|plip_connection_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3217,7 +3217,7 @@ id|plip_error
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3365,7 +3365,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3607,7 +3607,7 @@ id|skb
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3693,7 +3693,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3906,7 +3906,7 @@ id|plip_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4107,7 +4107,7 @@ id|plip_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4273,13 +4273,13 @@ id|handle
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|handle
@@ -4334,13 +4334,13 @@ id|handle
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|handle
@@ -4450,7 +4450,7 @@ id|plip_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4486,7 +4486,7 @@ id|plip_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4586,7 +4586,7 @@ id|plip_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4723,7 +4723,7 @@ suffix:semicolon
 DECL|variable|dev_plip
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_plip
 (braket
@@ -5193,7 +5193,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 comma
 id|GFP_KERNEL
@@ -5232,7 +5232,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon

@@ -248,7 +248,7 @@ id|etherh_setif
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -395,7 +395,7 @@ id|etherh_getifstat
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -491,7 +491,7 @@ id|etherh_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -522,7 +522,7 @@ DECL|function|etherh_block_output
 id|etherh_block_output
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -823,7 +823,7 @@ DECL|function|etherh_block_input
 id|etherh_block_input
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1022,7 +1022,7 @@ DECL|function|etherh_get_header
 id|etherh_get_header
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1197,7 +1197,7 @@ id|etherh_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1253,7 +1253,7 @@ id|etherh_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1287,7 +1287,7 @@ id|etherh_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1818,7 +1818,7 @@ op_star
 id|ec
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1963,7 +1963,7 @@ id|etherh_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2069,7 +2069,7 @@ suffix:semicolon
 DECL|variable|my_ethers
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|my_ethers
 (braket
@@ -2096,7 +2096,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2179,7 +2179,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -2187,7 +2187,7 @@ id|kmalloc
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 comma
 id|GFP_KERNEL
@@ -2207,7 +2207,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon

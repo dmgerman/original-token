@@ -123,7 +123,7 @@ id|addr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -443,7 +443,7 @@ l_int|0
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -558,7 +558,7 @@ l_int|NULL
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -872,7 +872,7 @@ id|ipv6_dev_mc_inc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1119,7 +1119,7 @@ id|ipv6_mca_remove
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1206,7 +1206,7 @@ id|ipv6_dev_mc_dec
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1356,7 +1356,7 @@ id|ipv6_chk_mcast_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1839,7 +1839,7 @@ op_star
 id|addrp
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2021,7 +2021,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2970,7 +2970,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

@@ -667,7 +667,7 @@ c_loop
 (paren
 id|endaddr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|cmd-&gt;SCp.ptr
@@ -681,7 +681,7 @@ l_int|1
 suffix:semicolon
 id|cmd-&gt;SCp.buffers_residual
 op_logical_and
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|cmd-&gt;SCp.buffer

@@ -446,13 +446,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|variable|isapnp_debug
-r_static
-r_int
-id|isapnp_debug
-op_assign
-l_int|0
-suffix:semicolon
 DECL|function|write_data
 r_static
 r_inline
@@ -465,7 +458,6 @@ r_char
 id|x
 )paren
 (brace
-singleline_comment|// if (isapnp_debug) printk(&quot;&lt;D:%02x&gt;&quot;,x);
 id|outb
 c_func
 (paren
@@ -487,7 +479,6 @@ r_char
 id|x
 )paren
 (brace
-singleline_comment|// if (isapnp_debug) printk(&quot;&lt;A:%02x&gt;&quot;,x);
 id|outb
 c_func
 (paren
@@ -524,7 +515,6 @@ c_func
 id|isapnp_rdp
 )paren
 suffix:semicolon
-singleline_comment|// if (isapnp_debug) printk(&quot;&lt;R:%02x&gt;&quot;,val);
 r_return
 id|val
 suffix:semicolon
@@ -1282,15 +1272,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Control: reset CSN and conditionally everything else too */
 id|isapnp_write_byte
 c_func
 (paren
 l_int|0x02
 comma
+id|isapnp_reset
+ques
+c_cond
+l_int|0x05
+suffix:colon
 l_int|0x04
 )paren
 suffix:semicolon
-multiline_comment|/* Control: reset CSN */
 id|mdelay
 c_func
 (paren
@@ -1645,10 +1640,6 @@ l_int|1
 id|isapnp_rdp
 op_add_assign
 id|RDP_STEP
-suffix:semicolon
-id|isapnp_debug
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -5064,7 +5055,7 @@ c_func
 id|csn
 )paren
 suffix:semicolon
-macro_line|#if 1&t;/* to avoid malfunction when isapnptools is used */
+macro_line|#if 1&t;/* to avoid malfunction when the isapnptools package is used */
 id|isapnp_set_rdp
 c_func
 (paren
@@ -11467,6 +11458,10 @@ op_le
 l_int|0x3ff
 )paren
 (brace
+id|isapnp_rdp
+op_or_assign
+l_int|3
+suffix:semicolon
 id|isapnp_rdp_res
 op_assign
 id|request_region
@@ -11499,6 +11494,11 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|isapnp_set_rdp
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 id|isapnp_detected
 op_assign

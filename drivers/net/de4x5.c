@@ -1055,7 +1055,7 @@ suffix:semicolon
 multiline_comment|/* A copy of the SROM           */
 DECL|member|next_module
 r_struct
-id|device
+id|net_device
 op_star
 id|next_module
 suffix:semicolon
@@ -1128,7 +1128,7 @@ id|infoleaf_fn
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1235,7 +1235,7 @@ id|de4x5_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1251,7 +1251,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1280,7 +1280,7 @@ id|de4x5_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1293,7 +1293,7 @@ id|de4x5_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1304,7 +1304,7 @@ id|de4x5_local_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1322,7 +1322,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1333,7 +1333,7 @@ id|de4x5_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1353,7 +1353,7 @@ id|de4x5_hw_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1367,7 +1367,7 @@ id|de4x5_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1378,7 +1378,7 @@ id|de4x5_sw_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1389,7 +1389,7 @@ id|de4x5_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1400,7 +1400,7 @@ id|de4x5_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1411,7 +1411,7 @@ id|de4x5_ast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1422,7 +1422,7 @@ id|de4x5_txur
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1433,7 +1433,7 @@ id|de4x5_rx_ovfc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1444,7 +1444,7 @@ id|autoconf_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1455,7 +1455,7 @@ id|create_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1491,7 +1491,7 @@ id|load_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1514,7 +1514,7 @@ id|dc21040_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1525,7 +1525,7 @@ id|dc21041_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1536,7 +1536,7 @@ id|dc21140m_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1547,7 +1547,7 @@ id|dc2114x_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1558,7 +1558,7 @@ id|srom_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1569,7 +1569,7 @@ id|de4x5_suspect_state
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1586,7 +1586,7 @@ id|fn
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -1599,7 +1599,7 @@ id|asfn
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 )paren
@@ -1610,7 +1610,7 @@ id|dc21040_state
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1639,7 +1639,7 @@ id|fn
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -1652,7 +1652,7 @@ id|test_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1681,7 +1681,7 @@ id|test_for_100Mb
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1695,7 +1695,7 @@ id|wait_for_link
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1706,7 +1706,7 @@ id|test_mii_reg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1729,7 +1729,7 @@ id|is_spd_100
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1740,7 +1740,7 @@ id|is_100_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1751,7 +1751,7 @@ id|is_10_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1762,7 +1762,7 @@ id|is_anc_capable
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1773,7 +1773,7 @@ id|ping_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1789,7 +1789,7 @@ id|de4x5_alloc_rx_buff
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1806,7 +1806,7 @@ id|de4x5_free_rx_buffs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1817,7 +1817,7 @@ id|de4x5_free_tx_buffs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1828,7 +1828,7 @@ id|de4x5_save_skbs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1839,7 +1839,7 @@ id|de4x5_rst_desc_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1850,7 +1850,7 @@ id|de4x5_cache_state
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1864,7 +1864,7 @@ id|de4x5_put_cache
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1880,7 +1880,7 @@ id|de4x5_putb_cache
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1898,7 +1898,7 @@ id|de4x5_get_cache
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1909,7 +1909,7 @@ id|de4x5_setup_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1920,7 +1920,7 @@ id|de4x5_init_connection
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1931,7 +1931,7 @@ id|de4x5_reset_phy
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1942,7 +1942,7 @@ id|reset_init_sia
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1962,7 +1962,7 @@ id|test_ans
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1982,7 +1982,7 @@ id|test_tp
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2138,7 +2138,7 @@ id|srom_map_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2149,7 +2149,7 @@ id|srom_infoleaf_info
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2160,7 +2160,7 @@ id|srom_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2171,7 +2171,7 @@ id|srom_exec
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2318,7 +2318,7 @@ id|mii_get_phy
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2329,7 +2329,7 @@ id|SetMulticastFilter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2340,7 +2340,7 @@ id|get_hw_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2351,7 +2351,7 @@ id|srom_repair
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2365,7 +2365,7 @@ id|test_bad_enet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2391,7 +2391,7 @@ id|eisa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2406,7 +2406,7 @@ id|pci_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2432,7 +2432,7 @@ id|build_setup_frame
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2446,7 +2446,7 @@ id|disable_ast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2457,7 +2457,7 @@ id|enable_ast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2471,7 +2471,7 @@ id|de4x5_switch_mac_port
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2482,7 +2482,7 @@ id|gep_rd
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2496,7 +2496,7 @@ id|s32
 id|data
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2507,7 +2507,7 @@ id|timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2534,7 +2534,7 @@ id|yawn
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2548,12 +2548,12 @@ id|link_modules
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|tmp
 )paren
@@ -2564,7 +2564,7 @@ id|de4x5_parse_params
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2575,7 +2575,7 @@ id|de4x5_dbg_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2586,7 +2586,7 @@ id|de4x5_dbg_mii
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2600,7 +2600,7 @@ id|de4x5_dbg_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2653,7 +2653,7 @@ id|dc21041_infoleaf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2664,7 +2664,7 @@ id|dc21140_infoleaf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2675,7 +2675,7 @@ id|dc21142_infoleaf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2686,7 +2686,7 @@ id|dc21143_infoleaf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2697,7 +2697,7 @@ id|type0_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2715,7 +2715,7 @@ id|type1_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2733,7 +2733,7 @@ id|type2_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2751,7 +2751,7 @@ id|type3_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2769,7 +2769,7 @@ id|type4_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2787,7 +2787,7 @@ id|type5_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2805,7 +2805,7 @@ id|compact_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2834,26 +2834,26 @@ r_void
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|unlink_modules
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|p
 )paren
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|insert_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2867,7 +2867,7 @@ id|init
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 )paren
@@ -2995,7 +2995,7 @@ suffix:semicolon
 DECL|variable|lastModule
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|lastModule
 op_assign
@@ -3027,7 +3027,7 @@ id|fn
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -3081,7 +3081,7 @@ id|dc_infoblock
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3123,7 +3123,7 @@ id|de4x5_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3192,7 +3192,7 @@ id|de4x5_hw_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4240,7 +4240,7 @@ id|de4x5_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4601,7 +4601,7 @@ id|de4x5_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4644,7 +4644,7 @@ id|de4x5_sw_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5067,7 +5067,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5455,13 +5455,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -5762,7 +5762,7 @@ id|de4x5_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6181,7 +6181,7 @@ id|de4x5_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6459,7 +6459,7 @@ id|de4x5_ast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6579,7 +6579,7 @@ id|de4x5_txur
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6712,7 +6712,7 @@ id|de4x5_rx_ovfc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6832,7 +6832,7 @@ id|de4x5_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6951,7 +6951,7 @@ id|de4x5_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7004,7 +7004,7 @@ id|de4x5_local_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7237,7 +7237,7 @@ id|load_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7380,7 +7380,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7505,7 +7505,7 @@ id|SetMulticastFilter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7880,7 +7880,7 @@ id|eisa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -8231,7 +8231,7 @@ id|pci_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9161,18 +9161,18 @@ id|link_modules
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|tmp
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|p
 op_assign
@@ -9271,7 +9271,7 @@ id|autoconf_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9419,7 +9419,7 @@ id|dc21040_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9766,7 +9766,7 @@ id|dc21040_state
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9795,7 +9795,7 @@ id|fn
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -9959,7 +9959,7 @@ id|de4x5_suspect_state
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9976,7 +9976,7 @@ id|fn
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -9989,7 +9989,7 @@ id|asfn
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 )paren
@@ -10118,7 +10118,7 @@ id|dc21041_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -11194,7 +11194,7 @@ id|dc21140m_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -12186,7 +12186,7 @@ id|dc2114x_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13592,7 +13592,7 @@ id|srom_autoconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13627,7 +13627,7 @@ id|srom_map_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13873,7 +13873,7 @@ id|de4x5_init_connection
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13983,7 +13983,7 @@ id|de4x5_reset_phy
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -14182,7 +14182,7 @@ id|test_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -14370,7 +14370,7 @@ id|test_tp
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -14472,7 +14472,7 @@ id|test_for_100Mb
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -14664,7 +14664,7 @@ id|wait_for_link
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -14725,7 +14725,7 @@ id|test_mii_reg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -14854,7 +14854,7 @@ id|is_spd_100
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -15032,7 +15032,7 @@ id|is_100_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -15195,7 +15195,7 @@ id|is_10_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -15363,7 +15363,7 @@ id|is_anc_capable
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -15465,7 +15465,7 @@ id|ping_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -15669,7 +15669,7 @@ id|de4x5_alloc_rx_buff
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -15991,7 +15991,7 @@ id|de4x5_free_rx_buffs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -16083,7 +16083,7 @@ id|de4x5_free_tx_buffs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -16183,7 +16183,7 @@ id|de4x5_save_skbs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -16268,7 +16268,7 @@ id|de4x5_rst_desc_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -16419,7 +16419,7 @@ id|de4x5_cache_state
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -16568,7 +16568,7 @@ id|de4x5_put_cache
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -16641,7 +16641,7 @@ id|de4x5_putb_cache
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -16690,7 +16690,7 @@ id|de4x5_get_cache
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -16741,7 +16741,7 @@ id|test_ans
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -16884,7 +16884,7 @@ id|de4x5_setup_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -16961,7 +16961,7 @@ id|reset_init_sia
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -17125,7 +17125,7 @@ id|create_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -18188,7 +18188,7 @@ id|get_hw_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -19000,7 +19000,7 @@ id|srom_repair
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -19096,7 +19096,7 @@ id|test_bad_enet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -19817,7 +19817,7 @@ id|srom_infoleaf_info
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -20020,7 +20020,7 @@ id|srom_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -20314,7 +20314,7 @@ id|srom_exec
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -20484,7 +20484,7 @@ id|dc21041_infoleaf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -20500,7 +20500,7 @@ id|dc21140_infoleaf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -20668,7 +20668,7 @@ id|dc21142_infoleaf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -20825,7 +20825,7 @@ id|dc21143_infoleaf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -20983,7 +20983,7 @@ id|compact_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -21238,7 +21238,7 @@ id|type0_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -21508,7 +21508,7 @@ id|type1_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -21811,7 +21811,7 @@ id|type2_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -22081,7 +22081,7 @@ id|type3_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -22415,7 +22415,7 @@ id|type4_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -22726,7 +22726,7 @@ id|type5_infoblock
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -23530,7 +23530,7 @@ id|mii_get_phy
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -24054,7 +24054,7 @@ id|build_setup_frame
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -24276,7 +24276,7 @@ id|enable_ast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -24314,7 +24314,7 @@ id|disable_ast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -24348,7 +24348,7 @@ id|de4x5_switch_mac_port
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -24510,7 +24510,7 @@ id|s32
 id|data
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -24588,7 +24588,7 @@ id|gep_rd
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -24663,7 +24663,7 @@ id|timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -24761,7 +24761,7 @@ id|yawn
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -24963,7 +24963,7 @@ id|de4x5_parse_params
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -25292,7 +25292,7 @@ id|de4x5_dbg_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -25689,7 +25689,7 @@ id|de4x5_dbg_mii
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -25987,7 +25987,7 @@ id|de4x5_dbg_media
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -26574,7 +26574,7 @@ id|de4x5_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -27351,7 +27351,7 @@ mdefine_line|#define LP(a) ((struct de4x5_private *)(a))
 DECL|variable|mdev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|mdev
 op_assign
@@ -27392,7 +27392,7 @@ op_minus
 id|EIO
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|p
 suffix:semicolon
@@ -27583,20 +27583,20 @@ suffix:semicolon
 )brace
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 DECL|function|unlink_modules
 id|unlink_modules
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|p
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|next
 op_assign
@@ -27825,7 +27825,7 @@ suffix:semicolon
 multiline_comment|/*&n;** If at end of eth device list and can&squot;t use current entry, malloc&n;** one up. If memory could not be allocated, print an error message.&n;*/
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|__init
 DECL|function|insert_device
@@ -27833,7 +27833,7 @@ id|insert_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -27847,13 +27847,13 @@ id|init
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 r_new
 suffix:semicolon
@@ -27861,7 +27861,7 @@ r_new
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -27870,7 +27870,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 l_int|8
@@ -27912,7 +27912,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 l_int|8

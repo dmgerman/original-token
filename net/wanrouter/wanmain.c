@@ -671,7 +671,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -822,7 +822,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1485,7 +1485,7 @@ id|wandev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1663,7 +1663,7 @@ id|wanif_conf_t
 id|conf
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1731,7 +1731,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 comma
 id|GFP_KERNEL
@@ -1758,7 +1758,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -2038,7 +2038,7 @@ id|force
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

@@ -165,7 +165,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -200,7 +200,7 @@ id|ipv6_get_lladdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -281,7 +281,7 @@ id|ipv6_dev_mc_inc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -297,7 +297,7 @@ id|ipv6_dev_mc_dec
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -357,7 +357,7 @@ id|ipv6_chk_mcast_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -373,7 +373,7 @@ id|addrconf_prefix_rcv
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -393,7 +393,7 @@ id|ipv6_get_idev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

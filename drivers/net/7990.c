@@ -138,7 +138,7 @@ r_void
 id|lance_init_ring
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -738,7 +738,7 @@ r_int
 id|lance_reset
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -825,7 +825,7 @@ r_int
 id|lance_rx
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1234,7 +1234,7 @@ r_int
 id|lance_tx
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1580,13 +1580,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -1828,7 +1828,7 @@ r_int
 id|lance_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1882,7 +1882,7 @@ r_int
 id|lance_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1944,7 +1944,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2265,7 +2265,7 @@ op_star
 id|lance_get_stats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2294,7 +2294,7 @@ r_void
 id|lance_load_multicast
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2543,7 +2543,7 @@ r_void
 id|lance_set_multicast
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

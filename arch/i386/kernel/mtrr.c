@@ -31,7 +31,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &lt;linux/irq.h&gt;
 DECL|macro|MTRR_VERSION
 mdefine_line|#define MTRR_VERSION            &quot;1.35 (19990512)&quot;
 DECL|macro|TRUE
@@ -2023,12 +2023,10 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*  Get the MSR pair relating to a var range  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_mtrr_var_range
 r_static
 r_void
+id|__init
 id|get_mtrr_var_range
 (paren
 r_int
@@ -2039,7 +2037,6 @@ r_struct
 id|mtrr_var_range
 op_star
 id|vr
-)paren
 )paren
 (brace
 id|rdmsr
@@ -2069,12 +2066,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*  End Function get_mtrr_var_range  */
 multiline_comment|/*  Set the MSR pair relating to a var range. Returns TRUE if&n;    changes are made  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|set_mtrr_var_range_testing
 r_static
 r_int
+id|__init
 id|set_mtrr_var_range_testing
 (paren
 r_int
@@ -2085,7 +2080,6 @@ r_struct
 id|mtrr_var_range
 op_star
 id|vr
-)paren
 )paren
 (brace
 r_int
@@ -2226,19 +2220,16 @@ id|changed
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function set_mtrr_var_range_testing  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_fixed_ranges
 r_static
 r_void
+id|__init
 id|get_fixed_ranges
 c_func
 (paren
 id|mtrr_type
 op_star
 id|frs
-)paren
 )paren
 (brace
 r_int
@@ -2354,19 +2345,16 @@ l_int|2
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function get_fixed_ranges  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|set_fixed_ranges_testing
 r_static
 r_int
+id|__init
 id|set_fixed_ranges_testing
 c_func
 (paren
 id|mtrr_type
 op_star
 id|frs
-)paren
 )paren
 (brace
 r_int
@@ -2653,12 +2641,10 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*  Grab all of the MTRR state for this CPU into *state  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_mtrr_state
 r_static
 r_void
+id|__init
 id|get_mtrr_state
 c_func
 (paren
@@ -2666,7 +2652,6 @@ r_struct
 id|mtrr_state
 op_star
 id|state
-)paren
 )paren
 (brace
 r_int
@@ -2785,12 +2770,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*  End Function get_mtrr_state  */
 multiline_comment|/*  Free resources associated with a struct mtrr_state  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|finalize_mtrr_state
 r_static
 r_void
+id|__init
 id|finalize_mtrr_state
 c_func
 (paren
@@ -2798,7 +2781,6 @@ r_struct
 id|mtrr_state
 op_star
 id|state
-)paren
 )paren
 (brace
 r_if
@@ -2813,13 +2795,11 @@ id|state-&gt;var_ranges
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function finalize_mtrr_state  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|set_mtrr_state
 r_static
 r_int
 r_int
+id|__init
 id|set_mtrr_state
 (paren
 r_struct
@@ -2831,7 +2811,6 @@ r_struct
 id|set_mtrr_context
 op_star
 id|ctxt
-)paren
 )paren
 multiline_comment|/*  [SUMMARY] Set the MTRR state for this CPU.&n;    &lt;state&gt; The MTRR state information to read.&n;    &lt;ctxt&gt; Some relevant CPU context.&n;    [NOTE] The CPU must already be in a safe state for MTRR changes.&n;    [RETURNS] 0 if no changes made, else a mask indication what was changed.&n;*/
 (brace
@@ -3236,18 +3215,16 @@ suffix:semicolon
 )brace
 multiline_comment|/*  End Function set_mtrr_smp  */
 multiline_comment|/*  Some BIOS&squot;s are fucked and don&squot;t set all MTRRs the same!  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mtrr_state_warn
 r_static
 r_void
+id|__init
 id|mtrr_state_warn
+c_func
 (paren
 r_int
 r_int
 id|mask
-)paren
 )paren
 (brace
 r_if
@@ -6290,17 +6267,14 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cyrix_arr_init_secondary
 r_static
 r_void
+id|__init
 id|cyrix_arr_init_secondary
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -6429,17 +6403,14 @@ multiline_comment|/* flush cache and disable MAPEN */
 multiline_comment|/*  End Function cyrix_arr_init_secondary  */
 macro_line|#endif
 multiline_comment|/*&n; * On Cyrix 6x86(MX) and M II the ARR3 is special: it has connection&n; * with the SMM (System Management Mode) mode. So we need the following:&n; * Check whether SMI_LOCK (CCR3 bit 0) is set&n; *   if it is set, write a warning message: ARR3 cannot be changed!&n; *     (it cannot be changed until the next processor reset)&n; *   if it is reset, then we can change it, set all the needed bits:&n; *   - disable access to SMM memory through ARR3 range (CCR1 bit 7 reset)&n; *   - disable access to SMM memory (CCR1 bit 2 reset)&n; *   - disable SMM mode (CCR1 bit 1 reset)&n; *   - disable write protection of ARR3 (CCR6 bit 1 reset)&n; *   - (maybe) disable ARR3&n; * Just to be sure, we enable ARR usage by the processor (CCR5 bit 5 set)&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cyrix_arr_init
 r_static
 r_void
+id|__init
 id|cyrix_arr_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -6798,16 +6769,14 @@ l_string|&quot;mtrr: ARR3 was write protected, unprotected&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function cyrix_arr_init  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|centaur_mcr_init
 r_static
 r_void
+id|__init
 id|centaur_mcr_init
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -6888,16 +6857,14 @@ id|ctxt
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function centaur_mcr_init  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mtrr_setup
 r_static
 r_void
+id|__init
 id|mtrr_setup
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk
@@ -6996,15 +6963,13 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|mtrr_init_boot_cpu
+r_void
+id|__init
+id|mtrr_init_boot_cpu
 c_func
 (paren
 r_void
-id|mtrr_init_boot_cpu
-(paren
-r_void
-)paren
 )paren
 (brace
 r_if
@@ -7061,16 +7026,14 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function mtrr_init_boot_cpu  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|intel_mtrr_init_secondary_cpu
 r_static
 r_void
+id|__init
 id|intel_mtrr_init_secondary_cpu
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -7148,15 +7111,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function intel_mtrr_init_secondary_cpu  */
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|mtrr_init_secondary_cpu
+r_void
+id|__init
+id|mtrr_init_secondary_cpu
 c_func
 (paren
 r_void
-id|mtrr_init_secondary_cpu
-(paren
-r_void
-)paren
 )paren
 (brace
 r_if
@@ -7209,16 +7170,13 @@ suffix:semicolon
 )brace
 multiline_comment|/*  End Function mtrr_init_secondary_cpu  */
 macro_line|#endif  /*  __SMP__  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mtrr_init
 r_int
+id|__init
 id|mtrr_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

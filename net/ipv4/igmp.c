@@ -155,7 +155,7 @@ id|igmp_send_report
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1088,7 +1088,7 @@ id|MAX_ADDR_LEN
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1148,7 +1148,7 @@ id|MAX_ADDR_LEN
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1859,7 +1859,7 @@ op_star
 id|rt
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2512,7 +2512,7 @@ id|ip_check_mc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2636,7 +2636,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

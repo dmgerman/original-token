@@ -231,7 +231,7 @@ suffix:semicolon
 multiline_comment|/* MAC address of remote session partner */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

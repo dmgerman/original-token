@@ -34,7 +34,7 @@ multiline_comment|/* For IPXWAN */
 DECL|macro|CVHexToAscii
 mdefine_line|#define CVHexToAscii(b) (((unsigned char)(b) &gt; (unsigned char)9) ? ((unsigned char)&squot;A&squot; + ((unsigned char)(b) - (unsigned char)10)) : ((unsigned char)&squot;0&squot; + (unsigned char)(b)))
 multiline_comment|/****** Data Structures *****************************************************/
-multiline_comment|/* This is an extention of the &squot;struct device&squot; we create for each network&n; * interface to keep the rest of X.25 channel-specific data.&n; */
+multiline_comment|/* This is an extention of the &squot;struct net_device&squot; we create for each network&n; * interface to keep the rest of X.25 channel-specific data.&n; */
 DECL|struct|x25_channel
 r_typedef
 r_struct
@@ -241,7 +241,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -259,7 +259,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -289,7 +289,7 @@ r_int
 id|if_init
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -299,7 +299,7 @@ r_int
 id|if_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -309,7 +309,7 @@ r_int
 id|if_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -324,7 +324,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -364,7 +364,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -376,7 +376,7 @@ op_star
 id|if_stats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -794,7 +794,7 @@ id|card
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|get_dev_by_lcn
 c_func
@@ -812,7 +812,7 @@ r_int
 id|chan_connect
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -822,7 +822,7 @@ r_int
 id|chan_disc
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -832,7 +832,7 @@ r_void
 id|set_chan_state
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -845,7 +845,7 @@ r_int
 id|chan_send
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1692,7 +1692,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2003,7 +2003,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2255,7 +2255,7 @@ r_int
 id|if_init
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2410,7 +2410,7 @@ r_int
 id|if_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2504,7 +2504,7 @@ r_int
 id|if_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2605,7 +2605,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2692,7 +2692,7 @@ id|skb
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2737,7 +2737,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2755,7 +2755,7 @@ op_assign
 id|chan-&gt;card
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev2
 suffix:semicolon
@@ -3216,7 +3216,7 @@ op_star
 id|if_stats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3263,7 +3263,7 @@ op_assign
 id|card-&gt;flags
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3532,7 +3532,7 @@ op_amp
 id|card-&gt;wandev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3902,7 +3902,7 @@ id|card
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4272,7 +4272,7 @@ id|card
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -6627,7 +6627,7 @@ op_assign
 id|mb-&gt;cmd.lcn
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -7107,7 +7107,7 @@ op_assign
 id|mb-&gt;cmd.lcn
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -7244,7 +7244,7 @@ op_assign
 id|mb-&gt;cmd.lcn
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -7341,7 +7341,7 @@ op_amp
 id|card-&gt;wandev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -7429,7 +7429,7 @@ l_int|0x05
 multiline_comment|/* call request time out */
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -7580,7 +7580,7 @@ multiline_comment|/*============================================================
 DECL|function|get_dev_by_lcn
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|get_dev_by_lcn
 (paren
@@ -7593,7 +7593,7 @@ id|lcn
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -7638,7 +7638,7 @@ r_int
 id|chan_connect
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7754,7 +7754,7 @@ r_int
 id|chan_disc
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7801,7 +7801,7 @@ r_void
 id|set_chan_state
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7958,7 +7958,7 @@ r_int
 id|chan_send
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

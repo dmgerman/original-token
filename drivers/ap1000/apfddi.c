@@ -769,7 +769,7 @@ l_int|0x41
 suffix:semicolon
 DECL|variable|apfddi_device
 r_struct
-id|device
+id|net_device
 op_star
 id|apfddi_device
 op_assign
@@ -1341,7 +1341,7 @@ id|apfddi_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1375,7 +1375,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1398,7 +1398,7 @@ id|apfddi_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1437,7 +1437,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1832,7 +1832,7 @@ op_star
 id|buff
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2029,7 +2029,7 @@ id|apfddi_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2059,7 +2059,7 @@ id|apfddi_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2080,7 +2080,7 @@ id|apfddi_do_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2114,7 +2114,7 @@ id|apfddi_set_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2145,7 +2145,7 @@ id|apfddi_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2291,7 +2291,7 @@ id|apfddi_stop
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2318,7 +2318,7 @@ id|apfddi_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3137,7 +3137,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3313,7 +3313,7 @@ id|apfddi_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

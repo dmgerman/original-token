@@ -427,7 +427,7 @@ op_star
 id|buf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -518,7 +518,7 @@ op_amp
 id|neigh-&gt;primary_key
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -761,7 +761,7 @@ id|in6_addr
 id|maddr
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -860,7 +860,7 @@ id|in6_addr
 id|maddr
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -936,7 +936,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1167,7 +1167,7 @@ id|ndisc_send_na
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1473,7 +1473,7 @@ id|ndisc_send_ns
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1779,7 +1779,7 @@ id|ndisc_send_rs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2192,7 +2192,7 @@ id|in6_addr
 id|mcaddr
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3409,7 +3409,7 @@ op_star
 id|addrp
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4089,7 +4089,7 @@ id|len
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

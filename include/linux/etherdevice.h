@@ -16,7 +16,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -59,7 +59,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -75,7 +75,7 @@ op_star
 id|hh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -119,13 +119,13 @@ id|haddr
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|init_etherdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int

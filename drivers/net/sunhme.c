@@ -4612,7 +4612,7 @@ op_assign
 id|hp-&gt;happy_block
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -8678,7 +8678,7 @@ op_star
 id|hp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9240,7 +9240,7 @@ op_star
 id|hp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9868,7 +9868,7 @@ op_star
 id|hp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -10241,7 +10241,7 @@ op_star
 id|hp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -10834,13 +10834,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -11075,13 +11075,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -11329,13 +11329,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -11569,13 +11569,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -11840,7 +11840,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|hdev
 op_assign
@@ -11921,7 +11921,7 @@ id|happy_meal_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -12237,7 +12237,7 @@ id|happy_meal_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -12342,7 +12342,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -12708,7 +12708,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -12996,7 +12996,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13276,7 +13276,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13588,7 +13588,7 @@ id|happy_meal_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -13625,7 +13625,7 @@ id|happy_meal_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -14019,7 +14019,7 @@ id|happy_meal_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -15120,7 +15120,7 @@ id|happy_meal_ether_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -16033,7 +16033,7 @@ id|happy_meal_pci_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -16953,7 +16953,7 @@ id|happy_meal_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

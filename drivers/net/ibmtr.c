@@ -279,7 +279,7 @@ id|ibmtr_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -290,7 +290,7 @@ id|ibmtr_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -329,7 +329,7 @@ id|tok_init_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -357,7 +357,7 @@ id|trdev_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -368,7 +368,7 @@ id|initial_tok_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -383,7 +383,7 @@ r_char
 id|type
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -403,7 +403,7 @@ id|tr_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -414,7 +414,7 @@ id|tr_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -425,7 +425,7 @@ id|tok_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -436,7 +436,7 @@ id|tok_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -452,7 +452,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -465,7 +465,7 @@ id|tok_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -475,7 +475,7 @@ id|ibmtr_readlog
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -490,7 +490,7 @@ op_star
 id|tmr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -500,7 +500,7 @@ id|ibmtr_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -675,7 +675,7 @@ id|ibmtr_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -825,7 +825,7 @@ id|ibmtr_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2938,7 +2938,7 @@ id|trdev_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3008,7 +3008,7 @@ id|tok_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3100,7 +3100,7 @@ id|tok_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3247,7 +3247,7 @@ op_star
 id|ti
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -5220,7 +5220,7 @@ id|initial_tok_int
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5607,7 +5607,7 @@ id|tok_init_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5775,7 +5775,7 @@ r_char
 id|type
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5941,13 +5941,13 @@ id|dev_addr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_addr
@@ -6293,7 +6293,7 @@ id|tr_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6820,7 +6820,7 @@ id|tr_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8096,7 +8096,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8280,7 +8280,7 @@ op_star
 id|tmr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8322,7 +8322,7 @@ id|ibmtr_readlog
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8397,7 +8397,7 @@ id|tok_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8432,7 +8432,7 @@ id|ibmtr_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -8495,7 +8495,7 @@ multiline_comment|/* 3COM 3C619C supports 8 interrupts, 32 I/O ports */
 DECL|variable|dev_ibmtr
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_ibmtr
 (braket
@@ -8742,7 +8742,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -8884,7 +8884,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon

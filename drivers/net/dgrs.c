@@ -197,7 +197,7 @@ macro_line|#ifdef MODULE
 DECL|variable|dgrs_root_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|dgrs_root_dev
 op_assign
@@ -219,7 +219,7 @@ suffix:semicolon
 multiline_comment|/* &quot;ethN&quot; string */
 DECL|member|next_dev
 r_struct
-id|device
+id|net_device
 op_star
 id|next_dev
 suffix:semicolon
@@ -330,7 +330,7 @@ suffix:semicolon
 multiline_comment|/* Channel # (1-6) for this device */
 DECL|member|devtbl
 r_struct
-id|device
+id|net_device
 op_star
 id|devtbl
 (braket
@@ -350,7 +350,7 @@ id|proc_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev0
 comma
@@ -440,7 +440,7 @@ id|check_board_dma
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev0
 )paren
@@ -578,7 +578,7 @@ id|do_plx_dma
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -815,7 +815,7 @@ id|dgrs_rcv_frame
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev0
 comma
@@ -849,7 +849,7 @@ op_star
 id|p
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|devN
 suffix:semicolon
@@ -1630,7 +1630,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|devN
 )paren
@@ -1646,7 +1646,7 @@ op_star
 id|devN-&gt;priv
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev0
 suffix:semicolon
@@ -2015,7 +2015,7 @@ id|dgrs_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2050,7 +2050,7 @@ id|dgrs_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2083,7 +2083,7 @@ id|dgrs_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2113,7 +2113,7 @@ id|dgrs_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2150,7 +2150,7 @@ id|dgrs_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|devN
 comma
@@ -2427,13 +2427,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev0
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -2749,7 +2749,7 @@ id|dgrs_download
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev0
 )paren
@@ -3377,7 +3377,7 @@ id|dgrs_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3680,7 +3680,7 @@ id|dgrs_initclone
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3760,7 +3760,7 @@ id|dgrs_found_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3793,7 +3793,7 @@ op_assign
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 r_sizeof
@@ -3808,7 +3808,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -3842,7 +3842,7 @@ op_plus
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 suffix:semicolon
 id|priv
@@ -3969,7 +3969,7 @@ id|i
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|devN
 suffix:semicolon
@@ -3982,7 +3982,7 @@ id|devN
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -4017,7 +4017,7 @@ op_plus
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 suffix:semicolon
 id|privN
@@ -4259,7 +4259,7 @@ id|dgrs_scan
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5097,7 +5097,7 @@ id|dgrs_root_dev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|next_dev
 suffix:semicolon
@@ -5201,7 +5201,7 @@ id|dgrs_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

@@ -299,7 +299,7 @@ r_int
 id|ether3_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -309,7 +309,7 @@ r_int
 id|ether3_probe1
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -319,7 +319,7 @@ r_int
 id|ether3_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -334,7 +334,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -361,7 +361,7 @@ r_int
 id|ether3_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -373,7 +373,7 @@ op_star
 id|ether3_getstats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -383,7 +383,7 @@ r_void
 id|ether3_setmulticastlist
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

@@ -48,7 +48,7 @@ r_extern
 id|__u32
 id|sysctl_rmem_max
 suffix:semicolon
-macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE) || defined (CONFIG_KHTTPD) || defined (CONFIG_KHTTPD_MODULE)
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
@@ -1010,7 +1010,7 @@ id|icmpv6_send
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_IPV6_MODULE
+macro_line|#if defined (CONFIG_IPV6_MODULE) || defined (CONFIG_KHTTPD) || defined (CONFIG_KHTTPD_MODULE)
 multiline_comment|/* inet functions common to v4 and v6 */
 DECL|variable|inet_stream_ops
 id|EXPORT_SYMBOL
@@ -1172,6 +1172,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|net_timer
+)paren
+suffix:semicolon
+DECL|variable|tcp_v4_lookup_listener
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_v4_lookup_listener
 )paren
 suffix:semicolon
 multiline_comment|/* UDP/TCP exported functions for TCPv6 */

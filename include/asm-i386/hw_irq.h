@@ -1,137 +1,8 @@
-macro_line|#ifndef __irq_h
-DECL|macro|__irq_h
-mdefine_line|#define __irq_h
+macro_line|#ifndef _ASM_HW_IRQ_H
+DECL|macro|_ASM_HW_IRQ_H
+mdefine_line|#define _ASM_HW_IRQ_H
+multiline_comment|/*&n; *&t;linux/include/asm/hw_irq.h&n; *&n; *&t;(C) 1992, 1993 Linus Torvalds, (C) 1997 Ingo Molnar&n; *&n; *&t;moved some of the old arch/i386/kernel/irq.h to here. VY&n; *&n; *&t;IRQ/IPI changes taken from work by Thomas Radke&n; *&t;&lt;tomsoft@informatik.tu-chemnitz.de&gt;&n; */
 macro_line|#include &lt;asm/irq.h&gt;
-multiline_comment|/*&n; * Interrupt controller descriptor. This is all we need&n; * to describe about the low-level hardware.&n; */
-DECL|struct|hw_interrupt_type
-r_struct
-id|hw_interrupt_type
-(brace
-DECL|member|typename
-r_const
-r_char
-op_star
-r_typename
-suffix:semicolon
-DECL|member|startup
-r_void
-(paren
-op_star
-id|startup
-)paren
-(paren
-r_int
-r_int
-id|irq
-)paren
-suffix:semicolon
-DECL|member|shutdown
-r_void
-(paren
-op_star
-id|shutdown
-)paren
-(paren
-r_int
-r_int
-id|irq
-)paren
-suffix:semicolon
-DECL|member|handle
-r_void
-(paren
-op_star
-id|handle
-)paren
-(paren
-r_int
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-DECL|member|enable
-r_void
-(paren
-op_star
-id|enable
-)paren
-(paren
-r_int
-r_int
-id|irq
-)paren
-suffix:semicolon
-DECL|member|disable
-r_void
-(paren
-op_star
-id|disable
-)paren
-(paren
-r_int
-r_int
-id|irq
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
-r_extern
-r_struct
-id|hw_interrupt_type
-id|no_irq_type
-suffix:semicolon
-multiline_comment|/*&n; * IRQ line status.&n; */
-DECL|macro|IRQ_INPROGRESS
-mdefine_line|#define IRQ_INPROGRESS&t;1&t;/* IRQ handler active - do not enter! */
-DECL|macro|IRQ_DISABLED
-mdefine_line|#define IRQ_DISABLED&t;2&t;/* IRQ disabled - do not enter! */
-DECL|macro|IRQ_PENDING
-mdefine_line|#define IRQ_PENDING&t;4&t;/* IRQ pending - replay on enable */
-DECL|macro|IRQ_REPLAY
-mdefine_line|#define IRQ_REPLAY&t;8&t;/* IRQ has been replayed but not acked yet */
-DECL|macro|IRQ_AUTODETECT
-mdefine_line|#define IRQ_AUTODETECT&t;16&t;/* IRQ is being autodetected */
-DECL|macro|IRQ_WAITING
-mdefine_line|#define IRQ_WAITING&t;32&t;/* IRQ not yet seen - for autodetection */
-multiline_comment|/*&n; * This is the &quot;IRQ descriptor&quot;, which contains various information&n; * about the irq, including what kind of hardware handling it has,&n; * whether it is disabled etc etc.&n; *&n; * Pad this out to 32 bytes for cache and indexing reasons.&n; */
-r_typedef
-r_struct
-(brace
-DECL|member|status
-r_int
-r_int
-id|status
-suffix:semicolon
-multiline_comment|/* IRQ status - IRQ_INPROGRESS, IRQ_DISABLED */
-DECL|member|handler
-r_struct
-id|hw_interrupt_type
-op_star
-id|handler
-suffix:semicolon
-multiline_comment|/* handle/enable/disable functions */
-DECL|member|action
-r_struct
-id|irqaction
-op_star
-id|action
-suffix:semicolon
-multiline_comment|/* IRQ action list */
-DECL|member|depth
-r_int
-r_int
-id|depth
-suffix:semicolon
-multiline_comment|/* Disable depth for nested irq disables */
-DECL|typedef|irq_desc_t
-)brace
-id|irq_desc_t
-suffix:semicolon
 multiline_comment|/*&n; * IDT vectors usable for external interrupt sources start&n; * at 0x20:&n; */
 DECL|macro|FIRST_EXTERNAL_VECTOR
 mdefine_line|#define FIRST_EXTERNAL_VECTOR&t;0x20
@@ -156,13 +27,6 @@ multiline_comment|/*&n; * This IRQ should never happen, but we print a message n
 DECL|macro|SPURIOUS_APIC_VECTOR
 mdefine_line|#define SPURIOUS_APIC_VECTOR&t;0xff
 r_extern
-id|irq_desc_t
-id|irq_desc
-(braket
-id|NR_IRQS
-)braket
-suffix:semicolon
-r_extern
 r_int
 id|irq_vector
 (braket
@@ -177,36 +41,6 @@ id|init_IRQ_SMP
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|handle_IRQ_event
-c_func
-(paren
-r_int
-r_int
-comma
-r_struct
-id|pt_regs
-op_star
-comma
-r_struct
-id|irqaction
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|setup_x86_irq
-c_func
-(paren
-r_int
-r_int
-comma
-r_struct
-id|irqaction
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Various low-level irq details needed by irq.c, process.c,&n; * time.c, io_apic.c and smp.c&n; *&n; * Interrupt entry/exit code at both C and assembly level&n; */
@@ -401,79 +235,10 @@ id|mp_bus_id_to_pci_bus
 id|MAX_MP_BUSSES
 )braket
 suffix:semicolon
-r_extern
-id|spinlock_t
-id|irq_controller_lock
-suffix:semicolon
 macro_line|#ifdef __SMP__
-macro_line|#include &lt;asm/atomic.h&gt;
-DECL|function|irq_enter
-r_static
-r_inline
-r_void
-id|irq_enter
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-r_int
-id|irq
-)paren
-(brace
-id|hardirq_enter
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|test_bit
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|global_irq_lock
-)paren
-)paren
-(brace
-multiline_comment|/* nothing */
-suffix:semicolon
-)brace
-)brace
-DECL|function|irq_exit
-r_static
-r_inline
-r_void
-id|irq_exit
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-r_int
-id|irq
-)paren
-(brace
-id|hardirq_exit
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-)brace
 DECL|macro|IO_APIC_IRQ
 mdefine_line|#define IO_APIC_IRQ(x) (((x) &gt;= 16) || ((1&lt;&lt;(x)) &amp; io_apic_irqs))
 macro_line|#else
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count[cpu])
 DECL|macro|IO_APIC_IRQ
 mdefine_line|#define IO_APIC_IRQ(x)&t;(0)
 macro_line|#endif
@@ -491,14 +256,19 @@ DECL|macro|GET_CURRENT
 mdefine_line|#define GET_CURRENT &bslash;&n;&t;&quot;movl %esp, %ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andl $-8192, %ebx&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
 multiline_comment|/*&n; *&t;SMP has a few special interrupts for IPI messages&n; */
+multiline_comment|/* there is a second layer of macro just to get the symbolic&n;&t;   name for the vector evaluated. This change is for RTLinux */
 DECL|macro|BUILD_SMP_INTERRUPT
-mdefine_line|#define BUILD_SMP_INTERRUPT(x) &bslash;&n;asmlinkage void x(void); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(x) &quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $-1&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;&quot;call &quot;SYMBOL_NAME_STR(smp_##x)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp ret_from_intr&bslash;n&quot;);
+mdefine_line|#define BUILD_SMP_INTERRUPT(x,v) XBUILD_SMP_INTERRUPT(x,v)
+DECL|macro|XBUILD_SMP_INTERRUPT
+mdefine_line|#define XBUILD_SMP_INTERRUPT(x,v)&bslash;&n;asmlinkage void x(void); &bslash;&n;asmlinkage void call_##x(void); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(x) &quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot;#v&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;SYMBOL_NAME_STR(call_##x)&quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call &quot;SYMBOL_NAME_STR(smp_##x)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp ret_from_intr&bslash;n&quot;);
 DECL|macro|BUILD_SMP_TIMER_INTERRUPT
-mdefine_line|#define BUILD_SMP_TIMER_INTERRUPT(x) &bslash;&n;asmlinkage void x(struct pt_regs * regs); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(x) &quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $-1&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;&quot;movl %esp,%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call &quot;SYMBOL_NAME_STR(smp_##x)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $4,%esp&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp ret_from_intr&bslash;n&quot;);
+mdefine_line|#define BUILD_SMP_TIMER_INTERRUPT(x,v) XBUILD_SMP_TIMER_INTERRUPT(x,v)
+DECL|macro|XBUILD_SMP_TIMER_INTERRUPT
+mdefine_line|#define XBUILD_SMP_TIMER_INTERRUPT(x,v) &bslash;&n;asmlinkage void x(struct pt_regs * regs); &bslash;&n;asmlinkage void call_##x(void); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(x) &quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot;#v&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;&quot;movl %esp,%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %eax&bslash;n&bslash;t&quot; &bslash;&n;&t;SYMBOL_NAME_STR(call_##x)&quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call &quot;SYMBOL_NAME_STR(smp_##x)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $4,%esp&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp ret_from_intr&bslash;n&quot;);
 macro_line|#endif /* __SMP__ */
 DECL|macro|BUILD_COMMON_IRQ
-mdefine_line|#define BUILD_COMMON_IRQ() &bslash;&n;__asm__( &bslash;&n;&t;&quot;&bslash;n&quot; __ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;&t;&quot;common_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;&quot;pushl $ret_from_intr&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp &quot;SYMBOL_NAME_STR(do_IRQ));
-multiline_comment|/*&n; * subtle. orig_eax is used by the signal code to distinct between&n; * system calls and interrupted &squot;random user-space&squot;. Thus we have&n; * to put a negative value into orig_eax here. (the problem is that&n; * both system calls and IRQs want to have small integer numbers in&n; * orig_eax, and the syscall code has won the optimization conflict ;)&n; */
+mdefine_line|#define BUILD_COMMON_IRQ() &bslash;&n;asmlinkage void call_do_IRQ(void); &bslash;&n;__asm__( &bslash;&n;&t;&quot;&bslash;n&quot; __ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;&t;&quot;common_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;&quot;pushl $ret_from_intr&bslash;n&bslash;t&quot; &bslash;&n;&t;SYMBOL_NAME_STR(call_do_IRQ)&quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp &quot;SYMBOL_NAME_STR(do_IRQ));
+multiline_comment|/* &n; * subtle. orig_eax is used by the signal code to distinct between&n; * system calls and interrupted &squot;random user-space&squot;. Thus we have&n; * to put a negative value into orig_eax here. (the problem is that&n; * both system calls and IRQs want to have small integer numbers in&n; * orig_eax, and the syscall code has won the optimization conflict ;)&n; *&n; * Subtle as a pigs ear.  VY&n; */
 DECL|macro|BUILD_IRQ
 mdefine_line|#define BUILD_IRQ(nr) &bslash;&n;asmlinkage void IRQ_NAME(nr); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(IRQ) #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot;#nr&quot;-256&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp common_interrupt&quot;);
 multiline_comment|/*&n; * x86 profiling function, SMP safe. We might want to do this in&n; * assembly totally?&n; */
@@ -517,6 +287,8 @@ r_if
 c_cond
 (paren
 id|prof_buffer
+op_logical_and
+id|current-&gt;pid
 )paren
 (brace
 id|eip
@@ -564,5 +336,54 @@ id|eip
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef __SMP__ /*more of this file should probably be ifdefed SMP */
+DECL|function|hw_resend_irq
+r_static
+r_inline
+r_void
+id|hw_resend_irq
+c_func
+(paren
+r_struct
+id|hw_interrupt_type
+op_star
+id|h
+comma
+r_int
+r_int
+id|i
+)paren
+(brace
+id|send_IPI_self
+c_func
+(paren
+id|IO_APIC_VECTOR
+c_func
+(paren
+id|i
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
+DECL|function|hw_resend_irq
+r_static
+r_inline
+r_void
+id|hw_resend_irq
+c_func
+(paren
+r_struct
+id|hw_interrupt_type
+op_star
+id|h
+comma
+r_int
+r_int
+id|i
+)paren
+(brace
+)brace
 macro_line|#endif
+macro_line|#endif /* _ASM_HW_IRQ_H */
 eof

@@ -2136,7 +2136,7 @@ id|z8530_sync_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2252,7 +2252,7 @@ id|z8530_sync_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2326,7 +2326,7 @@ id|z8530_sync_dma_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2857,7 +2857,7 @@ id|z8530_sync_dma_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3166,7 +3166,7 @@ id|z8530_sync_txdma_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3534,7 +3534,7 @@ id|z8530_sync_txdma_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

@@ -548,6 +548,9 @@ comma
 DECL|enumerator|PROC_SCSI_AMIGA7XX
 id|PROC_SCSI_AMIGA7XX
 comma
+DECL|enumerator|PROC_SCSI_MVME147
+id|PROC_SCSI_MVME147
+comma
 DECL|enumerator|PROC_SCSI_MVME16x
 id|PROC_SCSI_MVME16x
 comma

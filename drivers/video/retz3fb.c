@@ -299,10 +299,22 @@ l_string|&quot;RetinaZ3&quot;
 suffix:semicolon
 multiline_comment|/*&n; * A small info on how to convert XFree86 timing values into fb&n; * timings - by Frank Neumann:&n; *&n;An XFree86 mode line consists of the following fields:&n; &quot;800x600&quot;     50      800  856  976 1040    600  637  643  666&n; &lt; name &gt;     DCF       HR  SH1  SH2  HFL     VR  SV1  SV2  VFL&n;&n;The fields in the fb_var_screeninfo structure are:&n;        unsigned long pixclock;         * pixel clock in ps (pico seconds) *&n;        unsigned long left_margin;      * time from sync to picture    *&n;        unsigned long right_margin;     * time from picture to sync    *&n;        unsigned long upper_margin;     * time from sync to picture    *&n;        unsigned long lower_margin;&n;        unsigned long hsync_len;        * length of horizontal sync    *&n;        unsigned long vsync_len;        * length of vertical sync      *&n;&n;1) Pixelclock:&n;   xfree: in MHz&n;   fb: In Picoseconds (ps)&n;&n;   pixclock = 1000000 / DCF&n;&n;2) horizontal timings:&n;   left_margin = HFL - SH2&n;   right_margin = SH1 - HR&n;   hsync_len = SH2 - SH1&n;&n;3) vertical timings:&n;   upper_margin = VFL - SV2&n;   lower_margin = SV1 - VR&n;   vsync_len = SV2 - SV1&n;&n;Good examples for VESA timings can be found in the XFree86 source tree,&n;under &quot;programs/Xserver/hw/xfree86/doc/modeDB.txt&quot;.&n;*/
 multiline_comment|/*&n; *    Predefined Video Modes&n; */
-DECL|variable|__initdata
 r_static
 r_struct
-id|fb_videomode
+(brace
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|var
+r_struct
+id|fb_var_screeninfo
+id|var
+suffix:semicolon
+DECL|variable|__initdata
+)brace
 id|retz3fb_predefined
 (braket
 )braket

@@ -369,7 +369,7 @@ id|SK_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -380,7 +380,7 @@ id|SK_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -394,7 +394,7 @@ id|SK_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -410,7 +410,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -439,7 +439,7 @@ id|SK_rxintr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -450,7 +450,7 @@ id|SK_txintr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -461,7 +461,7 @@ id|SK_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -474,7 +474,7 @@ id|SK_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -493,7 +493,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -505,7 +505,7 @@ id|SK_lance_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -561,7 +561,7 @@ id|SK_print_pos
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -575,7 +575,7 @@ id|SK_print_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -589,13 +589,13 @@ id|SK_print_ram
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_init&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Check for a SK_G16 network adaptor and initialize it.&n; *                  This function gets called by dev_init which initializes&n; *                  all Network devices.&n; *&n; * Parameters     : I : struct device *dev - structure preconfigured &n; *                                           from Space.c&n; * Return Value   : 0 = Driver Found and initialized &n; * Errors         : ENODEV - no device found&n; *                  ENXIO  - not probed&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_init&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Check for a SK_G16 network adaptor and initialize it.&n; *                  This function gets called by dev_init which initializes&n; *                  all Network devices.&n; *&n; * Parameters     : I : struct net_device *dev - structure preconfigured &n; *                                           from Space.c&n; * Return Value   : 0 = Driver Found and initialized &n; * Errors         : ENODEV - no device found&n; *                  ENXIO  - not probed&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 multiline_comment|/* &n; * Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, allocate space for the device and return success&n; *                         (detachable devices only).&n; */
 DECL|function|SK_init
 r_int
@@ -604,7 +604,7 @@ id|SK_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -822,7 +822,7 @@ multiline_comment|/* Failed to find or init driver */
 )brace
 multiline_comment|/* End of SK_init */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_probe&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called by SK_init and &n; *                  does the main part of initialization.&n; *                  &n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; *                  I : short ioaddr       - I/O Port address where POS is.&n; * Return Value   : 0 = Initialization done             &n; * Errors         : ENODEV - No SK_G16 found&n; *                  -1     - Configuration problem&n; * Globals        : board       - pointer to SK_RAM&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     94/06/30  pwe  SK_ADDR now checked and at the correct place&n;-*/
+multiline_comment|/*-&n; * Function       : SK_probe&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called by SK_init and &n; *                  does the main part of initialization.&n; *                  &n; * Parameters     : I : struct net_device *dev - SK_G16 device structure&n; *                  I : short ioaddr       - I/O Port address where POS is.&n; * Return Value   : 0 = Initialization done             &n; * Errors         : ENODEV - No SK_G16 found&n; *                  -1     - Configuration problem&n; * Globals        : board       - pointer to SK_RAM&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     94/06/30  pwe  SK_ADDR now checked and at the correct place&n;-*/
 DECL|function|SK_probe
 r_int
 id|__init
@@ -830,7 +830,7 @@ id|SK_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1617,7 +1617,7 @@ multiline_comment|/* Initialization done */
 )brace
 multiline_comment|/* End of SK_probe() */
 "&f;"
-multiline_comment|/*- &n; * Function       : SK_open&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called sometimes after booting &n; *                  when ifconfig program is run.&n; *&n; *                  This function requests an IRQ, sets the correct&n; *                  IRQ in the card. Then calls SK_lance_init() to &n; *                  init and start the LANCE chip. Then if everything is &n; *                  ok returns with 0 (OK), which means SK_G16 is now&n; *                  opened and operational.&n; *&n; *                  (Called by dev_open() /net/inet/dev.c)&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; * Return Value   : 0 - Device opened&n; * Errors         : -EAGAIN - Open failed&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*- &n; * Function       : SK_open&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called sometimes after booting &n; *                  when ifconfig program is run.&n; *&n; *                  This function requests an IRQ, sets the correct&n; *                  IRQ in the card. Then calls SK_lance_init() to &n; *                  init and start the LANCE chip. Then if everything is &n; *                  ok returns with 0 (OK), which means SK_G16 is now&n; *                  opened and operational.&n; *&n; *                  (Called by dev_open() /net/inet/dev.c)&n; *&n; * Parameters     : I : struct net_device *dev - SK_G16 device structure&n; * Return Value   : 0 - Device opened&n; * Errors         : -EAGAIN - Open failed&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_open
 r_static
 r_int
@@ -1625,7 +1625,7 @@ id|SK_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2149,7 +2149,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* End of SK_open() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_lance_init&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Reset LANCE chip, fill RMD, TMD structures with&n; *                  start values and Start LANCE.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; *                  I : int mode - put LANCE into &quot;mode&quot; see data-sheet for&n; *                                 more info.&n; * Return Value   : 0  - Init done&n; * Errors         : -1 - Init failed&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_lance_init&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Reset LANCE chip, fill RMD, TMD structures with&n; *                  start values and Start LANCE.&n; *&n; * Parameters     : I : struct net_device *dev - SK_G16 device structure&n; *                  I : int mode - put LANCE into &quot;mode&quot; see data-sheet for&n; *                                 more info.&n; * Return Value   : 0  - Init done&n; * Errors         : -1 - Init failed&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_lance_init
 r_static
 r_int
@@ -2157,7 +2157,7 @@ id|SK_lance_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2687,7 +2687,7 @@ multiline_comment|/* LANCE is up and running */
 )brace
 multiline_comment|/* End of SK_lance_init() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_send_packet&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : Writes an socket buffer into a transmit descriptor&n; *                  and starts transmission.&n; *&n; * Parameters     : I : struct sk_buff *skb - packet to transfer&n; *                  I : struct device *dev  - SK_G16 device structure&n; * Return Value   : 0 - OK&n; *                  1 - Could not transmit (dev_queue_xmit will queue it)&n; *                      and try to sent it later&n; * Globals        : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_send_packet&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : Writes an socket buffer into a transmit descriptor&n; *                  and starts transmission.&n; *&n; * Parameters     : I : struct sk_buff *skb - packet to transfer&n; *                  I : struct net_device *dev  - SK_G16 device structure&n; * Return Value   : 0 - OK&n; *                  1 - Could not transmit (dev_queue_xmit will queue it)&n; *                      and try to sent it later&n; * Globals        : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_send_packet
 r_static
 r_int
@@ -2700,7 +2700,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2979,7 +2979,7 @@ r_int
 id|csr0
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3152,7 +3152,7 @@ multiline_comment|/* We are out */
 )brace
 multiline_comment|/* End of SK_interrupt() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_txintr&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : After sending a packet we check status, update&n; *                  statistics and relinquish ownership of transmit &n; *                  descriptor ring.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_txintr&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : After sending a packet we check status, update&n; *                  statistics and relinquish ownership of transmit &n; *                  descriptor ring.&n; *&n; * Parameters     : I : struct net_device *dev - SK_G16 device structure&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_txintr
 r_static
 r_void
@@ -3160,7 +3160,7 @@ id|SK_txintr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3388,7 +3388,7 @@ id|SK_rxintr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3721,7 +3721,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* End of SK_rxintr() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_close&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : close gets called from dev_close() and should&n; *                  deinstall the card (free_irq, mem etc).&n; *&n; * Parameters     : I : struct device *dev - our device structure&n; * Return Value   : 0 - closed device driver&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_close&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : close gets called from dev_close() and should&n; *                  deinstall the card (free_irq, mem etc).&n; *&n; * Parameters     : I : struct net_device *dev - our device structure&n; * Return Value   : 0 - closed device driver&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 multiline_comment|/* I have tried to set BOOT_ROM on and RAM off but then, after a &squot;ifconfig&n; * down&squot; the system stops. So I don&squot;t shut set card to init state.&n; */
 DECL|function|SK_close
 r_static
@@ -3730,7 +3730,7 @@ id|SK_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3805,7 +3805,7 @@ multiline_comment|/* always succeed */
 )brace
 multiline_comment|/* End of SK_close() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_get_stats&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Return current status structure to upper layers.&n; *                  It is called by sprintf_stats (dev.c).&n; *&n; * Parameters     : I : struct device *dev   - our device structure&n; * Return Value   : struct net_device_stats * - our current statistics&n; * Errors         : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_get_stats&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Return current status structure to upper layers.&n; *                  It is called by sprintf_stats (dev.c).&n; *&n; * Parameters     : I : struct net_device *dev   - our device structure&n; * Return Value   : struct net_device_stats * - our current statistics&n; * Errors         : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_get_stats
 r_static
 r_struct
@@ -3815,7 +3815,7 @@ id|SK_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3856,7 +3856,7 @@ multiline_comment|/* Return Device status */
 )brace
 multiline_comment|/* End of SK_get_stats() */
 "&f;"
-multiline_comment|/*-&n; * Function       : set_multicast_list&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function gets called when a program performs&n; *                  a SIOCSIFFLAGS call. Ifconfig does this if you call&n; *                  &squot;ifconfig [-]allmulti&squot; which enables or disables the&n; *                  Promiscuous mode.&n; *                  Promiscuous mode is when the Network card accepts all&n; *                  packets, not only the packets which match our MAC &n; *                  Address. It is useful for writing a network monitor,&n; *                  but it is also a security problem. You have to remember&n; *                  that all information on the net is not encrypted.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device Structure&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     95/10/18  ACox  New multicast calling scheme&n;-*/
+multiline_comment|/*-&n; * Function       : set_multicast_list&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function gets called when a program performs&n; *                  a SIOCSIFFLAGS call. Ifconfig does this if you call&n; *                  &squot;ifconfig [-]allmulti&squot; which enables or disables the&n; *                  Promiscuous mode.&n; *                  Promiscuous mode is when the Network card accepts all&n; *                  packets, not only the packets which match our MAC &n; *                  Address. It is useful for writing a network monitor,&n; *                  but it is also a security problem. You have to remember&n; *                  that all information on the net is not encrypted.&n; *&n; * Parameters     : I : struct net_device *dev - SK_G16 device Structure&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     95/10/18  ACox  New multicast calling scheme&n;-*/
 multiline_comment|/* Set or clear the multicast filter for SK_G16.&n; */
 DECL|function|set_multicast_list
 r_static
@@ -3865,7 +3865,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4430,14 +4430,14 @@ suffix:semicolon
 multiline_comment|/* End of SK_write_reg */
 "&f;"
 multiline_comment|/* &n; * Debugging functions&n; * -------------------&n; */
-multiline_comment|/*-&n; * Function       : SK_print_pos&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/25&n; *&n; * Description    : This function prints out the 4 POS (Programmable&n; *                  Option Select) Registers. Used mainly to debug operation.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; *                  I : char * - Text which will be printed as title&n; * Return Value   : None&n; * Errors         : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_print_pos&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/25&n; *&n; * Description    : This function prints out the 4 POS (Programmable&n; *                  Option Select) Registers. Used mainly to debug operation.&n; *&n; * Parameters     : I : struct net_device *dev - SK_G16 device structure&n; *                  I : char * - Text which will be printed as title&n; * Return Value   : None&n; * Errors         : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_print_pos
 r_void
 id|SK_print_pos
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4521,14 +4521,14 @@ suffix:semicolon
 )brace
 multiline_comment|/* End of SK_print_pos() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_print_dev&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/25&n; *&n; * Description    : This function simply prints out the important fields&n; *                  of the device structure.&n; *&n; * Parameters     : I : struct device *dev  - SK_G16 device structure&n; *                  I : char *text - Title for printing&n; * Return Value   : None&n; * Errors         : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_print_dev&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/25&n; *&n; * Description    : This function simply prints out the important fields&n; *                  of the device structure.&n; *&n; * Parameters     : I : struct net_device *dev  - SK_G16 device structure&n; *                  I : char *text - Title for printing&n; * Return Value   : None&n; * Errors         : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_print_dev
 r_void
 id|SK_print_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4618,14 +4618,14 @@ suffix:semicolon
 )brace
 multiline_comment|/* End of SK_print_dev() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_print_ram&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/06/02&n; *&n; * Description    : This function is used to check how are things set up&n; *                  in the 16KB RAM. Also the pointers to the receive and &n; *                  transmit descriptor rings and rx and tx buffers locations.&n; *                  It contains a minor bug in printing, but has no effect to the values&n; *                  only newlines are not correct.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_print_ram&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/06/02&n; *&n; * Description    : This function is used to check how are things set up&n; *                  in the 16KB RAM. Also the pointers to the receive and &n; *                  transmit descriptor rings and rx and tx buffers locations.&n; *                  It contains a minor bug in printing, but has no effect to the values&n; *                  only newlines are not correct.&n; *&n; * Parameters     : I : struct net_device *dev - SK_G16 device structure&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_print_ram
 r_void
 id|SK_print_ram
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

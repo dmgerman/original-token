@@ -208,7 +208,7 @@ op_star
 id|nr_dest
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

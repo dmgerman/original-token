@@ -21,7 +21,7 @@ macro_line|#endif
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#if defined(CONFIG_A4000T_SCSI) || &bslash;&n;    defined(CONFIG_WARPENGINE_SCSI) || &bslash;&n;    defined(CONFIG_A4091_SCSI) || &bslash;&n;    defined (CONFIG_GVP_TURBO_SCSI) || &bslash;&n;    defined (CONFIG_BLZ603E)
+macro_line|#if defined(CONFIG_A4000T_SCSI) || &bslash;&n;    defined(CONFIG_WARPENGINE_SCSI) || &bslash;&n;    defined(CONFIG_A4091_SCSI) || &bslash;&n;    defined (CONFIG_GVP_TURBO_SCSI) || &bslash;&n;    defined (CONFIG_BLZ603EPLUS_SCSI)
 DECL|macro|AMIGA7XXCONFIG
 mdefine_line|#define AMIGA7XXCONFIG
 macro_line|#endif

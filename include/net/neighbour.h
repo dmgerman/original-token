@@ -184,7 +184,7 @@ id|parms
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -393,7 +393,7 @@ id|next
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -612,7 +612,7 @@ op_star
 id|pkey
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -635,7 +635,7 @@ op_star
 id|pkey
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -702,7 +702,7 @@ op_star
 id|tbl
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -761,7 +761,7 @@ op_star
 id|saddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -774,7 +774,7 @@ id|neigh_parms_alloc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -850,7 +850,7 @@ op_star
 id|key
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -874,7 +874,7 @@ op_star
 id|key
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -958,7 +958,7 @@ id|neigh_sysctl_register
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1187,7 +1187,7 @@ op_star
 id|pkey
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

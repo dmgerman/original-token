@@ -42,13 +42,13 @@ DECL|macro|WRITE
 macro_line|#undef WRITE
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|init_etherdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -291,7 +291,7 @@ id|pamsnet_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -302,7 +302,7 @@ id|pamsnet_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -318,7 +318,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -329,7 +329,7 @@ id|pamsnet_poll_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -339,7 +339,7 @@ id|pamsnet_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -352,7 +352,7 @@ id|net_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1885,7 +1885,7 @@ id|pamsnet_probe
 id|dev
 )paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2294,7 +2294,7 @@ id|pamsnet_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2423,7 +2423,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2626,7 +2626,7 @@ id|pamsnet_poll_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2892,13 +2892,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -2969,7 +2969,7 @@ id|pamsnet_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3074,7 +3074,7 @@ id|net_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3113,7 +3113,7 @@ suffix:semicolon
 DECL|variable|pam_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|pam_dev
 op_assign
 (brace

@@ -155,7 +155,7 @@ suffix:semicolon
 r_static
 DECL|function|ipmr_new_tunnel
 r_struct
-id|device
+id|net_device
 op_star
 id|ipmr_new_tunnel
 c_func
@@ -167,7 +167,7 @@ id|v
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -403,7 +403,7 @@ suffix:semicolon
 DECL|variable|reg_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|reg_dev
 suffix:semicolon
@@ -419,7 +419,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -478,7 +478,7 @@ id|reg_vif_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -495,7 +495,7 @@ suffix:semicolon
 r_static
 DECL|function|ipmr_reg_vif
 r_struct
-id|device
+id|net_device
 op_star
 id|ipmr_reg_vif
 c_func
@@ -507,7 +507,7 @@ id|v
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -737,7 +737,7 @@ op_star
 id|v
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2788,7 +2788,7 @@ id|vif.vifc_vifi
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4074,7 +4074,7 @@ id|vifi
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4557,7 +4557,7 @@ id|ipmr_find_vif
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5688,7 +5688,7 @@ op_star
 id|nhp
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -5958,7 +5958,7 @@ id|MFC_QUEUED
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

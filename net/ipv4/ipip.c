@@ -30,7 +30,7 @@ id|ipip_fb_tunnel_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -41,7 +41,7 @@ id|ipip_tunnel_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -49,7 +49,7 @@ suffix:semicolon
 DECL|variable|ipip_fb_tunnel_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|ipip_fb_tunnel_dev
 op_assign
 (brace
@@ -580,7 +580,7 @@ op_star
 id|nt
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -908,7 +908,7 @@ id|ipip_tunnel_destroy
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1806,7 +1806,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1856,7 +1856,7 @@ id|rt
 suffix:semicolon
 multiline_comment|/* Route to the other host */
 r_struct
-id|device
+id|net_device
 op_star
 id|tdev
 suffix:semicolon
@@ -2462,7 +2462,7 @@ DECL|function|ipip_tunnel_ioctl
 id|ipip_tunnel_ioctl
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3068,7 +3068,7 @@ id|ipip_tunnel_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3096,7 +3096,7 @@ id|ipip_tunnel_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3136,7 +3136,7 @@ id|ipip_tunnel_init_gen
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3245,13 +3245,13 @@ id|ipip_tunnel_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|tdev
 op_assign
@@ -3397,7 +3397,7 @@ id|ipip_fb_tunnel_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3415,7 +3415,7 @@ id|ipip_fb_tunnel_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3436,7 +3436,7 @@ id|ipip_fb_tunnel_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

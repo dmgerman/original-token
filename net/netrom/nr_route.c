@@ -88,7 +88,7 @@ op_star
 id|ax25_digi
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1380,7 +1380,7 @@ op_star
 id|neighbour
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1618,7 +1618,7 @@ op_star
 id|ax25_digi
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1840,7 +1840,7 @@ op_star
 id|callsign
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2117,7 +2117,7 @@ id|nr_rt_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2285,7 +2285,7 @@ multiline_comment|/*&n; *&t;Check that the device given is a valid AX.25 interfa
 DECL|function|nr_ax25_dev_get
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|nr_ax25_dev_get
 c_func
@@ -2296,7 +2296,7 @@ id|devname
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2341,7 +2341,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Find the first active NET/ROM device, usually &quot;nr0&quot;.&n; */
 DECL|function|nr_dev_first
 r_struct
-id|device
+id|net_device
 op_star
 id|nr_dev_first
 c_func
@@ -2350,7 +2350,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2433,7 +2433,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Find the NET/ROM device for the given callsign.&n; */
 DECL|function|nr_dev_get
 r_struct
-id|device
+id|net_device
 op_star
 id|nr_dev_get
 c_func
@@ -2444,7 +2444,7 @@ id|addr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2614,7 +2614,7 @@ id|nr_route_struct
 id|nr_route
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2993,7 +2993,7 @@ op_star
 id|nr_node
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

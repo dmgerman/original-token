@@ -175,7 +175,7 @@ suffix:semicolon
 multiline_comment|/* Number of sig digits */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -194,7 +194,7 @@ id|next
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -486,7 +486,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -504,7 +504,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -632,7 +632,7 @@ id|x25_link_device_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -642,7 +642,7 @@ id|x25_link_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -749,7 +749,7 @@ id|x25_get_neigh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -799,7 +799,7 @@ suffix:semicolon
 multiline_comment|/* x25_route.c */
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|x25_get_route
 c_func
@@ -810,7 +810,7 @@ op_star
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|x25_dev_get
 c_func
@@ -825,7 +825,7 @@ id|x25_route_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon

@@ -2,12 +2,12 @@ multiline_comment|/*&n; * linux/include/video/vga.h -- standard VGA chipset inte
 macro_line|#ifndef __linux_video_vga_h__
 DECL|macro|__linux_video_vga_h__
 mdefine_line|#define __linux_video_vga_h__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifndef CONFIG_AMIGA
 macro_line|#include &lt;asm/vga.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/byteorder.h&gt;
 multiline_comment|/* Some of the code below is taken from SVGAlib.  The original,&n;   unmodified copyright notice for that code is below. */
 multiline_comment|/* VGAlib version 1.2 - (c) 1993 Tommy Frandsen                    */
 multiline_comment|/*                                                                 */
@@ -65,15 +65,15 @@ DECL|macro|VGA_PEL_IR
 mdefine_line|#define VGA_PEL_IR  &t;0x3C7&t;/* PEL Read Index */
 multiline_comment|/* standard VGA indexes max counts */
 DECL|macro|VGA_CRT_C
-mdefine_line|#define VGA_CRT_C   &t;24&t;/* 24 CRT Controller Registers */
+mdefine_line|#define VGA_CRT_C   &t;0x19&t;/* Number of CRT Controller Registers */
 DECL|macro|VGA_ATT_C
-mdefine_line|#define VGA_ATT_C   &t;21&t;/* 21 Attribute Controller Registers */
+mdefine_line|#define VGA_ATT_C   &t;0x15&t;/* Number of Attribute Controller Registers */
 DECL|macro|VGA_GFX_C
-mdefine_line|#define VGA_GFX_C   &t;9&t;/* 9  Graphics Controller Registers */
+mdefine_line|#define VGA_GFX_C   &t;0x09&t;/* Number of Graphics Controller Registers */
 DECL|macro|VGA_SEQ_C
-mdefine_line|#define VGA_SEQ_C   &t;5&t;/* 5  Sequencer Registers */
+mdefine_line|#define VGA_SEQ_C   &t;0x05&t;/* Number of Sequencer Registers */
 DECL|macro|VGA_MIS_C
-mdefine_line|#define VGA_MIS_C   &t;1&t;/* 1  Misc Output Register */
+mdefine_line|#define VGA_MIS_C   &t;0x01&t;/* Number of Misc Output Register */
 multiline_comment|/* VGA misc register bit masks */
 DECL|macro|VGA_MIS_COLOR
 mdefine_line|#define VGA_MIS_COLOR&t;&t;0x01
@@ -137,7 +137,12 @@ mdefine_line|#define VGA_CRTC_MODE&t;&t;0x17
 DECL|macro|VGA_CRTC_LINE_COMPARE
 mdefine_line|#define VGA_CRTC_LINE_COMPARE&t;0x18
 DECL|macro|VGA_CRTC_REGS
-mdefine_line|#define VGA_CRTC_REGS&t;&t;0x19
+mdefine_line|#define VGA_CRTC_REGS&t;&t;VGA_CRT_C
+multiline_comment|/* VGA CRT controller bit masks */
+DECL|macro|VGA_CR11_LOCK_CR0_CR7
+mdefine_line|#define VGA_CR11_LOCK_CR0_CR7&t;0x80 /* lock writes to CR0 - CR7 */
+DECL|macro|VGA_CR17_H_V_SIGNALS_ENABLED
+mdefine_line|#define VGA_CR17_H_V_SIGNALS_ENABLED 0x80
 multiline_comment|/* VGA attribute controller register indices */
 DECL|macro|VGA_ATC_PALETTE0
 mdefine_line|#define VGA_ATC_PALETTE0&t;0x00
@@ -226,6 +231,17 @@ DECL|macro|VGA_GFX_COMPARE_MASK
 mdefine_line|#define VGA_GFX_COMPARE_MASK&t;0x07
 DECL|macro|VGA_GFX_BIT_MASK
 mdefine_line|#define VGA_GFX_BIT_MASK&t;0x08
+multiline_comment|/* VGA graphics controller bit masks */
+DECL|macro|VGA_GR06_GRAPHICS_MODE
+mdefine_line|#define VGA_GR06_GRAPHICS_MODE&t;0x01
+multiline_comment|/* macro for composing an 8-bit VGA register index and value&n; * into a single 16-bit quantity */
+DECL|macro|VGA_OUT16VAL
+mdefine_line|#define VGA_OUT16VAL(v, r)       (((v) &lt;&lt; 8) | (r))
+multiline_comment|/* decide whether we should enable the faster 16-bit VGA register writes */
+macro_line|#ifdef __LITTLE_ENDIAN
+DECL|macro|VGA_OUTW_WRITE
+mdefine_line|#define VGA_OUTW_WRITE
+macro_line|#endif
 multiline_comment|/*&n; * generic VGA port read/write&n; */
 DECL|function|vga_io_r
 r_extern
@@ -264,6 +280,38 @@ id|val
 id|outb
 (paren
 id|val
+comma
+id|port
+)paren
+suffix:semicolon
+)brace
+DECL|function|vga_io_w_fast
+r_extern
+r_inline
+r_void
+id|vga_io_w_fast
+(paren
+r_int
+r_int
+id|port
+comma
+r_int
+r_char
+id|reg
+comma
+r_int
+r_char
+id|val
+)paren
+(brace
+id|outw
+(paren
+id|VGA_OUT16VAL
+(paren
+id|val
+comma
+id|reg
+)paren
 comma
 id|port
 )paren
@@ -314,6 +362,43 @@ id|val
 id|writeb
 (paren
 id|val
+comma
+id|regbase
+op_plus
+id|port
+)paren
+suffix:semicolon
+)brace
+DECL|function|vga_mm_w_fast
+r_extern
+r_inline
+r_void
+id|vga_mm_w_fast
+(paren
+id|caddr_t
+id|regbase
+comma
+r_int
+r_int
+id|port
+comma
+r_int
+r_char
+id|reg
+comma
+r_int
+r_char
+id|val
+)paren
+(brace
+id|writew
+(paren
+id|VGA_OUT16VAL
+(paren
+id|val
+comma
+id|reg
+)paren
 comma
 id|regbase
 op_plus
@@ -398,6 +483,55 @@ id|val
 )paren
 suffix:semicolon
 )brace
+DECL|function|vga_w_fast
+r_extern
+r_inline
+r_void
+id|vga_w_fast
+(paren
+id|caddr_t
+id|regbase
+comma
+r_int
+r_int
+id|port
+comma
+r_int
+r_char
+id|reg
+comma
+r_int
+r_char
+id|val
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|regbase
+)paren
+id|vga_mm_w_fast
+(paren
+id|regbase
+comma
+id|port
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+r_else
+id|vga_io_w_fast
+(paren
+id|port
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * VGA CRTC register read/write&n; */
 DECL|function|vga_rcrt
 r_extern
@@ -450,6 +584,19 @@ r_char
 id|val
 )paren
 (brace
+macro_line|#ifdef VGA_OUTW_WRITE
+id|vga_w_fast
+(paren
+id|regbase
+comma
+id|VGA_CRT_IC
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 id|vga_w
 (paren
 id|regbase
@@ -468,6 +615,7 @@ comma
 id|val
 )paren
 suffix:semicolon
+macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_io_rcrt
 r_extern
@@ -510,6 +658,17 @@ r_char
 id|val
 )paren
 (brace
+macro_line|#ifdef VGA_OUTW_WRITE
+id|vga_io_w_fast
+(paren
+id|VGA_CRT_IC
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 id|vga_io_w
 (paren
 id|VGA_CRT_IC
@@ -524,6 +683,7 @@ comma
 id|val
 )paren
 suffix:semicolon
+macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_mm_rcrt
 r_extern
@@ -576,6 +736,19 @@ r_char
 id|val
 )paren
 (brace
+macro_line|#ifdef VGA_OUTW_WRITE
+id|vga_mm_w_fast
+(paren
+id|regbase
+comma
+id|VGA_CRT_IC
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 id|vga_mm_w
 (paren
 id|regbase
@@ -594,6 +767,7 @@ comma
 id|val
 )paren
 suffix:semicolon
+macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 multiline_comment|/*&n; * VGA sequencer register read/write&n; */
 DECL|function|vga_rseq
@@ -647,6 +821,19 @@ r_char
 id|val
 )paren
 (brace
+macro_line|#ifdef VGA_OUTW_WRITE
+id|vga_w_fast
+(paren
+id|regbase
+comma
+id|VGA_SEQ_I
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 id|vga_w
 (paren
 id|regbase
@@ -665,6 +852,7 @@ comma
 id|val
 )paren
 suffix:semicolon
+macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_io_rseq
 r_extern
@@ -707,6 +895,17 @@ r_char
 id|val
 )paren
 (brace
+macro_line|#ifdef VGA_OUTW_WRITE
+id|vga_io_w_fast
+(paren
+id|VGA_SEQ_I
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 id|vga_io_w
 (paren
 id|VGA_SEQ_I
@@ -721,6 +920,7 @@ comma
 id|val
 )paren
 suffix:semicolon
+macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_mm_rseq
 r_extern
@@ -773,6 +973,19 @@ r_char
 id|val
 )paren
 (brace
+macro_line|#ifdef VGA_OUTW_WRITE
+id|vga_mm_w_fast
+(paren
+id|regbase
+comma
+id|VGA_SEQ_I
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 id|vga_mm_w
 (paren
 id|regbase
@@ -791,6 +1004,7 @@ comma
 id|val
 )paren
 suffix:semicolon
+macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 multiline_comment|/*&n; * VGA graphics controller register read/write&n; */
 DECL|function|vga_rgfx
@@ -844,6 +1058,19 @@ r_char
 id|val
 )paren
 (brace
+macro_line|#ifdef VGA_OUTW_WRITE
+id|vga_w_fast
+(paren
+id|regbase
+comma
+id|VGA_GFX_I
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 id|vga_w
 (paren
 id|regbase
@@ -862,6 +1089,7 @@ comma
 id|val
 )paren
 suffix:semicolon
+macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_io_rgfx
 r_extern
@@ -904,6 +1132,17 @@ r_char
 id|val
 )paren
 (brace
+macro_line|#ifdef VGA_OUTW_WRITE
+id|vga_io_w_fast
+(paren
+id|VGA_GFX_I
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 id|vga_io_w
 (paren
 id|VGA_GFX_I
@@ -918,6 +1157,7 @@ comma
 id|val
 )paren
 suffix:semicolon
+macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_mm_rgfx
 r_extern
@@ -970,6 +1210,19 @@ r_char
 id|val
 )paren
 (brace
+macro_line|#ifdef VGA_OUTW_WRITE
+id|vga_mm_w_fast
+(paren
+id|regbase
+comma
+id|VGA_GFX_I
+comma
+id|reg
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 id|vga_mm_w
 (paren
 id|regbase
@@ -988,6 +1241,7 @@ comma
 id|val
 )paren
 suffix:semicolon
+macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 multiline_comment|/*&n; * VGA attribute controller register read/write&n; */
 DECL|function|vga_rattr

@@ -969,7 +969,7 @@ id|ax25_return_dm
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

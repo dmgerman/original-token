@@ -116,7 +116,7 @@ id|pp_timer
 suffix:semicolon
 DECL|member|pp_if
 r_struct
-id|device
+id|net_device
 op_star
 id|pp_if
 suffix:semicolon
@@ -128,7 +128,7 @@ id|ppp_device
 (brace
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* Network device */
@@ -179,7 +179,7 @@ r_void
 id|sppp_detach
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -188,7 +188,7 @@ r_void
 id|sppp_input
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -202,7 +202,7 @@ r_int
 id|sppp_do_ioctl
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -221,7 +221,7 @@ op_star
 id|sppp_dequeue
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -230,7 +230,7 @@ r_int
 id|sppp_isempty
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -239,7 +239,7 @@ r_void
 id|sppp_flush
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -248,7 +248,7 @@ r_int
 id|sppp_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -257,7 +257,7 @@ r_int
 id|sppp_reopen
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -266,7 +266,7 @@ r_int
 id|sppp_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

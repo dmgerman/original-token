@@ -964,7 +964,7 @@ id|shaper_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1017,7 +1017,7 @@ id|shaper_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1071,7 +1071,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1102,7 +1102,7 @@ id|shaper_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1131,7 +1131,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1226,7 +1226,7 @@ op_assign
 id|skb-&gt;dev-&gt;priv
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1295,7 +1295,7 @@ op_assign
 id|neigh-&gt;dev-&gt;priv
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|tmp
 suffix:semicolon
@@ -1354,7 +1354,7 @@ op_star
 id|hh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1439,7 +1439,7 @@ id|shaper_neigh_setup_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1481,7 +1481,7 @@ id|shaper_attach
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|shdev
 comma
@@ -1491,7 +1491,7 @@ op_star
 id|sh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1636,7 +1636,7 @@ id|shaper_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1680,7 +1680,7 @@ id|SHAPER_SET_DEV
 suffix:colon
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|them
 op_assign
@@ -1794,7 +1794,7 @@ id|shaper_alloc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1887,7 +1887,7 @@ id|shaper_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2014,7 +2014,7 @@ suffix:semicolon
 DECL|variable|dev_shape
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_shape
 op_assign
 (brace
@@ -2146,7 +2146,7 @@ macro_line|#else
 DECL|variable|dev_sh0
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_sh0
 op_assign
 (brace
@@ -2178,7 +2178,7 @@ suffix:semicolon
 DECL|variable|dev_sh1
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_sh1
 op_assign
 (brace
@@ -2210,7 +2210,7 @@ suffix:semicolon
 DECL|variable|dev_sh2
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_sh2
 op_assign
 (brace
@@ -2242,7 +2242,7 @@ suffix:semicolon
 DECL|variable|dev_sh3
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_sh3
 op_assign
 (brace

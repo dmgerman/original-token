@@ -43,7 +43,7 @@ r_int
 id|pf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -78,7 +78,7 @@ r_int
 id|pf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -113,7 +113,7 @@ r_int
 id|pf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -192,7 +192,7 @@ r_int
 id|pf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -220,7 +220,7 @@ r_int
 id|pf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -248,7 +248,7 @@ r_int
 id|pf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -279,7 +279,7 @@ r_int
 id|pf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -313,7 +313,7 @@ r_int
 id|pf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -347,7 +347,7 @@ r_int
 id|pf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

@@ -992,7 +992,7 @@ suffix:semicolon
 multiline_comment|/* QE&squot;s SBUS device struct            */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

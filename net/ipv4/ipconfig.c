@@ -198,7 +198,7 @@ id|next
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -227,7 +227,7 @@ multiline_comment|/* List of open device */
 DECL|variable|__initdata
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|ic_dev
 id|__initdata
@@ -255,7 +255,7 @@ op_star
 id|last
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -561,7 +561,7 @@ op_star
 id|next
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1279,7 +1279,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1363,7 +1363,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1632,7 +1632,7 @@ id|IC_RARP
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1789,7 +1789,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2031,7 +2031,7 @@ id|jiffies
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2670,7 +2670,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

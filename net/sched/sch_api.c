@@ -338,7 +338,7 @@ id|qdisc_lookup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -786,7 +786,7 @@ id|qdisc_alloc_handle
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -882,7 +882,7 @@ id|dev_graft_qdisc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1009,7 +1009,7 @@ id|qdisc_graft
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1142,7 +1142,7 @@ id|qdisc_create
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1888,7 +1888,7 @@ op_assign
 id|arg
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2224,7 +2224,7 @@ op_assign
 id|arg
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3272,7 +3272,7 @@ comma
 id|s_q_idx
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3501,7 +3501,7 @@ op_assign
 id|arg
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4344,7 +4344,7 @@ r_int
 id|s_t
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

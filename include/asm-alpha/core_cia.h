@@ -38,7 +38,7 @@ DECL|macro|CIA_DMA_WIN_SIZE
 mdefine_line|#define CIA_DMA_WIN_SIZE&t;&t;alpha_mv.dma_win_size
 macro_line|#else
 DECL|macro|CIA_DMA_WIN_BASE
-mdefine_line|#define CIA_DMA_WIN_BASE&t;&t;CIA_DMA_WIN_SIZE_DEFAULT
+mdefine_line|#define CIA_DMA_WIN_BASE&t;&t;CIA_DMA_WIN_BASE_DEFAULT
 DECL|macro|CIA_DMA_WIN_SIZE
 mdefine_line|#define CIA_DMA_WIN_SIZE&t;&t;CIA_DMA_WIN_SIZE_DEFAULT
 macro_line|#endif

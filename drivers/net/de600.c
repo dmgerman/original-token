@@ -204,7 +204,7 @@ id|de600_read_status
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -219,7 +219,7 @@ r_char
 id|type
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -231,7 +231,7 @@ id|de600_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -242,7 +242,7 @@ id|de600_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -255,7 +255,7 @@ id|get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -271,7 +271,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -301,7 +301,7 @@ id|de600_tx_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -315,7 +315,7 @@ id|de600_rx_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -327,7 +327,7 @@ id|trigger_interrupt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -337,7 +337,7 @@ id|de600_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -348,7 +348,7 @@ id|adapter_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -432,7 +432,7 @@ id|de600_read_status
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -482,7 +482,7 @@ r_char
 id|type
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -566,7 +566,7 @@ id|de600_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -634,7 +634,7 @@ id|de600_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -705,7 +705,7 @@ id|get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -729,7 +729,7 @@ id|trigger_interrupt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -772,7 +772,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1109,7 +1109,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1318,7 +1318,7 @@ id|de600_tx_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1445,7 +1445,7 @@ id|de600_rx_intr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1711,7 +1711,7 @@ id|de600_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2062,7 +2062,7 @@ id|adapter_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2416,7 +2416,7 @@ suffix:semicolon
 DECL|variable|de600_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|de600_dev
 op_assign
 (brace

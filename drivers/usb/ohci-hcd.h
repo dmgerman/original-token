@@ -1,10 +1,11 @@
-multiline_comment|/*&n; * OHCI HCD (Host Controller Driver) for USB.&n; *&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; *&n; * The OHCI HCD layer is a simple but nearly complete implementation of what the&n; * USB people would call a HCD  for the OHCI. &n; * (ISO comming soon, Bulk disabled, INT u. CTRL transfers enabled)&n; * The layer on top of it, is for interfacing to the alternate-usb device-drivers.&n; * &n; * [ This is based on Linus&squot; UHCI code and gregs OHCI fragments (0.03c source tree). ]&n; * [ Open Host Controller Interface driver for USB. ]&n; * [ (C) Copyright 1999 Linus Torvalds (uhci.c) ]&n; * [ (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt; ]&n; * [ $Log: ohci.c,v $ ]&n; * [ Revision 1.1  1999/04/05 08:32:30  greg ]&n; * &n; * &n; * v2.1 1999/05/09 ep_addr correction, code clean up&n; * v2.0 1999/05/04 &n; * v1.0 1999/04/27&n; * ohci-hcd.h&n; */
+multiline_comment|/*&n; * OHCI HCD (Host Controller Driver) for USB.&n; *&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; *&n; * The OHCI HCD layer is a simple but nearly complete implementation of what the&n; * USB people would call a HCD  for the OHCI. &n; * (ISO comming soon, Bulk, INT u. CTRL transfers enabled)&n; * The layer on top of it, is for interfacing to the alternate-usb device-drivers.&n; * &n; * [ This is based on Linus&squot; UHCI code and gregs OHCI fragments (0.03c source tree). ]&n; * [ Open Host Controller Interface driver for USB. ]&n; * [ (C) Copyright 1999 Linus Torvalds (uhci.c) ]&n; * [ (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt; ]&n; * [ $Log: ohci.c,v $ ]&n; * [ Revision 1.1  1999/04/05 08:32:30  greg ]&n; * &n; * v4.0 1999/08/18&n; * v2.1 1999/05/09 ep_addr correction, code clean up&n; * v2.0 1999/05/04 &n; * v1.0 1999/04/27&n; * ohci-hcd.h&n; */
+singleline_comment|// #define OHCI_DBG    /* printk some debug information */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_USB_OHCI_VROOTHUB
+singleline_comment|// #ifdef CONFIG_USB_OHCI_VROOTHUB
 DECL|macro|VROOTHUB
 mdefine_line|#define VROOTHUB  
-macro_line|#endif
-multiline_comment|/* enables virtual root hub &n; * (root hub will be managed by the hub controller &n; *  hub.c of the alternate usb driver)&n; *  last time I did more testing without virtual root hub &n; *  -&gt; the virtual root hub could be more unstable now */
+singleline_comment|// #endif
+multiline_comment|/* enables virtual root hub &n; * (root hub will be managed by the hub controller &n; *  hub.c of the alternate usb driver)&n; *  must be on now&n; */
 macro_line|#ifdef OHCI_DBG
 DECL|macro|OHCI_DEBUG
 mdefine_line|#define OHCI_DEBUG(X) X
@@ -15,6 +16,9 @@ macro_line|#endif
 multiline_comment|/* for readl writel functions */
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+r_struct
+id|usb_ohci_ed
+suffix:semicolon
 multiline_comment|/* for ED and TD structures */
 DECL|typedef|__OHCI_BAG
 r_typedef
@@ -34,16 +38,10 @@ r_void
 op_star
 id|ohci
 comma
-r_int
-r_int
-id|ep_addr
-comma
-r_int
-id|cmd_len
-comma
-r_void
+r_struct
+id|usb_ohci_ed
 op_star
-id|cmd
+id|ed
 comma
 r_void
 op_star
@@ -62,113 +60,76 @@ id|__OHCI_BAG
 id|lw1
 )paren
 suffix:semicolon
-DECL|struct|ep_address
-r_struct
-id|ep_address
-(brace
-DECL|member|ep
-id|__u8
-id|ep
-suffix:semicolon
-multiline_comment|/* bit 7: IN/-OUT, 6,5: type 10..CTRL 00..ISO  11..BULK 10..INT, 3..0: ep nr */
-DECL|member|fa
-id|__u8
-id|fa
-suffix:semicolon
-multiline_comment|/* function address */
-DECL|member|hc
-id|__u8
-id|hc
-suffix:semicolon
-DECL|member|host
-id|__u8
-id|host
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|union|ep_addr_
-r_union
-id|ep_addr_
-(brace
-DECL|member|iep
-r_int
-r_int
-id|iep
-suffix:semicolon
-DECL|member|bep
-r_struct
-id|ep_address
-id|bep
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * ED and TD descriptors has to be 16-byte aligned&n; */
-DECL|struct|ohci_hw_ed
-r_struct
-id|ohci_hw_ed
-(brace
-DECL|member|info
-id|__u32
-id|info
-suffix:semicolon
-DECL|member|tail_td
-id|__u32
-id|tail_td
-suffix:semicolon
-multiline_comment|/* TD Queue tail pointer */
-DECL|member|head_td
-id|__u32
-id|head_td
-suffix:semicolon
-multiline_comment|/* TD Queue head pointer */
-DECL|member|next_ed
-id|__u32
-id|next_ed
-suffix:semicolon
-multiline_comment|/* Next ED */
-)brace
-id|__attribute
-c_func
-(paren
-(paren
-id|aligned
-c_func
-(paren
-l_int|16
-)paren
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* ED States */
+DECL|macro|ED_NEW
+mdefine_line|#define ED_NEW &t;&t;0x00
+DECL|macro|ED_UNLINK
+mdefine_line|#define ED_UNLINK &t;0x01
+DECL|macro|ED_OPER
+mdefine_line|#define ED_OPER&t;&t;0x02
+DECL|macro|ED_STOP
+mdefine_line|#define ED_STOP     0x03
+DECL|macro|ED_DEL
+mdefine_line|#define ED_DEL&t;&t;0x04
+DECL|macro|ED_RH
+mdefine_line|#define ED_RH&t;&t;0x07 /* marker for RH ED */
+DECL|macro|ED_STATE
+mdefine_line|#define ED_STATE(ed) &t;&t;&t;(((ed)-&gt;hwINFO &gt;&gt; 29) &amp; 0x7)
+DECL|macro|ED_setSTATE
+mdefine_line|#define ED_setSTATE(ed,state) &t;(ed)-&gt;hwINFO = ((ed)-&gt;hwINFO &amp; ~(0x7 &lt;&lt; 29)) | (((state)&amp; 0x7) &lt;&lt; 29)
+DECL|macro|ED_TYPE
+mdefine_line|#define ED_TYPE(ed) &t;&t;&t;(((ed)-&gt;hwINFO &gt;&gt; 27) &amp; 0x3)
 DECL|struct|usb_ohci_ed
 r_struct
 id|usb_ohci_ed
 (brace
-DECL|member|hw
-r_struct
-id|ohci_hw_ed
-id|hw
+DECL|member|hwINFO
+id|__u32
+id|hwINFO
 suffix:semicolon
-multiline_comment|/*  struct ohci * ohci; */
-DECL|member|handler
-id|f_handler
-id|handler
+DECL|member|hwTailP
+id|__u32
+id|hwTailP
 suffix:semicolon
-DECL|member|ep_addr
-r_union
-id|ep_addr_
-id|ep_addr
+DECL|member|hwHeadP
+id|__u32
+id|hwHeadP
 suffix:semicolon
-DECL|member|ed_list
-r_struct
-id|usb_ohci_ed
+DECL|member|hwNextED
+id|__u32
+id|hwNextED
+suffix:semicolon
+DECL|member|buffer_start
+r_void
 op_star
-id|ed_list
+id|buffer_start
+suffix:semicolon
+DECL|member|len
+r_int
+r_int
+id|len
 suffix:semicolon
 DECL|member|ed_prev
 r_struct
 id|usb_ohci_ed
 op_star
 id|ed_prev
+suffix:semicolon
+DECL|member|int_period
+id|__u8
+id|int_period
+suffix:semicolon
+DECL|member|int_branch
+id|__u8
+id|int_branch
+suffix:semicolon
+DECL|member|int_load
+id|__u8
+id|int_load
+suffix:semicolon
+DECL|member|int_interval
+id|__u8
+id|int_interval
 suffix:semicolon
 )brace
 id|__attribute
@@ -183,48 +144,57 @@ l_int|32
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* OHCI Hardware fields */
-DECL|struct|ohci_hw_td
+DECL|struct|usb_hcd_ed
 r_struct
-id|ohci_hw_td
+id|usb_hcd_ed
 (brace
-DECL|member|info
-id|__u32
-id|info
+DECL|member|endpoint
+r_int
+id|endpoint
 suffix:semicolon
-DECL|member|cur_buf
-id|__u32
-id|cur_buf
+DECL|member|function
+r_int
+id|function
 suffix:semicolon
-multiline_comment|/* Current Buffer Pointer */
-DECL|member|next_td
-id|__u32
-id|next_td
+DECL|member|out
+r_int
+id|out
 suffix:semicolon
-multiline_comment|/* Next TD Pointer */
-DECL|member|buf_end
-id|__u32
-id|buf_end
+DECL|member|type
+r_int
+id|type
 suffix:semicolon
-multiline_comment|/* Memory Buffer End Pointer */
+DECL|member|slow
+r_int
+id|slow
+suffix:semicolon
+DECL|member|maxpack
+r_int
+id|maxpack
+suffix:semicolon
 )brace
-id|__attribute
-c_func
-(paren
-(paren
-id|aligned
-c_func
-(paren
-l_int|16
-)paren
-)paren
-)paren
+suffix:semicolon
+DECL|struct|ohci_state
+r_struct
+id|ohci_state
+(brace
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|status
+r_int
+id|status
+suffix:semicolon
+)brace
 suffix:semicolon
 multiline_comment|/* TD info field */
 DECL|macro|TD_CC
 mdefine_line|#define TD_CC       0xf0000000
 DECL|macro|TD_CC_GET
-mdefine_line|#define TD_CC_GET(td_p) ((td_p &gt;&gt;28) &amp; 0x04)
+mdefine_line|#define TD_CC_GET(td_p) ((td_p &gt;&gt;28) &amp; 0x0f)
+DECL|macro|TD_CC_SET
+mdefine_line|#define TD_CC_SET(td_p, cc) (td_p) = ((td_p) &amp; 0x0fffffff) | (((cc) &amp; 0x0f) &lt;&lt; 28)
 DECL|macro|TD_EC
 mdefine_line|#define TD_EC       0x0C000000
 DECL|macro|TD_T
@@ -249,6 +219,10 @@ DECL|macro|TD_DP_IN
 mdefine_line|#define TD_DP_IN    0x00100000
 DECL|macro|TD_DP_OUT
 mdefine_line|#define TD_DP_OUT   0x00080000
+DECL|macro|TD_ISO
+mdefine_line|#define TD_ISO&t;&t;0x00010000
+DECL|macro|TD_DEL
+mdefine_line|#define TD_DEL      0x00020000
 multiline_comment|/* CC Codes */
 DECL|macro|TD_CC_NOERROR
 mdefine_line|#define TD_CC_NOERROR      0x00
@@ -276,14 +250,41 @@ DECL|macro|TD_BUFFERUNDERRUN
 mdefine_line|#define TD_BUFFERUNDERRUN  0x0D
 DECL|macro|TD_NOTACCESSED
 mdefine_line|#define TD_NOTACCESSED     0x0F
+DECL|macro|MAXPSW
+mdefine_line|#define MAXPSW 2
 DECL|struct|usb_ohci_td
 r_struct
 id|usb_ohci_td
 (brace
-DECL|member|hw
-r_struct
-id|ohci_hw_td
-id|hw
+DECL|member|hwINFO
+id|__u32
+id|hwINFO
+suffix:semicolon
+DECL|member|hwCBP
+id|__u32
+id|hwCBP
+suffix:semicolon
+multiline_comment|/* Current Buffer Pointer */
+DECL|member|hwNextTD
+id|__u32
+id|hwNextTD
+suffix:semicolon
+multiline_comment|/* Next TD Pointer */
+DECL|member|hwBE
+id|__u32
+id|hwBE
+suffix:semicolon
+multiline_comment|/* Memory Buffer End Pointer */
+DECL|member|hwPSW
+id|__u16
+id|hwPSW
+(braket
+id|MAXPSW
+)braket
+suffix:semicolon
+DECL|member|type
+id|__u32
+id|type
 suffix:semicolon
 DECL|member|buffer_start
 r_void
@@ -294,17 +295,11 @@ DECL|member|handler
 id|f_handler
 id|handler
 suffix:semicolon
-DECL|member|prev_td
-r_struct
-id|usb_ohci_td
-op_star
-id|prev_td
-suffix:semicolon
-DECL|member|ep
+DECL|member|ed
 r_struct
 id|usb_ohci_ed
 op_star
-id|ep
+id|ed
 suffix:semicolon
 DECL|member|next_dl_td
 r_struct
@@ -359,89 +354,28 @@ DECL|macro|ISO_IN
 mdefine_line|#define ISO_IN&t;&t;0x04
 DECL|macro|ISO_OUT
 mdefine_line|#define ISO_OUT&t;&t;0x00
-DECL|struct|ohci_rep_td
-r_struct
-id|ohci_rep_td
-(brace
-DECL|member|cmd_len
-r_int
-id|cmd_len
-suffix:semicolon
-DECL|member|cmd
-r_void
-op_star
-id|cmd
-suffix:semicolon
-DECL|member|data
-r_void
-op_star
-id|data
-suffix:semicolon
-DECL|member|data_len
-r_int
-id|data_len
-suffix:semicolon
-DECL|member|handler
-id|f_handler
-id|handler
-suffix:semicolon
-DECL|member|next_td
-r_struct
-id|ohci_rep_td
-op_star
-id|next_td
-suffix:semicolon
-DECL|member|ep_addr
-r_int
-id|ep_addr
-suffix:semicolon
-DECL|member|lw0
-id|__OHCI_BAG
-id|lw0
-suffix:semicolon
-DECL|member|lw1
-id|__OHCI_BAG
-id|lw1
-suffix:semicolon
-DECL|member|status
-id|__u32
-id|status
-suffix:semicolon
-)brace
-id|__attribute
-c_func
-(paren
-(paren
-id|aligned
-c_func
-(paren
-l_int|32
-)paren
-)paren
-)paren
-suffix:semicolon
+DECL|macro|CTRL_SETUP
+mdefine_line|#define CTRL_SETUP  &t;0x102
+DECL|macro|CTRL_DATA_IN
+mdefine_line|#define CTRL_DATA_IN&t;0x206
+DECL|macro|CTRL_DATA_OUT
+mdefine_line|#define CTRL_DATA_OUT&t;0x202
+DECL|macro|CTRL_STATUS_IN
+mdefine_line|#define CTRL_STATUS_IN&t;0x306
+DECL|macro|CTRL_STATUS_OUT
+mdefine_line|#define CTRL_STATUS_OUT&t;0x302
+DECL|macro|SEND
+mdefine_line|#define SEND            0x00001000
+DECL|macro|ST_ADDR
+mdefine_line|#define ST_ADDR         0x00002000
+DECL|macro|ADD_LEN
+mdefine_line|#define ADD_LEN         0x00004000
+DECL|macro|DEL
+mdefine_line|#define DEL             0x00008000
+DECL|macro|DEL_ED
+mdefine_line|#define DEL_ED          0x00040000
 DECL|macro|OHCI_ED_SKIP
 mdefine_line|#define OHCI_ED_SKIP&t;(1 &lt;&lt; 14)
-DECL|macro|OHCI_ED_MPS
-mdefine_line|#define OHCI_ED_MPS&t;(0x7ff &lt;&lt; 16)
-DECL|macro|OHCI_ED_F_NORM
-mdefine_line|#define OHCI_ED_F_NORM&t;(0)
-DECL|macro|OHCI_ED_F_ISOC
-mdefine_line|#define OHCI_ED_F_ISOC&t;(1 &lt;&lt; 15)
-DECL|macro|OHCI_ED_S_LOW
-mdefine_line|#define OHCI_ED_S_LOW&t;(1 &lt;&lt; 13)
-DECL|macro|OHCI_ED_S_HIGH
-mdefine_line|#define OHCI_ED_S_HIGH&t;(0)
-DECL|macro|OHCI_ED_D
-mdefine_line|#define OHCI_ED_D&t;(3 &lt;&lt; 11)
-DECL|macro|OHCI_ED_D_IN
-mdefine_line|#define OHCI_ED_D_IN&t;(2 &lt;&lt; 11)
-DECL|macro|OHCI_ED_D_OUT
-mdefine_line|#define OHCI_ED_D_OUT&t;(1 &lt;&lt; 11)
-DECL|macro|OHCI_ED_EN
-mdefine_line|#define OHCI_ED_EN&t;(0xf &lt;&lt; 7)
-DECL|macro|OHCI_ED_FA
-mdefine_line|#define OHCI_ED_FA&t;(0x7f)
 multiline_comment|/*&n; * The HCCA (Host Controller Communications Area) is a 256 byte&n; * structure defined in the OHCI spec. that the host controller is&n; * told the base address of.  It must be 256-byte aligned.&n; */
 DECL|macro|NUM_INTS
 mdefine_line|#define NUM_INTS 32&t;/* part of the OHCI standard */
@@ -492,24 +426,6 @@ l_int|256
 )paren
 )paren
 suffix:semicolon
-DECL|macro|ED_INT_1
-mdefine_line|#define ED_INT_1&t;1
-DECL|macro|ED_INT_2
-mdefine_line|#define ED_INT_2&t;2
-DECL|macro|ED_INT_4
-mdefine_line|#define ED_INT_4&t;4
-DECL|macro|ED_INT_8
-mdefine_line|#define ED_INT_8&t;8
-DECL|macro|ED_INT_16
-mdefine_line|#define ED_INT_16&t;16
-DECL|macro|ED_INT_32
-mdefine_line|#define ED_INT_32&t;32
-DECL|macro|ED_CONTROL
-mdefine_line|#define ED_CONTROL&t;64
-DECL|macro|ED_BULK
-mdefine_line|#define ED_BULK&t;&t;65
-DECL|macro|ED_ISO
-mdefine_line|#define ED_ISO&t;&t;0&t;/* same as 1ms interrupt queue */
 multiline_comment|/*&n; * This is the maximum number of root hub ports.  I don&squot;t think we&squot;ll&n; * ever see more than two as that&squot;s the space available on an ATX&n; * motherboard&squot;s case, but it could happen.  The OHCI spec allows for&n; * up to 15... (which is insane!)&n; * &n; * Although I suppose several &quot;ports&quot; could be connected directly to&n; * internal laptop devices such as a keyboard, mouse, camera and&n; * serial/parallel ports.  hmm...  That&squot;d be neat.&n; */
 DECL|macro|MAX_ROOT_PORTS
 mdefine_line|#define MAX_ROOT_PORTS&t;15&t;/* maximum OHCI root hub ports */
@@ -665,10 +581,50 @@ mdefine_line|#define OHCI_INTR_OC&t;(1 &lt;&lt; 30)
 DECL|macro|OHCI_INTR_MIE
 mdefine_line|#define OHCI_INTR_MIE&t;(1 &lt;&lt; 31)
 multiline_comment|/*&n; * Control register masks&n; */
+DECL|macro|OHCI_USB_RESET
+mdefine_line|#define OHCI_USB_RESET&t;&t;0
 DECL|macro|OHCI_USB_OPER
 mdefine_line|#define OHCI_USB_OPER&t;&t;(2 &lt;&lt; 6)
 DECL|macro|OHCI_USB_SUSPEND
 mdefine_line|#define OHCI_USB_SUSPEND&t;(3 &lt;&lt; 6)
+DECL|struct|virt_root_hub
+r_struct
+id|virt_root_hub
+(brace
+DECL|member|devnum
+r_int
+id|devnum
+suffix:semicolon
+multiline_comment|/* Address of Root Hub endpoint */
+DECL|member|handler
+id|usb_device_irq
+id|handler
+suffix:semicolon
+DECL|member|dev_id
+r_void
+op_star
+id|dev_id
+suffix:semicolon
+DECL|member|int_addr
+r_void
+op_star
+id|int_addr
+suffix:semicolon
+DECL|member|send
+r_int
+id|send
+suffix:semicolon
+DECL|member|interval
+r_int
+id|interval
+suffix:semicolon
+DECL|member|rh_int_timer
+r_struct
+id|timer_list
+id|rh_int_timer
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * This is the full ohci controller description&n; *&n; * Note how the &quot;proper&quot; USB information is just&n; * a subset of what the full implementation needs. (Linus)&n; */
 DECL|struct|ohci
 r_struct
@@ -692,11 +648,6 @@ op_star
 id|hc_area
 suffix:semicolon
 multiline_comment|/* hcca, int ed-tree, ohci itself .. */
-DECL|member|root_hub_funct_addr
-r_int
-id|root_hub_funct_addr
-suffix:semicolon
-multiline_comment|/* Address of Root Hub endpoint */
 DECL|member|ohci_int_load
 r_int
 id|ohci_int_load
@@ -733,36 +684,10 @@ op_star
 id|ed_isotail
 suffix:semicolon
 multiline_comment|/* last endpoint of iso list */
-DECL|member|ed_rh_ep0
-r_struct
-id|usb_ohci_ed
-id|ed_rh_ep0
-suffix:semicolon
-DECL|member|ed_rh_epi
-r_struct
-id|usb_ohci_ed
-id|ed_rh_epi
-suffix:semicolon
-DECL|member|td_rh_epi
-r_struct
-id|ohci_rep_td
-op_star
-id|td_rh_epi
-suffix:semicolon
 DECL|member|intrstatus
 r_int
 id|intrstatus
 suffix:semicolon
-DECL|member|ed_func_ep0
-r_struct
-id|usb_ohci_ed
-op_star
-id|ed_func_ep0
-(braket
-l_int|128
-)braket
-suffix:semicolon
-multiline_comment|/* &quot;hash&quot;-table for ep to ed mapping */
 DECL|member|repl_queue
 r_struct
 id|ohci_rep_td
@@ -784,13 +709,17 @@ id|usb_bus
 op_star
 id|bus
 suffix:semicolon
+DECL|member|rh
+r_struct
+id|virt_root_hub
+id|rh
+suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *  Warning: This constant must not be so large as to cause the&n; *  ohci_device structure to exceed one 4096 byte page.  Or &quot;weird&n; *  things will happen&quot; as the alloc_ohci() function assumes that&n; *  its less than one page at the moment.  (FIXME)&n; */
 DECL|macro|NUM_TDS
-mdefine_line|#define NUM_TDS&t;4&t;&t;/* num of preallocated transfer descriptors */
+mdefine_line|#define NUM_TDS&t;0&t;&t;/* num of preallocated transfer descriptors */
 DECL|macro|NUM_EDS
-mdefine_line|#define NUM_EDS 80&t;&t;/* num of preallocated endpoint descriptors */
+mdefine_line|#define NUM_EDS 32&t;&t;/* num of preallocated endpoint descriptors */
 DECL|struct|ohci_hc_area
 r_struct
 id|ohci_hc_area
@@ -801,24 +730,6 @@ id|ohci_hcca
 id|hcca
 suffix:semicolon
 multiline_comment|/* OHCI mem. mapped IO area 256 Bytes*/
-DECL|member|ed
-r_struct
-id|ohci_hw_ed
-id|ed
-(braket
-id|NUM_EDS
-)braket
-suffix:semicolon
-multiline_comment|/* Endpoint Descriptors 80 * 16  : 1280 Bytes */
-DECL|member|td
-r_struct
-id|ohci_hw_td
-id|td
-(braket
-id|NUM_TDS
-)braket
-suffix:semicolon
-multiline_comment|/* Transfer Descriptors 2 * 32   : 64 Bytes */
 DECL|member|ohci
 r_struct
 id|ohci
@@ -842,6 +753,14 @@ id|ohci
 op_star
 id|ohci
 suffix:semicolon
+DECL|member|ed
+r_struct
+id|usb_ohci_ed
+id|ed
+(braket
+id|NUM_EDS
+)braket
+suffix:semicolon
 DECL|member|data
 r_int
 r_int
@@ -853,93 +772,14 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|ohci_to_usb
-mdefine_line|#define ohci_to_usb(uhci)&t;((ohci)-&gt;usb)
+mdefine_line|#define ohci_to_usb(ohci)&t;((ohci)-&gt;usb)
 DECL|macro|usb_to_ohci
 mdefine_line|#define usb_to_ohci(usb)&t;((struct ohci_device *)(usb)-&gt;hcpriv)
-multiline_comment|/* Debugging code */
-multiline_comment|/*void show_ed(struct ohci_ed *ed);&n;void show_td(struct ohci_td *td);&n;void show_status(struct ohci *ohci); */
 multiline_comment|/* hcd */
-r_int
+r_struct
+id|usb_ohci_td
+op_star
 id|ohci_trans_req
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_int
-r_int
-id|ep_addr
-comma
-r_int
-id|cmd_len
-comma
-r_void
-op_star
-id|cmd
-comma
-r_void
-op_star
-id|data
-comma
-r_int
-id|data_len
-comma
-id|__OHCI_BAG
-id|lw0
-comma
-id|__OHCI_BAG
-id|lw1
-)paren
-suffix:semicolon
-r_struct
-id|usb_ohci_ed
-op_star
-id|usb_ohci_add_ep
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_int
-r_int
-id|ep_addr
-comma
-r_int
-id|interval
-comma
-r_int
-id|load
-comma
-id|f_handler
-id|handler
-comma
-r_int
-id|ep_size
-comma
-r_int
-id|speed
-)paren
-suffix:semicolon
-r_int
-id|usb_ohci_rm_function
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_int
-r_int
-id|ep_addr
-)paren
-suffix:semicolon
-r_int
-id|usb_ohci_rm_ep
 c_func
 (paren
 r_struct
@@ -951,143 +791,6 @@ r_struct
 id|usb_ohci_ed
 op_star
 id|ed
-)paren
-suffix:semicolon
-r_struct
-id|usb_ohci_ed
-op_star
-id|ohci_find_ep
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_int
-r_int
-id|ep_addr_in
-)paren
-suffix:semicolon
-multiline_comment|/* roothub */
-r_int
-id|ohci_del_rh_int_timer
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-)paren
-suffix:semicolon
-r_int
-id|ohci_init_rh_int_timer
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_int
-id|interval
-)paren
-suffix:semicolon
-r_int
-id|root_hub_int_req
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_int
-id|cmd_len
-comma
-r_void
-op_star
-id|ctrl
-comma
-r_void
-op_star
-id|data
-comma
-r_int
-id|data_len
-comma
-id|__OHCI_BAG
-id|lw0
-comma
-id|__OHCI_BAG
-id|lw1
-comma
-id|f_handler
-id|handler
-)paren
-suffix:semicolon
-r_int
-id|root_hub_send_irq
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_void
-op_star
-id|data
-comma
-r_int
-id|data_len
-)paren
-suffix:semicolon
-r_int
-id|root_hub_control_msg
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_int
-id|cmd_len
-comma
-r_void
-op_star
-id|rh_cmd
-comma
-r_void
-op_star
-id|rh_data
-comma
-r_int
-id|len
-comma
-id|__OHCI_BAG
-id|lw0
-comma
-id|__OHCI_BAG
-id|lw1
-comma
-id|f_handler
-id|handler
-)paren
-suffix:semicolon
-r_int
-id|queue_reply
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_int
-r_int
-id|ep_addr
 comma
 r_int
 id|cmd_len
@@ -1101,7 +804,7 @@ op_star
 id|data
 comma
 r_int
-id|len
+id|data_len
 comma
 id|__OHCI_BAG
 id|lw0
@@ -1109,18 +812,163 @@ comma
 id|__OHCI_BAG
 id|lw1
 comma
+r_int
+r_int
+id|type
+comma
 id|f_handler
 id|handler
 )paren
 suffix:semicolon
-r_int
-id|send_replies
+r_struct
+id|usb_ohci_ed
+op_star
+id|usb_ohci_add_ep
 c_func
 (paren
 r_struct
-id|ohci
+id|usb_device
 op_star
-id|ohci
+id|usb_dev
+comma
+r_struct
+id|usb_hcd_ed
+op_star
+id|hcd_ed
+comma
+r_int
+id|interval
+comma
+r_int
+id|load
+)paren
+suffix:semicolon
+r_int
+id|usb_ohci_rm_function
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+id|f_handler
+id|handler
+comma
+id|__OHCI_BAG
+id|lw0
+comma
+id|__OHCI_BAG
+id|lw1
+)paren
+suffix:semicolon
+r_int
+id|usb_ohci_rm_ep
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_struct
+id|usb_ohci_ed
+op_star
+id|ed
+comma
+id|f_handler
+id|handler
+comma
+id|__OHCI_BAG
+id|lw0
+comma
+id|__OHCI_BAG
+id|lw1
+comma
+r_int
+id|send
+)paren
+suffix:semicolon
+r_struct
+id|usb_ohci_ed
+op_star
+id|ohci_find_ep
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_struct
+id|usb_hcd_ed
+op_star
+id|hcd_ed
+)paren
+suffix:semicolon
+multiline_comment|/* roothub */
+r_int
+id|root_hub_control_msg
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_int
+r_int
+id|pipe
+comma
+id|devrequest
+op_star
+id|cmd
+comma
+r_void
+op_star
+id|data
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_int
+id|root_hub_release_irq
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_void
+op_star
+id|ed
+)paren
+suffix:semicolon
+r_void
+op_star
+id|root_hub_request_irq
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_int
+r_int
+id|pipe
+comma
+id|usb_device_irq
+id|handler
+comma
+r_int
+id|period
+comma
+r_void
+op_star
+id|dev_id
 )paren
 suffix:semicolon
 multiline_comment|/* Root-Hub Register info */
@@ -1150,13 +998,13 @@ DECL|macro|RH_PS_PRSC
 mdefine_line|#define RH_PS_PRSC           0x00100000   
 macro_line|#ifdef OHCI_DBG
 DECL|macro|OHCI_FREE
-mdefine_line|#define OHCI_FREE(x) kfree(x); printk(&quot;OHCI FREE: %d&bslash;n&quot;, -- __ohci_free_cnt)
+mdefine_line|#define OHCI_FREE(x) kfree(x); printk(&quot;OHCI FREE: %d: %4x&bslash;n&quot;, -- __ohci_free_cnt, (unsigned int) x)
 DECL|macro|OHCI_ALLOC
-mdefine_line|#define OHCI_ALLOC(x,size) (x) = kmalloc(size, GFP_KERNEL); printk(&quot;OHCI ALLO: %d&bslash;n&quot;, ++ __ohci_free_cnt)
+mdefine_line|#define OHCI_ALLOC(x,size) (x) = kmalloc(size, GFP_KERNEL); printk(&quot;OHCI ALLO: %d: %4x&bslash;n&quot;, ++ __ohci_free_cnt,(unsigned int) x)
 DECL|macro|USB_FREE
-mdefine_line|#define USB_FREE(x) kfree(x); printk(&quot;USB FREE: %d&bslash;n&quot;, -- __ohci_free1_cnt)
+mdefine_line|#define USB_FREE(x) kfree(x); printk(&quot;USB FREE: %d: %4x&bslash;n&quot;, -- __ohci_free1_cnt, (unsigned int) x)
 DECL|macro|USB_ALLOC
-mdefine_line|#define USB_ALLOC(x,size) (x) = kmalloc(size, GFP_KERNEL); printk(&quot;USB ALLO: %d&bslash;n&quot;, ++ __ohci_free1_cnt)
+mdefine_line|#define USB_ALLOC(x,size) (x) = kmalloc(size, GFP_KERNEL); printk(&quot;USB ALLO: %d: %4x&bslash;n&quot;, ++ __ohci_free1_cnt, (unsigned int) x)
 DECL|variable|__ohci_free_cnt
 r_static
 r_int

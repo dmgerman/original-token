@@ -399,7 +399,7 @@ id|express_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -410,7 +410,7 @@ id|eexp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -421,7 +421,7 @@ id|eexp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -434,7 +434,7 @@ id|eexp_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -450,7 +450,7 @@ op_star
 id|buf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -479,7 +479,7 @@ id|eexp_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -491,7 +491,7 @@ id|eexp_hw_rx_pio
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -502,7 +502,7 @@ id|eexp_hw_tx_pio
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -522,7 +522,7 @@ id|eexp_hw_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -553,7 +553,7 @@ id|eexp_hw_lasttxstat
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -564,7 +564,7 @@ id|eexp_hw_txrestart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -574,7 +574,7 @@ r_void
 id|eexp_hw_txinit
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -584,7 +584,7 @@ r_void
 id|eexp_hw_rxinit
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -594,7 +594,7 @@ r_void
 id|eexp_hw_init586
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -604,7 +604,7 @@ r_void
 id|eexp_setup_filter
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -653,7 +653,7 @@ id|scb_status
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -677,7 +677,7 @@ id|scb_rdcmd
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -700,7 +700,7 @@ id|scb_command
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -728,7 +728,7 @@ id|scb_wrcbl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -756,7 +756,7 @@ id|scb_wrrfa
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -784,7 +784,7 @@ id|set_loopback
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -816,7 +816,7 @@ id|clear_loopback
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -885,7 +885,7 @@ id|express_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1057,7 +1057,7 @@ id|eexp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1257,7 +1257,7 @@ id|eexp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1399,7 +1399,7 @@ id|eexp_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1429,7 +1429,7 @@ id|unstick_cu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1802,7 +1802,7 @@ op_star
 id|buf
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2067,7 +2067,7 @@ id|eexp_start_irq
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2447,7 +2447,7 @@ id|eexp_cmd_clear
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2519,7 +2519,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3079,7 +3079,7 @@ id|eexp_hw_set_interface
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3149,7 +3149,7 @@ id|eexp_hw_rx_pio
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3625,7 +3625,7 @@ id|eexp_hw_tx_pio
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3948,7 +3948,7 @@ id|eexp_hw_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4880,7 +4880,7 @@ id|eexp_hw_lasttxstat
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5177,7 +5177,7 @@ id|eexp_hw_txrestart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5361,7 +5361,7 @@ id|eexp_hw_txinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5578,7 +5578,7 @@ id|eexp_hw_rxinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5905,7 +5905,7 @@ id|eexp_hw_init586
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6630,7 +6630,7 @@ id|eexp_setup_filter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6923,7 +6923,7 @@ id|eexp_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7232,7 +7232,7 @@ suffix:semicolon
 DECL|variable|dev_eexp
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_eexp
 (braket
 id|EEXP_MAX_CARDS
@@ -7354,7 +7354,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -7488,7 +7488,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

@@ -4299,7 +4299,7 @@ suffix:colon
 multiline_comment|/* SIOCGIFNUM */
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 suffix:semicolon

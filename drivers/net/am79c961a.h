@@ -226,7 +226,7 @@ r_int
 id|am79c961_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -236,7 +236,7 @@ r_int
 id|am79c961_probe1
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -246,7 +246,7 @@ r_int
 id|am79c961_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -261,7 +261,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -288,7 +288,7 @@ r_void
 id|am79c961_rx
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -303,7 +303,7 @@ r_void
 id|am79c961_tx
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -318,7 +318,7 @@ r_int
 id|am79c961_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -330,7 +330,7 @@ op_star
 id|am79c961_getstats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -340,7 +340,7 @@ r_void
 id|am79c961_setmulticastlist
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

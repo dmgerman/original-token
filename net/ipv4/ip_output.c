@@ -126,7 +126,7 @@ op_star
 id|iph
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -404,7 +404,7 @@ op_star
 id|skb-&gt;dst
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -612,7 +612,7 @@ op_star
 id|rt
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2433,7 +2433,7 @@ op_star
 id|ptr
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

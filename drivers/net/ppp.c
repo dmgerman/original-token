@@ -1330,7 +1330,7 @@ id|ppp_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5306,7 +5306,7 @@ id|ppp_init_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5317,7 +5317,7 @@ id|ppp_dev_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -5327,7 +5327,7 @@ id|ppp_dev_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5346,7 +5346,7 @@ id|ppp_dev_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -5360,7 +5360,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -5371,7 +5371,7 @@ op_star
 id|ppp_dev_stats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -5579,7 +5579,7 @@ DECL|function|ppp_init_dev
 id|ppp_init_dev
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5650,7 +5650,7 @@ DECL|function|ppp_dev_open
 id|ppp_dev_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5708,7 +5708,7 @@ DECL|function|ppp_dev_close
 id|ppp_dev_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5795,7 +5795,7 @@ DECL|function|ppp_dev_ioctl
 id|ppp_dev_ioctl
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9926,7 +9926,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -10443,7 +10443,7 @@ DECL|function|ppp_dev_stats
 id|ppp_dev_stats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -10564,7 +10564,7 @@ r_int
 id|status
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

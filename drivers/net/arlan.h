@@ -49,7 +49,7 @@ suffix:semicolon
 macro_line|#endif
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|arlan_device
 (braket

@@ -300,7 +300,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -319,7 +319,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -351,7 +351,7 @@ id|if_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -362,7 +362,7 @@ id|if_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -373,7 +373,7 @@ id|if_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -389,7 +389,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -431,7 +431,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -444,7 +444,7 @@ id|if_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -708,7 +708,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -735,7 +735,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1252,7 +1252,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1411,7 +1411,7 @@ op_star
 id|wandev
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1616,7 +1616,7 @@ id|if_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1739,7 +1739,7 @@ id|if_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2025,7 +2025,7 @@ id|if_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2115,7 +2115,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2178,7 +2178,7 @@ id|skb
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2224,7 +2224,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3863,7 +3863,7 @@ id|if_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4712,7 +4712,7 @@ r_int
 id|host_cpu_flags
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -4975,7 +4975,7 @@ op_assign
 id|card-&gt;rxmb
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -5525,7 +5525,7 @@ id|card
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -6159,7 +6159,7 @@ id|card
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -6545,7 +6545,7 @@ id|card
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -7220,7 +7220,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -8342,7 +8342,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

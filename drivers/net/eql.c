@@ -56,7 +56,7 @@ id|eql_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -68,7 +68,7 @@ id|eql_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -80,7 +80,7 @@ id|eql_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -92,7 +92,7 @@ id|eql_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -117,7 +117,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -131,7 +131,7 @@ id|eql_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -144,7 +144,7 @@ id|eql_enslave
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -160,7 +160,7 @@ id|eql_emancipate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -176,7 +176,7 @@ id|eql_g_slave_cfg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -192,7 +192,7 @@ id|eql_s_slave_cfg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -208,7 +208,7 @@ id|eql_g_master_cfg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -224,7 +224,7 @@ id|eql_s_master_cfg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -241,7 +241,7 @@ id|eql_is_slave
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -254,7 +254,7 @@ id|eql_is_master
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -325,7 +325,7 @@ id|eql_new_slave_queue
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -373,7 +373,7 @@ id|slave
 )paren
 suffix:semicolon
 multiline_comment|/*  */
-multiline_comment|/* static int eql_insert_slave_dev(slave_queue_t *queue, struct device *dev); -*  */
+multiline_comment|/* static int eql_insert_slave_dev(slave_queue_t *queue, struct net_device *dev); -*  */
 r_static
 r_int
 id|eql_remove_slave_dev
@@ -384,7 +384,7 @@ op_star
 id|queue
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -393,7 +393,7 @@ multiline_comment|/*  */
 r_static
 r_inline
 r_struct
-id|device
+id|net_device
 op_star
 id|eql_best_slave_dev
 c_func
@@ -486,7 +486,7 @@ op_star
 id|queue
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -506,7 +506,7 @@ id|param
 suffix:semicolon
 multiline_comment|/*  */
 "&f;"
-multiline_comment|/* struct device * interface functions &n;   ---------------------------------------------------------&n;   */
+multiline_comment|/* struct net_device * interface functions &n;   ---------------------------------------------------------&n;   */
 DECL|function|eql_init
 r_int
 id|__init
@@ -514,7 +514,7 @@ id|eql_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -729,7 +729,7 @@ id|eql_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -841,7 +841,7 @@ id|eql_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -910,7 +910,7 @@ id|eql_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1063,7 +1063,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1079,7 +1079,7 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|slave_dev
 op_assign
@@ -1200,7 +1200,7 @@ id|eql_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1227,7 +1227,7 @@ id|eql_enslave
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1237,12 +1237,12 @@ id|srqp
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|master_dev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|slave_dev
 suffix:semicolon
@@ -1475,7 +1475,7 @@ id|eql_emancipate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1485,12 +1485,12 @@ id|srqp
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|master_dev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|slave_dev
 suffix:semicolon
@@ -1604,7 +1604,7 @@ id|eql_g_slave_cfg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1622,7 +1622,7 @@ op_star
 id|eql
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|slave_dev
 suffix:semicolon
@@ -1775,7 +1775,7 @@ id|eql_s_slave_cfg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1793,7 +1793,7 @@ op_star
 id|eql
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|slave_dev
 suffix:semicolon
@@ -1916,7 +1916,7 @@ id|eql_g_master_cfg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2015,7 +2015,7 @@ id|eql_s_master_cfg
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2116,7 +2116,7 @@ id|eql_is_slave
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2154,7 +2154,7 @@ id|eql_is_master
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2384,7 +2384,7 @@ id|eql_new_slave_queue
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2778,7 +2778,7 @@ op_star
 id|queue
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2869,7 +2869,7 @@ DECL|function|eql_best_slave_dev
 r_static
 r_inline
 r_struct
-id|device
+id|net_device
 op_star
 id|eql_best_slave_dev
 c_func
@@ -2937,7 +2937,7 @@ id|queue
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|master_dev
 op_assign
@@ -3212,7 +3212,7 @@ op_star
 id|queue
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3518,7 +3518,7 @@ macro_line|#ifdef MODULE
 DECL|variable|dev_eql
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_eql
 op_assign
 (brace

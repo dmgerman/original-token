@@ -364,7 +364,7 @@ multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibili
 multiline_comment|/* This table drives the PCI probe routines. */
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|speedo_found1
 c_func
@@ -376,7 +376,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -520,7 +520,7 @@ id|io_size
 suffix:semicolon
 DECL|member|probe1
 r_struct
-id|device
+id|net_device
 op_star
 (paren
 op_star
@@ -534,7 +534,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1230,7 +1230,7 @@ id|product_name
 suffix:semicolon
 DECL|member|next_module
 r_struct
-id|device
+id|net_device
 op_star
 id|next_module
 suffix:semicolon
@@ -1660,7 +1660,7 @@ id|speedo_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1671,7 +1671,7 @@ id|speedo_resume
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1692,7 +1692,7 @@ id|speedo_init_rx_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1703,7 +1703,7 @@ id|speedo_tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1719,7 +1719,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1730,7 +1730,7 @@ id|speedo_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1759,7 +1759,7 @@ id|speedo_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1772,7 +1772,7 @@ id|speedo_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1783,7 +1783,7 @@ id|speedo_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1802,7 +1802,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1841,7 +1841,7 @@ multiline_comment|/* A list of all installed Speedo devices, for removing the dr
 DECL|variable|root_speedo_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|root_speedo_dev
 op_assign
@@ -1854,7 +1854,7 @@ id|eepro100_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2263,7 +2263,7 @@ suffix:semicolon
 macro_line|#endif
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 DECL|function|speedo_found1
 id|speedo_found1
@@ -2276,7 +2276,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3833,7 +3833,7 @@ id|speedo_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4205,7 +4205,7 @@ id|speedo_resume
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4516,13 +4516,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -4785,7 +4785,7 @@ id|speedo_show_state
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5001,7 +5001,7 @@ id|speedo_init_rx_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5211,7 +5211,7 @@ id|speedo_tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5506,7 +5506,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5844,13 +5844,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_instance
@@ -6445,7 +6445,7 @@ id|speedo_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7062,7 +7062,7 @@ id|speedo_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7317,7 +7317,7 @@ id|speedo_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7475,7 +7475,7 @@ id|speedo_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7730,7 +7730,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8816,7 +8816,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|next_dev
 suffix:semicolon
@@ -8911,7 +8911,7 @@ id|eepro100_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

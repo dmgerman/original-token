@@ -541,7 +541,7 @@ id|q
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1189,7 +1189,7 @@ id|qdisc_lookup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1204,7 +1204,7 @@ id|qdisc_lookup_class
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1217,7 +1217,7 @@ id|dev_init_scheduler
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1227,7 +1227,7 @@ id|dev_shutdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1237,7 +1237,7 @@ id|dev_activate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1247,7 +1247,7 @@ id|dev_deactivate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1279,7 +1279,7 @@ id|qdisc_create_dflt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1376,7 +1376,7 @@ id|qdisc_restart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1492,7 +1492,7 @@ id|qdisc_wakeup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1544,7 +1544,7 @@ id|psched_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

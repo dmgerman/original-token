@@ -170,7 +170,7 @@ id|sdla_read
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -300,7 +300,7 @@ id|sdla_write
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -430,7 +430,7 @@ id|sdla_clear
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -528,7 +528,7 @@ id|sdla_byte
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -602,7 +602,7 @@ id|sdla_stop
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -718,7 +718,7 @@ id|sdla_start
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -843,7 +843,7 @@ id|sdla_z80_poll
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -995,7 +995,7 @@ id|sdla_cpuspeed
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1261,7 +1261,7 @@ id|sdla_errors
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1647,7 +1647,7 @@ id|sdla_cmd
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2035,7 +2035,7 @@ id|sdla_reconfig
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2046,12 +2046,12 @@ id|sdla_activate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 )paren
@@ -2167,12 +2167,12 @@ id|sdla_deactivate
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 )paren
@@ -2289,12 +2289,12 @@ id|sdla_assoc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 )paren
@@ -2468,12 +2468,12 @@ id|sdla_deassoc
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 )paren
@@ -2597,12 +2597,12 @@ id|sdla_dlci_conf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 comma
@@ -2796,7 +2796,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3182,13 +3182,13 @@ id|sdla_receive
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 suffix:semicolon
@@ -3786,7 +3786,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4021,7 +4021,7 @@ id|device
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4034,7 +4034,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|device
@@ -4079,7 +4079,7 @@ id|sdla_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4428,7 +4428,7 @@ id|sdla_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5052,7 +5052,7 @@ id|sdla_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5576,7 +5576,7 @@ id|sdla_xfer
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5755,7 +5755,7 @@ id|sdla_reconfig
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5915,7 +5915,7 @@ id|sdla_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6124,7 +6124,7 @@ id|sdla_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6162,7 +6162,7 @@ id|sdla_set_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7351,7 +7351,7 @@ id|sdla_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7377,7 +7377,7 @@ id|sdla_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7559,7 +7559,7 @@ macro_line|#ifdef MODULE
 DECL|variable|sdla0
 r_static
 r_struct
-id|device
+id|net_device
 id|sdla0
 op_assign
 (brace

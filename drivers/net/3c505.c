@@ -291,7 +291,7 @@ r_char
 id|val
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -515,7 +515,7 @@ id|set_hsf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -559,7 +559,7 @@ id|start_receive
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|pcb_struct
@@ -574,7 +574,7 @@ id|adapter_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -848,7 +848,7 @@ id|check_3c505_dma
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1129,7 +1129,7 @@ id|prime_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1176,7 +1176,7 @@ id|send_pcb
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1464,7 +1464,7 @@ id|receive_pcb
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1918,7 +1918,7 @@ id|start_receive
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2009,7 +2009,7 @@ id|receive_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2328,7 +2328,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3198,7 +3198,7 @@ id|elp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3666,7 +3666,7 @@ id|send_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3981,7 +3981,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4232,7 +4232,7 @@ id|elp_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4376,7 +4376,7 @@ id|elp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4478,7 +4478,7 @@ id|elp_set_mc_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4791,7 +4791,7 @@ id|elp_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4874,7 +4874,7 @@ id|elp_sense
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5178,7 +5178,7 @@ id|elp_autodetect
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5273,7 +5273,7 @@ id|elplus_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6225,7 +6225,7 @@ suffix:semicolon
 DECL|variable|dev_3c505
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_3c505
 (braket
 id|ELP_MAX_CARDS
@@ -6373,7 +6373,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -6535,7 +6535,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

@@ -36,7 +36,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -46,7 +46,7 @@ id|isdn_net_xmit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|isdn_net_local
@@ -72,7 +72,7 @@ id|isdn_net_unreachable
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -171,7 +171,7 @@ id|isdn_net_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -276,7 +276,7 @@ id|isdn_net_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -285,7 +285,7 @@ r_int
 id|i
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|p
 suffix:semicolon
@@ -1087,7 +1087,7 @@ id|lp-&gt;sav_skb
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|mdev
 suffix:semicolon
@@ -2825,7 +2825,7 @@ id|isdn_net_hangup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -3498,7 +3498,7 @@ id|isdn_net_send_skb
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|ndev
 comma
@@ -3614,7 +3614,7 @@ id|isdn_net_xmit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|ndev
 comma
@@ -3886,7 +3886,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3973,7 +3973,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|ndev
 )paren
@@ -4586,13 +4586,13 @@ id|isdn_net_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|p
 suffix:semicolon
@@ -4766,7 +4766,7 @@ id|isdn_net_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4800,7 +4800,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5414,7 +5414,7 @@ id|isdn_net_receive
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|ndev
 comma
@@ -6017,7 +6017,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6175,7 +6175,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6435,7 +6435,7 @@ id|skb
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -6539,7 +6539,7 @@ id|isdn_net_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|ndev
 )paren
@@ -8617,7 +8617,7 @@ op_star
 id|name
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 )paren
@@ -8794,7 +8794,7 @@ id|master
 (brace
 multiline_comment|/* Device shall be a slave */
 r_struct
-id|device
+id|net_device
 op_star
 id|p
 op_assign
@@ -8811,7 +8811,7 @@ id|slave
 )paren
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|q
 op_assign
@@ -11241,7 +11241,7 @@ id|name
 )paren
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|q
 suffix:semicolon

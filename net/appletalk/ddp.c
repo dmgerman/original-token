@@ -87,7 +87,7 @@ id|aarp_proxy_remove
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -725,7 +725,7 @@ id|atif_drop_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -806,7 +806,7 @@ id|atif_add_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1409,7 +1409,7 @@ id|atalk_find_dev_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1570,7 +1570,7 @@ r_int
 id|node
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1891,7 +1891,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Given an AppleTalk network, find the device to use. This can be&n; * a simple lookup.&n; */
 DECL|function|atrtr_get_dev
 r_struct
-id|device
+id|net_device
 op_star
 id|atrtr_get_dev
 c_func
@@ -1942,7 +1942,7 @@ id|atrtr_set_default
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1981,7 +1981,7 @@ op_star
 id|r
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|devhint
 )paren
@@ -2424,7 +2424,7 @@ id|atrtr_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2514,7 +2514,7 @@ id|atalk_dev_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2576,7 +2576,7 @@ c_func
 (paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|ptr
@@ -2640,7 +2640,7 @@ op_star
 id|sa
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3638,7 +3638,7 @@ id|rtentry
 id|rt
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -5261,7 +5261,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5780,7 +5780,7 @@ l_int|22
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -5963,7 +5963,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6196,7 +6196,7 @@ op_star
 id|skb
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

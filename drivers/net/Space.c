@@ -13,7 +13,7 @@ id|ne2_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -24,7 +24,7 @@ id|tulip_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -35,7 +35,7 @@ id|hp100_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -46,7 +46,7 @@ id|ultra_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -57,7 +57,7 @@ id|ultra32_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -68,7 +68,7 @@ id|ultramca_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -79,7 +79,7 @@ id|wd_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -90,7 +90,7 @@ id|el2_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -101,7 +101,7 @@ id|ne2k_pci_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -112,7 +112,7 @@ id|ne_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -123,7 +123,7 @@ id|hp_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -134,7 +134,7 @@ id|hp_plus_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -145,7 +145,7 @@ id|znet_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -155,7 +155,7 @@ id|express_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -165,7 +165,7 @@ id|eepro_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -175,7 +175,7 @@ id|eepro100_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -185,7 +185,7 @@ id|el3_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -195,7 +195,7 @@ id|at1500_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -205,7 +205,7 @@ id|pcnet32_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -215,7 +215,7 @@ id|at1700_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -225,7 +225,7 @@ id|fmv18x_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -235,7 +235,7 @@ id|eth16i_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -245,7 +245,7 @@ id|depca_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -255,7 +255,7 @@ id|i82596_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -265,7 +265,7 @@ id|ewrk3_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -275,7 +275,7 @@ id|de4x5_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -285,7 +285,7 @@ id|el1_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -295,7 +295,7 @@ id|wavelan_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -305,7 +305,7 @@ id|arlan_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -315,7 +315,7 @@ id|el16_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -325,7 +325,7 @@ id|elmc_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -335,7 +335,7 @@ id|skmca_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -345,7 +345,7 @@ id|elplus_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -355,7 +355,7 @@ id|ac3200_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -365,7 +365,7 @@ id|es_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -375,7 +375,7 @@ id|lne390_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -385,7 +385,7 @@ id|ne3210_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -395,7 +395,7 @@ id|e2100_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -405,7 +405,7 @@ id|ni5010_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -415,7 +415,7 @@ id|ni52_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -425,7 +425,7 @@ id|ni65_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -435,7 +435,7 @@ id|sonic_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -445,7 +445,7 @@ id|SK_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -455,7 +455,7 @@ id|seeq8005_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -465,7 +465,7 @@ id|tc59x_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -475,7 +475,7 @@ id|dgrs_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -485,7 +485,7 @@ id|smc_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -495,7 +495,7 @@ id|sparc_lance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -505,7 +505,7 @@ id|happy_meal_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -515,7 +515,7 @@ id|qec_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -525,7 +525,7 @@ id|bigmac_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -535,7 +535,7 @@ id|myri_sbus_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -545,7 +545,7 @@ id|sgiseeq_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -555,7 +555,7 @@ id|atarilance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -565,7 +565,7 @@ id|a2065_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -575,7 +575,7 @@ id|ariadne_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -585,7 +585,7 @@ id|ariadne2_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -595,7 +595,7 @@ id|hydra_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -605,7 +605,7 @@ id|apne_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -615,7 +615,7 @@ id|bionet_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -625,7 +625,7 @@ id|pamsnet_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -635,7 +635,7 @@ id|tlan_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -645,7 +645,7 @@ id|mace_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -655,7 +655,7 @@ id|bmac_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -665,7 +665,7 @@ id|cs89x0_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -676,7 +676,7 @@ id|ethertap_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -686,7 +686,7 @@ r_int
 id|ether1_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -696,7 +696,7 @@ r_int
 id|ether3_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -706,7 +706,7 @@ r_int
 id|etherh_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -717,7 +717,7 @@ id|am79c961_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -728,7 +728,7 @@ id|epic100_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -739,7 +739,7 @@ id|rtl8139_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -750,7 +750,7 @@ id|hplance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -761,7 +761,7 @@ id|bagetlance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -771,7 +771,7 @@ id|dec_lance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -781,7 +781,7 @@ id|mvme147lance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -792,7 +792,7 @@ id|via_rhine_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -803,7 +803,7 @@ id|tc515_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -814,7 +814,7 @@ id|lance_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -825,7 +825,7 @@ id|rcpci_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -835,7 +835,7 @@ id|mac_onboard_sonic_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -847,7 +847,7 @@ id|yellowfin_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -858,7 +858,7 @@ id|acenic_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -870,7 +870,7 @@ id|atp_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -880,7 +880,7 @@ id|de600_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -890,7 +890,7 @@ id|de620_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -901,7 +901,7 @@ id|dfx_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -912,7 +912,7 @@ id|apfddi_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -924,7 +924,7 @@ id|rr_hippi_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -940,7 +940,7 @@ id|probe
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -961,7 +961,7 @@ id|probe_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1933,7 +1933,7 @@ id|ethif_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2152,7 +2152,7 @@ id|fddiif_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2216,7 +2216,7 @@ id|hippi_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2263,7 +2263,7 @@ macro_line|#ifdef CONFIG_ETHERTAP
 DECL|variable|tap0_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|tap0_dev
 op_assign
 (brace
@@ -2305,14 +2305,14 @@ id|sdla_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|variable|sdla0_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|sdla0_dev
 op_assign
 (brace
@@ -2354,14 +2354,14 @@ id|ltpc_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|variable|dev_ltpc
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_ltpc
 op_assign
 (brace
@@ -2402,14 +2402,14 @@ id|cops_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|variable|cops2_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|cops2_dev
 op_assign
 (brace
@@ -2441,7 +2441,7 @@ suffix:semicolon
 DECL|variable|cops1_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|cops1_dev
 op_assign
 (brace
@@ -2474,7 +2474,7 @@ suffix:semicolon
 DECL|variable|cops0_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|cops0_dev
 op_assign
 (brace
@@ -2516,7 +2516,7 @@ id|ipddp_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2524,7 +2524,7 @@ suffix:semicolon
 DECL|variable|dev_ipddp
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_ipddp
 op_assign
 (brace
@@ -2573,7 +2573,7 @@ mdefine_line|#define ETH_NOPROBE_ADDR 0xffe0
 DECL|variable|eth7_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|eth7_dev
 op_assign
 (brace
@@ -2606,7 +2606,7 @@ suffix:semicolon
 DECL|variable|eth6_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|eth6_dev
 op_assign
 (brace
@@ -2640,7 +2640,7 @@ suffix:semicolon
 DECL|variable|eth5_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|eth5_dev
 op_assign
 (brace
@@ -2674,7 +2674,7 @@ suffix:semicolon
 DECL|variable|eth4_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|eth4_dev
 op_assign
 (brace
@@ -2708,7 +2708,7 @@ suffix:semicolon
 DECL|variable|eth3_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|eth3_dev
 op_assign
 (brace
@@ -2742,7 +2742,7 @@ suffix:semicolon
 DECL|variable|eth2_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|eth2_dev
 op_assign
 (brace
@@ -2776,7 +2776,7 @@ suffix:semicolon
 DECL|variable|eth1_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|eth1_dev
 op_assign
 (brace
@@ -2810,7 +2810,7 @@ suffix:semicolon
 DECL|variable|eth0_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|eth0_dev
 op_assign
 (brace
@@ -2852,14 +2852,14 @@ id|slip_init_ctrl_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|variable|slip_bootstrap
 r_static
 r_struct
-id|device
+id|net_device
 id|slip_bootstrap
 op_assign
 (brace
@@ -2902,14 +2902,14 @@ id|x25_asy_init_ctrl_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|variable|x25_asy_bootstrap
 r_static
 r_struct
-id|device
+id|net_device
 id|x25_asy_bootstrap
 op_assign
 (brace
@@ -2952,14 +2952,14 @@ id|mkiss_init_ctrl_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|variable|mkiss_bootstrap
 r_static
 r_struct
-id|device
+id|net_device
 id|mkiss_bootstrap
 op_assign
 (brace
@@ -3001,14 +3001,14 @@ id|yam_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|variable|yam_bootstrap
 r_static
 r_struct
-id|device
+id|net_device
 id|yam_bootstrap
 op_assign
 (brace
@@ -3050,14 +3050,14 @@ id|strip_init_ctrl_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|variable|strip_bootstrap
 r_static
 r_struct
-id|device
+id|net_device
 id|strip_bootstrap
 op_assign
 (brace
@@ -3099,14 +3099,14 @@ id|ppp_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 DECL|variable|ppp_bootstrap
 r_static
 r_struct
-id|device
+id|net_device
 id|ppp_bootstrap
 op_assign
 (brace
@@ -3148,7 +3148,7 @@ id|dummy_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3156,7 +3156,7 @@ suffix:semicolon
 DECL|variable|dummy_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|dummy_dev
 op_assign
 (brace
@@ -3198,14 +3198,14 @@ id|eql_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 suffix:semicolon
 DECL|variable|eql_dev
 r_struct
-id|device
+id|net_device
 id|eql_dev
 op_assign
 (brace
@@ -3254,7 +3254,7 @@ id|ibmtr_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -3264,7 +3264,7 @@ id|olympic_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -3275,7 +3275,7 @@ id|trif_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3332,7 +3332,7 @@ suffix:semicolon
 DECL|variable|tr7_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|tr7_dev
 op_assign
 (brace
@@ -3364,7 +3364,7 @@ suffix:semicolon
 DECL|variable|tr6_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|tr6_dev
 op_assign
 (brace
@@ -3397,7 +3397,7 @@ suffix:semicolon
 DECL|variable|tr5_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|tr5_dev
 op_assign
 (brace
@@ -3430,7 +3430,7 @@ suffix:semicolon
 DECL|variable|tr4_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|tr4_dev
 op_assign
 (brace
@@ -3463,7 +3463,7 @@ suffix:semicolon
 DECL|variable|tr3_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|tr3_dev
 op_assign
 (brace
@@ -3496,7 +3496,7 @@ suffix:semicolon
 DECL|variable|tr2_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|tr2_dev
 op_assign
 (brace
@@ -3529,7 +3529,7 @@ suffix:semicolon
 DECL|variable|tr1_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|tr1_dev
 op_assign
 (brace
@@ -3562,7 +3562,7 @@ suffix:semicolon
 DECL|variable|tr0_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|tr0_dev
 op_assign
 (brace
@@ -3601,7 +3601,7 @@ macro_line|#ifdef CONFIG_FDDI
 DECL|variable|fddi7_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|fddi7_dev
 op_assign
 (brace
@@ -3633,7 +3633,7 @@ suffix:semicolon
 DECL|variable|fddi6_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|fddi6_dev
 op_assign
 (brace
@@ -3666,7 +3666,7 @@ suffix:semicolon
 DECL|variable|fddi5_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|fddi5_dev
 op_assign
 (brace
@@ -3699,7 +3699,7 @@ suffix:semicolon
 DECL|variable|fddi4_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|fddi4_dev
 op_assign
 (brace
@@ -3732,7 +3732,7 @@ suffix:semicolon
 DECL|variable|fddi3_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|fddi3_dev
 op_assign
 (brace
@@ -3765,7 +3765,7 @@ suffix:semicolon
 DECL|variable|fddi2_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|fddi2_dev
 op_assign
 (brace
@@ -3798,7 +3798,7 @@ suffix:semicolon
 DECL|variable|fddi1_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|fddi1_dev
 op_assign
 (brace
@@ -3831,7 +3831,7 @@ suffix:semicolon
 DECL|variable|fddi0_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|fddi0_dev
 op_assign
 (brace
@@ -3870,7 +3870,7 @@ macro_line|#ifdef CONFIG_HIPPI
 DECL|variable|hip3_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|hip3_dev
 op_assign
 (brace
@@ -3902,7 +3902,7 @@ suffix:semicolon
 DECL|variable|hip2_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|hip2_dev
 op_assign
 (brace
@@ -3935,7 +3935,7 @@ suffix:semicolon
 DECL|variable|hip1_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|hip1_dev
 op_assign
 (brace
@@ -3968,7 +3968,7 @@ suffix:semicolon
 DECL|variable|hip0_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|hip0_dev
 op_assign
 (brace
@@ -4010,7 +4010,7 @@ id|bif_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4018,7 +4018,7 @@ suffix:semicolon
 DECL|variable|bif_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|bif_dev
 op_assign
 (brace
@@ -4058,14 +4058,14 @@ id|loopback_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 suffix:semicolon
 DECL|variable|loopback_dev
 r_struct
-id|device
+id|net_device
 id|loopback_dev
 op_assign
 (brace
@@ -4106,7 +4106,7 @@ multiline_comment|/* loopback_init should set up the rest&t;*/
 suffix:semicolon
 DECL|variable|dev_base
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_base
 op_assign

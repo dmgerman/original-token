@@ -18,7 +18,7 @@ id|ultramca_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -29,7 +29,7 @@ id|ultramca_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -40,7 +40,7 @@ id|ultramca_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -51,7 +51,7 @@ id|ultramca_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -70,7 +70,7 @@ id|ultramca_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -92,7 +92,7 @@ id|ultramca_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -116,7 +116,7 @@ id|ultramca_close_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -142,7 +142,7 @@ id|ultramca_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -671,7 +671,7 @@ id|ultramca_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -768,7 +768,7 @@ id|ultramca_reset_8390
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -854,7 +854,7 @@ id|ultramca_get_8390_hdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -928,7 +928,7 @@ id|ultramca_block_input
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1027,7 +1027,7 @@ id|ultramca_block_output
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1078,7 +1078,7 @@ id|ultramca_close_card
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1173,7 +1173,7 @@ suffix:semicolon
 DECL|variable|dev_ultra
 r_static
 r_struct
-id|device
+id|net_device
 id|dev_ultra
 (braket
 id|MAX_ULTRAMCA_CARDS
@@ -1295,7 +1295,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1449,7 +1449,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

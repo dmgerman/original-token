@@ -3883,7 +3883,7 @@ suffix:semicolon
 multiline_comment|/* Store device, bus-specific, and parameter information for this adapter */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

@@ -2008,7 +2008,7 @@ id|arg
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

@@ -88,7 +88,7 @@ suffix:semicolon
 multiline_comment|/* DDP Address */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -233,7 +233,7 @@ op_assign
 initialization_block
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -457,7 +457,7 @@ id|aarp_send_reply
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -696,7 +696,7 @@ id|aarp_send_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1096,7 +1096,7 @@ op_star
 id|n
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1417,7 +1417,7 @@ op_star
 id|list
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1488,7 +1488,7 @@ id|aarp_proxy_remove
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1551,7 +1551,7 @@ id|aarp_proxy_find
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2021,7 +2021,7 @@ id|aarp_send_ddp
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2735,7 +2735,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3415,7 +3415,7 @@ id|aarp_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

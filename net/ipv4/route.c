@@ -2313,7 +2313,7 @@ id|u8
 id|tos
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4280,7 +4280,7 @@ id|u8
 id|tos
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4622,7 +4622,7 @@ id|u8
 id|tos
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5360,7 +5360,7 @@ id|RTCF_DOREDIRECT
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|odev
 op_assign
@@ -5840,7 +5840,7 @@ id|u8
 id|tos
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6115,7 +6115,7 @@ op_star
 id|rth
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_out
 op_assign
@@ -8112,7 +8112,7 @@ id|iif
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

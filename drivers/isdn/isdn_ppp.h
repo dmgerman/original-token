@@ -99,7 +99,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -125,7 +125,7 @@ id|isdn_ppp_dev_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct

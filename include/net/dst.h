@@ -38,7 +38,7 @@ suffix:semicolon
 multiline_comment|/* client references&t;*/
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

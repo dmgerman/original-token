@@ -725,7 +725,7 @@ id|cosa_sppp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -736,7 +736,7 @@ id|cosa_sppp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -752,7 +752,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -803,7 +803,7 @@ id|cosa_sppp_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -824,7 +824,7 @@ id|cosa_net_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2425,7 +2425,7 @@ id|chan
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 suffix:semicolon
@@ -2558,7 +2558,7 @@ id|cosa_sppp_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -2719,7 +2719,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2874,7 +2874,7 @@ id|cosa_sppp_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|d
 )paren
@@ -3206,7 +3206,7 @@ id|cosa_net_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5309,7 +5309,7 @@ id|cosa_sppp_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

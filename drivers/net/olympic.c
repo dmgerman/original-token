@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  &n; *  To Do:&n; *&n; *  Sanitize for smp&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
+multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  8/18/99 - Updated driver for 2.3.13 kernel to use new pci&n; *&t;      resource. Driver also reports the card name returned by&n; *            the pci resource.&n; *  &n; *  To Do:&n; *&n; *  Sanitize for smp&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
 multiline_comment|/* Change OLYMPIC_DEBUG to 1 to get verbose, and I mean really verbose, messages */
 DECL|macro|OLYMPIC_DEBUG
 mdefine_line|#define OLYMPIC_DEBUG 0
@@ -36,7 +36,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;Olympic.c v0.2.0 6/8/99 - Peter De Schrijver &amp; Mike Phillips&quot;
+l_string|&quot;Olympic.c v0.3.0 8/18/99 - Peter De Schrijver &amp; Mike Phillips&quot;
 suffix:semicolon
 DECL|variable|open_maj_error
 r_static
@@ -201,7 +201,7 @@ id|olympic_scan
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -212,7 +212,7 @@ id|olympic_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -223,7 +223,7 @@ id|olympic_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -239,7 +239,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -250,7 +250,7 @@ id|olympic_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -261,7 +261,7 @@ id|olympic_set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -292,7 +292,7 @@ id|olympic_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -303,7 +303,7 @@ id|olympic_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -318,7 +318,7 @@ id|olympic_arb_cmd
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -329,7 +329,7 @@ id|olympic_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -343,7 +343,7 @@ id|olympic_srb_bh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -354,7 +354,7 @@ id|olympic_asb_bh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -371,7 +371,7 @@ op_star
 id|buffer
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -387,7 +387,7 @@ id|olympic_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -424,7 +424,7 @@ id|olympic_scan
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -487,15 +487,12 @@ c_cond
 id|check_region
 c_func
 (paren
-id|pci_device-&gt;base_address
+id|pci_device-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-(paren
-op_complement
-l_int|3
-)paren
+dot
+id|start
 comma
 id|OLYMPIC_IO_SPACE
 )paren
@@ -582,37 +579,49 @@ comma
 id|dev-&gt;priv
 )paren
 suffix:semicolon
-macro_line|#endif 
+macro_line|#endif
 id|dev-&gt;irq
 op_assign
 id|pci_device-&gt;irq
 suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
-id|pci_device-&gt;base_address
+id|pci_device-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-(paren
-op_complement
-l_int|3
-)paren
+dot
+id|start
 suffix:semicolon
 id|dev-&gt;init
 op_assign
 op_amp
 id|olympic_init
 suffix:semicolon
+id|olympic_priv-&gt;olympic_card_name
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|pci_device-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|name
+suffix:semicolon
 id|olympic_priv-&gt;olympic_mmio
 op_assign
 id|ioremap
 c_func
 (paren
-id|pci_device-&gt;base_address
+id|pci_device-&gt;resource
 (braket
 l_int|1
 )braket
+dot
+id|start
 comma
 l_int|256
 )paren
@@ -622,10 +631,12 @@ op_assign
 id|ioremap
 c_func
 (paren
-id|pci_device-&gt;base_address
+id|pci_device-&gt;resource
 (braket
 l_int|2
 )braket
+dot
+id|start
 comma
 l_int|2048
 )paren
@@ -768,7 +779,7 @@ id|olympic_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -821,9 +832,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: IBM PCI tokenring card. I/O at %hx, MMIO at %p, LAP at %p, using irq %d&bslash;n&quot;
+l_string|&quot;%s: %s. I/O at %hx, MMIO at %p, LAP at %p, using irq %d&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|olympic_priv-&gt;olympic_card_name
 comma
 (paren
 r_int
@@ -1513,7 +1526,7 @@ id|olympic_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3539,7 +3552,7 @@ id|olympic_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4188,13 +4201,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -4704,7 +4717,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4851,7 +4864,7 @@ id|olympic_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5203,7 +5216,7 @@ id|olympic_set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5780,7 +5793,7 @@ id|olympic_srb_bh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6326,7 +6339,7 @@ id|olympic_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6361,7 +6374,7 @@ r_int
 id|olympic_set_mac_address
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6476,7 +6489,7 @@ id|olympic_arb_cmd
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7640,7 +7653,7 @@ id|olympic_asb_bh
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7851,7 +7864,7 @@ id|olympic_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7984,7 +7997,7 @@ r_int
 id|size
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -8045,17 +8058,12 @@ c_cond
 (paren
 id|dev-&gt;base_addr
 op_eq
-(paren
-id|pci_device-&gt;base_address
+id|pci_device-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-(paren
-op_complement
-l_int|3
-)paren
-)paren
+dot
+id|start
 )paren
 (brace
 multiline_comment|/* Yep, an Olympic device */
@@ -8167,7 +8175,7 @@ op_star
 id|buffer
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9235,7 +9243,7 @@ macro_line|#ifdef MODULE
 DECL|variable|dev_olympic
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|dev_olympic
 (braket
@@ -9369,7 +9377,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -9503,7 +9511,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon

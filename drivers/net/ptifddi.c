@@ -408,7 +408,7 @@ op_star
 id|pp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -427,7 +427,7 @@ op_star
 id|pp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -453,13 +453,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -484,7 +484,7 @@ id|pti_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -521,7 +521,7 @@ id|pti_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -554,7 +554,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -581,7 +581,7 @@ id|pti_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -609,7 +609,7 @@ id|pti_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -623,7 +623,7 @@ id|pti_fddi_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -910,7 +910,7 @@ id|ptifddi_sbus_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

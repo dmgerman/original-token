@@ -415,6 +415,11 @@ id|__u8
 op_star
 id|olympic_lap
 suffix:semicolon
+DECL|member|olympic_card_name
+r_char
+op_star
+id|olympic_card_name
+suffix:semicolon
 DECL|member|srb_queued
 r_volatile
 r_int

@@ -38,7 +38,7 @@ r_void
 id|am79c961_setmulticastlist
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -171,7 +171,7 @@ id|am_writebuffer
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -521,7 +521,7 @@ DECL|function|am_readword
 id|am_readword
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -581,7 +581,7 @@ id|am_readbuffer
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -930,7 +930,7 @@ id|am79c961_ramtest
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1121,7 +1121,7 @@ id|am79c961_init_for_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1580,7 +1580,7 @@ id|am79c961_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1655,7 +1655,7 @@ id|am79c961_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1952,7 +1952,7 @@ id|am79c961_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2000,7 +2000,7 @@ id|am79c961_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2083,7 +2083,7 @@ id|am79c961_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2124,7 +2124,7 @@ op_star
 id|am79c961_getstats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2153,7 +2153,7 @@ r_void
 id|am79c961_setmulticastlist
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2218,7 +2218,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2490,13 +2490,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -2639,7 +2639,7 @@ id|am79c961_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2937,7 +2937,7 @@ id|am79c961_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

@@ -442,7 +442,7 @@ op_assign
 id|t-&gt;tcm_parent
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1726,7 +1726,7 @@ r_int
 id|s_t
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

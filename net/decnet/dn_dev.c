@@ -111,7 +111,7 @@ id|dn_neigh_table
 suffix:semicolon
 DECL|variable|decnet_default_device
 r_struct
-id|device
+id|net_device
 op_star
 id|decnet_default_device
 op_assign
@@ -125,7 +125,7 @@ id|dn_dev_create
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -140,7 +140,7 @@ id|dn_dev_delete
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -167,7 +167,7 @@ id|dn_eth_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -177,7 +177,7 @@ id|dn_send_brd_hello
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -188,7 +188,7 @@ id|dn_send_ptp_hello
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -957,7 +957,7 @@ id|dn_dev_sysctl_register
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1473,7 +1473,7 @@ id|dn_dev_set_ifa
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1561,7 +1561,7 @@ id|ifindex
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -1636,7 +1636,7 @@ op_star
 id|dn_db
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2207,7 +2207,7 @@ op_assign
 id|arg
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2703,7 +2703,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2924,7 +2924,7 @@ comma
 id|s_dn_idx
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3117,7 +3117,7 @@ l_int|0
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3208,7 +3208,7 @@ r_int
 id|type
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3309,7 +3309,7 @@ id|dn_send_endnode_hello
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3678,7 +3678,7 @@ id|dn_send_router_hello
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4130,7 +4130,7 @@ id|dn_send_brd_hello
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4164,7 +4164,7 @@ id|dn_send_brd_hello
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4184,7 +4184,7 @@ id|dn_send_ptp_hello
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4441,7 +4441,7 @@ id|dn_eth_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4646,7 +4646,7 @@ id|skb
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -4708,7 +4708,7 @@ id|dn_dev_set_timer
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4725,13 +4725,13 @@ id|arg
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|arg
@@ -4838,7 +4838,7 @@ id|dn_dev_set_timer
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4912,7 +4912,7 @@ id|dn_dev_create
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5160,7 +5160,7 @@ id|dn_dev_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5263,7 +5263,7 @@ id|dn_dev_delete
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5410,7 +5410,7 @@ id|dn_dev_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5524,7 +5524,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -5559,7 +5559,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -5600,7 +5600,7 @@ id|dnet_gifconf
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5878,7 +5878,7 @@ op_star
 id|dn_db
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

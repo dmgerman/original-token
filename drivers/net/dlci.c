@@ -44,7 +44,7 @@ suffix:semicolon
 DECL|variable|open_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|open_dev
 (braket
@@ -65,7 +65,7 @@ id|dlci_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -343,7 +343,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -503,7 +503,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -799,7 +799,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -953,7 +953,7 @@ id|dlci_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1118,7 +1118,7 @@ id|dlci_dev_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1256,7 +1256,7 @@ id|dlci_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1292,7 +1292,7 @@ id|dlci_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1392,7 +1392,7 @@ id|dlci_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1451,7 +1451,7 @@ id|dlci_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1482,7 +1482,7 @@ id|dlci
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 comma
@@ -1933,7 +1933,7 @@ op_star
 id|flp
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 comma
@@ -2216,7 +2216,7 @@ id|dlci_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

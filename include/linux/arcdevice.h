@@ -435,7 +435,7 @@ id|inthandler
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -448,7 +448,7 @@ id|arcnet_reset
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -464,7 +464,7 @@ id|asetmask
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -480,7 +480,7 @@ id|acommand
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -496,7 +496,7 @@ id|astatus
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -509,7 +509,7 @@ id|en_dis_able_TX
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -525,7 +525,7 @@ id|prepare_tx
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -566,7 +566,7 @@ id|open
 suffix:semicolon
 DECL|member|adev
 r_struct
-id|device
+id|net_device
 op_star
 id|adev
 suffix:semicolon
@@ -575,7 +575,7 @@ multiline_comment|/* These are last to ensure that the chipset drivers don&squot
 macro_line|#ifdef CONFIG_ARCNET_ETH
 DECL|member|edev
 r_struct
-id|device
+id|net_device
 op_star
 id|edev
 suffix:semicolon
@@ -584,7 +584,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ARCNET_1051
 DECL|member|sdev
 r_struct
-id|device
+id|net_device
 op_star
 id|sdev
 suffix:semicolon
@@ -600,7 +600,7 @@ id|arcnet_dump_skb
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -625,7 +625,7 @@ id|arcnet_dump_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -651,7 +651,7 @@ id|arcnet_tx_done
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -695,7 +695,7 @@ id|arcnet_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -706,7 +706,7 @@ id|arcnet_go_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -720,7 +720,7 @@ id|arcnetA_continue_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

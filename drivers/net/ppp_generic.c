@@ -240,7 +240,7 @@ suffix:semicolon
 multiline_comment|/* jiffies when last pkt rcvd */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* network interface device */
@@ -2413,7 +2413,7 @@ id|ppp_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2529,7 +2529,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2830,7 +2830,7 @@ id|ppp_net_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2859,7 +2859,7 @@ id|ppp_net_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3080,7 +3080,7 @@ id|ppp_net_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

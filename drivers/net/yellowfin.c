@@ -770,7 +770,7 @@ id|product_name
 suffix:semicolon
 DECL|member|next_module
 r_struct
-id|device
+id|net_device
 op_star
 id|next_module
 suffix:semicolon
@@ -1012,13 +1012,13 @@ macro_line|#endif
 macro_line|#endif
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|yellowfin_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1087,7 +1087,7 @@ id|mii_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1107,7 +1107,7 @@ id|yellowfin_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1128,7 +1128,7 @@ id|yellowfin_tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1139,7 +1139,7 @@ id|yellowfin_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1155,7 +1155,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1184,7 +1184,7 @@ id|yellowfin_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1195,7 +1195,7 @@ id|yellowfin_error
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1209,7 +1209,7 @@ id|yellowfin_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1222,7 +1222,7 @@ id|yellowfin_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1233,7 +1233,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1243,7 +1243,7 @@ multiline_comment|/* A list of all installed Yellowfin devices, for removing the
 DECL|variable|root_yellowfin_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|root_yellowfin_dev
 op_assign
@@ -1255,7 +1255,7 @@ id|yellowfin_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1666,13 +1666,13 @@ suffix:semicolon
 DECL|function|yellowfin_probe1
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|yellowfin_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2480,7 +2480,7 @@ id|yellowfin_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2943,13 +2943,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -3173,7 +3173,7 @@ id|yellowfin_tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3338,7 +3338,7 @@ id|yellowfin_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3883,7 +3883,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4229,13 +4229,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_instance
@@ -4982,7 +4982,7 @@ id|yellowfin_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5871,7 +5871,7 @@ id|yellowfin_error
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5939,7 +5939,7 @@ id|yellowfin_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6575,7 +6575,7 @@ id|yellowfin_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6706,7 +6706,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7044,7 +7044,7 @@ id|mii_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7242,7 +7242,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|next_dev
 suffix:semicolon

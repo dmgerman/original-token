@@ -834,7 +834,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1668,7 +1668,7 @@ DECL|function|toshoboe_net_init
 id|toshoboe_net_init
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1698,7 +1698,7 @@ DECL|function|toshoboe_net_open
 id|toshoboe_net_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1900,7 +1900,7 @@ DECL|function|toshoboe_net_close
 id|toshoboe_net_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

@@ -226,7 +226,7 @@ r_int
 id|cops_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -236,7 +236,7 @@ r_int
 id|cops_probe1
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -260,7 +260,7 @@ r_int
 id|cops_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -270,7 +270,7 @@ r_int
 id|cops_jumpstart
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -280,7 +280,7 @@ r_void
 id|cops_reset
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -293,7 +293,7 @@ r_void
 id|cops_load
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -303,7 +303,7 @@ r_int
 id|cops_nodeid
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -342,7 +342,7 @@ r_void
 id|cops_rx
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -357,7 +357,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -367,7 +367,7 @@ r_void
 id|set_multicast_list
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -382,7 +382,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -407,7 +407,7 @@ r_int
 id|cops_ioctl
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -425,7 +425,7 @@ r_int
 id|cops_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -437,7 +437,7 @@ op_star
 id|cops_get_stats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -450,7 +450,7 @@ id|cops_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -590,7 +590,7 @@ id|cops_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1129,7 +1129,7 @@ id|cops_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1249,7 +1249,7 @@ id|cops_jumpstart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1360,7 +1360,7 @@ id|cops_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1517,7 +1517,7 @@ r_void
 id|cops_load
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1844,7 +1844,7 @@ r_int
 id|cops_nodeid
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2235,13 +2235,13 @@ op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|ltdev
@@ -2380,7 +2380,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2604,7 +2604,7 @@ id|cops_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3033,7 +3033,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3391,7 +3391,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3427,7 +3427,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3476,7 +3476,7 @@ id|cops_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3606,7 +3606,7 @@ id|cops_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3670,7 +3670,7 @@ id|cops_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3704,7 +3704,7 @@ suffix:semicolon
 DECL|variable|cops0_dev
 r_static
 r_struct
-id|device
+id|net_device
 id|cops0_dev
 op_assign
 (brace

@@ -613,7 +613,7 @@ suffix:semicolon
 multiline_comment|/* For our owner */
 DECL|member|netdevice
 r_struct
-id|device
+id|net_device
 op_star
 id|netdevice
 suffix:semicolon
@@ -892,7 +892,7 @@ id|z8530_sync_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -906,7 +906,7 @@ id|z8530_sync_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -920,7 +920,7 @@ id|z8530_sync_dma_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -934,7 +934,7 @@ id|z8530_sync_dma_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -948,7 +948,7 @@ id|z8530_sync_txdma_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -962,7 +962,7 @@ id|z8530_sync_txdma_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct

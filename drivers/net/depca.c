@@ -408,7 +408,7 @@ id|depca_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -424,7 +424,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -453,7 +453,7 @@ id|depca_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -464,7 +464,7 @@ id|depca_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -485,7 +485,7 @@ id|depca_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -496,7 +496,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -508,7 +508,7 @@ id|depca_hw_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -525,7 +525,7 @@ id|depca_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -536,7 +536,7 @@ id|depca_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -547,7 +547,7 @@ id|depca_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -558,7 +558,7 @@ id|LoadCSRs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -569,7 +569,7 @@ id|InitRestartDepca
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -602,7 +602,7 @@ id|get_hw_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -626,7 +626,7 @@ id|SetMulticastFilter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -637,7 +637,7 @@ id|isa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -651,7 +651,7 @@ id|eisa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -666,7 +666,7 @@ id|mca_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -677,13 +677,13 @@ suffix:semicolon
 macro_line|#endif
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|alloc_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -703,13 +703,13 @@ id|s
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|insert_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -723,7 +723,7 @@ id|init
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 )paren
@@ -734,7 +734,7 @@ id|load_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -750,7 +750,7 @@ id|depca_dbg_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -915,7 +915,7 @@ id|depca_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1071,7 +1071,7 @@ id|depca_hw_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2193,7 +2193,7 @@ id|depca_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2410,7 +2410,7 @@ id|depca_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2681,7 +2681,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2941,7 +2941,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3149,7 +3149,7 @@ id|depca_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3808,7 +3808,7 @@ id|depca_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4025,7 +4025,7 @@ id|depca_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4151,7 +4151,7 @@ id|LoadCSRs
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4261,7 +4261,7 @@ id|InitRestartDepca
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4445,7 +4445,7 @@ id|depca_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4476,7 +4476,7 @@ id|set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4609,7 +4609,7 @@ id|SetMulticastFilter
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4933,7 +4933,7 @@ id|mca_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5363,7 +5363,7 @@ id|isa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5589,7 +5589,7 @@ id|eisa_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5833,7 +5833,7 @@ suffix:semicolon
 multiline_comment|/*&n;** Search the entire &squot;eth&squot; device list for a fixed probe. If a match isn&squot;t&n;** found then check for an autoprobe or unused device location. If they&n;** are not available then insert a new device structure at the end of&n;** the current list.&n;*/
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|__init
 DECL|function|alloc_device
@@ -5841,7 +5841,7 @@ id|alloc_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5850,7 +5850,7 @@ id|iobase
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|adev
 op_assign
@@ -6077,7 +6077,7 @@ suffix:semicolon
 multiline_comment|/*&n;** If at end of eth device list and can&squot;t use current entry, malloc&n;** one up. If memory could not be allocated, print an error message.&n;*/
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|__init
 DECL|function|insert_device
@@ -6085,7 +6085,7 @@ id|insert_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6099,13 +6099,13 @@ id|init
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 r_new
 suffix:semicolon
@@ -6113,7 +6113,7 @@ r_new
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -6122,7 +6122,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 l_int|8
@@ -6774,7 +6774,7 @@ id|get_hw_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7000,7 +7000,7 @@ id|load_packet
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7727,7 +7727,7 @@ id|depca_dbg_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8373,7 +8373,7 @@ id|depca_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -9253,7 +9253,7 @@ suffix:semicolon
 DECL|variable|thisDepca
 r_static
 r_struct
-id|device
+id|net_device
 id|thisDepca
 op_assign
 (brace

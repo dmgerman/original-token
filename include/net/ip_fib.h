@@ -80,7 +80,7 @@ id|fib_nh
 (brace
 DECL|member|nh_dev
 r_struct
-id|device
+id|net_device
 op_star
 id|nh_dev
 suffix:semicolon
@@ -863,7 +863,7 @@ r_int
 id|oif
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -903,7 +903,7 @@ id|u32
 id|gw
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1046,7 +1046,7 @@ id|u32
 id|local
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1060,7 +1060,7 @@ id|fib_sync_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

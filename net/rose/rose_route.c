@@ -94,7 +94,7 @@ op_star
 id|rose_route
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1075,7 +1075,7 @@ op_star
 id|rose_route
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1686,7 +1686,7 @@ id|rose_rt_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1855,7 +1855,7 @@ id|rose_route_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2010,7 +2010,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Check that the device given is a valid AX.25 interface that is &quot;up&quot;.&n; */
 DECL|function|rose_ax25_dev_get
 r_struct
-id|device
+id|net_device
 op_star
 id|rose_ax25_dev_get
 c_func
@@ -2021,7 +2021,7 @@ id|devname
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2066,7 +2066,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Find the first active ROSE device, usually &quot;rose0&quot;.&n; */
 DECL|function|rose_dev_first
 r_struct
-id|device
+id|net_device
 op_star
 id|rose_dev_first
 c_func
@@ -2075,7 +2075,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2158,7 +2158,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Find the ROSE device for the given address.&n; */
 DECL|function|rose_dev_get
 r_struct
-id|device
+id|net_device
 op_star
 id|rose_dev_get
 c_func
@@ -2169,7 +2169,7 @@ id|addr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2476,7 +2476,7 @@ id|rose_route_struct
 id|rose_route
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2907,7 +2907,7 @@ id|rose_link_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3018,7 +3018,7 @@ comma
 id|diagnostic
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

@@ -275,7 +275,7 @@ l_int|9
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* Ethernet device structure*/

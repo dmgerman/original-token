@@ -14,7 +14,7 @@ id|ltalk_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon

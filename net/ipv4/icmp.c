@@ -2125,7 +2125,7 @@ op_star
 id|skb-&gt;dst
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

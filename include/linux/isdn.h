@@ -742,7 +742,7 @@ suffix:semicolon
 multiline_comment|/* BogoCPS needed for trigger slave */
 DECL|member|srobin
 r_struct
-id|device
+id|net_device
 op_star
 id|srobin
 suffix:semicolon
@@ -766,14 +766,14 @@ suffix:semicolon
 multiline_comment|/* Pointer to dialed number         */
 DECL|member|master
 r_struct
-id|device
+id|net_device
 op_star
 id|master
 suffix:semicolon
 multiline_comment|/* Ptr to Master device for slaves  */
 DECL|member|slave
 r_struct
-id|device
+id|net_device
 op_star
 id|slave
 suffix:semicolon
@@ -845,7 +845,7 @@ id|hh_cache
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -935,7 +935,7 @@ suffix:semicolon
 multiline_comment|/* Pointer to next isdn-interface   */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* interface to upper levels        */
@@ -1742,7 +1742,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1754,7 +1754,7 @@ id|net_receive
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -1770,7 +1770,7 @@ id|net_open
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1782,7 +1782,7 @@ id|net_close
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon

@@ -92,7 +92,7 @@ id|pi0_preprobe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -106,7 +106,7 @@ multiline_comment|/* Dummy probe function */
 DECL|variable|pi0a
 r_static
 r_struct
-id|device
+id|net_device
 id|pi0a
 op_assign
 (brace
@@ -138,7 +138,7 @@ suffix:semicolon
 DECL|variable|pi0b
 r_static
 r_struct
-id|device
+id|net_device
 id|pi0b
 op_assign
 (brace
@@ -177,7 +177,7 @@ id|pi_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -191,7 +191,7 @@ id|pi_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -207,7 +207,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -236,7 +236,7 @@ id|pi_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -247,7 +247,7 @@ id|pi_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -268,7 +268,7 @@ id|pi_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -293,7 +293,7 @@ id|b_rxint
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -331,7 +331,7 @@ id|a_rxint
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2008,7 +2008,7 @@ id|a_rxint
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2353,7 +2353,7 @@ id|b_rxint
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -4852,7 +4852,7 @@ id|scc_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5385,7 +5385,7 @@ id|chipset_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5779,7 +5779,7 @@ id|pi_set_mac_address
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5912,7 +5912,7 @@ id|pi_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6514,7 +6514,7 @@ id|pi_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6688,7 +6688,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7018,7 +7018,7 @@ id|pi_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7128,7 +7128,7 @@ id|pi_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -7486,7 +7486,7 @@ id|pi_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

@@ -985,7 +985,7 @@ id|product_name
 suffix:semicolon
 DECL|member|next_module
 r_struct
-id|device
+id|net_device
 op_star
 id|next_module
 suffix:semicolon
@@ -1357,20 +1357,20 @@ id|vortex_scan
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|vortex_found_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1393,7 +1393,7 @@ id|vortex_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1404,7 +1404,7 @@ id|vortex_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1430,7 +1430,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1441,7 +1441,7 @@ id|vortex_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1452,7 +1452,7 @@ id|boomerang_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1482,7 +1482,7 @@ id|vortex_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1496,7 +1496,7 @@ r_int
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1509,7 +1509,7 @@ id|vortex_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1520,7 +1520,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1577,7 +1577,7 @@ multiline_comment|/* A list of all installed Vortex devices, for removing the dr
 DECL|variable|root_vortex_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|root_vortex_dev
 op_assign
@@ -1645,7 +1645,7 @@ id|tc515_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1696,7 +1696,7 @@ id|vortex_scan
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1927,13 +1927,13 @@ suffix:semicolon
 DECL|function|vortex_found_device
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|vortex_found_device
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1963,7 +1963,7 @@ op_assign
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 r_sizeof
@@ -1979,7 +1979,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -2017,7 +2017,7 @@ op_plus
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 l_int|15
@@ -2363,7 +2363,7 @@ id|vortex_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2912,7 +2912,7 @@ id|vortex_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3984,13 +3984,13 @@ id|data
 (brace
 macro_line|#ifdef AUTOMEDIA
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -4446,7 +4446,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5416,7 +5416,7 @@ id|regs
 (brace
 multiline_comment|/* Use the now-standard shared IRQ implementation. */
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -6237,7 +6237,7 @@ id|vortex_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6676,7 +6676,7 @@ id|boomerang_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7185,7 +7185,7 @@ id|vortex_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7508,7 +7508,7 @@ id|vortex_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7577,7 +7577,7 @@ r_int
 id|ioaddr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7757,7 +7757,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7863,7 +7863,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|next_dev
 suffix:semicolon

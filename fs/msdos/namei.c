@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/msdos/namei.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *  Hidden files 1995 by Albert Cahalan &lt;albert@ccs.neu.edu&gt; &lt;adc@coe.neu.edu&gt;&n; *  Rewritten for constant inumbers 1999 by Al Viro&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
@@ -24,7 +23,6 @@ id|reserved_names
 )braket
 op_assign
 (brace
-macro_line|#ifndef CONFIG_ATARI /* GEMDOS is less stupid */
 l_string|&quot;CON     &quot;
 comma
 l_string|&quot;PRN     &quot;
@@ -49,7 +47,6 @@ l_string|&quot;COM3    &quot;
 comma
 l_string|&quot;COM4    &quot;
 comma
-macro_line|#endif
 l_int|NULL
 )brace
 suffix:semicolon
@@ -63,28 +60,27 @@ id|bad_chars
 op_assign
 l_string|&quot;*?&lt;&gt;|&bslash;&quot;&quot;
 suffix:semicolon
-macro_line|#ifdef CONFIG_ATARI
-multiline_comment|/* GEMDOS is less restrictive */
-DECL|variable|bad_if_strict
+DECL|variable|bad_if_strict_pc
 r_static
 r_char
-id|bad_if_strict
-(braket
-)braket
-op_assign
-l_string|&quot; &quot;
-suffix:semicolon
-macro_line|#else
-DECL|variable|bad_if_strict
-r_static
-r_char
-id|bad_if_strict
+id|bad_if_strict_pc
 (braket
 )braket
 op_assign
 l_string|&quot;+=,; &quot;
 suffix:semicolon
-macro_line|#endif
+DECL|variable|bad_if_strict_atari
+r_static
+r_char
+id|bad_if_strict_atari
+(braket
+)braket
+op_assign
+l_string|&quot; &quot;
+suffix:semicolon
+multiline_comment|/* GEMDOS is less restrictive */
+DECL|macro|bad_if_strict
+mdefine_line|#define&t;bad_if_strict(opts) ((opts)-&gt;atari ? bad_if_strict_atari : bad_if_strict_pc)
 multiline_comment|/* Must die */
 DECL|function|msdos_put_super
 r_void
@@ -111,9 +107,6 @@ r_int
 id|msdos_format_name
 c_func
 (paren
-r_char
-id|conv
-comma
 r_const
 r_char
 op_star
@@ -126,8 +119,10 @@ r_char
 op_star
 id|res
 comma
-r_char
-id|dotsOK
+r_struct
+id|fat_mount_options
+op_star
+id|opts
 )paren
 multiline_comment|/* conv is relaxed/normal/strict, name is proposed name,&n;&t; * len is the length of the proposed name, res is the result name,&n;&t; * dotsOK is if hidden files get dots.&n;&t; */
 (brace
@@ -163,13 +158,9 @@ multiline_comment|/* dotfile because . and .. already done */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|dotsOK
+id|opts-&gt;dotsOK
 )paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
+(brace
 multiline_comment|/* Get rid of dot - test for it elsewhere */
 id|name
 op_increment
@@ -178,19 +169,24 @@ id|len
 op_decrement
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_ATARI
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|opts-&gt;atari
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+multiline_comment|/* disallow names that _really_ start with a dot for MS-DOS, GEMDOS does&n;&t; * not care */
 id|space
 op_assign
-l_int|1
+op_logical_neg
+id|opts-&gt;atari
 suffix:semicolon
-multiline_comment|/* disallow names that _really_ start with a dot */
-macro_line|#else
-id|space
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* GEMDOS does not care */
-macro_line|#endif
 id|c
 op_assign
 l_int|0
@@ -226,7 +222,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|conv
+id|opts-&gt;conversion
 op_ne
 l_char|&squot;r&squot;
 op_logical_and
@@ -245,7 +241,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|conv
+id|opts-&gt;conversion
 op_eq
 l_char|&squot;s&squot;
 op_logical_and
@@ -253,6 +249,10 @@ id|strchr
 c_func
 (paren
 id|bad_if_strict
+c_func
+(paren
+id|opts
+)paren
 comma
 id|c
 )paren
@@ -272,7 +272,7 @@ id|c
 op_le
 l_char|&squot;Z&squot;
 op_logical_and
-id|conv
+id|opts-&gt;conversion
 op_eq
 l_char|&squot;s&squot;
 )paren
@@ -374,7 +374,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|conv
+id|opts-&gt;conversion
 op_eq
 l_char|&squot;s&squot;
 op_logical_and
@@ -471,7 +471,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|conv
+id|opts-&gt;conversion
 op_ne
 l_char|&squot;r&squot;
 op_logical_and
@@ -490,7 +490,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|conv
+id|opts-&gt;conversion
 op_eq
 l_char|&squot;s&squot;
 op_logical_and
@@ -498,6 +498,10 @@ id|strchr
 c_func
 (paren
 id|bad_if_strict
+c_func
+(paren
+id|opts
+)paren
 comma
 id|c
 )paren
@@ -536,7 +540,7 @@ l_char|&squot;.&squot;
 r_if
 c_cond
 (paren
-id|conv
+id|opts-&gt;conversion
 op_eq
 l_char|&squot;s&squot;
 )paren
@@ -558,7 +562,7 @@ id|c
 op_le
 l_char|&squot;Z&squot;
 op_logical_and
-id|conv
+id|opts-&gt;conversion
 op_eq
 l_char|&squot;s&squot;
 )paren
@@ -604,7 +608,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|conv
+id|opts-&gt;conversion
 op_eq
 l_char|&squot;s&squot;
 op_logical_and
@@ -630,6 +634,13 @@ op_increment
 op_assign
 l_char|&squot; &squot;
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|opts-&gt;atari
+)paren
+multiline_comment|/* GEMDOS is less stupid and has no reserved names */
 r_for
 c_loop
 (paren
@@ -730,21 +741,20 @@ op_assign
 id|msdos_format_name
 c_func
 (paren
-id|MSDOS_SB
-c_func
-(paren
-id|dir-&gt;i_sb
-)paren
-op_member_access_from_pointer
-id|options.name_check
-comma
 id|name
 comma
 id|len
 comma
 id|msdos_name
 comma
-id|dotsOK
+op_amp
+id|MSDOS_SB
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|options
 )paren
 suffix:semicolon
 r_if
@@ -888,15 +898,13 @@ op_assign
 id|msdos_format_name
 c_func
 (paren
-id|options-&gt;name_check
-comma
 id|qstr-&gt;name
 comma
 id|qstr-&gt;len
 comma
 id|msdos_name
 comma
-id|options-&gt;dotsOK
+id|options
 )paren
 suffix:semicolon
 r_if
@@ -977,15 +985,13 @@ op_assign
 id|msdos_format_name
 c_func
 (paren
-id|options-&gt;name_check
-comma
 id|a-&gt;name
 comma
 id|a-&gt;len
 comma
 id|a_msdos_name
 comma
-id|options-&gt;dotsOK
+id|options
 )paren
 suffix:semicolon
 r_if
@@ -1001,15 +1007,13 @@ op_assign
 id|msdos_format_name
 c_func
 (paren
-id|options-&gt;name_check
-comma
 id|b-&gt;name
 comma
 id|b-&gt;len
 comma
 id|b_msdos_name
 comma
-id|options-&gt;dotsOK
+id|options
 )paren
 suffix:semicolon
 r_if
@@ -1510,27 +1514,20 @@ op_assign
 id|msdos_format_name
 c_func
 (paren
-id|MSDOS_SB
-c_func
-(paren
-id|sb
-)paren
-op_member_access_from_pointer
-id|options.name_check
-comma
 id|dentry-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.len
 comma
 id|msdos_name
 comma
+op_amp
 id|MSDOS_SB
 c_func
 (paren
 id|sb
 )paren
 op_member_access_from_pointer
-id|options.dotsOK
+id|options
 )paren
 suffix:semicolon
 r_if
@@ -1955,27 +1952,20 @@ op_assign
 id|msdos_format_name
 c_func
 (paren
-id|MSDOS_SB
-c_func
-(paren
-id|sb
-)paren
-op_member_access_from_pointer
-id|options.name_check
-comma
 id|dentry-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.len
 comma
 id|msdos_name
 comma
+op_amp
 id|MSDOS_SB
 c_func
 (paren
 id|sb
 )paren
 op_member_access_from_pointer
-id|options.dotsOK
+id|options
 )paren
 suffix:semicolon
 r_if
@@ -3030,27 +3020,20 @@ op_assign
 id|msdos_format_name
 c_func
 (paren
-id|MSDOS_SB
-c_func
-(paren
-id|sb
-)paren
-op_member_access_from_pointer
-id|options.name_check
-comma
 id|old_dentry-&gt;d_name.name
 comma
 id|old_dentry-&gt;d_name.len
 comma
 id|old_msdos_name
 comma
+op_amp
 id|MSDOS_SB
 c_func
 (paren
-id|sb
+id|old_dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|options.dotsOK
+id|options
 )paren
 suffix:semicolon
 r_if
@@ -3068,27 +3051,20 @@ op_assign
 id|msdos_format_name
 c_func
 (paren
-id|MSDOS_SB
-c_func
-(paren
-id|sb
-)paren
-op_member_access_from_pointer
-id|options.name_check
-comma
 id|new_dentry-&gt;d_name.name
 comma
 id|new_dentry-&gt;d_name.len
 comma
 id|new_msdos_name
 comma
+op_amp
 id|MSDOS_SB
 c_func
 (paren
-id|sb
+id|new_dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|options.dotsOK
+id|options
 )paren
 suffix:semicolon
 r_if

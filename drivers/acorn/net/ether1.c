@@ -98,7 +98,7 @@ DECL|function|ether1_inw_p
 id|ether1_inw_p
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -176,7 +176,7 @@ DECL|function|ether1_outw_p
 id|ether1_outw_p
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -885,7 +885,7 @@ DECL|function|ether1_writebuffer
 id|ether1_writebuffer
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1001,7 +1001,7 @@ DECL|function|ether1_readbuffer
 id|ether1_readbuffer
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1120,7 +1120,7 @@ r_int
 id|ether1_ramtest
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1381,7 +1381,7 @@ DECL|function|ether1_reset
 id|ether1_reset
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1408,7 +1408,7 @@ r_int
 id|ether1_init_2
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1749,7 +1749,7 @@ DECL|function|ether1_init_for_open
 id|ether1_init_for_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2881,7 +2881,7 @@ r_int
 id|ether1_probe1
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3124,7 +3124,7 @@ r_void
 id|ether1_addr
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3168,7 +3168,7 @@ r_int
 id|ether1_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3262,7 +3262,7 @@ DECL|function|ether1_txalloc
 id|ether1_txalloc
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3379,7 +3379,7 @@ DECL|function|ether1_restart
 id|ether1_restart
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3464,7 +3464,7 @@ DECL|function|ether1_open
 id|ether1_open
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3567,7 +3567,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3924,7 +3924,7 @@ DECL|function|ether1_xmit_done
 id|ether1_xmit_done
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4381,7 +4381,7 @@ DECL|function|ether1_recv_done
 id|ether1_recv_done
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4744,13 +4744,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -5069,7 +5069,7 @@ DECL|function|ether1_close
 id|ether1_close
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5109,7 +5109,7 @@ DECL|function|ether1_getstats
 id|ether1_getstats
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5138,7 +5138,7 @@ DECL|function|ether1_setmulticastlist
 id|ether1_setmulticastlist
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5166,7 +5166,7 @@ l_int|9
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 DECL|variable|ether_devs

@@ -412,7 +412,7 @@ id|open
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -428,7 +428,7 @@ id|close
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -444,7 +444,7 @@ id|ioctl
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -470,7 +470,7 @@ id|sethw
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct

@@ -206,7 +206,7 @@ id|tlan_private_tag
 (brace
 DECL|member|nextDevice
 r_struct
-id|device
+id|net_device
 op_star
 id|nextDevice
 suffix:semicolon

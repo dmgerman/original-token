@@ -537,7 +537,7 @@ id|hp100_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -560,7 +560,7 @@ id|hp100_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -584,7 +584,7 @@ id|hp100_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -595,7 +595,7 @@ id|hp100_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -611,7 +611,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -626,7 +626,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -637,7 +637,7 @@ id|hp100_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -649,7 +649,7 @@ id|hp100_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -660,7 +660,7 @@ id|hp100_misc_interrupt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -671,7 +671,7 @@ id|hp100_update_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -691,7 +691,7 @@ id|hp100_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -720,7 +720,7 @@ id|hp100_start_interface
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -731,7 +731,7 @@ id|hp100_stop_interface
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -742,7 +742,7 @@ id|hp100_load_eeprom
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -756,7 +756,7 @@ id|hp100_sense_lan
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -767,7 +767,7 @@ id|hp100_login_to_vg_hub
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -781,7 +781,7 @@ id|hp100_down_vg_link
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -792,7 +792,7 @@ id|hp100_cascade_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -806,7 +806,7 @@ id|hp100_BM_shutdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -817,7 +817,7 @@ id|hp100_mmuinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -828,7 +828,7 @@ id|hp100_init_pdls
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -839,7 +839,7 @@ id|hp100_init_rxpdl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -860,7 +860,7 @@ id|hp100_init_txpdl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -881,7 +881,7 @@ id|hp100_rxfill
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -892,7 +892,7 @@ id|hp100_hwinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -903,7 +903,7 @@ id|hp100_clean_txring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -915,7 +915,7 @@ id|hp100_RegisterDump
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -946,7 +946,7 @@ id|hp100_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1856,7 +1856,7 @@ id|hp100_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1879,7 +1879,7 @@ id|hp100_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3729,7 +3729,7 @@ id|hp100_hwinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4016,7 +4016,7 @@ id|hp100_mmuinit
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4852,7 +4852,7 @@ id|hp100_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5016,7 +5016,7 @@ id|hp100_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5141,7 +5141,7 @@ id|hp100_init_pdls
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5382,7 +5382,7 @@ id|hp100_init_rxpdl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5509,7 +5509,7 @@ id|hp100_init_txpdl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5609,7 +5609,7 @@ op_star
 id|ringptr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5856,7 +5856,7 @@ id|hp100_rxfill
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5999,7 +5999,7 @@ id|hp100_BM_shutdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6396,7 +6396,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -6918,7 +6918,7 @@ id|hp100_clean_txring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7078,7 +7078,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -7836,7 +7836,7 @@ id|hp100_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8329,7 +8329,7 @@ id|hp100_rx_bm
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8785,7 +8785,7 @@ id|hp100_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8842,7 +8842,7 @@ id|hp100_update_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -8956,7 +8956,7 @@ id|hp100_misc_interrupt
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9090,7 +9090,7 @@ id|hp100_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9890,13 +9890,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -10296,7 +10296,7 @@ id|hp100_start_interface
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -10551,7 +10551,7 @@ id|hp100_stop_interface
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -10738,7 +10738,7 @@ id|hp100_load_eeprom
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -10842,7 +10842,7 @@ id|hp100_sense_lan
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -11021,7 +11021,7 @@ id|hp100_down_vg_link
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -11496,7 +11496,7 @@ id|hp100_login_to_vg_hub
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -12246,7 +12246,7 @@ id|hp100_cascade_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -12420,7 +12420,7 @@ id|hp100_RegisterDump
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -12734,7 +12734,7 @@ multiline_comment|/* List of devices */
 DECL|variable|hp100_devlist
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|hp100_devlist
 (braket
@@ -12833,7 +12833,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 comma
 id|GFP_KERNEL
@@ -12852,7 +12852,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -12919,7 +12919,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -12930,7 +12930,7 @@ id|i
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 l_int|NULL
@@ -12990,7 +12990,7 @@ id|i
 op_ne
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 l_int|NULL
@@ -13142,7 +13142,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -13153,7 +13153,7 @@ id|i
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 l_int|NULL

@@ -121,7 +121,7 @@ suffix:semicolon
 multiline_comment|/* physical device info */
 DECL|member|if_dev
 r_struct
-id|device
+id|net_device
 op_star
 id|if_dev
 suffix:semicolon

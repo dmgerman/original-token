@@ -38,7 +38,7 @@ suffix:semicolon
 multiline_comment|/* X.25 things&t;&t;&t;*/
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* the device&t;&t;&t;*/
@@ -483,7 +483,7 @@ id|sl
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1252,7 +1252,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1829,7 +1829,7 @@ id|x25_asy_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2047,7 +2047,7 @@ id|x25_asy_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2498,7 +2498,7 @@ id|x25_asy_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3013,7 +3013,7 @@ id|x25_asy_open_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3066,7 +3066,7 @@ id|x25_asy_init_ctrl_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dummy
 )paren
@@ -3284,7 +3284,7 @@ id|x25_asy_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

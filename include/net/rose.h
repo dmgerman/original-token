@@ -157,7 +157,7 @@ id|ax25
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -340,7 +340,7 @@ id|neighbour
 suffix:semicolon
 DECL|member|device
 r_struct
-id|device
+id|net_device
 op_star
 id|device
 suffix:semicolon
@@ -576,7 +576,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -608,7 +608,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -618,7 +618,7 @@ id|rose_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -873,7 +873,7 @@ id|rose_rt_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -883,13 +883,13 @@ id|rose_link_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|rose_dev_first
 c_func
@@ -899,7 +899,7 @@ r_void
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|rose_dev_get
 c_func
@@ -925,7 +925,7 @@ op_star
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|rose_ax25_dev_get
 c_func

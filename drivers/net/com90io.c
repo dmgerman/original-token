@@ -33,7 +33,7 @@ id|arc90io_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -44,7 +44,7 @@ id|arc90io_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -58,7 +58,7 @@ id|arc90io_found
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -74,7 +74,7 @@ r_void
 id|arc90io_inthandler
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -84,7 +84,7 @@ r_int
 id|arc90io_reset
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -97,7 +97,7 @@ r_void
 id|arc90io_setmask
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -110,7 +110,7 @@ r_void
 id|arc90io_command
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -123,7 +123,7 @@ id|u_char
 id|arc90io_status
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -134,7 +134,7 @@ id|arc90io_prepare_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -176,7 +176,7 @@ id|u_char
 id|get_buffer_byte
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -189,7 +189,7 @@ r_void
 id|put_buffer_byte
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -205,7 +205,7 @@ r_void
 id|get_whole_buffer
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -225,7 +225,7 @@ r_void
 id|put_whole_buffer
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -305,7 +305,7 @@ id|ints
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 id|arcnet_devs
 (braket
 )braket
@@ -361,7 +361,7 @@ id|u_char
 id|get_buffer_byte
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -407,7 +407,7 @@ r_void
 id|put_buffer_byte
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -461,7 +461,7 @@ r_void
 id|get_whole_buffer
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -546,7 +546,7 @@ r_void
 id|put_whole_buffer
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -644,7 +644,7 @@ id|arc90io_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -998,7 +998,7 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set up the struct device associated with this card.  Called after&n; * probing succeeds.&n; */
+multiline_comment|/* Set up the struct net_device associated with this card.  Called after&n; * probing succeeds.&n; */
 DECL|function|arc90io_found
 r_int
 id|__init
@@ -1006,7 +1006,7 @@ id|arc90io_found
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1341,7 +1341,7 @@ id|arc90io_reset
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1552,7 +1552,7 @@ id|arc90io_setmask
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1579,7 +1579,7 @@ id|arc90io_status
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1600,7 +1600,7 @@ id|arc90io_command
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1628,7 +1628,7 @@ id|arc90io_inthandler
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2403,7 +2403,7 @@ id|arc90io_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2637,7 +2637,7 @@ id|arc90io_prepare_tx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3003,7 +3003,7 @@ macro_line|#ifdef MODULE
 DECL|variable|cards
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|cards
 (braket
@@ -3021,7 +3021,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3039,7 +3039,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -3048,7 +3048,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 comma
 id|GFP_KERNEL
@@ -3074,7 +3074,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -3188,7 +3188,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3330,7 +3330,7 @@ id|ints
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

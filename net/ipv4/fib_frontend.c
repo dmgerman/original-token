@@ -370,7 +370,7 @@ macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/*&n; *&t;Find the first device with a given source address.&n; */
 DECL|function|ip_dev_find
 r_struct
-id|device
+id|net_device
 op_star
 id|ip_dev_find
 c_func
@@ -560,7 +560,7 @@ r_int
 id|oif
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1844,7 +1844,7 @@ op_assign
 id|ifa-&gt;ifa_dev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2075,7 +2075,7 @@ op_assign
 id|ifa-&gt;ifa_dev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2392,7 +2392,7 @@ id|fib_disable_ip
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2554,7 +2554,7 @@ id|ptr
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign

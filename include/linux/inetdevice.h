@@ -68,7 +68,7 @@ id|in_device
 (brace
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -214,7 +214,7 @@ id|nb
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|ip_dev_find
 c_func
@@ -271,7 +271,7 @@ id|inetdev_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -293,7 +293,7 @@ c_func
 (paren
 r_const
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma

@@ -59,7 +59,7 @@ id|concap_proto
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -549,7 +549,7 @@ op_star
 id|cprot
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|ndev
 comma

@@ -6,11 +6,14 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/zorro.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;53c7xx.h&quot;
@@ -38,6 +41,7 @@ l_int|2
 )brace
 suffix:semicolon
 r_extern
+r_int
 id|ncr53c7xx_init
 (paren
 id|Scsi_Host_Template
@@ -72,6 +76,7 @@ id|clock
 suffix:semicolon
 DECL|function|amiga7xx_detect
 r_int
+id|__init
 id|amiga7xx_detect
 c_func
 (paren
@@ -151,7 +156,6 @@ c_func
 id|key
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;unsigned long address;&n;&t;address = (unsigned long)kernel_map((unsigned long)cd-&gt;cd_BoardAddr,&n;&t;&t;cd-&gt;cd_BoardSize, KERNELMAP_NOCACHE_SER, NULL);&n;*/
 id|options
 op_assign
 id|OPTION_MEMORY_MAPPED
@@ -183,13 +187,10 @@ comma
 (paren
 id|u32
 )paren
+id|ZTWO_VADDR
+c_func
 (paren
-r_int
-r_char
-op_star
-)paren
-(paren
-l_int|0x80f40000
+l_int|0xf40000
 )paren
 comma
 l_int|0
@@ -253,7 +254,7 @@ op_assign
 r_int
 r_int
 )paren
-id|kernel_map
+id|ioremap
 c_func
 (paren
 (paren
@@ -263,10 +264,6 @@ r_int
 id|cd-&gt;cd_BoardAddr
 comma
 id|cd-&gt;cd_BoardSize
-comma
-id|KERNELMAP_NOCACHE_SER
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|options
@@ -377,11 +374,6 @@ comma
 (paren
 id|u32
 )paren
-(paren
-r_int
-r_char
-op_star
-)paren
 id|ZTWO_VADDR
 c_func
 (paren
@@ -455,7 +447,7 @@ op_assign
 r_int
 r_int
 )paren
-id|kernel_map
+id|ioremap
 c_func
 (paren
 (paren
@@ -465,10 +457,6 @@ r_int
 id|cd-&gt;cd_BoardAddr
 comma
 id|cd-&gt;cd_BoardSize
-comma
-id|KERNELMAP_NOCACHE_SER
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|options

@@ -306,7 +306,7 @@ id|callsign
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -363,13 +363,13 @@ id|next
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
 DECL|member|forward
 r_struct
-id|device
+id|net_device
 op_star
 id|forward
 suffix:semicolon
@@ -591,7 +591,7 @@ comma
 r_int
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -628,7 +628,7 @@ id|ax25_digi
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -852,7 +852,7 @@ id|ax25_dev_ax25dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -872,7 +872,7 @@ id|ax25_dev_device_up
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -882,7 +882,7 @@ id|ax25_dev_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -901,13 +901,13 @@ op_star
 suffix:semicolon
 r_extern
 r_struct
-id|device
+id|net_device
 op_star
 id|ax25_fwd_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1139,7 +1139,7 @@ id|ax25_address
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1152,7 +1152,7 @@ id|ax25_address
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1185,7 +1185,7 @@ id|ax25_address
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1233,7 +1233,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -1252,7 +1252,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -1301,7 +1301,7 @@ id|ax25_digi
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1373,7 +1373,7 @@ id|ax25_rt_device_down
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1430,7 +1430,7 @@ id|ax25_address
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -1657,7 +1657,7 @@ id|ax25_return_dm
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 id|ax25_address

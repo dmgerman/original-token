@@ -24,7 +24,7 @@ mdefine_line|#define MAX_ETH_CARDS 16
 DECL|variable|ethdev_index
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|ethdev_index
 (braket
@@ -33,14 +33,14 @@ id|MAX_ETH_CARDS
 suffix:semicolon
 multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values.&n;&n;   If no device structure is passed, a new one is constructed, complete with&n;   a SIZEOF_PRIVATE private data area.&n;&n;   If an empty string area is passed as dev-&gt;name, or a new structure is made,&n;   a new name string is constructed.  The passed string area should be 8 bytes&n;   long.&n; */
 r_struct
-id|device
+id|net_device
 op_star
 DECL|function|init_etherdev
 id|init_etherdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -71,7 +71,7 @@ op_assign
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 r_sizeof
@@ -84,7 +84,7 @@ op_plus
 l_int|3
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|cur_dev
 suffix:semicolon
@@ -244,7 +244,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -417,7 +417,7 @@ id|eth_mac_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -465,7 +465,7 @@ id|eth_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -508,7 +508,7 @@ id|fddi_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -550,7 +550,7 @@ mdefine_line|#define MAX_HIP_CARDS&t;4
 DECL|variable|hipdev_index
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|hipdev_index
 (braket
@@ -564,7 +564,7 @@ id|hippi_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -608,7 +608,7 @@ id|hippi_mac_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -651,13 +651,13 @@ suffix:semicolon
 )brace
 DECL|function|init_hippi_dev
 r_struct
-id|device
+id|net_device
 op_star
 id|init_hippi_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -688,7 +688,7 @@ op_assign
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 r_sizeof
@@ -701,7 +701,7 @@ op_plus
 l_int|3
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|cur_dev
 suffix:semicolon
@@ -860,7 +860,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -1031,7 +1031,7 @@ id|unregister_hipdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1100,7 +1100,7 @@ id|hippi_neigh_setup_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1138,7 +1138,7 @@ id|ether_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1305,7 +1305,7 @@ id|fddi_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1382,7 +1382,7 @@ id|hippi_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1554,7 +1554,7 @@ id|ltalk_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1574,7 +1574,7 @@ id|ltalk_mac_addr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1594,7 +1594,7 @@ id|ltalk_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1673,7 +1673,7 @@ id|ether_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1796,7 +1796,7 @@ id|etherdev_get_index
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1867,7 +1867,7 @@ id|etherdev_put_index
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1919,7 +1919,7 @@ id|register_netdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2012,7 +2012,7 @@ id|unregister_netdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2047,7 +2047,7 @@ mdefine_line|#define MAX_TR_CARDS 16
 DECL|variable|trdev_index
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|trdev_index
 (braket
@@ -2056,13 +2056,13 @@ id|MAX_TR_CARDS
 suffix:semicolon
 DECL|function|init_trdev
 r_struct
-id|device
+id|net_device
 op_star
 id|init_trdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2093,7 +2093,7 @@ op_assign
 r_sizeof
 (paren
 r_struct
-id|device
+id|net_device
 )paren
 op_plus
 r_sizeof
@@ -2106,7 +2106,7 @@ op_plus
 l_int|3
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|cur_dev
 suffix:semicolon
@@ -2266,7 +2266,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|kmalloc
@@ -2449,7 +2449,7 @@ id|tr_setup
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2541,7 +2541,7 @@ id|tr_freedev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2593,7 +2593,7 @@ id|register_trdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2641,7 +2641,7 @@ id|unregister_trdev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

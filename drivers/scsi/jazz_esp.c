@@ -845,7 +845,11 @@ id|esp
 (brace
 r_return
 (paren
+id|esp_read
+c_func
+(paren
 id|esp-&gt;eregs-&gt;esp_status
+)paren
 op_amp
 id|ESP_STAT_INTR
 )paren

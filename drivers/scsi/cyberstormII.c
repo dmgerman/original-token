@@ -1,5 +1,6 @@
 multiline_comment|/* cyberstormII.c: Driver for CyberStorm SCSI Mk II&n; *&n; * Copyright (C) 1996 Jesper Skov (jskov@cygnus.co.uk)&n; *&n; * This driver is based on cyberstorm.c&n; */
 multiline_comment|/* TODO:&n; *&n; * 1) Figure out how to make a cleaner merge with the sparc driver with regard&n; *    to the caches and the Sparc MMU mapping.&n; * 2) Make as few routines required outside the generic driver. A lot of the&n; *    routines in this file used to be inline!&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -190,6 +191,7 @@ multiline_comment|/* This is where all commands are put&n;&t;&t;&t;&t; * before 
 multiline_comment|/***************************************************************** Detection */
 DECL|function|cyberII_esp_detect
 r_int
+id|__init
 id|cyberII_esp_detect
 c_func
 (paren
@@ -274,37 +276,6 @@ op_plus
 id|CYBERII_ESP_ADDR
 )paren
 suffix:semicolon
-id|eregs-&gt;esp_cfg1
-op_assign
-(paren
-id|ESP_CONFIG1_PENABLE
-op_or
-l_int|7
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|5
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|eregs-&gt;esp_cfg1
-op_ne
-(paren
-id|ESP_CONFIG1_PENABLE
-op_or
-l_int|7
-)paren
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* Bail out if address did not hold data */
 id|esp
 op_assign
 id|esp_allocate
@@ -319,6 +290,57 @@ op_star
 id|esp_dev
 )paren
 suffix:semicolon
+id|esp_write
+c_func
+(paren
+id|eregs-&gt;esp_cfg1
+comma
+(paren
+id|ESP_CONFIG1_PENABLE
+op_or
+l_int|7
+)paren
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|esp_read
+c_func
+(paren
+id|eregs-&gt;esp_cfg1
+)paren
+op_ne
+(paren
+id|ESP_CONFIG1_PENABLE
+op_or
+l_int|7
+)paren
+)paren
+(brace
+id|esp_deallocate
+c_func
+(paren
+id|esp
+)paren
+suffix:semicolon
+id|scsi_unregister
+c_func
+(paren
+id|esp-&gt;ehost
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Bail out if address did not hold data */
+)brace
 multiline_comment|/* Do command transfer with programmed I/O */
 id|esp-&gt;do_pio_cmds
 op_assign
@@ -453,16 +475,16 @@ op_assign
 id|virt_to_bus
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|cmd_buffer
 )paren
 suffix:semicolon
 id|esp-&gt;irq
 op_assign
 id|IRQ_AMIGA_PORTS
+suffix:semicolon
+id|esp-&gt;slot
+op_assign
+id|key
 suffix:semicolon
 id|request_irq
 c_func
@@ -471,7 +493,7 @@ id|IRQ_AMIGA_PORTS
 comma
 id|esp_intr
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 l_string|&quot;CyberStorm SCSI Mk II&quot;
 comma
@@ -483,8 +505,7 @@ id|esp-&gt;scsi_id
 op_assign
 l_int|7
 suffix:semicolon
-multiline_comment|/* Check for differential SCSI-bus */
-multiline_comment|/* What is this stuff? */
+multiline_comment|/* We don&squot;t have a differential SCSI-bus. */
 id|esp-&gt;diff
 op_assign
 l_int|0
@@ -506,7 +527,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nESP: Total of %d ESP hosts found, %d actually in use.&bslash;n&quot;
+l_string|&quot;ESP: Total of %d ESP hosts found, %d actually in use.&bslash;n&quot;
 comma
 id|nesps
 comma
@@ -852,7 +873,11 @@ id|esp
 multiline_comment|/* It&squot;s important to check the DMA IRQ bit in the correct way! */
 r_return
 (paren
+id|esp_read
+c_func
+(paren
 id|esp-&gt;eregs-&gt;esp_status
+)paren
 op_amp
 id|ESP_STAT_INTR
 )paren
@@ -989,5 +1014,83 @@ id|count
 )paren
 suffix:semicolon
 )brace
+)brace
+macro_line|#ifdef MODULE
+DECL|macro|HOSTS_C
+mdefine_line|#define HOSTS_C
+macro_line|#include &quot;cyberstormII.h&quot;
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|SCSI_CYBERSTORMII
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
+DECL|function|cyberII_esp_release
+r_int
+id|cyberII_esp_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+)paren
+(brace
+macro_line|#ifdef MODULE
+r_int
+r_int
+id|key
+suffix:semicolon
+id|key
+op_assign
+(paren
+(paren
+r_struct
+id|NCR_ESP
+op_star
+)paren
+id|instance-&gt;hostdata
+)paren
+op_member_access_from_pointer
+id|slot
+suffix:semicolon
+id|esp_deallocate
+c_func
+(paren
+(paren
+r_struct
+id|NCR_ESP
+op_star
+)paren
+id|instance-&gt;hostdata
+)paren
+suffix:semicolon
+id|esp_release
+c_func
+(paren
+)paren
+suffix:semicolon
+id|zorro_unconfig_board
+c_func
+(paren
+id|key
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|IRQ_AMIGA_PORTS
+comma
+id|esp_intr
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|1
+suffix:semicolon
 )brace
 eof

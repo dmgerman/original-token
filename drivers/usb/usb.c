@@ -4707,6 +4707,8 @@ op_member_access_from_pointer
 id|release_irq
 c_func
 (paren
+id|dev
+comma
 id|handle
 )paren
 suffix:semicolon

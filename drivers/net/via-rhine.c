@@ -390,7 +390,7 @@ id|io_size
 suffix:semicolon
 DECL|member|probe1
 r_struct
-id|device
+id|net_device
 op_star
 (paren
 op_star
@@ -404,7 +404,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -425,7 +425,7 @@ suffix:semicolon
 suffix:semicolon
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|via_probe1
 c_func
@@ -437,7 +437,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -987,7 +987,7 @@ suffix:semicolon
 multiline_comment|/* Tx bounce buffer region. */
 DECL|member|next_module
 r_struct
-id|device
+id|net_device
 op_star
 id|next_module
 suffix:semicolon
@@ -1130,7 +1130,7 @@ id|mdio_read
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1147,7 +1147,7 @@ id|mdio_write
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1167,7 +1167,7 @@ id|netdev_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1178,7 +1178,7 @@ id|check_duplex
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1199,7 +1199,7 @@ id|tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1210,7 +1210,7 @@ id|init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1226,7 +1226,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1255,7 +1255,7 @@ id|netdev_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1266,7 +1266,7 @@ id|netdev_error
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1280,7 +1280,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1293,7 +1293,7 @@ id|get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1304,7 +1304,7 @@ id|mii_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1323,7 +1323,7 @@ id|netdev_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1333,7 +1333,7 @@ multiline_comment|/* A list of our installed devices, for removing the driver mo
 DECL|variable|root_net_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|root_net_dev
 op_assign
@@ -1347,7 +1347,7 @@ id|pci_etherdev_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1922,7 +1922,7 @@ id|via_rhine_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1954,7 +1954,7 @@ macro_line|#endif
 DECL|function|via_probe1
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|via_probe1
 c_func
@@ -1966,7 +1966,7 @@ r_int
 id|pci_devfn
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2440,7 +2440,7 @@ id|mdio_read
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2566,7 +2566,7 @@ id|mdio_write
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2674,7 +2674,7 @@ id|netdev_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3035,7 +3035,7 @@ id|check_duplex
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3183,13 +3183,13 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -3273,7 +3273,7 @@ id|tx_timeout
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3351,7 +3351,7 @@ id|init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3698,7 +3698,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3988,13 +3988,13 @@ id|rgs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_instance
@@ -4532,7 +4532,7 @@ id|netdev_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5066,7 +5066,7 @@ id|netdev_error
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5341,7 +5341,7 @@ id|get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5507,7 +5507,7 @@ id|set_rx_mode
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5703,7 +5703,7 @@ id|mii_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5855,7 +5855,7 @@ id|netdev_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

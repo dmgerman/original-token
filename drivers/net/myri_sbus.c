@@ -466,7 +466,7 @@ id|mp
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -959,7 +959,7 @@ l_int|0
 )braket
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1363,7 +1363,7 @@ op_star
 id|mp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1480,7 +1480,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1670,7 +1670,7 @@ op_star
 id|mp
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2309,13 +2309,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -2499,7 +2499,7 @@ id|myri_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2536,7 +2536,7 @@ id|myri_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2575,7 +2575,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3124,7 +3124,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3383,7 +3383,7 @@ id|MYRI_PAD_LEN
 )paren
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3541,7 +3541,7 @@ id|MYRI_PAD_LEN
 )paren
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -3621,7 +3621,7 @@ op_star
 id|hh
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3657,7 +3657,7 @@ id|myri_change_mtu
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3705,7 +3705,7 @@ id|myri_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3737,7 +3737,7 @@ id|myri_set_multicast
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4287,7 +4287,7 @@ id|myri_ether_init
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5543,7 +5543,7 @@ id|myri_sbus_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren

@@ -175,7 +175,7 @@ id|addrconf_ifdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -614,7 +614,7 @@ id|ipv6_add_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -814,7 +814,7 @@ id|ipv6_find_idev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -943,7 +943,7 @@ id|ipv6_get_idev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1374,7 +1374,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -1711,7 +1711,7 @@ id|ipv6_get_lladdr
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1820,7 +1820,7 @@ op_star
 id|addr
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -1982,7 +1982,7 @@ id|addrconf_join_solict
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2057,7 +2057,7 @@ id|addrconf_leave_solict
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2137,7 +2137,7 @@ op_star
 id|eui
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2233,7 +2233,7 @@ r_int
 id|plen
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2338,7 +2338,7 @@ id|addrconf_add_mroute
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2417,7 +2417,7 @@ id|sit_route_add
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2478,7 +2478,7 @@ id|addrconf_add_lroute
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2531,7 +2531,7 @@ id|addrconf_add_dev
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -2583,7 +2583,7 @@ id|addrconf_prefix_rcv
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3167,7 +3167,7 @@ id|in6_ifreq
 id|ireq
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3439,7 +3439,7 @@ op_star
 id|idev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3593,7 +3593,7 @@ op_star
 id|idev
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3919,7 +3919,7 @@ id|in6_addr
 id|addr
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4224,7 +4224,7 @@ id|init_loopback
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4412,7 +4412,7 @@ id|addrconf_dev_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4578,7 +4578,7 @@ id|addrconf_sit_config
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4670,7 +4670,7 @@ id|data
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4678,7 +4678,7 @@ id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|data
@@ -4875,7 +4875,7 @@ id|addrconf_ifdown
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -5319,7 +5319,7 @@ id|ifp
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -5607,7 +5607,7 @@ id|ifp
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -7375,7 +7375,7 @@ id|ipv6_devconf.forwarding
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -7820,7 +7820,7 @@ r_int
 id|i
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
@@ -8138,7 +8138,7 @@ r_void
 (brace
 macro_line|#ifdef MODULE
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

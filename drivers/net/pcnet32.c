@@ -63,7 +63,7 @@ macro_line|#ifdef MODULE
 DECL|variable|pcnet32_dev
 r_static
 r_struct
-id|device
+id|net_device
 op_star
 id|pcnet32_dev
 op_assign
@@ -559,7 +559,7 @@ multiline_comment|/* mii port available */
 macro_line|#ifdef MODULE
 DECL|member|next
 r_struct
-id|device
+id|net_device
 op_star
 id|next
 suffix:semicolon
@@ -571,7 +571,7 @@ id|pcnet32_probe
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -581,7 +581,7 @@ id|pcnet32_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -601,7 +601,7 @@ id|pcnet32_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -611,7 +611,7 @@ id|pcnet32_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -625,7 +625,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -635,7 +635,7 @@ id|pcnet32_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -660,7 +660,7 @@ id|pcnet32_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -672,7 +672,7 @@ id|pcnet32_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -682,7 +682,7 @@ id|pcnet32_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -693,7 +693,7 @@ id|pcnet32_mii_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_struct
@@ -791,7 +791,7 @@ id|probe1
 )paren
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 comma
 r_int
@@ -1373,7 +1373,7 @@ id|__init
 id|pcnet32_probe
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -1881,7 +1881,7 @@ id|pcnet32_probe1
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -2795,7 +2795,7 @@ id|pcnet32_open
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3296,7 +3296,7 @@ id|pcnet32_purge_tx_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3367,7 +3367,7 @@ id|pcnet32_init_ring
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -3629,7 +3629,7 @@ id|pcnet32_restart
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -3734,7 +3734,7 @@ op_star
 id|skb
 comma
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -4226,13 +4226,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 )paren
 id|dev_id
@@ -4800,7 +4800,7 @@ id|pcnet32_rx
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5319,7 +5319,7 @@ id|pcnet32_close
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5525,7 +5525,7 @@ id|pcnet32_get_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5613,7 +5613,7 @@ r_void
 id|pcnet32_load_multicast
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5866,7 +5866,7 @@ id|pcnet32_set_multicast_list
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -5973,7 +5973,7 @@ id|pcnet32_mii_ioctl
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 comma
@@ -6302,7 +6302,7 @@ r_void
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|next_dev
 suffix:semicolon

@@ -264,7 +264,7 @@ suffix:semicolon
 multiline_comment|/* space for unit name */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* net device structure */

@@ -25,7 +25,7 @@ r_int
 id|tmp
 suffix:semicolon
 r_struct
-id|device
+id|net_device
 op_star
 id|ndev
 op_assign
@@ -97,7 +97,7 @@ id|concap
 )paren
 (brace
 r_struct
-id|device
+id|net_device
 op_star
 id|ndev
 op_assign

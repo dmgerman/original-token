@@ -382,7 +382,7 @@ suffix:semicolon
 multiline_comment|/* (4.5.5.9)&t; */
 DECL|member|dev
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 suffix:semicolon

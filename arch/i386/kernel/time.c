@@ -22,7 +22,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;asm/cobalt.h&gt;
 multiline_comment|/*&n; * for x86_do_profile()&n; */
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &lt;linux/irq.h&gt;
 DECL|variable|cpu_hz
 r_int
 r_int
@@ -1438,18 +1438,15 @@ DECL|macro|CALIBRATE_LATCH
 mdefine_line|#define CALIBRATE_LATCH&t;(5 * LATCH)
 DECL|macro|CALIBRATE_TIME
 mdefine_line|#define CALIBRATE_TIME&t;(5 * 1000020/HZ)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|calibrate_tsc
 r_static
 r_int
 r_int
+id|__init
 id|calibrate_tsc
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* Set the Gate high, disable speaker */
@@ -1678,16 +1675,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|time_init
 r_void
+id|__init
 id|time_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|xtime.tv_sec
@@ -1853,7 +1847,7 @@ id|CO_CTRL_TIMEMASK
 )paren
 suffix:semicolon
 multiline_comment|/* Wire cpu IDT entry to s/w handler (and Cobalt APIC to IDT) */
-id|setup_x86_irq
+id|setup_irq
 c_func
 (paren
 id|CO_IRQ_TIMER
@@ -1863,7 +1857,7 @@ id|irq0
 )paren
 suffix:semicolon
 macro_line|#else
-id|setup_x86_irq
+id|setup_irq
 c_func
 (paren
 l_int|0
