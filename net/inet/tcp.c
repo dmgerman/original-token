@@ -452,6 +452,10 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|skb-&gt;sk-&gt;dead
+op_assign
+l_int|1
+suffix:semicolon
 id|tcp_close
 c_func
 (paren
@@ -1038,6 +1042,13 @@ id|error_report
 c_func
 (paren
 id|sk
+)paren
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|sk-&gt;retransmit_timer
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Time wait the socket &n;&t;&t; */
@@ -8653,6 +8664,11 @@ id|newsk-&gt;dead
 op_assign
 l_int|1
 suffix:semicolon
+id|newsk-&gt;state
+op_assign
+id|TCP_CLOSE
+suffix:semicolon
+multiline_comment|/* And this will destroy it */
 id|release_sock
 c_func
 (paren
@@ -8756,6 +8772,10 @@ suffix:semicolon
 id|newsk-&gt;dead
 op_assign
 l_int|1
+suffix:semicolon
+id|newsk-&gt;state
+op_assign
+id|TCP_CLOSE
 suffix:semicolon
 id|release_sock
 c_func
@@ -8993,16 +9013,6 @@ comma
 id|buff
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|reset_xmit_timer
-c_func
-(paren
-id|newsk
-comma
-id|TIME_WRITE
-comma
-id|newsk-&gt;rto
 )paren
 suffix:semicolon
 id|reset_xmit_timer

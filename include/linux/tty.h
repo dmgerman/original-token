@@ -694,7 +694,7 @@ id|tty
 suffix:semicolon
 r_extern
 r_void
-id|wait_until_sent
+id|tty_wait_until_sent
 c_func
 (paren
 r_struct

@@ -354,7 +354,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Ok, FDIV bug i%c86 system&bslash;n&quot;
+l_string|&quot;Hmm, FDIV bug i%c86 system&bslash;n&quot;
 comma
 l_char|&squot;0&squot;
 op_plus

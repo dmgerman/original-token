@@ -1923,6 +1923,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
+macro_line|#if 0 /* Not yet */
 r_if
 c_cond
 (paren
@@ -1947,6 +1948,7 @@ r_return
 id|EBUSY
 suffix:semicolon
 )brace
+macro_line|#endif
 id|request_region
 c_func
 (paren
@@ -2470,18 +2472,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;de600: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
 id|unregister_netdev
 c_func
 (paren

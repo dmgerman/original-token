@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;scsi.c Copyright (C) 1992 Drew Eckhardt &n; *&t;       Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *&t;generic mid-level SCSI driver&n; *&t;&t;Initial versions: Drew Eckhardt &n; *&t;&t;Subsequent revisions: Eric Youngdale&n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *&t;Bug correction thanks go to : &n; *&t;&t;Rik Faith &lt;faith@cs.unc.edu&gt;&n; *&t;&t;Tommy Thorn &lt;tthorn&gt;&n; *&t;&t;Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; * &n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
+multiline_comment|/*&n; *&t;scsi.c Copyright (C) 1992 Drew Eckhardt&n; *&t;       Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *&t;generic mid-level SCSI driver&n; *&t;&t;Initial versions: Drew Eckhardt&n; *&t;&t;Subsequent revisions: Eric Youngdale&n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *&t;Bug correction thanks go to :&n; *&t;&t;Rik Faith &lt;faith@cs.unc.edu&gt;&n; *&t;&t;Tommy Thorn &lt;tthorn&gt;&n; *&t;&t;Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -94,22 +94,9 @@ r_static
 r_int
 id|time_elapsed
 suffix:semicolon
-DECL|variable|scsi_maybe_deadlocked
-r_static
-r_int
-id|scsi_maybe_deadlocked
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|max_active
-r_static
-r_int
-id|max_active
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|host_active
 r_static
+r_volatile
 r_struct
 id|Scsi_Host
 op_star
@@ -117,15 +104,8 @@ id|host_active
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|host_next
-r_static
-r_struct
-id|Scsi_Host
-op_star
-id|host_next
-op_assign
-l_int|NULL
-suffix:semicolon
+DECL|macro|SCSI_BLOCK
+mdefine_line|#define SCSI_BLOCK(HOST) ((HOST-&gt;block &amp;&amp; host_active &amp;&amp; HOST != host_active) &bslash;&n;&t;&t;   || (HOST-&gt;can_queue &amp;&amp; HOST-&gt;host_busy &gt;= HOST-&gt;can_queue))
 DECL|macro|MAX_SCSI_DEVICE_CODE
 mdefine_line|#define MAX_SCSI_DEVICE_CODE 10
 DECL|variable|scsi_device_types
@@ -160,7 +140,7 @@ comma
 l_string|&quot;Communications   &quot;
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;global variables : &n;&t;scsi_devices an array of these specifying the address for each &n;&t;(host, id, LUN)&n;*/
+multiline_comment|/*&n;&t;global variables :&n;&t;scsi_devices an array of these specifying the address for each&n;&t;(host, id, LUN)&n;*/
 DECL|variable|scsi_devices
 id|Scsi_Device
 op_star
@@ -207,11 +187,11 @@ id|last_cmnd
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; *&t;As the scsi do command functions are intelligent, and may need to &n; *&t;redo a command, we need to keep track of the last command &n; *&t;executed on each one.&n; */
+multiline_comment|/*&n; *&t;As the scsi do command functions are intelligent, and may need to&n; *&t;redo a command, we need to keep track of the last command&n; *&t;executed on each one.&n; */
 DECL|macro|WAS_RESET
-mdefine_line|#define WAS_RESET &t;0x01
+mdefine_line|#define WAS_RESET&t;0x01
 DECL|macro|WAS_TIMEDOUT
-mdefine_line|#define WAS_TIMEDOUT &t;0x02
+mdefine_line|#define WAS_TIMEDOUT&t;0x02
 DECL|macro|WAS_SENSE
 mdefine_line|#define WAS_SENSE&t;0x04
 DECL|macro|IS_RESETTING
@@ -220,7 +200,7 @@ DECL|macro|IS_ABORTING
 mdefine_line|#define IS_ABORTING&t;0x10
 DECL|macro|ASKED_FOR_SENSE
 mdefine_line|#define ASKED_FOR_SENSE 0x20
-multiline_comment|/*&n; *&t;This is the number  of clock ticks we should wait before we time out &n; *&t;and abort the command.  This is for  where the scsi.c module generates &n; *&t;the command, not where it originates from a higher level, in which&n; *&t;case the timeout is specified there.&n; *&n; *&t;ABORT_TIMEOUT and RESET_TIMEOUT are the timeouts for RESET and ABORT&n; *&t;respectively.&n; */
+multiline_comment|/*&n; *&t;This is the number  of clock ticks we should wait before we time out&n; *&t;and abort the command.  This is for  where the scsi.c module generates&n; *&t;the command, not where it originates from a higher level, in which&n; *&t;case the timeout is specified there.&n; *&n; *&t;ABORT_TIMEOUT and RESET_TIMEOUT are the timeouts for RESET and ABORT&n; *&t;respectively.&n; */
 macro_line|#ifdef DEBUG_TIMEOUT
 r_static
 r_void
@@ -252,9 +232,12 @@ DECL|macro|RESET_TIMEOUT
 mdefine_line|#define RESET_TIMEOUT 50
 DECL|macro|ABORT_TIMEOUT
 mdefine_line|#define ABORT_TIMEOUT 50
+macro_line|#endif
 DECL|macro|MIN_RESET_DELAY
 mdefine_line|#define MIN_RESET_DELAY 100
-macro_line|#endif
+multiline_comment|/* Do not call reset on error if we just did a reset within 10 sec. */
+DECL|macro|MIN_RESET_PERIOD
+mdefine_line|#define MIN_RESET_PERIOD 1000
 multiline_comment|/* The following devices are known not to tolerate a lun != 0 scan for&n;   one reason or another.  Some will respond to all luns, others will&n;   lock up. */
 DECL|struct|blist
 r_struct
@@ -699,7 +682,7 @@ suffix:semicolon
 )brace
 )def_block
 suffix:semicolon
-multiline_comment|/*&n; *&t;As the actual SCSI command runs in the background, we must set up a &n; *&t;flag that tells scan_scsis() when the result it has is valid.  &n; *&t;scan_scsis can set the_result to -1, and watch for it to become the &n; *&t;actual return code for that call.  the scan_scsis_done function() is &n; *&t;our user specified completion function that is passed on to the  &n; *&t;scsi_do_cmd() function.&n; */
+multiline_comment|/*&n; *&t;As the actual SCSI command runs in the background, we must set up a&n; *&t;flag that tells scan_scsis() when the result it has is valid.&n; *&t;scan_scsis can set the_result to -1, and watch for it to become the&n; *&t;actual return code for that call.  the scan_scsis_done function() is&n; *&t;our user specified completion function that is passed on to the&n; *&t;scsi_do_cmd() function.&n; */
 DECL|variable|in_scan_scsis
 r_volatile
 r_int
@@ -712,56 +695,194 @@ r_static
 r_int
 id|the_result
 suffix:semicolon
-DECL|function|restart_all
-r_static
+DECL|function|scsi_make_blocked_list
 r_void
-id|restart_all
+id|scsi_make_blocked_list
 c_func
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/*&n;  * If we might have deadlocked, get things started again. Only&n;  * for block devices. Character devices should never deadlock.&n;  */
+r_int
+id|block_count
+op_assign
+l_int|0
+comma
+id|index
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
-id|Scsi_Device_Template
+id|Scsi_Host
 op_star
-id|sdtpnt
+id|sh
+(braket
+l_int|128
+)braket
+comma
+op_star
+id|shpnt
+suffix:semicolon
+multiline_comment|/*&n;   * Create a circular linked list from the scsi hosts which have&n;   * the &quot;block&quot; field in the Scsi_Host structure set to any value&n;   * different from NULL.&n;   * If there is only one host such that host-&gt;block != NULL, the list is&n;   * empty and host-&gt;block is reset to NULL.&n;   * The blocked list should include all the scsi hosts using ISA DMA.&n;   * In some systems, using two dma channels simultaneously causes&n;   * unpredictable results.&n;   * Among the scsi hosts in the blocked list, only one host at a time&n;   * is allowed to have active commands queued. The transition from&n;   * one active host to the next one is allowed only when host_busy == 0&n;   * for the active host (which implies host_busy == 0 for all the hosts&n;   * in the list). Moreover for block devices the transition to a new&n;   * active host is allowed only when a request is completed, since a&n;   * block device request can be divided into multiple scsi commands&n;   * (when there are few sg lists or clustering is disabled).&n;   *&n;   * (DB, 4 Feb 1995)&n;   */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|host_active
+op_assign
+l_int|NULL
 suffix:semicolon
 r_for
 c_loop
 (paren
-id|sdtpnt
+id|shpnt
 op_assign
-id|scsi_devicelist
+id|scsi_hostlist
 suffix:semicolon
-id|sdtpnt
+id|shpnt
 suffix:semicolon
-id|sdtpnt
+id|shpnt
 op_assign
-id|sdtpnt-&gt;next
+id|shpnt-&gt;next
 )paren
+(brace
+macro_line|#if 0
+multiline_comment|/*&n;      * Is this is a candidate for the blocked list?&n;      * Useful to put into the blocked list all the hosts whose driver&n;      * does not know about the host-&gt;block feature.&n;      */
 r_if
 c_cond
 (paren
-id|sdtpnt-&gt;blk
-op_logical_and
-id|blk_dev
-(braket
-id|sdtpnt-&gt;major
-)braket
-dot
-id|request_fn
+id|shpnt-&gt;unchecked_isa_dma
 )paren
+id|shpnt-&gt;block
+op_assign
+id|shpnt
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
 (paren
-op_star
-id|blk_dev
-(braket
-id|sdtpnt-&gt;major
-)braket
-dot
-id|request_fn
+id|shpnt-&gt;block
 )paren
+id|sh
+(braket
+id|block_count
+op_increment
+)braket
+op_assign
+id|shpnt
+suffix:semicolon
+)brace
+r_if
+c_cond
 (paren
+id|block_count
+op_eq
+l_int|1
+)paren
+id|sh
+(braket
+l_int|0
+)braket
+op_member_access_from_pointer
+id|block
+op_assign
+l_int|NULL
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|block_count
+OG
+l_int|1
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|index
+op_assign
+l_int|0
+suffix:semicolon
+id|index
+OL
+id|block_count
+op_minus
+l_int|1
+suffix:semicolon
+id|index
+op_increment
+)paren
+(brace
+id|sh
+(braket
+id|index
+)braket
+op_member_access_from_pointer
+id|block
+op_assign
+id|sh
+(braket
+id|index
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : added to blocked host list.&bslash;n&quot;
+comma
+id|sh
+(braket
+id|index
+)braket
+op_member_access_from_pointer
+id|host_no
+)paren
+suffix:semicolon
+)brace
+id|sh
+(braket
+id|block_count
+op_minus
+l_int|1
+)braket
+op_member_access_from_pointer
+id|block
+op_assign
+id|sh
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : added to blocked host list.&bslash;n&quot;
+comma
+id|sh
+(braket
+id|index
+)braket
+op_member_access_from_pointer
+id|host_no
+)paren
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -785,7 +906,7 @@ comma
 id|SCpnt-&gt;result
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|SCpnt-&gt;request.dev
 op_assign
 l_int|0xfffe
@@ -860,7 +981,7 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Detecting SCSI devices :&t;&n; *&t;We scan all present host adapter&squot;s busses,  from ID 0 to ID 6.  &n; *&t;We use the INQUIRY command, determine device type, and pass the ID / &n; *&t;lun address of all sequential devices to the tape driver, all random &n; *&t;devices to the disk driver.&n; */
+multiline_comment|/*&n; *&t;Detecting SCSI devices :&n; *&t;We scan all present host adapter&squot;s busses,  from ID 0 to ID 6.&n; *&t;We use the INQUIRY command, determine device type, and pass the ID /&n; *&t;lun address of all sequential devices to the tape driver, all random&n; *&t;devices to the disk driver.&n; */
 DECL|function|scan_scsis
 r_void
 id|scan_scsis
@@ -1068,7 +1189,7 @@ id|SDpnt-&gt;attached
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Assume that the device will have handshaking problems, and then &n; * fix this field later if it turns out it doesn&squot;t.&n; */
+multiline_comment|/*&n; * Assume that the device will have handshaking problems, and then&n; * fix this field later if it turns out it doesn&squot;t.&n; */
 id|SDpnt-&gt;borken
 op_assign
 l_int|1
@@ -1362,7 +1483,7 @@ l_string|&quot;scsi: performing INQUIRY&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t;   * Build an INQUIRY command block.  &n;&t;   */
+multiline_comment|/*&n;&t;   * Build an INQUIRY command block.&n;&t;   */
 id|scsi_cmd
 (braket
 l_int|0
@@ -1607,7 +1728,6 @@ l_int|0x80
 suffix:semicolon
 multiline_comment|/* removable */
 )brace
-multiline_comment|/*&n; *     Unfortunately the Toshiba CD-ROM XM-3401TA doesn&squot;t&n; *     understand the vendor specific mode select/sense&n; *     commands which are used by the photo cd routines in &n; *     sr.c.&n; */
 id|SDpnt-&gt;manufacturer
 op_assign
 id|SCSI_MAN_UNKNOWN
@@ -1647,30 +1767,6 @@ l_string|&quot;TOSHIBA&quot;
 comma
 l_int|7
 )paren
-op_logical_and
-id|strncmp
-c_func
-(paren
-id|scsi_result
-op_plus
-l_int|16
-comma
-l_string|&quot;CD-ROM XM-3401TA&quot;
-comma
-l_int|16
-)paren
-op_logical_and
-id|strncmp
-c_func
-(paren
-id|scsi_result
-op_plus
-l_int|32
-comma
-l_string|&quot;3593&quot;
-comma
-l_int|4
-)paren
 )paren
 id|SDpnt-&gt;manufacturer
 op_assign
@@ -1705,7 +1801,7 @@ id|SDpnt-&gt;busy
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n; *&t;Currently, all sequential devices are assumed to be tapes,&n; *&t;all random devices disk, with the appropriate read only &n; *&t;flags set for ROM / WORM treated as RO.&n; */
+multiline_comment|/*&n; *&t;Currently, all sequential devices are assumed to be tapes,&n; *&t;all random devices disk, with the appropriate read only&n; *&t;flags set for ROM / WORM treated as RO.&n; */
 r_switch
 c_cond
 (paren
@@ -1906,7 +2002,7 @@ l_int|1
 id|SDpnt-&gt;scsi_level
 op_increment
 suffix:semicolon
-multiline_comment|/* &n; * Set the tagged_queue flag for SCSI-II devices that purport to support&n; * tagged queuing in the INQUIRY data.&n; */
+multiline_comment|/*&n; * Set the tagged_queue flag for SCSI-II devices that purport to support&n; * tagged queuing in the INQUIRY data.&n; */
 id|SDpnt-&gt;tagged_queue
 op_assign
 l_int|0
@@ -1944,7 +2040,7 @@ id|SDpnt-&gt;disconnect
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Some revisions of the Texel CD ROM drives have handshaking&n; * problems when used with the Seagate controllers.  Before we&n; * know what type of device we&squot;re talking to, we assume it&squot;s &n; * borken and then change it here if it turns out that it isn&squot;t&n; * a TEXEL drive.&n; */
+multiline_comment|/*&n; * Some revisions of the Texel CD ROM drives have handshaking&n; * problems when used with the Seagate controllers.  Before we&n; * know what type of device we&squot;re talking to, we assume it&squot;s&n; * borken and then change it here if it turns out that it isn&squot;t&n; * a TEXEL drive.&n; */
 r_if
 c_cond
 (paren
@@ -1987,7 +2083,7 @@ l_int|6
 )paren
 op_ne
 l_int|0
-multiline_comment|/* &n; * XXX 1.06 has problems, some one should figure out the others too so&n; * ALL TEXEL drives don&squot;t suffer in performance, especially when I finish&n; * integrating my seagate patches which do multiple I_T_L nexuses.&n; */
+multiline_comment|/*&n; * XXX 1.06 has problems, some one should figure out the others too so&n; * ALL TEXEL drives don&squot;t suffer in performance, especially when I finish&n; * integrating my seagate patches which do multiple I_T_L nexuses.&n; */
 macro_line|#ifdef notyet
 op_logical_or
 (paren
@@ -2380,14 +2476,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* scan_scsis  ends */
-multiline_comment|/*&n; *&t;Flag bits for the internal_timeout array &n; */
+multiline_comment|/*&n; *&t;Flag bits for the internal_timeout array&n; */
 DECL|macro|NORMAL_TIMEOUT
 mdefine_line|#define NORMAL_TIMEOUT 0
 DECL|macro|IN_ABORT
 mdefine_line|#define IN_ABORT 1
 DECL|macro|IN_RESET
 mdefine_line|#define IN_RESET 2
-multiline_comment|/*&n;&t;This is our time out function, called when the timer expires for a &n;&t;given host adapter.  It will attempt to abort the currently executing &n;&t;command, that failing perform a kernel panic.&n;*/
+multiline_comment|/*&n;&t;This is our time out function, called when the timer expires for a&n;&t;given host adapter.  It will attempt to abort the currently executing&n;&t;command, that failing perform a kernel panic.&n;*/
 DECL|function|scsi_times_out
 r_static
 r_void
@@ -2610,57 +2706,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|device-&gt;host-&gt;can_queue
-op_logical_and
+id|SCSI_BLOCK
+c_func
 (paren
-(paren
-id|device-&gt;host-&gt;block
-op_logical_and
-id|host_active
-op_logical_and
 id|device-&gt;host
-op_ne
-id|host_active
-)paren
-op_logical_or
-(paren
-id|device-&gt;host-&gt;block
-op_logical_and
-id|host_next
-op_logical_and
-id|device-&gt;host
-op_ne
-id|host_next
-)paren
-op_logical_or
-id|device-&gt;host-&gt;host_busy
-op_ge
-id|device-&gt;host-&gt;can_queue
 )paren
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|device-&gt;host-&gt;block
-op_logical_and
-op_logical_neg
-id|host_next
-op_logical_and
-id|host_active
-op_logical_and
-id|device-&gt;host
-op_ne
-id|host_active
-)paren
-id|host_next
-op_assign
-id|device-&gt;host
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2982,61 +3036,15 @@ c_cond
 (paren
 id|intr_count
 op_logical_and
-id|host-&gt;can_queue
-op_logical_and
+id|SCSI_BLOCK
+c_func
 (paren
-(paren
-id|host-&gt;block
-op_logical_and
-id|host_active
-op_logical_and
 id|host
-op_ne
-id|host_active
-)paren
-op_logical_or
-(paren
-id|host-&gt;block
-op_logical_and
-id|host_next
-op_logical_and
-id|host
-op_ne
-id|host_next
-)paren
-op_logical_or
-id|host-&gt;host_busy
-op_ge
-id|host-&gt;can_queue
 )paren
 )paren
-(brace
-id|scsi_maybe_deadlocked
-op_assign
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|host-&gt;block
-op_logical_and
-op_logical_neg
-id|host_next
-op_logical_and
-id|host_active
-op_logical_and
-id|host
-op_ne
-id|host_active
-)paren
-id|host_next
-op_assign
-id|host
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -3450,7 +3458,11 @@ id|Scsi_Host
 op_star
 id|host
 suffix:semicolon
-macro_line|#ifdef DEBUG_DELAY&t;
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#ifdef DEBUG_DELAY
 r_int
 id|clock
 suffix:semicolon
@@ -3477,10 +3489,23 @@ id|host
 op_assign
 id|SCpnt-&gt;host
 suffix:semicolon
-multiline_comment|/*&n;&t;We will wait MIN_RESET_DELAY clock ticks after the last reset so &n;&t;we can avoid the drive not being ready.&n;*/
+multiline_comment|/*&n;&t;We will wait MIN_RESET_DELAY clock ticks after the last reset so&n;&t;we can avoid the drive not being ready.&n;*/
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|temp
 op_assign
 id|host-&gt;last_reset
+op_plus
+id|MIN_RESET_DELAY
 suffix:semicolon
 r_while
 c_loop
@@ -3488,6 +3513,12 @@ c_loop
 id|jiffies
 OL
 id|temp
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|update_timeout
@@ -3498,7 +3529,7 @@ comma
 id|SCpnt-&gt;timeout_per_command
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;We will use a queued command if possible, otherwise we will emulate the&n;&t;queuing and calling of completion function ourselves. &n;*/
+multiline_comment|/*&n;&t;We will use a queued command if possible, otherwise we will emulate the&n;&t;queuing and calling of completion function ourselves.&n;*/
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -3761,7 +3792,7 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;scsi_do_cmd sends all the commands out to the low-level driver.  It &n;&t;handles the specifics required for each low level driver - ie queued &n;&t;or non queued.  It also prevents conflicts when different high level &n;&t;drivers go for the same host at the same time.&n;*/
+multiline_comment|/*&n;&t;scsi_do_cmd sends all the commands out to the low-level driver.  It&n;&t;handles the specifics required for each low level driver - ie queued&n;&t;or non queued.  It also prevents conflicts when different high level&n;&t;drivers go for the same host at the same time.&n;*/
 DECL|function|scsi_do_cmd
 r_void
 id|scsi_do_cmd
@@ -3894,19 +3925,7 @@ l_string|&quot;Invalid or not present host.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;We must prevent reentrancy to the lowlevel host driver.  This prevents &n;&t;it - we enter a loop until the host we want to talk to is not busy.   &n;&t;Race conditions are prevented, as interrupts are disabled in between the&n;&t;time we check for the host being not busy, and the time we mark it busy&n;&t;ourselves.&n;*/
-id|SCpnt-&gt;pid
-op_assign
-id|scsi_pid
-op_increment
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-(brace
+multiline_comment|/*&n;&t;We must prevent reentrancy to the lowlevel host driver.  This prevents&n;&t;it - we enter a loop until the host we want to talk to is not busy.&n;&t;Race conditions are prevented, as interrupts are disabled in between the&n;&t;time we check for the host being not busy, and the time we mark it busy&n;&t;ourselves.&n;*/
 id|save_flags
 c_func
 (paren
@@ -3918,67 +3937,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|SCpnt-&gt;pid
+op_assign
+id|scsi_pid
+op_increment
+suffix:semicolon
+r_while
+c_loop
 (paren
-id|host-&gt;can_queue
-op_logical_and
+id|SCSI_BLOCK
+c_func
 (paren
-(paren
-id|host-&gt;block
-op_logical_and
-id|host_active
-op_logical_and
 id|host
-op_ne
-id|host_active
-)paren
-op_logical_or
-(paren
-id|host-&gt;block
-op_logical_and
-id|host_next
-op_logical_and
-id|host
-op_ne
-id|host_next
-)paren
-op_logical_or
-id|host-&gt;host_busy
-op_ge
-id|host-&gt;can_queue
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|intr_count
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;scsi: queueing to inactive host while in interrupt.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|host-&gt;block
-op_logical_and
-op_logical_neg
-id|host_next
-op_logical_and
-id|host_active
-op_logical_and
-id|host
-op_ne
-id|host_active
-)paren
-id|host_next
-op_assign
-id|host
-suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -3991,95 +3964,38 @@ c_func
 op_amp
 id|host-&gt;host_wait
 comma
+id|SCSI_BLOCK
+c_func
 (paren
-(paren
-id|host-&gt;block
-op_logical_and
-id|host_active
-op_logical_and
 id|host
-op_ne
-id|host_active
-)paren
-op_logical_or
-(paren
-id|host-&gt;block
-op_logical_and
-id|host_next
-op_logical_and
-id|host
-op_ne
-id|host_next
-)paren
-op_logical_or
-id|host-&gt;host_busy
-op_ge
-id|host-&gt;can_queue
 )paren
 )paren
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-r_else
-(brace
+r_if
+c_cond
+(paren
+id|host-&gt;block
+)paren
+id|host_active
+op_assign
+id|host
+suffix:semicolon
 id|host-&gt;host_busy
 op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|host-&gt;block
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|host_active
-)paren
-(brace
-id|max_active
-op_assign
-l_int|0
-suffix:semicolon
-id|host_active
-op_assign
-id|host
-suffix:semicolon
-id|host_next
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|max_active
-OG
-l_int|7
-op_logical_and
-op_logical_neg
-id|host_next
-)paren
-id|host_next
-op_assign
-id|host-&gt;block
-suffix:semicolon
-id|max_active
-op_increment
-suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n;&t;Our own function scsi_done (which marks the host as not busy, disables &n;&t;the timeout counter, etc) will be called by us or by the &n;&t;scsi_hosts[host].queuecommand() function needs to also call&n;&t;the completion function for the high level driver.&n;&n;*/
+multiline_comment|/*&n;&t;Our own function scsi_done (which marks the host as not busy, disables&n;&t;the timeout counter, etc) will be called by us or by the&n;&t;scsi_hosts[host].queuecommand() function needs to also call&n;&t;the completion function for the high level driver.&n;&n;*/
 id|memcpy
 (paren
 (paren
@@ -4234,7 +4150,7 @@ l_string|&quot;Leaving scsi_do_cmd()&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;&t;The scsi_done() function disables the timeout timer for the scsi host, &n;&t;marks the host as not busy, and calls the user specified completion &n;&t;function for that host&squot;s current command.&n;*/
+multiline_comment|/*&n;&t;The scsi_done() function disables the timeout timer for the scsi host,&n;&t;marks the host as not busy, and calls the user specified completion&n;&t;function for that host&squot;s current command.&n;*/
 DECL|function|reset
 r_static
 r_void
@@ -5077,7 +4993,7 @@ c_func
 l_string|&quot;Aborting&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 m_exit
 op_assign
 (paren
@@ -5376,6 +5292,15 @@ l_int|1
 op_logical_and
 op_logical_neg
 (paren
+id|jiffies
+OL
+id|SCpnt-&gt;host-&gt;last_reset
+op_plus
+id|MIN_RESET_PERIOD
+)paren
+op_logical_and
+op_logical_neg
+(paren
 id|SCpnt-&gt;flags
 op_amp
 id|WAS_RESET
@@ -5413,15 +5338,6 @@ multiline_comment|/* fall through to REDO */
 r_case
 id|REDO
 suffix:colon
-r_if
-c_cond
-(paren
-id|host-&gt;block
-)paren
-id|scsi_maybe_deadlocked
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5519,70 +5435,56 @@ op_eq
 l_int|0
 )paren
 (brace
-r_struct
-id|Scsi_Host
-op_star
-id|block
-suffix:semicolon
-id|block
-op_assign
-id|host_next
-suffix:semicolon
 id|host_active
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* For block devices &quot;wake_up&quot; is done in end_scsi_request */
 r_if
 c_cond
 (paren
-id|block
-)paren
-id|wake_up
+id|MAJOR
 c_func
 (paren
-op_amp
-id|block-&gt;host_wait
+id|SCpnt-&gt;request.dev
 )paren
+op_ne
+id|SCSI_DISK_MAJOR
+op_logical_and
+id|MAJOR
+c_func
+(paren
+id|SCpnt-&gt;request.dev
+)paren
+op_ne
+id|SCSI_CDROM_MAJOR
+)paren
+(brace
+r_struct
+id|Scsi_Host
+op_star
+id|next
 suffix:semicolon
 r_for
 c_loop
 (paren
-id|block
+id|next
 op_assign
 id|host-&gt;block
 suffix:semicolon
-id|block
+id|next
 op_ne
 id|host
 suffix:semicolon
-id|block
+id|next
 op_assign
-id|block-&gt;block
+id|next-&gt;block
 )paren
 id|wake_up
 c_func
 (paren
 op_amp
-id|block-&gt;host_wait
-)paren
-suffix:semicolon
-id|host_next
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scsi_maybe_deadlocked
-)paren
-(brace
-id|scsi_maybe_deadlocked
-op_assign
-l_int|0
-suffix:semicolon
-id|restart_all
-c_func
-(paren
+id|next-&gt;host_wait
 )paren
 suffix:semicolon
 )brace
@@ -5631,7 +5533,7 @@ macro_line|#undef MAYREDO
 DECL|macro|PENDING
 macro_line|#undef PENDING
 )brace
-multiline_comment|/*&n;&t;The scsi_abort function interfaces with the abort() function of the host&n;&t;we are aborting, and causes the current command to not complete.  The &n;&t;caller should deal with any error messages or status returned on the &n;&t;next call.&n;&t;&n;&t;This will not be called reentrantly for a given host.&n;*/
+multiline_comment|/*&n;&t;The scsi_abort function interfaces with the abort() function of the host&n;&t;we are aborting, and causes the current command to not complete.  The&n;&t;caller should deal with any error messages or status returned on the&n;&t;next call.&n;&n;&t;This will not be called reentrantly for a given host.&n;*/
 multiline_comment|/*&n;&t;Since we&squot;re nice guys and specified that abort() and reset()&n;&t;can be non-reentrant.  The internal_timeout flags are used for&n;&t;this.&n;*/
 DECL|function|scsi_abort
 r_int
@@ -6137,7 +6039,7 @@ OG
 l_int|0
 )paren
 (brace
-macro_line|#if 0&t;&t;&t;&t;  
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -6177,42 +6079,9 @@ id|SCpnt1-&gt;next
 suffix:semicolon
 )brace
 suffix:semicolon
-id|temp
+id|host-&gt;last_reset
 op_assign
-id|host-&gt;hostt
-op_member_access_from_pointer
-id|reset
-c_func
-(paren
-id|SCpnt
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|host-&gt;host_busy
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|host-&gt;block
-)paren
-(brace
-id|host_active
-op_assign
-id|host
-suffix:semicolon
-id|host_next
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
+id|jiffies
 suffix:semicolon
 id|temp
 op_assign
@@ -6228,32 +6097,50 @@ id|host-&gt;last_reset
 op_assign
 id|jiffies
 suffix:semicolon
-id|host-&gt;host_busy
-op_decrement
-suffix:semicolon
 )brace
+r_else
+(brace
 r_if
 c_cond
 (paren
+op_logical_neg
 id|host-&gt;block
-op_logical_and
-id|host-&gt;host_busy
-op_eq
-l_int|0
 )paren
-(brace
-id|host_active
-op_assign
-l_int|NULL
+id|host-&gt;host_busy
+op_increment
 suffix:semicolon
-id|host_next
-op_assign
-l_int|NULL
-suffix:semicolon
-id|restart_all
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
+suffix:semicolon
+id|host-&gt;last_reset
+op_assign
+id|jiffies
+suffix:semicolon
+id|temp
+op_assign
+id|host-&gt;hostt
+op_member_access_from_pointer
+id|reset
+c_func
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+id|host-&gt;last_reset
+op_assign
+id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|host-&gt;block
+)paren
+id|host-&gt;host_busy
+op_decrement
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG
@@ -6528,7 +6415,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;The strategy is to cause the timer code to call scsi_times_out()&n;&t;when the soonest timeout is pending.  &n;&t;The arguments are used when we are queueing a new command, because&n;&t;we do not want to subtract the time used from this time, but when we&n;&t;set the timer, we want to take this value into account.&n;*/
+multiline_comment|/*&n;&t;The strategy is to cause the timer code to call scsi_times_out()&n;&t;when the soonest timeout is pending.&n;&t;The arguments are used when we are queueing a new command, because&n;&t;we do not want to subtract the time used from this time, but when we&n;&t;set the timer, we want to take this value into account.&n;*/
 DECL|function|update_timeout
 r_static
 r_int
@@ -6579,7 +6466,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;Figure out how much time has passed since the last time the timeouts &n;   &t;were updated &n;*/
+multiline_comment|/*&n;&t;Figure out how much time has passed since the last time the timeouts&n;&t;were updated&n;*/
 id|used
 op_assign
 (paren
@@ -6595,7 +6482,7 @@ id|time_start
 suffix:colon
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;Find out what is due to timeout soonest, and adjust all timeouts for&n;&t;the amount of time that has passed since the last time we called &n;&t;update_timeout. &n;*/
+multiline_comment|/*&n;&t;Find out what is due to timeout soonest, and adjust all timeouts for&n;&t;the amount of time that has passed since the last time we called&n;&t;update_timeout.&n;*/
 id|oldto
 op_assign
 l_int|0
@@ -6695,7 +6582,7 @@ suffix:semicolon
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;If something is due to timeout again, then we will set the next timeout &n;&t;interrupt to occur.  Otherwise, timeouts are disabled.&n;*/
+multiline_comment|/*&n;&t;If something is due to timeout again, then we will set the next timeout&n;&t;interrupt to occur.  Otherwise, timeouts are disabled.&n;*/
 r_if
 c_cond
 (paren
@@ -7493,7 +7380,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t;scsi_dev_init() is our initialization routine, which in turn calls host &n;&t;initialization, bus scanning, and sd/st initialization routines.  It &n;&t;should be called from main().&n;*/
+multiline_comment|/*&n;&t;scsi_dev_init() is our initialization routine, which in turn calls host&n;&t;initialization, bus scanning, and sd/st initialization routines.  It&n;&t;should be called from main().&n;*/
 DECL|function|scsi_dev_init
 r_int
 r_int
@@ -7539,7 +7426,7 @@ suffix:semicolon
 macro_line|#ifdef FOO_ON_YOU
 r_return
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/* Init a few things so we can &quot;malloc&quot; memory. */
 id|scsi_loadable_module_flag
 op_assign
@@ -8589,7 +8476,30 @@ id|name
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* The next step is to call scan_scsis here.  This generates the&n;         Scsi_Devices entries */
+id|printk
+(paren
+l_string|&quot;scsi : %d host%s.&bslash;n&quot;
+comma
+id|next_scsi_host
+comma
+(paren
+id|next_scsi_host
+op_eq
+l_int|1
+)paren
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|scsi_make_blocked_list
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* The next step is to call scan_scsis here.  This generates the&n;&t; Scsi_Devices entries */
 r_for
 c_loop
 (paren
@@ -9150,6 +9060,8 @@ r_if
 c_cond
 (paren
 id|sdtpnt-&gt;finish
+op_logical_and
+id|sdtpnt-&gt;nr_dev
 )paren
 (brace
 (paren
@@ -9664,6 +9576,29 @@ op_assign
 id|sh1
 suffix:semicolon
 )brace
+id|printk
+(paren
+l_string|&quot;scsi : %d host%s.&bslash;n&quot;
+comma
+id|next_scsi_host
+comma
+(paren
+id|next_scsi_host
+op_eq
+l_int|1
+)paren
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|scsi_make_blocked_list
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* There were some hosts that were loaded at boot time, so we cannot&n;     do any more than this */
 r_if
 c_cond

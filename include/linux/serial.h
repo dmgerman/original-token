@@ -54,32 +54,15 @@ DECL|member|hub6
 r_int
 id|hub6
 suffix:semicolon
-DECL|member|closing_wait
-r_int
-r_int
-id|closing_wait
-suffix:semicolon
-multiline_comment|/* time to wait before rcvr shutdown */
-DECL|member|closing_wait2
-r_int
-r_int
-id|closing_wait2
-suffix:semicolon
-multiline_comment|/* time to wait after rcvr shutdown */
 DECL|member|reserved
 r_int
 id|reserved
 (braket
-l_int|4
+l_int|5
 )braket
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * For the close wait times, 0 means wait forever for serial port to&n; * flush its output.  65535 means don&squot;t wait at all.&n; */
-DECL|macro|ASYNC_CLOSING_WAIT_INF
-mdefine_line|#define ASYNC_CLOSING_WAIT_INF&t;0
-DECL|macro|ASYNC_CLOSING_WAIT_NONE
-mdefine_line|#define ASYNC_CLOSING_WAIT_NONE&t;65535
 multiline_comment|/*&n; * These are the supported serial types.&n; */
 DECL|macro|PORT_UNKNOWN
 mdefine_line|#define PORT_UNKNOWN&t;0
@@ -92,11 +75,9 @@ mdefine_line|#define PORT_16550&t;3
 DECL|macro|PORT_16550A
 mdefine_line|#define PORT_16550A&t;4
 DECL|macro|PORT_CIRRUS
-mdefine_line|#define PORT_CIRRUS     5&t;/* Hey!  Who put this there? */
-DECL|macro|PORT_16650
-mdefine_line|#define PORT_16650&t;6
+mdefine_line|#define PORT_CIRRUS     5
 DECL|macro|PORT_MAX
-mdefine_line|#define PORT_MAX&t;6
+mdefine_line|#define PORT_MAX&t;5
 multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
 DECL|macro|ASYNC_HUP_NOTIFY
 mdefine_line|#define ASYNC_HUP_NOTIFY 0x0001 /* Notify getty on hangups and closes &n;&t;&t;&t;&t;   on the callout port */
@@ -214,16 +195,6 @@ multiline_comment|/* xon/xoff character */
 DECL|member|close_delay
 r_int
 id|close_delay
-suffix:semicolon
-DECL|member|closing_wait
-r_int
-r_int
-id|closing_wait
-suffix:semicolon
-DECL|member|closing_wait2
-r_int
-r_int
-id|closing_wait2
 suffix:semicolon
 DECL|member|IER
 r_int

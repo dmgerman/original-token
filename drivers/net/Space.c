@@ -424,7 +424,7 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#ifdef CONFIG_DE4X5             /* DEC DE425, DE434, DE435 adapters */
+macro_line|#ifdef CONFIG_DE4x5             /* DEC DE425, DE434, DE435 adapters */
 op_logical_and
 id|de4x5_probe
 c_func

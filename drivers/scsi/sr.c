@@ -1226,9 +1226,7 @@ id|SCpnt
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works:&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              People reported that it is necessary to eject and reinsert&n; *              the CD after the set-density call to get this working for&n; *              old drives.&n; *              And some very new drives don&squot;t need this call any more...&n; *              Multisession CD&squot;s are supported too.&n; *&n; * Dec 1994: completely rewritten, uses kernel_scsi_ioctl() now&n; *&n; *   kraxel@cs.tu-berlin.de (Gerd Knorr)&n; */
-DECL|macro|DEBUG
-mdefine_line|#define DEBUG
+multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works:&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              Multisession CD&squot;s are supported too.&n; *&n; *   kraxel@cs.tu-berlin.de (Gerd Knorr)&n; */
 DECL|function|sr_photocd
 r_static
 r_void
@@ -1461,6 +1459,10 @@ id|sector
 op_assign
 l_int|0
 suffix:semicolon
+id|is_xa
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1568,6 +1570,17 @@ op_plus
 id|frame
 suffix:colon
 l_int|0
+suffix:semicolon
+id|is_xa
+op_assign
+(paren
+id|rec
+(braket
+l_int|14
+)braket
+op_eq
+l_int|0xb0
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
@@ -1711,6 +1724,10 @@ id|rc
 )paren
 suffix:semicolon
 id|sector
+op_assign
+l_int|0
+suffix:semicolon
+id|is_xa
 op_assign
 l_int|0
 suffix:semicolon
@@ -2141,6 +2158,20 @@ id|rc
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* The set_density command may have changed the sector size or capacity. */
+id|scsi_CDs
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+dot
+id|needs_sector_size
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -2161,6 +2192,10 @@ id|sector
 op_assign
 l_int|0
 suffix:semicolon
+id|is_xa
+op_assign
+l_int|0
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -2177,7 +2212,6 @@ id|mpcd_sector
 op_assign
 id|sector
 suffix:semicolon
-multiline_comment|/* The code above may have changed the sector size or capacity. */
 id|scsi_CDs
 (braket
 id|MINOR
@@ -2187,15 +2221,13 @@ id|inode-&gt;i_rdev
 )paren
 )braket
 dot
-id|needs_sector_size
+id|is_xa
 op_assign
-l_int|1
+id|is_xa
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|macro|DEBUG
-macro_line|#undef DEBUG
 DECL|function|sr_open
 r_static
 r_int

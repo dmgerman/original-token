@@ -592,6 +592,31 @@ c_func
 id|unregister_serial
 )paren
 comma
+multiline_comment|/* tty routines */
+id|X
+c_func
+(paren
+id|tty_hangup
+)paren
+comma
+id|X
+c_func
+(paren
+id|tty_wait_until_sent
+)paren
+comma
+id|X
+c_func
+(paren
+id|tty_check_change
+)paren
+comma
+id|X
+c_func
+(paren
+id|tty_hung_up_p
+)paren
+comma
 multiline_comment|/* filesystem registration */
 id|X
 c_func

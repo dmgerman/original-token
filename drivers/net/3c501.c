@@ -1,5 +1,5 @@
 multiline_comment|/* 3c501.c: A 3Com 3c501 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.  &n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;       &n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Some notes on this thing if you have to hack it.  [Alan]&n;    &n;    1]&t;Some documentation is available from 3Com. Due to the boards age&n;    &t;standard responses when you ask for this will range from &squot;be serious&squot;&n;    &t;to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n;    &t;of historical interest anyway.&n;    &t;&n;    2]  The basic system is a single buffer which can be used to receive or&n;    &t;transmit a packet. A third command mode exists when you are setting&n;    &t;things up.&n;    &t;&n;    3]&t;If its transmitting its not receiving and vice versa. In fact the &n;    &t;time to get the board back into useful state after an operation is&n;    &t;quite large.&n;    &t;&n;    4]&t;The driver works by keeping the board in receive mode waiting for a&n;    &t;packet to arrive. When one arrives it is copied out of the buffer&n;    &t;and delivered to the kernel. The card is reloaded and off we go.&n;    &t;&n;    5]&t;When transmitting dev-&gt;tbusy is set and the card is reset (from&n;    &t;receive mode) [possibly losing a packet just received] to command&n;    &t;mode. A packet is loaded and transmit mode triggered. The interrupt&n;    &t;handler runs different code for transmit interrupts and can handle&n;    &t;returning to receive mode or retransmissions (yes you have to help&n;    &t;out with those too).&n;    &t;&n;    Problems:&n;    &t;There are a wide variety of undocumented error returns from the card&n;    and you basically have to kick the board and pray if they turn up. Most &n;    only occur under extreme load or if you do something the board doesn&squot;t&n;    like (eg touching a register at the wrong time).&n;    &n;    &t;The driver is less efficient than it could be. It switches through&n;    receive mode even if more transmits are queued. If this worries you buy&n;    a real ethernet card.&n;    &n;    &t;The combination of slow receive restart and no real multicast&n;    filter makes the board unusable with a kernel compiled for IP&n;    multicasting in a real multicast environment. Thats down to the board, &n;    but even with no multicast programs running a multicast IP kernel is&n;    in group 224.0.0.1 and you will therefore be listening to all multicasts.&n;    One nv conference running over that ethernet and you can give up.&n;    &n;*/
+multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.  &n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;       &n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Some notes on this thing if you have to hack it.  [Alan]&n;    &n;    1]&t;Some documentation is available from 3Com. Due to the boards age&n;    &t;standard responses when you ask for this will range from &squot;be serious&squot;&n;    &t;to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n;    &t;of historical interest anyway.&n;    &t;&n;    2]  The basic system is a single buffer which can be used to receive or&n;    &t;transmit a packet. A third command mode exists when you are setting&n;    &t;things up.&n;    &t;&n;    3]&t;If its transmitting its not receiving and vice versa. In fact the &n;    &t;time to get the board back into useful state after an operation is&n;    &t;quite large.&n;    &t;&n;    4]&t;The driver works by keeping the board in receive mode waiting for a&n;    &t;packet to arrive. When one arrives it is copied out of the buffer&n;    &t;and delivered to the kernel. The card is reloaded and off we go.&n;    &t;&n;    5]&t;When transmitting dev-&gt;tbusy is set and the card is reset (from&n;    &t;receive mode) [possibly losing a packet just received] to command&n;    &t;mode. A packet is loaded and transmit mode triggered. The interrupt&n;    &t;handler runs different code for transmit interrupts and can handle&n;    &t;returning to receive mode or retransmissions (yes you have to help&n;    &t;out with those too).&n;    &t;&n;    Problems:&n;    &t;There are a wide variety of undocumented error returns from the card&n;    and you basically have to kick the board and pray if they turn up. Most &n;    only occur under extreme load or if you do something the board doesn&squot;t&n;    like (eg touching a register at the wrong time).&n;    &n;    &t;The driver is less efficient than it could be. It switches through&n;    receive mode even if more transmits are queued. If this worries you buy&n;    a real ethernet card.&n;    &n;    &t;The combination of slow receive restart and no real multicast&n;    filter makes the board unusable with a kernel compiled for IP&n;    multicasting in a real multicast environment. Thats down to the board, &n;    but even with no multicast programs running a multicast IP kernel is&n;    in group 224.0.0.1 and you will therefore be listening to all multicasts.&n;    One nv conference running over that ethernet and you can give up.&n;    &n;    2/8/95 (invid@msen.com)&n;&n;    Removed calls to init_etherdev since they are no longer needed, and&n;    cleaned up modularization just a bit. The driver still allows only&n;    the default address for cards when loaded as a module, but that&squot;s&n;    really less braindead than anyone using a 3c501 board. :)&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -13,6 +13,11 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -29,27 +34,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-r_extern
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed.&n;   The 3c501 can be at many locations, but here are the popular ones. */
 DECL|variable|netcard_portlist
 r_static
@@ -452,6 +436,7 @@ r_int
 id|ioaddr
 )paren
 (brace
+macro_line|#ifndef MODULE
 r_char
 op_star
 id|mname
@@ -587,29 +572,6 @@ comma
 id|EL1_IO_EXTENT
 comma
 l_string|&quot;3c501&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|net_local
-)paren
-comma
-l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* We auto-IRQ by shutting off the interrupt line and letting it float&n;       high. */
@@ -847,6 +809,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif /* !MODULE */
 r_return
 l_int|0
 suffix:semicolon
@@ -932,10 +895,8 @@ id|AX_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Aux control, irq and receive enabled */
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif       
 r_return
 l_int|0
 suffix:semicolon
@@ -2210,10 +2171,8 @@ id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif    
 r_return
 l_int|0
 suffix:semicolon

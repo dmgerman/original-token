@@ -1,7 +1,8 @@
-multiline_comment|/*&n; *      eata.c - Low-level driver for EATA/DMA SCSI host adapters.&n; *&n; *      28 Jan 1995 rev. 1.14 for linux 1.1.86&n; *          Added module support.&n; *          Log and do a retry when a disk drive returns a target status &n; *          different from zero on a recovered error.&n; *&n; *      24 Jan 1995 rev. 1.13 for linux 1.1.85&n; *          Use optimized board configuration, with a measured performance&n; *          increase in the range 10%-20% on i/o throughput.&n; *&n; *      16 Jan 1995 rev. 1.12 for linux 1.1.81&n; *          Fix mscp structure comments (no functional change).&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      17 Dec 1994 rev. 1.11 for linux 1.1.74&n; *          Use the scsicam_bios_param routine. This allows an easy&n; *          migration path from disk partition tables created using &n; *          different SCSI drivers and non optimal disk geometry.&n; *&n; *      15 Dec 1994 rev. 1.10 for linux 1.1.74&n; *          Added support for ISA EATA boards (DPT PM2011, DPT PM2021).&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *          The detect routine no longer enforces LEVEL triggering&n; *          for EISA boards, it just prints a warning message.&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CHECK_CONDITION for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *          Forces sg_tablesize = 64 and can_queue = 64 if these&n; *          values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A, using DMA protocol.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; */
+multiline_comment|/*&n; *      eata.c - Low-level driver for EATA/DMA SCSI host adapters.&n; *&n; *       8 Feb 1995 rev. 1.15 for linux 1.1.89&n; *          Cleared target_time_out counter while preforming a reset.&n; *          All external symbols renamed to avoid possible name conflicts.&n; *&n; *      28 Jan 1995 rev. 1.14 for linux 1.1.86&n; *          Added module support.&n; *          Log and do a retry when a disk drive returns a target status &n; *          different from zero on a recovered error.&n; *&n; *      24 Jan 1995 rev. 1.13 for linux 1.1.85&n; *          Use optimized board configuration, with a measured performance&n; *          increase in the range 10%-20% on i/o throughput.&n; *&n; *      16 Jan 1995 rev. 1.12 for linux 1.1.81&n; *          Fix mscp structure comments (no functional change).&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      17 Dec 1994 rev. 1.11 for linux 1.1.74&n; *          Use the scsicam_bios_param routine. This allows an easy&n; *          migration path from disk partition tables created using &n; *          different SCSI drivers and non optimal disk geometry.&n; *&n; *      15 Dec 1994 rev. 1.10 for linux 1.1.74&n; *          Added support for ISA EATA boards (DPT PM2011, DPT PM2021).&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *          The detect routine no longer enforces LEVEL triggering&n; *          for EISA boards, it just prints a warning message.&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CHECK_CONDITION for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *          Forces sg_tablesize = 64 and can_queue = 64 if these&n; *          values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A, using DMA protocol.&n; *&n; *      Copyright (C) 1994, 1995 Dario Ballabio (dario@milano.europe.dg.com)&n; *&n; */
 multiline_comment|/*&n; *&n; *  Here is a brief description of the DPT SCSI host adapters.&n; *  All these boards provide an EATA/DMA compatible programming interface&n; *  and are fully supported by this driver:&n; *&n; *  PM2011B/9X -  Entry Level ISA&n; *  PM2021A/9X -  High Performance ISA&n; *  PM2012A       Old EISA&n; *  PM2012B       Old EISA&n; *  PM2022A/9X -  Entry Level EISA&n; *  PM2122A/9X -  High Performance EISA&n; *  PM2322A/9X -  Extra High Performance EISA&n; *&n; *  The DPT PM2001 provides only the EATA/PIO interface and hence is not&n; *  supported by this driver.&n; *&n; *  This code has been tested with up to 3 Distributed Processing Technology &n; *  PM2122A/9X (DPT SCSI BIOS v002.D1, firmware v05E.0) eisa controllers,&n; *  no on board cache and no RAID option. &n; *  BIOS must be enabled on the first board and must be disabled for all other &n; *  boards. &n; *  Support is provided for any number of DPT PM2122 eisa boards.&n; *  All boards should be configured at the same IRQ level.&n; *  Multiple IRQ configurations are supported too.&n; *  Boards can be located in any eisa slot (1-15) and are named EATA0, &n; *  EATA1,... in increasing eisa slot number. ISA boards are detected&n; *  after the eisa slot probes.&n; *&n; *  The IRQ for EISA boards should be _level_ triggered (not _edge_ triggered).&n; *  This is a requirement in order to support multiple boards on the same IRQ.&n; *&n; *  Other eisa configuration parameters are:&n; *&n; *  COMMAND QUEUING   : ENABLED&n; *  COMMAND TIMEOUT   : ENABLED&n; *  CACHE             : DISABLED&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;block = TRUE for all ISA boards.&n; */
 macro_line|#if defined(MODULE)
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -725,7 +726,7 @@ DECL|macro|BN
 mdefine_line|#define BN(board) (HD(board)-&gt;board_name)
 r_static
 r_void
-id|eata_interrupt_handler
+id|eata2x_interrupt_handler
 c_func
 (paren
 r_int
@@ -1403,7 +1404,7 @@ id|request_irq
 (paren
 id|irq
 comma
-id|eata_interrupt_handler
+id|eata2x_interrupt_handler
 comma
 id|SA_INTERRUPT
 comma
@@ -1745,8 +1746,6 @@ id|FALSE
 suffix:semicolon
 r_else
 (brace
-macro_line|#if !defined(MODULE)
-multiline_comment|/* The module code does not checkin/checkout in the blocking list yet */
 id|sh
 (braket
 id|j
@@ -1759,7 +1758,6 @@ id|sh
 id|j
 )braket
 suffix:semicolon
-macro_line|#endif
 id|sh
 (braket
 id|j
@@ -2038,9 +2036,9 @@ r_return
 id|TRUE
 suffix:semicolon
 )brace
-DECL|function|eata_detect
+DECL|function|eata2x_detect
 r_int
-id|eata_detect
+id|eata2x_detect
 (paren
 id|Scsi_Host_Template
 op_star
@@ -2205,6 +2203,19 @@ id|port_base
 op_increment
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|j
+OG
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;EATA/DMA 2.0x: Copyright (C) 1994, 1995 Dario Ballabio.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -2339,9 +2350,9 @@ id|sg_list
 )paren
 suffix:semicolon
 )brace
-DECL|function|eata_queuecommand
+DECL|function|eata2x_queuecommand
 r_int
-id|eata_queuecommand
+id|eata2x_queuecommand
 (paren
 id|Scsi_Cmnd
 op_star
@@ -2558,7 +2569,7 @@ r_else
 r_if
 c_cond
 (paren
-id|eata_reset
+id|eata2x_reset
 c_func
 (paren
 id|SCpnt
@@ -2938,9 +2949,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|eata_abort
+DECL|function|eata2x_abort
 r_int
-id|eata_abort
+id|eata2x_abort
 (paren
 id|Scsi_Cmnd
 op_star
@@ -3323,9 +3334,9 @@ id|i
 )paren
 suffix:semicolon
 )brace
-DECL|function|eata_reset
+DECL|function|eata2x_reset
 r_int
-id|eata_reset
+id|eata2x_reset
 (paren
 id|Scsi_Cmnd
 op_star
@@ -3515,6 +3526,33 @@ id|k
 )braket
 op_assign
 id|TRUE
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|k
+op_assign
+l_int|0
+suffix:semicolon
+id|k
+OL
+id|MAX_TARGET
+suffix:semicolon
+id|k
+op_increment
+)paren
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|target_time_out
+(braket
+id|k
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -3831,17 +3869,13 @@ OL
 (paren
 id|time
 op_plus
-l_int|200
+l_int|100
 )paren
 op_logical_and
 id|limit
 op_increment
 OL
 l_int|100000000
-)paren
-id|sti
-c_func
-(paren
 )paren
 suffix:semicolon
 id|cli
@@ -4038,10 +4072,10 @@ id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
 )brace
-DECL|function|eata_interrupt_handler
+DECL|function|eata2x_interrupt_handler
 r_static
 r_void
-id|eata_interrupt_handler
+id|eata2x_interrupt_handler
 c_func
 (paren
 r_int
@@ -4740,15 +4774,9 @@ id|tstatus
 op_eq
 id|CHECK_CONDITION
 op_logical_and
-(paren
 id|SCpnt-&gt;device-&gt;type
 op_eq
 id|TYPE_DISK
-op_logical_or
-id|SCpnt-&gt;device-&gt;type
-op_eq
-id|TYPE_ROM
-)paren
 op_logical_and
 (paren
 id|SCpnt-&gt;sense_buffer
@@ -4799,15 +4827,9 @@ c_cond
 (paren
 id|spp-&gt;target_status
 op_logical_and
-(paren
 id|SCpnt-&gt;device-&gt;type
 op_eq
 id|TYPE_DISK
-op_logical_or
-id|SCpnt-&gt;device-&gt;type
-op_eq
-id|TYPE_ROM
-)paren
 )paren
 id|printk
 c_func

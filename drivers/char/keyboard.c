@@ -619,7 +619,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|0x10000
+l_int|0x100000
 suffix:semicolon
 id|i
 op_increment
@@ -639,7 +639,13 @@ l_int|0x02
 op_eq
 l_int|0
 )paren
-r_break
+r_return
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Keyboard timed out&bslash;n&quot;
+)paren
 suffix:semicolon
 )brace
 DECL|function|send_cmd
@@ -4795,7 +4801,12 @@ l_string|&quot;keyboard&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef __alpha__
-multiline_comment|/* enable keyboard interrupts */
+multiline_comment|/* enable keyboard interrupts, PC/AT mode */
+id|kb_wait
+c_func
+(paren
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -4804,39 +4815,25 @@ comma
 l_int|0x64
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|inb
+multiline_comment|/* write PS/2 Mode Register */
+id|kb_wait
 c_func
 (paren
-l_int|0x64
 )paren
-op_amp
-l_int|2
-)paren
-multiline_comment|/* nothing */
 suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0x1
+l_int|0x41
 comma
 l_int|0x60
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|inb
+multiline_comment|/* KCC | EKI */
+id|kb_wait
 c_func
 (paren
-l_int|0x64
 )paren
-op_amp
-l_int|2
-)paren
-multiline_comment|/* nothing */
 suffix:semicolon
 r_if
 c_cond
@@ -4852,13 +4849,13 @@ op_logical_neg
 id|send_data
 c_func
 (paren
-l_int|0x01
+l_int|0x02
 )paren
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;Scanmode 1 change failed&bslash;n&quot;
+l_string|&quot;Scanmode 2 change failed&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -271,8 +271,12 @@ DECL|macro|PCI_DEVICE_ID_DEC_TULIP_FAST
 mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP_FAST&t;0x0009
 DECL|macro|PCI_DEVICE_ID_DEC_FDDI
 mdefine_line|#define PCI_DEVICE_ID_DEC_FDDI&t;&t;0x000F
+DECL|macro|PCI_DEVICE_ID_DEC_BRD
+mdefine_line|#define PCI_DEVICE_ID_DEC_BRD&t;&t;0x0001
 DECL|macro|PCI_VENDOR_ID_MATROX
 mdefine_line|#define PCI_VENDOR_ID_MATROX&t;&t;0x102B
+DECL|macro|PCI_DEVICE_ID_MATROX_2plus
+mdefine_line|#define PCI_DEVICE_ID_MATROX_2plus&t;0x0518
 DECL|macro|PCI_VENDOR_ID_INTEL
 mdefine_line|#define PCI_VENDOR_ID_INTEL&t;&t;0x8086
 DECL|macro|PCI_DEVICE_ID_INTEL_82378
@@ -324,7 +328,7 @@ mdefine_line|#define PCI_DEVICE_ID_AI_M1435&t;&t;0x1435
 DECL|macro|PCI_VENDOR_ID_AL
 mdefine_line|#define PCI_VENDOR_ID_AL&t;&t;0x10b9
 DECL|macro|PCI_DEVICE_ID_AL_M1449
-mdefine_line|#define PCI_DEVICE_ID_AL_M1449&t;&t;0x4449
+mdefine_line|#define PCI_DEVICE_ID_AL_M1449&t;&t;0x1449
 DECL|macro|PCI_DEVICE_ID_AL_M1451
 mdefine_line|#define PCI_DEVICE_ID_AL_M1451&t;&t;0x1451
 DECL|macro|PCI_VENDOR_ID_TSENG
@@ -333,8 +337,8 @@ DECL|macro|PCI_DEVICE_ID_TSENG_W32P_2
 mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_2&t;0x3202
 DECL|macro|PCI_DEVICE_ID_TSENG_W32P_b
 mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_b&t;0x3205
-DECL|macro|PCI_DEVICE_ID_TSENG_W32P_a
-mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_a&t;0x3207
+DECL|macro|PCI_DEVICE_ID_TSENG_W32P_c
+mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_c&t;0x3207
 DECL|macro|PCI_VENDOR_ID_CMD
 mdefine_line|#define PCI_VENDOR_ID_CMD&t;&t;0x1095
 DECL|macro|PCI_DEVICE_ID_CMD_640
@@ -363,6 +367,8 @@ DECL|macro|PCI_VENDOR_ID_TRIDENT
 mdefine_line|#define PCI_VENDOR_ID_TRIDENT&t;&t;0x1023
 DECL|macro|PCI_DEVICE_ID_TRIDENT_9420
 mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9420&t;0x9420
+DECL|macro|PCI_DEVICE_ID_TRIDENT_9440
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9440&t;0x9440
 DECL|macro|PCI_VENDOR_ID_CONTAQ
 mdefine_line|#define PCI_VENDOR_ID_CONTAQ&t;&t;0x1080
 DECL|macro|PCI_DEVICE_ID_CONTAQ_82C599
@@ -375,14 +381,28 @@ DECL|macro|PCI_DEVICE_ID_VIA_82C505
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C505&t;0x0505
 DECL|macro|PCI_VENDOR_ID_SI
 mdefine_line|#define PCI_VENDOR_ID_SI&t;&t;0x1039
-DECL|macro|PCI_DEVICE_ID_SI_MG1936
-mdefine_line|#define PCI_DEVICE_ID_SI_MG1936&t;&t;0x0406
-DECL|macro|PCI_DEVICE_ID_SI_MG1938
-mdefine_line|#define PCI_DEVICE_ID_SI_MG1938&t;&t;0x0008
+DECL|macro|PCI_DEVICE_ID_SI_496
+mdefine_line|#define PCI_DEVICE_ID_SI_496&t;&t;0x0496
+DECL|macro|PCI_DEVICE_ID_SI_501
+mdefine_line|#define PCI_DEVICE_ID_SI_501&t;&t;0x0406
+DECL|macro|PCI_DEVICE_ID_SI_503
+mdefine_line|#define PCI_DEVICE_ID_SI_503&t;&t;0x0008
 DECL|macro|PCI_VENDOR_ID_LEADTEK
 mdefine_line|#define PCI_VENDOR_ID_LEADTEK&t;&t;0x107d
 DECL|macro|PCI_DEVICE_ID_LEADTEK_805
 mdefine_line|#define PCI_DEVICE_ID_LEADTEK_805&t;0x0000
+DECL|macro|PCI_VENDOR_ID_IMS
+mdefine_line|#define PCI_VENDOR_ID_IMS&t;&t;0x10e0
+DECL|macro|PCI_DEVICE_ID_IMS_8849
+mdefine_line|#define PCI_DEVICE_ID_IMS_8849&t;&t;0x8849
+DECL|macro|PCI_VENDOR_ID_ZEINET
+mdefine_line|#define PCI_VENDOR_ID_ZEINET&t;&t;0x1193
+DECL|macro|PCI_DEVICE_ID_ZEINET_1221
+mdefine_line|#define PCI_DEVICE_ID_ZEINET_1221&t;0x0001
+DECL|macro|PCI_VENDOR_ID_EF
+mdefine_line|#define PCI_VENDOR_ID_EF&t;&t;0x111a
+DECL|macro|PCI_DEVICE_ID_EF_ATM
+mdefine_line|#define PCI_DEVICE_ID_EF_ATM&t;&t;0x0000
 DECL|struct|pci_vendor_type
 r_struct
 id|pci_vendor_type
@@ -400,9 +420,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|PCI_VENDOR_NUM
-mdefine_line|#define PCI_VENDOR_NUM 30
+mdefine_line|#define PCI_VENDOR_NUM 33
 DECL|macro|PCI_VENDOR_TYPE
-mdefine_line|#define PCI_VENDOR_TYPE { &bslash;&n;&t;{PCI_VENDOR_ID_NCR,&t;&t;&quot;NCR&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ADAPTEC,&t;&t;&quot;Adaptec&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DPT,&t;&t;&quot;DPT&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_S3,&t;&t;&quot;S3 Inc.&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_OPTI,&t;&t;&quot;OPTI&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_UMC,&t;&t;&quot;UMC&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DEC,&t;&t;&quot;DEC&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_MATROX,&t;&t;&quot;Matrox&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_INTEL,&t;&t;&quot;Intel&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_SMC,&t;&t;&quot;SMC&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ATI,&t;&t;&quot;ATI&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_WEITEK,&t;&t;&quot;Weitek&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_CIRRUS,&t;&t;&quot;Cirrus Logic&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_BUSLOGIC,&t;&quot;Bus Logic&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_N9,&t;&t;&quot;Number Nine&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_AI,&t;&t;&quot;Acer Incorporated&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_AL,&t;&t;&quot;Acer Labs&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_TSENG,&t;&t;&quot;Tseng&squot;Lab&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_CMD,&t;&t;&quot;CMD&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_VISION,&t;&t;&quot;Vision&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_AMD,&t;&t;&quot;AMD&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_VLSI,&t;&t;&quot;VLSI&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ADL,&t;&t;&quot;Advance Logic&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_SYMPHONY,&t;&quot;Symphony&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_TRIDENT,&t;&t;&quot;Trident&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_CONTAQ,&t;&t;&quot;Contaq&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_NS,&t;&t;&quot;NS&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_VIA,&t;&t;&quot;VIA Technologies&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_SI,&t;&t;&quot;Silicon Integrated&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_LEADTEK,&t;&t;&quot;Leadtek Research&quot;} &bslash;&n;}
+mdefine_line|#define PCI_VENDOR_TYPE { &bslash;&n;&t;{PCI_VENDOR_ID_NCR,&t;&t;&quot;NCR&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ADAPTEC,&t;&t;&quot;Adaptec&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DPT,&t;&t;&quot;DPT&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_S3,&t;&t;&quot;S3 Inc.&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_OPTI,&t;&t;&quot;OPTI&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_UMC,&t;&t;&quot;UMC&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DEC,&t;&t;&quot;DEC&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_MATROX,&t;&t;&quot;Matrox&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_INTEL,&t;&t;&quot;Intel&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_SMC,&t;&t;&quot;SMC&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ATI,&t;&t;&quot;ATI&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_WEITEK,&t;&t;&quot;Weitek&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_CIRRUS,&t;&t;&quot;Cirrus Logic&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_BUSLOGIC,&t;&quot;Bus Logic&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_N9,&t;&t;&quot;Number Nine&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_AI,&t;&t;&quot;Acer Incorporated&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_AL,&t;&t;&quot;Acer Labs&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_TSENG,&t;&t;&quot;Tseng&squot;Lab&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_CMD,&t;&t;&quot;CMD&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_VISION,&t;&t;&quot;Vision&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_AMD,&t;&t;&quot;AMD&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_VLSI,&t;&t;&quot;VLSI&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ADL,&t;&t;&quot;Advance Logic&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_SYMPHONY,&t;&quot;Symphony&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_TRIDENT,&t;&t;&quot;Trident&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_CONTAQ,&t;&t;&quot;Contaq&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_NS,&t;&t;&quot;NS&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_VIA,&t;&t;&quot;VIA Technologies&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_SI,&t;&t;&quot;Silicon Integrated&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_LEADTEK,&t;&t;&quot;Leadtek Research&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_IMS,&t;&t;&quot;IMS&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ZEINET,&t;&t;&quot;ZeiNet&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_EF,&t;&t;&quot;Efficient Networks&quot;} &bslash;&n;}
 multiline_comment|/* Optimisation pointer is a offset of an item into the array&t;&t;*/
 multiline_comment|/* BRIDGE_MAPPING_TYPE. 0xff indicates that the device is not a PCI&t;*/
 multiline_comment|/* bridge, or that we don&squot;t know for the moment how to configure it.&t;*/
@@ -437,9 +457,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|PCI_DEVICE_NUM
-mdefine_line|#define PCI_DEVICE_NUM 54
+mdefine_line|#define PCI_DEVICE_NUM 61
 DECL|macro|PCI_DEVICE_TYPE
-mdefine_line|#define PCI_DEVICE_TYPE { &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C810,&t;&quot;53c810&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C815,&t;&quot;53c815&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C820,&t;&quot;53c820&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C825,&t;&quot;53c825&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_ADAPTEC,&t;PCI_DEVICE_ID_ADAPTEC_2940,&t;&quot;2940&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_DPT,&t;PCI_DEVICE_ID_DPT,&t;&t;&quot;SmartCache/Raid&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_864_1,&t;&t;&quot;Vision 864-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_864_2,&t;&t;&quot;Vision 864-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_928,&t;&t;&quot;Vision 928-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_964_1,&t;&t;&quot;Vision 964-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_964_2,&t;&t;&quot;Vision 964-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_811,&t;&t;&quot;Trio32/Trio64&quot;}, &bslash;&n;&t;{0x02,&t;PCI_VENDOR_ID_OPTI,&t;PCI_DEVICE_ID_OPTI_82C822,&t;&quot;82C822&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_OPTI,&t;PCI_DEVICE_ID_OPTI_82C621,&t;&quot;82C621&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8881F,&t;&quot;UM8881F&quot;}, &bslash;&n;&t;{0x01,&t;PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8891A,&t;&quot;UM8891A&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8886F,&t;&quot;UM8886F&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8673F,&t;&quot;UM8673F&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_TULIP,&t;&quot;DC21040&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_TULIP_FAST,&t;&quot;DC21040&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_FDDI,&t;&t;&quot;DEFPA&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82378,&t;&quot;82378IB&quot;}, &bslash;&n;&t;{0x00,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82424,&t;&quot;82424ZX Saturn&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82375,&t;&quot;82375EB&quot;}, &bslash;&n;&t;{0x00,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82434,&t;&quot;82434LX Mercury/Neptune&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82430,&t;&quot;82430ZX Aries&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_SMC,&t;PCI_DEVICE_ID_SMC_37C665,&t;&quot;FDC 37C665&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_ATI,&t;PCI_DEVICE_ID_ATI_M32,&t;&t;&quot;Mach 32&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_ATI,&t;PCI_DEVICE_ID_ATI_M64,&t;&t;&quot;Mach 64&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_WEITEK,&t;PCI_DEVICE_ID_WEITEK_P9000,&t;&quot;P9000&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_WEITEK,&t;PCI_DEVICE_ID_WEITEK_P9100,&t;&quot;P9100&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CIRRUS,&t;PCI_DEVICE_ID_CIRRUS_5434_4,&t;&quot;GD 5434&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CIRRUS,&t;PCI_DEVICE_ID_CIRRUS_5434_8,&t;&quot;GD 5434&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CIRRUS,&t;PCI_DEVICE_ID_CIRRUS_6729,&t;&quot;CL 6729&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_BUSLOGIC,PCI_DEVICE_ID_BUSLOGIC_946C,&t;&quot;946C&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_N9,&t;PCI_DEVICE_ID_N9_I128,&t;&t;&quot;Imagine 128&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_AI,&t;PCI_DEVICE_ID_AI_M1435,&t;&t;&quot;M1435&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_AL,&t;PCI_DEVICE_ID_AL_M1449,&t;&t;&quot;M1449&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_AL,&t;PCI_DEVICE_ID_AL_M1451,&t;&t;&quot;M1451&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_TSENG,&t;PCI_DEVICE_ID_TSENG_W32P_2,&t;&quot;ET4000W32P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_TSENG,&t;PCI_DEVICE_ID_TSENG_W32P_b,&t;&quot;ET4000W32P rev B&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_TSENG,&t;PCI_DEVICE_ID_TSENG_W32P_a,&t;&quot;ET4000W32P rev A&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CMD,&t;PCI_DEVICE_ID_CMD_640,&t;&t;&quot;640A&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_VISION,&t;PCI_DEVICE_ID_VISION_QD8500,&t;&quot;QD-8500PCI&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_AMD,&t;PCI_DEVICE_ID_AMD_LANCE,&t;&quot;79C970&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_VLSI,&t;PCI_DEVICE_ID_VLSI_82C593,&t;&quot;82C593-FC1&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_ADL,&t;PCI_DEVICE_ID_ADL_2301,&t;&t;&quot;2301&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_SYMPHONY,&t;PCI_DEVICE_ID_SYMPHONY_101,&t;&quot;82C101&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_TRIDENT,&t;PCI_DEVICE_ID_TRIDENT_9420,&t;&quot;TG 9420&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CONTAQ,&t;PCI_DEVICE_ID_CONTAQ_82C599,&t;&quot;82C599&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_VIA,&t;PCI_DEVICE_ID_VIA_82C505,&t;&quot;VT 82C505&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_SI,&t;PCI_DEVICE_ID_SI_MG1936,&t;&quot;MG1936 ??&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_SI,&t;PCI_DEVICE_ID_SI_MG1938,&t;&quot;MG1938 ??&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_LEADTEK,&t;PCI_DEVICE_ID_LEADTEK_805,&t;&quot;S3 805&quot;} &bslash;&n;}
+mdefine_line|#define PCI_DEVICE_TYPE { &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C810,&t;&quot;53c810&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C815,&t;&quot;53c815&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C820,&t;&quot;53c820&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C825,&t;&quot;53c825&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_ADAPTEC,&t;PCI_DEVICE_ID_ADAPTEC_2940,&t;&quot;2940&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_DPT,&t;PCI_DEVICE_ID_DPT,&t;&t;&quot;SmartCache/Raid&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_864_1,&t;&t;&quot;Vision 864-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_864_2,&t;&t;&quot;Vision 864-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_928,&t;&t;&quot;Vision 928-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_964_1,&t;&t;&quot;Vision 964-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_964_2,&t;&t;&quot;Vision 964-P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_811,&t;&t;&quot;Trio32/Trio64&quot;}, &bslash;&n;&t;{0x02,&t;PCI_VENDOR_ID_OPTI,&t;PCI_DEVICE_ID_OPTI_82C822,&t;&quot;82C822&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_OPTI,&t;PCI_DEVICE_ID_OPTI_82C621,&t;&quot;82C621&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8881F,&t;&quot;UM8881F&quot;}, &bslash;&n;&t;{0x01,&t;PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8891A,&t;&quot;UM8891A&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8886F,&t;&quot;UM8886F&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8673F,&t;&quot;UM8673F&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_TULIP,&t;&quot;DC21040&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_TULIP_FAST,&t;&quot;DC21040&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_FDDI,&t;&t;&quot;DEFPA&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_BRD,&t;&t;&quot;DC21050&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_MATROX,&t;PCI_DEVICE_ID_MATROX_2plus,&t;&quot;MGA/2+&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82378,&t;&quot;82378IB&quot;}, &bslash;&n;&t;{0x00,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82424,&t;&quot;82424ZX Saturn&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82375,&t;&quot;82375EB&quot;}, &bslash;&n;&t;{0x00,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82434,&t;&quot;82434LX Mercury/Neptune&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82430,&t;&quot;82430ZX Aries&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_SMC,&t;PCI_DEVICE_ID_SMC_37C665,&t;&quot;FDC 37C665&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_ATI,&t;PCI_DEVICE_ID_ATI_M32,&t;&t;&quot;Mach 32&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_ATI,&t;PCI_DEVICE_ID_ATI_M64,&t;&t;&quot;Mach 64&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_WEITEK,&t;PCI_DEVICE_ID_WEITEK_P9000,&t;&quot;P9000&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_WEITEK,&t;PCI_DEVICE_ID_WEITEK_P9100,&t;&quot;P9100&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CIRRUS,&t;PCI_DEVICE_ID_CIRRUS_5434_4,&t;&quot;GD 5434&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CIRRUS,&t;PCI_DEVICE_ID_CIRRUS_5434_8,&t;&quot;GD 5434&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CIRRUS,&t;PCI_DEVICE_ID_CIRRUS_6729,&t;&quot;CL 6729&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_BUSLOGIC,PCI_DEVICE_ID_BUSLOGIC_946C,&t;&quot;946C&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_N9,&t;PCI_DEVICE_ID_N9_I128,&t;&t;&quot;Imagine 128&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_AI,&t;PCI_DEVICE_ID_AI_M1435,&t;&t;&quot;M1435&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_AL,&t;PCI_DEVICE_ID_AL_M1449,&t;&t;&quot;M1449&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_AL,&t;PCI_DEVICE_ID_AL_M1451,&t;&t;&quot;M1451&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_TSENG,&t;PCI_DEVICE_ID_TSENG_W32P_2,&t;&quot;ET4000W32P&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_TSENG,&t;PCI_DEVICE_ID_TSENG_W32P_b,&t;&quot;ET4000W32P rev B&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_TSENG,&t;PCI_DEVICE_ID_TSENG_W32P_c,&t;&quot;ET4000W32P rev C&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CMD,&t;PCI_DEVICE_ID_CMD_640,&t;&t;&quot;640A&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_VISION,&t;PCI_DEVICE_ID_VISION_QD8500,&t;&quot;QD-8500PCI&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_AMD,&t;PCI_DEVICE_ID_AMD_LANCE,&t;&quot;79C970&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_VLSI,&t;PCI_DEVICE_ID_VLSI_82C593,&t;&quot;82C593-FC1&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_ADL,&t;PCI_DEVICE_ID_ADL_2301,&t;&t;&quot;2301&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_SYMPHONY,&t;PCI_DEVICE_ID_SYMPHONY_101,&t;&quot;82C101&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_TRIDENT,&t;PCI_DEVICE_ID_TRIDENT_9420,&t;&quot;TG 9420&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_TRIDENT,&t;PCI_DEVICE_ID_TRIDENT_9440,&t;&quot;TG 9440&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_CONTAQ,&t;PCI_DEVICE_ID_CONTAQ_82C599,&t;&quot;82C599&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_VIA,&t;PCI_DEVICE_ID_VIA_82C505,&t;&quot;VT 82C505&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_SI,&t;PCI_DEVICE_ID_SI_496,&t;&t;&quot;85C496&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_SI,&t;PCI_DEVICE_ID_SI_501,&t;&t;&quot;85C501&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_SI,&t;PCI_DEVICE_ID_SI_503,&t;&t;&quot;85C503&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_LEADTEK,&t;PCI_DEVICE_ID_LEADTEK_805,&t;&quot;S3 805&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_IMS,&t;PCI_DEVICE_ID_IMS_8849,&t;&t;&quot;8849&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_ZEINET,&t;PCI_DEVICE_ID_ZEINET_1221,&t;&quot;1221&quot;}, &bslash;&n;&t;{0xff,&t;PCI_VENDOR_ID_EF,&t;PCI_DEVICE_ID_EF_ATM,&t;&t;&quot;155P-MF1&quot;} &bslash;&n;}
 multiline_comment|/* An item of this structure has the following meaning&t;*/
 multiline_comment|/* For each optimisation, the register address, the mask&t;*/
 multiline_comment|/* and value to write to turn it on.&t;&t;&t;*/

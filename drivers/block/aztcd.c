@@ -2674,7 +2674,7 @@ suffix:semicolon
 r_case
 id|CDROMVOLCTRL
 suffix:colon
-multiline_comment|/* Volume control &n;&t; * With my Aztech CD268-01A volume control does not work, I can only&n;&t;   turn the cannels on (any value !=0) or off (value==0). Maybe it&n;           works better with your drive */
+multiline_comment|/* Volume control &n;&t; * With my Aztech CD268-01A volume control does not work, I can only&n;&t;   turn the channels on (any value !=0) or off (value==0). Maybe it&n;           works better with your drive */
 id|st
 op_assign
 id|verify_area

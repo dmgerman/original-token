@@ -14,19 +14,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 multiline_comment|/* JEJB/JSP 2/7/94&n; * this must match the value of NFS_SLACK_SPACE in linux/fs/nfs/proc.c &n; * ***FIXME*** should probably put this in nfs_fs.h */
 DECL|macro|NFS_SLACK_SPACE
 mdefine_line|#define NFS_SLACK_SPACE 1024
-r_extern
-r_struct
-id|socket
-op_star
-id|socki_lookup
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
 DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 multiline_comment|/*&n; * We violate some modularity principles here by poking around&n; * in some socket internals.  Besides having to call socket&n; * functions from kernel-space instead of user space, the socket&n; * interface does not lend itself well to being cleanly called&n; * without a file descriptor.  Since the nfs calls can run on&n; * behalf of any process, the superblock maintains a file pointer&n; * to the server socket.&n; */
@@ -179,11 +166,8 @@ id|file-&gt;f_op-&gt;select
 suffix:semicolon
 id|sock
 op_assign
-id|socki_lookup
-c_func
-(paren
-id|inode
-)paren
+op_amp
+id|inode-&gt;u.socket_i
 suffix:semicolon
 r_if
 c_cond

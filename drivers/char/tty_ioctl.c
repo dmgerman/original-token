@@ -31,9 +31,9 @@ DECL|macro|TERMIOS_WAIT
 mdefine_line|#define TERMIOS_WAIT&t;2
 DECL|macro|TERMIOS_TERMIO
 mdefine_line|#define TERMIOS_TERMIO&t;4
-DECL|function|wait_until_sent
+DECL|function|tty_wait_until_sent
 r_void
-id|wait_until_sent
+id|tty_wait_until_sent
 c_func
 (paren
 r_struct
@@ -570,7 +570,7 @@ id|opt
 op_amp
 id|TERMIOS_WAIT
 )paren
-id|wait_until_sent
+id|tty_wait_until_sent
 c_func
 (paren
 id|tty
@@ -1801,7 +1801,7 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
-id|wait_until_sent
+id|tty_wait_until_sent
 c_func
 (paren
 id|tty

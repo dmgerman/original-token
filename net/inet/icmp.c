@@ -1024,7 +1024,7 @@ macro_line|#endif
 r_case
 id|ICMP_REDIR_HOST
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; *&t;Add better route to host.&n;&t;&t;&t; *&t;But first check that the redirect&n;&t;&t;&t; *&t;comes from the old gateway..&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Add better route to host.&n;&t;&t;&t; *&t;But first check that the redirect&n;&t;&t;&t; *&t;comes from the old gateway..&n;&t;&t;&t; *&t;And make sure it&squot;s an ok host address&n;&t;&t;&t; *&t;(not some confused thing sending our&n;&t;&t;&t; *&t;address)&n;&t;&t;&t; */
 id|rt
 op_assign
 id|ip_rt_route
@@ -1051,6 +1051,12 @@ c_cond
 id|rt-&gt;rt_gateway
 op_ne
 id|source
+op_logical_or
+id|ip_chk_addr
+c_func
+(paren
+id|icmph-&gt;un.gateway
+)paren
 )paren
 r_break
 suffix:semicolon

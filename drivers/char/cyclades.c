@@ -7683,7 +7683,7 @@ id|ret_val
 r_return
 id|ret_val
 suffix:semicolon
-id|wait_until_sent
+id|tty_wait_until_sent
 c_func
 (paren
 id|tty
@@ -7730,7 +7730,7 @@ id|ret_val
 r_return
 id|ret_val
 suffix:semicolon
-id|wait_until_sent
+id|tty_wait_until_sent
 c_func
 (paren
 id|tty
@@ -8340,7 +8340,7 @@ id|info-&gt;flags
 op_amp
 id|ASYNC_INITIALIZED
 )paren
-id|wait_until_sent
+id|tty_wait_until_sent
 c_func
 (paren
 id|tty

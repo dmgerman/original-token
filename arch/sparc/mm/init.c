@@ -336,7 +336,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * paging_init() sets up the page tables: in the alpha version this actually&n; * unmaps the bootup page table (as we&squot;re now in KSEG, so we don&squot;t need it).&n; *&n; * The bootup sequence put the virtual page table into high memory: that&n; * means that we cah change the L1 page table by just using VL1p below.&n; */
+multiline_comment|/*&n; * paging_init() sets up the page tables: in the alpha version this actually&n; * unmaps the bootup page table (as we&squot;re now in KSEG, so we don&squot;t need it).&n; *&n; * The bootup sequence put the virtual page table into high memory: that&n; * means that we can change the L1 page table by just using VL1p below.&n; */
 DECL|function|paging_init
 r_int
 r_int

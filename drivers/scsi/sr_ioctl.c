@@ -2428,27 +2428,15 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|ms_info.xa_flag
+op_assign
 id|scsi_CDs
 (braket
 id|target
 )braket
 dot
-id|mpcd_sector
-)paren
-id|ms_info.xa_flag
-op_assign
-l_int|1
+id|is_xa
 suffix:semicolon
-multiline_comment|/* valid redirection address */
-r_else
-id|ms_info.xa_flag
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* invalid redirection address */
 id|err
 op_assign
 id|verify_area

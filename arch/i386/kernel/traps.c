@@ -899,11 +899,6 @@ r_int
 id|error_code
 )paren
 (brace
-r_int
-id|signr
-op_assign
-id|SIGSEGV
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -938,43 +933,6 @@ comma
 id|error_code
 )paren
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|get_seg_byte
-c_func
-(paren
-id|regs-&gt;cs
-comma
-(paren
-r_char
-op_star
-)paren
-id|regs-&gt;eip
-)paren
-)paren
-(brace
-r_case
-l_int|0xCD
-suffix:colon
-multiline_comment|/* INT */
-r_case
-l_int|0xF4
-suffix:colon
-multiline_comment|/* HLT */
-r_case
-l_int|0xFA
-suffix:colon
-multiline_comment|/* CLI */
-r_case
-l_int|0xFB
-suffix:colon
-multiline_comment|/* STI */
-id|signr
-op_assign
-id|SIGILL
-suffix:semicolon
-)brace
 id|current-&gt;tss.error_code
 op_assign
 id|error_code
@@ -986,7 +944,7 @@ suffix:semicolon
 id|send_sig
 c_func
 (paren
-id|signr
+id|SIGSEGV
 comma
 id|current
 comma

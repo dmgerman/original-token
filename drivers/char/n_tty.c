@@ -3430,7 +3430,7 @@ op_star
 id|tty
 )paren
 (brace
-id|wait_until_sent
+id|tty_wait_until_sent
 c_func
 (paren
 id|tty

@@ -103,6 +103,14 @@ mdefine_line|#define MODE_SELECT_10&t;&t;0x55
 DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10&t;&t;0x5a
 r_extern
+r_void
+id|scsi_make_blocked_list
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_volatile
 r_int
 id|in_scan_scsis
@@ -1008,6 +1016,7 @@ r_int
 id|max_scsi_hosts
 suffix:semicolon
 macro_line|#if defined(MAJOR_NR) &amp;&amp; (MAJOR_NR != SCSI_TAPE_MAJOR)
+macro_line|#include &quot;hosts.h&quot;
 DECL|function|end_scsi_request
 r_static
 id|Scsi_Cmnd
@@ -1200,6 +1209,40 @@ id|req-&gt;sem
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;host-&gt;block
+)paren
+(brace
+r_struct
+id|Scsi_Host
+op_star
+id|next
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|next
+op_assign
+id|SCpnt-&gt;host-&gt;block
+suffix:semicolon
+id|next
+op_ne
+id|SCpnt-&gt;host
+suffix:semicolon
+id|next
+op_assign
+id|next-&gt;block
+)paren
+id|wake_up
+c_func
+(paren
+op_amp
+id|next-&gt;host_wait
+)paren
+suffix:semicolon
+)brace
 id|req-&gt;dev
 op_assign
 op_minus
@@ -1228,6 +1271,6 @@ DECL|macro|INIT_SCSI_REQUEST
 mdefine_line|#define INIT_SCSI_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;restore_flags(flags);   &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif
 DECL|macro|SCSI_SLEEP
-mdefine_line|#define SCSI_SLEEP(QUEUE, CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;if (CONDITION) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;struct wait_queue wait = { current, NULL};&t;&bslash;&n;&t;&t;add_wait_queue(QUEUE, &amp;wait);&t;&t;&t;&bslash;&n;sleep_repeat:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;&t;&bslash;&n;&t;&t;if (CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;schedule();&t;&t;&t;&t;&bslash;&n;&t;&t;&t;goto sleep_repeat;&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;remove_wait_queue(QUEUE, &amp;wait);&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_RUNNING;&t;&t;&t;&bslash;&n;&t;}; }
+mdefine_line|#define SCSI_SLEEP(QUEUE, CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;if (CONDITION) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;struct wait_queue wait = { current, NULL};&t;&bslash;&n;&t;&t;add_wait_queue(QUEUE, &amp;wait);&t;&t;&t;&bslash;&n;        for(;;) {       &t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;&t;&bslash;&n;&t;&t;if (CONDITION) {&t;&t;&t;&t;&bslash;&n;                   if (intr_count)                              &bslash;&n;                      panic(&quot;scsi: trying to call schedule() in interrupt&quot; &bslash;&n;                            &quot;, file %s, line %d.&bslash;n&quot;, __FILE__, __LINE__);  &bslash;&n;&t;&t;   schedule();&t;&t;&t;&t; &t;&bslash;&n;&t;&t;   }              &t;&t;&t; &t;&bslash;&n;&t;        else&t;&t;&t;&t;&t;&t;&bslash;&n;                   break;                            &t;        &bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;remove_wait_queue(QUEUE, &amp;wait);&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_RUNNING;&t;&t;&t;&bslash;&n;&t;}; }
 macro_line|#endif
 eof

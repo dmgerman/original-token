@@ -1392,7 +1392,7 @@ multiline_comment|/* IP addr/mask matches */
 )brace
 multiline_comment|/* End of whole function */
 macro_line|#endif /* CONFIG_IP_ACCT */
-macro_line|#ifdef CONFIG_IP_ACCT
+macro_line|#if defined(CONFIG_IP_ACCT) || defined(CONFIG_IP_FIREWALL)
 DECL|function|zero_fw_chain
 r_static
 r_void
@@ -1432,8 +1432,6 @@ id|ctmp-&gt;next
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#if defined(CONFIG_IP_ACCT) || defined(CONFIG_IP_FIREWALL)
 DECL|function|free_fw_chain
 r_static
 r_void

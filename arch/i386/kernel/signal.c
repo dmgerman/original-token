@@ -1354,6 +1354,11 @@ op_assign
 id|eip
 suffix:semicolon
 multiline_comment|/* &quot;return&quot; to the first handler */
+id|regs-&gt;eflags
+op_and_assign
+op_complement
+id|TF_MASK
+suffix:semicolon
 id|current-&gt;tss.trap_no
 op_assign
 id|current-&gt;tss.error_code
