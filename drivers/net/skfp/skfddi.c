@@ -4570,9 +4570,11 @@ multiline_comment|/* Zero out the driver statistics */
 r_if
 c_cond
 (paren
-id|suser
+op_logical_neg
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 (brace

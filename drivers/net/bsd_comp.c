@@ -1,32 +1,12 @@
 multiline_comment|/* Because this code is derived from the 4.3BSD compress source:&n; *&n; * Copyright (c) 1985, 1986 The Regents of the University of California.&n; * All rights reserved.&n; *&n; * This code is derived from software contributed to Berkeley by&n; * James A. Woods, derived from original work by Spencer Thomas&n; * and Joseph Orost.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. All advertising materials mentioning features or use of this software&n; *    must display the following acknowledgement:&n; *&t;This product includes software developed by the University of&n; *&t;California, Berkeley and its contributors.&n; * 4. Neither the name of the University nor the names of its contributors&n; *    may be used to endorse or promote products derived from this software&n; *    without specific prior written permission.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
-multiline_comment|/*&n; * This version is for use with contiguous buffers on Linux-derived systems.&n; *&n; *  ==FILEVERSION 970607==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     bsd_comp.c is shipped with a PPP distribution as well as with&n; *     the kernel; if everyone increases the FILEVERSION number above,&n; *     then scripts can do the right thing when deciding whether to&n; *     install a new bsd_comp.c file. Don&squot;t change the format of that&n; *     line otherwise, so the installation script can recognize it.&n; *&n; * From: bsd_comp.c,v 1.3 1994/12/08 01:59:58 paulus Exp&n; */
+multiline_comment|/*&n; * This version is for use with contiguous buffers on Linux-derived systems.&n; *&n; *  ==FILEVERSION 20000226==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     bsd_comp.c is shipped with a PPP distribution as well as with&n; *     the kernel; if everyone increases the FILEVERSION number above,&n; *     then scripts can do the right thing when deciding whether to&n; *     install a new bsd_comp.c file. Don&squot;t change the format of that&n; *     line otherwise, so the installation script can recognize it.&n; *&n; * From: bsd_comp.c,v 1.3 1994/12/08 01:59:58 paulus Exp&n; */
 macro_line|#ifndef MODULE
 macro_line|#error This file must be compiled as a module.
 macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/string.h&gt;&t;/* used in new tty drivers */
-macro_line|#include &lt;linux/signal.h&gt;&t;/* used in new tty drivers */
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/byteorder.h&gt;
-macro_line|#include &lt;linux/if.h&gt;
-macro_line|#include &lt;linux/if_ether.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;linux/inet.h&gt;
-macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/ppp_defs.h&gt;
 DECL|macro|PACKETPTR
 macro_line|#undef   PACKETPTR
@@ -3491,9 +3471,9 @@ multiline_comment|/* decomp_stat */
 )brace
 suffix:semicolon
 multiline_comment|/*************************************************************&n; * Module support routines&n; *************************************************************/
+DECL|function|bsdcomp_init
 r_int
-DECL|function|init_module
-id|init_module
+id|bsdcomp_init
 c_func
 (paren
 r_void
@@ -3503,6 +3483,7 @@ r_int
 id|answer
 op_assign
 id|ppp_register_compressor
+c_func
 (paren
 op_amp
 id|ppp_bsd_compress
@@ -3516,6 +3497,7 @@ op_eq
 l_int|0
 )paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;PPP BSD Compression module registered&bslash;n&quot;
@@ -3525,19 +3507,34 @@ r_return
 id|answer
 suffix:semicolon
 )brace
+DECL|function|bsdcomp_cleanup
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
+id|bsdcomp_cleanup
 c_func
 (paren
 r_void
 )paren
 (brace
 id|ppp_unregister_compressor
+c_func
 (paren
 op_amp
 id|ppp_bsd_compress
 )paren
 suffix:semicolon
 )brace
+DECL|variable|bsdcomp_init
+id|module_init
+c_func
+(paren
+id|bsdcomp_init
+)paren
+suffix:semicolon
+DECL|variable|bsdcomp_cleanup
+id|module_exit
+c_func
+(paren
+id|bsdcomp_cleanup
+)paren
+suffix:semicolon
 eof

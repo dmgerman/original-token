@@ -940,7 +940,7 @@ op_minus
 id|ENFILE
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;video_unregister_device - Unregister a video4linux device&n; *&t;@vfd: the device to unregister&n; *&n; *&t;This unregisters the passed device and deassigns the minor&n; *&t;number. Future open calls will be met with errors.&n; */
+multiline_comment|/**&n; *&t;video_unregister_device - unregister a video4linux device&n; *&t;@vfd: the device to unregister&n; *&n; *&t;This unregisters the passed device and deassigns the minor&n; *&t;number. Future open calls will be met with errors.&n; */
 DECL|function|video_unregister_device
 r_void
 id|video_unregister_device

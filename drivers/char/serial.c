@@ -6205,6 +6205,27 @@ id|info-&gt;state-&gt;type
 op_ne
 id|PORT_16750
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|fcr
+op_amp
+id|UART_FCR_ENABLE_FIFO
+)paren
+(brace
+multiline_comment|/* emulated UARTs (Lucent Venus 167x) need two steps */
+id|serial_outp
+c_func
+(paren
+id|info
+comma
+id|UART_FCR
+comma
+id|UART_FCR_ENABLE_FIFO
+)paren
+suffix:semicolon
+)brace
 id|serial_outp
 c_func
 (paren
@@ -6216,6 +6237,7 @@ id|fcr
 )paren
 suffix:semicolon
 multiline_comment|/* set fcr */
+)brace
 id|restore_flags
 c_func
 (paren

@@ -34,7 +34,6 @@ macro_line|#endif
 macro_line|#include &lt;linux/lockd/bind.h&gt;
 macro_line|#include &lt;linux/lockd/xdr.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/nls.h&gt;
 macro_line|#ifdef CONFIG_CODA_FS
 r_extern
 r_int
@@ -243,13 +242,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_OPENPROMFS
 id|init_openprom_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS
-id|init_nls
 c_func
 (paren
 )paren

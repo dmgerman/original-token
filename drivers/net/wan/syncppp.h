@@ -120,6 +120,11 @@ id|net_device
 op_star
 id|pp_if
 suffix:semicolon
+DECL|member|pp_link_state
+r_char
+id|pp_link_state
+suffix:semicolon
+multiline_comment|/* Link status */
 )brace
 suffix:semicolon
 DECL|struct|ppp_device
@@ -169,6 +174,10 @@ DECL|macro|IPCP_STATE_ACK_SENT
 mdefine_line|#define IPCP_STATE_ACK_SENT     2       /* IPCP state: conf-ack sent */
 DECL|macro|IPCP_STATE_OPENED
 mdefine_line|#define IPCP_STATE_OPENED       3       /* IPCP state: opened */
+DECL|macro|SPPP_LINK_DOWN
+mdefine_line|#define SPPP_LINK_DOWN&t;&t;0&t;/* link down - no keepalive */
+DECL|macro|SPPP_LINK_UP
+mdefine_line|#define SPPP_LINK_UP&t;&t;1&t;/* link is up - keepalive ok */
 r_void
 id|sppp_attach
 (paren

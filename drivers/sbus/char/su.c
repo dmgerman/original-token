@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.36 2000/02/09 21:11:22 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.37 2000/03/13 03:54:15 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 multiline_comment|/*&n; * Configuration section.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
@@ -9329,7 +9329,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.36 $&quot;
+l_string|&quot;$Revision: 1.37 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -10311,7 +10311,7 @@ l_string|&quot;su&quot;
 suffix:semicolon
 id|serial_driver.name
 op_assign
-l_string|&quot;ttyS&quot;
+l_string|&quot;ttys/%d&quot;
 suffix:semicolon
 id|serial_driver.major
 op_assign
@@ -10453,7 +10453,7 @@ id|serial_driver
 suffix:semicolon
 id|callout_driver.name
 op_assign
-l_string|&quot;cua&quot;
+l_string|&quot;cua/%d&quot;
 suffix:semicolon
 id|callout_driver.major
 op_assign

@@ -427,7 +427,7 @@ r_int
 r_int
 id|version
 op_assign
-id|inode-&gt;i_version
+id|filp-&gt;f_version
 suffix:semicolon
 id|UFSD
 c_func
@@ -493,7 +493,7 @@ c_cond
 (paren
 id|version
 op_ne
-id|inode-&gt;i_version
+id|filp-&gt;f_version
 )paren
 r_goto
 id|revalidate

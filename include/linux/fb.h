@@ -585,7 +585,7 @@ multiline_comment|/* reserved for future compatibility */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
-macro_line|#if 1 /* to go away in 2.4.0 */
+macro_line|#if 1 /* to go away in 2.5.0 */
 r_extern
 r_int
 id|GET_FB_IDX
@@ -868,11 +868,6 @@ id|start
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* fb_info flags */
-DECL|macro|FBINFO_FLAG_MODULE
-mdefine_line|#define FBINFO_FLAG_MODULE      1       /* Low-level driver is a module */
-DECL|macro|FBINFO_FLAG_OPEN
-mdefine_line|#define FBINFO_FLAG_OPEN        2       /* Has this been open already ? */ 
 DECL|struct|fb_info
 r_struct
 id|fb_info
@@ -893,11 +888,13 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
-DECL|member|count
+DECL|member|open
 r_int
-id|count
+id|open
 suffix:semicolon
-multiline_comment|/* How many using the hardware */
+multiline_comment|/* Has this been open already ? */
+DECL|macro|FBINFO_FLAG_MODULE
+mdefine_line|#define FBINFO_FLAG_MODULE&t;1&t;/* Low-level driver is a module */
 DECL|member|var
 r_struct
 id|fb_var_screeninfo

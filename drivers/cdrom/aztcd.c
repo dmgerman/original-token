@@ -7556,21 +7556,6 @@ id|count
 op_increment
 )paren
 suffix:semicolon
-(brace
-id|count
-op_assign
-id|count
-op_star
-l_int|2
-suffix:semicolon
-multiline_comment|/* delay a bit */
-id|count
-op_assign
-id|count
-op_div
-l_int|2
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

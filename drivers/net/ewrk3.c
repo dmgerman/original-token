@@ -8554,9 +8554,10 @@ multiline_comment|/* Set TX cut through mode */
 r_if
 c_cond
 (paren
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 (brace
@@ -8582,9 +8583,10 @@ multiline_comment|/* Clear TX cut through mode */
 r_if
 c_cond
 (paren
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 (brace

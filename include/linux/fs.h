@@ -2976,6 +2976,11 @@ id|statfs
 )paren
 )paren
 suffix:semicolon
+id|buf-&gt;f_blocks
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Darn GNU df... */
 r_return
 id|sb-&gt;s_op
 op_member_access_from_pointer

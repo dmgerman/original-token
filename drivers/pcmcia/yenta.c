@@ -3013,6 +3013,9 @@ c_func
 id|pci_socket_t
 op_star
 id|socket
+comma
+id|u32
+id|isa_irq_mask
 )paren
 (brace
 r_int
@@ -3093,6 +3096,8 @@ id|probe_irq_on
 c_func
 (paren
 )paren
+op_amp
+id|isa_irq_mask
 suffix:semicolon
 r_for
 c_loop
@@ -3638,6 +3643,9 @@ c_func
 id|pci_socket_t
 op_star
 id|socket
+comma
+id|u32
+id|isa_irq_mask
 )paren
 (brace
 id|socket-&gt;cap.features
@@ -3662,6 +3670,8 @@ id|yenta_probe_irq
 c_func
 (paren
 id|socket
+comma
+id|isa_irq_mask
 )paren
 suffix:semicolon
 id|socket-&gt;cap.cb_dev
@@ -4153,6 +4163,14 @@ id|ricoh_ops
 suffix:semicolon
 DECL|macro|NR_OVERRIDES
 mdefine_line|#define NR_OVERRIDES (sizeof(cardbus_override)/sizeof(struct cardbus_override_struct))
+multiline_comment|/*&n; * Only probe &quot;regular&quot; interrupts, don&squot;t&n; * touch dangerous spots like the mouse irq,&n; * because there are mice that apparently&n; * get really confused if they get fondled&n; * too intimately.&n; *&n; * Default to 11, 10, 9, 7, 6, 5, 4, 3.&n; */
+DECL|variable|isa_interrupts
+r_static
+id|u32
+id|isa_interrupts
+op_assign
+l_int|0x0ef8
+suffix:semicolon
 multiline_comment|/*&n; * Initialize a cardbus controller. Make sure we have a usable&n; * interrupt, and that we can map the cardbus area. Fill in the&n; * socket information structure..&n; */
 DECL|function|yenta_open
 r_static
@@ -4288,13 +4306,6 @@ id|socket-&gt;cb_irq
 op_assign
 id|dev-&gt;irq
 suffix:semicolon
-multiline_comment|/* And figure out what the dang thing can do for the PCMCIA layer... */
-id|yenta_get_socket_capabilities
-c_func
-(paren
-id|socket
-)paren
-suffix:semicolon
 multiline_comment|/* Do we have special options for the device? */
 r_for
 c_loop
@@ -4366,6 +4377,15 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* Figure out what the dang thing can do for the PCMCIA layer... */
+id|yenta_get_socket_capabilities
+c_func
+(paren
+id|socket
+comma
+id|isa_interrupts
+)paren
+suffix:semicolon
 id|kernel_thread
 c_func
 (paren

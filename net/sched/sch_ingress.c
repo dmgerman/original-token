@@ -750,8 +750,6 @@ l_int|NULL
 comma
 id|ing_hook
 comma
-l_int|NULL
-comma
 id|PF_INET
 comma
 id|NF_IP_PRE_ROUTING

@@ -1085,7 +1085,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;You must set an I/O address with io=0x20c, io=0x30c, io=0x24c or io=0x34c (or io=0x248 for the combined sound/radiocard)&bslash;n&quot;
+l_string|&quot;You must set an I/O address with io=0x20c, io=0x30c, io=0x24c or io=0x34c (io=0x020c or io=0x248 for the combined sound/radiocard)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1226,7 +1226,7 @@ c_func
 (paren
 id|io
 comma
-l_string|&quot;I/O address of the GemTek card (0x20c, 0x30c, 0x24c or 0x34c (or 0x248 for the combined sound/radiocard))&quot;
+l_string|&quot;I/O address of the GemTek card (0x20c, 0x30c, 0x24c or 0x34c (0x20c or 0x248 have been reported to work for the combined sound/radiocard)).&quot;
 )paren
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS

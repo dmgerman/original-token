@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|variable|tables
 r_static
@@ -22,6 +23,13 @@ id|nls_table
 op_star
 )paren
 l_int|NULL
+suffix:semicolon
+DECL|variable|nls_lock
+r_static
+id|spinlock_t
+id|nls_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/*&n; * Sample implementation from Unicode home page.&n; * http://www.stonehand.com/unicode/standard/fss-utf.html&n; */
 DECL|struct|utf8_table
@@ -728,6 +736,13 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|nls_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -744,6 +759,13 @@ op_star
 id|tmp
 )paren
 (brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|nls_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -767,6 +789,13 @@ suffix:semicolon
 id|tables
 op_assign
 id|nls
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|nls_lock
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -792,6 +821,13 @@ op_assign
 op_amp
 id|tables
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|nls_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -813,6 +849,13 @@ id|tmp
 op_assign
 id|nls-&gt;next
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|nls_lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -828,12 +871,20 @@ op_member_access_from_pointer
 id|next
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|nls_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
 )brace
 DECL|function|find_nls
+r_static
 r_struct
 id|nls_table
 op_star
@@ -849,15 +900,27 @@ r_struct
 id|nls_table
 op_star
 id|nls
-op_assign
-id|tables
 suffix:semicolon
-r_while
+id|spin_lock
+c_func
+(paren
+op_amp
+id|nls_lock
+)paren
+suffix:semicolon
+r_for
 c_loop
 (paren
 id|nls
+op_assign
+id|tables
+suffix:semicolon
+id|nls
+suffix:semicolon
+id|nls
+op_assign
+id|nls-&gt;next
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -870,16 +933,33 @@ comma
 id|charset
 )paren
 )paren
-r_return
-id|nls
+r_break
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|nls
+op_logical_and
+op_logical_neg
+id|try_inc_mod_count
+c_func
+(paren
+id|nls-&gt;owner
+)paren
+)paren
 id|nls
 op_assign
-id|nls-&gt;next
-suffix:semicolon
-)brace
-r_return
 l_int|NULL
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|nls_lock
+)paren
+suffix:semicolon
+r_return
+id|nls
 suffix:semicolon
 )brace
 DECL|function|load_nls
@@ -923,23 +1003,10 @@ c_cond
 (paren
 id|nls
 )paren
-(brace
-id|nls
-op_member_access_from_pointer
-id|inc_use_count
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|nls
 suffix:semicolon
-)brace
-macro_line|#ifndef CONFIG_KMOD
-r_return
-l_int|NULL
-suffix:semicolon
-macro_line|#else
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -1018,24 +1085,10 @@ c_func
 id|charset
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|nls
-)paren
-(brace
-id|nls
-op_member_access_from_pointer
-id|inc_use_count
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
+macro_line|#endif
 r_return
 id|nls
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|unload_nls
 r_void
@@ -1048,11 +1101,15 @@ op_star
 id|nls
 )paren
 (brace
-id|nls
-op_member_access_from_pointer
-id|dec_use_count
+r_if
+c_cond
+(paren
+id|nls-&gt;owner
+)paren
+id|__MOD_DEC_USE_COUNT
 c_func
 (paren
+id|nls-&gt;owner
 )paren
 suffix:semicolon
 )brace
@@ -4301,24 +4358,6 @@ comma
 multiline_comment|/* 0xf8-0xff */
 )brace
 suffix:semicolon
-DECL|function|inc_use_count
-r_void
-id|inc_use_count
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
-DECL|function|dec_use_count
-r_void
-id|dec_use_count
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
 DECL|variable|default_table
 r_static
 r_struct
@@ -4336,11 +4375,8 @@ id|charset2lower
 comma
 id|charset2upper
 comma
-id|inc_use_count
-comma
-id|dec_use_count
-comma
 l_int|NULL
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* Returns a simple default translation table */
@@ -4378,13 +4414,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|unload_nls
-)paren
-suffix:semicolon
-DECL|variable|find_nls
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|find_nls
 )paren
 suffix:semicolon
 DECL|variable|load_nls
@@ -4429,238 +4458,4 @@ c_func
 id|utf8_wcstombs
 )paren
 suffix:semicolon
-DECL|function|init_nls
-r_int
-id|init_nls
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_NLS_ISO8859_1
-id|init_nls_iso8859_1
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_2
-id|init_nls_iso8859_2
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_3
-id|init_nls_iso8859_3
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_4
-id|init_nls_iso8859_4
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_5
-id|init_nls_iso8859_5
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_6
-id|init_nls_iso8859_6
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_7
-id|init_nls_iso8859_7
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_8
-id|init_nls_iso8859_8
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_9
-id|init_nls_iso8859_9
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_14
-id|init_nls_iso8859_14
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_ISO8859_15
-id|init_nls_iso8859_15
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_437
-id|init_nls_cp437
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_737
-id|init_nls_cp737
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_775
-id|init_nls_cp775
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_850
-id|init_nls_cp850
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_852
-id|init_nls_cp852
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_855
-id|init_nls_cp855
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_857
-id|init_nls_cp857
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_860
-id|init_nls_cp860
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_861
-id|init_nls_cp861
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_862
-id|init_nls_cp862
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_863
-id|init_nls_cp863
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_864
-id|init_nls_cp864
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_865
-id|init_nls_cp865
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_866
-id|init_nls_cp866
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_869
-id|init_nls_cp869
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_CODEPAGE_874
-id|init_nls_cp874
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NLS_KOI8_R
-id|init_nls_koi8_r
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|init_nls
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
-macro_line|#endif /* ifdef MODULE */
 eof

@@ -90,14 +90,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|fbconsole_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PROM_CONSOLE
 r_extern
@@ -2605,11 +2597,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined (CONFIG_FB)
 id|fbmem_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|fbconsole_init
 c_func
 (paren
 )paren

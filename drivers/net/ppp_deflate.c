@@ -1,23 +1,8 @@
 multiline_comment|/*&n; *  ==FILEVERSION 980319==&n; *&n; * ppp_deflate.c - interface the zlib procedures for Deflate compression&n; * and decompression (as used by gzip) to the PPP code.&n; * This version is for use with Linux kernel 1.3.X.&n; *&n; * Copyright (c) 1994 The Australian National University.&n; * All rights reserved.&n; *&n; * Permission to use, copy, modify, and distribute this software and its&n; * documentation is hereby granted, provided that the above copyright&n; * notice appears in all copies.  This software is provided without any&n; * warranty, express or implied. The Australian National University&n; * makes no representations about the suitability of this software for&n; * any purpose.&n; *&n; * IN NO EVENT SHALL THE AUSTRALIAN NATIONAL UNIVERSITY BE LIABLE TO ANY&n; * PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&n; * ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&n; * THE AUSTRALIAN NATIONAL UNIVERSITY HAS BEEN ADVISED OF THE POSSIBILITY&n; * OF SUCH DAMAGE.&n; *&n; * THE AUSTRALIAN NATIONAL UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,&n; * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY&n; * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS&n; * ON AN &quot;AS IS&quot; BASIS, AND THE AUSTRALIAN NATIONAL UNIVERSITY HAS NO&n; * OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,&n; * OR MODIFICATIONS.&n; *&n; * From: deflate.c,v 1.1 1996/01/18 03:17:48 paulus Exp&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/string.h&gt;&t;/* used in new tty drivers */
-macro_line|#include &lt;linux/signal.h&gt;&t;/* used in new tty drivers */
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;linux/inet.h&gt;
-macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ppp_defs.h&gt;
 macro_line|#include &lt;linux/ppp-comp.h&gt;
 macro_line|#include &quot;zlib.c&quot;
@@ -2603,11 +2588,9 @@ comma
 multiline_comment|/* decomp_stat */
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-multiline_comment|/*************************************************************&n; * Module support routines&n; *************************************************************/
+DECL|function|deflate_init
 r_int
-DECL|function|init_module
-id|init_module
+id|deflate_init
 c_func
 (paren
 r_void
@@ -2617,6 +2600,7 @@ r_int
 id|answer
 op_assign
 id|ppp_register_compressor
+c_func
 (paren
 op_amp
 id|ppp_deflate
@@ -2630,6 +2614,7 @@ op_eq
 l_int|0
 )paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;PPP Deflate Compression module registered&bslash;n&quot;
@@ -2646,40 +2631,41 @@ r_return
 id|answer
 suffix:semicolon
 )brace
+DECL|function|deflate_cleanup
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
+id|deflate_cleanup
 c_func
 (paren
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Deflate Compression module busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|ppp_unregister_compressor
+c_func
 (paren
 op_amp
 id|ppp_deflate
 )paren
 suffix:semicolon
 id|ppp_unregister_compressor
+c_func
 (paren
 op_amp
 id|ppp_deflate_draft
 )paren
 suffix:semicolon
 )brace
-)brace
-macro_line|#endif
+DECL|variable|deflate_init
+id|module_init
+c_func
+(paren
+id|deflate_init
+)paren
+suffix:semicolon
+DECL|variable|deflate_cleanup
+id|module_exit
+c_func
+(paren
+id|deflate_cleanup
+)paren
+suffix:semicolon
 eof

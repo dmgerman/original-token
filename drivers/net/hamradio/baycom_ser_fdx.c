@@ -2347,9 +2347,10 @@ id|dev
 )paren
 op_logical_or
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 r_return
