@@ -3177,6 +3177,25 @@ op_assign
 op_star
 id|act
 suffix:semicolon
+id|sigdelsetmask
+c_func
+(paren
+op_amp
+id|k-&gt;sa.sa_mask
+comma
+id|sigmask
+c_func
+(paren
+id|SIGKILL
+)paren
+op_or
+id|sigmask
+c_func
+(paren
+id|SIGSTOP
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * POSIX 3.3.1.3:&n;&t;&t; *  &quot;Setting a signal action to SIG_IGN for a signal that is&n;&t;&t; *   pending shall cause the pending signal to be discarded,&n;&t;&t; *   whether or not it is blocked.&quot;&n;&t;&t; *&n;&t;&t; *  &quot;Setting a signal action to SIG_DFL for a signal that is&n;&t;&t; *   pending and whose default action is to ignore the signal&n;&t;&t; *   (for example, SIGCHLD), shall cause the pending signal to&n;&t;&t; *   be discarded, whether or not it is blocked&quot;&n;&t;&t; *&n;&t;&t; * Note the silly behaviour of SIGCHLD: SIG_IGN means that the&n;&t;&t; * signal isn&squot;t actually ignored, but does automatic child&n;&t;&t; * reaping, while SIG_DFL is explicitly said by POSIX to force&n;&t;&t; * the signal to be ignored.&n;&t;&t; */
 r_if
 c_cond

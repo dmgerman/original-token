@@ -4,7 +4,7 @@ DECL|macro|_aic7xxx_h
 mdefine_line|#define _aic7xxx_h
 DECL|macro|AIC7XXX_H_VERSION
 mdefine_line|#define AIC7XXX_H_VERSION  &quot;3.2.4&quot;
-macro_line|#ifndef LINUX_KERNEL_VERSION
+macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 macro_line|#ifndef KERNEL_VERSION

@@ -1609,7 +1609,12 @@ l_int|0
 )paren
 id|console-&gt;index
 op_assign
-l_int|0
+id|console_cmdline
+(braket
+id|i
+)braket
+dot
+id|index
 suffix:semicolon
 r_if
 c_cond

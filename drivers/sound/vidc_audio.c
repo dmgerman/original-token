@@ -1,8 +1,7 @@
 multiline_comment|/*&n; * drivers/sound/vidc_audio.c&n; *&n; * Audio routines for the VIDC&n; *&n; * Copyright (C) 1997 Russell King &lt;rmk@arm.uk.linux.org&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;vidc.h&quot;
 multiline_comment|/*&n; * VIDC sound&n; *&n; * When using SERIAL SOUND mode (external DAC), the number of physical&n; * channels is fixed at 2.  Therefore, the sample rate = vidc sample rate.&n; */
 DECL|variable|vidc_adev

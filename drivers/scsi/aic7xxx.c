@@ -74,7 +74,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.0.12&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.0.13&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -141,12 +141,21 @@ macro_line|#  include &lt;asm/spinlock.h&gt;
 macro_line|#  include &lt;linux/smp.h&gt;
 DECL|macro|cpuid
 macro_line|#  define cpuid smp_processor_id()
+macro_line|#  if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,95)
 DECL|macro|DRIVER_LOCK_INIT
-macro_line|#  define DRIVER_LOCK_INIT &bslash;&n;     spin_lock_init(&amp;p-&gt;spin_lock);
+macro_line|#    define DRIVER_LOCK_INIT &bslash;&n;       spin_lock_init(&amp;p-&gt;spin_lock);
 DECL|macro|DRIVER_LOCK
-macro_line|#  define DRIVER_LOCK &bslash;&n;       if(!p-&gt;cpu_lock_count[cpuid]) { &bslash;&n;         spin_lock_irqsave(&amp;p-&gt;spin_lock, cpu_flags); &bslash;&n;         p-&gt;cpu_lock_count[cpuid]++; &bslash;&n;       } else { &bslash;&n;         p-&gt;cpu_lock_count[cpuid]++; &bslash;&n;       }
+macro_line|#    define DRIVER_LOCK &bslash;&n;       if(!p-&gt;cpu_lock_count[cpuid]) { &bslash;&n;         spin_lock_irqsave(&amp;p-&gt;spin_lock, cpu_flags); &bslash;&n;         p-&gt;cpu_lock_count[cpuid]++; &bslash;&n;       } else { &bslash;&n;         p-&gt;cpu_lock_count[cpuid]++; &bslash;&n;       }
 DECL|macro|DRIVER_UNLOCK
-macro_line|#  define DRIVER_UNLOCK &bslash;&n;     if(--p-&gt;cpu_lock_count[cpuid] == 0) &bslash;&n;       spin_unlock_irqrestore(&amp;p-&gt;spin_lock, cpu_flags);
+macro_line|#    define DRIVER_UNLOCK &bslash;&n;       if(--p-&gt;cpu_lock_count[cpuid] == 0) &bslash;&n;         spin_unlock_irqrestore(&amp;p-&gt;spin_lock, cpu_flags);
+macro_line|#  else
+DECL|macro|DRIVER_LOCK_INIT
+macro_line|#    define DRIVER_LOCK_INIT
+DECL|macro|DRIVER_LOCK
+macro_line|#    define DRIVER_LOCK
+DECL|macro|DRIVER_UNLOCK
+macro_line|#    define DRIVER_UNLOCK
+macro_line|#  endif
 macro_line|#else
 DECL|macro|cpuid
 macro_line|#  define cpuid 0
@@ -5887,12 +5896,14 @@ id|Scsi_Cmnd
 op_star
 id|cmd
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,95)
 r_int
 r_int
 id|cpu_flags
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|DRIVER_LOCK
 r_while
 c_loop
@@ -10143,12 +10154,14 @@ suffix:semicolon
 r_int
 id|sent
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,95)
 r_int
 r_int
 id|cpu_flags
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10387,7 +10400,19 @@ id|aic7xxx_scb
 op_star
 id|scb
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,95)   
 id|DRIVER_LOCK
+macro_line|#else
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|cpu_flags
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -10521,7 +10546,19 @@ c_func
 id|p
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,95)   
 id|DRIVER_UNLOCK
+macro_line|#else
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|cpu_flags
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_construct_sdtr&n; *&n; * Description:&n; *   Constucts a synchronous data transfer message in the message&n; *   buffer on the sequencer.&n; *-F*************************************************************************/
 r_static
@@ -17073,12 +17110,6 @@ r_int
 r_char
 id|intstat
 suffix:semicolon
-r_int
-r_int
-id|cpu_flags
-op_assign
-l_int|0
-suffix:semicolon
 id|p
 op_assign
 (paren
@@ -17175,6 +17206,8 @@ op_increment
 suffix:semicolon
 )brace
 macro_line|#endif
+r_return
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -17189,7 +17222,6 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Handle all the interrupt sources - especially for SCSI&n;   * interrupts, we won&squot;t get a second chance at them.&n;   */
-id|DRIVER_LOCK
 id|intstat
 op_assign
 id|aic_inb
@@ -17212,68 +17244,6 @@ id|p-&gt;flags
 op_or_assign
 id|AHC_IN_ISR
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|p-&gt;flags
-op_amp
-id|AHC_A_SCANNED
-)paren
-op_logical_and
-(paren
-id|p-&gt;isr_count
-op_eq
-l_int|1
-)paren
-)paren
-(brace
-multiline_comment|/*&n;     * We must only have one card at this IRQ and it must have been&n;     * added to the board data before the spurious interrupt occurred.&n;     * It is sufficient that we check isr_count and not the spurious&n;     * interrupt count.&n;     */
-r_if
-c_cond
-(paren
-id|intstat
-)paren
-(brace
-multiline_comment|/* Try clearing all interrupts. */
-id|aic_outb
-c_func
-(paren
-id|p
-comma
-id|CLRBRKADRINT
-op_or
-id|CLRSCSIINT
-op_or
-id|CLRCMDINT
-op_or
-id|CLRSEQINT
-comma
-id|CLRINT
-)paren
-suffix:semicolon
-id|unpause_sequencer
-c_func
-(paren
-id|p
-comma
-id|TRUE
-)paren
-suffix:semicolon
-)brace
-id|DRIVER_UNLOCK
-id|printk
-c_func
-(paren
-l_string|&quot;scsi%d: Encountered spurious interrupt.&bslash;n&quot;
-comma
-id|p-&gt;host_no
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/*&n;   * Indicate that we&squot;re in the interrupt handler.&n;   */
 r_if
 c_cond
@@ -17749,7 +17719,6 @@ id|intstat
 )paren
 suffix:semicolon
 )brace
-id|DRIVER_UNLOCK
 r_if
 c_cond
 (paren
@@ -17784,7 +17753,7 @@ op_complement
 id|AHC_IN_ISR
 suffix:semicolon
 )brace
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_isr&n; *&n; * Description:&n; *   This is a gross hack to solve a problem in linux kernels 2.1.85 and&n; *   above.  Please, children, do not try this at home, and if you ever see&n; *   anything like it, please inform the Gross Hack Police immediately&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   do_aic7xxx_isr&n; *&n; * Description:&n; *   This is a gross hack to solve a problem in linux kernels 2.1.85 and&n; *   above.  Please, children, do not try this at home, and if you ever see&n; *   anything like it, please inform the Gross Hack Police immediately&n; *-F*************************************************************************/
 r_static
 r_void
 DECL|function|do_aic7xxx_isr
@@ -17804,18 +17773,18 @@ op_star
 id|regs
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,93)
 r_int
 r_int
-id|flags
+id|cpu_flags
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,95)
 id|spin_lock_irqsave
 c_func
 (paren
 op_amp
 id|io_request_lock
 comma
-id|flags
+id|cpu_flags
 )paren
 suffix:semicolon
 id|aic7xxx_isr
@@ -17834,10 +17803,11 @@ c_func
 op_amp
 id|io_request_lock
 comma
-id|flags
+id|cpu_flags
 )paren
 suffix:semicolon
 macro_line|#else
+id|DRIVER_LOCK
 id|aic7xxx_isr
 c_func
 (paren
@@ -17848,6 +17818,7 @@ comma
 id|regs
 )paren
 suffix:semicolon
+id|DRIVER_UNLOCK
 macro_line|#endif
 )brace
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_device_queue_depth&n; *&n; * Description:&n; *   Determines the queue depth for a given device.  There are two ways&n; *   a queue depth can be obtained for a tagged queueing device.  One&n; *   way is the default queue depth which is determined by whether&n; *   AIC7XXX_CMDS_PER_LUN is defined.  If it is defined, then it is used&n; *   as the default queue depth.  Otherwise, we use either 4 or 8 as the&n; *   default queue depth (dependent on the number of hardware SCBs).&n; *   The other way we determine queue depth is through the use of the&n; *   aic7xxx_tag_info array which is enabled by defining&n; *   AIC7XXX_TAGGED_QUEUEING_BY_DEVICE.  This array can be initialized&n; *   with queue depths for individual devices.  It also allows tagged&n; *   queueing to be [en|dis]abled for a specific adapter.&n; *-F*************************************************************************/
@@ -28670,12 +28641,14 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,95)
 r_int
 r_int
 id|cpu_flags
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|p
 op_assign
 (paren
@@ -29968,12 +29941,14 @@ id|next_hscbptr
 comma
 id|prev_hscbptr
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,95)
 r_int
 r_int
 id|cpu_flags
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|Scsi_Cmnd
 op_star
 id|cmd_next
@@ -31168,12 +31143,14 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,95)
 r_int
 r_int
 id|cpu_flags
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 DECL|macro|DEVICE_RESET
 mdefine_line|#define DEVICE_RESET 0x01
 DECL|macro|BUS_RESET

@@ -13,7 +13,7 @@ mdefine_line|#define KBD_INIT_TIMEOUT HZ&t;&t;/* Timeout in jiffies for initiali
 DECL|macro|KBC_TIMEOUT
 mdefine_line|#define KBC_TIMEOUT 250&t;&t;&t;/* Timeout in ms for sending to keyboard controller */
 DECL|macro|KBD_TIMEOUT
-mdefine_line|#define KBD_TIMEOUT 250&t;&t;&t;/* Timeout in ms for keyboard command acknowledge */
+mdefine_line|#define KBD_TIMEOUT 1000&t;&t;/* Timeout in ms for keyboard command acknowledge */
 multiline_comment|/*&n; *&t;Internal variables of the driver&n; */
 r_extern
 r_int

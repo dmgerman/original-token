@@ -578,7 +578,9 @@ op_star
 id|p
 )paren
 (brace
-multiline_comment|/* FIXME check that resources are free */
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -586,6 +588,12 @@ id|p-&gt;irq
 op_ne
 id|PARPORT_IRQ_NONE
 )paren
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
 id|request_irq
 c_func
 (paren
@@ -599,6 +607,12 @@ id|p-&gt;name
 comma
 l_int|NULL
 )paren
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+id|err
 suffix:semicolon
 id|request_region
 c_func

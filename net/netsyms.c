@@ -96,6 +96,8 @@ id|datalink_proto
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_IPV6_MODULE
 macro_line|#ifdef CONFIG_SYSCTL
 r_extern
 r_int

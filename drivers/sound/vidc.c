@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;drivers/sound/vidc.c&n; *&n; *&t;Detection routine for the VIDC.&n; *&n; *&t;Copyright (C) 1997 by Russell King &lt;rmk@arm.uk.linux.org&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;sound_config.h&quot;

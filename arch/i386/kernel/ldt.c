@@ -28,7 +28,7 @@ r_void
 op_star
 id|address
 op_assign
-id|current-&gt;ldt
+id|current-&gt;mm-&gt;segments
 suffix:semicolon
 r_int
 r_int
@@ -126,6 +126,11 @@ r_int
 op_star
 id|lp
 suffix:semicolon
+r_struct
+id|mm_struct
+op_star
+id|mm
+suffix:semicolon
 r_int
 id|error
 comma
@@ -195,11 +200,16 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|mm
+op_assign
+id|current-&gt;mm
+suffix:semicolon
+multiline_comment|/*&n;&t; * Horrible dependencies! Try to get rid of this. This is wrong,&n;&t; * as it only reloads the ldt for the first process with this&n;&t; * mm. The implications are that you should really make sure that&n;&t; * you have a ldt before you do the first clone(), otherwise&n;&t; * you get strange behaviour (the kernel is safe, it&squot;s just user&n;&t; * space strangeness).&n;&t; *&n;&t; * For no good reason except historical, the GDT index of the LDT&n;&t; * is chosen to follow the index number in the task[] array.&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;ldt
+id|mm-&gt;segments
 )paren
 (brace
 r_for
@@ -224,8 +234,10 @@ id|task
 (braket
 id|i
 )braket
+op_member_access_from_pointer
+id|mm
 op_eq
-id|current
+id|mm
 )paren
 (brace
 r_if
@@ -233,11 +245,10 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;ldt
+id|mm-&gt;segments
 op_assign
 (paren
-r_struct
-id|desc_struct
+r_void
 op_star
 )paren
 id|vmalloc
@@ -256,7 +267,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|current-&gt;ldt
+id|mm-&gt;segments
 comma
 l_int|0
 comma
@@ -278,7 +289,7 @@ l_int|1
 op_plus
 id|FIRST_LDT_ENTRY
 comma
-id|current-&gt;ldt
+id|mm-&gt;segments
 comma
 id|LDT_ENTRIES
 )paren
@@ -299,11 +310,17 @@ r_int
 r_int
 op_star
 )paren
-op_amp
-id|current-&gt;ldt
-(braket
+(paren
+id|LDT_ENTRY_SIZE
+op_star
 id|ldt_info.entry_number
-)braket
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|mm-&gt;segments
+)paren
 suffix:semicolon
 multiline_comment|/* Allow LDTs to be cleared by the user. */
 r_if

@@ -560,6 +560,10 @@ DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, &bslash;&n;&t;__KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;__USER_DS,0,__USER_DS,0,__USER_DS,0, &bslash;&n;&t;__USER_DS,0,__USER_DS,0,__USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0, 0, (mm_segment_t) { 0 } /* obsolete */ , &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0, 0 /* vm86_info */, &bslash;&n;}
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&bslash;&n;&t;unsigned long seg = __USER_DS; &bslash;&n;&t;__asm__(&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;:&quot;=r&quot; (seg) :&quot;0&quot; (seg)); &bslash;&n;&t;set_fs(USER_DS); &bslash;&n;&t;regs-&gt;xds = seg; &bslash;&n;&t;regs-&gt;xes = seg; &bslash;&n;&t;regs-&gt;xss = seg; &bslash;&n;&t;regs-&gt;xcs = __USER_CS; &bslash;&n;&t;regs-&gt;eip = new_eip; &bslash;&n;&t;regs-&gt;esp = new_esp; &bslash;&n;} while (0)
+multiline_comment|/* Forward declaration, a strange C thing */
+r_struct
+id|mm_struct
+suffix:semicolon
 multiline_comment|/* Free all resources held by a thread. */
 r_extern
 r_void
@@ -569,6 +573,37 @@ c_func
 r_struct
 id|task_struct
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Copy and release all segment info associated with a VM */
+r_extern
+r_void
+id|copy_segments
+c_func
+(paren
+r_int
+id|nr
+comma
+r_struct
+id|task_struct
+op_star
+id|p
+comma
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|release_segments
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */

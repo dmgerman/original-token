@@ -336,7 +336,6 @@ c_cond
 (paren
 id|queue_new_request
 )paren
-multiline_comment|/*&n;&t;&t; * request functions are smart enough to notice a change&n;&t;&t; * in the request queue, calling them without the spinlock&n;&t;&t; * is OK, i think. &lt;-- FIXME: [is this true? --mingo]&n;&t;&t; */
 (paren
 id|dev-&gt;request_fn
 )paren
@@ -1265,7 +1264,6 @@ l_int|1
 suffix:semicolon
 id|out
 suffix:colon
-multiline_comment|/*&n;&t; * request_fn() is usually a quite complex and slow function,&n;&t; * we want to call it with no spinlocks held&n;&t; */
 r_if
 c_cond
 (paren

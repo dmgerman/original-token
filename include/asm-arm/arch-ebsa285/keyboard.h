@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/keyboard.h&n; *&n; * Keyboard driver definitions for EBSA285 architecture&n; *&n; * (C) 1998 Russell King&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 DECL|macro|NR_SCANCODES
 mdefine_line|#define NR_SCANCODES 128

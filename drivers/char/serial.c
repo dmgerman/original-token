@@ -15483,6 +15483,17 @@ multiline_comment|/*&n;&t; *&t;Disable UART interrupts, set DTR and RTS high&n;&
 id|outb
 c_func
 (paren
+id|cval
+comma
+id|ser-&gt;port
+op_plus
+id|UART_LCR
+)paren
+suffix:semicolon
+multiline_comment|/* don&squot;t assume that DLAB is clear */
+id|outb
+c_func
+(paren
 l_int|0
 comma
 id|ser-&gt;port

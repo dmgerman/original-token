@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/* The driver prints some debugging information on the console if DEBUG&n;   is defined and non-zero. */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG 0
@@ -956,6 +957,19 @@ r_int
 id|retries
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1056,6 +1070,15 @@ comma
 id|timeout
 comma
 id|retries
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|down
@@ -4844,6 +4867,10 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|STp
 op_assign
 op_amp
@@ -6357,6 +6384,15 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|scsi_do_cmd
 (paren
 id|SCpnt
@@ -6384,6 +6420,15 @@ comma
 id|STp-&gt;timeout
 comma
 id|MAX_WRITE_RETRIES
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace

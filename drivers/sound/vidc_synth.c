@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * drivers/sound/vidc_synth.c&n; *&n; * Synthesizer routines for the VIDC&n; *&n; * Copyright (C) 1997 Russell King &lt;rmk@arm.uk.linux.org&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;vidc.h&quot;
 DECL|variable|vidc_info

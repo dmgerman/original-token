@@ -1877,10 +1877,6 @@ op_star
 id|SDev
 suffix:semicolon
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|flag
 op_assign
 l_int|0

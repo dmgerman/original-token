@@ -171,6 +171,10 @@ id|task_struct
 op_star
 )paren
 suffix:semicolon
+DECL|macro|copy_segments
+mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
+DECL|macro|release_segments
+mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 multiline_comment|/* NOTE: The task struct and the stack go together!  */
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;        ((struct task_struct *) __get_free_pages(GFP_KERNEL,1))

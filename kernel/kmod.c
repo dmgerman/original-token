@@ -316,6 +316,7 @@ c_func
 l_string|&quot;Starting kmod&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * CLONE_FS means that our &quot;cwd&quot; will follow that of init.&n;&t; * CLONE_FILES just saves some space (we don&squot;t need any&n;&t; * new file descriptors). Ditto for CLONE_SIGHAND.&n;&t; */
 id|kernel_thread
 c_func
 (paren
@@ -323,7 +324,12 @@ id|kmod_thread
 comma
 l_int|NULL
 comma
-l_int|0
+id|CLONE_FILES
+op_or
+"&#xfffd;"
+id|CLONE_FS
+op_or
+id|CLONE_SIGHAND
 )paren
 suffix:semicolon
 id|kmod_unload_timer.next

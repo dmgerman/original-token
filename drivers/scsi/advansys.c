@@ -7662,10 +7662,41 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-macro_line|#else /* version &gt;= v1.3.70 */
+macro_line|#elif LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,1,95)
 id|STATIC
 r_void
 id|advansys_interrupt
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= 2.1.95 */
+id|STATIC
+r_void
+id|advansys_interrupt
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+id|STATIC
+r_void
+id|do_advansys_interrupt
 c_func
 (paren
 r_int
