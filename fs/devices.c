@@ -616,10 +616,12 @@ r_if
 c_cond
 (paren
 id|fops-&gt;check_media_change
-op_ne
+op_eq
 l_int|NULL
 )paren
-(brace
+r_return
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -635,7 +637,6 @@ id|dev
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren

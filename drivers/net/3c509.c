@@ -1,12 +1,12 @@
 multiline_comment|/* 3c509.c: A 3c509 EtherLink3 ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&t; This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&t;&n;&t;This driver is for the 3Com EtherLinkIII series.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994 by Donald Becker.&n;&n;&t;Copyright 1994 by Donald Becker. &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&t; This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&t;&n;&t;This driver is for the 3Com EtherLinkIII series.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Known limitations:&n;&t;Because of the way 3c509 ISA detection works it&squot;s difficult to predict&n;&t;a priori which of several ISA-mode cards will be detected first.&n;&n;&t;This driver does not use predictive interrupt mode, resulting in higher&n;&t;packet latency but lower overhead.  If interrupts are disabled for an&n;&t;unusually long time it could also result in missed packets, but in&n;&t;practice this rarely happens.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c509.c:pl15k 3/5/94 becker@super.org&bslash;n&quot;
+l_string|&quot;3c509.c:1.01 7/5/94 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -250,7 +250,7 @@ id|current_tag
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* First check for a board on the EISA bus. */
+multiline_comment|/* First check all slots of the EISA bus.  The next slot address to&n;&t;   probe is kept in &squot;eisa_addr&squot; to support multiple probe() calls. */
 r_if
 c_cond
 (paren
@@ -260,26 +260,24 @@ id|EISA_bus
 r_static
 r_int
 id|eisa_addr
+op_assign
+l_int|0x1000
 suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-id|ioaddr
-op_assign
-l_int|0x1000
-suffix:semicolon
-id|ioaddr
+id|eisa_addr
 OL
 l_int|0x9000
-suffix:semicolon
-id|ioaddr
-op_add_assign
-l_int|0x1000
 )paren
 (brace
-id|eisa_addr
-op_assign
 id|ioaddr
+op_assign
+id|eisa_addr
+suffix:semicolon
+id|eisa_addr
+op_add_assign
+l_int|0x1000
 suffix:semicolon
 multiline_comment|/* Check the standard EISA ID register for an encoded &squot;3Com&squot;. */
 r_if
@@ -504,7 +502,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif&t;  
-multiline_comment|/* Send the ID sequence to the ID_PORT. */
+multiline_comment|/* Next check for all ISA bus boards by sending the ID sequence to the&n;&t;   ID_PORT.  We find cards past the first by setting the &squot;current_tag&squot;&n;&t;   on cards as they are found.  Cards with their tag set will not&n;&t;   respond to subseqent ID seqences. */
 id|outb
 c_func
 (paren
@@ -679,7 +677,6 @@ l_int|9
 op_rshift
 l_int|12
 suffix:semicolon
-multiline_comment|/* The current Space.c structure makes it difficult to have more&n;&t;   than one adaptor initialized.  Send me email if you have a need for&n;&t;   multiple adaptors, and we&squot;ll work out something.&t; -becker@super.org */
 r_if
 c_cond
 (paren
