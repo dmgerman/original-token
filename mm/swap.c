@@ -2060,7 +2060,7 @@ suffix:semicolon
 id|invalidate_page
 c_func
 (paren
-id|vma-&gt;vm_mm
+id|vma
 comma
 id|address
 )paren
@@ -2163,7 +2163,7 @@ suffix:semicolon
 id|invalidate_page
 c_func
 (paren
-id|vma-&gt;vm_mm
+id|vma
 comma
 id|address
 )paren
@@ -2190,7 +2190,7 @@ suffix:semicolon
 id|invalidate_page
 c_func
 (paren
-id|vma-&gt;vm_mm
+id|vma
 comma
 id|address
 )paren

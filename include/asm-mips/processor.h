@@ -2,7 +2,10 @@ multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1
 macro_line|#ifndef __ASM_MIPS_PROCESSOR_H
 DECL|macro|__ASM_MIPS_PROCESSOR_H
 mdefine_line|#define __ASM_MIPS_PROCESSOR_H
-macro_line|#if !defined (__ASSEMBLY__)
+macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
+macro_line|#include &lt;asm/cachectl.h&gt;
+macro_line|#include &lt;asm/mipsregs.h&gt;
+macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * System setup and hardware bug flags..&n; */
 r_extern
@@ -20,17 +23,6 @@ r_int
 r_int
 id|event
 suffix:semicolon
-macro_line|#if defined (__R4000__)
-DECL|macro|start_bh_atomic
-mdefine_line|#define start_bh_atomic()        &bslash;&n;__asm__ __volatile__(            &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;    &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;         &bslash;&n;&t;&quot;ll&bslash;t$1,(%0)&bslash;n&quot;          &bslash;&n;&t;&quot;1:&bslash;taddiu&bslash;t$1,$1,1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sc&bslash;t$1,(%0)&bslash;n&bslash;t&quot;        &bslash;&n;&t;&quot;beqzl&bslash;t$1,1b&bslash;n&bslash;t&quot;       &bslash;&n;&t;&quot;ll&bslash;t$1,(%0)&bslash;n&bslash;t&quot;        &bslash;&n;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot;           &bslash;&n;&t;&quot;.set&bslash;treorder&quot;          &bslash;&n;&t;: /* no outputs */       &bslash;&n;&t;: &quot;r&quot; (&amp;intr_count));
-DECL|macro|end_bh_atomic
-mdefine_line|#define end_bh_atomic()          &bslash;&n;__asm__ __volatile__(            &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;    &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;         &bslash;&n;&t;&quot;ll&bslash;t$1,(%0)&bslash;n&quot;          &bslash;&n;&t;&quot;1:&bslash;tsubu&bslash;t$1,$1,1&bslash;n&bslash;t&quot;  &bslash;&n;&t;&quot;sc&bslash;t$1,(%0)&bslash;n&bslash;t&quot;        &bslash;&n;&t;&quot;beqzl&bslash;t$1,1b&bslash;n&bslash;t&quot;       &bslash;&n;&t;&quot;ll&bslash;t$1,(%0)&bslash;n&bslash;t&quot;        &bslash;&n;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot;           &bslash;&n;&t;&quot;.set&bslash;treorder&quot;          &bslash;&n;&t;: /* no outputs */       &bslash;&n;&t;: &quot;r&quot; (&amp;intr_count));
-macro_line|#else /* !defined (__R4000__) */
-DECL|macro|start_bh_atomic
-mdefine_line|#define start_bh_atomic() &bslash;&n;{int flags; save_flags(flags); cli(); intr_count++; restore_flags(flags)}
-DECL|macro|end_bh_atomic
-mdefine_line|#define end_bh_atomic() &bslash;&n;{int flags; save_flags(flags); cli(); intr_count--; restore_flags(flags)}
-macro_line|#endif
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; *&n; * This needs to be extended since MIPS systems are being delivered with&n; * numerous different types of bus systems.&n; */
 r_extern
 r_int
@@ -99,7 +91,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_FPU
-mdefine_line|#define INIT_FPU { &bslash;&n;&t;0, &bslash;&n;}
+mdefine_line|#define INIT_FPU { &bslash;&n;&t;{{0,},} &bslash;&n;}
 multiline_comment|/*&n; * If you change thread_struct remember to change the #defines below too!&n; */
 DECL|struct|thread_struct
 r_struct
@@ -158,7 +150,7 @@ r_union
 id|mips_fpu_union
 id|fpu
 suffix:semicolon
-multiline_comment|/*&n;&t; * Other stuff associated with the process&n;&t; */
+multiline_comment|/*&n;&t; * Other stuff associated with the thread&n;&t; */
 DECL|member|cp0_badvaddr
 r_int
 r_int
@@ -180,21 +172,22 @@ r_int
 id|ksp
 suffix:semicolon
 multiline_comment|/* Top of kernel stack   */
-DECL|member|fs
-r_int
-r_int
-id|fs
-suffix:semicolon
-multiline_comment|/* &quot;Segment&quot; pointer     */
 DECL|member|pg_dir
 r_int
 r_int
 id|pg_dir
 suffix:semicolon
 multiline_comment|/* L1 page table pointer */
+DECL|macro|MF_FIXADE
+mdefine_line|#define MF_FIXADE 1
+DECL|member|mflags
+r_int
+r_int
+id|mflags
+suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif /* !defined (__ASSEMBLY__) */
+macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
 multiline_comment|/*&n; * If you change the #defines remember to change thread_struct above too!&n; */
 DECL|macro|TOFF_REG16
 mdefine_line|#define TOFF_REG16&t;&t;0
@@ -233,13 +226,109 @@ DECL|macro|TOFF_TRAP_NO
 mdefine_line|#define TOFF_TRAP_NO&t;&t;(TOFF_ERROR_CODE+4)
 DECL|macro|TOFF_KSP
 mdefine_line|#define TOFF_KSP&t;&t;(TOFF_TRAP_NO+4)
-DECL|macro|TOFF_FS
-mdefine_line|#define TOFF_FS&t;&t;&t;(TOFF_KSP+4)
 DECL|macro|TOFF_PG_DIR
-mdefine_line|#define TOFF_PG_DIR&t;&t;(TOFF_FS+4)
-macro_line|#if !defined (__ASSEMBLY__)
+mdefine_line|#define TOFF_PG_DIR&t;&t;(TOFF_KSP+4)
+DECL|macro|TOFF_MFLAGS
+mdefine_line|#define TOFF_MFLAGS&t;&t;(TOFF_PG_DIR+4)
+macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
+DECL|macro|INIT_MMAP
+mdefine_line|#define INIT_MMAP { &amp;init_mm, KSEG0, KSEG1, PAGE_SHARED, &bslash;&n;                    VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;            0, 0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process&bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, (((unsigned long)init_kernel_stack)+4096-8), &bslash;&n;&t;KERNEL_DS, (unsigned long) swapper_pg_dir &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;            0, 0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process&bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, sizeof(init_kernel_stack) + (unsigned long)init_kernel_stack - 8, &bslash;&n;&t;(unsigned long) swapper_pg_dir - PT_OFFSET, 0 &bslash;&n;}
+multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
+DECL|function|thread_saved_pc
+r_extern
+r_inline
+r_int
+r_int
+id|thread_saved_pc
+c_func
+(paren
+r_struct
+id|thread_struct
+op_star
+id|t
+)paren
+(brace
+r_return
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|t-&gt;reg29
+)paren
+(braket
+id|EF_CP0_EPC
+)braket
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
+r_static
+id|__inline__
+DECL|function|start_thread
+r_void
+id|start_thread
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+r_int
+id|pc
+comma
+r_int
+r_int
+id|sp
+)paren
+(brace
+multiline_comment|/*&n;&t; * Pure paranoia; probably not needed.&n;&t; */
+id|sys_cacheflush
+c_func
+(paren
+l_int|0
+comma
+op_complement
+l_int|0
+comma
+id|BCACHE
+)paren
+suffix:semicolon
+id|sync_mem
+c_func
+(paren
+)paren
+suffix:semicolon
+id|regs-&gt;cp0_epc
+op_assign
+id|pc
+suffix:semicolon
+multiline_comment|/*&n;&t; * New thread looses kernel priviledges.&n;&t; */
+id|regs-&gt;cp0_status
+op_assign
+(paren
+id|regs-&gt;cp0_status
+op_amp
+op_complement
+(paren
+id|ST0_CU0
+op_or
+id|ST0_KSU
+)paren
+)paren
+op_or
+id|KSU_USER
+suffix:semicolon
+multiline_comment|/*&n;&t; * Reserve argument save space for registers a0 - a3.&n;&t;regs-&gt;reg29 = sp - 4 * sizeof(unsigned long);&n;&t; */
+id|regs-&gt;reg29
+op_assign
+id|sp
+suffix:semicolon
+)brace
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; */
 id|asmlinkage
@@ -263,9 +352,15 @@ macro_line|#if defined (__R4000__)
 DECL|macro|USES_USER_TIME
 mdefine_line|#define USES_USER_TIME(regs) (!((regs)-&gt;cp0_status &amp; 0x18))
 macro_line|#else /* !defined (__R4000__) */
-macro_line|#error &quot;#define USES_USER_TIME(regs)!&quot;
+DECL|macro|USES_USER_TIME
+mdefine_line|#define USES_USER_TIME(regs) (!((regs)-&gt;cp0_status &amp; 0x4))
 macro_line|#endif /* !defined (__R4000__) */
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* !defined (__ASSEMBLY__) */
+macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
+multiline_comment|/*&n; * ELF support&n; *&n; * Using EM_MIPS is actually wrong - this one is reserved for big endian&n; * machines only&n; */
+DECL|macro|INCOMPATIBLE_MACHINE
+mdefine_line|#define INCOMPATIBLE_MACHINE(m) ((m) != EM_MIPS &amp;&amp; (m) != EM_MIPS_RS4_BE)
+DECL|macro|ELF_EM_CPU
+mdefine_line|#define ELF_EM_CPU EM_MIPS
 macro_line|#endif /* __ASM_MIPS_PROCESSOR_H */
 eof

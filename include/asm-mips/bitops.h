@@ -2,7 +2,8 @@ multiline_comment|/*&n; * include/asm-mips/bitops.h&n; *&n; * This file is subje
 macro_line|#ifndef __ASM_MIPS_BITOPS_H
 DECL|macro|__ASM_MIPS_BITOPS_H
 mdefine_line|#define __ASM_MIPS_BITOPS_H
-macro_line|#ifdef __R4000__
+macro_line|#if __mips &gt; 1
+multiline_comment|/*&n; * These functions for MIPS ISA &gt;= 2 are interrupt and SMP proof and&n; * interrupt friendly&n; */
 macro_line|#include &lt;asm/mipsregs.h&gt;
 multiline_comment|/*&n; * The following functions will only work for the R4000!&n; */
 DECL|function|set_bit
@@ -261,10 +262,11 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-macro_line|#else /* !defined(__R4000__) */
+macro_line|#else /* __mips &lt;= 1 */
+multiline_comment|/*&n; * These functions are only used for MIPS ISA 1 CPUs.  Since I don&squot;t&n; * believe that someone ever will run Linux/SMP on such a beast I don&squot;t&n; * worry about making them SMP proof.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * Only disable interrupt for kernelmode stuff to keep some&n; * usermode stuff alive&n; */
+multiline_comment|/*&n; * Only disable interrupt for kernel mode stuff to keep usermode stuff&n; * that dares to use kernel include files alive.&n; */
 DECL|macro|__flags
 mdefine_line|#define __flags unsigned long flags
 DECL|macro|__cli
@@ -526,7 +528,7 @@ DECL|macro|__save_flags
 macro_line|#undef __save_flags(x)
 DECL|macro|__restore_flags
 macro_line|#undef __restore_flags(x)
-macro_line|#endif /* !defined(__R4000__) */
+macro_line|#endif /* __mips &lt;= 1 */
 DECL|function|test_bit
 r_extern
 id|__inline__
@@ -543,44 +545,30 @@ op_star
 id|addr
 )paren
 (brace
-r_int
-id|mask
-suffix:semicolon
+r_return
+l_int|1UL
+op_amp
+(paren
+(paren
+(paren
+r_const
 r_int
 r_int
 op_star
-id|a
-suffix:semicolon
-id|a
-op_assign
+)paren
 id|addr
-suffix:semicolon
-id|addr
-op_add_assign
+)paren
+(braket
 id|nr
 op_rshift
 l_int|5
-suffix:semicolon
-id|mask
-op_assign
-l_int|1
-op_lshift
+)braket
+op_rshift
 (paren
 id|nr
 op_amp
-l_int|0x1f
+l_int|31
 )paren
-suffix:semicolon
-r_return
-(paren
-(paren
-id|mask
-op_amp
-op_star
-id|a
-)paren
-op_ne
-l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -855,12 +843,12 @@ id|__volatile__
 (paren
 l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
-l_string|&quot;li&bslash;t%2,1&bslash;n&quot;
+l_string|&quot;move&bslash;t%0,$0&bslash;n&quot;
 l_string|&quot;1:&bslash;tand&bslash;t$1,%2,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq&bslash;t$0,$1,2f&bslash;n&bslash;t&quot;
-l_string|&quot;sll&bslash;t%2,%2,1&bslash;n&bslash;t&quot;
-l_string|&quot;bne&bslash;t$0,%2,1b&bslash;n&bslash;t&quot;
-l_string|&quot;add&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
+l_string|&quot;beqz&bslash;t$1,2f&bslash;n&bslash;t&quot;
+l_string|&quot;sll&bslash;t%1,1&bslash;n&bslash;t&quot;
+l_string|&quot;bnez&bslash;t%1,1b&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&bslash;n&quot;
 l_string|&quot;2:&bslash;n&bslash;t&quot;
@@ -872,30 +860,17 @@ id|__res
 comma
 l_string|&quot;=r&quot;
 (paren
-id|word
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
 id|mask
 )paren
 suffix:colon
-l_string|&quot;1&quot;
-(paren
-op_complement
+l_string|&quot;r&quot;
 (paren
 id|word
 )paren
-)paren
 comma
-l_string|&quot;2&quot;
+l_string|&quot;1&quot;
 (paren
 id|mask
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-l_int|0
 )paren
 suffix:colon
 l_string|&quot;$1&quot;

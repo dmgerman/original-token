@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#if 0
 multiline_comment|/*&n; * does not yet catch signals sent when the child dies.&n; * in exit.c or in signal.c.&n; */
@@ -558,25 +559,25 @@ id|page
 OL
 id|high_memory
 )paren
-(brace
-id|page
-op_add_assign
-id|addr
-op_amp
-op_complement
-id|PAGE_MASK
-suffix:semicolon
 op_star
 (paren
 r_int
 r_int
 op_star
 )paren
+(paren
 id|page
+op_plus
+(paren
+id|addr
+op_amp
+op_complement
+id|PAGE_MASK
+)paren
+)paren
 op_assign
 id|data
 suffix:semicolon
-)brace
 multiline_comment|/* we&squot;re bypassing pagetables, so we have to set the dirty bit ourselves */
 multiline_comment|/* this should also re-instate whatever read-only mode there was before */
 id|set_pte
@@ -2303,6 +2304,17 @@ suffix:colon
 (brace
 r_int
 id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|child-&gt;state
+op_eq
+id|TASK_ZOMBIE
+)paren
+multiline_comment|/* already dead */
+r_return
+l_int|0
 suffix:semicolon
 id|wake_up_process
 c_func

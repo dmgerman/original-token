@@ -1,40 +1,53 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.0 - ALPHA&t;Dec  3, 1995&n; *&n; * Copyright (C) 1995 Gadi Oxman &lt;tgud@tochnapc2.technion.ac.il&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.1 - ALPHA&t;Dec  14, 1995&n; *&n; * Copyright (C) 1995 Gadi Oxman &lt;tgud@tochnapc2.technion.ac.il&gt;&n; */
 multiline_comment|/*&n; * Include file for the IDE ATAPI streaming tape driver.&n; *&n; * This file contains various ide-tape related structures and function&n; * prototypes which are already used in ide.h.&n; *&n; * The various compile time options are described below.&n; */
 macro_line|#ifndef IDETAPE_H
 DECL|macro|IDETAPE_H
 mdefine_line|#define IDETAPE_H 
 multiline_comment|/**************************** Tunable parameters *****************************/
+multiline_comment|/*&n; *&t;This is probably the most important configuration option.&n; *&n; *&t;Pipelined operation mode has the potential to maximize the&n; *&t;performance of the driver and thus to saturate the throughput&n; *&t;to the maximum value supported by the tape. Currently, pipelined&n; *&t;mode is supported only on writes.&n; *&n; *&t;In pipelined mode we are servicing requests without blocking the&n; *&t;user backup program. For example, on a write request, we will add it&n; *&t;to the pipeline and return without waiting for it to complete. The&n; *&t;user program will then have enough time to prepare the next blocks&n; *&t;while the tape is still busy working on the previous requests.&n; *&n; *&t;Pipelined (write) operation mode is enabled by default, but since&n; *&t;it has a few downfalls as well (Use of additional memory and deferred&n; *      error code to the application), you may wish to disable it.&n; *&t;Further explanation of pipelined mode is available in ide-tape.c .&n; */
+DECL|macro|IDETAPE_PIPELINE
+mdefine_line|#define&t;IDETAPE_PIPELINE&t;1
+multiline_comment|/*&n; *&t;Pipelined mode parameters.&n; *&n; *&t;We try to use the minimum number of stages which is enough to&n; *&t;keep the tape constantly streaming. To accomplish that, we implement&n; *&t;a feedback loop around the maximum number of stages:&n; *&n; *&t;We start from MIN maximum stages (we will not even use MIN stages&n; *      if we don&squot;t need them), increment it by RATE*(MAX-MIN)&n; *&t;whenever we sense that the pipeline is empty, until we reach&n; *&t;the optimum value or until we reach MAX.&n; */
+DECL|macro|IDETAPE_MIN_PIPELINE_STAGES
+mdefine_line|#define&t;IDETAPE_MIN_PIPELINE_STAGES&t;&t;100
+DECL|macro|IDETAPE_MAX_PIPELINE_STAGES
+mdefine_line|#define&t;IDETAPE_MAX_PIPELINE_STAGES&t;&t;200
+DECL|macro|IDETAPE_INCREASE_STAGES_RATE
+mdefine_line|#define&t;IDETAPE_INCREASE_STAGES_RATE&t;&t;0.2
+multiline_comment|/*&n; *&t;It seems that dynamically allocating buffers of about 32KB&n; *&t;each is doomed to fail, unless we are in or very near the&n; *&t;initialization stage. Take care when changing this value, as it&n; *&t;is now optimized with the design of kmalloc, so that we will not&n; *&t;allocate parts of a page. Setting the size to 512 bytes, for example,&n; *&t;would cause kmalloc to allocate for us 1024 bytes, and to&n; *&t;unnecessarily waste double amount of memory.&n; */
+macro_line|#if PAGE_SIZE == 4096
+DECL|macro|IDETAPE_ALLOCATION_BLOCK
+mdefine_line|#define&t;IDETAPE_ALLOCATION_BLOCK&t;&t;500
+macro_line|#elif PAGE_SIZE == 8192
+DECL|macro|IDETAPE_ALLOCATION_BLOCK
+mdefine_line|#define&t;IDETAPE_ALLOCATION_BLOCK&t;&t;496
+macro_line|#else /* ??? Not defined by linux/mm/kmalloc.c */
+DECL|macro|IDETAPE_ALLOCATION_BLOCK
+mdefine_line|#define IDETAPE_ALLOCATION_BLOCK&t;&t;512
+macro_line|#endif
 multiline_comment|/*&n; *&t;Setting IDETAPE_DEBUG to 1 will:&n; *&n; *&t;&t;1.&t;Generally log all driver actions.&n; *&t;&t;2.&t;Enable self-sanity checks in some places.&n; *&n; *&t;Use IDETAPE_DEBUG when encountering a problem with the driver.&n; *&n; *&t;Setting IDETAPE_DEBUG to 0 will restore normal operation mode:&n; *&n; *&t;&t;1.&t;Disable logging normal successful operations.&n; *&t;&t;2.&t;Disable self-sanity checks.&n; *&t;&t;3.&t;Errors will still be logged, of course.&n; */
 DECL|macro|IDETAPE_DEBUG
 mdefine_line|#define&t;IDETAPE_DEBUG&t;&t;0
 multiline_comment|/*&n; *&t;After each failed packet command we issue a request sense command&n; *&t;and retry the packet command IDETAPE_MAX_PC_RETRIES times.&n; *&n; *&t;Setting IDETAPE_MAX_PC_RETRIES to 0 will disable retries.&n; */
 DECL|macro|IDETAPE_MAX_PC_RETRIES
 mdefine_line|#define&t;IDETAPE_MAX_PC_RETRIES&t;2
-multiline_comment|/*&n; *&t;In case the tape is not at the requested block, we re-position the&n; *&t;tape. Repeat the procedure for IDETAPE_LOCATE_RETRIES times before&n; *&t;we give up and abort the request. Note that this should not usually&n; *&t;happen when using only the character device interface.&n; */
-DECL|macro|IDETAPE_LOCATE_RETRIES
-mdefine_line|#define&t;IDETAPE_LOCATE_RETRIES&t;1
 multiline_comment|/*&n; *&t;With each packet command, we allocate a buffer of&n; *&t;IDETAPE_TEMP_BUFFER_SIZE bytes. This is used for several packet&n; *&t;commands (Not for READ/WRITE commands).&n; *&n; *&t;The default below is too high - We should be using around 100 bytes&n; *&t;typically, but I didn&squot;t check all the cases, so I rather be on the&n; *&t;safe size.&n; */
 DECL|macro|IDETAPE_TEMP_BUFFER_SIZE
 mdefine_line|#define&t;IDETAPE_TEMP_BUFFER_SIZE 256
-multiline_comment|/*&n; *&t;In various places in the driver, we need to allocate storage&n; *&t;for packet commands and requests, which will remain valid while&n; *&t;we leave the driver to wait for an interrupt or a timeout event.&n; *&n; *&t;In the corresponding ide_drive_t structure, we pre-allocate storage&n; *&t;for IDETAPE_PC_STACK packet commands and requests. This storage is&n; *&t;used as a circular array - Each time we reach the last entry, we&n; *&t;warp around to the first.&n; *&n; *&t;It is crucial that we have enough entries for the maximum number&n; *&t;of packet commands / sub-requests which we need to allocate during&n; *&t;the handling of a specific request.&n; *&n; *&t;Follows a worse case calculation of the required storage, with a&n; *&t;large safety margin. Hopefully. :-)&n; */
+multiline_comment|/*&n; *&t;In various places in the driver, we need to allocate storage&n; *&t;for packet commands and requests, which will remain valid while&n; *&t;we leave the driver to wait for an interrupt or a timeout event.&n; *&n; *&t;In the corresponding ide_drive_t structure, we pre-allocate storage&n; *&t;for IDETAPE_PC_STACK packet commands and requests. This storage is&n; *&t;used as a circular array - Each time we reach the last entry, we&n; *&t;warp around to the first.&n; *&n; *&t;It is crucial that we have enough entries for the maximum number&n; *&t;of packet commands / sub-requests which we need to allocate during&n; *&t;the handling of a specific request.&n; *&n; *&t;Follows a worse case calculation of the required storage, with a&n; *&t;large safety margin.&n; */
 DECL|macro|IDETAPE_PC_STACK
-mdefine_line|#define&t;IDETAPE_PC_STACK&t;10+&bslash;&n;&t;&t;&t;&t;IDETAPE_MAX_PC_RETRIES+&bslash;&n;&t;&t;&t;&t;3*IDETAPE_LOCATE_RETRIES*IDETAPE_MAX_PC_RETRIES
-multiline_comment|/*&n; *&t;Media access packet command (like the LOCATE command) have immediate&n; *&t;status with a delayed (and usually long) execution. The tape doesn&squot;t&n; *&t;issue an interrupt when the command is actually complete (so that the&n; *&t;bus is freed to use the other IDE device on the same interface), so we&n; *&t;must for poll for this event.&n; *&n; *&t;We set a timer with polling frequency of 1/IDETAPE_DSC_MEDIA_ACCESS_FREQUENCY&n; *&t;in this case. We also poll for DSC *before* read/write commands. At&n; *&t;this time the DSC role is changed and instead of signalling command&n; *&t;completion, it will signal buffer availability. Since read/write&n; *&t;commands are fast in comparision to media access commands, the polling&n; *&t;frequency here should be much higher.&n; *&n; *&t;We will insist of reading DSC=1 for IDETAPE_DSC_COUNT times in a row,&n; *&t;to accommodate for random fluctuations in the sampling of DSC.&n; *&t;We will also set IDETAPE_DSC_POLLING_FREQUENCY to a rather low&n; *&t;frequency which besides freeing the CPU and the bus will let&n; *&t;random fluctuations a time to settle down.&n; *&n; *&t;We also set a timeout for the timer, in case something goes wrong.&n; *&t;The timeout should be longer then the maximum execution time of a&n; *&t;tape operation. I still have to measure exactly how much time does&n; *&t;it take to space over a far filemark, etc. It seemed that 15 minutes&n; *&t;was way too low, so I am meanwhile setting it to a rather large&n; *&t;timeout - 2 Hours.&n; *&n; *&t;Once we pass a threshold, the polling frequency will change to&n; *&t;a slow frequency: On relatively fast operations, there is a point&n; *&t;in polling fast, but if we sense that the operation is taking too&n; *&t;much time, we will poll at a lower frequency.&n; */
+mdefine_line|#define&t;IDETAPE_PC_STACK&t;20+IDETAPE_MAX_PC_RETRIES
+multiline_comment|/*&n; *&t;DSC polling parameters.&n; *&n; *&t;Polling for DSC (a single bit in the status register) is a very&n; *&t;important function in ide-tape. There are two cases in which we&n; *&t;poll for DSC:&n; *&n; *&t;1.&t;Before a read/write packet command, to ensure that we&n; *&t;&t;can transfer data from/to the tape&squot;s data buffers, without&n; *&t;&t;causing an actual media access. In case the tape is not&n; *&t;&t;ready yet, we take out our request from the device&n; *&t;&t;request queue, so that ide.c will service requests from&n; *&t;&t;the other device on the same interface meanwhile.&n; *&n; *&t;&t;The polling frequency is 1/IDETAPE_DSC_READ_WRITE_FREQUENCY,&n; *&t;&t;and it should be relatively fast. The default is a period&n; *&t;&t;of 50 msec.&n; *&n; *&t;2.&t;After the successful initialization of a &quot;media access&n; *&t;&t;packet command&quot;, which is a command which can take a long&n; *&t;&t;time to complete (it can be several seconds or even an hour).&n; *&n; *&t;&t;Again, we postpone our request in the middle to free the bus&n; *&t;&t;for the other device. The polling frequency here should be&n; *&t;&t;lower than the read/write frequency since those media access&n; *&t;&t;commands are slow. We start from a &quot;fast&quot; frequency -&n; *&t;&t;IDETAPE_DSC_FAST_MEDIA_ACCESS_FREQUENCY (one second), and&n; *&t;&t;if we don&squot;t receive DSC after IDETAPE_FAST_SLOW_THRESHOLD&n; *&t;&t;(5 minutes), we switch it to a lower frequency -&n; *&t;&t;IDETAPE_DSC_SLOW_MEDIA_ACCESS_FREQUENCY (1 minute).&n; *&t;&t;&n; *&t;We also set a timeout for the timer, in case something goes wrong.&n; *&t;The timeout should be longer then the maximum execution time of a&n; *&t;tape operation. I still have to measure exactly how much time does&n; *&t;it take to space over a far filemark, etc. It seemed that 15 minutes&n; *&t;was way too low, so I am meanwhile setting it to a rather large&n; *&t;timeout - 2 Hours ...&n; *&n; */
+DECL|macro|IDETAPE_DSC_READ_WRITE_FREQUENCY
+mdefine_line|#define&t;IDETAPE_DSC_READ_WRITE_FREQUENCY&t;5*HZ/100&t;/* 50 msec */
 DECL|macro|IDETAPE_DSC_FAST_MEDIA_ACCESS_FREQUENCY
 mdefine_line|#define&t;IDETAPE_DSC_FAST_MEDIA_ACCESS_FREQUENCY&t;1*HZ&t;&t;/* 1 second */
 DECL|macro|IDETAPE_FAST_SLOW_THRESHOLD
 mdefine_line|#define&t;IDETAPE_FAST_SLOW_THRESHOLD&t;&t;5*60*HZ&t;&t;/* 5 minutes */
 DECL|macro|IDETAPE_DSC_SLOW_MEDIA_ACCESS_FREQUENCY
 mdefine_line|#define IDETAPE_DSC_SLOW_MEDIA_ACCESS_FREQUENCY&t;60*HZ&t;&t;/* 1 minute */
-DECL|macro|IDETAPE_DSC_READ_WRITE_FREQUENCY
-mdefine_line|#define&t;IDETAPE_DSC_READ_WRITE_FREQUENCY&t;HZ/20&t;&t;/* 50 msec */
 DECL|macro|IDETAPE_DSC_TIMEOUT
 mdefine_line|#define&t;IDETAPE_DSC_TIMEOUT&t;&t;&t;2*60*60*HZ&t;/* 2 hours */
-DECL|macro|IDETAPE_DSC_COUNT
-mdefine_line|#define IDETAPE_DSC_COUNT&t;&t;&t;1&t;&t;/* Assume no DSC fluctuations */
-multiline_comment|/*&n; *&t;As explained in many places through the code, we provide both a block&n; *&t;device and a character device interface to the tape. The block device&n; *&t;interface is needed for compatibility with ide.c. The character device&n; *&t;interface is the higher level of the driver, and passes requests&n; *&t;to the lower part of the driver which interfaces with ide.c.&n; *&t;Using the block device interface, we can bypass this high level&n; *&t;of the driver, talking directly with the lower level part.&n; *&n; *&t;It is intended that the character device interface will be used by&n; *&t;the user. To prevent mistakes in this regard, opening of the block&n; *&t;device interface will be refused if ALLOW_OPENING_BLOCK_DEVICE is 0.&n; *&n; *&t;Do not change the following parameter unless you are developing&n; *&t;the driver itself.&n; */
-DECL|macro|IDETAPE_ALLOW_OPENING_BLOCK_DEVICE
-mdefine_line|#define IDETAPE_ALLOW_OPENING_BLOCK_DEVICE&t;0
 multiline_comment|/*************************** End of tunable parameters ***********************/
 multiline_comment|/*&n; *&t;Definitions which are already needed in ide.h&n; */
 multiline_comment|/*&n; *&t;The following is currently not used.&n; */
@@ -375,6 +388,61 @@ DECL|typedef|idetape_capabilities_page_t
 )brace
 id|idetape_capabilities_page_t
 suffix:semicolon
+multiline_comment|/*&n; *&t;A pipeline stage contains several small buffers of type&n; *&t;idetape_buffer_head_t. This is necessary since dynamical allocation&n; *&t;of large (32 KB or so) continuous memory blocks will usually fail.&n; */
+DECL|struct|idetape_buffer_head_s
+r_typedef
+r_struct
+id|idetape_buffer_head_s
+(brace
+DECL|member|data
+r_char
+op_star
+id|data
+suffix:semicolon
+multiline_comment|/* Pointer to data (512 bytes by default) */
+DECL|member|next
+r_struct
+id|idetape_buffer_head_s
+op_star
+id|next
+suffix:semicolon
+DECL|typedef|idetape_buffer_head_t
+)brace
+id|idetape_buffer_head_t
+suffix:semicolon
+multiline_comment|/*&n; *&t;A pipeline stage.&n; *&n; *&t;In a pipeline stage we have a request, pointer to a list of small&n; *&t;buffers, and pointers to the near stages.&n; */
+DECL|struct|idetape_pipeline_stage_s
+r_typedef
+r_struct
+id|idetape_pipeline_stage_s
+(brace
+DECL|member|rq
+r_struct
+id|request
+id|rq
+suffix:semicolon
+multiline_comment|/* The correspoding request */
+DECL|member|bh
+id|idetape_buffer_head_t
+op_star
+id|bh
+suffix:semicolon
+multiline_comment|/* The data buffers */
+DECL|member|next
+DECL|member|prev
+r_struct
+id|idetape_pipeline_stage_s
+op_star
+id|next
+comma
+op_star
+id|prev
+suffix:semicolon
+multiline_comment|/* Pointers to the next and previous stages */
+DECL|typedef|idetape_pipeline_stage_t
+)brace
+id|idetape_pipeline_stage_t
+suffix:semicolon
 multiline_comment|/*&n; *&t;Most of our global data which we need to save even as we leave the&n; *&t;driver due to an interrupt or a timer event is stored in a variable&n; *&t;of type tape_info, defined below.&n; *&n; *&t;Additional global variables which provide the link between the&n; *&t;character device interface to this structure are defined in&n; *&t;ide-tape.c&n; */
 r_typedef
 r_struct
@@ -405,7 +473,7 @@ id|byte
 id|pc_stack_index
 suffix:semicolon
 multiline_comment|/* Next free packet command storage space */
-multiline_comment|/* &n;&t; *&t;The Linux ide driver basically traverses the request lists&n;&t; *&t;of the ide block devices, finds the next request, completes&n;&t; *&t;it, and passes to the next one. This is done in ide_do_request.&n;&t; *&n;&t; *&t;In this regard, ide-tape.c is fully compatible with the rest of&n;&t; *&t;the ide driver - From the point of view of ide.c, we are just&n;&t; *&t;another ide block device which receives requests and completes&n;&t; *&t;them.&n;&t; *&n;&t; *&t;However, our requests usually don&squot;t originate in the buffer&n;&t; *&t;cache but rather in ide-tape.c itself. Here we provide safe&n;&t; *&t;storage for such requests.&n;&t; */
+multiline_comment|/* &n;&t; *&t;The Linux ide driver basically traverses the request lists&n;&t; *&t;of the ide block devices, finds the next request, completes&n;&t; *&t;it, and passes to the next one. This is done in ide_do_request.&n;&t; *&n;&t; *&t;In this regard, ide-tape.c is fully compatible with the rest of&n;&t; *&t;the ide driver - From the point of view of ide.c, we are just&n;&t; *&t;another ide block device which receives requests and completes&n;&t; *&t;them.&n;&t; *&n;&t; *&t;However, our requests don&squot;t originate in the buffer cache but&n;&t; *&t;rather in ide-tape.c itself. Here we provide safe storage for&n;&t; *&t;such requests.&n;&t; */
 DECL|member|rq_stack
 r_struct
 id|request
@@ -419,22 +487,25 @@ id|byte
 id|rq_stack_index
 suffix:semicolon
 multiline_comment|/* We implement a circular array */
-multiline_comment|/*&n;&t; *&t;While polling for DSC we use postponed_rq to postpone the&n;&t; *&t;current request so that ide.c will be able to service&n;&t; *&t;pending requests on the other device.&n;&t; */
+multiline_comment|/*&n;&t; *&t;While polling for DSC we use postponed_rq to postpone the&n;&t; *&t;current request so that ide.c will be able to service&n;&t; *&t;pending requests on the other device. Note that at most&n;&t; *&t;we will have only one DSC (usually data transfer) request&n;&t; *&t;in the device request queue. Additional request can be&n;&t; *&t;queued in our internal pipeline, but they will be visible&n;&t; *&t;to ide.c only one at a time.&n;&t; */
 DECL|member|postponed_rq
 r_struct
 id|request
 op_star
 id|postponed_rq
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;DSC polling variables.&n;&t; */
 DECL|member|dsc_count
 id|byte
 id|dsc_count
 suffix:semicolon
+multiline_comment|/* We received DSC dsc_count times in a row */
 DECL|member|dsc_polling_start
 r_int
 r_int
 id|dsc_polling_start
 suffix:semicolon
+multiline_comment|/* The time in which we started polling for DSC */
 DECL|member|dsc_timer
 r_struct
 id|timer_list
@@ -446,6 +517,7 @@ r_int
 r_int
 id|dsc_polling_frequency
 suffix:semicolon
+multiline_comment|/* The current polling frequency */
 DECL|member|dsc_timeout
 r_int
 r_int
@@ -456,6 +528,22 @@ DECL|member|dsc_received
 id|byte
 id|dsc_received
 suffix:semicolon
+multiline_comment|/* Set when we receive DSC */
+DECL|member|request_status
+id|byte
+id|request_status
+suffix:semicolon
+DECL|member|request_dsc_callback
+id|byte
+id|request_dsc_callback
+suffix:semicolon
+DECL|member|last_status
+id|byte
+id|last_status
+suffix:semicolon
+multiline_comment|/* Contents of the tape status register */
+multiline_comment|/* before the current request (saved for us */
+multiline_comment|/* by ide.c) */
 multiline_comment|/* Position information */
 DECL|member|partition_num
 id|byte
@@ -474,30 +562,6 @@ id|block_address_valid
 suffix:semicolon
 multiline_comment|/* 0 When the tape position is unknown */
 multiline_comment|/* (To the tape or to us) */
-DECL|member|locate_to
-r_int
-r_int
-id|locate_to
-suffix:semicolon
-multiline_comment|/* We want to reach this block, as a part */
-multiline_comment|/* of handling the current request */
-DECL|member|locate_retries
-id|byte
-id|locate_retries
-suffix:semicolon
-multiline_comment|/* Each time, increase locate_retries */
-DECL|member|last_written_block
-r_int
-r_int
-id|last_written_block
-suffix:semicolon
-multiline_comment|/* Once writing started, we don&squot;t allow read */
-DECL|member|last_written_valid
-id|byte
-id|last_written_valid
-suffix:semicolon
-multiline_comment|/* access beyond the last written block */
-multiline_comment|/* ??? Should I remove this ? */
 multiline_comment|/* Last error information */
 DECL|member|sense_key
 DECL|member|asc
@@ -527,20 +591,80 @@ r_int
 r_int
 id|tape_block_size
 suffix:semicolon
+multiline_comment|/* Usually 512 or 1024 bytes */
 DECL|member|capabilities
 id|idetape_capabilities_page_t
 id|capabilities
 suffix:semicolon
-multiline_comment|/* Capabilities and Mechanical Page */
-multiline_comment|/* Data buffer */
+multiline_comment|/* Copy of the tape&squot;s Capabilities and Mechanical Page */
+multiline_comment|/*&n;&t; *&t;Active data transfer request parameters.&n;&t; *&n;&t; *&t;At most, there is only one ide-tape originated data transfer&n;&t; *&t;request in the device request queue. This allows ide.c to&n;&t; *&t;easily service requests from the other device when we&n;&t; *&t;postpone our active request. In the pipelined operation&n;&t; *&t;mode, we use our internal pipeline structure to hold&n;&t; *&t;more data requests.&n;&t; *&n;&t; *&t;The data buffer size is chosen based on the tape&squot;s&n;&t; *&t;recommendation.&n;&t; */
+DECL|member|active_data_request
+r_struct
+id|request
+op_star
+id|active_data_request
+suffix:semicolon
+multiline_comment|/* Pointer to the request which is waiting in the device request queue */
 DECL|member|data_buffer
 r_char
 op_star
 id|data_buffer
 suffix:semicolon
+multiline_comment|/* The correspoding data buffer (for read/write requests) */
+DECL|member|data_buffer_size
+r_int
+id|data_buffer_size
+suffix:semicolon
+multiline_comment|/* Data buffer size (chosen based on the tape&squot;s recommendation */
+DECL|member|temp_data_buffer
+r_char
+op_star
+id|temp_data_buffer
+suffix:semicolon
+multiline_comment|/* Temporary buffer for user &lt;-&gt; kernel space data transfer */
+multiline_comment|/*&n;&t; *&t;Pipeline parameters.&n;&t; *&n;&t; *&t;To accomplish non-pipelined mode, we simply set the following&n;&t; *&t;variables to zero (or NULL, where appropriate).&n;&t; */
+DECL|member|current_number_of_stages
+r_int
+id|current_number_of_stages
+suffix:semicolon
+multiline_comment|/* Number of currently used stages */
+DECL|member|max_number_of_stages
+r_int
+id|max_number_of_stages
+suffix:semicolon
+multiline_comment|/* We will not allocate more than this number of stages */
+DECL|member|first_stage
+id|idetape_pipeline_stage_t
+op_star
+id|first_stage
+suffix:semicolon
+multiline_comment|/* Will be serviced after the currently active request */
+DECL|member|last_stage
+id|idetape_pipeline_stage_t
+op_star
+id|last_stage
+suffix:semicolon
+multiline_comment|/* New write requests will be added to the pipeline here */
+DECL|member|pipeline_was_full_once
+r_int
+id|pipeline_was_full_once
+suffix:semicolon
+multiline_comment|/* Set at the first time we fill the pipeline since the tape was opened */
+DECL|member|error_in_pipeline_stage
+r_int
+id|error_in_pipeline_stage
+suffix:semicolon
+multiline_comment|/* Set when an error was detected in one of the pipeline stages */
+DECL|member|pipeline_locked
+r_int
+id|pipeline_locked
+suffix:semicolon
+multiline_comment|/* Against race conditions ... */
 DECL|typedef|idetape_tape_t
 )brace
 id|idetape_tape_t
 suffix:semicolon
+DECL|macro|POLL_HWIF_TAPE_DRIVE
+mdefine_line|#define POLL_HWIF_TAPE_DRIVE&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;tape_drive != NULL) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (hwif-&gt;tape_drive-&gt;tape.request_status) {&t;&t;&t;&bslash;&n;&t;&t;&t;OUT_BYTE(hwif-&gt;tape_drive-&gt;select.all,IDE_SELECT_REG);&t;&bslash;&n;&t;&t;&t;hwif-&gt;tape_drive-&gt;tape.last_status=GET_STAT();&t;&t;&bslash;&n;&t;&t;&t;hwif-&gt;tape_drive-&gt;tape.request_status=0;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (hwif-&gt;tape_drive-&gt;tape.request_dsc_callback) {&t;&t;&bslash;&n;&t;&t;&t;hwif-&gt;tape_drive-&gt;tape.request_dsc_callback=0;&t;&t;&bslash;&n;&t;&t;&t;idetape_put_back_postponed_request(hwif-&gt;tape_drive);&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}
 macro_line|#endif /* IDETAPE_H */
 eof

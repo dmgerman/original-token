@@ -1,14 +1,18 @@
-multiline_comment|/*&n; *  arch/mips/kernel/traps.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * &squot;traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;asm.s&squot;. Currently mostly a debugging-aid, will be extended&n; * to mainly kill the offending process (probably by giving it a signal,&n; * but possibly by killing it outright if necessary).&n; */
+multiline_comment|/*&n; *  arch/mips/kernel/traps.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * &squot;traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;asm.s&squot;. Currently mostly a debugging-aid, will be extended&n; * to mainly kill the offending process (probably by giving it a signal,&n; * but possibly by killing it outright if necessary).&n; *&n; * FIXME: This is the place for a fpu emulator.&n; */
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/vector.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -33,10 +37,34 @@ op_assign
 l_int|15
 suffix:semicolon
 )brace
-DECL|macro|get_seg_byte
-mdefine_line|#define get_seg_byte(seg,addr) ({ &bslash;&n;register unsigned char __res; &bslash;&n;__res = get_user_byte(addr); &bslash;&n;__res;})
-DECL|macro|get_seg_long
-mdefine_line|#define get_seg_long(seg,addr) ({ &bslash;&n;register unsigned long __res; &bslash;&n;__res = get_user_word(addr); &bslash;&n;__res;})
+multiline_comment|/*&n; * Machine specific interrupt handlers&n; */
+r_extern
+id|asmlinkage
+r_void
+id|acer_pica_61_handle_int
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|decstation_handle_int
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|deskstation_rpc44_handle_int
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
@@ -49,7 +77,7 @@ suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
-id|acer_pica_61_handle_int
+id|mips_magnum_4000_handle_int
 c_func
 (paren
 r_void
@@ -218,6 +246,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|variable|cpu_names
+r_static
 r_char
 op_star
 id|cpu_names
@@ -226,15 +255,18 @@ id|cpu_names
 op_assign
 id|CPU_NAMES
 suffix:semicolon
+DECL|variable|page_colour_mask
+r_int
+r_int
+id|page_colour_mask
+suffix:semicolon
 DECL|variable|kstack_depth_to_print
 r_int
 id|kstack_depth_to_print
 op_assign
 l_int|24
 suffix:semicolon
-multiline_comment|/*&n; * These constants are for searching for possible module text&n; * segments.  VMALLOC_OFFSET comes from mm/vmalloc.c; MODULE_RANGE is&n; * a guess of how much space is likely to be vmalloced.&n; */
-DECL|macro|VMALLOC_OFFSET
-mdefine_line|#define VMALLOC_OFFSET (8*1024*1024)
+multiline_comment|/*&n; * These constant is for searching for possible module text segments.&n; * MODULE_RANGE is a guess of how much space is likely to be vmalloced.&n; */
 DECL|macro|MODULE_RANGE
 mdefine_line|#define MODULE_RANGE (8*1024*1024)
 DECL|function|die_if_kernel
@@ -259,17 +291,15 @@ r_int
 id|i
 suffix:semicolon
 r_int
-r_int
+op_star
+id|stack
+suffix:semicolon
+id|u32
 op_star
 id|sp
 comma
 op_star
 id|pc
-suffix:semicolon
-r_int
-r_int
-op_star
-id|stack
 comma
 id|addr
 comma
@@ -281,7 +311,7 @@ r_extern
 r_char
 id|start_kernel
 comma
-id|etext
+id|_etext
 suffix:semicolon
 r_if
 c_cond
@@ -303,8 +333,7 @@ suffix:semicolon
 id|sp
 op_assign
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|regs-&gt;reg29
@@ -312,8 +341,7 @@ suffix:semicolon
 id|pc
 op_assign
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|regs-&gt;cp0_epc
@@ -333,151 +361,10 @@ comma
 id|err
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Saved main processor registers&n;&t; */
-id|printk
+id|show_regs
 c_func
 (paren
-l_string|&quot;at   : %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg1
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;v0   : %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg2
-comma
-id|regs-&gt;reg3
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;a0   : %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg4
-comma
-id|regs-&gt;reg5
-comma
-id|regs-&gt;reg6
-comma
-id|regs-&gt;reg7
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;t0   : %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg8
-comma
-id|regs-&gt;reg9
-comma
-id|regs-&gt;reg10
-comma
-id|regs-&gt;reg11
-comma
-id|regs-&gt;reg12
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;t5   : %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg13
-comma
-id|regs-&gt;reg14
-comma
-id|regs-&gt;reg15
-comma
-id|regs-&gt;reg24
-comma
-id|regs-&gt;reg25
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;s0   : %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg16
-comma
-id|regs-&gt;reg17
-comma
-id|regs-&gt;reg18
-comma
-id|regs-&gt;reg19
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;s4   : %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg20
-comma
-id|regs-&gt;reg21
-comma
-id|regs-&gt;reg22
-comma
-id|regs-&gt;reg23
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;gp   : %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg28
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;sp   : %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg29
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;fp/s8: %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg30
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;ra   : %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg31
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Saved cp0 registers&n;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;epc  : %08lx&bslash;nStatus: %08lx&bslash;nCause : %08lx&bslash;n&quot;
-comma
-id|regs-&gt;cp0_epc
-comma
-id|regs-&gt;cp0_status
-comma
-id|regs-&gt;cp0_cause
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Some goodies...&n;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;Int  : %ld&bslash;n&quot;
-comma
-id|regs-&gt;interrupt
+id|regs
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Dump the stack&n;&t; */
@@ -488,8 +375,7 @@ id|STACK_MAGIC
 op_ne
 op_star
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|current-&gt;kernel_stack_page
@@ -503,15 +389,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Process %s (pid: %d, process nr: %d, stackpage=%08lx)&bslash;nStack: &quot;
+l_string|&quot;Process %s (pid: %d, stackpage=%08lx)&bslash;nStack: &quot;
 comma
 id|current-&gt;comm
 comma
 id|current-&gt;pid
-comma
-l_int|0xffff
-op_amp
-id|i
 comma
 id|current-&gt;kernel_stack_page
 )paren
@@ -534,7 +416,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;%08lx &quot;
+l_string|&quot;%08x &quot;
 comma
 op_star
 id|sp
@@ -545,7 +427,6 @@ suffix:semicolon
 id|stack
 op_assign
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -571,11 +452,15 @@ c_cond
 (paren
 (paren
 (paren
-r_int
+id|u32
 )paren
 id|stack
 op_amp
-l_int|4095
+(paren
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
 )paren
 op_eq
 l_int|0
@@ -608,11 +493,9 @@ c_func
 (paren
 l_string|&quot;%08lx &quot;
 comma
-id|get_seg_long
+id|get_user
 c_func
 (paren
-id|ss
-comma
 id|stack
 op_increment
 )paren
@@ -629,7 +512,6 @@ id|stack
 op_assign
 (paren
 r_int
-r_int
 op_star
 )paren
 id|sp
@@ -640,20 +522,7 @@ l_int|1
 suffix:semicolon
 id|module_start
 op_assign
-(paren
-(paren
-id|high_memory
-op_plus
-id|VMALLOC_OFFSET
-)paren
-op_amp
-op_complement
-(paren
-id|VMALLOC_OFFSET
-op_minus
-l_int|1
-)paren
-)paren
+id|VMALLOC_START
 suffix:semicolon
 id|module_end
 op_assign
@@ -666,11 +535,15 @@ c_loop
 (paren
 (paren
 (paren
-r_int
+id|u32
 )paren
 id|stack
 op_amp
-l_int|4095
+(paren
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
 )paren
 op_ne
 l_int|0
@@ -678,11 +551,9 @@ l_int|0
 (brace
 id|addr
 op_assign
-id|get_seg_long
+id|get_user
 c_func
 (paren
-id|ss
-comma
 id|stack
 op_increment
 )paren
@@ -696,8 +567,7 @@ c_cond
 id|addr
 op_ge
 (paren
-r_int
-r_int
+id|u32
 )paren
 op_amp
 id|start_kernel
@@ -707,11 +577,10 @@ op_logical_and
 id|addr
 op_le
 (paren
-r_int
-r_int
+id|u32
 )paren
 op_amp
-id|etext
+id|_etext
 )paren
 )paren
 op_logical_or
@@ -754,7 +623,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%08lx &quot;
+l_string|&quot;%08x &quot;
 comma
 id|addr
 )paren
@@ -770,6 +639,59 @@ c_func
 l_string|&quot;&bslash;nCode : &quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|pc
+comma
+l_int|5
+op_star
+r_sizeof
+(paren
+op_star
+id|pc
+)paren
+)paren
+op_logical_or
+id|KSEGX
+c_func
+(paren
+id|pc
+)paren
+op_eq
+id|KSEG0
+op_logical_or
+id|KSEGX
+c_func
+(paren
+id|pc
+)paren
+op_eq
+id|KSEG1
+)paren
+op_logical_and
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|pc
+op_amp
+l_int|3
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -788,7 +710,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;%08lx &quot;
+l_string|&quot;%08x &quot;
 comma
 op_star
 id|pc
@@ -802,10 +724,61 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;(Bad address in epc)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|do_exit
 c_func
 (paren
 id|SIGSEGV
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|fix_ade
+id|fix_ade
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+id|write
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Received address error (ade%c)&bslash;n&quot;
+comma
+id|write
+ques
+c_cond
+l_char|&squot;s&squot;
+suffix:colon
+l_char|&squot;l&squot;
+)paren
+suffix:semicolon
+id|panic
+c_func
+(paren
+l_string|&quot;Fixing address errors not implemented yet&quot;
 )paren
 suffix:semicolon
 )brace
@@ -820,6 +793,44 @@ op_star
 id|regs
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|current-&gt;tss.mflags
+op_amp
+id|MF_FIXADE
+)paren
+(brace
+id|fix_ade
+c_func
+(paren
+id|regs
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
+id|dump_tlb_nonwired
+c_func
+(paren
+)paren
+suffix:semicolon
 id|send_sig
 c_func
 (paren
@@ -842,6 +853,110 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+r_int
+id|pc
+op_assign
+id|regs-&gt;cp0_epc
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;tss.mflags
+op_amp
+id|MF_FIXADE
+)paren
+(brace
+id|fix_ade
+c_func
+(paren
+id|regs
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_TASKS
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|task
+(braket
+id|i
+)braket
+op_logical_and
+id|task
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|pid
+op_ge
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Process %d&bslash;n&quot;
+comma
+id|task
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|pid
+)paren
+suffix:semicolon
+id|dump_list_process
+c_func
+(paren
+id|task
+(braket
+id|i
+)braket
+comma
+id|pc
+)paren
+suffix:semicolon
+)brace
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|dump_tlb_nonwired
+c_func
+(paren
+)paren
+suffix:semicolon
 id|send_sig
 c_func
 (paren
@@ -853,6 +968,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * The ibe/dbe exceptions are signaled by onboard hardware and should get&n; * a board specific handlers to get maximum available information. Bus&n; * errors are always symptom of hardware malfunction or a kernel error.&n; *&n; * FIXME: Linux/68k sends a SIGSEGV for a buserror which seems to be wrong.&n; * This is certainly wrong. Actually, all hardware errors (ades,adel,ibe,dbe)&n; * are bus errors and therefor should send a SIGBUS! (Andy)&n; */
 DECL|function|do_ibe
 r_void
 id|do_ibe
@@ -864,10 +980,24 @@ op_star
 id|regs
 )paren
 (brace
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|send_sig
 c_func
 (paren
-id|SIGSEGV
+id|SIGBUS
 comma
 id|current
 comma
@@ -886,10 +1016,24 @@ op_star
 id|regs
 )paren
 (brace
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|send_sig
 c_func
 (paren
-id|SIGSEGV
+id|SIGBUS
 comma
 id|current
 comma
@@ -908,6 +1052,20 @@ op_star
 id|regs
 )paren
 (brace
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|send_sig
 c_func
 (paren
@@ -930,15 +1088,20 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/*&n;&t; * FIXME: This is the place for a fpu emulator. Not written&n;&t; * yet and the demand seems to be quite low.&n;&t; */
-id|printk
+id|show_regs
 c_func
 (paren
-l_string|&quot;Caught FPE exception at %lx.&bslash;n&quot;
-comma
-id|regs-&gt;cp0_epc
+id|regs
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|send_sig
 c_func
 (paren
@@ -961,6 +1124,20 @@ op_star
 id|regs
 )paren
 (brace
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|send_sig
 c_func
 (paren
@@ -983,6 +1160,20 @@ op_star
 id|regs
 )paren
 (brace
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|send_sig
 c_func
 (paren
@@ -1005,6 +1196,80 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_TASKS
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|task
+(braket
+id|i
+)braket
+op_logical_and
+id|task
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|pid
+op_ge
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Process %d&bslash;n&quot;
+comma
+id|task
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|pid
+)paren
+suffix:semicolon
+id|dump_list_process
+c_func
+(paren
+id|task
+(braket
+id|i
+)braket
+comma
+l_int|0x7ffff000
+)paren
+suffix:semicolon
+)brace
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|send_sig
 c_func
 (paren
@@ -1029,77 +1294,43 @@ id|regs
 (brace
 r_int
 r_int
-id|pc
+id|cpid
 suffix:semicolon
-r_int
-r_int
-id|insn
-suffix:semicolon
-multiline_comment|/*&n;&t; * Check whether this was a cp1 instruction&n;&t; */
-id|pc
+id|cpid
 op_assign
-id|regs-&gt;cp0_epc
-suffix:semicolon
-r_if
-c_cond
 (paren
 id|regs-&gt;cp0_cause
+op_rshift
+id|CAUSEB_CE
+)paren
 op_amp
-(paren
-l_int|1
-op_lshift
-l_int|31
-)paren
-)paren
-id|pc
-op_add_assign
-l_int|4
-suffix:semicolon
-id|insn
-op_assign
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pc
-suffix:semicolon
-id|insn
-op_and_assign
-l_int|0xfc000000
+l_int|3
 suffix:semicolon
 r_switch
 c_cond
 (paren
-id|insn
+id|cpid
 )paren
 (brace
 r_case
-l_int|0x44000000
+l_int|1
 suffix:colon
-r_case
-l_int|0xc4000000
-suffix:colon
-r_case
-l_int|0xe4000000
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;CP1 instruction - enabling cp1.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|regs-&gt;cp0_status
 op_or_assign
 id|ST0_CU1
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * No need to handle branch delay slots&n;&t;&t;&t; */
 r_break
 suffix:semicolon
-r_default
+r_case
+l_int|0
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * This wasn&squot;t a cp1 instruction and therefore illegal.&n;&t;&t;&t; * Default is to kill the process.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * CPU for cp0 can only happen in user mode&n;&t;&t; */
+r_case
+l_int|2
+suffix:colon
+r_case
+l_int|3
+suffix:colon
 id|send_sig
 c_func
 (paren
@@ -1109,6 +1340,8 @@ id|current
 comma
 l_int|1
 )paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace
@@ -1161,7 +1394,6 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/*&n;&t; * Only possible on R4[04]00. No way to handle this because&n;&t; * I don&squot;t have such a cpu.&n;&t; */
 id|panic
 c_func
 (paren
@@ -1180,7 +1412,7 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/*&n;&t; * Game over - no way to handle this if it ever occurs.&n;&t; * Most probably caused by a new unknown cpu type or a&n;&t; * after another deadly hard/software error.&n;&t; */
+multiline_comment|/*&n;&t; * Game over - no way to handle this if it ever occurs.&n;&t; * Most probably caused by a new unknown cpu type or&n;&t; * after another deadly hard/software error.&n;&t; */
 id|panic
 c_func
 (paren
@@ -1197,13 +1429,33 @@ r_void
 )paren
 (brace
 r_int
+r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; * FIXME: Mips Magnum R4000 has an EISA bus!&n;&t; */
+r_void
+id|watch_set
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|boot_info.machtype
+op_eq
+id|MACH_MIPS_MAGNUM_4000
+)paren
+(brace
 id|EISA_bus
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Setup default vectors&n;&t; */
 r_for
 c_loop
@@ -1234,6 +1486,38 @@ c_cond
 id|boot_info.cputype
 )paren
 (brace
+multiline_comment|/*&n;&t; * The R10000 is in most aspects similar to the R4400.  It however&n;&t; * should get some special optimizations.&n;&t; */
+r_case
+id|CPU_R10000
+suffix:colon
+id|write_32bit_cp0_register
+c_func
+(paren
+id|CP0_FRAMEMASK
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|set_cp0_status
+c_func
+(paren
+id|ST0_XX
+comma
+id|ST0_XX
+)paren
+suffix:semicolon
+id|page_colour_mask
+op_assign
+l_int|0x3000
+suffix:semicolon
+id|panic
+c_func
+(paren
+l_string|&quot;CPU too expensive - making holiday in the ANDES!&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|CPU_R4000MC
 suffix:colon
@@ -1246,7 +1530,7 @@ suffix:colon
 r_case
 id|CPU_R4400SC
 suffix:colon
-multiline_comment|/*&n;&t;&t; * Handlers not implemented yet&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Handlers not implemented yet.  If should ever be used -&n;&t;&t; * otherwise it&squot;s a bug in the Linux/MIPS kernel, anyway.&n;&t;&t; */
 id|set_except_vector
 c_func
 (paren
@@ -1269,7 +1553,11 @@ suffix:colon
 r_case
 id|CPU_R4400PC
 suffix:colon
-multiline_comment|/*&n;&t;&t; * Handler not implemented yet&n;&t;&t; */
+r_case
+id|CPU_R4200
+suffix:colon
+multiline_comment|/* case CPU_R4300: */
+multiline_comment|/*&n;&t;&t; * Use watch exception to trap on access to address zero&n;&t;&t; */
 id|set_except_vector
 c_func
 (paren
@@ -1278,9 +1566,14 @@ comma
 id|handle_watch
 )paren
 suffix:semicolon
-r_case
-id|CPU_R4200
-suffix:colon
+id|watch_set
+c_func
+(paren
+id|KSEG0
+comma
+l_int|3
+)paren
+suffix:semicolon
 r_case
 id|CPU_R4600
 suffix:colon
@@ -1324,6 +1617,7 @@ comma
 id|handle_ades
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * The following two are signaled by onboard hardware and&n;&t;&t; * should get board specific handlers to get maximum&n;&t;&t; * available information.&n;&t;&t; */
 id|set_except_vector
 c_func
 (paren
@@ -1396,6 +1690,35 @@ comma
 id|handle_fpe
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Compute mask for page_colour().  This is based on the&n;&t;&t; * size of the data cache.  Does the size of the icache&n;&t;&t; * need to be accounted for?&n;&t;&t; */
+id|i
+op_assign
+id|read_32bit_cp0_register
+c_func
+(paren
+id|CP0_CONFIG
+)paren
+suffix:semicolon
+id|i
+op_assign
+(paren
+id|i
+op_rshift
+l_int|26
+)paren
+op_amp
+l_int|7
+suffix:semicolon
+id|page_colour_mask
+op_assign
+l_int|1
+op_lshift
+(paren
+l_int|12
+op_plus
+id|i
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -1431,9 +1754,6 @@ suffix:colon
 r_case
 id|CPU_R8000
 suffix:colon
-r_case
-id|CPU_R10000
-suffix:colon
 id|printk
 c_func
 (paren
@@ -1461,51 +1781,18 @@ suffix:colon
 id|panic
 c_func
 (paren
-l_string|&quot;Unknown type of CPU&quot;
+l_string|&quot;Unknown CPU type&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * The interrupt handler depends of both type of the board and cpu&n;&t; */
-r_switch
-c_cond
-(paren
-id|boot_info.machtype
-)paren
-(brace
-r_case
-id|MACH_DESKSTATION_TYNE
-suffix:colon
+multiline_comment|/*&n;&t; * The interrupt handler mostly depends of the board type.&n;&t; */
 id|set_except_vector
 c_func
 (paren
 l_int|0
 comma
-id|deskstation_tyne_handle_int
+id|feature-&gt;handle_int
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MACH_ACER_PICA_61
-suffix:colon
-id|set_except_vector
-c_func
-(paren
-l_int|0
-comma
-id|acer_pica_61_handle_int
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|panic
-c_func
-(paren
-l_string|&quot;Unknown machine type&quot;
-)paren
-suffix:semicolon
-)brace
 )brace
 eof

@@ -38,10 +38,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|ramdisk_size
-suffix:semicolon
-r_extern
-r_int
 id|chr_dev_init
 c_func
 (paren
@@ -2448,11 +2444,6 @@ op_add_assign
 id|p-&gt;nr_real
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|ramdisk_size
-)paren
 id|rd_load
 c_func
 (paren

@@ -843,7 +843,7 @@ r_int
 id|second_port
 suffix:semicolon
 r_int
-id|read_ahead
+id|cmd_read_ahead
 suffix:semicolon
 id|byte
 id|b
@@ -1020,9 +1020,9 @@ l_int|50
 suffix:colon
 l_int|40
 suffix:semicolon
-macro_line|#if 0&t;/* don&squot;t know if this is reliable yet */
+macro_line|#if 1&t;/* don&squot;t know if this is reliable yet */
 multiline_comment|/*&n;&t; * Enable readahead for versions above &squot;A&squot;&n;&t; */
-id|read_ahead
+id|cmd_read_ahead
 op_assign
 (paren
 id|cmd640_chip_version
@@ -1031,7 +1031,7 @@ l_int|1
 )paren
 suffix:semicolon
 macro_line|#else
-id|read_ahead
+id|cmd_read_ahead
 op_assign
 l_int|0
 suffix:semicolon
@@ -1065,7 +1065,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|read_ahead
+id|cmd_read_ahead
 )paren
 id|b
 op_and_assign
@@ -1105,7 +1105,7 @@ id|second_port
 multiline_comment|/* We reset timings, and setup read-ahead */
 id|b
 op_assign
-id|read_ahead
+id|cmd_read_ahead
 ques
 c_cond
 l_int|0
@@ -1227,7 +1227,7 @@ c_func
 (paren
 l_string|&quot;&bslash;n ... serialized, %s read-ahead, secondary interface %s&bslash;n&quot;
 comma
-id|read_ahead
+id|cmd_read_ahead
 ques
 c_cond
 l_string|&quot;enabled&quot;

@@ -9,6 +9,8 @@ mdefine_line|#define LOGITECH_BUSMOUSE       0   /* Minor device # for Logitech 
 DECL|macro|MICROSOFT_BUSMOUSE
 mdefine_line|#define MICROSOFT_BUSMOUSE      2   /* Minor device # for Microsoft */
 multiline_comment|/*--------- LOGITECH BUSMOUSE ITEMS -------------*/
+DECL|macro|LOGIBM_BASE
+mdefine_line|#define&t;LOGIBM_BASE&t;&t;0x23c
 DECL|macro|MSE_DATA_PORT
 mdefine_line|#define&t;MSE_DATA_PORT&t;&t;0x23c
 DECL|macro|MSE_SIGNATURE_PORT
@@ -16,9 +18,11 @@ mdefine_line|#define&t;MSE_SIGNATURE_PORT&t;0x23d
 DECL|macro|MSE_CONTROL_PORT
 mdefine_line|#define&t;MSE_CONTROL_PORT&t;0x23e
 DECL|macro|MSE_INTERRUPT_PORT
-mdefine_line|#define MSE_INTERRUPT_PORT&t;0x23e
+mdefine_line|#define&t;MSE_INTERRUPT_PORT&t;0x23e
 DECL|macro|MSE_CONFIG_PORT
 mdefine_line|#define&t;MSE_CONFIG_PORT&t;&t;0x23f
+DECL|macro|LOGIBM_EXTENT
+mdefine_line|#define&t;LOGIBM_EXTENT&t;&t;0x4
 DECL|macro|MSE_ENABLE_INTERRUPTS
 mdefine_line|#define&t;MSE_ENABLE_INTERRUPTS&t;0x00
 DECL|macro|MSE_DISABLE_INTERRUPTS
@@ -44,6 +48,8 @@ mdefine_line|#define MSE_INT_OFF()&t;outb(MSE_DISABLE_INTERRUPTS, MSE_CONTROL_PO
 DECL|macro|MSE_INT_ON
 mdefine_line|#define MSE_INT_ON()&t;outb(MSE_ENABLE_INTERRUPTS, MSE_CONTROL_PORT)
 multiline_comment|/*--------- MICROSOFT BUSMOUSE ITEMS -------------*/
+DECL|macro|MSBM_BASE
+mdefine_line|#define&t;MSBM_BASE&t;&t;&t;0x23d
 DECL|macro|MS_MSE_DATA_PORT
 mdefine_line|#define&t;MS_MSE_DATA_PORT&t;        0x23d
 DECL|macro|MS_MSE_SIGNATURE_PORT
@@ -52,6 +58,8 @@ DECL|macro|MS_MSE_CONTROL_PORT
 mdefine_line|#define&t;MS_MSE_CONTROL_PORT&t;        0x23c
 DECL|macro|MS_MSE_CONFIG_PORT
 mdefine_line|#define&t;MS_MSE_CONFIG_PORT&t;&t;0x23f
+DECL|macro|MSBM_EXTENT
+mdefine_line|#define&t;MSBM_EXTENT&t;&t;&t;0x3
 DECL|macro|MS_MSE_ENABLE_INTERRUPTS
 mdefine_line|#define&t;MS_MSE_ENABLE_INTERRUPTS&t;0x11
 DECL|macro|MS_MSE_DISABLE_INTERRUPTS

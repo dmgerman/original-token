@@ -905,10 +905,9 @@ id|bad_fork
 suffix:semicolon
 id|new_stack
 op_assign
-id|get_free_page
+id|alloc_kernel_stack
 c_func
 (paren
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -1298,7 +1297,7 @@ op_decrement
 suffix:semicolon
 id|bad_fork_free_stack
 suffix:colon
-id|free_page
+id|free_kernel_stack
 c_func
 (paren
 id|new_stack

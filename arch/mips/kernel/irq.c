@@ -1,17 +1,22 @@
 multiline_comment|/*&n; *&t;linux/arch/mips/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; */
 multiline_comment|/*&n; * IRQ&squot;s are in fact implemented a bit like signal handlers for the kernel.&n; * Naturally it&squot;s not a 1:1 relation, but there are similarities.&n; */
-multiline_comment|/*&n; * The Deskstation Tyne is almost completely like an IBM compatible PC with&n; * another type of microprocessor. Therefore this code is almost completely&n; * the same. More work needs to be done to support Acer PICA and other&n; * machines.&n; */
+multiline_comment|/*&n; * Mips support by Ralf Baechle and Andreas Busse&n; *&n; * The Deskstation Tyne is almost completely like an IBM compatible PC with&n; * another type of microprocessor. Therefore this code is almost completely&n; * the same. More work needs to be done to support Acer PICA and other&n; * machines.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/jazz.h&gt;
+macro_line|#include &lt;asm/mipsregs.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 DECL|variable|cache_21
 r_int
 r_char
@@ -512,7 +517,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;%2d: %8d %c %s&bslash;n&quot;
+l_string|&quot;%3d: %8d %c %s&bslash;n&quot;
 comma
 id|i
 comma
@@ -571,6 +576,19 @@ id|irq
 )braket
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|action-&gt;flags
+op_amp
+id|SA_SAMPLE_RANDOM
+)paren
+id|add_interrupt_randomness
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
 id|action
 op_member_access_from_pointer
 id|handler
@@ -607,6 +625,19 @@ id|kstat.interrupts
 id|irq
 )braket
 op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|action-&gt;flags
+op_amp
+id|SA_SAMPLE_RANDOM
+)paren
+id|add_interrupt_randomness
+c_func
+(paren
+id|irq
+)paren
 suffix:semicolon
 id|action
 op_member_access_from_pointer
@@ -698,6 +729,19 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|irqflags
+op_amp
+id|SA_SAMPLE_RANDOM
+)paren
+id|rand_initialize_irq
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -745,7 +789,7 @@ id|action-&gt;flags
 op_amp
 id|SA_INTERRUPT
 )paren
-id|set_intr_gate
+id|set_int_vector
 c_func
 (paren
 id|irq
@@ -754,7 +798,7 @@ id|fast_interrupt
 )paren
 suffix:semicolon
 r_else
-id|set_intr_gate
+id|set_int_vector
 c_func
 (paren
 id|irq
@@ -955,7 +999,7 @@ l_int|0xA1
 )paren
 suffix:semicolon
 )brace
-id|set_intr_gate
+id|set_int_vector
 c_func
 (paren
 id|irq
@@ -1311,6 +1355,65 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|boot_info.machtype
+)paren
+(brace
+r_case
+id|MACH_MIPS_MAGNUM_4000
+suffix:colon
+r_case
+id|MACH_ACER_PICA_61
+suffix:colon
+id|r4030_write_reg16
+c_func
+(paren
+id|JAZZ_IO_IRQ_ENABLE
+comma
+id|JAZZ_IE_ETHERNET
+op_or
+id|JAZZ_IE_SERIAL1
+op_or
+id|JAZZ_IE_SERIAL2
+op_or
+id|JAZZ_IE_PARALLEL
+op_or
+id|JAZZ_IE_FLOPPY
+)paren
+suffix:semicolon
+id|r4030_read_reg16
+c_func
+(paren
+id|JAZZ_IO_IRQ_SOURCE
+)paren
+suffix:semicolon
+multiline_comment|/* clear pending IRQs */
+id|set_cp0_status
+c_func
+(paren
+id|ST0_IM
+comma
+id|IE_IRQ4
+op_or
+id|IE_IRQ1
+)paren
+suffix:semicolon
+multiline_comment|/* set the clock to 100 Hz */
+id|r4030_write_reg32
+c_func
+(paren
+id|JAZZ_TIMER_INTERVAL
+comma
+l_int|9
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MACH_DESKSTATION_TYNE
+suffix:colon
 multiline_comment|/* set the clock to 100 Hz */
 id|outb_p
 c_func
@@ -1343,28 +1446,6 @@ l_int|0x40
 )paren
 suffix:semicolon
 multiline_comment|/* MSB */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|16
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|set_intr_gate
-c_func
-(paren
-id|i
-comma
-id|bad_interrupt
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1384,6 +1465,39 @@ id|printk
 c_func
 (paren
 l_string|&quot;Unable to get IRQ2 for cascade&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|panic
+c_func
+(paren
+l_string|&quot;Unknown machtype in init_IRQ&quot;
+)paren
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|set_int_vector
+c_func
+(paren
+id|i
+comma
+id|bad_interrupt
 )paren
 suffix:semicolon
 multiline_comment|/* initialize the bottom half routines. */

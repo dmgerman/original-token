@@ -55,7 +55,8 @@ multiline_comment|/* 2**32 / 1000000 */
 id|__asm__
 c_func
 (paren
-l_string|&quot;mul&bslash;t%0,%0,%1&quot;
+l_string|&quot;multu&bslash;t%0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;mfhi&bslash;t%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -80,7 +81,7 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * 64-bit integers means we don&squot;t have to worry about overflow as&n; * on some other architectures..&n; */
+multiline_comment|/*&n; * The different variants for 32/64 bit are pure paranoia. The typical&n; * range of numbers that apprears for MIPS machines avoids overflows.&n; */
 DECL|function|muldiv
 r_extern
 id|__inline__

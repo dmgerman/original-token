@@ -5392,7 +5392,7 @@ c_func
 (paren
 l_string|&quot;Hostbyte=0x%02x &quot;
 comma
-id|hostbyte
+id|host_byte
 c_func
 (paren
 id|scsiresult

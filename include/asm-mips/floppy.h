@@ -10,7 +10,7 @@ macro_line|#include &lt;asm/vector.h&gt;
 DECL|macro|fd_inb
 mdefine_line|#define fd_inb(port)&t;&t;&t;feature-&gt;fd_inb(port)
 DECL|macro|fd_outb
-mdefine_line|#define fd_outb(port,value)&t;&t;feature-&gt;fd_outb(port,value)
+mdefine_line|#define fd_outb(value,port)&t;&t;feature-&gt;fd_outb(value,port)
 DECL|macro|fd_enable_dma
 mdefine_line|#define fd_enable_dma()&t;&t;&t;feature-&gt;fd_enable_dma()
 DECL|macro|fd_disable_dma
@@ -39,6 +39,8 @@ DECL|macro|fd_request_irq
 mdefine_line|#define fd_request_irq()        request_irq(FLOPPY_IRQ, floppy_interrupt, &bslash;&n;&t;&t;&t;&t;&t;    SA_INTERRUPT|SA_SAMPLE_RANDOM, &bslash;&n;&t;&t;&t;&t;            &quot;floppy&quot;)
 DECL|macro|fd_free_irq
 mdefine_line|#define fd_free_irq()           free_irq(FLOPPY_IRQ);
+DECL|macro|MAX_BUFFER_SECTORS
+mdefine_line|#define MAX_BUFFER_SECTORS 24
 DECL|macro|virtual_dma_init
 mdefine_line|#define virtual_dma_init()                                              &bslash;&n;        if (boot_info.machtype == MACH_ACER_PICA_61 ||                  &bslash;&n;            boot_info.machtype == MACH_MIPS_MAGNUM_4000 ||              &bslash;&n;            boot_info.machtype == MACH_OLIVETTI_M700)                   &bslash;&n;&t;&t;vdma_alloc(PHYSADDR(floppy_track_buffer),               &bslash;&n;&t;&t;&t;   512*2*MAX_BUFFER_SECTORS);
 multiline_comment|/*&n; * And on Mips&squot;s the CMOS info failes also ...&n; *&n; * FIXME: This information should come from the ARC configuration tree&n; *        or whereever a parivular machine has stored this ...&n; */

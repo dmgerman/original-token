@@ -213,10 +213,57 @@ l_int|32
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Serial input interrupt line counters -- external structure&n; * Four lines can interrupt: CTS, DSR, RI, DCD&n; */
+DECL|struct|serial_icounter_struct
+r_struct
+id|serial_icounter_struct
+(brace
+DECL|member|cts
+DECL|member|dsr
+DECL|member|rng
+DECL|member|dcd
+r_int
+id|cts
+comma
+id|dsr
+comma
+id|rng
+comma
+id|dcd
+suffix:semicolon
+DECL|member|reserved
+r_int
+id|reserved
+(braket
+l_int|16
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
+DECL|struct|async_icount
+r_struct
+id|async_icount
+(brace
+DECL|member|cts
+DECL|member|dsr
+DECL|member|rng
+DECL|member|dcd
+id|__u32
+id|cts
+comma
+id|dsr
+comma
+id|rng
+comma
+id|dcd
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|async_struct
 r_struct
 id|async_struct
@@ -396,6 +443,18 @@ id|wait_queue
 op_star
 id|close_wait
 suffix:semicolon
+DECL|member|delta_msr_wait
+r_struct
+id|wait_queue
+op_star
+id|delta_msr_wait
+suffix:semicolon
+DECL|member|icount
+r_struct
+id|async_icount
+id|icount
+suffix:semicolon
+multiline_comment|/* kernel counters for the 4 input interrupts */
 DECL|member|next_port
 r_struct
 id|async_struct

@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/sbpcd.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if !(SBPCD_ISSUE-1)
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MATSUSHITA_CDROM_MAJOR

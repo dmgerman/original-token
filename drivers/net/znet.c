@@ -2788,7 +2788,6 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-macro_line|#ifdef HAVE_MULTICAST
 multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   As a side effect this routine must also initialize the device parameters.&n;   This is taken advantage of in open().&n;&n;   N.B. that we change i593_init[] in place.  This (properly) makes the&n;   mode change persistent, but must be changed if this code is moved to&n;   a multiple adaptor environment.&n; */
 DECL|function|set_multicast_list
 r_static
@@ -3018,7 +3017,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#endif
 DECL|function|show_dma
 r_void
 id|show_dma

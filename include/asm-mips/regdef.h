@@ -1,12 +1,12 @@
-multiline_comment|/*&n; * include/asm-mips/regdefs.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_REGSDEFS_H
-DECL|macro|__ASM_MIPS_REGSDEFS_H
-mdefine_line|#define __ASM_MIPS_REGSDEFS_H
-multiline_comment|/*&n; * Symbolic register names&n; */
+multiline_comment|/*&n; * include/asm-mips/regdefs.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 by Ralf Baechle&n; */
+macro_line|#ifndef __ASM_MIPS_REGDEF_H
+DECL|macro|__ASM_MIPS_REGDEF_H
+mdefine_line|#define __ASM_MIPS_REGDEF_H
+multiline_comment|/*&n; * Symbolic register names for 32 bit ABI&n; */
 DECL|macro|zero
 mdefine_line|#define zero    $0      /* wired zero */
 DECL|macro|AT
-mdefine_line|#define AT      $1      /* assembler temp (uprcase, because &quot;.set at&quot;) */
+mdefine_line|#define AT      $1      /* assembler temp  - uppercase because of &quot;.set at&quot; */
 DECL|macro|v0
 mdefine_line|#define v0      $2      /* return value */
 DECL|macro|v1
@@ -55,6 +55,8 @@ DECL|macro|t8
 mdefine_line|#define t8      $24     /* caller saved */
 DECL|macro|t9
 mdefine_line|#define t9      $25
+DECL|macro|jp
+mdefine_line|#define jp      $25     /* PIC jump register */
 DECL|macro|k0
 mdefine_line|#define k0      $26     /* kernel scratch */
 DECL|macro|k1
@@ -65,7 +67,9 @@ DECL|macro|sp
 mdefine_line|#define sp      $29     /* stack pointer */
 DECL|macro|fp
 mdefine_line|#define fp      $30     /* frame pointer */
+DECL|macro|s8
+mdefine_line|#define s8&t;$30&t;/* same like fp! */
 DECL|macro|ra
 mdefine_line|#define ra      $31     /* return address */
-macro_line|#endif /* __ASM_MIPS_REGSDEFS_H */
+macro_line|#endif /* __ASM_MIPS_REGDEF_H */
 eof

@@ -4,7 +4,9 @@ DECL|macro|DEBG1
 mdefine_line|#define DEBG1(x)
 multiline_comment|/* inflate.c -- Not copyrighted 1992 by Mark Adler&n;   version c10p1, 10 January 1993 */
 multiline_comment|/* &n; * Adapted for booting Linux by Hannu Savolainen 1993&n; * based on gzip-1.0.3 &n; */
-macro_line|#ifndef lint
+multiline_comment|/*&n;   Inflate deflated (PKZIP&squot;s method 8 compressed) data.  The compression&n;   method searches for as much of the current string of bytes (up to a&n;   length of 258) in the previous 32K bytes.  If it doesn&squot;t find any&n;   matches (of at least length 3), it codes the next byte.  Otherwise, it&n;   codes the length of the matched string and its distance backwards from&n;   the current position.  There is a single Huffman code that codes both&n;   single bytes (called &quot;literals&quot;) and match lengths.  A second Huffman&n;   code codes the distance information, which follows a length code.  Each&n;   length or distance code actually represents a base value and a number&n;   of &quot;extra&quot; (sometimes zero) bits to get to add to the base value.  At&n;   the end of each deflated block is a special end-of-block (EOB) literal/&n;   length code.  The decoding process is basically: get a literal/length&n;   code; if EOB then done; if a literal, emit the decoded byte; if a&n;   length then get the distance and emit the referred-to bytes from the&n;   sliding window of previously emitted data.&n;&n;   There are (currently) three kinds of inflate blocks: stored, fixed, and&n;   dynamic.  The compressor deals with some chunk of data at a time, and&n;   decides which method to use on a chunk-by-chunk basis.  A chunk might&n;   typically be 32K or 64K.  If the chunk is uncompressible, then the&n;   &quot;stored&quot; method is used.  In this case, the bytes are simply stored as&n;   is, eight bits per byte, with none of the above coding.  The bytes are&n;   preceded by a count, since there is no longer an EOB code.&n;&n;   If the data is compressible, then either the fixed or dynamic methods&n;   are used.  In the dynamic method, the compressed data is preceded by&n;   an encoding of the literal/length and distance Huffman codes that are&n;   to be used to decode this block.  The representation is itself Huffman&n;   coded, and so is preceded by a description of that code.  These code&n;   descriptions take up a little space, and so for small blocks, there is&n;   a predefined set of codes, called the fixed codes.  The fixed method is&n;   used if the block codes up smaller that way (usually for quite small&n;   chunks), otherwise the dynamic method is used.  In the latter case, the&n;   codes are customized to the probabilities in the current block, and so&n;   can code it much better than the pre-determined fixed codes.&n; &n;   The Huffman codes themselves are decoded using a mutli-level table&n;   lookup, in order to maximize the speed of decoding plus the speed of&n;   building the decoding tables.  See the comments below that precede the&n;   lbits and dbits tuning parameters.&n; */
+multiline_comment|/*&n;   Notes beyond the 1.93a appnote.txt:&n;&n;   1. Distance pointers never point before the beginning of the output&n;      stream.&n;   2. Distance pointers can point back across blocks, up to 32k away.&n;   3. There is an implied maximum of 7 bits for the bit length table and&n;      15 bits for the actual data.&n;   4. If only one code exists, then it is encoded using one bit.  (Zero&n;      would be more efficient, but perhaps a little confusing.)  If two&n;      codes exist, they are coded using one bit each (0 and 1).&n;   5. There is no way of sending zero distance codes--a dummy must be&n;      sent if there are none.  (History: a pre 2.0 version of PKZIP would&n;      store blocks with no distance codes, but this was discovered to be&n;      too harsh a criterion.)  Valid only for 1.93a.  2.04c does allow&n;      zero distance codes, which is sent as one code of zero bits in&n;      length.&n;   6. There are up to 286 literal/length codes.  Code 256 represents the&n;      end-of-block.  Note however that the static length tree defines&n;      288 codes just to fill out the Huffman codes.  Codes 286 and 287&n;      cannot be used though, since there is no length base or extra bits&n;      defined for them.  Similarly, there are up to 30 distance codes.&n;      However, static trees define 32 codes (all 5 bits) to fill out the&n;      Huffman codes, but the last two had better not show up in the data.&n;   7. Unzip can check dynamic Huffman blocks for complete code sets.&n;      The exception is that a single code would not be complete (see #4).&n;   8. The five bits following the block type is really the number of&n;      literal codes sent minus 257.&n;   9. Length codes 8,16,16 are interpreted as 13 length codes of 8 bits&n;      (1+6+6).  Therefore, to output three times the length, you output&n;      three codes (1+1+1), whereas to output four times the same length,&n;      you only need two codes (1+3).  Hmm.&n;  10. In the tree reconstruction algorithm, Code = Code + Increment&n;      only if BitLength(i) is not zero.  (Pretty obvious.)&n;  11. Correction: 4 Bits: # of Bit Length codes - 4     (4 - 19)&n;  12. Note: length code 284 can represent 227-258, but length code 285&n;      really is 258.  The last length deserves its own, short code&n;      since it gets used a lot in very redundant files.  The length&n;      258 is special since 258 - 3 (the min match length) is 255.&n;  13. The literal/length and distance code bit lengths are read as a&n;      single stream of lengths.  It is possible (and advantageous) for&n;      a repeat code (16, 17, or 18) to go across the boundary between&n;      the two sets of lengths.&n; */
+macro_line|#ifdef RCSID
 DECL|variable|rcsid
 r_static
 r_char
@@ -12,16 +14,21 @@ id|rcsid
 (braket
 )braket
 op_assign
-l_string|&quot;$Id: inflate.c,v 0.10 1993/02/04 13:21:06 jloup Exp $&quot;
+l_string|&quot;#Id: inflate.c,v 0.14 1993/06/10 13:27:04 jloup Exp #&quot;
 suffix:semicolon
 macro_line|#endif
-macro_line|#include &quot;gzip.h&quot;
-DECL|macro|slide
-mdefine_line|#define slide window
+macro_line|#ifndef STATIC
 macro_line|#if defined(STDC_HEADERS) || defined(HAVE_STDLIB_H)
 macro_line|#  include &lt;sys/types.h&gt;
 macro_line|#  include &lt;stdlib.h&gt;
 macro_line|#endif
+macro_line|#include &quot;gzip.h&quot;
+DECL|macro|STATIC
+mdefine_line|#define STATIC
+macro_line|#endif /* !STATIC */
+DECL|macro|slide
+mdefine_line|#define slide window
+multiline_comment|/* Huffman code lookup table entry--this entry is four bytes for machines&n;   that have 16-bit pointers (e.g. PC&squot;s in the small or medium model).&n;   Valid extra bits are 0..13.  e == 15 is EOB (end of block), e == 16&n;   means that v is a literal, 16 &lt; e &lt; 32 means that v is a pointer to&n;   the next table, which codes e - 16 bits, and lastly e == 99 indicates&n;   an unused code.  If a code with e == 99 is looked up, this implies an&n;   error in the data. */
 DECL|struct|huft
 r_struct
 id|huft
@@ -57,6 +64,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Function prototypes */
+id|STATIC
 r_int
 id|huft_build
 id|OF
@@ -86,6 +94,7 @@ op_star
 )paren
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|huft_free
 id|OF
@@ -98,6 +107,7 @@ op_star
 )paren
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|inflate_codes
 id|OF
@@ -118,6 +128,7 @@ r_int
 )paren
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|inflate_stored
 id|OF
@@ -128,6 +139,7 @@ r_void
 )paren
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|inflate_fixed
 id|OF
@@ -138,6 +150,7 @@ r_void
 )paren
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|inflate_dynamic
 id|OF
@@ -148,6 +161,7 @@ r_void
 )paren
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|inflate_block
 id|OF
@@ -159,6 +173,7 @@ op_star
 )paren
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|inflate
 id|OF
@@ -169,6 +184,9 @@ r_void
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* The inflate algorithm uses a sliding 32K byte window on the uncompressed&n;   stream to find repeated byte strings.  This is implemented here as a&n;   circular buffer.  The index is updated simply by incrementing and then&n;   and&squot;ing with 0x7fff (32K-1). */
+multiline_comment|/* It is left to other modules to supply the 32K area.  It is assumed&n;   to be usable as if it were declared &quot;uch slide[32768];&quot; or as just&n;   &quot;uch *slide;&quot; and then malloc&squot;ed in the latter case.  The definition&n;   must be in unzip.h, included above. */
+multiline_comment|/* unsigned wp;             current position in slide */
 DECL|macro|wp
 mdefine_line|#define wp outcnt
 DECL|macro|flush_output
@@ -508,17 +526,21 @@ comma
 l_int|13
 )brace
 suffix:semicolon
+multiline_comment|/* Macros for inflate() bit peeking and grabbing.&n;   The usage is:&n;   &n;        NEEDBITS(j)&n;        x = b &amp; mask_bits[j];&n;        DUMPBITS(j)&n;&n;   where NEEDBITS makes sure that b has at least j bits in it, and&n;   DUMPBITS removes the bits from b.  The macros use the variable k&n;   for the number of bits in b.  Normally, b and k are register&n;   variables for speed, and are initialized at the beginning of a&n;   routine that uses these macros from a global bit buffer and count.&n;&n;   If we assume that EOB will be the longest code, then we will never&n;   ask for bits with NEEDBITS that are beyond the end of the stream.&n;   So, NEEDBITS should not read any more bytes than are needed to&n;   meet the request.  Then no bytes need to be &quot;returned&quot; to the buffer&n;   at the end of the last block.&n;&n;   However, this assumption is not true for fixed blocks--the EOB code&n;   is 7 bits, but the other literal/length codes can be 8 or 9 bits.&n;   (The EOB code is shorter than other codes because fixed blocks are&n;   generally short.  So, while a block always has an EOB, many other&n;   literal/length codes have a significantly lower probability of&n;   showing up at all.)  However, by making the first table have a&n;   lookup of seven bits, the EOB code will be found in that first&n;   lookup, and so will not require that too many bits be pulled from&n;   the stream.&n; */
 DECL|variable|bb
+id|STATIC
 id|ulg
 id|bb
 suffix:semicolon
 multiline_comment|/* bit buffer */
 DECL|variable|bk
+id|STATIC
 r_int
 id|bk
 suffix:semicolon
 multiline_comment|/* bits in bit buffer */
 DECL|variable|mask_bits
+id|STATIC
 id|ush
 id|mask_bits
 (braket
@@ -560,22 +582,15 @@ comma
 l_int|0xffff
 )brace
 suffix:semicolon
-macro_line|#ifdef CRYPT
-DECL|variable|cc
-id|uch
-id|cc
-suffix:semicolon
 DECL|macro|NEXTBYTE
-macro_line|#  define NEXTBYTE() &bslash;&n;     (decrypt ? (cc = get_byte(), zdecode(cc), cc) : get_byte())
-macro_line|#else
-DECL|macro|NEXTBYTE
-macro_line|#  define NEXTBYTE()  (uch)get_byte()
-macro_line|#endif
+mdefine_line|#define NEXTBYTE()  (uch)get_byte()
 DECL|macro|NEEDBITS
 mdefine_line|#define NEEDBITS(n) {while(k&lt;(n)){b|=((ulg)NEXTBYTE())&lt;&lt;k;k+=8;}}
 DECL|macro|DUMPBITS
 mdefine_line|#define DUMPBITS(n) {b&gt;&gt;=(n);k-=(n);}
+multiline_comment|/*&n;   Huffman code decoding is performed using a multi-level table lookup.&n;   The fastest way to decode is to simply build a lookup table whose&n;   size is determined by the longest code.  However, the time it takes&n;   to build this table can also be a factor if the data being decoded&n;   is not very long.  The most common codes are necessarily the&n;   shortest codes, so those codes dominate the decoding time, and hence&n;   the speed.  The idea is you can have a shorter table that decodes the&n;   shorter, more probable codes, and then point to subsidiary tables for&n;   the longer codes.  The time it costs to decode the longer codes is&n;   then traded against the time it takes to make longer tables.&n;&n;   This results of this trade are in the variables lbits and dbits&n;   below.  lbits is the number of bits the first level table for literal/&n;   length codes can decode in one step, and dbits is the same thing for&n;   the distance codes.  Subsequent tables are also less than or equal to&n;   those sizes.  These values may be adjusted either when all of the&n;   codes are shorter than that, in which case the longest code length in&n;   bits is used, or when the shortest code is *longer* than the requested&n;   table size, in which case the length of the shortest code in bits is&n;   used.&n;&n;   There are two different values for the two tables, since they code a&n;   different number of possibilities each.  The literal/length table&n;   codes 286 possible values, or in a flat code, a little over eight&n;   bits.  The distance table codes 30 possible values, or a little less&n;   than five bits, flat.  The optimum values for speed end up being&n;   about one bit more than those, so lbits is 8+1 and dbits is 5+1.&n;   The optimum values may differ though from machine to machine, and&n;   possibly even between compilers.  Your mileage may vary.&n; */
 DECL|variable|lbits
+id|STATIC
 r_int
 id|lbits
 op_assign
@@ -583,6 +598,7 @@ l_int|9
 suffix:semicolon
 multiline_comment|/* bits in base literal/length lookup table */
 DECL|variable|dbits
+id|STATIC
 r_int
 id|dbits
 op_assign
@@ -595,11 +611,13 @@ mdefine_line|#define BMAX 16         /* maximum bit length of any code (16 for e
 DECL|macro|N_MAX
 mdefine_line|#define N_MAX 288       /* maximum number of codes in any set */
 DECL|variable|hufts
+id|STATIC
 r_int
 id|hufts
 suffix:semicolon
 multiline_comment|/* track memory usage */
 DECL|function|huft_build
+id|STATIC
 r_int
 id|huft_build
 c_func
@@ -788,15 +806,55 @@ id|n
 suffix:semicolon
 r_do
 (brace
+id|Tracecv
+c_func
+(paren
+op_star
+id|p
+comma
+(paren
+id|stderr
+comma
+(paren
+id|n
+op_minus
+id|i
+op_ge
+l_char|&squot; &squot;
+op_logical_and
+id|n
+op_minus
+id|i
+op_le
+l_char|&squot;~&squot;
+ques
+c_cond
+l_string|&quot;%c %d&bslash;n&quot;
+suffix:colon
+l_string|&quot;0x%x %d&bslash;n&quot;
+)paren
+comma
+id|n
+op_minus
+id|i
+comma
+op_star
+id|p
+)paren
+)paren
+suffix:semicolon
 id|c
 (braket
 op_star
 id|p
-op_increment
 )braket
 op_increment
 suffix:semicolon
 multiline_comment|/* assume all entries &lt;= BMAX */
+id|p
+op_increment
+suffix:semicolon
+multiline_comment|/* Can&squot;t combine with above line (Solaris bug) */
 )brace
 r_while
 c_loop
@@ -1352,6 +1410,10 @@ id|j
 suffix:semicolon
 multiline_comment|/* table entries for j-bit table */
 multiline_comment|/* allocate and link in new table */
+r_if
+c_cond
+(paren
+(paren
 id|q
 op_assign
 (paren
@@ -1374,7 +1436,35 @@ r_struct
 id|huft
 )paren
 )paren
+)paren
+op_eq
+(paren
+r_struct
+id|huft
+op_star
+)paren
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|h
+)paren
+id|huft_free
+c_func
+(paren
+id|u
+(braket
+l_int|0
+)braket
+)paren
 suffix:semicolon
+r_return
+l_int|3
+suffix:semicolon
+multiline_comment|/* not enough memory */
+)brace
 id|DEBG1
 c_func
 (paren
@@ -1562,11 +1652,19 @@ suffix:semicolon
 multiline_comment|/* 256 is end-of-block code */
 id|r.v.n
 op_assign
+(paren
+id|ush
+)paren
+(paren
 op_star
+id|p
+)paren
+suffix:semicolon
+multiline_comment|/* simple code is just the value */
 id|p
 op_increment
 suffix:semicolon
-multiline_comment|/* simple code is just the value */
+multiline_comment|/* one compiler does not like *p++ */
 )brace
 r_else
 (brace
@@ -1732,6 +1830,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|huft_free
+id|STATIC
 r_int
 id|huft_free
 c_func
@@ -1785,6 +1884,10 @@ suffix:semicolon
 id|free
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 id|p
 )paren
 suffix:semicolon
@@ -1798,6 +1901,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|inflate_codes
+id|STATIC
 r_int
 id|inflate_codes
 c_func
@@ -2019,6 +2123,23 @@ id|uch
 )paren
 id|t-&gt;v.n
 suffix:semicolon
+id|Tracevv
+c_func
+(paren
+(paren
+id|stderr
+comma
+l_string|&quot;%c&quot;
+comma
+id|slide
+(braket
+id|w
+op_minus
+l_int|1
+)braket
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2205,6 +2326,22 @@ c_func
 (paren
 id|e
 )paren
+id|Tracevv
+c_func
+(paren
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;&bslash;[%d,%d]&quot;
+comma
+id|w
+op_minus
+id|d
+comma
+id|n
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* do the copy */
 r_do
 (brace
@@ -2296,6 +2433,23 @@ id|d
 op_increment
 )braket
 suffix:semicolon
+id|Tracevv
+c_func
+(paren
+(paren
+id|stderr
+comma
+l_string|&quot;%c&quot;
+comma
+id|slide
+(braket
+id|w
+op_minus
+l_int|1
+)braket
+)paren
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -2353,6 +2507,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|inflate_stored
+id|STATIC
 r_int
 id|inflate_stored
 c_func
@@ -2540,6 +2695,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|inflate_fixed
+id|STATIC
 r_int
 id|inflate_fixed
 c_func
@@ -2807,6 +2963,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|inflate_dynamic
+id|STATIC
 r_int
 id|inflate_dynamic
 c_func
@@ -3668,6 +3825,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|inflate_block
+id|STATIC
 r_int
 id|inflate_block
 c_func
@@ -3812,6 +3970,7 @@ l_int|2
 suffix:semicolon
 )brace
 DECL|function|inflate
+id|STATIC
 r_int
 id|inflate
 c_func
@@ -3831,6 +3990,10 @@ r_int
 id|h
 suffix:semicolon
 multiline_comment|/* maximum struct huft&squot;s malloc&squot;ed */
+r_void
+op_star
+id|ptr
+suffix:semicolon
 multiline_comment|/* initialize window, bit buffer */
 id|wp
 op_assign
@@ -3855,6 +4018,13 @@ id|hufts
 op_assign
 l_int|0
 suffix:semicolon
+id|gzip_mark
+c_func
+(paren
+op_amp
+id|ptr
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3871,8 +4041,24 @@ id|e
 op_ne
 l_int|0
 )paren
+(brace
+id|gzip_release
+c_func
+(paren
+op_amp
+id|ptr
+)paren
+suffix:semicolon
 r_return
 id|r
+suffix:semicolon
+)brace
+id|gzip_release
+c_func
+(paren
+op_amp
+id|ptr
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3930,6 +4116,829 @@ id|h
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/**********************************************************************&n; *&n; * The following are support routines for inflate.c&n; *&n; **********************************************************************/
+DECL|variable|crc_32_tab
+r_static
+id|ulg
+id|crc_32_tab
+(braket
+l_int|256
+)braket
+suffix:semicolon
+DECL|variable|crc
+r_static
+id|ulg
+id|crc
+op_assign
+(paren
+id|ulg
+)paren
+l_int|0xffffffffL
+suffix:semicolon
+multiline_comment|/* shift register contents */
+DECL|macro|CRC_VALUE
+mdefine_line|#define CRC_VALUE (crc ^ 0xffffffffL)
+multiline_comment|/*&n; * Code to compute the CRC-32 table. Borrowed from &n; * gzip-1.0.3/makecrc.c.&n; */
+r_static
+r_void
+DECL|function|makecrc
+id|makecrc
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Not copyrighted 1990 Mark Adler&t;*/
+r_int
+r_int
+id|c
+suffix:semicolon
+multiline_comment|/* crc shift register */
+r_int
+r_int
+id|e
+suffix:semicolon
+multiline_comment|/* polynomial exclusive-or pattern */
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* counter for all possible eight bit values */
+r_int
+id|k
+suffix:semicolon
+multiline_comment|/* byte being shifted into crc apparatus */
+multiline_comment|/* terms of polynomial defining this crc (except x^32): */
+r_static
+r_int
+id|p
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|1
+comma
+l_int|2
+comma
+l_int|4
+comma
+l_int|5
+comma
+l_int|7
+comma
+l_int|8
+comma
+l_int|10
+comma
+l_int|11
+comma
+l_int|12
+comma
+l_int|16
+comma
+l_int|22
+comma
+l_int|23
+comma
+l_int|26
+)brace
+suffix:semicolon
+multiline_comment|/* Make exclusive-or pattern from polynomial */
+id|e
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+(paren
+id|p
+)paren
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|e
+op_or_assign
+l_int|1L
+op_lshift
+(paren
+l_int|31
+op_minus
+id|p
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|crc_32_tab
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|i
+OL
+l_int|256
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|c
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|k
+op_assign
+id|i
+op_or
+l_int|256
+suffix:semicolon
+id|k
+op_ne
+l_int|1
+suffix:semicolon
+id|k
+op_rshift_assign
+l_int|1
+)paren
+(brace
+id|c
+op_assign
+id|c
+op_amp
+l_int|1
+ques
+c_cond
+(paren
+id|c
+op_rshift
+l_int|1
+)paren
+op_xor
+id|e
+suffix:colon
+id|c
+op_rshift
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|k
+op_amp
+l_int|1
+)paren
+id|c
+op_xor_assign
+id|e
+suffix:semicolon
+)brace
+id|crc_32_tab
+(braket
+id|i
+)braket
+op_assign
+id|c
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* gzip flag byte */
+DECL|macro|ASCII_FLAG
+mdefine_line|#define ASCII_FLAG   0x01 /* bit 0 set: file probably ascii text */
+DECL|macro|CONTINUATION
+mdefine_line|#define CONTINUATION 0x02 /* bit 1 set: continuation of multi-part gzip file */
+DECL|macro|EXTRA_FIELD
+mdefine_line|#define EXTRA_FIELD  0x04 /* bit 2 set: extra field present */
+DECL|macro|ORIG_NAME
+mdefine_line|#define ORIG_NAME    0x08 /* bit 3 set: original file name present */
+DECL|macro|COMMENT
+mdefine_line|#define COMMENT      0x10 /* bit 4 set: file comment present */
+DECL|macro|ENCRYPTED
+mdefine_line|#define ENCRYPTED    0x20 /* bit 5 set: file is encrypted */
+DECL|macro|RESERVED
+mdefine_line|#define RESERVED     0xC0 /* bit 6,7:   reserved */
+multiline_comment|/*&n; * Do the uncompression!&n; */
+DECL|function|gunzip
+r_static
+r_int
+id|gunzip
+c_func
+(paren
+r_void
+)paren
+(brace
+id|uch
+id|flags
+suffix:semicolon
+r_int
+r_char
+id|magic
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* magic header */
+r_char
+id|method
+suffix:semicolon
+id|ulg
+id|orig_crc
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* original crc */
+id|ulg
+id|orig_len
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* original uncompressed length */
+r_int
+id|res
+suffix:semicolon
+id|magic
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+r_int
+r_char
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+id|magic
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+r_int
+r_char
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+id|method
+op_assign
+(paren
+r_int
+r_char
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|magic
+(braket
+l_int|0
+)braket
+op_ne
+l_int|037
+op_logical_or
+(paren
+(paren
+id|magic
+(braket
+l_int|1
+)braket
+op_ne
+l_int|0213
+)paren
+op_logical_and
+(paren
+id|magic
+(braket
+l_int|1
+)braket
+op_ne
+l_int|0236
+)paren
+)paren
+)paren
+(brace
+id|error
+c_func
+(paren
+l_string|&quot;bad gzip magic numbers&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* We only support method #8, DEFLATED */
+r_if
+c_cond
+(paren
+id|method
+op_ne
+l_int|8
+)paren
+(brace
+id|error
+c_func
+(paren
+l_string|&quot;internal error, invalid method&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|flags
+op_assign
+(paren
+id|uch
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|ENCRYPTED
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|error
+c_func
+(paren
+l_string|&quot;Input is encrypted&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|CONTINUATION
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|error
+c_func
+(paren
+l_string|&quot;Multi part input&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|RESERVED
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|error
+c_func
+(paren
+l_string|&quot;Input has invalid flags&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Get timestamp */
+(paren
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+)paren
+op_lshift
+l_int|8
+suffix:semicolon
+(paren
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+)paren
+op_lshift
+l_int|16
+suffix:semicolon
+(paren
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+)paren
+op_lshift
+l_int|24
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Ignore extra flags for the moment */
+(paren
+r_void
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Ignore OS type for the moment */
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|EXTRA_FIELD
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+r_int
+id|len
+op_assign
+(paren
+r_int
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+id|len
+op_or_assign
+(paren
+(paren
+r_int
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+)paren
+op_lshift
+l_int|8
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|len
+op_decrement
+)paren
+(paren
+r_void
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Get original file name if it was truncated */
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|ORIG_NAME
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* Discard the old name */
+r_while
+c_loop
+(paren
+id|get_byte
+c_func
+(paren
+)paren
+op_ne
+l_int|0
+)paren
+multiline_comment|/* null */
+suffix:semicolon
+)brace
+multiline_comment|/* Discard file comment if any */
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|COMMENT
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|get_byte
+c_func
+(paren
+)paren
+op_ne
+l_int|0
+)paren
+multiline_comment|/* null */
+suffix:semicolon
+)brace
+multiline_comment|/* Decompress */
+r_if
+c_cond
+(paren
+(paren
+id|res
+op_assign
+id|inflate
+c_func
+(paren
+)paren
+)paren
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|res
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|error
+c_func
+(paren
+l_string|&quot;invalid compressed format (err=1)&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|error
+c_func
+(paren
+l_string|&quot;invalid compressed format (err=2)&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|error
+c_func
+(paren
+l_string|&quot;out of memory&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|error
+c_func
+(paren
+l_string|&quot;invalid compressed format (other)&quot;
+)paren
+suffix:semicolon
+)brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Get the crc and original length */
+multiline_comment|/* crc32  (see algorithm.doc)&n;     * uncompressed input size modulo 2^32&n;     */
+id|orig_crc
+op_assign
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+id|orig_crc
+op_or_assign
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+op_lshift
+l_int|8
+suffix:semicolon
+id|orig_crc
+op_or_assign
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+op_lshift
+l_int|16
+suffix:semicolon
+id|orig_crc
+op_or_assign
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+op_lshift
+l_int|24
+suffix:semicolon
+id|orig_len
+op_assign
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+suffix:semicolon
+id|orig_len
+op_or_assign
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+op_lshift
+l_int|8
+suffix:semicolon
+id|orig_len
+op_or_assign
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+op_lshift
+l_int|16
+suffix:semicolon
+id|orig_len
+op_or_assign
+(paren
+id|ulg
+)paren
+id|get_byte
+c_func
+(paren
+)paren
+op_lshift
+l_int|24
+suffix:semicolon
+multiline_comment|/* Validate decompression */
+r_if
+c_cond
+(paren
+id|orig_crc
+op_ne
+id|CRC_VALUE
+)paren
+(brace
+id|error
+c_func
+(paren
+l_string|&quot;crc error&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|orig_len
+op_ne
+id|bytes_out
+)paren
+(brace
+id|error
+c_func
+(paren
+l_string|&quot;length error&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

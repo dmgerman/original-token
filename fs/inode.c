@@ -591,6 +591,8 @@ id|inode
 r_if
 c_cond
 (paren
+id|inode-&gt;i_sb
+op_logical_and
 id|inode-&gt;i_sb-&gt;dq_op
 )paren
 id|inode-&gt;i_sb-&gt;dq_op
@@ -1816,6 +1818,8 @@ id|inode
 r_if
 c_cond
 (paren
+id|inode-&gt;i_sb
+op_logical_and
 id|inode-&gt;i_sb-&gt;dq_op
 )paren
 id|inode-&gt;i_sb-&gt;dq_op
@@ -2459,6 +2463,10 @@ suffix:semicolon
 id|inode-&gt;i_ino
 op_assign
 id|nr
+suffix:semicolon
+id|inode-&gt;i_flags
+op_assign
+id|sb-&gt;s_flags
 suffix:semicolon
 id|put_last_free
 c_func

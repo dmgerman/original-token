@@ -1570,4 +1570,15 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#include &quot;NCR5380.c&quot;
+macro_line|#ifdef MODULE
+multiline_comment|/* Eventually this will go into an include file, but this will be later */
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|MV_PAS16
+suffix:semicolon
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 eof

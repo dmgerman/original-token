@@ -2,10 +2,148 @@ macro_line|#ifndef _ALPHA_PGTABLE_H
 DECL|macro|_ALPHA_PGTABLE_H
 mdefine_line|#define _ALPHA_PGTABLE_H
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the alpha page table tree.&n; *&n; * This hopefully works with any standard alpha page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; */
-DECL|macro|invalidate_all
-mdefine_line|#define invalidate_all() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-2($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
-DECL|macro|invalidate
-mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-1($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
+r_extern
+r_void
+id|tbi
+c_func
+(paren
+r_int
+id|type
+comma
+dot
+dot
+dot
+)paren
+suffix:semicolon
+DECL|macro|tbisi
+mdefine_line|#define tbisi(x)&t;tbi(1,(x))
+DECL|macro|tbisd
+mdefine_line|#define tbisd(x)&t;tbi(2,(x))
+DECL|macro|tbis
+mdefine_line|#define tbis(x)&t;&t;tbi(3,(x))
+DECL|macro|tbiap
+mdefine_line|#define tbiap()&t;&t;tbi(-1)
+DECL|macro|tbia
+mdefine_line|#define tbia()&t;&t;tbi(-2)
+multiline_comment|/*&n; * Invalidate current user mapping.&n; */
+DECL|function|invalidate
+r_static
+r_inline
+r_void
+id|invalidate
+c_func
+(paren
+r_void
+)paren
+(brace
+id|tbiap
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Invalidate everything (kernel mapping may also have&n; * changed due to vmalloc/vfree)&n; */
+DECL|function|invalidate_all
+r_static
+r_inline
+r_void
+id|invalidate_all
+c_func
+(paren
+r_void
+)paren
+(brace
+id|tbia
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Invalidate a specified user mapping&n; */
+DECL|function|invalidate_mm
+r_static
+r_inline
+r_void
+id|invalidate_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+id|tbiap
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Page-granular invalidate.&n; *&n; * do a tbisd (type = 2) normally, and a tbis (type = 3)&n; * if it is an executable mapping.  We want to avoid the&n; * itlb invalidate, because that potentially also does a&n; * icache invalidate. &n; */
+DECL|function|invalidate_page
+r_static
+r_inline
+r_void
+id|invalidate_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|tbi
+c_func
+(paren
+l_int|2
+op_plus
+(paren
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_EXEC
+)paren
+op_ne
+l_int|0
+)paren
+comma
+id|addr
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Invalidate a specified range of user mapping: on the&n; * alpha we invalidate the whole user tlb&n; */
+DECL|function|invalidate_range
+r_static
+r_inline
+r_void
+id|invalidate_range
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+id|tbiap
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
@@ -153,11 +291,11 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|BAD_PAGETABLE
-mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
+mdefine_line|#define BAD_PAGETABLE&t;__bad_pagetable()
 DECL|macro|BAD_PAGE
-mdefine_line|#define BAD_PAGE __bad_page()
+mdefine_line|#define BAD_PAGE&t;__bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE __zero_page()
+mdefine_line|#define ZERO_PAGE&t;0xfffffc000030A000
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))

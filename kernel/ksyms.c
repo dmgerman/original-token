@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -1286,6 +1287,12 @@ comma
 id|X
 c_func
 (paren
+id|kstat
+)paren
+comma
+id|X
+c_func
+(paren
 id|kill_proc
 )paren
 comma
@@ -1828,6 +1835,12 @@ id|X
 c_func
 (paren
 id|scsi_ioctl
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_mark_host_bus_reset
 )paren
 comma
 id|X

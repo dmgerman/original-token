@@ -12,6 +12,8 @@ DECL|macro|UNNAMED_MAJOR
 mdefine_line|#define UNNAMED_MAJOR&t;0
 DECL|macro|MEM_MAJOR
 mdefine_line|#define MEM_MAJOR&t;1
+DECL|macro|RAMDISK_MAJOR
+mdefine_line|#define RAMDISK_MAJOR&t;1
 DECL|macro|FLOPPY_MAJOR
 mdefine_line|#define FLOPPY_MAJOR&t;2
 DECL|macro|PTY_MASTER_MAJOR

@@ -2,6 +2,9 @@ multiline_comment|/*&n; * include/asm-mips/irq.h&n; *&n; * This file is subject 
 macro_line|#ifndef __ASM_MIPS_IRQ_H
 DECL|macro|__ASM_MIPS_IRQ_H
 mdefine_line|#define __ASM_MIPS_IRQ_H
+multiline_comment|/*&n; * Actually this is a lie but we hide the local device&squot;s interrupts ...&n; */
+DECL|macro|NR_IRQS
+mdefine_line|#define NR_IRQS 16
 r_extern
 r_void
 id|disable_irq

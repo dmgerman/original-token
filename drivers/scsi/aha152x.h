@@ -1,7 +1,7 @@
 macro_line|#ifndef _AHA152X_H
 DECL|macro|_AHA152X_H
 mdefine_line|#define _AHA152X_H
-multiline_comment|/*&n; * $Id: aha152x.h,v 1.9 1995/03/18 09:21:04 root Exp root $&n; */
+multiline_comment|/*&n; * $Id: aha152x.h,v 1.11 1995/12/07 01:03:20 fischer Exp root $&n; */
 macro_line|#if defined(__KERNEL__)
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -69,11 +69,37 @@ r_int
 op_star
 )paren
 suffix:semicolon
+r_int
+id|aha152x_proc_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|hostno
+comma
+r_int
+id|inout
+)paren
+suffix:semicolon
 multiline_comment|/* number of queueable commands&n;   (unless we support more than 1 cmd_per_lun this should do) */
 DECL|macro|AHA152X_MAXQUEUE
 mdefine_line|#define AHA152X_MAXQUEUE&t;7&t;&t;
 DECL|macro|AHA152X_REVID
-mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.9 $&quot;
+mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.11 $&quot;
 r_extern
 r_struct
 id|proc_dir_entry
@@ -81,69 +107,82 @@ id|proc_scsi_aha152x
 suffix:semicolon
 multiline_comment|/* Initial value of Scsi_Host entry */
 DECL|macro|AHA152X
-mdefine_line|#define AHA152X       { /* next */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* usage_count */  &t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;                        &amp;proc_scsi_aha152x,         &bslash;&n;&t;&t;&t;&t;&t;&t;NULL,                       &bslash;&n;&t;&t;&t;/* name */&t;&t;AHA152X_REVID, &t;&t;    &bslash;&n;&t;&t;&t;/* detect */&t;&t;aha152x_detect,             &bslash;&n;&t;&t;&t;/* release */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* info */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* command */&t;&t;aha152x_command,            &bslash;&n;&t;&t;&t;/* queuecommand */&t;aha152x_queue,              &bslash;&n;&t;&t;&t;/* abort */&t;&t;aha152x_abort,              &bslash;&n;&t;&t;&t;/* reset */&t;&t;aha152x_reset,              &bslash;&n;&t;&t;&t;/* slave_attach */&t;/* NULL */  0,              &bslash;&n;&t;&t;&t;/* bios_param */&t;aha152x_biosparam,          &bslash;&n;&t;&t;&t;/* can_queue */&t;&t;1,                          &bslash;&n;&t;&t;&t;/* this_id */&t;&t;7,                          &bslash;&n;&t;&t;&t;/* sg_tablesize */&t;SG_ALL,                     &bslash;&n;&t;&t;&t;/* cmd_per_lun */&t;1,                          &bslash;&n;&t;&t;&t;/* present */&t;&t;0,                          &bslash;&n;&t;&t;&t;/* unchecked_isa_dma */&t;0,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* use_clustering */&t;DISABLE_CLUSTERING }
+mdefine_line|#define AHA152X       { /* next */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* usage_count */  &t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* proc_dir */&t;&t;&amp;proc_scsi_aha152x,         &bslash;&n;&t;&t;&t;/* proc_info */&t;&t;aha152x_proc_info,          &bslash;&n;&t;&t;&t;/* name */&t;&t;AHA152X_REVID, &t;&t;    &bslash;&n;&t;&t;&t;/* detect */&t;&t;aha152x_detect,             &bslash;&n;&t;&t;&t;/* release */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* info */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* command */&t;&t;aha152x_command,            &bslash;&n;&t;&t;&t;/* queuecommand */&t;aha152x_queue,              &bslash;&n;&t;&t;&t;/* abort */&t;&t;aha152x_abort,              &bslash;&n;&t;&t;&t;/* reset */&t;&t;aha152x_reset,              &bslash;&n;&t;&t;&t;/* slave_attach */&t;/* NULL */  0,              &bslash;&n;&t;&t;&t;/* bios_param */&t;aha152x_biosparam,          &bslash;&n;&t;&t;&t;/* can_queue */&t;&t;1,                          &bslash;&n;&t;&t;&t;/* this_id */&t;&t;7,                          &bslash;&n;&t;&t;&t;/* sg_tablesize */&t;SG_ALL,                     &bslash;&n;&t;&t;&t;/* cmd_per_lun */&t;1,                          &bslash;&n;&t;&t;&t;/* present */&t;&t;0,                          &bslash;&n;&t;&t;&t;/* unchecked_isa_dma */&t;0,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* use_clustering */&t;DISABLE_CLUSTERING }
 macro_line|#endif
 multiline_comment|/* port addresses */
 DECL|macro|SCSISEQ
-mdefine_line|#define SCSISEQ&t;&t;(port_base+0x00)&t;/* SCSI sequence control */
+mdefine_line|#define SCSISEQ&t;&t;(shpnt-&gt;io_port+0x00)&t;/* SCSI sequence control */
 DECL|macro|SXFRCTL0
-mdefine_line|#define SXFRCTL0&t;(port_base+0x01)&t;/* SCSI transfer control 0 */
+mdefine_line|#define SXFRCTL0&t;(shpnt-&gt;io_port+0x01)&t;/* SCSI transfer control 0 */
 DECL|macro|SXFRCTL1
-mdefine_line|#define SXFRCTL1&t;(port_base+0x02)&t;/* SCSI transfer control 1 */
+mdefine_line|#define SXFRCTL1&t;(shpnt-&gt;io_port+0x02)&t;/* SCSI transfer control 1 */
 DECL|macro|SCSISIG
-mdefine_line|#define SCSISIG&t;&t;(port_base+0x03)&t;/* SCSI signal in/out */
+mdefine_line|#define SCSISIG&t;&t;(shpnt-&gt;io_port+0x03)&t;/* SCSI signal in/out */
 DECL|macro|SCSIRATE
-mdefine_line|#define SCSIRATE&t;(port_base+0x04)&t;/* SCSI rate control */
+mdefine_line|#define SCSIRATE&t;(shpnt-&gt;io_port+0x04)&t;/* SCSI rate control */
 DECL|macro|SELID
-mdefine_line|#define SELID&t;&t;(port_base+0x05)&t;/* selection/reselection ID */
+mdefine_line|#define SELID&t;&t;(shpnt-&gt;io_port+0x05)&t;/* selection/reselection ID */
 DECL|macro|SCSIID
 mdefine_line|#define SCSIID&t;&t;SELID&t;&t;&t;/* SCSI ID */
 DECL|macro|SCSIDAT
-mdefine_line|#define SCSIDAT&t;&t;(port_base+0x06)&t;/* SCSI latched data */
+mdefine_line|#define SCSIDAT&t;&t;(shpnt-&gt;io_port+0x06)&t;/* SCSI latched data */
 DECL|macro|SCSIBUS
-mdefine_line|#define SCSIBUS&t;&t;(port_base+0x07)&t;/* SCSI data bus */
+mdefine_line|#define SCSIBUS&t;&t;(shpnt-&gt;io_port+0x07)&t;/* SCSI data bus */
 DECL|macro|STCNT0
-mdefine_line|#define STCNT0&t;&t;(port_base+0x08)&t;/* SCSI transfer count 0 */
+mdefine_line|#define STCNT0&t;&t;(shpnt-&gt;io_port+0x08)&t;/* SCSI transfer count 0 */
 DECL|macro|STCNT1
-mdefine_line|#define STCNT1&t;&t;(port_base+0x09)&t;/* SCSI transfer count 1 */
+mdefine_line|#define STCNT1&t;&t;(shpnt-&gt;io_port+0x09)&t;/* SCSI transfer count 1 */
 DECL|macro|STCNT2
-mdefine_line|#define STCNT2&t;&t;(port_base+0x0a)&t;/* SCSI transfer count 2 */
+mdefine_line|#define STCNT2&t;&t;(shpnt-&gt;io_port+0x0a)&t;/* SCSI transfer count 2 */
 DECL|macro|SSTAT0
-mdefine_line|#define SSTAT0&t;&t;(port_base+0x0b)&t;/* SCSI interrupt status 0 */
+mdefine_line|#define SSTAT0&t;&t;(shpnt-&gt;io_port+0x0b)&t;/* SCSI interrupt status 0 */
 DECL|macro|SSTAT1
-mdefine_line|#define SSTAT1&t;&t;(port_base+0x0c)&t;/* SCSI interrupt status 1 */
+mdefine_line|#define SSTAT1&t;&t;(shpnt-&gt;io_port+0x0c)&t;/* SCSI interrupt status 1 */
 DECL|macro|SSTAT2
-mdefine_line|#define SSTAT2&t;&t;(port_base+0x0d)&t;/* SCSI interrupt status 2 */
+mdefine_line|#define SSTAT2&t;&t;(shpnt-&gt;io_port+0x0d)&t;/* SCSI interrupt status 2 */
 DECL|macro|SCSITEST
-mdefine_line|#define SCSITEST&t;(port_base+0x0e)&t;/* SCSI test control */
+mdefine_line|#define SCSITEST&t;(shpnt-&gt;io_port+0x0e)&t;/* SCSI test control */
+DECL|macro|SSTAT3
+mdefine_line|#define SSTAT3&t;&t;SCSITEST                /* SCSI interrupt status 3 */
 DECL|macro|SSTAT4
-mdefine_line|#define SSTAT4&t;&t;(port_base+0x0f)&t;/* SCSI status 4 */
+mdefine_line|#define SSTAT4&t;&t;(shpnt-&gt;io_port+0x0f)&t;/* SCSI status 4 */
 DECL|macro|SIMODE0
-mdefine_line|#define SIMODE0&t;&t;(port_base+0x10)&t;/* SCSI interrupt mode 0 */
+mdefine_line|#define SIMODE0&t;&t;(shpnt-&gt;io_port+0x10)&t;/* SCSI interrupt mode 0 */
 DECL|macro|SIMODE1
-mdefine_line|#define SIMODE1&t;&t;(port_base+0x11)&t;/* SCSI interrupt mode 1 */
+mdefine_line|#define SIMODE1&t;&t;(shpnt-&gt;io_port+0x11)&t;/* SCSI interrupt mode 1 */
 DECL|macro|DMACNTRL0
-mdefine_line|#define DMACNTRL0&t;(port_base+0x12)&t;/* DMA control 0 */
+mdefine_line|#define DMACNTRL0&t;(shpnt-&gt;io_port+0x12)&t;/* DMA control 0 */
 DECL|macro|DMACNTRL1
-mdefine_line|#define DMACNTRL1&t;(port_base+0x13)&t;/* DMA control 1 */
+mdefine_line|#define DMACNTRL1&t;(shpnt-&gt;io_port+0x13)&t;/* DMA control 1 */
 DECL|macro|DMASTAT
-mdefine_line|#define DMASTAT&t;&t;(port_base+0x14)&t;/* DMA status */
+mdefine_line|#define DMASTAT&t;&t;(shpnt-&gt;io_port+0x14)&t;/* DMA status */
 DECL|macro|FIFOSTAT
-mdefine_line|#define FIFOSTAT&t;(port_base+0x15)&t;/* FIFO status */
+mdefine_line|#define FIFOSTAT&t;(shpnt-&gt;io_port+0x15)&t;/* FIFO status */
 DECL|macro|DATAPORT
-mdefine_line|#define DATAPORT&t;(port_base+0x16)&t;/* DATA port */
+mdefine_line|#define DATAPORT&t;(shpnt-&gt;io_port+0x16)&t;/* DATA port */
 DECL|macro|BRSTCNTRL
-mdefine_line|#define BRSTCNTRL&t;(port_base+0x18)&t;/* burst control */
+mdefine_line|#define BRSTCNTRL&t;(shpnt-&gt;io_port+0x18)&t;/* burst control */
 DECL|macro|PORTA
-mdefine_line|#define PORTA&t;&t;(port_base+0x1a)&t;/* PORT A */
+mdefine_line|#define PORTA&t;&t;(shpnt-&gt;io_port+0x1a)&t;/* PORT A */
 DECL|macro|PORTB
-mdefine_line|#define PORTB&t;&t;(port_base+0x1b)&t;/* PORT B */
+mdefine_line|#define PORTB&t;&t;(shpnt-&gt;io_port+0x1b)&t;/* PORT B */
 DECL|macro|REV
-mdefine_line|#define REV&t;&t;(port_base+0x1c)&t;/* revision */
+mdefine_line|#define REV&t;&t;(shpnt-&gt;io_port+0x1c)&t;/* revision */
 DECL|macro|STACK
-mdefine_line|#define STACK&t;&t;(port_base+0x1d)&t;/* stack */
+mdefine_line|#define STACK&t;&t;(shpnt-&gt;io_port+0x1d)&t;/* stack */
 DECL|macro|TEST
-mdefine_line|#define TEST&t;&t;(port_base+0x1e)&t;/* test register */
+mdefine_line|#define TEST&t;&t;(shpnt-&gt;io_port+0x1e)&t;/* test register */
+multiline_comment|/* used in aha152x_porttest */
+DECL|macro|O_PORTA
+mdefine_line|#define O_PORTA&t;&t;(0x1a)                  /* PORT A */
+DECL|macro|O_PORTB
+mdefine_line|#define O_PORTB&t;&t;(0x1b)                  /* PORT B */
+DECL|macro|O_DMACNTRL1
+mdefine_line|#define O_DMACNTRL1&t;(0x13)                  /* DMA control 1 */
+DECL|macro|O_STACK
+mdefine_line|#define O_STACK         (0x1d)                  /* stack */
+DECL|macro|IO_RANGE
+mdefine_line|#define IO_RANGE&t;0x20
 multiline_comment|/* bits and bitmasks to ports */
 multiline_comment|/* SCSI sequence control */
 DECL|macro|TEMODEO

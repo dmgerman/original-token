@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sat Nov  4 22:23:54 1995 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Thu Dec 14 21:51:16 1995 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15,6 +15,9 @@ macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* The driver prints some debugging information on the console if DEBUG&n;   is defined and non-zero. */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG 0
+multiline_comment|/* The message level for the debug messages is currently set to KERN_NOTICE&n;   so that people can easily see the messages. Later when the debugging messages&n;   in the drivers are more widely classified, this may be changed to KERN_DEBUG. */
+DECL|macro|ST_DEB_MSG
+mdefine_line|#define ST_DEB_MSG  KERN_NOTICE
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SCSI_TAPE_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
@@ -286,6 +289,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Error: %x, cmd: %x %x %x %x %x %x Len: %d&bslash;n&quot;
 comma
 id|dev
@@ -396,10 +400,7 @@ id|scode
 op_ne
 id|RECOVERED_ERROR
 op_logical_and
-id|scode
-op_ne
-id|UNIT_ATTENTION
-op_logical_and
+multiline_comment|/*       scode != UNIT_ATTENTION &amp;&amp; */
 id|scode
 op_ne
 id|BLANK_CHECK
@@ -414,20 +415,17 @@ l_int|0
 )braket
 op_ne
 id|MODE_SENSE
+op_logical_and
+id|SCpnt-&gt;data_cmnd
+(braket
+l_int|0
+)braket
+op_ne
+id|TEST_UNIT_READY
 )paren
 )paren
 (brace
 multiline_comment|/* Abnormal conditions for tape */
-id|printk
-c_func
-(paren
-l_string|&quot;st%d: Error %x. &quot;
-comma
-id|dev
-comma
-id|result
-)paren
-suffix:semicolon
 macro_line|#if !DEBUG
 r_if
 c_cond
@@ -440,6 +438,16 @@ id|result
 op_amp
 id|DRIVER_SENSE
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;st%d: Error with sense data: &quot;
+comma
+id|dev
+)paren
+suffix:semicolon
 id|print_sense
 c_func
 (paren
@@ -448,11 +456,17 @@ comma
 id|SCpnt
 )paren
 suffix:semicolon
+)brace
 r_else
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;st%d: Error %x.&bslash;n&quot;
+comma
+id|dev
+comma
+id|result
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -558,6 +572,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Recovered %s error (%d).&bslash;n&quot;
 comma
 id|dev
@@ -820,6 +835,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;st?: Illegal interrupt device %x&bslash;n&quot;
 comma
 id|st_nbr
@@ -888,6 +904,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;st%d: Can&squot;t get SCSI request.&bslash;n&quot;
 comma
 id|TAPE_NR
@@ -1194,6 +1211,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;st%d: Backing over filemark failed.&bslash;n&quot;
 comma
 id|TAPE_NR
@@ -1307,6 +1325,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Async write error (flush) %x.&bslash;n&quot;
 comma
 id|TAPE_NR
@@ -1403,6 +1422,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Flushing %d bytes.&bslash;n&quot;
 comma
 id|TAPE_NR
@@ -1533,6 +1553,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;st%d: Error on flush.&bslash;n&quot;
 comma
 id|TAPE_NR
@@ -1969,14 +1990,17 @@ c_cond
 id|STp-&gt;in_use
 )paren
 (brace
+macro_line|#if DEBUG
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Device already in use.&bslash;n&quot;
 comma
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 (paren
 op_minus
@@ -1984,6 +2008,20 @@ id|EBUSY
 )paren
 suffix:semicolon
 )brace
+id|STp-&gt;rew_at_close
+op_assign
+(paren
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+op_amp
+l_int|0x80
+)paren
+op_eq
+l_int|0
+suffix:semicolon
 multiline_comment|/* Allocate buffer for this user */
 r_for
 c_loop
@@ -2039,6 +2077,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;st%d: No free buffers.&bslash;n&quot;
 comma
 id|dev
@@ -2341,6 +2380,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;st%d: No tape.&bslash;n&quot;
 comma
 id|dev
@@ -2570,6 +2610,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Block limits %d - %d bytes.&bslash;n&quot;
 comma
 id|dev
@@ -2601,6 +2642,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Can&squot;t read block limits.&bslash;n&quot;
 comma
 id|dev
@@ -2678,6 +2720,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: No Mode Sense.&bslash;n&quot;
 comma
 id|dev
@@ -2714,6 +2757,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Mode sense. Length %d, medium %x, WBS %x, BLL %d&bslash;n&quot;
 comma
 id|dev
@@ -2841,6 +2885,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Density %x, tape length: %x, drv buffer: %d&bslash;n&quot;
 comma
 id|dev
@@ -2907,6 +2952,7 @@ id|STp-&gt;block_size
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;st%d: Blocksize %d too large for buffer.&bslash;n&quot;
 comma
 id|dev
@@ -3005,6 +3051,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Block size: %d, buffer size: %d (%d blocks).&bslash;n&quot;
 comma
 id|dev
@@ -3044,6 +3091,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Write protected&bslash;n&quot;
 comma
 id|dev
@@ -3154,9 +3202,6 @@ id|filp
 r_int
 id|result
 suffix:semicolon
-r_int
-id|rewind
-suffix:semicolon
 r_static
 r_int
 r_char
@@ -3188,20 +3233,6 @@ c_func
 (paren
 id|devt
 )paren
-suffix:semicolon
-id|rewind
-op_assign
-(paren
-id|MINOR
-c_func
-(paren
-id|devt
-)paren
-op_amp
-l_int|0x80
-)paren
-op_eq
-l_int|0
 suffix:semicolon
 id|STp
 op_assign
@@ -3246,6 +3277,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: File length %ld bytes.&bslash;n&quot;
 comma
 id|dev
@@ -3261,6 +3293,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Async write waits %d, finished %d.&bslash;n&quot;
 comma
 id|dev
@@ -3358,6 +3391,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;st%d: Error on write filemark.&bslash;n&quot;
 comma
 id|dev
@@ -3409,6 +3443,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Buffer flushed, %d EOF(s) written&bslash;n&quot;
 comma
 id|dev
@@ -3426,7 +3461,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|rewind
+id|STp-&gt;rew_at_close
 )paren
 (brace
 macro_line|#if ST_IN_FILE_POS
@@ -3464,7 +3499,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|rewind
+id|STp-&gt;rew_at_close
 )paren
 id|st_int_ioctl
 c_func
@@ -3687,6 +3722,7 @@ id|STp-&gt;in_use
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Incorrect device.&bslash;n&quot;
 comma
 id|dev
@@ -3845,6 +3881,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Async write error (write) %x.&bslash;n&quot;
 comma
 id|dev
@@ -4226,6 +4263,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Error on write:&bslash;n&quot;
 comma
 id|dev
@@ -4429,6 +4467,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: EOM with %d bytes unwritten.&bslash;n&quot;
 comma
 id|dev
@@ -4469,6 +4508,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: EOM with lost data.&bslash;n&quot;
 comma
 id|dev
@@ -4989,6 +5029,7 @@ id|STp-&gt;in_use
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Incorrect device.&bslash;n&quot;
 comma
 id|dev
@@ -5141,6 +5182,7 @@ id|ST_NOEOF
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: EOF flag up. Bytes %d&bslash;n&quot;
 comma
 id|dev
@@ -5409,6 +5451,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Sense: %2x %2x %2x %2x %2x %2x %2x %2x&bslash;n&quot;
 comma
 id|dev
@@ -5608,6 +5651,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;st%d: Incorrect block size.&bslash;n&quot;
 comma
 id|dev
@@ -5681,6 +5725,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: EOM detected (%d bytes read).&bslash;n&quot;
 comma
 id|dev
@@ -5747,6 +5792,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: EOF detected (%d bytes read, transferred %d bytes).&bslash;n&quot;
 comma
 id|dev
@@ -5776,6 +5822,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Tape error while reading.&bslash;n&quot;
 comma
 id|dev
@@ -5830,6 +5877,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Zero returned for first BLANK CHECK after EOF.&bslash;n&quot;
 comma
 id|dev
@@ -5941,6 +5989,7 @@ id|ST_NOEOF
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: EOF up. Left %d, needed %d.&bslash;n&quot;
 comma
 id|dev
@@ -6285,6 +6334,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: options: buffer writes: %d, async writes: %d, read ahead: %d&bslash;n&quot;
 comma
 id|dev
@@ -6299,7 +6349,10 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;              two FMs: %d, fast mteom: %d auto lock: %d, debugging: %d&bslash;n&quot;
+id|ST_DEB_MSG
+l_string|&quot;st%d:          two FMs: %d, fast mteom: %d auto lock: %d, debugging: %d&bslash;n&quot;
+comma
+id|dev
 comma
 id|STp-&gt;two_fm
 comma
@@ -6347,6 +6400,7 @@ id|st_buffer_size
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;st: Write threshold %d too small or too large.&bslash;n&quot;
 comma
 id|value
@@ -6367,6 +6421,7 @@ macro_line|#if DEBUG
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Write threshold set to %d bytes.&bslash;n&quot;
 comma
 id|dev
@@ -6582,6 +6637,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Spacing tape forward over %d filemarks.&bslash;n&quot;
 comma
 id|dev
@@ -6740,6 +6796,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Spacing tape backward over %ld filemarks.&bslash;n&quot;
 comma
 id|dev
@@ -6837,6 +6894,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Spacing tape forward %d blocks.&bslash;n&quot;
 comma
 id|dev
@@ -6988,6 +7046,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Spacing tape backward %ld blocks.&bslash;n&quot;
 comma
 id|dev
@@ -7077,6 +7136,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Spacing tape forward %d setmarks.&bslash;n&quot;
 comma
 id|dev
@@ -7231,6 +7291,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Spacing tape backward %ld setmarks.&bslash;n&quot;
 comma
 id|dev
@@ -7355,6 +7416,7 @@ id|MTWEOF
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Writing %d filemarks.&bslash;n&quot;
 comma
 id|dev
@@ -7383,6 +7445,7 @@ r_else
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Writing %d setmarks.&bslash;n&quot;
 comma
 id|dev
@@ -7467,6 +7530,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Rewinding tape.&bslash;n&quot;
 comma
 id|dev
@@ -7486,12 +7550,32 @@ suffix:semicolon
 r_case
 id|MTOFFL
 suffix:colon
+r_case
+id|MTLOAD
+suffix:colon
+r_case
+id|MTUNLOAD
+suffix:colon
 id|cmd
 (braket
 l_int|0
 )braket
 op_assign
 id|START_STOP
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd_in
+op_eq
+id|MTLOAD
+)paren
+id|cmd
+(braket
+l_int|4
+)braket
+op_or_assign
+l_int|1
 suffix:semicolon
 macro_line|#if ST_NOWAIT
 id|cmd
@@ -7506,6 +7590,13 @@ id|timeout
 op_assign
 id|ST_TIMEOUT
 suffix:semicolon
+macro_line|#else
+id|timeout
+op_assign
+id|ST_LONG_TIMEOUT
+op_star
+l_int|8
+suffix:semicolon
 macro_line|#endif
 macro_line|#if DEBUG
 r_if
@@ -7516,6 +7607,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Unloading tape.&bslash;n&quot;
 comma
 id|dev
@@ -7544,6 +7636,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: No op on tape.&bslash;n&quot;
 comma
 id|dev
@@ -7596,6 +7689,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Retensioning tape.&bslash;n&quot;
 comma
 id|dev
@@ -7692,6 +7786,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Spacing to end of recorded medium.&bslash;n&quot;
 comma
 id|dev
@@ -7767,6 +7862,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Erasing tape.&bslash;n&quot;
 comma
 id|dev
@@ -7809,6 +7905,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Locking drive door.&bslash;n&quot;
 comma
 id|dev
@@ -7843,62 +7940,13 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Unlocking drive door.&bslash;n&quot;
 comma
 id|dev
 )paren
 suffix:semicolon
 macro_line|#endif;
-r_break
-suffix:semicolon
-r_case
-id|MTLOAD
-suffix:colon
-r_case
-id|MTUNLOAD
-suffix:colon
-id|cmd
-(braket
-l_int|0
-)braket
-op_assign
-id|START_STOP
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cmd_in
-op_eq
-id|MTLOAD
-)paren
-id|cmd
-(braket
-l_int|4
-)braket
-op_or_assign
-l_int|1
-suffix:semicolon
-macro_line|#if ST_NOWAIT
-id|cmd
-(braket
-l_int|1
-)braket
-op_or_assign
-l_int|2
-suffix:semicolon
-multiline_comment|/* Don&squot;t wait for completion */
-id|timeout
-op_assign
-id|ST_TIMEOUT
-suffix:semicolon
-macro_line|#else
-id|timeout
-op_assign
-id|ST_LONG_TIMEOUT
-op_star
-l_int|8
-suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -8040,6 +8088,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Seeking tape to block %ld.&bslash;n&quot;
 comma
 id|dev
@@ -8120,6 +8169,7 @@ id|st_buffer_size
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;st%d: Illegal block size.&bslash;n&quot;
 comma
 id|dev
@@ -8320,6 +8370,7 @@ id|MTSETBLK
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Setting block size to %d bytes.&bslash;n&quot;
 comma
 id|dev
@@ -8367,6 +8418,7 @@ id|MTSETDENSITY
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Setting density code to %x.&bslash;n&quot;
 comma
 id|dev
@@ -8385,6 +8437,7 @@ r_else
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Setting drive buffer code to %d.&bslash;n&quot;
 comma
 id|dev
@@ -8411,16 +8464,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;st%d: Unknown st_ioctl command %x.&bslash;n&quot;
-comma
-id|dev
-comma
-id|cmd_in
-)paren
-suffix:semicolon
 r_return
 (paren
 op_minus
@@ -8723,6 +8766,43 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|cmd_in
+op_eq
+id|MTOFFL
+op_logical_or
+id|cmd_in
+op_eq
+id|MTUNLOAD
+)paren
+id|STp-&gt;rew_at_close
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|cmd_in
+op_eq
+id|MTLOAD
+)paren
+id|STp-&gt;rew_at_close
+op_assign
+(paren
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+op_amp
+l_int|0x80
+)paren
+op_eq
+l_int|0
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -9165,6 +9245,7 @@ id|STp-&gt;in_use
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Incorrect device.&bslash;n&quot;
 comma
 id|dev
@@ -9324,6 +9405,60 @@ op_member_access_from_pointer
 id|was_reset
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|STp-&gt;eof_hit
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mtc.mt_op
+op_eq
+id|MTFSF
+op_logical_or
+id|mtc.mt_op
+op_eq
+id|MTEOM
+)paren
+(brace
+id|mtc.mt_count
+op_sub_assign
+l_int|1
+suffix:semicolon
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_add_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|mtc.mt_op
+op_eq
+id|MTBSF
+)paren
+(brace
+id|mtc.mt_count
+op_add_assign
+l_int|1
+suffix:semicolon
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_add_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
 id|i
 op_assign
 id|flush_buffer
@@ -9446,6 +9581,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;st%d: Could not relock door after bus reset.&bslash;n&quot;
 comma
 id|dev
@@ -10022,6 +10158,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: get tape position.&bslash;n&quot;
 comma
 id|dev
@@ -10210,6 +10347,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st%d: Can&squot;t read tape position.&bslash;n&quot;
 comma
 id|dev
@@ -10533,6 +10671,7 @@ id|tb
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;st: Can&squot;t allocate new tape buffer (nbr %d).&bslash;n&quot;
 comma
 id|st_nbr_buffers
@@ -10551,6 +10690,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st: Allocated tape buffer %d (%d bytes).&bslash;n&quot;
 comma
 id|st_nbr_buffers
@@ -10668,6 +10808,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st: Buffer enlarged to %d bytes.&bslash;n&quot;
 comma
 id|a_size
@@ -10744,6 +10885,7 @@ id|debugging
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st: Buffer normalized to %d bytes.&bslash;n&quot;
 comma
 id|STbuffer-&gt;buffer_size
@@ -10751,7 +10893,7 @@ id|STbuffer-&gt;buffer_size
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* Set the boot options. Syntax: st=xxx,yyy&n;   where xxx is buffer size in 512 byte blocks and yyy is write threshold&n;   in 512 byte blocks. */
+multiline_comment|/* Set the boot options. Syntax: st=xxx,yyy&n;   where xxx is buffer size in 1024 byte blocks and yyy is write threshold&n;   in 1024 byte blocks. */
 r_void
 DECL|function|st_setup
 id|st_setup
@@ -11134,6 +11276,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;Detected scsi tape st%d at scsi%d, channel %d, id %d, lun %d&bslash;n&quot;
 comma
 id|st_template.dev_noticed
@@ -11215,6 +11358,7 @@ id|st_fops
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unable to get major %d for SCSI tapes&bslash;n&quot;
 comma
 id|MAJOR_NR
@@ -11283,6 +11427,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unable to allocate descriptors for SCSI tapes.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -11302,6 +11447,7 @@ macro_line|#if DEBUG
 id|printk
 c_func
 (paren
+id|ST_DEB_MSG
 l_string|&quot;st: Buffer size %d bytes, write threshold %d bytes.&bslash;n&quot;
 comma
 id|st_buffer_size
@@ -11489,6 +11635,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unable to allocate tape buffer pointers.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -11592,6 +11739,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Can&squot;t continue without at least one tape buffer.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -11645,6 +11793,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Number of tape buffers adjusted.&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -1,5 +1,4 @@
-multiline_comment|/*&n; *  arch/mips/mm/fault.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *  Ported to MIPS by Ralf Baechle&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; *  arch/mips/mm/fault.c&n; *&n; *  Copyright (C) 1995 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -12,7 +11,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/mipsconfig.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
 r_void
 id|die_if_kernel
@@ -28,10 +27,10 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; *&n; * The error_code parameter just the same as in the i386 version:&n; *&n; *&t;bit 0 == 0 means no page found, 1 means protection fault&n; *&t;bit 1 == 0 means read, 1 means write&n; *&t;bit 2 == 0 means kernel, 1 means user-mode&n; */
-DECL|function|do_page_fault
+multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; */
 id|asmlinkage
 r_void
+DECL|function|do_page_fault
 id|do_page_fault
 c_func
 (paren
@@ -42,7 +41,11 @@ id|regs
 comma
 r_int
 r_int
-id|error_code
+id|writeaccess
+comma
+r_int
+r_int
+id|address
 )paren
 (brace
 r_struct
@@ -50,39 +53,37 @@ id|vm_area_struct
 op_star
 id|vma
 suffix:semicolon
-r_int
-r_int
-id|address
-suffix:semicolon
-r_int
-r_int
-id|page
-suffix:semicolon
-multiline_comment|/* get the address */
-id|__asm__
+macro_line|#if 0
+id|printk
 c_func
 (paren
-l_string|&quot;dmfc0&bslash;t%0,$8&quot;
+l_string|&quot;do_page_fault() #1: %s %08lx (epc == %08lx, ra == %08lx)&bslash;n&quot;
+comma
+id|writeaccess
+ques
+c_cond
+l_string|&quot;writeaccess to&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;readaccess from&quot;
+comma
+id|address
+comma
+id|regs-&gt;cp0_epc
+comma
+id|regs-&gt;reg31
+)paren
+suffix:semicolon
+macro_line|#endif
+id|vma
+op_assign
+id|find_vma
+c_func
 (paren
+id|current
+comma
 id|address
 )paren
-)paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|vma
-op_assign
-id|current-&gt;mm-&gt;mmap
-suffix:semicolon
-suffix:semicolon
-id|vma
-op_assign
-id|vma-&gt;vm_next
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -92,16 +93,6 @@ id|vma
 r_goto
 id|bad_area
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|vma-&gt;vm_end
-OG
-id|address
-)paren
-r_break
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -128,48 +119,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_end
-op_minus
+id|expand_stack
+c_func
+(paren
+id|vma
+comma
 id|address
-OG
-id|current-&gt;rlim
-(braket
-id|RLIMIT_STACK
-)braket
-dot
-id|rlim_cur
+)paren
 )paren
 r_goto
 id|bad_area
 suffix:semicolon
-id|vma-&gt;vm_offset
-op_sub_assign
-id|vma-&gt;vm_start
-op_minus
-(paren
-id|address
-op_amp
-id|PAGE_MASK
-)paren
-suffix:semicolon
-id|vma-&gt;vm_start
-op_assign
-(paren
-id|address
-op_amp
-id|PAGE_MASK
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Ok, we have a good vm_area for this memory access, so&n; * we can handle it..&n; */
 id|good_area
 suffix:colon
-multiline_comment|/*&n;&t; * was it a write?&n;&t; */
 r_if
 c_cond
 (paren
-id|error_code
-op_amp
-l_int|2
+id|writeaccess
 )paren
 (brace
 r_if
@@ -188,17 +155,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* read with protection fault? */
-r_if
-c_cond
-(paren
-id|error_code
-op_amp
-l_int|1
-)paren
-r_goto
-id|bad_area
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -217,39 +173,25 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|error_code
-op_amp
-l_int|1
-)paren
-(brace
-id|do_wp_page
+id|handle_mm_fault
 c_func
 (paren
 id|vma
 comma
 id|address
 comma
-id|error_code
-op_amp
-l_int|2
+id|writeaccess
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|do_no_page
+multiline_comment|/* FIXME: This flushes the cache far to often */
+id|sys_cacheflush
 c_func
 (paren
-id|vma
-comma
 id|address
 comma
-id|error_code
-op_amp
-l_int|2
+id|PAGE_SIZE
+comma
+id|BCACHE
 )paren
 suffix:semicolon
 r_return
@@ -273,14 +215,8 @@ id|address
 suffix:semicolon
 id|current-&gt;tss.error_code
 op_assign
-id|error_code
+id|writeaccess
 suffix:semicolon
-macro_line|#if 0
-id|current-&gt;tss.trap_no
-op_assign
-l_int|14
-suffix:semicolon
-macro_line|#endif
 id|send_sig
 c_func
 (paren
@@ -295,143 +231,16 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n;&t; * terminate things with extreme prejudice.&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-r_int
-r_int
-)paren
-(paren
-id|address
-op_minus
-id|TASK_SIZE
-)paren
-OL
-id|PAGE_SIZE
-)paren
-(brace
 id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;Unable to handle kernel NULL pointer dereference&quot;
-)paren
-suffix:semicolon
-id|pg0
-(braket
-l_int|0
-)braket
-op_assign
-id|pte_val
-c_func
-(paren
-id|mk_pte
-c_func
-(paren
-l_int|0
-comma
-id|PAGE_SHARED
-)paren
-)paren
-suffix:semicolon
-)brace
-r_else
-id|printk
-c_func
-(paren
-id|KERN_ALERT
-l_string|&quot;Unable to handle kernel paging request&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; at virtual address %08lx&bslash;n&quot;
+l_string|&quot;Unable to handle kernel paging request at virtual &quot;
+l_string|&quot;address %08lx&bslash;n&quot;
 comma
 id|address
 )paren
 suffix:semicolon
-id|page
-op_assign
-id|current-&gt;tss.pg_dir
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ALERT
-l_string|&quot;current-&gt;tss.pg_dir = %08lx&bslash;n&quot;
-comma
-id|page
-)paren
-suffix:semicolon
-id|page
-op_assign
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|page
-)paren
-(braket
-id|address
-op_rshift
-id|PGDIR_SHIFT
-)braket
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ALERT
-l_string|&quot;*pde = %08lx&bslash;n&quot;
-comma
-id|page
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|page
-op_amp
-l_int|1
-)paren
-(brace
-id|page
-op_and_assign
-id|PAGE_MASK
-suffix:semicolon
-id|address
-op_and_assign
-l_int|0x003ff000
-suffix:semicolon
-id|page
-op_assign
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|page
-)paren
-(braket
-id|address
-op_rshift
-id|PAGE_SHIFT
-)braket
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ALERT
-l_string|&quot;*pte = %08lx&bslash;n&quot;
-comma
-id|page
-)paren
-suffix:semicolon
-)brace
 id|die_if_kernel
 c_func
 (paren
@@ -439,7 +248,7 @@ l_string|&quot;Oops&quot;
 comma
 id|regs
 comma
-id|error_code
+id|writeaccess
 )paren
 suffix:semicolon
 id|do_exit

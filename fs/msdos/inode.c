@@ -295,11 +295,14 @@ id|conversion
 op_assign
 l_char|&squot;b&squot;
 suffix:semicolon
+multiline_comment|/* Please leave dotsOK as 1, and contact Albert Cahalan if */
+multiline_comment|/* it causes any problems for you. &lt;albert@ccs.neu.edu&gt;    */
 op_star
 id|dotsOK
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
+multiline_comment|/* see note above, and report problems */
 op_star
 id|uid
 op_assign
@@ -2804,6 +2807,19 @@ c_func
 (paren
 id|raw_entry-&gt;size
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|raw_entry-&gt;attr
+op_amp
+id|ATTR_SYS
+)paren
+(brace
+id|inode-&gt;i_flags
+op_or_assign
+id|S_IMMUTABLE
 suffix:semicolon
 )brace
 id|MSDOS_I

@@ -2858,6 +2858,12 @@ c_cond
 (paren
 id|bh-&gt;b_count
 op_logical_or
+id|buffer_protected
+c_func
+(paren
+id|bh
+)paren
+op_logical_or
 id|bh-&gt;b_size
 op_ne
 id|size
@@ -3123,6 +3129,21 @@ id|panic
 c_func
 (paren
 l_string|&quot;Shared buffer in candidate list&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|buffer_protected
+c_func
+(paren
+id|bh
+)paren
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Protected buffer in candidate list&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -3831,6 +3852,7 @@ r_else
 r_if
 c_cond
 (paren
+(paren
 id|mem_map
 (braket
 id|MAP_NR
@@ -3847,6 +3869,13 @@ dot
 id|count
 OG
 l_int|1
+)paren
+op_logical_or
+id|buffer_protected
+c_func
+(paren
+id|buf
+)paren
 )paren
 id|dispose
 op_assign
@@ -4114,6 +4143,25 @@ id|printk
 c_func
 (paren
 l_string|&quot;Aieee... bforget(): shared buffer&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|buffer_protected
+c_func
+(paren
+id|buf
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Aieee... bforget(): protected buffer&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6513,6 +6561,12 @@ c_cond
 (paren
 id|tmp-&gt;b_count
 op_logical_or
+id|buffer_protected
+c_func
+(paren
+id|tmp
+)paren
+op_logical_or
 id|buffer_dirty
 c_func
 (paren
@@ -7184,6 +7238,12 @@ c_cond
 (paren
 id|bh-&gt;b_count
 op_logical_or
+id|buffer_protected
+c_func
+(paren
+id|bh
+)paren
+op_logical_or
 op_logical_neg
 id|bh-&gt;b_this_page
 )paren
@@ -7342,6 +7402,12 @@ r_if
 c_cond
 (paren
 id|bh-&gt;b_count
+op_logical_or
+id|buffer_protected
+c_func
+(paren
+id|bh
+)paren
 op_logical_or
 op_logical_neg
 id|bh-&gt;b_this_page
@@ -7513,6 +7579,11 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
+r_protected
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|shared
 suffix:semicolon
 r_int
@@ -7573,6 +7644,8 @@ id|used
 op_assign
 id|lastused
 op_assign
+r_protected
+op_assign
 l_int|0
 suffix:semicolon
 id|bh
@@ -7607,6 +7680,18 @@ id|bh
 )paren
 )paren
 id|locked
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|buffer_protected
+c_func
+(paren
+id|bh
+)paren
+)paren
+r_protected
 op_increment
 suffix:semicolon
 r_if
@@ -7679,7 +7764,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Buffer[%d] mem: %d buffers, %d used (last=%d), %d locked, %d dirty %d shrd&bslash;n&quot;
+l_string|&quot;Buffer[%d] mem: %d buffers, %d used (last=%d), %d locked, &quot;
+l_string|&quot;%d protected, %d dirty %d shrd&bslash;n&quot;
 comma
 id|nlist
 comma
@@ -7691,6 +7777,8 @@ id|lastused
 comma
 id|locked
 comma
+r_protected
+comma
 id|dirty
 comma
 id|shared
@@ -7701,7 +7789,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Size    [LAV]     Free  Clean  Unshar     Lck    Lck1   Dirty  Shared&bslash;n&quot;
+l_string|&quot;Size    [LAV]     Free  Clean  Unshar     Lck    Lck1   Dirty  Shared &bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -7875,6 +7963,12 @@ r_if
 c_cond
 (paren
 id|tmp-&gt;b_count
+op_logical_or
+id|buffer_protected
+c_func
+(paren
+id|tmp
+)paren
 op_logical_or
 id|buffer_dirty
 c_func
@@ -8816,6 +8910,10 @@ r_int
 id|wait
 )paren
 (brace
+r_extern
+r_int
+id|rd_loading
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8823,6 +8921,12 @@ op_logical_neg
 id|bdflush_running
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rd_loading
+)paren
 id|printk
 c_func
 (paren

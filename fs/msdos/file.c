@@ -1227,19 +1227,15 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* Must not harm system files */
+multiline_comment|/* system files are immutable */
 r_if
 c_cond
 (paren
-id|MSDOS_I
+id|IS_IMMUTABLE
 c_func
 (paren
 id|inode
 )paren
-op_member_access_from_pointer
-id|i_attrs
-op_amp
-id|ATTR_SYS
 )paren
 r_return
 op_minus
@@ -1689,20 +1685,15 @@ id|inode
 r_int
 id|cluster
 suffix:semicolon
-multiline_comment|/* Must not harm system files */
 multiline_comment|/* Why no return value?  Surely the disk could fail... */
 r_if
 c_cond
 (paren
-id|MSDOS_I
+id|IS_IMMUTABLE
 c_func
 (paren
 id|inode
 )paren
-op_member_access_from_pointer
-id|i_attrs
-op_amp
-id|ATTR_SYS
 )paren
 r_return
 multiline_comment|/* -EPERM */

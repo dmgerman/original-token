@@ -1664,6 +1664,8 @@ multiline_comment|/* create eats the dir */
 r_if
 c_cond
 (paren
+id|dir-&gt;i_sb
+op_logical_and
 id|dir-&gt;i_sb-&gt;dq_op
 )paren
 id|dir-&gt;i_sb-&gt;dq_op
@@ -1985,6 +1987,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|inode-&gt;i_sb
+op_logical_and
 id|inode-&gt;i_sb-&gt;dq_op
 )paren
 id|inode-&gt;i_sb-&gt;dq_op
@@ -2094,6 +2098,8 @@ id|FMODE_WRITE
 r_if
 c_cond
 (paren
+id|inode-&gt;i_sb
+op_logical_and
 id|inode-&gt;i_sb-&gt;dq_op
 )paren
 id|inode-&gt;i_sb-&gt;dq_op
@@ -2276,6 +2282,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dir-&gt;i_sb
+op_logical_and
 id|dir-&gt;i_sb-&gt;dq_op
 )paren
 id|dir-&gt;i_sb-&gt;dq_op
@@ -2619,6 +2627,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dir-&gt;i_sb
+op_logical_and
 id|dir-&gt;i_sb-&gt;dq_op
 )paren
 id|dir-&gt;i_sb-&gt;dq_op
@@ -2907,6 +2917,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dir-&gt;i_sb
+op_logical_and
 id|dir-&gt;i_sb-&gt;dq_op
 )paren
 id|dir-&gt;i_sb-&gt;dq_op
@@ -3159,6 +3171,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dir-&gt;i_sb
+op_logical_and
 id|dir-&gt;i_sb-&gt;dq_op
 )paren
 id|dir-&gt;i_sb-&gt;dq_op
@@ -3397,6 +3411,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dir-&gt;i_sb
+op_logical_and
 id|dir-&gt;i_sb-&gt;dq_op
 )paren
 id|dir-&gt;i_sb-&gt;dq_op
@@ -3787,6 +3803,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dir-&gt;i_sb
+op_logical_and
 id|dir-&gt;i_sb-&gt;dq_op
 )paren
 id|dir-&gt;i_sb-&gt;dq_op
@@ -4320,6 +4338,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|new_dir-&gt;i_sb
+op_logical_and
 id|new_dir-&gt;i_sb-&gt;dq_op
 )paren
 id|new_dir-&gt;i_sb-&gt;dq_op

@@ -60,10 +60,11 @@ macro_line|#ifndef CAN_QUEUE
 DECL|macro|CAN_QUEUE
 mdefine_line|#define CAN_QUEUE 16
 macro_line|#endif
-macro_line|#ifdef HOSTS_C
+macro_line|#if defined(HOSTS_C) || defined(MODULE)
 DECL|macro|GENERIC_NCR5380
 mdefine_line|#define GENERIC_NCR5380 {NULL, NULL, NULL, NULL, &bslash;&n;&t;&quot;Trantor T128/T128F/T228&quot;, &t;&t;&bslash;&n;&t;generic_NCR5380_detect, NULL, NULL, NULL, &t;&t;&t;&bslash;&n;&t;generic_NCR5380_queue_command, generic_NCR5380_abort, &t;&t;&bslash;&n;&t;generic_NCR5380_reset, NULL, &t;&t;&t;&t;&t;&bslash;&n;&t;NULL, /* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
-macro_line|#else
+macro_line|#endif
+macro_line|#ifndef HOSTS_C
 DECL|macro|NCR5380_implementation_fields
 mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    int port
 DECL|macro|NCR5380_local_declare

@@ -734,7 +734,8 @@ suffix:semicolon
 r_int
 id|ret
 op_assign
-l_int|0
+op_minus
+id|EUNATCH
 suffix:semicolon
 r_if
 c_cond

@@ -7,7 +7,7 @@ r_struct
 id|vfsmount
 (brace
 DECL|member|mnt_dev
-id|dev_t
+id|kdev_t
 id|mnt_dev
 suffix:semicolon
 multiline_comment|/* Device this applies to */
@@ -83,7 +83,7 @@ op_star
 id|lookup_vfsmnt
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon

@@ -2799,6 +2799,11 @@ id|ro_bits
 )paren
 )paren
 suffix:semicolon
+id|rd_init
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|ide_init
 c_func

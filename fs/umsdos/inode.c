@@ -1198,6 +1198,17 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|dotsOK
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* disable hidden==dotfile */
 id|sb-&gt;s_op
 op_assign
 op_amp

@@ -65,6 +65,18 @@ id|M_386
 op_assign
 l_int|100
 comma
+DECL|enumerator|M_MIPS1
+id|M_MIPS1
+op_assign
+l_int|151
+comma
+multiline_comment|/* MIPS R3000/R3000 binary */
+DECL|enumerator|M_MIPS2
+id|M_MIPS2
+op_assign
+l_int|152
+comma
+multiline_comment|/* MIPS R6000/R4000 binary */
 )brace
 suffix:semicolon
 macro_line|#if !defined (N_MAGIC)

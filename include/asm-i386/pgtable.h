@@ -1,6 +1,7 @@
 macro_line|#ifndef _I386_PGTABLE_H
 DECL|macro|_I386_PGTABLE_H
 mdefine_line|#define _I386_PGTABLE_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Define USE_PENTIUM_MM if you want the 4MB page table optimizations.&n; * This works only on a intel Pentium.&n; */
 DECL|macro|USE_PENTIUM_MM
 mdefine_line|#define USE_PENTIUM_MM 1
@@ -8,7 +9,7 @@ multiline_comment|/*&n; * The Linux memory management assumes a three-level page
 multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current mm struct TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_mm(mm) invalidates the specified mm context TLB&squot;s&n; *  - invalidate_page(mm, vmaddr) invalidates one page&n; *  - invalidate_range(mm, start, end) invalidates a range of pages&n; *&n; * ..but the i386 has somewhat limited invalidation capabilities,&n; * and page-granular invalidates are available only on i486 and up.&n; */
 DECL|macro|__invalidate
 mdefine_line|#define __invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
-macro_line|#ifdef __i486__
+macro_line|#ifdef CONFIG_M486
 DECL|macro|__invalidate_one
 mdefine_line|#define __invalidate_one(addr) &bslash;&n;__asm__ __volatile__(&quot;invlpg %0&quot;: :&quot;m&quot; (*(char *) addr))
 macro_line|#else
@@ -54,9 +55,9 @@ id|invalidate_page
 c_func
 (paren
 r_struct
-id|mm_struct
+id|vm_area_struct
 op_star
-id|mm
+id|vma
 comma
 r_int
 r_int
@@ -66,7 +67,7 @@ id|addr
 r_if
 c_cond
 (paren
-id|mm
+id|vma-&gt;vm_mm
 op_eq
 id|current-&gt;mm
 )paren
@@ -147,9 +148,9 @@ id|invalidate_page
 c_func
 (paren
 r_struct
-id|mm_struct
+id|vm_area_struct
 op_star
-id|mm
+id|vma
 comma
 r_int
 r_int

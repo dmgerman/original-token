@@ -55,6 +55,7 @@ DECL|member|dma
 r_int
 id|dma
 suffix:semicolon
+DECL|variable|overrides
 )brace
 id|overrides
 macro_line|#ifdef GENERIC_NCR5380_OVERRIDE 
@@ -435,4 +436,14 @@ id|string
 suffix:semicolon
 )brace
 macro_line|#include &quot;NCR5380.c&quot;
+macro_line|#ifdef MODULE
+multiline_comment|/* Eventually this will go into an include file, but this will be later */
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|GENERIC_NCR5380
+suffix:semicolon
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 eof

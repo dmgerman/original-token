@@ -162,6 +162,14 @@ r_int
 id|flag
 )paren
 suffix:semicolon
+r_void
+id|add_blkdev_randomness
+c_func
+(paren
+r_int
+id|major
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|floppy_init
@@ -183,17 +191,24 @@ r_int
 id|rd_init
 c_func
 (paren
-r_int
-id|mem_start
-comma
-r_int
-id|length
+r_void
 )paren
 suffix:semicolon
 r_extern
 r_int
-id|ramdisk_size
+id|rd_doload
 suffix:semicolon
+multiline_comment|/* 1 = load ramdisk, 0 = don&squot;t load */
+r_extern
+r_int
+id|rd_prompt
+suffix:semicolon
+multiline_comment|/* 1 = prompt for ramdisk, 0 = don&squot;t prompt */
+r_extern
+r_int
+id|rd_image_start
+suffix:semicolon
+multiline_comment|/* starting block # of image */
 DECL|macro|RO_IOCTLS
 mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EACCES; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: { int __err = verify_area(VERIFY_WRITE, (void *) (where), sizeof(long)); &bslash;&n;&t;&t;   if (!__err) put_fs_long(0!=is_read_only(dev),(long *) (where)); return __err; }
 macro_line|#if defined(MAJOR_NR) || defined(IDE_DRIVER)
@@ -205,18 +220,20 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)&t;/* nothing */
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)&t;/* nothing */
-macro_line|#elif (MAJOR_NR == MEM_MAJOR)
+macro_line|#elif (MAJOR_NR == RAMDISK_MAJOR)
 multiline_comment|/* ram disk */
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;ramdisk&quot;
 DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_rd_request
+mdefine_line|#define DEVICE_REQUEST rd_request
 DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device) &amp; 7)
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device) 
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
+DECL|macro|DEVICE_NO_RANDOM
+mdefine_line|#define DEVICE_NO_RANDOM
 macro_line|#elif (MAJOR_NR == FLOPPY_MAJOR)
 r_static
 r_void
@@ -694,6 +711,18 @@ r_return
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef DEVICE_NO_RANDOM
+id|add_blkdev_randomness
+c_func
+(paren
+id|MAJOR
+c_func
+(paren
+id|req-&gt;rq_dev
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef IDE_DRIVER
 id|blk_dev
 (braket

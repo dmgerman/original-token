@@ -10,7 +10,6 @@ macro_line|#include &lt;linux/vfs.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
 DECL|macro|NR_OPEN
 macro_line|#undef NR_OPEN
@@ -124,6 +123,7 @@ mdefine_line|#define FIBMAP&t;   _IO(0x00,1)&t;/* bmap access */
 DECL|macro|FIGETBSZ
 mdefine_line|#define FIGETBSZ   _IO(0x00,2)&t;/* get the block size used for bmap */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/bitops.h&gt;
 r_extern
 r_void
 id|buffer_init
@@ -198,6 +198,8 @@ DECL|macro|BH_Touched
 mdefine_line|#define BH_Touched&t;4&t;/* 1 if the buffer has been touched (aging) */
 DECL|macro|BH_Has_aged
 mdefine_line|#define BH_Has_aged&t;5&t;/* 1 if the buffer has been aged (aging) */
+DECL|macro|BH_Protected
+mdefine_line|#define BH_Protected&t;6&t;/* 1 if the buffer is protected */
 DECL|struct|buffer_head
 r_struct
 id|buffer_head
@@ -441,6 +443,30 @@ id|test_bit
 c_func
 (paren
 id|BH_Has_aged
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+)brace
+DECL|function|buffer_protected
+r_static
+r_inline
+r_int
+id|buffer_protected
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+r_return
+id|test_bit
+c_func
+(paren
+id|BH_Protected
 comma
 op_amp
 id|bh-&gt;b_state

@@ -524,7 +524,7 @@ comma
 id|p-&gt;comm
 )paren
 suffix:semicolon
-id|free_page
+id|free_kernel_stack
 c_func
 (paren
 id|p-&gt;kernel_stack_page
@@ -2122,7 +2122,7 @@ c_func
 id|current
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; * Check to see if any process groups have become orphaned&n;&t; * as a result of our exiting, and if they have any stopped&n;&t; * jobs, send them a SIGUP and then a SIGCONT.  (POSIX 3.2.2.2)&n;&t; *&n;&t; * Case i: Our father is in a different pgrp than we are&n;&t; * and we were the only connection outside, so our pgrp&n;&t; * is about to become orphaned.&n;&t; */
+multiline_comment|/* &n;&t; * Check to see if any process groups have become orphaned&n;&t; * as a result of our exiting, and if they have any stopped&n;&t; * jobs, send them a SIGHUP and then a SIGCONT.  (POSIX 3.2.2.2)&n;&t; *&n;&t; * Case i: Our father is in a different pgrp than we are&n;&t; * and we were the only connection outside, so our pgrp&n;&t; * is about to become orphaned.&n;&t; */
 r_if
 c_cond
 (paren

@@ -408,6 +408,49 @@ l_string|&quot;Ok.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|function|check_tlb
+r_static
+r_void
+id|check_tlb
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/*&n;&t; * The 386 chips don&squot;t support TLB finegrained invalidation.&n;&t; * They will fault when they hit a invlpg instruction.&n;&t; */
+r_if
+c_cond
+(paren
+id|x86
+op_eq
+l_int|3
+)paren
+(brace
+macro_line|#if defined(CONFIG_M486) || defined(CONFIG_M586)
+id|printk
+c_func
+(paren
+l_string|&quot;CPU is a 386 and this kernel was compiled for 486 or better.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Giving up.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+)brace
 DECL|function|check_bugs
 r_static
 r_void
@@ -417,6 +460,11 @@ c_func
 r_void
 )paren
 (brace
+id|check_tlb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|check_fpu
 c_func
 (paren

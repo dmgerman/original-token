@@ -1,27 +1,19 @@
-multiline_comment|/*&n; * linux/include/asm-mips/ptrace.h&n; *&n; * machine dependent structs and defines to help the user use&n; * the ptrace system call.&n; */
+multiline_comment|/*&n; * linux/include/asm-mips/ptrace.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 by Waldorf GMBH&n; * written by Ralf Baechle&n; *&n; * Machine dependent structs and defines to help the user use&n; * the ptrace system call.&n; */
 macro_line|#ifndef __ASM_MIPS_PTRACE_H
 DECL|macro|__ASM_MIPS_PTRACE_H
 mdefine_line|#define __ASM_MIPS_PTRACE_H
-multiline_comment|/*&n; * use ptrace (3 or 6, pid, PT_EXCL, data); to read or write&n; * the processes registers.&n; *&n; * This defines/structures correspond to the register layout on stack -&n; * if the order here is changed, it needs to be updated in&n; * arch/mips/fork.c:copy_process, asm/mips/signal.c:do_signal,&n; * asm-mips/ptrace.c, include/asm-mips/ptrace.h.&n; */
-macro_line|#include &lt;asm/stackframe.h&gt;
-multiline_comment|/*&n; * This struct defines the way the registers are stored on the &n; * stack during a system call/exception. As usual the registers&n; * k0/k1 aren&squot;t being saved.&n; */
+multiline_comment|/*&n; * This struct defines the way the registers are stored on the stack during a&n; * system call/exception. As usual the registers k0/k1 aren&squot;t being saved.&n; */
 DECL|struct|pt_regs
 r_struct
 id|pt_regs
 (brace
-multiline_comment|/*&n;&t; * Pad bytes for argument save space on the stack&n;&t; */
+multiline_comment|/*&n;&t; * Pad bytes for argument save space on the stack&n;&t; * 20/40 Bytes for 32/64 bit code&n;&t; */
 DECL|member|pad0
 r_int
 r_int
 id|pad0
 (braket
-id|FR_REG1
-op_div
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|5
 )braket
 suffix:semicolon
 multiline_comment|/*&n;&t; * saved main processor registers&n;&t; */
@@ -151,14 +143,33 @@ DECL|member|orig_reg2
 r_int
 id|orig_reg2
 suffix:semicolon
+DECL|member|pad1
+r_int
+id|pad1
+suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Does the process account for user or for system time?&n; */
 macro_line|#if defined (__R4000__)
 DECL|macro|user_mode
-mdefine_line|#define user_mode(regs) (!((regs)-&gt;cp0_status &amp; 0x18))
+mdefine_line|#define user_mode(regs) ((regs)-&gt;cp0_status &amp; 0x10)
 macro_line|#else /* !defined (__R4000__) */
-macro_line|#error &quot;#define user_mode(regs) for R3000!&quot;
+DECL|macro|user_mode
+mdefine_line|#define user_mode(regs) (!((regs)-&gt;cp0_status &amp; 0x8))
 macro_line|#endif /* !defined (__R4000__) */
+DECL|macro|instruction_pointer
+mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;cp0_epc)
+r_extern
+r_void
+id|show_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_PTRACE_H */
 eof

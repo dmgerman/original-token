@@ -926,6 +926,14 @@ id|request_sense_pc
 suffix:semicolon
 multiline_comment|/* from ide-cd.c */
 macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+DECL|member|tape_drive
+id|ide_drive_t
+op_star
+id|tape_drive
+suffix:semicolon
+multiline_comment|/* Pointer to the tape on this interface */
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 DECL|typedef|ide_hwif_t
 )brace
 id|ide_hwif_t
@@ -1097,6 +1105,23 @@ id|byte
 id|stat
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * ide_fixstring() cleans up and (optionally) byte-swaps a text string,&n; * removing leading/trailing blanks and compressing internal blanks.&n; * It is primarily used to tidy up the model name/number fields as&n; * returned by the WIN_[P]IDENTIFY commands.&n; */
+r_void
+id|ide_fixstring
+(paren
+id|byte
+op_star
+id|s
+comma
+r_const
+r_int
+id|bytecount
+comma
+r_const
+r_int
+id|byteswap
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * This routine busy-waits for the drive status to be not &quot;busy&quot;.&n; * It then checks the status for all of the &quot;good&quot; bits and none&n; * of the &quot;bad&quot; bits, and if all is okay it returns 0.  All other&n; * cases return 1 after invoking ide_error() -- caller should return.&n; *&n; */
 r_int
 id|ide_wait_stat
@@ -1162,12 +1187,16 @@ comma
 multiline_comment|/* insert rq immediately after current request */
 DECL|enumerator|ide_preempt
 id|ide_preempt
-)brace
+comma
 multiline_comment|/* insert rq in front of current request */
+DECL|enumerator|ide_end
+id|ide_end
+)brace
+multiline_comment|/* insert rq at end of list, but don&squot;t wait for it */
 DECL|typedef|ide_action_t
 id|ide_action_t
 suffix:semicolon
-multiline_comment|/*&n; * This function issues a special IDE device request&n; * onto the request queue.&n; *&n; * If action is ide_wait, then then rq is queued at the end of&n; * the request queue, and the function sleeps until it has been&n; * processed.  This is for use when invoked from an ioctl handler.&n; *&n; * If action is ide_preempt, then the rq is queued at the head of&n; * the request queue, displacing the currently-being-processed&n; * request and this function returns immediately without waiting&n; * for the new rq to be completed.  This is VERY DANGEROUS, and is&n; * intended for careful use by the ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_next, then the rq is queued immediately after&n; * the currently-being-processed-request (if any), and the function&n; * returns without waiting for the new rq to be completed.  As above,&n; * This is VERY DANGEROUS, and is intended for careful use by the &n; * ATAPI tape/cdrom driver code.&n; */
+multiline_comment|/*&n; * This function issues a special IDE device request&n; * onto the request queue.&n; *&n; * If action is ide_wait, then then rq is queued at the end of&n; * the request queue, and the function sleeps until it has been&n; * processed.  This is for use when invoked from an ioctl handler.&n; *&n; * If action is ide_preempt, then the rq is queued at the head of&n; * the request queue, displacing the currently-being-processed&n; * request and this function returns immediately without waiting&n; * for the new rq to be completed.  This is VERY DANGEROUS, and is&n; * intended for careful use by the ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_next, then the rq is queued immediately after&n; * the currently-being-processed-request (if any), and the function&n; * returns without waiting for the new rq to be completed.  As above,&n; * This is VERY DANGEROUS, and is intended for careful use by the &n; * ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_end, then the rq is queued at the end of the&n; * request queue, and the function returns immediately without waiting&n; * for the new rq to be completed. This is again intended for careful&n; * use by the ATAPI tape/cdrom driver code. (Currently used by ide-tape.c,&n; * when operating in the pipelined operation mode).&n; */
 r_int
 id|ide_do_drive_cmd
 (paren
@@ -1388,6 +1417,15 @@ r_void
 id|idetape_register_chrdev
 (paren
 r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;The following function is called to re-insert a postponed tape&n; *&t;request into the request queue.&n; */
+r_void
+id|idetape_put_back_postponed_request
+(paren
+id|ide_drive_t
+op_star
+id|drive
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */

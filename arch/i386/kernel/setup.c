@@ -137,8 +137,19 @@ id|aux_device_present
 suffix:semicolon
 r_extern
 r_int
-id|ramdisk_size
+id|rd_doload
 suffix:semicolon
+multiline_comment|/* 1 = load ramdisk, 0 = don&squot;t load */
+r_extern
+r_int
+id|rd_prompt
+suffix:semicolon
+multiline_comment|/* 1 = prompt for ramdisk, 0 = don&squot;t prompt */
+r_extern
+r_int
+id|rd_image_start
+suffix:semicolon
+multiline_comment|/* starting block # of image */
 r_extern
 r_int
 id|root_mountflags
@@ -173,8 +184,8 @@ DECL|macro|SCREEN_INFO
 mdefine_line|#define SCREEN_INFO (*(struct screen_info *) (PARAM+0))
 DECL|macro|MOUNT_ROOT_RDONLY
 mdefine_line|#define MOUNT_ROOT_RDONLY (*(unsigned short *) (PARAM+0x1F2))
-DECL|macro|RAMDISK_SIZE
-mdefine_line|#define RAMDISK_SIZE (*(unsigned short *) (PARAM+0x1F8))
+DECL|macro|RAMDISK_FLAGS
+mdefine_line|#define RAMDISK_FLAGS (*(unsigned short *) (PARAM+0x1F8))
 DECL|macro|ORIG_ROOT_DEV
 mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *) (PARAM+0x1FC))
 DECL|macro|AUX_DEVICE_INFO
@@ -183,6 +194,12 @@ DECL|macro|COMMAND_LINE
 mdefine_line|#define COMMAND_LINE ((char *) (PARAM+2048))
 DECL|macro|COMMAND_LINE_SIZE
 mdefine_line|#define COMMAND_LINE_SIZE 256
+DECL|macro|RAMDISK_IMAGE_START_MASK
+mdefine_line|#define RAMDISK_IMAGE_START_MASK  &t;0x07FF
+DECL|macro|RAMDISK_PROMPT_FLAG
+mdefine_line|#define RAMDISK_PROMPT_FLAG&t;&t;0x8000
+DECL|macro|RAMDISK_LOAD_FLAG
+mdefine_line|#define RAMDISK_LOAD_FLAG&t;&t;0x4000&t;
 DECL|variable|command_line
 r_static
 r_char
@@ -309,9 +326,35 @@ id|memory_end
 op_and_assign
 id|PAGE_MASK
 suffix:semicolon
-id|ramdisk_size
+id|rd_image_start
 op_assign
-id|RAMDISK_SIZE
+id|RAMDISK_FLAGS
+op_amp
+id|RAMDISK_IMAGE_START_MASK
+suffix:semicolon
+id|rd_prompt
+op_assign
+(paren
+(paren
+id|RAMDISK_FLAGS
+op_amp
+id|RAMDISK_PROMPT_FLAG
+)paren
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+id|rd_doload
+op_assign
+(paren
+(paren
+id|RAMDISK_FLAGS
+op_amp
+id|RAMDISK_LOAD_FLAG
+)paren
+op_ne
+l_int|0
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAX_16M
 r_if

@@ -2,7 +2,8 @@ multiline_comment|/*&n; * include/asm-mips/string.h&n; *&n; * This file is subje
 macro_line|#ifndef __ASM_MIPS_STRING_H
 DECL|macro|__ASM_MIPS_STRING_H
 mdefine_line|#define __ASM_MIPS_STRING_H
-macro_line|#include &lt;asm/mipsregs.h&gt;
+DECL|macro|__HAVE_ARCH_STRCPY
+mdefine_line|#define __HAVE_ARCH_STRCPY
 DECL|function|strcpy
 r_extern
 id|__inline__
@@ -34,10 +35,10 @@ c_func
 l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&quot;
 l_string|&quot;1:&bslash;tlbu&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%1,%1,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%1,1&bslash;n&bslash;t&quot;
 l_string|&quot;sb&bslash;t$1,(%0)&bslash;n&bslash;t&quot;
 l_string|&quot;bnez&bslash;t$1,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
@@ -70,6 +71,8 @@ r_return
 id|xdest
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRNCPY
+mdefine_line|#define __HAVE_ARCH_STRNCPY
 DECL|function|strncpy
 r_extern
 id|__inline__
@@ -163,6 +166,8 @@ r_return
 id|dest
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRCMP
+mdefine_line|#define __HAVE_ARCH_STRCMP
 DECL|function|strcmp
 r_extern
 id|__inline__
@@ -192,21 +197,18 @@ l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
 l_string|&quot;lbu&bslash;t%2,(%0)&bslash;n&quot;
 l_string|&quot;1:&bslash;tlbu&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;bne&bslash;t$1,%2,2f&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%1,%1,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%1,1&bslash;n&bslash;t&quot;
 l_string|&quot;bnez&bslash;t%2,1b&bslash;n&bslash;t&quot;
 l_string|&quot;lbu&bslash;t%2,(%0)&bslash;n&bslash;t&quot;
-id|STR
-c_func
-(paren
-id|FILL_LDS
-)paren
-l_string|&quot;&bslash;n&bslash;t&quot;
+macro_line|#ifndef __R4000__
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+macro_line|#endif
 l_string|&quot;move&bslash;t%2,$1&bslash;n&quot;
-l_string|&quot;2:&bslash;tsub&bslash;t%2,%2,$1&bslash;n&quot;
+l_string|&quot;2:&bslash;tsubu&bslash;t%2,$1&bslash;n&quot;
 l_string|&quot;3:&bslash;t.set&bslash;tat&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren
@@ -240,6 +242,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRNCMP
+mdefine_line|#define __HAVE_ARCH_STRNCMP
 DECL|function|strncmp
 r_extern
 id|__inline__
@@ -273,13 +277,13 @@ l_string|&quot;.set&bslash;tnoat&bslash;n&quot;
 l_string|&quot;1:&bslash;tlbu&bslash;t%3,(%0)&bslash;n&bslash;t&quot;
 l_string|&quot;beqz&bslash;t%2,2f&bslash;n&bslash;t&quot;
 l_string|&quot;lbu&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%2,%2,-1&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t%2,1&bslash;n&bslash;t&quot;
 l_string|&quot;bne&bslash;t$1,%3,3f&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;bnez&bslash;t%3,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%1,%1,1&bslash;n&quot;
+l_string|&quot;addiu&bslash;t%1,1&bslash;n&quot;
 l_string|&quot;2:&bslash;tmove&bslash;t%3,$1&bslash;n&quot;
-l_string|&quot;3:&bslash;tsub&bslash;t%3,%3,$1&bslash;n&bslash;t&quot;
+l_string|&quot;3:&bslash;tsubu&bslash;t%3,$1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
@@ -325,6 +329,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_MEMSET
+mdefine_line|#define __HAVE_ARCH_MEMSET
 DECL|function|memset
 r_extern
 id|__inline__
@@ -405,6 +411,8 @@ r_return
 id|xs
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_MEMCPY
+mdefine_line|#define __HAVE_ARCH_MEMCPY
 DECL|function|memcpy
 r_extern
 id|__inline__
@@ -448,11 +456,11 @@ c_func
 l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&quot;
 l_string|&quot;1:&bslash;tlbu&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%1,%1,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%1,1&bslash;n&bslash;t&quot;
 l_string|&quot;sb&bslash;t$1,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%2,%2,1&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t%2,1&bslash;n&bslash;t&quot;
 l_string|&quot;bnez&bslash;t%2,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
@@ -495,6 +503,8 @@ r_return
 id|xto
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_MEMMOVE
+mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|function|memmove
 r_extern
 id|__inline__
@@ -545,11 +555,11 @@ c_func
 l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&quot;
 l_string|&quot;1:&bslash;tlbu&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%1,%1,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%1,1&bslash;n&bslash;t&quot;
 l_string|&quot;sb&bslash;t$1,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%2,%2,1&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t%2,1&bslash;n&bslash;t&quot;
 l_string|&quot;bnez&bslash;t%2,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
@@ -596,11 +606,11 @@ c_func
 l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&quot;
 l_string|&quot;1:&bslash;tlbu&bslash;t$1,-1(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%1,%1,1&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t%1,1&bslash;n&bslash;t&quot;
 l_string|&quot;sb&bslash;t$1,-1(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%2,%2,1&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t%2,1&bslash;n&bslash;t&quot;
 l_string|&quot;bnez&bslash;t%2,1b&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
@@ -647,6 +657,8 @@ r_return
 id|xdest
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_MEMSCAN
+mdefine_line|#define __HAVE_ARCH_MEMSCAN
 DECL|function|memscan
 r_extern
 id|__inline__
@@ -680,11 +692,11 @@ c_func
 (paren
 l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&quot;
-l_string|&quot;1:&bslash;tbeq&bslash;t$0,%1,2f&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;tbeqz&bslash;t%1,2f&bslash;n&bslash;t&quot;
 l_string|&quot;lbu&bslash;t$1,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%1,%1,1&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t%1,1&bslash;n&bslash;t&quot;
 l_string|&quot;bnez&bslash;t%1,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&bslash;n&quot;
 l_string|&quot;2:&quot;

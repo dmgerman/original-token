@@ -209,6 +209,10 @@ DECL|macro|TIOCSERGETMULTI
 mdefine_line|#define TIOCSERGETMULTI 0x545A /* Get multiport config  */
 DECL|macro|TIOCSERSETMULTI
 mdefine_line|#define TIOCSERSETMULTI 0x545B /* Set multiport config */
+DECL|macro|TIOCMIWAIT
+mdefine_line|#define TIOCMIWAIT&t;0x545C&t;/* wait for a change on serial input line(s) */
+DECL|macro|TIOCGICOUNT
+mdefine_line|#define TIOCGICOUNT&t;0x545D&t;/* read serial port inline interrupt counts */
 multiline_comment|/* Used for packet mode */
 DECL|macro|TIOCPKT_DATA
 mdefine_line|#define TIOCPKT_DATA&t;&t; 0

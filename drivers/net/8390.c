@@ -2540,13 +2540,11 @@ id|dev-&gt;get_stats
 op_assign
 id|get_stats
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-macro_line|#endif
 id|ether_setup
 c_func
 (paren

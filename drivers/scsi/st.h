@@ -167,6 +167,11 @@ r_int
 r_char
 id|door_locked
 suffix:semicolon
+DECL|member|rew_at_close
+r_int
+r_char
+id|rew_at_close
+suffix:semicolon
 DECL|member|buffer
 id|ST_buffer
 op_star

@@ -3036,15 +3036,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|MSDOS_I
+id|IS_IMMUTABLE
 c_func
 (paren
 id|inode
 )paren
-op_member_access_from_pointer
-id|i_attrs
-op_amp
-id|ATTR_SYS
 )paren
 (brace
 id|res

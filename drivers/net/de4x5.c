@@ -2312,13 +2312,11 @@ op_assign
 op_amp
 id|de4x5_get_stats
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-macro_line|#endif
 id|dev-&gt;do_ioctl
 op_assign
 op_amp

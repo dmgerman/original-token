@@ -72,6 +72,10 @@ DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffffc0000000000,  0xfffffc0010000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;}
+DECL|macro|alloc_kernel_stack
+mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
+DECL|macro|free_kernel_stack
+mdefine_line|#define free_kernel_stack(page) free_page((page))
 macro_line|#include &lt;asm/ptrace.h&gt;
 multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame&n; * pointer is the 6th saved long on the kernel stack and that the&n; * saved return address is the first long in the frame.  This all&n; * holds provided the thread blocked through a call to schedule() ($15&n; * is the frame pointer in schedule() and $15 is saved at offset 48 by&n; * entry.S:do_switch_stack).&n; */
 DECL|function|thread_saved_pc

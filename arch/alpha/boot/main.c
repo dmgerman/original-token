@@ -943,7 +943,7 @@ c_func
 r_char
 op_star
 )paren
-id|ZERO_PGE
+id|ZERO_PAGE
 comma
 id|envval
 )paren
