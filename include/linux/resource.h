@@ -110,16 +110,16 @@ DECL|macro|RLIMIT_CORE
 mdefine_line|#define RLIMIT_CORE&t;4&t;&t;/* max core file size */
 DECL|macro|RLIMIT_RSS
 mdefine_line|#define RLIMIT_RSS&t;5&t;&t;/* max resident set size */
+DECL|macro|RLIMIT_NPROC
+mdefine_line|#define RLIMIT_NPROC&t;6&t;&t;/* max number of processes */
+DECL|macro|RLIMIT_NOFILE
+mdefine_line|#define RLIMIT_NOFILE&t;7&t;&t;/* max number of open files */
 macro_line|#ifdef notdef
 DECL|macro|RLIMIT_MEMLOCK
-mdefine_line|#define RLIMIT_MEMLOCK&t;6&t;&t;/* max locked-in-memory address space*/
-DECL|macro|RLIMIT_NPROC
-mdefine_line|#define RLIMIT_NPROC&t;7&t;&t;/* max number of processes */
-DECL|macro|RLIMIT_NOFILE
-mdefine_line|#define RLIMIT_NOFILE&t;8&t;&t;/* max number of open files */
+mdefine_line|#define RLIMIT_MEMLOCK&t;8&t;&t;/* max locked-in-memory address space*/
 macro_line|#endif
 DECL|macro|RLIM_NLIMITS
-mdefine_line|#define RLIM_NLIMITS&t;6
+mdefine_line|#define RLIM_NLIMITS&t;8
 DECL|macro|RLIM_INFINITY
 mdefine_line|#define RLIM_INFINITY&t;((long)(~0UL&gt;&gt;1))
 DECL|struct|rlimit

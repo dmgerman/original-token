@@ -74,16 +74,6 @@ r_char
 op_star
 id|ftape_big_buffer
 suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|do_floppy
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 macro_line|#include &quot;../drivers/scsi/scsi.h&quot;
@@ -960,12 +950,6 @@ id|X
 c_func
 (paren
 id|ftape_big_buffer
-)paren
-comma
-id|X
-c_func
-(paren
-id|do_floppy
 )paren
 comma
 macro_line|#endif

@@ -18,10 +18,10 @@ id|type
 l_int|8
 )braket
 suffix:semicolon
-DECL|member|datalink_type
-r_int
-r_int
-id|datalink_type
+DECL|member|string_name
+r_char
+op_star
+id|string_name
 suffix:semicolon
 DECL|member|header_length
 r_int

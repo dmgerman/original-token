@@ -2404,11 +2404,7 @@ suffix:semicolon
 id|tmp
 op_or_assign
 (paren
-(paren
-id|PAGE_SIZE
-op_lshift
-l_int|10
-)paren
+id|PGDIR_SIZE
 op_minus
 id|PAGE_SIZE
 )paren
@@ -3498,6 +3494,7 @@ id|free_page
 id|page
 )paren
 suffix:semicolon
+multiline_comment|/* doesn&squot;t sleep */
 r_goto
 id|done
 suffix:semicolon
@@ -3555,6 +3552,7 @@ id|free_page
 id|page
 )paren
 suffix:semicolon
+multiline_comment|/* doesn&squot;t sleep */
 r_goto
 id|done
 suffix:semicolon
@@ -3609,6 +3607,7 @@ suffix:semicolon
 multiline_comment|/* was incremented in do_no_page */
 id|done
 suffix:colon
+multiline_comment|/* pte_val(pte) == shp-&gt;shm_pages[idx] */
 id|current-&gt;mm-&gt;min_flt
 op_increment
 suffix:semicolon
@@ -3858,6 +3857,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|shp-&gt;attaches
+)paren
 r_for
 c_loop
 (paren

@@ -2631,12 +2631,10 @@ op_ne
 l_int|0
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|skb
-comma
-id|sksize
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_dropped

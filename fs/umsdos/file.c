@@ -57,6 +57,17 @@ comma
 id|count
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|IS_RDONLY
+c_func
+(paren
+id|inode
+)paren
+)paren
+(brace
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
@@ -65,6 +76,7 @@ id|inode-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon

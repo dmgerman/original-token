@@ -16,7 +16,7 @@ macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
-macro_line|#include &quot;igmp.h&quot;
+macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#ifdef CONFIG_IP_MULTICAST
 multiline_comment|/*&n; *&t;Timer management&n; */
 DECL|function|igmp_stop_timer

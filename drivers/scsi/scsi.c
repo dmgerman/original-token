@@ -1598,6 +1598,7 @@ l_int|0x80
 suffix:semicolon
 multiline_comment|/* removable */
 )brace
+multiline_comment|/*&n; *     Unfortunately the Toshiba CD-ROM XM-3401TA doesn&squot;t&n; *     understand the vendor specific mode select/sense&n; *     commands which are used by the photo cd routines in &n; *     sr.c.&n; */
 id|SDpnt-&gt;manufacturer
 op_assign
 id|SCSI_MAN_UNKNOWN
@@ -1636,6 +1637,30 @@ comma
 l_string|&quot;TOSHIBA&quot;
 comma
 l_int|7
+)paren
+op_logical_and
+id|strncmp
+c_func
+(paren
+id|scsi_result
+op_plus
+l_int|16
+comma
+l_string|&quot;CD-ROM XM-3401TA&quot;
+comma
+l_int|16
+)paren
+op_logical_and
+id|strncmp
+c_func
+(paren
+id|scsi_result
+op_plus
+l_int|32
+comma
+l_string|&quot;3593&quot;
+comma
+l_int|4
 )paren
 )paren
 id|SDpnt-&gt;manufacturer

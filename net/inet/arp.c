@@ -1713,11 +1713,9 @@ macro_line|#endif
 r_case
 id|ARPHRD_ETHER
 suffix:colon
-macro_line|#ifdef CONFIG_ARCNET
 r_case
 id|ARPHRD_ARCNET
 suffix:colon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1883,12 +1881,13 @@ multiline_comment|/*&n; *&t;Fall through to code below that adds sender to cache
 r_else
 (brace
 multiline_comment|/* &n; * &t;It is now an arp request &n; */
+multiline_comment|/*&n; * Only reply for the real device address or when it&squot;s in our proxy tables&n; */
 r_if
 c_cond
 (paren
-id|addr_hint
+id|tip
 op_ne
-id|IS_MYADDR
+id|dev-&gt;pa_addr
 )paren
 (brace
 multiline_comment|/*&n; * &t;To get in here, it is a request for someone else.  We need to&n; * &t;check if that someone else is one of our proxies.  If it isn&squot;t,&n; * &t;we can toss it.&n; */
@@ -2010,15 +2009,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n; * &t;To get here, it must be an arp request for us.  We need to reply.&n; */
-r_if
-c_cond
-(paren
-id|tip
-op_eq
-id|dev-&gt;pa_addr
-)paren
-(brace
-multiline_comment|/* Only reply for the real device address */
 id|arp_send
 c_func
 (paren
@@ -2037,7 +2027,6 @@ comma
 id|dev-&gt;dev_addr
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/*&n; * Now all replies are handled.  Next, anything that falls through to here&n; * needs to be added to the arp cache, or have its entry updated if it is &n; * there.&n; */
@@ -3369,7 +3358,6 @@ id|ETH_ALEN
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCNET
 r_case
 id|ARPHRD_ARCNET
 suffix:colon
@@ -3384,7 +3372,6 @@ suffix:semicolon
 multiline_comment|/* length of arcnet addresses */
 r_break
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_AX25
 r_case
 id|ARPHRD_AX25
@@ -3481,6 +3468,47 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|entry
+op_logical_and
+(paren
+id|entry-&gt;flags
+op_amp
+id|ATF_PUBL
+)paren
+op_ne
+(paren
+id|r.arp_flags
+op_amp
+id|ATF_PUBL
+)paren
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|arp_destroy
+c_func
+(paren
+id|ip
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|entry
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Do we need to create a new entry&n;&t; */
 r_if
 c_cond

@@ -183,11 +183,25 @@ comma
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_IPX
+DECL|enumerator|PROC_NET_IPX_INTERFACE
+id|PROC_NET_IPX_INTERFACE
+comma
 DECL|enumerator|PROC_NET_IPX_ROUTE
 id|PROC_NET_IPX_ROUTE
 comma
 DECL|enumerator|PROC_NET_IPX
 id|PROC_NET_IPX
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATALK
+DECL|enumerator|PROC_NET_ATALK
+id|PROC_NET_ATALK
+comma
+DECL|enumerator|PROC_NET_AT_ROUTE
+id|PROC_NET_AT_ROUTE
+comma
+DECL|enumerator|PROC_NET_ATIF
+id|PROC_NET_ATIF
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_AX25

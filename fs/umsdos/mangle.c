@@ -862,14 +862,15 @@ multiline_comment|/*&n;&t;&t;&t;&t;The numeric extension is added only when we k
 r_else
 (brace
 multiline_comment|/* Conforming MSDOS file name */
-id|strcpy
+id|strncpy
 (paren
 id|info-&gt;fake.fname
 comma
 id|fname
+comma
+id|len
 )paren
 suffix:semicolon
-multiline_comment|/* GLU&t;C&squot;est sur on a un 0 a la fin */
 id|info-&gt;msdos_reject
 op_assign
 l_int|0

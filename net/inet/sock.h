@@ -14,7 +14,10 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_IPX
 macro_line|#include &quot;ipx.h&quot;
 macro_line|#endif
-macro_line|#include &quot;igmp.h&quot;
+macro_line|#ifdef CONFIG_ATALK
+macro_line|#include &lt;linux/atalk.h&gt;
+macro_line|#endif
+macro_line|#include &lt;linux/igmp.h&gt;
 DECL|macro|SOCK_ARRAY_SIZE
 mdefine_line|#define SOCK_ARRAY_SIZE&t;256&t;&t;/* Think big (also on some systems a byte is faster */
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
@@ -396,12 +399,19 @@ id|localroute
 suffix:semicolon
 multiline_comment|/* Route locally only */
 macro_line|#ifdef CONFIG_IPX
-DECL|member|ipx_source_addr
 DECL|member|ipx_dest_addr
 id|ipx_address
-id|ipx_source_addr
-comma
 id|ipx_dest_addr
+suffix:semicolon
+DECL|member|ipx_intrfc
+id|ipx_interface
+op_star
+id|ipx_intrfc
+suffix:semicolon
+DECL|member|ipx_port
+r_int
+r_int
+id|ipx_port
 suffix:semicolon
 DECL|member|ipx_type
 r_int
@@ -490,6 +500,13 @@ op_star
 id|ax25_digipeat
 suffix:semicolon
 macro_line|#endif  
+macro_line|#ifdef CONFIG_ATALK
+DECL|member|at
+r_struct
+id|atalk_sock
+id|at
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* IP &squot;private area&squot; or will be eventually */
 DECL|member|ip_ttl
 r_int

@@ -2,6 +2,7 @@ multiline_comment|/*&n; *      sr.c Copyright (C) 1992 David Giller&n; *&t;     
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
@@ -1962,6 +1963,20 @@ id|mpcd_sector
 op_assign
 id|sector
 suffix:semicolon
+multiline_comment|/* The code above may have changed the sector size or capacity. */
+id|scsi_CDs
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+dot
+id|needs_sector_size
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2088,6 +2103,14 @@ id|device-&gt;host-&gt;hostt-&gt;usage_count
 )paren
 op_increment
 suffix:semicolon
+macro_line|#if 1&t;/* don&squot;t use for now - it doesn&squot;t seem to work for everybody */
+id|sr_photocd
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* If this device did not have media in the drive at boot time, then&n;&t;   we would have been unable to get the sector size.  Check to see if&n;&t;   this is the case, and try again.&n;&t;   */
 r_if
 c_cond
@@ -2115,14 +2138,6 @@ id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 1&t;/* don&squot;t use for now - it doesn&squot;t seem to work for everybody */
-id|sr_photocd
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3348,7 +3363,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;SG: %d %d %d %d %d *** &quot;
+l_string|&quot;SR: %d %d %d %d %d *** &quot;
 comma
 id|SCpnt-&gt;use_sg
 comma
@@ -4709,6 +4724,18 @@ dot
 id|needs_sector_size
 op_assign
 l_int|0
+suffix:semicolon
+id|sr_sizes
+(braket
+id|i
+)braket
+op_assign
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|capacity
 suffix:semicolon
 )brace
 suffix:semicolon

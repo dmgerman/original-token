@@ -2,6 +2,7 @@ multiline_comment|/* interrupt.h */
 macro_line|#ifndef _LINUX_INTERRUPT_H
 DECL|macro|_LINUX_INTERRUPT_H
 mdefine_line|#define _LINUX_INTERRUPT_H
+macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|struct|bh_struct
 r_struct

@@ -4,6 +4,9 @@ DECL|macro|BLANK
 mdefine_line|#define BLANK 0x0020
 DECL|macro|CAN_LOAD_EGA_FONTS
 mdefine_line|#define CAN_LOAD_EGA_FONTS    /* undefine if the user must not do this */
+multiline_comment|/* A bitmap for codes &lt;32. A bit of 1 indicates that the code&n; * corresponding to that bit number invokes some special action&n; * (such as cursor movement) and should not be displayed as a&n; * glyph unless the disp_ctrl mode is explicitly enabled.&n; */
+DECL|macro|CTRL_ACTION
+mdefine_line|#define CTRL_ACTION 0xd00ff80
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -4883,6 +4886,16 @@ id|i
 (brace
 multiline_comment|/* ANSI modes set/reset */
 r_case
+l_int|3
+suffix:colon
+multiline_comment|/* Monitor (display ctrls) */
+id|disp_ctrl
+op_assign
+id|on_off
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|4
 suffix:colon
 multiline_comment|/* Insert Mode on/off */
@@ -5691,7 +5704,7 @@ l_int|0
 suffix:semicolon
 id|disp_ctrl
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|toggle_meta
 op_assign
@@ -6348,7 +6361,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Can print ibm (even if 0), and latin1 provided&n;&t;&t;   it is a printing char or control chars are printed ^@ */
+multiline_comment|/* If the original code was &lt; 32 we only allow a&n;&t;&t; * glyph to be displayed if the code is not normally&n;&t;&t; * used (such as for cursor movement) or if the&n;&t;&t; * disp_ctrl mode has been explicitly enabled.&n;&t;&t; * Note: ESC is *never* allowed to be displayed as&n;&t;&t; * that would disable all escape sequences!&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -6365,13 +6378,20 @@ op_logical_or
 (paren
 id|disp_ctrl
 op_logical_and
-(paren
 id|c
-op_amp
-l_int|0x7f
-)paren
 op_ne
-l_int|27
+l_int|0x1b
+)paren
+op_logical_or
+op_logical_neg
+(paren
+(paren
+id|CTRL_ACTION
+op_rshift
+id|c
+)paren
+op_amp
+l_int|1
 )paren
 )paren
 )paren
@@ -6603,6 +6623,10 @@ id|translate
 op_assign
 id|G1_charset
 suffix:semicolon
+id|disp_ctrl
+op_assign
+l_int|1
+suffix:semicolon
 r_continue
 suffix:semicolon
 r_case
@@ -6615,6 +6639,10 @@ suffix:semicolon
 id|translate
 op_assign
 id|G0_charset
+suffix:semicolon
+id|disp_ctrl
+op_assign
+l_int|0
 suffix:semicolon
 r_continue
 suffix:semicolon

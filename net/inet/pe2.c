@@ -127,6 +127,10 @@ id|proto-&gt;datalink_header
 op_assign
 id|pEII_datalink_header
 suffix:semicolon
+id|proto-&gt;string_name
+op_assign
+l_string|&quot;EtherII&quot;
+suffix:semicolon
 )brace
 r_return
 id|proto

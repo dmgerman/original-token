@@ -129,6 +129,10 @@ id|proto-&gt;datalink_header
 op_assign
 id|p8023_datalink_header
 suffix:semicolon
+id|proto-&gt;string_name
+op_assign
+l_string|&quot;802.3&quot;
+suffix:semicolon
 )brace
 r_return
 id|proto

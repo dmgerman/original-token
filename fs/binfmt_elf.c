@@ -1,4 +1,13 @@
 multiline_comment|/*&n; * linux/fs/binfmt_elf.c&n; *&n; * These are the functions used to load ELF format executables as used&n; * on SVr4 machines.  Information on the format may be found in the book&n; * &quot;UNIX SYSTEM V RELEASE 4 Programmers Guide: Ansi C and Programming Support&n; * Tools&quot;.&n; *&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -15,10 +24,6 @@ macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifndef CONFIG_BINFMT_ELF
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/unistd.h&gt;
 DECL|typedef|sysfun_p
 r_typedef
@@ -72,7 +77,7 @@ id|linux_binfmt
 id|elf_format
 op_assign
 (brace
-macro_line|#ifdef CONFIG_BINFMT_ELF
+macro_line|#ifndef MODULE
 l_int|NULL
 comma
 l_int|NULL
@@ -1559,10 +1564,8 @@ id|passed_fileno
 l_int|6
 )braket
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 id|ibcs2_interpreter
 op_assign
 l_int|0
@@ -1615,10 +1618,8 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|ENOEXEC
@@ -1654,10 +1655,8 @@ id|bprm-&gt;inode-&gt;i_op-&gt;default_file_ops-&gt;mmap
 )paren
 )paren
 (brace
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|ENOEXEC
@@ -1737,10 +1736,8 @@ id|kfree
 id|elf_phdata
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 id|retval
 suffix:semicolon
@@ -1780,10 +1777,8 @@ id|kfree
 id|elf_phdata
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 id|elf_exec_fileno
 suffix:semicolon
@@ -2019,10 +2014,8 @@ c_func
 id|elf_interpreter
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 id|retval
 suffix:semicolon
@@ -2074,10 +2067,8 @@ c_func
 id|elf_phdata
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|ELIBACC
@@ -2174,10 +2165,8 @@ c_func
 id|elf_phdata
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|ELIBBAD
@@ -2274,10 +2263,8 @@ id|kfree
 id|elf_phdata
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|E2BIG
@@ -2484,10 +2471,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3033,10 +3018,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3100,10 +3083,8 @@ id|j
 comma
 id|k
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 id|len
 op_assign
 l_int|0
@@ -3169,10 +3150,8 @@ id|close
 id|fd
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|EACCES
@@ -3211,10 +3190,8 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|ENOEXEC
@@ -3251,10 +3228,8 @@ id|inode-&gt;i_op-&gt;default_file_ops-&gt;mmap
 )paren
 )paren
 (brace
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|ENOEXEC
@@ -3276,10 +3251,8 @@ OG
 id|PAGE_SIZE
 )paren
 (brace
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|ENOEXEC
@@ -3402,10 +3375,8 @@ c_func
 id|elf_phdata
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|ENOEXEC
@@ -3505,10 +3476,8 @@ c_func
 id|elf_phdata
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 id|error
 suffix:semicolon
@@ -3574,16 +3543,14 @@ c_func
 id|elf_phdata
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
 )def_block
-macro_line|#ifndef CONFIG_BINFMT_ELF
+macro_line|#ifdef MODULE
 DECL|variable|kernel_version
 r_char
 id|kernel_version

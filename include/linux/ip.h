@@ -34,7 +34,7 @@ id|ptr
 suffix:semicolon
 r_union
 (brace
-macro_line|#if defined(__i386__)  
+macro_line|#if defined(__i386__)
 id|__u8
 id|flags
 suffix:colon
@@ -45,6 +45,26 @@ suffix:colon
 l_int|4
 suffix:semicolon
 macro_line|#elif defined(__mc68000__)
+id|__u8
+id|overflow
+suffix:colon
+l_int|4
+comma
+id|flags
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#elif defined(__MIPSEL__) 
+id|__u8
+id|flags
+suffix:colon
+l_int|4
+comma
+id|overflow
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#elif defined(__MIPSEB__)
 id|__u8
 id|overflow
 suffix:colon
@@ -184,7 +204,27 @@ id|ihl
 suffix:colon
 l_int|4
 suffix:semicolon
-macro_line|#elif defined (__alpha__)
+macro_line|#elif defined(__MIPSEL__)
+id|__u8
+id|ihl
+suffix:colon
+l_int|4
+comma
+id|version
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#elif defined(__MIPSEB__)
+id|__u8
+id|version
+suffix:colon
+l_int|4
+comma
+id|ihl
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#elif defined(__alpha__)
 id|__u8
 id|ihl
 suffix:colon

@@ -1,4 +1,4 @@
-multiline_comment|/************************************************************&n; *                                                          *&n; *                  Linux EATA SCSI driver                  *&n; *                                                          *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,         *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *                                                          *&n; *  The driver currently:                                   *&n; *      -supports all ISA based EATA-DMA boards             *&n; *      -supports all EISA based EATA-DMA boards            *&n; *      -supports all PCI based EATA-DMA boards             *&n; *      -supports multiple HBAs with &amp; without IRQ sharing  *&n; *      -supports all SCSI channels on multi channel boards *&n; *                                                          *&n; *  (c)1993,94,95 Michael Neuffer                           *&n; *                neuffer@goofy.zdv.uni-mainz.de            *&n; *                                                          *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General     *&n; *  Public License as published by the Free Software        *&n; *  Foundation; either version 2 of the License, or         *&n; *  (at your option) any later version.                     *&n; *                                                          *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the      *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.  See the GNU General Public License *&n; *  for more details.                                       *&n; *                                                          *&n; *  You should have received a copy of the GNU General      *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,       *&n; *  Cambridge, MA 02139, USA.                               *&n; *                                                          *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and      *&n; * support I need.                                          *&n; *                                                          *&n; *  Thanks also to Greg Hosler who did a lot of testing and *&n; *  found quite a number of bugs during the development.    *&n; ************************************************************&n; *  last change: 95/01/20                                   *&n; ************************************************************/
+multiline_comment|/************************************************************&n; *                                                          *&n; *                  Linux EATA SCSI driver                  *&n; *                                                          *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,         *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *                                                          *&n; *  The driver currently:                                   *&n; *      -supports all ISA based EATA-DMA boards             *&n; *      -supports all EISA based EATA-DMA boards            *&n; *      -supports all PCI based EATA-DMA boards             *&n; *      -supports multiple HBAs with &amp; without IRQ sharing  *&n; *      -supports all SCSI channels on multi channel boards *&n; *                                                          *&n; *  (c)1993,94,95 Michael Neuffer                           *&n; *                neuffer@goofy.zdv.uni-mainz.de            *&n; *                                                          *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General     *&n; *  Public License as published by the Free Software        *&n; *  Foundation; either version 2 of the License, or         *&n; *  (at your option) any later version.                     *&n; *                                                          *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the      *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.  See the GNU General Public License *&n; *  for more details.                                       *&n; *                                                          *&n; *  You should have received a copy of the GNU General      *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,       *&n; *  Cambridge, MA 02139, USA.                               *&n; *                                                          *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and      *&n; * support I need.                                          *&n; *                                                          *&n; *  Thanks also to Greg Hosler who did a lot of testing and *&n; *  found quite a number of bugs during the development.    *&n; ************************************************************&n; *  last change: 95/01/24                                   *&n; ************************************************************/
 multiline_comment|/* Look in eata_dma.h for configuration information */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -545,8 +545,8 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;IRQ %d received, base 0x%04x, pid %lx, target: &quot;
-l_string|&quot;%x, lun: %x, ea_s: 0x%02x, hba_s: 0x%02x &bslash;n&quot;
+l_string|&quot;IRQ %d received, base %#.4x, pid %ld, target: &quot;
+l_string|&quot;%x, lun: %x, ea_s: %#.2x, hba_s: %#.2x &bslash;n&quot;
 comma
 id|irq
 comma
@@ -574,27 +574,6 @@ r_case
 l_int|0x00
 suffix:colon
 multiline_comment|/* NO Error */
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|scsi_stat
-op_eq
-id|INTERMEDIATE_GOOD
-op_logical_and
-id|cmd-&gt;device-&gt;type
-op_ne
-id|TYPE_TAPE
-)paren
-id|result
-op_assign
-id|DID_ERROR
-op_lshift
-l_int|16
-suffix:semicolon
-multiline_comment|/* If there was a bus reset, redo operation on each target */
-r_else
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -833,8 +812,36 @@ suffix:semicolon
 id|cmd-&gt;result
 op_assign
 id|result
+op_or
+id|scsi_stat
 suffix:semicolon
-macro_line|#if DGB_INTR2
+r_if
+c_cond
+(paren
+id|scsi_stat
+op_eq
+id|CHECK_CONDITION
+op_logical_and
+(paren
+id|cmd-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0xf
+)paren
+op_eq
+id|UNIT_ATTENTION
+)paren
+id|cmd-&gt;result
+op_or_assign
+(paren
+id|DRIVER_SENSE
+op_lshift
+l_int|24
+)paren
+suffix:semicolon
+macro_line|#if DBG_INTR2
 r_if
 c_cond
 (paren
@@ -843,12 +850,18 @@ op_logical_or
 id|result
 op_logical_or
 id|hba_stat
+op_logical_or
+id|eata_stat
+op_ne
+l_int|0x50
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;hba_stat: 0x%02x,scsi_stat: 0x%02x, sense_key: 0x%x, &quot;
-l_string|&quot;result: 0x%08x&bslash;n&quot;
+l_string|&quot;eata_stat: %#x hba_stat: %#.2x,scsi_stat: %#.2x, sense_key: %#x, &quot;
+l_string|&quot;result: %#.8x&bslash;n&quot;
+comma
+id|eata_stat
 comma
 id|hba_stat
 comma
@@ -861,7 +874,7 @@ l_int|2
 op_amp
 l_int|0xf
 comma
-id|result
+id|cmd-&gt;result
 )paren
 suffix:semicolon
 id|DBG
@@ -879,88 +892,6 @@ l_int|800
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|scsi_stat
-op_eq
-id|CHECK_CONDITION
-)paren
-(brace
-r_switch
-c_cond
-(paren
-id|cmd-&gt;sense_buffer
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0xf
-)paren
-(brace
-r_case
-id|NO_SENSE
-suffix:colon
-r_case
-id|RECOVERED_ERROR
-suffix:colon
-r_break
-suffix:semicolon
-r_case
-id|ILLEGAL_REQUEST
-suffix:colon
-id|cmd-&gt;result
-op_or_assign
-(paren
-id|DID_BAD_TARGET
-op_lshift
-l_int|16
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|NOT_READY
-suffix:colon
-r_case
-id|MEDIUM_ERROR
-suffix:colon
-r_case
-id|HARDWARE_ERROR
-suffix:colon
-r_case
-id|UNIT_ATTENTION
-suffix:colon
-r_case
-id|DATA_PROTECT
-suffix:colon
-r_case
-id|BLANK_CHECK
-suffix:colon
-r_case
-id|COPY_ABORTED
-suffix:colon
-r_case
-id|ABORTED_COMMAND
-suffix:colon
-r_case
-id|VOLUME_OVERFLOW
-suffix:colon
-r_case
-id|MISCOMPARE
-suffix:colon
-r_default
-suffix:colon
-id|cmd-&gt;result
-op_or_assign
-(paren
-id|DRIVER_SENSE
-op_lshift
-l_int|24
-)paren
-suffix:semicolon
-)brace
-)brace
 id|cp-&gt;status
 op_assign
 id|FREE
@@ -1343,7 +1274,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_queue pid %lx, target: %x, lun: %x, y %d&bslash;n&quot;
+l_string|&quot;eata_queue pid %ld, target: %x, lun: %x, y %d&bslash;n&quot;
 comma
 id|cmd-&gt;pid
 comma
@@ -1674,7 +1605,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;Queued base 0x%04lx pid: %lx target: %x lun: %x slot %d irq %d&bslash;n&quot;
+l_string|&quot;Queued base %#.4lx pid: %ld target: %x lun: %x slot %d irq %d&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1842,7 +1773,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_abort called pid: %lx target: %x lun: %x reason %x&bslash;n&quot;
+l_string|&quot;eata_abort called pid: %ld target: %x lun: %x reason %x&bslash;n&quot;
 comma
 id|cmd-&gt;pid
 comma
@@ -2167,7 +2098,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_reset called pid:%lx target: %x lun: %x reason %x&bslash;n&quot;
+l_string|&quot;eata_reset called pid:%ld target: %x lun: %x reason %x&bslash;n&quot;
 comma
 id|cmd-&gt;pid
 comma
@@ -2196,7 +2127,7 @@ id|RESET
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: reset, exit, already in reset.&bslash;n&quot;
+l_string|&quot;eata_reset: exit, already in reset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -2255,7 +2186,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: reset, exit, timeout error.&bslash;n&quot;
+l_string|&quot;eata_reset: exit, timeout error.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -2383,7 +2314,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: reset, locked slot %d forced free.&bslash;n&quot;
+l_string|&quot;eata_reset: locked slot %d forced free.&bslash;n&quot;
 comma
 id|x
 )paren
@@ -2438,7 +2369,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: reset, slot %d in reset, pid %ld.&bslash;n&quot;
+l_string|&quot;eata_reset: slot %d in reset, pid %ld.&bslash;n&quot;
 comma
 id|x
 comma
@@ -2469,7 +2400,7 @@ l_int|NULL
 id|panic
 c_func
 (paren
-l_string|&quot;eata_dma: reset, slot %d, sp==NULL.&bslash;n&quot;
+l_string|&quot;eata_reset: slot %d, sp==NULL.&bslash;n&quot;
 comma
 id|x
 )paren
@@ -2536,7 +2467,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: reset, board reset done, enabling interrupts.&bslash;n&quot;
+l_string|&quot;eata_reset: board reset done, enabling interrupts.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -2596,7 +2527,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: reset, interrupts disabled, loops %d.&bslash;n&quot;
+l_string|&quot;eata_reset: interrupts disabled, loops %d.&bslash;n&quot;
 comma
 id|limit
 )paren
@@ -2692,7 +2623,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma, reset, slot %d locked, DID_RESET, pid %ld done.&bslash;n&quot;
+l_string|&quot;eata_reset: slot %d locked, DID_RESET, pid %ld done.&bslash;n&quot;
 comma
 id|x
 comma
@@ -2763,7 +2694,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: reset, exit, success.&bslash;n&quot;
+l_string|&quot;eata_reset: exit, success.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -2797,7 +2728,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: reset, exit, wakeup.&bslash;n&quot;
+l_string|&quot;eata_reset: exit, wakeup.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -3732,7 +3663,7 @@ id|gc-&gt;DMA_support
 id|printk
 c_func
 (paren
-l_string|&quot;HBA at 0x%08lx doesn&squot;t support DMA. Sorry&bslash;n&quot;
+l_string|&quot;HBA at %#.8lx doesn&squot;t support DMA. Sorry&bslash;n&quot;
 comma
 id|base
 )paren
@@ -3832,7 +3763,7 @@ id|reg_IRQL
 id|gc-&gt;IRQ
 )braket
 op_assign
-l_int|1
+id|TRUE
 suffix:semicolon
 multiline_comment|/* IRQ is edge triggered */
 multiline_comment|/* We free it again so we can do a get_conf_dma and &n;&t;     * allocate the interrupt again later */
@@ -3870,6 +3801,8 @@ id|reg_IRQL
 (braket
 id|gc-&gt;IRQ
 )braket
+op_eq
+id|TRUE
 )paren
 (brace
 id|printk
@@ -3932,7 +3865,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;HBA at %#x didn&squot;t react on INQUIRY. Sorry.&bslash;n&quot;
+l_string|&quot;HBA at %#lx didn&squot;t react on INQUIRY. Sorry.&bslash;n&quot;
 comma
 (paren
 id|ulong
@@ -4413,9 +4346,19 @@ id|sh-&gt;irq
 op_assign
 id|gc-&gt;IRQ
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|gc-&gt;DMA_valid
+)paren
 id|sh-&gt;dma_channel
 op_assign
 id|dma_channel
+suffix:semicolon
+r_else
+id|sh-&gt;dma_channel
+op_assign
+l_int|0
 suffix:semicolon
 id|sh-&gt;this_id
 op_assign
@@ -4739,7 +4682,13 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|hd-&gt;prev-&gt;next
+id|SD
+c_func
+(paren
+id|hd-&gt;prev
+)paren
+op_member_access_from_pointer
+id|next
 op_assign
 id|sh
 suffix:semicolon
@@ -5874,7 +5823,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;HBA no. VID: Boardtype: Revis: EATA: Bus: BaseIO: IRQ: Ch: ID: Pr: QS: SG: CPL:&bslash;n&quot;
+l_string|&quot;HBA no. Boardtype: Revis: EATA: Bus: BaseIO: IRQ: DMA: Ch: ID: Pr: QS: SG: CPL:&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -5895,17 +5844,9 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%-2d: %.4s %.10s v%s 2.0%c  &quot;
+l_string|&quot;scsi%-2d: %.10s v%s 2.0%c  &quot;
 comma
 id|HBA_ptr-&gt;host_no
-comma
-id|SD
-c_func
-(paren
-id|HBA_ptr
-)paren
-op_member_access_from_pointer
-id|vendor
 comma
 id|SD
 c_func
@@ -5985,7 +5926,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; %#.4x   %2d   %d   %d   %d  %2d  %2d   %2d&bslash;n&quot;
+l_string|&quot; %#.4x   %2d   %2d   %d   %d   %d  %2d  %2d   %2d&bslash;n&quot;
 comma
 (paren
 id|uint
@@ -5993,6 +5934,8 @@ id|uint
 id|HBA_ptr-&gt;base
 comma
 id|HBA_ptr-&gt;irq
+comma
+id|HBA_ptr-&gt;dma_channel
 comma
 id|SD
 c_func

@@ -234,6 +234,12 @@ r_int
 id|users
 suffix:semicolon
 multiline_comment|/* User count - see datagram.c (and soon seqpacket.c/stream.c) */
+DECL|member|pkt_class
+r_int
+r_int
+id|pkt_class
+suffix:semicolon
+multiline_comment|/* For drivers that need to cache the packet type with the skbuff (new PPP) */
 macro_line|#ifdef CONFIG_SLAVE_BALANCING
 DECL|member|in_dev_queue
 r_int

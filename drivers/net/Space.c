@@ -153,6 +153,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|de4x5_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|el1_probe
 c_func
 (paren
@@ -397,6 +407,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_EWRK3             /* DEC EtherWORKS 3 */
 op_logical_and
 id|ewrk3_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_DE4X5             /* DEC DE425, DE434, DE435 adapters */
+op_logical_and
+id|de4x5_probe
 c_func
 (paren
 id|dev

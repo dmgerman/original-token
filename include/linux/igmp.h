@@ -1,7 +1,7 @@
-multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;WARNING:&n; *&t;&t;This is a &squot;preliminary&squot; implementation... on your own head&n; *&t;be it.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
-macro_line|#ifndef _IGMP_H
-DECL|macro|_IGMP_H
-mdefine_line|#define _IGMP_H
+multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+macro_line|#ifndef _LINUX_IGMP_H
+DECL|macro|_LINUX_IGMP_H
+mdefine_line|#define _LINUX_IGMP_H
 multiline_comment|/*&n; *&t;IGMP protocol structures&n; */
 DECL|struct|igmphdr
 r_struct
@@ -39,6 +39,7 @@ multiline_comment|/* 224.0.0.1 */
 DECL|macro|IGMP_ALL_HOSTS
 mdefine_line|#define IGMP_ALL_HOSTS&t;&t;htonl(0xE0000001L)
 multiline_comment|/*&n; * struct for keeping the multicast list in&n; */
+macro_line|#ifdef __KERNEL__
 DECL|struct|ip_mc_socklist
 r_struct
 id|ip_mc_socklist
@@ -105,7 +106,6 @@ id|ip_mc_list
 op_star
 id|ip_mc_head
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
 r_extern
 r_int
 id|igmp_rcv

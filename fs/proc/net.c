@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/net.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  gjh 3/&squot;93 heim@peanuts.informatik.uni-tuebingen.de (Gerald J. Heim)&n; *            most of this file is stolen from base.c&n; *            it works, but you shouldn&squot;t use it as a guideline&n; *            for new proc-fs entries. once i&squot;ll make it better.&n; * fvk 3/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      cleaned up the whole thing, moved &quot;net&quot; specific code to&n; *&t;      the NET kernel layer (where it belonged in the first place).&n; * Michael K. Johnson (johnsonm@stolaf.edu) 3/93&n; *            Added support from my previous inet.c.  Cleaned things up&n; *            quite a bit, modularized the code.&n; * fvk 4/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      Renamed &quot;route_get_info()&quot; to &quot;rt_get_info()&quot; for consistency.&n; * Alan Cox (gw4pts@gw4pts.ampr.org) 4/94&n; *&t;      Dusted off the code and added IPX. Fixed the 4K limit.&n; * Erik Schoenfelder (schoenfr@ibr.cs.tu-bs.de)&n; *&t;      /proc/net/snmp.&n; *&n; *  proc net directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/proc/net.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  gjh 3/&squot;93 heim@peanuts.informatik.uni-tuebingen.de (Gerald J. Heim)&n; *            most of this file is stolen from base.c&n; *            it works, but you shouldn&squot;t use it as a guideline&n; *            for new proc-fs entries. once i&squot;ll make it better.&n; * fvk 3/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      cleaned up the whole thing, moved &quot;net&quot; specific code to&n; *&t;      the NET kernel layer (where it belonged in the first place).&n; * Michael K. Johnson (johnsonm@stolaf.edu) 3/93&n; *            Added support from my previous inet.c.  Cleaned things up&n; *            quite a bit, modularized the code.&n; * fvk 4/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      Renamed &quot;route_get_info()&quot; to &quot;rt_get_info()&quot; for consistency.&n; * Alan Cox (gw4pts@gw4pts.ampr.org) 4/94&n; *&t;      Dusted off the code and added IPX. Fixed the 4K limit.&n; * Erik Schoenfelder (schoenfr@ibr.cs.tu-bs.de)&n; *&t;      /proc/net/snmp.&n; * Alan Cox (gw4pts@gw4pts.ampr.org) 1/95&n; *&t;      Added Appletalk slots&n; *&n; *  proc net directory handling functions&n; */
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -297,6 +297,23 @@ r_int
 suffix:semicolon
 r_extern
 r_int
+id|ip_msqhst_procinfo
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|ip_mc_procinfo
 c_func
 (paren
@@ -334,6 +351,23 @@ suffix:semicolon
 r_extern
 r_int
 id|ipx_rt_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ipx_get_interface_info
 c_func
 (paren
 r_char
@@ -438,6 +472,59 @@ r_int
 suffix:semicolon
 macro_line|#endif /* CONFIG_NETROM */
 macro_line|#endif /* CONFIG_AX25 */
+macro_line|#ifdef CONFIG_ATALK
+r_extern
+r_int
+id|atalk_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|atalk_rt_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|atalk_if_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|proc_net_operations
 r_static
 r_struct
@@ -666,6 +753,16 @@ l_string|&quot;ip_block&quot;
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+(brace
+id|PROC_NET_IPMSQHST
+comma
+l_int|13
+comma
+l_string|&quot;ip_masquerade&quot;
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_IP_ACCT
 (brace
 id|PROC_NET_IPACCT
@@ -692,6 +789,14 @@ comma
 l_int|3
 comma
 l_string|&quot;ipx&quot;
+)brace
+comma
+(brace
+id|PROC_NET_IPX_INTERFACE
+comma
+l_int|13
+comma
+l_string|&quot;ipx_interface&quot;
 )brace
 comma
 macro_line|#endif /* CONFIG_IPX */
@@ -739,6 +844,32 @@ l_string|&quot;nr&quot;
 comma
 macro_line|#endif /* CONFIG_NETROM */
 macro_line|#endif /* CONFIG_AX25 */
+macro_line|#ifdef CONFIG_ATALK
+(brace
+id|PROC_NET_ATALK
+comma
+l_int|9
+comma
+l_string|&quot;appletalk&quot;
+)brace
+comma
+(brace
+id|PROC_NET_AT_ROUTE
+comma
+l_int|11
+comma
+l_string|&quot;atalk_route&quot;
+)brace
+comma
+(brace
+id|PROC_NET_ATIF
+comma
+l_int|11
+comma
+l_string|&quot;atalk_iface&quot;
+)brace
+comma
+macro_line|#endif /* CONFIG_ATALK */
 (brace
 l_int|0
 comma
@@ -1428,6 +1559,28 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+r_case
+id|PROC_NET_IPMSQHST
+suffix:colon
+id|length
+op_assign
+id|ip_msqhst_procinfo
+c_func
+(paren
+id|page
+comma
+op_amp
+id|start
+comma
+id|file-&gt;f_pos
+comma
+id|thistime
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_INET_RARP&t;&t;&t;&t;
 r_case
 id|PROC_NET_RARP
@@ -1452,6 +1605,26 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_INET_RARP */&t;&t;&t;&t;
 macro_line|#endif /* CONFIG_INET */
 macro_line|#ifdef CONFIG_IPX
+r_case
+id|PROC_NET_IPX_INTERFACE
+suffix:colon
+id|length
+op_assign
+id|ipx_get_interface_info
+c_func
+(paren
+id|page
+comma
+op_amp
+id|start
+comma
+id|file-&gt;f_pos
+comma
+id|thistime
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|PROC_NET_IPX_ROUTE
 suffix:colon
@@ -1493,6 +1666,68 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif /* CONFIG_IPX */
+macro_line|#ifdef CONFIG_ATALK
+r_case
+id|PROC_NET_ATALK
+suffix:colon
+id|length
+op_assign
+id|atalk_get_info
+c_func
+(paren
+id|page
+comma
+op_amp
+id|start
+comma
+id|file-&gt;f_pos
+comma
+id|thistime
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PROC_NET_AT_ROUTE
+suffix:colon
+id|length
+op_assign
+id|atalk_rt_get_info
+c_func
+(paren
+id|page
+comma
+op_amp
+id|start
+comma
+id|file-&gt;f_pos
+comma
+id|thistime
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PROC_NET_ATIF
+suffix:colon
+id|length
+op_assign
+id|atalk_if_get_info
+c_func
+(paren
+id|page
+comma
+op_amp
+id|start
+comma
+id|file-&gt;f_pos
+comma
+id|thistime
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif /* CONFIG_ATALK */
 macro_line|#ifdef CONFIG_AX25
 r_case
 id|PROC_NET_AX25_ROUTE

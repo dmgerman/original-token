@@ -18,7 +18,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 macro_line|#include &quot;udp.h&quot;
-macro_line|#include &quot;igmp.h&quot;
+macro_line|#include &lt;linux/igmp.h&gt;
 DECL|variable|tcp_protocol
 r_static
 r_struct

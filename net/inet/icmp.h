@@ -31,6 +31,10 @@ comma
 r_int
 id|code
 comma
+r_int
+r_int
+id|info
+comma
 r_struct
 id|device
 op_star

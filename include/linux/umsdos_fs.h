@@ -4,7 +4,7 @@ mdefine_line|#define LINUX_UMSDOS_FS_H
 DECL|macro|UMSDOS_VERSION
 mdefine_line|#define UMSDOS_VERSION&t;0
 DECL|macro|UMSDOS_RELEASE
-mdefine_line|#define UMSDOS_RELEASE&t;3
+mdefine_line|#define UMSDOS_RELEASE&t;4
 macro_line|#ifndef LINUX_FS_H
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#endif
@@ -185,6 +185,9 @@ DECL|macro|UMSDOS_INIT_EMD
 mdefine_line|#define UMSDOS_INIT_EMD&t;&t;1242&t;/* Create the EMD file if not there */
 DECL|macro|UMSDOS_DOS_SETUP
 mdefine_line|#define UMSDOS_DOS_SETUP&t;1243&t;/* Set the defaults of the MsDOS driver */
+DECL|macro|UMSDOS_RENAME_DOS
+mdefine_line|#define UMSDOS_RENAME_DOS&t;1244&t;/* rename a file/directory in the DOS */
+multiline_comment|/* directory only */
 DECL|struct|umsdos_ioctl
 r_struct
 id|umsdos_ioctl

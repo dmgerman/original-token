@@ -39,7 +39,7 @@ mdefine_line|#define ETH_P_ALL&t;0x0003&t;&t;/* Every packet (be careful!!!) */
 DECL|macro|ETH_P_802_2
 mdefine_line|#define ETH_P_802_2&t;0x0004&t;&t;/* 802.2 frames &t;&t;*/
 DECL|macro|ETH_P_SNAP
-mdefine_line|#define ETH_P_SNAP&t;0x0005&t;&t;/* 802.2 SNAP frames  &t;&t;*/
+mdefine_line|#define ETH_P_SNAP&t;0x0005&t;&t;/* Internal only&t;&t;*/
 multiline_comment|/* This is an Ethernet frame header. */
 DECL|struct|ethhdr
 r_struct

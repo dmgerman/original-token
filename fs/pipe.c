@@ -1930,6 +1930,15 @@ op_logical_and
 id|i
 OL
 id|NR_OPEN
+op_logical_and
+id|i
+OL
+id|current-&gt;rlim
+(braket
+id|RLIMIT_NOFILE
+)braket
+dot
+id|rlim_cur
 suffix:semicolon
 id|i
 op_increment

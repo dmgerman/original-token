@@ -1760,6 +1760,8 @@ id|PPP_MRU
 )paren
 id|mru
 op_assign
+id|new_mru
+op_assign
 id|PPP_MRU
 suffix:semicolon
 id|mtu

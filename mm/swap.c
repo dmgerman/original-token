@@ -1337,6 +1337,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|vma-&gt;vm_task-&gt;mm-&gt;rss
+op_increment
+suffix:semicolon
+id|vma-&gt;vm_task-&gt;mm-&gt;maj_flt
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2391,7 +2397,7 @@ op_assign
 id|entry-&gt;next
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Free_page() adds the page to the free lists. This is optimized for&n; * fast normal cases (no error jumps taken normally).&n; *&n; * The way to optimize jumps for gcc-2.2.2 is to:&n; *  - select the &quot;normal&quot; case and put it inside the if () { XXX }&n; *  - no else-statements if you can avoid them&n; *&n; * With the above two rules, you get a straight-line execution path&n; * for the normal case, giving better asm-code.&n; */
+multiline_comment|/*&n; * Free_page() adds the page to the free lists. This is optimized for&n; * fast normal cases (no error jumps taken normally).&n; *&n; * The way to optimize jumps for gcc-2.2.2 is to:&n; *  - select the &quot;normal&quot; case and put it inside the if () { XXX }&n; *  - no else-statements if you can avoid them&n; *&n; * With the above two rules, you get a straight-line execution path&n; * for the normal case, giving better asm-code.&n; *&n; * free_page() may sleep since the page being freed may be a buffer&n; * page or present in the swap cache. It will not sleep, however,&n; * for a freshly allocated page (get_free_page()).&n; */
 multiline_comment|/*&n; * Buddy system. Hairy. You really aren&squot;t expected to understand this&n; */
 DECL|function|free_pages_ok
 r_static

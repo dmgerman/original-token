@@ -108,5 +108,8 @@ multiline_comment|/* Device private ioctl calls */
 multiline_comment|/*&n; *&t;These 16 ioctls are available to devices via the do_ioctl() device&n; *&t;vector. Each device should include this file and redefine these names&n; *&t;as their own. Because these are device dependent it is a good idea&n; *&t;_NOT_ to issue them to random objects and hope.&n; */
 DECL|macro|SIOCDEVPRIVATE
 mdefine_line|#define SIOCDEVPRIVATE&t;0x89F0&t;/* to 89FF */
+multiline_comment|/*&n; *&t;These 16 ioctl calls are protocol private&n; */
+DECL|macro|SIOCPROTOPRIVATE
+mdefine_line|#define SIOCPROTOPRIVATE 0x89E0 /* to 89EF */
 macro_line|#endif&t;/* _LINUX_SOCKIOS_H */
 eof

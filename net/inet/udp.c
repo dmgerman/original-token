@@ -2193,6 +2193,8 @@ id|ICMP_DEST_UNREACH
 comma
 id|ICMP_PORT_UNREACH
 comma
+l_int|0
+comma
 id|dev
 )paren
 suffix:semicolon

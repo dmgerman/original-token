@@ -886,6 +886,7 @@ multiline_comment|/* != 0, this is the value of flags */
 r_int
 id|ret
 op_assign
+op_minus
 id|EPERM
 suffix:semicolon
 r_struct
@@ -1003,6 +1004,82 @@ c_cond
 id|ret
 op_eq
 l_int|0
+)paren
+(brace
+multiline_comment|/* check sticky bit on old_dir */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|old_dir-&gt;i_mode
+op_amp
+id|S_ISVTX
+)paren
+op_logical_or
+id|fsuser
+c_func
+(paren
+)paren
+op_logical_or
+id|current-&gt;fsuid
+op_eq
+id|old_info.entry.uid
+op_logical_or
+id|current-&gt;fsuid
+op_eq
+id|old_dir-&gt;i_uid
+)paren
+(brace
+multiline_comment|/* Does new_name already exist? */
+id|PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;new findentry &quot;
+)paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|umsdos_findentry
+c_func
+(paren
+id|new_dir
+comma
+op_amp
+id|new_info
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_ne
+l_int|0
+op_logical_or
+multiline_comment|/* if destination file exists, are we allowed to replace it ? */
+op_logical_neg
+(paren
+id|new_dir-&gt;i_mode
+op_amp
+id|S_ISVTX
+)paren
+op_logical_or
+id|fsuser
+c_func
+(paren
+)paren
+op_logical_or
+id|current-&gt;fsuid
+op_eq
+id|new_info.entry.uid
+op_logical_or
+id|current-&gt;fsuid
+op_eq
+id|new_dir-&gt;i_uid
 )paren
 (brace
 id|PRINTK
@@ -1162,7 +1239,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;This UMSDOS_lookup does not look very useful.&n;&t;&t;&t;&t;&t;&t;&t;It makes sure that the inode of the file will&n;&t;&t;&t;&t;&t;&t;&t;be correctly setup (umsdos_patch_inode()) in&n;&t;&t;&t;&t;&t;&t;&t;case it is already in use.&n;&n;&t;&t;&t;&t;&t;&t;&t;Not very efficient ...&n;&t;&t;&t;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;   This UMSDOS_lookup does not look very useful.&n;&t;&t;&t;&t;&t;&t;&t;&t;   It makes sure that the inode of the file will&n;&t;&t;&t;&t;&t;&t;&t;&t;   be correctly setup (umsdos_patch_inode()) in&n;&t;&t;&t;&t;&t;&t;&t;&t;   case it is already in use.&n;&t;&t;&t;&t;&t;&t;&t;&t;   &n;&t;&t;&t;&t;&t;&t;&t;&t;   Not very efficient ...&n;&t;&t;&t;&t;&t;&t;&t;&t;   */
 r_struct
 id|inode
 op_star
@@ -1219,7 +1296,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;Update f_pos so notify_change will succeed&n;&t;&t;&t;&t;&t;&t;&t;&t;if the file was already in use.&n;&t;&t;&t;&t;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   Update f_pos so notify_change will succeed&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   if the file was already in use.&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   */
 id|umsdos_set_dirinfo
 (paren
 id|inode
@@ -1242,6 +1319,42 @@ suffix:semicolon
 )brace
 )brace
 )brace
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* sticky bit set on new_dir */
+id|PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;sticky set on new &quot;
+)paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* sticky bit set on old_dir */
+id|PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;sticky set on old &quot;
+)paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 )brace
 )brace
 id|umsdos_unlockcreate
@@ -2587,6 +2700,31 @@ id|sdir-&gt;i_count
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* check sticky bit */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|dir-&gt;i_mode
+op_amp
+id|S_ISVTX
+)paren
+op_logical_or
+id|fsuser
+c_func
+(paren
+)paren
+op_logical_or
+id|current-&gt;fsuid
+op_eq
+id|sdir-&gt;i_uid
+op_logical_or
+id|current-&gt;fsuid
+op_eq
+id|dir-&gt;i_uid
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -2707,6 +2845,24 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* sticky bit set and we don&squot;t have permission */
+id|PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;sticky set &quot;
+)paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
 multiline_comment|/*&n;&t;&t;&t;&t;&t;The subdirectory is not empty, so leave it there&n;&t;&t;&t;&t;*/
 id|ret
 op_assign
@@ -2765,10 +2921,6 @@ r_int
 id|len
 )paren
 (brace
-r_struct
-id|umsdos_info
-id|info
-suffix:semicolon
 r_int
 id|ret
 op_assign
@@ -2793,6 +2945,10 @@ op_eq
 l_int|0
 )paren
 (brace
+r_struct
+id|umsdos_info
+id|info
+suffix:semicolon
 id|ret
 op_assign
 id|umsdos_parse
@@ -2849,6 +3005,31 @@ id|info.fake.fname
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* check sticky bit */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|dir-&gt;i_mode
+op_amp
+id|S_ISVTX
+)paren
+op_logical_or
+id|fsuser
+c_func
+(paren
+)paren
+op_logical_or
+id|current-&gt;fsuid
+op_eq
+id|info.entry.uid
+op_logical_or
+id|current-&gt;fsuid
+op_eq
+id|dir-&gt;i_uid
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -2857,8 +3038,8 @@ op_amp
 id|UMSDOS_HLINK
 )paren
 (brace
-multiline_comment|/* #Specification: hard link / deleting a link&n;&t;&t;&t;&t;&t;&t;When we deletes a file, and this file is a link&n;&t;&t;&t;&t;&t;&t;we must subtract 1 to the nlink field of the&n;&t;&t;&t;&t;&t;&t;hidden link.&n;&n;&t;&t;&t;&t;&t;&t;If the count goes to 0, we delete this hidden&n;&t;&t;&t;&t;&t;&t;link too.&n;&t;&t;&t;&t;&t;*/
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;First, get the inode of the hidden link&n;&t;&t;&t;&t;&t;&t;using the standard lookup function.&n;&t;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: hard link / deleting a link&n;&t;&t;&t;&t;&t;&t;   When we deletes a file, and this file is a link&n;&t;&t;&t;&t;&t;&t;   we must subtract 1 to the nlink field of the&n;&t;&t;&t;&t;&t;&t;   hidden link.&n;&t;&t;&t;&t;&t;&t;   &n;&t;&t;&t;&t;&t;&t;   If the count goes to 0, we delete this hidden&n;&t;&t;&t;&t;&t;&t;   link too.&n;&t;&t;&t;&t;&t;&t;   */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   First, get the inode of the hidden link&n;&t;&t;&t;&t;&t;&t;   using the standard lookup function.&n;&t;&t;&t;&t;&t;&t;   */
 r_struct
 id|inode
 op_star
@@ -3062,6 +3243,24 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_else
+(brace
+multiline_comment|/* sticky bit set and we&squot;ve not got permission */
+id|PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;sticky set &quot;
+)paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+)brace
 id|umsdos_unlockcreate
 c_func
 (paren
@@ -3181,7 +3380,7 @@ op_minus
 id|EEXIST
 )paren
 (brace
-multiline_comment|/* #Specification: rename / new name exist&n;&t;&t;&t;&t;If the destination name already exist, it will&n;&t;&t;&t;&t;silently be removed. EXT2 does it this way&n;&t;&t;&t;&t;and this is the spec of SUNOS. So does UMSDOS.&n;&n;&t;&t;&t;&t;If the destination is an empty directory it will&n;&t;&t;&t;&t;also be removed.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: rename / new name exist&n;&t;&t;&t;        If the destination name already exist, it will&n;&t;&t;&t;&t;silently be removed. EXT2 does it this way&n;&t;&t;&t;&t;and this is the spec of SUNOS. So does UMSDOS.&n;&n;&t;&t;&t;&t;If the destination is an empty directory it will&n;&t;&t;&t;&t;also be removed.&n;&t;&t;&t;*/
 multiline_comment|/* #Specification: rename / new name exist / possible flaw&n;&t;&t;&t;&t;The code to handle the deletion of the target (file&n;&t;&t;&t;&t;and directory) use to be in umsdos_rename_f, surrounded&n;&t;&t;&t;&t;by proper directory locking. This was insuring that only&n;&t;&t;&t;&t;one process could achieve a rename (modification) operation&n;&t;&t;&t;&t;in the source and destination directory. This was also&n;&t;&t;&t;&t;insuring the operation was &quot;atomic&quot;.&n;&n;&t;&t;&t;&t;This has been changed because this was creating a kernel&n;&t;&t;&t;&t;stack overflow (stack is only 4k in the kernel). To avoid&n;&t;&t;&t;&t;the code doing the deletion of the target (if exist) has&n;&t;&t;&t;&t;been moved to a upper layer. umsdos_rename_f is tried&n;&t;&t;&t;&t;once and if it fails with EEXIST, the target is removed&n;&t;&t;&t;&t;and umsdos_rename_f is done again.&n;&n;&t;&t;&t;&t;This makes the code cleaner and (not sure) solve a&n;&t;&t;&t;&t;deadlock problem one tester was experiencing.&n;&n;&t;&t;&t;&t;The point is to mention that possibly, the semantic of&n;&t;&t;&t;&t;&quot;rename&quot; may be wrong. Anyone dare to check that :-)&n;&t;&t;&t;&t;Be aware that IF it is wrong, to produce the problem you&n;&t;&t;&t;&t;will need two process trying to rename a file to the&n;&t;&t;&t;&t;same target at the same time. Again, I am not sure it&n;&t;&t;&t;&t;is a problem at all.&n;&t;&t;&t;*/
 multiline_comment|/* This is not super efficient but should work */
 id|new_dir-&gt;i_count

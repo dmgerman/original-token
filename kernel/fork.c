@@ -11,11 +11,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/* These should maybe be in &lt;linux/tasks.h&gt; */
-DECL|macro|MAX_TASKS_PER_USER
-mdefine_line|#define MAX_TASKS_PER_USER (NR_TASKS/2)
-DECL|macro|MIN_TASKS_LEFT_FOR_ROOT
-mdefine_line|#define MIN_TASKS_LEFT_FOR_ROOT 4
 DECL|variable|last_pid
 r_int
 id|last_pid
@@ -162,7 +157,12 @@ id|MIN_TASKS_LEFT_FOR_ROOT
 op_logical_or
 id|this_user_tasks
 OG
-id|MAX_TASKS_PER_USER
+id|current-&gt;rlim
+(braket
+id|RLIMIT_NPROC
+)braket
+dot
+id|rlim_cur
 )paren
 r_if
 c_cond

@@ -34,13 +34,22 @@ l_int|15
 suffix:semicolon
 )brace
 DECL|macro|get_seg_byte
-mdefine_line|#define get_seg_byte(seg,addr) ({ &bslash;&n;register unsigned char __res; &bslash;&n;int unsigned long save; &bslash;&n;save = segment_fs; &bslash;&n;__res = get_user_byte(addr); &bslash;&n;segment_fs = save; &bslash;&n;__res;})
+mdefine_line|#define get_seg_byte(seg,addr) ({ &bslash;&n;register unsigned char __res; &bslash;&n;__res = get_user_byte(addr); &bslash;&n;__res;})
 DECL|macro|get_seg_long
-mdefine_line|#define get_seg_long(seg,addr) ({ &bslash;&n;register unsigned long __res; &bslash;&n;int unsigned long save; &bslash;&n;save = segment_fs; &bslash;&n;__res = get_user_word(addr); &bslash;&n;segment_fs = save; &bslash;&n;__res;})
+mdefine_line|#define get_seg_long(seg,addr) ({ &bslash;&n;register unsigned long __res; &bslash;&n;__res = get_user_word(addr); &bslash;&n;__res;})
 r_extern
 id|asmlinkage
 r_void
-id|handle_int
+id|deskstation_tyne_handle_int
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|acer_pica_61_handle_int
 c_func
 (paren
 r_void
@@ -1469,7 +1478,30 @@ c_func
 (paren
 l_int|0
 comma
-id|handle_int
+id|deskstation_tyne_handle_int
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MACH_ACER_PICA_61
+suffix:colon
+id|set_except_vector
+c_func
+(paren
+l_int|0
+comma
+id|acer_pica_61_handle_int
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|panic
+c_func
+(paren
+l_string|&quot;Unknown machine type&quot;
 )paren
 suffix:semicolon
 )brace
