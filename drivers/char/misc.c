@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * linux/drivers/char/misc.c&n; *&n; * Generic misc open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; *&n; * Made things a lot mode modular - easy to compile in just one or two&n; * of the misc drivers, as they are now completely independent. Linus.&n; *&n; * Support for loadable modules. 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * Fixed a failing symbol register to free the device registration&n; *&t;&t;Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt; 21-Jan-96&n; *&n; * Dynamic minors and /proc/mice by Alessandro Rubini. 26-Mar-96&n; *&n; * Renamed to misc and miscdevice to be more accurate. Alan Cox 26-Mar-96&n; *&n; * Handling of mouse minor numbers for kerneld:&n; *  Idea by Jacques Gelinas &lt;jack@solucorp.qc.ca&gt;,&n; *  adapted by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; *  corrected by Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt;&n; *&n; * Changes for kmod (from kerneld):&n; &t;Cyrus Durgin &lt;cider@speakeasy.org&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
@@ -53,7 +53,6 @@ op_div
 l_int|8
 )braket
 suffix:semicolon
-macro_line|#ifndef MODULE
 r_extern
 r_int
 id|adbdev_init
@@ -73,6 +72,14 @@ suffix:semicolon
 r_extern
 r_int
 id|psaux_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|qpmouse_init
 c_func
 (paren
 r_void
@@ -323,7 +330,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* PROC_FS */
-macro_line|#endif /* !MODULE */
 DECL|function|misc_open
 r_static
 r_int
@@ -625,8 +631,6 @@ op_amp
 l_int|7
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|misc-&gt;next
 op_assign
 op_amp
@@ -677,8 +681,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|misc-&gt;prev-&gt;next
 op_assign
 id|misc-&gt;next
@@ -726,27 +728,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|macro|misc_init
-mdefine_line|#define misc_init init_module
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|unregister_chrdev
-c_func
-(paren
-id|MISC_MAJOR
-comma
-l_string|&quot;misc&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|variable|misc_register
 id|EXPORT_SYMBOL
 c_func
@@ -761,7 +742,7 @@ c_func
 id|misc_deregister
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; !defined(MODULE)
+macro_line|#if defined(CONFIG_PROC_FS)
 DECL|variable|proc_misc
 r_static
 r_struct
@@ -770,19 +751,15 @@ op_star
 id|proc_misc
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|misc_init
 r_int
+id|__init
 id|misc_init
 c_func
 (paren
 r_void
 )paren
-)paren
 (brace
-macro_line|#ifndef MODULE
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_misc
 op_assign
@@ -819,6 +796,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#if defined CONFIG_82C710_MOUSE
+id|qpmouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* This must be before psaux_init */
 macro_line|#endif
 macro_line|#if defined CONFIG_PSMOUSE
 id|psaux_init
@@ -975,7 +960,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif /* !MODULE */
 r_if
 c_cond
 (paren

@@ -455,6 +455,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -486,6 +487,7 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|free_pages
 r_void
@@ -574,6 +576,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -605,6 +608,7 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 multiline_comment|/*&n; * Some ugly macros to speed up __get_free_pages()..&n; */

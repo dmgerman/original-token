@@ -2042,10 +2042,15 @@ c_func
 r_void
 )paren
 (brace
-id|disable_irq
+multiline_comment|/* Get the keyboard controller registers (incomplete decode) */
+id|request_region
 c_func
 (paren
-id|KEYBOARD_IRQ
+l_int|0x60
+comma
+l_int|16
+comma
+l_string|&quot;keyboard&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Flush any pending input. */
@@ -2074,7 +2079,6 @@ c_cond
 (paren
 id|msg
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -2084,14 +2088,8 @@ comma
 id|msg
 )paren
 suffix:semicolon
-id|aux_device_present
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-)brace
+multiline_comment|/* Ok, finally allocate the IRQ, and off we go.. */
 id|request_irq
 c_func
 (paren
@@ -2104,16 +2102,6 @@ comma
 l_string|&quot;keyboard&quot;
 comma
 l_int|NULL
-)paren
-suffix:semicolon
-id|request_region
-c_func
-(paren
-l_int|0x60
-comma
-l_int|16
-comma
-l_string|&quot;keyboard&quot;
 )paren
 suffix:semicolon
 )brace

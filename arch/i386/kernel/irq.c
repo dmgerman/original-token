@@ -2512,20 +2512,8 @@ c_cond
 op_logical_neg
 id|action
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Unhandled irq %d (%x)&bslash;n&quot;
-comma
-id|irq
-comma
-id|desc-&gt;status
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|handle_IRQ_event
 c_func
 (paren

@@ -4445,6 +4445,16 @@ suffix:semicolon
 r_int
 id|dev
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|filp-&gt;f_count
+OG
+l_int|1
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|dev
 op_assign
 id|TAPE_NR
