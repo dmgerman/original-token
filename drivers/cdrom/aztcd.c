@@ -331,9 +331,11 @@ id|timer_list
 id|delay_timer
 op_assign
 (brace
+(brace
 l_int|NULL
 comma
 l_int|NULL
+)brace
 comma
 l_int|0
 comma

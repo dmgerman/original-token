@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.28 2000/03/27 10:38:56 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.29 2000/06/30 10:18:39 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
@@ -12,6 +12,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -26,6 +27,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -40,6 +42,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -652,6 +655,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -665,6 +669,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -966,10 +971,12 @@ mdefine_line|#define ext2_find_first_zero_bit&t;find_first_zero_le_bit
 DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit&t;&t;find_next_zero_le_bit
 multiline_comment|/* Bitmap functions for the minix filesystem.  */
+DECL|macro|minix_test_and_set_bit
+mdefine_line|#define minix_test_and_set_bit(nr,addr) test_and_set_bit(nr,addr)
 DECL|macro|minix_set_bit
-mdefine_line|#define minix_set_bit(nr,addr) test_and_set_bit(nr,addr)
-DECL|macro|minix_clear_bit
-mdefine_line|#define minix_clear_bit(nr,addr) test_and_clear_bit(nr,addr)
+mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+DECL|macro|minix_test_and_clear_bit
+mdefine_line|#define minix_test_and_clear_bit(nr,addr) test_and_clear_bit(nr,addr)
 DECL|macro|minix_test_bit
 mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
 DECL|macro|minix_find_first_zero_bit

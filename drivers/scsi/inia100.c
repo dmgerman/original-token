@@ -665,10 +665,6 @@ r_int
 r_int
 id|dRegValue
 suffix:semicolon
-r_int
-r_int
-id|command
-suffix:semicolon
 id|WORD
 id|wBIOS
 comma

@@ -1130,6 +1130,9 @@ comma
 multiline_comment|/* handle */
 l_int|0
 comma
+multiline_comment|/* de, devfs */
+l_int|0
+comma
 multiline_comment|/* dev */
 l_int|0
 comma

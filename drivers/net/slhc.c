@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;net/slhc_vj.h&gt;
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Entire module is for IP only */
 macro_line|#include &lt;linux/sched.h&gt;
@@ -26,7 +27,6 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
-macro_line|#include &lt;net/slhc_vj.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|variable|last_retran
 r_int

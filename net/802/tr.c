@@ -1961,6 +1961,9 @@ r_int
 id|length
 )paren
 (brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#else
 DECL|function|rif_get_info

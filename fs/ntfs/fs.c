@@ -3611,6 +3611,9 @@ r_struct
 id|inode
 op_star
 id|ino
+comma
+r_int
+id|unused
 )paren
 (brace
 id|ntfs_debug

@@ -2351,7 +2351,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function free_dentries  */
-multiline_comment|/**&n; *&t;is_devfsd_or_child - Test if the current process is devfsd or one of its children.&n; *&t;fs_info: The filesystem information.&n; *&n; *&t;Returns %TRUE if devfsd or child, else %FALSE.&n; */
+multiline_comment|/**&n; *&t;is_devfsd_or_child - Test if the current process is devfsd or one of its children.&n; *&t;@fs_info: The filesystem information.&n; *&n; *&t;Returns %TRUE if devfsd or child, else %FALSE.&n; */
 DECL|function|is_devfsd_or_child
 r_static
 r_int
@@ -3642,7 +3642,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function unregister  */
-multiline_comment|/**&n; *&t;devfs_unregister - Unregister a device entry.&n; *&t;de: A handle previously created by devfs_register() or returned from&n; *&t;&t;devfs_find_handle(). If this is %NULL the routine does nothing.&n; */
+multiline_comment|/**&n; *&t;devfs_unregister - Unregister a device entry.&n; *&t;@de: A handle previously created by devfs_register() or returned from&n; *&t;&t;devfs_find_handle(). If this is %NULL the routine does nothing.&n; */
 DECL|function|devfs_unregister
 r_void
 id|devfs_unregister
@@ -7031,6 +7031,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|wait
 )paren
 (brace
 r_int
@@ -7351,7 +7354,7 @@ id|devfs_statfs
 comma
 )brace
 suffix:semicolon
-multiline_comment|/**&n; *&t;get_vfs_inode - Get a VFS inode.&n; *&t;@sb: The super block.&n; *&t;@di: The devfs inode.&n; *&t;@dentry The dentry to register with the devfs inode.&n; *&n; *&t;Returns the inode on success, else %NULL.&n; */
+multiline_comment|/**&n; *&t;get_vfs_inode - Get a VFS inode.&n; *&t;@sb: The super block.&n; *&t;@de: The devfs inode.&n; *&t;@dentry: The dentry to register with the devfs inode.&n; *&n; *&t;Returns the inode on success, else %NULL.&n; */
 DECL|function|get_vfs_inode
 r_static
 r_struct
@@ -8203,7 +8206,6 @@ op_star
 id|de
 suffix:semicolon
 id|lock_kernel
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -8245,14 +8247,11 @@ id|de-&gt;inode.dentry
 op_eq
 id|dentry
 )paren
-(brace
 id|de-&gt;inode.dentry
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 id|unlock_kernel
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -8332,7 +8331,7 @@ id|devfs_d_revalidate_wait
 comma
 )brace
 suffix:semicolon
-multiline_comment|/**&n; *&t;devfs_d_delete - Callback for when all files for a dentry are closed.&n; *&t;@detry: The dentry.&n; */
+multiline_comment|/**&n; *&t;devfs_d_delete - Callback for when all files for a dentry are closed.&n; *&t;@dentry: The dentry.&n; */
 DECL|function|devfs_d_delete
 r_static
 r_int
@@ -8583,7 +8582,6 @@ op_star
 id|fs_info
 suffix:semicolon
 id|lock_kernel
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -8833,7 +8831,6 @@ suffix:semicolon
 id|out
 suffix:colon
 id|unlock_kernel
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -10714,7 +10711,6 @@ op_star
 id|de
 suffix:semicolon
 id|lock_kernel
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -10726,7 +10722,6 @@ id|dentry-&gt;d_inode
 )paren
 suffix:semicolon
 id|unlock_kernel
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -10766,7 +10761,6 @@ op_star
 id|de
 suffix:semicolon
 id|lock_kernel
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -10778,7 +10772,6 @@ id|dentry-&gt;d_inode
 )paren
 suffix:semicolon
 id|unlock_kernel
-c_func
 (paren
 )paren
 suffix:semicolon

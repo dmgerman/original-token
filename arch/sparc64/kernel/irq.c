@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.88 2000/06/26 19:40:27 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.89 2000/06/30 10:18:38 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2304,15 +2304,15 @@ suffix:semicolon
 )brace
 multiline_comment|/* Only uniprocessor needs this IRQ/BH locking depth, on SMP it&n; * lives in the brlock table for cache reasons.&n; */
 macro_line|#ifndef CONFIG_SMP
-DECL|variable|local_irq_count
+DECL|variable|__local_irq_count
 r_int
 r_int
-id|local_irq_count
+id|__local_irq_count
 suffix:semicolon
-DECL|variable|local_bh_count
+DECL|variable|__local_bh_count
 r_int
 r_int
-id|local_bh_count
+id|__local_bh_count
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* Who has global_irq_lock. */
@@ -2546,6 +2546,13 @@ c_func
 op_logical_and
 (paren
 id|local_bh_count
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
 op_logical_or
 op_logical_neg
 id|spin_is_locked
@@ -2591,6 +2598,13 @@ op_logical_or
 (paren
 op_logical_neg
 id|local_bh_count
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
 op_logical_and
 id|spin_is_locked
 c_func
@@ -2695,6 +2709,10 @@ c_cond
 (paren
 op_logical_neg
 id|local_irq_count
+c_func
+(paren
+id|cpu
+)paren
 )paren
 id|get_irqlock
 c_func
@@ -2725,6 +2743,10 @@ c_cond
 (paren
 op_logical_neg
 id|local_irq_count
+c_func
+(paren
+id|cpu
+)paren
 )paren
 id|release_irqlock
 c_func
@@ -2787,6 +2809,13 @@ c_cond
 (paren
 op_logical_neg
 id|local_irq_count
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
 )paren
 (brace
 r_if

@@ -844,6 +844,9 @@ op_star
 id|data
 )paren
 (brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|ida_geninit

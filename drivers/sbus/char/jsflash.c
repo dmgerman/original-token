@@ -1228,6 +1228,10 @@ op_assign
 r_char
 op_star
 )paren
+(paren
+r_int
+r_int
+)paren
 id|abuf.data
 suffix:semicolon
 r_if

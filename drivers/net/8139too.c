@@ -5312,12 +5312,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_void
-op_star
-id|ioaddr
-op_assign
-id|tp-&gt;mmio_addr
-suffix:semicolon
 r_int
 id|next_tick
 op_assign
@@ -5360,6 +5354,12 @@ op_ne
 l_int|0xffff
 )paren
 (brace
+r_void
+op_star
+id|ioaddr
+op_assign
+id|tp-&gt;mmio_addr
+suffix:semicolon
 r_int
 id|duplex
 op_assign

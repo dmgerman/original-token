@@ -615,7 +615,7 @@ id|MAX_BLKDEV
 )braket
 suffix:semicolon
 DECL|macro|MAX_SECTORS
-mdefine_line|#define MAX_SECTORS 128
+mdefine_line|#define MAX_SECTORS 254
 DECL|macro|MAX_SEGMENTS
 mdefine_line|#define MAX_SEGMENTS MAX_SECTORS
 DECL|macro|PageAlignSize

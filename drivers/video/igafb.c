@@ -1579,6 +1579,7 @@ id|regno
 OL
 l_int|16
 )paren
+(brace
 r_switch
 c_cond
 (paren
@@ -1641,6 +1642,10 @@ macro_line|#ifdef FBCON_HAS_CFB32
 r_case
 l_int|32
 suffix:colon
+(brace
+r_int
+id|i
+suffix:semicolon
 id|i
 op_assign
 (paren
@@ -1664,9 +1669,11 @@ l_int|16
 op_or
 id|i
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 macro_line|#endif
+)brace
 )brace
 r_return
 l_int|0
@@ -2306,6 +2313,15 @@ suffix:semicolon
 macro_line|#endif
 r_default
 suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;igafb_set_disp: unknown resolution %d&bslash;n&quot;
+comma
+id|default_var.bits_per_pixel
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

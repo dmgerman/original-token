@@ -86,11 +86,6 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -202,11 +197,6 @@ suffix:semicolon
 id|ret
 op_assign
 id|KVM86-&gt;regs32
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_return
 id|ret
@@ -453,11 +443,6 @@ op_assign
 op_minus
 id|EPERM
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|tsk
 op_assign
 id|current
@@ -571,11 +556,6 @@ suffix:semicolon
 multiline_comment|/* we never return here */
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -610,11 +590,6 @@ r_int
 id|tmp
 comma
 id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|tsk
 op_assign
@@ -769,11 +744,6 @@ suffix:semicolon
 multiline_comment|/* we never return here */
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -930,11 +900,6 @@ c_func
 id|tsk
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -993,11 +958,6 @@ suffix:semicolon
 id|regs32-&gt;eax
 op_assign
 id|retval
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -1504,7 +1464,6 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This must be called with the kernel lock held. */
 DECL|function|handle_vm86_trap
 r_int
 id|handle_vm86_trap
@@ -1665,7 +1624,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This must be called with the kernel lock held. */
 DECL|function|handle_vm86_fault
 r_void
 id|handle_vm86_fault
@@ -2236,11 +2194,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -2319,11 +2272,6 @@ id|restore_flags
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

@@ -32,6 +32,7 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_PARPORT_PC
 DECL|variable|__initdata
 r_static
 r_int
@@ -55,6 +56,7 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|variable|__initdata
 r_static
 r_int

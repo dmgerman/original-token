@@ -2141,10 +2141,12 @@ DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit(addr, size, offset) &bslash;&n;                find_next_zero_bit((addr), (size), (offset))
 macro_line|#endif /* !(__MIPSEB__) */
 multiline_comment|/*&n; * Bitmap functions for the minix filesystem.&n; * FIXME: These assume that Minix uses the native byte/bitorder.&n; * This limits the Minix filesystem&squot;s value for data exchange very much.&n; */
+DECL|macro|minix_test_and_set_bit
+mdefine_line|#define minix_test_and_set_bit(nr,addr) test_and_set_bit(nr,addr)
 DECL|macro|minix_set_bit
-mdefine_line|#define minix_set_bit(nr,addr) test_and_set_bit(nr,addr)
-DECL|macro|minix_clear_bit
-mdefine_line|#define minix_clear_bit(nr,addr) test_and_clear_bit(nr,addr)
+mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+DECL|macro|minix_test_and_clear_bit
+mdefine_line|#define minix_test_and_clear_bit(nr,addr) test_and_clear_bit(nr,addr)
 DECL|macro|minix_test_bit
 mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
 DECL|macro|minix_find_first_zero_bit

@@ -178,10 +178,6 @@ r_int
 id|ret
 suffix:semicolon
 r_struct
-id|file
-id|new_filp
-suffix:semicolon
-r_struct
 id|umsdos_ioctl
 id|data
 suffix:semicolon
@@ -410,6 +406,11 @@ id|dentry
 op_star
 id|demd
 suffix:semicolon
+id|loff_t
+id|pos
+op_assign
+id|filp-&gt;f_pos
+suffix:semicolon
 multiline_comment|/* The absence of the EMD is simply seen as an EOF */
 id|demd
 op_assign
@@ -452,23 +453,10 @@ id|demd-&gt;d_inode
 r_goto
 id|read_dput
 suffix:semicolon
-id|fill_new_filp
-c_func
-(paren
-op_amp
-id|new_filp
-comma
-id|demd
-)paren
-suffix:semicolon
-id|new_filp.f_pos
-op_assign
-id|filp-&gt;f_pos
-suffix:semicolon
 r_while
 c_loop
 (paren
-id|new_filp.f_pos
+id|pos
 OL
 id|demd-&gt;d_inode-&gt;i_size
 )paren
@@ -476,7 +464,7 @@ id|demd-&gt;d_inode-&gt;i_size
 id|off_t
 id|f_pos
 op_assign
-id|new_filp.f_pos
+id|pos
 suffix:semicolon
 r_struct
 id|umsdos_dirent
@@ -490,8 +478,10 @@ id|ret
 op_assign
 id|umsdos_emd_dir_readentry
 (paren
+id|demd
+comma
 op_amp
-id|new_filp
+id|pos
 comma
 op_amp
 id|entry
@@ -584,7 +574,7 @@ suffix:semicolon
 multiline_comment|/* update the original f_pos */
 id|filp-&gt;f_pos
 op_assign
-id|new_filp.f_pos
+id|pos
 suffix:semicolon
 id|read_dput
 suffix:colon

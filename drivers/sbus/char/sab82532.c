@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.c,v 1.45 2000/05/08 22:23:08 ecd Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
+multiline_comment|/* $Id: sab82532.c,v 1.46 2000/07/06 01:41:37 davem Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -9656,7 +9656,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.45 $&quot;
+l_string|&quot;$Revision: 1.46 $&quot;
 suffix:semicolon
 r_char
 op_star

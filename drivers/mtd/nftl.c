@@ -1,14 +1,15 @@
 multiline_comment|/* Linux driver for NAND Flash Translation Layer      */
 multiline_comment|/* (c) 1999 Machine Vision Holdings, Inc.             */
-multiline_comment|/* Author: David Woodhouse &lt;dwmw2@infradead.org       */
-multiline_comment|/* $Id: nftl.c,v 1.34 2000/06/07 14:48:52 dwmw2 Exp $ */
-multiline_comment|/*&n;  LEGAL NOTE: The NFTL format is patented by M-Systems.  They have&n;  granted a licence for its use with their DiskOnChip products:&n;&n;    &quot;M-Systems grants a royalty-free, non-exclusive license under&n;    any presently existing M-Systems intellectual property rights&n;    necessary for the design and development of NFTL-compatible&n;    drivers, file systems and utilities to use the data formats with, &n;    and solely to support, M-Systems&squot; DiskOnChip products&quot;&n;&n;  A signed copy of this agreement from M-Systems is kept on file by&n;  Red Hat UK Limited. In the unlikely event that you need access to it,&n;  please contact dwmw2@redhat.com for assistance.&n;*/
+multiline_comment|/* Author: David Woodhouse &lt;dwmw2@infradead.org&gt;      */
+multiline_comment|/* $Id: nftl.c,v 1.35 2000/07/06 14:35:01 dwmw2 Exp $ */
+multiline_comment|/*&n;  The contents of this file are distributed under the GNU Public&n;  Licence version 2 (&quot;GPL&quot;). The legal note below refers only to the&n;  _use_ of the code in some jurisdictions, and does not in any way&n;  affect the copying, distribution and modification of this code,&n;  which is permitted under the terms of the GPL.&n;&n;  Section 0 of the GPL says:&n;&n; &quot;Activities other than copying, distribution and modification are not&n;  covered by this License; they are outside its scope.&quot;&n;&n;  You may copy, distribute and modify this code to your hearts&squot;&n;  content - it&squot;s just that in some jurisdictions, you may only _use_&n;  it under the terms of the licence below. This puts it in a similar&n;  situation to the ISDN code, which you may need telco approval to&n;  use, and indeed any code which has uses that may be restricted in&n;  law. For example, certain malicious uses of the networking stack&n;  may be illegal, but that doesn&squot;t prevent the networking code from&n;  being under GPL.&n;&n;  In fact the ISDN case is worse than this, because modification of&n;  the code automatically invalidates its approval. Modificiation,&n;  unlike usage, _is_ one of the rights which is protected by the&n;  GPL. Happily, the law in those places where approval is required&n;  doesn&squot;t actually prevent you from modifying the code - it&squot;s just&n;  that you may not be allowed to _use_ it once you&squot;ve done so - and&n;  because usage isn&squot;t addressed by the GPL, that&squot;s just fine.&n;&n;  dwmw2@infradead.org&n;  6/7/0&n;&n;  LEGAL NOTE: The NFTL format is patented by M-Systems.  They have&n;  granted a licence for its use with their DiskOnChip products:&n;&n;    &quot;M-Systems grants a royalty-free, non-exclusive license under&n;    any presently existing M-Systems intellectual property rights&n;    necessary for the design and development of NFTL-compatible&n;    drivers, file systems and utilities to use the data formats with, &n;    and solely to support, M-Systems&squot; DiskOnChip products&quot;&n;&n;  A signed copy of this agreement from M-Systems is kept on file by&n;  Red Hat UK Limited. In the unlikely event that you need access to it,&n;  please contact dwmw2@redhat.com for assistance.  */
 DECL|macro|PRERELEASE
 mdefine_line|#define PRERELEASE
 macro_line|#ifdef NFTL_DEBUG
 DECL|macro|DEBUGLVL
 mdefine_line|#define DEBUGLVL debug
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
@@ -5281,7 +5282,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;$Id: nftl.c,v 1.34 2000/06/07 14:48:52 dwmw2 Exp $&bslash;n&quot;
+l_string|&quot;$Id: nftl.c,v 1.35 2000/07/06 14:35:01 dwmw2 Exp $&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

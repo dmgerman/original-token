@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/msdos_fs_i.h&gt;
 macro_line|#include &lt;linux/pipe_fs_i.h&gt;
-multiline_comment|/* #Specification: strategy / in memory inode&n; * Here is the information specific to the inode of the UMSDOS file&n; * system. This information is added to the end of the standard struct&n; * inode. Each file system has its own extension to struct inode,&n; * so do the umsdos file system.&n; * &n; * The strategy is to have the umsdos_inode_info as a superset of&n; * the msdos_inode_info, since most of the time the job is done&n; * by the msdos fs code.&n; * &n; * So we duplicate the msdos_inode_info, and add our own info at the&n; * end.&n; * &n; * For all file type (and directory) the inode has a reference to:&n; * the directory which hold this entry: i_dir_owner&n; * The EMD file of i_dir_owner: i_emd_owner&n; * The offset in this EMD file of the entry: pos&n; * &n; * For directory, we also have a reference to the inode of its&n; * own EMD file. Also, we have dir_locking_info to help synchronise&n; * file creation and file lookup. See also msdos_fs_i.h for more &n; * information about msdos_inode_info.&n; * &n; * Special file and fifo do have an inode which correspond to an&n; * empty MSDOS file.&n; * &n; * symlink are processed mostly like regular file. The content is the&n; * link.&n; * &n; * The UMSDOS specific extension is placed after the union.&n; */
+multiline_comment|/* #Specification: strategy / in memory inode&n; * Here is the information specific to the inode of the UMSDOS file&n; * system. This information is added to the end of the standard struct&n; * inode. Each file system has its own extension to struct inode,&n; * so do the umsdos file system.&n; * &n; * The strategy is to have the umsdos_inode_info as a superset of&n; * the msdos_inode_info, since most of the time the job is done&n; * by the msdos fs code.&n; * &n; * So we duplicate the msdos_inode_info, and add our own info at the&n; * end.&n; * &n; * The offset in this EMD file of the entry: pos&n; * &n; * For directory, we have dir_locking_info to help synchronise&n; * file creation and file lookup. See also msdos_fs_i.h for more &n; * information about msdos_inode_info.&n; * &n; * Special file and fifo do have an inode which correspond to an&n; * empty MSDOS file.&n; * &n; * symlink are processed mostly like regular file. The content is the&n; * link.&n; * &n; * The UMSDOS specific extension is placed after the union.&n; */
 DECL|struct|dir_locking_info
 r_struct
 id|dir_locking_info
@@ -58,31 +58,11 @@ r_int
 id|i_is_hlink
 suffix:semicolon
 multiline_comment|/* Resolved hardlink inode? */
-DECL|member|i_emd_owner
-r_int
-r_int
-id|i_emd_owner
-suffix:semicolon
-multiline_comment|/* Is this the EMD file inode? */
 DECL|member|pos
 id|off_t
 id|pos
 suffix:semicolon
 multiline_comment|/* Entry offset in the emd_owner file */
-multiline_comment|/* The rest is used only if this inode describes a directory */
-DECL|member|i_emd_dentry
-r_struct
-id|dentry
-op_star
-id|i_emd_dentry
-suffix:semicolon
-multiline_comment|/* EMD dentry for this directory */
-DECL|member|i_emd_dir
-r_int
-r_int
-id|i_emd_dir
-suffix:semicolon
-multiline_comment|/* Inode of the EMD file */
 )brace
 suffix:semicolon
 macro_line|#endif

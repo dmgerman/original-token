@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.97 2000/05/09 17:40:13 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.99 2000/06/30 10:18:38 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -35,6 +35,9 @@ macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#ifdef CONFIG_SBUS
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
+macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/a.out.h&gt;
 macro_line|#include &lt;asm/io-unit.h&gt;
@@ -548,18 +551,18 @@ id|synchronize_irq
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|variable|local_irq_count
+DECL|variable|__local_irq_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|local_irq_count
+id|__local_irq_count
 )paren
 suffix:semicolon
-DECL|variable|local_bh_count
+DECL|variable|__local_bh_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|local_bh_count
+id|__local_bh_count
 )paren
 suffix:semicolon
 DECL|variable|udelay
@@ -810,7 +813,70 @@ id|sbus_ioremap
 suffix:semicolon
 macro_line|#endif
 macro_line|#if CONFIG_PCI
-multiline_comment|/* We do not have modular drivers for PCI devices yet. */
+multiline_comment|/* Actually, ioremap/iounmap are not PCI specific. But it is ok for drivers. */
+DECL|variable|ioremap
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ioremap
+)paren
+suffix:semicolon
+DECL|variable|iounmap
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|iounmap
+)paren
+suffix:semicolon
+DECL|variable|insl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|insl
+)paren
+suffix:semicolon
+DECL|variable|outsl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|outsl
+)paren
+suffix:semicolon
+DECL|variable|pci_alloc_consistent
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_alloc_consistent
+)paren
+suffix:semicolon
+DECL|variable|pci_free_consistent
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_free_consistent
+)paren
+suffix:semicolon
+DECL|variable|pci_map_single
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_map_single
+)paren
+suffix:semicolon
+DECL|variable|pci_unmap_single
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_unmap_single
+)paren
+suffix:semicolon
+DECL|variable|pci_dma_sync_single
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_dma_sync_single
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Solaris/SunOS binary compatibility */
 DECL|variable|svr4_setcontext
@@ -1020,7 +1086,7 @@ id|memscan
 )paren
 suffix:semicolon
 DECL|variable|strlen
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|strlen

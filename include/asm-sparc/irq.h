@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.29 2000/05/09 17:40:15 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.30 2000/06/30 10:18:39 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
@@ -31,7 +31,7 @@ macro_line|#ifdef CONFIG_SMP
 r_extern
 r_int
 r_int
-id|local_irq_count
+id|__local_irq_count
 (braket
 id|NR_CPUS
 )braket
@@ -44,10 +44,10 @@ macro_line|#else
 r_extern
 r_int
 r_int
-id|local_irq_count
+id|__local_irq_count
 suffix:semicolon
-mdefine_line|#define irq_enter(cpu, irq)     (local_irq_count++)
-mdefine_line|#define irq_exit(cpu, irq)      (local_irq_count--)
+mdefine_line|#define irq_enter(cpu, irq)     (__local_irq_count++)
+mdefine_line|#define irq_exit(cpu, irq)      (__local_irq_count--)
 macro_line|#endif
 multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependencies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; * Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Changed these to btfixup entities... It saves cycles :)&n; */
 id|BTFIXUPDEF_CALL

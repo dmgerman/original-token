@@ -37,9 +37,9 @@ DECL|macro|pci64_unmap_sg
 mdefine_line|#define pci64_unmap_sg(d,s,n,dir) pci_unmap_sg((d),(s),(n),(dir))
 macro_line|#if BITS_PER_LONG &gt; 32
 DECL|macro|pci64_dma_hi32
-mdefine_line|#define pci64_dma_hi32(a) ((u32) (0xffffffff &amp; (a&gt;&gt;32)))
+mdefine_line|#define pci64_dma_hi32(a) ((u32) (0xffffffff &amp; (((u64)(a))&gt;&gt;32)))
 DECL|macro|pci64_dma_lo32
-mdefine_line|#define pci64_dma_lo32(a) ((u32) (0xffffffff &amp; (a)))
+mdefine_line|#define pci64_dma_lo32(a) ((u32) (0xffffffff &amp; (((u64)(a)))))
 macro_line|#else
 DECL|macro|pci64_dma_hi32
 mdefine_line|#define pci64_dma_hi32(a) 0

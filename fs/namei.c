@@ -8346,7 +8346,7 @@ op_star
 )paren
 id|mapping-&gt;a_ops-&gt;readpage
 comma
-id|dentry
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

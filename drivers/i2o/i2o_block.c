@@ -39,7 +39,7 @@ mdefine_line|#define DEBUG( s ) printk( s )
 macro_line|#endif
 multiline_comment|/*&n; * Events that this OSM is interested in&n; */
 DECL|macro|I2OB_EVENT_MASK
-mdefine_line|#define I2OB_EVENT_MASK&t;I2O_EVT_IND_BSA_VOLUME_LOAD |&t;&bslash;&n;&t;&t;&t;&t;I2O_EVT_IND_BSA_VOLUME_UNLOAD | &bslash;&n;&t;&t;&t;&t;I2O_EVT_IND_BSA_VOLUME_UNLOAD_REQ | &bslash;&n;&t;&t;&t;&t;I2O_EVT_IND_BSA_CAPACITY_CHANGE
+mdefine_line|#define I2OB_EVENT_MASK&t;&t;(I2O_EVT_IND_BSA_VOLUME_LOAD |&t;&bslash;&n;&t;&t;&t;&t; I2O_EVT_IND_BSA_VOLUME_UNLOAD | &bslash;&n;&t;&t;&t;&t; I2O_EVT_IND_BSA_VOLUME_UNLOAD_REQ | &bslash;&n;&t;&t;&t;&t; I2O_EVT_IND_BSA_CAPACITY_CHANGE)
 multiline_comment|/*&n; * I2O Block Error Codes - should be in a header file really...&n; */
 DECL|macro|I2O_BSA_DSC_SUCCESS
 mdefine_line|#define I2O_BSA_DSC_SUCCESS             0x0000
@@ -204,9 +204,7 @@ DECL|member|num
 r_int
 id|num
 suffix:semicolon
-DECL|variable|__cacheline_aligned
 )brace
-id|__cacheline_aligned
 suffix:semicolon
 multiline_comment|/*&n; * Per IOP requst queue information&n; *&n; * We have a separate requeust_queue_t per IOP so that a heavilly&n; * loaded I2O block device on an IOP does not starve block devices&n; * across all I2O controllers.&n; * &n; */
 DECL|struct|i2ob_iop_queue

@@ -12231,7 +12231,7 @@ id|printk
 c_func
 (paren
 id|DEV_LABEL
-l_string|&quot;(itf %d): rev.%d,realbase=0x%x,irq=%d&bslash;n&quot;
+l_string|&quot;(itf %d): rev.%d,realbase=0x%lx,irq=%d&bslash;n&quot;
 comma
 id|dev-&gt;number
 comma
@@ -12381,7 +12381,7 @@ id|printk
 c_func
 (paren
 id|DEV_LABEL
-l_string|&quot; (itf %d): rev.%d,base=0x%x,irq=%d&bslash;n&quot;
+l_string|&quot; (itf %d): rev.%d,base=0x%lx,irq=%d&bslash;n&quot;
 comma
 id|dev-&gt;number
 comma

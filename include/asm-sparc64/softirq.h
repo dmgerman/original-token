@@ -10,17 +10,19 @@ macro_line|#ifndef CONFIG_SMP
 r_extern
 r_int
 r_int
-id|local_bh_count
+id|__local_bh_count
 suffix:semicolon
+DECL|macro|local_bh_count
+mdefine_line|#define local_bh_count(cpu)&t;__local_bh_count
 macro_line|#else
 DECL|macro|local_bh_count
-mdefine_line|#define local_bh_count&t;&t;(cpu_data[smp_processor_id()].bh_count)
+mdefine_line|#define local_bh_count(cpu)&t;(cpu_data[cpu].bh_count)
 macro_line|#endif
 DECL|macro|local_bh_disable
-mdefine_line|#define local_bh_disable()&t;(local_bh_count++)
+mdefine_line|#define local_bh_disable()&t;(local_bh_count(smp_processor_id())++)
 DECL|macro|local_bh_enable
-mdefine_line|#define local_bh_enable()&t;(local_bh_count--)
+mdefine_line|#define local_bh_enable()&t;(local_bh_count(smp_processor_id())--)
 DECL|macro|in_softirq
-mdefine_line|#define in_softirq() (local_bh_count != 0)
+mdefine_line|#define in_softirq() (local_bh_count(smp_processor_id()) != 0)
 macro_line|#endif /* !(__SPARC64_SOFTIRQ_H) */
 eof

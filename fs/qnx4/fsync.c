@@ -181,6 +181,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef WTF
 DECL|function|sync_iblock
 r_static
 r_int
@@ -306,6 +307,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sync_direct
 r_static
 r_int
@@ -388,6 +390,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifdef WTF
 DECL|function|sync_indirect
 r_static
 r_int
@@ -640,6 +643,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|qnx4_sync_file
 r_int
 id|qnx4_sync_file
@@ -654,6 +658,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_int
+id|unused
 )paren
 (brace
 r_struct

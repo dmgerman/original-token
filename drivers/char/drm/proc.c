@@ -1165,7 +1165,7 @@ id|q-&gt;use_count
 )paren
 comma
 l_string|&quot;%5d/0x%03x %5d %5d&quot;
-l_string|&quot; %5d/%c%c/%c%c%c %5d %10d %10d %10d&bslash;n&quot;
+l_string|&quot; %5d/%c%c/%c%c%c %5Zd %10d %10d %10d&bslash;n&quot;
 comma
 id|i
 comma

@@ -353,6 +353,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|unused
 )paren
 suffix:semicolon
 r_int

@@ -66,6 +66,14 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_int
+id|act2000_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_void
 DECL|function|isdn_cards_init
 id|isdn_cards_init

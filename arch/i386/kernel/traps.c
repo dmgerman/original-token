@@ -8,8 +8,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
@@ -164,14 +162,6 @@ op_assign
 l_int|15
 suffix:semicolon
 )brace
-DECL|macro|DO_ERROR
-mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;die_if_no_fixup(str,regs,error_code); &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;}
-DECL|macro|DO_ERROR_INFO
-mdefine_line|#define DO_ERROR_INFO(trapnr, signr, str, name, tsk, sicode, siaddr) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;siginfo_t info; &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;die_if_no_fixup(str,regs,error_code); &bslash;&n;&t;info.si_signo = signr; &bslash;&n;&t;info.si_errno = 0; &bslash;&n;&t;info.si_code = sicode; &bslash;&n;&t;info.si_addr = (void *)siaddr; &bslash;&n;&t;force_sig_info(signr, &amp;info, tsk); &bslash;&n;}
-DECL|macro|DO_VM86_ERROR
-mdefine_line|#define DO_VM86_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;lock_kernel(); &bslash;&n;&t;if (regs-&gt;eflags &amp; VM_MASK) { &bslash;&n;&t;&t;if (!handle_vm86_trap((struct kernel_vm86_regs *) regs, error_code, trapnr)) &bslash;&n;&t;&t;&t;goto out; &bslash;&n;&t;&t;/* else fall through */ &bslash;&n;&t;} &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;out: &bslash;&n;&t;unlock_kernel(); &bslash;&n;}
-DECL|macro|DO_VM86_ERROR_INFO
-mdefine_line|#define DO_VM86_ERROR_INFO(trapnr, signr, str, name, tsk, sicode, siaddr) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;siginfo_t info; &bslash;&n;&t;lock_kernel(); &bslash;&n;&t;if (regs-&gt;eflags &amp; VM_MASK) { &bslash;&n;&t;&t;if (!handle_vm86_trap((struct kernel_vm86_regs *) regs, error_code, trapnr)) &bslash;&n;&t;&t;&t;goto out; &bslash;&n;&t;&t;/* else fall through */ &bslash;&n;&t;} &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;info.si_signo = signr; &bslash;&n;&t;info.si_errno = 0; &bslash;&n;&t;info.si_code = sicode; &bslash;&n;&t;info.si_addr = (void *)siaddr; &bslash;&n;&t;force_sig_info(signr, &amp;info, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;out: &bslash;&n;&t;unlock_kernel(); &bslash;&n;}
 id|asmlinkage
 r_void
 id|divide_error
@@ -960,81 +950,6 @@ id|err
 )paren
 suffix:semicolon
 )brace
-DECL|function|die_if_no_fixup
-r_static
-r_void
-id|die_if_no_fixup
-c_func
-(paren
-r_const
-r_char
-op_star
-id|str
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-id|err
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|regs-&gt;eflags
-op_amp
-id|VM_MASK
-)paren
-op_logical_and
-op_logical_neg
-(paren
-l_int|3
-op_amp
-id|regs-&gt;xcs
-)paren
-)paren
-(brace
-r_int
-r_int
-id|fixup
-suffix:semicolon
-id|fixup
-op_assign
-id|search_exception_table
-c_func
-(paren
-id|regs-&gt;eip
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|fixup
-)paren
-(brace
-id|regs-&gt;eip
-op_assign
-id|fixup
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|die
-c_func
-(paren
-id|str
-comma
-id|regs
-comma
-id|err
-)paren
-suffix:semicolon
-)brace
-)brace
 DECL|function|get_cr2
 r_static
 r_inline
@@ -1066,6 +981,186 @@ r_return
 id|address
 suffix:semicolon
 )brace
+DECL|function|do_trap
+r_static
+r_void
+r_inline
+id|do_trap
+c_func
+(paren
+r_int
+id|trapnr
+comma
+r_int
+id|signr
+comma
+r_char
+op_star
+id|str
+comma
+r_int
+id|vm86
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+id|error_code
+comma
+id|siginfo_t
+op_star
+id|info
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|vm86
+op_logical_and
+id|regs-&gt;eflags
+op_amp
+id|VM_MASK
+)paren
+r_goto
+id|vm86_trap
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|regs-&gt;xcs
+op_amp
+l_int|3
+)paren
+)paren
+r_goto
+id|kernel_trap
+suffix:semicolon
+id|trap_signal
+suffix:colon
+(brace
+r_struct
+id|task_struct
+op_star
+id|tsk
+op_assign
+id|current
+suffix:semicolon
+id|tsk-&gt;thread.error_code
+op_assign
+id|error_code
+suffix:semicolon
+id|tsk-&gt;thread.trap_no
+op_assign
+id|trapnr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info
+)paren
+id|force_sig_info
+c_func
+(paren
+id|signr
+comma
+id|info
+comma
+id|tsk
+)paren
+suffix:semicolon
+r_else
+id|force_sig
+c_func
+(paren
+id|signr
+comma
+id|tsk
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|kernel_trap
+suffix:colon
+(brace
+r_int
+r_int
+id|fixup
+op_assign
+id|search_exception_table
+c_func
+(paren
+id|regs-&gt;eip
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fixup
+)paren
+id|regs-&gt;eip
+op_assign
+id|fixup
+suffix:semicolon
+r_else
+id|die
+c_func
+(paren
+id|str
+comma
+id|regs
+comma
+id|error_code
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|vm86_trap
+suffix:colon
+(brace
+r_int
+id|ret
+op_assign
+id|handle_vm86_trap
+c_func
+(paren
+(paren
+r_struct
+id|kernel_vm86_regs
+op_star
+)paren
+id|regs
+comma
+id|error_code
+comma
+id|trapnr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_goto
+id|trap_signal
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
+DECL|macro|DO_ERROR
+mdefine_line|#define DO_ERROR(trapnr, signr, str, name) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;do_trap(trapnr, signr, str, 0, regs, error_code, NULL); &bslash;&n;}
+DECL|macro|DO_ERROR_INFO
+mdefine_line|#define DO_ERROR_INFO(trapnr, signr, str, name, sicode, siaddr) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;siginfo_t info; &bslash;&n;&t;info.si_signo = signr; &bslash;&n;&t;info.si_errno = 0; &bslash;&n;&t;info.si_code = sicode; &bslash;&n;&t;info.si_addr = (void *)siaddr; &bslash;&n;&t;do_trap(trapnr, signr, str, 0, regs, error_code, &amp;info); &bslash;&n;}
+DECL|macro|DO_VM86_ERROR
+mdefine_line|#define DO_VM86_ERROR(trapnr, signr, str, name) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;do_trap(trapnr, signr, str, 1, regs, error_code, NULL); &bslash;&n;}
+DECL|macro|DO_VM86_ERROR_INFO
+mdefine_line|#define DO_VM86_ERROR_INFO(trapnr, signr, str, name, sicode, siaddr) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;siginfo_t info; &bslash;&n;&t;info.si_signo = signr; &bslash;&n;&t;info.si_errno = 0; &bslash;&n;&t;info.si_code = sicode; &bslash;&n;&t;info.si_addr = (void *)siaddr; &bslash;&n;&t;do_trap(trapnr, signr, str, 1, regs, error_code, &amp;info); &bslash;&n;}
 id|DO_VM86_ERROR_INFO
 c_func
 (paren
@@ -1076,8 +1171,6 @@ comma
 l_string|&quot;divide error&quot;
 comma
 id|divide_error
-comma
-id|current
 comma
 id|FPE_INTDIV
 comma
@@ -1093,8 +1186,6 @@ comma
 l_string|&quot;int3&quot;
 comma
 id|int3
-comma
-id|current
 )paren
 id|DO_VM86_ERROR
 c_func
@@ -1106,8 +1197,6 @@ comma
 l_string|&quot;overflow&quot;
 comma
 id|overflow
-comma
-id|current
 )paren
 id|DO_VM86_ERROR
 c_func
@@ -1119,8 +1208,6 @@ comma
 l_string|&quot;bounds&quot;
 comma
 id|bounds
-comma
-id|current
 )paren
 id|DO_ERROR_INFO
 c_func
@@ -1132,8 +1219,6 @@ comma
 l_string|&quot;invalid operand&quot;
 comma
 id|invalid_op
-comma
-id|current
 comma
 id|ILL_ILLOPN
 comma
@@ -1149,8 +1234,6 @@ comma
 l_string|&quot;device not available&quot;
 comma
 id|device_not_available
-comma
-id|current
 )paren
 id|DO_ERROR
 c_func
@@ -1162,8 +1245,6 @@ comma
 l_string|&quot;double fault&quot;
 comma
 id|double_fault
-comma
-id|current
 )paren
 id|DO_ERROR
 c_func
@@ -1175,8 +1256,6 @@ comma
 l_string|&quot;coprocessor segment overrun&quot;
 comma
 id|coprocessor_segment_overrun
-comma
-id|current
 )paren
 id|DO_ERROR
 c_func
@@ -1188,8 +1267,6 @@ comma
 l_string|&quot;invalid TSS&quot;
 comma
 id|invalid_TSS
-comma
-id|current
 )paren
 id|DO_ERROR
 c_func
@@ -1201,8 +1278,6 @@ comma
 l_string|&quot;segment not present&quot;
 comma
 id|segment_not_present
-comma
-id|current
 )paren
 id|DO_ERROR
 c_func
@@ -1214,8 +1289,6 @@ comma
 l_string|&quot;stack segment&quot;
 comma
 id|stack_segment
-comma
-id|current
 )paren
 id|DO_ERROR_INFO
 c_func
@@ -1227,8 +1300,6 @@ comma
 l_string|&quot;alignment check&quot;
 comma
 id|alignment_check
-comma
-id|current
 comma
 id|BUS_ADRALN
 comma
@@ -1247,8 +1318,6 @@ comma
 l_string|&quot;reserved&quot;
 comma
 id|reserved
-comma
-id|current
 )paren
 DECL|function|do_general_protection
 id|asmlinkage
@@ -1308,11 +1377,6 @@ r_return
 suffix:semicolon
 id|gp_in_vm86
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|handle_vm86_fault
 c_func
 (paren
@@ -1324,11 +1388,6 @@ op_star
 id|regs
 comma
 id|error_code
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -2095,11 +2154,6 @@ r_return
 suffix:semicolon
 id|debug_vm86
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|handle_vm86_trap
 c_func
 (paren
@@ -2113,11 +2167,6 @@ comma
 id|error_code
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -2707,11 +2756,6 @@ r_int
 id|arg
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2735,11 +2779,6 @@ id|current
 )paren
 suffix:semicolon
 id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-id|unlock_kernel
 c_func
 (paren
 )paren

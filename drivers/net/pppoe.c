@@ -1,4 +1,4 @@
-multiline_comment|/** -*- linux-c -*- ***********************************************************&n; * Linux PPP over Ethernet (PPPoX/PPPoE) Sockets&n; *&n; * PPPoX --- Generic PPP encapsulation socket family&n; * PPPoE --- PPP over Ethernet (RFC 2516)&n; *&n; *&n; * Version:&t;0.5.0&n; *&n; * Author:&t;Michal Ostrowski &lt;mostrows@styx.uwaterloo.ca&gt;&n; *&n; * License:&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/** -*- linux-c -*- ***********************************************************&n; * Linux PPP over Ethernet (PPPoX/PPPoE) Sockets&n; *&n; * PPPoX --- Generic PPP encapsulation socket family&n; * PPPoE --- PPP over Ethernet (RFC 2516)&n; *&n; *&n; * Version:    0.5.1&n; *&n; * 030700 :     Fixed connect logic to allow for disconnect&n; *&n; * Author:&t;Michal Ostrowski &lt;mostrows@styx.uwaterloo.ca&gt;&n; *&n; * License:&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1941,9 +1941,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|sk-&gt;state
 op_amp
 id|PPPOX_CONNECTED
+)paren
+op_logical_and
+id|sp-&gt;sa_addr.pppoe.sid
 )paren
 r_goto
 id|end

@@ -10,15 +10,17 @@ macro_line|#ifndef CONFIG_SMP
 r_extern
 r_int
 r_int
-id|local_irq_count
+id|__local_irq_count
 suffix:semicolon
+DECL|macro|local_irq_count
+mdefine_line|#define local_irq_count(cpu)&t;__local_irq_count
 DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count++)
+mdefine_line|#define irq_enter(cpu, irq)&t;(__local_irq_count++)
 DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count--)
+mdefine_line|#define irq_exit(cpu, irq)&t;(__local_irq_count--)
 macro_line|#else
 DECL|macro|local_irq_count
-mdefine_line|#define local_irq_count&t;&t;(__brlock_array[smp_processor_id()][BR_GLOBALIRQ_LOCK])
+mdefine_line|#define local_irq_count(cpu)&t;(__brlock_array[cpu][BR_GLOBALIRQ_LOCK])
 DECL|macro|irq_enter
 mdefine_line|#define irq_enter(cpu, irq)&t;br_read_lock(BR_GLOBALIRQ_LOCK)
 DECL|macro|irq_exit
@@ -26,19 +28,19 @@ mdefine_line|#define irq_exit(cpu, irq)&t;br_read_unlock(BR_GLOBALIRQ_LOCK)
 macro_line|#endif
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?  On any cpu?&n; */
 DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt() ((local_irq_count + local_bh_count) != 0)
+mdefine_line|#define in_interrupt() ((local_irq_count(smp_processor_id()) + &bslash;&n;&t;&t;         local_bh_count(smp_processor_id())) != 0)
 multiline_comment|/* This tests only the local processors hw IRQ context disposition.  */
 DECL|macro|in_irq
-mdefine_line|#define in_irq() (local_irq_count != 0)
+mdefine_line|#define in_irq() (local_irq_count(smp_processor_id()) != 0)
 macro_line|#ifndef CONFIG_SMP
 DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;((void)(cpu), local_irq_count == 0)
+mdefine_line|#define hardirq_trylock(cpu)&t;((void)(cpu), local_irq_count(smp_processor_id()) == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;do { (void)(cpu); } while(0)
 DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;((void)(cpu), local_irq_count++)
+mdefine_line|#define hardirq_enter(cpu)&t;((void)(cpu), local_irq_count(smp_processor_id())++)
 DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;((void)(cpu), local_irq_count--)
+mdefine_line|#define hardirq_exit(cpu)&t;((void)(cpu), local_irq_count(smp_processor_id())--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else /* (CONFIG_SMP) */

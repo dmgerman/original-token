@@ -27,6 +27,14 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_int
+id|lvm_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * For the allocated request tables&n; */
 DECL|variable|request_cachep
 r_static

@@ -712,6 +712,9 @@ comma
 id|last_fn
 comma
 id|hd
+op_assign
+op_minus
+l_int|1
 comma
 id|io_base
 comma

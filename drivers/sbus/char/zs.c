@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.57 2000/04/26 09:36:32 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.58 2000/07/06 01:41:38 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3265,30 +3265,6 @@ c_func
 (paren
 id|tty
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * This subroutine is called when the RS_TIMER goes off.  It is used&n; * by the serial driver to handle ports that do not have an interrupt&n; * (irq=0).  This doesn&squot;t work at all for 16450&squot;s, as a sun has a Z8530.&n; */
-DECL|function|zs_timer
-r_static
-r_void
-id|zs_timer
-c_func
-(paren
-r_void
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;zs_timer called&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|startup
@@ -8247,7 +8223,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.57 $&quot;
+l_string|&quot;$Revision: 1.58 $&quot;
 suffix:semicolon
 r_char
 op_star

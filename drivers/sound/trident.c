@@ -1918,6 +1918,7 @@ op_star
 id|card
 comma
 r_int
+r_int
 id|channel
 )paren
 (brace
@@ -1973,6 +1974,7 @@ id|trident_card
 op_star
 id|card
 comma
+r_int
 r_int
 id|channel
 )paren

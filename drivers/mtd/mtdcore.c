@@ -3,6 +3,7 @@ macro_line|#ifdef MTD_DEBUG
 DECL|macro|DEBUGLVL
 mdefine_line|#define DEBUGLVL debug
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.194 2000/06/05 06:08:45 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.195 2000/06/30 13:25:28 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -11230,6 +11230,8 @@ comma
 id|freed
 op_increment
 suffix:semicolon
+multiline_comment|/* Only two level page tables at the moment, sun4 3 level mmu is not supported - Anton */
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -11247,6 +11249,7 @@ comma
 id|freed
 op_increment
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -76,6 +76,7 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;scsi/scsicam.h&gt;
 macro_line|#include &quot;dc390.h&quot;
 DECL|macro|PCI_DEVICE_ID_AMD53C974
 mdefine_line|#define PCI_DEVICE_ID_AMD53C974 &t;PCI_DEVICE_ID_AMD_SCSI

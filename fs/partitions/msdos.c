@@ -12,6 +12,17 @@ macro_line|#endif /* CONFIG_BLK_DEV_IDE */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;check.h&quot;
 macro_line|#include &quot;msdos.h&quot;
+macro_line|#if CONFIG_BLK_DEV_MD &amp;&amp; CONFIG_AUTODETECT_RAID
+r_extern
+r_void
+id|md_autodetect_dev
+c_func
+(paren
+id|kdev_t
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|current_minor
 r_static
 r_int

@@ -455,6 +455,10 @@ op_assign
 (paren
 id|s32
 )paren
+(paren
+r_int
+r_int
+)paren
 id|filp-&gt;private_data
 suffix:semicolon
 id|j
@@ -644,6 +648,10 @@ op_assign
 (paren
 r_void
 op_star
+)paren
+(paren
+r_int
+r_int
 )paren
 id|i
 suffix:semicolon

@@ -4,6 +4,7 @@ multiline_comment|/* (c) 1999 Machine Vision Holdings, Inc.   */
 multiline_comment|/* Author: David Woodhouse &lt;dwmw2@mvhi.com&gt; */
 multiline_comment|/* $Id: docprobe.c,v 1.8 2000/06/26 20:40:53 dwmw2 Exp $ */
 multiline_comment|/* DOC_PASSIVE_PROBE:&n;   In order to ensure that the BIOS checksum is correct at boot time, and &n;   hence that the onboard BIOS extension gets executed, the DiskOnChip &n;   goes into reset mode when it is read sequentially: all registers &n;   return 0xff until the chip is woken up again by writing to the &n;   DOCControl register. &n;&n;   Unfortunately, this means that the probe for the DiskOnChip is unsafe, &n;   because one of the first things it does is write to where it thinks &n;   the DOCControl register should be - which may well be shared memory &n;   for another device. I&squot;ve had machines which lock up when this is &n;   attempted. Hence the possibility to do a passive probe, which will fail &n;   to detect a chip in reset mode, but is at least guaranteed not to lock&n;   the machine.&n;&n;   If you have this problem, uncomment the following line:&n;#define DOC_PASSIVE_PROBE&n;*/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;

@@ -8,23 +8,25 @@ macro_line|#ifndef CONFIG_SMP
 r_extern
 r_int
 r_int
-id|local_irq_count
+id|__local_irq_count
 suffix:semicolon
+DECL|macro|local_irq_count
+mdefine_line|#define local_irq_count(cpu)&t;__local_irq_count
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt()  ((local_irq_count + local_bh_count) != 0)
+mdefine_line|#define in_interrupt()  ((__local_irq_count + __local_bh_count) != 0)
 DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;((void)(cpu), local_irq_count == 0)
+mdefine_line|#define hardirq_trylock(cpu)&t;((void)(cpu), __local_irq_count == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;do { (void)(cpu); } while (0)
 DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count++)
+mdefine_line|#define hardirq_enter(cpu)&t;(__local_irq_count++)
 DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count--)
+mdefine_line|#define hardirq_exit(cpu)&t;(__local_irq_count--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 DECL|macro|in_irq
-mdefine_line|#define in_irq() (local_irq_count != 0)
+mdefine_line|#define in_irq() (__local_irq_count != 0)
 macro_line|#else
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
@@ -33,11 +35,13 @@ macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_int
 r_int
-id|local_irq_count
+id|__local_irq_count
 (braket
 id|NR_CPUS
 )braket
 suffix:semicolon
+DECL|macro|local_irq_count
+mdefine_line|#define local_irq_count(cpu)&t;__local_irq_count[cpu]
 r_extern
 r_int
 r_char
@@ -53,9 +57,9 @@ id|global_irq_count
 suffix:semicolon
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu] != 0); })
+mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count(__cpu) + local_bh_count(__cpu) != 0); })
 DECL|macro|in_irq
-mdefine_line|#define in_irq() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] != 0); })
+mdefine_line|#define in_irq() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count(__cpu) != 0); })
 DECL|function|release_irqlock
 r_static
 r_inline
@@ -106,9 +110,10 @@ id|cpu
 (brace
 op_increment
 id|local_irq_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 suffix:semicolon
 id|atomic_inc
 c_func
@@ -138,9 +143,10 @@ id|global_irq_count
 suffix:semicolon
 op_decrement
 id|local_irq_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 suffix:semicolon
 )brace
 DECL|function|hardirq_trylock

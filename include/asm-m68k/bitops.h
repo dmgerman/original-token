@@ -1163,8 +1163,8 @@ suffix:semicolon
 r_extern
 id|__inline__
 r_int
-DECL|function|minix_set_bit
-id|minix_set_bit
+DECL|function|minix_test_and_set_bit
+id|minix_test_and_set_bit
 (paren
 r_int
 id|nr
@@ -1209,11 +1209,13 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|macro|minix_set_bit
+mdefine_line|#define minix_set_bit(nr,addr)&t;((void)minix_test_and_set_bit(nr,addr))
 r_extern
 id|__inline__
 r_int
-DECL|function|minix_clear_bit
-id|minix_clear_bit
+DECL|function|minix_test_and_clear_bit
+id|minix_test_and_clear_bit
 (paren
 r_int
 id|nr

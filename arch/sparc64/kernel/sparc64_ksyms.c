@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.85 2000/05/23 02:14:25 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.86 2000/06/30 10:18:38 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -471,20 +471,6 @@ id|space
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|bcopy
-(paren
-r_const
-r_char
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|__ashrdi3
 c_func
@@ -778,18 +764,18 @@ id|_do_write_unlock
 suffix:semicolon
 macro_line|#endif
 macro_line|#else
-DECL|variable|local_bh_count
+DECL|variable|__local_bh_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|local_bh_count
+id|__local_bh_count
 )paren
 suffix:semicolon
-DECL|variable|local_irq_count
+DECL|variable|__local_irq_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|local_irq_count
+id|__local_irq_count
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1319,13 +1305,6 @@ id|__prom_getsibling
 )paren
 suffix:semicolon
 multiline_comment|/* sparc library symbols */
-DECL|variable|bcopy
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|bcopy
-)paren
-suffix:semicolon
 DECL|variable|__strlen
 id|EXPORT_SYMBOL
 c_func

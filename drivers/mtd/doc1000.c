@@ -1,4 +1,5 @@
 multiline_comment|/*======================================================================&n;&n;  $Id: doc1000.c,v 1.8 2000/07/03 10:01:38 dwmw2 Exp $&n;&n;    A general driver for accessing PCMCIA card memory via Bulk&n;    Memory Services.&n;&n;    This driver provides the equivalent of /dev/mem for a PCMCIA&n;    card&squot;s attribute and common memory.  It includes character&n;    and block devices.&n;&n;    Written by David Hinds, dhinds@allegro.stanford.edu&n;    &n;======================================================================*/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -329,7 +330,7 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#warning This is definitely not SMP safe. Lock the paging mechanism.
 macro_line|#endif
 DECL|function|pagein

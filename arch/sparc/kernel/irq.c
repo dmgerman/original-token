@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.103 2000/05/09 17:40:13 davem Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.104 2000/06/30 10:18:38 davem Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -688,30 +688,30 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_SMP
-DECL|variable|local_bh_count
+DECL|variable|__local_bh_count
 r_int
 r_int
-id|local_bh_count
+id|__local_bh_count
 suffix:semicolon
-DECL|variable|local_irq_count
+DECL|variable|__local_irq_count
 r_int
 r_int
-id|local_irq_count
+id|__local_irq_count
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* SMP interrupt locking on Sparc. */
-DECL|variable|local_bh_count
+DECL|variable|__local_bh_count
 r_int
 r_int
-id|local_bh_count
+id|__local_bh_count
 (braket
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|variable|local_irq_count
+DECL|variable|__local_irq_count
 r_int
 r_int
-id|local_irq_count
+id|__local_irq_count
 (braket
 id|NR_CPUS
 )braket
@@ -825,7 +825,7 @@ c_func
 (paren
 l_string|&quot;%d &quot;
 comma
-id|local_irq_count
+id|__local_irq_count
 (braket
 id|i
 )braket
@@ -878,7 +878,7 @@ c_func
 (paren
 l_string|&quot;%d &quot;
 comma
-id|local_bh_count
+id|__local_bh_count
 (braket
 id|cpu
 )braket
@@ -947,7 +947,7 @@ id|global_irq_count
 r_if
 c_cond
 (paren
-id|local_bh_count
+id|__local_bh_count
 (braket
 id|cpu
 )braket
@@ -1041,7 +1041,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|local_bh_count
+id|__local_bh_count
 (braket
 id|cpu
 )braket
@@ -1260,7 +1260,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|local_irq_count
+id|__local_irq_count
 (braket
 id|cpu
 )braket
@@ -1293,7 +1293,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|local_irq_count
+id|__local_irq_count
 (braket
 id|cpu
 )braket
@@ -1365,7 +1365,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|local_irq_count
+id|__local_irq_count
 (braket
 id|smp_processor_id
 c_func

@@ -3343,10 +3343,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* locks the driver */
-DECL|function|lock_fdc
+DECL|function|_lock_fdc
 r_static
 r_int
-id|lock_fdc
+id|_lock_fdc
 c_func
 (paren
 r_int
@@ -3354,6 +3354,9 @@ id|drive
 comma
 r_int
 id|interruptible
+comma
+r_int
+id|line
 )paren
 (brace
 r_if
@@ -3367,7 +3370,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Trying to lock fdc while usage count=0&bslash;n&quot;
+l_string|&quot;Trying to lock fdc while usage count=0 at line %d&bslash;n&quot;
+comma
+id|line
 )paren
 suffix:semicolon
 r_return
@@ -3520,6 +3525,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|macro|lock_fdc
+mdefine_line|#define lock_fdc(drive,interruptible) _lock_fdc(drive,interruptible, __LINE__)
 DECL|macro|LOCK_FDC
 mdefine_line|#define LOCK_FDC(drive,interruptible) &bslash;&n;if (lock_fdc(drive,interruptible)) return -EINTR;
 multiline_comment|/* unlocks the driver */
@@ -10779,6 +10786,24 @@ id|tracksize
 comma
 id|ssize
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|max_buffer_sectors
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;VFS: Block I/O scheduled on unopened device&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|set_fdc
 c_func
 (paren
@@ -12560,6 +12585,23 @@ op_star
 id|q
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|max_buffer_sectors
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;VFS: do_fd_request called on non-open device&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -16337,6 +16379,19 @@ id|UDRS-&gt;last_checked
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|floppy_grab_irq_and_dma
+c_func
+(paren
+)paren
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|lock_fdc
 c_func
 (paren
@@ -16354,6 +16409,11 @@ l_int|0
 )paren
 suffix:semicolon
 id|process_fd_request
+c_func
+(paren
+)paren
+suffix:semicolon
+id|floppy_release_irq_and_dma
 c_func
 (paren
 )paren
@@ -16462,6 +16522,25 @@ op_logical_or
 id|NO_GEOM
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|usage_count
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;VFS: revalidate called on non-open device.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 id|lock_fdc
 c_func
 (paren
@@ -16611,7 +16690,8 @@ c_func
 )paren
 suffix:semicolon
 r_return
-l_int|1
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 r_if

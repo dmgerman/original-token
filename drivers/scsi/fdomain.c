@@ -1616,6 +1616,8 @@ id|j
 suffix:semicolon
 r_int
 id|base
+op_assign
+l_int|0xdeadbeef
 suffix:semicolon
 r_int
 id|flag

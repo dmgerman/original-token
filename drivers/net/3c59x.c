@@ -4452,7 +4452,8 @@ op_amp
 id|HAS_CB_FNS
 )paren
 (brace
-id|u32
+r_int
+r_int
 id|fn_st_addr
 suffix:semicolon
 multiline_comment|/* Cardbus function status space */
@@ -4484,7 +4485,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: CardBus functions mapped %8.8x-&gt;%p&bslash;n&quot;
+l_string|&quot;%s: CardBus functions mapped %8.8lx-&gt;%p&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

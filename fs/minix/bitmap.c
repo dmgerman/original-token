@@ -481,7 +481,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|minix_clear_bit
+id|minix_test_and_clear_bit
 c_func
 (paren
 id|bit
@@ -657,7 +657,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|minix_set_bit
+id|minix_test_and_set_bit
 c_func
 (paren
 id|j
@@ -1203,7 +1203,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|minix_clear_bit
+id|minix_test_and_clear_bit
 c_func
 (paren
 id|ino
@@ -1382,7 +1382,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|minix_set_bit
+id|minix_test_and_set_bit
 c_func
 (paren
 id|j

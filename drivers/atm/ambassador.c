@@ -506,6 +506,9 @@ id|rd_mem
 (paren
 id|dev
 comma
+(paren
+r_int
+)paren
 id|i
 )paren
 suffix:semicolon
@@ -542,6 +545,9 @@ id|rd_mem
 (paren
 id|dev
 comma
+(paren
+r_int
+)paren
 id|i
 )paren
 suffix:semicolon
@@ -578,6 +584,9 @@ id|rd_mem
 (paren
 id|dev
 comma
+(paren
+r_int
+)paren
 id|i
 )paren
 suffix:semicolon

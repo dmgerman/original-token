@@ -5,7 +5,6 @@ mdefine_line|#define DEBUGLVL debug
 macro_line|#endif&t;&t;&t;&t;&t;&t;&t;       
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MTD_BLOCK_MAJOR

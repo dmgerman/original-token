@@ -563,6 +563,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* It is pretty silly, SIOCSIFHWADDR exists to make this. */

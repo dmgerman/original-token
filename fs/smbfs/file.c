@@ -823,7 +823,7 @@ macro_line|#ifdef SMBFS_PARANOIA
 id|printk
 c_func
 (paren
-l_string|&quot;smb_file_read: %s/%s validation failed, error=%d&bslash;n&quot;
+l_string|&quot;smb_file_read: %s/%s validation failed, error=%Zd&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
@@ -1168,7 +1168,7 @@ macro_line|#ifdef SMBFS_PARANOIA
 id|printk
 c_func
 (paren
-l_string|&quot;smb_file_write: %s/%s validation failed, error=%d&bslash;n&quot;
+l_string|&quot;smb_file_write: %s/%s validation failed, error=%Zd&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma

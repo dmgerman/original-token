@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.214 2000/06/22 01:28:44 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.215 2000/06/30 13:25:28 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -295,7 +295,6 @@ r_int
 id|srmmu_nocache_low
 suffix:semicolon
 DECL|variable|srmmu_nocache_used
-r_int
 r_int
 id|srmmu_nocache_used
 suffix:semicolon
@@ -6991,8 +6990,8 @@ id|buf
 comma
 l_string|&quot;MMU type&bslash;t: %s&bslash;n&quot;
 l_string|&quot;contexts&bslash;t: %d&bslash;n&quot;
-l_string|&quot;nocache total&bslash;t: %lu&bslash;n&quot;
-l_string|&quot;nocache used&bslash;t: %lu&bslash;n&quot;
+l_string|&quot;nocache total&bslash;t: %ld&bslash;n&quot;
+l_string|&quot;nocache used&bslash;t: %d&bslash;n&quot;
 comma
 id|srmmu_name
 comma

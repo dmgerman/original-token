@@ -1365,6 +1365,8 @@ id|nm256_writeBuffer8
 id|card
 comma
 id|buffer
+op_plus
+id|rem
 comma
 l_int|1
 comma

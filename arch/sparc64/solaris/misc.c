@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.27 2000/05/09 17:40:14 davem Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.28 2000/07/06 01:41:30 davem Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/types.h&gt;
