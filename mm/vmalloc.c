@@ -1135,6 +1135,7 @@ op_star
 id|addr
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -1158,6 +1159,29 @@ id|buf
 suffix:semicolon
 r_int
 id|n
+suffix:semicolon
+multiline_comment|/* Don&squot;t allow overflow */
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|addr
+op_plus
+id|count
+OL
+id|count
+)paren
+id|count
+op_assign
+op_minus
+(paren
+r_int
+r_int
+)paren
+id|addr
 suffix:semicolon
 r_for
 c_loop

@@ -1,12 +1,12 @@
-multiline_comment|/*&n; * $Id: capiutil.c,v 1.3 1997/05/18 09:24:18 calle Exp $&n; *&n; * CAPI 2.0 convert capi message to capi message struct&n; *&n; * From CAPI 2.0 Development Kit AVM 1995 (msg.c)&n; * Rewritten for Linux 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capiutil.c,v $&n; * Revision 1.3  1997/05/18 09:24:18  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.2  1997/03/05 21:22:13  fritz&n; * Fix: Symbols have to be exported unconditionally.&n; *&n; * Revision 1.1  1997/03/04 21:50:34  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
+multiline_comment|/*&n; * $Id: capiutil.c,v 1.6 1997/11/04 06:12:12 calle Exp $&n; *&n; * CAPI 2.0 convert capi message to capi message struct&n; *&n; * From CAPI 2.0 Development Kit AVM 1995 (msg.c)&n; * Rewritten for Linux 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capiutil.c,v $&n; * Revision 1.6  1997/11/04 06:12:12  calle&n; * capi.c: new read/write in file_ops since 2.1.60&n; * capidrv.c: prepared isdnlog interface for d2-trace in newer firmware.&n; * capiutil.c: needs config.h (CONFIG_ISDN_DRV_AVMB1_VERBOSE_REASON)&n; * compat.h: added #define LinuxVersionCode&n; *&n; * Revision 1.5  1997/10/01 09:21:19  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.4  1997/08/10 07:43:55  calle&n; * forgot to export symbol capi_info2str for 2.1.x&n; *&n; * Revision 1.3  1997/05/18 09:24:18  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.2  1997/03/05 21:22:13  fritz&n; * Fix: Symbols have to be exported unconditionally.&n; *&n; * Revision 1.1  1997/03/04 21:50:34  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;compat.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
 multiline_comment|/* from CAPI2.0 DDK AVM Berlin GmbH */
@@ -4087,7 +4087,6 @@ r_return
 id|buf
 suffix:semicolon
 )brace
-macro_line|#ifdef HAS_NEW_SYMTAB
 DECL|variable|capi_cmsg2message
 id|EXPORT_SYMBOL
 c_func
@@ -4130,61 +4129,13 @@ c_func
 id|capi_message2str
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|variable|capifunc_syms
-r_static
-r_struct
-id|symbol_table
-id|capifunc_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
-c_func
-(paren
-id|capi_cmsg2message
-)paren
-comma
-id|X
-c_func
-(paren
-id|capi_message2cmsg
-)paren
-comma
-id|X
-c_func
-(paren
-id|capi_cmsg_header
-)paren
-comma
-id|X
-c_func
-(paren
-id|capi_cmd2str
-)paren
-comma
-id|X
-c_func
-(paren
-id|capi_cmsg2str
-)paren
-comma
-id|X
-c_func
-(paren
-id|capi_message2str
-)paren
-comma
-id|X
+DECL|variable|capi_info2str
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|capi_info2str
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -4194,15 +4145,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef HAS_NEW_SYMTAB
-id|register_symtab
-c_func
-(paren
-op_amp
-id|capifunc_syms
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

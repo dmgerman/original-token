@@ -25,13 +25,13 @@ macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 multiline_comment|/*&n; * kernel variables&n; */
-DECL|variable|securelevel
+DECL|variable|securebits
 r_int
-id|securelevel
+id|securebits
 op_assign
-l_int|0
+id|SECUREBITS_DEFAULT
 suffix:semicolon
-multiline_comment|/* system security level */
+multiline_comment|/* systemwide security settings */
 DECL|variable|tick
 r_int
 id|tick

@@ -1,8 +1,7 @@
-multiline_comment|/*&n; * $Id: b1pci.c,v 1.2 1997/05/18 09:24:13 calle Exp $&n; * &n; * Module for AVM B1 PCI-card.&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1pci.c,v $&n; * Revision 1.2  1997/05/18 09:24:13  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.1  1997/03/30 17:10:42  calle&n; * added support for AVM-B1-PCI card.&n; *&n; */
+multiline_comment|/*&n; * $Id: b1pci.c,v 1.5 1998/01/31 11:14:43 calle Exp $&n; * &n; * Module for AVM B1 PCI-card.&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1pci.c,v $&n; * Revision 1.5  1998/01/31 11:14:43  calle&n; * merged changes to 2.0 tree, prepare 2.1.82 to work.&n; *&n; * Revision 1.4  1997/12/10 20:00:50  calle&n; * get changes from 2.0 version&n; *&n; * Revision 1.3  1997/10/01 09:21:14  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.2  1997/05/18 09:24:13  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.1  1997/03/30 17:10:42  calle&n; * added support for AVM-B1-PCI card.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;compat.h&quot;
@@ -22,17 +21,15 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.2 $&quot;
+l_string|&quot;$Revision: 1.5 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
-macro_line|#ifdef HAS_NEW_SYMTAB
 id|MODULE_AUTHOR
 c_func
 (paren
 l_string|&quot;Carsten Paeth &lt;calle@calle.in-berlin.de&gt;&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* ------------------------------------------------------------- */
 multiline_comment|/* ------------------------------------------------------------- */
 multiline_comment|/* -------- Init &amp; Cleanup ------------------------------------- */
@@ -63,8 +60,12 @@ suffix:semicolon
 r_int
 id|rc
 suffix:semicolon
-r_int
-id|pci_index
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -122,7 +123,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -132,7 +133,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;b1pci: no PCI-BIOS present&bslash;n&quot;
+l_string|&quot;b1pci: no PCI bus present&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -149,89 +150,38 @@ comma
 id|rev
 )paren
 suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-id|pci_index
+id|dev
 op_assign
-l_int|0
-suffix:semicolon
-id|pci_index
-OL
-l_int|8
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-r_int
-r_int
-id|ioaddr
-suffix:semicolon
-r_int
-r_char
-id|irq
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_find_device
+id|pci_find_device
+c_func
 (paren
 id|PCI_VENDOR_ID_AVM
 comma
 id|PCI_DEVICE_ID_AVM_B1
 comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
+id|dev
 )paren
-op_ne
-l_int|0
 )paren
 (brace
-r_continue
-suffix:semicolon
-)brace
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|irq
-)paren
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-op_amp
+r_int
+r_int
 id|ioaddr
-)paren
-suffix:semicolon
-multiline_comment|/* Strip the I/O address out of the returned value */
-id|ioaddr
-op_and_assign
+op_assign
+id|dev-&gt;base_address
+(braket
+l_int|1
+)braket
+op_amp
 id|PCI_BASE_ADDRESS_IO_MASK
+suffix:semicolon
+r_int
+r_int
+id|irq
+op_assign
+id|dev-&gt;irq
 suffix:semicolon
 id|printk
 c_func
@@ -256,6 +206,8 @@ c_func
 id|ioaddr
 comma
 id|irq
+comma
+id|AVM_CARDTYPE_B1
 )paren
 )paren
 op_ne
@@ -289,9 +241,11 @@ c_func
 id|ioaddr
 comma
 id|irq
+comma
+id|AVM_CARDTYPE_B1
 )paren
 )paren
-op_ne
+OL
 l_int|0
 )paren
 r_return

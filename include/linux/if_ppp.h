@@ -39,6 +39,8 @@ DECL|macro|SC_CCP_OPEN
 mdefine_line|#define SC_CCP_OPEN&t;0x00000040&t;/* Look at CCP packets */
 DECL|macro|SC_CCP_UP
 mdefine_line|#define SC_CCP_UP&t;0x00000080&t;/* May send/recv compressed packets */
+DECL|macro|SC_ENABLE_IP
+mdefine_line|#define SC_ENABLE_IP&t;0x00000100&t;/* IP packets may be exchanged */
 DECL|macro|SC_COMP_RUN
 mdefine_line|#define SC_COMP_RUN&t;0x00001000&t;/* compressor has been inited */
 DECL|macro|SC_DECOMP_RUN

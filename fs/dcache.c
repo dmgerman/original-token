@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|DCACHE_PARANOIA
 mdefine_line|#define DCACHE_PARANOIA 1
 multiline_comment|/* #define DCACHE_DEBUG 1 */
@@ -2276,8 +2277,8 @@ id|inode
 )paren
 suffix:semicolon
 )brace
-DECL|macro|switch
-mdefine_line|#define switch(x,y) do { &bslash;&n;&t;__typeof__ (x) __tmp = x; &bslash;&n;&t;x = y; y = __tmp; } while (0)
+DECL|macro|do_switch
+mdefine_line|#define do_switch(x,y) do { &bslash;&n;&t;__typeof__ (x) __tmp = x; &bslash;&n;&t;x = y; y = __tmp; } while (0)
 multiline_comment|/*&n; * We cannibalize &quot;target&quot; when moving dentry on top of it,&n; * because it&squot;s going to be thrown away anyway. We could be more&n; * polite about it, though.&n; *&n; * This forceful removal will result in ugly /proc output if&n; * somebody holds a file open that got deleted due to a rename.&n; * We could be nicer about the deleted file, and let it show&n; * up under the name it got deleted rather than the name that&n; * deleted it.&n; *&n; * Careful with the hash switch. The hash switch depends on&n; * the fact that any list-entry can be a head of the list.&n; * Think about it.&n; */
 DECL|function|d_move
 r_void
@@ -2356,32 +2357,32 @@ id|target-&gt;d_child
 )paren
 suffix:semicolon
 multiline_comment|/* Switch the parents and the names.. */
-r_switch
-c_cond
+id|do_switch
+c_func
 (paren
 id|dentry-&gt;d_parent
 comma
 id|target-&gt;d_parent
 )paren
 suffix:semicolon
-r_switch
-c_cond
+id|do_switch
+c_func
 (paren
 id|dentry-&gt;d_name.name
 comma
 id|target-&gt;d_name.name
 )paren
 suffix:semicolon
-r_switch
-c_cond
+id|do_switch
+c_func
 (paren
 id|dentry-&gt;d_name.len
 comma
 id|target-&gt;d_name.len
 )paren
 suffix:semicolon
-r_switch
-c_cond
+id|do_switch
+c_func
 (paren
 id|dentry-&gt;d_name.hash
 comma
@@ -2594,6 +2595,105 @@ suffix:semicolon
 )brace
 r_return
 id|retval
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * NOTE! The user-level library version returns a&n; * character pointer. The kernel system call just&n; * returns the length of the buffer filled (which&n; * includes the ending &squot;&bslash;0&squot; character), or a negative&n; * error value. So libc would do something like&n; *&n; *&t;char *getcwd(char * buf, size_t size)&n; *&t;{&n; *&t;&t;int retval;&n; *&n; *&t;&t;retval = sys_getcwd(buf, size);&n; *&t;&t;if (retval &gt;= 0)&n; *&t;&t;&t;return buf;&n; *&t;&t;errno = -retval;&n; *&t;&t;return NULL;&n; *&t;}&n; */
+DECL|function|sys_getcwd
+id|asmlinkage
+r_int
+id|sys_getcwd
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+r_int
+id|error
+suffix:semicolon
+r_int
+r_int
+id|len
+suffix:semicolon
+r_char
+op_star
+id|page
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|__get_free_page
+c_func
+(paren
+id|GFP_USER
+)paren
+suffix:semicolon
+r_char
+op_star
+id|cwd
+op_assign
+id|d_path
+c_func
+(paren
+id|current-&gt;fs-&gt;pwd
+comma
+id|page
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+id|error
+op_assign
+op_minus
+id|ERANGE
+suffix:semicolon
+id|len
+op_assign
+id|PAGE_SIZE
+op_plus
+id|page
+op_minus
+id|cwd
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_le
+id|size
+)paren
+(brace
+id|error
+op_assign
+id|len
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+id|buf
+comma
+id|cwd
+comma
+id|len
+)paren
+)paren
+id|error
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_return
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Test whether new_dentry is a subdirectory of old_dentry.&n; *&n; * Trivially implemented using the dcache structure&n; */

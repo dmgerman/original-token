@@ -1921,13 +1921,6 @@ c_func
 id|__up
 )paren
 suffix:semicolon
-DECL|variable|securelevel
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|securelevel
-)paren
-suffix:semicolon
 multiline_comment|/* all busmice */
 DECL|variable|add_mouse_randomness
 id|EXPORT_SYMBOL

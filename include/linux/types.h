@@ -176,6 +176,72 @@ r_int
 r_int
 id|ulong
 suffix:semicolon
+macro_line|#ifndef __BIT_TYPES_DEFINED__
+DECL|macro|__BIT_TYPES_DEFINED__
+mdefine_line|#define __BIT_TYPES_DEFINED__
+DECL|typedef|u_int8_t
+r_typedef
+id|__u8
+id|u_int8_t
+suffix:semicolon
+DECL|typedef|int8_t
+r_typedef
+id|__s8
+r_int8
+suffix:semicolon
+DECL|typedef|u_int16_t
+r_typedef
+id|__u16
+id|u_int16_t
+suffix:semicolon
+DECL|typedef|int16_t
+r_typedef
+id|__s16
+r_int16
+suffix:semicolon
+DECL|typedef|u_int32_t
+r_typedef
+id|__u32
+id|u_int32_t
+suffix:semicolon
+DECL|typedef|int32_t
+r_typedef
+id|__s32
+r_int32
+suffix:semicolon
+macro_line|#endif /* !(__BIT_TYPES_DEFINED__) */
+DECL|typedef|uint8_t
+r_typedef
+id|__u8
+r_uint8
+suffix:semicolon
+DECL|typedef|uint16_t
+r_typedef
+id|__u16
+r_uint16
+suffix:semicolon
+DECL|typedef|uint32_t
+r_typedef
+id|__u32
+r_uint32
+suffix:semicolon
+macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
+DECL|typedef|uint64_t
+r_typedef
+id|__u64
+r_uint64
+suffix:semicolon
+DECL|typedef|u_int64_t
+r_typedef
+id|__u64
+id|u_int64_t
+suffix:semicolon
+DECL|typedef|int64_t
+r_typedef
+id|__s64
+r_int64
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* __KERNEL_STRICT_NAMES */
 multiline_comment|/*&n; * Below are truly Linux-specific types that should never collide with&n; * any application/library that wants linux/types.h.&n; */
 DECL|struct|ustat

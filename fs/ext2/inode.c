@@ -3556,10 +3556,6 @@ id|EXT2_IMMUTABLE_FL
 r_if
 c_cond
 (paren
-id|securelevel
-OG
-l_int|0
-op_logical_or
 op_logical_neg
 id|fsuser
 c_func

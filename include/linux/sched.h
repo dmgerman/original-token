@@ -20,6 +20,8 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/capability.h&gt;
+macro_line|#include &lt;linux/securebits.h&gt;
 multiline_comment|/*&n; * cloning flags:&n; */
 DECL|macro|CSIGNAL
 mdefine_line|#define CSIGNAL&t;&t;0x000000ff&t;/* signal mask to be sent at exit */
@@ -470,17 +472,6 @@ DECL|member|leader
 r_int
 id|leader
 suffix:semicolon
-DECL|member|ngroups
-r_int
-id|ngroups
-suffix:semicolon
-DECL|member|groups
-id|gid_t
-id|groups
-(braket
-id|NGROUPS
-)braket
-suffix:semicolon
 multiline_comment|/* &n;&t; * pointers to (original) parent process, youngest child, younger sibling,&n;&t; * older sibling, respectively.  (p-&gt;father can be replaced with &n;&t; * p-&gt;p_pptr-&gt;pid)&n;&t; */
 DECL|member|p_opptr
 DECL|member|p_pptr
@@ -533,32 +524,6 @@ op_star
 id|wait_chldexit
 suffix:semicolon
 multiline_comment|/* for wait4() */
-DECL|member|uid
-DECL|member|euid
-DECL|member|suid
-DECL|member|fsuid
-id|uid_t
-id|uid
-comma
-id|euid
-comma
-id|suid
-comma
-id|fsuid
-suffix:semicolon
-DECL|member|gid
-DECL|member|egid
-DECL|member|sgid
-DECL|member|fsgid
-id|gid_t
-id|gid
-comma
-id|egid
-comma
-id|sgid
-comma
-id|fsgid
-suffix:semicolon
 DECL|member|timeout
 DECL|member|policy
 DECL|member|rt_priority
@@ -670,6 +635,54 @@ r_int
 id|swap_cnt
 suffix:semicolon
 multiline_comment|/* number of pages to swap on next pass */
+multiline_comment|/* process credentials */
+DECL|member|uid
+DECL|member|euid
+DECL|member|suid
+DECL|member|fsuid
+id|uid_t
+id|uid
+comma
+id|euid
+comma
+id|suid
+comma
+id|fsuid
+suffix:semicolon
+DECL|member|gid
+DECL|member|egid
+DECL|member|sgid
+DECL|member|fsgid
+id|gid_t
+id|gid
+comma
+id|egid
+comma
+id|sgid
+comma
+id|fsgid
+suffix:semicolon
+DECL|member|ngroups
+r_int
+id|ngroups
+suffix:semicolon
+DECL|member|groups
+id|gid_t
+id|groups
+(braket
+id|NGROUPS
+)braket
+suffix:semicolon
+DECL|member|cap_effective
+DECL|member|cap_inheritable
+DECL|member|cap_permitted
+id|kernel_cap_t
+id|cap_effective
+comma
+id|cap_inheritable
+comma
+id|cap_permitted
+suffix:semicolon
 multiline_comment|/* limits */
 DECL|member|rlim
 r_struct
@@ -842,7 +855,7 @@ mdefine_line|#define INIT_LOCKS
 macro_line|#endif
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* suppl grps*/ 0, {0,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per cpu times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0,0,0,0,0, &bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;&amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, &bslash;&n;/* SMP */&t;0,0,0,0, &bslash;&n;/* locks */&t;INIT_LOCKS &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;NULL, &bslash;&n;/* timeout */&t;0,SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per cpu times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0,0,0,0,0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_FULL_SET, CAP_FULL_SET, CAP_FULL_SET,    &bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;&amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, &bslash;&n;/* SMP */&t;0,0,0,0, &bslash;&n;/* locks */&t;INIT_LOCKS &bslash;&n;}
 DECL|union|task_union
 r_union
 id|task_union
@@ -1233,11 +1246,6 @@ r_int
 r_int
 id|prof_shift
 suffix:semicolon
-r_extern
-r_int
-id|securelevel
-suffix:semicolon
-multiline_comment|/* system security level */
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (xtime.tv_sec)
 r_extern
@@ -1798,7 +1806,7 @@ op_star
 id|dev_id
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This has now become a routine instead of a macro, it sets a flag if&n; * it returns true (to do BSD-style accounting where the process is flagged&n; * if it uses root privs). The implication of this is that you should do&n; * normal permissions checks first, and check suser() last.&n; *&n; * [Dec 1997 -- Chris Evans]&n; * For correctness, the above considerations need to be extended to&n; * fsuser(). This is done, along with moving fsuser() checks to be&n; * last.&n; */
+multiline_comment|/*&n; * This has now become a routine instead of a macro, it sets a flag if&n; * it returns true (to do BSD-style accounting where the process is flagged&n; * if it uses root privs). The implication of this is that you should do&n; * normal permissions checks first, and check suser() last.&n; *&n; * [Dec 1997 -- Chris Evans]&n; * For correctness, the above considerations need to be extended to&n; * fsuser(). This is done, along with moving fsuser() checks to be&n; * last.&n; *&n; * These will be removed, but in the mean time, when the SECURE_NOROOT &n; * flag is set, uids don&squot;t grant privilege.&n; */
 DECL|function|suser
 r_extern
 r_inline
@@ -1812,6 +1820,13 @@ r_void
 r_if
 c_cond
 (paren
+op_logical_neg
+id|issecure
+c_func
+(paren
+id|SECURE_NOROOT
+)paren
+op_logical_and
 id|current-&gt;euid
 op_eq
 l_int|0
@@ -1842,10 +1857,74 @@ r_void
 r_if
 c_cond
 (paren
+op_logical_neg
+id|issecure
+c_func
+(paren
+id|SECURE_NOROOT
+)paren
+op_logical_and
 id|current-&gt;fsuid
 op_eq
 l_int|0
 )paren
+(brace
+id|current-&gt;flags
+op_or_assign
+id|PF_SUPERPRIV
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * capable() checks for a particular capability.  &n; * New privilege checks should use this interface, rather than suser() or&n; * fsuser(). See include/linux/capability.h for defined capabilities.&n; */
+DECL|function|capable
+r_extern
+r_inline
+r_int
+id|capable
+c_func
+(paren
+r_int
+id|cap
+)paren
+(brace
+macro_line|#if 0 /* not yet */
+r_if
+c_cond
+(paren
+id|cap_raised
+c_func
+(paren
+id|current-&gt;cap_effective
+comma
+id|cap
+)paren
+)paren
+macro_line|#else
+r_if
+c_cond
+(paren
+id|cap_is_fs_cap
+c_func
+(paren
+id|cap
+)paren
+ques
+c_cond
+id|current-&gt;fsuid
+op_eq
+l_int|0
+suffix:colon
+id|current-&gt;euid
+op_eq
+l_int|0
+)paren
+macro_line|#endif
 (brace
 id|current-&gt;flags
 op_or_assign

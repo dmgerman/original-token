@@ -3575,6 +3575,14 @@ op_star
 id|ent
 suffix:semicolon
 macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|smp_num_cpus
+OG
+l_int|1
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -3584,6 +3592,7 @@ l_string|&quot;APM disabled: APM is not SMP safe.&bslash;n&quot;
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 macro_line|#endif
 r_if
 c_cond

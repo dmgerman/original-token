@@ -18,6 +18,13 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &lt;scsi/sg.h&gt;
+DECL|variable|sg_big_buff
+r_int
+id|sg_big_buff
+op_assign
+id|SG_BIG_BUFF
+suffix:semicolon
+multiline_comment|/* for now, sg_big_buff is read-only through sysctl */
 r_static
 r_int
 id|sg_init

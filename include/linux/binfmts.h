@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_BINFMTS_H
 DECL|macro|_LINUX_BINFMTS_H
 mdefine_line|#define _LINUX_BINFMTS_H
 macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;linux/capability.h&gt;
 multiline_comment|/*&n; * MAX_ARG_PAGES defines the number of pages allocated for arguments&n; * and envelope for the new program. 32 should suffice, this gives&n; * a maximum env+arg of 128kB w/4KB pages!&n; */
 DECL|macro|MAX_ARG_PAGES
 mdefine_line|#define MAX_ARG_PAGES 32
@@ -51,6 +52,16 @@ r_int
 id|e_uid
 comma
 id|e_gid
+suffix:semicolon
+DECL|member|cap_inheritable
+DECL|member|cap_permitted
+DECL|member|cap_effective
+id|kernel_cap_t
+id|cap_inheritable
+comma
+id|cap_permitted
+comma
+id|cap_effective
 suffix:semicolon
 DECL|member|argc
 DECL|member|envc
@@ -346,6 +357,17 @@ id|p
 comma
 r_int
 id|from_kmem
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|compute_creds
+c_func
+(paren
+r_struct
+id|linux_binprm
+op_star
+id|binprm
 )paren
 suffix:semicolon
 multiline_comment|/* this eventually goes away */

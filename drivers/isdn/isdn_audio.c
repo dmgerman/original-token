@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_audio.c,v 1.8 1997/03/02 14:29:16 fritz Exp $&n;&n; * Linux ISDN subsystem, audio conversion and compression (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * DTMF code (c) 1996 by Christian Mock (cm@kukuruz.ping.at)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_audio.c,v $&n; * Revision 1.8  1997/03/02 14:29:16  fritz&n; * More ttyI related cleanup.&n; *&n; * Revision 1.7  1997/02/03 22:44:11  fritz&n; * Reformatted according CodingStyle&n; *&n; * Revision 1.6  1996/06/06 14:43:31  fritz&n; * Changed to support DTMF decoding on audio playback also.&n; *&n; * Revision 1.5  1996/06/05 02:24:08  fritz&n; * Added DTMF decoder for audio mode.&n; *&n; * Revision 1.4  1996/05/17 03:48:01  fritz&n; * Removed some test statements.&n; * Added revision string.&n; *&n; * Revision 1.3  1996/05/10 08:48:11  fritz&n; * Corrected adpcm bugs.&n; *&n; * Revision 1.2  1996/04/30 09:31:17  fritz&n; * General rewrite.&n; *&n; * Revision 1.1.1.1  1996/04/28 12:25:40  fritz&n; * Taken under CVS control&n; *&n; */
+multiline_comment|/* $Id: isdn_audio.c,v 1.10 1998/02/20 17:09:40 fritz Exp $&n;&n; * Linux ISDN subsystem, audio conversion and compression (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * DTMF code (c) 1996 by Christian Mock (cm@kukuruz.ping.at)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_audio.c,v $&n; * Revision 1.10  1998/02/20 17:09:40  fritz&n; * Changes for recent kernels.&n; *&n; * Revision 1.9  1997/10/01 09:20:25  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.8  1997/03/02 14:29:16  fritz&n; * More ttyI related cleanup.&n; *&n; * Revision 1.7  1997/02/03 22:44:11  fritz&n; * Reformatted according CodingStyle&n; *&n; * Revision 1.6  1996/06/06 14:43:31  fritz&n; * Changed to support DTMF decoding on audio playback also.&n; *&n; * Revision 1.5  1996/06/05 02:24:08  fritz&n; * Added DTMF decoder for audio mode.&n; *&n; * Revision 1.4  1996/05/17 03:48:01  fritz&n; * Removed some test statements.&n; * Added revision string.&n; *&n; * Revision 1.3  1996/05/10 08:48:11  fritz&n; * Corrected adpcm bugs.&n; *&n; * Revision 1.2  1996/04/30 09:31:17  fritz&n; * General rewrite.&n; *&n; * Revision 1.1.1.1  1996/04/28 12:25:40  fritz&n; * Taken under CVS control&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -10,7 +10,7 @@ r_char
 op_star
 id|isdn_audio_revision
 op_assign
-l_string|&quot;$Revision: 1.8 $&quot;
+l_string|&quot;$Revision: 1.10 $&quot;
 suffix:semicolon
 multiline_comment|/*&n; * Misc. lookup-tables.&n; */
 multiline_comment|/* ulaw -&gt; signed 16-bit */
@@ -4151,12 +4151,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|SET_SKB_FREE
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|result
 op_assign
 (paren

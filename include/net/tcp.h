@@ -386,6 +386,27 @@ op_star
 op_star
 id|bind_pprev
 suffix:semicolon
+DECL|member|daddr
+id|__u32
+id|daddr
+suffix:semicolon
+DECL|member|rcv_saddr
+id|__u32
+id|rcv_saddr
+suffix:semicolon
+DECL|member|dport
+id|__u16
+id|dport
+suffix:semicolon
+DECL|member|num
+r_int
+r_int
+id|num
+suffix:semicolon
+DECL|member|bound_dev_if
+r_int
+id|bound_dev_if
+suffix:semicolon
 DECL|member|next
 r_struct
 id|sock
@@ -399,23 +420,6 @@ op_star
 op_star
 id|pprev
 suffix:semicolon
-DECL|member|daddr
-id|__u32
-id|daddr
-suffix:semicolon
-DECL|member|rcv_saddr
-id|__u32
-id|rcv_saddr
-suffix:semicolon
-DECL|member|bound_dev_if
-r_int
-id|bound_dev_if
-suffix:semicolon
-DECL|member|num
-r_int
-r_int
-id|num
-suffix:semicolon
 DECL|member|state
 r_int
 r_char
@@ -427,10 +431,6 @@ suffix:semicolon
 DECL|member|sport
 id|__u16
 id|sport
-suffix:semicolon
-DECL|member|dport
-id|__u16
-id|dport
 suffix:semicolon
 DECL|member|family
 r_int
@@ -486,6 +486,32 @@ id|kmem_cache_t
 op_star
 id|tcp_timewait_cachep
 suffix:semicolon
+multiline_comment|/* Socket demux engine toys. */
+macro_line|#ifdef __BIG_ENDIAN
+DECL|macro|TCP_COMBINED_PORTS
+mdefine_line|#define TCP_COMBINED_PORTS(__sport, __dport) &bslash;&n;&t;(((__u32)(__sport)&lt;&lt;16) | (__u32)(__dport))
+macro_line|#else /* __LITTLE_ENDIAN */
+DECL|macro|TCP_COMBINED_PORTS
+mdefine_line|#define TCP_COMBINED_PORTS(__sport, __dport) &bslash;&n;&t;(((__u32)(__dport)&lt;&lt;16) | (__u32)(__sport))
+macro_line|#endif
+macro_line|#if defined(__alpha__) || defined(__sparc_v9__)
+macro_line|#ifdef __BIG_ENDIAN
+DECL|macro|TCP_V4_ADDR_COOKIE
+mdefine_line|#define TCP_V4_ADDR_COOKIE(__name, __saddr, __daddr) &bslash;&n;&t;__u64 __name = (((__u64)(__saddr))&lt;&lt;32)|((__u64)(__daddr));
+macro_line|#else /* __LITTLE_ENDIAN */
+DECL|macro|TCP_V4_ADDR_COOKIE
+mdefine_line|#define TCP_V4_ADDR_COOKIE(__name, __saddr, __daddr) &bslash;&n;&t;__u64 __name = (((__u64)(__daddr))&lt;&lt;32)|((__u64)(__saddr));
+macro_line|#endif /* __BIG_ENDIAN */
+DECL|macro|TCP_IPV4_MATCH
+mdefine_line|#define TCP_IPV4_MATCH(__sk, __cookie, __saddr, __daddr, __ports, __dif)&bslash;&n;&t;(((*((__u64 *)&amp;((__sk)-&gt;daddr)))== (__cookie))&t;&amp;&amp;&t;&t;&bslash;&n;&t; ((*((__u32 *)&amp;((__sk)-&gt;dport)))== (__ports))   &amp;&amp;&t;&t;&bslash;&n;&t; (!((__sk)-&gt;bound_dev_if) || ((__sk)-&gt;bound_dev_if == (__dif))))
+macro_line|#else /* 32-bit arch */
+DECL|macro|TCP_V4_ADDR_COOKIE
+mdefine_line|#define TCP_V4_ADDR_COOKIE(__name, __saddr, __daddr)
+DECL|macro|TCP_IPV4_MATCH
+mdefine_line|#define TCP_IPV4_MATCH(__sk, __cookie, __saddr, __daddr, __ports, __dif)&bslash;&n;&t;(((__sk)-&gt;daddr&t;&t;&t;== (__saddr))&t;&amp;&amp;&t;&t;&bslash;&n;&t; ((__sk)-&gt;rcv_saddr&t;&t;== (__daddr))&t;&amp;&amp;&t;&t;&bslash;&n;&t; ((*((__u32 *)&amp;((__sk)-&gt;dport)))== (__ports))   &amp;&amp;&t;&t;&bslash;&n;&t; (!((__sk)-&gt;bound_dev_if) || ((__sk)-&gt;bound_dev_if == (__dif))))
+macro_line|#endif /* 64-bit arch */
+DECL|macro|TCP_IPV6_MATCH
+mdefine_line|#define TCP_IPV6_MATCH(__sk, __saddr, __daddr, __ports, __dif)&t;&t;&t;   &bslash;&n;&t;(((*((__u32 *)&amp;((__sk)-&gt;dport)))== (__ports))   &t;&t;&t;&amp;&amp; &bslash;&n;&t; ((__sk)-&gt;family&t;&t;== AF_INET6)&t;&t;&t;&t;&amp;&amp; &bslash;&n;&t; !ipv6_addr_cmp(&amp;(__sk)-&gt;net_pinfo.af_inet6.daddr, (__saddr))&t;&t;&amp;&amp; &bslash;&n;&t; !ipv6_addr_cmp(&amp;(__sk)-&gt;net_pinfo.af_inet6.rcv_saddr, (__daddr))&t;&amp;&amp; &bslash;&n;&t; (!((__sk)-&gt;bound_dev_if) || ((__sk)-&gt;bound_dev_if == (__dif))))
 multiline_comment|/* tcp_ipv4.c: These sysctl variables need to be shared between v4 and v6&n; * because the v6 tcp code to intialize a connection needs to interoperate&n; * with the v4 code using the same variables.&n; * FIXME: It would be better to rewrite the connection code to be&n; * address family independent and just leave one copy in the ipv4 section.&n; * This would also clean up some code duplication. -- erics&n; */
 r_extern
 r_int
@@ -653,13 +679,6 @@ DECL|macro|TCPOLEN_SACK_BASE_ALIGNED
 mdefine_line|#define TCPOLEN_SACK_BASE_ALIGNED&t;4
 DECL|macro|TCPOLEN_SACK_PERBLOCK
 mdefine_line|#define TCPOLEN_SACK_PERBLOCK&t;&t;8
-multiline_comment|/*&n; *&t;TCP Vegas constants&n; */
-DECL|macro|TCP_VEGAS_ALPHA
-mdefine_line|#define TCP_VEGAS_ALPHA&t;&t;2&t;/*  v_cong_detect_top_nseg */
-DECL|macro|TCP_VEGAS_BETA
-mdefine_line|#define TCP_VEGAS_BETA&t;&t;4&t;/*  v_cong_detect_bot_nseg */
-DECL|macro|TCP_VEGAS_GAMMA
-mdefine_line|#define TCP_VEGAS_GAMMA&t;&t;1&t;/*  v_exp_inc_nseg&t;   */
 r_struct
 id|open_request
 suffix:semicolon
@@ -2367,6 +2386,9 @@ multiline_comment|/* Sequence number ACK&squot;d&t;*/
 suffix:semicolon
 DECL|macro|TCP_SKB_CB
 mdefine_line|#define TCP_SKB_CB(__skb)&t;((struct tcp_skb_cb *)&amp;((__skb)-&gt;cb[0]))
+multiline_comment|/* We store the congestion window as a packet count, shifted by&n; * a factor so that implementing the 1/2 MSS ssthresh rules&n; * is easy.&n; */
+DECL|macro|TCP_CWND_SHIFT
+mdefine_line|#define TCP_CWND_SHIFT&t;1
 multiline_comment|/* This determines how many packets are &quot;in the network&quot; to the best&n; * or our knowledge.  In many cases it is conservative, but where&n; * detailed information is available from the receiver (via SACK&n; * blocks etc.) we can make more agressive calculations.&n; *&n; * Use this for decisions involving congestion control, use just&n; * tp-&gt;packets_out to determine if the send queue is empty or not.&n; *&n; * Read this equation as:&n; *&n; *&t;&quot;Packets sent once on transmission queue&quot; MINUS&n; *&t;&quot;Packets acknowledged by FACK information&quot; PLUS&n; *&t;&quot;Packets fast retransmitted&quot;&n; */
 DECL|function|tcp_packets_in_flight
 r_static
@@ -2461,13 +2483,19 @@ r_return
 (paren
 id|nagle_check
 op_logical_and
+(paren
 id|tcp_packets_in_flight
 c_func
 (paren
 id|tp
 )paren
 OL
+(paren
 id|tp-&gt;snd_cwnd
+op_rshift
+id|TCP_CWND_SHIFT
+)paren
+)paren
 op_logical_and
 op_logical_neg
 id|after

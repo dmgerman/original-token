@@ -559,7 +559,7 @@ l_string|&quot;Ok.&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; *&t;B step AMD K6 before B 9729AIJW have hardware bugs that can cause&n; *&t;misexecution of code under Linux. Owners of such processors should&n; *&t;contact AMD for precise details and a CPU swap.&n; *&n; *&t;See&t;http://www.chorus.com/~poulot/k6bug.html&n; *&t;&t;http://www.amd.com/K6/k6docs/revgd.html&n; *&n; *&t;The following test is erm.. interesting. AMD neglected to up&n; *&t;the chip setting when fixing the bug but they also tweaked some&n; *&t;performance at the same time..&n; */
+multiline_comment|/*&n; *&t;B step AMD K6 before B 9730xxxx have hardware bugs that can cause&n; *&t;misexecution of code under Linux. Owners of such processors should&n; *&t;contact AMD for precise details and a CPU swap.&n; *&n; *&t;See&t;http://www.chorus.com/~poulot/k6bug.html&n; *&t;&t;http://www.amd.com/K6/k6docs/revgd.html&n; *&n; *&t;The following test is erm.. interesting. AMD neglected to up&n; *&t;the chip setting when fixing the bug but they also tweaked some&n; *&t;performance at the same time..&n; */
 r_extern
 r_void
 id|vide
@@ -710,7 +710,6 @@ id|K6_BUG_LOOP
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;system stability may be impaired when more than 32 MB are used.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -718,7 +717,6 @@ r_else
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;probably OK (after B9730xxxx).&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -726,7 +724,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Please see http://www.chorus.com/bpc/k6bug.html&bslash;n&quot;
+l_string|&quot;Please see http://www.chorus.com/poulot/k6bug.html&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

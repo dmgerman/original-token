@@ -164,6 +164,8 @@ r_int
 comma
 r_int
 comma
+r_int
+comma
 r_struct
 id|sk_buff
 op_star
@@ -260,7 +262,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-macro_line|#if (LINUX_VERSION_CODE &gt; 0x020111)
 id|MODULE_PARM
 c_func
 (paren
@@ -293,7 +294,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|macro|init_sc
 mdefine_line|#define init_sc init_module
 macro_line|#else

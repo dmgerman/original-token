@@ -1,6 +1,6 @@
-multiline_comment|/* $Id: hisax.h,v 1.13 1997/04/06 22:54:12 keil Exp $&n;&n; *   Basic declarations, defines and prototypes&n; *&n; * $Log: hisax.h,v $&n; * Revision 1.13  1997/04/06 22:54:12  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.12  1997/03/23 21:45:45  keil&n; * Add support for ELSA PCMCIA&n; *&n; * Revision 1.11  1997/02/11 01:36:02  keil&n; * New Param structure&n; *&n; * Revision 1.10  1997/02/09 00:23:52  keil&n; * new interface handling, one interface per card&n; *&n; * Revision 1.9  1997/01/27 23:18:44  keil&n; * prototype for releasestack_isdnl3&n; *&n; * Revision 1.8  1997/01/27 16:02:37  keil&n; * new cards, callc timers, HZDELAY macro, HiSax_getrev prototype&n; *&n; * Revision 1.7  1997/01/21 22:22:14  keil&n; * changes for 2.0; Elsa Quickstep support&n; *&n; * Revision 1.6  1997/01/04 13:48:28  keil&n; * primitiv for MDL_REMOVE added&n; *&n; * Revision 1.5  1996/12/08 19:49:19  keil&n; * Monitor channel support&n; *&n; * Revision 1.4  1996/11/18 15:35:39  keil&n; * some changes for ELSA cards&n; *&n; * Revision 1.3  1996/11/05 19:37:23  keil&n; * using config.h&n; *&n; * Revision 1.2  1996/10/27 22:21:52  keil&n; * CallFlags for broadcast messages&n; *&n; * Revision 1.1  1996/10/13 20:03:46  keil&n; * Initial revision&n; *&n; *&n; *&n; */
-macro_line|#include &lt;linux/module.h&gt;
+multiline_comment|/* $Id: hisax.h,v 2.14 1998/02/11 17:28:04 keil Exp $&n;&n; *   Basic declarations, defines and prototypes&n; *&n; * $Log: hisax.h,v $&n; * Revision 2.14  1998/02/11 17:28:04  keil&n; * Niccy PnP/PCI support&n; *&n; * Revision 2.13  1998/02/09 18:46:02  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 2.12  1998/02/03 23:31:30  keil&n; * add AMD7930 support&n; *&n; * Revision 2.11  1998/02/02 13:33:00  keil&n; * New card support&n; *&n; * Revision 2.10  1997/11/08 21:37:52  keil&n; * new l1 init;new Compaq card&n; *&n; * Revision 2.9  1997/11/06 17:09:09  keil&n; * New 2.1 init code&n; *&n; * Revision 2.8  1997/10/29 19:04:13  keil&n; * new L1; changes for 2.1&n; *&n; * Revision 2.7  1997/10/10 20:56:47  fritz&n; * New HL interface.&n; *&n; * Revision 2.6  1997/09/11 17:25:51  keil&n; * Add new cards&n; *&n; * Revision 2.5  1997/08/03 14:36:31  keil&n; * Implement RESTART procedure&n; *&n; * Revision 2.4  1997/07/31 19:25:20  keil&n; * PTP_DATA_LINK support&n; *&n; * Revision 2.3  1997/07/31 11:50:17  keil&n; * ONE TEI and FIXED TEI handling&n; *&n; * Revision 2.2  1997/07/30 17:13:02  keil&n; * more changes for &squot;One TEI per card&squot;&n; *&n; * Revision 2.1  1997/07/27 21:45:13  keil&n; * new main structures&n; *&n; * Revision 2.0  1997/06/26 11:06:27  keil&n; * New card and L1 interface.&n; * Eicon.Diehl Diva and Dynalink IS64PH support&n; *&n; * old changes removed KKe&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -18,216 +18,203 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/isdnif.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-DECL|macro|PH_ACTIVATE
-mdefine_line|#define PH_ACTIVATE   1
-DECL|macro|PH_DATA
-mdefine_line|#define PH_DATA       2
-DECL|macro|PH_DEACTIVATE
-mdefine_line|#define PH_DEACTIVATE 3
-DECL|macro|MDL_ASSIGN
-mdefine_line|#define MDL_ASSIGN       4
+macro_line|#include &lt;linux/init.h&gt;
+DECL|macro|PH_ACTIVATE_REQ
+mdefine_line|#define PH_ACTIVATE_REQ&t;0x0010
+DECL|macro|PH_ACTIVATE_CNF
+mdefine_line|#define PH_ACTIVATE_CNF&t;0x0011
+DECL|macro|PH_ACTIVATE_IND
+mdefine_line|#define PH_ACTIVATE_IND&t;0x0012
+DECL|macro|PH_DEACTIVATE_REQ
+mdefine_line|#define PH_DEACTIVATE_REQ 0x0020
+DECL|macro|PH_DEACTIVATE_CNF
+mdefine_line|#define PH_DEACTIVATE_CNF 0x0021
+DECL|macro|PH_DEACTIVATE_IND
+mdefine_line|#define PH_DEACTIVATE_IND 0x0022
+DECL|macro|PH_DEACT_REQ
+mdefine_line|#define PH_DEACT_REQ&t;0x0024
+DECL|macro|PH_DEACT_CNF
+mdefine_line|#define PH_DEACT_CNF&t;0x0025
+DECL|macro|PH_DEACT_IND
+mdefine_line|#define PH_DEACT_IND&t;0x0026
+DECL|macro|PH_DEACT_ACK
+mdefine_line|#define PH_DEACT_ACK&t;0x0027
+DECL|macro|PH_TESTLOOP_REQ
+mdefine_line|#define PH_TESTLOOP_REQ&t;0x0030
+DECL|macro|PH_PAUSE_CNF
+mdefine_line|#define PH_PAUSE_CNF&t;0x0035
+DECL|macro|PH_PAUSE_IND
+mdefine_line|#define PH_PAUSE_IND&t;0x0036
+DECL|macro|PH_PULL_REQ
+mdefine_line|#define PH_PULL_REQ&t;0x0038
+DECL|macro|PH_PULL_CNF
+mdefine_line|#define PH_PULL_CNF&t;0x0039
+DECL|macro|PH_PULL_IND
+mdefine_line|#define&t;PH_PULL_IND&t;0x003A
+DECL|macro|PH_DATA_REQ
+mdefine_line|#define PH_DATA_REQ&t;0x0040
+DECL|macro|PH_DATA_IND
+mdefine_line|#define PH_DATA_IND&t;0x0042
+DECL|macro|PH_INFO3_REQ
+mdefine_line|#define PH_INFO3_REQ&t;0x0008
+DECL|macro|PH_INFO2_IND
+mdefine_line|#define PH_INFO2_IND&t;0x000A
+DECL|macro|PH_ENABLE_REQ
+mdefine_line|#define PH_ENABLE_REQ&t;0x0004
+DECL|macro|PH_RSYNC_IND
+mdefine_line|#define PH_RSYNC_IND&t;0x0006
+DECL|macro|PH_RESET_REQ
+mdefine_line|#define PH_RESET_REQ&t;0x0000
+DECL|macro|PH_RESET_IND
+mdefine_line|#define PH_RESET_IND&t;0x0002
+DECL|macro|PH_POWERUP_CNF
+mdefine_line|#define PH_POWERUP_CNF&t;0x0003
+DECL|macro|PH_ACTIV_REQ
+mdefine_line|#define PH_ACTIV_REQ&t;0x000C
+DECL|macro|PH_I4_P8_IND
+mdefine_line|#define PH_I4_P8_IND&t;0x000D
+DECL|macro|PH_I4_P10_IND
+mdefine_line|#define PH_I4_P10_IND&t;0x000F
+DECL|macro|MDL_ASSIGN_REQ
+mdefine_line|#define MDL_ASSIGN_REQ&t;0x0050
+DECL|macro|MDL_ASSIGN_IND
+mdefine_line|#define MDL_ASSIGN_IND&t;0x0052
+DECL|macro|MDL_REMOVE_REQ
+mdefine_line|#define MDL_REMOVE_REQ&t;0x0054
+DECL|macro|MDL_ERROR_REQ
+mdefine_line|#define MDL_ERROR_REQ&t;0x0058
+DECL|macro|MDL_ERROR_IND
+mdefine_line|#define MDL_ERROR_IND&t;0x005A
+DECL|macro|CARD_AUX_IND
+mdefine_line|#define CARD_AUX_IND&t;0x005E
 DECL|macro|DL_UNIT_DATA
-mdefine_line|#define DL_UNIT_DATA     5
-DECL|macro|SC_STARTUP
-mdefine_line|#define SC_STARTUP       6
+mdefine_line|#define DL_UNIT_DATA&t;6
 DECL|macro|CC_ESTABLISH
-mdefine_line|#define CC_ESTABLISH     7
+mdefine_line|#define CC_ESTABLISH&t;7
 DECL|macro|DL_ESTABLISH
-mdefine_line|#define DL_ESTABLISH     8
+mdefine_line|#define DL_ESTABLISH&t;8
 DECL|macro|DL_DATA
-mdefine_line|#define DL_DATA          9
-DECL|macro|CC_S_STATUS_ENQ
-mdefine_line|#define CC_S_STATUS_ENQ  10
+mdefine_line|#define DL_DATA&t;&t;9
 DECL|macro|CC_CONNECT
-mdefine_line|#define CC_CONNECT       15
-DECL|macro|CC_CONNECT_ACKNOWLEDGE
-mdefine_line|#define CC_CONNECT_ACKNOWLEDGE 16
-DECL|macro|CO_EOF
-mdefine_line|#define CO_EOF                 17
-DECL|macro|SC_DISCONNECT
-mdefine_line|#define SC_DISCONNECT          18
-DECL|macro|CO_DTMF
-mdefine_line|#define CO_DTMF                19
+mdefine_line|#define CC_CONNECT&t;15
 DECL|macro|DL_RELEASE
-mdefine_line|#define DL_RELEASE             20
+mdefine_line|#define DL_RELEASE&t;20
 DECL|macro|DL_FLUSH
-mdefine_line|#define DL_FLUSH               21
-DECL|macro|CO_ALARM
-mdefine_line|#define CO_ALARM               22
+mdefine_line|#define DL_FLUSH&t;21
 DECL|macro|CC_REJECT
-mdefine_line|#define CC_REJECT              23
+mdefine_line|#define CC_REJECT&t;23
 DECL|macro|CC_SETUP_REQ
-mdefine_line|#define CC_SETUP_REQ           24
+mdefine_line|#define CC_SETUP_REQ&t;24
 DECL|macro|CC_SETUP_CNF
-mdefine_line|#define CC_SETUP_CNF           25
+mdefine_line|#define CC_SETUP_CNF&t;25
 DECL|macro|CC_SETUP_IND
-mdefine_line|#define CC_SETUP_IND           26
+mdefine_line|#define CC_SETUP_IND&t;26
 DECL|macro|CC_SETUP_RSP
-mdefine_line|#define CC_SETUP_RSP           27
+mdefine_line|#define CC_SETUP_RSP&t;27
 DECL|macro|CC_SETUP_COMPLETE_IND
-mdefine_line|#define CC_SETUP_COMPLETE_IND  28
+mdefine_line|#define CC_SETUP_COMPLETE_IND&t;28
 DECL|macro|CC_DISCONNECT_REQ
-mdefine_line|#define CC_DISCONNECT_REQ      29
+mdefine_line|#define CC_DISCONNECT_REQ&t;29
 DECL|macro|CC_DISCONNECT_IND
-mdefine_line|#define CC_DISCONNECT_IND      30
+mdefine_line|#define CC_DISCONNECT_IND&t;30
 DECL|macro|CC_RELEASE_CNF
-mdefine_line|#define CC_RELEASE_CNF         31
+mdefine_line|#define CC_RELEASE_CNF&t;31
 DECL|macro|CC_RELEASE_IND
-mdefine_line|#define CC_RELEASE_IND         32
+mdefine_line|#define CC_RELEASE_IND&t;32
 DECL|macro|CC_RELEASE_REQ
-mdefine_line|#define CC_RELEASE_REQ         33
+mdefine_line|#define CC_RELEASE_REQ&t;33
 DECL|macro|CC_REJECT_REQ
-mdefine_line|#define CC_REJECT_REQ          34
+mdefine_line|#define CC_REJECT_REQ&t;34
 DECL|macro|CC_PROCEEDING_IND
-mdefine_line|#define CC_PROCEEDING_IND      35
+mdefine_line|#define CC_PROCEEDING_IND&t;35
 DECL|macro|CC_DLRL
-mdefine_line|#define CC_DLRL                36
+mdefine_line|#define CC_DLRL&t;&t;36
 DECL|macro|CC_DLEST
-mdefine_line|#define CC_DLEST               37
+mdefine_line|#define CC_DLEST&t;37
 DECL|macro|CC_ALERTING_REQ
-mdefine_line|#define CC_ALERTING_REQ        38
+mdefine_line|#define CC_ALERTING_REQ&t;38
 DECL|macro|CC_ALERTING_IND
-mdefine_line|#define CC_ALERTING_IND        39
+mdefine_line|#define CC_ALERTING_IND&t;39
 DECL|macro|DL_STOP
-mdefine_line|#define DL_STOP                40
+mdefine_line|#define DL_STOP&t;&t;40
 DECL|macro|DL_START
-mdefine_line|#define DL_START               41
+mdefine_line|#define DL_START&t;41
+DECL|macro|MDL_INFO_SETUP
+mdefine_line|#define MDL_INFO_SETUP&t;42
+DECL|macro|MDL_INFO_CONN
+mdefine_line|#define MDL_INFO_CONN&t;43
+DECL|macro|MDL_INFO_REL
+mdefine_line|#define MDL_INFO_REL&t;44
 DECL|macro|MDL_NOTEIPROC
-mdefine_line|#define MDL_NOTEIPROC          46
+mdefine_line|#define MDL_NOTEIPROC&t;46
 DECL|macro|LC_ESTABLISH
-mdefine_line|#define LC_ESTABLISH           47
+mdefine_line|#define LC_ESTABLISH&t;47
 DECL|macro|LC_RELEASE
-mdefine_line|#define LC_RELEASE             48
-DECL|macro|PH_REQUEST_PULL
-mdefine_line|#define PH_REQUEST_PULL        49
-DECL|macro|PH_PULL_ACK
-mdefine_line|#define PH_PULL_ACK            50
-DECL|macro|PH_DATA_PULLED
-mdefine_line|#define&t;PH_DATA_PULLED&t;       51
+mdefine_line|#define LC_RELEASE&t;48
 DECL|macro|CC_INFO_CHARGE
-mdefine_line|#define CC_INFO_CHARGE         52
+mdefine_line|#define CC_INFO_CHARGE&t;52
 DECL|macro|CC_MORE_INFO
-mdefine_line|#define CC_MORE_INFO           53
+mdefine_line|#define CC_MORE_INFO&t;53
 DECL|macro|CC_IGNORE
-mdefine_line|#define CC_IGNORE              54
-DECL|macro|MDL_REMOVE
-mdefine_line|#define MDL_REMOVE             56
-DECL|macro|MDL_VERIFY
-mdefine_line|#define MDL_VERIFY             57
+mdefine_line|#define CC_IGNORE&t;54
+DECL|macro|CC_RESTART
+mdefine_line|#define CC_RESTART&t;55
 DECL|macro|CC_T303
-mdefine_line|#define CC_T303                60
+mdefine_line|#define CC_T303&t;&t;60
 DECL|macro|CC_T304
-mdefine_line|#define CC_T304                61
+mdefine_line|#define CC_T304&t;&t;61
 DECL|macro|CC_T305
-mdefine_line|#define CC_T305                62
+mdefine_line|#define CC_T305&t;&t;62
 DECL|macro|CC_T308_1
-mdefine_line|#define CC_T308_1              64
+mdefine_line|#define CC_T308_1&t;64
 DECL|macro|CC_T308_2
-mdefine_line|#define CC_T308_2              65
+mdefine_line|#define CC_T308_2&t;65
 DECL|macro|CC_T310
-mdefine_line|#define CC_T310                66
+mdefine_line|#define CC_T310&t;&t;66
 DECL|macro|CC_T313
-mdefine_line|#define CC_T313                67
+mdefine_line|#define CC_T313&t;&t;67
 DECL|macro|CC_T318
-mdefine_line|#define CC_T318                68
+mdefine_line|#define CC_T318&t;&t;68
 DECL|macro|CC_T319
-mdefine_line|#define CC_T319                69
+mdefine_line|#define CC_T319&t;&t;69
 DECL|macro|CC_NOSETUP_RSP_ERR
-mdefine_line|#define CC_NOSETUP_RSP_ERR     70
+mdefine_line|#define CC_NOSETUP_RSP_ERR&t;70
 DECL|macro|CC_SETUP_ERR
-mdefine_line|#define CC_SETUP_ERR           71
+mdefine_line|#define CC_SETUP_ERR&t;&t;71
 DECL|macro|CC_CONNECT_ERR
-mdefine_line|#define CC_CONNECT_ERR         72
+mdefine_line|#define CC_CONNECT_ERR&t;&t;72
 DECL|macro|CC_RELEASE_ERR
-mdefine_line|#define CC_RELEASE_ERR         73
-multiline_comment|/*&n; * Message-Types&n; */
-DECL|macro|MT_ALERTING
-mdefine_line|#define MT_ALERTING            0x01
-DECL|macro|MT_CALL_PROCEEDING
-mdefine_line|#define MT_CALL_PROCEEDING     0x02
-DECL|macro|MT_CONNECT
-mdefine_line|#define MT_CONNECT             0x07
-DECL|macro|MT_CONNECT_ACKNOWLEDGE
-mdefine_line|#define MT_CONNECT_ACKNOWLEDGE 0x0f
-DECL|macro|MT_PROGRESS
-mdefine_line|#define MT_PROGRESS            0x03
-DECL|macro|MT_SETUP
-mdefine_line|#define MT_SETUP               0x05
-DECL|macro|MT_SETUP_ACKNOWLEDGE
-mdefine_line|#define MT_SETUP_ACKNOWLEDGE   0x0d
-DECL|macro|MT_RESUME
-mdefine_line|#define MT_RESUME              0x26
-DECL|macro|MT_RESUME_ACKNOWLEDGE
-mdefine_line|#define MT_RESUME_ACKNOWLEDGE  0x2e
-DECL|macro|MT_RESUME_REJECT
-mdefine_line|#define MT_RESUME_REJECT       0x22
-DECL|macro|MT_SUSPEND
-mdefine_line|#define MT_SUSPEND             0x25
-DECL|macro|MT_SUSPEND_ACKNOWLEDGE
-mdefine_line|#define MT_SUSPEND_ACKNOWLEDGE 0x2d
-DECL|macro|MT_SUSPEND_REJECT
-mdefine_line|#define MT_SUSPEND_REJECT      0x21
-DECL|macro|MT_USER_INFORMATION
-mdefine_line|#define MT_USER_INFORMATION    0x20
-DECL|macro|MT_DISCONNECT
-mdefine_line|#define MT_DISCONNECT          0x45
-DECL|macro|MT_RELEASE
-mdefine_line|#define MT_RELEASE             0x4d
-DECL|macro|MT_RELEASE_COMPLETE
-mdefine_line|#define MT_RELEASE_COMPLETE    0x5a
-DECL|macro|MT_RESTART
-mdefine_line|#define MT_RESTART             0x46
-DECL|macro|MT_RESTART_ACKNOWLEDGE
-mdefine_line|#define MT_RESTART_ACKNOWLEDGE 0x4e
-DECL|macro|MT_SEGMENT
-mdefine_line|#define MT_SEGMENT             0x60
-DECL|macro|MT_CONGESTION_CONTROL
-mdefine_line|#define MT_CONGESTION_CONTROL  0x79
-DECL|macro|MT_INFORMATION
-mdefine_line|#define MT_INFORMATION         0x7b
-DECL|macro|MT_FACILITY
-mdefine_line|#define MT_FACILITY            0x62
-DECL|macro|MT_NOTIFY
-mdefine_line|#define MT_NOTIFY              0x6e
-DECL|macro|MT_STATUS
-mdefine_line|#define MT_STATUS              0x7d
-DECL|macro|MT_STATUS_ENQUIRY
-mdefine_line|#define MT_STATUS_ENQUIRY      0x75
-DECL|macro|IE_CAUSE
-mdefine_line|#define IE_CAUSE               0x08
-DECL|struct|HscxIoctlArg
-r_struct
-id|HscxIoctlArg
-(brace
-DECL|member|channel
-r_int
-id|channel
-suffix:semicolon
-DECL|member|mode
-r_int
-id|mode
-suffix:semicolon
-DECL|member|transbufsize
-r_int
-id|transbufsize
-suffix:semicolon
-)brace
-suffix:semicolon
+mdefine_line|#define CC_RELEASE_ERR&t;&t;73
+DECL|macro|CARD_RESET
+mdefine_line|#define CARD_RESET&t;0x1001
+DECL|macro|CARD_SETIRQ
+mdefine_line|#define CARD_SETIRQ&t;0x1002
+DECL|macro|CARD_INIT
+mdefine_line|#define CARD_INIT&t;0x1003
+DECL|macro|CARD_RELEASE
+mdefine_line|#define CARD_RELEASE&t;0x1004
+DECL|macro|CARD_TEST
+mdefine_line|#define CARD_TEST&t;0x1005
 macro_line|#ifdef __KERNEL__
-DECL|macro|DEBUG_MAGIC
-macro_line|#undef DEBUG_MAGIC
 DECL|macro|MAX_DFRAME_LEN
-mdefine_line|#define MAX_DFRAME_LEN&t;3072
+mdefine_line|#define MAX_DFRAME_LEN&t;260
 DECL|macro|HSCX_BUFMAX
 mdefine_line|#define HSCX_BUFMAX&t;4096
 DECL|macro|MAX_DATA_SIZE
 mdefine_line|#define MAX_DATA_SIZE&t;(HSCX_BUFMAX - 4)
 DECL|macro|MAX_DATA_MEM
-mdefine_line|#define MAX_DATA_MEM    (HSCX_BUFMAX * 2)
+mdefine_line|#define MAX_DATA_MEM&t;(HSCX_BUFMAX + 64)
+DECL|macro|RAW_BUFMAX
+mdefine_line|#define RAW_BUFMAX&t;(((HSCX_BUFMAX*6)/5) + 5)
 DECL|macro|MAX_HEADER_LEN
 mdefine_line|#define MAX_HEADER_LEN&t;4
 DECL|macro|MAX_WINDOW
 mdefine_line|#define MAX_WINDOW&t;8
+DECL|macro|MAX_MON_FRAME
+mdefine_line|#define MAX_MON_FRAME&t;32
+multiline_comment|/* #define I4L_IRQ_FLAG SA_INTERRUPT */
+DECL|macro|I4L_IRQ_FLAG
+mdefine_line|#define I4L_IRQ_FLAG    0
 multiline_comment|/*&n; * Statemachine&n; */
 DECL|struct|Fsm
 r_struct
@@ -362,11 +349,11 @@ DECL|struct|L3Timer
 r_struct
 id|L3Timer
 (brace
-DECL|member|st
+DECL|member|pc
 r_struct
-id|PStack
+id|l3_process
 op_star
-id|st
+id|pc
 suffix:semicolon
 DECL|member|tl
 r_struct
@@ -379,6 +366,18 @@ id|event
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|FLG_L1_ACTIVATING
+mdefine_line|#define FLG_L1_ACTIVATING&t;1
+DECL|macro|FLG_L1_ACTIVATED
+mdefine_line|#define FLG_L1_ACTIVATED&t;2
+DECL|macro|FLG_L1_DEACTTIMER
+mdefine_line|#define FLG_L1_DEACTTIMER&t;3
+DECL|macro|FLG_L1_ACTTIMER
+mdefine_line|#define FLG_L1_ACTTIMER&t;&t;4
+DECL|macro|FLG_L1_T3RUN
+mdefine_line|#define FLG_L1_T3RUN&t;&t;5
+DECL|macro|FLG_L1_PULL_REQ
+mdefine_line|#define FLG_L1_PULL_REQ&t;&t;6
 DECL|struct|Layer1
 r_struct
 id|Layer1
@@ -388,9 +387,11 @@ r_void
 op_star
 id|hardware
 suffix:semicolon
-DECL|member|hscx
-r_int
-id|hscx
+DECL|member|bcs
+r_struct
+id|BCState
+op_star
+id|bcs
 suffix:semicolon
 DECL|member|stlistp
 r_struct
@@ -399,9 +400,19 @@ op_star
 op_star
 id|stlistp
 suffix:semicolon
-DECL|member|act_state
+DECL|member|Flags
 r_int
-id|act_state
+id|Flags
+suffix:semicolon
+DECL|member|l1m
+r_struct
+id|FsmInst
+id|l1m
+suffix:semicolon
+DECL|member|timer
+r_struct
+id|FsmTimer
+id|timer
 suffix:semicolon
 DECL|member|l1l2
 r_void
@@ -437,45 +448,89 @@ r_void
 op_star
 )paren
 suffix:semicolon
-DECL|member|hscxmode
-DECL|member|hscxchannel
-DECL|member|requestpull
+DECL|member|l1tei
+r_void
+(paren
+op_star
+id|l1tei
+)paren
+(paren
+r_struct
+id|PStack
+op_star
+comma
 r_int
-id|hscxmode
 comma
-id|hscxchannel
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|member|mode
+DECL|member|bc
+r_int
+id|mode
 comma
-id|requestpull
+id|bc
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|GROUP_TEI
+mdefine_line|#define GROUP_TEI&t;127
+DECL|macro|TEI_SAPI
+mdefine_line|#define TEI_SAPI&t;63
+DECL|macro|CTRL_SAPI
+mdefine_line|#define CTRL_SAPI&t;0
+DECL|macro|PACKET_NOACK
+mdefine_line|#define PACKET_NOACK&t;250
+multiline_comment|/* Layer2 Flags */
+DECL|macro|FLG_LAPB
+mdefine_line|#define FLG_LAPB&t;0
+DECL|macro|FLG_LAPD
+mdefine_line|#define FLG_LAPD&t;1
+DECL|macro|FLG_ORIG
+mdefine_line|#define FLG_ORIG&t;2
+DECL|macro|FLG_MOD128
+mdefine_line|#define FLG_MOD128&t;3
+DECL|macro|FLG_PEND_REL
+mdefine_line|#define FLG_PEND_REL&t;4
+DECL|macro|FLG_L3_INIT
+mdefine_line|#define FLG_L3_INIT&t;5 
+DECL|macro|FLG_T200_RUN
+mdefine_line|#define FLG_T200_RUN&t;6 
+DECL|macro|FLG_ACK_PEND
+mdefine_line|#define FLG_ACK_PEND&t;7
+DECL|macro|FLG_REJEXC
+mdefine_line|#define FLG_REJEXC&t;8
+DECL|macro|FLG_OWN_BUSY
+mdefine_line|#define FLG_OWN_BUSY&t;9
+DECL|macro|FLG_PEER_BUSY
+mdefine_line|#define FLG_PEER_BUSY&t;10
+DECL|macro|FLG_DCHAN_BUSY
+mdefine_line|#define FLG_DCHAN_BUSY&t;11
 DECL|struct|Layer2
 r_struct
 id|Layer2
 (brace
-DECL|member|sap
 DECL|member|tei
-DECL|member|ces
+r_int
+id|tei
+suffix:semicolon
+DECL|member|tei_wanted
+r_int
+id|tei_wanted
+suffix:semicolon
+DECL|member|sap
 r_int
 id|sap
-comma
-id|tei
-comma
-id|ces
 suffix:semicolon
-DECL|member|extended
-DECL|member|laptype
+DECL|member|maxlen
 r_int
-id|extended
-comma
-id|laptype
+id|maxlen
 suffix:semicolon
-DECL|member|uihsize
-DECL|member|ihsize
+DECL|member|flag
 r_int
-id|uihsize
-comma
-id|ihsize
+r_int
+id|flag
 suffix:semicolon
 DECL|member|vs
 DECL|member|va
@@ -487,25 +542,17 @@ id|va
 comma
 id|vr
 suffix:semicolon
-DECL|member|i_queue
-r_struct
-id|sk_buff_head
-id|i_queue
+DECL|member|rc
+r_int
+id|rc
 suffix:semicolon
 DECL|member|window
-DECL|member|orig
 r_int
 id|window
-comma
-id|orig
 suffix:semicolon
-DECL|member|rejexp
+DECL|member|sow
 r_int
-id|rejexp
-suffix:semicolon
-DECL|member|debug
-r_int
-id|debug
+id|sow
 suffix:semicolon
 DECL|member|windowar
 r_struct
@@ -516,14 +563,15 @@ id|windowar
 id|MAX_WINDOW
 )braket
 suffix:semicolon
-DECL|member|sow
-r_int
-id|sow
-suffix:semicolon
-DECL|member|l2m
+DECL|member|i_queue
 r_struct
-id|FsmInst
-id|l2m
+id|sk_buff_head
+id|i_queue
+suffix:semicolon
+DECL|member|ui_queue
+r_struct
+id|sk_buff_head
+id|ui_queue
 suffix:semicolon
 DECL|member|l2l1
 r_void
@@ -540,25 +588,6 @@ r_int
 comma
 r_void
 op_star
-)paren
-suffix:semicolon
-DECL|member|l2l1discardq
-r_void
-(paren
-op_star
-id|l2l1discardq
-)paren
-(paren
-r_struct
-id|PStack
-op_star
-comma
-r_int
-comma
-r_void
-op_star
-comma
-r_int
 )paren
 suffix:semicolon
 DECL|member|l2man
@@ -612,30 +641,32 @@ r_void
 op_star
 )paren
 suffix:semicolon
-DECL|member|t200_timer
-DECL|member|t203_timer
+DECL|member|l2m
 r_struct
-id|FsmTimer
-id|t200_timer
-comma
-id|t203_timer
+id|FsmInst
+id|l2m
 suffix:semicolon
 DECL|member|t200
-DECL|member|n200
 DECL|member|t203
-r_int
+r_struct
+id|FsmTimer
 id|t200
-comma
-id|n200
 comma
 id|t203
 suffix:semicolon
-DECL|member|rc
-DECL|member|t200_running
+DECL|member|T200
+DECL|member|N200
+DECL|member|T203
 r_int
-id|rc
+id|T200
 comma
-id|t200_running
+id|N200
+comma
+id|T203
+suffix:semicolon
+DECL|member|debug
+r_int
+id|debug
 suffix:semicolon
 DECL|member|debug_id
 r_char
@@ -658,7 +689,7 @@ id|l3l4
 )paren
 (paren
 r_struct
-id|PStack
+id|l3_process
 op_star
 comma
 r_int
@@ -684,60 +715,31 @@ r_void
 op_star
 )paren
 suffix:semicolon
-DECL|member|state
-DECL|member|callref
-r_int
-id|state
-comma
-id|callref
-suffix:semicolon
-DECL|member|timer
+DECL|member|proc
 r_struct
-id|L3Timer
-id|timer
+id|l3_process
+op_star
+id|proc
 suffix:semicolon
-DECL|member|t303
-DECL|member|t304
-DECL|member|t305
-DECL|member|t308
-DECL|member|t310
-DECL|member|t313
-DECL|member|t318
-DECL|member|t319
-r_int
-id|t303
-comma
-id|t304
-comma
-id|t305
-comma
-id|t308
-comma
-id|t310
-comma
-id|t313
-comma
-id|t318
-comma
-id|t319
+DECL|member|global
+r_struct
+id|l3_process
+op_star
+id|global
 suffix:semicolon
-DECL|member|n_t303
+DECL|member|N303
 r_int
-id|n_t303
+id|N303
 suffix:semicolon
 DECL|member|debug
 r_int
 id|debug
 suffix:semicolon
-DECL|member|channr
-r_int
-id|channr
-suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|Layer4
+DECL|struct|LLInterface
 r_struct
-id|Layer4
+id|LLInterface
 (brace
 DECL|member|l4l3
 r_void
@@ -771,6 +773,8 @@ id|l1writewakeup
 r_struct
 id|PStack
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|l2writewakeup
@@ -783,6 +787,8 @@ id|l2writewakeup
 r_struct
 id|PStack
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 )brace
@@ -791,6 +797,47 @@ DECL|struct|Management
 r_struct
 id|Management
 (brace
+DECL|member|ri
+r_int
+id|ri
+suffix:semicolon
+DECL|member|tei_m
+r_struct
+id|FsmInst
+id|tei_m
+suffix:semicolon
+DECL|member|t202
+r_struct
+id|FsmTimer
+id|t202
+suffix:semicolon
+DECL|member|T202
+DECL|member|N202
+DECL|member|debug
+r_int
+id|T202
+comma
+id|N202
+comma
+id|debug
+suffix:semicolon
+DECL|member|layer
+r_void
+(paren
+op_star
+id|layer
+)paren
+(paren
+r_struct
+id|PStack
+op_star
+comma
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
 DECL|member|manl1
 r_void
 (paren
@@ -825,23 +872,6 @@ r_void
 op_star
 )paren
 suffix:semicolon
-DECL|member|teil2
-r_void
-(paren
-op_star
-id|teil2
-)paren
-(paren
-r_struct
-id|PStack
-op_star
-comma
-r_int
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|Param
@@ -860,11 +890,6 @@ DECL|member|bchannel
 r_int
 id|bchannel
 suffix:semicolon
-DECL|member|callref
-r_int
-id|callref
-suffix:semicolon
-multiline_comment|/* Callreferenz Number */
 DECL|member|setup
 id|setup_parm
 id|setup
@@ -907,21 +932,15 @@ r_struct
 id|Layer3
 id|l3
 suffix:semicolon
-DECL|member|l4
+DECL|member|lli
 r_struct
-id|Layer4
-id|l4
+id|LLInterface
+id|lli
 suffix:semicolon
 DECL|member|ma
 r_struct
 id|Management
 id|ma
-suffix:semicolon
-DECL|member|pa
-r_struct
-id|Param
-op_star
-id|pa
 suffix:semicolon
 DECL|member|protocol
 r_int
@@ -930,44 +949,75 @@ suffix:semicolon
 multiline_comment|/* EDSS1 or 1TR6 */
 )brace
 suffix:semicolon
-DECL|struct|HscxState
+DECL|struct|l3_process
 r_struct
-id|HscxState
+id|l3_process
 (brace
-DECL|member|inuse
-DECL|member|init
-DECL|member|active
+DECL|member|callref
 r_int
-id|inuse
-comma
-id|init
-comma
-id|active
+id|callref
 suffix:semicolon
-DECL|member|sp
+DECL|member|state
+r_int
+id|state
+suffix:semicolon
+DECL|member|timer
 r_struct
-id|IsdnCardState
-op_star
-id|sp
+id|L3Timer
+id|timer
 suffix:semicolon
-DECL|member|hscx
-DECL|member|mode
+DECL|member|N303
 r_int
-id|hscx
-comma
-id|mode
+id|N303
 suffix:semicolon
+DECL|member|debug
+r_int
+id|debug
+suffix:semicolon
+DECL|member|para
+r_struct
+id|Param
+id|para
+suffix:semicolon
+DECL|member|chan
+r_struct
+id|Channel
+op_star
+id|chan
+suffix:semicolon
+DECL|member|st
+r_struct
+id|PStack
+op_star
+id|st
+suffix:semicolon
+DECL|member|next
+r_struct
+id|l3_process
+op_star
+id|next
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|hscx_hw
+r_struct
+id|hscx_hw
+(brace
+DECL|member|rcvidx
+r_int
+id|rcvidx
+suffix:semicolon
+DECL|member|count
+r_int
+id|count
+suffix:semicolon
+multiline_comment|/* Current skb sent count */
 DECL|member|rcvbuf
 id|u_char
 op_star
 id|rcvbuf
 suffix:semicolon
 multiline_comment|/* B-Channel receive Buffer */
-DECL|member|rcvidx
-r_int
-id|rcvidx
-suffix:semicolon
-multiline_comment|/* B-Channel receive Buffer Index */
 DECL|member|tx_skb
 r_struct
 id|sk_buff
@@ -975,16 +1025,230 @@ op_star
 id|tx_skb
 suffix:semicolon
 multiline_comment|/* B-Channel transmit Buffer */
+)brace
+suffix:semicolon
+DECL|struct|hfcB_hw
+r_struct
+id|hfcB_hw
+(brace
+DECL|member|send
+r_int
+r_int
+op_star
+id|send
+suffix:semicolon
+DECL|member|f1
+r_int
+id|f1
+suffix:semicolon
+DECL|member|f2
+r_int
+id|f2
+suffix:semicolon
+DECL|member|tx_skb
+r_struct
+id|sk_buff
+op_star
+id|tx_skb
+suffix:semicolon
+multiline_comment|/* B-Channel transmit Buffer */
+)brace
+suffix:semicolon
+DECL|struct|tiger_hw
+r_struct
+id|tiger_hw
+(brace
+DECL|member|tx_skb
+r_struct
+id|sk_buff
+op_star
+id|tx_skb
+suffix:semicolon
+multiline_comment|/* B-Channel transmit Buffer */
+DECL|member|send
+id|u_int
+op_star
+id|send
+suffix:semicolon
+DECL|member|s_irq
+id|u_int
+op_star
+id|s_irq
+suffix:semicolon
+DECL|member|s_end
+id|u_int
+op_star
+id|s_end
+suffix:semicolon
+DECL|member|sendp
+id|u_int
+op_star
+id|sendp
+suffix:semicolon
+DECL|member|rec
+id|u_int
+op_star
+id|rec
+suffix:semicolon
+DECL|member|free
+r_int
+id|free
+suffix:semicolon
+DECL|member|rcvbuf
+id|u_char
+op_star
+id|rcvbuf
+suffix:semicolon
+DECL|member|sendbuf
+id|u_char
+op_star
+id|sendbuf
+suffix:semicolon
+DECL|member|sp
+id|u_char
+op_star
+id|sp
+suffix:semicolon
+DECL|member|sendcnt
+r_int
+id|sendcnt
+suffix:semicolon
+DECL|member|s_tot
+id|u_int
+id|s_tot
+suffix:semicolon
+DECL|member|r_bitcnt
+id|u_int
+id|r_bitcnt
+suffix:semicolon
+DECL|member|r_tot
+id|u_int
+id|r_tot
+suffix:semicolon
+DECL|member|r_err
+id|u_int
+id|r_err
+suffix:semicolon
+DECL|member|r_fcs
+id|u_int
+id|r_fcs
+suffix:semicolon
+DECL|member|r_state
+id|u_char
+id|r_state
+suffix:semicolon
+DECL|member|r_one
+id|u_char
+id|r_one
+suffix:semicolon
+DECL|member|r_val
+id|u_char
+id|r_val
+suffix:semicolon
+DECL|member|s_state
+id|u_char
+id|s_state
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|amd7930_hw
+r_struct
+id|amd7930_hw
+(brace
+DECL|member|tx_buff
+id|u_char
+op_star
+id|tx_buff
+suffix:semicolon
+DECL|member|rv_buff
+id|u_char
+op_star
+id|rv_buff
+suffix:semicolon
+DECL|member|rv_buff_in
+r_int
+id|rv_buff_in
+suffix:semicolon
+DECL|member|rv_buff_out
+r_int
+id|rv_buff_out
+suffix:semicolon
+DECL|member|rv_skb
+r_struct
+id|sk_buff
+op_star
+id|rv_skb
+suffix:semicolon
+DECL|member|hdlc_state
+r_struct
+id|hdlc_state
+op_star
+id|hdlc_state
+suffix:semicolon
+DECL|member|tq_rcv
+r_struct
+id|tq_struct
+id|tq_rcv
+suffix:semicolon
+DECL|member|tq_xmt
+r_struct
+id|tq_struct
+id|tq_xmt
+suffix:semicolon
+DECL|member|tx_skb
+r_struct
+id|sk_buff
+op_star
+id|tx_skb
+suffix:semicolon
+multiline_comment|/* B-Channel transmit Buffer */
+)brace
+suffix:semicolon
+DECL|macro|BC_FLG_INIT
+mdefine_line|#define BC_FLG_INIT&t;1
+DECL|macro|BC_FLG_ACTIV
+mdefine_line|#define BC_FLG_ACTIV&t;2
+DECL|macro|BC_FLG_BUSY
+mdefine_line|#define BC_FLG_BUSY&t;3
+DECL|macro|BC_FLG_NOFRAME
+mdefine_line|#define BC_FLG_NOFRAME&t;4
+DECL|macro|BC_FLG_HALF
+mdefine_line|#define BC_FLG_HALF&t;5
+DECL|macro|BC_FLG_EMPTY
+mdefine_line|#define BC_FLG_EMPTY&t;6
+DECL|macro|L1_MODE_NULL
+mdefine_line|#define L1_MODE_NULL&t;0
+DECL|macro|L1_MODE_TRANS
+mdefine_line|#define L1_MODE_TRANS&t;1
+DECL|macro|L1_MODE_HDLC
+mdefine_line|#define L1_MODE_HDLC&t;2
+DECL|struct|BCState
+r_struct
+id|BCState
+(brace
+DECL|member|channel
+r_int
+id|channel
+suffix:semicolon
+DECL|member|mode
+r_int
+id|mode
+suffix:semicolon
+DECL|member|Flag
+r_int
+id|Flag
+suffix:semicolon
+DECL|member|cs
+r_struct
+id|IsdnCardState
+op_star
+id|cs
+suffix:semicolon
 DECL|member|tx_cnt
 r_int
 id|tx_cnt
 suffix:semicolon
 multiline_comment|/* B-Channel transmit counter */
-DECL|member|count
-r_int
-id|count
-suffix:semicolon
-multiline_comment|/* Current skb sent count */
 DECL|member|rqueue
 r_struct
 id|sk_buff_head
@@ -996,7 +1260,7 @@ r_struct
 id|sk_buff_head
 id|squeue
 suffix:semicolon
-multiline_comment|/* B-Channel receive Queue */
+multiline_comment|/* B-Channel send Queue */
 DECL|member|st
 r_struct
 id|PStack
@@ -1012,27 +1276,78 @@ DECL|member|event
 r_int
 id|event
 suffix:semicolon
-macro_line|#ifdef DEBUG_MAGIC
-DECL|member|magic
+DECL|member|BC_SetStack
 r_int
-id|magic
+(paren
+op_star
+id|BC_SetStack
+)paren
+(paren
+r_struct
+id|PStack
+op_star
+comma
+r_struct
+id|BCState
+op_star
+)paren
 suffix:semicolon
-multiline_comment|/* 301270 */
-macro_line|#endif
+DECL|member|BC_Close
+r_void
+(paren
+op_star
+id|BC_Close
+)paren
+(paren
+r_struct
+id|BCState
+op_star
+)paren
+suffix:semicolon
+r_union
+(brace
+DECL|member|hscx
+r_struct
+id|hscx_hw
+id|hscx
+suffix:semicolon
+DECL|member|hfc
+r_struct
+id|hfcB_hw
+id|hfc
+suffix:semicolon
+DECL|member|tiger
+r_struct
+id|tiger_hw
+id|tiger
+suffix:semicolon
+DECL|member|amd7930
+r_struct
+id|amd7930_hw
+id|amd7930
+suffix:semicolon
+DECL|member|hw
+)brace
+id|hw
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|LcFsm
 r_struct
 id|LcFsm
 (brace
+DECL|member|type
+r_int
+id|type
+suffix:semicolon
+DECL|member|delay
+r_int
+id|delay
+suffix:semicolon
 DECL|member|lcfi
 r_struct
 id|FsmInst
 id|lcfi
-suffix:semicolon
-DECL|member|type
-r_int
-id|type
 suffix:semicolon
 DECL|member|ch
 r_struct
@@ -1089,23 +1404,27 @@ DECL|struct|Channel
 r_struct
 id|Channel
 (brace
-DECL|member|ds
-DECL|member|is
+DECL|member|b_st
+DECL|member|d_st
 r_struct
 id|PStack
-id|ds
+op_star
+id|b_st
 comma
-id|is
+op_star
+id|d_st
 suffix:semicolon
-DECL|member|sp
+DECL|member|cs
 r_struct
 id|IsdnCardState
 op_star
-id|sp
+id|cs
 suffix:semicolon
-DECL|member|hscx
-r_int
-id|hscx
+DECL|member|bcs
+r_struct
+id|BCState
+op_star
+id|bcs
 suffix:semicolon
 DECL|member|chan
 r_int
@@ -1121,17 +1440,16 @@ id|FsmInst
 id|fi
 suffix:semicolon
 DECL|member|lc_d
+r_struct
+id|LcFsm
+op_star
+id|lc_d
+suffix:semicolon
 DECL|member|lc_b
 r_struct
 id|LcFsm
-id|lc_d
-comma
+op_star
 id|lc_b
-suffix:semicolon
-DECL|member|para
-r_struct
-id|Param
-id|para
 suffix:semicolon
 DECL|member|drel_timer
 DECL|member|dial_timer
@@ -1145,13 +1463,6 @@ DECL|member|debug
 r_int
 id|debug
 suffix:semicolon
-macro_line|#ifdef DEBUG_MAGIC
-DECL|member|magic
-r_int
-id|magic
-suffix:semicolon
-multiline_comment|/* 301272 */
-macro_line|#endif
 DECL|member|l2_protocol
 DECL|member|l2_active_protocol
 r_int
@@ -1159,25 +1470,21 @@ id|l2_protocol
 comma
 id|l2_active_protocol
 suffix:semicolon
-DECL|member|l2_primitive
-DECL|member|l2_headersize
-r_int
-id|l2_primitive
-comma
-id|l2_headersize
-suffix:semicolon
 DECL|member|data_open
 r_int
 id|data_open
 suffix:semicolon
-DECL|member|outcallref
-r_int
-id|outcallref
+DECL|member|proc
+r_struct
+id|l3_process
+op_star
+id|proc
 suffix:semicolon
-DECL|member|impair
-r_int
-id|impair
+DECL|member|setup
+id|setup_parm
+id|setup
 suffix:semicolon
+multiline_comment|/* from isdnif.h numbers and Serviceindicator */
 DECL|member|Flags
 r_int
 id|Flags
@@ -1189,16 +1496,591 @@ id|leased
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|elsa_hw
+r_struct
+id|elsa_hw
+(brace
+DECL|member|base
+r_int
+r_int
+id|base
+suffix:semicolon
+DECL|member|cfg
+r_int
+r_int
+id|cfg
+suffix:semicolon
+DECL|member|ctrl
+r_int
+r_int
+id|ctrl
+suffix:semicolon
+DECL|member|ale
+r_int
+r_int
+id|ale
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|itac
+r_int
+r_int
+id|itac
+suffix:semicolon
+DECL|member|hscx
+r_int
+r_int
+id|hscx
+suffix:semicolon
+DECL|member|trig
+r_int
+r_int
+id|trig
+suffix:semicolon
+DECL|member|timer
+r_int
+r_int
+id|timer
+suffix:semicolon
+DECL|member|counter
+r_int
+r_int
+id|counter
+suffix:semicolon
+DECL|member|status
+r_int
+r_int
+id|status
+suffix:semicolon
+DECL|member|tl
+r_struct
+id|timer_list
+id|tl
+suffix:semicolon
+DECL|member|ctrl_reg
+id|u_char
+id|ctrl_reg
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|teles3_hw
+r_struct
+id|teles3_hw
+(brace
+DECL|member|cfg_reg
+r_int
+r_int
+id|cfg_reg
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|hscx
+r_int
+r_int
+id|hscx
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|isacfifo
+r_int
+r_int
+id|isacfifo
+suffix:semicolon
+DECL|member|hscxfifo
+r_int
+r_int
+id|hscxfifo
+(braket
+l_int|2
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|teles0_hw
+r_struct
+id|teles0_hw
+(brace
+DECL|member|cfg_reg
+r_int
+r_int
+id|cfg_reg
+suffix:semicolon
+DECL|member|membase
+r_int
+r_int
+id|membase
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|avm_hw
+r_struct
+id|avm_hw
+(brace
+DECL|member|cfg_reg
+r_int
+r_int
+id|cfg_reg
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|hscx
+r_int
+r_int
+id|hscx
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|isacfifo
+r_int
+r_int
+id|isacfifo
+suffix:semicolon
+DECL|member|hscxfifo
+r_int
+r_int
+id|hscxfifo
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|counter
+r_int
+r_int
+id|counter
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ix1_hw
+r_struct
+id|ix1_hw
+(brace
+DECL|member|cfg_reg
+r_int
+r_int
+id|cfg_reg
+suffix:semicolon
+DECL|member|isac_ale
+r_int
+r_int
+id|isac_ale
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|hscx_ale
+r_int
+r_int
+id|hscx_ale
+suffix:semicolon
+DECL|member|hscx
+r_int
+r_int
+id|hscx
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|diva_hw
+r_struct
+id|diva_hw
+(brace
+DECL|member|cfg_reg
+r_int
+r_int
+id|cfg_reg
+suffix:semicolon
+DECL|member|ctrl
+r_int
+r_int
+id|ctrl
+suffix:semicolon
+DECL|member|isac_adr
+r_int
+r_int
+id|isac_adr
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|hscx_adr
+r_int
+r_int
+id|hscx_adr
+suffix:semicolon
+DECL|member|hscx
+r_int
+r_int
+id|hscx
+suffix:semicolon
+DECL|member|status
+r_int
+r_int
+id|status
+suffix:semicolon
+DECL|member|tl
+r_struct
+id|timer_list
+id|tl
+suffix:semicolon
+DECL|member|ctrl_reg
+id|u_char
+id|ctrl_reg
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|asus_hw
+r_struct
+id|asus_hw
+(brace
+DECL|member|cfg_reg
+r_int
+r_int
+id|cfg_reg
+suffix:semicolon
+DECL|member|adr
+r_int
+r_int
+id|adr
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|hscx
+r_int
+r_int
+id|hscx
+suffix:semicolon
+DECL|member|u7
+r_int
+r_int
+id|u7
+suffix:semicolon
+DECL|member|pots
+r_int
+r_int
+id|pots
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|hfc_hw
+r_struct
+id|hfc_hw
+(brace
+DECL|member|addr
+r_int
+r_int
+id|addr
+suffix:semicolon
+DECL|member|fifosize
+r_int
+r_int
+id|fifosize
+suffix:semicolon
+DECL|member|cirm
+r_int
+r_char
+id|cirm
+suffix:semicolon
+DECL|member|ctmt
+r_int
+r_char
+id|ctmt
+suffix:semicolon
+DECL|member|cip
+r_int
+r_char
+id|cip
+suffix:semicolon
+DECL|member|isac_spcr
+id|u_char
+id|isac_spcr
+suffix:semicolon
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|sedl_hw
+r_struct
+id|sedl_hw
+(brace
+DECL|member|cfg_reg
+r_int
+r_int
+id|cfg_reg
+suffix:semicolon
+DECL|member|adr
+r_int
+r_int
+id|adr
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|hscx
+r_int
+r_int
+id|hscx
+suffix:semicolon
+DECL|member|reset_on
+r_int
+r_int
+id|reset_on
+suffix:semicolon
+DECL|member|reset_off
+r_int
+r_int
+id|reset_off
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|spt_hw
+r_struct
+id|spt_hw
+(brace
+DECL|member|cfg_reg
+r_int
+r_int
+id|cfg_reg
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|hscx
+r_int
+r_int
+id|hscx
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|res_irq
+r_int
+r_char
+id|res_irq
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|mic_hw
+r_struct
+id|mic_hw
+(brace
+DECL|member|cfg_reg
+r_int
+r_int
+id|cfg_reg
+suffix:semicolon
+DECL|member|adr
+r_int
+r_int
+id|adr
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|hscx
+r_int
+r_int
+id|hscx
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|njet_hw
+r_struct
+id|njet_hw
+(brace
+DECL|member|base
+r_int
+r_int
+id|base
+suffix:semicolon
+DECL|member|isac
+r_int
+r_int
+id|isac
+suffix:semicolon
+DECL|member|auxa
+r_int
+r_int
+id|auxa
+suffix:semicolon
+DECL|member|auxd
+r_int
+r_char
+id|auxd
+suffix:semicolon
+DECL|member|dmactrl
+r_int
+r_char
+id|dmactrl
+suffix:semicolon
+DECL|member|ctrl_reg
+r_int
+r_char
+id|ctrl_reg
+suffix:semicolon
+DECL|member|irqmask0
+r_int
+r_char
+id|irqmask0
+suffix:semicolon
+DECL|member|irqstat0
+r_int
+r_char
+id|irqstat0
+suffix:semicolon
+DECL|member|last_is0
+r_int
+r_char
+id|last_is0
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|hfcD_hw
+r_struct
+id|hfcD_hw
+(brace
+DECL|member|addr
+r_int
+r_int
+id|addr
+suffix:semicolon
+DECL|member|bfifosize
+r_int
+r_int
+id|bfifosize
+suffix:semicolon
+DECL|member|dfifosize
+r_int
+r_int
+id|dfifosize
+suffix:semicolon
+DECL|member|cirm
+r_int
+r_char
+id|cirm
+suffix:semicolon
+DECL|member|ctmt
+r_int
+r_char
+id|ctmt
+suffix:semicolon
+DECL|member|cip
+r_int
+r_char
+id|cip
+suffix:semicolon
+DECL|member|conn
+r_int
+r_char
+id|conn
+suffix:semicolon
+DECL|member|mst_m
+r_int
+r_char
+id|mst_m
+suffix:semicolon
+DECL|member|int_m1
+r_int
+r_char
+id|int_m1
+suffix:semicolon
+DECL|member|int_m2
+r_int
+r_char
+id|int_m2
+suffix:semicolon
+DECL|member|int_s1
+r_int
+r_char
+id|int_s1
+suffix:semicolon
+DECL|member|sctrl
+r_int
+r_char
+id|sctrl
+suffix:semicolon
+DECL|member|stat
+r_int
+r_char
+id|stat
+suffix:semicolon
+DECL|member|fifo
+r_int
+r_char
+id|fifo
+suffix:semicolon
+DECL|member|f1
+r_int
+r_char
+id|f1
+suffix:semicolon
+DECL|member|f2
+r_int
+r_char
+id|f2
+suffix:semicolon
+DECL|member|send
+r_int
+r_int
+op_star
+id|send
+suffix:semicolon
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|HW_IOM1
+mdefine_line|#define HW_IOM1&t;&t;0
+DECL|macro|HW_IPAC
+mdefine_line|#define HW_IPAC&t;&t;1
+DECL|macro|FLG_TWO_DCHAN
+mdefine_line|#define FLG_TWO_DCHAN&t;4
+DECL|macro|FLG_L1_DBUSY
+mdefine_line|#define FLG_L1_DBUSY&t;5
+DECL|macro|FLG_DBUSY_TIMER
+mdefine_line|#define FLG_DBUSY_TIMER 6
+DECL|macro|FLG_LOCK_ATOMIC
+mdefine_line|#define FLG_LOCK_ATOMIC 7
+DECL|macro|HW_MON0_RX_END
+mdefine_line|#define HW_MON0_RX_END&t;8
+DECL|macro|HW_MON1_RX_END
+mdefine_line|#define HW_MON1_RX_END&t;9
+DECL|macro|HW_MON0_TX_END
+mdefine_line|#define HW_MON0_TX_END&t;10
+DECL|macro|HW_MON1_TX_END
+mdefine_line|#define HW_MON1_TX_END&t;11
 DECL|struct|IsdnCardState
 r_struct
 id|IsdnCardState
 (brace
-macro_line|#ifdef DEBUG_MAGIC
-DECL|member|magic
-r_int
-id|magic
-suffix:semicolon
-macro_line|#endif
 DECL|member|typ
 r_int
 r_char
@@ -1218,33 +2100,90 @@ r_int
 r_int
 id|irq
 suffix:semicolon
-DECL|member|cfg_reg
+DECL|member|HW_Flags
 r_int
-r_int
-id|cfg_reg
+id|HW_Flags
 suffix:semicolon
-DECL|member|membase
+DECL|member|busy_flag
 r_int
-r_int
-id|membase
+op_star
+id|busy_flag
 suffix:semicolon
-DECL|member|isac
-r_int
-r_int
-id|isac
+r_union
+(brace
+DECL|member|elsa
+r_struct
+id|elsa_hw
+id|elsa
 suffix:semicolon
-DECL|member|hscx
-r_int
-r_int
-id|hscx
-(braket
-l_int|2
-)braket
+DECL|member|teles0
+r_struct
+id|teles0_hw
+id|teles0
 suffix:semicolon
-DECL|member|counter
-r_int
-r_int
-id|counter
+DECL|member|teles3
+r_struct
+id|teles3_hw
+id|teles3
+suffix:semicolon
+DECL|member|avm
+r_struct
+id|avm_hw
+id|avm
+suffix:semicolon
+DECL|member|ix1
+r_struct
+id|ix1_hw
+id|ix1
+suffix:semicolon
+DECL|member|diva
+r_struct
+id|diva_hw
+id|diva
+suffix:semicolon
+DECL|member|asus
+r_struct
+id|asus_hw
+id|asus
+suffix:semicolon
+DECL|member|hfc
+r_struct
+id|hfc_hw
+id|hfc
+suffix:semicolon
+DECL|member|sedl
+r_struct
+id|sedl_hw
+id|sedl
+suffix:semicolon
+DECL|member|spt
+r_struct
+id|spt_hw
+id|spt
+suffix:semicolon
+DECL|member|mic
+r_struct
+id|mic_hw
+id|mic
+suffix:semicolon
+DECL|member|njet
+r_struct
+id|njet_hw
+id|njet
+suffix:semicolon
+DECL|member|hfcD
+r_struct
+id|hfcD_hw
+id|hfcD
+suffix:semicolon
+DECL|member|niccy
+r_struct
+id|ix1_hw
+id|niccy
+suffix:semicolon
+DECL|member|hw
+)brace
+id|hw
 suffix:semicolon
 DECL|member|myid
 r_int
@@ -1274,11 +2213,75 @@ id|u_char
 op_star
 id|status_end
 suffix:semicolon
-DECL|member|ph_command
+DECL|member|readisac
+id|u_char
+(paren
+op_star
+id|readisac
+)paren
+(paren
+r_struct
+id|IsdnCardState
+op_star
+comma
+id|u_char
+)paren
+suffix:semicolon
+DECL|member|writeisac
 r_void
 (paren
 op_star
-id|ph_command
+id|writeisac
+)paren
+(paren
+r_struct
+id|IsdnCardState
+op_star
+comma
+id|u_char
+comma
+id|u_char
+)paren
+suffix:semicolon
+DECL|member|readisacfifo
+r_void
+(paren
+op_star
+id|readisacfifo
+)paren
+(paren
+r_struct
+id|IsdnCardState
+op_star
+comma
+id|u_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|writeisacfifo
+r_void
+(paren
+op_star
+id|writeisacfifo
+)paren
+(paren
+r_struct
+id|IsdnCardState
+op_star
+comma
+id|u_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|BC_Read_Reg
+id|u_char
+(paren
+op_star
+id|BC_Read_Reg
 )paren
 (paren
 r_struct
@@ -1286,46 +2289,71 @@ id|IsdnCardState
 op_star
 comma
 r_int
-r_int
-)paren
-suffix:semicolon
-DECL|member|modehscx
-r_void
-(paren
-op_star
-id|modehscx
-)paren
-(paren
-r_struct
-id|HscxState
-op_star
 comma
-r_int
-comma
-r_int
+id|u_char
 )paren
 suffix:semicolon
-DECL|member|hscx_fill_fifo
+DECL|member|BC_Write_Reg
 r_void
 (paren
 op_star
-id|hscx_fill_fifo
-)paren
-(paren
-r_struct
-id|HscxState
-op_star
-)paren
-suffix:semicolon
-DECL|member|isac_fill_fifo
-r_void
-(paren
-op_star
-id|isac_fill_fifo
+id|BC_Write_Reg
 )paren
 (paren
 r_struct
 id|IsdnCardState
+op_star
+comma
+r_int
+comma
+id|u_char
+comma
+id|u_char
+)paren
+suffix:semicolon
+DECL|member|BC_Send_Data
+r_void
+(paren
+op_star
+id|BC_Send_Data
+)paren
+(paren
+r_struct
+id|BCState
+op_star
+)paren
+suffix:semicolon
+DECL|member|cardmsg
+r_int
+(paren
+op_star
+id|cardmsg
+)paren
+(paren
+r_struct
+id|IsdnCardState
+op_star
+comma
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|member|l1cmd
+r_void
+(paren
+op_star
+id|l1cmd
+)paren
+(paren
+r_struct
+id|IsdnCardState
+op_star
+comma
+r_int
+comma
+r_void
 op_star
 )paren
 suffix:semicolon
@@ -1333,6 +2361,14 @@ DECL|member|channel
 r_struct
 id|Channel
 id|channel
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|bcs
+r_struct
+id|BCState
+id|bcs
 (braket
 l_int|2
 )braket
@@ -1371,9 +2407,10 @@ r_struct
 id|tq_struct
 id|tqueue
 suffix:semicolon
-DECL|member|ph_active
-r_int
-id|ph_active
+DECL|member|dbusytimer
+r_struct
+id|timer_list
+id|dbusytimer
 suffix:semicolon
 DECL|member|rq
 DECL|member|sq
@@ -1384,27 +2421,13 @@ comma
 id|sq
 suffix:semicolon
 multiline_comment|/* D-channel queues */
-DECL|member|cardnr
-r_int
-id|cardnr
-suffix:semicolon
 DECL|member|ph_state
 r_int
 id|ph_state
 suffix:semicolon
-DECL|member|teistack
-r_struct
-id|PStack
-op_star
-id|teistack
-suffix:semicolon
-DECL|member|hs
-r_struct
-id|HscxState
-id|hs
-(braket
-l_int|2
-)braket
+DECL|member|cardnr
+r_int
+id|cardnr
 suffix:semicolon
 DECL|member|dlogflag
 r_int
@@ -1419,10 +2442,47 @@ DECL|member|debug
 r_int
 id|debug
 suffix:semicolon
-DECL|member|CallFlags
+DECL|member|mon_tx
+id|u_char
+op_star
+id|mon_tx
+suffix:semicolon
+DECL|member|mon_rx
+id|u_char
+op_star
+id|mon_rx
+suffix:semicolon
+DECL|member|mon_txp
 r_int
+id|mon_txp
+suffix:semicolon
+DECL|member|mon_txc
 r_int
-id|CallFlags
+id|mon_txc
+suffix:semicolon
+DECL|member|mon_rxp
+r_int
+id|mon_rxp
+suffix:semicolon
+DECL|member|mocr
+id|u_char
+id|mocr
+suffix:semicolon
+DECL|member|setstack_d
+r_void
+(paren
+op_star
+id|setstack_d
+)paren
+(paren
+r_struct
+id|PStack
+op_star
+comma
+r_struct
+id|IsdnCardState
+op_star
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1446,24 +2506,70 @@ DECL|macro|ISDN_CTYPE_A1
 mdefine_line|#define  ISDN_CTYPE_A1&t;&t;5
 DECL|macro|ISDN_CTYPE_ELSA
 mdefine_line|#define  ISDN_CTYPE_ELSA&t;6
-DECL|macro|ISDN_CTYPE_ELSA_QS1000
-mdefine_line|#define  ISDN_CTYPE_ELSA_QS1000&t;7
+DECL|macro|ISDN_CTYPE_ELSA_PNP
+mdefine_line|#define  ISDN_CTYPE_ELSA_PNP&t;7
 DECL|macro|ISDN_CTYPE_TELESPCMCIA
 mdefine_line|#define  ISDN_CTYPE_TELESPCMCIA&t;8
 DECL|macro|ISDN_CTYPE_IX1MICROR2
 mdefine_line|#define  ISDN_CTYPE_IX1MICROR2&t;9
+DECL|macro|ISDN_CTYPE_ELSA_PCMCIA
+mdefine_line|#define  ISDN_CTYPE_ELSA_PCMCIA&t;10
+DECL|macro|ISDN_CTYPE_DIEHLDIVA
+mdefine_line|#define  ISDN_CTYPE_DIEHLDIVA&t;11
+DECL|macro|ISDN_CTYPE_ASUSCOM
+mdefine_line|#define  ISDN_CTYPE_ASUSCOM&t;12
+DECL|macro|ISDN_CTYPE_TELEINT
+mdefine_line|#define  ISDN_CTYPE_TELEINT&t;13
+DECL|macro|ISDN_CTYPE_TELES3C
+mdefine_line|#define  ISDN_CTYPE_TELES3C&t;14
+DECL|macro|ISDN_CTYPE_SEDLBAUER
+mdefine_line|#define  ISDN_CTYPE_SEDLBAUER&t;15
+DECL|macro|ISDN_CTYPE_SPORTSTER
+mdefine_line|#define  ISDN_CTYPE_SPORTSTER&t;16
+DECL|macro|ISDN_CTYPE_MIC
+mdefine_line|#define  ISDN_CTYPE_MIC&t;&t;17
+DECL|macro|ISDN_CTYPE_ELSA_PCI
+mdefine_line|#define  ISDN_CTYPE_ELSA_PCI&t;18
+DECL|macro|ISDN_CTYPE_COMPAQ_ISA
+mdefine_line|#define  ISDN_CTYPE_COMPAQ_ISA&t;19
+DECL|macro|ISDN_CTYPE_NETJET
+mdefine_line|#define  ISDN_CTYPE_NETJET&t;20
+DECL|macro|ISDN_CTYPE_TELESPCI
+mdefine_line|#define  ISDN_CTYPE_TELESPCI&t;21
+DECL|macro|ISDN_CTYPE_SEDLBAUER_PCMCIA
+mdefine_line|#define  ISDN_CTYPE_SEDLBAUER_PCMCIA&t;22
+DECL|macro|ISDN_CTYPE_AMD7930
+mdefine_line|#define  ISDN_CTYPE_AMD7930&t;23
+DECL|macro|ISDN_CTYPE_NICCY
+mdefine_line|#define  ISDN_CTYPE_NICCY&t;24
 DECL|macro|ISDN_CTYPE_COUNT
-mdefine_line|#define  ISDN_CTYPE_COUNT&t;9
+mdefine_line|#define  ISDN_CTYPE_COUNT&t;24
+macro_line|#ifdef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+macro_line|#undef ISDN_CHIP_ISAC
+macro_line|#endif
+DECL|macro|HISAX_INITFUNC
+mdefine_line|#define HISAX_INITFUNC(__arginit) __initfunc(__arginit)
+DECL|macro|HISAX_INITDATA
+mdefine_line|#define HISAX_INITDATA __initdata
 macro_line|#ifdef&t;CONFIG_HISAX_16_0
 DECL|macro|CARD_TELES0
 mdefine_line|#define  CARD_TELES0 (1&lt;&lt; ISDN_CTYPE_16_0) | (1&lt;&lt; ISDN_CTYPE_8_0)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
 macro_line|#else
 DECL|macro|CARD_TELES0
 mdefine_line|#define  CARD_TELES0  0
 macro_line|#endif
 macro_line|#ifdef&t;CONFIG_HISAX_16_3
 DECL|macro|CARD_TELES3
-mdefine_line|#define  CARD_TELES3 (1&lt;&lt; ISDN_CTYPE_16_3) | (1&lt;&lt; ISDN_CTYPE_PNP) | &bslash;&n;&t;&t;     (1&lt;&lt; ISDN_CTYPE_TELESPCMCIA)
+mdefine_line|#define  CARD_TELES3 (1&lt;&lt; ISDN_CTYPE_16_3) | (1&lt;&lt; ISDN_CTYPE_PNP) | &bslash;&n;&t;&t;     (1&lt;&lt; ISDN_CTYPE_TELESPCMCIA) | (1&lt;&lt; ISDN_CTYPE_COMPAQ_ISA)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
 macro_line|#else
 DECL|macro|CARD_TELES3
 mdefine_line|#define  CARD_TELES3  0
@@ -1471,36 +2577,188 @@ macro_line|#endif
 macro_line|#ifdef&t;CONFIG_HISAX_AVM_A1
 DECL|macro|CARD_AVM_A1
 mdefine_line|#define  CARD_AVM_A1 (1&lt;&lt; ISDN_CTYPE_A1)
+macro_line|#ifndef ISDN_CHIP_ISAC 
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
 macro_line|#else
 DECL|macro|CARD_AVM_A1
 mdefine_line|#define  CARD_AVM_A1  0
 macro_line|#endif
-macro_line|#ifdef&t;CONFIG_HISAX_ELSA_PCC
+macro_line|#ifdef&t;CONFIG_HISAX_ELSA
 DECL|macro|CARD_ELSA
-mdefine_line|#define  CARD_ELSA (1&lt;&lt; ISDN_CTYPE_ELSA) | (1&lt;&lt; ISDN_CTYPE_ELSA_QS1000)
+mdefine_line|#define  CARD_ELSA (1&lt;&lt; ISDN_CTYPE_ELSA) | (1&lt;&lt; ISDN_CTYPE_ELSA_PNP) | &bslash;&n;&t;&t;   (1&lt;&lt; ISDN_CTYPE_ELSA_PCMCIA) | (1&lt;&lt; ISDN_CTYPE_ELSA_PCI)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
+DECL|macro|HISAX_INITFUNC
+macro_line|#undef HISAX_INITFUNC
+DECL|macro|HISAX_INITFUNC
+mdefine_line|#define HISAX_INITFUNC(__arginit) __arginit
+DECL|macro|HISAX_INITDATA
+macro_line|#undef HISAX_INITDATA
+DECL|macro|HISAX_INITDATA
+mdefine_line|#define HISAX_INITDATA
 macro_line|#else
 DECL|macro|CARD_ELSA
 mdefine_line|#define  CARD_ELSA  0
 macro_line|#endif
-macro_line|#ifdef&t;CONFIG_HISAX_ELSA_PCMCIA
-macro_line|#if CARD_ELSA
-macro_line|#error &quot;You can&squot;t use a ELSA ISA card and a ELSA PCMCIA card with the same driver&quot;
-macro_line|#else
-DECL|macro|CARD_ELSA
-macro_line|#undef CARD_ELSA
-DECL|macro|CARD_ELSA
-mdefine_line|#define CARD_ELSA (1&lt;&lt; ISDN_CTYPE_ELSA_QS1000)
-macro_line|#endif
-macro_line|#endif
 macro_line|#ifdef&t;CONFIG_HISAX_IX1MICROR2
 DECL|macro|CARD_IX1MICROR2
 mdefine_line|#define&t;CARD_IX1MICROR2 (1 &lt;&lt; ISDN_CTYPE_IX1MICROR2)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
 macro_line|#else
 DECL|macro|CARD_IX1MICROR2
 mdefine_line|#define CARD_IX1MICROR2 0
 macro_line|#endif
+macro_line|#ifdef  CONFIG_HISAX_DIEHLDIVA
+DECL|macro|CARD_DIEHLDIVA
+mdefine_line|#define CARD_DIEHLDIVA (1 &lt;&lt; ISDN_CTYPE_DIEHLDIVA)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
+macro_line|#else
+DECL|macro|CARD_DIEHLDIVA
+mdefine_line|#define CARD_DIEHLDIVA 0
+macro_line|#endif
+macro_line|#ifdef  CONFIG_HISAX_ASUSCOM
+DECL|macro|CARD_ASUSCOM
+mdefine_line|#define CARD_ASUSCOM (1 &lt;&lt; ISDN_CTYPE_ASUSCOM)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
+macro_line|#else
+DECL|macro|CARD_ASUSCOM
+mdefine_line|#define CARD_ASUSCOM 0
+macro_line|#endif
+macro_line|#ifdef  CONFIG_HISAX_TELEINT
+DECL|macro|CARD_TELEINT
+mdefine_line|#define CARD_TELEINT (1 &lt;&lt; ISDN_CTYPE_TELEINT)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
+macro_line|#else
+DECL|macro|CARD_TELEINT
+mdefine_line|#define CARD_TELEINT 0
+macro_line|#endif
+macro_line|#ifdef  CONFIG_HISAX_SEDLBAUER
+DECL|macro|CARD_SEDLBAUER
+mdefine_line|#define CARD_SEDLBAUER (1 &lt;&lt; ISDN_CTYPE_SEDLBAUER) | (1 &lt;&lt; ISDN_CTYPE_SEDLBAUER_PCMCIA)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
+macro_line|#else
+DECL|macro|CARD_SEDLBAUER
+mdefine_line|#define CARD_SEDLBAUER 0
+macro_line|#endif
+macro_line|#ifdef  CONFIG_HISAX_SPORTSTER
+DECL|macro|CARD_SPORTSTER
+mdefine_line|#define CARD_SPORTSTER (1 &lt;&lt; ISDN_CTYPE_SPORTSTER)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
+macro_line|#else
+DECL|macro|CARD_SPORTSTER
+mdefine_line|#define CARD_SPORTSTER 0
+macro_line|#endif
+macro_line|#ifdef  CONFIG_HISAX_MIC
+DECL|macro|CARD_MIC
+mdefine_line|#define CARD_MIC (1 &lt;&lt; ISDN_CTYPE_MIC)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
+macro_line|#else
+DECL|macro|CARD_MIC
+mdefine_line|#define CARD_MIC 0
+macro_line|#endif
+macro_line|#ifdef  CONFIG_HISAX_NETJET
+DECL|macro|CARD_NETJET
+mdefine_line|#define CARD_NETJET (1 &lt;&lt; ISDN_CTYPE_NETJET)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
+macro_line|#else
+DECL|macro|CARD_NETJET
+mdefine_line|#define CARD_NETJET 0
+macro_line|#endif
+macro_line|#ifdef&t;CONFIG_HISAX_TELES3C
+DECL|macro|CARD_TELES3C
+mdefine_line|#define  CARD_TELES3C (1&lt;&lt; ISDN_CTYPE_TELES3C)
+macro_line|#else
+DECL|macro|CARD_TELES3C
+mdefine_line|#define  CARD_TELES3C  0
+macro_line|#endif
+macro_line|#ifdef  CONFIG_HISAX_AMD7930
+DECL|macro|CARD_AMD7930
+mdefine_line|#define CARD_AMD7930 (1 &lt;&lt; ISDN_CTYPE_AMD7930)
+macro_line|#else
+DECL|macro|CARD_AMD7930
+mdefine_line|#define CARD_AMD7930 0
+macro_line|#endif
+macro_line|#ifdef&t;CONFIG_HISAX_NICCY
+DECL|macro|CARD_NICCY
+mdefine_line|#define&t;CARD_NICCY (1 &lt;&lt; ISDN_CTYPE_NICCY)
+macro_line|#ifndef ISDN_CHIP_ISAC
+DECL|macro|ISDN_CHIP_ISAC
+mdefine_line|#define ISDN_CHIP_ISAC 1
+macro_line|#endif
+macro_line|#else
+DECL|macro|CARD_NICCY
+mdefine_line|#define CARD_NICCY 0
+macro_line|#endif
 DECL|macro|SUPORTED_CARDS
-mdefine_line|#define  SUPORTED_CARDS  (CARD_TELES0 | CARD_TELES3 | CARD_AVM_A1 | CARD_ELSA &bslash;&n;&t;&t;&t; | CARD_IX1MICROR2)
+mdefine_line|#define  SUPORTED_CARDS  (CARD_TELES0 | CARD_TELES3 | CARD_AVM_A1 | CARD_ELSA &bslash;&n;&t;&t;&t; | CARD_IX1MICROR2 | CARD_DIEHLDIVA | CARD_ASUSCOM &bslash;&n;&t;&t;&t; | CARD_TELEINT | CARD_SEDLBAUER | CARD_SPORTSTER &bslash;&n;&t;&t;&t; | CARD_MIC | CARD_NETJET | CARD_TELES3C | CARD_AMD7930 &bslash;&n;&t;&t;&t; | CARD_NICCY)
+DECL|macro|TEI_PER_CARD
+mdefine_line|#define TEI_PER_CARD 0
+macro_line|#ifdef CONFIG_HISAX_1TR6
+DECL|macro|TEI_PER_CARD
+macro_line|#undef TEI_PER_CARD
+DECL|macro|TEI_PER_CARD
+mdefine_line|#define TEI_PER_CARD 1
+macro_line|#endif
+macro_line|#ifdef CONFIG_HISAX_EURO
+DECL|macro|TEI_PER_CARD
+macro_line|#undef TEI_PER_CARD
+DECL|macro|TEI_PER_CARD
+mdefine_line|#define TEI_PER_CARD 1
+DECL|macro|HISAX_EURO_SENDCOMPLETE
+mdefine_line|#define HISAX_EURO_SENDCOMPLETE 1
+macro_line|#ifdef&t;CONFIG_HISAX_ML
+DECL|macro|HISAX_EURO_SENDCOMPLETE
+macro_line|#undef HISAX_EURO_SENDCOMPLETE
+macro_line|#endif
+DECL|macro|HISAX_DE_AOC
+macro_line|#undef HISAX_DE_AOC
+macro_line|#ifdef CONFIG_DE_AOC
+DECL|macro|HISAX_DE_AOC
+mdefine_line|#define HISAX_DE_AOC 1
+macro_line|#endif
+macro_line|#endif
+macro_line|#if TEI_PER_CARD
+DECL|macro|TEI_FIXED
+macro_line|#undef TEI_FIXED
+macro_line|#endif
+DECL|macro|PTP_DATA_LINK
+macro_line|#undef PTP_DATA_LINK
+macro_line|#ifdef PTP_DATA_LINK
+DECL|macro|TEI_FIXED
+macro_line|#undef TEI_FIXED
+DECL|macro|TEI_FIXED
+mdefine_line|#define TEI_FIXED 0
+DECL|macro|LAYER2_WATCHING
+mdefine_line|#define LAYER2_WATCHING
+macro_line|#endif
 DECL|struct|IsdnCard
 r_struct
 id|IsdnCard
@@ -1519,71 +2777,16 @@ r_int
 r_int
 id|para
 (braket
-l_int|3
+l_int|4
 )braket
 suffix:semicolon
-DECL|member|sp
+DECL|member|cs
 r_struct
 id|IsdnCardState
 op_star
-id|sp
+id|cs
 suffix:semicolon
 )brace
-suffix:semicolon
-DECL|macro|LAPD
-mdefine_line|#define LAPD 0
-DECL|macro|LAPB
-mdefine_line|#define LAPB 1
-r_void
-id|l2down
-c_func
-(paren
-r_struct
-id|PStack
-op_star
-id|st
-comma
-id|u_char
-id|pr
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_void
-id|l2up
-c_func
-(paren
-r_struct
-id|PStack
-op_star
-id|st
-comma
-id|u_char
-id|pr
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_void
-id|acceptph
-c_func
-(paren
-r_struct
-id|PStack
-op_star
-id|st
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
 suffix:semicolon
 r_void
 id|setstack_isdnl2
@@ -1603,7 +2806,8 @@ r_int
 id|HiSax_inithardware
 c_func
 (paren
-r_void
+r_int
+op_star
 )paren
 suffix:semicolon
 r_void
@@ -1625,12 +2829,12 @@ comma
 r_struct
 id|IsdnCardState
 op_star
-id|sp
+id|cs
 )paren
 suffix:semicolon
 r_int
 r_int
-id|randomces
+id|random_ri
 c_func
 (paren
 r_void
@@ -1701,31 +2905,6 @@ op_star
 id|st
 )paren
 suffix:semicolon
-r_void
-id|newcallref
-c_func
-(paren
-r_struct
-id|PStack
-op_star
-id|st
-)paren
-suffix:semicolon
-r_int
-id|setstack_hscx
-c_func
-(paren
-r_struct
-id|PStack
-op_star
-id|st
-comma
-r_struct
-id|HscxState
-op_star
-id|hs
-)paren
-suffix:semicolon
 id|u_char
 op_star
 id|findie
@@ -1752,6 +2931,13 @@ c_func
 id|u_char
 op_star
 id|p
+)paren
+suffix:semicolon
+r_int
+id|newcallref
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_void
@@ -1851,6 +3037,29 @@ id|where
 )paren
 suffix:semicolon
 r_void
+id|FsmRestartTimer
+c_func
+(paren
+r_struct
+id|FsmTimer
+op_star
+id|ft
+comma
+r_int
+id|millisec
+comma
+r_int
+id|event
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+id|where
+)paren
+suffix:semicolon
+r_void
 id|FsmDelTimer
 c_func
 (paren
@@ -1861,16 +3070,6 @@ id|ft
 comma
 r_int
 id|where
-)paren
-suffix:semicolon
-r_int
-id|FsmTimerRunning
-c_func
-(paren
-r_struct
-id|FsmTimer
-op_star
-id|ft
 )paren
 suffix:semicolon
 r_void
@@ -1903,6 +3102,9 @@ id|id
 comma
 r_int
 id|chan
+comma
+r_int
+id|ack
 comma
 r_struct
 id|sk_buff
@@ -2023,15 +3225,6 @@ id|st
 )paren
 suffix:semicolon
 r_void
-id|close_hscxstate
-c_func
-(paren
-r_struct
-id|HscxState
-op_star
-)paren
-suffix:semicolon
-r_void
 id|setstack_tei
 c_func
 (paren
@@ -2041,7 +3234,34 @@ op_star
 id|st
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
+r_void
+id|setstack_manager
+c_func
+(paren
+r_struct
+id|PStack
+op_star
+id|st
+)paren
+suffix:semicolon
+macro_line|#ifdef ISDN_CHIP_ISAC
+r_void
+id|setstack_isac
+c_func
+(paren
+r_struct
+id|PStack
+op_star
+id|st
+comma
+r_struct
+id|IsdnCardState
+op_star
+id|cs
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* ISDN_CHIP_ISAC */
+macro_line|#endif&t;/* __KERNEL__ */
 DECL|macro|HZDELAY
 mdefine_line|#define HZDELAY(jiffs) {int tout = jiffs; while (tout--) udelay(1000000/HZ);}
 r_int
@@ -2099,6 +3319,20 @@ id|csta
 )paren
 suffix:semicolon
 r_void
+id|Isdnl1New
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|Isdnl1Free
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
 id|Isdnl2New
 c_func
 (paren
@@ -2144,6 +3378,20 @@ r_const
 r_char
 op_star
 id|revision
+)paren
+suffix:semicolon
+r_void
+id|TeiNew
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|TeiFree
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 eof

@@ -120,10 +120,6 @@ id|fsuser
 c_func
 (paren
 )paren
-op_logical_or
-id|securelevel
-OG
-l_int|0
 )paren
 r_return
 op_minus

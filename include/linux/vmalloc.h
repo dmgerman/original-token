@@ -74,6 +74,7 @@ op_star
 id|addr
 comma
 r_int
+r_int
 id|count
 )paren
 suffix:semicolon

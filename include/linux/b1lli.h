@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: b1lli.h,v 1.1 1997/03/04 21:27:32 calle Exp $&n; *&n; * ISDN lowlevel-module for AVM B1-card.&n; *&n; * Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: b1lli.h,v $&n; * Revision 1.1  1997/03/04 21:27:32  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
+multiline_comment|/*&n; * $Id: b1lli.h,v 1.3 1998/01/31 10:54:37 calle Exp $&n; *&n; * ISDN lowlevel-module for AVM B1-card.&n; *&n; * Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: b1lli.h,v $&n; * Revision 1.3  1998/01/31 10:54:37  calle&n; * include changes for PCMCIA cards from 2.0 version&n; *&n; * Revision 1.2  1997/12/10 19:38:42  calle&n; * get changes from 2.0 tree&n; *&n; * Revision 1.1.2.2  1997/11/26 16:57:26  calle&n; * more changes for B1/M1/T1.&n; *&n; * Revision 1.1.2.1  1997/11/26 10:47:01  calle&n; * prepared for M1 (Mobile) and T1 (PMX) cards.&n; * prepared to set configuration after load to support other D-channel&n; * protocols, point-to-point and leased lines.&n; *&n; * Revision 1.1  1997/03/04 21:27:32  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
 macro_line|#ifndef _B1LLI_H_
 DECL|macro|_B1LLI_H_
 mdefine_line|#define _B1LLI_H_
@@ -39,6 +39,27 @@ DECL|typedef|avmb1_loaddef
 )brace
 id|avmb1_loaddef
 suffix:semicolon
+DECL|struct|avmb1_loadandconfigdef
+r_typedef
+r_struct
+id|avmb1_loadandconfigdef
+(brace
+DECL|member|contr
+r_int
+id|contr
+suffix:semicolon
+DECL|member|t4file
+id|avmb1_t4file
+id|t4file
+suffix:semicolon
+DECL|member|t4config
+id|avmb1_t4file
+id|t4config
+suffix:semicolon
+DECL|typedef|avmb1_loadandconfigdef
+)brace
+id|avmb1_loadandconfigdef
+suffix:semicolon
 DECL|struct|avmb1_resetdef
 r_typedef
 r_struct
@@ -51,6 +72,27 @@ suffix:semicolon
 DECL|typedef|avmb1_resetdef
 )brace
 id|avmb1_resetdef
+suffix:semicolon
+DECL|struct|avmb1_getdef
+r_typedef
+r_struct
+id|avmb1_getdef
+(brace
+DECL|member|contr
+r_int
+id|contr
+suffix:semicolon
+DECL|member|cardtype
+r_int
+id|cardtype
+suffix:semicolon
+DECL|member|cardstate
+r_int
+id|cardstate
+suffix:semicolon
+DECL|typedef|avmb1_getdef
+)brace
+id|avmb1_getdef
 suffix:semicolon
 multiline_comment|/*&n; * struct for adding new cards &n; */
 DECL|struct|avmb1_carddef
@@ -70,16 +112,50 @@ DECL|typedef|avmb1_carddef
 )brace
 id|avmb1_carddef
 suffix:semicolon
+DECL|macro|AVM_CARDTYPE_B1
+mdefine_line|#define AVM_CARDTYPE_B1&t;0
+DECL|macro|AVM_CARDTYPE_T1
+mdefine_line|#define AVM_CARDTYPE_T1&t;1
+DECL|macro|AVM_CARDTYPE_M1
+mdefine_line|#define AVM_CARDTYPE_M1&t;2
+DECL|macro|AVM_CARDTYPE_M2
+mdefine_line|#define AVM_CARDTYPE_M2&t;3
+DECL|struct|avmb1_extcarddef
+r_typedef
+r_struct
+id|avmb1_extcarddef
+(brace
+DECL|member|port
+r_int
+id|port
+suffix:semicolon
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+DECL|member|cardtype
+r_int
+id|cardtype
+suffix:semicolon
+DECL|typedef|avmb1_extcarddef
+)brace
+id|avmb1_extcarddef
+suffix:semicolon
 DECL|macro|AVMB1_LOAD
-mdefine_line|#define&t;AVMB1_LOAD&t;0&t;/* load image to card */
+mdefine_line|#define&t;AVMB1_LOAD&t;&t;0&t;/* load image to card */
 DECL|macro|AVMB1_ADDCARD
-mdefine_line|#define AVMB1_ADDCARD&t;1&t;/* add a new card */
+mdefine_line|#define AVMB1_ADDCARD&t;&t;1&t;/* add a new card */
 DECL|macro|AVMB1_RESETCARD
-mdefine_line|#define AVMB1_RESETCARD&t;2&t;/* reset a card */
-macro_line|#ifdef __KERNEL__
+mdefine_line|#define AVMB1_RESETCARD&t;&t;2&t;/* reset a card */
+DECL|macro|AVMB1_LOAD_AND_CONFIG
+mdefine_line|#define&t;AVMB1_LOAD_AND_CONFIG&t;3&t;/* load image and config to card */
+DECL|macro|AVMB1_ADDCARD_WITH_TYPE
+mdefine_line|#define&t;AVMB1_ADDCARD_WITH_TYPE&t;4&t;/* add a new card, with cardtype */
+DECL|macro|AVMB1_GET_CARDINFO
+mdefine_line|#define AVMB1_GET_CARDINFO&t;5&t;/* get cardtype */
 multiline_comment|/*&n; * card states for startup&n; */
-DECL|macro|CARD_NONE
-mdefine_line|#define CARD_NONE&t;0
+DECL|macro|CARD_FREE
+mdefine_line|#define CARD_FREE&t;0
 DECL|macro|CARD_DETECTED
 mdefine_line|#define CARD_DETECTED&t;1
 DECL|macro|CARD_LOADING
@@ -90,6 +166,7 @@ DECL|macro|CARD_RUNNING
 mdefine_line|#define CARD_RUNNING&t;5
 DECL|macro|CARD_ACTIVE
 mdefine_line|#define CARD_ACTIVE&t;6
+macro_line|#ifdef __KERNEL__
 DECL|macro|AVMB1_PORTLEN
 mdefine_line|#define&t;AVMB1_PORTLEN&t;0x1f
 DECL|macro|AVM_MAXVERSION
@@ -126,6 +203,10 @@ suffix:semicolon
 DECL|member|irq
 r_int
 id|irq
+suffix:semicolon
+DECL|member|cardtype
+r_int
+id|cardtype
 suffix:semicolon
 DECL|member|cardstate
 r_volatile
@@ -216,6 +297,9 @@ c_func
 r_int
 r_int
 id|base
+comma
+r_int
+id|cardtype
 )paren
 suffix:semicolon
 r_void
@@ -241,6 +325,19 @@ id|t4file
 )paren
 suffix:semicolon
 r_int
+id|B1_load_config
+c_func
+(paren
+r_int
+r_int
+id|base
+comma
+id|avmb1_t4file
+op_star
+id|config
+)paren
+suffix:semicolon
+r_int
 id|B1_loaded
 c_func
 (paren
@@ -260,6 +357,9 @@ id|base
 comma
 r_int
 id|irq
+comma
+r_int
+id|cardtype
 )paren
 suffix:semicolon
 r_int
@@ -288,6 +388,9 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_int
+id|cardtype
 )paren
 suffix:semicolon
 r_void
@@ -430,6 +533,7 @@ op_star
 id|card
 )paren
 suffix:semicolon
+multiline_comment|/* standard calls, with check and allocation of resources */
 r_int
 id|avmb1_addcard
 c_func
@@ -439,6 +543,9 @@ id|port
 comma
 r_int
 id|irq
+comma
+r_int
+id|cardtype
 )paren
 suffix:semicolon
 r_int
@@ -450,6 +557,60 @@ id|port
 comma
 r_int
 id|irq
+comma
+r_int
+id|cardtype
+)paren
+suffix:semicolon
+r_int
+id|avmb1_resetcard
+c_func
+(paren
+r_int
+id|cardnr
+)paren
+suffix:semicolon
+multiline_comment|/* calls for pcmcia driver */
+r_int
+id|avmb1_detectcard
+c_func
+(paren
+r_int
+id|port
+comma
+r_int
+id|irq
+comma
+r_int
+id|cardtype
+)paren
+suffix:semicolon
+r_int
+id|avmb1_registercard
+c_func
+(paren
+r_int
+id|port
+comma
+r_int
+id|irq
+comma
+r_int
+id|cardtype
+comma
+r_int
+id|allocio
+)paren
+suffix:semicolon
+r_int
+id|avmb1_unregistercard
+c_func
+(paren
+r_int
+id|cnr
+comma
+r_int
+id|freeio
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */

@@ -368,6 +368,8 @@ DECL|macro|__NR_pwrite
 mdefine_line|#define __NR_pwrite&t;&t;181
 DECL|macro|__NR_chown
 mdefine_line|#define __NR_chown&t;&t;182
+DECL|macro|__NR_getcwd
+mdefine_line|#define __NR_getcwd&t;&t;183
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

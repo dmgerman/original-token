@@ -1151,7 +1151,7 @@ id|namelist
 (braket
 id|NAMELEN
 op_star
-id|MAX_ULTRA_CARDS
+id|MAX_ULTRAMCA_CARDS
 )braket
 op_assign
 (brace
@@ -1165,7 +1165,7 @@ r_struct
 id|device
 id|dev_ultra
 (braket
-id|MAX_ULTRA_CARDS
+id|MAX_ULTRAMCA_CARDS
 )braket
 op_assign
 (brace
@@ -1203,7 +1203,7 @@ r_static
 r_int
 id|io
 (braket
-id|MAX_ULTRA_CARDS
+id|MAX_ULTRAMCA_CARDS
 )braket
 op_assign
 (brace
@@ -1216,7 +1216,7 @@ r_static
 r_int
 id|irq
 (braket
-id|MAX_ULTRA_CARDS
+id|MAX_ULTRAMCA_CARDS
 )braket
 op_assign
 (brace
@@ -1233,7 +1233,7 @@ l_string|&quot;1-&quot;
 id|__MODULE_STRING
 c_func
 (paren
-id|MAX_ULTRA_CARDS
+id|MAX_ULTRAMCA_CARDS
 )paren
 l_string|&quot;i&quot;
 )paren
@@ -1247,7 +1247,7 @@ l_string|&quot;1-&quot;
 id|__MODULE_STRING
 c_func
 (paren
-id|MAX_ULTRA_CARDS
+id|MAX_ULTRAMCA_CARDS
 )paren
 l_string|&quot;i&quot;
 )paren
@@ -1277,7 +1277,7 @@ l_int|0
 suffix:semicolon
 id|this_dev
 OL
-id|MAX_ULTRA_CARDS
+id|MAX_ULTRAMCA_CARDS
 suffix:semicolon
 id|this_dev
 op_increment
@@ -1419,7 +1419,7 @@ l_int|0
 suffix:semicolon
 id|this_dev
 OL
-id|MAX_ULTRA_CARDS
+id|MAX_ULTRAMCA_CARDS
 suffix:semicolon
 id|this_dev
 op_increment

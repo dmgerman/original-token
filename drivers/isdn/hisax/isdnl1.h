@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnl1.h,v 1.4 1997/04/06 22:55:52 keil Exp $&n; *&n; * $Log: isdnl1.h,v $&n; * Revision 1.4  1997/04/06 22:55:52  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.3  1996/12/08 19:41:55  keil&n; * L2FRAME_DEBUG&n; *&n; * Revision 1.2  1996/10/27 22:26:27  keil&n; * ISAC/HSCX version functions&n; *&n; * Revision 1.1  1996/10/13 20:03:47  keil&n; * Initial revision&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: isdnl1.h,v 2.5 1998/02/02 13:36:58 keil Exp $&n;&n; * $Log: isdnl1.h,v $&n; * Revision 2.5  1998/02/02 13:36:58  keil&n; * more debug&n; *&n; * Revision 2.4  1997/11/08 21:35:49  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/10/29 19:07:53  keil&n; * changes for 2.1&n; *&n; * Revision 2.2  1997/07/30 17:11:09  keil&n; * L1deactivated exported&n; *&n; * Revision 2.1  1997/07/27 21:43:58  keil&n; * new l1 interface&n; *&n; * Revision 2.0  1997/06/26 11:02:55  keil&n; * New Layer and card interface&n; *&n; *&n; */
 DECL|macro|L2FRAME_DEBUG
 mdefine_line|#define L2FRAME_DEBUG
 multiline_comment|/* DEBUG Level */
@@ -16,16 +16,30 @@ DECL|macro|L1_DEB_HSCX_FIFO
 mdefine_line|#define&t;L1_DEB_HSCX_FIFO&t;0x20
 DECL|macro|L1_DEB_LAPD
 mdefine_line|#define&t;L1_DEB_LAPD&t;        0x40
-DECL|macro|ISAC_RCVBUFREADY
-mdefine_line|#define ISAC_RCVBUFREADY 0
-DECL|macro|ISAC_XMTBUFREADY
-mdefine_line|#define ISAC_XMTBUFREADY 1
-DECL|macro|ISAC_PHCHANGE
-mdefine_line|#define ISAC_PHCHANGE    2
-DECL|macro|HSCX_RCVBUFREADY
-mdefine_line|#define HSCX_RCVBUFREADY 0
-DECL|macro|HSCX_XMTBUFREADY
-mdefine_line|#define HSCX_XMTBUFREADY 1
+DECL|macro|L1_DEB_IPAC
+mdefine_line|#define&t;L1_DEB_IPAC&t;        0x80
+DECL|macro|L1_DEB_RECEIVE_FRAME
+mdefine_line|#define&t;L1_DEB_RECEIVE_FRAME    0x100
+DECL|macro|D_RCVBUFREADY
+mdefine_line|#define D_RCVBUFREADY&t;0
+DECL|macro|D_XMTBUFREADY
+mdefine_line|#define D_XMTBUFREADY&t;1
+DECL|macro|D_L1STATECHANGE
+mdefine_line|#define D_L1STATECHANGE&t;2
+DECL|macro|D_CLEARBUSY
+mdefine_line|#define D_CLEARBUSY&t;3
+DECL|macro|D_RX_MON0
+mdefine_line|#define D_RX_MON0&t;4
+DECL|macro|D_RX_MON1
+mdefine_line|#define D_RX_MON1&t;5
+DECL|macro|D_TX_MON0
+mdefine_line|#define D_TX_MON0&t;6
+DECL|macro|D_TX_MON1
+mdefine_line|#define D_TX_MON1&t;7
+DECL|macro|B_RCVBUFREADY
+mdefine_line|#define B_RCVBUFREADY 0
+DECL|macro|B_XMTBUFREADY
+mdefine_line|#define B_XMTBUFREADY 1
 r_extern
 r_void
 id|debugl1
@@ -42,75 +56,25 @@ id|msg
 )paren
 suffix:semicolon
 r_extern
-r_char
-op_star
-id|HscxVersion
-c_func
-(paren
-id|u_char
-id|v
-)paren
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|ISACVersion
-c_func
-(paren
-id|u_char
-id|v
-)paren
-suffix:semicolon
-r_extern
 r_void
-id|hscx_sched_event
-c_func
-(paren
-r_struct
-id|HscxState
-op_star
-id|hsp
-comma
-r_int
-id|event
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|isac_sched_event
+id|DChannel_proc_xmt
 c_func
 (paren
 r_struct
 id|IsdnCardState
 op_star
-id|sp
-comma
-r_int
-id|event
+id|cs
 )paren
 suffix:semicolon
 r_extern
 r_void
-id|isac_new_ph
+id|DChannel_proc_rcv
 c_func
 (paren
 r_struct
 id|IsdnCardState
 op_star
-id|sp
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|get_irq
-c_func
-(paren
-r_int
-id|cardnr
-comma
-r_void
-op_star
-id|routine
+id|cs
 )paren
 suffix:semicolon
 macro_line|#ifdef L2FRAME_DEBUG

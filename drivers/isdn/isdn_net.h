@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_net.h,v 1.5 1997/02/10 20:12:47 fritz Exp $&n;&n; * header for Linux ISDN subsystem, network related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_net.h,v $&n; * Revision 1.5  1997/02/10 20:12:47  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.4  1997/02/03 23:16:48  fritz&n; * Removed isdn_net_receive_callback prototype.&n; *&n; * Revision 1.3  1997/01/17 01:19:30  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.2  1996/04/20 16:29:43  fritz&n; * Misc. typos&n; *&n; * Revision 1.1  1996/02/11 02:35:13  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_net.h,v 1.6 1997/10/09 21:28:54 fritz Exp $&n;&n; * header for Linux ISDN subsystem, network related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_net.h,v $&n; * Revision 1.6  1997/10/09 21:28:54  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.5  1997/02/10 20:12:47  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.4  1997/02/03 23:16:48  fritz&n; * Removed isdn_net_receive_callback prototype.&n; *&n; * Revision 1.3  1997/01/17 01:19:30  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.2  1996/04/20 16:29:43  fritz&n; * Misc. typos&n; *&n; * Revision 1.1  1996/02/11 02:35:13  fritz&n; * Initial revision&n; *&n; */
 multiline_comment|/* Definitions for hupflags:                */
 DECL|macro|ISDN_WAITCHARGE
 mdefine_line|#define ISDN_WAITCHARGE  1      /* did not get a charge info yet            */
@@ -10,6 +10,111 @@ DECL|macro|ISDN_INHUP
 mdefine_line|#define ISDN_INHUP       8      /* Even if incoming, close after huptimeout */
 DECL|macro|ISDN_MANCHARGE
 mdefine_line|#define ISDN_MANCHARGE  16      /* Charge Interval manually set             */
+multiline_comment|/*&n; * Definitions for Cisco-HDLC header.&n; */
+DECL|struct|cisco_hdr
+r_typedef
+r_struct
+id|cisco_hdr
+(brace
+DECL|member|addr
+id|__u8
+id|addr
+suffix:semicolon
+multiline_comment|/* unicast/broadcast */
+DECL|member|ctrl
+id|__u8
+id|ctrl
+suffix:semicolon
+multiline_comment|/* Always 0          */
+DECL|member|type
+id|__u16
+id|type
+suffix:semicolon
+multiline_comment|/* IP-typefield      */
+DECL|typedef|cisco_hdr
+)brace
+id|cisco_hdr
+suffix:semicolon
+DECL|struct|cisco_slarp
+r_typedef
+r_struct
+id|cisco_slarp
+(brace
+DECL|member|code
+id|__u32
+id|code
+suffix:semicolon
+multiline_comment|/* SLREQ/SLREPLY/KEEPALIVE */
+r_union
+(brace
+r_struct
+(brace
+DECL|member|ifaddr
+id|__u32
+id|ifaddr
+suffix:semicolon
+multiline_comment|/* My interface address     */
+DECL|member|netmask
+id|__u32
+id|netmask
+suffix:semicolon
+multiline_comment|/* My interface netmask     */
+DECL|member|reply
+)brace
+id|reply
+suffix:semicolon
+r_struct
+(brace
+DECL|member|my_seq
+id|__u32
+id|my_seq
+suffix:semicolon
+multiline_comment|/* Packet sequence number   */
+DECL|member|your_seq
+id|__u32
+id|your_seq
+suffix:semicolon
+DECL|member|keepalive
+)brace
+id|keepalive
+suffix:semicolon
+DECL|member|slarp
+)brace
+id|slarp
+suffix:semicolon
+DECL|member|rel
+id|__u16
+id|rel
+suffix:semicolon
+multiline_comment|/* Always 0xffff            */
+DECL|member|t1
+id|__u16
+id|t1
+suffix:semicolon
+multiline_comment|/* Uptime in usec &gt;&gt; 16     */
+DECL|member|t0
+id|__u16
+id|t0
+suffix:semicolon
+multiline_comment|/* Uptime in usec &amp; 0xffff  */
+DECL|typedef|cisco_slarp
+)brace
+id|cisco_slarp
+suffix:semicolon
+DECL|macro|CISCO_ADDR_UNICAST
+mdefine_line|#define CISCO_ADDR_UNICAST    0x0f
+DECL|macro|CISCO_ADDR_BROADCAST
+mdefine_line|#define CISCO_ADDR_BROADCAST  0x8f
+DECL|macro|CISCO_TYPE_INET
+mdefine_line|#define CISCO_TYPE_INET       0x0800
+DECL|macro|CISCO_TYPE_SLARP
+mdefine_line|#define CISCO_TYPE_SLARP      0x8035
+DECL|macro|CISCO_SLARP_REPLY
+mdefine_line|#define CISCO_SLARP_REPLY     0
+DECL|macro|CISCO_SLARP_REQUEST
+mdefine_line|#define CISCO_SLARP_REQUEST   1
+DECL|macro|CISCO_SLARP_KEEPALIVE
+mdefine_line|#define CISCO_SLARP_KEEPALIVE 2
 r_extern
 r_char
 op_star
@@ -58,7 +163,8 @@ c_func
 (paren
 r_int
 comma
-r_int
+id|isdn_ctrl
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -204,6 +310,14 @@ comma
 r_struct
 id|sk_buff
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|isdn_net_slarp_out
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 eof

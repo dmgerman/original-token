@@ -198,7 +198,7 @@ id|dst_entry
 op_star
 id|dst
 suffix:semicolon
-macro_line|#if (defined(__alpha__) || defined(__sparc64__)) &amp;&amp; (defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE))
+macro_line|#if (defined(__alpha__) || defined(__sparc_v9__)) &amp;&amp; (defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE))
 DECL|member|cb
 r_char
 id|cb
@@ -207,6 +207,14 @@ l_int|48
 )braket
 suffix:semicolon
 multiline_comment|/* sorry. 64bit pointers have a price */
+macro_line|#elif (defined(__alpha__) || defined(__sparc_v9__))
+DECL|member|cb
+r_char
+id|cb
+(braket
+l_int|40
+)braket
+suffix:semicolon
 macro_line|#else
 DECL|member|cb
 r_char
@@ -1558,6 +1566,37 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Place a packet after a given packet in a list.&n; */
+DECL|function|__skb_append
+r_extern
+id|__inline__
+r_void
+id|__skb_append
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|old
+comma
+r_struct
+id|sk_buff
+op_star
+id|newsk
+)paren
+(brace
+id|__skb_insert
+c_func
+(paren
+id|newsk
+comma
+id|old
+comma
+id|old-&gt;next
+comma
+id|old-&gt;list
+)paren
+suffix:semicolon
+)brace
 DECL|function|skb_append
 r_extern
 id|__inline__
@@ -1589,16 +1628,12 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|__skb_insert
+id|__skb_append
 c_func
 (paren
-id|newsk
-comma
 id|old
 comma
-id|old-&gt;next
-comma
-id|old-&gt;list
+id|newsk
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore

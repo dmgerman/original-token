@@ -1,11 +1,10 @@
-multiline_comment|/*&n; *  $Id: message.c,v 1.2 1996/11/20 17:49:54 fritz Exp $&n; *  Copyright (C) 1996  SpellCaster Telecommunications Inc.&n; *&n; *  message.c - functions for sending and receiving control messages&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  For more information, please contact gpl-info@spellcast.com or write:&n; *&n; *     SpellCaster Telecommunications Inc.&n; *     5621 Finch Avenue East, Unit #3&n; *     Scarborough, Ontario  Canada&n; *     M1B 2T9&n; *     +1 (416) 297-8565&n; *     +1 (416) 297-6433 Facsimile&n; */
+multiline_comment|/*&n; *  $Id: message.c,v 1.3 1998/01/31 22:10:55 keil Exp $&n; *  Copyright (C) 1996  SpellCaster Telecommunications Inc.&n; *&n; *  message.c - functions for sending and receiving control messages&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  For more information, please contact gpl-info@spellcast.com or write:&n; *&n; *     SpellCaster Telecommunications Inc.&n; *     5621 Finch Avenue East, Unit #3&n; *     Scarborough, Ontario  Canada&n; *     M1B 2T9&n; *     +1 (416) 297-8565&n; *     +1 (416) 297-6433 Facsimile&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;includes.h&quot;
 macro_line|#include &quot;hardware.h&quot;
 macro_line|#include &quot;message.h&quot;
 macro_line|#include &quot;card.h&quot;
-macro_line|#include &lt;asm/io.h&gt;
 r_extern
 id|board
 op_star
@@ -801,7 +800,11 @@ op_amp
 id|WF_NOT_FULL
 )paren
 )paren
-id|__SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Disable interrupts and map in shared memory&n;&t; */
 id|save_flags

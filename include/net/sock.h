@@ -43,7 +43,7 @@ macro_line|#ifdef CONFIG_FILTER
 macro_line|#include &lt;linux/filter.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/atomic.h&gt;
-multiline_comment|/*&n; *&t;The AF_UNIX specific socket options&n; */
+multiline_comment|/* The AF_UNIX specific socket options */
 DECL|struct|unix_opt
 r_struct
 id|unix_opt
@@ -156,7 +156,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; *&t;Once the IPX ncpd patches are in these are going into protinfo&n; */
+multiline_comment|/* Once the IPX ncpd patches are in these are going into protinfo. */
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 DECL|struct|ipx_opt
 r_struct
@@ -395,7 +395,7 @@ DECL|member|ato
 id|__u32
 id|ato
 suffix:semicolon
-multiline_comment|/* delayed ack timeout */
+multiline_comment|/* delayed ack timeout&t;&t;&t;*/
 DECL|member|snd_wl1
 id|__u32
 id|snd_wl1
@@ -468,17 +468,13 @@ DECL|member|high_seq
 id|__u32
 id|high_seq
 suffix:semicolon
-multiline_comment|/* highest sequence number sent by onset of congestion */
+multiline_comment|/* snd_nxt at onset of congestion&t;*/
 multiline_comment|/*&n; *&t;Slow start and congestion control (see also Nagle, and Karn &amp; Partridge)&n; */
 DECL|member|snd_ssthresh
 id|__u32
 id|snd_ssthresh
 suffix:semicolon
 multiline_comment|/* Slow start size threshold&t;&t;*/
-DECL|member|snd_cwnd_cnt
-id|__u16
-id|snd_cwnd_cnt
-suffix:semicolon
 DECL|member|dup_acks
 id|__u8
 id|dup_acks
@@ -620,11 +616,6 @@ id|timer_list
 id|probe_timer
 suffix:semicolon
 multiline_comment|/* Probes&t;*/
-DECL|member|basertt
-id|__u32
-id|basertt
-suffix:semicolon
-multiline_comment|/* Vegas baseRTT&t;&t;&t;*/
 DECL|member|window_clamp
 id|__u32
 id|window_clamp
@@ -682,7 +673,6 @@ macro_line|#else
 DECL|macro|SOCK_DEBUG
 mdefine_line|#define SOCK_DEBUG(sk, msg...) do { } while (0)
 macro_line|#endif
-multiline_comment|/*&n; *  TCP will start to use the new protinfo while *still using the old* fields &n; */
 DECL|struct|sock
 r_struct
 id|sock
@@ -714,6 +704,33 @@ op_star
 op_star
 id|bind_pprev
 suffix:semicolon
+multiline_comment|/* Socket demultiplex comparisons on incoming packets. */
+DECL|member|daddr
+id|__u32
+id|daddr
+suffix:semicolon
+multiline_comment|/* Foreign IPv4 addr&t;&t;&t;*/
+DECL|member|rcv_saddr
+id|__u32
+id|rcv_saddr
+suffix:semicolon
+multiline_comment|/* Bound local IPv4 addr&t;&t;*/
+DECL|member|dport
+id|__u16
+id|dport
+suffix:semicolon
+multiline_comment|/* Destination port&t;&t;&t;*/
+DECL|member|num
+r_int
+r_int
+id|num
+suffix:semicolon
+multiline_comment|/* Local port&t;&t;&t;&t;*/
+DECL|member|bound_dev_if
+r_int
+id|bound_dev_if
+suffix:semicolon
+multiline_comment|/* Bound device index if != 0&t;&t;*/
 multiline_comment|/* Main hash linkage for various protocol lookup tables. */
 DECL|member|next
 r_struct
@@ -728,28 +745,6 @@ op_star
 op_star
 id|pprev
 suffix:semicolon
-multiline_comment|/* Socket demultiplex comparisons on incoming packets. */
-DECL|member|daddr
-id|__u32
-id|daddr
-suffix:semicolon
-multiline_comment|/* Foreign IPv4 addr&t;&t;&t;*/
-DECL|member|rcv_saddr
-id|__u32
-id|rcv_saddr
-suffix:semicolon
-multiline_comment|/* Bound local IPv4 addr&t;&t;*/
-DECL|member|bound_dev_if
-r_int
-id|bound_dev_if
-suffix:semicolon
-multiline_comment|/* Bound device index if != 0&t;&t;*/
-DECL|member|num
-r_int
-r_int
-id|num
-suffix:semicolon
-multiline_comment|/* Local port&t;&t;&t;&t;*/
 DECL|member|state
 r_volatile
 r_int
@@ -766,33 +761,32 @@ id|__u16
 id|sport
 suffix:semicolon
 multiline_comment|/* Source port&t;&t;&t;&t;*/
-DECL|member|dport
-id|__u16
-id|dport
-suffix:semicolon
-multiline_comment|/* Destination port&t;&t;&t;*/
 DECL|member|family
 r_int
 r_int
 id|family
 suffix:semicolon
+multiline_comment|/* Address family&t;&t;&t;*/
 DECL|member|reuse
 r_int
 r_char
 id|reuse
 comma
+multiline_comment|/* SO_REUSEADDR setting&t;&t;&t;*/
 DECL|member|nonagle
 id|nonagle
 suffix:semicolon
+multiline_comment|/* Disable Nagle algorithm?&t;&t;*/
 DECL|member|sock_readers
 r_int
 id|sock_readers
 suffix:semicolon
-multiline_comment|/* user count&t;&t;&t;&t;*/
+multiline_comment|/* User count&t;&t;&t;&t;*/
 DECL|member|rcvbuf
 r_int
 id|rcvbuf
 suffix:semicolon
+multiline_comment|/* Size of receive buffer in bytes&t;*/
 DECL|member|sleep
 r_struct
 id|wait_queue
@@ -800,6 +794,7 @@ op_star
 op_star
 id|sleep
 suffix:semicolon
+multiline_comment|/* Sock wait queue&t;&t;&t;*/
 DECL|member|dst_cache
 r_struct
 id|dst_entry
@@ -849,13 +844,14 @@ DECL|member|sndbuf
 r_int
 id|sndbuf
 suffix:semicolon
+multiline_comment|/* Size of send buffer in bytes&t;&t;*/
 DECL|member|prev
 r_struct
 id|sock
 op_star
 id|prev
 suffix:semicolon
-multiline_comment|/*&n;   *&t;Not all are volatile, but some are, so we&n;   * &t;might as well say they all are.&n;   */
+multiline_comment|/* Not all are volatile, but some are, so we might as well say they all are.&n;&t; * XXX Make this a flag word -DaveM&n;&t; */
 DECL|member|dead
 r_volatile
 r_char
@@ -924,7 +920,7 @@ id|proto
 op_star
 id|prot
 suffix:semicolon
-multiline_comment|/*&n; *&t;mss is min(mtu, max_window) &n; */
+multiline_comment|/* mss is min(mtu, max_window)&n;&t; * XXX Fix this, mtu only used in one TCP place and that is it -DaveM&n;&t; */
 DECL|member|mtu
 r_int
 r_int
@@ -1042,7 +1038,7 @@ op_star
 id|filter_data
 suffix:semicolon
 macro_line|#endif /* CONFIG_FILTER */
-multiline_comment|/*&n; *&t;This is where all the private (optional) areas that don&squot;t&n; *&t;overlap will eventually live. &n; */
+multiline_comment|/* This is where all the private (optional) areas that don&squot;t&n;&t; * overlap will eventually live. &n;&t; */
 r_union
 (brace
 DECL|member|destruct_hook
@@ -1123,7 +1119,7 @@ DECL|member|protinfo
 )brace
 id|protinfo
 suffix:semicolon
-multiline_comment|/* &n; *&t;IP &squot;private area&squot; or will be eventually &n; */
+multiline_comment|/* IP &squot;private area&squot; or will be eventually. */
 DECL|member|ip_ttl
 r_int
 id|ip_ttl
@@ -1184,7 +1180,7 @@ op_star
 id|ip_mc_list
 suffix:semicolon
 multiline_comment|/* Group array */
-multiline_comment|/*&n; *&t;This part is used for the timeout functions (timer.c). &n; */
+multiline_comment|/* This part is used for the timeout functions (timer.c). */
 DECL|member|timeout
 r_int
 id|timeout
@@ -1195,26 +1191,26 @@ r_struct
 id|timer_list
 id|timer
 suffix:semicolon
-multiline_comment|/* This is the TIME_WAIT/receive timer&n;&t;&t;&t;&t;&t;&t; * when we are doing IP&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* This is the sock cleanup timer. */
 DECL|member|stamp
 r_struct
 id|timeval
 id|stamp
 suffix:semicolon
-multiline_comment|/*&n;  *&t;Identd &n;  */
+multiline_comment|/* Identd */
 DECL|member|socket
 r_struct
 id|socket
 op_star
 id|socket
 suffix:semicolon
-multiline_comment|/*&n;   *&t;RPC layer private data&n;   */
+multiline_comment|/* RPC layer private data */
 DECL|member|user_data
 r_void
 op_star
 id|user_data
 suffix:semicolon
-multiline_comment|/*&n;   *&t;Callbacks &n;   */
+multiline_comment|/* Callbacks */
 DECL|member|state_change
 r_void
 (paren
@@ -1303,7 +1299,7 @@ id|sk
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;IP protocol blocks we attach to sockets.&n; *&t;socket layer -&gt; transport layer interface&n; *&t;transport -&gt; network interface is defined by struct inet_proto&n; */
+multiline_comment|/* IP protocol blocks we attach to sockets.&n; * socket layer -&gt; transport layer interface&n; * transport -&gt; network interface is defined by struct inet_proto&n; */
 DECL|struct|proto
 r_struct
 id|proto
@@ -1759,10 +1755,10 @@ DECL|macro|TIME_DONE
 mdefine_line|#define TIME_DONE&t;7&t;/* Used to absorb those last few packets */
 DECL|macro|TIME_PROBE0
 mdefine_line|#define TIME_PROBE0&t;8
-multiline_comment|/*&n; *&t;About 10 seconds &n; */
+multiline_comment|/* About 10 seconds */
 DECL|macro|SOCK_DESTROY_TIME
 mdefine_line|#define SOCK_DESTROY_TIME (10*HZ)
-multiline_comment|/*&n; *&t;Sockets 0-1023 can&squot;t be bound to unless you are superuser &n; */
+multiline_comment|/* Sockets 0-1023 can&squot;t be bound to unless you are superuser */
 DECL|macro|PROT_SOCK
 mdefine_line|#define PROT_SOCK&t;1024
 DECL|macro|SHUTDOWN_MASK

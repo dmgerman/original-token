@@ -1711,19 +1711,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|file-&gt;f_pos
-OL
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
-id|file-&gt;f_pos
-suffix:semicolon
 )brace
 DECL|macro|mmap_kmem
 mdefine_line|#define mmap_kmem&t;mmap_mem

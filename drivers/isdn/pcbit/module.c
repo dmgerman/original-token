@@ -97,7 +97,6 @@ id|irq
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE
-macro_line|#if (LINUX_VERSION_CODE &gt; 0x020111)
 id|MODULE_PARM
 c_func
 (paren
@@ -126,7 +125,6 @@ id|MAX_PCBIT_CARDS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|macro|pcbit_init
 mdefine_line|#define pcbit_init init_module
 macro_line|#endif
@@ -308,17 +306,8 @@ id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/* No symbols to export, hide all symbols */
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020111)
-id|register_symtab
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#else
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

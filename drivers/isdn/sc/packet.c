@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: packet.c,v 1.2 1996/11/20 17:49:55 fritz Exp $&n; *  Copyright (C) 1996  SpellCaster Telecommunications Inc.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  For more information, please contact gpl-info@spellcast.com or write:&n; *&n; *     SpellCaster Telecommunications Inc.&n; *     5621 Finch Avenue East, Unit #3&n; *     Scarborough, Ontario  Canada&n; *     M1B 2T9&n; *     +1 (416) 297-8565&n; *     +1 (416) 297-6433 Facsimile&n; */
+multiline_comment|/*&n; *  $Id: packet.c,v 1.4 1998/02/12 23:08:50 keil Exp $&n; *  Copyright (C) 1996  SpellCaster Telecommunications Inc.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  For more information, please contact gpl-info@spellcast.com or write:&n; *&n; *     SpellCaster Telecommunications Inc.&n; *     5621 Finch Avenue East, Unit #3&n; *     Scarborough, Ontario  Canada&n; *     M1B 2T9&n; *     +1 (416) 297-8565&n; *     +1 (416) 297-6433 Facsimile&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;includes.h&quot;
@@ -131,6 +131,10 @@ id|status
 suffix:semicolon
 r_int
 id|card
+suffix:semicolon
+r_int
+r_int
+id|len
 suffix:semicolon
 id|card
 op_assign
@@ -415,6 +419,10 @@ op_amp
 id|ReqLnkWrite
 )paren
 suffix:semicolon
+id|len
+op_assign
+id|data-&gt;len
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -536,12 +544,17 @@ id|ISDN_STAT_BSENT
 comma
 id|channel
 comma
-l_int|NULL
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|len
 )paren
 suffix:semicolon
 )brace
 r_return
-id|data-&gt;len
+id|len
 suffix:semicolon
 )brace
 DECL|function|rcvpkt

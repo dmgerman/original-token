@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * this code is derived from the avl functions in mmap.c&n; */
+multiline_comment|/*&n; *&t;This code is derived from the avl functions in mmap.c&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/br.h&gt;
 DECL|macro|_DEBUG_AVL
 mdefine_line|#define _DEBUG_AVL
-multiline_comment|/*&n; * Use an AVL (Adelson-Velskii and Landis) tree to speed up this search&n; * from O(n) to O(log n), where n is the number of ULAs.&n; * Written by Bruno Haible &lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;.&n; * Taken from mmap.c, extensively modified by John Hayes &n; * &lt;hayes@netplumbing.com&gt;&n; */
+multiline_comment|/*&n; * Use an AVL (Adelson-Velskii and Landis) tree to speed up this search&n; * from O(n) to O(log n), where n is the number of ULAs.&n; * Written by Bruno Haible &lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;.&n; * Taken from mmap.c, extensively modified by John Hayes &n; * &lt;hayes@netplumbing.com&gt;&n; * 98-02 Modified by Jean-Rene Peulve jr.peulve@aix.pacwan.net&n; *&t;&t;update port number when topology change&n; *&t;&t;return oldfdb when updating, for broadcast storm checking&n; *&t;&t;call addr_cmp once per node&n; */
 DECL|variable|fdb_head
 r_static
 r_struct
@@ -69,9 +69,9 @@ mdefine_line|#define avl_maxheight&t;127
 DECL|macro|heightof
 mdefine_line|#define heightof(tree)&t;((tree) == avl_br_empty ? 0 : (tree)-&gt;fdb_avl_height)
 multiline_comment|/*&n; * Consistency and balancing rules:&n; * 1. tree-&gt;fdb_avl_height == 1+max(heightof(tree-&gt;fdb_avl_left),heightof(tree-&gt;fdb_avl_right))&n; * 2. abs( heightof(tree-&gt;fdb_avl_left) - heightof(tree-&gt;fdb_avl_right) ) &lt;= 1&n; * 3. foreach node in tree-&gt;fdb_avl_left: node-&gt;fdb_avl_key &lt;= tree-&gt;fdb_avl_key,&n; *    foreach node in tree-&gt;fdb_avl_right: node-&gt;fdb_avl_key &gt;= tree-&gt;fdb_avl_key.&n; */
+DECL|function|fdb_init
 r_static
 r_int
-DECL|function|fdb_init
 id|fdb_init
 c_func
 (paren
@@ -325,7 +325,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#if (0)
 multiline_comment|/*&n; * Rebalance a tree.&n; * After inserting or deleting a node of a tree we have a sequence of subtrees&n; * nodes[0]..nodes[k-1] such that&n; * nodes[0] is the root and nodes[i+1] = nodes[i]-&gt;{fdb_avl_left|fdb_avl_right}.&n; */
 DECL|function|br_avl_rebalance
 r_static
@@ -694,10 +693,11 @@ id|fdb_head
 suffix:semicolon
 macro_line|#endif /* DEBUG_AVL */
 )brace
-macro_line|#endif /* (0) */
-multiline_comment|/* Insert a node into a tree. */
+multiline_comment|/* Insert a node into a tree.&n; * Performance improvement:&n; *&t; call addr_cmp() only once per node and use result in a switch.&n; * Return old node address if we knew that MAC address already&n; * Return NULL if we insert the new node&n; */
 DECL|function|br_avl_insert
-r_int
+r_struct
+id|fdb
+op_star
 id|br_avl_insert
 (paren
 r_struct
@@ -788,7 +788,7 @@ suffix:semicolon
 id|stack_count
 op_increment
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|addr_cmp
@@ -798,11 +798,20 @@ id|new_node-&gt;ula
 comma
 id|node-&gt;ula
 )paren
-op_eq
-l_int|0
 )paren
 (brace
+r_case
+l_int|0
+suffix:colon
 multiline_comment|/* update */
+r_if
+c_cond
+(paren
+id|node-&gt;port
+op_eq
+id|new_node-&gt;port
+)paren
+(brace
 id|node-&gt;flags
 op_assign
 id|new_node-&gt;flags
@@ -811,36 +820,89 @@ id|node-&gt;timer
 op_assign
 id|new_node-&gt;timer
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
-id|addr_cmp
+op_logical_neg
+(paren
+id|node-&gt;flags
+op_amp
+id|FDB_ENT_VALID
+)paren
+op_logical_and
+id|node-&gt;port
+)paren
+(brace
+multiline_comment|/* update fdb but never for local interfaces */
+macro_line|#if (DEBUG_AVL)
+id|printk
 c_func
 (paren
-id|new_node-&gt;ula
+l_string|&quot;node 0x%x:port changed old=%d new=%d&bslash;n&quot;
 comma
-id|node-&gt;ula
+(paren
+r_int
+r_int
 )paren
-OL
-l_int|0
+id|node
+comma
+id|node-&gt;port
+comma
+id|new_node-&gt;port
 )paren
-(brace
-id|nodeplace
-op_assign
-op_amp
-id|node-&gt;fdb_avl_left
 suffix:semicolon
+macro_line|#endif
+multiline_comment|/* JRP: update port as well if the topology change !&n;&t;&t;&t; * Don&squot;t do this while entry is still valid otherwise&n;&t;&t;&t; * a broadcast that we flooded and is reentered by another&n;&t;&t;&t; * port would mess up the good port number.&n;&t;&t;&t; * The fdb list per port needs to be updated as well.&n;&t;&t;&t; */
+id|requeue_fdb
+c_func
+(paren
+id|node
+comma
+id|new_node-&gt;port
+)paren
+suffix:semicolon
+id|node-&gt;flags
+op_assign
+id|new_node-&gt;flags
+suffix:semicolon
+id|node-&gt;timer
+op_assign
+id|new_node-&gt;timer
+suffix:semicolon
+macro_line|#if (DEBUG_AVL)
+id|printk_avl
+c_func
+(paren
+op_amp
+id|fdb_head
+)paren
+suffix:semicolon
+macro_line|#endif /* DEBUG_AVL */
 )brace
-r_else
-(brace
+r_return
+id|node
+suffix:semicolon
+multiline_comment|/* pass old fdb to caller */
+r_case
+l_int|1
+suffix:colon
+multiline_comment|/* new_node-&gt;ula &gt; node-&gt;ula */
 id|nodeplace
 op_assign
 op_amp
 id|node-&gt;fdb_avl_right
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/* -1 =&gt; new_node-&gt;ula &lt; node-&gt;ula */
+id|nodeplace
+op_assign
+op_amp
+id|node-&gt;fdb_avl_left
 suffix:semicolon
 )brace
 )brace
@@ -905,7 +967,6 @@ id|nodeplace
 op_assign
 id|new_node
 suffix:semicolon
-macro_line|#if (0)&t;
 id|br_avl_rebalance
 c_func
 (paren
@@ -914,7 +975,6 @@ comma
 id|stack_count
 )paren
 suffix:semicolon
-macro_line|#endif /* (0) */
 macro_line|#ifdef DEBUG_AVL
 id|printk_avl
 c_func
@@ -925,10 +985,10 @@ id|fdb_head
 suffix:semicolon
 macro_line|#endif /* DEBUG_AVL */
 r_return
-l_int|1
+l_int|NULL
 suffix:semicolon
+multiline_comment|/* this is a new node */
 )brace
-macro_line|#if (0)
 multiline_comment|/* Removes a node out of a tree. */
 DECL|function|br_avl_remove
 r_static
@@ -1209,7 +1269,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* (0) */
 macro_line|#ifdef DEBUG_AVL
 multiline_comment|/* print a tree */
 DECL|function|printk_avl
@@ -1240,7 +1299,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%02x:%02x:%02x:%02x:%02x:%02x&quot;
+l_string|&quot;%02x:%02x:%02x:%02x:%02x:%02x(%d)&quot;
 comma
 id|tree-&gt;ula
 (braket
@@ -1271,6 +1330,8 @@ id|tree-&gt;ula
 (braket
 l_int|5
 )braket
+comma
+id|tree-&gt;port
 )paren
 suffix:semicolon
 r_if
@@ -1323,7 +1384,6 @@ l_string|&quot;)&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-macro_line|#if (0)
 DECL|variable|avl_check_point
 r_static
 r_char
@@ -1629,7 +1689,6 @@ id|tree-&gt;fdb_avl_key
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* (0) */
 macro_line|#endif /* DEBUG_AVL */
 DECL|function|addr_cmp
 r_static

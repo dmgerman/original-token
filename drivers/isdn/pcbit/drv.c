@@ -91,6 +91,9 @@ comma
 r_int
 id|chan
 comma
+r_int
+id|ack
+comma
 r_struct
 id|sk_buff
 op_star
@@ -587,10 +590,6 @@ suffix:semicolon
 id|dev_if-&gt;writebuf_skb
 op_assign
 id|pcbit_xmit
-suffix:semicolon
-id|dev_if-&gt;writebuf
-op_assign
-l_int|NULL
 suffix:semicolon
 id|dev_if-&gt;hl_hdrlen
 op_assign
@@ -1185,6 +1184,9 @@ id|driver
 comma
 r_int
 id|chnum
+comma
+r_int
+id|ack
 comma
 r_struct
 id|sk_buff
@@ -2819,12 +2821,6 @@ r_break
 suffix:semicolon
 macro_line|#endif
 )brace
-id|SET_SKB_FREE
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren

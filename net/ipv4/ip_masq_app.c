@@ -1697,12 +1697,6 @@ suffix:semicolon
 id|maxsize
 op_assign
 id|skb-&gt;truesize
-op_minus
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
 suffix:semicolon
 id|diff
 op_assign
@@ -1863,10 +1857,6 @@ op_assign
 id|skb-&gt;h.raw
 op_plus
 id|offset
-suffix:semicolon
-id|n_skb-&gt;when
-op_assign
-id|skb-&gt;when
 suffix:semicolon
 id|n_skb-&gt;dev
 op_assign

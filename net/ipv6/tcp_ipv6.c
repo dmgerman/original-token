@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.69 1998/03/28 00:55:36 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.72 1998/03/30 08:41:52 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1046,8 +1046,12 @@ r_int
 id|dif
 )paren
 (brace
-r_int
-r_int
+r_struct
+id|sock
+op_star
+id|sk
+suffix:semicolon
+id|__u16
 id|hnum
 op_assign
 id|ntohs
@@ -1056,10 +1060,16 @@ c_func
 id|dport
 )paren
 suffix:semicolon
-r_struct
-id|sock
-op_star
-id|sk
+id|__u32
+id|ports
+op_assign
+id|TCP_COMBINED_PORTS
+c_func
+(paren
+id|sport
+comma
+id|hnum
+)paren
 suffix:semicolon
 r_int
 id|hash
@@ -1097,47 +1107,17 @@ c_cond
 (paren
 id|sk
 op_logical_and
-id|sk-&gt;num
-op_eq
-id|hnum
-op_logical_and
-multiline_comment|/* local port     */
-id|sk-&gt;family
-op_eq
-id|AF_INET6
-op_logical_and
-multiline_comment|/* address family */
-id|sk-&gt;dport
-op_eq
-id|sport
-op_logical_and
-multiline_comment|/* remote port    */
-op_logical_neg
-id|ipv6_addr_cmp
+id|TCP_IPV6_MATCH
 c_func
 (paren
-op_amp
-id|sk-&gt;net_pinfo.af_inet6.daddr
+id|sk
 comma
 id|saddr
-)paren
-op_logical_and
-op_logical_neg
-id|ipv6_addr_cmp
-c_func
-(paren
-op_amp
-id|sk-&gt;net_pinfo.af_inet6.rcv_saddr
 comma
 id|daddr
-)paren
-op_logical_and
-(paren
-op_logical_neg
-id|sk-&gt;bound_dev_if
-op_logical_or
-id|sk-&gt;bound_dev_if
-op_eq
+comma
+id|ports
+comma
 id|dif
 )paren
 )paren
@@ -1182,47 +1162,17 @@ multiline_comment|/* For IPV6 do the cheaper port and family tests first. */
 r_if
 c_cond
 (paren
-id|sk-&gt;num
-op_eq
-id|hnum
-op_logical_and
-multiline_comment|/* local port     */
-id|sk-&gt;family
-op_eq
-id|AF_INET6
-op_logical_and
-multiline_comment|/* address family */
-id|sk-&gt;dport
-op_eq
-id|sport
-op_logical_and
-multiline_comment|/* remote port    */
-op_logical_neg
-id|ipv6_addr_cmp
+id|TCP_IPV6_MATCH
 c_func
 (paren
-op_amp
-id|sk-&gt;net_pinfo.af_inet6.daddr
+id|sk
 comma
 id|saddr
-)paren
-op_logical_and
-op_logical_neg
-id|ipv6_addr_cmp
-c_func
-(paren
-op_amp
-id|sk-&gt;net_pinfo.af_inet6.rcv_saddr
 comma
 id|daddr
-)paren
-op_logical_and
-(paren
-op_logical_neg
-id|sk-&gt;bound_dev_if
-op_logical_or
-id|sk-&gt;bound_dev_if
-op_eq
+comma
+id|ports
+comma
 id|dif
 )paren
 )paren
@@ -1271,25 +1221,29 @@ id|sk
 op_assign
 id|sk-&gt;next
 )paren
+(brace
 r_if
 c_cond
 (paren
-id|sk-&gt;num
+op_star
+(paren
+(paren
+id|__u32
+op_star
+)paren
+op_amp
+(paren
+id|sk-&gt;dport
+)paren
+)paren
 op_eq
-id|hnum
+id|ports
 op_logical_and
-multiline_comment|/* local port     */
 id|sk-&gt;family
 op_eq
 id|AF_INET6
-op_logical_and
-multiline_comment|/* address family */
-id|sk-&gt;dport
-op_eq
-id|sport
 )paren
 (brace
-multiline_comment|/* remote port    */
 r_struct
 id|tcp_tw_bucket
 op_star
@@ -1338,6 +1292,7 @@ id|dif
 r_goto
 id|hit
 suffix:semicolon
+)brace
 )brace
 )brace
 macro_line|#ifdef USE_QUICKSYNS
@@ -5560,7 +5515,11 @@ suffix:semicolon
 multiline_comment|/* See draft-stevens-tcpca-spec-01 for discussion of the&n;&t; * initialization of these values.&n;&t; */
 id|tp-&gt;snd_cwnd
 op_assign
+(paren
 l_int|1
+op_lshift
+id|TCP_CWND_SHIFT
+)paren
 suffix:semicolon
 id|tp-&gt;snd_ssthresh
 op_assign
@@ -5653,7 +5612,7 @@ c_loop
 (paren
 id|skb
 op_assign
-id|skb_dequeue
+id|__skb_dequeue
 c_func
 (paren
 op_amp
@@ -5678,7 +5637,7 @@ c_loop
 (paren
 id|skb
 op_assign
-id|skb_dequeue
+id|__skb_dequeue
 c_func
 (paren
 op_amp

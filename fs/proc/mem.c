@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1650,7 +1651,7 @@ multiline_comment|/* bmap */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
-l_int|NULL
+id|proc_permission
 multiline_comment|/* permission */
 )brace
 suffix:semicolon

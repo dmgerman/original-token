@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: isdn.h,v 1.29 1997/05/27 15:18:02 fritz Exp $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.29  1997/05/27 15:18:02  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.28  1997/03/07 01:33:01  fritz&n; * Added proper ifdef&squot;s for CONFIG_ISDN_AUDIO&n; *&n; * Revision 1.27  1997/03/05 21:11:49  fritz&n; * Minor fixes.&n; *&n; * Revision 1.26  1997/02/28 02:37:53  fritz&n; * Added some comments.&n; *&n; * Revision 1.25  1997/02/23 16:54:23  hipp&n; * some initial changes for future PPP compresion&n; *&n; * Revision 1.24  1997/02/18 09:42:45  fritz&n; * Bugfix: Increased ISDN_MODEM_ANZREG.&n; * Increased TTY_DV.&n; *&n; * Revision 1.23  1997/02/10 22:07:13  fritz&n; * Added 2 modem registers for numbering plan and screening info.&n; *&n; * Revision 1.22  1997/02/03 23:42:08  fritz&n; * Added ISDN_TIMER_RINGING&n; * Misc. changes for Kernel 2.1.X compatibility&n; *&n; * Revision 1.21  1997/01/17 01:19:10  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.20  1997/01/17 00:41:19  fritz&n; * Increased TTY_DV.&n; *&n; * Revision 1.19  1997/01/14 01:41:07  fritz&n; * Added ATI2 related variables.&n; * Added variables for audio support in skbuffs.&n; *&n; * Revision 1.18  1996/11/06 17:37:50  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.17  1996/09/07 12:53:57  hipp&n; * moved a few isdn_ppp.c specific defines to drives/isdn/isdn_ppp.h&n; *&n; * Revision 1.16  1996/08/12 16:20:56  hipp&n; * renamed ppp_minor to ppp_slot&n; *&n; * Revision 1.15  1996/06/15 14:56:57  fritz&n; * Added version signatures for data structures used&n; * by userlevel programs.&n; *&n; * Revision 1.14  1996/06/06 21:24:23  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.13  1996/06/05 02:18:20  fritz&n; * Added DTMF decoding stuff.&n; *&n; * Revision 1.12  1996/06/03 19:55:08  fritz&n; * Fixed typos.&n; *&n; * Revision 1.11  1996/05/31 01:37:47  fritz&n; * Minor changes, due to changes in isdn_tty.c&n; *&n; * Revision 1.10  1996/05/18 01:37:18  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.9  1996/05/17 03:58:20  fritz&n; * Added flags for DLE handling.&n; *&n; * Revision 1.8  1996/05/11 21:49:55  fritz&n; * Removed queue management variables.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.7  1996/05/07 09:10:06  fritz&n; * Reorganized tty-related structs.&n; *&n; * Revision 1.6  1996/05/06 11:38:27  hipp&n; * minor change in ippp struct&n; *&n; * Revision 1.5  1996/04/30 11:03:16  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.4  1996/04/29 23:00:02  fritz&n; * Added variables for voice-support.&n; *&n; * Revision 1.3  1996/04/20 16:54:58  fritz&n; * Increased maximum number of channels.&n; * Added some flags for isdn_net to handle callback more reliable.&n; * Fixed delay-definitions to be more accurate.&n; * Misc. typos&n; *&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* Changes for X.25 support:&n;   Added ISDN_NET_ENCAP_X25IFACE macro.&n;   Additional field in isdn_net_dev_s and isdn_net_local to support&n;   generic encapsulation protocols. &n;*/
+multiline_comment|/* $Id: isdn.h,v 1.37 1998/02/22 19:45:24 fritz Exp $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.37  1998/02/22 19:45:24  fritz&n; * Some changes regarding V.110&n; *&n; * Revision 1.36  1998/02/20 17:35:55  fritz&n; * Added V.110 stuff.&n; *&n; * Revision 1.35  1998/01/31 22:14:14  keil&n; * changes for 2.1.82&n; *&n; * Revision 1.34  1997/10/09 21:28:11  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.33  1997/08/21 14:44:22  fritz&n; * Moved triggercps to end of struct for backwards-compatibility.&n; *&n; * Revision 1.32  1997/08/21 09:49:46  fritz&n; * Increased NET_DV&n; *&n; * Revision 1.31  1997/06/22 11:57:07  fritz&n; * Added ability to adjust slave triggerlevel.&n; *&n; * Revision 1.30  1997/06/17 13:07:23  hipp&n; * compression changes , MP changes&n; *&n; * Revision 1.29  1997/05/27 15:18:02  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.28  1997/03/07 01:33:01  fritz&n; * Added proper ifdef&squot;s for CONFIG_ISDN_AUDIO&n; *&n; * Revision 1.27  1997/03/05 21:11:49  fritz&n; * Minor fixes.&n; *&n; * Revision 1.26  1997/02/28 02:37:53  fritz&n; * Added some comments.&n; *&n; * Revision 1.25  1997/02/23 16:54:23  hipp&n; * some initial changes for future PPP compresion&n; *&n; * Revision 1.24  1997/02/18 09:42:45  fritz&n; * Bugfix: Increased ISDN_MODEM_ANZREG.&n; * Increased TTY_DV.&n; *&n; * Revision 1.23  1997/02/10 22:07:13  fritz&n; * Added 2 modem registers for numbering plan and screening info.&n; *&n; * Revision 1.22  1997/02/03 23:42:08  fritz&n; * Added ISDN_TIMER_RINGING&n; * Misc. changes for Kernel 2.1.X compatibility&n; *&n; * Revision 1.21  1997/01/17 01:19:10  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.20  1997/01/17 00:41:19  fritz&n; * Increased TTY_DV.&n; *&n; * Revision 1.19  1997/01/14 01:41:07  fritz&n; * Added ATI2 related variables.&n; * Added variables for audio support in skbuffs.&n; *&n; * Revision 1.18  1996/11/06 17:37:50  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.17  1996/09/07 12:53:57  hipp&n; * moved a few isdn_ppp.c specific defines to drives/isdn/isdn_ppp.h&n; *&n; * Revision 1.16  1996/08/12 16:20:56  hipp&n; * renamed ppp_minor to ppp_slot&n; *&n; * Revision 1.15  1996/06/15 14:56:57  fritz&n; * Added version signatures for data structures used&n; * by userlevel programs.&n; *&n; * Revision 1.14  1996/06/06 21:24:23  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.13  1996/06/05 02:18:20  fritz&n; * Added DTMF decoding stuff.&n; *&n; * Revision 1.12  1996/06/03 19:55:08  fritz&n; * Fixed typos.&n; *&n; * Revision 1.11  1996/05/31 01:37:47  fritz&n; * Minor changes, due to changes in isdn_tty.c&n; *&n; * Revision 1.10  1996/05/18 01:37:18  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.9  1996/05/17 03:58:20  fritz&n; * Added flags for DLE handling.&n; *&n; * Revision 1.8  1996/05/11 21:49:55  fritz&n; * Removed queue management variables.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.7  1996/05/07 09:10:06  fritz&n; * Reorganized tty-related structs.&n; *&n; * Revision 1.6  1996/05/06 11:38:27  hipp&n; * minor change in ippp struct&n; *&n; * Revision 1.5  1996/04/30 11:03:16  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.4  1996/04/29 23:00:02  fritz&n; * Added variables for voice-support.&n; *&n; * Revision 1.3  1996/04/20 16:54:58  fritz&n; * Increased maximum number of channels.&n; * Added some flags for isdn_net to handle callback more reliable.&n; * Fixed delay-definitions to be more accurate.&n; * Misc. typos&n; *&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdn_h
 DECL|macro|isdn_h
 mdefine_line|#define isdn_h
@@ -83,17 +84,23 @@ DECL|macro|IIOCDRVCTL
 mdefine_line|#define IIOCDRVCTL  _IO(&squot;I&squot;,128)
 multiline_comment|/* Packet encapsulations for net-interfaces */
 DECL|macro|ISDN_NET_ENCAP_ETHER
-mdefine_line|#define ISDN_NET_ENCAP_ETHER     0
+mdefine_line|#define ISDN_NET_ENCAP_ETHER      0
 DECL|macro|ISDN_NET_ENCAP_RAWIP
-mdefine_line|#define ISDN_NET_ENCAP_RAWIP     1
+mdefine_line|#define ISDN_NET_ENCAP_RAWIP      1
 DECL|macro|ISDN_NET_ENCAP_IPTYP
-mdefine_line|#define ISDN_NET_ENCAP_IPTYP     2
+mdefine_line|#define ISDN_NET_ENCAP_IPTYP      2
 DECL|macro|ISDN_NET_ENCAP_CISCOHDLC
-mdefine_line|#define ISDN_NET_ENCAP_CISCOHDLC 3
+mdefine_line|#define ISDN_NET_ENCAP_CISCOHDLC  3 /* Without SLARP and keepalive */
 DECL|macro|ISDN_NET_ENCAP_SYNCPPP
-mdefine_line|#define ISDN_NET_ENCAP_SYNCPPP   4
+mdefine_line|#define ISDN_NET_ENCAP_SYNCPPP    4
 DECL|macro|ISDN_NET_ENCAP_UIHDLC
-mdefine_line|#define ISDN_NET_ENCAP_UIHDLC    5
+mdefine_line|#define ISDN_NET_ENCAP_UIHDLC     5
+DECL|macro|ISDN_NET_ENCAP_CISCOHDLCK
+mdefine_line|#define ISDN_NET_ENCAP_CISCOHDLCK 6 /* With SLARP and keepalive    */
+DECL|macro|ISDN_NET_ENCAP_X25IFACE
+mdefine_line|#define ISDN_NET_ENCAP_X25IFACE   7 /* Documentation/networking/x25-iface.txt*/
+DECL|macro|ISDN_NET_ENCAP_MAX_ENCAP
+mdefine_line|#define ISDN_NET_ENCAP_MAX_ENCAP  ISDN_NET_ENCAP_X25IFACE
 multiline_comment|/* Facility which currently uses an ISDN-channel */
 DECL|macro|ISDN_USAGE_NONE
 mdefine_line|#define ISDN_USAGE_NONE       0
@@ -190,7 +197,7 @@ DECL|typedef|isdn_net_ioctl_phone
 id|isdn_net_ioctl_phone
 suffix:semicolon
 DECL|macro|NET_DV
-mdefine_line|#define NET_DV 0x02 /* Data version for net_cfg     */
+mdefine_line|#define NET_DV 0x04 /* Data version for net_cfg     */
 DECL|macro|TTY_DV
 mdefine_line|#define TTY_DV 0x04 /* Data version for iprofd etc. */
 r_typedef
@@ -316,6 +323,11 @@ r_int
 id|chargeint
 suffix:semicolon
 multiline_comment|/* Use fixed charge interval length      */
+DECL|member|triggercps
+r_int
+id|triggercps
+suffix:semicolon
+multiline_comment|/* BogoCPS needed for triggering slave   */
 DECL|typedef|isdn_net_ioctl_cfg
 )brace
 id|isdn_net_ioctl_cfg
@@ -354,6 +366,9 @@ macro_line|#include &lt;linux/ppp_defs.h&gt;
 macro_line|#include &lt;linux/if_ppp.h&gt;
 macro_line|#include &lt;linux/if_pppvar.h&gt;
 macro_line|#include &lt;linux/isdn_ppp.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_X25
+macro_line|#  include &lt;linux/concap.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/isdnif.h&gt;
 DECL|macro|ISDN_DRVIOCTL_MASK
@@ -402,31 +417,35 @@ DECL|macro|USG_MODEMORVOICE
 mdefine_line|#define USG_MODEMORVOICE(x) (((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_MODEM) || &bslash;&n;                             ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_VOICE)     )
 multiline_comment|/* Timer-delays and scheduling-flags */
 DECL|macro|ISDN_TIMER_RES
-mdefine_line|#define ISDN_TIMER_RES       3                     /* Main Timer-Resolution  */
+mdefine_line|#define ISDN_TIMER_RES         3                         /* Main Timer-Resolution   */
 DECL|macro|ISDN_TIMER_02SEC
-mdefine_line|#define ISDN_TIMER_02SEC     (HZ/(ISDN_TIMER_RES+1)/5) /* Slow-Timer1 .2 sec */
+mdefine_line|#define ISDN_TIMER_02SEC       (HZ/(ISDN_TIMER_RES+1)/5) /* Slow-Timer1 .2 sec      */
 DECL|macro|ISDN_TIMER_1SEC
-mdefine_line|#define ISDN_TIMER_1SEC      (HZ/(ISDN_TIMER_RES+1)) /* Slow-Timer2 1 sec   */
+mdefine_line|#define ISDN_TIMER_1SEC        (HZ/(ISDN_TIMER_RES+1))   /* Slow-Timer2 1 sec       */
 DECL|macro|ISDN_TIMER_RINGING
-mdefine_line|#define ISDN_TIMER_RINGING   5 /* tty RINGs = ISDN_TIMER_1SEC * this factor */
+mdefine_line|#define ISDN_TIMER_RINGING     5 /* tty RINGs = ISDN_TIMER_1SEC * this factor       */
+DECL|macro|ISDN_TIMER_KEEPINT
+mdefine_line|#define ISDN_TIMER_KEEPINT    10 /* Cisco-Keepalive = ISDN_TIMER_1SEC * this factor */
 DECL|macro|ISDN_TIMER_MODEMREAD
-mdefine_line|#define ISDN_TIMER_MODEMREAD 1
+mdefine_line|#define ISDN_TIMER_MODEMREAD   1
 DECL|macro|ISDN_TIMER_MODEMPLUS
-mdefine_line|#define ISDN_TIMER_MODEMPLUS 2
+mdefine_line|#define ISDN_TIMER_MODEMPLUS   2
 DECL|macro|ISDN_TIMER_MODEMRING
-mdefine_line|#define ISDN_TIMER_MODEMRING 4
+mdefine_line|#define ISDN_TIMER_MODEMRING   4
 DECL|macro|ISDN_TIMER_MODEMXMIT
-mdefine_line|#define ISDN_TIMER_MODEMXMIT 8
+mdefine_line|#define ISDN_TIMER_MODEMXMIT   8
 DECL|macro|ISDN_TIMER_NETDIAL
-mdefine_line|#define ISDN_TIMER_NETDIAL   16
+mdefine_line|#define ISDN_TIMER_NETDIAL    16 
 DECL|macro|ISDN_TIMER_NETHANGUP
-mdefine_line|#define ISDN_TIMER_NETHANGUP 32
+mdefine_line|#define ISDN_TIMER_NETHANGUP  32
 DECL|macro|ISDN_TIMER_IPPP
-mdefine_line|#define ISDN_TIMER_IPPP      64
+mdefine_line|#define ISDN_TIMER_IPPP       64 
+DECL|macro|ISDN_TIMER_KEEPALIVE
+mdefine_line|#define ISDN_TIMER_KEEPALIVE 128 /* Cisco-Keepalive */
 DECL|macro|ISDN_TIMER_FAST
 mdefine_line|#define ISDN_TIMER_FAST      (ISDN_TIMER_MODEMREAD | ISDN_TIMER_MODEMPLUS | &bslash;&n;                              ISDN_TIMER_MODEMXMIT)
 DECL|macro|ISDN_TIMER_SLOW
-mdefine_line|#define ISDN_TIMER_SLOW      (ISDN_TIMER_MODEMRING | ISDN_TIMER_NETHANGUP | &bslash;&n;                              ISDN_TIMER_NETDIAL)
+mdefine_line|#define ISDN_TIMER_SLOW      (ISDN_TIMER_MODEMRING | ISDN_TIMER_NETHANGUP | &bslash;&n;                              ISDN_TIMER_NETDIAL | ISDN_TIMER_KEEPALIVE)
 multiline_comment|/* Timeout-Values for isdn_net_dial() */
 DECL|macro|ISDN_TIMER_DTIMEOUT10
 mdefine_line|#define ISDN_TIMER_DTIMEOUT10 (10*HZ/(ISDN_TIMER_02SEC*(ISDN_TIMER_RES+1)))
@@ -475,6 +494,7 @@ DECL|typedef|isdn_net_phone
 )brace
 id|isdn_net_phone
 suffix:semicolon
+multiline_comment|/*&n;   Principles when extending structures for generic encapsulation protocol&n;   (&quot;concap&quot;) support:&n;   - Stuff which is hardware specific (here i4l-specific) goes in &n;     the netdev -&gt; local structure (here: isdn_net_local)&n;   - Stuff which is encapsulation protocol specific goes in the structure&n;     which holds the linux device structure (here: isdn_net_device)&n;*/
 multiline_comment|/* Local interface-data */
 DECL|struct|isdn_net_local_s
 r_typedef
@@ -668,6 +688,11 @@ id|ulong
 id|slavedelay
 suffix:semicolon
 multiline_comment|/* Dynamic bundling delaytime       */
+DECL|member|triggercps
+r_int
+id|triggercps
+suffix:semicolon
+multiline_comment|/* BogoCPS needed for trigger slave */
 DECL|member|srobin
 r_struct
 id|device
@@ -786,6 +811,30 @@ r_int
 id|pppbind
 suffix:semicolon
 multiline_comment|/* ippp device for bindings         */
+macro_line|#ifdef CONFIG_ISDN_X25
+DECL|member|dops
+r_struct
+id|concap_device_ops
+op_star
+id|dops
+suffix:semicolon
+multiline_comment|/* callbacks used by encapsulator   */
+macro_line|#endif
+DECL|member|cisco_loop
+r_int
+id|cisco_loop
+suffix:semicolon
+multiline_comment|/* Loop counter for Cisco-SLARP     */
+DECL|member|cisco_myseq
+id|ulong
+id|cisco_myseq
+suffix:semicolon
+multiline_comment|/* Local keepalive seq. for Cisco   */
+DECL|member|cisco_yourseq
+id|ulong
+id|cisco_yourseq
+suffix:semicolon
+multiline_comment|/* Remote keepalive seq. for Cisco  */
 DECL|typedef|isdn_net_local
 )brace
 id|isdn_net_local
@@ -848,6 +897,7 @@ id|isdn_net_dev_s
 (brace
 DECL|member|local
 id|isdn_net_local
+op_star
 id|local
 suffix:semicolon
 DECL|member|queue
@@ -880,6 +930,15 @@ id|ippp_bundle
 id|ib
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_X25
+DECL|member|cprot
+r_struct
+id|concap_proto
+op_star
+id|cprot
+suffix:semicolon
+multiline_comment|/* connection oriented encapsulation protocol */
+macro_line|#endif
 DECL|typedef|isdn_net_dev
 )brace
 id|isdn_net_dev
@@ -911,7 +970,9 @@ mdefine_line|#define ISDN_ASYNC_CALLOUT_NOHUP      0x0400 /* No hangup for cui  
 DECL|macro|ISDN_ASYNC_SPLIT_TERMIOS
 mdefine_line|#define ISDN_ASYNC_SPLIT_TERMIOS      0x0008 /* Sep. termios for dialin/out  */
 DECL|macro|ISDN_SERIAL_XMIT_SIZE
-mdefine_line|#define ISDN_SERIAL_XMIT_SIZE           4000 /* Maximum bufsize for write    */
+mdefine_line|#define ISDN_SERIAL_XMIT_SIZE           1024 /* Default bufsize for write    */
+DECL|macro|ISDN_SERIAL_XMIT_MAX
+mdefine_line|#define ISDN_SERIAL_XMIT_MAX            4000 /* Maximum bufsize for write    */
 DECL|macro|ISDN_SERIAL_TYPE_NORMAL
 mdefine_line|#define ISDN_SERIAL_TYPE_NORMAL            1
 DECL|macro|ISDN_SERIAL_TYPE_CALLOUT
@@ -955,7 +1016,7 @@ id|profile
 id|ISDN_MODEM_ANZREG
 )braket
 suffix:semicolon
-multiline_comment|/* Modem-Regs. Profile 0 */
+multiline_comment|/* Modem-Regs. Profile 0              */
 DECL|member|mdmreg
 id|u_char
 id|mdmreg
@@ -963,7 +1024,7 @@ id|mdmreg
 id|ISDN_MODEM_ANZREG
 )braket
 suffix:semicolon
-multiline_comment|/* Modem-Registers       */
+multiline_comment|/* Modem-Registers                    */
 DECL|member|pmsn
 r_char
 id|pmsn
@@ -971,7 +1032,7 @@ id|pmsn
 id|ISDN_MSNLEN
 )braket
 suffix:semicolon
-multiline_comment|/* EAZ/MSNs Profile 0             */
+multiline_comment|/* EAZ/MSNs Profile 0                 */
 DECL|member|msn
 r_char
 id|msn
@@ -979,7 +1040,7 @@ id|msn
 id|ISDN_MSNLEN
 )braket
 suffix:semicolon
-multiline_comment|/* EAZ/MSN                          */
+multiline_comment|/* EAZ/MSN                            */
 macro_line|#ifdef CONFIG_ISDN_AUDIO
 DECL|member|vpar
 id|u_char
@@ -988,28 +1049,28 @@ id|vpar
 l_int|10
 )braket
 suffix:semicolon
-multiline_comment|/* Voice-parameters                 */
+multiline_comment|/* Voice-parameters                   */
 DECL|member|lastDLE
 r_int
 id|lastDLE
 suffix:semicolon
-multiline_comment|/* Flag for voice-coding: DLE seen  */
+multiline_comment|/* Flag for voice-coding: DLE seen    */
 macro_line|#endif
 DECL|member|mdmcmdl
 r_int
 id|mdmcmdl
 suffix:semicolon
-multiline_comment|/* Length of Modem-Commandbuffer    */
+multiline_comment|/* Length of Modem-Commandbuffer      */
 DECL|member|pluscount
 r_int
 id|pluscount
 suffix:semicolon
-multiline_comment|/* Counter for +++ sequence         */
+multiline_comment|/* Counter for +++ sequence           */
 DECL|member|lastplus
 r_int
 id|lastplus
 suffix:semicolon
-multiline_comment|/* Timestamp of last +              */
+multiline_comment|/* Timestamp of last +                */
 DECL|member|mdmcmd
 r_char
 id|mdmcmd
@@ -1017,7 +1078,13 @@ id|mdmcmd
 l_int|255
 )braket
 suffix:semicolon
-multiline_comment|/* Modem-Commandbuffer              */
+multiline_comment|/* Modem-Commandbuffer                */
+DECL|member|charge
+r_int
+r_int
+id|charge
+suffix:semicolon
+multiline_comment|/* Charge units of current connection */
 DECL|typedef|atemu
 )brace
 id|atemu
@@ -1561,15 +1628,142 @@ r_int
 id|debug
 suffix:semicolon
 DECL|member|compressor
+DECL|member|link_compressor
 r_struct
 id|isdn_ppp_compressor
 op_star
 id|compressor
+comma
+op_star
+id|link_compressor
+suffix:semicolon
+DECL|member|decomp_stat
+DECL|member|comp_stat
+DECL|member|link_decomp_stat
+DECL|member|link_comp_stat
+r_void
+op_star
+id|decomp_stat
+comma
+op_star
+id|comp_stat
+comma
+op_star
+id|link_decomp_stat
+comma
+op_star
+id|link_comp_stat
 suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*======================== End of sync-ppp stuff ===========================*/
+multiline_comment|/*======================== Start of V.110 stuff ============================*/
+DECL|macro|V110_BUFSIZE
+mdefine_line|#define V110_BUFSIZE 1024
+r_typedef
+r_struct
+(brace
+DECL|member|nbytes
+r_int
+id|nbytes
+suffix:semicolon
+multiline_comment|/* 1 Matrixbyte -&gt; nbytes in stream     */
+DECL|member|nbits
+r_int
+id|nbits
+suffix:semicolon
+multiline_comment|/* Number of used bits in streambyte    */
+DECL|member|key
+r_int
+r_char
+id|key
+suffix:semicolon
+multiline_comment|/* Bitmask in stream eg. 11 (nbits=2)   */
+DECL|member|decodelen
+r_int
+id|decodelen
+suffix:semicolon
+multiline_comment|/* Amount of data in decodebuf          */
+DECL|member|SyncInit
+r_int
+id|SyncInit
+suffix:semicolon
+multiline_comment|/* Number of sync frames to send        */
+DECL|member|OnlineFrame
+r_int
+r_char
+op_star
+id|OnlineFrame
+suffix:semicolon
+multiline_comment|/* Precalculated V110 idle frame        */
+DECL|member|OfflineFrame
+r_int
+r_char
+op_star
+id|OfflineFrame
+suffix:semicolon
+multiline_comment|/* Precalculated V110 sync Frame        */
+DECL|member|framelen
+r_int
+id|framelen
+suffix:semicolon
+multiline_comment|/* Length of frames                     */
+DECL|member|skbuser
+r_int
+id|skbuser
+suffix:semicolon
+multiline_comment|/* Number of unacked userdata skbs      */
+DECL|member|skbidle
+r_int
+id|skbidle
+suffix:semicolon
+multiline_comment|/* Number of unacked idle/sync skbs     */
+DECL|member|introducer
+r_int
+id|introducer
+suffix:semicolon
+multiline_comment|/* Local vars for decoder               */
+DECL|member|dbit
+r_int
+id|dbit
+suffix:semicolon
+DECL|member|b
+r_int
+r_char
+id|b
+suffix:semicolon
+DECL|member|skbres
+r_int
+id|skbres
+suffix:semicolon
+multiline_comment|/* space to reserve in outgoing skb     */
+DECL|member|maxsize
+r_int
+id|maxsize
+suffix:semicolon
+multiline_comment|/* maxbufsize of lowlevel driver        */
+DECL|member|encodebuf
+r_int
+r_char
+op_star
+id|encodebuf
+suffix:semicolon
+multiline_comment|/* temporary buffer for encoding        */
+DECL|member|decodebuf
+r_int
+r_char
+id|decodebuf
+(braket
+id|V110_BUFSIZE
+)braket
+suffix:semicolon
+multiline_comment|/* incomplete V110 matrices     */
+DECL|typedef|isdn_v110_stream
+)brace
+id|isdn_v110_stream
+suffix:semicolon
+multiline_comment|/*========================= End of V.110 stuff =============================*/
 multiline_comment|/*======================= Start of general stuff ===========================*/
 r_typedef
 r_struct
@@ -1881,6 +2075,31 @@ id|ISDN_MAX_CHANNELS
 )braket
 suffix:semicolon
 multiline_comment|/* Statistics outgoing bytes  */
+DECL|member|v110emu
+r_int
+id|v110emu
+(braket
+id|ISDN_MAX_CHANNELS
+)braket
+suffix:semicolon
+multiline_comment|/* V.110 emulator-mode 0=none */
+DECL|member|v110use
+id|atomic_t
+id|v110use
+(braket
+id|ISDN_MAX_CHANNELS
+)braket
+suffix:semicolon
+multiline_comment|/* Usage-Semaphore for stream */
+DECL|member|v110
+id|isdn_v110_stream
+op_star
+id|v110
+(braket
+id|ISDN_MAX_CHANNELS
+)braket
+suffix:semicolon
+multiline_comment|/* V.110 private data         */
 DECL|typedef|isdn_dev
 )brace
 id|isdn_dev

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: l3_1tr6.h,v 1.1 1996/10/13 20:03:48 keil Exp $&n; *&n; *  German 1TR6 D-channel protocol defines&n; *&n; * $Log: l3_1tr6.h,v $&n; * Revision 1.1  1996/10/13 20:03:48  keil&n; * Initial revision&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: l3_1tr6.h,v 2.0 1997/07/27 21:15:47 keil Exp $&n; *&n; *  German 1TR6 D-channel protocol defines&n; *&n; * $Log: l3_1tr6.h,v $&n; * Revision 2.0  1997/07/27 21:15:47  keil&n; * New Callref based layer3&n; *&n; * Revision 1.1  1996/10/13 20:03:48  keil&n; * Initial revision&n; *&n; */
 macro_line|#ifndef l3_1tr6
 DECL|macro|l3_1tr6
 mdefine_line|#define l3_1tr6
@@ -235,5 +235,21 @@ DECL|macro|CAUSE_RemoteUserResumed
 mdefine_line|#define CAUSE_RemoteUserResumed 0x73
 DECL|macro|CAUSE_UserInfoDiscarded
 mdefine_line|#define CAUSE_UserInfoDiscarded 0x7F
+DECL|macro|T303
+mdefine_line|#define T303&t;4000
+DECL|macro|T304
+mdefine_line|#define T304&t;20000
+DECL|macro|T305
+mdefine_line|#define T305&t;4000
+DECL|macro|T308
+mdefine_line|#define T308&t;4000
+DECL|macro|T310
+mdefine_line|#define T310&t;120000
+DECL|macro|T313
+mdefine_line|#define T313&t;4000
+DECL|macro|T318
+mdefine_line|#define T318&t;4000
+DECL|macro|T319
+mdefine_line|#define T319&t;4000
 macro_line|#endif
 eof

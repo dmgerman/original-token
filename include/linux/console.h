@@ -337,8 +337,8 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;The interface for a console, or any other device that&n; *&t;wants to capture console messages (printer driver?)&n; */
 DECL|macro|CON_PRINTBUFFER
 mdefine_line|#define CON_PRINTBUFFER&t;(1)
-DECL|macro|CON_FIRST
-mdefine_line|#define CON_FIRST&t;(2)
+DECL|macro|CON_CONSDEV
+mdefine_line|#define CON_CONSDEV&t;(2) /* Last on the command line */
 DECL|macro|CON_ENABLED
 mdefine_line|#define CON_ENABLED&t;(4)
 DECL|struct|console

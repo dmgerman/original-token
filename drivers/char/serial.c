@@ -13848,7 +13848,7 @@ c_cond
 (paren
 id|sercons.flags
 op_amp
-id|CON_FIRST
+id|CON_CONSDEV
 )paren
 (brace
 r_for

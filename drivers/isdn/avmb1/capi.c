@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: capi.c,v 1.4 1997/05/27 15:17:50 fritz Exp $&n; *&n; * CAPI 2.0 Interface for Linux&n; *&n; * Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capi.c,v $&n; * Revision 1.4  1997/05/27 15:17:50  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.3  1997/05/18 09:24:14  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.2  1997/03/05 21:17:59  fritz&n; * Added capi_poll for compiling under 2.1.27&n; *&n; * Revision 1.1  1997/03/04 21:50:29  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
+multiline_comment|/*&n; * $Id: capi.c,v 1.10 1998/02/13 07:09:13 calle Exp $&n; *&n; * CAPI 2.0 Interface for Linux&n; *&n; * Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capi.c,v $&n; * Revision 1.10  1998/02/13 07:09:13  calle&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.9  1998/01/31 11:14:44  calle&n; * merged changes to 2.0 tree, prepare 2.1.82 to work.&n; *&n; * Revision 1.8  1997/11/04 06:12:08  calle&n; * capi.c: new read/write in file_ops since 2.1.60&n; * capidrv.c: prepared isdnlog interface for d2-trace in newer firmware.&n; * capiutil.c: needs config.h (CONFIG_ISDN_DRV_AVMB1_VERBOSE_REASON)&n; * compat.h: added #define LinuxVersionCode&n; *&n; * Revision 1.7  1997/10/11 10:29:34  calle&n; * llseek() parameters changed in 2.1.56.&n; *&n; * Revision 1.6  1997/10/01 09:21:15  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.5  1997/08/21 23:11:55  fritz&n; * Added changes for kernels &gt;= 2.1.45&n; *&n; * Revision 1.4  1997/05/27 15:17:50  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.3  1997/05/18 09:24:14  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.2  1997/03/05 21:17:59  fritz&n; * Added capi_poll for compiling under 2.1.27&n; *&n; * Revision 1.1  1997/03/04 21:50:29  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -12,21 +12,19 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;linux/kernelcapi.h&gt;
-macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &quot;compat.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capidev.h&quot;
-macro_line|#ifdef HAS_NEW_SYMTAB
 id|MODULE_AUTHOR
 c_func
 (paren
 l_string|&quot;Carsten Paeth (calle@calle.in-berlin.de)&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* -------- driver information -------------------------------------- */
 DECL|variable|capi_major
 r_int
@@ -35,7 +33,6 @@ op_assign
 l_int|68
 suffix:semicolon
 multiline_comment|/* allocated */
-macro_line|#ifdef HAS_NEW_SYMTAB
 id|MODULE_PARM
 c_func
 (paren
@@ -44,7 +41,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* -------- global variables ---------------------------------------- */
 DECL|variable|capidevs
 r_static
@@ -176,7 +172,8 @@ suffix:semicolon
 multiline_comment|/* -------- file_operations ----------------------------------------- */
 DECL|function|capi_llseek
 r_static
-id|loff_t
+r_int
+r_int
 id|capi_llseek
 c_func
 (paren
@@ -185,7 +182,8 @@ id|file
 op_star
 id|file
 comma
-id|loff_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -217,9 +215,16 @@ id|count
 comma
 id|loff_t
 op_star
-id|off
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_int
 r_int
 id|minor
@@ -227,7 +232,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
+id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_struct
@@ -245,6 +250,18 @@ id|retval
 suffix:semicolon
 r_int
 id|copied
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppos
+op_ne
+op_amp
+id|file-&gt;f_pos
+)paren
+r_return
+op_minus
+id|ESPIPE
 suffix:semicolon
 r_if
 c_cond
@@ -481,9 +498,16 @@ id|count
 comma
 id|loff_t
 op_star
-id|off
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_int
 r_int
 id|minor
@@ -491,7 +515,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
+id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_struct
@@ -515,6 +539,18 @@ id|subcmd
 suffix:semicolon
 id|__u16
 id|mlen
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppos
+op_ne
+op_amp
+id|file-&gt;f_pos
+)paren
+r_return
+op_minus
+id|ESPIPE
 suffix:semicolon
 r_if
 c_cond
@@ -741,6 +777,7 @@ id|mask
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02012d)
 r_int
 r_int
 id|minor
@@ -751,6 +788,18 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
+macro_line|#else
+r_int
+r_int
+id|minor
+op_assign
+id|MINOR
+c_func
+(paren
+id|file-&gt;f_inode-&gt;i_rdev
+)paren
+suffix:semicolon
+macro_line|#endif
 r_struct
 id|capidev
 op_star
@@ -1717,7 +1766,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-id|CLOSETYPE
+r_int
 DECL|function|capi_release
 id|capi_release
 c_func
@@ -1779,7 +1828,7 @@ id|minor
 )paren
 suffix:semicolon
 r_return
-id|CLOSEVAL
+l_int|0
 suffix:semicolon
 )brace
 id|cdev
@@ -1847,7 +1896,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-id|CLOSEVAL
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|capi_fops

@@ -308,12 +308,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|stack
-r_int
-r_int
-op_star
-id|stack
-suffix:semicolon
 multiline_comment|/*&n; * sys_iopl has to be used when you want to access the IO ports&n; * beyond the 0x3ff range: to get the full 65536 ports bitmapped&n; * you&squot;d need 8kB of bitmaps/process, which is a bit excessive.&n; *&n; * Here we just change the eflags value on the stack: we allow&n; * only the super-user to do it. This depends on the stack-layout&n; * on system-call entry - see also fork() and the signal handling&n; * code.&n; */
 DECL|function|sys_iopl
 id|asmlinkage
