@@ -463,7 +463,12 @@ id|inode-&gt;i_ino
 comma
 id|inode-&gt;i_nlink
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 comma
 id|inode-&gt;i_generation
 comma

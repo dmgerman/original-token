@@ -484,6 +484,13 @@ c_func
 id|iput
 )paren
 suffix:semicolon
+DECL|variable|force_delete
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|force_delete
+)paren
+suffix:semicolon
 DECL|variable|follow_up
 id|EXPORT_SYMBOL
 c_func

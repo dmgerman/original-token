@@ -525,8 +525,12 @@ id|inode
 op_or_assign
 id|NFS_INO_FLUSH
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|out
 suffix:colon

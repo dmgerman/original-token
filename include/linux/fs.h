@@ -802,8 +802,7 @@ r_int
 id|i_ino
 suffix:semicolon
 DECL|member|i_count
-r_int
-r_int
+id|atomic_t
 id|i_count
 suffix:semicolon
 DECL|member|i_dev
@@ -4527,6 +4526,16 @@ mdefine_line|#define user_path_walk_link(name,nd) __user_walk(name, LOOKUP_POSIT
 r_extern
 r_void
 id|iput
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|force_delete
 c_func
 (paren
 r_struct

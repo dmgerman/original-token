@@ -1798,36 +1798,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|inode-&gt;i_count
-)paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;nfsd: inode count == 0!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dentry-&gt;d_count
-)paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;nfsd: wheee, %s/%s d_count == 0!&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|filp-&gt;f_op
 op_logical_and
 id|filp-&gt;f_op-&gt;release
@@ -1849,14 +1819,12 @@ id|filp-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
-(brace
 id|put_write_access
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Sync a file&n; * As this calls fsync (not fdatasync) there is no need for a write_inode&n; * after it.&n; */
 r_void

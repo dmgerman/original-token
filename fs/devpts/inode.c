@@ -84,7 +84,12 @@ id|i
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 op_ne
 l_int|1
 )paren
@@ -95,7 +100,12 @@ l_string|&quot;devpts_put_super: badness: entry %d count %d&bslash;n&quot;
 comma
 id|i
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 )paren
 suffix:semicolon
 id|inode-&gt;i_nlink

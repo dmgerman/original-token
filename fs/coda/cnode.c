@@ -602,12 +602,17 @@ id|inode
 op_member_access_from_pointer
 id|i_ino
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 (paren
 op_star
 id|inode
 )paren
 op_member_access_from_pointer
 id|i_count
+)paren
 comma
 id|coda_f2s
 c_func

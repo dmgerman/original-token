@@ -21,16 +21,6 @@ mdefine_line|#define SMBFS_PARANOIA 1
 multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
 r_static
 r_void
-id|smb_put_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
 id|smb_delete_inode
 c_func
 (paren
@@ -86,7 +76,7 @@ op_assign
 (brace
 id|put_inode
 suffix:colon
-id|smb_put_inode
+id|force_delete
 comma
 id|delete_inode
 suffix:colon
@@ -829,39 +819,6 @@ id|out
 suffix:colon
 r_return
 id|error
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * This routine is called for every iput(). We clear i_nlink&n; * on the last use to force a call to delete_inode.&n; */
-r_static
-r_void
-DECL|function|smb_put_inode
-id|smb_put_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-)paren
-(brace
-id|pr_debug
-c_func
-(paren
-l_string|&quot;smb_put_inode: count = %d&bslash;n&quot;
-comma
-id|ino-&gt;i_count
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ino-&gt;i_count
-op_eq
-l_int|1
-)paren
-id|ino-&gt;i_nlink
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine is called when i_nlink == 0 and i_count goes to 0.&n; * All blocking cleanup operations need to go here to avoid races.&n; */

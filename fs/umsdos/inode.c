@@ -128,7 +128,12 @@ id|inode-&gt;i_ino
 comma
 id|inode-&gt;u.umsdos_i.pos
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -151,7 +156,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 op_eq
 l_int|1
 )paren

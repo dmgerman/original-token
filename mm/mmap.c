@@ -1180,6 +1180,14 @@ c_func
 id|vma
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|free_vma
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * merge_segments may merge our vma, so we can&squot;t refer to it&n;&t; * after the call.  Save the values we need now ...&n;&t; */
 id|flags

@@ -1656,8 +1656,12 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * We&squot;ve found it OK.  Now hash the dentry with the inode.&n;&t; */
 id|out_add
 suffix:colon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|d_add
 (paren

@@ -980,7 +980,12 @@ r_int
 )paren
 id|filp-&gt;f_pos
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
+)paren
 )paren
 suffix:semicolon
 id|cb.pl

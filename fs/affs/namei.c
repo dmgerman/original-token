@@ -2575,8 +2575,12 @@ c_func
 id|oldinode
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|oldinode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|d_instantiate
 c_func

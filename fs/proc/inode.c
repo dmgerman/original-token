@@ -128,31 +128,6 @@ c_func
 suffix:semicolon
 )brace
 )brace
-DECL|function|proc_put_inode
-r_static
-r_void
-id|proc_put_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-multiline_comment|/*&n;&t; * Kill off unused inodes ... VFS will unhash and&n;&t; * delete the inode if we set i_nlink to zero.&n;&t; */
-r_if
-c_cond
-(paren
-id|inode-&gt;i_count
-op_eq
-l_int|1
-)paren
-id|inode-&gt;i_nlink
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Decrement the use count of the proc_dir_entry.&n; */
 DECL|function|proc_delete_inode
 r_static
@@ -311,7 +286,7 @@ id|proc_read_inode
 comma
 id|put_inode
 suffix:colon
-id|proc_put_inode
+id|force_delete
 comma
 id|delete_inode
 suffix:colon

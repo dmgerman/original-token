@@ -424,7 +424,12 @@ l_string|&quot;dput on ino: %ld, icount %d, dcount %d&bslash;n&quot;
 comma
 id|target_inode-&gt;i_ino
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|target_inode-&gt;i_count
+)paren
 comma
 id|nd.dentry-&gt;d_count
 )paren

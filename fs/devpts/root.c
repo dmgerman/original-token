@@ -528,8 +528,12 @@ c_cond
 (paren
 id|dentry-&gt;d_inode
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dentry-&gt;d_inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|d_add
 c_func

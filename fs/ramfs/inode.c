@@ -696,8 +696,12 @@ suffix:semicolon
 id|inode-&gt;i_nlink
 op_increment
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 multiline_comment|/* New dentry reference */
 id|dget

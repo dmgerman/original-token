@@ -1337,7 +1337,12 @@ c_cond
 id|i-&gt;i_hpfs_rddir_off
 op_logical_and
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|i-&gt;i_count
+)paren
 )paren
 (brace
 r_if
