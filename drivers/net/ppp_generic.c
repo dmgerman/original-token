@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/ppp_defs.h&gt;
@@ -2279,6 +2280,13 @@ id|ppp_release
 suffix:semicolon
 DECL|macro|PPP_MAJOR
 mdefine_line|#define PPP_MAJOR&t;108
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* Called at boot time if ppp is compiled into the kernel,&n;   or at module load time (from init_module) if compiled as a module. */
 DECL|function|ppp_init
 r_int
@@ -2328,7 +2336,7 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 id|err
 op_assign
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|PPP_MAJOR
@@ -2351,6 +2359,38 @@ id|KERN_ERR
 l_string|&quot;failed to register PPP device (%d)&bslash;n&quot;
 comma
 id|err
+)paren
+suffix:semicolon
+id|devfs_handle
+op_assign
+id|devfs_register
+(paren
+l_int|NULL
+comma
+l_string|&quot;ppp&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_NONE
+comma
+id|PPP_MAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|ppp_device_fops
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#ifndef MODULE
@@ -6947,7 +6987,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|PPP_MAJOR
@@ -6962,6 +7002,11 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;PPP: failed to unregister PPP device&bslash;n&quot;
+)paren
+suffix:semicolon
+id|devfs_unregister
+(paren
+id|devfs_handle
 )paren
 suffix:semicolon
 )brace

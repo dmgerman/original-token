@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -692,7 +693,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|MAJOR_NR
@@ -709,6 +710,36 @@ c_func
 l_string|&quot;unable to get major %d for joystick devices&bslash;n&quot;
 comma
 id|MAJOR_NR
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+l_int|NULL
+comma
+l_string|&quot;joysticks/digital%u&quot;
+comma
+l_int|2
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+l_int|128
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|atari_joystick_fops
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

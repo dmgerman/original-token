@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *           Copyright (C) 1993, 1994, 1995, 1999 Eric Youngdale&n; *&n; *  adapted from:&n; *      sd.c Copyright (C) 1992 Drew Eckhardt&n; *      Linux scsi disk driver by&n; *              Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@andante.org to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *          Modified by Eric Youngdale eric@andante.org to support loadable&n; *          low-level scsi drivers.&n; *&n; *       Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *       provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; *       Modified by Jens Axboe &lt;axboe@image.dk&gt; - Uniform sr_packet()&n; *       interface, capabilities probe additions, ioctl cleanups, etc.&n; *&n; */
+multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *           Copyright (C) 1993, 1994, 1995, 1999 Eric Youngdale&n; *&n; *  adapted from:&n; *      sd.c Copyright (C) 1992 Drew Eckhardt&n; *      Linux scsi disk driver by&n; *              Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@andante.org to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *          Modified by Eric Youngdale eric@andante.org to support loadable&n; *          low-level scsi drivers.&n; *&n; *       Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *       provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; *       Modified by Jens Axboe &lt;axboe@image.dk&gt; - Uniform sr_packet()&n; *       interface, capabilities probe additions, ioctl cleanups, etc.&n; *&n; *       Modified by Richard Gooch &lt;rgooch@atnf.csiro.au&gt; to support devfs&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3122,7 +3122,7 @@ id|sr_registered
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -3593,6 +3593,48 @@ comma
 id|name
 )paren
 suffix:semicolon
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|cdi.de
+op_assign
+id|devfs_register
+(paren
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|device-&gt;de
+comma
+l_string|&quot;cd&quot;
+comma
+l_int|2
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+id|i
+comma
+id|S_IFBLK
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUGO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|cdrom_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|register_cdrom
 c_func
 (paren
@@ -3813,7 +3855,7 @@ op_amp
 id|sr_template
 )paren
 suffix:semicolon
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/shmiq.h&gt;
 macro_line|#include &lt;asm/mman.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1720,7 +1721,8 @@ id|printk
 l_string|&quot;SHMIQ setup&bslash;n&quot;
 )paren
 suffix:semicolon
-id|register_chrdev
+id|devfs_register_chrdev
+c_func
 (paren
 id|SHMIQ_MAJOR
 comma
@@ -1728,6 +1730,66 @@ l_string|&quot;shmiq&quot;
 comma
 op_amp
 id|shmiq_fops
+)paren
+suffix:semicolon
+id|devfs_register
+(paren
+l_int|NULL
+comma
+l_string|&quot;shmiq&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|SHMIQ_MAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|shmiq_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+l_int|NULL
+comma
+l_string|&quot;qcntl%u&quot;
+comma
+l_int|2
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|SHMIQ_MAJOR
+comma
+l_int|1
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|shmiq_fops
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

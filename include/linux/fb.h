@@ -547,6 +547,7 @@ mdefine_line|#define GET_FB_IDX(node)&t;(MINOR(node))
 macro_line|#endif
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 r_struct
 id|fb_info
 suffix:semicolon
@@ -892,6 +893,16 @@ l_int|40
 )braket
 suffix:semicolon
 multiline_comment|/* default font name */
+DECL|member|devfs_handle
+id|devfs_handle_t
+id|devfs_handle
+suffix:semicolon
+multiline_comment|/* Devfs handle for new name         */
+DECL|member|devfs_lhandle
+id|devfs_handle_t
+id|devfs_lhandle
+suffix:semicolon
+multiline_comment|/* Devfs handle for compat. symlink  */
 DECL|member|changevar
 r_int
 (paren
@@ -1494,7 +1505,6 @@ r_int
 id|unregister_framebuffer
 c_func
 (paren
-r_const
 r_struct
 id|fb_info
 op_star

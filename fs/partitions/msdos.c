@@ -1497,6 +1497,11 @@ id|dev
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|warn_no_part
+)paren
 id|printk
 c_func
 (paren

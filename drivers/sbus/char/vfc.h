@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_VFC_H_
 DECL|macro|_LINUX_VFC_H_
 mdefine_line|#define _LINUX_VFC_H_
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 multiline_comment|/*&n; * The control register for the vfc is at offset 0x4000&n; * The first field ram bank is located at offset 0x5000&n; * The second field ram bank is at offset 0x7000&n; * i2c_reg address the Phillips PCF8584(see notes in vfc_i2c.c) &n; *    data and transmit register.&n; * i2c_s1 controls register s1 of the PCF8584&n; * i2c_write seems to be similar to i2c_write but I am not &n; *    quite sure why sun uses it&n; * &n; * I am also not sure whether or not you can read the fram bank as a&n; * whole or whether you must read each word individually from offset&n; * 0x5000 as soon as I figure it out I will update this file */
 DECL|struct|vfc_regs
 r_struct
@@ -221,6 +222,10 @@ DECL|member|control_reg
 r_int
 r_int
 id|control_reg
+suffix:semicolon
+DECL|member|de
+id|devfs_handle_t
+id|de
 suffix:semicolon
 DECL|member|device_lock_sem
 r_struct

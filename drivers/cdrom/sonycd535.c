@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 macro_line|#include &lt;asm/system.h&gt;
@@ -6039,10 +6040,40 @@ comma
 id|sony_buffer_size
 )paren
 suffix:semicolon
+id|devfs_register
+(paren
+l_int|NULL
+comma
+id|CDU535_HANDLE
+comma
+l_int|0
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+l_int|0
+comma
+id|S_IFBLK
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUGO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|cdu_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -6544,10 +6575,32 @@ op_star
 id|sony_toc
 )paren
 suffix:semicolon
+id|devfs_unregister
+c_func
+(paren
+id|devfs_find_handle
+c_func
+(paren
+l_int|NULL
+comma
+id|CDU535_HANDLE
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|DEVFS_SPECIAL_BLK
+comma
+l_int|0
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR

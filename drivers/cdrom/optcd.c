@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR OPTICS_CDROM_MAJOR
@@ -8343,7 +8344,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -8371,6 +8372,36 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|devfs_register
+(paren
+l_int|NULL
+comma
+l_string|&quot;optcd&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+l_int|0
+comma
+id|S_IFBLK
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUGO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|opt_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|hardsect_size
 (braket
 id|MAJOR_NR
@@ -8459,10 +8490,32 @@ c_func
 r_void
 )paren
 (brace
+id|devfs_unregister
+c_func
+(paren
+id|devfs_find_handle
+c_func
+(paren
+l_int|NULL
+comma
+l_string|&quot;optcd&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|DEVFS_SPECIAL_BLK
+comma
+l_int|0
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR

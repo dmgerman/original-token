@@ -27,6 +27,7 @@ macro_line|#include &lt;linux/major.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MITSUMI_X_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 multiline_comment|/* for compatible parameter passing with &quot;insmod&quot; */
 DECL|macro|mcdx_drive_map
 mdefine_line|#define&t;mcdx_drive_map mcdx
@@ -4302,7 +4303,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -4817,7 +4818,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -5133,7 +5134,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR

@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -4088,6 +4089,13 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|function|slm_init
 r_int
 id|slm_init
@@ -4099,7 +4107,7 @@ r_void
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|MAJOR_NR
@@ -4151,7 +4159,7 @@ id|KERN_ERR
 l_string|&quot;Unable to get SLM ST-Ram buffer.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|MAJOR_NR
@@ -4171,6 +4179,49 @@ suffix:semicolon
 id|SLMState
 op_assign
 id|IDLE
+suffix:semicolon
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;slm&quot;
+comma
+l_int|3
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+id|MAX_SLM
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|slm_fops
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -4239,10 +4290,15 @@ c_func
 r_void
 )paren
 (brace
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|MAJOR_NR

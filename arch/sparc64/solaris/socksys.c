@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/termios.h&gt;
 macro_line|#include &quot;conv.h&quot;
@@ -689,6 +690,13 @@ id|socksys_release
 comma
 )brace
 suffix:semicolon
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 r_int
 id|__init
 DECL|function|init_socksys
@@ -766,7 +774,7 @@ id|close
 suffix:semicolon
 id|ret
 op_assign
-id|register_chrdev
+id|devfs_register_chrdev
 (paren
 l_int|30
 comma
@@ -822,6 +830,38 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_register
+(paren
+l_int|NULL
+comma
+l_string|&quot;socksys&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_NONE
+comma
+l_int|30
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|socksys_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|file
 op_assign
 id|fcheck
@@ -869,7 +909,8 @@ r_void
 r_if
 c_cond
 (paren
-id|unregister_chrdev
+id|devfs_unregister_chrdev
+c_func
 (paren
 l_int|30
 comma
@@ -879,6 +920,11 @@ l_string|&quot;socksys&quot;
 id|printk
 (paren
 l_string|&quot;Couldn&squot;t unregister socksys character device&bslash;n&quot;
+)paren
+suffix:semicolon
+id|devfs_unregister
+(paren
+id|devfs_handle
 )paren
 suffix:semicolon
 )brace

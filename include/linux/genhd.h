@@ -100,6 +100,8 @@ id|packed
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+macro_line|#  include &lt;linux/devfs_fs_kernel.h&gt;
 DECL|struct|hd_struct
 r_struct
 id|hd_struct
@@ -117,8 +119,15 @@ r_int
 id|type
 suffix:semicolon
 multiline_comment|/* currently RAID or normal */
+DECL|member|de
+id|devfs_handle_t
+id|de
+suffix:semicolon
+multiline_comment|/* primary (master) devfs entry  */
 )brace
 suffix:semicolon
+DECL|macro|GENHD_FL_REMOVABLE
+mdefine_line|#define GENHD_FL_REMOVABLE  1
 DECL|struct|gendisk
 r_struct
 id|gendisk
@@ -175,8 +184,27 @@ id|gendisk
 op_star
 id|next
 suffix:semicolon
+DECL|member|fops
+r_struct
+id|block_device_operations
+op_star
+id|fops
+suffix:semicolon
+DECL|member|de_arr
+id|devfs_handle_t
+op_star
+id|de_arr
+suffix:semicolon
+multiline_comment|/* one per physical disc */
+DECL|member|flags
+r_char
+op_star
+id|flags
+suffix:semicolon
+multiline_comment|/* one per physical disc */
 )brace
 suffix:semicolon
+macro_line|#endif  /*  __KERNEL__  */
 macro_line|#ifdef CONFIG_SOLARIS_X86_PARTITION
 DECL|macro|SOLARIS_X86_NUMSLICE
 mdefine_line|#define SOLARIS_X86_NUMSLICE&t;8
@@ -744,6 +772,22 @@ comma
 r_char
 op_star
 id|buf
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|devfs_register_partitions
+(paren
+r_struct
+id|gendisk
+op_star
+id|dev
+comma
+r_int
+id|minor
+comma
+r_int
+id|unregister
 )paren
 suffix:semicolon
 r_int

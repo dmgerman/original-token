@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/drivers/char/pty.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Added support for a Unix98-style ptmx device.&n; *    -- C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, 14-Jan-1998&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;&t;/* For EXPORT_SYMBOL */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -11,12 +12,44 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|BUILDING_PTY_C
 mdefine_line|#define BUILDING_PTY_C 1
 macro_line|#include &lt;linux/devpts_fs.h&gt;
+r_extern
+r_void
+id|tty_register_devfs
+(paren
+r_struct
+id|tty_driver
+op_star
+id|driver
+comma
+r_int
+r_int
+id|flags
+comma
+r_int
+r_int
+id|minor
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|tty_unregister_devfs
+(paren
+r_struct
+id|tty_driver
+op_star
+id|driver
+comma
+r_int
+id|minor
+)paren
+suffix:semicolon
 DECL|struct|pty_struct
 r_struct
 id|pty_struct
@@ -398,6 +431,17 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+id|tty_unregister_devfs
+(paren
+op_amp
+id|tty-&gt;link-&gt;driver
+comma
+id|MINOR
+(paren
+id|tty-&gt;device
+)paren
+)paren
+suffix:semicolon
 id|tty_vhangup
 c_func
 (paren
@@ -1317,6 +1361,33 @@ op_amp
 id|tty-&gt;flags
 )paren
 suffix:semicolon
+multiline_comment|/*  register a slave for the master  */
+r_if
+c_cond
+(paren
+id|tty-&gt;driver.major
+op_eq
+id|PTY_MASTER_MAJOR
+)paren
+id|tty_register_devfs
+c_func
+(paren
+op_amp
+id|tty-&gt;link-&gt;driver
+comma
+id|DEVFS_FL_WAIT
+comma
+id|tty-&gt;link-&gt;driver.minor_start
+op_plus
+id|MINOR
+c_func
+(paren
+id|tty-&gt;device
+)paren
+op_minus
+id|tty-&gt;driver.minor_start
+)paren
+suffix:semicolon
 id|retval
 op_assign
 l_int|0
@@ -1440,7 +1511,7 @@ l_string|&quot;pty_master&quot;
 suffix:semicolon
 id|pty_driver.name
 op_assign
-l_string|&quot;pty&quot;
+l_string|&quot;pty/m%d&quot;
 suffix:semicolon
 id|pty_driver.major
 op_assign
@@ -1564,7 +1635,7 @@ l_int|0
 suffix:semicolon
 id|pty_slave_driver.name
 op_assign
-l_string|&quot;ttyp&quot;
+l_string|&quot;pty/s%d&quot;
 suffix:semicolon
 id|pty_slave_driver.subtype
 op_assign
@@ -1589,6 +1660,11 @@ op_or
 id|CS8
 op_or
 id|CREAD
+suffix:semicolon
+multiline_comment|/* Slave ptys are registered when their corresponding master pty&n;&t; * is opened, and unregistered when the pair is closed.&n;&t; */
+id|pty_slave_driver.flags
+op_or_assign
+id|TTY_DRIVER_NO_DEVFS
 suffix:semicolon
 id|pty_slave_driver.table
 op_assign
@@ -1650,6 +1726,17 @@ id|pty_bsd_ioctl
 suffix:semicolon
 multiline_comment|/* Unix98 devices */
 macro_line|#ifdef CONFIG_UNIX98_PTYS
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;pts&quot;
+comma
+l_int|3
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1761,6 +1848,15 @@ id|ptm_driver
 id|i
 )braket
 dot
+id|flags
+op_or_assign
+id|TTY_DRIVER_NO_DEVFS
+suffix:semicolon
+id|ptm_driver
+(braket
+id|i
+)braket
+dot
 id|table
 op_assign
 id|ptm_table
@@ -1847,7 +1943,7 @@ id|i
 dot
 id|name
 op_assign
-l_string|&quot;pts&quot;
+l_string|&quot;pts/%d&quot;
 suffix:semicolon
 id|pts_driver
 (braket

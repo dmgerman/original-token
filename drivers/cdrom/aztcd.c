@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#ifndef AZT_KERNEL_PRIOR_2_1
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#endif
@@ -7983,10 +7984,40 @@ id|EIO
 suffix:semicolon
 )brace
 )brace
+id|devfs_register
+(paren
+l_int|NULL
+comma
+l_string|&quot;aztcd&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+l_int|0
+comma
+id|S_IFBLK
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUGO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|azt_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -8129,11 +8160,33 @@ c_func
 r_void
 )paren
 (brace
+id|devfs_unregister
+c_func
+(paren
+id|devfs_find_handle
+c_func
+(paren
+l_int|NULL
+comma
+l_string|&quot;aztcd&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|DEVFS_SPECIAL_BLK
+comma
+l_int|0
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR

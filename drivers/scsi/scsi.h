@@ -3,6 +3,7 @@ macro_line|#ifndef _SCSI_H
 DECL|macro|_SCSI_H
 mdefine_line|#define _SCSI_H
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_SCSI_LOGGING */
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/*&n; * Some of the public constants are being moved to this file.&n; * We include it here so that what came from where is transparent.&n; */
 macro_line|#include &lt;scsi/scsi.h&gt;
@@ -1004,6 +1005,11 @@ op_star
 id|hostdata
 suffix:semicolon
 multiline_comment|/* available to low-level driver */
+DECL|member|de
+id|devfs_handle_t
+id|de
+suffix:semicolon
+multiline_comment|/* directory for the device      */
 DECL|member|type
 r_char
 id|type

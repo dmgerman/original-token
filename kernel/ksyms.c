@@ -1308,6 +1308,13 @@ c_func
 id|sync_dev
 )paren
 suffix:semicolon
+DECL|variable|devfs_register_partitions
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|devfs_register_partitions
+)paren
+suffix:semicolon
 DECL|variable|blkdev_open
 id|EXPORT_SYMBOL
 c_func

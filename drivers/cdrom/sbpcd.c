@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt; 
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
@@ -31938,6 +31939,13 @@ suffix:semicolon
 )brace
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; *  Test for presence of drive and initialize it.&n; *  Called once at boot or load time.&n; */
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|__SBPCD_INIT
 r_int
@@ -31957,6 +31965,12 @@ r_void
 )paren
 macro_line|#endif MODULE
 (brace
+r_char
+id|nbuff
+(braket
+l_int|16
+)braket
+suffix:semicolon
 r_int
 id|i
 op_assign
@@ -32792,7 +32806,7 @@ macro_line|#endif SOUND_BASE
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -32872,6 +32886,19 @@ comma
 l_int|4
 comma
 id|major_name
+)paren
+suffix:semicolon
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;sbp&quot;
+comma
+l_int|0
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_for
@@ -33038,7 +33065,7 @@ r_if
 c_cond
 (paren
 (paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -33245,6 +33272,56 @@ id|sbpcd_infop-&gt;name
 )paren
 )paren
 suffix:semicolon
+id|sprintf
+(paren
+id|nbuff
+comma
+l_string|&quot;c%dt%d/cd&quot;
+comma
+id|SBPCD_ISSUE
+op_minus
+l_int|1
+comma
+id|D_S
+(braket
+id|j
+)braket
+dot
+id|drv_id
+)paren
+suffix:semicolon
+id|sbpcd_infop-&gt;de
+op_assign
+id|devfs_register
+(paren
+id|devfs_handle
+comma
+id|nbuff
+comma
+l_int|0
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+id|j
+comma
+id|S_IFBLK
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUGO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|cdrom_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -33326,7 +33403,7 @@ r_if
 c_cond
 (paren
 (paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -33358,6 +33435,11 @@ c_func
 id|CDo_command
 comma
 l_int|4
+)paren
+suffix:semicolon
+id|devfs_unregister
+(paren
+id|devfs_handle
 )paren
 suffix:semicolon
 r_for

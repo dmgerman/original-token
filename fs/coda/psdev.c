@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
@@ -1369,6 +1370,13 @@ r_return
 id|status
 suffix:semicolon
 )brace
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|function|init_coda_psdev
 r_int
 id|init_coda_psdev
@@ -1380,7 +1388,7 @@ r_void
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|CODA_PSDEV_MAJOR
@@ -1406,6 +1414,49 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;coda&quot;
+comma
+l_int|4
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+id|MAX_CODADEVS
+comma
+id|DEVFS_FL_NONE
+comma
+id|CODA_PSDEV_MAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|coda_psdev_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -1561,7 +1612,12 @@ l_string|&quot;coda: failed to unregister filesystem&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|unregister_chrdev
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|CODA_PSDEV_MAJOR

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
@@ -3286,6 +3287,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_extern
+r_struct
+id|block_device_operations
+id|hd_fops
+suffix:semicolon
 DECL|variable|hd_gendisk
 r_static
 r_struct
@@ -3320,7 +3326,12 @@ l_int|NULL
 comma
 multiline_comment|/* internal use, not presently used */
 l_int|NULL
+comma
 multiline_comment|/* next */
+op_amp
+id|hd_fops
+comma
+multiline_comment|/* file operations */
 )brace
 suffix:semicolon
 DECL|function|hd_interrupt
@@ -3882,7 +3893,7 @@ r_void
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR

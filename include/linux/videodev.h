@@ -7,6 +7,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 DECL|struct|video_device
 r_struct
 id|video_device
@@ -181,6 +182,10 @@ suffix:semicolon
 DECL|member|minor
 r_int
 id|minor
+suffix:semicolon
+DECL|member|devfs_handle
+id|devfs_handle_t
+id|devfs_handle
 suffix:semicolon
 )brace
 suffix:semicolon

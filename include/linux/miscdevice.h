@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_MISCDEVICE_H
 DECL|macro|_LINUX_MISCDEVICE_H
 mdefine_line|#define _LINUX_MISCDEVICE_H
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 DECL|macro|BUSMOUSE_MINOR
 mdefine_line|#define BUSMOUSE_MINOR 0
 DECL|macro|PSMOUSE_MINOR
@@ -87,6 +88,10 @@ id|next
 comma
 op_star
 id|prev
+suffix:semicolon
+DECL|member|devfs_handle
+id|devfs_handle_t
+id|devfs_handle
 suffix:semicolon
 )brace
 suffix:semicolon

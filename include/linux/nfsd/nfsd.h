@@ -173,11 +173,11 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
-r_void
+r_int
 id|nfsd_racache_init
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_void
@@ -757,11 +757,6 @@ r_extern
 r_struct
 id|timeval
 id|nfssvc_boot
-suffix:semicolon
-multiline_comment|/*&n; * The number of nfsd threads.&n; */
-r_extern
-r_int
-id|nfsd_nservers
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* LINUX_NFSD_NFSD_H */

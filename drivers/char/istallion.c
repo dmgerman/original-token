@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/istallion.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_PCI
@@ -2823,6 +2824,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -2846,6 +2854,8 @@ r_int
 id|i
 comma
 id|j
+comma
+id|k
 suffix:semicolon
 macro_line|#if DEBUG
 id|printk
@@ -2944,13 +2954,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
 id|i
 op_assign
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|STL_SIOMEMMAJOR
@@ -23146,7 +23161,7 @@ multiline_comment|/*&n; *&t;Set up a character driver for the shared memory regi
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|STL_SIOMEMMAJOR
@@ -23161,6 +23176,49 @@ id|printk
 c_func
 (paren
 l_string|&quot;STALLION: failed to register serial memory device&bslash;n&quot;
+)paren
+suffix:semicolon
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;staliomem&quot;
+comma
+l_int|9
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+l_int|4
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|STL_SIOMEMMAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|stli_fsiomem
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Set up the tty driver structure and register us as a driver.&n; *&t;Also setup the callout tty device.&n; */

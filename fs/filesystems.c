@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
 macro_line|#include &lt;linux/sysv_fs.h&gt;
@@ -123,6 +124,12 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|init_devfs_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*  Header file may make this empty  */
 macro_line|#ifdef CONFIG_LOCKD
 id|nlmxdr_init
 c_func

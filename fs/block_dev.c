@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_int
@@ -2378,7 +2379,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;Return the function table of a device.&n;&t;Load the driver if needed.&n;*/
 DECL|function|get_blkfops
-r_static
 r_const
 r_struct
 id|block_device_operations
@@ -2704,6 +2704,8 @@ r_struct
 id|block_device_operations
 op_star
 id|bdops
+op_assign
+l_int|NULL
 suffix:semicolon
 r_struct
 id|super_block
@@ -2722,10 +2724,9 @@ r_if
 c_cond
 (paren
 id|i
-op_ge
+OL
 id|MAX_BLKDEV
-op_logical_or
-(paren
+)paren
 id|bdops
 op_assign
 id|blkdevs
@@ -2734,7 +2735,57 @@ id|i
 )braket
 dot
 id|bdops
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bdops
+op_eq
+l_int|NULL
 )paren
+(brace
+id|devfs_handle_t
+id|de
+suffix:semicolon
+id|de
+op_assign
+id|devfs_find_handle
+(paren
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+id|i
+comma
+id|MINOR
+(paren
+id|dev
+)paren
+comma
+id|DEVFS_SPECIAL_BLK
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|de
+)paren
+id|bdops
+op_assign
+id|devfs_get_ops
+(paren
+id|de
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|bdops
 op_eq
 l_int|NULL
 )paren

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -1391,6 +1392,13 @@ suffix:semicolon
 macro_line|#endif
 "&f;"
 multiline_comment|/* ---------- Initialization stuff ---------- */
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -1440,7 +1448,7 @@ l_int|0
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|cosa_major
@@ -1476,7 +1484,7 @@ op_logical_neg
 (paren
 id|cosa_major
 op_assign
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 l_int|0
@@ -1566,6 +1574,49 @@ id|i
 )braket
 )paren
 suffix:semicolon
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;cosa&quot;
+comma
+l_int|4
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+id|nr_cards
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|cosa_major
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|cosa_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1580,7 +1631,7 @@ id|KERN_WARNING
 l_string|&quot;cosa: no devices found.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|cosa_major
@@ -1605,6 +1656,9 @@ id|cleanup_module
 r_void
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_struct
 id|cosa_data
 op_star
@@ -1615,6 +1669,11 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;Unloading the cosa module&bslash;n&quot;
+)paren
+suffix:semicolon
+id|devfs_unregister
+(paren
+id|devfs_handle
 )paren
 suffix:semicolon
 r_for
@@ -1705,7 +1764,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|cosa_major

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - Vincent.Renardias@waw.com Mar 20, 1997&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; *&n; * Loadable modules and other fixes by AK, 1998&n; *&n; * Make real block number available to downstream transfer functions, enables&n; * CBC (and relatives) mode encryption requiring unique IVs per data block. &n; * Reed H. Petty, rhp@draper.net&n; *&n; * Maximum number of loop devices now dynamic via max_loop module parameter.&n; * Russell Kroll &lt;rkroll@exploits.org&gt; 19990701&n; * &n; * Maximum number of loop devices when compiled-in now selectable by passing&n; * max_loop=&lt;1-255&gt; to the kernel on boot.&n; * Erik I. Bols&#xfffd;, &lt;eriki@himolde.no&gt;, Oct 31, 1999&n; *&n; * Still To Fix:&n; * - Advisory locking is ignored here. &n; * - Should use an own CAP_* category instead of CAP_SYS_ADMIN &n; * - Should use the underlying filesystems/devices read function if possible&n; *   to support read ahead (and for write)&n; *&n; * WARNING/FIXME:&n; * - The block number as IV passing to low level transfer functions is broken:&n; *   it passes the underlying device&squot;s block number instead of the&n; *   offset. This makes it change for a given block when the file is &n; *   moved/restored/copied and also doesn&squot;t work over NFS. &n; * AV, Feb 12, 2000: we pass the logical block number now. It fixes the&n; *   problem above. Encryption modules that used to rely on the old scheme&n; *   should just call -&gt;i_mapping-&gt;bmap() to calculate the physical block&n; *   number.&n; */
+multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - Vincent.Renardias@waw.com Mar 20, 1997&n; *&n; * Added devfs support - Richard Gooch &lt;rgooch@atnf.csiro.au&gt; 16-Jan-1998&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; *&n; * Loadable modules and other fixes by AK, 1998&n; *&n; * Make real block number available to downstream transfer functions, enables&n; * CBC (and relatives) mode encryption requiring unique IVs per data block. &n; * Reed H. Petty, rhp@draper.net&n; *&n; * Maximum number of loop devices now dynamic via max_loop module parameter.&n; * Russell Kroll &lt;rkroll@exploits.org&gt; 19990701&n; * &n; * Maximum number of loop devices when compiled-in now selectable by passing&n; * max_loop=&lt;1-255&gt; to the kernel on boot.&n; * Erik I. Bols&#xfffd;, &lt;eriki@himolde.no&gt;, Oct 31, 1999&n; *&n; * Still To Fix:&n; * - Advisory locking is ignored here. &n; * - Should use an own CAP_* category instead of CAP_SYS_ADMIN &n; * - Should use the underlying filesystems/devices read function if possible&n; *   to support read ahead (and for write)&n; *&n; * WARNING/FIXME:&n; * - The block number as IV passing to low level transfer functions is broken:&n; *   it passes the underlying device&squot;s block number instead of the&n; *   offset. This makes it change for a given block when the file is &n; *   moved/restored/copied and also doesn&squot;t work over NFS. &n; * AV, Feb 12, 2000: we pass the logical block number now. It fixes the&n; *   problem above. Encryption modules that used to rely on the old scheme&n; *   should just call -&gt;i_mapping-&gt;bmap() to calculate the physical block&n; *   number.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/loop.h&gt;&t;&t;
 DECL|macro|MAJOR_NR
@@ -53,6 +54,14 @@ r_int
 op_star
 id|loop_blksizes
 suffix:semicolon
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/*  For the directory        */
 DECL|macro|FALSE
 mdefine_line|#define FALSE 0
 DECL|macro|TRUE
@@ -3440,7 +3449,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -3466,6 +3475,51 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;loop&quot;
+comma
+l_int|0
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+id|max_loop
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+l_int|0
+comma
+id|S_IFBLK
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+op_or
+id|S_IRGRP
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|lo_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3783,10 +3837,15 @@ c_func
 r_void
 )paren
 (brace
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR

@@ -1076,7 +1076,7 @@ suffix:semicolon
 DECL|macro|THREAD_WAKEUP
 mdefine_line|#define THREAD_WAKEUP  0
 DECL|macro|MAX_DISKNAME_LEN
-mdefine_line|#define MAX_DISKNAME_LEN 32
+mdefine_line|#define MAX_DISKNAME_LEN 64
 DECL|struct|dev_name_s
 r_typedef
 r_struct

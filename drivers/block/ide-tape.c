@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -962,6 +963,13 @@ DECL|member|drive
 id|ide_drive_t
 op_star
 id|drive
+suffix:semicolon
+DECL|member|de_r
+DECL|member|de_n
+id|devfs_handle_t
+id|de_r
+comma
+id|de_n
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Since a typical character device operation requires more&n;&t; *&t;than one packet command, we provide here enough memory&n;&t; *&t;for the maximum of interconnected packet commands.&n;&t; *&t;The packet commands are stored in the circular array pc_stack.&n;&t; *&t;pc_stack_index points to the last used entry, and warps around&n;&t; *&t;to the start when we get to the last array entry.&n;&t; *&n;&t; *&t;pc points to the current processed packet command.&n;&t; *&n;&t; *&t;failed_pc points to the last failed packet command, or contains&n;&t; *&t;NULL if we do not need to retry any packet command. This is&n;&t; *&t;required since an additional packet command is needed before the&n;&t; *&t;retry, to get detailed information on what went wrong.&n;&t; */
 DECL|member|pc
@@ -24585,6 +24593,16 @@ id|drive-&gt;driver_data
 op_assign
 l_int|NULL
 suffix:semicolon
+id|devfs_unregister
+(paren
+id|tape-&gt;de_r
+)paren
+suffix:semicolon
+id|devfs_unregister
+(paren
+id|tape-&gt;de_n
+)paren
+suffix:semicolon
 id|kfree
 (paren
 id|tape
@@ -24621,7 +24639,7 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 (paren
 id|IDETAPE_MAJOR
 comma
@@ -24984,7 +25002,7 @@ c_cond
 op_logical_neg
 id|idetape_chrdev_present
 op_logical_and
-id|register_chrdev
+id|devfs_register_chrdev
 (paren
 id|IDETAPE_MAJOR
 comma
@@ -25186,6 +25204,89 @@ id|drive
 op_assign
 id|drive
 suffix:semicolon
+id|tape-&gt;de_r
+op_assign
+id|devfs_register
+(paren
+id|drive-&gt;de
+comma
+l_string|&quot;mt&quot;
+comma
+l_int|2
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|major
+comma
+id|minor
+comma
+id|S_IFCHR
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUGO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|idetape_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|tape-&gt;de_n
+op_assign
+id|devfs_register
+(paren
+id|drive-&gt;de
+comma
+l_string|&quot;mtn&quot;
+comma
+l_int|3
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|major
+comma
+id|minor
+op_plus
+l_int|128
+comma
+id|S_IFCHR
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUGO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|idetape_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_tape
+(paren
+id|tape-&gt;de_r
+)paren
+suffix:semicolon
 id|supported
 op_increment
 suffix:semicolon
@@ -25225,7 +25326,7 @@ op_logical_neg
 id|supported
 )paren
 (brace
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 (paren
 id|IDETAPE_MAJOR
 comma

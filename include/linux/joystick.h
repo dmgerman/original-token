@@ -174,6 +174,7 @@ macro_line|#ifdef __KERNEL__
 DECL|macro|JS_BUFF_SIZE
 mdefine_line|#define JS_BUFF_SIZE&t;&t;64&t;&t;/* output buffer size */
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,2,0)
 macro_line|#error &quot;You need to use at least v2.2 Linux kernel.&quot;
 macro_line|#endif
@@ -384,6 +385,10 @@ DECL|member|name
 r_char
 op_star
 id|name
+suffix:semicolon
+DECL|member|devfs_handle
+id|devfs_handle_t
+id|devfs_handle
 suffix:semicolon
 )brace
 suffix:semicolon

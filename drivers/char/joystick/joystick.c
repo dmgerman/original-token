@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/joystick.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -3228,6 +3229,18 @@ r_return
 id|prev
 suffix:semicolon
 )brace
+r_extern
+r_struct
+id|file_operations
+id|js_fops
+suffix:semicolon
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|function|js_register_device
 r_int
 id|js_register_device
@@ -3284,6 +3297,12 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_char
+id|devfs_name
+(braket
+l_int|8
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -3514,6 +3533,47 @@ comma
 id|name
 )paren
 suffix:semicolon
+id|sprintf
+(paren
+id|devfs_name
+comma
+l_string|&quot;analogue%d&quot;
+comma
+id|number
+)paren
+suffix:semicolon
+id|curd-&gt;devfs_handle
+op_assign
+id|devfs_register
+(paren
+id|devfs_handle
+comma
+id|devfs_name
+comma
+l_int|0
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|JOYSTICK_MAJOR
+comma
+id|number
+comma
+id|S_IFCHR
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|js_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|port-&gt;devs
 (braket
 id|number
@@ -3675,6 +3735,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|devfs_unregister
+(paren
+id|dev-&gt;devfs_handle
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -3734,7 +3799,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|JOYSTICK_MAJOR
@@ -3760,6 +3825,19 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;joysticks&quot;
+comma
+l_int|9
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3970,10 +4048,15 @@ op_amp
 id|js_timer
 )paren
 suffix:semicolon
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|JOYSTICK_MAJOR

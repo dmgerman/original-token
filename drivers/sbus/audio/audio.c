@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/audioio.h&gt;
@@ -9936,7 +9937,7 @@ multiline_comment|/* Register our character device driver with the VFS. */
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|SOUND_MAJOR
@@ -9992,7 +9993,7 @@ c_func
 r_void
 )paren
 (brace
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|SOUND_MAJOR

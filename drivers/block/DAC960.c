@@ -4478,12 +4478,12 @@ multiline_comment|/*&n;    Register the Block Device Major Number for this DAC96
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MajorNumber
 comma
-l_string|&quot;rd&quot;
+l_string|&quot;dac960&quot;
 comma
 op_amp
 id|DAC960_FileOperations
@@ -4629,7 +4629,7 @@ id|MajorNumber
 suffix:semicolon
 id|Controller-&gt;GenericDiskInfo.major_name
 op_assign
-l_string|&quot;rd&quot;
+l_string|&quot;dac960&quot;
 suffix:semicolon
 id|Controller-&gt;GenericDiskInfo.minor_shift
 op_assign
@@ -4650,6 +4650,11 @@ suffix:semicolon
 id|Controller-&gt;GenericDiskInfo.next
 op_assign
 l_int|NULL
+suffix:semicolon
+id|Controller-&gt;GenericDiskInfo.fops
+op_assign
+op_amp
+id|DAC960_FileOperations
 suffix:semicolon
 multiline_comment|/*&n;    Install the Generic Disk Information structure at the end of the list.&n;  */
 r_if
@@ -4712,12 +4717,12 @@ op_plus
 id|Controller-&gt;ControllerNumber
 suffix:semicolon
 multiline_comment|/*&n;    Unregister the Block Device Major Number for this DAC960 Controller.&n;  */
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MajorNumber
 comma
-l_string|&quot;rd&quot;
+l_string|&quot;dac960&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    Remove the I/O Request Function.&n;  */

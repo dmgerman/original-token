@@ -28,4 +28,8 @@ id|kdev_t
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|warn_no_part
+suffix:semicolon
 eof

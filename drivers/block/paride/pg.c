@@ -193,6 +193,7 @@ multiline_comment|/* end of parameters */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -714,6 +715,13 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|function|pg_init
 r_int
 id|pg_init
@@ -754,7 +762,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|major
@@ -804,6 +812,49 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;pg&quot;
+comma
+l_int|2
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+l_int|4
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|major
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|pg_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -865,7 +916,12 @@ r_void
 r_int
 id|unit
 suffix:semicolon
-id|unregister_chrdev
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|major

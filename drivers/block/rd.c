@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -111,6 +112,13 @@ id|NUM_RAMDISKS
 )braket
 suffix:semicolon
 multiline_comment|/* Size in blocks of 1024 bytes */
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/*&n; * Parameters for the boot-loading of the RAM disk.  These are set by&n; * init/main.c (from arguments to the kernel command line) or from the&n; * architecture-specific setup routine (from the stored boot sector&n; * information). &n; */
 DECL|variable|rd_size
 r_int
@@ -377,7 +385,7 @@ id|ramdisk_size2
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; *  Basically, my strategy here is to set up a buffer-head which can&squot;t be&n; *  deleted, and make that my Ramdisk.  If the request is outside of the&n; *  allocated size, we must get rid of it...&n; *&n; */
+multiline_comment|/*&n; *  Basically, my strategy here is to set up a buffer-head which can&squot;t be&n; *  deleted, and make that my Ramdisk.  If the request is outside of the&n; *  allocated size, we must get rid of it...&n; *&n; * 19-JAN-1998  Richard Gooch &lt;rgooch@atnf.csiro.au&gt;  Added devfs support&n; *&n; */
 DECL|function|rd_request
 r_static
 r_void
@@ -1140,6 +1148,11 @@ id|i
 )paren
 )paren
 suffix:semicolon
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
 id|unregister_blkdev
 c_func
 (paren
@@ -1294,6 +1307,49 @@ op_assign
 id|rd_size
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;rd&quot;
+comma
+l_int|0
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+id|NUM_RAMDISKS
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+l_int|0
+comma
+id|S_IFBLK
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|fd_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|hardsect_size
 (braket
 id|MAJOR_NR
@@ -2564,6 +2620,20 @@ c_func
 id|MAJOR_NR
 comma
 id|unit
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ROOT_DEVICE_NAME
+op_ne
+l_int|NULL
+)paren
+id|strcpy
+(paren
+id|ROOT_DEVICE_NAME
+comma
+l_string|&quot;rd/0&quot;
 )paren
 suffix:semicolon
 id|done

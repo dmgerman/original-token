@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/adb.h&gt;
@@ -2904,7 +2905,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|ADB_MAJOR
@@ -2922,6 +2923,37 @@ id|KERN_ERR
 l_string|&quot;adb: unable to get major %d&bslash;n&quot;
 comma
 id|ADB_MAJOR
+)paren
+suffix:semicolon
+r_else
+id|devfs_register
+(paren
+l_int|NULL
+comma
+l_string|&quot;adb&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_NONE
+comma
+id|ADB_MAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|adb_fops
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

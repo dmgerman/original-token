@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/delay.h&gt;&t;/* guess what */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
@@ -2418,6 +2419,13 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/****** Init and module functions ******/
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|function|dsp56k_init
 r_int
 id|__init
@@ -2455,7 +2463,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|DSP56K_MAJOR
@@ -2478,6 +2486,38 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_register
+(paren
+l_int|NULL
+comma
+l_string|&quot;dsp56k&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_NONE
+comma
+id|DSP56K_MAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|dsp56k_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|dsp56k.in_use
 op_assign
 l_int|0
@@ -2516,12 +2556,17 @@ c_func
 r_void
 )paren
 (brace
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|DSP56K_MAJOR
 comma
 l_string|&quot;dsp56k&quot;
+)paren
+suffix:semicolon
+id|devfs_unregister
+(paren
+id|devfs_handle
 )paren
 suffix:semicolon
 )brace

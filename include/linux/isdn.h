@@ -446,6 +446,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN_X25
 macro_line|#  include &lt;linux/concap.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_DEVFS_FS
+macro_line|#  include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/isdnif.h&gt;
 DECL|macro|ISDN_DRVIOCTL_MASK
 mdefine_line|#define ISDN_DRVIOCTL_MASK       0x7f  /* Mask for Device-ioctl */
@@ -2136,6 +2139,39 @@ r_int
 r_int
 id|global_features
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
+DECL|member|devfs_handle_isdninfo
+id|devfs_handle_t
+id|devfs_handle_isdninfo
+suffix:semicolon
+DECL|member|devfs_handle_isdnctrl
+id|devfs_handle_t
+id|devfs_handle_isdnctrl
+suffix:semicolon
+DECL|member|devfs_handle_isdnX
+id|devfs_handle_t
+id|devfs_handle_isdnX
+(braket
+id|ISDN_MAX_CHANNELS
+)braket
+suffix:semicolon
+DECL|member|devfs_handle_isdnctrlX
+id|devfs_handle_t
+id|devfs_handle_isdnctrlX
+(braket
+id|ISDN_MAX_CHANNELS
+)braket
+suffix:semicolon
+macro_line|#  ifdef CONFIG_ISDN_PPP
+DECL|member|devfs_handle_ipppX
+id|devfs_handle_t
+id|devfs_handle_ipppX
+(braket
+id|ISDN_MAX_CHANNELS
+)braket
+suffix:semicolon
+macro_line|#  endif
+macro_line|#endif
 DECL|typedef|isdn_dev
 )brace
 id|isdn_dev

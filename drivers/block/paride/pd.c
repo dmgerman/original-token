@@ -223,6 +223,7 @@ multiline_comment|/* end of parameters */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
@@ -949,6 +950,11 @@ l_string|&quot;TMO&quot;
 )brace
 suffix:semicolon
 multiline_comment|/* kernel glue structures */
+r_extern
+r_struct
+id|block_device_operations
+id|pd_fops
+suffix:semicolon
 DECL|variable|pd_gendisk
 r_static
 r_struct
@@ -981,7 +987,12 @@ l_int|NULL
 comma
 multiline_comment|/* internal */
 l_int|NULL
+comma
 multiline_comment|/* next */
+op_amp
+id|pd_fops
+comma
+multiline_comment|/* block device operations */
 )brace
 suffix:semicolon
 DECL|variable|pd_fops
@@ -1168,7 +1179,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -2236,7 +2247,7 @@ suffix:semicolon
 r_int
 id|unit
 suffix:semicolon
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR

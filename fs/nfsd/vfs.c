@@ -76,14 +76,6 @@ id|p_rawin
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|variable|nfsd_nservers
-r_int
-id|nfsd_nservers
-op_assign
-l_int|0
-suffix:semicolon
-DECL|macro|FILECACHE_MAX
-mdefine_line|#define FILECACHE_MAX&t;&t;(2 * nfsd_nservers) 
 DECL|variable|raparml
 r_static
 r_struct
@@ -1175,8 +1167,6 @@ r_if
 c_cond
 (paren
 id|error
-OL
-l_int|0
 )paren
 r_goto
 id|out
@@ -6648,9 +6638,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: freeing %d readahead buffers.&bslash;n&quot;
-comma
-id|FILECACHE_MAX
+l_string|&quot;nfsd: freeing readahead buffers.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -6658,10 +6646,6 @@ c_func
 (paren
 id|raparml
 )paren
-suffix:semicolon
-id|nfsd_nservers
-op_assign
-l_int|0
 suffix:semicolon
 id|raparm_cache
 op_assign
@@ -6671,12 +6655,13 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize readahead param cache&n; */
-r_void
+r_int
 DECL|function|nfsd_racache_init
 id|nfsd_racache_init
 c_func
 (paren
-r_void
+r_int
+id|cache_size
 )paren
 (brace
 r_int
@@ -6688,6 +6673,7 @@ c_cond
 id|raparm_cache
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|raparml
 op_assign
@@ -6700,7 +6686,7 @@ r_struct
 id|raparms
 )paren
 op_star
-id|FILECACHE_MAX
+id|cache_size
 comma
 id|GFP_KERNEL
 )paren
@@ -6718,7 +6704,7 @@ c_func
 (paren
 l_string|&quot;nfsd: allocating %d readahead buffers.&bslash;n&quot;
 comma
-id|FILECACHE_MAX
+id|cache_size
 )paren
 suffix:semicolon
 id|memset
@@ -6734,7 +6720,7 @@ r_struct
 id|raparms
 )paren
 op_star
-id|FILECACHE_MAX
+id|cache_size
 )paren
 suffix:semicolon
 r_for
@@ -6746,7 +6732,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|FILECACHE_MAX
+id|cache_size
 op_minus
 l_int|1
 suffix:semicolon
@@ -6782,10 +6768,13 @@ id|KERN_WARNING
 l_string|&quot;nfsd: Could not allocate memory read-ahead cache.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|nfsd_nservers
-op_assign
-l_int|0
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 eof

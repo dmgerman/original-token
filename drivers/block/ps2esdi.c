@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/ps2esdi.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/blkpg.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
@@ -668,7 +669,12 @@ id|ps2esdi_info
 comma
 multiline_comment|/* internal */
 l_int|NULL
+comma
 multiline_comment|/* next */
+op_amp
+id|ps2esdi_fops
+comma
+multiline_comment|/* file operations */
 )brace
 suffix:semicolon
 multiline_comment|/* initialization routine called by ll_rw_blk.c   */
@@ -685,7 +691,7 @@ multiline_comment|/* register the device - pass the name, major number and opera
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -1008,7 +1014,7 @@ id|PS2ESDI_IRQ
 comma
 l_int|NULL
 )paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR

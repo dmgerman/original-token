@@ -2,6 +2,8 @@ multiline_comment|/*&n; * linux/drivers/char/ppdev.c&n; *&n; * This is the code 
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
@@ -2234,6 +2236,13 @@ id|pp_release
 comma
 )brace
 suffix:semicolon
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|function|ppdev_init
 r_static
 r_int
@@ -2246,7 +2255,7 @@ r_void
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 (paren
 id|PP_MAJOR
 comma
@@ -2271,6 +2280,49 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;parports&quot;
+comma
+l_int|0
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+id|PARPORT_MAX
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|PP_MAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUGO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|pp_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
@@ -2292,7 +2344,12 @@ r_void
 )paren
 (brace
 multiline_comment|/* Clean up all parport stuff */
-id|unregister_chrdev
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
+id|devfs_unregister_chrdev
 (paren
 id|PP_MAJOR
 comma

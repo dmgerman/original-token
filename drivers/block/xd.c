@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -279,6 +280,11 @@ op_lshift
 l_int|6
 )braket
 suffix:semicolon
+r_extern
+r_struct
+id|block_device_operations
+id|xd_fops
+suffix:semicolon
 DECL|variable|xd_gendisk
 r_static
 r_struct
@@ -317,7 +323,12 @@ id|xd_info
 comma
 multiline_comment|/* internal */
 l_int|NULL
+comma
 multiline_comment|/* next */
+op_amp
+id|xd_fops
+comma
+multiline_comment|/* file operations */
 )brace
 suffix:semicolon
 DECL|variable|xd_fops
@@ -513,6 +524,13 @@ id|nodma
 op_assign
 id|XD_DONT_USE_DMA
 suffix:semicolon
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* xd_init: register the block device number and set up pointer tables */
 DECL|function|xd_init
 r_int
@@ -525,7 +543,7 @@ r_void
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -550,6 +568,19 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+id|xd_gendisk.major_name
+comma
+l_int|0
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|blk_init_queue
 c_func
 (paren
@@ -7313,7 +7344,7 @@ id|xd_drives
 )paren
 (brace
 multiline_comment|/* no drives detected - unload module */
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -7352,7 +7383,7 @@ id|dev
 comma
 id|start
 suffix:semicolon
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -7441,6 +7472,11 @@ suffix:semicolon
 id|xd_done
 c_func
 (paren
+)paren
+suffix:semicolon
+id|devfs_unregister
+(paren
+id|devfs_handle
 )paren
 suffix:semicolon
 r_if

@@ -1,6 +1,7 @@
-multiline_comment|/*&n;   md.c : Multiple Devices driver for Linux&n;          Copyright (C) 1998, 1999, 2000 Ingo Molnar&n;&n;     completely rewritten, based on the MD driver code from Marc Zyngier&n;&n;   Changes:&n;&n;   - RAID-1/RAID-5 extensions by Miguel de Icaza, Gadi Oxman, Ingo Molnar&n;   - boot support for linear and striped mode by Harald Hoyer &lt;HarryH@Royal.Net&gt;&n;   - kerneld support by Boris Tobotras &lt;boris@xtalk.msk.su&gt;&n;   - kmod support by: Cyrus Durgin&n;   - RAID0 bugfixes: Mark Anthony Lisher &lt;markal@iname.com&gt;&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2, or (at your option)&n;   any later version.&n;   &n;   You should have received a copy of the GNU General Public License&n;   (for example /usr/src/linux/COPYING); if not, write to the Free&n;   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  &n;*/
+multiline_comment|/*&n;   md.c : Multiple Devices driver for Linux&n;          Copyright (C) 1998, 1999, 2000 Ingo Molnar&n;&n;     completely rewritten, based on the MD driver code from Marc Zyngier&n;&n;   Changes:&n;&n;   - RAID-1/RAID-5 extensions by Miguel de Icaza, Gadi Oxman, Ingo Molnar&n;   - boot support for linear and striped mode by Harald Hoyer &lt;HarryH@Royal.Net&gt;&n;   - kerneld support by Boris Tobotras &lt;boris@xtalk.msk.su&gt;&n;   - kmod support by: Cyrus Durgin&n;   - RAID0 bugfixes: Mark Anthony Lisher &lt;markal@iname.com&gt;&n;   - Devfs support by Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2, or (at your option)&n;   any later version.&n;   &n;   You should have received a copy of the GNU General Public License&n;   (for example /usr/src/linux/COPYING); if not, write to the Free&n;   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  &n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/raid/md.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
@@ -120,6 +121,18 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+r_extern
+r_struct
+id|block_device_operations
+id|md_fops
+suffix:semicolon
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|variable|md_gendisk
 r_static
 r_struct
@@ -144,6 +157,10 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+op_amp
+id|md_fops
+comma
 )brace
 suffix:semicolon
 DECL|function|md_plug_device
@@ -13594,7 +13611,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 (paren
 id|MD_MAJOR
 comma
@@ -13620,6 +13637,49 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;md&quot;
+comma
+l_int|0
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+id|MAX_MD_DEV
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+l_int|0
+comma
+id|S_IFBLK
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|md_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|blk_dev
 (braket
 id|MD_MAJOR

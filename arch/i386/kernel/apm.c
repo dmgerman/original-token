@@ -4693,7 +4693,7 @@ op_assign
 (brace
 id|APM_MINOR_DEV
 comma
-l_string|&quot;apm&quot;
+l_string|&quot;apm_bios&quot;
 comma
 op_amp
 id|apm_bios_fops

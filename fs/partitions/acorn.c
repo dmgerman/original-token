@@ -2073,6 +2073,11 @@ id|r
 OL
 l_int|0
 )paren
+r_if
+c_cond
+(paren
+id|warn_no_part
+)paren
 id|printk
 c_func
 (paren

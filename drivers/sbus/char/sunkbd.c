@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/kbio.h&gt;
 macro_line|#include &lt;asm/vuid_event.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -6797,10 +6798,44 @@ l_int|0x0
 suffix:semicolon
 multiline_comment|/* All off */
 multiline_comment|/* Register the /dev/kbd interface */
+id|devfs_register
+(paren
+l_int|NULL
+comma
+l_string|&quot;kbd&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_NONE
+comma
+id|KBD_MAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+op_or
+id|S_IRGRP
+op_or
+id|S_IROTH
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|kbd_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 (paren
 id|KBD_MAJOR
 comma

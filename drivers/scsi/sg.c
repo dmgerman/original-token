@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com),&n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *&n; * Original driver (sg.c):&n; *        Copyright (C) 1992 Lawrence Foard&n; * Version 2 and 3 extensions to driver:&n; *        Copyright (C) 1998, 1999 Douglas Gilbert&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; */
+multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com),&n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *&n; * Original driver (sg.c):&n; *        Copyright (C) 1992 Lawrence Foard&n; * Version 2 and 3 extensions to driver:&n; *        Copyright (C) 1998, 1999 Douglas Gilbert&n; *&n; *  Modified  19-JAN-1998  Richard Gooch &lt;rgooch@atnf.csiro.au&gt;  Devfs support&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; */
 DECL|variable|sg_version_str
 r_static
 r_char
@@ -470,6 +470,10 @@ op_star
 id|headfp
 suffix:semicolon
 multiline_comment|/* first open fd belonging to this device */
+DECL|member|de
+id|devfs_handle_t
+id|de
+suffix:semicolon
 DECL|member|i_rdev
 id|kdev_t
 id|i_rdev
@@ -6103,7 +6107,7 @@ id|sg_registered
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|SCSI_GENERIC_MAJOR
@@ -6447,6 +6451,40 @@ comma
 id|k
 )paren
 suffix:semicolon
+id|sdp-&gt;de
+op_assign
+id|devfs_register
+(paren
+id|scsidp-&gt;de
+comma
+l_string|&quot;generic&quot;
+comma
+l_int|7
+comma
+id|DEVFS_FL_NONE
+comma
+id|SCSI_GENERIC_MAJOR
+comma
+id|k
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+op_or
+id|S_IRGRP
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|sg_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|sg_template.nr_dev
 op_increment
 suffix:semicolon
@@ -6663,6 +6701,15 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|devfs_unregister
+(paren
+id|sdp-&gt;de
+)paren
+suffix:semicolon
+id|sdp-&gt;de
+op_assign
+l_int|NULL
+suffix:semicolon
 id|scsidp-&gt;attached
 op_decrement
 suffix:semicolon
@@ -6748,7 +6795,7 @@ op_amp
 id|sg_template
 )paren
 suffix:semicolon
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|SCSI_GENERIC_MAJOR

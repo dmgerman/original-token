@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Generic parallel printer driver&n; *&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; * Support for parport by Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; * Parport sharing hacking by Andrea Arcangeli&n; * Fixed kernel_(to/from)_user memory copy to check for errors&n; * &t;&t;&t;&t;by Riccardo Facchetti &lt;fizban@tin.it&gt;&n; * Redesigned interrupt handling for handle printers with buggy handshake&n; *&t;&t;&t;&t;by Andrea Arcangeli, 11 May 1998&n; * Full efficient handling of printer with buggy irq handshake (now I have&n; * understood the meaning of the strange handshake). This is done sending new&n; * characters if the interrupt is just happened, even if the printer say to&n; * be still BUSY. This is needed at least with Epson Stylus Color. To enable&n; * the new TRUST_IRQ mode read the `LP OPTIMIZATION&squot; section below...&n; * Fixed the irq on the rising edge of the strobe case.&n; * Obsoleted the CAREFUL flag since a printer that doesn&squot; t work with&n; * CAREFUL will block a bit after in lp_check_status().&n; *&t;&t;&t;&t;Andrea Arcangeli, 15 Oct 1998&n; * Obsoleted and removed all the lowlevel stuff implemented in the last&n; * month to use the IEEE1284 functions (that handle the _new_ compatibilty&n; * mode fine).&n; */
+multiline_comment|/*&n; * Generic parallel printer driver&n; *&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; * Support for parport by Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; * Parport sharing hacking by Andrea Arcangeli&n; * Fixed kernel_(to/from)_user memory copy to check for errors&n; * &t;&t;&t;&t;by Riccardo Facchetti &lt;fizban@tin.it&gt;&n; * 22-JAN-1998  Added support for devfs  Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n; * Redesigned interrupt handling for handle printers with buggy handshake&n; *&t;&t;&t;&t;by Andrea Arcangeli, 11 May 1998&n; * Full efficient handling of printer with buggy irq handshake (now I have&n; * understood the meaning of the strange handshake). This is done sending new&n; * characters if the interrupt is just happened, even if the printer say to&n; * be still BUSY. This is needed at least with Epson Stylus Color. To enable&n; * the new TRUST_IRQ mode read the `LP OPTIMIZATION&squot; section below...&n; * Fixed the irq on the rising edge of the strobe case.&n; * Obsoleted the CAREFUL flag since a printer that doesn&squot; t work with&n; * CAREFUL will block a bit after in lp_check_status().&n; *&t;&t;&t;&t;Andrea Arcangeli, 15 Oct 1998&n; * Obsoleted and removed all the lowlevel stuff implemented in the last&n; * month to use the IEEE1284 functions (that handle the _new_ compatibilty&n; * mode fine).&n; */
 multiline_comment|/* This driver should, in theory, work with any parallel port that has an&n; * appropriate low-level driver; all I/O is done through the parport&n; * abstraction layer.&n; *&n; * If this driver is built into the kernel, you can configure it using the&n; * kernel command-line.  For example:&n; *&n; *&t;lp=parport1,none,parport2&t;(bind lp0 to parport1, disable lp1 and&n; *&t;&t;&t;&t;&t; bind lp2 to parport2)&n; *&n; *&t;lp=auto&t;&t;&t;&t;(assign lp devices to all ports that&n; *&t;&t;&t;&t;         have printers attached, as determined&n; *&t;&t;&t;&t;&t; by the IEEE-1284 autoprobe)&n; * &n; *&t;lp=reset&t;&t;&t;(reset the printer during &n; *&t;&t;&t;&t;&t; initialisation)&n; *&n; *&t;lp=off&t;&t;&t;&t;(disable the printer driver entirely)&n; *&n; * If the driver is loaded as a module, similar functionality is available&n; * using module parameters.  The equivalent of the above commands would be:&n; *&n; *&t;# insmod lp.o parport=1,none,2&n; *&n; *&t;# insmod lp.o parport=auto&n; *&n; *&t;# insmod lp.o reset=1&n; */
 multiline_comment|/* COMPATIBILITY WITH OLD KERNELS&n; *&n; * Under Linux 2.0 and previous versions, lp devices were bound to ports at&n; * particular I/O addresses, as follows:&n; *&n; *&t;lp0&t;&t;0x3bc&n; *&t;lp1&t;&t;0x378&n; *&t;lp2&t;&t;0x278&n; *&n; * The new driver, by default, binds lp devices to parport devices as it&n; * finds them.  This means that if you only have one port, it will be bound&n; * to lp0 regardless of its I/O address.  If you need the old behaviour, you&n; * can force it using the parameters described above.&n; */
 multiline_comment|/*&n; * The new interrupt handling code take care of the buggy handshake&n; * of some HP and Epson printer:&n; * ___&n; * ACK    _______________    ___________&n; *                       |__|&n; * ____&n; * BUSY   _________              _______&n; *                 |____________|&n; *&n; * I discovered this using the printer scanner that you can find at:&n; *&n; *&t;ftp://e-mind.com/pub/linux/pscan/&n; *&n; *&t;&t;&t;&t;&t;11 May 98, Andrea Arcangeli&n; *&n; * My printer scanner run on an Epson Stylus Color show that such printer&n; * generates the irq on the _rising_ edge of the STROBE. Now lp handle&n; * this case fine too.&n; *&n; *&t;&t;&t;&t;&t;15 Oct 1998, Andrea Arcangeli&n; *&n; * The so called `buggy&squot; handshake is really the well documented&n; * compatibility mode IEEE1284 handshake. They changed the well known&n; * Centronics handshake acking in the middle of busy expecting to not&n; * break drivers or legacy application, while they broken linux lp&n; * until I fixed it reverse engineering the protocol by hand some&n; * month ago...&n; *&n; *                                     14 Dec 1998, Andrea Arcangeli&n; *&n; * Copyright (C) 2000 by Tim Waugh (added LPSETTIMEOUT ioctl)&n; */
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -27,6 +28,13 @@ mdefine_line|#define LP_NO 3
 multiline_comment|/* ROUND_UP macro from fs/select.c */
 DECL|macro|ROUND_UP
 mdefine_line|#define ROUND_UP(x,y) (((x)+(y)-1)/(y))
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|variable|lp_table
 r_struct
 id|lp_struct
@@ -3111,7 +3119,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 (paren
 id|LP_MAJOR
 comma
@@ -3153,6 +3161,105 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+)brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;printers&quot;
+comma
+l_int|0
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp_count
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|LP_NO
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+r_char
+id|name
+(braket
+l_int|8
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|lp_table
+(braket
+id|i
+)braket
+dot
+id|flags
+op_amp
+id|LP_EXIST
+)paren
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* skip this entry: it doesn&squot;t exist. */
+id|sprintf
+(paren
+id|name
+comma
+l_string|&quot;%d&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|devfs_register
+(paren
+id|devfs_handle
+comma
+id|name
+comma
+l_int|0
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|LP_MAJOR
+comma
+id|i
+comma
+id|S_IFCHR
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUGO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|lp_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -3379,7 +3486,12 @@ id|lpcons
 )paren
 suffix:semicolon
 macro_line|#endif
-id|unregister_chrdev
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|LP_MAJOR

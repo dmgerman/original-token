@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
@@ -49,6 +50,36 @@ DECL|macro|DEFAULT_BELL_PITCH
 mdefine_line|#define DEFAULT_BELL_PITCH&t;750
 DECL|macro|DEFAULT_BELL_DURATION
 mdefine_line|#define DEFAULT_BELL_DURATION&t;(HZ/8)
+r_extern
+r_int
+id|tty_register_devfs
+(paren
+r_struct
+id|tty_driver
+op_star
+id|driver
+comma
+r_int
+r_int
+id|flags
+comma
+r_int
+r_int
+id|minor
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|vcs_make_devfs
+(paren
+r_int
+r_int
+id|index
+comma
+r_int
+id|unregister
+)paren
+suffix:semicolon
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
@@ -11070,6 +11101,20 @@ op_assign
 id|video_num_columns
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|tty-&gt;count
+op_eq
+l_int|1
+)paren
+id|vcs_make_devfs
+(paren
+id|currcons
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -11094,10 +11139,32 @@ id|filp
 r_if
 c_cond
 (paren
+op_logical_neg
+id|tty
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|tty-&gt;count
-op_eq
+op_ne
 l_int|1
 )paren
+r_return
+suffix:semicolon
+id|vcs_make_devfs
+(paren
+id|MINOR
+(paren
+id|tty-&gt;device
+)paren
+op_minus
+id|tty-&gt;driver.minor_start
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|tty-&gt;driver_data
 op_assign
 l_int|0
@@ -11360,7 +11427,7 @@ id|TTY_DRIVER_MAGIC
 suffix:semicolon
 id|console_driver.name
 op_assign
-l_string|&quot;tty&quot;
+l_string|&quot;vc/%d&quot;
 suffix:semicolon
 id|console_driver.name_base
 op_assign
@@ -11391,6 +11458,11 @@ op_assign
 id|TTY_DRIVER_REAL_RAW
 op_or
 id|TTY_DRIVER_RESET_TERMIOS
+suffix:semicolon
+multiline_comment|/* Tell tty_register_driver() to skip consoles because they are&n;&t; * registered before kmalloc() is ready. We&squot;ll patch them in later. &n;&t; * See comments at console_init(); see also con_init_devfs(). &n;&t; */
+id|console_driver.flags
+op_or_assign
+id|TTY_DRIVER_NO_DEVFS
 suffix:semicolon
 id|console_driver.refcount
 op_assign
@@ -12236,6 +12308,45 @@ c_cond
 id|mode
 suffix:colon
 l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* We can&squot;t register the console with devfs during con_init(), because it&n; * is called before kmalloc() works.  This function is called later to&n; * do the registration.&n; */
+DECL|function|con_init_devfs
+r_void
+id|__init
+id|con_init_devfs
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|console_driver.num
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|tty_register_devfs
+(paren
+op_amp
+id|console_driver
+comma
+l_int|0
+comma
+id|console_driver.minor_start
+op_plus
+id|i
+)paren
 suffix:semicolon
 )brace
 DECL|function|vesa_powerdown

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#if defined(__i386__)
@@ -4410,6 +4411,13 @@ id|BPP_SIZE
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -4454,7 +4462,7 @@ id|ENODEV
 suffix:semicolon
 id|rc
 op_assign
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|BPP_MAJOR
@@ -4506,7 +4514,62 @@ c_func
 id|idx
 )paren
 suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|devname
+comma
+l_string|&quot;%s%i&quot;
+comma
+id|dev_name
+comma
+id|idx
+)paren
+suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;bpp&quot;
+comma
+l_int|3
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+id|BPP_NO
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|BPP_MAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|bpp_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4523,7 +4586,12 @@ r_void
 r_int
 id|idx
 suffix:semicolon
-id|unregister_chrdev
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|BPP_MAJOR

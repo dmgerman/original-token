@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/wait.h&gt;&t;&t;/* for wait_queue */
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* for __init, module_{init,exit} */
 macro_line|#include &lt;linux/poll.h&gt;&t;&t;/* for POLLIN, etc. */
 macro_line|#include &lt;linux/dtlk.h&gt;&t;&t;/* local header file for DoubleTalk values */
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#ifdef TRACING
 DECL|macro|TRACE_TEXT
 mdefine_line|#define TRACE_TEXT(str) printk(str);
@@ -1277,6 +1278,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+suffix:semicolon
 DECL|function|dtlk_init
 r_static
 r_int
@@ -1305,7 +1311,7 @@ l_int|0
 suffix:semicolon
 id|dtlk_major
 op_assign
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 l_int|0
@@ -1351,6 +1357,38 @@ c_func
 l_string|&quot;, MAJOR %d&bslash;n&quot;
 comma
 id|dtlk_major
+)paren
+suffix:semicolon
+id|devfs_handle
+op_assign
+id|devfs_register
+(paren
+l_int|NULL
+comma
+l_string|&quot;dtlk&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_NONE
+comma
+id|dtlk_major
+comma
+id|DTLK_MINOR
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|dtlk_fops
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|init_timer
@@ -1413,12 +1451,18 @@ c_func
 id|DTLK_CLEAR
 )paren
 suffix:semicolon
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|dtlk_major
 comma
 l_string|&quot;dtlk&quot;
+)paren
+suffix:semicolon
+id|devfs_unregister
+c_func
+(paren
+id|devfs_handle
 )paren
 suffix:semicolon
 id|release_region

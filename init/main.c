@@ -3,6 +3,7 @@ DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
@@ -272,6 +273,13 @@ op_star
 id|execute_command
 op_assign
 l_int|NULL
+suffix:semicolon
+DECL|variable|root_device_name
+r_char
+id|root_device_name
+(braket
+l_int|64
+)braket
 suffix:semicolon
 DECL|variable|argv_init
 r_static
@@ -1074,6 +1082,12 @@ op_star
 id|line
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
+r_char
+id|ch
+suffix:semicolon
 id|ROOT_DEV
 op_assign
 id|name_to_kdev_t
@@ -1082,6 +1096,89 @@ c_func
 id|line
 )paren
 suffix:semicolon
+id|memset
+(paren
+id|root_device_name
+comma
+l_int|0
+comma
+r_sizeof
+id|root_device_name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|strncmp
+(paren
+id|line
+comma
+l_string|&quot;/dev/&quot;
+comma
+l_int|5
+)paren
+op_eq
+l_int|0
+)paren
+id|line
+op_add_assign
+l_int|5
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+id|root_device_name
+op_minus
+l_int|1
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+id|ch
+op_assign
+id|line
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|isspace
+(paren
+id|ch
+)paren
+op_logical_or
+(paren
+id|ch
+op_eq
+l_char|&squot;,&squot;
+)paren
+op_logical_or
+(paren
+id|ch
+op_eq
+l_char|&squot;&bslash;0&squot;
+)paren
+)paren
+r_break
+suffix:semicolon
+id|root_device_name
+(braket
+id|i
+)braket
+op_assign
+id|ch
+suffix:semicolon
+)brace
 r_return
 l_int|1
 suffix:semicolon
@@ -2418,6 +2515,10 @@ macro_line|#endif
 multiline_comment|/* Mount the root filesystem.. */
 id|mount_root
 c_func
+(paren
+)paren
+suffix:semicolon
+id|mount_devfs_fs
 (paren
 )paren
 suffix:semicolon

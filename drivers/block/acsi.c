@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -5475,6 +5476,11 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************&n; *&n; *  Initialization&n; *&n; ********************************************************************/
+r_extern
+r_struct
+id|block_device_operations
+id|acsi_fops
+suffix:semicolon
 DECL|variable|acsi_gendisk
 r_static
 r_struct
@@ -5513,7 +5519,12 @@ id|acsi_info
 comma
 multiline_comment|/* internal */
 l_int|NULL
+comma
 multiline_comment|/* next */
+op_amp
+id|acsi_fops
+comma
+multiline_comment|/* file operations */
 )brace
 suffix:semicolon
 DECL|macro|MAX_SCSI_DEVICE_CODE
@@ -7166,7 +7177,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_blkdev
+id|devfs_register_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -7222,7 +7233,7 @@ id|KERN_ERR
 l_string|&quot;Unable to get ACSI ST-Ram buffer.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -7387,7 +7398,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|unregister_blkdev
+id|devfs_unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR

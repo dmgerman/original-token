@@ -98,6 +98,11 @@ op_logical_neg
 id|bh
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|warn_no_part
+)paren
 id|printk
 (paren
 l_string|&quot; unable to read block 0 (partition table)&bslash;n&quot;
