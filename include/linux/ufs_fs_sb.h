@@ -1,7 +1,8 @@
-multiline_comment|/*&n; *  linux/include/linux/ufs_fs_sb.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_fs_sb.h,v 1.1 1996/04/21 14:45:15 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/include/linux/ufs_fs_sb.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_fs_sb.h,v 1.6 1996/06/01 15:31:08 ecd Exp $&n; *&n; */
 macro_line|#ifndef __LINUX_UFS_FS_SB_H
 DECL|macro|__LINUX_UFS_FS_SB_H
 mdefine_line|#define __LINUX_UFS_FS_SB_H
+macro_line|#include &lt;linux/ufs_fs.h&gt;
 DECL|struct|ufs_sb_info
 r_struct
 id|ufs_sb_info
@@ -35,9 +36,25 @@ DECL|member|s_fsize
 id|__u32
 id|s_fsize
 suffix:semicolon
+DECL|member|s_fshift
+id|__u32
+id|s_fshift
+suffix:semicolon
+DECL|member|s_fmask
+id|__u32
+id|s_fmask
+suffix:semicolon
 DECL|member|s_bsize
 id|__u32
 id|s_bsize
+suffix:semicolon
+DECL|member|s_bmask
+id|__u32
+id|s_bmask
+suffix:semicolon
+DECL|member|s_bshift
+id|__u32
+id|s_bshift
 suffix:semicolon
 DECL|member|s_iblkno
 id|__u32
@@ -59,6 +76,14 @@ DECL|member|s_inopb
 id|__u32
 id|s_inopb
 suffix:semicolon
+DECL|member|s_lshift
+id|__u32
+id|s_lshift
+suffix:semicolon
+DECL|member|s_lmask
+id|__u32
+id|s_lmask
+suffix:semicolon
 DECL|member|s_fsfrag
 id|__u32
 id|s_fsfrag
@@ -66,5 +91,4 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif /* __LINUX_UFS_FS_SB_H */
-multiline_comment|/*&n; * Local Variables: ***&n; * c-indent-level: 8 ***&n; * c-continued-statement-offset: 8 ***&n; * c-brace-offset: -8 ***&n; * c-argdecl-indent: 0 ***&n; * c-label-offset: -8 ***&n; * End: ***&n; */
 eof

@@ -21,13 +21,13 @@ op_star
 id|inode
 comma
 r_struct
-id|old_stat
+id|__old_kernel_stat
 op_star
 id|statbuf
 )paren
 (brace
 r_struct
-id|old_stat
+id|__old_kernel_stat
 id|tmp
 suffix:semicolon
 id|printk
@@ -132,13 +132,13 @@ op_star
 id|inode
 comma
 r_struct
-id|new_stat
+id|stat
 op_star
 id|statbuf
 )paren
 (brace
 r_struct
-id|new_stat
+id|stat
 id|tmp
 suffix:semicolon
 r_int
@@ -370,7 +370,7 @@ op_star
 id|filename
 comma
 r_struct
-id|old_stat
+id|__old_kernel_stat
 op_star
 id|statbuf
 )paren
@@ -456,7 +456,7 @@ op_star
 id|filename
 comma
 r_struct
-id|new_stat
+id|stat
 op_star
 id|statbuf
 )paren
@@ -543,7 +543,7 @@ op_star
 id|filename
 comma
 r_struct
-id|old_stat
+id|__old_kernel_stat
 op_star
 id|statbuf
 )paren
@@ -629,7 +629,7 @@ op_star
 id|filename
 comma
 r_struct
-id|new_stat
+id|stat
 op_star
 id|statbuf
 )paren
@@ -716,7 +716,7 @@ r_int
 id|fd
 comma
 r_struct
-id|old_stat
+id|__old_kernel_stat
 op_star
 id|statbuf
 )paren
@@ -810,7 +810,7 @@ r_int
 id|fd
 comma
 r_struct
-id|new_stat
+id|stat
 op_star
 id|statbuf
 )paren

@@ -68,14 +68,11 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linuxv/malloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
-macro_line|#ifdef LINUX_1_2
-macro_line|#include &quot;../block/blk.h&quot;
-macro_line|#else
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#endif
 DECL|macro|current
 macro_line|#undef current
 macro_line|#include &quot;scsi.h&quot;

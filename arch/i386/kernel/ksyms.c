@@ -57,13 +57,13 @@ comma
 id|XNOVERS
 c_func
 (paren
-id|down_failed
+id|__down_failed
 )paren
 comma
 id|XNOVERS
 c_func
 (paren
-id|up_wakeup
+id|__up_wakeup
 )paren
 comma
 macro_line|#ifdef __SMP__

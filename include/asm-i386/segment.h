@@ -29,90 +29,17 @@ DECL|macro|put_fs_word
 mdefine_line|#define put_fs_word(x,addr) put_user((x),(unsigned short *)(addr))
 DECL|macro|put_fs_long
 mdefine_line|#define put_fs_long(x,addr) put_user((x),(unsigned int *)(addr))
-DECL|function|memcpy_fromfs
-r_static
-r_inline
-r_void
-id|memcpy_fromfs
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-r_int
-id|n
-)paren
-(brace
-id|memcpy
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-)brace
-DECL|function|memcpy_tofs
-r_static
-r_inline
-r_void
-id|memcpy_tofs
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-r_int
-id|n
-)paren
-(brace
-id|memcpy
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-)brace
+DECL|macro|memcpy_fromfs
+mdefine_line|#define memcpy_fromfs(to,from,n) memcpy((to),(from),(n))
+DECL|macro|memcpy_tofs
+mdefine_line|#define memcpy_tofs(to,from,n)   memcpy((to),(from),(n))
 multiline_comment|/*&n; * The fs value determines whether argument validity checking should be&n; * performed or not.  If get_fs() == USER_DS, checking is performed, with&n; * get_fs() == KERNEL_DS, checking is bypassed.&n; * &n; * For historical reasons, these macros are grossly misnamed.&n; */
 DECL|macro|get_fs
 mdefine_line|#define get_fs()&t;(current-&gt;tss.segment)
 DECL|macro|set_fs
 mdefine_line|#define set_fs(x)&t;(current-&gt;tss.segment = (x))
-DECL|function|get_ds
-r_static
-r_inline
-r_int
-r_int
-id|get_ds
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|KERNEL_DS
-suffix:semicolon
-)brace
+DECL|macro|get_ds
+mdefine_line|#define get_ds()&t;(KERNEL_DS)
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* _ASM_SEGMENT_H */
 eof

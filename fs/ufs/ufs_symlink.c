@@ -1,18 +1,8 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_symlink.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_symlink.c,v 1.3 1996/04/25 09:12:11 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_symlink.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_symlink.c,v 1.5 1996/05/19 03:55:56 krioles Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-r_extern
-r_int
-id|ufs_bmap
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
 r_static
 r_int
 DECL|function|ufs_readlink
@@ -226,7 +216,7 @@ op_star
 )paren
 op_amp
 (paren
-id|inode-&gt;u.ufs_i.ui_db
+id|inode-&gt;u.ufs_i.i_data
 (braket
 l_int|0
 )braket
@@ -545,7 +535,7 @@ op_star
 )paren
 op_amp
 (paren
-id|inode-&gt;u.ufs_i.ui_db
+id|inode-&gt;u.ufs_i.i_data
 (braket
 l_int|0
 )braket
@@ -708,5 +698,4 @@ comma
 multiline_comment|/* smap */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Local Variables: ***&n; * c-indent-level: 8 ***&n; * c-continued-statement-offset: 8 ***&n; * c-brace-offset: -8 ***&n; * c-argdecl-indent: 0 ***&n; * c-label-offset: -8 ***&n; * End: ***&n; */
 eof

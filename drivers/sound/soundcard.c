@@ -130,6 +130,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -194,6 +195,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -241,6 +243,7 @@ suffix:semicolon
 )brace
 r_static
 r_int
+r_int
 DECL|function|sound_lseek
 id|sound_lseek
 (paren
@@ -252,7 +255,8 @@ id|file_handle
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int

@@ -1,9 +1,9 @@
 macro_line|#ifndef _ALPHA_STAT_H
 DECL|macro|_ALPHA_STAT_H
 mdefine_line|#define _ALPHA_STAT_H
-DECL|struct|old_stat
+DECL|struct|__old_kernel_stat
 r_struct
-id|old_stat
+id|__old_kernel_stat
 (brace
 DECL|member|st_dev
 r_int
@@ -80,9 +80,9 @@ id|st_gen
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|new_stat
+DECL|struct|stat
 r_struct
-id|new_stat
+id|stat
 (brace
 DECL|member|st_dev
 r_int

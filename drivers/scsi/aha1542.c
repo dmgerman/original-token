@@ -2919,6 +2919,8 @@ id|i
 )braket
 dot
 id|length
+op_minus
+l_int|1
 )paren
 OG
 id|ISA_DMA_THRESHOLD
@@ -3088,6 +3090,8 @@ c_func
 id|buff
 op_plus
 id|bufflen
+op_minus
+l_int|1
 )paren
 OG
 id|ISA_DMA_THRESHOLD
@@ -4695,10 +4699,8 @@ id|SCSI_PA
 c_func
 (paren
 id|shpnt
-op_plus
-l_int|1
 )paren
-OG
+op_ge
 id|ISA_DMA_THRESHOLD
 )paren
 (brace

@@ -16,7 +16,6 @@ multiline_comment|/*&n;&t;Read a file into kernel space memory&n;*/
 DECL|function|umsdos_file_read_kmem
 r_int
 id|umsdos_file_read_kmem
-c_func
 (paren
 r_struct
 id|inode
@@ -32,6 +31,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -79,7 +79,6 @@ multiline_comment|/*&n;&t;Write to a file from kernel space&n;*/
 DECL|function|umsdos_file_write_kmem
 r_int
 id|umsdos_file_write_kmem
-c_func
 (paren
 r_struct
 id|inode
@@ -96,6 +95,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -160,6 +160,7 @@ id|buf
 comma
 multiline_comment|/* buffer in kernel memory, not in user space */
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -216,9 +217,11 @@ id|buf
 comma
 multiline_comment|/* buffer in kernel memory, not in user space */
 r_int
+r_int
 id|count
 )paren
 (brace
+r_int
 r_int
 id|ret
 op_assign
@@ -254,7 +257,7 @@ id|count
 (brace
 id|printk
 (paren
-l_string|&quot;UMSDOS: problem with EMD file. Can&squot;t read pos = %Ld (%d != %d)&bslash;n&quot;
+l_string|&quot;UMSDOS: problem with EMD file. Can&squot;t read pos = %Ld (%d != %ld)&bslash;n&quot;
 comma
 id|filp-&gt;f_pos
 comma

@@ -11088,6 +11088,36 @@ r_return
 id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * AM53C974_release()&n; *&n; * Release resources allocated for a single AM53C974 adapter.&n; */
+r_int
+DECL|function|AM53C974_release
+id|AM53C974_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shp
+)paren
+(brace
+id|free_irq
+c_func
+(paren
+id|shp-&gt;irq
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|scsi_unregister
+c_func
+(paren
+id|shp
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#ifdef MODULE
 DECL|variable|driver_template
 r_static

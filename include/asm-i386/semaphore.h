@@ -29,7 +29,7 @@ DECL|macro|MUTEX_LOCKED
 mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { 0, 0, NULL })
 id|asmlinkage
 r_void
-id|down_failed
+id|__down_failed
 c_func
 (paren
 r_void
@@ -38,7 +38,7 @@ multiline_comment|/* special register calling convention */
 suffix:semicolon
 id|asmlinkage
 r_void
-id|up_wakeup
+id|__up_wakeup
 c_func
 (paren
 r_void
@@ -85,19 +85,19 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;# atomic down operation&bslash;n&quot;
-l_string|&quot;1:&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1b,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;# atomic down operation&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif
 l_string|&quot;decl %0&bslash;n&bslash;t&quot;
+l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;js &quot;
 id|SYMBOL_NAME_STR
 c_func
 (paren
-id|down_failed
+id|__down_failed
 )paren
+l_string|&quot;&bslash;n1:&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -112,8 +112,6 @@ id|sem
 )paren
 suffix:colon
 l_string|&quot;ax&quot;
-comma
-l_string|&quot;dx&quot;
 comma
 l_string|&quot;memory&quot;
 )paren
@@ -138,16 +136,16 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;# atomic up operation&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif
 l_string|&quot;incl %0&bslash;n&bslash;t&quot;
+l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;jle &quot;
 id|SYMBOL_NAME_STR
 c_func
 (paren
-id|up_wakeup
+id|__up_wakeup
 )paren
 l_string|&quot;&bslash;n1:&quot;
 suffix:colon
@@ -164,8 +162,6 @@ id|sem
 )paren
 suffix:colon
 l_string|&quot;ax&quot;
-comma
-l_string|&quot;dx&quot;
 comma
 l_string|&quot;memory&quot;
 )paren

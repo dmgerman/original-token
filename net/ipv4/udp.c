@@ -245,8 +245,8 @@ r_if
 c_cond
 (paren
 id|code
-OL
-l_int|13
+op_le
+id|NR_ICMP_UNREACH
 op_logical_and
 id|icmp_err_convert
 (braket

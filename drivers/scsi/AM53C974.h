@@ -487,7 +487,7 @@ id|proc_dir_entry
 id|proc_scsi_am53c974
 suffix:semicolon
 DECL|macro|AM53C974
-mdefine_line|#define AM53C974 { &bslash;&n;    NULL,              &t;&t;/* pointer to next in list                      */  &bslash;&n;    NULL,&t;&t;&t;/* long * usage_count&t;&t;&t;&t;*/  &bslash;&n;    &amp;proc_scsi_am53c974,        /* struct proc_dir_entry *proc_dir              */ &bslash;&n;    NULL,                       /* int (*proc_info)(char *, char **, off_t, int, int, int); */ &bslash;&n;    &quot;AM53C974&quot;,        &t;&t;/* name                                         */  &bslash;&n;    AM53C974_detect,   &t;&t;/* int (* detect)(struct SHT *)                 */  &bslash;&n;    NULL,              &t;&t;/* int (*release)(struct Scsi_Host *)           */  &bslash;&n;    AM53C974_info,     &t;&t;/* const char *(* info)(struct Scsi_Host *)     */  &bslash;&n;    AM53C974_command,  &t;&t;/* int (* command)(Scsi_Cmnd *)                 */  &bslash;&n;    AM53C974_queue_command,&t;/* int (* queuecommand)(Scsi_Cmnd *,                &bslash;&n;                                           void (*done)(Scsi_Cmnd *))           */  &bslash;&n;    AM53C974_abort,    &t;&t;/* int (* abort)(Scsi_Cmnd *)                   */  &bslash;&n;    AM53C974_reset,    &t;&t;/* int (* reset)(Scsi_Cmnd *)                   */  &bslash;&n;    NULL,                 &t;/* int (* slave_attach)(int, int)               */  &bslash;&n;    scsicam_bios_param,&t;&t;/* int (* bios_param)(Disk *, int, int[])       */  &bslash;&n;    12,                 &t;/* can_queue                                    */  &bslash;&n;    -1,                         /* this_id                                      */  &bslash;&n;    SG_ALL,            &t;&t;/* sg_tablesize                                 */  &bslash;&n;    1,                 &t;&t;/* cmd_per_lun                                  */  &bslash;&n;    0,                 &t;&t;/* present, i.e. how many adapters of this kind */  &bslash;&n;    0,                 &t;&t;/* unchecked_isa_dma                            */  &bslash;&n;    DISABLE_CLUSTERING &t;&t;/* use_clustering                               */  &bslash;&n;    }
+mdefine_line|#define AM53C974 { &bslash;&n;    NULL,              &t;&t;/* pointer to next in list                      */  &bslash;&n;    NULL,&t;&t;&t;/* long * usage_count&t;&t;&t;&t;*/  &bslash;&n;    &amp;proc_scsi_am53c974,        /* struct proc_dir_entry *proc_dir              */ &bslash;&n;    NULL,                       /* int (*proc_info)(char *, char **, off_t, int, int, int); */ &bslash;&n;    &quot;AM53C974&quot;,        &t;&t;/* name                                         */  &bslash;&n;    AM53C974_detect,   &t;&t;/* int (* detect)(struct SHT *)                 */  &bslash;&n;    AM53C974_release,&t;&t;/* int (*release)(struct Scsi_Host *)           */  &bslash;&n;    AM53C974_info,     &t;&t;/* const char *(* info)(struct Scsi_Host *)     */  &bslash;&n;    AM53C974_command,  &t;&t;/* int (* command)(Scsi_Cmnd *)                 */  &bslash;&n;    AM53C974_queue_command,&t;/* int (* queuecommand)(Scsi_Cmnd *,                &bslash;&n;                                           void (*done)(Scsi_Cmnd *))           */  &bslash;&n;    AM53C974_abort,    &t;&t;/* int (* abort)(Scsi_Cmnd *)                   */  &bslash;&n;    AM53C974_reset,    &t;&t;/* int (* reset)(Scsi_Cmnd *)                   */  &bslash;&n;    NULL,                 &t;/* int (* slave_attach)(int, int)               */  &bslash;&n;    scsicam_bios_param,&t;&t;/* int (* bios_param)(Disk *, int, int[])       */  &bslash;&n;    12,                 &t;/* can_queue                                    */  &bslash;&n;    -1,                         /* this_id                                      */  &bslash;&n;    SG_ALL,            &t;&t;/* sg_tablesize                                 */  &bslash;&n;    1,                 &t;&t;/* cmd_per_lun                                  */  &bslash;&n;    0,                 &t;&t;/* present, i.e. how many adapters of this kind */  &bslash;&n;    0,                 &t;&t;/* unchecked_isa_dma                            */  &bslash;&n;    DISABLE_CLUSTERING &t;&t;/* use_clustering                               */  &bslash;&n;    }
 r_void
 id|AM53C974_setup
 c_func
@@ -508,6 +508,16 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
+suffix:semicolon
+r_int
+id|AM53C974_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shp
 )paren
 suffix:semicolon
 r_int

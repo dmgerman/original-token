@@ -55,6 +55,14 @@ DECL|macro|ICMP_NET_UNR_TOS
 mdefine_line|#define ICMP_NET_UNR_TOS&t;11
 DECL|macro|ICMP_HOST_UNR_TOS
 mdefine_line|#define ICMP_HOST_UNR_TOS&t;12
+DECL|macro|ICMP_PKT_FILTERED
+mdefine_line|#define ICMP_PKT_FILTERED&t;13&t;/* Packet filtered */
+DECL|macro|ICMP_PREC_VIOLATION
+mdefine_line|#define ICMP_PREC_VIOLATION&t;14&t;/* Precedence violation */
+DECL|macro|ICMP_PREC_CUTOFF
+mdefine_line|#define ICMP_PREC_CUTOFF&t;15&t;/* Precedence cut off */
+DECL|macro|NR_ICMP_UNREACH
+mdefine_line|#define NR_ICMP_UNREACH&t;15&t;  /* instead of hardcoding immediate value */
 multiline_comment|/* Codes for REDIRECT. */
 DECL|macro|ICMP_REDIR_NET
 mdefine_line|#define ICMP_REDIR_NET&t;&t;0&t;/* Redirect Net&t;&t;&t;*/

@@ -263,7 +263,7 @@ mdefine_line|#define COPY_SEG(x) &bslash;&n;if ((context.x &amp; 0xfffc) &amp;&a
 DECL|macro|COPY_SEG_STRICT
 mdefine_line|#define COPY_SEG_STRICT(x) &bslash;&n;if (!(context.x &amp; 0xfffc) || (context.x &amp; 3) != 3) goto badframe; COPY(x);
 r_struct
-id|sigcontext_struct
+id|sigcontext
 id|context
 suffix:semicolon
 r_struct

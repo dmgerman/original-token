@@ -1,46 +1,6 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_dir.c,v 1.3 1996/04/25 09:12:00 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_dir.c,v 1.7 1996/05/21 19:01:45 davem Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
-multiline_comment|/* XXX */
-r_extern
-r_int
-id|ufs_lookup
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_const
-r_char
-op_star
-comma
-r_int
-comma
-r_struct
-id|inode
-op_star
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ufs_bmap
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ufs_print_inode
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
+macro_line|#include &lt;linux/ufs_fs.h&gt;
 multiline_comment|/*&n; * This is blatantly stolen from ext2fs&n; */
 r_static
 r_int
@@ -188,16 +148,6 @@ id|filp-&gt;f_pos
 op_rshift
 id|sb-&gt;s_blocksize_bits
 suffix:semicolon
-id|blk
-op_assign
-id|ufs_bmap
-c_func
-(paren
-id|inode
-comma
-id|lblk
-)paren
-suffix:semicolon
 multiline_comment|/* XXX - ufs_bmap() call needs error checking */
 id|blk
 op_assign
@@ -297,7 +247,11 @@ multiline_comment|/* It&squot;s too expensive to do a full&n;&t;&t;&t;&t; * dire
 r_if
 c_cond
 (paren
+id|ufs_swab16
+c_func
+(paren
 id|de-&gt;d_reclen
+)paren
 OL
 l_int|1
 )paren
@@ -305,7 +259,11 @@ r_break
 suffix:semicolon
 id|i
 op_add_assign
+id|ufs_swab16
+c_func
+(paren
 id|de-&gt;d_reclen
+)paren
 suffix:semicolon
 )brace
 id|offset
@@ -365,13 +323,21 @@ r_if
 c_cond
 (paren
 (paren
+id|ufs_swab16
+c_func
+(paren
 id|de-&gt;d_reclen
+)paren
 op_eq
 l_int|0
 )paren
 op_logical_or
 (paren
+id|ufs_swab16
+c_func
+(paren
 id|de-&gt;d_namlen
+)paren
 op_eq
 l_int|0
 )paren
@@ -447,12 +413,20 @@ suffix:semicolon
 macro_line|#endif /* XXX */
 id|offset
 op_add_assign
+id|ufs_swab16
+c_func
+(paren
 id|de-&gt;d_reclen
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|ufs_swab32
+c_func
+(paren
 id|de-&gt;d_ino
+)paren
 )paren
 (brace
 multiline_comment|/* We might block in the next section&n;&t;&t;&t;&t; * if the data destination is&n;&t;&t;&t;&t; * currently swapped out.  So, use a&n;&t;&t;&t;&t; * version stamp to detect whether or&n;&t;&t;&t;&t; * not the directory has been modified&n;&t;&t;&t;&t; * during the copy operation. */
@@ -467,9 +441,17 @@ id|inode
 comma
 id|de-&gt;d_name
 comma
+id|ufs_swab16
+c_func
+(paren
 id|de-&gt;d_namlen
+)paren
 comma
+id|ufs_swab32
+c_func
+(paren
 id|de-&gt;d_ino
+)paren
 )paren
 suffix:semicolon
 id|version
@@ -491,7 +473,11 @@ l_string|&quot;ufs_readdir: filldir(%s,%u)&bslash;n&quot;
 comma
 id|de-&gt;d_name
 comma
+id|ufs_swab32
+c_func
+(paren
 id|de-&gt;d_ino
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -504,11 +490,19 @@ id|dirent
 comma
 id|de-&gt;d_name
 comma
+id|ufs_swab16
+c_func
+(paren
 id|de-&gt;d_namlen
+)paren
 comma
 id|filp-&gt;f_pos
 comma
+id|ufs_swab32
+c_func
+(paren
 id|de-&gt;d_ino
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -534,7 +528,11 @@ suffix:semicolon
 )brace
 id|filp-&gt;f_pos
 op_add_assign
+id|ufs_swab16
+c_func
+(paren
 id|de-&gt;d_reclen
+)paren
 suffix:semicolon
 )brace
 id|offset

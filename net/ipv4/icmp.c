@@ -131,7 +131,28 @@ id|EOPNOTSUPP
 comma
 l_int|0
 )brace
+comma
 multiline_comment|/*&t;ICMP_HOST_UNR_TOS&t;*/
+(brace
+id|EOPNOTSUPP
+comma
+l_int|1
+)brace
+comma
+multiline_comment|/*&t;ICMP_PKT_FILTERED&t;*/
+(brace
+id|EOPNOTSUPP
+comma
+l_int|1
+)brace
+comma
+multiline_comment|/*&t;ICMP_PREC_VIOLATION&t;*/
+(brace
+id|EOPNOTSUPP
+comma
+l_int|1
+)brace
+multiline_comment|/*&t;ICMP_PREC_CUTOFF&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;A spare long used to speed up statistics updating&n; */
@@ -1687,7 +1708,7 @@ c_cond
 (paren
 id|icmph-&gt;code
 OG
-l_int|15
+id|NR_ICMP_UNREACH
 )paren
 (brace
 multiline_comment|/* Invalid type */

@@ -752,8 +752,10 @@ DECL|macro|PCI_VENDOR_ID_S3
 mdefine_line|#define PCI_VENDOR_ID_S3&t;&t;0x5333
 DECL|macro|PCI_DEVICE_ID_S3_ViRGE
 mdefine_line|#define PCI_DEVICE_ID_S3_ViRGE&t;&t;0x5631
-DECL|macro|PCI_DEVICE_ID_S3_811
-mdefine_line|#define PCI_DEVICE_ID_S3_811&t;&t;0x8811
+DECL|macro|PCI_DEVICE_ID_S3_TRIO
+mdefine_line|#define PCI_DEVICE_ID_S3_TRIO&t;&t;0x8811
+DECL|macro|PCI_DEVICE_ID_S3_ViRGE_VX
+mdefine_line|#define PCI_DEVICE_ID_S3_ViRGE_VX&t;0x883d
 DECL|macro|PCI_DEVICE_ID_S3_868
 mdefine_line|#define PCI_DEVICE_ID_S3_868&t;&t;0x8880
 DECL|macro|PCI_DEVICE_ID_S3_928

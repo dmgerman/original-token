@@ -1,21 +1,7 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_namei.c,v 1.3 1996/04/25 09:12:07 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_namei.c,v 1.7 1996/06/01 14:56:49 ecd Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
-r_extern
-r_int
-r_int
-id|ufs_bmap
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|block
-)paren
-suffix:semicolon
-multiline_comment|/* XXX */
+macro_line|#include &lt;linux/ufs_fs.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/*&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; * stolen from ext2fs&n; */
 DECL|function|ufs_match
 r_static
@@ -47,6 +33,7 @@ id|len
 OG
 id|UFS_MAXNAMLEN
 )paren
+multiline_comment|/* XXX - name space */
 r_return
 l_int|0
 suffix:semicolon
@@ -58,7 +45,11 @@ op_logical_neg
 id|len
 op_logical_and
 (paren
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_namlen
+)paren
 op_eq
 l_int|1
 )paren
@@ -89,7 +80,11 @@ c_cond
 (paren
 id|len
 op_ne
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_namlen
+)paren
 )paren
 r_return
 l_int|0
@@ -149,6 +144,23 @@ id|ufs_direct
 op_star
 id|d
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+op_amp
+id|UFS_DEBUG
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Passed name: %s&bslash;nPassed length: %d&bslash;n&quot;
+comma
+id|name
+comma
+id|len
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Touching /xyzzy in a filesystem toggles debugging messages.&n;&t; */
 r_if
 c_cond
@@ -198,6 +210,12 @@ c_cond
 l_string|&quot;on&quot;
 suffix:colon
 l_string|&quot;off&quot;
+)paren
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|dir
 )paren
 suffix:semicolon
 r_return
@@ -256,6 +274,12 @@ suffix:colon
 l_string|&quot;off&quot;
 )paren
 suffix:semicolon
+id|iput
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOENT
@@ -311,6 +335,12 @@ suffix:colon
 l_string|&quot;off&quot;
 )paren
 suffix:semicolon
+id|iput
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOENT
@@ -364,6 +394,12 @@ c_cond
 l_string|&quot;on&quot;
 suffix:colon
 l_string|&quot;off&quot;
+)paren
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|dir
 )paren
 suffix:semicolon
 r_return
@@ -456,6 +492,12 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* XXX - bug bug bug */
+id|iput
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOENT
@@ -491,6 +533,12 @@ comma
 id|lfragno
 )paren
 suffix:semicolon
+id|iput
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -519,7 +567,11 @@ id|d
 op_minus
 id|bh-&gt;b_data
 op_plus
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_reclen
+)paren
 )paren
 op_le
 id|dir-&gt;i_sb-&gt;s_blocksize
@@ -530,13 +582,21 @@ r_if
 c_cond
 (paren
 (paren
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_reclen
+)paren
 op_eq
 l_int|0
 )paren
 op_logical_or
 (paren
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_namlen
+)paren
 op_eq
 l_int|0
 )paren
@@ -583,11 +643,23 @@ r_int
 )paren
 id|d
 comma
+id|ufs_swab32
+c_func
+(paren
 id|d-&gt;d_ino
+)paren
 comma
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_reclen
+)paren
 comma
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_namlen
+)paren
 comma
 id|d-&gt;d_name
 )paren
@@ -597,7 +669,11 @@ r_if
 c_cond
 (paren
 (paren
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_namlen
+)paren
 op_eq
 id|len
 )paren
@@ -625,13 +701,23 @@ c_func
 (paren
 id|dir-&gt;i_sb
 comma
+id|ufs_swab32
+c_func
+(paren
 id|d-&gt;d_ino
+)paren
 )paren
 suffix:semicolon
 id|brelse
 c_func
 (paren
 id|bh
+)paren
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|dir
 )paren
 suffix:semicolon
 r_return
@@ -660,7 +746,11 @@ id|len
 comma
 id|d-&gt;d_name
 comma
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_namlen
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -679,7 +769,11 @@ op_star
 )paren
 id|d
 op_plus
+id|ufs_swab16
+c_func
+(paren
 id|d-&gt;d_reclen
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -690,10 +784,15 @@ id|bh
 )paren
 suffix:semicolon
 )brace
+id|iput
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOENT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local Variables: ***&n; * c-indent-level: 8 ***&n; * c-continued-statement-offset: 8 ***&n; * c-brace-offset: -8 ***&n; * c-argdecl-indent: 0 ***&n; * c-label-offset: -8 ***&n; * End: ***&n; */
 eof

@@ -63,9 +63,9 @@ id|status
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|sigcontext_struct
+DECL|struct|sigcontext
 r_struct
-id|sigcontext_struct
+id|sigcontext
 (brace
 DECL|member|gs
 DECL|member|__gsh

@@ -304,7 +304,7 @@ id|do_sigreturn
 c_func
 (paren
 r_struct
-id|sigcontext_struct
+id|sigcontext
 op_star
 id|sc
 comma
@@ -810,7 +810,7 @@ r_int
 id|oldsp
 suffix:semicolon
 r_struct
-id|sigcontext_struct
+id|sigcontext
 op_star
 id|sc
 suffix:semicolon
@@ -826,7 +826,7 @@ op_assign
 (paren
 (paren
 r_struct
-id|sigcontext_struct
+id|sigcontext
 op_star
 )paren
 id|oldsp

@@ -1,9 +1,9 @@
 macro_line|#ifndef _ASMAXP_SIGCONTEXT_H
 DECL|macro|_ASMAXP_SIGCONTEXT_H
 mdefine_line|#define _ASMAXP_SIGCONTEXT_H
-DECL|struct|sigcontext_struct
+DECL|struct|sigcontext
 r_struct
-id|sigcontext_struct
+id|sigcontext
 (brace
 multiline_comment|/*&n;&t; * what should we have here? I&squot;d probably better use the same&n;&t; * stack layout as OSF/1, just in case we ever want to try&n;&t; * running their binaries.. &n;&t; *&n;&t; * This is the basic layout, but I don&squot;t know if we&squot;ll ever&n;&t; * actually fill in all the values..&n;&t; */
 DECL|member|sc_onstack

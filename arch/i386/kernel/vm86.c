@@ -870,46 +870,29 @@ l_int|0
 r_return
 l_int|1
 suffix:semicolon
-id|__asm__
-id|__volatile__
+r_return
+id|test_bit
 c_func
 (paren
-l_string|&quot;btl %2,%%fs:%1&bslash;n&bslash;tsbbl %0,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
 id|nr
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
+comma
 id|bitmap
 )paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|nr
-)paren
-)paren
-suffix:semicolon
-r_return
-id|nr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Boy are these ugly, but we need to do the correct 16-bit arithmetic.&n; * Gcc makes a mess of it, so we do it inline and use non-obvious calling&n; * conventions..&n; */
 DECL|macro|pushb
-mdefine_line|#define pushb(base, ptr, val) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %2,%%fs:0(%1,%0)&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr) &bslash;&n;&t;: &quot;r&quot; (base), &quot;q&quot; (val), &quot;0&quot; (ptr))
+mdefine_line|#define pushb(base, ptr, val) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %2,0(%1,%0)&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr) &bslash;&n;&t;: &quot;r&quot; (base), &quot;q&quot; (val), &quot;0&quot; (ptr))
 DECL|macro|pushw
-mdefine_line|#define pushw(base, ptr, val) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %h2,%%fs:0(%1,%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %b2,%%fs:0(%1,%0)&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr) &bslash;&n;&t;: &quot;r&quot; (base), &quot;q&quot; (val), &quot;0&quot; (ptr))
+mdefine_line|#define pushw(base, ptr, val) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %h2,0(%1,%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %b2,0(%1,%0)&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr) &bslash;&n;&t;: &quot;r&quot; (base), &quot;q&quot; (val), &quot;0&quot; (ptr))
 DECL|macro|pushl
-mdefine_line|#define pushl(base, ptr, val) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %h2,%%fs:0(%1,%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %b2,%%fs:0(%1,%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %h2,%%fs:0(%1,%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %b2,%%fs:0(%1,%0)&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr) &bslash;&n;&t;: &quot;r&quot; (base), &quot;q&quot; (val), &quot;0&quot; (ptr))
+mdefine_line|#define pushl(base, ptr, val) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %h2,0(%1,%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %b2,0(%1,%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %h2,0(%1,%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;decw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %b2,0(%1,%0)&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr) &bslash;&n;&t;: &quot;r&quot; (base), &quot;q&quot; (val), &quot;0&quot; (ptr))
 DECL|macro|popb
-mdefine_line|#define popb(base, ptr) &bslash;&n;({ unsigned long __res; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;movb %%fs:0(%1,%0),%b2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr), &quot;=r&quot; (base), &quot;=q&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (ptr), &quot;1&quot; (base), &quot;2&quot; (0)); &bslash;&n;__res; })
+mdefine_line|#define popb(base, ptr) &bslash;&n;({ unsigned long __res; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;movb 0(%1,%0),%b2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr), &quot;=r&quot; (base), &quot;=q&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (ptr), &quot;1&quot; (base), &quot;2&quot; (0)); &bslash;&n;__res; })
 DECL|macro|popw
-mdefine_line|#define popw(base, ptr) &bslash;&n;({ unsigned long __res; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;movb %%fs:0(%1,%0),%b2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%fs:0(%1,%0),%h2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr), &quot;=r&quot; (base), &quot;=q&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (ptr), &quot;1&quot; (base), &quot;2&quot; (0)); &bslash;&n;__res; })
+mdefine_line|#define popw(base, ptr) &bslash;&n;({ unsigned long __res; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;movb 0(%1,%0),%b2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb 0(%1,%0),%h2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr), &quot;=r&quot; (base), &quot;=q&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (ptr), &quot;1&quot; (base), &quot;2&quot; (0)); &bslash;&n;__res; })
 DECL|macro|popl
-mdefine_line|#define popl(base, ptr) &bslash;&n;({ unsigned long __res; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;movb %%fs:0(%1,%0),%b2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%fs:0(%1,%0),%h2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%fs:0(%1,%0),%b2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%fs:0(%1,%0),%h2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%2&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr), &quot;=r&quot; (base), &quot;=q&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (ptr), &quot;1&quot; (base)); &bslash;&n;__res; })
+mdefine_line|#define popl(base, ptr) &bslash;&n;({ unsigned long __res; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;movb 0(%1,%0),%b2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb 0(%1,%0),%h2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb 0(%1,%0),%b2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb 0(%1,%0),%h2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;incw %w0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%2&quot; &bslash;&n;&t;: &quot;=r&quot; (ptr), &quot;=r&quot; (base), &quot;=q&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (ptr), &quot;1&quot; (base)); &bslash;&n;__res; })
 DECL|function|do_int
 r_static
 r_void

@@ -172,8 +172,8 @@ r_if
 c_cond
 (paren
 id|code
-OL
-l_int|13
+op_le
+id|NR_ICMP_UNREACH
 )paren
 (brace
 id|sk-&gt;err

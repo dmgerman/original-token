@@ -155,22 +155,6 @@ id|blocked_task
 )paren
 suffix:semicolon
 r_static
-r_int
-id|locks_overlap
-c_func
-(paren
-r_struct
-id|file_lock
-op_star
-id|fl1
-comma
-r_struct
-id|file_lock
-op_star
-id|fl2
-)paren
-suffix:semicolon
-r_static
 r_void
 id|posix_remove_locks
 c_func
@@ -273,6 +257,53 @@ op_star
 id|pfx
 )paren
 suffix:semicolon
+r_static
+r_void
+id|locks_insert_block
+c_func
+(paren
+r_struct
+id|file_lock
+op_star
+id|blocker
+comma
+r_struct
+id|file_lock
+op_star
+id|waiter
+)paren
+suffix:semicolon
+r_static
+r_void
+id|locks_delete_block
+c_func
+(paren
+r_struct
+id|file_lock
+op_star
+id|blocker
+comma
+r_struct
+id|file_lock
+op_star
+id|waiter
+)paren
+suffix:semicolon
+r_static
+r_void
+id|locks_wake_up_blocks
+c_func
+(paren
+r_struct
+id|file_lock
+op_star
+id|blocker
+comma
+r_int
+r_int
+id|wait
+)paren
+suffix:semicolon
 DECL|variable|file_lock_table
 r_static
 r_struct
@@ -338,10 +369,44 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Check if two locks overlap each other.&n; */
+DECL|function|locks_overlap
+r_static
+r_inline
+r_int
+id|locks_overlap
+c_func
+(paren
+r_struct
+id|file_lock
+op_star
+id|fl1
+comma
+r_struct
+id|file_lock
+op_star
+id|fl2
+)paren
+(brace
+r_return
+(paren
+(paren
+id|fl1-&gt;fl_end
+op_ge
+id|fl2-&gt;fl_start
+)paren
+op_logical_and
+(paren
+id|fl2-&gt;fl_end
+op_ge
+id|fl1-&gt;fl_start
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Insert waiter into blocker&squot;s block list.&n; * We use a circular list so that processes can be easily woken up in&n; * the order they blocked. The documentation doesn&squot;t require this but&n; * it seems seems like the reasonable thing to do.&n; */
 DECL|function|locks_insert_block
 r_static
-r_inline
 r_void
 id|locks_insert_block
 c_func
@@ -402,7 +467,6 @@ suffix:semicolon
 multiline_comment|/* Remove waiter from blocker&squot;s block list.&n; * When blocker ends up pointing to itself then the list is empty.&n; */
 DECL|function|locks_delete_block
 r_static
-r_inline
 r_void
 id|locks_delete_block
 c_func
@@ -479,7 +543,6 @@ suffix:semicolon
 multiline_comment|/* Wake up processes blocked waiting for blocker.&n; * If told to wait then schedule the processes until the block list&n; * is empty, otherwise empty the block list ourselves.&n; */
 DECL|function|locks_wake_up_blocks
 r_static
-r_inline
 r_void
 id|locks_wake_up_blocks
 c_func
@@ -976,7 +1039,7 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-multiline_comment|/*&n;&t; * Get arguments and validate them ...&n;&t; */
+multiline_comment|/* Get arguments and validate them ...&n;&t; */
 r_if
 c_cond
 (paren
@@ -1777,7 +1840,7 @@ r_return
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Search the lock list for this inode for locks that conflict with&n;&t; * the proposed read/write.&n;&t; */
+multiline_comment|/* Search the lock list for this inode for locks that conflict with&n;&t; * the proposed read/write.&n;&t; */
 r_while
 c_loop
 (paren
@@ -1786,40 +1849,17 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* Block for writes against a &quot;read&quot; lock,&n;&t;&t; * and both reads and writes against a &quot;write&quot; lock.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|fl-&gt;fl_owner
-op_eq
-id|current
-op_logical_or
-id|fl-&gt;fl_end
-OL
-id|offset
-op_logical_or
-id|fl-&gt;fl_start
-op_ge
-id|offset
-op_plus
-id|count
-)paren
-r_goto
-id|next_lock
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Block for writes against a &quot;read&quot; lock,&n;&t;&t; * and both reads and writes against a &quot;write&quot; lock.&n;&t;&t; */
-r_if
-c_cond
+id|posix_locks_conflict
+c_func
 (paren
-(paren
-id|read_write
-op_eq
-id|FLOCK_VERIFY_WRITE
-)paren
-op_logical_or
-(paren
-id|fl-&gt;fl_type
-op_eq
-id|F_WRLCK
+id|fl
+comma
+op_amp
+id|tfl
 )paren
 )paren
 (brace
@@ -1910,7 +1950,7 @@ op_minus
 id|ERESTARTSYS
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * If we&squot;ve been sleeping someone might have&n;&t;&t;&t; * changed the permissions behind our back.&n;&t;&t;&t; */
+multiline_comment|/* If we&squot;ve been sleeping someone might have&n;&t;&t;&t; * changed the permissions behind our back.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1932,8 +1972,6 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-id|next_lock
-suffix:colon
 id|fl
 op_assign
 id|fl-&gt;fl_next
@@ -2424,40 +2462,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* This should never happen */
 )brace
-multiline_comment|/* Check if two locks overlap each other.&n; */
-DECL|function|locks_overlap
-r_static
-r_int
-id|locks_overlap
-c_func
-(paren
-r_struct
-id|file_lock
-op_star
-id|fl1
-comma
-r_struct
-id|file_lock
-op_star
-id|fl2
-)paren
-(brace
-r_return
-(paren
-(paren
-id|fl1-&gt;fl_end
-op_ge
-id|fl2-&gt;fl_start
-)paren
-op_logical_and
-(paren
-id|fl2-&gt;fl_end
-op_ge
-id|fl1-&gt;fl_start
-)paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* This function tests for deadlock condition before putting a process to&n; * sleep. The detection scheme is no longer recursive. Recursive was neat,&n; * but dangerous - we risked stack corruption if the lock data was bad, or&n; * if the recursion was too deep for any other reason.&n; *&n; * We rely on the fact that a task can only be on one lock&squot;s wait queue&n; * at a time. When we find blocked_task on a wait queue we can re-search&n; * with blocked_task equal to that queue&squot;s owner, until either blocked_task&n; * isn&squot;t found, or blocked_task is found on a queue owned by my_task.&n; */
 DECL|function|posix_locks_deadlock
 r_static
@@ -2874,7 +2878,7 @@ op_complement
 id|current-&gt;blocked
 )paren
 (brace
-multiline_comment|/* If we are here, than we were awakened&n;&t;&t;&t;&t; * by a signal, so new_fl is still in the&n;&t;&t;&t;&t; * block queue of fl. We need to remove &n;&t;&t;&t;&t; * new_fl and then free it.&n;&t;&t;&t;&t; * &t;Dmitry Gorodchanin 09/02/96.&n;&t;&t;&t;&t; */
+multiline_comment|/* Awakened by a signal. Free the new&n;&t;&t;&t;&t; * lock and return an error.&n;&t;&t;&t;&t; */
 id|locks_free_lock
 c_func
 (paren
@@ -2912,7 +2916,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Add a POSIX style lock to a file.&n; * We merge adjacent locks whenever possible. POSIX locks come after FLOCK&n; * locks in the list and are sorted by owner task, then by starting address&n; *&n; * Kai Petzke writes:&n; * To make freeing a lock much faster, we keep a pointer to the lock before the&n; * actual one. But the real gain of the new coding was, that lock_it() and&n; * unlock_it() became one function.&n; *&n; * To all purists: Yes, I use a few goto&squot;s. Just pass on to the next function.&n; */
+multiline_comment|/* Add a POSIX style lock to a file.&n; * We merge adjacent locks whenever possible. POSIX locks are sorted by owner&n; * task, then by starting address&n; *&n; * Kai Petzke writes:&n; * To make freeing a lock much faster, we keep a pointer to the lock before the&n; * actual one. But the real gain of the new coding was, that lock_it() and&n; * unlock_it() became one function.&n; *&n; * To all purists: Yes, I use a few goto&squot;s. Just pass on to the next function.&n; */
 DECL|function|posix_lock_file
 r_static
 r_int
@@ -3110,13 +3114,13 @@ id|fl-&gt;fl_next
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Find the first old lock with the same owner as the new lock.&n;&t; */
+multiline_comment|/* Find the first old lock with the same owner as the new lock.&n;&t; */
 id|before
 op_assign
 op_amp
 id|filp-&gt;f_inode-&gt;i_flock
 suffix:semicolon
-multiline_comment|/* First skip FLOCK locks and locks owned by other processes.&n;&t; */
+multiline_comment|/* First skip locks owned by other processes.&n;&t; */
 r_while
 c_loop
 (paren
