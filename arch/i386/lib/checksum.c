@@ -1,14 +1,6 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IP/TCP/UDP checksumming routines&n; *&n; * Authors:&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Tom May, &lt;ftom@netcom.com&gt;&n; *&t;&t;Lots of code moved from tcp.c and ip.c; see those files&n; *&t;&t;for more names.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
-macro_line|#include &lt;asm/uaccess.h&gt;
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IP/TCP/UDP checksumming routines&n; *&n; * Authors:&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Tom May, &lt;ftom@netcom.com&gt;&n; *&t;&t;Lots of code moved from tcp.c and ip.c; see those files&n; *&t;&t;for more names.&n; *&n; * Changes:     Ingo Molnar, converted csum_partial_copy() to 2.1 exception&n; *&t;&t;&t;     handling.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;net/checksum.h&gt;
-multiline_comment|/*&n; * Computes a partial checksum&n; *&n; * mostly used for IP header checksumming. Thus we define the following&n; * fastpath: len==20, buff is 4 byte aligned.&n; *&n; */
-DECL|variable|csum_partial_bug
-r_int
-r_int
-id|csum_partial_bug
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/*&n; * computes a partial checksum, e.g. for TCP/UDP fragments&n; */
 DECL|function|csum_partial
 r_int
 r_int
@@ -471,11 +463,6 @@ l_string|&quot;S&quot;
 (paren
 id|buff
 )paren
-comma
-l_string|&quot;m&quot;
-(paren
-id|csum_partial_bug
-)paren
 suffix:colon
 l_string|&quot;bx&quot;
 comma
@@ -490,6 +477,470 @@ r_return
 id|sum
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Copy from ds while checksumming, otherwise like csum_partial&n; *&n; * The macros SRC and DST specify the type of access for the instruction.&n; * thus we can call a custom exception handler for all access types.&n; *&n; * FIXME: could someone double check wether i havent mixed up some SRC and&n; *&t;  DST definitions? It&squot;s damn hard to trigger all cases, i hope i got&n; *&t;  them all but theres no guarantee ...&n; */
+DECL|macro|SRC
+mdefine_line|#define SRC(y...)&t;&t;&t;&bslash;&n;&quot;&t;9999: &quot;#y&quot;;&t;&t;&t;&bslash;n &bslash;&n;&t;.section __ex_table, &bslash;&quot;a&bslash;&quot;;&t;&bslash;n &bslash;&n;&t;.long 9999b, src_access_fault&t;&bslash;n &bslash;&n;&t;.previous&quot;
+DECL|macro|DST
+mdefine_line|#define DST(y...)&t;&t;&t;&bslash;&n;&quot;&t;9999: &quot;#y&quot;;&t;&t;&t;&bslash;n &bslash;&n;&t;.section __ex_table, &bslash;&quot;a&bslash;&quot;;&t;&bslash;n &bslash;&n;&t;.long 9999b, dst_access_fault&t;&bslash;n &bslash;&n;&t;.previous&quot;
+DECL|function|csum_partial_copy_generic
+r_int
+r_int
+id|csum_partial_copy_generic
+(paren
+r_const
+r_char
+op_star
+id|src
+comma
+r_char
+op_star
+id|dst
+comma
+r_int
+id|len
+comma
+r_int
+id|sum
+comma
+r_int
+op_star
+id|src_err_ptr
+comma
+r_int
+op_star
+id|dst_err_ptr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+(paren
+"&quot;"
+id|testl
+"$"
+l_int|2
+comma
+op_mod
+op_mod
+id|edi
+macro_line|# Check alignment. 
+id|jz
+l_float|2f
+macro_line|# Jump if alignment is ok.
+id|subl
+"$"
+l_int|2
+comma
+op_mod
+op_mod
+id|ecx
+macro_line|# Alignment uses up two bytes.
+id|jae
+l_float|1f
+macro_line|# Jump if we had at least two bytes.
+id|addl
+"$"
+l_int|2
+comma
+op_mod
+op_mod
+id|ecx
+macro_line|# ecx was &lt; 2.  Deal with it.
+id|jmp
+l_float|4f
+l_string|&quot;SRC(&t;1:&t;movw (%%esi), %%bx&t;&t;&t;&t;)&quot;
+id|addl
+"$"
+l_int|2
+comma
+op_mod
+op_mod
+id|esi
+l_string|&quot;DST(&t;&t;movw %%bx, (%%edi)&t;&t;&t;&t;)&quot;
+id|addl
+"$"
+l_int|2
+comma
+op_mod
+op_mod
+id|edi
+id|addw
+op_mod
+op_mod
+id|bx
+comma
+op_mod
+op_mod
+id|ax
+id|adcl
+"$"
+l_int|0
+comma
+op_mod
+op_mod
+id|eax
+l_int|2
+suffix:colon
+id|pushl
+op_mod
+op_mod
+id|ecx
+id|shrl
+"$"
+l_int|5
+comma
+op_mod
+op_mod
+id|ecx
+id|jz
+l_float|2f
+id|testl
+op_mod
+op_mod
+id|esi
+comma
+op_mod
+op_mod
+id|esi
+l_string|&quot;SRC(&t;1:&t;movl (%%esi), %%ebx&t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;movl 4(%%esi), %%edx&t;&t;&t;&t;)&quot;
+id|adcl
+op_mod
+op_mod
+id|ebx
+comma
+op_mod
+op_mod
+id|eax
+l_string|&quot;DST(&t;&t;movl %%ebx, (%%edi)&t;&t;&t;&t;)&quot;
+id|adcl
+op_mod
+op_mod
+id|edx
+comma
+op_mod
+op_mod
+id|eax
+l_string|&quot;DST(&t;&t;movl %%edx, 4(%%edi)&t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;movl 8(%%esi), %%ebx&t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;movl 12(%%esi), %%edx&t;&t;&t;&t;)&quot;
+id|adcl
+op_mod
+op_mod
+id|ebx
+comma
+op_mod
+op_mod
+id|eax
+l_string|&quot;DST(&t;&t;movl %%ebx, 8(%%edi)&t;&t;&t;&t;)&quot;
+id|adcl
+op_mod
+op_mod
+id|edx
+comma
+op_mod
+op_mod
+id|eax
+l_string|&quot;DST(&t;&t;movl %%edx, 12(%%edi)&t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;movl 16(%%esi), %%ebx &t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;movl 20(%%esi), %%edx&t;&t;&t;&t;)&quot;
+id|adcl
+op_mod
+op_mod
+id|ebx
+comma
+op_mod
+op_mod
+id|eax
+l_string|&quot;DST(&t;&t;movl %%ebx, 16(%%edi)&t;&t;&t;&t;)&quot;
+id|adcl
+op_mod
+op_mod
+id|edx
+comma
+op_mod
+op_mod
+id|eax
+l_string|&quot;DST(&t;&t;movl %%edx, 20(%%edi)&t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;movl 24(%%esi), %%ebx&t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;movl 28(%%esi), %%edx&t;&t;&t;&t;)&quot;
+id|adcl
+op_mod
+op_mod
+id|ebx
+comma
+op_mod
+op_mod
+id|eax
+l_string|&quot;DST(&t;&t;movl %%ebx, 24(%%edi)&t;&t;&t;&t;)&quot;
+id|adcl
+op_mod
+op_mod
+id|edx
+comma
+op_mod
+op_mod
+id|eax
+l_string|&quot;DST(&t;&t;movl %%edx, 28(%%edi)&t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;lea 32(%%esi), %%esi&t;&t;&t;&t;)&quot;
+l_string|&quot;DST(&t;&t;lea 32(%%edi), %%edi&t;&t;&t;&t;)&quot;
+id|dec
+op_mod
+op_mod
+id|ecx
+id|jne
+l_int|1
+id|b
+id|adcl
+"$"
+l_int|0
+comma
+op_mod
+op_mod
+id|eax
+l_int|2
+suffix:colon
+id|popl
+op_mod
+op_mod
+id|edx
+id|movl
+op_mod
+op_mod
+id|edx
+comma
+op_mod
+op_mod
+id|ecx
+id|andl
+"$"
+l_int|0x1c
+comma
+op_mod
+op_mod
+id|edx
+id|je
+l_float|4f
+id|shrl
+"$"
+l_int|2
+comma
+op_mod
+op_mod
+id|edx
+macro_line|# This clears CF
+l_string|&quot;SRC(&t;3:&t;movl (%%esi), %%ebx&t;&t;&t;&t;)&quot;
+id|adcl
+op_mod
+op_mod
+id|ebx
+comma
+op_mod
+op_mod
+id|eax
+l_string|&quot;DST(&t;&t;movl %%ebx, (%%edi)&t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;lea 4(%%esi), %%esi&t;&t;&t;&t;)&quot;
+l_string|&quot;DST(&t;&t;lea 4(%%edi), %%edi&t;&t;&t;&t;)&quot;
+id|dec
+op_mod
+op_mod
+id|edx
+id|jne
+l_int|3
+id|b
+id|adcl
+"$"
+l_int|0
+comma
+op_mod
+op_mod
+id|eax
+l_int|4
+suffix:colon
+id|andl
+"$"
+l_int|3
+comma
+op_mod
+op_mod
+id|ecx
+id|jz
+l_float|7f
+id|cmpl
+"$"
+l_int|2
+comma
+op_mod
+op_mod
+id|ecx
+id|jb
+l_float|5f
+l_string|&quot;SRC(&t;&t;movw (%%esi), %%cx&t;&t;&t;&t;)&quot;
+l_string|&quot;SRC(&t;&t;leal 2(%%esi), %%esi&t;&t;&t;&t;)&quot;
+l_string|&quot;DST(&t;&t;movw %%cx, (%%edi)&t;&t;&t;&t;)&quot;
+l_string|&quot;DST(&t;&t;leal 2(%%edi), %%edi&t;&t;&t;&t;)&quot;
+id|je
+l_float|6f
+id|shll
+"$"
+l_int|16
+comma
+op_mod
+op_mod
+id|ecx
+l_string|&quot;SRC(&t;5:&t;movb (%%esi), %%cl&t;&t;&t;&t;)&quot;
+l_string|&quot;DST(&t;&t;movb %%cl, (%%edi)&t;&t;&t;&t;)&quot;
+l_int|6
+suffix:colon
+id|addl
+op_mod
+op_mod
+id|ecx
+comma
+op_mod
+op_mod
+id|eax
+id|adcl
+"$"
+l_int|0
+comma
+op_mod
+op_mod
+id|eax
+l_int|7
+suffix:colon
+id|end_of_body
+suffix:colon
+macro_line|# Exception handler:
+macro_line|################################################
+macro_line|#
+dot
+id|section
+dot
+id|fixup
+comma
+"&bslash;&quot;"
+id|a
+"&bslash;&quot;"
+macro_line|#
+macro_line|#
+id|common_fixup
+suffix:colon
+macro_line|#
+macro_line|#
+id|movl
+op_mod
+l_int|7
+comma
+(paren
+op_mod
+op_mod
+id|ebx
+)paren
+macro_line|#
+macro_line|#
+macro_line|# FIXME: do zeroing of rest of the buffer here. #
+macro_line|#
+id|jmp
+id|end_of_body
+macro_line|#
+macro_line|#
+id|src_access_fault
+suffix:colon
+macro_line|#
+id|movl
+op_mod
+l_int|1
+comma
+op_mod
+op_mod
+id|ebx
+macro_line|#
+id|jmp
+id|common_fixup
+macro_line|#
+macro_line|#
+id|dst_access_fault
+suffix:colon
+macro_line|#
+id|movl
+op_mod
+l_int|2
+comma
+op_mod
+op_mod
+id|ebx
+macro_line|#
+id|jmp
+id|common_fixup
+macro_line|#
+macro_line|#
+dot
+id|previous
+macro_line|#
+macro_line|#
+macro_line|################################################
+"&quot;"
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|sum
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|src_err_ptr
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|dst_err_ptr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|sum
+)paren
+comma
+l_string|&quot;c&quot;
+(paren
+id|len
+)paren
+comma
+l_string|&quot;S&quot;
+(paren
+id|src
+)paren
+comma
+l_string|&quot;D&quot;
+(paren
+id|dst
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+op_minus
+id|EFAULT
+)paren
+suffix:colon
+l_string|&quot;bx&quot;
+comma
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;dx&quot;
+comma
+l_string|&quot;si&quot;
+comma
+l_string|&quot;di&quot;
+)paren
+suffix:semicolon
+r_return
+id|sum
+suffix:semicolon
+)brace
+DECL|macro|SRC
+macro_line|#undef SRC
+DECL|macro|DST
+macro_line|#undef DST
 multiline_comment|/*&n; * FIXME: old compatibility stuff, will be removed soon.&n; */
 DECL|function|csum_partial_copy
 r_int
@@ -522,27 +973,9 @@ id|dst_err
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|access_ok
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|src
-comma
-id|len
-)paren
-)paren
-id|src
-op_assign
-l_int|NULL
-suffix:semicolon
 id|sum
 op_assign
-id|__csum_partial_copy_i386_generic
+id|csum_partial_copy_generic
 (paren
 id|src
 comma
@@ -569,7 +1002,7 @@ id|dst_err
 id|printk
 c_func
 (paren
-l_string|&quot;old csum_partial_copy() exception, tell mingo to convert me.&bslash;n&quot;
+l_string|&quot;old csum_partial_copy_fromuser(), tell mingo to convert me.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

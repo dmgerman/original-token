@@ -1,12 +1,11 @@
 macro_line|#ifndef _I386_CHECKSUM_H
 DECL|macro|_I386_CHECKSUM_H
 mdefine_line|#define _I386_CHECKSUM_H
-macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * computes the checksum of a memory block at buff, length len,&n; * and adds in &quot;sum&quot; (32-bit)&n; *&n; * returns a 32-bit number suitable for feeding into itself&n; * or csum_tcpudp_magic&n; *&n; * this function must be called with even lengths, except&n; * for the last fragment, which may be odd&n; *&n; * it&squot;s best to have buff aligned on a 32-bit boundary&n; */
-r_extern
 r_int
 r_int
 id|csum_partial
+c_func
 (paren
 r_const
 r_int
@@ -25,7 +24,7 @@ suffix:semicolon
 multiline_comment|/*&n; * the same as csum_partial, but copies from src while it&n; * checksums, and handles user-space pointer exceptions correctly, when needed.&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
 r_int
 r_int
-id|__csum_partial_copy_i386_generic
+id|csum_partial_copy_generic
 c_func
 (paren
 r_const
@@ -87,7 +86,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_return
-id|__csum_partial_copy_i386_generic
+id|csum_partial_copy_generic
 (paren
 id|src
 comma
@@ -136,27 +135,8 @@ id|dst_err_ptr
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; * If the source address is invalid, force an exception via NULL pointer.&n; * The point of this solution is to make the code smaller. The exception path&n; * doesnt have to be fast.&n; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|access_ok
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|src
-comma
-id|len
-)paren
-)paren
-id|src
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
-id|__csum_partial_copy_i386_generic
+id|csum_partial_copy_generic
 (paren
 id|src
 comma
@@ -206,26 +186,8 @@ id|src_err_ptr
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|access_ok
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|dst
-comma
-id|len
-)paren
-)paren
-id|dst
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
-id|__csum_partial_copy_i386_generic
+id|csum_partial_copy_generic
 (paren
 id|src
 comma
