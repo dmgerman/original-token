@@ -740,6 +740,8 @@ r_int
 id|limit
 op_assign
 id|num_physpages
+op_lshift
+l_int|1
 suffix:semicolon
 r_struct
 id|page
@@ -842,6 +844,9 @@ id|page
 )paren
 )paren
 r_continue
+suffix:semicolon
+id|count
+op_decrement
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Some common cases that we just short-circuit without&n;&t;&t; * getting the locks - we need to re-check this once we&n;&t;&t; * have the lock, but that&squot;s fine.&n;&t;&t; */
 id|users
@@ -977,9 +982,6 @@ op_amp
 id|pagecache_lock
 )paren
 suffix:semicolon
-id|count
-op_decrement
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1014,9 +1016,6 @@ l_int|2
 )paren
 r_goto
 id|spin_unlock_continue
-suffix:semicolon
-id|count
-op_decrement
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Is it a page swap page? If so, we want to&n;&t;&t; * drop it if it is no longer used, even if it&n;&t;&t; * were to be marked referenced..&n;&t;&t; */
 r_if
