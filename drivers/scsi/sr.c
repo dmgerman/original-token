@@ -1542,7 +1542,7 @@ l_int|17
 op_mod
 l_int|16
 suffix:semicolon
-multiline_comment|/* if rec[14] is&squot;nt 0xb0, the drive does not support multisession CD&squot;s, use zero */
+multiline_comment|/* if rec[14] isn&squot;t 0xb0, the drive does not support multisession CD&squot;s, use zero */
 id|sector
 op_assign
 (paren
@@ -1716,7 +1716,7 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* if the first ioctl fails, we don&squot;t call the secound one */
+multiline_comment|/* if the first ioctl fails, we don&squot;t call the second one */
 )brace
 id|is_xa
 op_assign
@@ -1966,7 +1966,7 @@ l_int|4
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* ...and only if nessesary a set_density */
+multiline_comment|/* ...and only if necessary a set_density */
 r_if
 c_cond
 (paren

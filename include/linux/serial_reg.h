@@ -16,6 +16,9 @@ DECL|macro|UART_IIR
 mdefine_line|#define UART_IIR&t;2&t;/* In:  Interrupt ID Register */
 DECL|macro|UART_FCR
 mdefine_line|#define UART_FCR&t;2&t;/* Out: FIFO Control Register */
+DECL|macro|UART_EFR
+mdefine_line|#define UART_EFR&t;2&t;/* I/O: Extended Features Register */
+multiline_comment|/* (DLAB=1, 16C660 only) */
 DECL|macro|UART_LCR
 mdefine_line|#define UART_LCR&t;3&t;/* Out: Line Control Register */
 DECL|macro|UART_MCR
@@ -26,7 +29,7 @@ DECL|macro|UART_MSR
 mdefine_line|#define UART_MSR&t;6&t;/* In:  Modem Status Register */
 DECL|macro|UART_SCR
 mdefine_line|#define UART_SCR&t;7&t;/* I/O: Scratch Register */
-multiline_comment|/*&n; * These are the definitions for the FIFO Control Register&n; */
+multiline_comment|/*&n; * These are the definitions for the FIFO Control Register&n; * (16650 only)&n; */
 DECL|macro|UART_FCR_ENABLE_FIFO
 mdefine_line|#define UART_FCR_ENABLE_FIFO&t;0x01 /* Enable the FIFO */
 DECL|macro|UART_FCR_CLEAR_RCVR
@@ -45,6 +48,23 @@ DECL|macro|UART_FCR_TRIGGER_8
 mdefine_line|#define UART_FCR_TRIGGER_8&t;0x80 /* Mask for trigger set at 8 */
 DECL|macro|UART_FCR_TRIGGER_14
 mdefine_line|#define UART_FCR_TRIGGER_14&t;0xC0 /* Mask for trigger set at 14 */
+multiline_comment|/* 16650 redefinitions */
+DECL|macro|UART_FCR6_R_TRIGGER_8
+mdefine_line|#define UART_FCR6_R_TRIGGER_8&t;0x00 /* Mask for receive trigger set at 1 */
+DECL|macro|UART_FCR6_R_TRIGGER_16
+mdefine_line|#define UART_FCR6_R_TRIGGER_16&t;0x40 /* Mask for receive trigger set at 4 */
+DECL|macro|UART_FCR6_R_TRIGGER_24
+mdefine_line|#define UART_FCR6_R_TRIGGER_24  0x80 /* Mask for receive trigger set at 8 */
+DECL|macro|UART_FCR6_R_TRIGGER_28
+mdefine_line|#define UART_FCR6_R_TRIGGER_28&t;0xC0 /* Mask for receive trigger set at 14 */
+DECL|macro|UART_FCR6_T_TRIGGER_16
+mdefine_line|#define UART_FCR6_T_TRIGGER_16&t;0x00 /* Mask for transmit trigger set at 16 */
+DECL|macro|UART_FCR6_T_TRIGGER_8
+mdefine_line|#define UART_FCR6_T_TRIGGER_8&t;0x10 /* Mask for transmit trigger set at 8 */
+DECL|macro|UART_FCR6_T_TRIGGER_24
+mdefine_line|#define UART_FCR6_T_TRIGGER_24  0x20 /* Mask for transmit trigger set at 24 */
+DECL|macro|UART_FCR6_T_TRIGGER_30
+mdefine_line|#define UART_FCR6_T_TRIGGER_30&t;0x30 /* Mask for transmit trigger set at 30 */
 multiline_comment|/*&n; * These are the definitions for the Line Control Register&n; * &n; * Note: if the word length is 5 bits (UART_LCR_WLEN5), then setting &n; * UART_LCR_STOP will select 1.5 stop bits, not 2 stop bits.&n; */
 DECL|macro|UART_LCR_DLAB
 mdefine_line|#define UART_LCR_DLAB&t;0x80&t;/* Divisor latch access bit */
@@ -133,5 +153,15 @@ DECL|macro|UART_MSR_DCTS
 mdefine_line|#define UART_MSR_DCTS&t;0x01&t;/* Delta CTS */
 DECL|macro|UART_MSR_ANY_DELTA
 mdefine_line|#define UART_MSR_ANY_DELTA 0x0F&t;/* Any of the delta bits! */
+multiline_comment|/*&n; * These are the definitions for the Extended Features Register&n; * (StarTech 16C660 only, when DLAB=1)&n; */
+DECL|macro|UART_EFR_CTS
+mdefine_line|#define UART_EFR_CTS&t;0x80&t;/* CTS flow control */
+DECL|macro|UART_EFR_RTS
+mdefine_line|#define UART_EFR_RTS&t;0x40&t;/* RTS flow control */
+DECL|macro|UART_EFR_SCD
+mdefine_line|#define UART_EFR_SCD&t;0x20&t;/* Special character detect */
+DECL|macro|UART_EFR_ENI
+mdefine_line|#define UART_EFR_ENI&t;0x10&t;/* Enhanced Interrupt */
+multiline_comment|/*&n; * the low four bits control software flow control&n; */
 macro_line|#endif /* _LINUX_SERIAL_REG_H */
 eof

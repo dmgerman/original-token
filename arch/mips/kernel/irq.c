@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *&t;linux/arch/mips/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; */
 multiline_comment|/*&n; * IRQ&squot;s are in fact implemented a bit like signal handlers for the kernel.&n; * Naturally it&squot;s not a 1:1 relation, but there are similarities.&n; */
-multiline_comment|/*&n; * The Deskstation Tyne is almost completly like an IBM compatible PC with&n; * another type of microprocessor. Therefore this code is almost completly&n; * the same. More work needs to be done to support Acer PICA and other&n; * machines.&n; */
+multiline_comment|/*&n; * The Deskstation Tyne is almost completely like an IBM compatible PC with&n; * another type of microprocessor. Therefore this code is almost completely&n; * the same. More work needs to be done to support Acer PICA and other&n; * machines.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;

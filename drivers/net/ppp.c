@@ -1760,8 +1760,6 @@ id|PPP_MRU
 )paren
 id|mru
 op_assign
-id|new_mru
-op_assign
 id|PPP_MRU
 suffix:semicolon
 id|mtu
@@ -5985,18 +5983,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|PRINTKN
-(paren
-l_int|3
-comma
-(paren
-id|KERN_INFO
-l_string|&quot;ppp_ioctl: set mru to %x&bslash;n&quot;
-comma
-id|temp_i
-)paren
-)paren
-suffix:semicolon
 id|temp_i
 op_assign
 (paren
@@ -6005,6 +5991,18 @@ r_int
 id|get_fs_long
 (paren
 id|l
+)paren
+suffix:semicolon
+id|PRINTKN
+(paren
+l_int|3
+comma
+(paren
+id|KERN_INFO
+l_string|&quot;ppp_ioctl: set mru to %d&bslash;n&quot;
+comma
+id|temp_i
+)paren
 )paren
 suffix:semicolon
 r_if

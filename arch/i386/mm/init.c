@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
 r_void
 id|scsi_mem_init
@@ -515,7 +516,7 @@ l_int|768
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* also map it tempoarily at 0x0000000 for init */
+multiline_comment|/* also map it temporarily at 0x0000000 for init */
 id|pgd_set
 c_func
 (paren

@@ -16,13 +16,6 @@ mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE
 mdefine_line|#define VERIFY_WRITE 1
 r_extern
-id|pgd_t
-id|swapper_pg_dir
-(braket
-l_int|1024
-)braket
-suffix:semicolon
-r_extern
 r_int
 id|verify_area
 c_func

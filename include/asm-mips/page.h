@@ -106,7 +106,7 @@ DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif /* !defined (CONFIG_STRICT_MM_TYPECHECKS) */
 macro_line|#endif /* __ASSEMBLY__ */
-multiline_comment|/*&n; * Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 aditional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; */
+multiline_comment|/*&n; * Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 additional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT               (1&lt;&lt;0)  /* implemented in software */
 DECL|macro|_PAGE_COW

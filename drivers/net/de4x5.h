@@ -96,7 +96,7 @@ multiline_comment|/*&n;** EISA Configuration Register 2 bit definitions&n;*/
 DECL|macro|ER2_BRS
 mdefine_line|#define ER2_BRS       0xc0           /* Boot ROM Size */
 DECL|macro|ER2_BRA
-mdefine_line|#define ER2_BRA       0x3c           /* Boot ROM Adress &lt;16:13&gt; */
+mdefine_line|#define ER2_BRA       0x3c           /* Boot ROM Address &lt;16:13&gt; */
 multiline_comment|/*&n;** EISA Configuration Register 3 bit definitions&n;*/
 DECL|macro|ER3_BWE
 mdefine_line|#define ER3_BWE       0x40           /* Burst Write Enable */
@@ -327,7 +327,7 @@ mdefine_line|#define OMR_TR     0x0000c000       /* Threshold Control Bits */
 DECL|macro|OMR_ST
 mdefine_line|#define OMR_ST     0x00002000       /* Start/Stop Transmission Command */
 DECL|macro|OMR_FC
-mdefine_line|#define OMR_FC     0x00001000       /* Force Collisio Mode */
+mdefine_line|#define OMR_FC     0x00001000       /* Force Collision Mode */
 DECL|macro|OMR_OM
 mdefine_line|#define OMR_OM     0x00000c00       /* Operating Mode */
 DECL|macro|OMR_FD
@@ -466,7 +466,7 @@ DECL|macro|SICR_RESET
 mdefine_line|#define SICR_RESET 0xffff0000       /* Reset value for SICR */
 multiline_comment|/*&n;** DC21040 SIA Transmit and Receive Register (DE4X5_STRR)&n;*/
 DECL|macro|STRR_SPP
-mdefine_line|#define STRR_SPP   0x00004000       /* Set Polarit Plus */
+mdefine_line|#define STRR_SPP   0x00004000       /* Set Polarity Plus */
 DECL|macro|STRR_APE
 mdefine_line|#define STRR_APE   0x00002000       /* Auto Polarity Enable */
 DECL|macro|STRR_LTE

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/mc146818rtc.h&gt; /* CMOS defines */
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 macro_line|#include &lt;asm/system.h&gt;
@@ -36,35 +37,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|function|CMOS_READ
-r_static
-r_inline
-r_int
-r_char
-id|CMOS_READ
-c_func
-(paren
-r_int
-r_char
-id|addr
-)paren
-(brace
-id|outb_p
-c_func
-(paren
-id|addr
-comma
-l_int|0x70
-)paren
-suffix:semicolon
-r_return
-id|inb_p
-c_func
-(paren
-l_int|0x71
-)paren
-suffix:semicolon
-)brace
 DECL|macro|HD_DELAY
 mdefine_line|#define&t;HD_DELAY&t;0
 DECL|macro|MAX_ERRORS

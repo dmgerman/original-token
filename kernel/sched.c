@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ 0
 macro_line|#include &lt;linux/timex.h&gt;

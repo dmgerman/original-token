@@ -171,6 +171,18 @@ id|device
 op_star
 )paren
 suffix:semicolon
+macro_line|#if&t;defined(CONFIG_WAVELAN)
+r_extern
+r_int
+id|wavelan_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 r_extern
 r_int
 id|el16_probe
@@ -436,6 +448,14 @@ c_func
 id|dev
 )paren
 macro_line|#endif
+macro_line|#if&t;defined(CONFIG_WAVELAN)&t;/* WaveLAN */
+op_logical_and
+id|wavelan_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 macro_line|#ifdef CONFIG_EL16&t;&t;/* 3c507 */
 op_logical_and
 id|el16_probe

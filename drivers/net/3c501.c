@@ -2438,19 +2438,7 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;3c501: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
+multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
 id|unregister_netdev
 c_func
 (paren
@@ -2458,7 +2446,27 @@ op_amp
 id|dev_3c501
 )paren
 suffix:semicolon
-)brace
+multiline_comment|/* Free up the private structure, or leak memory :-)  */
+id|kfree
+c_func
+(paren
+id|dev_3c501.priv
+)paren
+suffix:semicolon
+id|dev_3c501.priv
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* gets re-allocated by el1_probe1 */
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|release_region
+c_func
+(paren
+id|dev_3c501.base_addr
+comma
+id|EL1_IO_EXTENT
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

@@ -1164,7 +1164,7 @@ r_int
 id|fchild
 )paren
 (brace
-multiline_comment|/* TODO :&gt; I just can&squot;t stomache it right now... */
+multiline_comment|/* TODO :&gt; I just can&squot;t stomach it right now... */
 r_return
 suffix:semicolon
 )brace

@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 id|asmlinkage
 r_int

@@ -181,6 +181,11 @@ DECL|enumerator|PROC_NET_IPACCT
 id|PROC_NET_IPACCT
 comma
 macro_line|#endif
+macro_line|#if&t;defined(CONFIG_WAVELAN)
+DECL|enumerator|PROC_NET_WAVELAN
+id|PROC_NET_WAVELAN
+comma
+macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 macro_line|#endif
 macro_line|#ifdef CONFIG_IPX
 DECL|enumerator|PROC_NET_IPX_INTERFACE

@@ -438,7 +438,7 @@ op_eq
 id|UMSDOS_RENAME_DOS
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_RENAME_DOS&n;&t;&t;&t;&t;&t;A file or directory is rename in a DOS directory&n;&t;&t;&t;&t;&t;(not moved accross directory). The source name&n;&t;&t;&t;&t;&t;is in the dos_dirent.name field and the destination&n;&t;&t;&t;&t;&t;is in umsdos_dirent.name field.&n;&n;&t;&t;&t;&t;&t;This ioctl allows umssync to rename a mangle file&n;&t;&t;&t;&t;&t;name before syncing it back in the EMD.&n;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: ioctl / UMSDOS_RENAME_DOS&n;&t;&t;&t;&t;&t;A file or directory is rename in a DOS directory&n;&t;&t;&t;&t;&t;(not moved across directory). The source name&n;&t;&t;&t;&t;&t;is in the dos_dirent.name field and the destination&n;&t;&t;&t;&t;&t;is in umsdos_dirent.name field.&n;&n;&t;&t;&t;&t;&t;This ioctl allows umssync to rename a mangle file&n;&t;&t;&t;&t;&t;name before syncing it back in the EMD.&n;&t;&t;&t;&t;*/
 id|dir-&gt;i_count
 op_add_assign
 l_int|2

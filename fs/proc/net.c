@@ -244,6 +244,25 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#if&t;defined(CONFIG_WAVELAN)
+r_extern
+r_int
+id|wavelan_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 r_extern
 r_int
 id|ip_acct_procinfo
@@ -773,6 +792,16 @@ l_string|&quot;ip_acct&quot;
 )brace
 comma
 macro_line|#endif
+macro_line|#if&t;defined(CONFIG_WAVELAN)
+(brace
+id|PROC_NET_WAVELAN
+comma
+l_int|7
+comma
+l_string|&quot;wavelan&quot;
+)brace
+comma
+macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 macro_line|#endif&t;/* CONFIG_INET */
 macro_line|#ifdef CONFIG_IPX
 (brace
@@ -1603,6 +1632,28 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif /* CONFIG_INET_RARP */&t;&t;&t;&t;
+macro_line|#if&t;defined(CONFIG_WAVELAN)
+r_case
+id|PROC_NET_WAVELAN
+suffix:colon
+id|length
+op_assign
+id|wavelan_get_info
+c_func
+(paren
+id|page
+comma
+op_amp
+id|start
+comma
+id|file-&gt;f_pos
+comma
+id|thistime
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 macro_line|#endif /* CONFIG_INET */
 macro_line|#ifdef CONFIG_IPX
 r_case

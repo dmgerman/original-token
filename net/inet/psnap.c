@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;SNAP data link layer. Derived from 802.2&n; *&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;, from the 802.2 layer by Greg Page.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;SNAP data link layer. Derived from 802.2&n; *&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;, from the 802.2 layer by Greg Page.&n; *&t;&t;Merged in additions from Greg Page&squot;s psnap.c.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;datalink.h&quot;
@@ -97,6 +97,25 @@ op_star
 id|pt
 )paren
 (brace
+r_static
+r_struct
+id|packet_type
+id|psnap_packet_type
+op_assign
+(brace
+l_int|0
+comma
+l_int|NULL
+comma
+multiline_comment|/* All Devices */
+id|snap_rcv
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+)brace
+suffix:semicolon
 r_struct
 id|datalink_proto
 op_star
@@ -127,6 +146,21 @@ id|skb-&gt;len
 op_sub_assign
 l_int|5
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|psnap_packet_type.type
+op_eq
+l_int|0
+)paren
+id|psnap_packet_type.type
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_SNAP
+)paren
+suffix:semicolon
 r_return
 id|proto
 op_member_access_from_pointer
@@ -137,7 +171,8 @@ id|skb
 comma
 id|dev
 comma
-id|pt
+op_amp
+id|psnap_packet_type
 )paren
 suffix:semicolon
 )brace

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * Shared mappings implemented 30.11.1994. It&squot;s not fully working yet,&n; * though.&n; */
 DECL|function|file_mmap_nopage
 r_static

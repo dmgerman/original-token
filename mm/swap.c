@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|MAX_SWAPFILES
 mdefine_line|#define MAX_SWAPFILES 8
 DECL|macro|SWP_USED

@@ -8,9 +8,10 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/debugreg.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * does not yet catch signals sent when the child dies.&n; * in exit.c or in signal.c.&n; */
 multiline_comment|/* determines which flags the user has access to. */
 multiline_comment|/* 1 = access 0 = no access */

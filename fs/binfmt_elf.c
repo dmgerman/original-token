@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 DECL|typedef|sysfun_p

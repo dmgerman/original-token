@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|function|change_protection
 r_static
 r_void

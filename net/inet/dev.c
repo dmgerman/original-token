@@ -914,6 +914,7 @@ op_assign
 id|ptype-&gt;next
 )paren
 (brace
+multiline_comment|/* Never send packets back to the socket&n;&t;&t;&t; * they originated from - MvS (miquels@drinkel.ow.org)&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -932,6 +933,17 @@ id|dev
 op_logical_or
 op_logical_neg
 id|ptype-&gt;dev
+)paren
+op_logical_and
+(paren
+(paren
+r_struct
+id|sock
+op_star
+)paren
+id|ptype-&gt;data
+op_ne
+id|skb-&gt;sk
 )paren
 )paren
 (brace

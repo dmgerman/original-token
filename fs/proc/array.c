@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|LOAD_INT
 mdefine_line|#define LOAD_INT(x) ((x) &gt;&gt; FSHIFT)

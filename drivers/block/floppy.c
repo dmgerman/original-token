@@ -64,6 +64,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/mc146818rtc.h&gt; /* CMOS defines */
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -12766,8 +12767,6 @@ suffix:semicolon
 DECL|macro|IOCTL_ALLOWED
 macro_line|#undef IOCTL_ALLOWED
 )brace
-DECL|macro|CMOS_READ
-mdefine_line|#define CMOS_READ(addr) ({ &bslash;&n;outb_p(addr,0x70); &bslash;&n;inb_p(0x71); &bslash;&n;})
 DECL|function|set_base_type
 r_static
 r_void

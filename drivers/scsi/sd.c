@@ -252,7 +252,7 @@ id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/* No such device */
-multiline_comment|/*&n;&t; * See if we are requesting a non-existant partition.&n;&t; */
+multiline_comment|/*&n;&t; * See if we are requesting a non-existent partition.&n;&t; */
 r_if
 c_cond
 (paren

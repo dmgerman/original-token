@@ -14,6 +14,10 @@ DECL|member|sipx_family
 r_int
 id|sipx_family
 suffix:semicolon
+DECL|member|sipx_port
+r_int
+id|sipx_port
+suffix:semicolon
 DECL|member|sipx_network
 r_int
 r_int
@@ -26,10 +30,6 @@ id|sipx_node
 (braket
 id|IPX_NODE_LEN
 )braket
-suffix:semicolon
-DECL|member|sipx_port
-r_int
-id|sipx_port
 suffix:semicolon
 DECL|member|sipx_type
 r_int
@@ -45,10 +45,14 @@ multiline_comment|/* 16 byte fill */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;So we can fit the extra info for SIOCSIFADDR into the address nicely&n; */
-DECL|macro|sipx_primary
-mdefine_line|#define sipx_primary&t;sipx_port
-DECL|macro|sipx_internal
-mdefine_line|#define sipx_internal&t;sipx_zero
+DECL|macro|sipx_special
+mdefine_line|#define sipx_special&t;sipx_port
+DECL|macro|sipx_action
+mdefine_line|#define sipx_action&t;sipx_zero
+DECL|macro|IPX_DLTITF
+mdefine_line|#define IPX_DLTITF&t;0
+DECL|macro|IPX_CRTITF
+mdefine_line|#define IPX_CRTITF&t;1
 DECL|struct|ipx_route_definition
 r_typedef
 r_struct
@@ -96,7 +100,7 @@ l_int|16
 suffix:semicolon
 DECL|member|ipx_dlink_type
 r_int
-r_int
+r_char
 id|ipx_dlink_type
 suffix:semicolon
 DECL|macro|IPX_FRAME_NONE
@@ -109,16 +113,17 @@ DECL|macro|IPX_FRAME_ETHERII
 mdefine_line|#define IPX_FRAME_ETHERII&t;3
 DECL|macro|IPX_FRAME_8023
 mdefine_line|#define IPX_FRAME_8023&t;&t;4
-DECL|member|ipx_primary
+DECL|member|ipx_special
 r_int
 r_char
-id|ipx_primary
+id|ipx_special
 suffix:semicolon
-DECL|member|ipx_internal
-r_int
-r_char
-id|ipx_internal
-suffix:semicolon
+DECL|macro|IPX_SPECIAL_NONE
+mdefine_line|#define IPX_SPECIAL_NONE&t;0
+DECL|macro|IPX_PRIMARY
+mdefine_line|#define IPX_PRIMARY&t;&t;1
+DECL|macro|IPX_INTERNAL
+mdefine_line|#define IPX_INTERNAL&t;&t;2
 DECL|member|ipx_node
 r_int
 r_char
@@ -150,7 +155,7 @@ DECL|typedef|ipx_config_data
 )brace
 id|ipx_config_data
 suffix:semicolon
-multiline_comment|/*&n; * OLD Route Definition for backware compatibility.&n; */
+multiline_comment|/*&n; * OLD Route Definition for backward compatibility.&n; */
 DECL|struct|ipx_route_def
 r_struct
 id|ipx_route_def
