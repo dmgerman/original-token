@@ -1,12 +1,12 @@
 multiline_comment|/* 3c515.c: A 3Com ISA EtherLink XL &quot;Corkscrew&quot; ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1997-1998 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the 3Com ISA EtherLink XL &quot;Corkscrew&quot; 3c515 ethercard.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
+multiline_comment|/*&n;&t;Written 1997-1998 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the 3Com ISA EtherLink XL &quot;Corkscrew&quot; 3c515 ethercard.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Cleaned up for 2.3.x/softnet by Jeff Garzik and Alan Cox.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c515.c:v0.99 4/7/98 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
+l_string|&quot;3c515.c:v0.99-sn 2000/02/12 becker@cesdis.gsfc.nasa.gov and others&bslash;n&quot;
 suffix:semicolon
 DECL|macro|CORKSCREW
 mdefine_line|#define CORKSCREW 1
@@ -50,7 +50,7 @@ mdefine_line|#define TX_RING_SIZE&t;16
 DECL|macro|RX_RING_SIZE
 mdefine_line|#define RX_RING_SIZE&t;16
 DECL|macro|PKT_BUF_SZ
-mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;&t;&t;/* Size of each temporary Rx buffer.*/
+mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;/* Size of each temporary Rx buffer. */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -75,18 +75,10 @@ macro_line|#include &lt;linux/delay.h&gt;
 multiline_comment|/* Kernel version compatibility functions. */
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-DECL|macro|DEV_ALLOC_SKB
-mdefine_line|#define DEV_ALLOC_SKB(len) dev_alloc_skb(len + 2)
-DECL|macro|FREE_IRQ
-mdefine_line|#define FREE_IRQ(irqnum, dev) free_irq(irqnum, dev)
 DECL|macro|REQUEST_IRQ
 mdefine_line|#define REQUEST_IRQ(i,h,f,n, instance) request_irq(i,h,f,n, instance)
 DECL|macro|IRQ
 mdefine_line|#define IRQ(irq, dev_id, pt_regs) (irq, dev_id, pt_regs)
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x20123)
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
-macro_line|#elif defined(MODULE)
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -151,7 +143,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* &quot;Knobs&quot; for adjusting internal parameters. */
 multiline_comment|/* Put out somewhat more debugging messages. (0 - no msg, 1 minimal msgs). */
 DECL|macro|DRIVER_DEBUG
@@ -183,41 +174,24 @@ mdefine_line|#define TX_TIMEOUT  40&t;&t;/* Time in jiffies before concluding Tx
 multiline_comment|/* The size here is somewhat misleading: the Corkscrew also uses the ISA&n;   aliased registers at &lt;base&gt;+0x400.&n;   */
 DECL|macro|CORKSCREW_TOTAL_SIZE
 mdefine_line|#define CORKSCREW_TOTAL_SIZE 0x20
-macro_line|#ifdef HAVE_DEVLIST
-DECL|variable|tc515_drv
-r_struct
-id|netdev_entry
-id|tc515_drv
-op_assign
-(brace
-l_string|&quot;3c515&quot;
-comma
-id|tc515_probe
-comma
-id|CORKSCREW_TOTAL_SIZE
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef DRIVER_DEBUG
-DECL|variable|vortex_debug
+DECL|variable|corkscrew_debug
 r_int
-id|vortex_debug
+id|corkscrew_debug
 op_assign
 id|DRIVER_DEBUG
 suffix:semicolon
 macro_line|#else
-DECL|variable|vortex_debug
+DECL|variable|corkscrew_debug
 r_int
-id|vortex_debug
+id|corkscrew_debug
 op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
 DECL|macro|CORKSCREW_ID
 mdefine_line|#define CORKSCREW_ID 10
-multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the 3Com 3c515 ISA Fast EtherLink XL,&n;3Com&squot;s ISA bus adapter for Fast Ethernet.  Due to the unique I/O port layout,&n;it&squot;s not practical to integrate this driver with the other EtherLink drivers.&n;&n;II. Board-specific settings&n;&n;The Corkscrew has an EEPROM for configuration, but no special settings are&n;needed for Linux.&n;&n;III. Driver operation&n;&n;The 3c515 series use an interface that&squot;s very similar to the 3c900 &quot;Boomerang&quot;&n;PCI cards, with the bus master interface extensively modified to work with&n;the ISA bus.&n;&n;The card is capable of full-bus-master transfers with separate&n;lists of transmit and receive descriptors, similar to the AMD LANCE/PCnet,&n;DEC Tulip and Intel Speedo3.&n;&n;This driver uses a &quot;RX_COPYBREAK&quot; scheme rather than a fixed intermediate&n;receive buffer.  This scheme allocates full-sized skbuffs as receive&n;buffers.  The value RX_COPYBREAK is used as the copying breakpoint: it is&n;chosen to trade-off the memory wasted by passing the full-sized skbuff to&n;the queue layer for all frames vs. the copying cost of copying a frame to a&n;correctly-sized skbuff.&n;&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;IV. Notes&n;&n;Thanks to Terry Murphy of 3Com for providing documentation and a development&n;board.&n;&n;The names &quot;Vortex&quot;, &quot;Boomerang&quot; and &quot;Corkscrew&quot; are the internal 3Com&n;project names.  I use these names to eliminate confusion -- 3Com product&n;numbers and names are very similar and often confused.&n;&n;The new chips support both ethernet (1.5K) and FDDI (4.5K) frame sizes!&n;This driver only supports ethernet frames because of the recent MTU limit&n;of 1.5K, but the changes to support 4.5K are minimal.&n;*/
+multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the 3Com 3c515 ISA Fast EtherLink XL,&n;3Com&squot;s ISA bus adapter for Fast Ethernet.  Due to the unique I/O port layout,&n;it&squot;s not practical to integrate this driver with the other EtherLink drivers.&n;&n;II. Board-specific settings&n;&n;The Corkscrew has an EEPROM for configuration, but no special settings are&n;needed for Linux.&n;&n;III. Driver operation&n;&n;The 3c515 series use an interface that&squot;s very similar to the 3c900 &quot;Boomerang&quot;&n;PCI cards, with the bus master interface extensively modified to work with&n;the ISA bus.&n;&n;The card is capable of full-bus-master transfers with separate&n;lists of transmit and receive descriptors, similar to the AMD LANCE/PCnet,&n;DEC Tulip and Intel Speedo3.&n;&n;This driver uses a &quot;RX_COPYBREAK&quot; scheme rather than a fixed intermediate&n;receive buffer.  This scheme allocates full-sized skbuffs as receive&n;buffers.  The value RX_COPYBREAK is used as the copying breakpoint: it is&n;chosen to trade-off the memory wasted by passing the full-sized skbuff to&n;the queue layer for all frames vs. the copying cost of copying a frame to a&n;correctly-sized skbuff.&n;&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the netif&n;layer.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;IV. Notes&n;&n;Thanks to Terry Murphy of 3Com for providing documentation and a development&n;board.&n;&n;The names &quot;Vortex&quot;, &quot;Boomerang&quot; and &quot;Corkscrew&quot; are the internal 3Com&n;project names.  I use these names to eliminate confusion -- 3Com product&n;numbers and names are very similar and often confused.&n;&n;The new chips support both ethernet (1.5K) and FDDI (4.5K) frame sizes!&n;This driver only supports ethernet frames because of the recent MTU limit&n;of 1.5K, but the changes to support 4.5K are minimal.&n;*/
 multiline_comment|/* Operational definitions.&n;   These are not used by other compilation units and thus are not&n;   exported in a &quot;.h&quot; file.&n;&n;   First the windows.  There are eight register windows, with the command&n;   and status registers available in each.&n;   */
 DECL|macro|EL3WINDOW
 mdefine_line|#define EL3WINDOW(win_num) outw(SelectWindow + (win_num), ioaddr + EL3_CMD)
@@ -226,9 +200,9 @@ mdefine_line|#define EL3_CMD 0x0e
 DECL|macro|EL3_STATUS
 mdefine_line|#define EL3_STATUS 0x0e
 multiline_comment|/* The top five bits written to EL3_CMD are a command, the lower&n;   11 bits are the parameter, if applicable.&n;   Note that 11 parameters bits was fine for ethernet, but the new chips&n;   can handle FDDI length frames (~4500 octets) and now parameters count&n;   32-bit &squot;Dwords&squot; rather than octets. */
-DECL|enum|vortex_cmd
+DECL|enum|corkscrew_cmd
 r_enum
-id|vortex_cmd
+id|corkscrew_cmd
 (brace
 DECL|enumerator|TotalReset
 DECL|enumerator|SelectWindow
@@ -315,7 +289,6 @@ comma
 DECL|enumerator|RxDiscard
 DECL|enumerator|TxEnable
 DECL|enumerator|TxDisable
-DECL|enumerator|TxReset
 id|RxDiscard
 op_assign
 l_int|8
@@ -330,6 +303,7 @@ l_int|11
 comma
 id|TxDisable
 op_assign
+DECL|enumerator|TxReset
 l_int|10
 op_lshift
 l_int|11
@@ -464,9 +438,9 @@ l_int|8
 )brace
 suffix:semicolon
 multiline_comment|/* Bits in the general status register. */
-DECL|enum|vortex_status
+DECL|enum|corkscrew_status
 r_enum
-id|vortex_status
+id|corkscrew_status
 (brace
 DECL|enumerator|IntLatch
 DECL|enumerator|AdapterFailure
@@ -536,7 +510,7 @@ l_int|1
 op_lshift
 l_int|11
 comma
-multiline_comment|/* DMA controller is still busy.*/
+multiline_comment|/* DMA controller is still busy. */
 DECL|enumerator|CmdInProgress
 id|CmdInProgress
 op_assign
@@ -544,7 +518,7 @@ l_int|1
 op_lshift
 l_int|12
 comma
-multiline_comment|/* EL3_CMD is still busy.*/
+multiline_comment|/* EL3_CMD is still busy. */
 )brace
 suffix:semicolon
 multiline_comment|/* Register window 1 offsets, the window used in normal operation.&n;   On the Corkscrew this window is always mapped at offsets 0x10-0x1f. */
@@ -728,7 +702,6 @@ id|w3_config_fields
 DECL|member|ram_size
 DECL|member|ram_width
 DECL|member|ram_speed
-DECL|member|rom_size
 r_int
 r_int
 id|ram_size
@@ -743,6 +716,7 @@ id|ram_speed
 suffix:colon
 l_int|2
 comma
+DECL|member|rom_size
 id|rom_size
 suffix:colon
 l_int|2
@@ -757,7 +731,6 @@ DECL|member|ram_split
 DECL|member|pad18
 DECL|member|xcvr
 DECL|member|pad21
-DECL|member|autoselect
 r_int
 r_int
 id|ram_split
@@ -776,6 +749,7 @@ id|pad21
 suffix:colon
 l_int|1
 comma
+DECL|member|autoselect
 id|autoselect
 suffix:colon
 l_int|1
@@ -965,9 +939,9 @@ id|length
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|vortex_private
+DECL|struct|corkscrew_private
 r_struct
-id|vortex_private
+id|corkscrew_private
 (brace
 DECL|member|devname
 r_char
@@ -1098,6 +1072,7 @@ comma
 multiline_comment|/* Read from the EEPROM. */
 DECL|member|full_duplex
 DECL|member|autoselect
+DECL|member|bus_master
 id|full_duplex
 suffix:colon
 l_int|1
@@ -1106,7 +1081,6 @@ id|autoselect
 suffix:colon
 l_int|1
 comma
-DECL|member|bus_master
 id|bus_master
 suffix:colon
 l_int|1
@@ -1136,12 +1110,12 @@ r_enum
 id|xcvr_types
 (brace
 DECL|enumerator|XCVR_10baseT
+id|XCVR_10baseT
+op_assign
 DECL|enumerator|XCVR_AUI
 DECL|enumerator|XCVR_10baseTOnly
 DECL|enumerator|XCVR_10base2
 DECL|enumerator|XCVR_100baseTx
-id|XCVR_10baseT
-op_assign
 l_int|0
 comma
 id|XCVR_AUI
@@ -1190,7 +1164,7 @@ id|mask
 suffix:colon
 l_int|8
 comma
-multiline_comment|/* The transceiver-present bit in Wn3_Config.*/
+multiline_comment|/* The transceiver-present bit in Wn3_Config. */
 DECL|member|next
 id|next
 suffix:colon
@@ -1353,7 +1327,7 @@ comma
 suffix:semicolon
 r_static
 r_int
-id|vortex_scan
+id|corkscrew_scan
 c_func
 (paren
 r_struct
@@ -1366,7 +1340,7 @@ r_static
 r_struct
 id|net_device
 op_star
-id|vortex_found_device
+id|corkscrew_found_device
 c_func
 (paren
 r_struct
@@ -1389,7 +1363,7 @@ id|options
 suffix:semicolon
 r_static
 r_int
-id|vortex_probe1
+id|corkscrew_probe1
 c_func
 (paren
 r_struct
@@ -1400,7 +1374,7 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|vortex_open
+id|corkscrew_open
 c_func
 (paren
 r_struct
@@ -1411,7 +1385,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|vortex_timer
+id|corkscrew_timer
 c_func
 (paren
 r_int
@@ -1421,7 +1395,7 @@ id|arg
 suffix:semicolon
 r_static
 r_int
-id|vortex_start_xmit
+id|corkscrew_start_xmit
 c_func
 (paren
 r_struct
@@ -1437,7 +1411,18 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|vortex_rx
+id|corkscrew_rx
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|corkscrew_timeout
 c_func
 (paren
 r_struct
@@ -1459,8 +1444,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|vortex_interrupt
-id|IRQ
+id|corkscrew_interrupt
 c_func
 (paren
 r_int
@@ -1478,7 +1462,7 @@ id|regs
 suffix:semicolon
 r_static
 r_int
-id|vortex_close
+id|corkscrew_close
 c_func
 (paren
 r_struct
@@ -1505,7 +1489,7 @@ r_static
 r_struct
 id|enet_statistics
 op_star
-id|vortex_get_stats
+id|corkscrew_get_stats
 c_func
 (paren
 r_struct
@@ -1526,7 +1510,7 @@ id|dev
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/* Unlike the other PCI cards the 59x cards don&squot;t need a large contiguous&n;   memory region, so making the driver a loadable module is feasible.&n;&n;   Unfortunately maximizing the shared code between the integrated and&n;   module version of the driver results in a complicated set of initialization&n;   procedures.&n;   init_module() -- modules /  tc59x_init()  -- built-in&n;&t;&t;The wrappers for vortex_scan()&n;   vortex_scan()  &t;&t; The common routine that scans for PCI and EISA cards&n;   vortex_found_device() Allocate a device structure when we find a card.&n;&t;&t;&t;&t;&t;Different versions exist for modules and built-in.&n;   vortex_probe1()&t;&t;Fill in the device structure -- this is separated&n;&t;&t;&t;&t;&t;so that the modules code can put it in dev-&gt;init.&n;*/
+multiline_comment|/* &n;   Unfortunately maximizing the shared code between the integrated and&n;   module version of the driver results in a complicated set of initialization&n;   procedures.&n;   init_module() -- modules /  tc59x_init()  -- built-in&n;&t;&t;The wrappers for corkscrew_scan()&n;   corkscrew_scan()  &t;&t; The common routine that scans for PCI and EISA cards&n;   corkscrew_found_device() Allocate a device structure when we find a card.&n;&t;&t;&t;&t;&t;Different versions exist for modules and built-in.&n;   corkscrew_probe1()&t;&t;Fill in the device structure -- this is separated&n;&t;&t;&t;&t;&t;so that the modules code can put it in dev-&gt;init.&n;*/
 multiline_comment|/* This driver uses &squot;options&squot; to pass the media type, full-duplex flag, etc. */
 multiline_comment|/* Note: this is the only limit on the number of cards supported!! */
 DECL|variable|options
@@ -1574,17 +1558,17 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* A list of all installed Vortex devices, for removing the driver module. */
-DECL|variable|root_vortex_dev
+DECL|variable|root_corkscrew_dev
 r_static
 r_struct
 id|net_device
 op_star
-id|root_vortex_dev
+id|root_corkscrew_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -1601,14 +1585,14 @@ id|debug
 op_ge
 l_int|0
 )paren
-id|vortex_debug
+id|corkscrew_debug
 op_assign
 id|debug
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 )paren
 id|printk
 c_func
@@ -1616,13 +1600,13 @@ c_func
 id|version
 )paren
 suffix:semicolon
-id|root_vortex_dev
+id|root_corkscrew_dev
 op_assign
 l_int|NULL
 suffix:semicolon
 id|cards_found
 op_assign
-id|vortex_scan
+id|corkscrew_scan
 c_func
 (paren
 l_int|0
@@ -1657,7 +1641,7 @@ l_int|0
 suffix:semicolon
 id|cards_found
 op_assign
-id|vortex_scan
+id|corkscrew_scan
 c_func
 (paren
 id|dev
@@ -1666,7 +1650,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|0
 op_logical_and
@@ -1688,11 +1672,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif  /* not MODULE */
-DECL|function|vortex_scan
+macro_line|#endif&t;&t;&t;&t;/* not MODULE */
+DECL|function|corkscrew_scan
 r_static
 r_int
-id|vortex_scan
+id|corkscrew_scan
 c_func
 (paren
 r_struct
@@ -1844,6 +1828,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;3c515 Resource configuraiton register %#4.4x, DCR %4.4x.&bslash;n&quot;
 comma
 id|inl
@@ -1875,7 +1860,7 @@ l_int|0x2002
 op_amp
 l_int|15
 suffix:semicolon
-id|vortex_found_device
+id|corkscrew_found_device
 c_func
 (paren
 id|dev
@@ -1891,7 +1876,9 @@ op_logical_and
 id|dev-&gt;mem_start
 ques
 c_cond
-id|dev-&gt;mem_start
+id|dev
+op_member_access_from_pointer
+id|mem_start
 suffix:colon
 id|options
 (braket
@@ -1910,11 +1897,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 )paren
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%d 3c515 cards found.&bslash;n&quot;
 comma
 id|cards_found
@@ -1924,12 +1912,12 @@ r_return
 id|cards_found
 suffix:semicolon
 )brace
-DECL|function|vortex_found_device
+DECL|function|corkscrew_found_device
 r_static
 r_struct
 id|net_device
 op_star
-id|vortex_found_device
+id|corkscrew_found_device
 c_func
 (paren
 r_struct
@@ -1951,7 +1939,7 @@ id|options
 )paren
 (brace
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 suffix:semicolon
@@ -1969,7 +1957,7 @@ op_plus
 r_sizeof
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 )paren
 op_plus
 l_int|15
@@ -2031,7 +2019,7 @@ id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -2072,7 +2060,7 @@ l_int|0
 suffix:semicolon
 id|dev-&gt;init
 op_assign
-id|vortex_probe1
+id|corkscrew_probe1
 suffix:semicolon
 id|vp-&gt;product_name
 op_assign
@@ -2159,9 +2147,9 @@ id|dev
 suffix:semicolon
 id|vp-&gt;next_module
 op_assign
-id|root_vortex_dev
+id|root_corkscrew_dev
 suffix:semicolon
-id|root_vortex_dev
+id|root_corkscrew_dev
 op_assign
 id|dev
 suffix:semicolon
@@ -2179,7 +2167,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#else  /* not a MODULE */
+macro_line|#else&t;&t;&t;&t;/* not a MODULE */
 r_if
 c_cond
 (paren
@@ -2195,7 +2183,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 )paren
 comma
 id|GFP_KERNEL
@@ -2211,7 +2199,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 )paren
 )paren
 suffix:semicolon
@@ -2226,7 +2214,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 )paren
 )paren
 suffix:semicolon
@@ -2263,7 +2251,7 @@ id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -2345,21 +2333,21 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|vortex_probe1
+id|corkscrew_probe1
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 r_return
 id|dev
 suffix:semicolon
 )brace
-DECL|function|vortex_probe1
+DECL|function|corkscrew_probe1
 r_static
 r_int
-id|vortex_probe1
+id|corkscrew_probe1
 c_func
 (paren
 r_struct
@@ -2374,13 +2362,13 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -2403,6 +2391,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: 3Com %s at %#3x,&quot;
 comma
 id|dev-&gt;name
@@ -2663,7 +2652,7 @@ multiline_comment|/* Tell them about an invalid IRQ. */
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 op_logical_and
 (paren
 id|dev-&gt;irq
@@ -2678,6 +2667,7 @@ l_int|15
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot; *** Warning: this IRQ is unlikely to work! ***&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2731,13 +2721,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;  Internal config register is %4.4x, transceivers %#x.&bslash;n&quot;
 comma
 id|config.i
@@ -2754,6 +2745,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;  %dK %s-wide RAM %s Rx:Tx split, %s%s interface.&bslash;n&quot;
 comma
 l_int|8
@@ -2811,6 +2803,7 @@ l_int|7
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;  Media override to transceiver type %d (%s).&bslash;n&quot;
 comma
 id|vp-&gt;media_override
@@ -2849,7 +2842,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 multiline_comment|/* Rx is broken at 10mbps, so we always disable it. */
-multiline_comment|/* vp-&gt;full_bus_master_rx = 0;*/
+multiline_comment|/* vp-&gt;full_bus_master_rx = 0; */
 id|vp-&gt;full_bus_master_rx
 op_assign
 (paren
@@ -2874,26 +2867,41 @@ comma
 id|vp-&gt;product_name
 )paren
 suffix:semicolon
-multiline_comment|/* The 3c59x-specific entries in the device structure. */
+multiline_comment|/* The 3c51x-specific entries in the device structure. */
 id|dev-&gt;open
 op_assign
 op_amp
-id|vortex_open
+id|corkscrew_open
 suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
 op_amp
-id|vortex_start_xmit
+id|corkscrew_start_xmit
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|corkscrew_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+(paren
+l_int|400
+op_star
+id|HZ
+)paren
+op_div
+l_int|1000
 suffix:semicolon
 id|dev-&gt;stop
 op_assign
 op_amp
-id|vortex_close
+id|corkscrew_close
 suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
 op_amp
-id|vortex_get_stats
+id|corkscrew_get_stats
 suffix:semicolon
 id|dev-&gt;set_multicast_list
 op_assign
@@ -2905,10 +2913,10 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
+DECL|function|corkscrew_open
 r_static
 r_int
-DECL|function|vortex_open
-id|vortex_open
+id|corkscrew_open
 c_func
 (paren
 r_struct
@@ -2923,13 +2931,13 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -2985,13 +2993,14 @@ l_int|7
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: Media override to transceiver %d (%s).&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3050,7 +3059,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -3100,7 +3109,7 @@ suffix:semicolon
 id|vp-&gt;timer.function
 op_assign
 op_amp
-id|vortex_timer
+id|corkscrew_timer
 suffix:semicolon
 multiline_comment|/* timer handler */
 id|add_timer
@@ -3133,7 +3142,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -3141,7 +3150,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;%s: vortex_open() InternalConfig %8.8x.&bslash;n&quot;
+l_string|&quot;%s: corkscrew_open() InternalConfig %8.8x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3273,7 +3282,7 @@ c_func
 id|dev-&gt;irq
 comma
 op_amp
-id|vortex_interrupt
+id|corkscrew_interrupt
 comma
 l_int|0
 comma
@@ -3311,7 +3320,7 @@ c_func
 id|dev-&gt;irq
 comma
 op_amp
-id|vortex_interrupt
+id|corkscrew_interrupt
 comma
 id|SA_SHIRQ
 comma
@@ -3329,7 +3338,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -3343,7 +3352,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: vortex_open() irq %d media status %4.4x.&bslash;n&quot;
+l_string|&quot;%s: corkscrew_open() irq %d media status %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3422,7 +3431,7 @@ id|dev-&gt;if_port
 op_eq
 l_int|3
 )paren
-multiline_comment|/* Start the thinnet transceiver. We should really wait 50ms...*/
+multiline_comment|/* Start the thinnet transceiver. We should really wait 50ms... */
 id|outw
 c_func
 (paren
@@ -3575,7 +3584,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|2
 )paren
@@ -3837,17 +3846,11 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Turn on statistics. */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|outw
 c_func
@@ -3971,10 +3974,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|vortex_timer
+DECL|function|corkscrew_timer
 r_static
 r_void
-id|vortex_timer
+id|corkscrew_timer
 c_func
 (paren
 r_int
@@ -3996,13 +3999,13 @@ op_star
 id|data
 suffix:semicolon
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -4024,7 +4027,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -4118,7 +4121,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -4144,7 +4147,7 @@ r_else
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -4175,7 +4178,7 @@ multiline_comment|/* Other media types handled by Tx timeouts. */
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -4256,7 +4259,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -4281,7 +4284,7 @@ r_else
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -4411,7 +4414,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -4430,35 +4433,33 @@ dot
 id|name
 )paren
 suffix:semicolon
-macro_line|#endif /* AUTOMEDIA*/
+macro_line|#endif&t;&t;&t;&t;/* AUTOMEDIA */
 r_return
 suffix:semicolon
 )brace
+DECL|function|corkscrew_timeout
 r_static
-r_int
-DECL|function|vortex_start_xmit
-id|vortex_start_xmit
+r_void
+id|corkscrew_timeout
 c_func
 (paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
 r_struct
 id|net_device
 op_star
 id|dev
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -4468,41 +4469,10 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-multiline_comment|/* Min. wait before assuming a Tx failed == 400ms. */
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|400
-op_star
-id|HZ
-op_div
-l_int|1000
-)paren
-multiline_comment|/* We probably aren&squot;t empty. */
-r_return
-l_int|1
-suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: transmit timed out, tx_status %2.2x status %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4545,6 +4515,7 @@ l_int|0x88
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Transmitter encountered 16 collisions -- network&quot;
 l_string|&quot; network cable problem?&bslash;n&quot;
 comma
@@ -4688,50 +4659,60 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-multiline_comment|/* dev-&gt;tbusy = 0;*/
 id|vp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
 id|vp-&gt;stats.tx_dropped
 op_increment
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* Yes, silently *drop* the packet! */
-)brace
-multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t;   If this ever occurs the queue layer is doing something evil! */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+id|netif_wake_queue
 c_func
 (paren
-l_int|0
-comma
+id|dev
+)paren
+suffix:semicolon
+)brace
+DECL|function|corkscrew_start_xmit
+r_static
+r_int
+id|corkscrew_start_xmit
+c_func
 (paren
-r_void
+r_struct
+id|sk_buff
 op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
+id|skb
+comma
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 (brace
-id|printk
+r_struct
+id|corkscrew_private
+op_star
+id|vp
+op_assign
+(paren
+r_struct
+id|corkscrew_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+multiline_comment|/* Block a timer-based transmit from overlapping. */
+id|netif_stop_queue
 c_func
 (paren
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|dev
 )paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4796,7 +4777,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|3
 )paren
@@ -5017,9 +4998,11 @@ op_and_assign
 op_complement
 l_int|0x80000000
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 id|dev-&gt;trans_start
@@ -5095,7 +5078,7 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* dev-&gt;tbusy will be cleared at the DMADone interrupt. */
+multiline_comment|/* queue will be woken at the DMADone interrupt. */
 )brace
 r_else
 (brace
@@ -5119,6 +5102,7 @@ l_int|2
 )paren
 suffix:semicolon
 id|dev_kfree_skb
+c_func
 (paren
 id|skb
 )paren
@@ -5137,9 +5121,11 @@ OG
 l_int|1536
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -5182,6 +5168,7 @@ l_int|2
 )paren
 suffix:semicolon
 id|dev_kfree_skb
+c_func
 (paren
 id|skb
 )paren
@@ -5200,9 +5187,11 @@ OG
 l_int|1536
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -5223,7 +5212,7 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-macro_line|#endif  /* bus master */
+macro_line|#endif&t;&t;&t;&t;/* bus master */
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -5273,7 +5262,7 @@ multiline_comment|/* A Tx-disabling error occurred.  */
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|2
 )paren
@@ -5394,11 +5383,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* The interrupt handler does all of the Rx thread work and cleans up&n;   after the Tx thread. */
-DECL|function|IRQ
+DECL|function|corkscrew_interrupt
 r_static
 r_void
-id|vortex_interrupt
-id|IRQ
+id|corkscrew_interrupt
 c_func
 (paren
 r_int
@@ -5423,7 +5411,7 @@ op_assign
 id|dev_id
 suffix:semicolon
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|lp
 suffix:semicolon
@@ -5440,34 +5428,6 @@ id|i
 op_assign
 id|max_interrupt_work
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;interrupt
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -5486,7 +5446,7 @@ id|lp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -5504,7 +5464,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|4
 )paren
@@ -5551,16 +5511,24 @@ l_int|100
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Bogus interrupt, bailing. Status %4.4x, start=%d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|status
 comma
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 suffix:semicolon
-id|FREE_IRQ
+id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
@@ -5575,7 +5543,7 @@ r_do
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|5
 )paren
@@ -5596,7 +5564,7 @@ id|status
 op_amp
 id|RxComplete
 )paren
-id|vortex_rx
+id|corkscrew_rx
 c_func
 (paren
 id|dev
@@ -5613,12 +5581,11 @@ id|TxAvailable
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|5
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;&t;TX room bit was handled.&bslash;n&quot;
 )paren
@@ -5636,14 +5603,10 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -5714,7 +5677,9 @@ id|entry
 id|dev_kfree_skb_irq
 c_func
 (paren
-id|lp-&gt;tx_skbuff
+id|lp
+op_member_access_from_pointer
+id|tx_skbuff
 (braket
 id|entry
 )braket
@@ -5768,14 +5733,10 @@ id|lp-&gt;tx_full
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -5800,20 +5761,17 @@ id|Wn7_MasterStatus
 )paren
 suffix:semicolon
 multiline_comment|/* Ack the event. */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 id|dev_kfree_skb_irq
+c_func
 (paren
 id|lp-&gt;tx_skb
 )paren
 suffix:semicolon
 multiline_comment|/* Release the transfered buffer */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -5869,7 +5827,7 @@ id|RxEarly
 )paren
 (brace
 multiline_comment|/* Rx early is unused. */
-id|vortex_rx
+id|corkscrew_rx
 c_func
 (paren
 id|dev
@@ -5906,7 +5864,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|4
 )paren
@@ -6114,6 +6072,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Too much work in interrupt, status %4.4x.  &quot;
 l_string|&quot;Disabling functions (%4.4x).&bslash;n&quot;
 comma
@@ -6209,7 +6168,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|4
 )paren
@@ -6223,17 +6182,11 @@ comma
 id|status
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+DECL|function|corkscrew_rx
 r_static
 r_int
-DECL|function|vortex_rx
-id|vortex_rx
+id|corkscrew_rx
 c_func
 (paren
 r_struct
@@ -6243,13 +6196,13 @@ id|dev
 )paren
 (brace
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -6268,7 +6221,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|5
 )paren
@@ -6336,7 +6289,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|2
 )paren
@@ -6419,18 +6372,20 @@ id|skb
 suffix:semicolon
 id|skb
 op_assign
-id|DEV_ALLOC_SKB
+id|dev_alloc_skb
 c_func
 (paren
 id|pkt_len
 op_plus
 l_int|5
+op_plus
+l_int|2
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|4
 )paren
@@ -6568,7 +6523,7 @@ r_else
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 )paren
 id|printk
 c_func
@@ -6632,9 +6587,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|boomerang_rx
 r_static
 r_int
-DECL|function|boomerang_rx
 id|boomerang_rx
 c_func
 (paren
@@ -6645,13 +6600,13 @@ id|dev
 )paren
 (brace
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -6674,7 +6629,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|5
 )paren
@@ -6737,7 +6692,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|2
 )paren
@@ -6825,7 +6780,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|4
 )paren
@@ -6850,12 +6805,12 @@ op_logical_and
 (paren
 id|skb
 op_assign
-id|DEV_ALLOC_SKB
+id|dev_alloc_skb
 c_func
 (paren
 id|pkt_len
 op_plus
-l_int|2
+l_int|4
 )paren
 )paren
 op_ne
@@ -6964,7 +6919,9 @@ comma
 id|bus_to_virt
 c_func
 (paren
-id|vp-&gt;rx_ring
+id|vp
+op_member_access_from_pointer
+id|rx_ring
 (braket
 id|entry
 )braket
@@ -7118,10 +7075,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|corkscrew_close
 r_static
 r_int
-DECL|function|vortex_close
-id|vortex_close
+id|corkscrew_close
 c_func
 (paren
 r_struct
@@ -7131,13 +7088,13 @@ id|dev
 )paren
 (brace
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -7150,18 +7107,16 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|1
 )paren
@@ -7169,7 +7124,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;%s: vortex_close() status %4.4x, Tx status %2.2x.&bslash;n&quot;
+l_string|&quot;%s: corkscrew_close() status %4.4x, Tx status %2.2x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -7193,7 +7148,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: vortex close stats: rx_nocopy %d rx_copy %d&quot;
+l_string|&quot;%s: corkscrew close stats: rx_nocopy %d rx_copy %d&quot;
 l_string|&quot; tx_queued %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -7263,7 +7218,6 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-macro_line|#ifdef SA_SHIRQ
 id|free_irq
 c_func
 (paren
@@ -7272,21 +7226,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|outw
 c_func
 (paren
@@ -7347,18 +7286,8 @@ id|i
 )braket
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-id|vp-&gt;rx_skbuff
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|free
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 id|dev_kfree_skb
+c_func
 (paren
 id|vp-&gt;rx_skbuff
 (braket
@@ -7439,12 +7368,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|corkscrew_get_stats
 r_static
 r_struct
 id|enet_statistics
 op_star
-DECL|function|vortex_get_stats
-id|vortex_get_stats
+id|corkscrew_get_stats
 c_func
 (paren
 r_struct
@@ -7454,13 +7383,13 @@ id|dev
 )paren
 (brace
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -7472,7 +7401,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 id|save_flags
@@ -7523,13 +7459,13 @@ id|dev
 )paren
 (brace
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 id|vp
 op_assign
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
 id|dev-&gt;priv
@@ -7627,7 +7563,7 @@ l_int|0x30
 op_lshift
 l_int|4
 suffix:semicolon
-multiline_comment|/* Rx packets&t;*/
+multiline_comment|/* Rx packets   */
 id|inb
 c_func
 (paren
@@ -7690,9 +7626,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* This new version of set_rx_mode() supports v1.4 kernels.&n;   The Vortex chip has no documented multicast filter, so the only&n;   multicast setting is to receive all multicast frames.  At least&n;   the chip has a very clean way to set the mode, unlike many others. */
+DECL|function|set_rx_mode
 r_static
 r_void
-DECL|function|set_rx_mode
 id|set_rx_mode
 c_func
 (paren
@@ -7721,7 +7657,7 @@ id|IFF_PROMISC
 r_if
 c_cond
 (paren
-id|vortex_debug
+id|corkscrew_debug
 OG
 l_int|3
 )paren
@@ -7794,8 +7730,8 @@ suffix:semicolon
 )brace
 "&f;"
 macro_line|#ifdef MODULE
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren
@@ -7811,7 +7747,7 @@ multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks.
 r_while
 c_loop
 (paren
-id|root_vortex_dev
+id|root_corkscrew_dev
 )paren
 (brace
 id|next_dev
@@ -7819,10 +7755,12 @@ op_assign
 (paren
 (paren
 r_struct
-id|vortex_private
+id|corkscrew_private
 op_star
 )paren
-id|root_vortex_dev-&gt;priv
+id|root_corkscrew_dev
+op_member_access_from_pointer
+id|priv
 )paren
 op_member_access_from_pointer
 id|next_module
@@ -7830,18 +7768,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|root_vortex_dev-&gt;dma
+id|root_corkscrew_dev-&gt;dma
 )paren
 id|free_dma
 c_func
 (paren
-id|root_vortex_dev-&gt;dma
+id|root_corkscrew_dev-&gt;dma
 )paren
 suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
-id|root_vortex_dev
+id|root_corkscrew_dev
 )paren
 suffix:semicolon
 id|outw
@@ -7849,7 +7787,7 @@ c_func
 (paren
 id|TotalReset
 comma
-id|root_vortex_dev-&gt;base_addr
+id|root_corkscrew_dev-&gt;base_addr
 op_plus
 id|EL3_CMD
 )paren
@@ -7857,7 +7795,7 @@ suffix:semicolon
 id|release_region
 c_func
 (paren
-id|root_vortex_dev-&gt;base_addr
+id|root_corkscrew_dev-&gt;base_addr
 comma
 id|CORKSCREW_TOTAL_SIZE
 )paren
@@ -7865,16 +7803,16 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
-id|root_vortex_dev
+id|root_corkscrew_dev
 )paren
 suffix:semicolon
-id|root_vortex_dev
+id|root_corkscrew_dev
 op_assign
 id|next_dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c515.c&quot;&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

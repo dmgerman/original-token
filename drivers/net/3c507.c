@@ -1302,6 +1302,12 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_int
+r_int
+id|shmem
+op_assign
+id|dev-&gt;mem_start
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1443,12 +1449,6 @@ r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
-suffix:semicolon
-r_int
-r_int
-id|shmem
-op_assign
-id|dev-&gt;mem_start
 suffix:semicolon
 r_int
 r_int

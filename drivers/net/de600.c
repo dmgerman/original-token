@@ -604,10 +604,6 @@ suffix:semicolon
 )brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -674,9 +670,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
+multiline_comment|/* perhaps not needed? */
 id|free_irq
 c_func
 (paren
@@ -684,10 +688,6 @@ id|DE600_IRQ
 comma
 id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -777,6 +777,10 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_int
 id|transmit_from
 suffix:semicolon
@@ -876,6 +880,12 @@ id|len
 op_assign
 id|RUNT
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -958,9 +968,10 @@ id|dev
 )paren
 )paren
 (brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1012,9 +1023,11 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* allow more packets into adapter */
 multiline_comment|/* Send page and generate a faked interrupt */
@@ -1035,10 +1048,23 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dev-&gt;tbusy
-op_assign
-op_logical_neg
+r_if
+c_cond
+(paren
 id|free_tx_pages
+)paren
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_else
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|select_prn
 c_func
@@ -1046,12 +1072,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* interrupts back on */
 macro_line|#ifdef FAKE_SMALL_MAX
 multiline_comment|/* This will &quot;patch&quot; the socket TCP proto at an early moment */
 r_if
@@ -1139,12 +1165,6 @@ l_int|NULL
 )paren
 op_logical_or
 (paren
-id|dev-&gt;start
-op_eq
-l_int|0
-)paren
-op_logical_or
-(paren
 id|DE600_IRQ
 op_ne
 id|irq
@@ -1169,10 +1189,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|select_nic
 c_func
 (paren
@@ -1283,10 +1299,6 @@ id|retrig
 suffix:semicolon
 multiline_comment|/*&n;&t; * Yeah, it _looks_ like busy waiting, smells like busy waiting&n;&t; * and I know it&squot;s not PC, but please, it will only occur once&n;&t; * in a while and then only for a loop or so (&lt; 1ms for sure!)&n;&t; */
 multiline_comment|/* Enable adapter interrupts */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 id|select_prn
 c_func
 (paren
@@ -1301,11 +1313,6 @@ id|trigger_interrupt
 c_func
 (paren
 id|dev
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -1327,12 +1334,6 @@ id|irq_status
 )paren
 (brace
 multiline_comment|/*&n;&t; * Returns 1 if tx still not done&n;&t; */
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
-suffix:semicolon
 multiline_comment|/* Check if current transmission is done yet */
 r_if
 c_cond
@@ -1385,9 +1386,11 @@ op_member_access_from_pointer
 id|tx_packets
 op_increment
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* More to send, or resend last packet? */
@@ -1456,6 +1459,10 @@ op_star
 id|skb
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 r_int
@@ -1469,6 +1476,12 @@ r_int
 r_char
 op_star
 id|buffer
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -1526,9 +1539,10 @@ c_func
 id|RX_ENABLE
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1583,9 +1597,10 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -2182,9 +2197,11 @@ id|was_down
 op_assign
 l_int|1
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Transmit busy...  */
 id|restore_flags
@@ -2216,14 +2233,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Transmit busy...  */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|tx_fifo_in
 op_assign

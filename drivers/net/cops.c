@@ -1,4 +1,4 @@
-multiline_comment|/*      cops.c: LocalTalk driver for Linux.&n; *&n; *&t;Authors:&n; *      - Jay Schulist &lt;jschlst@turbolinux.com&gt;&n; *&n; *&t;With more than a little help from;&n; *&t;- Alan Cox &lt;Alan.Cox@linux.org&gt; &n; *&n; *      Derived from:&n; *      - skeleton.c: A network driver outline for linux.&n; *        Written 1993-94 by Donald Becker.&n; *&t;- ltpc.c: A driver for the LocalTalk PC card.&n; *&t;  Written by Bradford W. Johnson.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *      This software may be used and distributed according to the terms&n; *      of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;Changes:&n; *&t;19970608&t;Alan Cox&t;Allowed dual card type support&n; *&t;&t;&t;&t;&t;Can set board type in insmod&n; *&t;&t;&t;&t;&t;Hooks for cops_setup routine&n; *&t;&t;&t;&t;&t;(not yet implemented).&n; *&t;19971101&t;Jay Schulist&t;Fixes for multiple lt* devices.&n; *&t;19980607&t;Steven Hirsch&t;Fixed the badly broken support&n; *&t;&t;&t;&t;&t;for Tangent type cards. Only&n; *                                      tested on Daystar LT200. Some&n; *                                      cleanup of formatting and program&n; *                                      logic.  Added emacs &squot;local-vars&squot;&n; *                                      setup for Jay&squot;s brace style.&n; */
+multiline_comment|/*      cops.c: LocalTalk driver for Linux.&n; *&n; *&t;Authors:&n; *      - Jay Schulist &lt;jschlst@turbolinux.com&gt;&n; *&n; *&t;With more than a little help from;&n; *&t;- Alan Cox &lt;Alan.Cox@linux.org&gt; &n; *&n; *      Derived from:&n; *      - skeleton.c: A network driver outline for linux.&n; *        Written 1993-94 by Donald Becker.&n; *&t;- ltpc.c: A driver for the LocalTalk PC card.&n; *&t;  Written by Bradford W. Johnson.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *      This software may be used and distributed according to the terms&n; *      of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;Changes:&n; *&t;19970608&t;Alan Cox&t;Allowed dual card type support&n; *&t;&t;&t;&t;&t;Can set board type in insmod&n; *&t;&t;&t;&t;&t;Hooks for cops_setup routine&n; *&t;&t;&t;&t;&t;(not yet implemented).&n; *&t;19971101&t;Jay Schulist&t;Fixes for multiple lt* devices.&n; *&t;19980607&t;Steven Hirsch&t;Fixed the badly broken support&n; *&t;&t;&t;&t;&t;for Tangent type cards. Only&n; *                                      tested on Daystar LT200. Some&n; *                                      cleanup of formatting and program&n; *                                      logic.  Added emacs &squot;local-vars&squot;&n; *                                      setup for Jay&squot;s brace style.&n; *&t;20000211&t;Alan Cox&t;Cleaned up for softnet&n; */
 DECL|variable|version
 r_static
 r_const
@@ -11,10 +11,8 @@ suffix:semicolon
 multiline_comment|/*&n; *  Sources:&n; *      COPS Localtalk SDK. This provides almost all of the information&n; *      needed.&n; */
 multiline_comment|/*&n; * insmod/modprobe configurable stuff.&n; *&t;- IO Port, choose one your card supports or 0 if you dare.&n; *&t;- IRQ, also choose one your card supports or nothing and let&n; *&t;  the driver figure it out.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -193,7 +191,7 @@ id|cops_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|board
@@ -339,6 +337,17 @@ id|ltdev
 suffix:semicolon
 r_static
 r_void
+id|cops_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
 id|cops_rx
 (paren
 r_struct
@@ -432,7 +441,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|cops_get_stats
 (paren
@@ -811,8 +820,17 @@ id|dev
 suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
-op_amp
 id|cops_send_packet
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|cops_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|HZ
+op_star
+l_int|2
 suffix:semicolon
 id|dev-&gt;hard_header
 op_assign
@@ -832,12 +850,10 @@ id|cops_close
 suffix:semicolon
 id|dev-&gt;do_ioctl
 op_assign
-op_amp
 id|cops_ioctl
 suffix:semicolon
 id|dev-&gt;set_multicast_list
 op_assign
-op_amp
 id|set_multicast_list
 suffix:semicolon
 id|dev-&gt;mc_list
@@ -1221,17 +1237,11 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Start the card up. */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
@@ -1504,9 +1514,11 @@ l_int|333333
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2304,9 +2316,11 @@ op_amp
 id|TANG_TX_READY
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 id|status
@@ -2401,32 +2415,6 @@ id|boguscount
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: irq %d for unknown device.&bslash;n&quot;
-comma
-id|cardname
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -2489,14 +2477,10 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -2549,9 +2533,11 @@ op_amp
 id|TANG_TX_READY
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 id|status
@@ -2589,10 +2575,6 @@ id|TANG_TX_READY
 suffix:semicolon
 )brace
 )brace
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2645,6 +2627,16 @@ r_int
 id|boguscount
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -2811,7 +2803,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
+id|KERN_WARNING
 l_string|&quot;%s: Memory squeeze, dropping packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2889,9 +2881,10 @@ id|DAYNA_INT_CARD
 suffix:semicolon
 )brace
 multiline_comment|/* Interrupt the card */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Restore interrupts. */
@@ -2907,7 +2900,7 @@ id|MAX_LLAP_SIZE
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
+id|KERN_WARNING
 l_string|&quot;%s: Bad packet length of %d bytes.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2965,6 +2958,7 @@ id|LAP_RESPONSE
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Bad packet type %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3020,18 +3014,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Make the card transmit a LocalTalk packet.&n; */
-DECL|function|cops_send_packet
+DECL|function|cops_timeout
 r_static
-r_int
-id|cops_send_packet
+r_void
+id|cops_timeout
 c_func
 (paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
 r_struct
 id|net_device
 op_star
@@ -3055,32 +3043,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/*&n;                 * If we get here, some higher level has decided we are broken.&n;                 * There should really be a &quot;kick me&quot; function call instead.&n;                 */
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|5
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
@@ -3137,47 +3099,69 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Restart the card. */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-)brace
-multiline_comment|/*&n;         * Block a timer-based transmit from overlapping. This could better be&n;         * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t; */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+id|netif_wake_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|dev
 )paren
 suffix:semicolon
 )brace
-r_else
+multiline_comment|/*&n; *&t;Make the card transmit a LocalTalk packet.&n; */
+DECL|function|cops_send_packet
+r_static
+r_int
+id|cops_send_packet
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
 (brace
+r_struct
+id|cops_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|cops_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n;         * Block a timer-based transmit from overlapping. &n;&t; */
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -3351,9 +3335,10 @@ id|DAYNA_INT_CARD
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Restore interrupts. */
@@ -3369,15 +3354,10 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-)brace
 id|dev_kfree_skb
 (paren
 id|skb
 )paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -3644,13 +3624,11 @@ id|cops_timer
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
@@ -3664,7 +3642,7 @@ multiline_comment|/*&n; *      Get the current statistics.&n; *      This may be
 DECL|function|cops_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|cops_get_stats
 c_func
