@@ -122,14 +122,6 @@ op_star
 id|dma
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|parport_ax_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_int
@@ -606,13 +598,6 @@ comma
 id|irq
 comma
 id|dma
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_PARPORT_AX
-id|parport_ax_init
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#endif

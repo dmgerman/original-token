@@ -562,26 +562,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef __sparc__
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;irq:&bslash;t%s&bslash;n&quot;
-comma
-id|__irq_itoa
-c_func
-(paren
-id|port-&gt;irq
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
 id|len
 op_add_assign
 id|sprintf
@@ -596,7 +576,6 @@ comma
 id|port-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond

@@ -3145,6 +3145,12 @@ id|vm_area_struct
 op_star
 id|mpnt
 suffix:semicolon
+id|release_segments
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 id|mpnt
 op_assign
 id|mm-&gt;mmap

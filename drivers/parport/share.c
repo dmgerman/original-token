@@ -199,21 +199,6 @@ r_void
 )paren
 (brace
 )brace
-DECL|function|dead_fill
-r_static
-r_void
-id|dead_fill
-(paren
-r_struct
-id|inode
-op_star
-id|i
-comma
-r_int
-id|f
-)paren
-(brace
-)brace
 DECL|function|dead_write
 r_static
 r_int
@@ -313,9 +298,6 @@ comma
 multiline_comment|/* xxx_use_count */
 id|dead_noargs
 comma
-id|dead_fill
-comma
-multiline_comment|/* fill_inode */
 id|dead_write
 comma
 multiline_comment|/* epp */

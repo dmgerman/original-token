@@ -23,8 +23,15 @@ r_struct
 id|mm_struct
 op_star
 id|next
+comma
+r_int
+id|cpu
 )paren
 (brace
+r_int
+r_int
+id|vm_mask
+suffix:semicolon
 multiline_comment|/*&n;&t; * Re-load LDT if necessary&n;&t; */
 r_if
 c_cond
@@ -55,6 +62,21 @@ id|next-&gt;pgd
 )paren
 )paren
 )paren
+suffix:semicolon
+id|vm_mask
+op_assign
+l_int|1UL
+op_lshift
+id|cpu
+suffix:semicolon
+id|next-&gt;cpu_vm_mask
+op_or_assign
+id|vm_mask
+suffix:semicolon
+id|prev-&gt;cpu_vm_mask
+op_and_assign
+op_complement
+id|vm_mask
 suffix:semicolon
 )brace
 macro_line|#endif

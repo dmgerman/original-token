@@ -1115,6 +1115,8 @@ c_func
 id|active_mm
 comma
 id|mm
+comma
+id|current-&gt;processor
 )paren
 suffix:semicolon
 )brace

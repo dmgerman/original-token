@@ -418,7 +418,6 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* ? */
 DECL|member|init_state
 r_void
 (paren
@@ -487,23 +486,6 @@ id|dec_use_count
 r_void
 )paren
 suffix:semicolon
-DECL|member|fill_inode
-r_void
-(paren
-op_star
-id|fill_inode
-)paren
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|fill
-)paren
-suffix:semicolon
-multiline_comment|/* ? */
 multiline_comment|/* Block read/write */
 DECL|member|epp_write_data
 r_int

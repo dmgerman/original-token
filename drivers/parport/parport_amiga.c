@@ -750,34 +750,6 @@ r_void
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-DECL|function|amiga_fill_inode
-r_static
-r_void
-id|amiga_fill_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|fill
-)paren
-(brace
-macro_line|#ifdef MODULE
-r_if
-c_cond
-(paren
-id|fill
-)paren
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_else
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
-)brace
 DECL|variable|pp_amiga_ops
 r_static
 r_struct
@@ -795,71 +767,55 @@ id|amiga_read_control
 comma
 id|amiga_frob_control
 comma
-l_int|NULL
-comma
-multiline_comment|/* write_econtrol */
-l_int|NULL
-comma
-multiline_comment|/* read_econtrol */
-l_int|NULL
-comma
-multiline_comment|/* frob_econtrol */
-id|amiga_write_status
-comma
 id|amiga_read_status
 comma
-l_int|NULL
+id|amiga_enable_irq
 comma
-multiline_comment|/* write fifo */
-l_int|NULL
-comma
-multiline_comment|/* read fifo */
-id|amiga_change_mode
+id|amiga_disable_irq
 comma
 l_int|NULL
 comma
-multiline_comment|/* epp_write_data */
+multiline_comment|/* data_forward */
 l_int|NULL
 comma
-multiline_comment|/* epp_read_data */
-l_int|NULL
+multiline_comment|/* data_reverse */
+id|amiga_interrupt
 comma
-multiline_comment|/* epp_write_addr */
-l_int|NULL
-comma
-multiline_comment|/* epp_read_addr */
-l_int|NULL
-comma
-multiline_comment|/* epp_check_timeout */
-l_int|NULL
-comma
-multiline_comment|/* epp_write_block */
-l_int|NULL
-comma
-multiline_comment|/* epp_read_block */
-l_int|NULL
-comma
-multiline_comment|/* ecp_write_block */
-l_int|NULL
-comma
-multiline_comment|/* ecp_read_block */
 id|amiga_init_state
 comma
 id|amiga_save_state
 comma
 id|amiga_restore_state
 comma
-id|amiga_enable_irq
-comma
-id|amiga_disable_irq
-comma
-id|amiga_interrupt
-comma
 id|amiga_inc_use_count
 comma
 id|amiga_dec_use_count
 comma
-id|amiga_fill_inode
+id|parport_ieee1284_epp_write_data
+comma
+id|parport_ieee1284_epp_read_data
+comma
+multiline_comment|/* impossible? */
+id|parport_ieee1284_epp_write_addr
+comma
+id|parport_ieee1284_epp_read_addr
+comma
+multiline_comment|/* impossible? */
+id|parport_ieee1284_ecp_write_data
+comma
+id|parport_ieee1284_ecp_read_data
+comma
+multiline_comment|/* impossible? */
+id|parport_ieee1284_ecp_write_addr
+comma
+id|parport_ieee1284_write_compat
+comma
+multiline_comment|/* FIXME - need to write amiga one */
+id|parport_ieee1284_read_nibble
+comma
+id|parport_ieee1284_read_byte
+comma
+multiline_comment|/* impossible? */
 )brace
 suffix:semicolon
 multiline_comment|/* ----------- Initialisation code --------------------------------- */

@@ -633,17 +633,6 @@ id|address
 suffix:semicolon
 r_extern
 r_void
-id|free_page_tables
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|clear_page_tables
 c_func
 (paren
