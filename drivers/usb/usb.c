@@ -6830,6 +6830,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * usb_string:&n; *&t;returns string length (&gt; 0) or error (&lt; 0)&n; */
 DECL|function|usb_string
 r_int
 id|usb_string
@@ -6874,6 +6875,9 @@ l_int|0
 op_logical_or
 op_logical_neg
 id|buf
+op_logical_or
+op_logical_neg
+id|index
 )paren
 r_return
 op_minus
@@ -6965,6 +6969,7 @@ suffix:semicolon
 id|size
 op_decrement
 suffix:semicolon
+multiline_comment|/* leave room for trailing NULL char in output buffer */
 r_for
 c_loop
 (paren
@@ -6978,10 +6983,7 @@ l_int|2
 suffix:semicolon
 id|u
 OL
-id|tbuf
-(braket
-l_int|0
-)braket
+id|err
 suffix:semicolon
 id|u
 op_add_assign
@@ -7007,7 +7009,7 @@ op_plus
 l_int|1
 )braket
 )paren
-(brace
+multiline_comment|/* high byte */
 id|buf
 (braket
 id|idx
@@ -7016,10 +7018,8 @@ op_increment
 op_assign
 l_char|&squot;?&squot;
 suffix:semicolon
-multiline_comment|/* non ASCII character */
-r_continue
-suffix:semicolon
-)brace
+multiline_comment|/* non-ASCII character */
+r_else
 id|buf
 (braket
 id|idx
@@ -7556,6 +7556,11 @@ id|dev-&gt;string_langid
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|dev-&gt;descriptor.iManufacturer
+)paren
 id|usb_show_string
 c_func
 (paren
@@ -7566,6 +7571,11 @@ comma
 id|dev-&gt;descriptor.iManufacturer
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;descriptor.iProduct
+)paren
 id|usb_show_string
 c_func
 (paren
@@ -7576,6 +7586,11 @@ comma
 id|dev-&gt;descriptor.iProduct
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;descriptor.iSerialNumber
+)paren
 id|usb_show_string
 c_func
 (paren

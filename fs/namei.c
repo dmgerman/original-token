@@ -5460,6 +5460,7 @@ comma
 r_int
 id|buflen
 comma
+r_const
 r_char
 op_star
 id|link
@@ -5545,6 +5546,7 @@ comma
 r_int
 id|follow
 comma
+r_const
 r_char
 op_star
 id|link
@@ -5626,6 +5628,7 @@ r_int
 r_int
 id|follow
 comma
+r_const
 r_char
 op_star
 id|link

@@ -1,6 +1,7 @@
 macro_line|#ifndef _M68K_DMA_H
 DECL|macro|_M68K_DMA_H
 mdefine_line|#define _M68K_DMA_H 1
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* it&squot;s useless on the m68k, but unfortunately needed by the new&n;   bootmem allocator (but this should do it for this) */
 DECL|macro|MAX_DMA_ADDRESS
 mdefine_line|#define MAX_DMA_ADDRESS PAGE_OFFSET

@@ -3,10 +3,52 @@ macro_line|#ifndef _LINUX_SERIALP_H
 DECL|macro|_LINUX_SERIALP_H
 mdefine_line|#define _LINUX_SERIALP_H
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
+multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
+DECL|struct|async_icount
+r_struct
+id|async_icount
+(brace
+DECL|member|cts
+DECL|member|dsr
+DECL|member|rng
+DECL|member|dcd
+DECL|member|tx
+DECL|member|rx
+id|__u32
+id|cts
+comma
+id|dsr
+comma
+id|rng
+comma
+id|dcd
+comma
+id|tx
+comma
+id|rx
+suffix:semicolon
+DECL|member|frame
+DECL|member|parity
+DECL|member|overrun
+DECL|member|brk
+id|__u32
+id|frame
+comma
+id|parity
+comma
+id|overrun
+comma
+id|brk
+suffix:semicolon
+DECL|member|buf_overrun
+id|__u32
+id|buf_overrun
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|serial_state
 r_struct
 id|serial_state
@@ -472,7 +514,6 @@ id|pci_board_inst
 DECL|member|board
 r_struct
 id|pci_board
-op_star
 id|board
 suffix:semicolon
 DECL|member|dev
@@ -499,9 +540,35 @@ DECL|macro|SPCI_FL_BASE3
 mdefine_line|#define SPCI_FL_BASE3&t;0x0003
 DECL|macro|SPCI_FL_BASE4
 mdefine_line|#define SPCI_FL_BASE4&t;0x0004
-DECL|macro|SPCI_FL_IOMEM
-mdefine_line|#define SPCI_FL_IOMEM&t;&t;0x0008 /* Use I/O mapped memory */
+DECL|macro|SPCI_FL_GET_BASE
+mdefine_line|#define SPCI_FL_GET_BASE(x)&t;(x &amp; SPCI_FL_BASE_MASK)
+DECL|macro|SPCI_FL_IRQ_MASK
+mdefine_line|#define SPCI_FL_IRQ_MASK       (0x0007 &lt;&lt; 4)
+DECL|macro|SPCI_FL_IRQBASE0
+mdefine_line|#define SPCI_FL_IRQBASE0       (0x0000 &lt;&lt; 4)
+DECL|macro|SPCI_FL_IRQBASE1
+mdefine_line|#define SPCI_FL_IRQBASE1       (0x0001 &lt;&lt; 4)
+DECL|macro|SPCI_FL_IRQBASE2
+mdefine_line|#define SPCI_FL_IRQBASE2       (0x0002 &lt;&lt; 4)
+DECL|macro|SPCI_FL_IRQBASE3
+mdefine_line|#define SPCI_FL_IRQBASE3       (0x0003 &lt;&lt; 4)
+DECL|macro|SPCI_FL_IRQBASE4
+mdefine_line|#define SPCI_FL_IRQBASE4       (0x0004 &lt;&lt; 4)
+DECL|macro|SPCI_FL_GET_IRQBASE
+mdefine_line|#define SPCI_FL_GET_IRQBASE(x)        ((x &amp; SPCI_FL_IRQ_MASK) &gt;&gt; 4)
+multiline_comment|/* Use sucessiveentries base resource table */
 DECL|macro|SPCI_FL_BASE_TABLE
-mdefine_line|#define SPCI_FL_BASE_TABLE&t;0x0010 /* Use base address table for UART */
+mdefine_line|#define SPCI_FL_BASE_TABLE&t;0x0100
+multiline_comment|/* Use successive entries in the irq resource table */
+DECL|macro|SPCI_FL_IRQ_TABLE
+mdefine_line|#define SPCI_FL_IRQ_TABLE&t;0x0200
+multiline_comment|/* Use the irq resource table instead of dev-&gt;irq */
+DECL|macro|SPCI_FL_IRQRESOURCE
+mdefine_line|#define SPCI_FL_IRQRESOURCE&t;0x0400
+multiline_comment|/* Use the Base address register size to cap number of ports */
+DECL|macro|SPCI_FL_REGION_SZ_CAP
+mdefine_line|#define SPCI_FL_REGION_SZ_CAP&t;0x0800
+DECL|macro|SPCI_FL_PNPDEFAULT
+mdefine_line|#define SPCI_FL_PNPDEFAULT&t;(SPCI_FL_IRQRESOURCE)
 macro_line|#endif /* _LINUX_SERIAL_H */
 eof

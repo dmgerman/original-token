@@ -1365,7 +1365,17 @@ id|old_cap
 suffix:semicolon
 r_int
 id|res
-op_assign
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mode
+op_amp
+op_complement
+id|S_IRWXO
+)paren
+multiline_comment|/* where&squot;s F_OK, X_OK, W_OK, R_OK? */
+r_return
 op_minus
 id|EINVAL
 suffix:semicolon
@@ -1373,21 +1383,6 @@ id|lock_kernel
 c_func
 (paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|mode
-op_ne
-(paren
-id|mode
-op_amp
-id|S_IRWXO
-)paren
-)paren
-multiline_comment|/* where&squot;s F_OK, X_OK, W_OK, R_OK? */
-r_goto
-id|out
 suffix:semicolon
 id|old_fsuid
 op_assign
@@ -1508,8 +1503,6 @@ id|current-&gt;cap_effective
 op_assign
 id|old_cap
 suffix:semicolon
-id|out
-suffix:colon
 id|unlock_kernel
 c_func
 (paren

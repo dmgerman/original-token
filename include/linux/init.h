@@ -93,7 +93,7 @@ mdefine_line|#define __initdata
 DECL|macro|__exitdata
 mdefine_line|#define __exitdata
 DECL|macro|__initcall
-mdefine_line|#define __initcall
+mdefine_line|#define __initcall(fn)
 multiline_comment|/* For assembly routines */
 DECL|macro|__INIT
 mdefine_line|#define __INIT

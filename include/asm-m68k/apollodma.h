@@ -2,7 +2,6 @@ multiline_comment|/* $Id: dma.h,v 1.7 1992/12/14 00:29:34 root Exp root $&n; * l
 macro_line|#ifndef _ASM_APOLLO_DMA_H
 DECL|macro|_ASM_APOLLO_DMA_H
 mdefine_line|#define _ASM_APOLLO_DMA_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/apollohw.h&gt;&t;&t;/* need byte IO */
 macro_line|#include &lt;asm/spinlock.h&gt;&t;/* And spinlocks */
 macro_line|#include &lt;linux/delay.h&gt;

@@ -5,7 +5,7 @@ r_char
 op_star
 id|serial_version
 op_assign
-l_string|&quot;4.91&quot;
+l_string|&quot;4.92&quot;
 suffix:semicolon
 DECL|variable|serial_revdate
 r_static
@@ -13,20 +13,17 @@ r_char
 op_star
 id|serial_revdate
 op_assign
-l_string|&quot;1999-11-17&quot;
+l_string|&quot;2000-1-27&quot;
 suffix:semicolon
 multiline_comment|/*&n; * Serial driver configuration section.  Here are the various options:&n; *&n; * CONFIG_HUB6&n; *&t;&t;Enables support for the venerable Bell Technologies&n; *&t;&t;HUB6 card.&n; *&n; * CONFIG_SERIAL_MANY_PORTS&n; * &t;&t;Enables support for ports beyond the standard, stupid&n; * &t;&t;COM 1/2/3/4.&n; *&n; * CONFIG_SERIAL_MULTIPORT&n; * &t;&t;Enables support for special multiport board support.&n; *&n; * CONFIG_SERIAL_SHARE_IRQ&n; * &t;&t;Enables support for multiple serial ports on one IRQ&n; *&n; * CONFIG_SERIAL_DETECT_IRQ&n; *&t;&t;Enable the autodetection of IRQ on standart ports&n; *&n; * SERIAL_PARANOIA_CHECK&n; * &t;&t;Check the magic number for the async_structure where&n; * &t;&t;ever possible.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;linux/sysrq.h&gt;
 DECL|macro|SERIAL_PARANOIA_CHECK
 macro_line|#undef SERIAL_PARANOIA_CHECK
 DECL|macro|CONFIG_SERIAL_NOPAUSE_IO
 mdefine_line|#define CONFIG_SERIAL_NOPAUSE_IO
 DECL|macro|SERIAL_DO_RESTART
 mdefine_line|#define SERIAL_DO_RESTART
-DECL|macro|CONFIG_SERIAL_PCI_MEMMAPPED
-mdefine_line|#define CONFIG_SERIAL_PCI_MEMMAPPED
 macro_line|#if 0
 multiline_comment|/* These defines are normally controlled by the autoconf.h */
 mdefine_line|#define CONFIG_SERIAL_MANY_PORTS
@@ -45,6 +42,12 @@ macro_line|#endif
 macro_line|#ifndef CONFIG_SERIAL_MANY_PORTS
 DECL|macro|CONFIG_SERIAL_MANY_PORTS
 mdefine_line|#define CONFIG_SERIAL_MANY_PORTS
+macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifndef ENABLE_SERIAL_PNP
+DECL|macro|ENABLE_SERIAL_PNP
+mdefine_line|#define ENABLE_SERIAL_PNP
 macro_line|#endif
 macro_line|#endif
 multiline_comment|/* Set of debugging defines */
@@ -85,30 +88,10 @@ macro_line|#if (defined(__i386__) &amp;&amp; (CPU==386 || CPU==486))
 DECL|macro|SERIAL_INLINE
 mdefine_line|#define SERIAL_INLINE
 macro_line|#endif
-macro_line|#if defined(MODULE) &amp;&amp; defined(SERIAL_DEBUG_MCOUNT)
-DECL|macro|DBG_CNT
-mdefine_line|#define DBG_CNT(s) printk(&quot;(%s): [%x] refc=%d, serc=%d, ttyc=%d -&gt; %s&bslash;n&quot;, &bslash;&n; kdevname(tty-&gt;device), (info-&gt;flags), serial_refcount,info-&gt;count,tty-&gt;count,s)
-macro_line|#else
-DECL|macro|DBG_CNT
-mdefine_line|#define DBG_CNT(s)
-macro_line|#endif
 multiline_comment|/*&n; * End of serial driver configuration section.&n; */
-DECL|macro|NEW_MODULES
-mdefine_line|#define NEW_MODULES
-macro_line|#ifdef LOCAL_HEADERS&t;&t;/* We&squot;re building standalone */
-DECL|macro|MODULE
-mdefine_line|#define MODULE
-macro_line|#endif
-macro_line|#ifdef NEW_MODULES
 macro_line|#ifdef MODVERSIONS
 macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#endif
-macro_line|#else /* !NEW_MODULES */
-macro_line|#ifdef MODVERSIONS
-DECL|macro|MODULE
-mdefine_line|#define MODULE
-macro_line|#endif
-macro_line|#endif /* NEW_MODULES */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#ifdef LOCAL_HEADERS
@@ -148,9 +131,15 @@ macro_line|#endif
 macro_line|#ifdef ENABLE_SERIAL_PCI
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#endif
+macro_line|#ifdef ENABLE_SERIAL_PNP
+macro_line|#include &lt;linux/isapnp.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+macro_line|#include &lt;linux/sysrq.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * All of the compatibilty code so we can compile serial.c against&n; * older kernels is hidden in serial_compat.h&n; */
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020317) /* 2.3.23 */
-macro_line|#include &quot;serial_compat.h&quot;&t;
+macro_line|#if defined(LOCAL_HEADERS) || (LINUX_VERSION_CODE &lt; 0x020317) /* 2.3.23 */
+macro_line|#include &quot;serial_compat.h&quot;
 macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -408,7 +397,7 @@ l_int|0
 comma
 multiline_comment|/* usurped by cyclades.c */
 (brace
-l_string|&quot;16C950&quot;
+l_string|&quot;16C950/954&quot;
 comma
 l_int|128
 comma
@@ -464,9 +453,11 @@ multiline_comment|/* Defined in serial.h */
 suffix:semicolon
 DECL|macro|NR_PORTS
 mdefine_line|#define NR_PORTS&t;(sizeof(rs_table)/sizeof(struct serial_state))
-macro_line|#ifdef ENABLE_SERIAL_PCI
+macro_line|#if (defined(ENABLE_SERIAL_PCI) || defined(ENABLE_SERIAL_PNP))
 DECL|macro|NR_PCI_BOARDS
 mdefine_line|#define NR_PCI_BOARDS&t;8
+macro_line|#ifdef MODULE
+multiline_comment|/* We don&squot;t unregister PCI boards right now */
 DECL|variable|serial_pci_board
 r_static
 r_struct
@@ -483,14 +474,34 @@ id|serial_pci_board_idx
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef PCI_NUM_RESOURCES
+macro_line|#endif
+macro_line|#ifndef PCI_BASE_ADDRESS
 DECL|macro|PCI_BASE_ADDRESS
 mdefine_line|#define PCI_BASE_ADDRESS(dev, r) ((dev)-&gt;resource[r].start)
-macro_line|#else
-DECL|macro|PCI_BASE_ADDRESS
-mdefine_line|#define PCI_BASE_ADDRESS(dev, r) ((dev)-&gt;base_address[r])
+DECL|macro|PCI_BASE_REGION_SIZE
+mdefine_line|#define PCI_BASE_REGION_SIZE(dev, r) ((dev)-&gt;resource[r].end - &bslash;&n;&t;&t;&t;&t;      (dev)-&gt;resource[r].start)
+DECL|macro|IS_PCI_REGION_IOPORT
+mdefine_line|#define IS_PCI_REGION_IOPORT(dev, r) ((dev)-&gt;resource[r].flags &amp; &bslash;&n;&t;&t;&t;&t;      IORESOURCE_IO)
 macro_line|#endif
-macro_line|#endif&t;/* ENABLE_SERIAL_PCI  */
+macro_line|#ifndef PCI_IRQ_RESOURCE
+DECL|macro|PCI_IRQ_RESOURCE
+mdefine_line|#define PCI_IRQ_RESOURCE(dev, r) ((dev)-&gt;irq_resource[r].start)
+macro_line|#endif
+macro_line|#ifndef pci_get_subvendor
+DECL|macro|pci_get_subvendor
+mdefine_line|#define pci_get_subvendor(dev) ((dev)-&gt;subsystem_vendor)
+DECL|macro|pci_get_subdevice
+mdefine_line|#define pci_get_subdevice(dev)  ((dev)-&gt;subsystem_device)
+macro_line|#endif
+macro_line|#endif&t;/* ENABLE_SERIAL_PCI || ENABLE_SERIAL_PNP  */
+macro_line|#ifndef PREPARE_FUNC
+DECL|macro|PREPARE_FUNC
+mdefine_line|#define PREPARE_FUNC(dev)  (dev-&gt;prepare)
+DECL|macro|ACTIVATE_FUNC
+mdefine_line|#define ACTIVATE_FUNC(dev)  (dev-&gt;activate)
+DECL|macro|DEACTIVATE_FUNC
+mdefine_line|#define DEACTIVATE_FUNC(dev)  (dev-&gt;deactivate)
+macro_line|#endif
 DECL|variable|serial_table
 r_static
 r_struct
@@ -524,6 +535,13 @@ suffix:semicolon
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
+macro_line|#endif
+macro_line|#if defined(MODULE) &amp;&amp; defined(SERIAL_DEBUG_MCOUNT)
+DECL|macro|DBG_CNT
+mdefine_line|#define DBG_CNT(s) printk(&quot;(%s): [%x] refc=%d, serc=%d, ttyc=%d -&gt; %s&bslash;n&quot;, &bslash;&n; kdevname(tty-&gt;device), (info-&gt;flags), serial_refcount,info-&gt;count,tty-&gt;count,s)
+macro_line|#else
+DECL|macro|DBG_CNT
+mdefine_line|#define DBG_CNT(s)
 macro_line|#endif
 multiline_comment|/*&n; * tmp_buf is used as a temporary buffer by serial_write.  We need to&n; * lock it in case the copy_from_user blocks while swapping in a page,&n; * and some other program tries to do a serial write at the same time.&n; * Since the lock will only come under contention when the system is&n; * swapping and available memory is low, it makes sense to share one&n; * buffer across all the serial ports, since it significantly saves&n; * memory if large numbers of serial ports are open.&n; */
 DECL|variable|tmp_buf
@@ -694,7 +712,6 @@ l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SERIAL_PCI_MEMMAPPED
 r_case
 id|SERIAL_IO_MEM
 suffix:colon
@@ -711,7 +728,6 @@ id|info-&gt;iomem_reg_shift
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_GSC
 r_case
 id|SERIAL_IO_GSC
@@ -793,7 +809,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SERIAL_PCI_MEMMAPPED
 r_case
 id|SERIAL_IO_MEM
 suffix:colon
@@ -813,7 +828,6 @@ id|info-&gt;iomem_reg_shift
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_GSC
 r_case
 id|SERIAL_IO_GSC
@@ -2909,6 +2923,7 @@ id|IRQ_ports
 id|irq
 )braket
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * The user was a bonehead, and misconfigured their&n;&t;&t; * multiport info.  Rather than lock up the kernel&n;&t;&t; * in an infinite loop, if we loop too many times,&n;&t;&t; * print a message and break out of the loop.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2918,17 +2933,17 @@ OG
 id|RS_ISR_PASS_LIMIT
 )paren
 (brace
-macro_line|#if 1
 id|printk
 c_func
 (paren
-l_string|&quot;rs_multi loop break&bslash;n&quot;
+l_string|&quot;Misconfigured multiport serial info &quot;
+l_string|&quot;for irq %d.  Breaking out irq loop&bslash;n&quot;
+comma
+id|irq
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
-multiline_comment|/* Prevent infinite loops */
 )brace
 r_if
 c_cond
@@ -5736,6 +5751,35 @@ id|baud_base
 op_div
 l_int|9600
 suffix:semicolon
+multiline_comment|/*&n;&t; * Work around a bug in the Oxford Semiconductor 952 rev B&n;&t; * chip which causes it to seriously miscalculate baud rates&n;&t; * when DLL is 0.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|quot
+op_amp
+l_int|0xFF
+)paren
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+id|info-&gt;state-&gt;type
+op_eq
+id|PORT_16C950
+)paren
+op_logical_and
+(paren
+id|info-&gt;state-&gt;revision
+op_eq
+l_int|0x5202
+)paren
+)paren
+id|quot
+op_increment
+suffix:semicolon
 id|info-&gt;quot
 op_assign
 id|quot
@@ -8512,6 +8556,17 @@ op_or_assign
 id|UART_MCR_OUT2
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|arg
+op_amp
+id|TIOCM_LOOP
+)paren
+id|info-&gt;MCR
+op_or_assign
+id|UART_MCR_LOOP
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -8567,6 +8622,18 @@ op_complement
 id|UART_MCR_OUT2
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|arg
+op_amp
+id|TIOCM_LOOP
+)paren
+id|info-&gt;MCR
+op_and_assign
+op_complement
+id|UART_MCR_LOOP
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -8588,6 +8655,8 @@ op_or
 id|UART_MCR_OUT2
 op_or
 macro_line|#endif
+id|UART_MCR_LOOP
+op_or
 id|UART_MCR_DTR
 )paren
 )paren
@@ -8632,6 +8701,19 @@ suffix:colon
 l_int|0
 )paren
 macro_line|#endif
+op_or
+(paren
+(paren
+id|arg
+op_amp
+id|TIOCM_LOOP
+)paren
+ques
+c_cond
+id|UART_MCR_LOOP
+suffix:colon
+l_int|0
+)paren
 op_or
 (paren
 (paren
@@ -10792,6 +10874,12 @@ id|info-&gt;flags
 op_or_assign
 id|ASYNC_CLOSING
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Save the termios structure, since this port may have&n;&t; * separate termios for callout and dialin.&n;&t; */
 r_if
 c_cond
@@ -10972,12 +11060,6 @@ id|info-&gt;close_wait
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * rs_wait_until_sent() --- wait until the transmitter is empty&n; */
@@ -11288,6 +11370,15 @@ c_func
 (paren
 id|tty
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_CLOSING
+)paren
+r_return
 suffix:semicolon
 id|shutdown
 c_func
@@ -12020,7 +12111,6 @@ id|info-&gt;io_type
 op_assign
 id|sstate-&gt;io_type
 suffix:semicolon
-macro_line|#ifdef CONFIG_SERIAL_PCI_MEMMAPPED
 id|info-&gt;iomem_base
 op_assign
 id|sstate-&gt;iomem_base
@@ -12029,7 +12119,6 @@ id|info-&gt;iomem_reg_shift
 op_assign
 id|sstate-&gt;iomem_reg_shift
 suffix:semicolon
-macro_line|#endif
 id|info-&gt;xmit_fifo_size
 op_assign
 id|sstate-&gt;xmit_fifo_size
@@ -13081,6 +13170,58 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * ---------------------------------------------------------------------&n; * rs_init() and friends&n; *&n; * rs_init() is called at boot-time to initialize the serial driver.&n; * ---------------------------------------------------------------------&n; */
 multiline_comment|/*&n; * This routine prints out the appropriate serial driver version&n; * number, and identifies which options were configured into this&n; * driver.&n; */
+DECL|variable|__initdata
+r_static
+r_char
+id|serial_options
+(braket
+)braket
+id|__initdata
+op_assign
+macro_line|#ifdef CONFIG_HUB6
+l_string|&quot; HUB-6&quot;
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
+l_string|&quot; MANY_PORTS&quot;
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT
+l_string|&quot; MULTIPORT&quot;
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef CONFIG_SERIAL_SHARE_IRQ
+l_string|&quot; SHARE_IRQ&quot;
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef CONFIG_SERIAL_DETECT_IRQ
+l_string|&quot; DETECT_IRQ&quot;
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef ENABLE_SERIAL_PCI
+l_string|&quot; SERIAL_PCI&quot;
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef ENABLE_SERIAL_PNP
+l_string|&quot; ISAPNP&quot;
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef SERIAL_OPT
+l_string|&quot; enabled&bslash;n&quot;
+suffix:semicolon
+macro_line|#else
+l_string|&quot; no serial options enabled&bslash;n&quot;
+suffix:semicolon
+macro_line|#endif
+DECL|macro|SERIAL_OPT
+macro_line|#undef SERIAL_OPT
 DECL|function|show_serial_version
 r_static
 id|_INLINE_
@@ -13095,7 +13236,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s version %s%s (%s) with&quot;
+l_string|&quot;%s version %s%s (%s) with%s&quot;
 comma
 id|serial_name
 comma
@@ -13104,93 +13245,10 @@ comma
 id|LOCAL_VERSTRING
 comma
 id|serial_revdate
+comma
+id|serial_options
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_HUB6
-id|printk
-c_func
-(paren
-l_string|&quot; HUB-6&quot;
-)paren
-suffix:semicolon
-DECL|macro|SERIAL_OPT
-mdefine_line|#define SERIAL_OPT
-macro_line|#endif
-macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
-id|printk
-c_func
-(paren
-l_string|&quot; MANY_PORTS&quot;
-)paren
-suffix:semicolon
-DECL|macro|SERIAL_OPT
-mdefine_line|#define SERIAL_OPT
-macro_line|#endif
-macro_line|#ifdef CONFIG_SERIAL_MULTIPORT
-id|printk
-c_func
-(paren
-l_string|&quot; MULTIPORT&quot;
-)paren
-suffix:semicolon
-DECL|macro|SERIAL_OPT
-mdefine_line|#define SERIAL_OPT
-macro_line|#endif
-macro_line|#ifdef CONFIG_SERIAL_SHARE_IRQ
-id|printk
-c_func
-(paren
-l_string|&quot; SHARE_IRQ&quot;
-)paren
-suffix:semicolon
-DECL|macro|SERIAL_OPT
-mdefine_line|#define SERIAL_OPT
-macro_line|#endif
-macro_line|#ifdef CONFIG_SERIAL_DETECT_IRQ
-id|printk
-c_func
-(paren
-l_string|&quot; DETECT_IRQ&quot;
-)paren
-suffix:semicolon
-DECL|macro|SERIAL_OPT
-mdefine_line|#define SERIAL_OPT
-macro_line|#endif
-macro_line|#ifdef ENABLE_SERIAL_PCI
-id|printk
-c_func
-(paren
-l_string|&quot; SERIAL_PCI&quot;
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_SERIAL_PCI_MEMMAPPED
-id|printk
-c_func
-(paren
-l_string|&quot; PCI_IOMEM&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-DECL|macro|SERIAL_OPT
-mdefine_line|#define SERIAL_OPT
-macro_line|#endif
-macro_line|#ifdef SERIAL_OPT
-id|printk
-c_func
-(paren
-l_string|&quot; enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#else
-id|printk
-c_func
-(paren
-l_string|&quot; no serial options enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-DECL|macro|SERIAL_OPT
-macro_line|#undef SERIAL_OPT
 )brace
 multiline_comment|/*&n; * This routine detect the IRQ of a serial port by clearing OUT2 when&n; * no UART interrupt are requested (IER = 0) (*GPL*). This seems to work at&n; * each time, as long as no other device permanently request the IRQ.&n; * If no IRQ is detected, or multiple IRQ appear, this function returns 0.&n; * The variable &quot;state&quot; and the field &quot;state-&gt;port&quot; should not be null.&n; */
 DECL|function|detect_uart_irq
@@ -13285,6 +13343,10 @@ id|scr_info.magic
 op_assign
 id|SERIAL_MAGIC
 suffix:semicolon
+id|scr_info.state
+op_assign
+id|state
+suffix:semicolon
 id|scr_info.port
 op_assign
 id|state-&gt;port
@@ -13299,6 +13361,18 @@ op_assign
 id|state-&gt;hub6
 suffix:semicolon
 macro_line|#endif
+id|scr_info.io_type
+op_assign
+id|state-&gt;io_type
+suffix:semicolon
+id|scr_info.iomem_base
+op_assign
+id|state-&gt;iomem_base
+suffix:semicolon
+id|scr_info.iomem_reg_shift
+op_assign
+id|state-&gt;iomem_reg_shift
+suffix:semicolon
 multiline_comment|/* forget possible initially masked and pending IRQ */
 id|probe_irq_off
 c_func
@@ -13902,6 +13976,12 @@ id|info
 comma
 id|UART_REV
 )paren
+op_or
+(paren
+id|scratch3
+op_lshift
+l_int|8
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -14116,7 +14196,6 @@ id|info-&gt;io_type
 op_assign
 id|state-&gt;io_type
 suffix:semicolon
-macro_line|#ifdef CONFIG_SERIAL_PCI_MEMMAPPED
 id|info-&gt;iomem_base
 op_assign
 id|state-&gt;iomem_base
@@ -14125,7 +14204,6 @@ id|info-&gt;iomem_reg_shift
 op_assign
 id|state-&gt;iomem_reg_shift
 suffix:semicolon
-macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -14905,12 +14983,669 @@ macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(ENABLE_SERIAL_PCI) || defined(ENABLE_SERIAL_PNP) 
+DECL|function|printk_pnp_dev_id
+r_static
+r_void
+id|__init
+id|printk_pnp_dev_id
+c_func
+(paren
+r_int
+r_int
+id|vendor
+comma
+r_int
+r_int
+id|device
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%c%c%c%x%x%x%x&quot;
+comma
+l_char|&squot;A&squot;
+op_plus
+(paren
+(paren
+id|vendor
+op_rshift
+l_int|2
+)paren
+op_amp
+l_int|0x3f
+)paren
+op_minus
+l_int|1
+comma
+l_char|&squot;A&squot;
+op_plus
+(paren
+(paren
+(paren
+id|vendor
+op_amp
+l_int|3
+)paren
+op_lshift
+l_int|3
+)paren
+op_or
+(paren
+(paren
+id|vendor
+op_rshift
+l_int|13
+)paren
+op_amp
+l_int|7
+)paren
+)paren
+op_minus
+l_int|1
+comma
+l_char|&squot;A&squot;
+op_plus
+(paren
+(paren
+id|vendor
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0x1f
+)paren
+op_minus
+l_int|1
+comma
+(paren
+id|device
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0x0f
+comma
+id|device
+op_amp
+l_int|0x0f
+comma
+(paren
+id|device
+op_rshift
+l_int|12
+)paren
+op_amp
+l_int|0x0f
+comma
+(paren
+id|device
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0x0f
+)paren
+suffix:semicolon
+)brace
+DECL|function|get_pci_port
+r_static
+id|_INLINE_
+r_int
+id|get_pci_port
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_struct
+id|pci_board
+op_star
+id|board
+comma
+r_struct
+id|serial_struct
+op_star
+id|state
+comma
+r_int
+id|idx
+)paren
+(brace
+r_int
+r_int
+id|port
+suffix:semicolon
+r_int
+id|base_idx
+suffix:semicolon
+r_int
+id|max_port
+suffix:semicolon
+id|base_idx
+op_assign
+id|SPCI_FL_GET_BASE
+c_func
+(paren
+id|board-&gt;flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|board-&gt;flags
+op_amp
+id|SPCI_FL_BASE_TABLE
+)paren
+id|base_idx
+op_add_assign
+id|idx
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|board-&gt;flags
+op_amp
+id|SPCI_FL_REGION_SZ_CAP
+)paren
+(brace
+id|max_port
+op_assign
+id|PCI_BASE_REGION_SIZE
+c_func
+(paren
+id|dev
+comma
+id|base_idx
+)paren
+op_div
+l_int|8
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idx
+op_ge
+id|max_port
+)paren
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|port
+op_assign
+id|PCI_BASE_ADDRESS
+c_func
+(paren
+id|dev
+comma
+id|base_idx
+)paren
+op_plus
+id|board-&gt;first_uart_offset
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|board-&gt;flags
+op_amp
+id|SPCI_FL_BASE_TABLE
+)paren
+op_eq
+l_int|0
+)paren
+id|port
+op_add_assign
+id|idx
+op_star
+(paren
+id|board-&gt;uart_offset
+ques
+c_cond
+id|board-&gt;uart_offset
+suffix:colon
+l_int|8
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_PCI_REGION_IOPORT
+c_func
+(paren
+id|dev
+comma
+id|base_idx
+)paren
+)paren
+(brace
+id|state-&gt;port
+op_assign
+id|port
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|state-&gt;io_type
+op_assign
+id|SERIAL_IO_MEM
+suffix:semicolon
+id|state-&gt;iomem_base
+op_assign
+id|ioremap
+c_func
+(paren
+id|port
+comma
+id|board-&gt;uart_offset
+)paren
+suffix:semicolon
+id|state-&gt;iomem_reg_shift
+op_assign
+id|board-&gt;reg_shift
+suffix:semicolon
+id|state-&gt;port
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|get_pci_irq
+r_static
+id|_INLINE_
+r_int
+id|get_pci_irq
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_struct
+id|pci_board
+op_star
+id|board
+comma
+r_int
+id|idx
+)paren
+(brace
+r_int
+id|base_idx
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|board-&gt;flags
+op_amp
+id|SPCI_FL_IRQRESOURCE
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+id|dev-&gt;irq
+suffix:semicolon
+id|base_idx
+op_assign
+id|SPCI_FL_GET_IRQBASE
+c_func
+(paren
+id|board-&gt;flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|board-&gt;flags
+op_amp
+id|SPCI_FL_IRQ_TABLE
+)paren
+id|base_idx
+op_add_assign
+id|idx
+suffix:semicolon
+r_return
+id|PCI_IRQ_RESOURCE
+c_func
+(paren
+id|dev
+comma
+id|base_idx
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Common enabler code shared by both PCI and ISAPNP probes&n; */
+DECL|function|start_pci_pnp_board
+r_static
+r_void
+id|__init
+id|start_pci_pnp_board
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_struct
+id|pci_board
+op_star
+id|board
+)paren
+(brace
+r_int
+id|k
+comma
+id|line
+suffix:semicolon
+r_struct
+id|serial_struct
+id|fake_state
+suffix:semicolon
+r_int
+id|base_baud
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PREPARE_FUNC
+c_func
+(paren
+id|dev
+)paren
+op_logical_and
+(paren
+id|PREPARE_FUNC
+c_func
+(paren
+id|dev
+)paren
+)paren
+(paren
+id|dev
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;SERIAL: PNP device &squot;&quot;
+)paren
+suffix:semicolon
+id|printk_pnp_dev_id
+c_func
+(paren
+id|board-&gt;vendor
+comma
+id|board-&gt;device
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&squot; prepare failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ACTIVATE_FUNC
+c_func
+(paren
+id|dev
+)paren
+op_logical_and
+(paren
+id|ACTIVATE_FUNC
+c_func
+(paren
+id|dev
+)paren
+)paren
+(paren
+id|dev
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;SERIAL: PNP device &squot;&quot;
+)paren
+suffix:semicolon
+id|printk_pnp_dev_id
+c_func
+(paren
+id|board-&gt;vendor
+comma
+id|board-&gt;device
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&squot; activate failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Run the initialization function, if any&n;&t; */
+r_if
+c_cond
+(paren
+id|board-&gt;init_fn
+op_logical_and
+(paren
+(paren
+id|board-&gt;init_fn
+)paren
+(paren
+id|dev
+comma
+id|board
+comma
+l_int|1
+)paren
+op_ne
+l_int|0
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#ifdef MODULE
+multiline_comment|/*&n;&t; * Register the serial board in the array if we need to&n;&t; * shutdown the board on a module unload.&n;&t; */
+r_if
+c_cond
+(paren
+id|DEACTIVATE_FUNC
+c_func
+(paren
+id|dev
+)paren
+op_logical_or
+id|board-&gt;init_fn
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|serial_pci_board_idx
+op_ge
+id|NR_PCI_BOARDS
+)paren
+r_return
+suffix:semicolon
+id|serial_pci_board
+(braket
+id|serial_pci_board_idx
+)braket
+dot
+id|board
+op_assign
+op_star
+id|board
+suffix:semicolon
+id|serial_pci_board
+(braket
+id|serial_pci_board_idx
+)braket
+dot
+id|dev
+op_assign
+id|dev
+suffix:semicolon
+id|serial_pci_board_idx
+op_increment
+suffix:semicolon
+)brace
+macro_line|#endif
+id|base_baud
+op_assign
+id|board-&gt;base_baud
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|base_baud
+)paren
+id|base_baud
+op_assign
+id|BASE_BAUD
+suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|fake_state
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|fake_state
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|k
+op_assign
+l_int|0
+suffix:semicolon
+id|k
+OL
+id|board-&gt;num_ports
+suffix:semicolon
+id|k
+op_increment
+)paren
+(brace
+id|fake_state.irq
+op_assign
+id|get_pci_irq
+c_func
+(paren
+id|dev
+comma
+id|board
+comma
+id|k
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|get_pci_port
+c_func
+(paren
+id|dev
+comma
+id|board
+comma
+op_amp
+id|fake_state
+comma
+id|k
+)paren
+)paren
+r_break
+suffix:semicolon
+id|fake_state.flags
+op_assign
+id|ASYNC_SKIP_TEST
+suffix:semicolon
+macro_line|#ifdef SERIAL_DEBUG_PCI
+id|printk
+c_func
+(paren
+l_string|&quot;Setup PCI/PNP port: port %x, irq %d, type %d&bslash;n&quot;
+comma
+id|fake_state.port
+comma
+id|fake_state.irq
+comma
+id|fake_state.io_type
+)paren
+suffix:semicolon
+macro_line|#endif
+id|line
+op_assign
+id|register_serial
+c_func
+(paren
+op_amp
+id|fake_state
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|line
+OL
+l_int|0
+)paren
+r_break
+suffix:semicolon
+id|rs_table
+(braket
+id|line
+)braket
+dot
+id|baud_base
+op_assign
+id|base_baud
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif&t;/* ENABLE_SERIAL_PCI || ENABLE_SERIAL_PNP */
 macro_line|#ifdef ENABLE_SERIAL_PCI
-multiline_comment|/*&n; * Some PCI serial cards using the PLX 9050 PCI interface chip require&n; * that the card interrupt be explicitly enabled or disabled.  This&n; * seems to be mainly needed on card using the PLX which also use I/O&n; * mapped memory.&n; * &n; * Note that __init is a no-op if MODULE is defined; we depend on this.&n; */
-DECL|function|pci_plx9050_fn
+multiline_comment|/*&n; * Some PCI serial cards using the PLX 9050 PCI interface chip require&n; * that the card interrupt be explicitly enabled or disabled.  This&n; * seems to be mainly needed on card using the PLX which also use I/O&n; * mapped memory.&n; */
 r_static
 r_int
+macro_line|#ifndef MODULE
 id|__init
+macro_line|#endif
+DECL|function|pci_plx9050_fn
 id|pci_plx9050_fn
 c_func
 (paren
@@ -14984,7 +15719,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|board-&gt;vendor
+id|dev-&gt;vendor
 op_eq
 id|PCI_VENDOR_ID_PANACOM
 )paren
@@ -15075,10 +15810,12 @@ DECL|macro|PCI_DEVICE_ID_SIIG_1S_10x
 mdefine_line|#define PCI_DEVICE_ID_SIIG_1S_10x (PCI_DEVICE_ID_SIIG_1S_10x_550 &amp; 0xfffc)
 DECL|macro|PCI_DEVICE_ID_SIIG_2S_10x
 mdefine_line|#define PCI_DEVICE_ID_SIIG_2S_10x (PCI_DEVICE_ID_SIIG_2S_10x_550 &amp; 0xfff8)
-DECL|function|pci_siig10x_fn
 r_static
 r_int
+macro_line|#ifndef MODULE
 id|__init
+macro_line|#endif
+DECL|function|pci_siig10x_fn
 id|pci_siig10x_fn
 c_func
 (paren
@@ -15197,10 +15934,12 @@ DECL|macro|PCI_DEVICE_ID_SIIG_2S_20x
 mdefine_line|#define PCI_DEVICE_ID_SIIG_2S_20x (PCI_DEVICE_ID_SIIG_2S_20x_550 &amp; 0xfffc)
 DECL|macro|PCI_DEVICE_ID_SIIG_2S1P_20x
 mdefine_line|#define PCI_DEVICE_ID_SIIG_2S1P_20x (PCI_DEVICE_ID_SIIG_2S1P_20x_550 &amp; 0xfffc)
-DECL|function|pci_siig20x_fn
 r_static
 r_int
+macro_line|#ifndef MODULE
 id|__init
+macro_line|#endif
+DECL|function|pci_siig20x_fn
 id|pci_siig20x_fn
 c_func
 (paren
@@ -15308,13 +16047,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the configuration table for all of the PCI serial boards&n; * which we support.&n; */
-DECL|variable|pci_boards
+DECL|variable|__initdata
 r_static
 r_struct
 id|pci_board
 id|pci_boards
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*&n;&t; * Vendor ID, &t;Device ID,&n;&t; * Subvendor ID,&t;Subdevice ID,&n;&t; * PCI Flags, Number of Ports, Base (Maximum) Baud Rate,&n;&t; * Offset to get to next UART&squot;s registers&n;&t; * Register shift to use for memory-mapped I/O&n;&t; */
@@ -15726,13 +16466,12 @@ comma
 id|PCI_SUBDEVICE_ID_KEYSPAN_SX2
 comma
 id|SPCI_FL_BASE2
-op_or
-id|SPCI_FL_IOMEM
 comma
 l_int|2
 comma
 l_int|921600
 comma
+multiline_comment|/* IOMEM */
 l_int|0x400
 comma
 l_int|7
@@ -15949,22 +16688,6 @@ l_int|115200
 )brace
 comma
 (brace
-id|PCI_VENDOR_ID_OXSEMI
-comma
-id|PCI_DEVICE_ID_OXSEMI_16PCI954
-comma
-id|PCI_VENDOR_ID_SPECIALIX
-comma
-id|PCI_SUBDEVICE_ID_SPECIALIX_SPEED4
-comma
-id|SPCI_FL_BASE0
-comma
-l_int|4
-comma
-l_int|115200
-)brace
-comma
-(brace
 id|PCI_VENDOR_ID_SPECIALIX
 comma
 id|PCI_DEVICE_ID_OXSEMI_16PCI954
@@ -15978,6 +16701,57 @@ comma
 l_int|4
 comma
 l_int|921600
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_OXSEMI
+comma
+id|PCI_DEVICE_ID_OXSEMI_16PCI954
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+comma
+l_int|4
+comma
+l_int|115200
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_OXSEMI
+comma
+id|PCI_DEVICE_ID_OXSEMI_16PCI952
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+comma
+l_int|2
+comma
+l_int|115200
+)brace
+comma
+multiline_comment|/* This board uses the size of PCI Base region 0 to&n;&t;&t; * signal now many ports are available */
+(brace
+id|PCI_VENDOR_ID_OXSEMI
+comma
+id|PCI_DEVICE_ID_OXSEMI_16PCI95N
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_REGION_SZ_CAP
+comma
+l_int|32
+comma
+l_int|115200
 )brace
 comma
 (brace
@@ -15999,7 +16773,7 @@ comma
 (brace
 id|PCI_VENDOR_ID_LAVA
 comma
-id|PCI_DEVICE_ID_LAVA_DUAL_SERIAL
+id|PCI_DEVICE_ID_LAVA_DSERIAL
 comma
 id|PCI_ANY_ID
 comma
@@ -16012,6 +16786,132 @@ comma
 l_int|2
 comma
 l_int|115200
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_LAVA
+comma
+id|PCI_DEVICE_ID_LAVA_QUATRO_A
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_BASE_TABLE
+comma
+l_int|2
+comma
+l_int|115200
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_LAVA
+comma
+id|PCI_DEVICE_ID_LAVA_QUATRO_B
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_BASE_TABLE
+comma
+l_int|2
+comma
+l_int|115200
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_LAVA
+comma
+id|PCI_DEVICE_ID_LAVA_PORT_PLUS
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_BASE_TABLE
+comma
+l_int|2
+comma
+l_int|460800
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_LAVA
+comma
+id|PCI_DEVICE_ID_LAVA_QUAD_A
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_BASE_TABLE
+comma
+l_int|2
+comma
+l_int|460800
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_LAVA
+comma
+id|PCI_DEVICE_ID_LAVA_QUAD_B
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_BASE_TABLE
+comma
+l_int|2
+comma
+l_int|460800
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_LAVA
+comma
+id|PCI_DEVICE_ID_LAVA_SSERIAL
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_BASE_TABLE
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_LAVA
+comma
+id|PCI_DEVICE_ID_LAVA_PORT_650
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_BASE_TABLE
+comma
+l_int|1
+comma
+l_int|460800
 )brace
 comma
 (brace
@@ -16786,14 +17686,13 @@ id|PCI_SUBVENDOR_ID_COMPUTONE
 comma
 id|PCI_SUBDEVICE_ID_COMPUTONE_PG4
 comma
-id|SPCI_FL_IOMEM
-op_or
 id|SPCI_FL_BASE0
 comma
 l_int|4
 comma
 l_int|921600
 comma
+multiline_comment|/* IOMEM */
 l_int|0x40
 comma
 l_int|2
@@ -16812,14 +17711,13 @@ id|PCI_SUBVENDOR_ID_COMPUTONE
 comma
 id|PCI_SUBDEVICE_ID_COMPUTONE_PG8
 comma
-id|SPCI_FL_IOMEM
-op_or
 id|SPCI_FL_BASE0
 comma
 l_int|8
 comma
 l_int|921600
 comma
+multiline_comment|/* IOMEM */
 l_int|0x40
 comma
 l_int|2
@@ -16838,14 +17736,13 @@ id|PCI_SUBVENDOR_ID_COMPUTONE
 comma
 id|PCI_SUBDEVICE_ID_COMPUTONE_PG6
 comma
-id|SPCI_FL_IOMEM
-op_or
 id|SPCI_FL_BASE0
 comma
 l_int|6
 comma
 l_int|921600
 comma
+multiline_comment|/* IOMEM */
 l_int|0x40
 comma
 l_int|2
@@ -16855,41 +17752,41 @@ comma
 l_int|0x200
 )brace
 comma
+multiline_comment|/* Digitan DS560-558, from jimd@esoft.com */
+(brace
+id|PCI_VENDOR_ID_ATT
+comma
+id|PCI_DEVICE_ID_ATT_VENUS_MODEM
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE1
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
+multiline_comment|/* 3Com US Robotics 56k Voice Internal PCI model 5610 */
+(brace
+id|PCI_VENDOR_ID_USR
+comma
+l_int|0x1008
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
 multiline_comment|/*&n;&t; * Untested PCI modems, sent in from various folks...&n;&t; */
-multiline_comment|/* at+t zoom 56K faxmodem, from dougd@shieldsbag.com */
-(brace
-id|PCI_VENDOR_ID_ATT
-comma
-l_int|0x442
-comma
-id|PCI_ANY_ID
-comma
-id|PCI_ANY_ID
-comma
-id|SPCI_FL_BASE1
-comma
-l_int|1
-comma
-l_int|115200
-)brace
-comma
-multiline_comment|/* at&amp;t unknown modem, from jimd@esoft.com */
-(brace
-id|PCI_VENDOR_ID_ATT
-comma
-l_int|0x480
-comma
-id|PCI_ANY_ID
-comma
-id|PCI_ANY_ID
-comma
-id|SPCI_FL_BASE1
-comma
-l_int|1
-comma
-l_int|115200
-)brace
-comma
 multiline_comment|/* Elsa Model 56K PCI Modem, from Andreas Rath &lt;arh@01019freenet.de&gt; */
 (brace
 id|PCI_VENDOR_ID_ROCKWELL
@@ -16907,48 +17804,175 @@ comma
 l_int|115200
 )brace
 comma
-multiline_comment|/* 3Com US Robotics 56k* Voice Internal PCI, model# 2884 */
-multiline_comment|/* from evidal@iti.upv.es */
-multiline_comment|/* XXX complete guess this may not work!!! */
+multiline_comment|/* Generic serial board */
 (brace
-id|PCI_VENDOR_ID_USR
+l_int|0
 comma
-l_int|0x1006
+l_int|0
 comma
-l_int|0x12b9
+l_int|0
 comma
-l_int|0x0060
+l_int|0
 comma
-id|SPCI_FL_BASE1
-op_or
-id|SPCI_FL_IOMEM
+id|SPCI_FL_BASE0
 comma
 l_int|1
 comma
 l_int|115200
 )brace
 comma
-(brace
-l_int|0
-comma
-)brace
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Given a complete unknown PCI device, try to use some hueristics to&n; * guess what the configuration might be, based on the pitiful PCI&n; * serial specs.  Returns 0 on success, 1 on failure.&n; */
+DECL|function|serial_guess_board
+r_static
+r_int
+id|_INLINE_
+id|serial_guess_board
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_struct
+id|pci_board
+op_star
+id|board
+)paren
+(brace
+r_int
+id|num_iomem
+op_assign
+l_int|0
+comma
+id|num_port
+op_assign
+l_int|0
+comma
+id|first_port
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/*&n;&t; * If it is not a communications device or the programming&n;&t; * interface is greater than 6, give up.&n;&t; *&n;&t; * (Should we try to make guesses for multiport serial devices&n;&t; * later?) &n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+)paren
+op_ne
+id|PCI_CLASS_COMMUNICATION_SERIAL
+op_logical_or
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_amp
+l_int|0xff
+)paren
+OG
+l_int|6
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|IS_PCI_REGION_IOPORT
+c_func
+(paren
+id|dev
+comma
+id|i
+)paren
+)paren
+(brace
+id|num_port
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|first_port
+op_eq
+op_minus
+l_int|1
+)paren
+id|first_port
+op_assign
+id|i
+suffix:semicolon
+)brace
+r_else
+(brace
+id|num_iomem
+op_increment
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; * If there is 1 or 0 iomem regions, and exactly one port, use&n;&t; * it.&n;&t; */
+r_if
+c_cond
+(paren
+id|num_iomem
+op_le
+l_int|1
+op_logical_and
+id|num_port
+op_eq
+l_int|1
+)paren
+(brace
+id|board-&gt;flags
+op_assign
+id|first_port
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Query PCI space for known serial boards&n; * If found, add them to the PCI device space in rs_table[]&n; *&n; * Accept a maximum of eight boards&n; *&n; */
 DECL|function|probe_serial_pci
 r_static
 r_void
+id|__init
 id|probe_serial_pci
 c_func
 (paren
 r_void
 )paren
 (brace
-r_int
-id|k
-comma
-id|line
-suffix:semicolon
 r_struct
 id|pci_dev
 op_star
@@ -16961,21 +17985,6 @@ id|pci_board
 op_star
 id|board
 suffix:semicolon
-r_struct
-id|serial_struct
-id|fake_state
-suffix:semicolon
-r_int
-id|uart_offset
-comma
-id|base_baud
-comma
-id|base_idx
-suffix:semicolon
-r_int
-r_int
-id|port
-suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_PCI
 id|printk
 c_func
@@ -16985,6 +17994,28 @@ l_string|&quot;Entered probe_serial_pci()&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pcibios_present
+c_func
+(paren
+)paren
+)paren
+(brace
+macro_line|#ifdef SERIAL_DEBUG_PCI
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Leaving probe_serial_pci() (no pcibios)&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
 id|pci_for_each_dev
 c_func
 (paren
@@ -17049,7 +18080,11 @@ r_int
 )paren
 id|PCI_ANY_ID
 op_logical_and
-id|dev-&gt;subsystem_vendor
+id|pci_get_subvendor
+c_func
+(paren
+id|dev
+)paren
 op_ne
 id|board-&gt;subvendor
 )paren
@@ -17066,7 +18101,11 @@ r_int
 )paren
 id|PCI_ANY_ID
 op_logical_and
-id|dev-&gt;subsystem_device
+id|pci_get_subdevice
+c_func
+(paren
+id|dev
+)paren
 op_ne
 id|board-&gt;subdevice
 )paren
@@ -17081,398 +18120,25 @@ c_cond
 id|board-&gt;vendor
 op_eq
 l_int|0
-)paren
-(brace
-macro_line|#ifdef SERIAL_DEBUG_PCI
-id|printk
+op_logical_and
+id|serial_guess_board
 c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Found unknown serial board: %x:%x, %x:%x, %x&bslash;n&quot;
-comma
-id|dev-&gt;vendor
-comma
-id|dev-&gt;device
-comma
-id|subvendor
-comma
-id|subdevice
-comma
-id|dev
-op_member_access_from_pointer
-r_class
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;   Addresses: %lx, %lx, %lx, %lx&bslash;n&quot;
-comma
-id|PCI_BASE_ADDRESS
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-comma
-id|PCI_BASE_ADDRESS
-c_func
-(paren
-id|dev
-comma
-l_int|1
-)paren
-comma
-id|PCI_BASE_ADDRESS
-c_func
-(paren
-id|dev
-comma
-l_int|2
-)paren
-comma
-id|PCI_BASE_ADDRESS
-c_func
-(paren
-id|dev
-comma
-l_int|3
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_continue
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; * Run the initialization function, if any&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|board-&gt;init_fn
-)paren
-r_if
-c_cond
-(paren
-(paren
-id|board-&gt;init_fn
-)paren
 (paren
 id|dev
 comma
 id|board
-comma
-l_int|1
 )paren
-op_ne
-l_int|0
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Register the serial board in the array so we can&n;&t;&t; * shutdown the board later, if necessary.&n;&t;&t; */
-r_if
-c_cond
+id|start_pci_pnp_board
+c_func
 (paren
-id|serial_pci_board_idx
-op_ge
-id|NR_PCI_BOARDS
-)paren
-r_continue
-suffix:semicolon
-id|serial_pci_board
-(braket
-id|serial_pci_board_idx
-)braket
-dot
+id|dev
+comma
 id|board
-op_assign
-id|board
-suffix:semicolon
-id|serial_pci_board
-(braket
-id|serial_pci_board_idx
-)braket
-dot
-id|dev
-op_assign
-id|dev
-suffix:semicolon
-id|serial_pci_board_idx
-op_increment
-suffix:semicolon
-id|base_idx
-op_assign
-id|board-&gt;flags
-op_amp
-id|SPCI_FL_BASE_MASK
-suffix:semicolon
-id|port
-op_assign
-id|PCI_BASE_ADDRESS
-c_func
-(paren
-id|dev
-comma
-id|base_idx
-)paren
-op_plus
-id|board-&gt;first_uart_offset
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|board-&gt;flags
-op_amp
-id|SPCI_FL_IOMEM
-)paren
-id|port
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
-suffix:semicolon
-r_else
-id|port
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Set some defaults for the loop below, which &n;&t;&t; * actually registers each serial port belonging to&n;&t;&t; * the card.&n;&t;&t; */
-id|uart_offset
-op_assign
-id|board-&gt;uart_offset
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|uart_offset
-)paren
-id|uart_offset
-op_assign
-l_int|8
-suffix:semicolon
-id|base_baud
-op_assign
-id|board-&gt;base_baud
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|base_baud
-)paren
-id|base_baud
-op_assign
-id|BASE_BAUD
-suffix:semicolon
-macro_line|#ifndef CONFIG_SERIAL_PCI_MEMMAPPED
-r_if
-c_cond
-(paren
-id|board-&gt;flags
-op_amp
-id|SPCI_FL_IOMEM
-)paren
-(brace
-macro_line|#ifdef SERIAL_DEBUG_PCI
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Can&squot;t support memory mapped PCI serial device&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-r_continue
-suffix:semicolon
-)brace
-macro_line|#endif
-id|memset
-c_func
-(paren
-op_amp
-id|fake_state
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|fake_state
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_PCI
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Found Serial PCI device: %x:%x, %x:%x, %x&bslash;n&quot;
-comma
-id|dev-&gt;vendor
-comma
-id|dev-&gt;device
-comma
-id|subvendor
-comma
-id|subdevice
-comma
-id|dev
-op_member_access_from_pointer
-r_class
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;   IRQ: %d, base: %lx (%s), num_ports: %d&bslash;n&quot;
-comma
-id|dev-&gt;irq
-comma
-id|port
-comma
-id|board-&gt;flags
-op_amp
-id|SPCI_FL_IOMEM
-ques
-c_cond
-l_string|&quot;iomem&quot;
-suffix:colon
-l_string|&quot;port&quot;
-comma
-id|board-&gt;num_ports
-)paren
-suffix:semicolon
-macro_line|#endif
-r_for
-c_loop
-(paren
-id|k
-op_assign
-l_int|0
-suffix:semicolon
-id|k
-OL
-id|board-&gt;num_ports
-suffix:semicolon
-id|k
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|board-&gt;flags
-op_amp
-id|SPCI_FL_BASE_TABLE
-)paren
-(brace
-id|port
-op_assign
-id|PCI_BASE_ADDRESS
-c_func
-(paren
-id|dev
-comma
-id|base_idx
-op_increment
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|board-&gt;flags
-op_amp
-id|SPCI_FL_IOMEM
-)paren
-id|port
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
-suffix:semicolon
-r_else
-id|port
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
-)brace
-id|fake_state.irq
-op_assign
-id|dev-&gt;irq
-suffix:semicolon
-id|fake_state.port
-op_assign
-id|port
-suffix:semicolon
-macro_line|#ifdef CONFIG_SERIAL_PCI_MEMMAPPED
-r_if
-c_cond
-(paren
-id|board-&gt;flags
-op_amp
-id|SPCI_FL_IOMEM
-)paren
-(brace
-id|fake_state.io_type
-op_assign
-id|SERIAL_IO_MEM
-suffix:semicolon
-id|fake_state.iomem_base
-op_assign
-id|ioremap
-c_func
-(paren
-id|port
-comma
-id|board-&gt;uart_offset
-)paren
-suffix:semicolon
-id|fake_state.iomem_reg_shift
-op_assign
-id|board-&gt;reg_shift
-suffix:semicolon
-id|fake_state.port
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
-id|port
-op_add_assign
-id|uart_offset
-suffix:semicolon
-id|fake_state.flags
-op_assign
-id|ASYNC_SKIP_TEST
-op_or
-id|ASYNC_SHARE_IRQ
-suffix:semicolon
-id|line
-op_assign
-id|register_serial
-c_func
-(paren
-op_amp
-id|fake_state
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|line
-OL
-l_int|0
-)paren
-r_break
-suffix:semicolon
-id|rs_table
-(braket
-id|line
-)braket
-dot
-id|baud_base
-op_assign
-id|base_baud
-suffix:semicolon
-)brace
 )brace
 macro_line|#ifdef SERIAL_DEBUG_PCI
 id|printk
@@ -17487,6 +18153,347 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* ENABLE_SERIAL_PCI */
+macro_line|#ifdef ENABLE_SERIAL_PNP
+DECL|variable|__initdata
+r_static
+r_struct
+id|pci_board
+id|pnp_devices
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+multiline_comment|/* Rockwell 56K ACF II Fax+Data+Voice Modem */
+(brace
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;A&squot;
+comma
+l_char|&squot;K&squot;
+comma
+l_char|&squot;Y&squot;
+)paren
+comma
+id|ISAPNP_DEVICE
+c_func
+(paren
+l_int|0x1021
+)paren
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_PNPDEFAULT
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
+multiline_comment|/* Boca Research 33,600 ACF Modem */
+(brace
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;B&squot;
+comma
+l_char|&squot;R&squot;
+comma
+l_char|&squot;I&squot;
+)paren
+comma
+id|ISAPNP_DEVICE
+c_func
+(paren
+l_int|0x1400
+)paren
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_PNPDEFAULT
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
+multiline_comment|/* Best Data Products Inc. Smart One 336F PnP Modem */
+(brace
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;B&squot;
+comma
+l_char|&squot;D&squot;
+comma
+l_char|&squot;P&squot;
+)paren
+comma
+id|ISAPNP_DEVICE
+c_func
+(paren
+l_int|0x3336
+)paren
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_PNPDEFAULT
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
+multiline_comment|/* These ID&squot;s are taken from M$ documentation */
+multiline_comment|/* Compaq 14400 Modem */
+(brace
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;P&squot;
+comma
+l_char|&squot;N&squot;
+comma
+l_char|&squot;P&squot;
+)paren
+comma
+id|ISAPNP_DEVICE
+c_func
+(paren
+l_int|0xC000
+)paren
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_PNPDEFAULT
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
+multiline_comment|/* Compaq 2400/9600 Modem */
+(brace
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;P&squot;
+comma
+l_char|&squot;N&squot;
+comma
+l_char|&squot;P&squot;
+)paren
+comma
+id|ISAPNP_DEVICE
+c_func
+(paren
+l_int|0xC001
+)paren
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_PNPDEFAULT
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
+multiline_comment|/* Generic standard PC COM port&t; */
+(brace
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;P&squot;
+comma
+l_char|&squot;N&squot;
+comma
+l_char|&squot;P&squot;
+)paren
+comma
+id|ISAPNP_DEVICE
+c_func
+(paren
+l_int|0x0500
+)paren
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_PNPDEFAULT
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
+multiline_comment|/* Generic 16550A-compatible COM port */
+(brace
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;P&squot;
+comma
+l_char|&squot;N&squot;
+comma
+l_char|&squot;P&squot;
+)paren
+comma
+id|ISAPNP_DEVICE
+c_func
+(paren
+l_int|0x0501
+)paren
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_PNPDEFAULT
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
+(brace
+l_int|0
+comma
+)brace
+)brace
+suffix:semicolon
+DECL|function|probe_serial_pnp
+r_static
+r_void
+id|__init
+id|probe_serial_pnp
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+l_int|NULL
+suffix:semicolon
+r_struct
+id|pci_board
+op_star
+id|board
+suffix:semicolon
+macro_line|#ifdef SERIAL_DEBUG_PNP
+id|printk
+c_func
+(paren
+l_string|&quot;Entered probe_serial_pnp()&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isapnp_present
+c_func
+(paren
+)paren
+)paren
+(brace
+macro_line|#ifdef SERIAL_DEBUG_PNP
+id|printk
+c_func
+(paren
+l_string|&quot;Leaving probe_serial_pnp() (no isapnp)&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|board
+op_assign
+id|pnp_devices
+suffix:semicolon
+id|board-&gt;vendor
+suffix:semicolon
+id|board
+op_increment
+)paren
+(brace
+r_while
+c_loop
+(paren
+(paren
+id|dev
+op_assign
+id|isapnp_find_dev
+c_func
+(paren
+l_int|NULL
+comma
+id|board-&gt;vendor
+comma
+id|board-&gt;device
+comma
+id|dev
+)paren
+)paren
+)paren
+(brace
+id|start_pci_pnp_board
+c_func
+(paren
+id|dev
+comma
+id|board
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#ifdef SERIAL_DEBUG_PNP
+id|printk
+c_func
+(paren
+l_string|&quot;Leaving probe_serial_pnp() (probe finished)&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* ENABLE_SERIAL_PNP */
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
 DECL|function|rs_init
 r_int
@@ -18137,6 +19144,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef ENABLE_SERIAL_PNP
+id|probe_serial_pnp
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -18164,6 +19178,11 @@ r_struct
 id|serial_state
 op_star
 id|state
+suffix:semicolon
+r_struct
+id|async_struct
+op_star
+id|info
 suffix:semicolon
 id|save_flags
 c_func
@@ -18347,7 +19366,6 @@ id|state-&gt;io_type
 op_assign
 id|req-&gt;io_type
 suffix:semicolon
-macro_line|#ifdef CONFIG_SERIAL_PCI_MEMMAPPED
 id|state-&gt;iomem_base
 op_assign
 id|req-&gt;iomem_base
@@ -18356,7 +19374,6 @@ id|state-&gt;iomem_reg_shift
 op_assign
 id|req-&gt;iomem_reg_shift
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -18366,6 +19383,39 @@ id|state-&gt;baud_base
 op_assign
 id|req-&gt;baud_base
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|info
+op_assign
+id|state-&gt;info
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+id|info-&gt;port
+op_assign
+id|req-&gt;port
+suffix:semicolon
+id|info-&gt;flags
+op_assign
+id|req-&gt;flags
+suffix:semicolon
+id|info-&gt;io_type
+op_assign
+id|req-&gt;io_type
+suffix:semicolon
+id|info-&gt;iomem_base
+op_assign
+id|req-&gt;iomem_base
+suffix:semicolon
+id|info-&gt;iomem_reg_shift
+op_assign
+id|req-&gt;iomem_reg_shift
+suffix:semicolon
+)brace
 id|autoconfig
 c_func
 (paren
@@ -18764,7 +19814,7 @@ comma
 l_int|8
 )paren
 suffix:semicolon
-macro_line|#if defined(ENABLE_SERIAL_PCI) &amp;&amp; defined (CONFIG_SERIAL_PCI_MEMMAPPED)
+macro_line|#if defined(ENABLE_SERIAL_PCI) || defined(ENABLE_SERIAL_PNP)
 r_if
 c_cond
 (paren
@@ -18788,7 +19838,7 @@ id|iomem_base
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef ENABLE_SERIAL_PCI
+macro_line|#if defined(ENABLE_SERIAL_PCI) || defined(ENABLE_SERIAL_PNP)
 r_for
 c_loop
 (paren
@@ -18818,17 +19868,38 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|brd-&gt;board-&gt;init_fn
+id|brd-&gt;board.init_fn
 )paren
 (paren
-id|brd-&gt;board-&gt;init_fn
+id|brd-&gt;board.init_fn
 )paren
 (paren
 id|brd-&gt;dev
 comma
+op_amp
 id|brd-&gt;board
 comma
 l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|DEACTIVATE_FUNC
+c_func
+(paren
+id|brd-&gt;dev
+)paren
+)paren
+(paren
+id|DEACTIVATE_FUNC
+c_func
+(paren
+id|brd-&gt;dev
+)paren
+)paren
+(paren
+id|brd-&gt;dev
 )paren
 suffix:semicolon
 )brace
@@ -19485,7 +20556,6 @@ id|info-&gt;io_type
 op_assign
 id|state-&gt;io_type
 suffix:semicolon
-macro_line|#ifdef CONFIG_SERIAL_PCI_MEMMAPPED
 id|info-&gt;iomem_base
 op_assign
 id|state-&gt;iomem_base
@@ -19494,7 +20564,6 @@ id|info-&gt;iomem_reg_shift
 op_assign
 id|state-&gt;iomem_reg_shift
 suffix:semicolon
-macro_line|#endif
 id|quot
 op_assign
 id|state-&gt;baud_base

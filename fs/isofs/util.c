@@ -516,11 +516,6 @@ comma
 l_int|31
 )brace
 suffix:semicolon
-r_extern
-r_struct
-id|timezone
-id|sys_tz
-suffix:semicolon
 id|days
 op_assign
 id|year

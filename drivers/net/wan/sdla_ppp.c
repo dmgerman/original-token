@@ -14,7 +14,6 @@ macro_line|#include &lt;linux/inet.h&gt;&t;&t;/* in_aton(), in_ntoa() prototypes
 macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
-macro_line|#include &lt;linux/wanpipe.h&gt;
 macro_line|#include &lt;linux/sdla_ppp.h&gt;&t;&t;/* PPP firmware API definitions */
 macro_line|#include &lt;linux/sdlasfm.h&gt;&t;&t;/* S514 Type Definition */
 multiline_comment|/****** Defines &amp; Macros ****************************************************/

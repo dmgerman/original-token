@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  pm.h - Power management interface&n; *&n; *  Copyrigh
 macro_line|#ifndef _LINUX_PM_H
 DECL|macro|_LINUX_PM_H
 mdefine_line|#define _LINUX_PM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 multiline_comment|/*&n; * Power management requests&n; */
 r_enum

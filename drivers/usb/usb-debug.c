@@ -786,6 +786,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|index
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 (paren
 id|buf
 op_assign

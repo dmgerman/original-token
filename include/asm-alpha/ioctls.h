@@ -102,6 +102,12 @@ DECL|macro|TIOCM_CD
 macro_line|# define TIOCM_CD&t;TIOCM_CAR
 DECL|macro|TIOCM_RI
 macro_line|# define TIOCM_RI&t;TIOCM_RNG
+DECL|macro|TIOCM_OUT1
+macro_line|# define TIOCM_OUT1&t;0x2000
+DECL|macro|TIOCM_OUT2
+macro_line|# define TIOCM_OUT2&t;0x4000
+DECL|macro|TIOCM_LOOP
+macro_line|# define TIOCM_LOOP&t;0x8000
 DECL|macro|TIOCGSOFTCAR
 mdefine_line|#define TIOCGSOFTCAR&t;0x5419
 DECL|macro|TIOCSSOFTCAR
