@@ -21,11 +21,17 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA1740
 macro_line|#include &quot;aha1740.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
+macro_line|#include &quot;buslogic.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
 macro_line|#include &quot;fdomain.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_GENERIC_NCR5380
 macro_line|#include &quot;g_NCR5380.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IN2000
+macro_line|#include &quot;in2000.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PAS16
 macro_line|#include &quot;pas16.h&quot;
@@ -62,6 +68,11 @@ macro_line|#ifdef CONFIG_SCSI_AHA152X
 id|AHA152X
 comma
 macro_line|#endif
+multiline_comment|/* Buslogic must come before aha1542.c */
+macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
+id|BUSLOGIC
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA1542
 id|AHA1542
 comma
@@ -72,6 +83,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
 id|FDOMAIN_16X0
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IN2000
+id|IN2000
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_GENERIC_NCR5380
@@ -296,6 +311,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|retval-&gt;last_reset
+op_assign
+l_int|0
+suffix:semicolon
+id|retval-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon

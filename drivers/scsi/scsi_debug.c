@@ -2749,9 +2749,6 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|SCpnt
-comma
-r_int
-id|i
 )paren
 (brace
 r_int

@@ -80,6 +80,6 @@ macro_line|#endif
 DECL|macro|SCSI_DEBUG_MAILBOXES
 mdefine_line|#define SCSI_DEBUG_MAILBOXES 8
 DECL|macro|SCSI_DEBUG
-mdefine_line|#define SCSI_DEBUG {&quot;SCSI DEBUG&quot;, scsi_debug_detect,&t;&bslash;&n;&t;&t;scsi_debug_info, scsi_debug_command,&t;&t;&bslash;&n;&t;&t;scsi_debug_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_biosparam,&t;&t;&t;&t;&bslash;&n;&t;&t;SCSI_DEBUG_MAILBOXES, 7, SG_ALL, 1, 0, 1}
+mdefine_line|#define SCSI_DEBUG {&quot;SCSI DEBUG&quot;, scsi_debug_detect,&t;&bslash;&n;&t;&t;scsi_debug_info, scsi_debug_command,&t;&t;&bslash;&n;&t;&t;scsi_debug_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_biosparam,&t;&t;&t;&t;&bslash;&n;&t;&t;SCSI_DEBUG_MAILBOXES, 7, SG_ALL, 1, 0, 1, ENABLE_CLUSTERING}
 macro_line|#endif
 eof

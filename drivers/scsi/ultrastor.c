@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;ultrastor.c&t;Copyright (C) 1992 David B. Gentzel&n; *&t;Low-level SCSI driver for UltraStor 14F, 24F, and 34F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *  scatter/gather added by Scott Taylor (n217cg@tamuts.tamu.edu)&n; *  24F and multiple command support by John F. Carr (jfc@athena.mit.edu)&n; *    John&squot;s work modified by Caleb Epstein (cae@jpmorgan.com) and &n; *    Eric Youngdale (eric@tantalus.nrl.navy.mil).&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
+multiline_comment|/*&n; *&t;ultrastor.c&t;Copyright (C) 1992 David B. Gentzel&n; *&t;Low-level SCSI driver for UltraStor 14F, 24F, and 34F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *  scatter/gather added by Scott Taylor (n217cg@tamuts.tamu.edu)&n; *  24F and multiple command support by John F. Carr (jfc@athena.mit.edu)&n; *    John&squot;s work modified by Caleb Epstein (cae@jpmorgan.com) and &n; *    Eric Youngdale (ericy@cais.com).&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
 multiline_comment|/*&n; * TODO:&n; *&t;1. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;2. Look at command linking (mscp.command_link and&n; *&t;   mscp.command_link_id).  (Does not work with many disks, &n; *&t;&t;&t;&t;and no performance increase.  ERY).&n; *&t;3. Allow multiple adapters.&n; */
 multiline_comment|/*&n; * NOTES:&n; *    The UltraStor 14F, 24F, and 34F are a family of intelligent, high&n; *    performance SCSI-2 host adapters.  They all support command queueing&n; *    and scatter/gather I/O.  Some of them can also emulate the standard&n; *    WD1003 interface for use with OS&squot;s which don&squot;t support SCSI.  Here&n; *    is the scoop on the various models:&n; *&t;14F - ISA first-party DMA HA with floppy support and WD1003 emulation.&n; *&t;14N - ISA HA with floppy support.  I think that this is a non-DMA&n; *&t;      HA.  Nothing further known.&n; *&t;24F - EISA Bus Master HA with floppy support and WD1003 emulation.&n; *&t;34F - VL-Bus Bus Master HA with floppy support (no WD1003 emulation).&n; *&n; *    The 14F, 24F, and 34F are supported by this driver.&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
 multiline_comment|/* Changes from version 1.9 to 1.11&n; *&n; * Patches to bring this driver up to speed with the default kernel&n; * driver which supports only the 14F and 34F adapters.  This version&n; * should compile cleanly into 0.99.13, 0.99.12 and probably 0.99.11.&n; *&n; * Fixes from Eric Youngdale to fix a few possible race conditions and&n; * several problems with bit testing operations (insufficient&n; * parentheses).&n; *&n; * Removed the ultrastor_abort() and ultrastor_reset() functions&n; * (enclosed them in #if 0 / #endif).  These functions, at least on&n; * the 24F, cause the SCSI bus to do odd things and generally lead to&n; * kernel panics and machine hangs.  This is like the Adaptec code.&n; *&n; * Use check/snarf_region for 14f, 34f to avoid I/O space address conflicts.&n; */
@@ -2777,9 +2777,6 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|SCpnt
-comma
-r_int
-id|code
 )paren
 (brace
 macro_line|#if ULTRASTOR_DEBUG &amp; UD_ABORT
@@ -2835,7 +2832,7 @@ id|config.slot
 )paren
 (brace
 r_return
-l_int|0
+id|SCSI_ABORT_SNOOZE
 suffix:semicolon
 )brace
 multiline_comment|/* Do not attempt an abort for the 24f */
@@ -3119,8 +3116,9 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_ABORT_SUCCESS
 suffix:semicolon
+multiline_comment|/* FIXME - is this correct? -ERY */
 )brace
 macro_line|#endif
 id|old_aborted
@@ -3128,11 +3126,6 @@ op_assign
 id|xchgb
 c_func
 (paren
-id|code
-ques
-c_cond
-id|code
-suffix:colon
 id|DID_ABORT
 comma
 op_amp
@@ -3151,7 +3144,7 @@ op_eq
 l_int|0xff
 )paren
 r_return
-l_int|0
+id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 multiline_comment|/* On 24F, send an abort MSCP request.  The adapter will interrupt&n;       and the interrupt handler will call done.  */
 r_if
@@ -3260,7 +3253,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_ABORT_PENDING
 suffix:semicolon
 )brace
 macro_line|#if ULTRASTOR_DEBUG &amp; UD_ABORT
@@ -3275,6 +3268,7 @@ id|mscp_index
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Can&squot;t request a graceful abort.  Either this is not a 24F or&n;       the OGM is busy.  Don&squot;t free the command -- the adapter might&n;       still be using it.  Setting SCint = 0 causes the interrupt&n;       handler to ignore the command.  */
+multiline_comment|/* FIXME - devices that implement soft resets will still be running&n;       the command after a bus reset.  We would probably rather leave&n;       the command in the queue.  The upper level code will automatically&n;       leave the command in the active state instead of requeueing it. ERY */
 macro_line|#if ULTRASTOR_DEBUG &amp; UD_ABORT
 r_if
 c_cond
@@ -3317,7 +3311,7 @@ op_eq
 l_int|0
 )paren
 r_return
-l_int|1
+id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 r_if
 c_cond
@@ -3379,7 +3373,7 @@ id|SCpnt
 suffix:semicolon
 multiline_comment|/* Need to set a timeout here in case command never completes.  */
 r_return
-l_int|0
+id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
 DECL|function|ultrastor_reset
@@ -3413,21 +3407,11 @@ c_cond
 id|config.slot
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|SCpnt
-)paren
-id|SCpnt-&gt;flags
-op_or_assign
-id|NEEDS_JUMPSTART
-suffix:semicolon
 r_return
-l_int|0
+id|SCSI_RESET_SNOOZE
 suffix:semicolon
-multiline_comment|/* Do not attempt a reset for the 24f */
 )brace
-suffix:semicolon
+multiline_comment|/* Do not attempt a reset for the 24f */
 id|save_flags
 c_func
 (paren
@@ -3602,6 +3586,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/* FIXME - if the device implements soft resets, then the command&n;       will still be running.  ERY */
 id|memset
 c_func
 (paren
@@ -3637,7 +3622,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_RESET_SUCCESS
 suffix:semicolon
 )brace
 DECL|function|ultrastor_biosparam

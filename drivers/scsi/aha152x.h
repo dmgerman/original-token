@@ -54,8 +54,6 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_int
@@ -85,7 +83,7 @@ DECL|macro|AHA152X_REVID
 mdefine_line|#define AHA152X_REVID&t;&quot;Adaptec 152x SCSI driver; $Revision: 1.0 $&quot;
 multiline_comment|/* Initial value of Scsi_Host entry */
 DECL|macro|AHA152X
-mdefine_line|#define AHA152X       { /* name */&t;&t;AHA152X_REVID, &bslash;&n;&t;&t;&t;/* detect */&t;&t;aha152x_detect,             &bslash;&n;&t;&t;&t;/* info */&t;&t;aha152x_info,               &bslash;&n;&t;&t;&t;/* command */&t;&t;aha152x_command,            &bslash;&n;&t;&t;&t;/* queuecommand */&t;aha152x_queue,              &bslash;&n;                        /* abort */&t;&t;aha152x_abort,              &bslash;&n;                        /* reset */&t;&t;aha152x_reset,              &bslash;&n;                        /* slave_attach */&t;/* NULL */  0,              &bslash;&n;                        /* bios_param */&t;aha152x_biosparam,          &bslash;&n;&t;&t;&t;/* can_queue */&t;&t;1,                          &bslash;&n;                        /* this_id */&t;&t;7,                          &bslash;&n;                        /* sg_tablesize */&t;SG_ALL,                     &bslash;&n;                        /* cmd_per_lun */&t;1,                          &bslash;&n;                        /* present */&t;&t;0,                          &bslash;&n;                        /* unchecked_isa_dma */&t;0 }
+mdefine_line|#define AHA152X       { /* name */&t;&t;AHA152X_REVID, &bslash;&n;&t;&t;&t;/* detect */&t;&t;aha152x_detect,             &bslash;&n;&t;&t;&t;/* info */&t;&t;aha152x_info,               &bslash;&n;&t;&t;&t;/* command */&t;&t;aha152x_command,            &bslash;&n;&t;&t;&t;/* queuecommand */&t;aha152x_queue,              &bslash;&n;                        /* abort */&t;&t;aha152x_abort,              &bslash;&n;                        /* reset */&t;&t;aha152x_reset,              &bslash;&n;                        /* slave_attach */&t;/* NULL */  0,              &bslash;&n;                        /* bios_param */&t;aha152x_biosparam,          &bslash;&n;&t;&t;&t;/* can_queue */&t;&t;1,                          &bslash;&n;                        /* this_id */&t;&t;7,                          &bslash;&n;                        /* sg_tablesize */&t;SG_ALL,                     &bslash;&n;                        /* cmd_per_lun */&t;1,                          &bslash;&n;                        /* present */&t;&t;0,                          &bslash;&n;                        /* unchecked_isa_dma */&t;0,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* use_clustering */&t;DISABLE_CLUSTERING }
 macro_line|#endif
 multiline_comment|/* port addresses */
 DECL|macro|SCSISEQ

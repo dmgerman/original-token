@@ -43,8 +43,6 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_const
@@ -86,7 +84,7 @@ DECL|macro|seagate_st0x_biosparam
 mdefine_line|#define seagate_st0x_biosparam NULL
 macro_line|#endif
 DECL|macro|SEAGATE_ST0X
-mdefine_line|#define SEAGATE_ST0X  {&quot;Seagate ST-01/ST-02&quot;, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam, &bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0}
+mdefine_line|#define SEAGATE_ST0X  {&quot;Seagate ST-01/ST-02&quot;, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam, &bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0, DISABLE_CLUSTERING}
 macro_line|#endif
 multiline_comment|/*&n;&t;defining PARITY causes parity data to be checked&n;*/
 DECL|macro|PARITY

@@ -1,4 +1,4 @@
-multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: Juergen E. Fischer, fischer@server.et-inf.fho-emden.de&n; * Copyright 1993, 1994 Juergen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; &n; *&n; * $Id: aha152x.c,v 1.0 1994/03/25 12:52:00 root Exp $&n; *&n;&n; * $Log: aha152x.c,v $&n; * Revision 1.0  1994/03/25  12:52:00  root&n; * - Fixed &quot;more data than expected&quot; problem&n; * - added new BIOS signatures&n; *&n; * Revision 0.102  1994/01/31  20:44:12  root&n; * - minor changes in insw/outsw handling&n; *&n; * Revision 0.101  1993/12/13  01:16:27  root&n; * - fixed STATUS phase (non-GOOD stati were dropped sometimes;&n; *   fixes problems with CD-ROM sector size detection &amp; media change)&n; *&n; * Revision 0.100  1993/12/10  16:58:47  root&n; * - fix for unsuccessful selections in case of non-continuous id assignments&n; *   on the scsi bus.&n; *&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n;&n; **************************************************************************&n;&n;&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522&n; SCSI host adapters.&n;&n;&n; PER-DEFINE CONFIGURABLE OPTIONS:&n;&n; AUTOCONF       : use configuration the controller reports (only 152x)&n; IRQ            : override interrupt channel (9,10,11 or 12) (default 11)&n; SCSI_ID        : override scsiid of AIC-6260 (0-7) (default 7)&n; RECONNECT      : override target dis-/reconnection/multiple outstanding commands&n; SKIP_BIOSTEST  : Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n; PORTBASE       : Force port base. Don&squot;t try to probe&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;PORTBASE&gt;,&lt;IRQ&gt;,&lt;SCSI-ID&gt;,&lt;RECONNECT&gt;&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known). Don&squot;t use values that aren&squot;t support under normal operation.&n; If you think that you need other value: contact me.&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n; &n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (eric@tantalus.nrl.navy.mil) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
+multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: Juergen E. Fischer, fischer@server.et-inf.fho-emden.de&n; * Copyright 1993, 1994 Juergen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; &n; *&n; * $Id: aha152x.c,v 1.0 1994/03/25 12:52:00 root Exp $&n; *&n;&n; * $Log: aha152x.c,v $&n; * Revision 1.0  1994/03/25  12:52:00  root&n; * - Fixed &quot;more data than expected&quot; problem&n; * - added new BIOS signatures&n; *&n; * Revision 0.102  1994/01/31  20:44:12  root&n; * - minor changes in insw/outsw handling&n; *&n; * Revision 0.101  1993/12/13  01:16:27  root&n; * - fixed STATUS phase (non-GOOD stati were dropped sometimes;&n; *   fixes problems with CD-ROM sector size detection &amp; media change)&n; *&n; * Revision 0.100  1993/12/10  16:58:47  root&n; * - fix for unsuccessful selections in case of non-continuous id assignments&n; *   on the scsi bus.&n; *&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n;&n; **************************************************************************&n;&n;&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522&n; SCSI host adapters.&n;&n;&n; PER-DEFINE CONFIGURABLE OPTIONS:&n;&n; AUTOCONF       : use configuration the controller reports (only 152x)&n; IRQ            : override interrupt channel (9,10,11 or 12) (default 11)&n; SCSI_ID        : override scsiid of AIC-6260 (0-7) (default 7)&n; RECONNECT      : override target dis-/reconnection/multiple outstanding commands&n; SKIP_BIOSTEST  : Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n; PORTBASE       : Force port base. Don&squot;t try to probe&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;PORTBASE&gt;,&lt;IRQ&gt;,&lt;SCSI-ID&gt;,&lt;RECONNECT&gt;&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known). Don&squot;t use values that aren&squot;t support under normal operation.&n; If you think that you need other value: contact me.&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n; &n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (ericy@cais.com) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
 macro_line|#include &quot;aha152x.h&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -2284,9 +2284,6 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|SCpnt
-comma
-r_int
-id|code
 )paren
 (brace
 id|Scsi_Cmnd
@@ -2391,14 +2388,7 @@ l_int|NULL
 suffix:semicolon
 id|ptr-&gt;result
 op_assign
-(paren
-id|code
-ques
-c_cond
-id|code
-suffix:colon
 id|DID_ABORT
-)paren
 op_lshift
 l_int|16
 suffix:semicolon
@@ -2411,7 +2401,7 @@ id|ptr
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/* Fail abortion, if we&squot;re on the bus */
@@ -2427,8 +2417,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+id|SCSI_ABORT_BUSY
 suffix:semicolon
 )brace
 multiline_comment|/* look for command in disconnected queue */
@@ -2592,7 +2581,7 @@ id|INTEN
 suffix:semicolon
 id|abort_result
 op_assign
-l_int|0
+id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 id|sti
 c_func
@@ -2625,7 +2614,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Restore default values to the AIC-6260 registers and reset the fifos&n; */
@@ -2835,6 +2824,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME - if the device implements soft resets, the command will still&n;&t;  be running after the bus reset. In this case we should do nothing&n;&t;  and let the command continue. -ERY */
 r_if
 c_cond
 (paren
@@ -2961,7 +2951,7 @@ id|INTEN
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|SCSI_RESET_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return the &quot;logical geometry&quot;&n; */
@@ -4009,7 +3999,7 @@ id|aborted
 (brace
 id|abort_result
 op_assign
-l_int|1
+id|SCSI_ABORT_ERROR
 suffix:semicolon
 id|wake_up
 c_func
@@ -4219,7 +4209,7 @@ suffix:semicolon
 macro_line|#endif
 id|abort_result
 op_assign
-l_int|1
+id|SCSI_ABORT_ERROR
 suffix:semicolon
 id|wake_up
 c_func
@@ -4544,7 +4534,7 @@ id|ABORT
 multiline_comment|/* revive abort(); abort() enables interrupts */
 id|abort_result
 op_assign
-l_int|0
+id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 id|wake_up
 c_func

@@ -6518,7 +6518,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* def REAL_DMA */
-multiline_comment|/*&n; * Function : int NCR5380_abort (Scsi_Cmnd *cmd, int code)&n; *&n; * Purpose : abort a command&n; *&n; * Inputs : cmd - the Scsi_Cmnd to abort, code - code to set the &n; * &t;host byte of the result field to, if zero DID_ABORTED is &n; *&t;used.&n; *&n; * Returns : 0 - success, -1 on failure.&n; *&n; * XXX - there is no way to abort the command that is currently &n; * &t; connected, you have to wait for it to complete.  If this is &n; *&t; a problem, we could implement longjmp() / setjmp(), setjmp()&n; * &t; called where the loop started in NCR5380_main().&n; */
+multiline_comment|/*&n; * Function : int NCR5380_abort (Scsi_Cmnd *cmd)&n; *&n; * Purpose : abort a command&n; *&n; * Inputs : cmd - the Scsi_Cmnd to abort, code - code to set the &n; * &t;host byte of the result field to, if zero DID_ABORTED is &n; *&t;used.&n; *&n; * Returns : 0 - success, -1 on failure.&n; *&n; * XXX - there is no way to abort the command that is currently &n; * &t; connected, you have to wait for it to complete.  If this is &n; *&t; a problem, we could implement longjmp() / setjmp(), setjmp()&n; * &t; called where the loop started in NCR5380_main().&n; */
 macro_line|#ifndef NCR5380_abort
 r_static
 macro_line|#endif
@@ -6529,9 +6529,6 @@ id|NCR5380_abort
 id|Scsi_Cmnd
 op_star
 id|cmd
-comma
-r_int
-id|code
 )paren
 (brace
 id|NCR5380_local_declare
@@ -6688,14 +6685,7 @@ l_int|NULL
 suffix:semicolon
 id|tmp-&gt;result
 op_assign
-(paren
-id|code
-ques
-c_cond
-id|code
-suffix:colon
 id|DID_ABORT
-)paren
 op_lshift
 l_int|16
 suffix:semicolon
@@ -6723,7 +6713,7 @@ id|tmp
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Case 2 : If any commands are connected, we&squot;re going to fail the abort&n; *&t;    and let the high level SCSI driver retry at a later time or &n; *&t;    issue a reset.&n; *&n; *&t;    Timeouts, and therefore aborted commands, will be highly unlikely&n; *          and handling them cleanly in this situation would make the common&n; *&t;    case of noresets less efficient, and would pollute our code.  So,&n; *&t;    we fail.&n; */
@@ -6749,8 +6739,7 @@ id|instance-&gt;host_no
 suffix:semicolon
 macro_line|#endif
 r_return
-op_minus
-l_int|1
+id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Case 3: If the command is currently disconnected from the bus, and &n; * &t;there are no connected commands, we reconnect the I_T_L or &n; *&t;I_T_L_Q nexus associated with it, go into message out, and send &n; *      an abort message.&n; *&n; * This case is especially ugly. In order to resetablish the nexus, we&n; * need to call NCR5380_select().  The easiest way to implement this &n; * function was to abort if the bus was busy, and let the interrupt&n; * handler triggered on the SEL for reselect take care of lost arbitrations&n; * where necessary, meaning interrupts need to be enabled.&n; *&n; * When interrupts are enabled, the queues may change - so we &n; * can&squot;t remove it from the disconnected queue before selecting it&n; * because that could cause a failure in hashing the nexus if that &n; * device reselected.&n; * &n; * Since the queues may change, we can&squot;t use the pointers from when we&n; * first locate it.&n; *&n; * So, we must first locate the command, and if NCR5380_select()&n; * succeeds, then issue the abort, relocate the command and remove&n; * it from the disconnected queue.&n; */
@@ -6814,7 +6803,7 @@ id|cmd-&gt;tag
 )paren
 )paren
 r_return
-l_int|1
+id|SCSI_ABORT_BUSY
 suffix:semicolon
 macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
 id|printk
@@ -6940,14 +6929,7 @@ l_int|NULL
 suffix:semicolon
 id|tmp-&gt;result
 op_assign
-(paren
-id|code
-ques
-c_cond
-id|code
-suffix:colon
 id|DID_ABORT
-)paren
 op_lshift
 l_int|16
 suffix:semicolon
@@ -6965,7 +6947,7 @@ id|tmp
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
 )brace
@@ -6985,7 +6967,7 @@ id|instance-&gt;host_no
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Function : int NCR5380_reset (Scsi_Cmnd *cmd)&n; * &n; * Purpose : reset the SCSI bus.&n; *&n; * Returns : 0&n; *&n; */

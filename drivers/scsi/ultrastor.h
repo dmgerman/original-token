@@ -42,8 +42,6 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_int
@@ -75,7 +73,7 @@ mdefine_line|#define ULTRASTOR_MAX_CMDS 16
 DECL|macro|ULTRASTOR_24F_PORT
 mdefine_line|#define ULTRASTOR_24F_PORT 0xC80
 DECL|macro|ULTRASTOR_14F
-mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F/24F/34F&quot;, ultrastor_detect, ultrastor_info, 0, &bslash;&n;      ultrastor_queuecommand, ultrastor_abort, ultrastor_reset, &bslash;&n;      0, ultrastor_biosparam, ULTRASTOR_MAX_CMDS, 0, &bslash;&n;      ULTRASTOR_14F_MAX_SG, ULTRASTOR_MAX_CMDS_PER_LUN, 0, 1 }
+mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F/24F/34F&quot;, ultrastor_detect, ultrastor_info, 0, &bslash;&n;      ultrastor_queuecommand, ultrastor_abort, ultrastor_reset, &bslash;&n;      0, ultrastor_biosparam, ULTRASTOR_MAX_CMDS, 0, &bslash;&n;      ULTRASTOR_14F_MAX_SG, ULTRASTOR_MAX_CMDS_PER_LUN, 0, 1, &bslash;&n;&t;ENABLE_CLUSTERING }
 macro_line|#ifdef ULTRASTOR_PRIVATE
 DECL|macro|UD_ABORT
 mdefine_line|#define UD_ABORT&t;0x0001

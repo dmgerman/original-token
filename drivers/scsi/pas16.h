@@ -74,8 +74,6 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_int
@@ -147,7 +145,7 @@ macro_line|#endif
 multiline_comment|/* &n; * I hadn&squot;t thought of this with the earlier drivers - but to prevent&n; * macro definition conflicts, we shouldn&squot;t define all of the internal&n; * macros when this is being used solely for the host stub.&n; */
 macro_line|#ifdef HOSTS_C
 DECL|macro|MV_PAS16
-mdefine_line|#define MV_PAS16 {&quot;Pro Audio Spectrum-16 SCSI&quot;, pas16_detect, pas16_info,&bslash;&n;&t;NULL, pas16_queue_command, pas16_abort, pas16_reset, NULL, &t;&bslash;&n;&t;pas16_biosparam, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0}
+mdefine_line|#define MV_PAS16 {&quot;Pro Audio Spectrum-16 SCSI&quot;, pas16_detect, pas16_info,&bslash;&n;&t;NULL, pas16_queue_command, pas16_abort, pas16_reset, NULL, &t;&bslash;&n;&t;pas16_biosparam, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
 macro_line|#else
 DECL|macro|NCR5380_implementation_fields
 mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    volatile unsigned short io_port

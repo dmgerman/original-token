@@ -87,6 +87,7 @@ macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;linux/vm86.h&gt;
 macro_line|#include &lt;linux/math_emu.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
 DECL|macro|TASK_RUNNING
 mdefine_line|#define TASK_RUNNING&t;&t;0
 DECL|macro|TASK_INTERRUPTIBLE
@@ -675,6 +676,19 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* Hardware debugging registers */
+DECL|member|lcall7
+id|asmlinkage
+r_void
+(paren
+op_star
+id|lcall7
+)paren
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* various fields */
 DECL|member|next_task
 DECL|member|prev_task
@@ -987,7 +1001,7 @@ DECL|macro|COPYFD
 mdefine_line|#define COPYFD&t;&t;0x00000200&t;/* set if fd&squot;s should be copied, not shared (NI) */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, ident_map, ident_map, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, 0, 0, 0, &bslash;&n;/* fs info */&t;0,NULL,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;{ INIT_FS }, &bslash;&n;/* files */&t;{ INIT_FILES }, &bslash;&n;/* mm */&t;{ INIT_MM } &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* lcall 7 */&t;no_lcall7, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, ident_map, ident_map, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, 0, 0, 0, &bslash;&n;/* fs info */&t;0,NULL,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;{ INIT_FS }, &bslash;&n;/* files */&t;{ INIT_FILES }, &bslash;&n;/* mm */&t;{ INIT_MM } &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -1038,6 +1052,25 @@ suffix:semicolon
 r_extern
 r_int
 id|need_resched
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|ident_map
+(braket
+l_int|33
+)braket
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|no_lcall7
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
 suffix:semicolon
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (xtime.tv_sec)

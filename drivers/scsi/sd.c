@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale eric@tantalus.nrl.navy.mil to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
+multiline_comment|/*&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;     Copyright (C) 1993, 1994 Eric Youngdale&n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -23,7 +23,7 @@ mdefine_line|#define SD_TIMEOUT 300
 DECL|macro|SD_MOD_TIMEOUT
 mdefine_line|#define SD_MOD_TIMEOUT 750
 DECL|macro|CLUSTERABLE_DEVICE
-mdefine_line|#define CLUSTERABLE_DEVICE(SC) (SC-&gt;host-&gt;sg_tablesize &lt; 64 &amp;&amp; &bslash;&n;&t;&t;&t;    scsi_devices[SC-&gt;index].type != TYPE_MOD)
+mdefine_line|#define CLUSTERABLE_DEVICE(SC) (SC-&gt;host-&gt;hostt-&gt;use_clustering &amp;&amp; &bslash;&n;&t;&t;&t;    scsi_devices[SC-&gt;index].type != TYPE_MOD)
 DECL|variable|sd
 r_struct
 id|hd_struct

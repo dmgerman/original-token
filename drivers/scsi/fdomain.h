@@ -23,8 +23,6 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_const
@@ -80,6 +78,6 @@ DECL|macro|fdomain_16x0_biosparam
 mdefine_line|#define    fdomain_16x0_biosparam NULL
 macro_line|#endif
 DECL|macro|FDOMAIN_16X0
-mdefine_line|#define FDOMAIN_16X0 { &quot;Future Domain TMC-16x0&quot;,          &bslash;&n;&t;&t;&t;fdomain_16x0_detect,              &bslash;&n;&t;&t;        fdomain_16x0_info,                &bslash;&n;&t;&t;        fdomain_16x0_command,             &bslash;&n;&t;&t;        fdomain_16x0_queue,               &bslash;&n;&t;&t;        fdomain_16x0_abort,               &bslash;&n;&t;&t;        fdomain_16x0_reset,               &bslash;&n;&t;&t;        NULL,                             &bslash;&n;&t;&t;        fdomain_16x0_biosparam,           &bslash;&n;&t;&t;        1, 6, 64 /* SG_NONE */, 1 ,0, 0 }
+mdefine_line|#define FDOMAIN_16X0 { &quot;Future Domain TMC-16x0&quot;,          &bslash;&n;&t;&t;&t;fdomain_16x0_detect,              &bslash;&n;&t;&t;        fdomain_16x0_info,                &bslash;&n;&t;&t;        fdomain_16x0_command,             &bslash;&n;&t;&t;        fdomain_16x0_queue,               &bslash;&n;&t;&t;        fdomain_16x0_abort,               &bslash;&n;&t;&t;        fdomain_16x0_reset,               &bslash;&n;&t;&t;        NULL,                             &bslash;&n;&t;&t;        fdomain_16x0_biosparam,           &bslash;&n;&t;&t;        1, 6, 64 /* SG_NONE */, 1 ,0, 0, DISABLE_CLUSTERING}
 macro_line|#endif
 eof

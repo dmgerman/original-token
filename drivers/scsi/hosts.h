@@ -3,13 +3,14 @@ macro_line|#ifndef _HOSTS_H
 DECL|macro|_HOSTS_H
 mdefine_line|#define _HOSTS_H
 multiline_comment|/*&n;&t;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.h,v 1.3 1993/09/24 12:21:00 drew Exp drew $&n;*/
-multiline_comment|/* A jumpstart is often required when the reset() function is called -&n;   many host adapters cannot do this cleanly, so they do nothing at all.&n;   To get the command going again, these routines set this bit in the flags&n;   so that a scsi_request_sense() is executed, and the command starts running&n;   again */
-DECL|macro|NEEDS_JUMPSTART
-mdefine_line|#define NEEDS_JUMPSTART 0x20
 DECL|macro|SG_NONE
 mdefine_line|#define SG_NONE 0
 DECL|macro|SG_ALL
-mdefine_line|#define SG_ALL 0xff
+mdefine_line|#define SG_ALL 0x7fff
+DECL|macro|DISABLE_CLUSTERING
+mdefine_line|#define DISABLE_CLUSTERING 0
+DECL|macro|ENABLE_CLUSTERING
+mdefine_line|#define ENABLE_CLUSTERING 1
 multiline_comment|/* The various choices mean:&n;   NONE: Self evident.  Host adapter is not capable of scatter-gather.&n;   ALL:  Means that the host adapter module can do scatter-gather,&n;         and that there is no limit to the size of the table to which&n;&t; we scatter/gather data.&n;  Anything else:  Indicates the maximum number of chains that can be&n;        used in one scatter-gather request.&n;*/
 multiline_comment|/*&n;&t;The Scsi_Host_Template type has all that is needed to interface with a SCSI&n;&t;host in a device independant matter.  There is one entry for each different&n;&t;type of host adapter that is supported on the system.&n;*/
 r_typedef
@@ -79,7 +80,7 @@ op_star
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;Since the mid level driver handles time outs, etc, we want to &n;&t;&t;be able to abort the current command.  Abort returns 0 if the &n;&t;&t;abortion was successful.  If non-zero, the code passed to it &n;&t;&t;will be used as the return code, otherwise &n;&t;&t;DID_ABORT  should be returned.&n;&n;&t;&t;Note that the scsi driver should &quot;clean up&quot; after itself, &n;&t;&t;resetting the bus, etc.  if necessary. &n;&t;*/
+multiline_comment|/*&n;&t;&t;Since the mid level driver handles time outs, etc, we want to &n;&t;&t;be able to abort the current command.  Abort returns 0 if the &n;&t;&t;abortion was successful.  The field SCpnt-&gt;abort reason&n;&t;&t;can be filled in with the appropriate reason why we wanted&n;&t;&t;the abort in the first place, and this will be used&n;&t;&t;in the mid-level code instead of the host_byte().&n;&t;&t;If non-zero, the code passed to it &n;&t;&t;will be used as the return code, otherwise &n;&t;&t;DID_ABORT  should be returned.&n;&n;&t;&t;Note that the scsi driver should &quot;clean up&quot; after itself, &n;&t;&t;resetting the bus, etc.  if necessary. &n;&t;*/
 DECL|member|abort
 r_int
 (paren
@@ -89,8 +90,6 @@ m_abort
 (paren
 id|Scsi_Cmnd
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;The reset function will reset the SCSI bus.  Any executing &n;&t;&t;commands should fail with a DID_RESET in the host byte.&n;&t;&t;The Scsi_Cmnd  is passed so that the reset routine can figure&n;&t;&t;out which host adapter should be reset, and also which command&n;&t;&t;within the command block was responsible for the reset in&n;&t;&t;the first place.  Some hosts do not implement a reset function,&n;&t;&t;and these hosts must call scsi_request_sense(SCpnt) to keep&n;&t;&t;the command alive.&n;&t;*/
@@ -167,6 +166,13 @@ multiline_comment|/*&n;&t;  true if this host adapter uses unchecked DMA onto an
 DECL|member|unchecked_isa_dma
 r_int
 id|unchecked_isa_dma
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t;  true if this host adapter can make good use of clustering.&n;&t;  I originally thought that if the tablesize was large that it&n;&t;  was a waste of CPU cycles to prepare a cluster list, but&n;&t;  it works out that the Buslogic is faster if you use a smaller&n;&t;  number of segments (i.e. use clustering).  I guess it is&n;&t;  inefficient.&n;&t;*/
+DECL|member|use_clustering
+r_int
+id|use_clustering
 suffix:colon
 l_int|1
 suffix:semicolon

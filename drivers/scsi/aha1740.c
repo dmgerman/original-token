@@ -2293,9 +2293,6 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|SCpnt
-comma
-r_int
-id|i
 )paren
 (brace
 id|DEB
@@ -2309,7 +2306,7 @@ l_string|&quot;aha1740_abort called&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_ABORT_SNOOZE
 suffix:semicolon
 )brace
 multiline_comment|/* We do not implement a reset function here, but the upper level code assumes&n;   that it will get some kind of response for the command in SCpnt.  We must&n;   oblige, or the command will hang the scsi system */
@@ -2333,17 +2330,8 @@ l_string|&quot;aha1740_reset called&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|SCpnt
-)paren
-id|SCpnt-&gt;flags
-op_or_assign
-id|NEEDS_JUMPSTART
-suffix:semicolon
 r_return
-l_int|0
+id|SCSI_RESET_SNOOZE
 suffix:semicolon
 )brace
 DECL|function|aha1740_biosparam

@@ -314,9 +314,8 @@ l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
 l_string|&quot;xorl %%eax,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 3f&bslash;n&quot;
-l_string|&quot;2:&bslash;tmovl $1,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;jb 3f&bslash;n&bslash;t&quot;
-l_string|&quot;negl %%eax&bslash;n&quot;
+l_string|&quot;2:&bslash;tsbbl %%eax,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;orb $1,%%eax&bslash;n&quot;
 l_string|&quot;3:&quot;
 suffix:colon
 l_string|&quot;=a&quot;
@@ -324,12 +323,12 @@ l_string|&quot;=a&quot;
 id|__res
 )paren
 suffix:colon
-l_string|&quot;D&quot;
+l_string|&quot;S&quot;
 (paren
 id|cs
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;D&quot;
 (paren
 id|ct
 )paren
@@ -386,9 +385,8 @@ l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&bslash;n&quot;
 l_string|&quot;2:&bslash;txorl %%eax,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 4f&bslash;n&quot;
-l_string|&quot;3:&bslash;tmovl $1,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;jb 4f&bslash;n&bslash;t&quot;
-l_string|&quot;negl %%eax&bslash;n&quot;
+l_string|&quot;3:&bslash;tsbbl %%eax,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;orb $1,%%al&bslash;n&quot;
 l_string|&quot;4:&quot;
 suffix:colon
 l_string|&quot;=a&quot;
@@ -396,12 +394,12 @@ l_string|&quot;=a&quot;
 id|__res
 )paren
 suffix:colon
-l_string|&quot;D&quot;
+l_string|&quot;S&quot;
 (paren
 id|cs
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;D&quot;
 (paren
 id|ct
 )paren
@@ -520,8 +518,7 @@ l_string|&quot;movb %%al,%%ah&bslash;n&quot;
 l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;cmpb %%ah,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 2f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%esi,%0&bslash;n&bslash;t&quot;
-l_string|&quot;decl %0&bslash;n&quot;
+l_string|&quot;leal -1(%%esi),%0&bslash;n&quot;
 l_string|&quot;2:&bslash;ttestb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&quot;
 suffix:colon
@@ -1320,9 +1317,8 @@ l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;repe&bslash;n&bslash;t&quot;
 l_string|&quot;cmpsb&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;jb 1f&bslash;n&bslash;t&quot;
-l_string|&quot;negl %%eax&bslash;n&quot;
+l_string|&quot;sbbl %%eax,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;orb $1,%%al&bslash;n&quot;
 l_string|&quot;1:&quot;
 suffix:colon
 l_string|&quot;=a&quot;
@@ -1335,12 +1331,12 @@ l_string|&quot;0&quot;
 l_int|0
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;S&quot;
 (paren
 id|cs
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;D&quot;
 (paren
 id|ct
 )paren

@@ -372,6 +372,7 @@ r_int
 id|opcode
 )paren
 (brace
+r_const
 r_char
 op_star
 op_star
@@ -4027,19 +4028,19 @@ l_string|&quot;Data Protect&quot;
 comma
 l_string|&quot;Blank Check&quot;
 comma
-l_string|&quot;Key=E&quot;
+l_string|&quot;Key=9&quot;
 comma
-l_string|&quot;Key=F&quot;
+l_string|&quot;Copy Aborted&quot;
 comma
-l_string|&quot;Filemark&quot;
+l_string|&quot;Aborted Command&quot;
 comma
 l_string|&quot;End-Of-Medium&quot;
 comma
-l_string|&quot;Incorrect Block Length&quot;
+l_string|&quot;Volume Overflow&quot;
 comma
-l_string|&quot;14&quot;
+l_string|&quot;Miscompare&quot;
 comma
-l_string|&quot;15&quot;
+l_string|&quot;Key=15&quot;
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -4255,54 +4256,6 @@ id|error
 )paren
 suffix:semicolon
 macro_line|#if (CONSTANTS &amp; CONST_SENSE)
-r_if
-c_cond
-(paren
-id|sense_buffer
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0x80
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;FMK &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sense_buffer
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0x40
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;EOM &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sense_buffer
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0x20
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;ILI &quot;
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4617,6 +4570,13 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
+macro_line|#if !(CONSTANTS &amp; CONST_SENSE)
+id|printk
+c_func
+(paren
+l_string|&quot;Raw sense data:&quot;
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4642,6 +4602,13 @@ id|i
 )braket
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace

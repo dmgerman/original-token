@@ -375,9 +375,6 @@ id|NCR5380_abort
 id|Scsi_Cmnd
 op_star
 id|cmd
-comma
-r_int
-id|code
 )paren
 suffix:semicolon
 macro_line|#ifndef NCR5380_reset

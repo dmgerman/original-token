@@ -407,6 +407,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* can disconnect */
+DECL|member|soft_reset
+r_int
+id|soft_reset
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Uses soft reset option */
 DECL|member|current_tag
 r_int
 r_char
@@ -484,6 +491,40 @@ DECL|macro|ISA_DMA_THRESHOLD
 mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
 DECL|macro|CONTIGUOUS_BUFFERS
 mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)
+multiline_comment|/*&n; * These are the return codes for the abort and reset functions.  The mid-level&n; * code uses these to decide what to do next.  Each of the low level abort&n; * and reset functions must correctly indicate what it has done.&n; */
+multiline_comment|/* We did not do anything.  Wait&n;   some more for this command to complete, and if this does not work, try&n;   something more serious. */
+DECL|macro|SCSI_ABORT_SNOOZE
+mdefine_line|#define SCSI_ABORT_SNOOZE 0
+multiline_comment|/* This means that we were able to abort the command.  We have already&n;   called the mid-level done function, and do not expect an interrupt that will&n;   lead to another call to the mid-level done function for this command */
+DECL|macro|SCSI_ABORT_SUCCESS
+mdefine_line|#define SCSI_ABORT_SUCCESS 1
+multiline_comment|/* We called for an abort of this command, and we should get an interrupt &n;   when this succeeds.  Thus we should not restore the timer for this&n;   command in the mid-level abort function. */
+DECL|macro|SCSI_ABORT_PENDING
+mdefine_line|#define SCSI_ABORT_PENDING 2
+multiline_comment|/* Unable to abort - command is currently on the bus.  Grin and bear it. */
+DECL|macro|SCSI_ABORT_BUSY
+mdefine_line|#define SCSI_ABORT_BUSY 3
+multiline_comment|/* The command is not active in the low level code. Command probably&n;   finished. */
+DECL|macro|SCSI_ABORT_NOT_RUNNING
+mdefine_line|#define SCSI_ABORT_NOT_RUNNING 4
+multiline_comment|/* Something went wrong.  The low level driver will indicate the correct&n; error condition when it calls scsi_done, so the mid-level abort function&n; can simply wait until this comes through */
+DECL|macro|SCSI_ABORT_ERROR
+mdefine_line|#define SCSI_ABORT_ERROR 5
+multiline_comment|/* We do not know how to reset the bus, or we do not want to.  Bummer.&n;   Anyway, just wait a little more for the command in question, and hope that&n;   it eventually finishes */
+DECL|macro|SCSI_RESET_SNOOZE
+mdefine_line|#define SCSI_RESET_SNOOZE 0
+multiline_comment|/* This means that we were able to reset the bus.  We have restarted all of&n;   the commands that should be restarted, and we should be able to continue&n;   on normally from here.  We do not expect any interrupts that will return&n;   DID_RESET to any of the other commands in the host_queue. */
+DECL|macro|SCSI_RESET_SUCCESS
+mdefine_line|#define SCSI_RESET_SUCCESS 1
+multiline_comment|/* We called for an reset of this bus, and we should get an interrupt &n;   when this succeeds.  Each command should get it&squot;s own status&n;   passed up to scsi_done, but this has not happened yet. */
+DECL|macro|SCSI_RESET_PENDING
+mdefine_line|#define SCSI_RESET_PENDING 2
+multiline_comment|/* We did a reset, but do not expect an interrupt to signal DID_RESET.&n;   This tells the upper level code to request the sense info, and this&n;   should keep the command alive. */
+DECL|macro|SCSI_RESET_WAKEUP
+mdefine_line|#define SCSI_RESET_WAKEUP 3
+multiline_comment|/* Something went wrong, and we do not know how to fix it. */
+DECL|macro|SCSI_RESET_ERROR
+mdefine_line|#define SCSI_RESET_ERROR 4
 r_void
 op_star
 id|scsi_malloc
@@ -585,6 +626,11 @@ id|Scsi_Host
 op_star
 id|host
 suffix:semicolon
+DECL|member|device
+id|Scsi_Device
+op_star
+id|device
+suffix:semicolon
 DECL|member|target
 DECL|member|lun
 DECL|member|index
@@ -653,6 +699,12 @@ r_int
 id|sglist_len
 suffix:semicolon
 multiline_comment|/* size of malloc&squot;d scatter-gather list */
+DECL|member|abort_reason
+r_int
+r_int
+id|abort_reason
+suffix:semicolon
+multiline_comment|/* If the mid-level code requests an&n;&t;&t;&t;&t;&t; abort, this is the reason. */
 DECL|member|bufflen
 r_int
 id|bufflen

@@ -4094,6 +4094,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|memcmp
 c_func
 (paren
