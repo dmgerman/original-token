@@ -235,6 +235,10 @@ id|devc-&gt;input_opened
 op_assign
 l_int|0
 suffix:semicolon
+id|devc-&gt;opened
+op_assign
+l_int|0
+suffix:semicolon
 id|restore_flags
 (paren
 id|flags

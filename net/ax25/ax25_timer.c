@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;AX.25 032&t;Joerg(DL1BKE)&t;Fixed DAMA timeout bug&n; */
+multiline_comment|/*&n; *&t;AX.25 release 032&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;AX.25 032&t;Joerg(DL1BKE)&t;Fixed DAMA timeout bug&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -283,7 +283,6 @@ c_cond
 op_logical_neg
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke */
 id|ax25_send_control
 c_func
 (paren
@@ -318,7 +317,6 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
-multiline_comment|/* dl1bke 960114 */
 r_break
 suffix:semicolon
 r_default
@@ -370,7 +368,6 @@ c_cond
 op_logical_neg
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|ax25_timeout_response
 c_func
 (paren
@@ -939,7 +936,6 @@ comma
 id|C_COMMAND
 )paren
 suffix:semicolon
-multiline_comment|/* dl1bke */
 r_if
 c_cond
 (paren
@@ -991,7 +987,6 @@ c_func
 id|ax25-&gt;device
 )paren
 )paren
-multiline_comment|/* dl1bke */
 id|ax25_send_control
 c_func
 (paren
@@ -1020,7 +1015,6 @@ c_cond
 op_logical_neg
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|ax25_transmit_enquiry
 c_func
 (paren
@@ -1135,7 +1129,6 @@ c_cond
 op_logical_neg
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|ax25_transmit_enquiry
 c_func
 (paren

@@ -1,3 +1,7 @@
+multiline_comment|/*&n; * These are the public elements of the Linux kernel NET/ROM implementation.&n; * For kernel AX.25 see the file ax25.h. This file requires ax25.h for the&n; * definition of the ax25_address structure.&n; */
+macro_line|#ifndef&t;NETROM_KERNEL_H
+DECL|macro|NETROM_KERNEL_H
+mdefine_line|#define&t;NETROM_KERNEL_H
 DECL|macro|PF_NETROM
 mdefine_line|#define PF_NETROM&t;AF_NETROM
 DECL|macro|NETROM_MTU
@@ -147,4 +151,5 @@ id|arg
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 eof

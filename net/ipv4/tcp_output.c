@@ -698,6 +698,8 @@ op_assign
 id|jiffies
 op_plus
 id|HZ
+op_div
+l_int|10
 suffix:semicolon
 id|sk-&gt;partial_timer.function
 op_assign
@@ -2995,6 +2997,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_NO_PATH_MTU_DISCOVERY
+id|buff-&gt;ip_hdr-&gt;frag_off
+op_or_assign
+id|htons
+c_func
+(paren
+id|IP_DF
+)paren
+suffix:semicolon
+macro_line|#endif
 id|t1
 op_assign
 (paren

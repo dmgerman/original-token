@@ -3637,10 +3637,8 @@ op_assign
 r_sizeof
 (paren
 r_struct
-id|sockaddr_ax25
+id|full_sockaddr_ax25
 )paren
-op_plus
-id|AX25_ADDR_LEN
 suffix:semicolon
 )brace
 r_else
@@ -5519,7 +5517,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;user_addr dest_node src_node  dev    my  your  st vs vr va    t1     t2    n2  rtt wnd paclen Snd-Q Rcv-Q&bslash;n&quot;
+l_string|&quot;user_addr dest_node src_node  dev    my  your  st  vs  vr  va    t1     t2    n2  rtt wnd paclen Snd-Q Rcv-Q&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -5605,7 +5603,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-9s %-3s  %02X/%02X %02X/%02X %2d %2d %2d %2d %3d/%03d %2d/%02d %2d/%02d %3d %3d %6d %5d %5d&bslash;n&quot;
+l_string|&quot;%-9s %-3s  %02X/%02X %02X/%02X %2d %3d %3d %3d %3d/%03d %2d/%02d %2d/%02d %3d %3d %6d %5d %5d&bslash;n&quot;
 comma
 id|ax2asc
 c_func

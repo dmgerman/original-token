@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX) Extracted AX25 control block from&n; *&t;&t;&t;&t;&t;the sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added IP mode registration.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added AX.25 fragment reception.&n; *&t;&t;&t;&t;&t;Upgraded state machine for SABME.&n; *&t;&t;&t;&t;&t;Added arbitrary protocol id support.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;HaJo(DD8NE)&t;Added Idle Disc Timer T5&n; *&t;&t;&t;Joerg(DL1BKE)   Renamed it to &quot;IDLE&quot; with a slightly&n; *&t;&t;&t;&t;&t;different behaviour. Fixed defrag&n; *&t;&t;&t;&t;&t;routine (I hope)&n; */
+multiline_comment|/*&n; *&t;AX.25 release 032&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX) Extracted AX25 control block from&n; *&t;&t;&t;&t;&t;the sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added IP mode registration.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added AX.25 fragment reception.&n; *&t;&t;&t;&t;&t;Upgraded state machine for SABME.&n; *&t;&t;&t;&t;&t;Added arbitrary protocol id support.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;HaJo(DD8NE)&t;Added Idle Disc Timer T5&n; *&t;&t;&t;Joerg(DL1BKE)   Renamed it to &quot;IDLE&quot; with a slightly&n; *&t;&t;&t;&t;&t;different behaviour. Fixed defrag&n; *&t;&t;&t;&t;&t;routine (I hope)&n; *&t;AX.25 032&t;Jonathan(G4KLX)&t;Remove auto-router.&n; *&t;&t;&t;Darryl(G7LED)&t;AX.25 segmentation fixed.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -65,6 +65,8 @@ id|skbo
 suffix:semicolon
 r_int
 id|hdrlen
+comma
+id|nhdrlen
 suffix:semicolon
 r_if
 c_cond
@@ -103,7 +105,7 @@ id|SEG_REM
 )paren
 )paren
 (brace
-multiline_comment|/* enqueue fragment */
+multiline_comment|/* Enqueue fragment */
 id|ax25-&gt;fragno
 op_assign
 op_star
@@ -133,7 +135,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* last fragment received? */
+multiline_comment|/* Last fragment received ? */
 r_if
 c_cond
 (paren
@@ -161,9 +163,35 @@ id|GFP_ATOMIC
 op_eq
 l_int|NULL
 )paren
-r_return
-l_int|0
+(brace
+r_while
+c_loop
+(paren
+(paren
+id|skbo
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|ax25-&gt;frag_queue
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+id|kfree_skb
+c_func
+(paren
+id|skbo
+comma
+id|FREE_READ
+)paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|skbn-&gt;free
 op_assign
 l_int|1
@@ -174,7 +202,7 @@ l_int|1
 suffix:semicolon
 id|skbn-&gt;dev
 op_assign
-id|skb-&gt;dev
+id|ax25-&gt;device
 suffix:semicolon
 r_if
 c_cond
@@ -198,7 +226,15 @@ id|ax25-&gt;sk-&gt;rmem_alloc
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* get first fragment from queue */
+id|skb_reserve
+c_func
+(paren
+id|skbn
+comma
+id|AX25_MAX_HEADER_LEN
+)paren
+suffix:semicolon
+multiline_comment|/* Get first fragment from queue */
 id|skbo
 op_assign
 id|skb_dequeue
@@ -213,32 +249,34 @@ op_assign
 id|skbo-&gt;data
 op_minus
 id|skbo-&gt;h.raw
+suffix:semicolon
+id|nhdrlen
+op_assign
+id|hdrlen
 op_minus
 l_int|2
 suffix:semicolon
-multiline_comment|/* skip PID &amp; fragno */
 id|skb_push
 c_func
 (paren
 id|skbo
 comma
 id|hdrlen
-op_plus
-l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* start of address field */
-id|skbn-&gt;data
-op_assign
-id|skb_put
+id|skb_push
 c_func
 (paren
 id|skbn
 comma
-id|hdrlen
+id|nhdrlen
 )paren
 suffix:semicolon
-multiline_comment|/* get space for info */
+id|skbn-&gt;h.raw
+op_assign
+id|skbn-&gt;data
+suffix:semicolon
+multiline_comment|/* Copy AX.25 headers */
 id|memcpy
 c_func
 (paren
@@ -246,74 +284,27 @@ id|skbn-&gt;data
 comma
 id|skbo-&gt;data
 comma
-id|hdrlen
+id|nhdrlen
 )paren
 suffix:semicolon
-multiline_comment|/* copy address field */
+id|skb_pull
+c_func
+(paren
+id|skbn
+comma
+id|nhdrlen
+)paren
+suffix:semicolon
 id|skb_pull
 c_func
 (paren
 id|skbo
 comma
 id|hdrlen
-op_plus
-l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* start of data */
-id|skb_pull
-c_func
-(paren
-id|skbn
-comma
-id|hdrlen
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* ditto */
-multiline_comment|/* copy data from first fragment */
-id|memcpy
-c_func
-(paren
-id|skb_put
-c_func
-(paren
-id|skbn
-comma
-id|skbo-&gt;len
-)paren
-comma
-id|skbo-&gt;data
-comma
-id|skbo-&gt;len
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skbo
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-multiline_comment|/* add other fragment&squot;s data */
-r_while
-c_loop
-(paren
-(paren
-id|skbo
-op_assign
-id|skb_dequeue
-c_func
-(paren
-op_amp
-id|ax25-&gt;frag_queue
-)paren
-)paren
-op_ne
-l_int|NULL
-)paren
+multiline_comment|/* Copy data from the fragments */
+r_do
 (brace
 id|memcpy
 c_func
@@ -340,19 +331,26 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+(paren
+id|skbo
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|ax25-&gt;frag_queue
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+suffix:semicolon
 id|ax25-&gt;fraglen
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* reset counter */
-multiline_comment|/* &n;&t;&t;&t;&t;&t; * mysteriously we need to re-adjust skb-&gt;data.&n;&t;&t;&t;&t;&t; * Anyway, it seems to work. Do we have the address fields&n;&t;&t;&t;&t;&t; * encoded TWICE in one sk_buff?&n;&t;&t;&t;&t;&t; */
-id|skb_pull
-c_func
-(paren
-id|skbn
-comma
-id|hdrlen
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -384,7 +382,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* first fragment received? */
+multiline_comment|/* First fragment received */
 r_if
 c_cond
 (paren
@@ -394,6 +392,30 @@ op_amp
 id|SEG_FIRST
 )paren
 (brace
+r_while
+c_loop
+(paren
+(paren
+id|skbo
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|ax25-&gt;frag_queue
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+id|kfree_skb
+c_func
+(paren
+id|skbo
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
 id|ax25-&gt;fragno
 op_assign
 op_star
@@ -539,17 +561,6 @@ multiline_comment|/* Remove PID */
 id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;data
-suffix:semicolon
-id|ax25_ip_mode_set
-c_func
-(paren
-op_amp
-id|ax25-&gt;dest_addr
-comma
-id|ax25-&gt;device
-comma
-l_char|&squot;V&squot;
-)paren
 suffix:semicolon
 id|ip_rcv
 c_func
@@ -956,7 +967,6 @@ id|dama
 op_logical_and
 id|pf
 )paren
-multiline_comment|/* dl1bke 960116 */
 id|ax25_send_control
 c_func
 (paren
@@ -1910,7 +1920,6 @@ c_cond
 (paren
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|dama_enquiry_response
 c_func
 (paren
@@ -1936,6 +1945,16 @@ op_eq
 id|ax25-&gt;vr
 )paren
 (brace
+id|ax25-&gt;vr
+op_assign
+(paren
+id|ax25-&gt;vr
+op_plus
+l_int|1
+)paren
+op_mod
+id|ax25-&gt;modulus
+suffix:semicolon
 id|queued
 op_assign
 id|ax25_rx_iframe
@@ -1954,6 +1973,11 @@ op_amp
 id|OWN_RX_BUSY_CONDITION
 )paren
 (brace
+id|ax25-&gt;vr
+op_assign
+id|ns
+suffix:semicolon
+multiline_comment|/* ax25-&gt;vr - 1 */
 r_if
 c_cond
 (paren
@@ -1965,7 +1989,6 @@ c_cond
 (paren
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|dama_enquiry_response
 c_func
 (paren
@@ -1983,16 +2006,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|ax25-&gt;vr
-op_assign
-(paren
-id|ax25-&gt;vr
-op_plus
-l_int|1
-)paren
-op_mod
-id|ax25-&gt;modulus
-suffix:semicolon
 id|ax25-&gt;condition
 op_and_assign
 op_complement
@@ -2009,7 +2022,6 @@ c_cond
 (paren
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|dama_enquiry_response
 c_func
 (paren
@@ -2069,7 +2081,6 @@ c_cond
 (paren
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|dama_enquiry_response
 c_func
 (paren
@@ -2096,7 +2107,6 @@ c_cond
 (paren
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|dama_enquiry_response
 c_func
 (paren
@@ -3036,7 +3046,6 @@ c_cond
 id|pf
 )paren
 (brace
-multiline_comment|/* dl1bke 960114 */
 r_if
 c_cond
 (paren
@@ -3067,6 +3076,16 @@ op_eq
 id|ax25-&gt;vr
 )paren
 (brace
+id|ax25-&gt;vr
+op_assign
+(paren
+id|ax25-&gt;vr
+op_plus
+l_int|1
+)paren
+op_mod
+id|ax25-&gt;modulus
+suffix:semicolon
 id|queued
 op_assign
 id|ax25_rx_iframe
@@ -3085,13 +3104,17 @@ op_amp
 id|OWN_RX_BUSY_CONDITION
 )paren
 (brace
+id|ax25-&gt;vr
+op_assign
+id|ns
+suffix:semicolon
+multiline_comment|/* ax25-&gt;vr - 1 */
 r_if
 c_cond
 (paren
 id|pf
 )paren
 (brace
-multiline_comment|/* dl1bke 960114 */
 r_if
 c_cond
 (paren
@@ -3114,16 +3137,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|ax25-&gt;vr
-op_assign
-(paren
-id|ax25-&gt;vr
-op_plus
-l_int|1
-)paren
-op_mod
-id|ax25-&gt;modulus
-suffix:semicolon
 id|ax25-&gt;condition
 op_and_assign
 op_complement
@@ -3140,7 +3153,6 @@ c_cond
 (paren
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|dama_enquiry_response
 c_func
 (paren
@@ -3195,7 +3207,6 @@ c_cond
 id|pf
 )paren
 (brace
-multiline_comment|/* dl1bke 960114 */
 r_if
 c_cond
 (paren
@@ -3227,7 +3238,6 @@ c_cond
 (paren
 id|ax25-&gt;dama_slave
 )paren
-multiline_comment|/* dl1bke 960114 */
 id|dama_enquiry_response
 c_func
 (paren

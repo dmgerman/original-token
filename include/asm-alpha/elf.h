@@ -50,5 +50,8 @@ DECL|macro|ELF_EXEC_PAGESIZE
 mdefine_line|#define ELF_EXEC_PAGESIZE&t;8192
 DECL|macro|ELF_CORE_COPY_REGS
 mdefine_line|#define ELF_CORE_COPY_REGS(_dest,_regs)&t;&t;&t;&bslash;&n;{ struct user _dump;&t;&t;&t;&t;&t;&bslash;&n;&t;dump_thread(_regs, &amp;_dump);&t;&t;&t;&bslash;&n;&t;memcpy((char *) &amp;_dest, (char *) &amp;_dump.regs,&t;&bslash;&n;&t;       sizeof(elf_gregset_t)); }
+multiline_comment|/* $0 is set by ld.so to a pointer to a function which might be &n;   registered using atexit.  This provides a mean for the dynamic&n;   linker to call DT_FINI functions for shared libraries that have&n;   been loaded before the code runs.&n;&n;   So that we can use the same startup file with static executables,&n;   we start programs with a value of 0 to indicate that there is no&n;   such function.  */
+DECL|macro|ELF_PLAT_INIT
+mdefine_line|#define ELF_PLAT_INIT(_r)       _r-&gt;r0 = 0
 macro_line|#endif
 eof

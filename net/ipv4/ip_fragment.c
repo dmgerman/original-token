@@ -1979,13 +1979,13 @@ multiline_comment|/*&n;&t; *&t;Check for any &quot;DF&quot; flag. [DF means do n
 r_if
 c_cond
 (paren
-id|ntohs
+id|iph-&gt;frag_off
+op_amp
+id|htons
 c_func
 (paren
-id|iph-&gt;frag_off
-)paren
-op_amp
 id|IP_DF
+)paren
 )paren
 (brace
 id|ip_statistics.IpFragFails

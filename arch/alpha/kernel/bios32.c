@@ -3251,10 +3251,33 @@ l_int|2
 )brace
 comma
 multiline_comment|/* idsel 13 KN25_PCI_SLOT2 */
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* idsel 14 AS255 TULIP */
 macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n;&t; * route_tab selects irq routing in PCI/ISA bridge so that:&n;&t; *&t;&t;PIRQ0 -&gt; irq 15&n;&t; *&t;&t;PIRQ1 -&gt; irq  9&n;&t; *&t;&t;PIRQ2 -&gt; irq 10&n;&t; *&t;&t;PIRQ3 -&gt; irq 11&n;&t; *&n;&t; * This probably ought to be configurable via MILO.  For&n;&t; * example, sound boards seem to like using IRQ 9.&n;&t; */
+macro_line|#ifdef CONFIG_ALPHA_NONAME
+multiline_comment|/*&n;&t; * For UDB, the only available PCI slot must not map to IRQ 9,&n;&t; *  since that&squot;s the builtin MSS sound chip. That PCI slot&n;&t; *  will map to PIRQ1 (for INTA at least), so we give it IRQ 15&n;&t; *  instead.&n;&t; *&n;&t; * Unfortunately we have to do this for NONAME as well, since&n;&t; *  they are co-indicated when the platform type &quot;Noname&quot; is&n;&t; *  selected... :-(&n;&t; */
+r_const
+r_int
+r_int
+id|route_tab
+op_assign
+l_int|0x0b0a0f09
+suffix:semicolon
+macro_line|#else /* CONFIG_ALPHA_NONAME */
 r_const
 r_int
 r_int
@@ -3262,6 +3285,7 @@ id|route_tab
 op_assign
 l_int|0x0b0a090f
 suffix:semicolon
+macro_line|#endif /* CONFIG_ALPHA_NONAME */
 r_int
 r_int
 id|level_bits
@@ -3627,9 +3651,10 @@ id|dev-&gt;irq
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  inw()/outw()&n;&t; * don&squot;t work.&n;&t; */
+multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  inw()/outw()&n;&t; * don&squot;t work.&n;&t; *&n;&t; * Make sure to turn off any level bits set for IRQs 9,10,11,15,&n;&t; *  so that the only bits getting set are for devices actually found.&n;&t; * Note that we do preserve the remainder of the bits, which we hope&n;&t; *  will be set correctly by ARC/SRM.&n;&t; */
 id|level_bits
 op_or_assign
+(paren
 (paren
 id|inb
 c_func
@@ -3646,6 +3671,9 @@ l_int|0x4d1
 op_lshift
 l_int|8
 )paren
+)paren
+op_amp
+l_int|0x71ff
 )paren
 suffix:semicolon
 id|outb

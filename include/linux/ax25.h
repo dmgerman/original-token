@@ -1,9 +1,99 @@
+multiline_comment|/*&n; * These are the public elements of the Linux kernel AX.25 code. A similar&n; * file netrom.h exists for the NET/ROM protocol.&n; */
+macro_line|#ifndef&t;AX25_KERNEL_H
+DECL|macro|AX25_KERNEL_H
+mdefine_line|#define&t;AX25_KERNEL_H
 DECL|macro|PF_AX25
 mdefine_line|#define PF_AX25&t;&t;AF_AX25
 DECL|macro|AX25_MTU
 mdefine_line|#define AX25_MTU&t;256
 DECL|macro|AX25_MAX_DIGIS
-mdefine_line|#define AX25_MAX_DIGIS&t;6
+mdefine_line|#define AX25_MAX_DIGIS&t;6&t;/* This is wrong, should be 8 */
+DECL|macro|AX25_WINDOW
+mdefine_line|#define AX25_WINDOW&t;1
+DECL|macro|AX25_T1
+mdefine_line|#define AX25_T1&t;&t;2
+DECL|macro|AX25_N2
+mdefine_line|#define AX25_N2&t;&t;3
+DECL|macro|AX25_T3
+mdefine_line|#define AX25_T3&t;&t;4
+DECL|macro|AX25_T2
+mdefine_line|#define AX25_T2&t;&t;5
+DECL|macro|AX25_BACKOFF
+mdefine_line|#define&t;AX25_BACKOFF&t;6
+DECL|macro|AX25_EXTSEQ
+mdefine_line|#define&t;AX25_EXTSEQ&t;7
+DECL|macro|AX25_HDRINCL
+mdefine_line|#define&t;AX25_HDRINCL&t;8
+DECL|macro|AX25_IDLE
+mdefine_line|#define AX25_IDLE&t;9
+DECL|macro|AX25_PACLEN
+mdefine_line|#define AX25_PACLEN&t;10
+DECL|macro|AX25_IPMAXQUEUE
+mdefine_line|#define AX25_IPMAXQUEUE 11
+DECL|macro|AX25_KILL
+mdefine_line|#define AX25_KILL&t;99
+DECL|macro|SIOCAX25GETUID
+mdefine_line|#define SIOCAX25GETUID&t;&t;(SIOCPROTOPRIVATE)
+DECL|macro|SIOCAX25ADDUID
+mdefine_line|#define SIOCAX25ADDUID&t;&t;(SIOCPROTOPRIVATE+1)
+DECL|macro|SIOCAX25DELUID
+mdefine_line|#define SIOCAX25DELUID&t;&t;(SIOCPROTOPRIVATE+2)
+DECL|macro|SIOCAX25NOUID
+mdefine_line|#define SIOCAX25NOUID&t;&t;(SIOCPROTOPRIVATE+3)
+DECL|macro|SIOCAX25BPQADDR
+mdefine_line|#define&t;SIOCAX25BPQADDR&t;&t;(SIOCPROTOPRIVATE+4)
+DECL|macro|SIOCAX25GETPARMS
+mdefine_line|#define&t;SIOCAX25GETPARMS&t;(SIOCPROTOPRIVATE+5)
+DECL|macro|SIOCAX25SETPARMS
+mdefine_line|#define&t;SIOCAX25SETPARMS&t;(SIOCPROTOPRIVATE+6)
+DECL|macro|SIOCAX25OPTRT
+mdefine_line|#define SIOCAX25OPTRT&t;&t;(SIOCPROTOPRIVATE+7)
+DECL|macro|SIOCAX25CTLCON
+mdefine_line|#define SIOCAX25CTLCON&t;&t;(SIOCPROTOPRIVATE+8)
+DECL|macro|AX25_SET_RT_IPMODE
+mdefine_line|#define AX25_SET_RT_IPMODE&t;2
+DECL|macro|AX25_NOUID_DEFAULT
+mdefine_line|#define AX25_NOUID_DEFAULT&t;0
+DECL|macro|AX25_NOUID_BLOCK
+mdefine_line|#define AX25_NOUID_BLOCK&t;1
+DECL|macro|AX25_DIGI_INBAND
+mdefine_line|#define&t;AX25_DIGI_INBAND&t;0x01&t;/* Allow digipeating within port **/
+DECL|macro|AX25_DIGI_XBAND
+mdefine_line|#define&t;AX25_DIGI_XBAND&t;&t;0x02&t;/* Allow digipeating across ports **/
+DECL|macro|AX25_VALUES_IPDEFMODE
+mdefine_line|#define&t;AX25_VALUES_IPDEFMODE&t;0&t;/* &squot;D&squot;=DG &squot;V&squot;=VC */
+DECL|macro|AX25_VALUES_AXDEFMODE
+mdefine_line|#define&t;AX25_VALUES_AXDEFMODE&t;1&t;/* 8=Normal 128=Extended Seq Nos */
+DECL|macro|AX25_VALUES_NETROM
+mdefine_line|#define&t;AX25_VALUES_NETROM&t;2&t;/* Allow NET/ROM  - 0=No 1=Yes */
+DECL|macro|AX25_VALUES_TEXT
+mdefine_line|#define&t;AX25_VALUES_TEXT&t;3&t;/* Allow PID=Text - 0=No 1=Yes */
+DECL|macro|AX25_VALUES_BACKOFF
+mdefine_line|#define&t;AX25_VALUES_BACKOFF&t;4&t;/* &squot;E&squot;=Exponential &squot;L&squot;=Linear */
+DECL|macro|AX25_VALUES_CONMODE
+mdefine_line|#define&t;AX25_VALUES_CONMODE&t;5&t;/* Allow connected modes - 0=No 1=Yes */
+DECL|macro|AX25_VALUES_WINDOW
+mdefine_line|#define&t;AX25_VALUES_WINDOW&t;6&t;/* Default window size for standard AX.25 */
+DECL|macro|AX25_VALUES_EWINDOW
+mdefine_line|#define&t;AX25_VALUES_EWINDOW&t;7&t;/* Default window size for extended AX.25 */
+DECL|macro|AX25_VALUES_T1
+mdefine_line|#define&t;AX25_VALUES_T1&t;&t;8&t;/* Default T1 timeout value */
+DECL|macro|AX25_VALUES_T2
+mdefine_line|#define&t;AX25_VALUES_T2&t;&t;9&t;/* Default T2 timeout value */
+DECL|macro|AX25_VALUES_T3
+mdefine_line|#define&t;AX25_VALUES_T3&t;&t;10&t;/* Default T3 timeout value */
+DECL|macro|AX25_VALUES_N2
+mdefine_line|#define&t;AX25_VALUES_N2&t;&t;11&t;/* Default N2 value */
+DECL|macro|AX25_VALUES_DIGI
+mdefine_line|#define&t;AX25_VALUES_DIGI&t;12&t;/* Digipeat mode */
+DECL|macro|AX25_VALUES_IDLE
+mdefine_line|#define AX25_VALUES_IDLE&t;13&t;/* mode vc idle timer */
+DECL|macro|AX25_VALUES_PACLEN
+mdefine_line|#define AX25_VALUES_PACLEN&t;14&t;/* AX.25 MTU */
+DECL|macro|AX25_VALUES_IPMAXQUEUE
+mdefine_line|#define AX25_VALUES_IPMAXQUEUE  15&t;/* Maximum number of buffers enqueued */
+DECL|macro|AX25_MAX_VALUES
+mdefine_line|#define&t;AX25_MAX_VALUES&t;&t;20
 r_typedef
 r_struct
 (brace
@@ -15,8 +105,8 @@ l_int|7
 )braket
 suffix:semicolon
 multiline_comment|/* 6 call + SSID (shifted ascii!) */
-)brace
 DECL|typedef|ax25_address
+)brace
 id|ax25_address
 suffix:semicolon
 DECL|struct|sockaddr_ax25
@@ -151,104 +241,6 @@ id|addr
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|AX25_WINDOW
-mdefine_line|#define AX25_WINDOW&t;1
-DECL|macro|AX25_T1
-mdefine_line|#define AX25_T1&t;&t;2
-DECL|macro|AX25_N2
-mdefine_line|#define AX25_N2&t;&t;3
-DECL|macro|AX25_T3
-mdefine_line|#define AX25_T3&t;&t;4
-DECL|macro|AX25_T2
-mdefine_line|#define AX25_T2&t;&t;5
-DECL|macro|AX25_BACKOFF
-mdefine_line|#define&t;AX25_BACKOFF&t;6
-DECL|macro|AX25_EXTSEQ
-mdefine_line|#define&t;AX25_EXTSEQ&t;7
-DECL|macro|AX25_HDRINCL
-mdefine_line|#define&t;AX25_HDRINCL&t;8
-DECL|macro|AX25_IDLE
-mdefine_line|#define AX25_IDLE&t;9
-DECL|macro|AX25_PACLEN
-mdefine_line|#define AX25_PACLEN&t;10
-DECL|macro|AX25_IPMAXQUEUE
-mdefine_line|#define AX25_IPMAXQUEUE 11
-DECL|macro|AX25_KILL
-mdefine_line|#define AX25_KILL&t;99
-DECL|macro|SIOCAX25GETUID
-mdefine_line|#define SIOCAX25GETUID&t;&t;(SIOCPROTOPRIVATE)
-DECL|macro|SIOCAX25ADDUID
-mdefine_line|#define SIOCAX25ADDUID&t;&t;(SIOCPROTOPRIVATE+1)
-DECL|macro|SIOCAX25DELUID
-mdefine_line|#define SIOCAX25DELUID&t;&t;(SIOCPROTOPRIVATE+2)
-DECL|macro|SIOCAX25NOUID
-mdefine_line|#define SIOCAX25NOUID&t;&t;(SIOCPROTOPRIVATE+3)
-DECL|macro|SIOCAX25BPQADDR
-mdefine_line|#define&t;SIOCAX25BPQADDR&t;&t;(SIOCPROTOPRIVATE+4)
-DECL|macro|SIOCAX25GETPARMS
-mdefine_line|#define&t;SIOCAX25GETPARMS&t;(SIOCPROTOPRIVATE+5)
-DECL|macro|SIOCAX25SETPARMS
-mdefine_line|#define&t;SIOCAX25SETPARMS&t;(SIOCPROTOPRIVATE+6)
-DECL|macro|SIOCAX25OPTRT
-mdefine_line|#define SIOCAX25OPTRT&t;&t;(SIOCPROTOPRIVATE+7)
-DECL|macro|SIOCAX25CTLCON
-mdefine_line|#define SIOCAX25CTLCON&t;&t;(SIOCPROTOPRIVATE+8)
-DECL|macro|AX25_SET_RT_PERMANENT
-mdefine_line|#define AX25_SET_RT_PERMANENT&t;1
-DECL|macro|AX25_SET_RT_IPMODE
-mdefine_line|#define AX25_SET_RT_IPMODE&t;2
-DECL|macro|AX25_RT_DYNAMIC
-mdefine_line|#define AX25_RT_DYNAMIC&t;&t;0
-DECL|macro|AX25_RT_PERMANENT
-mdefine_line|#define AX25_RT_PERMANENT&t;1
-DECL|macro|AX25_RT_IPMODE_DEFAULT
-mdefine_line|#define AX25_RT_IPMODE_DEFAULT&t;&squot; &squot;
-DECL|macro|AX25_RT_IPMODE_DATAGRAM
-mdefine_line|#define AX25_RT_IPMODE_DATAGRAM&t;&squot;D&squot;
-DECL|macro|AX25_RT_IPMODE_VC
-mdefine_line|#define AX25_RT_IPMODE_VC&t;&squot;V&squot;
-DECL|macro|AX25_NOUID_DEFAULT
-mdefine_line|#define AX25_NOUID_DEFAULT&t;0
-DECL|macro|AX25_NOUID_BLOCK
-mdefine_line|#define AX25_NOUID_BLOCK&t;1
-DECL|macro|AX25_DIGI_INBAND
-mdefine_line|#define&t;AX25_DIGI_INBAND&t;0x01&t;/* Allow digipeating within port **/
-DECL|macro|AX25_DIGI_XBAND
-mdefine_line|#define&t;AX25_DIGI_XBAND&t;&t;0x02&t;/* Allow digipeating across ports **/
-DECL|macro|AX25_VALUES_IPDEFMODE
-mdefine_line|#define&t;AX25_VALUES_IPDEFMODE&t;0&t;/* &squot;D&squot;=DG &squot;V&squot;=VC */
-DECL|macro|AX25_VALUES_AXDEFMODE
-mdefine_line|#define&t;AX25_VALUES_AXDEFMODE&t;1&t;/* 8=Normal 128=Extended Seq Nos */
-DECL|macro|AX25_VALUES_NETROM
-mdefine_line|#define&t;AX25_VALUES_NETROM&t;2&t;/* Allow NET/ROM  - 0=No 1=Yes */
-DECL|macro|AX25_VALUES_TEXT
-mdefine_line|#define&t;AX25_VALUES_TEXT&t;3&t;/* Allow PID=Text - 0=No 1=Yes */
-DECL|macro|AX25_VALUES_BACKOFF
-mdefine_line|#define&t;AX25_VALUES_BACKOFF&t;4&t;/* &squot;E&squot;=Exponential &squot;L&squot;=Linear */
-DECL|macro|AX25_VALUES_CONMODE
-mdefine_line|#define&t;AX25_VALUES_CONMODE&t;5&t;/* Allow connected modes - 0=No 1=Yes */
-DECL|macro|AX25_VALUES_WINDOW
-mdefine_line|#define&t;AX25_VALUES_WINDOW&t;6&t;/* Default window size for standard AX.25 */
-DECL|macro|AX25_VALUES_EWINDOW
-mdefine_line|#define&t;AX25_VALUES_EWINDOW&t;7&t;/* Default window size for extended AX.25 */
-DECL|macro|AX25_VALUES_T1
-mdefine_line|#define&t;AX25_VALUES_T1&t;&t;8&t;/* Default T1 timeout value */
-DECL|macro|AX25_VALUES_T2
-mdefine_line|#define&t;AX25_VALUES_T2&t;&t;9&t;/* Default T2 timeout value */
-DECL|macro|AX25_VALUES_T3
-mdefine_line|#define&t;AX25_VALUES_T3&t;&t;10&t;/* Default T3 timeout value */
-DECL|macro|AX25_VALUES_N2
-mdefine_line|#define&t;AX25_VALUES_N2&t;&t;11&t;/* Default N2 value */
-DECL|macro|AX25_VALUES_DIGI
-mdefine_line|#define&t;AX25_VALUES_DIGI&t;12&t;/* Digipeat mode */
-DECL|macro|AX25_VALUES_IDLE
-mdefine_line|#define AX25_VALUES_IDLE&t;13&t;/* mode vc idle timer */
-DECL|macro|AX25_VALUES_PACLEN
-mdefine_line|#define AX25_VALUES_PACLEN&t;14&t;/* AX.25 MTU */
-DECL|macro|AX25_VALUES_IPMAXQUEUE
-mdefine_line|#define AX25_VALUES_IPMAXQUEUE  15&t;/* Maximum number of buffers enqueued */
-DECL|macro|AX25_MAX_VALUES
-mdefine_line|#define&t;AX25_MAX_VALUES&t;&t;20
 DECL|struct|ax25_parms_struct
 r_struct
 id|ax25_parms_struct
@@ -267,4 +259,5 @@ id|AX25_MAX_VALUES
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 eof

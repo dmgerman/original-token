@@ -82,8 +82,6 @@ DECL|macro|EM_486
 mdefine_line|#define EM_486   6   /* Perhaps disused */
 DECL|macro|EM_860
 mdefine_line|#define EM_860   7
-DECL|macro|EM_PPC
-mdefine_line|#define EM_PPC   20
 DECL|macro|EM_MIPS
 mdefine_line|#define EM_MIPS&t;&t;8&t;/* MIPS R3000 (officially, big-endian only) */
 DECL|macro|EM_MIPS_RS4_BE

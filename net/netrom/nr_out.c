@@ -584,7 +584,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-r_return
+r_break
 suffix:semicolon
 )brace
 id|next

@@ -3369,14 +3369,11 @@ id|elf_ex.e_phnum
 OG
 l_int|2
 op_logical_or
+op_logical_neg
+id|elf_check_arch
+c_func
 (paren
 id|elf_ex.e_machine
-op_ne
-id|EM_386
-op_logical_and
-id|elf_ex.e_machine
-op_ne
-id|EM_486
 )paren
 op_logical_or
 (paren

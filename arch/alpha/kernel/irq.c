@@ -27,6 +27,9 @@ suffix:semicolon
 macro_line|#if NR_IRQS &gt; 64
 macro_line|#  error Unable to handle more than 64 irq levels.
 macro_line|#endif
+multiline_comment|/* Reserved interrupts.  These must NEVER be requested by any driver!&n; */
+DECL|macro|IS_RESERVED_IRQ
+mdefine_line|#define&t;IS_RESERVED_IRQ(irq)&t;((irq)==2)&t;/* IRQ 2 used by hw cascade */
 multiline_comment|/*&n; * Shadow-copy of masked interrupts.&n; *  The bits are used as follows:&n; *&t; 0.. 7&t;first (E)ISA PIC (irq level 0..7)&n; *&t; 8..15&t;second (E)ISA PIC (irq level 8..15)&n; *   Systems with PCI interrupt lines managed by GRU (e.g., Alcor, XLT):&n; *&t;16..47&t;PCI interrupts 0..31 (int at GRU_INT_MASK)&n; *   Mikasa:&n; *&t;16..31&t;PCI interrupts 0..15 (short at I/O port 536)&n; *   Other systems (not Mikasa) with 16 PCI interrupt lines:&n; *&t;16..23&t;PCI interrupts 0.. 7 (char at I/O port 26)&n; *&t;24..31&t;PCI interrupts 8..15 (char at I/O port 27)&n; *   Systems with 17 PCI interrupt lines (e.g., Cabriolet and eb164):&n; *&t;16..32&t;PCI interrupts 0..31 (int at I/O port 804)&n; */
 DECL|variable|irq_mask
 r_static
@@ -645,6 +648,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|IS_RESERVED_IRQ
+c_func
+(paren
+id|irq
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|handler
 )paren
@@ -870,6 +886,27 @@ id|printk
 c_func
 (paren
 l_string|&quot;Trying to free IRQ%d&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|IS_RESERVED_IRQ
+c_func
+(paren
+id|irq
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Trying to free reserved IRQ %d&bslash;n&quot;
 comma
 id|irq
 )paren

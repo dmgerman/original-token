@@ -2563,8 +2563,6 @@ c_cond
 id|devc-&gt;bits
 op_eq
 id|AFMT_U8
-op_eq
-l_int|0
 )paren
 (brace
 multiline_comment|/* 8 bit mono */

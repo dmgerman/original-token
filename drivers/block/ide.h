@@ -27,14 +27,13 @@ DECL|macro|FANCY_STATUS_DUMPS
 mdefine_line|#define FANCY_STATUS_DUMPS&t;1&t;/* 0 to reduce kernel size */
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_CMD640
-macro_line|#if 1
+macro_line|#if 0&t;/* change to 1 when debugging cmd640 problems */
 r_void
 id|cmd640_dump_regs
 (paren
 r_void
 )paren
 suffix:semicolon
-DECL|macro|CMD640_DUMP_REGS
 mdefine_line|#define CMD640_DUMP_REGS cmd640_dump_regs() /* for debugging cmd640 chipset */
 macro_line|#endif
 macro_line|#endif  /* CONFIG_BLK_DEV_CMD640 */

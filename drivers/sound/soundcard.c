@@ -1137,11 +1137,11 @@ id|vma_get_start
 id|vma
 )paren
 comma
-id|virt_to_phys
-c_func
 (paren
-id|dmap-&gt;raw_buf
+r_int
+r_int
 )paren
+id|dmap-&gt;raw_buf
 comma
 id|vma_get_end
 (paren

@@ -1860,6 +1860,13 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* scsi_ioctl may allow CURRENT to change, so start over. */
+id|SDev-&gt;was_reset
+op_assign
+l_int|0
+suffix:semicolon
+r_continue
+suffix:semicolon
 )brace
 id|SDev-&gt;was_reset
 op_assign

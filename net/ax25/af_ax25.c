@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 006&t;Alan(GW4PTS)&t;&t;Nearly died of shock - it&squot;s working 8-)&n; *&t;AX.25 007&t;Alan(GW4PTS)&t;&t;Removed the silliest bugs&n; *&t;AX.25 008&t;Alan(GW4PTS)&t;&t;Cleaned up, fixed a few state machine problems, added callbacks&n; *&t;AX.25 009&t;Alan(GW4PTS)&t;&t;Emergency patch kit to fix memory corruption&n; * &t;AX.25 010&t;Alan(GW4PTS)&t;&t;Added RAW sockets/Digipeat.&n; *&t;AX.25 011&t;Alan(GW4PTS)&t;&t;RAW socket and datagram fixes (thanks) - Raw sendto now gets PID right&n; *&t;&t;&t;&t;&t;&t;datagram sendto uses correct target address.&n; *&t;AX.25 012&t;Alan(GW4PTS)&t;&t;Correct incoming connection handling, send DM to failed connects.&n; *&t;&t;&t;&t;&t;&t;Use skb-&gt;data not skb+1. Support sk-&gt;priority correctly.&n; *&t;&t;&t;&t;&t;&t;Correct receive on SOCK_DGRAM.&n; *&t;AX.25 013&t;Alan(GW4PTS)&t;&t;Send DM to all unknown frames, missing initialiser fixed&n; *&t;&t;&t;&t;&t;&t;Leave spare SSID bits set (DAMA etc) - thanks for bug report,&n; *&t;&t;&t;&t;&t;&t;removed device registration (it&squot;s not used or needed). Clean up for&n; *&t;&t;&t;&t;&t;&t;gcc 2.5.8. PID to AX25_P_&n; *&t;AX.25 014&t;Alan(GW4PTS)&t;&t;Cleanup and NET3 merge&n; *&t;AX.25 015&t;Alan(GW4PTS)&t;&t;Internal test version.&n; *&t;AX.25 016&t;Alan(GW4PTS)&t;&t;Semi Internal version for PI card&n; *&t;&t;&t;&t;&t;&t;work.&n; *&t;AX.25 017&t;Alan(GW4PTS)&t;&t;Fixed some small bugs reported by&n; *&t;&t;&t;&t;&t;&t;G4KLX&n; *&t;AX.25 018&t;Alan(GW4PTS)&t;&t;Fixed a small error in SOCK_DGRAM&n; *&t;AX.25 019&t;Alan(GW4PTS)&t;&t;Clean ups for the non INET kernel and device ioctls in AX.25&n; *&t;AX.25 020&t;Jonathan(G4KLX)&t;&t;/proc support and other changes.&n; *&t;AX.25 021&t;Alan(GW4PTS)&t;&t;Added AX25_T1, AX25_N2, AX25_T3 as requested.&n; *&t;AX.25 022&t;Jonathan(G4KLX)&t;&t;More work on the ax25 auto router and /proc improved (again)!&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Added TIOCINQ/OUTQ&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Fixed shutdown bug&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Linus changed timers&n; *&t;AX.25 024&t;Alan(GW4PTS)&t;&t;Small bug fixes&n; *&t;AX.25 025&t;Alan(GW4PTS)&t;&t;More fixes, Linux 1.1.51 compatibility stuff, timers again!&n; *&t;AX.25 026&t;Alan(GW4PTS)&t;&t;Small state fix.&n; *&t;AX.25 027&t;Alan(GW4PTS)&t;&t;Socket close crash fixes.&n; *&t;AX.25 028&t;Alan(GW4PTS)&t;&t;Callsign control including settings per uid.&n; *&t;&t;&t;&t;&t;&t;Small bug fixes.&n; *&t;&t;&t;&t;&t;&t;Protocol set by sockets only.&n; *&t;&t;&t;&t;&t;&t;Small changes to allow for start of NET/ROM layer.&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;&t;Changes to state machine.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;&t;Extracted ax25 control block&n; *&t;&t;&t;&t;&t;&t;from sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;&t;Combined 028b and some KA9Q code&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;and removed all the old Berkeley, added IP mode registration.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;stuff. Cross-port digipeating. Minor fixes and enhancements.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Missed suser() on axassociate checks&n; *&t;AX.25 030&t;Alan(GW4PTS)&t;&t;Added variable length headers.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Added BPQ Ethernet interface.&n; *&t;&t;&t;Steven(GW7RRM)&t;&t;Added digi-peating control ioctl.&n; *&t;&t;&t;&t;&t;&t;Added extended AX.25 support.&n; *&t;&t;&t;&t;&t;&t;Added AX.25 frame segmentation.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;Changed connect(), recvfrom(), sendto() sockaddr/addrlen to&n; *&t;&t;&t;&t;&t;&t;fall inline with bind() and new policy.&n; *&t;&t;&t;&t;&t;&t;Moved digipeating ctl to new ax25_dev structs.&n; *&t;&t;&t;&t;&t;&t;Fixed ax25_release(), set TCP_CLOSE, wakeup app&n; *&t;&t;&t;&t;&t;&t;context, THEN make the sock dead.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Cleaned up for single recvmsg methods.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Fixed not clearing error on connect failure.&n; *&t;AX.25 031&t;Jonathan(G4KLX)&t;&t;Added binding to any device.&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Added DAMA support, fixed (?) digipeating, fixed buffer locking&n; *&t;&t;&t;&t;&t;&t;for &quot;virtual connect&quot; mode... Result: Probably the&n; *&t;&t;&t;&t;&t;&t;&quot;Most Buggiest Code You&squot;ve Ever Seen&quot; (TM)&n; *&t;&t;&t;HaJo(DD8NE)&t;&t;Implementation of a T5 (idle) timer&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Renamed T5 to IDLE and changed behaviour:&n; *&t;&t;&t;&t;&t;&t;the timer gets reloaded on every received or transmitted&n; *&t;&t;&t;&t;&t;&t;I frame for IP or NETROM. The idle timer is not active&n; *&t;&t;&t;&t;&t;&t;on &quot;vanilla AX.25&quot; connections. Furthermore added PACLEN&n; *&t;&t;&t;&t;&t;&t;to provide AX.25-layer based fragmentation (like WAMPES)&n; *      AX.25 032&t;Joerg(DL1BKE)&t;&t;Fixed DAMA timeout error.&n; *&t;&t;&t;&t;&t;&t;ax25_send_frame() limits the number of enqueued&n; *&t;&t;&t;&t;&t;&t;datagrams per socket.&n; *&n; *&t;To do:&n; *&t;&t;Restructure the ax25_rcv code to be cleaner/faster and&n; *&t;&t;copy only when needed.&n; *&t;&t;Consider better arbitrary protocol support.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 032&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 006&t;Alan(GW4PTS)&t;&t;Nearly died of shock - it&squot;s working 8-)&n; *&t;AX.25 007&t;Alan(GW4PTS)&t;&t;Removed the silliest bugs&n; *&t;AX.25 008&t;Alan(GW4PTS)&t;&t;Cleaned up, fixed a few state machine problems, added callbacks&n; *&t;AX.25 009&t;Alan(GW4PTS)&t;&t;Emergency patch kit to fix memory corruption&n; * &t;AX.25 010&t;Alan(GW4PTS)&t;&t;Added RAW sockets/Digipeat.&n; *&t;AX.25 011&t;Alan(GW4PTS)&t;&t;RAW socket and datagram fixes (thanks) - Raw sendto now gets PID right&n; *&t;&t;&t;&t;&t;&t;datagram sendto uses correct target address.&n; *&t;AX.25 012&t;Alan(GW4PTS)&t;&t;Correct incoming connection handling, send DM to failed connects.&n; *&t;&t;&t;&t;&t;&t;Use skb-&gt;data not skb+1. Support sk-&gt;priority correctly.&n; *&t;&t;&t;&t;&t;&t;Correct receive on SOCK_DGRAM.&n; *&t;AX.25 013&t;Alan(GW4PTS)&t;&t;Send DM to all unknown frames, missing initialiser fixed&n; *&t;&t;&t;&t;&t;&t;Leave spare SSID bits set (DAMA etc) - thanks for bug report,&n; *&t;&t;&t;&t;&t;&t;removed device registration (it&squot;s not used or needed). Clean up for&n; *&t;&t;&t;&t;&t;&t;gcc 2.5.8. PID to AX25_P_&n; *&t;AX.25 014&t;Alan(GW4PTS)&t;&t;Cleanup and NET3 merge&n; *&t;AX.25 015&t;Alan(GW4PTS)&t;&t;Internal test version.&n; *&t;AX.25 016&t;Alan(GW4PTS)&t;&t;Semi Internal version for PI card&n; *&t;&t;&t;&t;&t;&t;work.&n; *&t;AX.25 017&t;Alan(GW4PTS)&t;&t;Fixed some small bugs reported by&n; *&t;&t;&t;&t;&t;&t;G4KLX&n; *&t;AX.25 018&t;Alan(GW4PTS)&t;&t;Fixed a small error in SOCK_DGRAM&n; *&t;AX.25 019&t;Alan(GW4PTS)&t;&t;Clean ups for the non INET kernel and device ioctls in AX.25&n; *&t;AX.25 020&t;Jonathan(G4KLX)&t;&t;/proc support and other changes.&n; *&t;AX.25 021&t;Alan(GW4PTS)&t;&t;Added AX25_T1, AX25_N2, AX25_T3 as requested.&n; *&t;AX.25 022&t;Jonathan(G4KLX)&t;&t;More work on the ax25 auto router and /proc improved (again)!&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Added TIOCINQ/OUTQ&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Fixed shutdown bug&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Linus changed timers&n; *&t;AX.25 024&t;Alan(GW4PTS)&t;&t;Small bug fixes&n; *&t;AX.25 025&t;Alan(GW4PTS)&t;&t;More fixes, Linux 1.1.51 compatibility stuff, timers again!&n; *&t;AX.25 026&t;Alan(GW4PTS)&t;&t;Small state fix.&n; *&t;AX.25 027&t;Alan(GW4PTS)&t;&t;Socket close crash fixes.&n; *&t;AX.25 028&t;Alan(GW4PTS)&t;&t;Callsign control including settings per uid.&n; *&t;&t;&t;&t;&t;&t;Small bug fixes.&n; *&t;&t;&t;&t;&t;&t;Protocol set by sockets only.&n; *&t;&t;&t;&t;&t;&t;Small changes to allow for start of NET/ROM layer.&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;&t;Changes to state machine.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;&t;Extracted ax25 control block&n; *&t;&t;&t;&t;&t;&t;from sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;&t;Combined 028b and some KA9Q code&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;and removed all the old Berkeley, added IP mode registration.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;stuff. Cross-port digipeating. Minor fixes and enhancements.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Missed suser() on axassociate checks&n; *&t;AX.25 030&t;Alan(GW4PTS)&t;&t;Added variable length headers.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Added BPQ Ethernet interface.&n; *&t;&t;&t;Steven(GW7RRM)&t;&t;Added digi-peating control ioctl.&n; *&t;&t;&t;&t;&t;&t;Added extended AX.25 support.&n; *&t;&t;&t;&t;&t;&t;Added AX.25 frame segmentation.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;Changed connect(), recvfrom(), sendto() sockaddr/addrlen to&n; *&t;&t;&t;&t;&t;&t;fall inline with bind() and new policy.&n; *&t;&t;&t;&t;&t;&t;Moved digipeating ctl to new ax25_dev structs.&n; *&t;&t;&t;&t;&t;&t;Fixed ax25_release(), set TCP_CLOSE, wakeup app&n; *&t;&t;&t;&t;&t;&t;context, THEN make the sock dead.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Cleaned up for single recvmsg methods.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Fixed not clearing error on connect failure.&n; *&t;AX.25 031&t;Jonathan(G4KLX)&t;&t;Added binding to any device.&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Added DAMA support, fixed (?) digipeating, fixed buffer locking&n; *&t;&t;&t;&t;&t;&t;for &quot;virtual connect&quot; mode... Result: Probably the&n; *&t;&t;&t;&t;&t;&t;&quot;Most Buggiest Code You&squot;ve Ever Seen&quot; (TM)&n; *&t;&t;&t;HaJo(DD8NE)&t;&t;Implementation of a T5 (idle) timer&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Renamed T5 to IDLE and changed behaviour:&n; *&t;&t;&t;&t;&t;&t;the timer gets reloaded on every received or transmitted&n; *&t;&t;&t;&t;&t;&t;I frame for IP or NETROM. The idle timer is not active&n; *&t;&t;&t;&t;&t;&t;on &quot;vanilla AX.25&quot; connections. Furthermore added PACLEN&n; *&t;&t;&t;&t;&t;&t;to provide AX.25-layer based fragmentation (like WAMPES)&n; *      AX.25 032&t;Joerg(DL1BKE)&t;&t;Fixed DAMA timeout error.&n; *&t;&t;&t;&t;&t;&t;ax25_send_frame() limits the number of enqueued&n; *&t;&t;&t;&t;&t;&t;datagrams per socket.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Remove auto-router.&n; *&n; *&t;To do:&n; *&t;&t;Restructure the ax25_rcv code to be cleaner/faster and&n; *&t;&t;copy only when needed.&n; *&t;&t;Consider better arbitrary protocol support.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1770,6 +1770,12 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+r_default
+suffix:colon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 )brace
 r_return
 op_minus
@@ -2423,7 +2429,6 @@ id|ax25-&gt;dama_slave
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* dl1bke 951121 */
 id|ax25-&gt;rtt
 op_assign
 (paren
@@ -2948,7 +2953,6 @@ id|ax25-&gt;idletimer
 op_assign
 id|ax25-&gt;idle
 suffix:semicolon
-multiline_comment|/* dl1bke 960228 */
 r_return
 l_int|1
 suffix:semicolon
@@ -3049,6 +3053,8 @@ c_func
 id|ax25
 comma
 id|dest
+comma
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -3061,7 +3067,6 @@ c_func
 id|ax25-&gt;device
 )paren
 )paren
-multiline_comment|/* dl1bke 960116 */
 id|dama_establish_data_link
 c_func
 (paren
@@ -4609,7 +4614,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* dl1bke 960119: we have to copy the old digipeater list! */
 op_star
 id|ax25-&gt;digipeat
 op_assign
@@ -5578,30 +5582,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_else
-(brace
-multiline_comment|/* dl1bke 960117 */
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;building digipeater path&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ax25_rt_build_path
-c_func
-(paren
-id|sk-&gt;ax25
-comma
-op_amp
-id|addr-&gt;sax25_call
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Must bind first - autobinding in this may or may not work. If&n;&t; *&t;the socket is already bound, check to see if the device has&n;&t; *&t;been filled in, error if it hasn&squot;t.&n;&t; */
 r_if
 c_cond
@@ -6092,10 +6072,6 @@ r_int
 id|peer
 )paren
 (brace
-id|ax25_address
-op_star
-id|addr
-suffix:semicolon
 r_struct
 id|full_sockaddr_ax25
 op_star
@@ -6147,28 +6123,13 @@ r_return
 op_minus
 id|ENOTCONN
 suffix:semicolon
-id|addr
-op_assign
-op_amp
-id|sk-&gt;ax25-&gt;dest_addr
-suffix:semicolon
-)brace
-r_else
-(brace
-id|addr
-op_assign
-op_amp
-id|sk-&gt;ax25-&gt;source_addr
-suffix:semicolon
-)brace
 id|sax-&gt;fsa_ax25.sax25_family
 op_assign
 id|AF_AX25
 suffix:semicolon
 id|sax-&gt;fsa_ax25.sax25_call
 op_assign
-op_star
-id|addr
+id|sk-&gt;ax25-&gt;dest_addr
 suffix:semicolon
 id|sax-&gt;fsa_ax25.sax25_ndigis
 op_assign
@@ -6180,10 +6141,9 @@ op_assign
 r_sizeof
 (paren
 r_struct
-id|sockaddr_ax25
+id|full_sockaddr_ax25
 )paren
 suffix:semicolon
-multiline_comment|/* This will supply digipeat path on both getpeername() and getsockname() */
 r_if
 c_cond
 (paren
@@ -6198,13 +6158,6 @@ id|sk-&gt;ax25-&gt;digipeat-&gt;ndigi
 suffix:semicolon
 id|sax-&gt;fsa_ax25.sax25_ndigis
 op_assign
-id|ndigi
-suffix:semicolon
-op_star
-id|uaddr_len
-op_add_assign
-id|AX25_ADDR_LEN
-op_star
 id|ndigi
 suffix:semicolon
 r_for
@@ -6230,6 +6183,60 @@ id|sk-&gt;ax25-&gt;digipeat-&gt;calls
 (braket
 id|i
 )braket
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|sax-&gt;fsa_ax25.sax25_family
+op_assign
+id|AF_AX25
+suffix:semicolon
+id|sax-&gt;fsa_ax25.sax25_call
+op_assign
+id|sk-&gt;ax25-&gt;source_addr
+suffix:semicolon
+id|sax-&gt;fsa_ax25.sax25_ndigis
+op_assign
+l_int|1
+suffix:semicolon
+op_star
+id|uaddr_len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|full_sockaddr_ax25
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;ax25-&gt;device
+op_ne
+l_int|NULL
+)paren
+id|memcpy
+c_func
+(paren
+op_amp
+id|sax-&gt;fsa_digipeater
+(braket
+l_int|0
+)braket
+comma
+id|sk-&gt;ax25-&gt;device-&gt;dev_addr
+comma
+id|AX25_ADDR_LEN
+)paren
+suffix:semicolon
+r_else
+id|sax-&gt;fsa_digipeater
+(braket
+l_int|0
+)braket
+op_assign
+id|null_ax25_address
 suffix:semicolon
 )brace
 r_return
@@ -6381,21 +6388,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Send the frame to the AX.25 auto-router&n;&t; */
-macro_line|#ifdef notdef&t;/* dl1bke 960310 */
-id|ax25_rt_rx_frame
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-op_amp
-id|dp
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Ours perhaps ?&n;&t; */
 r_if
 c_cond
@@ -6588,18 +6580,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|ax25_rt_rx_frame
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-op_amp
-id|dp
-)paren
-suffix:semicolon
 id|build_ax25_addr
 c_func
 (paren
@@ -6835,18 +6815,6 @@ macro_line|#ifdef CONFIG_INET&t;&t;
 r_case
 id|AX25_P_IP
 suffix:colon
-id|ax25_rt_rx_frame
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-op_amp
-id|dp
-)paren
-suffix:semicolon
 id|skb_pull
 c_func
 (paren
@@ -6856,17 +6824,6 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* drop PID/CTRL */
-id|ax25_ip_mode_set
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-l_char|&squot;D&squot;
-)paren
-suffix:semicolon
 id|ip_rcv
 c_func
 (paren
@@ -6883,18 +6840,6 @@ suffix:semicolon
 r_case
 id|AX25_P_ARP
 suffix:colon
-id|ax25_rt_rx_frame
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-op_amp
-id|dp
-)paren
-suffix:semicolon
 id|skb_pull
 c_func
 (paren
@@ -6962,18 +6907,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|ax25_rt_rx_frame
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-op_amp
-id|dp
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; *&t;Remove the control and PID.&n;&t;&t;&t;&t;&t;&t; */
 id|skb_pull
 c_func
@@ -7105,18 +7038,6 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;Process the frame. If it is queued up internally it returns one otherwise we &n;&t;&t; *&t;free it immediately. This routine itself wakes the user context layers so we&n;&t;&t; *&t;do no further work&n;&t;&t; */
-id|ax25_rt_rx_frame
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-op_amp
-id|dp
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7237,18 +7158,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|ax25_rt_rx_frame
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-op_amp
-id|dp
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7354,18 +7263,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|ax25_rt_rx_frame
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-op_amp
-id|dp
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7426,19 +7323,6 @@ c_cond
 (paren
 id|mine
 )paren
-(brace
-id|ax25_rt_rx_frame
-c_func
-(paren
-op_amp
-id|src
-comma
-id|dev
-comma
-op_amp
-id|dp
-)paren
-suffix:semicolon
 id|ax25_return_dm
 c_func
 (paren
@@ -7454,7 +7338,6 @@ op_amp
 id|dp
 )paren
 suffix:semicolon
-)brace
 id|kfree_skb
 c_func
 (paren
@@ -7993,7 +7876,6 @@ c_cond
 (paren
 id|sk-&gt;err
 )paren
-(brace
 r_return
 id|sock_error
 c_func
@@ -8001,7 +7883,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -8614,7 +8495,6 @@ c_cond
 (paren
 id|sk-&gt;err
 )paren
-(brace
 r_return
 id|sock_error
 c_func
@@ -8622,7 +8502,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -10311,7 +10190,19 @@ id|bcast_addr
 l_int|6
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0xFF
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+)brace
 suffix:semicolon
 r_int
 id|size
@@ -10760,10 +10651,6 @@ c_cond
 id|mode
 op_eq
 l_char|&squot;V&squot;
-op_logical_or
-id|mode
-op_eq
-l_char|&squot;v&squot;
 op_logical_or
 (paren
 id|mode

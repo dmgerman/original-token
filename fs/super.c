@@ -4670,7 +4670,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|#ifndef CONFIG_BLK_DEV_RAM
 id|printk
 c_func
 (paren

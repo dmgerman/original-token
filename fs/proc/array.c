@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;added cpuinfo &n; *&t;&t;&t;&lt;dth@cistron.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; *&n; * Bruno Haible      :  remove 4K limit for the maps file&n; * &lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;&n; */
+multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;added cpuinfo &n; *&t;&t;&t;&lt;dth@cistron.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; *&n; * Bruno Haible      :  remove 4K limit for the maps file&n; * &lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;&n; *&n; * Yves Arrouye      :  remove removal of trailing spaces in get_array.&n; *&t;&t;&t;&lt;Yves.Arrouye@marin.fdn.fr&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1601,8 +1601,8 @@ c_cond
 op_logical_neg
 id|addr
 )paren
-r_goto
-id|ready
+r_return
+id|result
 suffix:semicolon
 r_do
 (brace
@@ -1641,8 +1641,8 @@ op_assign
 id|c
 suffix:semicolon
 r_else
-r_goto
-id|ready
+r_return
+id|result
 suffix:semicolon
 id|addr
 op_increment
@@ -1660,8 +1660,8 @@ id|start
 op_ge
 id|end
 )paren
-r_goto
-id|ready
+r_return
+id|result
 suffix:semicolon
 )brace
 r_while
@@ -1674,28 +1674,6 @@ id|PAGE_MASK
 )paren
 suffix:semicolon
 )brace
-id|ready
-suffix:colon
-multiline_comment|/* remove the trailing blanks, used to fill out argv,envp space */
-r_while
-c_loop
-(paren
-id|result
-OG
-l_int|0
-op_logical_and
-id|buffer
-(braket
-id|result
-op_minus
-l_int|1
-)braket
-op_eq
-l_char|&squot; &squot;
-)paren
-id|result
-op_decrement
-suffix:semicolon
 r_return
 id|result
 suffix:semicolon

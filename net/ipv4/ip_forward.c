@@ -756,13 +756,13 @@ OG
 id|dev2-&gt;mtu
 op_logical_and
 (paren
-id|ntohs
+id|iph-&gt;frag_off
+op_amp
+id|htons
 c_func
 (paren
-id|iph-&gt;frag_off
-)paren
-op_amp
 id|IP_DF
+)paren
 )paren
 )paren
 (brace

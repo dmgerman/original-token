@@ -1,5 +1,5 @@
 multiline_comment|/* eepro.c: Intel EtherExpress Pro/10 device driver for Linux. */
-multiline_comment|/*&n;&t;Written 1994, 1995,1996 by Bao C. Ha.&n;&n;&t;Copyright (C) 1994, 1995,1996 by Bao C. Ha.&n;&n;&t;This software may be used and distributed&n;&t;according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached at bao@saigon.async.com &n;&t;or 418 Hastings Place, Martinez, GA 30907.&n;&n;&t;Things remaining to do:&n;&t;Better record keeping of errors.&n;&t;Eliminate transmit interrupt to reduce overhead.&n;&t;Implement &quot;concurrent processing&quot;. I won&squot;t be doing it!&n;&t;Allow changes to the partition of the transmit and receive&n;&t;buffers, currently the ratio is 3:1 of receive to transmit&n;&t;buffer ratio.  &n;&n;&t;Bugs:&n;&n;&t;If you have a problem of not detecting the 82595 during a&n;&t;reboot (warm reset), disable the FLASH memory should fix it.&n;&t;This is a compatibility hardware problem.&n;&n;&t;Versions:&n;&n;&t;0.08&t;Implement 32-bit I/O for the 82595TX and 82595FX&n;&t;&t;based lan cards.  Disable full-duplex mode if TPE&n;&t;&t;is not used.  (BCH, 4/8/96)&n;&n;&t;0.07a&t;Fix a stat report which counts every packet as a&n;&t;&t;heart-beat failure. (BCH, 6/3/95)&n;&n;&t;0.07&t;Modified to support all other 82595-based lan cards.  &n;&t;&t;The IRQ vector of the EtherExpress Pro will be set&n;&t;&t;according to the value saved in the EEPROM.  For other&n;&t;&t;cards, I will do autoirq_request() to grab the next&n;&t;&t;available interrupt vector. (BCH, 3/17/95)&n;&n;&t;0.06a,b&t;Interim released.  Minor changes in the comments and&n;&t;&t;print out format. (BCH, 3/9/95 and 3/14/95)&n;&n;&t;0.06&t;First stable release that I am comfortable with. (BCH,&n;&t;&t;3/2/95)&t;&n;&n;&t;0.05&t;Complete testing of multicast. (BCH, 2/23/95)&t;&n;&n;&t;0.04&t;Adding multicast support. (BCH, 2/14/95)&t;&n;&n;&t;0.03&t;First widely alpha release for public testing. &n;&t;&t;(BCH, 2/14/95)&t;&n;&n;*/
+multiline_comment|/*&n;&t;Written 1994, 1995,1996 by Bao C. Ha.&n;&n;&t;Copyright (C) 1994, 1995,1996 by Bao C. Ha.&n;&n;&t;This software may be used and distributed&n;&t;according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached at bao.ha@srs.gov &n;&t;or 418 Hastings Place, Martinez, GA 30907.&n;&n;&t;Things remaining to do:&n;&t;Better record keeping of errors.&n;&t;Eliminate transmit interrupt to reduce overhead.&n;&t;Implement &quot;concurrent processing&quot;. I won&squot;t be doing it!&n;&n;&t;Bugs:&n;&n;&t;If you have a problem of not detecting the 82595 during a&n;&t;reboot (warm reset), disable the FLASH memory should fix it.&n;&t;This is a compatibility hardware problem.&n;&n;&t;Versions:&n;&n;&t;0.09&t;Fixed a race condition in the transmit algorithm,&n;&t;&t;which causes crashes under heavy load with fast&n;&t;&t;pentium computers.  The performance should also&n;&t;&t;improve a bit.  The size of RX buffer, and hence&n;&t;&t;TX buffer, can also be changed via lilo or insmod.&n;&t;&t;(BCH, 7/31/96)&n;&n;&t;0.08&t;Implement 32-bit I/O for the 82595TX and 82595FX&n;&t;&t;based lan cards.  Disable full-duplex mode if TPE&n;&t;&t;is not used.  (BCH, 4/8/96)&n;&n;&t;0.07a&t;Fix a stat report which counts every packet as a&n;&t;&t;heart-beat failure. (BCH, 6/3/95)&n;&n;&t;0.07&t;Modified to support all other 82595-based lan cards.  &n;&t;&t;The IRQ vector of the EtherExpress Pro will be set&n;&t;&t;according to the value saved in the EEPROM.  For other&n;&t;&t;cards, I will do autoirq_request() to grab the next&n;&t;&t;available interrupt vector. (BCH, 3/17/95)&n;&n;&t;0.06a,b&t;Interim released.  Minor changes in the comments and&n;&t;&t;print out format. (BCH, 3/9/95 and 3/14/95)&n;&n;&t;0.06&t;First stable release that I am comfortable with. (BCH,&n;&t;&t;3/2/95)&t;&n;&n;&t;0.05&t;Complete testing of multicast. (BCH, 2/23/95)&t;&n;&n;&t;0.04&t;Adding multicast support. (BCH, 2/14/95)&t;&n;&n;&t;0.03&t;First widely alpha release for public testing. &n;&t;&t;(BCH, 2/14/95)&t;&n;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;eepro.c: v0.08 4/8/96 Bao C. Ha (bao.ha@srs.gov)&bslash;n&quot;
+l_string|&quot;eepro.c: v0.09 7/31/96 Bao C. Ha (bao.ha@srs.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n;  Sources:&n;&n;&t;This driver wouldn&squot;t have been written without the availability &n;&t;of the Crynwr&squot;s Lan595 driver source code.  It helps me to &n;&t;familiarize with the 82595 chipset while waiting for the Intel &n;&t;documentation.  I also learned how to detect the 82595 using &n;&t;the packet driver&squot;s technique.&n;&n;&t;This driver is written by cutting and pasting the skeleton.c driver&n;&t;provided by Donald Becker.  I also borrowed the EEPROM routine from&n;&t;Donald Becker&squot;s 82586 driver.&n;&n;&t;Datasheet for the Intel 82595 (including the TX and FX version). It &n;&t;provides just enough info that the casual reader might think that it &n;&t;documents the i82595.&n;&n;&t;The User Manual for the 82595.  It provides a lot of the missing&n;&t;information.&n;&n;*/
@@ -62,7 +62,7 @@ suffix:semicolon
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
-mdefine_line|#define NET_DEBUG 2
+mdefine_line|#define NET_DEBUG 3
 macro_line|#endif
 DECL|variable|net_debug
 r_static
@@ -303,23 +303,29 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;  &t;&t;&t;Details of the i82595.&n;&n;You will need either the datasheet or the user manual to understand what&n;is going on here.  The 82595 is very different from the 82586, 82593.&n;&n;The receive algorithm in eepro_rx() is just an implementation of the&n;RCV ring structure that the Intel 82595 imposes at the hardware level.&n;The receive buffer is set at 24K, and the transmit buffer is 8K.  I&n;am assuming that the total buffer memory is 32K, which is true for the&n;Intel EtherExpress Pro/10.  If it is less than that on a generic card,&n;the driver will be broken.&n;&n;The transmit algorithm in the hardware_send_packet() is similar to the&n;one in the eepro_rx().  The transmit buffer is a ring linked list.&n;I just queue the next available packet to the end of the list.  In my&n;system, the 82595 is so fast that the list seems to always contain a&n;single packet.  In other systems with faster computers and more congested&n;network traffics, the ring linked list should improve performance by&n;allowing up to 8K worth of packets to be queued.&n;&n;*/
+multiline_comment|/*&n;  &t;&t;&t;Details of the i82595.&n;&n;You will need either the datasheet or the user manual to understand what&n;is going on here.  The 82595 is very different from the 82586, 82593.&n;&n;The receive algorithm in eepro_rx() is just an implementation of the&n;RCV ring structure that the Intel 82595 imposes at the hardware level.&n;The receive buffer is set at 24K, and the transmit buffer is 8K.  I&n;am assuming that the total buffer memory is 32K, which is true for the&n;Intel EtherExpress Pro/10.  If it is less than that on a generic card,&n;the driver will be broken.&n;&n;The transmit algorithm in the hardware_send_packet() is similar to the&n;one in the eepro_rx().  The transmit buffer is a ring linked list.&n;I just queue the next available packet to the end of the list.  In my&n;system, the 82595 is so fast that the list seems to always contain a&n;single packet.  In other systems with faster computers and more congested&n;network traffics, the ring linked list should improve performance by&n;allowing up to 8K worth of packets to be queued.&n;&n;The sizes of the receive and transmit buffers can now be changed via lilo &n;or insmod.  Lilo uses the appended line &quot;ether=io,irq,debug,rx-buffer,eth0&quot;&n;where rx-buffer is in KB unit.  Modules uses the parameter mem which is&n;also in KB unit, for example &quot;insmod io=io-address irq=0 mem=rx-buffer.&quot;  &n;The receive buffer has to be more than 3K or less than 29K.  Otherwise,&n;it is reset to the default of 24K, and, hence, 8K for the trasnmit&n;buffer (transmit-buffer = 32K - receive-buffer).&n;&n;*/
 DECL|macro|RAM_SIZE
 mdefine_line|#define&t;RAM_SIZE&t;0x8000
 DECL|macro|RCV_HEADER
 mdefine_line|#define&t;RCV_HEADER&t;8
 DECL|macro|RCV_RAM
-mdefine_line|#define&t;RCV_RAM&t;&t;0x6000&t;/* 24KB for RCV buffer */
+mdefine_line|#define RCV_RAM         0x6000  /* 24KB default for RCV buffer */
 DECL|macro|RCV_LOWER_LIMIT
-mdefine_line|#define&t;RCV_LOWER_LIMIT&t;0x00&t;/* 0x0000 */
+mdefine_line|#define RCV_LOWER_LIMIT 0x00    /* 0x0000 */
+multiline_comment|/* #define RCV_UPPER_LIMIT ((RCV_RAM - 2) &gt;&gt; 8) */
+multiline_comment|/* 0x5ffe */
 DECL|macro|RCV_UPPER_LIMIT
-mdefine_line|#define&t;RCV_UPPER_LIMIT&t;((RCV_RAM - 2) &gt;&gt; 8)&t;/* 0x5ffe */
+mdefine_line|#define RCV_UPPER_LIMIT (((rcv_ram) - 2) &gt;&gt; 8)   
+multiline_comment|/* #define XMT_RAM         (RAM_SIZE - RCV_RAM) */
+multiline_comment|/* 8KB for XMT buffer */
 DECL|macro|XMT_RAM
-mdefine_line|#define&t;XMT_RAM&t;&t;(RAM_SIZE - RCV_RAM)&t;/* 8KB for XMT buffer */
+mdefine_line|#define XMT_RAM         (RAM_SIZE - (rcv_ram))    /* 8KB for XMT buffer */
+multiline_comment|/* #define XMT_LOWER_LIMIT (RCV_RAM &gt;&gt; 8) */
+multiline_comment|/* 0x6000 */
 DECL|macro|XMT_LOWER_LIMIT
-mdefine_line|#define&t;XMT_LOWER_LIMIT&t;(RCV_RAM &gt;&gt; 8)&t;/* 0x6000 */
+mdefine_line|#define XMT_LOWER_LIMIT ((rcv_ram) &gt;&gt; 8) 
 DECL|macro|XMT_UPPER_LIMIT
-mdefine_line|#define&t;XMT_UPPER_LIMIT&t;((RAM_SIZE - 2) &gt;&gt; 8)&t;/* 0x7ffe */
+mdefine_line|#define XMT_UPPER_LIMIT ((RAM_SIZE - 2) &gt;&gt; 8)   /* 0x7ffe */
 DECL|macro|XMT_HEADER
 mdefine_line|#define&t;XMT_HEADER&t;8
 DECL|macro|RCV_DONE
@@ -882,6 +888,54 @@ id|i
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;mem_end
+op_amp
+l_int|0x3f
+)paren
+template_param
+l_int|29
+)paren
+multiline_comment|/* and less than 29K */
+id|dev-&gt;mem_end
+op_assign
+id|RCV_RAM
+suffix:semicolon
+multiline_comment|/* or it will be set to 24K */
+r_else
+id|dev-&gt;mem_end
+op_assign
+l_int|1024
+op_star
+id|dev-&gt;mem_end
+suffix:semicolon
+multiline_comment|/* Maybe I should shift &lt;&lt; 10 */
+multiline_comment|/* From now on, dev-&gt;mem_end contains the actual size of rx buffer */
+r_if
+c_cond
+(paren
+id|net_debug
+OG
+l_int|3
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;, %dK RCV buffer&quot;
+comma
+(paren
+r_int
+)paren
+(paren
+id|dev-&gt;mem_end
+)paren
+op_div
+l_int|1024
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -1095,12 +1149,14 @@ l_int|0xf
 OG
 l_int|0
 )paren
+multiline_comment|/* I don&squot;t know if this is */
 id|net_debug
 op_assign
 id|dev-&gt;mem_start
 op_amp
 l_int|7
 suffix:semicolon
+multiline_comment|/* still useful or not */
 r_if
 c_cond
 (paren
@@ -1663,6 +1719,10 @@ comma
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
+comma
+id|rcv_ram
+op_assign
+id|dev-&gt;mem_end
 suffix:semicolon
 r_struct
 id|eepro_local
@@ -2463,6 +2523,11 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_int
+id|rcv_ram
+op_assign
+id|dev-&gt;mem_end
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2495,7 +2560,7 @@ c_cond
 (paren
 id|tickssofar
 OL
-l_int|5
+l_int|40
 )paren
 r_return
 l_int|1
@@ -2539,7 +2604,7 @@ id|lp-&gt;tx_start
 op_assign
 id|lp-&gt;tx_end
 op_assign
-id|RCV_RAM
+id|rcv_ram
 suffix:semicolon
 id|lp-&gt;tx_last
 op_assign
@@ -2714,7 +2779,7 @@ id|status
 comma
 id|boguscount
 op_assign
-l_int|0
+l_int|20
 suffix:semicolon
 r_if
 c_cond
@@ -2847,26 +2912,16 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
-suffix:semicolon
 )brace
 )brace
 r_while
 c_loop
 (paren
 (paren
-op_increment
 id|boguscount
-OL
-l_int|10
+op_decrement
+OG
+l_int|0
 )paren
 op_logical_and
 (paren
@@ -2924,6 +2979,11 @@ r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
+suffix:semicolon
+r_int
+id|rcv_ram
+op_assign
+id|dev-&gt;mem_end
 suffix:semicolon
 r_int
 id|temp_reg
@@ -2990,7 +3050,7 @@ id|lp-&gt;tx_start
 op_assign
 id|lp-&gt;tx_end
 op_assign
-id|RCV_RAM
+id|rcv_ram
 suffix:semicolon
 id|lp-&gt;tx_last
 op_assign
@@ -3653,12 +3713,14 @@ id|i
 suffix:semicolon
 )brace
 r_else
+(brace
 id|lp-&gt;tx_start
 op_assign
 id|lp-&gt;tx_end
 op_assign
 id|i
 suffix:semicolon
+)brace
 multiline_comment|/* Acknowledge that the MC setup is done */
 r_do
 (brace
@@ -4083,6 +4145,11 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 r_int
+id|rcv_ram
+op_assign
+id|dev-&gt;mem_end
+suffix:semicolon
+r_int
 id|status
 comma
 id|tx_available
@@ -4093,7 +4160,7 @@ id|end
 comma
 id|boguscount
 op_assign
-l_int|10
+l_int|100
 suffix:semicolon
 r_if
 c_cond
@@ -4117,6 +4184,46 @@ OG
 l_int|0
 )paren
 (brace
+multiline_comment|/* Disable RX and TX interrupts.  Necessary to avoid&n;&t;   &t;corruption of the HOST_ADDRESS_REG by interrupt&n;&t;   &t;service routines. */
+id|outb
+c_func
+(paren
+id|ALL_MASK
+comma
+id|ioaddr
+op_plus
+id|INT_MASK_REG
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;interrupt
+op_eq
+l_int|1
+)paren
+(brace
+multiline_comment|/* Enable RX and TX interrupts */
+id|outb
+c_func
+(paren
+id|ALL_MASK
+op_amp
+op_complement
+(paren
+id|RX_MASK
+op_or
+id|TX_MASK
+)paren
+comma
+id|ioaddr
+op_plus
+id|INT_MASK_REG
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 multiline_comment|/* determine how much of the transmit buffer space is available */
 r_if
 c_cond
@@ -4154,17 +4261,6 @@ id|tx_available
 op_assign
 id|XMT_RAM
 suffix:semicolon
-multiline_comment|/* Disable RX and TX interrupts.  Necessary to avoid&n;&t;&t;   corruption of the HOST_ADDRESS_REG by interrupt&n;&t;&t;   service routines. */
-id|outb
-c_func
-(paren
-id|ALL_MASK
-comma
-id|ioaddr
-op_plus
-id|INT_MASK_REG
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4191,8 +4287,35 @@ op_ge
 id|tx_available
 )paren
 multiline_comment|/* No space available ??? */
+(brace
+id|eepro_transmit_interrupt
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Clean up the transmiting queue */
+multiline_comment|/* Enable RX and TX interrupts */
+id|outb
+c_func
+(paren
+id|ALL_MASK
+op_amp
+op_complement
+(paren
+id|RX_MASK
+op_or
+id|TX_MASK
+)paren
+comma
+id|ioaddr
+op_plus
+id|INT_MASK_REG
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
+)brace
 id|last
 op_assign
 id|lp-&gt;tx_end
@@ -4241,7 +4364,7 @@ id|XMT_HEADER
 multiline_comment|/* Arrrr!!!, must keep the xmt header together,&n;&t;&t;&t;  several days were lost to chase this one down. */
 id|last
 op_assign
-id|RCV_RAM
+id|rcv_ram
 suffix:semicolon
 id|end
 op_assign
@@ -4267,7 +4390,7 @@ suffix:semicolon
 r_else
 id|end
 op_assign
-id|RCV_RAM
+id|rcv_ram
 op_plus
 (paren
 id|end
@@ -4412,15 +4535,52 @@ id|INT_MASK_REG
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* A dummy read to flush the DRAM write pipeline */
+id|status
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|IO_PORT
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|lp-&gt;tx_start
-op_ne
+op_eq
 id|lp-&gt;tx_end
 )paren
 (brace
-multiline_comment|/* update the next address and the chain bit in the &n;&t;&t;&t;   last packet */
+id|outw
+c_func
+(paren
+id|last
+comma
+id|ioaddr
+op_plus
+id|XMT_BAR
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|XMT_CMD
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+id|lp-&gt;tx_start
+op_assign
+id|last
+suffix:semicolon
+multiline_comment|/* I don&squot;t like to change tx_start here */
+)brace
+r_else
+(brace
+multiline_comment|/* update the next address and the chain bit in the &n;&t;&t;   &t;last packet */
 r_if
 c_cond
 (paren
@@ -4486,17 +4646,23 @@ op_plus
 id|IO_PORT
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* A dummy read to flush the DRAM write pipeline */
-id|status
-op_assign
-id|inw
+multiline_comment|/* Continue the transmit command */
+id|outb
 c_func
 (paren
+id|RESUME_XMT_CMD
+comma
 id|ioaddr
-op_plus
-id|IO_PORT
 )paren
+suffix:semicolon
+)brace
+id|lp-&gt;tx_last
+op_assign
+id|last
+suffix:semicolon
+id|lp-&gt;tx_end
+op_assign
+id|end
 suffix:semicolon
 multiline_comment|/* Enable RX and TX interrupts */
 id|outb
@@ -4519,67 +4685,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|lp-&gt;tx_start
-op_eq
-id|lp-&gt;tx_end
-)paren
-(brace
-id|outw
-c_func
-(paren
-id|last
-comma
-id|ioaddr
-op_plus
-id|XMT_BAR
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|XMT_CMD
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|lp-&gt;tx_start
-op_assign
-id|last
-suffix:semicolon
-multiline_comment|/* I don&squot;t like to change tx_start here */
-)brace
-r_else
-id|outb
-c_func
-(paren
-id|RESUME_XMT_CMD
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|lp-&gt;tx_last
-op_assign
-id|last
-suffix:semicolon
-id|lp-&gt;tx_end
-op_assign
-id|end
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|dev-&gt;tbusy
 )paren
 (brace
 id|dev-&gt;tbusy
 op_assign
 l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -4644,6 +4755,10 @@ r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
+comma
+id|rcv_ram
+op_assign
+id|dev-&gt;mem_end
 suffix:semicolon
 r_int
 id|boguscount
@@ -5107,7 +5222,7 @@ suffix:semicolon
 r_int
 id|boguscount
 op_assign
-l_int|10
+l_int|20
 suffix:semicolon
 r_int
 id|xmt_status
@@ -5173,12 +5288,6 @@ op_plus
 id|IO_PORT
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -5189,7 +5298,6 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5233,6 +5341,7 @@ id|xmt_status
 op_amp
 l_int|0x000f
 )paren
+(brace
 id|lp-&gt;stats.collisions
 op_add_assign
 (paren
@@ -5241,6 +5350,7 @@ op_amp
 l_int|0x000f
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5252,9 +5362,11 @@ l_int|0x0040
 op_eq
 l_int|0x0
 )paren
+(brace
 id|lp-&gt;stats.tx_heartbeat_errors
 op_increment
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5328,6 +5440,18 @@ id|irq
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|mem
+r_static
+r_int
+id|mem
+op_assign
+(paren
+id|RCV_RAM
+op_div
+l_int|1024
+)paren
+suffix:semicolon
+multiline_comment|/* Size of the rx buffer in KB */
 r_int
 DECL|function|init_module
 id|init_module
@@ -5356,6 +5480,10 @@ suffix:semicolon
 id|dev_eepro.irq
 op_assign
 id|irq
+suffix:semicolon
+id|dev_eepro.mem_end
+op_assign
+id|mem
 suffix:semicolon
 r_if
 c_cond
