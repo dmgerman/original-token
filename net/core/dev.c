@@ -2184,7 +2184,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|backlog.lock
 comma
 id|flags
 )paren
@@ -2202,7 +2202,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|backlog.lock
 comma
 id|flags
 )paren

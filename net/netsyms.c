@@ -512,13 +512,6 @@ c_func
 id|sock_kfree_s
 )paren
 suffix:semicolon
-DECL|variable|skb_queue_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|skb_queue_lock
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_FILTER
 DECL|variable|sk_run_filter
 id|EXPORT_SYMBOL

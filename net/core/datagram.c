@@ -277,12 +277,12 @@ r_int
 r_int
 id|cpu_flags
 suffix:semicolon
-multiline_comment|/* It is the only POTENTIAL race condition&n;&t;&t;   in this function. skb may be stolen by&n;&t;&t;   another receiver after peek, but before&n;&t;&t;   incrementing use count, provided kernel&n;&t;&t;   is reentearble (it is not) or this function&n;&t;&t;   is called by interrupts.&n;&n;&t;&t;   Protect it with global skb spinlock,&n;&t;&t;   though for now even this is overkill.&n;&t;&t;                                --ANK (980728)&n;&t;&t; */
+multiline_comment|/* It is the only POTENTIAL race condition&n;&t;&t;   in this function. skb may be stolen by&n;&t;&t;   another receiver after peek, but before&n;&t;&t;   incrementing use count, provided kernel&n;&t;&t;   is reentearble (it is not) or this function&n;&t;&t;   is called by interrupts.&n;&n;&t;&t;   Protect it with skb queue spinlock,&n;&t;&t;   though for now even this is overkill.&n;&t;&t;                                --ANK (980728)&n;&t;&t; */
 id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|sk-&gt;receive_queue.lock
 comma
 id|cpu_flags
 )paren
@@ -316,7 +316,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|sk-&gt;receive_queue.lock
 comma
 id|cpu_flags
 )paren

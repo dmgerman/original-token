@@ -15,6 +15,10 @@ macro_line|#else
 DECL|macro|local_bh_count
 mdefine_line|#define local_bh_count&t;&t;(cpu_data[smp_processor_id()].bh_count)
 macro_line|#endif
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;(local_bh_count++)
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;(local_bh_count--)
 multiline_comment|/* The locking mechanism for base handlers, to prevent re-entrancy,&n; * is entirely private to an implementation, it should not be&n; * referenced at all outside of this file.&n; */
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)

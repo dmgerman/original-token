@@ -153,24 +153,6 @@ r_int
 suffix:semicolon
 multiline_comment|/*&n; *&t;Functions provided by ip.c&n; */
 r_extern
-r_int
-id|ip_ioctl
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-id|cmd
-comma
-r_int
-r_int
-id|arg
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|ip_build_and_send_pkt
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.76 1998/12/17 11:11:26 davem Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.77 1999/05/29 06:25:57 davem Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1091,6 +1091,16 @@ macro_line|#ifdef CONFIG_OBP_FLASH
 r_extern
 r_int
 id|flash_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUN_AURORA
+r_extern
+r_int
+id|aurora_init
 c_func
 (paren
 r_void
@@ -2305,6 +2315,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_OBP_FLASH
 id|flash_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUN_AURORA
+id|aurora_init
 c_func
 (paren
 )paren

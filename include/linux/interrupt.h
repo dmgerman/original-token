@@ -125,6 +125,9 @@ comma
 DECL|enumerator|SPECIALIX_BH
 id|SPECIALIX_BH
 comma
+DECL|enumerator|AURORA_BH
+id|AURORA_BH
+comma
 DECL|enumerator|ESP_BH
 id|ESP_BH
 comma

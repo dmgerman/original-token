@@ -25,6 +25,7 @@ DECL|struct|sk_buff_head
 r_struct
 id|sk_buff_head
 (brace
+multiline_comment|/* These two members must be first. */
 DECL|member|next
 r_struct
 id|sk_buff
@@ -41,13 +42,17 @@ DECL|member|qlen
 id|__u32
 id|qlen
 suffix:semicolon
-multiline_comment|/* Must be same length as a pointer&n;&t;&t;&t;&t;&t;   for using debugging */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|sk_buff
 r_struct
 id|sk_buff
 (brace
+multiline_comment|/* These two members must be first. */
 DECL|member|next
 r_struct
 id|sk_buff
@@ -1104,6 +1109,13 @@ op_star
 id|list
 )paren
 (brace
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|list-&gt;lock
+)paren
+suffix:semicolon
 id|list-&gt;prev
 op_assign
 (paren
@@ -1191,10 +1203,6 @@ op_assign
 id|newsk
 suffix:semicolon
 )brace
-r_extern
-id|spinlock_t
-id|skb_queue_lock
-suffix:semicolon
 DECL|function|skb_queue_head
 r_extern
 id|__inline__
@@ -1221,7 +1229,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
@@ -1238,7 +1246,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
@@ -1334,7 +1342,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
@@ -1351,7 +1359,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
@@ -1472,7 +1480,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
@@ -1489,7 +1497,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
@@ -1578,7 +1586,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|old-&gt;list-&gt;lock
 comma
 id|flags
 )paren
@@ -1599,7 +1607,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|old-&gt;list-&gt;lock
 comma
 id|flags
 )paren
@@ -1663,7 +1671,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|old-&gt;list-&gt;lock
 comma
 id|flags
 )paren
@@ -1680,7 +1688,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|old-&gt;list-&gt;lock
 comma
 id|flags
 )paren
@@ -1759,6 +1767,19 @@ op_star
 id|skb
 )paren
 (brace
+r_struct
+id|sk_buff_head
+op_star
+id|list
+op_assign
+id|skb-&gt;list
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|list
+)paren
+(brace
 r_int
 r_int
 id|flags
@@ -1767,7 +1788,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
@@ -1776,6 +1797,8 @@ r_if
 c_cond
 (paren
 id|skb-&gt;list
+op_eq
+id|list
 )paren
 (brace
 id|__skb_unlink
@@ -1791,11 +1814,12 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* XXX: more streamlined implementation */
 DECL|function|__skb_dequeue_tail
@@ -1868,7 +1892,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
@@ -1885,7 +1909,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|skb_queue_lock
+id|list-&gt;lock
 comma
 id|flags
 )paren
