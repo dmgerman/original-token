@@ -548,11 +548,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|outb_p
 c_func
 (paren
@@ -627,6 +629,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 )brace
 multiline_comment|/*&n; * Auto-detect the IDE controller port.&n; */
 DECL|function|findPort
@@ -647,17 +650,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* local CPU only */
+id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_for
 c_loop
 (paren
@@ -753,12 +758,13 @@ comma
 id|basePort
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_if
 c_cond
 (paren
@@ -784,12 +790,13 @@ id|basePort
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_return
 l_int|0
 suffix:semicolon
@@ -814,17 +821,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* local CPU only */
+id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 id|outb_p
 c_func
 (paren
@@ -881,12 +890,13 @@ comma
 id|basePort
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_return
 id|t
 suffix:semicolon

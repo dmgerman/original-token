@@ -2086,9 +2086,10 @@ c_cond
 (paren
 id|lo-&gt;lo_encrypt_key_size
 op_logical_and
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 (brace

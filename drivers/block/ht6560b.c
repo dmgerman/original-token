@@ -175,16 +175,18 @@ id|current_timing
 op_assign
 id|timing
 suffix:semicolon
-id|save_flags
+id|__save_flags
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* local CPU only */
+id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 (paren
 r_void
 )paren
@@ -262,11 +264,12 @@ id|inb
 id|IDE_STATUS_REG
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 macro_line|#ifdef DEBUG
 id|printk
 c_func

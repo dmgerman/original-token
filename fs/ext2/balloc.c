@@ -1378,9 +1378,10 @@ id|sb-&gt;u.ext2_sb.s_resgid
 )paren
 op_logical_and
 op_logical_neg
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_SYS_RESOURCE
 )paren
 )paren
 )paren

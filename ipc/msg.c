@@ -2499,11 +2499,13 @@ op_ne
 id|ipcp-&gt;uid
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
+multiline_comment|/* We _could_ check for CAP_CHOWN above, but we don&squot;t */
 r_goto
 id|out
 suffix:semicolon
@@ -2515,9 +2517,10 @@ OG
 id|MSGMNB
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_RESOURCE
 )paren
 )paren
 r_goto
@@ -2581,9 +2584,10 @@ op_ne
 id|ipcp-&gt;uid
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 r_goto

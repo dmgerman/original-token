@@ -1350,7 +1350,18 @@ op_amp
 id|DRQ_STAT
 )paren
 (brace
-multiline_comment|/*                    unsigned long flags;&n;                    save_flags(flags);&n;                    cli();&n;                    disable_irq(HWIF(drive)-&gt;irq);&n;*/
+id|disable_irq
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|irq
+)paren
+suffix:semicolon
 id|ide_intr
 c_func
 (paren
@@ -1371,7 +1382,18 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/*                    enable_irq(HWIF(drive)-&gt;irq);&n;                    restore_flags(flags);&n;*/
+id|enable_irq
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|irq
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1465,11 +1487,12 @@ c_cond
 op_logical_neg
 id|drive-&gt;unmask
 )paren
-id|cli
+id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 id|HWGROUP
 c_func
 (paren

@@ -5795,9 +5795,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 (brace
@@ -5809,7 +5810,7 @@ id|EPERM
 comma
 id|ft_t_info
 comma
-l_string|&quot;only the superuser may send raw qic-117 commands&quot;
+l_string|&quot;need CAP_SYS_ADMIN capability to send raw qic-117 commands&quot;
 )paren
 suffix:semicolon
 )brace

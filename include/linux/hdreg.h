@@ -64,7 +64,7 @@ mdefine_line|#define WIN_FORMAT&t;&t;0x50
 DECL|macro|WIN_INIT
 mdefine_line|#define WIN_INIT&t;&t;0x60
 DECL|macro|WIN_SEEK
-mdefine_line|#define WIN_SEEK &t;&t;0x70
+mdefine_line|#define WIN_SEEK&t;&t;0x70
 DECL|macro|WIN_DIAGNOSE
 mdefine_line|#define WIN_DIAGNOSE&t;&t;0x90
 DECL|macro|WIN_SPECIFY
@@ -167,18 +167,20 @@ DECL|macro|HDIO_GET_UNMASKINTR
 mdefine_line|#define HDIO_GET_UNMASKINTR&t;0x0302&t;/* get current unmask setting */
 DECL|macro|HDIO_GET_MULTCOUNT
 mdefine_line|#define HDIO_GET_MULTCOUNT&t;0x0304&t;/* get current IDE blockmode setting */
-DECL|macro|HDIO_GET_IDENTITY
-mdefine_line|#define HDIO_GET_IDENTITY &t;0x0307&t;/* get IDE identification info */
+DECL|macro|HDIO_OBSOLETE_IDENTITY
+mdefine_line|#define HDIO_OBSOLETE_IDENTITY&t;0x0307&t;/* OBSOLETE, DO NOT USE: returns 142 bytes */
 DECL|macro|HDIO_GET_KEEPSETTINGS
-mdefine_line|#define HDIO_GET_KEEPSETTINGS &t;0x0308&t;/* get keep-settings-on-reset flag */
+mdefine_line|#define HDIO_GET_KEEPSETTINGS&t;0x0308&t;/* get keep-settings-on-reset flag */
 DECL|macro|HDIO_GET_32BIT
-mdefine_line|#define HDIO_GET_32BIT &t;&t;0x0309&t;/* get current io_32bit setting */
+mdefine_line|#define HDIO_GET_32BIT&t;&t;0x0309&t;/* get current io_32bit setting */
 DECL|macro|HDIO_GET_NOWERR
 mdefine_line|#define HDIO_GET_NOWERR&t;&t;0x030a&t;/* get ignore-write-error flag */
 DECL|macro|HDIO_GET_DMA
 mdefine_line|#define HDIO_GET_DMA&t;&t;0x030b&t;/* get use-dma flag */
 DECL|macro|HDIO_GET_NICE
 mdefine_line|#define HDIO_GET_NICE&t;&t;0x030c&t;/* get nice flags */
+DECL|macro|HDIO_GET_IDENTITY
+mdefine_line|#define HDIO_GET_IDENTITY&t;0x030d&t;/* get IDE identification info */
 DECL|macro|HDIO_DRIVE_CMD
 mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x031f&t;/* execute a special drive command */
 multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x032n/0x033n */

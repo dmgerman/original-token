@@ -1115,6 +1115,7 @@ DECL|variable|sense_key_texts
 r_const
 r_char
 op_star
+r_const
 id|sense_key_texts
 (braket
 l_int|16
@@ -1156,6 +1157,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* From Table 37 of the ATAPI 2.6 draft standard. */
+r_const
 r_struct
 (brace
 DECL|member|packet_command
@@ -1167,6 +1169,7 @@ DECL|member|text
 r_const
 r_char
 op_star
+r_const
 id|text
 suffix:semicolon
 DECL|variable|packet_command_texts
@@ -1329,6 +1332,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* From Table 125 of the ATAPI 1.2 spec.,&n;   with additions from Tables 141 and 142 of the ATAPI 2.6 draft standard. */
+r_const
 r_struct
 (brace
 DECL|member|asc_ascq
@@ -1340,6 +1344,7 @@ DECL|member|text
 r_const
 r_char
 op_star
+r_const
 id|text
 suffix:semicolon
 DECL|variable|sense_data_texts

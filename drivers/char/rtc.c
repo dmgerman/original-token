@@ -654,9 +654,10 @@ l_int|64
 op_logical_and
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_RESOURCE
 )paren
 )paren
 )paren
@@ -984,9 +985,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_TIME
 )paren
 )paren
 r_return
@@ -1447,9 +1449,10 @@ l_int|64
 op_logical_and
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_RESOURCE
 )paren
 )paren
 )paren
@@ -1579,9 +1582,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_TIME
 )paren
 )paren
 r_return

@@ -2051,9 +2051,10 @@ op_ne
 id|dir-&gt;i_uid
 op_logical_and
 op_logical_neg
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_FOWNER
 )paren
 )paren
 r_goto
@@ -2365,9 +2366,10 @@ op_ne
 id|dir-&gt;i_uid
 op_logical_and
 op_logical_neg
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_FOWNER
 )paren
 )paren
 r_goto
@@ -3132,9 +3134,10 @@ op_ne
 id|old_dir-&gt;i_uid
 op_logical_and
 op_logical_neg
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_FOWNER
 )paren
 )paren
 r_goto
@@ -3308,9 +3311,10 @@ op_ne
 id|new_dir-&gt;i_uid
 op_logical_and
 op_logical_neg
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_FOWNER
 )paren
 )paren
 r_goto

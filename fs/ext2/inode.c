@@ -3799,9 +3799,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_LINUX_IMMUTABLE
 )paren
 )paren
 r_goto
@@ -3819,9 +3820,10 @@ id|inode-&gt;i_uid
 )paren
 op_logical_and
 op_logical_neg
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_FOWNER
 )paren
 )paren
 r_goto

@@ -309,6 +309,46 @@ id|special_t
 id|special
 suffix:semicolon
 multiline_comment|/* special action flags */
+DECL|member|keep_settings
+id|byte
+id|keep_settings
+suffix:semicolon
+multiline_comment|/* restore settings after drive reset */
+DECL|member|using_dma
+id|byte
+id|using_dma
+suffix:semicolon
+multiline_comment|/* disk is using dma for read/write */
+DECL|member|waiting_for_dma
+id|byte
+id|waiting_for_dma
+suffix:semicolon
+multiline_comment|/* dma currently in progress */
+DECL|member|unmask
+id|byte
+id|unmask
+suffix:semicolon
+multiline_comment|/* flag: okay to unmask other irqs */
+DECL|member|slow
+id|byte
+id|slow
+suffix:semicolon
+multiline_comment|/* flag: slow data port */
+DECL|member|bswap
+id|byte
+id|bswap
+suffix:semicolon
+multiline_comment|/* flag: byte swap data */
+DECL|member|dsc_overlap
+id|byte
+id|dsc_overlap
+suffix:semicolon
+multiline_comment|/* flag: DSC overlap */
+DECL|member|nice1
+id|byte
+id|nice1
+suffix:semicolon
+multiline_comment|/* flag: give potential excess bandwidth */
 DECL|member|present
 r_int
 id|present
@@ -323,11 +363,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* from:  hdx=noprobe */
-DECL|member|keep_settings
-id|byte
-id|keep_settings
-suffix:semicolon
-multiline_comment|/* restore settings after drive reset */
 DECL|member|busy
 r_int
 id|busy
@@ -342,11 +377,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* 1 if need to do check_media_change */
-DECL|member|using_dma
-id|byte
-id|using_dma
-suffix:semicolon
-multiline_comment|/* disk is using dma for read/write */
 DECL|member|forced_geom
 r_int
 id|forced_geom
@@ -354,11 +384,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* 1 if hdx=c,h,s was given at boot */
-DECL|member|unmask
-id|byte
-id|unmask
-suffix:semicolon
-multiline_comment|/* flag: okay to unmask other irqs */
 DECL|member|no_unmask
 r_int
 id|no_unmask
@@ -380,18 +405,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* flag: do not probe bios for drive */
-DECL|member|slow
-id|byte
-id|slow
-suffix:semicolon
-multiline_comment|/* flag: slow data port */
-DECL|member|autotune
-r_int
-id|autotune
-suffix:colon
-l_int|2
-suffix:semicolon
-multiline_comment|/* 1=autotune, 2=noautotune, 0=default */
 DECL|member|revalidate
 r_int
 id|revalidate
@@ -399,16 +412,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* request revalidation */
-DECL|member|bswap
-id|byte
-id|bswap
-suffix:semicolon
-multiline_comment|/* flag: byte swap data */
-DECL|member|dsc_overlap
-id|byte
-id|dsc_overlap
-suffix:semicolon
-multiline_comment|/* flag: DSC overlap */
 DECL|member|atapi_overlap
 r_int
 id|atapi_overlap
@@ -423,11 +426,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* flag: give obvious excess bandwidth */
-DECL|member|nice1
-id|byte
-id|nice1
-suffix:semicolon
-multiline_comment|/* flag: give potential excess bandwidth */
 DECL|member|nice2
 r_int
 id|nice2
@@ -435,6 +433,20 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* flag: give a share in our own bandwidth */
+DECL|member|doorlocking
+r_int
+id|doorlocking
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: for removable only: door lock/unlock works */
+DECL|member|autotune
+r_int
+id|autotune
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* 1=autotune, 2=noautotune, 0=default */
 macro_line|#if FAKE_FDISK_FOR_EZDRIVE
 DECL|member|remap_0_to_1
 r_int
@@ -641,6 +653,9 @@ comma
 id|ide_dma_off
 comma
 id|ide_dma_off_quietly
+comma
+DECL|enumerator|ide_dma_test_irq
+id|ide_dma_test_irq
 DECL|typedef|ide_dma_action_t
 )brace
 id|ide_dma_action_t
@@ -967,12 +982,22 @@ r_typedef
 r_struct
 id|hwgroup_s
 (brace
+DECL|member|spinlock
+id|spinlock_t
+id|spinlock
+suffix:semicolon
+multiline_comment|/* protects &quot;busy&quot; and &quot;handler&quot; */
 DECL|member|handler
 id|ide_handler_t
 op_star
 id|handler
 suffix:semicolon
 multiline_comment|/* irq handler, if active */
+DECL|member|busy
+r_int
+id|busy
+suffix:semicolon
+multiline_comment|/* BOOL: protects all fields below */
 DECL|member|drive
 id|ide_drive_t
 op_star
@@ -1010,11 +1035,6 @@ r_int
 id|poll_timeout
 suffix:semicolon
 multiline_comment|/* timeout value during long polls */
-DECL|member|active
-r_int
-id|active
-suffix:semicolon
-multiline_comment|/* set when servicing requests */
 DECL|typedef|ide_hwgroup_t
 )brace
 id|ide_hwgroup_t
@@ -1121,6 +1141,7 @@ id|ide_drive_t
 op_star
 id|drive
 comma
+r_const
 r_char
 op_star
 id|name
@@ -1967,6 +1988,25 @@ id|kdev_t
 id|dev
 )paren
 suffix:semicolon
+r_int
+id|ide_spin_wait_hwgroup
+c_func
+(paren
+r_const
+r_char
+op_star
+id|msg
+comma
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+r_int
+op_star
+id|flags
+)paren
+suffix:semicolon
 r_void
 id|ide_timer_expiry
 (paren
@@ -2062,6 +2102,14 @@ id|ide_fops
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef _IDE_C
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+r_int
+id|ideprobe_init
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDE */
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDISK
 r_int
 id|idedisk_init
@@ -2244,11 +2292,6 @@ r_int
 r_int
 id|ide_get_or_set_dma_base
 (paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-comma
 id|ide_hwif_t
 op_star
 id|hwif
@@ -2264,14 +2307,6 @@ id|name
 id|__init
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
-r_int
-id|ideprobe_init
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDE */
 macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 macro_line|#include &quot;pdc4030.h&quot;
 DECL|macro|IS_PDC4030_DRIVE

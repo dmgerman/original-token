@@ -51,11 +51,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|outb_p
 c_func
 (paren
@@ -102,6 +104,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 )brace
 DECL|function|init_qd6580
 r_void

@@ -5782,16 +5782,12 @@ id|mm
 op_eq
 id|current-&gt;mm
 )paren
-(brace
-id|get_mmu_context
+id|activate_context
 c_func
 (paren
 id|current
 )paren
 suffix:semicolon
-multiline_comment|/* done by get_mmu_context() now -- Cort */
-multiline_comment|/*set_context(current-&gt;mm-&gt;context);*/
-)brace
 macro_line|#else
 id|asm
 r_volatile

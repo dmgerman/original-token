@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Generic parallel printer driver&n; *&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; * Support for parport by Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; * parport_sharing hacking by Andrea Arcangeli &lt;arcangeli@mbox.queen.it&gt;&n; * Fixed kernel_(to/from)_user memory copy to check for errors&n; * &t;&t;&t;&t;by Riccardo Facchetti &lt;fizban@tin.it&gt;&n; */
+multiline_comment|/*&n; * Generic parallel printer driver&n; *&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; * Support for parport by Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; * Parport sharing hacking by Andrea Arcangeli &lt;arcangeli@mbox.queen.it&gt;&n; * Fixed kernel_(to/from)_user memory copy to check for errors&n; * &t;&t;&t;&t;by Riccardo Facchetti &lt;fizban@tin.it&gt;&n; */
 multiline_comment|/* This driver should, in theory, work with any parallel port that has an&n; * appropriate low-level driver; all I/O is done through the parport&n; * abstraction layer.&n; *&n; * If this driver is built into the kernel, you can configure it using the&n; * kernel command-line.  For example:&n; *&n; *&t;lp=parport1,none,parport2&t;(bind lp0 to parport1, disable lp1 and&n; *&t;&t;&t;&t;&t; bind lp2 to parport2)&n; *&n; *&t;lp=auto&t;&t;&t;&t;(assign lp devices to all ports that&n; *&t;&t;&t;&t;         have printers attached, as determined&n; *&t;&t;&t;&t;&t; by the IEEE-1284 autoprobe)&n; * &n; *&t;lp=reset&t;&t;&t;(reset the printer during &n; *&t;&t;&t;&t;&t; initialisation)&n; *&n; *&t;lp=off&t;&t;&t;&t;(disable the printer driver entirely)&n; *&n; * If the driver is loaded as a module, similar functionality is available&n; * using module parameters.  The equivalent of the above commands would be:&n; *&n; *&t;# insmod lp.o parport=1,none,2&n; *&n; *&t;# insmod lp.o parport=auto&n; *&n; *&t;# insmod lp.o reset=1&n; */
 multiline_comment|/* COMPATIBILITY WITH OLD KERNELS&n; *&n; * Under Linux 2.0 and previous versions, lp devices were bound to ports at&n; * particular I/O addresses, as follows:&n; *&n; *&t;lp0&t;&t;0x3bc&n; *&t;lp1&t;&t;0x378&n; *&t;lp2&t;&t;0x278&n; *&n; * The new driver, by default, binds lp devices to parport devices as it&n; * finds them.  This means that if you only have one port, it will be bound&n; * to lp0 regardless of its I/O address.  If you need the old behaviour, you&n; * can force it using the parameters described above.&n; */
 macro_line|#include &lt;linux/module.h&gt;
@@ -12,6 +12,10 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
+DECL|macro|LP_STATS
+macro_line|#undef LP_STATS
+DECL|macro|LP_NEED_CAREFUL
+macro_line|#undef LP_NEED_CAREFUL
 macro_line|#include &lt;linux/lp.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -51,8 +55,7 @@ id|LP_INIT_WAIT
 comma
 l_int|NULL
 comma
-l_int|0
-comma
+macro_line|#ifdef LP_STATS
 l_int|0
 comma
 l_int|0
@@ -60,16 +63,24 @@ comma
 (brace
 l_int|0
 )brace
+comma
+macro_line|#endif
+l_int|NULL
+comma
+l_int|0
 )brace
 )brace
 suffix:semicolon
 multiline_comment|/* Test if printer is ready (and optionally has no error conditions) */
+macro_line|#ifdef LP_NEED_CAREFUL
 DECL|macro|LP_READY
-mdefine_line|#define LP_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : (status &amp; LP_PBUSY))
-DECL|macro|LP_CAREFUL_READY
-mdefine_line|#define LP_CAREFUL_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : 1)
+mdefine_line|#define LP_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : ((status) &amp; LP_PBUSY))
 DECL|macro|_LP_CAREFUL_READY
-mdefine_line|#define _LP_CAREFUL_READY(status) &bslash;&n;   (status &amp; (LP_PBUSY|LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PBUSY|LP_PSELECD|LP_PERRORP)
+mdefine_line|#define _LP_CAREFUL_READY(status) &bslash;&n;   ((status) &amp; (LP_PBUSY|LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PBUSY|LP_PSELECD|LP_PERRORP)
+macro_line|#else
+DECL|macro|LP_READY
+mdefine_line|#define LP_READY(minor, status) ((status) &amp; LP_PBUSY)
+macro_line|#endif
 DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
 DECL|macro|LP_READ_DEBUG
@@ -104,14 +115,14 @@ c_cond
 id|waitqueue_active
 (paren
 op_amp
-id|lps-&gt;dev-&gt;wait_q
+id|lps-&gt;wait_q
 )paren
 )paren
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|lps-&gt;dev-&gt;wait_q
+id|lps-&gt;wait_q
 )paren
 suffix:semicolon
 multiline_comment|/* Don&squot;t actually release the port now */
@@ -311,6 +322,7 @@ id|minor
 )paren
 (brace
 r_int
+r_char
 id|status
 suffix:semicolon
 r_int
@@ -325,11 +337,13 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef LP_STATS
 r_struct
 id|lp_stats
 op_star
 id|stats
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -353,6 +367,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|LP_READY
+c_func
+(paren
+id|minor
+comma
+id|status
+)paren
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|LP_POLLED
+c_func
+(paren
+id|minor
+)paren
+op_logical_or
 op_increment
 id|count
 op_eq
@@ -361,55 +395,16 @@ c_func
 (paren
 id|minor
 )paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|LP_POLLING
+op_logical_or
+id|signal_pending
 c_func
 (paren
-id|minor
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|LP_READY
-c_func
-(paren
-id|minor
-comma
-id|status
-)paren
-)paren
-r_break
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|LP_READY
-c_func
-(paren
-id|minor
-comma
-id|status
+id|current
 )paren
 )paren
 r_return
 l_int|0
 suffix:semicolon
-r_else
-r_break
-suffix:semicolon
-)brace
 )brace
 id|w_dtr
 c_func
@@ -419,6 +414,7 @@ comma
 id|lpchar
 )paren
 suffix:semicolon
+macro_line|#ifdef LP_STATS
 id|stats
 op_assign
 op_amp
@@ -431,6 +427,7 @@ suffix:semicolon
 id|stats-&gt;chars
 op_increment
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* must wait before taking strobe high, and after taking strobe&n;&t;   low, according spec.  Some printers need it, others don&squot;t. */
 macro_line|#ifndef __sparc__
 r_while
@@ -498,6 +495,7 @@ op_or
 id|LP_PINITP
 )paren
 suffix:semicolon
+macro_line|#ifdef LP_STATS
 multiline_comment|/* update waittime statistics */
 r_if
 c_cond
@@ -576,6 +574,7 @@ l_int|64
 op_div
 l_int|128
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -617,14 +616,14 @@ c_cond
 id|waitqueue_active
 (paren
 op_amp
-id|lp_dev-&gt;dev-&gt;wait_q
+id|lp_dev-&gt;wait_q
 )paren
 )paren
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|lp_dev-&gt;dev-&gt;wait_q
+id|lp_dev-&gt;wait_q
 )paren
 suffix:semicolon
 )brace
@@ -641,7 +640,7 @@ id|minor
 r_if
 c_cond
 (paren
-id|LP_POLLING
+id|LP_POLLED
 c_func
 (paren
 id|minor
@@ -693,12 +692,16 @@ r_int
 id|minor
 )paren
 (brace
-r_static
 r_int
-r_char
+r_int
 id|last
 op_assign
-l_int|0
+id|lp_table
+(braket
+id|minor
+)braket
+dot
+id|last_error
 suffix:semicolon
 r_int
 r_char
@@ -818,6 +821,15 @@ id|last
 op_assign
 l_int|0
 suffix:semicolon
+id|lp_table
+(braket
+id|minor
+)braket
+dot
+id|last_error
+op_assign
+id|last
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -853,7 +865,6 @@ suffix:semicolon
 )brace
 DECL|function|lp_write_buf
 r_static
-r_inline
 r_int
 id|lp_write_buf
 c_func
@@ -914,18 +925,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|lp_table
-(braket
-id|minor
-)braket
-dot
-id|dev
+id|lp-&gt;dev
 op_eq
 l_int|NULL
 )paren
 r_return
 op_minus
 id|ENXIO
+suffix:semicolon
+id|lp_table
+(braket
+id|minor
+)braket
+dot
+id|last_error
+op_assign
+l_int|0
 suffix:semicolon
 r_do
 (brace
@@ -990,14 +1005,11 @@ suffix:semicolon
 op_increment
 id|bytes_written
 suffix:semicolon
-id|lp_table
-(braket
-id|minor
-)braket
-dot
-id|runchars
+macro_line|#ifdef LP_STATS
+id|lp-&gt;runchars
 op_increment
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -1008,15 +1020,11 @@ id|total_bytes_written
 op_plus
 id|bytes_written
 suffix:semicolon
+macro_line|#ifdef LP_STATS
 r_if
 c_cond
 (paren
-id|lp_table
-(braket
-id|minor
-)braket
-dot
-id|runchars
+id|lp-&gt;runchars
 OG
 id|LP_STAT
 c_func
@@ -1034,12 +1042,7 @@ id|minor
 dot
 id|maxrun
 op_assign
-id|lp_table
-(braket
-id|minor
-)braket
-dot
-id|runchars
+id|lp-&gt;runchars
 suffix:semicolon
 id|LP_STAT
 c_func
@@ -1050,18 +1053,51 @@ dot
 id|sleeps
 op_increment
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
-id|LP_POLLING
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|total_bytes_written
+op_plus
+id|bytes_written
+)paren
+r_return
+id|total_bytes_written
+op_plus
+id|bytes_written
+suffix:semicolon
+r_else
+r_return
+op_minus
+id|EINTR
+suffix:semicolon
+)brace
+macro_line|#ifdef LP_STATS
+id|lp-&gt;runchars
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|LP_POLLED
 c_func
 (paren
 id|minor
 )paren
 )paren
 (brace
-id|lp_polling
-suffix:colon
 r_if
 c_cond
 (paren
@@ -1080,7 +1116,9 @@ suffix:colon
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#ifdef LP_DEBUG
+id|lp_polling
+suffix:colon
+macro_line|#if defined(LP_DEBUG) &amp;&amp; defined(LP_STATS)
 id|printk
 c_func
 (paren
@@ -1089,12 +1127,7 @@ l_string|&quot;lp%d sleeping at %d characters for %d jiffies&bslash;n&quot;
 comma
 id|minor
 comma
-id|lp_table
-(braket
-id|minor
-)braket
-dot
-id|runchars
+id|lp-&gt;runchars
 comma
 id|LP_TIME
 c_func
@@ -1141,6 +1174,7 @@ id|minor
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * We can&squot; t sleep on the interrupt&n;&t;&t;&t;&t;&t;&t; * since another pardevice need the port.&n;&t;&t;&t;&t;&t;&t; */
 id|sti
 c_func
 (paren
@@ -1150,12 +1184,6 @@ r_goto
 id|lp_polling
 suffix:semicolon
 )brace
-id|enable_irq
-c_func
-(paren
-id|lp-&gt;dev-&gt;port-&gt;irq
-)paren
-suffix:semicolon
 id|w_ctr
 c_func
 (paren
@@ -1179,7 +1207,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 op_logical_neg
 (paren
 id|status
@@ -1193,16 +1220,8 @@ op_amp
 id|LP_PBUSY
 )paren
 )paren
-op_logical_and
-id|LP_CAREFUL_READY
-c_func
-(paren
-id|minor
-comma
-id|status
-)paren
-)paren
 (brace
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * The interrupt is happened in the&n;&t;&t;&t;&t;&t;&t; * meantime so don&squot; t wait for it.&n;&t;&t;&t;&t;&t;&t; */
 id|w_ctr
 c_func
 (paren
@@ -1231,13 +1250,7 @@ id|interruptible_sleep_on
 c_func
 (paren
 op_amp
-id|lp-&gt;dev-&gt;wait_q
-)paren
-suffix:semicolon
-id|disable_irq
-c_func
-(paren
-id|lp-&gt;dev-&gt;port-&gt;irq
+id|lp-&gt;wait_q
 )paren
 suffix:semicolon
 id|w_ctr
@@ -1272,43 +1285,6 @@ id|rc
 suffix:colon
 op_minus
 id|EIO
-suffix:semicolon
-)brace
-id|lp_table
-(braket
-id|minor
-)braket
-dot
-id|runchars
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|signal_pending
-c_func
-(paren
-id|current
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|total_bytes_written
-op_plus
-id|bytes_written
-)paren
-r_return
-id|total_bytes_written
-op_plus
-id|bytes_written
-suffix:semicolon
-r_else
-r_return
-op_minus
-id|EINTR
 suffix:semicolon
 )brace
 )brace
@@ -1375,6 +1351,7 @@ suffix:semicolon
 id|ssize_t
 id|retv
 suffix:semicolon
+macro_line|#ifdef LP_STATS
 r_if
 c_cond
 (paren
@@ -1411,6 +1388,7 @@ id|lastcall
 op_assign
 id|jiffies
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Claim Parport or sleep until it becomes available&n; &t; */
 id|lp_parport_claim
 (paren
@@ -2135,10 +2113,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|test_and_set_bit
+c_func
+(paren
+id|LP_BUSY_BIT_POS
+comma
+op_amp
 id|LP_F
 c_func
 (paren
 id|minor
+)paren
 )paren
 op_amp
 id|LP_BUSY
@@ -2146,14 +2131,6 @@ id|LP_BUSY
 r_return
 op_minus
 id|EBUSY
-suffix:semicolon
-id|LP_F
-c_func
-(paren
-id|minor
-)paren
-op_or_assign
-id|LP_BUSY
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -2408,6 +2385,8 @@ id|lp_buffer
 op_assign
 l_int|NULL
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 id|LP_F
 c_func
 (paren
@@ -2416,8 +2395,6 @@ id|minor
 op_and_assign
 op_complement
 id|LP_BUSY
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -2603,6 +2580,7 @@ id|LP_ABORTOPEN
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef LP_NEED_CAREFUL
 r_case
 id|LPCAREFUL
 suffix:colon
@@ -2631,6 +2609,7 @@ id|LP_CAREFUL
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|LPWAIT
 suffix:colon
@@ -2748,6 +2727,7 @@ id|minor
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef LP_STATS
 r_case
 id|LPGETSTATS
 suffix:colon
@@ -2810,6 +2790,7 @@ id|lp_stats
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|LPGETFLAGS
 suffix:colon

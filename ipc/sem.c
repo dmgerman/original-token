@@ -2221,9 +2221,10 @@ id|current-&gt;euid
 op_eq
 id|ipcp-&gt;uid
 op_logical_or
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 (brace
@@ -2556,9 +2557,10 @@ id|current-&gt;euid
 op_eq
 id|ipcp-&gt;uid
 op_logical_or
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 (brace

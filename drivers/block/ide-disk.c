@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.04  Jan   7, 1998&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Version 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Version 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; * Version 1.04&t;&t;add /proc configurable settings and S.M.A.R.T support&n; * Version 1.05&t;&t;add capacity support for ATA3 &gt;= 8GB&n; * Version 1.06&t;&t;get boot-up messages to show full cyl count&n; */
+multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Version 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Version 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; * Version 1.04&t;&t;add /proc configurable settings and S.M.A.R.T support&n; * Version 1.05&t;&t;add capacity support for ATA3 &gt;= 8GB&n; * Version 1.06&t;&t;get boot-up messages to show full cyl count&n; * Version 1.07&t;&t;disable door-locking if it fails&n; */
 DECL|macro|IDEDISK_VERSION
-mdefine_line|#define IDEDISK_VERSION&t;&quot;1.06&quot;
+mdefine_line|#define IDEDISK_VERSION&t;&quot;1.07&quot;
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -1685,6 +1685,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_if
 c_cond
 (paren
@@ -1811,9 +1812,11 @@ id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Ignore the return code from door_lock,&n;&t;&t; * since the open() has already succeeded,&n;&t;&t; * and the door_lock is irrelevant at this point.&n;&t;&t; */
+r_if
+c_cond
 (paren
-r_void
-)paren
+id|drive-&gt;doorlocking
+op_logical_and
 id|ide_wait_cmd
 c_func
 (paren
@@ -1829,6 +1832,10 @@ l_int|0
 comma
 l_int|NULL
 )paren
+)paren
+id|drive-&gt;doorlocking
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_return
@@ -1870,9 +1877,11 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_if
+c_cond
 (paren
-r_void
-)paren
+id|drive-&gt;doorlocking
+op_logical_and
 id|ide_wait_cmd
 c_func
 (paren
@@ -1888,6 +1897,10 @@ l_int|0
 comma
 l_int|NULL
 )paren
+)paren
+id|drive-&gt;doorlocking
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
@@ -2950,6 +2963,28 @@ r_int
 id|arg
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ide_spin_wait_hwgroup
+c_func
+(paren
+l_string|&quot;set_nowerr&quot;
+comma
+id|drive
+comma
+op_amp
+id|flags
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 id|drive-&gt;nowerr
 op_assign
 id|arg
@@ -2962,6 +2997,21 @@ c_cond
 id|BAD_R_STAT
 suffix:colon
 id|BAD_W_STAT
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|spinlock
+comma
+id|flags
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -3466,33 +3516,17 @@ l_int|1
 op_ne
 l_char|&squot;D&squot;
 )paren
+(brace
 id|drive-&gt;removable
+op_assign
+l_int|1
+suffix:semicolon
+id|drive-&gt;doorlocking
 op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* SunDisk drives: treat as non-removable;   can mess up non-Sun systems!  FIXME */
-r_if
-c_cond
-(paren
-id|id-&gt;model
-(braket
-l_int|0
-)braket
-op_eq
-l_char|&squot;S&squot;
-op_logical_and
-id|id-&gt;model
-(braket
-l_int|1
-)braket
-op_eq
-l_char|&squot;u&squot;
-)paren
-id|drive-&gt;removable
-op_assign
-l_int|0
-suffix:semicolon
+)brace
 multiline_comment|/* Extract geometry if we did not already have one for the drive */
 r_if
 c_cond
@@ -3680,6 +3714,7 @@ op_assign
 id|drive-&gt;cyl
 suffix:semicolon
 )brace
+macro_line|#if 0&t;/* done instead for entire identify block in arch/ide.h stuff */
 multiline_comment|/* fix byte-ordering of buffer size field */
 id|id-&gt;buf_size
 op_assign
@@ -3689,6 +3724,7 @@ c_func
 id|id-&gt;buf_size
 )paren
 suffix:semicolon
+macro_line|#endif
 id|printk
 (paren
 id|KERN_INFO

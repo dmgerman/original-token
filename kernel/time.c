@@ -140,9 +140,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_TIME
 )paren
 )paren
 r_return
@@ -342,9 +343,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_TIME
 )paren
 )paren
 r_return
@@ -631,9 +633,10 @@ c_cond
 id|txc-&gt;modes
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_TIME
 )paren
 )paren
 r_return

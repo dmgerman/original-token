@@ -723,11 +723,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|reg_base
 op_assign
 id|hwif-&gt;io_ports
@@ -862,6 +864,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 )brace
 multiline_comment|/*&n; * ide_init_opti621() is called once for each hwif found at boot.&n; */
 DECL|function|ide_init_opti621

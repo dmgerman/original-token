@@ -84,13 +84,6 @@ DECL|macro|PPA_EMPTY
 mdefine_line|#define PPA_EMPTY &bslash;&n;{NULL,&t;&t;/* dev */&t;&bslash;&n;-1,&t;&t;/* base */&t;&bslash;&n;PPA_AUTODETECT,&t;/* mode */&t;&bslash;&n;-1,&t;&t;/* host */&t;&bslash;&n;NULL,&t;&t;/* cur_cmd */&t;&bslash;&n;{0, 0, ppa_interrupt, NULL},&t;&bslash;&n;0,&t;&t;/* jstart */&t;&bslash;&n;0,&t;&t;/* failed */&t;&bslash;&n;0&t;&t;/* p_busy */&t;&bslash;&n;}
 macro_line|#include  &quot;ppa.h&quot;
 macro_line|#include &lt;linux/parport.h&gt;
-macro_line|#ifdef CONFIG_KMOD
-macro_line|#include  &lt;linux/kmod.h&gt;
-macro_line|#ifndef PARPORT_MODULES
-DECL|macro|PARPORT_MODULES
-mdefine_line|#define PARPORT_MODULES &quot;parport_pc&quot;
-macro_line|#endif
-macro_line|#endif
 DECL|macro|NO_HOSTS
 mdefine_line|#define NO_HOSTS 4
 DECL|variable|ppa_hosts
@@ -256,19 +249,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|PPA_BASE
-c_func
-(paren
-id|host_no
-)paren
-op_assign
-id|ppa_hosts
-(braket
-id|host_no
-)braket
-dot
-id|dev-&gt;port-&gt;base
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -355,20 +335,12 @@ id|try_again
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
 op_logical_neg
 id|pb
 )paren
-(brace
-id|request_module
-c_func
-(paren
-id|PARPORT_MODULES
-)paren
-suffix:semicolon
 id|pb
 op_assign
 id|parport_enumerate
@@ -376,8 +348,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -485,6 +455,13 @@ c_func
 (paren
 id|i
 )paren
+op_assign
+id|ppa_hosts
+(braket
+id|i
+)braket
+dot
+id|dev-&gt;port-&gt;base
 suffix:semicolon
 id|w_ctr
 c_func

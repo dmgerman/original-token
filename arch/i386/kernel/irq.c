@@ -1101,6 +1101,7 @@ comma
 l_string|&quot; IO-APIC&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
 r_if
 c_cond
 (paren
@@ -1135,6 +1136,7 @@ comma
 l_string|&quot;-edge  &quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 id|p
@@ -2585,6 +2587,9 @@ id|irq
 )paren
 (brace
 )brace
+multiline_comment|/*&n; * if we enable this, why does it cause a hang in the BusLogic&n; * driver, when level triggered PCI IRQs are used?&n; */
+DECL|macro|NOT_BROKEN
+mdefine_line|#define NOT_BROKEN 0
 DECL|function|enable_level_ioapic_irq
 r_static
 r_void
@@ -2596,12 +2601,14 @@ r_int
 id|irq
 )paren
 (brace
+macro_line|#if NOT_BROKEN
 id|enable_IO_APIC_irq
 c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
+macro_line|#endif
 id|self_IPI
 c_func
 (paren
@@ -2620,12 +2627,14 @@ r_int
 id|irq
 )paren
 (brace
+macro_line|#if NOT_BROKEN
 id|disable_IO_APIC_irq
 c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Has to be called with the irq controller locked&n; */
 DECL|function|handle_ioapic_event
@@ -2891,12 +2900,14 @@ id|irq_controller_lock
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * in the level triggered case we first disable the IRQ&n;&t; * in the IO-APIC, then we &squot;early ACK&squot; the IRQ, then we&n;&t; * handle it and enable the IRQ when finished.&n;&t; */
+macro_line|#if NOT_BROKEN
 id|disable_IO_APIC_irq
 c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ack_APIC_irq
 c_func
 (paren

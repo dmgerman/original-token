@@ -2397,11 +2397,12 @@ op_amp
 id|pc-&gt;flags
 )paren
 suffix:semicolon
-id|ide_sti
+id|ide__sti
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_if
 c_cond
 (paren

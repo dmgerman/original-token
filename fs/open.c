@@ -1255,7 +1255,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * access() needs to use the real uid/gid, not the effective uid/gid.&n; * We do this by temporarily setting fsuid/fsgid to the wanted values&n; */
+multiline_comment|/*&n; * access() needs to use the real uid/gid, not the effective uid/gid.&n; * We do this by temporarily clearing all FS-related capabilities and&n; * switching the fsuid/fsgid around to the real ones.&n; */
 DECL|function|sys_access
 id|asmlinkage
 r_int
@@ -1280,6 +1280,9 @@ r_int
 id|old_fsuid
 comma
 id|old_fsgid
+suffix:semicolon
+id|kernel_cap_t
+id|old_cap
 suffix:semicolon
 r_int
 id|res
@@ -1315,6 +1318,10 @@ id|old_fsgid
 op_assign
 id|current-&gt;fsgid
 suffix:semicolon
+id|old_cap
+op_assign
+id|current-&gt;cap_effective
+suffix:semicolon
 id|current-&gt;fsuid
 op_assign
 id|current-&gt;uid
@@ -1322,6 +1329,18 @@ suffix:semicolon
 id|current-&gt;fsgid
 op_assign
 id|current-&gt;gid
+suffix:semicolon
+multiline_comment|/* Clear the capabilities if we switch to a non-root user */
+r_if
+c_cond
+(paren
+id|current-&gt;uid
+)paren
+id|cap_clear
+c_func
+(paren
+id|current-&gt;cap_effective
+)paren
 suffix:semicolon
 id|dentry
 op_assign
@@ -1374,6 +1393,10 @@ suffix:semicolon
 id|current-&gt;fsgid
 op_assign
 id|old_fsgid
+suffix:semicolon
+id|current-&gt;cap_effective
+op_assign
+id|old_cap
 suffix:semicolon
 id|out
 suffix:colon
@@ -1792,9 +1815,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_SYS_CHROOT
 )paren
 )paren
 r_goto
@@ -3615,9 +3639,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_TTY_CONFIG
 )paren
 )paren
 r_goto

@@ -415,9 +415,10 @@ c_cond
 id|mode
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_FSETID
 )paren
 )paren
 (brace

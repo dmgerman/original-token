@@ -1049,9 +1049,10 @@ op_amp
 id|S_ISVTX
 )paren
 op_logical_or
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_FOWNER
 )paren
 op_logical_or
 id|current-&gt;fsuid
@@ -1100,9 +1101,10 @@ op_amp
 id|S_ISVTX
 )paren
 op_logical_or
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_FOWNER
 )paren
 op_logical_or
 id|current-&gt;fsuid
@@ -2853,9 +2855,10 @@ op_amp
 id|S_ISVTX
 )paren
 op_logical_or
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_FOWNER
 )paren
 op_logical_or
 id|current-&gt;fsuid
@@ -3342,9 +3345,10 @@ op_amp
 id|S_ISVTX
 )paren
 op_logical_or
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_FOWNER
 )paren
 op_logical_or
 id|current-&gt;fsuid

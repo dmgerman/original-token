@@ -191,13 +191,13 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free_page() adds the page to the free lists. This is optimized for&n; * fast normal cases (no error jumps taken normally).&n; *&n; * The way to optimize jumps for gcc-2.2.2 is to:&n; *  - select the &quot;normal&quot; case and put it inside the if () { XXX }&n; *  - no else-statements if you can avoid them&n; *&n; * With the above two rules, you get a straight-line execution path&n; * for the normal case, giving better asm-code.&n; */
 multiline_comment|/*&n; * Buddy system. Hairy. You really aren&squot;t expected to understand this&n; *&n; * Hint: -mask = 1+~mask&n; */
-macro_line|#ifdef __SMP__
 DECL|variable|page_alloc_lock
 r_static
 id|spinlock_t
 id|page_alloc_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * This routine is used by the kernel swap deamon to determine&n; * whether we have &quot;enough&quot; free pages. It is fairly arbitrary,&n; * but this had better return false if any reasonable &quot;get_free_page()&quot;&n; * allocation could currently fail..&n; *&n; * This will return zero if no list was found, non-zero&n; * if there was memory (the bigger, the better).&n; */
 DECL|function|free_memory_available
 r_int

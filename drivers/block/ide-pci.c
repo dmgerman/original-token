@@ -49,6 +49,8 @@ DECL|macro|DEVID_HT6565
 mdefine_line|#define DEVID_HT6565&t;((ide_pci_devid_t){PCI_VENDOR_ID_HOLTEK,  PCI_DEVICE_ID_HOLTEK_6565})
 DECL|macro|DEVID_AEC6210
 mdefine_line|#define DEVID_AEC6210&t;((ide_pci_devid_t){0x1191,                0x0005})
+DECL|macro|DEVID_W82C105
+mdefine_line|#define DEVID_W82C105&t;((ide_pci_devid_t){PCI_VENDOR_ID_WINBOND, PCI_DEVICE_ID_WINBOND_82C105})
 DECL|macro|IDE_IGNORE
 mdefine_line|#define IDE_IGNORE&t;((void *)-1)
 macro_line|#ifdef CONFIG_BLK_DEV_TRM290
@@ -112,8 +114,29 @@ suffix:semicolon
 DECL|macro|INIT_CMD646
 mdefine_line|#define INIT_CMD646&t;&amp;ide_init_cmd646
 macro_line|#else
+macro_line|#ifdef __sparc_v9__
 DECL|macro|INIT_CMD646
 mdefine_line|#define INIT_CMD646&t;IDE_IGNORE
+macro_line|#else
+DECL|macro|INIT_CMD646
+mdefine_line|#define INIT_CMD646&t;NULL
+macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_SL82C105
+r_extern
+r_void
+id|ide_init_sl82c105
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|INIT_W82C105
+mdefine_line|#define INIT_W82C105&t;&amp;ide_init_sl82c105
+macro_line|#else
+DECL|macro|INIT_W82C105
+mdefine_line|#define INIT_W82C105&t;IDE_IGNORE
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_RZ1000
 r_extern
@@ -666,6 +689,32 @@ comma
 l_int|0x00
 comma
 l_int|0x00
+)brace
+)brace
+)brace
+comma
+(brace
+id|DEVID_W82C105
+comma
+l_string|&quot;W82C105&quot;
+comma
+id|INIT_W82C105
+comma
+(brace
+(brace
+l_int|0x40
+comma
+l_int|0x01
+comma
+l_int|0x01
+)brace
+comma
+(brace
+l_int|0x40
+comma
+l_int|0x10
+comma
+l_int|0x10
 )brace
 )brace
 )brace
@@ -1443,11 +1492,13 @@ id|ctl
 op_assign
 id|dev-&gt;base_address
 (braket
-l_int|1
-op_plus
+(paren
 l_int|2
 op_star
 id|port
+)paren
+op_plus
+l_int|1
 )braket
 op_amp
 id|PCI_BASE_ADDRESS_IO_MASK
@@ -1667,8 +1718,6 @@ op_assign
 id|ide_get_or_set_dma_base
 c_func
 (paren
-id|dev
-comma
 id|hwif
 comma
 id|extra

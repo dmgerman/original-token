@@ -145,9 +145,10 @@ l_int|0007
 )paren
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_IPC_OWNER
 )paren
 )paren
 r_return

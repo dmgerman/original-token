@@ -164,9 +164,10 @@ multiline_comment|/*&n;&t; * Normal users can read only the standardized portion
 r_if
 c_cond
 (paren
-id|fsuser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 id|size

@@ -3251,9 +3251,10 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * XXX - this is a tiny bit broken, when we consider BSD&n;         * process accounting. If the device is opened by root, we&n;&t; * instantly flag that we used superuser privs. Who knows,&n;&t; * we might close the device immediately without doing a&n;&t; * privileged operation -- cevans&n;&t; */
 id|as-&gt;suser
 op_assign
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 suffix:semicolon
 id|as-&gt;next

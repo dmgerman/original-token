@@ -1606,6 +1606,11 @@ r_int
 r_int
 id|cfg
 suffix:semicolon
+multiline_comment|/* local APIC has default address */
+id|mp_lapic_addr
+op_assign
+l_int|0xFEE00000
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;We need to know what the local&n;&t;&t;&t;&t;&t; *&t;APIC id of the boot CPU is!&n;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n; *&n; *&t;HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK&n; *&n; *&t;It&squot;s not just a crazy hack...  ;-)&n; */
 multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Standard page mapping&n;&t;&t;&t;&t;&t; *&t;functions don&squot;t work yet.&n;&t;&t;&t;&t;&t; *&t;We know that page 0 is not&n;&t;&t;&t;&t;&t; *&t;used.  Steal it for now!&n;&t;&t;&t;&t;&t; */

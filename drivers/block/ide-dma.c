@@ -27,6 +27,7 @@ l_string|&quot;CONNER CTMA 4000&quot;
 comma
 l_string|&quot;ST34342A&quot;
 comma
+multiline_comment|/* for Sun Ultra */
 l_int|NULL
 )brace
 suffix:semicolon
@@ -165,11 +166,12 @@ id|drive-&gt;name
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|ide__sti
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 id|ide_error
 c_func
 (paren
@@ -561,13 +563,7 @@ l_int|1
 )paren
 op_logical_and
 op_logical_neg
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_autodma
+id|hwif-&gt;no_autodma
 )paren
 (brace
 multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 0/1/2) enabled */
@@ -732,6 +728,9 @@ id|reading
 op_assign
 l_int|0
 suffix:semicolon
+id|byte
+id|dma_stat
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -840,14 +839,18 @@ op_plus
 l_int|2
 )paren
 op_or
-l_int|0x06
+l_int|6
 comma
 id|dma_base
 op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* clear status bits */
+multiline_comment|/* clear INTR &amp; ERROR flags */
+id|drive-&gt;waiting_for_dma
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -886,6 +889,7 @@ suffix:semicolon
 r_case
 id|ide_dma_begin
 suffix:colon
+multiline_comment|/* Note that this is done *after* the cmd has&n;&t;&t;&t; * been issued to the drive, as per the BM-IDE spec.&n;&t;&t;&t; * The Promise Ultra33 doesn&squot;t work correctly when&n;&t;&t;&t; * we do this part before issuing the drive cmd.&n;&t;&t;&t; */
 id|outb
 c_func
 (paren
@@ -908,8 +912,10 @@ r_case
 id|ide_dma_end
 suffix:colon
 multiline_comment|/* returns 1 on error, 0 otherwise */
-(brace
-id|byte
+id|drive-&gt;waiting_for_dma
+op_assign
+l_int|0
+suffix:semicolon
 id|dma_stat
 op_assign
 id|inb
@@ -919,17 +925,6 @@ id|dma_base
 op_plus
 l_int|2
 )paren
-suffix:semicolon
-r_int
-id|rc
-op_assign
-(paren
-id|dma_stat
-op_amp
-l_int|7
-)paren
-op_ne
-l_int|4
 suffix:semicolon
 id|outb
 c_func
@@ -961,10 +956,39 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* clear the INTR &amp; ERROR bits */
 r_return
-id|rc
+(paren
+id|dma_stat
+op_amp
+l_int|7
+)paren
+op_ne
+l_int|4
 suffix:semicolon
 multiline_comment|/* verify good DMA status */
-)brace
+r_case
+id|ide_dma_test_irq
+suffix:colon
+multiline_comment|/* returns 1 if dma irq issued, 0 otherwise */
+id|dma_stat
+op_assign
+id|inb
+c_func
+(paren
+id|dma_base
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+r_return
+(paren
+id|dma_stat
+op_amp
+l_int|4
+)paren
+op_eq
+l_int|4
+suffix:semicolon
+multiline_comment|/* return 1 if INTR asserted */
 r_default
 suffix:colon
 id|printk
@@ -1223,11 +1247,6 @@ r_int
 r_int
 id|ide_get_or_set_dma_base
 (paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-comma
 id|ide_hwif_t
 op_star
 id|hwif
@@ -1247,6 +1266,13 @@ r_int
 id|dma_base
 op_assign
 l_int|0
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+id|hwif-&gt;pci_dev
 suffix:semicolon
 r_if
 c_cond

@@ -68,11 +68,12 @@ id|SECTOR_WORDS
 )paren
 suffix:semicolon
 multiline_comment|/* read 512 bytes of id info */
-id|sti
+id|ide__sti
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 id|ide_fix_driveid
 c_func
 (paren
@@ -818,18 +819,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* local CPU only */
+id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* some systems need this */
+multiline_comment|/* local CPU only; some systems need this */
 id|do_identify
 c_func
 (paren
@@ -853,12 +855,13 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* clear drive IRQ */
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 )brace
 r_else
 id|rc
@@ -1732,18 +1735,19 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|sti
+multiline_comment|/* local CPU only */
+id|__sti
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* needed for jiffies and irq probing */
+multiline_comment|/* local CPU only; needed for jiffies and irq probing */
 multiline_comment|/*&n;&t; * Second drive should only exist if first drive was found,&n;&t; * but a lot of cdrom drives are configured as single slaves.&n;&t; */
 r_for
 c_loop
@@ -1926,12 +1930,13 @@ id|jiffies
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_for
 c_loop
 (paren
@@ -2118,11 +2123,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|hwif-&gt;hwgroup
 op_assign
 l_int|NULL
@@ -2175,6 +2182,18 @@ id|h-&gt;sharing_irq
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hwif-&gt;chipset
+op_ne
+id|ide_pci
+op_logical_or
+id|h-&gt;chipset
+op_ne
+id|ide_pci
+)paren
+(brace
 id|save_match
 c_func
 (paren
@@ -2186,6 +2205,7 @@ op_amp
 id|match
 )paren
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -2302,6 +2322,31 @@ id|hwgroup-&gt;drive
 op_assign
 l_int|NULL
 suffix:semicolon
+id|hwgroup-&gt;busy
+op_assign
+l_int|0
+suffix:semicolon
+id|hwgroup-&gt;spinlock
+op_assign
+(paren
+id|spinlock_t
+)paren
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
+macro_line|#if (DEBUG_SPINLOCK &gt; 0)
+id|printk
+c_func
+(paren
+l_string|&quot;hwgroup(%s) spinlock is %p&bslash;n&quot;
+comma
+id|hwif-&gt;name
+comma
+op_amp
+id|hwgroup-&gt;spinlock
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME */
+macro_line|#endif
 id|init_timer
 c_func
 (paren
@@ -2335,6 +2380,22 @@ op_ne
 id|hwif-&gt;irq
 )paren
 (brace
+r_int
+id|sa
+op_assign
+(paren
+id|hwif-&gt;chipset
+op_eq
+id|ide_pci
+)paren
+ques
+c_cond
+id|SA_INTERRUPT
+op_or
+id|SA_SHIRQ
+suffix:colon
+id|SA_INTERRUPT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2346,7 +2407,7 @@ comma
 op_amp
 id|ide_intr
 comma
-id|SA_INTERRUPT
+id|sa
 comma
 id|hwif-&gt;name
 comma
@@ -2372,6 +2433,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 r_return
 l_int|1
 suffix:semicolon
@@ -2456,7 +2518,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* safe now that hwif-&gt;hwgroup is set up */
+multiline_comment|/* all CPUs; safe now that hwif-&gt;hwgroup is set up */
 macro_line|#ifndef __mc68000__
 id|printk
 c_func
@@ -3217,13 +3279,39 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* success */
 )brace
+macro_line|#if (DEBUG_SPINLOCK &gt; 0)
+(brace
+r_static
+r_int
+id|done
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|done
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;io_request_lock is %p&bslash;n&quot;
+comma
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME */
+)brace
+macro_line|#endif
 r_return
 id|hwif-&gt;present
 suffix:semicolon
 )brace
 r_int
 id|ideprobe_init
-c_func
 (paren
 r_void
 )paren

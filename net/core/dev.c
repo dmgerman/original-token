@@ -715,9 +715,10 @@ c_func
 id|name
 )paren
 op_logical_and
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_MODULE
 )paren
 )paren
 (brace
@@ -4984,9 +4985,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 r_return

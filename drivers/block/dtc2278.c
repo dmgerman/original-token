@@ -157,11 +157,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 multiline_comment|/*&n;&t;&t; * This enables PIO mode4 (3?) on the first interface&n;&t;&t; */
 id|sub22
 c_func
@@ -185,6 +187,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 )brace
 r_else
 (brace
@@ -223,17 +226,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* local CPU only */
+id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 multiline_comment|/*&n;&t; * This enables the second interface&n;&t; */
 id|outb_p
 c_func
@@ -282,12 +287,13 @@ l_int|0xa0
 )paren
 suffix:semicolon
 macro_line|#endif
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 id|ide_hwifs
 (braket
 l_int|0

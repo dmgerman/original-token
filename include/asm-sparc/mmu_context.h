@@ -33,5 +33,8 @@ op_star
 )paren
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm) BTFIXUP_CALL(destroy_context)(mm)
+multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; * XXX this presumably needs a sensible implementation - paulus.&n; */
+DECL|macro|activate_context
+mdefine_line|#define activate_context(tsk)&t;do { } while(0)
 macro_line|#endif /* !(__SPARC_MMU_CONTEXT_H) */
 eof

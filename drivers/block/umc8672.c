@@ -499,11 +499,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 r_if
 c_cond
 (paren
@@ -550,6 +552,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 )brace
 DECL|function|init_umc8672
 r_void
@@ -563,16 +566,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* local CPU only */
+id|__cli
+c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_if
 c_cond
 (paren
@@ -585,7 +591,7 @@ l_int|2
 )paren
 )paren
 (brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -619,12 +625,13 @@ op_ne
 l_int|0xa0
 )paren
 (brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 id|printk
 (paren
 l_string|&quot;umc8672: not found&bslash;n&quot;
@@ -646,12 +653,13 @@ id|umc_set_speeds
 id|current_speeds
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 id|request_region
 c_func
 (paren

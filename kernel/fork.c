@@ -115,15 +115,12 @@ id|uidhash
 id|UIDHASH_SZ
 )braket
 suffix:semicolon
-macro_line|#ifdef __SMP__
 DECL|variable|uidhash_lock
-r_static
 id|spinlock_t
 id|uidhash_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 DECL|variable|uid_cachep
 id|kmem_cache_t
 op_star
@@ -630,16 +627,13 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
 multiline_comment|/* Protects next_safe and last_pid. */
 DECL|variable|lastpid_lock
-r_static
 id|spinlock_t
 id|lastpid_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 DECL|function|get_pid
 r_static
 r_int

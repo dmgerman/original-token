@@ -269,9 +269,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 r_return
@@ -306,6 +307,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 r_do
 (brace
 r_const
@@ -371,25 +373,25 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* ensure all writes are done together */
+multiline_comment|/* all CPUs; ensure all writes are done together */
 r_while
 c_loop
 (paren
-id|mygroup-&gt;active
+id|mygroup-&gt;busy
 op_logical_or
 (paren
 id|mategroup
 op_logical_and
-id|mategroup-&gt;active
+id|mategroup-&gt;busy
 )paren
 )paren
 (brace
-id|restore_flags
+id|sti
 c_func
 (paren
-id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 r_if
 c_cond
 (paren
@@ -414,6 +416,13 @@ comma
 id|hwif-&gt;name
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* all CPUs */
 r_return
 op_minus
 id|EBUSY
@@ -424,6 +433,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 )brace
 )brace
 id|p
@@ -496,6 +506,8 @@ macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
 r_if
 c_cond
 (paren
+id|hwif-&gt;pci_dev
+op_logical_and
 op_logical_neg
 id|IDE_PCI_DEVID_EQ
 c_func
@@ -602,9 +614,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_decrement
 id|n
-OL
+op_decrement
+op_eq
 l_int|0
 op_logical_or
 op_star
@@ -895,6 +907,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|printk
 c_func
 (paren
@@ -993,6 +1006,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 r_return
 id|count
 suffix:semicolon
@@ -1004,6 +1018,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs */
 id|printk
 c_func
 (paren
@@ -1071,17 +1086,34 @@ op_star
 )paren
 id|data
 suffix:semicolon
-r_int
-id|reg
-op_assign
-l_int|0
-suffix:semicolon
 r_struct
 id|pci_dev
 op_star
 id|dev
 op_assign
 id|hwif-&gt;pci_dev
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|hwif-&gt;pci_devid
+comma
+id|IDE_PCI_DEVID_NULL
+)paren
+op_logical_and
+id|dev
+op_logical_and
+id|dev-&gt;bus
+)paren
+(brace
+r_int
+id|reg
+op_assign
+l_int|0
 suffix:semicolon
 id|out
 op_add_assign
@@ -1131,7 +1163,9 @@ id|rc
 id|printk
 c_func
 (paren
-l_string|&quot;proc_ide_read_config: error reading bus %02x dev %02x reg 0x%02x&bslash;n&quot;
+l_string|&quot;proc_ide_read_config: error %d reading bus %02x dev %02x reg 0x%02x&bslash;n&quot;
+comma
+id|rc
 comma
 id|dev-&gt;bus-&gt;number
 comma
@@ -1139,18 +1173,6 @@ id|dev-&gt;devfn
 comma
 id|reg
 )paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;proc_ide_read_config: error %d&bslash;n&quot;
-comma
-id|rc
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
 suffix:semicolon
 id|out
 op_add_assign
@@ -1209,7 +1231,9 @@ OL
 l_int|0x100
 )paren
 suffix:semicolon
-macro_line|#else&t;/* CONFIG_BLK_DEV_IDEPCI */
+)brace
+r_else
+macro_line|#endif&t;/* CONFIG_BLK_DEV_IDEPCI */
 id|out
 op_add_assign
 id|sprintf
@@ -1220,7 +1244,6 @@ comma
 l_string|&quot;(none)&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* CONFIG_BLK_DEV_IDEPCI */
 id|len
 op_assign
 id|out
@@ -2281,16 +2304,6 @@ op_star
 )paren
 id|data
 suffix:semicolon
-id|ide_hwif_t
-op_star
-id|hwif
-op_assign
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-suffix:semicolon
 r_char
 id|name
 (braket
@@ -2309,8 +2322,6 @@ suffix:semicolon
 r_int
 r_int
 id|n
-comma
-id|flags
 suffix:semicolon
 r_const
 r_char
@@ -2327,9 +2338,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 r_return
@@ -2357,13 +2369,7 @@ op_increment
 id|buffer
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Do one full pass to verify all parameters,&n;&t; * then do another to actually write the pci regs.&n;&t; */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * Do one full pass to verify all parameters,&n;&t; * then do another to actually write the new settings.&n;&t; */
 r_do
 (brace
 r_const
@@ -2371,119 +2377,6 @@ r_char
 op_star
 id|p
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|for_real
-)paren
-(brace
-r_int
-r_int
-id|timeout
-op_assign
-id|jiffies
-op_plus
-(paren
-l_int|3
-op_star
-id|HZ
-)paren
-suffix:semicolon
-id|ide_hwgroup_t
-op_star
-id|mygroup
-op_assign
-(paren
-id|ide_hwgroup_t
-op_star
-)paren
-(paren
-id|hwif-&gt;hwgroup
-)paren
-suffix:semicolon
-id|ide_hwgroup_t
-op_star
-id|mategroup
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hwif-&gt;mate
-op_logical_and
-id|hwif-&gt;mate-&gt;hwgroup
-)paren
-id|mategroup
-op_assign
-(paren
-id|ide_hwgroup_t
-op_star
-)paren
-(paren
-id|hwif-&gt;mate-&gt;hwgroup
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* ensure all writes are done together */
-r_while
-c_loop
-(paren
-id|mygroup-&gt;active
-op_logical_or
-(paren
-id|mategroup
-op_logical_and
-id|mategroup-&gt;active
-)paren
-)paren
-(brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|0
-OL
-(paren
-r_int
-r_int
-)paren
-(paren
-id|jiffies
-op_minus
-id|timeout
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;/proc/ide/%s/settings: channel(s) busy, cannot write&bslash;n&quot;
-comma
-id|drive-&gt;name
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-)brace
 id|p
 op_assign
 id|buffer
@@ -2733,23 +2626,11 @@ id|for_real
 op_increment
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 id|count
 suffix:semicolon
 id|parse_error
 suffix:colon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3204,9 +3085,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 r_return

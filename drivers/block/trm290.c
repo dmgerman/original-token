@@ -66,17 +66,19 @@ op_complement
 l_int|0x82
 )paren
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* local CPU only */
+id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_if
 c_cond
 (paren
@@ -156,12 +158,13 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 )brace
 DECL|function|trm290_selectproc
 r_static
@@ -284,6 +287,10 @@ comma
 id|hwif-&gt;dma_base
 )paren
 suffix:semicolon
+id|drive-&gt;waiting_for_dma
+op_assign
+l_int|1
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -335,6 +342,9 @@ comma
 id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 r_case
 id|ide_dma_begin
 suffix:colon
@@ -344,6 +354,10 @@ suffix:semicolon
 r_case
 id|ide_dma_end
 suffix:colon
+id|drive-&gt;waiting_for_dma
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 (paren
 id|inw
@@ -354,6 +368,22 @@ op_plus
 l_int|2
 )paren
 op_ne
+l_int|0x00ff
+)paren
+suffix:semicolon
+r_case
+id|ide_dma_test_irq
+suffix:colon
+r_return
+(paren
+id|inw
+c_func
+(paren
+id|hwif-&gt;dma_base
+op_plus
+l_int|2
+)paren
+op_eq
 l_int|0x00ff
 )paren
 suffix:semicolon
@@ -471,17 +501,19 @@ id|hwif-&gt;config_data
 )paren
 suffix:semicolon
 )brace
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* local CPU only */
+id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 multiline_comment|/* put config reg into first byte of hwif-&gt;select_data */
 id|outb
 c_func
@@ -544,12 +576,13 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_if
 c_cond
 (paren
@@ -605,7 +638,7 @@ suffix:colon
 l_int|0x0000
 )paren
 comma
-l_int|2
+l_int|3
 )paren
 suffix:semicolon
 id|hwif-&gt;dmaproc

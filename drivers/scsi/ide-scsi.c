@@ -1532,7 +1532,7 @@ comma
 id|pc-&gt;actually_transferred
 )paren
 suffix:semicolon
-id|ide_sti
+id|ide__sti
 c_func
 (paren
 )paren

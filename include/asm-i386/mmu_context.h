@@ -8,5 +8,7 @@ DECL|macro|init_new_context
 mdefine_line|#define init_new_context(mm)&t;do { } while(0)
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;do { } while(0)
+DECL|macro|activate_context
+mdefine_line|#define activate_context(tsk)&t;do { } while(0)
 macro_line|#endif
 eof

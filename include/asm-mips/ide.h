@@ -14,8 +14,8 @@ macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
 mdefine_line|#define MAX_HWIFS&t;4
 macro_line|#endif
-DECL|macro|ide_sti
-mdefine_line|#define ide_sti()&t;sti()
+DECL|macro|ide__sti
+mdefine_line|#define ide__sti()&t;__sti()
 DECL|function|ide_default_irq
 r_static
 id|__inline__

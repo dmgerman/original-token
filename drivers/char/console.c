@@ -1011,9 +1011,10 @@ op_ge
 id|MAX_NR_USER_CONSOLES
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_RESOURCE
 )paren
 )paren
 r_return

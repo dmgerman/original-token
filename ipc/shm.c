@@ -1642,9 +1642,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_IPC_LOCK
 )paren
 )paren
 r_goto
@@ -1690,9 +1691,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_IPC_LOCK
 )paren
 )paren
 r_goto
@@ -1839,9 +1841,10 @@ id|current-&gt;euid
 op_eq
 id|shp-&gt;shm_perm.cuid
 op_logical_or
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 (brace
@@ -1897,9 +1900,10 @@ id|current-&gt;euid
 op_eq
 id|shp-&gt;shm_perm.cuid
 op_logical_or
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 (brace

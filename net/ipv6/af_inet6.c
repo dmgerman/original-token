@@ -261,9 +261,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_RAW
 )paren
 )paren
 r_goto
@@ -651,9 +652,10 @@ OL
 id|PROT_SOCK
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_BIND_SERVICE
 )paren
 )paren
 r_return
@@ -1146,9 +1148,10 @@ op_minus
 id|pid
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 r_return

@@ -299,7 +299,7 @@ r_void
 suffix:semicolon
 macro_line|#endif
 DECL|macro|RO_IOCTLS
-mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: { int __val;  if (!suser()) return -EACCES; &bslash;&n;&t;&t;   if (get_user(__val, (int *)(where))) return -EFAULT; &bslash;&n;&t;&t;   set_device_ro((dev),__val); return 0; } &bslash;&n;  case BLKROGET: { int __val = (is_read_only(dev) != 0) ; &bslash;&n;&t;&t;    return put_user(__val,(int *) (where)); }
+mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: { int __val;  if (!capable(CAP_SYS_ADMIN)) return -EACCES; &bslash;&n;&t;&t;   if (get_user(__val, (int *)(where))) return -EFAULT; &bslash;&n;&t;&t;   set_device_ro((dev),__val); return 0; } &bslash;&n;  case BLKROGET: { int __val = (is_read_only(dev) != 0) ; &bslash;&n;&t;&t;    return put_user(__val,(int *) (where)); }
 macro_line|#if defined(MAJOR_NR) || defined(IDE_DRIVER)
 multiline_comment|/*&n; * Add entries as needed.&n; */
 macro_line|#ifdef IDE_DRIVER
@@ -717,9 +717,32 @@ op_star
 id|hwgroup
 )paren
 (brace
+r_int
+id|nsect
+suffix:semicolon
+r_struct
+id|buffer_head
+op_star
+id|bh
+suffix:semicolon
 r_struct
 id|request
 op_star
+id|req
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|req
 op_assign
 id|hwgroup-&gt;rq
@@ -734,6 +757,14 @@ r_int
 id|uptodate
 )paren
 (brace
+r_int
+id|nsect
+suffix:semicolon
+r_struct
+id|buffer_head
+op_star
+id|bh
+suffix:semicolon
 r_struct
 id|request
 op_star
@@ -742,14 +773,6 @@ op_assign
 id|CURRENT
 suffix:semicolon
 macro_line|#endif /* IDE_DRIVER */
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
-r_int
-id|nsect
-suffix:semicolon
 id|req-&gt;errors
 op_assign
 l_int|0
@@ -891,6 +914,17 @@ id|req-&gt;buffer
 op_assign
 id|bh-&gt;b_data
 suffix:semicolon
+macro_line|#ifdef IDE_DRIVER
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* IDE_DRIVER */
 r_return
 suffix:semicolon
 )brace
@@ -965,6 +999,17 @@ op_amp
 id|wait_for_request
 )paren
 suffix:semicolon
+macro_line|#ifdef IDE_DRIVER
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* IDE_DRIVER */
 )brace
 macro_line|#endif /* defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) */
 macro_line|#endif /* ! SCSI_BLK_MAJOR(MAJOR_NR) */

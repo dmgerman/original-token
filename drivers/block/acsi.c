@@ -4496,9 +4496,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 (brace
@@ -4538,6 +4539,20 @@ r_case
 id|BLKRRPART
 suffix:colon
 multiline_comment|/* Re-read partition tables */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SYS_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
 r_return
 id|revalidate_acsidisk
 c_func

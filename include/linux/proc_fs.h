@@ -1532,11 +1532,6 @@ suffix:semicolon
 r_extern
 r_struct
 id|inode_operations
-id|proc_scsi_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
 id|proc_openprom_inode_operations
 suffix:semicolon
 r_extern
@@ -1601,7 +1596,6 @@ r_struct
 id|inode_operations
 id|proc_ppc_htab_inode_operations
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * generic.c&n; */
 r_struct
 id|proc_dir_entry
@@ -1678,4 +1672,5 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif /* _LINUX_PROC_FS_H */
 eof

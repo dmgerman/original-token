@@ -1546,6 +1546,12 @@ id|retval
 r_goto
 id|fail_restore
 suffix:semicolon
+id|activate_context
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 id|up
 c_func
 (paren
@@ -2069,6 +2075,8 @@ r_int
 id|retval
 comma
 id|id_change
+comma
+id|cap_raised
 suffix:semicolon
 r_struct
 id|inode
@@ -2176,6 +2184,8 @@ op_assign
 id|current-&gt;egid
 suffix:semicolon
 id|id_change
+op_assign
+id|cap_raised
 op_assign
 l_int|0
 suffix:semicolon
@@ -2307,33 +2317,50 @@ id|bprm-&gt;cap_effective
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We use a conservative definition of suid for capabilities.&n;         * The process is suid if the permitted set is not a subset of&n;         * the current permitted set after the exec call.&n;         *         new permitted set = forced | (allowed &amp; inherited)&n;         *                       pP&squot; = fP     | (fI      &amp; pI)&n;         */
+multiline_comment|/* Only if pP&squot; is _not_ a subset of pP, do we consider there&n;         * has been a capability related &quot;change of capability&quot;.  In&n;         * such cases, we need to check that the elevation of&n;         * privilege does not go against other system constraints.&n;         * The new Permitted set is defined below -- see (***). */
+(brace
+id|kernel_cap_t
+id|working
+op_assign
+id|cap_combine
+c_func
+(paren
+id|bprm-&gt;cap_permitted
+comma
+id|cap_intersect
+c_func
+(paren
+id|bprm-&gt;cap_inheritable
+comma
+id|current-&gt;cap_inheritable
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|cap_issubset
+c_func
 (paren
-id|bprm-&gt;cap_permitted.cap
-op_or
-(paren
-id|current-&gt;cap_inheritable.cap
-op_amp
-id|bprm-&gt;cap_inheritable.cap
+id|working
+comma
+id|current-&gt;cap_permitted
 )paren
-)paren
-op_amp
-op_complement
-id|current-&gt;cap_permitted.cap
 )paren
 (brace
-id|id_change
+id|cap_raised
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
 (paren
 id|id_change
+op_logical_or
+id|cap_raised
 )paren
 (brace
 multiline_comment|/* We can&squot;t suid-execute if we&squot;re sharing parts of the executable */
@@ -2381,10 +2408,29 @@ l_int|1
 r_if
 c_cond
 (paren
+id|id_change
+op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SETUID
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cap_raised
+op_logical_and
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SETPCAP
 )paren
 )paren
 r_return
@@ -2422,7 +2468,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function is used to produce the new IDs and capabilities&n; * from the old ones and the file&squot;s capabilities.&n; *&n; * The formula used for evolving capabilities is:&n; *&n; *       pI&squot; = pI&n; *       pP&squot; = fP | (fI &amp; pI)&n; *       pE&squot; = pP&squot; &amp; fE          [NB. fE is 0 or ~0]&n; *&n; * I=Inheritable, P=Permitted, E=Effective // p=process, f=file&n; * &squot; indicates post-exec().&n; */
+multiline_comment|/*&n; * This function is used to produce the new IDs and capabilities&n; * from the old ones and the file&squot;s capabilities.&n; *&n; * The formula used for evolving capabilities is:&n; *&n; *       pI&squot; = pI&n; * (***) pP&squot; = fP | (fI &amp; pI)&n; *       pE&squot; = pP&squot; &amp; fE          [NB. fE is 0 or ~0]&n; *&n; * I=Inheritable, P=Permitted, E=Effective // p=process, f=file&n; * &squot; indicates post-exec().&n; */
 DECL|function|compute_creds
 r_void
 id|compute_creds
@@ -2432,6 +2478,15 @@ r_struct
 id|linux_binprm
 op_star
 id|bprm
+)paren
+(brace
+multiline_comment|/* For init, we want to retain the capabilities set&n;         * in the init_task struct. Thus we skip the usual&n;         * capability rules */
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_ne
+l_int|1
 )paren
 (brace
 r_int
@@ -2455,6 +2510,7 @@ id|new_permitted
 op_amp
 id|bprm-&gt;cap_effective.cap
 suffix:semicolon
+)brace
 multiline_comment|/* AUD: Audit candidate if current-&gt;cap_effective is set */
 id|current-&gt;suid
 op_assign

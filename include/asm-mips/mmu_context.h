@@ -177,5 +177,26 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
+DECL|function|activate_context
+r_extern
+r_inline
+id|activate_context
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+)paren
+(brace
+id|get_mmu_context
+c_func
+(paren
+id|tsk
+)paren
+suffix:semicolon
+multiline_comment|/* XXX here we presumably need to set some cpu register - paulus. */
+)brace
 macro_line|#endif /* __ASM_MIPS_MMU_CONTEXT_H */
 eof

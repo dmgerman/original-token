@@ -200,5 +200,8 @@ suffix:semicolon
 )brace
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;do { } while(0)
+multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; * Ideally this would be an extern inline function, but reload_context&n; * is declared in pgtable.h, which includes this file. :-(&n; */
+DECL|macro|activate_context
+mdefine_line|#define activate_context(tsk)&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;&t;get_mmu_context(tsk);&t;&bslash;&n;&t;&t;reload_context(tsk);&t;&bslash;&n;&t;} while (0)
 macro_line|#endif
 eof

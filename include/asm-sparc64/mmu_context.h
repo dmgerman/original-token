@@ -262,6 +262,9 @@ l_string|&quot;o4&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
+DECL|macro|activate_context
+mdefine_line|#define activate_context(tsk)&t;get_mmu_context(tsk)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_MMU_CONTEXT_H) */
 eof

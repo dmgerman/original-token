@@ -81,17 +81,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* local CPU only */
+id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_new
 op_assign
 op_star
@@ -230,12 +232,13 @@ r_new
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 )brace
 DECL|function|ns87415_selectproc
 r_static
@@ -279,6 +282,9 @@ c_func
 id|drive
 )paren
 suffix:semicolon
+id|byte
+id|dma_stat
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -289,8 +295,10 @@ r_case
 id|ide_dma_end
 suffix:colon
 multiline_comment|/* returns 1 on error, 0 otherwise */
-(brace
-id|byte
+id|drive-&gt;waiting_for_dma
+op_assign
+l_int|0
+suffix:semicolon
 id|dma_stat
 op_assign
 id|inb
@@ -301,18 +309,6 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-r_int
-id|rc
-op_assign
-(paren
-id|dma_stat
-op_amp
-l_int|7
-)paren
-op_ne
-l_int|4
-suffix:semicolon
-multiline_comment|/* from errata: stop DMA, clear INTR &amp; ERROR */
 id|outb
 c_func
 (paren
@@ -321,7 +317,7 @@ comma
 id|hwif-&gt;dma_base
 )paren
 suffix:semicolon
-multiline_comment|/* clear the INTR &amp; ERROR bits */
+multiline_comment|/* from errata: stop DMA, clear INTR &amp; ERROR */
 id|outb
 c_func
 (paren
@@ -334,18 +330,23 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* verify good DMA status */
+multiline_comment|/* clear the INTR &amp; ERROR bits */
 r_return
-id|rc
+(paren
+id|dma_stat
+op_amp
+l_int|7
+)paren
+op_ne
+l_int|4
 suffix:semicolon
-)brace
+multiline_comment|/* verify good DMA status */
 r_case
 id|ide_dma_write
 suffix:colon
 r_case
 id|ide_dma_read
 suffix:colon
-multiline_comment|/* select DMA xfer */
 id|ns87415_prepare_drive
 c_func
 (paren
@@ -354,7 +355,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* use standard DMA stuff */
+multiline_comment|/* select DMA xfer */
 r_if
 c_cond
 (paren
@@ -367,10 +368,10 @@ comma
 id|drive
 )paren
 )paren
+multiline_comment|/* use standard DMA stuff */
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* DMA failed: select PIO xfer */
 id|ns87415_prepare_drive
 c_func
 (paren
@@ -379,12 +380,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* DMA failed: select PIO xfer */
 r_return
 l_int|1
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* use standard DMA stuff */
 r_return
 id|ide_dmaproc
 c_func
@@ -394,6 +395,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
+multiline_comment|/* use standard DMA stuff */
 )brace
 )brace
 DECL|function|__initfunc
@@ -424,11 +426,6 @@ id|using_inta
 suffix:semicolon
 id|byte
 id|progif
-comma
-id|stat
-suffix:semicolon
-r_int
-id|timeout
 suffix:semicolon
 multiline_comment|/*&n;&t; * We cannot probe for IRQ: both ports share common IRQ on INTA.&n;&t; * Also, leave IRQ masked during drive probing, to prevent infinite&n;&t; * interrupts from a potentially floating INTA..&n;&t; *&n;&t; * IRQs get unmasked in selectproc when drive is first used.&n;&t; */
 (paren
@@ -587,6 +584,13 @@ l_int|0xee
 )paren
 suffix:semicolon
 macro_line|#ifdef __sparc_v9__
+(brace
+r_int
+id|timeout
+suffix:semicolon
+id|byte
+id|stat
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * XXX: Reset the device, if we don&squot;t it will not respond&n;&t;&t; *      to SELECT_DRIVE() properly during first probe_hwif().&n;&t;&t; */
 id|timeout
 op_assign
@@ -662,6 +666,7 @@ op_decrement
 id|timeout
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 )brace
 r_if

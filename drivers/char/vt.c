@@ -994,9 +994,10 @@ op_ge
 id|MAX_NR_OF_USER_KEYMAPS
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_RESOURCE
 )paren
 )paren
 r_return
@@ -1117,9 +1118,10 @@ id|K_SAK
 )paren
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 r_return

@@ -3145,9 +3145,10 @@ id|child-&gt;gid
 )paren
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_PTRACE
 )paren
 )paren
 r_goto

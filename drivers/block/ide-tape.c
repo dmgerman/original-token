@@ -3308,10 +3308,13 @@ id|save_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|stage-&gt;next
 op_assign
 l_int|NULL
@@ -3360,6 +3363,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 )brace
 multiline_comment|/*&n; *&t;idetape_remove_stage_head removes tape-&gt;first_stage from the pipeline.&n; *&t;The caller should avoid race conditions.&n; */
 DECL|function|idetape_remove_stage_head
@@ -4472,11 +4476,12 @@ op_amp
 id|pc-&gt;flags
 )paren
 suffix:semicolon
-id|ide_sti
+id|ide__sti
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* local CPU only */
 r_if
 c_cond
 (paren
@@ -7248,10 +7253,13 @@ id|save_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 r_if
 c_cond
 (paren
@@ -7269,6 +7277,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|rq_ptr
 op_assign
 op_amp
@@ -7421,10 +7430,13 @@ id|save_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 r_if
 c_cond
 (paren
@@ -7444,6 +7456,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 )brace
 r_else
 (brace
@@ -7452,6 +7465,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|idetape_insert_pipeline_into_queue
 (paren
 id|drive
@@ -7645,10 +7659,13 @@ id|save_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|tape-&gt;next_stage
 op_assign
 l_int|NULL
@@ -7671,6 +7688,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 r_while
 c_loop
 (paren
@@ -7732,10 +7750,13 @@ id|save_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 r_if
 c_cond
 (paren
@@ -7776,6 +7797,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 )brace
 DECL|function|idetape_pad_zeros
 r_static
@@ -8682,10 +8704,13 @@ id|save_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 r_if
 c_cond
 (paren
@@ -8703,6 +8728,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 r_if
 c_cond
 (paren
@@ -12882,10 +12908,13 @@ id|save_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 r_if
 c_cond
 (paren
@@ -12912,6 +12941,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 r_return
 l_int|1
 suffix:semicolon
@@ -12930,6 +12960,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all CPUs (overkill?) */
 id|DRIVER
 c_func
 (paren

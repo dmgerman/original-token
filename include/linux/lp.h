@@ -18,6 +18,8 @@ DECL|macro|LP_SELEC
 mdefine_line|#define LP_SELEC 0x0002
 DECL|macro|LP_BUSY
 mdefine_line|#define LP_BUSY&t; 0x0004
+DECL|macro|LP_BUSY_BIT_POS
+mdefine_line|#define LP_BUSY_BIT_POS 2
 DECL|macro|LP_OFFL
 mdefine_line|#define LP_OFFL&t; 0x0008
 DECL|macro|LP_NOPA
@@ -26,8 +28,10 @@ DECL|macro|LP_ERR
 mdefine_line|#define LP_ERR   0x0020
 DECL|macro|LP_ABORT
 mdefine_line|#define LP_ABORT 0x0040
+macro_line|#ifdef LP_NEED_CAREFUL
 DECL|macro|LP_CAREFUL
 mdefine_line|#define LP_CAREFUL 0x0080
+macro_line|#endif
 DECL|macro|LP_ABORTOPEN
 mdefine_line|#define LP_ABORTOPEN 0x0100
 multiline_comment|/* timeout for each character.  This is relative to bus cycles -- it&n; * is the count in a busy loop.  THIS IS THE VALUE TO CHANGE if you&n; * have extremely slow printing, or if the machine seems to slow down&n; * a lot when you print.  If you have slow printing, increase this&n; * number and recompile, and if your system gets bogged down, decrease&n; * this number.  This can be changed with the tunelp(8) command as well.&n; */
@@ -52,16 +56,20 @@ DECL|macro|LPGETIRQ
 mdefine_line|#define LPGETIRQ 0x0606  /* get the current IRQ number */
 DECL|macro|LPWAIT
 mdefine_line|#define LPWAIT   0x0608  /* corresponds to LP_INIT_WAIT */
+macro_line|#ifdef LP_NEED_CAREFUL
 DECL|macro|LPCAREFUL
 mdefine_line|#define LPCAREFUL   0x0609  /* call with TRUE arg to require out-of-paper, off-&n;&t;&t;&t;    line, and error indicators good on all writes,&n;&t;&t;&t;    FALSE to ignore them.  Default is ignore. */
+macro_line|#endif
 DECL|macro|LPABORTOPEN
 mdefine_line|#define LPABORTOPEN 0x060a  /* call with TRUE arg to abort open() on error,&n;&t;&t;&t;    FALSE to ignore error.  Default is ignore.  */
 DECL|macro|LPGETSTATUS
 mdefine_line|#define LPGETSTATUS 0x060b  /* return LP_S(minor) */
 DECL|macro|LPRESET
 mdefine_line|#define LPRESET     0x060c  /* reset printer */
+macro_line|#ifdef LP_STATS
 DECL|macro|LPGETSTATS
 mdefine_line|#define LPGETSTATS  0x060d  /* get statistics (struct lp_stats) */
+macro_line|#endif
 DECL|macro|LPGETFLAGS
 mdefine_line|#define LPGETFLAGS  0x060e  /* get status flags */
 multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   This is also used for re-checking error conditions if LP_ABORT is&n;   not set.  This is the default behavior. */
@@ -80,12 +88,15 @@ mdefine_line|#define LP_WAIT(minor)&t;lp_table[(minor)].wait&t;&t;/* strobe wait
 DECL|macro|LP_IRQ
 mdefine_line|#define LP_IRQ(minor)&t;lp_table[(minor)].dev-&gt;port-&gt;irq /* interrupt # */
 multiline_comment|/* 0 means polled */
+macro_line|#ifdef LP_STATS
 DECL|macro|LP_STAT
 mdefine_line|#define LP_STAT(minor)&t;lp_table[(minor)].stats&t;&t;/* statistics area */
+macro_line|#endif
 DECL|macro|LP_BUFFER_SIZE
 mdefine_line|#define LP_BUFFER_SIZE 256
 DECL|macro|LP_BASE
 mdefine_line|#define LP_BASE(x)&t;lp_table[(x)].dev-&gt;port-&gt;base
+macro_line|#ifdef LP_STATS
 DECL|struct|lp_stats
 r_struct
 id|lp_stats
@@ -122,6 +133,7 @@ id|mdev
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|struct|lp_struct
 r_struct
 id|lp_struct
@@ -156,6 +168,7 @@ r_char
 op_star
 id|lp_buffer
 suffix:semicolon
+macro_line|#ifdef LP_STATS
 DECL|member|lastcall
 r_int
 r_int
@@ -166,15 +179,22 @@ r_int
 r_int
 id|runchars
 suffix:semicolon
-DECL|member|waittime
-r_int
-r_int
-id|waittime
-suffix:semicolon
 DECL|member|stats
 r_struct
 id|lp_stats
 id|stats
+suffix:semicolon
+macro_line|#endif
+DECL|member|wait_q
+r_struct
+id|wait_queue
+op_star
+id|wait_q
+suffix:semicolon
+DECL|member|last_error
+r_int
+r_int
+id|last_error
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -207,8 +227,8 @@ mdefine_line|#define LP_DUMMY&t;0x00
 multiline_comment|/*&n; * This is the port delay time, in microseconds.&n; * It is used only in the lp_init() and lp_reset() routine.&n; */
 DECL|macro|LP_DELAY
 mdefine_line|#define LP_DELAY &t;50
-DECL|macro|LP_POLLING
-mdefine_line|#define LP_POLLING(minor) (lp_table[(minor)].dev-&gt;port-&gt;irq == PARPORT_IRQ_NONE)
+DECL|macro|LP_POLLED
+mdefine_line|#define LP_POLLED(minor) (lp_table[(minor)].dev-&gt;port-&gt;irq == PARPORT_IRQ_NONE)
 DECL|macro|LP_PREEMPTED
 mdefine_line|#define LP_PREEMPTED(minor) (lp_table[(minor)].dev-&gt;port-&gt;waithead != NULL)
 multiline_comment|/*&n; * function prototypes&n; */
