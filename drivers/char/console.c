@@ -4197,6 +4197,12 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_SELECTION */
+id|disable_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5766,15 +5772,19 @@ r_if
 c_cond
 (paren
 id|vcmode
-op_eq
+op_ne
 id|KD_GRAPHICS
 )paren
-r_return
-suffix:semicolon
 id|set_cursor
 c_func
 (paren
 id|currcons
+)paren
+suffix:semicolon
+id|enable_bh
+c_func
+(paren
+id|KEYBOARD_BH
 )paren
 suffix:semicolon
 )brace

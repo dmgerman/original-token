@@ -256,6 +256,14 @@ DECL|macro|__NR_mprotect
 mdefine_line|#define __NR_mprotect&t;&t;125
 DECL|macro|__NR_sigprocmask
 mdefine_line|#define __NR_sigprocmask&t;126
+DECL|macro|__NR_create_module
+mdefine_line|#define __NR_create_module&t;127
+DECL|macro|__NR_init_module
+mdefine_line|#define __NR_init_module&t;128
+DECL|macro|__NR_delete_module
+mdefine_line|#define __NR_delete_module&t;129
+DECL|macro|__NR_get_kernel_syms
+mdefine_line|#define __NR_get_kernel_syms&t;130
 r_extern
 r_int
 id|errno

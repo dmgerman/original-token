@@ -13,6 +13,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 0 */
 r_extern
 r_int
 id|sys_exit
@@ -48,6 +49,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 5 */
 r_extern
 r_int
 id|sys_close
@@ -83,6 +85,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 10 */
 r_extern
 r_int
 id|sys_execve
@@ -118,6 +121,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 15 */
 r_extern
 r_int
 id|sys_chown
@@ -153,6 +157,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 20 */
 r_extern
 r_int
 id|sys_mount
@@ -188,6 +193,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 25 */
 r_extern
 r_int
 id|sys_ptrace
@@ -223,6 +229,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 30 */
 r_extern
 r_int
 id|sys_stty
@@ -258,6 +265,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 35 */
 r_extern
 r_int
 id|sys_sync
@@ -293,6 +301,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 40 */
 r_extern
 r_int
 id|sys_dup
@@ -328,6 +337,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 45 */
 r_extern
 r_int
 id|sys_setgid
@@ -363,6 +373,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 50 */
 r_extern
 r_int
 id|sys_acct
@@ -398,6 +409,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 55 */
 r_extern
 r_int
 id|sys_mpx
@@ -433,6 +445,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 60 */
 r_extern
 r_int
 id|sys_chroot
@@ -468,6 +481,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 65 */
 r_extern
 r_int
 id|sys_setsid
@@ -503,6 +517,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 70 */
 r_extern
 r_int
 id|sys_setregid
@@ -538,6 +553,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 75 */
 r_extern
 r_int
 id|sys_getrlimit
@@ -573,6 +589,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 80 */
 r_extern
 r_int
 id|sys_setgroups
@@ -608,6 +625,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 85 */
 r_extern
 r_int
 id|sys_uselib
@@ -643,6 +661,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 90 */
 r_extern
 r_int
 id|sys_munmap
@@ -678,6 +697,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 95 */
 r_extern
 r_int
 id|sys_getpriority
@@ -713,6 +733,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 100 */
 r_extern
 r_int
 id|sys_ioperm
@@ -748,6 +769,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 105 */
 r_extern
 r_int
 id|sys_newstat
@@ -783,6 +805,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 110 */
 r_extern
 r_int
 id|sys_vhangup
@@ -818,6 +841,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 115 */
 r_extern
 r_int
 id|sys_sysinfo
@@ -853,6 +877,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 120 */
 r_extern
 r_int
 id|sys_olduname
@@ -888,6 +913,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* 125 */
 r_extern
 r_int
 id|sys_sigprocmask
@@ -895,6 +921,35 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|sys_create_module
+c_func
+(paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sys_init_module
+c_func
+(paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sys_delete_module
+c_func
+(paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sys_get_kernel_syms
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* 130 */
 multiline_comment|/*&n; * These are system calls that will be removed at some time&n; * due to newer versions existing..&n; */
 macro_line|#ifdef notdef
 DECL|macro|sys_waitpid

@@ -238,6 +238,14 @@ comma
 l_string|&quot;kcore&quot;
 )brace
 comma
+(brace
+l_int|16
+comma
+l_int|7
+comma
+l_string|&quot;modules&quot;
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

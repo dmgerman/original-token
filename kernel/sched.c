@@ -579,6 +579,14 @@ comma
 id|sys_mprotect
 comma
 id|sys_sigprocmask
+comma
+id|sys_create_module
+comma
+id|sys_init_module
+comma
+id|sys_delete_module
+comma
+id|sys_get_kernel_syms
 )brace
 suffix:semicolon
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */

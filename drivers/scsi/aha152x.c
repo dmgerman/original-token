@@ -1,4 +1,4 @@
-multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: Juergen E. Fischer, fischer@server.et-inf.fho-emden.de&n; * Copyright 1993 Juergen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; &n; *&n; * $Id: aha152x.c,v 0.99 1993/10/24 16:19:59 root Exp root $&n; *&n;&n; * $Log: aha152x.c,v $&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n;&n; **************************************************************************&n;&n;&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522&n; SCSI host adapters.&n;&n;&n; PER-DEFINE CONFIGURABLE OPTIONS:&n;&n; AUTOCONF       : use configuration the controller reports (only 152x)&n; IRQ            : override interrupt channel (9,10,11 or 12) (default 11)&n; SCSI_ID        : override scsiid of AIC-6260 (0-7) (default 7)&n; RECONNECT      : override target dis-/reconnection/multiple outstanding commands&n; SKIP_BIOSTEST  : Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n; PORTBASE       : Force port base. Don&squot;t try to probe&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;PORTBASE&gt;,&lt;IRQ&gt;,&lt;SCSI-ID&gt;,&lt;RECONNECT&gt;&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known). Don&squot;t use values that aren&squot;t support under normal operation.&n; If you think that you need other value: contact me.&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n; &n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (eric@tantalus.nrl.navy.mil) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
+multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: Juergen E. Fischer, fischer@server.et-inf.fho-emden.de&n; * Copyright 1993 Juergen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; &n; *&n; * $Id: aha152x.c,v 0.101 1993/12/13 01:16:27 root Exp $&n; *&n;&n; * $Log: aha152x.c,v $&n; * Revision 0.101  1993/12/13  01:16:27  root&n; * - fixed STATUS phase (non-GOOD stati were dropped sometimes;&n; *   fixes problems with CD-ROM sector size detection &amp; media change)&n; *&n; * Revision 0.100  1993/12/10  16:58:47  root&n; * - fix for unsuccessful selections in case of non-continuous id assignments&n; *   on the scsi bus.&n; *&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n;&n; **************************************************************************&n;&n;&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522&n; SCSI host adapters.&n;&n;&n; PER-DEFINE CONFIGURABLE OPTIONS:&n;&n; AUTOCONF       : use configuration the controller reports (only 152x)&n; IRQ            : override interrupt channel (9,10,11 or 12) (default 11)&n; SCSI_ID        : override scsiid of AIC-6260 (0-7) (default 7)&n; RECONNECT      : override target dis-/reconnection/multiple outstanding commands&n; SKIP_BIOSTEST  : Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n; PORTBASE       : Force port base. Don&squot;t try to probe&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;PORTBASE&gt;,&lt;IRQ&gt;,&lt;SCSI-ID&gt;,&lt;RECONNECT&gt;&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known). Don&squot;t use values that aren&squot;t support under normal operation.&n; If you think that you need other value: contact me.&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n; &n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (eric@tantalus.nrl.navy.mil) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
 macro_line|#include &quot;aha152x.h&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -83,7 +83,7 @@ r_char
 op_star
 id|aha152x_id
 op_assign
-l_string|&quot;Adaptec 152x SCSI driver; $Revision: 0.99 $&bslash;n&quot;
+l_string|&quot;Adaptec 152x SCSI driver; $Revision: 0.101 $&bslash;n&quot;
 suffix:semicolon
 DECL|variable|port_base
 r_static
@@ -1907,6 +1907,12 @@ comma
 id|SCSIRSTO
 )paren
 suffix:semicolon
+id|do_pause
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
 id|aha152x_reset
 c_func
 (paren
@@ -2923,6 +2929,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|do_pause
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
 id|SETPORT
 c_func
 (paren
@@ -3590,7 +3602,7 @@ op_assign
 id|GETPORT
 c_func
 (paren
-id|SCSIDAT
+id|SCSIBUS
 )paren
 suffix:semicolon
 r_if
@@ -4157,6 +4169,17 @@ l_string|&quot;SELTO, &quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* end selection attempt */
+id|CLRBITS
+c_func
+(paren
+id|SCSISEQ
+comma
+id|ENSELO
+op_or
+id|ENAUTOATNO
+)paren
+suffix:semicolon
 multiline_comment|/* timeout */
 id|SETPORT
 c_func
@@ -4974,7 +4997,7 @@ op_assign
 id|GETPORT
 c_func
 (paren
-id|SCSIDAT
+id|SCSIBUS
 )paren
 suffix:semicolon
 r_switch
@@ -5101,7 +5124,7 @@ op_assign
 id|GETPORT
 c_func
 (paren
-id|SCSIDAT
+id|SCSIBUS
 )paren
 suffix:semicolon
 macro_line|#if defined(DEBUG_MSGI)
@@ -5146,7 +5169,7 @@ op_assign
 id|GETPORT
 c_func
 (paren
-id|SCSIDAT
+id|SCSIBUS
 )paren
 suffix:semicolon
 r_switch
@@ -5320,7 +5343,7 @@ comma
 id|GETPORT
 c_func
 (paren
-id|SCSIDAT
+id|SCSIBUS
 )paren
 )paren
 suffix:semicolon
@@ -5328,7 +5351,7 @@ macro_line|#else
 id|GETPORT
 c_func
 (paren
-id|SCSIDAT
+id|SCSIBUS
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5520,75 +5543,34 @@ c_func
 (paren
 id|SIMODE1
 comma
-id|ENPHASEMIS
-op_or
 id|ENREQINIT
 )paren
 suffix:semicolon
-id|SETBITS
-c_func
-(paren
-id|SXFRCTL0
-comma
-id|SCSIEN
-)paren
-suffix:semicolon
-macro_line|#if defined(DEBUG_STATUS)
-id|printk
-c_func
-(paren
-l_string|&quot;waiting for status, &quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(DEBUG_STATUS)
-id|disp_ports
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_while
-c_loop
-(paren
-id|TESTLO
-c_func
-(paren
-id|DMASTAT
-comma
-id|INTSTAT
-)paren
-)paren
-(brace
-suffix:semicolon
-)brace
-macro_line|#if 0
 r_if
 c_cond
 (paren
-id|TESTLO
+id|TESTHI
 c_func
 (paren
-id|SSTAT0
+id|SSTAT1
 comma
-id|SPIORDY
+id|PHASEMIS
 )paren
 )paren
 (brace
-id|aha152x_panic
+id|printk
 c_func
 (paren
-l_string|&quot;passing STATUS phase&quot;
+l_string|&quot;aha152x: passing STATUS phase&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|current_SC-&gt;SCp.Status
 op_assign
 id|GETPORT
 c_func
 (paren
-id|SCSIDAT
+id|SCSIBUS
 )paren
 suffix:semicolon
 id|make_acklow
@@ -5618,38 +5600,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;, &quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-id|CLRBITS
-c_func
-(paren
-id|SXFRCTL0
-comma
-id|SCSIEN
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|TESTHI
-c_func
-(paren
-id|SXFRCTL0
-comma
-id|SCSIEN
-)paren
-)paren
-(brace
-suffix:semicolon
-)brace
-macro_line|#if 0
-id|CLRBITS
-c_func
-(paren
-id|SXFRCTL0
-comma
-id|SPIOEN
 )paren
 suffix:semicolon
 macro_line|#endif
