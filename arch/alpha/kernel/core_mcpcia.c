@@ -29,9 +29,6 @@ macro_line|# define DBG_CFG(args)
 macro_line|#endif
 DECL|macro|MCPCIA_MAX_HOSES
 mdefine_line|#define MCPCIA_MAX_HOSES 4
-multiline_comment|/* Dodge has PCI0 and PCI1 at MID 4 and 5 respectively.  Durango adds&n;   PCI2 and PCI3 at MID 6 and 7 respectively.  */
-DECL|macro|hose2mid
-mdefine_line|#define hose2mid(h)&t;((h) + 4)
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the MCPCIA_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | |D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., SCSI and Ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 r_static
 r_int
@@ -62,7 +59,7 @@ r_int
 r_int
 id|mid
 op_assign
-id|hose2mid
+id|MCPCIA_HOSE2MID
 c_func
 (paren
 id|hose-&gt;index
@@ -311,7 +308,7 @@ r_int
 r_int
 id|mid
 op_assign
-id|hose2mid
+id|MCPCIA_HOSE2MID
 c_func
 (paren
 id|hose-&gt;index
@@ -1109,10 +1106,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|BUG
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_SG_TBIA
 c_func
 (paren
+id|MCPCIA_HOSE2MID
+c_func
+(paren
+id|hose-&gt;index
 )paren
+)paren
+op_assign
+l_int|0
 suffix:semicolon
 id|mb
 c_func
@@ -1143,7 +1151,7 @@ suffix:semicolon
 r_int
 id|mid
 op_assign
-id|hose2mid
+id|MCPCIA_HOSE2MID
 c_func
 (paren
 id|h
@@ -1310,7 +1318,7 @@ suffix:semicolon
 r_int
 id|mid
 op_assign
-id|hose2mid
+id|MCPCIA_HOSE2MID
 c_func
 (paren
 id|h
@@ -1571,7 +1579,7 @@ id|hose
 r_int
 id|mid
 op_assign
-id|hose2mid
+id|MCPCIA_HOSE2MID
 c_func
 (paren
 id|hose-&gt;index
@@ -2464,7 +2472,7 @@ id|hose-&gt;next
 id|mcpcia_pci_clr_err
 c_func
 (paren
-id|hose2mid
+id|MCPCIA_HOSE2MID
 c_func
 (paren
 id|hose-&gt;index

@@ -8647,6 +8647,12 @@ id|PFX
 l_string|&quot;No cards found, driver not installed.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|pci_unregister_driver
+(paren
+op_amp
+id|eepro100_driver
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV

@@ -8041,6 +8041,15 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+id|pci_unregister_driver
+(paren
+op_amp
+id|rtl8139_pci_driver
+)paren
+suffix:semicolon
+)brace
 id|DPRINTK
 (paren
 l_string|&quot;EXIT&bslash;n&quot;

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/fs/lockd/xdr.c&n; *&n; * XDR support for lockd and the lock client.&n; *&n; * Copyright (C) 1995, 1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;

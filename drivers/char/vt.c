@@ -164,6 +164,10 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -180,6 +184,12 @@ op_assign
 l_int|1193180
 op_div
 id|hz
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -276,9 +286,10 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return

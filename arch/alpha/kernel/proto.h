@@ -21,6 +21,9 @@ suffix:semicolon
 r_struct
 id|pci_controler
 suffix:semicolon
+r_struct
+id|irqaction
+suffix:semicolon
 multiline_comment|/* core_apecs.c */
 r_extern
 r_struct
@@ -250,6 +253,35 @@ id|pci_ops
 id|polaris_pci_ops
 suffix:semicolon
 r_extern
+r_int
+id|polaris_read_config_dword
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+comma
+id|u32
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|polaris_write_config_dword
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+comma
+id|u32
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|polaris_init_arch
 c_func
@@ -467,26 +499,12 @@ id|regs
 suffix:semicolon
 r_extern
 r_void
-id|rtc_init_pit
+id|common_init_rtc
 c_func
 (paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|rtc_kill_pit
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|common_init_pit
-c_func
-(paren
-r_void
+r_struct
+id|irqaction
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -531,7 +549,7 @@ r_int
 id|ide_base
 )paren
 suffix:semicolon
-multiline_comment|/* fpregs.c */
+multiline_comment|/* ../lib/fpreg.c */
 r_extern
 r_void
 id|alpha_write_fp_reg
@@ -731,7 +749,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* irq.h */
+multiline_comment|/* irq.c */
 macro_line|#ifdef __SMP__
 DECL|macro|mcheck_expected
 mdefine_line|#define mcheck_expected(cpu)&t;(cpu_data[cpu].mcheck_expected)

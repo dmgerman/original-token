@@ -6369,6 +6369,12 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
+id|pci_unregister_driver
+(paren
+op_amp
+id|epic100_driver
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV

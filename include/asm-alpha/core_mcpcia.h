@@ -12,6 +12,9 @@ multiline_comment|/*------------------------------------------------------------
 multiline_comment|/* MCPCIA ADDRESS BIT DEFINITIONS&n; *&n; *  3333 3333 3322 2222 2222 1111 1111 11&n; *  9876 5432 1098 7654 3210 9876 5432 1098 7654 3210&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  1                                             000&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  |                                             |&bslash;|&n; *  |                               Byte Enable --+ |&n; *  |                             Transfer Length --+&n; *  +-- IO space, not cached&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
 DECL|macro|MCPCIA_MID
 mdefine_line|#define MCPCIA_MID(m)&t;&t;((unsigned long)(m) &lt;&lt; 33)
+multiline_comment|/* Dodge has PCI0 and PCI1 at MID 4 and 5 respectively. &n;   Durango adds PCI2 and PCI3 at MID 6 and 7 respectively.  */
+DECL|macro|MCPCIA_HOSE2MID
+mdefine_line|#define MCPCIA_HOSE2MID(h)&t;((h) + 4)
 DECL|macro|MCPCIA_MEM_MASK
 mdefine_line|#define MCPCIA_MEM_MASK 0x07ffffff /* SPARSE Mem region mask is 27 bits */
 multiline_comment|/*&n; * Memory spaces:&n; */

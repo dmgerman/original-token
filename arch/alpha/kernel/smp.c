@@ -27,6 +27,7 @@ DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
 macro_line|#include &quot;proto.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
 DECL|macro|DEBUG_SMP
 mdefine_line|#define DEBUG_SMP 0
 macro_line|#if DEBUG_SMP
@@ -2233,7 +2234,7 @@ c_func
 (paren
 id|cpu
 comma
-id|TIMER_IRQ
+id|RTC_IRQ
 )paren
 suffix:semicolon
 id|update_one_process
@@ -2334,7 +2335,7 @@ c_func
 (paren
 id|cpu
 comma
-id|TIMER_IRQ
+id|RTC_IRQ
 )paren
 suffix:semicolon
 )brace
@@ -3187,6 +3188,8 @@ id|ipi_imb
 c_func
 (paren
 r_void
+op_star
+id|ignored
 )paren
 (brace
 id|imb

@@ -6,23 +6,23 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &quot;proto.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
 multiline_comment|/* Only uniprocessor needs this IRQ/BH locking depth, on SMP it lives&n;   in the per-cpu structure for cache reasons.  */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|variable|__local_irq_count
 r_int
 id|__local_irq_count
@@ -40,9 +40,6 @@ id|NR_IRQS
 )braket
 suffix:semicolon
 macro_line|#endif
-macro_line|#if NR_IRQS &gt; 128
-macro_line|#  error Unable to handle more than 128 irq levels.
-macro_line|#endif
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|macro|ACTUAL_NR_IRQS
 mdefine_line|#define ACTUAL_NR_IRQS&t;alpha_mv.nr_irqs
@@ -50,73 +47,10 @@ macro_line|#else
 DECL|macro|ACTUAL_NR_IRQS
 mdefine_line|#define ACTUAL_NR_IRQS&t;NR_IRQS
 macro_line|#endif
-multiline_comment|/* Reserved interrupts.  These must NEVER be requested by any driver!&n;   IRQ 2 used by hw cascade */
-DECL|macro|IS_RESERVED_IRQ
-mdefine_line|#define&t;IS_RESERVED_IRQ(irq)&t;((irq)==2)
-multiline_comment|/*&n; * The ack_irq routine used by 80% of the systems.&n; */
-r_void
-DECL|function|common_ack_irq
-id|common_ack_irq
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|irq
-OL
-l_int|16
-)paren
-(brace
-multiline_comment|/* Ack the interrupt making it the lowest priority */
-multiline_comment|/*  First the slave .. */
-r_if
-c_cond
-(paren
-id|irq
-OG
-l_int|7
-)paren
-(brace
-id|outb
-c_func
-(paren
-l_int|0xE0
-op_or
-(paren
-id|irq
-op_minus
-l_int|8
-)paren
-comma
-l_int|0xa0
-)paren
-suffix:semicolon
-id|irq
-op_assign
-l_int|2
-suffix:semicolon
-)brace
-multiline_comment|/* .. then the master */
-id|outb
-c_func
-(paren
-l_int|0xE0
-op_or
-id|irq
-comma
-l_int|0x20
-)paren
-suffix:semicolon
-)brace
-)brace
-DECL|function|dummy_perf
+multiline_comment|/*&n; * Performance counter hook.  A module can override this to&n; * do something useful.&n; */
 r_static
 r_void
+DECL|function|dummy_perf
 id|dummy_perf
 c_func
 (paren
@@ -156,7 +90,7 @@ op_assign
 id|dummy_perf
 suffix:semicolon
 multiline_comment|/*&n; * Dispatch device interrupts.&n; */
-multiline_comment|/* Handle ISA interrupt via the PICs. */
+multiline_comment|/*&n; * Handle ISA interrupt via the PICs.&n; */
 macro_line|#if defined(CONFIG_ALPHA_GENERIC)
 DECL|macro|IACK_SC
 macro_line|# define IACK_SC&t;alpha_mv.iack_sc
@@ -181,11 +115,8 @@ macro_line|# define IACK_SC&t;POLARIS_IACK_SC
 macro_line|#elif defined(CONFIG_ALPHA_IRONGATE)
 DECL|macro|IACK_SC
 macro_line|# define IACK_SC        IRONGATE_IACK_SC
-macro_line|#else
-multiline_comment|/* This is bogus but necessary to get it to compile on all platforms. */
-DECL|macro|IACK_SC
-macro_line|# define IACK_SC&t;1L
 macro_line|#endif
+macro_line|#if defined(IACK_SC)
 r_void
 DECL|function|isa_device_interrupt
 id|isa_device_interrupt
@@ -201,7 +132,6 @@ op_star
 id|regs
 )paren
 (brace
-macro_line|#if 1
 multiline_comment|/*&n;&t; * Generate a PCI interrupt acknowledge cycle.  The PIC will&n;&t; * respond with the interrupt vector of the highest priority&n;&t; * interrupt that is pending.  The PALcode sets up the&n;&t; * interrupts vectors such that irq level L generates vector L.&n;&t; */
 r_int
 id|j
@@ -252,7 +182,24 @@ comma
 id|regs
 )paren
 suffix:semicolon
-macro_line|#else
+)brace
+macro_line|#endif
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || !defined(IACK_SC)
+r_void
+DECL|function|isa_no_iack_sc_device_interrupt
+id|isa_no_iack_sc_device_interrupt
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
 r_int
 r_int
 id|pic
@@ -278,12 +225,6 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* read isr */
-id|pic
-op_and_assign
-op_complement
-id|alpha_irq_mask
-suffix:semicolon
-multiline_comment|/* apply mask */
 id|pic
 op_and_assign
 l_int|0xFFFB
@@ -316,15 +257,113 @@ c_func
 (paren
 id|j
 comma
-id|j
-comma
 id|regs
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
-multiline_comment|/* Handle interrupts from the SRM, assuming no additional weirdness.  */
+macro_line|#endif
+multiline_comment|/*&n; * Handle interrupts from the SRM, assuming no additional weirdness.&n; */
+r_static
+r_inline
+r_void
+DECL|function|srm_enable_irq
+id|srm_enable_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+id|cserve_ena
+c_func
+(paren
+id|irq
+op_minus
+l_int|16
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|srm_disable_irq
+id|srm_disable_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+id|cserve_dis
+c_func
+(paren
+id|irq
+op_minus
+l_int|16
+)paren
+suffix:semicolon
+)brace
+r_static
+r_int
+r_int
+DECL|function|srm_startup_irq
+id|srm_startup_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+id|srm_enable_irq
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|srm_irq_type
+r_static
+r_struct
+id|hw_interrupt_type
+id|srm_irq_type
+op_assign
+(brace
+r_typename
+suffix:colon
+l_string|&quot;SRM&quot;
+comma
+id|startup
+suffix:colon
+id|srm_startup_irq
+comma
+id|shutdown
+suffix:colon
+id|srm_disable_irq
+comma
+id|enable
+suffix:colon
+id|srm_enable_irq
+comma
+id|disable
+suffix:colon
+id|srm_disable_irq
+comma
+id|ack
+suffix:colon
+id|srm_disable_irq
+comma
+id|end
+suffix:colon
+id|srm_enable_irq
+comma
+)brace
+suffix:semicolon
 r_void
 DECL|function|srm_device_interrupt
 id|srm_device_interrupt
@@ -341,8 +380,6 @@ id|regs
 )paren
 (brace
 r_int
-id|irq
-suffix:semicolon
 id|irq
 op_assign
 (paren
@@ -362,9 +399,235 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Special irq handlers.&n; */
-DECL|function|no_action
 r_void
+id|__init
+DECL|function|init_srm_irqs
+id|init_srm_irqs
+c_func
+(paren
+r_int
+id|max
+comma
+r_int
+r_int
+id|ignore_mask
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|16
+suffix:semicolon
+id|i
+OL
+id|max
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|64
+op_logical_and
+(paren
+(paren
+id|ignore_mask
+op_rshift
+id|i
+)paren
+op_amp
+l_int|1
+)paren
+)paren
+r_continue
+suffix:semicolon
+id|irq_desc
+(braket
+id|i
+)braket
+dot
+id|status
+op_assign
+id|IRQ_DISABLED
+suffix:semicolon
+id|irq_desc
+(braket
+id|i
+)braket
+dot
+id|handler
+op_assign
+op_amp
+id|srm_irq_type
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n; * The not-handled irq handler.&n; */
+r_static
+r_void
+DECL|function|noirq_enable_disable
+id|noirq_enable_disable
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+)brace
+r_static
+r_int
+r_int
+DECL|function|noirq_startup
+id|noirq_startup
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|noirq_ack
+id|noirq_ack
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;Unexpected IRQ %u&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+)brace
+DECL|variable|no_irq_type
+r_static
+r_struct
+id|hw_interrupt_type
+id|no_irq_type
+op_assign
+(brace
+r_typename
+suffix:colon
+l_string|&quot;none&quot;
+comma
+id|startup
+suffix:colon
+id|noirq_startup
+comma
+id|shutdown
+suffix:colon
+id|noirq_enable_disable
+comma
+id|enable
+suffix:colon
+id|noirq_enable_disable
+comma
+id|disable
+suffix:colon
+id|noirq_enable_disable
+comma
+id|ack
+suffix:colon
+id|noirq_ack
+comma
+id|end
+suffix:colon
+id|noirq_enable_disable
+comma
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * The special RTC interrupt type.  The interrupt itself was&n; * processed by PALcode, and comes in via entInt vector 1.&n; */
+DECL|variable|rtc_irq_type
+r_static
+r_struct
+id|hw_interrupt_type
+id|rtc_irq_type
+op_assign
+(brace
+r_typename
+suffix:colon
+l_string|&quot;RTC&quot;
+comma
+id|startup
+suffix:colon
+id|noirq_startup
+comma
+id|shutdown
+suffix:colon
+id|noirq_enable_disable
+comma
+id|enable
+suffix:colon
+id|noirq_enable_disable
+comma
+id|disable
+suffix:colon
+id|noirq_enable_disable
+comma
+id|ack
+suffix:colon
+id|noirq_enable_disable
+comma
+id|end
+suffix:colon
+id|noirq_enable_disable
+comma
+)brace
+suffix:semicolon
+r_void
+id|__init
+DECL|function|init_rtc_irq
+id|init_rtc_irq
+c_func
+(paren
+r_void
+)paren
+(brace
+id|irq_desc
+(braket
+id|RTC_IRQ
+)braket
+dot
+id|status
+op_assign
+id|IRQ_DISABLED
+suffix:semicolon
+id|irq_desc
+(braket
+id|RTC_IRQ
+)braket
+dot
+id|handler
+op_assign
+op_amp
+id|rtc_irq_type
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Special irq handlers.&n; */
+r_void
+DECL|function|no_action
 id|no_action
 c_func
 (paren
@@ -382,91 +645,50 @@ id|regs
 )paren
 (brace
 )brace
-multiline_comment|/*&n; * Initial irq handlers.&n; */
-DECL|function|enable_none
-r_static
-r_void
-id|enable_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-)brace
-DECL|function|startup_none
-r_static
-r_int
-r_int
-id|startup_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|disable_none
-r_static
-r_void
-id|disable_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-)brace
-DECL|function|ack_none
-r_static
-r_void
-id|ack_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;unexpected IRQ trap at vector %02x&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* startup is the same as &quot;enable&quot;, shutdown is same as &quot;disable&quot; */
-DECL|macro|shutdown_none
-mdefine_line|#define shutdown_none&t;disable_none
-DECL|macro|end_none
-mdefine_line|#define end_none&t;enable_none
-DECL|variable|no_irq_type
+multiline_comment|/* &n; * Common irq handlers.&n; */
+DECL|variable|isa_cascade_irqaction
 r_struct
-id|hw_interrupt_type
-id|no_irq_type
+id|irqaction
+id|isa_cascade_irqaction
 op_assign
 (brace
-l_string|&quot;none&quot;
+id|handler
+suffix:colon
+id|no_action
 comma
-id|startup_none
+id|name
+suffix:colon
+l_string|&quot;isa-cascade&quot;
+)brace
+suffix:semicolon
+DECL|variable|timer_cascade_irqaction
+r_struct
+id|irqaction
+id|timer_cascade_irqaction
+op_assign
+(brace
+id|handler
+suffix:colon
+id|no_action
 comma
-id|shutdown_none
+id|name
+suffix:colon
+l_string|&quot;timer-cascade&quot;
+)brace
+suffix:semicolon
+DECL|variable|halt_switch_irqaction
+r_struct
+id|irqaction
+id|halt_switch_irqaction
+op_assign
+(brace
+id|handler
+suffix:colon
+id|no_action
 comma
-id|enable_none
-comma
-id|disable_none
-comma
-id|ack_none
-comma
-id|end_none
+id|name
+suffix:colon
+l_string|&quot;halt-switch&quot;
 )brace
 suffix:semicolon
 DECL|variable|irq_controller_lock
@@ -503,8 +725,8 @@ comma
 )brace
 )brace
 suffix:semicolon
-DECL|function|handle_IRQ_event
 r_int
+DECL|function|handle_IRQ_event
 id|handle_IRQ_event
 c_func
 (paren
@@ -525,14 +747,17 @@ id|action
 (brace
 r_int
 id|status
-suffix:semicolon
-r_int
+comma
 id|cpu
 op_assign
 id|smp_processor_id
 c_func
 (paren
 )paren
+suffix:semicolon
+r_int
+r_int
+id|ipl
 suffix:semicolon
 id|kstat.irqs
 (braket
@@ -556,29 +781,51 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Force the &quot;do bottom halves&quot; bit */
+id|ipl
+op_assign
+id|rdps
+c_func
+(paren
+)paren
+op_amp
+l_int|7
+suffix:semicolon
 r_do
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
+r_int
+r_int
+id|newipl
+op_assign
 (paren
 id|action-&gt;flags
 op_amp
 id|SA_INTERRUPT
-)paren
-)paren
-id|__sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_else
-id|__cli
-c_func
-(paren
+ques
+c_cond
+l_int|7
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|newipl
+op_ne
+id|ipl
+)paren
+(brace
+id|swpipl
+c_func
+(paren
+id|newipl
+)paren
+suffix:semicolon
+id|ipl
+op_assign
+id|newipl
+suffix:semicolon
+)brace
 id|status
 op_or_assign
 id|action-&gt;flags
@@ -619,6 +866,13 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ipl
+op_eq
+l_int|0
+)paren
 id|__cli
 c_func
 (paren
@@ -848,20 +1102,7 @@ id|status
 op_or
 id|IRQ_REPLAY
 suffix:semicolon
-id|hw_resend_irq
-c_func
-(paren
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|handler
-comma
-id|irq
-)paren
-suffix:semicolon
-multiline_comment|/* noop */
+multiline_comment|/* ??? We can&squot;t re-send on (most?) alpha hw.&n;&t;&t;&t;   hw_resend_irq(irq_desc[irq].handler,irq); */
 )brace
 id|irq_desc
 (braket
@@ -896,6 +1137,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;enable_irq() unbalanced from %p&bslash;n&quot;
 comma
 id|__builtin_return_address
@@ -1175,19 +1417,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_RESERVED_IRQ
-c_func
-(paren
-id|irq
-)paren
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
 op_logical_neg
 id|handler
 )paren
@@ -1200,20 +1429,20 @@ multiline_comment|/*&n;&t; * Sanity-check: shared interrupts should REALLY pass 
 r_if
 c_cond
 (paren
+(paren
 id|irqflags
 op_amp
 id|SA_SHIRQ
 )paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 op_logical_neg
 id|dev_id
 )paren
+(brace
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Bad boy: %s (at %p) called us without a dev_id!&bslash;n&quot;
 comma
 id|devname
@@ -1340,28 +1569,8 @@ id|ACTUAL_NR_IRQS
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;Trying to free IRQ%d&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|IS_RESERVED_IRQ
-c_func
-(paren
-id|irq
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Trying to free reserved IRQ %d&bslash;n&quot;
 comma
 id|irq
 )paren
@@ -1431,7 +1640,7 @@ id|dev_id
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* Found it - now remove it from the list of entries */
+multiline_comment|/* Found - now remove it from the list of entries.  */
 op_star
 id|pp
 op_assign
@@ -1481,7 +1690,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* Wait to make sure it&squot;s not being used on another CPU */
+multiline_comment|/* Wait to make sure it&squot;s not being used on&n;&t;&t;&t;   another CPU.  */
 r_while
 c_loop
 (paren
@@ -1511,6 +1720,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Trying to free free IRQ%d&bslash;n&quot;
 comma
 id|irq
@@ -1555,7 +1765,7 @@ id|p
 op_assign
 id|buf
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|p
 op_add_assign
 id|sprintf
@@ -1669,7 +1879,7 @@ comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|p
 op_add_assign
 id|sprintf
@@ -1910,7 +2120,7 @@ op_minus
 id|buf
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Who has global_irq_lock. */
 DECL|variable|global_irq_holder
 r_int
@@ -2448,6 +2658,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;global_restore_flags: %08lx (%p)&bslash;n&quot;
 comma
 id|flags
@@ -2770,7 +2981,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 multiline_comment|/*&n; * do_IRQ handles all normal device IRQ&squot;s (the special&n; * SMP cross-CPU interrupts have their own specific&n; * handlers).&n; */
 r_void
 DECL|function|handle_irq
@@ -2822,6 +3033,7 @@ id|ACTUAL_NR_IRQS
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;device_interrupt: illegal interrupt %d&bslash;n&quot;
 comma
 id|irq
@@ -2861,7 +3073,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   REPLAY is when Linux resends an IRQ that was dropped earlier&n;&t;   WAITING is used by probe to mark irqs that are being tested&n;&t;   */
+multiline_comment|/*&n;&t; * REPLAY is when Linux resends an IRQ that was dropped earlier.&n;&t; * WAITING is used by probe to mark irqs that are being tested.&n;&t; */
 id|status
 op_assign
 id|desc-&gt;status
@@ -2925,7 +3137,7 @@ op_amp
 id|irq_controller_lock
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If there is no IRQ handler or it was disabled, exit early.&n;&t;   Since we set PENDING, if another processor is handling&n;&t;   a different instance of this same irq, the other processor&n;&t;   will take care of it.&n;&t; */
+multiline_comment|/*&n;&t; * If there is no IRQ handler or it was disabled, exit early.&n;&t; * Since we set PENDING, if another processor is handling&n;&t; * a different instance of this same irq, the other processor&n;&t; * will take care of it.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2934,7 +3146,7 @@ id|action
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t; * Edge triggered interrupts need to remember&n;&t; * pending events.&n;&t; * This applies to any hw interrupts that allow a second&n;&t; * instance of the same irq to arrive while we are in do_IRQ&n;&t; * or in the handler. But the code here only handles the _second_&n;&t; * instance of the irq, not the third or fourth. So it is mostly&n;&t; * useful for irq hardware that does not mask cleanly in an&n;&t; * SMP environment.&n;&t; */
+multiline_comment|/*&n;&t; * Edge triggered interrupts need to remember pending events.&n;&t; * This applies to any hw interrupts that allow a second&n;&t; * instance of the same irq to arrive while we are in do_IRQ&n;&t; * or in the handler. But the code here only handles the _second_&n;&t; * instance of the irq, not the third or fourth. So it is mostly&n;&t; * useful for irq hardware that does not mask cleanly in an&n;&t; * SMP environment.&n;&t; */
 r_for
 c_loop
 (paren
@@ -3677,7 +3889,7 @@ id|type
 r_case
 l_int|0
 suffix:colon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|handle_ipi
 c_func
 (paren
@@ -3691,7 +3903,9 @@ macro_line|#else
 id|printk
 c_func
 (paren
-l_string|&quot;Interprocessor interrupt? You must be kidding&bslash;n&quot;
+id|KERN_CRIT
+l_string|&quot;Interprocessor interrupt? &quot;
+l_string|&quot;You must be kidding!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3700,7 +3914,7 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|cpu_data
 (braket
 id|smp_processor_id
@@ -3794,6 +4008,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;Hardware intr %ld %lx? Huh?&bslash;n&quot;
 comma
 id|type
@@ -3810,6 +4025,48 @@ comma
 id|regs.pc
 comma
 id|regs.ps
+)paren
+suffix:semicolon
+)brace
+r_void
+id|__init
+DECL|function|common_init_isa_dma
+id|common_init_isa_dma
+c_func
+(paren
+r_void
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA1_RESET_REG
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA2_RESET_REG
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA1_CLR_MASK_REG
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA2_CLR_MASK_REG
 )paren
 suffix:semicolon
 )brace
@@ -3853,7 +4110,7 @@ DECL|macro|MCHK_K_OS_BUGCHECK
 mdefine_line|#define MCHK_K_OS_BUGCHECK     0x008A
 DECL|macro|MCHK_K_PAL_BUGCHECK
 mdefine_line|#define MCHK_K_PAL_BUGCHECK    0x0090
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|variable|__mcheck_info
 r_struct
 id|mcheck_info

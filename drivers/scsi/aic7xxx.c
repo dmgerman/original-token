@@ -617,6 +617,9 @@ mdefine_line|#define aic7xxx_status(cmd)        ((cmd)-&gt;SCp.sent_command)
 multiline_comment|/*&n; * The position of the SCSI commands scb within the scb array.&n; */
 DECL|macro|aic7xxx_position
 mdefine_line|#define aic7xxx_position(cmd)        ((cmd)-&gt;SCp.have_data_in)
+multiline_comment|/*&n; * The stored DMA mapping for single-buffer data transfers.&n; */
+DECL|macro|aic7xxx_mapping
+mdefine_line|#define aic7xxx_mapping(cmd)&t;     ((cmd)-&gt;SCp.phase)
 multiline_comment|/*&n; * So we can keep track of our host structs&n; */
 DECL|variable|first_aic7xxx
 r_static
@@ -8298,6 +8301,34 @@ c_func
 (paren
 id|p-&gt;pdev
 comma
+id|aic7xxx_mapping
+c_func
+(paren
+id|cmd
+)paren
+comma
+id|cmd-&gt;request_bufflen
+comma
+id|scsi_to_pci_dma_dir
+c_func
+(paren
+id|cmd-&gt;sc_data_direction
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scb-&gt;flags
+op_amp
+id|SCB_SENSE
+)paren
+(brace
+id|pci_unmap_single
+c_func
+(paren
+id|p-&gt;pdev
+comma
 id|le32_to_cpu
 c_func
 (paren
@@ -8309,24 +8340,15 @@ dot
 id|address
 )paren
 comma
-id|le32_to_cpu
-c_func
+r_sizeof
 (paren
-id|scb-&gt;sg_list
-(braket
-l_int|0
-)braket
-dot
-id|length
+id|cmd-&gt;sense_buffer
 )paren
 comma
-id|scsi_to_pci_dma_dir
-c_func
-(paren
-id|cmd-&gt;sc_data_direction
-)paren
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -16664,11 +16686,7 @@ r_sizeof
 id|cmd-&gt;sense_buffer
 )paren
 comma
-id|scsi_to_pci_dma_dir
-c_func
-(paren
-id|cmd-&gt;sc_data_direction
-)paren
+id|PCI_DMA_FROMDEVICE
 )paren
 )paren
 suffix:semicolon
@@ -42171,6 +42189,14 @@ c_func
 id|cmd-&gt;sc_data_direction
 )paren
 )paren
+suffix:semicolon
+id|aic7xxx_mapping
+c_func
+(paren
+id|cmd
+)paren
+op_assign
+id|address
 suffix:semicolon
 id|scb-&gt;sg_list
 (braket

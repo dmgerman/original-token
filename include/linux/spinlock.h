@@ -44,8 +44,8 @@ macro_line|#else /* !SMP */
 DECL|macro|DEBUG_SPINLOCKS
 mdefine_line|#define DEBUG_SPINLOCKS&t;0&t;/* 0 == no debugging, 1 == maintain lock state, 2 == full debug */
 macro_line|#if (DEBUG_SPINLOCKS &lt; 1)
-multiline_comment|/*&n; * Your basic spinlocks, allowing only a single CPU anywhere&n; *&n; * Gcc-2.7.x has a nasty bug with empty initializers.&n; */
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
+multiline_comment|/*&n; * Your basic spinlocks, allowing only a single CPU anywhere&n; *&n; * Most gcc versions have a nasty bug with empty initializers.&n; */
+macro_line|#if (__GNUC__ &gt; 2)
 DECL|typedef|spinlock_t
 r_typedef
 r_struct
@@ -152,8 +152,8 @@ mdefine_line|#define spin_unlock_wait(x)&t;do {unsigned long __spinflags; save_f
 DECL|macro|spin_unlock
 mdefine_line|#define spin_unlock(x)&t;&t;do {unsigned long __spinflags; save_flags(__spinflags); cli(); if (!(x)-&gt;lock&amp;&amp;(x)-&gt;babble) {printk(&quot;%s:%d: spin_unlock(%s:%p) not locked&bslash;n&quot;, __BASE_FILE__,__LINE__, (x)-&gt;module, (x));(x)-&gt;babble--;} (x)-&gt;lock = 0; restore_flags(__spinflags);} while (0)
 macro_line|#endif&t;/* DEBUG_SPINLOCKS */
-multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; *&n; * Gcc-2.7.x has a nasty bug with empty initializers.&n; */
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
+multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; *&n; * Most gcc versions have a nasty bug with empty initializers.&n; */
+macro_line|#if (__GNUC__ &gt; 2)
 DECL|typedef|rwlock_t
 r_typedef
 r_struct

@@ -3,6 +3,7 @@ macro_line|#ifndef LINUX_LOCKD_LOCKD_H
 DECL|macro|LINUX_LOCKD_LOCKD_H
 mdefine_line|#define LINUX_LOCKD_LOCKD_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;

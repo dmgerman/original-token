@@ -1,5 +1,5 @@
 multiline_comment|/* $Id: aty128fb.c,v 1.1.1.1.36.1 1999/12/11 09:03:05 Exp $&n; *  linux/drivers/video/aty128fb.c -- Frame buffer device for ATI Rage128&n; *&n; *  Copyright (C) 1999-2000, Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *                Brad Douglas &lt;brad@neruo.com&gt;&n; *&t;&t;&t;&t;- x86 support&n; *&t;&t;&t;&t;- MTRR&n; *&t;&t;&t;&t;- Probe ROM for PLL&n; *&t;&t;&t;&t;- modedb&n; *&n; *                Ani Joshi / Jeff Garzik&n; *                      - Code cleanup&n; *&n; *  Based off of Geert&squot;s atyfb.c and vfb.c.&n; *&n; *  TODO:&n; *&t;&t;- panning&n; *&t;&t;- monitor sensing (DDC)&n; *              - virtual display&n; *&t;&t;- other platform support (only ppc/x86 supported)&n; *&t;&t;- PPLL_REF_DIV &amp; XTALIN calculation    -done for x86&n; *&t;&t;- determine MCLK from previous setting -done for x86            &n; *              - calculate XCLK, rather than probe BIOS&n; *&t;&t;- hardware cursor support&n; *              - acceleration&n; *&t;&t;- ioctl()&squot;s&n; */
-multiline_comment|/*&n; * A special note of gratitude to ATI&squot;s devrel for providing documentation,&n; * example code and hardware. Thanks Nitya.&t;-atong&n; */
+multiline_comment|/*&n; * A special note of gratitude to ATI&squot;s devrel for providing documentation,&n; * example code and hardware. Thanks Nitya.&t;-atong and brad&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -248,6 +248,22 @@ comma
 id|PCI_VENDOR_ID_ATI
 comma
 l_int|0x524c
+)brace
+comma
+(brace
+l_string|&quot;PCI_DEVICE_ID_ATI_RAGE128_PF&quot;
+comma
+id|PCI_VENDOR_ID_ATI
+comma
+l_int|0x5046
+)brace
+comma
+(brace
+l_string|&quot;PCI_DEVICE_ID_ATI_RAGE128_PR&quot;
+comma
+id|PCI_VENDOR_ID_ATI
+comma
+l_int|0x5052
 )brace
 comma
 (brace
@@ -7293,8 +7309,8 @@ id|var
 op_assign
 id|default_var
 suffix:semicolon
-macro_line|#endif /* CONFIG_PPC */
 )brace
+macro_line|#endif /* CONFIG_PPC */
 macro_line|#endif /* MODULE */
 r_if
 c_cond
@@ -9987,72 +10003,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;     *  Accelerated functions&n;     */
-r_static
-r_void
-DECL|function|aty128_rectdraw
-id|aty128_rectdraw
-c_func
-(paren
-id|s16
-id|x
-comma
-id|s16
-id|y
-comma
-id|u16
-id|width
-comma
-id|u16
-id|height
-comma
-r_struct
-id|fb_info_aty128
-op_star
-id|info
-)paren
-(brace
-multiline_comment|/* perform rectangle operation */
-id|wait_for_fifo
-c_func
-(paren
-l_int|2
-comma
-id|info
-)paren
-suffix:semicolon
-id|aty_st_le32
-c_func
-(paren
-id|DST_Y_X
-comma
-(paren
-id|y
-op_lshift
-l_int|16
-)paren
-op_or
-id|x
-)paren
-suffix:semicolon
-id|aty_st_le32
-c_func
-(paren
-id|DST_HEIGHT_WIDTH
-comma
-(paren
-id|height
-op_lshift
-l_int|16
-)paren
-op_or
-id|width
-)paren
-suffix:semicolon
-id|info-&gt;blitter_may_be_busy
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 r_static
 r_void
 DECL|function|aty128_rectcopy

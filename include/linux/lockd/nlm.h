@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/linux/lockd/nlm.h&n; *&n; * Declarations
 macro_line|#ifndef LINUX_LOCKD_NLM_H
 DECL|macro|LINUX_LOCKD_NLM_H
 mdefine_line|#define LINUX_LOCKD_NLM_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Maximum file offset in file_lock.fl_end */
 macro_line|#ifdef OFFSET_MAX
 DECL|macro|NLM_OFFSET_MAX

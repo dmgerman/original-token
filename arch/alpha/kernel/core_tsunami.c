@@ -708,6 +708,7 @@ suffix:semicolon
 macro_line|#ifdef NXM_MACHINE_CHECKS_ON_TSUNAMI
 r_static
 r_int
+id|__init
 DECL|function|tsunami_probe_read
 id|tsunami_probe_read
 c_func
@@ -818,6 +819,7 @@ suffix:semicolon
 )brace
 r_static
 r_int
+id|__init
 DECL|function|tsunami_probe_write
 id|tsunami_probe_write
 c_func

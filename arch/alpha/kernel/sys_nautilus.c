@@ -18,61 +18,9 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_irongate.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &lt;asm/hw_irq.h&gt;
+macro_line|#include &quot;irq_impl.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
 macro_line|#include &quot;machvec_impl.h&quot;
-DECL|macro|dev2hose
-mdefine_line|#define dev2hose(d) (bus2hose[(d)-&gt;bus-&gt;number]-&gt;pci_hose_index)
-r_static
-r_void
-DECL|function|nautilus_update_irq_hw
-id|nautilus_update_irq_hw
-c_func
-(paren
-r_int
-r_int
-id|irq
-comma
-r_int
-r_int
-id|mask
-comma
-r_int
-id|unmask_p
-)paren
-(brace
-multiline_comment|/* The timer is connected to PIC interrupt line also on Nautilus.&n;&t;   The timer interrupt handler enables the PIC line, so in order&n;&t;   not to get multiple timer interrupt sources, we mask it out&n;&t;   at all times.  */
-id|mask
-op_or_assign
-l_int|0x100
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq
-op_ge
-l_int|8
-)paren
-id|outb
-c_func
-(paren
-id|mask
-op_rshift
-l_int|8
-comma
-l_int|0xA1
-)paren
-suffix:semicolon
-r_else
-id|outb
-c_func
-(paren
-id|mask
-comma
-l_int|0x21
-)paren
-suffix:semicolon
-)brace
 r_static
 r_void
 id|__init
@@ -83,19 +31,19 @@ c_func
 r_void
 )paren
 (brace
-id|STANDARD_INIT_IRQ_PROLOG
-suffix:semicolon
-id|enable_irq
+id|init_i8259a_irqs
 c_func
 (paren
-l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* enable cascade */
-id|disable_irq
+id|init_rtc_irq
 c_func
 (paren
-l_int|8
+)paren
+suffix:semicolon
+id|common_init_isa_dma
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1630,27 +1578,6 @@ id|nr_irqs
 suffix:colon
 l_int|16
 comma
-id|irq_probe_mask
-suffix:colon
-(paren
-id|_PROBE_MASK
-c_func
-(paren
-l_int|16
-)paren
-op_amp
-op_complement
-l_int|0x101UL
-)paren
-comma
-id|update_irq_hw
-suffix:colon
-id|nautilus_update_irq_hw
-comma
-id|ack_irq
-suffix:colon
-id|common_ack_irq
-comma
 id|device_interrupt
 suffix:colon
 id|isa_device_interrupt
@@ -1663,9 +1590,9 @@ id|init_irq
 suffix:colon
 id|nautilus_init_irq
 comma
-id|init_pit
+id|init_rtc
 suffix:colon
-id|common_init_pit
+id|common_init_rtc
 comma
 id|init_pci
 suffix:colon

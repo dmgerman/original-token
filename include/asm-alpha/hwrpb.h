@@ -21,7 +21,7 @@ mdefine_line|#define EV6_CPU&t;&t;&t;8&t;/* EV6 (21164)&t;&t;*/
 DECL|macro|PCA56_CPU
 mdefine_line|#define PCA56_CPU&t;&t;9&t;/* PCA56 (21164PC)&t;*/
 DECL|macro|PCA57_CPU
-mdefine_line|#define PCA57_CPU&t;&t;10&t;/* PCA57 (21164??)&t;*/
+mdefine_line|#define PCA57_CPU&t;&t;10&t;/* PCA57 (notyet)&t;*/
 multiline_comment|/*&n; * DEC system types for Alpha systems.  Found in HWRPB.&n; * These values are architected.&n; */
 DECL|macro|ST_ADU
 mdefine_line|#define ST_ADU&t;&t;&t;  1&t;/* Alpha ADU systype&t;*/
@@ -96,9 +96,9 @@ DECL|macro|ST_DTI_RUFFIAN
 mdefine_line|#define ST_DTI_RUFFIAN&t;&t;101&t;/* RUFFIAN systype&t;*/
 multiline_comment|/* Alpha Processor, Inc. systems */
 DECL|macro|ST_API_BIAS
-mdefine_line|#define ST_API_BIAS&t;&t;200&t;&t;&t;/* Offset for API systems */
+mdefine_line|#define ST_API_BIAS&t;&t;200
 DECL|macro|ST_API_NAUTILUS
-mdefine_line|#define ST_API_NAUTILUS&t;&t;(ST_API_BIAS + 1)&t;/* Nautilus systype */
+mdefine_line|#define ST_API_NAUTILUS&t;&t;201&t;/* UP1000 systype&t;*/
 DECL|struct|pcb_struct
 r_struct
 id|pcb_struct

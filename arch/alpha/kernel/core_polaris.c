@@ -243,7 +243,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-r_static
 r_int
 DECL|function|polaris_read_config_dword
 id|polaris_read_config_dword
@@ -457,7 +456,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-r_static
 r_int
 DECL|function|polaris_write_config_dword
 id|polaris_write_config_dword
