@@ -3034,6 +3034,12 @@ op_assign
 id|CMD_MBINIT
 comma
 id|AHA1542_MAILBOXES
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )brace
 suffix:semicolon
 id|mb

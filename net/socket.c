@@ -387,7 +387,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -417,10 +417,10 @@ c_func
 id|fd
 comma
 op_amp
-id|current-&gt;close_on_exec
+id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -622,7 +622,7 @@ op_logical_neg
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -2408,7 +2408,7 @@ id|fd
 op_ge
 id|NR_OPEN
 op_logical_or
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -2521,7 +2521,7 @@ id|fd
 op_ge
 id|NR_OPEN
 op_logical_or
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -2663,7 +2663,7 @@ op_logical_or
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -2968,7 +2968,7 @@ op_logical_or
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -3146,7 +3146,7 @@ id|fd
 op_ge
 id|NR_OPEN
 op_logical_or
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -3240,7 +3240,7 @@ id|fd
 op_ge
 id|NR_OPEN
 op_logical_or
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -3350,7 +3350,7 @@ op_logical_or
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -3481,7 +3481,7 @@ op_logical_or
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -3603,7 +3603,7 @@ op_logical_or
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -3735,7 +3735,7 @@ op_logical_or
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -3872,7 +3872,7 @@ op_logical_or
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -4002,7 +4002,7 @@ op_logical_or
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -4117,7 +4117,7 @@ op_logical_or
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket

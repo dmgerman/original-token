@@ -7811,7 +7811,7 @@ op_star
 id|p
 )paren
 op_member_access_from_pointer
-id|filp
+id|files-&gt;fd
 (braket
 id|i
 )braket

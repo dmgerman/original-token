@@ -244,7 +244,7 @@ c_loop
 (paren
 id|vmm
 op_assign
-id|current-&gt;mmap
+id|current-&gt;mm-&gt;mmap
 suffix:semicolon
 id|vmm
 suffix:semicolon
@@ -551,7 +551,7 @@ op_logical_neg
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -963,7 +963,7 @@ multiline_comment|/*&n;&t; * Check if this memory area is ok - put it on the tem
 id|npp
 op_assign
 op_amp
-id|current-&gt;mmap
+id|current-&gt;mm-&gt;mmap
 suffix:semicolon
 id|free
 op_assign
@@ -1396,7 +1396,7 @@ suffix:semicolon
 id|merge_segments
 c_func
 (paren
-id|current-&gt;mmap
+id|current-&gt;mm-&gt;mmap
 comma
 l_int|NULL
 comma
@@ -1436,14 +1436,14 @@ suffix:semicolon
 id|nxtpp
 op_assign
 op_amp
-id|t-&gt;mmap
+id|t-&gt;mm-&gt;mmap
 suffix:semicolon
 r_for
 c_loop
 (paren
 id|mpnt
 op_assign
-id|t-&gt;mmap
+id|t-&gt;mm-&gt;mmap
 suffix:semicolon
 id|mpnt
 op_ne
@@ -1813,7 +1813,7 @@ suffix:semicolon
 id|merge_segments
 c_func
 (paren
-id|current-&gt;mmap
+id|current-&gt;mm-&gt;mmap
 comma
 id|ignoff_mergep
 comma

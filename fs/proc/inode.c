@@ -729,7 +729,7 @@ op_ge
 id|NR_OPEN
 op_logical_or
 op_logical_neg
-id|p-&gt;filp
+id|p-&gt;files-&gt;fd
 (braket
 id|ino
 )braket
@@ -776,7 +776,7 @@ c_loop
 (paren
 id|mpnt
 op_assign
-id|p-&gt;mmap
+id|p-&gt;mm-&gt;mmap
 suffix:semicolon
 id|mpnt
 suffix:semicolon

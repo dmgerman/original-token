@@ -267,7 +267,7 @@ l_int|4
 suffix:colon
 id|inode
 op_assign
-id|p-&gt;pwd
+id|p-&gt;fs-&gt;pwd
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -276,7 +276,7 @@ l_int|5
 suffix:colon
 id|inode
 op_assign
-id|p-&gt;root
+id|p-&gt;fs-&gt;root
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -315,14 +315,14 @@ id|ino
 OL
 id|NR_OPEN
 op_logical_and
-id|p-&gt;filp
+id|p-&gt;files-&gt;fd
 (braket
 id|ino
 )braket
 )paren
 id|inode
 op_assign
-id|p-&gt;filp
+id|p-&gt;files-&gt;fd
 (braket
 id|ino
 )braket
@@ -354,7 +354,7 @@ c_loop
 (paren
 id|mpnt
 op_assign
-id|p-&gt;mmap
+id|p-&gt;mm-&gt;mmap
 suffix:semicolon
 id|mpnt
 op_logical_and

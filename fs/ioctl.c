@@ -289,7 +289,7 @@ op_logical_neg
 (paren
 id|filp
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -314,7 +314,7 @@ c_func
 id|fd
 comma
 op_amp
-id|current-&gt;close_on_exec
+id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
 r_return
@@ -329,7 +329,7 @@ c_func
 id|fd
 comma
 op_amp
-id|current-&gt;close_on_exec
+id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
 r_return

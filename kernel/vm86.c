@@ -7,7 +7,12 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/*&n; * 16-bit register defines..&n; */
+multiline_comment|/*&n; * Known problems:&n; *&n; * Interrupt handling is not guaranteed:&n; * - a real x86 will disable all interrupts for one instruction&n; *   after a &quot;mov ss,xx&quot; to make stack handling atomic even without&n; *   the &squot;lss&squot; instruction. We can&squot;t guarantee this in v86 mode,&n; *   as the next instruction might result in a page fault or similar.&n; * - a real x86 will have interrupts disabled for one instruction&n; *   past the &squot;sti&squot; that enables them. We don&squot;t bother with all the&n; *   details yet..&n; *&n; * Hopefully these problems do not actually matter for anything.&n; */
+multiline_comment|/*&n; * 8- and 16-bit register defines..&n; */
+DECL|macro|AL
+mdefine_line|#define AL(regs)&t;(((unsigned char *) ((regs)-&gt;eax))[0])
+DECL|macro|AH
+mdefine_line|#define AH(regs)&t;(((unsigned char *) ((regs)-&gt;eax))[1])
 DECL|macro|IP
 mdefine_line|#define IP(regs)&t;(*(unsigned short *)&amp;((regs)-&gt;eip))
 DECL|macro|SP
@@ -859,13 +864,11 @@ op_logical_and
 id|is_revectored
 c_func
 (paren
+id|AH
+c_func
 (paren
-id|regs-&gt;eax
-op_rshift
-l_int|4
+id|regs
 )paren
-op_amp
-l_int|0xff
 comma
 op_amp
 id|current-&gt;vm86_info-&gt;int21_revectored
@@ -970,6 +973,46 @@ id|regs
 )paren
 suffix:semicolon
 r_return
+suffix:semicolon
+)brace
+DECL|function|handle_vm86_debug
+r_void
+id|handle_vm86_debug
+c_func
+(paren
+r_struct
+id|vm86_regs
+op_star
+id|regs
+comma
+r_int
+id|error_code
+)paren
+(brace
+id|do_int
+c_func
+(paren
+id|regs
+comma
+l_int|3
+comma
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+id|regs-&gt;ss
+op_lshift
+l_int|4
+)paren
+comma
+id|SP
+c_func
+(paren
+id|regs
+)paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|handle_vm86_fault
@@ -1342,6 +1385,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 multiline_comment|/* sti */
+multiline_comment|/*&n;&t; * Damn. This is incorrect: the &squot;sti&squot; instruction should actually&n;&t; * enable interrupts after the /next/ instruction. Not good.&n;&t; *&n;&t; * Probably needs some horsing around with the TF flag. Aiee..&n;&t; */
 r_case
 l_int|0xfb
 suffix:colon

@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/fs/msdos/fat.c&n; *&n; *  Written 1992,1993 by 
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 DECL|variable|fat_cache
 DECL|variable|cache

@@ -394,6 +394,7 @@ l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifndef EXCLUDE_MIDI
 r_case
 id|IMODE_MIDI
 suffix:colon
@@ -404,6 +405,7 @@ id|unit
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|printk

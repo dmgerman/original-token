@@ -764,6 +764,30 @@ id|error_code
 r_if
 c_cond
 (paren
+id|regs-&gt;eflags
+op_amp
+id|VM_MASK
+)paren
+(brace
+id|handle_vm86_debug
+c_func
+(paren
+(paren
+r_struct
+id|vm86_regs
+op_star
+)paren
+id|regs
+comma
+id|error_code
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|current-&gt;flags
 op_amp
 id|PF_PTRACED
@@ -815,23 +839,19 @@ multiline_comment|/* If this is a kernel mode trap, then reset db7 and allow us 
 id|__asm__
 c_func
 (paren
-l_string|&quot;movl $0,%%edx&bslash;n&bslash;t&quot;
-"&bslash;"
-l_string|&quot;movl %%edx,%%db7&bslash;n&bslash;t&quot;
-"&bslash;"
+l_string|&quot;movl %0,%%db7&quot;
 suffix:colon
 multiline_comment|/* no output */
-"&bslash;"
 suffix:colon
-multiline_comment|/* no input */
-suffix:colon
-l_string|&quot;dx&quot;
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-suffix:semicolon
 id|die_if_kernel
 c_func
 (paren

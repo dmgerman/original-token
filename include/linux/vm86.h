@@ -230,6 +230,17 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_void
+id|handle_vm86_debug
+c_func
+(paren
+r_struct
+id|vm86_regs
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 eof

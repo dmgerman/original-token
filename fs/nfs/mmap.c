@@ -328,7 +328,7 @@ suffix:semicolon
 id|merge_segments
 c_func
 (paren
-id|current-&gt;mmap
+id|current-&gt;mm-&gt;mmap
 comma
 l_int|NULL
 comma
@@ -431,13 +431,13 @@ id|page
 )paren
 (brace
 op_increment
-id|area-&gt;vm_task-&gt;min_flt
+id|area-&gt;vm_task-&gt;mm-&gt;min_flt
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 op_increment
-id|area-&gt;vm_task-&gt;maj_flt
+id|area-&gt;vm_task-&gt;mm-&gt;maj_flt
 suffix:semicolon
 r_if
 c_cond

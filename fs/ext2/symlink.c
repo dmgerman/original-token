@@ -151,7 +151,7 @@ id|dir
 (brace
 id|dir
 op_assign
-id|current-&gt;root
+id|current-&gt;fs-&gt;root
 suffix:semicolon
 id|dir-&gt;i_count
 op_increment

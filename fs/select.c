@@ -323,7 +323,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|i
 )braket
@@ -336,7 +336,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|i
 )braket
@@ -460,7 +460,7 @@ id|SEL_IN
 comma
 id|wait
 comma
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|i
 )braket
@@ -501,7 +501,7 @@ id|SEL_OUT
 comma
 id|wait
 comma
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|i
 )braket
@@ -542,7 +542,7 @@ id|SEL_EX
 comma
 id|wait
 comma
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|i
 )braket

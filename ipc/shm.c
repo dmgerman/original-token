@@ -1804,7 +1804,7 @@ id|PAGE_PRESENT
 )paren
 (brace
 op_decrement
-id|current-&gt;rss
+id|current-&gt;mm-&gt;rss
 suffix:semicolon
 id|free_page
 (paren
@@ -2188,7 +2188,7 @@ c_cond
 (paren
 id|addr
 OG
-id|current-&gt;start_stack
+id|current-&gt;mm-&gt;start_stack
 op_minus
 l_int|16384
 op_minus
@@ -2405,7 +2405,7 @@ c_cond
 (paren
 id|addr
 OL
-id|current-&gt;end_data
+id|current-&gt;mm-&gt;end_data
 )paren
 (brace
 id|iput
@@ -3215,12 +3215,12 @@ suffix:semicolon
 )brace
 r_else
 op_decrement
-id|current-&gt;maj_flt
+id|current-&gt;mm-&gt;maj_flt
 suffix:semicolon
 multiline_comment|/* was incremented in do_no_page */
 id|done
 suffix:colon
-id|current-&gt;min_flt
+id|current-&gt;mm-&gt;min_flt
 op_increment
 suffix:semicolon
 id|page
@@ -3683,7 +3683,7 @@ id|page
 )braket
 op_decrement
 suffix:semicolon
-id|shmd-&gt;task-&gt;rss
+id|shmd-&gt;task-&gt;mm-&gt;rss
 op_decrement
 suffix:semicolon
 id|invalid

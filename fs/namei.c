@@ -392,7 +392,7 @@ c_cond
 (paren
 id|dir
 op_eq
-id|current-&gt;root
+id|current-&gt;fs-&gt;root
 )paren
 (brace
 op_star
@@ -690,7 +690,7 @@ id|base
 (brace
 id|base
 op_assign
-id|current-&gt;pwd
+id|current-&gt;fs-&gt;pwd
 suffix:semicolon
 id|base-&gt;i_count
 op_increment
@@ -717,7 +717,7 @@ id|base
 suffix:semicolon
 id|base
 op_assign
-id|current-&gt;root
+id|current-&gt;fs-&gt;root
 suffix:semicolon
 id|pathname
 op_increment
@@ -1223,7 +1223,7 @@ op_and_assign
 id|S_IALLUGO
 op_amp
 op_complement
-id|current-&gt;umask
+id|current-&gt;fs-&gt;umask
 suffix:semicolon
 id|mode
 op_or_assign
@@ -1743,7 +1743,7 @@ op_star
 id|p
 )paren
 op_member_access_from_pointer
-id|mmap
+id|mm-&gt;mmap
 suffix:semicolon
 id|mpnt
 suffix:semicolon
@@ -1885,7 +1885,7 @@ suffix:semicolon
 id|mode
 op_and_assign
 op_complement
-id|current-&gt;umask
+id|current-&gt;fs-&gt;umask
 suffix:semicolon
 id|error
 op_assign

@@ -50,7 +50,7 @@ op_logical_neg
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -163,7 +163,7 @@ op_logical_neg
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -326,7 +326,7 @@ op_logical_neg
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -458,7 +458,7 @@ op_logical_neg
 (paren
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket

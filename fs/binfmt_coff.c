@@ -1165,7 +1165,7 @@ suffix:semicolon
 r_else
 id|fp
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -1327,11 +1327,11 @@ id|bprm
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *  Define the initial locations for the various items in the new process&n; */
-id|current-&gt;mmap
+id|current-&gt;mm-&gt;mmap
 op_assign
 l_int|NULL
 suffix:semicolon
-id|current-&gt;rss
+id|current-&gt;mm-&gt;rss
 op_assign
 l_int|0
 suffix:semicolon
@@ -1373,27 +1373,27 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *  Do the end processing once the stack has been constructed&n; */
-id|current-&gt;start_code
+id|current-&gt;mm-&gt;start_code
 op_assign
 id|text_vaddr
 op_amp
 id|PAGE_MASK
 suffix:semicolon
-id|current-&gt;end_code
+id|current-&gt;mm-&gt;end_code
 op_assign
 id|text_vaddr
 op_plus
 id|text_size
 suffix:semicolon
-id|current-&gt;end_data
+id|current-&gt;mm-&gt;end_data
 op_assign
 id|data_vaddr
 op_plus
 id|data_size
 suffix:semicolon
-id|current-&gt;start_brk
+id|current-&gt;mm-&gt;start_brk
 op_assign
-id|current-&gt;brk
+id|current-&gt;mm-&gt;brk
 op_assign
 id|bss_vaddr
 op_plus
@@ -1427,7 +1427,7 @@ suffix:semicolon
 multiline_comment|/* Current EIP register  */
 id|regs-&gt;esp
 op_assign
-id|current-&gt;start_stack
+id|current-&gt;mm-&gt;start_stack
 op_assign
 id|bprm-&gt;p
 suffix:semicolon
@@ -2345,7 +2345,7 @@ id|linux_binprm
 suffix:semicolon
 id|file
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket

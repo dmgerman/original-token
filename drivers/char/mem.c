@@ -494,7 +494,7 @@ suffix:semicolon
 id|merge_segments
 c_func
 (paren
-id|current-&gt;mmap
+id|current-&gt;mm-&gt;mmap
 comma
 l_int|NULL
 comma
@@ -1006,7 +1006,7 @@ suffix:semicolon
 id|merge_segments
 c_func
 (paren
-id|current-&gt;mmap
+id|current-&gt;mm-&gt;mmap
 comma
 id|ignoff_mergep
 comma

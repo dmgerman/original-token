@@ -75,7 +75,7 @@ op_ge
 id|NR_OPEN
 op_logical_or
 op_logical_neg
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -105,7 +105,7 @@ id|NR_OPEN
 r_if
 c_cond
 (paren
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|arg
 )braket
@@ -133,16 +133,16 @@ c_func
 id|arg
 comma
 op_amp
-id|current-&gt;close_on_exec
+id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
 (paren
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|arg
 )braket
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -178,7 +178,7 @@ op_ge
 id|NR_OPEN
 op_logical_or
 op_logical_neg
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|oldfd
 )braket
@@ -297,7 +297,7 @@ op_logical_neg
 (paren
 id|filp
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -335,7 +335,7 @@ c_func
 id|fd
 comma
 op_amp
-id|current-&gt;close_on_exec
+id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
 r_case
@@ -354,7 +354,7 @@ c_func
 id|fd
 comma
 op_amp
-id|current-&gt;close_on_exec
+id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
 r_else
@@ -364,7 +364,7 @@ c_func
 id|fd
 comma
 op_amp
-id|current-&gt;close_on_exec
+id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
 r_return

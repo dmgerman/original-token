@@ -1937,13 +1937,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|i
 )braket
 )paren
 (brace
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 (braket
@@ -1969,7 +1969,7 @@ id|j
 op_eq
 l_int|1
 )paren
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 (braket
@@ -2022,7 +2022,7 @@ c_func
 )paren
 )paren
 (brace
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 (braket
@@ -2032,7 +2032,7 @@ l_int|0
 op_assign
 l_int|NULL
 suffix:semicolon
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 (braket

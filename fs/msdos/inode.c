@@ -295,7 +295,7 @@ suffix:semicolon
 op_star
 id|umask
 op_assign
-id|current-&gt;umask
+id|current-&gt;fs-&gt;umask
 suffix:semicolon
 op_star
 id|debug

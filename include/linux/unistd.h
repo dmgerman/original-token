@@ -272,6 +272,8 @@ DECL|macro|__NR_fchdir
 mdefine_line|#define __NR_fchdir&t;&t;133
 DECL|macro|__NR_bdflush
 mdefine_line|#define __NR_bdflush&t;&t;134
+DECL|macro|__NR_sysfs
+mdefine_line|#define __NR_sysfs&t;&t;135
 r_extern
 r_int
 id|errno

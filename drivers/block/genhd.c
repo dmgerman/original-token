@@ -150,6 +150,10 @@ id|bh-&gt;b_uptodate
 op_assign
 l_int|0
 suffix:semicolon
+id|bh-&gt;b_req
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -993,8 +997,6 @@ id|device_setup
 c_func
 (paren
 r_void
-op_star
-id|BIOS
 )paren
 (brace
 r_struct

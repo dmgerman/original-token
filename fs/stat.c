@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/stat.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -113,17 +114,26 @@ id|statbuf
 r_struct
 id|new_stat
 id|tmp
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 r_int
 r_int
 id|blocks
 comma
 id|indirect
+suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|tmp
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|tmp
+)paren
+)paren
 suffix:semicolon
 id|tmp.st_dev
 op_assign
@@ -703,7 +713,7 @@ op_logical_neg
 (paren
 id|f
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
@@ -796,7 +806,7 @@ op_logical_neg
 (paren
 id|f
 op_assign
-id|current-&gt;filp
+id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket

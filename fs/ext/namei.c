@@ -2128,7 +2128,7 @@ op_amp
 l_int|0777
 op_amp
 op_complement
-id|current-&gt;umask
+id|current-&gt;fs-&gt;umask
 )paren
 suffix:semicolon
 r_if
