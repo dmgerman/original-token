@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|macro|X
-mdefine_line|#define X(name)&t;{ (void *) &amp;name, #name }
+mdefine_line|#define X(name)&t;{ (void *) &amp;name, &quot;_&quot; #name }
 r_struct
 (brace
 DECL|member|addr

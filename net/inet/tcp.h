@@ -12,7 +12,7 @@ mdefine_line|#define MAX_ACK_SIZE&t;40 + sizeof (struct sk_buff) + MAX_HEADER
 DECL|macro|MAX_RESET_SIZE
 mdefine_line|#define MAX_RESET_SIZE&t;40 + sizeof (struct sk_buff) + MAX_HEADER
 DECL|macro|MAX_WINDOW
-mdefine_line|#define MAX_WINDOW&t;4096
+mdefine_line|#define MAX_WINDOW&t;8192
 DECL|macro|MIN_WINDOW
 mdefine_line|#define MIN_WINDOW&t;2048
 DECL|macro|MAX_ACK_BACKLOG
