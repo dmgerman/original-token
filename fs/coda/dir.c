@@ -2749,6 +2749,11 @@ id|coda_cred
 op_star
 id|cred
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ENTRY
 suffix:semicolon
 id|coda_vfs_stat.open
@@ -2818,6 +2823,11 @@ comma
 id|error
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -2877,6 +2887,11 @@ id|iput
 c_func
 (paren
 id|cont_inode
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2982,6 +2997,11 @@ id|cont_inode-&gt;i_op
 )paren
 suffix:semicolon
 id|EXIT
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

@@ -408,6 +408,10 @@ op_assign
 op_amp
 id|i2cproc_operations
 suffix:semicolon
+id|proc_entry-&gt;owner
+op_assign
+id|THIS_MODULE
+suffix:semicolon
 macro_line|#else
 id|proc_entry-&gt;ops
 op_assign

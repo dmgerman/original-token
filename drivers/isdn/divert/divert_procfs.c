@@ -5,6 +5,7 @@ mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#else
@@ -524,7 +525,10 @@ id|filep
 r_int
 id|flags
 suffix:semicolon
-id|MOD_INC_USE_COUNT
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|save_flags
 c_func
@@ -577,6 +581,11 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*  start_divert(); */
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 l_int|0
@@ -687,8 +696,6 @@ id|inf
 )paren
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 (paren
 l_int|0
@@ -1275,6 +1282,10 @@ id|isdn_divert_entry-&gt;proc_fops
 op_assign
 op_amp
 id|isdn_fops
+suffix:semicolon
+id|isdn_divert_entry-&gt;owner
+op_assign
+id|THIS_MODULE
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_PROC_FS */
 r_return

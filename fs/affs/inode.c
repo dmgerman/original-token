@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/amigaffs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
@@ -880,6 +881,11 @@ id|inode-&gt;i_nlink
 )paren
 r_return
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -913,6 +919,11 @@ comma
 l_string|&quot;Cannot read block %lu&quot;
 comma
 id|inode-&gt;i_ino
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -1124,6 +1135,11 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 r_int
 DECL|function|affs_notify_change
@@ -1302,6 +1318,11 @@ comma
 id|inode-&gt;i_nlink
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|affs_free_prealloc
 c_func
 (paren
@@ -1355,6 +1376,11 @@ id|cache_page
 suffix:semicolon
 )brace
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 r_void
 DECL|function|affs_delete_inode
@@ -1375,6 +1401,11 @@ comma
 id|inode-&gt;i_ino
 comma
 id|inode-&gt;i_nlink
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|inode-&gt;i_size
@@ -1405,6 +1436,11 @@ c_func
 id|inode-&gt;i_sb
 comma
 id|inode-&gt;i_ino
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|clear_inode

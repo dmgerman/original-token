@@ -610,6 +610,14 @@ comma
 id|name
 suffix:colon
 l_string|&quot;kmem_cache&quot;
+comma
+id|next
+suffix:colon
+id|LIST_HEAD_INIT
+c_func
+(paren
+id|cache_cache.next
+)paren
 )brace
 suffix:semicolon
 multiline_comment|/* Guard access to the cache-chain. */

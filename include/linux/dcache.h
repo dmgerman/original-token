@@ -767,7 +767,7 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* Allocation counts.. */
-multiline_comment|/**&n; *&t;dget&t;-&t;get a reference to a dentry&n; *&t;@dentry: dentry to get a reference to&n; *&n; *&t;Given a dentry or %NULL pointer increment the reference count&n; *&t;if appropriate and return the dentry. A dentry will not be &n; *&t;destroyed when it has references.&n; */
+multiline_comment|/**&n; *&t;dget, dget_locked&t;-&t;get a reference to a dentry&n; *&t;@dentry: dentry to get a reference to&n; *&n; *&t;Given a dentry or %NULL pointer increment the reference count&n; *&t;if appropriate and return the dentry. A dentry will not be &n; *&t;destroyed when it has references. dget() should never be&n; *&t;called for dentries with zero reference counter. For these cases&n; *&t;(preferably none, functions in dcache.c are sufficient for normal&n; *&t;needs and they take necessary precautions) you should hold dcache_lock&n; *&t;and call dget_locked() instead of dget().&n; */
 DECL|function|dget
 r_static
 id|__inline__
@@ -780,6 +780,12 @@ c_func
 r_struct
 id|dentry
 op_star
+id|dentry
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|dentry
 )paren
 (brace
@@ -799,11 +805,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dentry
-)paren
 id|atomic_inc
 c_func
 (paren
@@ -811,10 +812,23 @@ op_amp
 id|dentry-&gt;d_count
 )paren
 suffix:semicolon
+)brace
 r_return
 id|dentry
 suffix:semicolon
 )brace
+r_extern
+r_struct
+id|dentry
+op_star
+id|dget_locked
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/**&n; *&t;d_unhashed -&t;is dentry hashed&n; *&t;@dentry: entry to check&n; *&n; *&t;Returns true if the dentry passed is not currently hashed.&n; */
 DECL|function|d_unhashed
 r_static

@@ -1,4 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/hpfs/inode.c&n; *&n; *  Mikulas Patocka (mikulas@artax.karlin.mff.cuni.cz), 1998-1999&n; *&n; *  inode VFS functions&n; */
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;hpfs_fn.h&quot;
 DECL|variable|hpfs_file_ops
 r_static
@@ -1867,12 +1869,22 @@ op_star
 id|inode
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hpfs_remove_fnode
 c_func
 (paren
 id|inode-&gt;i_sb
 comma
 id|inode-&gt;i_ino
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|clear_inode

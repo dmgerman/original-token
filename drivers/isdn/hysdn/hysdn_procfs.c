@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;hysdn_defs.h&quot;
 DECL|variable|hysdn_procfs_revision
 r_static
@@ -688,9 +689,11 @@ suffix:semicolon
 id|ulong
 id|flags
 suffix:semicolon
-id|MOD_INC_USE_COUNT
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
-multiline_comment|/* lock module */
 id|card
 op_assign
 id|card_root
@@ -731,9 +734,11 @@ op_logical_neg
 id|card
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
-multiline_comment|/* unlock module */
 r_return
 (paren
 op_minus
@@ -774,9 +779,11 @@ id|card
 )paren
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
-multiline_comment|/* unlock module */
 r_return
 (paren
 op_minus
@@ -860,9 +867,11 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* simultaneous read/write access forbidden ! */
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
-multiline_comment|/* unlock module */
 r_return
 (paren
 op_minus
@@ -871,6 +880,11 @@ id|EPERM
 suffix:semicolon
 multiline_comment|/* no permission this time */
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 l_int|0
@@ -1106,8 +1120,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* read access */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 (paren
 id|retval
@@ -1764,12 +1776,18 @@ id|hysdn_proc_entry
 op_ne
 l_int|NULL
 )paren
+(brace
 id|pd-&gt;log-&gt;proc_fops
 op_assign
 op_amp
 id|log_fops
 suffix:semicolon
 multiline_comment|/* set new operations table */
+id|pd-&gt;log-&gt;owner
+op_assign
+id|THIS_MODULE
+suffix:semicolon
+)brace
 id|init_waitqueue_head
 c_func
 (paren

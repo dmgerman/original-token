@@ -350,11 +350,6 @@ id|fifth
 r_int
 id|err
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* No need for backward compatibility. We can start fresh... */
 r_if
 c_cond
@@ -734,11 +729,6 @@ id|EINVAL
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -828,11 +818,6 @@ id|personality
 r_int
 id|ret
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -854,11 +839,6 @@ id|sys_personality
 c_func
 (paren
 id|personality
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if

@@ -144,6 +144,11 @@ op_star
 id|inode
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -158,6 +163,11 @@ id|sysv_free_inode
 c_func
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -6114,6 +6124,11 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|bh
 op_assign
 id|sysv_update_inode
@@ -6126,6 +6141,11 @@ id|brelse
 c_func
 (paren
 id|bh
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

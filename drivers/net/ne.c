@@ -855,6 +855,8 @@ suffix:semicolon
 r_int
 r_int
 id|pci_ioaddr
+op_assign
+l_int|0
 suffix:semicolon
 r_while
 c_loop

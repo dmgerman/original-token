@@ -238,6 +238,12 @@ comma
 id|inode
 )paren
 suffix:semicolon
+id|DQUOT_DROP
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|clear_inode
 (paren
 id|inode

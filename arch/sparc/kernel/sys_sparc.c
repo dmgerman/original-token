@@ -330,11 +330,6 @@ id|version
 comma
 id|err
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|version
 op_assign
 id|call
@@ -868,11 +863,6 @@ id|EINVAL
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon

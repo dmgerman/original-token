@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/fifo.c&n; *&n; *  written by Paul H. Hargrove&n; *&n; *  Fixes:&n; *&t;10-06-1999, AV: fixed OOM handling in fifo_open(), moved&n; *&t;&t;&t;initialization there, switched to external&n; *&t;&t;&t;allocation of pipe_inode_info.&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|function|wait_for_partner
 r_static
 r_void
@@ -102,6 +103,11 @@ id|ret
 op_assign
 op_minus
 id|ERESTARTSYS
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -455,6 +461,11 @@ id|inode
 )paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -589,6 +600,11 @@ id|inode
 suffix:semicolon
 id|err_nolock_nocleanup
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon

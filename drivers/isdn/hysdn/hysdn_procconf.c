@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;hysdn_defs.h&quot;
 DECL|variable|hysdn_procconf_revision
 r_static
@@ -1134,10 +1135,12 @@ comma
 op_star
 id|tmp
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-multiline_comment|/* lock module */
 multiline_comment|/* now search the addressed card */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|card
 op_assign
 id|card_root
@@ -1178,9 +1181,11 @@ op_logical_neg
 id|card
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
-multiline_comment|/* unlock module */
 r_return
 (paren
 op_minus
@@ -1252,7 +1257,10 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 (paren
@@ -1323,7 +1331,10 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 (paren
@@ -1481,9 +1492,11 @@ multiline_comment|/* end of string */
 r_else
 (brace
 multiline_comment|/* simultaneous read/write access forbidden ! */
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
-multiline_comment|/* unlock module */
 r_return
 (paren
 op_minus
@@ -1492,6 +1505,11 @@ id|EPERM
 suffix:semicolon
 multiline_comment|/* no permission this time */
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 l_int|0
@@ -1696,9 +1714,6 @@ id|filep-&gt;private_data
 suffix:semicolon
 multiline_comment|/* release memory */
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-multiline_comment|/* reduce usage count */
 r_return
 (paren
 id|retval
@@ -1873,6 +1888,19 @@ id|proc_fops
 op_assign
 op_amp
 id|conf_fops
+suffix:semicolon
+(paren
+(paren
+r_struct
+id|proc_dir_entry
+op_star
+)paren
+id|card-&gt;procconf
+)paren
+op_member_access_from_pointer
+id|owner
+op_assign
+id|THIS_MODULE
 suffix:semicolon
 id|hysdn_proclog_init
 c_func

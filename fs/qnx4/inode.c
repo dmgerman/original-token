@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/highuid.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|QNX4_VERSION
 mdefine_line|#define QNX4_VERSION  4
@@ -168,6 +169,11 @@ id|inode-&gt;i_ino
 )paren
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -182,6 +188,11 @@ id|qnx4_free_inode
 c_func
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -301,6 +312,11 @@ id|ino
 op_div
 id|QNX4_INODES_PER_BLOCK
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -331,6 +347,11 @@ c_func
 (paren
 id|inode-&gt;i_dev
 )paren
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -445,6 +466,11 @@ id|brelse
 c_func
 (paren
 id|bh
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

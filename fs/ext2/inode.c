@@ -131,6 +131,11 @@ r_return
 suffix:semicolon
 id|no_delete
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|clear_inode
 c_func
 (paren
@@ -138,11 +143,6 @@ id|inode
 )paren
 suffix:semicolon
 multiline_comment|/* We must guarantee clearing of inode... */
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|macro|inode_bmap
 mdefine_line|#define inode_bmap(inode, nr) (le32_to_cpu((inode)-&gt;u.ext2_i.i_data[(nr)]))

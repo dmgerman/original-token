@@ -583,6 +583,13 @@ c_func
 id|d_delete
 )paren
 suffix:semicolon
+DECL|variable|dget_locked
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dget_locked
+)paren
+suffix:semicolon
 DECL|variable|d_validate
 id|EXPORT_SYMBOL
 c_func

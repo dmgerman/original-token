@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/bfs_fs.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;bfs_defs.h&quot;
 id|MODULE_AUTHOR
@@ -382,6 +383,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|block
 op_assign
 (paren
@@ -425,6 +431,11 @@ id|dev
 )paren
 comma
 id|ino
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -531,6 +542,11 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|bfs_delete_inode
 r_static
@@ -616,6 +632,11 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mark_inode_dirty
 c_func
 (paren
@@ -665,6 +686,11 @@ id|dev
 )paren
 comma
 id|ino
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -771,6 +797,11 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|clear_inode
 c_func
 (paren

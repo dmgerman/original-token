@@ -1945,6 +1945,10 @@ op_assign
 op_amp
 id|mpc_file_operations
 suffix:semicolon
+id|p-&gt;owner
+op_assign
+id|THIS_MODULE
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

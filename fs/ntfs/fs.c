@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/nls.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* Forward declarations */
 DECL|variable|ntfs_dir_inode_operations
 r_static
@@ -3616,6 +3617,11 @@ r_int
 id|unused
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ntfs_debug
 (paren
 id|DEBUG_LINUX
@@ -3633,6 +3639,11 @@ id|ino
 )paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|_ntfs_clear_inode
@@ -3647,6 +3658,11 @@ op_star
 id|ino
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ntfs_debug
 c_func
 (paren
@@ -3703,6 +3719,11 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

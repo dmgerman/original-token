@@ -191,6 +191,13 @@ c_func
 id|fat_truncate
 )paren
 suffix:semicolon
+DECL|variable|fat_brelse
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fat_brelse
+)paren
+suffix:semicolon
 DECL|function|init_fat_fs
 r_static
 r_int

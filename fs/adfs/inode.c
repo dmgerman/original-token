@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;adfs.h&quot;
 multiline_comment|/*&n; * Lookup/Create a block at offset &squot;block&squot; into &squot;inode&squot;.  We currently do&n; * not support creation of new blocks, so we return -EIO for this case.&n; */
 r_int
@@ -1235,6 +1236,11 @@ r_struct
 id|object_info
 id|obj
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|obj.file_id
 op_assign
 id|inode-&gt;i_ino
@@ -1270,6 +1276,11 @@ id|sb
 comma
 op_amp
 id|obj
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

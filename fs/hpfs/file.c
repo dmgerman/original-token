@@ -1,6 +1,9 @@
 multiline_comment|/*&n; *  linux/fs/hpfs/file.c&n; *&n; *  Mikulas Patocka (mikulas@artax.karlin.mff.cuni.cz), 1998-1999&n; *&n; *  file VFS functions&n; */
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;hpfs_fn.h&quot;
+multiline_comment|/* HUH? */
 DECL|function|hpfs_open
 r_int
 id|hpfs_open
@@ -17,6 +20,11 @@ op_star
 id|f
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hpfs_lock_inode
 c_func
 (paren
@@ -30,6 +38,11 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* make sure nobody is deleting the file */
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -5176,38 +5176,30 @@ id|file_operations
 id|nftl_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|block_read
 comma
-multiline_comment|/* read - block dev read */
+id|write
+suffix:colon
 id|block_write
 comma
-multiline_comment|/* write - block dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - not here! */
-l_int|NULL
-comma
-multiline_comment|/* select */
+id|ioctl
+suffix:colon
 id|nftl_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|nftl_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|nftl_release
 comma
-multiline_comment|/* no special release code... */
+id|fsync
+suffix:colon
 id|block_fsync
-multiline_comment|/* fsync */
+comma
 )brace
 suffix:semicolon
 macro_line|#else

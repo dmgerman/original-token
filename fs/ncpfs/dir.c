@@ -1747,7 +1747,7 @@ c_cond
 (paren
 id|dent-&gt;d_inode
 )paren
-id|dget
+id|dget_locked
 c_func
 (paren
 id|dent

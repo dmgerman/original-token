@@ -1713,6 +1713,11 @@ op_star
 id|filp
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -1763,6 +1768,11 @@ c_func
 op_star
 id|inode
 )paren
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

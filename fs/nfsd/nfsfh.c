@@ -538,7 +538,7 @@ id|DCACHE_NFSD_DISCONNECTED
 )paren
 )paren
 (brace
-id|dget
+id|dget_locked
 c_func
 (paren
 id|result
@@ -1023,7 +1023,7 @@ c_cond
 (paren
 id|pdentry
 )paren
-id|dget
+id|dget_locked
 c_func
 (paren
 id|pdentry
@@ -1218,7 +1218,7 @@ id|parent
 (brace
 id|child
 op_assign
-id|dget
+id|dget_locked
 c_func
 (paren
 id|tmp

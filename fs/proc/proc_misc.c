@@ -3625,12 +3625,6 @@ id|swaps_read_proc
 )brace
 comma
 (brace
-l_string|&quot;slabinfo&quot;
-comma
-id|slabinfo_read_proc
-)brace
-comma
-(brace
 l_string|&quot;iomem&quot;
 comma
 id|memory_read_proc

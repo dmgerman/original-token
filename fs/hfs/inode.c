@@ -3,6 +3,7 @@ macro_line|#include &quot;hfs.h&quot;
 macro_line|#include &lt;linux/hfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/hfs_fs_i.h&gt;
 macro_line|#include &lt;linux/hfs_fs.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/*================ Variable-like macros ================*/
 DECL|macro|HFS_VALID_MODE_BITS
 mdefine_line|#define HFS_VALID_MODE_BITS  (S_IFREG | S_IFDIR | S_IRWXUGO)
@@ -239,6 +240,11 @@ id|inode
 op_member_access_from_pointer
 id|entry
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hfs_cat_put
 c_func
 (paren
@@ -295,6 +301,11 @@ id|tmp
 suffix:semicolon
 )brace
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * hfs_notify_change()&n; *&n; * Based very closely on fs/msdos/inode.c by Werner Almesberger&n; *&n; * This is the notify_change() field in the super_operations structure&n; * for HFS file systems.  The purpose is to take that changes made to&n; * an inode and apply then in a filesystem-dependent manner.  In this&n; * case the process has a few of tasks to do:&n; *  1) prevent changes to the i_uid and i_gid fields.&n; *  2) map file permissions to the closest allowable permissions&n; *  3) Since multiple Linux files can share the same on-disk inode under&n; *     HFS (for instance the data and resource forks of a file) a change&n; *     to permissions must be applied to all other in-core inodes which &n; *     correspond to the same HFS file.&n; */
 DECL|enumerator|HFS_NORM

@@ -1070,6 +1070,8 @@ id|file
 suffix:semicolon
 id|file-&gt;f_op
 op_assign
+id|sock-&gt;inode-&gt;i_fop
+op_assign
 op_amp
 id|socket_file_ops
 suffix:semicolon

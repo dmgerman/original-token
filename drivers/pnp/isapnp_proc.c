@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;
 DECL|struct|isapnp_info_buffer
 r_struct
@@ -782,6 +783,11 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|buffer-&gt;curr
 op_assign
 id|buffer-&gt;buffer
@@ -789,8 +795,6 @@ suffix:semicolon
 id|file-&gt;private_data
 op_assign
 id|buffer
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -803,6 +807,11 @@ id|isapnp_info_read
 c_func
 (paren
 id|buffer
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -882,8 +891,6 @@ c_func
 (paren
 id|buffer
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1348,6 +1355,10 @@ id|e-&gt;proc_fops
 op_assign
 op_amp
 id|isapnp_proc_bus_file_operations
+suffix:semicolon
+id|e-&gt;owner
+op_assign
+id|THIS_MODULE
 suffix:semicolon
 id|e-&gt;data
 op_assign
@@ -1886,11 +1897,17 @@ c_cond
 (paren
 id|p
 )paren
+(brace
 id|p-&gt;proc_fops
 op_assign
 op_amp
 id|isapnp_info_entry_operations
 suffix:semicolon
+id|p-&gt;owner
+op_assign
+id|THIS_MODULE
+suffix:semicolon
+)brace
 id|isapnp_proc_entry
 op_assign
 id|p

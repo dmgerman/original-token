@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fat_cvf.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
@@ -559,6 +560,11 @@ op_star
 id|inode
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -567,6 +573,11 @@ id|fat_truncate
 c_func
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|clear_inode
@@ -587,6 +598,11 @@ op_star
 id|inode
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -618,6 +634,11 @@ c_func
 (paren
 op_amp
 id|fat_inode_lock
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -4717,8 +4738,10 @@ op_logical_or
 op_logical_neg
 id|i_pos
 )paren
+(brace
 r_return
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4760,6 +4783,11 @@ comma
 l_string|&quot;msdos_write_inode: unable to read i-node block&quot;
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -4797,6 +4825,11 @@ c_func
 id|sb
 comma
 id|bh
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_goto
@@ -5008,6 +5041,11 @@ c_func
 id|sb
 comma
 id|bh
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

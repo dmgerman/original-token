@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: parport.h,v 1.1 1998/05/17 10:57:52 andrea Exp andrea $ */
+multiline_comment|/*&n; * The block comments above the functions in this file are&n; * licensed as part of the generated file&n; * Documentation/DocBook/parportbook.sgml under the GNU Free&n; * Documentation License.&n; */
 macro_line|#ifndef _PARPORT_H_
 DECL|macro|_PARPORT_H_
 mdefine_line|#define _PARPORT_H_

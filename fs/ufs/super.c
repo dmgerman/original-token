@@ -4937,10 +4937,6 @@ id|write_inode
 suffix:colon
 id|ufs_write_inode
 comma
-id|put_inode
-suffix:colon
-id|ufs_put_inode
-comma
 id|delete_inode
 suffix:colon
 id|ufs_delete_inode

@@ -3192,6 +3192,10 @@ op_assign
 op_amp
 id|proc_dev_atm_operations
 suffix:semicolon
+id|dev-&gt;proc_entry-&gt;owner
+op_assign
+id|THIS_MODULE
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3242,7 +3246,7 @@ id|dev-&gt;proc_name
 suffix:semicolon
 )brace
 DECL|macro|CREATE_ENTRY
-mdefine_line|#define CREATE_ENTRY(name) &bslash;&n;    name = create_proc_entry(#name,0,atm_proc_root); &bslash;&n;    if (!name) goto cleanup; &bslash;&n;    name-&gt;data = atm_##name##_info; &bslash;&n;    name-&gt;proc_fops = &amp;proc_spec_atm_operations
+mdefine_line|#define CREATE_ENTRY(name) &bslash;&n;    name = create_proc_entry(#name,0,atm_proc_root); &bslash;&n;    if (!name) goto cleanup; &bslash;&n;    name-&gt;data = atm_##name##_info; &bslash;&n;    name-&gt;proc_fops = &amp;proc_spec_atm_operations; &bslash;&n;    name-&gt;owner = THIS_MODULE
 DECL|function|atm_proc_init
 r_int
 id|__init

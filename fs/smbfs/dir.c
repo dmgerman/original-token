@@ -549,12 +549,6 @@ r_struct
 id|smb_sb_info
 op_star
 id|server
-op_assign
-id|server_from_dentry
-c_func
-(paren
-id|dentry
-)paren
 suffix:semicolon
 r_int
 id|error
@@ -574,6 +568,19 @@ id|file-&gt;f_dentry-&gt;d_name.name
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; * Directory timestamps in the core protocol aren&squot;t updated&n;&t; * when a file is added, so we give them a very short TTL.&n;&t; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|server
+op_assign
+id|server_from_dentry
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -617,6 +624,11 @@ id|smb_revalidate_inode
 c_func
 (paren
 id|dentry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

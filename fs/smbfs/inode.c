@@ -851,6 +851,11 @@ c_func
 l_string|&quot;smb_delete_inode&bslash;n&quot;
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -866,6 +871,11 @@ c_func
 l_string|&quot;smb_delete_inode: could not close inode %ld&bslash;n&quot;
 comma
 id|ino-&gt;i_ino
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|clear_inode

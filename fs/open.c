@@ -2814,11 +2814,6 @@ op_logical_and
 id|f-&gt;f_op-&gt;open
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|f-&gt;f_op
@@ -2829,11 +2824,6 @@ c_func
 id|inode
 comma
 id|f
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if

@@ -1983,44 +1983,6 @@ id|arp_find
 )paren
 suffix:semicolon
 macro_line|#endif  /* CONFIG_INET */
-macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)&t;||&t;defined(CONFIG_ULTRA32)&t;&t;|| &bslash;&n;&t;defined(CONFIG_LNE390)&t;||&t;defined(CONFIG_NE3210)&t;&t;|| &bslash;&n;&t;defined(CONFIG_NE2K_PCI) ||&t;defined(CONFIG_APNE)&t;&t;|| &bslash;&n;&t;defined(CONFIG_DAYNAPORT)
-multiline_comment|/* If 8390 NIC support is built in, we will need these. */
-DECL|variable|ei_open
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ei_open
-)paren
-suffix:semicolon
-DECL|variable|ei_close
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ei_close
-)paren
-suffix:semicolon
-DECL|variable|ei_interrupt
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ei_interrupt
-)paren
-suffix:semicolon
-DECL|variable|ethdev_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ethdev_init
-)paren
-suffix:semicolon
-DECL|variable|NS8390_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|NS8390_init
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_TR
 DECL|variable|tr_setup
 id|EXPORT_SYMBOL
