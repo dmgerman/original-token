@@ -2563,11 +2563,17 @@ id|size
 )paren
 r_continue
 suffix:semicolon
+id|bhnext-&gt;b_count
+op_increment
+suffix:semicolon
 id|wait_on_buffer
 c_func
 (paren
 id|bh
 )paren
+suffix:semicolon
+id|bhnext-&gt;b_count
+op_decrement
 suffix:semicolon
 r_if
 c_cond
@@ -6773,6 +6779,9 @@ suffix:semicolon
 id|nwritten
 op_increment
 suffix:semicolon
+id|next-&gt;b_count
+op_increment
+suffix:semicolon
 id|bh-&gt;b_count
 op_increment
 suffix:semicolon
@@ -6806,6 +6815,9 @@ id|bh
 )paren
 suffix:semicolon
 id|bh-&gt;b_count
+op_decrement
+suffix:semicolon
+id|next-&gt;b_count
 op_decrement
 suffix:semicolon
 )brace
@@ -7286,6 +7298,9 @@ id|LOOP_MAJOR
 )paren
 r_continue
 suffix:semicolon
+id|next-&gt;b_count
+op_increment
+suffix:semicolon
 id|bh-&gt;b_count
 op_increment
 suffix:semicolon
@@ -7359,6 +7374,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 id|bh-&gt;b_count
+op_decrement
+suffix:semicolon
+id|next-&gt;b_count
 op_decrement
 suffix:semicolon
 )brace

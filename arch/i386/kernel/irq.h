@@ -115,17 +115,10 @@ DECL|macro|STR
 mdefine_line|#define STR(x) __STR(x)
 DECL|macro|SAVE_ALL
 mdefine_line|#define SAVE_ALL &bslash;&n;&t;&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;push %es&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;push %ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %ebp&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %edi&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %esi&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl $&quot; STR(KERNEL_DS) &quot;,%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %dx,%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %dx,%es&bslash;n&bslash;t&quot;
-multiline_comment|/*&n; * These are used just for the &quot;bad&quot; interrupt handlers, &n; * which just clear the mask and return..&n; */
-DECL|macro|SAVE_MOST
-mdefine_line|#define SAVE_MOST &bslash;&n;&t;&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;push %es&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;push %ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl $&quot; STR(KERNEL_DS) &quot;,%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %dx,%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %dx,%es&bslash;n&bslash;t&quot;
-DECL|macro|RESTORE_MOST
-mdefine_line|#define RESTORE_MOST &bslash;&n;&t;&quot;popl %ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;popl %edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;popl %eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pop %ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pop %es&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;iret&quot;
 DECL|macro|IRQ_NAME2
 mdefine_line|#define IRQ_NAME2(nr) nr##_interrupt(void)
 DECL|macro|IRQ_NAME
 mdefine_line|#define IRQ_NAME(nr) IRQ_NAME2(IRQ##nr)
-DECL|macro|BAD_IRQ_NAME
-mdefine_line|#define BAD_IRQ_NAME(nr) IRQ_NAME2(bad_IRQ##nr)
 DECL|macro|GET_CURRENT
 mdefine_line|#define GET_CURRENT &bslash;&n;&t;&quot;movl %esp, %ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andl $-8192, %ebx&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
@@ -176,13 +169,22 @@ id|eip
 op_rshift_assign
 id|prof_shift
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Dont ignore out-of-bounds EIP values silently,&n;&t;&t; * put them into the last histogram slot, so if&n;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|eip
-OL
+OG
 id|prof_len
+op_minus
+l_int|1
 )paren
+id|eip
+op_assign
+id|prof_len
+op_minus
+l_int|1
+suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -194,24 +196,6 @@ op_amp
 id|prof_buffer
 (braket
 id|eip
-)braket
-)paren
-suffix:semicolon
-r_else
-multiline_comment|/*&n;&t;&t; * Dont ignore out-of-bounds EIP values silently,&n;&t;&t; * put them into the last histogram slot, so if&n;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t; */
-id|atomic_inc
-c_func
-(paren
-(paren
-id|atomic_t
-op_star
-)paren
-op_amp
-id|prof_buffer
-(braket
-id|prof_len
-op_minus
-l_int|1
 )braket
 )paren
 suffix:semicolon

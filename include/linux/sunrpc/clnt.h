@@ -26,7 +26,7 @@ id|__u32
 id|pm_prot
 suffix:semicolon
 DECL|member|pm_port
-id|__u32
+id|__u16
 id|pm_port
 suffix:semicolon
 )brace

@@ -67,10 +67,6 @@ r_extern
 r_int
 id|last_pid
 suffix:semicolon
-DECL|macro|FIRST_TASK
-mdefine_line|#define FIRST_TASK task[0]
-DECL|macro|LAST_TASK
-mdefine_line|#define LAST_TASK task[NR_TASKS-1]
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;

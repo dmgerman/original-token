@@ -1175,14 +1175,6 @@ c_func
 id|elf_phdata
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%d&quot;
-comma
-id|error
-)paren
-suffix:semicolon
 r_return
 op_complement
 l_int|0UL

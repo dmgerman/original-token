@@ -3618,7 +3618,7 @@ op_assign
 id|mpnt-&gt;vm_next_share
 )paren
 op_ne
-id|inode-&gt;i_mmap
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
