@@ -3,12 +3,13 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
-DECL|variable|firewall_lock
-r_static
-r_int
-id|firewall_lock
+macro_line|#include &lt;asm/semaphore.h&gt;
+DECL|variable|firewall_sem
+r_struct
+id|semaphore
+id|firewall_sem
 op_assign
-l_int|0
+id|MUTEX
 suffix:semicolon
 DECL|variable|firewall_policy
 r_static
@@ -67,22 +68,12 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Don&squot;t allow two people to adjust at once.&n;&t; */
-multiline_comment|/*&n;&t; *&t;FIXME: Swap for a kernel semaphore object&n;&t; */
-r_while
-c_loop
-(paren
-id|firewall_lock
-)paren
-(brace
-id|schedule
+id|down
 c_func
 (paren
+op_amp
+id|firewall_sem
 )paren
-suffix:semicolon
-)brace
-id|firewall_lock
-op_assign
-l_int|1
 suffix:semicolon
 id|p
 op_assign
@@ -145,9 +136,12 @@ op_assign
 id|fw
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;And release the sleep lock&n;&t; */
-id|firewall_lock
-op_assign
-l_int|0
+id|up
+c_func
+(paren
+op_amp
+id|firewall_sem
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -192,21 +186,12 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Don&squot;t allow two people to adjust at once.&n;&t; */
-r_while
-c_loop
-(paren
-id|firewall_lock
-)paren
-(brace
-id|schedule
+id|down
 c_func
 (paren
+op_amp
+id|firewall_sem
 )paren
-suffix:semicolon
-)brace
-id|firewall_lock
-op_assign
-l_int|1
 suffix:semicolon
 id|nl
 op_assign
@@ -246,9 +231,12 @@ id|nl
 op_assign
 id|f
 suffix:semicolon
-id|firewall_lock
-op_assign
-l_int|0
+id|up
+c_func
+(paren
+op_amp
+id|firewall_sem
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -267,9 +255,12 @@ id|next
 )paren
 suffix:semicolon
 )brace
-id|firewall_lock
-op_assign
-l_int|0
+id|up
+c_func
+(paren
+op_amp
+id|firewall_sem
+)paren
 suffix:semicolon
 r_return
 op_minus

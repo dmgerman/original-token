@@ -79,6 +79,13 @@ c_func
 id|in_group_p
 )paren
 suffix:semicolon
+DECL|variable|proc_dir_inode_operations
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|proc_dir_inode_operations
+)paren
+suffix:semicolon
 DECL|variable|proc_net_inode_operations
 id|EXPORT_SYMBOL
 c_func

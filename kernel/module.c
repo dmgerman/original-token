@@ -2655,12 +2655,7 @@ op_add_assign
 id|strlen
 c_func
 (paren
-(paren
-op_increment
-id|s
-)paren
-op_member_access_from_pointer
-id|name
+id|s-&gt;name
 )paren
 op_plus
 l_int|1

@@ -1329,6 +1329,11 @@ id|flags
 )paren
 (brace
 r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|copied
 op_assign
 l_int|0
@@ -1484,6 +1489,16 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+(paren
+id|err
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Stop on errors&n;&t;&t;&t; */
 r_if
@@ -1990,9 +2005,12 @@ suffix:semicolon
 )brace
 id|skb-&gt;csum
 op_assign
-id|csum_partial_copy_fromuser
+id|csum_partial_copy_from_user
 c_func
 (paren
+op_amp
+id|err
+comma
 id|from
 comma
 id|skb_put
@@ -2037,6 +2055,16 @@ suffix:semicolon
 id|sk-&gt;err
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+(paren
+id|err
+)paren
 suffix:semicolon
 r_return
 id|copied
@@ -2438,7 +2466,7 @@ id|sk
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  We send a ACK if the sender is blocked&n;&t; *  else let tcp_data deal with the acking policy.&n;&t; */
+multiline_comment|/*&n;  &t; *  We send a ACK if the sender is blocked&n;  &t; *  else let tcp_data deal with the acking policy.&n;  &t; */
 r_if
 c_cond
 (paren

@@ -636,7 +636,7 @@ suffix:semicolon
 multiline_comment|/* PCB for background receiving */
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|dma_buffer

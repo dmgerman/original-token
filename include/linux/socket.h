@@ -136,9 +136,17 @@ DECL|macro|CMSG_LENGTH
 mdefine_line|#define CMSG_LENGTH(len) CMSG_ALIGN((len)+sizeof(struct cmsghdr))
 DECL|macro|CMSG_FIRSTHDR
 mdefine_line|#define&t;CMSG_FIRSTHDR(msg)&t;((msg)-&gt;msg_controllen &gt;= sizeof(struct cmsghdr) ? &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)(msg)-&gt;msg_control : &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)NULL)
+multiline_comment|/*&n; *&t;This mess will go away with glibc&n; */
+macro_line|#ifdef __KERNEL__
+DECL|macro|KINLINE
+mdefine_line|#define KINLINE extern __inline__
+macro_line|#else
+DECL|macro|KINLINE
+mdefine_line|#define KINLINE static
+macro_line|#endif
+multiline_comment|/*&n; *&t;Get the next cmsg header&n; */
 DECL|function|cmsg_nxthdr
-r_extern
-id|__inline__
+id|KINLINE
 r_struct
 id|cmsghdr
 op_star

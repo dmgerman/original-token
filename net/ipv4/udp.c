@@ -2844,7 +2844,7 @@ id|len
 op_assign
 id|ulen
 suffix:semicolon
-multiline_comment|/* Wrong! --ANK */
+multiline_comment|/*&n;&t; *&t;FIXME:&n;&t; *&t;Trimming things wrongly. We must adjust the base/end to allow&n;&t; *&t;for the headers we keep!&n;&t; *&t;&t; --ANK &n;&t; */
 id|skb_trim
 c_func
 (paren

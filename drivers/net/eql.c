@@ -124,7 +124,7 @@ suffix:semicolon
 multiline_comment|/*  */
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|eql_get_stats
 c_func
@@ -599,7 +599,7 @@ id|kmalloc
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 comma
 id|GFP_KERNEL
@@ -637,7 +637,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -1211,7 +1211,7 @@ suffix:semicolon
 DECL|function|eql_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|eql_get_stats
 c_func

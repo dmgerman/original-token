@@ -1,8 +1,5 @@
 DECL|macro|DMA_BUFF_SIZE
 mdefine_line|#define DMA_BUFF_SIZE 2200
-multiline_comment|/* Network statistics, with the same names as &squot;struct enet_statistics&squot;. */
-DECL|macro|netstats
-mdefine_line|#define netstats enet_statistics
 DECL|macro|ON
 mdefine_line|#define ON 1
 DECL|macro|OFF

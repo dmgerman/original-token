@@ -382,7 +382,7 @@ id|xmit_queued
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|self
@@ -553,7 +553,7 @@ id|p
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ni65_get_stats
 c_func
@@ -749,7 +749,7 @@ op_plus
 id|L_BUSIF
 )paren
 suffix:semicolon
-multiline_comment|/* write ISA 1: DMA_W : isa1 * 50ns  */
+multiline_comment|/* write ISA 1: DMA_W : isa1 * 50ns&t;*/
 id|outw
 c_func
 (paren
@@ -1948,7 +1948,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Grab the region so we can find another board.&n;   */
+multiline_comment|/*&n;&t; * Grab the region so we can find another board.&n;&t; */
 id|request_region
 c_func
 (paren
@@ -2464,7 +2464,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;   * we need 8-aligned memory ..&n;   */
+multiline_comment|/*&n;&t; * we need 8-aligned memory ..&n;&t; */
 id|ptr
 op_assign
 id|ni65_alloc_mem
@@ -3602,7 +3602,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * ni65_set_lance_mem() sets L_ADDRREG to CSR0&n;   * NOW, WE WILL NEVER CHANGE THE L_ADDRREG, CSR0 IS ALWAYS SELECTED&n;   */
+multiline_comment|/*&n;&t; * ni65_set_lance_mem() sets L_ADDRREG to CSR0&n;&t; * NOW, WE WILL NEVER CHANGE THE L_ADDRREG, CSR0 IS ALWAYS SELECTED&n;&t; */
 r_if
 c_cond
 (paren
@@ -5309,34 +5309,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|set_bit
 c_func
 (paren
@@ -5633,7 +5605,7 @@ suffix:semicolon
 DECL|function|ni65_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ni65_get_stats
 c_func
@@ -5772,7 +5744,7 @@ id|device
 id|dev_ni65
 op_assign
 (brace
-l_string|&quot;        &quot;
+l_string|&quot;&t;&t;&t;&t;&quot;
 comma
 multiline_comment|/* &quot;ni6510&quot;: device name inserted by net_init.c */
 l_int|0
@@ -5853,37 +5825,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|io
-op_le
-l_int|0x0
-op_logical_or
-id|irq
-OL
-l_int|2
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ni65: Autoprobing not allowed for modules.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;ni65: Set symbols &squot;io&squot; &squot;irq&squot; and &squot;dma&squot;&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-macro_line|#endif
 id|dev_ni65.irq
 op_assign
 id|irq
@@ -5948,7 +5889,7 @@ id|p
 id|printk
 c_func
 (paren
-l_string|&quot;Ooops .. no privat struct&bslash;n&quot;
+l_string|&quot;Ooops .. no private struct&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

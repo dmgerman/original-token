@@ -239,7 +239,7 @@ id|dma
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|tx_full
@@ -333,7 +333,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|lance32_get_stats
 c_func
@@ -3546,11 +3546,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|lance32_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|lance32_get_stats
 id|lance32_get_stats
 c_func
 (paren

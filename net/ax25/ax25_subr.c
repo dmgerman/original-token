@@ -219,7 +219,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* Maybe this should be your ax25_invoke_retransmission(), which appears&n; * to be used but not do anything.  ax25_invoke_retransmission() used to&n; * be in AX 0.29, but has now gone in 0.30.&n; */
+multiline_comment|/*&n; * Maybe this should be your ax25_invoke_retransmission(), which appears&n; * to be used but not do anything.  ax25_invoke_retransmission() used to&n; * be in AX 0.29, but has now gone in 0.30.&n; */
 DECL|function|ax25_requeue_frames
 r_void
 id|ax25_requeue_frames
@@ -1144,10 +1144,6 @@ comma
 id|AX25_MODULUS
 )paren
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -1182,12 +1178,31 @@ id|t
 op_assign
 l_int|2
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|ax25-&gt;backoff
 )paren
 (brace
+r_case
+l_int|0
+suffix:colon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|t
+op_add_assign
+l_int|2
+op_star
+id|ax25-&gt;n2count
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
 r_for
 c_loop
 (paren
@@ -1216,6 +1231,8 @@ l_int|8
 id|t
 op_assign
 l_int|8
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 r_return

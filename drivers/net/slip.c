@@ -1276,6 +1276,10 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif  /* SL_INCLUDE_CSLIP */
+id|sl-&gt;rx_bytes
+op_add_assign
+id|count
+suffix:semicolon
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -1811,6 +1815,10 @@ c_func
 id|sl
 )paren
 suffix:semicolon
+id|sl-&gt;tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|sl_encaps
 c_func
 (paren
@@ -2227,9 +2235,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|slip_receive_room
 r_static
 r_int
-DECL|function|slip_receive_room
 id|slip_receive_room
 c_func
 (paren
@@ -2245,9 +2253,9 @@ suffix:semicolon
 multiline_comment|/* We can handle an infinite amount of data. :-) */
 )brace
 multiline_comment|/*&n; * Handle the &squot;receiver data ready&squot; interrupt.&n; * This function is called by the &squot;tty_io&squot; module in the kernel when&n; * a block of SLIP data has been received, which can now be decapsulated&n; * and sent on to some IP layer for further processing.&n; */
+DECL|function|slip_receive_buf
 r_static
 r_void
-DECL|function|slip_receive_buf
 id|slip_receive_buf
 c_func
 (paren
@@ -2632,7 +2640,7 @@ suffix:semicolon
 )brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|sl_get_stats
 id|sl_get_stats
@@ -2646,7 +2654,7 @@ id|dev
 (brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 r_struct
@@ -2681,7 +2689,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -2692,6 +2700,14 @@ suffix:semicolon
 id|stats.tx_packets
 op_assign
 id|sl-&gt;tx_packets
+suffix:semicolon
+id|stats.rx_bytes
+op_assign
+id|sl-&gt;rx_bytes
+suffix:semicolon
+id|stats.tx_bytes
+op_assign
+id|sl-&gt;tx_bytes
 suffix:semicolon
 id|stats.rx_dropped
 op_assign
@@ -2879,9 +2895,9 @@ id|d
 )paren
 suffix:semicolon
 )brace
+DECL|function|slip_unesc
 r_static
 r_void
-DECL|function|slip_unesc
 id|slip_unesc
 c_func
 (paren

@@ -312,7 +312,7 @@ id|el3_private
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* skb send-queue */
@@ -423,7 +423,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|el3_get_stats
 c_func
@@ -1918,9 +1918,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Always succeed */
 )brace
+DECL|function|el3_start_xmit
 r_static
 r_int
-DECL|function|el3_start_xmit
 id|el3_start_xmit
 c_func
 (paren
@@ -2046,34 +2046,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2247,6 +2219,10 @@ id|dev-&gt;name
 suffix:semicolon
 r_else
 (brace
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 multiline_comment|/* Put out the doubleword header... */
 id|outw
 c_func
@@ -2840,11 +2816,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|el3_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|el3_get_stats
 id|el3_get_stats
 c_func
 (paren

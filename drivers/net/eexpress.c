@@ -37,7 +37,7 @@ id|net_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|init_time
@@ -329,7 +329,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|eexp_stats
 c_func
@@ -1155,7 +1155,7 @@ multiline_comment|/*&n; * Return interface stats&n; */
 DECL|function|eexp_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|eexp_stats
 c_func

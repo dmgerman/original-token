@@ -159,7 +159,7 @@ id|haddr
 suffix:semicolon
 DECL|member|get_stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 (paren
 op_star

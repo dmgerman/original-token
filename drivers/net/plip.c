@@ -165,7 +165,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|plip_get_stats
 c_func
@@ -357,7 +357,7 @@ id|net_local
 (brace
 DECL|member|enet_stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|enet_stats
 suffix:semicolon
 DECL|member|immediate
@@ -421,8 +421,8 @@ suffix:semicolon
 suffix:semicolon
 "&f;"
 multiline_comment|/* Entry point of PLIP driver.&n;   Probe the hardware, and register/initialize the driver. */
-r_int
 DECL|function|plip_init
+r_int
 id|plip_init
 c_func
 (paren
@@ -866,9 +866,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* Bottom half handler for the delayed request.&n;   This routine is kicked by do_timer().&n;   Request `plip_bh&squot; to be invoked. */
+DECL|function|plip_kick_bh
 r_static
 r_void
-DECL|function|plip_kick_bh
 id|plip_kick_bh
 c_func
 (paren
@@ -1109,9 +1109,9 @@ id|plip_error
 )brace
 suffix:semicolon
 multiline_comment|/* Bottom half handler of PLIP. */
+DECL|function|plip_bh
 r_static
 r_void
-DECL|function|plip_bh
 id|plip_bh
 c_func
 (paren
@@ -1226,9 +1226,9 @@ id|tq_timer
 suffix:semicolon
 )brace
 )brace
+DECL|function|plip_bh_timeout_error
 r_static
 r_int
-DECL|function|plip_bh_timeout_error
 id|plip_bh_timeout_error
 c_func
 (paren
@@ -1523,9 +1523,9 @@ id|TIMEOUT
 suffix:semicolon
 )brace
 "&f;"
+DECL|function|plip_none
 r_static
 r_int
-DECL|function|plip_none
 id|plip_none
 c_func
 (paren
@@ -1555,10 +1555,10 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* PLIP_RECEIVE --- receive a byte(two nibbles)&n;   Returns OK on success, TIMEOUT on timeout */
-r_inline
-r_static
-r_int
 DECL|function|plip_receive
+r_extern
+r_inline
+r_int
 id|plip_receive
 c_func
 (paren
@@ -1801,9 +1801,9 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* PLIP_RECEIVE_PACKET --- receive a packet */
+DECL|function|plip_receive_packet
 r_static
 r_int
-DECL|function|plip_receive_packet
 id|plip_receive_packet
 c_func
 (paren
@@ -2389,10 +2389,10 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* PLIP_SEND --- send a byte (two nibbles)&n;   Returns OK on success, TIMEOUT when timeout    */
-r_inline
-r_static
-r_int
 DECL|function|plip_send
+r_extern
+r_inline
+r_int
 id|plip_send
 c_func
 (paren
@@ -2618,9 +2618,9 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* PLIP_SEND_PACKET --- send a packet */
+DECL|function|plip_send_packet
 r_static
 r_int
-DECL|function|plip_send_packet
 id|plip_send_packet
 c_func
 (paren
@@ -3132,9 +3132,9 @@ r_return
 id|OK
 suffix:semicolon
 )brace
+DECL|function|plip_connection_close
 r_static
 r_int
-DECL|function|plip_connection_close
 id|plip_connection_close
 c_func
 (paren
@@ -3197,9 +3197,9 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* PLIP_ERROR --- wait till other end settled */
+DECL|function|plip_error
 r_static
 r_int
-DECL|function|plip_error
 id|plip_error
 c_func
 (paren
@@ -3327,9 +3327,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* Handle the parallel port interrupts. */
+DECL|function|plip_interrupt
 r_static
 r_void
-DECL|function|plip_interrupt
 id|plip_interrupt
 c_func
 (paren
@@ -3574,9 +3574,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* We don&squot;t need to send arp, for plip is point-to-point. */
+DECL|function|plip_rebuild_header
 r_static
 r_int
-DECL|function|plip_rebuild_header
 id|plip_rebuild_header
 c_func
 (paren
@@ -3747,9 +3747,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|plip_tx_packet
 r_static
 r_int
-DECL|function|plip_tx_packet
 id|plip_tx_packet
 c_func
 (paren
@@ -3952,9 +3952,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Open/initialize the board.  This is called (in the current kernel)&n;   sometime after booting when the &squot;ifconfig&squot; program is run.&n;&n;   This routine gets exclusive access to the parallel port by allocating&n;   its IRQ line.&n; */
+DECL|function|plip_open
 r_static
 r_int
-DECL|function|plip_open
 id|plip_open
 c_func
 (paren
@@ -4162,9 +4162,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* The inverse routine to plip_open (). */
+DECL|function|plip_close
 r_static
 r_int
-DECL|function|plip_close
 id|plip_close
 c_func
 (paren
@@ -4320,11 +4320,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|plip_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|plip_get_stats
 id|plip_get_stats
 c_func
 (paren
@@ -4347,7 +4347,7 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|r
 op_assign
@@ -4358,9 +4358,9 @@ r_return
 id|r
 suffix:semicolon
 )brace
+DECL|function|plip_config
 r_static
 r_int
-DECL|function|plip_config
 id|plip_config
 c_func
 (paren
@@ -4430,9 +4430,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|plip_ioctl
 r_static
 r_int
-DECL|function|plip_ioctl
 id|plip_ioctl
 c_func
 (paren
@@ -4660,8 +4660,8 @@ id|plip_init
 )brace
 )brace
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -4866,8 +4866,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

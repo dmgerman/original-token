@@ -469,7 +469,7 @@ op_star
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ppp_dev_stats
 (paren
@@ -10898,7 +10898,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Generate the statistic information for the /proc/net/dev listing.&n; */
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|ppp_dev_stats
 id|ppp_dev_stats
@@ -10921,7 +10921,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|ppp_stats
 suffix:semicolon
 id|ppp_stats.rx_packets

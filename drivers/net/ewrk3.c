@@ -138,7 +138,7 @@ suffix:semicolon
 multiline_comment|/* Shared memory window length */
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* Public stats */
@@ -280,7 +280,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ewrk3_get_stats
 c_func
@@ -4736,11 +4736,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ewrk3_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|ewrk3_get_stats
 id|ewrk3_get_stats
 c_func
 (paren
@@ -4769,9 +4769,9 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Set or clear the multicast filter for this adapter.&n;*/
+DECL|function|set_multicast_list
 r_static
 r_void
-DECL|function|set_multicast_list
 id|set_multicast_list
 c_func
 (paren

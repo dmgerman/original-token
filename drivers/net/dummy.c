@@ -40,7 +40,7 @@ suffix:semicolon
 macro_line|#ifdef DUMMY_STATS
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|dummy_get_stats
 c_func
@@ -115,7 +115,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 comma
 id|GFP_KERNEL
@@ -142,7 +142,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -197,25 +197,11 @@ id|dev
 (brace
 macro_line|#if DUMMY_STATS
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-op_logical_or
-id|dev
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|0
-suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -229,7 +215,7 @@ id|stats
 op_assign
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
@@ -243,11 +229,11 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#if DUMMY_STATS
+DECL|function|dummy_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|dummy_get_stats
 id|dummy_get_stats
 c_func
 (paren
@@ -258,13 +244,13 @@ id|dev
 )paren
 (brace
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 op_assign
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv

@@ -89,7 +89,7 @@ id|net_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|open_time
@@ -201,7 +201,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|net_get_stats
 c_func
@@ -1086,9 +1086,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|net_send_packet
 r_static
 r_int
-DECL|function|net_send_packet
 id|net_send_packet
 c_func
 (paren
@@ -1182,25 +1182,6 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t; * we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t; * itself.&n;&t; */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Block a timer-based transmit from overlapping. This could better be&n;&t; * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t; */
 r_if
 c_cond
@@ -1250,6 +1231,10 @@ id|buf
 op_assign
 id|skb-&gt;data
 suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|hardware_send_packet
 c_func
 (paren
@@ -1293,9 +1278,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The typical workload of the driver:&n; *   Handle the network interface interrupts.&n; */
+DECL|function|net_interrupt
 r_static
 r_void
-DECL|function|net_interrupt
 id|net_interrupt
 c_func
 (paren
@@ -1587,6 +1572,10 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
+suffix:semicolon
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -1772,11 +1761,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get the current statistics.&n; * This may be called with the card open or closed.&n; */
+DECL|function|net_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|net_get_stats
 id|net_get_stats
 c_func
 (paren

@@ -1,5 +1,5 @@
 multiline_comment|/* tulip.c: A DEC 21040 ethernet driver for linux. */
-multiline_comment|/*&n;   NOTICE: this version works with kernels 1.1.82 and later only!&n;&t;Written 1994,1995 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the SMC EtherPower PCI ethernet adapter.&n;&t;It should work with most other DEC 21*40-based ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Subscribe to linux-tulip@cesdis.gsfc.nasa.gov and linux-tulip-bugs@cesdis.gsfc.nasa.gov&n;&t;for late breaking news and exciting develovements.&n;*/
+multiline_comment|/*&n;   NOTICE: this version works with kernels 1.1.82 and later only!&n;&t;Written 1994,1995 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the SMC EtherPower PCI ethernet adapter.&n;&t;It should work with most other DEC 21*40-based ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Subscribe to linux-tulip@cesdis.gsfc.nasa.gov and linux-tulip-bugs@cesdis.gsfc.nasa.gov&n;&t;for late breaking news and exciting develovements.&n;&t;&n;&t;This has Baldur Norddahl&squot;s one liner fix for the AC/AE boards. If it&n;&t;stops working please change TINTR_ENABLE to 0xFFFFFFFF&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -295,7 +295,7 @@ DECL|macro|TCMOD_AUTO
 mdefine_line|#define&t;TCMOD_AUTO&t;&t;&t;(TCMOD_SW100TP|TCMOD_TH128|TCMOD_10TP)
 multiline_comment|/* description of CSR7 interrupt mask register */
 DECL|macro|TINTR_ENABLE
-mdefine_line|#define&t;TINTR_ENABLE&t;&t;0xFFFFFFFF
+mdefine_line|#define&t;TINTR_ENABLE&t;&t;0xFFFFBBFF
 DECL|macro|TINTR_DISABLE
 mdefine_line|#define&t;TINTR_DISABLE&t;&t;0x00000000
 multiline_comment|/* description of CSR11 G.P. timer (21041/21140) register */
@@ -506,7 +506,7 @@ suffix:semicolon
 multiline_comment|/* temporary Rx buffers. */
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|setup_frame
@@ -752,7 +752,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|tulip_get_stats
 c_func
@@ -3570,6 +3570,10 @@ id|len
 op_assign
 id|skb-&gt;len
 suffix:semicolon
+id|tp-&gt;stats.tx_bytes
+op_add_assign
+id|len
+suffix:semicolon
 )brace
 id|tp-&gt;tx_skbuff
 (braket
@@ -4702,11 +4706,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|tulip_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|tulip_get_stats
 id|tulip_get_stats
 c_func
 (paren

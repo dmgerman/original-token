@@ -41,17 +41,18 @@ id|dev
 )paren
 (brace
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 op_assign
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Take this out if the debug says its ok&n;&t; */
 r_if
 c_cond
 (paren
@@ -63,8 +64,12 @@ id|dev
 op_eq
 l_int|NULL
 )paren
-r_return
-l_int|0
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;loopback fed NULL data - splat&bslash;n&quot;
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Optimise so buffers with skb-&gt;free=1 are not copied but&n;&t; *&t;instead are lobbed from tx queue to rx queue &n;&t; */
 r_if
@@ -168,7 +173,7 @@ suffix:semicolon
 DECL|function|get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|get_stats
 c_func
@@ -182,7 +187,7 @@ id|dev
 r_return
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
@@ -319,7 +324,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 comma
 id|GFP_KERNEL
@@ -346,7 +351,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon

@@ -286,7 +286,7 @@ id|cmd
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|pt_get_stats
 c_func
@@ -809,6 +809,10 @@ suffix:semicolon
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -881,14 +885,12 @@ c_cond
 (paren
 id|lp-&gt;dmachan
 )paren
-(brace
 id|pt_txisr
 c_func
 (paren
 id|lp
 )paren
 suffix:semicolon
-)brace
 r_else
 (brace
 id|save_flags
@@ -1040,7 +1042,7 @@ c_func
 id|dmachan
 )paren
 suffix:semicolon
-multiline_comment|/* Set DMA mode register to single transfers, incrementing address,&n;     *  auto init, writes&n;     */
+multiline_comment|/*&n;&t; *&t;Set DMA mode register to single transfers, incrementing address,&n;&t; *&t;auto init, writes&n;&t; */
 id|set_dma_mode
 c_func
 (paren
@@ -1073,7 +1075,7 @@ c_func
 id|dmachan
 )paren
 suffix:semicolon
-multiline_comment|/* If a packet is already coming in, this line is supposed to&n;&t;   avoid receiving a partial packet.&n;     */
+multiline_comment|/*&n;&t; *&t;If a packet is already coming in, this line is supposed to&n;&t; *&t;avoid receiving a partial packet.&n;&t; */
 id|wrtscc
 c_func
 (paren
@@ -1361,7 +1363,6 @@ suffix:semicolon
 multiline_comment|/* Initialise interrupt vector */
 )brace
 r_else
-(brace
 id|wrtscc
 c_func
 (paren
@@ -1375,7 +1376,6 @@ id|CHRB
 )paren
 suffix:semicolon
 multiline_comment|/* Reset channel B */
-)brace
 multiline_comment|/* Deselect all Rx and Tx interrupts */
 id|wrtscc
 c_func
@@ -1423,7 +1423,6 @@ c_cond
 (paren
 id|lp-&gt;nrzi
 )paren
-(brace
 multiline_comment|/* Preset Tx CRC, put into NRZI mode */
 id|wrtscc
 c_func
@@ -1439,9 +1438,7 @@ op_or
 id|NRZI
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 multiline_comment|/* Preset Tx CRC, put into NRZ mode */
 id|wrtscc
 c_func
@@ -1455,7 +1452,6 @@ comma
 id|CRCPS
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Tx/Rx parameters */
 r_if
 c_cond
@@ -1463,7 +1459,6 @@ c_cond
 id|lp-&gt;speed
 )paren
 multiline_comment|/* Use internal clocking */
-(brace
 multiline_comment|/* Tx Clk from BRG. Rx Clk form DPLL, TRxC pin outputs DPLL */
 id|wrtscc
 c_func
@@ -1483,10 +1478,9 @@ op_or
 id|TRxCOI
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 multiline_comment|/* Use external clocking */
+(brace
 multiline_comment|/* Tx Clk from TRxCL. Rx Clk from RTxCL, TRxC pin if input */
 id|wrtscc
 c_func
@@ -1759,7 +1753,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* DPLL frm rtxc,BRG src PCLK */
-multiline_comment|/*&t;&t;wrtscc(lp-&gt;cardbase, cmd, R14, BRSRC | SSRTxC);*/
 multiline_comment|/* Turn on external clock port */
 r_if
 c_cond
@@ -4719,12 +4712,12 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* Get the current statistics.&t;This may be called with the card open or&n;   closed. */
+multiline_comment|/*&n; *&t;Get the current statistics.&n; *&t;This may be called with the card open or closed. &n; */
+DECL|function|pt_get_stats
 r_static
 r_struct
-id|netstats
+id|net_device_stats
 op_star
-DECL|function|pt_get_stats
 id|pt_get_stats
 c_func
 (paren
@@ -6031,6 +6024,10 @@ suffix:semicolon
 id|skb-&gt;mac.raw
 op_assign
 id|skb-&gt;data
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 id|IS_SKB
 c_func

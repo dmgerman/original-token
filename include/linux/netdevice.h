@@ -123,6 +123,134 @@ r_int
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;Network device statistics. Akin to the 2.0 ether stats but&n; *&t;with byte counters.&n; */
+DECL|struct|net_device_stats
+r_struct
+id|net_device_stats
+(brace
+DECL|member|rx_packets
+r_int
+r_int
+id|rx_packets
+suffix:semicolon
+multiline_comment|/* total packets received&t;*/
+DECL|member|tx_packets
+r_int
+r_int
+id|tx_packets
+suffix:semicolon
+multiline_comment|/* total packets transmitted&t;*/
+DECL|member|rx_bytes
+r_int
+r_int
+id|rx_bytes
+suffix:semicolon
+multiline_comment|/* total bytes received &t;*/
+DECL|member|tx_bytes
+r_int
+r_int
+id|tx_bytes
+suffix:semicolon
+multiline_comment|/* total bytes transmitted&t;*/
+DECL|member|rx_errors
+r_int
+r_int
+id|rx_errors
+suffix:semicolon
+multiline_comment|/* bad packets received&t;&t;*/
+DECL|member|tx_errors
+r_int
+r_int
+id|tx_errors
+suffix:semicolon
+multiline_comment|/* packet transmit problems&t;*/
+DECL|member|rx_dropped
+r_int
+r_int
+id|rx_dropped
+suffix:semicolon
+multiline_comment|/* no space in linux buffers&t;*/
+DECL|member|tx_dropped
+r_int
+r_int
+id|tx_dropped
+suffix:semicolon
+multiline_comment|/* no space available in linux&t;*/
+DECL|member|multicast
+r_int
+r_int
+id|multicast
+suffix:semicolon
+multiline_comment|/* multicast packets received&t;*/
+DECL|member|collisions
+r_int
+r_int
+id|collisions
+suffix:semicolon
+multiline_comment|/* detailed rx_errors: */
+DECL|member|rx_length_errors
+r_int
+r_int
+id|rx_length_errors
+suffix:semicolon
+DECL|member|rx_over_errors
+r_int
+r_int
+id|rx_over_errors
+suffix:semicolon
+multiline_comment|/* receiver ring buff overflow&t;*/
+DECL|member|rx_crc_errors
+r_int
+r_int
+id|rx_crc_errors
+suffix:semicolon
+multiline_comment|/* recved pkt with crc error&t;*/
+DECL|member|rx_frame_errors
+r_int
+r_int
+id|rx_frame_errors
+suffix:semicolon
+multiline_comment|/* recv&squot;d frame alignment error */
+DECL|member|rx_fifo_errors
+r_int
+r_int
+id|rx_fifo_errors
+suffix:semicolon
+multiline_comment|/* recv&squot;r fifo overrun&t;&t;*/
+DECL|member|rx_missed_errors
+r_int
+r_int
+id|rx_missed_errors
+suffix:semicolon
+multiline_comment|/* receiver missed packet&t;*/
+multiline_comment|/* detailed tx_errors */
+DECL|member|tx_aborted_errors
+r_int
+r_int
+id|tx_aborted_errors
+suffix:semicolon
+DECL|member|tx_carrier_errors
+r_int
+r_int
+id|tx_carrier_errors
+suffix:semicolon
+DECL|member|tx_fifo_errors
+r_int
+r_int
+id|tx_fifo_errors
+suffix:semicolon
+DECL|member|tx_heartbeat_errors
+r_int
+r_int
+id|tx_heartbeat_errors
+suffix:semicolon
+DECL|member|tx_window_errors
+r_int
+r_int
+id|tx_window_errors
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; *&t;The DEVICE structure.&n; *&t;Actually, this whole structure is a big mistake.  It mixes I/O&n; *&t;data with strictly &quot;high-level&quot; data, and it has to know about&n; *&t;almost every data structure used in the INET module.&n; *&n; *&t;FIXME: cleanup struct device such that network protocol info&n; *&t;moves out.&n; */
 DECL|struct|device
 r_struct
@@ -236,7 +364,7 @@ multiline_comment|/* DMA channel&t;&t;*/
 multiline_comment|/*&n;&t; *&t;FIXME:&n;&t; *&t;The description &squot;enet_statistics&squot; is misleading. We&n;&t; *&t;should change this.&n;&t; */
 DECL|member|get_stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 (paren
 op_star

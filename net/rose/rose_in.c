@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Rose release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;Rose 001&t;Jonathan(G4KLX)&t;Cloned from nr_in.c&n; */
+multiline_comment|/*&n; *&t;Rose release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new&n; *&t;releases, misbehave and/or generally screw up. It might even work.&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;Rose 001&t;Jonathan(G4KLX)&t;Cloned from nr_in.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -120,18 +120,6 @@ l_int|NULL
 )paren
 r_return
 l_int|1
-suffix:semicolon
-id|skbn-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
-id|skb_set_owner_r
-c_func
-(paren
-id|skbn
-comma
-id|sk
-)paren
 suffix:semicolon
 id|skbn-&gt;h.raw
 op_assign
@@ -621,20 +609,16 @@ id|frametype
 op_eq
 id|ROSE_RNR
 )paren
-(brace
 id|sk-&gt;protinfo.rose-&gt;condition
 op_or_assign
 id|ROSE_COND_PEER_RX_BUSY
 suffix:semicolon
-)brace
 r_else
-(brace
 id|sk-&gt;protinfo.rose-&gt;condition
 op_and_assign
 op_complement
 id|ROSE_COND_PEER_RX_BUSY
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -875,7 +859,7 @@ c_cond
 (paren
 id|sk-&gt;protinfo.rose-&gt;vl
 op_plus
-id|ROSE_DEFAULT_WINDOW
+id|ROSE_MAX_WINDOW_SIZE
 )paren
 op_mod
 id|ROSE_MODULUS

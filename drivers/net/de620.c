@@ -48,8 +48,6 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/* Constant definitions for the DE-620 registers, commands and bits */
 macro_line|#include &quot;de620.h&quot;
-DECL|macro|netstats
-mdefine_line|#define netstats enet_statistics
 DECL|typedef|byte
 r_typedef
 r_int
@@ -201,7 +199,7 @@ op_star
 suffix:semicolon
 r_static
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 id|get_stats
 c_func
@@ -1249,11 +1247,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*********************************************&n; *&n; * Return current statistics&n; *&n; */
+DECL|function|get_stats
 r_static
 r_struct
-id|netstats
+id|net_device_stats
 op_star
-DECL|function|get_stats
 id|get_stats
 c_func
 (paren
@@ -1266,7 +1264,7 @@ id|dev
 r_return
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 )paren
 (paren
@@ -1628,7 +1626,7 @@ multiline_comment|/* Boolean! */
 (paren
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 )paren
 (paren
@@ -2000,7 +1998,7 @@ suffix:semicolon
 (paren
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 )paren
 (paren
@@ -2099,7 +2097,7 @@ suffix:semicolon
 (paren
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 )paren
 (paren
@@ -2186,7 +2184,7 @@ suffix:semicolon
 (paren
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 )paren
 (paren
@@ -2271,7 +2269,7 @@ multiline_comment|/* count all receives */
 (paren
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 )paren
 (paren
@@ -2702,7 +2700,7 @@ id|dev
 (brace
 r_static
 r_struct
-id|netstats
+id|net_device_stats
 id|de620_netstats
 suffix:semicolon
 r_int
@@ -2937,7 +2935,6 @@ l_string|&quot; UTP)&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the device structure. */
-multiline_comment|/*dev-&gt;priv = kmalloc(sizeof(struct netstats), GFP_KERNEL);*/
 id|dev-&gt;priv
 op_assign
 op_amp
@@ -2953,7 +2950,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon

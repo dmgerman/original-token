@@ -135,7 +135,7 @@ id|net_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|last_restart
@@ -464,7 +464,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|el16_get_stats
 c_func
@@ -522,8 +522,8 @@ id|netcard_portlist
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;&t;If dev-&gt;base_addr == 0, probe all likely locations.&n;&t;If dev-&gt;base_addr == 1, always return failure.&n;&t;If dev-&gt;base_addr == 2, (detachable devices only) allocate space for the&n;&t;device and return success.&n;&t;*/
-r_int
 DECL|function|el16_probe
+r_int
 id|el16_probe
 c_func
 (paren
@@ -1211,10 +1211,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|el16_open
 r_static
 r_int
-DECL|function|el16_open
 id|el16_open
 c_func
 (paren
@@ -1256,9 +1255,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|el16_send_packet
 r_static
 r_int
-DECL|function|el16_send_packet
 id|el16_send_packet
 c_func
 (paren
@@ -1437,25 +1436,6 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/* If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t;   we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t;   itself. */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Block a timer-based transmit from overlapping. */
 r_if
 c_cond
@@ -1503,6 +1483,10 @@ op_star
 id|buf
 op_assign
 id|skb-&gt;data
+suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|length
 suffix:semicolon
 multiline_comment|/* Disable the 82586&squot;s input to the interrupt line. */
 id|outb
@@ -1553,11 +1537,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
 multiline_comment|/*&t;The typical workload of the driver:&n;&t;Handle the network interface interrupts. */
+DECL|function|el16_interrupt
 r_static
 r_void
-DECL|function|el16_interrupt
 id|el16_interrupt
 c_func
 (paren
@@ -2045,9 +2028,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|el16_close
 r_static
 r_int
-DECL|function|el16_close
 id|el16_close
 c_func
 (paren
@@ -2129,11 +2112,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Get the current statistics.&t;This may be called with the card open or&n;   closed. */
+DECL|function|el16_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|el16_get_stats
 id|el16_get_stats
 c_func
 (paren
@@ -2162,9 +2145,9 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the Rx-block list. */
+DECL|function|init_rx_bufs
 r_static
 r_void
-DECL|function|init_rx_bufs
 id|init_rx_bufs
 c_func
 (paren
@@ -2391,8 +2374,8 @@ id|lp-&gt;rx_head
 suffix:semicolon
 multiline_comment|/* Link */
 )brace
-r_void
 DECL|function|init_82586_mem
+r_void
 id|init_82586_mem
 c_func
 (paren
@@ -2656,9 +2639,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|hardware_send_packet
 r_static
 r_void
-DECL|function|hardware_send_packet
 id|hardware_send_packet
 c_func
 (paren
@@ -2894,9 +2877,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|el16_rx
 r_static
 r_void
-DECL|function|el16_rx
 id|el16_rx
 c_func
 (paren

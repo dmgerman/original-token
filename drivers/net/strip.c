@@ -1,4 +1,3 @@
-macro_line|#error &quot;Doesn&squot;t run with 2.1.x&quot;
 multiline_comment|/*&n; * Copyright 1996 The Board of Trustees of The Leland Stanford&n; * Junior University. All Rights Reserved.&n; *&n; * Permission to use, copy, modify, and distribute this&n; * software and its documentation for any purpose and without&n; * fee is hereby granted, provided that the above copyright&n; * notice appear in all copies.  Stanford University&n; * makes no representations about the suitability of this&n; * software for any purpose.  It is provided &quot;as is&quot; without&n; * express or implied warranty.&n; *&n; * strip.c&t;This module implements Starmode Radio IP (STRIP)&n; *&t;&t;for kernel-based devices like TTY.  It interfaces between a&n; *&t;&t;raw TTY, and the kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)strip.c&t;0.9.8&t;June 1996&n; *&n; * Author:&t;Stuart Cheshire &lt;cheshire@cs.stanford.edu&gt;&n; *&n; * Fixes:&t;v0.9 12th Feb 1996.&n; *&t;&t;New byte stuffing (2+6 run-length encoding)&n; *&t;&t;New watchdog timer task&n; *&t;&t;New Protocol key (SIP0)&n; *&t;&t;&n; *&t;&t;v0.9.1 3rd March 1996&n; *&t;&t;Changed to dynamic device allocation -- no more compile&n; *&t;&t;time (or boot time) limit on the number of STRIP devices.&n; *&t;&t;&n; *&t;&t;v0.9.2 13th March 1996&n; *&t;&t;Uses arp cache lookups (but doesn&squot;t send arp packets yet)&n; *&t;&t;&n; *&t;&t;v0.9.3 17th April 1996&n; *&t;&t;Fixed bug where STR_ERROR flag was getting set unneccessarily&n; *&t;&t;&n; *&t;&t;v0.9.4 27th April 1996&n; *&t;&t;First attempt at using &quot;&amp;COMMAND&quot; Starmode AT commands&n; *&t;&t;&n; *&t;&t;v0.9.5 29th May 1996&n; *&t;&t;First attempt at sending (unicast) ARP packets&n; *&t;&t;&n; *&t;&t;v0.9.6 5th June 1996&n; *&t;&t;Elliot put &quot;message level&quot; tags in every &quot;printk&quot; statement&n; *&t;&t;&n; *&t;&t;v0.9.7 13th June 1996&n; *&t;&t;Added support for the /proc fs (laik)&n; *&n; *              v0.9.8 July 1996&n; *              Added packet logging (Mema)&n; */
 multiline_comment|/*&n; * Undefine this symbol if you don&squot;t have PROC_NET_STRIP_STATUS&n; * defined in include/linux/proc_fs.h&n; */
 DECL|macro|DO_PROC_NET_STRIP_STATUS
@@ -5810,24 +5809,33 @@ op_eq
 l_int|0xFF
 )paren
 (brace
-multiline_comment|/*IPaddr a;&n;        a.l = strip_info-&gt;dev.pa_brdaddr;&n;        printk(KERN_INFO &quot;%s: Broadcast packet! Sending to %d.%d.%d.%d&bslash;n&quot;,&n;                strip_info-&gt;dev.name, a.b[0], a.b[1], a.b[2], a.b[3]);*/
-r_if
-c_cond
-(paren
-op_logical_neg
-id|arp_query
+id|memcpy
 c_func
 (paren
 id|haddr.c
 comma
-id|strip_info-&gt;dev.pa_brdaddr
+id|dev-&gt;broadcast
 comma
-op_amp
-id|strip_info-&gt;dev
+r_sizeof
+(paren
+id|haddr
 )paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|haddr.c
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0xFF
 )paren
 (brace
-multiline_comment|/*IPaddr a;&n;            a.l = strip_info-&gt;dev.pa_brdaddr;&n;            printk(KERN_INFO &quot;%s: No ARP cache entry for %d.%d.%d.%d&bslash;n&quot;,&n;                strip_info-&gt;dev.name, a.b[0], a.b[1], a.b[2], a.b[3]);&n;            strip_info-&gt;tx_dropped++;*/
+id|strip_info-&gt;tx_dropped
+op_increment
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -9016,7 +9024,7 @@ multiline_comment|/* You cannot override a Metricom radio&squot;s address */
 DECL|function|strip_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|strip_get_stats
 c_func
@@ -9029,7 +9037,7 @@ id|dev
 (brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 r_struct
@@ -9057,7 +9065,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -9168,22 +9176,6 @@ suffix:semicolon
 id|strip_info-&gt;tx_left
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/*&n;     * Needed because address &squot;0&squot; is special&n;     */
-r_if
-c_cond
-(paren
-id|dev-&gt;pa_addr
-op_eq
-l_int|0
-)paren
-id|dev-&gt;pa_addr
-op_assign
-id|ntohl
-c_func
-(paren
-l_int|0xC0A80001
-)paren
 suffix:semicolon
 id|dev-&gt;tbusy
 op_assign

@@ -3618,6 +3618,10 @@ id|adapter
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
+id|adapter-&gt;stats.tx_bytes
+op_add_assign
+id|nlen
+suffix:semicolon
 multiline_comment|/*&n;&t; * send the adapter a transmit packet command. Ignore segment and offset&n;&t; * and make sure the length is even&n;&t; */
 id|adapter-&gt;tx_pcb.command
 op_assign
@@ -3952,35 +3956,6 @@ id|adapter-&gt;stats.tx_dropped
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/* Some upper layer thinks we&squot;ve missed a tx-done interrupt */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4108,7 +4083,7 @@ multiline_comment|/******************************************************&n; *&n
 DECL|function|elp_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|elp_get_stats
 c_func
@@ -4714,7 +4689,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon

@@ -5,10 +5,6 @@ mdefine_line|#define _NETROM_H
 macro_line|#include &lt;linux/netrom.h&gt;
 DECL|macro|NR_SLOWHZ
 mdefine_line|#define&t;NR_SLOWHZ&t;&t;&t;10&t;/* Run timing at 1/10 second */
-DECL|macro|NR_T1CLAMPLO
-mdefine_line|#define&t;NR_T1CLAMPLO  &t; &t;&t;(1 * NR_SLOWHZ)&t;&t;/* If defined, clamp at 1 second **/
-DECL|macro|NR_T1CLAMPHI
-mdefine_line|#define&t;NR_T1CLAMPHI &t;&t;&t;(300 * NR_SLOWHZ)&t;/* If defined, clamp at 30 seconds **/
 DECL|macro|NR_NETWORK_LEN
 mdefine_line|#define&t;NR_NETWORK_LEN&t;&t;&t;15
 DECL|macro|NR_TRANSPORT_LEN
@@ -70,16 +66,16 @@ DECL|macro|NR_DEFAULT_QUAL
 mdefine_line|#define&t;NR_DEFAULT_QUAL&t;&t;&t;10&t;&t;&t;/* Default Neighbour Quality - 10 */
 DECL|macro|NR_DEFAULT_TTL
 mdefine_line|#define&t;NR_DEFAULT_TTL&t;&t;&t;16&t;&t;&t;/* Default Time To Live - 16 */
-DECL|macro|NR_MODULUS
-mdefine_line|#define NR_MODULUS &t;&t;&t;256
-DECL|macro|NR_MAX_WINDOW_SIZE
-mdefine_line|#define NR_MAX_WINDOW_SIZE&t;&t;127&t;&t;&t;/* Maximum Window Allowable - 127 */
-DECL|macro|NR_DEFAULT_PACLEN
-mdefine_line|#define&t;NR_DEFAULT_PACLEN&t;&t;236&t;&t;&t;/* Default Packet Length - 236 */
 DECL|macro|NR_DEFAULT_ROUTING
 mdefine_line|#define&t;NR_DEFAULT_ROUTING&t;&t;1&t;&t;&t;/* Is routing enabled ? */
 DECL|macro|NR_DEFAULT_FAILS
 mdefine_line|#define&t;NR_DEFAULT_FAILS&t;&t;2&t;&t;&t;/* Link fails until route fails */
+DECL|macro|NR_MODULUS
+mdefine_line|#define NR_MODULUS &t;&t;&t;256
+DECL|macro|NR_MAX_WINDOW_SIZE
+mdefine_line|#define NR_MAX_WINDOW_SIZE&t;&t;127&t;&t;&t;/* Maximum Window Allowable - 127 */
+DECL|macro|NR_MAX_PACKET_SIZE
+mdefine_line|#define&t;NR_MAX_PACKET_SIZE&t;&t;236&t;&t;&t;/* Maximum Packet Length - 236 */
 r_typedef
 r_struct
 (brace
@@ -158,7 +154,6 @@ DECL|member|t1
 DECL|member|t2
 DECL|member|t4
 DECL|member|idle
-DECL|member|rtt
 r_int
 r_int
 id|t1
@@ -168,8 +163,6 @@ comma
 id|t4
 comma
 id|idle
-comma
-id|rtt
 suffix:semicolon
 DECL|member|t1timer
 DECL|member|t2timer
@@ -186,12 +179,9 @@ comma
 id|idletimer
 suffix:semicolon
 DECL|member|fraglen
-DECL|member|paclen
 r_int
 r_int
 id|fraglen
-comma
-id|paclen
 suffix:semicolon
 DECL|member|ack_queue
 r_struct
@@ -370,10 +360,6 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_netrom_transport_no_activity_timeout
-suffix:semicolon
-r_extern
-r_int
-id|sysctl_netrom_transport_packet_length
 suffix:semicolon
 r_extern
 r_int
@@ -725,27 +711,6 @@ c_func
 (paren
 r_struct
 id|sk_buff
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|nr_calculate_t1
-c_func
-(paren
-r_struct
-id|sock
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|nr_calculate_rtt
-c_func
-(paren
-r_struct
-id|sock
 op_star
 )paren
 suffix:semicolon

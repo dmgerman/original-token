@@ -84,6 +84,10 @@ DECL|macro|PCI_CFIT
 mdefine_line|#define PCI_CFIT     iobase+0x003c   /* PCI Configuration Interrupt Register */
 DECL|macro|PCI_CFDA
 mdefine_line|#define PCI_CFDA     iobase+0x0040   /* PCI Driver Area Register */
+DECL|macro|PCI_CFDD
+mdefine_line|#define PCI_CFDD     iobase+0x0041   /* PCI Driver Dependent Area Register */
+DECL|macro|PCI_CFPM
+mdefine_line|#define PCI_CFPM     iobase+0x0043   /* PCI Power Management Area Register */
 multiline_comment|/*&n;** EISA Configuration Register 0 bit definitions&n;*/
 DECL|macro|ER0_BSW
 mdefine_line|#define ER0_BSW       0x80           /* EISA Bus Slave Width, 1: 32 bits */
@@ -118,23 +122,27 @@ DECL|macro|ER3_BRE
 mdefine_line|#define ER3_BRE       0x04           /* Burst Read Enable */
 DECL|macro|ER3_LSR
 mdefine_line|#define ER3_LSR       0x02           /* Local Software Reset */
-multiline_comment|/*&n;** PCI Configuration ID Register (PCI_CFID)&n;*/
+multiline_comment|/*&n;** PCI Configuration ID Register (PCI_CFID). The Device IDs are left&n;** shifted 8 bits to allow detection of DC21142 and DC21143 variants with&n;** the configuration revision register step number.&n;*/
 DECL|macro|CFID_DID
 mdefine_line|#define CFID_DID    0xff00           /* Device ID */
 DECL|macro|CFID_VID
 mdefine_line|#define CFID_VID    0x00ff           /* Vendor ID */
 DECL|macro|DC21040_DID
-mdefine_line|#define DC21040_DID 0x0002           /* Unique Device ID # */
+mdefine_line|#define DC21040_DID 0x0200           /* Unique Device ID # */
 DECL|macro|DC21040_VID
 mdefine_line|#define DC21040_VID 0x1011           /* DC21040 Manufacturer */
 DECL|macro|DC21041_DID
-mdefine_line|#define DC21041_DID 0x0014           /* Unique Device ID # */
+mdefine_line|#define DC21041_DID 0x1400           /* Unique Device ID # */
 DECL|macro|DC21041_VID
 mdefine_line|#define DC21041_VID 0x1011           /* DC21041 Manufacturer */
 DECL|macro|DC21140_DID
-mdefine_line|#define DC21140_DID 0x0009           /* Unique Device ID # */
+mdefine_line|#define DC21140_DID 0x0900           /* Unique Device ID # */
 DECL|macro|DC21140_VID
 mdefine_line|#define DC21140_VID 0x1011           /* DC21140 Manufacturer */
+DECL|macro|DC2114x_DID
+mdefine_line|#define DC2114x_DID 0x1900           /* Unique Device ID # */
+DECL|macro|DC2114x_VID
+mdefine_line|#define DC2114x_VID 0x1011           /* DC2114[23] Manufacturer */
 multiline_comment|/*&n;** Chipset defines&n;*/
 DECL|macro|DC21040
 mdefine_line|#define DC21040     DC21040_DID
@@ -142,12 +150,24 @@ DECL|macro|DC21041
 mdefine_line|#define DC21041     DC21041_DID
 DECL|macro|DC21140
 mdefine_line|#define DC21140     DC21140_DID
+DECL|macro|DC2114x
+mdefine_line|#define DC2114x     DC2114x_DID
+DECL|macro|DC21142
+mdefine_line|#define DC21142     (DC2114x_DID | 0x0010)
+DECL|macro|DC21143
+mdefine_line|#define DC21143     (DC2114x_DID | 0x0020)
 DECL|macro|is_DC21040
 mdefine_line|#define is_DC21040 ((vendor == DC21040_VID) &amp;&amp; (device == DC21040_DID))
 DECL|macro|is_DC21041
 mdefine_line|#define is_DC21041 ((vendor == DC21041_VID) &amp;&amp; (device == DC21041_DID))
 DECL|macro|is_DC21140
 mdefine_line|#define is_DC21140 ((vendor == DC21140_VID) &amp;&amp; (device == DC21140_DID))
+DECL|macro|is_DC2114x
+mdefine_line|#define is_DC2114x ((vendor == DC2114x_VID) &amp;&amp; (device == DC2114x_DID))
+DECL|macro|is_DC21142
+mdefine_line|#define is_DC21142 ((vendor == DC2114x_VID) &amp;&amp; (device == DC21142))
+DECL|macro|is_DC21143
+mdefine_line|#define is_DC21143 ((vendor == DC2114x_VID) &amp;&amp; (device == DC21143))
 multiline_comment|/*&n;** PCI Configuration Command/Status Register (PCI_CFCS)&n;*/
 DECL|macro|CFCS_DPE
 mdefine_line|#define CFCS_DPE    0x80000000       /* Detected Parity Error (S) */
@@ -205,9 +225,17 @@ DECL|macro|CBER_MASK
 mdefine_line|#define CBER_MASK   0xfffffc00       /* Expansion ROM Base Address Mask */
 DECL|macro|CBER_ROME
 mdefine_line|#define CBER_ROME   0x00000001       /* ROM Enable */
-multiline_comment|/*&n;** PCI Configuration Driver Area Register (PCI_CFDA)&n;*/
-DECL|macro|CFDA_PSM
-mdefine_line|#define CFDA_PSM    0x80000000       /* Power Saving Mode */
+multiline_comment|/*&n;** PCI Configuration Power Management Area Register (PCI_CFPM)&n;*/
+DECL|macro|SLEEP
+mdefine_line|#define SLEEP       0x80             /* Power Saving Sleep Mode */
+DECL|macro|SNOOZE
+mdefine_line|#define SNOOZE      0x40             /* Power Saving Snooze Mode */
+DECL|macro|WAKEUP
+mdefine_line|#define WAKEUP      0x00             /* Power Saving Wakeup */
+DECL|macro|PCI_CFDA_DSU
+mdefine_line|#define PCI_CFDA_DSU 0x41            /* 8 bit Configuration Space Address */
+DECL|macro|PCI_CFDA_PSM
+mdefine_line|#define PCI_CFDA_PSM 0x43            /* 8 bit Configuration Space Address */
 multiline_comment|/*&n;** DC21040 Bus Mode Register (DE4X5_BMR)&n;*/
 DECL|macro|BMR_DBO
 mdefine_line|#define BMR_DBO    0x00100000       /* Descriptor Byte Ordering (Endian) */
@@ -405,8 +433,8 @@ DECL|macro|OMR_FC
 mdefine_line|#define OMR_FC     0x00001000       /* Force Collision Mode */
 DECL|macro|OMR_OM
 mdefine_line|#define OMR_OM     0x00000c00       /* Operating Mode */
-DECL|macro|OMR_FD
-mdefine_line|#define OMR_FD     0x00000200       /* Full Duplex Mode */
+DECL|macro|OMR_FDX
+mdefine_line|#define OMR_FDX    0x00000200       /* Full Duplex Mode */
 DECL|macro|OMR_FKD
 mdefine_line|#define OMR_FKD    0x00000100       /* Flaky Oscillator Disable */
 DECL|macro|OMR_PM
@@ -672,6 +700,105 @@ DECL|macro|MEDIA_TP
 mdefine_line|#define MEDIA_TP       0x0002      /* TP Media present */
 DECL|macro|MEDIA_BNC
 mdefine_line|#define MEDIA_BNC      0x0001      /* BNC Media present */
+multiline_comment|/*&n;** SROM Definitions (Digital Semiconductor Format)&n;*/
+DECL|macro|SROM_SSVID
+mdefine_line|#define SROM_SSVID     0x0000      /* Sub-system Vendor ID offset */
+DECL|macro|SROM_SSID
+mdefine_line|#define SROM_SSID      0x0002      /* Sub-system ID offset */
+DECL|macro|SROM_CISPL
+mdefine_line|#define SROM_CISPL     0x0004      /* CardBus CIS Pointer low offset */
+DECL|macro|SROM_CISPH
+mdefine_line|#define SROM_CISPH     0x0006      /* CardBus CIS Pointer high offset */
+DECL|macro|SROM_IDCRC
+mdefine_line|#define SROM_IDCRC     0x0010      /* ID Block CRC offset*/
+DECL|macro|SROM_RSVD2
+mdefine_line|#define SROM_RSVD2     0x0011      /* ID Reserved 2 offset */
+DECL|macro|SROM_SFV
+mdefine_line|#define SROM_SFV       0x0012      /* SROM Format Version offset */
+DECL|macro|SROM_CCNT
+mdefine_line|#define SROM_CCNT      0x0013      /* Controller Count offset */
+DECL|macro|SROM_HWADD
+mdefine_line|#define SROM_HWADD     0x0014      /* Hardware Address offset */
+DECL|macro|SROM_MRSVD
+mdefine_line|#define SROM_MRSVD     0x007c      /* Manufacturer Reserved offset*/
+DECL|macro|SROM_CRC
+mdefine_line|#define SROM_CRC       0x007e      /* SROM CRC offset */
+multiline_comment|/*&n;** SROM Media Connection Definitions&n;*/
+DECL|macro|SROM_10BT
+mdefine_line|#define SROM_10BT      0x0000      /*  10BASE-T half duplex */
+DECL|macro|SROM_10BTN
+mdefine_line|#define SROM_10BTN     0x0100      /*  10BASE-T with Nway */
+DECL|macro|SROM_10BTF
+mdefine_line|#define SROM_10BTF     0x0204      /*  10BASE-T full duplex */
+DECL|macro|SROM_10BTNLP
+mdefine_line|#define SROM_10BTNLP   0x0400      /*  10BASE-T without Link Pass test */
+DECL|macro|SROM_10B2
+mdefine_line|#define SROM_10B2      0x0001      /*  10BASE-2 (BNC) */
+DECL|macro|SROM_10B5
+mdefine_line|#define SROM_10B5      0x0002      /*  10BASE-5 (AUI) */
+DECL|macro|SROM_100BTH
+mdefine_line|#define SROM_100BTH    0x0003      /*  100BASE-T half duplex */
+DECL|macro|SROM_100BTF
+mdefine_line|#define SROM_100BTF    0x0205      /*  100BASE-T full duplex */
+DECL|macro|SROM_100BT4
+mdefine_line|#define SROM_100BT4    0x0006      /*  100BASE-T4 */
+DECL|macro|SROM_100BFX
+mdefine_line|#define SROM_100BFX    0x0007      /*  100BASE-FX half duplex (Fiber) */
+DECL|macro|SROM_M10BT
+mdefine_line|#define SROM_M10BT     0x0009      /*  MII 10BASE-T half duplex */
+DECL|macro|SROM_M10BTF
+mdefine_line|#define SROM_M10BTF    0x020a      /*  MII 10BASE-T full duplex */
+DECL|macro|SROM_M100BT
+mdefine_line|#define SROM_M100BT    0x000d      /*  MII 100BASE-T half duplex */
+DECL|macro|SROM_M100BTF
+mdefine_line|#define SROM_M100BTF   0x020e      /*  MII 100BASE-T full duplex */
+DECL|macro|SROM_M100BT4
+mdefine_line|#define SROM_M100BT4   0x000f      /*  MII 100BASE-T4 */
+DECL|macro|SROM_M100BF
+mdefine_line|#define SROM_M100BF    0x0010      /*  MII 100BASE-FX half duplex */
+DECL|macro|SROM_M100BFF
+mdefine_line|#define SROM_M100BFF   0x0211      /*  MII 100BASE-FX full duplex */
+DECL|macro|SROM_PDA
+mdefine_line|#define SROM_PDA       0x0800      /*  Powerup &amp; Dynamic Autosense */
+DECL|macro|SROM_PAO
+mdefine_line|#define SROM_PAO       0x8800      /*  Powerup Autosense Only */
+DECL|macro|SROM_NSMI
+mdefine_line|#define SROM_NSMI      0xffff      /*  No Selected Media Information */
+multiline_comment|/*&n;** SROM Media Definitions&n;*/
+DECL|macro|SROM_10BASET
+mdefine_line|#define SROM_10BASET   0x0000      /*  10BASE-T half duplex */
+DECL|macro|SROM_10BASE2
+mdefine_line|#define SROM_10BASE2   0x0001      /*  10BASE-2 (BNC) */
+DECL|macro|SROM_10BASE5
+mdefine_line|#define SROM_10BASE5   0x0002      /*  10BASE-5 (AUI) */
+DECL|macro|SROM_100BASET
+mdefine_line|#define SROM_100BASET  0x0003      /*  100BASE-T half duplex */
+DECL|macro|SROM_10BASETF
+mdefine_line|#define SROM_10BASETF  0x0004      /*  10BASE-T full duplex */
+DECL|macro|SROM_100BASETF
+mdefine_line|#define SROM_100BASETF 0x0005      /*  100BASE-T full duplex */
+DECL|macro|SROM_100BASET4
+mdefine_line|#define SROM_100BASET4 0x0006      /*  100BASE-T4 */
+DECL|macro|SROM_100BASEF
+mdefine_line|#define SROM_100BASEF  0x0007      /*  100BASE-FX half duplex */
+DECL|macro|SROM_100BASEFF
+mdefine_line|#define SROM_100BASEFF 0x0008      /*  100BASE-FX full duplex */
+DECL|macro|BLOCK_LEN
+mdefine_line|#define BLOCK_LEN      0x7f        /* Extended blocks length mask */
+multiline_comment|/*&n;** SROM Compact Format Block Masks&n;*/
+DECL|macro|COMPACT_FI
+mdefine_line|#define COMPACT_FI      0x80       /* Format Indicator */
+DECL|macro|COMPACT_LEN
+mdefine_line|#define COMPACT_LEN     0x04       /* Length */
+DECL|macro|COMPACT_MC
+mdefine_line|#define COMPACT_MC      0x3f       /* Media Code */
+multiline_comment|/*&n;** SROM Extended Format Block Type 0 Masks&n;*/
+DECL|macro|BLOCK0_FI
+mdefine_line|#define BLOCK0_FI      0x80        /* Format Indicator */
+DECL|macro|BLOCK0_MCS
+mdefine_line|#define BLOCK0_MCS     0x80        /* Media Code byte Sign */
+DECL|macro|BLOCK0_MC
+mdefine_line|#define BLOCK0_MC      0x3f        /* Media Code */
 multiline_comment|/*&n;** DC21040 Full Duplex Register (DE4X5_FDR)&n;*/
 DECL|macro|FDR_FDACV
 mdefine_line|#define FDR_FDACV  0x0000ffff      /* Full Duplex Auto Configuration Value */
@@ -700,6 +827,8 @@ DECL|macro|GEP_MODE
 mdefine_line|#define GEP_MODE 0x00000001        /* 0: 10Mb/s,  1: 100Mb/s           */
 DECL|macro|GEP_INIT
 mdefine_line|#define GEP_INIT 0x0000011f        /* Setup inputs (0) and outputs (1) */
+DECL|macro|GEP_CTRL
+mdefine_line|#define GEP_CTRL 0x00000100        /* GEP control bit                  */
 multiline_comment|/*&n;** DC21040 SIA Status Register (DE4X5_SISR)&n;*/
 DECL|macro|SISR_LPC
 mdefine_line|#define SISR_LPC   0xffff0000      /* Link Partner&squot;s Code Word */
@@ -1001,6 +1130,27 @@ DECL|macro|AUTO
 mdefine_line|#define AUTO            0x4000     /* Auto sense the media or speed */
 DECL|macro|TIMER_CB
 mdefine_line|#define TIMER_CB        0x80000000 /* Timer callback detection */
+multiline_comment|/*&n;** DE4X5 DEBUG Options&n;*/
+DECL|macro|DEBUG_NONE
+mdefine_line|#define DEBUG_NONE      0x0000     /* No DEBUG messages */
+DECL|macro|DEBUG_VERSION
+mdefine_line|#define DEBUG_VERSION   0x0001     /* Print version message */
+DECL|macro|DEBUG_MEDIA
+mdefine_line|#define DEBUG_MEDIA     0x0002     /* Print media messages */
+DECL|macro|DEBUG_TX
+mdefine_line|#define DEBUG_TX        0x0004     /* Print TX (queue_pkt) messages */
+DECL|macro|DEBUG_RX
+mdefine_line|#define DEBUG_RX        0x0008     /* Print RX (de4x5_rx) messages */
+DECL|macro|DEBUG_SROM
+mdefine_line|#define DEBUG_SROM      0x0010     /* Print SROM messages */
+DECL|macro|DEBUG_MII
+mdefine_line|#define DEBUG_MII       0x0020     /* Print MII messages */
+DECL|macro|DEBUG_OPEN
+mdefine_line|#define DEBUG_OPEN      0x0040     /* Print de4x5_open() messages */
+DECL|macro|DEBUG_CLOSE
+mdefine_line|#define DEBUG_CLOSE     0x0080     /* Print de4x5_close() messages */
+DECL|macro|DEBUG_PCICFG
+mdefine_line|#define DEBUG_PCICFG    0x0100
 multiline_comment|/*&n;** Miscellaneous&n;*/
 DECL|macro|PCI
 mdefine_line|#define PCI  0
@@ -1052,14 +1202,17 @@ DECL|macro|NO
 mdefine_line|#define NO                   0
 DECL|macro|FALSE
 mdefine_line|#define FALSE                0
-DECL|macro|CLOSED
-mdefine_line|#define CLOSED               0
 DECL|macro|YES
 mdefine_line|#define YES                  ~0
 DECL|macro|TRUE
 mdefine_line|#define TRUE                 ~0
+multiline_comment|/*&n;** Adapter state&n;*/
+DECL|macro|INITIALISED
+mdefine_line|#define INITIALISED          0     /* After h/w initialised and mem alloc&squot;d */
+DECL|macro|CLOSED
+mdefine_line|#define CLOSED               1     /* Ready for opening */
 DECL|macro|OPEN
-mdefine_line|#define OPEN                 ~0
+mdefine_line|#define OPEN                 2     /* Running */
 multiline_comment|/*&n;** IEEE OUIs for various PHY vendor/chip combos - Reg 2 values only. Since&n;** the vendors seem split 50-50 on how to calculate the OUI register values&n;** anyway, just reading Reg2 seems reasonable for now [see de4x5_get_oui()].&n;*/
 DECL|macro|NATIONAL_TX
 mdefine_line|#define NATIONAL_TX 0x2000
@@ -1071,12 +1224,12 @@ DECL|macro|CYPRESS_T4
 mdefine_line|#define CYPRESS_T4  0x0014
 multiline_comment|/*&n;** Speed Selection stuff&n;*/
 DECL|macro|SET_10Mb
-mdefine_line|#define SET_10Mb {&bslash;&n;  if (lp-&gt;phy[lp-&gt;active].id) {&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FD);&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_10|(de4x5_full_duplex?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr |= ((de4x5_full_duplex ? OMR_FD : 0) | OMR_TTM);&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    outl(0, DE4X5_GEP);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FD));&bslash;&n;    omr |= (de4x5_full_duplex ? OMR_FD : 0);&bslash;&n;    outl(omr | OMR_TTM, DE4X5_OMR);&bslash;&n;    outl((de4x5_full_duplex ? 0 : GEP_FDXD), DE4X5_GEP);&bslash;&n;  }&bslash;&n;}
+mdefine_line|#define SET_10Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_10|(lp-&gt;fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr |= ((lp-&gt;fdx ? OMR_FDX : 0) | OMR_TTM);&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | lp-&gt;infoblock_csr6, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_TTM, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD);&bslash;&n;  }&bslash;&n;}
 DECL|macro|SET_100Mb
-mdefine_line|#define SET_100Mb {&bslash;&n;  if (lp-&gt;phy[lp-&gt;active].id) {&bslash;&n;    int fdx=0;&bslash;&n;    if (lp-&gt;phy[lp-&gt;active].id == NATIONAL_TX) {&bslash;&n;        mii_wr(mii_rd(0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII) &amp; ~0x2000,&bslash;&n;                      0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FD);&bslash;&n;    sr = mii_rd(MII_SR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    if (!(sr &amp; MII_ANA_T4AM) &amp;&amp; de4x5_full_duplex) fdx=1;&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_100|(fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    if (fdx) omr |= OMR_FD;&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FD));&bslash;&n;    omr |= (de4x5_full_duplex ? OMR_FD : 0);&bslash;&n;    outl(omr | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    outl((de4x5_full_duplex ? 0 : GEP_FDXD) | GEP_MODE, DE4X5_GEP);&bslash;&n;  }&bslash;&n;}
+mdefine_line|#define SET_100Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    int fdx=0;&bslash;&n;    if (lp-&gt;phy[lp-&gt;active].id == NATIONAL_TX) {&bslash;&n;        mii_wr(mii_rd(0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII) &amp; ~0x2000,&bslash;&n;                      0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    sr = mii_rd(MII_SR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    if (!(sr &amp; MII_ANA_T4AM) &amp;&amp; lp-&gt;fdx) fdx=1;&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_100|(fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    if (fdx) omr |= OMR_FDX;&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | lp-&gt;infoblock_csr6 | OMR_HBD, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD) | GEP_MODE;&bslash;&n;  }&bslash;&n;}
 multiline_comment|/* FIX ME so I don&squot;t jam 10Mb networks */
 DECL|macro|SET_100Mb_PDET
-mdefine_line|#define SET_100Mb_PDET {&bslash;&n;  if (lp-&gt;phy[lp-&gt;active].id) {&bslash;&n;    mii_wr(MII_CR_100|MII_CR_ASSE, MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FD));&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FD));&bslash;&n;    outl(omr | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    outl(GEP_FDXD | GEP_MODE, DE4X5_GEP);&bslash;&n;  }&bslash;&n;}
+mdefine_line|#define SET_100Mb_PDET {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    mii_wr(MII_CR_100|MII_CR_ASSE, MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (GEP_FDXD | GEP_MODE);&bslash;&n;  }&bslash;&n;}
 multiline_comment|/*&n;** Include the IOCTL stuff&n;*/
 macro_line|#include &lt;linux/sockios.h&gt;
 DECL|macro|DE4X5IOCTL

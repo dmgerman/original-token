@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -151,18 +152,18 @@ id|Adapter
 suffix:semicolon
 multiline_comment|/*&n; * The following is set up by wd7000_detect, and used thereafter by&n; * wd7000_intr_handle to map the irq level to the corresponding Adapter.&n; * Note that if SA_INTERRUPT is not used, wd7000_intr_handle must be&n; * changed to pick up the IRQ level correctly.&n; */
 DECL|variable|irq2host
+r_static
 id|Adapter
 op_star
 id|irq2host
 (braket
-l_int|16
+id|NR_IRQS
 )braket
 op_assign
 (brace
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/* Possible IRQs are 0-15 */
 multiline_comment|/*&n; * (linear) base address for ROM BIOS&n; */
 DECL|variable|wd7000_biosaddr
 r_static

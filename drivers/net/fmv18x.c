@@ -81,7 +81,7 @@ id|net_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|open_time
@@ -248,7 +248,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|net_get_stats
 c_func
@@ -2501,11 +2501,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Get the current statistics.&t;This may be called with the card open or&n;   closed. */
+DECL|function|net_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|net_get_stats
 id|net_get_stats
 c_func
 (paren
@@ -2544,9 +2544,9 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
+DECL|function|set_multicast_list
 r_static
 r_void
-DECL|function|set_multicast_list
 id|set_multicast_list
 c_func
 (paren

@@ -171,6 +171,7 @@ id|sjcd_base
 op_assign
 id|SJCD_BASE_ADDR
 suffix:semicolon
+macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
 (paren
@@ -179,6 +180,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|sjcd_waitq
 r_static
 r_struct

@@ -301,6 +301,10 @@ op_assign
 id|nr_neigh_no
 op_increment
 suffix:semicolon
+id|nr_neigh-&gt;failed
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3085,7 +3089,7 @@ id|ax25-&gt;device
 comma
 l_int|0
 comma
-id|sysctl_netrom_network_ttl_initialiser
+id|sysctl_netrom_obsolescence_count_initialiser
 )paren
 suffix:semicolon
 r_if
@@ -3258,6 +3262,8 @@ id|ax25_send_frame
 c_func
 (paren
 id|skb
+comma
+l_int|0
 comma
 (paren
 id|ax25_address

@@ -975,6 +975,8 @@ comma
 l_string|&quot;Pentium 75+&quot;
 comma
 l_string|&quot;OverDrive PODP5V83&quot;
+comma
+l_string|&quot;Pentium MMX&quot;
 )brace
 suffix:semicolon
 r_if

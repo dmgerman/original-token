@@ -6,8 +6,6 @@ DECL|macro|PF_ROSE
 mdefine_line|#define PF_ROSE&t;&t;AF_ROSE
 DECL|macro|ROSE_MTU
 mdefine_line|#define ROSE_MTU&t;128
-DECL|macro|ROSE_T0
-mdefine_line|#define ROSE_T0&t;&t;1
 DECL|macro|ROSE_T1
 mdefine_line|#define ROSE_T1&t;&t;2
 DECL|macro|ROSE_T2

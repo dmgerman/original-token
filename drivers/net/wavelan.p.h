@@ -163,7 +163,7 @@ suffix:semicolon
 DECL|typedef|en_stats
 r_typedef
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|en_stats
 suffix:semicolon
 DECL|typedef|iw_stats

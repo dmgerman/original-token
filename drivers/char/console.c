@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/console.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; *&n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot;&n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;unsigned long con_init(unsigned long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void do_blank_screen(int)&squot;&n; *     &squot;void do_unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *&n; *     &squot;unsigned short *screen_pos(int currcons, int w_offset, int viewed)&squot;&n; *     &squot;void complement_pos(int currcons, int offset)&squot;&n; *     &squot;void invert_screen(int currcons, int offset, int count, int shift)&squot;&n; *&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *&n; *     &squot;void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; *&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; *&n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; * User-defined bell sound, new setterm control sequences and printk&n; * redirection by Martin Mares &lt;mj@k332.feld.cvut.cz&gt; 19-Nov-95&n; *&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; *&n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot;&n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;unsigned long con_init(unsigned long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void do_blank_screen(int)&squot;&n; *     &squot;void do_unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *&n; *     &squot;unsigned short *screen_pos(int currcons, int w_offset, int viewed)&squot;&n; *     &squot;void complement_pos(int currcons, int offset)&squot;&n; *     &squot;void invert_screen(int currcons, int offset, int count, int shift)&squot;&n; *&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *&n; *     &squot;void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; *&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; *&n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; * User-defined bell sound, new setterm control sequences and printk&n; * redirection by Martin Mares &lt;mj@k332.feld.cvut.cz&gt; 19-Nov-95&n; *&n; * APM screenblank bug fixed Takashi Manabe &lt;manabe@roy.dsl.tutics.tut.jp&gt;&n; */
 DECL|macro|BLANK
 mdefine_line|#define BLANK 0x0020
 multiline_comment|/* A bitmap for codes &lt;32. A bit of 1 indicates that the code&n; * corresponding to that bit number invokes some special action&n; * (such as cursor movement) and should not be displayed as a&n; * glyph unless the disp_ctrl mode is explicitly enabled.&n; */
@@ -10226,6 +10226,13 @@ id|fg_console
 op_plus
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|nopowersave
+)paren
+(brace
 macro_line|#ifdef CONFIG_APM
 r_if
 c_cond
@@ -10238,13 +10245,6 @@ c_func
 r_return
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-op_logical_neg
-id|nopowersave
-)paren
-(brace
 id|vesa_blank
 c_func
 (paren

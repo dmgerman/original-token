@@ -57,12 +57,6 @@ comma
 id|frontlen
 comma
 id|len
-comma
-id|mtu
-suffix:semicolon
-id|mtu
-op_assign
-id|sk-&gt;protinfo.nr-&gt;paclen
 suffix:semicolon
 r_if
 c_cond
@@ -71,7 +65,7 @@ id|skb-&gt;len
 op_minus
 id|NR_TRANSPORT_LEN
 OG
-id|mtu
+id|NR_MAX_PACKET_SIZE
 )paren
 (brace
 multiline_comment|/* Save a copy of the Transport Header */
@@ -122,7 +116,7 @@ id|sk
 comma
 id|frontlen
 op_plus
-id|mtu
+id|NR_MAX_PACKET_SIZE
 comma
 l_int|0
 comma
@@ -137,14 +131,6 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-id|skbn-&gt;sk
-op_assign
-id|sk
-suffix:semicolon
-id|skbn-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|skb_reserve
 c_func
 (paren
@@ -156,7 +142,7 @@ suffix:semicolon
 id|len
 op_assign
 (paren
-id|mtu
+id|NR_MAX_PACKET_SIZE
 OG
 id|skb-&gt;len
 )paren
@@ -164,7 +150,7 @@ ques
 c_cond
 id|skb-&gt;len
 suffix:colon
-id|mtu
+id|NR_MAX_PACKET_SIZE
 suffix:semicolon
 multiline_comment|/* Copy the user data */
 id|memcpy
@@ -647,18 +633,10 @@ id|sk-&gt;protinfo.nr-&gt;t1timer
 op_eq
 l_int|0
 )paren
-(brace
 id|sk-&gt;protinfo.nr-&gt;t1timer
 op_assign
 id|sk-&gt;protinfo.nr-&gt;t1
-op_assign
-id|nr_calculate_t1
-c_func
-(paren
-id|sk
-)paren
 suffix:semicolon
-)brace
 )brace
 id|nr_set_timer
 c_func
@@ -780,10 +758,6 @@ op_increment
 op_assign
 id|sysctl_netrom_network_ttl_initialiser
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -872,12 +846,6 @@ suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;t1timer
 op_assign
 id|sk-&gt;protinfo.nr-&gt;t1
-op_assign
-id|nr_calculate_t1
-c_func
-(paren
-id|sk
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Never send a NAK when we are CHOKEd.&n; */
@@ -924,12 +892,10 @@ id|sk-&gt;protinfo.nr-&gt;reseq_queue
 op_ne
 l_int|NULL
 )paren
-(brace
 id|frametype
 op_or_assign
 id|NR_NAK_FLAG
 suffix:semicolon
-)brace
 )brace
 id|nr_write_internal
 c_func
@@ -980,12 +946,6 @@ comma
 id|nr
 )paren
 suffix:semicolon
-id|nr_calculate_rtt
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;t1timer
 op_assign
 l_int|0
@@ -1016,12 +976,6 @@ suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;t1timer
 op_assign
 id|sk-&gt;protinfo.nr-&gt;t1
-op_assign
-id|nr_calculate_t1
-c_func
-(paren
-id|sk
-)paren
 suffix:semicolon
 )brace
 )brace

@@ -109,7 +109,7 @@ id|tx_dma
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* The starting, current, and end pointers for the packet buffers. */
@@ -418,7 +418,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|net_get_stats
 c_func
@@ -1038,6 +1038,18 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_struct
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1202,24 +1214,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Check that the part hasn&squot;t reset itself, probably from suspend. */
 id|outb
 c_func
@@ -1333,6 +1327,10 @@ l_int|1
 )paren
 op_rshift
 l_int|1
+suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|length
 suffix:semicolon
 (brace
 r_int
@@ -2772,7 +2770,7 @@ multiline_comment|/* Get the current statistics.&t;This may be called with the c
 DECL|function|net_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|net_get_stats
 c_func

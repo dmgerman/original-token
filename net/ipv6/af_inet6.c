@@ -288,6 +288,10 @@ comma
 id|sk
 )paren
 suffix:semicolon
+id|sk-&gt;zapped
+op_assign
+l_int|0
+suffix:semicolon
 id|sk-&gt;family
 op_assign
 id|AF_INET6
@@ -2408,10 +2412,12 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;inet6_proto_init: panic&bslash;n&quot;
+l_string|&quot;inet6_proto_init: size fault&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 (paren

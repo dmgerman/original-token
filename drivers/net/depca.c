@@ -319,7 +319,7 @@ suffix:semicolon
 multiline_comment|/* The ring entries to be free()ed.       */
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 r_struct
@@ -463,7 +463,7 @@ id|cmd
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|depca_get_stats
 c_func
@@ -4394,7 +4394,7 @@ suffix:semicolon
 )brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|depca_get_stats
 id|depca_get_stats

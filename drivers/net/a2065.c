@@ -194,7 +194,7 @@ id|tx_ring_mod_mask
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|tpe
@@ -2530,7 +2530,7 @@ suffix:semicolon
 DECL|function|lance_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|lance_get_stats
 (paren

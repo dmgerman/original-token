@@ -429,38 +429,9 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/* Sending a NULL skb means some higher layer thinks we&squot;ve missed an&n;       tx-done interrupt. Caution: dev_tint() handles the cli()/sti()&n;       itself. */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|length
 op_assign
 id|skb-&gt;len
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-r_return
-l_int|0
 suffix:semicolon
 multiline_comment|/* Mask interrupts from the ethercard. */
 id|outb_p
@@ -515,6 +486,10 @@ c_cond
 id|length
 suffix:colon
 id|ETH_ZLEN
+suffix:semicolon
+id|ei_local-&gt;stat.tx_bytes
+op_add_assign
+id|send_length
 suffix:semicolon
 macro_line|#ifdef EI_PINGPONG
 multiline_comment|/*&n;     * We have two Tx slots available for use. Find the first free&n;     * slot, and then perform some sanity checks. With two Tx bufs,&n;     * you get very close to transmitting back-to-back packets. With&n;     * only one Tx buf, the transmitter sits idle while you reload the&n;     * card, leaving a substantial gap between each transmitted packet.&n;     */
@@ -2140,6 +2115,10 @@ id|rx_frame
 )paren
 )paren
 suffix:semicolon
+id|ei_local-&gt;stat.rx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -2504,7 +2483,7 @@ suffix:semicolon
 DECL|function|get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|get_stats
 c_func

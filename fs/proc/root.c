@@ -2212,7 +2212,7 @@ id|proc_dir_entry
 id|proc_root_swaps
 op_assign
 (brace
-id|PROC_MTAB
+id|PROC_SWAP
 comma
 l_int|5
 comma

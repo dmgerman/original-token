@@ -789,14 +789,10 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 id|dev-&gt;mtu
 op_assign
-l_int|236
+id|NR_MAX_PACKET_SIZE
 suffix:semicolon
-multiline_comment|/* MTU&t;&t;&t;*/
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -915,29 +911,10 @@ id|dev-&gt;get_stats
 op_assign
 id|nr_get_stats
 suffix:semicolon
-multiline_comment|/* Fill in the generic fields of the device structure. */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|skb_queue_head_init
+id|dev_init_buffers
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
+id|dev
 )paren
 suffix:semicolon
 r_return

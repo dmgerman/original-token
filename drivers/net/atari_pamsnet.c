@@ -98,7 +98,7 @@ id|net_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|open_time
@@ -352,7 +352,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|net_get_stats
 c_func
@@ -3089,11 +3089,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Get the current statistics.&n;   This may be called with the card open or closed.&n; */
+DECL|function|net_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|net_get_stats
 id|net_get_stats
 c_func
 (paren

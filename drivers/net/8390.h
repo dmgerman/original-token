@@ -351,7 +351,7 @@ multiline_comment|/* Original dev-&gt;irq value. */
 multiline_comment|/* The new statistics table. */
 DECL|member|stat
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stat
 suffix:semicolon
 )brace

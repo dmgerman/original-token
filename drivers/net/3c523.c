@@ -162,7 +162,7 @@ op_star
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|elmc_get_stats
 c_func
@@ -291,7 +291,7 @@ id|priv
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|base
@@ -5165,11 +5165,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************&n; * Someone wanna have the statistics&n; */
+DECL|function|elmc_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|elmc_get_stats
 id|elmc_get_stats
 c_func
 (paren

@@ -2,8 +2,6 @@ multiline_comment|/*&n; * These are the public elements of the Linux kernel AX.2
 macro_line|#ifndef&t;AX25_KERNEL_H
 DECL|macro|AX25_KERNEL_H
 mdefine_line|#define&t;AX25_KERNEL_H
-DECL|macro|PF_AX25
-mdefine_line|#define PF_AX25&t;&t;AF_AX25
 DECL|macro|AX25_MTU
 mdefine_line|#define AX25_MTU&t;256
 DECL|macro|AX25_MAX_DIGIS

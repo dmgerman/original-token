@@ -71,7 +71,7 @@ id|net_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_driver_stats
 id|stats
 suffix:semicolon
 DECL|member|receive_ptr
@@ -189,7 +189,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_driver_stats
 op_star
 id|seeq8005_get_stats
 c_func
@@ -2655,11 +2655,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Get the current statistics.&t;This may be called with the card open or&n;   closed. */
+DECL|function|seeq8005_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_driver_stats
 op_star
-DECL|function|seeq8005_get_stats
 id|seeq8005_get_stats
 c_func
 (paren

@@ -1,6 +1,4 @@
-multiline_comment|/*&n; * QLogic ISP1020 Intelligent SCSI Processor Driver (PCI)&n; * Written by Erik H. Moe, ehm@cris.com&n; * Copyright 1995, Erik H. Moe&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; */
-multiline_comment|/* Renamed and updated to 1.3.x by Michael Griffith &lt;grif@cs.ucr.edu&gt; */
-multiline_comment|/*&n; * $Date: 1995/09/22 02:23:15 $&n; * $Revision: 0.5 $&n; *&n; * $Log: isp1020.c,v $&n; * Revision 0.5  1995/09/22  02:23:15  root&n; * do auto request sense&n; *&n; * Revision 0.4  1995/08/07  04:44:33  root&n; * supply firmware with driver.&n; * numerous bug fixes/general cleanup of code.&n; *&n; * Revision 0.3  1995/07/16  16:15:39  root&n; * added reset/abort code.&n; *&n; * Revision 0.2  1995/06/29  03:14:19  root&n; * fixed biosparam.&n; * added queue protocol.&n; *&n; * Revision 0.1  1995/06/25  01:55:45  root&n; * Initial release.&n; *&n; */
+multiline_comment|/*&n; * QLogic ISP1020 Intelligent SCSI Processor Driver (PCI)&n; * Written by Erik H. Moe, ehm@cris.com&n; * Copyright 1995, Erik H. Moe&n; * Copyright 1996, 1997  Michael A. Griffith &lt;grif@acm.org&gt; &n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; */
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -688,6 +686,7 @@ macro_line|#include &quot;qlogicisp_asm.c&quot;
 DECL|macro|PACKB
 mdefine_line|#define PACKB(a, b)&t;&t;&t;(((a)&lt;&lt;4)|(b))
 DECL|variable|mbox_param
+r_static
 r_const
 id|u_char
 id|mbox_param
@@ -1480,6 +1479,7 @@ mdefine_line|#define REQ_QUEUE_DEPTH(in, out)&t;QUEUE_DEPTH(in, out, &t;&t;     
 DECL|macro|RES_QUEUE_DEPTH
 mdefine_line|#define RES_QUEUE_DEPTH(in, out)&t;QUEUE_DEPTH(in, out, RES_QUEUE_LEN)
 DECL|variable|irq2host
+r_static
 r_struct
 id|Scsi_Host
 op_star

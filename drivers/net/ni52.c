@@ -88,7 +88,87 @@ DECL|macro|DELAY_18
 mdefine_line|#define DELAY_18(); { __delay( (loops_per_sec&gt;&gt;18)+1 ); }
 multiline_comment|/* wait for command with timeout: */
 DECL|macro|WAIT_4_SCB_CMD
-mdefine_line|#define WAIT_4_SCB_CMD() { int i; &bslash;&n;  for(i=0;i&lt;16384;i++) { &bslash;&n;    if(!p-&gt;scb-&gt;cmd_cuc) break; &bslash;&n;    DELAY_18(); &bslash;&n;    if(i == 16383) { &bslash;&n;      printk(&quot;%s: scb_cmd timed out: %04x,%04x .. disabling i82586!!&bslash;n&quot;,dev-&gt;name,p-&gt;scb-&gt;cmd_cuc,p-&gt;scb-&gt;cus); &bslash;&n;       if(!p-&gt;reseted) { p-&gt;reseted = 1; ni_reset586(); } } } }
+mdefine_line|#define WAIT_4_SCB_CMD() 
+(brace
+r_int
+id|i
+suffix:semicolon
+"&bslash;"
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|16384
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+"&bslash;"
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p-&gt;scb-&gt;cmd_cuc
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+"&bslash;"
+id|DELAY_18
+c_func
+(paren
+)paren
+suffix:semicolon
+"&bslash;"
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|16383
+)paren
+(brace
+"&bslash;"
+id|printk
+c_func
+(paren
+l_string|&quot;%s: scb_cmd timed out: %04x,%04x .. disabling i82586!!&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|p-&gt;scb-&gt;cmd_cuc
+comma
+id|p-&gt;scb-&gt;cus
+)paren
+suffix:semicolon
+"&bslash;"
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p-&gt;reseted
+)paren
+(brace
+id|p-&gt;reseted
+op_assign
+l_int|1
+suffix:semicolon
+id|ni_reset586
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+)brace
 DECL|macro|WAIT_4_SCB_CMD_RUC
 mdefine_line|#define WAIT_4_SCB_CMD_RUC() { int i; &bslash;&n;  for(i=0;i&lt;16384;i++) { &bslash;&n;    if(!p-&gt;scb-&gt;cmd_ruc) break; &bslash;&n;    DELAY_18(); &bslash;&n;    if(i == 16383) { &bslash;&n;      printk(&quot;%s: scb_cmd (ruc) timed out: %04x,%04x .. disabling i82586!!&bslash;n&quot;,dev-&gt;name,p-&gt;scb-&gt;cmd_ruc,p-&gt;scb-&gt;rus); &bslash;&n;       if(!p-&gt;reseted) { p-&gt;reseted = 1; ni_reset586(); } } } }
 DECL|macro|WAIT_4_STAT_COMPL
@@ -171,7 +251,7 @@ op_star
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ni52_get_stats
 c_func
@@ -315,7 +395,7 @@ id|priv
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|base
@@ -1460,7 +1540,7 @@ comma
 l_string|&quot;ni5210&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * check (or search) IO-Memory, 8K and 16K&n;   */
+multiline_comment|/*&n;&t; * check (or search) IO-Memory, 8K and 16K&n;&t; */
 macro_line|#ifdef MODULE
 id|size
 op_assign
@@ -2318,7 +2398,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * individual address setup&n;     */
+multiline_comment|/*&n;&t; * individual address setup&n;&t; */
 id|ias_cmd
 op_assign
 (paren
@@ -2419,7 +2499,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    * TDR, wire check .. e.g. no resistor e.t.c&n;    */
+multiline_comment|/*&n;&t; * TDR, wire check .. e.g. no resistor e.t.c&n;&t; */
 id|tdr_cmd
 op_assign
 (paren
@@ -2607,7 +2687,7 @@ id|result
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Multicast setup&n;   */
+multiline_comment|/*&n;&t; * Multicast setup&n;&t; */
 r_if
 c_cond
 (paren
@@ -2740,7 +2820,7 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;    * alloc nop/xmit-cmds&n;    */
+multiline_comment|/*&n;&t; * alloc nop/xmit-cmds&n;&t; */
 macro_line|#if (NUM_XMIT_BUFFS == 1)
 r_for
 c_loop
@@ -2915,7 +2995,7 @@ id|ptr
 )paren
 suffix:semicolon
 multiline_comment|/* init receive-frame-area */
-multiline_comment|/*&n;   * alloc xmit-buffs / init xmit_cmds&n;   */
+multiline_comment|/*&n;&t; * alloc xmit-buffs / init xmit_cmds&n;&t; */
 r_for
 c_loop
 (paren
@@ -3183,7 +3263,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;    * &squot;start transmitter&squot;&n;    */
+multiline_comment|/*&n;&t;&t;* &squot;start transmitter&squot;&n;&t;&t;*/
 macro_line|#ifndef NO_NOPCOMMANDS
 id|p-&gt;scb-&gt;cbl_offset
 op_assign
@@ -3241,7 +3321,7 @@ op_or
 id|CMD_INT
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;   * ack. interrupts&n;   */
+multiline_comment|/*&n;&t; * ack. interrupts&n;&t; */
 id|p-&gt;scb-&gt;cmd_cuc
 op_assign
 id|p-&gt;scb-&gt;cus
@@ -3681,7 +3761,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* wait for last command  */
+multiline_comment|/* wait for last command&t;*/
 r_while
 c_loop
 (paren
@@ -4247,7 +4327,7 @@ id|p-&gt;rfd_last-&gt;last
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* delete RFD_SUSP  */
+multiline_comment|/* delete RFD_SUSP&t;*/
 id|p-&gt;rfd_last
 op_assign
 id|p-&gt;rfd_top
@@ -5300,7 +5380,7 @@ suffix:colon
 id|ETH_ZLEN
 suffix:semicolon
 macro_line|#if (NUM_XMIT_BUFFS == 1)
-macro_line|#  ifdef NO_NOPCOMMANDS
+macro_line|#&t;ifdef NO_NOPCOMMANDS
 macro_line|#ifdef DEBUG
 r_if
 c_cond
@@ -5488,7 +5568,7 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 )brace
-macro_line|#  else
+macro_line|#&t;else
 id|next_nop
 op_assign
 (paren
@@ -5585,7 +5665,7 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-macro_line|#  endif
+macro_line|#&t;endif
 macro_line|#else
 id|p-&gt;xmit_buffs
 (braket
@@ -5737,7 +5817,7 @@ multiline_comment|/*******************************************&n; * Someone wann
 DECL|function|ni52_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ni52_get_stats
 c_func
@@ -5900,7 +5980,7 @@ id|device
 id|dev_ni52
 op_assign
 (brace
-l_string|&quot;        &quot;
+l_string|&quot;&t;&t;&t;&t;&quot;
 comma
 multiline_comment|/* &quot;ni5210&quot;: device name inserted by net_init.c */
 l_int|0

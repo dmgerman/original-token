@@ -463,7 +463,7 @@ id|arcnet_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|sequence
@@ -869,7 +869,7 @@ id|daddr
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|arcnet_get_stats
 c_func
@@ -8190,11 +8190,11 @@ suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Miscellaneous routines                                                   *&n; *                                                                          *&n; ****************************************************************************/
 multiline_comment|/* Get the current statistics.&t;This may be called with the card open or&n; * closed.&n; */
+DECL|function|arcnet_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|arcnet_get_stats
 id|arcnet_get_stats
 c_func
 (paren

@@ -65,7 +65,7 @@ id|skb-&gt;len
 op_minus
 id|ROSE_MIN_LEN
 OG
-id|ROSE_PACLEN
+id|ROSE_MAX_PACKET_SIZE
 )paren
 (brace
 multiline_comment|/* Save a copy of the Header */
@@ -116,7 +116,7 @@ id|sk
 comma
 id|frontlen
 op_plus
-id|ROSE_PACLEN
+id|ROSE_MAX_PACKET_SIZE
 comma
 l_int|0
 comma
@@ -131,14 +131,6 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-id|skbn-&gt;sk
-op_assign
-id|sk
-suffix:semicolon
-id|skbn-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|skb_reserve
 c_func
 (paren
@@ -150,7 +142,7 @@ suffix:semicolon
 id|len
 op_assign
 (paren
-id|ROSE_PACLEN
+id|ROSE_MAX_PACKET_SIZE
 OG
 id|skb-&gt;len
 )paren
@@ -158,7 +150,7 @@ ques
 c_cond
 id|skb-&gt;len
 suffix:colon
-id|ROSE_PACLEN
+id|ROSE_MAX_PACKET_SIZE
 suffix:semicolon
 multiline_comment|/* Copy the user data */
 id|memcpy
@@ -359,7 +351,7 @@ op_assign
 (paren
 id|sk-&gt;protinfo.rose-&gt;va
 op_plus
-id|ROSE_DEFAULT_WINDOW
+id|ROSE_MAX_WINDOW_SIZE
 )paren
 op_mod
 id|ROSE_MODULUS
@@ -481,7 +473,6 @@ id|sk-&gt;protinfo.rose-&gt;condition
 op_amp
 id|ROSE_COND_OWN_RX_BUSY
 )paren
-(brace
 id|rose_write_internal
 c_func
 (paren
@@ -490,9 +481,7 @@ comma
 id|ROSE_RNR
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|rose_write_internal
 c_func
 (paren
@@ -501,7 +490,6 @@ comma
 id|ROSE_RR
 )paren
 suffix:semicolon
-)brace
 id|sk-&gt;protinfo.rose-&gt;vl
 op_assign
 id|sk-&gt;protinfo.rose-&gt;vr

@@ -386,7 +386,7 @@ id|tx_old
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|ledma
@@ -2894,47 +2894,6 @@ r_return
 id|status
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;skb is NULL&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;skb len is %d&bslash;n&quot;
-comma
-id|skb-&gt;len
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Block a timer-based transmit from overlapping. */
 r_if
 c_cond
@@ -3005,6 +2964,10 @@ id|ETH_ZLEN
 suffix:colon
 id|skblen
 suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|len
+suffix:semicolon
 id|entry
 op_assign
 id|lp-&gt;tx_new
@@ -3055,6 +3018,7 @@ id|skblen
 )paren
 suffix:semicolon
 multiline_comment|/* Clear the slack of the packet, do I need this? */
+multiline_comment|/* For a firewall its a good idea - AC */
 r_if
 c_cond
 (paren
@@ -3161,7 +3125,7 @@ suffix:semicolon
 DECL|function|lance_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|lance_get_stats
 (paren

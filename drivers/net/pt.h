@@ -1,9 +1,6 @@
 multiline_comment|/*&n; * pt.h: Linux device driver for the Gracilis PackeTwin&n; * Copyright (C) 1995 Craig Small VK2XLZ (vk2xlz@vk2xlz.ampr.org.)&n; *&n; * Please read the notice appearing at the top of the file pt.c&n; */
 DECL|macro|DMA_BUFF_SIZE
 mdefine_line|#define DMA_BUFF_SIZE 2200
-multiline_comment|/* Network statistics, with the same names as &squot;struct enet_statistics&squot;. */
-DECL|macro|netstats
-mdefine_line|#define netstats enet_statistics
 DECL|macro|ON
 mdefine_line|#define ON 1
 DECL|macro|OFF
@@ -207,7 +204,7 @@ id|pt_local
 (brace
 DECL|member|stats
 r_struct
-id|netstats
+id|net_device_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* %%%dp*/
@@ -246,43 +243,43 @@ DECL|member|bufsiz
 r_int
 id|bufsiz
 suffix:semicolon
-multiline_comment|/* Size of rcvbuf */
+multiline_comment|/* Size of rcvbuf &t;&t;&t;*/
 DECL|member|rcp
 r_char
 op_star
 id|rcp
 suffix:semicolon
-multiline_comment|/* Pointer into rcvbuf */
+multiline_comment|/* Pointer into rcvbuf &t;&t;&t;*/
 DECL|member|sndq
 r_struct
 id|sk_buff_head
 id|sndq
 suffix:semicolon
-multiline_comment|/* Packets awaiting transmission */
+multiline_comment|/* Packets awaiting transmission &t;*/
 DECL|member|sndcnt
 r_int
 id|sndcnt
 suffix:semicolon
-multiline_comment|/* Number of packets on sndq */
+multiline_comment|/* Number of packets on sndq &t;&t;*/
 DECL|member|sndbuf
 r_struct
 id|sk_buff
 op_star
 id|sndbuf
 suffix:semicolon
-multiline_comment|/* Current buffer being transmitted */
+multiline_comment|/* Current buffer being transmitted&t;*/
 DECL|member|txdmabuf
 r_char
 op_star
 id|txdmabuf
 suffix:semicolon
-multiline_comment|/* Transmit DMA buffer */
+multiline_comment|/* Transmit DMA buffer &t;&t;&t;*/
 DECL|member|txptr
 r_char
 op_star
 id|txptr
 suffix:semicolon
-multiline_comment|/* Used by B port tx */
+multiline_comment|/* Used by B port tx &t;&t;&t;*/
 DECL|member|txcnt
 r_int
 id|txcnt
@@ -291,33 +288,33 @@ DECL|member|tstate
 r_char
 id|tstate
 suffix:semicolon
-multiline_comment|/* Transmitter state */
+multiline_comment|/* Transmitter state &t;&t;&t;*/
 DECL|macro|IDLE
-mdefine_line|#define IDLE    0       /* Transmitter off, no data pending */
+mdefine_line|#define IDLE    0       /* Transmitter off, no data pending &t;&t;*/
 DECL|macro|ACTIVE
-mdefine_line|#define ACTIVE  1       /* Transmitter on, sending data */
+mdefine_line|#define ACTIVE  1       /* Transmitter on, sending data &t;&t;*/
 DECL|macro|UNDERRUN
-mdefine_line|#define UNDERRUN 2      /* Transmitter on, flushing CRC */
+mdefine_line|#define UNDERRUN 2      /* Transmitter on, flushing CRC&t;&t;&t;*/
 DECL|macro|FLAGOUT
-mdefine_line|#define FLAGOUT 3       /* CRC sent - attempt to start next frame */
+mdefine_line|#define FLAGOUT 3       /* CRC sent - attempt to start next frame&t;*/
 DECL|macro|DEFER
-mdefine_line|#define DEFER 4         /* Receive Active - DEFER Transmit */
+mdefine_line|#define DEFER 4         /* Receive Active - DEFER Transmit&t;&t;*/
 DECL|macro|ST_TXDELAY
-mdefine_line|#define ST_TXDELAY 5    /* Sending leading flags */
+mdefine_line|#define ST_TXDELAY 5    /* Sending leading flags&t;&t;&t;*/
 DECL|macro|CRCOUT
 mdefine_line|#define CRCOUT 6
 DECL|member|rstate
 r_char
 id|rstate
 suffix:semicolon
-multiline_comment|/* Set when !DCD goes to 0 (TRUE) */
+multiline_comment|/* Set when !DCD goes to 0 (TRUE)&t;&t;*/
 multiline_comment|/* Normal state is ACTIVE if Receive enabled */
 DECL|macro|RXERROR
-mdefine_line|#define RXERROR 2       /* Error -- Aborting current Frame */
+mdefine_line|#define RXERROR 2       /* Error -- Aborting current Frame&t;&t;*/
 DECL|macro|RXABORT
-mdefine_line|#define RXABORT 3       /* ABORT sequence detected */
+mdefine_line|#define RXABORT 3       /* ABORT sequence detected&t;&t;&t;*/
 DECL|macro|TOOBIG
-mdefine_line|#define TOOBIG 4        /* too large a frame to store */
+mdefine_line|#define TOOBIG 4        /* too large a frame to store&t;&t;&t;*/
 DECL|member|dev
 r_int
 id|dev

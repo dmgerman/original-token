@@ -8,7 +8,7 @@ id|net_local
 macro_line|#ifdef __KERNEL__
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 macro_line|#endif
@@ -720,10 +720,10 @@ l_int|0xf0
 )paren
 suffix:semicolon
 )brace
+DECL|function|write_reg
 r_extern
 r_inline
 r_void
-DECL|function|write_reg
 id|write_reg
 c_func
 (paren
@@ -837,10 +837,10 @@ id|PAR_DATA
 )paren
 suffix:semicolon
 )brace
+DECL|function|write_reg_high
 r_extern
 r_inline
 r_void
-DECL|function|write_reg_high
 id|write_reg_high
 c_func
 (paren
@@ -966,10 +966,10 @@ id|PAR_DATA
 suffix:semicolon
 )brace
 multiline_comment|/* Write a byte out using nibble mode.  The low nibble is written first. */
+DECL|function|write_reg_byte
 r_extern
 r_inline
 r_void
-DECL|function|write_reg_byte
 id|write_reg_byte
 c_func
 (paren

@@ -436,7 +436,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|tok_get_stats
 c_func
@@ -7970,7 +7970,7 @@ multiline_comment|/* tok_get_stats():  Basically a scaffold routine which will r
 DECL|function|tok_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|tok_get_stats
 c_func
@@ -7998,7 +7998,7 @@ suffix:semicolon
 r_return
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 op_amp

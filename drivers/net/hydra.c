@@ -54,9 +54,9 @@ DECL|macro|ETHER_ADDR_LEN
 mdefine_line|#define ETHER_ADDR_LEN 6
 multiline_comment|/*&n; *   let&squot;s define here nice macros for writing and reading NIC registers&n; *&n; * the CIA accesses here are uses to make sure the minimum time&n; * requirement between NIC chip selects is met.&n; */
 DECL|macro|WRITE_REG
-mdefine_line|#define WRITE_REG(reg, val) (ciaa.pra, ((u_char)(*(nicbase+(reg))=val)))
+mdefine_line|#define WRITE_REG(reg, val) (ciaa.pra, ((u8)(*(nicbase+(reg))=val)))
 DECL|macro|READ_REG
-mdefine_line|#define READ_REG(reg) (ciaa.pra, ((u_char)(*(nicbase+(reg)))))
+mdefine_line|#define READ_REG(reg) (ciaa.pra, ((u8)(*(nicbase+(reg)))))
 multiline_comment|/* mask value for the interrupts we use */
 DECL|macro|NIC_INTS
 mdefine_line|#define NIC_INTS (ISR_PRX | ISR_PTX | ISR_RXE | ISR_TXE | ISR_OVW | ISR_CNT)
@@ -69,34 +69,34 @@ r_struct
 id|hydra_private
 (brace
 DECL|member|hydra_base
-id|u_char
+id|u8
 op_star
 id|hydra_base
 suffix:semicolon
 DECL|member|hydra_nic_base
-id|u_char
+id|u8
 op_star
 id|hydra_nic_base
 suffix:semicolon
 DECL|member|tx_page_start
-id|u_short
+id|u16
 id|tx_page_start
 suffix:semicolon
 DECL|member|rx_page_start
-id|u_short
+id|u16
 id|rx_page_start
 suffix:semicolon
 DECL|member|rx_page_stop
-id|u_short
+id|u16
 id|rx_page_stop
 suffix:semicolon
 DECL|member|next_pkt
-id|u_short
+id|u16
 id|next_pkt
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|key
@@ -167,7 +167,7 @@ op_star
 id|priv
 comma
 r_volatile
-id|u_char
+id|u8
 op_star
 id|nicbase
 )paren
@@ -185,7 +185,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|hydra_get_stats
 c_func
@@ -228,11 +228,11 @@ op_star
 id|memcpyw
 c_func
 (paren
-id|u_short
+id|u16
 op_star
 id|dest
 comma
-id|u_short
+id|u16
 op_star
 id|src
 comma
@@ -287,17 +287,18 @@ multiline_comment|/* hydra memory can only be read or written as words or longwo
 multiline_comment|/* that will mean that we&squot;ll have to write a special memcpy for it. */
 multiline_comment|/* this one here relies on the fact that _writes_ to hydra memory   */
 multiline_comment|/* are guaranteed to be of even length. (reads can be arbitrary)    */
+multiline_comment|/*&n; *&t;FIXME: Surely we should be using the OS generic stuff and do&n; *&n; *&t;memcpy(dest,src,(len+1)&amp;~1);&n; *&n; *&t;Can a 68K guy with this card check that ? - better yet&n; *&t;use a copy/checksum on it.&n; */
 DECL|function|memcpyw
 r_static
 r_void
 id|memcpyw
 c_func
 (paren
-id|u_short
+id|u16
 op_star
 id|dest
 comma
-id|u_short
+id|u16
 op_star
 id|src
 comma
@@ -360,7 +361,7 @@ id|hydra_private
 op_star
 id|priv
 suffix:semicolon
-id|u_long
+id|u32
 id|board
 suffix:semicolon
 r_int
@@ -419,7 +420,7 @@ c_cond
 id|board
 op_assign
 (paren
-id|u_long
+id|u32
 )paren
 id|cd-&gt;cd_BoardAddr
 )paren
@@ -448,7 +449,7 @@ op_assign
 op_star
 (paren
 (paren
-id|u_char
+id|u8
 op_star
 )paren
 id|ZTWO_VADDR
@@ -558,7 +559,7 @@ suffix:semicolon
 id|priv-&gt;hydra_base
 op_assign
 (paren
-id|u_char
+id|u8
 op_star
 )paren
 id|ZTWO_VADDR
@@ -570,7 +571,7 @@ suffix:semicolon
 id|priv-&gt;hydra_nic_base
 op_assign
 (paren
-id|u_char
+id|u8
 op_star
 )paren
 id|ZTWO_VADDR
@@ -605,13 +606,17 @@ op_assign
 op_amp
 id|hydra_get_stats
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|hydra_set_multicast_list
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/*&n;&t; &t;&t; *&t;Cannot yet do multicast&n;&t; &t;&t; */
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_MULTICAST
+suffix:semicolon
 id|zorro_config_board
 c_func
 (paren
@@ -654,17 +659,15 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_volatile
-id|u_char
+id|u8
 op_star
 id|nicbase
 op_assign
 id|priv-&gt;hydra_nic_base
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 r_int
 id|i
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef HYDRA_DEBUG
 id|printk
 c_func
@@ -894,7 +897,6 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 multiline_comment|/* clear multicast hash table */
 r_for
 c_loop
@@ -924,7 +926,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|priv-&gt;next_pkt
 op_assign
 id|priv-&gt;rx_page_start
@@ -1029,7 +1030,7 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_volatile
-id|u_char
+id|u8
 op_star
 id|nicbase
 op_assign
@@ -1138,7 +1139,7 @@ id|fp
 )paren
 (brace
 r_volatile
-id|u_char
+id|u8
 op_star
 id|nicbase
 suffix:semicolon
@@ -1159,7 +1160,7 @@ id|hydra_private
 op_star
 id|priv
 suffix:semicolon
-id|u_short
+id|u16
 id|intbits
 suffix:semicolon
 r_if
@@ -1211,7 +1212,7 @@ suffix:semicolon
 id|nicbase
 op_assign
 (paren
-id|u_char
+id|u8
 op_star
 )paren
 id|priv-&gt;hydra_nic_base
@@ -1352,7 +1353,7 @@ op_amp
 id|ISR_CNT
 )paren
 (brace
-multiline_comment|/*&n;&t;   * read the tally counters and (currently) ignore the values&n;&t;   * might be useful because of bugs of some versions of the 8390 NIC&n;&t;   */
+multiline_comment|/*&n;&t;&t; * read the tally counters and (currently) ignore the values&n;&t;&t; * might be useful because of bugs of some versions of the 8390 NIC&n;&t;&t; */
 macro_line|#ifdef HYDRA_DEBUG
 id|printk
 c_func
@@ -1641,7 +1642,7 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_volatile
-id|u_char
+id|u8
 op_star
 id|nicbase
 op_assign
@@ -1711,40 +1712,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
 id|len
 op_assign
 id|skb-&gt;len
-)paren
-op_le
-l_int|0
-)paren
-(brace
-r_return
-l_int|0
 suffix:semicolon
-)brace
 multiline_comment|/* fill in a tx ring entry */
 macro_line|#ifdef HYDRA_DEBUG
 id|printk
@@ -1754,7 +1725,7 @@ l_string|&quot;TX pkt type 0x%04x from &quot;
 comma
 (paren
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 id|skb-&gt;data
@@ -1768,14 +1739,14 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|u_char
+id|u8
 op_star
 id|ptr
 op_assign
 op_amp
 (paren
 (paren
-id|u_char
+id|u8
 op_star
 )paren
 id|skb-&gt;data
@@ -1820,12 +1791,12 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|u_char
+id|u8
 op_star
 id|ptr
 op_assign
 (paren
-id|u_char
+id|u8
 op_star
 )paren
 id|skb-&gt;data
@@ -1870,7 +1841,7 @@ id|len
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;     * make sure that the packet size is at least the minimum&n;     * allowed ethernet packet length.&n;     * (possibly should also clear the unused space...)&n;     * note: minimum packet length is 64, including CRC&n;     */
+multiline_comment|/*&n;&t; * make sure that the packet size is at least the minimum&n;&t; * allowed ethernet packet length.&n;&t; * (FIXME: Should also clear the unused space...)&n;&t; * note: minimum packet length is 64, including CRC&n;&t; */
 id|len1
 op_assign
 id|len
@@ -1913,7 +1884,7 @@ r_if
 c_cond
 (paren
 (paren
-id|u_long
+id|u32
 )paren
 (paren
 id|priv-&gt;hydra_base
@@ -1948,12 +1919,12 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* copy the packet data to the transmit buffer&n;       in the ethernet card RAM */
+multiline_comment|/* copy the packet data to the transmit buffer &n;&t;   in the ethernet card RAM */
 id|memcpyw
 c_func
 (paren
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 (paren
@@ -1967,7 +1938,7 @@ l_int|8
 )paren
 comma
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 id|skb-&gt;data
@@ -1976,7 +1947,37 @@ id|len
 )paren
 suffix:semicolon
 multiline_comment|/* clear the unused space */
-multiline_comment|/*    for(; len1&lt;len; len1++)&n;      (u_short)*(priv-&gt;hydra_base + (priv-&gt;tx_page_start&lt;&lt;8) + len1) = 0;&n;*/
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|len1
+OL
+id|len
+suffix:semicolon
+id|len1
+op_increment
+)paren
+(brace
+(paren
+id|u16
+)paren
+op_star
+(paren
+id|priv-&gt;hydra_base
+op_plus
+(paren
+id|priv-&gt;tx_page_start
+op_lshift
+l_int|8
+)paren
+op_plus
+id|len1
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|dev_kfree_skb
 c_func
 (paren
@@ -2082,13 +2083,13 @@ op_star
 id|priv
 comma
 r_volatile
-id|u_char
+id|u8
 op_star
 id|nicbase
 )paren
 (brace
 r_volatile
-id|u_short
+id|u16
 op_star
 id|board_ram_ptr
 suffix:semicolon
@@ -2136,7 +2137,7 @@ multiline_comment|/* should read this only once? */
 id|board_ram_ptr
 op_assign
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 (paren
@@ -2161,7 +2162,7 @@ id|board_ram_ptr
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* the following must be done with two steps, or&n;&t;   GCC optimizes it to a byte access to Hydra memory,&n;&t;   which doesn&squot;t work... */
+multiline_comment|/* the following must be done with two steps, or&n;&t;&t;   GCC optimizes it to a byte access to Hydra memory,&n;&t;&t;   which doesn&squot;t work... */
 id|hdr_next_pkt
 op_assign
 id|board_ram_ptr
@@ -2224,7 +2225,7 @@ op_le
 id|ETHER_MAX_LEN
 )paren
 (brace
-multiline_comment|/* note that board_ram_ptr is u_short */
+multiline_comment|/* note that board_ram_ptr is u16 */
 multiline_comment|/* CRC is not included in the packet length */
 id|pkt_len
 op_sub_assign
@@ -2251,6 +2252,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: memory squeeze, dropping packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2305,7 +2307,7 @@ id|memcpyw
 c_func
 (paren
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 id|skb_put
@@ -2317,7 +2319,7 @@ id|len1
 )paren
 comma
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 (paren
@@ -2333,7 +2335,7 @@ id|memcpyw
 c_func
 (paren
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 id|skb_put
@@ -2347,7 +2349,7 @@ id|len1
 )paren
 comma
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 (paren
@@ -2386,7 +2388,7 @@ id|memcpyw
 c_func
 (paren
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 id|skb_put
@@ -2398,7 +2400,7 @@ id|pkt_len
 )paren
 comma
 (paren
-id|u_short
+id|u16
 op_star
 )paren
 (paren
@@ -2411,7 +2413,6 @@ id|pkt_len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* if(skb == NULL) ... */
 )brace
 r_else
 (brace
@@ -2570,7 +2571,7 @@ suffix:semicolon
 DECL|function|hydra_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|hydra_get_stats
 c_func
@@ -2594,7 +2595,7 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 macro_line|#if 0
-id|u_char
+id|u8
 op_star
 id|board
 op_assign
@@ -2610,7 +2611,6 @@ op_amp
 id|priv-&gt;stats
 suffix:semicolon
 )brace
-macro_line|#ifdef HAVE_MULTICAST
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -2642,7 +2642,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|u_char
+id|u8
 op_star
 id|board
 op_assign
@@ -2653,7 +2653,6 @@ multiline_comment|/* (personally i don&squot;t care about multicasts at all :) *
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|variable|devicename
 r_static

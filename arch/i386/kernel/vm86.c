@@ -1471,6 +1471,7 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* This must be called with the kernel lock held. */
 DECL|function|handle_vm86_trap
 r_int
 id|handle_vm86_trap
@@ -1488,14 +1489,6 @@ r_int
 id|trapno
 )paren
 (brace
-r_int
-id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1556,18 +1549,10 @@ id|regs
 )paren
 )paren
 suffix:semicolon
-id|ret
-op_assign
+r_return
 l_int|1
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
 )brace
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1575,8 +1560,8 @@ id|trapno
 op_ne
 l_int|1
 )paren
-r_goto
-id|out
+r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* we let this handle by the calling routine */
 r_if
@@ -1617,17 +1602,11 @@ id|current-&gt;tss.error_code
 op_assign
 id|error_code
 suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
-id|ret
+l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* This must be called with the kernel lock held. */
 DECL|function|handle_vm86_fault
 r_void
 id|handle_vm86_fault
@@ -1659,12 +1638,7 @@ suffix:semicolon
 DECL|macro|CHECK_IF_IN_TRAP
 mdefine_line|#define CHECK_IF_IN_TRAP &bslash;&n;&t;if (VMPI.vm86dbg_active &amp;&amp; VMPI.vm86dbg_TFpendig) &bslash;&n;&t;&t;pushw(ssp,sp,popw(ssp,sp) | TF_MASK);
 DECL|macro|VM86_FAULT_RETURN
-mdefine_line|#define VM86_FAULT_RETURN &bslash;&n;&t;if (VMPI.force_return_for_pic  &amp;&amp; (VEFLAGS &amp; IF_MASK)) &bslash;&n;&t;&t;return_to_32bit(regs, VM86_PICRETURN); &bslash;&n;&t;goto out;
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
+mdefine_line|#define VM86_FAULT_RETURN &bslash;&n;&t;if (VMPI.force_return_for_pic  &amp;&amp; (VEFLAGS &amp; IF_MASK)) &bslash;&n;&t;&t;return_to_32bit(regs, VM86_PICRETURN); &bslash;&n;&t;return;
 id|csp
 op_assign
 (paren
@@ -2029,8 +2003,7 @@ comma
 id|sp
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/* iret */
@@ -2136,13 +2109,6 @@ id|VM86_UNKNOWN
 )paren
 suffix:semicolon
 )brace
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* ---------------- vm86 special IRQ passing stuff ----------------- */
 DECL|macro|VM86_IRQNAME

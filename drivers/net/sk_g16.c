@@ -349,7 +349,7 @@ suffix:semicolon
 multiline_comment|/* pointer to the transmit buffers */
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_driver_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* Device driver statistics */
@@ -475,7 +475,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_driver_stats
 op_star
 id|SK_get_stats
 c_func
@@ -3748,11 +3748,11 @@ multiline_comment|/* always succeed */
 )brace
 multiline_comment|/* End of SK_close() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_get_stats&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Return current status structure to upper layers.&n; *                  It is called by sprintf_stats (dev.c).&n; *&n; * Parameters     : I : struct device *dev   - our device structure&n; * Return Value   : struct enet_statistics * - our current statistics&n; * Errors         : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_get_stats&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Return current status structure to upper layers.&n; *                  It is called by sprintf_stats (dev.c).&n; *&n; * Parameters     : I : struct device *dev   - our device structure&n; * Return Value   : struct net_driver_stats * - our current statistics&n; * Errors         : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_driver_stats
 op_star
 id|SK_get_stats
 c_func

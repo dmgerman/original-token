@@ -142,7 +142,7 @@ id|smc_local
 multiline_comment|/*&n; &t;   these are things that the kernel wants me to keep, so users&n;&t;   can find out semi-useless statistics of how well the card is&n;&t;   performing&n; &t;*/
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_driver_stats
 id|stats
 suffix:semicolon
 multiline_comment|/*&n;&t;   If I have to wait until memory is available to send&n;&t;   a packet, I will store the skbuff here, until I get the&n;&t;   desired memory.  Then, I&squot;ll send it out and free it.&n;&t;*/
@@ -215,7 +215,7 @@ suffix:semicolon
 multiline_comment|/*&n; . This routine allows the proc file system to query the driver&squot;s&n; . statistics.&n;*/
 r_static
 r_struct
-id|enet_statistics
+id|net_driver_stats
 op_star
 id|smc_query_statistics
 c_func
@@ -4728,7 +4728,7 @@ multiline_comment|/*------------------------------------------------------------
 DECL|function|smc_query_statistics
 r_static
 r_struct
-id|enet_statistics
+id|net_driver_stats
 op_star
 id|smc_query_statistics
 c_func

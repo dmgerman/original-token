@@ -2231,7 +2231,7 @@ c_func
 (paren
 id|sk
 comma
-l_string|&quot;ofo packet already received &bslash;n&quot;
+l_string|&quot;ofo packet was allready received &bslash;n&quot;
 )paren
 suffix:semicolon
 id|skb_unlink
@@ -2777,7 +2777,7 @@ c_func
 (paren
 id|sk
 comma
-l_string|&quot;Data Wakeup.&bslash;n&quot;
+l_string|&quot;Data wakeup.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sk

@@ -34,21 +34,6 @@ mdefine_line|#define DE600_DEBUG 0
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
-DECL|variable|de600_debug
-r_int
-r_int
-id|de600_debug
-op_assign
-id|DE600_DEBUG
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|de600_debug
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 "&f;"
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -67,6 +52,21 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+DECL|variable|de600_debug
+r_int
+r_int
+id|de600_debug
+op_assign
+id|DE600_DEBUG
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|de600_debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#ifdef FAKE_SMALL_MAX
 r_static
 r_int
@@ -82,8 +82,6 @@ id|sk
 suffix:semicolon
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#endif
-DECL|macro|netstats
-mdefine_line|#define netstats enet_statistics
 DECL|typedef|byte
 r_typedef
 r_int
@@ -232,7 +230,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 id|get_stats
 c_func
@@ -695,7 +693,7 @@ suffix:semicolon
 )brace
 r_static
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 DECL|function|get_stats
 id|get_stats
@@ -710,7 +708,7 @@ id|dev
 r_return
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 )paren
 (paren
@@ -1395,7 +1393,7 @@ suffix:semicolon
 (paren
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 )paren
 (paren
@@ -1695,7 +1693,7 @@ suffix:semicolon
 (paren
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 op_star
 )paren
 (paren
@@ -1741,10 +1739,10 @@ id|i
 suffix:semicolon
 r_static
 r_struct
-id|netstats
+id|net_device_stats
 id|de600_netstats
 suffix:semicolon
-multiline_comment|/*dev-&gt;priv = kmalloc(sizeof(struct netstats), GFP_KERNEL);*/
+multiline_comment|/*dev-&gt;priv = kmalloc(sizeof(struct net_device_stats), GFP_KERNEL);*/
 id|printk
 c_func
 (paren
@@ -2019,7 +2017,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the device structure. */
-multiline_comment|/*dev-&gt;priv = kmalloc(sizeof(struct netstats), GFP_KERNEL);*/
 id|dev-&gt;priv
 op_assign
 op_amp
@@ -2035,7 +2032,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|netstats
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon

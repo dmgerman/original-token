@@ -63,6 +63,8 @@ DECL|macro|ARPHRD_BIF
 mdefine_line|#define ARPHRD_BIF      775             /* AP1000 BIF                   */
 DECL|macro|ARPHRD_SIT
 mdefine_line|#define ARPHRD_SIT&t;776&t;&t;/* sit0 device - IPv6-in-IPv4&t;*/
+DECL|macro|ARPHRD_IPDDP
+mdefine_line|#define ARPHRD_IPDDP&t;777&t;&t;/* IP over DDP tunneller&t;*/
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/

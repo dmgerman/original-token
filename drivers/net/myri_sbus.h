@@ -1107,7 +1107,7 @@ suffix:semicolon
 multiline_comment|/* TX skb&squot;s                   */
 DECL|member|enet_stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|enet_stats
 suffix:semicolon
 multiline_comment|/* Interface stats.           */

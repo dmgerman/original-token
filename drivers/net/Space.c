@@ -456,6 +456,17 @@ id|device
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|cs89x0_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Detachable devices (&quot;pocket adaptors&quot;) */
 r_extern
 r_int
@@ -487,9 +498,9 @@ id|device
 op_star
 )paren
 suffix:semicolon
+DECL|function|ethif_probe
 r_static
 r_int
-DECL|function|ethif_probe
 id|ethif_probe
 c_func
 (paren
@@ -658,6 +669,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_AT1500
 op_logical_and
 id|at1500_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_CS89x0
+op_logical_and
+id|cs89x0_probe
 c_func
 (paren
 id|dev
@@ -1049,6 +1068,54 @@ macro_line|#   undef&t;NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define&t;NEXT_DEV&t;(&amp;arcnet_dev)
 macro_line|#endif
+macro_line|#if defined(CONFIG_LTPC)
+r_extern
+r_int
+id|ltpc_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|dev_ltpc
+r_static
+r_struct
+id|device
+id|dev_ltpc
+op_assign
+(brace
+l_string|&quot;ltalk0&bslash;0   &quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|ltpc_probe
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define NEXT_DEV&t;(&amp;dev_ltpc)
+macro_line|#endif  /* LTPC */
 multiline_comment|/* The first device defaults to I/O base &squot;0&squot;, which means autoprobe. */
 macro_line|#ifndef ETH0_ADDR
 DECL|macro|ETH0_ADDR

@@ -112,6 +112,18 @@ r_int
 id|tx_packets
 suffix:semicolon
 multiline_comment|/* outbound frames counter      */
+DECL|member|rx_bytes
+r_int
+r_int
+id|rx_bytes
+suffix:semicolon
+multiline_comment|/* inbound byte counte&t;&t;*/
+DECL|member|tx_bytes
+r_int
+r_int
+id|tx_bytes
+suffix:semicolon
+multiline_comment|/* outbound byte counter&t;*/
 DECL|member|rx_errors
 r_int
 r_int

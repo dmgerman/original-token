@@ -3530,6 +3530,9 @@ suffix:colon
 )brace
 multiline_comment|/* CHECKSUM_UNNECESSARY */
 )brace
+id|tcp_statistics.TcpInSegs
+op_increment
+suffix:semicolon
 id|sk
 op_assign
 id|inet6_get_sock

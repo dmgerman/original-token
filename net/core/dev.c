@@ -2397,7 +2397,7 @@ id|dev
 )paren
 (brace
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 op_assign
@@ -2431,9 +2431,11 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%6s:%7d %4d %4d %4d %4d %8d %4d %4d %4d %5d %4d&bslash;n&quot;
+l_string|&quot;%6s:%8ld %7ld %4ld %4ld %4ld %4ld %8ld %8ld %4ld %4ld %4ld %5ld %4ld&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|stats-&gt;rx_bytes
 comma
 id|stats-&gt;rx_packets
 comma
@@ -2452,6 +2454,8 @@ op_plus
 id|stats-&gt;rx_crc_errors
 op_plus
 id|stats-&gt;rx_frame_errors
+comma
+id|stats-&gt;tx_bytes
 comma
 id|stats-&gt;tx_packets
 comma
@@ -2545,7 +2549,7 @@ c_func
 id|buffer
 comma
 l_string|&quot;Inter-|   Receive                  |  Transmit&bslash;n&quot;
-l_string|&quot; face |packets errs drop fifo frame|packets errs drop fifo colls carrier&bslash;n&quot;
+l_string|&quot; face |bytes    packets errs drop fifo frame|bytes    packets errs drop fifo colls carrier&bslash;n&quot;
 )paren
 suffix:semicolon
 id|pos

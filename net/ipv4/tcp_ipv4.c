@@ -3838,6 +3838,9 @@ suffix:colon
 )brace
 multiline_comment|/* CHECKSUM_UNNECESSARY */
 )brace
+id|tcp_statistics.TcpInSegs
+op_increment
+suffix:semicolon
 macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
 r_if
 c_cond

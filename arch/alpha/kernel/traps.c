@@ -1696,7 +1696,7 @@ l_int|0x7f
 (brace
 id|exp
 op_assign
-l_int|0x3ff
+l_int|0x7ff
 suffix:semicolon
 )brace
 )brace
@@ -1722,7 +1722,7 @@ op_or_assign
 (paren
 l_int|0x7
 op_lshift
-l_int|8
+l_int|7
 )paren
 suffix:semicolon
 )brace

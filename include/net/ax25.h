@@ -134,7 +134,7 @@ mdefine_line|#define&t;AX25_VALUES_AXDEFMODE&t;1&t;/* 0=Normal 1=Extended Seq No
 DECL|macro|AX25_VALUES_TEXT
 mdefine_line|#define&t;AX25_VALUES_TEXT&t;2&t;/* Allow PID=Text - 0=No 1=Yes */
 DECL|macro|AX25_VALUES_BACKOFF
-mdefine_line|#define&t;AX25_VALUES_BACKOFF&t;3&t;/* 0=Linear 1=Exponential */
+mdefine_line|#define&t;AX25_VALUES_BACKOFF&t;3&t;/* 0=None 1=Linear 2=Exponential */
 DECL|macro|AX25_VALUES_CONMODE
 mdefine_line|#define&t;AX25_VALUES_CONMODE&t;4&t;/* Allow connected modes - 0=No 1=Yes */
 DECL|macro|AX25_VALUES_WINDOW
@@ -166,7 +166,7 @@ mdefine_line|#define&t;AX25_DEF_AXDEFMODE&t;0&t;&t;&t;/* Normal */
 DECL|macro|AX25_DEF_TEXT
 mdefine_line|#define&t;AX25_DEF_TEXT&t;&t;1&t;&t;&t;/* PID=Text allowed */
 DECL|macro|AX25_DEF_BACKOFF
-mdefine_line|#define&t;AX25_DEF_BACKOFF&t;1&t;&t;&t;/* Exponential backoff */
+mdefine_line|#define&t;AX25_DEF_BACKOFF&t;1&t;&t;&t;/* Linear backoff */
 DECL|macro|AX25_DEF_CONMODE
 mdefine_line|#define&t;AX25_DEF_CONMODE&t;1&t;&t;&t;/* Connected mode allowed */
 DECL|macro|AX25_DEF_WINDOW
@@ -486,6 +486,8 @@ r_struct
 id|sk_buff
 op_star
 comma
+r_int
+comma
 id|ax25_address
 op_star
 comma
@@ -638,6 +640,8 @@ c_func
 (paren
 id|ax25_cb
 op_star
+comma
+r_int
 comma
 r_struct
 id|sk_buff

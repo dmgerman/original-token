@@ -2350,6 +2350,8 @@ op_amp
 id|dest
 comma
 id|skb-&gt;data
+op_plus
+l_int|0
 comma
 id|AX25_ADDR_LEN
 )paren
@@ -3022,7 +3024,7 @@ id|ax25_dev-&gt;forward
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; *    Free all memory associated with routing and device structures.&n; */
+multiline_comment|/*&n; *&t;Free all memory associated with routing and device structures.&n; */
 DECL|function|ax25_rt_free
 r_void
 id|ax25_rt_free

@@ -211,7 +211,7 @@ id|dev
 )paren
 (brace
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 suffix:semicolon
@@ -242,7 +242,7 @@ id|stats
 op_assign
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
@@ -556,6 +556,10 @@ c_func
 id|iph
 )paren
 suffix:semicolon
+id|stats-&gt;tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|ip_send
 c_func
 (paren
@@ -573,7 +577,7 @@ suffix:semicolon
 DECL|function|tunnel_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|tunnel_get_stats
 c_func
@@ -587,7 +591,7 @@ id|dev
 r_return
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
@@ -655,7 +659,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 comma
 id|GFP_KERNEL
@@ -682,7 +686,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -935,7 +939,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon

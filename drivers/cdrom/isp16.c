@@ -99,6 +99,7 @@ id|isp16_cdrom_type
 op_assign
 id|ISP16_CDROM_TYPE
 suffix:semicolon
+macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
 (paren
@@ -131,7 +132,6 @@ comma
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_int
 id|init_module
 c_func

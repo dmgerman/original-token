@@ -1490,17 +1490,29 @@ id|ft
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Compressible ?&n;&t;&t; * &n;&t;&t; *&t;IFF: src_net==dest_net==device_net&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Compressible ?&n;&t;&t; * &n;&t;&t; *&t;IFF: src_net==dest_net==device_net&n;&t;&t; *&t;(zero matches anything)&n;&t;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|ddp-&gt;deh_snet
+op_eq
+l_int|0
+op_logical_or
 id|at-&gt;s_net
 op_eq
-id|sa-&gt;s_net
-op_logical_and
-id|sa-&gt;s_net
-op_eq
 id|ddp-&gt;deh_snet
+)paren
+op_logical_and
+(paren
+id|ddp-&gt;deh_dnet
+op_eq
+l_int|0
+op_logical_or
+id|at-&gt;s_net
+op_eq
+id|ddp-&gt;deh_dnet
+)paren
 )paren
 (brace
 id|skb_pull

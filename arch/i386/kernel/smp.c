@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;Matthias Sattler&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michel Lespinasse&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michael Chastain&t;:&t;Change trampoline.S to gnu as.&n; *&n; */
+multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;Matthias Sattler&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michel Lespinasse&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michael Chastain&t;:&t;Change trampoline.S to gnu as.&n; *&t;&t;Alan Cox&t;:&t;Dumb bug: &squot;B&squot; step PPro&squot;s are fine&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -1940,6 +1940,7 @@ id|c-&gt;x86_mask
 op_assign
 id|x86_mask
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Mask B, Pentium, but not Pentium MMX&n;&t; */
 r_if
 c_cond
 (paren
@@ -1950,6 +1951,20 @@ op_logical_and
 id|x86_mask
 op_le
 l_int|4
+op_logical_and
+id|x86
+op_eq
+l_int|5
+op_logical_and
+(paren
+id|x86_model
+op_ge
+l_int|0
+op_logical_and
+id|x86_model
+op_le
+l_int|3
+)paren
 )paren
 (brace
 id|smp_b_stepping
@@ -1957,7 +1972,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Remember we have B step CPUs */
+multiline_comment|/* Remember we have B step Pentia with bugs */
 id|c-&gt;x86_capability
 op_assign
 id|x86_capability

@@ -450,7 +450,7 @@ id|eth16i_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|tx_started
@@ -712,7 +712,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|eth16i_get_stats
 c_func
@@ -941,7 +941,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif  /* Not HAVE_DEVLIST */
+macro_line|#endif&t;/* Not HAVE_DEVLIST */
 DECL|function|eth16i_probe1
 r_static
 r_int
@@ -974,7 +974,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* To inform initialization that we are in boot probe */
-multiline_comment|/*&n;     The MB86985 chip has on register which holds information in which&n;     io address the chip lies. First read this register and compare&n;     it to our current io address and if match then this could&n;     be our chip.&n;  */
+multiline_comment|/*&n;&t;&t; The MB86985 chip has on register which holds information in which&n;&t;&t; io address the chip lies. First read this register and compare&n;&t;&t; it to our current io address and if match then this could&n;&t;&t; be our chip.&n;&t;*/
 r_if
 c_cond
 (paren
@@ -1029,7 +1029,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     Now it seems that we have found an ethernet chip in this particular&n;     ioaddr. The MB86985 chip has this feature, that when you read a&n;     certain register it will increase its io base address to next&n;     configurable slot. Now when we have found the chip, first thing is&n;     to make sure that the chip&squot;s ioaddr will hold still here.&n;  */
+multiline_comment|/*&n;&t;&t; Now it seems that we have found an ethernet chip in this particular&n;&t;&t; ioaddr. The MB86985 chip has this feature, that when you read a&n;&t;&t; certain register it will increase its io base address to next&n;&t;&t; configurable slot. Now when we have found the chip, first thing is&n;&t;&t; to make sure that the chip&squot;s ioaddr will hold still here.&n;&t;*/
 id|eth16i_select_regbank
 c_func
 (paren
@@ -1524,7 +1524,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     Now let&squot;s disable the transmitter and receiver, set the buffer ram&n;     cycle time, bus width and buffer data path width. Also we shall&n;     set transmit buffer size and total buffer size.&n;  */
+multiline_comment|/*&n;&t;&t; Now let&squot;s disable the transmitter and receiver, set the buffer ram&n;&t;&t; cycle time, bus width and buffer data path width. Also we shall&n;&t;&t; set transmit buffer size and total buffer size.&n;&t;*/
 id|eth16i_select_regbank
 c_func
 (paren
@@ -2220,7 +2220,6 @@ l_int|0x80
 op_eq
 l_int|0
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -2235,7 +2234,6 @@ id|TIMEOUT_TICKS
 (brace
 r_break
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|0
@@ -2615,7 +2613,7 @@ l_int|0x7F
 suffix:semicolon
 multiline_comment|/* Mask DCLEN bit */
 macro_line|#ifdef 0
-multiline_comment|/*&n;&t;This was removed because the card was sometimes left to state&n;  &t;from which it couldn&squot;t be find anymore. If there is need&n;&t;to more strict chech still this have to be fixed.&n;*/
+multiline_comment|/*&n;&t;This was removed because the card was sometimes left to state&n;  &t;from which it couldn&squot;t be find anymore. If there is need&n;&t;to have a more strict check still this have to be fixed.&n;*/
 r_if
 c_cond
 (paren
@@ -3369,7 +3367,7 @@ c_cond
 id|dev-&gt;tbusy
 )paren
 (brace
-multiline_comment|/*&n;       If we get here, some higher level has decided that we are broken.&n;       There should really be a &quot;kick me&quot; function call instead.&n;    */
+multiline_comment|/*&n;&t;&t;&t; If we get here, some higher level has decided that we are broken.&n;&t;&t;&t; There should really be a &quot;kick me&quot; function call instead.&n;&t;&t;*/
 r_int
 id|tickssofar
 op_assign
@@ -3611,26 +3609,7 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;     we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;     itself&n;  */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* Block a timer based transmitter from overlapping. This could better be&n;     done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
+multiline_comment|/* Block a timer based transmitter from overlapping. This could better be&n;&t;&t; done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
 multiline_comment|/* Turn off TX interrupts */
 id|outw
 c_func
@@ -4178,7 +4157,7 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   Now let&squot;s get the packet out of buffer.&n;&t;   size is (pkt_len + 1) &gt;&gt; 1, cause we are now reading words&n;&t;   and it have to be even aligned.&n;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;Now let&squot;s get the packet out of buffer.&n;&t;&t;&t;&t;size is (pkt_len + 1) &gt;&gt; 1, cause we are now reading words&n;&t;&t;&t;&t;and it has to be even aligned.&n;&t;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -4656,8 +4635,8 @@ c_cond
 id|lp-&gt;tx_queue
 )paren
 (brace
-multiline_comment|/* Is there still packets ? */
-multiline_comment|/* There was packet(s) so start transmitting and write also&n;&t;   how many packets there is to be sent */
+multiline_comment|/* Are there still packets ? */
+multiline_comment|/* There was packet(s) so start transmitting and write also&n;&t;&t;&t;&t;   how many packets there is to be sent */
 id|outb
 c_func
 (paren
@@ -4828,7 +4807,7 @@ suffix:semicolon
 DECL|function|eth16i_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|eth16i_get_stats
 c_func

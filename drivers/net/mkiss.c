@@ -2533,7 +2533,7 @@ suffix:semicolon
 DECL|function|ax_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ax_get_stats
 c_func
@@ -2546,7 +2546,7 @@ id|dev
 (brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 r_struct
@@ -2572,7 +2572,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -3435,7 +3435,7 @@ r_int
 )paren
 id|ax25_disp_ioctl
 suffix:semicolon
-id|ax_ldisc.select
+id|ax_ldisc.poll
 op_assign
 l_int|NULL
 suffix:semicolon

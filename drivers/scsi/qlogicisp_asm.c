@@ -1,5 +1,7 @@
 multiline_comment|/*&n; *&t;Version 2.10 Initiator Firmware (16:13 Oct 18, 1995)&n; */
 DECL|variable|risc_code_version
+r_static
+r_const
 r_int
 r_int
 id|risc_code_version
@@ -11,6 +13,8 @@ op_plus
 l_int|10
 suffix:semicolon
 DECL|variable|risc_code_addr01
+r_static
+r_const
 r_int
 r_int
 id|risc_code_addr01
@@ -19,6 +23,8 @@ l_int|0x1000
 suffix:semicolon
 macro_line|#if RELOAD_FIRMWARE
 DECL|variable|risc_code01
+r_static
+r_const
 r_int
 r_int
 id|risc_code01
@@ -20625,6 +20631,8 @@ l_int|0x8e59
 suffix:semicolon
 macro_line|#endif /* RELOAD_FIRMWARE */
 DECL|variable|risc_code_length01
+r_static
+r_const
 r_int
 r_int
 id|risc_code_length01

@@ -151,7 +151,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|el1_get_stats
 c_func
@@ -193,7 +193,7 @@ id|net_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|tx_pkt_start
@@ -1059,24 +1059,6 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|save_flags
 c_func
 (paren
@@ -1158,6 +1140,10 @@ suffix:semicolon
 id|lp-&gt;collisions
 op_assign
 l_int|0
+suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Command mode with status cleared should [in theory]&n;&t;&t; *&t;mean no more interrupts can be pending on the card.&n;&t;&t; */
 macro_line|#ifdef BLOCKOUT_1
@@ -2377,7 +2363,7 @@ suffix:semicolon
 DECL|function|el1_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|el1_get_stats
 c_func

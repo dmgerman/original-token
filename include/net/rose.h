@@ -76,14 +76,16 @@ DECL|macro|ROSE_DEFAULT_HB
 mdefine_line|#define&t;ROSE_DEFAULT_HB&t;&t;&t;(5 * ROSE_SLOWHZ)&t;/* Default Holdback value */
 DECL|macro|ROSE_DEFAULT_IDLE
 mdefine_line|#define&t;ROSE_DEFAULT_IDLE&t;&t;(20 * 60 * ROSE_SLOWHZ)&t;/* Default No Activity value */
-DECL|macro|ROSE_DEFAULT_WINDOW
-mdefine_line|#define&t;ROSE_DEFAULT_WINDOW&t;&t;2&t;&t;&t;/* Default Window Size&t;*/
+DECL|macro|ROSE_DEFAULT_ROUTING
+mdefine_line|#define&t;ROSE_DEFAULT_ROUTING&t;&t;1&t;&t;&t;/* Default routing flag */
+DECL|macro|ROSE_DEFAULT_FAIL_TIMEOUT
+mdefine_line|#define&t;ROSE_DEFAULT_FAIL_TIMEOUT&t;(120 * ROSE_SLOWHZ)&t;/* Time until link considered usable */
 DECL|macro|ROSE_MODULUS
 mdefine_line|#define ROSE_MODULUS &t;&t;&t;8
 DECL|macro|ROSE_MAX_WINDOW_SIZE
-mdefine_line|#define ROSE_MAX_WINDOW_SIZE&t;&t;7&t;&t;&t;/* Maximum Window Allowable */
-DECL|macro|ROSE_PACLEN
-mdefine_line|#define&t;ROSE_PACLEN&t;&t;&t;128&t;&t;&t;/* Default Packet Length */
+mdefine_line|#define ROSE_MAX_WINDOW_SIZE&t;&t;2&t;&t;&t;/* Maximum Window Allowable */
+DECL|macro|ROSE_MAX_PACKET_SIZE
+mdefine_line|#define&t;ROSE_MAX_PACKET_SIZE&t;&t;128&t;&t;&t;/* Maximum Packet Length */
 DECL|macro|ROSE_COND_ACK_PENDING
 mdefine_line|#define&t;ROSE_COND_ACK_PENDING&t;&t;0x01
 DECL|macro|ROSE_COND_PEER_RX_BUSY
@@ -150,13 +152,13 @@ r_struct
 id|sk_buff_head
 id|queue
 suffix:semicolon
-DECL|member|t0
 DECL|member|t0timer
+DECL|member|ftimer
 r_int
 r_int
-id|t0
-comma
 id|t0timer
+comma
+id|ftimer
 suffix:semicolon
 DECL|member|timer
 r_struct
@@ -183,11 +185,6 @@ DECL|member|mask
 r_int
 r_int
 id|mask
-suffix:semicolon
-DECL|member|which
-r_int
-r_char
-id|which
 suffix:semicolon
 DECL|member|count
 r_int
@@ -395,6 +392,10 @@ id|sysctl_rose_routing_control
 suffix:semicolon
 r_extern
 r_int
+id|sysctl_rose_link_fail_timeout
+suffix:semicolon
+r_extern
+r_int
 id|rosecmp
 c_func
 (paren
@@ -529,6 +530,16 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* rose_link.c */
+r_extern
+r_void
+id|rose_link_set_timer
+c_func
+(paren
+r_struct
+id|rose_neigh
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|rose_link_rx_restart

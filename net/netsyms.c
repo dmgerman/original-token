@@ -205,6 +205,13 @@ c_func
 id|sock_alloc_send_skb
 )paren
 suffix:semicolon
+DECL|variable|sock_init_data
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_init_data
+)paren
+suffix:semicolon
 DECL|variable|sock_no_fcntl
 id|EXPORT_SYMBOL
 c_func
@@ -266,13 +273,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|datagram_poll
-)paren
-suffix:semicolon
-DECL|variable|sock_init_data
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sock_init_data
 )paren
 suffix:semicolon
 DECL|variable|put_cmsg

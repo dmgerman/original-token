@@ -261,7 +261,7 @@ id|cmd
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|pi_get_stats
 c_func
@@ -473,7 +473,7 @@ l_int|152
 suffix:semicolon
 multiline_comment|/* Random generator base */
 DECL|function|random
-r_static
+r_extern
 r_inline
 r_int
 r_char
@@ -500,7 +500,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|wrtscc
-r_static
+r_extern
 r_inline
 r_void
 id|wrtscc
@@ -562,7 +562,7 @@ suffix:semicolon
 multiline_comment|/* Enable DMA */
 )brace
 DECL|function|rdscc
-r_static
+r_extern
 r_inline
 r_int
 id|rdscc
@@ -7553,11 +7553,11 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* Get the current statistics.&t;This may be called with the card open or&n;   closed. */
+DECL|function|pi_get_stats
 r_static
 r_struct
-id|netstats
+id|net_device_stats
 op_star
-DECL|function|pi_get_stats
 id|pi_get_stats
 c_func
 (paren

@@ -21,7 +21,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-multiline_comment|/*&n; * All outgoing AX.25 I frames pass via this routine. Therefore this is&n; * where the fragmentation of frames takes place.&n; */
+multiline_comment|/*&n; *&t;All outgoing AX.25 I frames pass via this routine. Therefore this is&n; *&t;where the fragmentation of frames takes place. If fragment is set to&n; *&t;zero then we are not allowed to do fragmentation, even if the frame&n; *&t;is too large.&n; */
 DECL|function|ax25_output
 r_void
 id|ax25_output
@@ -30,6 +30,9 @@ c_func
 id|ax25_cb
 op_star
 id|ax25
+comma
+r_int
+id|fragment
 comma
 r_struct
 id|sk_buff
@@ -79,6 +82,8 @@ l_int|1
 )paren
 OG
 id|mtu
+op_logical_and
+id|fragment
 )paren
 (brace
 r_if
@@ -220,10 +225,6 @@ c_func
 (paren
 id|flags
 )paren
-suffix:semicolon
-id|skbn-&gt;arp
-op_assign
-l_int|1
 suffix:semicolon
 id|len
 op_assign
@@ -979,10 +980,6 @@ id|type
 comma
 id|ax25-&gt;modulus
 )paren
-suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
 suffix:semicolon
 id|skb-&gt;dev
 op_assign

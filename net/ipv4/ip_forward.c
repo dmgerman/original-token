@@ -488,7 +488,6 @@ id|RTCF_MASQ
 r_goto
 id|skip_call_fw_firewall
 suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_FIREWALL
 id|fw_res
@@ -552,6 +551,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_MASQUERADE
+)brace
 id|skip_call_fw_firewall
 suffix:colon
 multiline_comment|/*&n;&t;&t; * If this fragment needs masquerading, make it so...&n;&t;&t; * (Don&squot;t masquerade de-masqueraded fragments)&n;&t;&t; */
@@ -704,7 +704,7 @@ c_func
 (paren
 id|PF_INET
 comma
-id|skb-&gt;dev
+id|dev2
 comma
 id|iph
 comma
