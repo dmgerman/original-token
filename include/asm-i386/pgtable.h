@@ -697,7 +697,7 @@ id|ptep
 id|set_bit
 c_func
 (paren
-id|_PAGE_BIT_RW
+id|_PAGE_BIT_DIRTY
 comma
 id|ptep
 )paren

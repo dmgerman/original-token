@@ -2718,6 +2718,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|bh-&gt;b_end_io
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|blk_size
 (braket
 id|major

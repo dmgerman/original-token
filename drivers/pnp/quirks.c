@@ -364,7 +364,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ISAPnP: SB audio device quirk - increasing port range&bslash;n&quot;
+l_string|&quot;isapnp: SB audio device quirk - increasing port range&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

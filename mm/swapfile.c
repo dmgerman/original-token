@@ -1606,6 +1606,12 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|delete_from_swap_cache
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|read_lock
 c_func
 (paren
@@ -1644,21 +1650,6 @@ id|page
 )paren
 suffix:semicolon
 multiline_comment|/* Now get rid of the extra reference to the temporary&n;                   page we&squot;ve been using. */
-r_if
-c_cond
-(paren
-id|PageSwapCache
-c_func
-(paren
-id|page
-)paren
-)paren
-id|delete_from_swap_cache
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 id|page_cache_release
 c_func
 (paren
