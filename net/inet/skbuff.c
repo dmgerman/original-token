@@ -1382,11 +1382,6 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|intr_count
-suffix:semicolon
 r_if
 c_cond
 (paren

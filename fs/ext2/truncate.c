@@ -1508,6 +1508,13 @@ c_loop
 l_int|1
 )paren
 (brace
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
 id|retry
 op_assign
 id|trunc_direct
@@ -1567,6 +1574,13 @@ op_or_assign
 id|trunc_tindirect
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 r_if

@@ -902,6 +902,23 @@ r_int
 id|ticks
 suffix:semicolon
 multiline_comment|/* check alarm, wake up any interruptible tasks that have got a signal */
+r_if
+c_cond
+(paren
+id|intr_count
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Aiee: scheduling in interrupt&bslash;n&quot;
+)paren
+suffix:semicolon
+id|intr_count
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|cli
 c_func
 (paren

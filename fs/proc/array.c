@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; *  stat,statm extensions by Michael K. Johnson, johnsonm@stolaf.edu&n; */
+multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced addres recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@calvin.iaf.nl&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -433,7 +433,7 @@ l_string|&quot;cpu  %u %u %u %lu&bslash;n&quot;
 l_string|&quot;disk %u %u %u %u&bslash;n&quot;
 l_string|&quot;page %u %u&bslash;n&quot;
 l_string|&quot;swap %u %u&bslash;n&quot;
-l_string|&quot;%u&quot;
+l_string|&quot;intr %u&quot;
 comma
 id|kstat.cpu_user
 comma
@@ -815,7 +815,7 @@ op_logical_neg
 (paren
 id|page
 op_amp
-l_int|1
+id|PAGE_PRESENT
 )paren
 )paren
 r_return
@@ -850,7 +850,7 @@ op_logical_neg
 (paren
 id|page
 op_amp
-l_int|1
+id|PAGE_PRESENT
 )paren
 )paren
 r_return
@@ -945,8 +945,8 @@ c_cond
 op_logical_neg
 id|addr
 )paren
-r_return
-id|result
+r_goto
+id|ready
 suffix:semicolon
 r_do
 (brace
@@ -985,8 +985,8 @@ op_assign
 id|c
 suffix:semicolon
 r_else
-r_return
-id|result
+r_goto
+id|ready
 suffix:semicolon
 id|addr
 op_increment
@@ -997,27 +997,52 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|c
+op_logical_and
 id|start
 op_ge
 id|end
 )paren
-r_return
-id|result
+r_goto
+id|ready
 suffix:semicolon
 )brace
 r_while
 c_loop
-(paren
-op_logical_neg
 (paren
 id|addr
 op_amp
 op_complement
 id|PAGE_MASK
 )paren
-)paren
 suffix:semicolon
 )brace
+id|ready
+suffix:colon
+multiline_comment|/* remove the trailing blanks, used to fillout argv,envp space */
+r_while
+c_loop
+(paren
+id|result
+OG
+l_int|0
+op_logical_and
+id|buffer
+(braket
+id|result
+op_minus
+l_int|1
+)braket
+op_eq
+l_char|&squot; &squot;
+)paren
+id|result
+op_decrement
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
 )brace
 DECL|function|get_env
 r_static

@@ -37,7 +37,6 @@ suffix:semicolon
 DECL|member|up
 DECL|member|destroy
 r_int
-r_int
 id|up
 suffix:colon
 l_int|1

@@ -463,11 +463,6 @@ id|page_descriptor
 op_star
 id|page
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|intr_count
-suffix:semicolon
 multiline_comment|/* Sanity check... */
 r_if
 c_cond

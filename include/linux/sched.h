@@ -23,6 +23,11 @@ r_extern
 r_int
 id|wp_works_ok
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|intr_count
+suffix:semicolon
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; */
 r_extern
 r_int

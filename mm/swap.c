@@ -2241,11 +2241,6 @@ r_int
 id|priority
 )paren
 (brace
-r_extern
-r_int
-r_int
-id|intr_count
-suffix:semicolon
 r_int
 r_int
 id|result

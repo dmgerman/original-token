@@ -1750,6 +1750,23 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|intr_count
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Aiee, killing interrupt handler&bslash;n&quot;
+)paren
+suffix:semicolon
+id|intr_count
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|fake_volatile
 suffix:colon
 r_if

@@ -4696,6 +4696,10 @@ id|newsock-&gt;data
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sk-&gt;dead
+op_assign
+l_int|1
+suffix:semicolon
 id|destroy_sock
 c_func
 (paren
