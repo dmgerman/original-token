@@ -1340,6 +1340,12 @@ comma
 id|X
 c_func
 (paren
+id|__up
+)paren
+comma
+id|X
+c_func
+(paren
 id|securelevel
 )paren
 comma

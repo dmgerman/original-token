@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * SDLA&t;&t;An implementation of a driver for the Sangoma S502/S508 series&n; *&t;&t;multi-protocol PC interface card.  Initial offering is with &n; *&t;&t;the DLCI driver, providing Frame Relay support for linux.&n; *&n; *&t;&t;Global definitions for the Frame relay interface.&n; *&n; * Version:&t;@(#)sdla.c   0.25&t;14 May 1996&n; *&n; * Credits:&t;Sangoma Technologies, for the use of 2 cards for an extended&n; *&t;&t;&t;period of time.&n; *&t;&t;David Mandelstam &lt;dm@sangoma.com&gt; for getting me started on &n; *&t;&t;&t;this project, and incentive to complete it.&n; *&t;&t;Gene Kozen &lt;74604.152@compuserve.com&gt; for providing me with&n; *&t;&t;&t;important information about the cards.&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; * Changes:&n; *&t;&t;0.15&t;Mike McLagan&t;Improved error handling, packet dropping&n; *&t;&t;0.20&t;Mike McLagan&t;New transmit/receive flags for config&n; *&t;&t;&t;&t;&t;If in FR mode, don&squot;t accept packets from&n; *&t;&t;&t;&t;&t;non DLCI devices.&n; *&t;&t;0.25&t;Mike McLagan&t;Fixed problem with rejecting packets&n; *&t;&t;&t;&t;&t;from non DLCI devices.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * SDLA&t;&t;An implementation of a driver for the Sangoma S502/S508 series&n; *&t;&t;multi-protocol PC interface card.  Initial offering is with &n; *&t;&t;the DLCI driver, providing Frame Relay support for linux.&n; *&n; *&t;&t;Global definitions for the Frame relay interface.&n; *&n; * Version:&t;@(#)sdla.c   0.30&t;12 Sep 1996&n; *&n; * Credits:&t;Sangoma Technologies, for the use of 2 cards for an extended&n; *&t;&t;&t;period of time.&n; *&t;&t;David Mandelstam &lt;dm@sangoma.com&gt; for getting me started on &n; *&t;&t;&t;this project, and incentive to complete it.&n; *&t;&t;Gene Kozen &lt;74604.152@compuserve.com&gt; for providing me with&n; *&t;&t;&t;important information about the cards.&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; * Changes:&n; *&t;&t;0.15&t;Mike McLagan&t;Improved error handling, packet dropping&n; *&t;&t;0.20&t;Mike McLagan&t;New transmit/receive flags for config&n; *&t;&t;&t;&t;&t;If in FR mode, don&squot;t accept packets from&n; *&t;&t;&t;&t;&t;non DLCI devices.&n; *&t;&t;0.25&t;Mike McLagan&t;Fixed problem with rejecting packets&n; *&t;&t;&t;&t;&t;from non DLCI devices.&n; *&t;&t;0.30&t;Mike McLagan&t;Fixed kernel panic when used with modified&n; *&t;&t;&t;&t;&t;ifconfig&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -28,7 +28,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;SDLA driver v0.25, 14 May 1996, mike.mclagan@linux.org&quot;
+l_string|&quot;SDLA driver v0.30, 12 Sep 1996, mike.mclagan@linux.org&quot;
 suffix:semicolon
 DECL|variable|devname
 r_static
@@ -1722,6 +1722,10 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+id|len
+op_assign
+l_int|0
+suffix:semicolon
 id|jiffs
 op_assign
 id|jiffies
@@ -2584,7 +2588,7 @@ op_star
 id|flp
 suffix:semicolon
 r_struct
-id|frad_local
+id|dlci_local
 op_star
 id|dlp
 suffix:semicolon

@@ -358,10 +358,29 @@ c_func
 )paren
 )paren
 )paren
-r_return
+(brace
+multiline_comment|/* Aieee!!! Out of swap space! */
+r_int
+id|retval
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_swapfiles
+op_eq
+l_int|0
+)paren
+id|retval
+op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Aieee!!! Out of swap space! */
+r_return
+id|retval
+suffix:semicolon
+)brace
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
@@ -1314,6 +1333,14 @@ id|wait
 )paren
 )paren
 (brace
+multiline_comment|/* out of swap space? */
+r_case
+op_minus
+l_int|1
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
 r_case
 l_int|0
 suffix:colon

@@ -82,7 +82,7 @@ mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffffc0000000000,  0xfffffc0010
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0 &bslash;&n;}
 DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
+mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack
 mdefine_line|#define free_kernel_stack(page) free_page((page))
 macro_line|#include &lt;asm/ptrace.h&gt;

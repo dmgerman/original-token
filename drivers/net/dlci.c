@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * DLCI&t;&t;Implementation of Frame Relay protocol for Linux, according to&n; *&t;&t;RFC 1490.  This generic device provides en/decapsulation for an&n; *&t;&t;underlying hardware driver.  Routes &amp; IPs are assigned to these&n; *&t;&t;interfaces.  Requires &squot;dlcicfg&squot; program to create usable &n; *&t;&t;interfaces, the initial one, &squot;dlci&squot; is for IOCTL use only.&n; *&n; * Version:&t;@(#)dlci.c&t;0.25&t;13 May 1996&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; * Changes:&n; *&n; *&t;&t;0.15&t;Mike Mclagan&t;Packet freeing, bug in kmalloc call&n; *&t;&t;&t;&t;&t;DLCI_RET handling&n; *&n; *&t;&t;0.20&t;Mike McLagan&t;More conservative on which packets&n; *&t;&t;&t;&t;&t;are returned for retry and whic are&n; *&t;&t;&t;&t;&t;are dropped.  If DLCI_RET_DROP is&n; *&t;&t;&t;&t;&t;returned from the FRAD, the packet is&n; *&t;&t;&t;&t; &t;sent back to Linux for re-transmission&n; *&n; *&t;&t;0.25&t;Mike McLagan&t;Converted to use SIOC IOCTL calls&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * DLCI&t;&t;Implementation of Frame Relay protocol for Linux, according to&n; *&t;&t;RFC 1490.  This generic device provides en/decapsulation for an&n; *&t;&t;underlying hardware driver.  Routes &amp; IPs are assigned to these&n; *&t;&t;interfaces.  Requires &squot;dlcicfg&squot; program to create usable &n; *&t;&t;interfaces, the initial one, &squot;dlci&squot; is for IOCTL use only.&n; *&n; * Version:&t;@(#)dlci.c&t;0.30&t;12 Sep 1996&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; * Changes:&n; *&n; *&t;&t;0.15&t;Mike Mclagan&t;Packet freeing, bug in kmalloc call&n; *&t;&t;&t;&t;&t;DLCI_RET handling&n; *&t;&t;0.20&t;Mike McLagan&t;More conservative on which packets&n; *&t;&t;&t;&t;&t;are returned for retry and whic are&n; *&t;&t;&t;&t;&t;are dropped.  If DLCI_RET_DROP is&n; *&t;&t;&t;&t;&t;returned from the FRAD, the packet is&n; *&t;&t;&t;&t; &t;sent back to Linux for re-transmission&n; *&t;&t;0.25&t;Mike McLagan&t;Converted to use SIOC IOCTL calls&n; *&t;&t;0.30&t;Jim Freeman&t;Fixed to allow IPX traffic&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -36,7 +36,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;DLCI driver v0.25, 13 May 1996, mike.mclagan@linux.org&quot;
+l_string|&quot;DLCI driver v0.30, 12 Sep 1996, mike.mclagan@linux.org&quot;
 suffix:semicolon
 DECL|variable|open_dev
 r_static
@@ -437,7 +437,11 @@ id|hdr.OUI
 suffix:semicolon
 id|hdr.PID
 op_assign
+id|htons
+c_func
+(paren
 id|type
+)paren
 suffix:semicolon
 id|hlen
 op_assign
@@ -658,13 +662,10 @@ r_struct
 id|frhdr
 )paren
 suffix:semicolon
+multiline_comment|/* Already in network order ! */
 id|skb-&gt;protocol
 op_assign
-id|htons
-c_func
-(paren
 id|hdr-&gt;PID
-)paren
 suffix:semicolon
 id|process
 op_assign
@@ -2480,29 +2481,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|strcmp
-c_func
-(paren
-id|dev-&gt;name
-comma
-id|devname
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-id|dev-&gt;type
-op_assign
-l_int|0xFFFF
-suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_UNSPEC
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

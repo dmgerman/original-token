@@ -1,6 +1,7 @@
 macro_line|#ifndef _I386_SEMAPHORE_H
 DECL|macro|_I386_SEMAPHORE_H
 mdefine_line|#define _I386_SEMAPHORE_H
+macro_line|#include &lt;linux/linkage.h&gt;
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; */
 DECL|struct|semaphore
 r_struct
@@ -26,6 +27,24 @@ DECL|macro|MUTEX
 mdefine_line|#define MUTEX ((struct semaphore) { 1, 0, NULL })
 DECL|macro|MUTEX_LOCKED
 mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { 0, 0, NULL })
+id|asmlinkage
+r_void
+id|down_failed
+c_func
+(paren
+r_void
+multiline_comment|/* special register calling convention */
+)paren
+suffix:semicolon
+id|asmlinkage
+r_void
+id|up_wakeup
+c_func
+(paren
+r_void
+multiline_comment|/* special register calling convention */
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|__down
@@ -39,14 +58,13 @@ id|sem
 suffix:semicolon
 r_extern
 r_void
-id|wake_up
+id|__up
 c_func
 (paren
 r_struct
-id|wait_queue
+id|semaphore
 op_star
-op_star
-id|p
+id|sem
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/lib/semaphore.S&n; */
@@ -74,7 +92,12 @@ macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif
 l_string|&quot;decl %0&bslash;n&bslash;t&quot;
-l_string|&quot;js down_failed&quot;
+l_string|&quot;js &quot;
+id|SYMBOL_NAME_STR
+c_func
+(paren
+id|down_failed
+)paren
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -120,8 +143,13 @@ macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif
 l_string|&quot;incl %0&bslash;n&bslash;t&quot;
-l_string|&quot;jle up_wakeup&bslash;n&quot;
-l_string|&quot;1:&quot;
+l_string|&quot;jle &quot;
+id|SYMBOL_NAME_STR
+c_func
+(paren
+id|up_wakeup
+)paren
+l_string|&quot;&bslash;n1:&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon

@@ -2,16 +2,17 @@ macro_line|#ifndef _ALPHA_SEMAPHORE_H
 DECL|macro|_ALPHA_SEMAPHORE_H
 mdefine_line|#define _ALPHA_SEMAPHORE_H
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; */
+macro_line|#include &lt;asm/atomic.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore
 (brace
 DECL|member|count
-r_int
+id|atomic_t
 id|count
 suffix:semicolon
 DECL|member|waiting
-r_int
+id|atomic_t
 id|waiting
 suffix:semicolon
 DECL|member|wait
@@ -39,17 +40,16 @@ id|sem
 suffix:semicolon
 r_extern
 r_void
-id|wake_up
+id|__up
 c_func
 (paren
 r_struct
-id|wait_queue
+id|semaphore
 op_star
-op_star
-id|p
+id|sem
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * These are not yet interrupt-safe: should use ldl_l/stl_c here..&n; *&n; * See include/asm-i386/semaphore.h on how to do this correctly&n; * without any jumps or wakeups taken for the no-contention cases.&n; */
+multiline_comment|/*&n; * This isn&squot;t quite as clever as the x86 side, but the gp register&n; * makes things a bit more complicated on the alpha..&n; */
 DECL|function|down
 r_extern
 r_inline
@@ -63,23 +63,34 @@ op_star
 id|sem
 )paren
 (brace
-id|sem-&gt;count
-op_decrement
+r_for
+c_loop
+(paren
 suffix:semicolon
-multiline_comment|/* &quot;down_failed&quot; */
+suffix:semicolon
+)paren
+(brace
 r_if
 c_cond
 (paren
+id|atomic_dec_return
+c_func
+(paren
+op_amp
 id|sem-&gt;count
-OL
+)paren
+op_ge
 l_int|0
 )paren
+r_break
+suffix:semicolon
 id|__down
 c_func
 (paren
 id|sem
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|up
 r_extern
@@ -94,10 +105,18 @@ op_star
 id|sem
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|atomic_inc_return
+c_func
+(paren
+op_amp
 id|sem-&gt;count
-op_increment
-suffix:semicolon
-multiline_comment|/* &quot;up_wakeup&quot; */
+)paren
+op_le
+l_int|0
+)paren
 id|__up
 c_func
 (paren

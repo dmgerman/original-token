@@ -2,6 +2,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -44,6 +45,18 @@ id|X
 c_func
 (paren
 id|dump_fpu
+)paren
+comma
+id|XNOVERS
+c_func
+(paren
+id|down_failed
+)paren
+comma
+id|XNOVERS
+c_func
+(paren
+id|up_wakeup
 )paren
 comma
 macro_line|#ifdef __SMP__

@@ -426,7 +426,7 @@ mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, PAGE_SHARED, VM_RE
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t;KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0,0, &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0 /* vm86_info */ &bslash;&n;}
 DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
+mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack
 mdefine_line|#define free_kernel_stack(page) free_page((page))
 DECL|function|start_thread

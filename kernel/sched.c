@@ -33,7 +33,13 @@ DECL|variable|tick
 r_int
 id|tick
 op_assign
+(paren
 l_int|1000000
+op_plus
+id|HZ
+op_div
+l_int|2
+)paren
 op_div
 id|HZ
 suffix:semicolon
@@ -144,7 +150,23 @@ DECL|variable|time_freq
 r_int
 id|time_freq
 op_assign
-l_int|0
+(paren
+(paren
+l_int|1000000
+op_plus
+id|HZ
+op_div
+l_int|2
+)paren
+op_mod
+id|HZ
+op_minus
+id|HZ
+op_div
+l_int|2
+)paren
+op_lshift
+id|SHIFT_USEC
 suffix:semicolon
 multiline_comment|/* frequency offset (scaled ppm) */
 DECL|variable|time_adj
@@ -1681,7 +1703,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * When __up() is called, the count was negative before&n; * incrementing it, and we need to wake up somebody. In&n; * most cases &quot;waiting&quot; will be positive, and the normalization&n; * will allow things to continue. However, if somebody has&n; * /just/ done a down(), it may be that count was negative&n; * without waiting being positive (or in the generic case&n; * &quot;count is more negative than waiting is positive&quot;), and&n; * the waiter needs to check this itself (see __down).&n; *&n; * Note that these functions are only called when there is&n; * contention on the lock, and as such all this is the&n; * &quot;non-critical&quot; part of the whole semaphore business. The&n; * critical part is the inline stuff in &lt;asm/semaphore.h&gt;&n; * where we want to avoid any extra jumps and calls.&n; */
 DECL|function|__up
-r_inline
 r_void
 id|__up
 c_func
