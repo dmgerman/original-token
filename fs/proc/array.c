@@ -1153,9 +1153,6 @@ r_struct
 id|sysinfo
 id|i
 suffix:semicolon
-r_int
-id|len
-suffix:semicolon
 id|si_meminfo
 c_func
 (paren
@@ -1170,52 +1167,12 @@ op_amp
 id|i
 )paren
 suffix:semicolon
-id|len
-op_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-comma
-l_string|&quot;        total:    used:    free:  shared: buffers:  cached:&bslash;n&quot;
-l_string|&quot;Mem:  %8lu %8lu %8lu %8lu %8lu %8lu&bslash;n&quot;
-l_string|&quot;Swap: %8lu %8lu %8lu&bslash;n&quot;
-comma
-id|i.totalram
-comma
-id|i.totalram
-op_minus
-id|i.freeram
-comma
-id|i.freeram
-comma
-id|i.sharedram
-comma
-id|i.bufferram
-comma
-id|page_cache_size
-op_star
-id|PAGE_SIZE
-comma
-id|i.totalswap
-comma
-id|i.totalswap
-op_minus
-id|i.freeswap
-comma
-id|i.freeswap
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Tagged format, for easy grepping and expansion. The above will go away&n;&t; * eventually, once the tools have been updated.&n;&t; */
+multiline_comment|/*&n;&t; * Tagged format, for easy grepping and expansion.&n;&t; */
 r_return
-id|len
-op_plus
 id|sprintf
 c_func
 (paren
 id|buffer
-op_plus
-id|len
 comma
 l_string|&quot;MemTotal:  %8lu kB&bslash;n&quot;
 l_string|&quot;MemFree:   %8lu kB&bslash;n&quot;

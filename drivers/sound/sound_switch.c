@@ -10,6 +10,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Total # of open devices */
+DECL|variable|seq_time
+r_int
+r_int
+id|seq_time
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Time for /dev/sequencer */
 multiline_comment|/*&n; * Table for configurable mixer volume handling&n; */
 DECL|variable|mixer_vols
 r_static
@@ -707,7 +715,7 @@ suffix:semicolon
 macro_line|#ifdef SOUND_UNAME_A
 id|put_status
 (paren
-l_string|&quot;Sound Driver:&quot;
+l_string|&quot;OSS/Free&quot;
 id|SOUND_VERSION_STRING
 l_string|&quot; (&quot;
 id|SOUND_CONFIG_DATE
@@ -722,7 +730,7 @@ suffix:semicolon
 macro_line|#else
 id|put_status
 (paren
-l_string|&quot;Sound Driver:&quot;
+l_string|&quot;OSS/Free:&quot;
 id|SOUND_VERSION_STRING
 l_string|&quot; (&quot;
 id|SOUND_CONFIG_DATE
@@ -734,6 +742,19 @@ l_string|&quot;.&quot;
 id|SOUND_CONFIG_DOMAIN
 l_string|&quot;)&quot;
 l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef MODULE
+id|put_status
+(paren
+l_string|&quot;Load type: Driver loaded as a module.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|put_status
+(paren
+l_string|&quot;Load type: Driver compiled into kernel&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -792,6 +813,13 @@ id|put_status
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|put_status
+(paren
+l_string|&quot;Driver loaded as a module&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

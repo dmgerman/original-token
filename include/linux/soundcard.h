@@ -4,7 +4,7 @@ mdefine_line|#define SOUNDCARD_H
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1997&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 multiline_comment|/*&n; * OSS interface version. With versions earlier than 3.6 this value is&n; * an integer with value less than 361. In versions 3.6 and later&n; * it&squot;s a six digit hexadecimal value. For example value&n; * of 0x030600 represents OSS version 3.6.0.&n; * Use ioctl(fd, OSS_GETVERSION, &amp;int) to get the version number of&n; * the currently active driver.&n; */
 DECL|macro|SOUND_VERSION
-mdefine_line|#define SOUND_VERSION&t;0x0307f1
+mdefine_line|#define SOUND_VERSION&t;0x030800
 DECL|macro|OPEN_SOUND_SYSTEM
 mdefine_line|#define OPEN_SOUND_SYSTEM
 multiline_comment|/* In Linux we need to be prepared for cross compiling */
@@ -65,7 +65,7 @@ mdefine_line|#define SNDCARD_UART401&t;&t;26
 multiline_comment|/* Soundcard numbers 27 to N are reserved. Don&squot;t add more numbers here */
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _SIOWR
-macro_line|#if defined(_IOWR) &amp;&amp; !defined(sun) &amp;&amp; !defined(sparc)
+macro_line|#if defined(_IOWR) &amp;&amp; (defined(_AIX) || (!defined(sun) &amp;&amp; !defined(sparc) &amp;&amp; !defined(__INCioctlh) &amp;&amp; !defined(__Lynx__)))
 multiline_comment|/* Use already defined ioctl defines if they exist (except with Sun) */
 DECL|macro|SIOCPARM_MASK
 mdefine_line|#define&t;SIOCPARM_MASK&t;IOCPARM_MASK
@@ -145,7 +145,7 @@ mdefine_line|#define SNDCTL_SEQ_GETINCOUNT&t;&t;_SIOR (&squot;Q&squot;, 5, int)
 DECL|macro|SNDCTL_SEQ_PERCMODE
 mdefine_line|#define SNDCTL_SEQ_PERCMODE&t;&t;_SIOW (&squot;Q&squot;, 6, int)
 DECL|macro|SNDCTL_FM_LOAD_INSTR
-mdefine_line|#define SNDCTL_FM_LOAD_INSTR&t;&t;_SIOW (&squot;Q&squot;, 7, struct sbi_instrument)&t;/* Obsolete */
+mdefine_line|#define SNDCTL_FM_LOAD_INSTR&t;&t;_SIOW (&squot;Q&squot;, 7, struct sbi_instrument)&t;/* Obsolete. Don&squot;t use. */
 DECL|macro|SNDCTL_SEQ_TESTMIDI
 mdefine_line|#define SNDCTL_SEQ_TESTMIDI&t;&t;_SIOW (&squot;Q&squot;, 8, int)
 DECL|macro|SNDCTL_SEQ_RESETSAMPLES
@@ -170,7 +170,58 @@ DECL|macro|SNDCTL_SEQ_GETTIME
 mdefine_line|#define SNDCTL_SEQ_GETTIME&t;&t;_SIOR (&squot;Q&squot;,19, int)
 DECL|macro|SNDCTL_SYNTH_ID
 mdefine_line|#define SNDCTL_SYNTH_ID&t;&t;&t;_SIOWR(&squot;Q&squot;,20, struct synth_info)
+DECL|macro|SNDCTL_SYNTH_CONTROL
+mdefine_line|#define SNDCTL_SYNTH_CONTROL&t;&t;_SIOWR(&squot;Q&squot;,21, struct synth_control)
+DECL|macro|SNDCTL_SYNTH_REMOVESAMPLE
+mdefine_line|#define SNDCTL_SYNTH_REMOVESAMPLE&t;_SIOWR(&squot;Q&squot;,22, struct remove_sample)
+DECL|struct|synth_control
+r_typedef
+r_struct
+id|synth_control
+(brace
+DECL|member|devno
+r_int
+id|devno
+suffix:semicolon
+multiline_comment|/* Synthesizer # */
+DECL|member|data
+r_char
+id|data
+(braket
+l_int|4000
+)braket
+suffix:semicolon
+multiline_comment|/* Device spesific command/data record */
+DECL|typedef|synth_control
+)brace
+id|synth_control
+suffix:semicolon
+DECL|struct|remove_sample
+r_typedef
+r_struct
+id|remove_sample
+(brace
+DECL|member|devno
+r_int
+id|devno
+suffix:semicolon
+multiline_comment|/* Synthesizer # */
+DECL|member|bankno
+r_int
+id|bankno
+suffix:semicolon
+multiline_comment|/* MIDI bank # (0=General MIDI) */
+DECL|member|instrno
+r_int
+id|instrno
+suffix:semicolon
+multiline_comment|/* MIDI instrument number */
+DECL|typedef|remove_sample
+)brace
+id|remove_sample
+suffix:semicolon
 DECL|struct|seq_event_rec
+r_typedef
 r_struct
 id|seq_event_rec
 (brace
@@ -182,7 +233,9 @@ id|arr
 l_int|8
 )braket
 suffix:semicolon
+DECL|typedef|seq_event_rec
 )brace
+id|seq_event_rec
 suffix:semicolon
 DECL|macro|SNDCTL_TMR_TIMEBASE
 mdefine_line|#define SNDCTL_TMR_TIMEBASE&t;&t;_SIOWR(&squot;T&squot;, 1, int)

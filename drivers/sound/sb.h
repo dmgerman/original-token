@@ -286,6 +286,10 @@ DECL|member|input_opened
 r_int
 id|input_opened
 suffix:semicolon
+DECL|member|midi_broken
+r_int
+id|midi_broken
+suffix:semicolon
 DECL|member|midi_input_intr
 r_void
 (paren

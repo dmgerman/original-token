@@ -21,7 +21,7 @@ r_int
 r_int
 id|regno
 suffix:colon
-l_int|7
+l_int|5
 suffix:semicolon
 DECL|member|polarity
 r_int
@@ -36,12 +36,19 @@ r_int
 r_int
 id|bitpos
 suffix:colon
-l_int|4
+l_int|3
 suffix:semicolon
 DECL|member|nbits
 r_int
 r_int
 id|nbits
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|mutepos
+r_int
+r_int
+id|mutepos
 suffix:colon
 l_int|4
 suffix:semicolon
@@ -275,7 +282,7 @@ l_int|2
 suffix:semicolon
 multiline_comment|/*&n; * Most of the mixer entries work in backwards. Setting the polarity field&n; * makes them to work correctly.&n; *&n; * The channel numbering used by individual soundcards is not fixed. Some&n; * cards have assigned different meanings for the AUX1, AUX2 and LINE inputs.&n; * The current version doesn&squot;t try to compensate this.&n; */
 DECL|macro|MIX_ENT
-mdefine_line|#define MIX_ENT(name, reg_l, pola_l, pos_l, len_l, reg_r, pola_r, pos_r, len_r)&t;&bslash;&n;&t;{{reg_l, pola_l, pos_l, len_l}, {reg_r, pola_r, pos_r, len_r}}
+mdefine_line|#define MIX_ENT(name, reg_l, pola_l, pos_l, len_l, reg_r, pola_r, pos_r, len_r, mute_bit)&t;&bslash;&n;&t;{{reg_l, pola_l, pos_l, len_l}, {reg_r, pola_r, pos_r, len_r, mute_bit}}
 DECL|variable|ad1848_mix_devices
 r_static
 id|mixer_ents
@@ -305,6 +312,8 @@ comma
 l_int|0
 comma
 l_int|4
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -327,6 +336,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -349,6 +360,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -371,6 +384,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -393,6 +408,8 @@ comma
 l_int|0
 comma
 l_int|6
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -415,6 +432,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -437,6 +456,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -459,6 +480,8 @@ comma
 l_int|5
 comma
 l_int|1
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -481,6 +504,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -503,6 +528,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -525,6 +552,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -547,6 +576,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -569,6 +600,8 @@ comma
 l_int|0
 comma
 l_int|4
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -591,6 +624,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -613,6 +648,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -635,6 +672,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -657,6 +696,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 )brace
 suffix:semicolon
@@ -689,6 +730,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -711,6 +754,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -733,6 +778,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -755,6 +802,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -777,6 +826,8 @@ comma
 l_int|0
 comma
 l_int|6
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -799,6 +850,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -821,6 +874,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -843,6 +898,8 @@ comma
 l_int|5
 comma
 l_int|1
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -865,6 +922,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -887,6 +946,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -909,6 +970,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -931,6 +994,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -953,6 +1018,8 @@ comma
 l_int|0
 comma
 l_int|4
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -975,6 +1042,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -997,6 +1066,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -1019,6 +1090,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -1041,6 +1114,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 )brace
 suffix:semicolon
@@ -1074,6 +1149,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -1096,6 +1173,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -1118,6 +1197,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -1140,6 +1221,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -1162,6 +1245,8 @@ comma
 l_int|0
 comma
 l_int|6
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -1184,6 +1269,8 @@ comma
 l_int|0
 comma
 l_int|5
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -1206,6 +1293,8 @@ comma
 l_int|1
 comma
 l_int|4
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -1228,6 +1317,8 @@ comma
 l_int|0
 comma
 l_int|4
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -1250,6 +1341,8 @@ comma
 l_int|1
 comma
 l_int|4
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -1272,6 +1365,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -1294,6 +1389,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -1316,6 +1413,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -1338,6 +1437,8 @@ comma
 l_int|0
 comma
 l_int|4
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -1360,6 +1461,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|8
 )paren
 comma
 id|MIX_ENT
@@ -1382,6 +1485,8 @@ comma
 l_int|1
 comma
 l_int|4
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -1404,6 +1509,8 @@ comma
 l_int|1
 comma
 l_int|4
+comma
+l_int|7
 )paren
 comma
 id|MIX_ENT
@@ -1426,6 +1533,8 @@ comma
 l_int|1
 comma
 l_int|4
+comma
+l_int|7
 )paren
 )brace
 suffix:semicolon
@@ -1470,7 +1579,7 @@ comma
 multiline_comment|/* Recording monitor */
 l_int|0x4b4b
 comma
-multiline_comment|/* SB PCM */
+multiline_comment|/* Second PCM */
 l_int|0x4b4b
 comma
 multiline_comment|/* Recording level */
@@ -1480,10 +1589,10 @@ multiline_comment|/* Input gain */
 l_int|0x4b4b
 comma
 multiline_comment|/* Output gain */
-l_int|0x4040
+l_int|0x2020
 comma
 multiline_comment|/* Line1 */
-l_int|0x4040
+l_int|0x2020
 comma
 multiline_comment|/* Line2 */
 l_int|0x1515

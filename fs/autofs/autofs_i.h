@@ -1,5 +1,7 @@
 multiline_comment|/* -*- linux-c -*- ------------------------------------------------------- *&n; *   &n; * linux/fs/autofs/autofs_i.h&n; *&n; *   Copyright 1997 Transmeta Corporation - All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ----------------------------------------------------------------------- */
 multiline_comment|/* Internal header file for autofs */
+DECL|macro|DEBUG_WAITLIST
+mdefine_line|#define DEBUG_WAITLIST 1
 macro_line|#include &lt;linux/auto_fs.h&gt;
 multiline_comment|/* This is the range of ioctl() numbers we claim as ours */
 DECL|macro|AUTOFS_IOC_FIRST
@@ -305,10 +307,16 @@ macro_line|#ifndef END_OF_TIME
 DECL|macro|END_OF_TIME
 mdefine_line|#define END_OF_TIME ((time_t)((unsigned long)((time_t)(~0UL)) &gt;&gt; 1))
 macro_line|#endif
+DECL|macro|AUTOFS_SBI_MAGIC
+mdefine_line|#define AUTOFS_SBI_MAGIC 0x6d4a556d
 DECL|struct|autofs_sb_info
 r_struct
 id|autofs_sb_info
 (brace
+DECL|member|magic
+id|u32
+id|magic
+suffix:semicolon
 DECL|member|pipe
 r_struct
 id|file
@@ -384,6 +392,26 @@ op_eq
 id|sbi-&gt;oz_pgrp
 suffix:semicolon
 )brace
+multiline_comment|/* Debug the mysteriously disappearing wait list */
+macro_line|#ifdef DEBUG_WAITLIST
+DECL|macro|CHECK_WAITLIST
+mdefine_line|#define CHECK_WAITLIST(S,O) autofs_check_waitlist_integrity(S,O)
+r_void
+id|autofs_check_waitlist_integrity
+c_func
+(paren
+r_struct
+id|autofs_sb_info
+op_star
+comma
+r_char
+op_star
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|CHECK_WAITLIST
+mdefine_line|#define CHECK_WAITLIST(S,O)
+macro_line|#endif
 multiline_comment|/* Hash operations */
 id|autofs_hash_t
 id|autofs_hash

@@ -105,7 +105,14 @@ r_void
 id|DMAbuf_init
 c_func
 (paren
-r_void
+r_int
+id|dev
+comma
+r_int
+id|dma1
+comma
+r_int
+id|dma2
 )paren
 suffix:semicolon
 r_void
@@ -198,6 +205,9 @@ r_struct
 id|dma_buffparms
 op_star
 id|dmap
+comma
+r_int
+id|direction
 )paren
 suffix:semicolon
 r_void
@@ -464,7 +474,8 @@ id|arg
 )paren
 suffix:semicolon
 r_int
-id|sequencer_lseek
+id|sequencer_select
+c_func
 (paren
 r_int
 id|dev
@@ -474,11 +485,12 @@ id|fileinfo
 op_star
 id|file
 comma
-id|off_t
-id|offset
-comma
 r_int
-id|orig
+id|sel_type
+comma
+id|poll_table
+op_star
+id|wait
 )paren
 suffix:semicolon
 r_void
@@ -546,26 +558,6 @@ id|event
 comma
 r_int
 id|len
-)paren
-suffix:semicolon
-r_int
-id|sequencer_select
-c_func
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|fileinfo
-op_star
-id|file
-comma
-r_int
-id|sel_type
-comma
-id|poll_table
-op_star
-id|wait
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;System calls for the /dev/midi&n; */
@@ -652,7 +644,8 @@ id|arg
 )paren
 suffix:semicolon
 r_int
-id|MIDIbuf_lseek
+id|MIDIbuf_select
+c_func
 (paren
 r_int
 id|dev
@@ -662,11 +655,12 @@ id|fileinfo
 op_star
 id|file
 comma
-id|off_t
-id|offset
-comma
 r_int
-id|orig
+id|sel_type
+comma
+id|poll_table
+op_star
+id|wait
 )paren
 suffix:semicolon
 r_void
@@ -692,28 +686,9 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_int
-id|MIDIbuf_select
-c_func
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|fileinfo
-op_star
-id|file
-comma
-r_int
-id|sel_type
-comma
-id|poll_table
-op_star
-id|wait
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *&n; *&t;Misc calls from various sources&n; */
 multiline_comment|/*&t;From soundcard.c&t;*/
+macro_line|#ifndef __bsdi__
 r_void
 id|tenmicrosec
 c_func
@@ -723,6 +698,7 @@ op_star
 id|osp
 )paren
 suffix:semicolon
+macro_line|#endif
 r_void
 id|request_sound_timer
 (paren
@@ -1536,7 +1512,8 @@ mdefine_line|#define&t;&t;AD1848_MIXER_REROUTE&t;2
 DECL|macro|AD1848_REROUTE
 mdefine_line|#define AD1848_REROUTE(oldctl, newctl) &bslash;&n;&t;&t;ad1848_control(AD1848_MIXER_REROUTE, ((oldctl)&lt;&lt;8)|(newctl))
 r_void
-id|ad1848_interrupt
+id|adintr
+c_func
 (paren
 r_int
 id|irq

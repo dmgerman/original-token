@@ -446,7 +446,7 @@ c_cond
 (paren
 id|have_gus_max
 )paren
-id|ad1848_interrupt
+id|adintr
 (paren
 id|irq
 comma

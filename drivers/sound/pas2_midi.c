@@ -613,6 +613,10 @@ op_assign
 op_amp
 id|pas_midi_operations
 suffix:semicolon
+id|sequencer_init
+(paren
+)paren
+suffix:semicolon
 )brace
 r_void
 DECL|function|pas_midi_interrupt

@@ -1,9 +1,10 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1997 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Wed Jan  1 15:26:54 1997 by makisara@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1997 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Tue May 27 22:29:00 1997 by makisara@home&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mtio.h&gt;
@@ -26,14 +27,61 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &quot;st.h&quot;
 macro_line|#include &quot;constants.h&quot;
+macro_line|#ifdef MODULE
+id|MODULE_PARM
+c_func
+(paren
+id|buffer_kbs
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|write_threshold_kbs
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|max_buffers
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+DECL|variable|buffer_kbs
+r_static
+r_int
+id|buffer_kbs
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|write_threshold_kbs
+r_static
+r_int
+id|write_threshold_kbs
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|max_buffers
+r_static
+r_int
+id|max_buffers
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* The default definitions have been moved to st_options.h */
-DECL|macro|ST_BLOCK_SIZE
-mdefine_line|#define ST_BLOCK_SIZE 1024
+DECL|macro|ST_KILOBYTE
+mdefine_line|#define ST_KILOBYTE 1024
 macro_line|#include &quot;st_options.h&quot;
 DECL|macro|ST_BUFFER_SIZE
-mdefine_line|#define ST_BUFFER_SIZE (ST_BUFFER_BLOCKS * ST_BLOCK_SIZE)
+mdefine_line|#define ST_BUFFER_SIZE (ST_BUFFER_BLOCKS * ST_KILOBYTE)
 DECL|macro|ST_WRITE_THRESHOLD
-mdefine_line|#define ST_WRITE_THRESHOLD (ST_WRITE_THRESHOLD_BLOCKS * ST_BLOCK_SIZE)
+mdefine_line|#define ST_WRITE_THRESHOLD (ST_WRITE_THRESHOLD_BLOCKS * ST_KILOBYTE)
 multiline_comment|/* The buffer size should fit into the 24 bits for length in the&n;   6-byte SCSI read and write commands. */
 macro_line|#if ST_BUFFER_SIZE &gt;= (2 &lt;&lt; 24 - 1)
 macro_line|#error &quot;Buffer size should not exceed (2 &lt;&lt; 24 - 1) bytes!&quot;
@@ -834,6 +882,7 @@ id|last_result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -867,6 +916,20 @@ id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_SCSI_DONE
 suffix:semicolon
+macro_line|#else
+id|SCpnt-&gt;request.rq_status
+op_assign
+id|RQ_SCSI_DONE
+suffix:semicolon
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|last_SCpnt
+op_assign
+id|SCpnt
+suffix:semicolon
+macro_line|#endif
 macro_line|#if DEBUG
 id|STp-&gt;write_pending
 op_assign
@@ -1100,6 +1163,34 @@ id|STp-&gt;sem
 )paren
 )paren
 suffix:semicolon
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|last_result_fatal
+op_assign
+id|st_chk_result
+c_func
+(paren
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|last_SCpnt
+)paren
+suffix:semicolon
+(paren
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|last_SCpnt
+)paren
+op_member_access_from_pointer
+id|request.rq_status
+op_assign
+id|RQ_INACTIVE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1301,7 +1392,7 @@ id|cmd
 comma
 l_int|0
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_RETRIES
 )paren
@@ -1629,7 +1720,7 @@ id|cmd
 comma
 id|transfer
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_WRITE_RETRIES
 )paren
@@ -2655,7 +2746,7 @@ id|cmd
 comma
 l_int|0
 comma
-id|ST_LONG_TIMEOUT
+id|STp-&gt;long_timeout
 comma
 id|MAX_READY_RETRIES
 )paren
@@ -2772,7 +2863,7 @@ id|cmd
 comma
 l_int|0
 comma
-id|ST_LONG_TIMEOUT
+id|STp-&gt;long_timeout
 comma
 id|MAX_READY_RETRIES
 )paren
@@ -3009,7 +3100,7 @@ id|cmd
 comma
 l_int|6
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_READY_RETRIES
 )paren
@@ -3182,7 +3273,7 @@ id|cmd
 comma
 l_int|12
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_READY_RETRIES
 )paren
@@ -3954,6 +4045,10 @@ id|filp
 (brace
 r_int
 id|result
+op_assign
+l_int|0
+comma
+id|result2
 suffix:semicolon
 r_static
 r_int
@@ -4030,10 +4125,14 @@ c_cond
 (paren
 id|STp-&gt;can_partitions
 op_logical_and
+(paren
+id|result
+op_assign
 id|update_partition
 c_func
 (paren
 id|inode
+)paren
 )paren
 OL
 l_int|0
@@ -4174,7 +4273,7 @@ id|cmd
 comma
 l_int|0
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_WRITE_RETRIES
 )paren
@@ -4265,6 +4364,7 @@ l_int|0
 )paren
 )paren
 )paren
+(brace
 multiline_comment|/* Filter out successful write at EOM */
 id|printk
 c_func
@@ -4275,6 +4375,21 @@ comma
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+op_eq
+l_int|0
+)paren
+id|result
+op_assign
+(paren
+op_minus
+id|EIO
+)paren
+suffix:semicolon
+)brace
 r_else
 (brace
 r_if
@@ -4366,6 +4481,8 @@ c_cond
 (paren
 id|STp-&gt;can_bsr
 )paren
+id|result
+op_assign
 id|flush_buffer
 c_func
 (paren
@@ -4385,9 +4502,8 @@ op_eq
 id|ST_FM_HIT
 )paren
 (brace
-r_if
-c_cond
-(paren
+id|result
+op_assign
 id|cross_eof
 c_func
 (paren
@@ -4395,6 +4511,11 @@ id|STp
 comma
 id|FALSE
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
 (brace
 r_if
@@ -4433,12 +4554,16 @@ op_eq
 id|ST_NOEOF
 op_logical_and
 op_logical_neg
+(paren
+id|result
+op_assign
 id|cross_eof
 c_func
 (paren
 id|STp
 comma
 id|TRUE
+)paren
 )paren
 )paren
 op_logical_or
@@ -4474,6 +4599,9 @@ c_cond
 (paren
 id|STp-&gt;rew_at_close
 )paren
+(brace
+id|result2
+op_assign
 id|st_int_ioctl
 c_func
 (paren
@@ -4484,6 +4612,18 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+op_eq
+l_int|0
+)paren
+id|result
+op_assign
+id|result2
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4563,7 +4703,7 @@ id|st_template.module
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|result
 suffix:semicolon
 )brace
 "&f;"
@@ -5406,7 +5546,7 @@ id|cmd
 comma
 id|transfer
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_WRITE_RETRIES
 )paren
@@ -5907,12 +6047,22 @@ id|STm-&gt;do_async_writes
 op_logical_and
 (paren
 (paren
+(paren
 id|STp-&gt;buffer
 )paren
 op_member_access_from_pointer
 id|buffer_bytes
 op_ge
 id|STp-&gt;write_threshold
+op_logical_and
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|buffer_bytes
+op_ge
+id|STp-&gt;block_size
+)paren
 op_logical_or
 id|STp-&gt;block_size
 op_eq
@@ -6108,7 +6258,7 @@ id|writing
 comma
 id|st_sleep_done
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_WRITE_RETRIES
 )paren
@@ -6413,7 +6563,7 @@ id|cmd
 comma
 id|bytes
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_RETRIES
 )paren
@@ -7951,6 +8101,17 @@ comma
 id|STp-&gt;scsi2_logical
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;st%d:    sysv: %d&bslash;n&quot;
+comma
+id|dev
+comma
+id|STm-&gt;sysv
+)paren
+suffix:semicolon
 macro_line|#if DEBUG
 id|printk
 c_func
@@ -8207,6 +8368,16 @@ id|MT_ST_SCSI2LOGICAL
 op_ne
 l_int|0
 suffix:semicolon
+id|STm-&gt;sysv
+op_assign
+(paren
+id|options
+op_amp
+id|MT_ST_SYSV
+)paren
+op_ne
+l_int|0
+suffix:semicolon
 macro_line|#if DEBUG
 id|debugging
 op_assign
@@ -8424,6 +8595,21 @@ id|STp-&gt;scsi2_logical
 op_assign
 id|value
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|options
+op_amp
+id|MT_ST_SYSV
+)paren
+op_ne
+l_int|0
+)paren
+id|STm-&gt;sysv
+op_assign
+id|value
+suffix:semicolon
 macro_line|#if DEBUG
 r_if
 c_cond
@@ -8470,7 +8656,7 @@ op_complement
 id|MT_ST_OPTIONS
 )paren
 op_star
-id|ST_BLOCK_SIZE
+id|ST_KILOBYTE
 suffix:semicolon
 r_if
 c_cond
@@ -8573,6 +8759,85 @@ comma
 id|dev
 comma
 id|STm-&gt;default_blksize
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|code
+op_eq
+id|MT_ST_TIMEOUTS
+)paren
+(brace
+id|value
+op_assign
+(paren
+id|options
+op_amp
+op_complement
+id|MT_ST_OPTIONS
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|value
+op_amp
+id|MT_ST_SET_LONG_TIMEOUT
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|STp-&gt;long_timeout
+op_assign
+(paren
+id|value
+op_amp
+op_complement
+id|MT_ST_SET_LONG_TIMEOUT
+)paren
+op_star
+id|HZ
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;st%d: Long timeout set to %d seconds.&bslash;n&quot;
+comma
+id|dev
+comma
+(paren
+id|value
+op_amp
+op_complement
+id|MT_ST_SET_LONG_TIMEOUT
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|STp-&gt;timeout
+op_assign
+id|value
+op_star
+id|HZ
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;st%d: Normal timeout set to %d seconds.&bslash;n&quot;
+comma
+id|dev
+comma
+id|value
 )paren
 suffix:semicolon
 )brace
@@ -8898,7 +9163,7 @@ id|cmd
 l_int|4
 )braket
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 l_int|0
 )paren
@@ -9168,7 +9433,7 @@ id|cmd
 l_int|4
 )braket
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 l_int|0
 )paren
@@ -9268,8 +9533,6 @@ id|arg
 (brace
 r_int
 id|timeout
-op_assign
-id|ST_LONG_TIMEOUT
 suffix:semicolon
 r_int
 id|ltmp
@@ -9349,6 +9612,10 @@ r_return
 op_minus
 id|EIO
 )paren
+suffix:semicolon
+id|timeout
+op_assign
+id|STp-&gt;long_timeout
 suffix:semicolon
 id|STps
 op_assign
@@ -10221,7 +10488,7 @@ id|arg
 suffix:semicolon
 id|timeout
 op_assign
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 suffix:semicolon
 macro_line|#if DEBUG
 r_if
@@ -10342,7 +10609,7 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t wait for completion */
 id|timeout
 op_assign
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 suffix:semicolon
 macro_line|#endif
 macro_line|#if DEBUG
@@ -10478,14 +10745,12 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t wait for completion */
 id|timeout
 op_assign
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 suffix:semicolon
 macro_line|#else
 id|timeout
 op_assign
-id|ST_LONG_TIMEOUT
-op_star
-l_int|8
+id|STp-&gt;long_timeout
 suffix:semicolon
 macro_line|#endif
 macro_line|#if DEBUG
@@ -10579,7 +10844,7 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t wait for completion */
 id|timeout
 op_assign
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 suffix:semicolon
 macro_line|#endif
 id|cmd
@@ -10742,12 +11007,12 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t wait for completion */
 id|timeout
 op_assign
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 suffix:semicolon
 macro_line|#else
 id|timeout
 op_assign
-id|ST_LONG_TIMEOUT
+id|STp-&gt;long_timeout
 op_star
 l_int|8
 suffix:semicolon
@@ -11169,7 +11434,7 @@ id|ltmp
 suffix:semicolon
 id|timeout
 op_assign
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 suffix:semicolon
 macro_line|#if DEBUG
 r_if
@@ -12223,7 +12488,7 @@ id|scmd
 comma
 l_int|20
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_READY_RETRIES
 )paren
@@ -12560,8 +12825,6 @@ id|blk
 suffix:semicolon
 r_int
 id|timeout
-op_assign
-id|ST_LONG_TIMEOUT
 suffix:semicolon
 r_int
 r_char
@@ -12596,6 +12859,10 @@ r_return
 op_minus
 id|EIO
 )paren
+suffix:semicolon
+id|timeout
+op_assign
+id|STp-&gt;long_timeout
 suffix:semicolon
 id|STps
 op_assign
@@ -12909,7 +13176,7 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t wait for completion */
 id|timeout
 op_assign
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 suffix:semicolon
 macro_line|#endif
 id|SCpnt
@@ -13357,7 +13624,7 @@ id|cmd
 comma
 l_int|200
 comma
-id|ST_TIMEOUT
+id|STp-&gt;timeout
 comma
 id|MAX_READY_RETRIES
 )paren
@@ -13756,7 +14023,7 @@ id|cmd
 l_int|4
 )braket
 comma
-id|ST_LONG_TIMEOUT
+id|STp-&gt;long_timeout
 comma
 id|MAX_READY_RETRIES
 )paren
@@ -15735,8 +16002,11 @@ macro_line|#endif
 )brace
 macro_line|#ifndef MODULE
 multiline_comment|/* Set the boot options. Syntax: st=xxx,yyy&n;   where xxx is buffer size in 1024 byte blocks and yyy is write threshold&n;   in 1024 byte blocks. */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|st_setup
 id|st_setup
 c_func
 (paren
@@ -15747,6 +16017,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -15773,7 +16044,7 @@ id|ints
 l_int|1
 )braket
 op_star
-id|ST_BLOCK_SIZE
+id|ST_KILOBYTE
 suffix:semicolon
 r_if
 c_cond
@@ -15800,7 +16071,7 @@ id|ints
 l_int|2
 )braket
 op_star
-id|ST_BLOCK_SIZE
+id|ST_KILOBYTE
 suffix:semicolon
 r_if
 c_cond
@@ -16073,7 +16344,7 @@ id|ST_FAST_MTEOM
 suffix:semicolon
 id|tpnt-&gt;scsi2_logical
 op_assign
-l_int|0
+id|ST_SCSI2LOGICAL
 suffix:semicolon
 id|tpnt-&gt;write_threshold
 op_assign
@@ -16095,6 +16366,14 @@ suffix:semicolon
 id|tpnt-&gt;nbr_partitions
 op_assign
 l_int|0
+suffix:semicolon
+id|tpnt-&gt;timeout
+op_assign
+id|ST_TIMEOUT
+suffix:semicolon
+id|tpnt-&gt;long_timeout
+op_assign
+id|ST_LONG_TIMEOUT
 suffix:semicolon
 r_for
 c_loop
@@ -16298,7 +16577,7 @@ id|st_registered
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Driver initialization */
+multiline_comment|/* Driver initialization (not __initfunc because may be called later) */
 DECL|function|st_init
 r_static
 r_int
@@ -16853,12 +17132,16 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|result
+suffix:semicolon
 id|st_template.module
 op_assign
 op_amp
 id|__this_module
 suffix:semicolon
-r_return
+id|result
+op_assign
 id|scsi_register_module
 c_func
 (paren
@@ -16867,6 +17150,78 @@ comma
 op_amp
 id|st_template
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+r_return
+id|result
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|buffer_kbs
+OG
+l_int|0
+)paren
+id|st_buffer_size
+op_assign
+id|buffer_kbs
+op_star
+id|ST_KILOBYTE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|write_threshold_kbs
+OG
+l_int|0
+)paren
+id|st_write_threshold
+op_assign
+id|write_threshold_kbs
+op_star
+id|ST_KILOBYTE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|st_write_threshold
+OG
+id|st_buffer_size
+)paren
+id|st_write_threshold
+op_assign
+id|st_buffer_size
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|max_buffers
+OG
+l_int|0
+)paren
+id|st_max_buffers
+op_assign
+id|max_buffers
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;st: bufsize %d, wrt %d, max buffers %d.&bslash;n&quot;
+comma
+id|st_buffer_size
+comma
+id|st_write_threshold
+comma
+id|st_max_buffers
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

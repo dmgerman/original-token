@@ -48,6 +48,11 @@ DECL|member|last_result_fatal
 r_int
 id|last_result_fatal
 suffix:semicolon
+DECL|member|last_SCpnt
+id|Scsi_Cmnd
+op_star
+id|last_SCpnt
+suffix:semicolon
 DECL|member|b_data
 r_int
 r_char
@@ -262,6 +267,16 @@ DECL|member|write_threshold
 r_int
 id|write_threshold
 suffix:semicolon
+DECL|member|timeout
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/* timeout for normal commands */
+DECL|member|long_timeout
+r_int
+id|long_timeout
+suffix:semicolon
+multiline_comment|/* timeout for commands known to take long time*/
 multiline_comment|/* Mode characteristics */
 DECL|member|modes
 id|ST_mode

@@ -136,6 +136,10 @@ r_int
 r_int
 id|raw_buf_phys
 suffix:semicolon
+DECL|member|buffsize
+r_int
+id|buffsize
+suffix:semicolon
 multiline_comment|/*&n;         * Device state tables&n;         */
 DECL|member|flags
 r_int
@@ -160,6 +164,10 @@ DECL|macro|DMA_DIRTY
 mdefine_line|#define DMA_DIRTY&t;0x00000080
 DECL|macro|DMA_POST
 mdefine_line|#define DMA_POST&t;0x00000100
+DECL|macro|DMA_NODMA
+mdefine_line|#define DMA_NODMA&t;0x00000200
+DECL|macro|DMA_NOTIMEOUT
+mdefine_line|#define DMA_NOTIMEOUT&t;0x00000400
 DECL|member|open_mode
 r_int
 id|open_mode
@@ -227,6 +235,11 @@ r_int
 r_int
 id|user_counter
 suffix:semicolon
+DECL|member|max_byte_counter
+r_int
+r_int
+id|max_byte_counter
+suffix:semicolon
 DECL|member|data_rate
 r_int
 id|data_rate
@@ -255,6 +268,17 @@ r_int
 id|applic_profile
 suffix:semicolon
 multiline_comment|/* Application profile (APF_*) */
+DECL|member|buf_flags
+r_int
+id|buf_flags
+(braket
+id|MAX_SUB_BUFFERS
+)braket
+suffix:semicolon
+DECL|macro|BUFF_EOF
+mdefine_line|#define&t;&t; BUFF_EOF&t;&t;0x00000001 /* Increment eof count */
+DECL|macro|BUFF_DIRTY
+mdefine_line|#define&t;&t; BUFF_DIRTY&t;&t;0x00000002 /* Buffer written */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Structure for use with various microcontrollers and DSP processors &n; * in the recent soundcards.&n; */
@@ -598,6 +622,30 @@ r_int
 id|channels
 )paren
 suffix:semicolon
+DECL|member|postprocess_write
+r_void
+(paren
+op_star
+id|postprocess_write
+)paren
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Device spesific postprocessing for written data */
+DECL|member|preprocess_read
+r_void
+(paren
+op_star
+id|preprocess_read
+)paren
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Device spesific preprocessing for read data */
 )brace
 suffix:semicolon
 DECL|struct|audio_operations
@@ -627,10 +675,10 @@ DECL|macro|DMA_PSEUDO_AUTOMODE
 mdefine_line|#define DMA_PSEUDO_AUTOMODE&t;0x08
 DECL|macro|DMA_HARDSTOP
 mdefine_line|#define DMA_HARDSTOP&t;&t;0x10
-DECL|macro|DMA_NODMA
-mdefine_line|#define DMA_NODMA&t;&t;0x20
 DECL|macro|DMA_EXACT
 mdefine_line|#define DMA_EXACT&t;&t;0x40
+DECL|macro|DMA_NORESET
+mdefine_line|#define DMA_NORESET&t;&t;0x80
 DECL|member|format_mask
 r_int
 id|format_mask
@@ -654,10 +702,6 @@ op_star
 id|portc
 suffix:semicolon
 multiline_comment|/* Driver spesific info */
-DECL|member|buffsize
-r_int
-id|buffsize
-suffix:semicolon
 DECL|member|dmap_in
 DECL|member|dmap_out
 r_struct
@@ -693,6 +737,11 @@ suffix:semicolon
 DECL|member|min_fragment
 r_int
 id|min_fragment
+suffix:semicolon
+multiline_comment|/* 0 == unlimited */
+DECL|member|max_fragment
+r_int
+id|max_fragment
 suffix:semicolon
 multiline_comment|/* 0 == unlimited */
 DECL|member|parent_dev
@@ -1599,7 +1648,7 @@ id|num_midis
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS) &amp;&amp; !defined(VMIDI)
 r_extern
 r_struct
 id|sound_timer_operations
@@ -1704,6 +1753,58 @@ comma
 id|probe_pss_mss
 comma
 id|unload_pss_mss
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_GUS16
+(brace
+l_string|&quot;GUS16&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_GUS16
+comma
+l_string|&quot;Ultrasound 16-bit opt.&quot;
+comma
+id|attach_gus_db16
+comma
+id|probe_gus_db16
+comma
+id|unload_gus_db16
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_GUSHW
+(brace
+l_string|&quot;GUS&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_GUS
+comma
+l_string|&quot;Gravis Ultrasound&quot;
+comma
+id|attach_gus_card
+comma
+id|probe_gus
+comma
+id|unload_gus
+)brace
+comma
+(brace
+l_string|&quot;GUSPNP&quot;
+comma
+l_int|1
+comma
+id|SNDCARD_GUSPNP
+comma
+l_string|&quot;GUS PnP&quot;
+comma
+id|attach_gus_card
+comma
+id|probe_gus
+comma
+id|unload_gus
 )brace
 comma
 macro_line|#endif
@@ -1969,58 +2070,6 @@ id|unload_sbmpu
 )brace
 comma
 macro_line|#&t;endif
-macro_line|#endif
-macro_line|#ifdef CONFIG_GUS16
-(brace
-l_string|&quot;GUS16&quot;
-comma
-l_int|0
-comma
-id|SNDCARD_GUS16
-comma
-l_string|&quot;Ultrasound 16-bit opt.&quot;
-comma
-id|attach_gus_db16
-comma
-id|probe_gus_db16
-comma
-id|unload_gus_db16
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_GUSHW
-(brace
-l_string|&quot;GUS&quot;
-comma
-l_int|0
-comma
-id|SNDCARD_GUS
-comma
-l_string|&quot;Gravis Ultrasound&quot;
-comma
-id|attach_gus_card
-comma
-id|probe_gus
-comma
-id|unload_gus
-)brace
-comma
-(brace
-l_string|&quot;GUSPNP&quot;
-comma
-l_int|1
-comma
-id|SNDCARD_GUSPNP
-comma
-l_string|&quot;GUS PnP&quot;
-comma
-id|attach_gus_card
-comma
-id|probe_gus
-comma
-id|unload_gus
-)brace
-comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SSCAPEHW
 (brace
@@ -2385,6 +2434,10 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_MSS
+macro_line|#&t;ifndef MSS_DMA2
+DECL|macro|MSS_DMA2
+macro_line|#&t;define MSS_DMA2 -1
+macro_line|#&t;endif
 macro_line|#&t;ifdef DESKPROXL
 (brace
 id|SNDCARD_DESKPROXL

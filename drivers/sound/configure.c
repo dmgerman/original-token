@@ -567,7 +567,7 @@ op_assign
 (brace
 l_string|&quot;ProAudioSpectrum 16 support&quot;
 comma
-l_string|&quot;_TRUE_ Sound Blaster (SB, SBPro, SB16/32/64, ESS, Jazz16) support&quot;
+l_string|&quot;100% Sound Blaster compatibles (SB16/32/64, ESS, Jazz16) support&quot;
 comma
 l_string|&quot;Generic OPL2/OPL3 FM synthesizer support&quot;
 comma

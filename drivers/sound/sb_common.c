@@ -174,7 +174,7 @@ id|HZ
 op_div
 l_int|10
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * The timeout is 0.1 seconds&n;&t;&t;&t;&t; */
+multiline_comment|/* Timeout */
 multiline_comment|/*&n;   * Note! the i&lt;500000 is an emergency exit. The sb_dsp_command() is sometimes&n;   * called while interrupts are disabled. This means that the timer is&n;   * disabled also. However the timeout situation is a abnormal condition.&n;   * Normally the DSP should be ready to accept commands after just couple of&n;   * loops.&n;   */
 r_for
 c_loop
@@ -543,10 +543,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
-(paren
-l_string|&quot;Sound Blaster: Unexpected interrupt&bslash;n&quot;
-)paren
+multiline_comment|/* printk (&quot;Sound Blaster: Unexpected interrupt&bslash;n&quot;); */
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Acknowledge interrupts &n; */
@@ -2290,6 +2287,10 @@ op_or
 id|SB_NO_MIDI
 suffix:semicolon
 multiline_comment|/* Mixer only */
+id|devc-&gt;model
+op_assign
+id|MDL_AZTECH
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -2413,6 +2414,10 @@ id|name
 (braket
 l_int|100
 )braket
+suffix:semicolon
+r_extern
+r_int
+id|sb_be_quiet
 suffix:semicolon
 multiline_comment|/*&n; * Check if we had detected a SB device earlier&n; */
 id|DDB
@@ -2849,7 +2854,7 @@ l_int|NULL
 )paren
 id|hw_config-&gt;name
 op_assign
-l_string|&quot;Sound Blaster Pro&quot;
+l_string|&quot;Sound Blaster Pro (8 BIT ONLY)&quot;
 suffix:semicolon
 )brace
 r_break
@@ -2972,7 +2977,7 @@ l_int|NULL
 )paren
 id|hw_config-&gt;name
 op_assign
-l_string|&quot;Sound Blaster&quot;
+l_string|&quot;Sound Blaster (8 BIT/MONO ONLY)&quot;
 suffix:semicolon
 id|sprintf
 (paren
@@ -2994,6 +2999,75 @@ comma
 id|hw_config
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Assuming that a soundcard is Sound Blaster (compatible) is the most common&n; * configuration error and the mother of all problems. Usually soundcards&n; * emulate SB Pro but in addition they have a 16 bit native mode which should be&n; * used in Unix. See Readme.cards for more information about configuring OSS/Free&n; * properly.&n; */
+r_if
+c_cond
+(paren
+id|devc-&gt;model
+op_le
+id|MDL_SBPRO
+)paren
+r_if
+c_cond
+(paren
+id|devc-&gt;major
+op_eq
+l_int|3
+op_logical_and
+id|devc-&gt;minor
+op_ne
+l_int|1
+)paren
+multiline_comment|/* &quot;True&quot; SB Pro should have v3.1. */
+(brace
+id|printk
+(paren
+l_string|&quot;This soundcard doesn&squot;t seem to be fully Sound Blaster Pro compatible.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;Almost certainly there is another way to configure OSS so that&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;it works properly with OSS (for example in 16 bit mode).&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sb_be_quiet
+op_logical_and
+id|devc-&gt;model
+op_eq
+id|MDL_SBPRO
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;SB DSP version is just %d.%d which means that your card is&bslash;n&quot;
+comma
+id|devc-&gt;major
+comma
+id|devc-&gt;minor
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;several years old (8 bit only device)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;or alternatively the sound driver is incorrectly configured.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|hw_config-&gt;card_subtype
 op_assign
 id|devc-&gt;model

@@ -1174,6 +1174,13 @@ id|data
 suffix:semicolon
 id|get_user
 (paren
+op_star
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
 id|data
 comma
 (paren

@@ -9,6 +9,8 @@ DECL|macro|SHORT_BANNERS
 mdefine_line|#define SHORT_BANNERS
 DECL|macro|MANUAL_PNP
 mdefine_line|#define MANUAL_PNP
+DECL|macro|DO_TIMINGS
+macro_line|#undef DO_TIMINGS
 macro_line|#ifdef MODULE
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -22,6 +24,7 @@ macro_line|#if LINUX_VERSION_CODE &gt; 131328
 DECL|macro|LINUX21X
 mdefine_line|#define LINUX21X
 macro_line|#endif
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -39,6 +42,10 @@ macro_line|#endif
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#else
+macro_line|#endif
 macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 DECL|macro|FALSE

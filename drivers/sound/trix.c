@@ -1244,6 +1244,13 @@ op_star
 id|hw_config
 )paren
 (brace
+r_extern
+r_int
+id|sb_be_quiet
+suffix:semicolon
+r_int
+id|old_quiet
+suffix:semicolon
 macro_line|#ifdef CONFIG_SBDSP
 id|hw_config-&gt;driver_use_1
 op_assign
@@ -1253,10 +1260,23 @@ id|SB_NO_MIXER
 op_or
 id|SB_NO_RECORDING
 suffix:semicolon
+multiline_comment|/* Prevent false alarms */
+id|old_quiet
+op_assign
+id|sb_be_quiet
+suffix:semicolon
+id|sb_be_quiet
+op_assign
+l_int|1
+suffix:semicolon
 id|sb_dsp_init
 (paren
 id|hw_config
 )paren
+suffix:semicolon
+id|sb_be_quiet
+op_assign
+id|old_quiet
 suffix:semicolon
 macro_line|#endif
 )brace

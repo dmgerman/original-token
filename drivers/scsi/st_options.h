@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995 Kai Makisara.&n;&n;   Last modified: Thu Dec 14 21:51:27 1995 by root@kai.makisara.fi&n;*/
+multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995 Kai Makisara.&n;&n;   Last modified: Tue May 27 22:29:15 1997 by makisara@home&n;*/
 macro_line|#ifndef _ST_OPTIONS_H
 DECL|macro|_ST_OPTIONS_H
 mdefine_line|#define _ST_OPTIONS_H
@@ -48,6 +48,9 @@ mdefine_line|#define ST_AUTO_LOCK 0
 multiline_comment|/* If ST_FAST_MTEOM is non-zero, the MTEOM ioctl is done using the&n;   direct SCSI command. The file number status is lost but this method&n;   is fast with some drives. Otherwise MTEOM is done by spacing over&n;   files and the file number status is retained. */
 DECL|macro|ST_FAST_MTEOM
 mdefine_line|#define ST_FAST_MTEOM 0
+multiline_comment|/* If ST_SCSI2LOGICAL is nonzero, the logical block addresses are used for&n;   MTIOCPOS and MTSEEK by default. Vendor addresses are used if ST_SCSI2LOGICAL&n;   is zero. */
+DECL|macro|ST_SCSI2LOGICAL
+mdefine_line|#define ST_SCSI2LOGICAL 0
 multiline_comment|/* If ST_SYSV is non-zero, the tape behaves according to the SYS V semantics.&n;   The default is BSD semantics. */
 DECL|macro|ST_SYSV
 mdefine_line|#define ST_SYSV 0

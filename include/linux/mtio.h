@@ -395,6 +395,12 @@ DECL|macro|MT_ST_DEF_BLKSIZE
 mdefine_line|#define MT_ST_DEF_BLKSIZE&t;0x50000000
 DECL|macro|MT_ST_DEF_OPTIONS
 mdefine_line|#define MT_ST_DEF_OPTIONS&t;0x60000000
+DECL|macro|MT_ST_TIMEOUTS
+mdefine_line|#define MT_ST_TIMEOUTS&t;&t;0x70000000
+DECL|macro|MT_ST_SET_TIMEOUT
+mdefine_line|#define MT_ST_SET_TIMEOUT&t;(MT_ST_TIMEOUTS | 0x000000)
+DECL|macro|MT_ST_SET_LONG_TIMEOUT
+mdefine_line|#define MT_ST_SET_LONG_TIMEOUT&t;(MT_ST_TIMEOUTS | 0x100000)
 DECL|macro|MT_ST_BUFFER_WRITES
 mdefine_line|#define MT_ST_BUFFER_WRITES&t;0x1
 DECL|macro|MT_ST_ASYNC_WRITES
@@ -419,6 +425,8 @@ DECL|macro|MT_ST_CAN_PARTITIONS
 mdefine_line|#define MT_ST_CAN_PARTITIONS    0x400
 DECL|macro|MT_ST_SCSI2LOGICAL
 mdefine_line|#define MT_ST_SCSI2LOGICAL      0x800
+DECL|macro|MT_ST_SYSV
+mdefine_line|#define MT_ST_SYSV              0x1000
 multiline_comment|/* The mode parameters to be controlled. Parameter chosen with bits 20-28 */
 DECL|macro|MT_ST_CLEAR_DEFAULT
 mdefine_line|#define MT_ST_CLEAR_DEFAULT&t;0xfffff

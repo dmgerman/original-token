@@ -689,6 +689,10 @@ op_assign
 op_amp
 id|gus_midi_operations
 suffix:semicolon
+id|sequencer_init
+(paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

@@ -1,6 +1,8 @@
 multiline_comment|/*&n; * sound/midibuf.c&n; *&n; * Device file manager for /dev/midi#&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+DECL|macro|MIDIBUF_C
+mdefine_line|#define MIDIBUF_C
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_MIDI)
 multiline_comment|/*&n; * Don&squot;t make MAX_QUEUE_SIZE larger than 4000&n; */

@@ -809,6 +809,10 @@ op_assign
 op_amp
 id|uart6850_operations
 suffix:semicolon
+id|sequencer_init
+(paren
+)paren
+suffix:semicolon
 )brace
 r_static
 r_int

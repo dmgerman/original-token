@@ -1051,6 +1051,10 @@ r_private
 op_assign
 id|handle
 suffix:semicolon
+id|tmp-&gt;flags
+op_assign
+id|flags
+suffix:semicolon
 id|tmp-&gt;irq_func
 op_assign
 id|irq_func

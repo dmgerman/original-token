@@ -57,9 +57,9 @@ mdefine_line|#define CMD_GEN_MPU_ACK         0x81
 DECL|macro|CMD_GET_BOARD_TYPE
 mdefine_line|#define CMD_GET_BOARD_TYPE      0x82
 DECL|macro|CMD_SET_CONTROL
-mdefine_line|#define CMD_SET_CONTROL         0x88
+mdefine_line|#define CMD_SET_CONTROL         0x88&t;/* Old firmware only */
 DECL|macro|CMD_GET_CONTROL
-mdefine_line|#define CMD_GET_CONTROL         0x89
+mdefine_line|#define CMD_GET_CONTROL         0x89&t;/* Old firmware only */
 DECL|macro|CTL_MASTER_VOL
 mdefine_line|#define &t;CTL_MASTER_VOL          0
 DECL|macro|CTL_MIC_MODE
@@ -68,14 +68,14 @@ DECL|macro|CTL_SYNTH_VOL
 mdefine_line|#define &t;CTL_SYNTH_VOL           4
 DECL|macro|CTL_WAVE_VOL
 mdefine_line|#define &t;CTL_WAVE_VOL            7
-DECL|macro|CMD_SET_MT32
-mdefine_line|#define CMD_SET_MT32            0x96
-DECL|macro|CMD_GET_MT32
-mdefine_line|#define CMD_GET_MT32            0x97
 DECL|macro|CMD_SET_EXTMIDI
-mdefine_line|#define CMD_SET_EXTMIDI         0x9b
+mdefine_line|#define CMD_SET_EXTMIDI&t;&t;0x8a
 DECL|macro|CMD_GET_EXTMIDI
-mdefine_line|#define CMD_GET_EXTMIDI         0x9c
+mdefine_line|#define CMD_GET_EXTMIDI&t;&t;0x8b
+DECL|macro|CMD_SET_MT32
+mdefine_line|#define CMD_SET_MT32            0x8c
+DECL|macro|CMD_GET_MT32
+mdefine_line|#define CMD_GET_MT32            0x8d
 DECL|macro|CMD_ACK
 mdefine_line|#define CMD_ACK&t;&t;&t;0x80
 DECL|struct|sscape_info
@@ -106,9 +106,9 @@ DECL|member|dma_allocated
 r_int
 id|dma_allocated
 suffix:semicolon
-DECL|member|my_audiodev
+DECL|member|codec_audiodev
 r_int
-id|my_audiodev
+id|codec_audiodev
 suffix:semicolon
 DECL|member|opened
 r_int
@@ -123,11 +123,11 @@ suffix:semicolon
 DECL|typedef|sscape_info
 id|sscape_info
 suffix:semicolon
-DECL|variable|dev_info
+DECL|variable|adev_info
 r_static
 r_struct
 id|sscape_info
-id|dev_info
+id|adev_info
 op_assign
 (brace
 l_int|0
@@ -141,7 +141,15 @@ op_star
 id|devc
 op_assign
 op_amp
-id|dev_info
+id|adev_info
+suffix:semicolon
+DECL|variable|sscape_mididev
+r_static
+r_int
+id|sscape_mididev
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|sscape_sleeper
 r_static
@@ -918,58 +926,6 @@ id|devc
 suffix:semicolon
 )brace
 r_static
-r_int
-DECL|function|get_board_type
-id|get_board_type
-(paren
-r_struct
-id|sscape_info
-op_star
-id|devc
-)paren
-(brace
-r_int
-id|tmp
-suffix:semicolon
-id|host_open
-(paren
-id|devc
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|host_command1
-(paren
-id|devc
-comma
-id|CMD_GET_BOARD_TYPE
-)paren
-)paren
-id|tmp
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-r_else
-id|tmp
-op_assign
-id|host_read
-(paren
-id|devc
-)paren
-suffix:semicolon
-id|host_close
-(paren
-id|devc
-)paren
-suffix:semicolon
-r_return
-id|tmp
-suffix:semicolon
-)brace
-r_static
 r_void
 DECL|function|do_dma
 id|do_dma
@@ -1015,7 +971,7 @@ suffix:semicolon
 )brace
 id|audio_devs
 (braket
-id|devc-&gt;my_audiodev
+id|devc-&gt;codec_audiodev
 )braket
 op_member_access_from_pointer
 id|flags
@@ -1025,7 +981,7 @@ id|DMA_AUTOMODE
 suffix:semicolon
 id|DMAbuf_start_dma
 (paren
-id|devc-&gt;my_audiodev
+id|devc-&gt;codec_audiodev
 comma
 id|buf
 comma
@@ -1036,7 +992,7 @@ id|mode
 suffix:semicolon
 id|audio_devs
 (braket
-id|devc-&gt;my_audiodev
+id|devc-&gt;codec_audiodev
 )braket
 op_member_access_from_pointer
 id|flags
@@ -1316,6 +1272,7 @@ r_int
 r_char
 id|temp
 suffix:semicolon
+r_volatile
 r_int
 id|done
 comma
@@ -1439,11 +1396,33 @@ l_int|0x80
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Transfer one code block using DMA&n;   */
+r_if
+c_cond
+(paren
+id|audio_devs
+(braket
+id|devc-&gt;codec_audiodev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;raw_buf
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;SSCAPE: Error: DMA buffer not available&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|memcpy
 (paren
 id|audio_devs
 (braket
-id|devc-&gt;my_audiodev
+id|devc-&gt;codec_audiodev
 )braket
 op_member_access_from_pointer
 id|dmap_out-&gt;raw_buf
@@ -1471,7 +1450,7 @@ id|SSCAPE_DMA_A
 comma
 id|audio_devs
 (braket
-id|devc-&gt;my_audiodev
+id|devc-&gt;codec_audiodev
 )braket
 op_member_access_from_pointer
 id|dmap_out-&gt;raw_buf_phys
@@ -1492,7 +1471,7 @@ l_int|0
 suffix:semicolon
 id|timeout_val
 op_assign
-l_int|100
+l_int|30
 suffix:semicolon
 r_while
 c_loop
@@ -1517,7 +1496,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|50
 )paren
 id|current-&gt;timeout
 op_assign
@@ -1526,7 +1507,9 @@ op_assign
 id|jiffies
 op_plus
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|50
 )paren
 suffix:semicolon
 r_else
@@ -1804,11 +1787,14 @@ l_int|0xfe
 )paren
 multiline_comment|/* OBP startup acknowledge */
 (brace
+id|DDB
+(paren
 id|printk
 (paren
 l_string|&quot;Soundscape: Acknowledge = %x&bslash;n&quot;
 comma
 id|x
+)paren
 )paren
 suffix:semicolon
 id|done
@@ -1990,12 +1976,7 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;SoundScape board of type %d initialized OK&bslash;n&quot;
-comma
-id|get_board_type
-(paren
-id|devc
-)paren
+l_string|&quot;SoundScape board initialized OK&bslash;n&quot;
 )paren
 suffix:semicolon
 id|set_control
@@ -2268,7 +2249,7 @@ comma
 id|sscape_coproc_reset
 comma
 op_amp
-id|dev_info
+id|adev_info
 )brace
 suffix:semicolon
 DECL|variable|sscape_detected
@@ -2322,6 +2303,17 @@ op_ne
 id|hw_config-&gt;io_base
 )paren
 r_return
+suffix:semicolon
+id|request_region
+(paren
+id|devc-&gt;base
+op_plus
+l_int|2
+comma
+l_int|6
+comma
+l_string|&quot;SoundScape&quot;
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2688,6 +2680,11 @@ l_int|1
 )paren
 )paren
 multiline_comment|/* The MPU driver installed itself */
+(brace
+id|sscape_mididev
+op_assign
+id|prev_devs
+suffix:semicolon
 id|midi_devs
 (braket
 id|prev_devs
@@ -2698,6 +2695,7 @@ op_assign
 op_amp
 id|sscape_coproc_operations
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 id|sscape_write
@@ -2972,18 +2970,6 @@ op_star
 id|hw_config
 )paren
 (brace
-id|devc-&gt;base
-op_assign
-id|hw_config-&gt;io_base
-suffix:semicolon
-id|devc-&gt;irq
-op_assign
-id|hw_config-&gt;irq
-suffix:semicolon
-id|devc-&gt;dma
-op_assign
-id|hw_config-&gt;dma
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2998,21 +2984,21 @@ id|hw_config-&gt;io_base
 r_return
 l_int|0
 suffix:semicolon
-id|devc-&gt;failed
+id|devc-&gt;base
 op_assign
-l_int|1
+id|hw_config-&gt;io_base
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|detect_ga
-(paren
-id|devc
-)paren
-)paren
-r_return
-l_int|0
+id|devc-&gt;irq
+op_assign
+id|hw_config-&gt;irq
+suffix:semicolon
+id|devc-&gt;dma
+op_assign
+id|hw_config-&gt;dma
+suffix:semicolon
+id|devc-&gt;osp
+op_assign
+id|hw_config-&gt;osp
 suffix:semicolon
 macro_line|#ifdef SSCAPE_DEBUG1
 multiline_comment|/*&n;     * Temporary debugging aid. Print contents of the registers before&n;     * changing them.&n;   */
@@ -3050,6 +3036,22 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#endif
+id|devc-&gt;failed
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|detect_ga
+(paren
+id|devc
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3117,11 +3119,6 @@ id|ODIE_ADDR
 )paren
 suffix:semicolon
 )brace
-r_else
-id|old_hardware
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 id|sscape_detected
 op_assign
@@ -3147,6 +3144,11 @@ comma
 id|irq_bits
 op_assign
 l_int|0xff
+suffix:semicolon
+r_int
+id|ad_flags
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3238,12 +3240,23 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|old_hardware
+)paren
+id|ad_flags
+op_assign
+l_int|0x12345677
+suffix:semicolon
+multiline_comment|/* Tell that we may have a CS4248 chip (Spea-V7 Media FX) */
 r_return
 id|ad1848_detect
 (paren
 id|hw_config-&gt;io_base
 comma
-l_int|NULL
+op_amp
+id|ad_flags
 comma
 id|hw_config-&gt;osp
 )paren
@@ -3395,6 +3408,7 @@ l_int|1
 )paren
 )paren
 multiline_comment|/* The AD1848 driver installed itself */
+(brace
 id|audio_devs
 (braket
 id|prev_devs
@@ -3405,10 +3419,19 @@ op_assign
 op_amp
 id|sscape_coproc_operations
 suffix:semicolon
-id|devc-&gt;my_audiodev
+id|devc-&gt;codec_audiodev
 op_assign
 id|prev_devs
 suffix:semicolon
+multiline_comment|/* Set proper routings here (what are they) */
+id|AD1848_REROUTE
+(paren
+id|SOUND_MIXER_LINE1
+comma
+id|SOUND_MIXER_LINE
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifdef SSCAPE_DEBUG5
 multiline_comment|/*&n;     * Temporary debugging aid. Print contents of the registers&n;     * after the AD1848 device has been initialized.&n;   */
 (brace
@@ -3456,6 +3479,15 @@ op_star
 id|hw_config
 )paren
 (brace
+id|release_region
+(paren
+id|devc-&gt;base
+op_plus
+l_int|2
+comma
+l_int|6
+)paren
+suffix:semicolon
 macro_line|#if defined(CONFIG_MPU_EMU) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_mpu401
 (paren
@@ -3463,11 +3495,6 @@ id|hw_config
 )paren
 suffix:semicolon
 macro_line|#endif
-id|snd_release_irq
-(paren
-id|hw_config-&gt;irq
-)paren
-suffix:semicolon
 )brace
 r_void
 DECL|function|unload_ss_ms_sound

@@ -463,6 +463,12 @@ id|ins
 )paren
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: Obsolete ioctl(SNDCTL_FM_LOAD_INSTR) used. Fix the program.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5060,6 +5066,10 @@ op_increment
 op_assign
 op_amp
 id|opl3_operations
+suffix:semicolon
+id|sequencer_init
+(paren
+)paren
 suffix:semicolon
 id|devc-&gt;v_alloc
 op_assign

@@ -997,7 +997,7 @@ l_int|0x0B8B
 suffix:semicolon
 id|foo
 op_assign
-id|inb
+id|pas_read
 (paren
 l_int|0x0B8B
 )paren

@@ -38,6 +38,18 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* For timer change operation */
+r_extern
+r_int
+r_int
+id|seq_time
+suffix:semicolon
+DECL|variable|obsolete_api_used
+r_static
+r_int
+id|obsolete_api_used
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * Local counts for number of synth and MIDI devices. These are initialized&n; * by the sequencer_open.&n; */
 DECL|variable|max_mididev
 r_static
@@ -139,13 +151,6 @@ suffix:semicolon
 DECL|variable|prev_event_time
 r_int
 id|prev_event_time
-suffix:semicolon
-DECL|variable|seq_time
-r_int
-r_int
-id|seq_time
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#include &quot;tuning.h&quot;
 DECL|macro|EV_SZ
@@ -1242,6 +1247,20 @@ id|ev_size
 op_assign
 l_int|4
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|event_rec
+(braket
+l_int|0
+)braket
+op_ne
+id|SEQ_MIDIPUTC
+)paren
+id|obsolete_api_used
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -2087,51 +2106,16 @@ op_star
 id|event_rec
 )paren
 (brace
-r_int
-r_char
-id|dev
-op_assign
-id|event_rec
-(braket
-l_int|1
-)braket
-suffix:semicolon
-r_int
-r_char
-id|cmd
-op_assign
-id|event_rec
-(braket
-l_int|2
-)braket
-suffix:semicolon
-r_int
-r_char
-id|chn
-op_assign
-id|event_rec
-(braket
-l_int|3
-)braket
-suffix:semicolon
-r_int
-r_char
-id|note
-op_assign
-id|event_rec
-(braket
-l_int|4
-)braket
-suffix:semicolon
-r_int
-r_char
-id|parm
-op_assign
-id|event_rec
-(braket
-l_int|5
-)braket
-suffix:semicolon
+DECL|macro|dev
+mdefine_line|#define dev event_rec[1]
+DECL|macro|cmd
+mdefine_line|#define cmd event_rec[2]
+DECL|macro|chn
+mdefine_line|#define chn event_rec[3]
+DECL|macro|note
+mdefine_line|#define note event_rec[4]
+DECL|macro|parm
+mdefine_line|#define parm event_rec[5]
 r_int
 id|voice
 op_assign
@@ -2454,6 +2438,16 @@ r_default
 suffix:colon
 suffix:semicolon
 )brace
+DECL|macro|dev
+macro_line|#undef dev
+DECL|macro|cmd
+macro_line|#undef cmd
+DECL|macro|chn
+macro_line|#undef chn
+DECL|macro|note
+macro_line|#undef note
+DECL|macro|parm
+macro_line|#undef parm
 )brace
 r_static
 r_void
@@ -4633,6 +4627,10 @@ id|sequencer_busy
 op_assign
 l_int|1
 suffix:semicolon
+id|obsolete_api_used
+op_assign
+l_int|0
+suffix:semicolon
 id|restore_flags
 (paren
 id|flags
@@ -5536,6 +5534,16 @@ id|SEQ_2
 id|tmr-&gt;close
 (paren
 id|tmr_no
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|obsolete_api_used
+)paren
+id|printk
+(paren
+l_string|&quot;/dev/music: Obsolete (4 byte) API was used by this program&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sequencer_busy
@@ -6643,6 +6651,12 @@ suffix:semicolon
 r_case
 id|SNDCTL_SEQ_RESETSAMPLES
 suffix:colon
+r_case
+id|SNDCTL_SYNTH_REMOVESAMPLE
+suffix:colon
+r_case
+id|SNDCTL_SYNTH_CONTROL
+suffix:colon
 (brace
 r_int
 id|err
@@ -7682,6 +7696,7 @@ id|octave
 comma
 id|note_freq
 suffix:semicolon
+r_static
 r_int
 id|notes
 (braket
@@ -7922,6 +7937,17 @@ id|bend
 op_div
 l_int|100
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|semitones
+OG
+l_int|99
+)paren
+id|semitones
+op_assign
+l_int|99
+suffix:semicolon
 id|cents
 op_assign
 id|bend
@@ -7990,6 +8016,12 @@ id|sequencer_ok
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_MIDI
+id|MIDIbuf_init
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|queue
 op_assign
 (paren
@@ -8091,7 +8123,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|queue
+id|iqueue
 op_eq
 l_int|NULL
 )paren

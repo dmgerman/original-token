@@ -4,6 +4,12 @@ macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|_DEV_TABLE_C_
 mdefine_line|#define _DEV_TABLE_C_
 macro_line|#include &quot;sound_config.h&quot;
+DECL|variable|sb_be_quiet
+r_int
+id|sb_be_quiet
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|sound_started
 r_int
 id|sound_started
@@ -99,39 +105,30 @@ id|num_audiodevs
 )paren
 multiline_comment|/* Audio devices present */
 (brace
-id|DMAbuf_init
-(paren
-)paren
+r_int
+id|dev
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+l_int|0
+suffix:semicolon
+id|dev
+OL
+id|num_audiodevs
+suffix:semicolon
+id|dev
+op_increment
+)paren
+(brace
+)brace
 id|audio_init_devices
 (paren
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
-r_if
-c_cond
-(paren
-id|num_midis
-)paren
-id|MIDIbuf_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SEQUENCER
-r_if
-c_cond
-(paren
-id|num_midis
-op_plus
-id|num_synths
-)paren
-id|sequencer_init
-(paren
-)paren
-suffix:semicolon
 macro_line|#endif
 r_return
 suffix:semicolon
@@ -2154,10 +2151,6 @@ op_assign
 id|devc
 suffix:semicolon
 multiline_comment|/*&n; *    Hardcoded defaults&n; */
-id|op-&gt;buffsize
-op_assign
-id|DSP_BUFFSIZE
-suffix:semicolon
 id|audio_devs
 (braket
 id|num_audiodevs
@@ -2172,18 +2165,11 @@ op_increment
 suffix:semicolon
 id|DMAbuf_init
 (paren
-)paren
-suffix:semicolon
-id|op-&gt;dmap_out-&gt;dma
-op_assign
+id|num
+comma
 id|dma1
-suffix:semicolon
-id|op-&gt;dmap_in-&gt;dma
-op_assign
+comma
 id|dma2
-suffix:semicolon
-id|DMAbuf_init
-(paren
 )paren
 suffix:semicolon
 id|audio_init_devices

@@ -5029,6 +5029,13 @@ id|flags
 )paren
 (brace
 multiline_comment|/* Someone may have stolen our objs.  Doesn&squot;t matter, we&squot;ll&n;&t;&t;&t; * just come back here again.&n;&t;&t;&t; */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|cachep-&gt;c_spinlock
+)paren
+suffix:semicolon
 r_goto
 id|try_again
 suffix:semicolon

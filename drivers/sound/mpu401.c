@@ -4148,6 +4148,10 @@ id|mpu401_midi_operations
 id|devc-&gt;devno
 )braket
 suffix:semicolon
+id|sequencer_init
+(paren
+)paren
+suffix:semicolon
 )brace
 r_static
 r_int

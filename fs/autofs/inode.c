@@ -756,6 +756,10 @@ id|s-&gt;u.generic_sbp
 op_assign
 id|sbi
 suffix:semicolon
+id|sbi-&gt;magic
+op_assign
+id|AUTOFS_SBI_MAGIC
+suffix:semicolon
 id|sbi-&gt;catatonic
 op_assign
 l_int|0

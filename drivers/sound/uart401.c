@@ -1295,6 +1295,10 @@ suffix:semicolon
 id|num_midis
 op_increment
 suffix:semicolon
+id|sequencer_init
+(paren
+)paren
+suffix:semicolon
 id|devc-&gt;opened
 op_assign
 l_int|0
