@@ -233,6 +233,10 @@ DECL|macro|PARAM
 mdefine_line|#define PARAM&t;empty_zero_page
 DECL|macro|EXT_MEM_K
 mdefine_line|#define EXT_MEM_K (*(unsigned short *) (PARAM+2))
+macro_line|#ifndef STANDARD_MEMORY_BIOS_CALL
+DECL|macro|ALT_MEM_K
+mdefine_line|#define ALT_MEM_K (*(unsigned long *) (PARAM+0x1e0))
+macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 DECL|macro|APM_BIOS_INFO
 mdefine_line|#define APM_BIOS_INFO (*(struct apm_bios_info *) (PARAM+64))
@@ -319,6 +323,10 @@ r_int
 id|memory_start
 comma
 id|memory_end
+suffix:semicolon
+r_int
+r_int
+id|memory_alt_end
 suffix:semicolon
 r_char
 id|c
@@ -427,7 +435,6 @@ id|aux_device_present
 op_assign
 id|AUX_DEVICE_INFO
 suffix:semicolon
-macro_line|#ifdef STANDARD_MEMORY_BIOS_CALL
 id|memory_end
 op_assign
 (paren
@@ -442,8 +449,8 @@ op_lshift
 l_int|10
 )paren
 suffix:semicolon
-macro_line|#else
-id|memory_end
+macro_line|#ifndef STANDARD_MEMORY_BIOS_CALL
+id|memory_alt_end
 op_assign
 (paren
 l_int|1
@@ -452,14 +459,37 @@ l_int|20
 )paren
 op_plus
 (paren
-id|EXT_MEM_K
-op_star
-l_int|64L
-op_star
-l_int|1024L
+id|ALT_MEM_K
+op_lshift
+l_int|10
 )paren
 suffix:semicolon
-multiline_comment|/* 64kb chunks */
+r_if
+c_cond
+(paren
+id|memory_alt_end
+OG
+id|memory_end
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Memory: sized by int13 0e801h&bslash;n&quot;
+)paren
+suffix:semicolon
+id|memory_end
+op_assign
+id|memory_alt_end
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;Memory: sized by int13 088h&bslash;n&quot;
+)paren
+suffix:semicolon
 macro_line|#endif
 id|memory_end
 op_and_assign

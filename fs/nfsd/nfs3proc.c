@@ -148,7 +148,7 @@ id|argp-&gt;fh
 suffix:semicolon
 id|nfserr
 op_assign
-id|fh_lookup
+id|fh_verify
 c_func
 (paren
 id|rqstp
@@ -789,7 +789,7 @@ suffix:semicolon
 multiline_comment|/* Get the directory inode */
 id|nfserr
 op_assign
-id|fh_lookup
+id|fh_verify
 c_func
 (paren
 id|rqstp
@@ -866,8 +866,6 @@ comma
 l_int|0
 comma
 id|newfhp
-comma
-id|argp-&gt;createmode
 )paren
 suffix:semicolon
 id|RETURN

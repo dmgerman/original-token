@@ -8,38 +8,10 @@ macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
 DECL|macro|NFSDDBG_FACILITY
 mdefine_line|#define NFSDDBG_FACILITY&t;&t;NFSDDBG_FH
-multiline_comment|/*&n; * Get the inode version number&n; */
-r_static
-r_inline
-r_int
-DECL|function|nfsd_iversion
-id|nfsd_iversion
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_sb-&gt;s_magic
-op_eq
-id|EXT2_SUPER_MAGIC
-)paren
-r_return
-id|inode-&gt;u.ext2_i.i_version
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Get the inode given a file handle.&n; */
+multiline_comment|/*&n; * Perform sanity checks on the dentry in a client&squot;s file handle.&n; */
 id|u32
-DECL|function|fh_lookup
-id|fh_lookup
+DECL|function|fh_verify
+id|fh_verify
 c_func
 (paren
 r_struct
@@ -65,6 +37,11 @@ op_star
 id|exp
 suffix:semicolon
 r_struct
+id|dentry
+op_star
+id|dentry
+suffix:semicolon
+r_struct
 id|inode
 op_star
 id|inode
@@ -77,67 +54,29 @@ op_assign
 op_amp
 id|fhp-&gt;fh_handle
 suffix:semicolon
-multiline_comment|/* Already checked */
 r_if
 c_cond
 (paren
-id|fhp-&gt;fh_inode
+id|fhp-&gt;fh_dverified
 )paren
+(brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: fh_lookup(exp %x/%ld fh %x/%ld)&bslash;n&quot;
+l_string|&quot;nfsd: fh_lookup(exp %x/%d fh %p)&bslash;n&quot;
 comma
 id|fh-&gt;fh_xdev
 comma
 id|fh-&gt;fh_xino
 comma
-id|fh-&gt;fh_dev
-comma
-id|fh-&gt;fh_ino
+id|fh-&gt;fh_dentry
 )paren
 suffix:semicolon
-multiline_comment|/* Make sure that clients don&squot;t cheat */
-r_if
-c_cond
-(paren
-id|fh-&gt;fh_dev
-op_ne
-id|fh-&gt;fh_xdev
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;nfsd: fh with bad dev fields &quot;
-l_string|&quot;(%x != %x) from %08lx:%d&bslash;n&quot;
-comma
-id|fh-&gt;fh_dev
-comma
-id|fh-&gt;fh_xdev
-comma
-id|ntohl
-c_func
-(paren
-id|rqstp-&gt;rq_addr.sin_addr.s_addr
-)paren
-comma
-id|ntohs
-c_func
-(paren
-id|rqstp-&gt;rq_addr.sin_port
-)paren
-)paren
-suffix:semicolon
-r_return
-id|nfserr_perm
-suffix:semicolon
-)brace
-multiline_comment|/* Look up the export entry */
+multiline_comment|/* Look up the export entry. */
 id|exp
 op_assign
 id|exp_get
@@ -200,7 +139,7 @@ r_return
 id|nfserr_perm
 suffix:semicolon
 )brace
-multiline_comment|/* Set user creds if we haven&squot;t done so already */
+multiline_comment|/* Set user creds if we haven&squot;t done so already. */
 id|nfsd_setuser
 c_func
 (paren
@@ -209,68 +148,52 @@ comma
 id|exp
 )paren
 suffix:semicolon
-multiline_comment|/* Get the inode */
+id|dentry
+op_assign
+id|fh-&gt;fh_dentry
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
+id|d_validate
+c_func
+(paren
+id|dentry
+comma
+id|fh-&gt;fh_dparent
+comma
+id|fh-&gt;fh_dhash
+comma
+id|fh-&gt;fh_dlen
+)paren
+op_logical_or
+op_logical_neg
 (paren
 id|inode
 op_assign
-id|nfsd_iget
-c_func
-(paren
-id|fh-&gt;fh_dev
-comma
-id|fh-&gt;fh_ino
-)paren
+id|dentry-&gt;d_inode
 )paren
 op_logical_or
 op_logical_neg
 id|inode-&gt;i_nlink
-op_logical_or
-id|fh-&gt;fh_version
-op_ne
-id|nfsd_iversion
-c_func
-(paren
-id|inode
-)paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|inode
-)paren
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
+multiline_comment|/* Currently we cannot tell the difference between&n;&t;&t; * a bogus pointer and a true unlink between fh&n;&t;&t; * uses.  But who cares about accurate error reporting&n;&t;&t; * to buggy/malicious clients... -DaveM&n;&t;&t; */
 multiline_comment|/* nfsdstats.fhstale++; */
 r_return
 id|nfserr_stale
 suffix:semicolon
-multiline_comment|/* unlinked in the meanwhile */
 )brace
-multiline_comment|/* This is basically what wait_on_inode does */
-r_while
-c_loop
-(paren
-id|inode-&gt;i_lock
-)paren
-id|sleep_on
+id|dget
 c_func
 (paren
-op_amp
-id|inode-&gt;i_wait
+id|dentry
 )paren
 suffix:semicolon
-id|fhp-&gt;fh_inode
+id|fhp-&gt;fh_dverified
 op_assign
-id|inode
+l_int|1
 suffix:semicolon
 id|fhp-&gt;fh_export
 op_assign
@@ -333,14 +256,14 @@ id|nfserr_notdir
 suffix:colon
 id|nfserr_isdir
 suffix:semicolon
-multiline_comment|/* Finally, check access permissions */
+multiline_comment|/* Finally, check access permissions. */
 r_return
 id|nfsd_permission
 c_func
 (paren
 id|fhp-&gt;fh_export
 comma
-id|inode
+id|dentry
 comma
 id|access
 )paren
@@ -363,23 +286,21 @@ op_star
 id|exp
 comma
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 )paren
 (brace
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: fh_compose(exp %x/%ld fh %x/%ld)&bslash;n&quot;
+l_string|&quot;nfsd: fh_compose(exp %x/%d dentry %p)&bslash;n&quot;
 comma
 id|exp-&gt;ex_dev
 comma
 id|exp-&gt;ex_ino
 comma
-id|inode-&gt;i_dev
-comma
-id|inode-&gt;i_ino
+id|dentry
 )paren
 suffix:semicolon
 id|fh_init
@@ -389,21 +310,21 @@ id|fhp
 )paren
 suffix:semicolon
 multiline_comment|/* initialize empty fh */
-id|fhp-&gt;fh_inode
+id|fhp-&gt;fh_handle.fh_dentry
 op_assign
-id|inode
+id|dentry
 suffix:semicolon
-id|fhp-&gt;fh_export
+id|fhp-&gt;fh_handle.fh_dparent
 op_assign
-id|exp
+id|dentry-&gt;d_parent
 suffix:semicolon
-id|fhp-&gt;fh_handle.fh_dev
+id|fhp-&gt;fh_handle.fh_dhash
 op_assign
-id|inode-&gt;i_dev
+id|dentry-&gt;d_name.hash
 suffix:semicolon
-id|fhp-&gt;fh_handle.fh_ino
+id|fhp-&gt;fh_handle.fh_dlen
 op_assign
-id|inode-&gt;i_ino
+id|dentry-&gt;d_name.len
 suffix:semicolon
 id|fhp-&gt;fh_handle.fh_xdev
 op_assign
@@ -413,13 +334,14 @@ id|fhp-&gt;fh_handle.fh_xino
 op_assign
 id|exp-&gt;ex_ino
 suffix:semicolon
-id|fhp-&gt;fh_handle.fh_version
+id|fhp-&gt;fh_export
 op_assign
-id|nfsd_iversion
-c_func
-(paren
-id|inode
-)paren
+id|exp
+suffix:semicolon
+multiline_comment|/* We stuck it there, we know it&squot;s good. */
+id|fhp-&gt;fh_dverified
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 eof

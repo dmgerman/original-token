@@ -426,14 +426,9 @@ id|bh
 )paren
 (brace
 r_int
-r_int
 id|ino
 op_assign
-id|le32_to_cpu
-c_func
-(paren
 id|de-&gt;inode
-)paren
 suffix:semicolon
 id|brelse
 (paren
@@ -2923,6 +2918,9 @@ c_func
 (paren
 id|inode
 )paren
+suffix:semicolon
+id|inode-&gt;i_count
+op_increment
 suffix:semicolon
 id|d_instantiate
 c_func

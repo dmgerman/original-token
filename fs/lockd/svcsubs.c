@@ -15,7 +15,7 @@ multiline_comment|/*&n; * Global file hash table&n; */
 DECL|macro|FILE_NRHASH
 mdefine_line|#define FILE_NRHASH&t;&t;32
 DECL|macro|FILE_HASH
-mdefine_line|#define FILE_HASH(dev, ino)&t;(((dev) + (ino)) &amp; FILE_NRHASH)
+mdefine_line|#define FILE_HASH(dhash)&t;((dhash) &amp; FILE_NRHASH)
 DECL|variable|nlm_files
 r_static
 r_struct
@@ -81,9 +81,7 @@ op_assign
 id|FILE_HASH
 c_func
 (paren
-id|fh-&gt;fh_dev
-comma
-id|fh-&gt;fh_ino
+id|fh-&gt;fh_dhash
 )paren
 suffix:semicolon
 id|u32
@@ -92,11 +90,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlm_file_lookup(%04x/%ld)&bslash;n&quot;
+l_string|&quot;lockd: nlm_file_lookup(%p)&bslash;n&quot;
 comma
-id|fh-&gt;fh_dev
-comma
-id|fh-&gt;fh_ino
+id|fh-&gt;fh_dentry
 )paren
 suffix:semicolon
 multiline_comment|/* Lock file table */
@@ -127,9 +123,9 @@ id|file-&gt;f_next
 r_if
 c_cond
 (paren
-id|file-&gt;f_handle.fh_ino
+id|file-&gt;f_handle.fh_dentry
 op_eq
-id|fh-&gt;fh_ino
+id|fh-&gt;fh_dentry
 op_logical_and
 op_logical_neg
 id|memcmp
@@ -154,11 +150,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: creating file for %04x/%ld&bslash;n&quot;
+l_string|&quot;lockd: creating file for %p&bslash;n&quot;
 comma
-id|fh-&gt;fh_dev
-comma
-id|fh-&gt;fh_ino
+id|fh-&gt;fh_dentry
 )paren
 suffix:semicolon
 r_if
@@ -334,15 +328,11 @@ id|file
 )paren
 (brace
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 op_assign
-id|nlmsvc_file_inode
-c_func
-(paren
-id|file
-)paren
+id|file-&gt;f_file.f_dentry
 suffix:semicolon
 r_struct
 id|nlm_file
@@ -356,11 +346,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: closing file %04x/%ld&bslash;n&quot;
+l_string|&quot;lockd: closing file %p&bslash;n&quot;
 comma
-id|inode-&gt;i_dev
-comma
-id|inode-&gt;i_ino
+id|dentry
 )paren
 suffix:semicolon
 id|fp
@@ -370,9 +358,7 @@ op_plus
 id|FILE_HASH
 c_func
 (paren
-id|inode-&gt;i_dev
-comma
-id|inode-&gt;i_ino
+id|dentry-&gt;d_name.hash
 )paren
 suffix:semicolon
 r_while

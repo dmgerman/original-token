@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/lp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|DEBUG_PROBE
@@ -33,7 +34,7 @@ id|i
 suffix:semicolon
 id|i
 op_assign
-id|parport_r_status
+id|parport_read_status
 c_func
 (paren
 id|port
@@ -79,13 +80,13 @@ op_star
 id|port
 )paren
 (brace
-id|parport_w_ctrl
+id|parport_write_control
 c_func
 (paren
 id|port
 comma
 (paren
-id|parport_r_ctrl
+id|parport_read_control
 c_func
 (paren
 id|port
@@ -115,12 +116,12 @@ l_int|0
 multiline_comment|/* timeout, SelectIN high, Autofeed low */
 r_return
 suffix:semicolon
-id|parport_w_ctrl
+id|parport_write_control
 c_func
 (paren
 id|port
 comma
-id|parport_r_ctrl
+id|parport_read_control
 c_func
 (paren
 id|port
@@ -141,13 +142,13 @@ l_int|0x80
 )paren
 suffix:semicolon
 multiline_comment|/* no timeout possible, Autofeed low, SelectIN high */
-id|parport_w_ctrl
+id|parport_write_control
 c_func
 (paren
 id|port
 comma
 (paren
-id|parport_r_ctrl
+id|parport_read_control
 c_func
 (paren
 id|port
@@ -221,12 +222,12 @@ id|i
 op_increment
 )paren
 (brace
-id|parport_w_ctrl
+id|parport_write_control
 c_func
 (paren
 id|port
 comma
-id|parport_r_ctrl
+id|parport_read_control
 c_func
 (paren
 id|port
@@ -258,12 +259,12 @@ comma
 id|port-&gt;name
 )paren
 suffix:semicolon
-id|parport_w_ctrl
+id|parport_write_control
 c_func
 (paren
 id|port
 comma
-id|parport_r_ctrl
+id|parport_read_control
 c_func
 (paren
 id|port
@@ -284,12 +285,12 @@ c_func
 id|port
 )paren
 suffix:semicolon
-id|parport_w_ctrl
+id|parport_write_control
 c_func
 (paren
 id|port
 comma
-id|parport_r_ctrl
+id|parport_read_control
 c_func
 (paren
 id|port
@@ -377,7 +378,7 @@ r_if
 c_cond
 (paren
 (paren
-id|parport_r_status
+id|parport_read_status
 c_func
 (paren
 id|port
@@ -428,14 +429,14 @@ id|ref
 )paren
 (brace
 r_struct
-id|ppd
+id|pardevice
 op_star
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|ppd
+id|pardevice
 op_star
 op_star
 )paren
@@ -487,7 +488,7 @@ id|len
 )paren
 (brace
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|dev
 op_assign
@@ -1464,4 +1465,54 @@ id|buffer
 )paren
 suffix:semicolon
 )brace
+macro_line|#if MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|parport
+op_star
+id|p
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|p
+op_assign
+id|parport_enumerate
+c_func
+(paren
+)paren
+suffix:semicolon
+id|p
+suffix:semicolon
+id|p
+op_assign
+id|p-&gt;next
+)paren
+id|parport_probe_one
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif
 eof

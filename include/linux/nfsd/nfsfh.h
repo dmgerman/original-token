@@ -7,30 +7,40 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/nfsd/const.h&gt;
 macro_line|#include &lt;linux/nfsd/debug.h&gt;
-multiline_comment|/*&n; * This is our NFSv2 file handle.&n; *&n; * The xdev and xino fields are currently used to transport the dev/ino&n; * of the exported inode. The xdev field is redundant, though, because&n; * we do not allow mount point crossing.&n; */
+multiline_comment|/*&n; * This is the new &quot;dentry style&quot; Linux NFSv2 file handle.&n; *&n; * The xino and xdev fields are currently used to transport the&n; * ino/dev of the exported inode.&n; */
 DECL|struct|nfs_fhbase
 r_struct
 id|nfs_fhbase
 (brace
-DECL|member|fb_dev
-id|dev_t
-id|fb_dev
+DECL|member|fb_dentry
+r_struct
+id|dentry
+op_star
+id|fb_dentry
 suffix:semicolon
-DECL|member|fb_xdev
-id|dev_t
-id|fb_xdev
+DECL|member|fb_dparent
+r_struct
+id|dentry
+op_star
+id|fb_dparent
 suffix:semicolon
-DECL|member|fb_ino
-id|ino_t
-id|fb_ino
+DECL|member|fb_dhash
+r_int
+r_int
+id|fb_dhash
+suffix:semicolon
+DECL|member|fb_dlen
+r_int
+r_int
+id|fb_dlen
 suffix:semicolon
 DECL|member|fb_xino
 id|ino_t
 id|fb_xino
 suffix:semicolon
-DECL|member|fb_version
-id|__u32
-id|fb_version
+DECL|member|fb_xdev
+id|dev_t
+id|fb_xdev
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -54,16 +64,18 @@ id|NFS_FH_PADDING
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|fh_dev
-mdefine_line|#define fh_dev&t;&t;&t;fh_base.fb_dev
-DECL|macro|fh_xdev
-mdefine_line|#define fh_xdev&t;&t;&t;fh_base.fb_xdev
-DECL|macro|fh_ino
-mdefine_line|#define fh_ino&t;&t;&t;fh_base.fb_ino
+DECL|macro|fh_dentry
+mdefine_line|#define fh_dentry&t;&t;fh_base.fb_dentry
+DECL|macro|fh_dparent
+mdefine_line|#define fh_dparent&t;&t;fh_base.fb_dparent
+DECL|macro|fh_dhash
+mdefine_line|#define fh_dhash&t;&t;fh_base.fb_dhash
+DECL|macro|fh_dlen
+mdefine_line|#define fh_dlen&t;&t;&t;fh_base.fb_dlen
 DECL|macro|fh_xino
 mdefine_line|#define fh_xino&t;&t;&t;fh_base.fb_xino
-DECL|macro|fh_version
-mdefine_line|#define fh_version&t;&t;fh_base.fb_version
+DECL|macro|fh_xdev
+mdefine_line|#define fh_xdev&t;&t;&t;fh_base.fb_xdev
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is the internal representation of an NFS handle used in knfsd.&n; * pre_mtime/post_version will be used to support wcc_attr&squot;s in NFSv3.&n; */
 DECL|struct|svc_fh
@@ -84,13 +96,6 @@ op_star
 id|fh_export
 suffix:semicolon
 multiline_comment|/* export pointer */
-DECL|member|fh_dentry
-r_struct
-id|dentry
-op_star
-id|fh_dentry
-suffix:semicolon
-multiline_comment|/* file */
 DECL|member|fh_pre_size
 r_int
 id|fh_pre_size
@@ -118,18 +123,22 @@ r_char
 id|fh_locked
 suffix:semicolon
 multiline_comment|/* inode locked by us */
+DECL|member|fh_dverified
+r_int
+r_char
+id|fh_dverified
+suffix:semicolon
+multiline_comment|/* dentry has been checked */
 DECL|typedef|svc_fh
 )brace
 id|svc_fh
 suffix:semicolon
-multiline_comment|/*&n; * Shorthands for dprintk()&squot;s&n; */
-DECL|macro|SVCFH_INO
-mdefine_line|#define SVCFH_INO(f)&t;&t;((f)-&gt;fh_handle.fh_ino)
-DECL|macro|SVCFH_DEV
-mdefine_line|#define SVCFH_DEV(f)&t;&t;((f)-&gt;fh_handle.fh_dev)
+multiline_comment|/*&n; * Shorthand for dprintk()&squot;s&n; */
+DECL|macro|SVCFH_DENTRY
+mdefine_line|#define SVCFH_DENTRY(f)&t;&t;((f)-&gt;fh_handle.fh_dentry)
 multiline_comment|/*&n; * Function prototypes&n; */
 id|u32
-id|fh_lookup
+id|fh_verify
 c_func
 (paren
 r_struct
@@ -158,7 +167,7 @@ id|svc_export
 op_star
 comma
 r_struct
-id|inode
+id|dentry
 op_star
 )paren
 suffix:semicolon
@@ -244,7 +253,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|fhp-&gt;fh_dentry-&gt;d_inode
+id|fhp-&gt;fh_handle.fh_dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/*&n;&t;dfprintk(FILEOP, &quot;nfsd: fh_lock(%x/%ld) locked = %d&bslash;n&quot;,&n;&t;&t;&t;SVCFH_DEV(fhp), SVCFH_INO(fhp), fhp-&gt;fh_locked);&n;&t; */
 r_if
@@ -296,7 +305,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|fhp-&gt;fh_dentry-&gt;d_inode
+id|fhp-&gt;fh_handle.fh_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -345,7 +354,7 @@ id|fhp
 r_if
 c_cond
 (paren
-id|fhp-&gt;fh_dentry
+id|fhp-&gt;fh_dverified
 )paren
 (brace
 id|fh_unlock
@@ -357,7 +366,7 @@ suffix:semicolon
 id|dput
 c_func
 (paren
-id|fhp-&gt;fh_dentry
+id|fhp-&gt;fh_handle.fh_dentry
 )paren
 suffix:semicolon
 )brace
@@ -394,13 +403,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-id|dentry
-op_assign
-id|fhp-&gt;fh_dentry
-)paren
+id|fhp-&gt;fh_dverified
 )paren
 r_return
+suffix:semicolon
+id|dentry
+op_assign
+id|fhp-&gt;fh_handle.fh_dentry
 suffix:semicolon
 r_if
 c_cond

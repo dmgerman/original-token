@@ -1078,7 +1078,6 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This should check &quot;link_count&quot;, but doesn&squot;t do that yet..&n; */
 DECL|function|do_follow_link
 r_static
 r_struct
@@ -1115,10 +1114,21 @@ op_logical_and
 id|inode-&gt;i_op-&gt;follow_link
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|current-&gt;link_count
+OL
+l_int|5
+)paren
+(brace
 r_struct
 id|dentry
 op_star
 id|result
+suffix:semicolon
+id|current-&gt;link_count
+op_increment
 suffix:semicolon
 multiline_comment|/* This eats the base */
 id|result
@@ -1133,13 +1143,33 @@ comma
 id|base
 )paren
 suffix:semicolon
-id|base
-op_assign
+id|current-&gt;link_count
+op_decrement
+suffix:semicolon
+id|dput
+c_func
+(paren
 id|dentry
+)paren
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
+)brace
+id|dput
+c_func
+(paren
+id|dentry
+)paren
 suffix:semicolon
 id|dentry
 op_assign
-id|result
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ELOOP
+)paren
 suffix:semicolon
 )brace
 id|dput
@@ -1152,6 +1182,9 @@ r_return
 id|dentry
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Allow a filesystem to translate the character set of&n; * a file name. This allows for filesystems that are not&n; * case-sensitive, for example.&n; *&n; * This is only a dummy define right now, but eventually&n; * it might become something like &quot;(parent)-&gt;d_charmap[c]&quot;&n; */
+DECL|macro|name_translate_char
+mdefine_line|#define name_translate_char(parent, c) (c)
 multiline_comment|/*&n; * Name resolution.&n; *&n; * This is the basic name resolution function, turning a pathname&n; * into the final dentry.&n; */
 DECL|function|lookup_dentry
 r_struct
@@ -1318,6 +1351,16 @@ op_increment
 suffix:semicolon
 id|name
 op_increment
+suffix:semicolon
+id|c
+op_assign
+id|name_translate_char
+c_func
+(paren
+id|base
+comma
+id|c
+)paren
 suffix:semicolon
 id|hash
 op_assign

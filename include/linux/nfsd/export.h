@@ -125,11 +125,11 @@ DECL|member|ex_flags
 r_int
 id|ex_flags
 suffix:semicolon
-DECL|member|ex_inode
+DECL|member|ex_dentry
 r_struct
-id|inode
+id|dentry
 op_star
-id|ex_inode
+id|ex_dentry
 suffix:semicolon
 DECL|member|ex_dev
 id|dev_t

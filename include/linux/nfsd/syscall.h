@@ -274,7 +274,7 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Kernel syscall implementation.&n; */
-macro_line|#ifdef CONFIG_NFSD
+macro_line|#if defined(CONFIG_NFSD) || defined(CONFIG_NFSD_MODULE)
 r_extern
 id|asmlinkage
 r_int
@@ -294,7 +294,7 @@ op_star
 suffix:semicolon
 macro_line|#else
 DECL|macro|sys_nfsservctl
-macro_line|# define sys_nfsservctl&t;sys_ni_syscall
+mdefine_line|#define sys_nfsservctl&t;&t;sys_ni_syscall
 macro_line|#endif
 r_extern
 r_int

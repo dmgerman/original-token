@@ -1649,15 +1649,13 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The background pageout daemon.&n; * Started as a kernel thread from the init process.&n; */
-DECL|function|kswapd
-r_int
-id|kswapd
+multiline_comment|/*&n; * Before we start the kernel thread, print out the &n; * kswapd initialization message (otherwise the init message &n; * may be printed in the middle of another driver&squot;s init &n; * message).  It looks very bad when that happens.&n; */
+DECL|function|kswapd_setup
+r_void
+id|kswapd_setup
 c_func
 (paren
 r_void
-op_star
-id|unused
 )paren
 (brace
 r_int
@@ -1674,48 +1672,6 @@ id|s
 comma
 op_star
 id|e
-suffix:semicolon
-id|current-&gt;session
-op_assign
-l_int|1
-suffix:semicolon
-id|current-&gt;pgrp
-op_assign
-l_int|1
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|current-&gt;comm
-comma
-l_string|&quot;kswapd&quot;
-)paren
-suffix:semicolon
-id|current-&gt;blocked
-op_assign
-op_complement
-l_int|0UL
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;As a kernel thread we want to tamper with system buffers&n;&t; *&t;and other internals and thus be subject to the SMP locking&n;&t; *&t;rules. (On a uniprocessor box this does nothing).&n;&t; */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Give kswapd a realtime priority. */
-id|current-&gt;policy
-op_assign
-id|SCHED_FIFO
-suffix:semicolon
-id|current-&gt;priority
-op_assign
-l_int|32
-suffix:semicolon
-multiline_comment|/* Fixme --- we need to standardise our&n;&t;&t;&t;&t;    namings for POSIX.4 realtime scheduling&n;&t;&t;&t;&t;    priorities.  */
-id|init_swap_timer
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1765,11 +1721,65 @@ l_int|1
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;Started kswapd v%.*s&bslash;n&quot;
+l_string|&quot;Starting kswapd v%.*s&bslash;n&quot;
 comma
 id|i
 comma
 id|s
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * The background pageout daemon.&n; * Started as a kernel thread from the init process.&n; */
+DECL|function|kswapd
+r_int
+id|kswapd
+c_func
+(paren
+r_void
+op_star
+id|unused
+)paren
+(brace
+id|current-&gt;session
+op_assign
+l_int|1
+suffix:semicolon
+id|current-&gt;pgrp
+op_assign
+l_int|1
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|current-&gt;comm
+comma
+l_string|&quot;kswapd&quot;
+)paren
+suffix:semicolon
+id|current-&gt;blocked
+op_assign
+op_complement
+l_int|0UL
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;As a kernel thread we want to tamper with system buffers&n;&t; *&t;and other internals and thus be subject to the SMP locking&n;&t; *&t;rules. (On a uniprocessor box this does nothing).&n;&t; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Give kswapd a realtime priority. */
+id|current-&gt;policy
+op_assign
+id|SCHED_FIFO
+suffix:semicolon
+id|current-&gt;priority
+op_assign
+l_int|32
+suffix:semicolon
+multiline_comment|/* Fixme --- we need to standardise our&n;&t;&t;&t;&t;    namings for POSIX.4 realtime scheduling&n;&t;&t;&t;&t;    priorities.  */
+id|init_swap_timer
+c_func
+(paren
 )paren
 suffix:semicolon
 r_while

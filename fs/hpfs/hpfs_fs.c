@@ -46,7 +46,7 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|hpfs_statfs
 c_func
 (paren
@@ -90,13 +90,16 @@ comma
 multiline_comment|/* read_inode */
 l_int|NULL
 comma
-multiline_comment|/* notify_change */
-l_int|NULL
-comma
 multiline_comment|/* write_inode */
 l_int|NULL
 comma
 multiline_comment|/* put_inode */
+l_int|NULL
+comma
+multiline_comment|/* delete_inode */
+l_int|NULL
+comma
+multiline_comment|/* notify_change */
 id|hpfs_put_super
 comma
 multiline_comment|/* put_super */
@@ -230,6 +233,9 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
 id|generic_readpage
 comma
 multiline_comment|/* readpage */
@@ -318,15 +324,8 @@ r_struct
 id|inode
 op_star
 comma
-r_const
-r_char
-op_star
-comma
-r_int
-comma
 r_struct
-id|inode
-op_star
+id|dentry
 op_star
 )paren
 suffix:semicolon
@@ -1502,14 +1501,20 @@ id|bh0
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * all set.  try it out.&n;&t; */
-id|s-&gt;s_mounted
+id|s-&gt;s_root
 op_assign
+id|d_alloc_root
+c_func
+(paren
 id|iget
 c_func
 (paren
 id|s
 comma
 id|s-&gt;s_hpfs_root
+)paren
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|unlock_super
@@ -1522,7 +1527,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|s-&gt;s_mounted
+id|s-&gt;s_root
 )paren
 (brace
 id|printk
@@ -1562,7 +1567,7 @@ op_assign
 id|map_dirent
 c_func
 (paren
-id|s-&gt;s_mounted
+id|s-&gt;s_root-&gt;d_inode
 comma
 id|root_dno
 comma
@@ -1601,7 +1606,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|s-&gt;s_mounted-&gt;i_atime
+id|s-&gt;s_root-&gt;d_inode-&gt;i_atime
 op_assign
 id|local_to_gmt
 c_func
@@ -1609,7 +1614,7 @@ c_func
 id|de-&gt;read_date
 )paren
 suffix:semicolon
-id|s-&gt;s_mounted-&gt;i_mtime
+id|s-&gt;s_root-&gt;d_inode-&gt;i_mtime
 op_assign
 id|local_to_gmt
 c_func
@@ -1617,7 +1622,7 @@ c_func
 id|de-&gt;write_date
 )paren
 suffix:semicolon
-id|s-&gt;s_mounted-&gt;i_ctime
+id|s-&gt;s_root-&gt;d_inode-&gt;i_ctime
 op_assign
 id|local_to_gmt
 c_func
@@ -2536,7 +2541,7 @@ suffix:semicolon
 multiline_comment|/*&n; * statfs.  For free inode counts we report the count of dnodes in the&n; * directory band -- not exactly right but pretty analogous.&n; */
 DECL|function|hpfs_statfs
 r_static
-r_void
+r_int
 id|hpfs_statfs
 c_func
 (paren
@@ -2620,6 +2625,7 @@ id|tmp.f_namelen
 op_assign
 l_int|254
 suffix:semicolon
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -2630,6 +2636,12 @@ id|tmp
 comma
 id|bufsiz
 )paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * remount.  Don&squot;t let read only be turned off.&n; */
@@ -3867,19 +3879,10 @@ id|inode
 op_star
 id|dir
 comma
-r_const
-r_char
-op_star
-id|name
-comma
-r_int
-id|len
-comma
 r_struct
-id|inode
+id|dentry
 op_star
-op_star
-id|result
+id|dentry
 )paren
 (brace
 r_struct
@@ -3899,12 +3902,19 @@ suffix:semicolon
 id|ino_t
 id|ino
 suffix:semicolon
-multiline_comment|/* In case of madness */
+r_const
+r_char
 op_star
-id|result
+id|name
 op_assign
-l_int|0
+id|dentry-&gt;d_name.name
 suffix:semicolon
+r_int
+id|len
+op_assign
+id|dentry-&gt;d_name.len
+suffix:semicolon
+multiline_comment|/* In case of madness */
 r_if
 c_cond
 (paren
@@ -4155,10 +4165,13 @@ id|qbh
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Made it.&n;&t; */
-op_star
-id|result
-op_assign
+id|d_instantiate
+c_func
+(paren
+id|dentry
+comma
 id|inode
+)paren
 suffix:semicolon
 id|iput
 c_func
@@ -5864,7 +5877,7 @@ l_int|0
 op_assign
 id|bh
 op_assign
-id|breada
+id|bread
 c_func
 (paren
 id|dev
@@ -5872,10 +5885,6 @@ comma
 id|secno
 comma
 l_int|512
-comma
-l_int|0
-comma
-id|UINT_MAX
 )paren
 suffix:semicolon
 r_if

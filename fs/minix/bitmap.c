@@ -977,7 +977,7 @@ r_if
 c_cond
 (paren
 id|inode-&gt;i_count
-op_ne
+OG
 l_int|1
 )paren
 (brace
@@ -1319,10 +1319,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|inode-&gt;i_count
-op_assign
-l_int|1
-suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
 l_int|1

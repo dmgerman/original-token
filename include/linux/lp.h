@@ -143,7 +143,7 @@ id|lp_struct
 (brace
 DECL|member|dev
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|dev
 suffix:semicolon

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; */
+multiline_comment|/*&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; * Support for parport by Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* This driver is about due for a rewrite. */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -9,13 +10,12 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/lp.h&gt;
-multiline_comment|/* the BIOS manuals say there can be up to 4 lpt devices&n; * but I have not seen a board where the 4th address is listed&n; * if you have different hardware change the table below&n; * please let me know if you have different equipment&n; * if you have more than 3 printers, remember to increase LP_NO&n; */
+multiline_comment|/* if you have more than 3 printers, remember to increase LP_NO */
 DECL|variable|lp_table
 r_struct
 id|lp_struct
@@ -682,7 +682,7 @@ op_star
 id|dev_id
 suffix:semicolon
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|pd
 op_assign
@@ -2721,16 +2721,22 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_int
+r_int
+id|irq
+suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|irq
+op_assign
 id|LP_IRQ
 c_func
 (paren
 id|minor
 )paren
-OG
-l_int|0
+)paren
 )paren
 (brace
 id|kfree_s
@@ -3358,10 +3364,7 @@ id|parport_ptr
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lp_setup
 r_void
 id|lp_setup
 c_func
@@ -3373,7 +3376,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 multiline_comment|/* Ugh. */
@@ -3621,16 +3623,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lp_init
 r_int
 id|lp_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -3643,34 +3641,6 @@ id|parport
 op_star
 id|pb
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|register_chrdev
-c_func
-(paren
-id|LP_MAJOR
-comma
-l_string|&quot;lp&quot;
-comma
-op_amp
-id|lp_fops
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;lp: unable to get major %d&bslash;n&quot;
-comma
-id|LP_MAJOR
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3704,7 +3674,7 @@ c_cond
 (paren
 id|pb-&gt;modes
 op_amp
-id|PARPORT_MODE_SPP
+id|PARPORT_MODE_PCSPP
 )paren
 (brace
 r_if
@@ -3789,35 +3759,22 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;lp%d: using %s at 0x%x, &quot;
+l_string|&quot;lp%d: using %s (%s).&bslash;n&quot;
 comma
 id|count
 comma
 id|pb-&gt;name
 comma
-id|pb-&gt;base
-)paren
-suffix:semicolon
-r_if
-c_cond
 (paren
 id|pb-&gt;irq
 op_eq
 id|PARPORT_IRQ_NONE
 )paren
-id|printk
-c_func
-(paren
-l_string|&quot;polling.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;irq %d.&bslash;n&quot;
-comma
-id|pb-&gt;irq
+ques
+c_cond
+l_string|&quot;polling&quot;
+suffix:colon
+l_string|&quot;interrupt-driven&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3843,9 +3800,39 @@ c_cond
 (paren
 id|count
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|register_chrdev
+c_func
+(paren
+id|LP_MAJOR
+comma
+l_string|&quot;lp&quot;
+comma
+op_amp
+id|lp_fops
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;lp: unable to get major %d&bslash;n&quot;
+comma
+id|LP_MAJOR
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren

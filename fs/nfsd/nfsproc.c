@@ -127,16 +127,9 @@ id|resp
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: GETATTR  %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: GETATTR  %p&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -157,7 +150,7 @@ suffix:semicolon
 id|RETURN
 c_func
 (paren
-id|fh_lookup
+id|fh_verify
 c_func
 (paren
 id|rqstp
@@ -198,16 +191,9 @@ id|resp
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: SETATTR  %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: SETATTR  %p&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -271,16 +257,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: LOOKUP   %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: LOOKUP   %p %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -357,16 +336,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READLINK %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: READLINK %p&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -464,16 +436,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READ %x/%ld %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: READ %p %d bytes at %d&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -608,16 +573,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: WRITE    %x/%ld %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: WRITE    %p %d bytes at %d&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -731,16 +689,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: CREATE   %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: CREATE   %p %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -768,7 +719,7 @@ suffix:semicolon
 multiline_comment|/* Get the directory inode */
 id|nfserr
 op_assign
-id|fh_lookup
+id|fh_verify
 c_func
 (paren
 id|rqstp
@@ -793,7 +744,7 @@ id|nfserr
 suffix:semicolon
 id|dirp
 op_assign
-id|dirfhp-&gt;fh_inode
+id|dirfhp-&gt;fh_handle.fh_dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/* Check for MAY_WRITE separately. */
 id|nfserr
@@ -803,7 +754,7 @@ c_func
 (paren
 id|dirfhp-&gt;fh_export
 comma
-id|dirp
+id|dirfhp-&gt;fh_handle.fh_dentry
 comma
 id|MAY_WRITE
 )paren
@@ -860,10 +811,39 @@ comma
 id|newfhp
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|newfhp-&gt;fh_dverified
+)paren
 id|inode
 op_assign
-id|newfhp-&gt;fh_inode
+id|newfhp-&gt;fh_handle.fh_dentry-&gt;d_inode
 suffix:semicolon
+multiline_comment|/* Get rid of this soon... */
+r_if
+c_cond
+(paren
+id|exists
+op_logical_and
+op_logical_neg
+id|inode
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;nfsd_proc_create: Wheee... exists but d_inode==NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+id|nfserr
+op_assign
+id|nfserr_rofs
+suffix:semicolon
+r_goto
+id|done
+suffix:semicolon
+)brace
 multiline_comment|/* Unfudge the mode bits */
 r_if
 c_cond
@@ -1212,16 +1192,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: REMOVE   %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: REMOVE   %p %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -1291,16 +1264,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: RENAME   %x/%ld %s -&gt; %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: RENAME   %p %s -&gt; %p %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;ffh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -1309,14 +1275,7 @@ id|argp-&gt;ffh
 comma
 id|argp-&gt;fname
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;tfh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -1396,30 +1355,16 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: LINK     %x/%ld -&gt; %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: LINK     %p -&gt; %p %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
 id|argp-&gt;ffh
 )paren
 comma
-id|SVCFH_INO
-c_func
-(paren
-op_amp
-id|argp-&gt;ffh
-)paren
-comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;tfh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -1499,16 +1444,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: SYMLINK  %x/%ld %s -&gt; %s&bslash;n&quot;
+l_string|&quot;nfsd: SYMLINK  %p %s -&gt; %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;ffh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -1546,6 +1484,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|nfserr
 )paren
 id|nfserr
@@ -1612,16 +1551,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: MKDIR    %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: MKDIR    %p %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -1631,6 +1563,11 @@ comma
 id|argp-&gt;name
 )paren
 suffix:semicolon
+id|resp-&gt;fh.fh_dverified
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* paranoia */
 id|nfserr
 op_assign
 id|nfsd_create
@@ -1698,16 +1635,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: RMDIR    %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: RMDIR    %p %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -1783,16 +1713,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READDIR  %x/%ld %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: READDIR  %p %d bytes at %d&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -1907,16 +1830,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: STATFS   %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: STATFS   %p&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-id|SVCFH_INO
+id|SVCFH_DENTRY
 c_func
 (paren
 op_amp
@@ -1968,7 +1884,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|PROC
-mdefine_line|#define PROC(name, argt, rest, relt, cache)&t;&bslash;&n; { (svc_procfunc) nfsd_proc_##name,&t;&bslash;&n;   (kxdrproc_t) nfssvc_decode_##argt,&t;&bslash;&n;   (kxdrproc_t) nfssvc_encode_##rest,&t;&bslash;&n;   (kxdrproc_t) nfssvc_release_##relt,&t;&bslash;&n;   sizeof(struct nfsd_##argt),&t;&t;&bslash;&n;   sizeof(struct nfsd_##rest),&t;&t;&bslash;&n;   0,&t;&t;&t;&t;&t;&bslash;&n;   cache&t;&t;&t;&t;&bslash;&n; }
+mdefine_line|#define PROC(name, argt, rest, relt, cache)&t;&bslash;&n; { (svc_procfunc) nfsd_proc_##name,&t;&t;&bslash;&n;   (kxdrproc_t) nfssvc_decode_##argt,&t;&t;&bslash;&n;   (kxdrproc_t) nfssvc_encode_##rest,&t;&t;&bslash;&n;   (kxdrproc_t) nfssvc_release_##relt,&t;&t;&bslash;&n;   sizeof(struct nfsd_##argt),&t;&t;&t;&bslash;&n;   sizeof(struct nfsd_##rest),&t;&t;&t;&bslash;&n;   0,&t;&t;&t;&t;&t;&t;&bslash;&n;   cache&t;&t;&t;&t;&t;&bslash;&n; }
 DECL|variable|nfsd_procedures2
 r_struct
 id|svc_procedure

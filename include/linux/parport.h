@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport.h,v 1.2.6.3 1997/04/16 21:21:03 phil Exp $ */
+multiline_comment|/* $Id: parport.h,v 1.2.6.3.2.2 1997/04/18 15:03:53 phil Exp $ */
 macro_line|#ifndef _PARPORT_H_
 DECL|macro|_PARPORT_H_
 mdefine_line|#define _PARPORT_H_
@@ -10,12 +10,522 @@ DECL|macro|PARPORT_MAX
 mdefine_line|#define PARPORT_MAX  8 
 multiline_comment|/* Magic numbers */
 DECL|macro|PARPORT_IRQ_NONE
-mdefine_line|#define PARPORT_IRQ_NONE  -1
+mdefine_line|#define PARPORT_IRQ_NONE  -2
 DECL|macro|PARPORT_DMA_NONE
-mdefine_line|#define PARPORT_DMA_NONE  -1
+mdefine_line|#define PARPORT_DMA_NONE  -2
+DECL|macro|PARPORT_IRQ_AUTO
+mdefine_line|#define PARPORT_IRQ_AUTO  -1
+DECL|macro|PARPORT_DMA_AUTO
+mdefine_line|#define PARPORT_DMA_AUTO  -1
 DECL|macro|PARPORT_DISABLE
 mdefine_line|#define PARPORT_DISABLE   -2
-multiline_comment|/* Type classes for Plug-and-Play probe */
+multiline_comment|/* Define this later. */
+r_struct
+id|parport
+suffix:semicolon
+DECL|struct|pc_parport_state
+r_struct
+id|pc_parport_state
+(brace
+DECL|member|ctr
+r_int
+r_int
+id|ctr
+suffix:semicolon
+DECL|member|ecr
+r_int
+r_int
+id|ecr
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|parport_state
+r_struct
+id|parport_state
+(brace
+r_union
+(brace
+DECL|member|pc
+r_struct
+id|pc_parport_state
+id|pc
+suffix:semicolon
+multiline_comment|/* ARC has no state. */
+DECL|member|misc
+r_void
+op_star
+id|misc
+suffix:semicolon
+DECL|member|u
+)brace
+id|u
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* Generic operations vector through the dispatch table. */
+DECL|macro|parport_write_data
+mdefine_line|#define parport_write_data(p,x)            (p)-&gt;ops-&gt;write_data(p,x)
+DECL|macro|parport_read_data
+mdefine_line|#define parport_read_data(p)               (p)-&gt;ops-&gt;read_data(p)
+DECL|macro|parport_write_control
+mdefine_line|#define parport_write_control(p,x)         (p)-&gt;ops-&gt;write_control(p,x)
+DECL|macro|parport_read_control
+mdefine_line|#define parport_read_control(p)            (p)-&gt;ops-&gt;read_control(p)
+DECL|macro|parport_frob_control
+mdefine_line|#define parport_frob_control(p,m,v)        (p)-&gt;ops-&gt;frob_control(p,m,v)
+DECL|macro|parport_write_econtrol
+mdefine_line|#define parport_write_econtrol(p,x)        (p)-&gt;ops-&gt;write_econtrol(p,x)
+DECL|macro|parport_read_econtrol
+mdefine_line|#define parport_read_econtrol(p)           (p)-&gt;ops-&gt;read_econtrol(p)
+DECL|macro|parport_frob_econtrol
+mdefine_line|#define parport_frob_econtrol(p,m,v)       (p)-&gt;ops-&gt;frob_econtrol(p,m,v)
+DECL|macro|parport_write_status
+mdefine_line|#define parport_write_status(p,v)          (p)-&gt;ops-&gt;write_status(p,v)
+DECL|macro|parport_read_status
+mdefine_line|#define parport_read_status(p)             (p)-&gt;ops-&gt;read_status(p)
+DECL|macro|parport_write_fifo
+mdefine_line|#define parport_write_fifo(p,v)            (p)-&gt;ops-&gt;write_fifo(p,v)
+DECL|macro|parport_read_fifo
+mdefine_line|#define parport_read_fifo(p)               (p)-&gt;ops-&gt;read_fifo(p)
+DECL|macro|parport_change_mode
+mdefine_line|#define parport_change_mode(p,m)           (p)-&gt;ops-&gt;change_mode(p,m)
+DECL|macro|parport_release_resources
+mdefine_line|#define parport_release_resources(p)       (p)-&gt;ops-&gt;release_resources(p)
+DECL|macro|parport_claim_resources
+mdefine_line|#define parport_claim_resources(p)         (p)-&gt;ops-&gt;claim_resources(p)
+DECL|struct|parport_operations
+r_struct
+id|parport_operations
+(brace
+DECL|member|write_data
+r_void
+(paren
+op_star
+id|write_data
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|read_data
+r_int
+r_int
+(paren
+op_star
+id|read_data
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|write_control
+r_void
+(paren
+op_star
+id|write_control
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|read_control
+r_int
+r_int
+(paren
+op_star
+id|read_control
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|frob_control
+r_int
+r_int
+(paren
+op_star
+id|frob_control
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+r_int
+id|mask
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
+DECL|member|write_econtrol
+r_void
+(paren
+op_star
+id|write_econtrol
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|read_econtrol
+r_int
+r_int
+(paren
+op_star
+id|read_econtrol
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|frob_econtrol
+r_int
+r_int
+(paren
+op_star
+id|frob_econtrol
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+r_int
+id|mask
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
+DECL|member|write_status
+r_void
+(paren
+op_star
+id|write_status
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|read_status
+r_int
+r_int
+(paren
+op_star
+id|read_status
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|write_fifo
+r_void
+(paren
+op_star
+id|write_fifo
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|read_fifo
+r_int
+r_int
+(paren
+op_star
+id|read_fifo
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|change_mode
+r_void
+(paren
+op_star
+id|change_mode
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|release_resources
+r_void
+(paren
+op_star
+id|release_resources
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|claim_resources
+r_int
+(paren
+op_star
+id|claim_resources
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|epp_write_block
+r_int
+r_int
+(paren
+op_star
+id|epp_write_block
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|epp_read_block
+r_int
+r_int
+(paren
+op_star
+id|epp_read_block
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|ecp_write_block
+r_int
+r_int
+(paren
+op_star
+id|ecp_write_block
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+r_int
+comma
+r_void
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|member|ecp_read_block
+r_int
+r_int
+(paren
+op_star
+id|ecp_read_block
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+r_int
+comma
+r_void
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|member|save_state
+r_void
+(paren
+op_star
+id|save_state
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_struct
+id|parport_state
+op_star
+)paren
+suffix:semicolon
+DECL|member|restore_state
+r_void
+(paren
+op_star
+id|restore_state
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_struct
+id|parport_state
+op_star
+)paren
+suffix:semicolon
+DECL|member|enable_irq
+r_void
+(paren
+op_star
+id|enable_irq
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|disable_irq
+r_void
+(paren
+op_star
+id|disable_irq
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|examine_irq
+r_int
+(paren
+op_star
+id|examine_irq
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|PARPORT_CONTROL_STROBE
+mdefine_line|#define PARPORT_CONTROL_STROBE    0x1
+DECL|macro|PARPORT_CONTROL_AUTOFD
+mdefine_line|#define PARPORT_CONTROL_AUTOFD    0x2
+DECL|macro|PARPORT_CONTROL_INIT
+mdefine_line|#define PARPORT_CONTROL_INIT      0x4
+DECL|macro|PARPORT_CONTROL_SELECT
+mdefine_line|#define PARPORT_CONTROL_SELECT    0x8
+DECL|macro|PARPORT_CONTROL_INTEN
+mdefine_line|#define PARPORT_CONTROL_INTEN     0x10
+DECL|macro|PARPORT_CONTROL_DIRECTION
+mdefine_line|#define PARPORT_CONTROL_DIRECTION 0x20
+DECL|macro|PARPORT_STATUS_ERROR
+mdefine_line|#define PARPORT_STATUS_ERROR      0x8
+DECL|macro|PARPORT_STATUS_SELECT
+mdefine_line|#define PARPORT_STATUS_SELECT     0x10
+DECL|macro|PARPORT_STATUS_PAPEROUT
+mdefine_line|#define PARPORT_STATUS_PAPEROUT   0x20
+DECL|macro|PARPORT_STATUS_ACK
+mdefine_line|#define PARPORT_STATUS_ACK        0x40
+DECL|macro|PARPORT_STATUS_BUSY
+mdefine_line|#define PARPORT_STATUS_BUSY       0x80
+multiline_comment|/* Type classes for Plug-and-Play probe.  */
 r_typedef
 r_enum
 (brace
@@ -99,50 +609,11 @@ id|description
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Definitions for parallel port sharing */
-multiline_comment|/* Forward declare some stuff so we can use mutually circular structures */
-r_struct
-id|ppd
-suffix:semicolon
-r_struct
-id|parport
-suffix:semicolon
 multiline_comment|/* Each device can have two callback functions:&n; *  1) a preemption function, called by the resource manager to request&n; *     that the driver relinquish control of the port.  The driver should&n; *     return zero if it agrees to release the port, and nonzero if it &n; *     refuses.  Do not call parport_release() - the kernel will do this&n; *     implicitly.&n; *&n; *  2) a wake-up function, called by the resource manager to tell drivers&n; *     that the port is available to be claimed.  If a driver wants to use&n; *     the port, it should call parport_claim() here.  The return value from&n; *     this function is ignored.&n; */
-DECL|typedef|callback_func
-r_typedef
-r_int
-(paren
-op_star
-id|callback_func
-)paren
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/* This is an ordinary kernel IRQ handler routine.&n; * The dev_id field (void *) will point the the port structure&n; * associated with the interrupt request (to allow IRQ sharing)&n; * Please make code IRQ sharing as this function may be called&n; * when it isn&squot;t meant for you...&n; */
-DECL|typedef|irq_handler_func
-r_typedef
-r_void
-(paren
-op_star
-id|irq_handler_func
-)paren
-(paren
-r_int
-comma
-r_void
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/* A parallel port device */
-DECL|struct|ppd
+DECL|struct|pardevice
 r_struct
-id|ppd
+id|pardevice
 (brace
 DECL|member|name
 r_char
@@ -155,54 +626,73 @@ id|parport
 op_star
 id|port
 suffix:semicolon
-multiline_comment|/* The port this is associated with */
 DECL|member|preempt
-id|callback_func
+r_int
+(paren
+op_star
 id|preempt
+)paren
+(paren
+r_void
+op_star
+)paren
 suffix:semicolon
-multiline_comment|/* preemption function */
 DECL|member|wakeup
-id|callback_func
+r_void
+(paren
+op_star
 id|wakeup
+)paren
+(paren
+r_void
+op_star
+)paren
 suffix:semicolon
-multiline_comment|/* kick function */
 DECL|member|private
 r_void
 op_star
 r_private
 suffix:semicolon
 DECL|member|irq_func
-id|irq_handler_func
+r_void
+(paren
+op_star
 id|irq_func
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
 suffix:semicolon
 DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
-DECL|member|ctr
-r_int
-r_char
-id|ctr
-suffix:semicolon
-multiline_comment|/* SPP CTR register */
-DECL|member|ecr
-r_int
-r_char
-id|ecr
-suffix:semicolon
-multiline_comment|/* ECP ECR register */
 DECL|member|next
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|next
 suffix:semicolon
 DECL|member|prev
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|prev
 suffix:semicolon
+DECL|member|state
+r_struct
+id|parport_state
+op_star
+id|state
+suffix:semicolon
+multiline_comment|/* saved status over preemption */
 )brace
 suffix:semicolon
 DECL|struct|parport_dir
@@ -285,35 +775,23 @@ id|modes
 suffix:semicolon
 DECL|member|devices
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|devices
 suffix:semicolon
 DECL|member|cad
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|cad
 suffix:semicolon
 multiline_comment|/* port owner */
 DECL|member|lurker
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|lurker
 suffix:semicolon
-DECL|member|ctr
-r_int
-r_int
-id|ctr
-suffix:semicolon
-multiline_comment|/* SPP CTR register */
-DECL|member|ecr
-r_int
-r_int
-id|ecr
-suffix:semicolon
-multiline_comment|/* ECP ECR register */
 DECL|member|next
 r_struct
 id|parport
@@ -335,11 +813,18 @@ r_struct
 id|parport_device_info
 id|probe_info
 suffix:semicolon
-DECL|member|speed
-r_int
-id|speed
+DECL|member|ops
+r_struct
+id|parport_operations
+op_star
+id|ops
 suffix:semicolon
-multiline_comment|/* Max Write in Bytes/s */
+DECL|member|private_data
+r_void
+op_star
+id|private_data
+suffix:semicolon
+multiline_comment|/* for lowlevel driver */
 )brace
 suffix:semicolon
 multiline_comment|/* parport_register_port registers a new parallel port at the given address (if&n; * one does not already exist) and returns a pointer to it.  This entails&n; * claiming the I/O region, IRQ and DMA.&n; * NULL is returned if initialisation fails. &n; */
@@ -358,14 +843,19 @@ id|irq
 comma
 r_int
 id|dma
+comma
+r_struct
+id|parport_operations
+op_star
+id|ops
 )paren
 suffix:semicolon
 multiline_comment|/* parport_in_use returns nonzero if there are devices attached to a port. */
 DECL|macro|parport_in_use
 mdefine_line|#define parport_in_use(x)  ((x)-&gt;devices != NULL)
-multiline_comment|/* parport_destroy blows away a parallel port.  This fails if any devices are&n; * registered.&n; */
+multiline_comment|/* Put a parallel port to sleep; release its hardware resources.  Only possible&n; * if no devices are registered.  */
 r_void
-id|parport_destroy
+id|parport_quiesce
 c_func
 (paren
 r_struct
@@ -385,7 +875,7 @@ r_void
 suffix:semicolon
 multiline_comment|/* parport_register_device declares that a device is connected to a port, and &n; * tells the kernel all it needs to know.  &n; * pf is the preemption function (may be NULL for a transient driver)&n; * kf is the wake-up function (may be NULL for a transient driver)&n; * irq_func is the interrupt handler (may be NULL for no interrupts)&n; * Only one lurking driver can be used on a given port. &n; * handle is a user pointer that gets handed to callback functions. &n; */
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|parport_register_device
 c_func
@@ -400,14 +890,41 @@ r_char
 op_star
 id|name
 comma
-id|callback_func
+r_int
+(paren
+op_star
 id|pf
+)paren
+(paren
+r_void
+op_star
+)paren
 comma
-id|callback_func
+r_int
+(paren
+op_star
 id|kf
+)paren
+(paren
+r_void
+op_star
+)paren
 comma
-id|irq_handler_func
+r_void
+(paren
+op_star
 id|irq_func
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
 comma
 r_int
 id|flags
@@ -417,13 +934,13 @@ op_star
 id|handle
 )paren
 suffix:semicolon
-multiline_comment|/* parport_deregister causes the kernel to forget about a device */
+multiline_comment|/* parport_unregister unlinks a device from the chain. */
 r_void
 id|parport_unregister_device
 c_func
 (paren
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|dev
 )paren
@@ -434,7 +951,7 @@ id|parport_claim
 c_func
 (paren
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|dev
 )paren
@@ -445,31 +962,31 @@ id|parport_release
 c_func
 (paren
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* The &quot;modes&quot; entry in parport is a bit field representing the following&n; * modes.&n; * Note that LP_ECPEPP is for the SMC EPP+ECP mode which is NOT&n; * 100% compatible with EPP.&n; */
-DECL|macro|PARPORT_MODE_SPP
-mdefine_line|#define PARPORT_MODE_SPP&t;        0x0001
-DECL|macro|PARPORT_MODE_PS2
-mdefine_line|#define PARPORT_MODE_PS2&t;&t;0x0002
-DECL|macro|PARPORT_MODE_EPP
-mdefine_line|#define PARPORT_MODE_EPP&t;&t;0x0004
-DECL|macro|PARPORT_MODE_ECP
-mdefine_line|#define PARPORT_MODE_ECP&t;&t;0x0008
-DECL|macro|PARPORT_MODE_ECPEPP
-mdefine_line|#define PARPORT_MODE_ECPEPP&t;&t;0x0010
-DECL|macro|PARPORT_MODE_ECR
-mdefine_line|#define PARPORT_MODE_ECR&t;&t;0x0020  /* ECR Register Exists */
-DECL|macro|PARPORT_MODE_ECPPS2
-mdefine_line|#define PARPORT_MODE_ECPPS2&t;&t;0x0040
-multiline_comment|/* Flags used to identify what a device does&n; */
+DECL|macro|PARPORT_MODE_PCSPP
+mdefine_line|#define PARPORT_MODE_PCSPP&t;        0x0001
+DECL|macro|PARPORT_MODE_PCPS2
+mdefine_line|#define PARPORT_MODE_PCPS2&t;&t;0x0002
+DECL|macro|PARPORT_MODE_PCEPP
+mdefine_line|#define PARPORT_MODE_PCEPP&t;&t;0x0004
+DECL|macro|PARPORT_MODE_PCECP
+mdefine_line|#define PARPORT_MODE_PCECP&t;&t;0x0008
+DECL|macro|PARPORT_MODE_PCECPEPP
+mdefine_line|#define PARPORT_MODE_PCECPEPP&t;&t;0x0010
+DECL|macro|PARPORT_MODE_PCECR
+mdefine_line|#define PARPORT_MODE_PCECR&t;&t;0x0020  /* ECR Register Exists */
+DECL|macro|PARPORT_MODE_PCECPPS2
+mdefine_line|#define PARPORT_MODE_PCECPPS2&t;&t;0x0040
+multiline_comment|/* Flags used to identify what a device does. */
 DECL|macro|PARPORT_DEV_TRAN
-mdefine_line|#define PARPORT_DEV_TRAN&t;        0x0000
+mdefine_line|#define PARPORT_DEV_TRAN&t;        0x0000  /* We&squot;re transient. */
 DECL|macro|PARPORT_DEV_LURK
-mdefine_line|#define PARPORT_DEV_LURK&t;        0x0001
+mdefine_line|#define PARPORT_DEV_LURK&t;        0x0001  /* We lurk. */
 DECL|macro|PARPORT_FLAG_COMA
 mdefine_line|#define PARPORT_FLAG_COMA&t;&t;1
 r_extern
@@ -586,125 +1103,5 @@ op_star
 id|port
 )paren
 suffix:semicolon
-multiline_comment|/* Primitive port access functions */
-DECL|function|parport_w_ctrl
-r_extern
-r_inline
-r_void
-id|parport_w_ctrl
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|port
-comma
-r_int
-id|val
-)paren
-(brace
-id|outb
-c_func
-(paren
-id|val
-comma
-id|port-&gt;base
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-)brace
-DECL|function|parport_r_ctrl
-r_extern
-r_inline
-r_int
-id|parport_r_ctrl
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|port
-)paren
-(brace
-r_return
-id|inb
-c_func
-(paren
-id|port-&gt;base
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-)brace
-DECL|function|parport_w_data
-r_extern
-r_inline
-r_void
-id|parport_w_data
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|port
-comma
-r_int
-id|val
-)paren
-(brace
-id|outb
-c_func
-(paren
-id|val
-comma
-id|port-&gt;base
-)paren
-suffix:semicolon
-)brace
-DECL|function|parport_r_data
-r_extern
-r_inline
-r_int
-id|parport_r_data
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|port
-)paren
-(brace
-r_return
-id|inb
-c_func
-(paren
-id|port-&gt;base
-)paren
-suffix:semicolon
-)brace
-DECL|function|parport_r_status
-r_extern
-r_inline
-r_int
-id|parport_r_status
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|port
-)paren
-(brace
-r_return
-id|inb
-c_func
-(paren
-id|port-&gt;base
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif /* _PARPORT_H_ */
 eof

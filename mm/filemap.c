@@ -36,28 +36,8 @@ id|PAGE_HASH_SIZE
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * Simple routines for both non-shared and shared mappings.&n; */
-multiline_comment|/*&n; * This is a special fast page-free routine that _only_ works&n; * on page-cache pages that we are currently using. We can&n; * just decrement the page count, because we know that the page&n; * has a count &gt; 1 (the page cache itself counts as one, and&n; * we&squot;re currently using it counts as one). So we don&squot;t need&n; * the full free_page() stuff..&n; */
-DECL|function|release_page
-r_static
-r_inline
-r_void
-id|release_page
-c_func
-(paren
-r_struct
-id|page
-op_star
-id|page
-)paren
-(brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|page-&gt;count
-)paren
-suffix:semicolon
-)brace
+DECL|macro|release_page
+mdefine_line|#define release_page(page) __free_page((page))
 multiline_comment|/*&n; * Invalidate the pages of an inode, removing all pages that aren&squot;t&n; * locked down (those are sure to be up-to-date anyway, so we shouldn&squot;t&n; * invalidate them).&n; */
 DECL|function|invalidate_inode_pages
 r_void
@@ -2380,7 +2360,7 @@ r_return
 id|read
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Semantics for shared and private memory areas are different past the end&n; * of the file. A shared mapping past the last page of the file is an error&n; * and results in a SIGBUS, while a private mapping just maps in a zero page.&n; *&n; * The goto&squot;s are kind of ugly, but this streamlines the normal case of having&n; * it in the page cache, and handles the special cases reasonably without&n; * having a lot of duplicated code.&n; */
+multiline_comment|/*&n; * Semantics for shared and private memory areas are different past the end&n; * of the file. A shared mapping past the last page of the file is an error&n; * and results in a SIGBUS, while a private mapping just maps in a zero page.&n; *&n; * The goto&squot;s are kind of ugly, but this streamlines the normal case of having&n; * it in the page cache, and handles the special cases reasonably without&n; * having a lot of duplicated code.&n; *&n; * WSH 06/04/97: fixed a memory leak and moved the allocation of new_page&n; * ahead of the wait if we&squot;re sure to need it.&n; */
 DECL|function|filemap_nopage
 r_static
 r_int
@@ -2498,7 +2478,34 @@ id|no_cached_page
 suffix:semicolon
 id|found_page
 suffix:colon
-multiline_comment|/*&n;&t; * Ok, found a page in the page cache, now we need to check&n;&t; * that it&squot;s up-to-date&n;&t; */
+multiline_comment|/*&n;&t; * Ok, found a page in the page cache, now we need to check&n;&t; * that it&squot;s up-to-date.  First check whether we&squot;ll need an&n;&t; * extra page -- better to overlap the allocation with the I/O.&n;&t; */
+r_if
+c_cond
+(paren
+id|no_share
+op_logical_and
+op_logical_neg
+id|new_page
+)paren
+(brace
+id|new_page
+op_assign
+id|__get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|new_page
+)paren
+r_goto
+id|failure
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2564,32 +2571,7 @@ r_return
 id|old_page
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Check that we have another page to copy it over to..&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|new_page
-)paren
-(brace
-id|new_page
-op_assign
-id|__get_free_page
-c_func
-(paren
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|new_page
-)paren
-r_goto
-id|failure
-suffix:semicolon
-)brace
+multiline_comment|/*&n;&t; * No sharing ... copy to the new page.&n;&t; */
 id|copy_page
 c_func
 (paren
@@ -2801,6 +2783,17 @@ id|release_page
 c_func
 (paren
 id|page
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_page
+)paren
+id|free_page
+c_func
+(paren
+id|new_page
 )paren
 suffix:semicolon
 id|no_page
@@ -3018,6 +3011,7 @@ id|bh
 suffix:semicolon
 r_do
 (brace
+multiline_comment|/*&n;&t;&t;&t; * WSH: There&squot;s a race here: mark_buffer_dirty()&n;&t;&t;&t; * could block, and the buffers aren&squot;t pinned down.&n;&t;&t;&t; */
 id|mark_buffer_dirty
 c_func
 (paren
@@ -3089,6 +3083,7 @@ id|file.f_reada
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; * WSH: could vm_area struct (and inode) be released while writing?&n;&t; */
 id|down
 c_func
 (paren
@@ -4704,8 +4699,6 @@ comma
 id|sync
 comma
 id|didread
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -4878,20 +4871,13 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|lockit
+multiline_comment|/*&n;&t;&t; * WSH 06/05/97: restructured slightly to make sure we release&n;&t;&t; * the page on an error exit.  Removed explicit setting of&n;&t;&t; * PG_locked, as that&squot;s handled below the i_op-&gt;xxx interface.&n;&t;&t; */
+id|didread
+op_assign
+l_int|0
+suffix:semicolon
+id|page_wait
 suffix:colon
-r_while
-c_loop
-(paren
-id|test_and_set_bit
-c_func
-(paren
-id|PG_locked
-comma
-op_amp
-id|page-&gt;flags
-)paren
-)paren
 id|wait_on_page
 c_func
 (paren
@@ -4910,23 +4896,6 @@ id|page
 )paren
 )paren
 (brace
-multiline_comment|/* Already tried to read it twice... too bad */
-r_if
-c_cond
-(paren
-id|didread
-OG
-l_int|1
-)paren
-(brace
-id|status
-op_assign
-op_minus
-id|EIO
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4939,7 +4908,13 @@ OL
 id|inode-&gt;i_size
 )paren
 (brace
-multiline_comment|/* readpage implicitly unlocks the page */
+r_if
+c_cond
+(paren
+id|didread
+OL
+l_int|2
+)paren
 id|status
 op_assign
 id|inode-&gt;i_op
@@ -4952,6 +4927,13 @@ comma
 id|page
 )paren
 suffix:semicolon
+r_else
+id|status
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
+multiline_comment|/* two tries ... error out */
 r_if
 c_cond
 (paren
@@ -4959,13 +4941,14 @@ id|status
 OL
 l_int|0
 )paren
-r_break
+r_goto
+id|done_with_page
 suffix:semicolon
 id|didread
 op_increment
 suffix:semicolon
 r_goto
-id|lockit
+id|page_wait
 suffix:semicolon
 )brace
 id|set_bit
@@ -4978,11 +4961,7 @@ id|page-&gt;flags
 )paren
 suffix:semicolon
 )brace
-id|didread
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Alright, the page is there, and we&squot;ve locked it. Now&n;&t;&t; * update it. */
+multiline_comment|/* Alright, the page is there.  Now update it. */
 id|status
 op_assign
 id|inode-&gt;i_op
@@ -5003,14 +4982,12 @@ comma
 id|sync
 )paren
 suffix:semicolon
-id|free_page
-c_func
-(paren
-id|page_address
+id|done_with_page
+suffix:colon
+id|__free_page
 c_func
 (paren
 id|page
-)paren
 )paren
 suffix:semicolon
 r_if

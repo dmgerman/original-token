@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * ROMFS file system, Linux implementation&n; *&n; * Copyright (C) 1997  Janos Farkas &lt;chexum@shadow.banki.hu&gt;&n; *&n; * Using parts of the minix filesystem&n; * Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * and parts of the affs filesystem additionally&n; * Copyright (C) 1993  Ray Burr&n; * Copyright (C) 1996  Hans-Joachim Widmaier&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Changes&n; *&t;&t;&t;&t;&t;Changed for 2.1.19 modules&n; *&t;Jan 1997&t;&t;&t;Initial release&n; */
-multiline_comment|/* todo:&n; *&t;use malloced memory for file names?&n; *&t;considering write access...&n; *&t;network (tftp) files?&n; */
+multiline_comment|/*&n; * ROMFS file system, Linux implementation&n; *&n; * Copyright (C) 1997  Janos Farkas &lt;chexum@shadow.banki.hu&gt;&n; *&n; * Using parts of the minix filesystem&n; * Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * and parts of the affs filesystem additionally&n; * Copyright (C) 1993  Ray Burr&n; * Copyright (C) 1996  Hans-Joachim Widmaier&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Changes&n; *&t;&t;&t;&t;&t;Changed for 2.1.19 modules&n; *&t;Jan 1997&t;&t;&t;Initial release&n; *&t;Jun 1997&t;&t;&t;2.1.43+ changes&n; *&t;Jul 1997&t;&t;&t;proper page locking in readpage&n; *&t;&t;&t;&t;&t;Changed to work with 2.1.45+ fs&n; *&t;&t;&t;&t;&t;Fixed follow_link&n; */
+multiline_comment|/* todo:&n; *&t;- see Documentation/filesystems/romfs.txt&n; *&t;- use malloced memory for file names?&n; *&t;- considering write access...&n; *&t;- network (tftp) files?&n; *&t;- in the ancient times something leaked to made umounts&n; *&t;  impossible, but I&squot;ve not seen it in the last months&n; */
 multiline_comment|/*&n; * Sorry about some optimizations and for some goto&squot;s.  I just wanted&n; * to squeeze some more bytes out of this code.. :)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -141,7 +141,7 @@ id|sz
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-multiline_comment|/* I would parse the options, but there are none.. :) */
+multiline_comment|/* I would parse the options here, but there are none.. :) */
 id|lock_super
 c_func
 (paren
@@ -183,6 +183,7 @@ op_logical_neg
 id|bh
 )paren
 (brace
+multiline_comment|/* XXX merge with other printk? */
 id|printk
 (paren
 l_string|&quot;romfs: unable to read superblock&bslash;n&quot;
@@ -322,6 +323,22 @@ op_assign
 op_amp
 id|romfs_ops
 suffix:semicolon
+id|s-&gt;s_root
+op_assign
+id|d_alloc_root
+c_func
+(paren
+id|iget
+c_func
+(paren
+id|s
+comma
+id|sz
+)paren
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|unlock_super
 c_func
 (paren
@@ -332,17 +349,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-id|s-&gt;s_mounted
-op_assign
-id|iget
-c_func
-(paren
-id|s
-comma
-id|sz
-)paren
-)paren
+id|s-&gt;s_root
 )paren
 r_goto
 id|outnobh
@@ -421,7 +428,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* That&squot;s simple too. */
 r_static
-r_void
+r_int
 DECL|function|romfs_statfs
 id|romfs_statfs
 c_func
@@ -478,6 +485,8 @@ l_int|1
 op_rshift
 id|ROMBSBITS
 suffix:semicolon
+multiline_comment|/* XXX tmp.f_namelen = relevant? */
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -488,8 +497,15 @@ id|tmp
 comma
 id|bufsize
 )paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* some helper routines */
 r_static
 r_int
 DECL|function|romfs_strnlen
@@ -942,7 +958,6 @@ r_return
 id|res
 suffix:semicolon
 )brace
-multiline_comment|/* Directory operations */
 r_static
 r_int
 DECL|function|romfs_readdir
@@ -1250,19 +1265,10 @@ id|inode
 op_star
 id|dir
 comma
-r_const
-r_char
-op_star
-id|name
-comma
-r_int
-id|len
-comma
 r_struct
-id|inode
+id|dentry
 op_star
-op_star
-id|result
+id|dentry
 )paren
 (brace
 r_int
@@ -1276,6 +1282,11 @@ id|fslen
 comma
 id|res
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
 r_char
 id|fsname
 (braket
@@ -1287,10 +1298,14 @@ r_struct
 id|romfs_inode
 id|ri
 suffix:semicolon
+r_const
+r_char
 op_star
-id|result
-op_assign
-l_int|NULL
+id|name
+suffix:semicolon
+multiline_comment|/* got from dentry */
+r_int
+id|len
 suffix:semicolon
 r_if
 c_cond
@@ -1362,6 +1377,15 @@ id|ri.spec
 )paren
 op_amp
 id|ROMFH_MASK
+suffix:semicolon
+multiline_comment|/* ok, now find the file, whose name is in &quot;dentry&quot;, in the&n;&t; * directory specified by &quot;dir&quot;.  */
+id|name
+op_assign
+id|dentry-&gt;d_name.name
+suffix:semicolon
+id|len
+op_assign
+id|dentry-&gt;d_name.len
 suffix:semicolon
 r_for
 c_loop
@@ -1583,15 +1607,14 @@ id|ROMFH_MASK
 suffix:semicolon
 id|res
 op_assign
-l_int|0
+op_minus
+id|EACCES
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 (paren
-op_star
-id|result
+id|inode
 op_assign
 id|iget
 c_func
@@ -1601,25 +1624,30 @@ comma
 id|offset
 )paren
 )paren
+op_ne
+l_int|NULL
 )paren
+(brace
 id|res
 op_assign
-op_minus
-id|EACCES
+l_int|0
 suffix:semicolon
-id|out
-suffix:colon
-id|iput
+id|d_add
 c_func
 (paren
-id|dir
+id|dentry
+comma
+id|inode
 )paren
 suffix:semicolon
+)brace
+id|out
+suffix:colon
 r_return
 id|res
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Ok, we do readpage, to be able to execute programs.  Unfortunately,&n; * bmap is not applicable, since we have looser alignments.&n; *&n; * XXX I&squot;m not quite sure that I need to muck around the PG_xx bits..&n; */
+multiline_comment|/*&n; * Ok, we do readpage, to be able to execute programs.  Unfortunately,&n; * we can&squot;t use bmap, since we have looser alignments.&n; */
 r_static
 r_int
 DECL|function|romfs_readpage
@@ -1655,6 +1683,22 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|page-&gt;count
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|PG_locked
+comma
+op_amp
+id|page-&gt;flags
+)paren
+suffix:semicolon
 id|buf
 op_assign
 id|page_address
@@ -1663,11 +1707,22 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|atomic_inc
+id|clear_bit
 c_func
 (paren
+id|PG_uptodate
+comma
 op_amp
-id|page-&gt;count
+id|page-&gt;flags
+)paren
+suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|PG_error
+comma
+op_amp
+id|page-&gt;flags
 )paren
 suffix:semicolon
 id|offset
@@ -1751,10 +1806,6 @@ id|readlen
 )paren
 suffix:semicolon
 )brace
-id|result
-op_assign
-l_int|0
-suffix:semicolon
 id|set_bit
 c_func
 (paren
@@ -1764,9 +1815,27 @@ op_amp
 id|page-&gt;flags
 )paren
 suffix:semicolon
+id|result
+op_assign
+l_int|0
+suffix:semicolon
 )brace
-r_else
+)brace
+r_if
+c_cond
+(paren
+id|result
+)paren
 (brace
+id|set_bit
+c_func
+(paren
+id|PG_error
+comma
+op_amp
+id|page-&gt;flags
+)paren
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -1782,7 +1851,22 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 )brace
-)brace
+id|clear_bit
+c_func
+(paren
+id|PG_locked
+comma
+op_amp
+id|page-&gt;flags
+)paren
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|page-&gt;wait
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -1907,6 +1991,190 @@ r_return
 id|mylen
 suffix:semicolon
 )brace
+DECL|function|romfs_follow_link
+r_static
+r_struct
+id|dentry
+op_star
+id|romfs_follow_link
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|dentry
+op_star
+id|base
+)paren
+(brace
+r_char
+op_star
+id|link
+suffix:semicolon
+r_int
+id|len
+comma
+id|cnt
+suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|dentry
+suffix:semicolon
+multiline_comment|/* Note: 2.1.46+ calls this for our strange directories...&n;&t; * What I do is not really right, but I like it better for now,&n;&t; * than a separate i_op table.  Anyway, our directories won&squot;t&n;&t; * have multiple &quot;real&quot; links to them, so it maybe loses nothing.  */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|S_ISLNK
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+)paren
+(brace
+id|dentry
+op_assign
+id|dget
+c_func
+(paren
+id|i_dentry
+c_func
+(paren
+id|inode
+)paren
+)paren
+suffix:semicolon
+r_goto
+id|outnobuf
+suffix:semicolon
+)brace
+id|len
+op_assign
+id|inode-&gt;i_size
+suffix:semicolon
+id|dentry
+op_assign
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|EAGAIN
+)paren
+suffix:semicolon
+multiline_comment|/* correct? */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|link
+op_assign
+id|kmalloc
+c_func
+(paren
+id|len
+op_plus
+l_int|1
+comma
+id|GFP_KERNEL
+)paren
+)paren
+)paren
+r_goto
+id|outnobuf
+suffix:semicolon
+id|cnt
+op_assign
+id|romfs_copyfrom
+c_func
+(paren
+id|inode
+comma
+id|link
+comma
+id|inode-&gt;u.romfs_i.i_dataoffset
+comma
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_ne
+id|cnt
+)paren
+(brace
+id|dentry
+op_assign
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|EIO
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+r_else
+id|link
+(braket
+id|len
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|dentry
+op_assign
+id|lookup_dentry
+c_func
+(paren
+id|link
+comma
+id|base
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|link
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|0
+)paren
+(brace
+id|out
+suffix:colon
+id|kfree
+c_func
+(paren
+id|link
+)paren
+suffix:semicolon
+id|outnobuf
+suffix:colon
+id|dput
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+)brace
+r_return
+id|dentry
+suffix:semicolon
+)brace
 multiline_comment|/* Mapping from our types to the kernel */
 DECL|variable|romfs_file_operations
 r_static
@@ -1995,6 +2263,9 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
 id|romfs_readpage
 comma
 multiline_comment|/* readpage */
@@ -2062,7 +2333,7 @@ l_int|NULL
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-multiline_comment|/* Merged dir/symlink op table.  readdir/lookup/readlink&n; * will protect from type mismatch.&n; */
+multiline_comment|/* Merged dir/symlink op table.  readdir/lookup/readlink/follow_link&n; * will protect from type mismatch.&n; */
 DECL|variable|romfs_dirlink_inode_operations
 r_static
 r_struct
@@ -2103,6 +2374,9 @@ multiline_comment|/* rename */
 id|romfs_readlink
 comma
 multiline_comment|/* readlink */
+id|romfs_follow_link
+comma
+multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -2208,15 +2482,19 @@ r_struct
 id|romfs_inode
 id|ri
 suffix:semicolon
-id|i-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 id|ino
 op_assign
 id|i-&gt;i_ino
 op_amp
 id|ROMFH_MASK
+suffix:semicolon
+id|i-&gt;i_op
+op_assign
+l_int|NULL
+suffix:semicolon
+id|i-&gt;i_mode
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Loop for finding the real hard link */
 r_for
@@ -2505,13 +2783,16 @@ comma
 multiline_comment|/* read inode */
 l_int|NULL
 comma
-multiline_comment|/* notify change */
-l_int|NULL
-comma
 multiline_comment|/* write inode */
 l_int|NULL
 comma
 multiline_comment|/* put inode */
+l_int|NULL
+comma
+multiline_comment|/* delete inode */
+l_int|NULL
+comma
+multiline_comment|/* notify change */
 id|romfs_put_super
 comma
 multiline_comment|/* put super */

@@ -31,6 +31,8 @@ DECL|macro|HD_TIMER2
 mdefine_line|#define HD_TIMER2&t;24
 DECL|macro|GSCD_TIMER
 mdefine_line|#define GSCD_TIMER&t;25
+DECL|macro|COMTROL_TIMER
+mdefine_line|#define COMTROL_TIMER&t;26
 DECL|macro|DIGI_TIMER
 mdefine_line|#define DIGI_TIMER&t;29
 DECL|struct|timer_struct

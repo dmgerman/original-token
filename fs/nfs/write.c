@@ -1376,7 +1376,7 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Update and possibly write a cached page of an NFS file.&n; * The page is already locked when we get here.&n; *&n; * XXX: Keep an eye on generic_file_read to make sure it doesn&squot;t do bad&n; * things with a page scheduled for an RPC call (e.g. invalidate it).&n; */
+multiline_comment|/*&n; * Update and possibly write a cached page of an NFS file.&n; *&n; * XXX: Keep an eye on generic_file_read to make sure it doesn&squot;t do bad&n; * things with a page scheduled for an RPC call (e.g. invalidate it).&n; */
 r_int
 DECL|function|nfs_updatepage
 id|nfs_updatepage
@@ -1443,6 +1443,15 @@ op_plus
 id|offset
 comma
 id|sync
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|PG_locked
+comma
+op_amp
+id|page-&gt;flags
 )paren
 suffix:semicolon
 id|page_addr

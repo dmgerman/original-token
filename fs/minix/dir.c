@@ -372,6 +372,12 @@ id|bh
 )paren
 suffix:semicolon
 )brace
+id|UPDATE_ATIME
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

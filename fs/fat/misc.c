@@ -91,13 +91,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Filesystem panic (dev %s).&quot;
+l_string|&quot;Filesystem panic (dev %s).&bslash;n  %s&bslash;n&quot;
 comma
 id|kdevname
 c_func
 (paren
 id|s-&gt;s_dev
 )paren
+comma
+id|msg
 )paren
 suffix:semicolon
 r_if

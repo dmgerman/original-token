@@ -374,6 +374,31 @@ op_star
 id|name
 )paren
 suffix:semicolon
+multiline_comment|/* validate &quot;insecure&quot; dentry pointer */
+r_extern
+r_int
+id|d_validate
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+comma
+r_struct
+id|dentry
+op_star
+id|dparent
+comma
+r_int
+r_int
+id|hash
+comma
+r_int
+r_int
+id|len
+)paren
+suffix:semicolon
 multiline_comment|/* write full pathname into buffer and return length */
 r_extern
 r_int

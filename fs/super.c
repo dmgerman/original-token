@@ -2971,6 +2971,12 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+id|fsync_dev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|do_umount

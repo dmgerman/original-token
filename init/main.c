@@ -78,6 +78,14 @@ op_star
 suffix:semicolon
 r_extern
 r_void
+id|kswapd_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|init_IRQ
 c_func
 (paren
@@ -4295,6 +4303,11 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Start the background pageout daemon. */
+id|kswapd_setup
+c_func
+(paren
+)paren
+suffix:semicolon
 id|kernel_thread
 c_func
 (paren

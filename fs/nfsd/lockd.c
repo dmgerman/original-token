@@ -44,9 +44,9 @@ id|fh.fh_export
 op_assign
 l_int|NULL
 suffix:semicolon
-id|fh.fh_inode
+id|fh.fh_dverified
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 id|nfserr
 op_assign

@@ -1,17 +1,17 @@
-multiline_comment|/* $Id: parport_procfs.c,v 1.3.2.6 1997/04/16 21:30:38 phil Exp $&n; * Parallel port /proc interface code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* $Id: parport_procfs.c,v 1.1.2.2 1997/04/18 15:00:52 phil Exp $&n; * Parallel port /proc interface code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
-macro_line|#include &quot;parport_ll_io.h&quot;
 DECL|macro|PARPORT_INCLUDE_BENCH
 macro_line|#undef PARPORT_INCLUDE_BENCH
 DECL|variable|base
@@ -22,6 +22,7 @@ id|base
 op_assign
 l_int|NULL
 suffix:semicolon
+r_extern
 r_void
 id|parport_null_intr_func
 c_func
@@ -235,7 +236,7 @@ id|PARPORT_FLAG_COMA
 )paren
 (brace
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|pd
 op_assign
@@ -439,7 +440,7 @@ op_star
 id|data
 suffix:semicolon
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|pd1
 suffix:semicolon
@@ -663,6 +664,7 @@ comma
 id|pp-&gt;dma
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|len
 op_add_assign
 id|sprintf
@@ -676,7 +678,6 @@ l_string|&quot;modes:&bslash;t&quot;
 )paren
 suffix:semicolon
 (brace
-DECL|macro|printmode
 mdefine_line|#define printmode(x) {if(pp-&gt;modes&amp;PARPORT_MODE_##x){len+=sprintf(page+len,&quot;%s%s&quot;,f?&quot;,&quot;:&quot;&quot;,#x);f++;}}
 r_int
 id|f
@@ -719,7 +720,6 @@ c_func
 id|ECPPS2
 )paren
 suffix:semicolon
-DECL|macro|printmode
 macro_line|#undef printmode
 )brace
 id|len
@@ -1011,6 +1011,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 macro_line|#if 0
 multiline_comment|/* Now no detection, please fix with an external function */
 id|len

@@ -2067,7 +2067,7 @@ id|rqstp
 comma
 id|p
 comma
-id|resp-&gt;fh.fh_inode
+id|resp-&gt;fh.fh_handle.fh_dentry-&gt;d_inode
 )paren
 )paren
 )paren
@@ -2132,7 +2132,7 @@ id|rqstp
 comma
 id|p
 comma
-id|resp-&gt;fh.fh_inode
+id|resp-&gt;fh.fh_handle.fh_dentry-&gt;d_inode
 )paren
 )paren
 )paren
@@ -2231,7 +2231,7 @@ id|rqstp
 comma
 id|p
 comma
-id|resp-&gt;fh.fh_inode
+id|resp-&gt;fh.fh_handle.fh_dentry-&gt;d_inode
 )paren
 )paren
 )paren
