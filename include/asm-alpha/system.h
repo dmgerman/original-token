@@ -24,7 +24,7 @@ mdefine_line|#define ZERO_PGE&t;0xfffffc000030A000
 DECL|macro|START_ADDR
 mdefine_line|#define START_ADDR&t;0xfffffc0000310000
 DECL|macro|START_SIZE
-mdefine_line|#define START_SIZE&t;(1024*1024)
+mdefine_line|#define START_SIZE&t;(2*1024*1024)
 multiline_comment|/*&n; * Common PAL-code&n; */
 DECL|macro|PAL_halt
 mdefine_line|#define PAL_halt&t;  0
@@ -58,8 +58,10 @@ mdefine_line|#define PAL_swppal&t;10
 DECL|macro|PAL_mfpr_vptb
 mdefine_line|#define PAL_mfpr_vptb&t;41
 multiline_comment|/*&n; * OSF specific PAL-code&n; */
-DECL|macro|PAL_mtpr_mces
-mdefine_line|#define PAL_mtpr_mces&t;17
+DECL|macro|PAL_rdmces
+mdefine_line|#define PAL_rdmces&t;16
+DECL|macro|PAL_wrmces
+mdefine_line|#define PAL_wrmces&t;17
 DECL|macro|PAL_wrfen
 mdefine_line|#define PAL_wrfen&t;43
 DECL|macro|PAL_wrvptptr
@@ -148,20 +150,24 @@ id|pctxp
 suffix:semicolon
 DECL|macro|switch_to
 mdefine_line|#define switch_to(p) do { &bslash;&n;&t;current = p; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;(p)-&gt;tss - 0xfffffc0000000000); &bslash;&n;} while (0)
-macro_line|#ifndef mb
 DECL|macro|mb
-mdefine_line|#define mb() __asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
-macro_line|#endif
+mdefine_line|#define mb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
+DECL|macro|draina
+mdefine_line|#define draina() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_draina) : &quot;memory&quot;)
+DECL|macro|getipl
+mdefine_line|#define getipl() &bslash;&n;({ unsigned long __old_ipl; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;call_pal 54&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: : &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;); &bslash;&n;__old_ipl; })
+DECL|macro|setipl
+mdefine_line|#define setipl(__new_ipl) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %0,%0,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call_pal 53&quot; &bslash;&n;&t;: : &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;)
 DECL|macro|swpipl
-mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long __old_ipl; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %1,%1,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 53&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;); &bslash;&n;__old_ipl; })
+mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long __old_ipl; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %1,%1,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call_pal 53&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;); &bslash;&n;__old_ipl; })
 DECL|macro|cli
-mdefine_line|#define cli()&t;&t;&t;swpipl(7)
+mdefine_line|#define cli()&t;&t;&t;setipl(7)
 DECL|macro|sti
-mdefine_line|#define sti()&t;&t;&t;swpipl(0)
+mdefine_line|#define sti()&t;&t;&t;setipl(0)
 DECL|macro|save_flags
-mdefine_line|#define save_flags(flags)&t;do { flags = swpipl(7); } while (0)
+mdefine_line|#define save_flags(flags)&t;do { flags = getipl(); } while (0)
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(flags)&t;swpipl(flags)
+mdefine_line|#define restore_flags(flags)&t;setipl(flags)
 DECL|function|xchg_u32
 r_extern
 r_inline

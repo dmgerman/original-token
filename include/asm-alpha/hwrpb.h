@@ -3,6 +3,50 @@ DECL|macro|_HWRPB_H
 mdefine_line|#define _HWRPB_H
 DECL|macro|INIT_HWRPB
 mdefine_line|#define INIT_HWRPB ((struct hwrpb_struct *) 0x10000000)
+multiline_comment|/*&n; * DEC processor types for Alpha systems.  Found in HWRPB.&n; * These values are architected.&n; */
+DECL|macro|EV3_CPU
+mdefine_line|#define EV3_CPU                 1       /* EV3                  */
+DECL|macro|EV4_CPU
+mdefine_line|#define EV4_CPU                 2       /* EV4 (21064)          */
+DECL|macro|LCA4_CPU
+mdefine_line|#define LCA4_CPU                4       /* LCA4 (21066/21068)   */
+DECL|macro|EV5_CPU
+mdefine_line|#define EV5_CPU                 5       /* EV5 (21164)          */
+DECL|macro|EV45_CPU
+mdefine_line|#define EV45_CPU                6       /* EV4.5 (21064/xxx)    */
+multiline_comment|/*&n; * DEC system types for Alpha systems.  Found in HWRPB.&n; * These values are architected.&n; */
+DECL|macro|ST_ADU
+mdefine_line|#define ST_ADU                  1       /* Alpha ADU systype    */
+DECL|macro|ST_DEC_4000
+mdefine_line|#define ST_DEC_4000             2       /* Cobra systype        */
+DECL|macro|ST_DEC_7000
+mdefine_line|#define ST_DEC_7000             3       /* Ruby systype         */
+DECL|macro|ST_DEC_3000_500
+mdefine_line|#define ST_DEC_3000_500         4       /* Flamingo systype     */
+DECL|macro|ST_DEC_2000_300
+mdefine_line|#define ST_DEC_2000_300         6       /* Jensen systype       */
+DECL|macro|ST_DEC_3000_300
+mdefine_line|#define ST_DEC_3000_300         7       /* Pelican systype      */
+DECL|macro|ST_DEC_2100_A500
+mdefine_line|#define ST_DEC_2100_A500        9       /* Sable systype        */
+DECL|macro|ST_DEC_AXPVME_64
+mdefine_line|#define ST_DEC_AXPVME_64       10       /* AXPvme system type   */
+DECL|macro|ST_DEC_AXPPCI_33
+mdefine_line|#define ST_DEC_AXPPCI_33       11       /* NoName system type   */
+DECL|macro|ST_DEC_TLASER
+mdefine_line|#define ST_DEC_TLASER          12       /* Turbolaser systype&t;*/
+DECL|macro|ST_DEC_2100_A50
+mdefine_line|#define ST_DEC_2100_A50        13       /* Avanti systype       */
+DECL|macro|ST_DEC_MUSTANG
+mdefine_line|#define ST_DEC_MUSTANG         14       /* Mustang systype      */
+DECL|macro|ST_DEC_ALCOR
+mdefine_line|#define ST_DEC_ALCOR           15       /* Alcor systype&t;*/
+DECL|macro|ST_DEC_1000
+mdefine_line|#define ST_DEC_1000            17       /* Mikasa systype       */
+DECL|macro|ST_DEC_EB66
+mdefine_line|#define ST_DEC_EB66            19       /* EB66 systype&t;&t;*/
+DECL|macro|ST_DEC_EB64P
+mdefine_line|#define ST_DEC_EB64P           20       /* EB64+ systype        */
 DECL|struct|pcb_struct
 r_struct
 id|pcb_struct

@@ -2108,11 +2108,11 @@ id|instance
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : static int pci_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, int bus, int device_fn, int options)&n; *&n; * Purpose : initializes a NCR53c800 family based on the PCI&n; *&t;bus, device, and function location of it.  Allows &n; * &t;reprogramming of latency timer and determining addresses&n; *&t;and whether bus mastering, etc. are OK.&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
-DECL|function|pci_init
+multiline_comment|/* &n; * Function : static int ncr_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, int bus, int device_fn, int options)&n; *&n; * Purpose : initializes a NCR53c800 family based on the PCI&n; *&t;bus, device, and function location of it.  Allows &n; * &t;reprogramming of latency timer and determining addresses&n; *&t;and whether bus mastering, etc. are OK.&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
+DECL|function|ncr_init
 r_static
 r_int
-id|pci_init
+id|ncr_init
 (paren
 id|Scsi_Host_Template
 op_star
@@ -2768,7 +2768,7 @@ id|pci
 ques
 c_cond
 op_logical_neg
-id|pci_init
+id|ncr_init
 (paren
 id|tpnt
 comma
@@ -2955,7 +2955,7 @@ id|pci_device_fn
 )paren
 op_logical_and
 op_logical_neg
-id|pci_init
+id|ncr_init
 (paren
 id|tpnt
 comma

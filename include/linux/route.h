@@ -3,46 +3,6 @@ macro_line|#ifndef _LINUX_ROUTE_H
 DECL|macro|_LINUX_ROUTE_H
 mdefine_line|#define _LINUX_ROUTE_H
 macro_line|#include &lt;linux/if.h&gt;
-multiline_comment|/* This structure gets passed by the SIOCADDRTOLD and SIOCDELRTOLD calls. */
-DECL|struct|old_rtentry
-r_struct
-id|old_rtentry
-(brace
-DECL|member|rt_genmask
-r_int
-r_int
-id|rt_genmask
-suffix:semicolon
-DECL|member|rt_dst
-r_struct
-id|sockaddr
-id|rt_dst
-suffix:semicolon
-DECL|member|rt_gateway
-r_struct
-id|sockaddr
-id|rt_gateway
-suffix:semicolon
-DECL|member|rt_flags
-r_int
-id|rt_flags
-suffix:semicolon
-DECL|member|rt_refcnt
-r_int
-id|rt_refcnt
-suffix:semicolon
-DECL|member|rt_use
-r_int
-r_int
-id|rt_use
-suffix:semicolon
-DECL|member|rt_dev
-r_char
-op_star
-id|rt_dev
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/* This structure gets passed by the SIOCADDRT and SIOCDELRT calls. */
 DECL|struct|rtentry
 r_struct
@@ -107,17 +67,23 @@ r_int
 r_int
 id|rt_mss
 suffix:semicolon
-multiline_comment|/* per route MTU/Window */
+multiline_comment|/* per route MTU/Window &t;*/
 DECL|member|rt_window
 r_int
 r_int
 id|rt_window
 suffix:semicolon
-multiline_comment|/* Window clamping */
+multiline_comment|/* Window clamping &t;&t;*/
+DECL|member|rt_irtt
+r_int
+r_int
+id|rt_irtt
+suffix:semicolon
+multiline_comment|/* Initial RTT&t;&t;&t;*/
 )brace
 suffix:semicolon
 DECL|macro|RTF_UP
-mdefine_line|#define&t;RTF_UP&t;&t;0x0001&t;&t;/* route usable&t;&t;  */
+mdefine_line|#define&t;RTF_UP&t;&t;0x0001&t;&t;/* route usable&t;&t;  &t;  */
 DECL|macro|RTF_GATEWAY
 mdefine_line|#define&t;RTF_GATEWAY&t;0x0002&t;&t;/* destination is a gateway&t;  */
 DECL|macro|RTF_HOST
@@ -132,6 +98,10 @@ DECL|macro|RTF_MSS
 mdefine_line|#define RTF_MSS&t;&t;0x0040&t;&t;/* specific MSS for this route&t;  */
 DECL|macro|RTF_WINDOW
 mdefine_line|#define RTF_WINDOW&t;0x0080&t;&t;/* per route window clamping&t;  */
+DECL|macro|RTF_IRTT
+mdefine_line|#define RTF_IRTT&t;0x0100&t;&t;/* Initial round trip time&t;  */
+DECL|macro|RTF_REJECT
+mdefine_line|#define RTF_REJECT&t;0x0200&t;&t;/* Reject route&t;&t;&t;  */
 multiline_comment|/*&n; *&t;REMOVE THESE BY 1.2.0 !!!!!!!!!!!!!!!!!&n; */
 DECL|macro|RTF_MTU
 mdefine_line|#define&t;RTF_MTU&t;&t;RTF_MSS

@@ -3571,7 +3571,9 @@ suffix:semicolon
 r_int
 id|timeout
 op_assign
-l_int|6000
+l_int|60
+op_star
+id|HZ
 suffix:semicolon
 multiline_comment|/* 60 seconds === a long time :-) */
 id|info
@@ -3593,7 +3595,9 @@ id|IRQ_timeout
 id|irq
 )braket
 op_assign
-l_int|6000
+l_int|60
+op_star
+id|HZ
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -4097,7 +4101,7 @@ op_or
 id|UART_MCR_RTS
 suffix:semicolon
 )brace
-macro_line|#ifdef __alpha__
+macro_line|#if defined(__alpha__) &amp;&amp; !defined(CONFIG_PCI)
 id|info-&gt;MCR
 op_or_assign
 id|UART_MCR_OUT1
@@ -4980,20 +4984,73 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* byte size and parity */
-id|cval
-op_assign
+r_switch
+c_cond
+(paren
 id|cflag
 op_amp
-(paren
 id|CSIZE
-op_or
+)paren
+(brace
+r_case
+id|CS5
+suffix:colon
+id|cval
+op_assign
+l_int|0x00
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CS6
+suffix:colon
+id|cval
+op_assign
+l_int|0x01
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CS7
+suffix:colon
+id|cval
+op_assign
+l_int|0x02
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CS8
+suffix:colon
+id|cval
+op_assign
+l_int|0x03
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|cval
+op_assign
+l_int|0x00
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* too keep GCC shut... */
+)brace
+r_if
+c_cond
+(paren
+id|cflag
+op_amp
 id|CSTOPB
 )paren
-suffix:semicolon
+(brace
 id|cval
-op_rshift_assign
-l_int|4
+op_or_assign
+l_int|0x04
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -11074,7 +11131,7 @@ l_string|&quot;serial(auto)&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Reset the UART.&n;&t; */
-macro_line|#ifdef __alpha__
+macro_line|#if defined(__alpha__) &amp;&amp; !defined(CONFIG_PCI)
 multiline_comment|/*&n;&t; * I wonder what DEC did to the OUT1 and OUT2 lines?&n;&t; * clearing them results in endless interrupts.&n;&t; */
 id|serial_outp
 c_func

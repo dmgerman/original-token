@@ -3,7 +3,7 @@ macro_line|#ifndef _LINUX_TCP_H
 DECL|macro|_LINUX_TCP_H
 mdefine_line|#define _LINUX_TCP_H
 DECL|macro|HEADER_SIZE
-mdefine_line|#define HEADER_SIZE&t;64&t;&t;/* maximum header size&t;&t;*/
+mdefine_line|#define HEADER_SIZE&t;128&t;&t;/* maximum header size&t;&t;*/
 DECL|struct|tcphdr
 r_struct
 id|tcphdr

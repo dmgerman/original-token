@@ -34,9 +34,9 @@ id|prof_len
 suffix:semicolon
 r_extern
 r_char
-id|etext
+id|_stext
 comma
-id|end
+id|_etext
 suffix:semicolon
 r_extern
 r_char
@@ -153,7 +153,7 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|bios32_init
+id|pci_init
 c_func
 (paren
 r_int
@@ -1785,7 +1785,14 @@ r_int
 r_int
 )paren
 op_amp
-id|etext
+id|_etext
+op_minus
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|_stext
 suffix:semicolon
 id|prof_len
 op_rshift_assign
@@ -1812,9 +1819,10 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
 id|memory_start
 op_assign
-id|bios32_init
+id|pci_init
 c_func
 (paren
 id|memory_start
@@ -1822,6 +1830,7 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
+macro_line|#endif
 id|memory_start
 op_assign
 id|kmalloc_init

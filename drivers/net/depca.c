@@ -3873,6 +3873,16 @@ id|pkt_len
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t;    ** Notify the upper protocol layers that there is another &n;&t;    ** packet to handle&n;&t;    */
+id|skb-&gt;protocol
+op_assign
+id|eth_type_trans
+c_func
+(paren
+id|skb
+comma
+id|dev
+)paren
+suffix:semicolon
 id|netif_rx
 c_func
 (paren

@@ -379,6 +379,8 @@ DECL|macro|TTY_DRIVER_TYPE_SERIAL
 mdefine_line|#define TTY_DRIVER_TYPE_SERIAL&t;&t;0x0003
 DECL|macro|TTY_DRIVER_TYPE_PTY
 mdefine_line|#define TTY_DRIVER_TYPE_PTY&t;&t;0x0004
+DECL|macro|TTY_DRIVER_TYPE_SCC
+mdefine_line|#define TTY_DRIVER_TYPE_SCC&t;&t;0x0005&t;/* scc driver */
 multiline_comment|/* system subtypes (magic, used by tty_io.c) */
 DECL|macro|SYSTEM_TYPE_TTY
 mdefine_line|#define SYSTEM_TYPE_TTY&t;&t;&t;0x0001

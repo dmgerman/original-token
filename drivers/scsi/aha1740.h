@@ -118,12 +118,12 @@ r_struct
 id|aha1740_chain
 (brace
 DECL|member|dataptr
-id|ulong
+id|u32
 id|dataptr
 suffix:semicolon
 multiline_comment|/* Location of data */
 DECL|member|datalen
-id|ulong
+id|u32
 id|datalen
 suffix:semicolon
 multiline_comment|/* Size of this part of chain */
@@ -150,13 +150,13 @@ id|ecb
 (brace
 multiline_comment|/* Enhanced Control Block 6.1 */
 DECL|member|cmdw
-id|ushort
+id|u16
 id|cmdw
 suffix:semicolon
 multiline_comment|/* Command Word */
 multiline_comment|/* Flag Word 1 */
 DECL|member|cne
-id|ushort
+id|u16
 id|cne
 suffix:colon
 l_int|1
@@ -206,7 +206,7 @@ suffix:semicolon
 multiline_comment|/* Automatic Request Sense */
 multiline_comment|/* Flag Word 2 */
 DECL|member|lun
-id|ushort
+id|u16
 id|lun
 suffix:colon
 l_int|3
@@ -270,57 +270,57 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Error Recovery */
 DECL|member|nil0
-id|ushort
+id|u16
 id|nil0
 suffix:semicolon
 multiline_comment|/* nothing */
 DECL|member|dataptr
-id|ulong
+id|u32
 id|dataptr
 suffix:semicolon
 multiline_comment|/* Data or Scatter List ptr */
 DECL|member|datalen
-id|ulong
+id|u32
 id|datalen
 suffix:semicolon
 multiline_comment|/* Data or Scatter List len */
 DECL|member|statusptr
-id|ulong
+id|u32
 id|statusptr
 suffix:semicolon
 multiline_comment|/* Status Block ptr */
 DECL|member|linkptr
-id|ulong
+id|u32
 id|linkptr
 suffix:semicolon
 multiline_comment|/* Chain Address */
 DECL|member|nil1
-id|ulong
+id|u32
 id|nil1
 suffix:semicolon
 multiline_comment|/* nothing */
 DECL|member|senseptr
-id|ulong
+id|u32
 id|senseptr
 suffix:semicolon
 multiline_comment|/* Sense Info Pointer */
 DECL|member|senselen
-id|unchar
+id|u8
 id|senselen
 suffix:semicolon
 multiline_comment|/* Sense Length */
 DECL|member|cdblen
-id|unchar
+id|u8
 id|cdblen
 suffix:semicolon
 multiline_comment|/* CDB Length */
 DECL|member|datacheck
-id|ushort
+id|u16
 id|datacheck
 suffix:semicolon
 multiline_comment|/* Data checksum */
 DECL|member|cdb
-id|unchar
+id|u8
 id|cdb
 (braket
 id|MAX_CDB
@@ -329,7 +329,7 @@ suffix:semicolon
 multiline_comment|/* CDB area */
 multiline_comment|/* Hardware defined portion ends here, rest is driver defined */
 DECL|member|sense
-id|unchar
+id|u8
 id|sense
 (braket
 id|MAX_SENSE
@@ -337,7 +337,7 @@ id|MAX_SENSE
 suffix:semicolon
 multiline_comment|/* Sense area */
 DECL|member|status
-id|unchar
+id|u8
 id|status
 (braket
 id|MAX_STATUS

@@ -2055,6 +2055,16 @@ id|size
 )paren
 )paren
 suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|eth_type_trans
+c_func
+(paren
+id|skb
+comma
+id|dev
+)paren
+suffix:semicolon
 id|netif_rx
 c_func
 (paren

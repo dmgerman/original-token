@@ -2434,6 +2434,16 @@ suffix:semicolon
 id|p-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+id|skb1-&gt;protocol
+op_assign
+id|eth_type_trans
+c_func
+(paren
+id|skb1
+comma
+id|dev
+)paren
+suffix:semicolon
 id|netif_rx
 c_func
 (paren

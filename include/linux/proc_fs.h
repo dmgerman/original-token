@@ -181,6 +181,11 @@ DECL|enumerator|PROC_NET_IPACCT
 id|PROC_NET_IPACCT
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+DECL|enumerator|PROC_NET_IPMSQHST
+id|PROC_NET_IPMSQHST
+comma
+macro_line|#endif
 macro_line|#if&t;defined(CONFIG_WAVELAN)
 DECL|enumerator|PROC_NET_WAVELAN
 id|PROC_NET_WAVELAN
@@ -307,6 +312,8 @@ comma
 r_struct
 id|statfs
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan.&n; *&n; *&t;All the real work was done by .....&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&n; *&t;All the real work was done by .....&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 multiline_comment|/*&n; * &t;Format of an IP firewall descriptor&n; *&n; * &t;src, dst, src_mask, dst_mask are always stored in network byte order.&n; * &t;flags and num_*_ports are stored in host byte order (of course).&n; * &t;Port numbers are stored in HOST byte order.&n; */
 macro_line|#ifndef _IP_FW_H
@@ -104,8 +104,10 @@ DECL|macro|IP_FW_F_TCPSYN
 mdefine_line|#define IP_FW_F_TCPSYN&t;0x080&t;/* For tcp packets-check SYN only     */
 DECL|macro|IP_FW_F_ICMPRPL
 mdefine_line|#define IP_FW_F_ICMPRPL 0x100&t;/* Send back icmp unreachable packet  */
+DECL|macro|IP_FW_F_MASQ
+mdefine_line|#define IP_FW_F_MASQ&t;0x200&t;/* Masquerading&t;&t;&t;      */
 DECL|macro|IP_FW_F_MASK
-mdefine_line|#define IP_FW_F_MASK&t;0x1FF&t;/* All possible flag bits mask        */
+mdefine_line|#define IP_FW_F_MASK&t;0x3FF&t;/* All possible flag bits mask        */
 multiline_comment|/*    &n; *&t;New IP firewall options for [gs]etsockopt at the RAW IP level.&n; *&t;Unlike BSD Linux inherits IP options so you don&squot;t have to use&n; *&t;a raw socket for this. Instead we check rights in the calls.&n; */
 DECL|macro|IP_FW_BASE_CTL
 mdefine_line|#define IP_FW_BASE_CTL   64
@@ -180,6 +182,99 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+DECL|struct|ip_masq
+r_struct
+id|ip_masq
+(brace
+DECL|member|next
+r_struct
+id|ip_masq
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* next member in list */
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
+multiline_comment|/* Expiration timer */
+DECL|member|protocol
+id|__u16
+id|protocol
+suffix:semicolon
+multiline_comment|/* Which protocol are we talking? */
+DECL|member|src
+DECL|member|dst
+id|__u32
+id|src
+comma
+id|dst
+suffix:semicolon
+multiline_comment|/* Source and destination IP addresses */
+DECL|member|sport
+DECL|member|dport
+id|__u16
+id|sport
+comma
+id|dport
+suffix:semicolon
+multiline_comment|/* Source and destoination ports */
+DECL|member|mport
+id|__u16
+id|mport
+suffix:semicolon
+multiline_comment|/* Masquaraded port */
+DECL|member|init_seq
+id|__u32
+id|init_seq
+suffix:semicolon
+multiline_comment|/* Add delta from this seq. on */
+DECL|member|delta
+r_int
+id|delta
+suffix:semicolon
+multiline_comment|/* Delta in sequence numbers */
+DECL|member|sawfin
+r_char
+id|sawfin
+suffix:semicolon
+multiline_comment|/* Did we saw an FIN packet? */
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|ip_masq
+op_star
+id|ip_msq_hosts
+suffix:semicolon
+r_extern
+r_void
+id|ip_fw_masquerade
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ip_fw_demasquerade
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_IP_FIREWALL
 r_extern
 r_struct
@@ -278,5 +373,20 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif /* KERNEL */
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+DECL|macro|DEBUG_MASQ
+macro_line|#undef DEBUG_MASQ
+DECL|macro|MASQUERADE_EXPIRE_TCP
+mdefine_line|#define MASQUERADE_EXPIRE_TCP     15*60*HZ
+DECL|macro|MASQUERADE_EXPIRE_TCP_FIN
+mdefine_line|#define MASQUERADE_EXPIRE_TCP_FIN  2*60*HZ
+DECL|macro|MASQUERADE_EXPIRE_UDP
+mdefine_line|#define MASQUERADE_EXPIRE_UDP      5*60*HZ
+multiline_comment|/*&n; *&t;Linux ports don&squot;t normally get allocated above 32K. I used an extra 4K port-space&n; */
+DECL|macro|PORT_MASQ_BEGIN
+mdefine_line|#define PORT_MASQ_BEGIN&t;60000
+DECL|macro|PORT_MASQ_END
+mdefine_line|#define PORT_MASQ_END&t;(PORT_MASQ_BEGIN+4096)
+macro_line|#endif
 macro_line|#endif /* _IP_FW_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Holds initial configuration information for devices.&n; *&n; * NOTE:&t;This file is a nice idea, but its current format does not work&n; *&t;&t;well for drivers that support multiple units, like the SLIP&n; *&t;&t;driver.  We should actually have only one pointer to a driver&n; *&t;&t;here, with the driver knowing how many units it supports.&n; *&t;&t;Currently, the SLIP driver abuses the &quot;base_addr&quot; integer&n; *&t;&t;field of the &squot;device&squot; structure to store the unit number...&n; *&t;&t;-FvK&n; *&n; * Version:&t;@(#)Space.c&t;1.0.7&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Holds initial configuration information for devices.&n; *&n; * NOTE:&t;This file is a nice idea, but its current format does not work&n; *&t;&t;well for drivers that support multiple units, like the SLIP&n; *&t;&t;driver.  We should actually have only one pointer to a driver&n; *&t;&t;here, with the driver knowing how many units it supports.&n; *&t;&t;Currently, the SLIP driver abuses the &quot;base_addr&quot; integer&n; *&t;&t;field of the &squot;device&squot; structure to store the unit number...&n; *&t;&t;-FvK&n; *&n; * Version:&t;@(#)Space.c&t;1.0.7&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&n; *&t;FIXME:&n; *&t;&t;Sort the device chain fastest first.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -541,6 +541,157 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NETROM
+r_extern
+r_int
+id|nr_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|nr3_dev
+r_static
+r_struct
+id|device
+id|nr3_dev
+op_assign
+(brace
+l_string|&quot;nr3&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|nr_init
+comma
+)brace
+suffix:semicolon
+DECL|variable|nr2_dev
+r_static
+r_struct
+id|device
+id|nr2_dev
+op_assign
+(brace
+l_string|&quot;nr2&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|nr3_dev
+comma
+id|nr_init
+comma
+)brace
+suffix:semicolon
+DECL|variable|nr1_dev
+r_static
+r_struct
+id|device
+id|nr1_dev
+op_assign
+(brace
+l_string|&quot;nr1&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|nr2_dev
+comma
+id|nr_init
+comma
+)brace
+suffix:semicolon
+DECL|variable|nr0_dev
+r_static
+r_struct
+id|device
+id|nr0_dev
+op_assign
+(brace
+l_string|&quot;nr0&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|nr1_dev
+comma
+id|nr_init
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define&t;NEXT_DEV&t;(&amp;nr0_dev)
+macro_line|#endif
 multiline_comment|/* Run-time ATtachable (Pocket) devices have a different (not &quot;eth#&quot;) name. */
 macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
 DECL|variable|atp_dev
@@ -1197,6 +1348,108 @@ id|device
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPP_LOTS
+DECL|variable|ppp15_dev
+r_static
+r_struct
+id|device
+id|ppp15_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp14_dev
+r_static
+r_struct
+id|device
+id|ppp14_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp13_dev
+r_static
+r_struct
+id|device
+id|ppp13_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp12_dev
+r_static
+r_struct
+id|device
+id|ppp12_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp11_dev
+r_static
+r_struct
+id|device
+id|ppp11_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp10_dev
+r_static
+r_struct
+id|device
+id|ppp10_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp9_dev
+r_static
+r_struct
+id|device
+id|ppp9_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp8_dev
+r_static
+r_struct
+id|device
+id|ppp8_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp7_dev
+r_static
+r_struct
+id|device
+id|ppp7_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp6_dev
+r_static
+r_struct
+id|device
+id|ppp6_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp5_dev
+r_static
+r_struct
+id|device
+id|ppp5_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|variable|ppp4_dev
+r_static
+r_struct
+id|device
+id|ppp4_dev
+op_assign
+initialization_block
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef&t;NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define&t;NEXT_DEV&t;(&amp;ppp4_dev)
+macro_line|#endif&t;/* CONFIG_PPP_LOTS */
 DECL|variable|ppp3_dev
 r_static
 r_struct
@@ -1386,6 +1639,280 @@ DECL|macro|NEXT_DEV
 macro_line|#   undef&t;NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define&t;NEXT_DEV&t;(&amp;dummy_dev)
+macro_line|#endif
+macro_line|#ifdef CONFIG_EQUALIZER
+r_extern
+r_int
+id|eql_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+DECL|variable|eql_dev
+r_struct
+id|device
+id|eql_dev
+op_assign
+(brace
+l_string|&quot;eql&quot;
+comma
+multiline_comment|/* Master device for IP traffic load &n;&t;&t;&t;&t;   balancing */
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+multiline_comment|/* recv end/start; mem end/start */
+l_int|0
+comma
+multiline_comment|/* base I/O address */
+l_int|0
+comma
+multiline_comment|/* IRQ */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* flags */
+id|NEXT_DEV
+comma
+multiline_comment|/* next device */
+id|eql_init
+multiline_comment|/* set up the rest */
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef       NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define      NEXT_DEV        (&amp;eql_dev)
+macro_line|#endif
+macro_line|#ifdef CONFIG_IBMTR 
+r_extern
+r_int
+id|tok_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+DECL|variable|ibmtr_dev1
+r_static
+r_struct
+id|device
+id|ibmtr_dev1
+op_assign
+(brace
+l_string|&quot;tr1&quot;
+comma
+multiline_comment|/* IBM Token Ring (Non-DMA) Interface */
+l_int|0x0
+comma
+multiline_comment|/* recv memory end&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* recv memory start&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* memory end&t;&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* memory start&t;&t;&t;&t;*/
+l_int|0xa24
+comma
+multiline_comment|/* base I/O address&t;&t;&t;*/
+l_int|0
+comma
+multiline_comment|/* IRQ&t;&t;&t;&t;&t;*/
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* flags&t;&t;&t;&t;*/
+id|NEXT_DEV
+comma
+multiline_comment|/* next device&t;&t;&t;&t;*/
+id|tok_probe
+multiline_comment|/* ??? Token_init should set up the rest&t;*/
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef&t;NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define&t;NEXT_DEV&t;(&amp;ibmtr_dev1)
+r_extern
+r_int
+id|tok_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+DECL|variable|ibmtr_dev0
+r_static
+r_struct
+id|device
+id|ibmtr_dev0
+op_assign
+(brace
+l_string|&quot;tr0&quot;
+comma
+multiline_comment|/* IBM Token Ring (Non-DMA) Interface */
+l_int|0x0
+comma
+multiline_comment|/* recv memory end&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* recv memory start&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* memory end&t;&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* memory start&t;&t;&t;&t;*/
+l_int|0xa20
+comma
+multiline_comment|/* base I/O address&t;&t;&t;*/
+l_int|0
+comma
+multiline_comment|/* IRQ&t;&t;&t;&t;&t;*/
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* flags&t;&t;&t;&t;*/
+id|NEXT_DEV
+comma
+multiline_comment|/* next device&t;&t;&t;&t;*/
+id|tok_probe
+multiline_comment|/* ??? Token_init should set up the rest&t;*/
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef&t;NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define&t;NEXT_DEV&t;(&amp;ibmtr_dev0)
+macro_line|#endif 
+macro_line|#ifdef CONFIG_NET_IPIP
+macro_line|#ifdef CONFIG_IP_FORWARD
+r_extern
+r_int
+id|tunnel_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|tunnel_dev1
+r_static
+r_struct
+id|device
+id|tunnel_dev1
+op_assign
+(brace
+l_string|&quot;tunl1&quot;
+comma
+multiline_comment|/* IPIP tunnel  &t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* recv memory end&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* recv memory start&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* memory end&t;&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* memory start&t;&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* base I/O address&t;&t;&t;*/
+l_int|0
+comma
+multiline_comment|/* IRQ&t;&t;&t;&t;&t;*/
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* flags&t;&t;&t;&t;*/
+id|NEXT_DEV
+comma
+multiline_comment|/* next device&t;&t;&t;&t;*/
+id|tunnel_init
+multiline_comment|/* Fill in the details&t;&t;&t;*/
+)brace
+suffix:semicolon
+DECL|variable|tunnel_dev0
+r_static
+r_struct
+id|device
+id|tunnel_dev0
+op_assign
+(brace
+l_string|&quot;tunl0&quot;
+comma
+multiline_comment|/* IPIP tunnel  &t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* recv memory end&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* recv memory start&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* memory end&t;&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* memory start&t;&t;&t;&t;*/
+l_int|0x0
+comma
+multiline_comment|/* base I/O address&t;&t;&t;*/
+l_int|0
+comma
+multiline_comment|/* IRQ&t;&t;&t;&t;&t;*/
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* flags&t;&t;&t;&t;*/
+op_amp
+id|tunnel_dev1
+comma
+multiline_comment|/* next device&t;&t;&t;&t;*/
+id|tunnel_init
+multiline_comment|/* Fill in the details&t;&t;&t;*/
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef&t;NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define&t;NEXT_DEV&t;(&amp;tunnel_dev0)
+macro_line|#endif 
 macro_line|#endif
 r_extern
 r_int

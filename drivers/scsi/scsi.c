@@ -215,10 +215,10 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef DEBUG
 DECL|macro|SCSI_TIMEOUT
-mdefine_line|#define SCSI_TIMEOUT 500
+mdefine_line|#define SCSI_TIMEOUT (5*HZ)
 macro_line|#else
 DECL|macro|SCSI_TIMEOUT
-mdefine_line|#define SCSI_TIMEOUT 100
+mdefine_line|#define SCSI_TIMEOUT (1*HZ)
 macro_line|#endif
 macro_line|#ifdef DEBUG
 DECL|macro|SENSE_TIMEOUT
@@ -229,17 +229,17 @@ DECL|macro|RESET_TIMEOUT
 mdefine_line|#define RESET_TIMEOUT SCSI_TIMEOUT
 macro_line|#else
 DECL|macro|SENSE_TIMEOUT
-mdefine_line|#define SENSE_TIMEOUT 50
+mdefine_line|#define SENSE_TIMEOUT (5*HZ/10)
 DECL|macro|RESET_TIMEOUT
-mdefine_line|#define RESET_TIMEOUT 50
+mdefine_line|#define RESET_TIMEOUT (5*HZ/10)
 DECL|macro|ABORT_TIMEOUT
-mdefine_line|#define ABORT_TIMEOUT 50
+mdefine_line|#define ABORT_TIMEOUT (5*HZ/10)
 macro_line|#endif
 DECL|macro|MIN_RESET_DELAY
-mdefine_line|#define MIN_RESET_DELAY 100
+mdefine_line|#define MIN_RESET_DELAY (1*HZ)
 multiline_comment|/* Do not call reset on error if we just did a reset within 10 sec. */
 DECL|macro|MIN_RESET_PERIOD
-mdefine_line|#define MIN_RESET_PERIOD 1000
+mdefine_line|#define MIN_RESET_PERIOD (10*HZ)
 multiline_comment|/* The following devices are known not to tolerate a lun != 0 scan for&n;   one reason or another.  Some will respond to all luns, others will&n;   lock up. */
 DECL|struct|blist
 r_struct
@@ -908,7 +908,7 @@ id|SCpnt
 macro_line|#ifdef DEBUG
 id|printk
 (paren
-l_string|&quot;scan_scsis_done(%d, %06x)&bslash;n&quot;
+l_string|&quot;scan_scsis_done(%p, %06x)&bslash;n&quot;
 comma
 id|SCpnt-&gt;host
 comma
@@ -1318,7 +1318,9 @@ id|scan_scsis_done
 comma
 id|SCSI_TIMEOUT
 op_plus
-l_int|400
+l_int|4
+op_star
+id|HZ
 comma
 l_int|5
 )paren
@@ -3602,8 +3604,8 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;internal_cmnd (host = %d, target = %d, command = %08x, buffer =  %08x, &bslash;n&quot;
-l_string|&quot;bufflen = %d, done = %08x)&bslash;n&quot;
+l_string|&quot;internal_cmnd (host = %d, target = %d, command = %p, buffer = %p, &bslash;n&quot;
+l_string|&quot;bufflen = %d, done = %p)&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;host_no
 comma
@@ -3629,7 +3631,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;queuecommand : routine at %08x&bslash;n&quot;
+l_string|&quot;queuecommand : routine at %p&bslash;n&quot;
 comma
 id|host-&gt;hostt-&gt;queuecommand
 )paren
@@ -3682,7 +3684,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;command() :  routine at %08x&bslash;n&quot;
+l_string|&quot;command() :  routine at %p&bslash;n&quot;
 comma
 id|host-&gt;hostt-&gt;command
 )paren
@@ -3704,7 +3706,9 @@ id|clock
 op_assign
 id|jiffies
 op_plus
-l_int|400
+l_int|4
+op_star
+id|HZ
 suffix:semicolon
 r_while
 c_loop
@@ -3919,8 +3923,8 @@ id|SCpnt-&gt;target
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;scsi_do_cmd (host = %d, target = %d, buffer =%08x, &quot;
-l_string|&quot;bufflen = %d, done = %08x, timeout = %d, retries = %d)&bslash;n&quot;
+l_string|&quot;scsi_do_cmd (host = %d, target = %d, buffer =%p, &quot;
+l_string|&quot;bufflen = %d, done = %p, timeout = %d, retries = %d)&bslash;n&quot;
 l_string|&quot;command : &quot;
 comma
 id|host-&gt;host_no
@@ -5478,7 +5482,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Calling done function - at address %08x&bslash;n&quot;
+l_string|&quot;Calling done function - at address %p&bslash;n&quot;
 comma
 id|SCpnt-&gt;done
 )paren
@@ -6951,7 +6955,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;SMalloc: %d %x &quot;
+l_string|&quot;SMalloc: %d %p &quot;
 comma
 id|len
 comma
@@ -7037,7 +7041,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Sfree %x %d&bslash;n&quot;
+l_string|&quot;Sfree %p %d&bslash;n&quot;
 comma
 id|obj
 comma

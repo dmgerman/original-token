@@ -51,6 +51,7 @@ op_star
 r_volatile
 id|next
 suffix:semicolon
+multiline_comment|/* Next buffer in list */
 DECL|member|prev
 r_struct
 id|sk_buff
@@ -58,6 +59,7 @@ op_star
 r_volatile
 id|prev
 suffix:semicolon
+multiline_comment|/* Previous buffer in list */
 macro_line|#if CONFIG_SKB_CHECK
 DECL|member|magic_debug_cookie
 r_int
@@ -71,36 +73,41 @@ op_star
 r_volatile
 id|link3
 suffix:semicolon
+multiline_comment|/* Link for IP protocol level buffer chains &t;*/
 DECL|member|sk
 r_struct
 id|sock
 op_star
 id|sk
 suffix:semicolon
+multiline_comment|/* Socket we are owned by &t;&t;&t;*/
 DECL|member|when
 r_volatile
 r_int
 r_int
 id|when
 suffix:semicolon
-multiline_comment|/* used to compute rtt&squot;s&t;*/
+multiline_comment|/* used to compute rtt&squot;s&t;&t;&t;*/
 DECL|member|stamp
 r_struct
 id|timeval
 id|stamp
 suffix:semicolon
+multiline_comment|/* Time we arrived&t;&t;&t;&t;*/
 DECL|member|dev
 r_struct
 id|device
 op_star
 id|dev
 suffix:semicolon
+multiline_comment|/* Device we arrived on/are leaving by&t;&t;*/
 DECL|member|mem_addr
 r_struct
 id|sk_buff
 op_star
 id|mem_addr
 suffix:semicolon
+multiline_comment|/* Self reference (obsolete)&t;&t;&t;*/
 r_union
 (brace
 DECL|member|th
@@ -148,98 +155,112 @@ id|iphdr
 op_star
 id|ip_hdr
 suffix:semicolon
-multiline_comment|/* For IPPROTO_RAW */
+multiline_comment|/* For IPPROTO_RAW &t;&t;&t;&t;*/
 DECL|member|mem_len
 r_int
 r_int
 id|mem_len
 suffix:semicolon
+multiline_comment|/* Length of allocated memory&t;&t;&t;*/
 DECL|member|len
 r_int
 r_int
 id|len
 suffix:semicolon
+multiline_comment|/* Length of actual data&t;&t;&t;*/
 DECL|member|fraglen
 r_int
 r_int
 id|fraglen
 suffix:semicolon
+multiline_comment|/* Unused (yet)&t;&t;&t;&t;&t;*/
 DECL|member|fraglist
 r_struct
 id|sk_buff
 op_star
 id|fraglist
 suffix:semicolon
-multiline_comment|/* Fragment list */
+multiline_comment|/* Fragment list &t;&t;&t;&t;*/
 DECL|member|truesize
 r_int
 r_int
 id|truesize
 suffix:semicolon
+multiline_comment|/* True buffer size (obsolete)&t;&t;&t;*/
 DECL|member|saddr
 r_int
 r_int
 id|saddr
 suffix:semicolon
+multiline_comment|/* IP source address&t;&t;&t;&t;*/
 DECL|member|daddr
 r_int
 r_int
 id|daddr
 suffix:semicolon
+multiline_comment|/* IP target address&t;&t;&t;&t;*/
 DECL|member|raddr
 r_int
 r_int
 id|raddr
 suffix:semicolon
-multiline_comment|/* next hop addr */
+multiline_comment|/* IP next hop address&t;&t;&t;&t;*/
 DECL|member|acked
 r_volatile
 r_char
 id|acked
 comma
+multiline_comment|/* Are we acked ?&t;&t;&t;&t;*/
 DECL|member|used
 id|used
 comma
+multiline_comment|/* Are we in use ?&t;&t;&t;&t;*/
 DECL|member|free
 id|free
 comma
+multiline_comment|/* How to free this buffer&t;&t;&t;*/
 DECL|member|arp
 id|arp
 suffix:semicolon
+multiline_comment|/* Has IP/ARP resolution finished&t;&t;*/
 DECL|member|tries
-DECL|member|lock
-DECL|member|localroute
-DECL|member|pkt_type
 r_int
 r_char
 id|tries
 comma
+multiline_comment|/* Times tried&t;&t;&t;&t;&t;*/
+DECL|member|lock
 id|lock
 comma
+multiline_comment|/* Are we locked ?&t;&t;&t;&t;*/
+DECL|member|localroute
 id|localroute
 comma
+multiline_comment|/* Local routing asserted for this frame&t;*/
+DECL|member|pkt_type
 id|pkt_type
 suffix:semicolon
+multiline_comment|/* Packet class&t;&t;&t;&t;&t;*/
 DECL|macro|PACKET_HOST
-mdefine_line|#define PACKET_HOST&t;&t;0&t;&t;/* To us */
+mdefine_line|#define PACKET_HOST&t;&t;0&t;&t;&t;/* To us&t;&t;&t;&t;&t;*/
 DECL|macro|PACKET_BROADCAST
-mdefine_line|#define PACKET_BROADCAST&t;1
+mdefine_line|#define PACKET_BROADCAST&t;1&t;&t;&t;/* To all&t;&t;&t;&t;&t;*/
 DECL|macro|PACKET_MULTICAST
-mdefine_line|#define PACKET_MULTICAST&t;2
+mdefine_line|#define PACKET_MULTICAST&t;2&t;&t;&t;/* To group&t;&t;&t;&t;&t;*/
 DECL|macro|PACKET_OTHERHOST
-mdefine_line|#define PACKET_OTHERHOST&t;3&t;&t;/* Unmatched promiscuous */
+mdefine_line|#define PACKET_OTHERHOST&t;3&t;&t;&t;/* To someone else &t;&t;&t;&t;*/
 DECL|member|users
 r_int
 r_int
 id|users
 suffix:semicolon
-multiline_comment|/* User count - see datagram.c (and soon seqpacket.c/stream.c) */
-DECL|member|pkt_class
+multiline_comment|/* User count - see datagram.c,tcp.c &t;&t;*/
+DECL|member|protocol
 r_int
 r_int
-id|pkt_class
+id|protocol
 suffix:semicolon
-multiline_comment|/* For drivers that need to cache the packet type with the skbuff (new PPP) */
+multiline_comment|/* Packet protocol from driver. &t;&t;*/
 macro_line|#ifdef CONFIG_SLAVE_BALANCING
 DECL|member|in_dev_queue
 r_int
@@ -255,6 +276,7 @@ id|padding
 l_int|0
 )braket
 suffix:semicolon
+multiline_comment|/* Force long word alignment&t;&t;&t;*/
 DECL|member|data
 r_int
 r_char
@@ -263,6 +285,7 @@ id|data
 l_int|0
 )braket
 suffix:semicolon
+multiline_comment|/* Data follows&t;&t;&t;&t;&t;*/
 )brace
 suffix:semicolon
 DECL|macro|SK_WMEM_MAX
@@ -749,7 +772,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Remove an sk_buff from a list. This routine is also interrupt safe&n; *&t;so you can grab read and free buffers as another process adds them.&n; */
+multiline_comment|/*&n; *&t;Remove an sk_buff from a list. This routine is also interrupt safe&n; *&t;so you can grab read and free buffers as another process adds them.&n; *&n; * &t;Note we now do the ful list &n; */
 DECL|function|skb_dequeue
 r_extern
 id|__inline__
@@ -818,6 +841,8 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+r_else
+(brace
 id|result-&gt;next-&gt;prev
 op_assign
 id|list
@@ -843,6 +868,7 @@ suffix:semicolon
 r_return
 id|result
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;Insert a packet before another one in a list.&n; */
 DECL|function|skb_insert

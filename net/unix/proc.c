@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/un.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
-macro_line|#include &quot;unix.h&quot;
+macro_line|#include &lt;net/unix.h&gt;
 multiline_comment|/* Called from PROCfs. */
 DECL|function|unix_get_info
 r_int

@@ -1045,7 +1045,7 @@ r_case
 id|SIGTRAP
 suffix:colon
 r_case
-id|SIGIOT
+id|SIGABRT
 suffix:colon
 r_case
 id|SIGFPE

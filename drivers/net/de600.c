@@ -74,7 +74,7 @@ op_star
 id|sk
 )paren
 suffix:semicolon
-macro_line|#include &quot;../../net/inet/sock.h&quot;
+macro_line|#include &lt;net/sock.h&gt;
 macro_line|#endif
 DECL|macro|netstats
 mdefine_line|#define netstats enet_statistics
@@ -1678,6 +1678,16 @@ id|rx_packets
 op_increment
 suffix:semicolon
 multiline_comment|/* count all receives */
+id|skb-&gt;protocol
+op_assign
+id|eth_type_trans
+c_func
+(paren
+id|skb
+comma
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1068,6 +1068,9 @@ c_func
 (paren
 r_int
 r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 DECL|macro|read_swap_page

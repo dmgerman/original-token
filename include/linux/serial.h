@@ -312,6 +312,7 @@ suffix:semicolon
 multiline_comment|/* MCR with interrupts off */
 DECL|member|event
 r_int
+r_int
 id|event
 suffix:semicolon
 DECL|member|last_active

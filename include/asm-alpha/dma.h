@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-alpha/dma.h&n; *&n; * This is essentially the same as the i386 DMA stuff, as&n; * the AlphaPC uses normal EISA dma (but the DMA controller&n; * is not on the EISA bus, but on the local VL82c106 bus).&n; *&n; * These DMA-functions don&squot;t know about EISA DMA yet..&n; */
+multiline_comment|/*&n; * include/asm-alpha/dma.h&n; *&n; * This is essentially the same as the i386 DMA stuff, as the AlphaPCs&n; * use ISA-compatible dma.  The only extension is support for high-page&n; * registers that allow to set the top 8 bits of a 32-bit DMA address.&n; * This register should be written last when setting up a DMA address&n; * as this will also enable DMA across 64 KB boundaries.&n; */
 multiline_comment|/* $Id: dma.h,v 1.7 1992/12/14 00:29:34 root Exp root $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; */
 macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
@@ -40,6 +40,8 @@ DECL|macro|DMA1_CLR_MASK_REG
 mdefine_line|#define DMA1_CLR_MASK_REG       0x0E    /* Clear Mask */
 DECL|macro|DMA1_MASK_ALL_REG
 mdefine_line|#define DMA1_MASK_ALL_REG       0x0F    /* all-channels mask (w) */
+DECL|macro|DMA1_EXT_MODE_REG
+mdefine_line|#define DMA1_EXT_MODE_REG&t;(0x400 | DMA1_MODE_REG)
 DECL|macro|DMA2_CMD_REG
 mdefine_line|#define DMA2_CMD_REG&t;&t;0xD0&t;/* command register (w) */
 DECL|macro|DMA2_STAT_REG
@@ -60,6 +62,8 @@ DECL|macro|DMA2_CLR_MASK_REG
 mdefine_line|#define DMA2_CLR_MASK_REG       0xDC    /* Clear Mask */
 DECL|macro|DMA2_MASK_ALL_REG
 mdefine_line|#define DMA2_MASK_ALL_REG       0xDE    /* all-channels mask (w) */
+DECL|macro|DMA2_EXT_MODE_REG
+mdefine_line|#define DMA2_EXT_MODE_REG&t;(0x400 | DMA2_MODE_REG)
 DECL|macro|DMA_ADDR_0
 mdefine_line|#define DMA_ADDR_0              0x00    /* DMA address registers */
 DECL|macro|DMA_ADDR_1
@@ -106,6 +110,22 @@ DECL|macro|DMA_PAGE_6
 mdefine_line|#define DMA_PAGE_6              0x89
 DECL|macro|DMA_PAGE_7
 mdefine_line|#define DMA_PAGE_7              0x8A
+DECL|macro|DMA_HIPAGE_0
+mdefine_line|#define DMA_HIPAGE_0&t;&t;(0x400 | DMA_PAGE_0)
+DECL|macro|DMA_HIPAGE_1
+mdefine_line|#define DMA_HIPAGE_1&t;&t;(0x400 | DMA_PAGE_1)
+DECL|macro|DMA_HIPAGE_2
+mdefine_line|#define DMA_HIPAGE_2&t;&t;(0x400 | DMA_PAGE_2)
+DECL|macro|DMA_HIPAGE_3
+mdefine_line|#define DMA_HIPAGE_3&t;&t;(0x400 | DMA_PAGE_3)
+DECL|macro|DMA_HIPAGE_4
+mdefine_line|#define DMA_HIPAGE_4&t;&t;(0x400 | DMA_PAGE_4)
+DECL|macro|DMA_HIPAGE_5
+mdefine_line|#define DMA_HIPAGE_5&t;&t;(0x400 | DMA_PAGE_5)
+DECL|macro|DMA_HIPAGE_6
+mdefine_line|#define DMA_HIPAGE_6&t;&t;(0x400 | DMA_PAGE_6)
+DECL|macro|DMA_HIPAGE_7
+mdefine_line|#define DMA_HIPAGE_7&t;&t;(0x400 | DMA_PAGE_7)
 DECL|macro|DMA_MODE_READ
 mdefine_line|#define DMA_MODE_READ&t;0x44&t;/* I/O to memory, no autoinit, increment, single mode */
 DECL|macro|DMA_MODE_WRITE
@@ -284,7 +304,56 @@ id|DMA2_MODE_REG
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set only the page register bits of the transfer address.&n; * This is used for successive transfers when we know the contents of&n; * the lower 16 bits of the DMA current address register, but a 64k boundary&n; * may have been crossed.&n; */
+multiline_comment|/* set extended mode for a specific DMA channel */
+DECL|function|set_dma_ext_mode
+r_static
+id|__inline__
+r_void
+id|set_dma_ext_mode
+c_func
+(paren
+r_int
+r_int
+id|dmanr
+comma
+r_char
+id|ext_mode
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dmanr
+op_le
+l_int|3
+)paren
+id|dma_outb
+c_func
+(paren
+id|ext_mode
+op_or
+id|dmanr
+comma
+id|DMA1_EXT_MODE_REG
+)paren
+suffix:semicolon
+r_else
+id|dma_outb
+c_func
+(paren
+id|ext_mode
+op_or
+(paren
+id|dmanr
+op_amp
+l_int|3
+)paren
+comma
+id|DMA2_EXT_MODE_REG
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Set only the page register bits of the transfer address.&n; * This is used for successive transfers when we know the contents of&n; * the lower 16 bits of the DMA current address register.&n; */
 DECL|function|set_dma_page
 r_static
 id|__inline__
@@ -296,7 +365,8 @@ r_int
 r_int
 id|dmanr
 comma
-r_char
+r_int
+r_int
 id|pagenr
 )paren
 (brace
@@ -317,6 +387,18 @@ comma
 id|DMA_PAGE_0
 )paren
 suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|pagenr
+op_rshift
+l_int|8
+)paren
+comma
+id|DMA_HIPAGE_0
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -328,6 +410,18 @@ c_func
 id|pagenr
 comma
 id|DMA_PAGE_1
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|pagenr
+op_rshift
+l_int|8
+)paren
+comma
+id|DMA_HIPAGE_1
 )paren
 suffix:semicolon
 r_break
@@ -343,6 +437,18 @@ comma
 id|DMA_PAGE_2
 )paren
 suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|pagenr
+op_rshift
+l_int|8
+)paren
+comma
+id|DMA_HIPAGE_2
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -354,6 +460,18 @@ c_func
 id|pagenr
 comma
 id|DMA_PAGE_3
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|pagenr
+op_rshift
+l_int|8
+)paren
+comma
+id|DMA_HIPAGE_3
 )paren
 suffix:semicolon
 r_break
@@ -371,6 +489,18 @@ comma
 id|DMA_PAGE_5
 )paren
 suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|pagenr
+op_rshift
+l_int|8
+)paren
+comma
+id|DMA_HIPAGE_5
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -386,6 +516,18 @@ comma
 id|DMA_PAGE_6
 )paren
 suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|pagenr
+op_rshift
+l_int|8
+)paren
+comma
+id|DMA_HIPAGE_6
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -399,6 +541,18 @@ op_amp
 l_int|0xfe
 comma
 id|DMA_PAGE_7
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|pagenr
+op_rshift
+l_int|8
+)paren
+comma
+id|DMA_HIPAGE_7
 )paren
 suffix:semicolon
 r_break
@@ -422,16 +576,6 @@ r_int
 id|a
 )paren
 (brace
-id|set_dma_page
-c_func
-(paren
-id|dmanr
-comma
-id|a
-op_rshift
-l_int|16
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -536,6 +680,17 @@ id|IO_DMA2_BASE
 )paren
 suffix:semicolon
 )brace
+id|set_dma_page
+c_func
+(paren
+id|dmanr
+comma
+id|a
+op_rshift
+l_int|16
+)paren
+suffix:semicolon
+multiline_comment|/* set hipage last to enable 32-bit mode */
 )brace
 multiline_comment|/* Set transfer size (max 64k for DMA1..3, 128k for DMA5..7) for&n; * a specific DMA channel.&n; * You must ensure the parameters are valid.&n; * NOTE: from a manual: &quot;the number of transfers is one more&n; * than the initial word count&quot;! This is taken into account.&n; * Assumes dma flip-flop is clear.&n; * NOTE 2: &quot;count&quot; represents _bytes_ and must be even for channels 5-7.&n; */
 DECL|function|set_dma_count

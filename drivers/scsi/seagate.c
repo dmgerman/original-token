@@ -1104,7 +1104,7 @@ r_int
 id|current_bufflen
 suffix:semicolon
 macro_line|#ifdef LINKED
-multiline_comment|/* &n; * linked_connected indicates weather or not we are currently connected to &n; * linked_target, linked_lun and in an INFORMATION TRANSFER phase,&n; * using linked commands.&n; */
+multiline_comment|/* &n; * linked_connected indicates whether or not we are currently connected to &n; * linked_target, linked_lun and in an INFORMATION TRANSFER phase,&n; * using linked commands.&n; */
 DECL|variable|linked_connected
 r_static
 r_int

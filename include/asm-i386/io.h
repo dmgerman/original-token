@@ -17,6 +17,54 @@ macro_line|#else
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO __SLOW_DOWN_IO
 macro_line|#endif
+multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are trivial on the 1:1 Linux/i386 mapping (but if we ever&n; * make the kernel segment mapped at 0, we need to do translation&n; * on the i386 as well)&n; */
+DECL|function|virt_to_phys
+r_extern
+r_inline
+r_int
+r_int
+id|virt_to_phys
+c_func
+(paren
+r_void
+op_star
+id|address
+)paren
+(brace
+r_return
+(paren
+r_int
+r_int
+)paren
+id|address
+suffix:semicolon
+)brace
+DECL|function|phys_to_virt
+r_extern
+r_inline
+r_void
+op_star
+id|phys_to_virt
+c_func
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+r_return
+(paren
+r_void
+op_star
+)paren
+id|address
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * IO bus memory addresses are also 1:1 with the physical address&n; */
+DECL|macro|virt_to_bus
+mdefine_line|#define virt_to_bus virt_to_phys
+DECL|macro|bus_to_virt
+mdefine_line|#define bus_to_virt phys_to_virt
 multiline_comment|/*&n; * Talk about misusing macros..&n; */
 DECL|macro|__OUT1
 mdefine_line|#define __OUT1(s,x) &bslash;&n;extern inline void __out##s(unsigned x value, unsigned short port) {

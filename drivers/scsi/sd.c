@@ -3916,7 +3916,8 @@ r_char
 op_star
 id|buffer
 suffix:semicolon
-r_char
+r_int
+r_int
 id|spintime
 suffix:semicolon
 r_int
@@ -4288,7 +4289,9 @@ id|spintime
 op_logical_and
 id|spintime
 op_plus
-l_int|5000
+l_int|50
+op_star
+id|HZ
 OG
 id|jiffies
 )paren

@@ -284,6 +284,12 @@ DECL|macro|__NR_setfsgid
 mdefine_line|#define __NR_setfsgid&t;&t;139
 DECL|macro|__NR__llseek
 mdefine_line|#define __NR__llseek&t;&t;140
+DECL|macro|__NR_getdents
+mdefine_line|#define __NR_getdents&t;&t;141
+DECL|macro|__NR__newselect
+mdefine_line|#define __NR__newselect&t;&t;142
+DECL|macro|__NR_flock
+mdefine_line|#define __NR_flock&t;&t;143
 r_extern
 r_int
 id|errno

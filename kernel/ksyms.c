@@ -28,15 +28,16 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
-macro_line|#include &lt;linux/tcp.h&gt;
-macro_line|#include &quot;../net/inet/protocol.h&quot;
-macro_line|#include &quot;../net/inet/arp.h&quot;
+macro_line|#include &lt;net/protocol.h&gt;
+macro_line|#include &lt;net/arp.h&gt;
+macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
 macro_line|#include &quot;../drivers/net/slhc.h&quot;
 macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
+macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#endif
 macro_line|#if defined(CONFIG_MSDOS_FS) &amp;&amp; !defined(CONFIG_UMSDOS_FS)

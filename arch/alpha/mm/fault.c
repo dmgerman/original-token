@@ -28,6 +28,26 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|tbi
+c_func
+(paren
+r_int
+r_int
+id|type
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+DECL|macro|tbisi
+mdefine_line|#define tbisi(x) tbi(1,(x))
+DECL|macro|tbisd
+mdefine_line|#define tbisd(x) tbi(2,(x))
+DECL|macro|tbis
+mdefine_line|#define tbis(x)  tbi(3,(x))
 multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to handle_mm_fault().&n; *&n; * mmcsr:&n; *&t;0 = translation not valid&n; *&t;1 = access violation&n; *&t;2 = fault-on-read&n; *&t;3 = fault-on-execute&n; *&t;4 = fault-on-write&n; *&n; * cause:&n; *&t;-1 = instruction fetch&n; *&t;0 = load&n; *&t;1 = store&n; */
 DECL|function|do_page_fault
 id|asmlinkage
@@ -178,6 +198,7 @@ op_logical_neg
 id|cause
 )paren
 (brace
+multiline_comment|/* Allow reads even for write-only mappings */
 r_if
 c_cond
 (paren
@@ -185,7 +206,11 @@ op_logical_neg
 (paren
 id|vma-&gt;vm_flags
 op_amp
+(paren
 id|VM_READ
+op_or
+id|VM_WRITE
+)paren
 )paren
 )paren
 r_goto
@@ -208,6 +233,12 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
+id|tbis
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
 id|handle_mm_fault
 c_func
 (paren
@@ -236,6 +267,27 @@ id|regs
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;memory violation at pc=%08lx (%08lx)&bslash;n&quot;
+comma
+id|regs.pc
+comma
+id|address
+)paren
+suffix:semicolon
+id|die_if_kernel
+c_func
+(paren
+l_string|&quot;oops&quot;
+comma
+op_amp
+id|regs
+comma
+id|cause
+)paren
+suffix:semicolon
 id|send_sig
 c_func
 (paren

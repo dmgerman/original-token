@@ -785,6 +785,8 @@ r_struct
 id|statfs
 op_star
 id|buf
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -857,13 +859,11 @@ id|file
 op_star
 id|filp
 comma
-r_struct
-id|dirent
+r_void
 op_star
 id|dirent
 comma
-r_int
-id|count
+id|filldir_t
 )paren
 suffix:semicolon
 multiline_comment|/* file.c */

@@ -3,9 +3,37 @@ macro_line|#ifndef _LINUX_IGMP_H
 DECL|macro|_LINUX_IGMP_H
 mdefine_line|#define _LINUX_IGMP_H
 multiline_comment|/*&n; *&t;IGMP protocol structures&n; */
+multiline_comment|/*&n; *&t;Header in on cable format&n; */
 DECL|struct|igmphdr
 r_struct
 id|igmphdr
+(brace
+DECL|member|type
+r_int
+r_char
+id|type
+suffix:semicolon
+DECL|member|unused
+r_int
+r_char
+id|unused
+suffix:semicolon
+DECL|member|csum
+r_int
+r_int
+id|csum
+suffix:semicolon
+DECL|member|group
+r_int
+r_int
+id|group
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;Header in host convenient format&n; */
+DECL|struct|igmp_header
+r_struct
+id|igmp_header
 (brace
 DECL|member|type
 r_int

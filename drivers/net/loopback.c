@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Pseudo-driver for the loopback interface.&n; *&n; * Version:&t;@(#)loopback.c&t;1.0.4b&t;08/16/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&n; *&t;&t;Alan Cox&t;:&t;Fixed oddments for NET3.014&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Pseudo-driver for the loopback interface.&n; *&n; * Version:&t;@(#)loopback.c&t;1.0.4b&t;08/16/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&n; *&t;&t;Alan Cox&t;:&t;Fixed oddments for NET3.014&n; *&t;&t;Alan Cox&t;:&t;Rejig for NET3.029 snap #3&n; *&t;&t;Alan Cox&t;: &t;Fixed NET3.029 bugs and sped up&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -18,9 +18,10 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;net/sock.h&gt;
+DECL|function|loopback_xmit
 r_static
 r_int
-DECL|function|loopback_xmit
 id|loopback_xmit
 c_func
 (paren
@@ -48,7 +49,13 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_int
-id|done
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|unlock
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -64,6 +71,12 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -77,9 +90,10 @@ op_ne
 l_int|0
 )paren
 (brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|stats-&gt;tx_errors
@@ -93,57 +107,152 @@ id|dev-&gt;tbusy
 op_assign
 l_int|1
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: Optimise so buffers with skb-&gt;free=1 are not copied but&n;     instead are lobbed from tx queue to rx queue */
-id|done
-op_assign
-id|dev_rint
-c_func
+multiline_comment|/*&n;&t; *&t;Optimise so buffers with skb-&gt;free=1 are not copied but&n;&t; *&t;instead are lobbed from tx queue to rx queue &n;&t; */
+r_if
+c_cond
 (paren
-id|skb-&gt;data
-comma
-id|skb-&gt;len
-comma
+id|skb-&gt;free
+op_eq
 l_int|0
-comma
-id|dev
 )paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb2
+op_assign
+id|skb
 suffix:semicolon
-id|dev_kfree_skb
+id|skb
+op_assign
+id|skb_clone
 c_func
 (paren
 id|skb
 comma
-id|FREE_WRITE
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
-r_while
-c_loop
+multiline_comment|/* Clone the buffer */
+r_if
+c_cond
 (paren
-id|done
-op_ne
-l_int|1
+id|skb
+op_eq
+l_int|NULL
 )paren
 (brace
-id|done
-op_assign
-id|dev_rint
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|dev_kfree_skb
 c_func
 (paren
-l_int|NULL
+id|skb2
 comma
+id|FREE_READ
+)paren
+suffix:semicolon
+id|unlock
+op_assign
 l_int|0
-comma
-l_int|0
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|skb-&gt;sk
+)paren
+(brace
+multiline_comment|/*&n;&t;  &t; *&t;Packet sent but looped back around. Cease to charge&n;&t;  &t; *&t;the socket for the frame.&n;&t;  &t; */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|skb-&gt;sk-&gt;wmem_alloc
+op_sub_assign
+id|skb-&gt;mem_len
+suffix:semicolon
+id|skb-&gt;sk
+op_member_access_from_pointer
+id|write_space
+c_func
+(paren
+id|skb-&gt;sk
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+id|skb-&gt;protocol
+op_assign
+id|eth_type_trans
+c_func
+(paren
+id|skb
 comma
 id|dev
 )paren
 suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|netif_rx
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|unlock
+)paren
+(brace
+id|skb_device_unlock
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|stats-&gt;tx_packets
 op_increment
 suffix:semicolon
@@ -155,11 +264,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|get_stats
 r_static
 r_struct
 id|enet_statistics
 op_star
-DECL|function|get_stats
 id|get_stats
 c_func
 (paren
@@ -199,8 +308,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the rest of the LOOPBACK device. */
-r_int
 DECL|function|loopback_init
+r_int
 id|loopback_init
 c_func
 (paren
@@ -230,7 +339,6 @@ id|dev-&gt;open
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if 1
 id|dev-&gt;hard_header
 op_assign
 id|eth_header
@@ -250,10 +358,6 @@ op_assign
 id|ARPHRD_ETHER
 suffix:semicolon
 multiline_comment|/* 0x0001&t;&t;*/
-id|dev-&gt;type_trans
-op_assign
-id|eth_type_trans
-suffix:semicolon
 id|dev-&gt;rebuild_header
 op_assign
 id|eth_rebuild_header
@@ -262,34 +366,6 @@ id|dev-&gt;open
 op_assign
 id|loopback_open
 suffix:semicolon
-macro_line|#else
-id|dev-&gt;hard_header_length
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;addr_len
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;type
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* loopback_type (0)&t;*/
-id|dev-&gt;hard_header
-op_assign
-l_int|NULL
-suffix:semicolon
-id|dev-&gt;type_trans
-op_assign
-l_int|NULL
-suffix:semicolon
-id|dev-&gt;rebuild_header
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* New-style flags. */
 id|dev-&gt;flags
 op_assign
 id|IFF_LOOPBACK
@@ -366,7 +442,7 @@ id|dev-&gt;get_stats
 op_assign
 id|get_stats
 suffix:semicolon
-multiline_comment|/* Fill in the generic fields of the device structure. */
+multiline_comment|/*&n;&t; *&t;Fill in the generic fields of the device structure. &n;&t; */
 r_for
 c_loop
 (paren

@@ -103,6 +103,15 @@ id|pg0
 l_int|1024
 )braket
 suffix:semicolon
+multiline_comment|/* zero page used for unitialized stuff */
+r_extern
+r_int
+r_int
+id|empty_zero_page
+(braket
+l_int|1024
+)braket
+suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
@@ -121,21 +130,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|__zero_page
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|macro|BAD_PAGETABLE
 mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE __zero_page()
+mdefine_line|#define ZERO_PAGE ((unsigned long) empty_zero_page)
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
@@ -1755,5 +1755,11 @@ id|pte
 )paren
 (brace
 )brace
+DECL|macro|SWP_TYPE
+mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
+DECL|macro|SWP_OFFSET
+mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
+DECL|macro|SWP_ENTRY
+mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
 macro_line|#endif /* _I386_PAGE_H */
 eof

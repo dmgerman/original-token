@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;linux/scc.h&gt;
 macro_line|#include &quot;kbd_kern.h&quot;
 macro_line|#include &quot;vt_kern.h&quot;
 macro_line|#include &quot;selection.h&quot;
@@ -7680,6 +7681,16 @@ c_func
 id|kmem_start
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCC
+id|kmem_start
+op_assign
+id|scc_init
+c_func
+(paren
+id|kmem_start
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_CYCLADES
 id|kmem_start
 op_assign

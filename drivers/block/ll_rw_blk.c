@@ -1669,6 +1669,7 @@ r_int
 id|dev
 comma
 r_int
+r_int
 id|page
 comma
 r_char
@@ -1689,6 +1690,18 @@ id|MAJOR
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+r_int
+r_int
+id|sector
+op_assign
+id|page
+op_star
+(paren
+id|PAGE_SIZE
+op_div
+l_int|512
 )paren
 suffix:semicolon
 r_struct
@@ -1718,13 +1731,11 @@ id|request_fn
 id|printk
 c_func
 (paren
-l_string|&quot;Trying to read nonexistent block-device %04x (%d)&bslash;n&quot;
+l_string|&quot;Trying to read nonexistent block-device %04x (%ld)&bslash;n&quot;
 comma
 id|dev
 comma
-id|page
-op_star
-l_int|8
+id|sector
 )paren
 suffix:semicolon
 r_return
@@ -1793,17 +1804,19 @@ l_int|0
 suffix:semicolon
 id|req-&gt;sector
 op_assign
-id|page
-op_lshift
-l_int|3
+id|sector
 suffix:semicolon
 id|req-&gt;nr_sectors
 op_assign
-l_int|8
+id|PAGE_SIZE
+op_div
+l_int|512
 suffix:semicolon
 id|req-&gt;current_nr_sectors
 op_assign
-l_int|8
+id|PAGE_SIZE
+op_div
+l_int|512
 suffix:semicolon
 id|req-&gt;buffer
 op_assign

@@ -1,4 +1,10 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_dev_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_dev_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; * 2.05  Jun  8, 1995 -- Don&squot;t attempt to retry after an illegal request&n; *                        or data protect error.&n; *                       Use HWIF and DEV_HWIF macros as in ide.c.&n; *                       Always try to do a request_sense after&n; *                        a failed command.&n; *                       Include an option to give textual descriptions&n; *                        of ATAPI errors.&n; *                       Fix a bug in handling the sector cache which&n; *                        showed up if the drive returned data in 512 byte&n; *                        blocks (like Pioneer drives).  Thanks to&n; *                        Richard Hirst &lt;srh@gpt.co.uk&gt; for diagnosing this.&n; *                       Properly supply the page number field in the&n; *                        MODE_SELECT command.&n; *                       PLAYAUDIO12 is broken on the Aztech; work around it.&n; *                       &n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
+multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
+macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
+DECL|macro|VERBOSE_IDE_CD_ERRORS
+mdefine_line|#define VERBOSE_IDE_CD_ERRORS 0
+macro_line|#endif
+multiline_comment|/***************************************************************************/
 macro_line|#include &lt;linux/cdrom.h&gt;
 DECL|macro|SECTOR_SIZE
 mdefine_line|#define SECTOR_SIZE 512
@@ -10,9 +16,9 @@ DECL|macro|MIN
 mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
 macro_line|#if 1&t;/* &quot;old&quot; method */
 DECL|macro|OUT_WORDS
-mdefine_line|#define OUT_WORDS(b,n)  outsw (IDE_PORT (HD_DATA, dev-&gt;hwif), (b), (n))
+mdefine_line|#define OUT_WORDS(b,n)  outsw (IDE_PORT (HD_DATA, DEV_HWIF), (b), (n))
 DECL|macro|IN_WORDS
-mdefine_line|#define IN_WORDS(b,n)   insw  (IDE_PORT (HD_DATA, dev-&gt;hwif), (b), (n))
+mdefine_line|#define IN_WORDS(b,n)   insw  (IDE_PORT (HD_DATA, DEV_HWIF), (b), (n))
 macro_line|#else&t;/* &quot;new&quot; method -- should really fix each instance instead of this */
 DECL|macro|OUT_WORDS
 mdefine_line|#define OUT_WORDS(b,n)&t;output_ide_data(dev,b,(n)/2)
@@ -22,6 +28,8 @@ macro_line|#endif
 multiline_comment|/* special command codes for strategy routine. */
 DECL|macro|PACKET_COMMAND
 mdefine_line|#define PACKET_COMMAND 4315
+DECL|macro|REQUEST_SENSE_COMMAND
+mdefine_line|#define REQUEST_SENSE_COMMAND 4316
 DECL|macro|WIN_PACKETCMD
 mdefine_line|#define WIN_PACKETCMD 0xa0  /* Send a packet command. */
 multiline_comment|/* Some ATAPI command opcodes (just like SCSI).&n;   (Some other cdrom-specific codes are in cdrom.h.) */
@@ -39,6 +47,27 @@ DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10           0x5a
 DECL|macro|MODE_SELECT_10
 mdefine_line|#define MODE_SELECT_10          0x55
+multiline_comment|/* ATAPI sense keys (mostly copied from scsi.h). */
+DECL|macro|NO_SENSE
+mdefine_line|#define NO_SENSE                0x00
+DECL|macro|RECOVERED_ERROR
+mdefine_line|#define RECOVERED_ERROR         0x01
+DECL|macro|NOT_READY
+mdefine_line|#define NOT_READY               0x02
+DECL|macro|MEDIUM_ERROR
+mdefine_line|#define MEDIUM_ERROR            0x03
+DECL|macro|HARDWARE_ERROR
+mdefine_line|#define HARDWARE_ERROR          0x04
+DECL|macro|ILLEGAL_REQUEST
+mdefine_line|#define ILLEGAL_REQUEST         0x05
+DECL|macro|UNIT_ATTENTION
+mdefine_line|#define UNIT_ATTENTION          0x06
+DECL|macro|DATA_PROTECT
+mdefine_line|#define DATA_PROTECT            0x07
+DECL|macro|ABORTED_COMMAND
+mdefine_line|#define ABORTED_COMMAND         0x0b
+DECL|macro|MISCOMPARE
+mdefine_line|#define MISCOMPARE              0x0e
 DECL|struct|packet_command
 r_struct
 id|packet_command
@@ -194,12 +223,19 @@ id|no_lba_toc
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Drive cannot return TOC info in LBA format */
+multiline_comment|/* Drive cannot return TOC info in LBA format. */
+DECL|member|msf_as_bcd
+r_int
+id|msf_as_bcd
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive uses BCD in PLAYAUDIO_MSF. */
 DECL|member|reserved
 r_int
 id|reserved
 suffix:colon
-l_int|3
+l_int|2
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -313,6 +349,12 @@ r_char
 op_star
 id|sector_buffer
 suffix:semicolon
+multiline_comment|/* The result of the last successful request sense command&n;     on this device. */
+DECL|member|sense_data
+r_struct
+id|atapi_request_sense
+id|sense_data
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|variable|cdrom_info
@@ -327,8 +369,1182 @@ l_int|2
 id|MAX_DRIVES
 )braket
 suffix:semicolon
+multiline_comment|/* Statically allocate one request packet and one packet command struct&n;   for each interface for retrieving sense data during error recovery. */
+DECL|variable|request_sense_request
+r_static
+r_struct
+id|request
+id|request_sense_request
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|variable|request_sense_pc
+r_static
+r_struct
+id|packet_command
+id|request_sense_pc
+(braket
+l_int|2
+)braket
+suffix:semicolon
+"&f;"
+multiline_comment|/****************************************************************************&n; * Descriptions of ATAPI error codes.&n; */
+DECL|macro|ARY_LEN
+mdefine_line|#define ARY_LEN(a) ((sizeof(a) / sizeof(a[0])))
+macro_line|#if VERBOSE_IDE_CD_ERRORS
+multiline_comment|/* From Table 124 of the ATAPI 1.2 spec. */
+DECL|variable|sense_key_texts
+r_char
+op_star
+id|sense_key_texts
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_string|&quot;No sense data&quot;
+comma
+l_string|&quot;Recovered error&quot;
+comma
+l_string|&quot;Not ready&quot;
+comma
+l_string|&quot;Medium error&quot;
+comma
+l_string|&quot;Hardware error&quot;
+comma
+l_string|&quot;Illegal request&quot;
+comma
+l_string|&quot;Unit attention&quot;
+comma
+l_string|&quot;Data protect&quot;
+comma
+l_string|&quot;(reserved)&quot;
+comma
+l_string|&quot;(reserved)&quot;
+comma
+l_string|&quot;(reserved)&quot;
+comma
+l_string|&quot;Aborted command&quot;
+comma
+l_string|&quot;(reserved)&quot;
+comma
+l_string|&quot;(reserved)&quot;
+comma
+l_string|&quot;Miscompare&quot;
+comma
+l_string|&quot;(reserved)&quot;
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* From Table 125 of the ATAPI 1.2 spec. */
+r_struct
+(brace
+DECL|member|asc_ascq
+r_int
+id|asc_ascq
+suffix:semicolon
+DECL|member|text
+r_char
+op_star
+id|text
+suffix:semicolon
+DECL|variable|sense_data_texts
+)brace
+id|sense_data_texts
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_int|0x0000
+comma
+l_string|&quot;No additional sense information&quot;
+)brace
+comma
+(brace
+l_int|0x0011
+comma
+l_string|&quot;Audio play operation in progress&quot;
+)brace
+comma
+(brace
+l_int|0x0012
+comma
+l_string|&quot;Audio play operation paused&quot;
+)brace
+comma
+(brace
+l_int|0x0013
+comma
+l_string|&quot;Audio play operation successfully completed&quot;
+)brace
+comma
+(brace
+l_int|0x0014
+comma
+l_string|&quot;Audio play operation stopped due to error&quot;
+)brace
+comma
+(brace
+l_int|0x0015
+comma
+l_string|&quot;No current audio status to return&quot;
+)brace
+comma
+(brace
+l_int|0x0200
+comma
+l_string|&quot;No seek complete&quot;
+)brace
+comma
+(brace
+l_int|0x0400
+comma
+l_string|&quot;Logical unit not ready - cause not reportable&quot;
+)brace
+comma
+(brace
+l_int|0x0401
+comma
+l_string|&quot;Logical unit not ready - in progress (sic) of becoming ready&quot;
+)brace
+comma
+(brace
+l_int|0x0402
+comma
+l_string|&quot;Logical unit not ready - initializing command required&quot;
+)brace
+comma
+(brace
+l_int|0x0403
+comma
+l_string|&quot;Logical unit not ready - manual intervention required&quot;
+)brace
+comma
+(brace
+l_int|0x0600
+comma
+l_string|&quot;No reference position found&quot;
+)brace
+comma
+(brace
+l_int|0x0900
+comma
+l_string|&quot;Track following error&quot;
+)brace
+comma
+(brace
+l_int|0x0901
+comma
+l_string|&quot;Tracking servo failure&quot;
+)brace
+comma
+(brace
+l_int|0x0902
+comma
+l_string|&quot;Focus servo failure&quot;
+)brace
+comma
+(brace
+l_int|0x0903
+comma
+l_string|&quot;Spindle servo failure&quot;
+)brace
+comma
+(brace
+l_int|0x1100
+comma
+l_string|&quot;Unrecovered read error&quot;
+)brace
+comma
+(brace
+l_int|0x1106
+comma
+l_string|&quot;CIRC unrecovered error&quot;
+)brace
+comma
+(brace
+l_int|0x1500
+comma
+l_string|&quot;Random positioning error&quot;
+)brace
+comma
+(brace
+l_int|0x1501
+comma
+l_string|&quot;Mechanical positioning error&quot;
+)brace
+comma
+(brace
+l_int|0x1502
+comma
+l_string|&quot;Positioning error detected by read of medium&quot;
+)brace
+comma
+(brace
+l_int|0x1700
+comma
+l_string|&quot;Recovered data with no error correction applied&quot;
+)brace
+comma
+(brace
+l_int|0x1701
+comma
+l_string|&quot;Recovered data with retries&quot;
+)brace
+comma
+(brace
+l_int|0x1702
+comma
+l_string|&quot;Recovered data with positive head offset&quot;
+)brace
+comma
+(brace
+l_int|0x1703
+comma
+l_string|&quot;Recovered data with negative head offset&quot;
+)brace
+comma
+(brace
+l_int|0x1704
+comma
+l_string|&quot;Recovered data with retries and/or CIRC applied&quot;
+)brace
+comma
+(brace
+l_int|0x1705
+comma
+l_string|&quot;Recovered data using previous sector ID&quot;
+)brace
+comma
+(brace
+l_int|0x1800
+comma
+l_string|&quot;Recovered data with error correction applied&quot;
+)brace
+comma
+(brace
+l_int|0x1801
+comma
+l_string|&quot;Recovered data with error correction and retries applied&quot;
+)brace
+comma
+(brace
+l_int|0x1802
+comma
+l_string|&quot;Recovered data - the data was auto-reallocated&quot;
+)brace
+comma
+(brace
+l_int|0x1803
+comma
+l_string|&quot;Recovered data with CIRC&quot;
+)brace
+comma
+(brace
+l_int|0x1804
+comma
+l_string|&quot;Recovered data with L-EC&quot;
+)brace
+comma
+(brace
+l_int|0x1805
+comma
+l_string|&quot;Recovered data - recommend reassignment&quot;
+)brace
+comma
+(brace
+l_int|0x1806
+comma
+l_string|&quot;Recovered data - recommend rewrite&quot;
+)brace
+comma
+(brace
+l_int|0x1a00
+comma
+l_string|&quot;Parameter list length error&quot;
+)brace
+comma
+(brace
+l_int|0x2000
+comma
+l_string|&quot;Invalid command operation code&quot;
+)brace
+comma
+(brace
+l_int|0x2100
+comma
+l_string|&quot;Logical block address out of range&quot;
+)brace
+comma
+(brace
+l_int|0x2400
+comma
+l_string|&quot;Invalid field in command packet&quot;
+)brace
+comma
+(brace
+l_int|0x2600
+comma
+l_string|&quot;Invalid field in parameter list&quot;
+)brace
+comma
+(brace
+l_int|0x2601
+comma
+l_string|&quot;Parameter not supported&quot;
+)brace
+comma
+(brace
+l_int|0x2602
+comma
+l_string|&quot;Parameter value invalid&quot;
+)brace
+comma
+(brace
+l_int|0x2603
+comma
+l_string|&quot;Threshold parameters not supported&quot;
+)brace
+comma
+(brace
+l_int|0x2800
+comma
+l_string|&quot;Not ready to ready transition, medium may have changed&quot;
+)brace
+comma
+(brace
+l_int|0x2900
+comma
+l_string|&quot;Power on, reset or bus device reset occurred&quot;
+)brace
+comma
+(brace
+l_int|0x2a00
+comma
+l_string|&quot;Parameters changed&quot;
+)brace
+comma
+(brace
+l_int|0x2a01
+comma
+l_string|&quot;Mode parameters changed&quot;
+)brace
+comma
+(brace
+l_int|0x3000
+comma
+l_string|&quot;Incompatible medium installed&quot;
+)brace
+comma
+(brace
+l_int|0x3001
+comma
+l_string|&quot;Cannot read medium - unknown format&quot;
+)brace
+comma
+(brace
+l_int|0x3002
+comma
+l_string|&quot;Cannot read medium - incompatible format&quot;
+)brace
+comma
+(brace
+l_int|0x3700
+comma
+l_string|&quot;Rounded parameter&quot;
+)brace
+comma
+(brace
+l_int|0x3900
+comma
+l_string|&quot;Saving parameters not supported&quot;
+)brace
+comma
+(brace
+l_int|0x3a00
+comma
+l_string|&quot;Medium not present&quot;
+)brace
+comma
+(brace
+l_int|0x3f00
+comma
+l_string|&quot;ATAPI CD-ROM drive operating conditions have changed&quot;
+)brace
+comma
+(brace
+l_int|0x3f01
+comma
+l_string|&quot;Microcode has been changed&quot;
+)brace
+comma
+(brace
+l_int|0x3f02
+comma
+l_string|&quot;Changed operating definition&quot;
+)brace
+comma
+(brace
+l_int|0x3f03
+comma
+l_string|&quot;Inquiry data has changed&quot;
+)brace
+comma
+(brace
+l_int|0x4000
+comma
+l_string|&quot;Diagnostic failure on component (ASCQ)&quot;
+)brace
+comma
+(brace
+l_int|0x4400
+comma
+l_string|&quot;Internal ATAPI CD-ROM drive failure&quot;
+)brace
+comma
+(brace
+l_int|0x4e00
+comma
+l_string|&quot;Overlapped commands attempted&quot;
+)brace
+comma
+(brace
+l_int|0x5300
+comma
+l_string|&quot;Media load or eject failed&quot;
+)brace
+comma
+(brace
+l_int|0x5302
+comma
+l_string|&quot;Medium removal prevented&quot;
+)brace
+comma
+(brace
+l_int|0x5700
+comma
+l_string|&quot;Unable to recover table of contents&quot;
+)brace
+comma
+(brace
+l_int|0x5a00
+comma
+l_string|&quot;Operator request or state change input (unspecified)&quot;
+)brace
+comma
+(brace
+l_int|0x5a01
+comma
+l_string|&quot;Operator medium removal request&quot;
+)brace
+comma
+(brace
+l_int|0x5b00
+comma
+l_string|&quot;Threshold condition met&quot;
+)brace
+comma
+(brace
+l_int|0x5c00
+comma
+l_string|&quot;Status change&quot;
+)brace
+comma
+(brace
+l_int|0x6300
+comma
+l_string|&quot;End of user area encountered on this track&quot;
+)brace
+comma
+(brace
+l_int|0x6400
+comma
+l_string|&quot;Illegal mode for this track&quot;
+)brace
+comma
+(brace
+l_int|0xbf00
+comma
+l_string|&quot;Loss of streaming&quot;
+)brace
+comma
+)brace
+suffix:semicolon
+macro_line|#endif
 "&f;"
 multiline_comment|/****************************************************************************&n; * Generic packet command support routines.&n; */
+r_static
+DECL|function|cdrom_analyze_sense_data
+r_void
+id|cdrom_analyze_sense_data
+(paren
+id|ide_dev_t
+op_star
+id|dev
+comma
+r_struct
+id|atapi_request_sense
+op_star
+id|reqbuf
+comma
+r_struct
+id|packet_command
+op_star
+id|failed_command
+)paren
+(brace
+multiline_comment|/* Don&squot;t print not ready or unit attention errors for READ_SUBCHANNEL.&n;     Workman (and probably other programs) uses this command to poll&n;     the drive, and we don&squot;t want to fill the syslog with useless errors. */
+r_if
+c_cond
+(paren
+id|failed_command
+op_logical_and
+id|failed_command-&gt;c
+(braket
+l_int|0
+)braket
+op_eq
+id|SCMD_READ_SUBCHANNEL
+op_logical_and
+(paren
+id|reqbuf-&gt;sense_key
+op_eq
+l_int|2
+op_logical_or
+id|reqbuf-&gt;sense_key
+op_eq
+l_int|6
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#if VERBOSE_IDE_CD_ERRORS
+(brace
+r_int
+id|i
+suffix:semicolon
+r_char
+op_star
+id|s
+suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|80
+)braket
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;ATAPI device %s:&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;  Error code: %x&bslash;n&quot;
+comma
+id|reqbuf-&gt;error_code
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|reqbuf-&gt;sense_key
+op_ge
+l_int|0
+op_logical_and
+id|reqbuf-&gt;sense_key
+OL
+id|ARY_LEN
+(paren
+id|sense_key_texts
+)paren
+)paren
+id|s
+op_assign
+id|sense_key_texts
+(braket
+id|reqbuf-&gt;sense_key
+)braket
+suffix:semicolon
+r_else
+id|s
+op_assign
+l_string|&quot;(bad sense key)&quot;
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;  Sense key: %x - %s&bslash;n&quot;
+comma
+id|reqbuf-&gt;sense_key
+comma
+id|s
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|reqbuf-&gt;asc
+op_eq
+l_int|0x40
+)paren
+(brace
+id|sprintf
+(paren
+id|buf
+comma
+l_string|&quot;Diagnostic failure on component %x&quot;
+comma
+id|reqbuf-&gt;ascq
+)paren
+suffix:semicolon
+id|s
+op_assign
+id|buf
+suffix:semicolon
+)brace
+r_else
+(brace
+r_int
+id|lo
+comma
+id|hi
+suffix:semicolon
+r_int
+id|key
+op_assign
+(paren
+id|reqbuf-&gt;asc
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|reqbuf-&gt;ascq
+op_ge
+l_int|0x80
+op_logical_and
+id|reqbuf-&gt;ascq
+op_le
+l_int|0xdd
+)paren
+)paren
+id|key
+op_or_assign
+id|reqbuf-&gt;ascq
+suffix:semicolon
+id|lo
+op_assign
+l_int|0
+suffix:semicolon
+id|hi
+op_assign
+id|ARY_LEN
+(paren
+id|sense_data_texts
+)paren
+suffix:semicolon
+id|s
+op_assign
+l_int|NULL
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|hi
+OG
+id|lo
+)paren
+(brace
+r_int
+id|mid
+op_assign
+(paren
+id|lo
+op_plus
+id|hi
+)paren
+op_div
+l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sense_data_texts
+(braket
+id|mid
+)braket
+dot
+id|asc_ascq
+op_eq
+id|key
+)paren
+(brace
+id|s
+op_assign
+id|sense_data_texts
+(braket
+id|mid
+)braket
+dot
+id|text
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|sense_data_texts
+(braket
+id|mid
+)braket
+dot
+id|asc_ascq
+OG
+id|key
+)paren
+id|hi
+op_assign
+id|mid
+suffix:semicolon
+r_else
+id|lo
+op_assign
+id|mid
+op_plus
+l_int|1
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|s
+op_eq
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|reqbuf-&gt;asc
+OG
+l_int|0x80
+)paren
+id|s
+op_assign
+l_string|&quot;(vendor-specific error)&quot;
+suffix:semicolon
+r_else
+id|s
+op_assign
+l_string|&quot;(reserved error code)&quot;
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot;  Additional sense data: %x, %x  - %s&bslash;n&quot;
+comma
+id|reqbuf-&gt;asc
+comma
+id|reqbuf-&gt;ascq
+comma
+id|s
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|failed_command
+op_ne
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;  Failed packet command: &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+(paren
+id|failed_command-&gt;c
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|printk
+(paren
+l_string|&quot;%02x &quot;
+comma
+id|failed_command-&gt;c
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#else
+id|printk
+(paren
+l_string|&quot;%s: code: %x  key: %x  asc: %x  ascq: %x&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|reqbuf-&gt;error_code
+comma
+id|reqbuf-&gt;sense_key
+comma
+id|reqbuf-&gt;asc
+comma
+id|reqbuf-&gt;ascq
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+multiline_comment|/* Fix up a possibly partially-processed request so that we can&n;   start it over entirely, or even put it back on the request queue. */
+DECL|function|restore_request
+r_static
+r_void
+id|restore_request
+(paren
+r_struct
+id|request
+op_star
+id|rq
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|rq-&gt;buffer
+op_ne
+id|rq-&gt;bh-&gt;b_data
+)paren
+(brace
+r_int
+id|n
+op_assign
+(paren
+id|rq-&gt;buffer
+op_minus
+id|rq-&gt;bh-&gt;b_data
+)paren
+op_div
+id|SECTOR_SIZE
+suffix:semicolon
+id|rq-&gt;buffer
+op_assign
+id|rq-&gt;bh-&gt;b_data
+suffix:semicolon
+id|rq-&gt;nr_sectors
+op_add_assign
+id|n
+suffix:semicolon
+id|rq-&gt;sector
+op_sub_assign
+id|n
+suffix:semicolon
+)brace
+id|rq-&gt;current_nr_sectors
+op_assign
+id|rq-&gt;bh-&gt;b_size
+op_rshift
+id|SECTOR_BITS
+suffix:semicolon
+)brace
+DECL|function|cdrom_queue_request_sense
+r_static
+r_void
+id|cdrom_queue_request_sense
+(paren
+id|ide_dev_t
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|request
+op_star
+id|rq
+suffix:semicolon
+r_struct
+id|packet_command
+op_star
+id|pc
+suffix:semicolon
+r_struct
+id|atapi_request_sense
+op_star
+id|reqbuf
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|major
+op_assign
+id|ide_major
+(braket
+id|DEV_HWIF
+)braket
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* safety */
+id|rq
+op_assign
+id|ide_cur_rq
+(braket
+id|DEV_HWIF
+)braket
+suffix:semicolon
+multiline_comment|/* If we&squot;re processing a request, put it back on the request queue. */
+r_if
+c_cond
+(paren
+id|rq
+op_ne
+l_int|NULL
+)paren
+(brace
+id|restore_request
+(paren
+id|rq
+)paren
+suffix:semicolon
+id|rq-&gt;next
+op_assign
+id|blk_dev
+(braket
+id|major
+)braket
+dot
+id|current_request
+suffix:semicolon
+id|blk_dev
+(braket
+id|major
+)braket
+dot
+id|current_request
+op_assign
+id|rq
+suffix:semicolon
+id|ide_cur_rq
+(braket
+id|DEV_HWIF
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Make up a new request to retrieve sense information. */
+id|reqbuf
+op_assign
+op_amp
+id|cdrom_info
+(braket
+id|DEV_HWIF
+)braket
+(braket
+id|dev-&gt;select.b.drive
+)braket
+dot
+id|sense_data
+suffix:semicolon
+id|pc
+op_assign
+op_amp
+id|request_sense_pc
+(braket
+id|DEV_HWIF
+)braket
+suffix:semicolon
+id|memset
+(paren
+id|pc
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|pc
+)paren
+)paren
+suffix:semicolon
+id|pc-&gt;c
+(braket
+l_int|0
+)braket
+op_assign
+id|REQUEST_SENSE
+suffix:semicolon
+id|pc-&gt;c
+(braket
+l_int|4
+)braket
+op_assign
+r_sizeof
+(paren
+op_star
+id|reqbuf
+)paren
+suffix:semicolon
+id|pc-&gt;buffer
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|reqbuf
+suffix:semicolon
+id|pc-&gt;buflen
+op_assign
+r_sizeof
+(paren
+op_star
+id|reqbuf
+)paren
+suffix:semicolon
+id|rq
+op_assign
+op_amp
+id|request_sense_request
+(braket
+id|DEV_HWIF
+)braket
+suffix:semicolon
+id|rq-&gt;dev
+op_assign
+id|MKDEV
+(paren
+id|major
+comma
+(paren
+id|dev-&gt;select.b.drive
+)paren
+op_lshift
+id|PARTN_BITS
+)paren
+suffix:semicolon
+id|rq-&gt;cmd
+op_assign
+id|REQUEST_SENSE_COMMAND
+suffix:semicolon
+id|rq-&gt;errors
+op_assign
+l_int|0
+suffix:semicolon
+id|rq-&gt;sector
+op_assign
+l_int|0
+suffix:semicolon
+id|rq-&gt;nr_sectors
+op_assign
+l_int|0
+suffix:semicolon
+id|rq-&gt;current_nr_sectors
+op_assign
+l_int|0
+suffix:semicolon
+id|rq-&gt;buffer
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|pc
+suffix:semicolon
+id|rq-&gt;sem
+op_assign
+l_int|NULL
+suffix:semicolon
+id|rq-&gt;bh
+op_assign
+l_int|NULL
+suffix:semicolon
+id|rq-&gt;bhtail
+op_assign
+l_int|NULL
+suffix:semicolon
+id|rq-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* safety */
+multiline_comment|/* Stick it onto the front of the queue. */
+id|rq-&gt;next
+op_assign
+id|blk_dev
+(braket
+id|major
+)braket
+dot
+id|current_request
+suffix:semicolon
+id|blk_dev
+(braket
+id|major
+)braket
+dot
+id|current_request
+op_assign
+id|rq
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|function|cdrom_end_request
 r_static
 r_void
@@ -349,7 +1565,7 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 multiline_comment|/* The code in blk.h can screw us up on error recovery if the block&n;     size is larger than 1k.  Fix that up here. */
@@ -380,11 +1596,49 @@ op_add_assign
 id|adj
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|rq-&gt;cmd
+op_eq
+id|REQUEST_SENSE_COMMAND
+op_logical_and
+id|uptodate
+)paren
+(brace
+r_struct
+id|atapi_request_sense
+op_star
+id|reqbuf
+suffix:semicolon
+id|reqbuf
+op_assign
+op_amp
+id|cdrom_info
+(braket
+id|DEV_HWIF
+)braket
+(braket
+id|dev-&gt;select.b.drive
+)braket
+dot
+id|sense_data
+suffix:semicolon
+id|cdrom_analyze_sense_data
+(paren
+id|dev
+comma
+id|reqbuf
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 id|end_request
 (paren
 id|uptodate
 comma
-id|dev-&gt;hwif
+id|DEV_HWIF
 )paren
 suffix:semicolon
 )brace
@@ -419,7 +1673,7 @@ l_int|0
 suffix:semicolon
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -455,20 +1709,24 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 r_int
 id|stat
 comma
 id|err
+comma
+id|sense_key
+comma
+id|cmd
 suffix:semicolon
 multiline_comment|/* Check for errors. */
 id|stat
 op_assign
 id|GET_STAT
 (paren
-id|dev-&gt;hwif
+id|DEV_HWIF
 )paren
 suffix:semicolon
 op_star
@@ -498,20 +1756,42 @@ id|IN_BYTE
 (paren
 id|HD_ERROR
 comma
-id|dev-&gt;hwif
+id|DEV_HWIF
 )paren
+suffix:semicolon
+id|sense_key
+op_assign
+id|err
+op_rshift
+l_int|4
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rq
+op_eq
+l_int|NULL
+)paren
+id|printk
+(paren
+l_string|&quot;%s : missing request in cdrom_decode_status&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_else
+(brace
+id|cmd
+op_assign
+id|rq-&gt;cmd
 suffix:semicolon
 multiline_comment|/* Check for tray open */
 r_if
 c_cond
 (paren
-(paren
-id|err
-op_amp
-l_int|0xf0
-)paren
+id|sense_key
 op_eq
-l_int|0x20
+id|NOT_READY
 )paren
 (brace
 r_struct
@@ -528,7 +1808,7 @@ multiline_comment|/* Fail the request if this is a read command. */
 r_if
 c_cond
 (paren
-id|rq-&gt;cmd
+id|cmd
 op_eq
 id|READ
 )paren
@@ -550,7 +1830,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Otherwise, it&squot;s some other packet command.&n;             Print an error message to the syslog.&n;             Exception: don&squot;t print anything if this is a read subchannel&n;             command.  This is because workman constantly polls the drive&n;             with this command, and we don&squot;t want to uselessly fill up&n;             the syslog. */
+multiline_comment|/* Otherwise, it&squot;s some other packet command.&n;&t;&t; Print an error message to the syslog.&n;&t;&t; Exception: don&squot;t print anything if this is a read subchannel&n;&t;&t; command.  This is because workman constantly polls the drive&n;&t;&t; with this command, and we don&squot;t want to uselessly fill up&n;&t;&t; the syslog. */
 id|pc
 op_assign
 (paren
@@ -596,13 +1876,9 @@ r_else
 r_if
 c_cond
 (paren
-(paren
-id|err
-op_amp
-l_int|0xf0
-)paren
+id|sense_key
 op_eq
-l_int|0x60
+id|UNIT_ATTENTION
 )paren
 (brace
 id|cdrom_saw_media_change
@@ -617,7 +1893,41 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* We&squot;re going to retry this command.&n;         But be sure to give up if we&squot;ve retried too many times. */
+multiline_comment|/* Return failure for a packet command, so that&n;&t;     cdrom_queue_packet_command can do a request sense before&n;&t;     the command gets retried. */
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|PACKET_COMMAND
+)paren
+(brace
+r_struct
+id|packet_command
+op_star
+id|pc
+op_assign
+(paren
+r_struct
+id|packet_command
+op_star
+)paren
+id|rq-&gt;buffer
+suffix:semicolon
+id|pc-&gt;stat
+op_assign
+l_int|1
+suffix:semicolon
+id|cdrom_end_request
+(paren
+l_int|1
+comma
+id|dev
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Otherwise, it&squot;s a block read.  Arrange to retry it.&n;&t;     But be sure to give up if we&squot;ve retried too many times. */
+r_else
 r_if
 c_cond
 (paren
@@ -643,7 +1953,7 @@ r_else
 r_if
 c_cond
 (paren
-id|rq-&gt;cmd
+id|cmd
 op_eq
 id|PACKET_COMMAND
 )paren
@@ -662,7 +1972,7 @@ id|rq-&gt;buffer
 suffix:semicolon
 id|dump_status
 (paren
-id|dev-&gt;hwif
+id|DEV_HWIF
 comma
 l_string|&quot;packet command error&quot;
 comma
@@ -677,6 +1987,37 @@ multiline_comment|/* signal error */
 id|cdrom_end_request
 (paren
 l_int|1
+comma
+id|dev
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* No point in retrying after an illegal request or data protect error.*/
+r_else
+r_if
+c_cond
+(paren
+id|sense_key
+op_eq
+id|ILLEGAL_REQUEST
+op_logical_or
+id|sense_key
+op_eq
+id|DATA_PROTECT
+)paren
+(brace
+id|dump_status
+(paren
+id|DEV_HWIF
+comma
+l_string|&quot;command error&quot;
+comma
+id|stat
+)paren
+suffix:semicolon
+id|cdrom_end_request
+(paren
+l_int|0
 comma
 id|dev
 )paren
@@ -724,6 +2065,28 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
+id|dev
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* If we got a CHECK_STATUS condition, and this was a READ request,&n;&t; queue a request sense command to try to find out more about&n;&t; what went wrong (and clear a unit attention)?  For packet commands,&n;&t; this is done separately in cdrom_queue_packet_command. */
+r_if
+c_cond
+(paren
+(paren
+id|stat
+op_amp
+id|ERR_STAT
+)paren
+op_ne
+l_int|0
+op_logical_and
+id|cmd
+op_eq
+id|READ
+)paren
+id|cdrom_queue_request_sense
+(paren
 id|dev
 )paren
 suffix:semicolon
@@ -889,7 +2252,7 @@ id|dev
 comma
 id|DRQ_STAT
 comma
-id|BAD_STAT
+id|BUSY_STAT
 comma
 id|WAIT_READY
 )paren
@@ -914,7 +2277,7 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/****************************************************************************&n; * Block read functions.&n; */
-multiline_comment|/*&n; * Buffer up to SECTORS_TO_TRANSFER sectors from the drive in our sector&n; * buffer.  SECTOR is the number of the first sector to be buffered.&n; */
+multiline_comment|/*&n; * Buffer up to SECTORS_TO_TRANSFER sectors from the drive in our sector&n; * buffer.  Once the first sector is added, any subsequent sectors are&n; * assumed to be continuous (until the buffer is cleared).  For the first&n; * sector added, SECTOR is its sector number.  (SECTOR is then ignored until&n; * the buffer is cleared.)&n; */
 DECL|function|cdrom_buffer_sectors
 r_static
 r_void
@@ -940,7 +2303,7 @@ op_assign
 op_amp
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -959,6 +2322,8 @@ id|SECTOR_BUFFER_SIZE
 op_rshift
 id|SECTOR_BITS
 )paren
+op_minus
+id|info-&gt;nsectors_buffered
 )paren
 suffix:semicolon
 r_char
@@ -1000,19 +2365,26 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Remember the sector number and the number of sectors we&squot;re storing. */
+multiline_comment|/* If this is the first sector in the buffer, remember its number. */
+r_if
+c_cond
+(paren
+id|info-&gt;nsectors_buffered
+op_eq
+l_int|0
+)paren
 id|info-&gt;sector_buffered
 op_assign
 id|sector
-suffix:semicolon
-id|info-&gt;nsectors_buffered
-op_assign
-id|sectors_to_buffer
 suffix:semicolon
 multiline_comment|/* Read the data into the buffer. */
 id|dest
 op_assign
 id|info-&gt;sector_buffer
+op_plus
+id|info-&gt;nsectors_buffered
+op_star
+id|SECTOR_SIZE
 suffix:semicolon
 r_while
 c_loop
@@ -1037,6 +2409,9 @@ suffix:semicolon
 op_decrement
 id|sectors_to_transfer
 suffix:semicolon
+op_increment
+id|info-&gt;nsectors_buffered
+suffix:semicolon
 id|dest
 op_add_assign
 id|SECTOR_SIZE
@@ -1059,7 +2434,7 @@ id|SECTOR_SIZE
 suffix:semicolon
 id|IN_WORDS
 (paren
-id|dest
+id|dum
 comma
 r_sizeof
 (paren
@@ -1208,7 +2583,7 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 multiline_comment|/* Check for errors. */
@@ -1234,7 +2609,7 @@ id|IN_BYTE
 (paren
 id|HD_NSECTOR
 comma
-id|dev-&gt;hwif
+id|DEV_HWIF
 )paren
 suffix:semicolon
 id|len
@@ -1243,7 +2618,7 @@ id|IN_BYTE
 (paren
 id|HD_LCYL
 comma
-id|dev-&gt;hwif
+id|DEV_HWIF
 )paren
 op_plus
 l_int|256
@@ -1252,7 +2627,7 @@ id|IN_BYTE
 (paren
 id|HD_HCYL
 comma
-id|dev-&gt;hwif
+id|DEV_HWIF
 )paren
 suffix:semicolon
 multiline_comment|/* If DRQ is clear, the command has completed. */
@@ -1535,7 +2910,7 @@ suffix:semicolon
 multiline_comment|/* Done moving data!&n;     Wait for another interrupt. */
 id|ide_handler
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 op_assign
 id|cdrom_read_intr
@@ -1560,7 +2935,7 @@ op_assign
 op_amp
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -1573,7 +2948,7 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 multiline_comment|/* Can&squot;t do anything if there&squot;s no buffer. */
@@ -1755,7 +3130,7 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 r_int
@@ -2001,7 +3376,7 @@ suffix:semicolon
 multiline_comment|/* Set up our interrupt handler and return. */
 id|ide_handler
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 op_assign
 id|cdrom_read_intr
@@ -2032,60 +3407,14 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 multiline_comment|/* We may be retrying this request after an error.&n;     Fix up any weirdness which might be present in the request packet. */
-r_if
-c_cond
+id|restore_request
 (paren
-id|rq-&gt;buffer
-op_ne
-id|rq-&gt;bh-&gt;b_data
+id|rq
 )paren
-(brace
-r_int
-id|n
-op_assign
-(paren
-id|rq-&gt;buffer
-op_minus
-id|rq-&gt;bh-&gt;b_data
-)paren
-op_div
-id|SECTOR_SIZE
-suffix:semicolon
-id|rq-&gt;buffer
-op_assign
-id|rq-&gt;bh-&gt;b_data
-suffix:semicolon
-id|rq-&gt;nr_sectors
-op_add_assign
-id|n
-suffix:semicolon
-id|rq-&gt;current_nr_sectors
-op_add_assign
-id|n
-suffix:semicolon
-id|rq-&gt;sector
-op_sub_assign
-id|n
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|rq-&gt;current_nr_sectors
-OG
-(paren
-id|rq-&gt;bh-&gt;b_size
-op_rshift
-id|SECTOR_BITS
-)paren
-)paren
-id|rq-&gt;current_nr_sectors
-op_assign
-id|rq-&gt;bh-&gt;b_size
 suffix:semicolon
 multiline_comment|/* Satisfy whatever we can of this request from our cached sector. */
 r_if
@@ -2098,6 +3427,19 @@ id|dev
 )paren
 r_return
 l_int|1
+suffix:semicolon
+multiline_comment|/* Clear the local sector buffer. */
+id|cdrom_info
+(braket
+id|DEV_HWIF
+)braket
+(braket
+id|dev-&gt;select.b.drive
+)braket
+dot
+id|nsectors_buffered
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2124,7 +3466,7 @@ id|drq_interrupt
 )paren
 id|ide_handler
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 op_assign
 (paren
@@ -2159,6 +3501,22 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/****************************************************************************&n; * Execute all other packet commands.&n; */
+multiline_comment|/* Forward declaration */
+r_static
+r_int
+id|cdrom_request_sense
+(paren
+id|ide_dev_t
+op_star
+id|dev
+comma
+r_struct
+id|atapi_request_sense
+op_star
+id|reqbuf
+)paren
+suffix:semicolon
+multiline_comment|/* Interrupt routine for packet command completion. */
 DECL|function|cdrom_pc_intr
 r_static
 r_void
@@ -2185,7 +3543,7 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 r_struct
@@ -2223,7 +3581,7 @@ id|IN_BYTE
 (paren
 id|HD_NSECTOR
 comma
-id|dev-&gt;hwif
+id|DEV_HWIF
 )paren
 suffix:semicolon
 id|len
@@ -2232,7 +3590,7 @@ id|IN_BYTE
 (paren
 id|HD_LCYL
 comma
-id|dev-&gt;hwif
+id|DEV_HWIF
 )paren
 op_plus
 l_int|256
@@ -2241,7 +3599,7 @@ id|IN_BYTE
 (paren
 id|HD_HCYL
 comma
-id|dev-&gt;hwif
+id|DEV_HWIF
 )paren
 suffix:semicolon
 multiline_comment|/* If DRQ is clear, the command has completed.&n;     Complain if we still have data left to transfer. */
@@ -2257,6 +3615,45 @@ op_eq
 l_int|0
 )paren
 (brace
+multiline_comment|/* Some of the trailing request sense fields are optional, and&n;&t; some drives don&squot;t send them.  Sigh. */
+r_if
+c_cond
+(paren
+id|pc-&gt;c
+(braket
+l_int|0
+)braket
+op_eq
+id|REQUEST_SENSE
+op_logical_and
+id|pc-&gt;buflen
+OG
+l_int|0
+op_logical_and
+id|pc-&gt;buflen
+op_le
+l_int|5
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|pc-&gt;buflen
+OG
+l_int|0
+)paren
+(brace
+op_star
+id|pc-&gt;buffer
+op_increment
+op_assign
+l_int|0
+suffix:semicolon
+op_decrement
+id|pc-&gt;buflen
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -2517,7 +3914,7 @@ suffix:semicolon
 multiline_comment|/* Now we wait for another interrupt. */
 id|ide_handler
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 op_assign
 id|cdrom_pc_intr
@@ -2540,7 +3937,7 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 r_struct
@@ -2576,7 +3973,7 @@ suffix:semicolon
 multiline_comment|/* Set up our interrupt handler and return. */
 id|ide_handler
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 op_assign
 id|cdrom_pc_intr
@@ -2605,7 +4002,7 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 r_struct
@@ -2665,7 +4062,7 @@ id|drq_interrupt
 )paren
 id|ide_handler
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 op_assign
 (paren
@@ -2714,6 +4111,11 @@ id|pc
 )paren
 (brace
 r_int
+id|retries
+op_assign
+l_int|3
+suffix:semicolon
+r_int
 r_int
 id|flags
 suffix:semicolon
@@ -2740,9 +4142,11 @@ id|major
 op_assign
 id|ide_major
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
+id|retry
+suffix:colon
 id|req.dev
 op_assign
 id|MKDEV
@@ -2888,10 +4292,94 @@ id|pc-&gt;stat
 op_ne
 l_int|0
 )paren
+(brace
+multiline_comment|/* The request failed.  Try to do a request sense to get more information&n;&t; about the error; store the result in the cdrom_info struct&n;&t; for this drive.  Check to be sure that it wasn&squot;t a request sense&n;&t; request that failed, though, to prevent infinite loops. */
+r_struct
+id|atapi_request_sense
+op_star
+id|reqbuf
+op_assign
+op_amp
+id|cdrom_info
+(braket
+id|DEV_HWIF
+)braket
+(braket
+id|dev-&gt;select.b.drive
+)braket
+dot
+id|sense_data
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pc-&gt;c
+(braket
+l_int|0
+)braket
+op_eq
+id|REQUEST_SENSE
+op_logical_or
+id|cdrom_request_sense
+(paren
+id|dev
+comma
+id|reqbuf
+)paren
+)paren
+(brace
+id|memset
+(paren
+id|reqbuf
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|reqbuf
+)paren
+)paren
+suffix:semicolon
+id|reqbuf-&gt;asc
+op_assign
+l_int|0xff
+suffix:semicolon
+)brace
+id|cdrom_analyze_sense_data
+(paren
+id|dev
+comma
+id|reqbuf
+comma
+id|pc
+)paren
+suffix:semicolon
+multiline_comment|/* If the error was a unit attention (usually means media was changed),&n;&t; retry the command. */
+r_if
+c_cond
+(paren
+id|reqbuf-&gt;sense_key
+op_eq
+id|UNIT_ATTENTION
+op_logical_and
+id|retries
+OG
+l_int|0
+)paren
+(brace
+op_decrement
+id|retries
+suffix:semicolon
+r_goto
+id|retry
+suffix:semicolon
+)brace
 r_return
 op_minus
 id|EIO
 suffix:semicolon
+)brace
 r_else
 r_return
 l_int|0
@@ -2920,7 +4408,7 @@ id|rq
 op_assign
 id|ide_cur_rq
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 suffix:semicolon
 r_if
@@ -2931,6 +4419,12 @@ op_member_access_from_pointer
 id|cmd
 op_eq
 id|PACKET_COMMAND
+op_logical_or
+id|rq
+op_member_access_from_pointer
+id|cmd
+op_eq
+id|REQUEST_SENSE_COMMAND
 )paren
 r_return
 id|cdrom_do_packet_command
@@ -3719,7 +5213,7 @@ id|toc
 op_assign
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -3756,7 +5250,7 @@ id|GFP_KERNEL
 suffix:semicolon
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -4245,6 +5739,9 @@ id|ide_dev_t
 op_star
 id|dev
 comma
+r_int
+id|pageno
+comma
 r_char
 op_star
 id|buf
@@ -4292,6 +5789,13 @@ l_int|1
 )braket
 op_assign
 l_int|0x10
+suffix:semicolon
+id|pc.c
+(braket
+l_int|2
+)braket
+op_assign
+id|pageno
 suffix:semicolon
 id|pc.c
 (braket
@@ -4525,6 +6029,17 @@ l_int|8
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|CDROM_FLAGS
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|msf_as_bcd
+)paren
+(brace
 id|pc.c
 (braket
 l_int|3
@@ -4603,6 +6118,7 @@ l_int|8
 )braket
 )paren
 suffix:semicolon
+)brace
 r_return
 id|cdrom_queue_packet_command
 (paren
@@ -4655,11 +6171,10 @@ r_else
 (brace
 r_int
 id|stat
-comma
-id|stat2
 suffix:semicolon
 r_struct
 id|atapi_request_sense
+op_star
 id|reqbuf
 suffix:semicolon
 id|stat
@@ -4684,32 +6199,27 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* It failed.  Try to find out why. */
-id|stat2
-op_assign
-id|cdrom_request_sense
-(paren
-id|dev
-comma
-op_amp
 id|reqbuf
-)paren
+op_assign
+op_amp
+id|cdrom_info
+(braket
+id|DEV_HWIF
+)braket
+(braket
+id|dev-&gt;select.b.drive
+)braket
+dot
+id|sense_data
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|stat2
-)paren
-r_return
-id|stat
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|reqbuf.sense_key
+id|reqbuf-&gt;sense_key
 op_eq
 l_int|0x05
 op_logical_and
-id|reqbuf.asc
+id|reqbuf-&gt;asc
 op_eq
 l_int|0x20
 )paren
@@ -4729,6 +6239,15 @@ id|dev
 )paren
 op_member_access_from_pointer
 id|no_playaudio12
+op_assign
+l_int|1
+suffix:semicolon
+id|CDROM_FLAGS
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|msf_as_bcd
 op_assign
 l_int|1
 suffix:semicolon
@@ -4798,7 +6317,7 @@ id|toc
 op_assign
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -5261,7 +6780,7 @@ id|toc
 op_assign
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -5892,6 +7411,8 @@ id|cdrom_mode_select
 (paren
 id|dev
 comma
+l_int|0x0e
+comma
 id|buffer
 comma
 r_sizeof
@@ -6219,7 +7740,7 @@ id|dev
 multiline_comment|/* Just guess at capacity for now. */
 id|ide_capacity
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -6229,7 +7750,7 @@ l_int|0x1fffff
 suffix:semicolon
 id|ide_blksizes
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -6276,6 +7797,15 @@ id|dev
 )paren
 op_member_access_from_pointer
 id|no_lba_toc
+op_assign
+l_int|0
+suffix:semicolon
+id|CDROM_FLAGS
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|msf_as_bcd
 op_assign
 l_int|0
 suffix:semicolon
@@ -6365,6 +7895,7 @@ op_eq
 l_int|0
 )paren
 multiline_comment|/* Aztech */
+(brace
 id|CDROM_FLAGS
 (paren
 id|dev
@@ -6374,9 +7905,20 @@ id|no_lba_toc
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* This drive _also_ does not implement PLAYAUDIO12 correctly. */
+id|CDROM_FLAGS
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|no_playaudio12
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -6388,7 +7930,7 @@ l_int|NULL
 suffix:semicolon
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -6400,7 +7942,7 @@ l_int|NULL
 suffix:semicolon
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -6412,7 +7954,7 @@ l_int|0
 suffix:semicolon
 id|cdrom_info
 (braket
-id|dev-&gt;hwif
+id|DEV_HWIF
 )braket
 (braket
 id|dev-&gt;select.b.drive
@@ -6429,5 +7971,5 @@ DECL|macro|SECTOR_SIZE
 macro_line|#undef SECTOR_SIZE
 DECL|macro|SECTOR_BITS
 macro_line|#undef SECTOR_BITS
-multiline_comment|/*&n; * TODO:&n; *  Retrieve and interpret extended ATAPI error codes.&n; *  Read actual disk capacity.&n; *  Multisession support.&n; *  Direct reading of audio data.&n; *  Eject-on-dismount.&n; *  Lock door while there&squot;s a mounted volume.&n; */
+multiline_comment|/*&n; * TODO:&n; *  Read actual disk capacity.&n; *  Multisession support.&n; *  Direct reading of audio data.&n; *  Eject-on-dismount.&n; *  Lock door while there&squot;s a mounted volume.&n; *  Establish interfaces for an IDE port driver, and break out the cdrom&n; *   code into a loadable module.&n; */
 eof

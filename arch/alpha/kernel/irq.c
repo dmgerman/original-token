@@ -1279,14 +1279,14 @@ id|regs
 suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/* mouse: map to irq 12 */
+multiline_comment|/* mouse: map to irq 9 */
 r_case
 l_int|0x990
 suffix:colon
 id|handle_irq
 c_func
 (paren
-l_int|12
+l_int|9
 comma
 id|regs
 )paren

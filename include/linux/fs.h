@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#include &lt;linux/vfs.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
@@ -733,6 +732,12 @@ op_star
 id|fl_prevlink
 suffix:semicolon
 multiline_comment|/* used to simplify lock removal */
+DECL|member|fl_block
+r_struct
+id|file_lock
+op_star
+id|fl_block
+suffix:semicolon
 DECL|member|fl_owner
 r_struct
 id|task_struct
@@ -745,13 +750,19 @@ id|wait_queue
 op_star
 id|fl_wait
 suffix:semicolon
+DECL|member|fl_file
+r_struct
+id|file
+op_star
+id|fl_file
+suffix:semicolon
+DECL|member|fl_flags
+r_char
+id|fl_flags
+suffix:semicolon
 DECL|member|fl_type
 r_char
 id|fl_type
-suffix:semicolon
-DECL|member|fl_whence
-r_char
-id|fl_whence
 suffix:semicolon
 DECL|member|fl_start
 id|off_t
@@ -933,6 +944,28 @@ id|u
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * This is the &quot;filldir&quot; function type, used by readdir() to let&n; * the kernel specify what kind of dirent layout it wants to have.&n; * This allows the kernel to read directories into kernel space or&n; * to have different dirent layouts depending on the binary type.&n; */
+DECL|typedef|filldir_t
+r_typedef
+r_int
+(paren
+op_star
+id|filldir_t
+)paren
+(paren
+r_void
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+comma
+id|off_t
+comma
+id|ino_t
+)paren
+suffix:semicolon
 DECL|struct|file_operations
 r_struct
 id|file_operations
@@ -1014,11 +1047,10 @@ r_struct
 id|file
 op_star
 comma
-r_struct
-id|dirent
+r_void
 op_star
 comma
-r_int
+id|filldir_t
 )paren
 suffix:semicolon
 DECL|member|select
@@ -1574,6 +1606,8 @@ comma
 r_struct
 id|statfs
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|remount_fs
@@ -2329,6 +2363,15 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|do_pipe
+c_func
+(paren
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|iput
 c_func
@@ -2472,6 +2515,7 @@ comma
 r_int
 id|dev
 comma
+r_int
 r_int
 id|nr
 comma

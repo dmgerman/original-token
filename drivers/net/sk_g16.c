@@ -3587,6 +3587,16 @@ id|len
 )paren
 suffix:semicolon
 multiline_comment|/* &n;             * Notify the upper protocol layers that there is another packet&n;&t;     * to handle&n;&t;     *&n;&t;     * netif_rx() always succeeds. see /net/inet/dev.c for more.&n;&t;     */
+id|skb-&gt;protocol
+op_assign
+id|eth_type_trans
+c_func
+(paren
+id|skb
+comma
+id|dev
+)paren
+suffix:semicolon
 id|netif_rx
 c_func
 (paren

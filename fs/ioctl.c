@@ -196,7 +196,10 @@ op_star
 )paren
 id|arg
 comma
-l_int|4
+r_sizeof
+(paren
+r_int
+)paren
 )paren
 suffix:semicolon
 r_if

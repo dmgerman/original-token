@@ -342,6 +342,8 @@ id|val
 )paren
 suffix:semicolon
 )brace
+DECL|macro|mb
+mdefine_line|#define mb()  __asm__ __volatile__ (&quot;&quot;   : : :&quot;memory&quot;)
 DECL|macro|sti
 mdefine_line|#define sti() __asm__ __volatile__ (&quot;sti&quot;: : :&quot;memory&quot;)
 DECL|macro|cli

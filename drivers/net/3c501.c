@@ -1,5 +1,5 @@
 multiline_comment|/* 3c501.c: A 3Com 3c501 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.  &n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;       &n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Some notes on this thing if you have to hack it.  [Alan]&n;    &n;    1]&t;Some documentation is available from 3Com. Due to the boards age&n;    &t;standard responses when you ask for this will range from &squot;be serious&squot;&n;    &t;to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n;    &t;of historical interest anyway.&n;    &t;&n;    2]  The basic system is a single buffer which can be used to receive or&n;    &t;transmit a packet. A third command mode exists when you are setting&n;    &t;things up.&n;    &t;&n;    3]&t;If it&squot;s transmitting it&squot;s not receiving and vice versa. In fact the &n;    &t;time to get the board back into useful state after an operation is&n;    &t;quite large.&n;    &t;&n;    4]&t;The driver works by keeping the board in receive mode waiting for a&n;    &t;packet to arrive. When one arrives it is copied out of the buffer&n;    &t;and delivered to the kernel. The card is reloaded and off we go.&n;    &t;&n;    5]&t;When transmitting dev-&gt;tbusy is set and the card is reset (from&n;    &t;receive mode) [possibly losing a packet just received] to command&n;    &t;mode. A packet is loaded and transmit mode triggered. The interrupt&n;    &t;handler runs different code for transmit interrupts and can handle&n;    &t;returning to receive mode or retransmissions (yes you have to help&n;    &t;out with those too).&n;    &t;&n;    Problems:&n;    &t;There are a wide variety of undocumented error returns from the card&n;    and you basically have to kick the board and pray if they turn up. Most &n;    only occur under extreme load or if you do something the board doesn&squot;t&n;    like (eg touching a register at the wrong time).&n;    &n;    &t;The driver is less efficient than it could be. It switches through&n;    receive mode even if more transmits are queued. If this worries you buy&n;    a real ethernet card.&n;    &n;    &t;The combination of slow receive restart and no real multicast&n;    filter makes the board unusable with a kernel compiled for IP&n;    multicasting in a real multicast environment. Thats down to the board, &n;    but even with no multicast programs running a multicast IP kernel is&n;    in group 224.0.0.1 and you will therefore be listening to all multicasts.&n;    One nv conference running over that ethernet and you can give up.&n;    &n;    2/8/95 (invid@msen.com)&n;&n;    Removed calls to init_etherdev since they are no longer needed, and&n;    cleaned up modularization just a bit. The driver still allows only&n;    the default address for cards when loaded as a module, but that&squot;s&n;    really less braindead than anyone using a 3c501 board. :)&n;*/
+multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.  &n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;       &n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Removed calls to init_etherdev since they are no longer needed, and&n;    cleaned up modularization just a bit. The driver still allows only&n;    the default address for cards when loaded as a module, but that&squot;s&n;    really less braindead than anyone using a 3c501 board. :)&n;&t;&t;    19950208 (invid@msen.com)&n;&n;    Added traps for interrupts hitting the window as we clear and TX load&n;    the board. Now getting 150K/second FTP with a 3c501 card. Still playing&n;    with a TX-TX optimisation to see if we can touch 180-200K/second as seems&n;    theoretically maximum.&n;    &t;&t;19950402 Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Some notes on this thing if you have to hack it.  [Alan]&n;    &n;    1]&t;Some documentation is available from 3Com. Due to the boards age&n;    &t;standard responses when you ask for this will range from &squot;be serious&squot;&n;    &t;to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n;    &t;of historical interest anyway.&n;    &t;&n;    2]  The basic system is a single buffer which can be used to receive or&n;    &t;transmit a packet. A third command mode exists when you are setting&n;    &t;things up.&n;    &t;&n;    3]&t;If it&squot;s transmitting it&squot;s not receiving and vice versa. In fact the &n;    &t;time to get the board back into useful state after an operation is&n;    &t;quite large.&n;    &t;&n;    4]&t;The driver works by keeping the board in receive mode waiting for a&n;    &t;packet to arrive. When one arrives it is copied out of the buffer&n;    &t;and delivered to the kernel. The card is reloaded and off we go.&n;    &t;&n;    5]&t;When transmitting dev-&gt;tbusy is set and the card is reset (from&n;    &t;receive mode) [possibly losing a packet just received] to command&n;    &t;mode. A packet is loaded and transmit mode triggered. The interrupt&n;    &t;handler runs different code for transmit interrupts and can handle&n;    &t;returning to receive mode or retransmissions (yes you have to help&n;    &t;out with those too).&n;    &t;&n;    Problems:&n;    &t;There are a wide variety of undocumented error returns from the card&n;    and you basically have to kick the board and pray if they turn up. Most &n;    only occur under extreme load or if you do something the board doesn&squot;t&n;    like (eg touching a register at the wrong time).&n;    &n;    &t;The driver is less efficient than it could be. It switches through&n;    receive mode even if more transmits are queued. If this worries you buy&n;    a real ethernet card.&n;    &n;    &t;The combination of slow receive restart and no real multicast&n;    filter makes the board unusable with a kernel compiled for IP&n;    multicasting in a real multicast environment. Thats down to the board, &n;    but even with no multicast programs running a multicast IP kernel is&n;    in group 224.0.0.1 and you will therefore be listening to all multicasts.&n;    One nv conference running over that ethernet and you can give up.&n;    &n;*/
 DECL|variable|version
 r_static
 r_char
@@ -215,6 +215,11 @@ r_int
 id|collisions
 suffix:semicolon
 multiline_comment|/* Tx collisions this packet */
+DECL|member|loading
+r_int
+id|loading
+suffix:semicolon
+multiline_comment|/* Spot buffer load collisions */
 )brace
 suffix:semicolon
 "&f;"
@@ -1138,6 +1143,8 @@ id|buf
 op_assign
 id|skb-&gt;data
 suffix:semicolon
+id|load_it_again_sam
+suffix:colon
 id|lp-&gt;tx_pkt_start
 op_assign
 id|gp_start
@@ -1166,6 +1173,10 @@ c_func
 (paren
 id|TX_STATUS
 )paren
+suffix:semicolon
+id|lp-&gt;loading
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/* &n;&t; *&t;Turn interrupts back on while we spend a pleasant afternoon&n;&t; *&t;loading bytes into the board &n;&t; */
 id|restore_flags
@@ -1212,6 +1223,37 @@ id|GP_LOW
 )paren
 suffix:semicolon
 multiline_comment|/* the board reuses the same register */
+r_if
+c_cond
+(paren
+id|lp-&gt;loading
+op_eq
+l_int|2
+)paren
+multiline_comment|/* A receive upset our load, despite our best efforts */
+(brace
+r_if
+c_cond
+(paren
+id|el_debug
+OG
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: burped during tx load.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_goto
+id|load_it_again_sam
+suffix:semicolon
+multiline_comment|/* Sigh... */
+)brace
 id|outb
 c_func
 (paren
@@ -1373,6 +1415,11 @@ id|dev-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
+id|lp-&gt;loading
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* So we can spot loading interruptions */
 r_if
 c_cond
 (paren
@@ -1950,6 +1997,16 @@ comma
 id|skb-&gt;data
 comma
 id|pkt_len
+)paren
+suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|eth_type_trans
+c_func
+(paren
+id|skb
+comma
+id|dev
 )paren
 suffix:semicolon
 id|netif_rx

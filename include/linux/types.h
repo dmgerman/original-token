@@ -2,85 +2,10 @@ macro_line|#ifndef _LINUX_TYPES_H
 DECL|macro|_LINUX_TYPES_H
 mdefine_line|#define _LINUX_TYPES_H
 macro_line|#include &lt;asm/types.h&gt;
-macro_line|#ifndef _TIME_T
-DECL|macro|_TIME_T
-mdefine_line|#define _TIME_T
-DECL|typedef|time_t
-r_typedef
-r_int
-id|time_t
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef _CLOCK_T
-DECL|macro|_CLOCK_T
-mdefine_line|#define _CLOCK_T
-DECL|typedef|clock_t
-r_typedef
-r_int
-id|clock_t
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
-DECL|typedef|pid_t
-r_typedef
-r_int
-id|pid_t
-suffix:semicolon
-DECL|typedef|uid_t
-r_typedef
-r_int
-r_int
-id|uid_t
-suffix:semicolon
-DECL|typedef|gid_t
-r_typedef
-r_int
-r_int
-id|gid_t
-suffix:semicolon
-DECL|typedef|dev_t
-r_typedef
-r_int
-r_int
-id|dev_t
-suffix:semicolon
-DECL|typedef|ino_t
-r_typedef
-r_int
-r_int
-id|ino_t
-suffix:semicolon
-DECL|typedef|mode_t
-r_typedef
-r_int
-r_int
-id|mode_t
-suffix:semicolon
-DECL|typedef|umode_t
-r_typedef
-r_int
-r_int
-id|umode_t
-suffix:semicolon
-DECL|typedef|nlink_t
-r_typedef
-r_int
-r_int
-id|nlink_t
-suffix:semicolon
-DECL|typedef|daddr_t
-r_typedef
-r_int
-id|daddr_t
-suffix:semicolon
-DECL|typedef|off_t
-r_typedef
-r_int
-id|off_t
-suffix:semicolon
 macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
 DECL|macro|_LOFF_T
 mdefine_line|#define _LOFF_T

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Tell us the machine setup..&n; */
@@ -559,6 +560,218 @@ comma
 l_int|0x8
 comma
 l_string|&quot;npu&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|get_cpuinfo
+r_int
+id|get_cpuinfo
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+(brace
+r_char
+op_star
+id|model
+(braket
+l_int|2
+)braket
+(braket
+l_int|9
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+r_char
+id|mask
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|mask
+(braket
+l_int|0
+)braket
+op_assign
+id|x86_mask
+op_plus
+l_char|&squot;@&squot;
+suffix:semicolon
+id|mask
+(braket
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+r_return
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;cpu&bslash;t&bslash;t: %c86&bslash;n&quot;
+l_string|&quot;model&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;mask&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;vid&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;fdiv_bug&bslash;t: %s&bslash;n&quot;
+l_string|&quot;math&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;hlt&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;wp&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;Integrated NPU&bslash;t: %s&bslash;n&quot;
+l_string|&quot;Enhanced VM86&bslash;t: %s&bslash;n&quot;
+l_string|&quot;IO Breakpoints&bslash;t: %s&bslash;n&quot;
+l_string|&quot;4MB Pages&bslash;t: %s&bslash;n&quot;
+l_string|&quot;TS Counters&bslash;t: %s&bslash;n&quot;
+l_string|&quot;Pentium MSR&bslash;t: %s&bslash;n&quot;
+l_string|&quot;Mach. Ch. Exep.&bslash;t: %s&bslash;n&quot;
+l_string|&quot;CMPXCHGB8B&bslash;t: %s&bslash;n&quot;
+l_string|&quot;BogoMips&bslash;t: %lu.%02lu&bslash;n&quot;
+comma
+id|x86
+op_plus
+l_char|&squot;0&squot;
+comma
+id|x86_model
+ques
+c_cond
+id|model
+(braket
+id|x86
+op_minus
+l_int|4
+)braket
+(braket
+id|x86_model
+op_minus
+l_int|1
+)braket
+suffix:colon
+l_string|&quot;Unknown&quot;
+comma
+id|x86_mask
+ques
+c_cond
+id|mask
+suffix:colon
+l_string|&quot;Unknown&quot;
+comma
+id|x86_vendor_id
+comma
+id|fdiv_bug
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|hard_math
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|hlt_works_ok
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|wp_works_ok
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|x86_capability
+op_amp
+l_int|1
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|x86_capability
+op_amp
+l_int|2
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|x86_capability
+op_amp
+l_int|4
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|x86_capability
+op_amp
+l_int|8
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|x86_capability
+op_amp
+l_int|16
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|x86_capability
+op_amp
+l_int|32
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|x86_capability
+op_amp
+l_int|128
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|x86_capability
+op_amp
+l_int|256
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|loops_per_sec
+op_div
+l_int|500000
+comma
+(paren
+id|loops_per_sec
+op_div
+l_int|5000
+)paren
+op_mod
+l_int|100
 )paren
 suffix:semicolon
 )brace

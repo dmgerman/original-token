@@ -1076,19 +1076,24 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx, %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;shrl $2,%%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;rep ; movsl&bslash;n&bslash;t&quot;
-l_string|&quot;testb $1,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;testb $2,%%dl&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
-l_string|&quot;movsb&bslash;n&quot;
-l_string|&quot;1:&bslash;ttestb $2,%%dl&bslash;n&bslash;t&quot;
-l_string|&quot;je 2f&bslash;n&bslash;t&quot;
 l_string|&quot;movsw&bslash;n&quot;
-l_string|&quot;2:&bslash;n&quot;
+l_string|&quot;1:&bslash;ttestb $1,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;je 2f&bslash;n&bslash;t&quot;
+l_string|&quot;movsb&bslash;n&quot;
+l_string|&quot;2:&quot;
 suffix:colon
 multiline_comment|/* no output */
 suffix:colon
+l_string|&quot;c&quot;
+(paren
+id|n
+op_div
+l_int|4
+)paren
+comma
 l_string|&quot;d&quot;
 (paren
 id|n
@@ -1654,10 +1659,83 @@ id|s
 suffix:semicolon
 )brace
 multiline_comment|/* we might want to write optimized versions of these later */
-DECL|macro|__constant_c_memset
-mdefine_line|#define __constant_c_memset(s,c,count) __memset_generic((s),(unsigned char)(c),(count))
 DECL|macro|__constant_count_memset
 mdefine_line|#define __constant_count_memset(s,c,count) __memset_generic((s),(c),(count))
+multiline_comment|/*&n; * memset(x,0,y) is a reasonably common thing to do, so we want to fill&n; * things 32 bits at a time even when we don&squot;t know the size of the&n; * area at compile-time..&n; */
+DECL|function|__constant_c_memset
+r_extern
+r_inline
+r_void
+op_star
+id|__constant_c_memset
+c_func
+(paren
+r_void
+op_star
+id|s
+comma
+r_int
+r_int
+id|c
+comma
+r_int
+id|count
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;cld&bslash;n&bslash;t&quot;
+l_string|&quot;rep ; stosl&bslash;n&bslash;t&quot;
+l_string|&quot;testb $2,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;je 1f&bslash;n&bslash;t&quot;
+l_string|&quot;stosw&bslash;n&quot;
+l_string|&quot;1:&bslash;ttestb $1,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;je 2f&bslash;n&bslash;t&quot;
+l_string|&quot;stosb&bslash;n&quot;
+l_string|&quot;2:&quot;
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|c
+)paren
+comma
+l_string|&quot;d&quot;
+(paren
+id|count
+)paren
+comma
+l_string|&quot;c&quot;
+(paren
+id|count
+op_div
+l_int|4
+)paren
+comma
+l_string|&quot;D&quot;
+(paren
+(paren
+r_int
+)paren
+id|s
+)paren
+suffix:colon
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;di&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+id|s
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This looks horribly ugly, but the compiler can optimize it totally,&n; * as we by now know that both pattern and count is constant..&n; */
 DECL|function|__constant_c_and_count_memset
 r_extern

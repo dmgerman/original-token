@@ -11,7 +11,7 @@ mdefine_line|#define DEV_NUMBUFFS&t;3
 DECL|macro|MAX_ADDR_LEN
 mdefine_line|#define MAX_ADDR_LEN&t;7
 DECL|macro|MAX_HEADER
-mdefine_line|#define MAX_HEADER&t;18
+mdefine_line|#define MAX_HEADER&t;38
 DECL|macro|IS_MYADDR
 mdefine_line|#define IS_MYADDR&t;1&t;&t;/* address is (one of) our own&t;*/
 DECL|macro|IS_LOOPBACK
@@ -426,25 +426,6 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-DECL|member|type_trans
-r_int
-r_int
-(paren
-op_star
-id|type_trans
-)paren
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
 DECL|macro|HAVE_MULTICAST
 mdefine_line|#define HAVE_MULTICAST&t;&t;&t; 
 DECL|member|set_multicast_list
@@ -529,6 +510,32 @@ op_star
 id|map
 )paren
 suffix:semicolon
+DECL|member|header_cache
+r_int
+(paren
+op_star
+id|header_cache
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+r_int
+id|saddr
+comma
+r_int
+r_int
+id|daddr
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|packet_type
@@ -606,6 +613,9 @@ r_struct
 id|packet_type
 op_star
 id|ptype_base
+(braket
+l_int|16
+)braket
 suffix:semicolon
 r_extern
 r_int
@@ -857,6 +867,17 @@ multiline_comment|/* These functions live elsewhere (drivers/net/net_init.c, but
 r_extern
 r_void
 id|ether_setup
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|tr_setup
 c_func
 (paren
 r_struct

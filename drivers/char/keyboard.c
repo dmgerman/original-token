@@ -4877,12 +4877,12 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0x41
+l_int|0x65
 comma
 l_int|0x60
 )paren
 suffix:semicolon
-multiline_comment|/* KCC | EKI */
+multiline_comment|/* KCC | DMS | SYS | EKI */
 id|kb_wait
 c_func
 (paren

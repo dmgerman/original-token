@@ -2348,6 +2348,8 @@ op_assign
 id|get_unmapped_area
 c_func
 (paren
+l_int|0
+comma
 id|shp-&gt;shm_segsz
 )paren
 )paren

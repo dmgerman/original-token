@@ -2221,6 +2221,16 @@ r_case
 id|PLIP_PK_DONE
 suffix:colon
 multiline_comment|/* Inform the upper layer for the arrival of a packet. */
+id|rcv-&gt;skb-&gt;protocol
+op_assign
+id|eth_type_trans
+c_func
+(paren
+id|rcv-&gt;skb
+comma
+id|dev
+)paren
+suffix:semicolon
 id|netif_rx
 c_func
 (paren

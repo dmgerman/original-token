@@ -11,9 +11,62 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
+macro_line|#include &lt;linux/utsname.h&gt;
+macro_line|#include &lt;linux/time.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+DECL|function|sys_sethae
+id|asmlinkage
+r_int
+id|sys_sethae
+c_func
+(paren
+r_int
+r_int
+id|hae
+comma
+r_int
+r_int
+id|a1
+comma
+r_int
+r_int
+id|a2
+comma
+r_int
+r_int
+id|a3
+comma
+r_int
+r_int
+id|a4
+comma
+r_int
+r_int
+id|a5
+comma
+r_struct
+id|pt_regs
+id|regs
+)paren
+(brace
+(paren
+op_amp
+id|regs
+)paren
+op_member_access_from_pointer
+id|hae
+op_assign
+id|hae
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|sys_idle
 id|asmlinkage
 r_int
@@ -92,13 +145,97 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;rp: %04lx sp: %p&bslash;n&quot;
+l_string|&quot;rp: %016lx sp: %p&bslash;n&quot;
 comma
 id|regs-&gt;r26
 comma
 id|regs
 op_plus
 l_int|1
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; r0: %016lx  r1: %016lx  r2: %016lx  r3: %016lx&bslash;n&quot;
+comma
+id|regs-&gt;r0
+comma
+id|regs-&gt;r1
+comma
+id|regs-&gt;r2
+comma
+id|regs-&gt;r3
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; r4: %016lx  r5: %016lx  r6: %016lx  r7: %016lx&bslash;n&quot;
+comma
+id|regs-&gt;r4
+comma
+id|regs-&gt;r5
+comma
+id|regs-&gt;r6
+comma
+id|regs-&gt;r7
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; r8: %016lx r16: %016lx r17: %016lx r18: %016lx&bslash;n&quot;
+comma
+id|regs-&gt;r8
+comma
+id|regs-&gt;r16
+comma
+id|regs-&gt;r17
+comma
+id|regs-&gt;r18
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;r19: %016lx r20: %016lx r21: %016lx r22: %016lx&bslash;n&quot;
+comma
+id|regs-&gt;r19
+comma
+id|regs-&gt;r20
+comma
+id|regs-&gt;r21
+comma
+id|regs-&gt;r22
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;r23: %016lx r24: %016lx r25: %016lx r26: %016lx&bslash;n&quot;
+comma
+id|regs-&gt;r23
+comma
+id|regs-&gt;r24
+comma
+id|regs-&gt;r25
+comma
+id|regs-&gt;r26
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;r27: %016lx r28: %016lx r29: %016lx hae: %016lx&bslash;n&quot;
+comma
+id|regs-&gt;r27
+comma
+id|regs-&gt;r28
+comma
+id|regs-&gt;gp
+comma
+id|regs-&gt;hae
 )paren
 suffix:semicolon
 )brace
@@ -121,83 +258,6 @@ r_void
 )paren
 (brace
 )brace
-DECL|struct|alpha_switch_stack
-r_struct
-id|alpha_switch_stack
-(brace
-DECL|member|r9
-r_int
-r_int
-id|r9
-suffix:semicolon
-DECL|member|r10
-r_int
-r_int
-id|r10
-suffix:semicolon
-DECL|member|r11
-r_int
-r_int
-id|r11
-suffix:semicolon
-DECL|member|r12
-r_int
-r_int
-id|r12
-suffix:semicolon
-DECL|member|r13
-r_int
-r_int
-id|r13
-suffix:semicolon
-DECL|member|r14
-r_int
-r_int
-id|r14
-suffix:semicolon
-DECL|member|r15
-r_int
-r_int
-id|r15
-suffix:semicolon
-DECL|member|r26
-r_int
-r_int
-id|r26
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * &quot;alpha_switch_to()&quot;.. Done completely in assembly, due to the&n; * fact that we obviously don&squot;t returns to the caller directly.&n; * Also, we have to save the regs that the C compiler expects to be&n; * saved across a function call.. (9-15)&n; *&n; * NOTE! The stack switches from under us when we do the swpctx call:&n; * this *looks* like it restores the same registers that it just saved,&n; * but it actually restores the new context regs and return address.&n; */
-id|__asm__
-c_func
-(paren
-l_string|&quot;.align 3&bslash;n&bslash;t&quot;
-l_string|&quot;.globl alpha_switch_to&bslash;n&bslash;t&quot;
-l_string|&quot;.ent alpha_switch_to&bslash;n&quot;
-l_string|&quot;alpha_switch_to:&bslash;n&bslash;t&quot;
-l_string|&quot;subq $30,64,$30&bslash;n&bslash;t&quot;
-l_string|&quot;stq  $9,0($30)&bslash;n&bslash;t&quot;
-l_string|&quot;stq $10,8($30)&bslash;n&bslash;t&quot;
-l_string|&quot;stq $11,16($30)&bslash;n&bslash;t&quot;
-l_string|&quot;stq $12,24($30)&bslash;n&bslash;t&quot;
-l_string|&quot;stq $13,32($30)&bslash;n&bslash;t&quot;
-l_string|&quot;stq $14,40($30)&bslash;n&bslash;t&quot;
-l_string|&quot;stq $15,48($30)&bslash;n&bslash;t&quot;
-l_string|&quot;stq $26,56($30)&bslash;n&bslash;t&quot;
-l_string|&quot;call_pal 48&bslash;n&bslash;t&quot;
-l_string|&quot;ldq  $9,0($30)&bslash;n&bslash;t&quot;
-l_string|&quot;ldq $10,8($30)&bslash;n&bslash;t&quot;
-l_string|&quot;ldq $11,16($30)&bslash;n&bslash;t&quot;
-l_string|&quot;ldq $12,24($30)&bslash;n&bslash;t&quot;
-l_string|&quot;ldq $13,32($30)&bslash;n&bslash;t&quot;
-l_string|&quot;ldq $14,40($30)&bslash;n&bslash;t&quot;
-l_string|&quot;ldq $15,48($30)&bslash;n&bslash;t&quot;
-l_string|&quot;ldq $26,56($30)&bslash;n&bslash;t&quot;
-l_string|&quot;addq $30,64,$30&bslash;n&bslash;t&quot;
-l_string|&quot;ret $31,($26),1&bslash;n&bslash;t&quot;
-l_string|&quot;.end alpha_switch_to&quot;
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * &quot;alpha_fork()&quot;.. By the time we get here, the&n; * non-volatile registers have also been saved on the&n; * stack. We do some ugly pointer stuff here.. (see&n; * also copy_thread)&n; */
 DECL|function|alpha_fork
 r_int
@@ -205,7 +265,7 @@ id|alpha_fork
 c_func
 (paren
 r_struct
-id|alpha_switch_stack
+id|switch_stack
 op_star
 id|swstack
 )paren
@@ -218,7 +278,10 @@ id|COPYVM
 op_or
 id|SIGCHLD
 comma
-l_int|0
+id|rdusp
+c_func
+(paren
+)paren
 comma
 (paren
 r_struct
@@ -233,7 +296,15 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Copy an alpha thread..&n; */
+r_extern
+r_void
+id|ret_from_sys_call
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Copy an alpha thread..&n; *&n; * Note the &quot;stack_offset&quot; stuff: when returning to kernel mode, we need&n; * to have some extra stack-space for the kernel stack that still exists&n; * after the &quot;ret_from_sys_call&quot;. When returning to user mode, we only&n; * want the space needed by the syscall stack frame (ie &quot;struct pt_regs&quot;).&n; * Use the passed &quot;regs&quot; pointer to determine how much space we need&n; * for a kernel fork().&n; */
 DECL|function|copy_thread
 r_void
 id|copy_thread
@@ -267,16 +338,53 @@ op_star
 id|childregs
 suffix:semicolon
 r_struct
-id|alpha_switch_stack
+id|switch_stack
 op_star
 id|childstack
 comma
 op_star
 id|stack
 suffix:semicolon
-id|childregs
+r_int
+r_int
+id|stack_offset
+suffix:semicolon
+id|stack_offset
+op_assign
+id|PAGE_SIZE
+op_minus
+r_sizeof
+(paren
+r_struct
+id|pt_regs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|regs-&gt;ps
+op_amp
+l_int|8
+)paren
+)paren
+id|stack_offset
 op_assign
 (paren
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
+op_amp
+(paren
+r_int
+r_int
+)paren
+id|regs
+suffix:semicolon
+id|childregs
+op_assign
 (paren
 r_struct
 id|pt_regs
@@ -285,11 +393,8 @@ op_star
 (paren
 id|p-&gt;kernel_stack_page
 op_plus
-id|PAGE_SIZE
+id|stack_offset
 )paren
-)paren
-op_minus
-l_int|1
 suffix:semicolon
 op_star
 id|childregs
@@ -301,16 +406,29 @@ id|childregs-&gt;r0
 op_assign
 l_int|0
 suffix:semicolon
+id|childregs-&gt;r19
+op_assign
+l_int|0
+suffix:semicolon
+id|childregs-&gt;r20
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* OSF/1 has some strange fork() semantics.. */
 id|regs-&gt;r0
 op_assign
 id|p-&gt;pid
+suffix:semicolon
+id|regs-&gt;r20
+op_assign
+l_int|0
 suffix:semicolon
 id|stack
 op_assign
 (paren
 (paren
 r_struct
-id|alpha_switch_stack
+id|switch_stack
 op_star
 )paren
 id|regs
@@ -323,7 +441,7 @@ op_assign
 (paren
 (paren
 r_struct
-id|alpha_switch_stack
+id|switch_stack
 op_star
 )paren
 id|childregs
@@ -336,6 +454,14 @@ id|childstack
 op_assign
 op_star
 id|stack
+suffix:semicolon
+id|childstack-&gt;r26
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ret_from_sys_call
 suffix:semicolon
 id|p-&gt;tss.usp
 op_assign
@@ -348,6 +474,10 @@ r_int
 r_int
 )paren
 id|childstack
+suffix:semicolon
+id|p-&gt;tss.flags
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * fill in the user structure for a core dump..&n; */

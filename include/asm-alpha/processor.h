@@ -4,7 +4,7 @@ DECL|macro|__ASM_ALPHA_PROCESSOR_H
 mdefine_line|#define __ASM_ALPHA_PROCESSOR_H
 multiline_comment|/*&n; * We have a 41-bit user address space: 2TB user VM...&n; */
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE (0x20000000000UL)
+mdefine_line|#define TASK_SIZE (0x40000000000UL)
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 1
@@ -69,90 +69,51 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_task, 0xfffffc0000300000,  0xfffffc0010000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
+mdefine_line|#define INIT_MMAP { &amp;init_task, 0xfffffc0000000000,  0xfffffc0010000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;}
-multiline_comment|/*&n; * These are the &quot;cli()&quot; and &quot;sti()&quot; for software interrupts&n; * They work by increasing/decreasing the &quot;intr_count&quot; value, &n; * and as such can be nested arbitrarily.&n; */
-DECL|function|start_bh_atomic
+macro_line|#include &lt;asm/ptrace.h&gt;
+multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame pointer&n; * is the 6th saved long on the kernel stack and that the saved return&n; * address is the first long in the frame.  This all holds provided the&n; * thread blocked through a call to schedule().&n; */
+DECL|function|thread_saved_pc
 r_extern
 r_inline
-r_void
-id|start_bh_atomic
+r_int
+r_int
+id|thread_saved_pc
 c_func
 (paren
-r_void
+r_struct
+id|thread_struct
+op_star
+id|t
 )paren
 (brace
 r_int
 r_int
-id|dummy
+id|fp
 suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
+id|fp
+op_assign
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldq_l %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;addq %0,1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stq_c %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq %0,1b&bslash;n&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
-id|dummy
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|intr_count
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|end_bh_atomic
-r_extern
-r_inline
-r_void
-id|end_bh_atomic
-c_func
-(paren
-r_void
-)paren
-(brace
 r_int
 r_int
-id|dummy
+op_star
+)paren
+id|t-&gt;ksp
+)paren
+(braket
+l_int|6
+)braket
 suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
+r_return
+op_star
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldq_l %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;subq %0,1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stq_c %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq %0,1b&bslash;n&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|dummy
+r_int
+r_int
+op_star
 )paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|intr_count
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-l_int|0
-)paren
-)paren
+id|fp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
@@ -180,6 +141,10 @@ id|sp
 id|regs-&gt;pc
 op_assign
 id|pc
+suffix:semicolon
+id|regs-&gt;ps
+op_assign
+l_int|8
 suffix:semicolon
 id|wrusp
 c_func

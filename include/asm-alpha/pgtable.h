@@ -80,38 +80,44 @@ DECL|macro|PAGE_KERNEL
 mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_VALID | _PAGE_ASM | _PAGE_KRE | _PAGE_KWE)
 DECL|macro|_PAGE_NORMAL
 mdefine_line|#define _PAGE_NORMAL(x) __pgprot(_PAGE_VALID | __ACCESS_BITS | (x))
+DECL|macro|_PAGE_P
+mdefine_line|#define _PAGE_P(x) _PAGE_NORMAL((x) | (((x) &amp; _PAGE_FOW)?0:(_PAGE_FOW | _PAGE_COW)))
+DECL|macro|_PAGE_S
+mdefine_line|#define _PAGE_S(x) _PAGE_NORMAL(x)
+multiline_comment|/*&n; * The hardware can handle write-only mappings, but as the alpha&n; * architecture does byte-wide writes with a read-modify-write&n; * sequence, it&squot;s not practical to have write-without-read privs.&n; * Thus the &quot;-w- -&gt; rw-&quot; and &quot;-wx -&gt; rwx&quot; mapping here (and in&n; * arch/alpha/mm/fault.c)&n; */
+multiline_comment|/* xwr */
 DECL|macro|__P000
-mdefine_line|#define __P000&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOR | _PAGE_FOW | _PAGE_FOE)
+mdefine_line|#define __P000&t;_PAGE_P(_PAGE_FOE | _PAGE_FOW | _PAGE_FOR)
 DECL|macro|__P001
-mdefine_line|#define __P001&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOW | _PAGE_FOE)
+mdefine_line|#define __P001&t;_PAGE_P(_PAGE_FOE | _PAGE_FOW)
 DECL|macro|__P010
-mdefine_line|#define __P010&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOR | _PAGE_FOE)
+mdefine_line|#define __P010&t;_PAGE_P(_PAGE_FOE)
 DECL|macro|__P011
-mdefine_line|#define __P011&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOE)
+mdefine_line|#define __P011&t;_PAGE_P(_PAGE_FOE)
 DECL|macro|__P100
-mdefine_line|#define __P100&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOR | _PAGE_FOW)
+mdefine_line|#define __P100&t;_PAGE_P(_PAGE_FOW | _PAGE_FOR)
 DECL|macro|__P101
-mdefine_line|#define __P101&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOW)
+mdefine_line|#define __P101&t;_PAGE_P(_PAGE_FOW)
 DECL|macro|__P110
-mdefine_line|#define __P110&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOR)
+mdefine_line|#define __P110&t;_PAGE_P(0)
 DECL|macro|__P111
-mdefine_line|#define __P111&t;_PAGE_NORMAL(_PAGE_COW)
+mdefine_line|#define __P111&t;_PAGE_P(0)
 DECL|macro|__S000
-mdefine_line|#define __S000&t;_PAGE_NORMAL(_PAGE_FOR | _PAGE_FOW | _PAGE_FOE)
+mdefine_line|#define __S000&t;_PAGE_S(_PAGE_FOE | _PAGE_FOW | _PAGE_FOR)
 DECL|macro|__S001
-mdefine_line|#define __S001&t;_PAGE_NORMAL(_PAGE_FOW | _PAGE_FOE)
+mdefine_line|#define __S001&t;_PAGE_S(_PAGE_FOE | _PAGE_FOW)
 DECL|macro|__S010
-mdefine_line|#define __S010&t;_PAGE_NORMAL(_PAGE_FOR | _PAGE_FOE)
+mdefine_line|#define __S010&t;_PAGE_S(_PAGE_FOE)
 DECL|macro|__S011
-mdefine_line|#define __S011&t;_PAGE_NORMAL(_PAGE_FOE)
+mdefine_line|#define __S011&t;_PAGE_S(_PAGE_FOE)
 DECL|macro|__S100
-mdefine_line|#define __S100&t;_PAGE_NORMAL(_PAGE_FOR | _PAGE_FOW)
+mdefine_line|#define __S100&t;_PAGE_S(_PAGE_FOW | _PAGE_FOR)
 DECL|macro|__S101
-mdefine_line|#define __S101&t;_PAGE_NORMAL(_PAGE_FOW)
+mdefine_line|#define __S101&t;_PAGE_S(_PAGE_FOW)
 DECL|macro|__S110
-mdefine_line|#define __S110&t;_PAGE_NORMAL(_PAGE_FOR)
+mdefine_line|#define __S110&t;_PAGE_S(0)
 DECL|macro|__S111
-mdefine_line|#define __S111&t;_PAGE_NORMAL(0)
+mdefine_line|#define __S111&t;_PAGE_S(0)
 multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
@@ -1195,6 +1201,7 @@ c_func
 id|pte
 )paren
 op_and_assign
+op_complement
 id|_PAGE_FOW
 suffix:semicolon
 r_return
@@ -1218,6 +1225,7 @@ c_func
 id|pte
 )paren
 op_and_assign
+op_complement
 id|_PAGE_FOR
 suffix:semicolon
 r_return
@@ -1241,6 +1249,7 @@ c_func
 id|pte
 )paren
 op_and_assign
+op_complement
 id|_PAGE_FOE
 suffix:semicolon
 r_return
@@ -1316,7 +1325,7 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-multiline_comment|/* to set the page-dir. Note the self-mapping in the last entry */
+multiline_comment|/* &n; * To set the page-dir. Note the self-mapping in the last entry&n; *&n; * Also note that if we update the current process ptbr, we need to&n; * update the PAL-cached ptbr value as well.. There doesn&squot;t seem to&n; * be any &quot;wrptbr&quot; PAL-insn, but we can do a dummy swpctx to ourself&n; * instead.&n; */
 DECL|function|SET_PAGE_DIR
 r_extern
 r_inline
@@ -1380,9 +1389,39 @@ id|tsk
 op_eq
 id|current
 )paren
-id|invalidate
+id|__asm__
+id|__volatile__
 c_func
 (paren
+l_string|&quot;bis %0,%0,$16&bslash;n&bslash;t&quot;
+l_string|&quot;call_pal %1&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|tsk-&gt;tss
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|PAL_swpctx
+)paren
+suffix:colon
+l_string|&quot;$0&quot;
+comma
+l_string|&quot;$1&quot;
+comma
+l_string|&quot;$16&quot;
+comma
+l_string|&quot;$22&quot;
+comma
+l_string|&quot;$23&quot;
+comma
+l_string|&quot;$24&quot;
+comma
+l_string|&quot;$25&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1527,7 +1566,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*              &n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any, and marks the page tables reserved.&n; */
+multiline_comment|/*      &n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any, and marks the page tables reserved.&n; */
 DECL|function|pte_free_kernel
 r_extern
 r_inline
@@ -2399,5 +2438,53 @@ id|pte
 )paren
 (brace
 )brace
+multiline_comment|/*&n; * Non-present pages: high 24 bits are offset, next 8 bits type,&n; * low 32 bits zero..&n; */
+DECL|function|mk_swap_pte
+r_extern
+r_inline
+id|pte_t
+id|mk_swap_pte
+c_func
+(paren
+r_int
+r_int
+id|type
+comma
+r_int
+r_int
+id|offset
+)paren
+(brace
+id|pte_t
+id|pte
+suffix:semicolon
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_assign
+(paren
+id|type
+op_lshift
+l_int|32
+)paren
+op_or
+(paren
+id|offset
+op_lshift
+l_int|40
+)paren
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|macro|SWP_TYPE
+mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 32) &amp; 0xff)
+DECL|macro|SWP_OFFSET
+mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 40)
+DECL|macro|SWP_ENTRY
+mdefine_line|#define SWP_ENTRY(type,offset) pte_val(mk_swap_pte((type),(offset)))
 macro_line|#endif /* _ALPHA_PGTABLE_H */
 eof

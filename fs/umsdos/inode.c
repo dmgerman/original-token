@@ -117,6 +117,9 @@ r_struct
 id|statfs
 op_star
 id|buf
+comma
+r_int
+id|bufsiz
 )paren
 (brace
 id|msdos_statfs
@@ -125,6 +128,8 @@ c_func
 id|sb
 comma
 id|buf
+comma
+id|bufsiz
 )paren
 suffix:semicolon
 )brace

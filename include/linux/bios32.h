@@ -2,27 +2,7 @@ multiline_comment|/*&n; * BIOS32, PCI BIOS functions and defines&n; * Copyright 
 macro_line|#ifndef BIOS32_H
 DECL|macro|BIOS32_H
 mdefine_line|#define BIOS32_H
-r_extern
-r_int
-id|pcibios_present
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-r_int
-id|bios32_init
-c_func
-(paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
-)paren
-suffix:semicolon
+multiline_comment|/*&n; * Error values that may be returned by the PCI bios.  Use&n; * pci_strbioserr() to convert to a printable string.&n; */
 DECL|macro|PCIBIOS_SUCCESSFUL
 mdefine_line|#define PCIBIOS_SUCCESSFUL&t;&t;0x00
 DECL|macro|PCIBIOS_FUNC_NOT_SUPPORTED
@@ -33,6 +13,45 @@ DECL|macro|PCIBIOS_DEVICE_NOT_FOUND
 mdefine_line|#define PCIBIOS_DEVICE_NOT_FOUND&t;0x86
 DECL|macro|PCIBIOS_BAD_REGISTER_NUMBER
 mdefine_line|#define PCIBIOS_BAD_REGISTER_NUMBER&t;0x87
+DECL|macro|PCIBIOS_SET_FAILED
+mdefine_line|#define PCIBIOS_SET_FAILED&t;&t;0x88
+DECL|macro|PCIBIOS_BUFFER_TOO_SMALL
+mdefine_line|#define PCIBIOS_BUFFER_TOO_SMALL&t;0x89
+r_extern
+r_int
+id|pcibios_present
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|pcibios_init
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|pcibios_fixup
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|pcibios_find_class
@@ -53,7 +72,7 @@ comma
 r_int
 r_char
 op_star
-id|device_fn
+id|dev_fn
 )paren
 suffix:semicolon
 r_extern
@@ -66,7 +85,7 @@ id|vendor
 comma
 r_int
 r_int
-id|device_id
+id|dev_id
 comma
 r_int
 r_int
@@ -80,7 +99,7 @@ comma
 r_int
 r_char
 op_star
-id|device_fn
+id|dev_fn
 )paren
 suffix:semicolon
 r_extern
@@ -93,7 +112,7 @@ id|bus
 comma
 r_int
 r_char
-id|device_fn
+id|dev_fn
 comma
 r_int
 r_char
@@ -102,7 +121,7 @@ comma
 r_int
 r_char
 op_star
-id|value
+id|val
 )paren
 suffix:semicolon
 r_extern
@@ -115,7 +134,7 @@ id|bus
 comma
 r_int
 r_char
-id|device_fn
+id|dev_fn
 comma
 r_int
 r_char
@@ -124,7 +143,7 @@ comma
 r_int
 r_int
 op_star
-id|value
+id|val
 )paren
 suffix:semicolon
 r_extern
@@ -137,7 +156,7 @@ id|bus
 comma
 r_int
 r_char
-id|device_fn
+id|dev_fn
 comma
 r_int
 r_char
@@ -146,14 +165,7 @@ comma
 r_int
 r_int
 op_star
-id|value
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|pcibios_present
-(paren
-r_void
+id|val
 )paren
 suffix:semicolon
 r_extern
@@ -166,7 +178,7 @@ id|bus
 comma
 r_int
 r_char
-id|device_fn
+id|dev_fn
 comma
 r_int
 r_char
@@ -174,7 +186,7 @@ id|where
 comma
 r_int
 r_char
-id|value
+id|val
 )paren
 suffix:semicolon
 r_extern
@@ -187,7 +199,7 @@ id|bus
 comma
 r_int
 r_char
-id|device_fn
+id|dev_fn
 comma
 r_int
 r_char
@@ -195,7 +207,7 @@ id|where
 comma
 r_int
 r_int
-id|value
+id|val
 )paren
 suffix:semicolon
 r_extern
@@ -207,7 +219,7 @@ id|bus
 comma
 r_int
 r_char
-id|device_fn
+id|dev_fn
 comma
 r_int
 r_char
@@ -215,7 +227,7 @@ id|where
 comma
 r_int
 r_int
-id|value
+id|val
 )paren
 suffix:semicolon
 r_extern
@@ -227,5 +239,5 @@ r_int
 id|error
 )paren
 suffix:semicolon
-macro_line|#endif /* ndef BIOS32_H */
+macro_line|#endif /* BIOS32_H */
 eof

@@ -58,7 +58,7 @@ mdefine_line|#define SG_SET_TIMEOUT 0x2201  /* set timeout *(int *)arg==timeout 
 DECL|macro|SG_GET_TIMEOUT
 mdefine_line|#define SG_GET_TIMEOUT 0x2202  /* get timeout return timeout */
 DECL|macro|SG_DEFAULT_TIMEOUT
-mdefine_line|#define SG_DEFAULT_TIMEOUT 6000 /* 1 minute timeout */
+mdefine_line|#define SG_DEFAULT_TIMEOUT (60*HZ) /* 1 minute timeout */
 DECL|macro|SG_DEFAULT_RETRIES
 mdefine_line|#define SG_DEFAULT_RETRIES 1
 DECL|macro|SG_MAX_QUEUE

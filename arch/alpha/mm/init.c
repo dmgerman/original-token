@@ -188,7 +188,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Mem-info:&bslash;n&quot;
+l_string|&quot;&bslash;nMem-info:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|show_free_areas
@@ -212,9 +212,11 @@ l_int|10
 suffix:semicolon
 id|i
 op_assign
+id|MAP_NR
+c_func
+(paren
 id|high_memory
-op_rshift
-id|PAGE_SHIFT
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -341,7 +343,7 @@ c_func
 (paren
 l_string|&quot;stq $30,0(%0)&bslash;n&bslash;t&quot;
 l_string|&quot;bis %0,%0,$16&bslash;n&bslash;t&quot;
-l_string|&quot;.long %1&quot;
+l_string|&quot;call_pal %1&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -568,6 +570,14 @@ id|init_task.tss.ptbr
 op_assign
 id|newptbr
 suffix:semicolon
+id|init_task.tss.flags
+op_assign
+l_int|1
+suffix:semicolon
+id|init_task.kernel_stack_page
+op_assign
+id|INIT_STACK
+suffix:semicolon
 id|load_PCB
 c_func
 (paren
@@ -745,9 +755,11 @@ id|i
 suffix:semicolon
 id|i
 op_assign
+id|MAP_NR
+c_func
+(paren
 id|high_memory
-op_rshift
-id|PAGE_SHIFT
+)paren
 suffix:semicolon
 id|val-&gt;totalram
 op_assign

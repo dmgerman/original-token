@@ -30,7 +30,25 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+op_star
+id|__memcpy
+c_func
+(paren
+r_void
+op_star
+comma
+r_const
+r_void
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|macro|memset
 mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? &bslash;&n; __constant_c_memset((s),(0x01010101UL*(unsigned char)c),(count)) : &bslash;&n; __memset((s),(c),(count)))
+DECL|macro|memcpy
+mdefine_line|#define memcpy(d,s,count) __memcpy((d),(s),(count))
 macro_line|#endif
 eof

@@ -1468,6 +1468,8 @@ comma
 r_struct
 id|statfs
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* truncate.c */

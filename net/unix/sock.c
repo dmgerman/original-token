@@ -17,7 +17,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &quot;unix.h&quot;
+macro_line|#include &lt;net/unix.h&gt;
 multiline_comment|/*&n; *&t;Because these have the address in them they casually waste an extra 8K of kernel data&n; *&t;space that need not be wasted.&n; */
 DECL|variable|unix_datas
 r_struct
@@ -1523,7 +1523,7 @@ c_func
 (paren
 id|fname
 comma
-l_int|0
+l_int|2
 comma
 id|S_IFSOCK
 comma

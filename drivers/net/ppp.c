@@ -39,7 +39,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#endif
-macro_line|#include &lt;linux/ppp.h&gt;
+macro_line|#include &lt;linux/if_ppp.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &quot;slhc.h&quot;
@@ -1413,10 +1413,6 @@ suffix:semicolon
 id|dev-&gt;hard_header
 op_assign
 id|ppp_header
-suffix:semicolon
-id|dev-&gt;type_trans
-op_assign
-id|ppp_type_trans
 suffix:semicolon
 id|dev-&gt;rebuild_header
 op_assign
@@ -4480,6 +4476,11 @@ id|flags
 comma
 id|done
 suffix:semicolon
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
 id|PRINTKN
 (paren
 l_int|4
@@ -4784,20 +4785,55 @@ id|count
 )paren
 )brace
 multiline_comment|/* receive the frame through the network software */
+id|skb
+op_assign
+id|alloc_skb
+c_func
 (paren
-r_void
+id|count
+comma
+id|GFP_ATOMIC
 )paren
-id|dev_rint
+suffix:semicolon
+r_if
+c_cond
 (paren
+id|skb
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|skb-&gt;data
+comma
 id|c
 comma
 id|count
-comma
-l_int|0
-comma
-id|ppp-&gt;dev
 )paren
 suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_IP
+)paren
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|ppp-&gt;dev
+suffix:semicolon
+id|skb-&gt;len
+op_assign
+id|count
+suffix:semicolon
+id|netif_rx
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|1
 suffix:semicolon
@@ -7604,6 +7640,7 @@ r_goto
 id|done
 suffix:semicolon
 )brace
+macro_line|#ifdef CURED_AGES_AGO
 multiline_comment|/* get length from IP header as per Alan Cox bugfix for slip.c */
 r_if
 c_cond
@@ -7651,6 +7688,7 @@ op_member_access_from_pointer
 id|tot_len
 )paren
 suffix:semicolon
+macro_line|#endif  
 multiline_comment|/* If doing demand dial then divert the first frame to pppd. */
 r_if
 c_cond
@@ -8074,31 +8112,6 @@ id|FREE_WRITE
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-r_static
-r_int
-r_int
-DECL|function|ppp_type_trans
-id|ppp_type_trans
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_return
-id|htons
-c_func
-(paren
-id|ETH_P_IP
-)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef NET02D

@@ -1,70 +1,69 @@
 multiline_comment|/*****************************************************************&n; *&n; *  defines for 3Com Etherlink Plus adapter&n; *&n; *****************************************************************/
 multiline_comment|/*&n; * I/O register offsets&n; */
 DECL|macro|PORT_COMMAND
-mdefine_line|#define&t;PORT_COMMAND&t;0x00&t;/* read/write */
+mdefine_line|#define&t;PORT_COMMAND&t;0x00&t;/* read/write, 8-bit */
 DECL|macro|PORT_STATUS
-mdefine_line|#define&t;PORT_STATUS&t;0x02&t;/* read only */
+mdefine_line|#define&t;PORT_STATUS&t;0x02&t;/* read only, 8-bit */
 DECL|macro|PORT_AUXDMA
-mdefine_line|#define&t;PORT_AUXDMA&t;0x02&t;/* write only */
+mdefine_line|#define&t;PORT_AUXDMA&t;0x02&t;/* write only, 8-bit */
 DECL|macro|PORT_DATA
-mdefine_line|#define&t;PORT_DATA&t;0x04&t;/* read/write */
+mdefine_line|#define&t;PORT_DATA&t;0x04&t;/* read/write, 16-bit */
 DECL|macro|PORT_CONTROL
-mdefine_line|#define&t;PORT_CONTROL&t;0x06&t;/* read/write */
+mdefine_line|#define&t;PORT_CONTROL&t;0x06&t;/* read/write, 8-bit */
 multiline_comment|/*&n; * host control registers bits&n; */
-DECL|macro|CONTROL_ATTN
-mdefine_line|#define&t;CONTROL_ATTN&t;0x80&t;/* attention */
-DECL|macro|CONTROL_FLSH
-mdefine_line|#define&t;CONTROL_FLSH&t;0x40&t;/* flush data register */
-DECL|macro|CONTROL_DMAE
-mdefine_line|#define CONTROL_DMAE&t;0x20&t;/* DMA enable */
-DECL|macro|CONTROL_DIR
-mdefine_line|#define CONTROL_DIR&t;0x10&t;/* direction */
-DECL|macro|CONTROL_TCEN
-mdefine_line|#define&t;CONTROL_TCEN&t;0x08&t;/* terminal count interrupt enable */
-DECL|macro|CONTROL_CMDE
-mdefine_line|#define&t;CONTROL_CMDE&t;0x04&t;/* command register interrupt enable */
-DECL|macro|CONTROL_HSF2
-mdefine_line|#define&t;CONTROL_HSF2&t;0x02&t;/* host status flag 2 */
-DECL|macro|CONTROL_HSF1
-mdefine_line|#define&t;CONTROL_HSF1&t;0x01&t;/* host status flag 1 */
+DECL|macro|ATTN
+mdefine_line|#define&t;ATTN&t;0x80&t;/* attention */
+DECL|macro|FLSH
+mdefine_line|#define&t;FLSH&t;0x40&t;/* flush data register */
+DECL|macro|DMAE
+mdefine_line|#define DMAE&t;0x20&t;/* DMA enable */
+DECL|macro|DIR
+mdefine_line|#define DIR&t;0x10&t;/* direction */
+DECL|macro|TCEN
+mdefine_line|#define&t;TCEN&t;0x08&t;/* terminal count interrupt enable */
+DECL|macro|CMDE
+mdefine_line|#define&t;CMDE&t;0x04&t;/* command register interrupt enable */
+DECL|macro|HSF2
+mdefine_line|#define&t;HSF2&t;0x02&t;/* host status flag 2 */
+DECL|macro|HSF1
+mdefine_line|#define&t;HSF1&t;0x01&t;/* host status flag 1 */
 multiline_comment|/*&n; * combinations of HSF flags used for PCB transmission&n; */
 DECL|macro|HSF_PCB_ACK
-mdefine_line|#define&t;HSF_PCB_ACK&t;(CONTROL_HSF1)
+mdefine_line|#define&t;HSF_PCB_ACK&t;HSF1
 DECL|macro|HSF_PCB_NAK
-mdefine_line|#define&t;HSF_PCB_NAK&t;(CONTROL_HSF2)
+mdefine_line|#define&t;HSF_PCB_NAK&t;HSF2
 DECL|macro|HSF_PCB_END
-mdefine_line|#define&t;HSF_PCB_END&t;(CONTROL_HSF2|CONTROL_HSF1)
+mdefine_line|#define&t;HSF_PCB_END&t;(HSF2|HSF1)
 DECL|macro|HSF_PCB_MASK
-mdefine_line|#define&t;HSF_PCB_MASK&t;(CONTROL_HSF2|CONTROL_HSF1)
+mdefine_line|#define&t;HSF_PCB_MASK&t;(HSF2|HSF1)
 multiline_comment|/*&n; * host status register bits&n; */
-DECL|macro|STATUS_HRDY
-mdefine_line|#define&t;STATUS_HRDY&t;0x80&t;/* data register ready */
-DECL|macro|STATUS_HCRE
-mdefine_line|#define&t;STATUS_HCRE&t;0x40&t;/* command register empty */
-DECL|macro|STATUS_ACRF
-mdefine_line|#define&t;STATUS_ACRF&t;0x20&t;/* adapter command register full */
-DECL|macro|STATUS_DIR
-mdefine_line|#define&t;STATUS_DIR &t;0x10&t;/* direction */
-DECL|macro|STATUS_DONE
-mdefine_line|#define&t;STATUS_DONE&t;0x08&t;/* DMA done */
-DECL|macro|STATUS_ASF3
-mdefine_line|#define&t;STATUS_ASF3&t;0x04&t;/* adapter status flag 3 */
-DECL|macro|STATUS_ASF2
-mdefine_line|#define&t;STATUS_ASF2&t;0x02&t;/* adapter status flag 2 */
-DECL|macro|STATUS_ASF1
-mdefine_line|#define&t;STATUS_ASF1&t;0x01&t;/* adapter status flag 1 */
+DECL|macro|HRDY
+mdefine_line|#define&t;HRDY&t;0x80&t;/* data register ready */
+DECL|macro|HCRE
+mdefine_line|#define&t;HCRE&t;0x40&t;/* command register empty */
+DECL|macro|ACRF
+mdefine_line|#define&t;ACRF&t;0x20&t;/* adapter command register full */
+multiline_comment|/* #define DIR &t;0x10&t;direction - same as in control register */
+DECL|macro|DONE
+mdefine_line|#define&t;DONE&t;0x08&t;/* DMA done */
+DECL|macro|ASF3
+mdefine_line|#define&t;ASF3&t;0x04&t;/* adapter status flag 3 */
+DECL|macro|ASF2
+mdefine_line|#define&t;ASF2&t;0x02&t;/* adapter status flag 2 */
+DECL|macro|ASF1
+mdefine_line|#define&t;ASF1&t;0x01&t;/* adapter status flag 1 */
 multiline_comment|/*&n; * combinations of ASF flags used for PCB reception&n; */
 DECL|macro|ASF_PCB_ACK
-mdefine_line|#define&t;ASF_PCB_ACK&t;(STATUS_ASF1)
+mdefine_line|#define&t;ASF_PCB_ACK&t;ASF1
 DECL|macro|ASF_PCB_NAK
-mdefine_line|#define&t;ASF_PCB_NAK&t;(STATUS_ASF2)
+mdefine_line|#define&t;ASF_PCB_NAK&t;ASF2
 DECL|macro|ASF_PCB_END
-mdefine_line|#define&t;ASF_PCB_END&t;(STATUS_ASF2|STATUS_ASF1)
+mdefine_line|#define&t;ASF_PCB_END&t;(ASF2|ASF1)
 DECL|macro|ASF_PCB_MASK
-mdefine_line|#define&t;ASF_PCB_MASK&t;(STATUS_ASF2|STATUS_ASF1)
+mdefine_line|#define&t;ASF_PCB_MASK&t;(ASF2|ASF1)
 multiline_comment|/*&n; * host aux DMA register bits&n; */
-DECL|macro|AUXDMA_BRST
-mdefine_line|#define&t;AUXDMA_BRST&t;0x01&t;/* DMA burst */
+DECL|macro|DMA_BRST
+mdefine_line|#define&t;DMA_BRST&t;0x01&t;/* DMA burst */
 multiline_comment|/*&n; * maximum amount of data data allowed in a PCB&n; */
 DECL|macro|MAX_PCB_DATA
 mdefine_line|#define&t;MAX_PCB_DATA&t;62
@@ -240,4 +239,354 @@ op_assign
 l_int|0x41
 )brace
 suffix:semicolon
+multiline_comment|/* Definitions for the PCB data structure */
+multiline_comment|/* Data units */
+DECL|typedef|byte
+r_typedef
+r_int
+r_char
+id|byte
+suffix:semicolon
+DECL|typedef|word
+r_typedef
+r_int
+r_int
+r_int
+id|word
+suffix:semicolon
+DECL|typedef|dword
+r_typedef
+r_int
+r_int
+r_int
+id|dword
+suffix:semicolon
+multiline_comment|/* Data structures */
+DECL|struct|Memconf
+r_struct
+id|Memconf
+(brace
+DECL|member|cmd_q
+id|word
+id|cmd_q
+comma
+DECL|member|rcv_q
+id|rcv_q
+comma
+DECL|member|mcast
+id|mcast
+comma
+DECL|member|frame
+id|frame
+comma
+DECL|member|rcv_b
+id|rcv_b
+comma
+DECL|member|progs
+id|progs
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|Rcv_pkt
+r_struct
+id|Rcv_pkt
+(brace
+DECL|member|buf_ofs
+id|word
+id|buf_ofs
+comma
+DECL|member|buf_seg
+id|buf_seg
+comma
+DECL|member|buf_len
+id|buf_len
+comma
+DECL|member|timeout
+id|timeout
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|Xmit_pkt
+r_struct
+id|Xmit_pkt
+(brace
+DECL|member|buf_ofs
+id|word
+id|buf_ofs
+comma
+DECL|member|buf_seg
+id|buf_seg
+comma
+DECL|member|pkt_len
+id|pkt_len
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|Rcv_resp
+r_struct
+id|Rcv_resp
+(brace
+DECL|member|buf_ofs
+id|word
+id|buf_ofs
+comma
+DECL|member|buf_seg
+id|buf_seg
+comma
+DECL|member|buf_len
+id|buf_len
+comma
+DECL|member|pkt_len
+id|pkt_len
+comma
+DECL|member|timeout
+id|timeout
+comma
+DECL|member|status
+id|status
+suffix:semicolon
+DECL|member|timetag
+id|dword
+id|timetag
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|Xmit_resp
+r_struct
+id|Xmit_resp
+(brace
+DECL|member|buf_ofs
+id|word
+id|buf_ofs
+comma
+DECL|member|buf_seg
+id|buf_seg
+comma
+DECL|member|c_stat
+id|c_stat
+comma
+DECL|member|status
+id|status
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|Netstat
+r_struct
+id|Netstat
+(brace
+DECL|member|tot_recv
+id|dword
+id|tot_recv
+comma
+DECL|member|tot_xmit
+id|tot_xmit
+suffix:semicolon
+DECL|member|err_CRC
+id|word
+id|err_CRC
+comma
+DECL|member|err_align
+id|err_align
+comma
+DECL|member|err_res
+id|err_res
+comma
+DECL|member|err_ovrrun
+id|err_ovrrun
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|Selftest
+r_struct
+id|Selftest
+(brace
+DECL|member|error
+id|word
+id|error
+suffix:semicolon
+r_union
+(brace
+DECL|member|ROM_cksum
+id|word
+id|ROM_cksum
+suffix:semicolon
+r_struct
+(brace
+DECL|member|ofs
+DECL|member|seg
+id|word
+id|ofs
+comma
+id|seg
+suffix:semicolon
+DECL|member|RAM
+)brace
+id|RAM
+suffix:semicolon
+DECL|member|i82586
+id|word
+id|i82586
+suffix:semicolon
+DECL|member|failure
+)brace
+id|failure
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|Info
+r_struct
+id|Info
+(brace
+DECL|member|minor_vers
+id|byte
+id|minor_vers
+comma
+DECL|member|major_vers
+id|major_vers
+suffix:semicolon
+DECL|member|ROM_cksum
+id|word
+id|ROM_cksum
+comma
+DECL|member|RAM_sz
+id|RAM_sz
+comma
+DECL|member|free_ofs
+id|free_ofs
+comma
+DECL|member|free_seg
+id|free_seg
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|Memdump
+r_struct
+id|Memdump
+(brace
+DECL|member|size
+id|word
+id|size
+comma
+DECL|member|off
+id|off
+comma
+DECL|member|seg
+id|seg
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n;Primary Command Block. The most important data structure. All communication&n;between the host and the adapter is done with these. (Except for the actual&n;ethernet data, which has different packaging.)&n;*/
+r_typedef
+r_struct
+(brace
+DECL|member|command
+id|byte
+id|command
+suffix:semicolon
+DECL|member|length
+id|byte
+id|length
+suffix:semicolon
+r_union
+(brace
+DECL|member|memconf
+r_struct
+id|Memconf
+id|memconf
+suffix:semicolon
+DECL|member|configure
+id|word
+id|configure
+suffix:semicolon
+DECL|member|rcv_pkt
+r_struct
+id|Rcv_pkt
+id|rcv_pkt
+suffix:semicolon
+DECL|member|xmit_pkt
+r_struct
+id|Xmit_pkt
+id|xmit_pkt
+suffix:semicolon
+DECL|member|multicast
+id|byte
+id|multicast
+(braket
+l_int|10
+)braket
+(braket
+l_int|6
+)braket
+suffix:semicolon
+DECL|member|eth_addr
+id|byte
+id|eth_addr
+(braket
+l_int|6
+)braket
+suffix:semicolon
+DECL|member|failed
+id|byte
+id|failed
+suffix:semicolon
+DECL|member|rcv_resp
+r_struct
+id|Rcv_resp
+id|rcv_resp
+suffix:semicolon
+DECL|member|xmit_resp
+r_struct
+id|Xmit_resp
+id|xmit_resp
+suffix:semicolon
+DECL|member|netstat
+r_struct
+id|Netstat
+id|netstat
+suffix:semicolon
+DECL|member|selftest
+r_struct
+id|Selftest
+id|selftest
+suffix:semicolon
+DECL|member|info
+r_struct
+id|Info
+id|info
+suffix:semicolon
+DECL|member|memdump
+r_struct
+id|Memdump
+id|memdump
+suffix:semicolon
+DECL|member|raw
+id|byte
+id|raw
+(braket
+l_int|62
+)braket
+suffix:semicolon
+DECL|member|data
+)brace
+id|data
+suffix:semicolon
+DECL|typedef|pcb_struct
+)brace
+id|pcb_struct
+suffix:semicolon
+multiline_comment|/* These defines for &squot;configure&squot; */
+DECL|macro|RECV_STATION
+mdefine_line|#define RECV_STATION&t;0x00
+DECL|macro|RECV_BROAD
+mdefine_line|#define RECV_BROAD&t;0x01
+DECL|macro|RECV_MULTI
+mdefine_line|#define RECV_MULTI&t;0x02
+DECL|macro|RECV_PROMISC
+mdefine_line|#define RECV_PROMISC&t;0x04
+DECL|macro|NO_LOOPBACK
+mdefine_line|#define NO_LOOPBACK&t;0x00
+DECL|macro|INT_LOOPBACK
+mdefine_line|#define INT_LOOPBACK&t;0x08
+DECL|macro|EXT_LOOPBACK
+mdefine_line|#define EXT_LOOPBACK&t;0x10
 eof

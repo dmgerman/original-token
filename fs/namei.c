@@ -665,10 +665,6 @@ id|sb-&gt;s_mounted
 )paren
 )paren
 (brace
-id|sb
-op_assign
-id|dir-&gt;i_sb
-suffix:semicolon
 id|iput
 c_func
 (paren

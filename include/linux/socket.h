@@ -59,17 +59,25 @@ multiline_comment|/* Supported address families. */
 DECL|macro|AF_UNSPEC
 mdefine_line|#define AF_UNSPEC&t;0
 DECL|macro|AF_UNIX
-mdefine_line|#define AF_UNIX&t;&t;1
+mdefine_line|#define AF_UNIX&t;&t;1&t;/* Unix domain sockets &t;&t;*/
 DECL|macro|AF_INET
-mdefine_line|#define AF_INET&t;&t;2
+mdefine_line|#define AF_INET&t;&t;2&t;/* Internet IP Protocol &t;*/
 DECL|macro|AF_AX25
-mdefine_line|#define AF_AX25&t;&t;3
+mdefine_line|#define AF_AX25&t;&t;3&t;/* Amateur Radio AX.25 &t;&t;*/
 DECL|macro|AF_IPX
-mdefine_line|#define AF_IPX&t;&t;4
+mdefine_line|#define AF_IPX&t;&t;4&t;/* Novell IPX &t;&t;&t;*/
 DECL|macro|AF_APPLETALK
-mdefine_line|#define AF_APPLETALK&t;5
+mdefine_line|#define AF_APPLETALK&t;5&t;/* Appletalk DDP &t;&t;*/
+DECL|macro|AF_NETROM
+mdefine_line|#define&t;AF_NETROM&t;6&t;/* Amateur radio NetROM &t;*/
+DECL|macro|AF_BRIDGE
+mdefine_line|#define AF_BRIDGE&t;7&t;/* Multiprotocol bridge &t;*/
+DECL|macro|AF_AAL5
+mdefine_line|#define AF_AAL5&t;&t;8&t;/* Reserved for Werner&squot;s ATM &t;*/
+DECL|macro|AF_X25
+mdefine_line|#define AF_X25&t;&t;9&t;/* Reserved for X.25 project &t;*/
 DECL|macro|AF_MAX
-mdefine_line|#define AF_MAX&t;&t;8&t;/* For now.. */
+mdefine_line|#define AF_MAX&t;&t;12&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
 DECL|macro|PF_UNSPEC
 mdefine_line|#define PF_UNSPEC&t;AF_UNSPEC
@@ -83,6 +91,14 @@ DECL|macro|PF_IPX
 mdefine_line|#define PF_IPX&t;&t;AF_IPX
 DECL|macro|PF_APPLETALK
 mdefine_line|#define PF_APPLETALK&t;AF_APPLETALK
+DECL|macro|PF_NETROM
+mdefine_line|#define&t;PF_NETROM&t;AF_NETROM
+DECL|macro|PF_BRIDGE
+mdefine_line|#define PF_BRIDGE&t;AF_BRIDGE
+DECL|macro|PF_AAL5
+mdefine_line|#define PF_AAL5&t;&t;AF_AAL5
+DECL|macro|PF_X25
+mdefine_line|#define PF_X25&t;&t;AF_X25
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Flags we can use with send/ and recv. */
@@ -103,6 +119,8 @@ DECL|macro|SOL_AX25
 mdefine_line|#define SOL_AX25&t;257
 DECL|macro|SOL_ATALK
 mdefine_line|#define SOL_ATALK&t;258
+DECL|macro|SOL_NETROM
+mdefine_line|#define&t;SOL_NETROM&t;259
 DECL|macro|SOL_TCP
 mdefine_line|#define SOL_TCP&t;&t;6
 DECL|macro|SOL_UDP

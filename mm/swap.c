@@ -19,12 +19,6 @@ DECL|macro|SWP_USED
 mdefine_line|#define SWP_USED&t;1
 DECL|macro|SWP_WRITEOK
 mdefine_line|#define SWP_WRITEOK&t;3
-DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
-DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 12)
-DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 12))
 DECL|variable|min_free_pages
 r_int
 id|min_free_pages
@@ -561,7 +555,9 @@ r_int
 r_int
 id|zones
 (braket
-l_int|8
+id|PAGE_SIZE
+op_div
+l_int|512
 )braket
 suffix:semicolon
 r_int
@@ -660,7 +656,7 @@ op_assign
 id|offset
 op_lshift
 (paren
-l_int|12
+id|PAGE_SHIFT
 op_minus
 id|swapf-&gt;i_sb-&gt;s_blocksize_bits
 )paren
@@ -1371,7 +1367,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The swap-out functions return 1 of they successfully&n; * threw something out, and we got a free page. It returns&n; * zero if it couldn&squot;t do anything, and any other value&n; * indicates it decreased rss, but the page was shared.&n; *&n; * NOTE! If it sleeps, it *must* return 1 to make sure we&n; * don&squot;t continue with the swap-out. Otherwise we may be&n; * using a process that no longer actually exists (it might&n; * have died while we slept).&n; */
+multiline_comment|/*&n; * The swap-out functions return 1 if they successfully&n; * threw something out, and we got a free page. It returns&n; * zero if it couldn&squot;t do anything, and any other value&n; * indicates it decreased rss, but the page was shared.&n; *&n; * NOTE! If it sleeps, it *must* return 1 to make sure we&n; * don&squot;t continue with the swap-out. Otherwise we may be&n; * using a process that no longer actually exists (it might&n; * have died while we slept).&n; */
 DECL|function|try_to_swap_out
 r_static
 r_inline
@@ -5025,7 +5021,9 @@ l_string|&quot;SWAP-SPACE&quot;
 comma
 id|p-&gt;swap_lockmap
 op_plus
-l_int|4086
+id|PAGE_SIZE
+op_minus
+l_int|10
 comma
 l_int|10
 )paren
@@ -5255,7 +5253,11 @@ l_string|&quot;Adding Swap: %dk swap-space&bslash;n&quot;
 comma
 id|j
 op_lshift
-l_int|2
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|10
+)paren
 )paren
 suffix:semicolon
 r_return

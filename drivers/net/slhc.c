@@ -17,17 +17,18 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &quot;ip.h&quot;
-macro_line|#include &quot;protocol.h&quot;
-macro_line|#include &quot;icmp.h&quot;
-macro_line|#include &quot;tcp.h&quot;
+macro_line|#include &lt;net/ip.h&gt;
+macro_line|#include &lt;net/protocol.h&gt;
+macro_line|#include &lt;net/icmp.h&gt;
+macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &quot;sock.h&quot;
+macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &quot;slhc.h&quot;
 DECL|variable|last_retran
 r_int

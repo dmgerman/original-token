@@ -3103,7 +3103,7 @@ l_int|0
 comma
 l_int|256
 op_div
-l_int|32
+l_int|8
 )paren
 suffix:semicolon
 r_if
