@@ -1,4 +1,4 @@
-multiline_comment|/* linux/net/inet/rarp.c&n; *&n; * Copyright (C) 1994 by Ross Martin&n; * Based on linux/net/inet/arp.c, Copyright (C) 1994 by Florian La Roche&n; *&n; * This module implements the Reverse Address Resolution Protocol &n; * (RARP, RFC 903), which is used to convert low level addresses such&n; * as ethernet addresses into high level addresses such as IP addresses.&n; * The most common use of RARP is as a means for a diskless workstation &n; * to discover its IP address during a network boot.&n; *&n; **&n; ***&t;WARNING:::::::::::::::::::::::::::::::::WARNING&n; ****&n; *****&t;SUN machines seem determined to boot solely from the person who&n; ****&t;answered their RARP query. NEVER add a SUN to your RARP table&n; ***&t;unless you have all the rest to boot the box from it. &n; **&n; * &n; * Currently, only ethernet address -&gt; IP address is likely to work.&n; * (Is RARP ever used for anything else?)&n; *&n; * This code is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Fixes&n; *&t;Alan Cox&t;:&t;Rarp delete on device down needed as&n; *&t;&t;&t;&t;reported by Walter Wolfgang.&n; *&n; */
+multiline_comment|/* linux/net/inet/rarp.c&n; *&n; * Copyright (C) 1994 by Ross Martin&n; * Based on linux/net/inet/arp.c, Copyright (C) 1994 by Florian La Roche&n; *&n; * $Id: rarp.c,v 1.21 1997/10/27 09:13:16 geert Exp $&n; *&n; * This module implements the Reverse Address Resolution Protocol &n; * (RARP, RFC 903), which is used to convert low level addresses such&n; * as ethernet addresses into high level addresses such as IP addresses.&n; * The most common use of RARP is as a means for a diskless workstation &n; * to discover its IP address during a network boot.&n; *&n; **&n; ***&t;WARNING:::::::::::::::::::::::::::::::::WARNING&n; ****&n; *****&t;SUN machines seem determined to boot solely from the person who&n; ****&t;answered their RARP query. NEVER add a SUN to your RARP table&n; ***&t;unless you have all the rest to boot the box from it. &n; **&n; * &n; * Currently, only ethernet address -&gt; IP address is likely to work.&n; * (Is RARP ever used for anything else?)&n; *&n; * This code is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Fixes&n; *&t;Alan Cox&t;:&t;Rarp delete on device down needed as&n; *&t;&t;&t;&t;reported by Walter Wolfgang.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -200,7 +200,7 @@ op_star
 op_star
 id|pentry
 suffix:semicolon
-id|cli
+id|start_bh_atomic
 c_func
 (paren
 )paren
@@ -236,7 +236,7 @@ id|pentry
 op_assign
 id|entry-&gt;next
 suffix:semicolon
-id|sti
+id|end_bh_atomic
 c_func
 (paren
 )paren
@@ -256,7 +256,7 @@ op_amp
 id|entry-&gt;next
 suffix:semicolon
 )brace
-id|sti
+id|end_bh_atomic
 c_func
 (paren
 )paren
@@ -286,7 +286,7 @@ op_star
 op_star
 id|pentry
 suffix:semicolon
-id|cli
+id|start_bh_atomic
 c_func
 (paren
 )paren
@@ -336,7 +336,7 @@ op_amp
 id|entry-&gt;next
 suffix:semicolon
 )brace
-id|sti
+id|end_bh_atomic
 c_func
 (paren
 )paren
@@ -398,6 +398,13 @@ id|rarp_dev_notifier
 op_assign
 initialization_block
 suffix:semicolon
+DECL|variable|rarp_pkt_inited
+r_static
+r_int
+id|rarp_pkt_inited
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|rarp_init_pkt
 r_static
 r_void
@@ -428,6 +435,48 @@ c_func
 op_amp
 id|rarp_dev_notifier
 )paren
+suffix:semicolon
+id|rarp_pkt_inited
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+DECL|function|rarp_end_pkt
+r_static
+r_void
+id|rarp_end_pkt
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rarp_pkt_inited
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|dev_remove_pack
+c_func
+(paren
+op_amp
+id|rarp_packet_type
+)paren
+suffix:semicolon
+id|unregister_netdevice_notifier
+c_func
+(paren
+op_amp
+id|rarp_dev_notifier
+)paren
+suffix:semicolon
+id|rarp_pkt_inited
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Receive an arp request by the device layer.  Maybe it should be &n; *&t;rewritten to use the incoming packet for the reply. The current &n; *&t;&quot;overhead&quot; time isn&squot;t that high...&n; */
@@ -488,6 +537,13 @@ id|rarp_table
 op_star
 id|entry
 suffix:semicolon
+r_struct
+id|in_device
+op_star
+id|in_dev
+op_assign
+id|dev-&gt;ip_ptr
+suffix:semicolon
 r_int
 id|sip
 comma
@@ -521,6 +577,12 @@ op_logical_or
 id|dev-&gt;flags
 op_amp
 id|IFF_NOARP
+op_logical_or
+op_logical_neg
+id|in_dev
+op_logical_or
+op_logical_neg
+id|in_dev-&gt;ifa_list
 )paren
 (brace
 id|kfree_skb
@@ -656,11 +718,6 @@ l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Process entry. Use tha for table lookup according to RFC903.&n; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -704,11 +761,6 @@ id|sip
 op_assign
 id|entry-&gt;ip
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|arp_send
 c_func
 (paren
@@ -720,7 +772,7 @@ id|sip
 comma
 id|dev
 comma
-id|dev-&gt;pa_addr
+id|in_dev-&gt;ifa_list-&gt;ifa_address
 comma
 id|sha
 comma
@@ -730,12 +782,6 @@ id|sha
 )paren
 suffix:semicolon
 )brace
-r_else
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -924,7 +970,7 @@ l_int|0
 comma
 l_int|1
 comma
-l_int|NULL
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -941,13 +987,13 @@ c_cond
 id|rt-&gt;rt_flags
 op_amp
 (paren
-id|RTF_LOCAL
+id|RTCF_LOCAL
 op_or
-id|RTF_BROADCAST
+id|RTCF_BROADCAST
 op_or
-id|RTF_MULTICAST
+id|RTCF_MULTICAST
 op_or
-id|RTF_NAT
+id|RTCF_DNAT
 )paren
 )paren
 (brace
@@ -967,11 +1013,6 @@ op_assign
 id|rt-&gt;u.dst.dev
 suffix:semicolon
 multiline_comment|/*&n; *&t;Is there an existing entry for this address?  Find out...&n; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1032,11 +1073,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -1058,6 +1094,12 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Block interrupts until table modification is finished */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|entry-&gt;next
 op_assign
 id|rarp_tables
@@ -1067,6 +1109,11 @@ op_assign
 id|entry
 suffix:semicolon
 )brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|entry-&gt;ip
 op_assign
 id|ip
@@ -1095,13 +1142,13 @@ id|entry-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* Don&squot;t unlink if we have entries to serve. */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|sti
 c_func
 (paren
 )paren
+suffix:semicolon
+multiline_comment|/* Don&squot;t unlink if we have entries to serve. */
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1193,11 +1240,6 @@ id|ip
 op_assign
 id|si-&gt;sin_addr.s_addr
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1230,11 +1272,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -1255,11 +1292,6 @@ suffix:semicolon
 id|r.arp_ha.sa_family
 op_assign
 id|entry-&gt;htype
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/*&n; *        Copy the information back&n; */
 r_return
@@ -1443,6 +1475,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|rarp_get_info
 r_int
 id|rarp_get_info
@@ -1544,11 +1577,6 @@ suffix:semicolon
 id|len
 op_add_assign
 id|size
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1740,11 +1768,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 op_star
 id|start
@@ -1813,6 +1836,7 @@ comma
 id|rarp_get_info
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1825,6 +1849,7 @@ r_void
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -1832,6 +1857,7 @@ op_amp
 id|proc_net_rarp
 )paren
 suffix:semicolon
+macro_line|#endif
 id|rarp_ioctl_hook
 op_assign
 id|rarp_ioctl
@@ -1871,12 +1897,14 @@ comma
 op_star
 id|rt_next
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_unregister
 c_func
 (paren
 id|PROC_NET_RARP
 )paren
 suffix:semicolon
+macro_line|#endif
 id|rarp_ioctl_hook
 op_assign
 l_int|NULL
@@ -1925,6 +1953,11 @@ id|rt
 )paren
 suffix:semicolon
 )brace
+id|rarp_end_pkt
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 eof

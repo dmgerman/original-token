@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/inetdevice.h&gt;
+macro_line|#include &lt;linux/in_route.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#ifndef _SNMP_H
 macro_line|#include &lt;net/snmp.h&gt;
@@ -32,16 +34,12 @@ r_int
 r_char
 id|flags
 suffix:semicolon
-DECL|member|vif
-r_char
-id|vif
-suffix:semicolon
 DECL|macro|IPSKB_MASQUERADED
 mdefine_line|#define IPSKB_MASQUERADED&t;1
 DECL|macro|IPSKB_TRANSLATED
 mdefine_line|#define IPSKB_TRANSLATED&t;2
-DECL|macro|IPSKB_TUNNELED
-mdefine_line|#define IPSKB_TUNNELED&t;&t;4
+DECL|macro|IPSKB_FORWARDED
+mdefine_line|#define IPSKB_FORWARDED&t;&t;4
 )brace
 suffix:semicolon
 DECL|struct|ipcm_cookie
@@ -51,6 +49,10 @@ id|ipcm_cookie
 DECL|member|addr
 id|u32
 id|addr
+suffix:semicolon
+DECL|member|oif
+r_int
+id|oif
 suffix:semicolon
 DECL|member|opt
 r_struct
@@ -62,6 +64,42 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|IPCB
 mdefine_line|#define IPCB(skb) ((struct inet_skb_parm*)((skb)-&gt;cb))
+DECL|struct|ip_ra_chain
+r_struct
+id|ip_ra_chain
+(brace
+DECL|member|next
+r_struct
+id|ip_ra_chain
+op_star
+id|next
+suffix:semicolon
+DECL|member|sk
+r_struct
+id|sock
+op_star
+id|sk
+suffix:semicolon
+DECL|member|destructor
+r_void
+(paren
+op_star
+id|destructor
+)paren
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|ip_ra_chain
+op_star
+id|ip_ra_chain
+suffix:semicolon
 multiline_comment|/* IP flags. */
 DECL|macro|IP_CE
 mdefine_line|#define IP_CE&t;&t;0x8000&t;&t;/* Flag: &quot;Congestion&quot;&t;&t;*/
@@ -519,9 +557,9 @@ DECL|member|rfc1812_filter
 r_int
 id|rfc1812_filter
 suffix:semicolon
-DECL|member|addrmask_agent
+DECL|member|send_redirects
 r_int
-id|addrmask_agent
+id|send_redirects
 suffix:semicolon
 DECL|member|log_martians
 r_int
@@ -535,17 +573,17 @@ DECL|member|multicast_route
 r_int
 id|multicast_route
 suffix:semicolon
-DECL|member|bootp_agent
+DECL|member|proxy_arp
 r_int
-id|bootp_agent
+id|proxy_arp
 suffix:semicolon
 DECL|member|bootp_relay
 r_int
 id|bootp_relay
 suffix:semicolon
-DECL|member|fib_model
+DECL|member|autoconfig
 r_int
-id|fib_model
+id|autoconfig
 suffix:semicolon
 DECL|member|no_pmtu_disc
 r_int
@@ -558,8 +596,26 @@ r_struct
 id|ipv4_config
 id|ipv4_config
 suffix:semicolon
+r_extern
+r_int
+id|sysctl_local_port_range
+(braket
+l_int|2
+)braket
+suffix:semicolon
 DECL|macro|IS_ROUTER
 mdefine_line|#define IS_ROUTER&t;(ip_statistics.IpForwarding == 1)
+r_extern
+r_int
+id|ip_call_ra_chain
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;Functions provided by ip_fragment.o&n; */
 r_struct
 id|sk_buff
@@ -615,8 +671,10 @@ comma
 id|u32
 id|daddr
 comma
-id|u32
-id|saddr
+r_struct
+id|rtable
+op_star
+id|rt
 comma
 r_int
 id|is_frag
@@ -752,12 +810,6 @@ r_struct
 id|ipcm_cookie
 op_star
 id|ipc
-comma
-r_struct
-id|device
-op_star
-op_star
-id|devp
 )paren
 suffix:semicolon
 r_extern
@@ -807,6 +859,32 @@ comma
 r_int
 op_star
 id|optlen
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ip_ra_control
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+r_char
+id|on
+comma
+r_void
+(paren
+op_star
+id|destructor
+)paren
+(paren
+r_struct
+id|sock
+op_star
+)paren
 )paren
 suffix:semicolon
 r_extern

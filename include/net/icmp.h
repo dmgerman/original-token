@@ -83,6 +83,21 @@ op_star
 id|ops
 )paren
 suffix:semicolon
+multiline_comment|/* Move into dst.h ? */
+r_extern
+r_int
+id|xrlim_allow
+c_func
+(paren
+r_struct
+id|dst_entry
+op_star
+id|dst
+comma
+r_int
+id|timeout
+)paren
+suffix:semicolon
 multiline_comment|/* CONFIG_IP_TRANSPARENT_PROXY */
 r_extern
 r_int

@@ -188,9 +188,8 @@ id|sk_buff
 op_star
 op_star
 comma
-r_struct
-id|device
-op_star
+id|__u32
+id|maddr
 )paren
 suffix:semicolon
 r_extern
@@ -201,10 +200,6 @@ c_func
 r_struct
 id|sk_buff
 op_star
-op_star
-comma
-r_struct
-id|device
 op_star
 )paren
 suffix:semicolon
@@ -217,10 +212,6 @@ r_struct
 id|sk_buff
 op_star
 op_star
-comma
-r_struct
-id|device
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;ip_masq obj creation/deletion functions.&n; */
@@ -231,10 +222,8 @@ op_star
 id|ip_masq_new
 c_func
 (paren
-r_struct
-id|device
-op_star
-id|dev
+id|__u32
+id|maddr
 comma
 r_int
 id|proto
@@ -351,9 +340,7 @@ id|sk_buff
 op_star
 op_star
 comma
-r_struct
-id|device
-op_star
+id|__u32
 )paren
 suffix:semicolon
 DECL|member|pkt_in
@@ -375,10 +362,6 @@ comma
 r_struct
 id|sk_buff
 op_star
-op_star
-comma
-r_struct
-id|device
 op_star
 )paren
 suffix:semicolon
@@ -480,10 +463,8 @@ op_star
 op_star
 id|skb_p
 comma
-r_struct
-id|device
-op_star
-id|dev
+id|__u32
+id|maddr
 )paren
 suffix:semicolon
 r_extern
@@ -500,11 +481,6 @@ id|sk_buff
 op_star
 op_star
 id|skb_p
-comma
-r_struct
-id|device
-op_star
-id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;service routine(s).&n; */

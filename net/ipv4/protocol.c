@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;INET protocol dispatch tables.&n; *&n; * Version:&t;@(#)protocol.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: Ahah! udp icmp errors don&squot;t work because&n; *&t;&t;&t;&t;  udp_err is never called!&n; *&t;&t;Alan Cox&t;: Added new fields for init and ready for&n; *&t;&t;&t;&t;  proper fragmentation (_NO_ 4K limits!)&n; *&t;&t;Richard Colella&t;: Hang on hash collision&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;INET protocol dispatch tables.&n; *&n; * Version:&t;$Id: protocol.c,v 1.9 1997/10/29 20:27:34 kuznet Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: Ahah! udp icmp errors don&squot;t work because&n; *&t;&t;&t;&t;  udp_err is never called!&n; *&t;&t;Alan Cox&t;: Added new fields for init and ready for&n; *&t;&t;&t;&t;  proper fragmentation (_NO_ 4K limits!)&n; *&t;&t;Richard Colella&t;: Hang on hash collision&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -20,132 +20,9 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/ipip.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
-macro_line|#ifdef CONFIG_NET_IPIP
-DECL|variable|ipip_protocol
-r_static
-r_struct
-id|inet_protocol
-id|ipip_protocol
-op_assign
-(brace
-id|ipip_rcv
-comma
-multiline_comment|/* IPIP handler          */
-id|ipip_err
-comma
-multiline_comment|/* TUNNEL error control    */
-l_int|0
-comma
-multiline_comment|/* next                 */
-id|IPPROTO_IPIP
-comma
-multiline_comment|/* protocol ID          */
-l_int|0
-comma
-multiline_comment|/* copy                 */
-l_int|NULL
-comma
-multiline_comment|/* data                 */
-l_string|&quot;IPIP&quot;
-multiline_comment|/* name                 */
-)brace
-suffix:semicolon
-macro_line|#endif
-DECL|variable|tcp_protocol
-r_static
-r_struct
-id|inet_protocol
-id|tcp_protocol
-op_assign
-(brace
-id|tcp_v4_rcv
-comma
-multiline_comment|/* TCP handler&t;&t;*/
-id|tcp_v4_err
-comma
-multiline_comment|/* TCP error control&t;*/
-macro_line|#ifdef CONFIG_NET_IPIP
-op_amp
-id|ipip_protocol
-comma
-macro_line|#else  
-l_int|NULL
-comma
-multiline_comment|/* next&t;&t;&t;*/
-macro_line|#endif  
-id|IPPROTO_TCP
-comma
-multiline_comment|/* protocol ID&t;&t;*/
-l_int|0
-comma
-multiline_comment|/* copy&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* data&t;&t;&t;*/
-l_string|&quot;TCP&quot;
-multiline_comment|/* name&t;&t;&t;*/
-)brace
-suffix:semicolon
-DECL|variable|udp_protocol
-r_static
-r_struct
-id|inet_protocol
-id|udp_protocol
-op_assign
-(brace
-id|udp_rcv
-comma
-multiline_comment|/* UDP handler&t;&t;*/
-id|udp_err
-comma
-multiline_comment|/* UDP error control&t;*/
-op_amp
-id|tcp_protocol
-comma
-multiline_comment|/* next&t;&t;&t;*/
-id|IPPROTO_UDP
-comma
-multiline_comment|/* protocol ID&t;&t;*/
-l_int|0
-comma
-multiline_comment|/* copy&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* data&t;&t;&t;*/
-l_string|&quot;UDP&quot;
-multiline_comment|/* name&t;&t;&t;*/
-)brace
-suffix:semicolon
-DECL|variable|icmp_protocol
-r_static
-r_struct
-id|inet_protocol
-id|icmp_protocol
-op_assign
-(brace
-id|icmp_rcv
-comma
-multiline_comment|/* ICMP handler&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* ICMP error control&t;*/
-op_amp
-id|udp_protocol
-comma
-multiline_comment|/* next&t;&t;&t;*/
-id|IPPROTO_ICMP
-comma
-multiline_comment|/* protocol ID&t;&t;*/
-l_int|0
-comma
-multiline_comment|/* copy&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* data&t;&t;&t;*/
-l_string|&quot;ICMP&quot;
-multiline_comment|/* name&t;&t;&t;*/
-)brace
-suffix:semicolon
+DECL|macro|IPPROTO_PREVIOUS
+mdefine_line|#define IPPROTO_PREVIOUS NULL
+macro_line|#ifdef CONFIG_IP_MULTICAST
 DECL|variable|igmp_protocol
 r_static
 r_struct
@@ -159,8 +36,7 @@ multiline_comment|/* IGMP handler&t;&t;*/
 l_int|NULL
 comma
 multiline_comment|/* IGMP error control&t;*/
-op_amp
-id|icmp_protocol
+id|IPPROTO_PREVIOUS
 comma
 multiline_comment|/* next&t;&t;&t;*/
 id|IPPROTO_IGMP
@@ -176,14 +52,116 @@ l_string|&quot;IGMP&quot;
 multiline_comment|/* name&t;&t;&t;*/
 )brace
 suffix:semicolon
+DECL|macro|IPPROTO_PREVIOUS
+macro_line|#undef  IPPROTO_PREVIOUS
+DECL|macro|IPPROTO_PREVIOUS
+mdefine_line|#define IPPROTO_PREVIOUS &amp;igmp_protocol
+macro_line|#endif
+DECL|variable|tcp_protocol
+r_static
+r_struct
+id|inet_protocol
+id|tcp_protocol
+op_assign
+(brace
+id|tcp_v4_rcv
+comma
+multiline_comment|/* TCP handler&t;&t;*/
+id|tcp_v4_err
+comma
+multiline_comment|/* TCP error control&t;*/
+id|IPPROTO_PREVIOUS
+comma
+id|IPPROTO_TCP
+comma
+multiline_comment|/* protocol ID&t;&t;*/
+l_int|0
+comma
+multiline_comment|/* copy&t;&t;&t;*/
+l_int|NULL
+comma
+multiline_comment|/* data&t;&t;&t;*/
+l_string|&quot;TCP&quot;
+multiline_comment|/* name&t;&t;&t;*/
+)brace
+suffix:semicolon
+DECL|macro|IPPROTO_PREVIOUS
+macro_line|#undef  IPPROTO_PREVIOUS
+DECL|macro|IPPROTO_PREVIOUS
+mdefine_line|#define IPPROTO_PREVIOUS &amp;tcp_protocol
+DECL|variable|udp_protocol
+r_static
+r_struct
+id|inet_protocol
+id|udp_protocol
+op_assign
+(brace
+id|udp_rcv
+comma
+multiline_comment|/* UDP handler&t;&t;*/
+id|udp_err
+comma
+multiline_comment|/* UDP error control&t;*/
+id|IPPROTO_PREVIOUS
+comma
+multiline_comment|/* next&t;&t;&t;*/
+id|IPPROTO_UDP
+comma
+multiline_comment|/* protocol ID&t;&t;*/
+l_int|0
+comma
+multiline_comment|/* copy&t;&t;&t;*/
+l_int|NULL
+comma
+multiline_comment|/* data&t;&t;&t;*/
+l_string|&quot;UDP&quot;
+multiline_comment|/* name&t;&t;&t;*/
+)brace
+suffix:semicolon
+DECL|macro|IPPROTO_PREVIOUS
+macro_line|#undef  IPPROTO_PREVIOUS
+DECL|macro|IPPROTO_PREVIOUS
+mdefine_line|#define IPPROTO_PREVIOUS &amp;udp_protocol
+DECL|variable|icmp_protocol
+r_static
+r_struct
+id|inet_protocol
+id|icmp_protocol
+op_assign
+(brace
+id|icmp_rcv
+comma
+multiline_comment|/* ICMP handler&t;&t;*/
+l_int|NULL
+comma
+multiline_comment|/* ICMP error control&t;*/
+id|IPPROTO_PREVIOUS
+comma
+multiline_comment|/* next&t;&t;&t;*/
+id|IPPROTO_ICMP
+comma
+multiline_comment|/* protocol ID&t;&t;*/
+l_int|0
+comma
+multiline_comment|/* copy&t;&t;&t;*/
+l_int|NULL
+comma
+multiline_comment|/* data&t;&t;&t;*/
+l_string|&quot;ICMP&quot;
+multiline_comment|/* name&t;&t;&t;*/
+)brace
+suffix:semicolon
+DECL|macro|IPPROTO_PREVIOUS
+macro_line|#undef  IPPROTO_PREVIOUS
+DECL|macro|IPPROTO_PREVIOUS
+mdefine_line|#define IPPROTO_PREVIOUS &amp;icmp_protocol
 DECL|variable|inet_protocol_base
 r_struct
 id|inet_protocol
 op_star
 id|inet_protocol_base
 op_assign
-op_amp
-id|igmp_protocol
+id|IPPROTO_PREVIOUS
 suffix:semicolon
 DECL|variable|inet_protos
 r_struct

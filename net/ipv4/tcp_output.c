@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.46 1997/08/24 16:22:28 freitag Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.50 1997/10/15 19:13:02 freitag Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 r_extern
@@ -137,7 +137,7 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-multiline_comment|/*&t;RFC 1122 - section 4.2.3.4&n;&t; *&n;&t; *&t;We must queue if&n;&t; *&n;&t; *&t;a) The right edge of this frame exceeds the window&n;&t; *&t;b) There are packets in flight and we have a small segment&n;&t; *&t;   [SWS avoidance and Nagle algorithm]&n;&t; *&t;   (part of SWS is done on packetization)&n;&t; *&t;c) We are retransmiting [Nagle]&n;&t; *&t;d) We have too many packets &squot;in flight&squot;&n;&t; */
+multiline_comment|/*&t;RFC 1122 - section 4.2.3.4&n;&t; *&n;&t; *&t;We must queue if&n;&t; *&n;&t; *&t;a) The right edge of this frame exceeds the window&n;&t; *&t;b) There are packets in flight and we have a small segment&n;&t; *&t;   [SWS avoidance and Nagle algorithm]&n;&t; *&t;   (part of SWS is done on packetization)&n;&t; *&t;c) We are retransmiting [Nagle]&n;&t; *&t;d) We have too many packets &squot;in flight&squot;&n;&t; *&n;&t; * &t;Don&squot;t use the nagle rule for urgent data.&n;&t; */
 id|len
 op_assign
 id|skb-&gt;end_seq
@@ -159,6 +159,9 @@ l_int|1
 )paren
 op_logical_and
 id|tp-&gt;packets_out
+op_logical_and
+op_logical_neg
+id|skb-&gt;h.th-&gt;urg
 )paren
 id|nagle_check
 op_assign
@@ -1578,6 +1581,8 @@ id|mss
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef NO_ANK_FIX
+multiline_comment|/* I am tired of this message */
 r_else
 id|printk
 c_func
@@ -1586,6 +1591,7 @@ id|KERN_DEBUG
 l_string|&quot;Clamp failure. Water leaking.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1633,6 +1639,8 @@ id|cur_win
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef NO_ANK_FIX
+multiline_comment|/* And this too. */
 id|printk
 c_func
 (paren
@@ -1646,6 +1654,7 @@ comma
 id|tp-&gt;rcv_wup
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -2112,12 +2121,10 @@ c_cond
 (paren
 id|th2-&gt;fin
 )paren
-(brace
 id|th1-&gt;fin
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 multiline_comment|/* ... and off you go. */
 id|kfree_skb
 c_func
@@ -3663,25 +3670,24 @@ multiline_comment|/*&t;Write data can still be transmitted/retransmitted in the&
 r_if
 c_cond
 (paren
+(paren
+l_int|1
+op_lshift
 id|sk-&gt;state
-op_ne
-id|TCP_ESTABLISHED
-op_logical_and
-id|sk-&gt;state
-op_ne
-id|TCP_CLOSE_WAIT
-op_logical_and
-id|sk-&gt;state
-op_ne
-id|TCP_FIN_WAIT1
-op_logical_and
-id|sk-&gt;state
-op_ne
-id|TCP_LAST_ACK
-op_logical_and
-id|sk-&gt;state
-op_ne
-id|TCP_CLOSING
+)paren
+op_amp
+op_complement
+(paren
+id|TCPF_ESTABLISHED
+op_or
+id|TCPF_CLOSE_WAIT
+op_or
+id|TCPF_FIN_WAIT1
+op_or
+id|TCPF_LAST_ACK
+op_or
+id|TCPF_CLOSING
+)paren
 )paren
 r_return
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Multicast support for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: mcast.c,v 1.10 1997/05/07 09:40:22 davem Exp $&n; *&n; *&t;Based on linux/ipv4/igmp.c and linux/ipv4/ip_sockglue.c &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Multicast support for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: mcast.c,v 1.11 1997/10/29 20:27:50 kuznet Exp $&n; *&n; *&t;Based on linux/ipv4/igmp.c and linux/ipv4/ip_sockglue.c &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -1786,12 +1786,30 @@ id|ha
 id|MAX_ADDR_LEN
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;type
+op_eq
+id|ARPHRD_ETHER
+)paren
 id|ipv6_mc_map
 c_func
 (paren
 id|addr
 comma
 id|ha
+)paren
+suffix:semicolon
+r_else
+id|memcpy
+c_func
+(paren
+id|ha
+comma
+id|dev-&gt;broadcast
+comma
+id|dev-&gt;addr_len
 )paren
 suffix:semicolon
 id|dev

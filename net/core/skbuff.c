@@ -439,7 +439,7 @@ id|skb-&gt;cb
 suffix:semicolon
 id|skb-&gt;priority
 op_assign
-id|SOPRI_NORMAL
+l_int|0
 suffix:semicolon
 id|atomic_inc
 c_func

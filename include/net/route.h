@@ -2,8 +2,10 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _ROUTE_H
 DECL|macro|_ROUTE_H
 mdefine_line|#define _ROUTE_H
-macro_line|#include &lt;net/ip_fib.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
+macro_line|#include &lt;linux/in_route.h&gt;
+macro_line|#include &lt;linux/rtnetlink.h&gt;
 DECL|macro|RT_HASH_DIVISOR
 mdefine_line|#define RT_HASH_DIVISOR&t;    &t;256
 DECL|macro|RT_CACHE_MAX_SIZE
@@ -13,7 +15,7 @@ DECL|macro|RT_CACHE_TIMEOUT
 mdefine_line|#define RT_CACHE_TIMEOUT&t;&t;(HZ*300)
 multiline_comment|/*&n; * Cache invalidations can be delayed by:&n; */
 DECL|macro|RT_FLUSH_DELAY
-mdefine_line|#define RT_FLUSH_DELAY (2*HZ)
+mdefine_line|#define RT_FLUSH_DELAY (5*HZ)
 DECL|macro|RT_REDIRECT_NUMBER
 mdefine_line|#define RT_REDIRECT_NUMBER&t;&t;9
 DECL|macro|RT_REDIRECT_LOAD
@@ -27,6 +29,36 @@ multiline_comment|/*&n; * Prevents LRU trashing, entries considered equivalent,&
 DECL|macro|RT_CACHE_BUBBLE_THRESHOLD
 mdefine_line|#define RT_CACHE_BUBBLE_THRESHOLD&t;(5*HZ)
 macro_line|#include &lt;linux/route.h&gt;
+DECL|struct|rt_key
+r_struct
+id|rt_key
+(brace
+DECL|member|dst
+id|__u32
+id|dst
+suffix:semicolon
+DECL|member|src
+id|__u32
+id|src
+suffix:semicolon
+DECL|member|iif
+r_int
+id|iif
+suffix:semicolon
+DECL|member|oif
+r_int
+id|oif
+suffix:semicolon
+DECL|member|tos
+id|__u8
+id|tos
+suffix:semicolon
+DECL|member|scope
+id|__u8
+id|scope
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|rtable
 r_struct
 id|rtable
@@ -52,73 +84,51 @@ DECL|member|rt_flags
 r_int
 id|rt_flags
 suffix:semicolon
+DECL|member|rt_type
+r_int
+id|rt_type
+suffix:semicolon
 DECL|member|rt_dst
-id|u32
+id|__u32
 id|rt_dst
 suffix:semicolon
 multiline_comment|/* Path destination&t;*/
 DECL|member|rt_src
-id|u32
+id|__u32
 id|rt_src
 suffix:semicolon
 multiline_comment|/* Path source&t;&t;*/
-DECL|member|rt_src_dev
-r_struct
-id|device
-op_star
-id|rt_src_dev
+DECL|member|rt_iif
+r_int
+id|rt_iif
 suffix:semicolon
-multiline_comment|/* Path source device&t;*/
 multiline_comment|/* Info on neighbour */
 DECL|member|rt_gateway
-id|u32
+id|__u32
 id|rt_gateway
 suffix:semicolon
 multiline_comment|/* Cache lookup keys */
-r_struct
-(brace
-DECL|member|dst
-id|u32
-id|dst
-suffix:semicolon
-DECL|member|src
-id|u32
-id|src
-suffix:semicolon
-DECL|member|src_dev
-r_struct
-id|device
-op_star
-id|src_dev
-suffix:semicolon
-DECL|member|dst_dev
-r_struct
-id|device
-op_star
-id|dst_dev
-suffix:semicolon
-DECL|member|tos
-id|u8
-id|tos
-suffix:semicolon
 DECL|member|key
-)brace
+r_struct
+id|rt_key
 id|key
 suffix:semicolon
 multiline_comment|/* Miscellaneous cached information */
 DECL|member|rt_spec_dst
-id|u32
+id|__u32
 id|rt_spec_dst
 suffix:semicolon
 multiline_comment|/* RFC1122 specific destination */
+macro_line|#ifdef CONFIG_IP_ROUTE_NAT
 DECL|member|rt_src_map
-id|u32
+id|__u32
 id|rt_src_map
 suffix:semicolon
 DECL|member|rt_dst_map
-id|u32
+id|__u32
 id|rt_dst_map
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* ICMP statistics */
 DECL|member|last_error
 r_int
@@ -132,18 +142,7 @@ id|errors
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|RTF_IFBRD
-mdefine_line|#define RTF_IFBRD&t;(RTF_UP|RTF_MAGIC|RTF_LOCAL|RTF_BROADCAST)
-DECL|macro|RTF_IFLOCAL
-mdefine_line|#define RTF_IFLOCAL&t;(RTF_UP|RTF_MAGIC|RTF_LOCAL|RTF_INTERFACE)
-DECL|macro|RTF_IFPREFIX
-mdefine_line|#define RTF_IFPREFIX&t;(RTF_UP|RTF_MAGIC|RTF_INTERFACE)
-multiline_comment|/*&n; *&t;Flags not visible at user level.&n; */
-DECL|macro|RTF_INTERNAL
-mdefine_line|#define RTF_INTERNAL&t;0xFFFF8000&t;/* to get RTF_MAGIC as well... */
-multiline_comment|/*&n; *&t;Flags saved in FIB.&n; */
-DECL|macro|RTF_FIB
-mdefine_line|#define RTF_FIB&t;&t;(RTF_UP|RTF_GATEWAY|RTF_REJECT|RTF_THROW|RTF_STATIC|&bslash;&n;&t;&t;&t; RTF_XRESOLVE|RTF_NOPMTUDISC|RTF_NOFORWARD|RTF_INTERNAL)
+macro_line|#ifdef __KERNEL__
 r_extern
 r_void
 id|ip_rt_init
@@ -229,32 +228,8 @@ comma
 id|u8
 id|tos
 comma
-r_struct
-id|device
-op_star
-id|devout
-)paren
-suffix:semicolon
-r_extern
 r_int
-id|ip_route_output_dev
-c_func
-(paren
-r_struct
-id|rtable
-op_star
-op_star
-comma
-id|u32
-id|dst
-comma
-id|u32
-id|src
-comma
-id|u8
-id|tos
-comma
-r_int
+id|oif
 )paren
 suffix:semicolon
 r_extern
@@ -308,8 +283,56 @@ op_star
 id|skb
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|inet_addr_type
+c_func
+(paren
+id|u32
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_rt_multicast_event
+c_func
+(paren
+r_struct
+id|in_device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ip_rt_ioctl
+c_func
+(paren
+r_int
+r_int
+id|cmd
+comma
+r_void
+op_star
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_rt_get_source
+c_func
+(paren
+id|u8
+op_star
+id|src
+comma
+r_struct
+id|rtable
+op_star
+id|rt
+)paren
+suffix:semicolon
 DECL|function|ip_rt_put
-r_static
+r_extern
 id|__inline__
 r_void
 id|ip_rt_put
@@ -334,8 +357,15 @@ id|rt-&gt;u.dst
 )paren
 suffix:semicolon
 )brace
+r_extern
+id|__u8
+id|ip_tos2prio
+(braket
+l_int|16
+)braket
+suffix:semicolon
 DECL|function|rt_tos2priority
-r_static
+r_extern
 id|__inline__
 r_char
 id|rt_tos2priority
@@ -345,36 +375,21 @@ id|u8
 id|tos
 )paren
 (brace
-r_if
-c_cond
+r_return
+id|ip_tos2prio
+(braket
+id|IPTOS_TOS
+c_func
 (paren
 id|tos
-op_amp
-id|IPTOS_LOWDELAY
 )paren
-r_return
-id|SOPRI_INTERACTIVE
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tos
-op_amp
-(paren
-id|IPTOS_THROUGHPUT
-op_or
-id|IPTOS_MINCOST
-)paren
-)paren
-r_return
-id|SOPRI_BACKGROUND
-suffix:semicolon
-r_return
-id|SOPRI_NORMAL
+op_rshift
+l_int|1
+)braket
 suffix:semicolon
 )brace
 DECL|function|ip_route_connect
-r_static
+r_extern
 id|__inline__
 r_int
 id|ip_route_connect
@@ -394,6 +409,9 @@ id|src
 comma
 id|u32
 id|tos
+comma
+r_int
+id|oif
 )paren
 (brace
 r_int
@@ -412,7 +430,7 @@ id|src
 comma
 id|tos
 comma
-l_int|NULL
+id|oif
 )paren
 suffix:semicolon
 r_if
@@ -471,12 +489,12 @@ id|src
 comma
 id|tos
 comma
-l_int|NULL
+id|oif
 )paren
 suffix:semicolon
 )brace
 DECL|function|ip_ll_header
-r_static
+r_extern
 id|__inline__
 r_void
 id|ip_ll_header
@@ -597,5 +615,6 @@ op_assign
 id|skb-&gt;data
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif&t;/* _ROUTE_H */
 eof

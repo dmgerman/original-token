@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.40 1997/10/12 17:01:48 kuznet Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -33,7 +33,7 @@ macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
-macro_line|#include &lt;net/netlink.h&gt;
+macro_line|#include &lt;linux/netlink.h&gt;
 macro_line|#include &lt;linux/ipsec.h&gt;
 DECL|function|ip_ll_header_reserve
 r_static
@@ -168,7 +168,7 @@ op_logical_or
 l_int|0
 )paren
 comma
-l_int|NULL
+id|sk-&gt;bound_dev_if
 )paren
 suffix:semicolon
 r_if
@@ -308,7 +308,7 @@ op_logical_neg
 (paren
 id|rt-&gt;rt_flags
 op_amp
-id|RTF_NOPMTUDISC
+id|RTCF_NOPMTUDISC
 )paren
 )paren
 id|iph-&gt;frag_off
@@ -379,7 +379,7 @@ id|opt
 comma
 id|final_daddr
 comma
-id|rt-&gt;u.dst.dev-&gt;pa_addr
+id|rt
 comma
 l_int|0
 )paren
@@ -471,6 +471,10 @@ op_logical_or
 id|rt-&gt;u.dst.obsolete
 )paren
 (brace
+id|sk-&gt;dst_cache
+op_assign
+l_int|NULL
+suffix:semicolon
 id|ip_rt_put
 c_func
 (paren
@@ -501,7 +505,7 @@ op_logical_or
 l_int|0
 )paren
 comma
-l_int|NULL
+id|sk-&gt;bound_dev_if
 )paren
 suffix:semicolon
 r_if
@@ -651,7 +655,7 @@ op_logical_neg
 (paren
 id|rt-&gt;rt_flags
 op_amp
-id|RTF_NOPMTUDISC
+id|RTCF_NOPMTUDISC
 )paren
 )paren
 id|iph-&gt;frag_off
@@ -726,7 +730,7 @@ id|opt
 comma
 id|final_daddr
 comma
-id|rt-&gt;u.dst.dev-&gt;pa_addr
+id|rt
 comma
 l_int|0
 )paren
@@ -794,6 +798,7 @@ id|IP_FW_MODE_ACCT_OUT
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_IP_ROUTE_NAT
 r_if
 c_cond
 (paren
@@ -807,31 +812,76 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Multicasts are looped back for other local users&n;&t; */
 r_if
 c_cond
 (paren
 id|rt-&gt;rt_flags
 op_amp
-id|RTF_MULTICAST
+id|RTCF_MULTICAST
 op_logical_and
+(paren
 op_logical_neg
+id|sk
+op_logical_or
+id|sk-&gt;ip_mc_loop
+)paren
+)paren
+(brace
+macro_line|#ifndef CONFIG_IP_MROUTE
+macro_line|#if 1
+multiline_comment|/* It should never occur. Delete it eventually. --ANK */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|rt-&gt;rt_flags
+op_amp
+id|RTCF_LOCAL
+)paren
+op_logical_or
 (paren
 id|dev-&gt;flags
 op_amp
 id|IFF_LOOPBACK
 )paren
 )paren
-(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ip_mc_output (mc): it should never occur&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif
+macro_line|#else
+multiline_comment|/* Small optimization: do not loopback not local frames,&n;&t;&t;   which returned after forwarding; they will be  dropped&n;&t;&t;   by ip_mr_input in any case.&n;&t;&t;   Note, that local frames are looped back to be delivered&n;&t;&t;   to local recipients.&n;&n;&t;&t;   This check is duplicated in ip_mr_input at the moment.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|sk
-op_eq
-l_int|NULL
-op_logical_or
-id|sk-&gt;ip_mc_loop
+(paren
+id|rt-&gt;rt_flags
+op_amp
+id|RTCF_LOCAL
 )paren
+op_logical_or
+op_logical_neg
+(paren
+id|IPCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|flags
+op_amp
+id|IPSKB_FORWARDED
+)paren
+)paren
+macro_line|#endif
 id|dev_loopback_xmit
 c_func
 (paren
@@ -863,35 +913,45 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|rt-&gt;rt_flags
+op_amp
+id|RTCF_BROADCAST
+)paren
+(brace
+macro_line|#if 1
+multiline_comment|/* It should never occur. Delete it eventually. --ANK */
+r_if
+c_cond
+(paren
+op_logical_neg
 (paren
 id|rt-&gt;rt_flags
 op_amp
-(paren
-id|RTF_LOCAL
-op_or
-id|RTF_BROADCAST
+id|RTCF_LOCAL
 )paren
-)paren
-op_eq
-(paren
-id|RTF_LOCAL
-op_or
-id|RTF_BROADCAST
-)paren
-op_logical_and
-op_logical_neg
+op_logical_or
 (paren
 id|dev-&gt;flags
 op_amp
 id|IFF_LOOPBACK
 )paren
 )paren
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ip_mc_output (brd): it should never occur!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif
 id|dev_loopback_xmit
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -978,6 +1038,7 @@ id|IP_FW_MODE_ACCT_OUT
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_IP_ROUTE_NAT
 r_if
 c_cond
 (paren
@@ -991,6 +1052,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1402,7 +1464,12 @@ id|rt-&gt;key.src
 comma
 id|rt-&gt;key.tos
 comma
-l_int|NULL
+id|sk
+ques
+c_cond
+id|sk-&gt;bound_dev_if
+suffix:colon
+l_int|0
 )paren
 )paren
 (brace
@@ -1590,13 +1657,6 @@ id|opt
 op_assign
 id|ipc-&gt;opt
 suffix:semicolon
-r_struct
-id|device
-op_star
-id|dev
-op_assign
-id|rt-&gt;u.dst.dev
-suffix:semicolon
 r_int
 id|df
 op_assign
@@ -1620,7 +1680,7 @@ id|IP_PMTUDISC_DONT
 op_logical_or
 id|rt-&gt;rt_flags
 op_amp
-id|RTF_NOPMTUDISC
+id|RTCF_NOPMTUDISC
 )paren
 id|df
 op_assign
@@ -1789,12 +1849,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|rt-&gt;rt_flags
-op_amp
-id|RTF_MULTICAST
-)paren
+id|rt-&gt;rt_type
+op_ne
+id|RTN_MULTICAST
 )paren
 id|iph-&gt;ttl
 op_assign
@@ -2338,7 +2395,7 @@ id|opt
 comma
 id|ipc-&gt;addr
 comma
-id|dev-&gt;pa_addr
+id|rt
 comma
 id|offset
 )paren
@@ -2385,9 +2442,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rt-&gt;rt_flags
-op_amp
-id|RTF_MULTICAST
+id|rt-&gt;rt_type
+op_eq
+id|RTN_MULTICAST
 )paren
 id|iph-&gt;ttl
 op_assign
@@ -3260,7 +3317,7 @@ c_func
 id|skb-&gt;nh.iph-&gt;tos
 )paren
 comma
-l_int|NULL
+l_int|0
 )paren
 )paren
 r_return
@@ -3388,7 +3445,7 @@ id|replyopts.opt
 comma
 id|daddr
 comma
-id|rt-&gt;u.dst.dev-&gt;pa_addr
+id|rt
 comma
 l_int|0
 )paren
@@ -3422,93 +3479,8 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;Device notifier&n; */
-DECL|function|ip_netdev_event
-r_static
-r_int
-id|ip_netdev_event
-c_func
-(paren
-r_struct
-id|notifier_block
-op_star
-id|this
-comma
-r_int
-r_int
-id|event
-comma
-r_void
-op_star
-id|ptr
-)paren
-(brace
-r_struct
-id|device
-op_star
-id|dev
-op_assign
-id|ptr
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;family
-op_ne
-id|AF_INET
-)paren
-r_return
-id|NOTIFY_DONE
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|event
-op_eq
-id|NETDEV_UP
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; *&t;Join the initial group if multicast.&n;&t;&t; */
-id|ip_mc_allhost
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|event
-op_eq
-id|NETDEV_DOWN
-)paren
-(brace
-id|ip_mc_drop_device
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-)brace
-r_return
-id|ip_rt_event
-c_func
-(paren
-id|event
-comma
-id|dev
-)paren
-suffix:semicolon
-)brace
-DECL|variable|ip_netdev_notifier
-r_struct
-id|notifier_block
-id|ip_netdev_notifier
-op_assign
-initialization_block
-suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#ifdef CONFIG_IP_MULTICAST
 DECL|variable|proc_net_igmp
 r_static
 r_struct
@@ -3540,6 +3512,7 @@ comma
 id|ip_mc_procinfo
 )brace
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif&t;
 multiline_comment|/*&n; *&t;IP registers the packet type and then calls the subprotocol initialisers&n; */
 DECL|function|__initfunc
@@ -3566,15 +3539,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* So we flush routes and multicast lists when a device is downed */
-id|register_netdevice_notifier
-c_func
-(paren
-op_amp
-id|ip_netdev_notifier
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#ifdef CONFIG_IP_MULTICAST
 id|proc_net_register
 c_func
 (paren
@@ -3582,6 +3548,7 @@ op_amp
 id|proc_net_igmp
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif&t;
 )brace
 eof

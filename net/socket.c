@@ -19,14 +19,13 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/wanrouter.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#if defined(CONFIG_KERNELD) &amp;&amp; defined(CONFIG_NET)
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
-macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/rarp.h&gt;
@@ -126,7 +125,8 @@ id|file
 op_star
 id|file
 comma
-id|poll_table
+r_struct
+id|poll_table_struct
 op_star
 id|wait
 )paren
@@ -4366,14 +4366,27 @@ c_cond
 (paren
 id|msg_sys.msg_controllen
 OG
+l_int|256
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_goto
+id|failed2
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|msg_sys.msg_controllen
+OG
 r_sizeof
 (paren
 id|ctl
 )paren
-op_logical_and
-id|msg_sys.msg_controllen
-op_le
-l_int|256
 )paren
 (brace
 id|ctl_buf
@@ -4439,22 +4452,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
-op_member_access_from_pointer
-id|f_flags
-op_amp
-id|O_NONBLOCK
-)paren
-id|msg_sys.msg_flags
-op_or_assign
-id|MSG_DONTWAIT
-suffix:semicolon
-r_if
-c_cond
-(paren
 (paren
 id|sock
 op_assign
@@ -4471,6 +4468,22 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|current-&gt;files-&gt;fd
+(braket
+id|fd
+)braket
+op_member_access_from_pointer
+id|f_flags
+op_amp
+id|O_NONBLOCK
+)paren
+id|msg_sys.msg_flags
+op_or_assign
+id|MSG_DONTWAIT
+suffix:semicolon
 id|err
 op_assign
 id|sock_sendmsg
@@ -4713,22 +4726,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
-op_member_access_from_pointer
-id|f_flags
-op_amp
-id|O_NONBLOCK
-)paren
-id|flags
-op_or_assign
-id|MSG_DONTWAIT
-suffix:semicolon
-r_if
-c_cond
-(paren
 (paren
 id|sock
 op_assign
@@ -4745,6 +4742,22 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|current-&gt;files-&gt;fd
+(braket
+id|fd
+)braket
+op_member_access_from_pointer
+id|f_flags
+op_amp
+id|O_NONBLOCK
+)paren
+id|flags
+op_or_assign
+id|MSG_DONTWAIT
+suffix:semicolon
 id|err
 op_assign
 id|sock_recvmsg
@@ -5560,17 +5573,26 @@ r_if
 c_cond
 (paren
 id|ops-&gt;family
-OL
-l_int|0
-op_logical_or
-id|ops-&gt;family
 op_ge
 id|NPROTO
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;protocol %d &gt;= NPROTO(%d)&bslash;n&quot;
+comma
+id|ops-&gt;family
+comma
+id|NPROTO
+)paren
+suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|ENOBUFS
 suffix:semicolon
+)brace
 id|net_families
 (braket
 id|ops-&gt;family
@@ -5728,14 +5750,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The netlink device handler may be needed early.&n;&t; */
-macro_line|#ifdef CONFIG_NETLINK
-id|init_netlink
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Wan router layer. &n;&t; */
 macro_line|#ifdef CONFIG_WAN_ROUTER&t; 
 id|wanrouter_init
@@ -5758,6 +5772,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The netlink device handler may be needed early.&n;&t; */
+macro_line|#ifdef  CONFIG_RTNETLINK
+id|rtnetlink_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_NETLINK_DEV
+id|init_netlink
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|socket_get_info
 r_int

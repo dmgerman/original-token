@@ -555,10 +555,6 @@ c_func
 id|ETH_P_X25
 )paren
 suffix:semicolon
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|neigh-&gt;dev
@@ -669,10 +665,6 @@ c_func
 id|ETH_P_X25
 )paren
 suffix:semicolon
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|neigh-&gt;dev
@@ -770,10 +762,6 @@ c_func
 (paren
 id|ETH_P_X25
 )paren
-suffix:semicolon
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
 suffix:semicolon
 id|skb-&gt;dev
 op_assign

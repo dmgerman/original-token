@@ -3,7 +3,7 @@ DECL|macro|__LINUX_MROUTE_H
 mdefine_line|#define __LINUX_MROUTE_H
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-multiline_comment|/*&n; *&t;Based on the MROUTING 3.5 defines primarily to keep&n; *&t;source compatibility with BSD.&n; *&n; *&t;See the mrouted code for the original history.&n; *&n; */
+multiline_comment|/*&n; *&t;Based on the MROUTING 3.5 defines primarily to keep&n; *&t;source compatibility with BSD.&n; *&n; *&t;See the mrouted code for the original history.&n; *&n; *      Protocol Independent Multicast (PIM) data structures included&n; *      Carlos Picoto (cap@di.fc.ul.pt)&n; *&n; */
 DECL|macro|MRT_BASE
 mdefine_line|#define MRT_BASE&t;200
 DECL|macro|MRT_INIT
@@ -103,20 +103,11 @@ multiline_comment|/* IPIP tunnel addr */
 )brace
 suffix:semicolon
 DECL|macro|VIFF_TUNNEL
-mdefine_line|#define VIFF_TUNNEL&t;0x1&t;&t;/* IPIP tunnel */
+mdefine_line|#define VIFF_TUNNEL&t;0x1&t;/* IPIP tunnel */
 DECL|macro|VIFF_SRCRT
-mdefine_line|#define VIFF_SRCRT&t;0x2&t;&t;/* NI */
-multiline_comment|/* PIM Vif Flags */
-DECL|macro|VIFF_DR
-mdefine_line|#define VIFF_DR                 0x0010          /* designated router    */
-DECL|macro|VIFF_NOMRT
-mdefine_line|#define VIFF_NOMRT              0x0020          /* no neighbor on vif   */
-DECL|macro|VIFF_DOWN
-mdefine_line|#define VIFF_DOWN               0x0040          /* interface is down    */
-DECL|macro|VIFF_DISABLED
-mdefine_line|#define VIFF_DISABLED           0x0080          /* disabled interafce   */
+mdefine_line|#define VIFF_SRCRT&t;0x2&t;/* NI */
 DECL|macro|VIFF_REGISTER
-mdefine_line|#define VIFF_REGISTER           0x00A0          /* MIssing cap@di.fc.ul.pt */
+mdefine_line|#define VIFF_REGISTER&t;0x4&t;/* register vif&t;*/
 multiline_comment|/*&n; *&t;Cache manipulation structures for mrouted and PIMd&n; */
 DECL|struct|mfcctl
 r_struct
@@ -238,30 +229,6 @@ suffix:semicolon
 multiline_comment|/* Out bytes */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;To get RPF from unicast routing table (PIM: cap@di.fc.ul.pt)&n; */
-DECL|struct|sioc_rpf_req
-r_struct
-id|sioc_rpf_req
-(brace
-DECL|member|source
-r_int
-r_int
-id|source
-suffix:semicolon
-multiline_comment|/* Source address */
-DECL|member|rpfneighbor
-r_int
-r_int
-id|rpfneighbor
-suffix:semicolon
-multiline_comment|/* RPF */
-DECL|member|iif
-id|vifi_t
-id|iif
-suffix:semicolon
-multiline_comment|/* Incoming Interface */
-)brace
-suffix:semicolon
 multiline_comment|/*&n; *&t;This is the format the mroute daemon expects to see IGMP control&n; *&t;data. Magically happens to be like an IP packet as per the original&n; */
 DECL|struct|igmpmsg
 r_struct
@@ -269,8 +236,7 @@ id|igmpmsg
 (brace
 DECL|member|unused1
 DECL|member|unused2
-r_int
-r_int
+id|__u32
 id|unused1
 comma
 id|unused2
@@ -404,11 +370,17 @@ comma
 id|__u32
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ip_mr_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|struct|vif_device
 r_struct
 id|vif_device
-(brace
-r_union
 (brace
 DECL|member|dev
 r_struct
@@ -417,17 +389,6 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Device we are using */
-DECL|member|rt
-r_struct
-id|rtable
-op_star
-id|rt
-suffix:semicolon
-multiline_comment|/* Route for tunnel    */
-DECL|member|u
-)brace
-id|u
-suffix:semicolon
 DECL|member|bytes_in
 DECL|member|bytes_out
 r_int
@@ -465,18 +426,17 @@ suffix:semicolon
 multiline_comment|/* Control flags &t;&t;*/
 DECL|member|local
 DECL|member|remote
-r_int
-r_int
+id|__u32
 id|local
 comma
 id|remote
 suffix:semicolon
 multiline_comment|/* Addresses(remote for tunnels)*/
-DECL|member|uptime
+DECL|member|link
 r_int
-r_int
-id|uptime
+id|link
 suffix:semicolon
+multiline_comment|/* Physical interface index&t;*/
 )brace
 suffix:semicolon
 DECL|struct|mfc_cache
@@ -529,6 +489,7 @@ suffix:semicolon
 multiline_comment|/* Unresolved buffer counter&t;*/
 DECL|member|mfc_last_assert
 r_int
+r_int
 id|mfc_last_assert
 suffix:semicolon
 DECL|member|mfc_minvif
@@ -538,16 +499,6 @@ suffix:semicolon
 DECL|member|mfc_maxvif
 r_int
 id|mfc_maxvif
-suffix:semicolon
-DECL|member|uptime
-r_int
-r_int
-id|uptime
-suffix:semicolon
-DECL|member|expire
-r_int
-r_int
-id|expire
 suffix:semicolon
 DECL|member|mfc_bytes
 r_int
@@ -579,6 +530,8 @@ DECL|macro|MFC_QUEUED
 mdefine_line|#define MFC_QUEUED&t;&t;1
 DECL|macro|MFC_RESOLVED
 mdefine_line|#define MFC_RESOLVED&t;&t;2
+DECL|macro|MFC_NOTIFY
+mdefine_line|#define MFC_NOTIFY&t;&t;4
 DECL|macro|MFC_LINES
 mdefine_line|#define MFC_LINES&t;&t;64
 macro_line|#ifdef __BIG_ENDIAN
@@ -598,5 +551,86 @@ DECL|macro|IGMPMSG_WRONGVIF
 mdefine_line|#define IGMPMSG_WRONGVIF&t;2&t;&t;/* For PIM assert processing (unused) */
 DECL|macro|IGMPMSG_WHOLEPKT
 mdefine_line|#define IGMPMSG_WHOLEPKT&t;3&t;&t;/* For PIM Register processing */
+macro_line|#ifdef __KERNEL__
+DECL|macro|PIM_V1_VERSION
+mdefine_line|#define PIM_V1_VERSION&t;&t;__constant_htonl(0x10000000)
+DECL|macro|PIM_V1_REGISTER
+mdefine_line|#define PIM_V1_REGISTER&t;&t;1
+DECL|macro|PIM_VERSION
+mdefine_line|#define PIM_VERSION&t;&t;2
+DECL|macro|PIM_REGISTER
+mdefine_line|#define PIM_REGISTER&t;&t;1
+DECL|macro|PIM_NULL_REGISTER
+mdefine_line|#define PIM_NULL_REGISTER&t;__constant_htonl(0x40000000)
+multiline_comment|/* PIMv2 register message header layout (ietf-draft-idmr-pimvsm-v2-00.ps */
+DECL|struct|pimreghdr
+r_struct
+id|pimreghdr
+(brace
+DECL|member|type
+id|__u8
+id|type
+suffix:semicolon
+DECL|member|reserved
+id|__u8
+id|reserved
+suffix:semicolon
+DECL|member|csum
+id|__u16
+id|csum
+suffix:semicolon
+DECL|member|flags
+id|__u32
+id|flags
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_int
+id|pim_rcv
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|pim_rcv_v1
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+comma
+r_int
+r_int
+id|len
+)paren
+suffix:semicolon
+r_struct
+id|rtmsg
+suffix:semicolon
+r_extern
+r_int
+id|ipmr_get_route
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|rtmsg
+op_star
+id|rtm
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

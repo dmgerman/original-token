@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/promise.h&n; *&n; *  Copyright (C) 1995-6  Linus Torvalds &amp; authors&n; */
+multiline_comment|/*&n; *  linux/drivers/block/pdc4030.h&n; *&n; *  Copyright (C) 1995-1998  Linus Torvalds &amp; authors&n; */
 multiline_comment|/*&n; * Principal author: Peter Denison &lt;peterd@pnd-pc.demon.co.uk&gt;&n; */
 macro_line|#ifndef IDE_PROMISE_H
 DECL|macro|IDE_PROMISE_H
@@ -107,41 +107,6 @@ l_int|32
 )braket
 suffix:semicolon
 )brace
-suffix:semicolon
-multiline_comment|/*&n; * Routines exported to ide.c:&n; */
-r_void
-id|do_promise_io
-(paren
-id|ide_drive_t
-op_star
-comma
-r_struct
-id|request
-op_star
-)paren
-suffix:semicolon
-r_int
-id|promise_cmd
-c_func
-(paren
-id|ide_drive_t
-op_star
-comma
-id|byte
-)paren
-suffix:semicolon
-r_void
-id|setup_dc4030
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-r_int
-id|init_dc4030
-(paren
-r_void
-)paren
 suffix:semicolon
 macro_line|#endif IDE_PROMISE_H
 eof

@@ -375,10 +375,6 @@ id|skb-&gt;dev
 op_assign
 id|ax25_dev-&gt;dev
 suffix:semicolon
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|skb-&gt;protocol
 op_assign
 id|htons

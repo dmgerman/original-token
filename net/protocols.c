@@ -4,8 +4,6 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-DECL|macro|CONFIG_UNIX
-mdefine_line|#define CONFIG_UNIX&t;&t;/* always present...&t;*/
 macro_line|#ifdef&t;CONFIG_UNIX
 macro_line|#include &lt;linux/un.h&gt;
 macro_line|#include &lt;net/af_unix.h&gt;
@@ -26,6 +24,32 @@ id|pro
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif&t;/* INET */
+macro_line|#ifdef CONFIG_NETLINK
+r_extern
+r_void
+id|netlink_proto_init
+c_func
+(paren
+r_struct
+id|net_proto
+op_star
+id|pro
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PACKET
+r_extern
+r_void
+id|packet_proto_init
+c_func
+(paren
+r_struct
+id|net_proto
+op_star
+id|pro
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 DECL|macro|NEED_802
 mdefine_line|#define NEED_802
@@ -58,6 +82,10 @@ macro_line|#if defined(CONFIG_NETBEUI)
 DECL|macro|NEED_LLC
 mdefine_line|#define NEED_LLC
 macro_line|#include &lt;net/netbeuicall.h&gt;
+macro_line|#endif
+macro_line|#if defined(CONFIG_LLC)
+DECL|macro|NEED_LLC
+mdefine_line|#define NEED_LLC
 macro_line|#endif
 macro_line|#include &lt;net/psnapcall.h&gt;
 macro_line|#ifdef CONFIG_TR
@@ -92,6 +120,22 @@ id|protocols
 )braket
 op_assign
 (brace
+macro_line|#ifdef  CONFIG_NETLINK
+(brace
+l_string|&quot;NETLINK&quot;
+comma
+id|netlink_proto_init
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef  CONFIG_PACKET
+(brace
+l_string|&quot;PACKET&quot;
+comma
+id|packet_proto_init
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef&t;CONFIG_UNIX
 (brace
 l_string|&quot;UNIX&quot;

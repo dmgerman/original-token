@@ -1,14 +1,14 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The options processing module for ip.c&n; *&n; * Authors:&t;A.N.Kuznetsov&n; *&t;&t;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The options processing module for ip.c&n; *&n; * Version:&t;$Id: ip_options.c,v 1.12 1997/10/10 22:41:08 davem Exp $&n; *&n; * Authors:&t;A.N.Kuznetsov&n; *&t;&t;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/icmp.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
-macro_line|#include &lt;linux/net_alias.h&gt;
 multiline_comment|/* &n; * Write options to IP header, record destination address to&n; * source route option, address of outgoing interface&n; * (we should already know it, so that this  function is allowed be&n; * called only after routing decision) and timestamp,&n; * if we originate this datagram.&n; *&n; * daddr is real destination address, next hop is recorded in IP header.&n; * saddr is address of outgoing interface.&n; */
 DECL|function|ip_options_build
 r_void
@@ -28,8 +28,10 @@ comma
 id|u32
 id|daddr
 comma
-id|u32
-id|saddr
+r_struct
+id|rtable
+op_star
+id|rt
 comma
 r_int
 id|is_frag
@@ -137,7 +139,7 @@ c_cond
 (paren
 id|opt-&gt;rr_needaddr
 )paren
-id|memcpy
+id|ip_rt_get_source
 c_func
 (paren
 id|iph
@@ -153,10 +155,7 @@ l_int|2
 op_minus
 l_int|5
 comma
-op_amp
-id|saddr
-comma
-l_int|4
+id|rt
 )paren
 suffix:semicolon
 r_if
@@ -164,7 +163,7 @@ c_cond
 (paren
 id|opt-&gt;ts_needaddr
 )paren
-id|memcpy
+id|ip_rt_get_source
 c_func
 (paren
 id|iph
@@ -180,10 +179,7 @@ l_int|2
 op_minus
 l_int|9
 comma
-op_amp
-id|saddr
-comma
-l_int|4
+id|rt
 )paren
 suffix:semicolon
 r_if
@@ -702,13 +698,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__ip_chk_addr
+id|inet_addr_type
 c_func
 (paren
 id|addr
 )paren
 op_eq
-l_int|0
+id|RTN_UNICAST
 )paren
 (brace
 id|dopt-&gt;ts_needtime
@@ -1179,6 +1175,23 @@ r_char
 op_star
 id|pp_ptr
 op_assign
+l_int|NULL
+suffix:semicolon
+r_struct
+id|rtable
+op_star
+id|rt
+op_assign
+id|skb
+ques
+c_cond
+(paren
+r_struct
+id|rtable
+op_star
+)paren
+id|skb-&gt;dst
+suffix:colon
 l_int|NULL
 suffix:semicolon
 r_if
@@ -1667,7 +1680,7 @@ l_int|1
 )braket
 comma
 op_amp
-id|skb-&gt;dev-&gt;pa_addr
+id|rt-&gt;rt_spec_dst
 comma
 l_int|4
 )paren
@@ -1897,7 +1910,7 @@ l_int|1
 )braket
 comma
 op_amp
-id|skb-&gt;dev-&gt;pa_addr
+id|rt-&gt;rt_spec_dst
 comma
 l_int|4
 )paren
@@ -1984,13 +1997,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__ip_chk_addr
+id|inet_addr_type
 c_func
 (paren
 id|addr
 )paren
 op_eq
-l_int|0
+id|RTN_UNICAST
 )paren
 r_break
 suffix:semicolon
@@ -2746,7 +2759,7 @@ id|raw
 op_plus
 id|opt-&gt;rr
 suffix:semicolon
-id|memcpy
+id|ip_rt_get_source
 c_func
 (paren
 op_amp
@@ -2760,10 +2773,7 @@ op_minus
 l_int|5
 )braket
 comma
-op_amp
-id|rt-&gt;u.dst.dev-&gt;pa_addr
-comma
-l_int|4
+id|rt
 )paren
 suffix:semicolon
 id|opt-&gt;is_changed
@@ -2864,7 +2874,7 @@ id|opt-&gt;is_changed
 op_assign
 l_int|1
 suffix:semicolon
-id|memcpy
+id|ip_rt_get_source
 c_func
 (paren
 op_amp
@@ -2875,10 +2885,7 @@ op_minus
 l_int|1
 )braket
 comma
-op_amp
-id|rt-&gt;u.dst.dev-&gt;pa_addr
-comma
-l_int|4
+id|rt
 )paren
 suffix:semicolon
 id|skb-&gt;nh.iph-&gt;daddr
@@ -2915,7 +2922,7 @@ id|raw
 op_plus
 id|opt-&gt;ts
 suffix:semicolon
-id|memcpy
+id|ip_rt_get_source
 c_func
 (paren
 op_amp
@@ -2929,16 +2936,14 @@ op_minus
 l_int|9
 )braket
 comma
-op_amp
-id|rt-&gt;u.dst.dev-&gt;pa_addr
-comma
-l_int|4
+id|rt
 )paren
 suffix:semicolon
 id|opt-&gt;is_changed
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -2956,7 +2961,6 @@ c_func
 id|skb-&gt;nh.iph
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|function|ip_options_rcv_srr
@@ -3042,16 +3046,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rt-&gt;rt_flags
-op_amp
-(paren
-id|RTF_BROADCAST
-op_or
-id|RTF_MULTICAST
-op_or
-id|RTF_NAT
-)paren
-op_logical_or
 id|skb-&gt;pkt_type
 op_ne
 id|PACKET_HOST
@@ -3063,12 +3057,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|rt-&gt;rt_flags
-op_amp
-id|RTF_LOCAL
-)paren
+id|rt-&gt;rt_type
+op_eq
+id|RTN_UNICAST
 )paren
 (brace
 r_if
@@ -3097,6 +3088,17 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|rt-&gt;rt_type
+op_ne
+id|RTN_LOCAL
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3195,11 +3197,7 @@ id|iph-&gt;saddr
 comma
 id|iph-&gt;tos
 comma
-id|net_alias_main_dev
-c_func
-(paren
 id|skb-&gt;dev
-)paren
 )paren
 suffix:semicolon
 id|rt2
@@ -3216,14 +3214,14 @@ c_cond
 (paren
 id|err
 op_logical_or
-id|rt2-&gt;rt_flags
-op_amp
 (paren
-id|RTF_BROADCAST
-op_or
-id|RTF_MULTICAST
-op_or
-id|RTF_NAT
+id|rt2-&gt;rt_type
+op_ne
+id|RTN_UNICAST
+op_logical_and
+id|rt2-&gt;rt_type
+op_ne
+id|RTN_LOCAL
 )paren
 )paren
 (brace
@@ -3252,12 +3250,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|rt2-&gt;rt_flags
-op_amp
-id|RTF_LOCAL
-)paren
+id|rt2-&gt;rt_type
+op_ne
+id|RTN_LOCAL
 )paren
 r_break
 suffix:semicolon

@@ -110,7 +110,9 @@ mdefine_line|#define ID_ERR&t;&t;0x10&t;/* ID field not found */
 DECL|macro|ECC_ERR
 mdefine_line|#define ECC_ERR&t;&t;0x40&t;/* Uncorrectable ECC error */
 DECL|macro|BBD_ERR
-mdefine_line|#define&t;BBD_ERR&t;&t;0x80&t;/* block marked bad */
+mdefine_line|#define&t;BBD_ERR&t;&t;0x80&t;/* pre-EIDE meaning:  block marked bad */
+DECL|macro|ICRC_ERR
+mdefine_line|#define&t;ICRC_ERR&t;0x80&t;/* new meaning:  CRC error during transfer */
 DECL|struct|hd_geometry
 r_struct
 id|hd_geometry
@@ -442,24 +444,115 @@ r_int
 id|eide_pio_iordy
 suffix:semicolon
 multiline_comment|/* min cycle time (ns), with IORDY */
-DECL|member|reserved69
+DECL|member|word69
 r_int
 r_int
-id|reserved69
+id|word69
 suffix:semicolon
-multiline_comment|/* reserved (word 69) */
-DECL|member|reserved70
+DECL|member|word70
 r_int
 r_int
-id|reserved70
+id|word70
 suffix:semicolon
-multiline_comment|/* reserved (word 70) */
-multiline_comment|/* unsigned short reservedxx[57];*/
-multiline_comment|/* reserved (words 71-127) */
-multiline_comment|/* unsigned short vendor7  [32];*/
-multiline_comment|/* vendor unique (words 128-159) */
-multiline_comment|/* unsigned short reservedyy[96];*/
-multiline_comment|/* reserved (words 160-255) */
+multiline_comment|/* HDIO_GET_IDENTITY currently returns only words 0 through 70 */
+DECL|member|word71
+r_int
+r_int
+id|word71
+suffix:semicolon
+DECL|member|word72
+r_int
+r_int
+id|word72
+suffix:semicolon
+DECL|member|word73
+r_int
+r_int
+id|word73
+suffix:semicolon
+DECL|member|word74
+r_int
+r_int
+id|word74
+suffix:semicolon
+DECL|member|word75
+r_int
+r_int
+id|word75
+suffix:semicolon
+DECL|member|word76
+r_int
+r_int
+id|word76
+suffix:semicolon
+DECL|member|word77
+r_int
+r_int
+id|word77
+suffix:semicolon
+DECL|member|word78
+r_int
+r_int
+id|word78
+suffix:semicolon
+DECL|member|word79
+r_int
+r_int
+id|word79
+suffix:semicolon
+DECL|member|word80
+r_int
+r_int
+id|word80
+suffix:semicolon
+DECL|member|word81
+r_int
+r_int
+id|word81
+suffix:semicolon
+DECL|member|word82
+r_int
+r_int
+id|word82
+suffix:semicolon
+DECL|member|word83
+r_int
+r_int
+id|word83
+suffix:semicolon
+DECL|member|word84
+r_int
+r_int
+id|word84
+suffix:semicolon
+DECL|member|word85
+r_int
+r_int
+id|word85
+suffix:semicolon
+DECL|member|word86
+r_int
+r_int
+id|word86
+suffix:semicolon
+DECL|member|word87
+r_int
+r_int
+id|word87
+suffix:semicolon
+DECL|member|dma_ultra
+r_int
+r_int
+id|dma_ultra
+suffix:semicolon
+DECL|member|reserved
+r_int
+r_int
+id|reserved
+(braket
+l_int|167
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * IDE &quot;nice&quot; flags. These are used on a per drive basis to determine&n; * when to be nice and give more bandwidth to the other devices which&n; * share the same IDE bus.&n; */

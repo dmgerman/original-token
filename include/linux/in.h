@@ -60,12 +60,30 @@ op_assign
 l_int|22
 comma
 multiline_comment|/* XNS IDP protocol&t;&t;&t;*/
+DECL|enumerator|IPPROTO_RSVP
+id|IPPROTO_RSVP
+op_assign
+l_int|46
+comma
+multiline_comment|/* RSVP protocol&t;&t;&t;*/
+DECL|enumerator|IPPROTO_GRE
+id|IPPROTO_GRE
+op_assign
+l_int|47
+comma
+multiline_comment|/* Cisco GRE tunnels (rfc 1701,1702)&t;*/
 DECL|enumerator|IPPROTO_IPV6
 id|IPPROTO_IPV6
 op_assign
 l_int|41
 comma
 multiline_comment|/* IPv6-in-IPv4 tunnelling&t;&t;*/
+DECL|enumerator|IPPROTO_PIM
+id|IPPROTO_PIM
+op_assign
+l_int|103
+comma
+multiline_comment|/* Protocol Independent Multicast&t;*/
 DECL|enumerator|IPPROTO_RAW
 id|IPPROTO_RAW
 op_assign
@@ -95,23 +113,24 @@ DECL|macro|IP_HDRINCL
 mdefine_line|#define IP_HDRINCL&t;3
 DECL|macro|IP_OPTIONS
 mdefine_line|#define IP_OPTIONS&t;4
-DECL|macro|IP_LOCALADDR
-mdefine_line|#define IP_LOCALADDR&t;5&t;/* Cannot remove; a lot of apps still use it. ANK */
+DECL|macro|IP_ROUTER_ALERT
+mdefine_line|#define IP_ROUTER_ALERT&t;5
 DECL|macro|IP_RECVOPTS
 mdefine_line|#define IP_RECVOPTS&t;6
 DECL|macro|IP_RETOPTS
 mdefine_line|#define IP_RETOPTS&t;7
-DECL|macro|IP_RXINFO
-mdefine_line|#define IP_RXINFO&t;8
-DECL|macro|IP_TXINFO
-mdefine_line|#define IP_TXINFO&t;IP_RXINFO
-multiline_comment|/* Gated uses it. Remove later or preserve for 4.4BSD compatibility??? */
-DECL|macro|IP_RECVDSTADDR
-mdefine_line|#define IP_RECVDSTADDR  9
+DECL|macro|IP_PKTINFO
+mdefine_line|#define IP_PKTINFO&t;8
+DECL|macro|IP_PKTOPTIONS
+mdefine_line|#define IP_PKTOPTIONS&t;9
 DECL|macro|IP_PMTUDISC
 mdefine_line|#define IP_PMTUDISC&t;10
 DECL|macro|IP_RECVERR
 mdefine_line|#define IP_RECVERR&t;11
+DECL|macro|IP_RECVTTL
+mdefine_line|#define IP_RECVTTL&t;12
+DECL|macro|IP_RECVTOS
+mdefine_line|#define&t;IP_RECVTOS&t;13
 multiline_comment|/* BSD compatibility */
 DECL|macro|IP_RECVRETOPTS
 mdefine_line|#define IP_RECVRETOPTS&t;IP_RETOPTS
@@ -132,12 +151,6 @@ DECL|macro|IP_ADD_MEMBERSHIP
 mdefine_line|#define IP_ADD_MEMBERSHIP&t;&t;35
 DECL|macro|IP_DROP_MEMBERSHIP
 mdefine_line|#define IP_DROP_MEMBERSHIP&t;&t;36
-DECL|macro|IP_MULTICAST_IFN
-mdefine_line|#define IP_MULTICAST_IFN&t;&t;37
-DECL|macro|IP_ADD_MEMBERSHIPN
-mdefine_line|#define IP_ADD_MEMBERSHIPN&t;&t;38
-DECL|macro|IP_DROP_MEMBERSHIPN
-mdefine_line|#define IP_DROP_MEMBERSHIPN&t;&t;39
 multiline_comment|/* These need to appear somewhere around here */
 DECL|macro|IP_DEFAULT_MULTICAST_TTL
 mdefine_line|#define IP_DEFAULT_MULTICAST_TTL        1

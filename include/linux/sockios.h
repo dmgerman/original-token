@@ -65,25 +65,26 @@ DECL|macro|SIOCADDMULTI
 mdefine_line|#define SIOCADDMULTI&t;0x8931&t;&t;/* Multicast address lists&t;*/
 DECL|macro|SIOCDELMULTI
 mdefine_line|#define SIOCDELMULTI&t;0x8932
+DECL|macro|SIOCGIFINDEX
+mdefine_line|#define SIOCGIFINDEX&t;0x8933&t;&t;/* name -&gt; if_index mapping&t;*/
 DECL|macro|SIOGIFINDEX
-mdefine_line|#define SIOGIFINDEX&t;0x8933&t;&t;/* name -&gt; if_index mapping&t;*/
-DECL|macro|SIOGIFNAME
-mdefine_line|#define SIOGIFNAME&t;0x8934&t;&t;/* if_index -&gt; name mapping&t;*/
-DECL|macro|SIOCGIFCOUNT
-mdefine_line|#define SIOCGIFCOUNT&t;0x8935&t;&t;/* get number of interfaces&t;*/
+mdefine_line|#define SIOGIFINDEX&t;SIOCGIFINDEX&t;/* misprint compatibility :-)&t;*/
+DECL|macro|SIOCSIFPFLAGS
+mdefine_line|#define SIOCSIFPFLAGS&t;0x8934&t;&t;/* set/get extended flags set&t;*/
+DECL|macro|SIOCGIFPFLAGS
+mdefine_line|#define SIOCGIFPFLAGS&t;0x8935
 DECL|macro|SIOCDIFADDR
 mdefine_line|#define SIOCDIFADDR&t;0x8936&t;&t;/* delete PA address&t;&t;*/
+DECL|macro|SIOCSIFHWBROADCAST
+mdefine_line|#define&t;SIOCSIFHWBROADCAST&t;0x8937&t;/* set hardware broadcast addr&t;*/
+DECL|macro|SIOCGIFCOUNT
+mdefine_line|#define SIOCGIFCOUNT&t;0x8938&t;&t;/* get number of devices */
 DECL|macro|SIOCGIFBR
 mdefine_line|#define SIOCGIFBR&t;0x8940&t;&t;/* Bridging support&t;&t;*/
 DECL|macro|SIOCSIFBR
 mdefine_line|#define SIOCSIFBR&t;0x8941&t;&t;/* Set bridging options &t;*/
 multiline_comment|/* ARP cache control calls. */
-DECL|macro|OLD_SIOCDARP
-mdefine_line|#define OLD_SIOCDARP&t;0x8950&t;&t;/* old delete ARP table entry&t;*/
-DECL|macro|OLD_SIOCGARP
-mdefine_line|#define OLD_SIOCGARP&t;0x8951&t;&t;/* old get ARP table entry&t;*/
-DECL|macro|OLD_SIOCSARP
-mdefine_line|#define OLD_SIOCSARP&t;0x8952&t;&t;/* old set ARP table entry&t;*/
+multiline_comment|/*  0x8950 - 0x8952  * obsolete calls, don&squot;t re-use */
 DECL|macro|SIOCDARP
 mdefine_line|#define SIOCDARP&t;0x8953&t;&t;/* delete ARP table entry&t;*/
 DECL|macro|SIOCGARP

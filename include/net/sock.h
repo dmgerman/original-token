@@ -11,8 +11,10 @@ macro_line|#include &lt;linux/ipv6.h&gt;&t;&t;/* dest_cache, inet6_options */
 macro_line|#include &lt;linux/icmpv6.h&gt;
 macro_line|#include &lt;net/if_inet6.h&gt;&t;/* struct ipv6_mc_socklist */
 macro_line|#endif
+macro_line|#if defined(CONFIG_INET) || defined (CONFIG_INET_MODULE)
+macro_line|#include &lt;linux/icmp.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/tcp.h&gt;&t;&t;/* struct tcphdr */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;&t;/* struct sk_buff */
 macro_line|#include &lt;net/protocol.h&gt;&t;&t;/* struct inet_protocol */
@@ -37,7 +39,6 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_DECNET) || defined(CONFIG_DECNET_MODULE)
 macro_line|#include &lt;net/dn.h&gt;
 macro_line|#endif
-macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; *&t;The AF_UNIX specific socket options&n; */
 DECL|struct|unix_opt
@@ -99,43 +100,59 @@ id|inflight
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;IP packet socket options&n; */
-DECL|struct|inet_packet_opt
+macro_line|#ifdef CONFIG_NETLINK
 r_struct
-id|inet_packet_opt
+id|netlink_callback
+suffix:semicolon
+DECL|struct|netlink_opt
+r_struct
+id|netlink_opt
 (brace
-DECL|member|notifier
-r_struct
-id|notifier_block
-id|notifier
+DECL|member|pid
+id|pid_t
+id|pid
 suffix:semicolon
-multiline_comment|/* Used when bound */
-DECL|member|bound_dev
-r_struct
-id|device
-op_star
-id|bound_dev
-suffix:semicolon
-DECL|member|dev_stamp
+DECL|member|groups
 r_int
+id|groups
+suffix:semicolon
+DECL|member|dst_pid
+id|pid_t
+id|dst_pid
+suffix:semicolon
+DECL|member|dst_groups
 r_int
-id|dev_stamp
+id|dst_groups
 suffix:semicolon
-DECL|member|prot_hook
-r_struct
-id|packet_type
+DECL|member|handler
+r_int
+(paren
 op_star
-id|prot_hook
+id|handler
+)paren
+(paren
+r_int
+id|unit
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
 suffix:semicolon
-DECL|member|device_name
-r_char
-id|device_name
-(braket
-l_int|15
-)braket
+DECL|member|locks
+id|atomic_t
+id|locks
+suffix:semicolon
+DECL|member|cb
+r_struct
+id|netlink_callback
+op_star
+id|cb
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;Once the IPX ncpd patches are in these are going into protinfo&n; */
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 DECL|struct|ipx_opt
@@ -308,6 +325,19 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif /* IPV6 */
+macro_line|#if defined(CONFIG_INET) || defined(CONFIG_INET_MODULE)
+DECL|struct|raw_opt
+r_struct
+id|raw_opt
+(brace
+DECL|member|filter
+r_struct
+id|icmp_filter
+id|filter
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|struct|tcp_opt
 r_struct
 id|tcp_opt
@@ -751,6 +781,10 @@ comma
 DECL|member|bsdism
 id|bsdism
 suffix:semicolon
+DECL|member|bound_dev_if
+r_int
+id|bound_dev_if
+suffix:semicolon
 DECL|member|lingertime
 r_int
 r_int
@@ -859,11 +893,6 @@ id|dst_entry
 op_star
 id|dst_cache
 suffix:semicolon
-DECL|member|max_unacked
-r_int
-r_int
-id|max_unacked
-suffix:semicolon
 multiline_comment|/*&n; *&t;mss is min(mtu, max_window) &n; */
 DECL|member|mtu
 r_int
@@ -913,6 +942,13 @@ r_struct
 id|tcp_opt
 id|af_tcp
 suffix:semicolon
+macro_line|#if defined(CONFIG_INET) || defined (CONFIG_INET_MODULE)
+DECL|member|tp_raw4
+r_struct
+id|raw_opt
+id|tp_raw4
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 DECL|member|tp_raw
 r_struct
@@ -953,15 +989,14 @@ r_int
 r_int
 id|max_ack_backlog
 suffix:semicolon
-DECL|member|priority
-r_int
-r_char
-id|priority
-suffix:semicolon
 DECL|member|debug
 r_int
 r_char
 id|debug
+suffix:semicolon
+DECL|member|priority
+id|__u32
+id|priority
 suffix:semicolon
 DECL|member|rcvbuf
 r_int
@@ -1027,12 +1062,15 @@ id|ipx_opt
 id|af_ipx
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_INET
+macro_line|#if defined (CONFIG_PACKET) || defined(CONFIG_PACKET_MODULE)
 DECL|member|af_packet
 r_struct
-id|inet_packet_opt
+id|packet_opt
+op_star
 id|af_packet
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_INET
 macro_line|#ifdef CONFIG_NUTCP&t;&t;
 DECL|member|af_tcp
 r_struct
@@ -1074,6 +1112,13 @@ DECL|member|dn
 id|dn_cb
 op_star
 id|dn
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_NETLINK
+DECL|member|af_netlink
+r_struct
+id|netlink_opt
+id|af_netlink
 suffix:semicolon
 macro_line|#endif
 DECL|member|protinfo
@@ -1394,7 +1439,8 @@ id|socket
 op_star
 id|sock
 comma
-id|poll_table
+r_struct
+id|poll_table_struct
 op_star
 id|wait
 )paren
@@ -2404,7 +2450,8 @@ r_struct
 id|socket
 op_star
 comma
-id|poll_table
+r_struct
+id|poll_table_struct
 op_star
 )paren
 suffix:semicolon

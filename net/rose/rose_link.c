@@ -325,7 +325,7 @@ c_func
 (paren
 id|skb
 comma
-l_int|256
+l_int|0
 comma
 id|rose_call
 comma

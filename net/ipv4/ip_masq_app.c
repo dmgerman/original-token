@@ -1005,10 +1005,8 @@ op_star
 op_star
 id|skb_p
 comma
-r_struct
-id|device
-op_star
-id|dev
+id|__u32
+id|maddr
 )paren
 (brace
 r_struct
@@ -1154,7 +1152,7 @@ id|ms
 comma
 id|skb_p
 comma
-id|dev
+id|maddr
 )paren
 suffix:semicolon
 multiline_comment|/*&n;         *&t;Update ip_masq seq stuff if len has changed.&n;         */
@@ -1204,11 +1202,6 @@ id|sk_buff
 op_star
 op_star
 id|skb_p
-comma
-r_struct
-id|device
-op_star
-id|dev
 )paren
 (brace
 r_struct
@@ -1353,8 +1346,6 @@ comma
 id|ms
 comma
 id|skb_p
-comma
-id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;         *&t;Update ip_masq seq stuff if len has changed.&n;         */

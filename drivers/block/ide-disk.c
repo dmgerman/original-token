@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.01  Nov  25, 1996&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@pobox.com).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@pobox.com)&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with&n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.02  Nov  29, 1997&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@pobox.com).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@pobox.com)&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with&n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Verions 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -1164,7 +1164,7 @@ r_int
 id|block
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 id|ide_hwif_t
 op_star
 id|hwif
@@ -1176,11 +1176,11 @@ id|drive
 )paren
 suffix:semicolon
 r_int
-id|use_promise_io
+id|use_pdc4030_io
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 id|OUT_BYTE
 c_func
 (paren
@@ -1197,24 +1197,24 @@ comma
 id|IDE_NSECTOR_REG
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
-id|IS_PROMISE_DRIVE
+id|IS_PDC4030_DRIVE
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|hwif-&gt;is_promise2
+id|hwif-&gt;is_pdc4030_2
 op_logical_or
 id|rq-&gt;cmd
 op_eq
 id|READ
 )paren
 (brace
-id|use_promise_io
+id|use_pdc4030_io
 op_assign
 l_int|1
 suffix:semicolon
@@ -1225,17 +1225,17 @@ c_cond
 (paren
 id|drive-&gt;select.b.lba
 op_logical_or
-id|use_promise_io
+id|use_pdc4030_io
 )paren
 (brace
-macro_line|#else /* !CONFIG_BLK_DEV_PROMISE */
+macro_line|#else /* !CONFIG_BLK_DEV_PDC4030 */
 r_if
 c_cond
 (paren
 id|drive-&gt;select.b.lba
 )paren
 (brace
-macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -1424,14 +1424,27 @@ id|rq-&gt;buffer
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
-id|use_promise_io
+id|use_pdc4030_io
 )paren
 (brace
-id|do_promise_io
+r_extern
+r_void
+id|do_pdc4030_io
+c_func
+(paren
+id|ide_drive_t
+op_star
+comma
+r_struct
+id|request
+op_star
+)paren
+suffix:semicolon
+id|do_pdc4030_io
 (paren
 id|drive
 comma
@@ -1441,7 +1454,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 r_if
 c_cond
 (paren
@@ -1450,7 +1463,7 @@ op_eq
 id|READ
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_TRITON
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
@@ -1475,7 +1488,7 @@ id|drive
 )paren
 r_return
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|ide_set_handler
 c_func
 (paren
@@ -1511,7 +1524,7 @@ op_eq
 id|WRITE
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_TRITON
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
@@ -1536,7 +1549,7 @@ id|drive
 )paren
 r_return
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|OUT_BYTE
 c_func
 (paren
@@ -2022,7 +2035,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|IS_PROMISE_DRIVE
+id|IS_PDC4030_DRIVE
 )paren
 id|ide_cmd
 c_func
@@ -2053,7 +2066,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|IS_PROMISE_DRIVE
+id|IS_PDC4030_DRIVE
 )paren
 id|ide_cmd
 c_func
@@ -2097,7 +2110,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|IS_PROMISE_DRIVE
+id|IS_PDC4030_DRIVE
 )paren
 id|ide_cmd
 c_func
@@ -2624,7 +2637,7 @@ multiline_comment|/* initialize LBA selection */
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;%s: %.40s, %ldMB w/%dkB Cache, %sCHS=%d/%d/%d%s&bslash;n&quot;
+l_string|&quot;%s: %.40s, %ldMB w/%dkB Cache, CHS=%d/%d/%d&quot;
 comma
 id|drive-&gt;name
 comma
@@ -2642,25 +2655,58 @@ id|id-&gt;buf_size
 op_div
 l_int|2
 comma
-id|drive-&gt;select.b.lba
-ques
-c_cond
-l_string|&quot;LBA, &quot;
-suffix:colon
-l_string|&quot;&quot;
-comma
 id|drive-&gt;bios_cyl
 comma
 id|drive-&gt;bios_head
 comma
 id|drive-&gt;bios_sect
-comma
-id|drive-&gt;using_dma
-ques
+)paren
+suffix:semicolon
+r_if
 c_cond
+(paren
+id|drive-&gt;using_dma
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;field_valid
+op_amp
+l_int|4
+)paren
+op_logical_and
+(paren
+id|id-&gt;dma_ultra
+op_amp
+(paren
+id|id-&gt;dma_ultra
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|7
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;, UDMA&quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
 l_string|&quot;, DMA&quot;
-suffix:colon
-l_string|&quot;&quot;
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|drive-&gt;mult_count

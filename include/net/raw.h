@@ -70,6 +70,9 @@ comma
 r_int
 r_int
 id|laddr
+comma
+r_int
+id|dif
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _RAW_H */

@@ -1,7 +1,6 @@
-macro_line|#warning &quot;will not compile until the networking is merged&quot;
-macro_line|#if 0
 multiline_comment|/*&n; * Copyright 1996 The Board of Trustees of The Leland Stanford&n; * Junior University. All Rights Reserved.&n; *&n; * Permission to use, copy, modify, and distribute this&n; * software and its documentation for any purpose and without&n; * fee is hereby granted, provided that the above copyright&n; * notice appear in all copies.  Stanford University&n; * makes no representations about the suitability of this&n; * software for any purpose.  It is provided &quot;as is&quot; without&n; * express or implied warranty.&n; *&n; * strip.c&t;This module implements Starmode Radio IP (STRIP)&n; *&t;&t;for kernel-based devices like TTY.  It interfaces between a&n; *&t;&t;raw TTY, and the kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)strip.c&t;1.2&t;February 1997&n; *&n; * Author:&t;Stuart Cheshire &lt;cheshire@cs.stanford.edu&gt;&n; *&n; * Fixes:&t;v0.9 12th Feb 1996 (SC)&n; *&t;&t;New byte stuffing (2+6 run-length encoding)&n; *&t;&t;New watchdog timer task&n; *&t;&t;New Protocol key (SIP0)&n; *&t;&t;&n; *&t;&t;v0.9.1 3rd March 1996 (SC)&n; *&t;&t;Changed to dynamic device allocation -- no more compile&n; *&t;&t;time (or boot time) limit on the number of STRIP devices.&n; *&t;&t;&n; *&t;&t;v0.9.2 13th March 1996 (SC)&n; *&t;&t;Uses arp cache lookups (but doesn&squot;t send arp packets yet)&n; *&t;&t;&n; *&t;&t;v0.9.3 17th April 1996 (SC)&n; *&t;&t;Fixed bug where STR_ERROR flag was getting set unneccessarily&n; *&t;&t;(causing otherwise good packets to be unneccessarily dropped)&n; *&t;&t;&n; *&t;&t;v0.9.4 27th April 1996 (SC)&n; *&t;&t;First attempt at using &quot;&amp;COMMAND&quot; Starmode AT commands&n; *&t;&t;&n; *&t;&t;v0.9.5 29th May 1996 (SC)&n; *&t;&t;First attempt at sending (unicast) ARP packets&n; *&t;&t;&n; *&t;&t;v0.9.6 5th June 1996 (Elliot)&n; *&t;&t;Put &quot;message level&quot; tags in every &quot;printk&quot; statement&n; *&t;&t;&n; *&t;&t;v0.9.7 13th June 1996 (laik)&n; *&t;&t;Added support for the /proc fs&n; *&n; *              v0.9.8 July 1996 (Mema)&n; *              Added packet logging&n; *&n; *              v1.0 November 1996 (SC)&n; *              Fixed (severe) memory leaks in the /proc fs code&n; *              Fixed race conditions in the logging code&n; *&n; *              v1.1 January 1997 (SC)&n; *              Deleted packet logging (use tcpdump instead)&n; *              Added support for Metricom Firmware v204 features&n; *              (like message checksums)&n; *&n; *              v1.2 January 1997 (SC)&n; *              Put portables list back in&n; */
 macro_line|#ifdef MODULE
+DECL|variable|StripVersion
 r_static
 r_const
 r_char
@@ -12,6 +11,7 @@ op_assign
 l_string|&quot;1.2-STUART.CHESHIRE-MODULAR&quot;
 suffix:semicolon
 macro_line|#else
+DECL|variable|StripVersion
 r_static
 r_const
 r_char
@@ -22,7 +22,9 @@ op_assign
 l_string|&quot;1.2-STUART.CHESHIRE&quot;
 suffix:semicolon
 macro_line|#endif
+DECL|macro|TICKLE_TIMERS
 mdefine_line|#define TICKLE_TIMERS 0
+DECL|macro|EXT_COUNTERS
 mdefine_line|#define EXT_COUNTERS 1
 multiline_comment|/************************************************************************/
 multiline_comment|/* Header files&t;&t;&t;&t;&t;&t;&t;&t;*/
@@ -37,7 +39,9 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/*&n; * isdigit() and isspace() use the ctype[] array, which is not available&n; * to kernel modules.  If compiling as a module,  use  a local definition&n; * of isdigit() and isspace() until  _ctype is added to ksyms.&n; */
 macro_line|#ifdef MODULE
+DECL|macro|isdigit
 macro_line|# define isdigit(c) (&squot;0&squot; &lt;= (c) &amp;&amp; (c)  &lt;= &squot;9&squot;)
+DECL|macro|isspace
 macro_line|# define isspace(c) ((c) == &squot; &squot; || (c)  == &squot;&bslash;t&squot;)
 macro_line|#else
 macro_line|# include &lt;linux/ctype.h&gt;
@@ -67,15 +71,18 @@ multiline_comment|/*&n; * A MetricomKey identifies the protocol being carried in
 r_typedef
 r_union
 (brace
+DECL|member|c
 id|__u8
 id|c
 (braket
 l_int|4
 )braket
 suffix:semicolon
+DECL|member|l
 id|__u32
 id|l
 suffix:semicolon
+DECL|typedef|MetricomKey
 )brace
 id|MetricomKey
 suffix:semicolon
@@ -83,15 +90,18 @@ multiline_comment|/*&n; * An IP address can be viewed as four bytes in memory (w
 r_typedef
 r_union
 (brace
+DECL|member|b
 id|__u8
 id|b
 (braket
 l_int|4
 )braket
 suffix:semicolon
+DECL|member|l
 id|__u32
 id|l
 suffix:semicolon
+DECL|typedef|IPaddr
 )brace
 id|IPaddr
 suffix:semicolon
@@ -99,69 +109,85 @@ multiline_comment|/*&n; * A MetricomAddressString is used to hold a printable re
 r_typedef
 r_struct
 (brace
+DECL|member|c
 id|__u8
 id|c
 (braket
 l_int|24
 )braket
 suffix:semicolon
+DECL|typedef|MetricomAddressString
 )brace
 id|MetricomAddressString
 suffix:semicolon
 multiline_comment|/* Encapsulation can expand packet of size x to 65/64x + 1&n; * Sent packet looks like &quot;&lt;CR&gt;*&lt;address&gt;*&lt;key&gt;&lt;encaps payload&gt;&lt;CR&gt;&quot;&n; *                           1 1   1-18  1  4         ?         1&n; * eg.                     &lt;CR&gt;*0000-1234*SIP0&lt;encaps payload&gt;&lt;CR&gt;&n; * We allow 31 bytes for the stars, the key, the address and the &lt;CR&gt;s&n; */
+DECL|macro|STRIP_ENCAP_SIZE
 mdefine_line|#define STRIP_ENCAP_SIZE(X) (32 + (X)*65L/64L)
 multiline_comment|/*&n; * A STRIP_Header is never really sent over the radio, but making a dummy&n; * header for internal use within the kernel that looks like an Ethernet&n; * header makes certain other software happier. For example, tcpdump&n; * already understands Ethernet headers.&n; */
 r_typedef
 r_struct
 (brace
+DECL|member|dst_addr
 id|MetricomAddress
 id|dst_addr
 suffix:semicolon
 multiline_comment|/* Destination address, e.g. &quot;0000-1234&quot;   */
+DECL|member|src_addr
 id|MetricomAddress
 id|src_addr
 suffix:semicolon
 multiline_comment|/* Source address, e.g. &quot;0000-5678&quot;        */
+DECL|member|protocol
 r_int
 r_int
 id|protocol
 suffix:semicolon
 multiline_comment|/* The protocol type, using Ethernet codes */
+DECL|typedef|STRIP_Header
 )brace
 id|STRIP_Header
 suffix:semicolon
 r_typedef
 r_struct
 (brace
+DECL|member|c
 r_char
 id|c
 (braket
 l_int|60
 )braket
 suffix:semicolon
+DECL|typedef|MetricomNode
 )brace
 id|MetricomNode
 suffix:semicolon
+DECL|macro|NODE_TABLE_SIZE
 mdefine_line|#define NODE_TABLE_SIZE 32
 r_typedef
 r_struct
 (brace
+DECL|member|timestamp
 r_struct
 id|timeval
 id|timestamp
 suffix:semicolon
+DECL|member|num_nodes
 r_int
 id|num_nodes
 suffix:semicolon
+DECL|member|node
 id|MetricomNode
 id|node
 (braket
 id|NODE_TABLE_SIZE
 )braket
 suffix:semicolon
+DECL|typedef|MetricomNodeTable
 )brace
 id|MetricomNodeTable
 suffix:semicolon
+DECL|enumerator|FALSE
+DECL|enumerator|TRUE
 r_enum
 (brace
 id|FALSE
@@ -177,12 +203,14 @@ multiline_comment|/*&n; * Holds the radio&squot;s firmware version.&n; */
 r_typedef
 r_struct
 (brace
+DECL|member|c
 r_char
 id|c
 (braket
 l_int|50
 )braket
 suffix:semicolon
+DECL|typedef|FirmwareVersion
 )brace
 id|FirmwareVersion
 suffix:semicolon
@@ -190,12 +218,14 @@ multiline_comment|/*&n; * Holds the radio&squot;s serial number.&n; */
 r_typedef
 r_struct
 (brace
+DECL|member|c
 r_char
 id|c
 (braket
 l_int|18
 )braket
 suffix:semicolon
+DECL|typedef|SerialNumber
 )brace
 id|SerialNumber
 suffix:semicolon
@@ -203,200 +233,240 @@ multiline_comment|/*&n; * Holds the radio&squot;s battery voltage.&n; */
 r_typedef
 r_struct
 (brace
+DECL|member|c
 r_char
 id|c
 (braket
 l_int|11
 )braket
 suffix:semicolon
+DECL|typedef|BatteryVoltage
 )brace
 id|BatteryVoltage
 suffix:semicolon
 r_typedef
 r_struct
 (brace
+DECL|member|c
 r_char
 id|c
 (braket
 l_int|8
 )braket
 suffix:semicolon
+DECL|typedef|char8
 )brace
 id|char8
 suffix:semicolon
 r_enum
 (brace
+DECL|enumerator|NoStructure
 id|NoStructure
 op_assign
 l_int|0
 comma
 multiline_comment|/* Really old firmware */
+DECL|enumerator|StructuredMessages
 id|StructuredMessages
 op_assign
 l_int|1
 comma
 multiline_comment|/* Parsable AT response msgs */
+DECL|enumerator|ChecksummedMessages
 id|ChecksummedMessages
 op_assign
 l_int|2
 multiline_comment|/* Parsable AT response msgs with checksums */
+DECL|variable|FirmwareLevel
 )brace
 id|FirmwareLevel
 suffix:semicolon
+DECL|struct|strip
 r_struct
 id|strip
 (brace
+DECL|member|magic
 r_int
 id|magic
 suffix:semicolon
 multiline_comment|/*&n;     * These are pointers to the malloc()ed frame buffers.&n;     */
+DECL|member|rx_buff
 r_int
 r_char
 op_star
 id|rx_buff
 suffix:semicolon
 multiline_comment|/* buffer for received IP packet*/
+DECL|member|sx_buff
 r_int
 r_char
 op_star
 id|sx_buff
 suffix:semicolon
 multiline_comment|/* buffer for received serial data*/
+DECL|member|sx_count
 r_int
 id|sx_count
 suffix:semicolon
 multiline_comment|/* received serial data counter */
+DECL|member|sx_size
 r_int
 id|sx_size
 suffix:semicolon
 multiline_comment|/* Serial buffer size&t;&t;*/
+DECL|member|tx_buff
 r_int
 r_char
 op_star
 id|tx_buff
 suffix:semicolon
 multiline_comment|/* transmitter buffer           */
+DECL|member|tx_head
 r_int
 r_char
 op_star
 id|tx_head
 suffix:semicolon
 multiline_comment|/* pointer to next byte to XMIT */
+DECL|member|tx_left
 r_int
 id|tx_left
 suffix:semicolon
 multiline_comment|/* bytes left in XMIT queue     */
+DECL|member|tx_size
 r_int
 id|tx_size
 suffix:semicolon
 multiline_comment|/* Serial buffer size&t;&t;*/
 multiline_comment|/*&n;     * STRIP interface statistics.&n;     */
+DECL|member|rx_packets
 r_int
 r_int
 id|rx_packets
 suffix:semicolon
 multiline_comment|/* inbound frames counter&t;*/
+DECL|member|tx_packets
 r_int
 r_int
 id|tx_packets
 suffix:semicolon
 multiline_comment|/* outbound frames counter&t;*/
+DECL|member|rx_errors
 r_int
 r_int
 id|rx_errors
 suffix:semicolon
 multiline_comment|/* Parity, etc. errors&t;&t;*/
+DECL|member|tx_errors
 r_int
 r_int
 id|tx_errors
 suffix:semicolon
 multiline_comment|/* Planned stuff&t;&t;*/
+DECL|member|rx_dropped
 r_int
 r_int
 id|rx_dropped
 suffix:semicolon
 multiline_comment|/* No memory for skb&t;&t;*/
+DECL|member|tx_dropped
 r_int
 r_int
 id|tx_dropped
 suffix:semicolon
 multiline_comment|/* When MTU change&t;&t;*/
+DECL|member|rx_over_errors
 r_int
 r_int
 id|rx_over_errors
 suffix:semicolon
 multiline_comment|/* Frame bigger then STRIP buf. */
+DECL|member|pps_timer
 r_int
 r_int
 id|pps_timer
 suffix:semicolon
 multiline_comment|/* Timer to determine pps&t;*/
+DECL|member|rx_pps_count
 r_int
 r_int
 id|rx_pps_count
 suffix:semicolon
 multiline_comment|/* Counter to determine pps&t;*/
+DECL|member|tx_pps_count
 r_int
 r_int
 id|tx_pps_count
 suffix:semicolon
 multiline_comment|/* Counter to determine pps&t;*/
+DECL|member|sx_pps_count
 r_int
 r_int
 id|sx_pps_count
 suffix:semicolon
 multiline_comment|/* Counter to determine pps&t;*/
+DECL|member|rx_average_pps
 r_int
 r_int
 id|rx_average_pps
 suffix:semicolon
 multiline_comment|/* rx packets per second * 8&t;*/
+DECL|member|tx_average_pps
 r_int
 r_int
 id|tx_average_pps
 suffix:semicolon
 multiline_comment|/* tx packets per second * 8&t;*/
+DECL|member|sx_average_pps
 r_int
 r_int
 id|sx_average_pps
 suffix:semicolon
 multiline_comment|/* sent packets per second * 8&t;*/
 macro_line|#ifdef EXT_COUNTERS
+DECL|member|rx_bytes
 r_int
 r_int
 id|rx_bytes
 suffix:semicolon
 multiline_comment|/* total received bytes */
+DECL|member|tx_bytes
 r_int
 r_int
 id|tx_bytes
 suffix:semicolon
 multiline_comment|/* total received bytes */
+DECL|member|rx_rbytes
 r_int
 r_int
 id|rx_rbytes
 suffix:semicolon
 multiline_comment|/* bytes thru radio i/f */
+DECL|member|tx_rbytes
 r_int
 r_int
 id|tx_rbytes
 suffix:semicolon
 multiline_comment|/* bytes thru radio i/f */
+DECL|member|rx_sbytes
 r_int
 r_int
 id|rx_sbytes
 suffix:semicolon
 multiline_comment|/* tot bytes thru serial i/f */
+DECL|member|tx_sbytes
 r_int
 r_int
 id|tx_sbytes
 suffix:semicolon
 multiline_comment|/* tot bytes thru serial i/f */
+DECL|member|rx_ebytes
 r_int
 r_int
 id|rx_ebytes
 suffix:semicolon
 multiline_comment|/* tot stat/err bytes */
+DECL|member|tx_ebytes
 r_int
 r_int
 id|tx_ebytes
@@ -404,12 +474,14 @@ suffix:semicolon
 multiline_comment|/* tot stat/err bytes */
 macro_line|#endif
 multiline_comment|/*&n;     * Internal variables.&n;     */
+DECL|member|next
 r_struct
 id|strip
 op_star
 id|next
 suffix:semicolon
 multiline_comment|/* The next struct in the list&t;*/
+DECL|member|referrer
 r_struct
 id|strip
 op_star
@@ -417,87 +489,107 @@ op_star
 id|referrer
 suffix:semicolon
 multiline_comment|/* The pointer that points to us*/
+DECL|member|discard
 r_int
 id|discard
 suffix:semicolon
 multiline_comment|/* Set if serial error&t;&t;*/
+DECL|member|working
 r_int
 id|working
 suffix:semicolon
 multiline_comment|/* Is radio working correctly?&t;*/
+DECL|member|firmware_level
 r_int
 id|firmware_level
 suffix:semicolon
 multiline_comment|/* Message structuring level&t;*/
+DECL|member|next_command
 r_int
 id|next_command
 suffix:semicolon
 multiline_comment|/* Next periodic command&t;*/
+DECL|member|mtu
 r_int
 id|mtu
 suffix:semicolon
 multiline_comment|/* Our mtu (to spot changes!)&t;*/
+DECL|member|watchdog_doprobe
 r_int
 id|watchdog_doprobe
 suffix:semicolon
 multiline_comment|/* Next time to test the radio&t;*/
+DECL|member|watchdog_doreset
 r_int
 id|watchdog_doreset
 suffix:semicolon
 multiline_comment|/* Time to do next reset&t;*/
+DECL|member|gratuitous_arp
 r_int
 id|gratuitous_arp
 suffix:semicolon
 multiline_comment|/* Time to send next ARP refresh*/
+DECL|member|arp_interval
 r_int
 id|arp_interval
 suffix:semicolon
 multiline_comment|/* Next ARP interval&t;&t;*/
+DECL|member|idle_timer
 r_struct
 id|timer_list
 id|idle_timer
 suffix:semicolon
 multiline_comment|/* For periodic wakeup calls&t;*/
+DECL|member|true_dev_addr
 id|MetricomAddress
 id|true_dev_addr
 suffix:semicolon
 multiline_comment|/* True address of radio&t;*/
+DECL|member|manual_dev_addr
 r_int
 id|manual_dev_addr
 suffix:semicolon
 multiline_comment|/* Hack: See note below         */
+DECL|member|firmware_version
 id|FirmwareVersion
 id|firmware_version
 suffix:semicolon
 multiline_comment|/* The radio&squot;s firmware version */
+DECL|member|serial_number
 id|SerialNumber
 id|serial_number
 suffix:semicolon
 multiline_comment|/* The radio&squot;s serial number    */
+DECL|member|battery_voltage
 id|BatteryVoltage
 id|battery_voltage
 suffix:semicolon
 multiline_comment|/* The radio&squot;s battery voltage  */
 multiline_comment|/*&n;     * Other useful structures.&n;     */
+DECL|member|tty
 r_struct
 id|tty_struct
 op_star
 id|tty
 suffix:semicolon
 multiline_comment|/* ptr to TTY structure&t;&t;*/
+DECL|member|if_name
 id|char8
 id|if_name
 suffix:semicolon
 multiline_comment|/* Dynamically generated name&t;*/
+DECL|member|dev
 r_struct
 id|device
 id|dev
 suffix:semicolon
 multiline_comment|/* Our device structure&t;&t;*/
 multiline_comment|/*&n;     * Neighbour radio records&n;     */
+DECL|member|portables
 id|MetricomNodeTable
 id|portables
 suffix:semicolon
+DECL|member|poletops
 id|MetricomNodeTable
 id|poletops
 suffix:semicolon
@@ -507,6 +599,7 @@ multiline_comment|/*&n; * Note: manual_dev_addr hack&n; * &n; * It is not possib
 multiline_comment|/************************************************************************/
 multiline_comment|/* Constants&t;&t;&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/*&n; * CommandString1 works on all radios&n; * Other CommandStrings are only used with firmware that provides structured responses.&n; * &n; * ats319=1 Enables Info message for node additions and deletions&n; * ats319=2 Enables Info message for a new best node&n; * ats319=4 Enables checksums&n; * ats319=8 Enables ACK messages&n; */
+DECL|variable|MaxCommandStringLength
 r_static
 r_const
 r_int
@@ -514,6 +607,7 @@ id|MaxCommandStringLength
 op_assign
 l_int|32
 suffix:semicolon
+DECL|variable|CompatibilityCommand
 r_static
 r_const
 r_int
@@ -521,6 +615,7 @@ id|CompatibilityCommand
 op_assign
 l_int|1
 suffix:semicolon
+DECL|variable|CommandString0
 r_static
 r_const
 r_char
@@ -531,6 +626,7 @@ op_assign
 l_string|&quot;*&amp;COMMAND*ATS319=7&quot;
 suffix:semicolon
 multiline_comment|/* Turn on checksums &amp; info messages */
+DECL|variable|CommandString1
 r_static
 r_const
 r_char
@@ -541,6 +637,7 @@ op_assign
 l_string|&quot;*&amp;COMMAND*ATS305?&quot;
 suffix:semicolon
 multiline_comment|/* Query radio name */
+DECL|variable|CommandString2
 r_static
 r_const
 r_char
@@ -551,6 +648,7 @@ op_assign
 l_string|&quot;*&amp;COMMAND*ATS325?&quot;
 suffix:semicolon
 multiline_comment|/* Query battery voltage */
+DECL|variable|CommandString3
 r_static
 r_const
 r_char
@@ -561,6 +659,7 @@ op_assign
 l_string|&quot;*&amp;COMMAND*ATS300?&quot;
 suffix:semicolon
 multiline_comment|/* Query version information */
+DECL|variable|CommandString4
 r_static
 r_const
 r_char
@@ -571,6 +670,7 @@ op_assign
 l_string|&quot;*&amp;COMMAND*ATS311?&quot;
 suffix:semicolon
 multiline_comment|/* Query poletop list */
+DECL|variable|CommandString5
 r_static
 r_const
 r_char
@@ -581,6 +681,9 @@ op_assign
 l_string|&quot;*&amp;COMMAND*AT~LA&quot;
 suffix:semicolon
 multiline_comment|/* Query portables list */
+DECL|member|string
+DECL|member|length
+DECL|typedef|StringDescriptor
 r_typedef
 r_struct
 (brace
@@ -595,6 +698,7 @@ suffix:semicolon
 )brace
 id|StringDescriptor
 suffix:semicolon
+DECL|variable|CommandString
 r_static
 r_const
 id|StringDescriptor
@@ -670,7 +774,9 @@ l_int|1
 )brace
 )brace
 suffix:semicolon
+DECL|macro|GOT_ALL_RADIO_INFO
 mdefine_line|#define GOT_ALL_RADIO_INFO(S)      &bslash;&n;    ((S)-&gt;firmware_version.c[0] &amp;&amp; &bslash;&n;     (S)-&gt;battery_voltage.c[0]  &amp;&amp; &bslash;&n;     memcmp(&amp;(S)-&gt;true_dev_addr, zero_address.c, sizeof(zero_address)))
+DECL|variable|hextable
 r_static
 r_const
 r_char
@@ -681,11 +787,13 @@ l_int|16
 op_assign
 l_string|&quot;0123456789ABCDEF&quot;
 suffix:semicolon
+DECL|variable|zero_address
 r_static
 r_const
 id|MetricomAddress
 id|zero_address
 suffix:semicolon
+DECL|variable|broadcast_address
 r_static
 r_const
 id|MetricomAddress
@@ -707,6 +815,7 @@ l_int|0xFF
 )brace
 )brace
 suffix:semicolon
+DECL|variable|SIP0Key
 r_static
 r_const
 id|MetricomKey
@@ -718,6 +827,7 @@ l_string|&quot;SIP0&quot;
 )brace
 )brace
 suffix:semicolon
+DECL|variable|ARP0Key
 r_static
 r_const
 id|MetricomKey
@@ -729,6 +839,7 @@ l_string|&quot;ARP0&quot;
 )brace
 )brace
 suffix:semicolon
+DECL|variable|ATR_Key
 r_static
 r_const
 id|MetricomKey
@@ -740,6 +851,7 @@ l_string|&quot;ATR &quot;
 )brace
 )brace
 suffix:semicolon
+DECL|variable|ACK_Key
 r_static
 r_const
 id|MetricomKey
@@ -751,6 +863,7 @@ l_string|&quot;ACK_&quot;
 )brace
 )brace
 suffix:semicolon
+DECL|variable|INF_Key
 r_static
 r_const
 id|MetricomKey
@@ -762,6 +875,7 @@ l_string|&quot;INF_&quot;
 )brace
 )brace
 suffix:semicolon
+DECL|variable|ERR_Key
 r_static
 r_const
 id|MetricomKey
@@ -773,6 +887,7 @@ l_string|&quot;ERR_&quot;
 )brace
 )brace
 suffix:semicolon
+DECL|variable|MaxARPInterval
 r_static
 r_const
 r_int
@@ -784,6 +899,7 @@ id|HZ
 suffix:semicolon
 multiline_comment|/* One minute */
 multiline_comment|/*&n; * Maximum Starmode packet length is 1183 bytes. Allowing 4 bytes for&n; * protocol key, 4 bytes for checksum, one byte for CR, and 65/64 expansion&n; * for STRIP encoding, that translates to a maximum payload MTU of 1155.&n; * Note: A standard NFS 1K data packet is a total of 0x480 (1152) bytes&n; * long, including IP header, UDP header, and NFS header. Setting the STRIP&n; * MTU to 1152 allows us to send default sized NFS packets without fragmentation.&n; */
+DECL|variable|MAX_SEND_MTU
 r_static
 r_const
 r_int
@@ -792,6 +908,7 @@ id|MAX_SEND_MTU
 op_assign
 l_int|1152
 suffix:semicolon
+DECL|variable|MAX_RECV_MTU
 r_static
 r_const
 r_int
@@ -801,6 +918,7 @@ op_assign
 l_int|1500
 suffix:semicolon
 multiline_comment|/* Hoping for Ethernet sized packets in the future! */
+DECL|variable|DEFAULT_STRIP_MTU
 r_static
 r_const
 r_int
@@ -809,6 +927,7 @@ id|DEFAULT_STRIP_MTU
 op_assign
 l_int|1152
 suffix:semicolon
+DECL|variable|STRIP_MAGIC
 r_static
 r_const
 r_int
@@ -816,6 +935,7 @@ id|STRIP_MAGIC
 op_assign
 l_int|0x5303
 suffix:semicolon
+DECL|variable|LongTime
 r_static
 r_const
 r_int
@@ -825,6 +945,7 @@ l_int|0x7FFFFFFF
 suffix:semicolon
 multiline_comment|/************************************************************************/
 multiline_comment|/* Global variables&t;&t;&t;&t;&t;&t;&t;*/
+DECL|variable|struct_strip_list
 r_static
 r_struct
 id|strip
@@ -836,24 +957,36 @@ suffix:semicolon
 multiline_comment|/************************************************************************/
 multiline_comment|/* Macros&t;&t;&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/* Returns TRUE if text T begins with prefix P */
+DECL|macro|has_prefix
 mdefine_line|#define has_prefix(T,P) (!strncmp((T), (P), sizeof(P)-1))
 multiline_comment|/* Returns TRUE if text T of length L is equal to string S */
+DECL|macro|text_equal
 mdefine_line|#define text_equal(T,L,S) (((L) == sizeof(S)-1) &amp;&amp; !strncmp((T), (S), sizeof(S)-1))
+DECL|macro|READHEX
 mdefine_line|#define READHEX(X) ((X)&gt;=&squot;0&squot; &amp;&amp; (X)&lt;=&squot;9&squot; ? (X)-&squot;0&squot; :      &bslash;&n;                    (X)&gt;=&squot;a&squot; &amp;&amp; (X)&lt;=&squot;f&squot; ? (X)-&squot;a&squot;+10 :   &bslash;&n;                    (X)&gt;=&squot;A&squot; &amp;&amp; (X)&lt;=&squot;F&squot; ? (X)-&squot;A&squot;+10 : 0 )
+DECL|macro|READHEX16
 mdefine_line|#define READHEX16(X) ((__u16)(READHEX(X)))
+DECL|macro|READDEC
 mdefine_line|#define READDEC(X) ((X)&gt;=&squot;0&squot; &amp;&amp; (X)&lt;=&squot;9&squot; ? (X)-&squot;0&squot; : 0)
+DECL|macro|MIN
 mdefine_line|#define MIN(X, Y) ((X) &lt; (Y) ? (X) : (Y))
+DECL|macro|MAX
 mdefine_line|#define MAX(X, Y) ((X) &gt; (Y) ? (X) : (Y))
+DECL|macro|ELEMENTS_OF
 mdefine_line|#define ELEMENTS_OF(X) (sizeof(X) / sizeof((X)[0]))
+DECL|macro|ARRAY_END
 mdefine_line|#define ARRAY_END(X) (&amp;((X)[ELEMENTS_OF(X)]))
+DECL|macro|JIFFIE_TO_SEC
 mdefine_line|#define JIFFIE_TO_SEC(X) ((X) / HZ)
 multiline_comment|/************************************************************************/
 multiline_comment|/* Utility routines&t;&t;&t;&t;&t;&t;&t;*/
+DECL|typedef|InterruptStatus
 r_typedef
 r_int
 r_int
 id|InterruptStatus
 suffix:semicolon
+DECL|function|DisableInterrupts
 r_extern
 id|__inline__
 id|InterruptStatus
@@ -881,6 +1014,7 @@ r_return
 id|x
 suffix:semicolon
 )brace
+DECL|function|RestoreInterrupts
 r_extern
 id|__inline__
 r_void
@@ -898,6 +1032,7 @@ id|x
 )paren
 suffix:semicolon
 )brace
+DECL|function|DumpData
 r_static
 r_void
 id|DumpData
@@ -1218,48 +1353,60 @@ multiline_comment|/* Stuffing scheme:&n; * 00    Unused (reserved character)&n; 
 r_typedef
 r_enum
 (brace
+DECL|enumerator|Stuff_Diff
 id|Stuff_Diff
 op_assign
 l_int|0x00
 comma
+DECL|enumerator|Stuff_DiffZero
 id|Stuff_DiffZero
 op_assign
 l_int|0x40
 comma
+DECL|enumerator|Stuff_Same
 id|Stuff_Same
 op_assign
 l_int|0x80
 comma
+DECL|enumerator|Stuff_Zero
 id|Stuff_Zero
 op_assign
 l_int|0xC0
 comma
+DECL|enumerator|Stuff_NoCode
 id|Stuff_NoCode
 op_assign
 l_int|0xFF
 comma
 multiline_comment|/* Special code, meaning no code selected */
+DECL|enumerator|Stuff_CodeMask
 id|Stuff_CodeMask
 op_assign
 l_int|0xC0
 comma
+DECL|enumerator|Stuff_CountMask
 id|Stuff_CountMask
 op_assign
 l_int|0x3F
 comma
+DECL|enumerator|Stuff_MaxCount
 id|Stuff_MaxCount
 op_assign
 l_int|0x3F
 comma
+DECL|enumerator|Stuff_Magic
 id|Stuff_Magic
 op_assign
 l_int|0x0D
 multiline_comment|/* The value we are eliminating */
+DECL|typedef|StuffingCode
 )brace
 id|StuffingCode
 suffix:semicolon
 multiline_comment|/* StuffData encodes the data starting at &quot;src&quot; for &quot;length&quot; bytes.&n; * It writes it to the buffer pointed to by &quot;dst&quot; (which must be at least&n; * as long as 1 + 65/64 of the input length). The output may be up to 1.6%&n; * larger than the input for pathological input, but will usually be smaller.&n; * StuffData returns the new value of the dst pointer as its result.&n; * &quot;code_ptr_ptr&quot; points to a &quot;__u8 *&quot; which is used to hold encoding state&n; * between calls, allowing an encoded packet to be incrementally built up&n; * from small parts. On the first call, the &quot;__u8 *&quot; pointed to should be&n; * initialized to NULL; between subsequent calls the calling routine should&n; * leave the value alone and simply pass it back unchanged so that the&n; * encoder can recover its current state.&n; */
+DECL|macro|StuffData_FinishBlock
 mdefine_line|#define StuffData_FinishBlock(X) &bslash;&n;(*code_ptr = (X) ^ Stuff_Magic, code = Stuff_NoCode)
+DECL|function|StuffData
 r_static
 id|__u8
 op_star
@@ -1682,6 +1829,7 @@ id|dst
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * UnStuffData decodes the data at &quot;src&quot;, up to (but not including) &quot;end&quot;.&n; * It writes the decoded data into the buffer pointed to by &quot;dst&quot;, up to a&n; * maximum of &quot;dst_length&quot;, and returns the new value of &quot;src&quot; so that a&n; * follow-on call can read more data, continuing from where the first left off.&n; * &n; * There are three types of results:&n; * 1. The source data runs out before extracting &quot;dst_length&quot; bytes:&n; *    UnStuffData returns NULL to indicate failure.&n; * 2. The source data produces exactly &quot;dst_length&quot; bytes:&n; *    UnStuffData returns new_src = end to indicate that all bytes were consumed.&n; * 3. &quot;dst_length&quot; bytes are extracted, with more remaining.&n; *    UnStuffData returns new_src &lt; end to indicate that there are more bytes&n; *    to be read.&n; * &n; * Note: The decoding may be destructive, in that it may alter the source&n; * data in the process of decoding it (this is necessary to allow a follow-on&n; * call to resume correctly).&n; */
+DECL|function|UnStuffData
 r_static
 id|__u8
 op_star
@@ -2069,7 +2217,9 @@ suffix:semicolon
 multiline_comment|/************************************************************************/
 multiline_comment|/* General routines for STRIP&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/*&n; * Convert a string to a Metricom Address.&n; */
+DECL|macro|IS_RADIO_ADDRESS
 mdefine_line|#define IS_RADIO_ADDRESS(p) (                                                 &bslash;&n;  isdigit((p)[0]) &amp;&amp; isdigit((p)[1]) &amp;&amp; isdigit((p)[2]) &amp;&amp; isdigit((p)[3]) &amp;&amp; &bslash;&n;  (p)[4] == &squot;-&squot; &amp;&amp;                                                            &bslash;&n;  isdigit((p)[5]) &amp;&amp; isdigit((p)[6]) &amp;&amp; isdigit((p)[7]) &amp;&amp; isdigit((p)[8])    )
+DECL|function|string_to_radio_address
 r_static
 r_int
 id|string_to_radio_address
@@ -2216,6 +2366,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Convert a Metricom Address to a string.&n; */
+DECL|function|radio_address_to_string
 r_static
 id|__u8
 op_star
@@ -2265,6 +2416,7 @@ id|p-&gt;c
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note: Must make sure sx_size is big enough to receive a stuffed&n; * MAX_RECV_MTU packet. Additionally, we also want to ensure that it&squot;s&n; * big enough to receive a large radio neighbour list (currently 4K).&n; */
+DECL|function|allocate_buffers
 r_static
 r_int
 id|allocate_buffers
@@ -2422,6 +2574,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * MTU has been changed by the IP layer. Unfortunately we are not told&n; * about this, but we spot it ourselves and fix things up. We could be in&n; * an upcall from the tty driver, or in an ip packet queue.&n; */
+DECL|function|strip_changedmtu
 r_static
 r_void
 id|strip_changedmtu
@@ -2662,6 +2815,7 @@ id|otbuff
 )paren
 suffix:semicolon
 )brace
+DECL|function|strip_unlock
 r_static
 r_void
 id|strip_unlock
@@ -2721,6 +2875,7 @@ multiline_comment|/* Callback routines for exporting information through /proc&t
 multiline_comment|/*&n; * This function updates the total amount of data printed so far. It then&n; * determines if the amount of data printed into a buffer  has reached the&n; * offset requested. If it hasn&squot;t, then the buffer is shifted over so that&n; * the next bit of data can be printed over the old bit. If the total&n; * amount printed so far exceeds the total amount requested, then this&n; * function returns 1, otherwise 0.&n; */
 r_static
 r_int
+DECL|function|shift_buffer
 id|shift_buffer
 c_func
 (paren
@@ -2837,6 +2992,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This function calculates the actual start of the requested data&n; * in the buffer. It also calculates actual length of data returned,&n; * which could be less that the amount of data requested.&n; */
 r_static
 r_int
+DECL|function|calc_start_len
 id|calc_start_len
 c_func
 (paren
@@ -2936,6 +3092,7 @@ id|return_len
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * If the time is in the near future, time_delta prints the number of&n; * seconds to go into the buffer and returns the address of the buffer.&n; * If the time is not in the near future, it returns the address of the&n; * string &quot;Not scheduled&quot; The buffer must be long enough to contain the&n; * ascii representation of the number plus 9 charactes for the &quot; seconds&quot;&n; * and the null character.&n; */
+DECL|function|time_delta
 r_static
 r_char
 op_star
@@ -2997,6 +3154,7 @@ r_return
 id|buffer
 suffix:semicolon
 )brace
+DECL|function|sprintf_neighbours
 r_static
 r_int
 id|sprintf_neighbours
@@ -3127,6 +3285,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This function prints radio status information into the specified buffer.&n; * I think the buffer size is 4K, so this routine should never print more&n; * than 4K of data into it. With the maximum of 32 portables and 32 poletops&n; * reported, the routine outputs 3107 bytes into the buffer.&n; */
 r_static
 r_int
+DECL|function|sprintf_status_info
 id|sprintf_status_info
 c_func
 (paren
@@ -3741,6 +3900,7 @@ id|buffer
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function is exports status information from the STRIP driver through&n; * the /proc file system.&n; */
+DECL|function|get_status_info
 r_static
 r_int
 id|get_status_info
@@ -3891,6 +4051,7 @@ id|buf
 )paren
 suffix:semicolon
 )brace
+DECL|variable|proc_strip_status_name
 r_static
 r_const
 r_char
@@ -3900,6 +4061,7 @@ id|proc_strip_status_name
 op_assign
 l_string|&quot;strip&quot;
 suffix:semicolon
+DECL|variable|proc_strip_get_status_info
 r_static
 r_struct
 id|proc_dir_entry
@@ -3959,7 +4121,9 @@ multiline_comment|/* void *data; */
 suffix:semicolon
 multiline_comment|/************************************************************************/
 multiline_comment|/* Sending routines&t;&t;&t;&t;&t;&t;&t;*/
+DECL|macro|InitString
 mdefine_line|#define InitString &quot;ate0q1dt**starmode&quot;
+DECL|function|ResetRadio
 r_static
 r_void
 id|ResetRadio
@@ -4160,6 +4324,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * Called by the driver when there&squot;s room for more data.  If we have&n; * more packets to send, we send them here.&n; */
+DECL|function|strip_write_some_more
 r_static
 r_void
 id|strip_write_some_more
@@ -4280,6 +4445,7 @@ id|NET_BH
 suffix:semicolon
 )brace
 )brace
+DECL|function|add_checksum
 r_static
 id|__u8
 op_star
@@ -4385,6 +4551,7 @@ op_plus
 l_int|4
 suffix:semicolon
 )brace
+DECL|function|strip_make_packet
 r_static
 r_int
 r_char
@@ -4804,6 +4971,7 @@ r_return
 id|ptr
 suffix:semicolon
 )brace
+DECL|function|strip_send
 r_static
 r_void
 id|strip_send
@@ -5245,6 +5413,7 @@ id|strip_info-&gt;tty
 suffix:semicolon
 )brace
 multiline_comment|/* Encapsulate a datagram and kick it into a TTY queue. */
+DECL|function|strip_xmit
 r_static
 r_int
 id|strip_xmit
@@ -5552,6 +5721,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * IdleTask periodically calls strip_xmit, so even when we have no IP packets&n; * to send for an extended period of time, the watchdog processing still gets&n; * done to ensure that the radio stays in Starmode&n; */
+DECL|function|strip_IdleTask
 r_static
 r_void
 id|strip_IdleTask
@@ -5577,6 +5747,7 @@ id|parameter
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Create the MAC header for an arbitrary protocol layer&n; *&n; * saddr!=NULL        means use this specific address (n/a for Metricom)&n; * saddr==NULL        means use default device source address&n; * daddr!=NULL        means use this destination address&n; * daddr==NULL        means leave destination address alone&n; *                 (e.g. unresolved arp -- kernel will call&n; *                 rebuild_header later to fill in the address)&n; */
+DECL|function|strip_header
 r_static
 r_int
 id|strip_header
@@ -5679,6 +5850,7 @@ id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Rebuild the MAC header. This is called after an ARP&n; * (or in future other address resolution) has completed on this&n; * sk_buff. We now let ARP fill in the other fields.&n; * I think this should return zero if packet is ready to send,&n; * or non-zero if it needs more time to do an address lookup&n; */
+DECL|function|strip_rebuild_header
 r_static
 r_int
 id|strip_rebuild_header
@@ -5726,6 +5898,7 @@ macro_line|#endif
 )brace
 multiline_comment|/************************************************************************/
 multiline_comment|/* Receiving routines&t;&t;&t;&t;&t;&t;&t;*/
+DECL|function|strip_receive_room
 r_static
 r_int
 id|strip_receive_room
@@ -5743,6 +5916,7 @@ suffix:semicolon
 multiline_comment|/* We can handle an infinite amount of data. :-) */
 )brace
 multiline_comment|/*&n; * This function parses the response to the ATS300? command,&n; * extracting the radio version and serial number.&n; */
+DECL|function|get_radio_version
 r_static
 r_void
 id|get_radio_version
@@ -5979,6 +6153,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * This function parses the response to the ATS325? command,&n; * extracting the radio battery voltage.&n; */
+DECL|function|get_radio_voltage
 r_static
 r_void
 id|get_radio_voltage
@@ -6051,6 +6226,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * This function parses the responses to the AT~LA and ATS311 commands,&n; * which list the radio&squot;s neighbours.&n; */
+DECL|function|get_radio_neighbours
 r_static
 r_void
 id|get_radio_neighbours
@@ -6187,6 +6363,7 @@ id|table-&gt;timestamp
 )paren
 suffix:semicolon
 )brace
+DECL|function|get_radio_address
 r_static
 r_int
 id|get_radio_address
@@ -6301,6 +6478,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|verify_checksum
 r_static
 r_int
 id|verify_checksum
@@ -6426,6 +6604,7 @@ op_eq
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|RecvErr
 r_static
 r_void
 id|RecvErr
@@ -6471,6 +6650,7 @@ id|strip_info-&gt;rx_errors
 op_increment
 suffix:semicolon
 )brace
+DECL|function|RecvErr_Message
 r_static
 r_void
 id|RecvErr_Message
@@ -6906,6 +7086,7 @@ id|strip_info
 )paren
 suffix:semicolon
 )brace
+DECL|function|process_AT_response
 r_static
 r_void
 id|process_AT_response
@@ -7118,6 +7299,7 @@ id|strip_info
 )paren
 suffix:semicolon
 )brace
+DECL|function|process_ACK
 r_static
 r_void
 id|process_ACK
@@ -7139,6 +7321,7 @@ id|end
 (brace
 multiline_comment|/* Currently we don&squot;t do anything with ACKs from the radio */
 )brace
+DECL|function|process_Info
 r_static
 r_void
 id|process_Info
@@ -7176,6 +7359,7 @@ id|strip_info
 )paren
 suffix:semicolon
 )brace
+DECL|function|get_strip_dev
 r_static
 r_struct
 id|device
@@ -7289,6 +7473,7 @@ id|strip_info-&gt;dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Send one completely decapsulated datagram to the next layer.&n; */
+DECL|function|deliver_packet
 r_static
 r_void
 id|deliver_packet
@@ -7434,6 +7619,7 @@ id|skb
 suffix:semicolon
 )brace
 )brace
+DECL|function|process_IP_packet
 r_static
 r_void
 id|process_IP_packet
@@ -7613,6 +7799,7 @@ id|packetlen
 )paren
 suffix:semicolon
 )brace
+DECL|function|process_ARP_packet
 r_static
 r_void
 id|process_ARP_packet
@@ -7798,6 +7985,7 @@ id|packetlen
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * process_text_message processes a &lt;CR&gt;-terminated block of data received&n; * from the radio that doesn&squot;t begin with a &squot;*&squot; character. All normal&n; * Starmode communication messages with the radio begin with a &squot;*&squot;,&n; * so any text that does not indicates a serial port error, a radio that&n; * is in Hayes command mode instead of Starmode, or a radio with really&n; * old firmware that doesn&squot;t frame its Starmode responses properly.&n; */
+DECL|function|process_text_message
 r_static
 r_void
 id|process_text_message
@@ -7930,6 +8118,7 @@ id|strip_info
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * process_message processes a &lt;CR&gt;-terminated block of data received&n; * from the radio. If the radio is not in Starmode or has old firmware,&n; * it may be a line of text in response to an AT command. Ideally, with&n; * a current radio that&squot;s properly in Starmode, all data received should&n; * be properly framed and checksummed radio message blocks, containing&n; * either a starmode packet, or a other communication from the radio&n; * firmware, like &quot;INF_&quot; Info messages and &amp;COMMAND responses.&n; */
+DECL|function|process_message
 r_static
 r_void
 id|process_message
@@ -8528,10 +8717,12 @@ id|strip_info
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|macro|TTYERROR
 mdefine_line|#define TTYERROR(X) ((X) == TTY_BREAK   ? &quot;Break&quot;            : &bslash;&n;                     (X) == TTY_FRAME   ? &quot;Framing Error&quot;    : &bslash;&n;                     (X) == TTY_PARITY  ? &quot;Parity Error&quot;     : &bslash;&n;                     (X) == TTY_OVERRUN ? &quot;Hardware Overrun&quot; : &quot;Unknown Error&quot;)
 multiline_comment|/*&n; * Handle the &squot;receiver data ready&squot; interrupt.&n; * This function is called by the &squot;tty_io&squot; module in the kernel when&n; * a block of STRIP data has been received, which can now be decapsulated&n; * and sent on to some IP layer for further processing.&n; */
 r_static
 r_void
+DECL|function|strip_receive_buf
 id|strip_receive_buf
 c_func
 (paren
@@ -8840,6 +9031,7 @@ suffix:semicolon
 )brace
 multiline_comment|/************************************************************************/
 multiline_comment|/* General control routines&t;&t;&t;&t;&t;&t;*/
+DECL|function|set_mac_address
 r_static
 r_int
 id|set_mac_address
@@ -8900,6 +9092,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|dev_set_mac_address
 r_static
 r_int
 id|dev_set_mac_address
@@ -8961,6 +9154,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|strip_get_stats
 r_static
 r_struct
 id|net_device_stats
@@ -9045,6 +9239,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/* Opening and closing&t;&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/*&n; * Here&squot;s the order things happen:&n; * When the user runs &quot;slattach -p strip ...&quot;&n; *  1. The TTY module calls strip_open&n; *  2. strip_open calls strip_alloc&n; *  3.                  strip_alloc calls register_netdev&n; *  4.                  register_netdev calls strip_dev_init&n; *  5. then strip_open finishes setting up the strip_info&n; *&n; * When the user runs &quot;ifconfig st&lt;x&gt; up address netmask ...&quot;&n; *  6. strip_open_low gets called&n; *&n; * When the user runs &quot;ifconfig st&lt;x&gt; down&quot;&n; *  7. strip_close_low gets called&n; *&n; * When the user kills the slattach process&n; *  8. strip_close gets called&n; *  9. strip_close calls dev_close&n; * 10. if the device is still up, then dev_close calls strip_close_low&n; * 11. strip_close calls strip_free&n; */
 multiline_comment|/* Open the low-level part of the STRIP channel. Easy! */
+DECL|function|strip_open_low
 r_static
 r_int
 id|strip_open_low
@@ -9162,6 +9357,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Close the low-level part of the STRIP channel. Easy!&n; */
+DECL|function|strip_close_low
 r_static
 r_int
 id|strip_close_low
@@ -9279,6 +9475,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine is called by DDI when the&n; * (dynamically assigned) device is registered&n; */
+DECL|function|strip_dev_init
 r_static
 r_int
 id|strip_dev_init
@@ -9398,6 +9595,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free a STRIP channel.&n; */
+DECL|function|strip_free
 r_static
 r_void
 id|strip_free
@@ -9437,6 +9635,7 @@ id|strip_info
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Allocate a new free STRIP channel&n; */
+DECL|function|strip_alloc
 r_static
 r_struct
 id|strip
@@ -9647,6 +9846,7 @@ id|strip_info
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Open the high-level part of the STRIP channel.&n; * This function is called by the TTY module when the&n; * STRIP line discipline is called for.  Because we are&n; * sure the tty line exists, we only have to link it to&n; * a free STRIP channel...&n; */
+DECL|function|strip_open
 r_static
 r_int
 id|strip_open
@@ -9813,6 +10013,7 @@ id|strip_info-&gt;dev.base_addr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Close down a STRIP channel.&n; * This means flushing out any pending queues, and then restoring the&n; * TTY line discipline to what it was before it got hooked to STRIP&n; * (which usually is TTY again).&n; */
+DECL|function|strip_close
 r_static
 r_void
 id|strip_close
@@ -9890,6 +10091,7 @@ macro_line|#endif
 )brace
 multiline_comment|/************************************************************************/
 multiline_comment|/* Perform I/O control calls on an active STRIP channel.&t;&t;*/
+DECL|function|strip_ioctl
 r_static
 r_int
 id|strip_ioctl
@@ -10101,6 +10303,7 @@ multiline_comment|/*&n; * Initialize the STRIP driver.&n; * This routine is call
 macro_line|#ifdef MODULE
 r_static
 macro_line|#endif
+DECL|function|strip_init_ctrl_dev
 r_int
 id|strip_init_ctrl_dev
 c_func
@@ -10252,6 +10455,7 @@ macro_line|#endif
 multiline_comment|/************************************************************************/
 multiline_comment|/* From here down is only used when compiled as an external module&t;*/
 macro_line|#ifdef MODULE
+DECL|function|init_module
 r_int
 id|init_module
 c_func
@@ -10267,6 +10471,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|cleanup_module
 r_void
 id|cleanup_module
 c_func
@@ -10328,5 +10533,4 @@ l_string|&quot;STRIP: Module Unloaded&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-macro_line|#endif
 eof

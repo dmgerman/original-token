@@ -293,6 +293,13 @@ id|svc_wake_up
 suffix:semicolon
 multiline_comment|/* RPC statistics */
 macro_line|#ifdef CONFIG_PROC_FS
+DECL|variable|rpc_proc_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|rpc_proc_init
+)paren
+suffix:semicolon
 DECL|variable|rpc_proc_register
 id|EXPORT_SYMBOL
 c_func
@@ -312,13 +319,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|rpc_proc_unregister
-)paren
-suffix:semicolon
-DECL|variable|rpc_proc_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|rpc_proc_init
 )paren
 suffix:semicolon
 DECL|variable|rpc_proc_read

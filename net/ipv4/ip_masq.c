@@ -1054,10 +1054,8 @@ op_star
 id|ip_masq_new
 c_func
 (paren
-r_struct
-id|device
-op_star
-id|dev
+id|__u32
+id|maddr
 comma
 r_int
 id|proto
@@ -1273,7 +1271,7 @@ suffix:semicolon
 multiline_comment|/* get masq address from rif */
 id|ms-&gt;maddr
 op_assign
-id|dev-&gt;pa_addr
+id|maddr
 suffix:semicolon
 r_for
 c_loop
@@ -1577,10 +1575,8 @@ op_star
 op_star
 id|skb_ptr
 comma
-r_struct
-id|device
-op_star
-id|dev
+id|__u32
+id|maddr
 )paren
 (brace
 r_struct
@@ -1734,7 +1730,7 @@ op_assign
 id|ip_masq_new
 c_func
 (paren
-id|dev
+id|maddr
 comma
 id|iph-&gt;protocol
 comma
@@ -1806,7 +1802,7 @@ id|ms
 comma
 id|skb_ptr
 comma
-id|dev
+id|maddr
 )paren
 op_ne
 l_int|0
@@ -2048,7 +2044,7 @@ macro_line|#ifdef DEBUG_CONFIG_IP_MASQUERADE
 id|printk
 c_func
 (paren
-l_string|&quot;O-routed from %lX:%X over %s&bslash;n&quot;
+l_string|&quot;O-routed from %lX:%X via %lX&bslash;n&quot;
 comma
 id|ntohl
 c_func
@@ -2062,7 +2058,11 @@ c_func
 id|ms-&gt;mport
 )paren
 comma
-id|dev-&gt;name
+id|ntohl
+c_func
+(paren
+id|maddr
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2081,11 +2081,6 @@ id|sk_buff
 op_star
 op_star
 id|skb_p
-comma
-r_struct
-id|device
-op_star
-id|dev
 )paren
 (brace
 r_struct
@@ -2491,11 +2486,6 @@ id|sk_buff
 op_star
 op_star
 id|skb_p
-comma
-r_struct
-id|device
-op_star
-id|dev
 )paren
 (brace
 r_struct
@@ -2900,11 +2890,6 @@ id|sk_buff
 op_star
 op_star
 id|skb_p
-comma
-r_struct
-id|device
-op_star
-id|dev
 )paren
 (brace
 r_struct
@@ -2953,8 +2938,6 @@ id|ip_fw_demasq_icmp
 c_func
 (paren
 id|skb_p
-comma
-id|dev
 )paren
 suffix:semicolon
 r_case
@@ -3284,8 +3267,6 @@ c_func
 id|ms
 comma
 id|skb_p
-comma
-id|dev
 )paren
 op_ne
 l_int|0
@@ -3561,6 +3542,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/*&n; *&t;/proc/net entry&n; */
 DECL|function|ip_msqhst_procinfo
 r_static
@@ -3878,7 +3860,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_net_ipmsqhst
 r_static
 r_struct

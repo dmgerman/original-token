@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.2 1997/08/22 19:15:08 freitag Exp $&n; *&n; *  Missing: IPv6 support. &n; *           Some counter so that the Administrator can see when the machine&n; *           is under a syn flood attack.&n; */
+multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.3 1997/09/16 17:16:21 freitag Exp $&n; *&n; *  Missing: IPv6 support. &n; *           Some counter so that the Administrator can see when the machine&n; *           is under a syn flood attack.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SYN_COOKIES) 
 macro_line|#include &lt;linux/tcp.h&gt;
@@ -688,7 +688,7 @@ id|req-&gt;af.v4_req.loc_addr
 comma
 id|sk-&gt;ip_tos
 comma
-l_int|NULL
+l_int|0
 )paren
 )paren
 (brace

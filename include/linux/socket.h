@@ -115,8 +115,10 @@ multiline_comment|/* protocol-specific type */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Ancilliary data object information MACROS&n; *&t;Table 5-14 of POSIX 1003.1g&n; */
+DECL|macro|__CMSG_NXTHDR
+mdefine_line|#define __CMSG_NXTHDR(ctl, len, cmsg) __cmsg_nxthdr((ctl),(len),(cmsg))
 DECL|macro|CMSG_NXTHDR
-mdefine_line|#define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr(mhdr, cmsg)
+mdefine_line|#define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr((mhdr), (cmsg))
 DECL|macro|CMSG_ALIGN
 mdefine_line|#define CMSG_ALIGN(len) ( ((len)+sizeof(long)-1) &amp; ~(sizeof(long)-1) )
 DECL|macro|CMSG_DATA
@@ -125,45 +127,49 @@ DECL|macro|CMSG_SPACE
 mdefine_line|#define CMSG_SPACE(len) (CMSG_ALIGN(sizeof(struct cmsghdr)) + CMSG_ALIGN(len))
 DECL|macro|CMSG_LEN
 mdefine_line|#define CMSG_LEN(len) (CMSG_ALIGN(sizeof(struct cmsghdr)) + (len))
+DECL|macro|__CMSG_FIRSTHDR
+mdefine_line|#define __CMSG_FIRSTHDR(ctl,len) ((len) &gt;= sizeof(struct cmsghdr) ? &bslash;&n;&t;&t;&t;&t;  (struct cmsghdr *)(ctl) : &bslash;&n;&t;&t;&t;&t;  (struct cmsghdr *)NULL)
 DECL|macro|CMSG_FIRSTHDR
-mdefine_line|#define&t;CMSG_FIRSTHDR(msg)&t;((msg)-&gt;msg_controllen &gt;= sizeof(struct cmsghdr) ? &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)(msg)-&gt;msg_control : &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)NULL)
+mdefine_line|#define CMSG_FIRSTHDR(msg)&t;__CMSG_FIRSTHDR((msg)-&gt;msg_control, (msg)-&gt;msg_controllen)
 multiline_comment|/*&n; *&t;This mess will go away with glibc&n; */
 macro_line|#ifdef __KERNEL__
-DECL|macro|KINLINE
-mdefine_line|#define KINLINE extern __inline__
+DECL|macro|__KINLINE
+mdefine_line|#define __KINLINE extern __inline__
 macro_line|#else
-DECL|macro|KINLINE
-mdefine_line|#define KINLINE static
+DECL|macro|__KINLINE
+mdefine_line|#define __KINLINE static
 macro_line|#endif
 multiline_comment|/*&n; *&t;Get the next cmsg header&n; */
-DECL|function|cmsg_nxthdr
-id|KINLINE
+DECL|function|__cmsg_nxthdr
+id|__KINLINE
 r_struct
 id|cmsghdr
 op_star
-id|cmsg_nxthdr
+id|__cmsg_nxthdr
 c_func
 (paren
-r_struct
-id|msghdr
+r_void
 op_star
-id|mhdr
+id|__ctl
+comma
+id|__kernel_size_t
+id|__size
 comma
 r_struct
 id|cmsghdr
 op_star
-id|cmsg
+id|__cmsg
 )paren
 (brace
 r_int
 r_char
 op_star
-id|ptr
+id|__ptr
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|cmsg-&gt;cmsg_len
+id|__cmsg-&gt;cmsg_len
 OL
 r_sizeof
 (paren
@@ -171,12 +177,10 @@ r_struct
 id|cmsghdr
 )paren
 )paren
-(brace
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
-id|ptr
+id|__ptr
 op_assign
 (paren
 (paren
@@ -184,28 +188,28 @@ r_int
 r_char
 op_star
 )paren
-id|cmsg
+id|__cmsg
 )paren
 op_plus
 id|CMSG_ALIGN
 c_func
 (paren
-id|cmsg-&gt;cmsg_len
+id|__cmsg-&gt;cmsg_len
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ptr
+id|__ptr
 op_ge
 (paren
 r_int
 r_char
 op_star
 )paren
-id|mhdr-&gt;msg_control
+id|__ctl
 op_plus
-id|mhdr-&gt;msg_controllen
+id|__size
 )paren
 r_return
 l_int|NULL
@@ -216,7 +220,37 @@ r_struct
 id|cmsghdr
 op_star
 )paren
-id|ptr
+id|__ptr
+suffix:semicolon
+)brace
+DECL|function|cmsg_nxthdr
+id|__KINLINE
+r_struct
+id|cmsghdr
+op_star
+id|cmsg_nxthdr
+(paren
+r_struct
+id|msghdr
+op_star
+id|__msg
+comma
+r_struct
+id|cmsghdr
+op_star
+id|__cmsg
+)paren
+(brace
+r_return
+id|__cmsg_nxthdr
+c_func
+(paren
+id|__msg-&gt;msg_control
+comma
+id|__msg-&gt;msg_controllen
+comma
+id|__cmsg
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* &quot;Socket&quot;-level control message types: */
@@ -296,6 +330,12 @@ DECL|macro|AF_SECURITY
 mdefine_line|#define AF_SECURITY&t;14&t;/* Security callback pseudo AF */
 DECL|macro|pseudo_AF_KEY
 mdefine_line|#define pseudo_AF_KEY   15      /* PF_KEY key management API */
+DECL|macro|AF_NETLINK
+mdefine_line|#define AF_NETLINK&t;16
+DECL|macro|AF_ROUTE
+mdefine_line|#define AF_ROUTE&t;AF_NETLINK /* Alias to emulate 4.4BSD */
+DECL|macro|AF_PACKET
+mdefine_line|#define AF_PACKET&t;17&t;/* Packet family&t;&t;*/
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -333,6 +373,12 @@ DECL|macro|PF_SECURITY
 mdefine_line|#define PF_SECURITY&t;AF_SECURITY
 DECL|macro|PF_KEY
 mdefine_line|#define PF_KEY          pseudo_AF_KEY
+DECL|macro|PF_NETLINK
+mdefine_line|#define PF_NETLINK&t;AF_NETLINK
+DECL|macro|PF_ROUTE
+mdefine_line|#define PF_ROUTE&t;AF_ROUTE
+DECL|macro|PF_PACKET
+mdefine_line|#define PF_PACKET&t;AF_PACKET
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */
@@ -374,6 +420,11 @@ mdefine_line|#define MSG_CTLFLAGS&t;(MSG_OOB|MSG_URG|MSG_FIN|MSG_SYN|MSG_RST)
 multiline_comment|/* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 DECL|macro|SOL_IP
 mdefine_line|#define SOL_IP&t;&t;0
+multiline_comment|/* #define SOL_ICMP&t;1&t;No-no-no! Due to Linux :-) we cannot use SOL_ICMP=1 */
+DECL|macro|SOL_TCP
+mdefine_line|#define SOL_TCP&t;&t;6
+DECL|macro|SOL_UDP
+mdefine_line|#define SOL_UDP&t;&t;17
 DECL|macro|SOL_IPV6
 mdefine_line|#define SOL_IPV6&t;41
 DECL|macro|SOL_ICMPV6
@@ -394,10 +445,8 @@ DECL|macro|SOL_DECNET
 mdefine_line|#define SOL_DECNET&t;261
 DECL|macro|SOL_X25
 mdefine_line|#define&t;SOL_X25&t;&t;262
-DECL|macro|SOL_TCP
-mdefine_line|#define SOL_TCP&t;&t;6
-DECL|macro|SOL_UDP
-mdefine_line|#define SOL_UDP&t;&t;17
+DECL|macro|SOL_PACKET
+mdefine_line|#define SOL_PACKET&t;263
 multiline_comment|/* IPX options */
 DECL|macro|IPX_TYPE
 mdefine_line|#define IPX_TYPE&t;1
@@ -406,13 +455,6 @@ DECL|macro|TCP_NODELAY
 mdefine_line|#define TCP_NODELAY&t;1
 DECL|macro|TCP_MAXSEG
 mdefine_line|#define TCP_MAXSEG&t;2
-multiline_comment|/* The various priorities. */
-DECL|macro|SOPRI_INTERACTIVE
-mdefine_line|#define SOPRI_INTERACTIVE&t;0
-DECL|macro|SOPRI_NORMAL
-mdefine_line|#define SOPRI_NORMAL&t;&t;1
-DECL|macro|SOPRI_BACKGROUND
-mdefine_line|#define SOPRI_BACKGROUND&t;2
 macro_line|#ifdef __KERNEL__
 r_extern
 r_int
@@ -457,7 +499,6 @@ id|len
 suffix:semicolon
 r_extern
 r_int
-r_int
 id|csum_partial_copy_fromiovecend
 c_func
 (paren
@@ -478,7 +519,8 @@ r_int
 id|len
 comma
 r_int
-id|csum
+op_star
+id|csump
 )paren
 suffix:semicolon
 r_extern
@@ -562,7 +604,7 @@ id|kaddr
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|put_cmsg
 c_func
 (paren

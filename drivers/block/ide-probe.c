@@ -283,7 +283,7 @@ c_func
 l_string|&quot;ATAPI &quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
@@ -293,7 +293,7 @@ c_func
 id|drive
 )paren
 op_member_access_from_pointer
-id|is_promise2
+id|is_pdc4030_2
 )paren
 (brace
 id|printk
@@ -309,7 +309,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 r_switch
 c_cond
 (paren
@@ -593,17 +593,28 @@ op_assign
 id|IDE_ALTSTATUS_REG
 suffix:semicolon
 multiline_comment|/* use non-intrusive polling */
-macro_line|#if CONFIG_BLK_DEV_PROMISE
+macro_line|#if CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
-id|IS_PROMISE_DRIVE
+id|IS_PDC4030_DRIVE
 )paren
 (brace
+r_extern
+r_int
+id|pdc4030_cmd
+c_func
+(paren
+id|ide_drive_t
+op_star
+comma
+id|byte
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|promise_cmd
+id|pdc4030_cmd
 c_func
 (paren
 id|drive
@@ -632,7 +643,7 @@ suffix:semicolon
 )brace
 )brace
 r_else
-macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 id|OUT_BYTE
 c_func
 (paren
@@ -1336,15 +1347,15 @@ suffix:semicolon
 r_int
 id|unit
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
-id|hwif-&gt;is_promise2
+id|hwif-&gt;is_pdc4030_2
 )paren
 r_return
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 id|outb_p
 c_func
 (paren
@@ -1509,12 +1520,12 @@ id|probe_cmos_for_drives
 id|hwif
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_BLK_DEV_PROMISE
+macro_line|#if CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
 op_logical_neg
-id|hwif-&gt;is_promise2
+id|hwif-&gt;is_pdc4030_2
 op_logical_and
 (paren
 id|ide_check_region
@@ -1568,7 +1579,7 @@ l_int|1
 )paren
 )paren
 (brace
-macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 r_int
 id|msgout
 op_assign

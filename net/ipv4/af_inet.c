@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)af_inet.c&t;(from sock.c) 1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&t;&t;Alan Cox&t;:&t;Semantics of SO_LINGER aren&squot;t state moved&n; *&t;&t;&t;&t;&t;to close when you look carefully. With&n; *&t;&t;&t;&t;&t;this fixed and the accept bug fixed &n; *&t;&t;&t;&t;&t;some RPC stuff seems happier.&n; *&t;&t;Niibe Yutaka&t;:&t;4.4BSD style write async I/O&n; *&t;&t;Alan Cox, &n; *&t;&t;Tony Gale &t;:&t;Fixed reuse semantics.&n; *&t;&t;Alan Cox&t;:&t;bind() shouldn&squot;t abort existing but dead&n; *&t;&t;&t;&t;&t;sockets. Stops FTP netin:.. I hope.&n; *&t;&t;Alan Cox&t;:&t;bind() works correctly for RAW sockets. Note&n; *&t;&t;&t;&t;&t;that FreeBSD at least was broken in this respect&n; *&t;&t;&t;&t;&t;so be careful with compatibility tests...&n; *&t;&t;Alan Cox&t;:&t;routing cache support&n; *&t;&t;Alan Cox&t;:&t;memzero the socket structure for compactness.&n; *&t;&t;Matt Day&t;:&t;nonblock connect error handler&n; *&t;&t;Alan Cox&t;:&t;Allow large numbers of pending sockets&n; *&t;&t;&t;&t;&t;(eg for big web sites), but only if&n; *&t;&t;&t;&t;&t;specifically application requested.&n; *&t;&t;Alan Cox&t;:&t;New buffering throughout IP. Used dumbly.&n; *&t;&t;Alan Cox&t;:&t;New buffering now used smartly.&n; *&t;&t;Alan Cox&t;:&t;BSD rather than common sense interpretation of&n; *&t;&t;&t;&t;&t;listen.&n; *&t;&t;Germano Caronni&t;:&t;Assorted small races.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basic support.&n; *&t;&t;Alan Cox&t;:&t;Only sendmsg/recvmsg now supported.&n; *&t;&t;Alan Cox&t;:&t;Locked down bind (see security list).&n; *&t;&t;Alan Cox&t;:&t;Loosened bind a little.&n; *&t;&t;Mike McLagan&t;:&t;ADD/DEL DLCI Ioctls&n; *&t;Willy Konynenberg&t;:&t;Transparent proxying support.&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;Some other random speedups.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;$Id: af_inet.c,v 1.58 1997/10/29 20:27:21 kuznet Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&t;&t;Alan Cox&t;:&t;Semantics of SO_LINGER aren&squot;t state moved&n; *&t;&t;&t;&t;&t;to close when you look carefully. With&n; *&t;&t;&t;&t;&t;this fixed and the accept bug fixed &n; *&t;&t;&t;&t;&t;some RPC stuff seems happier.&n; *&t;&t;Niibe Yutaka&t;:&t;4.4BSD style write async I/O&n; *&t;&t;Alan Cox, &n; *&t;&t;Tony Gale &t;:&t;Fixed reuse semantics.&n; *&t;&t;Alan Cox&t;:&t;bind() shouldn&squot;t abort existing but dead&n; *&t;&t;&t;&t;&t;sockets. Stops FTP netin:.. I hope.&n; *&t;&t;Alan Cox&t;:&t;bind() works correctly for RAW sockets. Note&n; *&t;&t;&t;&t;&t;that FreeBSD at least was broken in this respect&n; *&t;&t;&t;&t;&t;so be careful with compatibility tests...&n; *&t;&t;Alan Cox&t;:&t;routing cache support&n; *&t;&t;Alan Cox&t;:&t;memzero the socket structure for compactness.&n; *&t;&t;Matt Day&t;:&t;nonblock connect error handler&n; *&t;&t;Alan Cox&t;:&t;Allow large numbers of pending sockets&n; *&t;&t;&t;&t;&t;(eg for big web sites), but only if&n; *&t;&t;&t;&t;&t;specifically application requested.&n; *&t;&t;Alan Cox&t;:&t;New buffering throughout IP. Used dumbly.&n; *&t;&t;Alan Cox&t;:&t;New buffering now used smartly.&n; *&t;&t;Alan Cox&t;:&t;BSD rather than common sense interpretation of&n; *&t;&t;&t;&t;&t;listen.&n; *&t;&t;Germano Caronni&t;:&t;Assorted small races.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basic support.&n; *&t;&t;Alan Cox&t;:&t;Only sendmsg/recvmsg now supported.&n; *&t;&t;Alan Cox&t;:&t;Locked down bind (see security list).&n; *&t;&t;Alan Cox&t;:&t;Loosened bind a little.&n; *&t;&t;Mike McLagan&t;:&t;ADD/DEL DLCI Ioctls&n; *&t;Willy Konynenberg&t;:&t;Transparent proxying support.&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;Some other random speedups.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
@@ -32,13 +33,14 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/raw.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
+macro_line|#include &lt;net/ipip.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#ifdef CONFIG_IP_MROUTE
+macro_line|#include &lt;linux/mroute.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_IP_MASQUERADE
 macro_line|#include &lt;net/ip_masq.h&gt;
-macro_line|#endif
-macro_line|#ifdef CONFIG_IP_ALIAS
-macro_line|#include &lt;net/ip_alias.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_BRIDGE
 macro_line|#include &lt;net/br.h&gt;
@@ -54,11 +56,6 @@ mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 r_extern
 r_int
 id|sysctl_core_destroy_delay
-suffix:semicolon
-r_extern
-r_struct
-id|proto
-id|packet_prot
 suffix:semicolon
 r_extern
 r_int
@@ -153,6 +150,17 @@ comma
 r_int
 comma
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_mc_drop_socket
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_DLCI
@@ -346,13 +354,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* This is gross, but needed for SOCK_PACKET -DaveM */
-r_if
-c_cond
-(paren
-id|sk-&gt;prot-&gt;unhash
-)paren
-(brace
+multiline_comment|/* Remove from protocol hash chains. */
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|unhash
@@ -361,7 +363,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -896,6 +897,64 @@ id|proto
 op_star
 id|prot
 suffix:semicolon
+multiline_comment|/* Compatibility */
+r_if
+c_cond
+(paren
+id|sock-&gt;type
+op_eq
+id|SOCK_PACKET
+)paren
+(brace
+r_static
+r_int
+id|warned
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|net_families
+(braket
+id|AF_PACKET
+)braket
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ESOCKTNOSUPPORT
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|warned
+op_increment
+)paren
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s uses obsolete (AF_INET,SOCK_PACKET)&bslash;n&quot;
+comma
+id|current-&gt;comm
+)paren
+suffix:semicolon
+r_return
+id|net_families
+(braket
+id|AF_PACKET
+)braket
+op_member_access_from_pointer
+id|create
+c_func
+(paren
+id|sock
+comma
+id|protocol
+)paren
+suffix:semicolon
+)brace
 id|sock-&gt;state
 op_assign
 id|SS_UNCONNECTED
@@ -920,19 +979,16 @@ l_int|NULL
 r_goto
 id|do_oom
 suffix:semicolon
-multiline_comment|/* Note for tcp that also wiped the dummy_th block for us. */
-r_if
+r_switch
 c_cond
 (paren
 id|sock-&gt;type
-op_eq
-id|SOCK_STREAM
-op_logical_or
-id|sock-&gt;type
-op_eq
-id|SOCK_SEQPACKET
 )paren
 (brace
+r_case
+id|SOCK_STREAM
+suffix:colon
+multiline_comment|/* Note for tcp that also wiped the dummy_th block for us. */
 r_if
 c_cond
 (paren
@@ -977,16 +1033,17 @@ op_assign
 op_amp
 id|inet_stream_ops
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|sock-&gt;type
-op_eq
+r_break
+suffix:semicolon
+r_case
+id|SOCK_SEQPACKET
+suffix:colon
+r_goto
+id|free_and_badtype
+suffix:semicolon
+r_case
 id|SOCK_DGRAM
-)paren
-(brace
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1021,20 +1078,11 @@ op_assign
 op_amp
 id|inet_dgram_ops
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|sock-&gt;type
-op_eq
+r_break
+suffix:semicolon
+r_case
 id|SOCK_RAW
-op_logical_or
-id|sock-&gt;type
-op_eq
-id|SOCK_PACKET
-)paren
-(brace
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1058,18 +1106,8 @@ id|free_and_noproto
 suffix:semicolon
 id|prot
 op_assign
-(paren
-id|sock-&gt;type
-op_eq
-id|SOCK_RAW
-)paren
-ques
-c_cond
 op_amp
 id|raw_prot
-suffix:colon
-op_amp
-id|packet_prot
 suffix:semicolon
 id|sk-&gt;reuse
 op_assign
@@ -1088,9 +1126,21 @@ op_assign
 op_amp
 id|inet_dgram_ops
 suffix:semicolon
-)brace
-r_else
-(brace
+r_if
+c_cond
+(paren
+id|protocol
+op_eq
+id|IPPROTO_RAW
+)paren
+id|sk-&gt;ip_hdrincl
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 r_goto
 id|free_and_badtype
 suffix:semicolon
@@ -1150,28 +1200,6 @@ id|sk-&gt;ip_ttl
 op_assign
 id|ip_statistics.IpDefaultTTL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;type
-op_eq
-id|SOCK_RAW
-op_logical_and
-id|protocol
-op_eq
-id|IPPROTO_RAW
-)paren
-(brace
-id|sk-&gt;ip_hdrincl
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_else
-id|sk-&gt;ip_hdrincl
-op_assign
-l_int|0
-suffix:semicolon
 id|sk-&gt;ip_mc_loop
 op_assign
 l_int|1
@@ -1198,19 +1226,13 @@ id|sk-&gt;num
 multiline_comment|/* It assumes that any protocol which allows&n;&t;&t; * the user to assign a number at socket&n;&t;&t; * creation time automatically&n;&t;&t; * shares.&n;&t;&t; */
 id|sk-&gt;dummy_th.source
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|sk-&gt;num
 )paren
 suffix:semicolon
-multiline_comment|/* This is gross, but needed for SOCK_PACKET -DaveM */
-r_if
-c_cond
-(paren
-id|sk-&gt;prot-&gt;hash
-)paren
-(brace
+multiline_comment|/* Add to protocol hash chains. */
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|hash
@@ -1219,7 +1241,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-)brace
 id|add_to_prot_sklist
 c_func
 (paren
@@ -1478,7 +1499,7 @@ suffix:semicolon
 r_int
 id|chk_addr_ret
 suffix:semicolon
-multiline_comment|/* If the socket has its own bind function then use it. (RAW and PACKET) */
+multiline_comment|/* If the socket has its own bind function then use it. (RAW) */
 r_if
 c_cond
 (paren
@@ -1596,7 +1617,7 @@ id|EACCES
 suffix:semicolon
 id|chk_addr_ret
 op_assign
-id|__ip_chk_addr
+id|inet_addr_type
 c_func
 (paren
 id|addr-&gt;sin_addr.s_addr
@@ -1611,15 +1632,15 @@ l_int|0
 op_logical_and
 id|chk_addr_ret
 op_ne
-id|IS_MYADDR
+id|RTN_LOCAL
 op_logical_and
 id|chk_addr_ret
 op_ne
-id|IS_MULTICAST
+id|RTN_MULTICAST
 op_logical_and
 id|chk_addr_ret
 op_ne
-id|IS_BROADCAST
+id|RTN_BROADCAST
 )paren
 (brace
 macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
@@ -1627,6 +1648,10 @@ multiline_comment|/* Superuser may bind to any address to allow transparent prox
 r_if
 c_cond
 (paren
+id|chk_addr_ret
+op_ne
+id|RTN_UNICAST
+op_logical_or
 op_logical_neg
 id|suser
 c_func
@@ -1654,11 +1679,11 @@ c_cond
 (paren
 id|chk_addr_ret
 op_eq
-id|IS_MULTICAST
+id|RTN_MULTICAST
 op_logical_or
 id|chk_addr_ret
 op_eq
-id|IS_BROADCAST
+id|RTN_BROADCAST
 )paren
 (brace
 id|sk-&gt;saddr
@@ -1693,7 +1718,7 @@ id|snum
 suffix:semicolon
 id|sk-&gt;dummy_th.source
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|snum
@@ -3202,15 +3227,6 @@ suffix:colon
 r_case
 id|SIOCSARP
 suffix:colon
-r_case
-id|OLD_SIOCDARP
-suffix:colon
-r_case
-id|OLD_SIOCGARP
-suffix:colon
-r_case
-id|OLD_SIOCSARP
-suffix:colon
 r_return
 id|arp_ioctl
 c_func
@@ -3292,6 +3308,15 @@ suffix:colon
 r_case
 id|SIOCSIFDSTADDR
 suffix:colon
+r_case
+id|SIOCSIFPFLAGS
+suffix:colon
+r_case
+id|SIOCGIFPFLAGS
+suffix:colon
+r_case
+id|SIOCSIFFLAGS
+suffix:colon
 r_return
 id|devinet_ioctl
 c_func
@@ -3310,9 +3335,6 @@ id|SIOCGIFCONF
 suffix:colon
 r_case
 id|SIOCGIFFLAGS
-suffix:colon
-r_case
-id|SIOCSIFFLAGS
 suffix:colon
 r_case
 id|SIOCADDMULTI
@@ -3360,13 +3382,16 @@ r_case
 id|SIOCGIFSLAVE
 suffix:colon
 r_case
-id|SIOGIFINDEX
+id|SIOCGIFINDEX
 suffix:colon
 r_case
-id|SIOGIFNAME
+id|SIOCGIFNAME
 suffix:colon
 r_case
 id|SIOCGIFCOUNT
+suffix:colon
+r_case
+id|SIOCSIFHWBROADCAST
 suffix:colon
 r_return
 id|dev_ioctl
@@ -4012,6 +4037,21 @@ op_amp
 id|inet_family_ops
 )paren
 suffix:semicolon
+multiline_comment|/* I wish inet_add_protocol had no constructor hook...&n;&t;   I had to move IPIP from net/ipv4/protocol.c :-( --ANK&n;&t; */
+macro_line|#ifdef CONFIG_NET_IPIP
+id|ipip_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_IPGRE
+id|ipgre_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Set the firewalling up&n;&t; */
 macro_line|#if defined(CONFIG_IP_ACCT)||defined(CONFIG_IP_FIREWALL)
 id|ip_fw_init
@@ -4030,14 +4070,6 @@ macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Initialise the multicast router&n;&t; */
 macro_line|#if defined(CONFIG_IP_MROUTE)
 id|ip_mr_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t; *  Initialise AF_INET alias type (register net_alias_type)&n;&t; */
-macro_line|#if defined(CONFIG_IP_ALIAS)
-id|ip_alias_init
 c_func
 (paren
 )paren

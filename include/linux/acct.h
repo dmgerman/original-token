@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* &n; *  comp_t is a 16-bit &quot;floating&quot; point number with a 3-bit base 8&n; *  exponent and a 13-bit fraction. See linux/kernel/acct.c for the&n; *  specific encoding system used.&n; */
 DECL|typedef|comp_t
 r_typedef
-id|u16
+id|__u16
 id|comp_t
 suffix:semicolon
 multiline_comment|/*&n; *   accounting file record&n; *&n; *   This structure contains all of the information written out to the&n; *   process accounting file whenever a process exits.&n; */
@@ -23,22 +23,22 @@ suffix:semicolon
 multiline_comment|/* Accounting Flags */
 multiline_comment|/*&n; *&t;No binary format break with 2.0 - but when we hit 32bit uid we&squot;ll&n; *&t;have to bite one&n; */
 DECL|member|ac_uid
-id|u16
+id|__u16
 id|ac_uid
 suffix:semicolon
 multiline_comment|/* Accounting Real User ID */
 DECL|member|ac_gid
-id|u16
+id|__u16
 id|ac_gid
 suffix:semicolon
 multiline_comment|/* Accounting Real Group ID */
 DECL|member|ac_tty
-id|u16
+id|__u16
 id|ac_tty
 suffix:semicolon
 multiline_comment|/* Accounting Control Terminal */
 DECL|member|ac_btime
-id|u32
+id|__u32
 id|ac_btime
 suffix:semicolon
 multiline_comment|/* Accounting Process Creation Time */
@@ -88,7 +88,7 @@ id|ac_swaps
 suffix:semicolon
 multiline_comment|/* Accounting Number of Swaps */
 DECL|member|ac_exitcode
-id|u32
+id|__u32
 id|ac_exitcode
 suffix:semicolon
 multiline_comment|/* Accounting Exitcode */

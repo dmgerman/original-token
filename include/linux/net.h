@@ -2,10 +2,12 @@ multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network acces
 macro_line|#ifndef _LINUX_NET_H
 DECL|macro|_LINUX_NET_H
 mdefine_line|#define _LINUX_NET_H
-macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
+r_struct
+id|poll_table_struct
+suffix:semicolon
 DECL|macro|NPROTO
-mdefine_line|#define NPROTO&t;&t;16&t;&t;/* should be enough for now..&t;*/
+mdefine_line|#define NPROTO&t;&t;32&t;&t;/* should be enough for now..&t;*/
 DECL|macro|SYS_SOCKET
 mdefine_line|#define SYS_SOCKET&t;1&t;&t;/* sys_socket(2)&t;&t;*/
 DECL|macro|SYS_BIND
@@ -313,7 +315,8 @@ id|socket
 op_star
 id|sock
 comma
-id|poll_table
+r_struct
+id|poll_table_struct
 op_star
 id|wait
 )paren

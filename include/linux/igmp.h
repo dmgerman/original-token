@@ -40,7 +40,7 @@ mdefine_line|#define IGMP_TRACE&t;&t;&t;0x15
 DECL|macro|IGMP_HOST_NEW_MEMBERSHIP_REPORT
 mdefine_line|#define IGMP_HOST_NEW_MEMBERSHIP_REPORT 0x16&t;/* New version of 0x11 */
 DECL|macro|IGMP_HOST_LEAVE_MESSAGE
-mdefine_line|#define IGMP_HOST_LEAVE_MESSAGE &t;0x17&t;/* An extra BSD seems to send */
+mdefine_line|#define IGMP_HOST_LEAVE_MESSAGE &t;0x17
 DECL|macro|IGMP_MTRACE_RESP
 mdefine_line|#define IGMP_MTRACE_RESP&t;&t;0x1e
 DECL|macro|IGMP_MTRACE
@@ -56,10 +56,6 @@ DECL|macro|IGMP_SLEEPING_MEMBER
 mdefine_line|#define IGMP_SLEEPING_MEMBER&t;&t;0x04
 DECL|macro|IGMP_AWAKENING_MEMBER
 mdefine_line|#define IGMP_AWAKENING_MEMBER&t;&t;0x05
-DECL|macro|IGMP_OLD_ROUTER
-mdefine_line|#define IGMP_OLD_ROUTER &t;&t;0x00
-DECL|macro|IGMP_NEW_ROUTER
-mdefine_line|#define IGMP_NEW_ROUTER &t;&t;0x01
 DECL|macro|IGMP_MINLEN
 mdefine_line|#define IGMP_MINLEN&t;&t;&t;8
 DECL|macro|IGMP_MAX_HOST_REPORT_DELAY
@@ -69,7 +65,7 @@ DECL|macro|IGMP_TIMER_SCALE
 mdefine_line|#define IGMP_TIMER_SCALE&t;&t;10&t;/* denotes that the igmphdr-&gt;timer field */
 multiline_comment|/* specifies time in 10th of seconds&t; */
 DECL|macro|IGMP_AGE_THRESHOLD
-mdefine_line|#define IGMP_AGE_THRESHOLD&t;&t;540&t;/* If this host don&squot;t hear any IGMP V1&t;*/
+mdefine_line|#define IGMP_AGE_THRESHOLD&t;&t;400&t;/* If this host don&squot;t hear any IGMP V1&t;*/
 multiline_comment|/* message in this period of time,&t;*/
 multiline_comment|/* revert to IGMP v2 router.&t;&t;*/
 DECL|macro|IGMP_ALL_HOSTS
@@ -82,27 +78,25 @@ DECL|macro|IGMP_LOCAL_GROUP_MASK
 mdefine_line|#define IGMP_LOCAL_GROUP_MASK&t;htonl(0xFFFFFF00L)
 multiline_comment|/*&n; * struct for keeping the multicast list in&n; */
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* ip_mc_socklist is real list now. Speed is not argument;&n;   this list never used in fast path code&n; */
 DECL|struct|ip_mc_socklist
 r_struct
 id|ip_mc_socklist
 (brace
-DECL|member|multiaddr
-r_int
-r_int
-id|multiaddr
-(braket
-id|IP_MAX_MEMBERSHIPS
-)braket
-suffix:semicolon
-multiline_comment|/* This is a speed trade off */
-DECL|member|multidev
+DECL|member|next
 r_struct
-id|device
+id|ip_mc_socklist
 op_star
-id|multidev
-(braket
-id|IP_MAX_MEMBERSHIPS
-)braket
+id|next
+suffix:semicolon
+DECL|member|count
+r_int
+id|count
+suffix:semicolon
+DECL|member|multi
+r_struct
+id|ip_mreqn
+id|multi
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -112,7 +106,7 @@ id|ip_mc_list
 (brace
 DECL|member|interface
 r_struct
-id|device
+id|in_device
 op_star
 id|interface
 suffix:semicolon
@@ -144,47 +138,74 @@ DECL|member|reporter
 r_char
 id|reporter
 suffix:semicolon
+DECL|member|unsolicit_count
+r_char
+id|unsolicit_count
+suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|ip_router_info
-r_struct
-id|ip_router_info
-(brace
-DECL|member|dev
+DECL|function|ip_check_mc
+r_extern
+id|__inline__
+r_int
+id|ip_check_mc
+c_func
+(paren
 r_struct
 id|device
 op_star
 id|dev
-suffix:semicolon
-DECL|member|type
-r_int
-id|type
-suffix:semicolon
-multiline_comment|/* type of router which is querier on this interface */
-DECL|member|time
-r_int
-id|time
-suffix:semicolon
-multiline_comment|/* # of slow timeouts since last old query */
-DECL|member|timer
+comma
+id|u32
+id|mc_addr
+)paren
+(brace
 r_struct
-id|timer_list
-id|timer
-suffix:semicolon
-DECL|member|next
-r_struct
-id|ip_router_info
+id|in_device
 op_star
-id|next
+id|in_dev
+op_assign
+id|dev-&gt;ip_ptr
 suffix:semicolon
-)brace
-suffix:semicolon
-r_extern
 r_struct
 id|ip_mc_list
 op_star
-id|ip_mc_head
+id|im
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|in_dev
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|im
+op_assign
+id|in_dev-&gt;mc_list
+suffix:semicolon
+id|im
+suffix:semicolon
+id|im
+op_assign
+id|im-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|im-&gt;multiaddr
+op_eq
+id|mc_addr
+)paren
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_extern
 r_int
 id|igmp_rcv
@@ -199,17 +220,6 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|ip_mc_drop_device
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|ip_mc_join_group
 c_func
@@ -220,13 +230,9 @@ op_star
 id|sk
 comma
 r_struct
-id|device
+id|ip_mreqn
 op_star
-id|dev
-comma
-r_int
-r_int
-id|addr
+id|imr
 )paren
 suffix:semicolon
 r_extern
@@ -240,13 +246,9 @@ op_star
 id|sk
 comma
 r_struct
-id|device
+id|ip_mreqn
 op_star
-id|dev
-comma
-r_int
-r_int
-id|addr
+id|imr
 )paren
 suffix:semicolon
 r_extern
@@ -266,6 +268,74 @@ id|ip_mr_init
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_mc_init_dev
+c_func
+(paren
+r_struct
+id|in_device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_mc_destroy_dev
+c_func
+(paren
+r_struct
+id|in_device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_mc_up
+c_func
+(paren
+r_struct
+id|in_device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_mc_down
+c_func
+(paren
+r_struct
+id|in_device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ip_mc_dec_group
+c_func
+(paren
+r_struct
+id|in_device
+op_star
+id|in_dev
+comma
+id|u32
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_mc_inc_group
+c_func
+(paren
+r_struct
+id|in_device
+op_star
+id|in_dev
+comma
+id|u32
+id|addr
 )paren
 suffix:semicolon
 macro_line|#endif

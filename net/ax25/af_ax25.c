@@ -5336,10 +5336,6 @@ id|skb-&gt;dev
 op_assign
 id|sk-&gt;protinfo.ax25-&gt;ax25_dev-&gt;dev
 suffix:semicolon
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|ax25_queue_xmit
 c_func
 (paren

@@ -47,6 +47,9 @@ r_int
 r_char
 op_star
 id|dp
+comma
+r_int
+id|len
 )paren
 suffix:semicolon
 DECL|member|next

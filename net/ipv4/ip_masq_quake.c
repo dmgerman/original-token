@@ -176,11 +176,6 @@ id|sk_buff
 op_star
 op_star
 id|skb_p
-comma
-r_struct
-id|device
-op_star
-id|dev
 )paren
 (brace
 r_struct
@@ -514,10 +509,8 @@ op_star
 op_star
 id|skb_p
 comma
-r_struct
-id|device
-op_star
-id|dev
+id|__u32
+id|maddr
 )paren
 (brace
 r_struct
@@ -824,7 +817,7 @@ op_assign
 id|ip_masq_new
 c_func
 (paren
-id|dev
+id|maddr
 comma
 id|IPPROTO_UDP
 comma

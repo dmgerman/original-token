@@ -1691,6 +1691,13 @@ id|skb_queue_head_init
 c_func
 (paren
 op_amp
+id|x25-&gt;ack_queue
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
 id|x25-&gt;fragment_queue
 )paren
 suffix:semicolon

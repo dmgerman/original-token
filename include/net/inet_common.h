@@ -193,7 +193,8 @@ id|socket
 op_star
 id|sock
 comma
-id|poll_table
+r_struct
+id|poll_table_struct
 op_star
 id|wait
 )paren

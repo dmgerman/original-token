@@ -35,6 +35,7 @@ macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -2557,6 +2558,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Break the tty-&gt;ppp link */
+id|rtnl_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Strong layering violation. */
 r_if
 c_cond
@@ -2575,6 +2581,11 @@ id|dev
 suffix:semicolon
 multiline_comment|/* close the device properly */
 )brace
+id|rtnl_unlock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ppp_free_buf
 (paren
 id|ppp-&gt;rbuf
@@ -10709,10 +10720,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;I am dying to know, are you still alive?&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;ppp: I am dying to know, are you still alive?&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef main_got_it_is_something
+macro_line|#if 0
 id|dev_close
 (paren
 id|dev

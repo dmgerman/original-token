@@ -18243,7 +18243,7 @@ l_int|0
 id|DPRINT
 c_func
 (paren
-l_string|&quot;Floppy io-port 0x%04x in use&bslash;n&quot;
+l_string|&quot;Floppy io-port 0x%04lx in use&bslash;n&quot;
 comma
 id|FDCS-&gt;address
 )paren

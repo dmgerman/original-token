@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/if_slip.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -2575,6 +2576,11 @@ id|SLIP_MAGIC
 r_return
 suffix:semicolon
 )brace
+id|rtnl_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2637,6 +2643,17 @@ id|sl_free
 c_func
 (paren
 id|sl
+)paren
+suffix:semicolon
+id|unregister_netdevice
+c_func
+(paren
+id|sl-&gt;dev
+)paren
+suffix:semicolon
+id|rtnl_unlock
+c_func
+(paren
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT

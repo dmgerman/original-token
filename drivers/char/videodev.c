@@ -729,6 +729,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE&t;&t;
 DECL|function|init_module
 r_int
 id|init_module
@@ -761,6 +762,7 @@ l_string|&quot;video_capture&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|variable|video_register_device
 id|EXPORT_SYMBOL
 c_func

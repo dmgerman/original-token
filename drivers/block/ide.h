@@ -1,7 +1,7 @@
 macro_line|#ifndef _IDE_H
 DECL|macro|_IDE_H
 mdefine_line|#define _IDE_H
-multiline_comment|/*&n; *  linux/drivers/block/ide.h&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide.h&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 multiline_comment|/*&n; * This is the multiple IDE interface driver, as evolved from hd.c.  &n; * It supports up to four IDE interfaces, on one or more IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary i/f:    ide0: major=3;  (hda)         minor=0; (hdb)         minor=64&n; * Secondary i/f:  ide1: major=22; (hdc or hd1a) minor=0; (hdd or hd1b) minor=64&n; * Tertiary i/f:   ide2: major=33; (hde)         minor=0; (hdf)         minor=64&n; * Quaternary i/f: ide3: major=34; (hdg)         minor=0; (hdh)         minor=64&n; */
@@ -195,13 +195,13 @@ DECL|macro|WAIT_CMD
 mdefine_line|#define WAIT_CMD&t;(10*HZ)&t;/* 10sec  - maximum wait for an IRQ to happen */
 DECL|macro|WAIT_MIN_SLEEP
 mdefine_line|#define WAIT_MIN_SLEEP&t;(2*HZ/100)&t;/* 20msec - minimum sleep time */
-macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PROMISE)
+macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PDC4030)
 DECL|macro|SELECT_DRIVE
 mdefine_line|#define SELECT_DRIVE(hwif,drive)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;selectproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;selectproc(drive);&t;&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]); &bslash;&n;}
 macro_line|#else
 DECL|macro|SELECT_DRIVE
 mdefine_line|#define SELECT_DRIVE(hwif,drive)  OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]);
-macro_line|#endif&t;/* CONFIG_BLK_DEV_HT6560B || CONFIG_BLK_DEV_PROMISE */
+macro_line|#endif&t;/* CONFIG_BLK_DEV_HT6560B || CONFIG_BLK_DEV_PDC4030 */
 multiline_comment|/*&n; * Now for the data we need to maintain per-drive:  ide_drive_t&n; */
 DECL|macro|ide_scsi
 mdefine_line|#define ide_scsi&t;0x21
@@ -545,6 +545,12 @@ r_int
 id|cyl
 suffix:semicolon
 multiline_comment|/* &quot;real&quot; number of cyls */
+DECL|member|timing_data
+r_int
+r_int
+id|timing_data
+suffix:semicolon
+multiline_comment|/* for use by tuneproc()&squot;s */
 DECL|member|hwif
 r_void
 op_star
@@ -641,9 +647,14 @@ op_assign
 l_int|7
 comma
 DECL|enumerator|ide_dma_off
+DECL|enumerator|ide_dma_off_quietly
 id|ide_dma_off
 op_assign
 l_int|8
+comma
+id|ide_dma_off_quietly
+op_assign
+l_int|9
 )brace
 DECL|typedef|ide_dma_action_t
 id|ide_dma_action_t
@@ -675,7 +686,7 @@ comma
 id|byte
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is used to provide HT6560B &amp; PROMISE interface support.&n; */
+multiline_comment|/*&n; * This is used to provide HT6560B &amp; PDC4030 interface support.&n; */
 DECL|typedef|ide_selectproc_t
 r_typedef
 r_void
@@ -690,7 +701,7 @@ suffix:semicolon
 multiline_comment|/*&n; * hwif_chipset_t is used to keep track of the specific hardware&n; * chipset used by each IDE interface, if known.&n; */
 DECL|enumerator|ide_unknown
 DECL|enumerator|ide_generic
-DECL|enumerator|ide_triton
+DECL|enumerator|ide_pci
 r_typedef
 r_enum
 (brace
@@ -698,7 +709,7 @@ id|ide_unknown
 comma
 id|ide_generic
 comma
-id|ide_triton
+id|ide_pci
 comma
 DECL|enumerator|ide_cmd640
 DECL|enumerator|ide_dtc2278
@@ -718,11 +729,11 @@ id|ide_umc8672
 comma
 id|ide_ht6560b
 comma
-DECL|enumerator|ide_promise
-DECL|enumerator|ide_via
-id|ide_promise
+DECL|enumerator|ide_pdc4030
+DECL|enumerator|ide_rz1000
+id|ide_pdc4030
 comma
-id|ide_via
+id|ide_rz1000
 )brace
 DECL|typedef|hwif_chipset_t
 id|hwif_chipset_t
@@ -774,7 +785,7 @@ op_star
 id|tuneproc
 suffix:semicolon
 multiline_comment|/* routine to tune PIO mode for drives */
-macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PROMISE)
+macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PDC4030)
 DECL|member|selectproc
 id|ide_selectproc_t
 op_star
@@ -857,15 +868,15 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* 1 = sharing irq with another hwif */
-macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
-DECL|member|is_promise2
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
+DECL|member|is_pdc4030_2
 r_int
-id|is_promise2
+id|is_pdc4030_2
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* 2nd i/f on promise DC4030 */
-macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+multiline_comment|/* 2nd i/f on pdc4030 */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 DECL|member|reset
 r_int
 id|reset
@@ -1722,26 +1733,6 @@ op_star
 id|drive
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_TRITON
-r_void
-id|ide_init_triton
-(paren
-id|byte
-comma
-id|byte
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
-macro_line|#ifdef CONFIG_BLK_DEV_OPTI621
-r_void
-id|ide_init_opti621
-(paren
-id|byte
-comma
-id|byte
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_OPTI621 */
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_int
 id|ideprobe_init
@@ -1750,13 +1741,13 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDE */
-macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
-macro_line|#include &quot;promise.h&quot;
-DECL|macro|IS_PROMISE_DRIVE
-mdefine_line|#define IS_PROMISE_DRIVE (HWIF(drive)-&gt;chipset == ide_promise)
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
+macro_line|#include &quot;pdc4030.h&quot;
+DECL|macro|IS_PDC4030_DRIVE
+mdefine_line|#define IS_PDC4030_DRIVE (HWIF(drive)-&gt;chipset == ide_pdc4030)
 macro_line|#else
-DECL|macro|IS_PROMISE_DRIVE
-mdefine_line|#define IS_PROMISE_DRIVE (0)&t;/* auto-NULLs out Promise code */
-macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
+DECL|macro|IS_PDC4030_DRIVE
+mdefine_line|#define IS_PDC4030_DRIVE (0)&t;/* auto-NULLs out pdc4030 code */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 macro_line|#endif /* _IDE_H */
 eof

@@ -592,10 +592,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|ax25_queue_xmit
 c_func
 (paren

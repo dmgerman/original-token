@@ -78,6 +78,17 @@ DECL|member|rtt
 r_int
 id|rtt
 suffix:semicolon
+DECL|member|rate_last
+r_int
+r_int
+id|rate_last
+suffix:semicolon
+multiline_comment|/* rate limiting for ICMP */
+DECL|member|rate_tokens
+r_int
+r_int
+id|rate_tokens
+suffix:semicolon
 DECL|member|error
 r_int
 id|error
@@ -155,7 +166,7 @@ r_struct
 id|dst_entry
 op_star
 comma
-id|u32
+id|__u32
 id|cookie
 )paren
 suffix:semicolon
@@ -191,6 +202,7 @@ op_star
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 r_extern
 r_struct
 id|dst_entry
@@ -488,5 +500,6 @@ id|dst
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif /* _NET_DST_H */
 eof

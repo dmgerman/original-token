@@ -38,14 +38,12 @@ mdefine_line|#define TCP_PUSH_BIT 0x10
 multiline_comment|/*&n; * data type and sizes conversion assumptions:&n; *&n; *&t;VJ code&t;&t;KA9Q style&t;generic&n; *&t;u_char&t;&t;byte_t&t;&t;unsigned char&t; 8 bits&n; *&t;u_short&t;&t;int16&t;&t;unsigned short&t;16 bits&n; *&t;u_int&t;&t;int16&t;&t;unsigned short&t;16 bits&n; *&t;u_long&t;&t;unsigned long&t;unsigned long&t;32 bits&n; *&t;int&t;&t;int32&t;&t;long&t;&t;32 bits&n; */
 DECL|typedef|byte_t
 r_typedef
-r_int
-r_char
+id|__u8
 id|byte_t
 suffix:semicolon
 DECL|typedef|int32
 r_typedef
-r_int
-r_int
+id|__u32
 id|int32
 suffix:semicolon
 multiline_comment|/*&n; * &quot;state&quot; data for each active tcp conversation on the wire.  This is&n; * basically a copy of the entire IP/TCP header from the last packet&n; * we saw from the conversation together with a small identifier&n; * the transmit &amp; receive ends of the line use to locate saved header.&n; */

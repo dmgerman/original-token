@@ -2057,10 +2057,6 @@ id|skb-&gt;mac.raw
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Send it out &n;&t; */
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren

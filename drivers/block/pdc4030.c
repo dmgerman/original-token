@@ -1,5 +1,5 @@
-multiline_comment|/*  -*- linux-c -*-&n; *  linux/drivers/block/promise.c&t;Version 0.07  Mar 26, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  peterd@pnd-pc.demon.co.uk&n; *&n; *  This file provides support for the second port and cache of Promise&n; *  IDE interfaces, e.g. DC4030, DC5030.&n; *&n; *  Thanks are due to Mark Lord for advice and patiently answering stupid&n; *  questions, and all those mugs^H^H^H^Hbrave souls who&squot;ve tested this.&n; *&n; *  Version 0.01&t;Initial version, #include&squot;d in ide.c rather than&n; *                      compiled separately.&n; *                      Reads use Promise commands, writes as before. Drives&n; *                      on second channel are read-only.&n; *  Version 0.02        Writes working on second channel, reads on both&n; *                      channels. Writes fail under high load. Suspect&n; *&t;&t;&t;transfers of &gt;127 sectors don&squot;t work.&n; *  Version 0.03        Brought into line with ide.c version 5.27.&n; *                      Other minor changes.&n; *  Version 0.04        Updated for ide.c version 5.30&n; *                      Changed initialization strategy&n; *  Version 0.05&t;Kernel integration.  -ml&n; *  Version 0.06&t;Ooops. Add hwgroup to direct call of ide_intr() -ml&n; *  Version 0.07&t;Added support for DC4030 variants&n; *&t;&t;&t;Secondary interface autodetection&n; */
+multiline_comment|/*  -*- linux-c -*-&n; *  linux/drivers/block/pdc4030.c&t;Version 0.08  Nov 30, 1997&n; *&n; *  Copyright (C) 1995-1998  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Principal Author/Maintainer:  peterd@pnd-pc.demon.co.uk&n; *&n; *  This file provides support for the second port and cache of Promise&n; *  IDE interfaces, e.g. DC4030, DC5030.&n; *&n; *  Thanks are due to Mark Lord for advice and patiently answering stupid&n; *  questions, and all those mugs^H^H^H^Hbrave souls who&squot;ve tested this.&n; *&n; *  Version 0.01&t;Initial version, #include&squot;d in ide.c rather than&n; *                      compiled separately.&n; *                      Reads use Promise commands, writes as before. Drives&n; *                      on second channel are read-only.&n; *  Version 0.02        Writes working on second channel, reads on both&n; *                      channels. Writes fail under high load. Suspect&n; *&t;&t;&t;transfers of &gt;127 sectors don&squot;t work.&n; *  Version 0.03        Brought into line with ide.c version 5.27.&n; *                      Other minor changes.&n; *  Version 0.04        Updated for ide.c version 5.30&n; *                      Changed initialization strategy&n; *  Version 0.05&t;Kernel integration.  -ml&n; *  Version 0.06&t;Ooops. Add hwgroup to direct call of ide_intr() -ml&n; *  Version 0.07&t;Added support for DC4030 variants&n; *&t;&t;&t;Secondary interface autodetection&n; *  Version 0.08&t;Renamed to pdc4030.c&n; */
 multiline_comment|/*&n; * Once you&squot;ve compiled it in, you&squot;ll have to also enable the interface&n; * setup routine from the kernel command line, as in &n; *&n; *&t;&squot;linux ide0=dc4030&squot;&n; *&n; * As before, it seems that somewhere around 3Megs when writing, bad things&n; * start to happen [timeouts/retries -ml]. If anyone can give me more feedback,&n; * I&squot;d really appreciate it.  [email: peterd@pnd-pc.demon.co.uk]&n; *&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;ide.h&quot;
-macro_line|#include &quot;promise.h&quot;
+macro_line|#include &quot;pdc4030.h&quot;
 multiline_comment|/* This is needed as the controller may not interrupt if the required data is&n;available in the cache. We have to simulate an interrupt. Ugh! */
 r_extern
 r_void
@@ -72,7 +72,7 @@ c_func
 id|drive
 )paren
 op_member_access_from_pointer
-id|is_promise2
+id|is_pdc4030_2
 )paren
 op_lshift
 l_int|1
@@ -89,10 +89,10 @@ id|IDE_FEATURE_REG
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * promise_cmd handles the set of vendor specific commands that are initiated&n; * by command F0. They all have the same success/failure notification.&n; */
-DECL|function|promise_cmd
+multiline_comment|/*&n; * pdc4030_cmd handles the set of vendor specific commands that are initiated&n; * by command F0. They all have the same success/failure notification.&n; */
+DECL|function|pdc4030_cmd
 r_int
-id|promise_cmd
+id|pdc4030_cmd
 c_func
 (paren
 id|ide_drive_t
@@ -239,9 +239,9 @@ id|hwif_required
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|setup_dc4030
+DECL|function|setup_pdc4030
 r_void
-id|setup_dc4030
+id|setup_pdc4030
 (paren
 id|ide_hwif_t
 op_star
@@ -253,10 +253,10 @@ op_assign
 id|hwif
 suffix:semicolon
 )brace
-multiline_comment|/*&n;init_dc4030: Test for presence of a Promise caching controller card.&n;Returns: 0 if no Promise card present at this io_base&n;&t; 1 if Promise card found&n;*/
-DECL|function|init_dc4030
+multiline_comment|/*&n;init_pdc4030: Test for presence of a Promise caching controller card.&n;Returns: 0 if no Promise card present at this io_base&n;&t; 1 if Promise card found&n;*/
+DECL|function|init_pdc4030
 r_int
-id|init_dc4030
+id|init_pdc4030
 (paren
 r_void
 )paren
@@ -312,7 +312,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hwif-&gt;is_promise2
+id|hwif-&gt;is_pdc4030_2
 )paren
 (brace
 multiline_comment|/* we&squot;ve already been found ! */
@@ -355,7 +355,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|promise_cmd
+id|pdc4030_cmd
 c_func
 (paren
 id|drive
@@ -546,7 +546,7 @@ id|hwif-&gt;chipset
 op_assign
 id|second_hwif-&gt;chipset
 op_assign
-id|ide_promise
+id|ide_pdc4030
 suffix:semicolon
 id|hwif-&gt;selectproc
 op_assign
@@ -643,7 +643,7 @@ op_member_access_from_pointer
 id|noprobe
 suffix:semicolon
 )brace
-id|second_hwif-&gt;is_promise2
+id|second_hwif-&gt;is_pdc4030_2
 op_assign
 l_int|1
 suffix:semicolon
@@ -1281,10 +1281,10 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * do_promise_io() is called from do_rw_disk, having had the block number&n; * already set up. It issues a READ or WRITE command to the Promise&n; * controller, assuming LBA has been used to set up the block number.&n; */
-DECL|function|do_promise_io
+multiline_comment|/*&n; * do_pdc4030_io() is called from do_rw_disk, having had the block number&n; * already set up. It issues a READ or WRITE command to the Promise&n; * controller, assuming LBA has been used to set up the block number.&n; */
+DECL|function|do_pdc4030_io
 r_void
-id|do_promise_io
+id|do_pdc4030_io
 (paren
 id|ide_drive_t
 op_star

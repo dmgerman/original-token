@@ -21,7 +21,6 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
-macro_line|#include &lt;linux/net_alias.h&gt;
 multiline_comment|/*&n; *&t;Device multicast list maintenance. &n; *&n; *&t;This is used both by IP and by the user level maintenance functions. &n; *&t;Unlike BSD we maintain a usage count on a given multicast address so &n; *&t;that a casual user application can add/delete multicasts used by &n; *&t;protocols without doing damage to the protocols when it deletes the&n; *&t;entries. It also helps IP as it tracks overlapping maps.&n; */
 multiline_comment|/*&n; *&t;Update the multicast list into the physical NIC controller.&n; */
 DECL|function|dev_mc_upload
@@ -50,15 +49,6 @@ id|IFF_UP
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;An aliased device should end up with the combined&n;&t; *&t;multicast list of all its aliases. &n;&t; *&t;Really, multicasting with logical interfaces is very&n;&t; *&t;subtle question. Now we DO forward multicast packets&n;&t; *&t;to logical interfcases, that doubles multicast&n;&t; *&t;traffic but allows mrouted to work.&n;&t; *&t;Alas, mrouted does not understand aliases even&n;&t; *&t;in 4.4BSD --ANK&n;&t; */
-id|dev
-op_assign
-id|net_alias_main_dev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Devices with no set multicast don&squot;t get set &n;&t; */
 r_if
 c_cond
@@ -107,14 +97,6 @@ id|dev_mc_list
 op_star
 op_star
 id|dmi
-suffix:semicolon
-id|dev
-op_assign
-id|net_alias_main_dev
-c_func
-(paren
-id|dev
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -267,14 +249,6 @@ id|dev_mc_list
 op_star
 id|dmi
 suffix:semicolon
-id|dev
-op_assign
-id|net_alias_main_dev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -405,17 +379,6 @@ op_star
 id|dev
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|net_alias_is
-c_func
-(paren
-id|dev
-)paren
-)paren
-r_return
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -434,6 +397,19 @@ suffix:semicolon
 id|dev-&gt;mc_list
 op_assign
 id|dev-&gt;mc_list-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp-&gt;dmi_users
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;dev_mc_discard: multicast leakage! dmi_users=%d&bslash;n&quot;
+comma
+id|tmp-&gt;dmi_users
+)paren
 suffix:semicolon
 id|kfree_s
 c_func

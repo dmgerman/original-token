@@ -1725,7 +1725,7 @@ id|count
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_BLK_DEV_TRITON
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 DECL|function|idefloppy_update_buffers
 r_static
 r_void
@@ -1777,7 +1777,7 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 multiline_comment|/*&n; *&t;idefloppy_queue_pc_head generates a new packet command request in front&n; *&t;of the request queue, before the current request, so that it will be&n; *&t;processed immediately, on the next pass through the driver.&n; */
 DECL|function|idefloppy_queue_pc_head
 r_static
@@ -2292,7 +2292,7 @@ l_string|&quot;ide-floppy: Reached idefloppy_pc_intr interrupt handler&bslash;n&
 )paren
 suffix:semicolon
 macro_line|#endif /* IDEFLOPPY_DEBUG_LOG */&t;
-macro_line|#ifdef CONFIG_BLK_DEV_TRITON
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
@@ -2375,7 +2375,7 @@ l_string|&quot;ide-floppy: DMA finished&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif /* IDEFLOPPY_DEBUG_LOG */
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|status.all
 op_assign
 id|GET_STAT
@@ -2504,7 +2504,7 @@ multiline_comment|/* Command finished - Call the callback function */
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_BLK_DEV_TRITON
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
@@ -2551,7 +2551,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|bcount.b.high
 op_assign
 id|IN_BYTE
@@ -3078,7 +3078,7 @@ op_assign
 id|pc-&gt;request_transfer
 suffix:semicolon
 multiline_comment|/* Request to transfer the entire buffer at once */
-macro_line|#ifdef CONFIG_BLK_DEV_TRITON
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
@@ -3153,7 +3153,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|OUT_BYTE
 (paren
 id|drive-&gt;ctl
@@ -3195,7 +3195,7 @@ comma
 id|IDE_SELECT_REG
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_TRITON
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
@@ -3231,7 +3231,7 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 r_if
 c_cond
 (paren
