@@ -4034,7 +4034,7 @@ comma
 l_int|0x50
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Take the gate-arry off of the DMA channel.&n;   */
+multiline_comment|/*&n;     * Take the gate-array off of the DMA channel.&n;   */
 id|sscape_write
 (paren
 id|devc

@@ -905,6 +905,18 @@ id|BLIST_KEY
 )brace
 comma
 (brace
+l_string|&quot;NRC&quot;
+comma
+l_string|&quot;MBR-7&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+op_or
+id|BLIST_SINGLELUN
+)brace
+comma
+(brace
 l_string|&quot;PIONEER&quot;
 comma
 l_string|&quot;CD-ROM DRM-602X&quot;

@@ -454,22 +454,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; * We got out of sequence data.&n;&t; * This turns out to be tricky. If the packet ends at the&n;&t; * edge of the window, then we MUST ack the packet,&n;&t; * otherwise a lost ACK packet can stall the TCP.&n;&t; * We deal with this case in tcp_queue().&n;&t; * On the other hand, if the packet is further to the&n;&t; * left of the window, then we are looking a retransmitted&n;&t; * packet. If we ACK it we can get into a situation that&n;&t; * will later induce a fast retransmit of another packet.&n;&t; * This can end up eating up half our bandwidth.&n;&t; */
-multiline_comment|/* This case is NOT supposed to be able&n;&t; * to happen. Test for it?&n;&t; */
-r_if
-c_cond
-(paren
-id|sk-&gt;acked_seq
-op_eq
-id|end_seq
-)paren
-id|printk
+multiline_comment|/*&n;&t; *&t;4.3reno machines look for these kind of acks so they can do fast&n;&t; *&t;recovery. Three identical &squot;old&squot; acks lets it know that one frame has&n;&t; *&t;been lost and should be resent. Because this is before the whole window&n;&t; *&t;of data has timed out it can take one lost frame per window without&n;&t; *&t;stalling. [See Jacobson RFC1323, Stevens TCP/IP illus vol2]&n;&t; */
+id|tcp_send_ack
 c_func
 (paren
-l_string|&quot;Impossible out of sequence data case.&bslash;n&quot;
+id|sk
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This functions checks to see if the tcp header is actually acceptable. &n; */
@@ -2563,17 +2553,66 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * Reset the xmit timer - state has changed.&n;&t;&t;&t; */
+(brace
+)brace
+multiline_comment|/*&n;&t;&t;&t; * &t;Must check send_head and write_queue&n;&t;&t;&t; * &t;to determine which timeout to use.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;send_head
+op_logical_or
+op_logical_neg
+id|skb_queue_empty
+c_func
+(paren
+op_amp
+id|sk-&gt;write_queue
+)paren
+)paren
+(brace
 id|tcp_reset_xmit_timer
 c_func
 (paren
 id|sk
 comma
-l_int|0
+id|TIME_WRITE
 comma
-l_int|0
+id|sk-&gt;rto
 )paren
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|sk-&gt;keepopen
+)paren
+(brace
+id|tcp_reset_xmit_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_KEEPOPEN
+comma
+id|TCP_TIMEOUT_LEN
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|sk-&gt;retransmit_timer
+)paren
+suffix:semicolon
+id|sk-&gt;ip_xmit_timeout
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -3427,7 +3466,7 @@ id|ack_seq
 )paren
 )paren
 (brace
-multiline_comment|/* the packet stradles our window end */
+multiline_comment|/* the packet straddles our window end */
 r_struct
 id|sk_buff_head
 op_star
@@ -3572,7 +3611,7 @@ id|delay
 op_assign
 id|HZ
 op_div
-l_int|10
+l_int|50
 suffix:semicolon
 id|tcp_send_delayed_ack
 c_func

@@ -2559,7 +2559,7 @@ suffix:semicolon
 r_char
 id|silly
 (braket
-l_int|14
+l_int|16
 )braket
 suffix:semicolon
 r_int

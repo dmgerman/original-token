@@ -1078,11 +1078,6 @@ comma
 id|PAS16_IRQS
 )paren
 suffix:semicolon
-id|instance-&gt;irq
-op_assign
-id|IRQ_NONE
-suffix:semicolon
-multiline_comment|/*****temp****/
 r_if
 c_cond
 (paren

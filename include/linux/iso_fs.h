@@ -989,6 +989,8 @@ DECL|macro|ISOFS_BUFFER_SIZE
 mdefine_line|#define ISOFS_BUFFER_SIZE(INODE) ((INODE)-&gt;i_sb-&gt;s_blocksize)
 DECL|macro|ISOFS_BUFFER_BITS
 mdefine_line|#define ISOFS_BUFFER_BITS(INODE) ((INODE)-&gt;i_sb-&gt;s_blocksize_bits)
+DECL|macro|ISOFS_ZONE_BITS
+mdefine_line|#define ISOFS_ZONE_BITS(INODE)   ((INODE)-&gt;i_sb-&gt;u.isofs_sb.s_log_zone_size)
 macro_line|#if 0
 macro_line|#ifdef ISOFS_FIXED_BLOCKSIZE
 multiline_comment|/* We use these until the buffer cache supports 2048 */

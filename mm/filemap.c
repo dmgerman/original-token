@@ -1213,7 +1213,7 @@ op_assign
 id|ppos
 suffix:semicolon
 multiline_comment|/*&t;&t;try_async = 1  */
-multiline_comment|/* Seems questionnable */
+multiline_comment|/* Seems questionable */
 )brace
 multiline_comment|/*&n; * The current page is not locked&n; * It may be the moment to try asynchronous read-ahead.&n; */
 r_else
@@ -1486,7 +1486,7 @@ id|pos
 op_assign
 id|filp-&gt;f_pos
 suffix:semicolon
-multiline_comment|/*&n; * Dont beleive f_reada&n; * --------------------&n; * f_reada is set to 0 by seek operations.&n; * If we beleive f_reada, small seek ops break asynchronous read-ahead.&n; * That may be quite bad for small seeks or rewrites operations.&n; * I prefer to check if the current position is inside the previous read-ahead&n; * window.&n; * If that&squot;s true, I assume that the file accesses are sequential enough to&n; * continue asynchronous read-ahead.&n; */
+multiline_comment|/*&n; * Dont believe f_reada&n; * --------------------&n; * f_reada is set to 0 by seek operations.&n; * If we believe f_reada, small seek ops break asynchronous read-ahead.&n; * That may be quite bad for small seeks or rewrites operations.&n; * I prefer to check if the current position is inside the previous read-ahead&n; * window.&n; * If that&squot;s true, I assume that the file accesses are sequential enough to&n; * continue asynchronous read-ahead.&n; */
 r_if
 c_cond
 (paren
@@ -1523,7 +1523,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Now f_reada = 1 means that asynchronous read-ahead is the good tactics.&n; * Will try asynchrous read-ahead as soon as possible.&n; * Double the max read ahead size each time.&n; *   That euristic avoid to do some large IO for files that are not really&n; *   accessed sequentialy.&n; */
+multiline_comment|/*&n; * Now f_reada = 1 means that asynchronous read-ahead is the good tactics.&n; * Will try asynchronous read-ahead as soon as possible.&n; * Double the max read ahead size each time.&n; *   That heuristic avoid to do some large IO for files that are not really&n; *   accessed sequentially.&n; */
 r_if
 c_cond
 (paren

@@ -1596,7 +1596,7 @@ r_void
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Define the driver info for a user level control device. Used mainly&n; *&t;to get at port stats - only ont using the port device itself.&n; */
+multiline_comment|/*&n; *&t;Define the driver info for a user level control device. Used mainly&n; *&t;to get at port stats - only not using the port device itself.&n; */
 DECL|variable|stl_fsiomem
 r_static
 r_struct

@@ -997,7 +997,15 @@ multiline_comment|/* Should never happen */
 id|printk
 c_func
 (paren
-l_string|&quot;Backlink not properly set.&bslash;n&quot;
+l_string|&quot;Backlink not properly set %x %lx.&bslash;n&quot;
+comma
+id|isonum_733
+c_func
+(paren
+id|de-&gt;extent
+)paren
+comma
+id|dir-&gt;i_ino
 )paren
 suffix:semicolon
 r_goto

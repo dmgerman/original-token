@@ -2287,6 +2287,18 @@ suffix:semicolon
 )brace
 )brace
 suffix:semicolon
+r_case
+id|SIG
+c_func
+(paren
+l_char|&squot;C&squot;
+comma
+l_char|&squot;E&squot;
+)paren
+suffix:colon
+id|CHECK_CE
+suffix:semicolon
+multiline_comment|/* This tells is if there is a continuation record */
 r_break
 suffix:semicolon
 r_default

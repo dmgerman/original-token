@@ -11020,7 +11020,7 @@ id|sample_ptrs
 id|sample
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offsess + offset to DRAM&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offset + offset to DRAM&n;&t;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -11175,7 +11175,7 @@ id|sample_ptrs
 id|sample
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offsess + offset to DRAM&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offset + offset to DRAM&n;&t;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren
