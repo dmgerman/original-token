@@ -954,16 +954,6 @@ op_xor
 id|t-&gt;uid
 )paren
 op_logical_and
-(paren
-id|cap_issubset
-c_func
-(paren
-id|t-&gt;cap_permitted
-comma
-id|current-&gt;cap_permitted
-)paren
-)paren
-op_logical_and
 op_logical_neg
 id|capable
 c_func

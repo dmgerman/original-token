@@ -1458,16 +1458,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|sysv_put_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|sysv_statfs
 c_func

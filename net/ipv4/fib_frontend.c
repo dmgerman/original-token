@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: FIB frontend.&n; *&n; * Version:&t;$Id: fib_frontend.c,v 1.14 1999/01/04 20:13:55 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: FIB frontend.&n; *&n; * Version:&t;$Id: fib_frontend.c,v 1.15 1999/03/21 05:22:31 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -569,6 +569,10 @@ comma
 id|u32
 op_star
 id|spec_dst
+comma
+id|u32
+op_star
+id|itag
 )paren
 (brace
 r_struct
@@ -654,6 +658,20 @@ op_assign
 id|FIB_RES_PREFSRC
 c_func
 (paren
+id|res
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|itag
+)paren
+id|fib_combine_itag
+c_func
+(paren
+id|itag
+comma
+op_amp
 id|res
 )paren
 suffix:semicolon
@@ -795,6 +813,11 @@ l_int|0
 comma
 id|RT_SCOPE_UNIVERSE
 )paren
+suffix:semicolon
+op_star
+id|itag
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -1521,7 +1544,10 @@ id|cb-&gt;args
 op_minus
 r_sizeof
 (paren
-r_int
+id|cb-&gt;args
+(braket
+l_int|0
+)braket
 )paren
 )paren
 suffix:semicolon

@@ -1342,6 +1342,8 @@ id|solicited
 suffix:semicolon
 id|msg-&gt;icmph.icmp6_override
 op_assign
+op_logical_neg
+op_logical_neg
 id|override
 suffix:semicolon
 multiline_comment|/* Set the target address. */
@@ -2102,18 +2104,10 @@ id|skb
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;&quot;The sender MUST return an ICMP&n;&t; *&t; destination unreachable&quot;&n;&t; */
-id|icmpv6_send
+id|dst_link_failure
 c_func
 (paren
 id|skb
-comma
-id|ICMPV6_DEST_UNREACH
-comma
-id|ICMPV6_ADDR_UNREACH
-comma
-l_int|0
-comma
-id|skb-&gt;dev
 )paren
 suffix:semicolon
 id|kfree_skb
@@ -2634,6 +2628,13 @@ suffix:semicolon
 id|neigh-&gt;flags
 op_or_assign
 id|NTF_ROUTER
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;If we where using an &quot;all destinations on link&quot; route&n;&t;&t; *&t;delete it&n;&t;&t; */
+id|rt6_purge_dflt_routers
+c_func
+(paren
+id|RTF_ALLONLINK
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -4411,9 +4412,9 @@ id|msg-&gt;target
 comma
 l_int|0
 comma
-l_int|0
+l_int|1
 comma
-id|inc
+l_int|0
 comma
 id|inc
 )paren
@@ -5200,10 +5201,6 @@ suffix:semicolon
 id|sk-&gt;net_pinfo.af_inet6.hop_limit
 op_assign
 l_int|255
-suffix:semicolon
-id|sk-&gt;net_pinfo.af_inet6.priority
-op_assign
-l_int|15
 suffix:semicolon
 multiline_comment|/* Do not loopback ndisc messages */
 id|sk-&gt;net_pinfo.af_inet6.mc_loop

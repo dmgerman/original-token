@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.25 1999/01/04 20:14:33 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
+multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.26 1999/03/21 05:22:31 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -458,9 +458,19 @@ id|in_dev-&gt;cnf
 )paren
 suffix:semicolon
 macro_line|#endif
+id|net_serialize_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 id|in_dev-&gt;dev-&gt;ip_ptr
 op_assign
 l_int|NULL
+suffix:semicolon
+id|net_serialize_leave
+c_func
+(paren
+)paren
 suffix:semicolon
 id|neigh_parms_release
 c_func
@@ -644,10 +654,20 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|net_serialize_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|ifap1
 op_assign
 id|ifa-&gt;ifa_next
+suffix:semicolon
+id|net_serialize_leave
+c_func
+(paren
+)paren
 suffix:semicolon
 id|rtmsg_ifa
 c_func
@@ -677,10 +697,20 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* 2. Unlink it */
+id|net_serialize_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|ifap
 op_assign
 id|ifa1-&gt;ifa_next
+suffix:semicolon
+id|net_serialize_leave
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* 3. Announce address deletion */
 multiline_comment|/* Send message first, then call notifier.&n;&t;   At first sight, FIB update triggered by notifier&n;&t;   will refer to already deleted ifaddr, that could confuse&n;&t;   netlink listeners. It is not true: look, gated sees&n;&t;   that route deleted and if it still thinks that ifaddr&n;&t;   is valid, it will try to restore deleted routes... Grr.&n;&t;   So that, this order is correct.&n;&t; */
@@ -917,11 +947,20 @@ op_assign
 op_star
 id|ifap
 suffix:semicolon
-multiline_comment|/* ATOMIC_SET */
+id|net_serialize_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|ifap
 op_assign
 id|ifa
+suffix:semicolon
+id|net_serialize_leave
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* Send message first, then call notifier.&n;&t;   Notifier will trigger FIB update, so that&n;&t;   listeners of netlink will know about new ifaddr */
 id|rtmsg_ifa
@@ -2937,8 +2976,72 @@ c_func
 id|in_dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|addr
+op_logical_or
+id|scope
+op_ge
+id|RT_SCOPE_LINK
+)paren
 r_return
 id|addr
+suffix:semicolon
+multiline_comment|/* Not loopback addresses on loopback should be preferred&n;&t;   in this case. It is importnat that lo is the first interface&n;&t;   in dev_base list.&n;&t; */
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+id|dev_base
+suffix:semicolon
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|in_dev
+op_assign
+id|dev-&gt;ip_ptr
+)paren
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+id|for_primary_ifa
+c_func
+(paren
+id|in_dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ifa-&gt;ifa_scope
+op_le
+id|scope
+)paren
+r_return
+id|ifa-&gt;ifa_local
+suffix:semicolon
+)brace
+id|endfor_ifa
+c_func
+(paren
+id|in_dev
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Device notifier&n; */

@@ -22,6 +22,9 @@ macro_line|#include &lt;asm/hardirq.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|OSS_DOCUMENTED_MIXER_SEMANTICS
 macro_line|#undef OSS_DOCUMENTED_MIXER_SEMANTICS
+DECL|macro|DBG
+mdefine_line|#define DBG(x) {}
+multiline_comment|/*#define DBG(x) {x}*/
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifndef PCI_VENDOR_ID_ENSONIQ
 DECL|macro|PCI_VENDOR_ID_ENSONIQ
@@ -5116,6 +5119,9 @@ l_int|1
 op_logical_and
 id|tmo
 )paren
+id|DBG
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -5123,6 +5129,7 @@ id|KERN_DEBUG
 l_string|&quot;es1370: dma timed out??&bslash;n&quot;
 )paren
 suffix:semicolon
+)paren
 )brace
 id|remove_wait_queue
 c_func
@@ -5337,6 +5344,9 @@ l_int|1
 op_logical_and
 id|tmo
 )paren
+id|DBG
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -5344,6 +5354,7 @@ id|KERN_DEBUG
 l_string|&quot;es1370: dma timed out??&bslash;n&quot;
 )paren
 suffix:semicolon
+)paren
 )brace
 id|remove_wait_queue
 c_func
@@ -12196,6 +12207,9 @@ l_int|1
 op_logical_and
 id|tmo
 )paren
+id|DBG
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -12203,6 +12217,7 @@ id|KERN_DEBUG
 l_string|&quot;es1370: midi timed out??&bslash;n&quot;
 )paren
 suffix:semicolon
+)paren
 )brace
 id|remove_wait_queue
 c_func

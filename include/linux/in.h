@@ -158,8 +158,6 @@ DECL|macro|IP_DEFAULT_MULTICAST_TTL
 mdefine_line|#define IP_DEFAULT_MULTICAST_TTL        1
 DECL|macro|IP_DEFAULT_MULTICAST_LOOP
 mdefine_line|#define IP_DEFAULT_MULTICAST_LOOP       1
-DECL|macro|IP_MAX_MEMBERSHIPS
-mdefine_line|#define IP_MAX_MEMBERSHIPS              20
 multiline_comment|/* Request struct for multicast socket ops */
 DECL|struct|ip_mreq
 r_struct

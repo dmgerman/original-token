@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.169 1999/03/11 00:04:22 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.170 1999/03/21 05:22:47 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Andi Kleen&t;&t;:&t;Fix new listen.&n; *&t;Andi Kleen&t;&t;:&t;Fix accept error reporting.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3028,6 +3028,18 @@ op_assign
 op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|sk-&gt;sock_readers
+)paren
+)paren
+r_return
+suffix:semicolon
 multiline_comment|/* Don&squot;t interested in TCP_LISTEN and open_requests (SYN-ACKs&n;&t; * send out by Linux are always &lt;576bytes so they should go through&n;&t; * unfragmented).&n;&t; */
 r_if
 c_cond
@@ -3042,27 +3054,15 @@ multiline_comment|/* We don&squot;t check in the destentry if pmtu discovery is 
 r_if
 c_cond
 (paren
+id|sk-&gt;dst_cache
+op_logical_and
 id|sk-&gt;ip_pmtudisc
 op_ne
 id|IP_PMTUDISC_DONT
 op_logical_and
-id|sk-&gt;dst_cache
-)paren
-(brace
-r_if
-c_cond
-(paren
 id|tp-&gt;pmtu_cookie
 OG
 id|sk-&gt;dst_cache-&gt;pmtu
-op_logical_and
-op_logical_neg
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;sock_readers
-)paren
 )paren
 (brace
 id|tcp_sync_mss
@@ -3073,7 +3073,7 @@ comma
 id|sk-&gt;dst_cache-&gt;pmtu
 )paren
 suffix:semicolon
-multiline_comment|/* Resend the TCP packet because it&squot;s  &n;&t;&t;&t; * clear that the old packet has been&n;&t;&t;&t; * dropped. This is the new &quot;fast&quot; path mtu&n;&t;&t;&t; * discovery.&n;&t;&t;&t; */
+multiline_comment|/* Resend the TCP packet because it&squot;s  &n;&t;&t; * clear that the old packet has been&n;&t;&t; * dropped. This is the new &quot;fast&quot; path mtu&n;&t;&t; * discovery.&n;&t;&t; */
 id|tcp_simple_retransmit
 c_func
 (paren
@@ -3082,7 +3082,6 @@ id|sk
 suffix:semicolon
 )brace
 multiline_comment|/* else let the usual retransmit timer handle it */
-)brace
 )brace
 multiline_comment|/*&n; * This routine is called by the ICMP module when it gets some&n; * sort of error condition.  If err &lt; 0 then the socket should&n; * be closed and the error returned to the user.  If err &gt; 0&n; * it&squot;s just the icmp type &lt;&lt; 8 | icmp code.  After adjustment&n; * header points to the first 8 bytes of the tcp header.  We need&n; * to find the appropriate port.&n; *&n; * The locking strategy used here is very &quot;optimistic&quot;. When&n; * someone else accesses the socket the ICMP is just dropped&n; * and for some paths there is no check at all.&n; * A more general error queue to queue errors for later handling&n; * is probably better.&n; *&n; * sk-&gt;err and sk-&gt;err_soft should be atomic_t.&n; */
 DECL|function|tcp_v4_err
@@ -3136,6 +3135,15 @@ id|code
 op_assign
 id|skb-&gt;h.icmph-&gt;code
 suffix:semicolon
+macro_line|#if ICMP_MIN_LENGTH &lt; 14
+r_int
+id|no_flags
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
+mdefine_line|#define no_flags 0
+macro_line|#endif
 r_struct
 id|sock
 op_star
@@ -3167,6 +3175,25 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if ICMP_MIN_LENGTH &lt; 14
+r_if
+c_cond
+(paren
+id|len
+OL
+(paren
+id|iph-&gt;ihl
+op_lshift
+l_int|2
+)paren
+op_plus
+l_int|14
+)paren
+id|no_flags
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|th
 op_assign
 (paren
@@ -3400,6 +3427,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|no_flags
+op_logical_and
+op_logical_neg
 id|th-&gt;syn
 op_logical_and
 op_logical_neg
@@ -3503,6 +3533,9 @@ multiline_comment|/* Cannot happen */
 r_if
 c_cond
 (paren
+op_logical_neg
+id|no_flags
+op_logical_and
 op_logical_neg
 id|th-&gt;syn
 )paren

@@ -518,9 +518,9 @@ DECL|macro|CDC_IOCTLS
 mdefine_line|#define CDC_IOCTLS              0x400   /* driver has non-standard ioctls */
 DECL|macro|CDC_DRIVE_STATUS
 mdefine_line|#define CDC_DRIVE_STATUS        0x800   /* driver implements drive status */
-multiline_comment|/* drive status possibilities used with the uniform CD-ROM driver */
+multiline_comment|/* drive status possibilities returned by CDROM_DRIVE_STATUS ioctl */
 DECL|macro|CDS_NO_INFO
-mdefine_line|#define CDS_NO_INFO&t;&t;0               /* if not implemented */
+mdefine_line|#define CDS_NO_INFO&t;&t;0&t;/* if not implemented */
 DECL|macro|CDS_NO_DISC
 mdefine_line|#define CDS_NO_DISC&t;&t;1
 DECL|macro|CDS_TRAY_OPEN
@@ -529,7 +529,8 @@ DECL|macro|CDS_DRIVE_NOT_READY
 mdefine_line|#define CDS_DRIVE_NOT_READY&t;3
 DECL|macro|CDS_DISC_OK
 mdefine_line|#define CDS_DISC_OK&t;&t;4
-multiline_comment|/* disc status possibilities, other than CDS_NO_DISC and CDS_NO_INFO */
+multiline_comment|/* return values for the CDROM_DISC_STATUS ioctl */
+multiline_comment|/* can also return CDS_NO_[INFO|DISC], from above */
 DECL|macro|CDS_AUDIO
 mdefine_line|#define CDS_AUDIO&t;&t;100
 DECL|macro|CDS_DATA_1

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.50 1999/01/07 19:06:57 jj Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.51 1999/03/20 22:02:00 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -830,6 +830,14 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|len
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|len
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -926,6 +934,7 @@ l_int|0xe0000000
 )paren
 )paren
 (brace
+multiline_comment|/* VM hole */
 id|retval
 op_assign
 id|current-&gt;mm-&gt;brk

@@ -22,7 +22,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
@@ -30,6 +29,7 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
+macro_line|#include &lt;net/pkt_sched.h&gt;
 DECL|variable|rtnl_rlockct
 id|atomic_t
 id|rtnl_rlockct

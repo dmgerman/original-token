@@ -2810,6 +2810,9 @@ c_func
 id|oldinode
 )paren
 suffix:semicolon
+id|inode-&gt;i_count
+op_increment
+suffix:semicolon
 id|d_instantiate
 c_func
 (paren

@@ -174,9 +174,7 @@ id|nd
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|inet6_ifaddr
-op_star
+r_int
 id|ipv6_get_saddr
 c_func
 (paren
@@ -189,6 +187,11 @@ r_struct
 id|in6_addr
 op_star
 id|daddr
+comma
+r_struct
+id|in6_addr
+op_star
+id|saddr
 )paren
 suffix:semicolon
 r_extern

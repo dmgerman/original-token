@@ -336,10 +336,20 @@ id|pt1
 )paren
 )paren
 (brace
+id|net_serialize_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|pt1
 op_assign
 id|pt-&gt;next
+suffix:semicolon
+id|net_serialize_leave
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
 r_if
@@ -703,6 +713,36 @@ r_return
 id|dev
 suffix:semicolon
 )brace
+DECL|function|netdev_state_change
+r_void
+id|netdev_state_change
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_UP
+)paren
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|netdev_chain
+comma
+id|NETDEV_CHANGE
+comma
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Find and possibly load an interface.&n; */
 macro_line|#ifdef CONFIG_KMOD
 DECL|function|dev_load
@@ -938,7 +978,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|dst_release
+id|dst_release_irqwait
 c_func
 (paren
 id|xchg
@@ -2498,22 +2538,6 @@ r_continue
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t;&t; * &t;Fetch the packet protocol ID. &n;&t;&t; */
-id|type
-op_assign
-id|skb-&gt;protocol
-suffix:semicolon
-macro_line|#ifdef CONFIG_BRIDGE
-multiline_comment|/*&n;&t;&t; *&t;If we are bridging then pass the frame up to the&n;&t;&t; *&t;bridging code (if this protocol is to be bridged).&n;&t;&t; *      If it is bridged then move on&n;&t;&t; */
-id|handle_bridge
-c_func
-(paren
-id|skb
-comma
-id|type
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; &t; *&t;Bump the pointer to the next structure.&n;&t;&t; * &n;&t;&t; *&t;On entry to the protocol layer. skb-&gt;data and&n;&t;&t; *&t;skb-&gt;nh.raw point to the MAC and encapsulated data&n;&t;&t; */
 multiline_comment|/* XXX until we figure out every place to modify.. */
 id|skb-&gt;h.raw
@@ -2550,6 +2574,22 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * &t;Fetch the packet protocol ID. &n;&t;&t; */
+id|type
+op_assign
+id|skb-&gt;protocol
+suffix:semicolon
+macro_line|#ifdef CONFIG_BRIDGE
+multiline_comment|/*&n;&t;&t; *&t;If we are bridging then pass the frame up to the&n;&t;&t; *&t;bridging code (if this protocol is to be bridged).&n;&t;&t; *      If it is bridged then move on&n;&t;&t; */
+id|handle_bridge
+c_func
+(paren
+id|skb
+comma
+id|type
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; *&t;We got a packet ID.  Now loop over the &quot;known protocols&quot;&n;&t;&t; * &t;list. There are two lists. The ptype_all list of taps (normally empty)&n;&t;&t; *&t;and the main protocol list which is hashed perfectly for normal protocols.&n;&t;&t; */
 id|pt_prev
 op_assign
@@ -4791,14 +4831,12 @@ suffix:semicolon
 r_case
 id|SIOCSIFTXQLEN
 suffix:colon
-multiline_comment|/* Why &lt;2? 0 and 1 are valid values. --ANK (980807) */
 r_if
 c_cond
 (paren
-multiline_comment|/*ifr-&gt;ifr_qlen&lt;2 ||*/
 id|ifr-&gt;ifr_qlen
-OG
-l_int|1024
+OL
+l_int|0
 )paren
 (brace
 r_return
@@ -5851,10 +5889,20 @@ op_eq
 id|dev
 )paren
 (brace
+id|net_serialize_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|dp
 op_assign
 id|d-&gt;next
+suffix:semicolon
+id|net_serialize_leave
+c_func
+(paren
+)paren
 suffix:semicolon
 id|d-&gt;next
 op_assign
@@ -6278,10 +6326,20 @@ id|dev
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; *&t;It failed to come up. Unhook it.&n;&t;&t;&t; */
+id|net_serialize_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|dp
 op_assign
 id|dev-&gt;next
+suffix:semicolon
+id|net_serialize_leave
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 r_else

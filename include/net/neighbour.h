@@ -1221,6 +1221,11 @@ op_amp
 id|tbl-&gt;lock
 )paren
 suffix:semicolon
+id|synchronize_bh
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|neigh_table_unlock
 r_extern

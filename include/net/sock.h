@@ -3323,6 +3323,39 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|function|gfp_any
+r_extern
+id|__inline__
+r_int
+id|gfp_any
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|in_interrupt
+c_func
+(paren
+)paren
+ques
+c_cond
+id|GFP_ATOMIC
+suffix:colon
+id|GFP_KERNEL
+suffix:semicolon
+)brace
+macro_line|#ifdef __SMP__
+DECL|macro|net_serialize_enter
+mdefine_line|#define net_serialize_enter()&t;start_bh_atomic()
+DECL|macro|net_serialize_leave
+mdefine_line|#define net_serialize_leave()&t;end_bh_atomic()
+macro_line|#else
+DECL|macro|net_serialize_enter
+mdefine_line|#define net_serialize_enter()&t;barrier();
+DECL|macro|net_serialize_leave
+mdefine_line|#define net_serialize_leave()&t;barrier();
+macro_line|#endif
 multiline_comment|/* &n; *&t;Enable debug/info messages &n; */
 macro_line|#if 1
 DECL|macro|NETDEBUG

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.89 1999/01/19 07:54:39 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.90 1999/03/22 02:12:16 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -2220,6 +2220,14 @@ id|distance
 comma
 id|rval
 suffix:semicolon
+multiline_comment|/* do_fork() grabs the parent semaphore, we must release it&n;&t; * temporarily so we can build the child clone stack frame&n;&t; * without deadlocking.&n;&t; */
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2321,10 +2329,12 @@ id|distance
 )paren
 )paren
 (brace
-r_return
+id|rval
+op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -2365,13 +2375,11 @@ l_int|6
 )paren
 )paren
 (brace
-r_return
+id|rval
+op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_return
-id|rval
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -2409,16 +2417,29 @@ l_int|6
 )paren
 )paren
 (brace
-r_return
+id|rval
+op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_return
+r_else
+id|rval
+op_assign
 id|rval
 op_minus
 id|STACK_BIAS
 suffix:semicolon
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+r_return
+id|rval
+suffix:semicolon
 )brace
 multiline_comment|/* Standard stuff. */
 DECL|function|shift_window_buffer

@@ -296,6 +296,12 @@ op_amp
 id|sb-&gt;sv_inodes_per_block_1
 )paren
 suffix:semicolon
+id|clear_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -392,12 +398,6 @@ id|brelse
 c_func
 (paren
 id|bh
-)paren
-suffix:semicolon
-id|clear_inode
-c_func
-(paren
-id|inode
 )paren
 suffix:semicolon
 )brace

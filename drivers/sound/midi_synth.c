@@ -305,7 +305,7 @@ id|msg
 (braket
 l_int|1
 )braket
-op_mod
+op_amp
 l_int|0x7f
 )paren
 op_or

@@ -488,6 +488,12 @@ DECL|enumerator|NET_UNIX_DELETE_DELAY
 id|NET_UNIX_DELETE_DELAY
 op_assign
 l_int|2
+comma
+DECL|enumerator|NET_UNIX_MAX_DGRAM_QLEN
+id|NET_UNIX_MAX_DGRAM_QLEN
+op_assign
+l_int|3
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv4 */
@@ -761,6 +767,11 @@ DECL|enumerator|NET_IPV4_ROUTE_GC_ELASTICITY
 id|NET_IPV4_ROUTE_GC_ELASTICITY
 op_assign
 l_int|14
+comma
+DECL|enumerator|NET_IPV4_ROUTE_MTU_EXPIRES
+id|NET_IPV4_ROUTE_MTU_EXPIRES
+op_assign
+l_int|15
 )brace
 suffix:semicolon
 r_enum
@@ -892,6 +903,11 @@ DECL|enumerator|NET_IPV6_ROUTE_GC_ELASTICITY
 id|NET_IPV6_ROUTE_GC_ELASTICITY
 op_assign
 l_int|7
+comma
+DECL|enumerator|NET_IPV6_ROUTE_MTU_EXPIRES
+id|NET_IPV6_ROUTE_MTU_EXPIRES
+op_assign
+l_int|8
 )brace
 suffix:semicolon
 r_enum

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.62 1999/01/07 14:13:00 jj Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.63 1999/03/20 22:02:01 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1712,7 +1712,8 @@ comma
 id|end_mem
 )paren
 suffix:semicolon
-id|freepages.min
+multiline_comment|/* NOTE NOTE NOTE NOTE&n;&t; * Please keep track of things and make sure this&n;&t; * always matches the code in mm/page_alloc.c -DaveM&n;&t; */
+id|i
 op_assign
 id|nr_free_pages
 op_rshift
@@ -1721,31 +1722,40 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|freepages.min
+id|i
 OL
-l_int|16
+l_int|48
 )paren
-(brace
+id|i
+op_assign
+l_int|48
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OG
+l_int|256
+)paren
+id|i
+op_assign
+l_int|256
+suffix:semicolon
 id|freepages.min
 op_assign
-l_int|16
+id|i
 suffix:semicolon
-)brace
 id|freepages.low
 op_assign
-id|freepages.min
-op_plus
-(paren
-id|freepages.min
-op_rshift
+id|i
+op_lshift
 l_int|1
-)paren
 suffix:semicolon
 id|freepages.high
 op_assign
-id|freepages.min
+id|freepages.low
 op_plus
-id|freepages.min
+id|i
 suffix:semicolon
 )brace
 DECL|function|free_initmem

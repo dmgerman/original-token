@@ -124,9 +124,10 @@ l_int|12
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|sysv_put_inode
+DECL|function|sysv_delete_inode
+r_static
 r_void
-id|sysv_put_inode
+id|sysv_delete_inode
 c_func
 (paren
 r_struct
@@ -135,13 +136,6 @@ op_star
 id|inode
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_nlink
-)paren
-r_return
-suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -170,11 +164,11 @@ id|sysv_read_inode
 comma
 id|sysv_write_inode
 comma
-id|sysv_put_inode
-comma
 l_int|NULL
 comma
-multiline_comment|/* delete_inode */
+multiline_comment|/* nothing special on put_inode() */
+id|sysv_delete_inode
+comma
 id|sysv_notify_change
 comma
 id|sysv_put_super

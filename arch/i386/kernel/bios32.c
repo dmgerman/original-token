@@ -4053,7 +4053,7 @@ id|pci_bios_present
 )paren
 (brace
 r_int
-id|succ
+id|err
 comma
 id|idx
 op_assign
@@ -4097,8 +4097,9 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+op_logical_neg
 (paren
-id|succ
+id|err
 op_assign
 id|pci_bios_find_device
 c_func
@@ -4133,8 +4134,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|succ
+id|err
 )paren
 r_break
 suffix:semicolon

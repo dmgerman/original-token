@@ -581,11 +581,20 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* ATOMIC_SET */
+id|net_serialize_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|pest
 op_assign
 id|est-&gt;next
+suffix:semicolon
+id|net_serialize_leave
+c_func
+(paren
+)paren
 suffix:semicolon
 id|kfree
 c_func

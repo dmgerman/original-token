@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.37 1998/11/08 11:17:10 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.38 1999/03/21 05:23:00 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -810,14 +810,13 @@ op_star
 id|daddr
 suffix:semicolon
 r_struct
+id|in6_addr
+id|saddr
+suffix:semicolon
+r_struct
 id|dst_entry
 op_star
 id|dst
-suffix:semicolon
-r_struct
-id|inet6_ifaddr
-op_star
-id|ifa
 suffix:semicolon
 r_struct
 id|flowi
@@ -1135,7 +1134,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|err
+op_assign
 id|dst-&gt;error
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|dst_release
@@ -1145,7 +1150,7 @@ id|dst
 )paren
 suffix:semicolon
 r_return
-id|dst-&gt;error
+id|err
 suffix:semicolon
 )brace
 id|ip6_dst_store
@@ -1159,7 +1164,7 @@ id|fl.nl_u.ip6_u.daddr
 )paren
 suffix:semicolon
 multiline_comment|/* get the source adddress used in the apropriate device */
-id|ifa
+id|err
 op_assign
 id|ipv6_get_saddr
 c_func
@@ -1167,8 +1172,19 @@ c_func
 id|dst
 comma
 id|daddr
+comma
+op_amp
+id|saddr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+op_eq
+l_int|0
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -1187,7 +1203,7 @@ op_amp
 id|np-&gt;saddr
 comma
 op_amp
-id|ifa-&gt;addr
+id|saddr
 )paren
 suffix:semicolon
 )brace
@@ -1209,7 +1225,7 @@ op_amp
 id|np-&gt;rcv_saddr
 comma
 op_amp
-id|ifa-&gt;addr
+id|saddr
 )paren
 suffix:semicolon
 id|sk-&gt;rcv_saddr
@@ -1221,8 +1237,9 @@ id|sk-&gt;state
 op_assign
 id|TCP_ESTABLISHED
 suffix:semicolon
+)brace
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
 DECL|function|udpv6_close
@@ -1262,7 +1279,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_FILTER) || !defined(HAVE_CSUM_COPY_USER)
+macro_line|#ifndef HAVE_CSUM_COPY_USER
 DECL|macro|CONFIG_UDP_DELAY_CSUM
 macro_line|#undef CONFIG_UDP_DELAY_CSUM
 macro_line|#endif
@@ -1412,8 +1429,6 @@ macro_line|#else
 r_if
 c_cond
 (paren
-id|sk-&gt;no_check
-op_logical_or
 id|skb-&gt;ip_summed
 op_eq
 id|CHECKSUM_UNNECESSARY
@@ -1461,6 +1476,10 @@ id|MSG_TRUNC
 r_if
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
 id|csum_fold
 c_func
 (paren
@@ -1469,11 +1488,7 @@ c_func
 (paren
 id|skb-&gt;h.raw
 comma
-id|ntohs
-c_func
-(paren
-id|skb-&gt;h.uh-&gt;len
-)paren
+id|skb-&gt;len
 comma
 id|skb-&gt;csum
 )paren
@@ -1587,6 +1602,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
 id|csum_fold
 c_func
 (paren
@@ -1975,6 +1994,61 @@ op_star
 id|skb
 )paren
 (brace
+macro_line|#if defined(CONFIG_FILTER) &amp;&amp; defined(CONFIG_UDP_DELAY_CSUM)
+r_if
+c_cond
+(paren
+id|sk-&gt;filter
+op_logical_and
+id|skb-&gt;ip_summed
+op_ne
+id|CHECKSUM_UNNECESSARY
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|csum_fold
+c_func
+(paren
+id|csum_partial
+c_func
+(paren
+id|skb-&gt;h.raw
+comma
+id|skb-&gt;len
+comma
+id|skb-&gt;csum
+)paren
+)paren
+)paren
+(brace
+id|udp_stats_in6.UdpInErrors
+op_increment
+suffix:semicolon
+id|ipv6_statistics.Ip6InDiscards
+op_increment
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|skb-&gt;ip_summed
+op_assign
+id|CHECKSUM_UNNECESSARY
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2837,6 +2911,10 @@ id|skb-&gt;ip_summed
 op_ne
 id|CHECKSUM_UNNECESSARY
 op_logical_and
+(paren
+r_int
+r_int
+)paren
 id|csum_fold
 c_func
 (paren

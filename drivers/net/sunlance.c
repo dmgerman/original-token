@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunlance.c,v 1.84 1999/03/11 12:30:22 anton Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; *&n; * 1.11:&n; *&t;12/27/97: Added sun4d support. (jj@sunsite.mff.cuni.cz)&n; *&n; * 1.12:&n; * &t; 11/3/99: Fixed SMP race in lance_start_xmit found by davem.&n; * &t;          Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/* $Id: sunlance.c,v 1.85 1999/03/21 05:22:05 davem Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; *&n; * 1.11:&n; *&t;12/27/97: Added sun4d support. (jj@sunsite.mff.cuni.cz)&n; *&n; * 1.12:&n; * &t; 11/3/99: Fixed SMP race in lance_start_xmit found by davem.&n; * &t;          Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 DECL|macro|DEBUG_DRIVER
 macro_line|#undef DEBUG_DRIVER
 DECL|variable|version
@@ -651,10 +651,6 @@ id|lp-&gt;tx_old
 op_assign
 l_int|0
 suffix:semicolon
-id|ib-&gt;mode
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Copy the ethernet address to the lance init block&n;&t; * Note that on the sparc you need to swap the ethernet address.&n;&t; * Note also we want the CPU ptr of the init_block here.&n;&t; */
 id|ib-&gt;phys_addr
 (braket
@@ -1033,21 +1029,6 @@ l_string|&quot;TX ptr: %8.8x&bslash;n&quot;
 comma
 id|leptr
 )paren
-suffix:semicolon
-multiline_comment|/* Clear the multicast filter */
-id|ib-&gt;filter
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|ib-&gt;filter
-(braket
-l_int|1
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|init_restart_lance
@@ -2287,6 +2268,14 @@ id|ll
 op_assign
 id|lp-&gt;ll
 suffix:semicolon
+r_volatile
+r_struct
+id|lance_init_block
+op_star
+id|ib
+op_assign
+id|lp-&gt;init_block
+suffix:semicolon
 r_int
 id|status
 op_assign
@@ -2359,6 +2348,25 @@ id|lp-&gt;init_block_dvma
 )paren
 op_amp
 l_int|0xff000000
+suffix:semicolon
+multiline_comment|/* Set mode and clear multicast filter only at device open,&n;&t;   so that lance_init_ring() called at any error will not&n;&t;   forget multicast filters.&n;&n;&t;   BTW it is common bug in all lance drivers! --ANK&n;&t; */
+id|ib-&gt;mode
+op_assign
+l_int|0
+suffix:semicolon
+id|ib-&gt;filter
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|ib-&gt;filter
+(braket
+l_int|1
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 id|lance_init_ring
 (paren
@@ -2646,6 +2654,13 @@ suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|1
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|lp-&gt;multicast_timer
+)paren
 suffix:semicolon
 multiline_comment|/* Stop the card */
 id|ll-&gt;rap
@@ -3431,6 +3446,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|dev-&gt;start
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|dev-&gt;tbusy
 )paren
 (brace
@@ -3448,6 +3471,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* This CANNOT be correct. Chip is running&n;&t;   and dev-&gt;tbusy may change any moment.&n;&t;   It is useless to set it.&n;&n;&t;   Generally, usage of dev-&gt;tbusy in this driver is completely&n;&t;   wrong.&n;&n;&t;   I protected calls to this function&n;&t;   with start_bh_atomic, so that set_multicast_list&n;&t;   and hard_start_xmit are serialized now by top level. --ANK&n;&n;&t;   The same is true about a2065.&n;&t; */
 id|set_bit
 (paren
 l_int|0
@@ -3478,6 +3502,10 @@ id|jiffies
 op_plus
 l_int|4
 )paren
+suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3534,6 +3562,12 @@ suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
 suffix:semicolon
 )brace
 DECL|function|__initfunc

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.99 1999/03/11 00:04:26 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.100 1999/03/21 05:22:59 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1720,16 +1720,15 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 suffix:semicolon
 r_struct
-id|inet6_ifaddr
-op_star
-id|ifa
-suffix:semicolon
-r_struct
 id|in6_addr
 op_star
 id|saddr
 op_assign
 l_int|NULL
+suffix:semicolon
+r_struct
+id|in6_addr
+id|saddr_buf
 suffix:semicolon
 r_struct
 id|flowi
@@ -1747,6 +1746,9 @@ id|buff
 suffix:semicolon
 r_int
 id|addr_type
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -1906,9 +1908,6 @@ suffix:semicolon
 r_struct
 id|sockaddr_in
 id|sin
-suffix:semicolon
-r_int
-id|err
 suffix:semicolon
 id|SOCK_DEBUG
 c_func
@@ -2108,7 +2107,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|err
+op_assign
 id|dst-&gt;error
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|dst_release
@@ -2118,7 +2123,7 @@ id|dst
 )paren
 suffix:semicolon
 r_return
-id|dst-&gt;error
+id|err
 suffix:semicolon
 )brace
 r_if
@@ -2157,7 +2162,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|ifa
+id|err
 op_assign
 id|ipv6_get_saddr
 c_func
@@ -2166,24 +2171,25 @@ id|dst
 comma
 op_amp
 id|np-&gt;daddr
+comma
+op_amp
+id|saddr_buf
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ifa
-op_eq
-l_int|NULL
+id|err
 )paren
 r_return
-op_minus
-id|ENETUNREACH
+id|err
 suffix:semicolon
 id|saddr
 op_assign
 op_amp
-id|ifa-&gt;addr
+id|saddr_buf
 suffix:semicolon
+)brace
 multiline_comment|/* set the source address */
 id|ipv6_addr_copy
 c_func
@@ -2203,7 +2209,6 @@ comma
 id|saddr
 )paren
 suffix:semicolon
-)brace
 id|tp-&gt;ext_header_len
 op_assign
 l_int|0
@@ -2663,7 +2668,18 @@ id|dst
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* icmp should have updated the destination cache entry */
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|sk-&gt;sock_readers
+)paren
+)paren
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2673,6 +2689,7 @@ id|TCP_LISTEN
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/* icmp should have updated the destination cache entry */
 r_if
 c_cond
 (paren
@@ -2773,14 +2790,6 @@ c_cond
 id|tp-&gt;pmtu_cookie
 OG
 id|dst-&gt;pmtu
-op_logical_and
-op_logical_neg
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;sock_readers
-)paren
 )paren
 (brace
 id|tcp_sync_mss
@@ -5298,6 +5307,24 @@ comma
 id|skb
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FILTER
+r_if
+c_cond
+(paren
+id|sk-&gt;filter
+op_logical_and
+id|sk_filter
+c_func
+(paren
+id|skb
+comma
+id|sk-&gt;filter
+)paren
+)paren
+r_goto
+id|discard
+suffix:semicolon
+macro_line|#endif /* CONFIG_FILTER */
 multiline_comment|/*&n;&t; *&t;socket locking is here for SMP purposes as backlog rcv&n;&t; *&t;is currently called with bh processing disabled.&n;&t; */
 id|ipv6_statistics.Ip6InDelivers
 op_increment
@@ -6150,6 +6177,28 @@ r_struct
 id|in6_addr
 op_star
 id|daddr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;protocol
+op_eq
+id|__constant_htons
+c_func
+(paren
+id|ETH_P_IP
+)paren
+)paren
+r_return
+id|ipv4_specific
+dot
+id|get_sock
+c_func
+(paren
+id|skb
+comma
+id|th
+)paren
 suffix:semicolon
 id|saddr
 op_assign

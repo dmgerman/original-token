@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.28 1998/04/17 02:37:25 davem Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.29 1999/03/21 05:22:07 davem Exp $ */
 macro_line|#ifndef __SPARC_CHECKSUM_H
 DECL|macro|__SPARC_CHECKSUM_H
 mdefine_line|#define __SPARC_CHECKSUM_H
@@ -550,6 +550,10 @@ id|ret
 suffix:semicolon
 )brace
 )brace
+DECL|macro|HAVE_CSUM_COPY_USER
+mdefine_line|#define HAVE_CSUM_COPY_USER
+DECL|macro|csum_and_copy_to_user
+mdefine_line|#define csum_and_copy_to_user csum_partial_copy_to_user
 multiline_comment|/* ihl is always 5 or greater, almost always is 5, and iph is word aligned&n; * the majority of the time.&n; */
 DECL|function|ip_fast_csum
 r_extern

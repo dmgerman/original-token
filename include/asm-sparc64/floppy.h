@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy.h,v 1.17 1998/12/02 12:42:23 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: floppy.h,v 1.18 1999/03/21 10:51:38 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef __ASM_SPARC64_FLOPPY_H
 DECL|macro|__ASM_SPARC64_FLOPPY_H
 mdefine_line|#define __ASM_SPARC64_FLOPPY_H
@@ -358,6 +358,12 @@ r_int
 id|port
 )paren
 (brace
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -431,6 +437,12 @@ r_int
 id|port
 )paren
 (brace
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren

@@ -207,13 +207,13 @@ OL
 id|q-&gt;qth_min
 )paren
 (brace
-id|enqueue
-suffix:colon
 id|q-&gt;qcount
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|enqueue
+suffix:colon
 r_if
 c_cond
 (paren
@@ -308,6 +308,15 @@ id|q-&gt;qR
 )paren
 r_goto
 id|enqueue
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Drop %d&bslash;n&quot;
+comma
+id|q-&gt;qcount
+)paren
 suffix:semicolon
 id|q-&gt;qcount
 op_assign
@@ -1012,6 +1021,9 @@ comma
 id|red_reset
 comma
 id|red_destroy
+comma
+l_int|NULL
+multiline_comment|/* red_change */
 comma
 macro_line|#ifdef CONFIG_RTNETLINK
 id|red_dump

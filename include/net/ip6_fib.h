@@ -100,6 +100,8 @@ DECL|macro|rt6i_dev
 mdefine_line|#define rt6i_dev&t;&t;&t;u.dst.dev
 DECL|macro|rt6i_nexthop
 mdefine_line|#define rt6i_nexthop&t;&t;&t;u.dst.neighbour
+DECL|macro|rt6i_expires
+mdefine_line|#define rt6i_expires&t;&t;&t;u.dst.expires
 DECL|member|rt6i_node
 r_struct
 id|fib6_node
@@ -122,11 +124,6 @@ suffix:semicolon
 DECL|member|rt6i_hoplimit
 id|u8
 id|rt6i_hoplimit
-suffix:semicolon
-DECL|member|rt6i_expires
-r_int
-r_int
-id|rt6i_expires
 suffix:semicolon
 DECL|member|rt6i_ref
 id|atomic_t

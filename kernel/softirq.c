@@ -159,6 +159,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|__cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hardirq_endlock
 c_func
 (paren
@@ -166,11 +171,6 @@ id|cpu
 )paren
 suffix:semicolon
 )brace
-id|__cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|softirq_endlock
 c_func
 (paren

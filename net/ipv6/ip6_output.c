@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 output functions&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_output.c,v 1.15 1998/10/03 09:38:34 davem Exp $&n; *&n; *&t;Based on linux/net/ipv4/ip_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes:&n; *&t;A.N.Kuznetsov&t;:&t;airthmetics in fragmentation.&n; *&t;&t;&t;&t;extension headers are implemented.&n; *&t;&t;&t;&t;route changes now work.&n; *&t;&t;&t;&t;ip6_forward does not confuse sniffers.&n; *&t;&t;&t;&t;etc.&n; *&t;&t;&t;&t;&n; */
+multiline_comment|/*&n; *&t;IPv6 output functions&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_output.c,v 1.16 1999/03/21 05:22:54 davem Exp $&n; *&n; *&t;Based on linux/net/ipv4/ip_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes:&n; *&t;A.N.Kuznetsov&t;:&t;airthmetics in fragmentation.&n; *&t;&t;&t;&t;extension headers are implemented.&n; *&t;&t;&t;&t;route changes now work.&n; *&t;&t;&t;&t;ip6_forward does not confuse sniffers.&n; *&t;&t;&t;&t;etc.&n; *&t;&t;&t;&t;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -164,6 +164,13 @@ id|aligned_hdr0
 op_assign
 id|hh-&gt;hh_data
 suffix:semicolon
+id|read_lock_irq
+c_func
+(paren
+op_amp
+id|hh-&gt;hh_lock
+)paren
+suffix:semicolon
 id|aligned_hdr
 (braket
 l_int|0
@@ -185,6 +192,13 @@ l_int|1
 )braket
 suffix:semicolon
 macro_line|#else
+id|read_lock_irq
+c_func
+(paren
+op_amp
+id|hh-&gt;hh_lock
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -198,6 +212,13 @@ l_int|16
 )paren
 suffix:semicolon
 macro_line|#endif
+id|read_unlock_irq
+c_func
+(paren
+op_amp
+id|hh-&gt;hh_lock
+)paren
+suffix:semicolon
 id|skb_push
 c_func
 (paren
@@ -611,6 +632,11 @@ id|KERN_DEBUG
 l_string|&quot;IPv6: sending pkt_too_big to self&bslash;n&quot;
 )paren
 suffix:semicolon
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 id|icmpv6_send
 c_func
 (paren
@@ -623,6 +649,11 @@ comma
 id|dst-&gt;pmtu
 comma
 id|skb-&gt;dev
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
 )paren
 suffix:semicolon
 id|kfree_skb
@@ -1692,6 +1723,10 @@ id|jumbolen
 comma
 id|mtu
 suffix:semicolon
+r_struct
+id|in6_addr
+id|saddr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1882,12 +1917,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_struct
-id|inet6_ifaddr
-op_star
-id|ifa
-suffix:semicolon
-id|ifa
+id|err
 op_assign
 id|ipv6_get_saddr
 c_func
@@ -1895,14 +1925,15 @@ c_func
 id|dst
 comma
 id|fl-&gt;nl_u.ip6_u.daddr
+comma
+op_amp
+id|saddr
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ifa
-op_eq
-l_int|NULL
+id|err
 )paren
 (brace
 macro_line|#if IP6_DEBUG &gt;= 2
@@ -1915,11 +1946,6 @@ l_string|&quot;no availiable source address&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|err
-op_assign
-op_minus
-id|ENETUNREACH
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
@@ -1927,7 +1953,7 @@ suffix:semicolon
 id|fl-&gt;nl_u.ip6_u.saddr
 op_assign
 op_amp
-id|ifa-&gt;addr
+id|saddr
 suffix:semicolon
 )brace
 id|pktlength

@@ -1887,6 +1887,13 @@ c_func
 id|unregister_netdev
 )paren
 suffix:semicolon
+DECL|variable|netdev_state_change
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|netdev_state_change
+)paren
+suffix:semicolon
 DECL|variable|ether_setup
 id|EXPORT_SYMBOL
 c_func
@@ -2171,6 +2178,8 @@ id|noop_qdisc
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_SCHED
+id|PSCHED_EXPORTLIST
+suffix:semicolon
 DECL|variable|pfifo_qdisc_ops
 id|EXPORT_SYMBOL
 c_func

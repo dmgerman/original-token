@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.131 1999/01/19 07:54:33 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.132 1999/03/22 02:12:13 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1837,6 +1837,14 @@ op_minus
 id|size
 )paren
 suffix:semicolon
+multiline_comment|/* do_fork() grabs the parent semaphore, we must release it&n;&t; * temporarily so we can build the child clone stack frame&n;&t; * without deadlocking.&n;&t; */
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1850,9 +1858,16 @@ comma
 id|size
 )paren
 )paren
-r_return
+id|sp
+op_assign
+(paren
+r_struct
+id|sparc_stackf
+op_star
+)paren
 l_int|0
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -1865,8 +1880,21 @@ op_amp
 id|sp-&gt;fp
 )paren
 )paren
-r_return
+id|sp
+op_assign
+(paren
+r_struct
+id|sparc_stackf
+op_star
+)paren
 l_int|0
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
 suffix:semicolon
 r_return
 id|sp

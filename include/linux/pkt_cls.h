@@ -59,10 +59,17 @@ comma
 DECL|enumerator|TCA_POLICE_PEAKRATE
 id|TCA_POLICE_PEAKRATE
 comma
+DECL|enumerator|TCA_POLICE_AVRATE
+id|TCA_POLICE_AVRATE
+comma
+DECL|enumerator|TCA_POLICE_RESULT
+id|TCA_POLICE_RESULT
+DECL|macro|TCA_POLICE_RESULT
+mdefine_line|#define TCA_POLICE_RESULT TCA_POLICE_RESULT
 )brace
 suffix:semicolon
 DECL|macro|TCA_POLICE_MAX
-mdefine_line|#define TCA_POLICE_MAX TCA_POLICE_PEAKRATE
+mdefine_line|#define TCA_POLICE_MAX TCA_POLICE_RESULT
 multiline_comment|/* U32 filters */
 DECL|macro|TC_U32_HTID
 mdefine_line|#define TC_U32_HTID(h) ((h)&amp;0xFFF00000)
@@ -258,5 +265,46 @@ id|tunnelhdr
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* ROUTE filter */
+r_enum
+(brace
+DECL|enumerator|TCA_ROUTE4_UNSPEC
+id|TCA_ROUTE4_UNSPEC
+comma
+DECL|enumerator|TCA_ROUTE4_CLASSID
+id|TCA_ROUTE4_CLASSID
+comma
+DECL|enumerator|TCA_ROUTE4_TO
+id|TCA_ROUTE4_TO
+comma
+DECL|enumerator|TCA_ROUTE4_FROM
+id|TCA_ROUTE4_FROM
+comma
+DECL|enumerator|TCA_ROUTE4_IIF
+id|TCA_ROUTE4_IIF
+comma
+DECL|enumerator|TCA_ROUTE4_POLICE
+id|TCA_ROUTE4_POLICE
+comma
+)brace
+suffix:semicolon
+DECL|macro|TCA_ROUTE4_MAX
+mdefine_line|#define TCA_ROUTE4_MAX TCA_ROUTE4_POLICE
+multiline_comment|/* FW filter */
+r_enum
+(brace
+DECL|enumerator|TCA_FW_UNSPEC
+id|TCA_FW_UNSPEC
+comma
+DECL|enumerator|TCA_FW_CLASSID
+id|TCA_FW_CLASSID
+comma
+DECL|enumerator|TCA_FW_POLICE
+id|TCA_FW_POLICE
+comma
+)brace
+suffix:semicolon
+DECL|macro|TCA_FW_MAX
+mdefine_line|#define TCA_FW_MAX TCA_FW_POLICE
 macro_line|#endif
 eof

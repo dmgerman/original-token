@@ -420,7 +420,7 @@ id|sparc_cpu_type
 id|cpuid
 )braket
 op_assign
-l_string|&quot;Unknow CPU&quot;
+l_string|&quot;Unknown CPU&quot;
 suffix:semicolon
 )brace
 r_for

@@ -222,6 +222,8 @@ DECL|macro|RTPROT_MRT
 mdefine_line|#define RTPROT_MRT&t;10&t;/* Merit MRT */
 DECL|macro|RTPROT_ZEBRA
 mdefine_line|#define RTPROT_ZEBRA&t;11&t;/* Zebra */
+DECL|macro|RTPROT_BIRD
+mdefine_line|#define RTPROT_BIRD&t;12&t;/* BIRD */
 multiline_comment|/* rtm_scope&n;&n;   Really it is not scope, but sort of distance to the destination.&n;   NOWHERE are reserved for not existing destinations, HOST is our&n;   local addresses, LINK are destinations, located on directly attached&n;   link and UNIVERSE is everywhere in the Universe.&n;&n;   Intermediate values are also possible f.e. interior routes&n;   could be assigned a value between UNIVERSE and LINK.&n;*/
 DECL|enum|rt_scope_t
 r_enum

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.15 1998/08/26 12:04:55 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.16 1999/03/21 05:22:52 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -192,14 +192,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|n
-op_eq
-l_int|0
+(paren
+id|__s32
 )paren
 id|n
-op_assign
-op_increment
+op_le
+l_int|0
+)paren
 id|rt_sernum
+op_assign
+id|n
+op_assign
+l_int|1
 suffix:semicolon
 r_return
 id|n
@@ -3884,9 +3888,6 @@ suffix:semicolon
 id|gc_args.more
 op_increment
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;check addrconf expiration here.&n;&t; *&t;They are expired even if they are in use.&n;&t; */
 r_if
@@ -3929,9 +3930,6 @@ suffix:semicolon
 )brace
 id|gc_args.more
 op_increment
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_return

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/binfmt_aout.c&n; *&n; *  Copyright (C) 1991, 1992, 1996  Linus Torvalds&n; *&n; *  Hacked a bit by DaveM to make it work with 32-bit SunOS&n; *  binaries on the sparc64 port.&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -9,9 +8,10 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -158,9 +158,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * These are the only things you should do on a core-file: use only these&n; * macros to write out all the necessary info.&n; */
 DECL|macro|DUMP_WRITE
-mdefine_line|#define DUMP_WRITE(addr,nr) &bslash;&n;while (file.f_op-&gt;write(&amp;file,(char *)(addr),(nr),&amp;file.f_pos) != (nr)) &bslash;&n;&t;goto close_coredump
+mdefine_line|#define DUMP_WRITE(addr,nr) &bslash;&n;while (file-&gt;f_op-&gt;write(file,(char *)(addr),(nr),&amp;file-&gt;f_pos) != (nr)) goto close_coredump
 DECL|macro|DUMP_SEEK
-mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file.f_op-&gt;llseek) { &bslash;&n;&t;if (file.f_op-&gt;llseek(&amp;file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file.f_pos = (offset)
+mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file-&gt;f_op-&gt;llseek) { &bslash;&n;&t;if (file-&gt;f_op-&gt;llseek(file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file-&gt;f_pos = (offset)
 multiline_comment|/*&n; * Routine writes a core dump image in the current directory.&n; * Currently only a stub-function.&n; *&n; * Note that setuid/setgid files won&squot;t make a core-dump if the uid/gid&n; * changed due to the set[u|g]id. It&squot;s enforced by the &quot;current-&gt;dumpable&quot;&n; * field, which also makes sure the core-dumps won&squot;t be recursive if the&n; * dumping of the process results in another error..&n; */
 r_static
 r_inline
@@ -194,6 +194,7 @@ l_int|NULL
 suffix:semicolon
 r_struct
 id|file
+op_star
 id|file
 suffix:semicolon
 id|mm_segment_t
@@ -315,9 +316,9 @@ op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 macro_line|#endif
-id|dentry
+id|file
 op_assign
-id|open_namei
+id|filp_open
 c_func
 (paren
 id|corefile
@@ -339,18 +340,16 @@ c_cond
 id|IS_ERR
 c_func
 (paren
-id|dentry
+id|file
 )paren
 )paren
-(brace
-id|dentry
-op_assign
-l_int|NULL
-suffix:semicolon
 r_goto
 id|end_coredump
 suffix:semicolon
-)brace
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
 id|inode
 op_assign
 id|dentry-&gt;d_inode
@@ -366,7 +365,7 @@ id|inode-&gt;i_mode
 )paren
 )paren
 r_goto
-id|end_coredump
+id|close_coredump
 suffix:semicolon
 r_if
 c_cond
@@ -378,75 +377,13 @@ op_logical_neg
 id|inode-&gt;i_op-&gt;default_file_ops
 )paren
 r_goto
-id|end_coredump
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|get_write_access
-c_func
-(paren
-id|inode
-)paren
-)paren
-r_goto
-id|end_coredump
-suffix:semicolon
-id|file.f_mode
-op_assign
-l_int|3
-suffix:semicolon
-id|file.f_flags
-op_assign
-l_int|0
-suffix:semicolon
-id|file.f_count
-op_assign
-l_int|1
-suffix:semicolon
-id|file.f_dentry
-op_assign
-id|dentry
-suffix:semicolon
-id|file.f_pos
-op_assign
-l_int|0
-suffix:semicolon
-id|file.f_reada
-op_assign
-l_int|0
-suffix:semicolon
-id|file.f_op
-op_assign
-id|inode-&gt;i_op-&gt;default_file_ops
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|file.f_op-&gt;open
-)paren
-r_if
-c_cond
-(paren
-id|file.f_op
-op_member_access_from_pointer
-id|open
-c_func
-(paren
-id|inode
-comma
-op_amp
-id|file
-)paren
-)paren
-r_goto
-id|done_coredump
+id|close_coredump
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|file.f_op-&gt;write
+id|file-&gt;f_op-&gt;write
 )paren
 r_goto
 id|close_coredump
@@ -689,28 +626,12 @@ id|current
 suffix:semicolon
 id|close_coredump
 suffix:colon
-r_if
-c_cond
-(paren
-id|file.f_op-&gt;release
-)paren
-id|file.f_op
-op_member_access_from_pointer
-id|release
+id|close_fp
 c_func
 (paren
-id|inode
-comma
-op_amp
 id|file
-)paren
-suffix:semicolon
-id|done_coredump
-suffix:colon
-id|put_write_access
-c_func
-(paren
-id|inode
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|end_coredump
@@ -719,12 +640,6 @@ id|set_fs
 c_func
 (paren
 id|fs
-)paren
-suffix:semicolon
-id|dput
-c_func
-(paren
-id|dentry
 )paren
 suffix:semicolon
 r_return
@@ -1190,10 +1105,6 @@ op_minus
 id|ENOEXEC
 suffix:semicolon
 )brace
-id|current-&gt;personality
-op_assign
-id|PER_LINUX
-suffix:semicolon
 id|fd_offset
 op_assign
 id|N_TXTOFF
@@ -1255,6 +1166,10 @@ r_return
 id|retval
 suffix:semicolon
 multiline_comment|/* OK, This is the point of no return */
+id|current-&gt;personality
+op_assign
+id|PER_LINUX
+suffix:semicolon
 id|current-&gt;mm-&gt;end_code
 op_assign
 id|ex.a_text
@@ -1305,21 +1220,11 @@ id|current-&gt;mm-&gt;mmap
 op_assign
 l_int|NULL
 suffix:semicolon
-id|current-&gt;suid
-op_assign
-id|current-&gt;euid
-op_assign
-id|current-&gt;fsuid
-op_assign
-id|bprm-&gt;e_uid
-suffix:semicolon
-id|current-&gt;sgid
-op_assign
-id|current-&gt;egid
-op_assign
-id|current-&gt;fsgid
-op_assign
-id|bprm-&gt;e_gid
+id|compute_creds
+c_func
+(paren
+id|bprm
+)paren
 suffix:semicolon
 id|current-&gt;flags
 op_and_assign
@@ -1967,38 +1872,42 @@ op_star
 id|file
 suffix:semicolon
 r_struct
-id|exec
-id|ex
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|dentry
-suffix:semicolon
-r_struct
 id|inode
 op_star
 id|inode
-suffix:semicolon
-r_int
-r_int
-id|len
 suffix:semicolon
 r_int
 r_int
 id|bss
-suffix:semicolon
-r_int
-r_int
+comma
 id|start_addr
+comma
+id|len
 suffix:semicolon
 r_int
 r_int
 id|error
 suffix:semicolon
+r_int
+id|retval
+suffix:semicolon
+id|loff_t
+id|offset
+op_assign
+l_int|0
+suffix:semicolon
+r_struct
+id|exec
+id|ex
+suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|EACCES
+suffix:semicolon
 id|file
 op_assign
-id|fcheck
+id|fget
 c_func
 (paren
 id|fd
@@ -2009,60 +1918,29 @@ c_cond
 (paren
 op_logical_neg
 id|file
-op_logical_or
+)paren
+r_goto
+id|out
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|file-&gt;f_op
 )paren
-r_return
-op_minus
-id|EACCES
-suffix:semicolon
-id|dentry
-op_assign
-id|file-&gt;f_dentry
+r_goto
+id|out_putf
 suffix:semicolon
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-multiline_comment|/* Seek into the file */
-r_if
-c_cond
-(paren
-id|file-&gt;f_op-&gt;llseek
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|error
+id|retval
 op_assign
-id|file-&gt;f_op
-op_member_access_from_pointer
-id|llseek
-c_func
-(paren
-id|file
-comma
-l_int|0
-comma
-l_int|0
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
 op_minus
 id|ENOEXEC
 suffix:semicolon
-)brace
-r_else
-id|file-&gt;f_pos
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* N.B. Save current fs? */
 id|set_fs
 c_func
 (paren
@@ -2091,7 +1969,7 @@ id|ex
 )paren
 comma
 op_amp
-id|file-&gt;f_pos
+id|offset
 )paren
 suffix:semicolon
 id|set_fs
@@ -2110,9 +1988,8 @@ r_sizeof
 id|ex
 )paren
 )paren
-r_return
-op_minus
-id|ENOEXEC
+r_goto
+id|out_putf
 suffix:semicolon
 multiline_comment|/* We come in here for the regular a.out style of shared libraries */
 r_if
@@ -2183,9 +2060,8 @@ id|ex
 )paren
 )paren
 (brace
-r_return
-op_minus
-id|ENOEXEC
+r_goto
+id|out_putf
 suffix:semicolon
 )brace
 r_if
@@ -2222,9 +2098,8 @@ c_func
 l_string|&quot;N_TXTOFF &lt; BLOCK_SIZE. Please convert library&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOEXEC
+r_goto
+id|out_putf
 suffix:semicolon
 )brace
 r_if
@@ -2236,9 +2111,8 @@ c_func
 id|ex
 )paren
 )paren
-r_return
-op_minus
-id|ENOEXEC
+r_goto
+id|out_putf
 suffix:semicolon
 multiline_comment|/* For  QMAGIC, the starting address is 0x20 into the page.  We mask&n;&t;   this off to get the starting address for the page */
 id|start_addr
@@ -2280,6 +2154,10 @@ id|ex
 )paren
 )paren
 suffix:semicolon
+id|retval
+op_assign
+id|error
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2287,8 +2165,8 @@ id|error
 op_ne
 id|start_addr
 )paren
-r_return
-id|error
+r_goto
+id|out_putf
 suffix:semicolon
 id|len
 op_assign
@@ -2344,6 +2222,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|retval
+op_assign
+id|error
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2353,12 +2235,26 @@ id|start_addr
 op_plus
 id|len
 )paren
-r_return
-id|error
+r_goto
+id|out_putf
 suffix:semicolon
 )brace
-r_return
+id|retval
+op_assign
 l_int|0
+suffix:semicolon
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|retval
 suffix:semicolon
 )brace
 r_static

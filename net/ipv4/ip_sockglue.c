@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.39 1998/10/03 09:37:33 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.40 1999/03/21 05:22:42 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -842,10 +842,20 @@ op_minus
 id|EADDRINUSE
 suffix:semicolon
 )brace
+id|net_serialize_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|rap
 op_assign
 id|ra-&gt;next
+suffix:semicolon
+id|net_serialize_leave
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -890,21 +900,21 @@ id|new_ra-&gt;destructor
 op_assign
 id|destructor
 suffix:semicolon
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 id|new_ra-&gt;next
 op_assign
 id|ra
+suffix:semicolon
+id|net_serialize_enter
+c_func
+(paren
+)paren
 suffix:semicolon
 op_star
 id|rap
 op_assign
 id|new_ra
 suffix:semicolon
-id|end_bh_atomic
+id|net_serialize_leave
 c_func
 (paren
 )paren
@@ -1785,9 +1795,10 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|start_bh_atomic
+id|lock_sock
 c_func
 (paren
+id|sk
 )paren
 suffix:semicolon
 r_if
@@ -1866,9 +1877,10 @@ comma
 id|opt
 )paren
 suffix:semicolon
-id|end_bh_atomic
+id|release_sock
 c_func
 (paren
+id|sk
 )paren
 suffix:semicolon
 r_if
@@ -2050,6 +2062,12 @@ op_ne
 id|val
 )paren
 (brace
+id|lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|sk-&gt;ip_tos
 op_assign
 id|val
@@ -2075,15 +2093,13 @@ l_int|NULL
 )paren
 )paren
 suffix:semicolon
-)brace
-id|sk-&gt;priority
-op_assign
-id|rt_tos2priority
+id|release_sock
 c_func
 (paren
-id|val
+id|sk
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2899,9 +2915,10 @@ op_star
 )paren
 id|optbuf
 suffix:semicolon
-id|start_bh_atomic
+id|lock_sock
 c_func
 (paren
+id|sk
 )paren
 suffix:semicolon
 id|opt-&gt;optlen
@@ -2929,9 +2946,10 @@ op_plus
 id|sk-&gt;opt-&gt;optlen
 )paren
 suffix:semicolon
-id|end_bh_atomic
+id|release_sock
 c_func
 (paren
+id|sk
 )paren
 suffix:semicolon
 r_if
