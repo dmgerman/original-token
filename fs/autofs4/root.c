@@ -1600,7 +1600,7 @@ op_minus
 id|ENOTEMPTY
 suffix:semicolon
 )brace
-id|list_del
+id|list_del_init
 c_func
 (paren
 op_amp

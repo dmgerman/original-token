@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *          Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *          Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *          Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.232 2000/06/11 13:18:30 acher Exp $&n; */
+multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999-2000 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *               Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *               Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *               Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.236 2000/08/02 20:28:28 acher Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -29,7 +29,7 @@ multiline_comment|/* This enables an extra UHCI slab for memory debugging */
 DECL|macro|DEBUG_SLAB
 mdefine_line|#define DEBUG_SLAB
 DECL|macro|VERSTR
-mdefine_line|#define VERSTR &quot;$Revision: 1.232 $ time &quot; __TIME__ &quot; &quot; __DATE__
+mdefine_line|#define VERSTR &quot;$Revision: 1.236 $ time &quot; __TIME__ &quot; &quot; __DATE__
 macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;usb-uhci.h&quot;
 macro_line|#include &quot;usb-uhci-debug.h&quot;
@@ -3416,6 +3416,8 @@ r_int
 id|info
 comma
 id|len
+comma
+id|last
 suffix:semicolon
 r_int
 id|depth_first
@@ -3851,11 +3853,36 @@ id|len
 op_sub_assign
 id|pktsze
 suffix:semicolon
+id|last
+op_assign
+(paren
+id|len
+op_eq
+l_int|0
+op_logical_and
+(paren
+id|usb_pipein
+c_func
+(paren
+id|pipe
+)paren
+op_logical_or
+id|pktsze
+OL
+id|maxsze
+op_logical_or
+(paren
+id|urb-&gt;transfer_flags
+op_amp
+id|USB_DISABLE_SPD
+)paren
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|len
+id|last
 )paren
 id|td-&gt;hw.td.status
 op_or_assign
@@ -3894,9 +3921,8 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|len
-OG
-l_int|0
+op_logical_neg
+id|last
 )paren
 suffix:semicolon
 id|list_add
@@ -4594,6 +4620,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+singleline_comment|// shouldn&squot;t be called from interrupt at all...
+id|spin_lock
+c_func
+(paren
+op_amp
+id|urb-&gt;lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|urb-&gt;status
 op_eq
 op_minus
@@ -4617,6 +4660,22 @@ suffix:semicolon
 id|s-&gt;unlink_urb_done
 op_assign
 l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|urb-&gt;lock
+)paren
 suffix:semicolon
 id|spin_unlock_irqrestore
 (paren
@@ -4785,11 +4844,25 @@ id|usb_dec_dev_use
 id|urb-&gt;dev
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
 r_else
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|urb-&gt;lock
+)paren
+suffix:semicolon
 id|spin_unlock_irqrestore
 (paren
 op_amp
@@ -4798,6 +4871,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -5326,11 +5400,16 @@ c_func
 id|s
 )paren
 suffix:semicolon
-)brace
 r_return
 op_minus
 id|EINPROGRESS
 suffix:semicolon
+singleline_comment|// completion will follow
+)brace
+r_return
+l_int|0
+suffix:semicolon
+singleline_comment|// URB already dead
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
 DECL|function|uhci_unlink_urb
@@ -5428,6 +5507,23 @@ comma
 id|flags
 )paren
 suffix:semicolon
+singleline_comment|// The URB needs to be locked if called outside completion context
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+id|spin_lock
+c_func
+(paren
+op_amp
+id|urb-&gt;lock
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|uhci_unlink_urb_async
@@ -5436,6 +5532,22 @@ c_func
 id|s
 comma
 id|urb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|urb-&gt;lock
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore
@@ -6483,9 +6595,6 @@ id|ret
 op_assign
 op_minus
 id|EINVAL
-suffix:semicolon
-r_goto
-id|inval
 suffix:semicolon
 )brace
 r_else
@@ -9745,25 +9854,19 @@ r_if
 c_cond
 (paren
 id|status
-op_ne
-l_int|0
-)paren
-(brace
-singleline_comment|// if any error occured stop processing of further TDs
-singleline_comment|// only set ret if status returned an error
-r_if
-c_cond
+op_logical_and
 (paren
 id|status
 op_ne
 op_minus
 id|EPIPE
 )paren
-id|uhci_show_td
-(paren
-id|desc
 )paren
-suffix:semicolon
+(brace
+singleline_comment|// if any error occurred stop processing of further TDs
+singleline_comment|// only set ret if status returned an error
+id|is_error
+suffix:colon
 id|ret
 op_assign
 id|status
@@ -9890,6 +9993,15 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|status
+)paren
+r_goto
+id|is_error
+suffix:semicolon
 id|data_toggle
 op_assign
 id|uhci_toggle
@@ -11079,6 +11191,13 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|urb-&gt;lock
+)paren
+suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -11086,7 +11205,7 @@ op_amp
 id|s-&gt;urb_list_lock
 )paren
 suffix:semicolon
-singleline_comment|// In case you need the current URB status for your completion handler
+singleline_comment|// In case you need the current URB status for your completion handler (before resubmit)
 r_if
 c_cond
 (paren
@@ -11095,12 +11214,6 @@ op_logical_and
 (paren
 op_logical_neg
 id|proceed
-op_logical_or
-(paren
-id|urb-&gt;transfer_flags
-op_amp
-id|USB_URB_EARLY_COMPLETE
-)paren
 )paren
 )paren
 (brace
@@ -11205,13 +11318,6 @@ r_if
 c_cond
 (paren
 id|urb-&gt;complete
-op_logical_and
-op_logical_neg
-(paren
-id|urb-&gt;transfer_flags
-op_amp
-id|USB_URB_EARLY_COMPLETE
-)paren
 )paren
 (brace
 id|dbg
@@ -11232,16 +11338,23 @@ id|urb
 suffix:semicolon
 )brace
 )brace
+id|usb_dec_dev_use
+(paren
+id|urb-&gt;dev
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|urb-&gt;lock
+)paren
+suffix:semicolon
 id|spin_lock
 c_func
 (paren
 op_amp
 id|s-&gt;urb_list_lock
-)paren
-suffix:semicolon
-id|usb_dec_dev_use
-(paren
-id|urb-&gt;dev
 )paren
 suffix:semicolon
 )brace
@@ -12513,33 +12626,6 @@ comma
 id|USBLEGSUP_DEFAULT
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;vendor
-op_eq
-l_int|0x8086
-)paren
-(brace
-id|info
-c_func
-(paren
-l_string|&quot;Intel USB controller: setting latency timer to %d&quot;
-comma
-id|UHCI_LATENCY_TIMER
-)paren
-suffix:semicolon
-id|pci_write_config_byte
-c_func
-(paren
-id|dev
-comma
-id|PCI_LATENCY_TIMER
-comma
-id|UHCI_LATENCY_TIMER
-)paren
-suffix:semicolon
-)brace
 r_return
 id|alloc_uhci
 c_func

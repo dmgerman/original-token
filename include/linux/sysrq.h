@@ -52,8 +52,4 @@ macro_line|#else
 DECL|macro|CHECK_EMERGENCY_SYNC
 mdefine_line|#define CHECK_EMERGENCY_SYNC
 macro_line|#endif
-r_extern
-r_int
-id|sysrq_enabled
-suffix:semicolon
 eof

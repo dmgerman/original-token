@@ -159,8 +159,6 @@ mdefine_line|#define wmb()&t;mb()
 multiline_comment|/*&n; * XXX check on these---I suspect what Linus really wants here is&n; * acquire vs release semantics but we can&squot;t discuss this stuff with&n; * Linus just yet.  Grrr...&n; */
 DECL|macro|set_mb
 mdefine_line|#define set_mb(var, value)&t;do { (var) = (value); mb(); } while (0)
-DECL|macro|set_rmb
-mdefine_line|#define set_rmb(var, value)&t;do { (var) = (value); mb(); } while (0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(var, value)&t;do { (var) = (value); mb(); } while (0)
 multiline_comment|/*&n; * The group barrier in front of the rsm &amp; ssm are necessary to ensure&n; * that none of the previous instructions in the same group are&n; * affected by the rsm/ssm.&n; */

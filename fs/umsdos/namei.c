@@ -862,14 +862,6 @@ op_assign
 id|old_info-&gt;entry.nlink
 suffix:semicolon
 )brace
-macro_line|#ifdef OBSOLETE
-DECL|macro|chkstk
-mdefine_line|#define chkstk() &bslash;&n;if (STACK_MAGIC != *(unsigned long *)current-&gt;kernel_stack_page){&bslash;&n;    printk(KERN_ALERT &quot;UMSDOS: %s magic %x != %lx ligne %d&bslash;n&quot; &bslash;&n;&t;   , current-&gt;comm,STACK_MAGIC &bslash;&n;&t;   ,*(unsigned long *)current-&gt;kernel_stack_page &bslash;&n;&t;   ,__LINE__); &bslash;&n;}
-DECL|macro|chkstk
-macro_line|#undef chkstk
-DECL|macro|chkstk
-mdefine_line|#define chkstk() do { } while (0);
-macro_line|#endif
 multiline_comment|/*&n; * Rename a file (move) in the file system.&n; */
 DECL|function|umsdos_rename_f
 r_static

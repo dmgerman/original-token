@@ -40,6 +40,13 @@ r_struct
 id|list_head
 id|super_blocks
 suffix:semicolon
+multiline_comment|/* Whether we react on sysrq keys or just ignore them */
+DECL|variable|sysrq_enabled
+r_int
+id|sysrq_enabled
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/* Machine specific power off function */
 DECL|variable|sysrq_power_off
 r_void
@@ -146,6 +153,14 @@ r_int
 id|orig_log_level
 op_assign
 id|console_loglevel
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sysrq_enabled
+)paren
+r_return
 suffix:semicolon
 r_if
 c_cond

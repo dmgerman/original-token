@@ -246,8 +246,6 @@ DECL|macro|wmb
 mdefine_line|#define wmb()   eieio()
 DECL|macro|set_mb
 mdefine_line|#define set_mb(var, value)      do { var = value; mb(); } while (0)
-DECL|macro|set_rmb
-mdefine_line|#define set_rmb(var, value)     do { var = value; rmb(); } while (0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(var, value)     do { var = value; wmb(); } while (0)
 multiline_comment|/* interrupt control.. */

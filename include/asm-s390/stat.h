@@ -184,10 +184,11 @@ r_int
 r_char
 id|__pad0
 (braket
-l_int|10
+l_int|6
 )braket
 suffix:semicolon
 DECL|member|st_ino
+r_int
 r_int
 r_int
 id|st_ino

@@ -173,8 +173,6 @@ DECL|macro|wmb
 mdefine_line|#define wmb()&t;&t;membar(&quot;#StoreLoad | #StoreStore&quot;)
 DECL|macro|set_mb
 mdefine_line|#define set_mb(__var, __value) &bslash;&n;&t;do { __var = __value; membar(&quot;#StoreLoad | #StoreStore&quot;); } while(0)
-DECL|macro|set_rmb
-mdefine_line|#define set_rmb(__var, __value) &bslash;&n;&t;do { __var = __value; membar(&quot;#StoreLoad&quot;); } while(0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(__var, __value) &bslash;&n;&t;do { __var = __value; membar(&quot;#StoreStore&quot;); } while(0)
 DECL|macro|flushi

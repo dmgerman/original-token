@@ -683,8 +683,6 @@ DECL|macro|wmb
 mdefine_line|#define wmb()&t;mb()
 DECL|macro|set_mb
 mdefine_line|#define set_mb(__var, __value)  do { __var = __value; mb(); } while(0)
-DECL|macro|set_rmb
-mdefine_line|#define set_rmb(__var, __value) set_mb(__var, __value)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(__var, __value) set_mb(__var, __value)
 DECL|macro|nop

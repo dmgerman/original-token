@@ -4,8 +4,6 @@ mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &quot;i810_drv.h&quot;
 macro_line|#include &lt;linux/interrupt.h&gt;&t;/* For task queue support */
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* in case we don&squot;t have a 2.3.99-pre6 kernel or later: */
 macro_line|#ifndef VM_DONTCOPY
 DECL|macro|VM_DONTCOPY

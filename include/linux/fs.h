@@ -112,6 +112,8 @@ DECL|macro|FS_NOMOUNT
 mdefine_line|#define FS_NOMOUNT&t;16 /* Never mount from userland */
 DECL|macro|FS_LITTER
 mdefine_line|#define FS_LITTER&t;32 /* Keeps the tree in dcache */
+DECL|macro|FS_ODD_RENAME
+mdefine_line|#define FS_ODD_RENAME&t;32768&t;/* Temporary stuff; will go away as soon&n;&t;&t;&t;&t;  * as nfs_rename() will be cleaned up&n;&t;&t;&t;&t;  */
 multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
 DECL|macro|MS_RDONLY
 mdefine_line|#define MS_RDONLY&t; 1&t;/* Mount read-only */
@@ -127,20 +129,10 @@ DECL|macro|MS_REMOUNT
 mdefine_line|#define MS_REMOUNT&t;32&t;/* Alter flags of a mounted FS */
 DECL|macro|MS_MANDLOCK
 mdefine_line|#define MS_MANDLOCK&t;64&t;/* Allow mandatory locks on an FS */
-DECL|macro|S_QUOTA
-mdefine_line|#define S_QUOTA&t;&t;128&t;/* Quota initialized for file/directory/symlink */
-DECL|macro|S_APPEND
-mdefine_line|#define S_APPEND&t;256&t;/* Append-only file */
-DECL|macro|S_IMMUTABLE
-mdefine_line|#define S_IMMUTABLE&t;512&t;/* Immutable file */
 DECL|macro|MS_NOATIME
 mdefine_line|#define MS_NOATIME&t;1024&t;/* Do not update access times. */
 DECL|macro|MS_NODIRATIME
 mdefine_line|#define MS_NODIRATIME&t;2048&t;/* Do not update directory access times */
-DECL|macro|MS_ODD_RENAME
-mdefine_line|#define MS_ODD_RENAME&t;32768&t;/* Temporary stuff; will go away as soon&n;&t;&t;&t;&t;  * as nfs_rename() will be cleaned up&n;&t;&t;&t;&t;  */
-DECL|macro|S_DEAD
-mdefine_line|#define S_DEAD&t;&t;(1&lt;&lt;16)&t;/* removed, but still open directory */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
 mdefine_line|#define MS_RMT_MASK&t;(MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|&bslash;&n;&t;&t;&t;MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME|MS_NODIRATIME)
@@ -149,11 +141,24 @@ DECL|macro|MS_MGC_VAL
 mdefine_line|#define MS_MGC_VAL 0xC0ED0000&t;/* magic flag number to indicate &quot;new&quot; flags */
 DECL|macro|MS_MGC_MSK
 mdefine_line|#define MS_MGC_MSK 0xffff0000&t;/* magic flag number mask */
+multiline_comment|/* Inode flags - they have nothing to superblock flags now */
+DECL|macro|S_SYNC
+mdefine_line|#define S_SYNC&t;&t;1&t;/* Writes are synced at once */
+DECL|macro|S_NOATIME
+mdefine_line|#define S_NOATIME&t;2&t;/* Do not update access times */
+DECL|macro|S_QUOTA
+mdefine_line|#define S_QUOTA&t;&t;4&t;/* Quota initialized for file */
+DECL|macro|S_APPEND
+mdefine_line|#define S_APPEND&t;8&t;/* Append-only file */
+DECL|macro|S_IMMUTABLE
+mdefine_line|#define S_IMMUTABLE&t;16&t;/* Immutable file */
+DECL|macro|S_DEAD
+mdefine_line|#define S_DEAD&t;&t;32&t;/* removed, but still open directory */
 multiline_comment|/*&n; * Note that nosuid etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to override it selectively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; *&n; * Unfortunately, it is possible to change a filesystems flags with it mounted&n; * with files in use.  This means that all of the inodes will not have their&n; * i_flags updated.  Hence, i_flags no longer inherit the superblock mount&n; * flags, so these have to be checked separately. -- rmk@arm.uk.linux.org&n; */
 DECL|macro|__IS_FLG
-mdefine_line|#define __IS_FLG(inode,flg) (((inode)-&gt;i_sb &amp;&amp; (inode)-&gt;i_sb-&gt;s_flags &amp; (flg)) &bslash;&n;&t;&t;&t;&t;|| (inode)-&gt;i_flags &amp; (flg))
+mdefine_line|#define __IS_FLG(inode,flg) ((inode)-&gt;i_sb-&gt;s_flags &amp; (flg))
 DECL|macro|IS_RDONLY
-mdefine_line|#define IS_RDONLY(inode) (((inode)-&gt;i_sb) &amp;&amp; ((inode)-&gt;i_sb-&gt;s_flags &amp; MS_RDONLY))
+mdefine_line|#define IS_RDONLY(inode) ((inode)-&gt;i_sb-&gt;s_flags &amp; MS_RDONLY)
 DECL|macro|IS_NOSUID
 mdefine_line|#define IS_NOSUID(inode)&t;__IS_FLG(inode, MS_NOSUID)
 DECL|macro|IS_NODEV
@@ -161,7 +166,7 @@ mdefine_line|#define IS_NODEV(inode)&t;&t;__IS_FLG(inode, MS_NODEV)
 DECL|macro|IS_NOEXEC
 mdefine_line|#define IS_NOEXEC(inode)&t;__IS_FLG(inode, MS_NOEXEC)
 DECL|macro|IS_SYNC
-mdefine_line|#define IS_SYNC(inode)&t;&t;__IS_FLG(inode, MS_SYNCHRONOUS)
+mdefine_line|#define IS_SYNC(inode)&t;&t;(__IS_FLG(inode, MS_SYNCHRONOUS) || ((inode)-&gt;i_flags &amp; S_SYNC))
 DECL|macro|IS_MANDLOCK
 mdefine_line|#define IS_MANDLOCK(inode)&t;__IS_FLG(inode, MS_MANDLOCK)
 DECL|macro|IS_QUOTAINIT
@@ -171,7 +176,7 @@ mdefine_line|#define IS_APPEND(inode)&t;((inode)-&gt;i_flags &amp; S_APPEND)
 DECL|macro|IS_IMMUTABLE
 mdefine_line|#define IS_IMMUTABLE(inode)&t;((inode)-&gt;i_flags &amp; S_IMMUTABLE)
 DECL|macro|IS_NOATIME
-mdefine_line|#define IS_NOATIME(inode)&t;__IS_FLG(inode, MS_NOATIME)
+mdefine_line|#define IS_NOATIME(inode)&t;(__IS_FLG(inode, MS_NOATIME) || ((inode)-&gt;i_flags &amp; S_NOATIME))
 DECL|macro|IS_NODIRATIME
 mdefine_line|#define IS_NODIRATIME(inode)&t;__IS_FLG(inode, MS_NODIRATIME)
 DECL|macro|IS_DEADDIR

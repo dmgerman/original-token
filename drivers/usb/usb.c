@@ -2774,15 +2774,15 @@ id|dev-&gt;refcnt
 )paren
 )paren
 (brace
-id|usb_destroy_configuration
+id|dev-&gt;bus-&gt;op
+op_member_access_from_pointer
+id|deallocate
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|deallocate
+id|usb_destroy_configuration
 c_func
 (paren
 id|dev
@@ -2957,7 +2957,7 @@ suffix:semicolon
 r_else
 r_return
 op_minus
-l_int|1
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
@@ -2990,7 +2990,7 @@ suffix:semicolon
 r_else
 r_return
 op_minus
-l_int|1
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*&n; *                     COMPLETION HANDLERS                           *&n; *-------------------------------------------------------------------*/
@@ -5138,31 +5138,6 @@ id|dev-&gt;config
 )paren
 suffix:semicolon
 )brace
-DECL|function|usb_init_root_hub
-r_void
-id|usb_init_root_hub
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|dev
-)paren
-(brace
-id|dev-&gt;devnum
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|dev-&gt;slow
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;actconfig
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
 multiline_comment|/* for returning string descriptors in UTF-16LE */
 DECL|function|ascii2utf
 r_static
@@ -5650,14 +5625,7 @@ id|child
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* remove /proc/bus/usb entry */
-id|usbdevfs_remove_device
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* Free up the device itself, including its device number */
+multiline_comment|/* Free the device number and remove the /proc/bus/usb entry */
 r_if
 c_cond
 (paren
@@ -5665,6 +5633,7 @@ id|dev-&gt;devnum
 OG
 l_int|0
 )paren
+(brace
 id|clear_bit
 c_func
 (paren
@@ -5674,6 +5643,14 @@ op_amp
 id|dev-&gt;bus-&gt;devmap.devicemap
 )paren
 suffix:semicolon
+id|usbdevfs_remove_device
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Free up the device itself */
 id|usb_free_dev
 c_func
 (paren
@@ -6676,7 +6653,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|status
+)paren
 op_amp
 l_int|1
 )paren
@@ -6937,7 +6918,7 @@ id|configuration
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EINVAL
 suffix:semicolon
 )brace
 r_if
@@ -7208,7 +7189,7 @@ l_string|&quot;too many configurations&quot;
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EINVAL
 suffix:semicolon
 )brace
 r_if
@@ -7227,7 +7208,7 @@ l_string|&quot;not enough configurations&quot;
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EINVAL
 suffix:semicolon
 )brace
 id|dev-&gt;config
@@ -7266,7 +7247,7 @@ l_string|&quot;out of memory&quot;
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|ENOMEM
 suffix:semicolon
 )brace
 id|memset
@@ -7321,7 +7302,7 @@ l_string|&quot;out of memory&quot;
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|ENOMEM
 suffix:semicolon
 )brace
 r_for
@@ -7379,6 +7360,7 @@ l_string|&quot;unable to get descriptor&quot;
 )paren
 suffix:semicolon
 r_else
+(brace
 id|err
 c_func
 (paren
@@ -7389,6 +7371,12 @@ comma
 id|result
 )paren
 suffix:semicolon
+id|result
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 r_goto
 id|err
 suffix:semicolon
@@ -7493,6 +7481,11 @@ comma
 id|result
 )paren
 suffix:semicolon
+id|result
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -7551,7 +7544,7 @@ l_int|0
 id|result
 op_assign
 op_minus
-l_int|1
+id|EINVAL
 suffix:semicolon
 r_goto
 id|err
@@ -8155,16 +8148,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|dev-&gt;actconfig
-op_assign
-id|dev-&gt;config
-suffix:semicolon
-id|usb_set_maxpacket
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/* we set the default configuration here */
 id|err
 op_assign
@@ -8195,8 +8178,21 @@ comma
 id|err
 )paren
 suffix:semicolon
-r_return
+id|clear_bit
+c_func
+(paren
+id|dev-&gt;devnum
+comma
+op_amp
+id|dev-&gt;bus-&gt;devmap.devicemap
+)paren
+suffix:semicolon
+id|dev-&gt;devnum
+op_assign
 op_minus
+l_int|1
+suffix:semicolon
+r_return
 l_int|1
 suffix:semicolon
 )brace
@@ -8620,13 +8616,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|usb_driver_release_interface
-)paren
-suffix:semicolon
-DECL|variable|usb_init_root_hub
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|usb_init_root_hub
 )paren
 suffix:semicolon
 DECL|variable|usb_root_hub_string

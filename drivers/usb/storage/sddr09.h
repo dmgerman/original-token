@@ -18,5 +18,34 @@ op_star
 id|us
 )paren
 suffix:semicolon
+DECL|struct|sddr09_card_info
+r_struct
+id|sddr09_card_info
+(brace
+DECL|member|capacity
+r_int
+r_int
+id|capacity
+suffix:semicolon
+multiline_comment|/* Size of card in bytes */
+DECL|member|pagesize
+r_int
+id|pagesize
+suffix:semicolon
+multiline_comment|/* Size of page in bytes */
+DECL|member|lba_to_pba
+r_int
+op_star
+id|lba_to_pba
+suffix:semicolon
+multiline_comment|/* logical to physical map */
+DECL|member|pba_to_lba
+r_int
+op_star
+id|pba_to_lba
+suffix:semicolon
+multiline_comment|/* physical to logical map */
+)brace
+suffix:semicolon
 macro_line|#endif
 eof

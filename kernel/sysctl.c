@@ -55,6 +55,10 @@ id|nr_queued_signals
 comma
 id|max_queued_signals
 suffix:semicolon
+r_extern
+r_int
+id|sysrq_enabled
+suffix:semicolon
 multiline_comment|/* this is needed for the proc_dointvec_minmax for [fs_]overflow UID and GID */
 DECL|variable|maxolduid
 r_static

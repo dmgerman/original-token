@@ -1501,6 +1501,8 @@ suffix:semicolon
 id|sum
 op_assign
 id|nr_lru_pages
+op_div
+l_int|3
 suffix:semicolon
 r_for
 c_loop

@@ -1088,6 +1088,12 @@ id|tmp.st_ino
 op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
+macro_line|#ifdef STAT64_HAS_BROKEN_ST_INO
+id|tmp.__st_ino
+op_assign
+id|inode-&gt;i_ino
+suffix:semicolon
+macro_line|#endif
 id|tmp.st_mode
 op_assign
 id|inode-&gt;i_mode

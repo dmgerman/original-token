@@ -2,8 +2,6 @@ multiline_comment|/* vm.c -- Memory mapping for DRM -*- linux-c -*-&n; * Created
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|variable|drm_vm_ops
 r_struct
 id|vm_operations_struct
@@ -497,6 +495,12 @@ op_amp
 id|dev-&gt;vma_count
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020333
+multiline_comment|/* The map can exist after the fd is closed. */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+multiline_comment|/* Needed before Linux 2.3.51 */
+macro_line|#endif
 macro_line|#if DRM_DEBUG_CODE
 id|vma_entry
 op_assign
@@ -595,6 +599,11 @@ op_minus
 id|vma-&gt;vm_start
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020333
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+multiline_comment|/* Needed before Linux 2.3.51 */
+macro_line|#endif
 id|atomic_dec
 c_func
 (paren

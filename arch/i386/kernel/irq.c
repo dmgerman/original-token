@@ -1720,7 +1720,9 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;enable_irq() unbalanced from %p&bslash;n&quot;
+l_string|&quot;enable_irq(%u) unbalanced from %p&bslash;n&quot;
+comma
+id|irq
 comma
 id|__builtin_return_address
 c_func
@@ -2342,6 +2344,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * IRQ autodetection code..&n; *&n; * This depends on the fact that any interrupt that&n; * comes in on to an unassigned handler will get stuck&n; * with &quot;IRQ_WAITING&quot; cleared and the interrupt&n; * disabled.&n; */
+r_static
+id|DECLARE_MUTEX
+c_func
+(paren
+id|probe_sem
+)paren
+suffix:semicolon
 multiline_comment|/**&n; *&t;probe_irq_on&t;- begin an interrupt autodetect&n; *&n; *&t;Commence probing for an interrupt. The interrupts are scanned&n; *&t;and a mask of potential interrupt lines is returned.&n; *&n; */
 DECL|function|probe_irq_on
 r_int
@@ -2367,6 +2376,13 @@ suffix:semicolon
 r_int
 r_int
 id|delay
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|probe_sem
+)paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * something may have generated an irq long ago and we want to&n;&t; * flush such a longstanding irq before considering it as spurious. &n;&t; */
 r_for
@@ -2660,7 +2676,7 @@ id|val
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return a mask of triggered interrupts (this&n; * can handle only legacy ISA interrupts).&n; */
-multiline_comment|/**&n; *&t;probe_irq_mask - scan a bitmap of interrupt lines&n; *&t;@val:&t;mask of interrupts to consider&n; *&n; *&t;Scan the ISA bus interrupt lines and return a bitmap of&n; *&t;active interrupts. The interrupt probe logic state is then&n; *&t;returned to its previous value.&n; */
+multiline_comment|/**&n; *&t;probe_irq_mask - scan a bitmap of interrupt lines&n; *&t;@val:&t;mask of interrupts to consider&n; *&n; *&t;Scan the ISA bus interrupt lines and return a bitmap of&n; *&t;active interrupts. The interrupt probe logic state is then&n; *&t;returned to its previous value.&n; *&n; *&t;Note: we need to scan all the irq&squot;s even though we will&n; *&t;only return ISA irq numbers - just so that we reset them&n; *&t;all to a known state.&n; */
 DECL|function|probe_irq_mask
 r_int
 r_int
@@ -2692,7 +2708,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -2732,6 +2748,10 @@ id|IRQ_AUTODETECT
 r_if
 c_cond
 (paren
+id|i
+OL
+l_int|16
+op_logical_and
 op_logical_neg
 (paren
 id|status
@@ -2769,6 +2789,13 @@ id|desc-&gt;lock
 )paren
 suffix:semicolon
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|probe_sem
+)paren
+suffix:semicolon
 r_return
 id|mask
 op_amp
@@ -2897,6 +2924,13 @@ id|desc-&gt;lock
 )paren
 suffix:semicolon
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|probe_sem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3076,7 +3110,13 @@ suffix:semicolon
 id|desc-&gt;status
 op_and_assign
 op_complement
+(paren
 id|IRQ_DISABLED
+op_or
+id|IRQ_AUTODETECT
+op_or
+id|IRQ_WAITING
+)paren
 suffix:semicolon
 id|desc-&gt;handler
 op_member_access_from_pointer

@@ -13845,6 +13845,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* End build_auth_frame */
 multiline_comment|/*===========================================================================*/
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|raycs_write
 r_static
 r_void
@@ -14125,6 +14126,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|init_ray_cs
 r_static
 r_int
@@ -14173,6 +14175,7 @@ comma
 id|rc
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_mkdir
 c_func
 (paren
@@ -14190,6 +14193,7 @@ l_int|0
 comma
 l_int|NULL
 comma
+op_amp
 id|ray_cs_proc_read
 )paren
 suffix:semicolon
@@ -14225,6 +14229,7 @@ op_amp
 id|translate
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -14260,6 +14265,7 @@ comma
 l_string|&quot;ray_cs: cleanup_module&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|remove_proc_entry
 c_func
 (paren
@@ -14268,6 +14274,7 @@ comma
 id|proc_root_driver
 )paren
 suffix:semicolon
+macro_line|#endif
 id|unregister_pcmcia_driver
 c_func
 (paren
@@ -14306,6 +14313,7 @@ id|dev_list
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 id|remove_proc_entry
 c_func
 (paren
@@ -14346,6 +14354,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* exit_ray_cs */
 DECL|variable|init_ray_cs

@@ -641,14 +641,6 @@ op_star
 id|pt_regs
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-macro_line|#ifndef CONFIG_PCI
-DECL|variable|sysrq_enabled
-r_int
-id|sysrq_enabled
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 DECL|variable|sun_sysrq_xlate
 r_int
 r_char
@@ -2286,8 +2278,6 @@ c_cond
 (paren
 op_logical_neg
 id|up_flag
-op_logical_and
-id|sysrq_enabled
 )paren
 id|handle_sysrq
 c_func

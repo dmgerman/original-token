@@ -163,13 +163,8 @@ r_int
 id|st_dev
 suffix:semicolon
 multiline_comment|/* Device.  */
-DECL|member|__pad1
-r_int
-r_int
-r_int
-id|__pad1
-suffix:semicolon
 DECL|member|st_ino
+r_int
 r_int
 r_int
 id|st_ino

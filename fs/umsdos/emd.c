@@ -31,6 +31,13 @@ id|p-&gt;name_len
 op_assign
 id|q-&gt;name_len
 suffix:semicolon
+id|p-&gt;name
+(braket
+id|p-&gt;name_len
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
 id|p-&gt;flags
 op_assign
 id|q-&gt;flags
@@ -365,6 +372,11 @@ suffix:semicolon
 r_int
 id|recsize
 suffix:semicolon
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 id|page
 op_assign
 id|read_cache_page
@@ -438,6 +450,34 @@ op_plus
 id|offs
 )paren
 suffix:semicolon
+multiline_comment|/* if this is an invalid entry (invalid name length), ignore it */
+r_if
+c_cond
+(paren
+id|p-&gt;name_len
+OG
+id|UMSDOS_MAXNAME
+)paren
+(brace
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;Ignoring invalid EMD entry with size %d&bslash;n&quot;
+comma
+id|entry-&gt;name_len
+)paren
+suffix:semicolon
+id|p-&gt;name_len
+op_assign
+l_int|0
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
+multiline_comment|/* notify umssync(8) code that something is wrong */
+)brace
 id|recsize
 op_assign
 id|umsdos_evalrecsize
@@ -662,7 +702,7 @@ op_add_assign
 id|recsize
 suffix:semicolon
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 id|async_fail
 suffix:colon
@@ -693,7 +733,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write an entry in the EMD file.&n; * Return 0 if OK, -EIO if some error.&n; *&n; * Note: the caller must hold a lock on the parent directory.&n; */
 DECL|function|umsdos_writeentry
-r_static
 r_int
 id|umsdos_writeentry
 (paren
@@ -1228,6 +1267,8 @@ id|page
 comma
 id|offs
 comma
+id|offs
+op_plus
 id|info-&gt;recsize
 )paren
 suffix:semicolon
@@ -1344,6 +1385,8 @@ id|page
 comma
 id|offs
 comma
+id|offs
+op_plus
 id|info-&gt;recsize
 )paren
 suffix:semicolon
@@ -1634,6 +1677,10 @@ c_func
 (paren
 id|page
 )paren
+suffix:semicolon
+id|page
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 r_if

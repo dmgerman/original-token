@@ -2988,6 +2988,16 @@ comma
 id|CB_CSTSMASK
 )paren
 suffix:semicolon
+id|exca_writeb
+c_func
+(paren
+id|socket
+comma
+id|I365_CSCINT
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|val
 op_assign
 id|probe_irq_on
@@ -3221,6 +3231,8 @@ comma
 id|current
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|daemonize
 c_func
 (paren
@@ -3351,6 +3363,8 @@ c_func
 id|current
 )paren
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -3930,7 +3944,7 @@ l_int|1024
 suffix:semicolon
 id|size
 op_assign
-l_int|1024
+l_int|256
 suffix:semicolon
 id|min
 op_assign
@@ -4035,6 +4049,17 @@ comma
 id|IORESOURCE_IO
 )paren
 suffix:semicolon
+id|yenta_allocate_res
+c_func
+(paren
+id|socket
+comma
+l_int|3
+comma
+id|IORESOURCE_IO
+)paren
+suffix:semicolon
+multiline_comment|/* PCI isn&squot;t clever enough to use this one yet */
 )brace
 multiline_comment|/*&n; * Close it down - release our resources and go home..&n; */
 DECL|function|yenta_close

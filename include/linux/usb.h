@@ -1676,17 +1676,6 @@ id|timeout
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|usb_init_root_hub
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|usb_root_hub_string
 c_func

@@ -2,8 +2,6 @@ multiline_comment|/* i810_drv.c -- I810 driver -*- linux-c -*-&n; * Created: Mon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &quot;i810_drv.h&quot;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|macro|I810_NAME
 mdefine_line|#define I810_NAME&t; &quot;i810&quot;
 DECL|macro|I810_DESC
@@ -1798,6 +1796,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* i810_init is called via init_module at module load time, or via&n; * linux/init/main.c (this is not currently supported). */
 DECL|function|i810_init
+r_static
 r_int
 id|i810_init
 c_func
@@ -2054,6 +2053,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* i810_cleanup is called via cleanup_module at module unload time. */
 DECL|function|i810_cleanup
+r_static
 r_void
 id|i810_cleanup
 c_func
@@ -2332,6 +2332,11 @@ id|dev
 )paren
 )paren
 (brace
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020333
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+multiline_comment|/* Needed before Linux 2.3.51 */
+macro_line|#endif
 id|atomic_inc
 c_func
 (paren
@@ -2714,6 +2719,11 @@ comma
 id|DRM_MEM_FILES
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020333
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+multiline_comment|/* Needed before Linux 2.3.51 */
+macro_line|#endif
 id|atomic_inc
 c_func
 (paren
@@ -2788,8 +2798,12 @@ op_amp
 id|dev-&gt;count_lock
 )paren
 suffix:semicolon
-id|retcode
-op_assign
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
 id|i810_takedown
 c_func
 (paren
@@ -2797,7 +2811,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-r_else
 id|spin_unlock
 c_func
 (paren

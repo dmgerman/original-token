@@ -90,8 +90,16 @@ id|pseudo_root
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;Umsdos: Oops releasing pseudo_root.&quot;
-l_string|&quot; Notify jacques@solucorp.qc.ca&bslash;n&quot;
+l_string|&quot;Umsdos: debug: releasing pseudo_root - ino=%lu count=%d&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+comma
+id|atomic_read
+c_func
+(paren
+op_amp
+id|inode-&gt;i_count
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -706,9 +714,9 @@ id|out
 suffix:semicolon
 id|ret
 op_assign
-op_minus
-id|EPERM
+l_int|0
 suffix:semicolon
+multiline_comment|/* don&squot;t do anything if directory is not promoted to umsdos yet */
 r_if
 c_cond
 (paren
@@ -716,25 +724,23 @@ op_logical_neg
 id|demd-&gt;d_inode
 )paren
 (brace
-id|printk
+id|Printk
 c_func
 (paren
-id|KERN_WARNING
+(paren
+id|KERN_DEBUG
 l_string|&quot;UMSDOS_notify_change: no EMD file %s/%s&bslash;n&quot;
 comma
 id|demd-&gt;d_parent-&gt;d_name.name
 comma
 id|demd-&gt;d_name.name
 )paren
+)paren
 suffix:semicolon
 r_goto
 id|out_dput
 suffix:semicolon
 )brace
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* don&squot;t do anything if this is the EMD itself */
 r_if
 c_cond
@@ -1068,7 +1074,7 @@ id|UMSDOS_put_super
 comma
 id|statfs
 suffix:colon
-id|fat_statfs
+id|UMSDOS_statfs
 comma
 id|clear_inode
 suffix:colon
@@ -1076,6 +1082,48 @@ id|fat_clear_inode
 comma
 )brace
 suffix:semicolon
+DECL|function|UMSDOS_statfs
+r_int
+id|UMSDOS_statfs
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
+r_struct
+id|statfs
+op_star
+id|buf
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+id|ret
+op_assign
+id|fat_statfs
+(paren
+id|sb
+comma
+id|buf
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
+)paren
+id|buf-&gt;f_namelen
+op_assign
+id|UMSDOS_MAXNAME
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Read the super block of an Extended MS-DOS FS.&n; */
 DECL|function|UMSDOS_read_super
 r_struct
@@ -1140,7 +1188,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;UMSDOS 0.86 &quot;
+l_string|&quot;UMSDOS 0.86i &quot;
 l_string|&quot;(compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION

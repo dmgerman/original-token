@@ -1729,7 +1729,7 @@ id|EXT2_SYNC_FL
 )paren
 id|inode-&gt;i_flags
 op_or_assign
-id|MS_SYNCHRONOUS
+id|S_SYNC
 suffix:semicolon
 id|insert_inode_hash
 c_func

@@ -245,14 +245,15 @@ c_func
 id|highpage
 )paren
 suffix:semicolon
-multiline_comment|/* Preserve the caching of the swap_entry. */
-id|highpage-&gt;index
-op_assign
-id|page-&gt;index
-suffix:semicolon
-id|highpage-&gt;mapping
-op_assign
+r_if
+c_cond
+(paren
 id|page-&gt;mapping
+)paren
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We can just forget the old page since &n;&t; * we stored its data into the new highmem-page.&n;&t; */
 id|page_cache_release

@@ -158,7 +158,7 @@ op_assign
 id|next
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * list_del - deletes entry from list.&n; * @entry: the element to delete from the list.&n; */
+multiline_comment|/**&n; * list_del - deletes entry from list.&n; * @entry: the element to delete from the list.&n; * Note: list_empty on entry does not return true after this, the entry is in an undefined state.&n; */
 DECL|function|list_del
 r_static
 id|__inline__
@@ -178,6 +178,35 @@ c_func
 id|entry-&gt;prev
 comma
 id|entry-&gt;next
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/**&n; * list_del_init - deletes entry from list and reinitialize it.&n; * @entry: the element to delete from the list.n &n; */
+DECL|function|list_del_init
+r_static
+id|__inline__
+r_void
+id|list_del_init
+c_func
+(paren
+r_struct
+id|list_head
+op_star
+id|entry
+)paren
+(brace
+id|__list_del
+c_func
+(paren
+id|entry-&gt;prev
+comma
+id|entry-&gt;next
+)paren
+suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+id|entry
 )paren
 suffix:semicolon
 )brace

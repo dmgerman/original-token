@@ -14,6 +14,8 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;&t;/* For (un)lock_kernel */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/mman.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;

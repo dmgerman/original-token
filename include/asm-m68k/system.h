@@ -59,10 +59,8 @@ DECL|macro|rmb
 mdefine_line|#define rmb()  asm volatile (&quot;&quot;   : : :&quot;memory&quot;)
 DECL|macro|wmb
 mdefine_line|#define wmb()  asm volatile (&quot;&quot;   : : :&quot;memory&quot;)
-DECL|macro|set_rmb
-mdefine_line|#define set_rmb(var, value)    do { xchg(&amp;var, value); } while (0)
 DECL|macro|set_mb
-mdefine_line|#define set_mb(var, value)     set_rmb(var, value)
+mdefine_line|#define set_mb(var, value)    do { xchg(&amp;var, value); } while (0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(var, value)    do { var = value; wmb(); } while (0)
 DECL|macro|xchg

@@ -164,8 +164,6 @@ mdefine_line|#define wmb() mb()
 macro_line|#endif
 DECL|macro|set_mb
 mdefine_line|#define set_mb(var, value) &bslash;&n;do { var = value; mb(); } while (0)
-DECL|macro|set_rmb
-mdefine_line|#define set_rmb(var, value) &bslash;&n;do { var = value; rmb(); } while (0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(var, value) &bslash;&n;do { var = value; wmb(); } while (0)
 macro_line|#if !defined (_LANGUAGE_ASSEMBLY)

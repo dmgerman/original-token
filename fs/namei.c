@@ -7510,9 +7510,9 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|old_dir-&gt;i_sb-&gt;s_flags
+id|old_dir-&gt;i_sb-&gt;s_type-&gt;fs_flags
 op_amp
-id|MS_ODD_RENAME
+id|FS_ODD_RENAME
 )paren
 )paren
 (brace

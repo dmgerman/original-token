@@ -567,12 +567,6 @@ r_static
 r_int
 id|sysrq_pressed
 suffix:semicolon
-DECL|variable|sysrq_enabled
-r_int
-id|sysrq_enabled
-op_assign
-l_int|1
-suffix:semicolon
 macro_line|#endif
 DECL|variable|pm_kbd
 r_static
@@ -937,8 +931,6 @@ c_cond
 (paren
 op_logical_neg
 id|up_flag
-op_logical_and
-id|sysrq_enabled
 )paren
 (brace
 id|handle_sysrq

@@ -1394,6 +1394,12 @@ id|mm
 )paren
 r_return
 suffix:semicolon
+id|vmlist_access_lock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1433,6 +1439,12 @@ id|page
 )paren
 suffix:semicolon
 )brace
+id|vmlist_access_unlock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

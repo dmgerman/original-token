@@ -318,12 +318,32 @@ id|i
 suffix:semicolon
 )brace
 multiline_comment|/* Drop the &quot;current user&quot; thing */
+(brace
+r_struct
+id|user_struct
+op_star
+id|user
+op_assign
+id|current-&gt;user
+suffix:semicolon
+id|current-&gt;user
+op_assign
+id|INIT_USER
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|current-&gt;user-&gt;__count
+)paren
+suffix:semicolon
 id|free_uid
 c_func
 (paren
-id|current
+id|user
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Give kmod all effective privileges.. */
 id|current-&gt;uid
 op_assign
