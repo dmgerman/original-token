@@ -131,7 +131,8 @@ mdefine_line|#define spin_lock_irqsave(x,flags)      do {save_flags(flags); cli(
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(x,flags) do {cli(); if (!(x)-&gt;lock&amp;&amp;(x)-&gt;babble) {printk(&quot;%s:%d: spin_unlock_irqrestore(%s:%p) not locked&bslash;n&quot;, __BASE_FILE__,__LINE__, (x)-&gt;module, (x));(x)-&gt;babble--;} (x)-&gt;lock = 0; restore_flags(flags);} while (0)
 macro_line|#endif&t;/* DEBUG_SPINLOCKS */
-multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
+multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; *&n; * Gcc-2.7.x has a nasty bug with empty initializers.&n; */
+macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
 DECL|typedef|rwlock_t
 r_typedef
 r_struct
@@ -141,6 +142,21 @@ id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { }
+macro_line|#else
+DECL|member|gcc_is_buggy
+DECL|typedef|rwlock_t
+r_typedef
+r_struct
+(brace
+r_int
+id|gcc_is_buggy
+suffix:semicolon
+)brace
+id|rwlock_t
+suffix:semicolon
+DECL|macro|RW_LOCK_UNLOCKED
+mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
+macro_line|#endif
 DECL|macro|read_lock
 mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
 DECL|macro|read_unlock

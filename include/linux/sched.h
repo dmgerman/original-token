@@ -22,8 +22,6 @@ macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;linux/securebits.h&gt;
-DECL|macro|JIFFIES_OFFSET
-mdefine_line|#define JIFFIES_OFFSET&t;(-3600*HZ)
 multiline_comment|/*&n; * cloning flags:&n; */
 DECL|macro|CSIGNAL
 mdefine_line|#define CSIGNAL&t;&t;0x000000ff&t;/* signal mask to be sent at exit */

@@ -92,7 +92,7 @@ mdefine_line|#define PORT_16550&t;3
 DECL|macro|PORT_16550A
 mdefine_line|#define PORT_16550A&t;4
 DECL|macro|PORT_CIRRUS
-mdefine_line|#define PORT_CIRRUS     5
+mdefine_line|#define PORT_CIRRUS     5&t;/* usurped by cyclades.c */
 DECL|macro|PORT_16650
 mdefine_line|#define PORT_16650&t;6
 DECL|macro|PORT_16650V2
@@ -100,7 +100,7 @@ mdefine_line|#define PORT_16650V2&t;7
 DECL|macro|PORT_16750
 mdefine_line|#define PORT_16750&t;8
 DECL|macro|PORT_STARTECH
-mdefine_line|#define PORT_STARTECH&t;9
+mdefine_line|#define PORT_STARTECH&t;9&t;/* usurped by cyclades.c */
 DECL|macro|PORT_MAX
 mdefine_line|#define PORT_MAX&t;9
 DECL|struct|serial_uart_config
@@ -164,7 +164,7 @@ mdefine_line|#define ASYNC_SPD_WARP&t;0x1010&t;/* Use 460800 instead of 38400 bp
 DECL|macro|ASYNC_LOW_LATENCY
 mdefine_line|#define ASYNC_LOW_LATENCY 0x2000 /* Request low latency behaviour */
 DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x2FFF&t;/* Possible legal async flags */
+mdefine_line|#define ASYNC_FLAGS&t;0x3FFF&t;/* Possible legal async flags */
 DECL|macro|ASYNC_USR_MASK
 mdefine_line|#define ASYNC_USR_MASK&t;0x3430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
 multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
