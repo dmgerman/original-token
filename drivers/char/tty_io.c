@@ -5052,9 +5052,11 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
+macro_line|#ifdef CONFIG_UNIX98_PTYS
 multiline_comment|/* N.B. this error exit may leave filp-&gt;f_flags with O_NONBLOCK set */
 id|init_dev_done
 suffix:colon
+macro_line|#endif
 id|filp-&gt;private_data
 op_assign
 id|tty

@@ -3387,6 +3387,12 @@ id|ndev-&gt;tbusy
 )paren
 )paren
 suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3421,6 +3427,12 @@ op_amp
 (paren
 id|ndev-&gt;tbusy
 )paren
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
 )paren
 suffix:semicolon
 r_return

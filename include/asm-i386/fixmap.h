@@ -10,7 +10,7 @@ DECL|enum|fixed_addresses
 r_enum
 id|fixed_addresses
 (brace
-macro_line|#if __SMP__
+macro_line|#ifdef __SMP__
 DECL|enumerator|FIX_APIC_BASE
 id|FIX_APIC_BASE
 comma

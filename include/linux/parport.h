@@ -1170,7 +1170,6 @@ DECL|function|parport_yield
 r_extern
 id|__inline__
 r_int
-r_int
 id|parport_yield
 c_func
 (paren
@@ -1227,7 +1226,6 @@ multiline_comment|/* parport_yield_blocking is the same but uses parport_claim_o
 DECL|function|parport_yield_blocking
 r_extern
 id|__inline__
-r_int
 r_int
 id|parport_yield_blocking
 c_func

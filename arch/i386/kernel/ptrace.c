@@ -3230,16 +3230,6 @@ id|user_i387_struct
 )paren
 )paren
 suffix:semicolon
-id|child-&gt;flags
-op_and_assign
-op_complement
-id|PF_USEDFPU
-suffix:semicolon
-id|stts
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_MATH_EMULATION
 )brace
 r_else

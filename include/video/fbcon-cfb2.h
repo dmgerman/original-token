@@ -1,31 +1,27 @@
-multiline_comment|/*&n;     *  32 bpp packed pixel (cfb32)&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for 2 bpp packed pixel (cfb2)&n; */
+macro_line|#ifndef _VIDEO_FBCON_CFB2_H
+DECL|macro|_VIDEO_FBCON_CFB2_H
+mdefine_line|#define _VIDEO_FBCON_CFB2_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#if defined(CONFIG_FBCON_CFB32) || defined(CONFIG_FBCON_CFB32_MODULE)
-DECL|macro|FBCON_HAS_CFB32
-mdefine_line|#define FBCON_HAS_CFB32
+macro_line|#if defined(CONFIG_FBCON_CFB2) || defined(CONFIG_FBCON_CFB2_MODULE)
+DECL|macro|FBCON_HAS_CFB2
+mdefine_line|#define FBCON_HAS_CFB2
 macro_line|#endif
 macro_line|#else
-macro_line|#if defined(CONFIG_FBCON_CFB32)
-DECL|macro|FBCON_HAS_CFB32
-mdefine_line|#define FBCON_HAS_CFB32
+macro_line|#if defined(CONFIG_FBCON_CFB2)
+DECL|macro|FBCON_HAS_CFB2
+mdefine_line|#define FBCON_HAS_CFB2
 macro_line|#endif
 macro_line|#endif
 r_extern
 r_struct
 id|display_switch
-id|fbcon_cfb32
-suffix:semicolon
-r_extern
-id|u32
-id|fbcon_cfb32_cmap
-(braket
-l_int|16
-)braket
+id|fbcon_cfb2
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb32_setup
+id|fbcon_cfb2_setup
 c_func
 (paren
 r_struct
@@ -36,7 +32,7 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb32_bmove
+id|fbcon_cfb2_bmove
 c_func
 (paren
 r_struct
@@ -65,7 +61,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb32_clear
+id|fbcon_cfb2_clear
 c_func
 (paren
 r_struct
@@ -93,7 +89,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb32_putc
+id|fbcon_cfb2_putc
 c_func
 (paren
 r_struct
@@ -118,7 +114,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb32_putcs
+id|fbcon_cfb2_putcs
 c_func
 (paren
 r_struct
@@ -149,7 +145,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb32_revc
+id|fbcon_cfb2_revc
 c_func
 (paren
 r_struct
@@ -164,20 +160,5 @@ r_int
 id|yy
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|fbcon_cfb32_clear_margins
-c_func
-(paren
-r_struct
-id|vc_data
-op_star
-id|conp
-comma
-r_struct
-id|display
-op_star
-id|p
-)paren
-suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_CFB2_H */
 eof

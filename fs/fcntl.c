@@ -375,6 +375,8 @@ id|FASYNC
 r_if
 c_cond
 (paren
+id|filp-&gt;f_op
+op_logical_and
 id|filp-&gt;f_op-&gt;fasync
 )paren
 id|filp-&gt;f_op

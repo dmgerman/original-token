@@ -788,6 +788,19 @@ id|u_short
 id|inverse
 suffix:semicolon
 multiline_comment|/* != 0 text black on white as default */
+DECL|member|dispsw
+r_struct
+id|display_switch
+op_star
+id|dispsw
+suffix:semicolon
+multiline_comment|/* low level operations */
+DECL|member|dispsw_data
+r_void
+op_star
+id|dispsw_data
+suffix:semicolon
+multiline_comment|/* optional dispsw helper data */
 macro_line|#if 0
 r_struct
 id|fb_fix_cursorinfo
@@ -859,38 +872,31 @@ op_star
 id|fontdata
 suffix:semicolon
 multiline_comment|/* Font associated to this display */
-DECL|member|fontheightlog
+DECL|member|_fontheightlog
 r_int
 r_int
-id|fontheightlog
+id|_fontheightlog
 suffix:semicolon
-DECL|member|fontwidthlog
+DECL|member|_fontwidthlog
 r_int
 r_int
-id|fontwidthlog
+id|_fontwidthlog
 suffix:semicolon
-DECL|member|fontheight
+DECL|member|_fontheight
 r_int
 r_int
-id|fontheight
+id|_fontheight
 suffix:semicolon
-DECL|member|fontwidth
+DECL|member|_fontwidth
 r_int
 r_int
-id|fontwidth
+id|_fontwidth
 suffix:semicolon
 DECL|member|userfont
 r_int
 id|userfont
 suffix:semicolon
 multiline_comment|/* != 0 if fontdata kmalloc()ed */
-DECL|member|dispsw
-r_struct
-id|display_switch
-op_star
-id|dispsw
-suffix:semicolon
-multiline_comment|/* low level operations */
 DECL|member|scrollmode
 id|u_short
 id|scrollmode
@@ -1241,19 +1247,22 @@ op_star
 id|info
 )paren
 suffix:semicolon
-DECL|member|get_dispsw
-r_struct
-id|display_switch
-op_star
+DECL|member|set_dispsw
+r_void
 (paren
 op_star
-id|get_dispsw
+id|set_dispsw
 )paren
 (paren
 r_const
 r_void
 op_star
 id|par
+comma
+r_struct
+id|display
+op_star
+id|disp
 comma
 r_struct
 id|fb_info_gen
@@ -1680,11 +1689,6 @@ id|fb_cmap
 op_star
 id|cmap
 comma
-r_struct
-id|fb_var_screeninfo
-op_star
-id|var
-comma
 r_int
 id|kspc
 comma
@@ -1728,11 +1732,6 @@ r_struct
 id|fb_cmap
 op_star
 id|cmap
-comma
-r_struct
-id|fb_var_screeninfo
-op_star
-id|var
 comma
 r_int
 id|kspc
@@ -1900,76 +1899,6 @@ DECL|macro|FB_CURSOR_ON
 mdefine_line|#define FB_CURSOR_ON&t;&t;1
 DECL|macro|FB_CURSOR_FLASH
 mdefine_line|#define FB_CURSOR_FLASH&t;&t;2
-DECL|macro|FBCMD_DRAWLINE
-mdefine_line|#define FBCMD_DRAWLINE&t;&t;0x4621
-DECL|macro|FBCMD_MOVE
-mdefine_line|#define FBCMD_MOVE&t;&t;0x4622
-DECL|macro|FB_LINE_XOR
-mdefine_line|#define FB_LINE_XOR&t;1
-DECL|macro|FB_LINE_BOX
-mdefine_line|#define FB_LINE_BOX&t;2
-DECL|macro|FB_LINE_FILLED
-mdefine_line|#define FB_LINE_FILLED&t;4
-DECL|struct|fb_line
-r_struct
-id|fb_line
-(brace
-DECL|member|start_x
-id|__s32
-id|start_x
-suffix:semicolon
-DECL|member|start_y
-id|__s32
-id|start_y
-suffix:semicolon
-DECL|member|end_x
-id|__s32
-id|end_x
-suffix:semicolon
-DECL|member|end_y
-id|__s32
-id|end_y
-suffix:semicolon
-DECL|member|color
-id|__u32
-id|color
-suffix:semicolon
-DECL|member|option
-id|__u32
-id|option
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|fb_move
-r_struct
-id|fb_move
-(brace
-DECL|member|src_x
-id|__s32
-id|src_x
-suffix:semicolon
-DECL|member|src_y
-id|__s32
-id|src_y
-suffix:semicolon
-DECL|member|dest_x
-id|__s32
-id|dest_x
-suffix:semicolon
-DECL|member|dest_y
-id|__s32
-id|dest_y
-suffix:semicolon
-DECL|member|height
-id|__u32
-id|height
-suffix:semicolon
-DECL|member|width
-id|__u32
-id|width
-suffix:semicolon
-)brace
-suffix:semicolon
 macro_line|#endif /* Preliminary */
 macro_line|#endif /* _LINUX_FB_H */
 eof

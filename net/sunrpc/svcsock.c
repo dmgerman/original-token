@@ -148,20 +148,33 @@ op_star
 id|rqstp
 )paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+op_assign
+id|rqstp-&gt;rq_skbuff
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|rqstp-&gt;rq_skbuff
+id|skb
 )paren
 r_return
+suffix:semicolon
+id|rqstp-&gt;rq_skbuff
+op_assign
+l_int|NULL
 suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: releasing skb %p&bslash;n&quot;
+l_string|&quot;svc: service %p, releasing skb %p&bslash;n&quot;
 comma
-id|rqstp-&gt;rq_skbuff
+id|rqstp
+comma
+id|skb
 )paren
 suffix:semicolon
 id|skb_free_datagram
@@ -169,17 +182,12 @@ c_func
 (paren
 id|rqstp-&gt;rq_sock-&gt;sk_sk
 comma
-id|rqstp-&gt;rq_skbuff
+id|skb
 )paren
 suffix:semicolon
-id|rqstp-&gt;rq_skbuff
-op_assign
-l_int|NULL
-suffix:semicolon
 )brace
-multiline_comment|/*&n; * Queue up a socket with data pending. If there are idle nfsd&n; * processes, wake&squot;em up.&n; * When calling this function, you should make sure it can&squot;t be interrupted&n; * by the network bottom half.&n; */
+multiline_comment|/*&n; * Queue up a socket with data pending. If there are idle nfsd&n; * processes, wake &squot;em up.&n; * When calling this function, you should make sure it can&squot;t be interrupted&n; * by the network bottom half.&n; */
 r_static
-r_inline
 r_void
 DECL|function|svc_sock_enqueue
 id|svc_sock_enqueue
@@ -192,14 +200,30 @@ id|svsk
 )paren
 (brace
 r_struct
+id|svc_serv
+op_star
+id|serv
+op_assign
+id|svsk-&gt;sk_server
+suffix:semicolon
+r_struct
 id|svc_rqst
 op_star
 id|rqstp
 suffix:semicolon
-r_struct
-id|svc_serv
-op_star
-id|serv
+r_if
+c_cond
+(paren
+id|serv-&gt;sv_threads
+op_logical_and
+id|serv-&gt;sv_sockets
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;svc_sock_enqueue: threads and sockets both waiting??&bslash;n&quot;
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -211,7 +235,7 @@ multiline_comment|/* Don&squot;t enqueue socket while daemon is receiving */
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: socket %p not enqueued: busy&bslash;n&quot;
+l_string|&quot;svc: socket %p busy, not enqueued&bslash;n&quot;
 comma
 id|svsk-&gt;sk_sk
 )paren
@@ -219,14 +243,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Mark socket as busy. It will remain in this state until the&n;&t; * server has processed all pending data and put the socket back&n;&t; * on the idle list&n;&t; */
+multiline_comment|/* Mark socket as busy. It will remain in this state until the&n;&t; * server has processed all pending data and put the socket back&n;&t; * on the idle list.&n;&t; */
 id|svsk-&gt;sk_busy
 op_assign
 l_int|1
-suffix:semicolon
-id|serv
-op_assign
-id|svsk-&gt;sk_server
 suffix:semicolon
 r_if
 c_cond
@@ -256,6 +276,22 @@ c_func
 id|serv
 comma
 id|rqstp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rqstp-&gt;rq_sock
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;svc_sock_enqueue: server %p, rq_sock=%p!&bslash;n&quot;
+comma
+id|rqstp
+comma
+id|rqstp-&gt;rq_sock
 )paren
 suffix:semicolon
 id|rqstp-&gt;rq_sock
@@ -358,9 +394,11 @@ id|svsk
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: socket %p dequeued&bslash;n&quot;
+l_string|&quot;svc: socket %p dequeued, inuse=%d&bslash;n&quot;
 comma
 id|svsk-&gt;sk_sk
+comma
+id|svsk-&gt;sk_inuse
 )paren
 suffix:semicolon
 id|svsk-&gt;sk_qued
@@ -1124,18 +1162,6 @@ r_struct
 id|svc_sock
 op_star
 id|svsk
-suffix:semicolon
-id|dprintk
-c_func
-(paren
-l_string|&quot;svc: socket %p data ready (inet %p)&bslash;n&quot;
-comma
-id|sk-&gt;user_data
-comma
-id|sk
-)paren
-suffix:semicolon
-id|svsk
 op_assign
 (paren
 r_struct
@@ -1153,6 +1179,20 @@ op_logical_neg
 id|svsk
 )paren
 r_return
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;svc: socket %p(inet %p), count=%d, busy=%d&bslash;n&quot;
+comma
+id|svsk
+comma
+id|sk
+comma
+id|count
+comma
+id|svsk-&gt;sk_busy
+)paren
 suffix:semicolon
 id|svsk-&gt;sk_data
 op_assign
@@ -2666,6 +2706,14 @@ id|rqstp
 )paren
 (brace
 r_struct
+id|svc_sock
+op_star
+id|svsk
+suffix:semicolon
+r_int
+id|len
+suffix:semicolon
+r_struct
 id|wait_queue
 id|wait
 op_assign
@@ -2675,14 +2723,6 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-r_struct
-id|svc_sock
-op_star
-id|svsk
-suffix:semicolon
-r_int
-id|len
-suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -2691,6 +2731,39 @@ comma
 id|rqstp
 comma
 id|current-&gt;timeout
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rqstp-&gt;rq_sock
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;svc_recv: service %p, socket not NULL!&bslash;n&quot;
+comma
+id|rqstp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
+id|rqstp-&gt;rq_wait
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;svc_recv: service %p, wait queue active!&bslash;n&quot;
+comma
+id|rqstp
 )paren
 suffix:semicolon
 id|again
@@ -2737,11 +2810,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|end_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 id|rqstp-&gt;rq_sock
 op_assign
 id|svsk
@@ -2749,19 +2817,10 @@ suffix:semicolon
 id|svsk-&gt;sk_inuse
 op_increment
 suffix:semicolon
-multiline_comment|/* N.B. where is this decremented? */
 )brace
 r_else
 (brace
 multiline_comment|/* No data pending. Go to sleep */
-id|rqstp-&gt;rq_sock
-op_assign
-l_int|NULL
-suffix:semicolon
-id|rqstp-&gt;rq_wait
-op_assign
-l_int|NULL
-suffix:semicolon
 id|svc_serv_enqueue
 c_func
 (paren
@@ -2795,6 +2854,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|rqstp-&gt;rq_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2814,16 +2888,19 @@ comma
 id|rqstp
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|end_bh_atomic
+c_func
 (paren
-op_logical_neg
+)paren
+suffix:semicolon
+id|dprintk
+c_func
 (paren
-id|svsk
-op_assign
-id|rqstp-&gt;rq_sock
+l_string|&quot;svc: server %p, no data yet&bslash;n&quot;
+comma
+id|rqstp
 )paren
-)paren
+suffix:semicolon
 r_return
 id|signalled
 c_func
@@ -2839,14 +2916,21 @@ id|EAGAIN
 suffix:semicolon
 )brace
 )brace
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: server %p servicing socket %p&bslash;n&quot;
+l_string|&quot;svc: server %p, socket %p, inuse=%d&bslash;n&quot;
 comma
 id|rqstp
 comma
 id|svsk
+comma
+id|svsk-&gt;sk_inuse
 )paren
 suffix:semicolon
 id|len
@@ -2857,6 +2941,14 @@ id|sk_recvfrom
 c_func
 (paren
 id|rqstp
+)paren
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;svc: got len=%d&bslash;n&quot;
+comma
+id|len
 )paren
 suffix:semicolon
 multiline_comment|/* No data, incomplete (TCP) read, or accept() */

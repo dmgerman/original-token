@@ -1,24 +1,27 @@
-multiline_comment|/*&n;     *  Atari interleaved bitplanes (2 planes) (iplan2p2)&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for 4 bpp packed pixel (cfb4)&n; */
+macro_line|#ifndef _VIDEO_FBCON_CFB4_H
+DECL|macro|_VIDEO_FBCON_CFB4_H
+mdefine_line|#define _VIDEO_FBCON_CFB4_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#if defined(CONFIG_FBCON_IPLAN2P2) || defined(CONFIG_FBCON_IPLAN2P2_MODULE)
-DECL|macro|FBCON_HAS_IPLAN2P2
-mdefine_line|#define FBCON_HAS_IPLAN2P2
+macro_line|#if defined(CONFIG_FBCON_CFB4) || defined(CONFIG_FBCON_CFB4_MODULE)
+DECL|macro|FBCON_HAS_CFB4
+mdefine_line|#define FBCON_HAS_CFB4
 macro_line|#endif
 macro_line|#else
-macro_line|#if defined(CONFIG_FBCON_IPLAN2P2)
-DECL|macro|FBCON_HAS_IPLAN2P2
-mdefine_line|#define FBCON_HAS_IPLAN2P2
+macro_line|#if defined(CONFIG_FBCON_CFB4)
+DECL|macro|FBCON_HAS_CFB4
+mdefine_line|#define FBCON_HAS_CFB4
 macro_line|#endif
 macro_line|#endif
 r_extern
 r_struct
 id|display_switch
-id|fbcon_iplan2p2
+id|fbcon_cfb4
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_iplan2p2_setup
+id|fbcon_cfb4_setup
 c_func
 (paren
 r_struct
@@ -29,7 +32,7 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_iplan2p2_bmove
+id|fbcon_cfb4_bmove
 c_func
 (paren
 r_struct
@@ -58,7 +61,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_iplan2p2_clear
+id|fbcon_cfb4_clear
 c_func
 (paren
 r_struct
@@ -86,7 +89,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_iplan2p2_putc
+id|fbcon_cfb4_putc
 c_func
 (paren
 r_struct
@@ -111,7 +114,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_iplan2p2_putcs
+id|fbcon_cfb4_putcs
 c_func
 (paren
 r_struct
@@ -142,7 +145,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_iplan2p2_revc
+id|fbcon_cfb4_revc
 c_func
 (paren
 r_struct
@@ -157,4 +160,5 @@ r_int
 id|yy
 )paren
 suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_CFB4_H */
 eof

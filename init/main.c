@@ -1749,6 +1749,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_MDA_CONSOLE
+r_extern
+r_void
+id|mdacon_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_SYSVIPC)
 r_extern
 r_void
@@ -1784,12 +1800,6 @@ op_star
 id|ints
 )paren
 id|__init
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef __sparc__
-r_extern
-r_int
-id|serial_console
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Boot command-line arguments&n; */
@@ -2737,7 +2747,6 @@ comma
 id|console_setup
 )brace
 comma
-macro_line|#ifdef CONFIG_VT
 macro_line|#ifdef CONFIG_VGA_CONSOLE
 (brace
 l_string|&quot;no-scroll&quot;
@@ -2746,6 +2755,15 @@ id|no_scroll
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_MDA_CONSOLE
+(brace
+l_string|&quot;mdacon=&quot;
+comma
+id|mdacon_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_VT
 (brace
 l_string|&quot;kbd-reset&quot;
 comma

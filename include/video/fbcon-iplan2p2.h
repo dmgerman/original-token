@@ -1,24 +1,27 @@
-multiline_comment|/*&n;     *  8 bpp packed pixel (cfb8)&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for Atari interleaved bitplanes (2 planes) (iplan2p2)&n; */
+macro_line|#ifndef _VIDEO_FBCON_IPLAN2P2_H
+DECL|macro|_VIDEO_FBCON_IPLAN2P2_H
+mdefine_line|#define _VIDEO_FBCON_IPLAN2P2_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#if defined(CONFIG_FBCON_CFB8) || defined(CONFIG_FBCON_CFB8_MODULE)
-DECL|macro|FBCON_HAS_CFB8
-mdefine_line|#define FBCON_HAS_CFB8
+macro_line|#if defined(CONFIG_FBCON_IPLAN2P2) || defined(CONFIG_FBCON_IPLAN2P2_MODULE)
+DECL|macro|FBCON_HAS_IPLAN2P2
+mdefine_line|#define FBCON_HAS_IPLAN2P2
 macro_line|#endif
 macro_line|#else
-macro_line|#if defined(CONFIG_FBCON_CFB8)
-DECL|macro|FBCON_HAS_CFB8
-mdefine_line|#define FBCON_HAS_CFB8
+macro_line|#if defined(CONFIG_FBCON_IPLAN2P2)
+DECL|macro|FBCON_HAS_IPLAN2P2
+mdefine_line|#define FBCON_HAS_IPLAN2P2
 macro_line|#endif
 macro_line|#endif
 r_extern
 r_struct
 id|display_switch
-id|fbcon_cfb8
+id|fbcon_iplan2p2
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb8_setup
+id|fbcon_iplan2p2_setup
 c_func
 (paren
 r_struct
@@ -29,7 +32,7 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb8_bmove
+id|fbcon_iplan2p2_bmove
 c_func
 (paren
 r_struct
@@ -58,7 +61,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb8_clear
+id|fbcon_iplan2p2_clear
 c_func
 (paren
 r_struct
@@ -86,7 +89,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb8_putc
+id|fbcon_iplan2p2_putc
 c_func
 (paren
 r_struct
@@ -111,7 +114,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb8_putcs
+id|fbcon_iplan2p2_putcs
 c_func
 (paren
 r_struct
@@ -142,7 +145,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb8_revc
+id|fbcon_iplan2p2_revc
 c_func
 (paren
 r_struct
@@ -157,20 +160,5 @@ r_int
 id|yy
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|fbcon_cfb8_clear_margins
-c_func
-(paren
-r_struct
-id|vc_data
-op_star
-id|conp
-comma
-r_struct
-id|display
-op_star
-id|p
-)paren
-suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_IPLAN2P2_H */
 eof

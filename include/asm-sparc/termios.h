@@ -166,6 +166,12 @@ DECL|macro|N_X25
 mdefine_line|#define N_X25&t;&t;6
 DECL|macro|N_6PACK
 mdefine_line|#define N_6PACK&t;&t;7
+DECL|macro|N_MASC
+mdefine_line|#define N_MASC&t;&t;8&t;/* Reserved for Mobitex module &lt;kaz@cafe.net&gt; */
+DECL|macro|N_R3964
+mdefine_line|#define N_R3964&t;&t;9&t;/* Reserved for Simatic R3964 module */
+DECL|macro|N_PROFIBUS_FDL
+mdefine_line|#define N_PROFIBUS_FDL&t;10&t;/* Reserved for Profibus &lt;Dave@mvhi.com&gt; */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * c_cc characters in the termio structure.  Oh, how I love being&n; * backwardly compatible.  Notice that character 4 and 5 are&n; * interpreted differently depending on whether ICANON is set in&n; * c_lflag.  If it&squot;s set, they are used as _VEOF and _VEOL, otherwise&n; * as _VMIN and V_TIME.  This is for compatibility with OSF/1 (which&n; * is compatible with sysV)...&n; */
 DECL|macro|_VMIN

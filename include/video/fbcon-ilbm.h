@@ -1,24 +1,27 @@
-multiline_comment|/*&n;     *  VGA characters/attributes&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for Amiga interleaved bitplanes (ilbm)&n; */
+macro_line|#ifndef _VIDEO_FBCON_ILBM_H
+DECL|macro|_VIDEO_FBCON_ILBM_H
+mdefine_line|#define _VIDEO_FBCON_ILBM_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#if defined(CONFIG_FBCON_VGA) || defined(CONFIG_FBCON_VGA_MODULE)
-DECL|macro|FBCON_HAS_VGA
-mdefine_line|#define FBCON_HAS_VGA
+macro_line|#if defined(CONFIG_FBCON_ILBM) || defined(CONFIG_FBCON_ILBM_MODULE)  
+DECL|macro|FBCON_HAS_ILBM
+mdefine_line|#define FBCON_HAS_ILBM 
 macro_line|#endif
 macro_line|#else
-macro_line|#if defined(CONFIG_FBCON_VGA)
-DECL|macro|FBCON_HAS_VGA
-mdefine_line|#define FBCON_HAS_VGA
+macro_line|#if defined(CONFIG_FBCON_ILBM) 
+DECL|macro|FBCON_HAS_ILBM
+mdefine_line|#define FBCON_HAS_ILBM 
 macro_line|#endif
 macro_line|#endif
 r_extern
 r_struct
 id|display_switch
-id|fbcon_vga
+id|fbcon_ilbm
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_vga_setup
+id|fbcon_ilbm_setup
 c_func
 (paren
 r_struct
@@ -29,7 +32,7 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_vga_bmove
+id|fbcon_ilbm_bmove
 c_func
 (paren
 r_struct
@@ -58,7 +61,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_vga_clear
+id|fbcon_ilbm_clear
 c_func
 (paren
 r_struct
@@ -86,7 +89,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_vga_putc
+id|fbcon_ilbm_putc
 c_func
 (paren
 r_struct
@@ -111,7 +114,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_vga_putcs
+id|fbcon_ilbm_putcs
 c_func
 (paren
 r_struct
@@ -142,7 +145,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_vga_revc
+id|fbcon_ilbm_revc
 c_func
 (paren
 r_struct
@@ -157,4 +160,5 @@ r_int
 id|yy
 )paren
 suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_ILBM_H */
 eof

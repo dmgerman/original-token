@@ -1,3 +1,6 @@
+macro_line|#ifndef _VIDEO_S3BLIT_H
+DECL|macro|_VIDEO_S3BLIT_H
+mdefine_line|#define _VIDEO_S3BLIT_H
 multiline_comment|/* s3 commands */
 DECL|macro|S3_BITBLT
 mdefine_line|#define S3_BITBLT       0xc011
@@ -122,4 +125,5 @@ DECL|macro|S3_HWGC_DY
 mdefine_line|#define S3_HWGC_DY     0x4f
 DECL|macro|S3_LAW_CTL
 mdefine_line|#define S3_LAW_CTL 0x58
+macro_line|#endif /* _VIDEO_S3BLIT_H */
 eof

@@ -1,31 +1,27 @@
-multiline_comment|/*&n;     *  16 bpp packed pixel (cfb16)&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for Atari interleaved bitplanes (8 planes) (iplan2p8)&n; */
+macro_line|#ifndef _VIDEO_FBCON_IPLAN2P8_H
+DECL|macro|_VIDEO_FBCON_IPLAN2P8_H
+mdefine_line|#define _VIDEO_FBCON_IPLAN2P8_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#if defined(CONFIG_FBCON_CFB16) || defined(CONFIG_FBCON_CFB16_MODULE)
-DECL|macro|FBCON_HAS_CFB16
-mdefine_line|#define FBCON_HAS_CFB16
+macro_line|#if defined(CONFIG_FBCON_IPLAN2P8) || defined(CONFIG_FBCON_IPLAN2P8_MODULE)
+DECL|macro|FBCON_HAS_IPLAN2P8
+mdefine_line|#define FBCON_HAS_IPLAN2P8
 macro_line|#endif
 macro_line|#else
-macro_line|#if defined(CONFIG_FBCON_CFB16)
-DECL|macro|FBCON_HAS_CFB16
-mdefine_line|#define FBCON_HAS_CFB16
+macro_line|#if defined(CONFIG_FBCON_IPLAN2P8)
+DECL|macro|FBCON_HAS_IPLAN2P8
+mdefine_line|#define FBCON_HAS_IPLAN2P8
 macro_line|#endif
 macro_line|#endif
 r_extern
 r_struct
 id|display_switch
-id|fbcon_cfb16
-suffix:semicolon
-r_extern
-id|u16
-id|fbcon_cfb16_cmap
-(braket
-l_int|16
-)braket
+id|fbcon_iplan2p8
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb16_setup
+id|fbcon_iplan2p8_setup
 c_func
 (paren
 r_struct
@@ -36,7 +32,7 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb16_bmove
+id|fbcon_iplan2p8_bmove
 c_func
 (paren
 r_struct
@@ -65,7 +61,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb16_clear
+id|fbcon_iplan2p8_clear
 c_func
 (paren
 r_struct
@@ -93,7 +89,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb16_putc
+id|fbcon_iplan2p8_putc
 c_func
 (paren
 r_struct
@@ -118,7 +114,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb16_putcs
+id|fbcon_iplan2p8_putcs
 c_func
 (paren
 r_struct
@@ -149,7 +145,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb16_revc
+id|fbcon_iplan2p8_revc
 c_func
 (paren
 r_struct
@@ -164,20 +160,5 @@ r_int
 id|yy
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|fbcon_cfb16_clear_margins
-c_func
-(paren
-r_struct
-id|vc_data
-op_star
-id|conp
-comma
-r_struct
-id|display
-op_star
-id|p
-)paren
-suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_IPLAN2P8_H */
 eof

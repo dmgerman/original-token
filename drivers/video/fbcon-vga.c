@@ -5,8 +5,8 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-vga.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-vga.h&gt;
 multiline_comment|/*&n;     *  VGA screen access&n;     */
 DECL|function|vga_writew
 r_static

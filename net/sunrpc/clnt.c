@@ -1935,6 +1935,10 @@ comma
 id|task-&gt;tk_status
 )paren
 suffix:semicolon
+id|task-&gt;tk_action
+op_assign
+id|call_status
+suffix:semicolon
 multiline_comment|/* In case of error, evaluate status */
 r_if
 c_cond
@@ -1943,14 +1947,8 @@ id|task-&gt;tk_status
 OL
 l_int|0
 )paren
-(brace
-id|task-&gt;tk_action
-op_assign
-id|call_status
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* If we have no decode function, this means we&squot;re performing&n;&t; * a void call (a la lockd message passing). */
 r_if
 c_cond
@@ -1979,10 +1977,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|task-&gt;tk_action
-op_assign
-id|call_status
-suffix:semicolon
 id|xprt_receive
 c_func
 (paren
@@ -2234,14 +2228,14 @@ r_goto
 id|minor_timeout
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
 id|to-&gt;to_initval
 op_lshift_assign
 l_int|1
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|to-&gt;to_initval
 OG
 id|to-&gt;to_maxval
 )paren
@@ -2307,6 +2301,15 @@ id|RPC_CALL_MAJORSEEN
 )paren
 )paren
 (brace
+id|task-&gt;tk_flags
+op_or_assign
+id|RPC_CALL_MAJORSEEN
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req
+)paren
 id|printk
 c_func
 (paren
@@ -2317,9 +2320,16 @@ comma
 id|clnt-&gt;cl_server
 )paren
 suffix:semicolon
-id|task-&gt;tk_flags
-op_or_assign
-id|RPC_CALL_MAJORSEEN
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;%s: task %d can&squot;t get a request slot&bslash;n&quot;
+comma
+id|clnt-&gt;cl_protname
+comma
+id|task-&gt;tk_pid
+)paren
 suffix:semicolon
 )brace
 r_if

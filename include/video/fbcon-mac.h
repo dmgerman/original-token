@@ -1,4 +1,7 @@
-multiline_comment|/*&n;     *  Mac variable bpp packed pixels (mac)&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for Mac variable bpp packed pixels (mac)&n; */
+macro_line|#ifndef _VIDEO_FBCON_MAC_H
+DECL|macro|_VIDEO_FBCON_MAC_H
+mdefine_line|#define _VIDEO_FBCON_MAC_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_MAC) || defined(CONFIG_FBCON_MAC_MODULE)
@@ -157,4 +160,5 @@ r_int
 id|yy
 )paren
 suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_MAC_H */
 eof

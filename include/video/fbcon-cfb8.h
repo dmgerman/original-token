@@ -1,24 +1,27 @@
-multiline_comment|/*&n;     *  4 bpp packed pixel (cfb4)&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for 8 bpp packed pixel (cfb8)&n; */
+macro_line|#ifndef _VIDEO_FBCON_CFB8_H
+DECL|macro|_VIDEO_FBCON_CFB8_H
+mdefine_line|#define _VIDEO_FBCON_CFB8_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#if defined(CONFIG_FBCON_CFB4) || defined(CONFIG_FBCON_CFB4_MODULE)
-DECL|macro|FBCON_HAS_CFB4
-mdefine_line|#define FBCON_HAS_CFB4
+macro_line|#if defined(CONFIG_FBCON_CFB8) || defined(CONFIG_FBCON_CFB8_MODULE)
+DECL|macro|FBCON_HAS_CFB8
+mdefine_line|#define FBCON_HAS_CFB8
 macro_line|#endif
 macro_line|#else
-macro_line|#if defined(CONFIG_FBCON_CFB4)
-DECL|macro|FBCON_HAS_CFB4
-mdefine_line|#define FBCON_HAS_CFB4
+macro_line|#if defined(CONFIG_FBCON_CFB8)
+DECL|macro|FBCON_HAS_CFB8
+mdefine_line|#define FBCON_HAS_CFB8
 macro_line|#endif
 macro_line|#endif
 r_extern
 r_struct
 id|display_switch
-id|fbcon_cfb4
+id|fbcon_cfb8
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb4_setup
+id|fbcon_cfb8_setup
 c_func
 (paren
 r_struct
@@ -29,7 +32,7 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb4_bmove
+id|fbcon_cfb8_bmove
 c_func
 (paren
 r_struct
@@ -58,7 +61,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb4_clear
+id|fbcon_cfb8_clear
 c_func
 (paren
 r_struct
@@ -86,7 +89,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb4_putc
+id|fbcon_cfb8_putc
 c_func
 (paren
 r_struct
@@ -111,7 +114,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb4_putcs
+id|fbcon_cfb8_putcs
 c_func
 (paren
 r_struct
@@ -142,7 +145,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb4_revc
+id|fbcon_cfb8_revc
 c_func
 (paren
 r_struct
@@ -157,4 +160,24 @@ r_int
 id|yy
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|fbcon_cfb8_clear_margins
+c_func
+(paren
+r_struct
+id|vc_data
+op_star
+id|conp
+comma
+r_struct
+id|display
+op_star
+id|p
+comma
+r_int
+id|bottom_only
+)paren
+suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_CFB8_H */
 eof

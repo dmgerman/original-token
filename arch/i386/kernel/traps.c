@@ -1721,41 +1721,15 @@ id|task_struct
 op_star
 id|task
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|clts
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * Save the info for the exception handler&n;&t; * (this will also clear the error)&n;&t; */
 id|task
 op_assign
 id|current
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Save the info for the exception handler&n;&t; */
-id|__asm__
-id|__volatile__
+id|unlazy_fpu
 c_func
 (paren
-l_string|&quot;fnsave %0&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|task-&gt;tss.i387.hard
-)paren
-)paren
-suffix:semicolon
-id|task-&gt;flags
-op_and_assign
-op_complement
-id|PF_USEDFPU
-suffix:semicolon
-id|stts
-c_func
-(paren
+id|task
 )paren
 suffix:semicolon
 id|task-&gt;tss.trap_no
@@ -1772,11 +1746,6 @@ c_func
 id|SIGFPE
 comma
 id|task
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1848,7 +1817,6 @@ l_string|&quot;clts&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Allow maths ops (or we recurse) */
-multiline_comment|/*&n; *&t;SMP is actually simpler than uniprocessor for once. Because&n; *&t;we can&squot;t pull the delayed FPU switching trick Linus does&n; *&t;we simply have to do the restore each context switch and&n; *&t;set the flag. switch_to() will always save the state in&n; *&t;case we swap processors. We also don&squot;t use the coprocessor&n; *&t;timer - IRQ 13 mode isn&squot;t used with SMP machines (thank god).&n; */
 r_if
 c_cond
 (paren

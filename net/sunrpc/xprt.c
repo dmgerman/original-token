@@ -1067,7 +1067,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;RPC:      cong %08lx, cwnd was %08lx, now %08lx, &quot;
+l_string|&quot;RPC:      cong %ld, cwnd was %ld, now %ld, &quot;
 l_string|&quot;time %ld ms&bslash;n&quot;
 comma
 id|xprt-&gt;cong
@@ -3393,11 +3393,19 @@ op_star
 id|task
 )paren
 (brace
+r_struct
+id|rpc_rqst
+op_star
+id|req
+op_assign
+id|task-&gt;tk_rqstp
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|task-&gt;tk_rqstp
+id|req
 )paren
+(brace
 id|xprt_adjust_cwnd
 c_func
 (paren
@@ -3407,6 +3415,7 @@ op_minus
 id|ETIMEDOUT
 )paren
 suffix:semicolon
+)brace
 id|dprintk
 c_func
 (paren
@@ -3414,7 +3423,7 @@ l_string|&quot;RPC: %4d xprt_timer (%s request)&bslash;n&quot;
 comma
 id|task-&gt;tk_pid
 comma
-id|task-&gt;tk_rqstp
+id|req
 ques
 c_cond
 l_string|&quot;pending&quot;
@@ -4387,6 +4396,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;RPC: %4d inconsistent free list (cong %ld cwnd %ld)&bslash;n&quot;
 comma
 id|task-&gt;tk_pid
@@ -4409,6 +4419,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;RPC: used rqst slot %p on free list!&bslash;n&quot;
 comma
 id|req
@@ -4622,11 +4633,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Decrease congestion value. If congestion threshold is not yet&n;&t; * reached, pass on the request slot.&n;&t; * This looks kind of kludgy, but it guarantees backlogged requests&n;&t; * are served in order.&n;&t; */
+multiline_comment|/* Decrease congestion value. */
 id|xprt-&gt;cong
 op_sub_assign
 id|RPC_CWNDSCALE
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* If congestion threshold is not yet reached, pass on the request slot.&n;&t; * This looks kind of kludgy, but it guarantees backlogged requests&n;&t; * are served in order.&n;&t; * N.B. This doesn&squot;t look completely safe, as the task is still&n;&t; * on the backlog list after wake-up.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4680,6 +4693,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 id|req-&gt;rq_next
 op_assign
 id|xprt-&gt;free
@@ -4687,6 +4701,24 @@ suffix:semicolon
 id|xprt-&gt;free
 op_assign
 id|req
+suffix:semicolon
+multiline_comment|/* If not congested, wake up the next backlogged process */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|RPCXPRT_CONGESTED
+c_func
+(paren
+id|xprt
+)paren
+)paren
+id|rpc_wake_up_next
+c_func
+(paren
+op_amp
+id|xprt-&gt;backlog
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set default timeout parameters&n; */

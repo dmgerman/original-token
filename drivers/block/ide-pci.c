@@ -245,6 +245,21 @@ DECL|typedef|ide_pci_device_t
 )brace
 id|ide_pci_device_t
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_OFFBOARD
+DECL|macro|ON_BOARD
+macro_line|#  define ON_BOARD&t;&t;0
+DECL|macro|OFF_BOARD
+macro_line|#  define OFF_BOARD&t;&t;1
+DECL|macro|NEVER_BOARD
+macro_line|#  define NEVER_BOARD&t;&t;0
+macro_line|#else /* CONFIG_BLK_DEV_OFFBOARD */
+DECL|macro|ON_BOARD
+macro_line|#  define ON_BOARD&t;&t;1
+DECL|macro|OFF_BOARD
+macro_line|#  define OFF_BOARD&t;&t;0
+DECL|macro|NEVER_BOARD
+macro_line|#  define NEVER_BOARD&t;&t;0
+macro_line|#endif /* CONFIG_BLK_DEV_OFFBOARD */
 DECL|variable|__initdata
 r_static
 id|ide_pci_device_t
@@ -279,7 +294,7 @@ l_int|0x80
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -309,7 +324,7 @@ l_int|0x80
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -339,7 +354,7 @@ l_int|0x80
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -369,7 +384,7 @@ l_int|0x80
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -399,7 +414,7 @@ l_int|0x01
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -429,7 +444,7 @@ l_int|0x04
 )brace
 )brace
 comma
-l_int|0x01
+id|OFF_BOARD
 comma
 l_int|16
 )brace
@@ -459,7 +474,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -489,7 +504,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -519,7 +534,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -549,7 +564,7 @@ l_int|0x08
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -579,7 +594,7 @@ l_int|0x04
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -609,7 +624,7 @@ l_int|0x80
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -639,7 +654,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -669,7 +684,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -699,7 +714,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -729,7 +744,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -759,7 +774,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -789,7 +804,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|OFF_BOARD
 comma
 l_int|0
 )brace
@@ -819,7 +834,7 @@ l_int|0x10
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -849,7 +864,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -879,7 +894,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x00
+id|NEVER_BOARD
 comma
 l_int|16
 )brace
@@ -909,7 +924,7 @@ l_int|0x00
 )brace
 )brace
 comma
-l_int|0x01
+id|ON_BOARD
 comma
 l_int|0
 )brace
@@ -1097,6 +1112,12 @@ suffix:semicolon
 multiline_comment|/* 0xbc */
 )brace
 )brace
+r_return
+id|dev-&gt;irq
+suffix:semicolon
+r_case
+id|PCI_DEVICE_ID_TTI_HPT343
+suffix:colon
 r_return
 id|dev-&gt;irq
 suffix:semicolon

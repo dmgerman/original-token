@@ -1,24 +1,27 @@
-multiline_comment|/*&n;     *  2 bpp packed pixel (cfb2)&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for VGA characters/attributes&n; */
+macro_line|#ifndef _VIDEO_FBCON_VGA_H
+DECL|macro|_VIDEO_FBCON_VGA_H
+mdefine_line|#define _VIDEO_FBCON_VGA_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#if defined(CONFIG_FBCON_CFB2) || defined(CONFIG_FBCON_CFB2_MODULE)
-DECL|macro|FBCON_HAS_CFB2
-mdefine_line|#define FBCON_HAS_CFB2
+macro_line|#if defined(CONFIG_FBCON_VGA) || defined(CONFIG_FBCON_VGA_MODULE)
+DECL|macro|FBCON_HAS_VGA
+mdefine_line|#define FBCON_HAS_VGA
 macro_line|#endif
 macro_line|#else
-macro_line|#if defined(CONFIG_FBCON_CFB2)
-DECL|macro|FBCON_HAS_CFB2
-mdefine_line|#define FBCON_HAS_CFB2
+macro_line|#if defined(CONFIG_FBCON_VGA)
+DECL|macro|FBCON_HAS_VGA
+mdefine_line|#define FBCON_HAS_VGA
 macro_line|#endif
 macro_line|#endif
 r_extern
 r_struct
 id|display_switch
-id|fbcon_cfb2
+id|fbcon_vga
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb2_setup
+id|fbcon_vga_setup
 c_func
 (paren
 r_struct
@@ -29,7 +32,7 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb2_bmove
+id|fbcon_vga_bmove
 c_func
 (paren
 r_struct
@@ -58,7 +61,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb2_clear
+id|fbcon_vga_clear
 c_func
 (paren
 r_struct
@@ -86,7 +89,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb2_putc
+id|fbcon_vga_putc
 c_func
 (paren
 r_struct
@@ -111,7 +114,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb2_putcs
+id|fbcon_vga_putcs
 c_func
 (paren
 r_struct
@@ -142,7 +145,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb2_revc
+id|fbcon_vga_revc
 c_func
 (paren
 r_struct
@@ -157,4 +160,5 @@ r_int
 id|yy
 )paren
 suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_VGA_H */
 eof

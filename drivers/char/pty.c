@@ -1376,9 +1376,11 @@ r_void
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_UNIX98_PTYS
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Traditional BSD devices */
 id|memset
 c_func

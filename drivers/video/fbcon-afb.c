@@ -4,8 +4,8 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-afb.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-afb.h&gt;
 multiline_comment|/*&n;     *  Bitplanes &#xfffd; la Amiga&n;     */
 DECL|variable|expand_table
 r_static
@@ -2172,7 +2172,11 @@ id|p-&gt;screen_base
 op_plus
 id|sy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|width
 suffix:semicolon
@@ -2182,7 +2186,11 @@ id|p-&gt;screen_base
 op_plus
 id|dy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|width
 suffix:semicolon
@@ -2201,7 +2209,11 @@ id|src
 comma
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|width
 )paren
@@ -2238,7 +2250,11 @@ id|p-&gt;screen_base
 op_plus
 id|sy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|p-&gt;next_line
 op_plus
@@ -2250,7 +2266,11 @@ id|p-&gt;screen_base
 op_plus
 id|dy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|p-&gt;next_line
 op_plus
@@ -2274,7 +2294,11 @@ id|j
 op_assign
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -2333,7 +2357,11 @@ op_plus
 id|height
 )paren
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|p-&gt;next_line
 op_plus
@@ -2349,7 +2377,11 @@ op_plus
 id|height
 )paren
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|p-&gt;next_line
 op_plus
@@ -2373,7 +2405,11 @@ id|j
 op_assign
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -2470,7 +2506,11 @@ id|p-&gt;screen_base
 op_plus
 id|sy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|p-&gt;next_line
 op_plus
@@ -2500,7 +2540,11 @@ id|j
 op_assign
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -2614,7 +2658,11 @@ id|p-&gt;screen_base
 op_plus
 id|yy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|p-&gt;next_line
 op_plus
@@ -2630,7 +2678,11 @@ op_amp
 id|p-&gt;charmask
 )paren
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|fg
 op_assign
@@ -2694,7 +2746,11 @@ l_int|256
 suffix:semicolon
 id|j
 op_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -2840,7 +2896,11 @@ id|p-&gt;screen_base
 op_plus
 id|yy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|p-&gt;next_line
 op_plus
@@ -2909,7 +2969,11 @@ id|p-&gt;fontdata
 op_plus
 id|c1
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|fg
 op_assign
@@ -2961,7 +3025,11 @@ l_int|256
 suffix:semicolon
 id|j
 op_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -3057,7 +3125,11 @@ id|p-&gt;fontdata
 op_plus
 id|c1
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|cdat20
 op_assign
@@ -3065,7 +3137,11 @@ id|p-&gt;fontdata
 op_plus
 id|c2
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|cdat30
 op_assign
@@ -3073,7 +3149,11 @@ id|p-&gt;fontdata
 op_plus
 id|c3
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|cdat40
 op_assign
@@ -3081,7 +3161,11 @@ id|p-&gt;fontdata
 op_plus
 id|c4
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|fg
 op_assign
@@ -3145,7 +3229,11 @@ l_int|256
 suffix:semicolon
 id|j
 op_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -3324,7 +3412,11 @@ id|p-&gt;screen_base
 op_plus
 id|yy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|p-&gt;next_line
 op_plus
@@ -3357,7 +3449,11 @@ id|dest0
 suffix:semicolon
 id|j
 op_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 r_do
 (brace

@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *  linux/drivers/video/macmodes.h -- Standard MacOS video modes&n; *&n; *&t;Copyright (C) 1998 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+macro_line|#ifndef _VIDEO_MACMODES_H
+DECL|macro|_VIDEO_MACMODES_H
+mdefine_line|#define _VIDEO_MACMODES_H
 multiline_comment|/*&n;     *  Video mode values.&n;     *  These are supposed to be the same as the values that Apple uses in&n;     *  MacOS.&n;     */
 DECL|macro|VMODE_NVRAM
 mdefine_line|#define VMODE_NVRAM&t;&t;0
@@ -105,4 +108,5 @@ DECL|macro|NV_VMODE
 mdefine_line|#define NV_VMODE&t;&t;0x140f
 DECL|macro|NV_CMODE
 mdefine_line|#define NV_CMODE&t;&t;0x1410
+macro_line|#endif /* _VIDEO_MACMODES_H */
 eof

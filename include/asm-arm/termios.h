@@ -122,6 +122,12 @@ DECL|macro|N_X25
 mdefine_line|#define N_X25&t;&t;6&t;/* X.25 async */
 DECL|macro|N_6PACK
 mdefine_line|#define N_6PACK&t;&t;7
+DECL|macro|N_MASC
+mdefine_line|#define N_MASC&t;&t;8&t;/* Reserved for Mobitex module &lt;kaz@cafe.net&gt; */
+DECL|macro|N_R3964
+mdefine_line|#define N_R3964&t;&t;9&t;/* Reserved for Simatic R3964 module */
+DECL|macro|N_PROFIBUS_FDL
+mdefine_line|#define N_PROFIBUS_FDL&t;10&t;/* Reserved for Profibus &lt;Dave@mvhi.com&gt; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */

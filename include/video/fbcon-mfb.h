@@ -1,31 +1,27 @@
-multiline_comment|/*&n;     *  24 bpp packed pixel (cfb24)&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for Monochrome (mfb)&n; */
+macro_line|#ifndef _VIDEO_FBCON_MFB_H
+DECL|macro|_VIDEO_FBCON_MFB_H
+mdefine_line|#define _VIDEO_FBCON_MFB_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#if defined(CONFIG_FBCON_CFB24) || defined(CONFIG_FBCON_CFB24_MODULE)
-DECL|macro|FBCON_HAS_CFB24
-mdefine_line|#define FBCON_HAS_CFB24
+macro_line|#if defined(CONFIG_FBCON_MFB) || defined(CONFIG_FBCON_MFB_MODULE)
+DECL|macro|FBCON_HAS_MFB
+mdefine_line|#define FBCON_HAS_MFB
 macro_line|#endif
 macro_line|#else
-macro_line|#if defined(CONFIG_FBCON_CFB24)
-DECL|macro|FBCON_HAS_CFB24
-mdefine_line|#define FBCON_HAS_CFB24
+macro_line|#if defined(CONFIG_FBCON_MFB)
+DECL|macro|FBCON_HAS_MFB
+mdefine_line|#define FBCON_HAS_MFB
 macro_line|#endif
 macro_line|#endif
 r_extern
 r_struct
 id|display_switch
-id|fbcon_cfb24
-suffix:semicolon
-r_extern
-id|u32
-id|fbcon_cfb24_cmap
-(braket
-l_int|16
-)braket
+id|fbcon_mfb
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb24_setup
+id|fbcon_mfb_setup
 c_func
 (paren
 r_struct
@@ -36,7 +32,7 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb24_bmove
+id|fbcon_mfb_bmove
 c_func
 (paren
 r_struct
@@ -65,7 +61,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb24_clear
+id|fbcon_mfb_clear
 c_func
 (paren
 r_struct
@@ -93,7 +89,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb24_putc
+id|fbcon_mfb_putc
 c_func
 (paren
 r_struct
@@ -118,7 +114,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb24_putcs
+id|fbcon_mfb_putcs
 c_func
 (paren
 r_struct
@@ -149,7 +145,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_cfb24_revc
+id|fbcon_mfb_revc
 c_func
 (paren
 r_struct
@@ -164,20 +160,5 @@ r_int
 id|yy
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|fbcon_cfb24_clear_margins
-c_func
-(paren
-r_struct
-id|vc_data
-op_star
-id|conp
-comma
-r_struct
-id|display
-op_star
-id|p
-)paren
-suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_MFB_H */
 eof

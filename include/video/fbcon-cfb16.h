@@ -1,24 +1,27 @@
-multiline_comment|/*&n;     *  Amiga interleaved bitplanes (ilbm)&n;     */
+multiline_comment|/*&n; *  FBcon low-level driver for 16 bpp packed pixel (cfb16)&n; */
+macro_line|#ifndef _VIDEO_FBCON_CFB16_H
+DECL|macro|_VIDEO_FBCON_CFB16_H
+mdefine_line|#define _VIDEO_FBCON_CFB16_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#if defined(CONFIG_FBCON_ILBM) || defined(CONFIG_FBCON_ILBM_MODULE)  
-DECL|macro|FBCON_HAS_ILBM
-mdefine_line|#define FBCON_HAS_ILBM 
+macro_line|#if defined(CONFIG_FBCON_CFB16) || defined(CONFIG_FBCON_CFB16_MODULE)
+DECL|macro|FBCON_HAS_CFB16
+mdefine_line|#define FBCON_HAS_CFB16
 macro_line|#endif
 macro_line|#else
-macro_line|#if defined(CONFIG_FBCON_ILBM) 
-DECL|macro|FBCON_HAS_ILBM
-mdefine_line|#define FBCON_HAS_ILBM 
+macro_line|#if defined(CONFIG_FBCON_CFB16)
+DECL|macro|FBCON_HAS_CFB16
+mdefine_line|#define FBCON_HAS_CFB16
 macro_line|#endif
 macro_line|#endif
 r_extern
 r_struct
 id|display_switch
-id|fbcon_ilbm
+id|fbcon_cfb16
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_ilbm_setup
+id|fbcon_cfb16_setup
 c_func
 (paren
 r_struct
@@ -29,7 +32,7 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_ilbm_bmove
+id|fbcon_cfb16_bmove
 c_func
 (paren
 r_struct
@@ -58,7 +61,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_ilbm_clear
+id|fbcon_cfb16_clear
 c_func
 (paren
 r_struct
@@ -86,7 +89,7 @@ id|width
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_ilbm_putc
+id|fbcon_cfb16_putc
 c_func
 (paren
 r_struct
@@ -111,7 +114,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_ilbm_putcs
+id|fbcon_cfb16_putcs
 c_func
 (paren
 r_struct
@@ -142,7 +145,7 @@ id|xx
 suffix:semicolon
 r_extern
 r_void
-id|fbcon_ilbm_revc
+id|fbcon_cfb16_revc
 c_func
 (paren
 r_struct
@@ -157,4 +160,24 @@ r_int
 id|yy
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|fbcon_cfb16_clear_margins
+c_func
+(paren
+r_struct
+id|vc_data
+op_star
+id|conp
+comma
+r_struct
+id|display
+op_star
+id|p
+comma
+r_int
+id|bottom_only
+)paren
+suffix:semicolon
+macro_line|#endif /* _VIDEO_FBCON_CFB16_H */
 eof

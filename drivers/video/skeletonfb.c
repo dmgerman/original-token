@@ -8,7 +8,8 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
-macro_line|#include &quot;fbcon.h&quot;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;video/fbcon.h&gt;
 multiline_comment|/*&n;     *  This is just simple sample code.&n;     *&n;     *  No warranty that it actually compiles.&n;     *  Even less warranty that it actually works :-)&n;     */
 DECL|struct|xxxfb_info
 r_struct
@@ -95,6 +96,10 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n;     *  This function should detect the current video mode settings and store&n;     *  it as the default video mode&n;     */
+r_struct
+id|xxxfb_par
+id|par
+suffix:semicolon
 multiline_comment|/* ... */
 id|xxx_get_par
 c_func
@@ -134,7 +139,7 @@ r_const
 r_struct
 id|fb_info
 op_star
-id|fb_info
+id|info
 )paren
 (brace
 multiline_comment|/*&n;     *  This function should fill in the &squot;fix&squot; structure based on the values&n;     *  in the `par&squot; structure.&n;     */
@@ -163,7 +168,7 @@ r_const
 r_struct
 id|fb_info
 op_star
-id|fb_info
+id|info
 )paren
 (brace
 multiline_comment|/*&n;     *  Get the video params out of &squot;var&squot;. If a value doesn&squot;t fit, round it up,&n;     *  if it&squot;s too big, return -EINVAL.&n;     *&n;     *  Suggestion: Round up in the following order: bits_per_pixel, xres,&n;     *  yres, xres_virtual, yres_virtual, xoffset, yoffset, grayscale,&n;     *  bitfields, horizontal timing, vertical timing.&n;     */
@@ -213,7 +218,7 @@ r_const
 r_struct
 id|fb_info
 op_star
-id|fb_info
+id|info
 )paren
 (brace
 multiline_comment|/*&n;     *  Fill the &squot;var&squot; structure based on the values in &squot;par&squot; and maybe other&n;     *  values read out of the hardware.&n;     */
@@ -237,7 +242,7 @@ r_const
 r_struct
 id|fb_info
 op_star
-id|fb_info
+id|info
 )paren
 (brace
 multiline_comment|/*&n;     *  Fill the hardware&squot;s &squot;par&squot; structure.&n;     */
@@ -271,7 +276,7 @@ r_const
 r_struct
 id|fb_info
 op_star
-id|fb_info
+id|info
 )paren
 (brace
 multiline_comment|/*&n;     *  Set the hardware according to &squot;par&squot;.&n;     */
@@ -315,10 +320,10 @@ r_const
 r_struct
 id|fb_info
 op_star
-id|fb_info
+id|info
 )paren
 (brace
-multiline_comment|/*&n;     *  Read a single color register and split it into colors/transparent.&n;     *  Return != 0 for invalid regno.&n;     */
+multiline_comment|/*&n;     *  Read a single color register and split it into colors/transparent.&n;     *  The return values must have a 16 bit magnitude.&n;     *  Return != 0 for invalid regno.&n;     */
 multiline_comment|/* ... */
 r_return
 l_int|0
@@ -349,10 +354,10 @@ r_const
 r_struct
 id|fb_info
 op_star
-id|fb_info
+id|info
 )paren
 (brace
-multiline_comment|/*&n;     *  Set a single color register. The values supplied are already rounded&n;     *  down to the hardware&squot;s capabilities (according to the entries in the&n;     *  `var&squot; structure). Return != 0 for invalid regno.&n;     */
+multiline_comment|/*&n;     *  Set a single color register. The values supplied have a 16 bit&n;     *  magnitude.&n;     *  Return != 0 for invalid regno.&n;     */
 r_if
 c_cond
 (paren
@@ -368,27 +373,42 @@ c_cond
 id|is_cfb15
 )paren
 multiline_comment|/* RGB 555 */
-id|fbcon_cfb15_cmap
+dot
+dot
+dot
+id|fbcon_cmap.cfb16
 (braket
 id|regno
 )braket
 op_assign
-id|be16_to_cpu
-c_func
 (paren
 (paren
 id|red
-op_lshift
-l_int|10
+op_amp
+l_int|0xf800
+)paren
+op_rshift
+l_int|1
 )paren
 op_or
 (paren
+(paren
 id|green
-op_lshift
-l_int|5
+op_amp
+l_int|0xf800
+)paren
+op_rshift
+l_int|6
 )paren
 op_or
+(paren
+(paren
 id|blue
+op_amp
+l_int|0xf800
+)paren
+op_rshift
+l_int|11
 )paren
 suffix:semicolon
 r_if
@@ -397,27 +417,38 @@ c_cond
 id|is_cfb16
 )paren
 multiline_comment|/* RGB 565 */
-id|fbcon_cfb16_cmap
+dot
+dot
+dot
+id|fbcon_cmap.cfb16
 (braket
 id|regno
 )braket
 op_assign
-id|be16_to_cpu
-c_func
-(paren
 (paren
 id|red
-op_lshift
-l_int|11
+op_amp
+l_int|0xf800
 )paren
 op_or
 (paren
+(paren
 id|green
-op_lshift
+op_amp
+l_int|0xfc00
+)paren
+op_rshift
 l_int|5
 )paren
 op_or
+(paren
+(paren
 id|blue
+op_amp
+l_int|0xf800
+)paren
+op_rshift
+l_int|11
 )paren
 suffix:semicolon
 r_if
@@ -426,27 +457,38 @@ c_cond
 id|is_cfb24
 )paren
 multiline_comment|/* RGB 888 */
-id|fbcon_cfb24_cmap
+dot
+dot
+dot
+id|fbcon_cmap.cfb24
 (braket
 id|regno
 )braket
 op_assign
-id|be32_to_cpu
-c_func
 (paren
 (paren
 id|red
-op_lshift
-l_int|16
+op_amp
+l_int|0xff00
 )paren
-op_or
-(paren
-id|green
 op_lshift
 l_int|8
 )paren
 op_or
+(paren
+id|green
+op_amp
+l_int|0xff00
+)paren
+op_or
+(paren
+(paren
 id|blue
+op_amp
+l_int|0xff00
+)paren
+op_rshift
+l_int|8
 )paren
 suffix:semicolon
 r_if
@@ -455,33 +497,48 @@ c_cond
 id|is_cfb32
 )paren
 multiline_comment|/* RGBA 8888 */
-id|fbcon_cfb32_cmap
+dot
+dot
+dot
+id|fbcon_cmap.cfb32
 (braket
 id|regno
 )braket
 op_assign
-id|be32_to_cpu
-c_func
 (paren
 (paren
 id|red
-op_lshift
-l_int|24
+op_amp
+l_int|0xff00
 )paren
-op_or
-(paren
-id|green
 op_lshift
 l_int|16
 )paren
 op_or
 (paren
-id|blue
+(paren
+id|green
+op_amp
+l_int|0xff00
+)paren
 op_lshift
 l_int|8
 )paren
 op_or
+(paren
+id|blue
+op_amp
+l_int|0xff00
+)paren
+op_or
+(paren
+(paren
 id|transp
+op_amp
+l_int|0xff00
+)paren
+op_rshift
+l_int|8
 )paren
 suffix:semicolon
 )brace
@@ -510,7 +567,7 @@ r_const
 r_struct
 id|fb_info
 op_star
-id|fb_info
+id|info
 )paren
 (brace
 multiline_comment|/*&n;     *  Pan (or wrap, depending on the `vmode&squot; field) the display using the&n;     *  `xoffset&squot; and `yoffset&squot; fields of the `var&squot; structure.&n;     *  If the values don&squot;t fit, return -EINVAL.&n;     */
@@ -532,7 +589,7 @@ r_const
 r_struct
 id|fb_info
 op_star
-id|fb_info
+id|info
 )paren
 (brace
 multiline_comment|/*&n;     *  Blank the screen if blank_mode != 0, else unblank. If blank == NULL&n;     *  then the caller blanks by setting the CLUT (Color Look Up Table) to all&n;     *  black. Return 0 if blanking succeeded, != 0 if un-/blanking failed due&n;     *  to e.g. a video mode which doesn&squot;t support it. Implements VESA suspend&n;     *  and powerdown modes on hardware that supports disabling hsync/vsync:&n;     *    blank_mode == 2: suspend vsync&n;     *    blank_mode == 3: suspend hsync&n;     *    blank_mode == 4: powerdown&n;     */
@@ -541,12 +598,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|xxx_get_dispsw
+DECL|function|xxx_set_dispsw
 r_static
-r_struct
-id|display_switch
-op_star
-id|xxx_get_dispsw
+r_void
+id|xxx_set_dispsw
 c_func
 (paren
 r_const
@@ -555,22 +610,45 @@ op_star
 id|par
 comma
 r_struct
+id|display
+op_star
+id|disp
+comma
+r_struct
 id|fb_info_gen
 op_star
 id|info
 )paren
 (brace
-multiline_comment|/*&n;     *  Return a pointer to appropriate low level text console operations for&n;     *  the video mode `par&squot; of your video hardware. These can be generic&n;     *  software routines, or hardware accelerated routines specifically&n;     *  tailored for your hardware.&n;     *  If you don&squot;t have any appropriate operations, simple fill in the NULL&n;     *  pointer, and there will be no text output.&n;     */
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n;     *  Fill in a pointer to appropriate low level text console operations (and&n;     *  optionally a pointer to help data) for the video mode `par&squot; of your&n;     *  video hardware. These can be generic software routines, or hardware&n;     *  accelerated routines specifically tailored for your hardware.&n;     *  If you don&squot;t have any appropriate operations, you must fill in a&n;     *  pointer to dummy operations, and there will be no text output.&n;     */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef FBCON_HAS_CFB8
 r_if
 c_cond
 (paren
 id|is_cfb8
 )paren
-r_return
-op_amp
+(brace
+id|disp-&gt;dispsw
+op_assign
 id|fbcon_cfb8
 suffix:semicolon
+)brace
+r_else
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB16
 r_if
@@ -578,10 +656,43 @@ c_cond
 (paren
 id|is_cfb16
 )paren
-r_return
-op_amp
+(brace
+id|disp-&gt;dispsw
+op_assign
 id|fbcon_cfb16
 suffix:semicolon
+id|disp-&gt;dispsw_data
+op_assign
+dot
+dot
+dot
+id|fbcon_cmap.cfb16
+suffix:semicolon
+multiline_comment|/* console palette */
+)brace
+r_else
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB24
+r_if
+c_cond
+(paren
+id|is_cfb24
+)paren
+(brace
+id|disp-&gt;dispsw
+op_assign
+id|fbcon_cfb24
+suffix:semicolon
+id|disp-&gt;dispsw_data
+op_assign
+dot
+dot
+dot
+id|fbcon_cmap.cfb24
+suffix:semicolon
+multiline_comment|/* console palette */
+)brace
+r_else
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB32
 r_if
@@ -589,13 +700,32 @@ c_cond
 (paren
 id|is_cfb32
 )paren
-r_return
-op_amp
+(brace
+id|disp-&gt;dispsw
+op_assign
 id|fbcon_cfb32
 suffix:semicolon
+id|disp-&gt;dispsw_data
+op_assign
+dot
+dot
+dot
+id|fbcon_cmap.cfb32
+suffix:semicolon
+multiline_comment|/* console palette */
+)brace
+r_else
 macro_line|#endif
-r_return
-l_int|NULL
+id|disp-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_dummy
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* ------------ Interfaces to hardware functions ------------ */
@@ -640,16 +770,12 @@ r_void
 )paren
 )paren
 (brace
-r_struct
-id|fb_var_screeninfo
-id|var
-suffix:semicolon
-id|fb_info.fbhw
+id|fb_info.gen.fbhw
 op_assign
 op_amp
 id|xxx_switch
 suffix:semicolon
-id|fbhw
+id|fb_info.gen.fbhw
 op_member_access_from_pointer
 id|detect
 c_func
@@ -659,40 +785,41 @@ suffix:semicolon
 id|strcpy
 c_func
 (paren
-id|fb_info.modename
+id|fb_info.gen.info.modename
 comma
 l_string|&quot;XXX&quot;
 )paren
 suffix:semicolon
-id|fb_info.changevar
+id|fb_info.gen.info.changevar
 op_assign
 l_int|NULL
 suffix:semicolon
-id|fb_info.node
+id|fb_info.gen.info.node
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|fb_info.fbops
+id|fb_info.gen.info.fbops
 op_assign
 op_amp
 id|xxxfb_ops
 suffix:semicolon
-id|fb_info.disp
+id|fb_info.gen.info.disp
 op_assign
+op_amp
 id|disp
 suffix:semicolon
-id|fb_info.switch_con
+id|fb_info.gen.info.switch_con
 op_assign
 op_amp
 id|xxxfb_switch
 suffix:semicolon
-id|fb_info.updatevar
+id|fb_info.gen.info.updatevar
 op_assign
 op_amp
 id|xxxfb_update_var
 suffix:semicolon
-id|fb_info.blank
+id|fb_info.gen.info.blank
 op_assign
 op_amp
 id|xxxfb_blank
@@ -708,18 +835,19 @@ op_minus
 l_int|1
 comma
 op_amp
-id|fb_info.gen
+id|fb_info.gen.info
 )paren
 suffix:semicolon
 id|fbgen_do_set_var
 c_func
 (paren
-id|var
+op_amp
+id|disp.var
 comma
 l_int|1
 comma
 op_amp
-id|fbinfo.gen
+id|fb_info.gen
 )paren
 suffix:semicolon
 id|fbgen_set_disp
@@ -729,7 +857,7 @@ op_minus
 l_int|1
 comma
 op_amp
-id|fb_info.gen.info
+id|fb_info.gen
 )paren
 suffix:semicolon
 id|fbgen_install_cmap
@@ -763,10 +891,10 @@ comma
 id|GET_FB_IDX
 c_func
 (paren
-id|fb_info.node
+id|fb_info.gen.info.node
 )paren
 comma
-id|fb_info.modename
+id|fb_info.gen.info.modename
 )paren
 suffix:semicolon
 multiline_comment|/* uncomment this if your driver cannot be unloaded */
@@ -788,8 +916,7 @@ multiline_comment|/*&n;     *  If your driver supports multiple boards, you shou
 id|unregister_framebuffer
 c_func
 (paren
-op_amp
-id|fb_info
+id|info
 )paren
 suffix:semicolon
 multiline_comment|/* ... */

@@ -1,7 +1,23 @@
 multiline_comment|/*&n; *  font.h -- `Soft&squot; font definitions&n; *&n; *  Created 1995 by Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
-macro_line|#ifndef _FONT_H_
-DECL|macro|_FONT_H_
-mdefine_line|#define _FONT_H_
+macro_line|#ifndef _VIDEO_FONT_H
+DECL|macro|_VIDEO_FONT_H
+mdefine_line|#define _VIDEO_FONT_H
+macro_line|#ifdef __ASSEMBLY__
+macro_line|#ifdef __mc68000__
+DECL|macro|FBCON_FONT_DESC_idx
+mdefine_line|#define FBCON_FONT_DESC_idx&t;0
+DECL|macro|FBCON_FONT_DESC_name
+mdefine_line|#define FBCON_FONT_DESC_name&t;(FBCON_FONT_DESC_idx   +4)
+DECL|macro|FBCON_FONT_DESC_width
+mdefine_line|#define FBCON_FONT_DESC_width&t;(FBCON_FONT_DESC_name  +4)
+DECL|macro|FBCON_FONT_DESC_height
+mdefine_line|#define FBCON_FONT_DESC_height&t;(FBCON_FONT_DESC_width +4)
+DECL|macro|FBCON_FONT_DESC_data
+mdefine_line|#define FBCON_FONT_DESC_data&t;(FBCON_FONT_DESC_height+4)
+DECL|macro|FBCON_FONT_DESC_pref
+mdefine_line|#define FBCON_FONT_DESC_pref&t;(FBCON_FONT_DESC_data  +4)
+macro_line|#endif
+macro_line|#else /* __ASSEMBLY__ */
 macro_line|#include &lt;linux/types.h&gt;
 DECL|struct|fbcon_font_desc
 r_struct
@@ -96,5 +112,6 @@ suffix:semicolon
 multiline_comment|/* Max. length for the name of a predefined font */
 DECL|macro|MAX_FONT_NAME
 mdefine_line|#define MAX_FONT_NAME&t;32
-macro_line|#endif /* _FONT_H_ */
+macro_line|#endif /* __ASSEMBLY__ */
+macro_line|#endif /* _VIDEO_FONT_H */
 eof

@@ -4,8 +4,8 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-cfb4.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-cfb4.h&gt;
 multiline_comment|/*&n;     *  4 bpp packed pixels&n;     */
 multiline_comment|/*&n;     *  IFF the font is even pixel aligned (that is to say each&n;     *  character start is a byte start in the pixel pairs). That&n;     *  avoids us having to mask bytes and means we won&squot;t be here&n;     *  all week. On a MacII that matters _lots_&n;     */
 DECL|variable|nibbletab_cfb4
@@ -145,7 +145,11 @@ id|linesize
 op_assign
 id|bytes
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 comma
 id|rows
 suffix:semicolon
@@ -246,7 +250,11 @@ id|rows
 op_assign
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|rows
 op_decrement
@@ -320,7 +328,11 @@ id|rows
 op_assign
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|rows
 op_decrement
@@ -395,7 +407,11 @@ id|lines
 op_assign
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 comma
 id|rows
 comma
@@ -411,7 +427,11 @@ id|p-&gt;screen_base
 op_plus
 id|sy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|bytes
 op_plus
@@ -618,7 +638,11 @@ id|p-&gt;screen_base
 op_plus
 id|yy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|bytes
 op_plus
@@ -636,13 +660,22 @@ op_amp
 id|p-&gt;charmask
 )paren
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|fgx
 op_assign
-l_int|15
+id|attr_fgcol
+c_func
+(paren
+id|p
+comma
+id|c
+)paren
 suffix:semicolon
-multiline_comment|/*attr_fgcol(p,c);*/
 id|bgx
 op_assign
 id|attr_bgcol
@@ -696,7 +729,11 @@ c_loop
 (paren
 id|rows
 op_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|rows
 op_decrement
@@ -823,7 +860,11 @@ id|p-&gt;screen_base
 op_plus
 id|yy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|bytes
 op_plus
@@ -833,8 +874,14 @@ l_int|4
 suffix:semicolon
 id|fgx
 op_assign
-l_int|15
-multiline_comment|/*attr_fgcol(p,*s)*/
+id|attr_fgcol
+c_func
+(paren
+id|p
+comma
+op_star
+id|s
+)paren
 suffix:semicolon
 id|bgx
 op_assign
@@ -922,14 +969,22 @@ id|p-&gt;fontdata
 op_plus
 id|c
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 r_for
 c_loop
 (paren
 id|rows
 op_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 comma
 id|dest
 op_assign
@@ -1035,7 +1090,11 @@ id|p-&gt;screen_base
 op_plus
 id|yy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 op_star
 id|bytes
 op_plus
@@ -1048,7 +1107,11 @@ c_loop
 (paren
 id|rows
 op_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|rows
 op_decrement
@@ -1069,7 +1132,7 @@ id|dest
 l_int|0
 )braket
 op_xor_assign
-l_int|0x0f0f0f0f
+l_int|0xffffffff
 suffix:semicolon
 )brace
 )brace

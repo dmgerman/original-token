@@ -1,7 +1,7 @@
 multiline_comment|/* &n;&t;frpw.c&t;(c) 1996-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;&t;&t;            Under the terms of the GNU public license&n;&n;&t;frpw.c is a low-level protocol driver for the Freecom &quot;Power&quot;&n;&t;parallel port IDE adapter.&n;&t;&n;*/
-multiline_comment|/* Changes:&n;&n;        1.01    GRG 1998.05.06 init_proto, release_proto&n;&t;&t;&t;       fix chip detect&n;&t;&t;&t;       added EPP-16 and EPP-32&n;&n;*/
+multiline_comment|/* Changes:&n;&n;        1.01    GRG 1998.05.06 init_proto, release_proto&n;&t;&t;&t;       fix chip detect&n;&t;&t;&t;       added EPP-16 and EPP-32&n;&t;1.02    GRG 1998.09.23 added hard reset to initialisation process&n;&n;*/
 DECL|macro|FRPW_VERSION
-mdefine_line|#define&t;FRPW_VERSION&t;&quot;1.01&quot; 
+mdefine_line|#define&t;FRPW_VERSION&t;&quot;1.02&quot; 
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1172,6 +1172,37 @@ comma
 id|a
 comma
 id|b
+suffix:semicolon
+id|w0
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|w2
+c_func
+(paren
+l_int|8
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|50
+)paren
+suffix:semicolon
+id|w2
+c_func
+(paren
+l_int|0xc
+)paren
+suffix:semicolon
+multiline_comment|/* parallel bus reset */
+id|mdelay
+c_func
+(paren
+l_int|1500
+)paren
 suffix:semicolon
 id|olddelay
 op_assign

@@ -370,7 +370,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We disable IO-APIC IRQs by setting their &squot;destination CPU mask&squot; to&n; * zero. Trick, trick.&n; */
+multiline_comment|/*&n; * We disable IO-APIC IRQs by setting their &squot;destination CPU mask&squot; to&n; * zero. Trick by Ramesh Nalluri.&n; */
 DECL|function|disable_IO_APIC_irq
 r_static
 r_inline
@@ -3601,7 +3601,7 @@ id|pos
 dot
 id|mpc_irqtype
 op_assign
-l_int|0
+id|mp_INT
 suffix:semicolon
 id|mp_irqs
 (braket
@@ -3610,8 +3610,15 @@ id|pos
 dot
 id|mpc_irqflag
 op_assign
-l_int|0
+(paren
+l_int|1
+op_lshift
+l_int|2
+)paren
+op_or
+l_int|1
 suffix:semicolon
+multiline_comment|/* High-active edge */
 id|mp_irqs
 (braket
 id|pos
@@ -3619,7 +3626,7 @@ id|pos
 dot
 id|mpc_srcbus
 op_assign
-l_int|0
+id|MP_BUS_ISA
 suffix:semicolon
 id|mp_irqs
 (braket

@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/drivers/video/fbcon.h -- Low level frame buffer based console driver&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
-macro_line|#ifndef __VIDEO_FBCON_H
-DECL|macro|__VIDEO_FBCON_H
-mdefine_line|#define __VIDEO_FBCON_H
+macro_line|#ifndef _VIDEO_FBCON_H
+DECL|macro|_VIDEO_FBCON_H
+mdefine_line|#define _VIDEO_FBCON_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
 multiline_comment|/*                                  &n;     *  `switch&squot; for the Low Level Operations&n;     */
@@ -53,6 +53,7 @@ r_int
 id|width
 )paren
 suffix:semicolon
+multiline_comment|/* for clear, conp may be NULL, which means use a blanking (black) color */
 DECL|member|clear
 r_void
 (paren
@@ -219,6 +220,9 @@ r_struct
 id|display
 op_star
 id|p
+comma
+r_int
+id|bottom_only
 )paren
 suffix:semicolon
 DECL|member|fontwidthmask
@@ -229,6 +233,15 @@ suffix:semicolon
 multiline_comment|/* 1 at (1 &lt;&lt; (width - 1)) if width is supported */
 )brace
 suffix:semicolon
+r_extern
+r_struct
+id|display_switch
+id|fbcon_dummy
+suffix:semicolon
+DECL|macro|fontheight
+mdefine_line|#define fontheight(p) ((p)-&gt;_fontheight)
+DECL|macro|fontheightlog
+mdefine_line|#define fontheightlog(p) ((p)-&gt;_fontheightlog)
 macro_line|#ifdef CONFIG_FBCON_FONTWIDTH8_ONLY
 multiline_comment|/* fontwidth w is supported by dispsw */
 DECL|macro|FONTWIDTH
@@ -236,6 +249,10 @@ mdefine_line|#define FONTWIDTH(w)&t;(1 &lt;&lt; ((8) - 1))
 multiline_comment|/* fontwidths w1-w2 inclusive are supported by dispsw */
 DECL|macro|FONTWIDTHRANGE
 mdefine_line|#define FONTWIDTHRANGE(w1,w2)&t;FONTWIDTH(8)
+DECL|macro|fontwidth
+mdefine_line|#define fontwidth(p) (8)
+DECL|macro|fontwidthlog
+mdefine_line|#define fontwidthlog(p) (0)
 macro_line|#else
 multiline_comment|/* fontwidth w is supported by dispsw */
 DECL|macro|FONTWIDTH
@@ -243,6 +260,10 @@ mdefine_line|#define FONTWIDTH(w)&t;(1 &lt;&lt; ((w) - 1))
 multiline_comment|/* fontwidths w1-w2 inclusive are supported by dispsw */
 DECL|macro|FONTWIDTHRANGE
 mdefine_line|#define FONTWIDTHRANGE(w1,w2)&t;(FONTWIDTH(w2+1) - FONTWIDTH(w1))
+DECL|macro|fontwidth
+mdefine_line|#define fontwidth(p) ((p)-&gt;_fontwidth)
+DECL|macro|fontwidthlog
+mdefine_line|#define fontwidthlog(p) ((p)-&gt;_fontwidthlog)
 macro_line|#endif
 multiline_comment|/*&n;     *  Attribute Decoding&n;     */
 multiline_comment|/* Color */
@@ -251,7 +272,7 @@ mdefine_line|#define attr_fgcol(p,s)    &bslash;&n;&t;(((s) &gt;&gt; ((p)-&gt;fg
 DECL|macro|attr_bgcol
 mdefine_line|#define attr_bgcol(p,s)    &bslash;&n;&t;(((s) &gt;&gt; ((p)-&gt;bgshift)) &amp; 0x0f)
 DECL|macro|attr_bgcol_ec
-mdefine_line|#define&t;attr_bgcol_ec(p,conp) &bslash;&n;&t;(((conp)-&gt;vc_video_erase_char &gt;&gt; ((p)-&gt;bgshift)) &amp; 0x0f)
+mdefine_line|#define&t;attr_bgcol_ec(p,conp) &bslash;&n;&t;((conp) ? (((conp)-&gt;vc_video_erase_char &gt;&gt; ((p)-&gt;bgshift)) &amp; 0x0f) : 0)
 multiline_comment|/* Monochrome */
 DECL|macro|attr_bold
 mdefine_line|#define attr_bold(p,s) &bslash;&n;&t;((s) &amp; 0x200)
@@ -262,14 +283,29 @@ mdefine_line|#define attr_underline(p,s) &bslash;&n;&t;((s) &amp; 0x400)
 DECL|macro|attr_blink
 mdefine_line|#define attr_blink(p,s) &bslash;&n;&t;((s) &amp; 0x8000)
 multiline_comment|/*&n;     *  Scroll Method&n;     */
-DECL|macro|SCROLL_YWRAP
-mdefine_line|#define SCROLL_YWRAP&t;(0)
-DECL|macro|SCROLL_YPAN
-mdefine_line|#define SCROLL_YPAN&t;(1)
-DECL|macro|SCROLL_YMOVE
-mdefine_line|#define SCROLL_YMOVE&t;(2)
+multiline_comment|/* Internal flags */
+DECL|macro|__SCROLL_YPAN
+mdefine_line|#define __SCROLL_YPAN&t;&t;0x001
+DECL|macro|__SCROLL_YWRAP
+mdefine_line|#define __SCROLL_YWRAP&t;&t;0x002
+DECL|macro|__SCROLL_YMOVE
+mdefine_line|#define __SCROLL_YMOVE&t;&t;0x003
+DECL|macro|__SCROLL_YREDRAW
+mdefine_line|#define __SCROLL_YREDRAW&t;0x004
+DECL|macro|__SCROLL_YMASK
+mdefine_line|#define __SCROLL_YMASK&t;&t;0x00f
+DECL|macro|__SCROLL_YFIXED
+mdefine_line|#define __SCROLL_YFIXED&t;&t;0x010
+DECL|macro|__SCROLL_YNOMOVE
+mdefine_line|#define __SCROLL_YNOMOVE&t;0x020
+DECL|macro|__SCROLL_YPANREDRAW
+mdefine_line|#define __SCROLL_YPANREDRAW&t;0x040
+multiline_comment|/* Only these should be used by the drivers */
+multiline_comment|/* Which one should you use? If you have a fast card and slow bus,&n;   then probably just 0 to indicate fbcon should choose between&n;   YWRAP/YPAN+MOVE/YMOVE. On the other side, if you have a fast bus&n;   and even better if your card can do fonting (1-&gt;8/32bit painting),&n;   you should consider either SCROLL_YREDRAW (if your card is&n;   able to do neither YPAN/YWRAP), or SCROLL_YNOMOVE.&n;   The best is to test it with some real life scrolling (usually, not&n;   all lines on the screen are filled completely with non-space characters,&n;   and REDRAW performs much better on such lines, so don&squot;t cat a file&n;   with every line covering all screen columns, it would not be the right&n;   benchmark).&n; */
 DECL|macro|SCROLL_YREDRAW
-mdefine_line|#define SCROLL_YREDRAW&t;(3)
+mdefine_line|#define SCROLL_YREDRAW&t;&t;(__SCROLL_YFIXED|__SCROLL_YREDRAW)
+DECL|macro|SCROLL_YNOMOVE
+mdefine_line|#define SCROLL_YNOMOVE&t;&t;(__SCROLL_YNOMOVE|__SCROLL_YPANREDRAW)
 r_extern
 r_void
 id|fbcon_redraw_bmove
@@ -1048,7 +1084,8 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 macro_line|#else /* !m68k */
-multiline_comment|/*&n;     *  Anyone who&squot;d like to write asm functions for other CPUs?&n;     */
+multiline_comment|/*&n;     *  Anyone who&squot;d like to write asm functions for other CPUs?&n;     *   (Why are these functions better than those from include/asm/string.h?)&n;     */
+macro_line|#ifndef CONFIG_SUN4
 DECL|function|mymemclear_small
 r_static
 id|__inline__
@@ -1133,6 +1170,148 @@ id|count
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+multiline_comment|/* You may think that I&squot;m crazy and that I should use generic&n;   routines.  No, I&squot;m not: sun4&squot;s framebuffer crashes if we std&n;   into it, so we cannot use memset.  */
+DECL|function|sun4_memset
+r_static
+id|__inline__
+r_void
+op_star
+id|sun4_memset
+c_func
+(paren
+r_void
+op_star
+id|s
+comma
+r_char
+id|val
+comma
+r_int
+id|count
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|count
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+(paren
+(paren
+r_char
+op_star
+)paren
+id|s
+)paren
+(braket
+id|i
+)braket
+op_assign
+id|val
+suffix:semicolon
+)brace
+r_return
+id|s
+suffix:semicolon
+)brace
+DECL|function|mymemset
+r_static
+id|__inline__
+r_void
+op_star
+id|mymemset
+c_func
+(paren
+r_void
+op_star
+id|s
+comma
+r_int
+id|count
+)paren
+(brace
+r_return
+id|sun4_memset
+c_func
+(paren
+id|s
+comma
+l_int|255
+comma
+id|count
+)paren
+suffix:semicolon
+)brace
+DECL|function|mymemclear
+r_static
+id|__inline__
+r_void
+op_star
+id|mymemclear
+c_func
+(paren
+r_void
+op_star
+id|s
+comma
+r_int
+id|count
+)paren
+(brace
+r_return
+id|sun4_memset
+c_func
+(paren
+id|s
+comma
+l_int|0
+comma
+id|count
+)paren
+suffix:semicolon
+)brace
+DECL|function|mymemclear_small
+r_static
+id|__inline__
+r_void
+op_star
+id|mymemclear_small
+c_func
+(paren
+r_void
+op_star
+id|s
+comma
+r_int
+id|count
+)paren
+(brace
+r_return
+id|sun4_memset
+c_func
+(paren
+id|s
+comma
+l_int|0
+comma
+id|count
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef __i386__
 DECL|function|fast_memmove
 r_static
@@ -1229,7 +1408,8 @@ l_string|&quot;decl %%edi&bslash;n&bslash;t&quot;
 l_string|&quot;decl %%esi&bslash;n&bslash;t&quot;
 l_string|&quot;decl %%edi&bslash;n&quot;
 l_string|&quot;2:&bslash;trep&bslash;n&bslash;t&quot;
-l_string|&quot;movsl&quot;
+l_string|&quot;movsl&bslash;n&bslash;t&quot;
+l_string|&quot;cld&quot;
 suffix:colon
 multiline_comment|/* no output */
 suffix:colon
@@ -1377,5 +1557,5 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;/* !i386 */
 macro_line|#endif /* !m68k */
-macro_line|#endif /* __VIDEO_FBCON_H */
+macro_line|#endif /* _VIDEO_FBCON_H */
 eof
