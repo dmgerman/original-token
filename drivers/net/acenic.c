@@ -53,15 +53,15 @@ macro_line|#endif
 multiline_comment|/*&n; * They used the DEC vendor ID by mistake&n; */
 macro_line|#ifndef PCI_DEVICE_ID_FARALLON_PN9000SX
 DECL|macro|PCI_DEVICE_ID_FARALLON_PN9000SX
-mdefine_line|#define PCI_DEVICE_ID_FARALLON_PN9000SX 0x1a
+mdefine_line|#define PCI_DEVICE_ID_FARALLON_PN9000SX&t;0x1a
 macro_line|#endif
 macro_line|#ifndef PCI_VENDOR_ID_SGI
 DECL|macro|PCI_VENDOR_ID_SGI
-mdefine_line|#define PCI_VENDOR_ID_SGI             0x10a9
+mdefine_line|#define PCI_VENDOR_ID_SGI&t;&t;0x10a9
 macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_SGI_ACENIC
 DECL|macro|PCI_DEVICE_ID_SGI_ACENIC
-mdefine_line|#define PCI_DEVICE_ID_SGI_ACENIC      0x0009
+mdefine_line|#define PCI_DEVICE_ID_SGI_ACENIC&t;0x0009
 macro_line|#endif
 macro_line|#ifndef wmb
 DECL|macro|wmb
@@ -70,6 +70,10 @@ macro_line|#endif
 macro_line|#ifndef __exit
 DECL|macro|__exit
 mdefine_line|#define __exit
+macro_line|#endif
+macro_line|#ifndef SMP_CACHE_BYTES
+DECL|macro|SMP_CACHE_BYTES
+mdefine_line|#define SMP_CACHE_BYTES&t;L1_CACHE_BYTES
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02030e)
 DECL|macro|net_device
@@ -136,7 +140,7 @@ suffix:semicolon
 DECL|macro|pci_free_consistent
 mdefine_line|#define pci_free_consistent(cookie, size, ptr, dma_ptr)&t;kfree(ptr)
 DECL|macro|pci_map_single
-mdefine_line|#define pci_map_single(cookie, address, size, dir)&t;&t;virt_to_bus(address)
+mdefine_line|#define pci_map_single(cookie, address, size, dir)&t;virt_to_bus(address)
 DECL|macro|pci_unmap_single
 mdefine_line|#define pci_unmap_single(cookie, address, size, dir)
 macro_line|#endif
@@ -175,25 +179,27 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|macro|ace_mark_net_bh
-mdefine_line|#define ace_mark_net_bh(foo)&t;&t;&t;&t;mark_bh(foo)
-DECL|macro|ace_if_busy
-mdefine_line|#define ace_if_busy(dev)&t;dev-&gt;tbusy
-DECL|macro|ace_if_running
-mdefine_line|#define ace_if_running(dev)&t;dev-&gt;start
+mdefine_line|#define ace_mark_net_bh(foo)&t;&t;mark_bh(foo)
+DECL|macro|netif_queue_stopped
+mdefine_line|#define netif_queue_stopped(dev)&t;dev-&gt;tbusy
+DECL|macro|netif_running
+mdefine_line|#define netif_running(dev)&t;&t;dev-&gt;start
 DECL|macro|ace_if_down
-mdefine_line|#define ace_if_down(dev)&t;{do{dev-&gt;start = 0;}while (0);}
+mdefine_line|#define ace_if_down(dev)&t;&t;{do{dev-&gt;start = 0;}while (0);}
 macro_line|#else
 DECL|macro|NET_BH
 mdefine_line|#define NET_BH&t;&t;&t;0
 DECL|macro|ace_mark_net_bh
 mdefine_line|#define ace_mark_net_bh(foo)&t;{do{} while(0);}
-DECL|macro|ace_if_busy
-mdefine_line|#define ace_if_busy(dev)&t;netif_queue_stopped(dev)
-DECL|macro|ace_if_running
-mdefine_line|#define ace_if_running(dev)&t;netif_running(dev)
 DECL|macro|ace_if_down
 mdefine_line|#define ace_if_down(dev)&t;{do{} while(0);}
 macro_line|#endif
+DECL|macro|ACE_MAX_MOD_PARMS
+mdefine_line|#define ACE_MAX_MOD_PARMS&t;8
+DECL|macro|BOARD_IDX_STATIC
+mdefine_line|#define BOARD_IDX_STATIC&t;0
+DECL|macro|BOARD_IDX_OVERFLOW
+mdefine_line|#define BOARD_IDX_OVERFLOW&t;-1
 macro_line|#include &quot;acenic.h&quot;
 multiline_comment|/*&n; * These must be defined before the firmware is included.&n; */
 DECL|macro|MAX_TEXT_LEN
@@ -238,29 +244,39 @@ DECL|macro|ACE_STD_BUFSIZE
 mdefine_line|#define ACE_STD_BUFSIZE&t;&t;(ACE_STD_MTU + ETH_HLEN + 2+4+16)
 DECL|macro|ACE_JUMBO_BUFSIZE
 mdefine_line|#define ACE_JUMBO_BUFSIZE&t;(ACE_JUMBO_MTU + ETH_HLEN + 2+4+16)
-DECL|macro|DEF_TX_RATIO
-mdefine_line|#define DEF_TX_RATIO&t;&t;24
-multiline_comment|/*&n; * There seems to be a magic difference in the effect between 995 and 996&n; * but little difference between 900 and 995 ... no idea why.&n; */
+multiline_comment|/*&n; * There seems to be a magic difference in the effect between 995 and 996&n; * but little difference between 900 and 995 ... no idea why.&n; *&n; * There is now a default set of tuning parameters which is set, depending&n; * on whether or not the user enables Jumbo frames. It&squot;s assumed that if&n; * Jumbo frames are enabled, the user wants optimal tuning for that case.&n; */
 DECL|macro|DEF_TX_COAL
-mdefine_line|#define DEF_TX_COAL&t;&t;996
+mdefine_line|#define DEF_TX_COAL&t;&t;400 /* 996 */
 DECL|macro|DEF_TX_MAX_DESC
 mdefine_line|#define DEF_TX_MAX_DESC&t;&t;40
 DECL|macro|DEF_RX_COAL
-mdefine_line|#define DEF_RX_COAL&t;&t;1000
+mdefine_line|#define DEF_RX_COAL&t;&t;120 /* 1000 */
 DECL|macro|DEF_RX_MAX_DESC
 mdefine_line|#define DEF_RX_MAX_DESC&t;&t;25
+DECL|macro|DEF_TX_RATIO
+mdefine_line|#define DEF_TX_RATIO&t;&t;21 /* 24 */
+DECL|macro|DEF_JUMBO_TX_COAL
+mdefine_line|#define DEF_JUMBO_TX_COAL&t;20
+DECL|macro|DEF_JUMBO_TX_MAX_DESC
+mdefine_line|#define DEF_JUMBO_TX_MAX_DESC&t;60
+DECL|macro|DEF_JUMBO_RX_COAL
+mdefine_line|#define DEF_JUMBO_RX_COAL&t;30
+DECL|macro|DEF_JUMBO_RX_MAX_DESC
+mdefine_line|#define DEF_JUMBO_RX_MAX_DESC&t;6
+DECL|macro|DEF_JUMBO_TX_RATIO
+mdefine_line|#define DEF_JUMBO_TX_RATIO&t;21
 DECL|macro|TX_COAL_INTS_ONLY
 mdefine_line|#define TX_COAL_INTS_ONLY&t;0&t;/* seems not worth it */
 DECL|macro|DEF_TRACE
 mdefine_line|#define DEF_TRACE&t;&t;0
 DECL|macro|DEF_STAT
-mdefine_line|#define DEF_STAT&t;&t;2 * TICKS_PER_SEC
+mdefine_line|#define DEF_STAT&t;&t;(2 * TICKS_PER_SEC)
 DECL|variable|link
 r_static
 r_int
 id|link
 (braket
-l_int|8
+id|ACE_MAX_MOD_PARMS
 )braket
 op_assign
 (brace
@@ -273,7 +289,7 @@ r_static
 r_int
 id|trace
 (braket
-l_int|8
+id|ACE_MAX_MOD_PARMS
 )braket
 op_assign
 (brace
@@ -286,7 +302,7 @@ r_static
 r_int
 id|tx_coal_tick
 (braket
-l_int|8
+id|ACE_MAX_MOD_PARMS
 )braket
 op_assign
 (brace
@@ -299,7 +315,7 @@ r_static
 r_int
 id|rx_coal_tick
 (braket
-l_int|8
+id|ACE_MAX_MOD_PARMS
 )braket
 op_assign
 (brace
@@ -312,7 +328,7 @@ r_static
 r_int
 id|max_tx_desc
 (braket
-l_int|8
+id|ACE_MAX_MOD_PARMS
 )braket
 op_assign
 (brace
@@ -325,7 +341,7 @@ r_static
 r_int
 id|max_rx_desc
 (braket
-l_int|8
+id|ACE_MAX_MOD_PARMS
 )braket
 op_assign
 (brace
@@ -338,7 +354,7 @@ r_static
 r_int
 id|tx_ratio
 (braket
-l_int|8
+id|ACE_MAX_MOD_PARMS
 )braket
 op_assign
 (brace
@@ -351,7 +367,7 @@ r_static
 r_int
 id|dis_pci_mem_inval
 (braket
-l_int|8
+id|ACE_MAX_MOD_PARMS
 )braket
 op_assign
 (brace
@@ -380,7 +396,7 @@ id|__initdata
 op_star
 id|version
 op_assign
-l_string|&quot;acenic.c: v0.41 02/16/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
+l_string|&quot;acenic.c: v0.42 03/02/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
 l_string|&quot;                            http://home.cern.ch/~jes/gige/acenic.html&bslash;n&quot;
 suffix:semicolon
 DECL|variable|root_dev
@@ -814,19 +830,6 @@ c_func
 id|pdev
 )paren
 suffix:semicolon
-macro_line|#ifdef __sparc__
-multiline_comment|/* NOTE: Cache line size is in 32-bit word units. */
-id|pci_write_config_byte
-c_func
-(paren
-id|pdev
-comma
-id|PCI_CACHE_LINE_SIZE
-comma
-l_int|0x10
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Remap the regs into kernel space - this is abuse of&n;&t;&t; * dev-&gt;base_addr since it was means for I/O port&n;&t;&t; * addresses but who gives a damn.&n;&t;&t; */
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02030d)
 id|dev-&gt;base_addr
@@ -1134,13 +1137,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|iounmap
-c_func
-(paren
-id|ap-&gt;regs
-)paren
-suffix:semicolon
-id|unregister_netdev
+id|ace_init_cleanup
 c_func
 (paren
 id|dev
@@ -1165,17 +1162,25 @@ macro_line|#ifdef MODULE
 r_if
 c_cond
 (paren
-id|ace_init
-c_func
-(paren
-id|dev
-comma
 id|boards_found
+op_ge
+id|ACE_MAX_MOD_PARMS
 )paren
-)paren
-r_continue
+id|ap-&gt;board_idx
+op_assign
+id|BOARD_IDX_OVERFLOW
+suffix:semicolon
+r_else
+id|ap-&gt;board_idx
+op_assign
+id|boards_found
 suffix:semicolon
 macro_line|#else
+id|ap-&gt;board_idx
+op_assign
+id|BOARD_IDX_STATIC
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1183,24 +1188,15 @@ id|ace_init
 c_func
 (paren
 id|dev
-comma
-op_minus
-l_int|1
 )paren
 )paren
 r_continue
 suffix:semicolon
-macro_line|#endif
 id|boards_found
 op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If we&squot;re at this point we&squot;re going through ace_probe() for&n;&t; * the first time.  Return success (0) if we&squot;ve initialized 1&n;&t; * or more boards. Otherwise, return failure (-ENODEV).&n;&t; */
-macro_line|#ifdef MODULE
-r_return
-id|boards_found
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -1216,7 +1212,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
@@ -1228,7 +1223,7 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;AceNIC/3C985 Gigabit Ethernet driver&quot;
+l_string|&quot;AceNIC/3C985/GA620 Gigabit Ethernet driver&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -1363,11 +1358,6 @@ id|next
 suffix:semicolon
 id|ap
 op_assign
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
 id|root_dev-&gt;priv
 suffix:semicolon
 id|regs
@@ -1705,78 +1695,10 @@ id|skb
 suffix:semicolon
 )brace
 )brace
-id|ace_free_descriptors
+id|ace_init_cleanup
 c_func
 (paren
 id|root_dev
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ap-&gt;trace_buf
-)paren
-id|kfree
-c_func
-(paren
-id|ap-&gt;trace_buf
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ap-&gt;info
-)paren
-id|pci_free_consistent
-c_func
-(paren
-id|ap-&gt;pdev
-comma
-r_sizeof
-(paren
-r_struct
-id|ace_info
-)paren
-comma
-id|ap-&gt;info
-comma
-id|ap-&gt;info_dma
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ap-&gt;skb
-)paren
-id|kfree
-c_func
-(paren
-id|ap-&gt;skb
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|root_dev-&gt;irq
-)paren
-id|free_irq
-c_func
-(paren
-id|root_dev-&gt;irq
-comma
-id|root_dev
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|root_dev
-)paren
-suffix:semicolon
-id|iounmap
-c_func
-(paren
-id|regs
 )paren
 suffix:semicolon
 id|kfree
@@ -1791,6 +1713,7 @@ id|next
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|function|ace_module_init
 r_int
 id|__init
@@ -1801,14 +1724,14 @@ r_void
 )paren
 (brace
 r_int
-id|cards
+id|status
 suffix:semicolon
 id|root_dev
 op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#ifdef NEW_NETINIT
-id|cards
+id|status
 op_assign
 id|acenic_probe
 c_func
@@ -1816,7 +1739,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#else
-id|cards
+id|status
 op_assign
 id|acenic_probe
 c_func
@@ -1826,13 +1749,7 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 r_return
-id|cards
-ques
-c_cond
-l_int|0
-suffix:colon
-op_minus
-id|ENODEV
+id|status
 suffix:semicolon
 )brace
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032a)
@@ -1865,7 +1782,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
 DECL|variable|ace_module_init
@@ -2298,7 +2214,101 @@ suffix:semicolon
 id|fail
 suffix:colon
 multiline_comment|/* Clean up. */
+id|ace_init_cleanup
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Generic cleanup handling data allocated during init. Used when the&n; * module is unloaded or if an error occurs during initialization&n; */
+DECL|function|ace_init_cleanup
+r_static
+r_void
+id|ace_init_cleanup
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|ace_private
+op_star
+id|ap
+suffix:semicolon
+id|ap
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 id|ace_free_descriptors
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ap-&gt;info
+)paren
+id|pci_free_consistent
+c_func
+(paren
+id|ap-&gt;pdev
+comma
+r_sizeof
+(paren
+r_struct
+id|ace_info
+)paren
+comma
+id|ap-&gt;info
+comma
+id|ap-&gt;info_dma
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ap-&gt;skb
+)paren
+id|kfree
+c_func
+(paren
+id|ap-&gt;skb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ap-&gt;trace_buf
+)paren
+id|kfree
+c_func
+(paren
+id|ap-&gt;trace_buf
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;irq
+)paren
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
+id|unregister_netdev
 c_func
 (paren
 id|dev
@@ -2309,15 +2319,6 @@ c_func
 (paren
 id|ap-&gt;regs
 )paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Commands are considered to be slow.&n; */
@@ -2401,9 +2402,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-comma
-r_int
-id|board_idx
 )paren
 (brace
 r_struct
@@ -2441,12 +2439,18 @@ comma
 id|pci_state
 suffix:semicolon
 r_int
+id|board_idx
+comma
 id|ecode
 op_assign
 l_int|0
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_int
+r_char
+id|cache
 suffix:semicolon
 id|ap
 op_assign
@@ -2455,6 +2459,10 @@ suffix:semicolon
 id|regs
 op_assign
 id|ap-&gt;regs
+suffix:semicolon
+id|board_idx
+op_assign
+id|ap-&gt;board_idx
 suffix:semicolon
 multiline_comment|/*&n;&t; * aman@sgi.com - its useful to do a NIC reset here to&n;&t; * address the `Firmware not running&squot; problem subsequent&n;&t; * to any crashes involving the NIC&n;&t; */
 id|writel
@@ -2995,6 +3003,59 @@ id|mac2
 op_amp
 l_int|0xff
 suffix:semicolon
+multiline_comment|/*&n;&t; * Looks like this is necessary to deal with on all architectures,&n;&t; * even this %$#%$# N440BX Intel based thing doesn&squot;t get it right.&n;&t; * Ie. having two NICs in the machine, one will have the cache&n;&t; * line set at boot time, the other will not.&n;&t; */
+id|pci_read_config_byte
+c_func
+(paren
+id|ap-&gt;pdev
+comma
+id|PCI_CACHE_LINE_SIZE
+comma
+op_amp
+id|cache
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|cache
+op_lshift
+l_int|2
+)paren
+op_ne
+id|SMP_CACHE_BYTES
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;  PCI cache line size set incorrectly &quot;
+l_string|&quot;(%i bytes) by BIOS/FW, correcting to %i&bslash;n&quot;
+comma
+(paren
+id|cache
+op_lshift
+l_int|2
+)paren
+comma
+id|SMP_CACHE_BYTES
+)paren
+suffix:semicolon
+id|pci_write_config_byte
+c_func
+(paren
+id|ap-&gt;pdev
+comma
+id|PCI_CACHE_LINE_SIZE
+comma
+id|SMP_CACHE_BYTES
+op_rshift
+l_int|2
+)paren
+suffix:semicolon
+)brace
 id|pci_state
 op_assign
 id|readl
@@ -3068,8 +3129,8 @@ r_if
 c_cond
 (paren
 id|board_idx
-OG
-l_int|7
+op_eq
+id|BOARD_IDX_OVERFLOW
 op_logical_or
 id|dis_pci_mem_inval
 (braket
@@ -3104,10 +3165,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: disabling PCI memory &quot;
+l_string|&quot;  Disabling PCI memory &quot;
 l_string|&quot;write and invalidate&bslash;n&quot;
-comma
-id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
@@ -3125,17 +3184,14 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: PCI memory write &amp; invalidate &quot;
-l_string|&quot;enabled by BIOS, enabling counter &quot;
-l_string|&quot;measures&bslash;n&quot;
-comma
-id|dev-&gt;name
+l_string|&quot;  PCI memory write &amp; invalidate &quot;
+l_string|&quot;enabled by BIOS, enabling counter measures&bslash;n&quot;
 )paren
 suffix:semicolon
 r_switch
 c_cond
 (paren
-id|L1_CACHE_BYTES
+id|SMP_CACHE_BYTES
 )paren
 (brace
 r_case
@@ -3197,17 +3253,13 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef __sparc__
-multiline_comment|/* On this platform, we know what the best dma settings&n;&t; * are.  We use 64-byte maximum bursts, because if we&n;&t; * burst larger than the cache line size (or even cross&n;&t; * a 64byte boundry in a single burst) the UltraSparc&n;&t; * PCI controller will disconnect at 64-byte multiples.&n;&t; *&n;&t; * Read-multiple will be properly enabled above, and when&n;&t; * set will give the PCI controller proper hints about&n;&t; * prefetching.&n;&t; */
+multiline_comment|/*&n;&t; * On this platform, we know what the best dma settings&n;&t; * are.  We use 64-byte maximum bursts, because if we&n;&t; * burst larger than the cache line size (or even cross&n;&t; * a 64byte boundry in a single burst) the UltraSparc&n;&t; * PCI controller will disconnect at 64-byte multiples.&n;&t; *&n;&t; * Read-multiple will be properly enabled above, and when&n;&t; * set will give the PCI controller proper hints about&n;&t; * prefetching.&n;&t; */
 id|tmp
 op_assign
-(paren
 id|tmp
 op_amp
 op_complement
-(paren
-l_int|0xfc
-)paren
-)paren
+id|DMA_READ_WRITE_MASK
 suffix:semicolon
 id|tmp
 op_or_assign
@@ -3227,6 +3279,39 @@ op_amp
 id|regs-&gt;PciState
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ap-&gt;pci_command
+op_amp
+id|PCI_COMMAND_FAST_BACK
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;  Enabling PCI Fast Back to Back&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ap-&gt;pci_command
+op_or_assign
+id|PCI_COMMAND_FAST_BACK
+suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|ap-&gt;pdev
+comma
+id|PCI_COMMAND
+comma
+id|ap-&gt;pci_command
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Initialize the generic info block and the command+event rings&n;&t; * and the control blocks for the transmit and receive rings&n;&t; * as they need to be setup once and for all.&n;&t; */
 r_if
 c_cond
@@ -4092,81 +4177,42 @@ suffix:semicolon
 id|writel
 c_func
 (paren
-id|DEF_TX_COAL
-comma
-op_amp
-id|regs-&gt;TuneTxCoalTicks
-)paren
-suffix:semicolon
-id|writel
-c_func
-(paren
-id|DEF_TX_MAX_DESC
-comma
-op_amp
-id|regs-&gt;TuneMaxTxDesc
-)paren
-suffix:semicolon
-id|writel
-c_func
-(paren
-id|DEF_RX_COAL
-comma
-op_amp
-id|regs-&gt;TuneRxCoalTicks
-)paren
-suffix:semicolon
-id|writel
-c_func
-(paren
-id|DEF_RX_MAX_DESC
-comma
-op_amp
-id|regs-&gt;TuneMaxRxDesc
-)paren
-suffix:semicolon
-id|writel
-c_func
-(paren
 id|DEF_TRACE
 comma
 op_amp
 id|regs-&gt;TuneTrace
 )paren
 suffix:semicolon
-id|writel
+id|ace_set_rxtx_parms
 c_func
 (paren
-id|DEF_TX_RATIO
+id|dev
 comma
-op_amp
-id|regs-&gt;TxBufRat
+l_int|0
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|board_idx
-op_ge
-l_int|8
+op_eq
+id|BOARD_IDX_OVERFLOW
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: more then 8 NICs detected, &quot;
+l_string|&quot;%s: more then %i NICs detected, &quot;
 l_string|&quot;ignoring module parameters!&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|ACE_MAX_MOD_PARMS
 )paren
 suffix:semicolon
-id|board_idx
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -4771,18 +4817,6 @@ op_amp
 id|regs-&gt;Mb0Lo
 )paren
 suffix:semicolon
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|dev
-)paren
-suffix:semicolon
-id|dev-&gt;irq
-op_assign
-l_int|0
-suffix:semicolon
 id|ecode
 op_assign
 op_minus
@@ -4870,59 +4904,256 @@ l_int|0
 suffix:semicolon
 id|init_error
 suffix:colon
-id|iounmap
-c_func
-(paren
-id|ap-&gt;regs
-)paren
-suffix:semicolon
-id|unregister_netdev
+id|ace_init_cleanup
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ap-&gt;skb
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|ap-&gt;skb
-)paren
-suffix:semicolon
-id|ap-&gt;skb
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|ap-&gt;info
-)paren
-id|pci_free_consistent
-c_func
-(paren
-id|ap-&gt;pdev
-comma
-r_sizeof
-(paren
-r_struct
-id|ace_info
-)paren
-comma
-id|info
-comma
-id|ap-&gt;info_dma
-)paren
-suffix:semicolon
 r_return
 id|ecode
 suffix:semicolon
+)brace
+DECL|function|ace_set_rxtx_parms
+r_static
+r_void
+id|ace_set_rxtx_parms
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+r_int
+id|jumbo
+)paren
+(brace
+r_struct
+id|ace_private
+op_star
+id|ap
+suffix:semicolon
+r_struct
+id|ace_regs
+op_star
+id|regs
+suffix:semicolon
+r_int
+id|board_idx
+suffix:semicolon
+id|ap
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+id|regs
+op_assign
+id|ap-&gt;regs
+suffix:semicolon
+id|board_idx
+op_assign
+id|ap-&gt;board_idx
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|board_idx
+op_ge
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|jumbo
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tx_coal_tick
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_TX_COAL
+comma
+op_amp
+id|regs-&gt;TuneTxCoalTicks
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|max_tx_desc
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_TX_MAX_DESC
+comma
+op_amp
+id|regs-&gt;TuneMaxTxDesc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rx_coal_tick
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_RX_COAL
+comma
+op_amp
+id|regs-&gt;TuneRxCoalTicks
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|max_rx_desc
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_RX_MAX_DESC
+comma
+op_amp
+id|regs-&gt;TuneMaxRxDesc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tx_ratio
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_TX_RATIO
+comma
+op_amp
+id|regs-&gt;TxBufRat
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tx_coal_tick
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_JUMBO_TX_COAL
+comma
+op_amp
+id|regs-&gt;TuneTxCoalTicks
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|max_tx_desc
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_JUMBO_TX_MAX_DESC
+comma
+op_amp
+id|regs-&gt;TuneMaxTxDesc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rx_coal_tick
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_JUMBO_RX_COAL
+comma
+op_amp
+id|regs-&gt;TuneRxCoalTicks
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|max_rx_desc
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_JUMBO_RX_MAX_DESC
+comma
+op_amp
+id|regs-&gt;TuneMaxRxDesc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tx_ratio
+(braket
+id|board_idx
+)braket
+)paren
+id|writel
+c_func
+(paren
+id|DEF_JUMBO_TX_RATIO
+comma
+op_amp
+id|regs-&gt;TxBufRat
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 multiline_comment|/*&n; * Monitor the card to detect hangs.&n; */
 DECL|function|ace_timer
@@ -4953,11 +5184,6 @@ id|ace_private
 op_star
 id|ap
 op_assign
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 r_struct
@@ -5243,7 +5469,6 @@ id|GFP_KERNEL
 )paren
 )paren
 )paren
-suffix:semicolon
 r_return
 suffix:semicolon
 macro_line|#endif
@@ -6043,11 +6268,6 @@ id|ap
 suffix:semicolon
 id|ap
 op_assign
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 r_while
@@ -6412,11 +6632,6 @@ id|ace_private
 op_star
 id|ap
 op_assign
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 id|u32
@@ -6882,11 +7097,6 @@ id|evtprd
 suffix:semicolon
 id|ap
 op_assign
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 id|regs
@@ -7095,7 +7305,7 @@ multiline_comment|/*&n;&t;&t; * Once we actually get to this point the tx ring h
 r_if
 c_cond
 (paren
-id|ace_if_busy
+id|netif_queue_stopped
 c_func
 (paren
 id|dev
@@ -7191,7 +7401,7 @@ multiline_comment|/*&n;&t; * This has to go last in the interrupt handler and ru
 r_if
 c_cond
 (paren
-id|ace_if_running
+id|netif_running
 c_func
 (paren
 id|dev
@@ -7781,11 +7991,6 @@ id|dev
 suffix:semicolon
 id|ap
 op_assign
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 id|regs
@@ -8044,11 +8249,6 @@ id|ace_private
 op_star
 id|ap
 op_assign
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 r_struct
@@ -8470,9 +8670,13 @@ comma
 id|RX_JUMBO_SIZE
 )paren
 suffix:semicolon
-id|ap-&gt;jumbo
-op_assign
+id|ace_set_rxtx_parms
+c_func
+(paren
+id|dev
+comma
 l_int|1
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -8500,6 +8704,14 @@ suffix:semicolon
 id|synchronize_irq
 c_func
 (paren
+)paren
+suffix:semicolon
+id|ace_set_rxtx_parms
+c_func
+(paren
+id|dev
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -8565,11 +8777,6 @@ id|ace_private
 op_star
 id|ap
 op_assign
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 r_struct
@@ -9230,7 +9437,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ace_if_running
+id|netif_running
 c_func
 (paren
 id|dev
@@ -10001,11 +10208,6 @@ id|regs
 suffix:semicolon
 id|ap
 op_assign
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 id|regs

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.51 2000/02/26 04:24:32 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.52 2000/03/03 23:48:41 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -579,6 +579,32 @@ l_int|1024
 )paren
 )paren
 (brace
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Locked down tlb entry 63.&n;&t;&t;&t; */
 id|tte
 op_assign

@@ -329,6 +329,8 @@ DECL|macro|AUI_LOOPBACK
 mdefine_line|#define AUI_LOOPBACK 0x0400
 DECL|macro|BACKOFF_OFF
 mdefine_line|#define BACKOFF_OFF 0x0800
+DECL|macro|FDX_8900
+mdefine_line|#define FDX_8900 0x4000
 DECL|macro|FAST_TEST
 mdefine_line|#define FAST_TEST 0x8000
 multiline_comment|/* PP_RxEvent - Receive Event Bit definition - Read-only */

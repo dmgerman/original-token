@@ -4229,6 +4229,8 @@ r_if
 c_cond
 (paren
 id|is_shmzero
+op_eq
+l_int|0
 )paren
 id|shm_swp
 op_decrement
@@ -4238,6 +4240,8 @@ r_if
 c_cond
 (paren
 id|is_shmzero
+op_eq
+l_int|0
 )paren
 id|shm_rss
 op_increment

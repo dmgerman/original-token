@@ -1253,11 +1253,6 @@ suffix:colon
 l_string|&quot;disabled&quot;
 )paren
 suffix:semicolon
-id|feature_init
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_KGDB
 id|zs_kgdb_hook
 c_func
@@ -1395,6 +1390,11 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppc_md
+dot
 id|pcibios_read_config_word
 c_func
 (paren
@@ -1407,12 +1407,27 @@ comma
 op_amp
 id|val
 )paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;init_p2pbridge: couldn&squot;t read bridge control&bslash;n&quot;
+)paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|val
 op_and_assign
 op_complement
 id|PCI_BRIDGE_CTL_MASTER_ABORT
 suffix:semicolon
+id|ppc_md
+dot
 id|pcibios_write_config_word
 c_func
 (paren
@@ -1425,6 +1440,8 @@ comma
 id|val
 )paren
 suffix:semicolon
+id|ppc_md
+dot
 id|pcibios_read_config_word
 c_func
 (paren
@@ -2759,13 +2776,13 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-id|drawstring
+id|prom_drawstring
 c_func
 (paren
 id|s
 )paren
 suffix:semicolon
-id|drawchar
+id|prom_drawchar
 c_func
 (paren
 l_char|&squot;&bslash;n&squot;

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.146 2000/02/09 21:11:09 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.147 2000/03/03 23:48:44 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1068,6 +1068,32 @@ c_func
 l_string|&quot;Remapping the kernel... &quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 id|phys_page
 op_assign
 id|spitfire_get_dtlb_data
@@ -1174,6 +1200,32 @@ r_int
 op_amp
 id|empty_zero_page
 suffix:semicolon
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 id|kern_locked_tte_data
 op_assign
 id|tte_data
@@ -1204,6 +1256,32 @@ r_int
 )paren
 op_amp
 id|prom_boot_page
+)paren
+suffix:semicolon
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
 )paren
 suffix:semicolon
 id|remap_func
@@ -1517,6 +1595,34 @@ op_increment
 (brace
 r_int
 r_int
+id|tag
+suffix:semicolon
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 id|tag
 op_assign
 id|spitfire_get_dtlb_tag
@@ -2103,6 +2209,32 @@ r_int
 r_int
 id|data
 suffix:semicolon
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 id|data
 op_assign
 id|spitfire_get_dtlb_data
@@ -2133,6 +2265,34 @@ id|_PAGE_VALID
 (brace
 r_int
 r_int
+id|tag
+suffix:semicolon
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 id|tag
 op_assign
 id|spitfire_get_dtlb_tag
@@ -2248,6 +2408,32 @@ r_int
 r_int
 id|data
 suffix:semicolon
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 id|data
 op_assign
 id|spitfire_get_itlb_data
@@ -2278,6 +2464,34 @@ id|_PAGE_VALID
 (brace
 r_int
 r_int
+id|tag
+suffix:semicolon
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 id|tag
 op_assign
 id|spitfire_get_itlb_tag
@@ -2717,6 +2931,32 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2772,6 +3012,32 @@ l_string|&quot;#Sync&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Spitfire Errata #32 workaround */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;flush&t;%%g6&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PRIMARY_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

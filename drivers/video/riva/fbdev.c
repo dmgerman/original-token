@@ -1966,7 +1966,7 @@ id|pd
 suffix:semicolon
 id|rinfo-&gt;base0_region_size
 op_assign
-id|pci_resource_start
+id|pci_resource_len
 (paren
 id|pd
 comma
@@ -1975,7 +1975,7 @@ l_int|0
 suffix:semicolon
 id|rinfo-&gt;base1_region_size
 op_assign
-id|pci_resource_start
+id|pci_resource_len
 (paren
 id|pd
 comma

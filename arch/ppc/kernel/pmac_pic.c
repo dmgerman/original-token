@@ -9,6 +9,7 @@ macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
+macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &quot;pmac_pic.h&quot;
 DECL|struct|pmac_irq_hw
 multiline_comment|/* pmac */

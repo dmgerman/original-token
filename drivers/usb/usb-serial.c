@@ -5402,6 +5402,10 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
+r_return
+op_minus
+id|ENOIOCTLCMD
+suffix:semicolon
 )brace
 macro_line|#endif&t;/* CONFIG_USB_SERIAL_FTDI_SIO */
 macro_line|#ifdef CONFIG_USB_SERIAL_KEYSPAN_PDA

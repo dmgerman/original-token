@@ -128,6 +128,13 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;There is some experimental EISA board detection code in this driver.&n; *&t;By default it is disabled, but for those that want to try it out,&n; *&t;then set the define below to be 1.&n; */
 DECL|macro|STLI_EISAPROBE
 mdefine_line|#define&t;STLI_EISAPROBE&t;0
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Define some important driver characteristics. Device major numbers&n; *&t;allocated as per Linux Device Registry.&n; */
 macro_line|#ifndef&t;STL_SIOMEMMAJOR
@@ -2824,13 +2831,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-DECL|variable|devfs_handle
-r_static
-id|devfs_handle_t
-id|devfs_handle
-op_assign
-l_int|NULL
-suffix:semicolon
 DECL|function|cleanup_module
 r_void
 id|cleanup_module

@@ -38,25 +38,27 @@ id|dev
 suffix:semicolon
 r_int
 id|alloc_size
+suffix:semicolon
+multiline_comment|/* 32-byte alignment */
+id|alloc_size
 op_assign
 r_sizeof
 (paren
-r_struct
-id|net_device
+op_star
+id|dev
 )paren
 op_plus
 id|IFNAMSIZ
 op_plus
 id|sizeof_priv
 op_plus
-l_int|3
+l_int|31
 suffix:semicolon
 id|alloc_size
 op_and_assign
 op_complement
-l_int|3
+l_int|31
 suffix:semicolon
-multiline_comment|/* Round to dword boundary. */
 id|dev
 op_assign
 (paren
@@ -65,7 +67,6 @@ id|net_device
 op_star
 )paren
 id|kmalloc
-c_func
 (paren
 id|alloc_size
 comma

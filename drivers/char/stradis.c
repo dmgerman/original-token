@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -13469,27 +13470,15 @@ id|saa-&gt;video_dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|stradis_init
+r_static
 r_int
-id|init_module
-c_func
+id|__init
+id|stradis_init
 (paren
 r_void
 )paren
 (brace
-macro_line|#else
-r_int
-id|init_stradis_cards
-c_func
-(paren
-r_struct
-id|video_init
-op_star
-id|unused
-)paren
-(brace
-macro_line|#endif
 r_struct
 id|pci_dev
 op_star
@@ -13630,11 +13619,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|stradis_exit
+r_static
 r_void
-id|cleanup_module
-c_func
+id|__exit
+id|stradis_exit
 (paren
 r_void
 )paren
@@ -13652,5 +13641,18 @@ l_string|&quot;stradis: module cleanup complete&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|stradis_init
+id|module_init
+c_func
+(paren
+id|stradis_init
+)paren
+suffix:semicolon
+DECL|variable|stradis_exit
+id|module_exit
+c_func
+(paren
+id|stradis_exit
+)paren
+suffix:semicolon
 eof

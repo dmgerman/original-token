@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/udf_udf.h&gt;
 macro_line|#include &quot;udfend.h&quot;
 macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;

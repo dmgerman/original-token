@@ -48,7 +48,7 @@ dot
 suffix:semicolon
 r_extern
 r_void
-id|drawchar
+id|prom_drawchar
 c_func
 (paren
 r_char
@@ -56,7 +56,7 @@ r_char
 suffix:semicolon
 r_extern
 r_void
-id|drawstring
+id|prom_drawstring
 c_func
 (paren
 r_const
@@ -92,8 +92,9 @@ r_static
 r_int
 id|use_screen
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
+multiline_comment|/* default */
 DECL|variable|via_modem
 r_static
 r_int
@@ -187,6 +188,10 @@ r_char
 op_star
 id|base
 suffix:semicolon
+id|use_screen
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -225,7 +230,7 @@ c_func
 )paren
 )paren
 (brace
-id|drawstring
+id|prom_drawstring
 c_func
 (paren
 l_string|&quot;xmon uses screen and keyboard&bslash;n&quot;
@@ -513,7 +518,7 @@ suffix:semicolon
 op_increment
 id|i
 )paren
-id|drawchar
+id|prom_drawchar
 c_func
 (paren
 op_star
@@ -616,6 +621,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|prom_drawchar
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -764,7 +775,7 @@ l_int|1
 op_minus
 id|on
 suffix:semicolon
-id|drawchar
+id|prom_drawchar
 c_func
 (paren
 id|on
@@ -775,7 +786,7 @@ suffix:colon
 l_int|0x20
 )paren
 suffix:semicolon
-id|drawchar
+id|prom_drawchar
 c_func
 (paren
 l_char|&squot;&bslash;b&squot;
@@ -810,7 +821,7 @@ c_cond
 (paren
 id|on
 )paren
-id|drawstring
+id|prom_drawstring
 c_func
 (paren
 l_string|&quot; &bslash;b&quot;
@@ -1228,6 +1239,21 @@ r_int
 id|i
 comma
 id|x
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|macio_node
+op_ne
+l_int|0
+)paren
+id|feature_set
+c_func
+(paren
+id|macio_node
+comma
+id|FEATURE_Serial_enable
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1800,17 +1826,9 @@ id|t0
 OG
 id|timeout
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;timeout&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_continue
 suffix:semicolon
 )brace
@@ -1822,14 +1840,6 @@ op_eq
 l_char|&squot;&bslash;n&squot;
 )paren
 r_break
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%c&quot;
-comma
-id|c
-)paren
 suffix:semicolon
 r_if
 c_cond

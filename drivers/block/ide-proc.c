@@ -1911,6 +1911,15 @@ l_string|&quot;4drives&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|ide_pmac
+suffix:colon
+id|name
+op_assign
+l_string|&quot;mac-io&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|name

@@ -100,11 +100,11 @@ mdefine_line|#define AC97_RECMUX_MIC           0x0000
 DECL|macro|AC97_RECMUX_CD
 mdefine_line|#define AC97_RECMUX_CD            0x0101
 DECL|macro|AC97_RECMUX_VIDEO
-mdefine_line|#define AC97_RECMUX_VIDEO         0x0202       /* not used */
+mdefine_line|#define AC97_RECMUX_VIDEO         0x0202
 DECL|macro|AC97_RECMUX_AUX
-mdefine_line|#define AC97_RECMUX_AUX           0x0303      
+mdefine_line|#define AC97_RECMUX_AUX           0x0303
 DECL|macro|AC97_RECMUX_LINE
-mdefine_line|#define AC97_RECMUX_LINE          0x0404      
+mdefine_line|#define AC97_RECMUX_LINE          0x0404
 DECL|macro|AC97_RECMUX_STEREO_MIX
 mdefine_line|#define AC97_RECMUX_STEREO_MIX    0x0505
 DECL|macro|AC97_RECMUX_MONO_MIX
@@ -179,7 +179,7 @@ mdefine_line|#define AC97_STEREO_MASK (SOUND_MASK_VOLUME|SOUND_MASK_PCM|&bslash;
 DECL|macro|AC97_SUPPORTED_MASK
 mdefine_line|#define AC97_SUPPORTED_MASK (AC97_STEREO_MASK | &bslash;&n;&t;SOUND_MASK_BASS|SOUND_MASK_TREBLE|&bslash;&n;&t;SOUND_MASK_SPEAKER|SOUND_MASK_MIC|&bslash;&n;&t;SOUND_MASK_PHONEIN|SOUND_MASK_PHONEOUT)
 DECL|macro|AC97_RECORD_MASK
-mdefine_line|#define AC97_RECORD_MASK (SOUND_MASK_MIC|&bslash;&n;&t;SOUND_MASK_CD|SOUND_MASK_VIDEO|&bslash;&n;&t;SOUND_MASK_LINE1| SOUND_MASK_LINE|&bslash;&n;&t;SOUND_MASK_PHONEIN)
+mdefine_line|#define AC97_RECORD_MASK (SOUND_MASK_MIC|&bslash;&n;&t;SOUND_MASK_CD|SOUND_MASK_IGAIN|SOUND_MASK_VIDEO|&bslash;&n;&t;SOUND_MASK_LINE1| SOUND_MASK_LINE|&bslash;&n;&t;SOUND_MASK_PHONEIN)
 DECL|macro|supported_mixer
 mdefine_line|#define supported_mixer(CODEC,FOO) ( CODEC-&gt;supported_mixers &amp; (1&lt;&lt;FOO) )
 DECL|struct|ac97_codec

@@ -3862,6 +3862,12 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef __powerpc__
+(brace
+r_extern
+r_struct
+id|file_operations
+id|ppc_htab_operations
+suffix:semicolon
 id|entry
 op_assign
 id|create_proc_entry
@@ -3886,6 +3892,7 @@ op_assign
 op_amp
 id|ppc_htab_operations
 suffix:semicolon
+)brace
 macro_line|#endif
 )brace
 eof

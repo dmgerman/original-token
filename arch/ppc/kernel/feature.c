@@ -814,6 +814,15 @@ id|device_node
 op_star
 id|np
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|_machine
+op_ne
+id|_MACH_Pmac
+)paren
+r_return
+suffix:semicolon
 id|np
 op_assign
 id|find_devices

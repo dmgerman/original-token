@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ac97_codec.c: Generic AC97 mixer module&n; *&n; * Derived from ac97 mixer in maestro and trident driver.&n; *&n; * Copyright 2000 Silicon Integrated System Corporation&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * History&n; * v0.2 Feb 10 2000 Ollie Lho&n; *&t;add ac97_read_proc for /proc/driver/vnedor/ac97&n; * v0.1 Jan 14 2000 Ollie Lho &lt;ollie@sis.com.tw&gt; &n; *&t;Isolated from trident.c to support multiple ac97 codec&n; */
+multiline_comment|/*&n; * ac97_codec.c: Generic AC97 mixer module&n; *&n; * Derived from ac97 mixer in maestro and trident driver.&n; *&n; * Copyright 2000 Silicon Integrated System Corporation&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * History&n; * v0.3 Feb 22 2000 Ollie Lho&n; *&t;bug fix for record mask setting&n; * v0.2 Feb 10 2000 Ollie Lho&n; *&t;add ac97_read_proc for /proc/driver/vnedor/ac97&n; * v0.1 Jan 14 2000 Ollie Lho &lt;ollie@sis.com.tw&gt; &n; *&t;Isolated from trident.c to support multiple ac97 codec&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -97,8 +97,19 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+r_static
+r_int
+id|sigmatel_init
+c_func
+(paren
+r_struct
+id|ac97_codec
+op_star
+id|codec
+)paren
+suffix:semicolon
 DECL|macro|arraysize
-mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof((x)[0]))
+mdefine_line|#define arraysize(x)   (sizeof(x)/sizeof((x)[0]))
 r_static
 r_struct
 (brace
@@ -157,9 +168,25 @@ l_int|NULL
 )brace
 comma
 (brace
+l_int|0x43525903
+comma
+l_string|&quot;Cirrus Logic CS4297&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
 l_int|0x43525913
 comma
 l_string|&quot;Cirrus Logic CS4297A&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_int|0x43525923
+comma
+l_string|&quot;Cirrus Logic CS4298&quot;
 comma
 l_int|NULL
 )brace
@@ -217,7 +244,7 @@ l_int|0x83847609
 comma
 l_string|&quot;SigmaTel STAC9721/23&quot;
 comma
-l_int|NULL
+id|sigmatel_init
 )brace
 comma
 (brace
@@ -707,6 +734,12 @@ op_assign
 id|SOUND_MIXER_LINE
 comma
 (braket
+id|AC97_REC_STEREO
+)braket
+op_assign
+id|SOUND_MIXER_IGAIN
+comma
+(braket
 id|AC97_REC_PHONE
 )braket
 op_assign
@@ -752,6 +785,12 @@ id|SOUND_MIXER_LINE
 )braket
 op_assign
 id|AC97_REC_LINE
+comma
+(braket
+id|SOUND_MIXER_IGAIN
+)braket
+op_assign
+id|AC97_REC_STEREO
 comma
 (braket
 id|SOUND_MIXER_PHONEIN
@@ -1093,10 +1132,17 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;ac97_codec: read OSS mixer %2d (ac97 register 0x%02x), &quot;
+l_string|&quot;ac97_codec: read OSS mixer %2d (%s ac97 register 0x%02x), &quot;
 l_string|&quot;0x%04x -&gt; 0x%04x&bslash;n&quot;
 comma
 id|oss_channel
+comma
+id|codec-&gt;id
+ques
+c_cond
+l_string|&quot;Secondary&quot;
+suffix:colon
+l_string|&quot;Primary&quot;
 comma
 id|mh-&gt;offset
 comma
@@ -1652,16 +1698,30 @@ c_func
 (paren
 id|codec
 comma
-l_int|0x1a
+id|AC97_RECORD_SELECT
 )paren
-op_amp
-l_int|0x7
 suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;ac97_codec: ac97 recmask to set to 0x%04x&bslash;n&quot;
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
+(paren
+l_int|1
+op_lshift
 id|ac97_rm2oss
 (braket
 id|val
+op_amp
+l_int|0x07
 )braket
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* else, write the first set in the mask as the&n;&t;   output */
@@ -1693,7 +1753,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;ac97_codec: setting ac97 recmask to 0x%x&bslash;n&quot;
+l_string|&quot;ac97_codec: setting ac97 recmask to 0x%04x&bslash;n&quot;
 comma
 id|val
 )paren
@@ -1706,7 +1766,7 @@ c_func
 (paren
 id|codec
 comma
-l_int|0x1a
+id|AC97_RECORD_SELECT
 comma
 id|val
 )paren
@@ -2049,19 +2109,14 @@ op_minus
 id|EINVAL
 suffix:semicolon
 multiline_comment|/* do we ever want to touch the hardware? */
+multiline_comment|/* val = codec-&gt;read_mixer(codec, i); */
 id|val
 op_assign
-id|codec
-op_member_access_from_pointer
-id|read_mixer
-c_func
-(paren
-id|codec
-comma
+id|codec-&gt;mixer_state
+(braket
 id|i
-)paren
+)braket
 suffix:semicolon
-multiline_comment|/* val = codec-&gt;mixer_state[i]; */
 r_break
 suffix:semicolon
 )brace
@@ -2958,6 +3013,21 @@ id|SOUND_MASK_BASS
 op_or
 id|SOUND_MASK_TREBLE
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|cap
+op_amp
+l_int|0x10
+)paren
+)paren
+id|codec-&gt;supported_mixers
+op_and_assign
+op_complement
+id|SOUND_MASK_ALTPCM
 suffix:semicolon
 multiline_comment|/* generic OSS to AC97 wrapper */
 id|codec-&gt;read_mixer

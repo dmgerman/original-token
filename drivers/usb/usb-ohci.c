@@ -5883,6 +5883,10 @@ id|__u8
 op_star
 id|data_buf
 op_assign
+(paren
+id|__u8
+op_star
+)paren
 id|datab
 suffix:semicolon
 id|__u16

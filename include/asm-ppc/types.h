@@ -2,7 +2,7 @@ macro_line|#ifndef _PPC_TYPES_H
 DECL|macro|_PPC_TYPES_H
 mdefine_line|#define _PPC_TYPES_H
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/*&n; * __xx is ok: it doesn&squot;t pollute the POSIX namespace. Use these in the&n; * header files exported to user space&n; */
+macro_line|#ifdef __KERNEL__
 DECL|typedef|umode_t
 r_typedef
 r_int
@@ -137,7 +137,6 @@ l_int|16
 )paren
 id|vector128
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
 DECL|macro|BITS_PER_LONG
 mdefine_line|#define BITS_PER_LONG 32
 multiline_comment|/* DMA addresses are 32-bits wide */

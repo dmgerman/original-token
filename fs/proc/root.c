@@ -278,18 +278,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __powerpc__
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-op_amp
-id|proc_root_ppc_htab
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_DEVICETREE
 id|proc_device_tree_init
 c_func

@@ -3854,10 +3854,6 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|elp_device
 op_star
 id|adapter

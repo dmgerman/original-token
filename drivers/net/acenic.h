@@ -592,6 +592,8 @@ DECL|macro|DMA_WRITE_MAX_256
 mdefine_line|#define DMA_WRITE_MAX_256&t;0xc0
 DECL|macro|DMA_WRITE_MAX_1K
 mdefine_line|#define DMA_WRITE_MAX_1K&t;0xe0
+DECL|macro|DMA_READ_WRITE_MASK
+mdefine_line|#define DMA_READ_WRITE_MASK&t;0xfc
 DECL|macro|MEM_READ_MULTIPLE
 mdefine_line|#define MEM_READ_MULTIPLE&t;0x00020000
 DECL|macro|PCI_66MHZ
@@ -1529,6 +1531,10 @@ id|net_device
 op_star
 id|next
 suffix:semicolon
+DECL|member|board_idx
+r_int
+id|board_idx
+suffix:semicolon
 DECL|member|pci_command
 id|u16
 id|pci_command
@@ -1778,9 +1784,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-comma
-r_int
-id|board_idx
 )paren
 suffix:semicolon
 r_static
@@ -1997,6 +2000,20 @@ id|p
 )paren
 suffix:semicolon
 r_static
+r_void
+id|ace_set_rxtx_parms
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+r_int
+id|jumbo
+)paren
+suffix:semicolon
+r_static
 r_int
 id|ace_allocate_descriptors
 c_func
@@ -2010,6 +2027,17 @@ suffix:semicolon
 r_static
 r_void
 id|ace_free_descriptors
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|ace_init_cleanup
 c_func
 (paren
 r_struct

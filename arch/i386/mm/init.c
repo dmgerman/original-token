@@ -1479,7 +1479,7 @@ op_assign
 id|pmd_t
 op_star
 )paren
-id|alloc_bootmem_pages
+id|alloc_bootmem_low_pages
 c_func
 (paren
 id|PAGE_SIZE

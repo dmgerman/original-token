@@ -737,10 +737,8 @@ id|i
 op_eq
 id|cpu
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -761,9 +759,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|esp
-op_eq
-l_int|NULL
 )paren
 (brace
 multiline_comment|/* tss-&gt;esp0 is set to NULL in cpu_init(),&n;&t;&t;&t; * it&squot;s initialized when the cpu returns to user&n;&t;&t;&t; * space. -- manfreds&n;&t;&t;&t; */

@@ -4036,24 +4036,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#if 0
-id|setbat
-c_func
-(paren
-l_int|0
-comma
-id|disp_bi-&gt;dispDeviceBase
-comma
-id|disp_bi-&gt;dispDeviceBase
-comma
-l_int|0x100000
-comma
-id|IO_PAGE
-)paren
-suffix:semicolon
-id|disp_bi-&gt;logicalDisplayBase
-op_assign
-id|disp_bi-&gt;dispDeviceBase
-suffix:semicolon
+singleline_comment|// This is bogus, BAT must be aligned.
+singleline_comment|//&t;&t;setbat(0, disp_bi-&gt;dispDeviceBase, disp_bi-&gt;dispDeviceBase, 0x100000, IO_PAGE);
+singleline_comment|//&t;&t;disp_bi-&gt;logicalDisplayBase = disp_bi-&gt;dispDeviceBase;
 macro_line|#endif&t;&t;
 id|ioremap_base
 op_assign

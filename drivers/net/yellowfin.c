@@ -6576,6 +6576,9 @@ l_int|1
 suffix:semicolon
 id|ioaddr
 op_assign
+(paren
+r_int
+)paren
 id|ioremap
 c_func
 (paren

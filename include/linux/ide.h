@@ -933,6 +933,9 @@ comma
 id|ide_cy82c693
 comma
 id|ide_4drives
+comma
+DECL|enumerator|ide_pmac
+id|ide_pmac
 DECL|typedef|hwif_chipset_t
 )brace
 id|hwif_chipset_t

@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#ifdef CONFIG_OAK
 macro_line|#include &quot;oak_setup.h&quot;
 macro_line|#endif /* CONFIG_OAK */
@@ -2966,6 +2967,11 @@ comma
 l_int|0x3eab
 )paren
 suffix:semicolon
+id|paging_init
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|ppc_generic_ide_fix_driveid
 r_void
@@ -3363,6 +3369,7 @@ suffix:semicolon
 id|i
 OL
 l_int|2
+suffix:semicolon
 id|i
 op_increment
 )paren
@@ -3390,6 +3397,7 @@ suffix:semicolon
 id|i
 OL
 l_int|4
+suffix:semicolon
 id|i
 op_increment
 )paren
@@ -3425,6 +3433,7 @@ suffix:semicolon
 id|i
 OL
 l_int|4
+suffix:semicolon
 id|i
 op_increment
 )paren

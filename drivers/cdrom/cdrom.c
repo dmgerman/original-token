@@ -1,8 +1,8 @@
-multiline_comment|/* linux/drivers/cdrom/cdrom.c. &n;   Copyright (c) 1996, 1997 David A. van Leeuwen.&n;   Copyright (c) 1997, 1998 Erik Andersen &lt;andersee@debian.org&gt;&n;   Copyright (c) 1998, 1999 Jens Axboe &lt;axboe@image.dk&gt;&n;&n;   May be copied or modified under the terms of the GNU General Public&n;   License.  See linux/COPYING for more information.&n;&n;   Uniform CD-ROM driver for Linux.&n;   See Documentation/cdrom/cdrom-standard.tex for usage information.&n;&n;   The routines in the file provide a uniform interface between the&n;   software that uses CD-ROMs and the various low-level drivers that&n;   actually talk to the hardware. Suggestions are welcome.&n;   Patches that work are more welcome though.  ;-)&n;&n; To Do List:&n; ----------------------------------&n;&n; -- Modify sysctl/proc interface. I plan on having one directory per&n; drive, with entries for outputing general drive information, and sysctl&n; based tunable parameters such as whether the tray should auto-close for&n; that drive. Suggestions (or patches) for this welcome!&n;&n;&n; Revision History&n; ----------------------------------&n; 1.00  Date Unknown -- David van Leeuwen &lt;david@tm.tno.nl&gt;&n; -- Initial version by David A. van Leeuwen. I don&squot;t have a detailed&n;  changelog for the 1.x series, David?&n;&n;2.00  Dec  2, 1997 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- New maintainer! As David A. van Leeuwen has been too busy to activly&n;  maintain and improve this driver, I am now carrying on the torch. If&n;  you have a problem with this driver, please feel free to contact me.&n;&n;  -- Added (rudimentary) sysctl interface. I realize this is really weak&n;  right now, and is _very_ badly implemented. It will be improved...&n;&n;  -- Modified CDROM_DISC_STATUS so that it is now incorporated into&n;  the Uniform CD-ROM driver via the cdrom_count_tracks function.&n;  The cdrom_count_tracks function helps resolve some of the false&n;  assumptions of the CDROM_DISC_STATUS ioctl, and is also used to check&n;  for the correct media type when mounting or playing audio from a CD.&n;&n;  -- Remove the calls to verify_area and only use the copy_from_user and&n;  copy_to_user stuff, since these calls now provide their own memory&n;  checking with the 2.1.x kernels.&n;&n;  -- Major update to return codes so that errors from low-level drivers&n;  are passed on through (thanks to Gerd Knorr for pointing out this&n;  problem).&n;&n;  -- Made it so if a function isn&squot;t implemented in a low-level driver,&n;  ENOSYS is now returned instead of EINVAL.&n;&n;  -- Simplified some complex logic so that the source code is easier to read.&n;&n;  -- Other stuff I probably forgot to mention (lots of changes).&n;&n;2.01 to 2.11 Dec 1997-Jan 1998&n;  -- TO-DO!  Write changelogs for 2.01 to 2.12.&n;&n;2.12  Jan  24, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in the IOCTL_IN and IOCTL_OUT macros.  It turns out that&n;  copy_*_user does not return EFAULT on error, but instead returns the number &n;  of bytes not copied.  I was returning whatever non-zero stuff came back from &n;  the copy_*_user functions directly, which would result in strange errors.&n;&n;2.13  July 17, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in CDROM_SELECT_SPEED where you couldn&squot;t lower the speed&n;  of the drive.  Thanks to Tobias Ringstr|m &lt;tori@prosolvia.se&gt; for pointing&n;  this out and providing a simple fix.&n;  -- Fixed the procfs-unload-module bug with the fill_inode procfs callback.&n;  thanks to Andrea Arcangeli&n;  -- Fixed it so that the /proc entry now also shows up when cdrom is&n;  compiled into the kernel.  Before it only worked when loaded as a module.&n;&n;  2.14 August 17, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in cdrom_media_changed and handling of reporting that&n;  the media had changed for devices that _don&squot;t_ implement media_changed.  &n;  Thanks to Grant R. Guenther &lt;grant@torque.net&gt; for spotting this bug.&n;  -- Made a few things more pedanticly correct.&n;&n;2.50 Oct 19, 1998 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- New maintainers! Erik was too busy to continue the work on the driver,&n;  so now Chris Zwilling &lt;chris@cloudnet.com&gt; and Jens Axboe &lt;axboe@image.dk&gt;&n;  will do their best to follow in his footsteps&n;  &n;  2.51 Dec 20, 1998 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Check if drive is capable of doing what we ask before blindly changing&n;  cdi-&gt;options in various ioctl.&n;  -- Added version to proc entry.&n;  &n;  2.52 Jan 16, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixed an error in open_for_data where we would sometimes not return&n;  the correct error value. Thanks Huba Gaspar &lt;huba@softcell.hu&gt;.&n;  -- Fixed module usage count - usage was based on /proc/sys/dev&n;  instead of /proc/sys/dev/cdrom. This could lead to an oops when other&n;  modules had entries in dev. Feb 02 - real bug was in sysctl.c where&n;  dev would be removed even though it was used. cdrom.c just illuminated&n;  that bug.&n;  &n;  2.53 Feb 22, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixup of several ioctl calls, in particular CDROM_SET_OPTIONS has&n;  been &quot;rewritten&quot; because capabilities and options aren&squot;t in sync. They&n;  should be...&n;  -- Added CDROM_LOCKDOOR ioctl. Locks the door and keeps it that way.&n;  -- Added CDROM_RESET ioctl.&n;  -- Added CDROM_DEBUG ioctl. Enable debug messages on-the-fly.&n;  -- Added CDROM_GET_CAPABILITY ioctl. This relieves userspace programs&n;  from parsing /proc/sys/dev/cdrom/info.&n;  &n;  2.54 Mar 15, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Check capability mask from low level driver when counting tracks as&n;  per suggestion from Corey J. Scotts &lt;cstotts@blue.weeg.uiowa.edu&gt;.&n;  &n;  2.55 Apr 25, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- autoclose was mistakenly checked against CDC_OPEN_TRAY instead of&n;  CDC_CLOSE_TRAY.&n;  -- proc info didn&squot;t mask against capabilities mask.&n;  &n;  3.00 Aug 5, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Unified audio ioctl handling across CD-ROM drivers. A lot of the&n;  code was duplicated before. Drives that support the generic packet&n;  interface are now being fed packets from here instead.&n;  -- First attempt at adding support for MMC2 commands - for DVD and&n;  CD-R(W) drives. Only the DVD parts are in now - the interface used is&n;  the same as for the audio ioctls.&n;  -- ioctl cleanups. if a drive couldn&squot;t play audio, it didn&squot;t get&n;  a change to perform device specific ioctls as well.&n;  -- Defined CDROM_CAN(CDC_XXX) for checking the capabilities.&n;  -- Put in sysctl files for autoclose, autoeject, check_media, debug,&n;  and lock.&n;  -- /proc/sys/dev/cdrom/info has been updated to also contain info about&n;  CD-Rx and DVD capabilities.&n;  -- Now default to checking media type.&n;  -- CDROM_SEND_PACKET ioctl added. The infrastructure was in place for&n;  doing this anyway, with the generic_packet addition.&n;  &n;  3.01 Aug 6, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fix up the sysctl handling so that the option flags get set&n;  correctly.&n;  -- Fix up ioctl handling so the device specific ones actually get&n;  called :).&n;  &n;  3.02 Aug 8, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixed volume control on SCSI drives (or others with longer audio&n;  page).&n;  -- Fixed a couple of DVD minors. Thanks to Andrew T. Veliath&n;  &lt;andrewtv@usa.net&gt; for telling me and for having defined the various&n;  DVD structures and ioctls in the first place! He designed the original&n;  DVD patches for ide-cd and while I rearranged and unified them, the&n;  interface is still the same.&n;  &n;  3.03 Sep 1, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Moved the rest of the audio ioctls from the CD-ROM drivers here. Only&n;  CDROMREADTOCENTRY and CDROMREADTOCHDR are left.&n;  -- Moved the CDROMREADxxx ioctls in here.&n;  -- Defined the cdrom_get_last_written and cdrom_get_next_block as ioctls&n;  and exported functions.&n;  -- Erik Andersen &lt;andersen@xmission.com&gt; modified all SCMD_ commands&n;  to now read GPCMD_ for the new generic packet interface. All low level&n;  drivers are updated as well.&n;  -- Various other cleanups.&n;&n;  3.04 Sep 12, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixed a couple of possible memory leaks (if an operation failed and&n;  we didn&squot;t free the buffer before returning the error).&n;  -- Integrated Uniform CD Changer handling from Richard Sharman&n;  &lt;rsharman@pobox.com&gt;.&n;  -- Defined CD_DVD and CD_CHANGER log levels.&n;  -- Fixed the CDROMREADxxx ioctls.&n;  -- CDROMPLAYTRKIND uses the GPCMD_PLAY_AUDIO_MSF command - too few&n;  drives supported it. We loose the index part, however.&n;  -- Small modifications to accomodate opens of /dev/hdc1, required&n;  for ide-cd to handle multisession discs.&n;  -- Export cdrom_mode_sense and cdrom_mode_select.&n;  -- init_cdrom_command() for setting up a cgc command.&n;  &n;  3.05 Oct 24, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Changed the interface for CDROM_SEND_PACKET. Before it was virtually&n;  impossible to send the drive data in a sensible way.&n;  -- Lowered stack usage in mmc_ioctl(), dvd_read_disckey(), and&n;  dvd_read_manufact.&n;  -- Added setup of write mode for packet writing.&n;  -- Fixed CDDA ripping with cdda2wav - accept much larger requests of&n;  number of frames and split the reads in blocks of 8.&n;&n;  3.05 Dec 13, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Added support for changing the region of DVD drives.&n;  -- Added sense data to generic command.&n;  &n;-------------------------------------------------------------------------*/
+multiline_comment|/* linux/drivers/cdrom/cdrom.c. &n;   Copyright (c) 1996, 1997 David A. van Leeuwen.&n;   Copyright (c) 1997, 1998 Erik Andersen &lt;andersee@debian.org&gt;&n;   Copyright (c) 1998, 1999 Jens Axboe &lt;axboe@image.dk&gt;&n;&n;   May be copied or modified under the terms of the GNU General Public&n;   License.  See linux/COPYING for more information.&n;&n;   Uniform CD-ROM driver for Linux.&n;   See Documentation/cdrom/cdrom-standard.tex for usage information.&n;&n;   The routines in the file provide a uniform interface between the&n;   software that uses CD-ROMs and the various low-level drivers that&n;   actually talk to the hardware. Suggestions are welcome.&n;   Patches that work are more welcome though.  ;-)&n;&n; To Do List:&n; ----------------------------------&n;&n; -- Modify sysctl/proc interface. I plan on having one directory per&n; drive, with entries for outputing general drive information, and sysctl&n; based tunable parameters such as whether the tray should auto-close for&n; that drive. Suggestions (or patches) for this welcome!&n;&n;&n; Revision History&n; ----------------------------------&n; 1.00  Date Unknown -- David van Leeuwen &lt;david@tm.tno.nl&gt;&n; -- Initial version by David A. van Leeuwen. I don&squot;t have a detailed&n;  changelog for the 1.x series, David?&n;&n;2.00  Dec  2, 1997 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- New maintainer! As David A. van Leeuwen has been too busy to activly&n;  maintain and improve this driver, I am now carrying on the torch. If&n;  you have a problem with this driver, please feel free to contact me.&n;&n;  -- Added (rudimentary) sysctl interface. I realize this is really weak&n;  right now, and is _very_ badly implemented. It will be improved...&n;&n;  -- Modified CDROM_DISC_STATUS so that it is now incorporated into&n;  the Uniform CD-ROM driver via the cdrom_count_tracks function.&n;  The cdrom_count_tracks function helps resolve some of the false&n;  assumptions of the CDROM_DISC_STATUS ioctl, and is also used to check&n;  for the correct media type when mounting or playing audio from a CD.&n;&n;  -- Remove the calls to verify_area and only use the copy_from_user and&n;  copy_to_user stuff, since these calls now provide their own memory&n;  checking with the 2.1.x kernels.&n;&n;  -- Major update to return codes so that errors from low-level drivers&n;  are passed on through (thanks to Gerd Knorr for pointing out this&n;  problem).&n;&n;  -- Made it so if a function isn&squot;t implemented in a low-level driver,&n;  ENOSYS is now returned instead of EINVAL.&n;&n;  -- Simplified some complex logic so that the source code is easier to read.&n;&n;  -- Other stuff I probably forgot to mention (lots of changes).&n;&n;2.01 to 2.11 Dec 1997-Jan 1998&n;  -- TO-DO!  Write changelogs for 2.01 to 2.12.&n;&n;2.12  Jan  24, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in the IOCTL_IN and IOCTL_OUT macros.  It turns out that&n;  copy_*_user does not return EFAULT on error, but instead returns the number &n;  of bytes not copied.  I was returning whatever non-zero stuff came back from &n;  the copy_*_user functions directly, which would result in strange errors.&n;&n;2.13  July 17, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in CDROM_SELECT_SPEED where you couldn&squot;t lower the speed&n;  of the drive.  Thanks to Tobias Ringstr|m &lt;tori@prosolvia.se&gt; for pointing&n;  this out and providing a simple fix.&n;  -- Fixed the procfs-unload-module bug with the fill_inode procfs callback.&n;  thanks to Andrea Arcangeli&n;  -- Fixed it so that the /proc entry now also shows up when cdrom is&n;  compiled into the kernel.  Before it only worked when loaded as a module.&n;&n;  2.14 August 17, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in cdrom_media_changed and handling of reporting that&n;  the media had changed for devices that _don&squot;t_ implement media_changed.  &n;  Thanks to Grant R. Guenther &lt;grant@torque.net&gt; for spotting this bug.&n;  -- Made a few things more pedanticly correct.&n;&n;2.50 Oct 19, 1998 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- New maintainers! Erik was too busy to continue the work on the driver,&n;  so now Chris Zwilling &lt;chris@cloudnet.com&gt; and Jens Axboe &lt;axboe@image.dk&gt;&n;  will do their best to follow in his footsteps&n;  &n;  2.51 Dec 20, 1998 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Check if drive is capable of doing what we ask before blindly changing&n;  cdi-&gt;options in various ioctl.&n;  -- Added version to proc entry.&n;  &n;  2.52 Jan 16, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixed an error in open_for_data where we would sometimes not return&n;  the correct error value. Thanks Huba Gaspar &lt;huba@softcell.hu&gt;.&n;  -- Fixed module usage count - usage was based on /proc/sys/dev&n;  instead of /proc/sys/dev/cdrom. This could lead to an oops when other&n;  modules had entries in dev. Feb 02 - real bug was in sysctl.c where&n;  dev would be removed even though it was used. cdrom.c just illuminated&n;  that bug.&n;  &n;  2.53 Feb 22, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixup of several ioctl calls, in particular CDROM_SET_OPTIONS has&n;  been &quot;rewritten&quot; because capabilities and options aren&squot;t in sync. They&n;  should be...&n;  -- Added CDROM_LOCKDOOR ioctl. Locks the door and keeps it that way.&n;  -- Added CDROM_RESET ioctl.&n;  -- Added CDROM_DEBUG ioctl. Enable debug messages on-the-fly.&n;  -- Added CDROM_GET_CAPABILITY ioctl. This relieves userspace programs&n;  from parsing /proc/sys/dev/cdrom/info.&n;  &n;  2.54 Mar 15, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Check capability mask from low level driver when counting tracks as&n;  per suggestion from Corey J. Scotts &lt;cstotts@blue.weeg.uiowa.edu&gt;.&n;  &n;  2.55 Apr 25, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- autoclose was mistakenly checked against CDC_OPEN_TRAY instead of&n;  CDC_CLOSE_TRAY.&n;  -- proc info didn&squot;t mask against capabilities mask.&n;  &n;  3.00 Aug 5, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Unified audio ioctl handling across CD-ROM drivers. A lot of the&n;  code was duplicated before. Drives that support the generic packet&n;  interface are now being fed packets from here instead.&n;  -- First attempt at adding support for MMC2 commands - for DVD and&n;  CD-R(W) drives. Only the DVD parts are in now - the interface used is&n;  the same as for the audio ioctls.&n;  -- ioctl cleanups. if a drive couldn&squot;t play audio, it didn&squot;t get&n;  a change to perform device specific ioctls as well.&n;  -- Defined CDROM_CAN(CDC_XXX) for checking the capabilities.&n;  -- Put in sysctl files for autoclose, autoeject, check_media, debug,&n;  and lock.&n;  -- /proc/sys/dev/cdrom/info has been updated to also contain info about&n;  CD-Rx and DVD capabilities.&n;  -- Now default to checking media type.&n;  -- CDROM_SEND_PACKET ioctl added. The infrastructure was in place for&n;  doing this anyway, with the generic_packet addition.&n;  &n;  3.01 Aug 6, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fix up the sysctl handling so that the option flags get set&n;  correctly.&n;  -- Fix up ioctl handling so the device specific ones actually get&n;  called :).&n;  &n;  3.02 Aug 8, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixed volume control on SCSI drives (or others with longer audio&n;  page).&n;  -- Fixed a couple of DVD minors. Thanks to Andrew T. Veliath&n;  &lt;andrewtv@usa.net&gt; for telling me and for having defined the various&n;  DVD structures and ioctls in the first place! He designed the original&n;  DVD patches for ide-cd and while I rearranged and unified them, the&n;  interface is still the same.&n;  &n;  3.03 Sep 1, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Moved the rest of the audio ioctls from the CD-ROM drivers here. Only&n;  CDROMREADTOCENTRY and CDROMREADTOCHDR are left.&n;  -- Moved the CDROMREADxxx ioctls in here.&n;  -- Defined the cdrom_get_last_written and cdrom_get_next_block as ioctls&n;  and exported functions.&n;  -- Erik Andersen &lt;andersen@xmission.com&gt; modified all SCMD_ commands&n;  to now read GPCMD_ for the new generic packet interface. All low level&n;  drivers are updated as well.&n;  -- Various other cleanups.&n;&n;  3.04 Sep 12, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixed a couple of possible memory leaks (if an operation failed and&n;  we didn&squot;t free the buffer before returning the error).&n;  -- Integrated Uniform CD Changer handling from Richard Sharman&n;  &lt;rsharman@pobox.com&gt;.&n;  -- Defined CD_DVD and CD_CHANGER log levels.&n;  -- Fixed the CDROMREADxxx ioctls.&n;  -- CDROMPLAYTRKIND uses the GPCMD_PLAY_AUDIO_MSF command - too few&n;  drives supported it. We loose the index part, however.&n;  -- Small modifications to accomodate opens of /dev/hdc1, required&n;  for ide-cd to handle multisession discs.&n;  -- Export cdrom_mode_sense and cdrom_mode_select.&n;  -- init_cdrom_command() for setting up a cgc command.&n;  &n;  3.05 Oct 24, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Changed the interface for CDROM_SEND_PACKET. Before it was virtually&n;  impossible to send the drive data in a sensible way.&n;  -- Lowered stack usage in mmc_ioctl(), dvd_read_disckey(), and&n;  dvd_read_manufact.&n;  -- Added setup of write mode for packet writing.&n;  -- Fixed CDDA ripping with cdda2wav - accept much larger requests of&n;  number of frames and split the reads in blocks of 8.&n;&n;  3.06 Dec 13, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Added support for changing the region of DVD drives.&n;  -- Added sense data to generic command.&n;&n;  3.07 Feb 2, 2000 - Jens Axboe &lt;axboe@suse.de&gt;&n;  -- Do same &quot;read header length&quot; trick in cdrom_get_disc_info() as&n;  we do in cdrom_get_track_info() -- some drive don&squot;t obbey specs and&n;  fail if they can&squot;t supply the full Mt Fuji size table.&n;  -- Deleted stuff related to setting up write modes. It has a different&n;  home now.&n;  -- Clear header length in mode_select unconditionally.&n;  -- Removed the register_disk() that was added, not needed here.&n;  &n;-------------------------------------------------------------------------*/
 DECL|macro|REVISION
-mdefine_line|#define REVISION &quot;Revision: 3.06&quot;
+mdefine_line|#define REVISION &quot;Revision: 3.07&quot;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;Id: cdrom.c 3.06 1999/12/13&quot;
+mdefine_line|#define VERSION &quot;Id: cdrom.c 3.07 2000/02/02&quot;
 multiline_comment|/* I use an error-log mask to give fine grain control over the type of&n;   messages dumped to the system logs.  The available masks include: */
 DECL|macro|CD_NOTHING
 mdefine_line|#define CD_NOTHING      0x0
@@ -954,7 +954,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_static
 DECL|function|cdrom_find_device
 r_struct
 id|cdrom_device_info
@@ -2170,6 +2169,8 @@ comma
 id|buf
 comma
 id|length
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -2401,6 +2402,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|CGC_DATA_NONE
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -3137,6 +3140,9 @@ id|buf
 comma
 r_int
 id|len
+comma
+r_int
+id|type
 )paren
 (brace
 id|memset
@@ -3153,6 +3159,11 @@ id|cdrom_generic_command
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|buf
+)paren
 id|memset
 c_func
 (paren
@@ -3174,6 +3185,10 @@ suffix:semicolon
 id|cgc-&gt;buflen
 op_assign
 id|len
+suffix:semicolon
+id|cgc-&gt;data_direction
+op_assign
+id|type
 suffix:semicolon
 )brace
 multiline_comment|/* DVD handling */
@@ -3275,6 +3290,10 @@ l_int|9
 op_assign
 id|cgc-&gt;buflen
 suffix:semicolon
+id|cgc-&gt;data_direction
+op_assign
+id|CGC_DATA_WRITE
+suffix:semicolon
 )brace
 DECL|function|setup_send_key
 r_static
@@ -3361,6 +3380,10 @@ l_int|9
 op_assign
 id|cgc-&gt;buflen
 suffix:semicolon
+id|cgc-&gt;data_direction
+op_assign
+id|CGC_DATA_READ
+suffix:semicolon
 )brace
 DECL|function|dvd_do_auth
 r_static
@@ -3407,6 +3430,8 @@ comma
 id|buf
 comma
 l_int|0
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 r_switch
@@ -4193,6 +4218,8 @@ r_sizeof
 (paren
 id|buf
 )paren
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -4513,6 +4540,8 @@ r_sizeof
 (paren
 id|buf
 )paren
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -4672,6 +4701,8 @@ comma
 id|buf
 comma
 id|size
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -4811,6 +4842,8 @@ r_sizeof
 (paren
 id|buf
 )paren
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -4993,6 +5026,8 @@ comma
 id|buf
 comma
 id|size
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -5302,6 +5337,10 @@ id|cgc-&gt;buflen
 op_amp
 l_int|0xff
 suffix:semicolon
+id|cgc-&gt;data_direction
+op_assign
+id|CGC_DATA_READ
+suffix:semicolon
 r_return
 id|cdo
 op_member_access_from_pointer
@@ -5350,6 +5389,16 @@ id|cgc-&gt;cmd
 )paren
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|cgc-&gt;buffer
+comma
+l_int|0
+comma
+l_int|2
+)paren
+suffix:semicolon
 id|cgc-&gt;cmd
 (braket
 l_int|0
@@ -5382,6 +5431,10 @@ op_assign
 id|cgc-&gt;buflen
 op_amp
 l_int|0xff
+suffix:semicolon
+id|cgc-&gt;data_direction
+op_assign
+id|CGC_DATA_WRITE
 suffix:semicolon
 r_return
 id|cdo
@@ -5444,6 +5497,8 @@ comma
 id|buffer
 comma
 l_int|16
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -7925,6 +7980,10 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|cgc.data_direction
+op_assign
+id|CGC_DATA_READ
+suffix:semicolon
 id|ret
 op_assign
 id|cdrom_read_block
@@ -8121,6 +8180,10 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
+id|cgc.data_direction
+op_assign
+id|CGC_DATA_READ
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -8495,6 +8558,10 @@ l_int|0
 op_assign
 id|GPCMD_PLAY_AUDIO_MSF
 suffix:semicolon
+id|cgc.data_direction
+op_assign
+id|CGC_DATA_NONE
+suffix:semicolon
 r_return
 id|cdo
 op_member_access_from_pointer
@@ -8583,6 +8650,10 @@ l_int|8
 )braket
 op_assign
 id|msf.cdmsf_frame1
+suffix:semicolon
+id|cgc.data_direction
+op_assign
+id|CGC_DATA_NONE
 suffix:semicolon
 r_return
 id|cdo
@@ -8700,6 +8771,10 @@ op_assign
 id|blk.len
 op_amp
 l_int|0xff
+suffix:semicolon
+id|cgc.data_direction
+op_assign
+id|CGC_DATA_NONE
 suffix:semicolon
 r_return
 id|cdo
@@ -8992,17 +9067,6 @@ op_plus
 l_int|15
 )braket
 suffix:semicolon
-multiline_comment|/* clear the first three */
-id|memset
-c_func
-(paren
-id|buffer
-comma
-l_int|0
-comma
-l_int|3
-)paren
-suffix:semicolon
 multiline_comment|/* set volume */
 id|cgc.buffer
 op_assign
@@ -9064,6 +9128,10 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
+id|cgc.data_direction
+op_assign
+id|CGC_DATA_NONE
+suffix:semicolon
 r_return
 id|cdo
 op_member_access_from_pointer
@@ -9114,6 +9182,10 @@ c_cond
 l_int|1
 suffix:colon
 l_int|0
+suffix:semicolon
+id|cgc.data_direction
+op_assign
+id|CGC_DATA_NONE
 suffix:semicolon
 r_return
 id|cdo
@@ -9574,8 +9646,6 @@ multiline_comment|/* copy back sense data */
 r_if
 c_cond
 (paren
-id|ret
-op_logical_and
 id|sense
 op_ne
 l_int|NULL
@@ -9772,6 +9842,8 @@ comma
 id|ti
 comma
 l_int|8
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -9906,6 +9978,9 @@ r_struct
 id|cdrom_generic_command
 id|cgc
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 multiline_comment|/* set up command and get the disc info */
 id|init_cdrom_command
 c_func
@@ -9920,6 +9995,8 @@ r_sizeof
 op_star
 id|di
 )paren
+comma
+id|CGC_DATA_READ
 )paren
 suffix:semicolon
 id|cgc.cmd
@@ -9928,6 +10005,67 @@ l_int|0
 )braket
 op_assign
 id|GPCMD_READ_DISC_INFO
+suffix:semicolon
+id|cgc.cmd
+(braket
+l_int|8
+)braket
+op_assign
+id|cgc.buflen
+op_assign
+l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+id|cdo
+op_member_access_from_pointer
+id|generic_packet
+c_func
+(paren
+id|cdi
+comma
+op_amp
+id|cgc
+)paren
+)paren
+)paren
+r_return
+id|ret
+suffix:semicolon
+multiline_comment|/* not all drives have the same disc_info length, so requeue&n;&t; * packet with the length the drive tells us it can supply&n;&t; */
+id|cgc.buflen
+op_assign
+id|be16_to_cpu
+c_func
+(paren
+id|di-&gt;disc_information_length
+)paren
+op_plus
+r_sizeof
+(paren
+id|di-&gt;disc_information_length
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cgc.buflen
+OG
+r_sizeof
+(paren
+id|disc_information
+)paren
+)paren
+id|cgc.buflen
+op_assign
+r_sizeof
+(paren
+id|disc_information
+)paren
 suffix:semicolon
 id|cgc.cmd
 (braket
@@ -10489,6 +10627,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|init_cdrom_command
+)paren
+suffix:semicolon
+DECL|variable|cdrom_find_device
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cdrom_find_device
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SYSCTL

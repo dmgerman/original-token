@@ -1,8 +1,7 @@
-multiline_comment|/*&n; * -- &lt;linux/cdrom.h&gt;&n; * General header file for linux CD-ROM drivers &n; * Copyright (C) 1992         David Giller, rafetmad@oxy.edu&n; *               1994, 1995   Eberhard Moenkeberg, emoenke@gwdg.de&n; *               1996         David van Leeuwen, david@tm.tno.nl&n; *               1997, 1998   Erik Andersen, andersee@debian.org&n; *               1998, 1999   Jens Axboe, axboe@image.dk&n; */
+multiline_comment|/*&n; * -- &lt;linux/cdrom.h&gt;&n; * General header file for linux CD-ROM drivers &n; * Copyright (C) 1992         David Giller, rafetmad@oxy.edu&n; *               1994, 1995   Eberhard Moenkeberg, emoenke@gwdg.de&n; *               1996         David van Leeuwen, david@tm.tno.nl&n; *               1997, 1998   Erik Andersen, andersee@debian.org&n; *               1998-2000    Jens Axboe, axboe@suse.de&n; */
 macro_line|#ifndef&t;_LINUX_CDROM_H
 DECL|macro|_LINUX_CDROM_H
 mdefine_line|#define&t;_LINUX_CDROM_H
-macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 multiline_comment|/*******************************************************&n; * As of Linux 2.1.x, all Linux CD-ROM application programs will use this &n; * (and only this) include file.  It is my hope to provide Linux with&n; * a uniform interface between software accessing CD-ROMs and the various &n; * device drivers that actually talk to the drives.  There may still be&n; * 23 different kinds of strange CD-ROM drives, but at least there will &n; * now be one, and only one, Linux CD-ROM interface.&n; *&n; * Additionally, as of Linux 2.1.x, all Linux application programs &n; * should use the O_NONBLOCK option when opening a CD-ROM device &n; * for subsequent ioctl commands.  This allows for neat system errors &n; * like &quot;No medium found&quot; or &quot;Wrong medium type&quot; upon attempting to &n; * mount or play an empty slot, mount an audio disc, or play a data disc.&n; * Generally, changing an application program to support O_NONBLOCK&n; * is as easy as the following:&n; *       -    drive = open(&quot;/dev/cdrom&quot;, O_RDONLY);&n; *       +    drive = open(&quot;/dev/cdrom&quot;, O_RDONLY | O_NONBLOCK);&n; * It is worth the small change.&n; *&n; *  Patches for many common CD programs (provided by David A. van Leeuwen)&n; *  can be found at:  ftp://ftp.gwdg.de/pub/linux/cdrom/drivers/cm206/&n; * &n; *******************************************************/
 multiline_comment|/* When a driver supports a certain function, but the cdrom drive we are &n; * using doesn&squot;t, we will return the error EDRIVE_CANT_DO_THIS.  We will &n; * borrow the &quot;Operation not supported&quot; error from the network folks to &n; * accomplish this.  Maybe someday we will get a more targeted error code, &n; * but this will do for now... */
@@ -339,7 +338,8 @@ r_int
 id|cdread_lba
 suffix:semicolon
 DECL|member|cdread_bufaddr
-id|caddr_t
+r_char
+op_star
 id|cdread_bufaddr
 suffix:semicolon
 DECL|member|cdread_buflen
@@ -433,6 +433,14 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|CDROM_PACKET_SIZE
 mdefine_line|#define CDROM_PACKET_SIZE&t;12
+DECL|macro|CGC_DATA_UNKNOWN
+mdefine_line|#define CGC_DATA_UNKNOWN&t;0
+DECL|macro|CGC_DATA_WRITE
+mdefine_line|#define CGC_DATA_WRITE&t;&t;1
+DECL|macro|CGC_DATA_READ
+mdefine_line|#define CGC_DATA_READ&t;&t;2
+DECL|macro|CGC_DATA_NONE
+mdefine_line|#define CGC_DATA_NONE&t;&t;3
 multiline_comment|/* for CDROM_PACKET_COMMAND ioctl */
 DECL|struct|cdrom_generic_command
 r_struct
@@ -466,6 +474,11 @@ r_struct
 id|request_sense
 op_star
 id|sense
+suffix:semicolon
+DECL|member|data_direction
+r_int
+r_char
+id|data_direction
 suffix:semicolon
 DECL|member|reserved
 r_void
@@ -1965,6 +1978,20 @@ id|buffer
 comma
 r_int
 id|len
+comma
+r_int
+id|type
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|cdrom_device_info
+op_star
+id|cdrom_find_device
+c_func
+(paren
+id|kdev_t
+id|dev
 )paren
 suffix:semicolon
 r_typedef
@@ -1993,16 +2020,16 @@ id|border_status
 suffix:colon
 l_int|2
 suffix:semicolon
-DECL|member|disc_border
+DECL|member|disc_status
 id|__u8
-id|disc_border
+id|disc_status
 suffix:colon
 l_int|2
 suffix:semicolon
 macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
-DECL|member|disc_border
+DECL|member|disc_status
 id|__u8
-id|disc_border
+id|disc_status
 suffix:colon
 l_int|2
 suffix:semicolon
@@ -2593,11 +2620,6 @@ suffix:semicolon
 r_typedef
 r_struct
 (brace
-DECL|member|header
-r_struct
-id|mode_page_header
-id|header
-suffix:semicolon
 macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
 DECL|member|ps
 id|__u8
@@ -2689,90 +2711,75 @@ suffix:colon
 l_int|4
 suffix:semicolon
 macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
-DECL|member|page_code
 id|__u8
 id|page_code
 suffix:colon
 l_int|6
 suffix:semicolon
-DECL|member|reserved1
 id|__u8
 id|reserved1
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|ps
 id|__u8
 id|ps
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|page_length
 id|__u8
 id|page_length
 suffix:semicolon
-DECL|member|write_type
 id|__u8
 id|write_type
 suffix:colon
 l_int|4
 suffix:semicolon
-DECL|member|test_write
 id|__u8
 id|test_write
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|ls_v
 id|__u8
 id|ls_v
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|bufe
 id|__u8
 id|bufe
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|reserved2
 id|__u8
 id|reserved2
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|track_mode
 id|__u8
 id|track_mode
 suffix:colon
 l_int|4
 suffix:semicolon
-DECL|member|copy
 id|__u8
 id|copy
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|fp
 id|__u8
 id|fp
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|multi_session
 id|__u8
 id|multi_session
 suffix:colon
 l_int|2
 suffix:semicolon
 multiline_comment|/* or border, DVD */
-DECL|member|data_block_type
 id|__u8
 id|data_block_type
 suffix:colon
 l_int|4
 suffix:semicolon
-DECL|member|reserved3
 id|__u8
 id|reserved3
 suffix:colon
@@ -2862,7 +2869,6 @@ id|subhdr3
 suffix:semicolon
 DECL|typedef|write_param_page
 )brace
-id|write_param_page
 id|__attribute__
 c_func
 (paren
@@ -2870,6 +2876,7 @@ c_func
 id|packed
 )paren
 )paren
+id|write_param_page
 suffix:semicolon
 macro_line|#endif  /* End of kernel only stuff */ 
 macro_line|#endif  /* _LINUX_CDROM_H */

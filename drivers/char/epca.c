@@ -4841,8 +4841,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* End init_module */
 macro_line|#endif
-macro_line|#ifdef MODULE
-multiline_comment|/* -------------------- Begin cleanup_module  ---------------------- */
 macro_line|#ifdef ENABLE_PCI
 DECL|variable|epca_driver
 r_static
@@ -4851,6 +4849,8 @@ id|pci_driver
 id|epca_driver
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef MODULE
+multiline_comment|/* -------------------- Begin cleanup_module  ---------------------- */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module

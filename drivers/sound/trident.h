@@ -46,16 +46,21 @@ DECL|macro|TRIDENT_FMT_16BIT
 mdefine_line|#define TRIDENT_FMT_16BIT      0x02
 DECL|macro|TRIDENT_FMT_MASK
 mdefine_line|#define TRIDENT_FMT_MASK       0x03
-DECL|macro|DMA_ENABLE
-mdefine_line|#define DMA_ENABLE&t;0x01
-DECL|macro|DMA_RUNNING
-mdefine_line|#define DMA_RUNNING&t;0x02
+DECL|macro|DAC_RUNNING
+mdefine_line|#define DAC_RUNNING&t;0x01
+DECL|macro|ADC_RUNNING
+mdefine_line|#define ADC_RUNNING&t;0x02
 multiline_comment|/* Register Addresses */
 multiline_comment|/* operational registers common to DX, NX, 7018 */
 DECL|enum|trident_op_registers
 r_enum
 id|trident_op_registers
 (brace
+DECL|enumerator|T4D_REC_CH
+id|T4D_REC_CH
+op_assign
+l_int|0x70
+comma
 DECL|enumerator|T4D_START_A
 DECL|enumerator|T4D_STOP_A
 id|T4D_START_A

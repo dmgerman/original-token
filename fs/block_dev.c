@@ -3326,14 +3326,6 @@ c_func
 op_amp
 id|bdev-&gt;bd_openers
 )paren
-op_logical_and
-id|MAJOR
-c_func
-(paren
-id|rdev
-)paren
-op_ne
-id|RAMDISK_MAJOR
 )paren
 (brace
 multiline_comment|/* invalidating buffers will go here */

@@ -162,6 +162,13 @@ op_amp
 id|nbdev-&gt;queue_lock
 )paren
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|nbdev-&gt;queue_head
+)paren
+suffix:semicolon
 id|nbdev-&gt;flags
 op_or_assign
 id|NBD_INITIALISED

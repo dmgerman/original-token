@@ -16,14 +16,14 @@ macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/* port addresses for auto-detection */
 DECL|macro|ALI_NUM_PORTS
 mdefine_line|#define ALI_NUM_PORTS 4
-DECL|variable|ports
+DECL|variable|__initdata
 r_static
 r_int
-id|__init
 id|ports
 (braket
 id|ALI_NUM_PORTS
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x074
@@ -50,13 +50,13 @@ suffix:semicolon
 )brace
 id|RegInitializer
 suffix:semicolon
-DECL|variable|initData
+DECL|variable|__initdata
 r_static
 id|RegInitializer
-id|__init
 id|initData
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace

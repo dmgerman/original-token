@@ -51,6 +51,7 @@ DECL|macro|RX_RING_SIZE
 mdefine_line|#define RX_RING_SIZE&t;16
 DECL|macro|PKT_BUF_SZ
 mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;/* Size of each temporary Rx buffer. */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;

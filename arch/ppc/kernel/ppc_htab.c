@@ -141,26 +141,6 @@ r_int
 r_int
 id|pte_errors
 suffix:semicolon
-DECL|variable|ppc_htab_operations
-r_struct
-id|file_operations
-id|ppc_htab_operations
-op_assign
-(brace
-id|llseek
-suffix:colon
-id|ppc_htab_lseek
-comma
-id|read
-suffix:colon
-id|ppc_htab_read
-comma
-id|write
-suffix:colon
-id|ppc_htab_write
-comma
-)brace
-suffix:semicolon
 multiline_comment|/* these will go into processor.h when I&squot;m done debugging -- Cort */
 DECL|macro|MMCR0
 mdefine_line|#define MMCR0 952
@@ -182,6 +162,26 @@ DECL|macro|PMC1
 mdefine_line|#define PMC1 953
 DECL|macro|PMC2
 mdefine_line|#define PMC2 954
+DECL|variable|ppc_htab_operations
+r_struct
+id|file_operations
+id|ppc_htab_operations
+op_assign
+(brace
+id|llseek
+suffix:colon
+id|ppc_htab_lseek
+comma
+id|read
+suffix:colon
+id|ppc_htab_read
+comma
+id|write
+suffix:colon
+id|ppc_htab_write
+comma
+)brace
+suffix:semicolon
 DECL|function|pmc1_lookup
 r_char
 op_star

@@ -2982,10 +2982,9 @@ id|SRpnt-&gt;sr_cmd_len
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * FIXME(eric) - need to set the data direction here.&n;&t; */
 id|SRpnt-&gt;sr_data_direction
 op_assign
-id|SCSI_DATA_UNKNOWN
+id|cgc-&gt;data_direction
 suffix:semicolon
 id|scsi_wait_req
 c_func

@@ -1855,7 +1855,7 @@ id|hwif-&gt;io_ports
 suffix:semicolon
 id|hwif-&gt;chipset
 op_assign
-id|ide_generic
+id|ide_pmac
 suffix:semicolon
 id|hwif-&gt;noprobe
 op_assign

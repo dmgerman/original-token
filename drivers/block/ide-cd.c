@@ -6611,6 +6611,8 @@ r_sizeof
 (paren
 id|buffer
 )paren
+comma
+id|CGC_DATA_UNKNOWN
 )paren
 suffix:semicolon
 multiline_comment|/* These will be moved into the Uniform layer shortly... */
@@ -7459,6 +7461,8 @@ r_sizeof
 (paren
 id|buf
 )paren
+comma
+id|CGC_DATA_UNKNOWN
 )paren
 suffix:semicolon
 macro_line|#ifndef __ACER50__
@@ -8488,6 +8492,8 @@ r_sizeof
 (paren
 id|buf
 )paren
+comma
+id|CGC_DATA_UNKNOWN
 )paren
 suffix:semicolon
 multiline_comment|/* we have to cheat a little here. the packet will eventually&n;&t; * be queued with ide_cdrom_packet(), which extracts the&n;&t; * drive from cdi-&gt;handle. Since this device hasn&squot;t been&n;&t; * registered with the Uniform layer yet, it can&squot;t do this.&n;&t; * Same goes for cdi-&gt;ops.&n;&t; */

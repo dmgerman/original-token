@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/raid/md.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#endif
 macro_line|#include &quot;ida_cmd.h&quot;
