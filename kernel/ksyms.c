@@ -169,20 +169,6 @@ id|try_inc_mod_count
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|variable|get_option
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|get_option
-)paren
-suffix:semicolon
-DECL|variable|get_options
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|get_options
-)paren
-suffix:semicolon
 multiline_comment|/* process memory management */
 DECL|variable|do_mmap_pgoff
 id|EXPORT_SYMBOL
