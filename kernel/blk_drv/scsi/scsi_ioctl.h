@@ -12,6 +12,8 @@ DECL|macro|SCSI_IOCTL_DOORLOCK
 mdefine_line|#define SCSI_IOCTL_DOORLOCK 0x5380&t;&t;/* lock the eject mechanism */
 DECL|macro|SCSI_IOCTL_DOORUNLOCK
 mdefine_line|#define SCSI_IOCTL_DOORUNLOCK 0x5381&t;&t;/* unlock the mechanism&t;  */
+DECL|macro|SCSI_IOCTL_GET_IDLUN
+mdefine_line|#define SCSI_IOCTL_GET_IDLUN 0x5382
 DECL|macro|SCSI_REMOVAL_PREVENT
 mdefine_line|#define&t;SCSI_REMOVAL_PREVENT&t;1
 DECL|macro|SCSI_REMOVAL_ALLOW

@@ -2834,7 +2834,7 @@ id|p
 id|retval
 op_assign
 op_minus
-id|ENOMEM
+id|E2BIG
 suffix:semicolon
 r_goto
 id|exec_error1
@@ -3003,7 +3003,7 @@ id|p
 id|retval
 op_assign
 op_minus
-id|ENOMEM
+id|E2BIG
 suffix:semicolon
 r_goto
 id|exec_error2

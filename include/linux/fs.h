@@ -1283,6 +1283,8 @@ op_star
 comma
 r_void
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|name
@@ -1409,9 +1411,15 @@ id|inode_operations
 id|chrdev_inode_operations
 suffix:semicolon
 r_extern
+r_void
+id|init_fifo
+c_func
+(paren
 r_struct
-id|inode_operations
-id|fifo_inode_operations
+id|inode
+op_star
+id|inode
+)paren
 suffix:semicolon
 r_extern
 r_struct

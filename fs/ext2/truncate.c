@@ -89,7 +89,7 @@ r_continue
 suffix:semicolon
 id|bh
 op_assign
-id|getblk
+id|get_hash_table
 (paren
 id|inode-&gt;i_dev
 comma
@@ -364,7 +364,7 @@ r_continue
 suffix:semicolon
 id|bh
 op_assign
-id|getblk
+id|get_hash_table
 (paren
 id|inode-&gt;i_dev
 comma

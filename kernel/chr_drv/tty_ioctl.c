@@ -2062,6 +2062,7 @@ suffix:colon
 r_if
 c_cond
 (paren
+(paren
 id|current-&gt;leader
 op_logical_and
 id|current-&gt;tty
@@ -2071,6 +2072,18 @@ op_logical_and
 id|tty-&gt;session
 op_eq
 l_int|0
+)paren
+op_logical_or
+(paren
+id|arg
+op_eq
+l_int|1
+op_logical_and
+id|suser
+c_func
+(paren
+)paren
+)paren
 )paren
 (brace
 id|current-&gt;tty

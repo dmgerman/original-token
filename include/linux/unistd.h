@@ -240,6 +240,8 @@ DECL|macro|__NR_ipc
 mdefine_line|#define __NR_ipc&t;&t;117&t;/* not implemented yet */
 DECL|macro|__NR_fsync
 mdefine_line|#define __NR_fsync&t;&t;118&t;/* not implemented yet */
+DECL|macro|__NR_sigreturn
+mdefine_line|#define __NR_sigreturn&t;&t;119
 r_extern
 r_int
 id|errno

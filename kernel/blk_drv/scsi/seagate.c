@@ -97,11 +97,11 @@ multiline_comment|/* set to SEAGATE for ST0x boards or FD for TMC-88x boards */
 DECL|macro|retcode
 mdefine_line|#define retcode(result) (((result) &lt;&lt; 16) | (message &lt;&lt; 8) | status) &t;&t;&t;
 DECL|macro|STATUS
-mdefine_line|#define STATUS (*(unsigned char *) st0x_cr_sr)
+mdefine_line|#define STATUS (*(volatile unsigned char *) st0x_cr_sr)
 DECL|macro|CONTROL
 mdefine_line|#define CONTROL STATUS 
 DECL|macro|DATA
-mdefine_line|#define DATA (*(unsigned char *) st0x_dr)
+mdefine_line|#define DATA (*(volatile unsigned char *) st0x_dr)
 macro_line|#ifndef OVERRIDE&t;&t;
 DECL|variable|seagate_bases
 r_static

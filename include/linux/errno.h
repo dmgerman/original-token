@@ -248,5 +248,7 @@ DECL|macro|ERESTARTSYS
 mdefine_line|#define ERESTARTSYS&t;512
 DECL|macro|ERESTARTNOINTR
 mdefine_line|#define ERESTARTNOINTR&t;513
+DECL|macro|ERESTARTNOHAND
+mdefine_line|#define ERESTARTNOHAND&t;514&t;/* restart if no handler.. */
 macro_line|#endif
 eof

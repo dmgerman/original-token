@@ -472,6 +472,8 @@ comma
 r_void
 op_star
 id|data
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern

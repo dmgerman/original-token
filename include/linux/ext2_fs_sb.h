@@ -42,7 +42,6 @@ suffix:semicolon
 multiline_comment|/* Log of block size */
 DECL|member|s_log_frag_size
 r_int
-r_int
 id|s_log_frag_size
 suffix:semicolon
 multiline_comment|/* Log of fragment size */
@@ -157,6 +156,10 @@ suffix:semicolon
 DECL|member|s_rename_lock
 r_int
 id|s_rename_lock
+suffix:semicolon
+DECL|member|s_was_mounted_valid
+r_int
+id|s_was_mounted_valid
 suffix:semicolon
 DECL|member|s_rename_wait
 r_struct

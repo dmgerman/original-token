@@ -391,20 +391,6 @@ comma
 id|bad_IRQ15_interrupt
 )brace
 suffix:semicolon
-DECL|function|fake_keyboard_interrupt
-r_void
-id|fake_keyboard_interrupt
-c_func
-(paren
-r_void
-)paren
-(brace
-id|IRQ1_interrupt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Initial irq handlers.&n; */
 DECL|variable|irq_sigaction
 r_static

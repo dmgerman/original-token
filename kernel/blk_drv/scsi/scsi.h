@@ -102,8 +102,91 @@ DECL|macro|MODE_SELECT_10
 mdefine_line|#define MODE_SELECT_10&t;&t;0x55
 DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10&t;&t;0x5a
-DECL|macro|COMMAND_SIZE
-mdefine_line|#define COMMAND_SIZE(opcode) ((opcode) ? ((opcode) &gt; 0x20 ? 10 : 6) : 0)
+DECL|function|COMMAND_SIZE
+r_static
+id|__inline__
+r_int
+id|COMMAND_SIZE
+(paren
+r_int
+id|opcode
+)paren
+(brace
+r_int
+id|group
+op_assign
+(paren
+id|opcode
+op_rshift
+l_int|5
+)paren
+op_amp
+l_int|7
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|group
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+r_return
+l_int|6
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+r_case
+l_int|2
+suffix:colon
+r_return
+l_int|10
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+r_case
+l_int|4
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;COMMAND_SIZE : reserved command group %d&bslash;n&quot;
+comma
+id|group
+)paren
+suffix:semicolon
+id|panic
+(paren
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+r_case
+l_int|5
+suffix:colon
+r_return
+l_int|12
+suffix:semicolon
+r_default
+suffix:colon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;COMMAND_SIZE : vendor specific command group %d - assuming&quot;
+l_string|&quot; 10 bytes&bslash;n&quot;
+comma
+id|group
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|10
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n;&t;MESSAGE CODES&n;*/
 DECL|macro|COMMAND_COMPLETE
 mdefine_line|#define COMMAND_COMPLETE&t;0x00
@@ -337,6 +420,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Used to prevent races */
+DECL|member|lockable
+r_int
+id|lockable
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Able to prevent media removal */
 DECL|typedef|Scsi_Device
 )brace
 id|Scsi_Device
@@ -614,6 +704,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;We handle the timeout differently if it happens when a reset, &n; *&t;abort, etc are in process. &n; */
 DECL|member|internal_timeout
 r_int
+r_volatile
 r_char
 id|internal_timeout
 suffix:semicolon
@@ -1123,6 +1214,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* This is just like INIT_REQUEST, but we need to be aware of the fact&n;   that an interrupt may start another request, so we run this with interrupts&n;   turned off */
+DECL|macro|INIT_SCSI_REQUEST
+mdefine_line|#define INIT_SCSI_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;sti();   &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif
 DECL|macro|SCSI_SLEEP
 mdefine_line|#define SCSI_SLEEP(QUEUE, CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;if (CONDITION) {&t;&t;&t;&t;&t;&bslash;&n;                struct wait_queue wait = { current, NULL};      &bslash;&n;&t;&t;add_wait_queue(QUEUE, &amp;wait);&t;&t;&t;&bslash;&n;sleep_repeat:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;&t;&bslash;&n;&t;&t;if (CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;schedule();&t;&t;&t;&t;&bslash;&n;&t;&t;&t;goto sleep_repeat;&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;remove_wait_queue(QUEUE, &amp;wait);&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_RUNNING;&t;&t;&t;&bslash;&n;&t;}; }

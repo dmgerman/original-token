@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  control_w.h                                                              |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  control_w.h                                                              |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#ifndef _CONTROLW_H_
 DECL|macro|_CONTROLW_H_
 mdefine_line|#define _CONTROLW_H_
@@ -35,5 +35,15 @@ DECL|macro|RC_UP
 mdefine_line|#define RC_UP&t;&t;_Const_(0x0800)
 DECL|macro|RC_CHOP
 mdefine_line|#define RC_CHOP&t;&t;_Const_(0x0C00)
+multiline_comment|/* p 15-5: Precision control bits affect only the following:&n;   ADD, SUB(R), MUL, DIV(R), and SQRT */
+DECL|macro|PRECISION_ADJUST_CONTROL
+mdefine_line|#define PRECISION_ADJUST_CONTROL (control_word &amp; 0x300)
+DECL|macro|PR_24_BITS
+mdefine_line|#define PR_24_BITS      0x000
+DECL|macro|PR_53_BITS
+mdefine_line|#define PR_53_BITS      0x200
+multiline_comment|/* By doing this as a macro, we allow easy modification */
+DECL|macro|PRECISION_ADJUST
+mdefine_line|#define PRECISION_ADJUST(x) &bslash;&n;&t;      switch (PRECISION_ADJUST_CONTROL) &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;case PR_24_BITS: &bslash;&n;&t;&t;  round_to_24_bits(x); &bslash;&n;&t;&t;  break; &bslash;&n;&t;&t;case PR_53_BITS: &bslash;&n;&t;&t;  round_to_53_bits(x); &bslash;&n;&t;&t;  break; &bslash;&n;&t;&t;}
 macro_line|#endif _CONTROLW_H_
 eof

@@ -1273,6 +1273,8 @@ op_star
 comma
 r_void
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern

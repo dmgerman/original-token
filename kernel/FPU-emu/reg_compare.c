@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_compare.c                                                            |&n; |                                                                           |&n; | Compare two floating point registers                                      |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_compare.c                                                            |&n; |                                                                           |&n; | Compare two floating point registers                                      |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | compare() is the core FPU_REG comparison function                         |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
@@ -355,6 +355,21 @@ id|FPU_st0_ptr-&gt;sigh
 op_minus
 id|b-&gt;sigh
 suffix:semicolon
+multiline_comment|/* Works only if ms bits are&n;&t;&t;&t;&t;&t;      identical */
+r_if
+c_cond
+(paren
+id|diff
+op_eq
+l_int|0
+)paren
+(brace
+id|diff
+op_assign
+id|FPU_st0_ptr-&gt;sigl
+OG
+id|b-&gt;sigl
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -364,10 +379,14 @@ l_int|0
 )paren
 id|diff
 op_assign
-id|FPU_st0_ptr-&gt;sigl
 op_minus
+(paren
+id|FPU_st0_ptr-&gt;sigl
+OL
 id|b-&gt;sigl
+)paren
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

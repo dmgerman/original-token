@@ -34,6 +34,16 @@ op_star
 suffix:semicolon
 r_static
 r_void
+id|nfs_put_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_static
+r_void
 id|nfs_put_super
 c_func
 (paren
@@ -72,7 +82,7 @@ multiline_comment|/* notify change */
 l_int|NULL
 comma
 multiline_comment|/* write inode */
-l_int|NULL
+id|nfs_put_inode
 comma
 multiline_comment|/* put inode */
 id|nfs_put_super
@@ -85,6 +95,25 @@ id|nfs_statfs
 multiline_comment|/* stat filesystem */
 )brace
 suffix:semicolon
+DECL|function|nfs_put_inode
+r_static
+r_void
+id|nfs_put_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+id|clear_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
 DECL|function|nfs_put_super
 r_void
 id|nfs_put_super
@@ -135,6 +164,9 @@ comma
 r_void
 op_star
 id|raw_data
+comma
+r_int
+id|silent
 )paren
 (brace
 r_struct
@@ -593,6 +625,16 @@ l_int|0
 comma
 op_amp
 id|buf-&gt;f_ffree
+)paren
+suffix:semicolon
+multiline_comment|/* We should really try to interrogate the remote server to find&n;&t;   it&squot;s maximum name length here */
+id|put_fs_long
+c_func
+(paren
+id|NAME_MAX
+comma
+op_amp
+id|buf-&gt;f_namelen
 )paren
 suffix:semicolon
 )brace

@@ -51,14 +51,8 @@ r_int
 id|new_console
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|fake_keyboard_interrupt
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+DECL|macro|fake_keyboard_interrupt
+mdefine_line|#define fake_keyboard_interrupt() &bslash;&n;__asm__ __volatile__(&quot;int $0x21&quot;)
 DECL|variable|kbd_flags
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aha1740.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1740.c&n; *&n; *  Based loosely on aha1542.c which is&n; *  Copyright (C) 1992  Tommy Thorn&n; *  and&n; *  Modified by Eric Youngdale&n; *&n; *  This file is aha1740.c, written and&n; *  Copyright (C) 1992  Brad McLean&n; *  &n; * aha1740_makecode needs more work&n; */
+multiline_comment|/*  $Id$&n; *  1993/03/31&n; *  linux/kernel/aha1740.c&n; *&n; *  Based loosely on aha1542.c which is&n; *  Copyright (C) 1992  Tommy Thorn and&n; *  Modified by Eric Youngdale&n; *&n; *  This file is aha1740.c, written and&n; *  Copyright (C) 1992,1993  Brad McLean&n; *  &n; *  Modifications to makecode and queuecommand&n; *  for proper handling of multiple devices courteously&n; *  provided by Michael Weller, March, 1993&n; *&n; * aha1740_makecode may still need even more work&n; * if it doesn&squot;t work for your devices, take a look.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -11,7 +11,7 @@ macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;aha1740.h&quot;
-multiline_comment|/* #define DEBUG */
+multiline_comment|/* IF YOU ARE HAVING PROBLEMS WITH THIS DRIVER, AND WANT TO WATCH&n;   IT WORK, THEN:&n;#define DEBUG&n;*/
 macro_line|#ifdef DEBUG
 DECL|macro|DEB
 mdefine_line|#define DEB(x) x
@@ -139,10 +139,10 @@ id|eca
 suffix:colon
 l_int|1
 comma
+multiline_comment|/* Extended Contingent alliance */
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Extended Contingent alliance */
 )brace
 id|status_word
 suffix:semicolon
@@ -212,31 +212,144 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+op_logical_neg
 id|status_word.don
 )paren
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;    if ( status_word.du &amp;&amp; status[2] != 0x11 )&n;&t;return 0;&n;*/
+multiline_comment|/* Anything abnormal was detected */
+(brace
 r_if
+c_cond
+(paren
+(paren
+id|status
+(braket
+l_int|1
+)braket
+op_amp
+l_int|0x18
+)paren
+op_logical_or
+id|status_word.sc
+)paren
+multiline_comment|/*Additional info available*/
+(brace
+multiline_comment|/* Use the supplied info for futher diagnostics */
+r_switch
 c_cond
 (paren
 id|status
 (braket
 l_int|2
 )braket
-op_eq
-l_int|0x11
 )paren
-id|retval
-op_assign
-id|DID_TIME_OUT
-suffix:semicolon
-r_else
+(brace
+r_case
+l_int|0x12
+suffix:colon
+r_if
+c_cond
+(paren
+id|status_word.dor
+)paren
 id|retval
 op_assign
 id|DID_ERROR
 suffix:semicolon
+multiline_comment|/* It&squot;s an Overrun */
+multiline_comment|/* If not overrun, assume underrun and ignore it! */
+r_case
+l_int|0x00
+suffix:colon
+multiline_comment|/* No info, assume no error, should not occur */
+r_break
+suffix:semicolon
+r_case
+l_int|0x11
+suffix:colon
+r_case
+l_int|0x21
+suffix:colon
+id|retval
+op_assign
+id|DID_TIME_OUT
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0a
+suffix:colon
+id|retval
+op_assign
+id|DID_BAD_TARGET
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x04
+suffix:colon
+r_case
+l_int|0x05
+suffix:colon
+id|retval
+op_assign
+id|DID_ABORT
+suffix:semicolon
+multiline_comment|/* Either by this driver or the AHA1740&n;&t;&t;&t;&t;&t; itself */
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|retval
+op_assign
+id|DID_ERROR
+suffix:semicolon
+multiline_comment|/* No further diagnostics possible */
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* Michael suggests, and Brad concurs: */
+r_if
+c_cond
+(paren
+id|status_word.qf
+)paren
+(brace
+id|retval
+op_assign
+id|DID_TIME_OUT
+suffix:semicolon
+multiline_comment|/* forces a redo */
+multiline_comment|/* I think this specific one should not happen -Brad */
+id|printk
+c_func
+(paren
+l_string|&quot;aha1740.c: WARNING: AHA1740 queue overflow!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|status
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x60
+)paren
+(brace
+id|retval
+op_assign
+id|DID_ERROR
+suffix:semicolon
+multiline_comment|/* Didn&squot;t found a better error */
+)brace
+multiline_comment|/* In any other case return DID_OK so for example&n;               CONDITION_CHECKS make it through to the appropriate&n;&t;       device driver */
+)brace
+)brace
+multiline_comment|/* Under all circumstances supply the target status -Michael */
 r_return
 id|status
 (braket
@@ -247,13 +360,13 @@ id|retval
 op_lshift
 l_int|16
 suffix:semicolon
-multiline_comment|/* OKAY, SO I&squot;M LAZY! I&squot;ll fix it later... */
 )brace
 DECL|function|aha1740_test_port
 r_int
 id|aha1740_test_port
 c_func
 (paren
+r_void
 )paren
 (brace
 r_char
@@ -383,32 +496,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Not an Adaptec 174x */
-multiline_comment|/*    if ( inb(HID3) &lt; HID_REV ) */
-r_if
-c_cond
-(paren
-id|inb
-c_func
-(paren
-id|HID3
-)paren
-op_ne
-id|HID_REV
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;aha1740: Warning; board revision of %d; expected %d&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|HID3
-)paren
-comma
-id|HID_REV
-)paren
-suffix:semicolon
+multiline_comment|/*  if ( inb(HID3) != HID_REV )&n;&t;printk(&quot;aha1740: Warning; board revision of %d; expected %d&bslash;n&quot;,&n;&t;    inb(HID3),HID_REV); */
 r_if
 c_cond
 (paren
@@ -462,7 +550,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* What&squot;s this little function for? */
 DECL|function|aha1740_info
 r_const
 r_char
@@ -479,9 +566,8 @@ id|buffer
 (braket
 )braket
 op_assign
-l_string|&quot;&quot;
+l_string|&quot;Adaptec 174x (EISA)&quot;
 suffix:semicolon
-multiline_comment|/* looks nicer without anything here */
 r_return
 id|buffer
 suffix:semicolon
@@ -577,12 +663,6 @@ id|G2INTST_MASK
 r_case
 id|G2INTST_CCBRETRY
 suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;aha1740 complete with retry!&bslash;n&quot;
-)paren
-suffix:semicolon
 r_case
 id|G2INTST_CCBERROR
 suffix:colon
@@ -907,38 +987,6 @@ r_int
 id|i
 )paren
 suffix:semicolon
-id|DEB
-c_func
-(paren
-r_if
-(paren
-id|target
-OG
-l_int|0
-op_logical_or
-id|SCpnt-&gt;lun
-OG
-l_int|0
-)paren
-(brace
-id|SCpnt-&gt;result
-op_assign
-id|DID_TIME_OUT
-op_lshift
-l_int|16
-suffix:semicolon
-id|done
-c_func
-(paren
-id|SCpnt
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -948,7 +996,6 @@ op_eq
 id|REQUEST_SENSE
 )paren
 (brace
-macro_line|#ifndef DEBUG
 r_if
 c_cond
 (paren
@@ -972,8 +1019,6 @@ l_string|&quot;aha1740.c&quot;
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
-macro_line|#endif
 id|SCpnt-&gt;result
 op_assign
 l_int|0
@@ -988,7 +1033,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 macro_line|#ifdef DEBUG
 r_if
 c_cond
@@ -1043,31 +1087,10 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|done
-)paren
 id|printk
 c_func
 (paren
 l_string|&quot;aha1740_queuecommand: dev %d cmd %02x pos %d len %d &quot;
-comma
-id|target
-comma
-op_star
-id|cmd
-comma
-id|i
-comma
-id|bufflen
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;aha1740_command: dev %d cmd %02x pos %d len %d &quot;
 comma
 id|target
 comma
@@ -1095,15 +1118,12 @@ suffix:semicolon
 id|i
 OL
 (paren
+id|COMMAND_SIZE
+c_func
+(paren
 op_star
 id|cmd
-op_le
-l_int|0x1f
-ques
-c_cond
-l_int|6
-suffix:colon
-l_int|10
+)paren
 )paren
 suffix:semicolon
 id|i
@@ -1126,25 +1146,6 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef 0
-r_if
-c_cond
-(paren
-op_star
-id|cmd
-op_eq
-id|WRITE_10
-op_logical_or
-op_star
-id|cmd
-op_eq
-id|WRITE_6
-)paren
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* we are still testing, so *don&squot;t* write */
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/* locate an available ecb */
 id|cli
@@ -1158,6 +1159,7 @@ id|aha1740_last_ecb_used
 op_plus
 l_int|1
 suffix:semicolon
+multiline_comment|/* An optimization */
 r_if
 c_cond
 (paren
@@ -1236,7 +1238,7 @@ id|cmdw
 op_assign
 id|AHA1740CMD_INIT
 suffix:semicolon
-multiline_comment|/* SCSI Initiator Command to reserve*/
+multiline_comment|/* SCSI Initiator Command doubles as reserved flag */
 id|aha1740_last_ecb_used
 op_assign
 id|ecbno
@@ -1265,17 +1267,12 @@ id|ecbno
 dot
 id|cdblen
 op_assign
+id|COMMAND_SIZE
+c_func
 (paren
 op_star
 id|cmd
-op_le
-l_int|0x1f
 )paren
-ques
-c_cond
-l_int|6
-suffix:colon
-l_int|10
 suffix:semicolon
 multiline_comment|/* SCSI Command Descriptor Block Length */
 id|direction
@@ -1353,6 +1350,9 @@ id|aha1740_chain
 op_star
 id|cptr
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 macro_line|#ifdef DEBUG
 r_int
 r_char
@@ -1360,9 +1360,6 @@ op_star
 id|ptr
 suffix:semicolon
 macro_line|#endif
-r_int
-id|i
-suffix:semicolon
 id|ecb
 (braket
 id|ecbno
@@ -1459,7 +1456,6 @@ dot
 id|length
 suffix:semicolon
 )brace
-suffix:semicolon
 id|ecb
 (braket
 id|ecbno
@@ -1562,7 +1558,6 @@ r_int
 id|buff
 suffix:semicolon
 )brace
-suffix:semicolon
 id|ecb
 (braket
 id|ecbno
@@ -1582,8 +1577,6 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Suppress underrun errors */
-multiline_comment|/*    ecb[ecbno].dat=1;&t;*/
-multiline_comment|/* Yes, check the data direction */
 id|ecb
 (braket
 id|ecbno
@@ -1612,7 +1605,6 @@ id|senselen
 op_assign
 l_int|12
 suffix:semicolon
-multiline_comment|/* Why 12? Eric? MAXSENSE? */
 id|ecb
 (braket
 id|ecbno
@@ -1720,7 +1712,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1734,8 +1725,26 @@ c_cond
 id|done
 )paren
 (brace
+multiline_comment|/*  You may question the code below, which contains potentially&n;&t;  non-terminating while loops with interrupts disabled.  So did&n;&t;  I when I wrote it, but the Adaptec Spec says the card is so fast,&n;&t;  that this problem virtually never occurs so I&squot;ve kept it.  We&n;          do printk a warning first, so that you&squot;ll know if it happens.&n;&t;  In practive the only time we&squot;ve seen this message is when some-&n;&t;  thing else is in the driver was broken, like _makecode(), or&n;&t;  when a scsi device hung the scsi bus.  Even under these conditions,&n;&t;  The loop actually only cycled &lt; 3 times (we instrumented it). */
 id|ulong
 id|adrs
+suffix:semicolon
+id|DEB
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;aha1740[%d] critical section&bslash;n&quot;
+comma
+id|ecbno
+)paren
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1751,14 +1760,22 @@ op_amp
 id|G2STAT_MBXOUT
 )paren
 )paren
-multiline_comment|/* Spec claim&squot;s it&squot;s so fast */
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;aha1740_mbxout wait!&bslash;n&quot;
+l_string|&quot;aha1740[%d]_mbxout wait!&bslash;n&quot;
+comma
+id|ecbno
 )paren
 suffix:semicolon
-multiline_comment|/* that this is okay? It seems */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* printk may have done a sti()! */
+)brace
 r_while
 c_loop
 (paren
@@ -1774,7 +1791,7 @@ id|G2STAT_MBXOUT
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* to work, so I&squot;ll leave it */
+multiline_comment|/* Oh Well. */
 id|adrs
 op_assign
 (paren
@@ -1788,6 +1805,7 @@ id|ecbno
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* Spit the command */
 id|outb
 c_func
 (paren
@@ -1803,6 +1821,7 @@ comma
 id|MBOXOUT0
 )paren
 suffix:semicolon
+multiline_comment|/* out, note this set */
 id|outb
 c_func
 (paren
@@ -1822,6 +1841,7 @@ comma
 id|MBOXOUT1
 )paren
 suffix:semicolon
+multiline_comment|/* of outb&squot;s must be */
 id|outb
 c_func
 (paren
@@ -1841,6 +1861,7 @@ comma
 id|MBOXOUT2
 )paren
 suffix:semicolon
+multiline_comment|/* atomic */
 id|outb
 c_func
 (paren
@@ -1871,13 +1892,21 @@ id|G2STAT
 op_amp
 id|G2STAT_BUSY
 )paren
-multiline_comment|/* Again, allegedly fast */
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;aha1740_attn wait!&bslash;n&quot;
+l_string|&quot;aha1740[%d]_attn wait!&bslash;n&quot;
+comma
+id|ecbno
 )paren
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -1890,6 +1919,7 @@ op_amp
 id|G2STAT_BUSY
 )paren
 suffix:semicolon
+multiline_comment|/* And Again! */
 id|outb
 c_func
 (paren
@@ -1905,6 +1935,23 @@ id|ATTN
 )paren
 suffix:semicolon
 multiline_comment|/* Start it up */
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|DEB
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;aha1740[%d] request queued.&bslash;n&quot;
+comma
+id|ecbno
+)paren
+)paren
+suffix:semicolon
 )brace
 r_else
 id|printk
@@ -1985,48 +2032,15 @@ r_return
 id|internal_done_errcode
 suffix:semicolon
 )brace
-multiline_comment|/* Query the board for it&squot;s port addresses, etc.  Actually, the irq_level is&n;    all we care about for this board, since it&squot;s EISA */
+multiline_comment|/* Query the board for it&squot;s irq_level.  Nothing else matters&n;   in enhanced mode on an EISA bus. */
 DECL|function|aha1740_getconfig
-r_static
-r_int
+r_void
 id|aha1740_getconfig
 c_func
 (paren
+r_void
 )paren
 (brace
-r_int
-id|iop
-comma
-id|bios
-comma
-id|scsi
-comma
-id|dma
-suffix:semicolon
-r_static
-r_int
-id|iotab
-(braket
-)braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0x130
-comma
-l_int|0x134
-comma
-l_int|0x230
-comma
-l_int|0x234
-comma
-l_int|0x330
-comma
-l_int|0x334
-)brace
-suffix:semicolon
 r_static
 r_int
 id|intab
@@ -2051,43 +2065,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-r_static
-r_int
-id|dmatab
-(braket
-)braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|5
-comma
-l_int|6
-comma
-l_int|7
-)brace
-suffix:semicolon
-id|iop
-op_assign
-id|iotab
-(braket
-id|inb
-c_func
-(paren
-id|PORTADR
-)paren
-op_amp
-l_int|0x7
-)braket
-suffix:semicolon
-id|bios
-op_assign
-id|inb
-c_func
-(paren
-id|BIOSADR
-)paren
-suffix:semicolon
 id|irq_level
 op_assign
 id|intab
@@ -2100,34 +2077,6 @@ id|INTDEF
 op_amp
 l_int|0x7
 )braket
-suffix:semicolon
-id|scsi
-op_assign
-id|inb
-c_func
-(paren
-id|SCSIDEF
-)paren
-suffix:semicolon
-id|dma
-op_assign
-id|dmatab
-(braket
-(paren
-id|inb
-c_func
-(paren
-id|BUSDEF
-)paren
-op_rshift
-l_int|2
-)paren
-op_amp
-l_int|0x3
-)braket
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|aha1740_detect
@@ -2191,7 +2140,6 @@ c_cond
 id|aha1740_test_port
 c_func
 (paren
-id|base
 )paren
 )paren
 r_break
@@ -2207,19 +2155,10 @@ id|MAXEISA
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|aha1740_getconfig
 c_func
 (paren
 )paren
-op_eq
-op_minus
-l_int|1
-)paren
-r_return
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2241,6 +2180,7 @@ op_ne
 id|G2STAT_MBXOUT
 )paren
 (brace
+multiline_comment|/* If the card isn&squot;t ready, hard reset it */
 id|outb
 c_func
 (paren
@@ -2249,7 +2189,6 @@ comma
 id|G2CNTRL
 )paren
 suffix:semicolon
-multiline_comment|/* 10 Msec Delay Here */
 id|outb
 c_func
 (paren
@@ -2303,11 +2242,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* Note:  They following two functions do not apply very well to the Adaptec,&n;which basically manages it&squot;s own affairs quite well without our interference,&n;so I haven&squot;t put anything into them.  I can faintly imagine someone with a&n;*very* badly behaved SCSI target (perhaps an old tape?) wanting the abort(),&n;but it hasn&squot;t happened yet, and doing aborts brings the Adaptec to it&squot;s&n;knees.  I cannot (at this moment in time) think of any reason to reset the&n;card once it&squot;s running.  So there. */
 DECL|function|aha1740_abort
 r_int
 id|aha1740_abort
@@ -2327,7 +2266,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;aha1740_abort&bslash;n&quot;
+l_string|&quot;aha1740_abort called&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -2359,7 +2298,6 @@ suffix:semicolon
 )brace
 DECL|function|aha1740_biosparam
 r_int
-(def_block
 id|aha1740_biosparam
 c_func
 (paren
@@ -2407,26 +2345,10 @@ id|size
 op_rshift
 l_int|11
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|info
-(braket
-l_int|2
-)braket
-op_ge
-l_int|1024
-)paren
-id|info
-(braket
-l_int|2
-)braket
-op_assign
-l_int|1024
-suffix:semicolon
+multiline_comment|/*  if (info[2] &gt;= 1024) info[2] = 1024; */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-)def_block
+multiline_comment|/* Okay, you made it all the way through.  As of this writing, 3/31/93, I&squot;m&n;brad@saturn.gaylord.com or brad@bradpc.gaylord.com.  I&squot;ll try to help as time&n;permits if you have any trouble with this driver.  Happy Linuxing! */
 eof

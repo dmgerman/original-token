@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 r_extern
 r_int
 r_int
@@ -379,6 +380,8 @@ DECL|macro|DRIVE_INFO
 mdefine_line|#define DRIVE_INFO (*(struct drive_info *)0x90080)
 DECL|macro|SCREEN_INFO
 mdefine_line|#define SCREEN_INFO (*(struct screen_info *)0x90000)
+DECL|macro|MOUNT_ROOT_RDONLY
+mdefine_line|#define MOUNT_ROOT_RDONLY (*(unsigned short *)0x901F2)
 DECL|macro|RAMDISK_SIZE
 mdefine_line|#define RAMDISK_SIZE (*(unsigned short *)0x901F8)
 DECL|macro|ORIG_ROOT_DEV
@@ -714,6 +717,19 @@ DECL|variable|ramdisk_size
 r_int
 id|ramdisk_size
 suffix:semicolon
+DECL|variable|root_mountflags
+r_int
+id|root_mountflags
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|fpu_error
+r_static
+r_char
+id|fpu_error
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|command_line
 r_static
 r_char
@@ -838,6 +854,47 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|line
+comma
+l_string|&quot;ro&quot;
+)paren
+)paren
+(brace
+id|root_mountflags
+op_or_assign
+id|MS_RDONLY
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|line
+comma
+l_string|&quot;rw&quot;
+)paren
+)paren
+(brace
+id|root_mountflags
+op_and_assign
+op_complement
+id|MS_RDONLY
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * Then check if it&squot;s an environment variable or&n;&t;&t; * an option.&n;&t;&t; */
 r_if
 c_cond
@@ -918,34 +975,59 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_MATH_EMULATION
-id|printk
-c_func
-(paren
-l_string|&quot; Trying to use software floating point&bslash;n&quot;
-)paren
-suffix:semicolon
-id|hard_math
+id|fpu_error
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movl %%cr0,%%eax ; xorl $6,%%eax ; movl %%eax,%%cr0&quot;
-op_scope_resolution
-suffix:colon
-l_string|&quot;ax&quot;
-)paren
+id|timer_table
+(braket
+id|COPRO_TIMER
+)braket
+dot
+id|expires
+op_assign
+id|jiffies
+op_plus
+l_int|100
 suffix:semicolon
-macro_line|#else
+id|timer_active
+op_or_assign
+l_int|1
+op_lshift
+id|COPRO_TIMER
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; No software floating point - tough cookies&bslash;n&quot;
+l_string|&quot;387 failed: trying to reset&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+id|send_sig
+c_func
+(paren
+id|SIGFPE
+comma
+id|last_task_used_math
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0
+comma
+l_int|0xf1
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0
+comma
+l_int|0xf0
+)paren
+suffix:semicolon
 )brace
 DECL|function|start_kernel
 r_void
@@ -1015,6 +1097,15 @@ op_star
 l_int|1024
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|MOUNT_ROOT_RDONLY
+)paren
+id|root_mountflags
+op_or_assign
+id|MS_RDONLY
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1244,18 +1335,18 @@ id|control_word
 suffix:semicolon
 id|timer_table
 (braket
-id|MISC_TIMER
+id|COPRO_TIMER
 )braket
 dot
 id|expires
 op_assign
 id|jiffies
 op_plus
-l_int|100
+l_int|50
 suffix:semicolon
 id|timer_table
 (braket
-id|MISC_TIMER
+id|COPRO_TIMER
 )braket
 dot
 id|fn
@@ -1266,18 +1357,18 @@ id|timer_active
 op_or_assign
 l_int|1
 op_lshift
-id|MISC_TIMER
+id|COPRO_TIMER
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;You have a bad 386/387 coupling.&quot;
+l_string|&quot;You have a bad 386/387 coupling.&bslash;r&quot;
 )paren
 suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;fninit ; fnstcw %0 ; fwait&quot;
+l_string|&quot;clts ; fninit ; fnstcw %0 ; fwait&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -1334,18 +1425,19 @@ op_complement
 (paren
 l_int|1
 op_lshift
-id|MISC_TIMER
+id|COPRO_TIMER
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|hard_math
+op_logical_neg
+id|fpu_error
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;rMath coprocessor using %s error reporting.&bslash;n&quot;
+l_string|&quot;Math coprocessor using %s error reporting.&bslash;n&quot;
 comma
 id|ignore_irq13
 ques

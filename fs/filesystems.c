@@ -43,16 +43,6 @@ l_int|1
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_XIA_FS
-(brace
-id|xiafs_read_super
-comma
-l_string|&quot;xiafs&quot;
-comma
-l_int|1
-)brace
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_EXT_FS
 (brace
 id|ext_read_super
@@ -68,6 +58,16 @@ macro_line|#ifdef CONFIG_EXT2_FS
 id|ext2_read_super
 comma
 l_string|&quot;ext2&quot;
+comma
+l_int|1
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_XIA_FS
+(brace
+id|xiafs_read_super
+comma
+l_string|&quot;xiafs&quot;
 comma
 l_int|1
 )brace

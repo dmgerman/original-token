@@ -41,6 +41,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|root_mountflags
+suffix:semicolon
 DECL|variable|super_block
 r_struct
 id|super_block
@@ -498,6 +502,9 @@ comma
 r_void
 op_star
 id|data
+comma
+r_int
+id|silent
 )paren
 (brace
 r_struct
@@ -635,6 +642,8 @@ c_func
 id|s
 comma
 id|data
+comma
+id|silent
 )paren
 )paren
 (brace
@@ -1405,6 +1414,8 @@ comma
 id|flags
 comma
 id|data
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -2144,9 +2155,11 @@ id|ROOT_DEV
 comma
 id|fs_type-&gt;name
 comma
-l_int|0
+id|root_mountflags
 comma
 l_int|NULL
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -2170,7 +2183,7 @@ id|inode
 suffix:semicolon
 id|sb-&gt;s_flags
 op_assign
-l_int|0
+id|root_mountflags
 suffix:semicolon
 id|current-&gt;pwd
 op_assign
@@ -2179,6 +2192,24 @@ suffix:semicolon
 id|current-&gt;root
 op_assign
 id|inode
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;VFS: Mounted root (%s filesystem)%s.&bslash;n&quot;
+comma
+id|fs_type-&gt;name
+comma
+(paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_RDONLY
+)paren
+ques
+c_cond
+l_string|&quot; readonly&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon

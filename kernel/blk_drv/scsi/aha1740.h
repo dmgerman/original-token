@@ -1,11 +1,12 @@
 macro_line|#ifndef _AHA1740_H
-multiline_comment|/* $Id: aha1740.h,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *&n; * Header file for the adaptec 1740 driver for Linux&n; *&n; */
+multiline_comment|/* $Id$&n; *&n; * Header file for the adaptec 1740 driver for Linux&n; *&n; * With minor revisions 3/31/93&n; * Written and (C) 1992,1993 Brad McLean.  See aha1740.c&n; * for more info&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* Eisa Enhanced mode operation - slot locating and addressing */
 DECL|macro|MINEISA
 mdefine_line|#define MINEISA 1   /* I don&squot;t have an EISA Spec to know these ranges, so I */
 DECL|macro|MAXEISA
-mdefine_line|#define MAXEISA 6   /* Just took my machine&squot;s specifications.  Adjust to fit.*/
+mdefine_line|#define MAXEISA 8   /* Just took my machine&squot;s specifications.  Adjust to fit.*/
+multiline_comment|/* I just saw an ad, and bumped this from 6 to 8 */
 DECL|macro|SLOTBASE
 mdefine_line|#define&t;SLOTBASE(x)&t;((x &lt;&lt; 12)+ 0xc80 )
 DECL|macro|BASE
@@ -42,7 +43,7 @@ mdefine_line|#define&t;HID_MFG&t;&quot;ADP&quot;
 DECL|macro|HID_PRD
 mdefine_line|#define&t;HID_PRD 0
 DECL|macro|HID_REV
-mdefine_line|#define HID_REV 1
+mdefine_line|#define HID_REV 2
 DECL|macro|EBCNTRL_VALUE
 mdefine_line|#define EBCNTRL_VALUE 1
 DECL|macro|PORTADDR_ENH
@@ -128,7 +129,7 @@ suffix:semicolon
 multiline_comment|/* Size of this part of chain */
 )brace
 suffix:semicolon
-multiline_comment|/* These belong in scsi.h also */
+multiline_comment|/* These belong in scsi.h */
 DECL|macro|any2scsi
 mdefine_line|#define any2scsi(up, p)&t;&t;&t;&t;&bslash;&n;(up)[0] = (((unsigned long)(p)) &gt;&gt; 16)  ;&t;&bslash;&n;(up)[1] = (((unsigned long)(p)) &gt;&gt; 8);&t;&t;&bslash;&n;(up)[2] = ((unsigned long)(p));
 DECL|macro|scsi2int
@@ -451,7 +452,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|AHA1740_ECBS
-mdefine_line|#define AHA1740_ECBS 64
+mdefine_line|#define AHA1740_ECBS 32
 DECL|macro|AHA1740_SCATTER
 mdefine_line|#define AHA1740_SCATTER 16
 macro_line|#ifndef NULL

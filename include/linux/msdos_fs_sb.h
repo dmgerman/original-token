@@ -59,6 +59,11 @@ DECL|member|fs_gid
 id|gid_t
 id|fs_gid
 suffix:semicolon
+DECL|member|quiet
+r_int
+id|quiet
+suffix:semicolon
+multiline_comment|/* fake successful chmods and chowns */
 DECL|member|fs_umask
 r_int
 r_int

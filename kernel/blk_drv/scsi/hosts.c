@@ -32,6 +32,9 @@ macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.c,v 1.1 1992/07/24 06:27:38 root Exp root $&quot;;&n;*/
 multiline_comment|/*&n; *&t;The scsi host entries should be in the order you wish the &n; *&t;cards to be detected.  A driver may appear more than once IFF&n; *&t;it can deal with being detected (and therefore initialized) &n; *&t;with more than one simulatenous host number, can handle being&n; *&t;rentrant, etc.&n; *&n; *&t;They may appear in any order, as each SCSI host  is told which host number it is&n; *&t;during detection.&n; */
+multiline_comment|/* This is a placeholder for controllers that are not configured into&n;   the system - we do this to ensure that the controller numbering is&n;   always consistent, no matter how the kernel is configured. */
+DECL|macro|NO_CONTROLLER
+mdefine_line|#define NO_CONTROLLER {NULL, NULL, NULL, NULL, NULL, NULL, NULL, &bslash;&n;&t;        NULL, NULL, 0, 0, 0, 0, 0, 0}
 multiline_comment|/*&n; *&t;When figure is run, we don&squot;t want to link to any object code.  Since &n; *&t;the macro for each host will contain function pointers, we cannot &n; *&t;use it and instead must use a &quot;blank&quot; that does no such &n; *&t;idiocy.&n; */
 DECL|variable|scsi_hosts
 id|Scsi_Host

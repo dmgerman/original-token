@@ -13,7 +13,7 @@ DECL|macro|EXT2FS_DEBUG_CACHE
 macro_line|#undef EXT2FS_DEBUG_CACHE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_VERSION
-mdefine_line|#define EXT2FS_VERSION&t;&quot;0.2c, 93/03/06&quot;
+mdefine_line|#define EXT2FS_VERSION&t;&quot;0.2d, 93/03/30&quot;
 multiline_comment|/*&n; * Special inodes numbers&n; */
 DECL|macro|EXT2_BAD_INO
 mdefine_line|#define&t;EXT2_BAD_INO&t;&t; 1&t;/* Bad blocks inode */
@@ -311,12 +311,17 @@ r_char
 id|i_fsize
 suffix:semicolon
 multiline_comment|/* Fragment size */
+DECL|member|i_pad1
+r_int
+r_int
+id|i_pad1
+suffix:semicolon
 DECL|member|i_reserved2
 r_int
 r_int
 id|i_reserved2
 (braket
-l_int|3
+l_int|2
 )braket
 suffix:semicolon
 )brace
@@ -369,7 +374,6 @@ id|s_log_block_size
 suffix:semicolon
 multiline_comment|/* Block size */
 DECL|member|s_log_frag_size
-r_int
 r_int
 id|s_log_frag_size
 suffix:semicolon
@@ -589,6 +593,30 @@ comma
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* dir.c */
+r_extern
+r_int
+id|ext2_check_dir_entry
+(paren
+r_char
+op_star
+comma
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|ext2_dir_entry
+op_star
+comma
+r_struct
+id|buffer_head
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* file.c */
 r_extern
 r_int
@@ -741,6 +769,8 @@ op_star
 comma
 r_void
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -982,18 +1012,6 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Inodes and files operations&n; */
-multiline_comment|/* blkdev.c */
-r_extern
-r_struct
-id|inode_operations
-id|ext2_blkdev_inode_operations
-suffix:semicolon
-multiline_comment|/* chrdev.c */
-r_extern
-r_struct
-id|inode_operations
-id|ext2_chrdev_inode_operations
-suffix:semicolon
 multiline_comment|/* dir.c */
 r_extern
 r_struct
@@ -1004,12 +1022,6 @@ r_extern
 r_struct
 id|file_operations
 id|ext2_dir_operations
-suffix:semicolon
-multiline_comment|/* fifo.c */
-r_extern
-r_struct
-id|inode_operations
-id|ext2_fifo_inode_operations
 suffix:semicolon
 multiline_comment|/* file.c */
 r_extern

@@ -990,6 +990,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|filp-&gt;f_inode
+op_logical_and
+id|filp-&gt;f_inode-&gt;i_rdev
+op_eq
+l_int|0x0400
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|filp-&gt;f_op
 op_ne
 op_amp

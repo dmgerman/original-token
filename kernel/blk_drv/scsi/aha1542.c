@@ -135,6 +135,13 @@ id|aha1542_host
 op_assign
 l_int|0
 suffix:semicolon
+r_static
+r_void
+id|setup_mailboxes
+c_func
+(paren
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|aha1542_interrupt
@@ -488,6 +495,11 @@ id|INTRMASK
 r_goto
 id|fail
 suffix:semicolon
+id|setup_mailboxes
+c_func
+(paren
+)paren
+suffix:semicolon
 id|debug
 op_assign
 l_int|3
@@ -663,9 +675,8 @@ id|buffer
 (braket
 )braket
 op_assign
-l_string|&quot;&quot;
+l_string|&quot;Adaptec 1542&quot;
 suffix:semicolon
-multiline_comment|/* looks nicer without anything here */
 r_return
 id|buffer
 suffix:semicolon
@@ -1590,15 +1601,12 @@ suffix:semicolon
 id|i
 OL
 (paren
+id|COMMAND_SIZE
+c_func
+(paren
 op_star
 id|cmd
-op_le
-l_int|0x1f
-ques
-c_cond
-l_int|6
-suffix:colon
-l_int|10
+)paren
 )paren
 suffix:semicolon
 id|i
@@ -1787,17 +1795,12 @@ id|mbo
 dot
 id|cdblen
 op_assign
+id|COMMAND_SIZE
+c_func
 (paren
 op_star
 id|cmd
-op_le
-l_int|0x1f
 )paren
-ques
-c_cond
-l_int|6
-suffix:colon
-l_int|10
 suffix:semicolon
 multiline_comment|/* SCSI Command Descriptor Block Length */
 id|direction
@@ -2682,7 +2685,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Query the board to find out if it is a 1542 or a 1740, or whatever. */
 DECL|function|aha1542_getconfig
 r_static
 r_int
@@ -3818,23 +3820,7 @@ id|size
 op_rshift
 l_int|11
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|info
-(braket
-l_int|2
-)braket
-op_ge
-l_int|1024
-)paren
-id|info
-(braket
-l_int|2
-)braket
-op_assign
-l_int|1024
-suffix:semicolon
+multiline_comment|/*  if (info[2] &gt;= 1024) info[2] = 1024; */
 r_return
 l_int|0
 suffix:semicolon

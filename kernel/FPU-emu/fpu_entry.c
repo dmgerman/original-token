@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_entry.c                                                              |&n; |                                                                           |&n; | The entry function for wm-FPU-emu                                         |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; | See the files &quot;README&quot; and &quot;COPYING&quot; for further copyright and warranty   |&n; | information.                                                              |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_entry.c                                                              |&n; |                                                                           |&n; | The entry function for wm-FPU-emu                                         |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; | See the files &quot;README&quot; and &quot;COPYING&quot; for further copyright and warranty   |&n; | information.                                                              |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | math_emulate() is the sole entry point for wm-FPU-emu                     |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/config.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;exception.h&quot;
+macro_line|#include &quot;control_w.h&quot;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|__BAD__
 mdefine_line|#define __BAD__ Un_impl   /* Not implemented */
@@ -706,6 +707,11 @@ id|FPU_EFLAGS
 op_amp
 l_int|0x00020000
 )paren
+(brace
+id|FPU_ORIG_EIP
+op_assign
+id|FPU_EIP
+suffix:semicolon
 id|math_abort
 c_func
 (paren
@@ -714,6 +720,7 @@ comma
 id|SIGILL
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* 0x000f means user code space */
 r_if
 c_cond
@@ -979,6 +986,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_goto
+id|no_precision_adjust
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -994,6 +1004,9 @@ id|pop
 c_func
 (paren
 )paren
+suffix:semicolon
+r_goto
+id|no_precision_adjust
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1066,6 +1079,15 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|PRECISION_ADJUST
+c_func
+(paren
+id|FPU_st0_ptr
+)paren
+suffix:semicolon
+id|no_precision_adjust
+suffix:colon
+suffix:semicolon
 )brace
 r_else
 id|stack_underflow
@@ -1403,6 +1425,7 @@ r_int
 id|signal
 )paren
 (brace
+id|RE_ENTRANT_CHECK_OFF
 id|FPU_EIP
 op_assign
 id|FPU_ORIG_EIP
@@ -1417,6 +1440,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_OFF
 id|__asm__
 c_func
 (paren
@@ -1435,6 +1459,14 @@ l_int|4
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef PARANOID
+id|printk
+c_func
+(paren
+l_string|&quot;ERROR: wm-FPU-emu math_abort failed!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif PARANOID
 )brace
 macro_line|#else /* no math emulation */
 macro_line|#include &lt;linux/signal.h&gt;

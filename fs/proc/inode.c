@@ -97,6 +97,9 @@ comma
 r_void
 op_star
 id|data
+comma
+r_int
+id|silent
 )paren
 (brace
 id|lock_super
@@ -236,6 +239,15 @@ l_int|0
 comma
 op_amp
 id|buf-&gt;f_ffree
+)paren
+suffix:semicolon
+id|put_fs_long
+c_func
+(paren
+id|NAME_MAX
+comma
+op_amp
+id|buf-&gt;f_namelen
 )paren
 suffix:semicolon
 multiline_comment|/* Don&squot;t know what value to put in buf-&gt;f_fsid */
@@ -442,11 +454,19 @@ id|ino
 op_eq
 l_int|5
 )paren
+(brace
+id|inode-&gt;i_mode
+op_assign
+id|S_IFREG
+op_or
+l_int|0400
+suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|proc_kmsg_inode_operations
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace

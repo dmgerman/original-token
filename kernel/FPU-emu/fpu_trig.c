@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_trig.c                                                               |&n; |                                                                           |&n; | Implementation of the FPU &quot;transcendental&quot; functions.                     |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_trig.c                                                               |&n; |                                                                           |&n; | Implementation of the FPU &quot;transcendental&quot; functions.                     |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -353,6 +353,7 @@ id|rv
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/* error */
 id|reg_mul
 c_func
 (paren
@@ -363,8 +364,6 @@ id|FPU_st0_ptr
 comma
 id|FPU_st0_ptr
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_else
@@ -422,7 +421,6 @@ suffix:semicolon
 id|FPU_st0_ptr-&gt;exp
 op_decrement
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -436,6 +434,7 @@ c_func
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
@@ -1100,9 +1099,19 @@ r_return
 suffix:semicolon
 )brace
 r_else
+(brace
 id|single_arg_error
 c_func
 (paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|PRECISION_ADJUST
+c_func
+(paren
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 )brace
@@ -2221,12 +2230,16 @@ id|FPU_st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
+(brace
 id|arith_underflow
 c_func
 (paren
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -2235,12 +2248,16 @@ id|FPU_st0_ptr-&gt;exp
 op_ge
 id|EXP_OVER
 )paren
+(brace
 id|arith_overflow
 c_func
 (paren
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -2265,10 +2282,11 @@ c_func
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -2293,6 +2311,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -2327,6 +2346,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -2393,6 +2413,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -2448,6 +2469,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_else
+(brace
 id|pop
 c_func
 (paren
@@ -2471,7 +2494,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+)brace
 multiline_comment|/* One or both arg must be an infinity */
+r_else
 r_if
 c_cond
 (paren
@@ -2558,6 +2583,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* st(1) must be infinity here */
+r_else
 r_if
 c_cond
 (paren
@@ -2632,8 +2658,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -2655,10 +2679,12 @@ id|FPU_st0_ptr-&gt;sign
 op_xor_assign
 id|SIGN_NEG
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
-)brace
+r_else
+(brace
 multiline_comment|/* st(0) must be zero or negative */
 id|pop
 c_func
@@ -2682,6 +2708,7 @@ id|FPU_st0_ptr
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 DECL|function|fpatan
 r_static
@@ -2883,6 +2910,7 @@ id|FPU_st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
+(brace
 id|arith_underflow
 c_func
 (paren
@@ -2892,6 +2920,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -2916,6 +2946,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -2950,6 +2981,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -3072,9 +3104,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -3117,7 +3148,7 @@ comma
 id|st1_ptr
 )paren
 suffix:semicolon
-id|st1_tag
+id|st1_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -3125,8 +3156,6 @@ id|pop
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_else
@@ -3153,7 +3182,7 @@ comma
 id|st1_ptr
 )paren
 suffix:semicolon
-id|st1_tag
+id|st1_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -3162,10 +3191,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 macro_line|#ifdef PARANOID
+r_else
 id|EXCEPTION
 c_func
 (paren
@@ -3293,8 +3321,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -3312,11 +3338,15 @@ op_eq
 id|TW_Empty
 )paren
 )paren
+(brace
 id|stack_underflow
 c_func
 (paren
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -3362,6 +3392,8 @@ c_func
 id|st1_ptr
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -3394,6 +3426,8 @@ op_or_assign
 l_int|0x40000000
 suffix:semicolon
 multiline_comment|/* QNaN */
+r_return
+suffix:semicolon
 )brace
 macro_line|#ifdef PARANOID
 r_else
@@ -3406,14 +3440,14 @@ op_or
 l_int|0x116
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 macro_line|#endif PARANOID
 id|pop
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_else
@@ -3657,12 +3691,16 @@ id|scale
 op_le
 id|EXP_UNDER
 )paren
+(brace
 id|arith_underflow
 c_func
 (paren
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -3671,12 +3709,16 @@ id|scale
 op_ge
 id|EXP_OVER
 )paren
+(brace
 id|arith_overflow
 c_func
 (paren
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
