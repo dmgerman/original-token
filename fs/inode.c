@@ -857,6 +857,22 @@ op_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* sum of readers/writers */
+id|PIPE_READ_WAIT
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_assign
+id|PIPE_WRITE_WAIT
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
 id|PIPE_HEAD
 c_func
 (paren

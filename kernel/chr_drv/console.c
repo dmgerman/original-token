@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/console.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module implements the console io functions&n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;void con_write(struct tty_queue * queue)&squot;&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;void con_open(struct tty_queue * queue, struct )&squot;&n; * &t;&squot;void update_screen(int new_console)&squot;&n; * &t;&squot;void blank_screen(void)&squot;&n; * &t;&squot;void unblank_screen(void)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; */
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
 multiline_comment|/*&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; */
 DECL|macro|KEYBOARD_IRQ
@@ -57,6 +57,11 @@ r_extern
 r_int
 r_char
 id|krepeat
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|default_kleds
 suffix:semicolon
 r_extern
 r_int
@@ -610,13 +615,6 @@ DECL|macro|kbdleds
 mdefine_line|#define kbdleds&t;&t;(vt_cons[currcons].vc_kbdleds)
 DECL|macro|vtmode
 mdefine_line|#define vtmode&t;&t;(vt_cons[currcons].vt_mode)
-macro_line|#if defined KBD_NUMERIC_LOCK
-DECL|macro|NUMLED_DEFAULT
-mdefine_line|#define NUMLED_DEFAULT 0x02
-macro_line|#else
-DECL|macro|NUMLED_DEFAULT
-mdefine_line|#define NUMLED_DEFAULT 0
-macro_line|#endif
 DECL|macro|SET
 mdefine_line|#define SET(mode,fg,v) &bslash;&n;&t;(mode) = (v); &bslash;&n;&t;if (currcons == fg_console) &bslash;&n;&t;&t;(fg) = (v)
 DECL|variable|blankinterval
@@ -2426,6 +2424,7 @@ c_func
 op_star
 id|p
 comma
+op_amp
 id|tty-&gt;read_q
 )paren
 suffix:semicolon
@@ -2519,6 +2518,7 @@ id|buff
 id|i
 )braket
 comma
+op_amp
 id|tty-&gt;read_q
 )paren
 suffix:semicolon
@@ -2545,6 +2545,7 @@ c_func
 (paren
 l_char|&squot;&bslash;033&squot;
 comma
+op_amp
 id|tty-&gt;read_q
 )paren
 suffix:semicolon
@@ -2553,6 +2554,7 @@ c_func
 (paren
 l_char|&squot;[&squot;
 comma
+op_amp
 id|tty-&gt;read_q
 )paren
 suffix:semicolon
@@ -2582,6 +2584,7 @@ c_func
 (paren
 l_char|&squot;;&squot;
 comma
+op_amp
 id|tty-&gt;read_q
 )paren
 suffix:semicolon
@@ -2602,6 +2605,7 @@ c_func
 (paren
 l_char|&squot;R&squot;
 comma
+op_amp
 id|tty-&gt;read_q
 )paren
 suffix:semicolon
@@ -3790,7 +3794,7 @@ l_int|0
 suffix:semicolon
 id|kleds
 op_assign
-id|NUMLED_DEFAULT
+id|default_kleds
 suffix:semicolon
 id|kmode
 op_assign
@@ -3822,7 +3826,7 @@ l_int|0
 suffix:semicolon
 id|kbdleds
 op_assign
-id|NUMLED_DEFAULT
+id|default_kleds
 suffix:semicolon
 id|kbdmode
 op_assign
@@ -3924,14 +3928,14 @@ id|wake_up
 c_func
 (paren
 op_amp
-id|tty-&gt;write_q-&gt;proc_list
+id|tty-&gt;write_q.proc_list
 )paren
 suffix:semicolon
 id|currcons
 op_assign
-id|tty
+id|tty-&gt;line
 op_minus
-id|tty_table
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -3944,7 +3948,9 @@ id|NR_CONSOLES
 id|printk
 c_func
 (paren
-l_string|&quot;con_write: illegal tty&bslash;n&bslash;r&quot;
+l_string|&quot;con_write: illegal tty (%d)&bslash;n&quot;
+comma
+id|currcons
 )paren
 suffix:semicolon
 r_return
@@ -3962,6 +3968,7 @@ op_assign
 id|get_tty_queue
 c_func
 (paren
+op_amp
 id|tty-&gt;write_q
 )paren
 )paren
@@ -7024,5 +7031,34 @@ op_lshift
 id|BLANK_TIMER
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * All we do is set the write and ioctl subroutines; later on maybe we&squot;ll&n; * dynamically allocate the console screen memory.&n; */
+DECL|function|con_open
+r_int
+id|con_open
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+id|tty-&gt;write
+op_assign
+id|con_write
+suffix:semicolon
+id|tty-&gt;ioctl
+op_assign
+id|vt_ioctl
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 eof

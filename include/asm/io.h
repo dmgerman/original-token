@@ -7,7 +7,7 @@ DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO __asm__ __volatile__(&quot;jmp 1f&bslash;n1:&bslash;tjmp 1f&bslash;n1:&quot;)
 macro_line|#else
 DECL|macro|__SLOW_DOWN_IO
-mdefine_line|#define __SLOW_DOWN_IO __asm__ __volatile__(&quot;inb $0x80,%%al&quot;:::&quot;ax&quot;)
+mdefine_line|#define __SLOW_DOWN_IO __asm__ __volatile__(&quot;inb $0x61,%%al&quot;:::&quot;ax&quot;)
 macro_line|#endif
 macro_line|#ifdef REALLY_SLOW_IO
 DECL|macro|SLOW_DOWN_IO

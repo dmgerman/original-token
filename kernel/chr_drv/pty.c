@@ -1,19 +1,36 @@
 multiline_comment|/*&n; *  linux/kernel/chr_drv/pty.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;pty.c&n; *&n; * This module implements the pty functions&n; *&t;void mpty_write(struct tty_struct * queue);&n; *&t;void spty_write(struct tty_struct * queue);&n; */
+multiline_comment|/*&n; *&t;pty.c&n; *&n; * This module exports the following pty function:&n; * &n; * &t;int  pty_open(struct tty_struct * tty, struct file * filp);&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+r_static
+r_void
+id|pty_close
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+suffix:semicolon
 DECL|function|pty_open
 r_int
 id|pty_open
 c_func
 (paren
-r_int
-r_int
-id|dev
+r_struct
+id|tty_struct
+op_star
+id|tty
 comma
 r_struct
 id|file
@@ -21,20 +38,12 @@ op_star
 id|filp
 )paren
 (brace
-r_struct
-id|tty_struct
-op_star
-id|tty
-suffix:semicolon
-id|tty
-op_assign
-id|tty_table
-op_plus
-id|dev
-suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|tty
+op_logical_or
 op_logical_neg
 id|tty-&gt;link
 )paren
@@ -42,11 +51,33 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_A_PTY_MASTER
+c_func
+(paren
+id|tty-&gt;line
+)paren
+)paren
+id|tty-&gt;write
+op_assign
+id|mpty_write
+suffix:semicolon
+r_else
+id|tty-&gt;write
+op_assign
+id|spty_write
+suffix:semicolon
+id|tty-&gt;close
+op_assign
+id|pty_close
+suffix:semicolon
 id|wake_up
 c_func
 (paren
 op_amp
-id|tty-&gt;read_q-&gt;proc_list
+id|tty-&gt;read_q.proc_list
 )paren
 suffix:semicolon
 r_if
@@ -77,7 +108,7 @@ id|interruptible_sleep_on
 c_func
 (paren
 op_amp
-id|tty-&gt;link-&gt;read_q-&gt;proc_list
+id|tty-&gt;link-&gt;read_q.proc_list
 )paren
 suffix:semicolon
 r_if
@@ -95,13 +126,15 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|pty_close
+r_static
 r_void
 id|pty_close
 c_func
 (paren
-r_int
-r_int
-id|dev
+r_struct
+id|tty_struct
+op_star
+id|tty
 comma
 r_struct
 id|file
@@ -109,29 +142,18 @@ op_star
 id|filp
 )paren
 (brace
-r_struct
-id|tty_struct
-op_star
-id|tty
-suffix:semicolon
-id|tty
-op_assign
-id|tty_table
-op_plus
-id|dev
-suffix:semicolon
 id|wake_up
 c_func
 (paren
 op_amp
-id|tty-&gt;read_q-&gt;proc_list
+id|tty-&gt;read_q.proc_list
 )paren
 suffix:semicolon
 id|wake_up
 c_func
 (paren
 op_amp
-id|tty-&gt;link-&gt;write_q-&gt;proc_list
+id|tty-&gt;link-&gt;write_q.proc_list
 )paren
 suffix:semicolon
 r_if
@@ -140,7 +162,7 @@ c_cond
 id|IS_A_PTY_MASTER
 c_func
 (paren
-id|dev
+id|tty-&gt;line
 )paren
 )paren
 (brace
@@ -194,6 +216,7 @@ op_logical_neg
 id|EMPTY
 c_func
 (paren
+op_amp
 id|from-&gt;write_q
 )paren
 )paren
@@ -204,6 +227,7 @@ c_cond
 id|FULL
 c_func
 (paren
+op_amp
 id|to-&gt;read_q
 )paren
 )paren
@@ -214,6 +238,7 @@ c_cond
 id|FULL
 c_func
 (paren
+op_amp
 id|to-&gt;secondary
 )paren
 )paren
@@ -233,6 +258,7 @@ op_assign
 id|get_tty_queue
 c_func
 (paren
+op_amp
 id|from-&gt;write_q
 )paren
 suffix:semicolon
@@ -241,6 +267,7 @@ c_func
 (paren
 id|c
 comma
+op_amp
 id|to-&gt;read_q
 )paren
 suffix:semicolon
@@ -265,7 +292,7 @@ id|wake_up
 c_func
 (paren
 op_amp
-id|from-&gt;write_q-&gt;proc_list
+id|from-&gt;write_q.proc_list
 )paren
 suffix:semicolon
 )brace

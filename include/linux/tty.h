@@ -1,15 +1,11 @@
 macro_line|#ifndef _LINUX_TTY_H
 DECL|macro|_LINUX_TTY_H
 mdefine_line|#define _LINUX_TTY_H
-multiline_comment|/*&n; * &squot;tty.h&squot; defines some structures used by tty_io.c and some defines.&n; *&n; * NOTE! Don&squot;t touch this without checking that nothing in rs_io.s or&n; * con_io.s breaks. Some constants are hardwired into the system (mainly&n; * offsets into &squot;tty_queue&squot;&n; */
+multiline_comment|/*&n; * &squot;tty.h&squot; defines some structures used by tty_io.c and some defines.&n; */
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|NR_CONSOLES
 mdefine_line|#define NR_CONSOLES&t;8
-DECL|macro|NR_SERIALS
-mdefine_line|#define NR_SERIALS&t;4
-DECL|macro|NR_PTYS
-mdefine_line|#define NR_PTYS&t;&t;4
 multiline_comment|/*&n; * These are set up by the setup-routine at boot-time:&n; */
 DECL|struct|screen_info
 r_struct
@@ -104,8 +100,9 @@ mdefine_line|#define VIDEO_TYPE_EGAC&t;&t;0x21&t;/* EGA/VGA in Color Mode&t;*/
 multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR ahs no character etc)&n; */
 DECL|macro|__DISABLED_CHAR
 mdefine_line|#define __DISABLED_CHAR &squot;&bslash;0&squot;
+multiline_comment|/*&n; * See comment for the tty_struct structure before changing&n; * TTY_BUF_SIZE.  Actually, there should be different sized tty_queue&n; * structures for different purposes.  1024 bytes for the transmit&n; * queue is way overkill.  TYT, 9/14/92&n; */
 DECL|macro|TTY_BUF_SIZE
-mdefine_line|#define TTY_BUF_SIZE 2048
+mdefine_line|#define TTY_BUF_SIZE 1024&t;/* Must be a power of 2 */
 DECL|struct|tty_queue
 r_struct
 id|tty_queue
@@ -147,29 +144,38 @@ id|serial_struct
 (brace
 DECL|member|type
 r_int
-r_int
 id|type
 suffix:semicolon
 DECL|member|line
-r_int
 r_int
 id|line
 suffix:semicolon
 DECL|member|port
 r_int
-r_int
 id|port
 suffix:semicolon
 DECL|member|irq
 r_int
-r_int
 id|irq
 suffix:semicolon
-DECL|member|tty
-r_struct
-id|tty_struct
-op_star
-id|tty
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|member|xmit_fifo_size
+r_int
+id|xmit_fifo_size
+suffix:semicolon
+DECL|member|custom_divisor
+r_int
+id|custom_divisor
+suffix:semicolon
+DECL|member|reserved
+r_int
+id|reserved
+(braket
+l_int|8
+)braket
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -184,6 +190,19 @@ DECL|macro|PORT_16550
 mdefine_line|#define PORT_16550&t;3
 DECL|macro|PORT_16550A
 mdefine_line|#define PORT_16550A&t;4
+multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
+DECL|macro|ASYNC_NOSCRATCH
+mdefine_line|#define ASYNC_NOSCRATCH&t;0x0001&t;/* 16XXX UART with no scratch register */
+DECL|macro|ASYNC_FOURPORT
+mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
+DECL|macro|ASYNC_SPD_MASK
+mdefine_line|#define ASYNC_SPD_MASK&t;0x0030
+DECL|macro|ASYNC_SPD_HI
+mdefine_line|#define ASYNC_SPD_HI&t;0x0010&t;/* Use 56000 instead of 38400 bps */
+DECL|macro|ASYNC_SPD_VHI
+mdefine_line|#define ASYNC_SPD_VHI&t;0x0020  /* Use 115200 instead of 38400 bps */
+DECL|macro|ASYNC_SPD_CUST
+mdefine_line|#define ASYNC_SPD_CUST&t;0x0030  /* Use user-specified divisor */
 DECL|macro|IS_A_CONSOLE
 mdefine_line|#define IS_A_CONSOLE(min)&t;(((min) &amp; 0xC0) == 0x00)
 DECL|macro|IS_A_SERIAL
@@ -196,6 +215,10 @@ DECL|macro|IS_A_PTY_SLAVE
 mdefine_line|#define IS_A_PTY_SLAVE(min)&t;(((min) &amp; 0xC0) == 0xC0)
 DECL|macro|PTY_OTHER
 mdefine_line|#define PTY_OTHER(min)&t;&t;((min) ^ 0x40)
+DECL|macro|SL_TO_DEV
+mdefine_line|#define SL_TO_DEV(line)&t;&t;((line) | 0x40)
+DECL|macro|DEV_TO_SL
+mdefine_line|#define DEV_TO_SL(min)&t;&t;((min) &amp; 0x3F)
 DECL|macro|INC
 mdefine_line|#define INC(a) ((a) = ((a)+1) &amp; (TTY_BUF_SIZE-1))
 DECL|macro|DEC
@@ -236,27 +259,27 @@ id|queue
 )paren
 suffix:semicolon
 DECL|macro|INTR_CHAR
-mdefine_line|#define INTR_CHAR(tty) ((tty)-&gt;termios.c_cc[VINTR])
+mdefine_line|#define INTR_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VINTR])
 DECL|macro|QUIT_CHAR
-mdefine_line|#define QUIT_CHAR(tty) ((tty)-&gt;termios.c_cc[VQUIT])
+mdefine_line|#define QUIT_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VQUIT])
 DECL|macro|ERASE_CHAR
-mdefine_line|#define ERASE_CHAR(tty) ((tty)-&gt;termios.c_cc[VERASE])
+mdefine_line|#define ERASE_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VERASE])
 DECL|macro|KILL_CHAR
-mdefine_line|#define KILL_CHAR(tty) ((tty)-&gt;termios.c_cc[VKILL])
+mdefine_line|#define KILL_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VKILL])
 DECL|macro|EOF_CHAR
-mdefine_line|#define EOF_CHAR(tty) ((tty)-&gt;termios.c_cc[VEOF])
+mdefine_line|#define EOF_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VEOF])
 DECL|macro|START_CHAR
-mdefine_line|#define START_CHAR(tty) ((tty)-&gt;termios.c_cc[VSTART])
+mdefine_line|#define START_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSTART])
 DECL|macro|STOP_CHAR
-mdefine_line|#define STOP_CHAR(tty) ((tty)-&gt;termios.c_cc[VSTOP])
+mdefine_line|#define STOP_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSTOP])
 DECL|macro|SUSPEND_CHAR
-mdefine_line|#define SUSPEND_CHAR(tty) ((tty)-&gt;termios.c_cc[VSUSP])
+mdefine_line|#define SUSPEND_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSUSP])
 DECL|macro|_L_FLAG
-mdefine_line|#define _L_FLAG(tty,f)&t;((tty)-&gt;termios.c_lflag &amp; f)
+mdefine_line|#define _L_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_lflag &amp; f)
 DECL|macro|_I_FLAG
-mdefine_line|#define _I_FLAG(tty,f)&t;((tty)-&gt;termios.c_iflag &amp; f)
+mdefine_line|#define _I_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_iflag &amp; f)
 DECL|macro|_O_FLAG
-mdefine_line|#define _O_FLAG(tty,f)&t;((tty)-&gt;termios.c_oflag &amp; f)
+mdefine_line|#define _O_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_oflag &amp; f)
 DECL|macro|L_CANON
 mdefine_line|#define L_CANON(tty)&t;_L_FLAG((tty),ICANON)
 DECL|macro|L_ISIG
@@ -298,9 +321,10 @@ mdefine_line|#define O_NLRET(tty)&t;_O_FLAG((tty),ONLRET)
 DECL|macro|O_LCUC
 mdefine_line|#define O_LCUC(tty)&t;_O_FLAG((tty),OLCUC)
 DECL|macro|C_SPEED
-mdefine_line|#define C_SPEED(tty)&t;((tty)-&gt;termios.c_cflag &amp; CBAUD)
+mdefine_line|#define C_SPEED(tty)&t;((tty)-&gt;termios-&gt;c_cflag &amp; CBAUD)
 DECL|macro|C_HUP
 mdefine_line|#define C_HUP(tty)&t;(C_SPEED((tty)) == B0)
+multiline_comment|/*&n; * Where all of the state associated with a tty is kept while the tty&n; * is open.  Since the termios state should be kept even if the tty&n; * has been closed --- for things like the baud rate, etc --- it is&n; * not stored here, but rather a pointer to the real state is stored&n; * here.  Possible the winsize structure should have the same&n; * treatment, but (1) the default 80x24 is usually right and (2) it&squot;s&n; * most often used by a windowing system, which will set the correct&n; * size each time the window is created or resized anyway.&n; * IMPORTANT: since this structure is dynamically allocated, it must&n; * be no larger than 4096 bytes.  Changing TTY_BUF_SIZE will change&n; * the size of this structure, and it needs to be done with care.&n; * &t;&t;&t;&t;&t;&t;- TYT, 9/14/92&n; */
 DECL|struct|tty_struct
 r_struct
 id|tty_struct
@@ -308,6 +332,7 @@ id|tty_struct
 DECL|member|termios
 r_struct
 id|termios
+op_star
 id|termios
 suffix:semicolon
 DECL|member|pgrp
@@ -340,11 +365,10 @@ r_int
 r_char
 id|ctrl_status
 suffix:semicolon
-DECL|member|unused
+DECL|member|line
 r_int
-id|unused
+id|line
 suffix:semicolon
-multiline_comment|/* make everything a multiple of 4. */
 DECL|member|flags
 r_int
 id|flags
@@ -357,6 +381,42 @@ DECL|member|winsize
 r_struct
 id|winsize
 id|winsize
+suffix:semicolon
+DECL|member|open
+r_int
+(paren
+op_star
+id|open
+)paren
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+suffix:semicolon
+DECL|member|close
+r_void
+(paren
+op_star
+id|close
+)paren
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
 suffix:semicolon
 DECL|member|write
 r_void
@@ -371,6 +431,48 @@ op_star
 id|tty
 )paren
 suffix:semicolon
+DECL|member|ioctl
+r_int
+(paren
+op_star
+id|ioctl
+)paren
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+DECL|member|throttle
+r_void
+(paren
+op_star
+id|throttle
+)paren
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_int
+id|status
+)paren
+suffix:semicolon
 DECL|member|link
 r_struct
 id|tty_struct
@@ -380,30 +482,49 @@ suffix:semicolon
 DECL|member|read_q
 r_struct
 id|tty_queue
-op_star
 id|read_q
 suffix:semicolon
 DECL|member|write_q
 r_struct
 id|tty_queue
-op_star
 id|write_q
 suffix:semicolon
 DECL|member|secondary
 r_struct
 id|tty_queue
-op_star
 id|secondary
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * so that interrupts won&squot;t be able to mess up the&n; * queues, copy_to_cooked must be atomic with repect&n; * to itself, as must tty-&gt;write. These are the flag&n; * bit-numbers. Use the set_bit() and clear_bit()&n; * macros to make it all atomic.&n; */
+multiline_comment|/*&n; * These are the different types of thottle status which can be sent&n; * to the low-level tty driver.  The tty_io.c layer is responsible for&n; * notifying the low-level tty driver of the following conditions:&n; * secondary queue full, secondary queue available, and read queue&n; * available.  The low-level driver must send the read queue full&n; * command to itself, if it is interested in that condition.&n; *&n; * Note that the low-level tty driver may elect to ignore one or both&n; * of these conditions; normally, however, it will use ^S/^Q or some&n; * sort of hardware flow control to regulate the input to try to avoid&n; * overflow.  While the low-level driver is responsible for all&n; * receiving flow control, note that the ^S/^Q handling (but not&n; * hardware flow control) is handled by the upper layer, in&n; * copy_to_cooked.  &n; */
+DECL|macro|TTY_THROTTLE_SQ_FULL
+mdefine_line|#define TTY_THROTTLE_SQ_FULL&t;1
+DECL|macro|TTY_THROTTLE_SQ_AVAIL
+mdefine_line|#define TTY_THROTTLE_SQ_AVAIL&t;2
+DECL|macro|TTY_THROTTLE_RQ_FULL
+mdefine_line|#define TTY_THROTTLE_RQ_FULL&t;3
+DECL|macro|TTY_THROTTLE_RQ_AVAIL
+mdefine_line|#define TTY_THROTTLE_RQ_AVAIL&t;4
+multiline_comment|/*&n; * This defines the low- and high-watermarks for the various conditions.&n; * Again, the low-level driver is free to ignore any of these, and has&n; * to implement RQ_THREHOLD_LW for itself if it wants it.&n; */
+DECL|macro|SQ_THRESHOLD_LW
+mdefine_line|#define SQ_THRESHOLD_LW&t;0
+DECL|macro|SQ_THRESHOLD_HW
+mdefine_line|#define SQ_THRESHOLD_HW 768
+DECL|macro|RQ_THRESHOLD_LW
+mdefine_line|#define RQ_THRESHOLD_LW 64
+DECL|macro|RQ_THRESHOLD_HW
+mdefine_line|#define RQ_THRESHOLD_HW 768
+multiline_comment|/*&n; * so that interrupts won&squot;t be able to mess up the&n; * queues, copy_to_cooked must be atomic with repect&n; * to itself, as must tty-&gt;write. These are the flag&n; * bit-numbers. Use the set_bit() and clear_bit()&n; * macros to make it all atomic.&n; * &n; * These bits are used in the flags field of the tty structure.&n; */
 DECL|macro|TTY_WRITE_BUSY
 mdefine_line|#define TTY_WRITE_BUSY 0
 DECL|macro|TTY_READ_BUSY
 mdefine_line|#define TTY_READ_BUSY 1
 DECL|macro|TTY_CR_PENDING
 mdefine_line|#define TTY_CR_PENDING 2
+DECL|macro|TTY_SQ_THROTTLED
+mdefine_line|#define TTY_SQ_THROTTLED 3
+DECL|macro|TTY_RQ_THROTTLED
+mdefine_line|#define TTY_RQ_THROTTLED 4
 multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. Both set_bit and clear_bit return 0&n; * if the bit-setting went ok, != 0 if the bit already was set/cleared.&n; */
 DECL|function|set_bit
 r_extern
@@ -526,14 +647,8 @@ suffix:semicolon
 r_extern
 r_struct
 id|tty_struct
+op_star
 id|tty_table
-(braket
-)braket
-suffix:semicolon
-r_extern
-r_struct
-id|serial_struct
-id|serial_table
 (braket
 )braket
 suffix:semicolon
@@ -557,8 +672,16 @@ r_int
 r_int
 id|video_num_lines
 suffix:semicolon
+r_extern
+r_struct
+id|wait_queue
+op_star
+id|keypress_wait
+suffix:semicolon
+DECL|macro|TTY_TABLE_IDX
+mdefine_line|#define TTY_TABLE_IDX(nr)&t;((nr) ? (nr) : (fg_console+1))
 DECL|macro|TTY_TABLE
-mdefine_line|#define TTY_TABLE(nr) &bslash;&n;(tty_table + ((nr) ? (((nr) &lt; 64)? (nr)-1:(nr))&t;: fg_console))
+mdefine_line|#define TTY_TABLE(nr) &t;&t;(tty_table[TTY_TABLE_IDX(nr)])
 multiline_comment|/*&t;intr=^C&t;&t;quit=^|&t;&t;erase=del&t;kill=^U&n;&t;eof=^D&t;&t;vtime=&bslash;0&t;vmin=&bslash;1&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;eol=&bslash;0&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;&t;eol2=&bslash;0&n;*/
 DECL|macro|INIT_C_CC
 mdefine_line|#define INIT_C_CC &quot;&bslash;003&bslash;034&bslash;177&bslash;025&bslash;004&bslash;0&bslash;1&bslash;0&bslash;021&bslash;023&bslash;032&bslash;0&bslash;022&bslash;017&bslash;027&bslash;026&bslash;0&quot;
@@ -753,27 +876,13 @@ suffix:semicolon
 multiline_comment|/* serial.c */
 r_extern
 r_int
-id|serial_open
+id|rs_open
 c_func
 (paren
-r_int
-r_int
-id|line
-comma
 r_struct
-id|file
+id|tty_struct
 op_star
-id|filp
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|serial_close
-c_func
-(paren
-r_int
-r_int
-id|line
+id|tty
 comma
 r_struct
 id|file
@@ -791,95 +900,16 @@ r_int
 id|line
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|send_break
-c_func
-(paren
-r_int
-r_int
-id|line
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|get_serial_info
-c_func
-(paren
-r_int
-r_int
-comma
-r_struct
-id|serial_struct
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|set_serial_info
-c_func
-(paren
-r_int
-r_int
-comma
-r_struct
-id|serial_struct
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|get_modem_info
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|set_modem_info
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/* pty.c */
 r_extern
 r_int
 id|pty_open
 c_func
 (paren
-r_int
-r_int
-id|dev
-comma
 r_struct
-id|file
+id|tty_struct
 op_star
-id|filp
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|pty_close
-c_func
-(paren
-r_int
-r_int
-id|dev
+id|tty
 comma
 r_struct
 id|file
@@ -888,6 +918,23 @@ id|filp
 )paren
 suffix:semicolon
 multiline_comment|/* console.c */
+r_extern
+r_int
+id|con_open
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|update_screen
 c_func
@@ -896,6 +943,7 @@ r_int
 id|new_console
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|blank_screen
 c_func
@@ -903,11 +951,37 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|unblank_screen
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+multiline_comment|/* vt.c */
+r_extern
+r_int
+id|vt_ioctl
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
 )paren
 suffix:semicolon
 macro_line|#endif

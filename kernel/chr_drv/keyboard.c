@@ -4,39 +4,41 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
+multiline_comment|/*&n; * The default IO slowdown is doing &squot;inb()&squot;s from 0x61, which should be&n; * safe. But as that is the keyboard controller chip address, we do our&n; * slowdowns here by doing short jumps: the keyboard controller should&n; * be able to keep up&n; */
+DECL|macro|REALLY_SLOW_IO
+mdefine_line|#define REALLY_SLOW_IO
+DECL|macro|SLOW_IO_BY_JUMPING
+mdefine_line|#define SLOW_IO_BY_JUMPING
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|LSHIFT
-mdefine_line|#define LSHIFT   0x01
+mdefine_line|#define LSHIFT&t;&t;0x01
 DECL|macro|RSHIFT
-mdefine_line|#define RSHIFT   0x02
+mdefine_line|#define RSHIFT&t;&t;0x02
 DECL|macro|LCTRL
-mdefine_line|#define LCTRL    0x04
+mdefine_line|#define LCTRL&t;&t;0x04
 DECL|macro|RCTRL
-mdefine_line|#define RCTRL    0x08
+mdefine_line|#define RCTRL&t;&t;0x08
 DECL|macro|ALT
-mdefine_line|#define ALT      0x10
+mdefine_line|#define ALT&t;&t;0x10
 DECL|macro|ALTGR
-mdefine_line|#define ALTGR    0x20
+mdefine_line|#define ALTGR&t;&t;0x20
 DECL|macro|CAPS
-mdefine_line|#define CAPS     0x40
+mdefine_line|#define CAPS&t;&t;0x40
 DECL|macro|CAPSDOWN
-mdefine_line|#define CAPSDOWN 0x80
+mdefine_line|#define CAPSDOWN&t;0x80
 DECL|macro|SCRLED
-mdefine_line|#define SCRLED   0x01
+mdefine_line|#define SCRLED&t;&t;0x01
 DECL|macro|NUMLED
-mdefine_line|#define NUMLED   0x02
+mdefine_line|#define NUMLED&t;&t;0x02
 DECL|macro|CAPSLED
-mdefine_line|#define CAPSLED  0x04
-macro_line|#if defined KBD_NUMERIC_LOCK
-DECL|macro|NUMLED_DEFAULT
-mdefine_line|#define NUMLED_DEFAULT NUMLED
-macro_line|#else
-DECL|macro|NUMLED_DEFAULT
-mdefine_line|#define NUMLED_DEFAULT 0
-macro_line|#endif
+mdefine_line|#define CAPSLED&t;&t;0x04
 DECL|macro|NO_META_BIT
 mdefine_line|#define NO_META_BIT 0x80
+macro_line|#ifndef KBD_DEFLOCK
+DECL|macro|KBD_DEFLOCK
+mdefine_line|#define KBD_DEFLOCK NUMLED
+macro_line|#endif
 DECL|variable|kapplic
 r_int
 r_char
@@ -65,12 +67,19 @@ id|kmode
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|default_kleds
+r_int
+r_char
+id|default_kleds
+op_assign
+id|KBD_DEFLOCK
+suffix:semicolon
 DECL|variable|kleds
 r_int
 r_char
 id|kleds
 op_assign
-id|NUMLED_DEFAULT
+id|KBD_DEFLOCK
 suffix:semicolon
 DECL|variable|ke0
 r_int
@@ -469,6 +478,8 @@ op_logical_neg
 (paren
 id|krepeat
 op_logical_and
+id|tty
+op_logical_and
 (paren
 id|L_ECHO
 c_func
@@ -480,12 +491,14 @@ op_logical_or
 id|EMPTY
 c_func
 (paren
+op_amp
 id|tty-&gt;secondary
 )paren
 op_logical_and
 id|EMPTY
 c_func
 (paren
+op_amp
 id|tty-&gt;read_q
 )paren
 )paren
@@ -528,20 +541,45 @@ r_int
 id|ch
 )paren
 (brace
-r_register
 r_struct
 id|tty_queue
 op_star
 id|qp
+suffix:semicolon
+r_struct
+id|tty_struct
+op_star
+id|tty
 op_assign
-id|table_list
-(braket
+id|TTY_TABLE
+c_func
+(paren
 l_int|0
-)braket
+)paren
 suffix:semicolon
 r_int
 r_int
 id|new_head
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|keypress_wait
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tty
+)paren
+r_return
+suffix:semicolon
+id|qp
+op_assign
+op_amp
+id|tty-&gt;read_q
 suffix:semicolon
 id|qp-&gt;buf
 (braket
@@ -594,16 +632,21 @@ op_star
 id|cp
 )paren
 (brace
-r_register
 r_struct
 id|tty_queue
 op_star
 id|qp
+suffix:semicolon
+r_struct
+id|tty_struct
+op_star
+id|tty
 op_assign
-id|table_list
-(braket
+id|TTY_TABLE
+c_func
+(paren
 l_int|0
-)braket
+)paren
 suffix:semicolon
 r_int
 r_int
@@ -611,6 +654,26 @@ id|new_head
 suffix:semicolon
 r_char
 id|ch
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|keypress_wait
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tty
+)paren
+r_return
+suffix:semicolon
+id|qp
+op_assign
+op_amp
+id|tty-&gt;read_q
 suffix:semicolon
 r_while
 c_loop
@@ -10233,7 +10296,7 @@ id|cur_table
 (braket
 )braket
 op_assign
-l_string|&quot;HA5-DGC+YB623&quot;
+l_string|&quot;1A5-DGC+4B623&quot;
 suffix:semicolon
 DECL|variable|pad_table
 r_static
@@ -10271,7 +10334,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&t;&n;    Keypad /         &t;&t;35&t;B7&t;Q&n;    Keypad *  (PrtSc)&t;&t;37&t;B7&t;R&n;    Keypad NumLock     &t;&t;45&t;??&t;P&n;    Keypad 7  (Home)&t;&t;47&t;C7&t;w&n;    Keypad 8  (Up arrow)&t;48&t;C8&t;x&n;    Keypad 9  (PgUp)&t;&t;49&t;C9&t;y&n;    Keypad -&t;&t;&t;4A&t;CA&t;S&n;    Keypad 4  (Left arrow)&t;4B&t;CB&t;t&n;    Keypad 5&t;&t;&t;4C&t;CC&t;u&n;    Keypad 6  (Right arrow)&t;4D&t;CD&t;v&n;    Keypad +&t;&t;&t;4E&t;CE&t;l&n;    Keypad 1  (End) &t;&t;4F&t;CF&t;q&n;    Keypad 2  (Down arrow)&t;50&t;D0&t;r&n;    Keypad 3  (PgDn)&t;&t;51&t;D1&t;s&n;    Keypad 0  (Ins)&t;&t;52&t;D2&t;p&n;    Keypad .  (Del) &t;&t;53&t;D3&t;n&n;*/
+multiline_comment|/*&n;    Keypad /&t;&t;&t;35&t;B7&t;Q&n;    Keypad *  (PrtSc)&t;&t;37&t;B7&t;R&n;    Keypad NumLock&t;&t;45&t;??&t;P&n;    Keypad 7  (Home)&t;&t;47&t;C7&t;w&n;    Keypad 8  (Up arrow)&t;48&t;C8&t;x&n;    Keypad 9  (PgUp)&t;&t;49&t;C9&t;y&n;    Keypad -&t;&t;&t;4A&t;CA&t;S&n;    Keypad 4  (Left arrow)&t;4B&t;CB&t;t&n;    Keypad 5&t;&t;&t;4C&t;CC&t;u&n;    Keypad 6  (Right arrow)&t;4D&t;CD&t;v&n;    Keypad +&t;&t;&t;4E&t;CE&t;l&n;    Keypad 1  (End)&t;&t;4F&t;CF&t;q&n;    Keypad 2  (Down arrow)&t;50&t;D0&t;r&n;    Keypad 3  (PgDn)&t;&t;51&t;D1&t;s&n;    Keypad 0  (Ins)&t;&t;52&t;D2&t;p&n;    Keypad .  (Del)&t;&t;53&t;D3&t;n&n;*/
 DECL|variable|appl_table
 r_static
 r_int
@@ -10282,14 +10345,21 @@ id|appl_table
 op_assign
 l_string|&quot;wxyStuvlqrspn&quot;
 suffix:semicolon
+multiline_comment|/*&n;  Set up keyboard to generate DEC VT200 F-keys.&n;  DEC F1  - F5  not implemented (DEC HOLD, LOCAL PRINT, SETUP, SW SESS, BREAK)&n;  DEC F6  - F10 are mapped to F6 - F10&n;  DEC F11 - F20 are mapped to Shift-F1 - Shift-F10&n;  DEC HELP and DEC DO are mapped to F11, F12 or Shift- F11, F12.&n;  Regular (?) Linux F1-F5 remain the same.&n;*/
 DECL|variable|func_table
 r_static
 r_char
 op_star
 id|func_table
 (braket
+l_int|2
+)braket
+(braket
+l_int|12
 )braket
 op_assign
+(brace
+multiline_comment|/* DEC F1 - F10 */
 (brace
 l_string|&quot;&bslash;033[[A&quot;
 comma
@@ -10301,19 +10371,47 @@ l_string|&quot;&bslash;033[[D&quot;
 comma
 l_string|&quot;&bslash;033[[E&quot;
 comma
-l_string|&quot;&bslash;033[[F&quot;
+l_string|&quot;&bslash;033[17~&quot;
 comma
-l_string|&quot;&bslash;033[[G&quot;
+l_string|&quot;&bslash;033[18~&quot;
 comma
-l_string|&quot;&bslash;033[[H&quot;
+l_string|&quot;&bslash;033[19~&quot;
 comma
-l_string|&quot;&bslash;033[[I&quot;
+l_string|&quot;&bslash;033[20~&quot;
 comma
-l_string|&quot;&bslash;033[[J&quot;
+l_string|&quot;&bslash;033[21~&quot;
 comma
-l_string|&quot;&bslash;033[[K&quot;
+l_string|&quot;&bslash;033[28~&quot;
 comma
-l_string|&quot;&bslash;033[[L&quot;
+l_string|&quot;&bslash;033[29~&quot;
+)brace
+comma
+multiline_comment|/* DEC F11 - F20 */
+(brace
+l_string|&quot;&bslash;033[23~&quot;
+comma
+l_string|&quot;&bslash;033[24~&quot;
+comma
+l_string|&quot;&bslash;033[25~&quot;
+comma
+l_string|&quot;&bslash;033[26~&quot;
+comma
+l_string|&quot;&bslash;033[28~&quot;
+comma
+l_string|&quot;&bslash;033[29~&quot;
+comma
+l_string|&quot;&bslash;033[31~&quot;
+comma
+l_string|&quot;&bslash;033[32~&quot;
+comma
+l_string|&quot;&bslash;033[33~&quot;
+comma
+l_string|&quot;&bslash;033[34~&quot;
+comma
+l_string|&quot;&bslash;033[28~&quot;
+comma
+l_string|&quot;&bslash;033[29~&quot;
+)brace
 )brace
 suffix:semicolon
 DECL|function|cursor
@@ -10532,6 +10630,7 @@ l_int|3
 op_assign
 l_char|&squot;~&squot;
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -10629,10 +10728,39 @@ id|sc
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|kmode
+op_amp
+(paren
+id|LSHIFT
+op_or
+id|RSHIFT
+)paren
+)paren
+multiline_comment|/* DEC F11 - F20 */
 id|puts_queue
 c_func
 (paren
 id|func_table
+(braket
+l_int|1
+)braket
+(braket
+id|sc
+)braket
+)paren
+suffix:semicolon
+r_else
+multiline_comment|/* DEC F1 - F10 */
+id|puts_queue
+c_func
+(paren
+id|func_table
+(braket
+l_int|0
+)braket
 (braket
 id|sc
 )braket

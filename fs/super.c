@@ -557,9 +557,15 @@ comma
 id|data
 )paren
 )paren
+(brace
+id|s-&gt;s_dev
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 id|s-&gt;s_dev
 op_assign
 id|dev

@@ -2079,6 +2079,7 @@ r_return
 id|SUGGEST_RETRY
 suffix:semicolon
 )brace
+multiline_comment|/* This function is the mid-level interrupt routine, which decides how&n; *  to handle error conditions.  Each invocation of this function must&n; *  do one and *only* one of the following:&n; *&n; *  (1) Call last_cmnd[host].done.  This is done for fatal errors and&n; *      normal completion, and indicates that the handling for this&n; *      request is complete.&n; *  (2) Call internal_cmnd to requeue the command.  This will result in&n; *      scsi_done being called again when the retry is complete.&n; *  (3) Call scsi_request_sense.  This asks the host adapter/drive for&n; *      more information about the error condition.  When the information&n; *      is available, scsi_done will be called again.&n; *  (4) Call reset().  This is sort of a last resort, and the idea is that&n; *      this may kick things loose and get the drive working again.  reset()&n; *      automatically calls scsi_request_sense, and thus scsi_done will be&n; *      called again once the reset is complete.&n; *&n; *      If none of the above actions are taken, the drive in question&n; * will hang. If more than one of the above actions are taken by&n; * scsi_done, then unpredictable behavior will result.&n; */
 DECL|function|scsi_done
 r_static
 r_void
@@ -2284,12 +2285,16 @@ op_amp
 id|WAS_RESET
 )paren
 )paren
+(brace
 id|reset
 c_func
 (paren
 id|host
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_else
 (brace
 m_exit
@@ -2594,6 +2599,9 @@ c_func
 id|host
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#if 0
 m_exit
 op_assign
 id|DRIVER_SOFT
@@ -2606,6 +2614,7 @@ id|MAYREDO
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|printk
@@ -2875,6 +2884,7 @@ op_amp
 id|WAS_RESET
 )paren
 )paren
+(brace
 id|reset
 c_func
 (paren
@@ -2883,6 +2893,7 @@ id|host
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
