@@ -1581,8 +1581,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|root_hub_request_irq
-r_void
-op_star
+r_int
 id|root_hub_request_irq
 c_func
 (paren
@@ -1604,6 +1603,11 @@ comma
 r_void
 op_star
 id|dev_id
+comma
+r_void
+op_star
+op_star
+id|handle
 )paren
 (brace
 r_struct
@@ -1649,7 +1653,9 @@ comma
 id|period
 )paren
 suffix:semicolon
-r_return
+op_star
+id|handle
+op_assign
 id|ohci-&gt;rh.int_addr
 op_assign
 id|usb_to_ohci
@@ -1657,6 +1663,9 @@ c_func
 (paren
 id|usb_dev
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|root_hub_release_irq

@@ -1103,8 +1103,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|member|request_irq
-r_void
-op_star
+r_int
 (paren
 op_star
 id|request_irq
@@ -1122,6 +1121,10 @@ comma
 r_int
 comma
 r_void
+op_star
+comma
+r_void
+op_star
 op_star
 )paren
 suffix:semicolon
@@ -1306,6 +1309,26 @@ op_star
 id|hcpriv
 suffix:semicolon
 multiline_comment|/* Host Controller private data */
+DECL|member|bandwidth_allocated
+r_int
+r_int
+id|bandwidth_allocated
+suffix:semicolon
+multiline_comment|/* on this Host Controller; */
+multiline_comment|/* applies to Int. and Isoc. pipes; */
+multiline_comment|/* measured in microseconds/frame; */
+multiline_comment|/* range is 0..900, where 900 = */
+multiline_comment|/* 90% of a 1-millisecond frame */
+DECL|member|bandwidth_int_reqs
+r_int
+id|bandwidth_int_reqs
+suffix:semicolon
+multiline_comment|/* number of Interrupt requesters */
+DECL|member|bandwidth_isoc_reqs
+r_int
+id|bandwidth_isoc_reqs
+suffix:semicolon
+multiline_comment|/* number of Isoc. requesters */
 multiline_comment|/* procfs entry */
 DECL|member|proc_busnum
 r_int
@@ -1639,8 +1662,7 @@ id|size
 )paren
 suffix:semicolon
 r_extern
-r_void
-op_star
+r_int
 id|usb_request_irq
 c_func
 (paren
@@ -1657,6 +1679,10 @@ r_int
 comma
 r_void
 op_star
+comma
+r_void
+op_star
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -1672,6 +1698,10 @@ comma
 r_void
 op_star
 id|handle
+comma
+r_int
+r_int
+id|pipe
 )paren
 suffix:semicolon
 r_extern
@@ -2163,6 +2193,27 @@ r_int
 id|endp
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Some USB bandwidth allocation constants.&n; */
+DECL|macro|BW_HOST_DELAY
+mdefine_line|#define BW_HOST_DELAY&t;1000L&t;&t;/* nanoseconds */
+DECL|macro|BW_HUB_LS_SETUP
+mdefine_line|#define BW_HUB_LS_SETUP&t;333L&t;&t;/* nanoseconds */
+multiline_comment|/* 4 full-speed bit times (est.) */
+DECL|macro|FRAME_TIME_BITS
+mdefine_line|#define FRAME_TIME_BITS         12000L&t;&t;/* frame = 1 millisecond */
+DECL|macro|FRAME_TIME_MAX_BITS_ALLOC
+mdefine_line|#define FRAME_TIME_MAX_BITS_ALLOC&t;(90L * FRAME_TIME_BITS / 100L)
+DECL|macro|FRAME_TIME_USECS
+mdefine_line|#define FRAME_TIME_USECS&t;1000L
+DECL|macro|FRAME_TIME_MAX_USECS_ALLOC
+mdefine_line|#define FRAME_TIME_MAX_USECS_ALLOC&t;(90L * FRAME_TIME_USECS / 100L)
+DECL|macro|BitTime
+mdefine_line|#define BitTime(bytecount)  (7 * 8 * bytecount / 6)  /* with integer truncation */
+multiline_comment|/* Trying not to use worst-case bit-stuffing&n;                   of (7/6 * 8 * bytecount) = 9.33 * bytecount */
+multiline_comment|/* bytecount = data payload byte count */
+DECL|macro|NS_TO_US
+mdefine_line|#define NS_TO_US(ns)&t;((ns + 500L) / 1000L)
+multiline_comment|/* convert &amp; round nanoseconds to microseconds */
 multiline_comment|/*&n; * Debugging helpers..&n; */
 r_void
 id|usb_show_device_descriptor
@@ -2236,6 +2287,16 @@ r_int
 id|index
 )paren
 suffix:semicolon
+macro_line|#ifdef USB_DEBUG
+DECL|macro|PRINTD
+mdefine_line|#define PRINTD(format, args...) printk(&quot;usb: &quot; format &quot;&bslash;n&quot; , ## args);
+macro_line|#else /* NOT DEBUGGING */
+DECL|macro|PRINTD
+mdefine_line|#define PRINTD(fmt, arg...) do {} while (0) /**/
+macro_line|#endif /* USB_DEBUG */
+multiline_comment|/* A simple way to change one line from DEBUG to NOT DEBUG: */
+DECL|macro|XPRINTD
+mdefine_line|#define XPRINTD(fmt, arg...)&t;do {} while (0)
 multiline_comment|/*&n; * procfs stuff&n; */
 macro_line|#ifdef CONFIG_USB_PROC
 r_void
@@ -2336,6 +2397,6 @@ id|dev
 (brace
 )brace
 macro_line|#endif
-macro_line|#endif  /* __KERNEL */
+macro_line|#endif  /* __KERNEL__ */
 macro_line|#endif
 eof

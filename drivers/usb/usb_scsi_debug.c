@@ -29,6 +29,8 @@ id|srb
 r_char
 op_star
 id|what
+op_assign
+l_int|NULL
 suffix:semicolon
 r_switch
 c_cond

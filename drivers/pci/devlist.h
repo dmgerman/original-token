@@ -3788,6 +3788,15 @@ c_func
 (paren
 id|VIA
 comma
+id|VIA_8501_0
+comma
+l_string|&quot;VT 8501&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
 id|VIA_82C505
 comma
 l_string|&quot;VT 82C505&quot;
@@ -3989,6 +3998,15 @@ comma
 id|VIA_86C100A
 comma
 l_string|&quot;VT 86C100A&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_8501_1
+comma
+l_string|&quot;VT 8501 PCI Bridge&quot;
 )paren
 id|DEVICE
 c_func

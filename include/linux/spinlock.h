@@ -38,7 +38,7 @@ DECL|macro|write_unlock_irq
 mdefine_line|#define write_unlock_irq(lock)&t;&t;&t;do { write_unlock(lock); local_irq_enable();       } while (0)
 DECL|macro|write_unlock_bh
 mdefine_line|#define write_unlock_bh(lock)&t;&t;&t;do { write_unlock(lock); local_bh_enable();        } while (0)
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#else /* !SMP */
 DECL|macro|DEBUG_SPINLOCKS

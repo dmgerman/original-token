@@ -901,6 +901,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 multiline_comment|/* We don&squot;t handle multi-config hubs */
 r_if
 c_cond
@@ -1153,13 +1156,8 @@ op_ge
 l_int|0
 )paren
 (brace
-id|hub-&gt;irq_handle
+id|hub-&gt;irqpipe
 op_assign
-id|usb_request_irq
-c_func
-(paren
-id|dev
-comma
 id|usb_rcvctrlpipe
 c_func
 (paren
@@ -1167,14 +1165,46 @@ id|dev
 comma
 id|endpoint-&gt;bEndpointAddress
 )paren
+suffix:semicolon
+id|ret
+op_assign
+id|usb_request_irq
+c_func
+(paren
+id|dev
+comma
+id|hub-&gt;irqpipe
 comma
 id|hub_irq
 comma
 id|endpoint-&gt;bInterval
 comma
 id|hub
+comma
+op_amp
+id|hub-&gt;irq_handle
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;usb-hub: usb_request_irq failed (0x%x)&bslash;n&quot;
+comma
+id|ret
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: need to free &lt;hub&gt; but first clean up its list. */
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* Wake up khubd */
 id|wake_up
 c_func
@@ -1272,11 +1302,9 @@ c_func
 id|hub-&gt;dev
 comma
 id|hub-&gt;irq_handle
+comma
+id|hub-&gt;irqpipe
 )paren
-suffix:semicolon
-id|hub-&gt;irq_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Free the memory */

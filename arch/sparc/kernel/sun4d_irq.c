@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: sun4d_irq.c,v 1.19 1999/08/31 06:54:25 davem Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
+multiline_comment|/*  $Id: sun4d_irq.c,v 1.20 1999/09/10 10:40:30 davem Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;

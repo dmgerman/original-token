@@ -919,8 +919,7 @@ suffix:semicolon
 )brace
 DECL|function|sohci_request_irq
 r_static
-r_void
-op_star
+r_int
 id|sohci_request_irq
 c_func
 (paren
@@ -942,6 +941,11 @@ comma
 r_void
 op_star
 id|dev_id
+comma
+r_void
+op_star
+op_star
+id|handle
 )paren
 (brace
 r_struct
@@ -997,6 +1001,8 @@ comma
 id|period
 comma
 id|dev_id
+comma
+id|handle
 )paren
 suffix:semicolon
 )brace
@@ -1094,8 +1100,13 @@ comma
 id|ed
 )paren
 suffix:semicolon
-r_return
+op_star
+id|handle
+op_assign
 id|ed
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sohci_release_irq

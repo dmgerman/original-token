@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.54 1999/09/01 08:06:12 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.55 1999/09/10 10:44:44 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -87,11 +87,19 @@ mdefine_line|#define swap_pil(__new_pil) &bslash;&n;({&t;unsigned long retval; &
 DECL|macro|read_pil_and_cli
 mdefine_line|#define read_pil_and_cli() &bslash;&n;({&t;unsigned long retval; &bslash;&n;&t;__asm__ __volatile__(&quot;rdpr&t;%%pil, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;wrpr&t;15, %%pil&quot; &bslash;&n;&t;&t;&t;     : &quot;=r&quot; (retval) &bslash;&n;&t;&t;&t;     : : &quot;memory&quot;); &bslash;&n;&t;retval; &bslash;&n;})
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(flags)&t;((flags) = getipl())
+mdefine_line|#define __save_flags(flags)&t;&t;((flags) = getipl())
 DECL|macro|__save_and_cli
-mdefine_line|#define __save_and_cli(flags)&t;((flags) = read_pil_and_cli())
+mdefine_line|#define __save_and_cli(flags)&t;&t;((flags) = read_pil_and_cli())
 DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(flags)&t;setipl((flags))
+mdefine_line|#define __restore_flags(flags)&t;&t;setipl((flags))
+DECL|macro|local_irq_disable
+mdefine_line|#define local_irq_disable()&t;&t;__cli()
+DECL|macro|local_irq_enable
+mdefine_line|#define local_irq_enable()&t;&t;__sti()
+DECL|macro|local_irq_save
+mdefine_line|#define local_irq_save(flags)&t;&t;__save_and_cli(flags)
+DECL|macro|local_irq_restore
+mdefine_line|#define local_irq_restore(flags)&t;__restore_flags(flags)
 macro_line|#ifndef __SMP__
 DECL|macro|cli
 mdefine_line|#define cli() __cli()

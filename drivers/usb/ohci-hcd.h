@@ -955,8 +955,7 @@ op_star
 id|ed
 )paren
 suffix:semicolon
-r_void
-op_star
+r_int
 id|root_hub_request_irq
 c_func
 (paren
@@ -978,6 +977,11 @@ comma
 r_void
 op_star
 id|dev_id
+comma
+r_void
+op_star
+op_star
+id|handle
 )paren
 suffix:semicolon
 multiline_comment|/* Root-Hub Register info */

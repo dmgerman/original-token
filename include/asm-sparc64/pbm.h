@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pbm.h,v 1.17 1999/08/30 10:14:54 davem Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.18 1999/09/10 10:44:40 davem Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H

@@ -172,194 +172,13 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;membar&t;#StoreStore | #LoadStore&bslash;n&bslash;t&quot;
-l_string|&quot;stb&t;%%g0, [%0]&bslash;n&bslash;t&quot;
-l_string|&quot;membar&t;#StoreStore | #StoreLoad&quot;
+l_string|&quot;stb&t;%%g0, [%0]&quot;
 suffix:colon
 multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|lock
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-)brace
-DECL|function|spin_lock_irq
-r_extern
-id|__inline__
-r_void
-id|spin_lock_irq
-c_func
-(paren
-id|spinlock_t
-op_star
-id|lock
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
-(paren
-"&quot;"
-id|wrpr
-op_mod
-op_mod
-id|g0
-comma
-l_int|15
-comma
-op_mod
-op_mod
-id|pil
-l_int|1
-suffix:colon
-id|ldstub
-(braket
-op_mod
-l_int|0
-)braket
-comma
-op_mod
-op_mod
-id|g7
-id|brnz
-comma
-id|pn
-op_mod
-op_mod
-id|g7
-comma
-l_float|2f
-id|membar
-macro_line|#StoreLoad | #StoreStore
-dot
-id|subsection
-l_int|2
-l_int|2
-suffix:colon
-id|ldub
-(braket
-op_mod
-l_int|0
-)braket
-comma
-op_mod
-op_mod
-id|g7
-id|brnz
-comma
-id|pt
-op_mod
-op_mod
-id|g7
-comma
-l_int|2
-id|b
-id|membar
-macro_line|#LoadLoad
-id|b
-comma
-id|a
-comma
-id|pt
-op_mod
-op_mod
-id|xcc
-comma
-l_int|1
-id|b
-dot
-id|previous
-"&quot;"
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|lock
-)paren
-suffix:colon
-l_string|&quot;g7&quot;
-comma
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-)brace
-DECL|function|spin_unlock_irq
-r_extern
-id|__inline__
-r_void
-id|spin_unlock_irq
-c_func
-(paren
-id|spinlock_t
-op_star
-id|lock
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;membar&t;#StoreStore | #LoadStore&bslash;n&bslash;t&quot;
-l_string|&quot;stb&t;%%g0, [%0]&bslash;n&bslash;t&quot;
-l_string|&quot;membar&t;#StoreStore | #StoreLoad&bslash;n&bslash;t&quot;
-l_string|&quot;wrpr&t;%%g0, 0x0, %%pil&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|lock
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-)brace
-DECL|macro|spin_lock_bh
-mdefine_line|#define spin_lock_bh(__lock)&t;&bslash;&n;do {&t;local_bh_count++;&t;&bslash;&n;&t;spin_lock(__lock);&t;&bslash;&n;} while(0)
-DECL|macro|spin_unlock_bh
-mdefine_line|#define spin_unlock_bh(__lock)&t;&t;&bslash;&n;do {&t;spin_unlock(__lock);&t;&t;&bslash;&n;&t;local_bh_count--;&t;&t;&bslash;&n;} while(0)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(__lock, flags)&t;&t;&t;&bslash;&n;do {&t;register spinlock_t *__lp asm(&quot;g1&quot;);&t;&t;&t;&bslash;&n;&t;__lp = (__lock);&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&bslash;n&t;rdpr&t;&t;%%pil, %0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;wrpr&t;&t;%%g0, 15, %%pil&bslash;n&quot;&t;&t;&bslash;&n;&t;&quot;1:&t;ldstub&t;&t;[%1], %%g7&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;brnz,pn&t;&t;%%g7, 2f&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t; membar&t;&t;#StoreLoad | #StoreStore&bslash;n&quot;&t;&bslash;&n;&t;&quot;&t;.subsection&t;2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&t;ldub&t;&t;[%1], %%g7&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;brnz,pt&t;&t;%%g7, 2b&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t; membar&t;&t;#LoadLoad&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;b,a,pt&t;&t;%%xcc, 1b&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=&amp;r&quot; (flags)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (__lp)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;g7&quot;, &quot;memory&quot;);&t;&t;&t;&t;&t;&bslash;&n;} while(0)
-DECL|function|spin_unlock_irqrestore
-r_extern
-id|__inline__
-r_void
-id|spin_unlock_irqrestore
-c_func
-(paren
-id|spinlock_t
-op_star
-id|lock
-comma
-r_int
-r_int
-id|flags
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;membar&t;#StoreStore | #LoadStore&bslash;n&bslash;t&quot;
-l_string|&quot;stb&t;%%g0, [%0]&bslash;n&bslash;t&quot;
-l_string|&quot;membar&t;#StoreStore | #StoreLoad&bslash;n&bslash;t&quot;
-l_string|&quot;wrpr&t;%1, 0x0, %%pil&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|lock
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|flags
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -430,20 +249,8 @@ DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lp)&t;_spin_trylock(lp)
 DECL|macro|spin_lock
 mdefine_line|#define spin_lock(lock)&t;&t;_do_spin_lock(lock, &quot;spin_lock&quot;)
-DECL|macro|spin_lock_irq
-mdefine_line|#define spin_lock_irq(lock)&t;do { __cli(); _do_spin_lock(lock, &quot;spin_lock_irq&quot;); } while(0)
-DECL|macro|spin_lock_bh
-mdefine_line|#define spin_lock_bh(lock)&t;do { local_bh_count++; _do_spin_lock(lock, &quot;spin_lock_bh&quot;); } while(0)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags) do { __save_and_cli(flags); _do_spin_lock(lock, &quot;spin_lock_irqsave&quot;); } while(0)
 DECL|macro|spin_unlock
 mdefine_line|#define spin_unlock(lock)&t;_do_spin_unlock(lock)
-DECL|macro|spin_unlock_irq
-mdefine_line|#define spin_unlock_irq(lock)&t;do { _do_spin_unlock(lock); __sti(); } while(0)
-DECL|macro|spin_unlock_bh
-mdefine_line|#define spin_unlock_bh(lock)&t;do { _do_spin_unlock(lock); local_bh_count--; } while(0)
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(lock, flags) do { _do_spin_unlock(lock); __restore_flags(flags); } while(0)
 macro_line|#endif /* SPIN_LOCK_DEBUG */
 multiline_comment|/* Multi-reader locks, these are much saner than the 32-bit Sparc ones... */
 macro_line|#ifndef SPIN_LOCK_DEBUG
@@ -463,30 +270,6 @@ DECL|macro|write_lock
 mdefine_line|#define write_lock(__rw_lck) &bslash;&n;do {&t;register rwlock_t *__X asm(&quot;g1&quot;); &bslash;&n;&t;__asm__ __volatile__(&quot;sethi&t;%%hi(__write_lock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;jmpl&t;%%g3 + %%lo(__write_lock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot; nop&bslash;n1:&quot; &bslash;&n;&t;: : &quot;r&quot; (__X = (__rw_lck)) &bslash;&n;&t;  : &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;, &quot;cc&quot;, &quot;memory&quot;); &bslash;&n;} while(0)
 DECL|macro|write_unlock
 mdefine_line|#define write_unlock(__rw_lck) &bslash;&n;do {&t;register rwlock_t *__X asm(&quot;g1&quot;); &bslash;&n;&t;__asm__ __volatile__(&quot;sethi&t;%%hi(__write_unlock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;jmpl&t;%%g3 + %%lo(__write_unlock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot; nop&bslash;n1:&quot; &bslash;&n;&t;: : &quot;r&quot; (__X = (__rw_lck)) &bslash;&n;&t;  : &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;, &quot;cc&quot;, &quot;memory&quot;); &bslash;&n;} while(0)
-DECL|macro|read_lock_irq
-mdefine_line|#define read_lock_irq(lock)&t;do { __cli(); read_lock(lock); } while (0)
-DECL|macro|read_unlock_irq
-mdefine_line|#define read_unlock_irq(lock)&t;do { read_unlock(lock); __sti(); } while (0)
-DECL|macro|read_lock_bh
-mdefine_line|#define read_lock_bh(lock)&t;do { local_bh_count++; read_lock(lock); } while (0)
-DECL|macro|read_unlock_bh
-mdefine_line|#define read_unlock_bh(lock)&t;do { read_unlock(lock); local_bh_count--; } while (0)
-DECL|macro|write_lock_irq
-mdefine_line|#define write_lock_irq(lock)&t;do { __cli(); write_lock(lock); } while (0)
-DECL|macro|write_unlock_irq
-mdefine_line|#define write_unlock_irq(lock)&t;do { write_unlock(lock); __sti(); } while (0)
-DECL|macro|write_lock_bh
-mdefine_line|#define write_lock_bh(lock)&t;do { local_bh_count++; write_lock(lock); } while (0)
-DECL|macro|write_unlock_bh
-mdefine_line|#define write_unlock_bh(lock)&t;do { write_unlock(lock); local_bh_count--; } while (0)
-DECL|macro|read_lock_irqsave
-mdefine_line|#define read_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { __save_and_cli(flags); read_lock(lock); } while (0)
-DECL|macro|read_unlock_irqrestore
-mdefine_line|#define read_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { read_unlock(lock); __restore_flags(flags); } while (0)
-DECL|macro|write_lock_irqsave
-mdefine_line|#define write_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { __save_and_cli(flags); write_lock(lock); } while (0)
-DECL|macro|write_unlock_irqrestore
-mdefine_line|#define write_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { write_unlock(lock); __restore_flags(flags); } while (0)
 macro_line|#else /* !(SPIN_LOCK_DEBUG) */
 r_typedef
 r_struct
@@ -572,36 +355,12 @@ id|rw
 suffix:semicolon
 DECL|macro|read_lock
 mdefine_line|#define read_lock(lock)&t;&bslash;&n;do {&t;unsigned long flags; &bslash;&n;&t;__save_and_cli(flags); &bslash;&n;&t;_do_read_lock(lock, &quot;read_lock&quot;); &bslash;&n;&t;__restore_flags(flags); &bslash;&n;} while(0)
-DECL|macro|read_lock_irq
-mdefine_line|#define read_lock_irq(lock)&t;do { __cli(); _do_read_lock(lock, &quot;read_lock_irq&quot;); } while(0)
-DECL|macro|read_lock_bh
-mdefine_line|#define read_lock_bh(lock)&t;do { local_bh_count++; _do_read_lock(lock, &quot;read_lock_bh&quot;); } while(0)
-DECL|macro|read_lock_irqsave
-mdefine_line|#define read_lock_irqsave(lock, flags) do { __save_and_cli(flags); _do_read_lock(lock, &quot;read_lock_irqsave&quot;); } while(0)
 DECL|macro|read_unlock
 mdefine_line|#define read_unlock(lock) &bslash;&n;do {&t;unsigned long flags; &bslash;&n;&t;__save_and_cli(flags); &bslash;&n;&t;_do_read_unlock(lock, &quot;read_unlock&quot;); &bslash;&n;&t;__restore_flags(flags); &bslash;&n;} while(0)
-DECL|macro|read_unlock_irq
-mdefine_line|#define read_unlock_irq(lock)&t;do { _do_read_unlock(lock, &quot;read_unlock_irq&quot;); __sti() } while(0)
-DECL|macro|read_unlock_bh
-mdefine_line|#define read_unlock_bh(lock)&t;do { _do_read_unlock(lock, &quot;read_unlock_bh&quot;); local_bh_count--; } while(0)
-DECL|macro|read_unlock_irqrestore
-mdefine_line|#define read_unlock_irqrestore(lock, flags) do { _do_read_unlock(lock, &quot;read_unlock_irqrestore&quot;); __restore_flags(flags); } while(0)
 DECL|macro|write_lock
 mdefine_line|#define write_lock(lock) &bslash;&n;do {&t;unsigned long flags; &bslash;&n;&t;__save_and_cli(flags); &bslash;&n;&t;_do_write_lock(lock, &quot;write_lock&quot;); &bslash;&n;&t;__restore_flags(flags); &bslash;&n;} while(0)
-DECL|macro|write_lock_irq
-mdefine_line|#define write_lock_irq(lock)&t;do { __cli(); _do_write_lock(lock, &quot;write_lock_irq&quot;); } while(0)
-DECL|macro|write_lock_bh
-mdefine_line|#define write_lock_bh(lock)&t;do { local_bh_count++; _do_write_lock(lock, &quot;write_lock_bh&quot;); } while(0)
-DECL|macro|write_lock_irqsave
-mdefine_line|#define write_lock_irqsave(lock, flags) do { __save_and_cli(flags); _do_write_lock(lock, &quot;write_lock_irqsave&quot;); } while(0)
 DECL|macro|write_unlock
 mdefine_line|#define write_unlock(lock) &bslash;&n;do {&t;unsigned long flags; &bslash;&n;&t;__save_and_cli(flags); &bslash;&n;&t;_do_write_unlock(lock); &bslash;&n;&t;__restore_flags(flags); &bslash;&n;} while(0)
-DECL|macro|write_unlock_irq
-mdefine_line|#define write_unlock_irq(lock)&t;do { _do_write_unlock(lock); __sti(); } while(0)
-DECL|macro|write_unlock_bh
-mdefine_line|#define write_unlock_bh(lock)&t;do { _do_write_unlock(lock); local_bh_count--; } while(0)
-DECL|macro|write_unlock_irqrestore
-mdefine_line|#define write_unlock_irqrestore(lock, flags) do { _do_write_unlock(lock); __restore_flags(flags); } while(0)
 macro_line|#endif /* SPIN_LOCK_DEBUG */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_SPINLOCK_H) */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.67 1999/08/20 00:27:08 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.68 1999/09/10 05:59:25 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1967,6 +1967,13 @@ id|IFNAMSIZ
 )braket
 suffix:semicolon
 multiline_comment|/* Just fits the size */
+DECL|member|ifru_newname
+r_char
+id|ifru_newname
+(braket
+id|IFNAMSIZ
+)braket
+suffix:semicolon
 DECL|member|ifru_data
 id|__kernel_caddr_t32
 id|ifru_data
@@ -2063,6 +2070,14 @@ id|dev
 r_return
 op_minus
 id|ENODEV
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|ifr32.ifr_name
+comma
+id|dev-&gt;name
+)paren
 suffix:semicolon
 id|err
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_impl.h,v 1.2 1999/09/05 04:58:05 davem Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pci_impl.h,v 1.3 1999/09/10 10:40:44 davem Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef PCI_IMPL_H
 DECL|macro|PCI_IMPL_H
 mdefine_line|#define PCI_IMPL_H

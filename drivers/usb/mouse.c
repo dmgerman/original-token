@@ -452,6 +452,14 @@ c_func
 id|mouse-&gt;dev
 comma
 id|mouse-&gt;irq_handle
+comma
+id|usb_rcvctrlpipe
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|mouse-&gt;bEndpointAddress
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* never keep a reference to a released IRQ! */
@@ -488,6 +496,9 @@ id|mouse
 op_assign
 op_amp
 id|static_mouse_state
+suffix:semicolon
+r_int
+id|ret
 suffix:semicolon
 id|printk
 c_func
@@ -583,7 +594,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* start the usb controller&squot;s polling of the mouse */
-id|mouse-&gt;irq_handle
+id|ret
 op_assign
 id|usb_request_irq
 c_func
@@ -603,8 +614,29 @@ comma
 id|mouse-&gt;bInterval
 comma
 l_int|NULL
+comma
+op_amp
+id|mouse-&gt;irq_handle
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;usb-mouse: usb_request_irq failed (0x%x)&bslash;n&quot;
+comma
+id|ret
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1018,6 +1050,9 @@ op_assign
 op_amp
 id|static_mouse_state
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 multiline_comment|/* We don&squot;t handle multi-config mice */
 r_if
 c_cond
@@ -1221,7 +1256,7 @@ id|__LINE__
 )paren
 suffix:semicolon
 multiline_comment|/* restart the usb controller&squot;s polling of the mouse */
-id|mouse-&gt;irq_handle
+id|ret
 op_assign
 id|usb_request_irq
 c_func
@@ -1241,8 +1276,29 @@ comma
 id|mouse-&gt;bInterval
 comma
 l_int|NULL
+comma
+op_amp
+id|mouse-&gt;irq_handle
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;usb-mouse: usb_request_irq failed (0x%x)&bslash;n&quot;
+comma
+id|ret
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 id|mouse-&gt;suspended
 op_assign
 l_int|0
@@ -1285,6 +1341,14 @@ c_func
 id|mouse-&gt;dev
 comma
 id|mouse-&gt;irq_handle
+comma
+id|usb_rcvctrlpipe
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|mouse-&gt;bEndpointAddress
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* never keep a reference to a released IRQ! */
@@ -1418,6 +1482,14 @@ c_func
 id|mouse-&gt;dev
 comma
 id|mouse-&gt;irq_handle
+comma
+id|usb_rcvctrlpipe
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|mouse-&gt;bEndpointAddress
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* never keep a reference to a released IRQ! */

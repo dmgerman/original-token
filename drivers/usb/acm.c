@@ -865,6 +865,9 @@ id|acm_state
 op_star
 id|acm
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 id|info
 c_func
 (paren
@@ -930,7 +933,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/*Start reading from the device*/
-id|acm-&gt;ctrltransfer
+id|ret
 op_assign
 id|usb_request_irq
 c_func
@@ -944,8 +947,26 @@ comma
 id|acm-&gt;ctrlinterval
 comma
 id|acm
+comma
+op_amp
+id|acm-&gt;ctrltransfer
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;usb-acm: usb_request_irq failed (0x%x)&bslash;n&quot;
+comma
+id|ret
+)paren
+suffix:semicolon
+)brace
 id|acm-&gt;reading
 op_assign
 l_int|1
@@ -1092,7 +1113,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-singleline_comment|//  usb_release_irq(acm-&gt;dev,acm-&gt;ctrltransfer);
+singleline_comment|//  usb_release_irq(acm-&gt;dev,acm-&gt;ctrltransfer, acm-&gt;ctrlpipe);
 id|acm-&gt;active
 op_assign
 l_int|0
@@ -2370,7 +2391,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-singleline_comment|//  usb_release_irq(acm-&gt;dev,acm-&gt;ctrltransfer);
+singleline_comment|//  usb_release_irq(acm-&gt;dev,acm-&gt;ctrltransfer, acm-&gt;ctrlpipe);
 singleline_comment|//BUG: What to do if a device is open?? Notify process or not allow cleanup?
 id|acm-&gt;active
 op_assign

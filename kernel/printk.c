@@ -736,13 +736,6 @@ id|error
 r_goto
 id|out
 suffix:semicolon
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|console_lock
-)paren
-suffix:semicolon
 id|count
 op_assign
 id|len
@@ -757,6 +750,13 @@ id|LOG_BUF_LEN
 id|count
 op_assign
 id|LOG_BUF_LEN
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|console_lock
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -220,6 +220,12 @@ op_star
 id|irq_handle
 suffix:semicolon
 multiline_comment|/* for USB interrupt requests */
+DECL|member|irqpipe
+r_int
+r_int
+id|irqpipe
+suffix:semicolon
+multiline_comment|/* remember pipe for release_irq */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * kernel thread actions&n; */
@@ -1531,10 +1537,6 @@ id|retry
 op_assign
 l_int|5
 suffix:semicolon
-r_void
-op_star
-id|irq_handle
-suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
@@ -1562,7 +1564,7 @@ op_decrement
 (brace
 id|dr.requesttype
 op_assign
-l_int|0x80
+id|USB_DIR_IN
 op_or
 id|USB_TYPE_STANDARD
 op_or
@@ -1718,7 +1720,17 @@ id|us-&gt;ip_wanted
 op_assign
 l_int|1
 suffix:semicolon
-id|irq_handle
+id|us-&gt;irqpipe
+op_assign
+id|usb_rcvctrlpipe
+c_func
+(paren
+id|us-&gt;pusb_dev
+comma
+id|us-&gt;ep_int
+)paren
+suffix:semicolon
+id|result
 op_assign
 id|us-&gt;pusb_dev-&gt;bus-&gt;op
 op_member_access_from_pointer
@@ -1727,13 +1739,7 @@ c_func
 (paren
 id|us-&gt;pusb_dev
 comma
-id|usb_rcvctrlpipe
-c_func
-(paren
-id|us-&gt;pusb_dev
-comma
-id|us-&gt;ep_int
-)paren
+id|us-&gt;irqpipe
 comma
 id|pop_CBI_irq
 comma
@@ -1744,19 +1750,23 @@ r_void
 op_star
 )paren
 id|us
+comma
+op_amp
+id|us-&gt;irq_handle
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|irq_handle
+id|result
 )paren
 (brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;No interrupt for CBI&bslash;n&quot;
+l_string|&quot;usb_scsi: usb_request_irq failed (0x%x), No interrupt for CBI&bslash;n&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 r_return
@@ -1765,10 +1775,6 @@ op_lshift
 l_int|16
 suffix:semicolon
 )brace
-id|us-&gt;irq_handle
-op_assign
-id|irq_handle
-suffix:semicolon
 id|sleep_on
 c_func
 (paren
@@ -2833,11 +2839,17 @@ c_func
 id|us-&gt;pusb_dev
 comma
 id|us-&gt;irq_handle
+comma
+id|us-&gt;irqpipe
 )paren
 suffix:semicolon
 id|us-&gt;irq_handle
 op_assign
 l_int|NULL
+suffix:semicolon
+id|us-&gt;irqpipe
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -3719,6 +3731,8 @@ suffix:semicolon
 r_int
 r_int
 id|saveallocation
+op_assign
+l_int|0
 suffix:semicolon
 r_switch
 c_cond
@@ -3926,6 +3940,8 @@ suffix:semicolon
 r_int
 r_int
 id|length
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* set correct length and retry */
 r_switch
@@ -5181,7 +5197,7 @@ id|i
 dot
 id|bEndpointAddress
 op_amp
-l_int|0x80
+id|USB_DIR_IN
 )paren
 id|ss-&gt;ep_in
 op_assign
@@ -5665,9 +5681,8 @@ id|qstat
 l_int|2
 )braket
 suffix:semicolon
-r_void
-op_star
-id|irq_handle
+r_int
+id|result
 suffix:semicolon
 multiline_comment|/* shuttle E-USB */
 id|dr.requesttype
@@ -5736,7 +5751,17 @@ op_amp
 id|ss-&gt;ip_waitq
 )paren
 suffix:semicolon
-id|irq_handle
+id|ss-&gt;irqpipe
+op_assign
+id|usb_rcvctrlpipe
+c_func
+(paren
+id|ss-&gt;pusb_dev
+comma
+id|ss-&gt;ep_int
+)paren
+suffix:semicolon
+id|result
 op_assign
 id|ss-&gt;pusb_dev-&gt;bus-&gt;op
 op_member_access_from_pointer
@@ -5745,13 +5770,7 @@ c_func
 (paren
 id|ss-&gt;pusb_dev
 comma
-id|usb_rcvctrlpipe
-c_func
-(paren
-id|ss-&gt;pusb_dev
-comma
-id|ss-&gt;ep_int
-)paren
+id|ss-&gt;irqpipe
 comma
 id|pop_CBI_irq
 comma
@@ -5762,21 +5781,19 @@ r_void
 op_star
 )paren
 id|ss
+comma
+op_amp
+id|ss-&gt;irq_handle
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|irq_handle
+id|result
 )paren
 r_return
 op_minus
 l_int|1
-suffix:semicolon
-id|ss-&gt;irq_handle
-op_assign
-id|irq_handle
 suffix:semicolon
 id|interruptible_sleep_on_timeout
 c_func

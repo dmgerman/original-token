@@ -56,6 +56,11 @@ r_void
 op_star
 id|irq_handle
 suffix:semicolon
+DECL|member|irqpipe
+r_int
+r_int
+id|irqpipe
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|variable|usb_audio_driver
@@ -311,7 +316,7 @@ op_assign
 id|aud
 suffix:semicolon
 multiline_comment|/*&n;&t;if (usb_set_configuration(dev, dev-&gt;config[0].bConfigurationValue)) {&n;&t;&t;printk (KERN_INFO &quot;Failed usb_set_configuration: Audio&bslash;n&quot;);&n;&t;&t;break;&n;&t;}&n;&t;usb_set_protocol(dev, 0);&n;&t;usb_set_idle(dev, 0, 0);&n;*/
-multiline_comment|/*&n;&t;aud-&gt;irq_handle = usb_request_irq(dev,&n;&t;&t;usb_rcvctrlpipe(dev, endpoint-&gt;bEndpointAddress),&n;&t;&t;usb_audio_irq,&n;&t;&t;endpoint-&gt;bInterval,&n;&t;&t;aud);&n;*/
+multiline_comment|/*&n;&t;aud-&gt;irqpipe = usb_rcvctrlpipe(dev, endpoint-&gt;bEndpointAddress);&n;&t;na = usb_request_irq(dev, aud-&gt;irqpipe,&n;&t;&t;usb_audio_irq, endpoint-&gt;bInterval,&n;&t;&t;aud, &amp;aud-&gt;irq_handle);&n;&t;if (na) {&n;&t;&t;printk (KERN_WARNING &quot;usb-audio: usb_request_irq failed (0x%x)&bslash;n&quot;, na);&n;&t;}&n;*/
 id|list_add
 c_func
 (paren
@@ -373,11 +378,9 @@ c_func
 id|aud-&gt;dev
 comma
 id|aud-&gt;irq_handle
+comma
+id|aud-&gt;irqpipe
 )paren
-suffix:semicolon
-id|aud-&gt;irq_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 id|kfree
 c_func

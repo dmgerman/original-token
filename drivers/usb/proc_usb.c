@@ -28,6 +28,15 @@ op_assign
 multiline_comment|/* T:  Lev=dd Prnt=dd Port=dd Cnt=dd Dev#=ddd Spd=ddd If#=ddd MxCh=dd Driver=%s */
 l_string|&quot;T:  Lev=%2.2d Prnt=%2.2d Port=%2.2d Cnt=%2.2d Dev#=%3d Spd=%3s If#=%3d MxCh=%2d Driver=%s&bslash;n&quot;
 suffix:semicolon
+DECL|variable|format_bandwidth
+r_static
+r_char
+op_star
+id|format_bandwidth
+op_assign
+multiline_comment|/* B:  Alloc=ddd/ddd us (xx%), #Int=ddd, #Iso=ddd */
+l_string|&quot;B:  Alloc=%3d/%3d us (%2d%%), #Int=%3d, #Iso=%3d&bslash;n&quot;
+suffix:semicolon
 DECL|variable|format_device1
 r_static
 r_char
@@ -542,7 +551,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* TBD:&n; * 0. TBDs&n; * 1. marking active config and ifaces (code lists all, but should mark&n; *    which ones are active, if any)&n; * 2. Add proc_usb_init() call from usb-core.c.&n; * 3. proc_usb as a MODULE ?&n; * 4. use __init ?&n; * 5. add &lt;halted&gt; status to each endpoint line&n; */
+multiline_comment|/* TBD:&n; * 0. TBDs&n; * 1. marking active config and ifaces (code lists all, but should mark&n; *    which ones are active, if any)&n; * 2. add &lt;halted&gt; status to each endpoint line&n; */
 DECL|function|usb_dump_config_descriptor
 r_static
 r_int
@@ -960,6 +969,68 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|usb_hcd_bandwidth
+r_static
+r_int
+id|usb_hcd_bandwidth
+(paren
+r_const
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+op_star
+id|len
+)paren
+(brace
+op_star
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|buf
+op_plus
+op_star
+id|len
+comma
+id|format_bandwidth
+comma
+id|dev-&gt;bus-&gt;bandwidth_allocated
+comma
+id|FRAME_TIME_MAX_USECS_ALLOC
+comma
+l_int|100
+op_star
+id|dev-&gt;bus-&gt;bandwidth_allocated
+op_div
+id|FRAME_TIME_MAX_USECS_ALLOC
+comma
+id|dev-&gt;bus-&gt;bandwidth_int_reqs
+comma
+id|dev-&gt;bus-&gt;bandwidth_isoc_reqs
+)paren
+suffix:semicolon
+r_return
+(paren
+op_star
+id|len
+op_ge
+id|DUMP_LIMIT
+)paren
+ques
+c_cond
+op_minus
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#ifdef PROC_EXTRA /* TBD: may want to add this code later */
 DECL|function|usb_dump_hub_descriptor
 r_static
@@ -1293,6 +1364,28 @@ r_if
 c_cond
 (paren
 id|usb_dump_desc
+(paren
+id|usbdev
+comma
+id|buf
+comma
+id|len
+)paren
+OL
+l_int|0
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* for a host controller */
+r_if
+c_cond
+(paren
+id|usb_hcd_bandwidth
 (paren
 id|usbdev
 comma
@@ -4082,32 +4175,5 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef PROCFS_MODULE /* TBD: support proc_fs MODULE ??? */
-DECL|function|init_module
-r_int
-id|init_module
-(paren
-r_void
-)paren
-(brace
-r_return
-id|proc_usb_init
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-(paren
-r_void
-)paren
-(brace
-id|proc_usb_cleanup
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* PROCFS_MODULE */
 multiline_comment|/* end proc_usb.c */
 eof

@@ -10714,6 +10714,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PCMCIA_3C589
+id|init_3c589_cs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PCMCIA_RAYCS
 id|init_ray_cs
 c_func

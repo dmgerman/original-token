@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * drivers/video/clgenfb.c - driver for Cirrus Logic chipsets&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@pobox.com&gt;&n; *&n; * Contributors (thanks, all!)&n; *&n; *      Jeff Rugen:&n; *      Major contributions;  Motorola PowerStack (PPC and PCI) support,&n; *      GD54xx, 1280x1024 mode support, change MCLK based on VCLK.&n; *&n; *&t;Geert Uytterhoeven:&n; *&t;Excellent code review.&n; *&n; *&t;Lars Hecking:&n; *&t;Amiga updates and testing.&n; *&n; * Original clgenfb author:  Frank Neumann&n; *&n; * Based on retz3fb.c and clgen.c:&n; *      Copyright (C) 1997 Jes Sorensen&n; *      Copyright (C) 1996 Frank Neumann&n; *&n; ***************************************************************&n; *&n; * Format this code with GNU indent &squot;-kr -i8 -pcs&squot; options.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
 DECL|macro|CLGEN_VERSION
-mdefine_line|#define CLGEN_VERSION &quot;1.9.4.3&quot;
+mdefine_line|#define CLGEN_VERSION &quot;1.9.4.4&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -35,6 +36,7 @@ macro_line|#include &lt;video/fbcon-cfb24.h&gt;
 macro_line|#include &lt;video/fbcon-cfb32.h&gt;
 macro_line|#include &quot;clgenfb.h&quot;
 macro_line|#include &quot;vga.h&quot;
+multiline_comment|/*****************************************************************&n; *&n; * compatibility with older kernel versions&n; *&n; */
 macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
@@ -42,6 +44,11 @@ macro_line|#ifndef KERNEL_VERSION
 DECL|macro|KERNEL_VERSION
 mdefine_line|#define KERNEL_VERSION(x,y,z) (((x)&lt;&lt;16)+((y)&lt;&lt;8)+(z))
 macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_CIRRUS_5462
+DECL|macro|PCI_DEVICE_ID_CIRRUS_5462
+mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5462      0x00d0
+macro_line|#endif
+multiline_comment|/*****************************************************************&n; *&n; * debugging and utility macros&n; *&n; */
 multiline_comment|/* enable debug output? */
 multiline_comment|/* #define CLGEN_DEBUG 1 */
 multiline_comment|/* disable runtime assertions? */
@@ -80,6 +87,7 @@ DECL|macro|MB_
 mdefine_line|#define MB_ (1024*1024)
 DECL|macro|MAX_NUM_BOARDS
 mdefine_line|#define MAX_NUM_BOARDS 7
+multiline_comment|/*****************************************************************&n; *&n; * chipset information&n; *&n; */
 multiline_comment|/* board types */
 r_typedef
 r_enum
@@ -112,6 +120,10 @@ multiline_comment|/* GD543x/4x */
 DECL|enumerator|BT_GD5480
 id|BT_GD5480
 comma
+DECL|enumerator|BT_LAGUNA
+id|BT_LAGUNA
+comma
+multiline_comment|/* GD546x */
 DECL|typedef|clgen_board_t
 )brace
 id|clgen_board_t
@@ -139,9 +151,16 @@ r_int
 id|maxclock
 suffix:semicolon
 multiline_comment|/* maximum video clock */
-DECL|member|write_sr1f
+DECL|member|init_sr07
 r_int
-id|write_sr1f
+id|init_sr07
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* init SR07 during init_vgachip() */
+DECL|member|init_sr1f
+r_int
+id|init_sr1f
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -153,18 +172,38 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* construct bit 19 of screen start address */
+multiline_comment|/* initial SR07 value, then for each mode */
 DECL|member|sr07
 r_int
 r_char
 id|sr07
 suffix:semicolon
-multiline_comment|/* SR07 VGA register value */
+DECL|member|sr07_1bpp
+r_int
+r_char
+id|sr07_1bpp
+suffix:semicolon
+DECL|member|sr07_1bpp_mux
+r_int
+r_char
+id|sr07_1bpp_mux
+suffix:semicolon
+DECL|member|sr07_8bpp
+r_int
+r_char
+id|sr07_8bpp
+suffix:semicolon
+DECL|member|sr07_8bpp_mux
+r_int
+r_char
+id|sr07_8bpp_mux
+suffix:semicolon
 DECL|member|sr1f
 r_int
 r_char
 id|sr1f
 suffix:semicolon
-multiline_comment|/* SR1F VGA register value */
+multiline_comment|/* SR1F VGA initial register value */
 DECL|variable|clgen_board_info
 )brace
 id|clgen_board_info
@@ -190,8 +229,20 @@ id|TRUE
 comma
 id|TRUE
 comma
-l_int|0xf0
+id|TRUE
 comma
+l_int|0xF0
+comma
+l_int|0xF0
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
+l_int|0xF1
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
 l_int|0x20
 )brace
 comma
@@ -204,10 +255,22 @@ l_int|90000
 comma
 id|TRUE
 comma
+id|TRUE
+comma
 id|FALSE
 comma
 l_int|0x80
 comma
+l_int|0x80
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
+l_int|0x81
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
 l_int|0x22
 )brace
 comma
@@ -220,10 +283,22 @@ l_int|90000
 comma
 id|TRUE
 comma
+id|TRUE
+comma
 id|FALSE
 comma
 l_int|0x20
 comma
+l_int|0x20
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
+l_int|0x21
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
 l_int|0x22
 )brace
 comma
@@ -236,10 +311,22 @@ l_int|90000
 comma
 id|TRUE
 comma
+id|TRUE
+comma
 id|FALSE
 comma
 l_int|0x80
 comma
+l_int|0x80
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
+l_int|0x81
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
 l_int|0x22
 )brace
 comma
@@ -251,12 +338,24 @@ comma
 l_int|140000
 comma
 multiline_comment|/* the SD64/P4 have a higher max. videoclock */
+id|TRUE
+comma
 id|FALSE
 comma
 id|TRUE
 comma
 l_int|0x20
 comma
+l_int|0x20
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
+l_int|0x21
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
 l_int|0
 )brace
 comma
@@ -272,7 +371,17 @@ id|TRUE
 comma
 id|TRUE
 comma
+id|TRUE
+comma
 l_int|0xA0
+comma
+l_int|0xA1
+comma
+l_int|0xA7
+comma
+l_int|0xA1
+comma
+l_int|0xA7
 comma
 l_int|0x1C
 )brace
@@ -288,11 +397,55 @@ id|TRUE
 comma
 id|TRUE
 comma
+id|TRUE
+comma
 l_int|0x10
 comma
+l_int|0x11
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
+l_int|0x11
+comma
+l_int|0
+comma
+multiline_comment|/* unused, does not multiplex */
 l_int|0x1C
 )brace
 comma
+(brace
+id|BT_LAGUNA
+comma
+l_string|&quot;CL Laguna&quot;
+comma
+l_int|135100
+comma
+id|FALSE
+comma
+id|FALSE
+comma
+id|TRUE
+comma
+l_int|0
+comma
+multiline_comment|/* unused */
+l_int|0
+comma
+multiline_comment|/* unused */
+l_int|0
+comma
+multiline_comment|/* unused */
+l_int|0
+comma
+multiline_comment|/* unused */
+l_int|0
+comma
+multiline_comment|/* unused */
+l_int|0
+)brace
+comma
+multiline_comment|/* unused */
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_PCI
@@ -305,6 +458,13 @@ DECL|member|btype
 id|clgen_board_t
 id|btype
 suffix:semicolon
+DECL|member|nameOverride
+r_const
+r_char
+op_star
+id|nameOverride
+suffix:semicolon
+multiline_comment|/* XXX unused... for now */
 DECL|member|device
 r_int
 r_int
@@ -321,11 +481,15 @@ op_assign
 (brace
 id|BT_ALPINE
 comma
+l_int|NULL
+comma
 id|PCI_DEVICE_ID_CIRRUS_5436
 )brace
 comma
 (brace
 id|BT_ALPINE
+comma
+l_int|NULL
 comma
 id|PCI_DEVICE_ID_CIRRUS_5434_8
 )brace
@@ -333,11 +497,15 @@ comma
 (brace
 id|BT_ALPINE
 comma
+l_int|NULL
+comma
 id|PCI_DEVICE_ID_CIRRUS_5434_4
 )brace
 comma
 (brace
 id|BT_ALPINE
+comma
+l_int|NULL
 comma
 id|PCI_DEVICE_ID_CIRRUS_5430
 )brace
@@ -346,6 +514,8 @@ multiline_comment|/* GD-5440 has identical id */
 (brace
 id|BT_GD5480
 comma
+l_int|NULL
+comma
 id|PCI_DEVICE_ID_CIRRUS_5480
 )brace
 comma
@@ -353,10 +523,36 @@ multiline_comment|/* MacPicasso probably */
 (brace
 id|BT_PICASSO4
 comma
+l_int|NULL
+comma
 id|PCI_DEVICE_ID_CIRRUS_5446
 )brace
 comma
 multiline_comment|/* Picasso 4 is a GD5446 */
+(brace
+id|BT_LAGUNA
+comma
+l_string|&quot;CL Laguna&quot;
+comma
+id|PCI_DEVICE_ID_CIRRUS_5462
+)brace
+comma
+(brace
+id|BT_LAGUNA
+comma
+l_string|&quot;CL Laguna 3D&quot;
+comma
+id|PCI_DEVICE_ID_CIRRUS_5464
+)brace
+comma
+(brace
+id|BT_LAGUNA
+comma
+l_string|&quot;CL Laguna 3DA&quot;
+comma
+id|PCI_DEVICE_ID_CIRRUS_5465
+)brace
+comma
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_PCI */
@@ -606,6 +802,28 @@ DECL|member|currentmode
 r_struct
 id|clgenfb_par
 id|currentmode
+suffix:semicolon
+DECL|member|red
+DECL|member|green
+DECL|member|blue
+DECL|member|pad
+DECL|member|palette
+r_struct
+(brace
+id|u8
+id|red
+comma
+id|green
+comma
+id|blue
+comma
+id|pad
+suffix:semicolon
+)brace
+id|palette
+(braket
+l_int|256
+)braket
 suffix:semicolon
 r_union
 (brace
@@ -1732,6 +1950,7 @@ r_char
 id|blue
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_static
 r_void
 id|RClut
@@ -1761,6 +1980,7 @@ op_star
 id|blue
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|clgen_WaitBLT
@@ -4019,6 +4239,12 @@ op_star
 )paren
 id|info
 suffix:semicolon
+r_const
+r_struct
+id|clgen_board_info_rec
+op_star
+id|bi
+suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;ENTER&bslash;n&quot;
@@ -4041,6 +4267,14 @@ l_string|&quot;pixclock: %d&bslash;n&quot;
 comma
 id|_par-&gt;var.pixclock
 )paren
+suffix:semicolon
+id|bi
+op_assign
+op_amp
+id|clgen_board_info
+(braket
+id|fb_info-&gt;btype
+)braket
 suffix:semicolon
 multiline_comment|/* unlock register VGA_CRTC_H_TOTAL..CRT7 */
 id|vga_wcrt
@@ -4753,6 +4987,7 @@ l_int|31
 )paren
 suffix:semicolon
 multiline_comment|/* text cursor end line */
+multiline_comment|/******************************************************&n;&t; *&n;&t; * 1 bpp&n;&t; *&n;&t; */
 multiline_comment|/* programming for different color depths */
 r_if
 c_cond
@@ -4777,6 +5012,93 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* mode register */
+multiline_comment|/* SR07 */
+r_switch
+c_cond
+(paren
+id|fb_info-&gt;btype
+)paren
+(brace
+r_case
+id|BT_SD64
+suffix:colon
+r_case
+id|BT_PICCOLO
+suffix:colon
+r_case
+id|BT_PICASSO
+suffix:colon
+r_case
+id|BT_SPECTRUM
+suffix:colon
+r_case
+id|BT_PICASSO4
+suffix:colon
+r_case
+id|BT_ALPINE
+suffix:colon
+r_case
+id|BT_GD5480
+suffix:colon
+id|DPRINTK
+(paren
+l_string|&quot; (for GD54xx)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|vga_wseq
+(paren
+id|fb_info-&gt;regs
+comma
+id|CL_SEQR7
+comma
+id|_par-&gt;multiplexing
+ques
+c_cond
+id|bi-&gt;sr07_1bpp_mux
+suffix:colon
+id|bi-&gt;sr07_1bpp
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|BT_LAGUNA
+suffix:colon
+id|DPRINTK
+(paren
+l_string|&quot; (for GD546x)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|vga_wseq
+(paren
+id|fb_info-&gt;regs
+comma
+id|CL_SEQR7
+comma
+id|vga_rseq
+(paren
+id|fb_info-&gt;regs
+comma
+id|CL_SEQR7
+)paren
+op_amp
+op_complement
+l_int|0x01
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;clgen: unknown Board&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* Extended Sequencer Mode */
 r_switch
 c_cond
@@ -4797,15 +5119,6 @@ id|vga_wseq
 (paren
 id|fb_info-&gt;regs
 comma
-id|CL_SEQR7
-comma
-l_int|0xf0
-)paren
-suffix:semicolon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
 id|CL_SEQR1F
 comma
 l_int|0x1a
@@ -4820,15 +5133,6 @@ suffix:colon
 id|DPRINTK
 (paren
 l_string|&quot;(for Piccolo)&bslash;n&quot;
-)paren
-suffix:semicolon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0x80
 )paren
 suffix:semicolon
 multiline_comment|/* ### ueberall 0x22? */
@@ -4866,15 +5170,6 @@ id|vga_wseq
 (paren
 id|fb_info-&gt;regs
 comma
-id|CL_SEQR7
-comma
-l_int|0x20
-)paren
-suffix:semicolon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
 id|CL_SEQR1F
 comma
 l_int|0x22
@@ -4899,15 +5194,6 @@ suffix:colon
 id|DPRINTK
 (paren
 l_string|&quot;(for Spectrum)&bslash;n&quot;
-)paren
-suffix:semicolon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0x80
 )paren
 suffix:semicolon
 multiline_comment|/* ### ueberall 0x22? */
@@ -4936,77 +5222,21 @@ suffix:semicolon
 r_case
 id|BT_PICASSO4
 suffix:colon
-id|DPRINTK
-(paren
-l_string|&quot;(for Picasso 4)&bslash;n&quot;
-)paren
-suffix:semicolon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0x20
-)paren
-suffix:semicolon
-multiline_comment|/*                      vga_wseq(fb_info-&gt;regs, CL_SEQR1F, 0x1c); */
-multiline_comment|/* SEQRF not being set here...  vga_wseq(fb_info-&gt;regs, CL_SEQRF, 0xd0); */
-r_break
-suffix:semicolon
 r_case
 id|BT_ALPINE
 suffix:colon
-id|DPRINTK
-(paren
-l_string|&quot; (for GD543x)&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|_par-&gt;multiplexing
-)paren
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0xa7
-)paren
-suffix:semicolon
-r_else
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0xa1
-)paren
-suffix:semicolon
-multiline_comment|/* We already set SRF and SR1F */
-r_break
-suffix:semicolon
 r_case
 id|BT_GD5480
 suffix:colon
+r_case
+id|BT_LAGUNA
+suffix:colon
 id|DPRINTK
 (paren
-l_string|&quot; (for GD5480)&bslash;n&quot;
+l_string|&quot; (for GD54xx)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0x11
-)paren
-suffix:semicolon
-multiline_comment|/* We already set SRF and SR1F */
+multiline_comment|/* do nothing */
 r_break
 suffix:semicolon
 r_default
@@ -5079,6 +5309,7 @@ op_div
 l_int|16
 suffix:semicolon
 )brace
+multiline_comment|/******************************************************&n;&t; *&n;&t; * 8 bpp&n;&t; *&n;&t; */
 r_else
 r_if
 c_cond
@@ -5102,16 +5333,91 @@ id|fb_info-&gt;btype
 r_case
 id|BT_SD64
 suffix:colon
+r_case
+id|BT_PICCOLO
+suffix:colon
+r_case
+id|BT_PICASSO
+suffix:colon
+r_case
+id|BT_SPECTRUM
+suffix:colon
+r_case
+id|BT_PICASSO4
+suffix:colon
+r_case
+id|BT_ALPINE
+suffix:colon
+r_case
+id|BT_GD5480
+suffix:colon
+id|DPRINTK
+(paren
+l_string|&quot; (for GD54xx)&bslash;n&quot;
+)paren
+suffix:semicolon
 id|vga_wseq
 (paren
 id|fb_info-&gt;regs
 comma
 id|CL_SEQR7
 comma
-l_int|0xf1
+id|_par-&gt;multiplexing
+ques
+c_cond
+id|bi-&gt;sr07_8bpp_mux
+suffix:colon
+id|bi-&gt;sr07_8bpp
 )paren
 suffix:semicolon
-multiline_comment|/* Extended Sequencer Mode: 256c col. mode */
+r_break
+suffix:semicolon
+r_case
+id|BT_LAGUNA
+suffix:colon
+id|DPRINTK
+(paren
+l_string|&quot; (for GD546x)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|vga_wseq
+(paren
+id|fb_info-&gt;regs
+comma
+id|CL_SEQR7
+comma
+id|vga_rseq
+(paren
+id|fb_info-&gt;regs
+comma
+id|CL_SEQR7
+)paren
+op_or
+l_int|0x01
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;clgen: unknown Board&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|fb_info-&gt;btype
+)paren
+(brace
+r_case
+id|BT_SD64
+suffix:colon
 id|vga_wseq
 (paren
 id|fb_info-&gt;regs
@@ -5127,15 +5433,6 @@ suffix:semicolon
 r_case
 id|BT_PICCOLO
 suffix:colon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0x81
-)paren
-suffix:semicolon
 id|vga_wseq
 (paren
 id|fb_info-&gt;regs
@@ -5165,15 +5462,6 @@ id|vga_wseq
 (paren
 id|fb_info-&gt;regs
 comma
-id|CL_SEQR7
-comma
-l_int|0x21
-)paren
-suffix:semicolon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
 id|CL_SEQR1F
 comma
 l_int|0x22
@@ -5195,15 +5483,6 @@ suffix:semicolon
 r_case
 id|BT_SPECTRUM
 suffix:colon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0x81
-)paren
-suffix:semicolon
 id|vga_wseq
 (paren
 id|fb_info-&gt;regs
@@ -5233,15 +5512,6 @@ id|vga_wseq
 (paren
 id|fb_info-&gt;regs
 comma
-id|CL_SEQR7
-comma
-l_int|0x21
-)paren
-suffix:semicolon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
 id|CL_SEQRF
 comma
 l_int|0xb8
@@ -5259,30 +5529,6 @@ id|DPRINTK
 l_string|&quot; (for GD543x)&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|_par-&gt;multiplexing
-)paren
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0xa7
-)paren
-suffix:semicolon
-r_else
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0xa1
-)paren
-suffix:semicolon
 id|clgen_set_mclk
 (paren
 id|fb_info
@@ -5298,21 +5544,15 @@ suffix:semicolon
 r_case
 id|BT_GD5480
 suffix:colon
+r_case
+id|BT_LAGUNA
+suffix:colon
 id|DPRINTK
 (paren
-l_string|&quot; (for GD5480)&bslash;n&quot;
+l_string|&quot; (for GD54xx)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|vga_wseq
-(paren
-id|fb_info-&gt;regs
-comma
-id|CL_SEQR7
-comma
-l_int|0x11
-)paren
-suffix:semicolon
-multiline_comment|/* We already set SRF and SR1F */
+multiline_comment|/* do nothing */
 r_break
 suffix:semicolon
 r_default
@@ -5395,6 +5635,7 @@ op_div
 l_int|8
 suffix:semicolon
 )brace
+multiline_comment|/******************************************************&n;&t; *&n;&t; * 16 bpp&n;&t; *&n;&t; */
 r_else
 r_if
 c_cond
@@ -5622,6 +5863,33 @@ suffix:semicolon
 multiline_comment|/* We already set SRF and SR1F */
 r_break
 suffix:semicolon
+r_case
+id|BT_LAGUNA
+suffix:colon
+id|DPRINTK
+(paren
+l_string|&quot; (for GD546x)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|vga_wseq
+(paren
+id|fb_info-&gt;regs
+comma
+id|CL_SEQR7
+comma
+id|vga_rseq
+(paren
+id|fb_info-&gt;regs
+comma
+id|CL_SEQR7
+)paren
+op_amp
+op_complement
+l_int|0x01
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
@@ -5699,6 +5967,7 @@ op_div
 l_int|4
 suffix:semicolon
 )brace
+multiline_comment|/******************************************************&n;&t; *&n;&t; * 32 bpp&n;&t; *&n;&t; */
 r_else
 r_if
 c_cond
@@ -5909,6 +6178,33 @@ suffix:semicolon
 multiline_comment|/* We already set SRF and SR1F */
 r_break
 suffix:semicolon
+r_case
+id|BT_LAGUNA
+suffix:colon
+id|DPRINTK
+(paren
+l_string|&quot; (for GD546x)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|vga_wseq
+(paren
+id|fb_info-&gt;regs
+comma
+id|CL_SEQR7
+comma
+id|vga_rseq
+(paren
+id|fb_info-&gt;regs
+comma
+id|CL_SEQR7
+)paren
+op_amp
+op_complement
+l_int|0x01
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
@@ -5975,7 +6271,9 @@ op_div
 l_int|4
 suffix:semicolon
 )brace
+multiline_comment|/******************************************************&n;&t; *&n;&t; * unknown/unsupported bpp&n;&t; *&n;&t; */
 r_else
+(brace
 id|printk
 (paren
 id|KERN_ERR
@@ -5984,6 +6282,7 @@ comma
 id|_par-&gt;var.bits_per_pixel
 )paren
 suffix:semicolon
+)brace
 id|vga_wcrt
 (paren
 id|fb_info-&gt;regs
@@ -6322,14 +6621,6 @@ op_star
 id|info
 )paren
 (brace
-r_int
-r_char
-id|bred
-comma
-id|bgreen
-comma
-id|bblue
-suffix:semicolon
 r_struct
 id|clgenfb_info
 op_star
@@ -6350,87 +6641,37 @@ OG
 l_int|255
 )paren
 r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-id|RClut
-(paren
-id|fb_info
-comma
-id|regno
-comma
-op_amp
-id|bred
-comma
-op_amp
-id|bgreen
-comma
-op_amp
-id|bblue
-)paren
+l_int|1
 suffix:semicolon
 op_star
 id|red
 op_assign
-(paren
-id|bred
-op_lshift
-l_int|10
-)paren
-op_or
-(paren
-id|bred
-op_lshift
-l_int|4
-)paren
-op_or
-(paren
-id|bred
-op_rshift
-l_int|2
-)paren
+id|fb_info-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|red
 suffix:semicolon
 op_star
 id|green
 op_assign
-(paren
-id|bgreen
-op_lshift
-l_int|10
-)paren
-op_or
-(paren
-id|bgreen
-op_lshift
-l_int|4
-)paren
-op_or
-(paren
-id|bgreen
-op_rshift
-l_int|2
-)paren
+id|fb_info-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|green
 suffix:semicolon
 op_star
 id|blue
 op_assign
-(paren
-id|bblue
-op_lshift
-l_int|10
-)paren
-op_or
-(paren
-id|bblue
-op_lshift
-l_int|4
-)paren
-op_or
-(paren
-id|bblue
-op_rshift
-l_int|2
-)paren
+id|fb_info-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|blue
 suffix:semicolon
 op_star
 id|transp
@@ -6490,13 +6731,13 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#ifdef FBCON_HAS_CFB8
 r_switch
 c_cond
 (paren
 id|fb_info-&gt;currentmode.var.bits_per_pixel
 )paren
 (brace
-macro_line|#ifdef FBCON_HAS_CFB8
 r_case
 l_int|8
 suffix:colon
@@ -6522,7 +6763,56 @@ l_int|10
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
+r_default
+suffix:colon
+multiline_comment|/* do nothing */
+r_break
+suffix:semicolon
+)brace
+macro_line|#endif&t;/* FBCON_HAS_CFB8 */
+id|fb_info-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|red
+op_assign
+id|red
+suffix:semicolon
+id|fb_info-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_assign
+id|green
+suffix:semicolon
+id|fb_info-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+op_assign
+id|blue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|regno
+op_ge
+l_int|16
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|fb_info-&gt;currentmode.var.bits_per_pixel
+)paren
+(brace
 macro_line|#ifdef FBCON_HAS_CFB16
 r_case
 l_int|16
@@ -6617,7 +6907,44 @@ l_int|11
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* FBCON_HAS_CFB16 */
+macro_line|#ifdef FBCON_HAS_CFB24
+r_case
+l_int|24
+suffix:colon
+m_assert
+(paren
+id|regno
+OL
+l_int|16
+)paren
+suffix:semicolon
+id|fb_info-&gt;fbcon_cmap.cfb24
+(braket
+id|regno
+)braket
+op_assign
+(paren
+id|red
+op_lshift
+id|fb_info-&gt;currentmode.var.red.offset
+)paren
+op_or
+(paren
+id|green
+op_lshift
+id|fb_info-&gt;currentmode.var.green.offset
+)paren
+op_or
+(paren
+id|blue
+op_lshift
+id|fb_info-&gt;currentmode.var.blue.offset
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif /* FBCON_HAS_CFB24 */
 macro_line|#ifdef FBCON_HAS_CFB32
 r_case
 l_int|32
@@ -6663,7 +6990,7 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#else
 id|fb_info-&gt;fbcon_cmap.cfb32
 (braket
 id|regno
@@ -6698,6 +7025,14 @@ l_int|8
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
+macro_line|#endif /* FBCON_HAS_CFB32 */
+r_default
+suffix:colon
+multiline_comment|/* do nothing */
+r_break
+suffix:semicolon
 )brace
 r_return
 l_int|0
@@ -7689,6 +8024,11 @@ l_int|0x0e
 suffix:semicolon
 multiline_comment|/* memory mode: chain-4, no odd/even, ext. memory */
 multiline_comment|/* controller-internal base address of video memory */
+r_if
+c_cond
+(paren
+id|bi-&gt;init_sr07
+)paren
 id|vga_wseq
 (paren
 id|fb_info-&gt;regs
@@ -7774,7 +8114,7 @@ multiline_comment|/* MCLK select etc. */
 r_if
 c_cond
 (paren
-id|bi-&gt;write_sr1f
+id|bi-&gt;init_sr1f
 )paren
 id|vga_wseq
 (paren
@@ -11571,6 +11911,10 @@ r_void
 (brace
 r_int
 id|err
+comma
+id|j
+comma
+id|k
 suffix:semicolon
 id|clgen_board_t
 id|btype
@@ -11773,6 +12117,100 @@ id|fb_info-&gt;gen.info.flags
 op_assign
 id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+l_int|256
+suffix:semicolon
+id|j
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|j
+OL
+l_int|16
+)paren
+(brace
+id|k
+op_assign
+id|color_table
+(braket
+id|j
+)braket
+suffix:semicolon
+id|fb_info-&gt;palette
+(braket
+id|j
+)braket
+dot
+id|red
+op_assign
+id|default_red
+(braket
+id|k
+)braket
+suffix:semicolon
+id|fb_info-&gt;palette
+(braket
+id|j
+)braket
+dot
+id|green
+op_assign
+id|default_grn
+(braket
+id|k
+)braket
+suffix:semicolon
+id|fb_info-&gt;palette
+(braket
+id|j
+)braket
+dot
+id|blue
+op_assign
+id|default_blu
+(braket
+id|k
+)braket
+suffix:semicolon
+)brace
+r_else
+(brace
+id|fb_info-&gt;palette
+(braket
+id|j
+)braket
+dot
+id|red
+op_assign
+id|fb_info-&gt;palette
+(braket
+id|j
+)braket
+dot
+id|green
+op_assign
+id|fb_info-&gt;palette
+(braket
+id|j
+)braket
+dot
+id|blue
+op_assign
+id|j
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* now that we know the board has been registered n&squot; stuff, we */
 multiline_comment|/* can finally initialize it to a default mode */
 id|clgenfb_default
@@ -12823,8 +13261,8 @@ id|red
 suffix:semicolon
 )brace
 )brace
+macro_line|#if 0
 multiline_comment|/*** RClut - read CLUT entry (range 0..63) ***/
-DECL|function|RClut
 r_static
 r_void
 id|RClut
@@ -12965,6 +13403,7 @@ id|data
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/*******************************************************************&n;&t;clgen_WaitBLT()&n;&n;&t;Wait for the BitBLT engine to complete a possible earlier job&n;*********************************************************************/
 multiline_comment|/* FIXME: use interrupts instead */
 DECL|function|clgen_WaitBLT

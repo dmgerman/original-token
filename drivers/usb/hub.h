@@ -185,11 +185,16 @@ id|usb_device
 op_star
 id|dev
 suffix:semicolon
-multiline_comment|/* Reference to the hub&squot;s polling IRQ */
+multiline_comment|/* Reference to the hub&squot;s polling IRQ and its associated pipe */
 DECL|member|irq_handle
 r_void
 op_star
 id|irq_handle
+suffix:semicolon
+DECL|member|irqpipe
+r_int
+r_int
+id|irqpipe
 suffix:semicolon
 multiline_comment|/* List of hubs */
 DECL|member|hub_list

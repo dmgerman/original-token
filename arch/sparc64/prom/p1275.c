@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: p1275.c,v 1.17 1999/08/31 19:25:43 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: p1275.c,v 1.18 1999/09/10 10:40:53 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

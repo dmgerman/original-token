@@ -785,10 +785,15 @@ id|NET_TCP_TW_RECYCLE
 op_assign
 l_int|66
 comma
+DECL|enumerator|NET_IPV4_ALWAYS_DEFRAG
+id|NET_IPV4_ALWAYS_DEFRAG
+op_assign
+l_int|67
+comma
 DECL|enumerator|NET_IPV4_TCP_KEEPALIVE_INTVL
 id|NET_IPV4_TCP_KEEPALIVE_INTVL
 op_assign
-l_int|67
+l_int|68
 comma
 )brace
 suffix:semicolon

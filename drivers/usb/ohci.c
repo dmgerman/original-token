@@ -3240,11 +3240,10 @@ suffix:semicolon
 )brace
 multiline_comment|/* ohci_td_bytes_done() */
 multiline_comment|/**********************************&n; * OHCI interrupt list operations *&n; **********************************/
-multiline_comment|/*&n; * Request an interrupt handler for one &quot;pipe&quot; of a USB device.&n; * (this function is pretty minimal right now)&n; *&n; * At the moment this is only good for input interrupts. (ie: for a&n; * mouse or keyboard)&n; *&n; * Period is desired polling interval in ms.  The closest, shorter&n; * match will be used.  Powers of two from 1-32 are supported by OHCI.&n; *&n; * Returns: a &quot;handle pointer&quot; that release_irq can use to stop this&n; * interrupt.  (It&squot;s really a pointer to the TD).  NULL = error.&n; */
+multiline_comment|/*&n; * Request an interrupt handler for one &quot;pipe&quot; of a USB device.&n; * (this function is pretty minimal right now)&n; *&n; * At the moment this is only good for input interrupts. (ie: for a&n; * mouse or keyboard)&n; *&n; * Period is desired polling interval in ms.  The closest, shorter&n; * match will be used.  Powers of two from 1-32 are supported by OHCI.&n; *&n; * Returns: success (0) or failure (&lt; 0).&n; * Also sets the &quot;handle pointer&quot; that release_irq can use to stop this&n; * interrupt.  (It&squot;s really a pointer to the TD).&n; */
 DECL|function|ohci_request_irq
 r_static
-r_void
-op_star
+r_int
 id|ohci_request_irq
 c_func
 (paren
@@ -3266,6 +3265,11 @@ comma
 r_void
 op_star
 id|dev_id
+comma
+r_void
+op_star
+op_star
+id|handle
 )paren
 (brace
 r_struct
@@ -3359,7 +3363,10 @@ id|dev
 )paren
 suffix:semicolon
 r_return
-l_int|NULL
+(paren
+op_minus
+id|ENOMEM
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Set the max packet size, device speed, endpoint number, usb&n;&t;&t; * device number (function address), and type of TD.&n;&t;&t; */
@@ -3475,7 +3482,10 @@ id|interrupt_ed
 )paren
 suffix:semicolon
 r_return
-l_int|NULL
+(paren
+op_minus
+id|ENOMEM
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Fill in the TD */
@@ -3563,12 +3573,17 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_return
+op_star
+id|handle
+op_assign
 (paren
 r_void
 op_star
 )paren
 id|td
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ohci_request_irq() */

@@ -759,25 +759,19 @@ mdefine_line|#define TX_RING_MAXSIZE   256
 DECL|macro|RX_RING_MAXSIZE
 mdefine_line|#define RX_RING_MAXSIZE   256
 DECL|macro|TX_RING_SIZE
-mdefine_line|#define TX_RING_SIZE      256
+mdefine_line|#define TX_RING_SIZE      16
 DECL|macro|RX_RING_SIZE
-mdefine_line|#define RX_RING_SIZE      256
+mdefine_line|#define RX_RING_SIZE      16
 DECL|macro|NEXT_RX
-mdefine_line|#define NEXT_RX(num)       (((num) + 1) &amp; (RX_RING_SIZE - 1))
+mdefine_line|#define NEXT_RX(num)       (((num) + 1) &amp; (RX_RING_MAXSIZE - 1))
 DECL|macro|NEXT_TX
-mdefine_line|#define NEXT_TX(num)       (((num) + 1) &amp; (TX_RING_SIZE - 1))
+mdefine_line|#define NEXT_TX(num)       (((num) + 1) &amp; (TX_RING_MAXSIZE - 1))
 DECL|macro|PREV_RX
-mdefine_line|#define PREV_RX(num)       (((num) - 1) &amp; (RX_RING_SIZE - 1))
+mdefine_line|#define PREV_RX(num)       (((num) - 1) &amp; (RX_RING_MAXSIZE - 1))
 DECL|macro|PREV_TX
-mdefine_line|#define PREV_TX(num)       (((num) - 1) &amp; (TX_RING_SIZE - 1))
+mdefine_line|#define PREV_TX(num)       (((num) - 1) &amp; (TX_RING_MAXSIZE - 1))
 DECL|macro|TX_BUFFS_AVAIL
 mdefine_line|#define TX_BUFFS_AVAIL(qp)                                    &bslash;&n;        (((qp)-&gt;tx_old &lt;= (qp)-&gt;tx_new) ?                     &bslash;&n;&t;  (qp)-&gt;tx_old + (TX_RING_SIZE - 1) - (qp)-&gt;tx_new :  &bslash;&n;&t;&t;&t;    (qp)-&gt;tx_old - (qp)-&gt;tx_new - 1)
-DECL|macro|SUN4C_TX_BUFFS_AVAIL
-mdefine_line|#define SUN4C_TX_BUFFS_AVAIL(qp)                                    &bslash;&n;        (((qp)-&gt;tx_old &lt;= (qp)-&gt;tx_new) ?                           &bslash;&n;&t;  (qp)-&gt;tx_old + (SUN4C_TX_RING_SIZE - 1) - (qp)-&gt;tx_new :  &bslash;&n;&t;  (qp)-&gt;tx_old - (qp)-&gt;tx_new - (TX_RING_SIZE - SUN4C_TX_RING_SIZE))
-DECL|macro|RX_COPY_THRESHOLD
-mdefine_line|#define RX_COPY_THRESHOLD  256
-DECL|macro|RX_BUF_ALLOC_SIZE
-mdefine_line|#define RX_BUF_ALLOC_SIZE  (1546 + 64)
 DECL|struct|qe_init_block
 r_struct
 id|qe_init_block
@@ -825,35 +819,33 @@ id|qes
 l_int|4
 )braket
 suffix:semicolon
+multiline_comment|/* Each child MACE              */
 DECL|member|qec_bursts
 r_int
 r_int
 id|qec_bursts
 suffix:semicolon
+multiline_comment|/* Support burst sizes          */
 DECL|member|qec_sbus_dev
 r_struct
 id|linux_sbus_device
 op_star
 id|qec_sbus_dev
 suffix:semicolon
+multiline_comment|/* QEC&squot;s SBUS device            */
 DECL|member|next_module
 r_struct
 id|sunqec
 op_star
 id|next_module
 suffix:semicolon
+multiline_comment|/* List of all QECs in system   */
 )brace
 suffix:semicolon
-DECL|macro|SUN4C_PKT_BUF_SZ
-mdefine_line|#define SUN4C_PKT_BUF_SZ&t;1544
-DECL|macro|SUN4C_RX_BUFF_SIZE
-mdefine_line|#define SUN4C_RX_BUFF_SIZE&t;SUN4C_PKT_BUF_SZ
-DECL|macro|SUN4C_TX_BUFF_SIZE
-mdefine_line|#define SUN4C_TX_BUFF_SIZE&t;SUN4C_PKT_BUF_SZ
-DECL|macro|SUN4C_RX_RING_SIZE
-mdefine_line|#define SUN4C_RX_RING_SIZE&t;16
-DECL|macro|SUN4C_TX_RING_SIZE
-mdefine_line|#define SUN4C_TX_RING_SIZE&t;16
+DECL|macro|PKT_BUF_SZ
+mdefine_line|#define PKT_BUF_SZ&t;1664
+DECL|macro|RXD_PKT_SZ
+mdefine_line|#define RXD_PKT_SZ&t;1664
 DECL|struct|sunqe_buffers
 r_struct
 id|sunqe_buffers
@@ -862,42 +854,33 @@ DECL|member|tx_buf
 r_char
 id|tx_buf
 (braket
-id|SUN4C_TX_RING_SIZE
+id|TX_RING_SIZE
 )braket
 (braket
-id|SUN4C_TX_BUFF_SIZE
+id|PKT_BUF_SZ
 )braket
 suffix:semicolon
-DECL|member|pad
+DECL|member|__pad
 r_char
-id|pad
+id|__pad
 (braket
 l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/* Align rx_buf for copy_and_sum(). */
 DECL|member|rx_buf
 r_char
 id|rx_buf
 (braket
-id|SUN4C_RX_RING_SIZE
+id|RX_RING_SIZE
 )braket
 (braket
-id|SUN4C_RX_BUFF_SIZE
+id|PKT_BUF_SZ
 )braket
 suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|qebuf_offset
 mdefine_line|#define qebuf_offset(mem, elem) &bslash;&n;((__u32)((unsigned long)(&amp;(((struct sunqe_buffers *)0)-&gt;mem[elem][0]))))
-DECL|macro|SUN4C_NEXT_RX
-mdefine_line|#define SUN4C_NEXT_RX(num)&t;(((num) + 1) &amp; (SUN4C_RX_RING_SIZE - 1))
-DECL|macro|SUN4C_NEXT_TX
-mdefine_line|#define SUN4C_NEXT_TX(num)&t;(((num) + 1) &amp; (SUN4C_TX_RING_SIZE - 1))
-DECL|macro|SUN4C_PREV_RX
-mdefine_line|#define SUN4C_PREV_RX(num)&t;(((num) - 1) &amp; (SUN4C_RX_RING_SIZE - 1))
-DECL|macro|SUN4C_PREV_TX
-mdefine_line|#define SUN4C_PREV_TX(num)&t;(((num) - 1) &amp; (SUN4C_TX_RING_SIZE - 1))
 DECL|struct|sunqe
 r_struct
 id|sunqe
@@ -928,153 +911,72 @@ id|__u32
 id|qblock_dvma
 suffix:semicolon
 multiline_comment|/* RX and TX descriptors          */
-DECL|member|rx_skbs
-r_struct
-id|sk_buff
-op_star
-id|rx_skbs
-(braket
-id|RX_RING_SIZE
-)braket
-suffix:semicolon
-DECL|member|tx_skbs
-r_struct
-id|sk_buff
-op_star
-id|tx_skbs
-(braket
-id|TX_RING_SIZE
-)braket
-suffix:semicolon
 DECL|member|rx_new
-DECL|member|tx_new
 DECL|member|rx_old
-DECL|member|tx_old
 r_int
 id|rx_new
 comma
-id|tx_new
-comma
 id|rx_old
+suffix:semicolon
+multiline_comment|/* RX ring extents&t;&t;       */
+DECL|member|tx_new
+DECL|member|tx_old
+r_int
+id|tx_new
 comma
 id|tx_old
 suffix:semicolon
-DECL|member|sun4c_buffers
+multiline_comment|/* TX ring extents&t;&t;       */
+DECL|member|buffers
 r_struct
 id|sunqe_buffers
 op_star
-id|sun4c_buffers
+id|buffers
 suffix:semicolon
-multiline_comment|/* CPU visible address.  */
-DECL|member|s4c_buf_dvma
+multiline_comment|/* CPU visible address.           */
+DECL|member|buffers_dvma
 id|__u32
-id|s4c_buf_dvma
+id|buffers_dvma
 suffix:semicolon
-multiline_comment|/* DVMA visible address. */
+multiline_comment|/* DVMA visible address.          */
 DECL|member|parent
 r_struct
 id|sunqec
 op_star
 id|parent
 suffix:semicolon
+DECL|member|mconfig
+r_int
+r_char
+id|mconfig
+suffix:semicolon
+multiline_comment|/* Base MACE mconfig value        */
 DECL|member|net_stats
 r_struct
 id|net_device_stats
 id|net_stats
 suffix:semicolon
-multiline_comment|/* Statistical counters               */
+multiline_comment|/* Statistical counters           */
 DECL|member|qe_sbusdev
 r_struct
 id|linux_sbus_device
 op_star
 id|qe_sbusdev
 suffix:semicolon
-multiline_comment|/* QE&squot;s SBUS device struct            */
+multiline_comment|/* QE&squot;s SBUS device struct        */
 DECL|member|dev
 r_struct
 id|net_device
 op_star
 id|dev
 suffix:semicolon
-multiline_comment|/* QE&squot;s netdevice struct              */
+multiline_comment|/* QE&squot;s netdevice struct          */
 DECL|member|channel
 r_int
 id|channel
 suffix:semicolon
-multiline_comment|/* Who am I?                          */
+multiline_comment|/* Who am I?                      */
 )brace
 suffix:semicolon
-multiline_comment|/* We use this to acquire receive skb&squot;s that we can DMA directly into. */
-DECL|macro|ALIGNED_RX_SKB_ADDR
-mdefine_line|#define ALIGNED_RX_SKB_ADDR(addr) &bslash;&n;        ((((unsigned long)(addr) + (64 - 1)) &amp; ~(64 - 1)) - (unsigned long)(addr))
-DECL|function|qe_alloc_skb
-r_static
-r_inline
-r_struct
-id|sk_buff
-op_star
-id|qe_alloc_skb
-c_func
-(paren
-r_int
-r_int
-id|length
-comma
-r_int
-id|gfp_flags
-)paren
-(brace
-r_struct
-id|sk_buff
-op_star
-id|skb
-suffix:semicolon
-id|skb
-op_assign
-id|alloc_skb
-c_func
-(paren
-id|length
-op_plus
-l_int|64
-comma
-id|gfp_flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-)paren
-(brace
-r_int
-id|offset
-op_assign
-id|ALIGNED_RX_SKB_ADDR
-c_func
-(paren
-id|skb-&gt;data
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|offset
-)paren
-(brace
-id|skb_reserve
-c_func
-(paren
-id|skb
-comma
-id|offset
-)paren
-suffix:semicolon
-)brace
-)brace
-r_return
-id|skb
-suffix:semicolon
-)brace
 macro_line|#endif /* !(_SUNQE_H) */
 eof

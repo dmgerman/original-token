@@ -2099,11 +2099,10 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Request a interrupt handler..&n; *&n; * Returns: a &quot;handle pointer&quot; that release_irq can use to stop this&n; * interrupt.  (It&squot;s really a pointer to the TD).&n; */
+multiline_comment|/*&n; * Request a interrupt handler..&n; *&n; * Returns 0 (success) or negative (failure).&n; * Also returns/sets a &quot;handle pointer&quot; that release_irq can use to stop this&n; * interrupt.  (It&squot;s really a pointer to the TD).&n; */
 DECL|function|uhci_request_irq
 r_static
-r_void
-op_star
+r_int
 id|uhci_request_irq
 c_func
 (paren
@@ -2125,6 +2124,11 @@ comma
 r_void
 op_star
 id|dev_id
+comma
+r_void
+op_star
+op_star
+id|handle
 )paren
 (brace
 r_struct
@@ -2175,9 +2179,36 @@ op_logical_or
 op_logical_neg
 id|qh
 )paren
-r_return
-l_int|NULL
+(brace
+r_if
+c_cond
+(paren
+id|td
+)paren
+id|uhci_td_free
+c_func
+(paren
+id|td
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|qh
+)paren
+id|uhci_qh_free
+c_func
+(paren
+id|qh
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENOMEM
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Destination: pipe destination with INPUT */
 id|destination
 op_assign
@@ -2217,7 +2248,6 @@ id|td-&gt;status
 op_assign
 id|status
 suffix:semicolon
-multiline_comment|/* In */
 id|td-&gt;info
 op_assign
 id|destination
@@ -2336,12 +2366,17 @@ comma
 id|qh
 )paren
 suffix:semicolon
-r_return
+op_star
+id|handle
+op_assign
 (paren
 r_void
 op_star
 )paren
 id|td
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Release an interrupt handler previously allocated using&n; * uhci_request_irq.  This function does no validity checking, so make&n; * sure you&squot;re not releasing an already released handle as it may be&n; * in use by something else..&n; *&n; * This function can NOT be called from an interrupt.&n; */
@@ -2481,7 +2516,7 @@ id|USBFRNUM
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * uhci_init_isoc()&n; *&n; * Checks bus bandwidth allocation for this USB bus.&n; * Allocates some data structures.&n; * Initializes parts of them from the function parameters.&n; *&n; * It does not associate any data/buffer pointers or&n; * driver (caller) callback functions with the allocated&n; * data structures.  Such associations are left until&n; * uhci_run_isoc().&n; *&n; * Returns 0 for success or negative value for error.&n; * Sets isocdesc before successful return.&n; */
+multiline_comment|/*&n; * uhci_init_isoc()&n; *&n; * Allocates some data structures.&n; * Initializes parts of them from the function parameters.&n; *&n; * It does not associate any data/buffer pointers or&n; * driver (caller) callback functions with the allocated&n; * data structures.  Such associations are left until&n; * uhci_run_isoc().&n; *&n; * Returns 0 for success or negative value for error.&n; * Sets isocdesc before successful return.&n; */
 DECL|function|uhci_init_isoc
 r_static
 r_int
@@ -2519,10 +2554,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef BANDWIDTH_ALLOCATION
-multiline_comment|/* TBD: add bandwidth allocation/checking/management HERE. */
-multiline_comment|/* TBD: some way to factor in frame_spacing ??? */
-macro_line|#endif
 op_star
 id|isocdesc
 op_assign
@@ -3089,6 +3120,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* end START_ABSOLUTE */
 )brace
+multiline_comment|/* end not pr_isocdesc */
 multiline_comment|/*&n;&t; * Set the start/end frame numbers.&n;&t; */
 r_if
 c_cond
@@ -5225,7 +5257,6 @@ id|td-&gt;status
 op_assign
 id|status
 suffix:semicolon
-multiline_comment|/* Status */
 id|td-&gt;info
 op_assign
 id|destination
@@ -6573,6 +6604,15 @@ id|io_addr
 op_plus
 id|USBSTS
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|status
+)paren
+multiline_comment|/* shared interrupt, not mine */
+r_return
 suffix:semicolon
 id|outw
 c_func
