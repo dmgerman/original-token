@@ -465,10 +465,10 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 )brace
 r_static
 r_int

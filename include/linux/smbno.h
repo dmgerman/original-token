@@ -68,6 +68,8 @@ DECL|macro|ERRlock
 mdefine_line|#define ERRlock 33              /* Lock request conflicts with existing lock */
 DECL|macro|ERRfilexists
 mdefine_line|#define ERRfilexists 80         /* File in operation already exists */
+DECL|macro|ERRundocumented1
+mdefine_line|#define ERRundocumented1 123    /* Invalid name?? e.g. .tmp* */
 DECL|macro|ERRbadpipe
 mdefine_line|#define ERRbadpipe 230          /* Named pipe invalid */
 DECL|macro|ERRpipebusy

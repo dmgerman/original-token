@@ -1342,6 +1342,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+l_int|1
+op_logical_or
 op_logical_neg
 id|signalled
 c_func

@@ -4275,6 +4275,10 @@ id|task-&gt;tk_rqstp
 )paren
 r_return
 suffix:semicolon
+id|task-&gt;tk_rqstp
+op_assign
+l_int|NULL
+suffix:semicolon
 id|memset
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; * 960821&t;Made changes to compile in newer 2.0.x kernels.  Added&n; *&t;&t;&quot;cold reboot sense&quot; entry.&n; * 960825&t;Made a few changes to code, deleted some defines and made&n; *&t;&t;typedefs to replace them.  Made heartbeat reset only available&n; *&t;&t;via ioctl, and removed the write routine.&n; * 960828&t;Added new items for PC Watchdog Rev.C card.&n; * 960829&t;Changed around all of the IOCTLs, added new features,&n; *&t;&t;added watchdog disable/re-enable routines.  Added firmware&n; *&t;&t;version reporting.  Added read routine for temperature.&n; *&t;&t;Removed some extra defines, added an autodetect Revision&n; *&t;&t;routine.&n; * 961006       Revised some documentation, fixed some cosmetic bugs.  Made&n; *              drivers to panic the system if it&squot;s overheating at bootup.&n; * 961118&t;Changed some verbiage on some of the output, tidied up&n; *&t;&t;code bits, and added compatibility to 2.1.x.&n; */
+multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; * 960821&t;Made changes to compile in newer 2.0.x kernels.  Added&n; *&t;&t;&quot;cold reboot sense&quot; entry.&n; * 960825&t;Made a few changes to code, deleted some defines and made&n; *&t;&t;typedefs to replace them.  Made heartbeat reset only available&n; *&t;&t;via ioctl, and removed the write routine.&n; * 960828&t;Added new items for PC Watchdog Rev.C card.&n; * 960829&t;Changed around all of the IOCTLs, added new features,&n; *&t;&t;added watchdog disable/re-enable routines.  Added firmware&n; *&t;&t;version reporting.  Added read routine for temperature.&n; *&t;&t;Removed some extra defines, added an autodetect Revision&n; *&t;&t;routine.&n; * 961006       Revised some documentation, fixed some cosmetic bugs.  Made&n; *              drivers to panic the system if it&squot;s overheating at bootup.&n; * 961118&t;Changed some verbiage on some of the output, tidied up&n; *&t;&t;code bits, and added compatibility to 2.1.x.&n; * 970912       Enabled board on open and disable on close.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -497,14 +497,6 @@ r_void
 (brace
 r_int
 id|wdrst_stat
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|is_open
-)paren
-r_return
 suffix:semicolon
 id|wdrst_stat
 op_assign
@@ -1175,7 +1167,38 @@ op_star
 id|filep
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|is_open
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
 id|MOD_INC_USE_COUNT
+suffix:semicolon
+multiline_comment|/*  Enable the port  */
+r_if
+c_cond
+(paren
+id|revision
+op_eq
+id|PCWD_REVISION_C
+)paren
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|current_readport
+op_plus
+l_int|3
+)paren
+suffix:semicolon
+id|is_open
+op_assign
+l_int|1
 suffix:semicolon
 r_return
 l_int|0
@@ -1285,8 +1308,44 @@ op_star
 id|filep
 )paren
 (brace
+id|is_open
+op_assign
+l_int|0
+suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
+macro_line|#ifndef CONFIG_WATCHDOG_NOWAYOUT
+multiline_comment|/*  Disable the board  */
+r_if
+c_cond
+(paren
+id|revision
+op_eq
+id|PCWD_REVISION_C
+)paren
+(brace
+id|outb_p
+c_func
+(paren
+l_int|0xA5
+comma
+id|current_readport
+op_plus
+l_int|3
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0xA5
+comma
+id|current_readport
+op_plus
+l_int|3
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1819,10 +1878,6 @@ id|EIO
 suffix:semicolon
 )brace
 macro_line|#endif
-id|is_open
-op_assign
-l_int|1
-suffix:semicolon
 macro_line|#ifdef&t;PCWD_BLIND
 id|current_readport
 op_assign
@@ -1961,6 +2016,36 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/*  Disable the board  */
+r_if
+c_cond
+(paren
+id|revision
+op_eq
+id|PCWD_REVISION_C
+)paren
+(brace
+id|outb_p
+c_func
+(paren
+l_int|0xA5
+comma
+id|current_readport
+op_plus
+l_int|3
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0xA5
+comma
+id|current_readport
+op_plus
+l_int|3
+)paren
+suffix:semicolon
+)brace
 id|misc_deregister
 c_func
 (paren

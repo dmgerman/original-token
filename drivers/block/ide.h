@@ -188,7 +188,7 @@ DECL|macro|WAIT_READY
 mdefine_line|#define WAIT_READY&t;(3*HZ/100)&t;/* 30msec - should be instantaneous */
 macro_line|#endif /* CONFIG_APM */
 DECL|macro|WAIT_PIDENTIFY
-mdefine_line|#define WAIT_PIDENTIFY&t;(1*HZ)&t;/* 1sec   - should be less than 3ms (?) */
+mdefine_line|#define WAIT_PIDENTIFY&t;(10*HZ)&t;/* 10sec  - should be less than 3ms (?)&n;&t;&t;&t;&t;            if all ATAPI CD is closed at boot */
 DECL|macro|WAIT_WORSTCASE
 mdefine_line|#define WAIT_WORSTCASE&t;(30*HZ)&t;/* 30sec  - worst case when spinning up */
 DECL|macro|WAIT_CMD

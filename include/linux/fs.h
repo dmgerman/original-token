@@ -106,7 +106,7 @@ DECL|macro|MS_NOATIME
 mdefine_line|#define MS_NOATIME&t;1024&t;/* Do not update access times. */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
-mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_MANDLOCK|MS_NOATIME)
+mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME)
 multiline_comment|/*&n; * Magic mount flag number. Has to be or-ed to the flag values.&n; */
 DECL|macro|MS_MGC_VAL
 mdefine_line|#define MS_MGC_VAL 0xC0ED0000&t;/* magic flag number to indicate &quot;new&quot; flags */
@@ -890,6 +890,25 @@ id|inode
 )paren
 suffix:semicolon
 )brace
+DECL|struct|fown_struct
+r_struct
+id|fown_struct
+(brace
+DECL|member|pid
+r_int
+id|pid
+suffix:semicolon
+multiline_comment|/* pid or -pgrp where SIGIO should be sent */
+DECL|member|uid
+DECL|member|euid
+id|uid_t
+id|uid
+comma
+id|euid
+suffix:semicolon
+multiline_comment|/* uid/euid of process setting the owner */
+)brace
+suffix:semicolon
 DECL|struct|file
 r_struct
 id|file
@@ -950,9 +969,9 @@ id|f_ralen
 comma
 id|f_rawin
 suffix:semicolon
-multiline_comment|/* pid or -pgrp where SIGIO should be sent */
 DECL|member|f_owner
-r_int
+r_struct
+id|fown_struct
 id|f_owner
 suffix:semicolon
 DECL|member|f_version

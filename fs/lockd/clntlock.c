@@ -150,7 +150,7 @@ l_int|30
 op_star
 id|HZ
 suffix:semicolon
-id|interruptible_sleep_on
+id|sleep_on
 c_func
 (paren
 op_amp

@@ -637,14 +637,18 @@ id|current
 (brace
 macro_line|#ifdef __SMP__
 multiline_comment|/* FIXME! Cheesy, but kills the window... -DaveM */
+r_do
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
 id|p-&gt;has_cpu
-)paren
-id|barrier
-c_func
-(paren
 )paren
 suffix:semicolon
 id|spin_unlock_wait

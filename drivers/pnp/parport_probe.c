@@ -415,8 +415,6 @@ r_struct
 id|wait_queue
 op_star
 id|wait_q
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|wakeup
 r_static
@@ -447,7 +445,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|wait_q
+id|waitqueue_active
 op_logical_or
 id|parport_claim
 c_func
@@ -535,6 +533,12 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|init_waitqueue
+(paren
+op_amp
+id|wait_q
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -544,7 +548,6 @@ c_func
 id|dev
 )paren
 )paren
-(brace
 id|sleep_on
 c_func
 (paren
@@ -552,11 +555,6 @@ op_amp
 id|wait_q
 )paren
 suffix:semicolon
-id|wait_q
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren

@@ -54,13 +54,23 @@ id|portlist
 op_eq
 l_int|NULL
 )paren
+(brace
 id|request_module
 c_func
 (paren
 l_string|&quot;parport_lowlevel&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#ifdef CONFIG_PNP_PARPORT_MODULE
+id|request_module
+c_func
+(paren
+l_string|&quot;parport_probe&quot;
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PNP_PARPORT_MODULE */
+)brace
+macro_line|#endif /* CONFIG_KERNELD */
 r_return
 id|portlist
 suffix:semicolon

@@ -195,6 +195,13 @@ id|dentry_operations
 op_star
 id|d_op
 suffix:semicolon
+DECL|member|d_sb
+r_struct
+id|super_block
+op_star
+id|d_sb
+suffix:semicolon
+multiline_comment|/* The root of the dentry tree */
 )brace
 suffix:semicolon
 DECL|struct|dentry_operations

@@ -174,9 +174,9 @@ r_void
 id|smb_invalid_dir_cache
 c_func
 (paren
-r_int
-r_int
-id|ino
+r_struct
+id|inode
+op_star
 )paren
 suffix:semicolon
 r_void
@@ -401,7 +401,7 @@ id|smb_close
 c_func
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 )paren
 suffix:semicolon

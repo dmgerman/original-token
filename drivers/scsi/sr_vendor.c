@@ -1,4 +1,4 @@
-multiline_comment|/* -*-linux-c-*-&n; *&n; * vendor-specific code for SCSI CD-ROM&squot;s goes here.&n; *&n; * This is needed becauce most of the new features (multisession and&n; * the like) are to new to be included into the SCSI-II standard (to&n; * be exact: there is&squot;nt anything in my draft copy).&n; *&n; *   Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; &n; *&n; * --------------------------------------------------------------------------&n; *&n; * support for XA/multisession-CD&squot;s&n; * &n; *   - NEC:     Detection and support of multisession CD&squot;s.&n; *     &n; *   - TOSHIBA: Detection and support of multisession CD&squot;s.&n; *              Some XA-Sector tweaking, required for older drives.&n; *&n; *   - SONY:&t;Detection and support of multisession CD&squot;s.&n; *              added by Thomas Quinot &lt;operator@melchior.cuivre.fdn.fr&gt;&n; *&n; *   - PIONEER, HITACHI, PLEXTOR, MATSHITA, TEAC: known to work with SONY code.&n; *&n; *   - HP:&t;Much like SONY, but a little different... (Thomas)&n; *              HP-Writers only ??? Maybe other CD-Writers work with this too ?&n; */
+multiline_comment|/* -*-linux-c-*-&n; *&n; * vendor-specific code for SCSI CD-ROM&squot;s goes here.&n; *&n; * This is needed becauce most of the new features (multisession and&n; * the like) are to new to be included into the SCSI-II standard (to&n; * be exact: there is&squot;nt anything in my draft copy).&n; *&n; *   Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; &n; *&n; * --------------------------------------------------------------------------&n; *&n; * support for XA/multisession-CD&squot;s&n; * &n; *   - NEC:     Detection and support of multisession CD&squot;s.&n; *     &n; *   - TOSHIBA: Detection and support of multisession CD&squot;s.&n; *              Some XA-Sector tweaking, required for older drives.&n; *&n; *   - SONY:&t;Detection and support of multisession CD&squot;s.&n; *              added by Thomas Quinot &lt;thomas@cuivre.freenix.fr&gt;&n; *&n; *   - PIONEER, HITACHI, PLEXTOR, MATSHITA, TEAC, PHILIPS:&n; *&t;&t;Known to work with SONY code.&n; *&n; *   - HP:&t;Much like SONY, but a little different... (Thomas)&n; *              HP-Writers only ??? Maybe other CD-Writers work with this too ?&n; *&t;&t;HP 6020 writers now supported.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -17,8 +17,12 @@ DECL|macro|VENDOR_TOSHIBA
 mdefine_line|#define VENDOR_TOSHIBA         3
 DECL|macro|VENDOR_SONY_LIKE
 mdefine_line|#define VENDOR_SONY_LIKE       4   /* much drives are Sony compatible */
-DECL|macro|VENDOR_HP
-mdefine_line|#define VENDOR_HP              5   /* HP Writers, others too ?? */
+DECL|macro|VENDOR_HP_4020
+mdefine_line|#define VENDOR_HP_4020         5   /* HP 4xxx writers, others too ?? */
+DECL|macro|VENDOR_HP_6020
+mdefine_line|#define VENDOR_HP_6020         6   /* HP 6020 writers */
+DECL|macro|VENDOR_ID
+mdefine_line|#define VENDOR_ID (scsi_CDs[minor].vendor)
 macro_line|#if 0
 mdefine_line|#define DEBUG
 macro_line|#endif
@@ -90,14 +94,28 @@ op_eq
 id|TYPE_WORM
 )paren
 (brace
-id|scsi_CDs
-(braket
-id|minor
-)braket
-dot
-id|vendor
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|model
+comma
+l_string|&quot;CD-Writer 6020&quot;
+comma
+l_int|14
+)paren
+)paren
+id|VENDOR_ID
 op_assign
-id|VENDOR_HP
+id|VENDOR_HP_6020
+suffix:semicolon
+r_else
+id|VENDOR_ID
+op_assign
+id|VENDOR_HP_4020
 suffix:semicolon
 )brace
 r_else
@@ -115,12 +133,7 @@ l_int|3
 )paren
 )paren
 (brace
-id|scsi_CDs
-(braket
-id|minor
-)braket
-dot
-id|vendor
+id|VENDOR_ID
 op_assign
 id|VENDOR_NEC
 suffix:semicolon
@@ -193,25 +206,15 @@ l_int|7
 )paren
 )paren
 (brace
-id|scsi_CDs
-(braket
-id|minor
-)braket
-dot
-id|vendor
+id|VENDOR_ID
 op_assign
 id|VENDOR_TOSHIBA
 suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* most drives can handled like sony ones, so we take&n;&t;&t; * it as default */
-id|scsi_CDs
-(braket
-id|minor
-)braket
-dot
-id|vendor
+multiline_comment|/* most drives can handled like Sony ones, so we take&n;&t;&t; * it as default */
+id|VENDOR_ID
 op_assign
 id|VENDOR_SONY_LIKE
 suffix:semicolon
@@ -437,12 +440,7 @@ suffix:semicolon
 id|density
 op_assign
 (paren
-id|scsi_CDs
-(braket
-id|minor
-)braket
-dot
-id|vendor
+id|VENDOR_ID
 op_eq
 id|VENDOR_TOSHIBA
 )paren
@@ -761,12 +759,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|scsi_CDs
-(braket
-id|minor
-)braket
-dot
-id|vendor
+id|VENDOR_ID
 )paren
 (brace
 r_case
@@ -1077,7 +1070,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|VENDOR_HP
+id|VENDOR_HP_4020
+suffix:colon
+multiline_comment|/* Fallthrough */
+r_case
+id|VENDOR_HP_6020
 suffix:colon
 id|cmd
 (braket
@@ -1107,7 +1104,16 @@ id|cmd
 l_int|8
 )braket
 op_assign
+(paren
+id|VENDOR_ID
+op_eq
+id|VENDOR_HP_4020
+)paren
+ques
+c_cond
 l_int|0x04
+suffix:colon
+l_int|0x0c
 suffix:semicolon
 id|cmd
 (braket
@@ -1127,7 +1133,16 @@ id|cmd
 comma
 id|buffer
 comma
-l_int|12
+(paren
+id|VENDOR_ID
+op_eq
+id|VENDOR_HP_4020
+)paren
+ques
+c_cond
+l_int|0x04
+suffix:colon
+l_int|0x0c
 )paren
 suffix:semicolon
 r_if
@@ -1165,6 +1180,14 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|VENDOR_ID
+op_eq
+id|VENDOR_HP_4020
+)paren
+(brace
 id|cmd
 (braket
 l_int|0
@@ -1238,36 +1261,7 @@ l_int|0
 r_break
 suffix:semicolon
 )brace
-DECL|macro|STRICT_HP
-macro_line|#undef STRICT_HP
-macro_line|#ifdef STRICT_HP
-id|sector
-op_assign
-id|buffer
-(braket
-l_int|11
-)braket
-op_plus
-(paren
-id|buffer
-(braket
-l_int|10
-)braket
-op_lshift
-l_int|8
-)paren
-op_plus
-(paren
-id|buffer
-(braket
-l_int|9
-)braket
-op_lshift
-l_int|16
-)paren
-suffix:semicolon
-multiline_comment|/* HP documentation states that Logical Start Address is&n;&t;&t;   returned as three (!) bytes, and that buffer[8] is&n;&t;&t;   reserved. This is strange, because a LBA usually is&n;&t;&t;   4 bytes long. */
-macro_line|#else
+)brace
 id|sector
 op_assign
 id|buffer
@@ -1302,13 +1296,11 @@ op_lshift
 l_int|24
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
 id|VENDOR_SONY_LIKE
 suffix:colon
-multiline_comment|/* Thomas QUINOT &lt;thomas@melchior.cuivre.fdn.fr&gt; */
 id|memset
 c_func
 (paren
@@ -1490,12 +1482,7 @@ c_func
 id|KERN_WARNING
 l_string|&quot;sr: unknown vendor code (%i), not initialized ?&bslash;n&quot;
 comma
-id|scsi_CDs
-(braket
-id|minor
-)braket
-dot
-id|vendor
+id|VENDOR_ID
 )paren
 suffix:semicolon
 id|sector

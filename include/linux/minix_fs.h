@@ -602,11 +602,11 @@ id|minix_sync_file
 c_func
 (paren
 r_struct
-id|inode
+id|file
 op_star
 comma
 r_struct
-id|file
+id|dentry
 op_star
 )paren
 suffix:semicolon

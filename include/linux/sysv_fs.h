@@ -1572,11 +1572,11 @@ id|sysv_sync_file
 c_func
 (paren
 r_struct
-id|inode
+id|file
 op_star
 comma
 r_struct
-id|file
+id|dentry
 op_star
 )paren
 suffix:semicolon
@@ -1585,10 +1585,6 @@ r_int
 id|sysv_mmap
 c_func
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star

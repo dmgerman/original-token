@@ -303,7 +303,7 @@ id|bdf_prm
 op_assign
 (brace
 (brace
-l_int|60
+l_int|40
 comma
 l_int|500
 comma
@@ -1122,6 +1122,14 @@ id|file-&gt;f_op-&gt;fsync
 r_goto
 id|out
 suffix:semicolon
+multiline_comment|/* We need to protect against concurrent writers.. */
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
 id|err
 op_assign
 id|file-&gt;f_op
@@ -1132,6 +1140,13 @@ c_func
 id|file
 comma
 id|file-&gt;f_dentry
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 id|out

@@ -1280,7 +1280,7 @@ id|current-&gt;timeout
 op_assign
 l_int|0
 suffix:semicolon
-id|interruptible_sleep_on
+id|sleep_on
 c_func
 (paren
 op_amp
@@ -1321,6 +1321,8 @@ multiline_comment|/*&n;&t;&t; * When a sync task receives a signal, it exits wit
 r_if
 c_cond
 (paren
+l_int|0
+op_logical_and
 op_logical_neg
 id|RPC_IS_ASYNC
 c_func

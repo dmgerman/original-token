@@ -2086,7 +2086,9 @@ suffix:semicolon
 multiline_comment|/* Update sizes on original skb, both TCP and IP. */
 id|skb-&gt;end_seq
 op_add_assign
-id|size2
+id|buff-&gt;end_seq
+op_minus
+id|buff-&gt;seq
 suffix:semicolon
 r_if
 c_cond
@@ -2103,6 +2105,17 @@ op_assign
 id|th2-&gt;urg_ptr
 op_plus
 id|size1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|th2-&gt;fin
+)paren
+(brace
+id|th1-&gt;fin
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* ... and off you go. */

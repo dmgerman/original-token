@@ -2782,7 +2782,7 @@ id|rqstp
 suffix:semicolon
 id|current-&gt;state
 op_assign
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 suffix:semicolon
 id|add_wait_queue
 c_func
