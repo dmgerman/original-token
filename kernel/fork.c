@@ -1336,11 +1336,6 @@ id|tsk
 op_assign
 id|current
 suffix:semicolon
-id|forget_segments
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* notify parent sleeping on vfork() */
 r_if
 c_cond

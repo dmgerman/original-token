@@ -1056,26 +1056,10 @@ suffix:semicolon
 )brace
 DECL|macro|THREAD_SIZE
 mdefine_line|#define THREAD_SIZE (2*PAGE_SIZE)
-r_extern
-r_struct
-id|task_struct
-op_star
-id|alloc_task_struct
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|free_task_struct
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-)paren
-suffix:semicolon
+DECL|macro|alloc_task_struct
+mdefine_line|#define alloc_task_struct() ((struct task_struct *) __get_free_pages(GFP_KERNEL,1))
+DECL|macro|free_task_struct
+mdefine_line|#define free_task_struct(p) free_pages((unsigned long) (p), 1)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

@@ -59,6 +59,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/if_strip.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/serialP.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;

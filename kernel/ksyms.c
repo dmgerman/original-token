@@ -1267,6 +1267,13 @@ c_func
 id|max_sectors
 )paren
 suffix:semicolon
+DECL|variable|max_segments
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|max_segments
+)paren
+suffix:semicolon
 DECL|variable|max_readahead
 id|EXPORT_SYMBOL
 c_func

@@ -7,9 +7,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-macro_line|#ifdef CONFIG_PCI
-macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#endif
 multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
 DECL|struct|async_icount
 r_struct
@@ -430,6 +427,9 @@ mdefine_line|#define ALPHA_KLUDGE_MCR 0
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n; * Structures and definitions for PCI support&n; */
+r_struct
+id|pci_dev
+suffix:semicolon
 DECL|struct|pci_board
 r_struct
 id|pci_board

@@ -90,6 +90,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef LOCAL_HEADERS
 macro_line|#include &quot;serial_local.h&quot;
 macro_line|#else
+macro_line|#include &lt;linux/serialP.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/serial_reg.h&gt;
 macro_line|#include &lt;asm/serial.h&gt;

@@ -11481,6 +11481,9 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * ------------------------------------------------------------&n; * Serial console driver&n; * ------------------------------------------------------------&n; */
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
+macro_line|#ifdef CONFIG_SERIAL
+macro_line|#error Cannot build serial console with macserial and serial drivers
+macro_line|#endif
 multiline_comment|/*&n; *&t;Print a string to the serial port trying not to disturb&n; *&t;any possible real use of the port...&n; */
 DECL|function|serial_console_write
 r_static
@@ -12653,16 +12656,12 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
 DECL|function|serial_console_init
-r_int
+r_void
 id|__init
 id|serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 (brace
 id|register_console

@@ -20,6 +20,9 @@ macro_line|#include &lt;asm/io.h&gt;
 r_struct
 id|usb_ohci_ed
 suffix:semicolon
+r_struct
+id|usb_ohci_td
+suffix:semicolon
 multiline_comment|/* for ED and TD structures */
 DECL|typedef|__OHCI_BAG
 r_typedef
@@ -40,9 +43,9 @@ op_star
 id|ohci
 comma
 r_struct
-id|usb_ohci_ed
+id|usb_ohci_td
 op_star
-id|ed
+id|td
 comma
 r_void
 op_star
@@ -50,6 +53,9 @@ id|data
 comma
 r_int
 id|data_len
+comma
+r_int
+id|dlen
 comma
 r_int
 id|status
@@ -653,6 +659,12 @@ op_star
 id|hc_area
 suffix:semicolon
 multiline_comment|/* hcca, int ed-tree, ohci itself .. */
+DECL|member|ohci_hcd_list
+r_struct
+id|list_head
+id|ohci_hcd_list
+suffix:semicolon
+multiline_comment|/* list of all ohci_hcd */
 DECL|member|ohci_int_load
 r_int
 id|ohci_int_load

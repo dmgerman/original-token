@@ -18,7 +18,6 @@ macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/tty_driver.h&gt;
 macro_line|#include &lt;linux/tty_ldisc.h&gt;
-macro_line|#include &lt;linux/serialP.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Note: don&squot;t mess with NR_PTYS until you understand the tty minor &n; * number allocation game...&n; * (Note: the *_driver.minor_start values 1, 64, 128, 192 are&n; * hardcoded at present.)&n; */
 DECL|macro|NR_PTYS

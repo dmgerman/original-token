@@ -1,8 +1,8 @@
 multiline_comment|/*&n;&n;  Linux Driver for Mylex DAC960 and DAC1100 PCI RAID Controllers&n;&n;  Copyright 1998-1999 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;*/
 DECL|macro|DAC960_DriverVersion
-mdefine_line|#define DAC960_DriverVersion&t;&t;&t;&quot;2.2.4&quot;
+mdefine_line|#define DAC960_DriverVersion&t;&t;&t;&quot;2.3.4&quot;
 DECL|macro|DAC960_DriverDate
-mdefine_line|#define DAC960_DriverDate&t;&t;&t;&quot;23 August 1999&quot;
+mdefine_line|#define DAC960_DriverDate&t;&t;&t;&quot;23 September 1999&quot;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -630,10 +630,11 @@ id|Controller
 op_assign
 id|Command-&gt;Controller
 suffix:semicolon
-id|Semaphore_T
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|Semaphore
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 r_int
 r_int
@@ -1610,19 +1611,23 @@ r_int
 r_int
 id|BaseAddress0
 op_assign
-id|PCI_Device-&gt;base_address
+id|PCI_Device-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 r_int
 r_int
 id|BaseAddress1
 op_assign
-id|PCI_Device-&gt;base_address
+id|PCI_Device-&gt;resource
 (braket
 l_int|1
 )braket
+dot
+id|start
 suffix:semicolon
 r_int
 r_int
@@ -3107,10 +3112,11 @@ id|Semaphores
 id|Channel
 )braket
 suffix:semicolon
-op_star
+id|init_MUTEX_LOCKED
+c_func
+(paren
 id|Semaphore
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 id|DCDB
 op_assign

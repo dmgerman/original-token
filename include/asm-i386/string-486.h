@@ -1,7 +1,7 @@
 macro_line|#ifndef _I386_STRING_I486_H_
 DECL|macro|_I386_STRING_I486_H_
 mdefine_line|#define _I386_STRING_I486_H_
-multiline_comment|/*&n; * This string-include defines all string functions as inline&n; * functions. Use gcc. It also assumes ds=es=data space, this should be&n; * normal. Most of the string-functions are rather heavily hand-optimized,&n; * see especially strtok,strstr,str[c]spn. They should work, but are not&n; * very easy to understand. Everything is done entirely within the register&n; * set, making the functions fast and clean. &n; *&n; *&t;&t;Copyright (C) 1991, 1992 Linus Torvalds&n; *&t;&t;Revised and optimized for i486/pentium&n; *&t;&t;1994/03/15 by Alberto Vignani/Davide Parodi @crf.it&n; *&n; *&t;Split into 2 CPU specific files by Alan Cox to keep #ifdef noise down.&n; *&n; *&t;99/9/15  Proper reg args for newer gcc/egcs - Petkan (petkan@spct.net)&n; */
+multiline_comment|/*&n; * This string-include defines all string functions as inline&n; * functions. Use gcc. It also assumes ds=es=data space, this should be&n; * normal. Most of the string-functions are rather heavily hand-optimized,&n; * see especially strtok,strstr,str[c]spn. They should work, but are not&n; * very easy to understand. Everything is done entirely within the register&n; * set, making the functions fast and clean. &n; *&n; *&t;&t;Copyright (C) 1991, 1992 Linus Torvalds&n; *&t;&t;Revised and optimized for i486/pentium&n; *&t;&t;1994/03/15 by Alberto Vignani/Davide Parodi @crf.it&n; *&n; *&t;Split into 2 CPU specific files by Alan Cox to keep #ifdef noise down.&n; *&n; *&t;1999/10/5&t;Proper register args for newer GCCs and minor bugs&n; *&t;&t;&t;fixed - Petko Manolov (petkan@spct.net)&n; *&t;1999/10/14&t;3DNow memscpy() added - Petkan&n; */
 DECL|macro|__HAVE_ARCH_STRCPY
 mdefine_line|#define __HAVE_ARCH_STRCPY
 DECL|function|strcpy
@@ -330,7 +330,7 @@ l_string|&quot;movb %b0,(%1)&bslash;n&bslash;t&quot;
 l_string|&quot;incl %1&bslash;n&bslash;t&quot;
 l_string|&quot;testb %b0,%b0&bslash;n&bslash;t&quot;
 l_string|&quot;jne 2b&bslash;n&quot;
-l_string|&quot;3:&bslash;txorl %0,%0&bslash;n&bslash;t&quot;
+l_string|&quot;3:&bslash;txorb %0,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movb %b0,(%1)&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=q&quot;
@@ -870,9 +870,8 @@ op_minus
 id|cs
 suffix:semicolon
 )brace
-DECL|macro|__HAVE_ARCH_STRPBRK
+macro_line|#if 0
 mdefine_line|#define __HAVE_ARCH_STRPBRK
-DECL|function|strpbrk
 r_extern
 r_inline
 r_char
@@ -906,7 +905,7 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
@@ -915,7 +914,7 @@ l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
 l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;je 2f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
@@ -969,9 +968,9 @@ r_return
 id|__res
 suffix:semicolon
 )brace
-DECL|macro|__HAVE_ARCH_STRSTR
+macro_line|#endif
+macro_line|#if 0
 mdefine_line|#define __HAVE_ARCH_STRSTR
-DECL|function|strstr
 r_extern
 r_inline
 r_char
@@ -1006,14 +1005,14 @@ c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
 "&bslash;"
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
 multiline_comment|/* NOTE! This also sets Z if searchstring=&squot;&squot; */
 l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;1:&bslash;tmovl %4,%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;tmovl %6,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;movl %%esi,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;repe&bslash;n&bslash;t&quot;
@@ -1071,6 +1070,7 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|macro|__HAVE_ARCH_STRLEN
 mdefine_line|#define __HAVE_ARCH_STRLEN
 DECL|function|strlen
@@ -1168,7 +1168,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;movl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movl %3,%0&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 2f&bslash;n&quot;
 l_string|&quot;1:&bslash;tcmpb $0,(%0)&bslash;n&bslash;t&quot;
 l_string|&quot;je 3f&bslash;n&bslash;t&quot;
@@ -1176,7 +1176,7 @@ l_string|&quot;incl %0&bslash;n&quot;
 l_string|&quot;2:&bslash;tdecl %2&bslash;n&bslash;t&quot;
 l_string|&quot;cmpl $-1,%2&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&bslash;n&quot;
-l_string|&quot;3:&bslash;tsubl %1,%0&quot;
+l_string|&quot;3:&bslash;tsubl %3,%0&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1204,9 +1204,8 @@ id|__res
 suffix:semicolon
 )brace
 multiline_comment|/* end of additional stuff */
-DECL|macro|__HAVE_ARCH_STRTOK
+macro_line|#if 0
 mdefine_line|#define __HAVE_ARCH_STRTOK
-DECL|function|strtok
 r_extern
 r_inline
 r_char
@@ -1325,12 +1324,7 @@ r_return
 id|__res
 suffix:semicolon
 )brace
-DECL|macro|__memcpy_c
-mdefine_line|#define __memcpy_c(d,s,count) &bslash;&n;((count%4==0) ? &bslash;&n; __memcpy_by4((d),(s),(count)) : &bslash;&n; ((count%2==0) ? &bslash;&n;  __memcpy_by2((d),(s),(count)) : &bslash;&n;  __memcpy_g((d),(s),(count))))
-DECL|macro|__HAVE_ARCH_MEMCPY
-mdefine_line|#define __HAVE_ARCH_MEMCPY
-DECL|macro|memcpy
-mdefine_line|#define memcpy(d,s,count) &bslash;&n;(__builtin_constant_p(count) ? &bslash;&n; __memcpy_c((d),(s),(count)) : &bslash;&n; __memcpy_g((d),(s),(count)))
+macro_line|#endif
 multiline_comment|/*&n; *&t;These ought to get tweaked to do some cache priming.&n; */
 DECL|function|__memcpy_by4
 r_extern
@@ -1622,6 +1616,144 @@ id|to
 )paren
 suffix:semicolon
 )brace
+DECL|macro|__memcpy_c
+mdefine_line|#define __memcpy_c(d,s,count) &bslash;&n;((count%4==0) ? &bslash;&n; __memcpy_by4((d),(s),(count)) : &bslash;&n; ((count%2==0) ? &bslash;&n;  __memcpy_by2((d),(s),(count)) : &bslash;&n;  __memcpy_g((d),(s),(count))))
+DECL|macro|__memcpy
+mdefine_line|#define __memcpy(d,s,count) &bslash;&n;(__builtin_constant_p(count) ? &bslash;&n; __memcpy_c((d),(s),(count)) : &bslash;&n; __memcpy_g((d),(s),(count)))
+DECL|macro|__HAVE_ARCH_MEMCPY
+mdefine_line|#define __HAVE_ARCH_MEMCPY
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_X86_USE_3DNOW
+macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/mmx.h&gt;
+multiline_comment|/*&n;**      This CPU favours 3DNow strongly (eg AMD K6-II, K6-III, Athlon)&n;*/
+DECL|function|__constant_memcpy3d
+r_extern
+r_inline
+r_void
+op_star
+id|__constant_memcpy3d
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|512
+op_logical_or
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+(brace
+r_return
+id|__memcpy_c
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+r_return
+id|_mmx_memcpy
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+DECL|function|__memcpy3d
+r_extern
+id|__inline__
+r_void
+op_star
+id|__memcpy3d
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|512
+op_logical_or
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+(brace
+r_return
+id|__memcpy_g
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+r_return
+id|_mmx_memcpy
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+DECL|macro|memcpy
+mdefine_line|#define memcpy(d, s, count) &bslash;&n;(__builtin_constant_p(count) ? &bslash;&n; __constant_memcpy3d((d),(s),(count)) : &bslash;&n; __memcpy3d((d),(s),(count)))
+macro_line|#else /* CONFIG_X86_USE_3DNOW */
+multiline_comment|/*&n;**&t;Generic routines&n;*/
+DECL|macro|memcpy
+mdefine_line|#define memcpy(d, s, count) __memcpy(d, s, count)
+macro_line|#endif /* CONFIG_X86_USE_3DNOW */ 
 DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|function|memmove
