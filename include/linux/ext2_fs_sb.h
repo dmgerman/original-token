@@ -53,12 +53,12 @@ r_int
 id|s_itb_per_group
 suffix:semicolon
 multiline_comment|/* Number of inode table blocks per group */
-DECL|member|s_db_per_group
+DECL|member|s_gdb_count
 r_int
 r_int
-id|s_db_per_group
+id|s_gdb_count
 suffix:semicolon
-multiline_comment|/* Number of descriptor blocks per group */
+multiline_comment|/* Number of group descriptor blocks */
 DECL|member|s_desc_per_block
 r_int
 r_int
@@ -174,18 +174,6 @@ suffix:semicolon
 DECL|member|s_first_ino
 r_int
 id|s_first_ino
-suffix:semicolon
-DECL|member|s_feature_compat
-r_int
-id|s_feature_compat
-suffix:semicolon
-DECL|member|s_feature_incompat
-r_int
-id|s_feature_incompat
-suffix:semicolon
-DECL|member|s_feature_ro_compat
-r_int
-id|s_feature_ro_compat
 suffix:semicolon
 )brace
 suffix:semicolon

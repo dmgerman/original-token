@@ -1855,6 +1855,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* sysctl_net_ax25.c */
+macro_line|#ifdef CONFIG_SYSCTL
 r_extern
 r_void
 id|ax25_register_sysctl
@@ -1871,5 +1872,31 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|function|ax25_register_sysctl
+r_extern
+r_inline
+r_void
+id|ax25_register_sysctl
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+suffix:semicolon
+DECL|function|ax25_unregister_sysctl
+r_extern
+r_inline
+r_void
+id|ax25_unregister_sysctl
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+suffix:semicolon
+macro_line|#endif /* CONFIG_SYSCTL */
 macro_line|#endif
 eof

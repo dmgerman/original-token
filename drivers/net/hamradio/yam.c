@@ -21,7 +21,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 multiline_comment|/* prototypes for ax25_encapsulate and ax25_rebuild_header */
 macro_line|#include &lt;net/ax25.h&gt;
-macro_line|#endif&t;&t;&t;&t;&t;&t;&t;/* CONFIG_AX25 || CONFIG_AX25_MODULE */
+macro_line|#endif&t;/* CONFIG_AX25 || CONFIG_AX25_MODULE */
 multiline_comment|/* make genksyms happy */
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
@@ -45,13 +45,14 @@ id|yam_drvname
 op_assign
 l_string|&quot;yam&quot;
 suffix:semicolon
-DECL|variable|yam_drvinfo
+DECL|variable|__initdata
 r_static
 r_const
 r_char
 id|yam_drvinfo
 (braket
 )braket
+id|__initdata
 op_assign
 id|KERN_INFO
 l_string|&quot;YAM driver version 0.8 by F1OAT/F6FBB&bslash;n&quot;
@@ -62,36 +63,36 @@ mdefine_line|#define YAM_9600&t;1
 DECL|macro|YAM_1200
 mdefine_line|#define YAM_1200&t;2
 DECL|macro|NR_PORTS
-mdefine_line|#define NR_PORTS &t;4
+mdefine_line|#define NR_PORTS&t;4
 DECL|macro|YAM_MAGIC
 mdefine_line|#define YAM_MAGIC&t;0xF10A7654
 multiline_comment|/* Transmitter states */
 DECL|macro|TX_OFF
-mdefine_line|#define TX_OFF  &t;0
+mdefine_line|#define TX_OFF&t;&t;0
 DECL|macro|TX_HEAD
 mdefine_line|#define TX_HEAD&t;&t;1
 DECL|macro|TX_DATA
-mdefine_line|#define TX_DATA  &t;2
+mdefine_line|#define TX_DATA&t;&t;2
 DECL|macro|TX_CRC1
-mdefine_line|#define TX_CRC1  &t;3
+mdefine_line|#define TX_CRC1&t;&t;3
 DECL|macro|TX_CRC2
-mdefine_line|#define TX_CRC2  &t;4
+mdefine_line|#define TX_CRC2&t;&t;4
 DECL|macro|TX_TAIL
-mdefine_line|#define TX_TAIL  &t;5
+mdefine_line|#define TX_TAIL&t;&t;5
 DECL|macro|YAM_MAX_FRAME
 mdefine_line|#define YAM_MAX_FRAME&t;1024
 DECL|macro|DEFAULT_BITRATE
-mdefine_line|#define DEFAULT_BITRATE&t;9600&t;/* bps */
+mdefine_line|#define DEFAULT_BITRATE&t;9600&t;&t;&t;/* bps */
 DECL|macro|DEFAULT_HOLDD
-mdefine_line|#define DEFAULT_HOLDD   10&t;&t;/* sec */
+mdefine_line|#define DEFAULT_HOLDD&t;10&t;&t;&t;/* sec */
 DECL|macro|DEFAULT_TXD
-mdefine_line|#define DEFAULT_TXD&t;    300&t;&t;/* ms */
+mdefine_line|#define DEFAULT_TXD&t;300&t;&t;&t;/* ms */
 DECL|macro|DEFAULT_TXTAIL
-mdefine_line|#define DEFAULT_TXTAIL  10&t;&t;/* ms */
+mdefine_line|#define DEFAULT_TXTAIL&t;10&t;&t;&t;/* ms */
 DECL|macro|DEFAULT_SLOT
-mdefine_line|#define DEFAULT_SLOT    100&t;&t;/* ms */
+mdefine_line|#define DEFAULT_SLOT&t;100&t;&t;&t;/* ms */
 DECL|macro|DEFAULT_PERS
-mdefine_line|#define DEFAULT_PERS    64&t;&t;/* 0-&gt;255 */
+mdefine_line|#define DEFAULT_PERS&t;64&t;&t;&t;/* 0-&gt;255 */
 DECL|struct|yam_port
 r_struct
 id|yam_port
@@ -268,16 +269,6 @@ r_struct
 id|yam_mcs
 op_star
 id|yam_data
-op_assign
-l_int|NULL
-suffix:semicolon
-DECL|variable|irqs
-r_static
-r_int
-id|irqs
-(braket
-l_int|16
-)braket
 suffix:semicolon
 DECL|variable|ax25_bcast
 r_static
@@ -363,144 +354,140 @@ id|yam_timer
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|RBR
-mdefine_line|#define RBR(iobase) (iobase+0)
+mdefine_line|#define RBR(iobase)&t;(iobase+0)
 DECL|macro|THR
-mdefine_line|#define THR(iobase) (iobase+0)
+mdefine_line|#define THR(iobase)&t;(iobase+0)
 DECL|macro|IER
-mdefine_line|#define IER(iobase) (iobase+1)
+mdefine_line|#define IER(iobase)&t;(iobase+1)
 DECL|macro|IIR
-mdefine_line|#define IIR(iobase) (iobase+2)
+mdefine_line|#define IIR(iobase)&t;(iobase+2)
 DECL|macro|FCR
-mdefine_line|#define FCR(iobase) (iobase+2)
+mdefine_line|#define FCR(iobase)&t;(iobase+2)
 DECL|macro|LCR
-mdefine_line|#define LCR(iobase) (iobase+3)
+mdefine_line|#define LCR(iobase)&t;(iobase+3)
 DECL|macro|MCR
-mdefine_line|#define MCR(iobase) (iobase+4)
+mdefine_line|#define MCR(iobase)&t;(iobase+4)
 DECL|macro|LSR
-mdefine_line|#define LSR(iobase) (iobase+5)
+mdefine_line|#define LSR(iobase)&t;(iobase+5)
 DECL|macro|MSR
-mdefine_line|#define MSR(iobase) (iobase+6)
+mdefine_line|#define MSR(iobase)&t;(iobase+6)
 DECL|macro|SCR
-mdefine_line|#define SCR(iobase) (iobase+7)
+mdefine_line|#define SCR(iobase)&t;(iobase+7)
 DECL|macro|DLL
-mdefine_line|#define DLL(iobase) (iobase+0)
+mdefine_line|#define DLL(iobase)&t;(iobase+0)
 DECL|macro|DLM
-mdefine_line|#define DLM(iobase) (iobase+1)
+mdefine_line|#define DLM(iobase)&t;(iobase+1)
 DECL|macro|YAM_EXTENT
-mdefine_line|#define YAM_EXTENT 8
+mdefine_line|#define YAM_EXTENT&t;8
 multiline_comment|/* Interrupt Identification Register Bit Masks */
 DECL|macro|IIR_NOPEND
-mdefine_line|#define IIR_NOPEND &t;1
+mdefine_line|#define IIR_NOPEND&t;1
 DECL|macro|IIR_MSR
-mdefine_line|#define IIR_MSR  &t;0
+mdefine_line|#define IIR_MSR&t;&t;0
 DECL|macro|IIR_TX
-mdefine_line|#define IIR_TX     &t;2
+mdefine_line|#define IIR_TX&t;&t;2
 DECL|macro|IIR_RX
-mdefine_line|#define IIR_RX     &t;4
+mdefine_line|#define IIR_RX&t;&t;4
 DECL|macro|IIR_LSR
-mdefine_line|#define IIR_LSR   &t;6
+mdefine_line|#define IIR_LSR&t;&t;6
 DECL|macro|IIR_TIMEOUT
 mdefine_line|#define IIR_TIMEOUT&t;12&t;&t;&t;/* Fifo mode only */
 DECL|macro|IIR_MASK
 mdefine_line|#define IIR_MASK&t;0x0F
 multiline_comment|/* Interrupt Enable Register Bit Masks */
 DECL|macro|IER_RX
-mdefine_line|#define IER_RX  1&t;&t;&t;&t;/* enable rx interrupt */
+mdefine_line|#define IER_RX&t;&t;1&t;&t;&t;/* enable rx interrupt */
 DECL|macro|IER_TX
-mdefine_line|#define IER_TX  2&t;&t;&t;&t;/* enable tx interrupt */
+mdefine_line|#define IER_TX&t;&t;2&t;&t;&t;/* enable tx interrupt */
 DECL|macro|IER_LSR
-mdefine_line|#define IER_LSR 4&t;&t;&t;&t;/* enable line status interrupts */
+mdefine_line|#define IER_LSR&t;&t;4&t;&t;&t;/* enable line status interrupts */
 DECL|macro|IER_MSR
-mdefine_line|#define IER_MSR 8&t;&t;&t;&t;/* enable modem status interrupts */
+mdefine_line|#define IER_MSR&t;&t;8&t;&t;&t;/* enable modem status interrupts */
 multiline_comment|/* Modem Control Register Bit Masks */
 DECL|macro|MCR_DTR
-mdefine_line|#define MCR_DTR  0x01&t;&t;&t;/* DTR output */
+mdefine_line|#define MCR_DTR&t;&t;0x01&t;&t;&t;/* DTR output */
 DECL|macro|MCR_RTS
-mdefine_line|#define MCR_RTS  0x02&t;&t;&t;/* RTS output */
+mdefine_line|#define MCR_RTS&t;&t;0x02&t;&t;&t;/* RTS output */
 DECL|macro|MCR_OUT1
-mdefine_line|#define MCR_OUT1 0x04&t;&t;&t;/* OUT1 output (not accessible in RS232) */
+mdefine_line|#define MCR_OUT1&t;0x04&t;&t;&t;/* OUT1 output (not accessible in RS232) */
 DECL|macro|MCR_OUT2
-mdefine_line|#define MCR_OUT2 0x08&t;&t;&t;/* Master Interrupt enable (must be set on PCs) */
+mdefine_line|#define MCR_OUT2&t;0x08&t;&t;&t;/* Master Interrupt enable (must be set on PCs) */
 DECL|macro|MCR_LOOP
-mdefine_line|#define MCR_LOOP 0x10&t;&t;&t;/* Loopback enable */
+mdefine_line|#define MCR_LOOP&t;0x10&t;&t;&t;/* Loopback enable */
 multiline_comment|/* Modem Status Register Bit Masks */
 DECL|macro|MSR_DCTS
-mdefine_line|#define MSR_DCTS 0x01&t;&t;&t;/* Delta CTS input */
+mdefine_line|#define MSR_DCTS&t;0x01&t;&t;&t;/* Delta CTS input */
 DECL|macro|MSR_DDSR
-mdefine_line|#define MSR_DDSR 0x02&t;&t;&t;/* Delta DSR */
+mdefine_line|#define MSR_DDSR&t;0x02&t;&t;&t;/* Delta DSR */
 DECL|macro|MSR_DRIN
-mdefine_line|#define MSR_DRIN 0x04&t;&t;&t;/* Delta RI */
+mdefine_line|#define MSR_DRIN&t;0x04&t;&t;&t;/* Delta RI */
 DECL|macro|MSR_DDCD
-mdefine_line|#define MSR_DDCD 0x08&t;&t;&t;/* Delta DCD */
+mdefine_line|#define MSR_DDCD&t;0x08&t;&t;&t;/* Delta DCD */
 DECL|macro|MSR_CTS
-mdefine_line|#define MSR_CTS  0x10&t;&t;&t;/* CTS input */
+mdefine_line|#define MSR_CTS&t;&t;0x10&t;&t;&t;/* CTS input */
 DECL|macro|MSR_DSR
-mdefine_line|#define MSR_DSR  0x20&t;&t;&t;/* DSR input */
+mdefine_line|#define MSR_DSR&t;&t;0x20&t;&t;&t;/* DSR input */
 DECL|macro|MSR_RING
-mdefine_line|#define MSR_RING 0x40&t;&t;&t;/* RI  input */
+mdefine_line|#define MSR_RING&t;0x40&t;&t;&t;/* RI  input */
 DECL|macro|MSR_DCD
-mdefine_line|#define MSR_DCD  0x80&t;&t;&t;/* DCD input */
+mdefine_line|#define MSR_DCD&t;&t;0x80&t;&t;&t;/* DCD input */
 multiline_comment|/* line status register bit mask */
 DECL|macro|LSR_RXC
-mdefine_line|#define LSR_RXC&t;   0x01
+mdefine_line|#define LSR_RXC&t;&t;0x01
 DECL|macro|LSR_OE
-mdefine_line|#define LSR_OE&t;   0x02
+mdefine_line|#define LSR_OE&t;&t;0x02
 DECL|macro|LSR_PE
-mdefine_line|#define LSR_PE&t;   0x04
+mdefine_line|#define LSR_PE&t;&t;0x04
 DECL|macro|LSR_FE
-mdefine_line|#define LSR_FE&t;   0x08
+mdefine_line|#define LSR_FE&t;&t;0x08
 DECL|macro|LSR_BREAK
-mdefine_line|#define LSR_BREAK  0x10
+mdefine_line|#define LSR_BREAK&t;0x10
 DECL|macro|LSR_THRE
-mdefine_line|#define LSR_THRE   0x20
+mdefine_line|#define LSR_THRE&t;0x20
 DECL|macro|LSR_TSRE
-mdefine_line|#define LSR_TSRE   0x40
+mdefine_line|#define LSR_TSRE&t;0x40
 multiline_comment|/* Line Control Register Bit Masks */
 DECL|macro|LCR_DLAB
-mdefine_line|#define LCR_DLAB    0x80
+mdefine_line|#define LCR_DLAB&t;0x80
 DECL|macro|LCR_BREAK
-mdefine_line|#define LCR_BREAK   0x40
+mdefine_line|#define LCR_BREAK&t;0x40
 DECL|macro|LCR_PZERO
-mdefine_line|#define LCR_PZERO   0x28
+mdefine_line|#define LCR_PZERO&t;0x28
 DECL|macro|LCR_PEVEN
-mdefine_line|#define LCR_PEVEN   0x18
+mdefine_line|#define LCR_PEVEN&t;0x18
 DECL|macro|LCR_PODD
-mdefine_line|#define LCR_PODD    0x08
+mdefine_line|#define LCR_PODD&t;0x08
 DECL|macro|LCR_STOP1
-mdefine_line|#define LCR_STOP1   0x00
+mdefine_line|#define LCR_STOP1&t;0x00
 DECL|macro|LCR_STOP2
-mdefine_line|#define LCR_STOP2   0x04
+mdefine_line|#define LCR_STOP2&t;0x04
 DECL|macro|LCR_BIT5
-mdefine_line|#define LCR_BIT5    0x00
+mdefine_line|#define LCR_BIT5&t;0x00
 DECL|macro|LCR_BIT6
-mdefine_line|#define LCR_BIT6    0x02
+mdefine_line|#define LCR_BIT6&t;0x02
 DECL|macro|LCR_BIT7
-mdefine_line|#define LCR_BIT7    0x01
+mdefine_line|#define LCR_BIT7&t;0x01
 DECL|macro|LCR_BIT8
-mdefine_line|#define LCR_BIT8    0x03
+mdefine_line|#define LCR_BIT8&t;0x03
 multiline_comment|/* YAM Modem &lt;-&gt; UART Port mapping */
 DECL|macro|TX_RDY
-mdefine_line|#define TX_RDY &t;  MSR_DCTS&t;&t;/* transmitter ready to send */
+mdefine_line|#define TX_RDY&t;&t;MSR_DCTS&t;&t;/* transmitter ready to send */
 DECL|macro|RX_DCD
-mdefine_line|#define RX_DCD    MSR_DCD&t;&t;/* carrier detect */
+mdefine_line|#define RX_DCD&t;&t;MSR_DCD&t;&t;&t;/* carrier detect */
 DECL|macro|RX_FLAG
-mdefine_line|#define RX_FLAG   MSR_RING&t;&t;/* hdlc flag received */
+mdefine_line|#define RX_FLAG&t;&t;MSR_RING&t;&t;/* hdlc flag received */
 DECL|macro|FPGA_DONE
-mdefine_line|#define FPGA_DONE MSR_DSR&t;&t;/* FPGA is configured */
+mdefine_line|#define FPGA_DONE&t;MSR_DSR&t;&t;&t;/* FPGA is configured */
 DECL|macro|PTT_ON
-mdefine_line|#define PTT_ON    (MCR_RTS|MCR_OUT2)&t;/* activate PTT */
+mdefine_line|#define PTT_ON&t;&t;(MCR_RTS|MCR_OUT2)&t;/* activate PTT */
 DECL|macro|PTT_OFF
-mdefine_line|#define PTT_OFF   (MCR_DTR|MCR_OUT2)&t;/* release PTT */
+mdefine_line|#define PTT_OFF&t;&t;(MCR_DTR|MCR_OUT2)&t;/* release PTT */
 DECL|macro|ENABLE_RXINT
-mdefine_line|#define ENABLE_RXINT   IER_RX&t;/* enable uart rx interrupt during rx */
+mdefine_line|#define ENABLE_RXINT&t;IER_RX&t;&t;&t;/* enable uart rx interrupt during rx */
 DECL|macro|ENABLE_TXINT
-mdefine_line|#define ENABLE_TXINT   IER_MSR&t;/* enable uart ms interrupt during tx */
+mdefine_line|#define ENABLE_TXINT&t;IER_MSR&t;&t;&t;/* enable uart ms interrupt during tx */
 DECL|macro|ENABLE_RTXINT
-mdefine_line|#define ENABLE_RTXINT  (IER_RX|IER_MSR)&t;&t;/* full duplex operations */
-DECL|macro|MIN
-mdefine_line|#define MIN(a, b) (((a) &lt; (b)) ? (a) : (b))
-DECL|macro|MAX
-mdefine_line|#define MAX(a, b) (((a) &gt; (b)) ? (a) : (b))
+mdefine_line|#define ENABLE_RTXINT&t;(IER_RX|IER_MSR)&t;/* full duplex operations */
 multiline_comment|/*************************************************************************&n;* CRC Tables&n;************************************************************************/
 DECL|variable|chktabl
 r_static
@@ -1857,49 +1844,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|free_mcs
-r_static
-r_void
-id|free_mcs
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|yam_mcs
-op_star
-id|p
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|yam_data
-)paren
-(brace
-id|p
-op_assign
-id|yam_data
-suffix:semicolon
-id|yam_data
-op_assign
-id|yam_data-&gt;next
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
+DECL|function|add_mcs
 r_static
 r_int
 r_char
 op_star
-DECL|function|add_mcs
 id|add_mcs
 c_func
 (paren
@@ -1956,6 +1905,10 @@ id|p-&gt;next
 suffix:semicolon
 )brace
 multiline_comment|/* Allocate a new mcs */
+r_if
+c_cond
+(paren
+(paren
 id|p
 op_assign
 id|kmalloc
@@ -1967,13 +1920,9 @@ r_struct
 id|yam_mcs
 )paren
 comma
-id|GFP_ATOMIC
+id|GFP_KERNEL
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|p
+)paren
 op_eq
 l_int|NULL
 )paren
@@ -2089,7 +2038,7 @@ id|bitrate
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * download bitstream to FPGA&n; * data is contained in bits[] array in fpgaconf.h&n; */
+multiline_comment|/*&n; * download bitstream to FPGA&n; * data is contained in bits[] array in yam1200.h resp. yam9600.h&n; */
 DECL|function|fpga_download
 r_static
 r_int
@@ -2171,6 +2120,7 @@ id|i
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;yam: error in write cycle&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2693,10 +2643,10 @@ id|u
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n;* Rx Section&n;******************************************************************************/
-r_static
-r_void
-r_inline
 DECL|function|yam_rx_flag
+r_static
+r_inline
+r_void
 id|yam_rx_flag
 c_func
 (paren
@@ -2774,6 +2724,7 @@ id|pkt_len
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: memory squeeze, dropping packet&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2860,10 +2811,10 @@ op_assign
 l_int|0xf3
 suffix:semicolon
 )brace
-r_static
-r_void
-r_inline
 DECL|function|yam_rx_byte
+r_static
+r_inline
+r_void
 id|yam_rx_byte
 c_func
 (paren
@@ -3003,18 +2954,6 @@ id|yp
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|skb_queue_tail
 c_func
 (paren
@@ -3884,6 +3823,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: too many irq iir=%d&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4478,24 +4418,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_INET
-macro_line|#ifdef CONFIG_PROC_FS
-DECL|macro|yam_net_procfs_init
-mdefine_line|#define yam_net_procfs_init() proc_net_create(&quot;yam&quot;,0,yam_net_get_info)
-DECL|macro|yam_net_procfs_remove
-mdefine_line|#define yam_net_procfs_remove() proc_net_remove(&quot;yam&quot;)
-macro_line|#else
-DECL|macro|yam_net_procfs_init
-mdefine_line|#define yam_net_procfs_init()
-DECL|macro|yam_net_procfs_remove
-mdefine_line|#define yam_net_procfs_remove()
-macro_line|#endif /* CONFIG_PROC_FS */
-macro_line|#else
-DECL|macro|yam_net_procfs_init
-mdefine_line|#define yam_net_procfs_init()
-DECL|macro|yam_net_procfs_remove
-mdefine_line|#define yam_net_procfs_remove()
-macro_line|#endif /* CONFIG_INET */
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|yam_get_stats
 r_static
@@ -4651,6 +4573,7 @@ id|YAM_EXTENT
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: cannot 0x%lx busy&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4682,6 +4605,7 @@ id|c_uart_unknown
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: cannot find uart type&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4707,6 +4631,7 @@ id|yp-&gt;bitrate
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: cannot init FPGA&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4752,6 +4677,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: irq %d busy&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5135,7 +5061,7 @@ r_struct
 id|yamdrv_ioctl_mcs
 )paren
 comma
-id|GFP_ATOMIC
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -5836,10 +5762,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|yam_init
+DECL|function|yam_init_driver
+r_static
 r_int
 id|__init
-id|yam_init
+id|yam_init_driver
 c_func
 (paren
 r_void
@@ -5857,33 +5784,6 @@ id|printk
 c_func
 (paren
 id|yam_drvinfo
-)paren
-suffix:semicolon
-multiline_comment|/* Clears the IRQ table */
-id|memset
-c_func
-(paren
-id|irqs
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|irqs
-)paren
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|yam_ports
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|yam_ports
-)paren
 )paren
 suffix:semicolon
 r_for
@@ -6075,7 +5975,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;yam: cannot register net  device %s&bslash;n&quot;
+l_string|&quot;yam: cannot register net device %s&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -6105,68 +6005,36 @@ op_amp
 id|yam_timer
 )paren
 suffix:semicolon
-id|yam_net_procfs_init
+id|proc_net_create
 c_func
 (paren
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
-multiline_comment|/*&n; * command line settable parameters&n; */
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Frederic Rible F1OAT frible@teaser.fr&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;Yam amateur radio modem driver&quot;
-)paren
-suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|ret
-op_assign
-id|yam_init
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-(paren
-id|ret
-op_eq
-l_int|1
-)paren
-ques
-c_cond
+l_string|&quot;yam&quot;
+comma
 l_int|0
-suffix:colon
-id|ret
+comma
+id|yam_net_get_info
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|cleanup_module
+DECL|function|yam_cleanup_driver
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|yam_cleanup_driver
 c_func
 (paren
 r_void
 )paren
 (brace
+r_struct
+id|yam_mcs
+op_star
+id|p
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -6235,17 +6103,60 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|free_mcs
-c_func
+r_while
+c_loop
 (paren
+id|yam_data
 )paren
+(brace
+id|p
+op_assign
+id|yam_data
 suffix:semicolon
-id|yam_net_procfs_remove
+id|yam_data
+op_assign
+id|yam_data-&gt;next
+suffix:semicolon
+id|kfree
 c_func
 (paren
+id|p
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;&t;&t;&t;&t;/* MODULE */
+id|proc_net_remove
+c_func
+(paren
+l_string|&quot;yam&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* --------------------------------------------------------------------- */
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Frederic Rible F1OAT frible@teaser.fr&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Yam amateur radio modem driver&quot;
+)paren
+suffix:semicolon
+DECL|variable|yam_init_driver
+id|module_init
+c_func
+(paren
+id|yam_init_driver
+)paren
+suffix:semicolon
+DECL|variable|yam_cleanup_driver
+id|module_exit
+c_func
+(paren
+id|yam_cleanup_driver
+)paren
+suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 eof

@@ -1,12 +1,11 @@
 multiline_comment|/*&n; *&t;NET/ROM release 007&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 007&t;Tomi(OH2BNS)&t;Created this file.&n; *                                      Small change in nr_loopback_queue().&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/netrom.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|loopback_queue
 r_static
 r_struct
@@ -313,9 +312,9 @@ c_func
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
 DECL|function|nr_loopback_clear
 r_void
+id|__exit
 id|nr_loopback_clear
 c_func
 (paren
@@ -357,6 +356,4 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
 eof

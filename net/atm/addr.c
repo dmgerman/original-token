@@ -163,6 +163,10 @@ c_func
 id|local_lock
 )paren
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|atm_dev_lock
+suffix:semicolon
 DECL|function|notify_sigd
 r_static
 r_void
@@ -222,6 +226,12 @@ op_amp
 id|local_lock
 )paren
 suffix:semicolon
+id|spin_lock
+(paren
+op_amp
+id|atm_dev_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -248,6 +258,12 @@ c_func
 (paren
 op_amp
 id|local_lock
+)paren
+suffix:semicolon
+id|spin_unlock
+(paren
+op_amp
+id|atm_dev_lock
 )paren
 suffix:semicolon
 id|notify_sigd

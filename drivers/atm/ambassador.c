@@ -4313,10 +4313,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-singleline_comment|// prevent module unload while sleeping (kmalloc/down)
-singleline_comment|// doing this any earlier would complicate more error return paths
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 singleline_comment|// get space for our vcc stuff
 id|vcc
 op_assign
@@ -4343,8 +4339,6 @@ id|KERN_ERR
 comma
 l_string|&quot;out of memory!&quot;
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -5126,8 +5120,6 @@ comma
 op_amp
 id|atm_vcc-&gt;flags
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -6337,6 +6329,11 @@ comma
 id|proc_read
 suffix:colon
 id|amb_proc_read
+comma
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 )brace
 suffix:semicolon
 multiline_comment|/********** housekeeping **********/

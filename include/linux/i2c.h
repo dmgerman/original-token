@@ -6,7 +6,7 @@ multiline_comment|/* -----------------------------------------------------------
 multiline_comment|/*   Copyright (C) 1995-2000 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c.h,v 1.40 2000/07/19 19:55:45 frodo Exp $ */
+multiline_comment|/* $Id: i2c.h,v 1.42 2000/09/06 20:14:06 frodo Exp $ */
 macro_line|#ifndef I2C_H
 DECL|macro|I2C_H
 mdefine_line|#define I2C_H
@@ -315,6 +315,27 @@ suffix:semicolon
 r_extern
 id|s32
 id|i2c_smbus_write_block_data
+c_func
+(paren
+r_struct
+id|i2c_client
+op_star
+id|client
+comma
+id|u8
+id|command
+comma
+id|u8
+id|length
+comma
+id|u8
+op_star
+id|values
+)paren
+suffix:semicolon
+r_extern
+id|s32
+id|i2c_smbus_write_i2c_block_data
 c_func
 (paren
 r_struct
@@ -1194,17 +1215,19 @@ DECL|macro|I2C_SMBUS_WRITE
 mdefine_line|#define I2C_SMBUS_WRITE&t;0
 multiline_comment|/* SMBus transaction types (size parameter in the above functions) &n;   Note: these no longer correspond to the (arbitrary) PIIX4 internal codes! */
 DECL|macro|I2C_SMBUS_QUICK
-mdefine_line|#define I2C_SMBUS_QUICK&t;&t;0
+mdefine_line|#define I2C_SMBUS_QUICK&t;&t;    0
 DECL|macro|I2C_SMBUS_BYTE
-mdefine_line|#define I2C_SMBUS_BYTE&t;&t;1
+mdefine_line|#define I2C_SMBUS_BYTE&t;&t;    1
 DECL|macro|I2C_SMBUS_BYTE_DATA
-mdefine_line|#define I2C_SMBUS_BYTE_DATA&t;2 
+mdefine_line|#define I2C_SMBUS_BYTE_DATA&t;    2 
 DECL|macro|I2C_SMBUS_WORD_DATA
-mdefine_line|#define I2C_SMBUS_WORD_DATA&t;3
+mdefine_line|#define I2C_SMBUS_WORD_DATA&t;    3
 DECL|macro|I2C_SMBUS_PROC_CALL
-mdefine_line|#define I2C_SMBUS_PROC_CALL&t;4
+mdefine_line|#define I2C_SMBUS_PROC_CALL&t;    4
 DECL|macro|I2C_SMBUS_BLOCK_DATA
-mdefine_line|#define I2C_SMBUS_BLOCK_DATA&t;5
+mdefine_line|#define I2C_SMBUS_BLOCK_DATA&t;    5
+DECL|macro|I2C_SMBUS_I2C_BLOCK_DATA
+mdefine_line|#define I2C_SMBUS_I2C_BLOCK_DATA    6
 multiline_comment|/* ----- commands for the ioctl like i2c_command call:&n; * note that additional calls are defined in the algorithm and hw &n; *&t;dependent layers - these can be listed here, or see the &n; *&t;corresponding header files.&n; */
 multiline_comment|/* -&gt; bit-adapter specific ioctls&t;*/
 DECL|macro|I2C_RETRIES

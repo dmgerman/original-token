@@ -5554,8 +5554,6 @@ id|fore200e_vcc
 op_star
 id|fore200e_vcc
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/* find a free VPI/VCI */
 id|fore200e_walk_vccs
 c_func
@@ -5589,13 +5587,9 @@ id|vpi
 op_eq
 id|ATM_VPI_UNSPEC
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|set_bit
 c_func
 (paren
@@ -5694,8 +5688,6 @@ op_amp
 id|fore200e-&gt;rate_sf
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
@@ -5754,8 +5746,6 @@ op_amp
 id|fore200e-&gt;rate_sf
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -5810,8 +5800,6 @@ c_func
 op_amp
 id|fore200e-&gt;rate_sf
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -5954,10 +5942,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 id|kfree
 c_func
 (paren
@@ -11034,8 +11018,6 @@ id|FORE200E_VERSION
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/* for each configured bus interface */
 r_for
 c_loop
@@ -11143,15 +11125,6 @@ id|fore200e
 suffix:semicolon
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|link
-op_le
-l_int|0
-)paren
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|link
 suffix:semicolon
@@ -12392,42 +12365,42 @@ id|atmdev_ops
 id|fore200e_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* fore200e_dev_close   */
+id|open
+suffix:colon
 id|fore200e_open
 comma
+id|close
+suffix:colon
 id|fore200e_close
 comma
+id|ioctl
+suffix:colon
 id|fore200e_ioctl
 comma
+id|getsockopt
+suffix:colon
 id|fore200e_getsockopt
 comma
+id|setsockopt
+suffix:colon
 id|fore200e_setsockopt
 comma
+id|send
+suffix:colon
 id|fore200e_send
 comma
-l_int|NULL
-comma
-multiline_comment|/* fore200e_sg_send,    */
-l_int|NULL
-comma
-multiline_comment|/* fore200e_send_oam,   */
-l_int|NULL
-comma
-multiline_comment|/* fore200e_phy_put,    */
-l_int|NULL
-comma
-multiline_comment|/* fore200e_phy_get,    */
-l_int|NULL
-comma
-multiline_comment|/* fore200e_feedback,   */
+id|change_qos
+suffix:colon
 id|fore200e_change_qos
 comma
-l_int|NULL
-comma
-multiline_comment|/* fore200e_free_rx_skb */
+id|proc_read
+suffix:colon
 id|fore200e_proc_read
+comma
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_ATM_FORE200E_PCA

@@ -3,7 +3,7 @@ multiline_comment|/* -----------------------------------------------------------
 multiline_comment|/*   Copyright (C) 1995-99 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt;.&n;   All SMBus-related things are written by Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c-core.c,v 1.56 2000/07/09 15:13:05 frodo Exp $ */
+multiline_comment|/* $Id: i2c-core.c,v 1.58 2000/10/29 22:57:38 frodo Exp $ */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -205,6 +205,8 @@ DECL|variable|i2cproc_initialized
 r_static
 r_int
 id|i2cproc_initialized
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#else /* undef CONFIG_PROC_FS */
 DECL|macro|i2cproc_init
@@ -4769,6 +4771,100 @@ id|data
 )paren
 suffix:semicolon
 )brace
+DECL|function|i2c_smbus_write_i2c_block_data
+r_extern
+id|s32
+id|i2c_smbus_write_i2c_block_data
+c_func
+(paren
+r_struct
+id|i2c_client
+op_star
+id|client
+comma
+id|u8
+id|command
+comma
+id|u8
+id|length
+comma
+id|u8
+op_star
+id|values
+)paren
+(brace
+r_union
+id|i2c_smbus_data
+id|data
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|length
+OG
+l_int|32
+)paren
+id|length
+op_assign
+l_int|32
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|i
+op_le
+id|length
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|data.block
+(braket
+id|i
+)braket
+op_assign
+id|values
+(braket
+id|i
+op_minus
+l_int|1
+)braket
+suffix:semicolon
+id|data.block
+(braket
+l_int|0
+)braket
+op_assign
+id|length
+suffix:semicolon
+r_return
+id|i2c_smbus_xfer
+c_func
+(paren
+id|client-&gt;adapter
+comma
+id|client-&gt;addr
+comma
+id|client-&gt;flags
+comma
+id|I2C_SMBUS_WRITE
+comma
+id|command
+comma
+id|I2C_SMBUS_I2C_BLOCK_DATA
+comma
+op_amp
+id|data
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Simulate a SMBus command using the i2c protocol &n;   No checking of parameters is done!  */
 DECL|function|i2c_smbus_xfer_emulated
 r_static
@@ -4808,14 +4904,14 @@ r_int
 r_char
 id|msgbuf0
 (braket
-l_int|33
+l_int|34
 )braket
 suffix:semicolon
 r_int
 r_char
 id|msgbuf1
 (braket
-l_int|33
+l_int|34
 )braket
 suffix:semicolon
 r_int
@@ -5118,7 +5214,7 @@ r_else
 (brace
 id|msg
 (braket
-l_int|1
+l_int|0
 )braket
 dot
 id|len
@@ -5128,19 +5224,19 @@ id|data-&gt;block
 l_int|0
 )braket
 op_plus
-l_int|1
+l_int|2
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|msg
 (braket
-l_int|1
+l_int|0
 )braket
 dot
 id|len
 OG
-l_int|32
+l_int|34
 )paren
 (brace
 id|printk
@@ -5151,7 +5247,7 @@ l_string|&quot;invalid block write size (%d)&bslash;n&quot;
 comma
 id|msg
 (braket
-l_int|1
+l_int|0
 )braket
 dot
 id|len
@@ -5173,7 +5269,7 @@ id|i
 op_le
 id|msg
 (braket
-l_int|1
+l_int|0
 )braket
 dot
 id|len
@@ -5189,6 +5285,8 @@ op_assign
 id|data-&gt;block
 (braket
 id|i
+op_minus
+l_int|1
 )braket
 suffix:semicolon
 )brace

@@ -390,11 +390,9 @@ op_amp
 id|flush_cpumask
 )paren
 )paren
-id|BUG
-c_func
-(paren
-)paren
+r_return
 suffix:semicolon
+multiline_comment|/* &n;&t;&t; * This was a BUG() but until someone can quote me the&n;&t;&t; * line from the intel manual that guarantees an IPI to&n;&t;&t; * multiple CPUs is retried _only_ on the erroring CPUs&n;&t;&t; * its staying as a return&n;&t;&t; *&n;&t;&t; * BUG();&n;&t;&t; */
 r_if
 c_cond
 (paren

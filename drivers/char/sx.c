@@ -22,7 +22,8 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 multiline_comment|/* The 3.0.0 version of sxboards/sxwindow.h  uses BYTE and WORD.... */
 DECL|macro|BYTE
@@ -244,6 +245,7 @@ op_star
 id|sx_termios_locked
 suffix:semicolon
 DECL|variable|boards
+r_static
 r_struct
 id|sx_board
 id|boards
@@ -252,40 +254,48 @@ id|SX_NBOARDS
 )braket
 suffix:semicolon
 DECL|variable|sx_ports
+r_static
 r_struct
 id|sx_port
 op_star
 id|sx_ports
 suffix:semicolon
 DECL|variable|sx_refcount
+r_static
 r_int
 id|sx_refcount
 suffix:semicolon
 DECL|variable|sx_initialized
+r_static
 r_int
 id|sx_initialized
 suffix:semicolon
 DECL|variable|sx_nports
+r_static
 r_int
 id|sx_nports
 suffix:semicolon
 DECL|variable|sx_debug
+r_static
 r_int
 id|sx_debug
 suffix:semicolon
 multiline_comment|/* You can have the driver poll your card. &n;    - Set sx_poll to 1 to poll every timer tick (10ms on Intel). &n;      This is used when the card cannot use an interrupt for some reason.&n;&n;    - set sx_slowpoll to 100 to do an extra poll once a second (on Intel). If &n;      the driver misses an interrupt (report this if it DOES happen to you!)&n;      everything will continue to work.... &n; */
 DECL|variable|sx_poll
+r_static
 r_int
 id|sx_poll
 op_assign
 l_int|1
 suffix:semicolon
 DECL|variable|sx_slowpoll
+r_static
 r_int
 id|sx_slowpoll
 suffix:semicolon
 multiline_comment|/* The card limits the number of interrupts per second. &n;   At 115k2 &quot;100&quot; should be sufficient. &n;   If you&squot;re using higher baudrates, you can increase this...&n; */
 DECL|variable|sx_maxints
+r_static
 r_int
 id|sx_maxints
 op_assign
@@ -293,6 +303,7 @@ l_int|100
 suffix:semicolon
 multiline_comment|/* These are the only open spaces in my computer. Yours may have more&n;   or less.... -- REW &n;   duh: Card at 0xa0000 is possible on HP Netserver?? -- pvdl&n;*/
 DECL|variable|sx_probe_addrs
+r_static
 r_int
 id|sx_probe_addrs
 (braket
@@ -313,6 +324,7 @@ l_int|0xe8000
 )brace
 suffix:semicolon
 DECL|variable|si_probe_addrs
+r_static
 r_int
 id|si_probe_addrs
 (braket
@@ -340,14 +352,13 @@ DECL|macro|NR_SI_ADDRS
 mdefine_line|#define NR_SI_ADDRS (sizeof(si_probe_addrs)/sizeof (int))
 multiline_comment|/* Set the mask to all-ones. This alas, only supports 32 interrupts. &n;   Some architectures may need more. */
 DECL|variable|sx_irqmask
+r_static
 r_int
 id|sx_irqmask
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#ifndef TWO_ZERO
-macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
 (paren
@@ -404,8 +415,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 DECL|variable|sx_real_driver
 r_static
 r_struct
@@ -433,7 +442,6 @@ id|sx_close
 comma
 id|sx_hungup
 comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* &n;   This driver can spew a whole lot of debugging output at you. If you&n;   need maximum performance, you should disable the DEBUG define. To&n;   aid in debugging in the field, I&squot;m leaving the compile-time debug&n;   features enabled, and disable them &quot;runtime&quot;. That allows me to&n;   instruct people with problems to enable debugging without requiring&n;   them to recompile... &n;*/
@@ -471,6 +479,7 @@ comma
 )brace
 suffix:semicolon
 DECL|variable|sx_fw_device
+r_static
 r_struct
 id|miscdevice
 id|sx_fw_device
@@ -741,6 +750,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* This needs redoing for Alpha -- REW -- Done. */
 DECL|function|write_sx_byte
+r_static
 r_inline
 r_void
 id|write_sx_byte
@@ -768,6 +778,7 @@ id|offset
 suffix:semicolon
 )brace
 DECL|function|read_sx_byte
+r_static
 r_inline
 id|u8
 id|read_sx_byte
@@ -791,6 +802,7 @@ id|offset
 suffix:semicolon
 )brace
 DECL|function|write_sx_word
+r_static
 r_inline
 r_void
 id|write_sx_word
@@ -818,6 +830,7 @@ id|offset
 suffix:semicolon
 )brace
 DECL|function|read_sx_word
+r_static
 r_inline
 id|u16
 id|read_sx_word
@@ -841,6 +854,7 @@ id|offset
 suffix:semicolon
 )brace
 DECL|function|sx_busy_wait_eq
+r_static
 r_int
 id|sx_busy_wait_eq
 (paren
@@ -960,6 +974,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sx_busy_wait_neq
+r_static
 r_int
 id|sx_busy_wait_neq
 (paren
@@ -1080,6 +1095,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* 5.6.4 of 6210028 r2.3 */
 DECL|function|sx_reset
+r_static
 r_int
 id|sx_reset
 (paren
@@ -1273,6 +1289,7 @@ mdefine_line|#define sx_write_board_word(board, elem, val) &bslash;&n;   write_s
 DECL|macro|sx_read_board_word
 mdefine_line|#define sx_read_board_word(board, elem) &bslash;&n;   read_sx_word (board, BRD_OFFSET (board, elem))
 DECL|function|sx_start_board
+r_static
 r_int
 id|sx_start_board
 (paren
@@ -1369,6 +1386,7 @@ DECL|macro|SX_IRQ_REG_VAL
 mdefine_line|#define SX_IRQ_REG_VAL(board) &bslash;&n;        ((board-&gt;flags &amp; SX_ISA_BOARD)?(board-&gt;irq &lt;&lt; 4):0)
 multiline_comment|/* Note. The SX register is write-only. Therefore, we have to enable the&n;   bus too. This is a no-op, if you don&squot;t mess with this driver... */
 DECL|function|sx_start_interrupts
+r_static
 r_int
 id|sx_start_interrupts
 (paren
@@ -1505,6 +1523,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|sx_send_command
+r_static
 r_int
 id|sx_send_command
 (paren
@@ -1564,6 +1583,7 @@ id|newstat
 suffix:semicolon
 )brace
 DECL|function|mod_type_s
+r_static
 r_char
 op_star
 id|mod_type_s
@@ -1622,6 +1642,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|pan_type_s
+r_static
 r_char
 op_star
 id|pan_type_s
@@ -1704,6 +1725,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|mod_compat_type
+r_static
 r_int
 id|mod_compat_type
 (paren
@@ -3105,6 +3127,7 @@ suffix:semicolon
 multiline_comment|/* ********************************************************************** *&n; *                   the interrupt related routines                       *&n; * ********************************************************************** */
 multiline_comment|/* Note:&n;   Other drivers use the macro &quot;MIN&quot; to calculate how much to copy.&n;   This has the disadvantage that it will evaluate parts twice. That&squot;s&n;   expensive when it&squot;s IO (and the compiler cannot optimize those away!).&n;   Moreover, I&squot;m not sure that you&squot;re race-free. &n;&n;   I assign a value, and then only allow the value to decrease. This&n;   is always safe. This makes the code a few lines longer, and you&n;   know I&squot;m dead against that, but I think it is required in this&n;   case.  */
 DECL|function|sx_transmit_chars
+r_static
 r_void
 id|sx_transmit_chars
 (paren
@@ -3429,6 +3452,7 @@ suffix:semicolon
 multiline_comment|/* Note the symmetry between receiving chars and transmitting them!&n;   Note: The kernel should have implemented both a receive buffer and&n;   a transmit buffer. */
 multiline_comment|/* Inlined: Called only once. Remove the inline when you add another call */
 DECL|function|sx_receive_chars
+r_static
 r_inline
 r_void
 id|sx_receive_chars
@@ -3719,6 +3743,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Inlined: it is called only once. Remove the inline if you add another &n;   call */
 DECL|function|sx_check_modem_signals
+r_static
 r_inline
 r_void
 id|sx_check_modem_signals
@@ -4988,7 +5013,7 @@ suffix:semicolon
 )brace
 id|retval
 op_assign
-id|block_til_ready
+id|gs_block_til_ready
 c_func
 (paren
 id|port
@@ -5322,6 +5347,7 @@ DECL|macro|R1
 mdefine_line|#define R1         if (read_sx_byte (board, i) != 0xaa) return 1
 multiline_comment|/* This memtest takes a human-noticable time. You normally only do it&n;   once a boot, so I guess that it is worth it. */
 DECL|function|do_memtest
+r_static
 r_int
 id|do_memtest
 (paren
@@ -5420,6 +5446,7 @@ DECL|macro|R1
 mdefine_line|#define R1         if (read_sx_word (board, i) != 0xaa55) return 1
 multiline_comment|/* This memtest takes a human-noticable time. You normally only do it&n;   once a boot, so I guess that it is worth it. */
 DECL|function|do_memtest_w
+r_static
 r_int
 id|do_memtest_w
 (paren
@@ -6227,9 +6254,6 @@ suffix:semicolon
 r_case
 id|SXIO_SETDEBUG
 suffix:colon
-r_case
-id|SXIO_SETGSDEBUG
-suffix:colon
 id|sx_debug
 op_assign
 id|arg
@@ -6239,12 +6263,22 @@ suffix:semicolon
 r_case
 id|SXIO_GETDEBUG
 suffix:colon
-r_case
-id|SXIO_GETGSDEBUG
-suffix:colon
 id|rc
 op_assign
 id|sx_debug
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SXIO_GETGSDEBUG
+suffix:colon
+r_case
+id|SXIO_SETGSDEBUG
+suffix:colon
+id|rc
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -7755,6 +7789,7 @@ id|chans
 suffix:semicolon
 )brace
 DECL|function|printheader
+r_static
 r_void
 id|printheader
 c_func
@@ -7795,6 +7830,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|probe_sx
+r_static
 r_int
 id|probe_sx
 (paren
@@ -8131,6 +8167,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Specialix probes for this card at 32k increments from 640k to 16M.&n;   I consider machines with less than 16M unlikely nowadays, so I&squot;m&n;   not probing above 1Mb. Also, 0xa0000, 0xb0000, are taken by the VGA&n;   card. 0xe0000 and 0xf0000 are taken by the BIOS. That only leaves &n;   0xc0000, 0xc8000, 0xd0000 and 0xd8000 . */
 DECL|function|probe_si
+r_static
 r_int
 id|probe_si
 (paren
@@ -8530,6 +8567,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ckmalloc
+r_static
 r_void
 op_star
 id|ckmalloc
@@ -9029,10 +9067,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|function|sx_release_drivers
 r_static
 r_void
+id|__exit
 id|sx_release_drivers
 c_func
 (paren
@@ -9064,7 +9102,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifdef TWO_ZERO
 DECL|macro|PDEV
 mdefine_line|#define PDEV unsigned char pci_bus, unsigned pci_fun
@@ -9078,6 +9115,7 @@ macro_line|#ifdef CONFIG_PCI
 multiline_comment|/******************************************************** &n; * Setting bit 17 in the CNTRL register of the PLX 9050  * &n; * chip forces a retry on writes while a read is pending.*&n; * This is to prevent the card locking up on Intel Xeon  *&n; * multiprocessor systems with the NX chipset.    -- NV  *&n; ********************************************************/
 multiline_comment|/* Newer cards are produced with this bit set from the configuration&n;   EEprom.  As the bit is read/write for the CPU, we can fix it here,&n;   if we detect that it isn&squot;t set correctly. -- REW */
 DECL|function|fix_sx_pci
+r_static
 r_void
 id|fix_sx_pci
 (paren
@@ -9179,12 +9217,10 @@ id|rebase
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef MODULE
-DECL|macro|sx_init
-mdefine_line|#define sx_init init_module
-macro_line|#endif
 DECL|function|sx_init
+r_static
 r_int
+id|__init
 id|sx_init
 c_func
 (paren
@@ -10013,11 +10049,11 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|sx_exit
+r_static
 r_void
-id|cleanup_module
-c_func
+id|__exit
+id|sx_exit
 (paren
 r_void
 )paren
@@ -10176,5 +10212,18 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|sx_init
+id|module_init
+c_func
+(paren
+id|sx_init
+)paren
+suffix:semicolon
+DECL|variable|sx_exit
+id|module_exit
+c_func
+(paren
+id|sx_exit
+)paren
+suffix:semicolon
 eof

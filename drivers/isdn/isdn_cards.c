@@ -30,7 +30,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_EICON
+macro_line|#if defined(CONFIG_ISDN_DRV_EICON_OLD) || defined(CONFIG_ISDN_DRV_EICON_DIVAS)
 r_extern
 r_void
 id|eicon_init
@@ -86,7 +86,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if CONFIG_ISDN_DRV_EICON
+macro_line|#if defined(CONFIG_ISDN_DRV_EICON_OLD) || defined(CONFIG_ISDN_DRV_EICON_DIVAS)
 id|eicon_init
 c_func
 (paren

@@ -5843,7 +5843,7 @@ c_cond
 (paren
 id|page
 op_eq
-l_int|NULL
+l_int|0UL
 )paren
 (brace
 id|printk

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&t;ROSE release 003&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from af_netrom.c.&n; *&t;&t;&t;Alan(GW4PTS)&t;Hacked up for newer API stuff&n; *&t;&t;&t;Terry (VK2KTJ)&t;Added support for variable length&n; * &t;&t;&t;&t;&t;address masks.&n; *&t;ROSE 002&t;Jonathan(G4KLX)&t;Changed hdrincl to qbitincl.&n; *&t;&t;&t;&t;&t;Added random number facilities entry.&n; *&t;&t;&t;&t;&t;Variable number of ROSE devices.&n; *&t;ROSE 003&t;Jonathan(G4KLX)&t;New timer architecture.&n; *&t;&t;&t;&t;&t;Implemented idle timer.&n; *&t;&t;&t;&t;&t;Added use count to neighbour.&n; *                      Tomi(OH2BNS)    Fixed rose_getname().&n; *                      Arnaldo C. Melo s/suser/capable/ + micro cleanups&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -6367,7 +6366,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;F6FBB/G4KLX ROSE for Linux. Version 0.62 for AX25.037 Linux 2.1&bslash;n&quot;
+l_string|&quot;F6FBB/G4KLX ROSE for Linux. Version 0.62 for AX25.037 Linux 2.4&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ax25_protocol_register
@@ -6401,7 +6400,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_create
 c_func
 (paren
@@ -6442,7 +6440,6 @@ comma
 id|rose_routes_get_info
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -6454,7 +6451,6 @@ c_func
 id|rose_proto_init
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 id|MODULE_PARM
@@ -6498,7 +6494,6 @@ r_void
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_remove
 c_func
 (paren
@@ -6523,7 +6518,6 @@ c_func
 l_string|&quot;rose_routes&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|rose_loopback_clear
 c_func
 (paren
@@ -6675,6 +6669,4 @@ c_func
 id|rose_exit
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
-macro_line|#endif
 eof

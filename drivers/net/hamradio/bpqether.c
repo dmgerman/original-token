@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;G8BPQ compatible &quot;AX.25 via ethernet&quot; driver release 003&n; *&n; *&t;This code REQUIRES 2.0.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a &quot;pseudo&quot; network driver to allow AX.25 over Ethernet&n; *&t;using G8BPQ encapsulation. It has been extracted from the protocol&n; *&t;implementation because&n; *&n; *&t;&t;- things got unreadable within the protocol stack&n; *&t;&t;- to cure the protocol stack from &quot;feature-ism&quot;&n; *&t;&t;- a protocol implementation shouldn&squot;t need to know on&n; *&t;&t;  which hardware it is running&n; *&t;&t;- user-level programs like the AX.25 utilities shouldn&squot;t&n; *&t;&t;  need to know about the hardware.&n; *&t;&t;- IP over ethernet encapsulated AX.25 was impossible&n; *&t;&t;- rxecho.c did not work&n; *&t;&t;- to have room for extensions&n; *&t;&t;- it just deserves to &quot;live&quot; as an own driver&n; *&n; *&t;This driver can use any ethernet destination address, and can be&n; *&t;limited to accept frames from one dedicated ethernet card only.&n; *&n; *&t;Note that the driver sets up the BPQ devices automagically on&n; *&t;startup or (if started before the &quot;insmod&quot; of an ethernet device)&n; *&t;on &quot;ifconfig up&quot;. It hopefully will remove the BPQ on &quot;rmmod&quot;ing&n; *&t;the ethernet device (in fact: as soon as another ethernet or bpq&n; *&t;device gets &quot;ifconfig&quot;ured).&n; *&n; *&t;I have heard that several people are thinking of experiments&n; *&t;with highspeed packet radio using existing ethernet cards.&n; *&t;Well, this driver is prepared for this purpose, just add&n; *&t;your tx key control and a txdelay / tailtime algorithm,&n; *&t;probably some buffering, and /voila/...&n; *&n; *&t;History&n; *&t;BPQ   001&t;Joerg(DL1BKE)&t;&t;Extracted BPQ code from AX.25&n; *&t;&t;&t;&t;&t;&t;protocol stack and added my own&n; *&t;&t;&t;&t;&t;&t;yet existing patches&n; *&t;BPQ   002&t;Joerg(DL1BKE)&t;&t;Scan network device list on&n; *&t;&t;&t;&t;&t;&t;startup.&n; *&t;BPQ   003&t;Joerg(DL1BKE)&t;&t;Ethernet destination address&n; *&t;&t;&t;&t;&t;&t;and accepted source address&n; *&t;&t;&t;&t;&t;&t;can be configured by an ioctl()&n; *&t;&t;&t;&t;&t;&t;call.&n; *&t;&t;&t;&t;&t;&t;Fixed to match Linux networking&n; *&t;&t;&t;&t;&t;&t;changes - 2.1.15.&n; *&t;BPQ   004&t;Joerg(DL1BKE)&t;&t;Fixed to not lock up on ifconfig.&n; */
+multiline_comment|/*&n; *&t;G8BPQ compatible &quot;AX.25 via ethernet&quot; driver release 004&n; *&n; *&t;This code REQUIRES 2.0.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a &quot;pseudo&quot; network driver to allow AX.25 over Ethernet&n; *&t;using G8BPQ encapsulation. It has been extracted from the protocol&n; *&t;implementation because&n; *&n; *&t;&t;- things got unreadable within the protocol stack&n; *&t;&t;- to cure the protocol stack from &quot;feature-ism&quot;&n; *&t;&t;- a protocol implementation shouldn&squot;t need to know on&n; *&t;&t;  which hardware it is running&n; *&t;&t;- user-level programs like the AX.25 utilities shouldn&squot;t&n; *&t;&t;  need to know about the hardware.&n; *&t;&t;- IP over ethernet encapsulated AX.25 was impossible&n; *&t;&t;- rxecho.c did not work&n; *&t;&t;- to have room for extensions&n; *&t;&t;- it just deserves to &quot;live&quot; as an own driver&n; *&n; *&t;This driver can use any ethernet destination address, and can be&n; *&t;limited to accept frames from one dedicated ethernet card only.&n; *&n; *&t;Note that the driver sets up the BPQ devices automagically on&n; *&t;startup or (if started before the &quot;insmod&quot; of an ethernet device)&n; *&t;on &quot;ifconfig up&quot;. It hopefully will remove the BPQ on &quot;rmmod&quot;ing&n; *&t;the ethernet device (in fact: as soon as another ethernet or bpq&n; *&t;device gets &quot;ifconfig&quot;ured).&n; *&n; *&t;I have heard that several people are thinking of experiments&n; *&t;with highspeed packet radio using existing ethernet cards.&n; *&t;Well, this driver is prepared for this purpose, just add&n; *&t;your tx key control and a txdelay / tailtime algorithm,&n; *&t;probably some buffering, and /voila/...&n; *&n; *&t;History&n; *&t;BPQ   001&t;Joerg(DL1BKE)&t;&t;Extracted BPQ code from AX.25&n; *&t;&t;&t;&t;&t;&t;protocol stack and added my own&n; *&t;&t;&t;&t;&t;&t;yet existing patches&n; *&t;BPQ   002&t;Joerg(DL1BKE)&t;&t;Scan network device list on&n; *&t;&t;&t;&t;&t;&t;startup.&n; *&t;BPQ   003&t;Joerg(DL1BKE)&t;&t;Ethernet destination address&n; *&t;&t;&t;&t;&t;&t;and accepted source address&n; *&t;&t;&t;&t;&t;&t;can be configured by an ioctl()&n; *&t;&t;&t;&t;&t;&t;call.&n; *&t;&t;&t;&t;&t;&t;Fixed to match Linux networking&n; *&t;&t;&t;&t;&t;&t;changes - 2.1.15.&n; *&t;BPQ   004&t;Joerg(DL1BKE)&t;&t;Fixed to not lock up on ifconfig.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
@@ -28,6 +29,18 @@ macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/bpqether.h&gt;
+DECL|variable|__initdata
+r_static
+r_const
+r_char
+id|banner
+(braket
+)braket
+id|__initdata
+op_assign
+id|KERN_INFO
+l_string|&quot;AX.25: bpqether driver version 004&bslash;n&quot;
+suffix:semicolon
 DECL|variable|ax25_bcast
 r_static
 r_int
@@ -176,17 +189,17 @@ id|packet_type
 id|bpq_packet_type
 op_assign
 (brace
-l_int|0
+id|type
+suffix:colon
+id|__constant_htons
+c_func
+(paren
+id|ETH_P_BPQ
+)paren
 comma
-multiline_comment|/* ntohs(ETH_P_BPQ),*/
-l_int|0
-comma
-multiline_comment|/* copy */
+id|func
+suffix:colon
 id|bpq_rcv
-comma
-l_int|NULL
-comma
-l_int|NULL
 comma
 )brace
 suffix:semicolon
@@ -197,9 +210,10 @@ id|notifier_block
 id|bpq_dev_notifier
 op_assign
 (brace
+id|notifier_call
+suffix:colon
 id|bpq_device_event
 comma
-l_int|0
 )brace
 suffix:semicolon
 DECL|macro|MAXBPQDEV
@@ -262,14 +276,12 @@ DECL|variable|bpq_devices
 )brace
 op_star
 id|bpq_devices
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------------------ */
 multiline_comment|/*&n; *&t;Get the ethernet device for a BPQ device&n; */
 DECL|function|bpq_get_ether_dev
 r_static
-id|__inline__
+r_inline
 r_struct
 id|net_device
 op_star
@@ -286,8 +298,6 @@ r_struct
 id|bpqdev
 op_star
 id|bpq
-suffix:semicolon
-id|bpq
 op_assign
 (paren
 r_struct
@@ -297,11 +307,7 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_return
-(paren
 id|bpq
-op_ne
-l_int|NULL
-)paren
 ques
 c_cond
 id|bpq-&gt;ethdev
@@ -312,7 +318,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Get the BPQ device for the ethernet device&n; */
 DECL|function|bpq_get_ax25_dev
 r_static
-id|__inline__
+r_inline
 r_struct
 id|net_device
 op_star
@@ -362,7 +368,7 @@ suffix:semicolon
 )brace
 DECL|function|dev_is_ethdev
 r_static
-id|__inline__
+r_inline
 r_int
 id|dev_is_ethdev
 c_func
@@ -696,28 +702,10 @@ id|len
 )paren
 suffix:semicolon
 multiline_comment|/* Set the length of the data */
-(paren
-(paren
-r_struct
-id|bpqdev
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|stats.rx_packets
+id|bpq-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
-(paren
-(paren
-r_struct
-id|bpqdev
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|stats.rx_bytes
+id|bpq-&gt;stats.rx_bytes
 op_add_assign
 id|len
 suffix:semicolon
@@ -1068,8 +1056,6 @@ r_struct
 id|bpqdev
 op_star
 id|bpq
-suffix:semicolon
-id|bpq
 op_assign
 (paren
 r_struct
@@ -1147,9 +1133,6 @@ r_int
 id|cmd
 )paren
 (brace
-r_int
-id|err
-suffix:semicolon
 r_struct
 id|bpq_ethaddr
 op_star
@@ -1211,29 +1194,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|ifr-&gt;ifr_data
-comma
-r_sizeof
-(paren
-r_struct
-id|bpq_req
-)paren
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
-id|err
-suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -1248,6 +1208,10 @@ r_struct
 id|bpq_req
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_switch
 c_cond
@@ -1276,29 +1240,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|ethaddr
-comma
-r_sizeof
-(paren
-r_struct
-id|bpq_ethaddr
-)paren
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
-id|err
-suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -1308,7 +1249,14 @@ id|ethaddr-&gt;destination
 comma
 id|ETH_ALEN
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -1318,6 +1266,10 @@ id|ethaddr-&gt;accept
 comma
 id|ETH_ALEN
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2177,14 +2129,6 @@ id|net_device
 op_star
 id|dev
 suffix:semicolon
-id|bpq_packet_type.type
-op_assign
-id|htons
-c_func
-(paren
-id|ETH_P_BPQ
-)paren
-suffix:semicolon
 id|dev_add_pack
 c_func
 (paren
@@ -2202,11 +2146,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;AX.25: bpqether driver version 0.01&bslash;n&quot;
+id|banner
 )paren
 suffix:semicolon
 id|proc_net_create
+c_func
 (paren
 l_string|&quot;bpqether&quot;
 comma
@@ -2311,6 +2255,7 @@ id|bpq_dev_notifier
 )paren
 suffix:semicolon
 id|proc_net_remove
+c_func
 (paren
 l_string|&quot;bpqether&quot;
 )paren

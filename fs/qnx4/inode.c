@@ -2026,16 +2026,7 @@ comma
 id|qnx4_get_block
 comma
 op_amp
-(paren
-(paren
-r_struct
-id|inode
-op_star
-)paren
-id|page-&gt;mapping-&gt;host
-)paren
-op_member_access_from_pointer
-id|u.qnx4_i.mmu_private
+id|page-&gt;mapping-&gt;host-&gt;u.qnx4_i.mmu_private
 )paren
 suffix:semicolon
 )brace

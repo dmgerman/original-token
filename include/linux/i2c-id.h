@@ -5,7 +5,7 @@ multiline_comment|/* &t;&t;&t;&t;&t;&t;&t;&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*   Copyright (C) 1995-1999 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/* $Id: i2c-id.h,v 1.16 2000/04/03 18:57:42 frodo Exp $ */
+multiline_comment|/* $Id: i2c-id.h,v 1.25 2000/10/12 07:27:29 simon Exp $ */
 macro_line|#ifndef I2C_ID_H
 DECL|macro|I2C_ID_H
 mdefine_line|#define I2C_ID_H
@@ -65,6 +65,30 @@ DECL|macro|I2C_DRIVERID_SAB3036
 mdefine_line|#define I2C_DRIVERID_SAB3036&t;26&t;/* SAB3036 tuner&t;&t;*/
 DECL|macro|I2C_DRIVERID_TDA7432
 mdefine_line|#define I2C_DRIVERID_TDA7432&t;27&t;/* Stereo sound processor&t;*/
+DECL|macro|I2C_DRIVERID_TVMIXER
+mdefine_line|#define I2C_DRIVERID_TVMIXER    28      /* Mixer driver for tv cards    */
+DECL|macro|I2C_DRIVERID_TVAUDIO
+mdefine_line|#define I2C_DRIVERID_TVAUDIO    29      /* Generic TV sound driver      */
+DECL|macro|I2C_DRIVERID_DPL3518
+mdefine_line|#define I2C_DRIVERID_DPL3518    30      /* Dolby decoder chip           */
+DECL|macro|I2C_DRIVERID_TDA9873
+mdefine_line|#define I2C_DRIVERID_TDA9873    31      /* TV sound decoder chip        */
+DECL|macro|I2C_DRIVERID_TDA9875
+mdefine_line|#define I2C_DRIVERID_TDA9875    32      /* TV sound decoder chip        */
+DECL|macro|I2C_DRIVERID_PIC16C54_PV9
+mdefine_line|#define I2C_DRIVERID_PIC16C54_PV9 33    /* Audio mux/ir receiver        */
+DECL|macro|I2C_DRIVERID_SBATT
+mdefine_line|#define I2C_DRIVERID_SBATT      34     /* Smart Battery Device&t;&t;*/
+DECL|macro|I2C_DRIVERID_SBS
+mdefine_line|#define I2C_DRIVERID_SBS        35     /* SB System Manager&t;&t;*/
+DECL|macro|I2C_DRIVERID_VES1893
+mdefine_line|#define I2C_DRIVERID_VES1893&t;36     /* VLSI DVB-S decoder&t;&t;*/
+DECL|macro|I2C_DRIVERID_VES1820
+mdefine_line|#define I2C_DRIVERID_VES1820&t;37     /* VLSI DVB-C decoder&t;&t;*/
+DECL|macro|I2C_DRIVERID_SAA7113
+mdefine_line|#define I2C_DRIVERID_SAA7113&t;38     /* video decoder&t;&t;&t;*/
+DECL|macro|I2C_DRIVERID_TDA8444
+mdefine_line|#define I2C_DRIVERID_TDA8444&t;39     /* octuple 6-bit DAC             */
 DECL|macro|I2C_DRIVERID_EXP0
 mdefine_line|#define I2C_DRIVERID_EXP0&t;0xF0&t;/* experimental use id&squot;s&t;*/
 DECL|macro|I2C_DRIVERID_EXP1
@@ -92,6 +116,12 @@ DECL|macro|I2C_ALGO_ISA
 mdefine_line|#define I2C_ALGO_ISA &t;0x050000&t;/* lm_sensors ISA pseudo-adapter */
 DECL|macro|I2C_ALGO_SAA7146
 mdefine_line|#define I2C_ALGO_SAA7146 0x060000&t;/* SAA 7146 video decoder bus&t;*/
+DECL|macro|I2C_ALGO_ACB
+mdefine_line|#define I2C_ALGO_ACB &t;0x070000&t;/* ACCESS.bus algorithm         */
+DECL|macro|I2C_ALGO_EC
+mdefine_line|#define I2C_ALGO_EC     0x100000        /* ACPI embedded controller     */
+DECL|macro|I2C_ALGO_MPC8XX
+mdefine_line|#define I2C_ALGO_MPC8XX 0x110000&t;/* MPC8xx PowerPC I2C algorithm */
 DECL|macro|I2C_ALGO_EXP
 mdefine_line|#define I2C_ALGO_EXP&t;0x800000&t;/* experimental&t;&t;&t;*/
 DECL|macro|I2C_ALGO_MASK
@@ -139,6 +169,12 @@ DECL|macro|I2C_HW_P_ISA
 mdefine_line|#define I2C_HW_P_ISA&t;0x01&t;/* generic ISA Bus inteface card&t;*/
 DECL|macro|I2C_HW_P_ELEK
 mdefine_line|#define I2C_HW_P_ELEK&t;0x02&t;/* Elektor ISA Bus inteface card&t;*/
+multiline_comment|/* --- ACPI Embedded controller algorithms                              */
+DECL|macro|I2C_HW_ACPI_EC
+mdefine_line|#define I2C_HW_ACPI_EC          0x00
+multiline_comment|/* --- MPC8xx PowerPC adapters&t;&t;&t;&t;&t;&t;*/
+DECL|macro|I2C_HW_MPC8XX_EPON
+mdefine_line|#define I2C_HW_MPC8XX_EPON 0x00&t;/* Eponymous MPC8xx I2C adapter &t;*/
 multiline_comment|/* --- SMBus only adapters&t;&t;&t;&t;&t;&t;*/
 DECL|macro|I2C_HW_SMBUS_PIIX4
 mdefine_line|#define I2C_HW_SMBUS_PIIX4&t;0x00
@@ -154,6 +190,8 @@ DECL|macro|I2C_HW_SMBUS_AMD756
 mdefine_line|#define I2C_HW_SMBUS_AMD756&t;0x05
 DECL|macro|I2C_HW_SMBUS_SIS5595
 mdefine_line|#define I2C_HW_SMBUS_SIS5595&t;0x06
+DECL|macro|I2C_HW_SMBUS_ALI1535
+mdefine_line|#define I2C_HW_SMBUS_ALI1535&t;0x07
 multiline_comment|/* --- ISA pseudo-adapter&t;&t;&t;&t;&t;&t;*/
 DECL|macro|I2C_HW_ISA
 mdefine_line|#define I2C_HW_ISA 0x00

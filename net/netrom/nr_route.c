@@ -1,6 +1,4 @@
 multiline_comment|/*&n; *&t;NET/ROM release 007&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;First attempt.&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Use SIOCADDRT/SIOCDELRT ioctl values&n; *&t;&t;&t;&t;&t;for NET/ROM routes.&n; *&t;&t;&t;&t;&t;Use &squot;*&squot; for a blank mnemonic in /proc/net/nr_nodes.&n; *&t;&t;&t;&t;&t;Change default quality for new neighbour when same&n; *&t;&t;&t;&t;&t;as node callsign.&n; *&t;&t;&t;Alan Cox(GW4PTS) Added the firewall hooks.&n; *&t;NET/ROM 006&t;Jonathan(G4KLX)&t;Added the setting of digipeated neighbours.&n; *&t;&t;&t;Tomi(OH2BNS)&t;Routing quality and link failure changes.&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -26,6 +24,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/netrom.h&gt;
 DECL|variable|nr_neigh_no
 r_static
@@ -41,8 +40,6 @@ r_struct
 id|nr_node
 op_star
 id|nr_node_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|nr_neigh_list
 r_static
@@ -50,8 +47,6 @@ r_struct
 id|nr_neigh
 op_star
 id|nr_neigh_list
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 r_void
@@ -3759,10 +3754,10 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/*&n; *&t;Free all memory associated with the nodes and routes lists.&n; */
 DECL|function|nr_rt_free
 r_void
+id|__exit
 id|nr_rt_free
 c_func
 (paren
@@ -3836,6 +3831,4 @@ id|s
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#endif
 eof

@@ -844,11 +844,23 @@ DECL|macro|EXT2_GOOD_OLD_INODE_SIZE
 mdefine_line|#define EXT2_GOOD_OLD_INODE_SIZE 128
 multiline_comment|/*&n; * Feature set definitions&n; */
 DECL|macro|EXT2_HAS_COMPAT_FEATURE
-mdefine_line|#define EXT2_HAS_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;( EXT2_SB(sb)-&gt;s_feature_compat &amp; (mask) )
+mdefine_line|#define EXT2_HAS_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;( EXT2_SB(sb)-&gt;s_es-&gt;s_feature_compat &amp; cpu_to_le32(mask) )
 DECL|macro|EXT2_HAS_RO_COMPAT_FEATURE
-mdefine_line|#define EXT2_HAS_RO_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;( EXT2_SB(sb)-&gt;s_feature_ro_compat &amp; (mask) )
+mdefine_line|#define EXT2_HAS_RO_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;( EXT2_SB(sb)-&gt;s_es-&gt;s_feature_ro_compat &amp; cpu_to_le32(mask) )
 DECL|macro|EXT2_HAS_INCOMPAT_FEATURE
-mdefine_line|#define EXT2_HAS_INCOMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;( EXT2_SB(sb)-&gt;s_feature_incompat &amp; (mask) )
+mdefine_line|#define EXT2_HAS_INCOMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;( EXT2_SB(sb)-&gt;s_es-&gt;s_feature_incompat &amp; cpu_to_le32(mask) )
+DECL|macro|EXT2_SET_COMPAT_FEATURE
+mdefine_line|#define EXT2_SET_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;EXT2_SB(sb)-&gt;s_es-&gt;s_feature_compat |= cpu_to_le32(mask)
+DECL|macro|EXT2_SET_RO_COMPAT_FEATURE
+mdefine_line|#define EXT2_SET_RO_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;EXT2_SB(sb)-&gt;s_es-&gt;s_feature_ro_compat |= cpu_to_le32(mask)
+DECL|macro|EXT2_SET_INCOMPAT_FEATURE
+mdefine_line|#define EXT2_SET_INCOMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;EXT2_SB(sb)-&gt;s_es-&gt;s_feature_incompat |= cpu_to_le32(mask)
+DECL|macro|EXT2_CLEAR_COMPAT_FEATURE
+mdefine_line|#define EXT2_CLEAR_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;EXT2_SB(sb)-&gt;s_es-&gt;s_feature_compat &amp;= ~cpu_to_le32(mask)
+DECL|macro|EXT2_CLEAR_RO_COMPAT_FEATURE
+mdefine_line|#define EXT2_CLEAR_RO_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;EXT2_SB(sb)-&gt;s_es-&gt;s_feature_ro_compat &amp;= ~cpu_to_le32(mask)
+DECL|macro|EXT2_CLEAR_INCOMPAT_FEATURE
+mdefine_line|#define EXT2_CLEAR_INCOMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;EXT2_SB(sb)-&gt;s_es-&gt;s_feature_incompat &amp;= ~cpu_to_le32(mask)
 DECL|macro|EXT2_FEATURE_COMPAT_DIR_PREALLOC
 mdefine_line|#define EXT2_FEATURE_COMPAT_DIR_PREALLOC&t;0x0001
 DECL|macro|EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER
@@ -988,9 +1000,29 @@ suffix:semicolon
 multiline_comment|/* balloc.c */
 r_extern
 r_int
-id|ext2_group_sparse
+id|ext2_bg_has_super
 c_func
 (paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
+r_int
+id|group
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|ext2_bg_num_gdb
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
 r_int
 id|group
 )paren
@@ -1442,6 +1474,16 @@ comma
 l_int|4
 )paren
 )paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ext2_update_dynamic_rev
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
 )paren
 suffix:semicolon
 r_extern

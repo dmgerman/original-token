@@ -1149,6 +1149,12 @@ op_star
 id|page
 )paren
 suffix:semicolon
+DECL|member|owner
+r_struct
+id|module
+op_star
+id|owner
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|atmphy_ops

@@ -382,7 +382,7 @@ id|private_
 )paren
 suffix:semicolon
 r_int
-id|block_til_ready
+id|gs_block_til_ready
 c_func
 (paren
 r_void

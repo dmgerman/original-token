@@ -6797,7 +6797,9 @@ id|timer.expires
 op_assign
 id|jiffies
 op_plus
-l_int|10000
+l_int|10
+op_star
+id|HZ
 suffix:semicolon
 multiline_comment|/* 10s */
 id|timer.function
@@ -11466,7 +11468,7 @@ id|the_time
 op_assign
 id|jiffies
 op_plus
-l_int|100
+id|HZ
 suffix:semicolon
 r_while
 c_loop

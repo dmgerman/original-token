@@ -3649,7 +3649,7 @@ suffix:semicolon
 )brace
 id|retval
 op_assign
-id|block_til_ready
+id|gs_block_til_ready
 c_func
 (paren
 id|port

@@ -677,7 +677,7 @@ c_func
 (paren
 id|printk
 (paren
-l_string|&quot;&bslash;npci2000 recieved interrupt &quot;
+l_string|&quot;&bslash;npci2000 received interrupt &quot;
 )paren
 )paren
 suffix:semicolon

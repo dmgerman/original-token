@@ -486,6 +486,49 @@ DECL|macro|LockPage
 mdefine_line|#define LockPage(page)&t;&t;set_bit(PG_locked, &amp;(page)-&gt;flags)
 DECL|macro|TryLockPage
 mdefine_line|#define TryLockPage(page)&t;test_and_set_bit(PG_locked, &amp;(page)-&gt;flags)
+r_extern
+r_void
+id|__set_page_dirty
+c_func
+(paren
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+DECL|function|set_page_dirty
+r_static
+r_inline
+r_void
+id|set_page_dirty
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|test_and_set_bit
+c_func
+(paren
+id|PG_dirty
+comma
+op_amp
+id|page-&gt;flags
+)paren
+)paren
+id|__set_page_dirty
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The first mb is necessary to safely close the critical section opened by the&n; * TryLockPage(), the second mb is necessary to enforce ordering between&n; * the clear_bit and the read of the waitqueue (to avoid SMP races with a&n; * parallel wait_on_page).&n; */
 DECL|macro|UnlockPage
 mdefine_line|#define UnlockPage(page)&t;do { &bslash;&n;&t;&t;&t;&t;&t;smp_mb__before_clear_bit(); &bslash;&n;&t;&t;&t;&t;&t;if (!test_and_clear_bit(PG_locked, &amp;(page)-&gt;flags)) BUG(); &bslash;&n;&t;&t;&t;&t;&t;smp_mb__after_clear_bit(); &bslash;&n;&t;&t;&t;&t;&t;if (waitqueue_active(&amp;page-&gt;wait)) &bslash;&n;&t;&t;&t;&t;&t;&t;wake_up(&amp;page-&gt;wait); &bslash;&n;&t;&t;&t;&t;} while (0)

@@ -1,6 +1,4 @@
 multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from af_ax25.c.&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -35,8 +33,6 @@ r_static
 id|ax25_uid_assoc
 op_star
 id|ax25_uid_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|ax25_uid_policy
 r_int
@@ -604,10 +600,10 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/*&n; *&t;Free all memory associated with UID/Callsign structures.&n; */
 DECL|function|ax25_uid_free
 r_void
+id|__exit
 id|ax25_uid_free
 c_func
 (paren
@@ -647,6 +643,4 @@ id|s
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#endif
 eof

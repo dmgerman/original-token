@@ -4300,9 +4300,9 @@ r_int
 r_char
 id|fskcnt
 suffix:semicolon
-DECL|member|pstn_cid_recieved
+DECL|member|pstn_cid_received
 r_int
-id|pstn_cid_recieved
+id|pstn_cid_received
 suffix:semicolon
 DECL|member|cid
 id|PHONE_CID

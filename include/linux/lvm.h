@@ -5,6 +5,7 @@ DECL|macro|_LVM_H_INCLUDE
 mdefine_line|#define _LVM_H_INCLUDE
 DECL|macro|_LVM_KERNEL_H_VERSION
 mdefine_line|#define&t;_LVM_KERNEL_H_VERSION&t;&quot;LVM 0.9 (13/11/2000)&quot;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;endian.h&gt;
 multiline_comment|/*&n; * preprocessor definitions&n; */

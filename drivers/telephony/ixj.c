@@ -3403,7 +3403,7 @@ id|j-&gt;pstn_cid_intr
 op_assign
 l_int|1
 suffix:semicolon
-id|j-&gt;pstn_cid_recieved
+id|j-&gt;pstn_cid_received
 op_assign
 id|jiffies
 suffix:semicolon
@@ -3436,7 +3436,7 @@ id|j-&gt;pstn_cid_intr
 op_logical_and
 id|jiffies
 OG
-id|j-&gt;pstn_cid_recieved
+id|j-&gt;pstn_cid_received
 op_plus
 (paren
 id|hertz

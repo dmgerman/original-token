@@ -942,16 +942,7 @@ comma
 id|hfs_get_block
 comma
 op_amp
-(paren
-(paren
-r_struct
-id|inode
-op_star
-)paren
-id|page-&gt;mapping-&gt;host
-)paren
-op_member_access_from_pointer
-id|u.hfs_i.mmu_private
+id|page-&gt;mapping-&gt;host-&gt;u.hfs_i.mmu_private
 )paren
 suffix:semicolon
 )brace

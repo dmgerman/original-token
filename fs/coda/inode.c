@@ -875,11 +875,6 @@ id|inode-&gt;i_data
 (brace
 id|open_inode
 op_assign
-(paren
-r_struct
-id|inode
-op_star
-)paren
 id|inode-&gt;i_mapping-&gt;host
 suffix:semicolon
 id|CDEBUG

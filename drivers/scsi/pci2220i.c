@@ -1079,9 +1079,9 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 (paren
-l_int|100000
+l_int|100
 )paren
 suffix:semicolon
 singleline_comment|// just wait 100 mSec to let drives flush&t;
@@ -6276,7 +6276,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-singleline_comment|//&t;DEB (printk (&quot;&bslash;npci2220i recieved interrupt&bslash;n&quot;));
+singleline_comment|//&t;DEB (printk (&quot;&bslash;npci2220i received interrupt&bslash;n&quot;));
 r_for
 c_loop
 (paren
@@ -12616,9 +12616,9 @@ c_cond
 (paren
 id|padapter-&gt;reconPhase
 )paren
-id|udelay
+id|mdelay
 (paren
-l_int|300000
+l_int|300
 )paren
 suffix:semicolon
 r_if

@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/smplock.h&gt;
@@ -737,16 +736,7 @@ suffix:semicolon
 id|info
 op_assign
 op_amp
-(paren
-(paren
-r_struct
-id|inode
-op_star
-)paren
-id|page-&gt;mapping-&gt;host
-)paren
-op_member_access_from_pointer
-id|u.shmem_i
+id|page-&gt;mapping-&gt;host-&gt;u.shmem_i
 suffix:semicolon
 r_if
 c_cond
@@ -861,7 +851,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|SetPageDirty
+id|set_page_dirty
 c_func
 (paren
 id|page
@@ -3428,6 +3418,7 @@ suffix:semicolon
 id|found
 suffix:colon
 id|add_to_page_cache
+c_func
 (paren
 id|page
 comma
@@ -3438,17 +3429,20 @@ op_plus
 id|idx
 )paren
 suffix:semicolon
-id|SetPageDirty
+id|set_page_dirty
+c_func
 (paren
 id|page
 )paren
 suffix:semicolon
 id|SetPageUptodate
+c_func
 (paren
 id|page
 )paren
 suffix:semicolon
 id|UnlockPage
+c_func
 (paren
 id|page
 )paren
@@ -3457,6 +3451,7 @@ id|info-&gt;swapped
 op_decrement
 suffix:semicolon
 id|spin_unlock
+c_func
 (paren
 op_amp
 id|info-&gt;lock

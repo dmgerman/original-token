@@ -1,6 +1,4 @@
 multiline_comment|/*&n; *&t;ROSE release 003&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from nr_route.c.&n; *&t;&t;&t;Terry(VK2KTJ)&t;Added support for variable length&n; *&t;&t;&t;&t;&t;address masks.&n; *&t;ROSE 002&t;Jonathan(G4KLX)&t;Uprated through routing of packets.&n; *&t;&t;&t;&t;&t;Routing loop detection.&n; *&t;ROSE 003&t;Jonathan(G4KLX)&t;New timer architecture.&n; *&t;&t;&t;&t;&t;Added use count to neighbours.&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -27,6 +25,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/rose.h&gt;
 DECL|variable|rose_neigh_no
 r_static
@@ -42,8 +41,6 @@ r_struct
 id|rose_node
 op_star
 id|rose_node_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|rose_neigh_list
 r_static
@@ -51,8 +48,6 @@ r_struct
 id|rose_neigh
 op_star
 id|rose_neigh_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|rose_route_list
 r_static
@@ -60,16 +55,12 @@ r_struct
 id|rose_route
 op_star
 id|rose_route_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|rose_loopback_neigh
 r_struct
 id|rose_neigh
 op_star
 id|rose_loopback_neigh
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 r_void
@@ -4919,10 +4910,10 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/*&n; *&t;Release all memory associated with ROSE routing structures.&n; */
 DECL|function|rose_rt_free
 r_void
+id|__exit
 id|rose_rt_free
 c_func
 (paren
@@ -5029,6 +5020,4 @@ id|u
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#endif
 eof

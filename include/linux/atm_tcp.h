@@ -126,6 +126,12 @@ r_int
 id|itf
 )paren
 suffix:semicolon
+DECL|member|owner
+r_struct
+id|module
+op_star
+id|owner
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern

@@ -495,8 +495,7 @@ op_star
 id|dev
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
+multiline_comment|/* Nothing.... Isn&squot;t this simple :-)  -- REW */
 )brace
 DECL|function|atmtcp_v_open
 r_static
@@ -1644,6 +1643,10 @@ comma
 id|proc_read
 suffix:colon
 id|atmtcp_v_proc
+comma
+id|owner
+suffix:colon
+id|THIS_MODULE
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Device operations for the ATMTCP control device.&n; */
@@ -1735,8 +1738,6 @@ id|atm_dev
 op_star
 id|dev
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|dev_data
 op_assign
 id|kmalloc
@@ -1757,14 +1758,10 @@ c_cond
 op_logical_neg
 id|dev_data
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|dev
 op_assign
 id|atm_dev_register
@@ -1792,8 +1789,6 @@ c_func
 (paren
 id|dev_data
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 id|itf

@@ -1585,11 +1585,6 @@ id|inode
 op_star
 id|inode
 op_assign
-(paren
-r_struct
-id|inode
-op_star
-)paren
 id|page-&gt;mapping-&gt;host
 suffix:semicolon
 r_int

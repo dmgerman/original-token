@@ -1,13 +1,20 @@
 multiline_comment|/*&n;    i2c-dev.c - i2c-bus driver, char device interface  &n;&n;    Copyright (C) 1995-97 Simon G. Vogl&n;    Copyright (C) 1998-99 Frodo Looijaard &lt;frodol@dds.nl&gt;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
 multiline_comment|/* Note that this is a complete rewrite of Simon Vogl&squot;s i2c-dev module.&n;   But I have used so much of his original code and ideas that it seems&n;   only fair to recognize him as co-author -- Frodo */
 multiline_comment|/* The I2C_RDWR ioctl code is written by Kolja Waschk &lt;waschk@telos.de&gt; */
-multiline_comment|/* $Id: i2c-dev.c,v 1.32 2000/07/25 23:52:17 frodo Exp $ */
+multiline_comment|/* The devfs code is contributed by Philipp Matthias Hahn &n;   &lt;pmhahn@titan.lahn.de&gt; */
+multiline_comment|/* $Id: i2c-dev.c,v 1.36 2000/09/22 02:19:35 mds Exp $ */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_KERNEL_VERSION &gt;= KERNEL_VERSION(2,4,0)
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#endif /* LINUX_KERNEL_VERSION &gt;= KERNEL_VERSION(2,4,0) */
+macro_line|#ifdef CONFIG_DEVFS_FS
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#endif
 multiline_comment|/* If you want debugging uncomment: */
 multiline_comment|/* #define DEBUG */
 macro_line|#include &lt;linux/init.h&gt;
@@ -214,10 +221,12 @@ id|file_operations
 id|i2cdev_fops
 op_assign
 (brace
+macro_line|#if LINUX_KERNEL_VERSION &gt;= KERNEL_VERSION(2,4,0)
 id|owner
 suffix:colon
 id|THIS_MODULE
 comma
+macro_line|#endif /* LINUX_KERNEL_VERSION &gt;= KERNEL_VERSION(2,4,0) */
 id|llseek
 suffix:colon
 id|i2cdev_lseek
@@ -256,6 +265,23 @@ id|i2cdev_adaps
 id|I2CDEV_ADAPS_MAX
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
+DECL|variable|devfs_i2c
+r_static
+id|devfs_handle_t
+id|devfs_i2c
+(braket
+id|I2CDEV_ADAPS_MAX
+)braket
+suffix:semicolon
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 DECL|variable|i2cdev_driver
 r_static
 r_struct
@@ -263,30 +289,31 @@ id|i2c_driver
 id|i2cdev_driver
 op_assign
 (brace
-multiline_comment|/* name */
+id|name
+suffix:colon
 l_string|&quot;i2c-dev dummy driver&quot;
 comma
-multiline_comment|/* id */
+id|id
+suffix:colon
 id|I2C_DRIVERID_I2CDEV
 comma
-multiline_comment|/* flags */
+id|flags
+suffix:colon
 id|I2C_DF_DUMMY
 comma
-multiline_comment|/* attach_adapter */
+id|attach_adapter
+suffix:colon
 id|i2cdev_attach_adapter
 comma
-multiline_comment|/* detach_client */
+id|detach_client
+suffix:colon
 id|i2cdev_detach_client
 comma
-multiline_comment|/* command */
+id|command
+suffix:colon
 id|i2cdev_command
 comma
-multiline_comment|/* inc_use */
-l_int|NULL
-comma
-multiline_comment|/* dec_use */
-l_int|NULL
-comma
+multiline_comment|/*&t;inc_use:&t;NULL,&n;&t;dec_use:&t;NULL, */
 )brace
 suffix:semicolon
 DECL|variable|i2cdev_client_template
@@ -296,28 +323,30 @@ id|i2c_client
 id|i2cdev_client_template
 op_assign
 (brace
-multiline_comment|/* name */
+id|name
+suffix:colon
 l_string|&quot;I2C /dev entry&quot;
 comma
-multiline_comment|/* id */
+id|id
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* flags */
+id|flags
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* addr */
+id|addr
+suffix:colon
 op_minus
 l_int|1
 comma
-multiline_comment|/* adapter */
-l_int|NULL
-comma
-multiline_comment|/* driver */
+multiline_comment|/*&t;adapter:&t;NULL, */
+id|driver
+suffix:colon
 op_amp
 id|i2cdev_driver
 comma
-multiline_comment|/* data */
-l_int|NULL
+multiline_comment|/*&t;data:&t;&t;NULL */
 )brace
 suffix:semicolon
 DECL|variable|i2cdev_initialized
@@ -353,7 +382,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-dev,o: i2c-%d lseek to %ld bytes relative to %d.&bslash;n&quot;
+l_string|&quot;i2c-dev.o: i2c-%d lseek to %ld bytes relative to %d.&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -451,7 +480,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-dev,o: i2c-%d reading %d bytes.&bslash;n&quot;
+l_string|&quot;i2c-dev.o: i2c-%d reading %d bytes.&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -611,7 +640,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-dev,o: i2c-%d writing %d bytes.&bslash;n&quot;
+l_string|&quot;i2c-dev.o: i2c-%d writing %d bytes.&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -1238,6 +1267,12 @@ id|data_arg.size
 op_ne
 id|I2C_SMBUS_BLOCK_DATA
 )paren
+op_logical_and
+(paren
+id|data_arg.size
+op_ne
+id|I2C_SMBUS_I2C_BLOCK_DATA
+)paren
 )paren
 (brace
 macro_line|#ifdef DEBUG
@@ -1663,6 +1698,10 @@ id|minor
 )braket
 )paren
 suffix:semicolon
+macro_line|#if LINUX_KERNEL_VERSION &lt; KERNEL_VERSION(2,4,0)
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif /* LINUX_KERNEL_VERSION &lt; KERNEL_VERSION(2,4,0) */
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -1723,11 +1762,16 @@ id|minor
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if LINUX_KERNEL_VERSION &lt; KERNEL_VERSION(2,4,0)
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#else /* LINUX_KERNEL_VERSION &gt;= KERNEL_VERSION(2,4,0) */
 id|lock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* LINUX_KERNEL_VERSION &lt; KERNEL_VERSION(2,4,0) */
 r_if
 c_cond
 (paren
@@ -1752,11 +1796,13 @@ id|minor
 )braket
 )paren
 suffix:semicolon
+macro_line|#if LINUX_KERNEL_VERSION &gt;= KERNEL_VERSION(2,4,0)
 id|unlock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* LINUX_KERNEL_VERSION &gt;= KERNEL_VERSION(2,4,0) */
 r_return
 l_int|0
 suffix:semicolon
@@ -1774,6 +1820,12 @@ id|adap
 (brace
 r_int
 id|i
+suffix:semicolon
+r_char
+id|name
+(braket
+l_int|8
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -1823,6 +1875,15 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+id|sprintf
+(paren
+id|name
+comma
+l_string|&quot;%d&quot;
+comma
+id|i
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1840,6 +1901,37 @@ id|i
 op_assign
 id|adap
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
+id|devfs_i2c
+(braket
+id|i
+)braket
+op_assign
+id|devfs_register
+(paren
+id|devfs_handle
+comma
+id|name
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|I2C_MAJOR
+comma
+id|i
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+op_amp
+id|i2cdev_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1854,6 +1946,17 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* This is actually a detach_adapter call! */
+macro_line|#ifdef CONFIG_DEVFS_FS
+id|devfs_unregister
+c_func
+(paren
+id|devfs_i2c
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 id|i2cdev_adaps
 (braket
 id|i
@@ -1938,6 +2041,23 @@ id|i2cdev_initialized
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
+r_if
+c_cond
+(paren
+id|devfs_register_chrdev
+c_func
+(paren
+id|I2C_MAJOR
+comma
+l_string|&quot;i2c&quot;
+comma
+op_amp
+id|i2cdev_fops
+)paren
+)paren
+(brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1953,6 +2073,7 @@ id|i2cdev_fops
 )paren
 )paren
 (brace
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1966,6 +2087,20 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_DEVFS_FS
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+c_func
+(paren
+l_int|NULL
+comma
+l_string|&quot;i2c&quot;
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif
 id|i2cdev_initialized
 op_increment
 suffix:semicolon
@@ -2063,6 +2198,30 @@ op_ge
 l_int|1
 )paren
 (brace
+macro_line|#ifdef CONFIG_DEVFS_FS
+id|devfs_unregister
+c_func
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|res
+op_assign
+id|devfs_unregister_chrdev
+c_func
+(paren
+id|I2C_MAJOR
+comma
+l_string|&quot;i2c&quot;
+)paren
+)paren
+)paren
+(brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2079,6 +2238,7 @@ l_string|&quot;i2c&quot;
 )paren
 )paren
 (brace
+macro_line|#endif
 id|printk
 c_func
 (paren

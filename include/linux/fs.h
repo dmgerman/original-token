@@ -717,18 +717,30 @@ DECL|struct|address_space
 r_struct
 id|address_space
 (brace
-DECL|member|pages
+DECL|member|clean_pages
 r_struct
 id|list_head
-id|pages
+id|clean_pages
 suffix:semicolon
-multiline_comment|/* list of pages */
+multiline_comment|/* list of clean pages */
+DECL|member|dirty_pages
+r_struct
+id|list_head
+id|dirty_pages
+suffix:semicolon
+multiline_comment|/* list of dirty pages */
+DECL|member|locked_pages
+r_struct
+id|list_head
+id|locked_pages
+suffix:semicolon
+multiline_comment|/* list of locked pages */
 DECL|member|nrpages
 r_int
 r_int
 id|nrpages
 suffix:semicolon
-multiline_comment|/* number of pages */
+multiline_comment|/* number of total pages */
 DECL|member|a_ops
 r_struct
 id|address_space_operations
@@ -737,7 +749,8 @@ id|a_ops
 suffix:semicolon
 multiline_comment|/* methods */
 DECL|member|host
-r_void
+r_struct
+id|inode
 op_star
 id|host
 suffix:semicolon
@@ -1144,14 +1157,16 @@ DECL|macro|I_DIRTY_SYNC
 mdefine_line|#define I_DIRTY_SYNC&t;&t;1 /* Not dirty enough for O_DATASYNC */
 DECL|macro|I_DIRTY_DATASYNC
 mdefine_line|#define I_DIRTY_DATASYNC&t;2 /* Data-related inode changes pending */
+DECL|macro|I_DIRTY_PAGES
+mdefine_line|#define I_DIRTY_PAGES&t;&t;4 /* Data-related inode changes pending */
 DECL|macro|I_LOCK
-mdefine_line|#define I_LOCK&t;&t;&t;4
+mdefine_line|#define I_LOCK&t;&t;&t;8
 DECL|macro|I_FREEING
-mdefine_line|#define I_FREEING&t;&t;8
+mdefine_line|#define I_FREEING&t;&t;16
 DECL|macro|I_CLEAR
-mdefine_line|#define I_CLEAR&t;&t;&t;16
+mdefine_line|#define I_CLEAR&t;&t;&t;32
 DECL|macro|I_DIRTY
-mdefine_line|#define I_DIRTY (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+mdefine_line|#define I_DIRTY (I_DIRTY_SYNC | I_DIRTY_DATASYNC | I_DIRTY_PAGES)
 r_extern
 r_void
 id|__mark_inode_dirty
@@ -1226,6 +1241,40 @@ c_func
 id|inode
 comma
 id|I_DIRTY_SYNC
+)paren
+suffix:semicolon
+)brace
+DECL|function|mark_inode_dirty_pages
+r_static
+r_inline
+r_void
+id|mark_inode_dirty_pages
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|inode
+op_logical_and
+op_logical_neg
+(paren
+id|inode-&gt;i_state
+op_amp
+id|I_DIRTY_PAGES
+)paren
+)paren
+id|__mark_inode_dirty
+c_func
+(paren
+id|inode
+comma
+id|I_DIRTY_PAGES
 )paren
 suffix:semicolon
 )brace
@@ -4469,6 +4518,26 @@ c_func
 (paren
 r_struct
 id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|filemap_fdatasync
+c_func
+(paren
+r_struct
+id|address_space
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|filemap_fdatawait
+c_func
+(paren
+r_struct
+id|address_space
 op_star
 )paren
 suffix:semicolon

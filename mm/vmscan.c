@@ -205,7 +205,7 @@ c_func
 id|pte
 )paren
 )paren
-id|SetPageDirty
+id|set_page_dirty
 c_func
 (paren
 id|page
@@ -291,21 +291,13 @@ r_goto
 id|drop_pte
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, it&squot;s really dirty. That means that&n;&t; * we should either create a new swap cache&n;&t; * entry for it, or we should write it back&n;&t; * to its own backing store.&n;&t; */
-id|flush_cache_page
-c_func
-(paren
-id|vma
-comma
-id|address
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|page-&gt;mapping
 )paren
 (brace
-id|SetPageDirty
+id|set_page_dirty
 c_func
 (paren
 id|page
@@ -342,7 +334,7 @@ comma
 id|entry
 )paren
 suffix:semicolon
-id|SetPageDirty
+id|set_page_dirty
 c_func
 (paren
 id|page
@@ -1998,7 +1990,7 @@ l_int|1
 r_continue
 suffix:semicolon
 multiline_comment|/* writepage refused to do anything */
-id|SetPageDirty
+id|set_page_dirty
 c_func
 (paren
 id|page

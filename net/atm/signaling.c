@@ -35,6 +35,10 @@ c_func
 id|sigd_sleep
 )paren
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|atm_dev_lock
+suffix:semicolon
 DECL|function|sigd_put_skb
 r_static
 r_void
@@ -1122,6 +1126,12 @@ c_func
 id|nodev_vccs
 )paren
 suffix:semicolon
+id|spin_lock
+(paren
+op_amp
+id|atm_dev_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1139,6 +1149,12 @@ id|purge_vccs
 c_func
 (paren
 id|dev-&gt;vccs
+)paren
+suffix:semicolon
+id|spin_unlock
+(paren
+op_amp
+id|atm_dev_lock
 )paren
 suffix:semicolon
 )brace

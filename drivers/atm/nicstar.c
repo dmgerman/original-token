@@ -664,6 +664,11 @@ comma
 id|proc_read
 suffix:colon
 id|ns_proc_read
+comma
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 )brace
 suffix:semicolon
 DECL|variable|ns_timer
@@ -7369,8 +7374,6 @@ op_amp
 id|vcc-&gt;flags
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7975,8 +7978,6 @@ comma
 op_amp
 id|vcc-&gt;flags
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#ifdef RX_DEBUG
 (brace

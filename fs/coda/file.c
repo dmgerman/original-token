@@ -51,11 +51,6 @@ id|inode
 op_star
 id|container
 op_assign
-(paren
-r_struct
-id|inode
-op_star
-)paren
 id|inode-&gt;i_mapping-&gt;host
 suffix:semicolon
 id|ssize_t
@@ -188,11 +183,6 @@ suffix:semicolon
 )brace
 id|cont_dentry.d_inode
 op_assign
-(paren
-r_struct
-id|inode
-op_star
-)paren
 id|inode-&gt;i_mapping-&gt;host
 suffix:semicolon
 id|down

@@ -3330,6 +3330,10 @@ op_logical_and
 op_logical_neg
 id|ic_got_reply
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -2511,11 +2511,6 @@ suffix:semicolon
 )brace
 id|container
 op_assign
-(paren
-r_struct
-id|inode
-op_star
-)paren
 id|inode-&gt;i_mapping-&gt;host
 suffix:semicolon
 id|coda_prepare_fakefile
@@ -2965,11 +2960,6 @@ id|i-&gt;i_data
 (brace
 id|old_container
 op_assign
-(paren
-r_struct
-id|inode
-op_star
-)paren
 id|i-&gt;i_mapping-&gt;host
 suffix:semicolon
 id|i-&gt;i_mapping
@@ -3140,11 +3130,6 @@ id|i-&gt;i_data
 )paren
 id|container
 op_assign
-(paren
-r_struct
-id|inode
-op_star
-)paren
 id|i-&gt;i_mapping-&gt;host
 suffix:semicolon
 id|cii
@@ -4270,11 +4255,6 @@ id|inode-&gt;i_data
 (brace
 id|container
 op_assign
-(paren
-r_struct
-id|inode
-op_star
-)paren
 id|inode-&gt;i_mapping-&gt;host
 suffix:semicolon
 id|inode-&gt;i_mapping

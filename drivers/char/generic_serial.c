@@ -1954,9 +1954,9 @@ id|func_exit
 )paren
 suffix:semicolon
 )brace
-DECL|function|block_til_ready
+DECL|function|gs_block_til_ready
 r_int
-id|block_til_ready
+id|gs_block_til_ready
 c_func
 (paren
 r_void
@@ -2030,7 +2030,7 @@ id|gs_dprintk
 (paren
 id|GS_DEBUG_BTR
 comma
-l_string|&quot;Entering block_till_ready.&bslash;n&quot;
+l_string|&quot;Entering gs_block_till_ready.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If the device is in the middle of being closed, then block&n;&t; * until it&squot;s done, and then try again.&n;&t; */
@@ -4005,11 +4005,11 @@ c_func
 id|gs_do_softint
 )paren
 suffix:semicolon
-DECL|variable|block_til_ready
+DECL|variable|gs_block_til_ready
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|block_til_ready
+id|gs_block_til_ready
 )paren
 suffix:semicolon
 DECL|variable|gs_close

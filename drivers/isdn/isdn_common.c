@@ -13,6 +13,10 @@ macro_line|#include &quot;isdn_ppp.h&quot;
 macro_line|#ifdef CONFIG_ISDN_AUDIO
 macro_line|#include &quot;isdn_audio.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_DIVERSION_MODULE
+DECL|macro|CONFIG_ISDN_DIVERSION
+mdefine_line|#define CONFIG_ISDN_DIVERSION
+macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN_DIVERSION
 macro_line|#include &lt;linux/isdn_divertif.h&gt;
 macro_line|#endif CONFIG_ISDN_DIVERSION

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from ax25_timer.c.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -56,8 +55,6 @@ DECL|variable|protocol_list
 )brace
 op_star
 id|protocol_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|struct|linkfail_struct
 r_static
@@ -87,8 +84,6 @@ DECL|variable|linkfail_list
 )brace
 op_star
 id|linkfail_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|struct|listen_struct
 r_static
@@ -115,8 +110,6 @@ DECL|variable|listen_list
 )brace
 op_star
 id|listen_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|ax25_protocol_register
 r_int
@@ -1047,5 +1040,4 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

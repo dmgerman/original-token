@@ -56,16 +56,23 @@ id|address_space
 id|swapper_space
 op_assign
 (brace
-(brace
-multiline_comment|/* pages&t;*/
-op_amp
-id|swapper_space.pages
+id|LIST_HEAD_INIT
+c_func
+(paren
+id|swapper_space.clean_pages
+)paren
 comma
-multiline_comment|/*        .next */
-op_amp
-id|swapper_space.pages
-multiline_comment|/*&t;  .prev */
-)brace
+id|LIST_HEAD_INIT
+c_func
+(paren
+id|swapper_space.dirty_pages
+)paren
+comma
+id|LIST_HEAD_INIT
+c_func
+(paren
+id|swapper_space.locked_pages
+)paren
 comma
 l_int|0
 comma

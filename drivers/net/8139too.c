@@ -1437,13 +1437,6 @@ l_string|&quot;i&quot;
 suffix:semicolon
 id|MODULE_PARM
 (paren
-id|debug
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-(paren
 id|media
 comma
 l_string|&quot;1-&quot;

@@ -16959,6 +16959,11 @@ comma
 id|proc_read
 suffix:colon
 id|ia_proc_read
+comma
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 )brace
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x20312
@@ -17417,7 +17422,6 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-singleline_comment|// MOD_INC_USE_COUNT; 
 id|ia_timer.expires
 op_assign
 id|jiffies
@@ -17475,7 +17479,6 @@ l_string|&quot;&gt;ia cleanup_module&bslash;n&quot;
 )paren
 suffix:semicolon
 )paren
-singleline_comment|// MOD_DEC_USE_COUNT;
 r_if
 c_cond
 (paren

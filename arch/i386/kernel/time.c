@@ -114,7 +114,7 @@ l_string|&quot;=d&quot;
 id|edx
 )paren
 suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;rm&quot;
 (paren
 id|fast_gettimeoffset_quotient
 )paren

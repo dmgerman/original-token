@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Other kernels modules in this kit are generally BSD derived. See the copyright headers.&n; *&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from ax25_route.c.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -22,12 +21,11 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|ax25_dev_list
 id|ax25_dev
 op_star
 id|ax25_dev_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|ax25_dev_ax25dev
 id|ax25_dev
@@ -180,13 +178,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_unregister_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|memset
 c_func
 (paren
@@ -332,13 +328,11 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|ax25_dev_device_down
 r_void
@@ -379,13 +373,11 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_unregister_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -460,13 +452,11 @@ c_func
 id|ax25_dev
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -506,13 +496,11 @@ c_func
 id|ax25_dev
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -527,13 +515,11 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|ax25_fwd_ioctl
 r_int
@@ -703,10 +689,10 @@ r_return
 id|ax25_dev-&gt;forward
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/*&n; *&t;Free all memory associated with device structures.&n; */
 DECL|function|ax25_dev_free
 r_void
+id|__exit
 id|ax25_dev_free
 c_func
 (paren
@@ -746,6 +732,4 @@ id|s
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#endif
 eof
