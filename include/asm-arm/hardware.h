@@ -3,10 +3,6 @@ macro_line|#ifndef __ASM_HARDWARE_H
 DECL|macro|__ASM_HARDWARE_H
 mdefine_line|#define __ASM_HARDWARE_H
 macro_line|#include &lt;asm/arch/hardware.h&gt;
-macro_line|#ifndef FLUSH_BASE
-DECL|macro|FLUSH_BASE
-mdefine_line|#define FLUSH_BASE&t;0xdf000000
-macro_line|#endif
 macro_line|#ifdef HAS_EXPMASK
 macro_line|#ifndef __ASSEMBLER__
 DECL|macro|__EXPMASK

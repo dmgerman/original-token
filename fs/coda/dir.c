@@ -223,6 +223,8 @@ r_struct
 id|dentry
 op_star
 id|de
+comma
+r_int
 )paren
 suffix:semicolon
 r_static
@@ -3578,6 +3580,9 @@ r_struct
 id|dentry
 op_star
 id|de
+comma
+r_int
+id|flags
 )paren
 (brace
 r_int

@@ -56,6 +56,13 @@ r_char
 id|newdata
 )paren
 suffix:semicolon
+r_void
+id|oldlatch_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#elif defined(CONFIG_ARCH_A5K)
 macro_line|#ifdef __need_oldlatches
 macro_line|#error &quot;Old latches not present in this (a5k) machine&quot;

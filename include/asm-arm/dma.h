@@ -10,10 +10,9 @@ suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/arch/dma.h&gt;
-multiline_comment|/*&n; * DMA modes - we have two, IN and OUT&n; */
+multiline_comment|/*&n; * DMA modes&n; */
 DECL|typedef|dmamode_t
 r_typedef
 r_int
@@ -21,13 +20,15 @@ r_int
 id|dmamode_t
 suffix:semicolon
 DECL|macro|DMA_MODE_MASK
-mdefine_line|#define DMA_MODE_MASK&t;1
+mdefine_line|#define DMA_MODE_MASK&t;3
 DECL|macro|DMA_MODE_READ
-mdefine_line|#define DMA_MODE_READ&t;0
+mdefine_line|#define DMA_MODE_READ&t; 0
 DECL|macro|DMA_MODE_WRITE
-mdefine_line|#define DMA_MODE_WRITE&t;1
+mdefine_line|#define DMA_MODE_WRITE&t; 1
+DECL|macro|DMA_MODE_CASCADE
+mdefine_line|#define DMA_MODE_CASCADE 2
 DECL|macro|DMA_AUTOINIT
-mdefine_line|#define DMA_AUTOINIT&t;2
+mdefine_line|#define DMA_AUTOINIT&t; 4
 r_typedef
 r_struct
 (brace

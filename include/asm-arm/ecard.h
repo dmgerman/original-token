@@ -41,6 +41,10 @@ DECL|macro|MANU_ICS
 mdefine_line|#define MANU_ICS&t;&t;0x003c
 DECL|macro|PROD_ICS_IDE
 mdefine_line|#define PROD_ICS_IDE&t;&t;&t;0x00ae
+DECL|macro|MANU_ICS2
+mdefine_line|#define MANU_ICS2&t;&t;0x003d
+DECL|macro|PROD_ICS2_IDE
+mdefine_line|#define PROD_ICS2_IDE&t;&t;&t;0x00ae
 DECL|macro|MANU_SERPORT
 mdefine_line|#define MANU_SERPORT&t;&t;0x003f
 DECL|macro|PROD_SERPORT_DSPORT
@@ -81,7 +85,7 @@ DECL|macro|CONST
 mdefine_line|#define CONST const
 macro_line|#endif
 DECL|macro|MAX_ECARDS
-mdefine_line|#define MAX_ECARDS&t;8
+mdefine_line|#define MAX_ECARDS&t;9
 r_typedef
 r_enum
 (brace
@@ -271,6 +275,18 @@ r_int
 id|irqnr
 )paren
 suffix:semicolon
+DECL|member|irqpending
+r_int
+(paren
+op_star
+id|irqpending
+)paren
+(paren
+id|ecard_t
+op_star
+id|ec
+)paren
+suffix:semicolon
 DECL|member|fiqenable
 r_void
 (paren
@@ -301,6 +317,18 @@ r_int
 id|fiqnr
 )paren
 suffix:semicolon
+DECL|member|fiqpending
+r_int
+(paren
+op_star
+id|fiqpending
+)paren
+(paren
+id|ecard_t
+op_star
+id|ec
+)paren
+suffix:semicolon
 DECL|typedef|expansioncard_ops_t
 )brace
 id|expansioncard_ops_t
@@ -310,6 +338,12 @@ DECL|struct|expansion_card
 r_struct
 id|expansion_card
 (brace
+DECL|member|next
+r_struct
+id|expansion_card
+op_star
+id|next
+suffix:semicolon
 multiline_comment|/* Public data */
 DECL|member|irqaddr
 r_volatile
@@ -366,28 +400,28 @@ multiline_comment|/* Enable/Disable Ops for card&t;*/
 DECL|member|slot_no
 id|CONST
 r_int
-r_char
+r_int
 id|slot_no
 suffix:semicolon
 multiline_comment|/* Slot number&t;&t;&t;*/
 DECL|member|dma
 id|CONST
 r_int
-r_char
+r_int
 id|dma
 suffix:semicolon
 multiline_comment|/* DMA number (for request_dma)&t;*/
 DECL|member|irq
 id|CONST
 r_int
-r_char
+r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* IRQ number (for request_irq)&t;*/
 DECL|member|fiq
 id|CONST
 r_int
-r_char
+r_int
 id|fiq
 suffix:semicolon
 multiline_comment|/* FIQ number (for request_irq)&t;*/

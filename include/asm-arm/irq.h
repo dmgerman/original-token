@@ -13,8 +13,10 @@ macro_line|#endif
 multiline_comment|/*&n; * Use this value to indicate lack of interrupt&n; * capability&n; */
 macro_line|#ifndef NO_IRQ
 DECL|macro|NO_IRQ
-mdefine_line|#define NO_IRQ&t;255
+mdefine_line|#define NO_IRQ&t;((unsigned int)(-1))
 macro_line|#endif
+DECL|macro|disable_irq_nosync
+mdefine_line|#define disable_irq_nosync(i) disable_irq(i)
 r_extern
 r_void
 id|disable_irq

@@ -5,6 +5,8 @@ DECL|macro|IRQ_MSET
 mdefine_line|#define IRQ_MSET&t;((volatile unsigned char *)0xf2c00000)
 DECL|macro|IRQ_MASK
 mdefine_line|#define IRQ_MASK&t;((volatile unsigned char *)0xf2c00000)
+DECL|macro|fixup_irq
+mdefine_line|#define fixup_irq(x) (x)
 DECL|function|ebsa110_mask_and_ack_irq
 r_static
 r_void

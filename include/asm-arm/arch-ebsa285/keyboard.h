@@ -1,12 +1,10 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/keyboard.h&n; *&n; * Keyboard driver definitions for EBSA285 architecture&n; *&n; * (C) 1998 Russell King&n; * (C) 1998 Phil Blundell&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-DECL|macro|NR_SCANCODES
-mdefine_line|#define NR_SCANCODES 128
-macro_line|#ifdef CONFIG_CATS
-DECL|macro|KEYBOARD_IRQ
-mdefine_line|#define KEYBOARD_IRQ&t;&t;IRQ_ISA(1)
+r_extern
+r_int
+id|have_isa_bridge
+suffix:semicolon
 r_extern
 r_int
 id|pckbd_setkeycode
@@ -85,18 +83,22 @@ id|pckbd_sysrq_xlate
 l_int|128
 )braket
 suffix:semicolon
+DECL|macro|KEYBOARD_IRQ
+mdefine_line|#define KEYBOARD_IRQ&t;&t;&t;IRQ_ISA_KEYBOARD
+DECL|macro|NR_SCANCODES
+mdefine_line|#define NR_SCANCODES 128
 DECL|macro|kbd_setkeycode
-mdefine_line|#define kbd_setkeycode&t;&t;&t;pckbd_setkeycode
+mdefine_line|#define kbd_setkeycode(sc,kc)&t;&t;&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;int __ret;&t;&t;&t;&t;&bslash;&n;&t;&t;if (have_isa_bridge)&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = pckbd_setkeycode(sc,kc);&bslash;&n;&t;&t;else&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = -EINVAL;&t;&t;&bslash;&n;&t;&t;__ret;&t;&t;&t;&t;&t;&bslash;&n;&t;})
 DECL|macro|kbd_getkeycode
-mdefine_line|#define kbd_getkeycode&t;&t;&t;pckbd_getkeycode
+mdefine_line|#define kbd_getkeycode(sc)&t;&t;&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;int __ret;&t;&t;&t;&t;&bslash;&n;&t;&t;if (have_isa_bridge)&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = pckbd_getkeycode(sc);&t;&bslash;&n;&t;&t;else&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = -EINVAL;&t;&t;&bslash;&n;&t;&t;__ret;&t;&t;&t;&t;&t;&bslash;&n;&t;})
 DECL|macro|kbd_translate
-mdefine_line|#define kbd_translate(sc, kcp, ufp, rm) ({ *ufp = sc &amp; 0200; &bslash;&n;&t;&t;pckbd_translate(sc &amp; 0x7f, kcp, rm);})
+mdefine_line|#define kbd_translate(sc, kcp, rm)&t;&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;pckbd_translate(sc, kcp, rm);&t;&t;&bslash;&n;&t;})
 DECL|macro|kbd_unexpected_up
 mdefine_line|#define kbd_unexpected_up&t;&t;pckbd_unexpected_up
 DECL|macro|kbd_leds
-mdefine_line|#define kbd_leds&t;&t;&t;pckbd_leds
+mdefine_line|#define kbd_leds(leds)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (have_isa_bridge)&t;&t;&t;&bslash;&n;&t;&t;&t;pckbd_leds(leds);&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|kbd_init_hw
-mdefine_line|#define kbd_init_hw()&t;&t;&t;&bslash;&n;&t;&t;do { if (machine_is_cats()) pckbd_init_hw(); } while (0)
+mdefine_line|#define kbd_init_hw()&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (have_isa_bridge)&t;&t;&t;&bslash;&n;&t;&t;&t;pckbd_init_hw();&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|kbd_sysrq_xlate
 mdefine_line|#define kbd_sysrq_xlate&t;&t;&t;pckbd_sysrq_xlate
 DECL|macro|kbd_disable_irq
@@ -105,27 +107,4 @@ DECL|macro|kbd_enable_irq
 mdefine_line|#define kbd_enable_irq()
 DECL|macro|SYSRQ_KEY
 mdefine_line|#define SYSRQ_KEY&t;0x54
-macro_line|#else
-multiline_comment|/* Dummy keyboard definitions */
-DECL|macro|kbd_setkeycode
-mdefine_line|#define kbd_setkeycode(sc,kc)&t;&t;(-EINVAL)
-DECL|macro|kbd_getkeycode
-mdefine_line|#define kbd_getkeycode(sc)&t;&t;(-EINVAL)
-multiline_comment|/* Prototype: int kbd_translate(scancode, *keycode, *up_flag, raw_mode)&n; * Returns  : 0 to ignore scancode, *keycode set to keycode, *up_flag&n; *            set to 0200 if scancode indicates release&n; */
-DECL|macro|kbd_translate
-mdefine_line|#define kbd_translate(sc, kcp, ufp, rm)&t;(1)
-DECL|macro|kbd_unexpected_up
-mdefine_line|#define kbd_unexpected_up(kc)&t;&t;(0200)
-DECL|macro|kbd_leds
-mdefine_line|#define kbd_leds(leds)
-DECL|macro|kbd_init_hw
-mdefine_line|#define kbd_init_hw()
-singleline_comment|//#define kbd_sysrq_xlate&t;&t;&t;ps2kbd_sysrq_xlate
-DECL|macro|kbd_disable_irq
-mdefine_line|#define kbd_disable_irq()
-DECL|macro|kbd_enable_irq
-mdefine_line|#define kbd_enable_irq()
-DECL|macro|SYSRQ_KEY
-mdefine_line|#define SYSRQ_KEY&t;13
-macro_line|#endif
 eof

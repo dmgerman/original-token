@@ -88,8 +88,12 @@ DECL|macro|CC_Z_BIT
 mdefine_line|#define CC_Z_BIT&t;(1 &lt;&lt; 30)
 DECL|macro|CC_N_BIT
 mdefine_line|#define CC_N_BIT&t;(1 &lt;&lt; 31)
-DECL|macro|user_mode
+macro_line|#if 0 /* GCC/egcs should be able to optimise this, IMHO */
 mdefine_line|#define user_mode(regs)&t;&bslash;&n;&t;((((regs)-&gt;ARM_cpsr &amp; MODE_MASK) == USR_MODE) || &bslash;&n;&t; (((regs)-&gt;ARM_cpsr &amp; MODE_MASK) == USR26_MODE))
+macro_line|#else
+DECL|macro|user_mode
+mdefine_line|#define user_mode(regs)&t;&bslash;&n;&t;(((regs)-&gt;ARM_cpsr &amp; 0xf) == 0)
+macro_line|#endif
 DECL|macro|processor_mode
 mdefine_line|#define processor_mode(regs) &bslash;&n;&t;((regs)-&gt;ARM_cpsr &amp; MODE_MASK)
 DECL|macro|interrupts_enabled
@@ -103,7 +107,61 @@ mdefine_line|#define instruction_pointer(regs)&t;((regs)-&gt;ARM_pc)
 DECL|macro|pc_pointer
 mdefine_line|#define pc_pointer(v)&t;&t;&t;(v)
 multiline_comment|/* Are the current registers suitable for user mode?&n; * (used to maintain security in signal handlers)&n; */
-DECL|macro|valid_user_regs
-mdefine_line|#define valid_user_regs(regs) &bslash;&n;&t;(user_mode(regs) &amp;&amp; ((regs)-&gt;ARM_sp &amp; 3) == 0)
+DECL|function|valid_user_regs
+r_static
+r_inline
+r_int
+id|valid_user_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|regs-&gt;ARM_cpsr
+op_amp
+l_int|0xf
+)paren
+op_eq
+l_int|0
+op_logical_or
+(paren
+id|regs-&gt;ARM_cpsr
+op_amp
+(paren
+id|F_BIT
+op_or
+id|I_BIT
+)paren
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t; * Force CPSR to something logical...&n;&t; */
+id|regs-&gt;ARM_cpsr
+op_and_assign
+(paren
+id|CC_V_BIT
+op_or
+id|CC_C_BIT
+op_or
+id|CC_Z_BIT
+op_or
+id|CC_N_BIT
+op_or
+l_int|0x10
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

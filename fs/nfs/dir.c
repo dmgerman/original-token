@@ -304,13 +304,13 @@ comma
 multiline_comment|/* mmap */
 id|nfs_open
 comma
-multiline_comment|/* open - revalidate the inode */
+multiline_comment|/* open */
 l_int|NULL
 comma
 multiline_comment|/* flush */
-l_int|NULL
+id|nfs_release
 comma
-multiline_comment|/* no special release code */
+multiline_comment|/* release */
 l_int|NULL
 multiline_comment|/* fsync */
 )brace
@@ -1459,8 +1459,137 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-DECL|macro|NFS_REVALIDATE_INTERVAL
-mdefine_line|#define NFS_REVALIDATE_INTERVAL (5*HZ)
+DECL|function|nfs_dentry_force_reval
+r_static
+r_inline
+r_int
+id|nfs_dentry_force_reval
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+comma
+r_int
+id|flags
+)paren
+(brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
+r_int
+r_int
+id|timeout
+op_assign
+id|NFS_ATTRTIMEO
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * If it&squot;s the last lookup in a series, we use a stricter&n;&t; * cache consistency check!&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|LOOKUP_CONTINUE
+)paren
+)paren
+id|timeout
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+id|time_after
+c_func
+(paren
+id|jiffies
+comma
+id|dentry-&gt;d_time
+op_plus
+id|timeout
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * We judge how long we want to trust negative&n; * dentries by looking at the parent inode mtime.&n; *&n; * If mtime is close to present time, we revalidate&n; * more often.&n; */
+DECL|function|nfs_neg_need_reval
+r_static
+r_inline
+r_int
+id|nfs_neg_need_reval
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_int
+r_int
+id|timeout
+op_assign
+l_int|30
+op_star
+id|HZ
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|dir
+op_assign
+id|dentry-&gt;d_parent-&gt;d_inode
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dir
+)paren
+(brace
+multiline_comment|/* Modified in the last two minutes? */
+r_int
+id|diff
+op_assign
+id|CURRENT_TIME
+op_minus
+id|dir-&gt;i_mtime
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|diff
+OL
+l_int|2
+op_star
+l_int|60
+)paren
+id|timeout
+op_assign
+l_int|1
+op_star
+id|HZ
+suffix:semicolon
+)brace
+r_return
+id|time_after
+c_func
+(paren
+id|jiffies
+comma
+id|dentry-&gt;d_time
+op_plus
+id|timeout
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This is called every time the dcache has a lookup hit,&n; * and we should check whether we can really trust that&n; * lookup.&n; *&n; * NOTE! The hit can be a negative hit too, don&squot;t assume&n; * we have an inode!&n; *&n; * If the dentry is older than the revalidation interval, &n; * we do a new lookup and verify that the dentry is still&n; * correct.&n; */
 DECL|function|nfs_lookup_revalidate
 r_static
@@ -1472,6 +1601,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -1499,7 +1631,7 @@ r_struct
 id|nfs_fattr
 id|fattr
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we don&squot;t have an inode, let&squot;s just assume&n;&t; * a 5-second &quot;live&quot; time for negative dentries.&n;&t; */
+multiline_comment|/*&n;&t; * If we don&squot;t have an inode, let&squot;s look at the parent&n;&t; * directory mtime to get a hint about how often we&n;&t; * should validate things..&n;&t; */
 r_if
 c_cond
 (paren
@@ -1510,14 +1642,10 @@ id|inode
 r_if
 c_cond
 (paren
-id|time_after
+id|nfs_neg_need_reval
 c_func
 (paren
-id|jiffies
-comma
-id|dentry-&gt;d_time
-op_plus
-id|NFS_REVALIDATE_INTERVAL
+id|dentry
 )paren
 )paren
 r_goto
@@ -1556,18 +1684,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|time_before
+id|IS_ROOT
 c_func
 (paren
-id|jiffies
-comma
-id|dentry-&gt;d_time
-op_plus
-id|NFS_ATTRTIMEO
-c_func
-(paren
-id|inode
-)paren
+id|dentry
 )paren
 )paren
 r_goto
@@ -1576,10 +1696,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_ROOT
+op_logical_neg
+id|nfs_dentry_force_reval
 c_func
 (paren
 id|dentry
+comma
+id|flags
 )paren
 )paren
 r_goto
@@ -1892,7 +2015,7 @@ op_assign
 (brace
 id|nfs_lookup_revalidate
 comma
-multiline_comment|/* d_validate(struct dentry *) */
+multiline_comment|/* d_revalidate(struct dentry *, int) */
 l_int|NULL
 comma
 multiline_comment|/* d_hash */

@@ -3584,6 +3584,15 @@ DECL|macro|PTR_ERR
 mdefine_line|#define PTR_ERR(ptr)&t;((long)(ptr))
 DECL|macro|IS_ERR
 mdefine_line|#define IS_ERR(ptr)&t;((unsigned long)(ptr) &gt; (unsigned long)(-1000))
+multiline_comment|/*&n; * The bitmask for a lookup event:&n; *  - follow links at the end&n; *  - require a directory&n; *  - ending slashes ok even for nonexistent files&n; *  - internal &quot;there are more path compnents&quot; flag&n; */
+DECL|macro|LOOKUP_FOLLOW
+mdefine_line|#define LOOKUP_FOLLOW&t;&t;(1)
+DECL|macro|LOOKUP_DIRECTORY
+mdefine_line|#define LOOKUP_DIRECTORY&t;(2)
+DECL|macro|LOOKUP_SLASHOK
+mdefine_line|#define LOOKUP_SLASHOK&t;&t;(4)
+DECL|macro|LOOKUP_CONTINUE
+mdefine_line|#define LOOKUP_CONTINUE&t;&t;(8)
 r_extern
 r_struct
 id|dentry

@@ -6203,7 +6203,7 @@ id|type
 op_eq
 id|USRQUOTA
 op_logical_and
-id|current-&gt;uid
+id|current-&gt;euid
 op_ne
 id|id
 )paren
@@ -6213,7 +6213,7 @@ id|type
 op_eq
 id|GRPQUOTA
 op_logical_and
-id|current-&gt;gid
+id|current-&gt;egid
 op_ne
 id|id
 )paren

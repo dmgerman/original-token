@@ -3,25 +3,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 DECL|macro|NR_SCANCODES
 mdefine_line|#define NR_SCANCODES 128
 r_extern
-r_int
-id|a5kkbd_translate
-c_func
-(paren
-r_int
-r_char
-id|scancode
-comma
-r_int
-r_char
-op_star
-id|keycode_p
-comma
-r_char
-op_star
-id|up_flag_p
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|a5kkbd_leds
 c_func
@@ -51,9 +32,8 @@ DECL|macro|kbd_setkeycode
 mdefine_line|#define kbd_setkeycode(sc,kc)&t;&t;(-EINVAL)
 DECL|macro|kbd_getkeycode
 mdefine_line|#define kbd_getkeycode(sc)&t;&t;(-EINVAL)
-multiline_comment|/* Prototype: int kbd_translate(scancode, *keycode, *up_flag, raw_mode)&n; * Returns  : 0 to ignore scancode, *keycode set to keycode, *up_flag&n; *            set to 0200 if scancode indicates release&n; */
 DECL|macro|kbd_translate
-mdefine_line|#define kbd_translate(sc, kcp, ufp, rm)&t;a5kkbd_translate(sc, kcp, ufp)
+mdefine_line|#define kbd_translate(sc, kcp, rm)&t;({ *(kcp) = (sc); 1; })
 DECL|macro|kbd_unexpected_up
 mdefine_line|#define kbd_unexpected_up(kc)&t;&t;(0200)
 DECL|macro|kbd_leds

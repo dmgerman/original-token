@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASMARM_PAGE_H
 DECL|macro|_ASMARM_PAGE_H
 mdefine_line|#define _ASMARM_PAGE_H
-macro_line|#include &lt;asm/arch/mmu.h&gt;
+macro_line|#include &lt;asm/arch/memory.h&gt;
 macro_line|#include &lt;asm/proc/page.h&gt;
 macro_line|#ifdef __KERNEL__
 DECL|macro|get_user_page
@@ -9,9 +9,9 @@ mdefine_line|#define get_user_page(vaddr)&t;&t;__get_free_page(GFP_KERNEL)
 DECL|macro|free_user_page
 mdefine_line|#define free_user_page(page, addr)&t;free_page(addr)
 DECL|macro|clear_page
-mdefine_line|#define clear_page(page)&t;memzero((void *)(page), PAGE_SIZE)
+mdefine_line|#define clear_page(page)&t;&t;memzero((void *)(page), PAGE_SIZE)
 DECL|macro|copy_page
-mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
+mdefine_line|#define copy_page(to,from)&t;&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
 macro_line|#endif
 multiline_comment|/* unsigned long __pa(void *x) */
 DECL|macro|__pa

@@ -43,6 +43,8 @@ c_func
 r_struct
 id|dentry
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|variable|devpts_root_operations
@@ -392,6 +394,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct

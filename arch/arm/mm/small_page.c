@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/mm/small_page.c&n; *&n; *  Copyright (C) 1996  Russell King&n; *&n; * Changelog:&n; *  26/01/1996&t;RMK&t;Cleaned up various areas to make little more generic&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/small_page.c&n; *&n; *  Copyright (C) 1996  Russell King&n; *&n; * Changelog:&n; *  26/01/1996&t;RMK&t;Cleaned up various areas to make little more generic&n; *  07/02/1999&t;RMK&t;Support added for 16K and 32K page sizes&n; *&t;&t;&t;containing 8K blocks&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,25 +10,40 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#if PAGE_SIZE == 4096
+multiline_comment|/* 2K blocks */
 DECL|macro|SMALL_ALLOC_SHIFT
-mdefine_line|#define SMALL_ALLOC_SHIFT&t;(10)
+mdefine_line|#define SMALL_ALLOC_SHIFT&t;(11)
+DECL|macro|NAME
+mdefine_line|#define NAME(x)&t;&t;&t;x##_2k
+macro_line|#elif PAGE_SIZE == 32768 || PAGE_SIZE == 16384
+multiline_comment|/* 8K blocks */
+DECL|macro|SMALL_ALLOC_SHIFT
+mdefine_line|#define SMALL_ALLOC_SHIFT&t;(13)
+DECL|macro|NAME
+mdefine_line|#define NAME(x)&t;&t;&t;x##_8k
+macro_line|#endif
 DECL|macro|SMALL_ALLOC_SIZE
 mdefine_line|#define SMALL_ALLOC_SIZE&t;(1 &lt;&lt; SMALL_ALLOC_SHIFT)
 DECL|macro|NR_BLOCKS
 mdefine_line|#define NR_BLOCKS&t;&t;(PAGE_SIZE / SMALL_ALLOC_SIZE)
-macro_line|#if NR_BLOCKS != 4
-macro_line|#error I only support 4 blocks per page!
-macro_line|#endif
+DECL|macro|BLOCK_MASK
+mdefine_line|#define BLOCK_MASK&t;&t;((1 &lt;&lt; NR_BLOCKS) - 1)
 DECL|macro|USED
-mdefine_line|#define USED(pg)&t;&t;((atomic_read(&amp;(pg)-&gt;count) &gt;&gt; 8) &amp; 15)
+mdefine_line|#define USED(pg)&t;&t;((atomic_read(&amp;(pg)-&gt;count) &gt;&gt; 8) &amp; BLOCK_MASK)
 DECL|macro|SET_USED
 mdefine_line|#define SET_USED(pg,off)&t;(atomic_read(&amp;(pg)-&gt;count) |= 256 &lt;&lt; off)
 DECL|macro|CLEAR_USED
 mdefine_line|#define CLEAR_USED(pg,off)&t;(atomic_read(&amp;(pg)-&gt;count) &amp;= ~(256 &lt;&lt; off))
+DECL|macro|ALL_USED
+mdefine_line|#define ALL_USED&t;&t;BLOCK_MASK
 DECL|macro|IS_FREE
 mdefine_line|#define IS_FREE(pg,off)&t;&t;(!(atomic_read(&amp;(pg)-&gt;count) &amp; (256 &lt;&lt; off)))
-DECL|macro|PAGE_PTR
-mdefine_line|#define PAGE_PTR(page,block)&t;((struct free_small_page *)((page) + &bslash;&n;&t;&t;&t;&t;&t;((block) &lt;&lt; SMALL_ALLOC_SHIFT)))
+DECL|macro|SM_PAGE_PTR
+mdefine_line|#define SM_PAGE_PTR(page,block)&t;((struct free_small_page *)((page) + &bslash;&n;&t;&t;&t;&t;&t;((block) &lt;&lt; SMALL_ALLOC_SHIFT)))
+macro_line|#if NR_BLOCKS != 2 &amp;&amp; NR_BLOCKS != 4
+macro_line|#error I only support 2 or 4 blocks per page
+macro_line|#endif
 DECL|struct|free_small_page
 r_struct
 id|free_small_page
@@ -76,6 +91,7 @@ multiline_comment|/* 0010 */
 l_int|2
 comma
 multiline_comment|/* 0011 */
+macro_line|#if NR_BLOCKS == 4
 l_int|0
 comma
 multiline_comment|/* 0100 */
@@ -111,6 +127,7 @@ comma
 multiline_comment|/* 1110 */
 l_int|4
 multiline_comment|/* 1111 */
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|function|clear_page_links
@@ -150,7 +167,7 @@ op_increment
 (brace
 id|fsp
 op_assign
-id|PAGE_PTR
+id|SM_PAGE_PTR
 c_func
 (paren
 id|page
@@ -248,7 +265,7 @@ r_continue
 suffix:semicolon
 id|fsp
 op_assign
-id|PAGE_PTR
+id|SM_PAGE_PTR
 c_func
 (paren
 id|page
@@ -344,7 +361,7 @@ r_continue
 suffix:semicolon
 id|fsp
 op_assign
-id|PAGE_PTR
+id|SM_PAGE_PTR
 c_func
 (paren
 id|page
@@ -358,11 +375,14 @@ id|next
 suffix:semicolon
 )brace
 )brace
-DECL|function|get_small_page
+DECL|function|get_page
 r_int
 r_int
-id|get_small_page
+id|NAME
 c_func
+(paren
+id|get_page
+)paren
 (paren
 r_int
 id|priority
@@ -446,7 +466,7 @@ op_assign
 r_int
 r_int
 )paren
-id|PAGE_PTR
+id|SM_PAGE_PTR
 c_func
 (paren
 id|small_page_ptr
@@ -463,7 +483,7 @@ c_func
 id|page
 )paren
 op_eq
-l_int|15
+id|ALL_USED
 )paren
 (brace
 id|fsp
@@ -579,10 +599,13 @@ r_goto
 id|again
 suffix:semicolon
 )brace
-DECL|function|free_small_page
+DECL|function|free_page
 r_void
-id|free_small_page
+id|NAME
 c_func
+(paren
+id|free_page
+)paren
 (paren
 r_int
 r_int
@@ -610,6 +633,15 @@ r_int
 id|offset
 comma
 id|oldoffset
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|spage
+)paren
+r_goto
+id|none
 suffix:semicolon
 id|offset
 op_assign
@@ -658,21 +690,9 @@ c_func
 id|page
 )paren
 )paren
-(brace
-id|printk
-(paren
-l_string|&quot;Trying to free non-small page from %p&bslash;n&quot;
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
+r_goto
+id|non_small
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -684,21 +704,9 @@ comma
 id|offset
 )paren
 )paren
-(brace
-id|printk
-(paren
-l_string|&quot;Trying to free free small page from %p&bslash;n&quot;
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
+r_goto
+id|free
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|save_flags_cli
 (paren
 id|flags
@@ -725,7 +733,7 @@ id|offset
 suffix:semicolon
 id|ofsp
 op_assign
-id|PAGE_PTR
+id|SM_PAGE_PTR
 c_func
 (paren
 id|spage
@@ -735,7 +743,7 @@ id|oldoffset
 suffix:semicolon
 id|cfsp
 op_assign
-id|PAGE_PTR
+id|SM_PAGE_PTR
 c_func
 (paren
 id|spage
@@ -841,6 +849,40 @@ c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+r_return
+suffix:semicolon
+id|non_small
+suffix:colon
+id|printk
+(paren
+l_string|&quot;Trying to free non-small page from %p&bslash;n&quot;
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+id|free
+suffix:colon
+id|printk
+(paren
+l_string|&quot;Trying to free free small page from %p&bslash;n&quot;
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|none
+suffix:colon
+r_return
 suffix:semicolon
 )brace
 eof

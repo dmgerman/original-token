@@ -128,6 +128,7 @@ DECL|typedef|__kernel_fsid_t
 )brace
 id|__kernel_fsid_t
 suffix:semicolon
+macro_line|#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2)
 DECL|macro|__FD_SET
 macro_line|#undef&t;__FD_SET
 DECL|macro|__FD_SET
@@ -144,5 +145,6 @@ DECL|macro|__FD_ZERO
 macro_line|#undef&t;__FD_ZERO
 DECL|macro|__FD_ZERO
 mdefine_line|#define __FD_ZERO(fdsetp) &bslash;&n;&t;&t;(memset (fdsetp, 0, sizeof (*(fd_set *)fdsetp)))
+macro_line|#endif
 macro_line|#endif
 eof

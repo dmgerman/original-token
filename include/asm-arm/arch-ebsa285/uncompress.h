@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/uncompress.h&n; *&n; * Copyright (C) 1996,1997,1998 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/uncompress.h&n; *&n; * Copyright (C) 1996,1997,1998 Russell King&n; */
+multiline_comment|/*&n; * Note! This could cause problems on the NetWinder&n; */
 DECL|macro|BASE
 mdefine_line|#define BASE 0x42000160
 DECL|function|putc

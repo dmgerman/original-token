@@ -1,9 +1,86 @@
-multiline_comment|/*&n; * linux/include/asm-arm/io.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * Modifications:&n; *  16-Sep-1996&t;RMK&t;Inlined the inx/outx functions &amp; optimised for both&n; *&t;&t;&t;constant addresses and variable addresses.&n; *  04-Dec-1997&t;RMK&t;Moved a lot of this stuff to the new architecture&n; *&t;&t;&t;specific IO header files.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/io.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * Modifications:&n; *  16-Sep-1996&t;RMK&t;Inlined the inx/outx functions &amp; optimised for both&n; *&t;&t;&t;constant addresses and variable addresses.&n; *  04-Dec-1997&t;RMK&t;Moved a lot of this stuff to the new architecture&n; *&t;&t;&t;specific IO header files.&n; *  27-Mar-1999&t;PJB&t;Second parameter of memcpy_toio is const..&n; *  04-Apr-1999&t;PJB&t;Added check_signature.&n; */
 macro_line|#ifndef __ASM_ARM_IO_H
 DECL|macro|__ASM_ARM_IO_H
 mdefine_line|#define __ASM_ARM_IO_H
+macro_line|#ifdef __KERNEL__
+macro_line|#ifndef NULL
+DECL|macro|NULL
+mdefine_line|#define NULL&t;((void *) 0)
+macro_line|#endif
+r_extern
+r_void
+op_star
+id|__ioremap
+c_func
+(paren
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+r_int
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * String version of IO memory access ops:&n; */
+r_extern
+r_void
+id|_memcpy_fromio
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_memcpy_toio
+c_func
+(paren
+r_int
+r_int
+comma
+r_const
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_memset_io
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|memcpy_fromio
+mdefine_line|#define memcpy_fromio(to,from,len)&t;_memcpy_fromio((to),(unsigned long)(from),(len))
+DECL|macro|memcpy_toio
+mdefine_line|#define memcpy_toio(to,from,len)&t;_memcpy_toio((unsigned long)(to),(from),(len))
+DECL|macro|memset_io
+mdefine_line|#define memset_io(addr,c,len)&t;&t;_memset_io((unsigned long)(addr),(c),(len))
+macro_line|#endif
 macro_line|#include &lt;asm/hardware.h&gt;
-macro_line|#include &lt;asm/arch/mmu.h&gt;
+macro_line|#include &lt;asm/arch/memory.h&gt;
 macro_line|#include &lt;asm/arch/io.h&gt;
 macro_line|#include &lt;asm/proc/io.h&gt;
 multiline_comment|/* unsigned long virt_to_phys(void *x) */
@@ -150,81 +227,97 @@ macro_line|#else
 mdefine_line|#define inl_p(port) __inl_p((port))
 macro_line|#endif
 macro_line|#endif
+macro_line|#ifndef ARCH_READWRITE
+multiline_comment|/* for panic */
+macro_line|#include &lt;linux/kernel.h&gt;
+DECL|macro|readb
+mdefine_line|#define readb(p)&t;(panic(&quot;readb called, but not implemented&quot;),0)
+DECL|macro|readw
+mdefine_line|#define readw(p)&t;(panic(&quot;readw called, but not implemented&quot;),0)
+DECL|macro|readl
+mdefine_line|#define readl(p)&t;(panic(&quot;readl called, but not implemented&quot;),0)
+DECL|macro|writeb
+mdefine_line|#define writeb(v,p)&t;panic(&quot;writeb called, but not implemented&quot;)
+DECL|macro|writew
+mdefine_line|#define writew(v,p)&t;panic(&quot;writew called, but not implemented&quot;)
+DECL|macro|writel
+mdefine_line|#define writel(v,p)&t;panic(&quot;writel called, but not implemented&quot;)
+macro_line|#endif
+multiline_comment|/*&n; * This isn&squot;t especially architecture dependent so it seems like it&n; * might as well go here as anywhere.&n; */
+DECL|function|check_signature
+r_static
+r_inline
+r_int
+id|check_signature
+c_func
+(paren
+r_int
+r_int
+id|io_addr
+comma
+r_const
+r_int
+r_char
+op_star
+id|signature
+comma
+r_int
+id|length
+)paren
+(brace
+r_int
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+id|readb
+c_func
+(paren
+id|io_addr
+)paren
+op_ne
+op_star
+id|signature
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|io_addr
+op_increment
+suffix:semicolon
+id|signature
+op_increment
+suffix:semicolon
+id|length
+op_decrement
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|length
+)paren
+suffix:semicolon
+id|retval
+op_assign
+l_int|1
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|macro|ARCH_READWRITE
+macro_line|#undef ARCH_READWRITE
 DECL|macro|ARCH_IO_DELAY
 macro_line|#undef ARCH_IO_DELAY
 DECL|macro|ARCH_IO_CONSTANT
 macro_line|#undef ARCH_IO_CONSTANT
-macro_line|#ifdef __KERNEL__
-r_extern
-r_void
-op_star
-id|__ioremap
-c_func
-(paren
-r_int
-r_int
-id|offset
-comma
-r_int
-r_int
-id|size
-comma
-r_int
-r_int
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * String version of IO memory access ops:&n; */
-r_extern
-r_void
-id|_memcpy_fromio
-c_func
-(paren
-r_void
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|_memcpy_toio
-c_func
-(paren
-r_int
-r_int
-comma
-r_void
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|_memset_io
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(to,from,len)&t;_memcpy_fromio((to),(unsigned long)(from),(len))
-DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(to,from,len)&t;_memcpy_toio((unsigned long)(to),(from),(len))
-DECL|macro|memset_io
-mdefine_line|#define memset_io(addr,c,len)&t;&t;_memset_io((unsigned long)(addr),(c),(len))
-macro_line|#endif
 macro_line|#endif
 eof

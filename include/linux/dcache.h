@@ -317,6 +317,8 @@ id|d_revalidate
 r_struct
 id|dentry
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|d_hash

@@ -1,5 +1,7 @@
 multiline_comment|/*&n; * include/asm-arm/arch-nexuspci/irq.h&n; *&n; * Copyright (C) 1998 Philip Blundell&n; *&n; * Changelog:&n; *   22-08-1998&t;RMK&t;Restructured IRQ routines&n; */
 macro_line|#include &lt;asm/io.h&gt;
+DECL|macro|fixup_irq
+mdefine_line|#define fixup_irq(x) (x)
 DECL|macro|INTCONT
 mdefine_line|#define INTCONT&t;&t;0xffe00000
 r_extern

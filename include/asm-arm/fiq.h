@@ -90,5 +90,16 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|get_fiq_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

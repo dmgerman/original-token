@@ -2,9 +2,9 @@ multiline_comment|/*&n; * linux/include/asm-arm/proc-armo/pgtable.h&n; *&n; * Co
 macro_line|#ifndef __ASM_PROC_PGTABLE_H
 DECL|macro|__ASM_PROC_PGTABLE_H
 mdefine_line|#define __ASM_PROC_PGTABLE_H
-macro_line|#include &lt;asm/arch/mmu.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
-macro_line|#include &lt;asm/arch/processor.h&gt;&t;&t;/* For TASK_SIZE */
+macro_line|#include &lt;asm/arch/memory.h&gt;&t;&t;/* For TASK_SIZE */
 DECL|macro|LIBRARY_TEXT_START
 mdefine_line|#define LIBRARY_TEXT_START 0x0c000000
 multiline_comment|/*&n; * Cache flushing...&n; */
@@ -957,6 +957,7 @@ r_extern
 id|__inline__
 id|pmd_t
 id|mk_pmd
+c_func
 (paren
 id|pte_t
 op_star
@@ -988,6 +989,11 @@ r_return
 id|pmd
 suffix:semicolon
 )brace
+multiline_comment|/* these are aliases for the above function */
+DECL|macro|mk_user_pmd
+mdefine_line|#define mk_user_pmd(ptep)   mk_pmd(ptep)
+DECL|macro|mk_kernel_pmd
+mdefine_line|#define mk_kernel_pmd(ptep) mk_pmd(ptep)
 DECL|macro|set_pmd
 mdefine_line|#define set_pmd(pmdp,pmd) ((*(pmdp)) = (pmd))
 DECL|function|pmd_page
@@ -1099,6 +1105,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any.&n; */
 macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_NO_PGT_CACHE
 DECL|struct|pgtable_cache_struct
 r_extern
 r_struct
@@ -1132,6 +1139,7 @@ DECL|macro|pgd_quicklist
 mdefine_line|#define pgd_quicklist (quicklists.pgd_cache)
 DECL|macro|pgtable_cache_size
 mdefine_line|#define pgtable_cache_size (quicklists.pgtable_cache_sz)
+macro_line|#endif
 macro_line|#else
 macro_line|#error Pgtable caches have to be per-CPU, so that no locking is needed.
 macro_line|#endif
@@ -1144,6 +1152,17 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|free_table
+c_func
+(paren
+r_void
+op_star
+id|table
+)paren
+suffix:semicolon
+macro_line|#ifndef CONFIG_NO_PGT_CACHE
 DECL|function|get_pgd_fast
 r_extern
 id|__inline__
@@ -1258,6 +1277,8 @@ id|pgtable_cache_size
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
+multiline_comment|/* keep this as an inline so we get type checking */
 DECL|function|free_pgd_slow
 r_extern
 id|__inline__
@@ -1270,9 +1291,13 @@ op_star
 id|pgd
 )paren
 (brace
-id|kfree
+id|free_table
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|pgd
 )paren
 suffix:semicolon
@@ -1292,6 +1317,7 @@ r_int
 id|address_preadjusted
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_NO_PGT_CACHE
 DECL|function|get_pte_fast
 r_extern
 id|__inline__
@@ -1398,6 +1424,8 @@ id|pgtable_cache_size
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
+multiline_comment|/* keep this as an inline so we get type checking */
 DECL|function|free_pte_slow
 r_extern
 id|__inline__
@@ -1410,9 +1438,13 @@ op_star
 id|pte
 )paren
 (brace
-id|kfree
+id|free_table
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|pte
 )paren
 suffix:semicolon
@@ -1483,6 +1515,102 @@ op_star
 id|pmd
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NO_PGT_CACHE
+DECL|macro|pte_free_kernel
+mdefine_line|#define pte_free_kernel(pte)    free_pte_slow(pte)
+DECL|macro|pte_free
+mdefine_line|#define pte_free(pte)           free_pte_slow(pte)
+DECL|macro|pgd_free
+mdefine_line|#define pgd_free(pgd)           free_pgd_slow(pgd)
+DECL|macro|pgd_alloc
+mdefine_line|#define pgd_alloc()             get_pgd_slow()
+DECL|function|pte_alloc
+r_extern
+id|__inline__
+id|pte_t
+op_star
+id|pte_alloc
+c_func
+(paren
+id|pmd_t
+op_star
+id|pmd
+comma
+r_int
+r_int
+id|address
+)paren
+(brace
+id|address
+op_assign
+(paren
+id|address
+op_rshift
+id|PAGE_SHIFT
+)paren
+op_amp
+(paren
+id|PTRS_PER_PTE
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pmd_none
+(paren
+op_star
+id|pmd
+)paren
+)paren
+(brace
+r_return
+id|get_pte_slow
+c_func
+(paren
+id|pmd
+comma
+id|address
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|pmd_bad
+(paren
+op_star
+id|pmd
+)paren
+)paren
+(brace
+id|__bad_pmd
+c_func
+(paren
+id|pmd
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_return
+(paren
+id|pte_t
+op_star
+)paren
+id|pmd_page
+c_func
+(paren
+op_star
+id|pmd
+)paren
+op_plus
+id|address
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|macro|pte_free_kernel
 mdefine_line|#define pte_free_kernel(pte)    free_pte_fast(pte)
 DECL|macro|pte_free
@@ -1613,6 +1741,7 @@ op_plus
 id|address
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * allocating and freeing a pmd is trivial: the 1-entry pmd is&n; * inside the pgd, so has no extra memory associated with it.&n; */
 DECL|function|pmd_free
 r_extern
@@ -1678,10 +1807,6 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
-id|pgd_t
-op_star
-id|pgd
-suffix:semicolon
 id|read_lock
 c_func
 (paren
@@ -1722,6 +1847,12 @@ op_amp
 id|tasklist_lock
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_NO_PGT_CACHE
+(brace
+id|pgd_t
+op_star
+id|pgd
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1758,6 +1889,8 @@ id|PGDIR_SHIFT
 op_assign
 id|entry
 suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 r_extern
 id|pgd_t

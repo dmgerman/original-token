@@ -1,4 +1,6 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/system.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; */
+macro_line|#include &lt;asm/dec21285.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 DECL|function|arch_reset
@@ -67,13 +69,29 @@ id|mov
 id|pc
 comma
 id|lr
+l_string|&quot; : : : &quot;
+id|cc
 "&quot;"
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* To reboot, we set up the 21285 watchdog and enable it.&n;&t;&t; * We then wait for it to timeout.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|machine_is_ebsa285
+c_func
+(paren
+)paren
+op_logical_or
+id|machine_is_co285
+c_func
+(paren
+)paren
+)paren
+(brace
+multiline_comment|/* To reboot, we set up the 21285 watchdog and&n;&t;&t;&t; * enable it.  We then wait for it to timeout.&n;&t;&t;&t; */
 op_star
 id|CSR_TIMER4_LOAD
 op_assign
@@ -95,6 +113,78 @@ l_int|1
 op_lshift
 l_int|13
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|machine_is_netwinder
+c_func
+(paren
+)paren
+)paren
+(brace
+multiline_comment|/* open up the SuperIO chip&n;&t;&t;&t; */
+id|outb
+c_func
+(paren
+l_int|0x87
+comma
+l_int|0x370
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x87
+comma
+l_int|0x370
+)paren
+suffix:semicolon
+multiline_comment|/* aux function group 1 (logical device 7)&n;&t;&t;&t; */
+id|outb
+c_func
+(paren
+l_int|0x07
+comma
+l_int|0x370
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x07
+comma
+l_int|0x371
+)paren
+suffix:semicolon
+multiline_comment|/* set GP16 for WD-TIMER output&n;&t;&t;&t; */
+id|outb
+c_func
+(paren
+l_int|0xe6
+comma
+l_int|0x370
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x371
+)paren
+suffix:semicolon
+multiline_comment|/* set a RED LED and toggle WD_TIMER for rebooting&n;&t;&t;&t; */
+id|outb
+c_func
+(paren
+l_int|0xc4
+comma
+l_int|0x338
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 DECL|macro|arch_start_idle

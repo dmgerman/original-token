@@ -1,4 +1,7 @@
 multiline_comment|/*&n; * include/asm-arm/arch-rpc/irq.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * Changelog:&n; *   10-10-1996&t;RMK&t;Brought up to date with arch-sa110eval&n; *   22-08-1998&t;RMK&t;Restructured IRQ routines&n; */
+macro_line|#include &lt;asm/iomd.h&gt;
+DECL|macro|fixup_irq
+mdefine_line|#define fixup_irq(x) (x)
 DECL|function|rpc_mask_irq_ack_a
 r_static
 r_void

@@ -119,11 +119,11 @@ comma
 multiline_comment|/* mmap */
 id|nfs_open
 comma
-multiline_comment|/* open - revalidate the inode */
+multiline_comment|/* open */
 id|nfs_file_flush
 comma
 multiline_comment|/* flush */
-l_int|NULL
+id|nfs_release
 comma
 multiline_comment|/* release */
 id|nfs_fsync

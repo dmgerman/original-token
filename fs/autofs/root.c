@@ -728,6 +728,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -1021,6 +1024,8 @@ id|autofs_revalidate
 c_func
 (paren
 id|dentry
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|down

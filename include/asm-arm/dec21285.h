@@ -16,14 +16,17 @@ mdefine_line|#define DC21285_PCI_IO&t;&t;&t;0x7c000000
 DECL|macro|DC21285_PCI_MEM
 mdefine_line|#define DC21285_PCI_MEM&t;&t;&t;0x80000000
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;asm/arch/hardware.h&gt;
 DECL|macro|DC21285_IO
-mdefine_line|#define DC21285_IO(x)&t;&t;((volatile unsigned long *)(0xfe000000+(x)))
+mdefine_line|#define DC21285_IO(x)&t;&t;((volatile unsigned long *)(ARMCSR_BASE+(x)))
 macro_line|#else
 DECL|macro|DC21285_IO
 mdefine_line|#define DC21285_IO(x)&t;&t;(x)
 macro_line|#endif
 DECL|macro|CSR_PCICMD
 mdefine_line|#define CSR_PCICMD&t;&t;DC21285_IO(0x0004)
+DECL|macro|CSR_CLASSREV
+mdefine_line|#define CSR_CLASSREV&t;&t;DC21285_IO(0x0008)
 DECL|macro|CSR_PCICACHELINESIZE
 mdefine_line|#define CSR_PCICACHELINESIZE&t;DC21285_IO(0x000c)
 DECL|macro|CSR_PCICSRBASE
@@ -34,6 +37,8 @@ DECL|macro|CSR_PCISDRAMBASE
 mdefine_line|#define CSR_PCISDRAMBASE&t;DC21285_IO(0x0018)
 DECL|macro|CSR_PCIROMBASE
 mdefine_line|#define CSR_PCIROMBASE&t;&t;DC21285_IO(0x0030)
+DECL|macro|CSR_ROMWRITEREG
+mdefine_line|#define CSR_ROMWRITEREG&t;&t;DC21285_IO(0x0068)
 DECL|macro|CSR_CSRBASEMASK
 mdefine_line|#define CSR_CSRBASEMASK&t;&t;DC21285_IO(0x00f8)
 DECL|macro|CSR_CSRBASEOFFSET
@@ -70,6 +75,58 @@ DECL|macro|CSR_I2O_INPOSTCOUNT
 mdefine_line|#define CSR_I2O_INPOSTCOUNT&t;DC21285_IO(0x0138)
 DECL|macro|CSR_SA110_CNTL
 mdefine_line|#define CSR_SA110_CNTL&t;&t;DC21285_IO(0x013c)
+DECL|macro|SA110_CNTL_INITCMPLETE
+mdefine_line|#define SA110_CNTL_INITCMPLETE&t;&t;(1 &lt;&lt; 0)
+DECL|macro|SA110_CNTL_ASSERTSERR
+mdefine_line|#define SA110_CNTL_ASSERTSERR&t;&t;(1 &lt;&lt; 1)
+DECL|macro|SA110_CNTL_RXSERR
+mdefine_line|#define SA110_CNTL_RXSERR&t;&t;(1 &lt;&lt; 3)
+DECL|macro|SA110_CNTL_SA110DRAMPARITY
+mdefine_line|#define SA110_CNTL_SA110DRAMPARITY&t;(1 &lt;&lt; 4)
+DECL|macro|SA110_CNTL_PCISDRAMPARITY
+mdefine_line|#define SA110_CNTL_PCISDRAMPARITY&t;(1 &lt;&lt; 5)
+DECL|macro|SA110_CNTL_DMASDRAMPARITY
+mdefine_line|#define SA110_CNTL_DMASDRAMPARITY&t;(1 &lt;&lt; 6)
+DECL|macro|SA110_CNTL_DISCARDTIMER
+mdefine_line|#define SA110_CNTL_DISCARDTIMER&t;&t;(1 &lt;&lt; 8)
+DECL|macro|SA110_CNTL_PCINRESET
+mdefine_line|#define SA110_CNTL_PCINRESET&t;&t;(1 &lt;&lt; 9)
+DECL|macro|SA110_CNTL_I2O_256
+mdefine_line|#define SA110_CNTL_I2O_256&t;&t;(0 &lt;&lt; 10)
+DECL|macro|SA110_CNTL_I20_512
+mdefine_line|#define SA110_CNTL_I20_512&t;&t;(1 &lt;&lt; 10)
+DECL|macro|SA110_CNTL_I2O_1024
+mdefine_line|#define SA110_CNTL_I2O_1024&t;&t;(2 &lt;&lt; 10)
+DECL|macro|SA110_CNTL_I2O_2048
+mdefine_line|#define SA110_CNTL_I2O_2048&t;&t;(3 &lt;&lt; 10)
+DECL|macro|SA110_CNTL_I2O_4096
+mdefine_line|#define SA110_CNTL_I2O_4096&t;&t;(4 &lt;&lt; 10)
+DECL|macro|SA110_CNTL_I2O_8192
+mdefine_line|#define SA110_CNTL_I2O_8192&t;&t;(5 &lt;&lt; 10)
+DECL|macro|SA110_CNTL_I2O_16384
+mdefine_line|#define SA110_CNTL_I2O_16384&t;&t;(6 &lt;&lt; 10)
+DECL|macro|SA110_CNTL_I2O_32768
+mdefine_line|#define SA110_CNTL_I2O_32768&t;&t;(7 &lt;&lt; 10)
+DECL|macro|SA110_CNTL_WATCHDOG
+mdefine_line|#define SA110_CNTL_WATCHDOG&t;&t;(1 &lt;&lt; 13)
+DECL|macro|SA110_CNTL_ROMWIDTH_UNDEF
+mdefine_line|#define SA110_CNTL_ROMWIDTH_UNDEF&t;(0 &lt;&lt; 14)
+DECL|macro|SA110_CNTL_ROMWIDTH_16
+mdefine_line|#define SA110_CNTL_ROMWIDTH_16&t;&t;(1 &lt;&lt; 14)
+DECL|macro|SA110_CNTL_ROMWIDTH_32
+mdefine_line|#define SA110_CNTL_ROMWIDTH_32&t;&t;(2 &lt;&lt; 14)
+DECL|macro|SA110_CNTL_ROMWIDTH_8
+mdefine_line|#define SA110_CNTL_ROMWIDTH_8&t;&t;(3 &lt;&lt; 14)
+DECL|macro|SA110_CNTL_ROMACCESSTIME
+mdefine_line|#define SA110_CNTL_ROMACCESSTIME(x)&t;((x)&lt;&lt;16)
+DECL|macro|SA110_CNTL_ROMBURSTTIME
+mdefine_line|#define SA110_CNTL_ROMBURSTTIME(x)&t;((x)&lt;&lt;20)
+DECL|macro|SA110_CNTL_ROMTRISTATETIME
+mdefine_line|#define SA110_CNTL_ROMTRISTATETIME(x)&t;((x)&lt;&lt;24)
+DECL|macro|SA110_CNTL_XCSDIR
+mdefine_line|#define SA110_CNTL_XCSDIR(x)&t;&t;((x)&lt;&lt;28)
+DECL|macro|SA110_CNTL_PCICFN
+mdefine_line|#define SA110_CNTL_PCICFN&t;&t;(1 &lt;&lt; 31)
 DECL|macro|CSR_PCIADDR_EXTN
 mdefine_line|#define CSR_PCIADDR_EXTN&t;DC21285_IO(0x0140)
 DECL|macro|CSR_PREFETCHMEMRANGE

@@ -723,6 +723,8 @@ c_func
 r_struct
 id|dentry
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_static
@@ -776,7 +778,7 @@ op_assign
 (brace
 id|smb_lookup_validate
 comma
-multiline_comment|/* d_validate(struct dentry *) */
+multiline_comment|/* d_revalidate(struct dentry *) */
 id|smb_hash_dentry
 comma
 multiline_comment|/* d_hash */
@@ -798,6 +800,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct

@@ -505,6 +505,11 @@ r_struct
 id|osf_dirent_callback
 id|buf
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -631,6 +636,11 @@ id|file
 suffix:semicolon
 id|out
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon

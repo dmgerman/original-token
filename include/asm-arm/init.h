@@ -3,7 +3,7 @@ DECL|macro|_ASMARM_INIT_H
 mdefine_line|#define _ASMARM_INIT_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* C routines */
-macro_line|#ifdef CONFIG_TEXT_INIT_SECTION
+macro_line|#ifdef CONFIG_TEXT_SECTIONS
 DECL|macro|__init
 mdefine_line|#define __init __attribute__ ((__section__ (&quot;.text.init&quot;)))
 DECL|macro|__initfunc

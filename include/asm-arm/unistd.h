@@ -380,6 +380,10 @@ DECL|macro|__NR_sigaltstack
 mdefine_line|#define __NR_sigaltstack&t;&t;(__NR_SYSCALL_BASE+186)
 DECL|macro|__NR_sendfile
 mdefine_line|#define __NR_sendfile&t;&t;&t;(__NR_SYSCALL_BASE+187)
+multiline_comment|/* 188 reserved */
+multiline_comment|/* 189 reserved */
+DECL|macro|__NR_vfork
+mdefine_line|#define __NR_vfork&t;&t;&t;(__NR_SYSCALL_BASE+190)
 DECL|macro|__sys2
 mdefine_line|#define __sys2(x) #x
 DECL|macro|__sys1
@@ -741,6 +745,13 @@ c_func
 (paren
 r_int
 )paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
 suffix:semicolon
 r_return
 id|sys_exit
@@ -907,10 +918,8 @@ comma
 id|envp
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is the mechanism for creating a new kernel thread.&n; *&n; * NOTE! Only a kernel-only process(ie the swapper or direct descendants&n; * who haven&squot;t done an &quot;execve()&quot;) should use this: it will work within&n; * a system call from a &quot;real&quot; process, but the process memory space will&n; * not be free&squot;d until both the parent and the child have exited.&n; */
-DECL|function|kernel_thread
-r_static
-r_inline
+multiline_comment|/*&n; * Create a new kernel thread&n; */
+r_extern
 id|pid_t
 id|kernel_thread
 c_func
@@ -933,98 +942,7 @@ r_int
 r_int
 id|flags
 )paren
-(brace
-r_int
-id|retval
 suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-"&quot;"
-id|mov
-id|r0
-comma
-op_mod
-l_int|1
-id|mov
-id|r1
-comma
-op_mod
-l_int|2
-l_string|&quot;__syscall(clone)&quot;
-id|teq
-id|r0
-comma
-macro_line|#0
-id|bne
-l_float|1f
-id|mov
-id|r0
-comma
-op_mod
-l_int|4
-id|mov
-id|lr
-comma
-id|pc
-id|mov
-id|pc
-comma
-op_mod
-l_int|3
-l_string|&quot;__syscall(exit)&quot;
-l_int|1
-suffix:colon
-id|mov
-op_mod
-l_int|0
-comma
-id|r0
-"&quot;"
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-suffix:colon
-l_string|&quot;Ir&quot;
-(paren
-id|flags
-op_or
-id|CLONE_VM
-)paren
-comma
-l_string|&quot;Ir&quot;
-(paren
-l_int|NULL
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|fn
-)paren
-comma
-l_string|&quot;Ir&quot;
-(paren
-id|arg
-)paren
-suffix:colon
-l_string|&quot;r0&quot;
-comma
-l_string|&quot;r1&quot;
-comma
-l_string|&quot;r2&quot;
-comma
-l_string|&quot;r3&quot;
-comma
-l_string|&quot;lr&quot;
-)paren
-suffix:semicolon
-r_return
-id|retval
-suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#endif /* __ASM_ARM_UNISTD_H */
 eof

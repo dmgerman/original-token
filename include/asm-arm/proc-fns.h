@@ -4,6 +4,10 @@ DECL|macro|__ASM_PROCFNS_H
 mdefine_line|#define __ASM_PROCFNS_H
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* forward-decare task_struct */
+r_struct
+id|task_struct
+suffix:semicolon
 multiline_comment|/*&n; * Don&squot;t change this structure&n; */
 DECL|struct|processor
 r_extern
@@ -18,17 +22,21 @@ id|name
 suffix:semicolon
 multiline_comment|/* MISC&n;&t; *&n;&t; * flush caches for task switch&n;&t; */
 DECL|member|_switch_to
-r_void
+r_struct
+id|task_struct
+op_star
 (paren
 op_star
 id|_switch_to
 )paren
 (paren
-r_void
+r_struct
+id|task_struct
 op_star
 id|prev
 comma
-r_void
+r_struct
+id|task_struct
 op_star
 id|next
 )paren
@@ -128,17 +136,21 @@ r_int
 id|address
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * flush a virtual address used for a page table&n;&t;&t;&t; * note D-cache only!&n;&t;&t;&t; */
-DECL|member|_flush_cache_pte
+multiline_comment|/*&n;&t;&t;&t; * clean a virtual address range from the&n;&t;&t;&t; * D-cache without flushing the cache.&n;&t;&t;&t; */
+DECL|member|_clean_cache_area
 r_void
 (paren
 op_star
-id|_flush_cache_pte
+id|_clean_cache_area
 )paren
 (paren
 r_int
 r_int
-id|address
+id|start
+comma
+r_int
+r_int
+id|size
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * flush a page to RAM&n;&t;&t;&t; */
@@ -201,6 +213,22 @@ id|pmd_t
 id|pmd
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Set a PTE&n;&t;&t;&t; */
+DECL|member|_set_pte
+r_void
+(paren
+op_star
+id|_set_pte
+)paren
+(paren
+id|pte_t
+op_star
+id|ptep
+comma
+id|pte_t
+id|pte
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Special stuff for a reset&n;&t;&t;&t; */
 DECL|member|reset
 r_int
@@ -227,7 +255,7 @@ id|start
 comma
 r_int
 r_int
-id|end
+id|size
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * write back dirty cached data&n;&t;&t;&t; */

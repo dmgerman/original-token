@@ -1,17 +1,15 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/hardware.h&n; *&n; * Copyright (C) 1996 Russell King.&n; *&n; * This file contains the hardware definitions of the&n; * Acorn Archimedes/A5000 machines.&n; *&n; * Modifications:&n; *  04-04-1998&t;PJB/RMK&t;Merged arc and a5k versions&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/hardware.h&n; *&n; * Copyright (C) 1996-1999 Russell King.&n; *&n; * This file contains the hardware definitions of the&n; * Acorn Archimedes/A5000 machines.&n; *&n; * Modifications:&n; *  04-04-1998&t;PJB/RMK&t;Merged arc and a5k versions&n; */
 macro_line|#ifndef __ASM_ARCH_HARDWARE_H
 DECL|macro|__ASM_ARCH_HARDWARE_H
 mdefine_line|#define __ASM_ARCH_HARDWARE_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/arch/memory.h&gt;
 multiline_comment|/*&n; * What hardware must be present - these can be tested by the kernel&n; * source.&n; */
 DECL|macro|HAS_IOC
 mdefine_line|#define HAS_IOC
-macro_line|#include &lt;asm/ioc.h&gt;
 DECL|macro|HAS_MEMC
 mdefine_line|#define HAS_MEMC
 macro_line|#include &lt;asm/memc.h&gt;
-DECL|macro|HAS_MEMC1A
-mdefine_line|#define HAS_MEMC1A
 DECL|macro|HAS_VIDC
 mdefine_line|#define HAS_VIDC
 multiline_comment|/*&n; * Optional hardware&n; */
@@ -39,6 +37,16 @@ macro_line|#ifndef __ASSEMBLER__
 multiline_comment|/*&n; * for use with inb/outb&n; */
 DECL|macro|IO_VIDC_BASE
 mdefine_line|#define IO_VIDC_BASE&t;&t;0x80100000
+macro_line|#ifdef CONFIG_ARCH_A5K
+DECL|macro|IOEB_VID_CTL
+mdefine_line|#define IOEB_VID_CTL&t;&t;0x800d4012
+DECL|macro|IOEB_PRESENT
+mdefine_line|#define IOEB_PRESENT&t;&t;0x800d4014
+DECL|macro|IOEB_PSCLR
+mdefine_line|#define IOEB_PSCLR&t;&t;0x800d4016
+DECL|macro|IOEB_MONTYPE
+mdefine_line|#define IOEB_MONTYPE&t;&t;0x800d401c
+macro_line|#endif
 macro_line|#ifdef CONFIG_ARCH_ARC
 DECL|macro|LATCHAADDR
 mdefine_line|#define LATCHAADDR&t;&t;0x80094010
@@ -53,6 +61,17 @@ DECL|macro|IO_EC_IOC_BASE
 mdefine_line|#define IO_EC_IOC_BASE&t;&t;0x80090000
 DECL|macro|IO_EC_MEMC_BASE
 mdefine_line|#define IO_EC_MEMC_BASE&t;&t;0x80000000
+macro_line|#ifdef CONFIG_ARCH_ARC
+multiline_comment|/* A680 hardware */
+DECL|macro|WD1973_BASE
+mdefine_line|#define WD1973_BASE&t;&t;0x03290000
+DECL|macro|WD1973_LATCH
+mdefine_line|#define WD1973_LATCH&t;&t;0x03350000
+DECL|macro|Z8530_BASE
+mdefine_line|#define Z8530_BASE&t;&t;0x032b0008
+DECL|macro|SCSI_BASE
+mdefine_line|#define SCSI_BASE&t;&t;0x03100000
+macro_line|#endif
 multiline_comment|/*&n; * IO definitions&n; */
 DECL|macro|EXPMASK_BASE
 mdefine_line|#define EXPMASK_BASE&t;&t;((volatile unsigned char *)0x03360000)
@@ -63,16 +82,10 @@ mdefine_line|#define PCIO_FLOPPYDMABASE&t;((volatile unsigned char *)0x0302a000)
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0x03010000
 multiline_comment|/*&n; * RAM definitions&n; */
-DECL|macro|MAPTOPHYS
-mdefine_line|#define MAPTOPHYS(a)&t;&t;(((unsigned long)a &amp; 0x007fffff) + PAGE_OFFSET)
-DECL|macro|KERNTOPHYS
-mdefine_line|#define KERNTOPHYS(a)&t;&t;((((unsigned long)(&amp;a)) &amp; 0x007fffff) + PAGE_OFFSET)
 DECL|macro|GET_MEMORY_END
 mdefine_line|#define GET_MEMORY_END(p)&t;(PAGE_OFFSET + (p-&gt;u1.s.page_size) * (p-&gt;u1.s.nr_pages))
 DECL|macro|PARAMS_BASE
 mdefine_line|#define PARAMS_BASE&t;&t;(PAGE_OFFSET + 0x7c000)
-DECL|macro|KERNEL_BASE
-mdefine_line|#define KERNEL_BASE&t;&t;(PAGE_OFFSET + 0x80000)
 macro_line|#else
 DECL|macro|IOEB_BASE
 mdefine_line|#define IOEB_BASE&t;&t;0x03350050

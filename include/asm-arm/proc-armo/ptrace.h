@@ -87,7 +87,43 @@ mdefine_line|#define pc_pointer(v) &bslash;&n;&t;((v) &amp; 0x03fffffc)
 DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) &bslash;&n;&t;(pc_pointer((regs)-&gt;ARM_pc))
 multiline_comment|/* Are the current registers suitable for user mode?&n; * (used to maintain security in signal handlers)&n; */
-DECL|macro|valid_user_regs
-mdefine_line|#define valid_user_regs(regs) &bslash;&n;&t;(user_mode(regs) &amp;&amp; ((regs)-&gt;ARM_sp &amp; 3) == 0)
+DECL|function|valid_user_regs
+r_static
+r_inline
+r_int
+id|valid_user_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+op_logical_or
+id|regs-&gt;ARM_pc
+op_amp
+(paren
+id|F_BIT
+op_or
+id|I_BIT
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

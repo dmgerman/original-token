@@ -36,6 +36,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_int
+id|flags
 )paren
 (brace
 r_return
@@ -84,7 +87,7 @@ op_assign
 (brace
 id|umsdos_dentry_validate
 comma
-multiline_comment|/* d_validate(struct dentry *) */
+multiline_comment|/* d_revalidate(struct dentry *, int) */
 l_int|NULL
 comma
 multiline_comment|/* d_hash */

@@ -10,15 +10,6 @@ macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-multiline_comment|/*&n; * The bitmask for a lookup event:&n; *  - follow links at the end&n; *  - require a directory&n; *  - ending slashes ok even for nonexistent files&n; *  - internal &quot;there are more path compnents&quot; flag&n; */
-DECL|macro|LOOKUP_FOLLOW
-mdefine_line|#define LOOKUP_FOLLOW&t;&t;(1)
-DECL|macro|LOOKUP_DIRECTORY
-mdefine_line|#define LOOKUP_DIRECTORY&t;(2)
-DECL|macro|LOOKUP_SLASHOK
-mdefine_line|#define LOOKUP_SLASHOK&t;&t;(4)
-DECL|macro|LOOKUP_CONTINUE
-mdefine_line|#define LOOKUP_CONTINUE&t;&t;(8)
 macro_line|#include &lt;asm/namei.h&gt;
 multiline_comment|/* This can be removed after the beta phase. */
 DECL|macro|CACHE_SUPERVISE
@@ -604,6 +595,9 @@ r_struct
 id|qstr
 op_star
 id|name
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -639,6 +633,8 @@ id|d_revalidate
 c_func
 (paren
 id|dentry
+comma
+id|flags
 )paren
 op_logical_and
 op_logical_neg
@@ -683,6 +679,9 @@ r_struct
 id|qstr
 op_star
 id|name
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -713,6 +712,8 @@ c_func
 id|parent
 comma
 id|name
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1334,6 +1335,8 @@ id|base
 comma
 op_amp
 id|this
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1352,6 +1355,8 @@ id|base
 comma
 op_amp
 id|this
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if

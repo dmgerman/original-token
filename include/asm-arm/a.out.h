@@ -59,7 +59,9 @@ DECL|macro|N_SYMSIZE
 mdefine_line|#define N_SYMSIZE(a)&t;((a).a_syms)
 DECL|macro|M_ARM
 mdefine_line|#define M_ARM 103
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/arch/a.out.h&gt;
+macro_line|#endif
 macro_line|#ifndef LIBRARY_START_TEXT
 DECL|macro|LIBRARY_START_TEXT
 mdefine_line|#define LIBRARY_START_TEXT&t;(0x00c00000)

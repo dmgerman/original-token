@@ -2,7 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/proc-armo/processor.h&n; *&n; * 
 macro_line|#ifndef __ASM_PROC_PROCESSOR_H
 DECL|macro|__ASM_PROC_PROCESSOR_H
 mdefine_line|#define __ASM_PROC_PROCESSOR_H
-macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/assembler.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|KERNEL_STACK_SIZE
@@ -53,6 +52,8 @@ id|pc
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|INIT_CSS
+mdefine_line|#define INIT_CSS (struct context_save_struct){ 0, 0, 0, 0, 0, 0, 0, SVC26_MODE }
 r_typedef
 r_struct
 (brace
@@ -230,129 +231,38 @@ comma
 id|uaccess_kernel
 suffix:semicolon
 DECL|macro|EXTRA_THREAD_STRUCT
-mdefine_line|#define EXTRA_THREAD_STRUCT&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;uaccess_t&t;*uaccess;&t;&t;/* User access functions*/&t;&bslash;&n;&t;struct context_save_struct *save;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long&t;memmap;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long&t;memcmap[256];
+mdefine_line|#define EXTRA_THREAD_STRUCT&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;uaccess_t&t;*uaccess;&t;&t;/* User access functions*/&t;&bslash;&n;&t;unsigned long&t;memcmap[256];
 DECL|macro|EXTRA_THREAD_STRUCT_INIT
-mdefine_line|#define EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;&t;&amp;uaccess_kernel,&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;(unsigned long) swapper_pg_dir,&t;&t;&bslash;&n;&t;{ 0, }
-id|DECLARE_THREAD_STRUCT
-suffix:semicolon
-multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
-DECL|function|thread_saved_pc
-r_extern
-id|__inline__
-r_int
-r_int
-id|thread_saved_pc
-(paren
-r_struct
-id|thread_struct
-op_star
-id|t
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|t-&gt;save
-)paren
-r_return
-id|t-&gt;save-&gt;pc
-op_amp
-op_complement
-id|PCMASK
-suffix:semicolon
-r_else
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|get_css_fp
-r_extern
-id|__inline__
-r_int
-r_int
-id|get_css_fp
-(paren
-r_struct
-id|thread_struct
-op_star
-id|t
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|t-&gt;save
-)paren
-r_return
-id|t-&gt;save-&gt;fp
-suffix:semicolon
-r_else
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|asmlinkage
-r_void
-id|ret_from_sys_call
-c_func
-(paren
-r_void
-)paren
-id|__asm__
-c_func
-(paren
-l_string|&quot;ret_from_sys_call&quot;
-)paren
-suffix:semicolon
-DECL|function|copy_thread_css
-r_extern
-id|__inline__
-r_void
-id|copy_thread_css
-(paren
-r_struct
-id|context_save_struct
-op_star
-id|save
-)paren
-(brace
-id|save-&gt;r4
-op_assign
-id|save-&gt;r5
-op_assign
-id|save-&gt;r6
-op_assign
-id|save-&gt;r7
-op_assign
-id|save-&gt;r8
-op_assign
-id|save-&gt;r9
-op_assign
-id|save-&gt;fp
-op_assign
-l_int|0
-suffix:semicolon
-id|save-&gt;pc
-op_assign
-(paren
-(paren
-r_int
-r_int
-)paren
-id|ret_from_sys_call
-)paren
-op_or
-id|SVC26_MODE
-suffix:semicolon
-)brace
+mdefine_line|#define EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;&t;,&amp;uaccess_kernel,&t;&t;&t;&bslash;&n;&t;{ 0, }
+DECL|macro|SWAPPER_PG_DIR
+mdefine_line|#define SWAPPER_PG_DIR ((unsigned long)swapper_pg_dir)
 DECL|macro|start_thread
-mdefine_line|#define start_thread(regs,pc,sp)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long *stack = (unsigned long *)sp;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;memzero(regs-&gt;uregs, sizeof (regs-&gt;uregs));&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_pc = pc;&t;&t;/* pc */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_sp = sp;&t;&t;/* sp */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r2 = stack[2];&t;/* r2 (envp) */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r1 = stack[1];&t;/* r1 (argv) */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r0 = stack[0];&t;/* r0 (argc) */&t;&t;&t;&bslash;&n;&t;flush_tlb_mm(current-&gt;mm);&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define start_thread(regs,pc,sp)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long *stack = (unsigned long *)sp;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;memzero(regs-&gt;uregs, sizeof (regs-&gt;uregs));&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_pc = pc;&t;&t;/* pc */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_sp = sp;&t;&t;/* sp */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r2 = stack[2];&t;/* r2 (envp) */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r1 = stack[1];&t;/* r1 (argv) */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r0 = stack[0];&t;/* r0 (argc) */&t;&t;&t;&bslash;&n;})
 multiline_comment|/* Allocation and freeing of basic task resources. */
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
-DECL|macro|alloc_task_struct
-mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1))
-DECL|macro|free_task_struct
-mdefine_line|#define free_task_struct(p)    free_pages((unsigned long)(p),1)
-macro_line|#endif
+r_extern
+r_int
+r_int
+id|get_page_8k
+c_func
+(paren
+r_int
+id|priority
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_page_8k
+c_func
+(paren
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
+DECL|macro|ll_alloc_task_struct
+mdefine_line|#define ll_alloc_task_struct()&t;((struct task_struct *)get_page_8k(GFP_KERNEL))
+DECL|macro|ll_free_task_struct
+mdefine_line|#define ll_free_task_struct(p)  free_page_8k((unsigned long)(p))
 macro_line|#endif
 eof

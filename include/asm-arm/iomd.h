@@ -201,6 +201,7 @@ DECL|macro|DMA_ST_INT
 mdefine_line|#define DMA_ST_INT&t;2
 DECL|macro|DMA_ST_AB
 mdefine_line|#define DMA_ST_AB&t;1
+macro_line|#ifndef IOC_CONTROL
 multiline_comment|/*&n; * IOC compatability&n; */
 DECL|macro|IOC_CONTROL
 mdefine_line|#define IOC_CONTROL&t;IOMD_CONTROL
@@ -248,6 +249,7 @@ DECL|macro|IOC_T1GO
 mdefine_line|#define IOC_T1GO&t;IOMD_T1GO
 DECL|macro|IOC_T1LATCH
 mdefine_line|#define IOC_T1LATCH&t;IOMD_T1LATCH
+macro_line|#endif
 multiline_comment|/*&n; * DMA (MEMC) compatability&n; */
 DECL|macro|HALF_SAM
 mdefine_line|#define HALF_SAM&t;vram_half_sam
