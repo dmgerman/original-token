@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.&n; * Dynamic registration fixes, Stephen Tweedie.&n; * Added kswapd-interval, ctrl-alt-del, printk stuff, 1/8/97, Chris Horn.&n; * Made sysctl support optional via CONFIG_SYSCTL, 1/10/97, Chris&n; *  Horn.&n; * Added proc_doulongvec_ms_jiffies_minmax, 09/08/99, Carlos H. Bauer.&n; * Added proc_doulongvec_minmax, 09/08/99, Carlos H. Bauer.&n; * Changed linked lists to use list.h instead of lists.h, 02/24/00, Bill&n; *  Wendling.&n; */
+multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.&n; * Dynamic registration fixes, Stephen Tweedie.&n; * Added kswapd-interval, ctrl-alt-del, printk stuff, 1/8/97, Chris Horn.&n; * Made sysctl support optional via CONFIG_SYSCTL, 1/10/97, Chris&n; *  Horn.&n; * Added proc_doulongvec_ms_jiffies_minmax, 09/08/99, Carlos H. Bauer.&n; * Added proc_doulongvec_minmax, 09/08/99, Carlos H. Bauer.&n; * Changed linked lists to use list.h instead of lists.h, 02/24/00, Bill&n; *  Wendling.&n; * The list_for_each() macro wasn&squot;t appropriate for the sysctl loop.&n; *  Removed it and replaced it with older style, 03/23/00, Bill Wendling&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
@@ -232,12 +232,21 @@ id|root_table
 (braket
 )braket
 suffix:semicolon
+DECL|variable|root_table_header
 r_static
-id|LIST_HEAD
+r_struct
+id|ctl_table_header
+id|root_table_header
+op_assign
+(brace
+id|root_table
+comma
+id|LIST_HEAD_INIT
 c_func
 (paren
-id|root_table_header
+id|root_table_header.ctl_entry
 )paren
+)brace
 suffix:semicolon
 DECL|variable|kern_table
 r_static
@@ -1771,6 +1780,7 @@ macro_line|#endif
 DECL|function|do_sysctl
 r_int
 id|do_sysctl
+c_func
 (paren
 r_int
 op_star
@@ -1795,17 +1805,10 @@ r_int
 id|newlen
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 r_struct
 id|list_head
 op_star
 id|tmp
-suffix:semicolon
-r_void
-op_star
-id|context
 suffix:semicolon
 r_if
 c_cond
@@ -1836,14 +1839,7 @@ c_cond
 (paren
 op_logical_neg
 id|oldlenp
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_or
 id|get_user
 c_func
 (paren
@@ -1852,21 +1848,17 @@ comma
 id|oldlenp
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-)brace
-id|list_for_each
-c_func
-(paren
 id|tmp
-comma
+op_assign
 op_amp
-id|root_table_header
-)paren
+id|root_table_header.ctl_entry
+suffix:semicolon
+r_do
 (brace
 r_struct
 id|ctl_table_header
@@ -1884,10 +1876,13 @@ comma
 id|ctl_entry
 )paren
 suffix:semicolon
+r_void
+op_star
 id|context
 op_assign
 l_int|NULL
 suffix:semicolon
+r_int
 id|error
 op_assign
 id|parse_table
@@ -1934,6 +1929,15 @@ r_return
 id|error
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+id|tmp
+op_ne
+op_amp
+id|root_table_header.ctl_entry
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOTDIR
@@ -1976,12 +1980,10 @@ id|tmp
 )paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 id|lock_kernel
 c_func
 (paren
@@ -2014,7 +2016,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/* ctl_perm does NOT grant the superuser all rights automatically, because&n;   some sysctl variables are readonly even to root. */
+multiline_comment|/*&n; * ctl_perm does NOT grant the superuser all rights automatically, because&n; * some sysctl variables are readonly even to root.&n; */
 DECL|function|test_perm
 r_static
 r_int
@@ -2136,9 +2138,6 @@ op_star
 id|context
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|repeat
 suffix:colon
 r_if
@@ -2175,12 +2174,10 @@ comma
 id|name
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2193,6 +2190,9 @@ op_eq
 id|CTL_ANY
 )paren
 (brace
+r_int
+id|error
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2623,7 +2623,7 @@ op_amp
 id|tmp-&gt;ctl_entry
 comma
 op_amp
-id|root_table_header
+id|root_table_header.ctl_entry
 )paren
 suffix:semicolon
 r_else
@@ -2634,7 +2634,7 @@ op_amp
 id|tmp-&gt;ctl_entry
 comma
 op_amp
-id|root_table_header
+id|root_table_header.ctl_entry
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS

@@ -6,6 +6,8 @@ r_extern
 id|spinlock_t
 id|kernel_flag
 suffix:semicolon
+DECL|macro|kernel_locked
+mdefine_line|#define kernel_locked()&t;&t;spin_is_locked(&amp;kernel_flag)
 multiline_comment|/*&n; * Release global kernel lock and global interrupt lock&n; */
 r_static
 id|__inline__

@@ -8936,5 +8936,5 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* MODULE */
-multiline_comment|/*&n;  Local variables:&n;  compile-command: &quot;gcc -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strict-aliasing -D__SMP__ -pipe -fno-strength-reduce  -DCPU=686 -march=i686 -DMODULE -DMODVERSIONS -include ../../include/linux/modversions.h   -DEXPORT_SYMTAB -c amiserial.c&quot;&n;  End:&n;*/
+multiline_comment|/*&n;  Local variables:&n;  compile-command: &quot;gcc -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strict-aliasing -D__SMP__ -pipe -fno-strength-reduce  -march=i686 -DMODULE -DMODVERSIONS -include ../../include/linux/modversions.h   -DEXPORT_SYMTAB -c amiserial.c&quot;&n;  End:&n;*/
 eof

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/char/mouse.c&n; *&n; * Copyright (C) 1995 - 1998 Russell King&n; *  Protocol taken from busmouse.c&n; *  read() waiting taken from psaux.c&n; *&n; * Medium-level interface for quadrature or bus mice.&n; *&n; * Currently, the majority of kernel busmice drivers in the&n; * kernel common code to talk to userspace.  This driver&n; * attempts to rectify this situation by presenting a&n; * simple and safe interface to the mice and user.&n; *&n; * This driver:&n; *  - is SMP safe&n; *  - handles multiple opens&n; *  - handles the wakeups and locking&n; *  - has optional blocking reads&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;

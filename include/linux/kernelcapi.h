@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.5 2000/01/28 16:45:40 calle Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kernelcapi.h,v $&n; * Revision 1.5  2000/01/28 16:45:40  calle&n; * new manufacturer command KCAPI_CMD_ADDCARD (generic addcard),&n; * will search named driver and call the add_card function if one exist.&n; *&n; * Revision 1.4  1999/09/10 17:24:19  calle&n; * Changes for proposed standard for CAPI2.0:&n; * - AK148 &quot;Linux Exention&quot;&n; *&n; * Revision 1.3  1999/07/01 15:26:56  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.2  1999/06/21 15:24:26  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
+multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.6 2000/03/03 15:50:42 calle Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kernelcapi.h,v $&n; * Revision 1.6  2000/03/03 15:50:42  calle&n; * - kernel CAPI:&n; *   - Changed parameter &quot;param&quot; in capi_signal from __u32 to void *.&n; *   - rewrote notifier handling in kcapi.c&n; *   - new notifier NCCI_UP and NCCI_DOWN&n; * - User CAPI:&n; *   - /dev/capi20 is now a cloning device.&n; *   - middleware extentions prepared.&n; * - capidrv.c&n; *   - locking of list operations and module count updates.&n; *&n; * Revision 1.5  2000/01/28 16:45:40  calle&n; * new manufacturer command KCAPI_CMD_ADDCARD (generic addcard),&n; * will search named driver and call the add_card function if one exist.&n; *&n; * Revision 1.4  1999/09/10 17:24:19  calle&n; * Changes for proposed standard for CAPI2.0:&n; * - AK148 &quot;Linux Exention&quot;&n; *&n; * Revision 1.3  1999/07/01 15:26:56  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.2  1999/06/21 15:24:26  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
 macro_line|#ifndef __KERNELCAPI_H__
 DECL|macro|__KERNELCAPI_H__
 mdefine_line|#define __KERNELCAPI_H__
@@ -169,11 +169,13 @@ id|signal
 id|__u16
 id|applid
 comma
-id|__u32
+r_void
+op_star
 id|param
 )paren
 comma
-id|__u32
+r_void
+op_star
 id|param
 )paren
 suffix:semicolon
@@ -264,10 +266,28 @@ id|data
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|capi_ncciinfo
+r_struct
+id|capi_ncciinfo
+(brace
+DECL|member|applid
+id|__u16
+id|applid
+suffix:semicolon
+DECL|member|ncci
+id|__u32
+id|ncci
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|KCI_CONTRUP
-mdefine_line|#define&t;KCI_CONTRUP&t;0
+mdefine_line|#define&t;KCI_CONTRUP&t;0&t;/* struct capi_profile */
 DECL|macro|KCI_CONTRDOWN
-mdefine_line|#define&t;KCI_CONTRDOWN&t;1
+mdefine_line|#define&t;KCI_CONTRDOWN&t;1&t;/* NULL */
+DECL|macro|KCI_NCCIUP
+mdefine_line|#define&t;KCI_NCCIUP&t;2&t;/* struct capi_ncciinfo */
+DECL|macro|KCI_NCCIDOWN
+mdefine_line|#define&t;KCI_NCCIDOWN&t;3&t;/* struct capi_ncciinfo */
 DECL|struct|capi_interface_user
 r_struct
 id|capi_interface_user

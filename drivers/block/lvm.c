@@ -10477,7 +10477,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* lvm_gen_init() */
 macro_line|#ifdef LVM_GET_INODE
-multiline_comment|/*&n; * support function to get an empty inode&n; *&n; * Gets an empty inode to be inserted into the inode hash,&n; * so that a physical volume can&squot;t be mounted.&n; * This is analog to drivers/block/md.c&n; *&n; * Is this the real thing?&n; *&n; */
+multiline_comment|/*&n; * support function to get an empty inode&n; *&n; * Gets an empty inode to be inserted into the inode hash,&n; * so that a physical volume can&squot;t be mounted.&n; * This is analog to drivers/block/md.c&n; *&n; * Is this the real thing?&n; *&n; *&t;No, it&squot;s bollocks. md.c tries to do a bit different thing that might&n; * _somewhat_ work eons ago. Neither does any good these days. mount() couldn&squot;t&n; * care less for icache (it cares only for -&gt;s_root-&gt;d_count and if we want&n; * loopback mounts even that will stop). BTW, with the form used here mount()&n; * would have to scan the _whole_ icache to detect the attempt - how on the&n; * Earth could it guess the i_ino of your dummy inode? Official line on the&n; * exclusion between mount()/swapon()/open()/etc. is Just Don&squot;t Do It(tm).&n; * If you can convince Linus that it&squot;s worth changing - fine, then you&squot;ll need&n; * to do blkdev_get()/blkdev_put(). Until then...&n; */
 DECL|function|lvm_get_inode
 r_struct
 id|inode

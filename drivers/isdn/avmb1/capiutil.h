@@ -1,32 +1,234 @@
-multiline_comment|/*&n; * $Id: capiutil.h,v 1.4 1999/09/15 08:16:03 calle Exp $&n; * &n; * CAPI 2.0 defines &amp; types&n; * &n; * From CAPI 2.0 Development Kit AVM 1995 (capi20.h)&n; * Rewritten for Linux 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: capiutil.h,v $&n; * Revision 1.4  1999/09/15 08:16:03  calle&n; * Implementation of 64Bit extention complete.&n; *&n; * Revision 1.3  1999/09/07 09:02:53  calle&n; * SETDATA removed. Now inside the kernel the datapart of DATA_B3_REQ and&n; * DATA_B3_IND is always directly after the CAPI message. The &quot;Data&quot; member&n; * ist never used inside the kernel.&n; *&n; * Revision 1.2  1997/05/18 09:24:19  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.1  1997/03/04 21:50:35  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
+multiline_comment|/*&n; * $Id: capiutil.h,v 1.5 2000/03/03 15:50:42 calle Exp $&n; * &n; * CAPI 2.0 defines &amp; types&n; * &n; * From CAPI 2.0 Development Kit AVM 1995 (capi20.h)&n; * Rewritten for Linux 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: capiutil.h,v $&n; * Revision 1.5  2000/03/03 15:50:42  calle&n; * - kernel CAPI:&n; *   - Changed parameter &quot;param&quot; in capi_signal from __u32 to void *.&n; *   - rewrote notifier handling in kcapi.c&n; *   - new notifier NCCI_UP and NCCI_DOWN&n; * - User CAPI:&n; *   - /dev/capi20 is now a cloning device.&n; *   - middleware extentions prepared.&n; * - capidrv.c&n; *   - locking of list operations and module count updates.&n; *&n; * Revision 1.4  1999/09/15 08:16:03  calle&n; * Implementation of 64Bit extention complete.&n; *&n; * Revision 1.3  1999/09/07 09:02:53  calle&n; * SETDATA removed. Now inside the kernel the datapart of DATA_B3_REQ and&n; * DATA_B3_IND is always directly after the CAPI message. The &quot;Data&quot; member&n; * ist never used inside the kernel.&n; *&n; * Revision 1.2  1997/05/18 09:24:19  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.1  1997/03/04 21:50:35  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
 macro_line|#ifndef __CAPIUTIL_H__
 DECL|macro|__CAPIUTIL_H__
 mdefine_line|#define __CAPIUTIL_H__
 macro_line|#include &lt;asm/types.h&gt;
+DECL|macro|CAPIMSG_BASELEN
+mdefine_line|#define CAPIMSG_BASELEN&t;&t;8
+DECL|macro|CAPIMSG_U8
+mdefine_line|#define CAPIMSG_U8(m, off)&t;(m[off])
+DECL|macro|CAPIMSG_U16
+mdefine_line|#define CAPIMSG_U16(m, off)&t;(m[off]|(m[(off)+1]&lt;&lt;8))
+DECL|macro|CAPIMSG_U32
+mdefine_line|#define CAPIMSG_U32(m, off)&t;(m[off]|(m[(off)+1]&lt;&lt;8)|(m[(off)+2]&lt;&lt;16)|(m[(off)+3]&lt;&lt;24))
 DECL|macro|CAPIMSG_LEN
-mdefine_line|#define&t;CAPIMSG_LEN(m)&t;&t;(m[0] | (m[1] &lt;&lt; 8))
+mdefine_line|#define&t;CAPIMSG_LEN(m)&t;&t;CAPIMSG_U16(m,0)
 DECL|macro|CAPIMSG_APPID
-mdefine_line|#define&t;CAPIMSG_APPID(m)&t;(m[2] | (m[3] &lt;&lt; 8))
+mdefine_line|#define&t;CAPIMSG_APPID(m)&t;CAPIMSG_U16(m,2)
 DECL|macro|CAPIMSG_COMMAND
-mdefine_line|#define&t;CAPIMSG_COMMAND(m)&t;(m[4])
+mdefine_line|#define&t;CAPIMSG_COMMAND(m)&t;CAPIMSG_U8(m,4)
 DECL|macro|CAPIMSG_SUBCOMMAND
-mdefine_line|#define&t;CAPIMSG_SUBCOMMAND(m)&t;(m[5])
+mdefine_line|#define&t;CAPIMSG_SUBCOMMAND(m)&t;CAPIMSG_U8(m,5)
+DECL|macro|CAPIMSG_CMD
+mdefine_line|#define CAPIMSG_CMD(m)&t;&t;(((m[4])&lt;&lt;8)|(m[5]))
 DECL|macro|CAPIMSG_MSGID
-mdefine_line|#define&t;CAPIMSG_MSGID(m)&t;(m[6] | (m[7] &lt;&lt; 8))
+mdefine_line|#define&t;CAPIMSG_MSGID(m)&t;CAPIMSG_U16(m,6)
 DECL|macro|CAPIMSG_CONTROLLER
 mdefine_line|#define CAPIMSG_CONTROLLER(m)&t;(m[8] &amp; 0x7f)
 DECL|macro|CAPIMSG_CONTROL
-mdefine_line|#define CAPIMSG_CONTROL(m)&t;(m[8]|(m[9]&lt;&lt;8)|(m[10]&lt;&lt;16)|(m[11]&lt;&lt;24))
+mdefine_line|#define CAPIMSG_CONTROL(m)&t;CAPIMSG_U32(m, 8)
 DECL|macro|CAPIMSG_NCCI
 mdefine_line|#define CAPIMSG_NCCI(m)&t;&t;CAPIMSG_CONTROL(m)
-DECL|macro|CAPIMSG_DATA
-mdefine_line|#define CAPIMSG_DATA(m)&t;&t;(m[12]|(m[13]&lt;&lt;8)|(m[14]&lt;&lt;16)|(m[15]&lt;&lt;24))
 DECL|macro|CAPIMSG_DATALEN
-mdefine_line|#define CAPIMSG_DATALEN(m)&t;(m[16] | (m[17]&lt;&lt;8))
-DECL|macro|CAPIMSG_SETAPPID
-mdefine_line|#define&t;CAPIMSG_SETAPPID(m, applid) &bslash;&n;&t;do { &bslash;&n;&t;&t;((__u8 *)m)[2] = (__u16)(applid) &amp; 0xff; &bslash;&n;&t;&t;((__u8 *)m)[3] = ((__u16)(applid) &gt;&gt; 8) &amp; 0xff; &bslash;&n;&t;} while (0)
+mdefine_line|#define CAPIMSG_DATALEN(m)&t;CAPIMSG_U16(m,16) /* DATA_B3_REQ */
+DECL|function|capimsg_setu8
+r_static
+r_inline
+r_void
+id|capimsg_setu8
+c_func
+(paren
+r_void
+op_star
+id|m
+comma
+r_int
+id|off
+comma
+id|__u8
+id|val
+)paren
+(brace
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|m
+)paren
+(braket
+id|off
+)braket
+op_assign
+id|val
+suffix:semicolon
+)brace
+DECL|function|capimsg_setu16
+r_static
+r_inline
+r_void
+id|capimsg_setu16
+c_func
+(paren
+r_void
+op_star
+id|m
+comma
+r_int
+id|off
+comma
+id|__u16
+id|val
+)paren
+(brace
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|m
+)paren
+(braket
+id|off
+)braket
+op_assign
+id|val
+op_amp
+l_int|0xff
+suffix:semicolon
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|m
+)paren
+(braket
+id|off
+op_plus
+l_int|1
+)braket
+op_assign
+(paren
+id|val
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+suffix:semicolon
+)brace
+DECL|function|capimsg_setu32
+r_static
+r_inline
+r_void
+id|capimsg_setu32
+c_func
+(paren
+r_void
+op_star
+id|m
+comma
+r_int
+id|off
+comma
+id|__u32
+id|val
+)paren
+(brace
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|m
+)paren
+(braket
+id|off
+)braket
+op_assign
+id|val
+op_amp
+l_int|0xff
+suffix:semicolon
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|m
+)paren
+(braket
+id|off
+op_plus
+l_int|1
+)braket
+op_assign
+(paren
+id|val
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+suffix:semicolon
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|m
+)paren
+(braket
+id|off
+op_plus
+l_int|2
+)braket
+op_assign
+(paren
+id|val
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xff
+suffix:semicolon
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|m
+)paren
+(braket
+id|off
+op_plus
+l_int|3
+)braket
+op_assign
+(paren
+id|val
+op_rshift
+l_int|24
+)paren
+op_amp
+l_int|0xff
+suffix:semicolon
+)brace
 DECL|macro|CAPIMSG_SETLEN
-mdefine_line|#define&t;CAPIMSG_SETLEN(m, len) &bslash;&n;&t;do { &bslash;&n;&t;&t;((__u8 *)m)[0] = (__u16)(len) &amp; 0xff; &bslash;&n;&t;&t;((__u8 *)m)[1] = ((__u16)(len) &gt;&gt; 8) &amp; 0xff; &bslash;&n;&t;} while (0)
+mdefine_line|#define&t;CAPIMSG_SETLEN(m, len)&t;&t;capimsg_setu16(m, 0, len)
+DECL|macro|CAPIMSG_SETAPPID
+mdefine_line|#define&t;CAPIMSG_SETAPPID(m, applid)&t;capimsg_setu16(m, 2, applid)
+DECL|macro|CAPIMSG_SETCOMMAND
+mdefine_line|#define&t;CAPIMSG_SETCOMMAND(m,cmd)&t;capimsg_setu8(m, 4, cmd)
+DECL|macro|CAPIMSG_SETSUBCOMMAND
+mdefine_line|#define&t;CAPIMSG_SETSUBCOMMAND(m, cmd)&t;capimsg_setu8(m, 5, cmd)
+DECL|macro|CAPIMSG_SETMSGID
+mdefine_line|#define&t;CAPIMSG_SETMSGID(m, msgid)&t;capimsg_setu16(m, 6, msgid)
+DECL|macro|CAPIMSG_SETCONTROL
+mdefine_line|#define&t;CAPIMSG_SETCONTROL(m, contr)&t;capimsg_setu32(m, 8, contr)
+DECL|macro|CAPIMSG_SETDATALEN
+mdefine_line|#define&t;CAPIMSG_SETDATALEN(m, len)&t;capimsg_setu16(m, 16, len)
 multiline_comment|/*----- basic-type definitions -----*/
 DECL|typedef|_cstruct
 r_typedef

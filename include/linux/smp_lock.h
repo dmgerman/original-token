@@ -10,6 +10,8 @@ DECL|macro|release_kernel_lock
 mdefine_line|#define release_kernel_lock(task, cpu)&t;&t;do { } while(0)
 DECL|macro|reacquire_kernel_lock
 mdefine_line|#define reacquire_kernel_lock(task)&t;&t;do { } while(0)
+DECL|macro|kernel_locked
+mdefine_line|#define kernel_locked() 1
 macro_line|#else
 macro_line|#include &lt;asm/smplock.h&gt;
 macro_line|#endif /* __SMP__ */

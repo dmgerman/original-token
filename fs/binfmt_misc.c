@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * We should make this work with a &quot;stub-only&quot; /proc,&n; * which would just not be able to be configured.&n; * Right now the /proc-fs support is too black and white,&n; * though, so just remind people that this should be&n; * fixed..&n; */
@@ -622,9 +623,9 @@ op_star
 id|fmt
 suffix:semicolon
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 suffix:semicolon
 r_char
 id|iname
@@ -711,13 +712,13 @@ id|fmt
 r_goto
 id|_ret
 suffix:semicolon
-id|dput
+id|fput
 c_func
 (paren
-id|bprm-&gt;dentry
+id|bprm-&gt;file
 )paren
 suffix:semicolon
-id|bprm-&gt;dentry
+id|bprm-&gt;file
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -785,9 +786,9 @@ op_assign
 id|iname
 suffix:semicolon
 multiline_comment|/* for binfmt_script */
-id|dentry
+id|file
 op_assign
-id|open_namei
+id|open_exec
 c_func
 (paren
 id|iname
@@ -798,7 +799,7 @@ op_assign
 id|PTR_ERR
 c_func
 (paren
-id|dentry
+id|file
 )paren
 suffix:semicolon
 r_if
@@ -807,15 +808,15 @@ c_cond
 id|IS_ERR
 c_func
 (paren
-id|dentry
+id|file
 )paren
 )paren
 r_goto
 id|_ret
 suffix:semicolon
-id|bprm-&gt;dentry
+id|bprm-&gt;file
 op_assign
-id|dentry
+id|file
 suffix:semicolon
 id|retval
 op_assign

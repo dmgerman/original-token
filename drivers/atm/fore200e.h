@@ -2,6 +2,7 @@ macro_line|#ifndef _FORE200E_H
 DECL|macro|_FORE200E_H
 mdefine_line|#define _FORE200E_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* rx buffer sizes */
 DECL|macro|SMALL_BUFFER_SIZE
 mdefine_line|#define SMALL_BUFFER_SIZE    384     /* size of small buffers (multiple of 48 (PCA) and 64 (SBA) bytes) */

@@ -707,7 +707,7 @@ op_logical_neg
 (paren
 id|file-&gt;f_mode
 op_amp
-l_int|2
+id|FMODE_WRITE
 )paren
 )paren
 r_return
@@ -727,7 +727,7 @@ op_logical_and
 (paren
 id|file-&gt;f_mode
 op_amp
-l_int|2
+id|FMODE_WRITE
 )paren
 )paren
 r_return
@@ -759,7 +759,7 @@ op_logical_neg
 (paren
 id|file-&gt;f_mode
 op_amp
-l_int|1
+id|FMODE_READ
 )paren
 )paren
 r_return
@@ -905,7 +905,7 @@ c_cond
 (paren
 id|file-&gt;f_mode
 op_amp
-l_int|1
+id|FMODE_READ
 )paren
 id|vma-&gt;vm_flags
 op_or_assign
@@ -937,7 +937,7 @@ op_logical_neg
 (paren
 id|file-&gt;f_mode
 op_amp
-l_int|2
+id|FMODE_WRITE
 )paren
 )paren
 id|vma-&gt;vm_flags

@@ -59,12 +59,6 @@ DECL|macro|PPPIOCSCOMPRESSOR
 mdefine_line|#define PPPIOCSCOMPRESSOR _IOW(&squot;t&squot;,135,int)
 DECL|macro|PPPIOCGIFNAME
 mdefine_line|#define PPPIOCGIFNAME      _IOR(&squot;t&squot;,136, char [IFNAMSIZ] )
-DECL|macro|PPP_MP
-mdefine_line|#define PPP_MP          0x003d
-DECL|macro|PPP_LINK_COMP
-mdefine_line|#define PPP_LINK_COMP   0x00fb
-DECL|macro|PPP_LINK_CCP
-mdefine_line|#define PPP_LINK_CCP    0x80fb
 DECL|macro|SC_MP_PROT
 mdefine_line|#define SC_MP_PROT       0x00000200
 DECL|macro|SC_REJ_MP_PROT

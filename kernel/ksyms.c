@@ -2276,18 +2276,18 @@ c_func
 id|flush_old_exec
 )paren
 suffix:semicolon
-DECL|variable|open_dentry
+DECL|variable|kernel_read
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|open_dentry
+id|kernel_read
 )paren
 suffix:semicolon
-DECL|variable|read_exec
+DECL|variable|open_exec
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|read_exec
+id|open_exec
 )paren
 suffix:semicolon
 multiline_comment|/* Miscellaneous access points */

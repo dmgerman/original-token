@@ -84,7 +84,7 @@ DECL|macro|RS_STROBE_TIME
 mdefine_line|#define RS_STROBE_TIME (10*HZ)
 DECL|macro|RS_ISR_PASS_LIMIT
 mdefine_line|#define RS_ISR_PASS_LIMIT 256
-macro_line|#if (defined(__i386__) &amp;&amp; (CPU==386 || CPU==486))
+macro_line|#if defined(__i386__) &amp;&amp; (defined(CONFIG_M386) || defined(CONFIG_M486))
 DECL|macro|SERIAL_INLINE
 mdefine_line|#define SERIAL_INLINE
 macro_line|#endif
@@ -21386,5 +21386,5 @@ id|sercons
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;  Local variables:&n;  compile-command: &quot;gcc -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strict-aliasing -D__SMP__ -pipe -fno-strength-reduce  -DCPU=686 -march=i686 -DMODULE -DMODVERSIONS -include ../../include/linux/modversions.h   -DEXPORT_SYMTAB -c serial.c&quot;&n;  End:&n;*/
+multiline_comment|/*&n;  Local variables:&n;  compile-command: &quot;gcc -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strict-aliasing -D__SMP__ -pipe -fno-strength-reduce  -march=i686 -DMODULE -DMODVERSIONS -include ../../include/linux/modversions.h   -DEXPORT_SYMTAB -c serial.c&quot;&n;  End:&n;*/
 eof

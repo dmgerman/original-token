@@ -1,19 +1,32 @@
-multiline_comment|/*&n; * $Id: capidev.h,v 1.4 1999/07/01 15:26:32 calle Exp $&n; *&n; * CAPI 2.0 Interface for Linux&n; *&n; * (c) Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capidev.h,v $&n; * Revision 1.4  1999/07/01 15:26:32  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.3  1999/07/01 08:22:58  keil&n; * compatibility macros now in &lt;linux/isdn_compat.h&gt;&n; *&n; * Revision 1.2  1999/06/21 15:24:13  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:50:30  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
+multiline_comment|/*&n; * $Id: capidev.h,v 1.5 2000/03/03 15:50:42 calle Exp $&n; *&n; * CAPI 2.0 Interface for Linux&n; *&n; * (c) Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capidev.h,v $&n; * Revision 1.5  2000/03/03 15:50:42  calle&n; * - kernel CAPI:&n; *   - Changed parameter &quot;param&quot; in capi_signal from __u32 to void *.&n; *   - rewrote notifier handling in kcapi.c&n; *   - new notifier NCCI_UP and NCCI_DOWN&n; * - User CAPI:&n; *   - /dev/capi20 is now a cloning device.&n; *   - middleware extentions prepared.&n; * - capidrv.c&n; *   - locking of list operations and module count updates.&n; *&n; * Revision 1.4  1999/07/01 15:26:32  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.3  1999/07/01 08:22:58  keil&n; * compatibility macros now in &lt;linux/isdn_compat.h&gt;&n; *&n; * Revision 1.2  1999/06/21 15:24:13  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:50:30  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
 DECL|struct|capidev
 r_struct
 id|capidev
 (brace
-DECL|member|is_open
-r_int
-id|is_open
+DECL|member|next
+r_struct
+id|capidev
+op_star
+id|next
 suffix:semicolon
-DECL|member|is_registered
-r_int
-id|is_registered
+DECL|member|file
+r_struct
+id|file
+op_star
+id|file
 suffix:semicolon
 DECL|member|applid
 id|__u16
 id|applid
+suffix:semicolon
+DECL|member|errcode
+id|__u16
+id|errcode
+suffix:semicolon
+DECL|member|minor
+r_int
+r_int
+id|minor
 suffix:semicolon
 DECL|member|recv_queue
 r_struct
@@ -24,16 +37,7 @@ DECL|member|recv_wait
 id|wait_queue_head_t
 id|recv_wait
 suffix:semicolon
-DECL|member|errcode
-id|__u16
-id|errcode
-suffix:semicolon
 multiline_comment|/* Statistic */
-DECL|member|nopen
-r_int
-r_int
-id|nopen
-suffix:semicolon
 DECL|member|nrecvctlpkt
 r_int
 r_int
@@ -56,6 +60,4 @@ id|nsentdatapkt
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|CAPI_MAXMINOR
-mdefine_line|#define CAPI_MAXMINOR&t;CAPI_MAXAPPL
 eof

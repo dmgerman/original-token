@@ -30,7 +30,6 @@ l_string|&quot;Carsten Paeth &lt;calle@calle.in-berlin.de&gt;&quot;
 )paren
 suffix:semicolon
 DECL|variable|suppress_pollack
-r_static
 r_int
 id|suppress_pollack
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: capi.h,v 1.1 1997/03/04 21:27:33 calle Exp $&n; * &n; * CAPI 2.0 Interface for Linux&n; * &n; * Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: capi.h,v $&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
+multiline_comment|/*&n; * $Id: capi.h,v 1.3 2000/03/08 17:06:34 calle Exp $&n; * &n; * CAPI 2.0 Interface for Linux&n; * &n; * Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: capi.h,v $&n; * Revision 1.3  2000/03/08 17:06:34  calle&n; * - changes for devfs and 2.3.49&n; * - capifs now configurable (no need with devfs)&n; * - New Middleware ioctl CAPI_NCCI_GETUNIT&n; * - Middleware again tested with 2.2.14 and 2.3.49 (with and without devfs)&n; *&n; * Revision 1.2  2000/03/03 15:50:42  calle&n; * - kernel CAPI:&n; *   - Changed parameter &quot;param&quot; in capi_signal from __u32 to void *.&n; *   - rewrote notifier handling in kcapi.c&n; *   - new notifier NCCI_UP and NCCI_DOWN&n; * - User CAPI:&n; *   - /dev/capi20 is now a cloning device.&n; *   - middleware extentions prepared.&n; * - capidrv.c&n; *   - locking of list operations and module count updates.&n; *&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
 macro_line|#ifndef __LINUX_CAPI_H__
 DECL|macro|__LINUX_CAPI_H__
 mdefine_line|#define __LINUX_CAPI_H__
@@ -207,5 +207,18 @@ DECL|typedef|capi_ioctl_struct
 )brace
 id|capi_ioctl_struct
 suffix:semicolon
+multiline_comment|/*&n; * Middleware extension&n; */
+DECL|macro|CAPIFLAG_HIGHJACKING
+mdefine_line|#define CAPIFLAG_HIGHJACKING&t;0x0001
+DECL|macro|CAPI_GET_FLAGS
+mdefine_line|#define CAPI_GET_FLAGS&t;&t;_IOR(&squot;C&squot;,0x23, unsigned)
+DECL|macro|CAPI_SET_FLAGS
+mdefine_line|#define CAPI_SET_FLAGS&t;&t;_IOR(&squot;C&squot;,0x24, unsigned)
+DECL|macro|CAPI_CLR_FLAGS
+mdefine_line|#define CAPI_CLR_FLAGS&t;&t;_IOR(&squot;C&squot;,0x25, unsigned)
+DECL|macro|CAPI_NCCI_OPENCOUNT
+mdefine_line|#define CAPI_NCCI_OPENCOUNT&t;_IOR(&squot;C&squot;,0x26, unsigned)
+DECL|macro|CAPI_NCCI_GETUNIT
+mdefine_line|#define CAPI_NCCI_GETUNIT&t;_IOR(&squot;C&squot;,0x27, unsigned)
 macro_line|#endif&t;&t;&t;&t;/* __LINUX_CAPI_H__ */
 eof

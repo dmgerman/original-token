@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hysdn_proclog.c,v 1.2 2000/02/14 19:23:03 werner Exp $&n;&n; * Linux driver for HYSDN cards, /proc/net filesystem log functions.&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hysdn_proclog.c,v $&n; * Revision 1.2  2000/02/14 19:23:03  werner&n; *&n; * Changed handling of proc filesystem tables to a more portable version&n; *&n; * Revision 1.1  2000/02/10 19:45:18  werner&n; *&n; * Initial release&n; *&n; *&n; */
+multiline_comment|/* $Id: hysdn_proclog.c,v 1.4 2000/03/03 16:37:12 kai Exp $&n;&n; * Linux driver for HYSDN cards, /proc/net filesystem log functions.&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hysdn_proclog.c,v $&n; * Revision 1.4  2000/03/03 16:37:12  kai&n; * incorporated some cosmetic changes from the official kernel tree back&n; * into CVS&n; *&n; * Revision 1.3  2000/03/02 00:11:07  werner&n; *&n; * Changes related to procfs for 2.3.48&n; *&n; * Revision 1.2  2000/02/14 19:23:03  werner&n; *&n; * Changed handling of proc filesystem tables to a more portable version&n; *&n; * Revision 1.1  2000/02/10 19:45:18  werner&n; *&n; * Initial release&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -13,7 +13,7 @@ r_char
 op_star
 id|hysdn_proclog_revision
 op_assign
-l_string|&quot;$Revision: 1.2 $&quot;
+l_string|&quot;$Revision: 1.4 $&quot;
 suffix:semicolon
 multiline_comment|/* the proc subdir for the interface is defined in the procconf module */
 r_extern
@@ -1802,7 +1802,6 @@ op_assign
 op_amp
 id|log_fops
 suffix:semicolon
-multiline_comment|/* set new operations table */
 id|init_waitqueue_head
 c_func
 (paren

@@ -3226,18 +3226,16 @@ suffix:semicolon
 multiline_comment|/* we use this routine to read the file into our buffer */
 id|bufsize
 op_assign
-id|read_exec
+id|kernel_read
 c_func
 (paren
-id|filp-&gt;f_dentry
+id|filp
 comma
 id|filp-&gt;f_pos
 comma
 id|buff
 comma
 id|DIR_BUFSIZE
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if

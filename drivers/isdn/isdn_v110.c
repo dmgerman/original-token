@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_v110.c,v 1.3 1999/10/30 09:49:28 keil Exp $&n;&n; * Linux ISDN subsystem, V.110 related functions (linklevel).&n; *&n; * Copyright by Thomas Pfeiffer (pfeiffer@pds.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_v110.c,v $&n; * Revision 1.3  1999/10/30 09:49:28  keil&n; * Reinit of v110 structs&n; *&n; * Revision 1.2  1998/02/22 19:44:25  fritz&n; * Bugfixes and improvements regarding V.110, V.110 now running.&n; *&n; * Revision 1.1  1998/02/20 17:32:09  fritz&n; * First checkin (not yet completely functionable).&n; *&n; */
+multiline_comment|/* $Id: isdn_v110.c,v 1.4 2000/03/16 16:34:12 kai Exp $&n;&n; * Linux ISDN subsystem, V.110 related functions (linklevel).&n; *&n; * Copyright by Thomas Pfeiffer (pfeiffer@pds.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_v110.c,v $&n; * Revision 1.4  2000/03/16 16:34:12  kai&n; * some translation work&n; *&n; * there shouldn&squot;t be any German comments lurking around anymore ;-)&n; *&n; * Revision 1.3  1999/10/30 09:49:28  keil&n; * Reinit of v110 structs&n; *&n; * Revision 1.2  1998/02/22 19:44:25  fritz&n; * Bugfixes and improvements regarding V.110, V.110 now running.&n; *&n; * Revision 1.1  1998/02/20 17:32:09  fritz&n; * First checkin (not yet completely functionable).&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -12,7 +12,7 @@ r_char
 op_star
 id|isdn_v110_revision
 op_assign
-l_string|&quot;$Revision: 1.3 $&quot;
+l_string|&quot;$Revision: 1.4 $&quot;
 suffix:semicolon
 DECL|macro|V110_38400
 mdefine_line|#define V110_38400 255
@@ -20,7 +20,7 @@ DECL|macro|V110_19200
 mdefine_line|#define V110_19200  15
 DECL|macro|V110_9600
 mdefine_line|#define V110_9600    3
-multiline_comment|/* Die folgenden Daten sind fertig kodierte Matrizen, jeweils&n;   als online und offline matrix f&#xfffd;r 9600, 19200 und 38400&n; */
+multiline_comment|/* &n; * The following data are precoded matrices, online and offline matrix &n; * for 9600, 19200 und 38400, respectively&n; */
 DECL|variable|V110_OnMatrix_9600
 r_static
 r_int
@@ -361,7 +361,7 @@ comma
 l_int|0xff
 )brace
 suffix:semicolon
-multiline_comment|/* FlipBits dreht die Reihenfolge von jeweils keylen bits in einem byte um.&n;   Aus der Bitreihenfolge 76543210 werden bei keylen=4 die bits 45670123,&n;   bei keylen=2 die bits 67452301. Dies ist notwendig, weil die reihenfolge&n;   auf der isdn-leitung falsch herum ist.&n; */
+multiline_comment|/* &n; * FlipBits reorders sequences of keylen bits in one byte.&n; * E.g. source order 7654321 will be converted to 45670123 when keylen = 4,&n; * and to 67452301 when keylen = 2. This is necessary because ordering on&n; * the isdn line is the the other way.&n; */
 r_static
 id|__inline
 r_int
@@ -724,7 +724,7 @@ id|v
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* ValidHeaderBytes pr&#xfffd;ft, wieviele bytes in v-&gt;decodebuf g&#xfffd;ltig sind */
+multiline_comment|/* &n; * ValidHeaderBytes return the number of valid bytes in v-&gt;decodebuf &n; */
 r_static
 r_int
 DECL|function|ValidHeaderBytes
@@ -781,7 +781,7 @@ r_return
 id|i
 suffix:semicolon
 )brace
-multiline_comment|/* SyncHeader schiebt den decodebuf pointer auf den n&#xfffd;chsten g&#xfffd;ltigen header */
+multiline_comment|/* &n; * SyncHeader moves the decodebuf ptr to the next valid header &n; */
 r_static
 r_void
 DECL|function|SyncHeader
@@ -943,7 +943,7 @@ OL
 id|len
 )paren
 (brace
-multiline_comment|/* sind schon alle matrizenzeilen abgearbeitet? */
+multiline_comment|/* Are we done with all lines of the matrix? */
 r_if
 c_cond
 (paren
@@ -956,7 +956,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* die 0. zeile der matrix ist immer null ! */
+multiline_comment|/* the 0. line of the matrix is always 0 ! */
 r_if
 c_cond
 (paren
@@ -968,7 +968,7 @@ op_ne
 l_int|0x00
 )paren
 (brace
-multiline_comment|/* nicht 0 ? dann fehler! */
+multiline_comment|/* not 0 ? -&gt; error! */
 macro_line|#ifdef ISDN_V110_DEBUG
 id|printk
 c_func
@@ -977,13 +977,13 @@ id|KERN_DEBUG
 l_string|&quot;isdn_v110: DecodeMatrix, V110 Bad Header&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* returning now is not the right thing, though :-( */
 macro_line|#endif
-multiline_comment|/*&n;  dann einen return zu machen, ist auch irgendwie nicht das richtige! :-(&n;  v-&gt;introducer = 0; v-&gt;dbit = 1; v-&gt;b = 0;&n;  return buflen;                                                                                                     anzahl schon erzeugter daten zur&#xfffd;ckgeben!&n;  */
 )brace
 id|line
 op_increment
 suffix:semicolon
-multiline_comment|/* sonst die n&#xfffd;chste matrixzeile nehmen */
+multiline_comment|/* next line of matrix */
 r_continue
 suffix:semicolon
 )brace
@@ -1000,7 +1000,7 @@ op_eq
 l_int|5
 )paren
 (brace
-multiline_comment|/* in zeile 5 stehen nur e-bits ! */
+multiline_comment|/* in line 5 there&squot;s only e-bits ! */
 r_if
 c_cond
 (paren
@@ -1016,7 +1016,7 @@ op_ne
 l_int|0x30
 )paren
 (brace
-multiline_comment|/* 011 mu&#xfffd; am anfang stehen! */
+multiline_comment|/* 011 has to be at the beginning! */
 macro_line|#ifdef ISDN_V110_DEBUG
 id|printk
 c_func
@@ -1025,13 +1025,13 @@ id|KERN_DEBUG
 l_string|&quot;isdn_v110: DecodeMatrix, V110 Bad 5th line&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* returning now is not the right thing, though :-( */
 macro_line|#endif
-multiline_comment|/* dann einen return zu machen, ist auch irgendwie nicht das richtige! :-(&n;   v-&gt;introducer = 0; v-&gt;dbit = 1; v-&gt;b = 0;&n;   return buflen;&n; */
 )brace
 id|line
 op_increment
 suffix:semicolon
-multiline_comment|/* alles klar, n&#xfffd;chste zeile */
+multiline_comment|/* next line */
 r_continue
 suffix:semicolon
 )brace
@@ -1060,7 +1060,7 @@ l_int|0
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* aktuelles bit der matrix */
+multiline_comment|/* current bit of the matrix */
 id|next_byte
 suffix:colon
 r_if
@@ -1071,16 +1071,16 @@ OG
 l_int|2
 )paren
 (brace
-multiline_comment|/* war es das letzte bit dieser matrixzeile ? */
+multiline_comment|/* was it the last bit in this line ? */
 id|mbit
 op_rshift_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* nein, nimm das n&#xfffd;chste in dieser zeile */
+multiline_comment|/* no -&gt; take next */
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* sonst links in der n&#xfffd;chsten zeile anfangen */
+multiline_comment|/* otherwise start with leftmost bit in the next line */
 id|mbit
 op_assign
 l_int|64
@@ -1093,7 +1093,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* sonst m&#xfffd;ssen wir ein datenbit setzen */
+multiline_comment|/* otherwise we need to set a data bit */
 r_if
 c_cond
 (paren
@@ -1104,12 +1104,12 @@ id|line
 op_amp
 id|mbit
 )paren
-multiline_comment|/* war das bit in der matrix gesetzt ? */
+multiline_comment|/* was that bit set in the matrix ? */
 id|b
 op_or_assign
 id|dbit
 suffix:semicolon
-multiline_comment|/* ja, dann setz es auch im datenbyte  */
+multiline_comment|/* yes -&gt; set it in the data byte */
 r_else
 id|b
 op_and_assign
@@ -1117,7 +1117,7 @@ id|dbit
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* nein, l&#xfffd;sch bit im datenbyte */
+multiline_comment|/* no -&gt; clear it in the data byte */
 r_if
 c_cond
 (paren
@@ -1125,15 +1125,15 @@ id|dbit
 OL
 l_int|128
 )paren
-multiline_comment|/* haben wir schon ein ganzes byte voll ? */
+multiline_comment|/* is that data byte done ? */
 id|dbit
 op_lshift_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* nein, auf zum n&#xfffd;chsten datenbit */
+multiline_comment|/* no, got the next bit */
 r_else
 (brace
-multiline_comment|/* ein ganzes datenbyte ist voll */
+multiline_comment|/* data byte is done */
 id|buf
 (braket
 id|buflen
@@ -1142,24 +1142,24 @@ op_increment
 op_assign
 id|b
 suffix:semicolon
-multiline_comment|/* byte in den output buffer kopieren */
+multiline_comment|/* copy byte into the output buffer */
 id|introducer
 op_assign
 id|b
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Init der Introsequenz und des datenbytes */
+multiline_comment|/* init of the intro sequence and of the data byte */
 id|dbit
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* als n&#xfffd;chstes suchen wir das nullte bit */
+multiline_comment|/* next we look for the 0th bit */
 )brace
 r_goto
 id|next_byte
 suffix:semicolon
-multiline_comment|/* suche das n&#xfffd;chste bit in der matrix */
+multiline_comment|/* look for next bit in the matrix */
 )brace
 )brace
 id|v-&gt;introducer
@@ -1177,9 +1177,9 @@ suffix:semicolon
 r_return
 id|buflen
 suffix:semicolon
-multiline_comment|/* return anzahl der bytes im output buffer */
+multiline_comment|/* return number of bytes in the output buffer */
 )brace
-multiline_comment|/* DecodeStream erh&#xfffd;lt vom input stream V110 kodierte Daten, die zu den&n;   V110 frames zusammengepackt werden m&#xfffd;ssen. Die Daten k&#xfffd;nnen an diese&n;   Schnittstelle so &#xfffd;bergeben werden, wie sie von der Leitung kommen, ohne&n;   darauf achten zu m&#xfffd;ssen, das frames usw. eingehalten werden.&n; */
+multiline_comment|/* &n; * DecodeStream receives V.110 coded data from the input stream. It recovers the &n; * original frames.&n; * The input stream doesn&squot;t need to be framed&n; */
 r_struct
 id|sk_buff
 op_star
@@ -1379,14 +1379,14 @@ op_ne
 id|v-&gt;nbytes
 )paren
 (brace
-multiline_comment|/* ist es ein ung&#xfffd;ltiger header ? */
+multiline_comment|/* is that a valid header? */
 id|SyncHeader
 c_func
 (paren
 id|v
 )paren
 suffix:semicolon
-multiline_comment|/* nein, such einen header */
+multiline_comment|/* no -&gt; look for header */
 r_goto
 id|ReSync
 suffix:semicolon
@@ -1684,7 +1684,7 @@ id|mlen
 )paren
 )paren
 (brace
-multiline_comment|/* solange noch input da ist */
+multiline_comment|/* while we still have input data */
 r_switch
 c_cond
 (paren
@@ -1693,7 +1693,7 @@ op_mod
 l_int|10
 )paren
 (brace
-multiline_comment|/* in welcher matrixzeile sind wir ? */
+multiline_comment|/* in which line of the matrix are we? */
 r_case
 l_int|0
 suffix:colon
@@ -1705,12 +1705,12 @@ op_increment
 op_assign
 l_int|0x00
 suffix:semicolon
-multiline_comment|/* zeile 0 ist immer 0 */
+multiline_comment|/* line 0 is always 0 */
 id|mbit
 op_assign
 l_int|128
 suffix:semicolon
-multiline_comment|/* und es geht mit dem 7. bit weiter */
+multiline_comment|/* go on with the 7th bit */
 r_break
 suffix:semicolon
 r_case
@@ -1724,12 +1724,12 @@ op_increment
 op_assign
 l_int|0xbf
 suffix:semicolon
-multiline_comment|/* zeile 5 ist immer 10111111 */
+multiline_comment|/* line 5 is always 10111111 */
 id|mbit
 op_assign
 l_int|128
 suffix:semicolon
-multiline_comment|/* und es geht mit dem 7. bit weiter */
+multiline_comment|/* go on with the 7th bit */
 r_break
 suffix:semicolon
 )brace
@@ -1760,14 +1760,14 @@ c_cond
 id|mbit
 )paren
 (brace
-multiline_comment|/* ganz linkes oder rechtes bit ? */
+multiline_comment|/* leftmost or rightmost bit ? */
 r_case
 l_int|1
 suffix:colon
 id|line
 op_increment
 suffix:semicolon
-multiline_comment|/* ganz rechts ! dann in die n&#xfffd;chste */
+multiline_comment|/* rightmost -&gt; go to next line */
 r_if
 c_cond
 (paren
@@ -1797,12 +1797,12 @@ id|line
 op_assign
 l_int|128
 suffix:semicolon
-multiline_comment|/* ganz links byte auf 1000000 setzen */
+multiline_comment|/* leftmost -&gt; set byte to 1000000 */
 id|mbit
 op_assign
 l_int|64
 suffix:semicolon
-multiline_comment|/* aktuelles bit in der matrixzeile */
+multiline_comment|/* current bit in the matrix line */
 r_continue
 suffix:semicolon
 )brace
@@ -1812,11 +1812,11 @@ c_cond
 id|introducer
 )paren
 (brace
-multiline_comment|/* 110 sequenz setzen ? */
+multiline_comment|/* set 110 sequence ? */
 id|introducer
 op_decrement
 suffix:semicolon
-multiline_comment|/* ein digit weniger setzen */
+multiline_comment|/* set on digit less */
 id|m
 (braket
 id|line
@@ -1832,18 +1832,18 @@ id|mbit
 suffix:colon
 l_int|0
 suffix:semicolon
-multiline_comment|/* entsprechendes bit setzen */
+multiline_comment|/* set corresponding bit */
 id|mbit
 op_rshift_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* bit der matrixzeile &gt;&gt; 1 */
+multiline_comment|/* bit of matrix line  &gt;&gt; 1 */
 r_goto
 id|next_bit
 suffix:semicolon
-multiline_comment|/* und dort weiter machen */
+multiline_comment|/* and go on there */
 )brace
-multiline_comment|/* else datenbits in die matrix packen! */
+multiline_comment|/* else push data bits into the matrix! */
 id|m
 (braket
 id|line
@@ -1863,7 +1863,7 @@ id|mbit
 suffix:colon
 l_int|0
 suffix:semicolon
-multiline_comment|/* datenbit in matrix setzen */
+multiline_comment|/* set data bit in matrix */
 r_if
 c_cond
 (paren
@@ -1872,16 +1872,16 @@ op_eq
 l_int|128
 )paren
 (brace
-multiline_comment|/* war es das letzte datenbit ? */
+multiline_comment|/* was it the last one? */
 id|dbit
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* dann mach beim n&#xfffd;chsten weiter */
+multiline_comment|/* then go on with first bit of  */
 id|i
 op_increment
 suffix:semicolon
-multiline_comment|/* n&#xfffd;chste datenbyte des input buffers */
+multiline_comment|/* next byte in input buffer */
 r_if
 c_cond
 (paren
@@ -1889,15 +1889,15 @@ id|i
 OL
 id|len
 )paren
-multiline_comment|/* war es schon das letzte ? */
+multiline_comment|/* input buffer done ? */
 id|introducer
 op_assign
 l_int|3
 suffix:semicolon
-multiline_comment|/* nein, schreib den introducer 110 */
+multiline_comment|/* no, write introducer 110 */
 r_else
 (brace
-multiline_comment|/* war das letzte datenbyte ! */
+multiline_comment|/* input buffer done ! */
 id|m
 (braket
 id|line
@@ -1911,28 +1911,28 @@ l_int|1
 op_amp
 l_int|0xfe
 suffix:semicolon
-multiline_comment|/* setz restliche bits der zeile auf 1 */
+multiline_comment|/* set remaining bits in line to 1 */
 r_break
 suffix:semicolon
 )brace
 )brace
 r_else
-multiline_comment|/* nicht das letzte datenbit */
+multiline_comment|/* not the last data bit */
 id|dbit
 op_lshift_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* dann gehe zum n&#xfffd;chsten datenbit */
+multiline_comment|/* then go to next data bit */
 id|mbit
 op_rshift_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* und setz bit der matrix weiter */
+multiline_comment|/* go to next bit of matrix */
 r_goto
 id|next_bit
 suffix:semicolon
 )brace
-multiline_comment|/* evtl. noch restliche zeilen in der matrix generieren... */
+multiline_comment|/* if necessary, generate remaining lines of the matrix... */
 r_if
 c_cond
 (paren
@@ -2062,7 +2062,7 @@ suffix:semicolon
 r_return
 id|line
 suffix:semicolon
-multiline_comment|/* soviele matrixzeilen sind es */
+multiline_comment|/* that&squot;s how many lines we have */
 )brace
 multiline_comment|/*&n; * Build a sync frame.&n; */
 r_static
@@ -2486,7 +2486,7 @@ comma
 id|size
 )paren
 suffix:semicolon
-multiline_comment|/* jetzt noch jeweils 2 oder 4 bits auf den output stream verteilen! */
+multiline_comment|/* now distribute 2 or 4 bits each to the output stream! */
 id|rbuf
 op_assign
 id|skb_put

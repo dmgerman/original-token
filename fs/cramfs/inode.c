@@ -824,22 +824,6 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/* Nothing to do.. */
-DECL|function|cramfs_put_super
-r_static
-r_void
-id|cramfs_put_super
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
 DECL|function|cramfs_statfs
 r_static
 r_int
@@ -1589,10 +1573,6 @@ id|super_operations
 id|cramfs_ops
 op_assign
 (brace
-id|put_super
-suffix:colon
-id|cramfs_put_super
-comma
 id|statfs
 suffix:colon
 id|cramfs_statfs

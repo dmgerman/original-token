@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: eicon_idi.c,v 1.31 2000/02/22 16:26:40 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon active cards.&n; *        IDI interface &n; *&n; * Copyright 1998-2000  by Armin Schindler (mac@melware.de)&n; * Copyright 1999,2000  Cytronics &amp; Melware (info@melware.de)&n; *&n; * Thanks to&t;Deutsche Mailbox Saar-Lor-Lux GmbH&n; *&t;&t;for sponsoring and testing fax&n; *&t;&t;capabilities with Diva Server cards.&n; *&t;&t;(dor@deutschemailbox.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_idi.c,v $&n; * Revision 1.31  2000/02/22 16:26:40  armin&n; * Fixed membase error message.&n; * Fixed missing log buffer struct.&n; *&n; * Revision 1.30  2000/02/16 16:08:46  armin&n; * Fixed virtual channel handling of IDI.&n; *&n; * Revision 1.29  2000/01/23 21:21:23  armin&n; * Added new trace capability and some updates.&n; * DIVA Server BRI now supports data for ISDNLOG.&n; *&n; * Revision 1.28  2000/01/20 19:55:34  keil&n; * Add FAX Class 1 support&n; *&n; * Revision 1.27  1999/11/29 13:12:03  armin&n; * Autoconnect on L2_TRANS doesn&squot;t work with link_level correctly,&n; * changed back to former mode.&n; *&n; * Revision 1.26  1999/11/25 11:43:27  armin&n; * Fixed statectrl and connect message.&n; * X.75 fix and HDLC/transparent with autoconnect.&n; * Minor cleanup.&n; *&n; * Revision 1.25  1999/11/18 20:30:55  armin&n; * removed old workaround for ISA cards.&n; *&n; * Revision 1.24  1999/10/26 21:15:33  armin&n; * using define for checking phone number len to avoid buffer overflow.&n; *&n; * Revision 1.23  1999/10/11 18:13:25  armin&n; * Added fax capabilities for Eicon Diva Server cards.&n; *&n; * Revision 1.22  1999/10/08 22:09:33  armin&n; * Some fixes of cards interface handling.&n; * Bugfix of NULL pointer occurence.&n; * Changed a few log outputs.&n; *&n; * Revision 1.21  1999/09/26 14:17:53  armin&n; * Improved debug and log via readstat()&n; *&n; * Revision 1.20  1999/09/21 20:35:43  armin&n; * added more error checking.&n; *&n; * Revision 1.19  1999/09/21 20:06:40  armin&n; * Added pointer checks.&n; *&n; * Revision 1.18  1999/09/07 12:48:05  armin&n; * Prepared for sub-address usage.&n; *&n; * Revision 1.17  1999/09/07 12:35:39  armin&n; * Better checking and channel Id handling.&n; *&n; * Revision 1.16  1999/09/04 13:44:19  armin&n; * Fix of V.42 analog Modem negotiation handling.&n; *&n; * Revision 1.15  1999/08/28 21:32:50  armin&n; * Prepared for fax related functions.&n; * Now compilable without errors/warnings.&n; *&n; * Revision 1.14  1999/08/28 20:24:40  armin&n; * Corrected octet 3/3a in CPN/OAD information element.&n; * Thanks to John Simpson &lt;xfl23@dial.pipex.com&gt;&n; *&n; * Revision 1.13  1999/08/22 20:26:44  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.12  1999/08/18 20:16:59  armin&n; * Added XLOG function for all cards.&n; * Bugfix of alloc_skb NULL pointer.&n; *&n; * Revision 1.11  1999/07/25 15:12:03  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.10  1999/07/11 17:16:24  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.9  1999/03/29 11:19:42  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.8  1999/03/02 12:37:43  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.7  1999/02/03 18:34:35  armin&n; * Channel selection for outgoing calls w/o CHI.&n; * Added channel # in debug messages.&n; * L2 Transparent should work with 800 byte/packet now.&n; *&n; * Revision 1.6  1999/01/26 07:18:59  armin&n; * Bug with wrong added CPN fixed.&n; *&n; * Revision 1.5  1999/01/24 20:14:11  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.4  1999/01/10 18:46:05  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.3  1999/01/05 14:49:34  armin&n; * Added experimental usage of full BC and HLC for&n; * speech, 3.1kHz audio, fax gr.2/3&n; *&n; * Revision 1.2  1999/01/04 13:19:29  armin&n; * Channel status with listen-request wrong - fixed.&n; *&n; * Revision 1.1  1999/01/01 18:09:41  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
+multiline_comment|/* $Id: eicon_idi.c,v 1.33 2000/03/06 15:45:17 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon active cards.&n; *        IDI interface &n; *&n; * Copyright 1998-2000  by Armin Schindler (mac@melware.de)&n; * Copyright 1999,2000  Cytronics &amp; Melware (info@melware.de)&n; *&n; * Thanks to&t;Deutsche Mailbox Saar-Lor-Lux GmbH&n; *&t;&t;for sponsoring and testing fax&n; *&t;&t;capabilities with Diva Server cards.&n; *&t;&t;(dor@deutschemailbox.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_idi.c,v $&n; * Revision 1.33  2000/03/06 15:45:17  armin&n; * Fixed incomplete number handling with BRI PtP connection.&n; *&n; * Revision 1.32  2000/03/04 17:04:21  armin&n; * Fix of statemachine, B-connect before D-connect,&n; * thanks to Helmut Adams &lt;adams@ipcon.de&gt;&n; * Minor change in send-data packet handling.&n; *&n; * Revision 1.31  2000/02/22 16:26:40  armin&n; * Fixed membase error message.&n; * Fixed missing log buffer struct.&n; *&n; * Revision 1.30  2000/02/16 16:08:46  armin&n; * Fixed virtual channel handling of IDI.&n; *&n; * Revision 1.29  2000/01/23 21:21:23  armin&n; * Added new trace capability and some updates.&n; * DIVA Server BRI now supports data for ISDNLOG.&n; *&n; * Revision 1.28  2000/01/20 19:55:34  keil&n; * Add FAX Class 1 support&n; *&n; * Revision 1.27  1999/11/29 13:12:03  armin&n; * Autoconnect on L2_TRANS doesn&squot;t work with link_level correctly,&n; * changed back to former mode.&n; *&n; * Revision 1.26  1999/11/25 11:43:27  armin&n; * Fixed statectrl and connect message.&n; * X.75 fix and HDLC/transparent with autoconnect.&n; * Minor cleanup.&n; *&n; * Revision 1.25  1999/11/18 20:30:55  armin&n; * removed old workaround for ISA cards.&n; *&n; * Revision 1.24  1999/10/26 21:15:33  armin&n; * using define for checking phone number len to avoid buffer overflow.&n; *&n; * Revision 1.23  1999/10/11 18:13:25  armin&n; * Added fax capabilities for Eicon Diva Server cards.&n; *&n; * Revision 1.22  1999/10/08 22:09:33  armin&n; * Some fixes of cards interface handling.&n; * Bugfix of NULL pointer occurence.&n; * Changed a few log outputs.&n; *&n; * Revision 1.21  1999/09/26 14:17:53  armin&n; * Improved debug and log via readstat()&n; *&n; * Revision 1.20  1999/09/21 20:35:43  armin&n; * added more error checking.&n; *&n; * Revision 1.19  1999/09/21 20:06:40  armin&n; * Added pointer checks.&n; *&n; * Revision 1.18  1999/09/07 12:48:05  armin&n; * Prepared for sub-address usage.&n; *&n; * Revision 1.17  1999/09/07 12:35:39  armin&n; * Better checking and channel Id handling.&n; *&n; * Revision 1.16  1999/09/04 13:44:19  armin&n; * Fix of V.42 analog Modem negotiation handling.&n; *&n; * Revision 1.15  1999/08/28 21:32:50  armin&n; * Prepared for fax related functions.&n; * Now compilable without errors/warnings.&n; *&n; * Revision 1.14  1999/08/28 20:24:40  armin&n; * Corrected octet 3/3a in CPN/OAD information element.&n; * Thanks to John Simpson &lt;xfl23@dial.pipex.com&gt;&n; *&n; * Revision 1.13  1999/08/22 20:26:44  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.12  1999/08/18 20:16:59  armin&n; * Added XLOG function for all cards.&n; * Bugfix of alloc_skb NULL pointer.&n; *&n; * Revision 1.11  1999/07/25 15:12:03  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.10  1999/07/11 17:16:24  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.9  1999/03/29 11:19:42  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.8  1999/03/02 12:37:43  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.7  1999/02/03 18:34:35  armin&n; * Channel selection for outgoing calls w/o CHI.&n; * Added channel # in debug messages.&n; * L2 Transparent should work with 800 byte/packet now.&n; *&n; * Revision 1.6  1999/01/26 07:18:59  armin&n; * Bug with wrong added CPN fixed.&n; *&n; * Revision 1.5  1999/01/24 20:14:11  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.4  1999/01/10 18:46:05  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.3  1999/01/05 14:49:34  armin&n; * Added experimental usage of full BC and HLC for&n; * speech, 3.1kHz audio, fax gr.2/3&n; *&n; * Revision 1.2  1999/01/04 13:19:29  armin&n; * Channel status with listen-request wrong - fixed.&n; *&n; * Revision 1.1  1999/01/01 18:09:41  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -12,7 +12,7 @@ r_char
 op_star
 id|eicon_idi_revision
 op_assign
-l_string|&quot;$Revision: 1.31 $&quot;
+l_string|&quot;$Revision: 1.33 $&quot;
 suffix:semicolon
 DECL|variable|manbuf
 id|eicon_manifbuf
@@ -12795,40 +12795,10 @@ comma
 id|chan-&gt;No
 )paren
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|ccard-&gt;type
-)paren
-(brace
-r_case
-id|EICON_CTYPE_MAESTRAP
-suffix:colon
-r_case
-id|EICON_CTYPE_S2M
-suffix:colon
-multiline_comment|/* TODO (other protocols) */
 id|chan-&gt;fsm_state
 op_assign
 id|EICON_STATE_ICALLW
 suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|idi_do_req
-c_func
-(paren
-id|ccard
-comma
-id|chan
-comma
-id|HANGUP
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 )brace
@@ -12992,6 +12962,14 @@ multiline_comment|/* idi_do_req(ccard, chan, IDI_N_CONNECT, 1); */
 )brace
 )brace
 r_else
+(brace
+r_if
+c_cond
+(paren
+id|chan-&gt;fsm_state
+op_ne
+id|EICON_STATE_ACTIVE
+)paren
 id|idi_hangup
 c_func
 (paren
@@ -13000,6 +12978,7 @@ comma
 id|chan
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -15337,6 +15316,18 @@ op_logical_and
 (paren
 id|chan-&gt;l2prot
 op_ne
+id|ISDN_PROTO_L2_MODEM
+)paren
+op_logical_and
+(paren
+id|chan-&gt;l2prot
+op_ne
+id|ISDN_PROTO_L2_FAX
+)paren
+op_logical_and
+(paren
+id|chan-&gt;l2prot
+op_ne
 id|ISDN_PROTO_L2_TRANS
 )paren
 )paren
@@ -15352,15 +15343,7 @@ id|reqbuf-&gt;Req
 op_assign
 id|IDI_N_DATA
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ack
-)paren
-id|reqbuf-&gt;Req
-op_or_assign
-id|N_D_BIT
-suffix:semicolon
+multiline_comment|/* if (ack) reqbuf-&gt;Req |= N_D_BIT; */
 )brace
 id|reqbuf-&gt;ReqCh
 op_assign

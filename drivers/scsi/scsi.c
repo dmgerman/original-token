@@ -3386,6 +3386,9 @@ id|SDpnt
 id|Scsi_Cmnd
 op_star
 id|SCpnt
+comma
+op_star
+id|SCnext
 suffix:semicolon
 r_int
 r_int
@@ -3411,10 +3414,12 @@ id|SCpnt
 suffix:semicolon
 id|SCpnt
 op_assign
-id|SCpnt-&gt;next
+id|SCnext
 )paren
 (brace
 id|SDpnt-&gt;device_queue
+op_assign
+id|SCnext
 op_assign
 id|SCpnt-&gt;next
 suffix:semicolon

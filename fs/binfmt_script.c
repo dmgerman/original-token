@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|function|load_script
 r_static
@@ -34,9 +35,9 @@ op_star
 id|i_arg
 suffix:semicolon
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 suffix:semicolon
 r_char
 id|interp
@@ -80,23 +81,13 @@ multiline_comment|/*&n;&t; * This section does the #! interpretation.&n;&t; * So
 id|bprm-&gt;sh_bang
 op_increment
 suffix:semicolon
-id|lock_kernel
+id|fput
 c_func
 (paren
+id|bprm-&gt;file
 )paren
 suffix:semicolon
-id|dput
-c_func
-(paren
-id|bprm-&gt;dentry
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|bprm-&gt;dentry
+id|bprm-&gt;file
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -377,22 +368,12 @@ id|bprm-&gt;argc
 op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t; * OK, now restart the process with the interpreter&squot;s dentry.&n;&t; */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|dentry
+id|file
 op_assign
-id|open_namei
+id|open_exec
 c_func
 (paren
 id|interp
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -401,19 +382,19 @@ c_cond
 id|IS_ERR
 c_func
 (paren
-id|dentry
+id|file
 )paren
 )paren
 r_return
 id|PTR_ERR
 c_func
 (paren
-id|dentry
+id|file
 )paren
 suffix:semicolon
-id|bprm-&gt;dentry
+id|bprm-&gt;file
 op_assign
-id|dentry
+id|file
 suffix:semicolon
 id|retval
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_concap.c,v 1.6 1999/08/22 20:26:01 calle Exp $&n; &n; * Stuff to support the concap_proto by isdn4linux. isdn4linux - specific&n; * stuff goes here. Stuff that depends only on the concap protocol goes to&n; * another -- protocol specific -- source file.&n; *&n; * $Log: isdn_concap.c,v $&n; * Revision 1.6  1999/08/22 20:26:01  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.5  1998/10/30 18:44:48  he&n; * pass return value from isdn_net_dial_req for dialmode change&n; *&n; * Revision 1.4  1998/10/30 17:55:24  he&n; * dialmode for x25iface and multulink ppp&n; *&n; * Revision 1.3  1998/05/26 22:39:22  he&n; * sync&squot;ed with 2.1.102 where appropriate (CAPABILITY changes)&n; * concap typo&n; * cleared dev.tbusy in isdn_net BCONN status callback&n; *&n; * Revision 1.2  1998/01/31 22:49:21  keil&n; * correct comments&n; *&n; * Revision 1.1  1998/01/31 22:27:57  keil&n; * New files from Henner Eisen for X.25 support&n; *&n; */
+multiline_comment|/* $Id: isdn_concap.c,v 1.7 2000/03/21 23:53:22 kai Exp $&n; &n; * Stuff to support the concap_proto by isdn4linux. isdn4linux - specific&n; * stuff goes here. Stuff that depends only on the concap protocol goes to&n; * another -- protocol specific -- source file.&n; *&n; * $Log: isdn_concap.c,v $&n; * Revision 1.7  2000/03/21 23:53:22  kai&n; * fix backwards compatibility&n; *&n; * Revision 1.6  1999/08/22 20:26:01  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.5  1998/10/30 18:44:48  he&n; * pass return value from isdn_net_dial_req for dialmode change&n; *&n; * Revision 1.4  1998/10/30 17:55:24  he&n; * dialmode for x25iface and multulink ppp&n; *&n; * Revision 1.3  1998/05/26 22:39:22  he&n; * sync&squot;ed with 2.1.102 where appropriate (CAPABILITY changes)&n; * concap typo&n; * cleared dev.tbusy in isdn_net BCONN status callback&n; *&n; * Revision 1.2  1998/01/31 22:49:21  keil&n; * correct comments&n; *&n; * Revision 1.1  1998/01/31 22:27:57  keil&n; * New files from Henner Eisen for X.25 support&n; *&n; */
 macro_line|#include &lt;linux/isdn.h&gt;
 macro_line|#include &quot;isdn_x25iface.h&quot;
 macro_line|#include &quot;isdn_net.h&quot;
@@ -21,9 +21,6 @@ op_star
 id|skb
 )paren
 (brace
-r_int
-id|tmp
-suffix:semicolon
 r_struct
 id|net_device
 op_star
@@ -33,15 +30,29 @@ id|concap
 op_member_access_from_pointer
 id|net_dev
 suffix:semicolon
-id|isdn_net_local
+id|isdn_net_dev
 op_star
-id|lp
+id|nd
 op_assign
+(paren
 (paren
 id|isdn_net_local
 op_star
 )paren
 id|ndev-&gt;priv
+)paren
+op_member_access_from_pointer
+id|netdev
+suffix:semicolon
+id|isdn_net_local
+op_star
+id|lp
+op_assign
+id|isdn_net_get_locked_lp
+c_func
+(paren
+id|nd
+)paren
 suffix:semicolon
 id|IX25DEBUG
 c_func
@@ -51,20 +62,48 @@ comma
 id|concap-&gt;net_dev-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp
+)paren
+(brace
+id|IX25DEBUG
+c_func
+(paren
+l_string|&quot;isdn_concap_dl_data_req: %s : isdn_net_send_skb returned %d&bslash;n&quot;
+comma
+id|concap
+op_member_access_from_pointer
+id|net_dev
+op_member_access_from_pointer
+id|name
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|lp-&gt;huptimer
 op_assign
 l_int|0
 suffix:semicolon
-id|tmp
-op_assign
-id|isdn_net_send_skb
+id|isdn_net_writebuf_skb
 c_func
 (paren
-id|ndev
-comma
 id|lp
 comma
 id|skb
+)paren
+suffix:semicolon
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|lp-&gt;xmit_lock
 )paren
 suffix:semicolon
 id|IX25DEBUG
@@ -78,11 +117,11 @@ id|net_dev
 op_member_access_from_pointer
 id|name
 comma
-id|tmp
+l_int|0
 )paren
 suffix:semicolon
 r_return
-id|tmp
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|isdn_concap_dl_connect_req

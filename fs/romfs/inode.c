@@ -367,22 +367,6 @@ r_return
 id|s
 suffix:semicolon
 )brace
-multiline_comment|/* Nothing to do.. */
-r_static
-r_void
-DECL|function|romfs_put_super
-id|romfs_put_super
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/* That&squot;s simple too. */
 r_static
 r_int
@@ -2167,10 +2151,6 @@ op_assign
 id|read_inode
 suffix:colon
 id|romfs_read_inode
-comma
-id|put_super
-suffix:colon
-id|romfs_put_super
 comma
 id|statfs
 suffix:colon

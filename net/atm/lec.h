@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&n; * Lan Emulation client header file&n; *&n; * Marko 
 macro_line|#ifndef _LEC_H_
 DECL|macro|_LEC_H_
 mdefine_line|#define _LEC_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/atmlec.h&gt;

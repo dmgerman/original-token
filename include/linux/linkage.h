@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_LINKAGE_H
 DECL|macro|_LINUX_LINKAGE_H
 mdefine_line|#define _LINUX_LINKAGE_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef __cplusplus
 DECL|macro|CPP_ASMLINKAGE
 mdefine_line|#define CPP_ASMLINKAGE extern &quot;C&quot;
@@ -47,17 +48,17 @@ mdefine_line|#define __ALIGN .balign 4
 DECL|macro|__ALIGN_STR
 mdefine_line|#define __ALIGN_STR &quot;.balign 4&quot;
 macro_line|#else
-macro_line|#if !defined(__i486__) &amp;&amp; !defined(__i586__) &amp;&amp; !defined(__pentium__)
-DECL|macro|__ALIGN
-mdefine_line|#define __ALIGN .align 4,0x90
-DECL|macro|__ALIGN_STR
-mdefine_line|#define __ALIGN_STR &quot;.align 4,0x90&quot;
-macro_line|#else  /* __i486__/__i586__/__pentium__ */
+macro_line|#if defined(__i386__) &amp;&amp; defined(CONFIG_X86_ALIGNMENT_16)
 DECL|macro|__ALIGN
 mdefine_line|#define __ALIGN .align 16,0x90
 DECL|macro|__ALIGN_STR
 mdefine_line|#define __ALIGN_STR &quot;.align 16,0x90&quot;
-macro_line|#endif /* __i486__/__i586__/__pentium__ */
+macro_line|#else
+DECL|macro|__ALIGN
+mdefine_line|#define __ALIGN .align 4,0x90
+DECL|macro|__ALIGN_STR
+mdefine_line|#define __ALIGN_STR &quot;.align 4,0x90&quot;
+macro_line|#endif
 macro_line|#endif /* __sh__ */
 macro_line|#endif /* __mc68000__ */
 macro_line|#endif /* __arm__ */

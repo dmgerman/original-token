@@ -11,6 +11,9 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|DCACHE_PARANOIA
 mdefine_line|#define DCACHE_PARANOIA 1
 multiline_comment|/* #define DCACHE_DEBUG 1 */
+multiline_comment|/* Right now the dcache depends on the kernel lock */
+DECL|macro|check_lock
+mdefine_line|#define check_lock()&t;if (!kernel_locked()) BUG()
 multiline_comment|/* For managing the dcache */
 r_extern
 r_int
@@ -235,6 +238,11 @@ id|dentry
 r_int
 id|count
 suffix:semicolon
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -422,14 +430,10 @@ comma
 id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
-op_star
+id|BUG
+c_func
 (paren
-r_int
-op_star
 )paren
-l_int|0
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Try to invalidate the dentry if it turns out to be&n; * possible. If there are other dentries that can be&n; * reached through this one we can&squot;t delete it.&n; */
@@ -444,6 +448,11 @@ op_star
 id|dentry
 )paren
 (brace
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * If it&squot;s already been dropped, return OK.&n;&t; */
 r_if
 c_cond
@@ -586,6 +595,11 @@ r_int
 id|count
 )paren
 (brace
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1844,6 +1858,11 @@ id|tmp
 op_assign
 id|head-&gt;next
 suffix:semicolon
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2002,6 +2021,11 @@ id|valid
 op_assign
 l_int|1
 suffix:semicolon
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2135,6 +2159,11 @@ op_star
 id|dentry
 )paren
 (brace
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Are we the only user?&n;&t; */
 r_if
 c_cond
@@ -2225,6 +2254,11 @@ comma
 op_star
 id|new_name
 suffix:semicolon
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -2291,6 +2325,11 @@ op_star
 id|target
 )paren
 (brace
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2676,6 +2715,13 @@ suffix:semicolon
 r_char
 op_star
 id|cwd
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cwd
 op_assign
 id|d_path
 c_func
@@ -2685,6 +2731,11 @@ comma
 id|page
 comma
 id|PAGE_SIZE
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|error

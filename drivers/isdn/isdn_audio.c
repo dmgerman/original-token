@@ -2319,14 +2319,6 @@ l_char|&squot;D&squot;
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * egcs 2.95 complain about invalid asm statement:&n; * &quot;fixed or forbidden register 2 (cx) was spilled for class CREG.&quot;&n; */
-macro_line|#if ((CPU == 386) || (CPU == 486) || (CPU == 586)) &amp;&amp; defined(__GNUC__)
-macro_line|#if __GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 95
-DECL|macro|ISDN_AUDIO_OPTIMIZE_ON_X386_WITH_ASM_IF_GCC_ALLOW_IT
-mdefine_line|#define ISDN_AUDIO_OPTIMIZE_ON_X386_WITH_ASM_IF_GCC_ALLOW_IT
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef ISDN_AUDIO_OPTIMIZE_ON_X386_WITH_ASM_IF_GCC_ALLOW_IT
 r_static
 r_inline
 r_void
@@ -2348,7 +2340,19 @@ r_int
 id|n
 )paren
 (brace
+macro_line|#ifdef __i386__
+r_int
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+comma
+id|d3
+suffix:semicolon
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&quot;
@@ -2357,8 +2361,27 @@ l_string|&quot;xlatb&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&bslash;n&bslash;t&quot;
 l_string|&quot;loop 1b&bslash;n&bslash;t&quot;
 suffix:colon
+l_string|&quot;=&amp;b&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d2
+)paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d3
+)paren
 suffix:colon
-l_string|&quot;b&quot;
+l_string|&quot;0&quot;
 (paren
 (paren
 r_int
@@ -2366,12 +2389,12 @@ r_int
 id|table
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;1&quot;
 (paren
 id|n
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;2&quot;
 (paren
 (paren
 r_int
@@ -2379,7 +2402,7 @@ r_int
 id|buff
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;3&quot;
 (paren
 (paren
 r_int
@@ -2387,40 +2410,12 @@ r_int
 id|buff
 )paren
 suffix:colon
-l_string|&quot;bx&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;si&quot;
+l_string|&quot;memory&quot;
 comma
 l_string|&quot;ax&quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#else
-r_static
-r_inline
-r_void
-DECL|function|isdn_audio_tlookup
-id|isdn_audio_tlookup
-c_func
-(paren
-r_const
-r_char
-op_star
-id|table
-comma
-r_char
-op_star
-id|buff
-comma
-r_int
-r_int
-id|n
-)paren
-(brace
 r_while
 c_loop
 (paren
@@ -2442,8 +2437,8 @@ op_star
 id|buff
 )braket
 suffix:semicolon
-)brace
 macro_line|#endif
+)brace
 r_void
 DECL|function|isdn_audio_ulaw2alaw
 id|isdn_audio_ulaw2alaw

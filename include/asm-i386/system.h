@@ -1,6 +1,7 @@
 macro_line|#ifndef __ASM_SYSTEM_H
 DECL|macro|__ASM_SYSTEM_H
 mdefine_line|#define __ASM_SYSTEM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt; /* for LOCK_PREFIX */
@@ -497,7 +498,7 @@ id|x
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Atomic compare and exchange.  Compare OLD with MEM, if identical,&n; * store NEW in MEM.  Return the initial value in MEM.  Success is&n; * indicated by comparing RETURN with OLD.&n; */
-macro_line|#if CPU != 386
+macro_line|#ifdef CONFIG_X86_CMPXCHG
 DECL|macro|__HAVE_ARCH_CMPXCHG
 mdefine_line|#define __HAVE_ARCH_CMPXCHG 1
 DECL|function|__cmpxchg

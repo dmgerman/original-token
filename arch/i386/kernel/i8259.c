@@ -824,21 +824,27 @@ suffix:semicolon
 id|outb
 c_func
 (paren
+l_int|0x60
+op_plus
+(paren
+id|irq
+op_amp
+l_int|7
+)paren
+comma
+l_int|0xA0
+)paren
+suffix:semicolon
+multiline_comment|/* &squot;Specific EOI&squot; to slave */
+id|outb
+c_func
+(paren
 l_int|0x62
 comma
 l_int|0x20
 )paren
 suffix:semicolon
 multiline_comment|/* &squot;Specific EOI&squot; to master-IRQ2 */
-id|outb
-c_func
-(paren
-l_int|0x20
-comma
-l_int|0xA0
-)paren
-suffix:semicolon
-multiline_comment|/* &squot;generic EOI&squot; to slave */
 )brace
 r_else
 (brace
@@ -860,12 +866,14 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0x20
+l_int|0x60
+op_plus
+id|irq
 comma
 l_int|0x20
 )paren
 suffix:semicolon
-multiline_comment|/* &squot;generic EOI&squot; to master */
+multiline_comment|/* &squot;Specific EOI&squot; to master */
 )brace
 id|spin_unlock_irqrestore
 c_func

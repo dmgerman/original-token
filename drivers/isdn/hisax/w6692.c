@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: w6692.c,v 1.2 2000/02/26 00:35:13 keil Exp $&n;&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; * $Log: w6692.c,v $&n; * Revision 1.2  2000/02/26 00:35:13  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.1  1999/09/04 06:28:58  keil&n; * first revision&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: w6692.c,v 1.4 2000/03/16 23:24:11 werner Exp $&n;&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; * $Log: w6692.c,v $&n; * Revision 1.4  2000/03/16 23:24:11  werner&n; *&n; * Fixed an additional location&n; *&n; * Revision 1.3  2000/03/16 22:41:36  werner&n; *&n; * Tried to fix second B-channel problem (still not tested)&n; *&n; * Revision 1.2  2000/02/26 00:35:13  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.1  1999/09/04 06:28:58  keil&n; * first revision&n; *&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -97,7 +97,7 @@ r_char
 op_star
 id|w6692_revision
 op_assign
-l_string|&quot;$Revision: 1.2 $&quot;
+l_string|&quot;$Revision: 1.4 $&quot;
 suffix:semicolon
 DECL|macro|DBUSY_TIMER_VALUE
 mdefine_line|#define DBUSY_TIMER_VALUE 80
@@ -1544,8 +1544,6 @@ op_star
 id|bcs
 op_assign
 id|cs-&gt;bcs
-op_plus
-id|bchan
 suffix:semicolon
 r_struct
 id|sk_buff
@@ -1555,6 +1553,17 @@ suffix:semicolon
 r_int
 id|count
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|bcs-&gt;channel
+op_ne
+id|bchan
+)paren
+id|bcs
+op_increment
+suffix:semicolon
+multiline_comment|/* hardware bchan must match ! */
 id|val
 op_assign
 id|cs
@@ -4016,7 +4025,11 @@ suffix:semicolon
 r_int
 id|bchan
 op_assign
+id|bc
+suffix:semicolon
 id|bcs-&gt;hw.w6692.bchan
+op_assign
+id|bc
 suffix:semicolon
 r_if
 c_cond

@@ -7334,5 +7334,5 @@ r_return
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; * kernel-compile-command: &quot;gcc -D__KERNEL__ -I/root/linux/include -Wall -Wstrict-prototypes -O2 -pipe -fomit-frame-pointer -fno-strength-reduce -m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2 -DCPU=586 -c defxx.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * kernel-compile-command: &quot;gcc -D__KERNEL__ -I/root/linux/include -Wall -Wstrict-prototypes -O2 -pipe -fomit-frame-pointer -fno-strength-reduce -m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2 -c defxx.c&quot;&n; * End:&n; */
 eof

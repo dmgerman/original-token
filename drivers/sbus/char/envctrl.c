@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: envctrl.c,v 1.15 2000/02/09 22:33:23 davem Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: envctrl.c,v 1.16 2000/03/22 21:29:23 ecd Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -5190,11 +5190,6 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|envctrl_stop
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENODEV
@@ -8383,6 +8378,8 @@ r_if
 c_cond
 (paren
 id|err
+OL
+l_int|0
 )paren
 (brace
 id|printk
@@ -8460,6 +8457,8 @@ r_if
 c_cond
 (paren
 id|err
+OL
+l_int|0
 )paren
 (brace
 id|printk
@@ -8537,6 +8536,8 @@ r_if
 c_cond
 (paren
 id|err
+OL
+l_int|0
 )paren
 (brace
 id|printk
@@ -8614,6 +8615,8 @@ r_if
 c_cond
 (paren
 id|err
+OL
+l_int|0
 )paren
 (brace
 id|printk
@@ -8663,11 +8666,6 @@ id|kfree
 c_func
 (paren
 id|tmp
-)paren
-suffix:semicolon
-id|envctrl_stop
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/modedb.c -- Standard video mode database management&n; *&n; *&t;Copyright (C) 1999 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
@@ -1544,7 +1545,6 @@ suffix:semicolon
 DECL|function|PROC_CONSOLE
 r_static
 r_int
-id|__init
 id|PROC_CONSOLE
 c_func
 (paren
@@ -1618,11 +1618,9 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|try_mode
-r_static
+DECL|function|__fb_try_mode
 r_int
-id|__init
-id|try_mode
+id|__fb_try_mode
 c_func
 (paren
 r_struct
@@ -2210,7 +2208,7 @@ op_eq
 id|refresh
 )paren
 op_logical_and
-id|try_mode
+id|__fb_try_mode
 c_func
 (paren
 id|var
@@ -2242,7 +2240,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|try_mode
+id|__fb_try_mode
 c_func
 (paren
 id|var
@@ -2280,7 +2278,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|try_mode
+id|__fb_try_mode
 c_func
 (paren
 id|var
@@ -2309,4 +2307,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|__fb_try_mode
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__fb_try_mode
+)paren
+suffix:semicolon
 eof

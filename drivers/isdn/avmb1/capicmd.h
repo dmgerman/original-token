@@ -1,7 +1,13 @@
-multiline_comment|/*&n; * $Id: capicmd.h,v 1.1 1997/03/04 21:50:30 calle Exp $&n; * &n; * CAPI 2.0 Interface for Linux&n; * &n; * Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: capicmd.h,v $&n; * Revision 1.1  1997/03/04 21:50:30  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
+multiline_comment|/*&n; * $Id: capicmd.h,v 1.2 2000/03/03 15:50:42 calle Exp $&n; * &n; * CAPI 2.0 Interface for Linux&n; * &n; * Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: capicmd.h,v $&n; * Revision 1.2  2000/03/03 15:50:42  calle&n; * - kernel CAPI:&n; *   - Changed parameter &quot;param&quot; in capi_signal from __u32 to void *.&n; *   - rewrote notifier handling in kcapi.c&n; *   - new notifier NCCI_UP and NCCI_DOWN&n; * - User CAPI:&n; *   - /dev/capi20 is now a cloning device.&n; *   - middleware extentions prepared.&n; * - capidrv.c&n; *   - locking of list operations and module count updates.&n; *&n; * Revision 1.1  1997/03/04 21:50:30  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
 macro_line|#ifndef __CAPICMD_H__
 DECL|macro|__CAPICMD_H__
 mdefine_line|#define __CAPICMD_H__
+DECL|macro|CAPI_MSG_BASELEN
+mdefine_line|#define CAPI_MSG_BASELEN&t;&t;8
+DECL|macro|CAPI_DATA_B3_REQ_LEN
+mdefine_line|#define CAPI_DATA_B3_REQ_LEN&t;&t;(CAPI_MSG_BASELEN+4+4+2+2+2)
+DECL|macro|CAPI_DATA_B3_RESP_LEN
+mdefine_line|#define CAPI_DATA_B3_RESP_LEN&t;&t;(CAPI_MSG_BASELEN+4+2)
 multiline_comment|/*----- CAPI commands -----*/
 DECL|macro|CAPI_ALERT
 mdefine_line|#define CAPI_ALERT&t;&t;    0x01

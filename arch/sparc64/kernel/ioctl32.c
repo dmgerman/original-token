@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.84 2000/03/21 21:19:18 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.85 2000/03/23 05:25:41 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10964,7 +10964,8 @@ suffix:semicolon
 r_int
 id|err
 op_assign
-l_int|0
+op_minus
+id|EINVAL
 suffix:semicolon
 r_switch
 c_cond
@@ -11104,10 +11105,15 @@ c_cond
 (paren
 id|err
 )paren
-r_return
+(brace
+id|err
+op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
+)brace
+r_else
+(brace
 id|set_fs
 (paren
 id|KERNEL_DS
@@ -11134,6 +11140,7 @@ id|set_fs
 id|old_fs
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -11294,18 +11301,57 @@ op_amp
 id|l.lo_offset
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
+(brace
+r_static
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|count
+op_le
+l_int|20
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Unknown loop ioctl cmd, fd(%d) &quot;
+l_string|&quot;cmd(%08x) arg(%08lx)&bslash;n&quot;
+comma
+id|__FUNCTION__
+comma
+id|fd
+comma
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+)brace
 )brace
 r_return
 id|err
-ques
-c_cond
-op_minus
-id|EFAULT
-suffix:colon
-l_int|0
 suffix:semicolon
 )brace
 r_extern

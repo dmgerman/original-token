@@ -4561,8 +4561,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|fs_may_mount
+id|get_super
 c_func
 (paren
 id|newdev
@@ -6991,8 +6990,8 @@ c_cond
 op_logical_neg
 id|ro
 op_logical_and
-op_logical_neg
-id|fs_may_mount
+id|get_super
+c_func
 (paren
 id|dev
 )paren
