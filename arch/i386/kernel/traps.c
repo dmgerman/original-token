@@ -296,7 +296,7 @@ id|regs-&gt;esp
 suffix:semicolon
 id|ss
 op_assign
-id|KERNEL_DS
+id|__KERNEL_DS
 suffix:semicolon
 r_if
 c_cond
@@ -700,7 +700,6 @@ id|spinlock_t
 id|die_lock
 suffix:semicolon
 DECL|function|die_if_kernel
-multiline_comment|/*static*/
 r_void
 id|die_if_kernel
 c_func

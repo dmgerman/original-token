@@ -1450,8 +1450,7 @@ id|in_dentry
 comma
 id|out_dentry
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 id|kdev_t

@@ -120,11 +120,12 @@ id|bytes
 (brace
 r_int
 r_int
-id|fs
-comma
 id|sigpipe
 comma
 id|flags
+suffix:semicolon
+id|mm_segment_t
+id|fs
 suffix:semicolon
 r_const
 r_char

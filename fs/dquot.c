@@ -860,8 +860,7 @@ id|dquot-&gt;dq_mnt-&gt;mnt_quotas
 id|type
 )braket
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 id|loff_t
@@ -1012,8 +1011,7 @@ id|dquot-&gt;dq_mnt-&gt;mnt_quotas
 id|type
 )braket
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 id|loff_t

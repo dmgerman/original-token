@@ -257,7 +257,6 @@ id|stack_t
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/sigcontext.h&gt;
-macro_line|#endif
 DECL|macro|__HAVE_ARCH_SIG_BITOPS
 mdefine_line|#define __HAVE_ARCH_SIG_BITOPS
 DECL|function|sigaddset
@@ -462,5 +461,6 @@ r_return
 id|word
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

@@ -273,8 +273,7 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 r_int

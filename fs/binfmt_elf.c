@@ -1682,8 +1682,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 suffix:semicolon
 r_int
@@ -4517,8 +4516,7 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 r_char

@@ -731,8 +731,7 @@ r_char
 op_star
 id|str
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 suffix:semicolon
 r_if
@@ -1311,8 +1310,7 @@ c_cond
 id|to_kmem
 )paren
 (brace
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs

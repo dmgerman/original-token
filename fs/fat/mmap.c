@@ -152,8 +152,7 @@ op_minus
 id|clear
 suffix:semicolon
 (brace
-r_int
-r_int
+id|mm_segment_t
 id|cur_fs
 op_assign
 id|get_fs

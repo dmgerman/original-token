@@ -53,7 +53,7 @@ c_cond
 (paren
 id|FPU_CS
 op_eq
-id|USER_CS
+id|__USER_CS
 )paren
 (brace
 r_while
@@ -269,7 +269,7 @@ c_cond
 (paren
 id|FPU_CS
 op_eq
-id|USER_CS
+id|__USER_CS
 )paren
 (brace
 DECL|macro|MAX_PRINTED_BYTES

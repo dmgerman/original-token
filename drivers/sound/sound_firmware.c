@@ -239,8 +239,7 @@ id|fp
 r_int
 id|r
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 op_assign
 id|get_fs

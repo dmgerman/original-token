@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/sigcontext.h&gt;
+macro_line|#include &lt;asm/ucontext.h&gt;
 DECL|macro|DEBUG_SIG
 mdefine_line|#define DEBUG_SIG 0
 DECL|macro|_BLOCKABLE

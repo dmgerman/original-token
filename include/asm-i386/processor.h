@@ -4,6 +4,7 @@ DECL|macro|__ASM_I386_PROCESSOR_H
 mdefine_line|#define __ASM_I386_PROCESSOR_H
 macro_line|#include &lt;asm/vm86.h&gt;
 macro_line|#include &lt;asm/math_emu.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * System setup and hardware bug flags..&n; * [Note we don&squot;t test the 386 multiply bug or popad bug]&n; */
 r_extern
 r_char
@@ -219,6 +220,18 @@ id|soft
 suffix:semicolon
 )brace
 suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|seg
+r_int
+r_int
+id|seg
+suffix:semicolon
+DECL|typedef|mm_segment_t
+)brace
+id|mm_segment_t
+suffix:semicolon
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
@@ -401,7 +414,6 @@ suffix:semicolon
 DECL|member|cr2
 DECL|member|trap_no
 DECL|member|error_code
-DECL|member|segment
 r_int
 r_int
 id|cr2
@@ -409,7 +421,9 @@ comma
 id|trap_no
 comma
 id|error_code
-comma
+suffix:semicolon
+DECL|member|segment
+id|mm_segment_t
 id|segment
 suffix:semicolon
 multiline_comment|/* floating point info */
@@ -449,9 +463,9 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, &bslash;&n;&t;KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0, 0, KERNEL_DS, &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0, 0 /* vm86_info */, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, &bslash;&n;&t;__KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;__USER_DS,0,__USER_DS,0,__USER_DS,0, &bslash;&n;&t;__USER_DS,0,__USER_DS,0,__USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0, 0, KERNEL_DS, &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0, 0 /* vm86_info */, &bslash;&n;}
 DECL|macro|start_thread
-mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&bslash;&n;&t;unsigned long seg = USER_DS; &bslash;&n;&t;__asm__(&quot;mov %w0,%%fs ; mov %w0,%%gs&quot;:&quot;=r&quot; (seg) :&quot;0&quot; (seg)); &bslash;&n;&t;set_fs(seg); &bslash;&n;&t;regs-&gt;xds = seg; &bslash;&n;&t;regs-&gt;xes = seg; &bslash;&n;&t;regs-&gt;xss = seg; &bslash;&n;&t;regs-&gt;xcs = USER_CS; &bslash;&n;&t;regs-&gt;eip = new_eip; &bslash;&n;&t;regs-&gt;esp = new_esp; &bslash;&n;} while (0)
+mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&bslash;&n;&t;unsigned long seg = __USER_DS; &bslash;&n;&t;__asm__(&quot;mov %w0,%%fs ; mov %w0,%%gs&quot;:&quot;=r&quot; (seg) :&quot;0&quot; (seg)); &bslash;&n;&t;set_fs(MAKE_MM_SEG(seg)); &bslash;&n;&t;regs-&gt;xds = seg; &bslash;&n;&t;regs-&gt;xes = seg; &bslash;&n;&t;regs-&gt;xss = seg; &bslash;&n;&t;regs-&gt;xcs = __USER_CS; &bslash;&n;&t;regs-&gt;eip = new_eip; &bslash;&n;&t;regs-&gt;esp = new_esp; &bslash;&n;} while (0)
 multiline_comment|/* Free all resources held by a thread. */
 r_extern
 r_void

@@ -11,7 +11,7 @@ mdefine_line|#define LOCK &quot;&quot;
 macro_line|#endif
 multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
 DECL|macro|__atomic_fool_gcc
-mdefine_line|#define __atomic_fool_gcc(x) (*(struct { int a[100]; } *)x)
+mdefine_line|#define __atomic_fool_gcc(x) (*(volatile struct { int a[100]; } *)x)
 macro_line|#ifdef __SMP__
 DECL|member|counter
 DECL|typedef|atomic_t

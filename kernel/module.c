@@ -225,11 +225,16 @@ id|user_name
 op_ge
 id|TASK_SIZE
 op_logical_and
+op_logical_neg
+id|segment_eq
+c_func
+(paren
 id|get_fs
 (paren
 )paren
-op_ne
+comma
 id|KERNEL_DS
+)paren
 )paren
 r_return
 op_minus

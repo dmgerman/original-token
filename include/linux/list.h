@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_LIST_H
 DECL|macro|_LINUX_LIST_H
 mdefine_line|#define _LINUX_LIST_H
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Simple doubly linked list implementation.&n; *&n; * Some of the internal functions (&quot;__xxx&quot;) are useful when&n; * manipulating whole lists rather than single entries, as&n; * sometimes we already know the next/prev entries and we can&n; * generate better code by using them directly rather than&n; * using the generic single-entry routines.&n; */
 DECL|struct|list_head
 r_struct
@@ -25,7 +26,7 @@ mdefine_line|#define INIT_LIST_HEAD(ptr) do { &bslash;&n;&t;(ptr)-&gt;next = (pt
 multiline_comment|/*&n; * Insert a new entry between two known consecutive entries. &n; *&n; * This is only for internal list manipulation where we know&n; * the prev/next entries already!&n; */
 DECL|function|__list_add
 r_static
-r_inline
+id|__inline__
 r_void
 id|__list_add
 c_func
@@ -70,7 +71,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Insert a new entry after the specified head..&n; */
 DECL|function|list_add
 r_static
-r_inline
+id|__inline__
 r_void
 id|list_add
 c_func
@@ -100,7 +101,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Delete a list entry by making the prev/next entries&n; * point to each other.&n; *&n; * This is only for internal list manipulation where we know&n; * the prev/next entries already!&n; */
 DECL|function|__list_del
 r_static
-r_inline
+id|__inline__
 r_void
 id|__list_del
 c_func
@@ -127,7 +128,7 @@ suffix:semicolon
 )brace
 DECL|function|list_del
 r_static
-r_inline
+id|__inline__
 r_void
 id|list_del
 c_func
@@ -149,7 +150,7 @@ suffix:semicolon
 )brace
 DECL|function|list_empty
 r_static
-r_inline
+id|__inline__
 r_int
 id|list_empty
 c_func
@@ -169,7 +170,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Splice in &quot;list&quot; into &quot;head&quot;&n; */
 DECL|function|list_splice
 r_static
-r_inline
+id|__inline__
 r_void
 id|list_splice
 c_func
@@ -234,5 +235,6 @@ suffix:semicolon
 )brace
 DECL|macro|list_entry
 mdefine_line|#define list_entry(ptr, type, member) &bslash;&n;&t;((type *)((char *)(ptr)-(unsigned long)(&amp;((type *)0)-&gt;member)))
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

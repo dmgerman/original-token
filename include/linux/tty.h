@@ -441,9 +441,14 @@ suffix:colon
 l_int|1
 suffix:semicolon
 DECL|member|low_latency
+DECL|member|warned
 r_int
 r_char
 id|low_latency
+suffix:colon
+l_int|1
+comma
+id|warned
 suffix:colon
 l_int|1
 suffix:semicolon

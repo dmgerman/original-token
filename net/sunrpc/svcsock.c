@@ -660,8 +660,7 @@ r_int
 id|nr
 )paren
 (brace
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_struct
@@ -857,8 +856,7 @@ op_star
 id|svsk
 )paren
 (brace
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_struct
@@ -948,8 +946,7 @@ r_int
 id|buflen
 )paren
 (brace
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_struct

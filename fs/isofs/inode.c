@@ -1031,8 +1031,7 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* Whoops.  We must save the old FS, since otherwise&n;       * we would destroy the kernels idea about FS on root&n;       * mount in read_super... [chexum]&n;       */
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs

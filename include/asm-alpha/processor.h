@@ -17,6 +17,18 @@ DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
 DECL|macro|MCA_bus__is_a_macro
 mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
+r_typedef
+r_struct
+(brace
+DECL|member|seg
+r_int
+r_int
+id|seg
+suffix:semicolon
+DECL|typedef|mm_segment_t
+)brace
+id|mm_segment_t
+suffix:semicolon
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
@@ -78,8 +90,7 @@ id|flags
 suffix:semicolon
 multiline_comment|/* perform syscall argument validation (get/set_fs) */
 DECL|member|fs
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 )brace
@@ -87,7 +98,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffffc0000000000,  0xfffffc0010000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, &bslash;&n;&t;0 &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, &bslash;&n;&t;KERNEL_DS &bslash;&n;}
 macro_line|#include &lt;asm/ptrace.h&gt;
 multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame&n; * pointer is the 6th saved long on the kernel stack and that the&n; * saved return address is the first long in the frame.  This all&n; * holds provided the thread blocked through a call to schedule() ($15&n; * is the frame pointer in schedule() and $15 is saved at offset 48 by&n; * entry.S:do_switch_stack).&n; */
 DECL|function|thread_saved_pc

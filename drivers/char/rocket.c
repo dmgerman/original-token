@@ -2281,7 +2281,7 @@ op_assign
 id|info
 suffix:semicolon
 )brace
-macro_line|#if (LINUX_VERSION_CODE &lt; 131393) /* Linux 2.1.65 */
+macro_line|#if (LINUX_VERSION_CODE &lt; 131394) /* Linux 2.1.66 */
 DECL|variable|baud_table
 r_static
 r_int
@@ -2501,7 +2501,7 @@ id|cp
 suffix:semicolon
 )brace
 multiline_comment|/* baud rate */
-macro_line|#if (LINUX_VERSION_CODE &lt; 131393) /* Linux 2.1.65 */
+macro_line|#if (LINUX_VERSION_CODE &lt; 131394) /* Linux 2.1.66 */
 id|i
 op_assign
 id|cflag
@@ -3846,6 +3846,69 @@ id|info-&gt;flags
 op_or_assign
 id|ROCKET_INITIALIZED
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &gt;= 131394) /* Linux 2.1.66 */
+multiline_comment|/*&n;&t; * Set up the tty-&gt;alt_speed kludge&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ROCKET_SPD_MASK
+)paren
+op_eq
+id|ROCKET_SPD_HI
+)paren
+id|info-&gt;tty-&gt;alt_speed
+op_assign
+l_int|57600
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ROCKET_SPD_MASK
+)paren
+op_eq
+id|ROCKET_SPD_VHI
+)paren
+id|info-&gt;tty-&gt;alt_speed
+op_assign
+l_int|115200
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ROCKET_SPD_MASK
+)paren
+op_eq
+id|ROCKET_SPD_SHI
+)paren
+id|info-&gt;tty-&gt;alt_speed
+op_assign
+l_int|230400
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ROCKET_SPD_MASK
+)paren
+op_eq
+id|ROCKET_SPD_WARP
+)paren
+id|info-&gt;tty-&gt;alt_speed
+op_assign
+l_int|460800
+suffix:semicolon
+macro_line|#endif
 id|configure_r_port
 c_func
 (paren
@@ -4708,7 +4771,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Here are the routines used by rp_ioctl&n; */
-macro_line|#if (LINUX_VERSION_CODE &lt; 131393) /* Linux 2.1.65 */
+macro_line|#if (LINUX_VERSION_CODE &lt; 131394) /* Linux 2.1.66 */
 DECL|function|send_break
 r_static
 r_void
@@ -5418,7 +5481,7 @@ id|info-&gt;closing_wait
 op_assign
 id|new_serial.closing_wait
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &gt;= 131393) /* Linux 2.1.65 */
+macro_line|#if (LINUX_VERSION_CODE &gt;= 131394) /* Linux 2.1.66 */
 r_if
 c_cond
 (paren
@@ -5671,7 +5734,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &lt; 131393) /* Linux 2.1.65 */
+macro_line|#if (LINUX_VERSION_CODE &lt; 131394) /* Linux 2.1.66 */
 r_int
 id|retval
 comma
@@ -5705,7 +5768,7 @@ c_cond
 id|cmd
 )paren
 (brace
-macro_line|#if (LINUX_VERSION_CODE &lt; 131393) /* Linux 2.1.65 */
+macro_line|#if (LINUX_VERSION_CODE &lt; 131394) /* Linux 2.1.66 */
 r_case
 id|TCSBRK
 suffix:colon
@@ -9513,7 +9576,7 @@ id|rocket_driver.hangup
 op_assign
 id|rp_hangup
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &gt;= 131393) /* Linux 2.1.65 */
+macro_line|#if (LINUX_VERSION_CODE &gt;= 131394) /* Linux 2.1.66 */
 id|rocket_driver.break_ctl
 op_assign
 id|rp_break

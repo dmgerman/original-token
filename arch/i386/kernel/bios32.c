@@ -2189,7 +2189,7 @@ op_assign
 (brace
 l_int|0
 comma
-id|KERNEL_CS
+id|__KERNEL_CS
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Returns the entry point for the given service, NULL on error&n; */
@@ -2362,7 +2362,7 @@ op_assign
 (brace
 l_int|0
 comma
-id|KERNEL_CS
+id|__KERNEL_CS
 )brace
 suffix:semicolon
 DECL|function|__initfunc

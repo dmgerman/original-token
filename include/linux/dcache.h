@@ -1,6 +1,7 @@
 macro_line|#ifndef __LINUX_DCACHE_H
 DECL|macro|__LINUX_DCACHE_H
 mdefine_line|#define __LINUX_DCACHE_H
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * linux/include/linux/dcache.h&n; *&n; * Directory cache data structures&n; */
 DECL|macro|D_MAXLEN
 mdefine_line|#define D_MAXLEN 1024
@@ -36,7 +37,7 @@ mdefine_line|#define init_name_hash()&t;&t;0
 multiline_comment|/* partial hash update function. Assume roughly 4 bits per character */
 DECL|function|partial_name_hash
 r_static
-r_inline
+id|__inline__
 r_int
 r_int
 id|partial_name_hash
@@ -84,7 +85,7 @@ suffix:semicolon
 multiline_comment|/* Finally: cut down the number of bits to a int value (and try to avoid losing bits) */
 DECL|function|end_name_hash
 r_static
-r_inline
+id|__inline__
 r_int
 r_int
 id|end_name_hash
@@ -131,7 +132,7 @@ suffix:semicolon
 multiline_comment|/* Compute the hash for a name string. */
 DECL|function|full_name_hash
 r_static
-r_inline
+id|__inline__
 r_int
 r_int
 id|full_name_hash
@@ -353,7 +354,7 @@ mdefine_line|#define DCACHE_NFSFS_RENAMED  0x0002    /* this dentry has been &qu
 multiline_comment|/*&n; * d_drop() unhashes the entry from the parent&n; * dentry hashes, so that it won&squot;t be found through&n; * a VFS lookup any more. Note that this is different&n; * from deleting the dentry - d_delete will try to&n; * mark the dentry negative if possible, giving a&n; * successful _negative_ lookup, while d_drop will&n; * just make the cache lookup fail.&n; *&n; * d_drop() is used mainly for stuff that wants&n; * to invalidate a dentry for some reason (NFS&n; * timeouts or autofs deletes).&n; */
 DECL|function|d_drop
 r_static
-r_inline
+id|__inline__
 r_void
 id|d_drop
 c_func
@@ -620,7 +621,7 @@ suffix:semicolon
 multiline_comment|/* Allocation counts.. */
 DECL|function|dget
 r_static
-r_inline
+id|__inline__
 r_struct
 id|dentry
 op_star
@@ -655,5 +656,6 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* __LINUX_DCACHE_H */
 eof

@@ -1701,8 +1701,7 @@ op_star
 id|arg
 )paren
 (brace
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int

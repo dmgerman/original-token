@@ -367,8 +367,7 @@ r_struct
 id|msghdr
 id|msg
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int
@@ -640,8 +639,7 @@ r_struct
 id|msghdr
 id|msg
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int
@@ -1994,8 +1992,7 @@ id|iov
 id|MAX_IOVEC
 )braket
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int

@@ -862,11 +862,11 @@ c_cond
 (paren
 id|FPU_CS
 op_eq
-id|USER_CS
+id|__USER_CS
 op_logical_and
 id|FPU_DS
 op_eq
-id|USER_DS
+id|__USER_DS
 )paren
 (brace
 id|addr_modes.default_mode
@@ -880,7 +880,7 @@ c_cond
 (paren
 id|FPU_CS
 op_eq
-id|KERNEL_CS
+id|__KERNEL_CS
 )paren
 (brace
 id|printk

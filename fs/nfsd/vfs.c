@@ -1332,8 +1332,7 @@ r_struct
 id|file
 id|file
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int
@@ -1603,8 +1602,7 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int
@@ -2683,8 +2681,7 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int
@@ -4456,8 +4453,7 @@ id|super_block
 op_star
 id|sb
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int

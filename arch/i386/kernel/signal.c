@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;asm/ucontext.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|DEBUG_SIG
 mdefine_line|#define DEBUG_SIG 0
@@ -1774,7 +1775,7 @@ op_amp
 l_int|0xffff
 )paren
 op_ne
-id|USER_DS
+id|__USER_DS
 op_logical_and
 op_logical_neg
 (paren
@@ -1985,7 +1986,7 @@ r_int
 r_int
 id|seg
 op_assign
-id|USER_DS
+id|__USER_DS
 suffix:semicolon
 id|__asm__
 c_func
@@ -2006,7 +2007,11 @@ suffix:semicolon
 id|set_fs
 c_func
 (paren
+id|MAKE_MM_SEG
+c_func
+(paren
 id|seg
+)paren
 )paren
 suffix:semicolon
 id|regs-&gt;xds
@@ -2023,7 +2028,7 @@ id|seg
 suffix:semicolon
 id|regs-&gt;xcs
 op_assign
-id|USER_CS
+id|__USER_CS
 suffix:semicolon
 )brace
 id|regs-&gt;eflags
@@ -2131,7 +2136,7 @@ op_amp
 l_int|0xffff
 )paren
 op_ne
-id|USER_DS
+id|__USER_DS
 op_logical_and
 op_logical_neg
 (paren
@@ -2382,7 +2387,7 @@ r_int
 r_int
 id|seg
 op_assign
-id|USER_DS
+id|__USER_DS
 suffix:semicolon
 id|__asm__
 c_func
@@ -2403,7 +2408,11 @@ suffix:semicolon
 id|set_fs
 c_func
 (paren
+id|MAKE_MM_SEG
+c_func
+(paren
 id|seg
+)paren
 )paren
 suffix:semicolon
 id|regs-&gt;xds
@@ -2420,7 +2429,7 @@ id|seg
 suffix:semicolon
 id|regs-&gt;xcs
 op_assign
-id|USER_CS
+id|__USER_CS
 suffix:semicolon
 )brace
 id|regs-&gt;eflags
@@ -2675,19 +2684,8 @@ op_star
 id|regs
 )paren
 (brace
-id|sigset_t
-id|_oldset
-suffix:semicolon
 id|siginfo_t
 id|info
-suffix:semicolon
-r_int
-r_int
-id|signr
-comma
-id|core
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|k_sigaction
@@ -2709,6 +2707,28 @@ l_int|3
 r_return
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|oldset
+)paren
+id|oldset
+op_assign
+op_amp
+id|current-&gt;blocked
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+r_int
+r_int
+id|signr
+suffix:semicolon
 id|spin_lock_irq
 c_func
 (paren
@@ -2716,27 +2736,6 @@ op_amp
 id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|oldset
-)paren
-(brace
-id|_oldset
-op_assign
-id|current-&gt;blocked
-suffix:semicolon
-id|oldset
-op_assign
-op_amp
-id|_oldset
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-(paren
 id|signr
 op_assign
 id|dequeue_signal
@@ -2748,17 +2747,21 @@ comma
 op_amp
 id|info
 )paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
+suffix:semicolon
 id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|current-&gt;sigmask_lock
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|signr
+)paren
+r_break
 suffix:semicolon
 r_if
 c_cond
@@ -2807,8 +2810,7 @@ op_assign
 id|current-&gt;exit_code
 )paren
 )paren
-r_goto
-id|skip_signal
+r_continue
 suffix:semicolon
 id|current-&gt;exit_code
 op_assign
@@ -2822,8 +2824,7 @@ id|signr
 op_eq
 id|SIGSTOP
 )paren
-r_goto
-id|skip_signal
+r_continue
 suffix:semicolon
 multiline_comment|/* Update the siginfo structure.  Is this good?  */
 r_if
@@ -2880,8 +2881,7 @@ comma
 id|current
 )paren
 suffix:semicolon
-r_goto
-id|skip_signal
+r_continue
 suffix:semicolon
 )brace
 )brace
@@ -2900,9 +2900,55 @@ c_cond
 (paren
 id|ka-&gt;sa.sa_handler
 op_eq
+id|SIG_IGN
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|signr
+op_ne
+id|SIGCHLD
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* Check for SIGCHLD: it&squot;s special.  */
+r_while
+c_loop
+(paren
+id|sys_wait4
+c_func
+(paren
+op_minus
+l_int|1
+comma
+l_int|NULL
+comma
+id|WNOHANG
+comma
+l_int|NULL
+)paren
+OG
+l_int|0
+)paren
+multiline_comment|/* nothing */
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ka-&gt;sa.sa_handler
+op_eq
 id|SIG_DFL
 )paren
 (brace
+r_int
+id|exit_code
+op_assign
+id|signr
+suffix:semicolon
 multiline_comment|/* Init gets no signals it doesn&squot;t want.  */
 r_if
 c_cond
@@ -2911,8 +2957,7 @@ id|current-&gt;pid
 op_eq
 l_int|1
 )paren
-r_goto
-id|skip_signal
+r_continue
 suffix:semicolon
 r_switch
 c_cond
@@ -2929,8 +2974,7 @@ suffix:colon
 r_case
 id|SIGWINCH
 suffix:colon
-r_goto
-id|skip_signal
+r_continue
 suffix:semicolon
 r_case
 id|SIGTSTP
@@ -2950,8 +2994,7 @@ c_func
 id|current-&gt;pgrp
 )paren
 )paren
-r_goto
-id|skip_signal
+r_continue
 suffix:semicolon
 multiline_comment|/* FALLTHRU */
 r_case
@@ -2995,7 +3038,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 id|SIGQUIT
@@ -3037,8 +3080,8 @@ comma
 id|regs
 )paren
 )paren
-id|core
-op_assign
+id|exit_code
+op_or_assign
 l_int|0x80
 suffix:semicolon
 id|unlock_kernel
@@ -3070,59 +3113,12 @@ suffix:semicolon
 id|do_exit
 c_func
 (paren
-(paren
-id|signr
-op_amp
-l_int|0x7f
-)paren
-op_or
-id|core
+id|exit_code
 )paren
 suffix:semicolon
+multiline_comment|/* NOTREACHED */
 )brace
 )brace
-r_else
-r_if
-c_cond
-(paren
-id|ka-&gt;sa.sa_handler
-op_eq
-id|SIG_IGN
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|signr
-op_eq
-id|SIGCHLD
-)paren
-(brace
-multiline_comment|/* Check for SIGCHLD: it&squot;s special.  */
-r_while
-c_loop
-(paren
-id|sys_wait4
-c_func
-(paren
-op_minus
-l_int|1
-comma
-l_int|NULL
-comma
-id|WNOHANG
-comma
-l_int|NULL
-)paren
-OG
-l_int|0
-)paren
-multiline_comment|/* nothing */
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
 multiline_comment|/* Whee!  Actually deliver the signal.  */
 id|handle_signal
 c_func
@@ -3141,16 +3137,6 @@ id|regs
 suffix:semicolon
 r_return
 l_int|1
-suffix:semicolon
-)brace
-id|skip_signal
-suffix:colon
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Did we come from a system call? */

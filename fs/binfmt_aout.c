@@ -208,8 +208,7 @@ r_struct
 id|file
 id|file
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 r_int

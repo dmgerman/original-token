@@ -594,8 +594,7 @@ r_struct
 id|rtentry
 id|route
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int
@@ -2230,7 +2229,7 @@ r_int
 id|size
 )paren
 (brace
-id|u32
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int
@@ -2339,7 +2338,7 @@ r_int
 id|size
 )paren
 (brace
-id|u32
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 r_int

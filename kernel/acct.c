@@ -112,8 +112,7 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 r_struct
@@ -809,8 +808,7 @@ r_struct
 id|acct
 id|ac
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 r_int

@@ -2904,8 +2904,7 @@ r_int
 r_int
 id|size
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 suffix:semicolon
 id|size
