@@ -676,10 +676,14 @@ id|from
 suffix:semicolon
 op_star
 (paren
+(paren
 r_char
 op_star
 )paren
 id|to
+op_plus
+l_int|2
+)paren
 op_assign
 id|get_user_byte
 c_func

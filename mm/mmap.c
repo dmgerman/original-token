@@ -402,6 +402,11 @@ id|PAGE_SHARED
 suffix:semicolon
 id|vma
 op_assign
+(paren
+r_struct
+id|vm_area_struct
+op_star
+)paren
 id|kmalloc
 c_func
 (paren

@@ -4060,11 +4060,15 @@ id|current-&gt;suid
 op_assign
 id|current-&gt;euid
 op_assign
+id|current-&gt;fsuid
+op_assign
 id|bprm-&gt;e_uid
 suffix:semicolon
 id|current-&gt;sgid
 op_assign
 id|current-&gt;egid
+op_assign
+id|current-&gt;fsgid
 op_assign
 id|bprm-&gt;e_gid
 suffix:semicolon

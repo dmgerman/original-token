@@ -11,7 +11,9 @@ r_extern
 l_string|&quot;C&quot;
 (brace
 macro_line|#endif
+macro_line|#ifdef i386
 macro_line|#include &lt;asm/string.h&gt;&t;&t;/* inline functions for i386.. */
+macro_line|#else
 r_extern
 r_char
 op_star
@@ -287,6 +289,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef __cplusplus
 )brace
 macro_line|#endif

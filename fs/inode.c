@@ -1843,11 +1843,11 @@ id|S_IWUSR
 suffix:semicolon
 id|inode-&gt;i_uid
 op_assign
-id|current-&gt;euid
+id|current-&gt;fsuid
 suffix:semicolon
 id|inode-&gt;i_gid
 op_assign
-id|current-&gt;egid
+id|current-&gt;fsgid
 suffix:semicolon
 id|inode-&gt;i_atime
 op_assign

@@ -735,7 +735,6 @@ c_func
 (paren
 id|interrupt_level
 comma
-op_amp
 id|hndlr
 comma
 macro_line|#ifdef SND_SA_INTERRUPT

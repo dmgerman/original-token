@@ -1174,7 +1174,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -1406,7 +1406,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -1675,7 +1675,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -1914,7 +1914,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -2218,7 +2218,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -2502,7 +2502,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -2766,7 +2766,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -2985,7 +2985,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -3236,7 +3236,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -3470,7 +3470,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -3721,7 +3721,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -3985,7 +3985,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -4204,7 +4204,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -4570,7 +4570,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -4796,7 +4796,7 @@ c_cond
 op_logical_neg
 id|ruid
 op_logical_and
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 l_int|0
 op_logical_and
@@ -5044,7 +5044,7 @@ ques
 c_cond
 id|current-&gt;uid
 suffix:colon
-id|current-&gt;euid
+id|current-&gt;fsuid
 )paren
 suffix:semicolon
 op_star

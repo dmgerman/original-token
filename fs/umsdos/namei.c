@@ -576,7 +576,7 @@ id|flags
 suffix:semicolon
 id|info.entry.uid
 op_assign
-id|current-&gt;euid
+id|current-&gt;fsuid
 suffix:semicolon
 id|info.entry.gid
 op_assign
@@ -589,7 +589,7 @@ ques
 c_cond
 id|dir-&gt;i_gid
 suffix:colon
-id|current-&gt;egid
+id|current-&gt;fsgid
 suffix:semicolon
 id|info.entry.ctime
 op_assign
@@ -2168,7 +2168,7 @@ l_int|0
 suffix:semicolon
 id|info.entry.uid
 op_assign
-id|current-&gt;euid
+id|current-&gt;fsuid
 suffix:semicolon
 id|info.entry.gid
 op_assign
@@ -2181,7 +2181,7 @@ ques
 c_cond
 id|dir-&gt;i_gid
 suffix:colon
-id|current-&gt;egid
+id|current-&gt;fsgid
 suffix:semicolon
 id|info.entry.ctime
 op_assign

@@ -6517,7 +6517,8 @@ op_star
 id|here
 op_assign
 (paren
-r_void
+r_struct
+id|fparm
 op_star
 )paren
 id|floppy_track_buffer

@@ -1311,6 +1311,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_int
@@ -1391,6 +1396,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_int
@@ -2856,7 +2866,7 @@ c_func
 (paren
 r_void
 op_star
-r_private
+id|private_
 )paren
 (brace
 r_struct
@@ -2869,7 +2879,7 @@ r_struct
 id|async_struct
 op_star
 )paren
-r_private
+id|private_
 suffix:semicolon
 r_struct
 id|tty_struct
@@ -4975,6 +4985,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_int
@@ -5078,6 +5093,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_int
@@ -5182,6 +5202,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_int
@@ -5443,6 +5468,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_int
@@ -5504,6 +5534,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_if
@@ -5543,6 +5578,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_if
@@ -5626,6 +5666,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_THROTTLE
@@ -5738,6 +5783,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_THROTTLE
@@ -7117,6 +7167,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_int
@@ -7660,6 +7715,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_if
@@ -7752,6 +7812,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_if
@@ -8063,6 +8128,11 @@ id|async_struct
 op_star
 id|info
 op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 r_if

@@ -10011,7 +10011,7 @@ id|QIC02_TAPE_IRQ
 comma
 id|qic02_tape_interrupt
 comma
-id|SA_INTERRUP
+id|SA_INTERRUPT
 comma
 l_string|&quot;QIC-02&quot;
 )paren

@@ -276,6 +276,11 @@ id|shpnt
 suffix:semicolon
 id|retval
 op_assign
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
 id|scsi_init_malloc
 c_func
 (paren

@@ -697,6 +697,11 @@ id|net_local
 suffix:semicolon
 id|pl
 op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
 id|dev-&gt;priv
 suffix:semicolon
 id|pl-&gt;trigger_us
@@ -2953,6 +2958,11 @@ id|device
 op_star
 id|dev
 op_assign
+(paren
+r_struct
+id|device
+op_star
+)paren
 id|irq2dev_map
 (braket
 id|irq

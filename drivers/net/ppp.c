@@ -2447,6 +2447,11 @@ suffix:semicolon
 multiline_comment|/* Allocate a user-level receive buffer */
 id|ppp-&gt;us_rbuff
 op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
 id|kmalloc
 (paren
 id|RBUFSIZE
@@ -8944,10 +8949,6 @@ c_cond
 (paren
 id|name
 op_ne
-(paren
-r_char
-op_star
-)paren
 l_int|NULL
 )paren
 id|PRINTK

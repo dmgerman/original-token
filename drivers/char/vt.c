@@ -334,6 +334,11 @@ id|vt_struct
 op_star
 id|vt
 op_assign
+(paren
+r_struct
+id|vt_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 id|console

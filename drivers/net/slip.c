@@ -3724,6 +3724,11 @@ c_func
 (paren
 id|tty
 comma
+(paren
+r_struct
+id|file
+op_star
+)paren
 id|file
 comma
 id|cmd

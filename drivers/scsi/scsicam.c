@@ -649,6 +649,9 @@ l_int|0
 )paren
 id|rv
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon

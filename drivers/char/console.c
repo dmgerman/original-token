@@ -4507,6 +4507,11 @@ id|vt_struct
 op_star
 id|vt
 op_assign
+(paren
+r_struct
+id|vt_struct
+op_star
+)paren
 id|tty-&gt;driver_data
 suffix:semicolon
 id|currcons
@@ -8148,6 +8153,7 @@ op_star
 id|p
 suffix:semicolon
 r_static
+r_int
 r_char
 op_star
 id|prev

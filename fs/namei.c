@@ -214,7 +214,7 @@ id|name
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;permission()&n; *&n; * is used to check for read/write/execute permissions on a file.&n; * I don&squot;t know if we should look at just the euid or both euid and&n; * uid, but that should be easily changed.&n; */
+multiline_comment|/*&n; *&t;permission()&n; *&n; * is used to check for read/write/execute permissions on a file.&n; * We use &quot;fsuid&quot; for this, letting us set arbitrary permissions&n; * permissions for filesystem access without changing the &quot;normal&quot;&n; * uids which are used for other things..&n; */
 DECL|function|permission
 r_int
 id|permission
@@ -256,7 +256,7 @@ r_else
 r_if
 c_cond
 (paren
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 id|inode-&gt;i_uid
 )paren
@@ -293,7 +293,7 @@ op_eq
 id|mask
 )paren
 op_logical_or
-id|suser
+id|fsuser
 c_func
 (paren
 )paren
@@ -2073,7 +2073,7 @@ id|mode
 )paren
 op_logical_and
 op_logical_neg
-id|suser
+id|fsuser
 c_func
 (paren
 )paren

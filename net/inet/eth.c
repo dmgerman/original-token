@@ -429,6 +429,7 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
+r_int
 r_char
 op_star
 id|rawp

@@ -1599,6 +1599,11 @@ id|hd_ident_info
 id|dev
 )braket
 op_assign
+(paren
+r_struct
+id|hd_driveid
+op_star
+)paren
 id|kmalloc
 c_func
 (paren

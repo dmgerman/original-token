@@ -1054,7 +1054,7 @@ id|sb-&gt;s_dev
 suffix:semicolon
 id|inode-&gt;i_uid
 op_assign
-id|current-&gt;euid
+id|current-&gt;fsuid
 suffix:semicolon
 id|inode-&gt;i_gid
 op_assign
@@ -1067,7 +1067,7 @@ ques
 c_cond
 id|dir-&gt;i_gid
 suffix:colon
-id|current-&gt;egid
+id|current-&gt;fsgid
 suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign

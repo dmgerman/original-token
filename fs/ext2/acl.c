@@ -29,7 +29,8 @@ multiline_comment|/*&n;&t; * Special case, access is always granted for root&n;&
 r_if
 c_cond
 (paren
-id|suser
+id|fsuser
+c_func
 (paren
 )paren
 )paren
@@ -41,7 +42,7 @@ r_else
 r_if
 c_cond
 (paren
-id|current-&gt;euid
+id|current-&gt;fsuid
 op_eq
 id|inode-&gt;i_uid
 )paren

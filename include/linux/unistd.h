@@ -278,6 +278,10 @@ DECL|macro|__NR_personality
 mdefine_line|#define __NR_personality&t;136
 DECL|macro|__NR_afs_syscall
 mdefine_line|#define __NR_afs_syscall&t;137 /* Syscall for Andrew File System */
+DECL|macro|__NR_setfsuid
+mdefine_line|#define __NR_setfsuid&t;&t;138
+DECL|macro|__NR_setfsgid
+mdefine_line|#define __NR_setfsgid&t;&t;139
 r_extern
 r_int
 id|errno

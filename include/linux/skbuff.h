@@ -95,7 +95,8 @@ op_star
 id|dev
 suffix:semicolon
 DECL|member|mem_addr
-r_void
+r_struct
+id|sk_buff
 op_star
 id|mem_addr
 suffix:semicolon

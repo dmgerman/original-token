@@ -1453,7 +1453,7 @@ op_le
 id|es-&gt;s_r_blocks_count
 op_logical_and
 op_logical_neg
-id|suser
+id|fsuser
 c_func
 (paren
 )paren

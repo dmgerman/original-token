@@ -4334,10 +4334,6 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|bh
 comma
 l_int|0
