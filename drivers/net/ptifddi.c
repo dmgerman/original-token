@@ -7,6 +7,7 @@ id|version
 op_assign
 l_string|&quot;ptifddi.c:v1.0 10/Dec/96 David S. Miller (davem@caipfs.rutgers.edu)&bslash;n&quot;
 suffix:semicolon
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;ptifddi.h&quot;
 macro_line|#include &quot;ptifddi_asm.h&quot;

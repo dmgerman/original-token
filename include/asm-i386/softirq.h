@@ -11,6 +11,18 @@ id|local_bh_count
 id|NR_CPUS
 )braket
 suffix:semicolon
+DECL|macro|cpu_bh_disable
+mdefine_line|#define cpu_bh_disable(cpu)&t;do { local_bh_count[(cpu)]++; barrier(); } while (0)
+DECL|macro|cpu_bh_enable
+mdefine_line|#define cpu_bh_enable(cpu)&t;do { barrier(); local_bh_count[(cpu)]--; } while (0)
+DECL|macro|cpu_bh_trylock
+mdefine_line|#define cpu_bh_trylock(cpu)&t;(local_bh_count[(cpu)] ? 0 : (local_bh_count[(cpu)] = 1))
+DECL|macro|cpu_bh_endlock
+mdefine_line|#define cpu_bh_endlock(cpu)&t;(local_bh_count[(cpu)] = 0)
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;cpu_bh_disable(smp_processor_id())
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;cpu_bh_enable(smp_processor_id())
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
 DECL|macro|clear_active_bhs
@@ -133,11 +145,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is suboptimal. We only need to disable bh&squot;s locally&n; * on this CPU...&n; */
-DECL|macro|local_bh_disable
-mdefine_line|#define local_bh_disable()&t;atomic_inc(&amp;global_bh_lock)
-DECL|macro|local_bh_enable
-mdefine_line|#define local_bh_enable()&t;atomic_dec(&amp;global_bh_lock)
 DECL|function|start_bh_atomic
 r_static
 r_inline
@@ -194,6 +201,16 @@ id|cpu
 r_if
 c_cond
 (paren
+id|cpu_bh_trylock
+c_func
+(paren
+id|cpu
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|test_and_set_bit
 c_func
@@ -217,17 +234,9 @@ id|global_bh_lock
 op_eq
 l_int|0
 )paren
-(brace
-op_increment
-id|local_bh_count
-(braket
-id|cpu
-)braket
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-)brace
 id|clear_bit
 c_func
 (paren
@@ -235,6 +244,13 @@ l_int|0
 comma
 op_amp
 id|global_bh_count
+)paren
+suffix:semicolon
+)brace
+id|cpu_bh_endlock
+c_func
+(paren
+id|cpu
 )paren
 suffix:semicolon
 )brace
@@ -253,11 +269,11 @@ r_int
 id|cpu
 )paren
 (brace
-id|local_bh_count
-(braket
+id|cpu_bh_enable
+c_func
+(paren
 id|cpu
-)braket
-op_decrement
+)paren
 suffix:semicolon
 id|clear_bit
 c_func
@@ -280,14 +296,10 @@ c_func
 r_void
 )paren
 (brace
-id|local_bh_count
-(braket
-id|smp_processor_id
+id|local_bh_disable
 c_func
 (paren
 )paren
-)braket
-op_increment
 suffix:semicolon
 id|barrier
 c_func
@@ -310,25 +322,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|local_bh_count
-(braket
-id|smp_processor_id
+id|local_bh_enable
 c_func
 (paren
 )paren
-)braket
-op_decrement
 suffix:semicolon
 )brace
-DECL|macro|local_bh_disable
-mdefine_line|#define local_bh_disable()&t;(local_bh_count[smp_processor_id()]++)
-DECL|macro|local_bh_enable
-mdefine_line|#define local_bh_enable()&t;(local_bh_count[smp_processor_id()]--)
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count[cpu] ? 0 : (local_bh_count[cpu]=1))
+mdefine_line|#define softirq_trylock(cpu)&t;(cpu_bh_trylock(cpu))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[cpu] = 0)
+mdefine_line|#define softirq_endlock(cpu)&t;(cpu_bh_endlock(cpu))
 DECL|macro|synchronize_bh
 mdefine_line|#define synchronize_bh()&t;barrier()
 macro_line|#endif&t;/* SMP */

@@ -2,6 +2,7 @@ multiline_comment|/* $Id: parport_share.c,v 1.15 1998/01/11 12:06:17 philip Exp 
 DECL|macro|PARPORT_DEBUG_SHARING
 macro_line|#undef PARPORT_DEBUG_SHARING&t;&t;/* undef for production */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

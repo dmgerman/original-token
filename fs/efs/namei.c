@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * namei.c&n; *&n; * Copyright (c) 1999 Al Smith&n; *&n; * Portions derived from work (c) 1995,1996 Christian Vogelgsang.&n; */
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/efs_fs.h&gt;
 DECL|function|efs_find_entry
 r_static

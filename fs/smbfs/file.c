@@ -749,9 +749,6 @@ comma
 r_int
 r_int
 id|count
-comma
-r_int
-id|sync
 )paren
 (brace
 r_struct
@@ -764,7 +761,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;SMBFS: smb_updatepage(%s/%s %d@%ld, sync=%d)&bslash;n&quot;
+l_string|&quot;SMBFS: smb_updatepage(%s/%s %d@%ld)&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
@@ -775,8 +772,6 @@ comma
 id|page-&gt;offset
 op_plus
 id|offset
-comma
-id|sync
 )paren
 suffix:semicolon
 r_return
@@ -1010,6 +1005,90 @@ r_return
 id|status
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This does the &quot;real&quot; work of the write. The generic routine has&n; * allocated the page, locked it, done all the page alignment stuff&n; * calculations etc. Now we should just copy the data from user&n; * space and write it back to the real medium..&n; *&n; * If the writer ends up delaying the write, the writer needs to&n; * increment the page use counts until he is done with the page.&n; */
+DECL|function|smb_write_one_page
+r_static
+r_int
+id|smb_write_one_page
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|page
+op_star
+id|page
+comma
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|bytes
+comma
+r_const
+r_char
+op_star
+id|buf
+)paren
+(brace
+r_int
+id|status
+suffix:semicolon
+id|bytes
+op_sub_assign
+id|copy_from_user
+c_func
+(paren
+(paren
+id|u8
+op_star
+)paren
+id|page_address
+c_func
+(paren
+id|page
+)paren
+op_plus
+id|offset
+comma
+id|buf
+comma
+id|bytes
+)paren
+suffix:semicolon
+id|status
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bytes
+)paren
+id|status
+op_assign
+id|smb_updatepage
+c_func
+(paren
+id|file
+comma
+id|page
+comma
+id|offset
+comma
+id|bytes
+)paren
+suffix:semicolon
+r_return
+id|status
+suffix:semicolon
+)brace
 multiline_comment|/* &n; * Write to a file (through the page cache).&n; */
 r_static
 id|ssize_t
@@ -1142,6 +1221,8 @@ comma
 id|count
 comma
 id|ppos
+comma
+id|smb_write_one_page
 )paren
 suffix:semicolon
 macro_line|#ifdef SMBFS_DEBUG_VERBOSE
@@ -1441,7 +1522,7 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
-id|smb_updatepage
+l_int|NULL
 comma
 multiline_comment|/* updatepage */
 id|smb_revalidate_inode

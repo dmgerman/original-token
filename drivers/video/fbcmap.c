@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/fbcmap.c -- Colormap handling for frame buffer devices&n; *&n; *&t;Created 15 Jun 1997 by Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;

@@ -1,8 +1,9 @@
 multiline_comment|/*&n; * sound/audio.c&n; *&n; * Device file manager for /dev/audio&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; * Thomas Sailer   : use more logical O_NONBLOCK semantics&n; * Daniel Rodriksson: reworked the use of the device specific copy_user&n; *                    still generic&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; * Thomas Sailer   : use more logical O_NONBLOCK semantics&n; * Daniel Rodriksson: reworked the use of the device specific copy_user&n; *                    still generic&n; * Horst von Brand:  Add missing #include &lt;linux/string.h&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_AUDIO

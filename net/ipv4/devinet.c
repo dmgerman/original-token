@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.29 1999/05/27 00:37:57 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
+multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.30 1999/06/01 07:49:59 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -2697,7 +2697,15 @@ id|ifa
 suffix:semicolon
 r_struct
 id|ifreq
+op_star
 id|ifr
+op_assign
+(paren
+r_struct
+id|ifreq
+op_star
+)paren
+id|buf
 suffix:semicolon
 r_int
 id|done
@@ -2737,7 +2745,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|buf
+id|ifr
 )paren
 (brace
 id|done
@@ -2769,7 +2777,6 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-op_amp
 id|ifr
 comma
 l_int|0
@@ -2789,7 +2796,7 @@ id|ifa-&gt;ifa_label
 id|strcpy
 c_func
 (paren
-id|ifr.ifr_name
+id|ifr-&gt;ifr_name
 comma
 id|ifa-&gt;ifa_label
 )paren
@@ -2798,7 +2805,7 @@ r_else
 id|strcpy
 c_func
 (paren
-id|ifr.ifr_name
+id|ifr-&gt;ifr_name
 comma
 id|dev-&gt;name
 )paren
@@ -2809,7 +2816,7 @@ id|sockaddr_in
 op_star
 )paren
 op_amp
-id|ifr.ifr_addr.sin_family
+id|ifr-&gt;ifr_addr.sin_family
 op_assign
 id|AF_INET
 suffix:semicolon
@@ -2819,39 +2826,12 @@ id|sockaddr_in
 op_star
 )paren
 op_amp
-id|ifr.ifr_addr.sin_addr.s_addr
+id|ifr-&gt;ifr_addr.sin_addr.s_addr
 op_assign
 id|ifa-&gt;ifa_local
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|copy_to_user
-c_func
-(paren
-id|buf
-comma
-op_amp
 id|ifr
-comma
-r_sizeof
-(paren
-r_struct
-id|ifreq
-)paren
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-id|buf
-op_add_assign
-r_sizeof
-(paren
-r_struct
-id|ifreq
-)paren
+op_increment
 suffix:semicolon
 id|len
 op_sub_assign

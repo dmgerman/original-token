@@ -882,8 +882,6 @@ r_int
 comma
 r_int
 r_int
-comma
-r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * linux/fs/nfs/read.c&n; */

@@ -32,6 +32,7 @@ r_int
 r_int
 id|p
 suffix:semicolon
+multiline_comment|/* current top of mem */
 DECL|member|sh_bang
 r_int
 id|sh_bang
@@ -319,14 +320,9 @@ id|bprm
 suffix:semicolon
 r_extern
 r_int
-r_int
 id|setup_arg_pages
 c_func
 (paren
-r_int
-r_int
-id|p
-comma
 r_struct
 id|linux_binprm
 op_star
@@ -334,7 +330,6 @@ id|bprm
 )paren
 suffix:semicolon
 r_extern
-r_int
 r_int
 id|copy_strings
 c_func
@@ -347,17 +342,29 @@ op_star
 op_star
 id|argv
 comma
-r_int
-r_int
+r_struct
+id|linux_binprm
 op_star
-id|page
+id|bprm
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|copy_strings_kernel
+c_func
+(paren
+r_int
+id|argc
 comma
-r_int
-r_int
-id|p
+r_char
+op_star
+op_star
+id|argv
 comma
-r_int
-id|from_kmem
+r_struct
+id|linux_binprm
+op_star
+id|bprm
 )paren
 suffix:semicolon
 r_extern
@@ -371,9 +378,10 @@ op_star
 id|binprm
 )paren
 suffix:semicolon
-multiline_comment|/* this eventually goes away */
-DECL|macro|change_ldt
+macro_line|#if 0
+multiline_comment|/* this went away now */
 mdefine_line|#define change_ldt(a,b) setup_arg_pages(a,b)
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_BINFMTS_H */
 eof

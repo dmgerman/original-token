@@ -1,7 +1,7 @@
 macro_line|#ifndef __LINUX_SMP_H
 DECL|macro|__LINUX_SMP_H
 mdefine_line|#define __LINUX_SMP_H
-multiline_comment|/*&n; *&t;Generic SMP support&n; *&t;&t;Alan Cox. &lt;alan@cymru.net&gt;&n; */
+multiline_comment|/*&n; *&t;Generic SMP support&n; *&t;&t;Alan Cox. &lt;alan@redhat.com&gt;&n; */
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;asm/smp.h&gt;
 multiline_comment|/*&n; * main cross-CPU interfaces, handles INIT, TLB flush, STOP, etc.&n; * (defined in asm header):&n; */

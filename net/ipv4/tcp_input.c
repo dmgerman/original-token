@@ -8193,10 +8193,10 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+)brace
 r_goto
 id|discard
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* step 2: check RST bit */
 r_if

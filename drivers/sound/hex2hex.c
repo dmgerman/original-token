@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * hex2hex reads stdin in Intel HEX format and produces an&n; * (unsigned char) array which contains the bytes and writes it&n; * to stdout using C syntax&n; */
 macro_line|#include &lt;stdio.h&gt;
+macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
 DECL|macro|ABANDON
 mdefine_line|#define ABANDON(why) { fprintf(stderr, &quot;%s&bslash;n&quot;, why); exit(1); }

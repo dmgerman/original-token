@@ -1370,9 +1370,6 @@ comma
 r_int
 r_int
 id|count
-comma
-r_int
-id|sync
 )paren
 (brace
 r_struct
@@ -1397,7 +1394,9 @@ suffix:semicolon
 r_int
 id|synchronous
 op_assign
-id|sync
+id|file-&gt;f_flags
+op_amp
+id|O_SYNC
 suffix:semicolon
 r_int
 id|retval
@@ -1405,7 +1404,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS:      nfs_updatepage(%s/%s %d@%ld, sync=%d)&bslash;n&quot;
+l_string|&quot;NFS:      nfs_updatepage(%s/%s %d@%ld)&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
@@ -1416,8 +1415,6 @@ comma
 id|page-&gt;offset
 op_plus
 id|offset
-comma
-id|sync
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Try to find a corresponding request on the writeback queue.&n;&t; * If there is one, we can be sure that this request is not&n;&t; * yet being processed, because we hold a lock on the page.&n;&t; *&n;&t; * If the request was created by us, update it. Otherwise,&n;&t; * transfer the page lock and flush out the dirty page now.&n;&t; * After returning, generic_file_write will wait on the&n;&t; * page and retry the update.&n;&t; */
@@ -1526,7 +1523,7 @@ c_func
 (paren
 id|req
 comma
-id|sync
+id|synchronous
 )paren
 suffix:semicolon
 id|updated

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/arch/arm/drivers/block/ide-ics.c&n; *&n; * Copyright (c) 1996,1997 Russell King.&n; *&n; * Changelog:&n; *  08-06-1996&t;RMK&t;Created&n; *  12-09-1997&t;RMK&t;Added interrupt enable/disable&n; */
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;

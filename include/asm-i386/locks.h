@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;SMP locks primitives for building ix86 locks&n; *&t;(not yet used).&n; *&n; *&t;&t;Alan Cox, alan@cymru.net, 1995&n; */
+multiline_comment|/*&n; *&t;SMP locks primitives for building ix86 locks&n; *&t;(not yet used).&n; *&n; *&t;&t;Alan Cox, alan@redhat.com, 1995&n; */
 multiline_comment|/*&n; *&t;This would be much easier but far less clear and easy&n; *&t;to borrow for other processors if it was just assembler.&n; */
 DECL|function|prim_spin_lock
 r_extern

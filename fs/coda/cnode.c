@@ -1,5 +1,6 @@
 multiline_comment|/* cnode related routines for the coda kernel code&n;   (C) 1996 Peter Braam&n;   */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;

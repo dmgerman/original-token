@@ -2348,12 +2348,6 @@ l_int|24
 )paren
 )paren
 suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 )brace
 r_return
 op_minus

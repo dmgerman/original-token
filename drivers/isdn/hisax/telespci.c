@@ -2,6 +2,7 @@ multiline_comment|/* $Id: telespci.c,v 2.5 1998/11/15 23:55:28 keil Exp $&n;&n; 
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;

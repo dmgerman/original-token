@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/lockd/bind.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|NFSDBG_FACILITY
@@ -204,7 +205,7 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
-id|nfs_updatepage
+l_int|NULL
 comma
 multiline_comment|/* updatepage */
 id|nfs_revalidate
@@ -521,6 +522,90 @@ r_return
 id|status
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This does the &quot;real&quot; work of the write. The generic routine has&n; * allocated the page, locked it, done all the page alignment stuff&n; * calculations etc. Now we should just copy the data from user&n; * space and write it back to the real medium..&n; *&n; * If the writer ends up delaying the write, the writer needs to&n; * increment the page use counts until he is done with the page.&n; */
+DECL|function|nfs_write_one_page
+r_static
+r_int
+id|nfs_write_one_page
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|page
+op_star
+id|page
+comma
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|bytes
+comma
+r_const
+r_char
+op_star
+id|buf
+)paren
+(brace
+r_int
+id|status
+suffix:semicolon
+id|bytes
+op_sub_assign
+id|copy_from_user
+c_func
+(paren
+(paren
+id|u8
+op_star
+)paren
+id|page_address
+c_func
+(paren
+id|page
+)paren
+op_plus
+id|offset
+comma
+id|buf
+comma
+id|bytes
+)paren
+suffix:semicolon
+id|status
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bytes
+)paren
+id|status
+op_assign
+id|nfs_updatepage
+c_func
+(paren
+id|file
+comma
+id|page
+comma
+id|offset
+comma
+id|bytes
+)paren
+suffix:semicolon
+r_return
+id|status
+suffix:semicolon
+)brace
 multiline_comment|/* &n; * Write to a file (through the page cache).&n; */
 r_static
 id|ssize_t
@@ -654,6 +739,8 @@ comma
 id|count
 comma
 id|ppos
+comma
+id|nfs_write_one_page
 )paren
 suffix:semicolon
 id|out

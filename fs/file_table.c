@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/file_table.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

@@ -1,5 +1,6 @@
-multiline_comment|/*&n; * linux/net/sunrpc/rpcauth_unix.c&n; *&n; * UNIX-style authentication; no AUTH_SHORT support&n; *&n; * Copyright (C) 1996, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/net/sunrpc/rpcauth_unix.c&n; *&n; * UNIX-style authentication; no AUTH_SHORT support&n; *&n; * Copyright (C) 1996, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; *&n; * Modified May 1999 Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
