@@ -52,7 +52,7 @@ multiline_comment|/* NULL function - Does nothing */
 r_return
 suffix:semicolon
 )brace
-DECL|function|pc_write_epp
+macro_line|#if 0
 r_static
 r_void
 id|pc_write_epp
@@ -79,6 +79,7 @@ id|EPPREG
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|pc_read_epp
 r_static
 r_int
@@ -1301,8 +1302,8 @@ r_return
 id|dma
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/* Only called if port supports ECP mode.&n; *&n; * The only restriction on DMA channels is that it has to be&n; * between 0 to 7 (inclusive). Used only in an ECP mode, DMAs are&n; * considered a shared resource and hence they should be registered&n; * when needed and then immediately unregistered.&n; *&n; * DMA autoprobes for ECP mode are known not to work for some&n; * main board BIOS configs. I had to remove everything from the&n; * port, set the mode to SPP, reboot to DOS, set the mode to ECP,&n; * and reboot again, then I got IRQ probes and DMA probes to work.&n; * [Is the BIOS doing a device detection?]&n; *&n; * A value of PARPORT_DMA_NONE is allowed indicating no DMA support.&n; *&n; * if( 0 &lt; DMA &lt; 4 )&n; *    1Byte DMA transfer&n; * else // 4 &lt; DMA &lt; 8&n; *    2Byte DMA transfer&n; *&n; */
-DECL|function|parport_dma_probe
 r_static
 r_int
 id|parport_dma_probe
@@ -1550,6 +1551,7 @@ r_return
 id|retv
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/******************************************************&n; *  MODE detection section:&n; */
 multiline_comment|/*&n; * Clear TIMEOUT BIT in EPP MODE&n; */
 DECL|function|epp_clear_timeout

@@ -14865,7 +14865,7 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;aic7xxx: Warning - detected auto-termination.  Please &quot;
-l_string|&quot;verify driver&quot;
+l_string|&quot;verify driver&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -14873,7 +14873,7 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;         detected settings and use manual termination &quot;
-l_string|&quot;if necessary.&quot;
+l_string|&quot;if necessary.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Configure auto termination. */

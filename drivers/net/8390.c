@@ -480,8 +480,16 @@ suffix:semicolon
 id|ei_local-&gt;stat.tx_errors
 op_increment
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 id|ei_local-&gt;irqlock
@@ -910,6 +918,11 @@ suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
 l_int|1
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* Change to page 0 and read the intr status reg. */
 id|outb_p

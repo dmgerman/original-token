@@ -843,6 +843,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_HFMODEM
+id|hfmodem_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* !MODULE */
 r_if
 c_cond

@@ -1933,7 +1933,7 @@ id|dev-&gt;irq
 comma
 id|ei_interrupt
 comma
-l_int|0
+id|SA_INTERRUPT
 comma
 id|name
 comma

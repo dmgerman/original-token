@@ -382,6 +382,7 @@ comma
 l_int|5
 )brace
 suffix:semicolon
+r_static
 r_void
 id|wakeup_bdflush
 c_func
@@ -2198,12 +2199,15 @@ id|dev
 )paren
 r_continue
 suffix:semicolon
-r_return
+id|next
+op_assign
 id|tmp
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 r_return
-l_int|NULL
+id|next
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Why like this, I hear you say... The reason is race-conditions.&n; * As we don&squot;t lock buffers (unless we are reading them, that is),&n; * something might happen to it while we sleep (ie a read-error&n; * will force it bad). This shouldn&squot;t really happen currently, but&n; * the code is ready.&n; */
@@ -2255,7 +2259,7 @@ op_logical_neg
 id|bh
 )paren
 r_return
-l_int|NULL
+id|bh
 suffix:semicolon
 id|bh-&gt;b_count
 op_increment
@@ -6665,6 +6669,7 @@ suffix:semicolon
 multiline_comment|/* ====================== bdflush support =================== */
 multiline_comment|/* This is a simple kernel daemon, whose job it is to provide a dynamic&n; * response to dirty buffers.  Once this process is activated, we write back&n; * a limited number of buffers to the disks and then go back to sleep again.&n; */
 DECL|variable|bdflush_wait
+r_static
 r_struct
 id|wait_queue
 op_star
@@ -6673,6 +6678,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 DECL|variable|bdflush_done
+r_static
 r_struct
 id|wait_queue
 op_star
@@ -6689,6 +6695,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|wakeup_bdflush
+r_static
 r_void
 id|wakeup_bdflush
 c_func

@@ -15189,7 +15189,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Print a string to the serial port trying not to disturb any possible&n; * real use of the port...&n; */
 DECL|function|serial_console_write
 r_static
-r_int
+r_void
 id|serial_console_write
 c_func
 (paren
@@ -15322,16 +15322,11 @@ op_plus
 id|UART_IER
 )paren
 suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Receive character from the serial port&n; */
 DECL|function|serial_console_wait_key
 r_static
-r_int
+r_void
 id|serial_console_wait_key
 c_func
 (paren
@@ -15423,9 +15418,6 @@ id|ser-&gt;port
 op_plus
 id|UART_IER
 )paren
-suffix:semicolon
-r_return
-id|c
 suffix:semicolon
 )brace
 DECL|function|serial_console_device

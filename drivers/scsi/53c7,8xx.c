@@ -1150,6 +1150,7 @@ multiline_comment|/* 2^1 bytes */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Function : struct Scsi_Host *find_host (int host)&n; * &n; * Purpose : KGDB support function which translates a host number &n; * &t;to a host structure. &n; *&n; * Inputs : host - number of SCSI host&n; *&n; * Returns : NULL on failure, pointer to host structure on success.&n; */
+macro_line|#if 0
 r_static
 r_struct
 id|Scsi_Host
@@ -1478,6 +1479,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Function : static void NCR53c7x0_driver_init (struct Scsi_Host *host)&n; *&n; * Purpose : Initialize internal structures, as required on startup, or &n; *&t;after a SCSI bus reset.&n; * &n; * Inputs : host - pointer to this host adapter&squot;s structure&n; */
 r_static
 r_void
@@ -19932,6 +19934,7 @@ id|size
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function : static const char *ncr_state (int state)&n; *&n; * Purpose : convert state (probably from hostdata-&gt;state) to a string&n; *&n; * Inputs : state&n; *&n; * Returns : char * representation of state, &quot;unknown&quot; on error.&n; */
+macro_line|#if 0
 r_static
 r_const
 r_char
@@ -19986,6 +19989,7 @@ l_string|&quot;unknown&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Function : int NCR53c7xx_abort (Scsi_Cmnd *cmd)&n; * &n; * Purpose : Abort an errant SCSI command, doing all necessary&n; *&t;cleanup of the issue_queue, running_list, shared Linux/NCR&n; *&t;dsa issue and reconnect queues.&n; *&n; * Inputs : cmd - command to abort, code - entire result field&n; *&n; * Returns : 0 on success, -1 on failure.&n; */
 r_int
 DECL|function|NCR53c7xx_abort

@@ -1154,8 +1154,8 @@ DECL|macro|LOW_BYTE_TERM
 mdefine_line|#define LOW_BYTE_TERM&t;&t;  0x0010
 DECL|macro|HIGH_BYTE_TERM
 mdefine_line|#define HIGH_BYTE_TERM&t;&t;  0x0020
-DECL|macro|BUSTYPE_PCI
-mdefine_line|#define BUSTYPE_PCI&t;  0x3
+DECL|macro|_BUSTYPE_PCI
+mdefine_line|#define _BUSTYPE_PCI&t;  0x3
 macro_line|#endif
 DECL|macro|SUPPORT_16TAR_32LUN
 mdefine_line|#define SUPPORT_16TAR_32LUN&t;  0x0002
@@ -6656,7 +6656,7 @@ id|HARPOON_FAMILY
 suffix:semicolon
 id|pCardInfo-&gt;si_bustype
 op_assign
-id|BUSTYPE_PCI
+id|_BUSTYPE_PCI
 suffix:semicolon
 r_if
 c_cond
@@ -9374,7 +9374,7 @@ id|HARPOON_FAMILY
 suffix:semicolon
 id|pAdapterInfo-&gt;ai_HBAbustype
 op_assign
-id|BUSTYPE_PCI
+id|_BUSTYPE_PCI
 suffix:semicolon
 r_for
 c_loop

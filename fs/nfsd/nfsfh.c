@@ -67,7 +67,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: fh_lookup(exp %x/%d fh %p)&bslash;n&quot;
+l_string|&quot;nfsd: fh_lookup(exp %x/%ld fh %p)&bslash;n&quot;
 comma
 id|fh-&gt;fh_xdev
 comma
@@ -294,7 +294,7 @@ id|dentry
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: fh_compose(exp %x/%d dentry %p)&bslash;n&quot;
+l_string|&quot;nfsd: fh_compose(exp %x/%ld dentry %p)&bslash;n&quot;
 comma
 id|exp-&gt;ex_dev
 comma

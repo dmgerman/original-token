@@ -2002,6 +2002,10 @@ c_cond
 id|state
 op_eq
 id|TCP_TIME_WAIT
+op_logical_or
+id|state
+op_eq
+id|TCP_CLOSE
 )paren
 id|sk-&gt;prot
 op_member_access_from_pointer

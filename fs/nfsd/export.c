@@ -527,7 +527,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;exp_export called for %s:%s (%x/%d fl %x).&bslash;n&quot;
+l_string|&quot;exp_export called for %s:%s (%x/%ld fl %x).&bslash;n&quot;
 comma
 id|nxp-&gt;ex_client
 comma
@@ -1387,7 +1387,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: exp_rootfh(%s:%x/%d)&bslash;n&quot;
+l_string|&quot;nfsd: exp_rootfh(%s:%x/%ld)&bslash;n&quot;
 comma
 id|clp-&gt;cl_ident
 comma
@@ -1465,7 +1465,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;exp_rootfh: arg[dev(%x):ino(%d)] inode[dev(%x):ino(%ld)]&bslash;n&quot;
+l_string|&quot;exp_rootfh: arg[dev(%x):ino(%ld)] inode[dev(%x):ino(%ld)]&bslash;n&quot;
 comma
 id|dev
 comma

@@ -4,7 +4,7 @@ DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
 multiline_comment|/*&n;**&t;Name and revision of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 2.1b&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 2.4&quot;
 multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
 macro_line|#if !defined(LINUX_VERSION_CODE)
 macro_line|#include &lt;linux/version.h&gt;
@@ -35,6 +35,8 @@ DECL|macro|SCSI_NCR_BOOT_COMMAND_LINE_SUPPORT
 mdefine_line|#define SCSI_NCR_BOOT_COMMAND_LINE_SUPPORT
 DECL|macro|SCSI_NCR_DEBUG_INFO_SUPPORT
 mdefine_line|#define SCSI_NCR_DEBUG_INFO_SUPPORT
+DECL|macro|SCSI_NCR_PCI_FIX_UP_SUPPORT
+mdefine_line|#define SCSI_NCR_PCI_FIX_UP_SUPPORT
 macro_line|#ifdef&t;SCSI_NCR_PROC_INFO_SUPPORT
 DECL|macro|SCSI_NCR_PROFILE_SUPPORT
 macro_line|#&t;define&t;SCSI_NCR_PROFILE_SUPPORT
@@ -43,6 +45,12 @@ macro_line|#&t;define&t;SCSI_NCR_USER_COMMAND_SUPPORT
 DECL|macro|SCSI_NCR_USER_INFO_SUPPORT
 macro_line|#&t;define&t;SCSI_NCR_USER_INFO_SUPPORT
 multiline_comment|/* #&t;define&t;SCSI_NCR_DEBUG_ERROR_RECOVERY_SUPPORT */
+macro_line|#endif
+multiline_comment|/*==========================================================&n;**&n;** nvram settings - #define SCSI_NCR_NVRAM_SUPPORT to enable&n;**&n;**==========================================================&n;*/
+macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
+DECL|macro|SCSI_NCR_NVRAM_SUPPORT
+mdefine_line|#define SCSI_NCR_NVRAM_SUPPORT
+multiline_comment|/* #define SCSI_NCR_DEBUG_NVRAM */
 macro_line|#endif
 multiline_comment|/* ---------------------------------------------------------------------&n;** Take into account kernel configured parameters.&n;** Most of these options can be overridden at startup by a command line.&n;** ---------------------------------------------------------------------&n;*/
 multiline_comment|/*&n; * For Ultra2 SCSI support option, use special features and allow 40Mhz &n; * synchronous data transfers.&n; */
@@ -349,59 +357,59 @@ r_int
 r_int
 id|features
 suffix:semicolon
-DECL|macro|_F_LED0
-mdefine_line|#define _F_LED0&t;&t;(1&lt;&lt;0)
-DECL|macro|_F_WIDE
-mdefine_line|#define _F_WIDE&t;&t;(1&lt;&lt;1)
-DECL|macro|_F_ULTRA
-mdefine_line|#define _F_ULTRA&t;(1&lt;&lt;2)
-DECL|macro|_F_ULTRA2
-mdefine_line|#define _F_ULTRA2&t;(1&lt;&lt;3)
-DECL|macro|_F_DBLR
-mdefine_line|#define _F_DBLR&t;&t;(1&lt;&lt;4)
-DECL|macro|_F_QUAD
-mdefine_line|#define _F_QUAD&t;&t;(1&lt;&lt;5)
-DECL|macro|_F_ERL
-mdefine_line|#define _F_ERL&t;&t;(1&lt;&lt;6)
-DECL|macro|_F_CLSE
-mdefine_line|#define _F_CLSE&t;&t;(1&lt;&lt;7)
-DECL|macro|_F_WRIE
-mdefine_line|#define _F_WRIE&t;&t;(1&lt;&lt;8)
-DECL|macro|_F_ERMP
-mdefine_line|#define _F_ERMP&t;&t;(1&lt;&lt;9)
-DECL|macro|_F_BOF
-mdefine_line|#define _F_BOF&t;&t;(1&lt;&lt;10)
-DECL|macro|_F_DFS
-mdefine_line|#define _F_DFS&t;&t;(1&lt;&lt;11)
-DECL|macro|_F_PFEN
-mdefine_line|#define _F_PFEN&t;&t;(1&lt;&lt;12)
-DECL|macro|_F_LDSTR
-mdefine_line|#define _F_LDSTR&t;(1&lt;&lt;13)
-DECL|macro|_F_RAM
-mdefine_line|#define _F_RAM&t;&t;(1&lt;&lt;14)
-DECL|macro|_F_CLK80
-mdefine_line|#define _F_CLK80&t;(1&lt;&lt;15)
-DECL|macro|_F_CACHE_SET
-mdefine_line|#define _F_CACHE_SET&t;(_F_ERL|_F_CLSE|_F_WRIE|_F_ERMP)
-DECL|macro|_F_SCSI_SET
-mdefine_line|#define _F_SCSI_SET&t;(_F_WIDE|_F_ULTRA|_F_ULTRA2|_F_DBLR|_F_QUAD|F_CLK80)
-DECL|macro|_F_SPECIAL_SET
-mdefine_line|#define _F_SPECIAL_SET&t;(_F_CACHE_SET|_F_BOF|_F_DFS|_F_LDSTR|_F_PFEN|_F_RAM)
+DECL|macro|FE_LED0
+mdefine_line|#define FE_LED0&t;&t;(1&lt;&lt;0)
+DECL|macro|FE_WIDE
+mdefine_line|#define FE_WIDE&t;&t;(1&lt;&lt;1)
+DECL|macro|FE_ULTRA
+mdefine_line|#define FE_ULTRA&t;(1&lt;&lt;2)
+DECL|macro|FE_ULTRA2
+mdefine_line|#define FE_ULTRA2&t;(1&lt;&lt;3)
+DECL|macro|FE_DBLR
+mdefine_line|#define FE_DBLR&t;&t;(1&lt;&lt;4)
+DECL|macro|FE_QUAD
+mdefine_line|#define FE_QUAD&t;&t;(1&lt;&lt;5)
+DECL|macro|FE_ERL
+mdefine_line|#define FE_ERL&t;&t;(1&lt;&lt;6)
+DECL|macro|FE_CLSE
+mdefine_line|#define FE_CLSE&t;&t;(1&lt;&lt;7)
+DECL|macro|FE_WRIE
+mdefine_line|#define FE_WRIE&t;&t;(1&lt;&lt;8)
+DECL|macro|FE_ERMP
+mdefine_line|#define FE_ERMP&t;&t;(1&lt;&lt;9)
+DECL|macro|FE_BOF
+mdefine_line|#define FE_BOF&t;&t;(1&lt;&lt;10)
+DECL|macro|FE_DFS
+mdefine_line|#define FE_DFS&t;&t;(1&lt;&lt;11)
+DECL|macro|FE_PFEN
+mdefine_line|#define FE_PFEN&t;&t;(1&lt;&lt;12)
+DECL|macro|FE_LDSTR
+mdefine_line|#define FE_LDSTR&t;(1&lt;&lt;13)
+DECL|macro|FE_RAM
+mdefine_line|#define FE_RAM&t;&t;(1&lt;&lt;14)
+DECL|macro|FE_CLK80
+mdefine_line|#define FE_CLK80&t;(1&lt;&lt;15)
+DECL|macro|FE_CACHE_SET
+mdefine_line|#define FE_CACHE_SET&t;(FE_ERL|FE_CLSE|FE_WRIE|FE_ERMP)
+DECL|macro|FE_SCSI_SET
+mdefine_line|#define FE_SCSI_SET&t;(FE_WIDE|FE_ULTRA|FE_ULTRA2|FE_DBLR|FE_QUAD|F_CLK80)
+DECL|macro|FE_SPECIAL_SET
+mdefine_line|#define FE_SPECIAL_SET&t;(FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM)
 DECL|typedef|ncr_chip
 )brace
 id|ncr_chip
 suffix:semicolon
 DECL|macro|SCSI_NCR_CHIP_TABLE
-mdefine_line|#define SCSI_NCR_CHIP_TABLE&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C810, 0x0f, &quot;810&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; _F_ERL}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C810, 0xff, &quot;810a&quot;, 4,  8, 4,&t;&t;&t;&bslash;&n; _F_CACHE_SET|_F_LDSTR|_F_PFEN|_F_BOF}&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C815, 0xff, &quot;815&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; _F_ERL|_F_BOF}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C820, 0xff, &quot;820&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; _F_WIDE|_F_ERL}&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C825, 0x0f, &quot;825&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; _F_WIDE|_F_ERL|_F_BOF}&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C825, 0xff, &quot;825a&quot;, 7,  8, 4,&t;&t;&t;&bslash;&n; _F_WIDE|_F_CACHE_SET|_F_BOF|_F_DFS|_F_LDSTR|_F_PFEN|_F_RAM}&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C860, 0xff, &quot;860&quot;,  4,  8, 5,&t;&t;&t;&bslash;&n; _F_WIDE|_F_ULTRA|_F_CLK80|_F_CACHE_SET|_F_BOF|_F_LDSTR|_F_PFEN|_F_RAM}&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875, 0x01, &quot;875&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; _F_WIDE|_F_ULTRA|_F_CLK80|_F_CACHE_SET|_F_BOF|_F_DFS|_F_LDSTR|_F_PFEN|_F_RAM}&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875, 0xff, &quot;875&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; _F_WIDE|_F_ULTRA|_F_DBLR|_F_CACHE_SET|_F_BOF|_F_DFS|_F_LDSTR|_F_PFEN|_F_RAM}&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875J, 0xff, &quot;875J&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; _F_WIDE|_F_ULTRA|_F_DBLR|_F_CACHE_SET|_F_BOF|_F_DFS|_F_LDSTR|_F_PFEN|_F_RAM}&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C885, 0xff, &quot;885&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; _F_WIDE|_F_ULTRA|_F_DBLR|_F_CACHE_SET|_F_BOF|_F_DFS|_F_LDSTR|_F_PFEN|_F_RAM}&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C895, 0xff, &quot;895&quot;,  7, 31, 7,&t;&t;&t;&bslash;&n; _F_WIDE|_F_ULTRA|_F_ULTRA2|_F_QUAD|_F_CACHE_SET|_F_BOF|_F_DFS|_F_LDSTR|_F_PFEN|_F_RAM}&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C896, 0xff, &quot;896&quot;,  7, 31, 7,&t;&t;&t;&bslash;&n; _F_WIDE|_F_ULTRA|_F_ULTRA2|_F_QUAD|_F_CACHE_SET|_F_BOF|_F_DFS|_F_LDSTR|_F_PFEN|_F_RAM}&t;&bslash;&n;}
+mdefine_line|#define SCSI_NCR_CHIP_TABLE&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C810, 0x0f, &quot;810&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_ERL}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C810, 0xff, &quot;810a&quot;, 4,  8, 4,&t;&t;&t;&bslash;&n; FE_CACHE_SET|FE_LDSTR|FE_PFEN|FE_BOF}&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C815, 0xff, &quot;815&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_ERL|FE_BOF}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C820, 0xff, &quot;820&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ERL}&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C825, 0x0f, &quot;825&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ERL|FE_BOF}&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C825, 0xff, &quot;825a&quot;, 7,  8, 4,&t;&t;&t;&bslash;&n; FE_WIDE|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C860, 0xff, &quot;860&quot;,  4,  8, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_CLK80|FE_CACHE_SET|FE_BOF|FE_LDSTR|FE_PFEN|FE_RAM}&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875, 0x01, &quot;875&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_CLK80|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875, 0xff, &quot;875&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_DBLR|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875J, 0xff, &quot;875J&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_DBLR|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C885, 0xff, &quot;885&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_DBLR|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C895, 0xff, &quot;895&quot;,  7, 31, 7,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA2|FE_QUAD|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C896, 0xff, &quot;896&quot;,  7, 31, 7,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA2|FE_QUAD|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n;}
 multiline_comment|/*&n; * List of supported NCR chip ids&n; */
 DECL|macro|SCSI_NCR_CHIP_IDS
 mdefine_line|#define SCSI_NCR_CHIP_IDS&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C810,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C815,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C820,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C825,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C860,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C875,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C875J,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C885,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C895,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C896&t;&bslash;&n;}
 multiline_comment|/*&n;**&t;Initial setup.&n;**&t;Can be overriden at startup by a command line.&n;*/
 DECL|macro|SCSI_NCR_DRIVER_SETUP
-mdefine_line|#define SCSI_NCR_DRIVER_SETUP&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_MASTER_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SCSI_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DISCONNECTION,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SPECIAL_FEATURES,&t;&bslash;&n;&t;SCSI_NCR_SETUP_ULTRA_SCSI,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_FORCE_SYNC_NEGO,&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_TAGS,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_SYNC,&t;&t;&bslash;&n;&t;0x00,&t;&t;&t;&t;&t;&bslash;&n;&t;7,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_LED_PIN,&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SETTLE_TIME,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DIFF_SUPPORT,&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define SCSI_NCR_DRIVER_SETUP&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_MASTER_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SCSI_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DISCONNECTION,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SPECIAL_FEATURES,&t;&bslash;&n;&t;SCSI_NCR_SETUP_ULTRA_SCSI,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_FORCE_SYNC_NEGO,&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_TAGS,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_SYNC,&t;&t;&bslash;&n;&t;0x00,&t;&t;&t;&t;&t;&bslash;&n;&t;7,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_LED_PIN,&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SETTLE_TIME,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DIFF_SUPPORT,&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;&t;&bslash;&n;}
 multiline_comment|/*&n;**&t;Boot fail safe setup.&n;**&t;Override initial setup from boot command line:&n;**&t;ncr53c8xx=safe:y&n;*/
 DECL|macro|SCSI_NCR_DRIVER_SAFE_SETUP
-mdefine_line|#define SCSI_NCR_DRIVER_SAFE_SETUP&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;2,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0x00,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;10,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;1&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define SCSI_NCR_DRIVER_SAFE_SETUP&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;2,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0x00,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;10,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;1&t;&t;&t;&t;&t;&bslash;&n;}
 multiline_comment|/*&n;**&t;Define the table of target capabilities by host and target&n;**&n;**&t;If you have problems with a scsi device, note the host unit and the&n;**&t;corresponding target number.&n;**&n;**&t;Edit the corresponding entry of the table below and try successively:&n;**&t;&t;NQ7_Questionnable&n;**&t;&t;NQ7_IdeLike&n;**&n;**&t;This bitmap is anded with the byte 7 of inquiry data on completion of&n;**&t;INQUIRY command.&n;**&t;The driver never see the zeroed bits and will ignore the corresponding&n;**&t;capabilities of the target.&n;*/
 DECL|macro|INQ7_SftRe
 mdefine_line|#define INQ7_SftRe&t;1

@@ -10,6 +10,7 @@ DECL|macro|DMA_MODE_AUTOINIT
 mdefine_line|#define DMA_MODE_AUTOINIT      0x10
 DECL|macro|NUM_FRAGMENTS
 mdefine_line|#define NUM_FRAGMENTS          4
+multiline_comment|/*&n; * NOTE: make sure that hdlcdrv_hdlcbuffer contains enough space&n; * for the modulator to fill the whole DMA buffer without underrun&n; * at the highest possible baud rate, otherwise the TX state machine will&n; * not work correctly. That is (9k6 FSK): HDLCDRV_HDLCBUFFER &gt; 6*NUM_FRAGMENTS&n; */
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * ===================== DMA buffer management ===========================&n; */
 multiline_comment|/*&n; * returns the number of samples per fragment&n; */

@@ -2991,15 +2991,6 @@ c_func
 (paren
 id|old_dentry
 comma
-id|new_dentry-&gt;d_parent
-comma
-op_amp
-id|new_dentry-&gt;d_name
-)paren
-suffix:semicolon
-id|d_delete
-c_func
-(paren
 id|new_dentry
 )paren
 suffix:semicolon

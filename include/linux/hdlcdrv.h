@@ -254,7 +254,7 @@ mdefine_line|#define HDLCDRV_MAGIC      0x5ac6e778
 DECL|macro|HDLCDRV_IFNAMELEN
 mdefine_line|#define HDLCDRV_IFNAMELEN    6
 DECL|macro|HDLCDRV_HDLCBUFFER
-mdefine_line|#define HDLCDRV_HDLCBUFFER  16 /* should be a power of 2 for speed reasons */
+mdefine_line|#define HDLCDRV_HDLCBUFFER  32 /* should be a power of 2 for speed reasons */
 DECL|macro|HDLCDRV_BITBUFFER
 mdefine_line|#define HDLCDRV_BITBUFFER  256 /* should be a power of 2 for speed reasons */
 DECL|macro|HDLCDRV_LOOPBACK

@@ -854,6 +854,9 @@ c_cond
 (paren
 op_logical_neg
 id|dir
+op_logical_or
+op_logical_neg
+id|dir-&gt;i_nlink
 )paren
 r_return
 l_int|NULL
@@ -1594,6 +1597,9 @@ id|de
 suffix:semicolon
 r_int
 id|err
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -1605,6 +1611,7 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
+multiline_comment|/*&n;&t; * N.B. Several error exits in ext2_new_inode don&squot;t set err.&n;&t; */
 id|inode
 op_assign
 id|ext2_new_inode
@@ -1785,6 +1792,9 @@ id|de
 suffix:semicolon
 r_int
 id|err
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -2119,6 +2129,9 @@ id|de
 suffix:semicolon
 r_int
 id|err
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -3602,10 +3615,12 @@ suffix:semicolon
 r_int
 id|i
 comma
-id|err
-suffix:semicolon
-r_int
 id|l
+comma
+id|err
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_char
 id|c
@@ -4897,15 +4912,6 @@ c_func
 (paren
 id|old_dentry
 comma
-id|new_dentry-&gt;d_parent
-comma
-op_amp
-id|new_dentry-&gt;d_name
-)paren
-suffix:semicolon
-id|d_delete
-c_func
-(paren
 id|new_dentry
 )paren
 suffix:semicolon

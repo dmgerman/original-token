@@ -283,12 +283,10 @@ c_func
 (paren
 r_int
 comma
-r_struct
-id|nfsctl_arg
+r_void
 op_star
 comma
-r_union
-id|nfsctl_res
+r_void
 op_star
 )paren
 suffix:semicolon

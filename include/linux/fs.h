@@ -1532,6 +1532,12 @@ r_int
 r_int
 id|s_ibasket_max
 suffix:semicolon
+DECL|member|s_dirty
+r_struct
+id|list_head
+id|s_dirty
+suffix:semicolon
+multiline_comment|/* dirty inodes */
 r_union
 (brace
 DECL|member|minix_sb

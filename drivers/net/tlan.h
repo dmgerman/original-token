@@ -1473,5 +1473,4 @@ r_return
 id|hash
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

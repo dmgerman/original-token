@@ -4237,7 +4237,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|file-&gt;f_inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_int

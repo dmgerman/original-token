@@ -3956,7 +3956,7 @@ c_func
 (paren
 id|tmp
 comma
-l_string|&quot;up1tr6%sunexpected discriminator %x message len %ld state %d&quot;
+l_string|&quot;up1tr6%sunexpected discriminator %x message len %d state %d&quot;
 comma
 (paren
 id|pr

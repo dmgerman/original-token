@@ -227,7 +227,7 @@ id|handle
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|plip_wakeup
 c_func
 (paren

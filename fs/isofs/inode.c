@@ -2534,6 +2534,12 @@ id|isonum_733
 id|raw_inode-&gt;size
 )paren
 suffix:semicolon
+id|inode-&gt;i_blocks
+op_assign
+id|inode-&gt;i_blksize
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* There are defective discs out there - we do this to protect&n;&t;   ourselves.  A cdrom will never contain more than 800Mb */
 r_if
 c_cond
@@ -2988,6 +2994,12 @@ op_assign
 l_int|0
 suffix:semicolon
 id|inode-&gt;i_size
+op_assign
+l_int|0
+suffix:semicolon
+id|inode-&gt;i_blocks
+op_assign
+id|inode-&gt;i_blksize
 op_assign
 l_int|0
 suffix:semicolon

@@ -354,12 +354,7 @@ comma
 r_struct
 id|dentry
 op_star
-id|newparent
-comma
-r_struct
-id|qstr
-op_star
-id|newname
+id|newdentry
 )paren
 suffix:semicolon
 multiline_comment|/* appendix may either be NULL or be used for transname suffixes */
