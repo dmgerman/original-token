@@ -2172,7 +2172,6 @@ id|NS_PCI_LATENCY
 op_ne
 l_int|0
 )paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace

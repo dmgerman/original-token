@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Revalidate the inode. This is required for proper NFS attribute caching.&n; */
 r_static
@@ -112,13 +113,21 @@ id|tmp.st_nlink
 op_assign
 id|inode-&gt;i_nlink
 suffix:semicolon
-id|tmp.st_uid
-op_assign
+id|SET_OLDSTAT_UID
+c_func
+(paren
+id|tmp
+comma
 id|inode-&gt;i_uid
+)paren
 suffix:semicolon
-id|tmp.st_gid
-op_assign
+id|SET_OLDSTAT_GID
+c_func
+(paren
+id|tmp
+comma
 id|inode-&gt;i_gid
+)paren
 suffix:semicolon
 id|tmp.st_rdev
 op_assign
@@ -228,13 +237,21 @@ id|tmp.st_nlink
 op_assign
 id|inode-&gt;i_nlink
 suffix:semicolon
-id|tmp.st_uid
-op_assign
+id|SET_STAT_UID
+c_func
+(paren
+id|tmp
+comma
 id|inode-&gt;i_uid
+)paren
 suffix:semicolon
-id|tmp.st_gid
-op_assign
+id|SET_STAT_GID
+c_func
+(paren
+id|tmp
+comma
 id|inode-&gt;i_gid
+)paren
 suffix:semicolon
 id|tmp.st_rdev
 op_assign

@@ -14,6 +14,14 @@ r_extern
 l_string|&quot;C&quot;
 (brace
 macro_line|#endif
+multiline_comment|/*&n; * The &quot;residual&quot; board information structure the boot loader passes&n; * into the kernel.&n; */
+r_extern
+r_int
+r_char
+id|__res
+(braket
+)braket
+suffix:semicolon
 macro_line|#ifdef __cplusplus
 )brace
 macro_line|#endif

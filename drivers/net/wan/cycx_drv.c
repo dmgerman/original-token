@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* cycx_drv.c&t;Cyclom 2X Support Module.&n;*&n;*&t;&t;This module is a library of common hardware-specific&n;*&t;&t;functions used by the Cyclades Cyclom 2X sync card.&n;*&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Based on sdladrv.c by Gene Kozin &lt;genek@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/11/11&t;acme&t;&t;set_current_state(TASK_INTERRUPTIBLE), code cleanup&n;* 1999/11/08&t;acme&t;&t;init_cyc2x deleted, doing nothing&n;* 1999/11/06&t;acme&t;&t;back to read[bw], write[bw] and memcpy_to and&n;*&t;&t;&t;&t;fromio to use dpmbase ioremaped&n;* 1999/10/26&t;acme&t;&t;use isa_read[bw], isa_write[bw] and isa_memcpy_to&n;*&t;&t;&t;&t;and fromio&n;* 1999/10/23&t;acme&t;&t;cleanup to only supports cyclom2x: all the other&n;*&t;&t;&t;&t;boards are no longer manufactured by cyclades, if&n;*&t;&t;&t;&t;someone wants to support them... be my guest!&n;* 1999/05/28    acme&t;&t;cycx_intack &amp; cycx_intde gone for good&n;* 1999/05/18&t;acme&t;&t;lots of unlogged work, submitting to Linus...&n;* 1999/01/03&t;acme&t;&t;more judicious use of data types&n;* 1999/01/03&t;acme&t;&t;judicious use of data types :&gt;&n;*&t;&t;&t;&t;cycx_inten trying to reset pending interrupts&n;*&t;&t;&t;&t;from cyclom 2x - I think this isn&squot;t the way to&n;*&t;&t;&t;&t;go, but for now...&n;* 1999/01/02&t;acme&t;&t;cycx_intack ok, I think there&squot;s nothing to do&n;*&t;&t;&t;&t;to ack an int in cycx_drv.c, only handle it in&n;*&t;&t;&t;&t;cyx_isr (or in the other protocols: cyp_isr,&n;*&t;&t;&t;&t;cyf_isr, when they get implemented.&n;* Dec 31, 1998&t;acme&t;&t;cycx_data_boot &amp; cycx_code_boot fixed, crossing&n;*&t;&t;&t;&t;fingers to see x25_configure in cycx_x25.c&n;*&t;&t;&t;&t;work... :)&n;* Dec 26, 1998&t;acme&t;&t;load implementation fixed, seems to work! :)&n;*&t;&t;&t;&t;cycx_2x_dpmbase_options with all the possible&n;*&t;&t;&t;&t;DPM addresses (20).&n;*&t;&t;&t;&t;cycx_intr implemented (test this!)&n;*&t;&t;&t;&t;general code cleanup&n;* Dec  8, 1998&t;Ivan Passos&t;Cyclom-2X firmware load implementation.&n;* Aug  8, 1998&t;acme&t;&t;Initial version.&n;*/
+multiline_comment|/*&n;* cycx_drv.c&t;Cyclom 2X Support Module.&n;*&n;*&t;&t;This module is a library of common hardware specific&n;*&t;&t;functions used by the Cyclades Cyclom 2X sync card.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998-2000 Arnaldo Carvalho de Melo&n;*&n;* Based on sdladrv.c by Gene Kozin &lt;genek@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/11/11&t;acme&t;&t;set_current_state(TASK_INTERRUPTIBLE), code&n;*&t;&t;&t;&t;cleanup&n;* 1999/11/08&t;acme&t;&t;init_cyc2x deleted, doing nothing&n;* 1999/11/06&t;acme&t;&t;back to read[bw], write[bw] and memcpy_to and&n;*&t;&t;&t;&t;fromio to use dpmbase ioremaped&n;* 1999/10/26&t;acme&t;&t;use isa_read[bw], isa_write[bw] &amp; isa_memcpy_to&n;*&t;&t;&t;&t;&amp; fromio&n;* 1999/10/23&t;acme&t;&t;cleanup to only supports cyclom2x: all the other&n;*&t;&t;&t;&t;boards are no longer manufactured by cyclades,&n;*&t;&t;&t;&t;if someone wants to support them... be my guest!&n;* 1999/05/28    acme&t;&t;cycx_intack &amp; cycx_intde gone for good&n;* 1999/05/18&t;acme&t;&t;lots of unlogged work, submitting to Linus...&n;* 1999/01/03&t;acme&t;&t;more judicious use of data types&n;* 1999/01/03&t;acme&t;&t;judicious use of data types :&gt;&n;*&t;&t;&t;&t;cycx_inten trying to reset pending interrupts&n;*&t;&t;&t;&t;from cyclom 2x - I think this isn&squot;t the way to&n;*&t;&t;&t;&t;go, but for now...&n;* 1999/01/02&t;acme&t;&t;cycx_intack ok, I think there&squot;s nothing to do&n;*&t;&t;&t;&t;to ack an int in cycx_drv.c, only handle it in&n;*&t;&t;&t;&t;cyx_isr (or in the other protocols: cyp_isr,&n;*&t;&t;&t;&t;cyf_isr, when they get implemented.&n;* Dec 31, 1998&t;acme&t;&t;cycx_data_boot &amp; cycx_code_boot fixed, crossing&n;*&t;&t;&t;&t;fingers to see x25_configure in cycx_x25.c&n;*&t;&t;&t;&t;work... :)&n;* Dec 26, 1998&t;acme&t;&t;load implementation fixed, seems to work! :)&n;*&t;&t;&t;&t;cycx_2x_dpmbase_options with all the possible&n;*&t;&t;&t;&t;DPM addresses (20).&n;*&t;&t;&t;&t;cycx_intr implemented (test this!)&n;*&t;&t;&t;&t;general code cleanup&n;* Dec  8, 1998&t;Ivan Passos&t;Cyclom-2X firmware load implementation.&n;* Aug  8, 1998&t;acme&t;&t;Initial version.&n;*/
 macro_line|#ifdef MODULE
 macro_line|#ifdef MODVERSIONS
 macro_line|#include &lt;linux/modversions.h&gt;
@@ -19,7 +19,7 @@ macro_line|#include &lt;asm/io.h&gt;&t;&t;/* read[wl], write[wl], ioremap, iounm
 DECL|macro|MOD_VERSION
 mdefine_line|#define&t;MOD_VERSION&t;0
 DECL|macro|MOD_RELEASE
-mdefine_line|#define&t;MOD_RELEASE&t;4
+mdefine_line|#define&t;MOD_RELEASE&t;5
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
@@ -173,7 +173,8 @@ id|copyright
 (braket
 )braket
 op_assign
-l_string|&quot;(c) 1998, 1999 Arnaldo Carvalho de Melo&quot;
+l_string|&quot;(c) 1998-2000 Arnaldo Carvalho de Melo &quot;
+l_string|&quot;&lt;acme@conectiva.com.br&gt;&quot;
 suffix:semicolon
 multiline_comment|/* Hardware configuration options.&n; * These are arrays of configuration options used by verification routines.&n; * The first element of each array is its size (i.e. number of options).&n; */
 DECL|variable|cyc2x_dpmbase_options
@@ -1786,14 +1787,10 @@ l_string|&quot;%s: loading firmware %s (ID=%u)...&bslash;n&quot;
 comma
 id|modname
 comma
-(paren
 id|cfm-&gt;descr
 (braket
 l_int|0
 )braket
-op_ne
-l_char|&squot;&bslash;0&squot;
-)paren
 ques
 c_cond
 id|cfm-&gt;descr
@@ -1834,8 +1831,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: dpm problem or board not &quot;
-l_string|&quot;found.&bslash;n&quot;
+l_string|&quot;%s: dpm problem or board not found&bslash;n&quot;
 comma
 id|modname
 )paren

@@ -1149,14 +1149,6 @@ id|inode-&gt;u.ufs_i.i_flags
 op_assign
 id|dir-&gt;u.ufs_i.i_flags
 suffix:semicolon
-id|inode-&gt;u.ufs_i.i_uid
-op_assign
-id|inode-&gt;i_uid
-suffix:semicolon
-id|inode-&gt;u.ufs_i.i_gid
-op_assign
-id|inode-&gt;i_gid
-suffix:semicolon
 id|inode-&gt;u.ufs_i.i_lastfrag
 op_assign
 l_int|0

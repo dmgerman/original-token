@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;$Id: pcisyms.c,v 1.8 1998/05/12 07:36:04 mj Exp $&n; *&n; *&t;PCI Bus Services -- Exported Symbols&n; *&n; *&t;Copyright 1998 Martin Mares&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;&t;/* isa_dma_bridge_buggy */

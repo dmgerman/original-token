@@ -97,7 +97,7 @@ r_void
 )paren
 suffix:semicolon
 r_int
-id|usb_scsi_init
+id|usb_stor_init
 c_func
 (paren
 r_void
@@ -181,6 +181,11 @@ id|proc_usb_cleanup
 )paren
 suffix:semicolon
 macro_line|#endif
+id|usbdevfs_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
 id|usb_hub_cleanup
 c_func
 (paren
@@ -216,6 +221,11 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|usbdevfs_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|usb_hub_init
 c_func
 (paren
@@ -279,7 +289,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_SCSI
-id|usb_scsi_init
+id|usb_stor_init
 c_func
 (paren
 )paren

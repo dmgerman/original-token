@@ -30,36 +30,42 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_8xx
-macro_line|#ifdef CONFIG_APUS
-DECL|macro|enable_irq
-mdefine_line|#define enable_irq m68k_enable_irq
-DECL|macro|disable_irq
-mdefine_line|#define disable_irq m68k_disable_irq
-macro_line|#include &lt;asm-m68k/irq.h&gt;
-DECL|macro|enable_irq
-macro_line|#undef enable_irq
-DECL|macro|disable_irq
-macro_line|#undef disable_irq
-macro_line|#else /* CONFIG_APUS */
-multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all - which happens to be powermac&n; * at present (G3 powermacs have 64).&n; */
+macro_line|#if defined(CONFIG_4xx)
+multiline_comment|/*&n; * The PowerPC 403 cores&squot; Asynchronous Interrupt Controller (AIC) has&n; * 32 possible interrupts, a majority of which are not implemented on&n; * all cores. There are six configurable, external interrupt pins and&n; * there are eight internal interrupts for the on-chip serial port&n; * (SPU), DMA controller, and JTAG controller.&n; *&n; * The PowerPC 405 cores&squot; Universal Interrupt Controller (UIC) has 32&n; * possible interrupts as well. There are seven, configurable external&n; * interrupt pins and there are 17 internal interrupts for the on-chip&n; * serial port, DMA controller, on-chip Ethernet controller, PCI, etc.&n; *&n; */
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;&t;&t;128
-macro_line|#endif /* CONFIG_APUS */
-DECL|macro|NUM_8259_INTERRUPTS
-mdefine_line|#define NUM_8259_INTERRUPTS&t;16
-DECL|macro|IRQ_8259_CASCADE
-mdefine_line|#define IRQ_8259_CASCADE&t;16
-DECL|macro|openpic_to_irq
-mdefine_line|#define openpic_to_irq(n)&t;((n)+NUM_8259_INTERRUPTS)
-DECL|macro|irq_to_openpic
-mdefine_line|#define irq_to_openpic(n)&t;((n)-NUM_8259_INTERRUPTS)
-macro_line|#ifndef CONFIG_APUS
-multiline_comment|/*&n; * This gets called from serial.c, which is now used on&n; * powermacs as well as prep/chrp boxes.&n; * Prep and chrp both have cascaded 8259 PICs.&n; */
-DECL|function|irq_cannonicalize
+mdefine_line|#define&t;NR_IRQS&t;&t;32
+DECL|macro|AIC_INT0
+mdefine_line|#define&t;AIC_INT0&t;(0)
+DECL|macro|AIC_INT4
+mdefine_line|#define&t;AIC_INT4&t;(4)
+DECL|macro|AIC_INT5
+mdefine_line|#define&t;AIC_INT5&t;(5)
+DECL|macro|AIC_INT6
+mdefine_line|#define&t;AIC_INT6&t;(6)
+DECL|macro|AIC_INT7
+mdefine_line|#define&t;AIC_INT7&t;(7)
+DECL|macro|AIC_INT8
+mdefine_line|#define&t;AIC_INT8&t;(8)
+DECL|macro|AIC_INT9
+mdefine_line|#define&t;AIC_INT9&t;(9)
+DECL|macro|AIC_INT10
+mdefine_line|#define&t;AIC_INT10&t;(10)
+DECL|macro|AIC_INT11
+mdefine_line|#define&t;AIC_INT11&t;(11)
+DECL|macro|AIC_INT27
+mdefine_line|#define&t;AIC_INT27&t;(27)
+DECL|macro|AIC_INT28
+mdefine_line|#define&t;AIC_INT28&t;(28)
+DECL|macro|AIC_INT29
+mdefine_line|#define&t;AIC_INT29&t;(29)
+DECL|macro|AIC_INT30
+mdefine_line|#define&t;AIC_INT30&t;(30)
+DECL|macro|AIC_INT31
+mdefine_line|#define&t;AIC_INT31&t;(31)
 r_static
 id|__inline__
 r_int
+DECL|function|irq_cannonicalize
 id|irq_cannonicalize
 c_func
 (paren
@@ -67,31 +73,13 @@ r_int
 id|irq
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|ppc_md.irq_cannonicalize
-)paren
-(brace
 r_return
-id|ppc_md
-dot
-id|irq_cannonicalize
-c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
 )brace
-r_else
-(brace
-r_return
-id|irq
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-macro_line|#else /* CONFIG_8xx */
+macro_line|#elif defined(CONFIG_8xx)
 multiline_comment|/* The MPC8xx cores have 16 possible interrupts.  There are eight&n; * possible level sensitive interrupts assigned and generated internally&n; * from such devices as CPM, PCMCIA, RTC, PIT, TimeBase and Decrementer.&n; * There are eight external interrupts (IRQs) that can be configured&n; * as either level or edge sensitive. &n; *&n; * The 82xx can have up to 64 interrupts on the internal controller.&n; *&n; * On some implementations, there is also the possibility of an 8259&n; * through the PCI and PCI-ISA bridges.&n; */
 macro_line|#ifdef CONFIG_82xx
 DECL|macro|NR_SIU_INTS
@@ -165,6 +153,67 @@ r_return
 id|irq
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_8xx */
+macro_line|#else
+macro_line|#ifdef CONFIG_APUS
+DECL|macro|enable_irq
+mdefine_line|#define enable_irq m68k_enable_irq
+DECL|macro|disable_irq
+mdefine_line|#define disable_irq m68k_disable_irq
+macro_line|#include &lt;asm-m68k/irq.h&gt;
+DECL|macro|enable_irq
+macro_line|#undef enable_irq
+DECL|macro|disable_irq
+macro_line|#undef disable_irq
+macro_line|#else /* CONFIG_APUS */
+multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all - which happens to be powermac&n; * at present (G3 powermacs have 64).&n; */
+DECL|macro|NR_IRQS
+mdefine_line|#define NR_IRQS&t;&t;&t;128
+macro_line|#endif /* CONFIG_APUS */
+DECL|macro|NUM_8259_INTERRUPTS
+mdefine_line|#define NUM_8259_INTERRUPTS&t;16
+DECL|macro|IRQ_8259_CASCADE
+mdefine_line|#define IRQ_8259_CASCADE&t;16
+DECL|macro|openpic_to_irq
+mdefine_line|#define openpic_to_irq(n)&t;((n)+NUM_8259_INTERRUPTS)
+DECL|macro|irq_to_openpic
+mdefine_line|#define irq_to_openpic(n)&t;((n)-NUM_8259_INTERRUPTS)
+macro_line|#ifndef CONFIG_APUS
+multiline_comment|/*&n; * This gets called from serial.c, which is now used on&n; * powermacs as well as prep/chrp boxes.&n; * Prep and chrp both have cascaded 8259 PICs.&n; */
+DECL|function|irq_cannonicalize
+r_static
+id|__inline__
+r_int
+id|irq_cannonicalize
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ppc_md.irq_cannonicalize
+)paren
+(brace
+r_return
+id|ppc_md
+dot
+id|irq_cannonicalize
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_return
+id|irq
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* !CONFIG_APUS */
 macro_line|#endif
+macro_line|#endif /* _ASM_IRQ_H */
 eof

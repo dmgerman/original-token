@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.84 2000/01/07 18:15:14 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.85 2000/01/08 16:38:18 anton Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -453,13 +453,6 @@ c_func
 id|___up_write
 )paren
 suffix:semicolon
-DECL|variable|page_offset
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|page_offset
-)paren
-suffix:semicolon
 DECL|variable|sparc_valid_addr_bitmap
 id|EXPORT_SYMBOL
 c_func
@@ -698,16 +691,6 @@ id|BTFIXUP_CALL
 c_func
 (paren
 id|__irq_itoa
-)paren
-)paren
-suffix:semicolon
-id|EXPORT_SYMBOL_NOVERS
-c_func
-(paren
-id|BTFIXUP_CALL
-c_func
-(paren
-id|mmu_v2p
 )paren
 )paren
 suffix:semicolon

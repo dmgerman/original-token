@@ -88,23 +88,6 @@ l_int|1
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|uidin
-OG
-(paren
-l_int|64
-op_star
-l_int|1024U
-op_minus
-l_int|1
-)paren
-)paren
-multiline_comment|/* 16 bit UID */
-r_return
-l_int|0
-suffix:semicolon
 r_return
 id|uidin
 suffix:semicolon
@@ -126,23 +109,6 @@ op_eq
 op_minus
 l_int|1
 )paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|gidin
-OG
-(paren
-l_int|64
-op_star
-l_int|1024U
-op_minus
-l_int|1
-)paren
-)paren
-multiline_comment|/* 16 bit GID */
 r_return
 l_int|0
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Extension Header handling for IPv6&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Andi Kleen&t;&t;&lt;ak@muc.de&gt;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: exthdrs.c,v 1.9 1999/05/17 23:47:35 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Extension Header handling for IPv6&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Andi Kleen&t;&t;&lt;ak@muc.de&gt;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: exthdrs.c,v 1.10 2000/01/09 02:19:55 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -629,8 +629,11 @@ op_minus
 id|skb-&gt;h.raw
 )paren
 (brace
-id|ipv6_statistics.Ip6InHdrErrors
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InHdrErrors
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -1688,8 +1691,11 @@ id|ipv6hdr
 )paren
 )paren
 (brace
-id|ipv6_statistics.Ip6InTruncatedPkts
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InTruncatedPkts
+)paren
 suffix:semicolon
 r_goto
 id|drop

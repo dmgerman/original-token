@@ -2203,13 +2203,13 @@ op_logical_and
 id|iobuf-&gt;locked
 )paren
 (brace
-id|__free_page
+id|UnlockPage
 c_func
 (paren
 id|map
 )paren
 suffix:semicolon
-id|UnlockPage
+id|__free_page
 c_func
 (paren
 id|map

@@ -3191,7 +3191,7 @@ id|kind
 op_eq
 id|BDEV_FS
 )paren
-id|sync_dev
+id|fsync_dev
 c_func
 (paren
 id|rdev

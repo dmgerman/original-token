@@ -44,13 +44,13 @@ DECL|member|i_shadow
 id|__u32
 id|i_shadow
 suffix:semicolon
-DECL|member|i_uid
+DECL|member|i_unused1
 id|__u32
-id|i_uid
+id|i_unused1
 suffix:semicolon
-DECL|member|i_gid
+DECL|member|i_unused2
 id|__u32
-id|i_gid
+id|i_unused2
 suffix:semicolon
 DECL|member|i_oeftflag
 id|__u32

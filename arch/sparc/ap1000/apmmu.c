@@ -5127,13 +5127,11 @@ id|APMMU_VALID
 suffix:semicolon
 id|init_mm.mmap-&gt;vm_start
 op_assign
-id|page_offset
-op_assign
-id|KERNBASE
+id|PAGE_OFFSET
 suffix:semicolon
 id|stack_top
 op_assign
-id|page_offset
+id|PAGE_OFFSET
 op_minus
 id|PAGE_SIZE
 suffix:semicolon

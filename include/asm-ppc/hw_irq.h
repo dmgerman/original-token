@@ -152,7 +152,7 @@ r_int
 r_int
 id|do_IRQ_intercept
 suffix:semicolon
-r_void
+r_int
 id|timer_interrupt
 c_func
 (paren

@@ -444,6 +444,7 @@ op_increment
 id|i
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB&t;    
 r_while
 c_loop
 (paren
@@ -468,6 +469,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB */
 id|buf_access
 c_func
 (paren
@@ -868,6 +870,7 @@ op_increment
 id|i
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB&t;    
 r_while
 c_loop
 (paren
@@ -892,6 +895,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB */
 id|buf_access
 c_func
 (paren

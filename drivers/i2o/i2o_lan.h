@@ -6,7 +6,7 @@ multiline_comment|/* Tunable parameters first */
 DECL|macro|I2O_BUCKET_COUNT
 mdefine_line|#define I2O_BUCKET_COUNT &t;256
 DECL|macro|I2O_BUCKET_THRESH
-mdefine_line|#define I2O_BUCKET_THRESH&t;8
+mdefine_line|#define I2O_BUCKET_THRESH&t;18 /* 9 buckets in one message */
 multiline_comment|/* LAN types */
 DECL|macro|I2O_LAN_ETHERNET
 mdefine_line|#define I2O_LAN_ETHERNET&t;0x0030

@@ -43,6 +43,14 @@ id|inode_hashtable
 id|HASH_SIZE
 )braket
 suffix:semicolon
+r_static
+id|LIST_HEAD
+c_func
+(paren
+id|anon_hash_chain
+)paren
+suffix:semicolon
+multiline_comment|/* for inodes with NULL i_sb */
 multiline_comment|/*&n; * A simple spinlock to protect the list manipulations.&n; *&n; * NOTE! You also have to own the lock if you change&n; * the i_state of an inode while it is in use..&n; */
 DECL|variable|inode_lock
 id|spinlock_t
@@ -2352,6 +2360,16 @@ id|inode
 r_struct
 id|list_head
 op_star
+id|head
+op_assign
+op_amp
+id|anon_hash_chain
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_sb
+)paren
 id|head
 op_assign
 id|inode_hashtable

@@ -14,6 +14,7 @@ mdefine_line|#define SHMALL (SHMMAX/PAGE_SIZE*SHMMNI) /* max shm system wide (pa
 DECL|macro|SHMSEG
 mdefine_line|#define SHMSEG SHMMNI&t;&t;&t; /* max shared segs per process */
 macro_line|#include &lt;asm/shmparam.h&gt;
+multiline_comment|/* Obsolete, used only for backwards compatibility and libc5 compiles */
 DECL|struct|shmid_ds
 r_struct
 id|shmid_ds
@@ -80,6 +81,8 @@ suffix:semicolon
 multiline_comment|/* unused */
 )brace
 suffix:semicolon
+multiline_comment|/* Include the definition of shmid64_ds and shminfo64 */
+macro_line|#include &lt;asm/shmbuf.h&gt;
 multiline_comment|/* permission flag for shmget */
 DECL|macro|SHM_R
 mdefine_line|#define SHM_R&t;&t;0400&t;/* or S_IRUGO from &lt;linux/stat.h&gt; */
@@ -102,6 +105,7 @@ DECL|macro|SHM_STAT
 mdefine_line|#define SHM_STAT &t;13
 DECL|macro|SHM_INFO
 mdefine_line|#define SHM_INFO &t;14
+multiline_comment|/* Obsolete, used only for backwards compatibility */
 DECL|struct|shminfo
 r_struct
 id|shminfo

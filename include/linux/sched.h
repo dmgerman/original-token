@@ -546,7 +546,16 @@ r_volatile
 r_int
 id|need_resched
 suffix:semicolon
-multiline_comment|/* various fields */
+DECL|member|avg_slice
+id|cycles_t
+id|avg_slice
+suffix:semicolon
+DECL|member|lock_depth
+r_int
+id|lock_depth
+suffix:semicolon
+multiline_comment|/* Lock depth. We can context switch in and out of holding a syscall kernel lock... */
+multiline_comment|/* begin intel cache line */
 DECL|member|counter
 r_int
 id|counter
@@ -555,11 +564,22 @@ DECL|member|priority
 r_int
 id|priority
 suffix:semicolon
-DECL|member|avg_slice
-id|cycles_t
-id|avg_slice
+DECL|member|policy
+r_int
+r_int
+id|policy
 suffix:semicolon
-multiline_comment|/* SMP and runqueue state */
+multiline_comment|/* memory management info */
+DECL|member|mm
+DECL|member|active_mm
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+op_star
+id|active_mm
+suffix:semicolon
 DECL|member|has_cpu
 r_int
 id|has_cpu
@@ -568,15 +588,11 @@ DECL|member|processor
 r_int
 id|processor
 suffix:semicolon
-DECL|member|last_processor
-r_int
-id|last_processor
+DECL|member|run_list
+r_struct
+id|list_head
+id|run_list
 suffix:semicolon
-DECL|member|lock_depth
-r_int
-id|lock_depth
-suffix:semicolon
-multiline_comment|/* Lock depth. We can context switch in and out of holding a syscall kernel lock... */
 DECL|member|next_task
 DECL|member|prev_task
 r_struct
@@ -587,10 +603,9 @@ comma
 op_star
 id|prev_task
 suffix:semicolon
-DECL|member|run_list
-r_struct
-id|list_head
-id|run_list
+DECL|member|last_processor
+r_int
+id|last_processor
 suffix:semicolon
 multiline_comment|/* task state */
 DECL|member|binfmt
@@ -699,12 +714,9 @@ op_star
 id|vfork_sem
 suffix:semicolon
 multiline_comment|/* for vfork() */
-DECL|member|policy
 DECL|member|rt_priority
 r_int
 r_int
-id|policy
-comma
 id|rt_priority
 suffix:semicolon
 DECL|member|it_real_value
@@ -904,17 +916,6 @@ id|files_struct
 op_star
 id|files
 suffix:semicolon
-multiline_comment|/* memory management info */
-DECL|member|mm
-DECL|member|active_mm
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-op_star
-id|active_mm
-suffix:semicolon
 multiline_comment|/* signal handlers */
 DECL|member|sigmask_lock
 id|spinlock_t
@@ -1006,7 +1007,7 @@ DECL|macro|DEF_PRIORITY
 mdefine_line|#define DEF_PRIORITY&t;(20*HZ/100)&t;/* 200 ms time slices */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK(name) &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, LIST_HEAD_INIT(init_task.run_list), &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* chld wait */&t;__WAIT_QUEUE_HEAD_INITIALIZER(name.wait_chldexit), NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* thread */&t;INIT_THREAD, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;NULL, &amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;/* exec cts */&t;0,0, &bslash;&n;/* exit_sem */&t;__MUTEX_INITIALIZER(name.exit_sem),&t;&bslash;&n;}
+mdefine_line|#define INIT_TASK(name) &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* avg_slice */&t;0, -1, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,SCHED_OTHER, &bslash;&n;/* mm */&t;NULL, &amp;init_mm, &bslash;&n;/* has_cpu */&t;0,0, &bslash;&n;/* run_list */&t;LIST_HEAD_INIT(init_task.run_list), &bslash;&n;/* next_task */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* last_proc */&t;0, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* chld wait */&t;__WAIT_QUEUE_HEAD_INITIALIZER(name.wait_chldexit), NULL, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* thread */&t;INIT_THREAD, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;/* exec cts */&t;0,0, &bslash;&n;/* exit_sem */&t;__MUTEX_INITIALIZER(name.exit_sem),&t;&bslash;&n;}
 macro_line|#ifndef INIT_TASK_SIZE
 DECL|macro|INIT_TASK_SIZE
 macro_line|# define INIT_TASK_SIZE&t;2048*sizeof(long)

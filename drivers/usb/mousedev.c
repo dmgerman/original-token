@@ -278,7 +278,7 @@ c_cond
 id|list-&gt;mode
 )paren
 id|list-&gt;dz
-op_add_assign
+op_sub_assign
 id|value
 suffix:semicolon
 r_break

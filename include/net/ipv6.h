@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.18 1999/08/20 11:00:53 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.19 2000/01/09 02:19:26 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _NET_IPV6_H
 DECL|macro|_NET_IPV6_H
 mdefine_line|#define _NET_IPV6_H
@@ -90,17 +90,50 @@ r_extern
 r_struct
 id|ipv6_mib
 id|ipv6_statistics
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
+DECL|macro|IP6_INC_STATS
+mdefine_line|#define IP6_INC_STATS(field)&t;&t;SNMP_INC_STATS(ipv6_statistics, field)
+DECL|macro|IP6_INC_STATS_BH
+mdefine_line|#define IP6_INC_STATS_BH(field)&t;&t;SNMP_INC_STATS_BH(ipv6_statistics, field)
+DECL|macro|IP6_INC_STATS_USER
+mdefine_line|#define IP6_INC_STATS_USER(field) &t;SNMP_INC_STATS_USER(ipv6_statistics, field)
 r_extern
 r_struct
 id|icmpv6_mib
 id|icmpv6_statistics
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
+DECL|macro|ICMP6_INC_STATS
+mdefine_line|#define ICMP6_INC_STATS(field)&t;&t;SNMP_INC_STATS(icmpv6_statistics, field)
+DECL|macro|ICMP6_INC_STATS_BH
+mdefine_line|#define ICMP6_INC_STATS_BH(field)&t;SNMP_INC_STATS_BH(icmpv6_statistics, field)
+DECL|macro|ICMP6_INC_STATS_USER
+mdefine_line|#define ICMP6_INC_STATS_USER(field) &t;SNMP_INC_STATS_USER(icmpv6_statistics, field)
 r_extern
 r_struct
 id|udp_mib
 id|udp_stats_in6
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
+DECL|macro|UDP6_INC_STATS
+mdefine_line|#define UDP6_INC_STATS(field)&t;&t;SNMP_INC_STATS(udp_stats_in6, field)
+DECL|macro|UDP6_INC_STATS_BH
+mdefine_line|#define UDP6_INC_STATS_BH(field)&t;SNMP_INC_STATS_BH(udp_stats_in6, field)
+DECL|macro|UDP6_INC_STATS_USER
+mdefine_line|#define UDP6_INC_STATS_USER(field) &t;SNMP_INC_STATS_USER(udp_stats_in6, field)
 r_extern
 id|atomic_t
 id|inet6_sock_nr

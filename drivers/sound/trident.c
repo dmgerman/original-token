@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&n; *&t;Trident 4D-Wave/SiS 7018 OSS driver for Linux 2.2.x&n; *&n; *&t;Driver: Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *  Built from:&n; *&t;Low level code: &lt;audio@tridentmicro.com&gt; from ALSA&n; *&t;Framework: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *&t;Extended by: Zach Brown &lt;zab@redhat.com&gt;  &n; *&n; *  Hacked up by:&n; *&t;Aaron Holtzman &lt;aholtzma@ess.engr.uvic.ca&gt;&n; *&t;Ollie Lho &lt;ollie@sis.com.tw&gt; SiS 7018 Audio Core Support&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History&n; *  v0.04 Dec 31 1999 Ollie Lho&n; *&t;Multiple Open, useing Middle Loop Interrupt to smooth playback&n; *  v0.03 Dec 24 1999 Ollie Lho&n; *&t;mem leak in prog_dmabuf and dealloc_dmabuf removed&n; *  v0.02 Dec 15 1999 Ollie Lho&n; *&t;SiS 7018 support added, playback O.K.&n; *  v0.01 Alan Cox et. al.&n; *&t;Initial Release in kernel 2.3.30, does not work&n; */
+multiline_comment|/*&n; *&n; *&t;Trident 4D-Wave/SiS 7018 OSS driver for Linux 2.2.x&n; *&n; *&t;Driver: Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *  Built from:&n; *&t;Low level code: &lt;audio@tridentmicro.com&gt; from ALSA&n; *&t;Framework: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *&t;Extended by: Zach Brown &lt;zab@redhat.com&gt;  &n; *&n; *  Hacked up by:&n; *&t;Aaron Holtzman &lt;aholtzma@ess.engr.uvic.ca&gt;&n; *&t;Ollie Lho &lt;ollie@sis.com.tw&gt; SiS 7018 Audio Core Support&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History&n; *  v0.05 Jan 08 2000 Luca Montecchiani &lt;m.luca@iname.com&gt;&n; *     adapt to 2.3.x new __setup/__initcall&n; *  v0.04 Dec 31 1999 Ollie Lho&n; *&t;Multiple Open, useing Middle Loop Interrupt to smooth playback&n; *  v0.03 Dec 24 1999 Ollie Lho&n; *&t;mem leak in prog_dmabuf and dealloc_dmabuf removed&n; *  v0.02 Dec 15 1999 Ollie Lho&n; *&t;SiS 7018 support added, playback O.K.&n; *  v0.01 Alan Cox et. al.&n; *&t;Initial Release in kernel 2.3.30, does not work&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -26,7 +26,7 @@ macro_line|#include &quot;ac97.h&quot;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 DECL|macro|DRIVER_VERSION
-mdefine_line|#define DRIVER_VERSION &quot;0.03&quot;
+mdefine_line|#define DRIVER_VERSION &quot;0.05&quot;
 DECL|macro|TRIDENT_FMT_STEREO
 mdefine_line|#define TRIDENT_FMT_STEREO     0x01
 DECL|macro|TRIDENT_FMT_16BIT
@@ -12863,15 +12863,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|function|init_trident
+r_static
 r_int
 id|__init
 id|init_trident
@@ -12879,7 +12872,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|pci_dev
@@ -13003,11 +12995,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Alan Cox &lt;alan@redhat.com&gt;&quot;
+l_string|&quot;Alan Cox, Aaron Holtzman, Ollie Lho&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -13026,9 +13017,11 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|cleanup_module
+DECL|function|cleanup_trident
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_trident
 c_func
 (paren
 r_void
@@ -13097,5 +13090,18 @@ id|devs-&gt;next
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|init_trident
+id|module_init
+c_func
+(paren
+id|init_trident
+)paren
+suffix:semicolon
+DECL|variable|cleanup_trident
+id|module_exit
+c_func
+(paren
+id|cleanup_trident
+)paren
+suffix:semicolon
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* cycx_x25.c&t;CYCLOM X WAN Link Driver.  X.25 module.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo&n;*&n;* Based on sdla_x25.c by Gene Kozin &lt;genek@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/10/27&t;acme&t;&t;use ARPHRD_HWX25 so that the x25 stack know&n;*&t;&t;&t;&t;that we have a X.25 stack implemented in&n;*&t;&t;&t;&t;firmware onboard&n;* 1999/10/18&t;acme&t;&t;support for X.25 sockets in if_send,&n;*&t;&t;&t;&t;beware: socket(AF_X25...) IS WORK IN PROGRESS,&n;*&t;&t;&t;&t;TCP/IP over X.25 via wanrouter not affected,&n;*&t;&t;&t;&t;working.&n;* 1999/10/09&t;acme&t;&t;chan_disc renamed to chan_disconnect,&n;* &t;&t;&t;&t;began adding support for X.25 sockets:&n;* &t;&t;&t;&t;conf-&gt;protocol in new_if&n;* 1999/10/05&t;acme&t;&t;fixed return E... to return -E...&n;* 1999/08/10&t;acme&t;&t;serialized access to the card thru a spinlock&n;*&t;&t;&t;&t;in x25_exec&n;* 1999/08/09&t;acme&t;&t;removed per channel spinlocks&n;*&t;&t;&t;&t;removed references to enable_tx_int&n;* 1999/05/28&t;acme&t;&t;fixed nibble_to_byte, ackvc now properly treated&n;*&t;&t;&t;&t;if_send simplified&n;* 1999/05/25&t;acme&t;&t;fixed t1, t2, t21 &amp; t23 configuration&n;*&t;&t;&t;&t;use spinlocks instead of cli/sti in some points&n;* 1999/05/24&t;acme&t;&t;finished the x25_get_stat function&n;* 1999/05/23&t;acme&t;&t;dev-&gt;type = ARPHRD_X25 (tcpdump only works,&n;*&t;&t;&t;&t;AFAIT, with ARPHRD_ETHER). This seems to be&n;*&t;&t;&t;&t;needed to use socket(AF_X25)...&n;*&t;&t;&t;&t;Now the config file must specify a peer media&n;*&t;&t;&t;&t;address for svc channes over a crossover cable.&n;*&t;&t;&t;&t;Removed hold_timeout from x25_channel_t,&n;*&t;&t;&t;&t;not used.&n;*&t;&t;&t;&t;A little enhancement in the DEBUG processing&n;* 1999/05/22&t;acme&t;&t;go to DISCONNECTED in disconnect_confirm_intr,&n;*&t;&t;&t;&t;instead of chan_disc.&n;* 1999/05/16&t;marcelo&t;&t;fixed timer initialization in SVCs&n;* 1999/01/05&t;acme&t;&t;x25_configure now get (most of) all&n;*&t;&t;&t;&t;parameters...&n;* 1999/01/05&t;acme&t;&t;pktlen now (correctly) uses log2 (value&n;*&t;&t;&t;&t;configured)&n;* 1999/01/03&t;acme&t;&t;judicious use of data types (u8, u16, u32, etc)&n;* 1999/01/03&t;acme&t;&t;cyx_isr: reset dpmbase to acknowledge&n;*&t;&t;&t;&t;indication (interrupt from cyclom 2x)&n;* 1999/01/02&t;acme&t;&t;cyx_isr: first hackings...&n;* 1999/01/0203  acme &t;&t;when initializing an array don&squot;t give less&n;*&t;&t;&t;&t;elements than declared...&n;* &t;&t;&t;&t;example: char send_cmd[6] = &quot;?&bslash;xFF&bslash;x10&quot;;&n;*          &t;&t;&t;you&squot;ll gonna lose a couple hours, &squot;cause your&n;*&t;&t;&t;&t;brain won&squot;t admit that there&squot;s an error in the&n;*&t;&t;&t;&t;above declaration...  the side effect is that&n;*&t;&t;&t;&t;memset is put into the unresolved symbols&n;*&t;&t;&t;&t;instead of using the inline memset functions...&n;* 1999/01/02    acme &t;&t;began chan_connect, chan_send, x25_send&n;* 1998/12/31&t;acme&t;&t;x25_configure&n;*&t;&t;&t;&t;this code can be compiled as non module&n;* 1998/12/27&t;acme&t;&t;code cleanup&n;*&t;&t;&t;&t;IPX code wiped out! let&squot;s decrease code&n;*&t;&t;&t;&t;complexity for now, remember: I&squot;m learning! :)&n;*                               bps_to_speed_code OK&n;* 1998/12/26&t;acme&t;&t;Minimal debug code cleanup&n;* 1998/08/08&t;acme&t;&t;Initial version.&n;*/
+multiline_comment|/*&n;* cycx_x25.c&t;Cyclom 2X WAN Link Driver.  X.25 module.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998-2000 Arnaldo Carvalho de Melo&n;*&n;* Based on sdla_x25.c by Gene Kozin &lt;genek@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 2000/01/08&t;acme&t;&t;cleanup&n;* 1999/10/27&t;acme&t;&t;use ARPHRD_HWX25 so that the X.25 stack know&n;*&t;&t;&t;&t;that we have a X.25 stack implemented in&n;*&t;&t;&t;&t;firmware onboard&n;* 1999/10/18&t;acme&t;&t;support for X.25 sockets in if_send,&n;*&t;&t;&t;&t;beware: socket(AF_X25...) IS WORK IN PROGRESS,&n;*&t;&t;&t;&t;TCP/IP over X.25 via wanrouter not affected,&n;*&t;&t;&t;&t;working.&n;* 1999/10/09&t;acme&t;&t;chan_disc renamed to chan_disconnect,&n;* &t;&t;&t;&t;began adding support for X.25 sockets:&n;* &t;&t;&t;&t;conf-&gt;protocol in new_if&n;* 1999/10/05&t;acme&t;&t;fixed return E... to return -E...&n;* 1999/08/10&t;acme&t;&t;serialized access to the card thru a spinlock&n;*&t;&t;&t;&t;in x25_exec&n;* 1999/08/09&t;acme&t;&t;removed per channel spinlocks&n;*&t;&t;&t;&t;removed references to enable_tx_int&n;* 1999/05/28&t;acme&t;&t;fixed nibble_to_byte, ackvc now properly treated&n;*&t;&t;&t;&t;if_send simplified&n;* 1999/05/25&t;acme&t;&t;fixed t1, t2, t21 &amp; t23 configuration&n;*&t;&t;&t;&t;use spinlocks instead of cli/sti in some points&n;* 1999/05/24&t;acme&t;&t;finished the x25_get_stat function&n;* 1999/05/23&t;acme&t;&t;dev-&gt;type = ARPHRD_X25 (tcpdump only works,&n;*&t;&t;&t;&t;AFAIT, with ARPHRD_ETHER). This seems to be&n;*&t;&t;&t;&t;needed to use socket(AF_X25)...&n;*&t;&t;&t;&t;Now the config file must specify a peer media&n;*&t;&t;&t;&t;address for svc channels over a crossover cable.&n;*&t;&t;&t;&t;Removed hold_timeout from x25_channel_t,&n;*&t;&t;&t;&t;not used.&n;*&t;&t;&t;&t;A little enhancement in the DEBUG processing&n;* 1999/05/22&t;acme&t;&t;go to DISCONNECTED in disconnect_confirm_intr,&n;*&t;&t;&t;&t;instead of chan_disc.&n;* 1999/05/16&t;marcelo&t;&t;fixed timer initialization in SVCs&n;* 1999/01/05&t;acme&t;&t;x25_configure now get (most of) all&n;*&t;&t;&t;&t;parameters...&n;* 1999/01/05&t;acme&t;&t;pktlen now (correctly) uses log2 (value&n;*&t;&t;&t;&t;configured)&n;* 1999/01/03&t;acme&t;&t;judicious use of data types (u8, u16, u32, etc)&n;* 1999/01/03&t;acme&t;&t;cyx_isr: reset dpmbase to acknowledge&n;*&t;&t;&t;&t;indication (interrupt from cyclom 2x)&n;* 1999/01/02&t;acme&t;&t;cyx_isr: first hackings...&n;* 1999/01/0203  acme &t;&t;when initializing an array don&squot;t give less&n;*&t;&t;&t;&t;elements than declared...&n;* &t;&t;&t;&t;example: char send_cmd[6] = &quot;?&bslash;xFF&bslash;x10&quot;;&n;*          &t;&t;&t;you&squot;ll gonna lose a couple hours, &squot;cause your&n;*&t;&t;&t;&t;brain won&squot;t admit that there&squot;s an error in the&n;*&t;&t;&t;&t;above declaration...  the side effect is that&n;*&t;&t;&t;&t;memset is put into the unresolved symbols&n;*&t;&t;&t;&t;instead of using the inline memset functions...&n;* 1999/01/02    acme &t;&t;began chan_connect, chan_send, x25_send&n;* 1998/12/31&t;acme&t;&t;x25_configure&n;*&t;&t;&t;&t;this code can be compiled as non module&n;* 1998/12/27&t;acme&t;&t;code cleanup&n;*&t;&t;&t;&t;IPX code wiped out! let&squot;s decrease code&n;*&t;&t;&t;&t;complexity for now, remember: I&squot;m learning! :)&n;*                               bps_to_speed_code OK&n;* 1998/12/26&t;acme&t;&t;Minimal debug code cleanup&n;* 1998/08/08&t;acme&t;&t;Initial version.&n;*/
 DECL|macro|CYCLOMX_X25_DEBUG
 mdefine_line|#define CYCLOMX_X25_DEBUG 1
 macro_line|#include &lt;linux/version.h&gt;
@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;&t;/* kmalloc(), kfree() */
 macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router definitions */
 macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
 macro_line|#include &lt;linux/if_arp.h&gt;       /* ARPHRD_HWX25 */
-macro_line|#include &lt;linux/cyclomx.h&gt;&t;/* CYCLOM X common user API definitions */
+macro_line|#include &lt;linux/cyclomx.h&gt;&t;/* Cyclom 2X common user API definitions */
 macro_line|#include &lt;linux/cycx_x25.h&gt;&t;/* X.25 firmware API definitions */
 multiline_comment|/* Defines &amp; Macros */
 DECL|macro|MAX_CMD_RETRY
@@ -18,7 +18,7 @@ mdefine_line|#define MAX_CMD_RETRY&t;5
 DECL|macro|X25_CHAN_MTU
 mdefine_line|#define X25_CHAN_MTU&t;2048&t;/* unfragmented logical channel MTU */
 multiline_comment|/* Data Structures */
-multiline_comment|/* This is an extention of the &squot;struct net_device&squot; we create for each network&n;   interface to keep the rest of X.25 channel-specific data. */
+multiline_comment|/* This is an extension of the &squot;struct net_device&squot; we create for each network&n;   interface to keep the rest of X.25 channel-specific data. */
 DECL|struct|x25_channel
 r_typedef
 r_struct
@@ -631,7 +631,7 @@ DECL|macro|dprintk
 mdefine_line|#define dprintk(format, a...)
 macro_line|#endif
 multiline_comment|/* Public Functions */
-multiline_comment|/* X.25 Protocol Initialization routine.&n; *&n; * This routine is called by the main CYCLOM X module during setup.  At this&n; * point adapter is completely initialized and X.25 firmware is running.&n; *  o read firmware version (to make sure it&squot;s alive)&n; *  o configure adapter&n; *  o initialize protocol-specific fields of the adapter data space.&n; *&n; * Return:&t;0&t;o.k.&n; *&t;&t;&lt; 0&t;failure.  */
+multiline_comment|/* X.25 Protocol Initialization routine.&n; *&n; * This routine is called by the main Cyclom 2X module during setup.  At this&n; * point adapter is completely initialized and X.25 firmware is running.&n; *  o read firmware version (to make sure it&squot;s alive)&n; *  o configure adapter&n; *  o initialize protocol-specific fields of the adapter data space.&n; *&n; * Return:&t;0&t;o.k.&n; *&t;&t;&lt; 0&t;failure.  */
 DECL|function|cyx_init
 r_int
 id|cyx_init
@@ -688,7 +688,7 @@ id|card-&gt;u.x.lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/* Configure adapter. Here we set resonable defaults, then parse&n;&t; * device configuration structure and set configuration options.&n;&t; * Most configuration options are verified and corrected (if&n;&t; * necessary) since we can&squot;t rely on the adapter to do so and don&squot;t&n;&t; * want it to fail either. */
+multiline_comment|/* Configure adapter. Here we set reasonable defaults, then parse&n;&t; * device configuration structure and set configuration options.&n;&t; * Most configuration options are verified and corrected (if&n;&t; * necessary) since we can&squot;t rely on the adapter to do so and don&squot;t&n;&t; * want it to fail either. */
 id|memset
 c_func
 (paren
@@ -1169,7 +1169,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Create new logical channel.&n; * This routine is called by the router when ROUTER_IFNEW IOCTL is being&n; * handled.&n; * o parse media- and hardware-specific configuration&n; * o make sure that a new channel can be created&n; * o allocate resources, if necessary&n; * o prepare network device structure for registaration.&n; *&n; * Return:&t;0&t;o.k.&n; *&t;&t;&lt; 0&t;failure (channel will not be created) */
+multiline_comment|/* Create new logical channel.&n; * This routine is called by the router when ROUTER_IFNEW IOCTL is being&n; * handled.&n; * o parse media- and hardware-specific configuration&n; * o make sure that a new channel can be created&n; * o allocate resources, if necessary&n; * o prepare network device structure for registration.&n; *&n; * Return:&t;0&t;o.k.&n; *&t;&t;&lt; 0&t;failure (channel will not be created) */
 DECL|function|new_if
 r_static
 r_int
@@ -2627,6 +2627,7 @@ c_cond
 id|dev
 op_assign
 id|get_dev_by_lcn
+c_func
 (paren
 id|wandev
 comma
@@ -2659,7 +2660,7 @@ id|lcn
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Receive interrupt handler.&n; * This routine handles fragmented IP packets using M-bit according to the&n; * RFC1356.&n; * o map ligical channel number to network interface.&n; * o allocate socket buffer or append received packet to the existing one.&n; * o if M-bit is reset (i.e. it&squot;s the last packet in a sequence) then &n; *   decapsulate packet and pass socket buffer to the protocol stack.&n; *&n; * Notes:&n; * 1. When allocating a socket buffer, if M-bit is set then more data is&n; *    comming and we have to allocate buffer for the maximum IP packet size&n; *    expected on this channel.&n; * 2. If something goes wrong and X.25 packet has to be dropped (e.g. no&n; *    socket buffers available) the whole packet sequence must be discarded. */
+multiline_comment|/* Receive interrupt handler.&n; * This routine handles fragmented IP packets using M-bit according to the&n; * RFC1356.&n; * o map logical channel number to network interface.&n; * o allocate socket buffer or append received packet to the existing one.&n; * o if M-bit is reset (i.e. it&squot;s the last packet in a sequence) then &n; *   decapsulate packet and pass socket buffer to the protocol stack.&n; *&n; * Notes:&n; * 1. When allocating a socket buffer, if M-bit is set then more data is&n; *    coming and we have to allocate buffer for the maximum IP packet size&n; *    expected on this channel.&n; * 2. If something goes wrong and X.25 packet has to be dropped (e.g. no&n; *    socket buffers available) the whole packet sequence must be discarded. */
 DECL|function|rx_intr
 r_static
 r_void
@@ -3434,7 +3435,7 @@ id|WAN_CONNECTED
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Disonnect confirm interrupt handler. */
+multiline_comment|/* Disconnect confirm interrupt handler. */
 DECL|function|disconnect_confirm_intr
 r_static
 r_void
@@ -3736,7 +3737,7 @@ id|size
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* at most 20 bytes are available... thanx to Daniela :) */
+multiline_comment|/* at most 20 bytes are available... thanks to Daniela :) */
 id|toread
 op_assign
 id|size
@@ -4064,8 +4065,8 @@ id|hex
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* CYCLOM X Firmware-Specific Functions */
-multiline_comment|/* Exec x25 command. */
+multiline_comment|/* Cyclom 2X Firmware-Specific Functions */
+multiline_comment|/* Exec X.25 command. */
 DECL|function|x25_exec
 r_static
 r_int
@@ -4170,7 +4171,7 @@ id|c.buf
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* write x25 data */
+multiline_comment|/* write X.25 data */
 r_if
 c_cond
 (paren
@@ -4468,7 +4469,7 @@ op_star
 id|card
 )paren
 (brace
-multiline_comment|/* the firmware expects 20 in the size field!!!&n;&t;   thanx to Daniela */
+multiline_comment|/* the firmware expects 20 in the size field!!!&n;&t;   thanks to Daniela */
 r_int
 id|err
 op_assign
@@ -5028,7 +5029,7 @@ l_int|1
 op_assign
 l_int|0xCC
 suffix:semicolon
-multiline_comment|/* TCP/IP over X.25, thanx to Daniela :) */
+multiline_comment|/* TCP/IP over X.25, thanks to Daniela :) */
 r_if
 c_cond
 (paren
@@ -5152,7 +5153,7 @@ l_int|7
 op_assign
 l_int|0xCC
 suffix:semicolon
-multiline_comment|/* TCP/IP over X.25, thanx Daniela */
+multiline_comment|/* TCP/IP over X.25, thanks Daniela */
 r_return
 id|x25_exec
 c_func
@@ -5527,6 +5528,7 @@ c_cond
 (paren
 op_logical_neg
 id|strcmp
+c_func
 (paren
 (paren
 (paren
@@ -5728,37 +5730,31 @@ id|chan
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
-r_switch
+r_if
 c_cond
 (paren
 id|chan-&gt;state
-)paren
-(brace
-r_case
+op_eq
 id|WAN_CONNECTED
-suffix:colon
+)paren
 id|chan_disconnect
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
+r_else
 id|printk
+c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: chan_timer for svc (%s) not &quot;
-l_string|&quot;connected!&bslash;n&quot;
+l_string|&quot;%s: chan_timer for svc (%s) not connected!&bslash;n&quot;
 comma
 id|chan-&gt;card-&gt;devname
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Set logical channel state. */
 DECL|function|set_chan_state
@@ -5791,6 +5787,12 @@ id|u32
 id|flags
 op_assign
 l_int|0
+suffix:semicolon
+r_char
+op_star
+id|string_state
+op_assign
+l_int|NULL
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -5834,16 +5836,9 @@ id|state
 r_case
 id|WAN_CONNECTED
 suffix:colon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;%s: interface %s &quot;
-l_string|&quot;connected!&bslash;n&quot;
-comma
-id|card-&gt;devname
-comma
-id|dev-&gt;name
-)paren
+id|string_state
+op_assign
+l_string|&quot;connected!&quot;
 suffix:semicolon
 op_star
 (paren
@@ -5888,48 +5883,27 @@ suffix:semicolon
 r_case
 id|WAN_CONNECTING
 suffix:colon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;%s: interface %s &quot;
-l_string|&quot;connecting...&bslash;n&quot;
-comma
-id|card-&gt;devname
-comma
-id|dev-&gt;name
-)paren
+id|string_state
+op_assign
+l_string|&quot;connecting...&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|WAN_DISCONNECTING
 suffix:colon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;%s: interface %s &quot;
-l_string|&quot;disconnecting...&bslash;n&quot;
-comma
-id|card-&gt;devname
-comma
-id|dev-&gt;name
-)paren
+id|string_state
+op_assign
+l_string|&quot;disconnecting...&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|WAN_DISCONNECTED
 suffix:colon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;%s: interface %s &quot;
-l_string|&quot;disconnected!&bslash;n&quot;
-comma
-id|card-&gt;devname
-comma
-id|dev-&gt;name
-)paren
+id|string_state
+op_assign
+l_string|&quot;disconnected!&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -5974,6 +5948,18 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot;%s: interface %s %s&bslash;n&quot;
+comma
+id|card-&gt;devname
+comma
+id|dev-&gt;name
+comma
+id|string_state
+)paren
+suffix:semicolon
 id|chan-&gt;state
 op_assign
 id|state
@@ -6447,11 +6433,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|chan-&gt;svc
 )paren
-r_return
-suffix:semicolon
+(brace
 id|del_timer
 c_func
 (paren
@@ -6475,6 +6459,7 @@ id|chan-&gt;timer
 )paren
 suffix:semicolon
 )brace
+)brace
 macro_line|#ifdef CYCLOMX_X25_DEBUG
 DECL|function|x25_dump_config
 r_static
@@ -6488,18 +6473,21 @@ id|conf
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_INFO
-l_string|&quot;x25 configuration&bslash;n&quot;
+l_string|&quot;X.25 configuration&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;-----------------&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;link number=%d&bslash;n&quot;
@@ -6508,6 +6496,7 @@ id|conf-&gt;link
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;line speed=%d&bslash;n&quot;
@@ -6516,6 +6505,7 @@ id|conf-&gt;speed
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;clock=%sternal&bslash;n&quot;
@@ -6531,6 +6521,7 @@ l_string|&quot;In&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;# level 2 retransm.=%d&bslash;n&quot;
@@ -6539,6 +6530,7 @@ id|conf-&gt;n2
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;level 2 window=%d&bslash;n&quot;
@@ -6547,6 +6539,7 @@ id|conf-&gt;n2win
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;level 3 window=%d&bslash;n&quot;
@@ -6555,6 +6548,7 @@ id|conf-&gt;n3win
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;# logical channels=%d&bslash;n&quot;
@@ -6563,6 +6557,7 @@ id|conf-&gt;nvc
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;level 3 pkt len=%d&bslash;n&quot;
@@ -6571,6 +6566,7 @@ id|conf-&gt;pktlen
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;my address=%d&bslash;n&quot;
@@ -6579,6 +6575,7 @@ id|conf-&gt;locaddr
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;remote address=%d&bslash;n&quot;
@@ -6587,6 +6584,7 @@ id|conf-&gt;remaddr
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;t1=%d seconds&bslash;n&quot;
@@ -6595,6 +6593,7 @@ id|conf-&gt;t1
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;t2=%d seconds&bslash;n&quot;
@@ -6603,6 +6602,7 @@ id|conf-&gt;t2
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;t21=%d seconds&bslash;n&quot;
@@ -6611,6 +6611,7 @@ id|conf-&gt;t21
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;# PVCs=%d&bslash;n&quot;
@@ -6619,6 +6620,7 @@ id|conf-&gt;npvc
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;t23=%d seconds&bslash;n&quot;
@@ -6627,6 +6629,7 @@ id|conf-&gt;t23
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;flags=0x%x&bslash;n&quot;
@@ -6647,18 +6650,21 @@ id|stats
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_INFO
-l_string|&quot;x25 statistics&bslash;n&quot;
+l_string|&quot;X.25 statistics&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;--------------&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;rx_crc_errors=%d&bslash;n&quot;
@@ -6667,6 +6673,7 @@ id|stats-&gt;rx_crc_errors
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;rx_over_errors=%d&bslash;n&quot;
@@ -6675,6 +6682,7 @@ id|stats-&gt;rx_over_errors
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;n2_tx_frames=%d&bslash;n&quot;
@@ -6683,6 +6691,7 @@ id|stats-&gt;n2_tx_frames
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;n2_rx_frames=%d&bslash;n&quot;
@@ -6691,6 +6700,7 @@ id|stats-&gt;n2_rx_frames
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;tx_timeouts=%d&bslash;n&quot;
@@ -6699,6 +6709,7 @@ id|stats-&gt;tx_timeouts
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;rx_timeouts=%d&bslash;n&quot;
@@ -6707,6 +6718,7 @@ id|stats-&gt;rx_timeouts
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;n3_tx_packets=%d&bslash;n&quot;
@@ -6715,6 +6727,7 @@ id|stats-&gt;n3_tx_packets
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;n3_rx_packets=%d&bslash;n&quot;
@@ -6723,6 +6736,7 @@ id|stats-&gt;n3_rx_packets
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;tx_aborts=%d&bslash;n&quot;
@@ -6731,6 +6745,7 @@ id|stats-&gt;tx_aborts
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;rx_aborts=%d&bslash;n&quot;
@@ -6758,18 +6773,21 @@ op_assign
 id|wandev-&gt;dev
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
-l_string|&quot;x25 dev states&bslash;n&quot;
+l_string|&quot;X.25 dev states&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;name: addr:           tbusy:  protocol:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;---------------------------------------&bslash;n&quot;
@@ -6793,6 +6811,7 @@ op_assign
 id|dev-&gt;priv
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;%-5.5s %-15.15s   %ld     ETH_P_%s&bslash;n&quot;

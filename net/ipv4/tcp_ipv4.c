@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.193 2000/01/06 00:42:01 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.194 2000/01/09 02:19:41 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Andi Kleen&t;&t;:&t;Fix new listen.&n; *&t;Andi Kleen&t;&t;:&t;Fix accept error reporting.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1720,22 +1720,12 @@ id|sk-&gt;pprev
 op_assign
 id|skp
 suffix:semicolon
-id|sk-&gt;prot-&gt;inuse
-op_increment
-suffix:semicolon
-r_if
-c_cond
+id|sock_prot_inc_use
+c_func
 (paren
-id|sk-&gt;prot-&gt;highestinuse
-OL
-id|sk-&gt;prot-&gt;inuse
+id|sk-&gt;prot
 )paren
-(brace
-id|sk-&gt;prot-&gt;highestinuse
-op_assign
-id|sk-&gt;prot-&gt;inuse
 suffix:semicolon
-)brace
 id|write_unlock
 c_func
 (paren
@@ -1872,8 +1862,11 @@ id|sk-&gt;pprev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;prot-&gt;inuse
-op_decrement
+id|sock_prot_dec_use
+c_func
+(paren
+id|sk-&gt;prot
+)paren
 suffix:semicolon
 )brace
 id|write_unlock_bh
@@ -2766,22 +2759,12 @@ id|sk-&gt;pprev
 op_assign
 id|skp
 suffix:semicolon
-id|sk-&gt;prot-&gt;inuse
-op_increment
-suffix:semicolon
-r_if
-c_cond
+id|sock_prot_inc_use
+c_func
 (paren
-id|sk-&gt;prot-&gt;highestinuse
-OL
-id|sk-&gt;prot-&gt;inuse
+id|sk-&gt;prot
 )paren
-(brace
-id|sk-&gt;prot-&gt;highestinuse
-op_assign
-id|sk-&gt;prot-&gt;inuse
 suffix:semicolon
-)brace
 id|write_unlock_bh
 c_func
 (paren
@@ -3899,8 +3882,11 @@ op_plus
 id|ICMP_MIN_LENGTH
 )paren
 (brace
-id|icmp_statistics.IcmpInErrors
-op_increment
+id|ICMP_INC_STATS_BH
+c_func
+(paren
+id|IcmpInErrors
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3965,8 +3951,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|icmp_statistics.IcmpInErrors
-op_increment
+id|ICMP_INC_STATS_BH
+c_func
+(paren
+id|IcmpInErrors
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -4007,8 +3996,11 @@ id|sk-&gt;lock.users
 op_ne
 l_int|0
 )paren
-id|net_statistics.LockDroppedIcmps
-op_increment
+id|NET_INC_STATS_BH
+c_func
+(paren
+id|LockDroppedIcmps
+)paren
 suffix:semicolon
 id|tp
 op_assign
@@ -4042,8 +4034,11 @@ id|tp-&gt;snd_nxt
 )paren
 )paren
 (brace
-id|net_statistics.OutOfWindowIcmps
-op_increment
+id|NET_INC_STATS
+c_func
+(paren
+id|OutOfWindowIcmps
+)paren
 suffix:semicolon
 r_goto
 id|out
@@ -4305,8 +4300,11 @@ id|tp-&gt;snd_nxt
 )paren
 )paren
 (brace
-id|net_statistics.OutOfWindowIcmps
-op_increment
+id|NET_INC_STATS
+c_func
+(paren
+id|OutOfWindowIcmps
+)paren
 suffix:semicolon
 r_goto
 id|out
@@ -4323,8 +4321,11 @@ op_ne
 id|req-&gt;snt_isn
 )paren
 (brace
-id|net_statistics.OutOfWindowIcmps
-op_increment
+id|NET_INC_STATS
+c_func
+(paren
+id|OutOfWindowIcmps
+)paren
 suffix:semicolon
 r_goto
 id|out
@@ -4399,8 +4400,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|tcp_statistics.TcpAttemptFails
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpAttemptFails
+)paren
 suffix:semicolon
 id|sk-&gt;err
 op_assign
@@ -4770,11 +4774,17 @@ r_sizeof
 id|rth
 )paren
 suffix:semicolon
-id|tcp_statistics.TcpOutSegs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpOutSegs
+)paren
 suffix:semicolon
-id|tcp_statistics.TcpOutRsts
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpOutRsts
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* The code following below sending ACKs in SYN-RECV and TIME-WAIT states&n;   outside socket context is ugly, certainly. What can I do?&n; */
@@ -5056,8 +5066,11 @@ dot
 id|iov_len
 )paren
 suffix:semicolon
-id|tcp_statistics.TcpOutSegs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpOutSegs
+)paren
 suffix:semicolon
 )brace
 DECL|function|tcp_v4_timewait_ack
@@ -5222,8 +5235,11 @@ id|sk-&gt;bound_dev_if
 )paren
 )paren
 (brace
-id|ip_statistics.IpOutNoRoutes
-op_increment
+id|IP_INC_STATS_BH
+c_func
+(paren
+id|IpOutNoRoutes
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -5246,8 +5262,11 @@ c_func
 id|rt
 )paren
 suffix:semicolon
-id|ip_statistics.IpOutNoRoutes
-op_increment
+id|IP_INC_STATS_BH
+c_func
+(paren
+id|IpOutNoRoutes
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -5942,8 +5961,11 @@ op_decrement
 suffix:semicolon
 id|drop
 suffix:colon
-id|tcp_statistics.TcpAttemptFails
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpAttemptFails
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -6782,8 +6804,11 @@ l_int|0
 suffix:semicolon
 id|csum_err
 suffix:colon
-id|tcp_statistics.TcpInErrs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpInErrs
+)paren
 suffix:semicolon
 r_goto
 id|discard
@@ -6844,8 +6869,11 @@ id|skb-&gt;data
 )paren
 suffix:semicolon
 multiline_comment|/* Count it even if it&squot;s bad */
-id|tcp_statistics.TcpInSegs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpInSegs
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7053,8 +7081,11 @@ id|skb
 (brace
 id|bad_packet
 suffix:colon
-id|tcp_statistics.TcpInErrs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpInErrs
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -7101,8 +7132,11 @@ id|skb
 )paren
 )paren
 (brace
-id|tcp_statistics.TcpInErrs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpInErrs
+)paren
 suffix:semicolon
 r_goto
 id|discard_and_relse
@@ -9077,11 +9111,6 @@ multiline_comment|/* retransmits */
 l_string|&quot;TCP&quot;
 comma
 multiline_comment|/* name */
-l_int|0
-comma
-multiline_comment|/* inuse */
-l_int|0
-multiline_comment|/* highestinuse */
 )brace
 suffix:semicolon
 DECL|function|tcp_v4_init

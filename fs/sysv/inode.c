@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#if 0
@@ -5331,10 +5332,16 @@ id|mode
 suffix:semicolon
 id|inode-&gt;i_uid
 op_assign
+(paren
+id|uid_t
+)paren
 id|raw_inode-&gt;i_uid
 suffix:semicolon
 id|inode-&gt;i_gid
 op_assign
+(paren
+id|gid_t
+)paren
 id|raw_inode-&gt;i_gid
 suffix:semicolon
 id|inode-&gt;i_nlink
@@ -5806,11 +5813,19 @@ id|mode
 suffix:semicolon
 id|raw_inode-&gt;i_uid
 op_assign
+id|fs_high2lowuid
+c_func
+(paren
 id|inode-&gt;i_uid
+)paren
 suffix:semicolon
 id|raw_inode-&gt;i_gid
 op_assign
+id|fs_high2lowgid
+c_func
+(paren
 id|inode-&gt;i_gid
+)paren
 suffix:semicolon
 id|raw_inode-&gt;i_nlink
 op_assign

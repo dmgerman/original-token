@@ -89,12 +89,12 @@ id|nlink
 suffix:semicolon
 multiline_comment|/* How many hard links point to this entry */
 DECL|member|uid
-id|uid_t
+id|__kernel_uid_t
 id|uid
 suffix:semicolon
 multiline_comment|/* Owner user id */
 DECL|member|gid
-id|gid_t
+id|__kernel_gid_t
 id|gid
 suffix:semicolon
 multiline_comment|/* Group id */
@@ -249,11 +249,11 @@ id|nlink_t
 id|st_nlink
 suffix:semicolon
 DECL|member|st_uid
-id|uid_t
+id|__kernel_uid_t
 id|st_uid
 suffix:semicolon
 DECL|member|st_gid
-id|gid_t
+id|__kernel_gid_t
 id|st_gid
 suffix:semicolon
 DECL|member|st_rdev
@@ -306,15 +306,13 @@ r_int
 r_int
 id|__unused3
 suffix:semicolon
-DECL|member|__unused4
-r_int
-r_int
-id|__unused4
+DECL|member|st_uid32
+id|uid_t
+id|st_uid32
 suffix:semicolon
-DECL|member|__unused5
-r_int
-r_int
-id|__unused5
+DECL|member|st_gid32
+id|gid_t
+id|st_gid32
 suffix:semicolon
 DECL|member|stat
 )brace

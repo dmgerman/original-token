@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.9 1999/08/23 06:30:34 davem Exp $&n; *&n; *  Missing: IPv6 support. &n; */
+multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.10 2000/01/09 02:19:35 davem Exp $&n; *&n; *  Missing: IPv6 support. &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SYN_COOKIES) 
 macro_line|#include &lt;linux/tcp.h&gt;
@@ -133,8 +133,11 @@ id|mssind
 op_plus
 l_int|1
 suffix:semicolon
-id|net_statistics.SyncookiesSent
-op_increment
+id|NET_INC_STATS_BH
+c_func
+(paren
+id|SyncookiesSent
+)paren
 suffix:semicolon
 r_return
 id|secure_tcp_syn_cookie
@@ -455,15 +458,21 @@ op_eq
 l_int|0
 )paren
 (brace
-id|net_statistics.SyncookiesFailed
-op_increment
+id|NET_INC_STATS_BH
+c_func
+(paren
+id|SyncookiesFailed
+)paren
 suffix:semicolon
 r_return
 id|sk
 suffix:semicolon
 )brace
-id|net_statistics.SyncookiesRecv
-op_increment
+id|NET_INC_STATS_BH
+c_func
+(paren
+id|SyncookiesRecv
+)paren
 suffix:semicolon
 id|req
 op_assign

@@ -1206,6 +1206,8 @@ suffix:semicolon
 id|dev-&gt;hdr_type
 op_assign
 id|hdr
+op_amp
+l_int|0x7f
 suffix:semicolon
 id|pci_setup_device
 c_func

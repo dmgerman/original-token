@@ -59,7 +59,7 @@ DECL|macro|DN_DEV_S_OF
 mdefine_line|#define DN_DEV_S_OF  6 /* Off                      */
 DECL|macro|DN_DEV_S_HA
 mdefine_line|#define DN_DEV_S_HA  7 /* Halt                     */
-multiline_comment|/*&n; * The dn_dev_parms structure contains the set of parameters&n; * for each device (hence inclusion in the dn_dev structure)&n; * and an array is used to store the default types of supported&n; * device (in dn_dev.c).&n; *&n; * The type field matches the ARPHRD_ constants and is used in&n; * searching the list for supported devices when new devices&n; * come up.&n; *&n; * The mode field is used to find out if a device is broadcast,&n; * multipoint, or pointopoint. Please note that DECnet thinks&n; * different ways about devices to the rest of the kernel&n; * so the normal IFF_xxx flags are invalid here. For devices&n; * which can be any combination of the previously mentioned&n; * attributes, you can set this on a per device basis by&n; * installing an up() routine.&n; *&n; * The device state field, defines the initial state in which the&n; * device will come up. In the dn_dev structure, it is the actual&n; * state.&n; *&n; * The cost field is used in the routing algorithm.&n; *&n; * Timers:&n; * t1 - Routing timer, send routing messages when it expires&n; * t2 - Rate limit timer, min time between routing and hello messages&n; * t3 - Hello timer, send hello messages when it expires&n; *&n; * Callbacks:&n; * up() - Called to initialize device, return value can veto use of&n; *        device with DECnet.&n; * down() - Called to turn device off when it goes down&n; * timer1() - Called when timer 1 goes off&n; * timer3() - Called when timer 3 goes off&n; * &n; * sysctl - Hook for sysctl things&n; *&n; */
+multiline_comment|/*&n; * The dn_dev_parms structure contains the set of parameters&n; * for each device (hence inclusion in the dn_dev structure)&n; * and an array is used to store the default types of supported&n; * device (in dn_dev.c).&n; *&n; * The type field matches the ARPHRD_ constants and is used in&n; * searching the list for supported devices when new devices&n; * come up.&n; *&n; * The mode field is used to find out if a device is broadcast,&n; * multipoint, or pointopoint. Please note that DECnet thinks&n; * different ways about devices to the rest of the kernel&n; * so the normal IFF_xxx flags are invalid here. For devices&n; * which can be any combination of the previously mentioned&n; * attributes, you can set this on a per device basis by&n; * installing an up() routine.&n; *&n; * The device state field, defines the initial state in which the&n; * device will come up. In the dn_dev structure, it is the actual&n; * state.&n; *&n; * Things have changed here. I&squot;ve killed timer1 since its a user space&n; * issue for a user space routing deamon to sort out. The kernel does&n; * not need to be bothered with it.&n; *&n; * Timers:&n; * t2 - Rate limit timer, min time between routing and hello messages&n; * t3 - Hello timer, send hello messages when it expires&n; *&n; * Callbacks:&n; * up() - Called to initialize device, return value can veto use of&n; *        device with DECnet.&n; * down() - Called to turn device off when it goes down&n; * timer3() - Called when timer 3 goes off&n; * &n; * sysctl - Hook for sysctl things&n; *&n; */
 DECL|struct|dn_dev_parms
 r_struct
 id|dn_dev_parms
@@ -68,12 +68,12 @@ DECL|member|type
 r_int
 id|type
 suffix:semicolon
-multiline_comment|/* ARPHRD_xxx                     */
+multiline_comment|/* ARPHRD_xxx                         */
 DECL|member|mode
 r_int
 id|mode
 suffix:semicolon
-multiline_comment|/* Broadcast, Unicast, Mulitpoint */
+multiline_comment|/* Broadcast, Unicast, Mulitpoint     */
 DECL|macro|DN_DEV_BCAST
 mdefine_line|#define DN_DEV_BCAST  1
 DECL|macro|DN_DEV_UCAST
@@ -84,52 +84,46 @@ DECL|member|state
 r_int
 id|state
 suffix:semicolon
-multiline_comment|/* Initial state                  */
-DECL|member|cost
+multiline_comment|/* Initial state                      */
+DECL|member|forwarding
 r_int
-id|cost
+id|forwarding
 suffix:semicolon
-multiline_comment|/* Default cost of device         */
+multiline_comment|/* 0=EndNode, 1=L1Router, 2=L2Router  */
 DECL|member|blksize
 r_int
 r_int
 id|blksize
 suffix:semicolon
-multiline_comment|/* Block Size                     */
-DECL|member|t1
-r_int
-r_int
-id|t1
-suffix:semicolon
-multiline_comment|/* Default value of t1            */
+multiline_comment|/* Block Size                         */
 DECL|member|t2
 r_int
 r_int
 id|t2
 suffix:semicolon
-multiline_comment|/* Default value of t2            */
+multiline_comment|/* Default value of t2                */
 DECL|member|t3
 r_int
 r_int
 id|t3
 suffix:semicolon
-multiline_comment|/* Default value of t3            */
+multiline_comment|/* Default value of t3                */
 DECL|member|priority
 r_int
 id|priority
 suffix:semicolon
-multiline_comment|/* Priority to be a router        */
+multiline_comment|/* Priority to be a router            */
 DECL|member|name
 r_char
 op_star
 id|name
 suffix:semicolon
-multiline_comment|/* Name for sysctl                */
+multiline_comment|/* Name for sysctl                    */
 DECL|member|ctl_name
 r_int
 id|ctl_name
 suffix:semicolon
-multiline_comment|/* Index for sysctl               */
+multiline_comment|/* Index for sysctl                   */
 DECL|member|up
 r_int
 (paren
@@ -147,18 +141,6 @@ r_void
 (paren
 op_star
 id|down
-)paren
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-suffix:semicolon
-DECL|member|timer1
-r_void
-(paren
-op_star
-id|timer1
 )paren
 (paren
 r_struct
@@ -216,12 +198,9 @@ id|timer_list
 id|timer
 suffix:semicolon
 DECL|member|t3
-DECL|member|t1
 r_int
 r_int
 id|t3
-comma
-id|t1
 suffix:semicolon
 DECL|member|neigh_parms
 r_struct

@@ -196,5 +196,21 @@ r_int
 id|flags
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|udp_mib
+id|udp_statistics
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
+suffix:semicolon
+DECL|macro|UDP_INC_STATS
+mdefine_line|#define UDP_INC_STATS(field)&t;&t;SNMP_INC_STATS(udp_statistics, field)
+DECL|macro|UDP_INC_STATS_BH
+mdefine_line|#define UDP_INC_STATS_BH(field)&t;&t;SNMP_INC_STATS_BH(udp_statistics, field)
+DECL|macro|UDP_INC_STATS_USER
+mdefine_line|#define UDP_INC_STATS_USER(field) &t;SNMP_INC_STATS_USER(udp_statistics, field)
 macro_line|#endif&t;/* _UDP_H */
 eof

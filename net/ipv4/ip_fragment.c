@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.45 1999/08/30 10:17:10 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.46 2000/01/09 02:19:36 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -682,11 +682,17 @@ id|out
 suffix:semicolon
 )brace
 multiline_comment|/* Send an ICMP &quot;Fragment Reassembly Timeout&quot; message. */
-id|ip_statistics.IpReasmTimeout
-op_increment
+id|IP_INC_STATS_BH
+c_func
+(paren
+id|IpReasmTimeout
+)paren
 suffix:semicolon
-id|ip_statistics.IpReasmFails
-op_increment
+id|IP_INC_STATS_BH
+c_func
+(paren
+id|IpReasmFails
+)paren
 suffix:semicolon
 id|icmp_send
 c_func
@@ -1363,8 +1369,11 @@ c_func
 id|count
 )paren
 suffix:semicolon
-id|ip_statistics.IpReasmOKs
-op_increment
+id|IP_INC_STATS_BH
+c_func
+(paren
+id|IpReasmOKs
+)paren
 suffix:semicolon
 r_return
 id|skb
@@ -1434,8 +1443,11 @@ id|qp-&gt;iph-&gt;saddr
 suffix:semicolon
 id|out_fail
 suffix:colon
-id|ip_statistics.IpReasmFails
-op_increment
+id|IP_INC_STATS_BH
+c_func
+(paren
+id|IpReasmFails
+)paren
 suffix:semicolon
 r_return
 l_int|NULL
@@ -1498,8 +1510,11 @@ id|ihl
 comma
 id|end
 suffix:semicolon
-id|ip_statistics.IpReasmReqds
-op_increment
+id|IP_INC_STATS_BH
+c_func
+(paren
+id|IpReasmReqds
+)paren
 suffix:semicolon
 id|spin_lock
 c_func
@@ -2072,8 +2087,11 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|ip_statistics.IpReasmFails
-op_increment
+id|IP_INC_STATS_BH
+c_func
+(paren
+id|IpReasmFails
+)paren
 suffix:semicolon
 r_if
 c_cond

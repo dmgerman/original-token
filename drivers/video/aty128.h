@@ -1,45 +1,23 @@
-multiline_comment|/*  $Id: aty128.h,v 1.1 1999/10/12 11:00:40 geert Exp $&n; *  linux/drivers/video/aty128.h&n; *  Register definitions for ATI Rage128 boards&n; *&n; *  Anthony Tong &lt;atong@uiuc.edu&gt;, 1999&n; */
+multiline_comment|/*  $Id: aty128.h,v 1.1 1999/10/12 11:00:40 geert Exp $&n; *  linux/drivers/video/aty128.h&n; *  Register definitions for ATI Rage128 boards&n; *&n; *  Anthony Tong &lt;atong@uiuc.edu&gt;, 1999&n; *  Brad Douglas &lt;brad@neruo.com&gt;, 2000&n; */
 macro_line|#ifndef REG_RAGE128_H
 DECL|macro|REG_RAGE128_H
 mdefine_line|#define REG_RAGE128_H
-DECL|macro|MM_INDEX
-mdefine_line|#define MM_INDEX&t;&t;&t;&t;0x0000
-DECL|macro|MM_DATA
-mdefine_line|#define MM_DATA&t;&t;&t;&t;&t;0x0004
 DECL|macro|CLOCK_CNTL_INDEX
 mdefine_line|#define CLOCK_CNTL_INDEX&t;&t;&t;0x0008
 DECL|macro|CLOCK_CNTL_DATA
 mdefine_line|#define CLOCK_CNTL_DATA&t;&t;&t;&t;0x000c
 DECL|macro|BIOS_0_SCRATCH
 mdefine_line|#define BIOS_0_SCRATCH&t;&t;&t;&t;0x0010
-DECL|macro|BIOS_1_SCRATCH
-mdefine_line|#define BIOS_1_SCRATCH&t;&t;&t;&t;0x0014
-DECL|macro|BIOS_2_SCRATCH
-mdefine_line|#define BIOS_2_SCRATCH&t;&t;&t;&t;0x0018
-DECL|macro|BIOS_3_SCRATCH
-mdefine_line|#define BIOS_3_SCRATCH&t;&t;&t;&t;0x001c
 DECL|macro|BUS_CNTL
 mdefine_line|#define BUS_CNTL&t;&t;&t;&t;0x0030
-DECL|macro|BUS_CNTL1
-mdefine_line|#define BUS_CNTL1&t;&t;&t;&t;0x0034
-DECL|macro|MEM_VGA_WP_SEL
-mdefine_line|#define MEM_VGA_WP_SEL&t;&t;&t;&t;0x0038
-DECL|macro|MEM_VGA_RP_SEL
-mdefine_line|#define MEM_VGA_RP_SEL&t;&t;&t;&t;0x003c
 DECL|macro|GEN_INT_CNTL
 mdefine_line|#define GEN_INT_CNTL&t;&t;&t;&t;0x0040
-DECL|macro|GEN_INT_STATUS
-mdefine_line|#define GEN_INT_STATUS&t;&t;&t;&t;0x0044
 DECL|macro|CRTC_GEN_CNTL
 mdefine_line|#define CRTC_GEN_CNTL&t;&t;&t;&t;0x0050
 DECL|macro|CRTC_EXT_CNTL
 mdefine_line|#define CRTC_EXT_CNTL&t;&t;&t;&t;0x0054
 DECL|macro|DAC_CNTL
 mdefine_line|#define DAC_CNTL&t;&t;&t;&t;0x0058
-DECL|macro|CRTC_STATUS
-mdefine_line|#define CRTC_STATUS&t;&t;&t;&t;0x005c
-DECL|macro|GPIO_MONID
-mdefine_line|#define GPIO_MONID&t;&t;&t;&t;0x0068
 DECL|macro|I2C_CNTL_1
 mdefine_line|#define I2C_CNTL_1&t;&t;&t;&t;0x0094
 DECL|macro|PALETTE_INDEX
@@ -48,54 +26,12 @@ DECL|macro|PALETTE_DATA
 mdefine_line|#define PALETTE_DATA&t;&t;&t;&t;0x00b4
 DECL|macro|CONFIG_CNTL
 mdefine_line|#define CONFIG_CNTL&t;&t;&t;&t;0x00e0
-DECL|macro|CONFIG_XSTRAP
-mdefine_line|#define CONFIG_XSTRAP&t;&t;&t;&t;0x00e4
-DECL|macro|CONFIG_BONDS
-mdefine_line|#define CONFIG_BONDS&t;&t;&t;&t;0x00e8
 DECL|macro|GEN_RESET_CNTL
 mdefine_line|#define GEN_RESET_CNTL&t;&t;&t;&t;0x00f0
-DECL|macro|GEN_STATUS
-mdefine_line|#define GEN_STATUS&t;&t;&t;&t;0x00f4
 DECL|macro|CONFIG_MEMSIZE
 mdefine_line|#define CONFIG_MEMSIZE&t;&t;&t;&t;0x00f8
-DECL|macro|CONFIG_APER_0_BASE
-mdefine_line|#define CONFIG_APER_0_BASE&t;&t;&t;0x0100
-DECL|macro|CONFIG_APER_1_BASE
-mdefine_line|#define CONFIG_APER_1_BASE&t;&t;&t;0x0104
-DECL|macro|CONFIG_APER_SIZE
-mdefine_line|#define CONFIG_APER_SIZE&t;&t;&t;0x0108
-DECL|macro|CONFIG_REG_1_BASE
-mdefine_line|#define CONFIG_REG_1_BASE&t;&t;&t;0x010c
-DECL|macro|CONFIG_REG_APER_SIZE
-mdefine_line|#define CONFIG_REG_APER_SIZE&t;&t;&t;0x0110
-DECL|macro|CONFIG_MEMSIZE_EMBEDDED
-mdefine_line|#define CONFIG_MEMSIZE_EMBEDDED&t;&t;&t;0x0114
-DECL|macro|TEST_DEBUG_CNTL
-mdefine_line|#define TEST_DEBUG_CNTL&t;&t;&t;&t;0x0120
-DECL|macro|TEST_DEBUG_MUX
-mdefine_line|#define TEST_DEBUG_MUX&t;&t;&t;&t;0x0124
-DECL|macro|HW_DEBUG
-mdefine_line|#define HW_DEBUG&t;&t;&t;&t;0x0128
-DECL|macro|TEST_DEBUG_OUT
-mdefine_line|#define TEST_DEBUG_OUT&t;&t;&t;&t;0x012c
-DECL|macro|HOST_PATH_CNTL
-mdefine_line|#define HOST_PATH_CNTL&t;&t;&t;&t;0x0130
-DECL|macro|SW_SEMAPHORE
-mdefine_line|#define SW_SEMAPHORE&t;&t;&t;&t;0x013c
 DECL|macro|MEM_CNTL
 mdefine_line|#define MEM_CNTL&t;&t;&t;&t;0x0140
-DECL|macro|EXT_MEM_CNTL
-mdefine_line|#define EXT_MEM_CNTL&t;&t;&t;&t;0x0144
-DECL|macro|MEM_ADDR_CONFIG
-mdefine_line|#define MEM_ADDR_CONFIG&t;&t;&t;&t;0x0148
-DECL|macro|MEM_INTF_CNTL
-mdefine_line|#define MEM_INTF_CNTL&t;&t;&t;&t;0x014c
-DECL|macro|MEM_STR_CNTL
-mdefine_line|#define MEM_STR_CNTL&t;&t;&t;&t;0x0150
-DECL|macro|MEM_INIT_LAT_TIMER
-mdefine_line|#define MEM_INIT_LAT_TIMER&t;&t;&t;0x0154
-DECL|macro|MEM_SDRAM_MODE_REG
-mdefine_line|#define MEM_SDRAM_MODE_REG&t;&t;&t;0x0158
 DECL|macro|AGP_BASE
 mdefine_line|#define AGP_BASE&t;&t;&t;&t;0x0170
 DECL|macro|AGP_CNTL
@@ -108,8 +44,6 @@ DECL|macro|PC_NGUI_MODE
 mdefine_line|#define PC_NGUI_MODE&t;&t;&t;&t;0x0180
 DECL|macro|PC_NGUI_CTLSTAT
 mdefine_line|#define PC_NGUI_CTLSTAT&t;&t;&t;&t;0x0184
-DECL|macro|VIDEOMUX_CNTL
-mdefine_line|#define VIDEOMUX_CNTL&t;&t;&t;&t;0x0190
 DECL|macro|MPP_TB_CONFIG
 mdefine_line|#define MPP_TB_CONFIG&t;&t;&t;&t;0x01C0
 DECL|macro|MPP_GP_CONFIG
@@ -124,14 +58,6 @@ DECL|macro|CRTC_V_TOTAL_DISP
 mdefine_line|#define CRTC_V_TOTAL_DISP&t;&t;&t;0x0208
 DECL|macro|CRTC_V_SYNC_STRT_WID
 mdefine_line|#define CRTC_V_SYNC_STRT_WID&t;&t;&t;0x020c
-DECL|macro|CRTC_VLINE_CRNT_VLINE
-mdefine_line|#define CRTC_VLINE_CRNT_VLINE&t;&t;&t;0x0210
-DECL|macro|CRTC_CRNT_FRAME
-mdefine_line|#define CRTC_CRNT_FRAME&t;&t;&t;&t;0x0214
-DECL|macro|CRTC_GUI_TRIG_VLINE
-mdefine_line|#define CRTC_GUI_TRIG_VLINE&t;&t;&t;0x0218
-DECL|macro|CRTC_DEBUG
-mdefine_line|#define CRTC_DEBUG&t;&t;&t;&t;0x021c
 DECL|macro|CRTC_OFFSET
 mdefine_line|#define CRTC_OFFSET&t;&t;&t;&t;0x0224
 DECL|macro|CRTC_OFFSET_CNTL
@@ -144,26 +70,6 @@ DECL|macro|OVR_WID_LEFT_RIGHT
 mdefine_line|#define OVR_WID_LEFT_RIGHT&t;&t;&t;0x0234
 DECL|macro|OVR_WID_TOP_BOTTOM
 mdefine_line|#define OVR_WID_TOP_BOTTOM&t;&t;&t;0x0238
-DECL|macro|SNAPSHOT_VH_COUNTS
-mdefine_line|#define SNAPSHOT_VH_COUNTS&t;&t;&t;0x0240
-DECL|macro|SNAPSHOT_F_COUNT
-mdefine_line|#define SNAPSHOT_F_COUNT&t;&t;&t;0x0244
-DECL|macro|N_VIF_COUNT
-mdefine_line|#define N_VIF_COUNT&t;&t;&t;&t;0x0248
-DECL|macro|SNAPSHOT_VIF_COUNT
-mdefine_line|#define SNAPSHOT_VIF_COUNT&t;&t;&t;0x024c
-DECL|macro|CUR_OFFSET
-mdefine_line|#define CUR_OFFSET&t;&t;&t;&t;0x0260
-DECL|macro|CUR_HORZ_VERT_POSN
-mdefine_line|#define CUR_HORZ_VERT_POSN&t;&t;&t;0x0264
-DECL|macro|CUR_HORZ_VERT_OFF
-mdefine_line|#define CUR_HORZ_VERT_OFF&t;&t;&t;0x0268
-DECL|macro|CUR_CLR0
-mdefine_line|#define CUR_CLR0&t;&t;&t;&t;0x026c
-DECL|macro|CUR_CLR1
-mdefine_line|#define CUR_CLR1&t;&t;&t;&t;0x0270
-DECL|macro|DAC_CRC_SIG
-mdefine_line|#define DAC_CRC_SIG&t;&t;&t;&t;0x02cc
 DECL|macro|DDA_CONFIG
 mdefine_line|#define DDA_CONFIG&t;&t;&t;&t;0x02e0
 DECL|macro|DDA_ON_OFF
@@ -172,90 +78,8 @@ DECL|macro|VGA_DDA_CONFIG
 mdefine_line|#define VGA_DDA_CONFIG&t;&t;&t;&t;0x02e8
 DECL|macro|VGA_DDA_ON_OFF
 mdefine_line|#define VGA_DDA_ON_OFF&t;&t;&t;&t;0x02ec
-DECL|macro|OV0_Y_X_START
-mdefine_line|#define OV0_Y_X_START&t;&t;&t;&t;0x0400
-DECL|macro|OV0_Y_X_END
-mdefine_line|#define OV0_Y_X_END&t;&t;&t;&t;0x0404
-DECL|macro|OV0_EXCLUSIVE_HORZ
-mdefine_line|#define OV0_EXCLUSIVE_HORZ&t;&t;&t;0x0408
-DECL|macro|OV0_EXCLUSIVE_VERT
-mdefine_line|#define OV0_EXCLUSIVE_VERT&t;&t;&t;0x040c
-DECL|macro|OV0_REG_LOAD_CNTL
-mdefine_line|#define OV0_REG_LOAD_CNTL&t;&t;&t;0x0410
 DECL|macro|OV0_SCALE_CNTL
 mdefine_line|#define OV0_SCALE_CNTL&t;&t;&t;&t;0x0420
-DECL|macro|OV0_V_INC
-mdefine_line|#define OV0_V_INC&t;&t;&t;&t;0x0424
-DECL|macro|OV0_P1_V_ACCUM_INIT
-mdefine_line|#define OV0_P1_V_ACCUM_INIT&t;&t;&t;0x0428
-DECL|macro|OV0_P23_V_ACCUM_INIT
-mdefine_line|#define OV0_P23_V_ACCUM_INIT&t;&t;&t;0x042c
-DECL|macro|OV0_P1_BLANK_LINES_AT_TOP
-mdefine_line|#define OV0_P1_BLANK_LINES_AT_TOP&t;&t;0x0430
-DECL|macro|OV0_P23_BLANK_LINES_AT_TOP
-mdefine_line|#define OV0_P23_BLANK_LINES_AT_TOP&t;&t;0x0434
-DECL|macro|OV0_VID_BUF0_BASE_ADRS
-mdefine_line|#define OV0_VID_BUF0_BASE_ADRS&t;&t;&t;0x0440
-DECL|macro|OV0_VID_BUF1_BASE_ADRS
-mdefine_line|#define OV0_VID_BUF1_BASE_ADRS&t;&t;&t;0x0444
-DECL|macro|OV0_VID_BUF2_BASE_ADRS
-mdefine_line|#define OV0_VID_BUF2_BASE_ADRS&t;&t;&t;0x0448
-DECL|macro|OV0_VID_BUF3_BASE_ADRS
-mdefine_line|#define OV0_VID_BUF3_BASE_ADRS&t;&t;&t;0x044c
-DECL|macro|OV0_VID_BUF4_BASE_ADRS
-mdefine_line|#define OV0_VID_BUF4_BASE_ADRS&t;&t;&t;0x0450
-DECL|macro|OV0_VID_BUF5_BASE_ADRS
-mdefine_line|#define OV0_VID_BUF5_BASE_ADRS&t;&t;&t;0x0454
-DECL|macro|OV0_VID_BUF_PITCH0_VALUE
-mdefine_line|#define OV0_VID_BUF_PITCH0_VALUE&t;&t;0x0460
-DECL|macro|OV0_VID_BUF_PITCH1_VALUE
-mdefine_line|#define OV0_VID_BUF_PITCH1_VALUE&t;&t;0x0464
-DECL|macro|OV0_OCTWORDS_PER_LINE_M1
-mdefine_line|#define OV0_OCTWORDS_PER_LINE_M1&t;&t;0x046c
-DECL|macro|OV0_AUTO_FLIP_CNTRL
-mdefine_line|#define OV0_AUTO_FLIP_CNTRL&t;&t;&t;0x0470
-DECL|macro|OV0_DEINTERLACE_PATTERN
-mdefine_line|#define OV0_DEINTERLACE_PATTERN&t;&t;&t;0x0474
-DECL|macro|OV0_H_INC
-mdefine_line|#define OV0_H_INC&t;&t;&t;&t;0x0480
-DECL|macro|OV0_STEP_BY
-mdefine_line|#define OV0_STEP_BY&t;&t;&t;&t;0x0484
-DECL|macro|OV0_P1_H_ACCUM_INIT
-mdefine_line|#define OV0_P1_H_ACCUM_INIT&t;&t;&t;0x0488
-DECL|macro|OV0_P23_H_ACCUM_INIT
-mdefine_line|#define OV0_P23_H_ACCUM_INIT&t;&t;&t;0x048c
-DECL|macro|OV0_P1_X_START_END
-mdefine_line|#define OV0_P1_X_START_END&t;&t;&t;0x0494
-DECL|macro|OV0_P2_X_START_END
-mdefine_line|#define OV0_P2_X_START_END&t;&t;&t;0x0498
-DECL|macro|OV0_P3_X_START_END
-mdefine_line|#define OV0_P3_X_START_END&t;&t;&t;0x049c
-DECL|macro|OV0_FILTER_CNTL
-mdefine_line|#define OV0_FILTER_CNTL&t;&t;&t;&t;0x04a0
-DECL|macro|OV0_FOUR_TAP_COEF_0
-mdefine_line|#define OV0_FOUR_TAP_COEF_0&t;&t;&t;0x04b0
-DECL|macro|OV0_FOUR_TAP_COEF_1
-mdefine_line|#define OV0_FOUR_TAP_COEF_1&t;&t;&t;0x04b4
-DECL|macro|OV0_FOUR_TAP_COEF_2
-mdefine_line|#define OV0_FOUR_TAP_COEF_2&t;&t;&t;0x04b8
-DECL|macro|OV0_FOUR_TAP_COEF_3
-mdefine_line|#define OV0_FOUR_TAP_COEF_3&t;&t;&t;0x04bc
-DECL|macro|OV0_FOUR_TAP_COEF_4
-mdefine_line|#define OV0_FOUR_TAP_COEF_4&t;&t;&t;0x04c0
-DECL|macro|OV0_COLOR_CNTL
-mdefine_line|#define OV0_COLOR_CNTL&t;&t;&t;&t;0x04e0
-DECL|macro|OV0_VIDEO_KEY_CLR
-mdefine_line|#define OV0_VIDEO_KEY_CLR&t;&t;&t;0x04e4
-DECL|macro|OV0_VIDEO_KEY_MASK
-mdefine_line|#define OV0_VIDEO_KEY_MASK&t;&t;&t;0x04e8
-DECL|macro|OV0_GRAPHICS_KEY_CLR
-mdefine_line|#define OV0_GRAPHICS_KEY_CLR&t;&t;&t;0x04ec
-DECL|macro|OV0_GRAPHICS_KEY_MASK
-mdefine_line|#define OV0_GRAPHICS_KEY_MASK&t;&t;&t;0x04f0
-DECL|macro|OV0_KEY_CNTL
-mdefine_line|#define OV0_KEY_CNTL&t;&t;&t;&t;0x04f4
-DECL|macro|OV0_TEST
-mdefine_line|#define OV0_TEST&t;&t;&t;&t;0x04f8
 DECL|macro|SUBPIC_CNTL
 mdefine_line|#define SUBPIC_CNTL&t;&t;&t;&t;0x0540
 DECL|macro|PM4_BUFFER_OFFSET
@@ -290,12 +114,8 @@ DECL|macro|PM4_IW_INDSIZE
 mdefine_line|#define PM4_IW_INDSIZE&t;&t;&t;&t;0x073c
 DECL|macro|PM4_FPU_FPX0
 mdefine_line|#define PM4_FPU_FPX0&t;&t;&t;&t;0x0740
-DECL|macro|CRC_CMDFIFO_ADDR
-mdefine_line|#define CRC_CMDFIFO_ADDR&t;&t;&t;0x0740
 DECL|macro|PM4_FPU_FPY0
 mdefine_line|#define PM4_FPU_FPY0&t;&t;&t;&t;0x0744
-DECL|macro|CRC_CMDFIFO_DOUT
-mdefine_line|#define CRC_CMDFIFO_DOUT&t;&t;&t;0x0744
 DECL|macro|PM4_FPU_FPX1
 mdefine_line|#define PM4_FPU_FPX1&t;&t;&t;&t;0x0748
 DECL|macro|PM4_FPU_FPY1
@@ -364,148 +184,10 @@ DECL|macro|PM4_BUFFER_DATAL
 mdefine_line|#define PM4_BUFFER_DATAL&t;&t;&t;0x07f8
 DECL|macro|PM4_MICRO_CNTL
 mdefine_line|#define PM4_MICRO_CNTL&t;&t;&t;&t;0x07fc
-DECL|macro|VID_BUFFER_CONTROL
-mdefine_line|#define VID_BUFFER_CONTROL&t;&t;&t;0x0900
-DECL|macro|CAP_INT_CNTL
-mdefine_line|#define CAP_INT_CNTL&t;&t;&t;&t;0x0908
-DECL|macro|CAP_INT_STATUS
-mdefine_line|#define CAP_INT_STATUS&t;&t;&t;&t;0x090c
-DECL|macro|CAP0_BUF0_OFFSET
-mdefine_line|#define CAP0_BUF0_OFFSET&t;&t;&t;0x0920
-DECL|macro|CAP0_BUF1_OFFSET
-mdefine_line|#define CAP0_BUF1_OFFSET&t;&t;&t;0x0924
-DECL|macro|CAP0_BUF0_EVEN_OFFSET
-mdefine_line|#define CAP0_BUF0_EVEN_OFFSET&t;&t;&t;0x0928
-DECL|macro|CAP0_BUF1_EVEN_OFFSET
-mdefine_line|#define CAP0_BUF1_EVEN_OFFSET&t;&t;&t;0x092c
-DECL|macro|CAP0_BUF_PITCH
-mdefine_line|#define CAP0_BUF_PITCH&t;&t;&t;&t;0x0930
-DECL|macro|CAP0_V_WINDOW
-mdefine_line|#define CAP0_V_WINDOW&t;&t;&t;&t;0x0934
-DECL|macro|CAP0_H_WINDOW
-mdefine_line|#define CAP0_H_WINDOW&t;&t;&t;&t;0x0938
-DECL|macro|CAP0_VBI_ODD_OFFSET
-mdefine_line|#define CAP0_VBI_ODD_OFFSET&t;&t;&t;0x093c
-DECL|macro|CAP0_VBI_EVEN_OFFSET
-mdefine_line|#define CAP0_VBI_EVEN_OFFSET&t;&t;&t;0x0940
-DECL|macro|CAP0_VBI_V_WINDOW
-mdefine_line|#define CAP0_VBI_V_WINDOW&t;&t;&t;0x0944
-DECL|macro|CAP0_VBI_H_WINDOW
-mdefine_line|#define CAP0_VBI_H_WINDOW&t;&t;&t;0x0948
-DECL|macro|CAP0_PORT_MODE_CNTL
-mdefine_line|#define CAP0_PORT_MODE_CNTL&t;&t;&t;0x094c
 DECL|macro|CAP0_TRIG_CNTL
 mdefine_line|#define CAP0_TRIG_CNTL&t;&t;&t;&t;0x0950
-DECL|macro|CAP0_DEBUG
-mdefine_line|#define CAP0_DEBUG&t;&t;&t;&t;0x0954
-DECL|macro|CAP0_CONFIG
-mdefine_line|#define CAP0_CONFIG&t;&t;&t;&t;0x0958
-DECL|macro|CAP0_ANC_ODD_OFFSET
-mdefine_line|#define CAP0_ANC_ODD_OFFSET&t;&t;&t;0x095c
-DECL|macro|CAP0_ANC_EVEN_OFFSET
-mdefine_line|#define CAP0_ANC_EVEN_OFFSET&t;&t;&t;0x0960
-DECL|macro|CAP0_ANC_H_WINDOW
-mdefine_line|#define CAP0_ANC_H_WINDOW&t;&t;&t;0x0964
-DECL|macro|CAP0_VIDEO_SYNC_TEST
-mdefine_line|#define CAP0_VIDEO_SYNC_TEST&t;&t;&t;0x0968
-DECL|macro|CAP0_ONESHOT_BUF_OFFSET
-mdefine_line|#define CAP0_ONESHOT_BUF_OFFSET&t;&t;&t;0x096c
-DECL|macro|CAP0_BUF_STATUS
-mdefine_line|#define CAP0_BUF_STATUS&t;&t;&t;&t;0x0970
-DECL|macro|CAP0_DWNSC_XRATIO
-mdefine_line|#define CAP0_DWNSC_XRATIO&t;&t;&t;0x0978
-DECL|macro|CAP0_XSHARPNESS
-mdefine_line|#define CAP0_XSHARPNESS&t;&t;&t;&t;0x097c
-DECL|macro|CAP1_BUF0_OFFSET
-mdefine_line|#define CAP1_BUF0_OFFSET&t;&t;&t;0x0990
-DECL|macro|CAP1_BUF1_OFFSET
-mdefine_line|#define CAP1_BUF1_OFFSET&t;&t;&t;0x0994
-DECL|macro|CAP1_BUF0_EVEN_OFFSET
-mdefine_line|#define CAP1_BUF0_EVEN_OFFSET&t;&t;&t;0x0998
-DECL|macro|CAP1_BUF1_EVEN_OFFSET
-mdefine_line|#define CAP1_BUF1_EVEN_OFFSET&t;&t;&t;0x099c
-DECL|macro|CAP1_BUF_PITCH
-mdefine_line|#define CAP1_BUF_PITCH&t;&t;&t;&t;0x09a0
-DECL|macro|CAP1_V_WINDOW
-mdefine_line|#define CAP1_V_WINDOW&t;&t;&t;&t;0x09a4
-DECL|macro|CAP1_H_WINDOW
-mdefine_line|#define CAP1_H_WINDOW&t;&t;&t;&t;0x09a8
-DECL|macro|CAP1_VBI_ODD_OFFSET
-mdefine_line|#define CAP1_VBI_ODD_OFFSET&t;&t;&t;0x09ac
-DECL|macro|CAP1_VBI_EVEN_OFFSET
-mdefine_line|#define CAP1_VBI_EVEN_OFFSET&t;&t;&t;0x09b0
-DECL|macro|CAP1_VBI_V_WINDOW
-mdefine_line|#define CAP1_VBI_V_WINDOW&t;&t;&t;0x09b4
-DECL|macro|CAP1_VBI_H_WINDOW
-mdefine_line|#define CAP1_VBI_H_WINDOW&t;&t;&t;0x09b8
-DECL|macro|CAP1_PORT_MODE_CNTL
-mdefine_line|#define CAP1_PORT_MODE_CNTL&t;&t;&t;0x09bc
 DECL|macro|CAP1_TRIG_CNTL
 mdefine_line|#define CAP1_TRIG_CNTL&t;&t;&t;&t;0x09c0
-DECL|macro|CAP1_DEBUG
-mdefine_line|#define CAP1_DEBUG&t;&t;&t;&t;0x09c4
-DECL|macro|CAP1_CONFIG
-mdefine_line|#define CAP1_CONFIG&t;&t;&t;&t;0x09c8
-DECL|macro|CAP1_ANC_ODD_OFFSET
-mdefine_line|#define CAP1_ANC_ODD_OFFSET&t;&t;&t;0x09cc
-DECL|macro|CAP1_ANC_EVEN_OFFSET
-mdefine_line|#define CAP1_ANC_EVEN_OFFSET&t;&t;&t;0x09d0
-DECL|macro|CAP1_ANC_H_WINDOW
-mdefine_line|#define CAP1_ANC_H_WINDOW&t;&t;&t;0x09d4
-DECL|macro|CAP1_VIDEO_SYNC_TEST
-mdefine_line|#define CAP1_VIDEO_SYNC_TEST&t;&t;&t;0x09d8
-DECL|macro|CAP1_ONESHOT_BUF_OFFSET
-mdefine_line|#define CAP1_ONESHOT_BUF_OFFSET&t;&t;&t;0x09dc
-DECL|macro|CAP1_BUF_STATUS
-mdefine_line|#define CAP1_BUF_STATUS&t;&t;&t;&t;0x09e0
-DECL|macro|CAP1_DWNSC_XRATIO
-mdefine_line|#define CAP1_DWNSC_XRATIO&t;&t;&t;0x09e8
-DECL|macro|CAP1_XSHARPNESS
-mdefine_line|#define CAP1_XSHARPNESS&t;&t;&t;&t;0x09ec
-DECL|macro|BM_FRAME_BUF_OFFSET
-mdefine_line|#define BM_FRAME_BUF_OFFSET&t;&t;&t;0x0a00
-DECL|macro|BM_SYSTEM_MEM_ADDR
-mdefine_line|#define BM_SYSTEM_MEM_ADDR&t;&t;&t;0x0a04
-DECL|macro|BM_COMMAND
-mdefine_line|#define BM_COMMAND&t;&t;&t;&t;0x0a08
-DECL|macro|BM_STATUS
-mdefine_line|#define BM_STATUS&t;&t;&t;&t;0x0a0c
-DECL|macro|BM_QUEUE_STATUS
-mdefine_line|#define BM_QUEUE_STATUS&t;&t;&t;&t;0x0a10
-DECL|macro|BM_QUEUE_FREE_STATUS
-mdefine_line|#define BM_QUEUE_FREE_STATUS&t;&t;&t;0x0A14
-DECL|macro|BM_CHUNK_0_VAL
-mdefine_line|#define BM_CHUNK_0_VAL&t;&t;&t;&t;0x0a18
-DECL|macro|BM_CHUNK_1_VAL
-mdefine_line|#define BM_CHUNK_1_VAL&t;&t;&t;&t;0x0a1C
-DECL|macro|BM_VIP0_BUF
-mdefine_line|#define BM_VIP0_BUF&t;&t;&t;&t;0x0A20
-DECL|macro|BM_VIP0_ACTIVE
-mdefine_line|#define BM_VIP0_ACTIVE&t;&t;&t;&t;0x0A24
-DECL|macro|BM_VIP1_BUF
-mdefine_line|#define BM_VIP1_BUF&t;&t;&t;&t;0x0A30
-DECL|macro|BM_VIP1_ACTIVE
-mdefine_line|#define BM_VIP1_ACTIVE&t;&t;&t;&t;0x0A34
-DECL|macro|BM_VIP2_BUF
-mdefine_line|#define BM_VIP2_BUF&t;&t;&t;&t;0x0A40
-DECL|macro|BM_VIP2_ACTIVE
-mdefine_line|#define BM_VIP2_ACTIVE&t;&t;&t;&t;0x0A44
-DECL|macro|BM_VIP3_BUF
-mdefine_line|#define BM_VIP3_BUF&t;&t;&t;&t;0x0A50
-DECL|macro|BM_VIP3_ACTIVE
-mdefine_line|#define BM_VIP3_ACTIVE&t;&t;&t;&t;0x0A54
-DECL|macro|BM_VIDCAP_BUF0
-mdefine_line|#define BM_VIDCAP_BUF0&t;&t;&t;&t;0x0a60
-DECL|macro|BM_VIDCAP_BUF1
-mdefine_line|#define BM_VIDCAP_BUF1&t;&t;&t;&t;0x0a64
-DECL|macro|BM_VIDCAP_BUF2
-mdefine_line|#define BM_VIDCAP_BUF2&t;&t;&t;&t;0x0a68
-DECL|macro|BM_VIDCAP_ACTIVE
-mdefine_line|#define BM_VIDCAP_ACTIVE&t;&t;&t;0x0a6c
-DECL|macro|BM_GUI
-mdefine_line|#define BM_GUI&t;&t;&t;&t;&t;0x0a80
-DECL|macro|SURFACE_DELAY
-mdefine_line|#define SURFACE_DELAY&t;&t;&t;&t;0x0b00
 multiline_comment|/******************************************************************************&n; *                  GUI Block Memory Mapped Registers                         *&n; *                     These registers are FIFOed.                            *&n; *****************************************************************************/
 DECL|macro|PM4_FIFO_DATA_EVEN
 mdefine_line|#define PM4_FIFO_DATA_EVEN&t;&t;&t;0x1000
@@ -547,134 +229,6 @@ DECL|macro|DP_BRUSH_BKGD_CLR
 mdefine_line|#define DP_BRUSH_BKGD_CLR&t;&t;&t;0x1478
 DECL|macro|DP_BRUSH_FRGD_CLR
 mdefine_line|#define DP_BRUSH_FRGD_CLR&t;&t;&t;0x147c
-DECL|macro|BRUSH_DATA0
-mdefine_line|#define BRUSH_DATA0&t;&t;&t;&t;0x1480
-DECL|macro|BRUSH_DATA1
-mdefine_line|#define BRUSH_DATA1&t;&t;&t;&t;0x1484
-DECL|macro|BRUSH_DATA2
-mdefine_line|#define BRUSH_DATA2&t;&t;&t;&t;0x1488
-DECL|macro|BRUSH_DATA3
-mdefine_line|#define BRUSH_DATA3&t;&t;&t;&t;0x148c
-DECL|macro|BRUSH_DATA4
-mdefine_line|#define BRUSH_DATA4&t;&t;&t;&t;0x1490
-DECL|macro|BRUSH_DATA5
-mdefine_line|#define BRUSH_DATA5&t;&t;&t;&t;0x1494
-DECL|macro|BRUSH_DATA6
-mdefine_line|#define BRUSH_DATA6&t;&t;&t;&t;0x1498
-DECL|macro|BRUSH_DATA7
-mdefine_line|#define BRUSH_DATA7&t;&t;&t;&t;0x149c
-DECL|macro|BRUSH_DATA8
-mdefine_line|#define BRUSH_DATA8&t;&t;&t;&t;0x14a0
-DECL|macro|BRUSH_DATA9
-mdefine_line|#define BRUSH_DATA9&t;&t;&t;&t;0x14a4
-DECL|macro|BRUSH_DATA10
-mdefine_line|#define BRUSH_DATA10&t;&t;&t;&t;0x14a8
-DECL|macro|BRUSH_DATA11
-mdefine_line|#define BRUSH_DATA11&t;&t;&t;&t;0x14ac
-DECL|macro|BRUSH_DATA12
-mdefine_line|#define BRUSH_DATA12&t;&t;&t;&t;0x14b0
-DECL|macro|BRUSH_DATA13
-mdefine_line|#define BRUSH_DATA13&t;&t;&t;&t;0x14b4
-DECL|macro|BRUSH_DATA14
-mdefine_line|#define BRUSH_DATA14&t;&t;&t;&t;0x14b8
-DECL|macro|BRUSH_DATA15
-mdefine_line|#define BRUSH_DATA15&t;&t;&t;&t;0x14bc
-DECL|macro|BRUSH_DATA16
-mdefine_line|#define BRUSH_DATA16&t;&t;&t;&t;0x14c0
-DECL|macro|BRUSH_DATA17
-mdefine_line|#define BRUSH_DATA17&t;&t;&t;&t;0x14c4
-DECL|macro|BRUSH_DATA18
-mdefine_line|#define BRUSH_DATA18&t;&t;&t;&t;0x14c8
-DECL|macro|BRUSH_DATA19
-mdefine_line|#define BRUSH_DATA19&t;&t;&t;&t;0x14cc
-DECL|macro|BRUSH_DATA20
-mdefine_line|#define BRUSH_DATA20&t;&t;&t;&t;0x14d0
-DECL|macro|BRUSH_DATA21
-mdefine_line|#define BRUSH_DATA21&t;&t;&t;&t;0x14d4
-DECL|macro|BRUSH_DATA22
-mdefine_line|#define BRUSH_DATA22&t;&t;&t;&t;0x14d8
-DECL|macro|BRUSH_DATA23
-mdefine_line|#define BRUSH_DATA23&t;&t;&t;&t;0x14dc
-DECL|macro|BRUSH_DATA24
-mdefine_line|#define BRUSH_DATA24&t;&t;&t;&t;0x14e0
-DECL|macro|BRUSH_DATA25
-mdefine_line|#define BRUSH_DATA25&t;&t;&t;&t;0x14e4
-DECL|macro|BRUSH_DATA26
-mdefine_line|#define BRUSH_DATA26&t;&t;&t;&t;0x14e8
-DECL|macro|BRUSH_DATA27
-mdefine_line|#define BRUSH_DATA27&t;&t;&t;&t;0x14ec
-DECL|macro|BRUSH_DATA28
-mdefine_line|#define BRUSH_DATA28&t;&t;&t;&t;0x14f0
-DECL|macro|BRUSH_DATA29
-mdefine_line|#define BRUSH_DATA29&t;&t;&t;&t;0x14f4
-DECL|macro|BRUSH_DATA30
-mdefine_line|#define BRUSH_DATA30&t;&t;&t;&t;0x14f8
-DECL|macro|BRUSH_DATA31
-mdefine_line|#define BRUSH_DATA31&t;&t;&t;&t;0x14fc
-DECL|macro|BRUSH_DATA32
-mdefine_line|#define BRUSH_DATA32&t;&t;&t;&t;0x1500
-DECL|macro|BRUSH_DATA33
-mdefine_line|#define BRUSH_DATA33&t;&t;&t;&t;0x1504
-DECL|macro|BRUSH_DATA34
-mdefine_line|#define BRUSH_DATA34&t;&t;&t;&t;0x1508
-DECL|macro|BRUSH_DATA35
-mdefine_line|#define BRUSH_DATA35&t;&t;&t;&t;0x150c
-DECL|macro|BRUSH_DATA36
-mdefine_line|#define BRUSH_DATA36&t;&t;&t;&t;0x1510
-DECL|macro|BRUSH_DATA37
-mdefine_line|#define BRUSH_DATA37&t;&t;&t;&t;0x1514
-DECL|macro|BRUSH_DATA38
-mdefine_line|#define BRUSH_DATA38&t;&t;&t;&t;0x1518
-DECL|macro|BRUSH_DATA39
-mdefine_line|#define BRUSH_DATA39&t;&t;&t;&t;0x151c
-DECL|macro|BRUSH_DATA40
-mdefine_line|#define BRUSH_DATA40&t;&t;&t;&t;0x1520
-DECL|macro|BRUSH_DATA41
-mdefine_line|#define BRUSH_DATA41&t;&t;&t;&t;0x1524
-DECL|macro|BRUSH_DATA42
-mdefine_line|#define BRUSH_DATA42&t;&t;&t;&t;0x1528
-DECL|macro|BRUSH_DATA43
-mdefine_line|#define BRUSH_DATA43&t;&t;&t;&t;0x152c
-DECL|macro|BRUSH_DATA44
-mdefine_line|#define BRUSH_DATA44&t;&t;&t;&t;0x1530
-DECL|macro|BRUSH_DATA45
-mdefine_line|#define BRUSH_DATA45&t;&t;&t;&t;0x1534
-DECL|macro|BRUSH_DATA46
-mdefine_line|#define BRUSH_DATA46&t;&t;&t;&t;0x1538
-DECL|macro|BRUSH_DATA47
-mdefine_line|#define BRUSH_DATA47&t;&t;&t;&t;0x153c
-DECL|macro|BRUSH_DATA48
-mdefine_line|#define BRUSH_DATA48&t;&t;&t;&t;0x1540
-DECL|macro|BRUSH_DATA49
-mdefine_line|#define BRUSH_DATA49&t;&t;&t;&t;0x1544
-DECL|macro|BRUSH_DATA50
-mdefine_line|#define BRUSH_DATA50&t;&t;&t;&t;0x1548
-DECL|macro|BRUSH_DATA51
-mdefine_line|#define BRUSH_DATA51&t;&t;&t;&t;0x154c
-DECL|macro|BRUSH_DATA52
-mdefine_line|#define BRUSH_DATA52&t;&t;&t;&t;0x1550
-DECL|macro|BRUSH_DATA53
-mdefine_line|#define BRUSH_DATA53&t;&t;&t;&t;0x1554
-DECL|macro|BRUSH_DATA54
-mdefine_line|#define BRUSH_DATA54&t;&t;&t;&t;0x1558
-DECL|macro|BRUSH_DATA55
-mdefine_line|#define BRUSH_DATA55&t;&t;&t;&t;0x155c
-DECL|macro|BRUSH_DATA56
-mdefine_line|#define BRUSH_DATA56&t;&t;&t;&t;0x1560
-DECL|macro|BRUSH_DATA57
-mdefine_line|#define BRUSH_DATA57&t;&t;&t;&t;0x1564
-DECL|macro|BRUSH_DATA58
-mdefine_line|#define BRUSH_DATA58&t;&t;&t;&t;0x1568
-DECL|macro|BRUSH_DATA59
-mdefine_line|#define BRUSH_DATA59&t;&t;&t;&t;0x156c
-DECL|macro|BRUSH_DATA60
-mdefine_line|#define BRUSH_DATA60&t;&t;&t;&t;0x1570
-DECL|macro|BRUSH_DATA61
-mdefine_line|#define BRUSH_DATA61&t;&t;&t;&t;0x1574
-DECL|macro|BRUSH_DATA62
-mdefine_line|#define BRUSH_DATA62&t;&t;&t;&t;0x1578
-DECL|macro|BRUSH_DATA63
-mdefine_line|#define BRUSH_DATA63&t;&t;&t;&t;0x157c
 DECL|macro|DST_WIDTH_X
 mdefine_line|#define DST_WIDTH_X&t;&t;&t;&t;0x1588
 DECL|macro|DST_HEIGHT_WIDTH_8
@@ -711,38 +265,6 @@ DECL|macro|DP_SRC_FRGD_CLR
 mdefine_line|#define DP_SRC_FRGD_CLR&t;&t;&t;&t;0x15d8
 DECL|macro|DP_SRC_BKGD_CLR
 mdefine_line|#define DP_SRC_BKGD_CLR&t;&t;&t;&t;0x15dc
-DECL|macro|GUI_SCRATCH_REG0
-mdefine_line|#define GUI_SCRATCH_REG0&t;&t;&t;0x15e0
-DECL|macro|GUI_SCRATCH_REG1
-mdefine_line|#define GUI_SCRATCH_REG1&t;&t;&t;0x15e4
-DECL|macro|GUI_SCRATCH_REG2
-mdefine_line|#define GUI_SCRATCH_REG2&t;&t;&t;0x15e8
-DECL|macro|GUI_SCRATCH_REG3
-mdefine_line|#define GUI_SCRATCH_REG3&t;&t;&t;0x15ec
-DECL|macro|GUI_SCRATCH_REG4
-mdefine_line|#define GUI_SCRATCH_REG4&t;&t;&t;0x15f0
-DECL|macro|GUI_SCRATCH_REG5
-mdefine_line|#define GUI_SCRATCH_REG5&t;&t;&t;0x15f4
-DECL|macro|LEAD_BRES_ERR
-mdefine_line|#define LEAD_BRES_ERR&t;&t;&t;&t;0x1600
-DECL|macro|LEAD_BRES_INC
-mdefine_line|#define LEAD_BRES_INC&t;&t;&t;&t;0x1604
-DECL|macro|LEAD_BRES_DEC
-mdefine_line|#define LEAD_BRES_DEC&t;&t;&t;&t;0x1608
-DECL|macro|TRAIL_BRES_ERR
-mdefine_line|#define TRAIL_BRES_ERR&t;&t;&t;&t;0x160c
-DECL|macro|TRAIL_BRES_INC
-mdefine_line|#define TRAIL_BRES_INC&t;&t;&t;&t;0x1610
-DECL|macro|TRAIL_BRES_DEC
-mdefine_line|#define TRAIL_BRES_DEC&t;&t;&t;&t;0x1614
-DECL|macro|TRAIL_X
-mdefine_line|#define TRAIL_X&t;&t;&t;&t;&t;0x1618
-DECL|macro|LEAD_BRES_LNTH
-mdefine_line|#define LEAD_BRES_LNTH&t;&t;&t;&t;0x161c
-DECL|macro|TRAIL_X_SUB
-mdefine_line|#define TRAIL_X_SUB&t;&t;&t;&t;0x1620
-DECL|macro|LEAD_BRES_LNTH_SUB
-mdefine_line|#define LEAD_BRES_LNTH_SUB&t;&t;&t;0x1624
 DECL|macro|DST_BRES_ERR
 mdefine_line|#define DST_BRES_ERR&t;&t;&t;&t;0x1628
 DECL|macro|DST_BRES_INC
@@ -765,32 +287,6 @@ DECL|macro|SRC_SC_RIGHT
 mdefine_line|#define SRC_SC_RIGHT&t;&t;&t;&t;0x1654
 DECL|macro|SRC_SC_BOTTOM
 mdefine_line|#define SRC_SC_BOTTOM&t;&t;&t;&t;0x165c
-DECL|macro|AUX_SC_CNTL
-mdefine_line|#define AUX_SC_CNTL&t;&t;&t;&t;0x1660
-DECL|macro|AUX1_SC_LEFT
-mdefine_line|#define AUX1_SC_LEFT&t;&t;&t;&t;0x1664
-DECL|macro|AUX1_SC_RIGHT
-mdefine_line|#define AUX1_SC_RIGHT&t;&t;&t;&t;0x1668
-DECL|macro|AUX1_SC_TOP
-mdefine_line|#define AUX1_SC_TOP&t;&t;&t;&t;0x166c
-DECL|macro|AUX1_SC_BOTTOM
-mdefine_line|#define AUX1_SC_BOTTOM&t;&t;&t;&t;0x1670
-DECL|macro|AUX2_SC_LEFT
-mdefine_line|#define AUX2_SC_LEFT&t;&t;&t;&t;0x1674
-DECL|macro|AUX2_SC_RIGHT
-mdefine_line|#define AUX2_SC_RIGHT&t;&t;&t;&t;0x1678
-DECL|macro|AUX2_SC_TOP
-mdefine_line|#define AUX2_SC_TOP&t;&t;&t;&t;0x167c
-DECL|macro|AUX2_SC_BOTTOM
-mdefine_line|#define AUX2_SC_BOTTOM&t;&t;&t;&t;0x1680
-DECL|macro|AUX3_SC_LEFT
-mdefine_line|#define AUX3_SC_LEFT&t;&t;&t;&t;0x1684
-DECL|macro|AUX3_SC_RIGHT
-mdefine_line|#define AUX3_SC_RIGHT&t;&t;&t;&t;0x1688
-DECL|macro|AUX3_SC_TOP
-mdefine_line|#define AUX3_SC_TOP&t;&t;&t;&t;0x168c
-DECL|macro|AUX3_SC_BOTTOM
-mdefine_line|#define AUX3_SC_BOTTOM&t;&t;&t;&t;0x1690
 DECL|macro|GUI_DEBUG0
 mdefine_line|#define GUI_DEBUG0&t;&t;&t;&t;0x16a0
 DECL|macro|GUI_DEBUG1
@@ -849,34 +345,6 @@ DECL|macro|DST_BRES_T1_LNTH
 mdefine_line|#define DST_BRES_T1_LNTH&t;&t;&t;0x1790
 DECL|macro|DST_BRES_T2_LNTH
 mdefine_line|#define DST_BRES_T2_LNTH&t;&t;&t;0x1794
-DECL|macro|HOST_DATA0
-mdefine_line|#define HOST_DATA0&t;&t;&t;&t;0x17c0
-DECL|macro|HOST_DATA1
-mdefine_line|#define HOST_DATA1&t;&t;&t;&t;0x17c4
-DECL|macro|HOST_DATA2
-mdefine_line|#define HOST_DATA2&t;&t;&t;&t;0x17c8
-DECL|macro|HOST_DATA3
-mdefine_line|#define HOST_DATA3&t;&t;&t;&t;0x17cc
-DECL|macro|HOST_DATA4
-mdefine_line|#define HOST_DATA4&t;&t;&t;&t;0x17d0
-DECL|macro|HOST_DATA5
-mdefine_line|#define HOST_DATA5&t;&t;&t;&t;0x17d4
-DECL|macro|HOST_DATA6
-mdefine_line|#define HOST_DATA6&t;&t;&t;&t;0x17d8
-DECL|macro|HOST_DATA7
-mdefine_line|#define HOST_DATA7&t;&t;&t;&t;0x17dc
-DECL|macro|HOST_DATA_LAST
-mdefine_line|#define HOST_DATA_LAST&t;&t;&t;&t;0x17e0
-DECL|macro|SECONDARY_SCALE_PITCH
-mdefine_line|#define SECONDARY_SCALE_PITCH&t;&t;&t;0x1980
-DECL|macro|SECONDARY_SCALE_X_INC
-mdefine_line|#define SECONDARY_SCALE_X_INC&t;&t;&t;0x1984
-DECL|macro|SECONDARY_SCALE_Y_INC
-mdefine_line|#define SECONDARY_SCALE_Y_INC&t;&t;&t;0x1988
-DECL|macro|SECONDARY_SCALE_HACC
-mdefine_line|#define SECONDARY_SCALE_HACC&t;&t;&t;0x198c
-DECL|macro|SECONDARY_SCALE_VACC
-mdefine_line|#define SECONDARY_SCALE_VACC&t;&t;&t;0x1990
 DECL|macro|SCALE_SRC_HEIGHT_WIDTH
 mdefine_line|#define SCALE_SRC_HEIGHT_WIDTH&t;&t;&t;0x1994
 DECL|macro|SCALE_OFFSET_0
@@ -1012,6 +480,8 @@ mdefine_line|#define CRTC_PIX_WIDTH_32BPP&t;&t;&t;0x00000600
 multiline_comment|/* DAC_CNTL bit constants */
 DECL|macro|DAC_8BIT_EN
 mdefine_line|#define DAC_8BIT_EN&t;&t;&t;&t;0x00000100
+DECL|macro|DAC_MASK
+mdefine_line|#define DAC_MASK&t;&t;&t;&t;0xFF000000
 multiline_comment|/* GEN_RESET_CNTL bit constants */
 DECL|macro|SOFT_RESET_GUI
 mdefine_line|#define SOFT_RESET_GUI&t;&t;&t;&t;0x00000001
@@ -1036,6 +506,19 @@ DECL|macro|BUS_MASTER_DIS
 mdefine_line|#define BUS_MASTER_DIS&t;&t;&t;&t;0x00000040
 DECL|macro|PM4_BUFFER_CNTL_NONPM4
 mdefine_line|#define PM4_BUFFER_CNTL_NONPM4&t;&t;&t;0x00000000
+multiline_comment|/* DP_DATATYPE bit constants */
+DECL|macro|DST_8BPP
+mdefine_line|#define DST_8BPP&t;&t;&t;&t;0x00000002
+DECL|macro|DST_15BPP
+mdefine_line|#define DST_15BPP&t;&t;&t;&t;0x00000003
+DECL|macro|DST_16BPP
+mdefine_line|#define DST_16BPP&t;&t;&t;&t;0x00000004
+DECL|macro|DST_24BPP
+mdefine_line|#define DST_24BPP&t;&t;&t;&t;0x00000005
+DECL|macro|DST_32BPP
+mdefine_line|#define DST_32BPP&t;&t;&t;&t;0x00000006
+DECL|macro|BRUSH_SOLIDCOLOR
+mdefine_line|#define BRUSH_SOLIDCOLOR&t;&t;&t;0x00000d00
 multiline_comment|/* DP_GUI_MASTER_CNTL bit constants */
 DECL|macro|GMC_SRC_PITCH_OFFSET_DEFAULT
 mdefine_line|#define&t;GMC_SRC_PITCH_OFFSET_DEFAULT&t;&t;0x00000000
@@ -1067,8 +550,7 @@ multiline_comment|/* DP_GUI_MASTER_CNTL ROP3 named constants */
 DECL|macro|ROP3_PATCOPY
 mdefine_line|#define&t;ROP3_PATCOPY&t;&t;&t;&t;0x00f00000
 DECL|macro|ROP3_SRCCOPY
-mdefine_line|#define ROP3_SRCCOPY&t;&t;&t;&t;0x00cc0000   
-singleline_comment|// S
+mdefine_line|#define ROP3_SRCCOPY&t;&t;&t;&t;0x00cc0000
 DECL|macro|SRC_DSTCOLOR
 mdefine_line|#define SRC_DSTCOLOR&t;&t;&t;&t;0x00030000
 multiline_comment|/* DP_CNTL bit constants */

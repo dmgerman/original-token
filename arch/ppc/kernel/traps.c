@@ -724,10 +724,6 @@ id|regs
 macro_line|#if defined(CONFIG_4xx)
 r_int
 r_int
-id|instr
-suffix:semicolon
-r_int
-r_int
 id|esr
 op_assign
 id|mfspr

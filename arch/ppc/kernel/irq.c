@@ -1230,7 +1230,7 @@ suffix:semicolon
 )brace
 DECL|function|do_IRQ
 id|asmlinkage
-r_void
+r_int
 id|do_IRQ
 c_func
 (paren
@@ -1337,6 +1337,10 @@ c_func
 id|cpu
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* lets ret_from_int know we can do checks */
 )brace
 DECL|function|probe_irq_on
 r_int

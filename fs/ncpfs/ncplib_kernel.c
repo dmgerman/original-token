@@ -3329,14 +3329,6 @@ comma
 l_int|4
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dir
-op_ne
-l_int|NULL
-)paren
-(brace
 multiline_comment|/* in target there&squot;s a new finfo to fill */
 id|ncp_extract_file_info
 c_func
@@ -3355,7 +3347,6 @@ id|target-&gt;i
 )paren
 )paren
 suffix:semicolon
-)brace
 id|ConvertToNWfromDWORD
 c_func
 (paren

@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *   procfs handler for Linux I2O subsystem&n; *&n; *   (c) Copyright 1999 Deepak Saxena&n; *   &n; *   Originally written by Deepak Saxena(deepak@plexity.net)&n; *&n; *   This program is free software. You can redistribute it and/or&n; *   modify it under the terms of the GNU General Public License&n; *   as published by the Free Software Foundation; either version&n; *   2 of the License, or (at your option) any later version.&n; *&n; *   This is an initial test release. The code is based on the design&n; *   of the ide procfs system (drivers/block/ide-proc.c). Some code&n; *   taken from i2o-core module by Alan Cox.&n; *&n; *   DISCLAIMER: This code is still under development/test and may cause&n; *   your system to behave unpredictably.  Use at your own discretion.&n; *&n; *   LAN entries by Juha Siev&#xfffd;nen (Juha.Sievanen@cs.Helsinki.FI),&n; *&t;&t;    Auvo H&#xfffd;kkinen (Auvo.Hakkinen@cs.Helsinki.FI)&n; *   University of Helsinki, Department of Computer Science&n; */
 multiline_comment|/*&n; * set tabstop=3&n; */
-multiline_comment|/*&n; * TODO List&n; *&n; * - Add support for any version 2.0 spec changes once 2.0 IRTOS is&n; *   is available to test with&n; * - Clean up code to use official structure definitions &n; */
+multiline_comment|/*&n; * TODO List&n; *&n; * - Add support for any version 2.0 spec changes once 2.0 IRTOS&n; *   is available to test with&n; * - Clean up code to use official structure definitions &n; */
 singleline_comment|// FIXME!
 DECL|macro|FMT_U64_HEX
 mdefine_line|#define FMT_U64_HEX &quot;0x%08x%08x&quot;
@@ -50,13 +50,6 @@ multiline_comment|/* write func */
 DECL|typedef|i2o_proc_entry
 )brace
 id|i2o_proc_entry
-suffix:semicolon
-DECL|variable|proc_context
-r_static
-r_int
-id|proc_context
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_int
@@ -585,24 +578,6 @@ r_void
 )paren
 suffix:semicolon
 r_static
-r_void
-id|i2o_proc_reply
-c_func
-(paren
-r_struct
-id|i2o_handler
-op_star
-comma
-r_struct
-id|i2o_controller
-op_star
-comma
-r_struct
-id|i2o_message
-op_star
-)paren
-suffix:semicolon
-r_static
 r_int
 id|i2o_proc_read_lan_dev_info
 c_func
@@ -907,28 +882,6 @@ r_struct
 id|proc_dir_entry
 op_star
 id|i2o_proc_dir_root
-suffix:semicolon
-multiline_comment|/*&n; * Message handler&n; */
-DECL|variable|i2o_proc_handler
-r_static
-r_struct
-id|i2o_handler
-id|i2o_proc_handler
-op_assign
-(brace
-(paren
-r_void
-op_star
-)paren
-id|i2o_proc_reply
-comma
-l_string|&quot;I2O procfs Layer&quot;
-comma
-l_int|0
-comma
-l_int|0xffffffff
-singleline_comment|// All classes
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * IOP specific entries...write field just in case someone &n; * ever wants one.&n; */
 DECL|variable|generic_iop_entries
@@ -1495,13 +1448,6 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-DECL|variable|i2o_proc_token
-r_static
-id|u32
-id|i2o_proc_token
-op_assign
-l_int|0
-suffix:semicolon
 DECL|function|chtostr
 r_static
 r_char
@@ -1664,32 +1610,6 @@ id|i2o_proc_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-DECL|function|i2o_proc_reply
-r_void
-id|i2o_proc_reply
-c_func
-(paren
-r_struct
-id|i2o_handler
-op_star
-id|phdlr
-comma
-r_struct
-id|i2o_controller
-op_star
-id|pctrl
-comma
-r_struct
-id|i2o_message
-op_star
-id|pmsg
-)paren
-(brace
-id|i2o_proc_token
-op_assign
-id|I2O_POST_WAIT_OK
-suffix:semicolon
-)brace
 DECL|function|i2o_proc_read_hrt
 r_int
 id|i2o_proc_read_hrt
@@ -3691,7 +3611,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;   Context Field Size Support : &quot;
+l_string|&quot;    Context Field Size Support : &quot;
 )paren
 suffix:semicolon
 r_switch
@@ -3798,7 +3718,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;   Current Context Field Size : &quot;
+l_string|&quot;    Current Context Field Size : &quot;
 )paren
 suffix:semicolon
 r_switch
@@ -3902,7 +3822,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;   Inbound Peer Support       : %s&bslash;n&quot;
+l_string|&quot;    Inbound Peer Support       : %s&bslash;n&quot;
 comma
 (paren
 id|c-&gt;status_block-&gt;iop_capabilities
@@ -3925,7 +3845,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;   Outbound Peer Support      : %s&bslash;n&quot;
+l_string|&quot;    Outbound Peer Support      : %s&bslash;n&quot;
 comma
 (paren
 id|c-&gt;status_block-&gt;iop_capabilities
@@ -3948,7 +3868,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;   Peer to Peer Support       : %s&bslash;n&quot;
+l_string|&quot;    Peer to Peer Support       : %s&bslash;n&quot;
 comma
 (paren
 id|c-&gt;status_block-&gt;iop_capabilities
@@ -4379,17 +4299,34 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Capabilities :&bslash;n&quot;
+l_string|&quot;Capabilities : 0x%08x&bslash;n&quot;
+comma
+id|hwcap
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;   [%s] Self booting&bslash;n&quot;
+comma
 (paren
 id|hwcap
 op_amp
 l_int|0x00000001
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -4399,18 +4336,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;   Self-booting&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;   [%s] Upgradable IRTOS&bslash;n&quot;
+comma
 (paren
 id|hwcap
 op_amp
 l_int|0x00000002
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -4420,18 +4359,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;   Upgradable IRTOS&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;   [%s] Supports downloading DDMs&bslash;n&quot;
+comma
 (paren
 id|hwcap
 op_amp
 l_int|0x00000004
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -4441,18 +4382,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;   Supports downloading DDMs&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;   [%s] Supports installing DDMs&bslash;n&quot;
+comma
 (paren
 id|hwcap
 op_amp
 l_int|0x00000008
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -4462,31 +4405,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;   Supports installing DDMs&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;   [%s] Battery-backed RAM&bslash;n&quot;
+comma
 (paren
 id|hwcap
 op_amp
 l_int|0x00000010
 )paren
-(brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;   Battery-backed RAM&bslash;n&quot;
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock
 c_func
 (paren
@@ -9642,18 +9574,34 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Event_enable          : 0x%02X&bslash;n&quot;
+l_string|&quot;Event_enable : 0x%02X&bslash;n&quot;
 comma
 id|result.event_enable
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] Operational state change. &bslash;n&quot;
+comma
 (paren
 id|result.event_enable
 op_amp
 l_int|0x01
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -9663,16 +9611,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;&bslash;tOperational state change. &bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] Low catastrophic. &bslash;n&quot;
+comma
 (paren
 id|result.event_enable
 op_amp
 l_int|0x02
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -9682,16 +9634,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;&bslash;tLow catastrophic. &bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] Low reading. &bslash;n&quot;
+comma
 (paren
 id|result.event_enable
 op_amp
 l_int|0x04
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -9701,16 +9657,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;&bslash;tLow reading. &bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] Low warning. &bslash;n&quot;
+comma
 (paren
 id|result.event_enable
 op_amp
 l_int|0x08
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -9720,16 +9680,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;&bslash;tLow warning. &bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] Change back to normal from out of range state. &bslash;n&quot;
+comma
 (paren
 id|result.event_enable
 op_amp
 l_int|0x10
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -9739,16 +9703,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;&bslash;tChange back to normal from out of range state. &bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] High warning. &bslash;n&quot;
+comma
 (paren
 id|result.event_enable
 op_amp
 l_int|0x20
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -9758,16 +9726,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;&bslash;tHigh warning. &bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] High reading. &bslash;n&quot;
+comma
 (paren
 id|result.event_enable
 op_amp
 l_int|0x40
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -9777,26 +9749,18 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;&bslash;tHigh reading. &bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] High catastrophic. &bslash;n&quot;
+comma
 (paren
 id|result.event_enable
 op_amp
 l_int|0x80
 )paren
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;&bslash;tHigh catastrophic. &bslash;n&quot;
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|spin_unlock
@@ -12045,7 +12009,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Unicast packets %ssupported&bslash;n&quot;
+l_string|&quot;    [%s] Unicast packets supported&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12057,9 +12021,9 @@ l_int|0x00000001
 )paren
 ques
 c_cond
-l_string|&quot;&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;not &quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12071,7 +12035,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Promiscuous mode %ssupported&bslash;n&quot;
+l_string|&quot;    [%s] Promiscuous mode supported&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12083,9 +12047,9 @@ l_int|0x00000002
 )paren
 ques
 c_cond
-l_string|&quot;&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;not&quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12097,7 +12061,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Promiscuous multicast mode %ssupported&bslash;n&quot;
+l_string|&quot;    [%s] Promiscuous multicast mode supported&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12109,9 +12073,9 @@ l_int|0x00000004
 )paren
 ques
 c_cond
-l_string|&quot;&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;not &quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12123,7 +12087,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Broadcast reception disabling %ssupported&bslash;n&quot;
+l_string|&quot;    [%s] Broadcast reception disabling supported&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12135,9 +12099,9 @@ l_int|0x00000100
 )paren
 ques
 c_cond
-l_string|&quot;&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;not &quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12149,7 +12113,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Multicast reception disabling %ssupported&bslash;n&quot;
+l_string|&quot;    [%s] Multicast reception disabling supported&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12161,9 +12125,9 @@ l_int|0x00000200
 )paren
 ques
 c_cond
-l_string|&quot;&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;not &quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12175,7 +12139,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Functional address disabling %ssupported&bslash;n&quot;
+l_string|&quot;    [%s] Functional address disabling supported&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12187,9 +12151,9 @@ l_int|0x00000400
 )paren
 ques
 c_cond
-l_string|&quot;&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;not &quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12201,7 +12165,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    MAC reporting %ssupported&bslash;n&quot;
+l_string|&quot;    [%s] MAC reporting supported&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12213,9 +12177,9 @@ l_int|0x00000800
 )paren
 ques
 c_cond
-l_string|&quot;&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;not &quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12244,7 +12208,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Unicast packets %s&bslash;n&quot;
+l_string|&quot;    [%s] Unicast packets disable&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12256,9 +12220,9 @@ l_int|0x00000001
 )paren
 ques
 c_cond
-l_string|&quot;rejected&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;enabled&quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12270,7 +12234,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Promiscuous mode %s&bslash;n&quot;
+l_string|&quot;    [%s] Promiscuous mode enable&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12282,9 +12246,9 @@ l_int|0x00000002
 )paren
 ques
 c_cond
-l_string|&quot;enabled&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;disabled&quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12296,7 +12260,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Promiscuous multicast mode %s&bslash;n&quot;
+l_string|&quot;    [%s] Promiscuous multicast mode enable&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12308,9 +12272,9 @@ l_int|0x00000004
 )paren
 ques
 c_cond
-l_string|&quot;enabled&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;disabled&quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12322,7 +12286,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Broadcast packets %s&bslash;n&quot;
+l_string|&quot;    [%s] Broadcast packets disable&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12334,9 +12298,9 @@ l_int|0x00000100
 )paren
 ques
 c_cond
-l_string|&quot;rejected&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;enabled&quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12348,7 +12312,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Multicast packets %s&bslash;n&quot;
+l_string|&quot;    [%s] Multicast packets disable&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12360,9 +12324,9 @@ l_int|0x00000200
 )paren
 ques
 c_cond
-l_string|&quot;rejected&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;enabled&quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|len
@@ -12374,7 +12338,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Functional address %s&bslash;n&quot;
+l_string|&quot;    [%s] Functional address disable&bslash;n&quot;
 comma
 (paren
 id|work32
@@ -12386,9 +12350,9 @@ l_int|0x00000400
 )paren
 ques
 c_cond
-l_string|&quot;ignored&quot;
+l_string|&quot;+&quot;
 suffix:colon
-l_string|&quot;enabled&quot;
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 r_if
@@ -13047,15 +13011,6 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|d-&gt;i2oversion
-op_eq
-l_int|0x00
-)paren
-(brace
-multiline_comment|/* Reserved in 1.53 and 2.0 */
 id|len
 op_add_assign
 id|sprintf
@@ -13065,84 +13020,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Rising load delay      : %d ms&bslash;n&quot;
-comma
-id|work32
-(braket
-l_int|1
-)braket
-op_div
-l_int|10
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;Rising load threshold  : %d ms&bslash;n&quot;
-comma
-id|work32
-(braket
-l_int|2
-)braket
-op_div
-l_int|10
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;Falling load delay     : %d ms&bslash;n&quot;
-comma
-id|work32
-(braket
-l_int|3
-)braket
-op_div
-l_int|10
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;Falling load threshold : %d ms&bslash;n&quot;
-comma
-id|work32
-(braket
-l_int|4
-)braket
-op_div
-l_int|10
-)paren
-suffix:semicolon
-)brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;Max Rx batch count     : %d&bslash;n&quot;
+l_string|&quot;Max Rx batch count : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -13159,7 +13037,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Max Rx batch delay     : %d&bslash;n&quot;
+l_string|&quot;Max Rx batch delay : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -13167,34 +13045,6 @@ l_int|6
 )braket
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|d-&gt;i2oversion
-op_eq
-l_int|0x00
-)paren
-(brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;Transmission completion reporting delay : %d ms&bslash;n&quot;
-comma
-id|work32
-(braket
-l_int|7
-)braket
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|len
 op_add_assign
 id|sprintf
@@ -13229,7 +13079,6 @@ l_int|8
 )braket
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock
 c_func
 (paren
@@ -13450,11 +13299,25 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Tx modes :&bslash;n&quot;
+l_string|&quot;Tx modes : 0x%08x&bslash;n&quot;
+comma
+id|work32
+(braket
+l_int|3
+)braket
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] HW CRC supression&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13463,33 +13326,24 @@ l_int|3
 op_amp
 l_int|0x00000004
 )paren
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;    HW CRC supressed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;    HW CRC&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
+ques
 c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] HW IPv4 checksum&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13498,6 +13352,13 @@ l_int|3
 op_amp
 l_int|0x00000100
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13507,11 +13368,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    HW IPv4 checksumming&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] HW TCP checksum&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13520,6 +13378,13 @@ l_int|3
 op_amp
 l_int|0x00000200
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13529,11 +13394,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    HW TCP checksumming&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] HW UDP checksum&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13542,6 +13404,13 @@ l_int|3
 op_amp
 l_int|0x00000400
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13551,11 +13420,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    HW UDP checksumming&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] HW RSVP checksum&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13564,6 +13430,13 @@ l_int|3
 op_amp
 l_int|0x00000800
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13573,11 +13446,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    HW RSVP checksumming&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] HW ICMP checksum&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13586,6 +13456,13 @@ l_int|3
 op_amp
 l_int|0x00001000
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13595,11 +13472,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    HW ICMP checksumming&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] Loopback supression enable&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13608,32 +13482,41 @@ l_int|3
 op_amp
 l_int|0x00002000
 )paren
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;    Loopback packet not delivered&bslash;n&quot;
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;Rx modes :&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
+ques
 c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;Rx modes : 0x%08x&bslash;n&quot;
+comma
+id|work32
+(braket
+l_int|4
+)braket
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] FCS in payload&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13642,6 +13525,13 @@ l_int|4
 op_amp
 l_int|0x00000004
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13651,11 +13541,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    FCS in payload&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] HW IPv4 checksum validation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13664,6 +13551,13 @@ l_int|4
 op_amp
 l_int|0x00000100
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13673,11 +13567,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    HW IPv4 checksum validation&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] HW TCP checksum validation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13686,6 +13577,13 @@ l_int|4
 op_amp
 l_int|0x00000200
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13695,11 +13593,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    HW TCP checksum validation&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] HW UDP checksum validation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13708,6 +13603,13 @@ l_int|4
 op_amp
 l_int|0x00000400
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13717,11 +13619,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    HW UDP checksum validation&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] HW RSVP checksum validation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13730,6 +13629,13 @@ l_int|4
 op_amp
 l_int|0x00000800
 )paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -13739,11 +13645,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    HW RSVP checksum validation&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
+l_string|&quot;    [%s] HW ICMP checksum validation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -13752,16 +13655,11 @@ l_int|4
 op_amp
 l_int|0x00001000
 )paren
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;    HW ICMP checksum validation&bslash;n&quot;
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 id|spin_unlock
@@ -14112,41 +14010,6 @@ l_string|&quot;Unspecified&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|d-&gt;i2oversion
-op_eq
-l_int|0x00
-)paren
-multiline_comment|/* Reserved in 1.53 and 2.0 */
-(brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;Bad packets handled by : %s&bslash;n&quot;
-comma
-(paren
-id|result.reserved
-op_eq
-l_int|0xFF
-)paren
-ques
-c_cond
-l_string|&quot;host&quot;
-suffix:colon
-l_string|&quot;DDM&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|len
 op_add_assign
 id|sprintf
@@ -14250,7 +14113,6 @@ id|result.connection_type_target
 )paren
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock
 c_func
 (paren
@@ -14644,7 +14506,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;Max SG Elements per packet : %d&bslash;n&quot;
+l_string|&quot;Tx Max SG elements per packet : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -14661,7 +14523,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Max SG Elements per chain  : %d&bslash;n&quot;
+l_string|&quot;Tx Max SG elements per chain  : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -14678,7 +14540,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Max outstanding packets    : %d&bslash;n&quot;
+l_string|&quot;Tx Max outstanding packets    : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -14695,7 +14557,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Max packets per request    : %d&bslash;n&quot;
+l_string|&quot;Tx Max packets per request    : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -14712,11 +14574,25 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Tx modes :&bslash;n&quot;
+l_string|&quot;Tx modes : 0x%08x&bslash;n&quot;
+comma
+id|work32
+(braket
+l_int|4
+)braket
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] No DA in SGL&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -14725,7 +14601,13 @@ l_int|4
 op_amp
 l_int|0x00000002
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -14735,12 +14617,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    No DA in SGL&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;    [%s] CRC suppression&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -14749,7 +14627,13 @@ l_int|4
 op_amp
 l_int|0x00000004
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -14759,36 +14643,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    CRC suppression&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|work32
-(braket
-l_int|4
-)braket
-op_amp
-l_int|0x00000008
-)paren
-(brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
+l_string|&quot;    [%s] MAC insertion&bslash;n&quot;
 comma
-l_string|&quot;    Loop suppression&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
 (paren
 id|work32
 (braket
@@ -14797,7 +14653,13 @@ l_int|4
 op_amp
 l_int|0x00000010
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -14807,12 +14669,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    MAC insertion&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;    [%s] RIF insertion&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -14821,7 +14679,13 @@ l_int|4
 op_amp
 l_int|0x00000020
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -14831,12 +14695,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    RIF insertion&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;    [%s] IPv4 checksum generation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -14845,7 +14705,13 @@ l_int|4
 op_amp
 l_int|0x00000100
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -14855,12 +14721,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    IPv4 checksum&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;    [%s] TCP checksum generation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -14869,7 +14731,13 @@ l_int|4
 op_amp
 l_int|0x00000200
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -14879,12 +14747,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    TCP checksum&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;    [%s] UDP checksum generation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -14893,7 +14757,13 @@ l_int|4
 op_amp
 l_int|0x00000400
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -14903,12 +14773,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    UDP checksum&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;    [%s] RSVP checksum generation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -14917,7 +14783,13 @@ l_int|4
 op_amp
 l_int|0x00000800
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -14927,12 +14799,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    RSVP checksum&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
+l_string|&quot;    [%s] ICMP checksum generation&bslash;n&quot;
+comma
 (paren
 id|work32
 (braket
@@ -14941,7 +14809,13 @@ l_int|4
 op_amp
 l_int|0x00001000
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -14951,44 +14825,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    ICMP checksum&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|d-&gt;i2oversion
-op_eq
-l_int|0x00
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|work32
-(braket
-l_int|4
-)braket
-op_amp
-l_int|0x00008000
-)paren
-(brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
+l_string|&quot;    [%s] Loopback enabled&bslash;n&quot;
 comma
-l_string|&quot;    Loopback enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
 (paren
 id|work32
 (braket
@@ -14997,7 +14835,13 @@ l_int|4
 op_amp
 l_int|0x00010000
 )paren
-(brace
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -15007,39 +14851,8 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    Loopback suppression enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|work32
-(braket
-l_int|4
-)braket
-op_amp
-l_int|0x00010000
-)paren
-(brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
+l_string|&quot;    [%s] Loopback suppression enabled&bslash;n&quot;
 comma
-l_string|&quot;    Loopback enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
 (paren
 id|work32
 (braket
@@ -15048,21 +14861,13 @@ l_int|4
 op_amp
 l_int|0x00020000
 )paren
-(brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;    Loopback suppression enabled&bslash;n&quot;
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
-)brace
-)brace
 id|spin_unlock
 c_func
 (paren
@@ -15199,7 +15004,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;Max size of chain element : %d&bslash;n&quot;
+l_string|&quot;Rx Max size of chain element : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -15216,7 +15021,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Max number of buckets     : %d&bslash;n&quot;
+l_string|&quot;Rx Max Buckets               : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -15224,15 +15029,6 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|d-&gt;i2oversion
-OG
-l_int|0x00
-)paren
-(brace
-multiline_comment|/* not in 1.5 */
 id|len
 op_add_assign
 id|sprintf
@@ -15242,24 +15038,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;RxModes                   : %d&bslash;n&quot;
-comma
-id|work32
-(braket
-l_int|2
-)braket
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;RxMaxBucketsReply         : %d&bslash;n&quot;
+l_string|&quot;Rx Max Buckets in Reply      : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -15276,7 +15055,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;RxMaxPacketsPerBuckets    : %d&bslash;n&quot;
+l_string|&quot;Rx Max Packets in Bucket     : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -15293,7 +15072,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;RxMaxPostBuckets          : %d&bslash;n&quot;
+l_string|&quot;Rx Max Buckets in Post       : %d&bslash;n&quot;
 comma
 id|work32
 (braket
@@ -15301,7 +15080,179 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-)brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;Rx Modes : 0x%08x&bslash;n&quot;
+comma
+id|work32
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] FCS reception&bslash;n&quot;
+comma
+(paren
+id|work32
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x00000004
+)paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] IPv4 checksum validation &bslash;n&quot;
+comma
+(paren
+id|work32
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x00000100
+)paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] TCP checksum validation &bslash;n&quot;
+comma
+(paren
+id|work32
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x00000200
+)paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] UDP checksum validation &bslash;n&quot;
+comma
+(paren
+id|work32
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x00000400
+)paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] RSVP checksum validation &bslash;n&quot;
+comma
+(paren
+id|work32
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x00000800
+)paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    [%s] ICMP checksum validation &bslash;n&quot;
+comma
+(paren
+id|work32
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x00001000
+)paren
+ques
+c_cond
+l_string|&quot;+&quot;
+suffix:colon
+l_string|&quot;-&quot;
+)paren
+suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -19177,34 +19128,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|i2o_install_handler
-c_func
-(paren
-op_amp
-id|i2o_proc_handler
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;i2o_proc: Unable to install PROC handler.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|proc_context
-op_assign
-id|i2o_proc_handler.context
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -19233,13 +19156,6 @@ r_void
 id|destroy_i2o_procfs
 c_func
 (paren
-)paren
-suffix:semicolon
-id|i2o_remove_handler
-c_func
-(paren
-op_amp
-id|i2o_proc_handler
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: asyncd.c,v 1.10 1999/12/15 22:25:02 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
+multiline_comment|/*  $Id: asyncd.c,v 1.11 2000/01/08 20:22:19 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1028,7 +1028,7 @@ op_logical_neg
 id|async_queue
 )paren
 (brace
-id|spin_lock_irq
+id|spin_lock
 c_func
 (paren
 op_amp
@@ -1041,7 +1041,7 @@ c_func
 id|current
 )paren
 suffix:semicolon
-id|spin_unlock_irq
+id|spin_unlock
 c_func
 (paren
 op_amp
@@ -1055,6 +1055,17 @@ op_amp
 id|asyncd_wait
 )paren
 suffix:semicolon
+id|__sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* acquire gloabl_irq_lock */
 )brace
 id|restore_flags
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.182 1999/12/27 06:30:04 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.183 2000/01/08 16:38:20 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -57,47 +57,6 @@ r_int
 r_int
 id|sun4c_kernel_faults
 suffix:semicolon
-multiline_comment|/* convert a virtual address to a physical address and vice&n; * versa. Easy on the 4c&n; */
-DECL|function|sun4c_v2p
-r_static
-r_int
-r_int
-id|sun4c_v2p
-c_func
-(paren
-r_int
-r_int
-id|vaddr
-)paren
-(brace
-r_return
-(paren
-id|vaddr
-op_minus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
-)brace
-DECL|function|sun4c_p2v
-r_static
-r_int
-r_int
-id|sun4c_p2v
-c_func
-(paren
-r_int
-r_int
-id|vaddr
-)paren
-(brace
-r_return
-(paren
-id|vaddr
-op_plus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Invalidate every sun4c cache line tag. */
 DECL|function|sun4c_flush_all
 r_void
@@ -13413,26 +13372,6 @@ c_func
 id|mmu_inval_dma_area
 comma
 id|sun4c_inval_dma_area
-comma
-id|BTFIXUPCALL_NORM
-)paren
-suffix:semicolon
-id|BTFIXUPSET_CALL
-c_func
-(paren
-id|mmu_v2p
-comma
-id|sun4c_v2p
-comma
-id|BTFIXUPCALL_NORM
-)paren
-suffix:semicolon
-id|BTFIXUPSET_CALL
-c_func
-(paren
-id|mmu_p2v
-comma
-id|sun4c_p2v
 comma
 id|BTFIXUPCALL_NORM
 )paren

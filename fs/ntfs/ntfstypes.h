@@ -115,7 +115,7 @@ DECL|macro|NTFS_UID_T
 mdefine_line|#define NTFS_UID_T
 DECL|typedef|ntfs_uid_t
 r_typedef
-id|__kernel_uid_t
+id|uid_t
 id|ntfs_uid_t
 suffix:semicolon
 macro_line|#endif
@@ -124,7 +124,7 @@ DECL|macro|NTFS_GID_T
 mdefine_line|#define NTFS_GID_T
 DECL|typedef|ntfs_gid_t
 r_typedef
-id|__kernel_gid_t
+id|gid_t
 id|ntfs_gid_t
 suffix:semicolon
 macro_line|#endif

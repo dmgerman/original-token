@@ -330,7 +330,19 @@ DECL|enumerator|KERN_SHMMNI
 id|KERN_SHMMNI
 op_assign
 l_int|45
+comma
 multiline_comment|/* int: shm array identifiers */
+DECL|enumerator|KERN_OVERFLOWUID
+id|KERN_OVERFLOWUID
+op_assign
+l_int|46
+comma
+multiline_comment|/* int: overflow UID */
+DECL|enumerator|KERN_OVERFLOWGID
+id|KERN_OVERFLOWGID
+op_assign
+l_int|47
+multiline_comment|/* int: overflow GID */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */
@@ -1664,8 +1676,8 @@ id|NET_DECNET_CONF_DEV_T3
 op_assign
 l_int|4
 comma
-DECL|enumerator|NET_DECNET_CONF_DEV_COST
-id|NET_DECNET_CONF_DEV_COST
+DECL|enumerator|NET_DECNET_CONF_DEV_FORWARDING
+id|NET_DECNET_CONF_DEV_FORWARDING
 op_assign
 l_int|5
 comma
@@ -1740,7 +1752,19 @@ DECL|enumerator|FS_MAXSUPER
 id|FS_MAXSUPER
 op_assign
 l_int|10
+comma
 multiline_comment|/* int:maximum number of super_blocks that can be allocated */
+DECL|enumerator|FS_OVERFLOWUID
+id|FS_OVERFLOWUID
+op_assign
+l_int|11
+comma
+multiline_comment|/* int: overflow UID */
+DECL|enumerator|FS_OVERFLOWGID
+id|FS_OVERFLOWGID
+op_assign
+l_int|12
+multiline_comment|/* int: overflow GID */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_DEBUG names: */

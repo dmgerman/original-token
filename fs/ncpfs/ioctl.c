@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
 multiline_comment|/* maximum limit for ncp_objectname_ioctl */
@@ -559,7 +560,11 @@ suffix:semicolon
 multiline_comment|/* TODO: info.addr = server-&gt;m.serv_addr; */
 id|info.mounted_uid
 op_assign
+id|NEW_TO_OLD_UID
+c_func
+(paren
 id|server-&gt;m.mounted_uid
+)paren
 suffix:semicolon
 id|info.connection
 op_assign
@@ -641,35 +646,53 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
+id|put_user
+c_func
+(paren
+id|high2lowuid
+c_func
+(paren
+id|server-&gt;m.mounted_uid
+)paren
+comma
+(paren
+id|old_uid_t
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|NCP_IOC_GETMOUNTUID32
+suffix:colon
 r_if
 c_cond
 (paren
 (paren
-id|result
-op_assign
-id|verify_area
+id|permission
 c_func
 (paren
-id|VERIFY_WRITE
+id|inode
 comma
-(paren
-id|uid_t
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-id|uid_t
-)paren
-)paren
+id|MAY_READ
 )paren
 op_ne
 l_int|0
 )paren
+op_logical_and
+(paren
+id|current-&gt;uid
+op_ne
+id|server-&gt;m.mounted_uid
+)paren
+)paren
 (brace
 r_return
-id|result
+op_minus
+id|EACCES
 suffix:semicolon
 )brace
 id|put_user

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.20 1999/11/23 08:56:45 davem Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: uaccess.h,v 1.21 2000/01/08 16:38:23 anton Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -26,7 +26,7 @@ DECL|macro|set_fs
 mdefine_line|#define set_fs(val)&t;((current-&gt;thread.current_ds) = (val))
 DECL|macro|segment_eq
 mdefine_line|#define segment_eq(a,b)&t;((a).seg == (b).seg)
-multiline_comment|/* We have there a nice not-mapped page at page_offset - PAGE_SIZE, so that this test&n; * can be fairly lightweight.&n; * No one can read/write anything from userland in the kernel space by setting&n; * large size and address near to page_offset - a fault will break his intentions.&n; */
+multiline_comment|/* We have there a nice not-mapped page at PAGE_OFFSET - PAGE_SIZE, so that this test&n; * can be fairly lightweight.&n; * No one can read/write anything from userland in the kernel space by setting&n; * large size and address near to PAGE_OFFSET - a fault will break his intentions.&n; */
 DECL|macro|__user_ok
 mdefine_line|#define __user_ok(addr,size) ((addr) &lt; STACK_TOP)
 DECL|macro|__kernel_ok

@@ -39,7 +39,7 @@ DECL|variable|smp_num_cpus
 r_int
 id|smp_num_cpus
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 multiline_comment|/* Internal processor count */
 DECL|variable|num_processors
@@ -124,14 +124,6 @@ r_static
 r_int
 r_int
 id|boot_cpu_id
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Tripped once we need to start cross invalidating */
-DECL|variable|smp_activated
-r_static
-r_int
-id|smp_activated
 op_assign
 l_int|0
 suffix:semicolon
@@ -5509,10 +5501,6 @@ c_func
 (paren
 l_string|&quot;Before bogocount - setting activated=1.&bslash;n&quot;
 )paren
-suffix:semicolon
-id|smp_activated
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 id|smp_num_cpus

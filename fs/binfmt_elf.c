@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -5101,11 +5102,19 @@ id|current-&gt;flags
 suffix:semicolon
 id|psinfo.pr_uid
 op_assign
+id|NEW_TO_OLD_UID
+c_func
+(paren
 id|current-&gt;uid
+)paren
 suffix:semicolon
 id|psinfo.pr_gid
 op_assign
+id|NEW_TO_OLD_GID
+c_func
+(paren
 id|current-&gt;gid
+)paren
 suffix:semicolon
 (brace
 r_int

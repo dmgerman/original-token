@@ -56,17 +56,42 @@ r_struct
 id|sock
 op_star
 id|sk
+comma
+r_int
+id|gfp
 )paren
 suffix:semicolon
 r_extern
 r_void
-id|dn_send_disc
+id|dn_nsp_send_disc
 c_func
 (paren
 r_struct
 id|sock
 op_star
 id|sk
+comma
+r_int
+r_char
+id|type
+comma
+r_int
+r_int
+id|reason
+comma
+r_int
+id|gfp
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|dn_nsp_return_disc
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
 comma
 r_int
 r_char
@@ -382,9 +407,7 @@ id|packed
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Acknowledgment Messages */
-multiline_comment|/*-------------------------*/
-multiline_comment|/* Acknowledgment Messages (data/other data)                             */
+multiline_comment|/* Acknowledgment Message (data/other data)                             */
 DECL|struct|nsp_data_ack_msg
 r_struct
 id|nsp_data_ack_msg
@@ -470,8 +493,6 @@ id|packed
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Control Messages */
-multiline_comment|/*------------------*/
 multiline_comment|/* Connect Initiate/Retransmit Initiate/Connect Confirm */
 DECL|struct|nsp_conn_init_msg
 r_struct
@@ -490,9 +511,9 @@ id|packed
 )paren
 suffix:semicolon
 DECL|macro|NSP_CI
-mdefine_line|#define         NSP_CI          0x18            /* Connect Initiate     */
+mdefine_line|#define NSP_CI      0x18            /* Connect Initiate     */
 DECL|macro|NSP_RCI
-mdefine_line|#define         NSP_RCI         0x68            /* Retrans. Conn Init   */
+mdefine_line|#define NSP_RCI     0x68            /* Retrans. Conn Init   */
 DECL|member|dstaddr
 r_int
 r_int
@@ -530,11 +551,11 @@ id|packed
 )paren
 suffix:semicolon
 DECL|macro|NSP_FC_NONE
-mdefine_line|#define         NSP_FC_NONE     0x00            /* Flow Control None    */
+mdefine_line|#define NSP_FC_NONE   0x00            /* Flow Control None    */
 DECL|macro|NSP_FC_SRC
-mdefine_line|#define         NSP_FC_SRC      0x04            /* Seg Req. Count       */
+mdefine_line|#define NSP_FC_SRC    0x04            /* Seg Req. Count       */
 DECL|macro|NSP_FC_SCMC
-mdefine_line|#define         NSP_FC_SCMC     0x08            /* Sess. Control Mess   */
+mdefine_line|#define NSP_FC_SCMC   0x08            /* Sess. Control Mess   */
 DECL|member|info
 r_int
 r_char
@@ -616,7 +637,6 @@ id|packed
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*------------------------- SCP - messages ------------------------------*/
 DECL|struct|srcobj_fmt
 r_struct
 id|srcobj_fmt

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Name                         : qnx4_fs_sb.h&n; *  Author                       : Richard Frowijn&n; *  Function                     : qnx4 superblock definitions&n; *  Version                      : 1.0&n; *  Last modified                : 20-05-1998&n; * &n; *  History                      : 23-03-1998 created&n; * &n; */
+multiline_comment|/*&n; *  Name                         : qnx4_fs_sb.h&n; *  Author                       : Richard Frowijn&n; *  Function                     : qnx4 superblock definitions&n; *  Version                      : 1.0.2&n; *  Last modified                : 2000-01-06&n; * &n; *  History                      : 23-03-1998 created&n; * &n; */
 macro_line|#ifndef _QNX4_FS_SB
 DECL|macro|_QNX4_FS_SB
 mdefine_line|#define _QNX4_FS_SB

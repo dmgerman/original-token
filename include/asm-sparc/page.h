@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.45 1999/07/03 08:58:05 davem Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: page.h,v 1.46 2000/01/08 16:38:22 anton Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PAGE_H
 DECL|macro|_SPARC_PAGE_H
 mdefine_line|#define _SPARC_PAGE_H
@@ -24,60 +24,11 @@ macro_line|#ifndef __ASSEMBLY__
 DECL|macro|BUG
 mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
 DECL|macro|PAGE_BUG
-mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;&t;&t;&t;BUG(); } while (0)
+mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;BUG(); &bslash;&n;} while (0)
 DECL|macro|clear_page
 mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page
 mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
-r_extern
-r_int
-r_int
-id|page_offset
-suffix:semicolon
-id|BTFIXUPDEF_SETHI_INIT
-c_func
-(paren
-id|page_offset
-comma
-l_int|0xf0000000
-)paren
-macro_line|#ifdef MODULE
-DECL|macro|PAGE_OFFSET
-mdefine_line|#define &t;PAGE_OFFSET  (page_offset)
-macro_line|#else
-mdefine_line|#define&t;&t;PAGE_OFFSET  BTFIXUP_SETHI(page_offset)
-macro_line|#endif
-multiline_comment|/* translate between physical and virtual addresses */
-id|BTFIXUPDEF_CALL_CONST
-c_func
-(paren
-r_int
-r_int
-comma
-id|mmu_v2p
-comma
-r_int
-r_int
-)paren
-id|BTFIXUPDEF_CALL_CONST
-c_func
-(paren
-r_int
-r_int
-comma
-id|mmu_p2v
-comma
-r_int
-r_int
-)paren
-DECL|macro|mmu_v2p
-mdefine_line|#define mmu_v2p(vaddr) BTFIXUP_CALL(mmu_v2p)(vaddr)
-DECL|macro|mmu_p2v
-mdefine_line|#define mmu_p2v(paddr) BTFIXUP_CALL(mmu_p2v)(paddr)
-DECL|macro|__pa
-mdefine_line|#define __pa(x)    (mmu_v2p((unsigned long)(x)))
-DECL|macro|__va
-mdefine_line|#define __va(x)    ((void *)(mmu_p2v((unsigned long)(x))))
 multiline_comment|/* The following structure is used to hold the physical&n; * memory configuration of the machine.  This is filled in&n; * probe_memory() and is later used by mem_init() to set up&n; * mem_map[].  We statically allocate SPARC_PHYS_BANKS of&n; * these structs, this is arbitrary.  The entry after the&n; * last valid one has num_bytes==0.&n; */
 DECL|struct|sparc_phys_banks
 r_struct
@@ -796,15 +747,20 @@ id|sparc_unmapped_base
 )paren
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;BTFIXUP_SETHI(sparc_unmapped_base)
-multiline_comment|/* to align the pointer to the (next) page boundary */
-DECL|macro|PAGE_ALIGN
-mdefine_line|#define PAGE_ALIGN(addr)  (((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
-multiline_comment|/* Now, to allow for very large physical memory configurations we&n; * place the page pool both above the kernel and below the kernel.&n; */
-DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr) ((((unsigned long) (addr)) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 macro_line|#else /* !(__ASSEMBLY__) */
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif /* !(__ASSEMBLY__) */
+multiline_comment|/* to align the pointer to the (next) page boundary */
+DECL|macro|PAGE_ALIGN
+mdefine_line|#define PAGE_ALIGN(addr)  (((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
+DECL|macro|PAGE_OFFSET
+mdefine_line|#define PAGE_OFFSET&t;0xf0000000
+DECL|macro|__pa
+mdefine_line|#define __pa(x)                 ((unsigned long)(x) - PAGE_OFFSET)
+DECL|macro|__va
+mdefine_line|#define __va(x)                 ((void *)((unsigned long) (x) + PAGE_OFFSET))
+DECL|macro|MAP_NR
+mdefine_line|#define MAP_NR(addr)            (__pa(addr) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _SPARC_PAGE_H */
 eof

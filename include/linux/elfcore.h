@@ -192,11 +192,11 @@ id|pr_flag
 suffix:semicolon
 multiline_comment|/* flags */
 DECL|member|pr_uid
-id|uid_t
+id|__kernel_uid_t
 id|pr_uid
 suffix:semicolon
 DECL|member|pr_gid
-id|gid_t
+id|__kernel_gid_t
 id|pr_gid
 suffix:semicolon
 DECL|member|pr_pid

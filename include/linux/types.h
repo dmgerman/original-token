@@ -39,16 +39,6 @@ r_typedef
 id|__kernel_pid_t
 id|pid_t
 suffix:semicolon
-DECL|typedef|uid_t
-r_typedef
-id|__kernel_uid_t
-id|uid_t
-suffix:semicolon
-DECL|typedef|gid_t
-r_typedef
-id|__kernel_gid_t
-id|gid_t
-suffix:semicolon
 DECL|typedef|daddr_t
 r_typedef
 id|__kernel_daddr_t
@@ -63,6 +53,51 @@ DECL|typedef|suseconds_t
 r_typedef
 id|__kernel_suseconds_t
 id|suseconds_t
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|typedef|uid_t
+r_typedef
+id|__kernel_uid32_t
+id|uid_t
+suffix:semicolon
+DECL|typedef|gid_t
+r_typedef
+id|__kernel_gid32_t
+id|gid_t
+suffix:semicolon
+DECL|typedef|uid16_t
+r_typedef
+id|__kernel_uid16_t
+id|uid16_t
+suffix:semicolon
+DECL|typedef|gid16_t
+r_typedef
+id|__kernel_gid16_t
+id|gid16_t
+suffix:semicolon
+multiline_comment|/* libc5 includes this file to define uid_t, thus uid_t can never change&n; * when it is included by non-kernel code&n; */
+macro_line|#else
+DECL|typedef|uid_t
+r_typedef
+id|__kernel_uid_t
+id|uid_t
+suffix:semicolon
+DECL|typedef|gid_t
+r_typedef
+id|__kernel_gid_t
+id|gid_t
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
+multiline_comment|/* This is defined by include/asm-{arch}/posix_types.h */
+DECL|typedef|old_uid_t
+r_typedef
+id|__kernel_old_uid_t
+id|old_uid_t
+suffix:semicolon
+DECL|typedef|old_gid_t
+r_typedef
+id|__kernel_old_gid_t
+id|old_gid_t
 suffix:semicolon
 macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
 DECL|typedef|loff_t

@@ -44,8 +44,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ino %lu  mode 0%6.6o  nlink %d  uid %d  uid32 %u&quot;
-l_string|&quot;  gid %d  gid32 %u  size %lu blocks %lu&bslash;n&quot;
+l_string|&quot;ino %lu  mode 0%6.6o  nlink %d  uid %d  gid %d&quot;
+l_string|&quot;  size %lu blocks %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -55,11 +55,7 @@ id|inode-&gt;i_nlink
 comma
 id|inode-&gt;i_uid
 comma
-id|inode-&gt;u.ufs_i.i_uid
-comma
 id|inode-&gt;i_gid
-comma
-id|inode-&gt;u.ufs_i.i_gid
 comma
 id|inode-&gt;i_size
 comma
@@ -2798,10 +2794,8 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Linux has only 16-bit uid and gid, so we can&squot;t support EFT.&n;&t; * Files are dynamically chown()ed to root.&n;&t; */
+multiline_comment|/*&n;&t; * Linux now has 32-bit uid and gid, so we can support EFT.&n;&t; */
 id|inode-&gt;i_uid
-op_assign
-id|inode-&gt;u.ufs_i.i_uid
 op_assign
 id|ufs_get_inode_uid
 c_func
@@ -2811,40 +2805,12 @@ id|ufs_inode
 suffix:semicolon
 id|inode-&gt;i_gid
 op_assign
-id|inode-&gt;u.ufs_i.i_gid
-op_assign
 id|ufs_get_inode_gid
 c_func
 (paren
 id|ufs_inode
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode-&gt;u.ufs_i.i_uid
-op_ge
-id|UFS_USEEFT
-)paren
-(brace
-id|inode-&gt;i_uid
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|inode-&gt;u.ufs_i.i_gid
-op_ge
-id|UFS_USEEFT
-)paren
-(brace
-id|inode-&gt;i_gid
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Linux i_size can be 32 on some architectures. We will mark &n;&t; * big files as read only and let user access first 32 bits.&n;&t; */
 id|inode-&gt;u.ufs_i.i_size
 op_assign
@@ -3321,25 +3287,6 @@ c_func
 id|inode-&gt;i_nlink
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode-&gt;i_uid
-op_eq
-l_int|0
-op_logical_and
-id|inode-&gt;u.ufs_i.i_uid
-op_ge
-id|UFS_USEEFT
-)paren
-id|ufs_set_inode_uid
-(paren
-id|ufs_inode
-comma
-id|inode-&gt;u.ufs_i.i_uid
-)paren
-suffix:semicolon
-r_else
 id|ufs_set_inode_uid
 (paren
 id|ufs_inode
@@ -3347,25 +3294,6 @@ comma
 id|inode-&gt;i_uid
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode-&gt;i_gid
-op_eq
-l_int|0
-op_logical_and
-id|inode-&gt;u.ufs_i.i_gid
-op_ge
-id|UFS_USEEFT
-)paren
-id|ufs_set_inode_gid
-(paren
-id|ufs_inode
-comma
-id|inode-&gt;u.ufs_i.i_gid
-)paren
-suffix:semicolon
-r_else
 id|ufs_set_inode_gid
 (paren
 id|ufs_inode

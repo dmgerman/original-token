@@ -78,6 +78,15 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|dn_rt_cache_flush
+c_func
+(paren
+r_int
+id|delay
+)paren
+suffix:semicolon
 multiline_comment|/* Masks for flags field */
 DECL|macro|DN_RT_F_PID
 mdefine_line|#define DN_RT_F_PID 0x07 /* Mask for packet type                      */
@@ -138,6 +147,7 @@ DECL|macro|DN_RT_INFO_NOML
 mdefine_line|#define DN_RT_INFO_NOML 0x20 /* No Multicast traffic accepted */
 DECL|macro|DN_RT_INFO_BLKR
 mdefine_line|#define DN_RT_INFO_BLKR 0x40 /* Blocking Requested            */
+multiline_comment|/*&n; * The key structure is what we used to look up the route.&n; * The rt_saddr &amp; rt_daddr entries are the same as key.saddr &amp; key.daddr&n; * except for local input routes, where the rt_saddr = key.daddr and&n; * rt_daddr = key.saddr to allow the route to be used for returning&n; * packets to the originating host.&n; */
 DECL|struct|dn_route
 r_struct
 id|dn_route
@@ -159,6 +169,34 @@ DECL|member|u
 )brace
 id|u
 suffix:semicolon
+r_struct
+(brace
+DECL|member|saddr
+r_int
+r_int
+id|saddr
+suffix:semicolon
+DECL|member|daddr
+r_int
+r_int
+id|daddr
+suffix:semicolon
+DECL|member|iif
+r_int
+id|iif
+suffix:semicolon
+DECL|member|oif
+r_int
+id|oif
+suffix:semicolon
+DECL|member|fwmark
+id|u32
+id|fwmark
+suffix:semicolon
+DECL|member|key
+)brace
+id|key
+suffix:semicolon
 DECL|member|rt_saddr
 r_int
 r_int
@@ -169,13 +207,25 @@ r_int
 r_int
 id|rt_daddr
 suffix:semicolon
-DECL|member|rt_iif
+DECL|member|rt_type
 r_int
-id|rt_iif
+r_char
+id|rt_type
 suffix:semicolon
-DECL|member|rt_oif
+DECL|member|rt_scope
 r_int
-id|rt_oif
+r_char
+id|rt_scope
+suffix:semicolon
+DECL|member|rt_protocol
+r_int
+r_char
+id|rt_protocol
+suffix:semicolon
+DECL|member|rt_table
+r_int
+r_char
+id|rt_table
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -38,5 +38,9 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|open_pic_irq_offset
+suffix:semicolon
 macro_line|#endif /* _PPC_KERNEL_OPEN_PIC_H */
 eof

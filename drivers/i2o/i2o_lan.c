@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/drivers/i2o/i2o_lan.c&n; *&n; * &t;I2O LAN CLASS OSM &t;December 2nd 1999&n; *&n; *&t;(C) Copyright 1999 &t;University of Helsinki,&n; *&t;&t;&t;&t;Department of Computer Science&n; *&n; * &t;This code is still under development / test.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Authors: &t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Deepak Saxena &lt;deepak@plexity.net&gt;&n; *&n; *&t;Tested:&t;&t;in FDDI environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Ethernet environment (using Intel 82558 DDM proto)&n; *&n; *&t;TODO:&t;&t;check error checking / timeouts&n; *&t;&t;&t;code / test for other LAN classes&n; */
+multiline_comment|/*&n; *&t;linux/drivers/i2o/i2o_lan.c&n; *&n; * &t;I2O LAN CLASS OSM &t;January 7th 1999&n; *&n; *&t;(C) Copyright 1999 &t;University of Helsinki,&n; *&t;&t;&t;&t;Department of Computer Science&n; *&n; * &t;This code is still under development / test.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Authors: &t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Deepak Saxena &lt;deepak@plexity.net&gt;&n; *&n; *&t;Tested:&t;&t;in FDDI environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Gigabit Eth environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Fast Ethernet environment (using Intel 82558 DDM)&n; *&n; *&t;TODO:&t;&t;check error checking / timeouts&n; *&t;&t;&t;code / test for other LAN classes&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -115,9 +115,9 @@ id|u32
 id|tx_count
 suffix:semicolon
 multiline_comment|/* packets in one TX message frame */
-DECL|member|tx_max
+DECL|member|tx_max_out
 id|u32
-id|tx_max
+id|tx_max_out
 suffix:semicolon
 multiline_comment|/* DDM&squot;s Tx queue len */
 DECL|member|tx_out
@@ -135,6 +135,11 @@ id|u32
 id|m
 suffix:semicolon
 multiline_comment|/* IOP address of msg frame */
+DECL|member|i2o_batch_send_task
+r_struct
+id|tq_struct
+id|i2o_batch_send_task
+suffix:semicolon
 DECL|member|i2o_fbl
 r_struct
 id|sk_buff
@@ -282,6 +287,7 @@ op_star
 l_int|0
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * i2o_lan_reply(): The only callback function to handle incoming messages.&n; */
 DECL|function|i2o_lan_reply
 r_static
 r_void
@@ -543,7 +549,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;i2olan: Device %s rejected bucket post.&bslash;n&quot;
+l_string|&quot;%s: rejected bucket post.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -664,6 +670,7 @@ suffix:semicolon
 r_case
 id|LAN_RESET
 suffix:colon
+multiline_comment|/* default reply without payload */
 r_case
 id|LAN_SUSPEND
 suffix:colon
@@ -691,7 +698,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: Sorry, no handler for the reply.&bslash;n&quot;
+l_string|&quot;%s: No handler for the reply.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -708,6 +715,7 @@ id|msg
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * i2o_lan_event_reply(): Handle events.&n; */
 DECL|function|i2o_lan_event_reply
 r_static
 r_void
@@ -1083,6 +1091,7 @@ multiline_comment|/*&n;                 * EventAck necessary only for events tha
 multiline_comment|/* else evt-&gt;function == I2O_CMD_UTIL_EVT_ACK) */
 multiline_comment|/* Do we need to do something here too? */
 )brace
+multiline_comment|/*&n; * i2o_lan_release_buckets(): Handle unused buckets.&n; */
 DECL|function|i2o_lan_release_buckets
 r_static
 r_void
@@ -1183,6 +1192,7 @@ op_decrement
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * i2o_lan_receive_post_reply(): Process incoming packets.&n; */
 DECL|function|i2o_lan_receive_post_reply
 r_static
 r_int
@@ -1421,34 +1431,29 @@ op_increment
 suffix:semicolon
 singleline_comment|// to next Packet Descriptor Block
 )brace
+macro_line|#ifdef DRIVERDEBUG
 r_if
 c_cond
 (paren
-(paren
 id|msg
 (braket
-l_int|4
+l_int|5
 )braket
-op_amp
-l_int|0x000000FF
-)paren
 op_eq
-id|I2O_LAN_DSC_BUCKET_OVERRUN
+l_int|0
 )paren
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: DDM out of buckets (count = %d)!&bslash;n&quot;
+l_string|&quot;%s: DDM out of buckets (priv-&gt;count = %d)!&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|msg
-(braket
-l_int|5
-)braket
+id|priv-&gt;bucket_count
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1459,7 +1464,6 @@ op_minus
 id|bucketthresh
 )paren
 (brace
-singleline_comment|//        &t;i2o_lan_receive_post(dev);
 id|i2o_post_buckets_task.data
 op_assign
 (paren
@@ -1484,6 +1488,7 @@ c_func
 id|IMMEDIATE_BH
 )paren
 suffix:semicolon
+multiline_comment|/* Note: the task is queued only once */
 )brace
 r_return
 l_int|0
@@ -1877,6 +1882,15 @@ id|msg
 l_int|5
 )braket
 suffix:semicolon
+id|dprintk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: LAN RESET MESSAGE.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 id|msg
 (braket
 l_int|0
@@ -2091,7 +2105,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Set DDM into batch mode.&n; */
+multiline_comment|/*&n; * i2o_set_batch_mode(): Set DDM into batch mode.&n; */
 DECL|function|i2o_set_batch_mode
 r_static
 r_void
@@ -2273,6 +2287,7 @@ id|i2o_dev
 op_assign
 id|priv-&gt;i2o_dev
 suffix:semicolon
+macro_line|#if 0
 r_struct
 id|i2o_controller
 op_star
@@ -2285,7 +2300,8 @@ id|evt_mask
 op_assign
 l_int|0xFFC00007
 suffix:semicolon
-singleline_comment|// All generic events, all lan evenst
+singleline_comment|// All generic events, all lan events
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2485,15 +2501,11 @@ OL
 l_int|0
 )paren
 id|printk
-c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;%s: Unable to clear the event mask.&bslash;n&quot;
 comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
+macro_line|#endif&t;&t;&t;&t;dev-&gt;name);
 id|dev-&gt;tbusy
 op_assign
 l_int|1
@@ -2650,35 +2662,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|variable|i2o_post_send_task
-r_struct
-id|tq_struct
-id|i2o_post_send_task
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-(paren
-r_void
-(paren
-op_star
-)paren
-(paren
-r_void
-op_star
-)paren
-)paren
-id|i2o_lan_batch_send
-comma
-(paren
-r_void
-op_star
-)paren
-l_int|0
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * i2o_lan_packet_send(): Send a packet as is, including the MAC header.&n; *&n; * Must be supported by Ethernet/802.3, Token Ring, FDDI, optional for&n; * Fibre Channel&n; */
 DECL|function|i2o_lan_packet_send
 r_static
@@ -2923,49 +2906,20 @@ op_plus
 l_int|6
 )paren
 suffix:semicolon
-id|i2o_post_send_task.data
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|dev
-suffix:semicolon
 id|queue_task
 c_func
 (paren
 op_amp
-id|i2o_post_send_task
+id|priv-&gt;i2o_batch_send_task
 comma
 op_amp
 id|tq_scheduler
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|priv-&gt;tx_out
-OL
-id|priv-&gt;tx_max
-)paren
-id|clear_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
-multiline_comment|/* Else add new SGL element to the previous message frame */
+r_else
+(brace
+multiline_comment|/* Add new SGL element to the previous message frame */
 id|dprintk
 c_func
 (paren
@@ -3093,7 +3047,6 @@ id|priv-&gt;sgl_max
 )paren
 (brace
 multiline_comment|/* frame full, send now */
-singleline_comment|//&t;&t;i2o_lan_batch_send(dev);
 id|i2o_post_message
 c_func
 (paren
@@ -3117,12 +3070,14 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* If HDMs TxMaxPktOut reached, stay busy (don&squot;t clean tbusy) */
 r_if
 c_cond
 (paren
 id|priv-&gt;tx_out
 OL
-id|priv-&gt;tx_max
+id|priv-&gt;tx_max_out
 )paren
 id|clear_bit
 c_func
@@ -3141,6 +3096,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * i2o_lan_get_stats(): Fill in the statistics.&n; */
 DECL|function|i2o_lan_get_stats
 r_static
 r_struct
@@ -4359,6 +4315,50 @@ id|tq_scheduler
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * i2o_lan_change_mtu(): Change maximum transfer unit size.&n; */
+DECL|function|i2o_lan_change_mtu
+r_static
+r_int
+id|i2o_lan_change_mtu
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+r_int
+id|new_mtu
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|new_mtu
+OL
+l_int|68
+)paren
+op_logical_or
+(paren
+id|new_mtu
+OG
+l_int|9000
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|dev-&gt;mtu
+op_assign
+id|new_mtu
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * i2o_lan_register_device(): Register LAN class device to kernel.&n; */
 DECL|function|i2o_lan_register_device
 r_struct
 id|net_device
@@ -4393,7 +4393,7 @@ l_int|8
 )braket
 suffix:semicolon
 id|u32
-id|tx_max
+id|tx_max_out
 op_assign
 l_int|0
 suffix:semicolon
@@ -4862,11 +4862,11 @@ comma
 l_int|2
 comma
 op_amp
-id|tx_max
+id|tx_max_out
 comma
 r_sizeof
 (paren
-id|tx_max
+id|tx_max_out
 )paren
 )paren
 OL
@@ -4909,12 +4909,12 @@ l_string|&quot;%s: Max TX Outstanding = %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|tx_max
+id|tx_max_out
 )paren
 suffix:semicolon
-id|priv-&gt;tx_max
+id|priv-&gt;tx_max_out
 op_assign
-id|tx_max
+id|tx_max_out
 suffix:semicolon
 id|priv-&gt;tx_out
 op_assign
@@ -4927,6 +4927,30 @@ suffix:semicolon
 id|priv-&gt;lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
+id|priv-&gt;i2o_batch_send_task.next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|priv-&gt;i2o_batch_send_task.sync
+op_assign
+l_int|0
+suffix:semicolon
+id|priv-&gt;i2o_batch_send_task.routine
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|i2o_lan_batch_send
+suffix:semicolon
+id|priv-&gt;i2o_batch_send_task.data
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|dev
 suffix:semicolon
 id|dev-&gt;open
 op_assign
@@ -4947,6 +4971,10 @@ suffix:semicolon
 id|dev-&gt;set_multicast_list
 op_assign
 id|i2o_lan_set_multicast_list
+suffix:semicolon
+id|dev-&gt;change_mtu
+op_assign
+id|i2o_lan_change_mtu
 suffix:semicolon
 r_return
 id|dev

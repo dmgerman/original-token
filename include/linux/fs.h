@@ -501,6 +501,7 @@ macro_line|#include &lt;linux/bfs_fs_i.h&gt;
 macro_line|#include &lt;linux/udf_fs_i.h&gt;
 macro_line|#include &lt;linux/ncp_fs_i.h&gt;
 macro_line|#include &lt;linux/proc_fs_i.h&gt;
+macro_line|#include &lt;linux/usbdev_fs_i.h&gt;
 multiline_comment|/*&n; * Attribute flags.  These should be or-ed together to figure out what&n; * has been changed!&n; */
 DECL|macro|ATTR_MODE
 mdefine_line|#define ATTR_MODE&t;1
@@ -932,6 +933,11 @@ DECL|member|socket_i
 r_struct
 id|socket
 id|socket_i
+suffix:semicolon
+DECL|member|usbdev_i
+r_struct
+id|usbdev_inode_info
+id|usbdev_i
 suffix:semicolon
 DECL|member|generic_ip
 r_void
@@ -1430,6 +1436,7 @@ macro_line|#include &lt;linux/qnx4_fs_sb.h&gt;
 macro_line|#include &lt;linux/bfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/udf_fs_sb.h&gt;
 macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
+macro_line|#include &lt;linux/usbdev_fs_sb.h&gt;
 r_extern
 r_struct
 id|list_head
@@ -1638,6 +1645,11 @@ DECL|member|ncpfs_sb
 r_struct
 id|ncp_sb_info
 id|ncpfs_sb
+suffix:semicolon
+DECL|member|usbdevfs_sb
+r_struct
+id|usbdev_sb_info
+id|usbdevfs_sb
 suffix:semicolon
 DECL|member|generic_sbp
 r_void
@@ -3015,6 +3027,20 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|blkdev_close
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|file_operations
 id|def_blk_fops
@@ -3276,8 +3302,10 @@ DECL|macro|BUF_LOCKED
 mdefine_line|#define BUF_LOCKED&t;1&t;/* Buffers scheduled for write */
 DECL|macro|BUF_DIRTY
 mdefine_line|#define BUF_DIRTY&t;2&t;/* Dirty buffers, not yet scheduled for write */
+DECL|macro|BUF_PROTECTED
+mdefine_line|#define BUF_PROTECTED&t;3&t;/* Ramdisk persistent storage */
 DECL|macro|NR_LIST
-mdefine_line|#define NR_LIST&t;&t;3
+mdefine_line|#define NR_LIST&t;&t;4
 multiline_comment|/*&n; * This is called by bh-&gt;b_end_io() handlers when I/O has completed.&n; */
 DECL|function|mark_buffer_uptodate
 r_extern
@@ -3365,6 +3393,58 @@ id|bh
 )paren
 )paren
 id|__mark_buffer_clean
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
+DECL|macro|atomic_set_buffer_protected
+mdefine_line|#define atomic_set_buffer_protected(bh) test_and_set_bit(BH_Protected, &amp;(bh)-&gt;b_state)
+DECL|function|__mark_buffer_protected
+r_extern
+r_inline
+r_void
+id|__mark_buffer_protected
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+id|refile_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
+DECL|function|mark_buffer_protected
+r_extern
+r_inline
+r_void
+id|mark_buffer_protected
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|atomic_set_buffer_protected
+c_func
+(paren
+id|bh
+)paren
+)paren
+id|__mark_buffer_protected
 c_func
 (paren
 id|bh
@@ -4624,6 +4704,20 @@ comma
 r_int
 comma
 id|loff_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|block_fsync
+c_func
+(paren
+r_struct
+id|file
+op_star
+comma
+r_struct
+id|dentry
 op_star
 )paren
 suffix:semicolon

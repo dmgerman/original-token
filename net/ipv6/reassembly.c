@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 fragment reassembly&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: reassembly.c,v 1.15 1999/08/20 11:06:27 davem Exp $&n; *&n; *&t;Based on: net/ipv4/ip_fragment.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 fragment reassembly&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: reassembly.c,v 1.16 2000/01/09 02:19:51 davem Exp $&n; *&n; *&t;Based on: net/ipv4/ip_fragment.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/* &n; *&t;Fixes:&t;&n; *&t;Andi Kleen&t;Make it work with multiple hosts.&n; *&t;&t;&t;More RFC compliance.&n; *&n; *      Horst von Brand Add missing #include &lt;linux/string.h&gt;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -431,8 +431,11 @@ op_amp
 id|ipv6_frag_queue
 )paren
 (brace
-id|ipv6_statistics.Ip6ReasmFails
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6ReasmFails
+)paren
 suffix:semicolon
 id|fq_free
 c_func
@@ -551,8 +554,11 @@ id|hdr
 op_assign
 id|skb-&gt;nh.ipv6h
 suffix:semicolon
-id|ipv6_statistics.Ip6ReasmReqds
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6ReasmReqds
+)paren
 suffix:semicolon
 multiline_comment|/* Jumbo payload inhibits frag. header */
 r_if
@@ -883,11 +889,17 @@ id|frag
 op_assign
 id|fq-&gt;fragments
 suffix:semicolon
-id|ipv6_statistics.Ip6ReasmTimeout
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6ReasmTimeout
+)paren
 suffix:semicolon
-id|ipv6_statistics.Ip6ReasmFails
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6ReasmFails
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1039,8 +1051,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|ipv6_statistics.Ip6ReasmFails
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6ReasmFails
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -1709,8 +1724,11 @@ comma
 id|payload_len
 )paren
 suffix:semicolon
-id|ipv6_statistics.Ip6ReasmFails
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6ReasmFails
+)paren
 suffix:semicolon
 id|fq_free
 c_func
@@ -1759,8 +1777,11 @@ id|KERN_DEBUG
 l_string|&quot;reasm_frag: no memory for reassembly&bslash;n&quot;
 )paren
 suffix:semicolon
-id|ipv6_statistics.Ip6ReasmFails
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6ReasmFails
+)paren
 suffix:semicolon
 id|fq_free
 c_func
@@ -1973,8 +1994,11 @@ id|fq
 )paren
 )paren
 suffix:semicolon
-id|ipv6_statistics.Ip6ReasmOKs
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6ReasmOKs
+)paren
 suffix:semicolon
 r_return
 id|nhptr

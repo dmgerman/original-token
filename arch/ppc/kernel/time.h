@@ -1,5 +1,7 @@
 multiline_comment|/*&n; * $Id: time.h,v 1.12 1999/08/27 04:21:23 cort Exp $&n; * Common time prototypes and such for all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/* time.c */
 r_extern
 r_int
@@ -75,25 +77,27 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|ret
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;mfspr %0,22&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|ret
-)paren
-suffix:colon
-)paren
-suffix:semicolon
+macro_line|#if defined(CONFIG_4xx)
 r_return
-id|ret
+(paren
+id|mfspr
+c_func
+(paren
+id|SPRN_PIT
+)paren
+)paren
 suffix:semicolon
+macro_line|#else
+r_return
+(paren
+id|mfspr
+c_func
+(paren
+id|SPRN_DEC
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|set_dec
 r_static
@@ -107,17 +111,24 @@ r_int
 id|val
 )paren
 (brace
-id|asm
-r_volatile
+macro_line|#if defined(CONFIG_4xx)
+id|mtspr
+c_func
 (paren
-l_string|&quot;mtspr 22,%0&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
+id|SPRN_PIT
+comma
 id|val
 )paren
+suffix:semicolon
+macro_line|#else
+id|mtspr
+c_func
+(paren
+id|SPRN_DEC
+comma
+id|val
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 eof

@@ -394,6 +394,44 @@ DECL|macro|__NR_lstat64
 mdefine_line|#define __NR_lstat64&t;&t;196
 DECL|macro|__NR_fstat64
 mdefine_line|#define __NR_fstat64&t;&t;197
+DECL|macro|__NR_chown32
+mdefine_line|#define __NR_chown32&t;&t;198
+DECL|macro|__NR_getuid32
+mdefine_line|#define __NR_getuid32&t;&t;199
+DECL|macro|__NR_getgid32
+mdefine_line|#define __NR_getgid32&t;&t;200
+DECL|macro|__NR_geteuid32
+mdefine_line|#define __NR_geteuid32&t;&t;201
+DECL|macro|__NR_getegid32
+mdefine_line|#define __NR_getegid32&t;&t;202
+DECL|macro|__NR_setreuid32
+mdefine_line|#define __NR_setreuid32&t;&t;203
+DECL|macro|__NR_setregid32
+mdefine_line|#define __NR_setregid32&t;&t;204
+DECL|macro|__NR_getgroups32
+mdefine_line|#define __NR_getgroups32&t;205
+DECL|macro|__NR_setgroups32
+mdefine_line|#define __NR_setgroups32&t;206
+DECL|macro|__NR_fchown32
+mdefine_line|#define __NR_fchown32&t;&t;207
+DECL|macro|__NR_setresuid32
+mdefine_line|#define __NR_setresuid32&t;208
+DECL|macro|__NR_getresuid32
+mdefine_line|#define __NR_getresuid32&t;209
+DECL|macro|__NR_setresgid32
+mdefine_line|#define __NR_setresgid32&t;210
+DECL|macro|__NR_getresgid32
+mdefine_line|#define __NR_getresgid32&t;211
+DECL|macro|__NR_lchown32
+mdefine_line|#define __NR_lchown32&t;&t;212
+DECL|macro|__NR_setuid32
+mdefine_line|#define __NR_setuid32&t;&t;213
+DECL|macro|__NR_setgid32
+mdefine_line|#define __NR_setgid32&t;&t;214
+DECL|macro|__NR_setfsuid32
+mdefine_line|#define __NR_setfsuid32&t;&t;215
+DECL|macro|__NR_setfsgid32
+mdefine_line|#define __NR_setfsgid32&t;&t;216
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see&n;   &lt;asm-m68k/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* avoid using res which is declared to be in register d0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

@@ -1218,7 +1218,18 @@ r_extern
 r_struct
 id|tcp_mib
 id|tcp_statistics
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
+DECL|macro|TCP_INC_STATS
+mdefine_line|#define TCP_INC_STATS(field)&t;&t;SNMP_INC_STATS(tcp_statistics, field)
+DECL|macro|TCP_INC_STATS_BH
+mdefine_line|#define TCP_INC_STATS_BH(field)&t;&t;SNMP_INC_STATS_BH(tcp_statistics, field)
+DECL|macro|TCP_INC_STATS_USER
+mdefine_line|#define TCP_INC_STATS_USER(field) &t;SNMP_INC_STATS_USER(tcp_statistics, field)
 r_extern
 r_void
 id|tcp_put_port
@@ -3196,8 +3207,11 @@ id|oldstate
 op_ne
 id|TCP_ESTABLISHED
 )paren
-id|tcp_statistics.TcpCurrEstab
-op_increment
+id|TCP_INC_STATS
+c_func
+(paren
+id|TcpCurrEstab
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3224,7 +3238,23 @@ id|oldstate
 op_eq
 id|TCP_ESTABLISHED
 )paren
-id|tcp_statistics.TcpCurrEstab
+id|tcp_statistics
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_star
+l_int|2
+op_plus
+op_logical_neg
+id|in_interrupt
+c_func
+(paren
+)paren
+)braket
+dot
+id|TcpCurrEstab
 op_decrement
 suffix:semicolon
 )brace

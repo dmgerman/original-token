@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.113 1999/09/07 02:31:39 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.114 2000/01/09 02:19:43 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&t;&t;Andrea Arcangeli:&t;SYNACK carry ts_recent in tsecr.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -611,8 +611,11 @@ id|tp-&gt;last_ack_sent
 op_assign
 id|tp-&gt;rcv_nxt
 suffix:semicolon
-id|tcp_statistics.TcpOutSegs
-op_increment
+id|TCP_INC_STATS
+c_func
+(paren
+id|TcpOutSegs
+)paren
 suffix:semicolon
 id|tp-&gt;af_specific
 op_member_access_from_pointer
@@ -2358,8 +2361,11 @@ multiline_comment|/* Update global TCP statistics and return success. */
 id|sk-&gt;prot-&gt;retransmits
 op_increment
 suffix:semicolon
-id|tcp_statistics.TcpRetransSegs
-op_increment
+id|TCP_INC_STATS
+c_func
+(paren
+id|TcpRetransSegs
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -3623,8 +3629,11 @@ op_rshift
 l_int|2
 )paren
 suffix:semicolon
-id|tcp_statistics.TcpOutSegs
-op_increment
+id|TCP_INC_STATS
+c_func
+(paren
+id|TcpOutSegs
+)paren
 suffix:semicolon
 r_return
 id|skb
@@ -3924,8 +3933,11 @@ id|GFP_KERNEL
 )paren
 )paren
 suffix:semicolon
-id|tcp_statistics.TcpActiveOpens
-op_increment
+id|TCP_INC_STATS
+c_func
+(paren
+id|TcpActiveOpens
+)paren
 suffix:semicolon
 multiline_comment|/* Timer for repeating the SYN until an answer. */
 id|tcp_reset_xmit_timer

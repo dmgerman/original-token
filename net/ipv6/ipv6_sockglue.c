@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.29 1999/08/31 07:04:06 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
+multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.30 2000/01/09 02:19:49 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -30,8 +30,11 @@ DECL|variable|ipv6_statistics
 r_struct
 id|ipv6_mib
 id|ipv6_statistics
-op_assign
-initialization_block
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
 DECL|variable|ipv6_packet_type
 r_struct
@@ -571,6 +574,29 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 )paren
 suffix:semicolon
+id|local_bh_disable
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sock_prot_dec_use
+c_func
+(paren
+id|sk-&gt;prot
+)paren
+suffix:semicolon
+id|sock_prot_inc_use
+c_func
+(paren
+op_amp
+id|tcp_prot
+)paren
+suffix:semicolon
+id|local_bh_enable
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sk-&gt;prot
 op_assign
 op_amp
@@ -601,6 +627,29 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|local_bh_disable
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sock_prot_dec_use
+c_func
+(paren
+id|sk-&gt;prot
+)paren
+suffix:semicolon
+id|sock_prot_inc_use
+c_func
+(paren
+op_amp
+id|udp_prot
+)paren
+suffix:semicolon
+id|local_bh_enable
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sk-&gt;prot
 op_assign
 op_amp

@@ -97,6 +97,46 @@ r_char
 op_star
 id|__kernel_caddr_t
 suffix:semicolon
+DECL|typedef|__kernel_uid16_t
+r_typedef
+r_int
+r_int
+id|__kernel_uid16_t
+suffix:semicolon
+DECL|typedef|__kernel_gid16_t
+r_typedef
+r_int
+r_int
+id|__kernel_gid16_t
+suffix:semicolon
+DECL|typedef|__kernel_uid32_t
+r_typedef
+r_int
+r_int
+id|__kernel_uid32_t
+suffix:semicolon
+DECL|typedef|__kernel_gid32_t
+r_typedef
+r_int
+r_int
+id|__kernel_gid32_t
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|UID16_COMPAT_NEEDED
+mdefine_line|#define UID16_COMPAT_NEEDED
+DECL|typedef|__kernel_old_uid_t
+r_typedef
+r_int
+r_int
+id|__kernel_old_uid_t
+suffix:semicolon
+DECL|typedef|__kernel_old_gid_t
+r_typedef
+r_int
+r_int
+id|__kernel_old_gid_t
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#ifdef __GNUC__
 DECL|typedef|__kernel_loff_t
 r_typedef

@@ -2795,8 +2795,6 @@ id|lo
 suffix:semicolon
 r_int
 id|dev
-comma
-id|err
 suffix:semicolon
 r_if
 c_cond
@@ -2914,7 +2912,7 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 r_return
-id|err
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|lo_fops

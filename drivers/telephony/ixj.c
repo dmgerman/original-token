@@ -9027,7 +9027,6 @@ op_ne
 op_minus
 l_int|1
 )paren
-suffix:semicolon
 (brace
 id|ixj_WriteDSPCommand
 c_func

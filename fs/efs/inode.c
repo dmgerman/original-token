@@ -303,6 +303,9 @@ id|efs_inode-&gt;di_nlink
 suffix:semicolon
 id|inode-&gt;i_uid
 op_assign
+(paren
+id|uid_t
+)paren
 id|be16_to_cpu
 c_func
 (paren
@@ -311,6 +314,9 @@ id|efs_inode-&gt;di_uid
 suffix:semicolon
 id|inode-&gt;i_gid
 op_assign
+(paren
+id|gid_t
+)paren
 id|be16_to_cpu
 c_func
 (paren

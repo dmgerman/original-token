@@ -25,7 +25,7 @@ DECL|macro|SEM_STAT
 mdefine_line|#define SEM_STAT 18
 DECL|macro|SEM_INFO
 mdefine_line|#define SEM_INFO 19
-multiline_comment|/* One semid data structure for each set of semaphores in the system. */
+multiline_comment|/* Obsolete, used only for backwards compatibility and libc5 compiles */
 DECL|struct|semid_ds
 r_struct
 id|semid_ds
@@ -83,6 +83,8 @@ suffix:semicolon
 multiline_comment|/* no. of semaphores in array */
 )brace
 suffix:semicolon
+multiline_comment|/* Include the definition of semid64_ds */
+macro_line|#include &lt;asm/sembuf.h&gt;
 multiline_comment|/* semop system calls takes an array of these. */
 DECL|struct|sembuf
 r_struct
@@ -229,6 +231,64 @@ suffix:semicolon
 multiline_comment|/* pid of last operation */
 )brace
 suffix:semicolon
+multiline_comment|/* One sem_array data structure for each set of semaphores in the system. */
+DECL|struct|sem_array
+r_struct
+id|sem_array
+(brace
+DECL|member|sem_perm
+r_struct
+id|kern_ipc_perm
+id|sem_perm
+suffix:semicolon
+multiline_comment|/* permissions .. see ipc.h */
+DECL|member|sem_otime
+id|time_t
+id|sem_otime
+suffix:semicolon
+multiline_comment|/* last semop time */
+DECL|member|sem_ctime
+id|time_t
+id|sem_ctime
+suffix:semicolon
+multiline_comment|/* last change time */
+DECL|member|sem_base
+r_struct
+id|sem
+op_star
+id|sem_base
+suffix:semicolon
+multiline_comment|/* ptr to first semaphore in array */
+DECL|member|sem_pending
+r_struct
+id|sem_queue
+op_star
+id|sem_pending
+suffix:semicolon
+multiline_comment|/* pending operations to be processed */
+DECL|member|sem_pending_last
+r_struct
+id|sem_queue
+op_star
+op_star
+id|sem_pending_last
+suffix:semicolon
+multiline_comment|/* last pending operation */
+DECL|member|undo
+r_struct
+id|sem_undo
+op_star
+id|undo
+suffix:semicolon
+multiline_comment|/* undo requests on this array */
+DECL|member|sem_nsems
+r_int
+r_int
+id|sem_nsems
+suffix:semicolon
+multiline_comment|/* no. of semaphores in array */
+)brace
+suffix:semicolon
 multiline_comment|/* One queue for each sleeping process in the system. */
 DECL|struct|sem_queue
 r_struct
@@ -275,7 +335,7 @@ suffix:semicolon
 multiline_comment|/* completion status of operation */
 DECL|member|sma
 r_struct
-id|semid_ds
+id|sem_array
 op_star
 id|sma
 suffix:semicolon

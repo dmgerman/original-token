@@ -36,6 +36,9 @@ macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/gemini.h&gt;
 macro_line|#include &quot;mem_pieces.h&quot;
+macro_line|#if defined(CONFIG_4xx)
+macro_line|#include &quot;4xx_tlb.h&quot;
+macro_line|#endif
 DECL|macro|PGTOKB
 mdefine_line|#define&t;PGTOKB(pages)&t;(((pages) * PAGE_SIZE) &gt;&gt; 10)
 DECL|variable|prom_trashed
@@ -244,6 +247,17 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
+macro_line|#ifdef CONFIG_4xx
+r_int
+r_int
+op_star
+id|oak_find_end_of_memory
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|mapin_ram
@@ -2762,7 +2776,7 @@ id|s
 comma
 id|f
 suffix:semicolon
-macro_line|#ifndef CONFIG_8xx
+macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
 r_if
 c_cond
 (paren
@@ -2972,7 +2986,7 @@ id|RAM_PAGE
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* CONFIG_8xx */
+macro_line|#endif /* !CONFIG_4xx &amp;&amp; !CONFIG_8xx */
 r_for
 c_loop
 (paren
@@ -3604,6 +3618,99 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * Do very early mm setup such as finding the size of memory&n; * and setting up the hash table.&n; * A lot of this is prep/pmac specific but a lot of it could&n; * still be merged.&n; * -- Cort&n; */
+macro_line|#if defined(CONFIG_4xx)
+r_void
+id|__init
+DECL|function|MMU_init
+id|MMU_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|PPC4xx_tlb_pin
+c_func
+(paren
+id|KERNELBASE
+comma
+l_int|0
+comma
+id|TLB_PAGESZ
+c_func
+(paren
+id|PAGESZ_16M
+)paren
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|PPC4xx_tlb_pin
+c_func
+(paren
+id|OAKNET_IO_BASE
+comma
+id|OAKNET_IO_BASE
+comma
+id|TLB_PAGESZ
+c_func
+(paren
+id|PAGESZ_4K
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|end_of_DRAM
+op_assign
+id|oak_find_end_of_memory
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Map in all of RAM starting at KERNELBASE */
+id|mapin_ram
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Zone 0 - kernel (above 0x80000000), zone 1 - user */
+id|mtspr
+c_func
+(paren
+id|SPRN_ZPR
+comma
+l_int|0x2aaaaaaa
+)paren
+suffix:semicolon
+id|mtspr
+c_func
+(paren
+id|SPRN_DCWR
+comma
+l_int|0x00000000
+)paren
+suffix:semicolon
+multiline_comment|/* all caching is write-back */
+multiline_comment|/* Cache 128MB of space starting at KERNELBASE. */
+id|mtspr
+c_func
+(paren
+id|SPRN_DCCR
+comma
+l_int|0x00000000
+)paren
+suffix:semicolon
+multiline_comment|/* flush_instruction_cache(); XXX */
+id|mtspr
+c_func
+(paren
+id|SPRN_ICCR
+comma
+l_int|0x00000000
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|function|MMU_init
 r_void
 id|__init
@@ -4101,6 +4208,7 @@ l_int|0x211
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_4xx */
 multiline_comment|/*&n; * Initialize the bootmem system and give it all the memory we&n; * have available.&n; */
 DECL|function|do_init_bootmem
 r_void
@@ -6004,7 +6112,7 @@ l_int|0x205
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* CONFIG_8xx */
+macro_line|#elif defined(CONFIG_8xx)
 multiline_comment|/*&n; * This is a big hack right now, but it may turn into something real&n; * someday.&n; *&n; * For the 8xx boards (at this time anyway), there is nothing to initialize&n; * associated the PROM.  Rather than include all of the prom.c&n; * functions in the image just to get prom_init, all we really need right&n; * now is the initialization of the physical memory region.&n; */
 DECL|function|m8xx_find_end_of_memory
 r_int
@@ -6094,5 +6202,96 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#endif /* ndef CONFIG_8xx */
+macro_line|#endif /* !CONFIG_4xx &amp;&amp; !CONFIG_8xx */
+macro_line|#ifdef CONFIG_OAK
+multiline_comment|/*&n; * Return the virtual address representing the top of physical RAM&n; * on the Oak board.&n; */
+r_int
+r_int
+id|__init
+op_star
+DECL|function|oak_find_end_of_memory
+id|oak_find_end_of_memory
+c_func
+(paren
+r_void
+)paren
+(brace
+r_extern
+r_int
+r_char
+id|__res
+(braket
+)braket
+suffix:semicolon
+r_int
+r_int
+op_star
+id|ret
+suffix:semicolon
+id|bd_t
+op_star
+id|bip
+op_assign
+(paren
+id|bd_t
+op_star
+)paren
+id|__res
+suffix:semicolon
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|address
+op_assign
+l_int|0
+suffix:semicolon
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|size
+op_assign
+id|bip-&gt;bi_memsize
+suffix:semicolon
+id|phys_mem.n_regions
+op_assign
+l_int|1
+suffix:semicolon
+id|ret
+op_assign
+id|__va
+c_func
+(paren
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|address
+op_plus
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|size
+)paren
+suffix:semicolon
+id|set_phys_avail
+c_func
+(paren
+op_amp
+id|phys_mem
+)paren
+suffix:semicolon
+r_return
+(paren
+id|ret
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

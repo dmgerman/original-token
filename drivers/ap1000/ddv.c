@@ -1460,7 +1460,7 @@ op_logical_neg
 id|rem_queue
 )paren
 (brace
-id|spin_lock_irq
+id|spin_lock
 c_func
 (paren
 op_amp
@@ -1473,7 +1473,7 @@ c_func
 id|current
 )paren
 suffix:semicolon
-id|spin_unlock_irq
+id|spin_unlock
 c_func
 (paren
 op_amp
@@ -1485,6 +1485,16 @@ c_func
 (paren
 op_amp
 id|ddv_daemon_wait
+)paren
+suffix:semicolon
+id|__sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

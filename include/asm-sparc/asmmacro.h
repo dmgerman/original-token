@@ -16,8 +16,6 @@ DECL|macro|GET_PROCESSOR_MID
 mdefine_line|#define GET_PROCESSOR_MID(reg, tmp) &bslash;&n;&t;rd&t;%tbr, %reg; &bslash;&n;&t;sethi&t;%hi(C_LABEL(mid_xlate)), %tmp; &bslash;&n;&t;srl&t;%reg, 12, %reg; &bslash;&n;&t;or&t;%tmp, %lo(C_LABEL(mid_xlate)), %tmp; &bslash;&n;&t;and&t;%reg, 3, %reg; &bslash;&n;&t;ldub&t;[%tmp + %reg], %reg;
 DECL|macro|GET_PROCESSOR_OFFSET
 mdefine_line|#define GET_PROCESSOR_OFFSET(reg, tmp) &bslash;&n;&t;GET_PROCESSOR_ID(reg) &bslash;&n;&t;sethi&t;%hi(C_LABEL(cpu_offset)), %tmp; &bslash;&n;&t;sll&t;%reg, 2, %reg; &bslash;&n;&t;or&t;%tmp, %lo(C_LABEL(cpu_offset)), %tmp; &bslash;&n;&t;ld&t;[%tmp + %reg], %reg;
-DECL|macro|GET_PAGE_OFFSET
-mdefine_line|#define GET_PAGE_OFFSET(reg) &bslash;&n;&t;sethi&t;BTFIXUP_SETHI_INIT(page_offset,0xf0000000), %reg;
 multiline_comment|/* All trap entry points _must_ begin with this macro or else you&n; * lose.  It makes sure the kernel has a proper window so that&n; * c-code can be called.&n; */
 DECL|macro|SAVE_ALL_HEAD
 mdefine_line|#define SAVE_ALL_HEAD &bslash;&n;&t;sethi&t;%hi(trap_setup), %l4; &bslash;&n;&t;jmpl&t;%l4 + %lo(trap_setup), %l6;

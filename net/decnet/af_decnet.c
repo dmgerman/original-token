@@ -75,12 +75,6 @@ comma
 l_int|0x00
 )brace
 suffix:semicolon
-DECL|variable|decnet_node_type
-r_int
-id|decnet_node_type
-op_assign
-id|DN_RT_INFO_ENDN
-suffix:semicolon
 DECL|variable|dn_proto_ops
 r_static
 r_struct
@@ -1560,9 +1554,8 @@ id|DN_NOCHANGE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Timer for shutdown/destroyed sockets.&n; * When socket is dead &amp; no packets have been sent for a&n; * certain amount of time, they are removed by this&n; * routine. Also takes care of sending out DI &amp; DC&n; * frames at correct times. This is called by both&n; * socket level and interrupt driven code.&n; */
+multiline_comment|/*&n; * Timer for shutdown/destroyed sockets.&n; * When socket is dead &amp; no packets have been sent for a&n; * certain amount of time, they are removed by this&n; * routine. Also takes care of sending out DI &amp; DC&n; * frames at correct times.&n; */
 DECL|function|dn_destroy_timer
-r_static
 r_int
 id|dn_destroy_timer
 c_func
@@ -1598,7 +1591,7 @@ id|scp-&gt;state
 r_case
 id|DN_DI
 suffix:colon
-id|dn_send_disc
+id|dn_nsp_send_disc
 c_func
 (paren
 id|sk
@@ -1606,6 +1599,8 @@ comma
 id|NSP_DISCINIT
 comma
 l_int|0
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -1625,7 +1620,7 @@ suffix:semicolon
 r_case
 id|DN_DR
 suffix:colon
-id|dn_send_disc
+id|dn_nsp_send_disc
 c_func
 (paren
 id|sk
@@ -1633,6 +1628,8 @@ comma
 id|NSP_DISCINIT
 comma
 l_int|0
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -1661,7 +1658,7 @@ id|decnet_dn_count
 )paren
 (brace
 multiline_comment|/* printk(KERN_DEBUG &quot;dn_destroy_timer: DN&bslash;n&quot;); */
-id|dn_send_disc
+id|dn_nsp_send_disc
 c_func
 (paren
 id|sk
@@ -1669,6 +1666,8 @@ comma
 id|NSP_DISCCONF
 comma
 id|NSP_REASON_DC
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_return
@@ -1736,6 +1735,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|dn_destroy_sock
+r_static
 r_void
 id|dn_destroy_sock
 c_func
@@ -1801,7 +1801,7 @@ id|scp-&gt;state
 r_case
 id|DN_DN
 suffix:colon
-id|dn_send_disc
+id|dn_nsp_send_disc
 c_func
 (paren
 id|sk
@@ -1809,6 +1809,8 @@ comma
 id|NSP_DISCCONF
 comma
 id|NSP_REASON_DC
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|scp-&gt;persist_fxn
@@ -1825,9 +1827,6 @@ id|sk
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|DN_CD
-suffix:colon
 r_case
 id|DN_CR
 suffix:colon
@@ -1853,7 +1852,7 @@ id|DN_DR
 suffix:colon
 id|disc_reject
 suffix:colon
-id|dn_send_disc
+id|dn_nsp_send_disc
 c_func
 (paren
 id|sk
@@ -1861,6 +1860,8 @@ comma
 id|NSP_DISCINIT
 comma
 l_int|0
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_case
@@ -1883,6 +1884,9 @@ id|DN_DRC
 suffix:colon
 r_case
 id|DN_CI
+suffix:colon
+r_case
+id|DN_CD
 suffix:colon
 id|scp-&gt;persist_fxn
 op_assign
@@ -3871,6 +3875,8 @@ id|dn_send_conn_conf
 c_func
 (paren
 id|newsk
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|err
@@ -5515,6 +5521,8 @@ id|dn_send_conn_conf
 c_func
 (paren
 id|sk
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|err
@@ -5552,7 +5560,7 @@ id|sk-&gt;shutdown
 op_assign
 id|SHUTDOWN_MASK
 suffix:semicolon
-id|dn_send_disc
+id|dn_nsp_send_disc
 c_func
 (paren
 id|sk
@@ -5560,6 +5568,8 @@ comma
 l_int|0x38
 comma
 l_int|0
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_break
@@ -5666,10 +5676,8 @@ id|optlen
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|err
 suffix:semicolon
-multiline_comment|/* -0 is 0 after all */
 macro_line|#endif
 r_default
 suffix:colon
@@ -6131,6 +6139,8 @@ id|dn_send_conn_conf
 c_func
 (paren
 id|sk
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_return
@@ -8385,6 +8395,13 @@ op_star
 id|pro
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;NET4: DECnet for Linux: V.2.3.38s (C) 1995-1999 Linux DECnet Project Team&bslash;n&quot;
+)paren
+suffix:semicolon
 id|sock_register
 c_func
 (paren
@@ -8443,13 +8460,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_FW
-id|dn_fw_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_DECNET_FW */
 macro_line|#ifdef CONFIG_DECNET_ROUTER
 id|dn_fib_init
 c_func
@@ -8464,13 +8474,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_SYSCTL */
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;NET4: DECnet for Linux: V.2.3.15s (C) 1995-1999 Linux DECnet Project Team&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 DECL|function|decnet_setup
@@ -8524,30 +8527,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_int
-r_int
-id|type
-op_assign
-id|simple_strtoul
-c_func
-(paren
-op_star
-id|str
-OG
-l_int|0
-ques
-c_cond
-op_increment
-id|str
-suffix:colon
-id|str
-comma
-op_amp
-id|str
-comma
-l_int|0
-)paren
-suffix:semicolon
+multiline_comment|/* unsigned short type = simple_strtoul(*str &gt; 0 ? ++str : str, &amp;str, 0); */
 id|decnet_address
 op_assign
 id|dn_htons
@@ -8572,51 +8552,6 @@ id|decnet_address
 )paren
 )paren
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|type
-)paren
-(brace
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Invalid DECnet node type, switching to EndNode&bslash;n&quot;
-)paren
-suffix:semicolon
-r_case
-l_int|0
-suffix:colon
-id|decnet_node_type
-op_assign
-id|DN_RT_INFO_ENDN
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_ROUTER
-r_case
-l_int|1
-suffix:colon
-id|decnet_node_type
-op_assign
-id|DN_RT_INFO_L1RT
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|2
-suffix:colon
-id|decnet_node_type
-op_assign
-id|DN_RT_INFO_L2RT
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif /* CONFIG_DECNET_ROUTER */
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -8659,15 +8594,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_ROUTER
-DECL|variable|type
-r_static
-r_int
-id|type
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|MODULE_PARM
 c_func
 (paren
@@ -8684,26 +8610,9 @@ comma
 l_string|&quot;The DECnet address of this machine: area,node&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_ROUTER
-id|MODULE_PARM
-c_func
-(paren
-id|type
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|type
-comma
-l_string|&quot;The type of this DECnet node: 0=EndNode, 1,2=Router&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|init_module
 r_int
+id|__init
 id|init_module
 c_func
 (paren
@@ -8800,59 +8709,6 @@ id|decnet_address
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_ROUTER
-r_switch
-c_cond
-(paren
-id|type
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-id|decnet_node_type
-op_assign
-id|DN_RT_INFO_ENDN
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|1
-suffix:colon
-id|decnet_node_type
-op_assign
-id|DN_RT_INFO_L1RT
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|2
-suffix:colon
-id|decnet_node_type
-op_assign
-id|DN_RT_INFO_L2RT
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;DECnet: Node type must be between 0 and 2 inclusive&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#else
-id|decnet_node_type
-op_assign
-id|DN_RT_INFO_ENDN
-suffix:semicolon
-macro_line|#endif
 id|decnet_proto_init
 c_func
 (paren
@@ -8865,6 +8721,7 @@ suffix:semicolon
 )brace
 DECL|function|cleanup_module
 r_void
+id|__exit
 id|cleanup_module
 c_func
 (paren
@@ -8900,9 +8757,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_FW
-multiline_comment|/* dn_fw_cleanup(); */
-macro_line|#endif /* CONFIG_DECNET_FW */
 macro_line|#ifdef CONFIG_DECNET_ROUTER
 id|dn_fib_cleanup
 c_func

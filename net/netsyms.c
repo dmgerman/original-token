@@ -1280,6 +1280,13 @@ c_func
 id|csum_partial_copy_fromiovecend
 )paren
 suffix:semicolon
+DECL|variable|copy_and_csum_toiovec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|copy_and_csum_toiovec
+)paren
+suffix:semicolon
 DECL|variable|tcp_keepalive_timer
 id|EXPORT_SYMBOL
 c_func

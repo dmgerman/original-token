@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &quot;check.h&quot;
 macro_line|#include &quot;acorn.h&quot;
 r_extern
 r_void
@@ -18,14 +19,11 @@ op_star
 id|hd
 comma
 r_int
-r_int
 id|minor
 comma
 r_int
-r_int
 id|start
 comma
-r_int
 r_int
 id|size
 )paren

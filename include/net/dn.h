@@ -294,7 +294,7 @@ id|sk
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * src,dst : Source and Destination DECnet addresses&n; * neigh: Address from which we&squot;ve just got this skb.&n; * hops : Number of hops through the network&n; * dst_port, src_port : NSP port numbers&n; * services, info : Useful data extracted from conninit messages&n; * rt_flags : Routing flags byte&n; * nsp_flags : NSP layer flags byte&n; * segsize : Size of segment&n; * segnum : Number, for data, otherdata and linkservice&n; * xmit_count : Number of times we&squot;ve transmitted this skb&n; * stamp : Time stamp of first transmission, used in RTT calculations&n; * iif: Input interface number&n; *&n; * As a general policy, this structure keeps all addresses in network&n; * byte order, and all else in host byte order. Thus dst, src, dst_port&n; * src_port and neigh are in network order. All else is in host order.&n; * &n; */
+multiline_comment|/*&n; * src,dst : Source and Destination DECnet addresses&n; * hops : Number of hops through the network&n; * dst_port, src_port : NSP port numbers&n; * services, info : Useful data extracted from conninit messages&n; * rt_flags : Routing flags byte&n; * nsp_flags : NSP layer flags byte&n; * segsize : Size of segment&n; * segnum : Number, for data, otherdata and linkservice&n; * xmit_count : Number of times we&squot;ve transmitted this skb&n; * stamp : Time stamp of first transmission, used in RTT calculations&n; * iif: Input interface number&n; *&n; * As a general policy, this structure keeps all addresses in network&n; * byte order, and all else in host byte order. Thus dst, src, dst_port&n; * and src_port are in network order. All else is in host order.&n; * &n; */
 DECL|struct|dn_skb_cb
 r_struct
 id|dn_skb_cb
@@ -308,11 +308,6 @@ DECL|member|src
 r_int
 r_int
 id|src
-suffix:semicolon
-DECL|member|neigh
-r_int
-r_int
-id|neigh
 suffix:semicolon
 DECL|member|hops
 r_int
@@ -550,8 +545,8 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|dn_destroy_sock
+r_int
+id|dn_destroy_timer
 c_func
 (paren
 r_struct
@@ -659,10 +654,6 @@ id|decnet_ether_address
 (braket
 l_int|6
 )braket
-suffix:semicolon
-r_extern
-r_int
-id|decnet_node_type
 suffix:semicolon
 r_extern
 r_int

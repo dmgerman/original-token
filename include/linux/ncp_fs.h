@@ -260,6 +260,8 @@ DECL|macro|NCP_IOC_GETDENTRYTTL
 mdefine_line|#define NCP_IOC_GETDENTRYTTL&t;&t;_IOW(&squot;n&squot;, 12, __u32)
 DECL|macro|NCP_IOC_SETDENTRYTTL
 mdefine_line|#define NCP_IOC_SETDENTRYTTL&t;&t;_IOR(&squot;n&squot;, 12, __u32)
+DECL|macro|NCP_IOC_GETMOUNTUID32
+mdefine_line|#define&t;NCP_IOC_GETMOUNTUID32&t;&t;_IOW(&squot;n&squot;, 13, __kernel_uid32_t)
 multiline_comment|/*&n; * The packet size to allocate. One page should be enough.&n; */
 DECL|macro|NCP_PACKET_SIZE
 mdefine_line|#define NCP_PACKET_SIZE 4070

@@ -936,16 +936,6 @@ op_minus
 id|_stext
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;kstart = 0x%08lx, ksize = 0x%08lx&bslash;n&quot;
-comma
-id|kstart
-comma
-id|ksize
-)paren
-suffix:semicolon
 id|mem_pieces_remove
 c_func
 (paren

@@ -398,6 +398,44 @@ DECL|macro|__NR_lstat64
 mdefine_line|#define __NR_lstat64&t;&t;&t;(__NR_SYSCALL_BASE+196)
 DECL|macro|__NR_fstat64
 mdefine_line|#define __NR_fstat64&t;&t;&t;(__NR_SYSCALL_BASE+197)
+DECL|macro|__NR_lchown32
+mdefine_line|#define __NR_lchown32&t;&t;&t;(__NR_SYSCALL_BASE+198)
+DECL|macro|__NR_getuid32
+mdefine_line|#define __NR_getuid32&t;&t;&t;(__NR_SYSCALL_BASE+199)
+DECL|macro|__NR_getgid32
+mdefine_line|#define __NR_getgid32&t;&t;&t;(__NR_SYSCALL_BASE+200)
+DECL|macro|__NR_geteuid32
+mdefine_line|#define __NR_geteuid32&t;&t;&t;(__NR_SYSCALL_BASE+201)
+DECL|macro|__NR_getegid32
+mdefine_line|#define __NR_getegid32&t;&t;&t;(__NR_SYSCALL_BASE+202)
+DECL|macro|__NR_setreuid32
+mdefine_line|#define __NR_setreuid32&t;&t;&t;(__NR_SYSCALL_BASE+203)
+DECL|macro|__NR_setregid32
+mdefine_line|#define __NR_setregid32&t;&t;&t;(__NR_SYSCALL_BASE+204)
+DECL|macro|__NR_getgroups32
+mdefine_line|#define __NR_getgroups32&t;&t;(__NR_SYSCALL_BASE+205)
+DECL|macro|__NR_setgroups32
+mdefine_line|#define __NR_setgroups32&t;&t;(__NR_SYSCALL_BASE+206)
+DECL|macro|__NR_fchown32
+mdefine_line|#define __NR_fchown32&t;&t;&t;(__NR_SYSCALL_BASE+207)
+DECL|macro|__NR_setresuid32
+mdefine_line|#define __NR_setresuid32&t;&t;(__NR_SYSCALL_BASE+208)
+DECL|macro|__NR_getresuid32
+mdefine_line|#define __NR_getresuid32&t;&t;(__NR_SYSCALL_BASE+209)
+DECL|macro|__NR_setresgid32
+mdefine_line|#define __NR_setresgid32&t;&t;(__NR_SYSCALL_BASE+210)
+DECL|macro|__NR_getresgid32
+mdefine_line|#define __NR_getresgid32&t;&t;(__NR_SYSCALL_BASE+211)
+DECL|macro|__NR_chown32
+mdefine_line|#define __NR_chown32&t;&t;&t;(__NR_SYSCALL_BASE+212)
+DECL|macro|__NR_setuid32
+mdefine_line|#define __NR_setuid32&t;&t;&t;(__NR_SYSCALL_BASE+213)
+DECL|macro|__NR_setgid32
+mdefine_line|#define __NR_setgid32&t;&t;&t;(__NR_SYSCALL_BASE+214)
+DECL|macro|__NR_setfsuid32
+mdefine_line|#define __NR_setfsuid32&t;&t;&t;(__NR_SYSCALL_BASE+215)
+DECL|macro|__NR_setfsgid32
+mdefine_line|#define __NR_setfsgid32&t;&t;&t;(__NR_SYSCALL_BASE+216)
 DECL|macro|__sys2
 mdefine_line|#define __sys2(x) #x
 DECL|macro|__sys1

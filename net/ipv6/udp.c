@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.47 2000/01/05 21:27:54 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.48 2000/01/09 02:19:53 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -29,6 +29,11 @@ DECL|variable|udp_stats_in6
 r_struct
 id|udp_mib
 id|udp_stats_in6
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
 multiline_comment|/* Grrr, addr_type already calculated by caller, but I don&squot;t want&n; * to add some silly &quot;cookie&quot; argument to this method just for that.&n; */
 DECL|function|udp_v6_get_port
@@ -485,22 +490,12 @@ id|sk-&gt;pprev
 op_assign
 id|skp
 suffix:semicolon
-id|sk-&gt;prot-&gt;inuse
-op_increment
-suffix:semicolon
-r_if
-c_cond
+id|sock_prot_inc_use
+c_func
 (paren
-id|sk-&gt;prot-&gt;highestinuse
-OL
-id|sk-&gt;prot-&gt;inuse
+id|sk-&gt;prot
 )paren
-(brace
-id|sk-&gt;prot-&gt;highestinuse
-op_assign
-id|sk-&gt;prot-&gt;inuse
 suffix:semicolon
-)brace
 id|sock_hold
 c_func
 (paren
@@ -558,8 +553,11 @@ id|sk-&gt;pprev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;prot-&gt;inuse
-op_decrement
+id|sock_prot_dec_use
+c_func
+(paren
+id|sk-&gt;prot
+)paren
 suffix:semicolon
 id|__sock_put
 c_func
@@ -2294,11 +2292,17 @@ id|skb-&gt;csum
 )paren
 )paren
 (brace
-id|udp_stats_in6.UdpInErrors
-op_increment
+id|UDP6_INC_STATS_BH
+c_func
+(paren
+id|UdpInErrors
+)paren
 suffix:semicolon
-id|ipv6_statistics.Ip6InDiscards
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InDiscards
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -2330,11 +2334,17 @@ OL
 l_int|0
 )paren
 (brace
-id|udp_stats_in6.UdpInErrors
-op_increment
+id|UDP6_INC_STATS_BH
+c_func
+(paren
+id|UdpInErrors
+)paren
 suffix:semicolon
-id|ipv6_statistics.Ip6InDiscards
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InDiscards
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -2346,11 +2356,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|ipv6_statistics.Ip6InDelivers
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InDelivers
+)paren
 suffix:semicolon
-id|udp_stats_in6.UdpInDatagrams
-op_increment
+id|UDP6_INC_STATS_BH
+c_func
+(paren
+id|UdpInDatagrams
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -2884,8 +2900,11 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|udp_stats_in6.UdpInErrors
-op_increment
+id|UDP6_INC_STATS_BH
+c_func
+(paren
+id|UdpInErrors
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -3146,8 +3165,11 @@ r_goto
 id|discard
 suffix:semicolon
 macro_line|#endif
-id|udp_stats_in6.UdpNoPorts
-op_increment
+id|UDP6_INC_STATS_BH
+c_func
+(paren
+id|UdpNoPorts
+)paren
 suffix:semicolon
 id|icmpv6_send
 c_func
@@ -3180,8 +3202,11 @@ l_int|0
 multiline_comment|/*sk-&gt;user_callback &amp;&amp;&n;&t;    sk-&gt;user_callback(sk-&gt;user_data, skb) == 0*/
 )paren
 (brace
-id|udp_stats_in6.UdpInDatagrams
-op_increment
+id|UDP6_INC_STATS_BH
+c_func
+(paren
+id|UdpInDatagrams
+)paren
 suffix:semicolon
 id|sock_put
 c_func
@@ -3213,8 +3238,11 @@ l_int|0
 suffix:semicolon
 id|discard
 suffix:colon
-id|udp_stats_in6.UdpInErrors
-op_increment
+id|UDP6_INC_STATS_BH
+c_func
+(paren
+id|UdpInErrors
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -4093,8 +4121,11 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-id|udp_stats_in6.UdpOutDatagrams
-op_increment
+id|UDP6_INC_STATS_USER
+c_func
+(paren
+id|UdpOutDatagrams
+)paren
 suffix:semicolon
 r_return
 id|ulen
@@ -4655,11 +4686,6 @@ multiline_comment|/* retransmits */
 l_string|&quot;UDP&quot;
 comma
 multiline_comment|/* name */
-l_int|0
-comma
-multiline_comment|/* inuse */
-l_int|0
-multiline_comment|/* highestinuse */
 )brace
 suffix:semicolon
 DECL|function|udpv6_init

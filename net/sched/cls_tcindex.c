@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * net/sched/cls_tcindex.c&t;Packet classifier for skb-&gt;tc_index&n; *&n; * Written 1998,1999 by Werner Almesberger, EPFL ICA&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

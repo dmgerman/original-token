@@ -1,8 +1,12 @@
 multiline_comment|/*&n; *    Copyright (c) 1997 Paul Mackerras &lt;paulus@cs.anu.edu.au&gt;&n; *      Initial Power Macintosh COFF version.&n; *    Copyright (c) 1999 Grant Erickson &lt;grant@lcse.umn.edu&gt;&n; *      Modifications for an ELF-based IBM evaluation board version.&n; *&n; *    Module name: main.c&n; *&n; *    Description:&n; *      This module does most of the real work for the boot loader. It&n; *      checks the variables holding the absolute start address and size&n; *      of the Linux kernel &quot;image&quot; and initial RAM disk &quot;initrd&quot; sections&n; *      and if they are present, moves them to their &quot;proper&quot; locations.&n; *&n; *      For the Linux kernel, &quot;proper&quot; is physical address 0x00000000.&n; *      For the RAM disk, &quot;proper&quot; is the image&squot;s size below the top&n; *      of physical memory. The Linux kernel may be in either raw&n; *      binary form or compressed with GNU zip (aka gzip).&n; *&n; *    This program is free software; you can redistribute it and/or&n; *    modify it under the terms of the GNU General Public License &n; *    as published by the Free Software Foundation; either version&n; *    2 of the License, or (at your option) any later version.&n; *&n; */
-macro_line|#include &quot;nonstdio.h&quot;
-macro_line|#include &quot;zlib.h&quot;
+macro_line|#include &lt;asm/board.h&gt;
+macro_line|#include &quot;../coffboot/nonstdio.h&quot;
+macro_line|#include &quot;../coffboot/zlib.h&quot;
 macro_line|#include &quot;irSect.h&quot;
 multiline_comment|/* Preprocessor Defines */
+multiline_comment|/*&n; * Location of the IBM boot ROM function pointer address for retrieving&n; * the board information structure.&n; */
+DECL|macro|BOARD_INFO_VECTOR
+mdefine_line|#define&t;BOARD_INFO_VECTOR&t;0xFFFE0B50
 DECL|macro|RAM_SIZE
 mdefine_line|#define&t;RAM_SIZE&t;(4 * 1024 * 1024)
 DECL|macro|RAM_PBASE
@@ -38,6 +42,19 @@ op_star
 id|end_avail
 suffix:semicolon
 multiline_comment|/* Indicates end of RAM available for heap */
+DECL|variable|board_info
+id|bd_t
+id|board_info
+suffix:semicolon
+multiline_comment|/*&n; * XXX - Until either the IBM boot ROM provides a way of passing arguments to&n; *       the program it launches or until I/O is working in the boot loader,&n; *       this is a good spot to pass in command line arguments to the kernel&n; *       (e.g. console=tty0).&n; */
+DECL|variable|cmdline
+r_static
+r_char
+op_star
+id|cmdline
+op_assign
+l_string|&quot;&quot;
+suffix:semicolon
 multiline_comment|/* Function Prototypes */
 r_void
 op_star
@@ -133,6 +150,7 @@ comma
 id|i
 suffix:semicolon
 r_int
+r_int
 id|sa
 comma
 id|len
@@ -147,9 +165,74 @@ op_star
 id|im
 suffix:semicolon
 r_int
+r_int
 id|initrd_start
 comma
 id|initrd_size
+suffix:semicolon
+id|bd_t
+op_star
+(paren
+op_star
+id|get_board_info
+)paren
+(paren
+r_void
+)paren
+op_assign
+(paren
+id|bd_t
+op_star
+(paren
+op_star
+)paren
+(paren
+r_void
+)paren
+)paren
+(paren
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|BOARD_INFO_VECTOR
+)paren
+suffix:semicolon
+id|bd_t
+op_star
+id|bip
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|bip
+op_assign
+id|get_board_info
+c_func
+(paren
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+id|memcpy
+c_func
+(paren
+op_amp
+id|board_info
+comma
+id|bip
+comma
+r_sizeof
+(paren
+id|bd_t
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* setup_bats(RAM_START); */
 multiline_comment|/* Init RAM disk (initrd) section */
@@ -221,6 +304,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|initrd_start
+op_assign
+id|initrd_size
+op_assign
+l_int|0
+suffix:semicolon
 id|end_avail
 op_assign
 (paren
@@ -328,6 +417,10 @@ l_int|0x200000
 comma
 id|cp
 comma
+(paren
+r_int
+op_star
+)paren
 op_amp
 id|len
 )paren
@@ -346,7 +439,14 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* flush_cache(dst, len); */
+id|flush_cache
+c_func
+(paren
+id|dst
+comma
+id|len
+)paren
+suffix:semicolon
 id|sa
 op_assign
 (paren
@@ -368,6 +468,24 @@ op_star
 id|sa
 )paren
 (paren
+op_amp
+id|board_info
+comma
+id|initrd_start
+comma
+id|initrd_start
+op_plus
+id|initrd_size
+comma
+id|cmdline
+comma
+id|cmdline
+op_plus
+id|strlen
+c_func
+(paren
+id|cmdline
+)paren
 )paren
 suffix:semicolon
 id|pause

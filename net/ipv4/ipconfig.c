@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.24 1999/08/20 00:35:14 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; *  &n; *  Fixed ip_auto_config_setup calling at startup in the new &quot;Linker Magic&quot;&n; *  initialization scheme.&n; *&t;- Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;, 08/11/1999&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.25 2000/01/09 02:19:31 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; *  &n; *  Fixed ip_auto_config_setup calling at startup in the new &quot;Linker Magic&quot;&n; *  initialization scheme.&n; *&t;- Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;, 08/11/1999&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -268,11 +268,9 @@ op_assign
 op_amp
 id|ic_first_dev
 suffix:semicolon
-id|read_lock
+id|rtnl_shlock
 c_func
 (paren
-op_amp
-id|dev_base_lock
 )paren
 suffix:semicolon
 r_for
@@ -489,11 +487,9 @@ id|able
 suffix:semicolon
 )brace
 )brace
-id|read_unlock
+id|rtnl_shunlock
 c_func
 (paren
-op_amp
-id|dev_base_lock
 )paren
 suffix:semicolon
 op_star

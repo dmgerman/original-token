@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  This is very similar to the IPv4 version,&n; *&t;&t;except it reports the sockets in the INET6 address family.&n; *&n; * Version:&t;$Id: proc.c,v 1.12 1999/12/15 22:39:48 davem Exp $&n; *&n; * Authors:&t;David S. Miller (davem@caip.rutgers.edu)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  This is very similar to the IPv4 version,&n; *&t;&t;except it reports the sockets in the INET6 address family.&n; *&n; * Version:&t;$Id: proc.c,v 1.13 2000/01/09 02:19:55 davem Exp $&n; *&n; * Authors:&t;David S. Miller (davem@caip.rutgers.edu)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
@@ -8,6 +8,53 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
+DECL|function|fold_prot_inuse
+r_static
+r_int
+id|fold_prot_inuse
+c_func
+(paren
+r_struct
+id|proto
+op_star
+id|proto
+)paren
+(brace
+r_int
+id|res
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|cpu
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|cpu
+op_assign
+l_int|0
+suffix:semicolon
+id|cpu
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|cpu
+op_increment
+)paren
+id|res
+op_add_assign
+id|proto-&gt;stats
+(braket
+id|cpu
+)braket
+dot
+id|inuse
+suffix:semicolon
+r_return
+id|res
+suffix:semicolon
+)brace
 DECL|function|afinet6_get_info
 r_int
 id|afinet6_get_info
@@ -27,6 +74,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_int
@@ -43,11 +93,14 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;TCP6: inuse %d highest %d&bslash;n&quot;
+l_string|&quot;TCP6: inuse %d&bslash;n&quot;
 comma
-id|tcpv6_prot.inuse
-comma
-id|tcpv6_prot.highestinuse
+id|fold_prot_inuse
+c_func
+(paren
+op_amp
+id|tcpv6_prot
+)paren
 )paren
 suffix:semicolon
 id|len
@@ -59,11 +112,14 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;UDP6: inuse %d highest %d&bslash;n&quot;
+l_string|&quot;UDP6: inuse %d&bslash;n&quot;
 comma
-id|udpv6_prot.inuse
-comma
-id|udpv6_prot.highestinuse
+id|fold_prot_inuse
+c_func
+(paren
+op_amp
+id|udpv6_prot
+)paren
 )paren
 suffix:semicolon
 id|len
@@ -75,11 +131,14 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;RAW6: inuse %d highest %d&bslash;n&quot;
+l_string|&quot;RAW6: inuse %d&bslash;n&quot;
 comma
-id|rawv6_prot.inuse
-comma
-id|rawv6_prot.highestinuse
+id|fold_prot_inuse
+c_func
+(paren
+op_amp
+id|rawv6_prot
+)paren
 )paren
 suffix:semicolon
 op_star
@@ -125,6 +184,10 @@ r_int
 op_star
 id|ptr
 suffix:semicolon
+DECL|member|mibsize
+r_int
+id|mibsize
+suffix:semicolon
 DECL|variable|snmp6_list
 )brace
 id|snmp6_list
@@ -134,7 +197,7 @@ op_assign
 (brace
 multiline_comment|/* ipv6 mib according to draft-ietf-ipngwg-ipv6-mib-04 */
 DECL|macro|SNMP6_GEN
-mdefine_line|#define SNMP6_GEN(x) { #x , &amp;ipv6_statistics.x }
+mdefine_line|#define SNMP6_GEN(x) { #x , &amp;ipv6_statistics[0].x, sizeof(struct ipv6_mib)/sizeof(unsigned long) }
 id|SNMP6_GEN
 c_func
 (paren
@@ -271,7 +334,7 @@ DECL|macro|SNMP6_GEN
 macro_line|#undef SNMP6_GEN
 multiline_comment|/* icmpv6 mib according to draft-ietf-ipngwg-ipv6-icmp-mib-02&n;&n;   Exceptions:  {In|Out}AdminProhibs are removed, because I see&n;                no good reasons to account them separately&n;&t;&t;of another dest.unreachs.&n;&t;&t;OutErrs is zero identically.&n;&t;&t;OutEchos too.&n;&t;&t;OutRouterAdvertisements too.&n;&t;&t;OutGroupMembQueries too.&n; */
 DECL|macro|SNMP6_GEN
-mdefine_line|#define SNMP6_GEN(x) { #x , &amp;icmpv6_statistics.x }
+mdefine_line|#define SNMP6_GEN(x) { #x , &amp;icmpv6_statistics[0].x, sizeof(struct icmpv6_mib)/sizeof(unsigned long) }
 id|SNMP6_GEN
 c_func
 (paren
@@ -443,7 +506,7 @@ comma
 DECL|macro|SNMP6_GEN
 macro_line|#undef SNMP6_GEN
 DECL|macro|SNMP6_GEN
-mdefine_line|#define SNMP6_GEN(x) { &quot;Udp6&quot; #x , &amp;udp_stats_in6.Udp##x }
+mdefine_line|#define SNMP6_GEN(x) { &quot;Udp6&quot; #x , &amp;udp_stats_in6[0].Udp##x, sizeof(struct udp_mib)/sizeof(unsigned long) }
 id|SNMP6_GEN
 c_func
 (paren
@@ -471,6 +534,58 @@ DECL|macro|SNMP6_GEN
 macro_line|#undef SNMP6_GEN
 )brace
 suffix:semicolon
+DECL|function|fold_field
+r_static
+r_int
+r_int
+id|fold_field
+c_func
+(paren
+r_int
+r_int
+op_star
+id|ptr
+comma
+r_int
+id|size
+)paren
+(brace
+r_int
+r_int
+id|res
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|res
+op_add_assign
+id|ptr
+(braket
+id|i
+op_star
+id|size
+)braket
+suffix:semicolon
+r_return
+id|res
+suffix:semicolon
+)brace
 DECL|function|afinet6_get_snmp
 r_int
 id|afinet6_get_snmp
@@ -543,7 +658,8 @@ id|i
 dot
 id|name
 comma
-op_star
+id|fold_field
+c_func
 (paren
 id|snmp6_list
 (braket
@@ -551,6 +667,13 @@ id|i
 )braket
 dot
 id|ptr
+comma
+id|snmp6_list
+(braket
+id|i
+)braket
+dot
+id|mibsize
 )paren
 )paren
 suffix:semicolon

@@ -75,7 +75,7 @@ comma
 l_int|0x27
 )brace
 suffix:semicolon
-macro_line|#elif CONFIG_MAC_KEYBOARD
+macro_line|#elif CONFIG_ADB_KEYBOARD
 DECL|variable|keybdev_mac_codes
 r_static
 r_int
@@ -146,7 +146,7 @@ l_int|36
 comma
 l_int|54
 comma
-l_int|0
+l_int|128
 comma
 l_int|1
 comma
@@ -539,11 +539,11 @@ comma
 id|down
 )paren
 suffix:semicolon
-macro_line|#elif CONFIG_MAC_KEYBOARD
+macro_line|#elif CONFIG_ADB_KEYBOARD
 r_if
 c_cond
 (paren
-id|keycode
+id|code
 OL
 l_int|128
 op_logical_and
@@ -559,6 +559,8 @@ id|keybdev_mac_codes
 (braket
 id|code
 )braket
+op_amp
+l_int|0x7f
 comma
 id|down
 )paren

@@ -1,9 +1,9 @@
-multiline_comment|/*&n; *  Name                         : qnx4_fs_i.h&n; *  Author                       : Richard Frowijn&n; *  Function                     : qnx4 inode definitions&n; *  Version                      : 1.0&n; *  Last modified                : 25-05-1998&n; * &n; *  History                      : 23-03-1998 created&n; * &n; */
+multiline_comment|/*&n; *  Name                         : qnx4_fs_i.h&n; *  Author                       : Richard Frowijn&n; *  Function                     : qnx4 inode definitions&n; *  Version                      : 1.0.2&n; *  Last modified                : 2000-01-06&n; *&n; *  History                      : 23-03-1998 created&n; *&n; */
 macro_line|#ifndef _QNX4_FS_I
 DECL|macro|_QNX4_FS_I
 mdefine_line|#define _QNX4_FS_I
 macro_line|#include &lt;linux/qnxtypes.h&gt;
-multiline_comment|/*&n; * qnx4 fs inode entry &n; */
+multiline_comment|/*&n; * qnx4 fs inode entry&n; */
 DECL|struct|qnx4_inode_info
 r_struct
 id|qnx4_inode_info
@@ -27,27 +27,27 @@ id|i_first_xtnt
 suffix:semicolon
 multiline_comment|/*  8 */
 DECL|member|i_xblk
-r_int
+id|__u32
 id|i_xblk
 suffix:semicolon
 multiline_comment|/*  4 */
 DECL|member|i_ftime
-id|time_t
+id|__s32
 id|i_ftime
 suffix:semicolon
 multiline_comment|/*  4 */
 DECL|member|i_mtime
-id|time_t
+id|__s32
 id|i_mtime
 suffix:semicolon
 multiline_comment|/*  4 */
 DECL|member|i_atime
-id|time_t
+id|__s32
 id|i_atime
 suffix:semicolon
 multiline_comment|/*  4 */
 DECL|member|i_ctime
-id|time_t
+id|__s32
 id|i_ctime
 suffix:semicolon
 multiline_comment|/*  4 */
@@ -57,7 +57,7 @@ id|i_num_xtnts
 suffix:semicolon
 multiline_comment|/*  2 */
 DECL|member|i_mode
-id|mode_t
+id|qnx4_mode_t
 id|i_mode
 suffix:semicolon
 multiline_comment|/*  2 */
@@ -77,7 +77,7 @@ id|i_nlink
 suffix:semicolon
 multiline_comment|/*  2 */
 DECL|member|i_zero
-r_char
+id|__u8
 id|i_zero
 (braket
 l_int|4
@@ -90,8 +90,7 @@ id|i_type
 suffix:semicolon
 multiline_comment|/*  1 */
 DECL|member|i_status
-r_int
-r_char
+id|__u8
 id|i_status
 suffix:semicolon
 multiline_comment|/*  1 */

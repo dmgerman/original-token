@@ -1204,6 +1204,22 @@ id|rdp
 op_add_assign
 id|RDP_STEP
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;We cannot use NE2000 probe spaces for ISAPnP or we&n;&t;&t; *&t;will lock up machines.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|rdp
+op_ge
+l_int|0x280
+op_logical_and
+id|rdp
+op_le
+l_int|0x380
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 )brace
 r_return
 op_minus
@@ -1238,7 +1254,7 @@ l_int|100
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This code is badly broken. We cannot simply pick ports as the &n; *&t;ISAPnP specification implies. We should try 4 or 5 safe ports&n; *&t;then bale by default.&n; *&n; *&t;This code touches NE2K cards or other devices and your box is&n; *&t;history.&n; */
+multiline_comment|/*&n; *&t;Perform an isolation. The port selection code now tries to avoid&n; *&t;&quot;dangerous to read&quot; ports.&n; */
 DECL|function|isapnp_isolate_rdp_select
 r_static
 r_int
@@ -4872,6 +4888,13 @@ id|isapnp_checksum_value
 op_assign
 l_int|0x00
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|card-&gt;devices
+)paren
+suffix:semicolon
 id|isapnp_parse_resource_map
 c_func
 (paren
@@ -4898,13 +4921,6 @@ suffix:semicolon
 id|card-&gt;checksum
 op_assign
 id|isapnp_checksum_value
-suffix:semicolon
-id|INIT_LIST_HEAD
-c_func
-(paren
-op_amp
-id|card-&gt;devices
-)paren
 suffix:semicolon
 id|list_add_tail
 c_func
@@ -8674,6 +8690,7 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
+multiline_comment|/* Some machines allow DMA 0, but others don&squot;t. In fact on some &n;&t;   boxes DMA 0 is the memory refresh. Play safe */
 r_if
 c_cond
 (paren

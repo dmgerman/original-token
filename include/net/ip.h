@@ -510,18 +510,44 @@ r_extern
 r_struct
 id|ip_mib
 id|ip_statistics
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
+DECL|macro|IP_INC_STATS
+mdefine_line|#define IP_INC_STATS(field)&t;&t;SNMP_INC_STATS(ip_statistics, field)
+DECL|macro|IP_INC_STATS_BH
+mdefine_line|#define IP_INC_STATS_BH(field)&t;&t;SNMP_INC_STATS_BH(ip_statistics, field)
+DECL|macro|IP_INC_STATS_USER
+mdefine_line|#define IP_INC_STATS_USER(field) &t;SNMP_INC_STATS_USER(ip_statistics, field)
 r_extern
 r_struct
 id|linux_mib
 id|net_statistics
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
+DECL|macro|NET_INC_STATS
+mdefine_line|#define NET_INC_STATS(field)&t;&t;SNMP_INC_STATS(net_statistics, field)
+DECL|macro|NET_INC_STATS_BH
+mdefine_line|#define NET_INC_STATS_BH(field)&t;&t;SNMP_INC_STATS_BH(net_statistics, field)
+DECL|macro|NET_INC_STATS_USER
+mdefine_line|#define NET_INC_STATS_USER(field) &t;SNMP_INC_STATS_USER(net_statistics, field)
 r_extern
 r_int
 id|sysctl_local_port_range
 (braket
 l_int|2
 )braket
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_ip_default_ttl
 suffix:semicolon
 macro_line|#ifdef CONFIG_INET
 DECL|function|ip_send

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Multicast support for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: mcast.c,v 1.27 1999/12/09 00:52:49 davem Exp $&n; *&n; *&t;Based on linux/ipv4/igmp.c and linux/ipv4/ip_sockglue.c &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Multicast support for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: mcast.c,v 1.28 2000/01/09 02:19:50 davem Exp $&n; *&n; *&t;Based on linux/ipv4/igmp.c and linux/ipv4/ip_sockglue.c &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -2392,15 +2392,24 @@ id|type
 op_eq
 id|ICMPV6_MGM_REDUCTION
 )paren
-id|icmpv6_statistics.Icmp6OutGroupMembReductions
-op_increment
+id|ICMP6_INC_STATS
+c_func
+(paren
+id|Icmp6OutGroupMembReductions
+)paren
 suffix:semicolon
 r_else
-id|icmpv6_statistics.Icmp6OutGroupMembResponses
-op_increment
+id|ICMP6_INC_STATS
+c_func
+(paren
+id|Icmp6OutGroupMembResponses
+)paren
 suffix:semicolon
-id|icmpv6_statistics.Icmp6OutMsgs
-op_increment
+id|ICMP6_INC_STATS
+c_func
+(paren
+id|Icmp6OutMsgs
+)paren
 suffix:semicolon
 )brace
 DECL|function|igmp6_join_group

@@ -63,7 +63,7 @@ suffix:semicolon
 multiline_comment|/* count_period_num / count_period_den us */
 multiline_comment|/*&n; * timer_interrupt - gets called when the decrementer overflows,&n; * with interrupts disabled.&n; * We set it up to overflow again in 1/HZ seconds.&n; */
 DECL|function|timer_interrupt
-r_void
+r_int
 id|timer_interrupt
 c_func
 (paren
@@ -317,6 +317,10 @@ c_func
 id|cpu
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* lets ret_from_int know we can do checks */
 )brace
 multiline_comment|/*&n; * This version of gettimeofday has microsecond resolution.&n; */
 DECL|function|do_gettimeofday

@@ -1461,6 +1461,12 @@ id|proc_dir_entry
 op_star
 id|proc_entry
 suffix:semicolon
+multiline_comment|/* usbdevfs inode list */
+DECL|member|inodes
+r_struct
+id|list_head
+id|inodes
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|USB_MAXCHILDREN
@@ -1557,12 +1563,6 @@ op_star
 id|config
 suffix:semicolon
 multiline_comment|/* All of the configs */
-DECL|member|string
-r_char
-op_star
-id|string
-suffix:semicolon
-multiline_comment|/* pointer to the last string read from the device */
 DECL|member|string_langid
 r_int
 id|string_langid
@@ -1580,6 +1580,17 @@ r_struct
 id|proc_dir_entry
 op_star
 id|proc_entry
+suffix:semicolon
+multiline_comment|/* usbdevfs inode list */
+DECL|member|inodes
+r_struct
+id|list_head
+id|inodes
+suffix:semicolon
+DECL|member|filelist
+r_struct
+id|list_head
+id|filelist
 suffix:semicolon
 multiline_comment|/*&n;&t; * Child devices - these can be either new devices&n;&t; * (if this is a hub device), or different instances&n;&t; * of this same device.&n;&t; *&n;&t; * Each instance needs its own set of data structures.&n;&t; */
 DECL|member|maxchild
@@ -2326,8 +2337,7 @@ r_int
 id|size
 )paren
 suffix:semicolon
-r_char
-op_star
+r_int
 id|usb_string
 c_func
 (paren
@@ -2338,6 +2348,13 @@ id|dev
 comma
 r_int
 id|index
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|size
 )paren
 suffix:semicolon
 r_int
@@ -2454,7 +2471,7 @@ DECL|macro|dbg
 mdefine_line|#define dbg(format, arg...) printk(KERN_DEBUG __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
 macro_line|#else
 DECL|macro|dbg
-mdefine_line|#define dbg(format, arg...)
+mdefine_line|#define dbg(format, arg...) do {} while (0)
 macro_line|#endif
 DECL|macro|err
 mdefine_line|#define err(format, arg...) printk(KERN_ERR __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
@@ -2462,6 +2479,17 @@ DECL|macro|info
 mdefine_line|#define info(format, arg...) printk(KERN_INFO __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
 DECL|macro|warn
 mdefine_line|#define warn(format, arg...) printk(KERN_WARNING __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
+multiline_comment|/*&n; * bus and driver list&n; */
+r_extern
+r_struct
+id|list_head
+id|usb_driver_list
+suffix:semicolon
+r_extern
+r_struct
+id|list_head
+id|usb_bus_list
+suffix:semicolon
 multiline_comment|/*&n; * procfs stuff&n; */
 macro_line|#ifdef CONFIG_USB_PROC
 r_void
@@ -2562,6 +2590,152 @@ id|dev
 (brace
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * USB device fs stuff&n; */
+macro_line|#ifdef CONFIG_USB_DEVICEFS
+multiline_comment|/*&n; * these are expected to be called from the USB core/hub thread&n; * with the kernel lock held&n; */
+r_extern
+r_void
+id|usbdevfs_add_bus
+c_func
+(paren
+r_struct
+id|usb_bus
+op_star
+id|bus
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usbdevfs_remove_bus
+c_func
+(paren
+r_struct
+id|usb_bus
+op_star
+id|bus
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usbdevfs_add_device
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usbdevfs_remove_device
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|usbdevfs_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usbdevfs_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#else /* CONFIG_USB_DEVICEFS */
+DECL|function|usbdevfs_add_bus
+r_extern
+r_inline
+r_void
+id|usbdevfs_add_bus
+c_func
+(paren
+r_struct
+id|usb_bus
+op_star
+id|bus
+)paren
+(brace
+)brace
+DECL|function|usbdevfs_remove_bus
+r_extern
+r_inline
+r_void
+id|usbdevfs_remove_bus
+c_func
+(paren
+r_struct
+id|usb_bus
+op_star
+id|bus
+)paren
+(brace
+)brace
+DECL|function|usbdevfs_add_device
+r_extern
+r_inline
+r_void
+id|usbdevfs_add_device
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+)paren
+(brace
+)brace
+DECL|function|usbdevfs_remove_device
+r_extern
+r_inline
+r_void
+id|usbdevfs_remove_device
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+)paren
+(brace
+)brace
+DECL|function|usbdevfs_init
+r_extern
+r_inline
+r_int
+id|usbdevfs_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|usbdevfs_cleanup
+r_extern
+r_inline
+r_void
+id|usbdevfs_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif /* CONFIG_USB_DEVICEFS */
 macro_line|#endif  /* __KERNEL__ */
 macro_line|#endif
 eof

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * debug.c - USB debug helper routines.&n; *&n; * I just want these out of the way where they aren&squot;t in your&n; * face, but so that you can still use them..&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 macro_line|#include &quot;usb.h&quot;
@@ -879,21 +880,41 @@ id|index
 (brace
 r_char
 op_star
-id|p
+id|buf
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|buf
 op_assign
+id|kmalloc
+c_func
+(paren
+l_int|256
+comma
+id|GFP_KERNEL
+)paren
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|usb_string
 c_func
 (paren
 id|dev
 comma
 id|index
+comma
+id|buf
+comma
+l_int|256
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|p
-op_ne
+OG
 l_int|0
 )paren
 id|printk
@@ -904,7 +925,13 @@ l_string|&quot;%s: %s&bslash;n&quot;
 comma
 id|id
 comma
-id|p
+id|buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|buf
 )paren
 suffix:semicolon
 )brace

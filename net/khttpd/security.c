@@ -204,7 +204,6 @@ id|filp
 op_ne
 l_int|NULL
 )paren
-suffix:semicolon
 id|fput
 c_func
 (paren

@@ -3345,7 +3345,7 @@ macro_line|#endif
 r_else
 id|iph-&gt;ttl
 op_assign
-id|ip_statistics.IpDefaultTTL
+id|sysctl_ip_default_ttl
 suffix:semicolon
 )brace
 (paren

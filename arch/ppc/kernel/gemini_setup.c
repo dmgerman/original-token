@@ -1256,7 +1256,7 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* gemini has no 8259 */
-id|open_pic.irq_offset
+id|open_pic_irq_offset
 op_assign
 l_int|0
 suffix:semicolon
@@ -2044,7 +2044,7 @@ c_cond
 (paren
 id|irq
 op_ge
-id|open_pic.irq_offset
+id|open_pic_irq_offset
 )paren
 id|openpic_eoi
 c_func

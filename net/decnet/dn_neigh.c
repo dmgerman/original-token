@@ -2487,6 +2487,18 @@ id|rs
 op_assign
 id|ptr
 suffix:semicolon
+r_struct
+id|dn_dev
+op_star
+id|dn_db
+op_assign
+(paren
+r_struct
+id|dn_dev
+op_star
+)paren
+id|dev-&gt;dn_ptr
+suffix:semicolon
 id|read_lock_bh
 c_func
 (paren
@@ -2565,9 +2577,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|decnet_node_type
+id|dn_db-&gt;parms.forwarding
 op_eq
-id|DN_RT_INFO_L1RT
+l_int|1
 op_logical_and
 (paren
 id|dn-&gt;flags
@@ -2981,9 +2993,9 @@ id|dn_neigh_get_info
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 )brace
-macro_line|#ifdef CONFIG_DECNET_MODULE
 DECL|function|dn_neigh_cleanup
 r_void
+id|__exit
 id|dn_neigh_cleanup
 c_func
 (paren
@@ -3006,5 +3018,4 @@ id|dn_neigh_table
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_DECNET_MODULE */
 eof

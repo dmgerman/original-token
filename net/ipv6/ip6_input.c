@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;$Id: ip6_input.c,v 1.14 1999/08/30 12:14:56 davem Exp $&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;$Id: ip6_input.c,v 1.15 2000/01/09 02:19:54 davem Exp $&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -56,8 +56,11 @@ id|PACKET_OTHERHOST
 r_goto
 id|drop
 suffix:semicolon
-id|ipv6_statistics.Ip6InReceives
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InReceives
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -199,8 +202,11 @@ id|hdr-&gt;nexthdr
 )paren
 )paren
 (brace
-id|ipv6_statistics.Ip6InHdrErrors
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InHdrErrors
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -231,13 +237,19 @@ id|skb
 suffix:semicolon
 id|truncated
 suffix:colon
-id|ipv6_statistics.Ip6InTruncatedPkts
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InTruncatedPkts
+)paren
 suffix:semicolon
 id|err
 suffix:colon
-id|ipv6_statistics.Ip6InHdrErrors
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InHdrErrors
+)paren
 suffix:semicolon
 id|drop
 suffix:colon
@@ -598,8 +610,11 @@ op_logical_neg
 id|found
 )paren
 (brace
-id|ipv6_statistics.Ip6InUnknownProtos
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InUnknownProtos
+)paren
 suffix:semicolon
 id|icmpv6_param_prob
 c_func
@@ -642,8 +657,11 @@ id|discard
 op_assign
 l_int|1
 suffix:semicolon
-id|ipv6_statistics.Ip6InMcastPkts
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InMcastPkts
+)paren
 suffix:semicolon
 id|hdr
 op_assign

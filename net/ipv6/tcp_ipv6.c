@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.115 2000/01/06 00:42:09 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.116 2000/01/09 02:19:52 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -964,22 +964,12 @@ id|sk-&gt;pprev
 op_assign
 id|skp
 suffix:semicolon
-id|sk-&gt;prot-&gt;inuse
-op_increment
-suffix:semicolon
-r_if
-c_cond
+id|sock_prot_inc_use
+c_func
 (paren
-id|sk-&gt;prot-&gt;highestinuse
-OL
-id|sk-&gt;prot-&gt;inuse
+id|sk-&gt;prot
 )paren
-(brace
-id|sk-&gt;prot-&gt;highestinuse
-op_assign
-id|sk-&gt;prot-&gt;inuse
 suffix:semicolon
-)brace
 id|write_unlock
 c_func
 (paren
@@ -1948,22 +1938,12 @@ id|sk-&gt;pprev
 op_assign
 id|skp
 suffix:semicolon
-id|sk-&gt;prot-&gt;inuse
-op_increment
-suffix:semicolon
-r_if
-c_cond
+id|sock_prot_inc_use
+c_func
 (paren
-id|sk-&gt;prot-&gt;highestinuse
-OL
-id|sk-&gt;prot-&gt;inuse
+id|sk-&gt;prot
 )paren
-(brace
-id|sk-&gt;prot-&gt;highestinuse
-op_assign
-id|sk-&gt;prot-&gt;inuse
 suffix:semicolon
-)brace
 id|write_unlock_bh
 c_func
 (paren
@@ -3206,8 +3186,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|icmpv6_statistics.Icmp6InErrors
-op_increment
+id|ICMP6_INC_STATS_BH
+c_func
+(paren
+id|Icmp6InErrors
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3245,8 +3228,11 @@ c_cond
 (paren
 id|sk-&gt;lock.users
 )paren
-id|net_statistics.LockDroppedIcmps
-op_increment
+id|NET_INC_STATS_BH
+c_func
+(paren
+id|LockDroppedIcmps
+)paren
 suffix:semicolon
 id|tp
 op_assign
@@ -3280,8 +3266,11 @@ id|tp-&gt;snd_nxt
 )paren
 )paren
 (brace
-id|net_statistics.OutOfWindowIcmps
-op_increment
+id|NET_INC_STATS_BH
+c_func
+(paren
+id|OutOfWindowIcmps
+)paren
 suffix:semicolon
 r_goto
 id|out
@@ -3596,8 +3585,11 @@ id|tp-&gt;snd_nxt
 )paren
 )paren
 (brace
-id|net_statistics.OutOfWindowIcmps
-op_increment
+id|NET_INC_STATS_BH
+c_func
+(paren
+id|OutOfWindowIcmps
+)paren
 suffix:semicolon
 r_goto
 id|out
@@ -3614,8 +3606,11 @@ op_ne
 id|req-&gt;snt_isn
 )paren
 (brace
-id|net_statistics.OutOfWindowIcmps
-op_increment
+id|NET_INC_STATS_BH
+c_func
+(paren
+id|OutOfWindowIcmps
+)paren
 suffix:semicolon
 r_goto
 id|out
@@ -3677,8 +3672,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|tcp_statistics.TcpAttemptFails
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpAttemptFails
+)paren
 suffix:semicolon
 id|sk-&gt;err
 op_assign
@@ -4564,8 +4562,11 @@ l_int|0
 suffix:semicolon
 id|drop
 suffix:colon
-id|tcp_statistics.TcpAttemptFails
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpAttemptFails
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -5645,11 +5646,17 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|tcp_statistics.TcpOutSegs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpOutSegs
+)paren
 suffix:semicolon
-id|tcp_statistics.TcpOutRsts
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpOutRsts
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -6001,8 +6008,11 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|tcp_statistics.TcpOutSegs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpOutSegs
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -6563,8 +6573,11 @@ id|discard
 suffix:semicolon
 macro_line|#endif /* CONFIG_FILTER */
 multiline_comment|/*&n;&t; *&t;socket locking is here for SMP purposes as backlog rcv&n;&t; *&t;is currently called with bh processing disabled.&n;&t; */
-id|ipv6_statistics.Ip6InDelivers
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InDelivers
+)paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * This doesn&squot;t check if the socket has enough room for the packet.&n;&t; * Either process the packet _without_ queueing it and then free it,&n;&t; * or do the check later.&n;&t; */
 id|skb_set_owner_r
@@ -6861,8 +6874,11 @@ l_int|0
 suffix:semicolon
 id|csum_err
 suffix:colon
-id|tcp_statistics.TcpInErrs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpInErrs
+)paren
 suffix:semicolon
 r_goto
 id|discard
@@ -7098,8 +7114,11 @@ id|skb-&gt;data
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Count it even if it&squot;s bad.&n;&t; */
-id|tcp_statistics.TcpInSegs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpInSegs
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7313,8 +7332,11 @@ id|skb
 (brace
 id|bad_packet
 suffix:colon
-id|tcp_statistics.TcpInErrs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpInErrs
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -7361,8 +7383,11 @@ id|skb
 )paren
 )paren
 (brace
-id|tcp_statistics.TcpInErrs
-op_increment
+id|TCP_INC_STATS_BH
+c_func
+(paren
+id|TcpInErrs
+)paren
 suffix:semicolon
 id|sock_put
 c_func
@@ -9495,11 +9520,6 @@ multiline_comment|/* retransmits */
 l_string|&quot;TCPv6&quot;
 comma
 multiline_comment|/* name */
-l_int|0
-comma
-multiline_comment|/* inuse */
-l_int|0
-multiline_comment|/* highestinuse */
 )brace
 suffix:semicolon
 DECL|variable|tcpv6_protocol

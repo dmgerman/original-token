@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.24 1999/08/20 11:06:18 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.25 2000/01/09 02:19:54 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Andi Kleen&t;&t;:&t;exception handling&n; *&t;Andi Kleen&t;&t;&t;add rate limits. never reply to a icmp.&n; *&t;&t;&t;&t;&t;add more length checks and other fixes.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -33,6 +33,11 @@ DECL|variable|icmpv6_statistics
 r_struct
 id|icmpv6_mib
 id|icmpv6_statistics
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;ICMP socket for flow control.&n; */
 DECL|variable|icmpv6_socket
@@ -691,8 +696,11 @@ c_cond
 id|dst-&gt;error
 )paren
 (brace
-id|ipv6_statistics.Ip6OutNoRoutes
-op_increment
+id|IP6_INC_STATS
+c_func
+(paren
+id|Ip6OutNoRoutes
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -1266,7 +1274,19 @@ id|ICMPV6_PARAMPROB
 )paren
 (paren
 op_amp
-id|icmpv6_statistics.Icmp6OutDestUnreachs
+(paren
+id|icmpv6_statistics
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_star
+l_int|2
+)braket
+dot
+id|Icmp6OutDestUnreachs
+)paren
 )paren
 (braket
 id|type
@@ -1275,8 +1295,11 @@ l_int|1
 )braket
 op_increment
 suffix:semicolon
-id|icmpv6_statistics.Icmp6OutMsgs
-op_increment
+id|ICMP6_INC_STATS_BH
+c_func
+(paren
+id|Icmp6OutMsgs
+)paren
 suffix:semicolon
 id|out
 suffix:colon
@@ -1490,11 +1513,17 @@ comma
 id|MSG_DONTWAIT
 )paren
 suffix:semicolon
-id|icmpv6_statistics.Icmp6OutEchoReplies
-op_increment
+id|ICMP6_INC_STATS_BH
+c_func
+(paren
+id|Icmp6OutEchoReplies
+)paren
 suffix:semicolon
-id|icmpv6_statistics.Icmp6OutMsgs
-op_increment
+id|ICMP6_INC_STATS_BH
+c_func
+(paren
+id|Icmp6OutMsgs
+)paren
 suffix:semicolon
 id|icmpv6_xmit_unlock_bh
 c_func
@@ -1858,8 +1887,11 @@ suffix:semicolon
 r_int
 id|type
 suffix:semicolon
-id|icmpv6_statistics.Icmp6InMsgs
-op_increment
+id|ICMP6_INC_STATS_BH
+c_func
+(paren
+id|Icmp6InMsgs
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2117,7 +2149,17 @@ id|ICMPV6_PARAMPROB
 )paren
 (paren
 op_amp
-id|icmpv6_statistics.Icmp6InDestUnreachs
+id|icmpv6_statistics
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_star
+l_int|2
+)braket
+dot
+id|Icmp6InDestUnreachs
 )paren
 (braket
 id|type
@@ -2140,7 +2182,17 @@ id|NDISC_REDIRECT
 )paren
 (paren
 op_amp
-id|icmpv6_statistics.Icmp6InEchos
+id|icmpv6_statistics
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_star
+l_int|2
+)braket
+dot
+id|Icmp6InEchos
 )paren
 (braket
 id|type
@@ -2381,8 +2433,11 @@ l_int|0
 suffix:semicolon
 id|discard_it
 suffix:colon
-id|icmpv6_statistics.Icmp6InErrors
-op_increment
+id|ICMP6_INC_STATS_BH
+c_func
+(paren
+id|Icmp6InErrors
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func

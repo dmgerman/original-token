@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* cycx_x25.h&t;Cyclom X.25 firmware API definitions.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo&n;*&n;* Based on sdla_x25.h by Gene Kozin &lt;74604.152@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/01/03&t;acme&t;&t;judicious use of data types&n;*&n;* 1999/01/02&t;acme&t;&t;#define X25_ACK_N3&t;0x4411&n;* Dec 28, 1998&t;Arnaldo&t;&t;cleanup: lot&squot;o&squot;things removed&n;*&t;&t;&t;&t;&t; commands listed,&n;*&t;&t;&t;&t;&t; TX25Cmd &amp; TX25Config structs&n;*&t;&t;&t;&t;&t; typedef&squot;ed&n;*/
+multiline_comment|/*&n;* cycx_x25.h&t;Cyclom X.25 firmware API definitions.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998-2000 Arnaldo Carvalho de Melo&n;*&n;* Based on sdla_x25.h by Gene Kozin &lt;74604.152@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/01/03&t;acme&t;&t;judicious use of data types&n;* 1999/01/02&t;acme&t;&t;#define X25_ACK_N3&t;0x4411&n;* 1998/12/28&t;acme&t;&t;cleanup: lot&squot;o&squot;things removed&n;*&t;&t;&t;&t;&t; commands listed,&n;*&t;&t;&t;&t;&t; TX25Cmd &amp; TX25Config structs&n;*&t;&t;&t;&t;&t; typedef&squot;ed&n;*/
 macro_line|#ifndef&t;_CYCX_X25_H
 DECL|macro|_CYCX_X25_H
 mdefine_line|#define&t;_CYCX_X25_H
@@ -11,7 +11,7 @@ DECL|macro|X25_MBOX_OFFS
 mdefine_line|#define&t;X25_MBOX_OFFS&t;0x300&t;/* general mailbox block */
 DECL|macro|X25_RXMBOX_OFFS
 mdefine_line|#define&t;X25_RXMBOX_OFFS&t;0x340&t;/* receive mailbox */
-multiline_comment|/* DATA STRUCTURES */
+multiline_comment|/* Data Structures */
 multiline_comment|/* X.25 Command Block. */
 DECL|struct|X25Cmd
 r_typedef

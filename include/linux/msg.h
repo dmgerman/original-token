@@ -12,6 +12,7 @@ DECL|macro|MSG_NOERROR
 mdefine_line|#define MSG_NOERROR     010000  /* no error if message is too big */
 DECL|macro|MSG_EXCEPT
 mdefine_line|#define MSG_EXCEPT      020000  /* recv any msg except of specified type.*/
+multiline_comment|/* Obsolete, used only for backwards compatibility and libc5 compiles */
 DECL|struct|msqid_ds
 r_struct
 id|msqid_ds
@@ -92,6 +93,8 @@ suffix:semicolon
 multiline_comment|/* last receive pid */
 )brace
 suffix:semicolon
+multiline_comment|/* Include the definition of msqid64_ds */
+macro_line|#include &lt;asm/msgbuf.h&gt;
 multiline_comment|/* message buffer for msgsnd and msgrcv calls */
 DECL|struct|msgbuf
 r_struct

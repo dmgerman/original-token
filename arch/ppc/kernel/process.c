@@ -1101,6 +1101,10 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+r_int
+id|msr
+suffix:semicolon
 r_struct
 id|pt_regs
 op_star
@@ -1249,9 +1253,21 @@ r_int
 id|ret_from_syscall
 suffix:semicolon
 macro_line|#endif&t;
+id|asm
+r_volatile
+(paren
+l_string|&quot;mfmsr %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|msr
+)paren
+suffix:colon
+)paren
+suffix:semicolon
 id|kregs-&gt;msr
 op_assign
-id|MSR_KERNEL
+id|msr
 suffix:semicolon
 id|kregs-&gt;gpr
 (braket

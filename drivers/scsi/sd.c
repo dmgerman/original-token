@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *      sd.c Copyright (C) 1992 Drew Eckhardt&n; *           Copyright (C) 1993, 1994, 1995, 1999 Eric Youngdale&n; *&n; *      Linux scsi disk driver&n; *              Initial versions: Drew Eckhardt&n; *              Subsequent revisions: Eric Youngdale&n; *&n; *      &lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale ericy@andante.org to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; *&n; *       Modified by Eric Youngdale eric@andante.org to support loadable&n; *       low-level scsi drivers.&n; *&n; *       Modified by Jirka Hanika geo@ff.cuni.cz to support more&n; *       scsi disks using eight major numbers.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; * This is a variable in scsi.c that is set when we are processing something&n; * after boot time.  By definition, this is true when we are a loadable module&n; * ourselves.&n; */

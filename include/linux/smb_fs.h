@@ -8,6 +8,9 @@ DECL|macro|SMB_IOC_GETMOUNTUID
 mdefine_line|#define&t;SMB_IOC_GETMOUNTUID&t;&t;_IOR(&squot;u&squot;, 1, __kernel_uid_t)
 DECL|macro|SMB_IOC_NEWCONN
 mdefine_line|#define SMB_IOC_NEWCONN                 _IOW(&squot;u&squot;, 2, struct smb_conn_opt)
+multiline_comment|/* __kernel_uid_t can never change, so we have to use __kernel_uid32_t */
+DECL|macro|SMB_IOC_GETMOUNTUID32
+mdefine_line|#define&t;SMB_IOC_GETMOUNTUID32&t;&t;_IOR(&squot;u&squot;, 3, __kernel_uid32_t)
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|macro|WVAL

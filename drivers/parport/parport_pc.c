@@ -434,13 +434,15 @@ op_assign
 id|p-&gt;physport-&gt;private_data
 suffix:semicolon
 multiline_comment|/* Prevent further data transfer. */
-id|parport_frob_control
+id|frob_econtrol
 (paren
 id|p
 comma
-id|PARPORT_CONTROL_STROBE
+l_int|0xe0
 comma
-id|PARPORT_CONTROL_STROBE
+id|ECR_TST
+op_lshift
+l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* Adjust for the contents of the FIFO. */
@@ -503,15 +505,6 @@ comma
 id|ECR_PS2
 op_lshift
 l_int|5
-)paren
-suffix:semicolon
-id|parport_frob_control
-(paren
-id|p
-comma
-id|PARPORT_CONTROL_STROBE
-comma
-l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Now change to config mode and clean up. FIXME */
@@ -2048,7 +2041,7 @@ multiline_comment|/* Timed out. */
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;Timed out&bslash;n&quot;
+l_string|&quot;FIFO write timed out&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -2486,7 +2479,7 @@ multiline_comment|/* Timed out. */
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;Timed out&bslash;n&quot;
+l_string|&quot;DMA write timed out&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -2774,13 +2767,15 @@ id|port-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* Prevent further data transfer. */
-id|parport_frob_control
+id|frob_econtrol
 (paren
 id|port
 comma
-id|PARPORT_CONTROL_STROBE
+l_int|0xe0
 comma
-id|PARPORT_CONTROL_STROBE
+id|ECR_TST
+op_lshift
+l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* Adjust for the contents of the FIFO. */
@@ -2833,16 +2828,6 @@ comma
 id|ECR_PS2
 op_lshift
 l_int|5
-)paren
-suffix:semicolon
-multiline_comment|/* De-assert strobe. */
-id|parport_frob_control
-(paren
-id|port
-comma
-id|PARPORT_CONTROL_STROBE
-comma
-l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -3020,13 +3005,13 @@ id|port-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* Prevent further data transfer. */
-id|parport_frob_control
+id|frob_econtrol
 (paren
 id|port
 comma
-id|PARPORT_CONTROL_STROBE
+l_int|0xe0
 comma
-id|PARPORT_CONTROL_STROBE
+id|ECR_TST
 )paren
 suffix:semicolon
 multiline_comment|/* Adjust for the contents of the FIFO. */
@@ -3079,16 +3064,6 @@ comma
 id|ECR_PS2
 op_lshift
 l_int|5
-)paren
-suffix:semicolon
-multiline_comment|/* De-assert strobe. */
-id|parport_frob_control
-(paren
-id|port
-comma
-id|PARPORT_CONTROL_STROBE
-comma
-l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Host transfer recovery. */
@@ -3477,7 +3452,7 @@ multiline_comment|/* Timed out. */
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;Timed out&bslash;n&quot;
+l_string|&quot;PIO read timed out&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break

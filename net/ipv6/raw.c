@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.30 1999/12/15 22:39:51 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.31 2000/01/09 02:19:50 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -104,22 +104,12 @@ id|sk-&gt;pprev
 op_assign
 id|skp
 suffix:semicolon
-id|sk-&gt;prot-&gt;inuse
-op_increment
-suffix:semicolon
-r_if
-c_cond
+id|sock_prot_inc_use
+c_func
 (paren
-id|sk-&gt;prot-&gt;highestinuse
-OL
-id|sk-&gt;prot-&gt;inuse
+id|sk-&gt;prot
 )paren
-(brace
-id|sk-&gt;prot-&gt;highestinuse
-op_assign
-id|sk-&gt;prot-&gt;inuse
 suffix:semicolon
-)brace
 id|sock_hold
 c_func
 (paren
@@ -177,8 +167,11 @@ id|sk-&gt;pprev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;prot-&gt;inuse
-op_decrement
+id|sock_prot_dec_use
+c_func
+(paren
+id|sk-&gt;prot
+)paren
 suffix:semicolon
 id|__sock_put
 c_func
@@ -1012,8 +1005,11 @@ OL
 l_int|0
 )paren
 (brace
-id|ipv6_statistics.Ip6InDiscards
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InDiscards
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -1025,8 +1021,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|ipv6_statistics.Ip6InDelivers
-op_increment
+id|IP6_INC_STATS_BH
+c_func
+(paren
+id|Ip6InDelivers
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -3330,11 +3329,6 @@ multiline_comment|/* retransmits */
 l_string|&quot;RAW&quot;
 comma
 multiline_comment|/* name */
-l_int|0
-comma
-multiline_comment|/* inuse */
-l_int|0
-multiline_comment|/* highestinuse */
 )brace
 suffix:semicolon
 eof

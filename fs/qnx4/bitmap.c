@@ -336,6 +336,7 @@ id|QNX4_INODES_PER_BLOCK
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
+macro_line|#ifdef CONFIG_QNX4FS_RW
 DECL|function|qnx4_is_free
 r_int
 id|qnx4_is_free
@@ -510,7 +511,6 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_QNX4FS_RW
 DECL|function|qnx4_set_bitmap
 r_int
 id|qnx4_set_bitmap

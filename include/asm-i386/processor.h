@@ -134,6 +134,8 @@ DECL|macro|X86_VENDOR_NEXGEN
 mdefine_line|#define X86_VENDOR_NEXGEN 4
 DECL|macro|X86_VENDOR_CENTAUR
 mdefine_line|#define X86_VENDOR_CENTAUR 5
+DECL|macro|X86_VENDOR_RISE
+mdefine_line|#define X86_VENDOR_RISE 6
 DECL|macro|X86_VENDOR_UNKNOWN
 mdefine_line|#define X86_VENDOR_UNKNOWN 0xff
 multiline_comment|/*&n; * capabilities of CPUs&n; */

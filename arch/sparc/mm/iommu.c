@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: iommu.c,v 1.16 1999/12/28 04:28:54 anton Exp $&n; * iommu.c:  IOMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: iommu.c,v 1.17 2000/01/08 17:01:18 anton Exp $&n; * iommu.c:  IOMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -91,7 +91,7 @@ r_int
 r_int
 id|first
 op_assign
-id|page_offset
+id|PAGE_OFFSET
 suffix:semicolon
 r_int
 r_int
@@ -135,7 +135,7 @@ c_func
 id|MKIOPTE
 c_func
 (paren
-id|mmu_v2p
+id|__pa
 c_func
 (paren
 id|first
@@ -330,7 +330,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|page_offset
+id|PAGE_OFFSET
 op_amp
 l_int|0xf0000000
 )paren
@@ -655,7 +655,7 @@ c_func
 suffix:semicolon
 id|iommu-&gt;regs-&gt;base
 op_assign
-id|mmu_v2p
+id|__pa
 c_func
 (paren
 (paren
@@ -1405,7 +1405,7 @@ op_assign
 id|MKIOPTE
 c_func
 (paren
-id|mmu_v2p
+id|__pa
 c_func
 (paren
 id|page
@@ -1426,7 +1426,7 @@ op_assign
 id|MKIOPTE
 c_func
 (paren
-id|mmu_v2p
+id|__pa
 c_func
 (paren
 id|page

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/smb_mount.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -56,6 +57,29 @@ id|cmd
 (brace
 r_case
 id|SMB_IOC_GETMOUNTUID
+suffix:colon
+id|result
+op_assign
+id|put_user
+c_func
+(paren
+id|high2lowuid
+c_func
+(paren
+id|server-&gt;mnt-&gt;mounted_uid
+)paren
+comma
+(paren
+id|old_uid_t
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SMB_IOC_GETMOUNTUID32
 suffix:colon
 id|result
 op_assign

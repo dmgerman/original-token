@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and Cyrix &quot;coma bug&quot; recognition by&n; *      Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; *&n; *  IDT Winchip tweaks, misc clean ups.&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, August 1999&n; *&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; *&n; *  Better detection of Centaur/IDT WinChip models.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, August 1999.&n; *&n; *  Memory region support&n; *&t;David Parsons &lt;orc@pell.chi.il.us&gt;, July-August 1999&n; *&n; *  Cleaned up cache-detection code&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, October 1999&n; *&n; *&t;Added proper L2 cache detection for Coppermine&n; *&t;Dragan Stancevic &lt;visitor@valinux.com&gt;, October 1999&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and Cyrix &quot;coma bug&quot; recognition by&n; *      Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; *&n; *  IDT Winchip tweaks, misc clean ups.&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, August 1999&n; *&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; *&n; *  Better detection of Centaur/IDT WinChip models.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, August 1999.&n; *&n; *  Memory region support&n; *&t;David Parsons &lt;orc@pell.chi.il.us&gt;, July-August 1999&n; *&n; *  Cleaned up cache-detection code&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, October 1999&n; *&n; *&t;Added proper L2 cache detection for Coppermine&n; *&t;Dragan Stancevic &lt;visitor@valinux.com&gt;, October 1999&n; *&n; *  Added the origninal array for capability flags but forgot to credit &n; *  myself :) (~1998) Fixed/cleaned up some cpu_model_info and other stuff&n; *  &t;Jauder Ho &lt;jauderho@carumba.com&gt;, January 2000&n; *  &t;&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -4765,6 +4765,23 @@ op_assign
 id|X86_VENDOR_NEXGEN
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|v
+comma
+l_string|&quot;RiseRiseRise&quot;
+)paren
+)paren
+id|c-&gt;x86_vendor
+op_assign
+id|X86_VENDOR_RISE
+suffix:semicolon
+r_else
 id|c-&gt;x86_vendor
 op_assign
 id|X86_VENDOR_UNKNOWN
@@ -4792,6 +4809,7 @@ l_int|16
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Naming convention should be: &lt;Name&gt; [(&lt;Codename&gt;)] */
 DECL|variable|__initdata
 r_static
 r_struct
@@ -5089,6 +5107,46 @@ comma
 l_string|&quot;Nx586&quot;
 comma
 l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+)brace
+comma
+(brace
+id|X86_VENDOR_RISE
+comma
+l_int|5
+comma
+(brace
+l_string|&quot;mP6&quot;
+comma
+l_string|&quot;mP6&quot;
 comma
 l_int|NULL
 comma
@@ -5460,7 +5518,7 @@ id|model_names
 id|c-&gt;x86_model
 )braket
 suffix:semicolon
-multiline_comment|/* Names for the Pentium II Celeron processors &n;                           detectable only by also checking the cache size */
+multiline_comment|/* Names for the Pentium II/Celeron processors &n;                           detectable only by also checking the cache size.&n;&t;&t;&t;   Dixon is NOT a Celeron. */
 r_if
 c_cond
 (paren
@@ -5537,7 +5595,7 @@ l_int|256
 (brace
 id|p
 op_assign
-l_string|&quot;Celeron (Dixon)&quot;
+l_string|&quot;Mobile Pentium II (Dixon)&quot;
 suffix:semicolon
 )brace
 )brace
@@ -5630,6 +5688,8 @@ comma
 l_string|&quot;NexGen&quot;
 comma
 l_string|&quot;Centaur&quot;
+comma
+l_string|&quot;Rise&quot;
 )brace
 suffix:semicolon
 DECL|function|print_cpu_info
@@ -5762,6 +5822,7 @@ suffix:semicolon
 r_int
 id|sep_bug
 suffix:semicolon
+multiline_comment|/* &n;&t; * Flags should be entered into the array ONLY if there is no overlap.&n;&t; * Else a number should be used and then overridden in the case &n;&t; * statement below. --Jauder &lt;jauderho@carumba.com&gt;&n;&t; *&n;&t; * NOTE: bits 10, 19-22, 26-31 are reserved.&n;&t; *&n;&t; * Data courtesy of http://www.sandpile.org/arch/cpuid.htm&n;&t; * Thanks to the Greasel!&n;&t; */
 r_static
 r_char
 op_star
@@ -5802,9 +5863,9 @@ l_string|&quot;mca&quot;
 comma
 l_string|&quot;cmov&quot;
 comma
-l_string|&quot;pat&quot;
+l_string|&quot;16&quot;
 comma
-l_string|&quot;17&quot;
+l_string|&quot;pse36&quot;
 comma
 l_string|&quot;psn&quot;
 comma
@@ -5820,7 +5881,7 @@ l_string|&quot;mmx&quot;
 comma
 l_string|&quot;24&quot;
 comma
-l_string|&quot;kni&quot;
+l_string|&quot;xmm&quot;
 comma
 l_string|&quot;26&quot;
 comma
@@ -6088,24 +6149,17 @@ id|X86_VENDOR_INTEL
 suffix:colon
 id|x86_cap_flags
 (braket
-l_int|17
+l_int|16
 )braket
 op_assign
-l_string|&quot;pse36&quot;
-suffix:semicolon
-id|x86_cap_flags
-(braket
-l_int|18
-)braket
-op_assign
-l_string|&quot;psn&quot;
+l_string|&quot;pat&quot;
 suffix:semicolon
 id|x86_cap_flags
 (braket
 l_int|24
 )braket
 op_assign
-l_string|&quot;osfxsr&quot;
+l_string|&quot;fxsr&quot;
 suffix:semicolon
 r_break
 suffix:semicolon

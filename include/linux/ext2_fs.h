@@ -298,7 +298,7 @@ DECL|member|i_uid
 id|__u16
 id|i_uid
 suffix:semicolon
-multiline_comment|/* Owner Uid */
+multiline_comment|/* Low 16 bits of Owner Uid */
 DECL|member|i_size
 id|__u32
 id|i_size
@@ -328,7 +328,7 @@ DECL|member|i_gid
 id|__u16
 id|i_gid
 suffix:semicolon
-multiline_comment|/* Group Id */
+multiline_comment|/* Low 16 bits of Group Id */
 DECL|member|i_links_count
 id|__u16
 id|i_links_count
@@ -427,12 +427,19 @@ DECL|member|i_pad1
 id|__u16
 id|i_pad1
 suffix:semicolon
+DECL|member|l_i_uid_high
+id|__u16
+id|l_i_uid_high
+suffix:semicolon
+multiline_comment|/* these 2 fields    */
+DECL|member|l_i_gid_high
+id|__u16
+id|l_i_gid_high
+suffix:semicolon
+multiline_comment|/* were reserved2[0] */
 DECL|member|l_i_reserved2
 id|__u32
 id|l_i_reserved2
-(braket
-l_int|2
-)braket
 suffix:semicolon
 DECL|member|linux2
 )brace
@@ -513,6 +520,14 @@ DECL|macro|i_frag
 mdefine_line|#define i_frag&t;&t;osd2.linux2.l_i_frag
 DECL|macro|i_fsize
 mdefine_line|#define i_fsize&t;&t;osd2.linux2.l_i_fsize
+DECL|macro|i_uid_low
+mdefine_line|#define i_uid_low&t;i_uid
+DECL|macro|i_gid_low
+mdefine_line|#define i_gid_low&t;i_gid
+DECL|macro|i_uid_high
+mdefine_line|#define i_uid_high&t;osd2.linux2.l_i_uid_high
+DECL|macro|i_gid_high
+mdefine_line|#define i_gid_high&t;osd2.linux2.l_i_gid_high
 DECL|macro|i_reserved2
 mdefine_line|#define i_reserved2&t;osd2.linux2.l_i_reserved2
 macro_line|#endif
@@ -564,6 +579,8 @@ DECL|macro|EXT2_MOUNT_ERRORS_PANIC
 mdefine_line|#define EXT2_MOUNT_ERRORS_PANIC&t;&t;0x0040&t;/* Panic on errors */
 DECL|macro|EXT2_MOUNT_MINIX_DF
 mdefine_line|#define EXT2_MOUNT_MINIX_DF&t;&t;0x0080&t;/* Mimics the Minix statfs */
+DECL|macro|EXT2_MOUNT_NO_UID32
+mdefine_line|#define EXT2_MOUNT_NO_UID32&t;&t;0x0200  /* Disable 32-bit UIDs */
 DECL|macro|clear_opt
 mdefine_line|#define clear_opt(o, opt)&t;&t;o &amp;= ~EXT2_MOUNT_##opt
 DECL|macro|set_opt

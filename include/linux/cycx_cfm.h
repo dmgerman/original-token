@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* cycx_cfm.h&t;CYCLOM X Multiprotocol WAN Link Driver.&n;*&t;&t;Definitions for the CYCLOM X Firmware Module (CFM).&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo&n;*&n;* Based on sdlasfm.h by Gene Kozin &lt;74604.152@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Aug 08, 1998&t;Arnaldo&t;&t;Initial version.&n;*/
+multiline_comment|/*&n;* cycx_cfm.h&t;Cyclom 2X WAN Link Driver.&n;*&t;&t;Definitions for the Cyclom 2X Firmware Module (CFM).&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998-2000 Arnaldo Carvalho de Melo&n;*&n;* Based on sdlasfm.h by Gene Kozin &lt;74604.152@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1998/08/08&t;acme&t;&t;Initial version.&n;*/
 macro_line|#ifndef&t;_CYCX_CFM_H
 DECL|macro|_CYCX_CFM_H
 mdefine_line|#define&t;_CYCX_CFM_H
@@ -20,16 +20,17 @@ multiline_comment|/* Firmware Commands */
 DECL|macro|GEN_POWER_ON
 mdefine_line|#define GEN_POWER_ON&t;0x1280
 DECL|macro|GEN_SET_SEG
-mdefine_line|#define GEN_SET_SEG&t;0x1401&t;/* boot segment setting.        */
+mdefine_line|#define GEN_SET_SEG&t;0x1401&t;/* boot segment setting. */
 DECL|macro|GEN_BOOT_DAT
-mdefine_line|#define GEN_BOOT_DAT&t;0x1402&t;/* boot data.                   */
+mdefine_line|#define GEN_BOOT_DAT&t;0x1402&t;/* boot data. */
 DECL|macro|GEN_START
-mdefine_line|#define GEN_START&t;0x1403&t;/* board start.                 */
+mdefine_line|#define GEN_START&t;0x1403&t;/* board start. */
 DECL|macro|GEN_DEFPAR
-mdefine_line|#define GEN_DEFPAR&t;0x1404&t;/* buffer length for boot.      */
-multiline_comment|/* Adapter types */
+mdefine_line|#define GEN_DEFPAR&t;0x1404&t;/* buffer length for boot. */
+multiline_comment|/* Adapter Types */
 DECL|macro|CYCX_2X
 mdefine_line|#define CYCX_2X&t;&t;2
+multiline_comment|/* for now only the 2X is supported, no plans to support 8X or 16X */
 DECL|macro|CYCX_8X
 mdefine_line|#define CYCX_8X&t;&t;8
 DECL|macro|CYCX_16X
@@ -54,7 +55,7 @@ r_int
 r_int
 id|version
 suffix:semicolon
-multiline_comment|/* firmaware version number */
+multiline_comment|/* firmware version number */
 DECL|member|adapter
 r_int
 r_int
@@ -123,7 +124,7 @@ DECL|struct|cfm
 r_typedef
 r_struct
 id|cfm
-multiline_comment|/* CYCX firmware file structire */
+multiline_comment|/* CYCX firmware file structure */
 (brace
 DECL|member|signature
 r_char

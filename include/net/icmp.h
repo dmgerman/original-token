@@ -17,7 +17,18 @@ r_extern
 r_struct
 id|icmp_mib
 id|icmp_statistics
+(braket
+id|NR_CPUS
+op_star
+l_int|2
+)braket
 suffix:semicolon
+DECL|macro|ICMP_INC_STATS
+mdefine_line|#define ICMP_INC_STATS(field)&t;&t;SNMP_INC_STATS(icmp_statistics, field)
+DECL|macro|ICMP_INC_STATS_BH
+mdefine_line|#define ICMP_INC_STATS_BH(field)&t;SNMP_INC_STATS_BH(icmp_statistics, field)
+DECL|macro|ICMP_INC_STATS_USER
+mdefine_line|#define ICMP_INC_STATS_USER(field) &t;SNMP_INC_STATS_USER(icmp_statistics, field)
 r_extern
 r_void
 id|icmp_send
