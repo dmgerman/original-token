@@ -9,6 +9,10 @@ id|version
 op_assign
 l_string|&quot;wd.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1421,6 +1425,9 @@ op_minus
 id|WD_NIC_OFFSET
 suffix:semicolon
 multiline_comment|/* WD_CMDREG */
+r_int
+id|rc
+suffix:semicolon
 multiline_comment|/* Map in the shared memory. Always set register 0 last to remain&n;&t; compatible with very old boards. */
 id|ei_status.reg0
 op_assign
@@ -1474,12 +1481,30 @@ id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* WD_CMDREG */
-r_return
+id|rc
+op_assign
 id|ei_open
 c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rc
+op_ne
+l_int|0
+)paren
+r_return
+id|rc
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -1952,10 +1977,145 @@ comma
 id|wd_cmdreg
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_wd80x3
+r_static
+r_struct
+id|device
+id|dev_wd80x3
+op_assign
+(brace
+l_string|&quot;        &quot;
+multiline_comment|/*&quot;wd80x3&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|wd_probe
+)brace
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|mem
+r_int
+id|mem
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|dev_wd80x3.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|dev_wd80x3.irq
+op_assign
+id|irq
+suffix:semicolon
+id|dev_wd80x3.mem_start
+op_assign
+id|mem
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_wd80x3
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;wd80x3: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_wd80x3
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c wd.c&quot;&n; *  version-control: t&n; *  tab-width: 4&n; *  kept-new-versions: 5&n; * End:&n; */
 eof

@@ -31,6 +31,7 @@ macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;net/netrom.h&gt;
 macro_line|#endif
 macro_line|#endif
+macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/*&n; *&t;This structure defines the ARP mapping cache. As long as we make changes&n; *&t;in this structure, we keep interrupts of. But normally we can copy the&n; *&t;hardware address and the device pointer in a local variable and then make&n; *&t;any &quot;long calls&quot; to send a packet out.&n; */
 DECL|struct|arp_table
 r_struct
@@ -3034,6 +3035,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_int
@@ -4630,6 +4634,25 @@ c_func
 (paren
 op_amp
 id|arp_dev_notifier
+)paren
+suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_ARP
+comma
+id|arp_get_info
+comma
+l_int|3
+comma
+l_string|&quot;arp&quot;
+)brace
 )paren
 suffix:semicolon
 )brace

@@ -9,6 +9,10 @@ id|version
 op_assign
 l_string|&quot;3c507.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documentation.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990.  It provides just enough&n;&t;info that the casual reader might think that it documents the i82586 :-&lt;.&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1258,6 +1262,10 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2124,6 +2132,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3288,6 +3300,135 @@ op_assign
 id|rx_tail
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_3c507
+r_static
+r_struct
+id|device
+id|dev_3c507
+op_assign
+(brace
+l_string|&quot;        &quot;
+multiline_comment|/*&quot;3c507&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|el16_probe
+)brace
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|dev_3c507.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|dev_3c507.irq
+op_assign
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_3c507
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;3c507: register_netdev() returned non-zero.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;3c507: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_3c507
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -I/usr/src/linux/drivers/net -Wall -Wstrict-prototypes -O6 -m486 -c 3c507.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; *  c-indent-level: 4&n; * End:&n; */
 eof

@@ -9,6 +9,10 @@ id|version
 op_assign
 l_string|&quot;smc-ultra.c:v1.12 1/18/95 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -476,6 +480,18 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+multiline_comment|/* Still.. */
+r_return
+id|ENOMEM
+suffix:semicolon
+multiline_comment|/* Out of memory ?? */
 id|model_name
 op_assign
 (paren
@@ -696,7 +712,7 @@ c_func
 (paren
 id|ioaddr
 comma
-l_int|32
+id|ULTRA_IO_EXTENT
 comma
 id|model_name
 )paren
@@ -919,6 +935,9 @@ op_minus
 id|ULTRA_NIC_OFFSET
 suffix:semicolon
 multiline_comment|/* ASIC addr */
+r_int
+id|rc
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -968,12 +987,30 @@ l_int|6
 )paren
 suffix:semicolon
 multiline_comment|/* Enable interrupts and memory. */
-r_return
+id|rc
+op_assign
 id|ei_open
 c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rc
+op_ne
+l_int|0
+)paren
+r_return
+id|rc
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -1356,10 +1393,143 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* We should someday disable shared memory and change to 8-bit mode&n;&t;   &quot;just in case&quot;... */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_ultra
+r_static
+r_struct
+id|device
+id|dev_ultra
+op_assign
+(brace
+l_string|&quot;        &quot;
+multiline_comment|/*&quot;smc-ultra&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|ultra_probe
+)brace
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|dev_ultra.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|dev_ultra.irq
+op_assign
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_ultra
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;smc-ultra: register_netdev() returned non-zero.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;smc-ultra: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_ultra
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -I/usr/src/linux/net/inet -c smc-ultra.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

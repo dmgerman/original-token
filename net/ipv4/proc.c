@@ -116,7 +116,7 @@ comma
 l_string|&quot;sl  local_address rem_address   st tx_queue rx_queue tr tm-&gt;when uid&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;This was very pretty but didn&squot;t work when a socket is destroyed at the wrong moment&n; *&t;(eg a syn recv socket getting a reset), or a memory timer destroy. Instead of playing&n; *&t;with timers we just concede defeat and cli().&n; */
+multiline_comment|/*&n; *&t;This was very pretty but didn&squot;t work when a socket is destroyed&n; *&t;at the wrong moment (eg a syn recv socket getting a reset), or&n; *&t;a memory timer destroy. Instead of playing with timers we just&n; *&t;concede defeat and cli().&n; */
 r_for
 c_loop
 (paren
@@ -421,7 +421,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* We only turn interrupts back on for a moment, but because the interrupt queues anything built up&n;&t;&t;&t;   before this will clear before we jump back and cli, so it&squot;s not as bad as it looks */
+multiline_comment|/* We only turn interrupts back on for a moment,&n;&t;&t;&t;   but because the interrupt queues anything built&n;&t;&t;&t;   up before this will clear before we jump back&n;&t;&t;&t;   and cli(), so it&squot;s not as bad as it looks */
 r_if
 c_cond
 (paren
@@ -491,6 +491,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_return
@@ -531,6 +534,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_return
@@ -571,6 +577,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_return
@@ -612,6 +621,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 multiline_comment|/* From  net/socket.c  */
@@ -776,6 +788,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_extern

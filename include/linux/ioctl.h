@@ -2,6 +2,7 @@ multiline_comment|/* $Id: ioctl.h,v 1.5 1993/07/19 21:53:50 root Exp root $&n; *
 macro_line|#ifndef _LINUX_IOCTL_H
 DECL|macro|_LINUX_IOCTL_H
 mdefine_line|#define _LINUX_IOCTL_H
+macro_line|#include &lt;asm/page.h&gt;&t;&t;/* for PAGE_SIZE */
 multiline_comment|/* ioctl command encoding: 32 bits total, command in lower 16 bits,&n; * size of the parameter structure in the lower 14 bits of the&n; * upper 16 bits.&n; * Encoding the size of the parameter structure in the ioctl request&n; * is useful for catching programs compiled with old versions&n; * and to avoid overwriting user space outside the user buffer area.&n; * The highest 2 bits are reserved for indicating the ``access mode&squot;&squot;.&n; * NOTE: This limits the max parameter size to 16kB -1 !&n; */
 DECL|macro|IOC_VOID
 mdefine_line|#define IOC_VOID&t;0x00000000&t;/* param in size field */
@@ -16,7 +17,7 @@ mdefine_line|#define IOCSIZE_MASK&t;0x3fff0000&t;/* size (max 16k-1 bytes) */
 DECL|macro|IOCSIZE_SHIFT
 mdefine_line|#define IOCSIZE_SHIFT&t;16&t;&t;/* how to get the size */
 DECL|macro|IOCSIZE_MAX
-mdefine_line|#define IOCSIZE_MAX&t;((PAGE_SIZE-1)&amp;(IOCSIZE_MASK &gt;&gt; IOC_SHIFT))
+mdefine_line|#define IOCSIZE_MAX&t;((PAGE_SIZE-1)&amp;(IOCSIZE_MASK &gt;&gt; IOCSIZE_SHIFT))
 DECL|macro|IOCCMD_MASK
 mdefine_line|#define IOCCMD_MASK&t;0x0000ffff&t;/* command code */
 DECL|macro|IOCCMD_SHIFT

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
@@ -5538,6 +5539,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 id|off_t
@@ -8553,5 +8557,26 @@ id|ip_rt_notifier
 )paren
 suffix:semicolon
 multiline_comment|/*&t;ip_raw_init();&n;&t;ip_packet_init();&n;&t;ip_tcp_init();&n;&t;ip_udp_init();*/
+macro_line|#ifdef CONFIG_IP_MULTICAST
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_IGMP
+comma
+id|ip_mc_procinfo
+comma
+l_int|4
+comma
+l_string|&quot;igmp&quot;
+)brace
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

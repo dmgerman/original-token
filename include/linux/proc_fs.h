@@ -4,6 +4,7 @@ mdefine_line|#define _LINUX_PROC_FS_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 multiline_comment|/*&n; * The proc filesystem constants/structures&n; */
+multiline_comment|/*&n; * We always define these enumerators&n; */
 DECL|enum|root_directory_inos
 r_enum
 id|root_directory_inos
@@ -44,11 +45,9 @@ comma
 DECL|enumerator|PROC_SCSI
 id|PROC_SCSI
 comma
-macro_line|#ifdef CONFIG_DEBUG_MALLOC
 DECL|enumerator|PROC_MALLOC
 id|PROC_MALLOC
 comma
-macro_line|#endif
 DECL|enumerator|PROC_KCORE
 id|PROC_KCORE
 comma
@@ -140,7 +139,6 @@ id|PROC_NET_UNIX
 op_assign
 l_int|128
 comma
-macro_line|#ifdef CONFIG_INET
 DECL|enumerator|PROC_NET_ARP
 id|PROC_NET_ARP
 comma
@@ -162,41 +160,27 @@ comma
 DECL|enumerator|PROC_NET_SNMP
 id|PROC_NET_SNMP
 comma
-macro_line|#ifdef CONFIG_INET_RARP
 DECL|enumerator|PROC_NET_RARP
 id|PROC_NET_RARP
 comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_IP_MULTICAST
 DECL|enumerator|PROC_NET_IGMP
 id|PROC_NET_IGMP
 comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_IP_FIREWALL
 DECL|enumerator|PROC_NET_IPFWFWD
 id|PROC_NET_IPFWFWD
 comma
 DECL|enumerator|PROC_NET_IPFWBLK
 id|PROC_NET_IPFWBLK
 comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_IP_ACCT
 DECL|enumerator|PROC_NET_IPACCT
 id|PROC_NET_IPACCT
 comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_IP_MASQUERADE
 DECL|enumerator|PROC_NET_IPMSQHST
 id|PROC_NET_IPMSQHST
 comma
-macro_line|#endif
-macro_line|#if&t;defined(CONFIG_WAVELAN)
 DECL|enumerator|PROC_NET_WAVELAN
 id|PROC_NET_WAVELAN
 comma
-macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
-macro_line|#endif
-macro_line|#ifdef CONFIG_IPX
 DECL|enumerator|PROC_NET_IPX_INTERFACE
 id|PROC_NET_IPX_INTERFACE
 comma
@@ -206,8 +190,6 @@ comma
 DECL|enumerator|PROC_NET_IPX
 id|PROC_NET_IPX
 comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATALK
 DECL|enumerator|PROC_NET_ATALK
 id|PROC_NET_ATALK
 comma
@@ -217,8 +199,6 @@ comma
 DECL|enumerator|PROC_NET_ATIF
 id|PROC_NET_ATIF
 comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_AX25
 DECL|enumerator|PROC_NET_AX25_ROUTE
 id|PROC_NET_AX25_ROUTE
 comma
@@ -228,7 +208,6 @@ comma
 DECL|enumerator|PROC_NET_AX25_CALLS
 id|PROC_NET_AX25_CALLS
 comma
-macro_line|#ifdef CONFIG_NETROM
 DECL|enumerator|PROC_NET_NR_NODES
 id|PROC_NET_NR_NODES
 comma
@@ -238,8 +217,6 @@ comma
 DECL|enumerator|PROC_NET_NR
 id|PROC_NET_NR
 comma
-macro_line|#endif
-macro_line|#endif
 DECL|enumerator|PROC_NET_SOCKSTAT
 id|PROC_NET_SOCKSTAT
 comma
@@ -346,6 +323,27 @@ r_int
 r_int
 id|low_ino
 suffix:semicolon
+DECL|member|get_info
+r_int
+(paren
+op_star
+id|get_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|member|namelen
 r_int
 r_int
@@ -446,6 +444,24 @@ comma
 r_struct
 id|proc_dir_entry
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|proc_net_register
+c_func
+(paren
+r_struct
+id|proc_dir_entry
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|proc_net_unregister
+c_func
+(paren
+r_int
 )paren
 suffix:semicolon
 r_extern

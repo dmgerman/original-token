@@ -149,6 +149,8 @@ op_assign
 (brace
 id|PROC_ROOT_INO
 comma
+l_int|NULL
+comma
 l_int|1
 comma
 l_string|&quot;.&quot;
@@ -156,6 +158,8 @@ l_string|&quot;.&quot;
 comma
 (brace
 id|PROC_ROOT_INO
+comma
+l_int|NULL
 comma
 l_int|2
 comma
@@ -165,6 +169,8 @@ comma
 (brace
 id|PROC_LOADAVG
 comma
+l_int|NULL
+comma
 l_int|7
 comma
 l_string|&quot;loadavg&quot;
@@ -172,6 +178,8 @@ l_string|&quot;loadavg&quot;
 comma
 (brace
 id|PROC_UPTIME
+comma
+l_int|NULL
 comma
 l_int|6
 comma
@@ -181,6 +189,8 @@ comma
 (brace
 id|PROC_MEMINFO
 comma
+l_int|NULL
+comma
 l_int|7
 comma
 l_string|&quot;meminfo&quot;
@@ -189,6 +199,8 @@ comma
 (brace
 id|PROC_KMSG
 comma
+l_int|NULL
+comma
 l_int|4
 comma
 l_string|&quot;kmsg&quot;
@@ -196,6 +208,8 @@ l_string|&quot;kmsg&quot;
 comma
 (brace
 id|PROC_VERSION
+comma
+l_int|NULL
 comma
 l_int|7
 comma
@@ -206,6 +220,8 @@ macro_line|#ifdef CONFIG_PCI
 (brace
 id|PROC_PCI
 comma
+l_int|NULL
+comma
 l_int|3
 comma
 l_string|&quot;pci&quot;
@@ -215,6 +231,8 @@ macro_line|#endif
 (brace
 id|PROC_CPUINFO
 comma
+l_int|NULL
+comma
 l_int|7
 comma
 l_string|&quot;cpuinfo&quot;
@@ -222,6 +240,8 @@ l_string|&quot;cpuinfo&quot;
 comma
 (brace
 id|PROC_SELF
+comma
+l_int|NULL
 comma
 l_int|4
 comma
@@ -232,6 +252,8 @@ multiline_comment|/* will change inode # */
 (brace
 id|PROC_NET
 comma
+l_int|NULL
+comma
 l_int|3
 comma
 l_string|&quot;net&quot;
@@ -239,6 +261,8 @@ l_string|&quot;net&quot;
 comma
 (brace
 id|PROC_SCSI
+comma
+l_int|NULL
 comma
 l_int|4
 comma
@@ -249,6 +273,8 @@ macro_line|#ifdef CONFIG_DEBUG_MALLOC
 (brace
 id|PROC_MALLOC
 comma
+l_int|NULL
+comma
 l_int|6
 comma
 l_string|&quot;malloc&quot;
@@ -258,6 +284,8 @@ macro_line|#endif
 (brace
 id|PROC_KCORE
 comma
+l_int|NULL
+comma
 l_int|5
 comma
 l_string|&quot;kcore&quot;
@@ -265,6 +293,8 @@ l_string|&quot;kcore&quot;
 comma
 (brace
 id|PROC_MODULES
+comma
+l_int|NULL
 comma
 l_int|7
 comma
@@ -274,6 +304,8 @@ comma
 (brace
 id|PROC_STAT
 comma
+l_int|NULL
+comma
 l_int|4
 comma
 l_string|&quot;stat&quot;
@@ -281,6 +313,8 @@ l_string|&quot;stat&quot;
 comma
 (brace
 id|PROC_DEVICES
+comma
+l_int|NULL
 comma
 l_int|7
 comma
@@ -290,6 +324,8 @@ comma
 (brace
 id|PROC_INTERRUPTS
 comma
+l_int|NULL
+comma
 l_int|10
 comma
 l_string|&quot;interrupts&quot;
@@ -297,6 +333,8 @@ l_string|&quot;interrupts&quot;
 comma
 (brace
 id|PROC_FILESYSTEMS
+comma
+l_int|NULL
 comma
 l_int|11
 comma
@@ -306,6 +344,8 @@ comma
 (brace
 id|PROC_KSYMS
 comma
+l_int|NULL
+comma
 l_int|5
 comma
 l_string|&quot;ksyms&quot;
@@ -313,6 +353,8 @@ l_string|&quot;ksyms&quot;
 comma
 (brace
 id|PROC_DMA
+comma
+l_int|NULL
 comma
 l_int|3
 comma
@@ -322,6 +364,8 @@ comma
 (brace
 id|PROC_IOPORTS
 comma
+l_int|NULL
+comma
 l_int|7
 comma
 l_string|&quot;ioports&quot;
@@ -330,6 +374,8 @@ comma
 macro_line|#ifdef CONFIG_PROFILE
 (brace
 id|PROC_PROFILE
+comma
+l_int|NULL
 comma
 l_int|7
 comma

@@ -30,8 +30,12 @@ DECL|variable|utp
 r_static
 r_int
 id|bnc
+op_assign
+l_int|0
 comma
 id|utp
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Force media with insmod:&n; *&t;insmod de620.o bnc=1&n; * or&n; *&t;insmod de620.o utp=1&n; */
 "&f;"
@@ -75,11 +79,11 @@ DECL|macro|DE620_IRQ
 mdefine_line|#define DE620_IRQ&t;7
 macro_line|#endif
 DECL|macro|DATA_PORT
-mdefine_line|#define DATA_PORT&t;(DE620_IO)
+mdefine_line|#define DATA_PORT&t;(dev-&gt;base_addr)
 DECL|macro|STATUS_PORT
-mdefine_line|#define STATUS_PORT&t;(DE620_IO + 1)
+mdefine_line|#define STATUS_PORT&t;(dev-&gt;base_addr + 1)
 DECL|macro|COMMAND_PORT
-mdefine_line|#define COMMAND_PORT&t;(DE620_IO + 2)
+mdefine_line|#define COMMAND_PORT&t;(dev-&gt;base_addr + 2)
 DECL|macro|RUNT
 mdefine_line|#define RUNT 60&t;&t;/* Too small Ethernet packet */
 DECL|macro|GIANT
@@ -205,7 +209,9 @@ r_int
 id|read_eeprom
 c_func
 (paren
-r_void
+r_struct
+id|device
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * D-Link driver variables:&n; */
@@ -286,9 +292,9 @@ suffix:semicolon
 "&f;"
 multiline_comment|/**********************************************************&n; *                                                        *&n; * Convenience macros/functions for D-Link DE-620 adapter *&n; *                                                        *&n; **********************************************************/
 DECL|macro|de620_tx_buffs
-mdefine_line|#define de620_tx_buffs() (inb(STATUS_PORT) &amp; (TXBF0 | TXBF1))
+mdefine_line|#define de620_tx_buffs(dd) (inb(STATUS_PORT) &amp; (TXBF0 | TXBF1))
 DECL|macro|de620_flip_ds
-mdefine_line|#define de620_flip_ds() NIC_Cmd ^= DS0 | DS1; outb(NIC_Cmd, COMMAND_PORT);
+mdefine_line|#define de620_flip_ds(dd) NIC_Cmd ^= DS0 | DS1; outb(NIC_Cmd, COMMAND_PORT);
 multiline_comment|/* Check for ready-status, and return a nibble (high 4 bits) for data input */
 macro_line|#ifdef COUNT_LOOPS
 DECL|variable|tot_cnt
@@ -304,7 +310,10 @@ DECL|function|de620_ready
 id|de620_ready
 c_func
 (paren
-r_void
+r_struct
+id|device
+op_star
+id|dev
 )paren
 (brace
 id|byte
@@ -367,6 +376,11 @@ DECL|function|de620_send_command
 id|de620_send_command
 c_func
 (paren
+r_struct
+id|device
+op_star
+id|dev
+comma
 id|byte
 id|cmd
 )paren
@@ -374,6 +388,7 @@ id|cmd
 id|de620_ready
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -412,6 +427,7 @@ suffix:semicolon
 id|de620_ready
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 id|outb
@@ -430,6 +446,11 @@ DECL|function|de620_put_byte
 id|de620_put_byte
 c_func
 (paren
+r_struct
+id|device
+op_star
+id|dev
+comma
 id|byte
 id|value
 )paren
@@ -438,6 +459,7 @@ multiline_comment|/* The de620_ready() makes 7 loops, on the average, on a DX2/6
 id|de620_ready
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 id|outb
@@ -451,6 +473,7 @@ suffix:semicolon
 id|de620_flip_ds
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -461,7 +484,10 @@ DECL|function|de620_read_byte
 id|de620_read_byte
 c_func
 (paren
-r_void
+r_struct
+id|device
+op_star
+id|dev
 )paren
 (brace
 id|byte
@@ -473,12 +499,14 @@ op_assign
 id|de620_ready
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* High nibble */
 id|de620_flip_ds
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 id|value
@@ -486,6 +514,7 @@ op_or_assign
 id|de620_ready
 c_func
 (paren
+id|dev
 )paren
 op_rshift
 l_int|4
@@ -502,6 +531,11 @@ DECL|function|de620_write_block
 id|de620_write_block
 c_func
 (paren
+r_struct
+id|device
+op_star
+id|dev
+comma
 id|byte
 op_star
 id|buffer
@@ -562,6 +596,8 @@ id|buffer
 id|de620_put_byte
 c_func
 (paren
+id|dev
+comma
 op_star
 id|buffer
 )paren
@@ -570,6 +606,8 @@ suffix:semicolon
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_DUMMY
 )paren
 suffix:semicolon
@@ -649,6 +687,8 @@ suffix:semicolon
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_DUMMY
 )paren
 suffix:semicolon
@@ -661,6 +701,11 @@ DECL|function|de620_read_block
 id|de620_read_block
 c_func
 (paren
+r_struct
+id|device
+op_star
+id|dev
+comma
 id|byte
 op_star
 id|data
@@ -720,11 +765,13 @@ op_assign
 id|de620_read_byte
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 id|de620_flip_ds
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -814,12 +861,16 @@ DECL|function|de620_set_delay
 id|de620_set_delay
 c_func
 (paren
-r_void
+r_struct
+id|device
+op_star
+id|dev
 )paren
 (brace
 id|de620_ready
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 id|outb
@@ -843,6 +894,7 @@ suffix:semicolon
 id|de620_ready
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 macro_line|#ifdef LOWSPEED
@@ -867,11 +919,13 @@ macro_line|#endif
 id|de620_flip_ds
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 id|de620_ready
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 macro_line|#ifdef LOWSPEED
@@ -896,6 +950,7 @@ macro_line|#endif
 id|de620_flip_ds
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -906,6 +961,11 @@ DECL|function|de620_set_register
 id|de620_set_register
 c_func
 (paren
+r_struct
+id|device
+op_star
+id|dev
+comma
 id|byte
 id|reg
 comma
@@ -916,6 +976,7 @@ id|value
 id|de620_ready
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 id|outb
@@ -939,6 +1000,8 @@ suffix:semicolon
 id|de620_put_byte
 c_func
 (paren
+id|dev
+comma
 id|value
 )paren
 suffix:semicolon
@@ -950,6 +1013,11 @@ DECL|function|de620_get_register
 id|de620_get_register
 c_func
 (paren
+r_struct
+id|device
+op_star
+id|dev
+comma
 id|byte
 id|reg
 )paren
@@ -960,6 +1028,8 @@ suffix:semicolon
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|reg
 )paren
 suffix:semicolon
@@ -968,11 +1038,14 @@ op_assign
 id|de620_read_byte
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_DUMMY
 )paren
 suffix:semicolon
@@ -1073,6 +1146,8 @@ multiline_comment|/* disable recv */
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_TCR
 comma
 id|RXOFF
@@ -1159,6 +1234,8 @@ multiline_comment|/* Enable promiscuous mode */
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_TCR
 comma
 (paren
@@ -1178,6 +1255,8 @@ multiline_comment|/* Disable promiscuous mode, use normal mode */
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_TCR
 comma
 id|TCR_DEF
@@ -1246,6 +1325,7 @@ op_assign
 id|de620_tx_buffs
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Peek at the adapter */
@@ -1383,6 +1463,8 @@ multiline_comment|/* use TXBF0 */
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_CR
 op_or
 id|RW0
@@ -1401,6 +1483,8 @@ multiline_comment|/* use TXBF1 */
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_CR
 op_or
 id|RW1
@@ -1441,6 +1525,8 @@ suffix:semicolon
 id|de620_write_block
 c_func
 (paren
+id|dev
+comma
 id|buffer
 comma
 id|len
@@ -1585,6 +1671,8 @@ op_assign
 id|de620_get_register
 c_func
 (paren
+id|dev
+comma
 id|R_STS
 )paren
 suffix:semicolon
@@ -1647,6 +1735,7 @@ op_assign
 id|de620_tx_buffs
 c_func
 (paren
+id|dev
 )paren
 op_eq
 (paren
@@ -1730,6 +1819,8 @@ multiline_comment|/* Tell the adapter that we are going to read data, and from w
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_CR
 op_or
 id|RRN
@@ -1738,6 +1829,8 @@ suffix:semicolon
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_RSA1
 comma
 id|next_rx_page
@@ -1746,6 +1839,8 @@ suffix:semicolon
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_RSA0
 comma
 l_int|0
@@ -1755,6 +1850,8 @@ multiline_comment|/* Deep breath, and away we goooooo */
 id|de620_read_block
 c_func
 (paren
+id|dev
+comma
 (paren
 id|byte
 op_star
@@ -1904,12 +2001,16 @@ multiline_comment|/* at least a try... */
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_DUMMY
 )paren
 suffix:semicolon
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_NPRF
 comma
 id|next_rx_page
@@ -2052,6 +2153,8 @@ multiline_comment|/* copy the packet into the buffer */
 id|de620_read_block
 c_func
 (paren
+id|dev
+comma
 id|buffer
 comma
 id|size
@@ -2108,12 +2211,16 @@ op_assign
 id|de620_get_register
 c_func
 (paren
+id|dev
+comma
 id|R_CPR
 )paren
 suffix:semicolon
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_NPRF
 comma
 id|next_rx_page
@@ -2237,6 +2344,8 @@ suffix:semicolon
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_CR
 op_or
 id|RNOP
@@ -2247,6 +2356,8 @@ suffix:semicolon
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_CR
 op_or
 id|RNOP
@@ -2255,6 +2366,8 @@ suffix:semicolon
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_SCR
 comma
 id|SCR_DEF
@@ -2264,6 +2377,8 @@ multiline_comment|/* disable recv to wait init */
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_TCR
 comma
 id|RXOFF
@@ -2289,6 +2404,8 @@ multiline_comment|/* W_PARn = 0xaa + n */
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_PAR0
 op_plus
 id|i
@@ -2303,6 +2420,8 @@ suffix:semicolon
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_EIP
 comma
 id|EIPRegister
@@ -2334,15 +2453,19 @@ suffix:semicolon
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_SPR
 comma
 id|first_rx_page
 )paren
 suffix:semicolon
-multiline_comment|/* Start Page Register */
+multiline_comment|/* Start Page Register*/
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_EPR
 comma
 id|last_rx_page
@@ -2352,30 +2475,37 @@ multiline_comment|/* End Page Register */
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_CPR
 comma
 id|first_rx_page
 )paren
 suffix:semicolon
-multiline_comment|/* Current Page Register */
+multiline_comment|/*Current Page Register*/
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_NPR
 op_or
 id|first_rx_page
 )paren
 suffix:semicolon
-multiline_comment|/* Next Page Register */
+multiline_comment|/* Next Page Register*/
 id|de620_send_command
 c_func
 (paren
+id|dev
+comma
 id|W_DUMMY
 )paren
 suffix:semicolon
 id|de620_set_delay
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Final sanity check: Anybody out there? */
@@ -2396,6 +2526,8 @@ op_assign
 id|de620_get_register
 c_func
 (paren
+id|dev
+comma
 id|R_STS
 )paren
 )paren
@@ -2462,6 +2594,8 @@ multiline_comment|/* All OK, go ahead... */
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_TCR
 comma
 id|TCR_DEF
@@ -2524,6 +2658,8 @@ suffix:semicolon
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_EIP
 comma
 id|EIPRegister
@@ -2533,6 +2669,8 @@ multiline_comment|/* Anybody out there? */
 id|de620_set_register
 c_func
 (paren
+id|dev
+comma
 id|W_CPR
 comma
 id|checkbyte
@@ -2543,6 +2681,8 @@ op_assign
 id|de620_get_register
 c_func
 (paren
+id|dev
+comma
 id|R_CPR
 )paren
 suffix:semicolon
@@ -2559,6 +2699,7 @@ op_logical_or
 id|read_eeprom
 c_func
 (paren
+id|dev
 )paren
 op_ne
 l_int|0
@@ -2852,7 +2993,7 @@ suffix:semicolon
 "&f;"
 multiline_comment|/**********************************&n; *&n; * Read info from on-board EEPROM&n; *&n; * Note: Bitwise serial I/O to/from the EEPROM vi the status _register_!&n; */
 DECL|macro|sendit
-mdefine_line|#define sendit(data) de620_set_register(W_EIP, data | EIPRegister);
+mdefine_line|#define sendit(dev,data) de620_set_register(dev, W_EIP, data | EIPRegister);
 r_static
 r_int
 r_int
@@ -2860,6 +3001,11 @@ DECL|function|ReadAWord
 id|ReadAWord
 c_func
 (paren
+r_struct
+id|device
+op_star
+id|dev
+comma
 r_int
 id|from
 )paren
@@ -2877,24 +3023,32 @@ multiline_comment|/* sck  [_~~_]                */
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|0
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|1
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|5
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|4
 )paren
 suffix:semicolon
@@ -2933,24 +3087,32 @@ multiline_comment|/* sck   [_~~_]        */
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|6
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|7
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|7
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|6
 )paren
 suffix:semicolon
@@ -2963,24 +3125,32 @@ multiline_comment|/* sck   [_~~_]        */
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|4
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|5
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|5
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|4
 )paren
 suffix:semicolon
@@ -3012,24 +3182,32 @@ multiline_comment|/* sck   [_~~_]        */
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|4
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|5
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|5
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|4
 )paren
 suffix:semicolon
@@ -3046,6 +3224,8 @@ op_or
 id|de620_get_register
 c_func
 (paren
+id|dev
+comma
 id|R_STS
 )paren
 op_amp
@@ -3062,24 +3242,32 @@ multiline_comment|/* sck   [_~~_]                  */
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|0
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|1
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|1
 )paren
 suffix:semicolon
 id|sendit
 c_func
 (paren
+id|dev
+comma
 l_int|0
 )paren
 suffix:semicolon
@@ -3093,7 +3281,10 @@ DECL|function|read_eeprom
 id|read_eeprom
 c_func
 (paren
-r_void
+r_struct
+id|device
+op_star
+id|dev
 )paren
 (brace
 r_int
@@ -3106,6 +3297,8 @@ op_assign
 id|ReadAWord
 c_func
 (paren
+id|dev
+comma
 l_int|0x1aa
 )paren
 suffix:semicolon
@@ -3150,6 +3343,8 @@ op_assign
 id|ReadAWord
 c_func
 (paren
+id|dev
+comma
 l_int|0x1ab
 )paren
 suffix:semicolon
@@ -3194,6 +3389,8 @@ op_assign
 id|ReadAWord
 c_func
 (paren
+id|dev
+comma
 l_int|0x1ac
 )paren
 suffix:semicolon
@@ -3221,6 +3418,8 @@ op_assign
 id|ReadAWord
 c_func
 (paren
+id|dev
+comma
 l_int|0x1ad
 )paren
 suffix:semicolon
@@ -3238,6 +3437,8 @@ op_assign
 id|ReadAWord
 c_func
 (paren
+id|dev
+comma
 l_int|0x1ae
 )paren
 suffix:semicolon
@@ -3255,6 +3456,8 @@ op_assign
 id|ReadAWord
 c_func
 (paren
+id|dev
+comma
 l_int|0x1af
 )paren
 suffix:semicolon
@@ -3272,6 +3475,8 @@ op_assign
 id|ReadAWord
 c_func
 (paren
+id|dev
+comma
 l_int|0x1a8
 )paren
 suffix:semicolon
@@ -3307,6 +3512,8 @@ id|nullname
 (braket
 l_int|8
 )braket
+op_assign
+l_string|&quot;&quot;
 suffix:semicolon
 DECL|variable|de620_dev
 r_static
@@ -3340,6 +3547,18 @@ comma
 id|de620_probe
 )brace
 suffix:semicolon
+DECL|variable|de620_io
+r_int
+id|de620_io
+op_assign
+id|DE620_IO
+suffix:semicolon
+DECL|variable|de620_irq
+r_int
+id|de620_irq
+op_assign
+id|DE620_IRQ
+suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module
@@ -3348,6 +3567,14 @@ c_func
 r_void
 )paren
 (brace
+id|de620_dev.base_addr
+op_assign
+id|de620_io
+suffix:semicolon
+id|de620_dev.irq
+op_assign
+id|de620_irq
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3386,7 +3613,7 @@ suffix:semicolon
 id|release_region
 c_func
 (paren
-id|DE620_IO
+id|de620_dev.base_addr
 comma
 l_int|3
 )paren
@@ -3394,5 +3621,6 @@ suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"
-multiline_comment|/*&n; * (add &squot;-DMODULE&squot; when compiling as loadable module)&n; *&n; * compile-command:&n; *&t;gcc -D__KERNEL__ -Wall -Wstrict-prototypes -O2 &bslash;&n; *&t; -fomit-frame-pointer -m486 &bslash;&n; *&t;-I/usr/src/linux/include -I../../net/inet -c de620.c&n; */
+multiline_comment|/*&n; * (add &squot;-DMODULE&squot; when compiling as loadable module)&n; *&n; * compile-command:&n; *&t;gcc -D__KERNEL__ -Wall -Wstrict-prototypes -O2 &bslash;&n; *&t; -fomit-frame-pointer -m486 &bslash;&n; *&t;-I/usr/src/linux/include -I../../net/inet -c de620.c&n;*/
+multiline_comment|/*&n; * Local variables:&n; *  kernel-compile-command: &quot;gcc -D__KERNEL__ -Ilinux/include -I../../net/inet -Wall -Wstrict-prototypes -O2 -m486 -c de620.c&quot;&n; *  module-compile-command: &quot;gcc -D__KERNEL__ -DMODULE -Ilinux/include -I../../net/inet -Wall -Wstrict-prototypes -O2 -m486 -c de620.c&quot;&n; *  compile-command: &quot;gcc -D__KERNEL__ -DMODULE -Ilinux/include -I../../net/inet -Wall -Wstrict-prototypes -O2 -m486 -c de620.c&quot;&n; * End:&n; */
 eof

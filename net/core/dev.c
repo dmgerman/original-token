@@ -24,6 +24,7 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/*&n; *&t;The list of packet types we will receive (as opposed to discard)&n; *&t;and the routines to invoke.&n; */
 DECL|variable|ptype_base
 r_struct
@@ -2298,6 +2299,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_int
@@ -3709,5 +3713,24 @@ id|dev
 suffix:semicolon
 )brace
 )brace
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_DEV
+comma
+id|dev_get_info
+comma
+l_int|3
+comma
+l_string|&quot;dev&quot;
+)brace
+)paren
+suffix:semicolon
 )brace
 eof

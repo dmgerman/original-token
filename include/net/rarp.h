@@ -18,27 +18,6 @@ id|arg
 suffix:semicolon
 r_extern
 r_int
-id|rarp_rcv
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|packet_type
-op_star
-id|pt
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|rarp_get_info
 c_func
 (paren
@@ -56,6 +35,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _RARP_H */

@@ -143,6 +143,9 @@ DECL|macro|PF_X25
 mdefine_line|#define PF_X25&t;&t;AF_X25
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
+multiline_comment|/* Maximum queue length specificable by listen.  */
+DECL|macro|SOMAXCONN
+mdefine_line|#define SOMAXCONN&t;128
 multiline_comment|/* Flags we can use with send/ and recv. */
 DECL|macro|MSG_OOB
 mdefine_line|#define MSG_OOB&t;&t;1

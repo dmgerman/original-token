@@ -148,6 +148,8 @@ op_assign
 (brace
 id|PROC_PID_INO
 comma
+l_int|NULL
+comma
 l_int|1
 comma
 l_string|&quot;.&quot;
@@ -155,6 +157,8 @@ l_string|&quot;.&quot;
 comma
 (brace
 id|PROC_ROOT_INO
+comma
+l_int|NULL
 comma
 l_int|2
 comma
@@ -164,6 +168,8 @@ comma
 (brace
 id|PROC_PID_MEM
 comma
+l_int|NULL
+comma
 l_int|3
 comma
 l_string|&quot;mem&quot;
@@ -171,6 +177,8 @@ l_string|&quot;mem&quot;
 comma
 (brace
 id|PROC_PID_CWD
+comma
+l_int|NULL
 comma
 l_int|3
 comma
@@ -180,6 +188,8 @@ comma
 (brace
 id|PROC_PID_ROOT
 comma
+l_int|NULL
+comma
 l_int|4
 comma
 l_string|&quot;root&quot;
@@ -187,6 +197,8 @@ l_string|&quot;root&quot;
 comma
 (brace
 id|PROC_PID_EXE
+comma
+l_int|NULL
 comma
 l_int|3
 comma
@@ -196,6 +208,8 @@ comma
 (brace
 id|PROC_PID_FD
 comma
+l_int|NULL
+comma
 l_int|2
 comma
 l_string|&quot;fd&quot;
@@ -203,6 +217,8 @@ l_string|&quot;fd&quot;
 comma
 (brace
 id|PROC_PID_ENVIRON
+comma
+l_int|NULL
 comma
 l_int|7
 comma
@@ -212,6 +228,8 @@ comma
 (brace
 id|PROC_PID_CMDLINE
 comma
+l_int|NULL
+comma
 l_int|7
 comma
 l_string|&quot;cmdline&quot;
@@ -219,6 +237,8 @@ l_string|&quot;cmdline&quot;
 comma
 (brace
 id|PROC_PID_STAT
+comma
+l_int|NULL
 comma
 l_int|4
 comma
@@ -228,6 +248,8 @@ comma
 (brace
 id|PROC_PID_STATM
 comma
+l_int|NULL
+comma
 l_int|5
 comma
 l_string|&quot;statm&quot;
@@ -235,6 +257,8 @@ l_string|&quot;statm&quot;
 comma
 (brace
 id|PROC_PID_MAPS
+comma
+l_int|NULL
 comma
 l_int|4
 comma

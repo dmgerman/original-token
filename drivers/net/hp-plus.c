@@ -9,6 +9,10 @@ id|version
 op_assign
 l_string|&quot;hp-plus.c:v1.10 9/24/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/string.h&gt;&t;&t;/* Important -- this inlines word moves. */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -177,7 +181,7 @@ comma
 )brace
 suffix:semicolon
 r_int
-id|hpplus_probe
+id|hp_plus_probe
 c_func
 (paren
 r_struct
@@ -1670,6 +1674,135 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_hp
+r_static
+r_struct
+id|device
+id|dev_hp
+op_assign
+(brace
+l_string|&quot;        &quot;
+multiline_comment|/*&quot;hp&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|hp_plus_probe
+)brace
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|dev_hp.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|dev_hp.irq
+op_assign
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_hp
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;hp: register_netdev() returned non-zero.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;hp: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_hp
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c hp-plus.c&quot;&n; * version-control: t&n; * kept-new-versions: 5&n; * tab-width: 4&n; * c-indent-level: 4&n; * End:&n; */
 eof

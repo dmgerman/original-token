@@ -33,6 +33,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
+macro_line|#include &lt;net/route.h&gt;
 macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
 macro_line|#include &quot;../drivers/net/slhc.h&quot;
 macro_line|#endif
@@ -204,6 +205,19 @@ c_func
 r_int
 r_int
 id|dmanr
+)paren
+suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|rarp_ioctl_hook
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -912,6 +926,19 @@ c_func
 id|intr_count
 )paren
 comma
+multiline_comment|/* autoirq from  drivers/net/auto_irq.c */
+id|X
+c_func
+(paren
+id|autoirq_setup
+)paren
+comma
+id|X
+c_func
+(paren
+id|autoirq_report
+)paren
+comma
 multiline_comment|/* dma handling */
 id|X
 c_func
@@ -1163,6 +1190,30 @@ id|X
 c_func
 (paren
 id|inet_del_protocol
+)paren
+comma
+id|X
+c_func
+(paren
+id|rarp_ioctl_hook
+)paren
+comma
+id|X
+c_func
+(paren
+id|init_etherdev
+)paren
+comma
+id|X
+c_func
+(paren
+id|ip_rt_route
+)paren
+comma
+id|X
+c_func
+(paren
+id|arp_send
 )paren
 comma
 macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
@@ -1801,6 +1852,20 @@ id|X
 c_func
 (paren
 id|msdos_write_inode
+)paren
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PROC_FS
+id|X
+c_func
+(paren
+id|proc_net_register
+)paren
+comma
+id|X
+c_func
+(paren
+id|proc_net_unregister
 )paren
 comma
 macro_line|#endif

@@ -9,6 +9,10 @@ id|version
 op_assign
 l_string|&quot;hp.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -219,6 +223,14 @@ l_int|0
 comma
 l_int|0
 )brace
+suffix:semicolon
+multiline_comment|/* NE2000, et.al. bug-fix code */
+DECL|variable|ne8390_rw_bugfix
+r_static
+r_int
+id|ne8390_rw_bugfix
+op_assign
+l_int|0
 suffix:semicolon
 "&f;"
 multiline_comment|/*&t;Probe for an HP LAN adaptor.&n;&t;Also initialize the card and fill in STATION_ADDR with the station&n;&t;address. */
@@ -1364,8 +1376,13 @@ comma
 id|nic_base
 )paren
 suffix:semicolon
-macro_line|#ifdef ei8390_bug
-multiline_comment|/* Handle the read-before-write bug the same way as the&n;&t;   Crynwr packet driver -- the NatSemi method doesn&squot;t work. */
+r_if
+c_cond
+(paren
+id|ne8390_rw_bugfix
+)paren
+(brace
+multiline_comment|/* Handle the read-before-write bug the same way as the&n;&t;&t;   Crynwr packet driver -- the NatSemi method doesn&squot;t work. */
 id|outb_p
 c_func
 (paren
@@ -1406,6 +1423,8 @@ op_plus
 id|EN0_RSARHI
 )paren
 suffix:semicolon
+DECL|macro|NE_CMD
+mdefine_line|#define NE_CMD&t; &t;0x00
 id|outb_p
 c_func
 (paren
@@ -1413,7 +1432,9 @@ id|E8390_RREAD
 op_plus
 id|E8390_START
 comma
-id|EN_CMD
+id|nic_base
+op_plus
+id|NE_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Make certain that the dummy read has occurred. */
@@ -1429,7 +1450,7 @@ c_func
 l_int|0x61
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
 id|outb_p
 c_func
 (paren
@@ -1669,6 +1690,135 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_hp
+r_static
+r_struct
+id|device
+id|dev_hp
+op_assign
+(brace
+l_string|&quot;        &quot;
+multiline_comment|/*&quot;hp&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|hp_probe
+)brace
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|dev_hp.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|dev_hp.irq
+op_assign
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_hp
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;hp: register_netdev() returned non-zero.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;hp: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_hp
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c hp.c&quot;&n; * version-control: t&n; * kept-new-versions: 5&n; * tab-width: 4&n; * c-indent-level: 4&n; * End:&n; */
 eof

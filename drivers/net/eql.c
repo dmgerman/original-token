@@ -8,9 +8,13 @@ id|version
 op_assign
 l_string|&quot;Equalizer: $Revision: 3.12 $ $Date: 1995/01/19 $ Simon Janes (simon@ncm.com)&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Sources:&n; *   skeleton.c by Donald Becker.&n; * Inspirations:&n; *   The Harried and Overworked Alan Cox&n; * Conspiracies:&n; *   The Alan Cox and Arisian plot to get someone else to do the code, which&n; *   turned out to be me.&n; */
 multiline_comment|/*&n; * $Log: eql.c,v $&n; * Revision 3.12  1995/03/22  21:07:51  anarchy&n; * Added suser() checks on configuration.&n; * Moved header file.&n; *&n; * Revision 3.11  1995/01/19  23:14:31  guru&n; * &t;&t;      slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued * 8;&n; *&n; * Revision 3.10  1995/01/19  23:07:53  guru&n; * back to&n; * &t;&t;      slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued;&n; *&n; * Revision 3.9  1995/01/19  22:38:20  guru&n; * &t;&t;      slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued * 4;&n; *&n; * Revision 3.8  1995/01/19  22:30:55  guru&n; *       slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued * 2;&n; *&n; * Revision 3.7  1995/01/19  21:52:35  guru&n; * printk&squot;s trimmed out.&n; *&n; * Revision 3.6  1995/01/19  21:49:56  guru&n; * This is working pretty well. I gained 1 K/s in speed.. now its just&n; * robustness and printk&squot;s to be diked out.&n; *&n; * Revision 3.5  1995/01/18  22:29:59  guru&n; * still crashes the kernel when the lock_wait thing is woken up.&n; *&n; * Revision 3.4  1995/01/18  21:59:47  guru&n; * Broken set-bit locking snapshot&n; *&n; * Revision 3.3  1995/01/17  22:09:18  guru&n; * infinite sleep in a lock somewhere..&n; *&n; * Revision 3.2  1995/01/15  16:46:06  guru&n; * Log trimmed of non-pertinant 1.x branch messages&n; *&n; * Revision 3.1  1995/01/15  14:41:45  guru&n; * New Scheduler and timer stuff...&n; *&n; * Revision 1.15  1995/01/15  14:29:02  guru&n; * Will make 1.14 (now 1.15) the 3.0 branch, and the 1.12 the 2.0 branch, the one&n; * with the dumber scheduler&n; *&n; * Revision 1.14  1995/01/15  02:37:08  guru&n; * shock.. the kept-new-versions could have zonked working&n; * stuff.. shudder&n; *&n; * Revision 1.13  1995/01/15  02:36:31  guru&n; * big changes&n; *&n; * &t;scheduler was torn out and replaced with something smarter&n; *&n; * &t;global names not prefixed with eql_ were renamed to protect&n; * &t;against namespace collisions&n; *&n; * &t;a few more abstract interfaces were added to facilitate any&n; * &t;potential change of datastructure.  the driver is still using&n; * &t;a linked list of slaves.  going to a heap would be a bit of&n; * &t;an overkill.&n; *&n; * &t;this compiles fine with no warnings.&n; *&n; * &t;the locking mechanism and timer stuff must be written however,&n; * &t;this version will not work otherwise&n; *&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -881,6 +885,10 @@ op_amp
 id|eql-&gt;timer
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -950,6 +958,10 @@ id|eql_delete_slave_queue
 id|eql-&gt;queue
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3848,5 +3860,113 @@ id|eql-&gt;timer
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_eql
+r_static
+r_struct
+id|device
+id|dev_eql
+op_assign
+(brace
+l_string|&quot;eql&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|eql_init
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_eql
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;eql: register_netdev() returned non-zero.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;eql: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_eql
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Local Variables: &n; * compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c eql.c&quot;&n; * version-control: t&n; * kept-new-versions: 20&n; * End:&n; */
 eof

@@ -26,6 +26,7 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/*&n; *&t;Implement IP packet firewall&n; */
 macro_line|#ifdef CONFIG_IPFIREWALL_DEBUG 
 DECL|macro|dprintf1
@@ -5514,6 +5515,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_ACCT
 DECL|function|ip_acct_procinfo
+r_static
 r_int
 id|ip_acct_procinfo
 c_func
@@ -5558,6 +5560,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_FIREWALL
 DECL|function|ip_fw_blk_procinfo
+r_static
 r_int
 id|ip_fw_blk_procinfo
 c_func
@@ -5600,6 +5603,7 @@ id|reset
 suffix:semicolon
 )brace
 DECL|function|ip_fw_fwd_procinfo
+r_static
 r_int
 id|ip_fw_fwd_procinfo
 c_func
@@ -5644,6 +5648,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_MASQUERADE
 DECL|function|ip_msqhst_procinfo
+r_static
 r_int
 id|ip_msqhst_procinfo
 c_func
@@ -5893,4 +5898,95 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|function|ip_fw_init
+r_void
+id|ip_fw_init
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_IP_ACCT
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_IPACCT
+comma
+id|ip_acct_procinfo
+comma
+l_int|7
+comma
+l_string|&quot;ip_acct&quot;
+)brace
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_FIREWALL
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_IPFWBLK
+comma
+id|ip_fw_blk_procinfo
+comma
+l_int|8
+comma
+l_string|&quot;ip_block&quot;
+)brace
+)paren
+suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_IPFWFWD
+comma
+id|ip_fw_fwd_procinfo
+comma
+l_int|10
+comma
+l_string|&quot;ip_forward&quot;
+)brace
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_IPMSQHST
+comma
+id|ip_msqhst_procinfo
+comma
+l_int|13
+comma
+l_string|&quot;ip_masquerade&quot;
+)brace
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 eof

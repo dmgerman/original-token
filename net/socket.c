@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 r_static
@@ -163,6 +164,24 @@ id|filp
 comma
 r_int
 id|on
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|proc_net_register
+c_func
+(paren
+r_struct
+id|proc_dir_entry
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|proc_net_unregister
+c_func
+(paren
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Socket files have a set of &squot;special&squot; operations as well as the generic file ones. These don&squot;t appear&n; *&t;in the operation structures but are done directly via the socketcall() multiplexor.&n; */

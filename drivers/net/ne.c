@@ -10,6 +10,10 @@ id|version
 op_assign
 l_string|&quot;ne.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -23,8 +27,42 @@ DECL|macro|CONFIG_NE_BAD_CLONES
 mdefine_line|#define CONFIG_NE_BAD_CLONES
 multiline_comment|/* Do we perform extra sanity checks on stuff ? */
 multiline_comment|/* #define CONFIG_NE_SANITY */
+macro_line|#ifdef CONFIG_NE_SANITY
+DECL|variable|config_ne_sanity
+r_static
+r_int
+id|config_ne_sanity
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+DECL|variable|config_ne_sanity
+r_static
+r_int
+id|config_ne_sanity
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Do we implement the read before write bugfix ? */
 multiline_comment|/* #define CONFIG_NE_RW_BUGFIX */
+macro_line|#ifdef CONFIG_NE_RW_BUGFIX
+DECL|variable|ne8390_rw_bugfix
+r_static
+r_int
+id|ne8390_rw_bugfix
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+DECL|variable|ne8390_rw_bugfix
+r_static
+r_int
+id|ne8390_rw_bugfix
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* ---- No user-serviceable parts below ---- */
 r_extern
 r_struct
@@ -1715,17 +1753,16 @@ r_int
 id|ring_offset
 )paren
 (brace
-macro_line|#ifdef CONFIG_NE_SANITY
-r_int
-id|xfer_count
-op_assign
-id|count
-suffix:semicolon
-macro_line|#endif
 r_int
 id|nic_base
 op_assign
 id|dev-&gt;base_addr
+suffix:semicolon
+multiline_comment|/* CONFIG_NE_SANITY */
+r_int
+id|xfer_count
+op_assign
+id|count
 suffix:semicolon
 multiline_comment|/* This *shouldn&squot;t* happen. If it does, it&squot;s the last thing you&squot;ll see */
 r_if
@@ -1881,11 +1918,10 @@ op_plus
 id|NE_DATAPORT
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NE_SANITY
+multiline_comment|/* CONFIG_NE_SANITY */
 id|xfer_count
 op_increment
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_else
@@ -1904,10 +1940,11 @@ id|count
 suffix:semicolon
 )brace
 multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       been encountering problems so it is still here.  If you see&n;       this message you either 1) have a slightly incompatible clone&n;       or 2) have noise/speed problems with your bus. */
-macro_line|#ifdef CONFIG_NE_SANITY
 r_if
 c_cond
 (paren
+id|config_ne_sanity
+op_logical_and
 id|ei_debug
 OG
 l_int|1
@@ -2006,7 +2043,6 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|outb_p
 c_func
 (paren
@@ -2054,13 +2090,6 @@ r_int
 id|start_page
 )paren
 (brace
-macro_line|#ifdef CONFIG_NE_SANITY
-r_int
-id|retries
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_int
 id|nic_base
 op_assign
@@ -2069,6 +2098,12 @@ suffix:semicolon
 r_int
 r_int
 id|dma_start
+suffix:semicolon
+multiline_comment|/* CONFIG_NE_SANITY */
+r_int
+id|retries
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Round the count up for word writes.  Do we need to do this?&n;       What effect will an odd byte count have on the 8390?&n;       I should check someday. */
 r_if
@@ -2136,12 +2171,15 @@ op_plus
 id|NE_CMD
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NE_SANITY
 id|retry
 suffix:colon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NE_RW_BUGFIX 
-multiline_comment|/* Handle the read-before-write bug the same way as the&n;       Crynwr packet driver -- the NatSemi method doesn&squot;t work.&n;       Actually this doesn&squot;t always work either, but if you have&n;       problems with your NEx000 this is better than nothing! */
+r_if
+c_cond
+(paren
+id|ne8390_rw_bugfix
+)paren
+(brace
+multiline_comment|/* Handle the read-before-write bug the same way as the&n;&t;   Crynwr packet driver -- the NatSemi method doesn&squot;t work.&n;&t;   Actually this doesn&squot;t always work either, but if you have&n;&t;   problems with your NEx000 this is better than nothing! */
 id|outb_p
 c_func
 (paren
@@ -2201,7 +2239,7 @@ id|SLOW_DOWN_IO
 suffix:semicolon
 id|SLOW_DOWN_IO
 suffix:semicolon
-macro_line|#endif  /* rw_bugfix */
+)brace
 id|outb_p
 c_func
 (paren
@@ -2309,11 +2347,12 @@ id|dma_start
 op_assign
 id|jiffies
 suffix:semicolon
-macro_line|#ifdef CONFIG_NE_SANITY
 multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       been encountering problems so it is still here. */
 r_if
 c_cond
 (paren
+id|config_ne_sanity
+op_logical_and
 id|ei_debug
 OG
 l_int|1
@@ -2426,7 +2465,6 @@ id|retry
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -2503,6 +2541,127 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_ne2000
+r_static
+r_struct
+id|device
+id|dev_ne2000
+op_assign
+(brace
+l_string|&quot;        &quot;
+multiline_comment|/*&quot;ne2000&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|ne_probe
+)brace
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|dev_ne2000.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|dev_ne2000.irq
+op_assign
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_ne2000
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ne2000: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_ne2000
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DKERNEL -Wall -O6 -fomit-frame-pointer -I/usr/src/linux/net/tcp -c ne.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
 eof

@@ -1,10 +1,14 @@
 multiline_comment|/* linux/net/inet/rarp.c&n; *&n; * Copyright (C) 1994 by Ross Martin&n; * Based on linux/net/inet/arp.c, Copyright (C) 1994 by Florian La Roche&n; *&n; * This module implements the Reverse Address Resolution Protocol &n; * (RARP, RFC 903), which is used to convert low level addresses such&n; * as ethernet addresses into high level addresses such as IP addresses.&n; * The most common use of RARP is as a means for a diskless workstation &n; * to discover its IP address during a network boot.&n; *&n; **&n; ***&t;WARNING:::::::::::::::::::::::::::::::::WARNING&n; ****&n; *****&t;SUN machines seem determined to boot solely from the person who&n; ****&t;answered their RARP query. NEVER add a SUN to your RARP table&n; ***&t;unless you have all the rest to boot the box from it. &n; **&n; * &n; * Currently, only ethernet address -&gt; IP address is likely to work.&n; * (Is RARP ever used for anything else?)&n; *&n; * This code is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Fixes&n; *&t;Alan Cox&t;:&t;Rarp delete on device down needed as&n; *&t;&t;&t;&t;reported by Walter Wolfgang.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -27,7 +31,22 @@ macro_line|#include &lt;net/rarp.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_INET_RARP
+macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#if&t;defined(CONFIG_INET_RARP) || defined(MODULE)
+r_extern
+r_int
+(paren
+op_star
+id|rarp_ioctl_hook
+)paren
+(paren
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;This structure defines the RARP mapping cache. As long as we make &n; *&t;changes in this structure, we keep interrupts off.&n; */
 DECL|struct|rarp_table
 r_struct
@@ -83,6 +102,24 @@ op_star
 id|rarp_tables
 op_assign
 l_int|NULL
+suffix:semicolon
+r_static
+r_int
+id|rarp_rcv
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+comma
+r_struct
+id|device
+op_star
+comma
+r_struct
+id|packet_type
+op_star
+)paren
 suffix:semicolon
 DECL|variable|rarp_packet_type
 r_static
@@ -360,10 +397,10 @@ id|rarp_dev_notifier
 op_assign
 initialization_block
 suffix:semicolon
-DECL|function|rarp_init
+DECL|function|rarp_init_pkt
 r_static
 r_void
-id|rarp_init
+id|rarp_init_pkt
 (paren
 r_void
 )paren
@@ -394,6 +431,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Receive an arp request by the device layer.  Maybe it should be &n; *&t;rewritten to use the incoming packet for the reply. The current &n; *&t;&quot;overhead&quot; time isn&squot;t that high...&n; */
 DECL|function|rarp_rcv
+r_static
 r_int
 id|rarp_rcv
 c_func
@@ -560,7 +598,7 @@ op_ne
 l_int|4
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;This packet is not for us. Remove it. &n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;This packet is not for us. Remove it. &n;&t;&t; */
 id|kfree_skb
 c_func
 (paren
@@ -954,7 +992,7 @@ c_cond
 id|initflag
 )paren
 (brace
-id|rarp_init
+id|rarp_init_pkt
 c_func
 (paren
 )paren
@@ -1414,6 +1452,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_int
@@ -1723,16 +1764,153 @@ id|len
 OG
 id|length
 )paren
-(brace
 id|len
 op_assign
 id|length
 suffix:semicolon
-)brace
 multiline_comment|/* Ending slop */
 r_return
 id|len
 suffix:semicolon
+)brace
+r_void
+DECL|function|rarp_init
+id|rarp_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_RARP
+comma
+id|rarp_get_info
+comma
+l_int|4
+comma
+l_string|&quot;rarp&quot;
+)brace
+)paren
+suffix:semicolon
+id|rarp_ioctl_hook
+op_assign
+id|rarp_ioctl
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|rarp_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+suffix:semicolon
+r_else
+(brace
+r_struct
+id|rarp_table
+op_star
+id|rt
+comma
+op_star
+id|rt_next
+suffix:semicolon
+id|proc_net_unregister
+c_func
+(paren
+id|PROC_NET_RARP
+)paren
+suffix:semicolon
+id|rarp_ioctl_hook
+op_assign
+l_int|NULL
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Destroy the RARP-table */
+id|rt
+op_assign
+id|rarp_tables
+suffix:semicolon
+id|rarp_tables
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ... and free it. */
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|rt
+op_ne
+l_int|NULL
+suffix:semicolon
+id|rt
+op_assign
+id|rt_next
+)paren
+(brace
+id|rt_next
+op_assign
+id|rt-&gt;next
+suffix:semicolon
+id|rarp_release_entry
+c_func
+(paren
+id|rt
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 macro_line|#endif
 eof

@@ -25,6 +25,7 @@ macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/atalk.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#ifdef CONFIG_ATALK
 DECL|macro|APPLETALK_DEBUG
 mdefine_line|#define APPLETALK_DEBUG
@@ -7400,14 +7401,12 @@ id|atalk_rcv
 op_eq
 l_int|NULL
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;Unable to register DDP with SNAP.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|register_netdevice_notifier
 c_func
 (paren
@@ -7418,6 +7417,63 @@ suffix:semicolon
 id|aarp_proto_init
 c_func
 (paren
+)paren
+suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_ATALK
+comma
+id|atalk_get_info
+comma
+l_int|9
+comma
+l_string|&quot;appletalk&quot;
+)brace
+)paren
+suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_AT_ROUTE
+comma
+id|atalk_rt_get_info
+comma
+l_int|11
+comma
+l_string|&quot;atalk_route&quot;
+)brace
+)paren
+suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_ATIF
+comma
+id|atalk_if_get_info
+comma
+l_int|11
+comma
+l_string|&quot;atalk_iface&quot;
+)brace
 )paren
 suffix:semicolon
 id|printk

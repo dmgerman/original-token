@@ -14814,11 +14814,7 @@ r_struct
 id|iphdr
 op_star
 )paren
-(paren
-id|skb-&gt;data
-op_plus
-id|skb-&gt;dev-&gt;hard_header_len
-)paren
+id|skb-&gt;ip_hdr
 suffix:semicolon
 id|th
 op_assign
@@ -14865,7 +14861,7 @@ op_lshift
 l_int|2
 )paren
 op_plus
-id|skb-&gt;dev-&gt;hard_header_len
+id|sk-&gt;prot-&gt;max_header
 op_plus
 l_int|15
 comma

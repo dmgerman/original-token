@@ -4129,6 +4129,7 @@ r_int
 id|slip_init_ctrl_dev
 c_func
 (paren
+r_void
 )paren
 macro_line|#else&t;/* !MODULE */
 r_int

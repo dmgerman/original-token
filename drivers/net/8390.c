@@ -52,6 +52,23 @@ DECL|variable|ei_debug
 r_int
 id|ei_debug
 op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef EI_NOPINGPONG
+DECL|variable|ei_pingpong
+r_static
+r_int
+id|ei_pingpong
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
+DECL|variable|ei_pingpong
+r_static
+r_int
+id|ei_pingpong
+op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
@@ -2490,12 +2507,10 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#ifndef NO_PINGPONG
 id|ei_local-&gt;pingpong
 op_assign
-l_int|1
+id|ei_pingpong
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* The open call may be overridden by the card-specific code. */
 r_if

@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/af_unix.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 DECL|variable|unix_socket_list
 r_static
 id|unix_socket
@@ -2961,7 +2962,7 @@ c_func
 suffix:semicolon
 r_return
 op_minus
-id|sk-&gt;err
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&t;printk(&quot;get rcv sem&bslash;n&quot;);*/
@@ -3072,12 +3073,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|noblock
-)paren
-(brace
-r_if
-c_cond
-(paren
 id|copied
 )paren
 (brace
@@ -3085,6 +3080,12 @@ r_return
 id|copied
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|noblock
+)paren
+(brace
 r_return
 op_minus
 id|EAGAIN
@@ -3672,8 +3673,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Exported for procfs. */
 DECL|function|unix_get_info
+r_static
 r_int
 id|unix_get_info
 c_func
@@ -3692,6 +3693,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 id|off_t
@@ -3927,11 +3931,17 @@ id|sa
 suffix:semicolon
 id|msg.msg_namelen
 op_assign
-id|get_user
-c_func
+l_int|0
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|addr_len
 )paren
+id|msg.msg_namelen
+op_assign
+op_star
+id|addr_len
 suffix:semicolon
 id|msg.msg_accrights
 op_assign
@@ -4321,5 +4331,25 @@ op_amp
 id|unix_proto_ops
 )paren
 suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_NET_UNIX
+comma
+id|unix_get_info
+comma
+l_int|4
+comma
+l_string|&quot;unix&quot;
 )brace
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -g -D__KERNEL__ -Wall -O6 -I/usr/src/linux/include -c af_unix.c&quot;&n; * End:&n; */
 eof

@@ -1784,7 +1784,13 @@ suffix:semicolon
 r_case
 id|PLIP_NB_2
 suffix:colon
+r_break
+suffix:semicolon
 )brace
+r_return
+id|TIMEOUT
+suffix:semicolon
+multiline_comment|/* XX: ?? */
 )brace
 multiline_comment|/* PLIP_RECEIVE_PACKET --- receive a packet */
 r_static
@@ -2591,6 +2597,9 @@ r_return
 id|OK
 suffix:semicolon
 )brace
+r_return
+id|TIMEOUT
+suffix:semicolon
 )brace
 multiline_comment|/* PLIP_SEND_PACKET --- send a packet */
 r_static

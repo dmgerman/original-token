@@ -15,6 +15,14 @@ r_int
 r_int
 id|prof_len
 suffix:semicolon
+r_extern
+r_void
+id|proc_net_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|proc_put_inode
 r_void
 id|proc_put_inode
@@ -386,6 +394,11 @@ op_amp
 id|s-&gt;s_mounted-&gt;i_gid
 )paren
 suffix:semicolon
+id|proc_net_init
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|s
 suffix:semicolon
@@ -643,7 +656,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_IP_ACCT
+multiline_comment|/* #ifdef CONFIG_IP_ACCT */
 multiline_comment|/* this file may be opened R/W by root to reset the accounting */
 r_if
 c_cond
@@ -669,8 +682,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#ifdef CONFIG_IP_FIREWALL
+multiline_comment|/* #endif */
+multiline_comment|/* #ifdef CONFIG_IP_FIREWALL */
 multiline_comment|/* these files may be opened R/W by root to reset the counters */
 r_if
 c_cond
@@ -704,7 +717,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
+multiline_comment|/* #endif */
 multiline_comment|/* other files within /proc/net */
 r_if
 c_cond

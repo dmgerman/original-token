@@ -122,6 +122,24 @@ r_int
 id|base
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|device
+op_star
+id|init_etherdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+comma
+r_int
+comma
+r_int
+r_int
+op_star
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif&t;/* _LINUX_ETHERDEVICE_H */
 eof

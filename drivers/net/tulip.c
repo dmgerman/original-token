@@ -8,6 +8,10 @@ id|version
 op_assign
 l_string|&quot;tulip.c:v0.05 1/20/95 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -459,6 +463,7 @@ id|addr
 )paren
 suffix:semicolon
 "&f;"
+macro_line|#ifndef MODULE
 multiline_comment|/* This 21040 probe is unlike most other board probes.  We can use memory&n;   efficiently by allocating a large contiguous region and dividing it&n;   ourselves.  This is done by having the initialization occur before&n;   the &squot;kmalloc()&squot; memory management system is started. */
 DECL|function|dec21040_init
 r_int
@@ -603,6 +608,32 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifdef MODULE
+DECL|function|tulip_probe
+r_static
+r_int
+id|tulip_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;tulip: This driver does not yet install properly from module!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|tulip_probe1
 r_int
 r_int
@@ -1277,6 +1308,10 @@ id|CSR13
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2876,6 +2911,10 @@ id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3239,6 +3278,135 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_tulip
+r_static
+r_struct
+id|device
+id|dev_tulip
+op_assign
+(brace
+l_string|&quot;        &quot;
+multiline_comment|/*&quot;tulip&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|tulip_probe
+)brace
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|dev_tulip.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|dev_tulip.irq
+op_assign
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_tulip
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;tulip: register_netdev() returned non-zero.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;tulip: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_tulip
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c tulip.c&quot;&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

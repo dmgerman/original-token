@@ -379,6 +379,8 @@ DECL|macro|PCI_VENDOR_ID_SMC
 mdefine_line|#define PCI_VENDOR_ID_SMC&t;&t;0x1042
 DECL|macro|PCI_DEVICE_ID_SMC_37C665
 mdefine_line|#define PCI_DEVICE_ID_SMC_37C665&t;0x1000
+DECL|macro|PCI_DEVICE_ID_SMC_37C922
+mdefine_line|#define PCI_DEVICE_ID_SMC_37C922&t;0x1001
 DECL|macro|PCI_VENDOR_ID_ATI
 mdefine_line|#define PCI_VENDOR_ID_ATI&t;&t;0x1002
 DECL|macro|PCI_DEVICE_ID_ATI_M32
@@ -571,6 +573,14 @@ DECL|macro|PCI_VENDOR_ID_HP
 mdefine_line|#define PCI_VENDOR_ID_HP&t;&t;0x103c
 DECL|macro|PCI_DEVICE_ID_HP_J2585A
 mdefine_line|#define PCI_DEVICE_ID_HP_J2585A&t;&t;0x1030
+DECL|macro|PCI_VENDOR_ID_TEKRAM
+mdefine_line|#define PCI_VENDOR_ID_TEKRAM&t;&t;0x1de1
+DECL|macro|PCI_DEVICE_ID_TEKRAM_DC290
+mdefine_line|#define PCI_DEVICE_ID_TEKRAM_DC290&t;0xdc29
+DECL|macro|PCI_VENDOR_ID_MUTECH
+mdefine_line|#define PCI_VENDOR_ID_MUTECH&t;&t;0x1159
+DECL|macro|PCI_DEVICE_ID_MUTECH_MV1000
+mdefine_line|#define PCI_DEVICE_ID_MUTECH_MV1000&t;0x0001
 multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:4 = slot&n; *&t;3:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))

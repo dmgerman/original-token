@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; *&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; * Features:&n; *&t;- Supports stacked modules (removable only of there are no dependents).&n; *&t;- Supports table of symbols defined by the modules.&n; *&t;- Supports /proc/ksyms, showing value, name and owner of all&n; *&t;  the symbols defined by all modules (in stack order).&n; *&t;- Added module dependencies information into /proc/modules&n; *&t;- Supports redefines of all symbols, for streams-like behaviour.&n; *&t;- Compatible with older versions of insmod.&n; *&n; * New addition in December 1994: (Bjorn Ekwall, idea from Jacques Gelinas)&n; *&t;- Externally callable function:&n; *&n; *&t;&t;&quot;int register_symtab(struct symbol_table *)&quot;&n; *&n; *&t;  This function can be called from within the kernel,&n; *&t;  and ALSO from loadable modules.&n; *&t;  The goal is to assist in modularizing the kernel even more,&n; *&t;  and finally: reducing the number of entries in ksyms.c&n; *&t;  since every subsystem should now be able to decide and&n; *&t;  control exactly what symbols it wants to export, locally!&n; */
+multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; *&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; * Features:&n; *&t;- Supports stacked modules (removable only of there are no dependents).&n; *&t;- Supports table of symbols defined by the modules.&n; *&t;- Supports /proc/ksyms, showing value, name and owner of all&n; *&t;  the symbols defined by all modules (in stack order).&n; *&t;- Added module dependencies information into /proc/modules&n; *&t;- Supports redefines of all symbols, for streams-like behaviour.&n; *&t;- Compatible with older versions of insmod.&n; *&n; * New addition in December 1994: (Bjorn Ekwall, idea from Jacques Gelinas)&n; *&t;- Externally callable function:&n; *&n; *&t;&t;&quot;int register_symtab(struct symbol_table *)&quot;&n; *&n; *&t;  This function can be called from within the kernel,&n; *&t;  and ALSO from loadable modules.&n; *&t;  The goal is to assist in modularizing the kernel even more,&n; *&t;  and finally: reducing the number of entries in ksyms.c&n; *&t;  since every subsystem should now be able to decide and&n; *&t;  control exactly what symbols it wants to export, locally!&n; *&n; * On 1-Aug-95:  &lt;Matti.Aarnio@utu.fi&gt;  altered code to use same style as&n; *&t;&t; do  /proc/net/XXX  &quot;files&quot;.  Namely allow more than 4kB&n; *&t;&t; (or what the block size if) output.&n; */
 macro_line|#ifdef DEBUG_MODULE
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(a) printk a
@@ -79,6 +79,12 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Hmm... */
+r_extern
+r_struct
+id|symbol_table
+id|symbol_table
+suffix:semicolon
+multiline_comment|/* in kernel/ksyms.c */
 multiline_comment|/*&n; * Called at boot time&n; */
 DECL|function|init_modules
 r_void
@@ -88,12 +94,6 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-r_struct
-id|symbol_table
-id|symbol_table
-suffix:semicolon
-multiline_comment|/* in kernel/ksyms.c */
 r_struct
 id|internal_symbol
 op_star
@@ -2288,6 +2288,17 @@ c_func
 r_char
 op_star
 id|buf
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
 )paren
 (brace
 r_struct
@@ -2308,6 +2319,22 @@ op_star
 id|p
 op_assign
 id|buf
+suffix:semicolon
+r_int
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* code from  net/ipv4/proc.c */
+id|off_t
+id|pos
+op_assign
+l_int|0
+suffix:semicolon
+id|off_t
+id|begin
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -2367,41 +2394,12 @@ op_increment
 id|sym
 )paren
 (brace
-r_if
-c_cond
-(paren
 id|p
-op_minus
+op_assign
 id|buf
-OG
-l_int|4096
-op_minus
-l_int|100
-)paren
-(brace
-id|strcat
-c_func
-(paren
-id|p
-comma
-l_string|&quot;...&bslash;n&quot;
-)paren
+op_plus
+id|len
 suffix:semicolon
-id|p
-op_add_assign
-id|strlen
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
-r_return
-id|p
-op_minus
-id|buf
-suffix:semicolon
-multiline_comment|/* avoid overflowing buffer */
-)brace
 r_if
 c_cond
 (paren
@@ -2411,6 +2409,8 @@ l_int|0
 )braket
 )paren
 (brace
+id|len
+op_add_assign
 id|sprintf
 c_func
 (paren
@@ -2431,6 +2431,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|len
+op_add_assign
 id|sprintf
 c_func
 (paren
@@ -2447,21 +2449,84 @@ id|sym-&gt;name
 )paren
 suffix:semicolon
 )brace
-id|p
-op_add_assign
-id|strlen
-c_func
+id|pos
+op_assign
+id|begin
+op_plus
+id|len
+suffix:semicolon
+r_if
+c_cond
 (paren
-id|p
+id|pos
+OL
+id|offset
 )paren
+(brace
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|begin
+op_assign
+id|pos
+suffix:semicolon
+)brace
+id|pos
+op_assign
+id|begin
+op_plus
+id|len
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pos
+OG
+id|offset
+op_plus
+id|length
+)paren
+r_goto
+id|leave_the_loop
 suffix:semicolon
 )brace
 )brace
 )brace
-r_return
-id|p
-op_minus
+id|leave_the_loop
+suffix:colon
+op_star
+id|start
+op_assign
 id|buf
+op_plus
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+id|len
+op_sub_assign
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+id|len
+op_assign
+id|length
+suffix:semicolon
+r_return
+id|len
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Rules:&n; * - The new symbol table should be statically allocated, or else you _have_&n; *   to set the &quot;size&quot; field of the struct to the number of bytes allocated.&n; *&n; * - The strings that name the symbols will not be copied, maybe the pointers&n; *&n; * - For a loadable module, the function should only be called in the&n; *   context of init_module&n; *&n; * Those are the only restrictions! (apart from not being reentrant...)&n; *&n; * If you want to remove a symbol table for a loadable module,&n; * the call looks like: &quot;register_symtab(0)&quot;.&n; *&n; * The look of the code is mostly dictated by the format of&n; * the frozen struct symbol_table, due to compatibility demands.&n; */
