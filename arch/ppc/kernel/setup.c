@@ -189,16 +189,6 @@ r_int
 id|r7
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BOOTX_TEXT
-r_extern
-r_void
-id|map_bootx_text
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_XMON
 r_extern
 r_void
@@ -292,6 +282,19 @@ r_struct
 id|machdep_calls
 id|ppc_md
 suffix:semicolon
+multiline_comment|/*&n; * These are used in binfmt_elf.c to put aux entries on the stack&n; * for each elf executable being started.&n; */
+DECL|variable|dcache_bsize
+r_int
+id|dcache_bsize
+suffix:semicolon
+DECL|variable|icache_bsize
+r_int
+id|icache_bsize
+suffix:semicolon
+DECL|variable|ucache_bsize
+r_int
+id|ucache_bsize
+suffix:semicolon
 multiline_comment|/*&n; * Perhaps we can put the pmac screen_info[] here&n; * on pmac as well so we don&squot;t need the ifdef&squot;s.&n; * Until we get multiple-console support in here&n; * that is.  -- Cort&n; * Maybe tie it to serial consoles, since this is really what&n; * these processors use on existing boards.  -- Dan&n; */
 macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx) &amp;&amp; !defined(CONFIG_8260)
 DECL|variable|screen_info
@@ -333,19 +336,6 @@ multiline_comment|/* orig-video-isVGA */
 l_int|16
 multiline_comment|/* orig-video-points */
 )brace
-suffix:semicolon
-multiline_comment|/*&n; * These are used in binfmt_elf.c to put aux entries on the stack&n; * for each elf executable being started.&n; */
-DECL|variable|dcache_bsize
-r_int
-id|dcache_bsize
-suffix:semicolon
-DECL|variable|icache_bsize
-r_int
-id|icache_bsize
-suffix:semicolon
-DECL|variable|ucache_bsize
-r_int
-id|ucache_bsize
 suffix:semicolon
 multiline_comment|/*&n; * I really need to add multiple-console support... -- Cort&n; */
 DECL|function|pmac_display_supported
@@ -1001,7 +991,7 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;, altivec enabled&quot;
+l_string|&quot;, altivec supported&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_ALTIVEC */
@@ -2940,13 +2930,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BOOTX_TEXT
-id|map_bootx_text
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_ALL_PPC
 id|feature_init
 c_func

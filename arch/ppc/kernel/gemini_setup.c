@@ -19,7 +19,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/m48t35.h&gt;
 macro_line|#include &lt;asm/gemini.h&gt;
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;open_pic.h&quot;
 r_void

@@ -1,23 +1,17 @@
-multiline_comment|/*&n; * $Id: nora.c,v 1.12 2000/07/13 10:32:33 dwmw2 Exp $&n; *&n; * This is so simple I love it.&n; */
+multiline_comment|/*&n; *&t;pnc2000.c - mapper for Photron PNC-2000 board.&n; *&n; * Copyright (C) 2000 Crossnet Co. &lt;info@crossnet.co.jp&gt;&n; *&n; * This code is GPL&n; *&n; * $Id: pnc2000.c,v 1.1 2000/07/12 09:34:32 dwmw2 Exp $&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
 macro_line|#include &lt;linux/mtd/map.h&gt;
 DECL|macro|WINDOW_ADDR
-mdefine_line|#define WINDOW_ADDR 0xd0000000
+mdefine_line|#define WINDOW_ADDR 0xbf000000
 DECL|macro|WINDOW_SIZE
-mdefine_line|#define WINDOW_SIZE 0x04000000
-DECL|variable|mymtd
-r_static
-r_struct
-id|mtd_info
-op_star
-id|mymtd
-suffix:semicolon
-DECL|function|nora_read8
+mdefine_line|#define WINDOW_SIZE 0x00400000
+multiline_comment|/* &n; * MAP DRIVER STUFF&n; */
+DECL|function|pnc_read8
 id|__u8
-id|nora_read8
+id|pnc_read8
 c_func
 (paren
 r_struct
@@ -43,9 +37,9 @@ id|ofs
 )paren
 suffix:semicolon
 )brace
-DECL|function|nora_read16
+DECL|function|pnc_read16
 id|__u16
-id|nora_read16
+id|pnc_read16
 c_func
 (paren
 r_struct
@@ -71,9 +65,9 @@ id|ofs
 )paren
 suffix:semicolon
 )brace
-DECL|function|nora_read32
+DECL|function|pnc_read32
 id|__u32
-id|nora_read32
+id|pnc_read32
 c_func
 (paren
 r_struct
@@ -89,7 +83,9 @@ id|ofs
 r_return
 op_star
 (paren
-id|__u32
+r_volatile
+r_int
+r_int
 op_star
 )paren
 (paren
@@ -99,9 +95,9 @@ id|ofs
 )paren
 suffix:semicolon
 )brace
-DECL|function|nora_copy_from
+DECL|function|pnc_copy_from
 r_void
-id|nora_copy_from
+id|pnc_copy_from
 c_func
 (paren
 r_struct
@@ -140,9 +136,9 @@ id|len
 )paren
 suffix:semicolon
 )brace
-DECL|function|nora_write8
+DECL|function|pnc_write8
 r_void
-id|nora_write8
+id|pnc_write8
 c_func
 (paren
 r_struct
@@ -172,9 +168,9 @@ op_assign
 id|d
 suffix:semicolon
 )brace
-DECL|function|nora_write16
+DECL|function|pnc_write16
 r_void
-id|nora_write16
+id|pnc_write16
 c_func
 (paren
 r_struct
@@ -204,9 +200,9 @@ op_assign
 id|d
 suffix:semicolon
 )brace
-DECL|function|nora_write32
+DECL|function|pnc_write32
 r_void
-id|nora_write32
+id|pnc_write32
 c_func
 (paren
 r_struct
@@ -236,9 +232,9 @@ op_assign
 id|d
 suffix:semicolon
 )brace
-DECL|function|nora_copy_to
+DECL|function|pnc_copy_to
 r_void
-id|nora_copy_to
+id|pnc_copy_to
 c_func
 (paren
 r_struct
@@ -278,43 +274,53 @@ id|len
 )paren
 suffix:semicolon
 )brace
-DECL|variable|nora_map
+DECL|variable|pnc_map
 r_struct
 id|map_info
-id|nora_map
+id|pnc_map
 op_assign
 (brace
-l_string|&quot;NORA&quot;
+l_string|&quot;PNC-2000&quot;
 comma
 id|WINDOW_SIZE
 comma
-l_int|2
+l_int|4
 comma
-id|nora_read8
+id|pnc_read8
 comma
-id|nora_read16
+id|pnc_read16
 comma
-id|nora_read32
+id|pnc_read32
 comma
-id|nora_copy_from
+id|pnc_copy_from
 comma
-id|nora_write8
+id|pnc_write8
 comma
-id|nora_write16
+id|pnc_write16
 comma
-id|nora_write32
+id|pnc_write32
 comma
-id|nora_copy_to
+id|pnc_copy_to
 comma
 l_int|0
 comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|nora_mtd_read
+multiline_comment|/*&n; * MTD &squot;PARTITIONING&squot; STUFF &n; */
+multiline_comment|/* &n; * This is the _real_ MTD device for which all the others are just&n; * auto-relocating aliases.&n; */
+DECL|variable|mymtd
+r_static
+r_struct
+id|mtd_info
+op_star
+id|mymtd
+suffix:semicolon
+multiline_comment|/* &n; * MTD methods which simply translate the effective address and pass through&n; * to the _real_ device.&n; */
+DECL|function|pnc_mtd_read
 r_static
 r_int
-id|nora_mtd_read
+id|pnc_mtd_read
 (paren
 r_struct
 id|mtd_info
@@ -360,10 +366,10 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-DECL|function|nora_mtd_write
+DECL|function|pnc_mtd_write
 r_static
 r_int
-id|nora_mtd_write
+id|pnc_mtd_write
 c_func
 (paren
 r_struct
@@ -411,10 +417,10 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-DECL|function|nora_mtd_erase
+DECL|function|pnc_mtd_erase
 r_static
 r_int
-id|nora_mtd_erase
+id|pnc_mtd_erase
 (paren
 r_struct
 id|mtd_info
@@ -447,10 +453,10 @@ id|instr
 )paren
 suffix:semicolon
 )brace
-DECL|function|nora_mtd_sync
+DECL|function|pnc_mtd_sync
 r_static
 r_void
-id|nora_mtd_sync
+id|pnc_mtd_sync
 (paren
 r_struct
 id|mtd_info
@@ -467,10 +473,10 @@ id|mymtd
 )paren
 suffix:semicolon
 )brace
-DECL|function|nora_mtd_suspend
+DECL|function|pnc_mtd_suspend
 r_static
 r_int
-id|nora_mtd_suspend
+id|pnc_mtd_suspend
 (paren
 r_struct
 id|mtd_info
@@ -488,10 +494,10 @@ id|mymtd
 )paren
 suffix:semicolon
 )brace
-DECL|function|nora_mtd_resume
+DECL|function|pnc_mtd_resume
 r_static
 r_void
-id|nora_mtd_resume
+id|pnc_mtd_resume
 (paren
 r_struct
 id|mtd_info
@@ -508,17 +514,17 @@ id|mymtd
 )paren
 suffix:semicolon
 )brace
-DECL|variable|nora_mtds
+DECL|variable|pnc_mtds
 r_static
 r_struct
 id|mtd_info
-id|nora_mtds
+id|pnc_mtds
 (braket
-l_int|4
+l_int|3
 )braket
 op_assign
 (brace
-multiline_comment|/* boot, kernel, ramdisk, fs */
+multiline_comment|/* boot, kernel, fs */
 (brace
 id|type
 suffix:colon
@@ -530,7 +536,7 @@ id|MTD_CAP_NORFLASH
 comma
 id|size
 suffix:colon
-l_int|0x60000
+l_int|0x20000
 comma
 id|erasesize
 suffix:colon
@@ -538,7 +544,7 @@ l_int|0x20000
 comma
 id|name
 suffix:colon
-l_string|&quot;NORA boot firmware&quot;
+l_string|&quot;PNC-2000 boot firmware&quot;
 comma
 id|module
 suffix:colon
@@ -546,27 +552,27 @@ id|THIS_MODULE
 comma
 id|erase
 suffix:colon
-id|nora_mtd_erase
+id|pnc_mtd_erase
 comma
 id|read
 suffix:colon
-id|nora_mtd_read
+id|pnc_mtd_read
 comma
 id|write
 suffix:colon
-id|nora_mtd_write
+id|pnc_mtd_write
 comma
 id|suspend
 suffix:colon
-id|nora_mtd_suspend
+id|pnc_mtd_suspend
 comma
 id|resume
 suffix:colon
-id|nora_mtd_resume
+id|pnc_mtd_resume
 comma
 id|sync
 suffix:colon
-id|nora_mtd_sync
+id|pnc_mtd_sync
 comma
 id|priv
 suffix:colon
@@ -588,7 +594,7 @@ id|MTD_CAP_NORFLASH
 comma
 id|size
 suffix:colon
-l_int|0x0a0000
+l_int|0x1a0000
 comma
 id|erasesize
 suffix:colon
@@ -596,7 +602,7 @@ l_int|0x20000
 comma
 id|name
 suffix:colon
-l_string|&quot;NORA kernel&quot;
+l_string|&quot;PNC-2000 kernel&quot;
 comma
 id|module
 suffix:colon
@@ -604,27 +610,27 @@ id|THIS_MODULE
 comma
 id|erase
 suffix:colon
-id|nora_mtd_erase
+id|pnc_mtd_erase
 comma
 id|read
 suffix:colon
-id|nora_mtd_read
+id|pnc_mtd_read
 comma
 id|write
 suffix:colon
-id|nora_mtd_write
+id|pnc_mtd_write
 comma
 id|suspend
 suffix:colon
-id|nora_mtd_suspend
+id|pnc_mtd_suspend
 comma
 id|resume
 suffix:colon
-id|nora_mtd_resume
+id|pnc_mtd_resume
 comma
 id|sync
 suffix:colon
-id|nora_mtd_sync
+id|pnc_mtd_sync
 comma
 id|priv
 suffix:colon
@@ -632,7 +638,7 @@ suffix:colon
 r_void
 op_star
 )paren
-l_int|0x60000
+l_int|0x20000
 )brace
 comma
 (brace
@@ -646,7 +652,7 @@ id|MTD_CAP_NORFLASH
 comma
 id|size
 suffix:colon
-l_int|0xf00000
+l_int|0x240000
 comma
 id|erasesize
 suffix:colon
@@ -654,7 +660,7 @@ l_int|0x20000
 comma
 id|name
 suffix:colon
-l_string|&quot;NORA root filesystem&quot;
+l_string|&quot;PNC-2000 filesystem&quot;
 comma
 id|module
 suffix:colon
@@ -662,27 +668,27 @@ id|THIS_MODULE
 comma
 id|erase
 suffix:colon
-id|nora_mtd_erase
+id|pnc_mtd_erase
 comma
 id|read
 suffix:colon
-id|nora_mtd_read
+id|pnc_mtd_read
 comma
 id|write
 suffix:colon
-id|nora_mtd_write
+id|pnc_mtd_write
 comma
 id|suspend
 suffix:colon
-id|nora_mtd_suspend
+id|pnc_mtd_suspend
 comma
 id|resume
 suffix:colon
-id|nora_mtd_resume
+id|pnc_mtd_resume
 comma
 id|sync
 suffix:colon
-id|nora_mtd_sync
+id|pnc_mtd_sync
 comma
 id|priv
 suffix:colon
@@ -690,80 +696,22 @@ suffix:colon
 r_void
 op_star
 )paren
-l_int|0x100000
-)brace
-comma
-(brace
-id|type
-suffix:colon
-id|MTD_NORFLASH
-comma
-id|flags
-suffix:colon
-id|MTD_CAP_NORFLASH
-comma
-id|size
-suffix:colon
-l_int|0x1000000
-comma
-id|erasesize
-suffix:colon
-l_int|0x20000
-comma
-id|name
-suffix:colon
-l_string|&quot;NORA main filesystem&quot;
-comma
-id|module
-suffix:colon
-id|THIS_MODULE
-comma
-id|erase
-suffix:colon
-id|nora_mtd_erase
-comma
-id|read
-suffix:colon
-id|nora_mtd_read
-comma
-id|write
-suffix:colon
-id|nora_mtd_write
-comma
-id|suspend
-suffix:colon
-id|nora_mtd_suspend
-comma
-id|resume
-suffix:colon
-id|nora_mtd_resume
-comma
-id|sync
-suffix:colon
-id|nora_mtd_sync
-comma
-id|priv
-suffix:colon
-(paren
-r_void
-op_star
-)paren
-l_int|0x1000000
+l_int|0x1c0000
 )brace
 )brace
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
 macro_line|#ifdef MODULE
-DECL|macro|init_nora
-mdefine_line|#define init_nora init_module
-DECL|macro|cleanup_nora
-mdefine_line|#define cleanup_nora cleanup_module
+DECL|macro|init_pnc
+mdefine_line|#define init_pnc init_module
+DECL|macro|cleanup_pnc
+mdefine_line|#define cleanup_pnc cleanup_module
 macro_line|#endif
 macro_line|#endif
-DECL|function|init_nora
+DECL|function|init_pnc
 r_int
 id|__init
-id|init_nora
+id|init_pnc
 c_func
 (paren
 r_void
@@ -773,7 +721,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;nora flash device: %x at %x&bslash;n&quot;
+l_string|&quot;Photron PNC-2000 flash mapping: %x at %x&bslash;n&quot;
 comma
 id|WINDOW_SIZE
 comma
@@ -786,7 +734,7 @@ id|do_cfi_probe
 c_func
 (paren
 op_amp
-id|nora_map
+id|pnc_map
 )paren
 suffix:semicolon
 r_if
@@ -795,53 +743,43 @@ c_cond
 id|mymtd
 )paren
 (brace
-macro_line|#ifdef MODULE
 id|mymtd-&gt;module
 op_assign
-op_amp
-id|__this_module
-suffix:semicolon
-macro_line|#endif
-id|add_mtd_device
-c_func
-(paren
-op_amp
-id|nora_mtds
-(braket
-l_int|3
-)braket
-)paren
+id|THIS_MODULE
 suffix:semicolon
 id|add_mtd_device
 c_func
 (paren
 op_amp
-id|nora_mtds
+id|pnc_mtds
 (braket
 l_int|0
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* boot */
 id|add_mtd_device
 c_func
 (paren
 op_amp
-id|nora_mtds
+id|pnc_mtds
 (braket
 l_int|1
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* kernel */
 id|add_mtd_device
 c_func
 (paren
 op_amp
-id|nora_mtds
+id|pnc_mtds
 (braket
 l_int|2
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* file system */
 r_return
 l_int|0
 suffix:semicolon
@@ -851,11 +789,11 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-DECL|function|cleanup_nora
+DECL|function|cleanup_pnc
 r_static
 r_void
 id|__exit
-id|cleanup_nora
+id|cleanup_pnc
 c_func
 (paren
 r_void
@@ -871,7 +809,7 @@ id|del_mtd_device
 c_func
 (paren
 op_amp
-id|nora_mtds
+id|pnc_mtds
 (braket
 l_int|2
 )braket
@@ -881,7 +819,7 @@ id|del_mtd_device
 c_func
 (paren
 op_amp
-id|nora_mtds
+id|pnc_mtds
 (braket
 l_int|1
 )braket
@@ -891,19 +829,9 @@ id|del_mtd_device
 c_func
 (paren
 op_amp
-id|nora_mtds
+id|pnc_mtds
 (braket
 l_int|0
-)braket
-)paren
-suffix:semicolon
-id|del_mtd_device
-c_func
-(paren
-op_amp
-id|nora_mtds
-(braket
-l_int|3
 )braket
 )paren
 suffix:semicolon

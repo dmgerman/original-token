@@ -1660,9 +1660,11 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
+macro_line|#ifdef CONFIG_POWER4
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 r_int
 op_star
 id|brp

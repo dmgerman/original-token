@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * JFFS -- Journalling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Finn Hakansson, Axis Communications, Inc.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: inode-v23.c,v 1.17 2000/07/06 20:35:19 prumpf Exp $&n; *&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; * &n; */
 multiline_comment|/* inode.c -- Contains the code that is called from the VFS.  */
 multiline_comment|/* TODO-ALEX:&n; * uid and gid are just 16 bit.&n; * jffs_file_write reads from user-space pointers without xx_from_user&n; * maybe other stuff do to.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

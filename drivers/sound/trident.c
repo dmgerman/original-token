@@ -6791,7 +6791,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|out
-suffix:semicolon
+suffix:colon
 id|unlock_kernel
 c_func
 (paren

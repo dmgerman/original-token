@@ -21,11 +21,25 @@ macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;commproc.h&quot;
-multiline_comment|/*&n; *&t;&t;&t;&t;Theory of Operation&n; *&n; * The MPC8xx CPM performs the Ethernet processing on SCC1.  It can use&n; * an aribtrary number of buffers on byte boundaries, but must have at&n; * least two receive buffers to prevent constant overrun conditions.&n; *&n; * The buffer descriptors are allocated from the CPM dual port memory&n; * with the data buffers allocated from host memory, just like all other&n; * serial communication protocols.  The host memory buffers are allocated&n; * from the free page pool, and then divided into smaller receive and&n; * transmit buffers.  The size of the buffers should be a power of two,&n; * since that nicely divides the page.  This creates a ring buffer&n; * structure similar to the LANCE and other controllers.&n; *&n; * Like the LANCE driver:&n; * The driver runs as two independent, single-threaded flows of control.  One&n; * is the send-packet routine, which enforces single-threaded use by the&n; * cep-&gt;tx_busy flag.  The other thread is the interrupt handler, which is&n; * single threaded by the hardware and other software.&n; *&n; * The send packet thread has partial control over the Tx ring and the&n; * &squot;cep-&gt;tx_busy&squot; flag.  It sets the tx_busy flag whenever it&squot;s queuing a Tx&n; * packet. If the next queue slot is empty, it clears the tx_busy flag when&n; * finished otherwise it sets the &squot;lp-&gt;tx_full&squot; flag.&n; *&n; * The MBX has a control register external to the MPC8xx that has some&n; * control of the Ethernet interface.  Control Register 1 has the&n; * following format:&n; *&t;bit 0 - Set to enable Ethernet transceiver&n; *&t;bit 1 - Set to enable Ethernet internal loopback&n; *&t;bit 2 - Set to auto select AUI or TP port&n; *&t;bit 3 - if bit 2 is 0, set to select TP port&n; *&t;bit 4 - Set to disable full duplex (loopback)&n; *&t;bit 5 - Set to disable XCVR collision test&n; *&t;bit 6, 7 - Used for RS-232 control.&n; *&n; * EPPC-Bug sets this register to 0x98 for normal Ethernet operation,&n; * so we should not have to touch it.&n; *&n; * The following I/O is used by the MBX implementation of the MPC8xx to&n; * the MC68160 transceiver.  It DOES NOT exactly follow the cookbook&n; * example from the MPC860 manual.&n; *&t;Port A, 15 - SCC1 Ethernet Rx&n; *&t;Port A, 14 - SCC1 Ethernet Tx&n; *&t;Port A, 6 (CLK2) - SCC1 Ethernet Tx Clk&n; *&t;Port A, 4 (CLK4) - SCC1 Ethernet Rx Clk&n; *&t;Port C, 15 - SCC1 Ethernet Tx Enable&n; *&t;Port C, 11 - SCC1 Ethernet Collision&n; *&t;Port C, 10 - SCC1 Ethernet Rx Enable&n; *&n; * The RPX-Lite (that I had :-), was the MPC850SAR.  It has a control&n; * register to enable Ethernet functions in the 68160, and the Ethernet&n; * was controlled by SCC2.  So, the pin I/O was like this:&n; *&t;Port A, 13 - SCC2 Ethernet Rx&n; *&t;Port A, 12 - SCC2 Ethernet Tx&n; *&t;Port A,  6 (CLK2) - Ethernet Tx Clk&n; *&t;Port A,  4 (CLK4) - Ethernet Rx Clk&n; *&t;Port B, 18 (RTS2) - Ethernet Tx Enable&n; *&t;Port C,  8 (CD2) - Ethernet Rx Enable&n; *&t;Port C,  9 (CTS2) - SCC Ethernet Collision&n; */
+multiline_comment|/*&n; *&t;&t;&t;&t;Theory of Operation&n; *&n; * The MPC8xx CPM performs the Ethernet processing on SCC1.  It can use&n; * an aribtrary number of buffers on byte boundaries, but must have at&n; * least two receive buffers to prevent constant overrun conditions.&n; *&n; * The buffer descriptors are allocated from the CPM dual port memory&n; * with the data buffers allocated from host memory, just like all other&n; * serial communication protocols.  The host memory buffers are allocated&n; * from the free page pool, and then divided into smaller receive and&n; * transmit buffers.  The size of the buffers should be a power of two,&n; * since that nicely divides the page.  This creates a ring buffer&n; * structure similar to the LANCE and other controllers.&n; *&n; * Like the LANCE driver:&n; * The driver runs as two independent, single-threaded flows of control.  One&n; * is the send-packet routine, which enforces single-threaded use by the&n; * cep-&gt;tx_busy flag.  The other thread is the interrupt handler, which is&n; * single threaded by the hardware and other software.&n; *&n; * The send packet thread has partial control over the Tx ring and the&n; * &squot;cep-&gt;tx_busy&squot; flag.  It sets the tx_busy flag whenever it&squot;s queuing a Tx&n; * packet. If the next queue slot is empty, it clears the tx_busy flag when&n; * finished otherwise it sets the &squot;lp-&gt;tx_full&squot; flag.&n; *&n; * The MBX has a control register external to the MPC8xx that has some&n; * control of the Ethernet interface.  Information is in the manual for&n; * your board.&n; *&n; * The RPX boards have an external control/status register.  Consult the&n; * programming documents for details unique to your board.&n; *&n; * For the TQM8xx(L) modules, there is no control register interface.&n; * All functions are directly controlled using I/O pins.  See commproc.h.&n; */
 multiline_comment|/* The transmitter timeout&n; */
 DECL|macro|TX_TIMEOUT
 mdefine_line|#define TX_TIMEOUT&t;(2*HZ)
 multiline_comment|/* The number of Tx and Rx buffers.  These are allocated from the page&n; * pool.  The code may assume these are power of two, so it is best&n; * to keep them that size.&n; * We don&squot;t need to allocate pages for the transmitter.  We just use&n; * the skbuffer directly.&n; */
+macro_line|#ifdef CONFIG_ENET_BIG_BUFFERS
+DECL|macro|CPM_ENET_RX_PAGES
+mdefine_line|#define CPM_ENET_RX_PAGES&t;32
+DECL|macro|CPM_ENET_RX_FRSIZE
+mdefine_line|#define CPM_ENET_RX_FRSIZE&t;2048
+DECL|macro|CPM_ENET_RX_FRPPG
+mdefine_line|#define CPM_ENET_RX_FRPPG&t;(PAGE_SIZE / CPM_ENET_RX_FRSIZE)
+DECL|macro|RX_RING_SIZE
+mdefine_line|#define RX_RING_SIZE&t;&t;(CPM_ENET_RX_FRPPG * CPM_ENET_RX_PAGES)
+DECL|macro|TX_RING_SIZE
+mdefine_line|#define TX_RING_SIZE&t;&t;64&t;/* Must be power of two */
+DECL|macro|TX_RING_MOD_MASK
+mdefine_line|#define TX_RING_MOD_MASK&t;63&t;/*   for this to work */
+macro_line|#else
 DECL|macro|CPM_ENET_RX_PAGES
 mdefine_line|#define CPM_ENET_RX_PAGES&t;4
 DECL|macro|CPM_ENET_RX_FRSIZE
@@ -38,6 +52,7 @@ DECL|macro|TX_RING_SIZE
 mdefine_line|#define TX_RING_SIZE&t;&t;8&t;/* Must be power of two */
 DECL|macro|TX_RING_MOD_MASK
 mdefine_line|#define TX_RING_MOD_MASK&t;7&t;/*   for this to work */
+macro_line|#endif
 multiline_comment|/* The CPM stores dest/src/type, data, and checksum for receive packets.&n; */
 DECL|macro|PKT_MAXBUF_SIZE
 mdefine_line|#define PKT_MAXBUF_SIZE&t;&t;1518
@@ -2305,7 +2320,7 @@ id|SCC_PMSR_NIB22
 )paren
 suffix:semicolon
 multiline_comment|/* It is now OK to enable the Ethernet transmitter.&n;&t; * Unfortunately, there are board implementation differences here.&n;&t; */
-macro_line|#ifdef CONFIG_MBX
+macro_line|#if (defined(CONFIG_MBX) || defined(CONFIG_TQM860) || defined(CONFIG_TQM860L) || defined(CONFIG_FPS850))
 id|immap-&gt;im_ioport.iop_pcpar
 op_or_assign
 id|PC_ENET_TENA
@@ -2314,6 +2329,16 @@ id|immap-&gt;im_ioport.iop_pcdir
 op_and_assign
 op_complement
 id|PC_ENET_TENA
+suffix:semicolon
+macro_line|#endif
+macro_line|#if (defined(CONFIG_TQM8xxL) &amp;&amp; !defined(CONFIG_FPS850))
+id|cp-&gt;cp_pbpar
+op_or_assign
+id|PB_ENET_TENA
+suffix:semicolon
+id|cp-&gt;cp_pbdir
+op_or_assign
+id|PB_ENET_TENA
 suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_RPXLITE) || defined(CONFIG_RPXCLASSIC)

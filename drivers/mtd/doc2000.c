@@ -1,7 +1,7 @@
 multiline_comment|/* Linux driver for Disk-On-Chip 2000       */
 multiline_comment|/* (c) 1999 Machine Vision Holdings, Inc.   */
 multiline_comment|/* Author: David Woodhouse &lt;dwmw2@mvhi.com&gt; */
-multiline_comment|/* $Id: doc2000.c,v 1.23 2000/07/03 10:01:38 dwmw2 Exp $ */
+multiline_comment|/* $Id: doc2000.c,v 1.24 2000/07/13 10:03:31 dwmw2 Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
@@ -201,6 +201,7 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* DOC_WaitReady: Wait for RDY line to be asserted by the flash chip */
 DECL|function|_DoC_WaitReady
+r_static
 r_int
 id|_DoC_WaitReady
 (paren
@@ -665,6 +666,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* DoC_IdentChip: Identify a given NAND chip given {floor,chip} */
 DECL|function|DoC_IdentChip
+r_static
 r_int
 id|DoC_IdentChip
 c_func
@@ -1176,6 +1178,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* DoC_ScanChips: Find all NAND chips present in a DiskOnChip, and identify them */
 DECL|function|DoC_ScanChips
+r_static
 r_void
 id|DoC_ScanChips
 c_func

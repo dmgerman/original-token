@@ -491,6 +491,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#if 0 /* Makes compile with -Wall */
 r_static
 r_char
 op_star
@@ -513,6 +514,7 @@ r_int
 id|addr
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|csum
@@ -8114,7 +8116,7 @@ op_assign
 id|str
 suffix:semicolon
 )brace
-DECL|function|pretty_print_addr
+macro_line|#if 0 /* Makes compile with -Wall */
 r_static
 r_char
 op_star
@@ -8159,7 +8161,8 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|function|lookup_name
+macro_line|#endif
+macro_line|#if 0 /* Makes compile with -Wall */
 r_static
 r_char
 op_star
@@ -8291,4 +8294,5 @@ id|last
 suffix:semicolon
 macro_line|#endif&t;
 )brace
+macro_line|#endif
 eof

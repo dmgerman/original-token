@@ -427,8 +427,12 @@ mdefine_line|#define SMC_CENT_PE&t;((u_char)0x04)
 DECL|macro|SMC_CENT_S
 mdefine_line|#define SMC_CENT_S&t;((u_char)0x02)
 multiline_comment|/* SMC Event and Mask register.&n;*/
+DECL|macro|SMCM_BRKE
+mdefine_line|#define&t;SMCM_BRKE&t;((unsigned char)0x40)&t;/* When in UART Mode */
+DECL|macro|SMCM_BRK
+mdefine_line|#define&t;SMCM_BRK&t;((unsigned char)0x10)&t;/* When in UART Mode */
 DECL|macro|SMCM_TXE
-mdefine_line|#define&t;SMCM_TXE&t;((unsigned char)0x10)
+mdefine_line|#define&t;SMCM_TXE&t;((unsigned char)0x10)&t;/* When in Transparent Mode */
 DECL|macro|SMCM_BSY
 mdefine_line|#define&t;SMCM_BSY&t;((unsigned char)0x04)
 DECL|macro|SMCM_TX
@@ -1042,6 +1046,56 @@ mdefine_line|#define SICR_ENET_MASK&t;((uint)0x000000ff)
 DECL|macro|SICR_ENET_CLKRT
 mdefine_line|#define SICR_ENET_CLKRT&t;((uint)0x0000003d)
 macro_line|#endif
+macro_line|#if (defined(CONFIG_TQM860) || defined(CONFIG_TQM860L))
+multiline_comment|/*&n; * TQM860 and TQM860L Configuration:&n; *&n; * Signal       PAR     DIR     ODR     DAT     Function&n; * Port A,  5    1       0       -       -       TCLK (CLK3) for Ethernet&n; * Port A,  7    1       0       -       -       RCLK (CLK1) for Ethernet&n; * Port A, 14    1       0       -       -       TXD for Ethernet (SCC1)&n; * Port A, 15    1       0       -       -       RXD for Ethernet (SCC1)&n; * Port C,  7    0       0       0       -       -&gt; ETH-LOOP&n; * Port C, 10    0       0       1       -       CD  for Ethernet (SCC1)&n; * Port C, 11    0       0       1       -       CTS for Ethernet (SCC1)&n; * Port C, 15    *       *       0       -       TENA/RTS for Ethernet&n; */
+DECL|macro|PA_ENET_RXD
+mdefine_line|#define PA_ENET_RXD&t;((ushort)0x0001)&t;/* PA 15 */
+DECL|macro|PA_ENET_TXD
+mdefine_line|#define PA_ENET_TXD&t;((ushort)0x0002)&t;/* PA 14 */
+DECL|macro|PA_ENET_TCLK
+mdefine_line|#define PA_ENET_TCLK&t;((ushort)0x0400)&t;/* PA  5 */
+DECL|macro|PA_ENET_RCLK
+mdefine_line|#define PA_ENET_RCLK&t;((ushort)0x0100)&t;/* PA  7 */
+DECL|macro|PC_ENET_TENA
+mdefine_line|#define PC_ENET_TENA&t;((ushort)0x0001)&t;/* PC 15 */
+DECL|macro|PC_ENET_CLSN
+mdefine_line|#define PC_ENET_CLSN&t;((ushort)0x0010)&t;/* PC 11 */
+DECL|macro|PC_ENET_RENA
+mdefine_line|#define PC_ENET_RENA&t;((ushort)0x0020)&t;/* PC 10 */
+multiline_comment|/* Control bits in the SICR to route TCLK (CLK3) and RCLK (CLK1) to&n; * SCC1.  Also, make sure GR1 (bit 24) and SC1 (bit 25) are zero.&n; */
+DECL|macro|SICR_ENET_MASK
+mdefine_line|#define SICR_ENET_MASK&t;((uint)0x000000ff)
+DECL|macro|SICR_ENET_CLKRT
+mdefine_line|#define SICR_ENET_CLKRT&t;((uint)0x00000026)
+macro_line|#endif&t;/* CONFIG_TQM860, TQM860L */
+macro_line|#ifdef CONFIG_TQM8xxL
+multiline_comment|/*&n; * TQM8xxL Configuration (except TQM860L):&n; *&n; * Signal       PAR     DIR     ODR     DAT     Function&n; * Port A,  5    1       0       -       -       TCLK (CLK3) for Ethernet&n; * Port A,  7    1       0       -       -       RCLK (CLK1) for Ethernet&n; * Port A, 12    1       0       -       -       TXD for Ethernet (SCC2)&n; * Port A, 13    1       0       -       -       RXD for Ethernet (SCC2)&n; * Port B, 18    1       1       -       -       TENA/RTS for Ethernet on STK8xx&n; * Port C,  7    0       0       0       -       -&gt; ETH-LOOP&n; * Port C,  8    0       0       1       -       CD  for Ethernet (SCC2)&n; * Port C,  9    0       0       1       -       CTS for Ethernet (SCC2)&n; * Port C, 14    *       *       0       -       TENA/RTS for Ethernet on FPS850&n; *&n; * Note: Using PC14 as RTS2 (TENA) does not work on the TQM850L when&n; * used with the starter-kit mainboard; we *must* use PB18 instead.&n; * For the FPS850 system, we *must* use PC14 :-(&n; */
+DECL|macro|PA_ENET_RXD
+mdefine_line|#define PA_ENET_RXD&t;((ushort)0x0004)&t;/* PA 13 */
+DECL|macro|PA_ENET_TXD
+mdefine_line|#define PA_ENET_TXD&t;((ushort)0x0008)&t;/* PA 12 */
+DECL|macro|PA_ENET_RCLK
+mdefine_line|#define PA_ENET_RCLK&t;((ushort)0x0100)&t;/* PA  7 */
+DECL|macro|PA_ENET_TCLK
+mdefine_line|#define PA_ENET_TCLK&t;((ushort)0x0400)&t;/* PA  5 */
+macro_line|#ifndef&t;CONFIG_FPS850&t;/* not valid on FPS board */
+DECL|macro|PB_ENET_TENA
+mdefine_line|#define&t;PB_ENET_TENA&t;((uint)0x00002000)
+macro_line|#endif&t;/* !CONFIG_FPS850 */
+macro_line|#ifdef&t;CONFIG_FPS850&t;/* FPS uses default configuration */
+DECL|macro|PC_ENET_TENA
+mdefine_line|#define PC_ENET_TENA&t;((ushort)0x0002)&t;/* PC 14 */
+macro_line|#endif&t;/* CONFIG_FPS850 */
+DECL|macro|PC_ENET_CLSN
+mdefine_line|#define PC_ENET_CLSN&t;((ushort)0x0040)&t;/* PC  9 */
+DECL|macro|PC_ENET_RENA
+mdefine_line|#define PC_ENET_RENA&t;((ushort)0x0080)&t;/* PC  8 */
+multiline_comment|/* Control bits in the SICR to route TCLK (CLK3) and RCLK (CLK1) to&n; * SCC2.  Also, make sure GR2 (bit 16) and SC2 (bit 17) are zero.&n; */
+DECL|macro|SICR_ENET_MASK
+mdefine_line|#define SICR_ENET_MASK&t;((uint)0x0000ff00)
+DECL|macro|SICR_ENET_CLKRT
+mdefine_line|#define SICR_ENET_CLKRT&t;((uint)0x00002600)
+macro_line|#endif&t;/* CONFIG_TQM8xxL */
 multiline_comment|/* SCC Event register as used by Ethernet.&n;*/
 DECL|macro|SCCE_ENET_GRA
 mdefine_line|#define SCCE_ENET_GRA&t;((ushort)0x0080)&t;/* Graceful stop complete */

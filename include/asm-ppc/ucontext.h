@@ -21,6 +21,11 @@ DECL|member|uc_stack
 id|stack_t
 id|uc_stack
 suffix:semicolon
+DECL|member|uc_mcontext
+r_struct
+id|sigcontext_struct
+id|uc_mcontext
+suffix:semicolon
 DECL|member|uc_sigmask
 id|sigset_t
 id|uc_sigmask

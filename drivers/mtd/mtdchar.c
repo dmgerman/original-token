@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,2,0)
 DECL|function|mtd_lseek
 r_static
@@ -306,11 +305,6 @@ op_star
 )paren
 id|file-&gt;private_data
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -328,11 +322,6 @@ id|put_mtd_device
 c_func
 (paren
 id|mtd
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|release_return

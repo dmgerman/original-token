@@ -34,10 +34,11 @@ macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/hw_irq.h&gt;
+macro_line|#include &lt;asm/nvram.h&gt;
 macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;asm/smplock.h&gt;
 macro_line|#endif /* CONFIG_SMP */
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -305,18 +306,11 @@ c_func
 id|disable_irq_nosync
 )paren
 suffix:semicolon
-DECL|variable|local_irq_count
+DECL|variable|irq_stat
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|local_irq_count
-)paren
-suffix:semicolon
-DECL|variable|local_bh_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_bh_count
+id|irq_stat
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
@@ -389,6 +383,22 @@ id|ucSystemType
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
+DECL|variable|pci_dev_io_base
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_dev_io_base
+)paren
+suffix:semicolon
+DECL|variable|pci_dev_mem_base
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_dev_mem_base
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#if !__INLINE_BITOPS
 DECL|variable|set_bit
@@ -1063,6 +1073,27 @@ c_func
 id|feature_test
 )paren
 suffix:semicolon
+DECL|variable|feature_set_gmac_power
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|feature_set_gmac_power
+)paren
+suffix:semicolon
+DECL|variable|feature_set_usb_power
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|feature_set_usb_power
+)paren
+suffix:semicolon
+DECL|variable|feature_set_firewire_power
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|feature_set_firewire_power
+)paren
+suffix:semicolon
 macro_line|#endif /* defined(CONFIG_ALL_PPC) */
 macro_line|#if defined(CONFIG_SCSI) &amp;&amp; defined(CONFIG_ALL_PPC)
 DECL|variable|note_scsi_host
@@ -1095,7 +1126,37 @@ c_func
 id|nvram_write_byte
 )paren
 suffix:semicolon
+DECL|variable|pmac_xpram_read
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pmac_xpram_read
+)paren
+suffix:semicolon
+DECL|variable|pmac_xpram_write
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pmac_xpram_write
+)paren
+suffix:semicolon
 macro_line|#endif /* CONFIG_NVRAM */
+macro_line|#ifdef CONFIG_PPC_RTC
+DECL|variable|mktime
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mktime
+)paren
+suffix:semicolon
+DECL|variable|to_tm
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|to_tm
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|__ashrdi3
 id|EXPORT_SYMBOL_NOVERS
 c_func

@@ -14053,6 +14053,10 @@ id|lp-&gt;media
 op_assign
 id|ANS
 suffix:semicolon
+id|lp-&gt;fdx
+op_assign
+id|lp-&gt;params.fdx
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default

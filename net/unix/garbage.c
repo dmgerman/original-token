@@ -312,7 +312,6 @@ multiline_comment|/*&n;&t; *&t;Avoid a recursive GC.&n;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|down_trylock
 c_func
 (paren
@@ -320,10 +319,8 @@ op_amp
 id|unix_gc_sem
 )paren
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|read_lock
 c_func
 (paren

@@ -17,7 +17,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1752,6 +1751,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;We enforce only one user at a time here with the open/close.&n; *&t;Also clear the previous interrupt data on an open, and clean&n; *&t;up things on a close.&n; */
+multiline_comment|/* We use rtc_lock to protect against concurrent opens. So the BKL is not&n; * needed here. Or anywhere else in this driver. */
 DECL|function|rtc_open
 r_static
 r_int
@@ -1769,7 +1769,12 @@ op_star
 id|file
 )paren
 (brace
-multiline_comment|/* If someday somebody decides to remove the kernel_lock on open and&n;&t; * close and ioctl this is gonna get open to races */
+id|spin_lock_irq
+(paren
+op_amp
+id|rtc_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1778,20 +1783,13 @@ op_amp
 id|RTC_IS_OPEN
 )paren
 (brace
-r_return
-op_minus
-id|EBUSY
+r_goto
+id|out_busy
 suffix:semicolon
 )brace
 id|rtc_status
 op_or_assign
 id|RTC_IS_OPEN
-suffix:semicolon
-id|spin_lock_irq
-(paren
-op_amp
-id|rtc_lock
-)paren
 suffix:semicolon
 id|rtc_irq_data
 op_assign
@@ -1805,6 +1803,18 @@ id|rtc_lock
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|out_busy
+suffix:colon
+id|spin_unlock_irq
+(paren
+op_amp
+id|rtc_lock
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
 )brace
 DECL|function|rtc_fasync
@@ -1860,11 +1870,6 @@ multiline_comment|/*&n;&t; * Turn off all interrupts once the device is no longe
 r_int
 r_char
 id|tmp
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|spin_lock_irq
 c_func
@@ -1957,12 +1962,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#endif
 id|spin_lock_irq
 (paren
@@ -1980,17 +1979,11 @@ op_amp
 id|rtc_lock
 )paren
 suffix:semicolon
+multiline_comment|/* No need for locking -- nobody else can do anything until this rmw is&n;&t; * committed, and no timer is running. */
 id|rtc_status
-op_assign
-id|rtc_status
-op_amp
+op_and_assign
 op_complement
 id|RTC_IS_OPEN
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_return
 l_int|0

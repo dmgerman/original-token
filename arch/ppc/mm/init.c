@@ -3858,6 +3858,13 @@ multiline_comment|/* 128 MB of instr. space at 0x0. */
 )brace
 macro_line|#else
 multiline_comment|/* How about ppc_md.md_find_end_of_memory instead of these&n;&t; * ifdefs?  -- Dan.&n;&t; */
+macro_line|#ifdef CONFIG_BOOTX_TEXT
+r_extern
+id|boot_infos_t
+op_star
+id|disp_bi
+suffix:semicolon
+macro_line|#endif
 DECL|function|MMU_init
 r_void
 id|__init
@@ -4396,6 +4403,21 @@ comma
 l_int|0x211
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BOOTX_TEXT
+multiline_comment|/* Must be done last, or ppc_md.progress will die */
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+id|map_bootx_text
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif /* CONFIG_4xx */
 multiline_comment|/*&n; * Initialize the bootmem system and give it all the memory we&n; * have available.&n; */

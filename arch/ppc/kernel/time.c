@@ -19,7 +19,7 @@ macro_line|#include &lt;asm/nvram.h&gt;
 macro_line|#include &lt;asm/cache.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 r_void
 id|smp_local_timer_interrupt
 c_func
@@ -84,10 +84,12 @@ id|dval
 comma
 id|d
 suffix:semicolon
+macro_line|#if 0
 r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#endif
 r_int
 r_int
 id|cpu
@@ -256,6 +258,8 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* -- BenH -- I&squot;m removing this for now since it can cause various&n;&t; *            troubles with local-time RTCs. Now that we have a&n;&t; *            /dev/rtc that uses ppc_md.set_rtc_time() on mac, it&n;&t; *            should be possible to program the RTC from userland&n;&t; *            in all cases.&n;&t; */
 multiline_comment|/*&n;&t;&t; * update the rtc when needed&n;&t;&t; */
 id|read_lock_irqsave
 c_func
@@ -325,6 +329,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;
 )brace
 macro_line|#ifdef CONFIG_SMP
 id|smp_local_timer_interrupt

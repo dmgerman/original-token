@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/prep_nvram.h&gt;
 macro_line|#include &lt;asm/mk48t59.h&gt;
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 multiline_comment|/*&n; * The motorola uses the m48t18 rtc (includes DS1643) whose registers&n; * are at a higher end of nvram (1ff8-1fff) than the ibm mc146818&n; * rtc (ds1386) which has regs at addr 0-d).  The intel gets&n; * past this because the bios emulates the mc146818.&n; *&n; * Why in the world did they have to use different clocks?&n; *&n; * Right now things are hacked to check which machine we&squot;re on then&n; * use the appropriate macro.  This is very very ugly and I should&n; * probably have a function that checks which machine we&squot;re on then&n; * does things correctly transparently or a function pointer which&n; * is setup at boot time to use the correct addresses.&n; * -- Cort&n; */
 multiline_comment|/*&n; * Set the hardware clock. -- Cort&n; */
 id|__prep

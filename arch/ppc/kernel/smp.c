@@ -25,7 +25,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/gemini.h&gt;
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 macro_line|#include &quot;open_pic.h&quot;
 DECL|variable|smp_threads_ready
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: mtdcore.c,v 1.8 2000/06/27 13:40:05 dwmw2 Exp $&n; *&n; * Core registration and callback routines for MTD &n; * drivers and users.&n; *&n; */
+multiline_comment|/*&n; * $Id: mtdcore.c,v 1.13 2000/07/13 14:27:37 dwmw2 Exp $&n; *&n; * Core registration and callback routines for MTD &n; * drivers and users.&n; *&n; */
 macro_line|#ifdef MTD_DEBUG
 DECL|macro|DEBUGLVL
 mdefine_line|#define DEBUGLVL debug
@@ -59,10 +59,40 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_MTD_PHYSMAP
+r_extern
+r_int
+id|init_physmap
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MTD_RPXLITE
+r_extern
+r_int
+id|init_rpxlite
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_MTD_OCTAGON
 r_extern
 r_int
 id|init_octagon5066
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MTD_PNC2000
+r_extern
+r_int
+id|init_pnc2000
 c_func
 (paren
 r_void
@@ -176,6 +206,7 @@ id|mtd_notifiers
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/**&n; *&t;add_mtd_device - register an MTD device &n; *&t;@mtd: pointer to new MTD device info structure&n; *&n; *&t;Add a device to the list of MTD devices present in the system, and&n; *&t;notify each currently active MTD &squot;user&squot; of its arrival. Returns&n; *&t;zero on success or 1 on failure, which currently will only happen&n; *&t;if the number of present devices exceeds MAX_MTD_DEVICES (i.e. 16)&n; */
 DECL|function|add_mtd_device
 r_int
 id|add_mtd_device
@@ -296,6 +327,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;del_mtd_device - unregister an MTD device &n; *&t;@mtd: pointer to MTD device info structure&n; *&n; *&t;Remove a device from the list of MTD devices present in the system,&n; *&t;and notify each currently active MTD &squot;user&squot; of its departure.&n; *&t;Returns zero on success or 1 on failure, which currently will happen&n; *&t;if the requested device does not appear to be present in the list.&n; */
 DECL|function|del_mtd_device
 r_int
 id|del_mtd_device
@@ -405,6 +437,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;register_mtd_user - register a &squot;user&squot; of MTD devices.&n; *&t;@new: pointer to notifier info structure&n; *&n; *&t;Registers a pair of callbacks function to be called upon addition&n; *&t;or removal of MTD devices. Causes the &squot;add&squot; callback to be immediately&n; *&t;invoked for each MTD device currently present in the system.&n; */
 DECL|function|register_mtd_user
 r_void
 id|register_mtd_user
@@ -478,6 +511,7 @@ id|mtd_table_mutex
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;register_mtd_user - unregister a &squot;user&squot; of MTD devices.&n; *&t;@new: pointer to notifier info structure&n; *&n; *&t;Removes a callback function pair from the list of &squot;users&squot; to be&n; *&t;notified upon addition or removal of MTD devices. Causes the &n; *&t;&squot;remove&squot; callback to be immediately invoked for each MTD device&n; *&t;currently present in the system.&n; */
 DECL|function|unregister_mtd_user
 r_int
 id|unregister_mtd_user
@@ -599,7 +633,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* get_mtd_device(): &n; * Prepare to use an MTD device referenced either by number or address.&n; *&n; * If &lt;num&gt; == -1, search the table for an MTD device located at &lt;mtd&gt;.&n; * If &lt;mtd&gt; == NULL, return the MTD device with number &lt;num&gt;.&n; * If both are set, return the MTD device with number &lt;num&gt; _only_ if it&n; *     is located at &lt;mtd&gt;.&n; */
+multiline_comment|/**&n; *&t;__get_mtd_device - obtain a validated handle for an MTD device&n; *&t;@mtd: last known address of the required MTD device&n; *&t;@num: internal device number of the required MTD device&n; *&n; *&t;Given a number and NULL address, return the num&squot;th entry in the device &n; *&t;table, if any.&t;Given an address and num == -1, search the device table&n; *&t;for a device with that address and return if it&squot;s still present. Given&n; *&t;both, return the num&squot;th driver only if its address matches. Return NULL&n; *&t;if not. get_mtd_device() increases the use count, but&n; *&t;__get_mtd_device() doesn&squot;t - you should generally use get_mtd_device().&n; */
 DECL|function|__get_mtd_device
 r_struct
 id|mtd_info
@@ -751,10 +785,196 @@ id|unregister_mtd_user
 )paren
 suffix:semicolon
 multiline_comment|/*====================================================================*/
-multiline_comment|/* /proc/mtd support */
+multiline_comment|/* Power management code */
+macro_line|#ifdef CONFIG_PM
+macro_line|#include &lt;linux/pm.h&gt;
+DECL|variable|mtd_pm_dev
+r_static
+r_struct
+id|pm_dev
+op_star
+id|mtd_pm_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|function|mtd_pm_callback
+r_static
+r_int
+id|mtd_pm_callback
+c_func
+(paren
+r_struct
+id|pm_dev
+op_star
+id|dev
+comma
+id|pm_request_t
+id|rqst
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+r_int
+id|ret
+op_assign
+l_int|0
+comma
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|down_trylock
+c_func
+(paren
+op_amp
+id|mtd_table_mutex
+)paren
+)paren
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rqst
+op_eq
+id|PM_SUSPEND
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|ret
+op_eq
+l_int|0
+op_logical_and
+id|i
+OL
+id|MAX_MTD_DEVICES
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mtd_table
+(braket
+id|i
+)braket
+op_logical_and
+id|mtd_table
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|suspend
+)paren
+id|ret
+op_assign
+id|mtd_table
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|suspend
+c_func
+(paren
+id|mtd_table
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+id|i
+op_assign
+id|MAX_MTD_DEVICES
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rqst
+op_eq
+id|PM_RESUME
+op_logical_or
+id|ret
+)paren
+(brace
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|i
+op_ge
+l_int|0
+suffix:semicolon
+id|i
+op_decrement
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mtd_table
+(braket
+id|i
+)braket
+op_logical_and
+id|mtd_table
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|resume
+)paren
+id|mtd_table
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|resume
+c_func
+(paren
+id|mtd_table
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+id|up
+c_func
+(paren
+op_amp
+id|mtd_table_mutex
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*====================================================================*/
+multiline_comment|/* Support for /proc/mtd */
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,2,0)
 DECL|variable|proc_mtd
+r_static
 r_struct
 id|proc_dir_entry
 op_star
@@ -1033,8 +1253,9 @@ multiline_comment|/* nothing more */
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/*====================================================================*/
+multiline_comment|/* Init code */
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
 DECL|function|init_others
 r_static
@@ -1062,8 +1283,29 @@ c_func
 suffix:semicolon
 multiline_comment|/* This covers both the DiskOnChip 2000 &n;&t;&t;     * and the DiskOnChip Millennium. &n;&t;&t;     * Theoretically all other DiskOnChip&n;&t;&t;     * devices too. */
 macro_line|#endif
+macro_line|#ifdef CONFIG_MTD_PHYSMAP
+id|init_physmap
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MTD_RPXLITE
+id|init_rpxlite
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_MTD_OCTAGON
 id|init_octagon5066
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MTD_PNC2000
+id|init_pnc2000
 c_func
 (paren
 )paren
@@ -1223,6 +1465,20 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PM
+id|mtd_pm_dev
+op_assign
+id|pm_register
+c_func
+(paren
+id|PM_UNKNOWN_DEV
+comma
+l_int|0
+comma
+id|mtd_pm_callback
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1243,6 +1499,25 @@ comma
 l_string|&quot;mtd&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PM
+r_if
+c_cond
+(paren
+id|mtd_pm_dev
+)paren
+(brace
+id|pm_unregister
+c_func
+(paren
+id|mtd_pm_dev
+)paren
+suffix:semicolon
+id|mtd_pm_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,2,0)
 r_if

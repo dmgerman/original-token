@@ -8,7 +8,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * pci_io_base returns the memory address at which you can access&n; * the I/O space for PCI bus number `bus&squot; (or NULL on error).&n; */
+multiline_comment|/*&n; * pci_io_base returns the memory address at which you can access&n; * the I/O space for PCI bus number `bus&squot; (or NULL on error).&n; * &n; * NOTE: This doesn&squot;t handle the new Uni-N chip which requires&n; *       per-device io_base. &n; */
 r_void
 op_star
 id|pci_io_base
@@ -17,6 +17,49 @@ c_func
 r_int
 r_int
 id|bus
+)paren
+suffix:semicolon
+multiline_comment|/* This version handles the new Uni-N host bridge, the iobase is now&n; * a per-device thing. I also added the memory base so PReP can&n; * be fixed to return 0xc0000000 (I didn&squot;t actually implement it)&n; */
+r_void
+op_star
+id|pci_dev_io_base
+c_func
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|devfn
+)paren
+suffix:semicolon
+r_void
+op_star
+id|pci_dev_mem_base
+c_func
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|devfn
+)paren
+suffix:semicolon
+multiline_comment|/* Returns the root-bridge number (Uni-N number) of a device */
+r_int
+id|pci_dev_root_bridge
+c_func
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|devfn
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * pci_device_loc returns the bus number and device/function number&n; * for a device on a PCI bus, given its device_node struct.&n; * It returns 0 if OK, -1 on error.&n; */

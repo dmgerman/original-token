@@ -1,61 +1,61 @@
 multiline_comment|/* Linux driver for Disk-On-Chip 2000       */
 multiline_comment|/* (c) 1999 Machine Vision Holdings, Inc.   */
 multiline_comment|/* Author: David Woodhouse &lt;dwmw2@mvhi.com&gt; */
-multiline_comment|/* $Id: doc2000.h,v 1.7 2000/06/26 20:40:53 dwmw2 Exp $ */
+multiline_comment|/* $Id: doc2000.h,v 1.8 2000/07/10 15:46:29 dwmw2 Exp $ */
 macro_line|#ifndef __MTD_DOC2000_H__
 DECL|macro|__MTD_DOC2000_H__
 mdefine_line|#define __MTD_DOC2000_H__
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
-DECL|macro|DoC_M_CDSN_IO
-mdefine_line|#define DoC_M_CDSN_IO 0x800
 DECL|macro|DoC_Sig1
 mdefine_line|#define DoC_Sig1 0
 DECL|macro|DoC_Sig2
 mdefine_line|#define DoC_Sig2 1
 DECL|macro|DoC_ChipID
-mdefine_line|#define DoC_ChipID 0x1000
+mdefine_line|#define DoC_ChipID&t;&t;0x1000
 DECL|macro|DoC_DOCStatus
-mdefine_line|#define DoC_DOCStatus 0x1001
+mdefine_line|#define DoC_DOCStatus&t;&t;0x1001
 DECL|macro|DoC_DOCControl
-mdefine_line|#define DoC_DOCControl 0x1002
+mdefine_line|#define DoC_DOCControl&t;&t;0x1002
 DECL|macro|DoC_FloorSelect
-mdefine_line|#define DoC_FloorSelect 0x1003
+mdefine_line|#define DoC_FloorSelect&t;&t;0x1003
 DECL|macro|DoC_CDSNControl
-mdefine_line|#define DoC_CDSNControl 0x1004
+mdefine_line|#define DoC_CDSNControl&t;&t;0x1004
 DECL|macro|DoC_CDSNDeviceSelect
-mdefine_line|#define DoC_CDSNDeviceSelect 0x1005
+mdefine_line|#define DoC_CDSNDeviceSelect &t;0x1005
 DECL|macro|DoC_ECCConf
-mdefine_line|#define DoC_ECCConf 0x1006
+mdefine_line|#define DoC_ECCConf &t;&t;0x1006
 DECL|macro|DoC_2k_ECCStatus
-mdefine_line|#define DoC_2k_ECCStatus 0x1007
+mdefine_line|#define DoC_2k_ECCStatus&t;0x1007
 DECL|macro|DoC_CDSNSlowIO
-mdefine_line|#define DoC_CDSNSlowIO 0x100d
+mdefine_line|#define DoC_CDSNSlowIO&t;&t;0x100d
 DECL|macro|DoC_ECCSyndrome0
-mdefine_line|#define DoC_ECCSyndrome0 0x1010
+mdefine_line|#define DoC_ECCSyndrome0&t;0x1010
 DECL|macro|DoC_ECCSyndrome1
-mdefine_line|#define DoC_ECCSyndrome1 0x1011
+mdefine_line|#define DoC_ECCSyndrome1&t;0x1011
 DECL|macro|DoC_ECCSyndrome2
-mdefine_line|#define DoC_ECCSyndrome2 0x1012
+mdefine_line|#define DoC_ECCSyndrome2&t;0x1012
 DECL|macro|DoC_ECCSyndrome3
-mdefine_line|#define DoC_ECCSyndrome3 0x1013
+mdefine_line|#define DoC_ECCSyndrome3&t;0x1013
 DECL|macro|DoC_ECCSyndrome4
-mdefine_line|#define DoC_ECCSyndrome4 0x1014
+mdefine_line|#define DoC_ECCSyndrome4&t;0x1014
 DECL|macro|DoC_ECCSyndrome5
-mdefine_line|#define DoC_ECCSyndrome5 0x1015
+mdefine_line|#define DoC_ECCSyndrome5&t;0x1015
 DECL|macro|DoC_AliasResolution
-mdefine_line|#define DoC_AliasResolution 0x101b
+mdefine_line|#define DoC_AliasResolution &t;0x101b
 DECL|macro|DoC_ConfigInput
-mdefine_line|#define DoC_ConfigInput 0x101c
+mdefine_line|#define DoC_ConfigInput&t;&t;0x101c
 DECL|macro|DoC_ReadPipeInit
-mdefine_line|#define DoC_ReadPipeInit 0x101d
+mdefine_line|#define DoC_ReadPipeInit &t;0x101d
 DECL|macro|DoC_WritePipeTerm
-mdefine_line|#define DoC_WritePipeTerm 0x101e
+mdefine_line|#define DoC_WritePipeTerm &t;0x101e
 DECL|macro|DoC_LastDataRead
-mdefine_line|#define DoC_LastDataRead 0x101f
+mdefine_line|#define DoC_LastDataRead &t;0x101f
 DECL|macro|DoC_NOP
-mdefine_line|#define DoC_NOP 0x1020
+mdefine_line|#define DoC_NOP &t;&t;0x1020
+DECL|macro|DoC_Mil_CDSN_IO
+mdefine_line|#define DoC_Mil_CDSN_IO &t;0x0800
 DECL|macro|DoC_2k_CDSN_IO
-mdefine_line|#define DoC_2k_CDSN_IO 0x1800
+mdefine_line|#define DoC_2k_CDSN_IO &t;&t;0x1800
 multiline_comment|/* How to access the device? &n; * On ARM, it&squot;ll be mmap&squot;d directly with 32-bit wide accesses. &n; * On PPC, it&squot;s mmap&squot;d and 16-bit wide.&n; * Others use readb/writeb &n; */
 macro_line|#if defined(__arm__) 
 DECL|macro|ReadDOC
@@ -74,50 +74,54 @@ DECL|macro|WriteDOC
 mdefine_line|#define WriteDOC(d, adr, reg)  writeb(d, ((unsigned long)adr) + DoC_##reg)
 macro_line|#endif
 DECL|macro|DOC_MODE_RESET
-mdefine_line|#define DOC_MODE_RESET 0
+mdefine_line|#define DOC_MODE_RESET &t;&t;0
 DECL|macro|DOC_MODE_NORMAL
-mdefine_line|#define DOC_MODE_NORMAL 1
+mdefine_line|#define DOC_MODE_NORMAL &t;1
 DECL|macro|DOC_MODE_RESERVED1
-mdefine_line|#define DOC_MODE_RESERVED1 2
+mdefine_line|#define DOC_MODE_RESERVED1 &t;2
 DECL|macro|DOC_MODE_RESERVED2
-mdefine_line|#define DOC_MODE_RESERVED2 3
+mdefine_line|#define DOC_MODE_RESERVED2 &t;3
 DECL|macro|DOC_MODE_MDWREN
-mdefine_line|#define DOC_MODE_MDWREN 4
+mdefine_line|#define DOC_MODE_MDWREN &t;4
 DECL|macro|DOC_MODE_CLR_ERR
-mdefine_line|#define DOC_MODE_CLR_ERR 0x80
+mdefine_line|#define DOC_MODE_CLR_ERR &t;0x80
 DECL|macro|DOC_ChipID_Doc2k
-mdefine_line|#define DOC_ChipID_Doc2k 0x20
+mdefine_line|#define DOC_ChipID_Doc2k &t;0x20
 DECL|macro|DOC_ChipID_DocMil
-mdefine_line|#define DOC_ChipID_DocMil 0x30
+mdefine_line|#define DOC_ChipID_DocMil &t;0x30
 DECL|macro|CDSN_CTRL_FR_B
-mdefine_line|#define CDSN_CTRL_FR_B 0x80
+mdefine_line|#define CDSN_CTRL_FR_B &t;&t;0x80
 DECL|macro|CDSN_CTRL_ECC_IO
-mdefine_line|#define CDSN_CTRL_ECC_IO 0x20
+mdefine_line|#define CDSN_CTRL_ECC_IO &t;0x20
 DECL|macro|CDSN_CTRL_FLASH_IO
-mdefine_line|#define CDSN_CTRL_FLASH_IO 0x10
+mdefine_line|#define CDSN_CTRL_FLASH_IO &t;0x10
 DECL|macro|CDSN_CTRL_WP
-mdefine_line|#define CDSN_CTRL_WP 8
+mdefine_line|#define CDSN_CTRL_WP &t;&t;0x08
 DECL|macro|CDSN_CTRL_ALE
-mdefine_line|#define CDSN_CTRL_ALE 4
+mdefine_line|#define CDSN_CTRL_ALE &t;&t;0x04
 DECL|macro|CDSN_CTRL_CLE
-mdefine_line|#define CDSN_CTRL_CLE 2
+mdefine_line|#define CDSN_CTRL_CLE &t;&t;0x02
 DECL|macro|CDSN_CTRL_CE
-mdefine_line|#define CDSN_CTRL_CE 1
+mdefine_line|#define CDSN_CTRL_CE &t;&t;0x01
 DECL|macro|DOC_ECC_RESET
-mdefine_line|#define DOC_ECC_RESET 0
+mdefine_line|#define DOC_ECC_RESET &t;&t;0
 DECL|macro|DOC_ECC_ERROR
-mdefine_line|#define DOC_ECC_ERROR 0x80
+mdefine_line|#define DOC_ECC_ERROR &t;&t;0x80
 DECL|macro|DOC_ECC_RW
-mdefine_line|#define DOC_ECC_RW 0x20
+mdefine_line|#define DOC_ECC_RW &t;&t;0x20
 DECL|macro|DOC_ECC__EN
-mdefine_line|#define DOC_ECC__EN 0x08
+mdefine_line|#define DOC_ECC__EN &t;&t;0x08
 DECL|macro|DOC_TOGGLE_BIT
-mdefine_line|#define DOC_TOGGLE_BIT 0x04
+mdefine_line|#define DOC_TOGGLE_BIT &t;&t;0x04
 DECL|macro|DOC_ECC_RESV
-mdefine_line|#define DOC_ECC_RESV 0x02
+mdefine_line|#define DOC_ECC_RESV &t;&t;0x02
+DECL|macro|DOC_ECC_IGNORE
+mdefine_line|#define DOC_ECC_IGNORE&t;&t;0x01
 multiline_comment|/* We have to also set the reserved bit 1 for enable */
 DECL|macro|DOC_ECC_EN
 mdefine_line|#define DOC_ECC_EN (DOC_ECC__EN | DOC_ECC_RESV)
+DECL|macro|DOC_ECC_DIS
+mdefine_line|#define DOC_ECC_DIS (DOC_ECC_IGNORE | DOC_ECC_RESV)
 DECL|struct|Nand
 r_struct
 id|Nand
@@ -146,6 +150,10 @@ DECL|macro|MAX_FLOORS
 mdefine_line|#define MAX_FLOORS 4
 DECL|macro|MAX_CHIPS
 mdefine_line|#define MAX_CHIPS 4
+DECL|macro|MAX_FLOORS_MIL
+mdefine_line|#define MAX_FLOORS_MIL 4
+DECL|macro|MAX_CHIPS_MIL
+mdefine_line|#define MAX_CHIPS_MIL 1
 DECL|struct|DiskOnChip
 r_struct
 id|DiskOnChip

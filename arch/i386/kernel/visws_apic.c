@@ -177,6 +177,13 @@ id|irq
 suffix:semicolon
 DECL|macro|shutdown_cobalt_irq
 mdefine_line|#define shutdown_cobalt_irq disable_cobalt_irq
+DECL|variable|irq_controller_lock
+r_static
+id|spinlock_t
+id|irq_controller_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|variable|cobalt_irq_type
 r_static
 r_struct

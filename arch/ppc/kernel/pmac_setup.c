@@ -39,11 +39,20 @@ macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/bootx.h&gt;
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;pmac_pic.h&quot;
 DECL|macro|SHOW_GATWICK_IRQS
 macro_line|#undef SHOW_GATWICK_IRQS
+r_extern
+r_void
+id|pmac_time_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_int
 r_int
 id|pmac_get_rtc_time
@@ -52,6 +61,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|pmac_set_rtc_time
 c_func
@@ -61,6 +71,7 @@ r_int
 id|nowtime
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|pmac_read_rtc_time
 c_func
@@ -68,6 +79,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|pmac_calibrate_decr
 c_func
@@ -75,6 +87,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|pmac_setup_pci_ptrs
 c_func
@@ -232,6 +245,58 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|pmac_nvram_update
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+op_star
+id|pmac_pci_dev_io_base
+c_func
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|devfn
+)paren
+suffix:semicolon
+r_extern
+r_void
+op_star
+id|pmac_pci_dev_mem_base
+c_func
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|devfn
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|pmac_pci_dev_root_bridge
+c_func
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|devfn
+)paren
+suffix:semicolon
 DECL|variable|drive_info
 r_int
 r_char
@@ -252,6 +317,14 @@ r_int
 id|has_l2cache
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|current_root_goodness
+r_static
+r_int
+id|current_root_goodness
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 r_extern
 r_char
@@ -1299,6 +1372,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#ifdef CONFIG_NVRAM
+id|pmac_nvram_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_DUMMY_CONSOLE
 id|conswitchp
 op_assign
@@ -1574,18 +1654,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* &n;&t; * Turns on the gmac clock so that it responds to PCI cycles&n;&t; * later, the driver may want to turn it off again to save&n;&t; * power when interface is down&n;&t; */
-r_struct
-id|device_node
-op_star
-id|uni_n
-op_assign
-id|find_devices
-c_func
-(paren
-l_string|&quot;uni-n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* &n;&t; * Turns OFF the gmac clock. The gmac driver will turn&n;&t; * it back ON when the interface is enabled. This save&n;&t; * power on portables.&n;&t; * &n;&t; * Note: We could also try to turn OFF the PHY. Since this&n;&t; * has to be done by both the gmac driver and this code,&n;&t; * I&squot;ll probably end-up moving some of this out of the&n;&t; * modular gmac driver into a non-modular stub containing&n;&t; * some basic PHY management and power management stuffs&n;&t; */
 r_struct
 id|device_node
 op_star
@@ -1595,38 +1664,6 @@ id|find_devices
 c_func
 (paren
 l_string|&quot;ethernet&quot;
-)paren
-suffix:semicolon
-r_int
-r_int
-op_star
-id|addr
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|uni_n
-op_logical_or
-id|uni_n-&gt;n_addrs
-OL
-l_int|1
-)paren
-r_return
-suffix:semicolon
-id|addr
-op_assign
-id|ioremap
-c_func
-(paren
-id|uni_n-&gt;addrs
-(braket
-l_int|0
-)braket
-dot
-id|address
-comma
-l_int|0x300
 )paren
 suffix:semicolon
 r_while
@@ -1658,22 +1695,14 @@ c_cond
 (paren
 id|gmac
 )paren
-(brace
-op_star
-(paren
-id|addr
-op_plus
-l_int|8
-)paren
-op_or_assign
-l_int|2
-suffix:semicolon
-id|eieio
+id|feature_set_gmac_power
 c_func
 (paren
+id|gmac
+comma
+l_int|0
 )paren
 suffix:semicolon
-)brace
 )brace
 r_extern
 r_char
@@ -1726,13 +1755,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_NVRAM  
-id|pmac_nvram_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 id|media_bay_init
 c_func
@@ -2025,6 +2047,9 @@ id|dev
 comma
 r_int
 id|part
+comma
+r_int
+id|goodness
 )paren
 (brace
 r_static
@@ -2041,12 +2066,20 @@ multiline_comment|/* Do nothing if the root has been set already. */
 r_if
 c_cond
 (paren
+(paren
+id|goodness
+OL
+id|current_root_goodness
+)paren
+op_logical_and
+(paren
 id|ROOT_DEV
 op_ne
 id|to_kdev_t
 c_func
 (paren
 id|DEFAULT_ROOT_DEVICE
+)paren
 )paren
 )paren
 r_return
@@ -2137,13 +2170,9 @@ id|boot_dev
 op_assign
 id|NODEV
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; (root on %d)&quot;
-comma
-id|part
-)paren
+id|current_root_goodness
+op_assign
+id|goodness
 suffix:semicolon
 )brace
 )brace
@@ -2646,7 +2675,7 @@ id|pmac_halt
 suffix:semicolon
 id|ppc_md.time_init
 op_assign
-l_int|NULL
+id|pmac_time_init
 suffix:semicolon
 id|ppc_md.set_rtc_time
 op_assign
@@ -2659,6 +2688,18 @@ suffix:semicolon
 id|ppc_md.calibrate_decr
 op_assign
 id|pmac_calibrate_decr
+suffix:semicolon
+id|ppc_md.pci_dev_io_base
+op_assign
+id|pmac_pci_dev_io_base
+suffix:semicolon
+id|ppc_md.pci_dev_mem_base
+op_assign
+id|pmac_pci_dev_mem_base
+suffix:semicolon
+id|ppc_md.pci_dev_root_bridge
+op_assign
+id|pmac_pci_dev_root_bridge
 suffix:semicolon
 macro_line|#if defined(CONFIG_VT) &amp;&amp; defined(CONFIG_ADB_KEYBOARD)
 id|ppc_md.kbd_setkeycode

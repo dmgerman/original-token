@@ -37,7 +37,7 @@ macro_line|#include &lt;asm/mk48t59.h&gt;
 macro_line|#include &lt;asm/prep_nvram.h&gt;
 macro_line|#include &lt;asm/raven.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;i8259.h&quot;
 macro_line|#include &quot;open_pic.h&quot;

@@ -13,7 +13,7 @@ macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;ppc4xx_pic.h&quot;
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 macro_line|#include &quot;walnut_setup.h&quot;
 multiline_comment|/* Function Prototypes */
 r_extern

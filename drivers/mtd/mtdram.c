@@ -1,13 +1,13 @@
-multiline_comment|/* &n; * mtdram - a test mtd device&n; * $Id: mtdram.c,v 1.13 2000/07/03 10:01:38 dwmw2 Exp $&n; * Author: Alexander Larsson &lt;alex@cendio.se&gt; &n; *&n; * Copyright (c) 1999 Alexander Larsson &lt;alex@cendio.se&gt;&n; *&n; * This code is GPL&n; *&n; */
+multiline_comment|/* &n; * mtdram - a test mtd device&n; * $Id: mtdram.c,v 1.15 2000/07/13 12:40:46 scote1 Exp $&n; * Author: Alexander Larsson &lt;alex@cendio.se&gt; &n; *&n; * Copyright (c) 1999 Alexander Larsson &lt;alex@cendio.se&gt;&n; *&n; * This code is GPL&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mtd/compatmac.h&gt;
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
 DECL|macro|MTDRAM_TOTAL_SIZE
-mdefine_line|#define MTDRAM_TOTAL_SIZE 1024*1024*8
+mdefine_line|#define MTDRAM_TOTAL_SIZE (CONFIG_MTDRAM_TOTAL_SIZE * 1024)
 DECL|macro|MTDRAM_ERASE_SIZE
-mdefine_line|#define MTDRAM_ERASE_SIZE 4*1024
+mdefine_line|#define MTDRAM_ERASE_SIZE (CONFIG_MTDRAM_ERASE_SIZE * 1024)
 singleline_comment|// We could store these in the mtd structure, but we only support 1 device..
 DECL|variable|mtd_info
 r_static

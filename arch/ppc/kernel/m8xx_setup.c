@@ -29,7 +29,7 @@ macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 macro_line|#include &quot;ppc8xx_pic.h&quot;
 r_static
 r_int

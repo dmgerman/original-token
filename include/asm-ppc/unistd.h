@@ -394,6 +394,14 @@ DECL|macro|__NR_lstat64
 mdefine_line|#define __NR_lstat64&t;&t;196
 DECL|macro|__NR_fstat64
 mdefine_line|#define __NR_fstat64&t;&t;197
+DECL|macro|__NR_sys_pciconfig_read
+mdefine_line|#define __NR_sys_pciconfig_read&t;&t;198
+DECL|macro|__NR_sys_pciconfig_write
+mdefine_line|#define __NR_sys_pciconfig_write&t;199
+DECL|macro|__NR_sys_pciconfig_iobase
+mdefine_line|#define __NR_sys_pciconfig_iobase&t;200
+DECL|macro|__NR_multiplexer
+mdefine_line|#define __NR_multiplexer&t;&t;201
 DECL|macro|__NR
 mdefine_line|#define __NR(n)&t;#n
 DECL|macro|__syscall_return

@@ -1,7 +1,6 @@
-multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs_fm.c,v 1.6 2000/06/30 14:13:03 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs_fm.c,v 1.8 2000/07/13 13:15:33 scote1 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/jffs.h&gt;
@@ -193,7 +192,7 @@ l_int|0
 suffix:semicolon
 id|fmc-&gt;sector_size
 op_assign
-l_int|65536
+id|mtd-&gt;erasesize
 suffix:semicolon
 id|fmc-&gt;max_chunk_size
 op_assign
@@ -2236,6 +2235,17 @@ op_mod
 id|ssize
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_flash_erasable_size() given non-aligned offset %lx (erasesize %lx)&bslash;n&quot;
+comma
+id|offset
+comma
+id|ssize
+)paren
+suffix:semicolon
 multiline_comment|/* The offset is not sector size aligned.  */
 r_return
 op_minus
@@ -2251,6 +2261,17 @@ OG
 id|mtd-&gt;size
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_flash_erasable_size given offset off the end of device (%lx &gt; %lx)&bslash;n&quot;
+comma
+id|offset
+comma
+id|mtd-&gt;size
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|2
@@ -2267,6 +2288,23 @@ OG
 id|mtd-&gt;size
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_flash_erasable_size() given length which runs off the end of device (ofs %lx + len %lx = %lx, &gt; %lx)&bslash;n&quot;
+comma
+id|offset
+comma
+id|size
+comma
+id|offset
+op_plus
+id|size
+comma
+id|mtd-&gt;size
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|3

@@ -19,6 +19,7 @@ macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 macro_line|#include &lt;video/fbcon-cfb16.h&gt;
 macro_line|#include &lt;video/fbcon-cfb24.h&gt;
 macro_line|#include &lt;video/fbcon-cfb32.h&gt;
+macro_line|#include &lt;video/fbcon-mac.h&gt;
 DECL|macro|dac_reg
 mdefine_line|#define dac_reg&t;(0x3c8)
 DECL|macro|dac_val
@@ -863,6 +864,15 @@ suffix:semicolon
 macro_line|#endif
 r_default
 suffix:colon
+macro_line|#ifdef FBCON_HAS_MAC
+id|sw
+op_assign
+op_amp
+id|fbcon_mac
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#else
 id|sw
 op_assign
 op_amp
@@ -870,6 +880,7 @@ id|fbcon_dummy
 suffix:semicolon
 r_return
 suffix:semicolon
+macro_line|#endif
 )brace
 id|memcpy
 c_func

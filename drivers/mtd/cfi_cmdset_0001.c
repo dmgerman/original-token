@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Common Flash Interface support:&n; *   Intel Extended Vendor Command Set (ID 0x0001)&n; *&n; * (C) 2000 Red Hat. GPL&squot;d&n; *&n; * $Id: cfi_cmdset_0001.c,v 1.20 2000/07/04 07:36:43 dwmw2 Exp $&n; */
+multiline_comment|/*&n; * Common Flash Interface support:&n; *   Intel Extended Vendor Command Set (ID 0x0001)&n; *&n; * (C) 2000 Red Hat. GPL&squot;d&n; *&n; * $Id: cfi_cmdset_0001.c,v 1.21 2000/07/13 10:36:14 dwmw2 Exp $&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2103,36 +2103,17 @@ id|chip-&gt;word_write_time
 id|chip-&gt;word_write_time
 op_increment
 suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;decreasing word_write_time to %d &#xfffd;s&bslash;n&quot;
-comma
-id|chip-&gt;word_write_time
-)paren
-suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
 id|z
 OG
-l_int|100
+l_int|1
 )paren
-(brace
 id|chip-&gt;word_write_time
 op_increment
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;increasing word_write_time to %d &#xfffd;s&bslash;n&quot;
-comma
-id|chip-&gt;word_write_time
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Done and happy. */
 id|chip-&gt;state
 op_assign

@@ -6,7 +6,6 @@ DECL|macro|current_text_addr
 mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/* Machine State Register (MSR) Fields */
 macro_line|#ifdef CONFIG_PPC64BRIDGE
@@ -904,6 +903,10 @@ DECL|macro|_MACH_walnut
 mdefine_line|#define _MACH_walnut&t;0x00001000&t;/* IBM &quot;Walnut&quot; 405GP eval. board */
 DECL|macro|_MACH_8260
 mdefine_line|#define _MACH_8260&t;0x00002000&t;/* Generic 8260 */
+DECL|macro|_MACH_tqm860
+mdefine_line|#define _MACH_tqm860&t;0x00004000&t;/* TQM860/L */
+DECL|macro|_MACH_tqm8xxL
+mdefine_line|#define _MACH_tqm8xxL&t;0x00008000&t;/* TQM8xxL */
 multiline_comment|/* see residual.h for these */
 DECL|macro|_PREP_Motorola
 mdefine_line|#define _PREP_Motorola 0x01  /* motorola prep */

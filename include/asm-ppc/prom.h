@@ -486,5 +486,13 @@ r_char
 id|c
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|map_bootx_text
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* _PPC_PROM_H */
 eof

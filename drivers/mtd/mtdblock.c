@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Direct MTD block device access&n; *&n; * $Id: mtdblock.c,v 1.16 2000/06/23 09:34:58 dwmw2 Exp $&n; */
+multiline_comment|/* &n; * Direct MTD block device access&n; *&n; * $Id: mtdblock.c,v 1.17 2000/07/13 14:25:54 dwmw2 Exp $&n; */
 macro_line|#ifdef MTDBLOCK_DEBUG
 DECL|macro|DEBUGLVL
 mdefine_line|#define DEBUGLVL debug

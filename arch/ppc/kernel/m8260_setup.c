@@ -28,7 +28,7 @@ macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/mpc8260.h&gt;
 macro_line|#include &lt;asm/immap_8260.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
-macro_line|#include &quot;time.h&quot;
+macro_line|#include &lt;asm/time.h&gt;
 macro_line|#include &quot;ppc8260_pic.h&quot;
 r_static
 r_int

@@ -1442,6 +1442,14 @@ id|usb_driver
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|usb_scan_devices
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* used these for multi-interface device registration */
 r_extern
 r_void

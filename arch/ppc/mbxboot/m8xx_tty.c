@@ -10,6 +10,45 @@ mdefine_line|#define MBX_CSR1&t;((volatile u_char *)0xfa100000)
 DECL|macro|CSR1_COMEN
 mdefine_line|#define CSR1_COMEN&t;(u_char)0x02
 macro_line|#endif
+macro_line|#ifdef TQM_SMC2_CONSOLE
+DECL|macro|PROFF_CONS
+mdefine_line|#define PROFF_CONS&t;PROFF_SMC2
+DECL|macro|CPM_CR_CH_CONS
+mdefine_line|#define CPM_CR_CH_CONS&t;CPM_CR_CH_SMC2
+DECL|macro|SMC_INDEX
+mdefine_line|#define SMC_INDEX&t;1
+DECL|variable|iopp
+r_static
+r_volatile
+id|iop8xx_t
+op_star
+id|iopp
+op_assign
+(paren
+id|iop8xx_t
+op_star
+)paren
+op_amp
+(paren
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_ioport
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|PROFF_CONS
+mdefine_line|#define PROFF_CONS&t;PROFF_SMC1
+DECL|macro|CPM_CR_CH_CONS
+mdefine_line|#define CPM_CR_CH_CONS&t;CPM_CR_CH_SMC1
+DECL|macro|SMC_INDEX
+mdefine_line|#define SMC_INDEX&t;0
+macro_line|#endif
 DECL|variable|cpmp
 r_static
 id|cpm8xx_t
@@ -85,7 +124,7 @@ op_amp
 (paren
 id|cp-&gt;cp_smc
 (braket
-l_int|0
+id|SMC_INDEX
 )braket
 )paren
 suffix:semicolon
@@ -98,7 +137,7 @@ op_star
 op_amp
 id|cp-&gt;cp_dparam
 (braket
-id|PROFF_SMC1
+id|PROFF_CONS
 )braket
 suffix:semicolon
 multiline_comment|/* Disable transmitter/receiver.&n;&t;*/
@@ -113,7 +152,7 @@ id|SMCMR_TEN
 suffix:semicolon
 macro_line|#ifndef CONFIG_MBX
 (brace
-multiline_comment|/* Initialize SMC1 and use it for the console port.&n;&t; */
+multiline_comment|/* Initialize SMCx and use it for the console port.&n;&t; */
 multiline_comment|/* Enable SDMA.&n;&t;*/
 (paren
 (paren
@@ -127,6 +166,23 @@ id|im_siu_conf.sc_sdcr
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef TQM_SMC2_CONSOLE
+multiline_comment|/* Use Port A for SMC2 instead of other functions.&n;&t;*/
+id|iopp-&gt;iop_papar
+op_or_assign
+l_int|0x00c0
+suffix:semicolon
+id|iopp-&gt;iop_padir
+op_and_assign
+op_complement
+l_int|0x00c0
+suffix:semicolon
+id|iopp-&gt;iop_paodr
+op_and_assign
+op_complement
+l_int|0x00c0
+suffix:semicolon
+macro_line|#else
 multiline_comment|/* Use Port B for SMCs instead of other functions.&n;&t;*/
 id|cp-&gt;cp_pbpar
 op_or_assign
@@ -142,12 +198,13 @@ op_and_assign
 op_complement
 l_int|0x00000cc0
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Allocate space for two buffer descriptors in the DP ram.&n;&t; * For now, this address seems OK, but it may have to&n;&t; * change with newer versions of the firmware.&n;&t; */
 id|dpaddr
 op_assign
 l_int|0x0800
 suffix:semicolon
-multiline_comment|/* Grab a few bytes from the top of memory.  EPPC-Bug isn&squot;t&n;&t; * running any more, so we can do this.&n;&t; */
+multiline_comment|/* Grab a few bytes from the top of memory for SMC FIFOs.&n;&t; */
 id|memaddr
 op_assign
 (paren
@@ -238,13 +295,18 @@ id|sp-&gt;smc_smce
 op_assign
 l_int|0xff
 suffix:semicolon
-multiline_comment|/* Set up the baud rate generator.&n;&t; * See 8xx_io/commproc.c for details.&n;&t; */
+multiline_comment|/* Set up the baud rate generator.&n;&t; * See 8xx_io/commproc.c for details.&n;&t; * This wires BRG1 to SMC1 and BRG2 to SMC2;&n;&t; */
 id|cp-&gt;cp_simode
 op_assign
 l_int|0x10000000
 suffix:semicolon
+macro_line|#ifdef TQM_SMC2_CONSOLE
+id|cp-&gt;cp_brgc2
+op_assign
+macro_line|#else
 id|cp-&gt;cp_brgc1
 op_assign
+macro_line|#endif
 (paren
 (paren
 (paren
@@ -438,7 +500,7 @@ suffix:semicolon
 r_else
 (brace
 macro_line|#endif /* ndef CONFIG_MBX */
-multiline_comment|/* SMC1 is used as console port.&n;&t;&t;*/
+multiline_comment|/* SMCx is used as console port.&n;&t;&t;*/
 id|tbdf
 op_assign
 (paren
@@ -469,7 +531,7 @@ op_assign
 id|mk_cr_cmd
 c_func
 (paren
-id|CPM_CR_CH_SMC1
+id|CPM_CR_CH_CONS
 comma
 id|CPM_CR_STOP_TX
 )paren
@@ -511,7 +573,7 @@ op_assign
 id|mk_cr_cmd
 c_func
 (paren
-id|CPM_CR_CH_SMC1
+id|CPM_CR_CH_CONS
 comma
 id|CPM_CR_INIT_TRX
 )paren
@@ -568,7 +630,7 @@ op_star
 op_amp
 id|cpmp-&gt;cp_dparam
 (braket
-id|PROFF_SMC1
+id|PROFF_CONS
 )braket
 suffix:semicolon
 id|tbdf
@@ -648,7 +710,7 @@ op_star
 op_amp
 id|cpmp-&gt;cp_dparam
 (braket
-id|PROFF_SMC1
+id|PROFF_CONS
 )braket
 suffix:semicolon
 id|rbdf
@@ -719,7 +781,7 @@ op_star
 op_amp
 id|cpmp-&gt;cp_dparam
 (braket
-id|PROFF_SMC1
+id|PROFF_CONS
 )braket
 suffix:semicolon
 id|rbdf

@@ -1,4 +1,4 @@
-singleline_comment|// $Id: octagon-5066.c,v 1.9 2000/07/03 10:01:38 dwmw2 Exp $
+singleline_comment|// $Id: octagon-5066.c,v 1.10 2000/07/13 14:04:23 dwmw2 Exp $
 multiline_comment|/* ######################################################################&n;&n;   Octagon 5066 MTD Driver. &n;  &n;   The Octagon 5066 is a SBC based on AMD&squot;s 586-WB running at 133 MHZ. It&n;   comes with a builtin AMD 29F016 flash chip and a socketed EEPROM that&n;   is replacable by flash. Both units are mapped through a multiplexer&n;   into a 32k memory window at 0xe8000. The control register for the &n;   multiplexing unit is located at IO 0x208 with a bit map of&n;     0-5 Page Selection in 32k increments&n;     6-7 Device selection:&n;        00 SSD off&n;        01 SSD 0 (Socket)&n;        10 SSD 1 (Flash chip)&n;        11 undefined&n;  &n;   On each SSD, the first 128k is reserved for use by the bios&n;   (actually it IS the bios..) This only matters if you are booting off the &n;   flash, you must not put a file system starting there.&n;   &n;   The driver tries to do a detection algorithm to guess what sort of devices&n;   are plugged into the sockets.&n;   &n;   ##################################################################### */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -101,7 +101,6 @@ id|page_n_dev
 op_ne
 id|byte
 )paren
-suffix:semicolon
 id|__oct5066_page
 c_func
 (paren

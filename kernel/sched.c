@@ -1162,14 +1162,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp
 id|timer
 )paren
 suffix:semicolon
-multiline_comment|/* RED-PEN. Timer may be running now on another cpu.&n;&t; * Pray that process will not exit enough fastly.&n;&t; */
 id|timeout
 op_assign
 id|expire

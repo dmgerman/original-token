@@ -102,11 +102,6 @@ op_star
 id|new_driver
 )paren
 (brace
-r_struct
-id|list_head
-op_star
-id|tmp
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -175,7 +170,29 @@ op_amp
 id|usb_driver_list
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * We go through all existing devices, and see if any of them would&n;&t; * be acceptable to the new driver.. This is done using a depth-first&n;&t; * search for devices without a registered driver already, then &n;&t; * running &squot;probe&squot; with each of the drivers registered on every one &n;&t; * of these.&n;&t; */
+id|usb_scan_devices
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * We go through all existing devices, and see if any of them would&n; * be acceptable to the new driver.. This is done using a depth-first&n; * search for devices without a registered driver already, then &n; * running &squot;probe&squot; with each of the drivers registered on every one &n; * of these.&n; */
+DECL|function|usb_scan_devices
+r_void
+id|usb_scan_devices
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|list_head
+op_star
+id|tmp
+suffix:semicolon
 id|tmp
 op_assign
 id|usb_bus_list.next
@@ -216,9 +233,6 @@ id|bus-&gt;root_hub
 )paren
 suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function is part of a depth-first search down the device tree,&n; * removing any instances of a device driver.&n; */
 DECL|function|usb_drivers_purge
@@ -7598,6 +7612,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|usb_deregister
+)paren
+suffix:semicolon
+DECL|variable|usb_scan_devices
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|usb_scan_devices
 )paren
 suffix:semicolon
 DECL|variable|usb_alloc_bus
