@@ -36,7 +36,7 @@ id|loff_t
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the coh filesystem.&n; */
+multiline_comment|/*&n; * We have mostly NULLs here: the current defaults are OK for&n; * the coh filesystem.&n; */
 DECL|variable|sysv_file_operations
 r_static
 r_struct
@@ -880,7 +880,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ok, append may not work when many processes are writing at the same time&n; * but so what. That way leads to madness anyway.&n; * But we need to protect against simultaneous truncate as we may end up&n; * writing our data into blocks that have meanwhile been incorporated into&n; * the freelist, thereby trashing the freelist.&n; */
+multiline_comment|/*&n; * OK, append may not work when many processes are writing at the same time&n; * but so what. That way leads to madness anyway.&n; * But we need to protect against simultaneous truncate as we may end up&n; * writing our data into blocks that have meanwhile been incorporated into&n; * the freelist, thereby trashing the freelist.&n; */
 r_if
 c_cond
 (paren

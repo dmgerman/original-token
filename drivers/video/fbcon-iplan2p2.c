@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/fbcon-iplan2p2.c -- Low level frame buffer operations&n; *&t;&t;&t;&t;  for interleaved bitplanes &#xfffd; la Atari (2&n; *&t;&t;&t;&t;  planes, 2 bytes interleave)&n; *&n; *&t;Created 5 Apr 1997 by Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;

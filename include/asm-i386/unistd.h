@@ -376,6 +376,8 @@ DECL|macro|__NR_capset
 mdefine_line|#define __NR_capset&t;&t;185
 DECL|macro|__NR_sigaltstack
 mdefine_line|#define __NR_sigaltstack&t;186
+DECL|macro|__NR_sendfile
+mdefine_line|#define __NR_sendfile&t;&t;187
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

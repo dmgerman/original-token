@@ -8,7 +8,6 @@ id|version
 op_assign
 l_string|&quot;sktr.c: v1.01 08/29/97 by Christoph Goos&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;

@@ -1,5 +1,4 @@
 multiline_comment|/* &n; * 7990.c -- LANCE ethernet IC generic routines. &n; * This is an attempt to separate out the bits of various ethernet&n; * drivers that are common because they all use the AMD 7990 LANCE &n; * (Local Area Network Controller for Ethernet) chip.&n; *&n; * Copyright (C) 05/1998 Peter Maydell &lt;pmaydell@chiark.greenend.org.uk&gt;&n; *&n; * Most of this stuff was obtained by looking at other LANCE drivers,&n; * in particular a2065.[ch]. The AMD C-LANCE datasheet was also helpful.&n; * NB: this was made easy by the fact that Jes Sorensen had cleaned up&n; * most of a2025 and sunlance with the aim of merging them, so the &n; * common code was pretty obvious.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

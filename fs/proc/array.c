@@ -855,7 +855,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;CPU  %u %u %u %lu&bslash;n&quot;
+l_string|&quot;cpu  %u %u %u %lu&bslash;n&quot;
 comma
 id|kstat.cpu_user
 comma

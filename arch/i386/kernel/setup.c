@@ -2499,7 +2499,7 @@ c_func
 id|p
 comma
 l_string|&quot;processor&bslash;t: %d&bslash;n&quot;
-l_string|&quot;CPU family&bslash;t: %c&bslash;n&quot;
+l_string|&quot;cpu family&bslash;t: %c&bslash;n&quot;
 l_string|&quot;model&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;vendor_id&bslash;t: %s&bslash;n&quot;
 comma
@@ -2732,9 +2732,9 @@ l_string|&quot;fdiv_bug&bslash;t: %s&bslash;n&quot;
 l_string|&quot;hlt_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;sep_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;f00f_bug&bslash;t: %s&bslash;n&quot;
-l_string|&quot;FPU&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;FPU_exception&bslash;t: %s&bslash;n&quot;
-l_string|&quot;CPUID level&bslash;t: %d&bslash;n&quot;
+l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;fpu_exception&bslash;t: %s&bslash;n&quot;
+l_string|&quot;cpuid level&bslash;t: %d&bslash;n&quot;
 l_string|&quot;wp&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;flags&bslash;t&bslash;t:&quot;
 comma

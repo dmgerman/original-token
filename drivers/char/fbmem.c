@@ -13,8 +13,8 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#ifdef __mc68000__
 macro_line|#include &lt;asm/setup.h&gt;
@@ -1340,7 +1340,7 @@ id|unit
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 DECL|function|try_to_load
 r_static
 r_void
@@ -1958,7 +1958,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -2398,7 +2398,7 @@ id|fb_info
 op_star
 id|info
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren

@@ -1,5 +1,4 @@
 multiline_comment|/* hplance.c  : the  Linux/hp300/lance ethernet driver&n; *&n; * Copyright (C) 05/1998 Peter Maydell &lt;pmaydell@chiark.greenend.org.uk&gt;&n; * Based on the Sun Lance driver and the NetBSD HP Lance driver&n; * Uses the generic 7990.c LANCE code.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

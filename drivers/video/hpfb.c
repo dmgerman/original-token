@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;HP300 Topcat framebuffer support (derived from macfb of all things)&n; *&t;Phil Blundell &lt;philb@gnu.org&gt; 1998&n; * &n; * Should this be moved to drivers/dio/video/ ? -- Peter Maydell&n; * No! -- Jes&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

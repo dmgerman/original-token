@@ -2,6 +2,7 @@ multiline_comment|/* NCR53C9x.c:  Defines and structures for the NCR53C9x generi
 macro_line|#ifndef NCR53C9X_H
 DECL|macro|NCR53C9X_H
 mdefine_line|#define NCR53C9X_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Macros for debugging messages */
 multiline_comment|/* #define DEBUG_ESP */
 multiline_comment|/* #define DEBUG_ESP_HME */

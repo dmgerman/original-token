@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/include/linux/console_compat.h -- Abstract cons
 macro_line|#ifndef _LINUX_CONSOLE_COMPAT_H_
 DECL|macro|_LINUX_CONSOLE_COMPAT_H_
 mdefine_line|#define _LINUX_CONSOLE_COMPAT_H_
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|video_num_columns
 macro_line|#undef video_num_columns
 DECL|macro|video_num_lines

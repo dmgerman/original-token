@@ -9,8 +9,8 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -364,7 +364,7 @@ op_logical_neg
 id|fcscount
 )paren
 (brace
-macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_FC4_SOC_MODULE) &amp;&amp; defined(CONFIG_KERNELD)
+macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_FC4_SOC_MODULE) &amp;&amp; defined(CONFIG_KMOD)
 id|request_module
 c_func
 (paren

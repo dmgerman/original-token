@@ -2926,7 +2926,7 @@ suffix:semicolon
 r_float
 id|c
 (braket
-l_int|40
+l_int|44
 )braket
 suffix:semicolon
 r_float

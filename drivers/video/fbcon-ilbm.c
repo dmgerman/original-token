@@ -970,8 +970,7 @@ op_star
 id|cdat4
 op_increment
 op_lshift
-l_int|32
-)paren
+l_int|24
 suffix:semicolon
 macro_line|#else
 macro_line|#error FIXME: No endianness??

@@ -195,9 +195,6 @@ id|un
 r_int
 id|i
 suffix:semicolon
-id|unicode
-id|hu
-suffix:semicolon
 r_if
 c_cond
 (paren

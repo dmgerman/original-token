@@ -1,6 +1,7 @@
 macro_line|#ifndef _M68K_PGTABLE_H
 DECL|macro|_M68K_PGTABLE_H
 mdefine_line|#define _M68K_PGTABLE_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/processor.h&gt;&t;/* For TASK_SIZE */

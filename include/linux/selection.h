@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * selection.h&n; *&n; * Interface between console.c, tty_io.c, vt.c, vc_screen.c and selection.c&n; */
-macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_int
 id|sel_cons
@@ -280,7 +279,6 @@ id|p
 )paren
 suffix:semicolon
 multiline_comment|/* how to access screen memory */
-macro_line|#include &lt;linux/config.h&gt;
 DECL|function|scr_writew
 r_static
 r_inline

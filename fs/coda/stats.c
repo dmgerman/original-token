@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * stats.c&n; * &n; * CODA operation statistics&n; *&n; * (c) March, 1998 Zhanyong Wan &lt;zhanyong.wan@yale.edu&gt;&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;

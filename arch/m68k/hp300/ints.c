@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/arch/m68k/hp300/ints.c&n; *&n; *  Copyright (C) 1998 Philip Blundell &lt;philb@gnu.org&gt;&n; *&n; *  This file contains the HP300-specific interrupt handling.  There&n; *  isn&squot;t much here -- we only use the autovector interrupts and at the&n; *  moment everything difficult is handled by the generic code.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

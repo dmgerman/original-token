@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/drivers/video/S3Triofb.c -- Open Firmware based frame buffer device&n; *&n; *&t;Copyright (C) 1997 Peter De Schrijver&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the Open Firmware based frame buffer device:&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/*&n;&t;Bugs : + OF dependencies should be removed.&n;               + This driver should be merged with the CyberVision driver. The&n;                 CyberVision is a Zorro III implementation of the S3Trio64 chip.&n;&n;*/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
