@@ -7,6 +7,12 @@ macro_line|#include &lt;linux/ip.h&gt;&t;&t;/* struct options */
 macro_line|#include &lt;linux/tcp.h&gt;&t;&t;/* struct tcphdr */
 macro_line|#include &quot;skbuff.h&quot;&t;&t;/* struct sk_buff */
 macro_line|#include &quot;protocol.h&quot;&t;&t;/* struct inet_protocol */
+macro_line|#ifdef CONFIG_AX25
+macro_line|#include &quot;ax25.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_IPX
+macro_line|#include &quot;ipx.h&quot;
+macro_line|#endif
 DECL|macro|SOCK_ARRAY_SIZE
 mdefine_line|#define SOCK_ARRAY_SIZE&t;64
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
@@ -110,7 +116,7 @@ comma
 DECL|member|zapped
 id|zapped
 comma
-multiline_comment|/* In ipx means not linked */
+multiline_comment|/* In ax25 &amp; ipx means not linked */
 DECL|member|broadcast
 id|broadcast
 suffix:semicolon
@@ -330,7 +336,80 @@ r_int
 r_int
 id|type
 suffix:semicolon
-multiline_comment|/* IPX type field */
+macro_line|#ifdef CONFIG_IPX
+DECL|member|ipx_source_addr
+DECL|member|ipx_dest_addr
+id|ipx_address
+id|ipx_source_addr
+comma
+id|ipx_dest_addr
+suffix:semicolon
+DECL|member|ipx_type
+r_int
+r_int
+id|ipx_type
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_AX25
+multiline_comment|/* Really we want to add a per protocol private area */
+DECL|member|ax25_source_addr
+DECL|member|ax25_dest_addr
+id|ax25_address
+id|ax25_source_addr
+comma
+id|ax25_dest_addr
+suffix:semicolon
+DECL|member|ax25_retxq
+r_struct
+id|sk_buff
+op_star
+r_volatile
+id|ax25_retxq
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|ax25_state
+DECL|member|ax25_vs
+DECL|member|ax25_vr
+DECL|member|ax25_lastrxnr
+DECL|member|ax25_lasttxnr
+r_char
+id|ax25_state
+comma
+id|ax25_vs
+comma
+id|ax25_vr
+comma
+id|ax25_lastrxnr
+comma
+id|ax25_lasttxnr
+suffix:semicolon
+DECL|member|ax25_condition
+r_char
+id|ax25_condition
+suffix:semicolon
+DECL|member|ax25_retxcnt
+r_char
+id|ax25_retxcnt
+suffix:semicolon
+DECL|member|ax25_xx
+r_char
+id|ax25_xx
+suffix:semicolon
+DECL|member|ax25_retxqi
+r_char
+id|ax25_retxqi
+suffix:semicolon
+DECL|member|ax25_rrtimer
+r_char
+id|ax25_rrtimer
+suffix:semicolon
+DECL|member|ax25_timer
+r_char
+id|ax25_timer
+suffix:semicolon
+macro_line|#endif  
 DECL|member|dummy_th
 r_struct
 id|tcphdr

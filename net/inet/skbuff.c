@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;A saner implementation of the skbuff stuff scattered everywhere&n; *&t;&t;in the old NET2D code.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Tracks memory and number of buffers for kernel memory report&n; *&t;&t;&t;&t;&t;and memory leak hunting.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;A saner implementation of the skbuff stuff scattered everywhere&n; *&t;&t;in the old NET2D code.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Tracks memory and number of buffers for kernel memory report&n; *&t;&t;&t;&t;&t;and memory leak hunting.&n; *&t;&t;Alan Cox&t;:&t;More generic kfree handler&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1259,9 +1260,16 @@ id|skb-&gt;sk
 r_if
 c_cond
 (paren
-id|rw
+id|skb-&gt;sk-&gt;prot
+op_ne
+l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|rw
+)paren
 id|skb-&gt;sk-&gt;prot
 op_member_access_from_pointer
 id|rfree
@@ -1274,9 +1282,7 @@ comma
 id|skb-&gt;mem_len
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|skb-&gt;sk-&gt;prot
 op_member_access_from_pointer
 id|wfree
@@ -1290,9 +1296,37 @@ id|skb-&gt;mem_len
 )paren
 suffix:semicolon
 )brace
-)brace
 r_else
 (brace
+multiline_comment|/* Non INET - default wmalloc/rmalloc handler */
+r_if
+c_cond
+(paren
+id|rw
+)paren
+id|skb-&gt;sk-&gt;rmem_alloc
+op_sub_assign
+id|skb-&gt;mem_len
+suffix:semicolon
+r_else
+id|skb-&gt;sk-&gt;wmem_alloc
+op_sub_assign
+id|skb-&gt;mem_len
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb-&gt;sk-&gt;dead
+)paren
+(brace
+id|wake_up
+c_func
+(paren
+id|skb-&gt;sk-&gt;sleep
+)paren
+suffix:semicolon
+)brace
 id|kfree_skbmem
 c_func
 (paren
@@ -1302,6 +1336,16 @@ id|skb-&gt;mem_len
 )paren
 suffix:semicolon
 )brace
+)brace
+r_else
+id|kfree_skbmem
+c_func
+(paren
+id|skb-&gt;mem_addr
+comma
+id|skb-&gt;mem_len
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Allocate a new skbuff. We do this ourselves so we can fill in a few &squot;private&squot;&n; *&t;fields and also do memory statistics to find all the [BEEP] leaks.&n; */
 DECL|function|alloc_skb

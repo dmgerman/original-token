@@ -442,6 +442,8 @@ id|rt
 suffix:semicolon
 r_int
 id|mask
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 r_int
@@ -511,6 +513,29 @@ op_or
 id|RTF_UP
 )paren
 suffix:semicolon
+multiline_comment|/*&n;   *&t;Gateway to our own interface is really direct&n;   */
+r_if
+c_cond
+(paren
+id|gw
+op_eq
+id|dev-&gt;pa_addr
+op_logical_or
+id|gw
+op_eq
+id|dst
+)paren
+(brace
+id|gw
+op_assign
+l_int|0
+suffix:semicolon
+id|rt-&gt;rt_flags
+op_and_assign
+op_complement
+id|RTF_GATEWAY
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -552,6 +577,7 @@ id|dst
 suffix:semicolon
 r_else
 (brace
+multiline_comment|/* Cut down to the route at interface mask level */
 id|rt-&gt;rt_dst
 op_assign
 (paren
@@ -559,6 +585,10 @@ id|dst
 op_amp
 id|dev-&gt;pa_mask
 )paren
+suffix:semicolon
+id|mask
+op_assign
+id|dev-&gt;pa_mask
 suffix:semicolon
 multiline_comment|/* We don&squot;t want new routes to our own net*/
 r_if
@@ -622,6 +652,15 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * What we have to do is loop though this until we have&n;   * found the first address which has the same generality&n;   * as the one in rt.  Then we can put rt in after it.&n;   */
+r_if
+c_cond
+(paren
+id|mask
+op_eq
+l_int|0
+)paren
+multiline_comment|/* Dont figure out masks for DYNAMIC routes. The mask is (our should be!)&n;  &t;&t;   the device mask (obtained above) */
+(brace
 r_for
 c_loop
 (paren
@@ -674,6 +713,7 @@ id|mask
 )paren
 )paren
 suffix:semicolon
+)brace
 id|save_flags
 c_func
 (paren
@@ -788,6 +828,7 @@ op_assign
 id|r-&gt;rt_next
 )paren
 (brace
+multiline_comment|/* When we find a route more general than ourselves, and we are not a gateway or it is a gateway then use it &n;  &t;   This puts gateways after direct links in the table and sorts (most) of the bit aligned subnetting out */
 r_if
 c_cond
 (paren
@@ -796,6 +837,16 @@ op_logical_neg
 id|r-&gt;rt_dst
 op_amp
 id|mask
+)paren
+op_logical_and
+(paren
+id|gw
+op_eq
+l_int|0
+op_logical_or
+id|r-&gt;rt_flags
+op_amp
+id|RTF_GATEWAY
 )paren
 )paren
 (brace
@@ -1251,14 +1302,21 @@ id|rtable
 op_star
 id|rt
 suffix:semicolon
+r_int
+id|type
+suffix:semicolon
 multiline_comment|/*&n;   * This is a hack, I think. -FvK&n;   */
 r_if
 c_cond
 (paren
+(paren
+id|type
+op_assign
 id|chk_addr
 c_func
 (paren
 id|daddr
+)paren
 )paren
 op_eq
 id|IS_MYADDR
@@ -1404,6 +1462,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|type
+op_eq
+id|IS_BROADCAST
+op_logical_and
 (paren
 id|rt-&gt;rt_dev-&gt;flags
 op_amp

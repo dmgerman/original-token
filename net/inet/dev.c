@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Interface (streams) handling functions.&n; *&n; * Version:&t;@(#)dev.c&t;1.0.19&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&t;&n; *&t;&t;Alan Cox:&t;check_addr returns a value for a wrong subnet&n; *&t;&t;&t;&t;ie not us but don&squot;t forward this!&n; *&t;&t;Alan Cox:&t;block timer if the inet_bh handler is running&n; *&t;&t;Alan Cox:&t;generic queue code added. A lot neater now&n; *&t;&t;C.E.Hawkins:&t;SIOCGIFCONF only reports &squot;upped&squot; interfaces&n; *&t;&t;C.E.Hawkins:&t;IFF_PROMISC support&n; *&t;&t;Alan Cox:&t;Supports Donald Beckers new hardware &n; *&t;&t;&t;&t;multicast layer, but not yet multicast lists.&n; *&t;&t;Alan Cox:&t;ip_addr_match problems with class A/B nets.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Interface (streams) handling functions.&n; *&n; * Version:&t;@(#)dev.c&t;1.0.19&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&t;&n; *&t;&t;Alan Cox:&t;check_addr returns a value for a wrong subnet&n; *&t;&t;&t;&t;ie not us but don&squot;t forward this!&n; *&t;&t;Alan Cox:&t;block timer if the inet_bh handler is running&n; *&t;&t;Alan Cox:&t;generic queue code added. A lot neater now&n; *&t;&t;C.E.Hawkins:&t;SIOCGIFCONF only reports &squot;upped&squot; interfaces&n; *&t;&t;C.E.Hawkins:&t;IFF_PROMISC support&n; *&t;&t;Alan Cox:&t;Supports Donald Beckers new hardware &n; *&t;&t;&t;&t;multicast layer, but not yet multicast lists.&n; *&t;&t;Alan Cox:&t;ip_addr_match problems with class A/B nets.&n; *&t;&t;C.E.Hawkins&t;IP 0.0.0.0 and also same net route fix. [FIXME: Ought to cause ICMP_REDIRECT]&n; *&t;&t;Alan Cox:&t;Removed bogus subnet check now the subnet code&n; *&t;&t;&t;&t;a) actually works for all A/B nets&n; *&t;&t;&t;&t;b) doesn&squot;t forward off the same interface.&n; *&t;&t;Alan Cox:&t;Multiple extra protocols&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -24,6 +24,85 @@ macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
+macro_line|#ifdef CONFIG_AX25
+macro_line|#include &quot;ax25.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_IPX
+DECL|variable|ipx_8023_type
+r_static
+r_struct
+id|packet_type
+id|ipx_8023_type
+op_assign
+(brace
+id|NET16
+c_func
+(paren
+id|ETH_P_802_3
+)paren
+comma
+l_int|0
+comma
+id|ipx_rcv
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|variable|ipx_packet_type
+r_static
+r_struct
+id|packet_type
+id|ipx_packet_type
+op_assign
+(brace
+id|NET16
+c_func
+(paren
+id|ETH_P_IPX
+)paren
+comma
+l_int|0
+comma
+id|ipx_rcv
+comma
+l_int|NULL
+comma
+op_amp
+id|ipx_8023_type
+)brace
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_AX25
+DECL|variable|ax25_packet_type
+r_static
+r_struct
+id|packet_type
+id|ax25_packet_type
+op_assign
+(brace
+id|NET16
+c_func
+(paren
+id|ETH_P_AX25
+)paren
+comma
+l_int|0
+comma
+id|ax25_rcv
+comma
+l_int|NULL
+comma
+macro_line|#ifdef CONFIG_IPX
+op_amp
+id|ipx_packet_type
+macro_line|#else
+l_int|NULL
+macro_line|#endif
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|variable|arp_packet_type
 r_static
 r_struct
@@ -44,8 +123,18 @@ id|arp_rcv
 comma
 l_int|NULL
 comma
+macro_line|#ifdef CONFIG_IPX
+macro_line|#ifndef CONFIG_AX25
+op_amp
+id|ipx_packet_type
+macro_line|#else
+op_amp
+id|ax25_packet_type
+macro_line|#endif
+macro_line|#else
 l_int|NULL
 multiline_comment|/* next */
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|ip_packet_type
@@ -471,28 +560,28 @@ id|dev-&gt;next
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_UP
+)paren
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|dev-&gt;pa_addr
 op_eq
 l_int|0
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_PROMISC
+multiline_comment|/* || (dev-&gt;flags&amp;IFF_PROMISC)*/
 )paren
-(brace
-multiline_comment|/* This allows all addresses through */
 r_return
 id|IS_MYADDR
 suffix:semicolon
-)brace
-r_else
-r_continue
-suffix:semicolon
-)brace
 multiline_comment|/* Is it the exact IP address? */
 r_if
 c_cond
@@ -592,6 +681,112 @@ id|IS_BROADCAST
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Nope. Check for Network broadcast. */
+r_if
+c_cond
+(paren
+id|IN_CLASSA
+c_func
+(paren
+id|dst
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|addr
+op_eq
+(paren
+id|dev-&gt;pa_addr
+op_or
+l_int|0xffffff00
+)paren
+)paren
+(brace
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_DEV
+comma
+l_string|&quot;CLASS A BROADCAST-1&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+id|IS_BROADCAST
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|IN_CLASSB
+c_func
+(paren
+id|dst
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|addr
+op_eq
+(paren
+id|dev-&gt;pa_addr
+op_or
+l_int|0xffff0000
+)paren
+)paren
+(brace
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_DEV
+comma
+l_string|&quot;CLASS B BROADCAST-1&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+id|IS_BROADCAST
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* IN_CLASSC */
+r_if
+c_cond
+(paren
+id|addr
+op_eq
+(paren
+id|dev-&gt;pa_addr
+op_or
+l_int|0xff000000
+)paren
+)paren
+(brace
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_DEV
+comma
+l_string|&quot;CLASS C BROADCAST-1&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+id|IS_BROADCAST
+suffix:semicolon
+)brace
+)brace
 )brace
 id|DPRINTF
 c_func
@@ -603,23 +798,6 @@ l_string|&quot;NONE&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|addr
-op_amp
-l_int|0xFF
-)paren
-op_eq
-l_int|0xFF
-)paren
-(brace
-multiline_comment|/* Wrong subnetted IS_BROADCAST */
-r_return
-id|IS_INVBCAST
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

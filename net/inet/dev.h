@@ -8,9 +8,9 @@ multiline_comment|/* for future expansion when we will have different priorities
 DECL|macro|DEV_NUMBUFFS
 mdefine_line|#define DEV_NUMBUFFS&t;3
 DECL|macro|MAX_ADDR_LEN
-mdefine_line|#define MAX_ADDR_LEN&t;6
+mdefine_line|#define MAX_ADDR_LEN&t;7
 DECL|macro|MAX_HEADER
-mdefine_line|#define MAX_HEADER&t;14
+mdefine_line|#define MAX_HEADER&t;18
 DECL|macro|IS_MYADDR
 mdefine_line|#define IS_MYADDR&t;1&t;&t;/* address is (one of) our own&t;*/
 DECL|macro|IS_LOOPBACK
@@ -431,6 +431,25 @@ comma
 r_void
 op_star
 id|addrs
+)paren
+suffix:semicolon
+DECL|macro|HAVE_SET_MAC_ADDR
+mdefine_line|#define HAVE_SET_MAC_ADDR  &t;&t; 
+DECL|member|set_mac_address
+r_int
+(paren
+op_star
+id|set_mac_address
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_void
+op_star
+id|addr
 )paren
 suffix:semicolon
 )brace

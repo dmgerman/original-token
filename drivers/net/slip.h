@@ -174,6 +174,8 @@ DECL|macro|SL_MODE_SLIP6
 mdefine_line|#define SL_MODE_SLIP6&t;2&t;&t;/* Matt Dillon&squot;s printable slip */
 DECL|macro|SL_MODE_CSLIP6
 mdefine_line|#define SL_MODE_CSLIP6&t;(SL_MODE_SLIP|SL_MODE_CSLIP)
+DECL|macro|SL_MODE_AX25
+mdefine_line|#define SL_MODE_AX25&t;4
 DECL|member|xdata
 DECL|member|xbits
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;SOCK - AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Numerous verify_area() problems&n; *&t;&t;Alan Cox&t;:&t;Connecting on a connecting socket&n; *&t;&t;&t;&t;&t;now returns an error for tcp.&n; *&t;&t;Alan Cox&t;:&t;sock-&gt;protocol is set correctly.&n; *&t;&t;&t;&t;&t;and is not sometimes left as 0.&n; *&t;&t;Alan Cox&t;:&t;connect handles icmp errors on a&n; *&t;&t;&t;&t;&t;connect properly. Unfortunately there&n; *&t;&t;&t;&t;&t;is a restart syscall nasty there. I&n; *&t;&t;&t;&t;&t;can&squot;t match BSD without hacking the C&n; *&t;&t;&t;&t;&t;library. Ideas urgently sought!&n; *&t;&t;Alan Cox&t;:&t;Disallow bind() to addresses that are&n; *&t;&t;&t;&t;&t;not ours - especially broadcast ones!!&n; *&t;&t;Alan Cox&t;:&t;Socket 1024 _IS_ ok for users. (fencepost)&n; *&t;&t;Alan Cox&t;:&t;sock_wfree/sock_rfree don&squot;t destroy sockets,&n; *&t;&t;&t;&t;&t;instead they leave that for the DESTROY timer.&n; *&t;&t;Alan Cox&t;:&t;Clean up error flag in accept&n; *&t;&t;Alan Cox&t;:&t;TCP ack handling is buggy, the DESTROY timer&n; *&t;&t;&t;&t;&t;was buggy. Put a remove_sock() in the handler&n; *&t;&t;&t;&t;&t;for memory when we hit 0. Also altered the timer&n; *&t;&t;&t;&t;&t;code. The ACK stuff can wait and needs major &n; *&t;&t;&t;&t;&t;TCP layer surgery.&n; *&t;&t;Alan Cox&t;:&t;Fixed TCP ack bug, removed remove sock&n; *&t;&t;&t;&t;&t;and fixed timer/inet_bh race.&n; *&t;&t;Alan Cox&t;:&t;Added zapped flag for TCP&n; *&t;&t;Alan Cox&t;:&t;Move kfree_skb into skbuff.c and tidied up surplus code&n; *&t;&t;Alan Cox&t;:&t;for new sk_buff allocations wmalloc/rmalloc now call alloc_skb&n; *&t;&t;Alan Cox&t;:&t;kfree_s calls now are kfree_skbmem so we can track skb resources&n; *&t;&t;Alan Cox&t;:&t;Supports socket option broadcast now as does udp. Packet and raw need fixing.&n; *&t;&t;Alan Cox&t;:&t;Added RCVBUF,SNDBUF size setting. It suddenely occured to me how easy it was so...&n; *&t;&t;Rick Sladkey&t;:&t;Relaxed UDP rules for matching packets.&n; *&t;&t;C.E.Hawkins&t;:&t;IFF_PROMISC/SIOCGHWADDR support&n; *&t;Pauline Middelink&t;:&t;Pidentd support&n; *&t;&t;Alan Cox&t;:&t;Fixed connect() taking signals I think.&n; *&t;&t;Alan Cox&t;:&t;SO_LINGER supported&n; *&n; * To Fix:&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;SOCK - AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Numerous verify_area() problems&n; *&t;&t;Alan Cox&t;:&t;Connecting on a connecting socket&n; *&t;&t;&t;&t;&t;now returns an error for tcp.&n; *&t;&t;Alan Cox&t;:&t;sock-&gt;protocol is set correctly.&n; *&t;&t;&t;&t;&t;and is not sometimes left as 0.&n; *&t;&t;Alan Cox&t;:&t;connect handles icmp errors on a&n; *&t;&t;&t;&t;&t;connect properly. Unfortunately there&n; *&t;&t;&t;&t;&t;is a restart syscall nasty there. I&n; *&t;&t;&t;&t;&t;can&squot;t match BSD without hacking the C&n; *&t;&t;&t;&t;&t;library. Ideas urgently sought!&n; *&t;&t;Alan Cox&t;:&t;Disallow bind() to addresses that are&n; *&t;&t;&t;&t;&t;not ours - especially broadcast ones!!&n; *&t;&t;Alan Cox&t;:&t;Socket 1024 _IS_ ok for users. (fencepost)&n; *&t;&t;Alan Cox&t;:&t;sock_wfree/sock_rfree don&squot;t destroy sockets,&n; *&t;&t;&t;&t;&t;instead they leave that for the DESTROY timer.&n; *&t;&t;Alan Cox&t;:&t;Clean up error flag in accept&n; *&t;&t;Alan Cox&t;:&t;TCP ack handling is buggy, the DESTROY timer&n; *&t;&t;&t;&t;&t;was buggy. Put a remove_sock() in the handler&n; *&t;&t;&t;&t;&t;for memory when we hit 0. Also altered the timer&n; *&t;&t;&t;&t;&t;code. The ACK stuff can wait and needs major &n; *&t;&t;&t;&t;&t;TCP layer surgery.&n; *&t;&t;Alan Cox&t;:&t;Fixed TCP ack bug, removed remove sock&n; *&t;&t;&t;&t;&t;and fixed timer/inet_bh race.&n; *&t;&t;Alan Cox&t;:&t;Added zapped flag for TCP&n; *&t;&t;Alan Cox&t;:&t;Move kfree_skb into skbuff.c and tidied up surplus code&n; *&t;&t;Alan Cox&t;:&t;for new sk_buff allocations wmalloc/rmalloc now call alloc_skb&n; *&t;&t;Alan Cox&t;:&t;kfree_s calls now are kfree_skbmem so we can track skb resources&n; *&t;&t;Alan Cox&t;:&t;Supports socket option broadcast now as does udp. Packet and raw need fixing.&n; *&t;&t;Alan Cox&t;:&t;Added RCVBUF,SNDBUF size setting. It suddenely occured to me how easy it was so...&n; *&t;&t;Rick Sladkey&t;:&t;Relaxed UDP rules for matching packets.&n; *&t;&t;C.E.Hawkins&t;:&t;IFF_PROMISC/SIOCGHWADDR support&n; *&t;Pauline Middelink&t;:&t;Pidentd support&n; *&t;&t;Alan Cox&t;:&t;Fixed connect() taking signals I think.&n; *&t;&t;Alan Cox&t;:&t;SO_LINGER supported&n; *&t;&t;Alan Cox&t;:&t;Error reporting fixes&n; *&t;&t;Anonymous&t;:&t;inet_create tidied up (sk-&gt;reuse setting)&n; *&n; * To Fix:&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2680,6 +2680,10 @@ id|sk-&gt;num
 op_assign
 l_int|0
 suffix:semicolon
+id|sk-&gt;reuse
+op_assign
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -3065,10 +3069,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|sk-&gt;destroy
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;reuse
 op_assign
 l_int|0
 suffix:semicolon
@@ -4317,9 +4317,17 @@ id|sock-&gt;state
 op_assign
 id|SS_UNCONNECTED
 suffix:semicolon
-r_return
+id|err
+op_assign
 op_minus
 id|sk-&gt;err
+suffix:semicolon
+id|sk-&gt;err
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 multiline_comment|/* set by tcp_err() */
 )brace
@@ -4347,9 +4355,16 @@ id|sock-&gt;state
 op_assign
 id|SS_UNCONNECTED
 suffix:semicolon
-r_return
-op_minus
+id|err
+op_assign
 id|sk-&gt;err
+suffix:semicolon
+id|sk-&gt;err
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 r_return
@@ -7573,7 +7588,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society Net2Debugged [1.24]&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society Net2Debugged [1.27]&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Set up our UNIX VFS major device. */

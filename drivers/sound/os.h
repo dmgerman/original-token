@@ -14,10 +14,10 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;sys/kd.h&gt;
+macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &quot;soundcard.h&quot;
+macro_line|#include &lt;linux/soundcard.h&gt;
 DECL|typedef|snd_rw_buf
 r_typedef
 r_char

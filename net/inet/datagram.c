@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;SUCS&t;NET2 Debugged.&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-). &n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; */
+multiline_comment|/*&n; *&t;SUCS&t;NET2 Debugged.&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-). &n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -83,6 +83,61 @@ op_star
 id|err
 op_assign
 l_int|0
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sk-&gt;err
+)paren
+(brace
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+op_star
+id|err
+op_assign
+op_minus
+id|sk-&gt;err
+suffix:semicolon
+id|sk-&gt;err
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/* Sequenced packets can come disconnected. If so we report the problem */
+r_if
+c_cond
+(paren
+id|sk-&gt;type
+op_eq
+id|SOCK_SEQPACKET
+op_logical_and
+id|sk-&gt;state
+op_ne
+id|TCP_ESTABLISHED
+)paren
+(brace
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+op_star
+id|err
+op_assign
+op_minus
+id|ENOTCONN
 suffix:semicolon
 r_return
 l_int|NULL
@@ -401,7 +456,7 @@ id|size
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Datagram select: Again totally generic. Moved from udp.c&n; */
+multiline_comment|/*&n; *&t;Datagram select: Again totally generic. Moved from udp.c&n; *&t;Now does seqpacket.&n; */
 DECL|function|datagram_select
 r_int
 id|datagram_select
@@ -437,6 +492,23 @@ id|sel_type
 r_case
 id|SEL_IN
 suffix:colon
+r_if
+c_cond
+(paren
+id|sk-&gt;type
+op_eq
+id|SOCK_SEQPACKET
+op_logical_and
+id|sk-&gt;state
+op_eq
+id|TCP_CLOSE
+)paren
+(brace
+multiline_comment|/* Connection closed: Wake up */
+r_return
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -26,8 +26,12 @@ DECL|macro|ETH_P_ARP
 mdefine_line|#define ETH_P_ARP&t;0x0806&t;&t;/* Address Resolution packet&t;*/
 DECL|macro|ETH_P_RARP
 mdefine_line|#define ETH_P_RARP      0x0835&t;&t;/* Reverse Addr Res packet&t;*/
+DECL|macro|ETH_P_IPX
+mdefine_line|#define ETH_P_IPX&t;0x8137&t;&t;/* IPX over DIX&t;&t;&t;*/
 DECL|macro|ETH_P_802_3
 mdefine_line|#define ETH_P_802_3&t;0x0001&t;&t;/* Dummy type for 802.3 frames  */
+DECL|macro|ETH_P_AX25
+mdefine_line|#define ETH_P_AX25&t;0x0002&t;&t;/* Dummy protocol id for AX.25  */
 multiline_comment|/* Define the Ethernet Broadcast Address (48 bits set to &quot;1&quot;). */
 DECL|macro|ETH_A_BCAST
 mdefine_line|#define ETH_A_BCAST     &quot;&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&quot;

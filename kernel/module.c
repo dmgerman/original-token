@@ -111,7 +111,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|name
+id|module_name
 op_eq
 l_int|NULL
 op_logical_or

@@ -12,6 +12,12 @@ macro_line|#endif
 macro_line|#ifdef&t;CONFIG_INET
 macro_line|#  include &quot;inet/inet.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_IPX
+macro_line|#include &quot;inet/ipxcall.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_AX25
+macro_line|#include &quot;inet/ax25call.h&quot;
+macro_line|#endif
 DECL|variable|protocols
 r_struct
 id|ddi_proto
@@ -28,6 +34,22 @@ id|unix_proto_init
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef  CONFIG_IPX
+(brace
+l_string|&quot;IPX&quot;
+comma
+id|ipx_proto_init
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_AX25  
+(brace
+l_string|&quot;AX.25&quot;
+comma
+id|ax25_proto_init
+)brace
+comma
+macro_line|#endif  
 macro_line|#ifdef&t;CONFIG_INET
 (brace
 l_string|&quot;INET&quot;

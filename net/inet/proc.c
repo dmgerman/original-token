@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;@(#)proc.c&t;1.0.5&t;05/27/93&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;Pidentd support&n; *&n; * To Do:&n; *&t;&t;Put the creating userid in the proc/net/... files. This will&n; *&t;&t;allow us to write an RFC931 daemon for Linux&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;@(#)proc.c&t;1.0.5&t;05/27/93&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;Pidentd support&n; *&t;&t;Alan Cox&t;:&t;Make /proc safer.&n; *&n; * To Do:&n; *&t;&t;Put the creating userid in the proc/net/... files. This will&n; *&t;&t;allow us to write an RFC931 daemon for Linux&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -85,6 +85,7 @@ comma
 l_string|&quot;sl  local_address rem_address   st tx_queue rx_queue tr tm-&gt;when uid&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n; *&t;This was very pretty but didn&squot;t work when a socket is destroyed at the wrong moment&n; *&t;(eg a syn recv socket getting a reset), or a memory timer destroy. Instead of playing&n; *&t;with timers we just concede defeat and cli().&n; */
 r_for
 c_loop
 (paren
@@ -100,6 +101,11 @@ id|i
 op_increment
 )paren
 (brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sp
 op_assign
 id|s_array
@@ -275,6 +281,12 @@ op_assign
 id|sp-&gt;next
 suffix:semicolon
 )brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* We only turn interrupts back on for a moment, but because the interrupt queues anything built up&n;&t;&t;   before this will clear before we jump back and cli, so its not as bad as it looks */
 )brace
 r_return
 id|strlen
