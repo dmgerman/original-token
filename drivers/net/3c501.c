@@ -23,12 +23,11 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_IP_MULTICAST */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-DECL|macro|BLOCKOUT_2
-mdefine_line|#define BLOCKOUT_2
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed.&n;   The 3c501 can be at many locations, but here are the popular ones. */
 DECL|variable|__initdata
 r_static
@@ -213,6 +212,11 @@ r_int
 id|loading
 suffix:semicolon
 multiline_comment|/* Spot buffer load collisions */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+multiline_comment|/* Serializing lock */
 )brace
 suffix:semicolon
 "&f;"
@@ -442,6 +446,11 @@ id|ioaddr
 )paren
 )paren
 (brace
+r_struct
+id|net_local
+op_star
+id|lp
+suffix:semicolon
 r_const
 r_char
 op_star
@@ -786,6 +795,17 @@ id|net_local
 )paren
 )paren
 suffix:semicolon
+id|lp
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;The EL1-specific entries in the device structure.&n;&t; */
 id|dev-&gt;open
 op_assign
@@ -1062,16 +1082,14 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Avoid incoming interrupts between us flipping tbusy and flipping&n;&t; *&t;mode as the driver assumes tbusy is a faithful indicator of card&n;&t; *&t;state&n;&t; */
-id|cli
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Avoid timer-based retransmission conflicts.&n;&t; */
@@ -1094,15 +1112,19 @@ op_ne
 l_int|0
 )paren
 (brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1149,14 +1171,6 @@ op_add_assign
 id|skb-&gt;len
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Command mode with status cleared should [in theory]&n;&t;&t; *&t;mean no more interrupts can be pending on the card.&n;&t;&t; */
-macro_line|#ifdef BLOCKOUT_1
-id|disable_irq
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 id|outb_p
 c_func
 (paren
@@ -1182,9 +1196,12 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Turn interrupts back on while we spend a pleasant afternoon&n;&t;&t; *&t;loading bytes into the board&n;&t;&t; */
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1226,7 +1243,6 @@ id|GP_LOW
 )paren
 suffix:semicolon
 multiline_comment|/* the board reuses the same register */
-macro_line|#ifndef BLOCKOUT_1
 r_if
 c_cond
 (paren
@@ -1253,12 +1269,20 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_goto
 id|load_it_again_sam
 suffix:semicolon
 multiline_comment|/* Sigh... */
 )brace
-macro_line|#endif
 id|outb
 c_func
 (paren
@@ -1272,14 +1296,6 @@ id|lp-&gt;loading
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef BLOCKOUT_1
-id|enable_irq
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -1361,6 +1377,7 @@ id|irq
 (brace
 id|printk
 (paren
+id|KERN_ERR
 l_string|&quot;3c501 driver: irq %d for unknown device.&bslash;n&quot;
 comma
 id|irq
@@ -1382,6 +1399,13 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;What happened ?&n;&t; */
 id|axsr
 op_assign
@@ -1402,6 +1426,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: el_interrupt() aux=%#02x&quot;
 comma
 id|dev-&gt;name
@@ -1417,6 +1442,7 @@ id|dev-&gt;interrupt
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Reentering the interrupt driver!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1426,7 +1452,6 @@ id|dev-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifndef BLOCKOUT_1
 r_if
 c_cond
 (paren
@@ -1441,20 +1466,13 @@ id|dev-&gt;tbusy
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Inconsistent state loading while not in tx&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#ifdef BLOCKOUT_3
-id|lp-&gt;loading
-op_assign
-l_int|2
-suffix:semicolon
-multiline_comment|/* So we can spot loading interruptions */
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1471,7 +1489,6 @@ c_func
 id|TX_STATUS
 )paren
 suffix:semicolon
-macro_line|#ifdef BLOCKOUT_2
 r_if
 c_cond
 (paren
@@ -1491,6 +1508,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Interrupt while loading [&quot;
 comma
 id|dev-&gt;name
@@ -1526,10 +1544,16 @@ id|dev-&gt;interrupt
 op_assign
 l_int|0
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1540,6 +1564,7 @@ l_int|6
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot; txsr=%02x gp=%04x rp=%04x&quot;
 comma
 id|txsr
@@ -1714,6 +1739,13 @@ suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
 l_int|0
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -1930,6 +1962,13 @@ suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
 l_int|0
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon

@@ -155,6 +155,8 @@ DECL|macro|DMA_MODE_WRITE
 mdefine_line|#define DMA_MODE_WRITE&t;0x48&t;/* memory to I/O, no autoinit, increment, single mode */
 DECL|macro|DMA_MODE_CASCADE
 mdefine_line|#define DMA_MODE_CASCADE 0xC0   /* pass thru DREQ-&gt;HRQ, DACK&lt;-HLDA only */
+DECL|macro|DMA_AUTOINIT
+mdefine_line|#define DMA_AUTOINIT&t;0x10
 r_extern
 id|spinlock_t
 id|dma_spin_lock

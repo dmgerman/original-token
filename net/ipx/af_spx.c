@@ -242,6 +242,7 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Called on connection receive so cannot be GFP_KERNEL&n;&t; */
 id|sk
 op_assign
 id|sk_alloc
@@ -249,7 +250,7 @@ c_func
 (paren
 id|PF_IPX
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 comma
 l_int|1
 )paren

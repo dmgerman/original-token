@@ -7,8 +7,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/lp_m68k.h&gt;
 macro_line|#include &lt;linux/lp_intern.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; *  why bother around with the pio driver when the interrupt works;&n; *  so, for &quot;security&quot; reasons only, it&squot;s configurable here.&n; *  saves some bytes, at least ...&n; */
@@ -491,6 +492,9 @@ r_int
 id|flags
 suffix:semicolon
 r_int
+id|timeout
+suffix:semicolon
+r_int
 id|rc
 suffix:semicolon
 r_int
@@ -678,23 +682,19 @@ id|lp_error
 )paren
 (brace
 multiline_comment|/* something blocked printing, so we don&squot;t want to sleep too long,&n;&t;     in case we have to rekick the interrupt */
-id|current-&gt;timeout
+id|timeout
 op_assign
-id|jiffies
-op_plus
 id|LP_TIMEOUT_POLLED
 suffix:semicolon
 )brace
 r_else
 (brace
-id|current-&gt;timeout
+id|timeout
 op_assign
-id|jiffies
-op_plus
 id|LP_TIMEOUT_INTERRUPT
 suffix:semicolon
 )brace
-id|interruptible_sleep_on
+id|interruptible_sleep_on_timeout
 c_func
 (paren
 op_amp
@@ -704,6 +704,8 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|lp_wait_q
+comma
+id|timeout
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1037,16 +1039,20 @@ macro_line|#ifdef LP_DEBUG
 r_if
 c_cond
 (paren
+id|time_after
+c_func
+(paren
 id|jiffies
-op_minus
+comma
 id|lp_last_call
-OG
+op_plus
 id|lp_table
 (braket
 id|dev
 )braket
 op_member_access_from_pointer
 id|time
+)paren
 )paren
 (brace
 id|lp_total_chars
@@ -1334,15 +1340,10 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|timeout
-suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|timeout
 )paren
 suffix:semicolon
 )brace

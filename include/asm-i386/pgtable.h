@@ -23,7 +23,7 @@ mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
 multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * ..but the i386 has somewhat limited tlb flushing capabilities,&n; * and page-granular flushes are available only on i486 and up.&n; */
 DECL|macro|__flush_tlb
 mdefine_line|#define __flush_tlb() &bslash;&n;do { unsigned long tmpreg; __asm__ __volatile__(&quot;movl %%cr3,%0&bslash;n&bslash;tmovl %0,%%cr3&quot;:&quot;=r&quot; (tmpreg) : :&quot;memory&quot;); } while (0)
-macro_line|#ifndef CONFIG_INVLPG
+macro_line|#ifndef CONFIG_X86_INVLPG
 DECL|macro|__flush_tlb_one
 mdefine_line|#define __flush_tlb_one(addr) flush_tlb()
 macro_line|#else

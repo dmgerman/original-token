@@ -4531,6 +4531,16 @@ id|buflength
 op_assign
 id|skb-&gt;len
 suffix:semicolon
+multiline_comment|/* tx_bytes counting -- Nolan Leake */
+id|ep-&gt;stats.tx_bytes
+op_add_assign
+id|ep-&gt;tx_ring
+(braket
+id|entry
+)braket
+dot
+id|txlength
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5731,6 +5741,11 @@ id|skb
 suffix:semicolon
 id|ep-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+multiline_comment|/* rx_bytes counting -- Nolan Leake */
+id|ep-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
 suffix:semicolon
 )brace
 id|work_done

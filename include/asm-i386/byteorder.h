@@ -19,7 +19,7 @@ id|__u32
 id|x
 )paren
 (brace
-macro_line|#ifdef CONFIG_BSWAP
+macro_line|#ifdef CONFIG_X86_BSWAP
 id|__asm__
 c_func
 (paren

@@ -62,15 +62,6 @@ op_minus
 l_int|1
 )brace
 suffix:semicolon
-DECL|variable|Cx86_step
-r_static
-r_char
-id|Cx86_step
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* decoded Cyrix step number */
 multiline_comment|/*&n; * Bus types ..&n; */
 DECL|variable|EISA_bus
 r_int
@@ -433,21 +424,6 @@ id|memory_alt_end
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|macro|VMALLOC_RESERVE
-mdefine_line|#define VMALLOC_RESERVE&t;(64 &lt;&lt; 20)&t;/* 64MB for vmalloc */
-DECL|macro|MAXMEM
-mdefine_line|#define MAXMEM&t;((unsigned long)(-PAGE_OFFSET-VMALLOC_RESERVE))
-r_if
-c_cond
-(paren
-id|memory_end
-OG
-id|MAXMEM
-)paren
-id|memory_end
-op_assign
-id|MAXMEM
-suffix:semicolon
 id|memory_end
 op_and_assign
 id|PAGE_MASK
@@ -741,6 +717,34 @@ id|cmdline_p
 op_assign
 id|command_line
 suffix:semicolon
+DECL|macro|VMALLOC_RESERVE
+mdefine_line|#define VMALLOC_RESERVE&t;(64 &lt;&lt; 20)&t;/* 64MB for vmalloc */
+DECL|macro|MAXMEM
+mdefine_line|#define MAXMEM&t;((unsigned long)(-PAGE_OFFSET-VMALLOC_RESERVE))
+r_if
+c_cond
+(paren
+id|memory_end
+OG
+id|MAXMEM
+)paren
+(brace
+id|memory_end
+op_assign
+id|MAXMEM
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Warning only %ldMB will be used.&bslash;n&quot;
+comma
+id|MAXMEM
+op_rshift
+l_int|20
+)paren
+suffix:semicolon
+)brace
 id|memory_end
 op_add_assign
 id|PAGE_OFFSET
@@ -871,6 +875,7 @@ id|dummy_con
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
+multiline_comment|/*&n;&t; *&t;Check the bugs that will bite us before we get booting&n;&t; */
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -925,6 +930,26 @@ l_int|4
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|cpuid
+c_func
+(paren
+l_int|0x80000001
+comma
+op_amp
+id|dummy
+comma
+op_amp
+id|dummy
+comma
+op_amp
+id|dummy
+comma
+op_amp
+(paren
+id|c-&gt;x86_capability
+)paren
+)paren
 suffix:semicolon
 id|v
 op_assign
@@ -1036,21 +1061,23 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Use the Cyrix DEVID CPU registers if avail. to get more detailed info.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+multiline_comment|/*&n; * Read Cyrix DEVID registers (DIR) to get more detailed info. about the CPU&n; */
+DECL|function|do_cyrix_devid
 r_static
+r_inline
 r_void
 id|do_cyrix_devid
 c_func
 (paren
-r_struct
-id|cpuinfo_x86
+r_int
+r_char
 op_star
-id|c
-)paren
+id|dir0
+comma
+r_int
+r_char
+op_star
+id|dir1
 )paren
 (brace
 r_int
@@ -1140,7 +1167,8 @@ op_eq
 id|ccr2
 )paren
 multiline_comment|/* old Cx486SLC/DLC */
-id|c-&gt;x86_model
+op_star
+id|dir0
 op_assign
 l_int|0xfd
 suffix:semicolon
@@ -1155,7 +1183,8 @@ comma
 id|ccr2
 )paren
 suffix:semicolon
-id|c-&gt;x86_model
+op_star
+id|dir0
 op_assign
 l_int|0xfe
 suffix:semicolon
@@ -1173,7 +1202,8 @@ id|ccr3
 suffix:semicolon
 multiline_comment|/* restore CCR3 */
 multiline_comment|/* read DIR0 and DIR1 CPU registers */
-id|c-&gt;x86_model
+op_star
+id|dir0
 op_assign
 id|getCx86
 c_func
@@ -1181,7 +1211,8 @@ c_func
 id|CX86_DIR0
 )paren
 suffix:semicolon
-id|c-&gt;x86_mask
+op_star
+id|dir1
 op_assign
 id|getCx86
 c_func
@@ -1196,6 +1227,15 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Cx86_dir0_msb is a HACK needed by check_cx686_cpuid/slop in bugs.h in&n; * order to identify the Cyrix CPU model after we&squot;re out of setup.c&n; */
+DECL|variable|__initdata
+r_int
+r_char
+id|Cx86_dir0_msb
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_char
@@ -1330,16 +1370,6 @@ id|__initdata
 op_assign
 l_string|&quot;12233445&quot;
 suffix:semicolon
-DECL|variable|__initdata
-r_static
-r_char
-id|cyrix_model_oldstep
-(braket
-)braket
-id|__initdata
-op_assign
-l_string|&quot;A step&quot;
-suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1358,11 +1388,15 @@ id|c
 (brace
 r_int
 r_char
+id|dir0
+comma
 id|dir0_msn
 comma
 id|dir0_lsn
 comma
 id|dir1
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 op_star
@@ -1380,33 +1414,32 @@ suffix:semicolon
 id|do_cyrix_devid
 c_func
 (paren
-id|c
+op_amp
+id|dir0
+comma
+op_amp
+id|dir1
 )paren
 suffix:semicolon
+id|Cx86_dir0_msb
+op_assign
 id|dir0_msn
 op_assign
-id|c-&gt;x86_model
+id|dir0
 op_rshift
 l_int|4
 suffix:semicolon
+multiline_comment|/* identifies CPU &quot;family&quot;   */
 id|dir0_lsn
 op_assign
-id|c-&gt;x86_model
+id|dir0
 op_amp
 l_int|0xf
 suffix:semicolon
-id|dir1
+multiline_comment|/* model or clock multiplier */
+multiline_comment|/* common case step number/rev -- exceptions handled below */
+id|c-&gt;x86_model
 op_assign
-id|c-&gt;x86_mask
-suffix:semicolon
-multiline_comment|/* common case stepping number -- exceptions handled below */
-id|sprintf
-c_func
-(paren
-id|Cx86_step
-comma
-l_string|&quot;%d.%d&quot;
-comma
 (paren
 id|dir1
 op_rshift
@@ -1414,13 +1447,14 @@ l_int|4
 )paren
 op_plus
 l_int|1
-comma
+suffix:semicolon
+id|c-&gt;x86_mask
+op_assign
 id|dir1
 op_amp
-l_int|0x0f
-)paren
+l_int|0xf
 suffix:semicolon
-multiline_comment|/* Now cook; the original recipe is by Channing Corn, from Cyrix.&n;&t; * We do the same thing for each generation: we work out&n;&t; * the model, multiplier and stepping.&n;&t; */
+multiline_comment|/* Now cook; the original recipe is by Channing Corn, from Cyrix.&n;&t; * We do the same thing for each generation: we work out&n;&t; * the model, multiplier and stepping.  Black magic included,&n;&t; * to make the silicon step/rev numbers match the printed ones.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -1542,10 +1576,9 @@ id|p
 op_assign
 id|Cx86_cb
 suffix:semicolon
-id|Cx86_step
-(braket
-l_int|0
-)braket
+(paren
+id|c-&gt;x86_model
+)paren
 op_increment
 suffix:semicolon
 )brace
@@ -1563,6 +1596,7 @@ r_case
 l_int|4
 suffix:colon
 multiline_comment|/* MediaGX/GXm */
+multiline_comment|/*&n;&t;&t; *&t;Life sometimes gets weiiiiiiiird if we use this&n;&t;&t; *&t;on the MediaGX. So we turn it off for now. &n;&t;&t; */
 multiline_comment|/* GXm supports extended cpuid levels &squot;ala&squot; AMD */
 r_if
 c_cond
@@ -1579,6 +1613,11 @@ id|c
 )paren
 suffix:semicolon
 multiline_comment|/* get CPU marketing name */
+id|c-&gt;x86_capability
+op_and_assign
+op_complement
+id|X86_FEATURE_TSC
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1607,10 +1646,7 @@ id|Cx86_cb
 op_plus
 l_int|2
 suffix:semicolon
-id|Cx86_step
-(braket
-l_int|0
-)braket
+id|c-&gt;x86_model
 op_assign
 (paren
 id|dir1
@@ -1619,9 +1655,14 @@ l_int|0x20
 )paren
 ques
 c_cond
-l_char|&squot;1&squot;
+l_int|1
 suffix:colon
-l_char|&squot;2&squot;
+l_int|2
+suffix:semicolon
+id|c-&gt;x86_capability
+op_and_assign
+op_complement
+id|X86_FEATURE_TSC
 suffix:semicolon
 )brace
 r_break
@@ -1630,12 +1671,6 @@ r_case
 l_int|5
 suffix:colon
 multiline_comment|/* 6x86MX/M II */
-multiline_comment|/* the TSC is broken (for now) */
-id|c-&gt;x86_capability
-op_and_assign
-op_complement
-l_int|16
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1708,10 +1743,9 @@ op_eq
 l_int|0x20
 )paren
 )paren
-id|Cx86_step
-(braket
-l_int|0
-)braket
+(paren
+id|c-&gt;x86_model
+)paren
 op_increment
 suffix:semicolon
 r_break
@@ -1719,7 +1753,7 @@ suffix:semicolon
 r_case
 l_int|0xf
 suffix:colon
-multiline_comment|/* Cyrix 486 without DIR registers */
+multiline_comment|/* Cyrix 486 without DEVID registers */
 r_switch
 c_cond
 (paren
@@ -1765,24 +1799,20 @@ id|Cx486S_name
 l_int|0
 )braket
 suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|Cx86_step
-comma
-id|cyrix_model_oldstep
-)paren
-suffix:semicolon
-id|c-&gt;x86_mask
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* must != 0 to print */
 r_break
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_default
+suffix:colon
+multiline_comment|/* unknown (shouldn&squot;t happen, we know everyone ;-) */
+id|dir0_msn
+op_assign
+l_int|7
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 id|strcpy
 c_func
@@ -2139,25 +2169,25 @@ comma
 l_int|5
 comma
 (brace
-l_string|&quot;K5/SSA5 (PR75, PR90, PR100)&quot;
+l_string|&quot;K5/SSA5&quot;
 comma
-l_string|&quot;K5 (PR120, PR133)&quot;
+l_string|&quot;K5&quot;
 comma
-l_string|&quot;K5 (PR166)&quot;
+l_string|&quot;K5&quot;
 comma
-l_string|&quot;K5 (PR200)&quot;
-comma
-l_int|NULL
+l_string|&quot;K5&quot;
 comma
 l_int|NULL
 comma
-l_string|&quot;K6 (PR166 - PR266)&quot;
+l_int|NULL
 comma
-l_string|&quot;K6 (PR166 - PR300)&quot;
+l_string|&quot;K6&quot;
 comma
-l_string|&quot;K6-2 (PR233 - PR333)&quot;
+l_string|&quot;K6&quot;
 comma
-l_string|&quot;K6-3 (PR300 - PR450)&quot;
+l_string|&quot;K6-2&quot;
+comma
+l_string|&quot;K6-3&quot;
 comma
 l_int|NULL
 comma
@@ -2235,7 +2265,7 @@ l_int|NULL
 comma
 l_int|NULL
 comma
-l_int|NULL
+l_string|&quot;C6-2&quot;
 comma
 l_int|NULL
 comma
@@ -2364,6 +2394,21 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|c-&gt;x86_vendor
+op_eq
+id|X86_VENDOR_AMD
+op_logical_and
+id|amd_model
+c_func
+(paren
+id|c
+)paren
+)paren
+r_return
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2605,21 +2650,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|c-&gt;x86_vendor
-op_eq
-id|X86_VENDOR_AMD
-op_logical_and
-id|amd_model
-c_func
-(paren
-id|c
-)paren
-)paren
-r_return
-suffix:semicolon
 id|sprintf
 c_func
 (paren
@@ -2633,6 +2663,49 @@ id|c-&gt;x86_model
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Perform early boot up checks for a valid TSC. See arch/i386/kernel/time.c&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|dodgy_tsc
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+id|get_cpu_vendor
+c_func
+(paren
+op_amp
+id|boot_cpu_data
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|boot_cpu_data.x86_vendor
+op_ne
+id|X86_VENDOR_CYRIX
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|cyrix_model
+c_func
+(paren
+op_amp
+id|boot_cpu_data
+)paren
+suffix:semicolon
+)brace
+DECL|macro|rdmsr
+mdefine_line|#define rdmsr(msr,val1,val2) &bslash;&n;       __asm__ __volatile__(&quot;rdmsr&quot; &bslash;&n;&t;&t;&t;    : &quot;=a&quot; (val1), &quot;=d&quot; (val2) &bslash;&n;&t;&t;&t;    : &quot;c&quot; (msr))
+DECL|macro|wrmsr
+mdefine_line|#define wrmsr(msr,val1,val2) &bslash;&n;     __asm__ __volatile__(&quot;wrmsr&quot; &bslash;&n;&t;&t;&t;  : /* no outputs */ &bslash;&n;&t;&t;&t;  : &quot;c&quot; (msr), &quot;a&quot; (val1), &quot;d&quot; (val2))
 DECL|variable|__initdata
 r_static
 r_char
@@ -2756,29 +2829,78 @@ c_cond
 (paren
 id|c-&gt;x86_mask
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|c-&gt;x86_vendor
-op_eq
-id|X86_VENDOR_CYRIX
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; stepping %s&quot;
-comma
-id|Cx86_step
-)paren
-suffix:semicolon
-r_else
 id|printk
 c_func
 (paren
 l_string|&quot; stepping %02x&quot;
 comma
 id|c-&gt;x86_mask
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c-&gt;x86_vendor
+op_eq
+id|X86_VENDOR_CENTAUR
+)paren
+(brace
+id|u32
+id|hv
+comma
+id|lv
+suffix:semicolon
+id|rdmsr
+c_func
+(paren
+l_int|0x107
+comma
+id|lv
+comma
+id|hv
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;nCentaur FSR was 0x%X &quot;
+comma
+id|lv
+)paren
+suffix:semicolon
+id|lv
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+id|lv
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|7
+)paren
+suffix:semicolon
+multiline_comment|/* lv|=(1&lt;&lt;6);&t;- may help too if the board can cope */
+id|printk
+c_func
+(paren
+l_string|&quot;now 0x%X&quot;
+comma
+id|lv
+)paren
+suffix:semicolon
+id|wrmsr
+c_func
+(paren
+l_int|0x107
+comma
+id|lv
+comma
+id|hv
 )paren
 suffix:semicolon
 )brace
@@ -2977,27 +3099,6 @@ c_cond
 (paren
 id|c-&gt;x86_mask
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|c-&gt;x86_vendor
-op_eq
-id|X86_VENDOR_CYRIX
-)paren
-id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot;stepping&bslash;t: %s&bslash;n&quot;
-comma
-id|Cx86_step
-)paren
-suffix:semicolon
-r_else
 id|p
 op_add_assign
 id|sprintf
@@ -3010,7 +3111,6 @@ comma
 id|c-&gt;x86_mask
 )paren
 suffix:semicolon
-)brace
 r_else
 id|p
 op_add_assign
@@ -3037,7 +3137,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;cpu MHz&bslash;t&bslash;t: %lu.%06lu&bslash;n&quot;
+l_string|&quot;cpu MHz&bslash;t&bslash;t: %lu.%02lu&bslash;n&quot;
 comma
 id|cpu_hz
 op_div
@@ -3075,12 +3175,6 @@ multiline_comment|/* Modify the capabilities according to chip type */
 r_if
 c_cond
 (paren
-id|c-&gt;x86_mask
-)paren
-(brace
-r_if
-c_cond
-(paren
 id|c-&gt;x86_vendor
 op_eq
 id|X86_VENDOR_CYRIX
@@ -3115,7 +3209,7 @@ id|x86_cap_flags
 l_int|31
 )braket
 op_assign
-l_string|&quot;amd3d&quot;
+l_string|&quot;3dnow&quot;
 suffix:semicolon
 )brace
 r_else
@@ -3176,7 +3270,6 @@ l_int|24
 op_assign
 l_string|&quot;osfxsr&quot;
 suffix:semicolon
-)brace
 )brace
 id|sep_bug
 op_assign

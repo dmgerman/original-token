@@ -231,6 +231,14 @@ id|cpuinfo_x86
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|dodgy_tsc
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;Generic CPUID function&n; */
 DECL|function|cpuid
 r_extern

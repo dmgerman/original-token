@@ -179,7 +179,7 @@ id|enabled
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|entries_lock
 r_static
 id|rwlock_t
@@ -642,12 +642,13 @@ id|iname
 suffix:semicolon
 r_int
 id|retval
-comma
-id|fmt_flags
-op_assign
-l_int|0
 suffix:semicolon
 id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|ENOEXEC
 suffix:semicolon
 r_if
 c_cond
@@ -655,16 +656,9 @@ c_cond
 op_logical_neg
 id|enabled
 )paren
-(brace
-id|retval
-op_assign
-op_minus
-id|ENOEXEC
-suffix:semicolon
 r_goto
 id|_ret
 suffix:semicolon
-)brace
 multiline_comment|/* to keep locking time low, we copy the interpreter string */
 id|read_lock
 c_func
@@ -673,10 +667,6 @@ op_amp
 id|entries_lock
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|fmt
 op_assign
 id|check_file
@@ -684,7 +674,11 @@ c_func
 (paren
 id|bprm
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fmt
 )paren
 (brace
 id|strncpy
@@ -704,10 +698,6 @@ l_int|127
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|fmt_flags
-op_assign
-id|fmt-&gt;flags
-suffix:semicolon
 )brace
 id|read_unlock
 c_func
@@ -722,16 +712,9 @@ c_cond
 op_logical_neg
 id|fmt
 )paren
-(brace
-id|retval
-op_assign
-op_minus
-id|ENOEXEC
-suffix:semicolon
 r_goto
 id|_ret
 suffix:semicolon
-)brace
 id|dput
 c_func
 (paren
@@ -789,22 +772,20 @@ suffix:semicolon
 id|bprm-&gt;argc
 op_increment
 suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|E2BIG
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|bprm-&gt;p
 )paren
-(brace
-id|retval
-op_assign
-op_minus
-id|E2BIG
-suffix:semicolon
 r_goto
 id|_ret
 suffix:semicolon
-)brace
 id|bprm-&gt;filename
 op_assign
 id|iname
@@ -2276,7 +2257,6 @@ op_star
 id|e
 )paren
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
 id|remove_proc_entry
 c_func
 (paren
@@ -2285,7 +2265,6 @@ comma
 id|bm_dir
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Create the /proc-dir entry for binfmt&n; */
 DECL|function|entry_proc_setup
@@ -2300,7 +2279,6 @@ op_star
 id|e
 )paren
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
 r_if
 c_cond
 (paren
@@ -2345,7 +2323,6 @@ id|e-&gt;proc_dir-&gt;write_proc
 op_assign
 id|proc_write_status
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2394,7 +2371,6 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 r_struct
 id|proc_dir_entry
 op_star
@@ -2492,7 +2468,6 @@ id|reg-&gt;write_proc
 op_assign
 id|proc_write_register
 suffix:semicolon
-macro_line|#endif /* CONFIG_PROC_FS */
 id|error
 op_assign
 id|register_binfmt

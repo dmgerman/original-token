@@ -12257,17 +12257,6 @@ c_cond
 id|drive-&gt;forced_geom
 )paren
 (brace
-multiline_comment|/* bombs otherwise /axboe */
-r_if
-c_cond
-(paren
-id|drive
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Update the current 3D drive values.&n;&t;&t; */
 id|drive-&gt;id-&gt;cur_cyls
 op_assign

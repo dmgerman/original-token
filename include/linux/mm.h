@@ -1303,28 +1303,8 @@ suffix:semicolon
 )brace
 DECL|macro|buffer_under_min
 mdefine_line|#define buffer_under_min()&t;((buffermem &gt;&gt; PAGE_SHIFT) * 100 &lt; &bslash;&n;&t;&t;&t;&t;buffer_mem.min_percent * num_physpages)
-DECL|macro|buffer_under_borrow
-mdefine_line|#define buffer_under_borrow()&t;((buffermem &gt;&gt; PAGE_SHIFT) * 100 &lt; &bslash;&n;&t;&t;&t;&t;buffer_mem.borrow_percent * num_physpages)
-DECL|macro|buffer_under_max
-mdefine_line|#define buffer_under_max()&t;((buffermem &gt;&gt; PAGE_SHIFT) * 100 &lt; &bslash;&n;&t;&t;&t;&t;buffer_mem.max_percent * num_physpages)
-DECL|macro|buffer_over_min
-mdefine_line|#define buffer_over_min()&t;((buffermem &gt;&gt; PAGE_SHIFT) * 100 &gt; &bslash;&n;&t;&t;&t;&t;buffer_mem.min_percent * num_physpages)
-DECL|macro|buffer_over_borrow
-mdefine_line|#define buffer_over_borrow()&t;((buffermem &gt;&gt; PAGE_SHIFT) * 100 &gt; &bslash;&n;&t;&t;&t;&t;buffer_mem.borrow_percent * num_physpages)
-DECL|macro|buffer_over_max
-mdefine_line|#define buffer_over_max()&t;((buffermem &gt;&gt; PAGE_SHIFT) * 100 &gt; &bslash;&n;&t;&t;&t;&t;buffer_mem.max_percent * num_physpages)
 DECL|macro|pgcache_under_min
 mdefine_line|#define pgcache_under_min()&t;(page_cache_size * 100 &lt; &bslash;&n;&t;&t;&t;&t;page_cache.min_percent * num_physpages)
-DECL|macro|pgcache_under_borrow
-mdefine_line|#define pgcache_under_borrow()&t;(page_cache_size * 100 &lt; &bslash;&n;&t;&t;&t;&t;page_cache.borrow_percent * num_physpages)
-DECL|macro|pgcache_under_max
-mdefine_line|#define pgcache_under_max()&t;(page_cache_size * 100 &lt; &bslash;&n;&t;&t;&t;&t;page_cache.max_percent * num_physpages)
-DECL|macro|pgcache_over_min
-mdefine_line|#define pgcache_over_min()&t;(page_cache_size * 100 &gt; &bslash;&n;&t;&t;&t;&t;page_cache.min_percent * num_physpages)
-DECL|macro|pgcache_over_borrow
-mdefine_line|#define pgcache_over_borrow()&t;(page_cache_size * 100 &gt; &bslash;&n;&t;&t;&t;&t;page_cache.borrow_percent * num_physpages)
-DECL|macro|pgcache_over_max
-mdefine_line|#define pgcache_over_max()&t;(page_cache_size * 100 &gt; &bslash;&n;&t;&t;&t;&t;page_cache.max_percent * num_physpages)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

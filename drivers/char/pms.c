@@ -914,7 +914,7 @@ c_func
 (paren
 l_int|0x42
 comma
-l_int|012
+l_int|0x12
 comma
 id|colour
 )paren

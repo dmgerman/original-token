@@ -2462,6 +2462,10 @@ id|p-&gt;swappable
 op_assign
 l_int|1
 suffix:semicolon
+id|p-&gt;trashing_memory
+op_assign
+l_int|0
+suffix:semicolon
 id|p-&gt;exit_signal
 op_assign
 id|clone_flags

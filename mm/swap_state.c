@@ -865,10 +865,10 @@ id|page
 )paren
 suffix:semicolon
 )brace
-id|free_page
+id|__free_page
 c_func
 (paren
-id|addr
+id|page
 )paren
 suffix:semicolon
 )brace

@@ -503,5 +503,12 @@ r_int
 id|both
 )paren
 suffix:semicolon
+r_int
+id|i2c_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* I2C_H */
 eof

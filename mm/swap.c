@@ -85,7 +85,7 @@ id|buffer_mem_t
 id|buffer_mem
 op_assign
 (brace
-l_int|5
+l_int|2
 comma
 multiline_comment|/* minimum percent buffer */
 l_int|10
@@ -100,7 +100,7 @@ id|buffer_mem_t
 id|page_cache
 op_assign
 (brace
-l_int|5
+l_int|2
 comma
 multiline_comment|/* minimum percent page cache */
 l_int|15

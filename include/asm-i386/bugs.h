@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  include/asm-i386/bugs.h&n; *&n; *  Copyright (C) 1994  Linus Torvalds&n; *&n; *  Cyrix stuff, June 1998 by:&n; *&t;- Rafael R. Reilova (moved everything from head.S),&n; *&t;- Channing Corn (tests &amp; fixes),&n; *&t;- Andrew D. Balsa (code cleanup).&n; */
+multiline_comment|/*&n; *  include/asm-i386/bugs.h&n; *&n; *  Copyright (C) 1994  Linus Torvalds&n; *&n; *  Cyrix stuff, June 1998 by:&n; *&t;- Rafael R. Reilova (moved everything from head.S),&n; *        &lt;rreilova@ececs.uc.edu&gt;&n; *&t;- Channing Corn (tests &amp; fixes),&n; *&t;- Andrew D. Balsa (code cleanup).&n; */
 multiline_comment|/*&n; * This is included by init/main.c to check for architecture-dependent bugs.&n; *&n; * Needs:&n; *&t;void check_bugs(void);&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -431,52 +431,6 @@ l_string|&quot;OK.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_static
-r_void
-id|check_tlb
-c_func
-(paren
-r_void
-)paren
-)paren
-(brace
-macro_line|#ifndef CONFIG_M386
-multiline_comment|/*&n;&t; * The 386 chips don&squot;t support TLB finegrained invalidation.&n;&t; * They will fault when they hit an invlpg instruction.&n;&t; */
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-op_eq
-l_int|3
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_EMERG
-l_string|&quot;CPU is a 386 and this kernel was compiled for 486 or better.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Giving up.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-)brace
 multiline_comment|/*&n; *&t;Most 386 processors have a bug where a POPAD can lock the &n; *&t;machine even from user space.&n; */
 DECL|function|__initfunc
 id|__initfunc
@@ -491,7 +445,7 @@ r_void
 )paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_M386
+macro_line|#ifndef CONFIG_X86_POPAD_OK
 r_int
 id|res
 comma
@@ -516,21 +470,17 @@ c_func
 (paren
 l_string|&quot;movl $12345678,%%eax; movl $0,%%edi; pusha; popa; movl (%%edx,%%edi),%%ecx &quot;
 suffix:colon
-l_string|&quot;=eax&quot;
+l_string|&quot;=&amp;a&quot;
 (paren
 id|res
 )paren
 suffix:colon
-l_string|&quot;edx&quot;
+l_string|&quot;d&quot;
 (paren
 id|inp
 )paren
 suffix:colon
-l_string|&quot;eax&quot;
-comma
 l_string|&quot;ecx&quot;
-comma
-l_string|&quot;edx&quot;
 comma
 l_string|&quot;edi&quot;
 )paren
@@ -844,14 +794,20 @@ op_eq
 l_int|0x02
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Cyrix CPUs without cpuid or with cpuid not yet enabled can be detected&n; * by the fact that they preserve the flags across the division of 5/2.&n; * PII and PPro exhibit this behavior too, but they have cpuid available.&n; */
+multiline_comment|/*&n; * Fix cpuid problems with Cyrix CPU&squot;s:&n; *   -- on the Cx686(L) the cpuid is disabled on power up.&n; *   -- braindamaged BIOS disable cpuid on the Cx686MX.&n; */
+r_extern
+r_int
+r_char
+id|Cx86_dir0_msb
+suffix:semicolon
+multiline_comment|/* exported HACK from cyrix_model() */
 DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
 r_static
 r_void
-id|check_cyrix_cpu
+id|check_cx686_cpuid
 c_func
 (paren
 r_void
@@ -860,87 +816,30 @@ r_void
 (brace
 r_if
 c_cond
-(paren
 (paren
 id|boot_cpu_data.cpuid_level
 op_eq
 op_minus
 l_int|1
-)paren
 op_logical_and
 (paren
-id|boot_cpu_data.x86
+(paren
+id|Cx86_dir0_msb
 op_eq
-l_int|4
+l_int|5
 )paren
-op_logical_and
-id|test_cyrix_52div
-c_func
+op_logical_or
 (paren
+id|Cx86_dir0_msb
+op_eq
+l_int|3
+)paren
 )paren
 )paren
 (brace
-multiline_comment|/* default to an unknown Cx486, (we will differentiate later) */
-multiline_comment|/* NOTE:  using 0xff since 0x00 is a valid DIR0 value */
-id|strcpy
-c_func
-(paren
-id|boot_cpu_data.x86_vendor_id
-comma
-l_string|&quot;CyrixInstead&quot;
-)paren
-suffix:semicolon
-id|boot_cpu_data.x86_model
-op_assign
-l_int|0xff
-suffix:semicolon
-id|boot_cpu_data.x86_mask
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n; * Fix two problems with the Cyrix 6x86 and 6x86L:&n; *   -- the cpuid is disabled on power up, enable it, use it.&n; *   -- the SLOP bit needs resetting on some motherboards due to old BIOS,&n; *      so that the udelay loop calibration works well.  Recalibrate.&n; */
-r_extern
-r_void
-id|calibrate_delay
-c_func
-(paren
-r_void
-)paren
-id|__init
-suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_static
-r_void
-id|check_cx686_cpuid_slop
-c_func
-(paren
-r_void
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86_vendor
-op_eq
-id|X86_VENDOR_CYRIX
-op_logical_and
-(paren
-id|boot_cpu_data.x86_model
-op_amp
-l_int|0xf0
-)paren
-op_eq
-l_int|0x30
-)paren
-(brace
-multiline_comment|/* 6x86(L) */
 r_int
+id|eax
+comma
 id|dummy
 suffix:semicolon
 r_int
@@ -948,8 +847,6 @@ r_char
 id|ccr3
 comma
 id|ccr4
-comma
-id|ccr5
 suffix:semicolon
 id|cli
 c_func
@@ -998,6 +895,121 @@ l_int|0x80
 )paren
 suffix:semicolon
 multiline_comment|/* enable cpuid  */
+id|setCx86
+c_func
+(paren
+id|CX86_CCR3
+comma
+id|ccr3
+)paren
+suffix:semicolon
+multiline_comment|/* disable MAPEN */
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* we have up to level 1 available on the Cx6x86(L|MX) */
+id|boot_cpu_data.cpuid_level
+op_assign
+l_int|1
+suffix:semicolon
+id|cpuid
+c_func
+(paren
+l_int|1
+comma
+op_amp
+id|eax
+comma
+op_amp
+id|dummy
+comma
+op_amp
+id|dummy
+comma
+op_amp
+id|boot_cpu_data.x86_capability
+)paren
+suffix:semicolon
+id|boot_cpu_data.x86
+op_assign
+(paren
+id|eax
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|15
+suffix:semicolon
+multiline_comment|/*&n; &t;&t; * we already have a cooked step/rev number from DIR1&n;&t;&t; * so we don&squot;t use the cpuid-provided ones.&n;&t;&t; */
+)brace
+)brace
+multiline_comment|/*&n; * Reset the slow-loop (SLOP) bit on the 686(L) which is set by some old&n; * BIOSes for compatability with DOS games.  This makes the udelay loop&n; * work correctly, and improves performance.&n; */
+r_extern
+r_void
+id|calibrate_delay
+c_func
+(paren
+r_void
+)paren
+id|__init
+suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|check_cx686_slop
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|Cx86_dir0_msb
+op_eq
+l_int|3
+)paren
+(brace
+r_int
+r_char
+id|ccr3
+comma
+id|ccr5
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ccr3
+op_assign
+id|getCx86
+c_func
+(paren
+id|CX86_CCR3
+)paren
+suffix:semicolon
+id|setCx86
+c_func
+(paren
+id|CX86_CCR3
+comma
+(paren
+id|ccr3
+op_amp
+l_int|0x0f
+)paren
+op_or
+l_int|0x10
+)paren
+suffix:semicolon
+multiline_comment|/* enable MAPEN  */
 id|ccr5
 op_assign
 id|getCx86
@@ -1013,7 +1025,6 @@ id|ccr5
 op_amp
 l_int|2
 )paren
-multiline_comment|/* reset SLOP if needed, old BIOS do this wrong */
 id|setCx86
 c_func
 (paren
@@ -1024,6 +1035,7 @@ op_amp
 l_int|0xfd
 )paren
 suffix:semicolon
+multiline_comment|/* reset SLOP */
 id|setCx86
 c_func
 (paren
@@ -1038,35 +1050,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|boot_cpu_data.cpuid_level
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* should cover all 6x86(L) */
-id|boot_cpu_data.x86
-op_assign
-l_int|5
-suffix:semicolon
-multiline_comment|/* we know we have level 1 available on the 6x86(L) */
-id|cpuid
-c_func
-(paren
-l_int|1
-comma
-op_amp
-id|dummy
-comma
-op_amp
-id|dummy
-comma
-op_amp
-id|dummy
-comma
-op_amp
-id|boot_cpu_data.x86_capability
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * DON&squot;T use the x86_mask and x86_model from cpuid, these are&n;&t;&t; * not as accurate (or the same) as those from the DIR regs.&n;&t;&t; * already in place after cyrix_model() in setup.c&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1095,7 +1078,53 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * Check wether we are able to run this kernel safely with this&n; * configuration.  Various configs imply certain minimum requirements&n; * of the machine:&n; *&n; * - In order to run on a i386, we need to be compiled for i386&n; *   (for due to lack of &quot;invlpg&quot; and working WP on a i386)&n; * - In order to run on anything without a TSC, we need to be&n; *   compiled for a i486.&n; * - In order to work on a Pentium/SMP machine, we need to be&n; *   compiled for a Pentium or lower, as a PPro config implies&n; *   a properly working local APIC without the need to do extra&n; *   reads from the APIC.&n; */
+multiline_comment|/*&n; * Cyrix CPUs without cpuid or with cpuid not yet enabled can be detected&n; * by the fact that they preserve the flags across the division of 5/2.&n; * PII and PPro exhibit this behavior too, but they have cpuid available.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|check_cyrix_cpu
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|boot_cpu_data.cpuid_level
+op_eq
+op_minus
+l_int|1
+)paren
+op_logical_and
+(paren
+id|boot_cpu_data.x86
+op_eq
+l_int|4
+)paren
+op_logical_and
+id|test_cyrix_52div
+c_func
+(paren
+)paren
+)paren
+(brace
+id|strcpy
+c_func
+(paren
+id|boot_cpu_data.x86_vendor_id
+comma
+l_string|&quot;CyrixInstead&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n; * Check wether we are able to run this kernel safely on SMP.&n; *&n; * - In order to run on a i386, we need to be compiled for i386&n; *   (for due to lack of &quot;invlpg&quot; and working WP on a i386)&n; * - In order to run on anything without a TSC, we need to be&n; *   compiled for a i486.&n; * - In order to work on a Pentium/SMP machine, we need to be&n; *   compiled for a Pentium or lower, as a PPro config implies&n; *   a properly working local APIC without the need to do extra&n; *   reads from the APIC.&n;*/
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1109,9 +1138,8 @@ r_void
 )paren
 )paren
 (brace
-multiline_comment|/* Configuring for a i386 will boot on anything */
-macro_line|#ifndef CONFIG_M386
-multiline_comment|/* Configuring for an i486 only implies &squot;invlpg&squot; and a working WP bit */
+multiline_comment|/*&n; * We&squot;d better not be a i386 if we&squot;re configured to use some&n; * i486+ only features! (WP works in supervisor mode and the&n; * new &quot;invlpg&quot; and &quot;bswap&quot; instructions)&n; */
+macro_line|#if defined(CONFIG_X86_WP_WORKS_OK) || defined(CONFIG_X86_INVLPG) || defined(CONFIG_X86_BSWAP)
 r_if
 c_cond
 (paren
@@ -1125,14 +1153,9 @@ c_func
 l_string|&quot;Kernel requires i486+ for &squot;invlpg&squot; and other features&quot;
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_M486
-macro_line|#ifndef CONFIG_M586
-multiline_comment|/* Configuring for a PPro implies that we have an IO-APIC without the read-before-write bug */
-macro_line|#endif&t;/* CONFIG_M586 */
-macro_line|#endif&t;/* CONFIG_M486 */
-macro_line|#endif&t;/* CONFIG_M386 */
-multiline_comment|/* If we configured ourselves for a TSC, we&squot;d better have one! */
-macro_line|#ifdef CONFIG_TSC
+macro_line|#endif
+multiline_comment|/*&n; * If we configured ourselves for a TSC, we&squot;d better have one!&n; */
+macro_line|#ifdef CONFIG_X86_TSC
 r_if
 c_cond
 (paren
@@ -1150,8 +1173,8 @@ l_string|&quot;Kernel compiled for Pentium+, requires TSC&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* If we were told we had a good APIC for SMP, we&squot;d better be a PPro */
-macro_line|#ifdef CONFIG_GOOD_APIC
+multiline_comment|/*&n; * If we were told we had a good APIC for SMP, we&squot;d better be a PPro&n; */
+macro_line|#if defined(CONFIG_X86_GOOD_APIC) &amp;&amp; defined(CONFIG_SMP)
 r_if
 c_cond
 (paren
@@ -1194,7 +1217,12 @@ op_amp
 id|boot_cpu_data
 )paren
 suffix:semicolon
-id|check_config
+id|check_cx686_cpuid
+c_func
+(paren
+)paren
+suffix:semicolon
+id|check_cx686_slop
 c_func
 (paren
 )paren
@@ -1214,12 +1242,7 @@ id|boot_cpu_data
 )paren
 suffix:semicolon
 macro_line|#endif
-id|check_cx686_cpuid_slop
-c_func
-(paren
-)paren
-suffix:semicolon
-id|check_tlb
+id|check_config
 c_func
 (paren
 )paren

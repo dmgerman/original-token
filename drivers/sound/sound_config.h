@@ -26,8 +26,6 @@ macro_line|#ifndef DSP_BUFFCOUNT
 DECL|macro|DSP_BUFFCOUNT
 mdefine_line|#define DSP_BUFFCOUNT&t;&t;1&t;/* 1 is recommended. */
 macro_line|#endif
-DECL|macro|DMA_AUTOINIT
-mdefine_line|#define DMA_AUTOINIT&t;&t;0x10
 DECL|macro|FM_MONO
 mdefine_line|#define FM_MONO&t;&t;0x388&t;/* This is the I/O address used by AdLib */
 macro_line|#ifndef CONFIG_PAS_BASE

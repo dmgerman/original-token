@@ -29,7 +29,7 @@ id|get_cycles
 r_void
 )paren
 (brace
-macro_line|#ifndef CONFIG_TSC
+macro_line|#ifndef CONFIG_X86_TSC
 r_return
 l_int|0
 suffix:semicolon

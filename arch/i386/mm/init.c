@@ -1697,7 +1697,7 @@ c_func
 l_string|&quot;No.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_WP_WORKS_OK
+macro_line|#ifdef CONFIG_X86_WP_WORKS_OK
 id|panic
 c_func
 (paren

@@ -155,7 +155,7 @@ suffix:semicolon
 )brace
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
-macro_line|#ifndef CONFIG_TSC
+macro_line|#ifndef CONFIG_X86_TSC
 multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|function|do_slow_gettimeoffset
 r_static
@@ -1562,6 +1562,12 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * If we have APM enabled or the CPU clock speed is variable&n; * (CPU stops clock on HLT or slows clock to save power)&n; * then the TSC timestamps may diverge by up to 1 jiffy from&n; * &squot;real time&squot; but nothing will break.&n; * The most frequent case is that the CPU is &quot;woken&quot; from a halt&n; * state by the timer interrupt itself, so we get 0 error. In the&n; * rare cases where a driver would &quot;wake&quot; the CPU and request a&n; * timestamp, the maximum error is &lt; 1 jiffy. But timestamps are&n; * still perfectly ordered.&n; * Note that the TSC counter will be reset if APM suspends&n; * to disk; this won&squot;t break the kernel, though, &squot;cuz we&squot;re&n; * smart.  See arch/i386/kernel/apm.c.&n; */
+multiline_comment|/*&n; &t; *&t;Firstly we have to do a CPU check for chips with&n; &t; * &t;a potentially buggy TSC. At this point we haven&squot;t run&n; &t; *&t;the ident/bugs checks so we must run this hook as it&n; &t; *&t;may turn off the TSC flag.&n; &t; *&n; &t; *&t;NOTE: this doesnt yet handle SMP 486 machines where only&n; &t; *&t;some CPU&squot;s have a TSC. Thats never worked and nobody has&n; &t; *&t;moaned if you have the only one in the world - you fix it!&n; &t; */
+id|dodgy_tsc
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -3562,6 +3562,8 @@ id|cacheflush_time
 op_assign
 l_int|0
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -3596,7 +3598,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;per-CPU timeslice cutoff: %ld.%ld usecs.&bslash;n&quot;
+l_string|&quot;per-CPU timeslice cutoff: %ld.%02ld usecs.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -4248,7 +4250,7 @@ suffix:colon
 )brace
 multiline_comment|/*&n; * the following functions deal with sending IPIs between CPUs.&n; *&n; * We use &squot;broadcast&squot;, CPU-&gt;CPU IPIs and self-IPIs too.&n; */
 multiline_comment|/*&n; * Silly serialization to work around CPU bug in P5s.&n; * We can safely turn it off on a 686.&n; */
-macro_line|#ifdef CONFIG_GOOD_APIC
+macro_line|#ifdef CONFIG_X86_GOOD_APIC
 DECL|macro|FORCE_APIC_SERIALIZATION
 macro_line|# define FORCE_APIC_SERIALIZATION 0
 macro_line|#else
