@@ -39,7 +39,7 @@ mdefine_line|#define SUPER_MAGIC 0x137F
 DECL|macro|NR_OPEN
 mdefine_line|#define NR_OPEN 20
 DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 32
+mdefine_line|#define NR_INODE 64
 DECL|macro|NR_FILE
 mdefine_line|#define NR_FILE 64
 DECL|macro|NR_SUPER
@@ -60,6 +60,10 @@ DECL|macro|INODES_PER_BLOCK
 mdefine_line|#define INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct d_inode)))
 DECL|macro|DIR_ENTRIES_PER_BLOCK
 mdefine_line|#define DIR_ENTRIES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct dir_entry)))
+DECL|macro|PIPE_READ_WAIT
+mdefine_line|#define PIPE_READ_WAIT(inode) ((inode).i_wait)
+DECL|macro|PIPE_WRITE_WAIT
+mdefine_line|#define PIPE_WRITE_WAIT(inode) ((inode).i_wait2)
 DECL|macro|PIPE_HEAD
 mdefine_line|#define PIPE_HEAD(inode) ((inode).i_zone[0])
 DECL|macro|PIPE_TAIL
@@ -70,8 +74,14 @@ DECL|macro|PIPE_EMPTY
 mdefine_line|#define PIPE_EMPTY(inode) (PIPE_HEAD(inode)==PIPE_TAIL(inode))
 DECL|macro|PIPE_FULL
 mdefine_line|#define PIPE_FULL(inode) (PIPE_SIZE(inode)==(PAGE_SIZE-1))
-DECL|macro|INC_PIPE
-mdefine_line|#define INC_PIPE(head) &bslash;&n;__asm__(&quot;incl %0&bslash;n&bslash;tandl $4095,%0&quot;::&quot;m&quot; (head))
+DECL|macro|NIL_FILP
+mdefine_line|#define NIL_FILP&t;((struct file *)0)
+DECL|macro|SEL_IN
+mdefine_line|#define SEL_IN&t;&t;1
+DECL|macro|SEL_OUT
+mdefine_line|#define SEL_OUT&t;&t;2
+DECL|macro|SEL_EX
+mdefine_line|#define SEL_EX&t;&t;4
 DECL|typedef|buffer_block
 r_typedef
 r_char
@@ -250,6 +260,13 @@ id|task_struct
 op_star
 id|i_wait
 suffix:semicolon
+DECL|member|i_wait2
+r_struct
+id|task_struct
+op_star
+id|i_wait2
+suffix:semicolon
+multiline_comment|/* for pipes */
 DECL|member|i_atime
 r_int
 r_int
@@ -665,6 +682,19 @@ id|pathname
 )paren
 suffix:semicolon
 r_extern
+r_struct
+id|m_inode
+op_star
+id|lnamei
+c_func
+(paren
+r_const
+r_char
+op_star
+id|pathname
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|open_namei
 c_func
@@ -776,6 +806,25 @@ id|bh
 suffix:semicolon
 r_extern
 r_void
+id|ll_rw_page
+c_func
+(paren
+r_int
+id|rw
+comma
+r_int
+id|dev
+comma
+r_int
+id|nr
+comma
+r_char
+op_star
+id|buffer
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|brelse
 c_func
 (paren
@@ -846,7 +895,7 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|free_block
 c_func
 (paren

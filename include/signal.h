@@ -67,6 +67,8 @@ mdefine_line|#define SIGTTOU&t;&t;22
 multiline_comment|/* Ok, I haven&squot;t implemented sigactions, but trying to keep headers POSIX */
 DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;1
+DECL|macro|SA_INTERRUPT
+mdefine_line|#define SA_INTERRUPT&t;0x20000000
 DECL|macro|SA_NOMASK
 mdefine_line|#define SA_NOMASK&t;0x40000000
 DECL|macro|SA_ONESHOT
@@ -81,6 +83,14 @@ DECL|macro|SIG_DFL
 mdefine_line|#define SIG_DFL&t;&t;((void (*)(int))0)&t;/* default signal handling */
 DECL|macro|SIG_IGN
 mdefine_line|#define SIG_IGN&t;&t;((void (*)(int))1)&t;/* ignore signal */
+DECL|macro|SIG_ERR
+mdefine_line|#define SIG_ERR&t;&t;((void (*)(int))-1)&t;/* error return from signal */
+macro_line|#ifdef notdef
+DECL|macro|sigemptyset
+mdefine_line|#define sigemptyset(mask) ((*(mask) = 0), 1)
+DECL|macro|sigfillset
+mdefine_line|#define sigfillset(mask) ((*(mask) = ~0), 1)
+macro_line|#endif
 DECL|struct|sigaction
 r_struct
 id|sigaction

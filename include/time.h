@@ -20,6 +20,10 @@ r_int
 r_int
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef NULL
+DECL|macro|NULL
+mdefine_line|#define NULL ((void *) 0)
+macro_line|#endif
 DECL|macro|CLOCKS_PER_SEC
 mdefine_line|#define CLOCKS_PER_SEC 100
 DECL|typedef|clock_t
@@ -69,6 +73,8 @@ id|tm_isdst
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|__isleap
+mdefine_line|#define&t;__isleap(year)&t;&bslash;&n;  ((year) % 4 == 0 &amp;&amp; ((year) % 100 != 0 || (year) % 1000 == 0))
 id|clock_t
 id|clock
 c_func

@@ -86,5 +86,10 @@ DECL|macro|ENOSYS
 mdefine_line|#define ENOSYS&t;&t;38
 DECL|macro|ENOTEMPTY
 mdefine_line|#define ENOTEMPTY&t;39
+multiline_comment|/* Should never be seen by user programs */
+DECL|macro|ERESTARTSYS
+mdefine_line|#define ERESTARTSYS&t;512
+DECL|macro|ERESTARTNOINTR
+mdefine_line|#define ERESTARTNOINTR&t;513
 macro_line|#endif
 eof

@@ -12,13 +12,15 @@ mdefine_line|#define WNOHANG&t;&t;1
 DECL|macro|WUNTRACED
 mdefine_line|#define WUNTRACED&t;2
 DECL|macro|WIFEXITED
-mdefine_line|#define WIFEXITED(s)&t;(!((s)&amp;0xFF)
+mdefine_line|#define WIFEXITED(s)&t;(!((s)&amp;0xFF))
 DECL|macro|WIFSTOPPED
 mdefine_line|#define WIFSTOPPED(s)&t;(((s)&amp;0xFF)==0x7F)
 DECL|macro|WEXITSTATUS
 mdefine_line|#define WEXITSTATUS(s)&t;(((s)&gt;&gt;8)&amp;0xFF)
 DECL|macro|WTERMSIG
 mdefine_line|#define WTERMSIG(s)&t;((s)&amp;0x7F)
+DECL|macro|WCOREDUMP
+mdefine_line|#define WCOREDUMP(s)&t;((s)&amp;0x80)
 DECL|macro|WSTOPSIG
 mdefine_line|#define WSTOPSIG(s)&t;(((s)&gt;&gt;8)&amp;0xFF)
 DECL|macro|WIFSIGNALED

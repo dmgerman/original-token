@@ -54,6 +54,8 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|S_IFMT
 mdefine_line|#define S_IFMT  00170000
+DECL|macro|S_IFLNK
+mdefine_line|#define S_IFLNK&t; 0120000
 DECL|macro|S_IFREG
 mdefine_line|#define S_IFREG  0100000
 DECL|macro|S_IFBLK
@@ -70,6 +72,8 @@ DECL|macro|S_ISGID
 mdefine_line|#define S_ISGID  0002000
 DECL|macro|S_ISVTX
 mdefine_line|#define S_ISVTX  0001000
+DECL|macro|S_ISLNK
+mdefine_line|#define S_ISLNK(m)&t;(((m) &amp; S_IFMT) == S_IFLNK)
 DECL|macro|S_ISREG
 mdefine_line|#define S_ISREG(m)&t;(((m) &amp; S_IFMT) == S_IFREG)
 DECL|macro|S_ISDIR

@@ -76,30 +76,10 @@ c_func
 id|args
 )paren
 suffix:semicolon
-id|__asm__
+id|console_print
 c_func
 (paren
-l_string|&quot;push %%fs&bslash;n&bslash;t&quot;
-l_string|&quot;push %%ds&bslash;n&bslash;t&quot;
-l_string|&quot;pop %%fs&bslash;n&bslash;t&quot;
-l_string|&quot;pushl %0&bslash;n&bslash;t&quot;
-l_string|&quot;pushl $_buf&bslash;n&bslash;t&quot;
-l_string|&quot;pushl $0&bslash;n&bslash;t&quot;
-l_string|&quot;call _tty_write&bslash;n&bslash;t&quot;
-l_string|&quot;addl $8,%%esp&bslash;n&bslash;t&quot;
-l_string|&quot;popl %0&bslash;n&bslash;t&quot;
-l_string|&quot;pop %%fs&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|i
-)paren
-suffix:colon
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;dx&quot;
+id|buf
 )paren
 suffix:semicolon
 r_return

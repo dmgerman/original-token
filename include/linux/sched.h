@@ -1,10 +1,32 @@
 macro_line|#ifndef _SCHED_H
 DECL|macro|_SCHED_H
 mdefine_line|#define _SCHED_H
-DECL|macro|NR_TASKS
-mdefine_line|#define NR_TASKS 64
 DECL|macro|HZ
 mdefine_line|#define HZ 100
+DECL|macro|NR_TASKS
+mdefine_line|#define NR_TASKS&t;64
+DECL|macro|TASK_SIZE
+mdefine_line|#define TASK_SIZE&t;0x04000000
+DECL|macro|LIBRARY_SIZE
+mdefine_line|#define LIBRARY_SIZE&t;0x00400000
+macro_line|#if (TASK_SIZE &amp; 0x3fffff)
+macro_line|#error &quot;TASK_SIZE must be multiple of 4M&quot;
+macro_line|#endif
+macro_line|#if (LIBRARY_SIZE &amp; 0x3fffff)
+macro_line|#error &quot;LIBRARY_SIZE must be a multiple of 4M&quot;
+macro_line|#endif
+macro_line|#if (LIBRARY_SIZE &gt;= (TASK_SIZE/2))
+macro_line|#error &quot;LIBRARY_SIZE too damn big!&quot;
+macro_line|#endif
+macro_line|#if (((TASK_SIZE&gt;&gt;16)*NR_TASKS) != 0x10000)
+macro_line|#error &quot;TASK_SIZE*NR_TASKS must be 4GB&quot;
+macro_line|#endif
+DECL|macro|LIBRARY_OFFSET
+mdefine_line|#define LIBRARY_OFFSET (TASK_SIZE - LIBRARY_SIZE)
+DECL|macro|CT_TO_SECS
+mdefine_line|#define CT_TO_SECS(x)&t;((x) / HZ)
+DECL|macro|CT_TO_USECS
+mdefine_line|#define CT_TO_USECS(x)&t;(((x) % HZ) * 1000000/HZ)
 DECL|macro|FIRST_TASK
 mdefine_line|#define FIRST_TASK task[0]
 DECL|macro|LAST_TASK
@@ -12,9 +34,12 @@ mdefine_line|#define LAST_TASK task[NR_TASKS-1]
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;sys/param.h&gt;
+macro_line|#include &lt;sys/time.h&gt;
+macro_line|#include &lt;sys/resource.h&gt;
 macro_line|#include &lt;signal.h&gt;
 macro_line|#if (NR_OPEN &gt; 32)
-macro_line|#error &quot;Currently the close-on-exec-flags are in one word, max 32 files/proc&quot;
+macro_line|#error &quot;Currently the close-on-exec-flags and select masks are in one long, max 32 files/proc&quot;
 macro_line|#endif
 DECL|macro|TASK_RUNNING
 mdefine_line|#define TASK_RUNNING&t;&t;0
@@ -346,20 +371,43 @@ comma
 id|start_stack
 suffix:semicolon
 DECL|member|pid
-DECL|member|father
 DECL|member|pgrp
 DECL|member|session
 DECL|member|leader
 r_int
 id|pid
 comma
-id|father
-comma
 id|pgrp
 comma
 id|session
 comma
 id|leader
+suffix:semicolon
+DECL|member|groups
+r_int
+id|groups
+(braket
+id|NGROUPS
+)braket
+suffix:semicolon
+multiline_comment|/* &n;&t; * pointers to parent process, youngest child, younger sibling,&n;&t; * older sibling, respectively.  (p-&gt;father can be replaced with &n;&t; * p-&gt;p_pptr-&gt;pid)&n;&t; */
+DECL|member|p_pptr
+DECL|member|p_cptr
+DECL|member|p_ysptr
+DECL|member|p_osptr
+r_struct
+id|task_struct
+op_star
+id|p_pptr
+comma
+op_star
+id|p_cptr
+comma
+op_star
+id|p_ysptr
+comma
+op_star
+id|p_osptr
 suffix:semicolon
 DECL|member|uid
 DECL|member|euid
@@ -383,8 +431,12 @@ id|egid
 comma
 id|sgid
 suffix:semicolon
+DECL|member|timeout
 DECL|member|alarm
 r_int
+r_int
+id|timeout
+comma
 id|alarm
 suffix:semicolon
 DECL|member|utime
@@ -403,6 +455,20 @@ id|cstime
 comma
 id|start_time
 suffix:semicolon
+DECL|member|rlim
+r_struct
+id|rlimit
+id|rlim
+(braket
+id|RLIM_NLIMITS
+)braket
+suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* per process flags, defined below */
 DECL|member|used_math
 r_int
 r_int
@@ -437,6 +503,12 @@ id|m_inode
 op_star
 id|executable
 suffix:semicolon
+DECL|member|library
+r_struct
+id|m_inode
+op_star
+id|library
+suffix:semicolon
 DECL|member|close_on_exec
 r_int
 r_int
@@ -468,9 +540,13 @@ id|tss
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Per process flags&n; */
+DECL|macro|PF_ALIGNWARN
+mdefine_line|#define PF_ALIGNWARN&t;0x00000001&t;/* Print alignment warning msgs */
+multiline_comment|/* Not implemented yet, only for 486*/
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,-1,0,0,0, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* alarm */&t;0,0,0,0,0,0, &bslash;&n;/* math */&t;0, &bslash;&n;/* fs info */&t;-1,0022,NULL,NULL,NULL,0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;&t;{ &bslash;&n;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;{0x9f,0xc0f200}, &bslash;&n;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,0,0,0, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* fs info */&t;-1,0022,NULL,NULL,NULL,NULL,0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;&t;{ &bslash;&n;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;{0x9f,0xc0f200}, &bslash;&n;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -494,15 +570,21 @@ id|current
 suffix:semicolon
 r_extern
 r_int
+r_int
 r_volatile
 id|jiffies
 suffix:semicolon
 r_extern
 r_int
+r_int
 id|startup_time
 suffix:semicolon
+r_extern
+r_int
+id|jiffies_offset
+suffix:semicolon
 DECL|macro|CURRENT_TIME
-mdefine_line|#define CURRENT_TIME (startup_time+jiffies/HZ)
+mdefine_line|#define CURRENT_TIME (startup_time+(jiffies+jiffies_offset)/HZ)
 r_extern
 r_void
 id|add_timer
@@ -555,6 +637,15 @@ id|task_struct
 op_star
 op_star
 id|p
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|in_group_p
+c_func
+(paren
+id|gid_t
+id|grp
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Entry into gdt where to find first TSS. 0-nul, 1-cs, 2-ds, 3-syscall&n; * 4-TSS0, 5-LDT0, 6-TSS1 etc ...&n; */

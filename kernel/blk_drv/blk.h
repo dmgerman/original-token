@@ -107,6 +107,14 @@ id|task_struct
 op_star
 id|wait_for_request
 suffix:semicolon
+r_extern
+r_int
+op_star
+id|blk_size
+(braket
+id|NR_BLK_DEV
+)braket
+suffix:semicolon
 macro_line|#ifdef MAJOR_NR
 multiline_comment|/*&n; * Add entries as needed. Currently the only block devices&n; * supported are hard-disks and floppies.&n; */
 macro_line|#if (MAJOR_NR == 1)
@@ -141,6 +149,8 @@ DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;harddisk&quot;
 DECL|macro|DEVICE_INTR
 mdefine_line|#define DEVICE_INTR do_hd
+DECL|macro|DEVICE_TIMEOUT
+mdefine_line|#define DEVICE_TIMEOUT hd_timeout
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_hd_request
 DECL|macro|DEVICE_NR
@@ -170,6 +180,19 @@ r_void
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEVICE_TIMEOUT
+DECL|variable|DEVICE_TIMEOUT
+r_int
+id|DEVICE_TIMEOUT
+op_assign
+l_int|0
+suffix:semicolon
+DECL|macro|SET_INTR
+mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x),DEVICE_TIMEOUT = 200)
+macro_line|#else
+DECL|macro|SET_INTR
+mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x))
 macro_line|#endif
 r_static
 r_void
@@ -301,8 +324,22 @@ op_assign
 id|CURRENT-&gt;next
 suffix:semicolon
 )brace
+macro_line|#ifdef DEVICE_TIMEOUT
+DECL|macro|CLEAR_DEVICE_TIMEOUT
+mdefine_line|#define CLEAR_DEVICE_TIMEOUT DEVICE_TIMEOUT = 0;
+macro_line|#else
+DECL|macro|CLEAR_DEVICE_TIMEOUT
+mdefine_line|#define CLEAR_DEVICE_TIMEOUT
+macro_line|#endif
+macro_line|#ifdef DEVICE_INTR
+DECL|macro|CLEAR_DEVICE_INTR
+mdefine_line|#define CLEAR_DEVICE_INTR DEVICE_INTR = 0;
+macro_line|#else
+DECL|macro|CLEAR_DEVICE_INTR
+mdefine_line|#define CLEAR_DEVICE_INTR
+macro_line|#endif
 DECL|macro|INIT_REQUEST
-mdefine_line|#define INIT_REQUEST &bslash;&n;repeat: &bslash;&n;&t;if (!CURRENT) &bslash;&n;&t;&t;return; &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
+mdefine_line|#define INIT_REQUEST &bslash;&n;repeat: &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_DEVICE_INTR &bslash;&n;&t;&t;CLEAR_DEVICE_TIMEOUT &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif
 macro_line|#endif
 eof

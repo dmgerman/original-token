@@ -13,14 +13,6 @@ DECL|macro|get_seg_long
 mdefine_line|#define get_seg_long(seg,addr) ({ &bslash;&n;register unsigned long __res; &bslash;&n;__asm__(&quot;push %%fs;mov %%ax,%%fs;movl %%fs:%2,%%eax;pop %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
 DECL|macro|_fs
 mdefine_line|#define _fs() ({ &bslash;&n;register unsigned short __res; &bslash;&n;__asm__(&quot;mov %%fs,%%ax&quot;:&quot;=a&quot; (__res):); &bslash;&n;__res;})
-r_int
-id|do_exit
-c_func
-(paren
-r_int
-id|code
-)paren
-suffix:semicolon
 r_void
 id|page_exception
 c_func
@@ -156,6 +148,13 @@ r_void
 suffix:semicolon
 r_void
 id|irq13
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|alignment_check
 c_func
 (paren
 r_void
@@ -444,6 +443,29 @@ id|die
 c_func
 (paren
 l_string|&quot;general protection&quot;
+comma
+id|esp
+comma
+id|error_code
+)paren
+suffix:semicolon
+)brace
+DECL|function|do_alignment_check
+r_void
+id|do_alignment_check
+c_func
+(paren
+r_int
+id|esp
+comma
+r_int
+id|error_code
+)paren
+(brace
+id|die
+c_func
+(paren
+l_string|&quot;alignment check&quot;
 comma
 id|esp
 comma
@@ -1053,12 +1075,21 @@ op_amp
 id|coprocessor_error
 )paren
 suffix:semicolon
+id|set_trap_gate
+c_func
+(paren
+l_int|17
+comma
+op_amp
+id|alignment_check
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|17
+l_int|18
 suffix:semicolon
 id|i
 OL

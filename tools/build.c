@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  linux/tools/build.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file builds a disk-image from three different files:&n; *&n; * - bootsect: max 510 bytes of 8086 machine code, loads the rest&n; * - setup: max 4 sectors of 8086 machine code, sets up system parm&n; * - system: 80386 code for actual system&n; *&n; * It does some checking that all files are of the correct type, and&n; * just writes the result to stdout, removing headers and padding to&n; * the right amount. It also writes some system data to stderr.&n; */
-multiline_comment|/*&n; * Changes by tytso to allow root device specification&n; */
+multiline_comment|/*&n; * Changes by tytso to allow root device specification&n; *&n; * Added swap-device specification: Linux 20.12.91&n; */
 macro_line|#include &lt;stdio.h&gt;&t;/* fprintf */
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;stdlib.h&gt;&t;/* contains exit */
@@ -14,11 +14,15 @@ mdefine_line|#define MINIX_HEADER 32
 DECL|macro|GCC_HEADER
 mdefine_line|#define GCC_HEADER 1024
 DECL|macro|SYS_SIZE
-mdefine_line|#define SYS_SIZE 0x2000
+mdefine_line|#define SYS_SIZE 0x3000
 DECL|macro|DEFAULT_MAJOR_ROOT
 mdefine_line|#define DEFAULT_MAJOR_ROOT 3
 DECL|macro|DEFAULT_MINOR_ROOT
 mdefine_line|#define DEFAULT_MINOR_ROOT 6
+DECL|macro|DEFAULT_MAJOR_SWAP
+mdefine_line|#define DEFAULT_MAJOR_SWAP 0
+DECL|macro|DEFAULT_MINOR_SWAP
+mdefine_line|#define DEFAULT_MINOR_SWAP 0
 multiline_comment|/* max nr of sectors of setup: don&squot;t change unless you also change&n; * bootsect etc */
 DECL|macro|SETUP_SECTS
 mdefine_line|#define SETUP_SECTS 4
@@ -97,6 +101,11 @@ id|major_root
 comma
 id|minor_root
 suffix:semicolon
+r_char
+id|major_swap
+comma
+id|minor_swap
+suffix:semicolon
 r_struct
 id|stat
 id|sb
@@ -106,14 +115,14 @@ c_cond
 (paren
 (paren
 id|argc
-op_ne
+OL
 l_int|4
 )paren
-op_logical_and
+op_logical_or
 (paren
 id|argc
-op_ne
-l_int|5
+OG
+l_int|6
 )paren
 )paren
 id|usage
@@ -125,8 +134,8 @@ r_if
 c_cond
 (paren
 id|argc
-op_eq
-l_int|5
+OG
+l_int|4
 )paren
 (brace
 r_if
@@ -216,6 +225,101 @@ op_assign
 id|DEFAULT_MINOR_ROOT
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|argc
+op_eq
+l_int|6
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|argv
+(braket
+l_int|5
+)braket
+comma
+l_string|&quot;NONE&quot;
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|stat
+c_func
+(paren
+id|argv
+(braket
+l_int|5
+)braket
+comma
+op_amp
+id|sb
+)paren
+)paren
+(brace
+id|perror
+c_func
+(paren
+id|argv
+(braket
+l_int|5
+)braket
+)paren
+suffix:semicolon
+id|die
+c_func
+(paren
+l_string|&quot;Couldn&squot;t stat root device.&quot;
+)paren
+suffix:semicolon
+)brace
+id|major_swap
+op_assign
+id|MAJOR
+c_func
+(paren
+id|sb.st_rdev
+)paren
+suffix:semicolon
+id|minor_swap
+op_assign
+id|MINOR
+c_func
+(paren
+id|sb.st_rdev
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|major_swap
+op_assign
+l_int|0
+suffix:semicolon
+id|minor_swap
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|major_swap
+op_assign
+id|DEFAULT_MAJOR_SWAP
+suffix:semicolon
+id|minor_swap
+op_assign
+id|DEFAULT_MINOR_SWAP
+suffix:semicolon
+)brace
 id|fprintf
 c_func
 (paren
@@ -226,6 +330,18 @@ comma
 id|major_root
 comma
 id|minor_root
+)paren
+suffix:semicolon
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;Swap device is (%d, %d)&bslash;n&quot;
+comma
+id|major_swap
+comma
+id|minor_swap
 )paren
 suffix:semicolon
 r_if
@@ -258,6 +374,33 @@ comma
 l_string|&quot;Illegal root device (major = %d)&bslash;n&quot;
 comma
 id|major_root
+)paren
+suffix:semicolon
+id|die
+c_func
+(paren
+l_string|&quot;Bad root device --- major #&quot;
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|major_swap
+op_logical_and
+id|major_swap
+op_ne
+l_int|3
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;Illegal swap device (major = %d)&bslash;n&quot;
+comma
+id|major_swap
 )paren
 suffix:semicolon
 id|die
@@ -530,6 +673,26 @@ c_func
 (paren
 l_string|&quot;Boot block hasn&squot;t got boot flag (0xAA55)&quot;
 )paren
+suffix:semicolon
+id|buf
+(braket
+l_int|506
+)braket
+op_assign
+(paren
+r_char
+)paren
+id|minor_swap
+suffix:semicolon
+id|buf
+(braket
+l_int|507
+)braket
+op_assign
+(paren
+r_char
+)paren
+id|major_swap
 suffix:semicolon
 id|buf
 (braket

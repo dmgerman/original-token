@@ -10,10 +10,10 @@ DECL|macro|_POSIX_NO_TRUNC
 mdefine_line|#define _POSIX_NO_TRUNC&t;&t;/* no pathname truncation (but see in kernel) */
 DECL|macro|_POSIX_VDISABLE
 mdefine_line|#define _POSIX_VDISABLE &squot;&bslash;0&squot;&t;/* character to disable things like ^C */
-multiline_comment|/*#define _POSIX_SAVED_IDS */
-multiline_comment|/* we&squot;ll get to this yet */
-multiline_comment|/*#define _POSIX_JOB_CONTROL */
-multiline_comment|/* we aren&squot;t there quite yet. Soon hopefully */
+DECL|macro|_POSIX_JOB_CONTROL
+mdefine_line|#define _POSIX_JOB_CONTROL
+DECL|macro|_POSIX_SAVED_IDS
+mdefine_line|#define _POSIX_SAVED_IDS&t;/* Implemented, for whatever good it is */
 DECL|macro|STDIN_FILENO
 mdefine_line|#define STDIN_FILENO&t;0
 DECL|macro|STDOUT_FILENO
@@ -77,8 +77,10 @@ mdefine_line|#define _PC_VDISABLE&t;&t;8
 DECL|macro|_PC_CHOWN_RESTRICTED
 mdefine_line|#define _PC_CHOWN_RESTRICTED&t;9
 macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#include &lt;sys/time.h&gt;
 macro_line|#include &lt;sys/times.h&gt;
 macro_line|#include &lt;sys/utsname.h&gt;
+macro_line|#include &lt;sys/resource.h&gt;
 macro_line|#include &lt;utime.h&gt;
 macro_line|#ifdef __LIBRARY__
 DECL|macro|__NR_setup
@@ -225,6 +227,36 @@ DECL|macro|__NR_setreuid
 mdefine_line|#define __NR_setreuid&t;70
 DECL|macro|__NR_setregid
 mdefine_line|#define __NR_setregid&t;71
+DECL|macro|__NR_sigsuspend
+mdefine_line|#define __NR_sigsuspend&t;72
+DECL|macro|__NR_sigpending
+mdefine_line|#define __NR_sigpending 73
+DECL|macro|__NR_sethostname
+mdefine_line|#define __NR_sethostname 74
+DECL|macro|__NR_setrlimit
+mdefine_line|#define __NR_setrlimit&t;75
+DECL|macro|__NR_getrlimit
+mdefine_line|#define __NR_getrlimit&t;76
+DECL|macro|__NR_getrusage
+mdefine_line|#define __NR_getrusage&t;77
+DECL|macro|__NR_gettimeofday
+mdefine_line|#define __NR_gettimeofday 78
+DECL|macro|__NR_settimeofday
+mdefine_line|#define __NR_settimeofday 79
+DECL|macro|__NR_getgroups
+mdefine_line|#define __NR_getgroups&t;80
+DECL|macro|__NR_setgroups
+mdefine_line|#define __NR_setgroups&t;81
+DECL|macro|__NR_select
+mdefine_line|#define __NR_select&t;82
+DECL|macro|__NR_symlink
+mdefine_line|#define __NR_symlink&t;83
+DECL|macro|__NR_lstat
+mdefine_line|#define __NR_lstat&t;84
+DECL|macro|__NR_readlink
+mdefine_line|#define __NR_readlink&t;85
+DECL|macro|__NR_uselib
+mdefine_line|#define __NR_uselib&t;86
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall1
@@ -955,6 +987,136 @@ id|setsid
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_int
+id|sethostname
+c_func
+(paren
+r_char
+op_star
+id|name
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_int
+id|setrlimit
+c_func
+(paren
+r_int
+id|resource
+comma
+r_struct
+id|rlimit
+op_star
+id|rlp
+)paren
+suffix:semicolon
+r_int
+id|getrlimit
+c_func
+(paren
+r_int
+id|resource
+comma
+r_struct
+id|rlimit
+op_star
+id|rlp
+)paren
+suffix:semicolon
+r_int
+id|getrusage
+c_func
+(paren
+r_int
+id|who
+comma
+r_struct
+id|rusage
+op_star
+id|rusage
+)paren
+suffix:semicolon
+r_int
+id|gettimeofday
+c_func
+(paren
+r_struct
+id|timeval
+op_star
+id|tv
+comma
+r_struct
+id|timezone
+op_star
+id|tz
+)paren
+suffix:semicolon
+r_int
+id|settimeofday
+c_func
+(paren
+r_struct
+id|timeval
+op_star
+id|tv
+comma
+r_struct
+id|timezone
+op_star
+id|tz
+)paren
+suffix:semicolon
+r_int
+id|getgroups
+c_func
+(paren
+r_int
+id|gidsetlen
+comma
+id|gid_t
+op_star
+id|gidset
+)paren
+suffix:semicolon
+r_int
+id|setgroups
+c_func
+(paren
+r_int
+id|gidsetlen
+comma
+id|gid_t
+op_star
+id|gidset
+)paren
+suffix:semicolon
+r_int
+id|select
+c_func
+(paren
+r_int
+id|width
+comma
+id|fd_set
+op_star
+id|readfds
+comma
+id|fd_set
+op_star
+id|writefds
+comma
+id|fd_set
+op_star
+id|exceptfds
+comma
+r_struct
+id|timeval
+op_star
+id|timeout
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -12,7 +12,7 @@ mdefine_line|#define clear_bit(nr,addr) ({&bslash;&n;register int res __asm__(&q
 DECL|macro|find_first_zero
 mdefine_line|#define find_first_zero(addr) ({ &bslash;&n;int __res; &bslash;&n;__asm__(&quot;cld&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tlodsl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;notl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bsfl %%eax,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 2f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl %%edx,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 3f&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;taddl $32,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl $8192,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jl 1b&bslash;n&quot; &bslash;&n;&t;&quot;3:&quot; &bslash;&n;&t;:&quot;=c&quot; (__res):&quot;c&quot; (0),&quot;S&quot; (addr):&quot;ax&quot;,&quot;dx&quot;,&quot;si&quot;); &bslash;&n;__res;})
 DECL|function|free_block
-r_void
+r_int
 id|free_block
 c_func
 (paren
@@ -90,23 +90,18 @@ r_if
 c_cond
 (paren
 id|bh-&gt;b_count
-op_ne
+OG
 l_int|1
 )paren
 (brace
-id|printk
+id|brelse
 c_func
 (paren
-l_string|&quot;trying to free block (%04x:%d), count=%d&bslash;n&quot;
-comma
-id|dev
-comma
-id|block
-comma
-id|bh-&gt;b_count
+id|bh
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|bh-&gt;b_dirt
@@ -117,6 +112,11 @@ id|bh-&gt;b_uptodate
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|bh-&gt;b_count
+)paren
 id|brelse
 c_func
 (paren
@@ -165,10 +165,10 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;free_block: bit already cleared&quot;
+l_string|&quot;free_block: bit already cleared&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -181,6 +181,9 @@ l_int|8192
 op_member_access_from_pointer
 id|b_dirt
 op_assign
+l_int|1
+suffix:semicolon
+r_return
 l_int|1
 suffix:semicolon
 )brace

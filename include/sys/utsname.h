@@ -2,6 +2,7 @@ macro_line|#ifndef _SYS_UTSNAME_H
 DECL|macro|_SYS_UTSNAME_H
 mdefine_line|#define _SYS_UTSNAME_H
 macro_line|#include &lt;sys/types.h&gt;
+macro_line|#include &lt;sys/param.h&gt;
 DECL|struct|utsname
 r_struct
 id|utsname
@@ -17,7 +18,9 @@ DECL|member|nodename
 r_char
 id|nodename
 (braket
-l_int|9
+id|MAXHOSTNAMELEN
+op_plus
+l_int|1
 )braket
 suffix:semicolon
 DECL|member|release

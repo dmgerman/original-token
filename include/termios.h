@@ -1,6 +1,7 @@
 macro_line|#ifndef _TERMIOS_H
 DECL|macro|_TERMIOS_H
 mdefine_line|#define _TERMIOS_H
+macro_line|#include &lt;sys/types.h&gt;
 DECL|macro|TTY_BUF_SIZE
 mdefine_line|#define TTY_BUF_SIZE 1024
 multiline_comment|/* 0x54 is just a magic number to make these relatively uniqe (&squot;T&squot;) */
@@ -56,8 +57,10 @@ DECL|macro|TIOCGSOFTCAR
 mdefine_line|#define TIOCGSOFTCAR&t;0x5419
 DECL|macro|TIOCSSOFTCAR
 mdefine_line|#define TIOCSSOFTCAR&t;0x541A
+DECL|macro|FIONREAD
+mdefine_line|#define FIONREAD&t;0x541B
 DECL|macro|TIOCINQ
-mdefine_line|#define TIOCINQ&t;&t;0x541B
+mdefine_line|#define TIOCINQ&t;&t;FIONREAD
 DECL|struct|winsize
 r_struct
 id|winsize
@@ -138,38 +141,32 @@ r_struct
 id|termios
 (brace
 DECL|member|c_iflag
-r_int
-r_int
+id|tcflag_t
 id|c_iflag
 suffix:semicolon
 multiline_comment|/* input mode flags */
 DECL|member|c_oflag
-r_int
-r_int
+id|tcflag_t
 id|c_oflag
 suffix:semicolon
 multiline_comment|/* output mode flags */
 DECL|member|c_cflag
-r_int
-r_int
+id|tcflag_t
 id|c_cflag
 suffix:semicolon
 multiline_comment|/* control mode flags */
 DECL|member|c_lflag
-r_int
-r_int
+id|tcflag_t
 id|c_lflag
 suffix:semicolon
 multiline_comment|/* local mode flags */
 DECL|member|c_line
-r_int
-r_char
+id|cc_t
 id|c_line
 suffix:semicolon
 multiline_comment|/* line discipline */
 DECL|member|c_cc
-r_int
-r_char
+id|cc_t
 id|c_cc
 (braket
 id|NCCS
@@ -358,10 +355,10 @@ DECL|macro|CSTOPB
 mdefine_line|#define CSTOPB&t;0000100
 DECL|macro|CREAD
 mdefine_line|#define CREAD&t;0000200
-DECL|macro|CPARENB
-mdefine_line|#define CPARENB&t;0000400
-DECL|macro|CPARODD
-mdefine_line|#define CPARODD&t;0001000
+DECL|macro|PARENB
+mdefine_line|#define PARENB&t;0000400
+DECL|macro|PARODD
+mdefine_line|#define PARODD&t;0001000
 DECL|macro|HUPCL
 mdefine_line|#define HUPCL&t;0002000
 DECL|macro|CLOCAL
@@ -370,10 +367,6 @@ DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;03600000&t;&t;/* input baud rate (not used) */
 DECL|macro|CRTSCTS
 mdefine_line|#define CRTSCTS&t;020000000000&t;&t;/* flow control */
-DECL|macro|PARENB
-mdefine_line|#define PARENB CPARENB
-DECL|macro|PARODD
-mdefine_line|#define PARODD CPARODD
 multiline_comment|/* c_lflag bits */
 DECL|macro|ISIG
 mdefine_line|#define ISIG&t;0000001
@@ -451,11 +444,6 @@ DECL|macro|TCSADRAIN
 mdefine_line|#define&t;TCSADRAIN&t;1
 DECL|macro|TCSAFLUSH
 mdefine_line|#define&t;TCSAFLUSH&t;2
-DECL|typedef|speed_t
-r_typedef
-r_int
-id|speed_t
-suffix:semicolon
 r_extern
 id|speed_t
 id|cfgetispeed
