@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *  linux/drivers/block/promise.c&t;Version 0.04  Mar 15, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  peterd@pnd-pc.demon.co.uk&n; *&n; *  This file provides support for the second port and cache of Promise&n; *  IDE interfaces, e.g. DC4030, DC5030.&n; *&n; *  Thanks are due to Mark Lord for advice and patiently answering stupid&n; *  questions, and all those mugs^H^H^H^Hbrave souls who&squot;ve tested this.&n; *&n; *  Version 0.01&t;Initial version, #include&squot;d in ide.c rather than&n; *                      compiled separately.&n; *                      Reads use Promise commands, writes as before. Drives&n; *                      on second channel are read-only.&n; *  Version 0.02        Writes working on second channel, reads on both&n; *                      channels. Writes fail under high load. Suspect&n; *&t;&t;&t;transfers of &gt;127 sectors don&squot;t work.&n; *  Version 0.03        Brought into line with ide.c version 5.27.&n; *                      Other minor changes.&n; *  Version 0.04        Updated for ide.c version 5.30&n; *                      Changed initialization strategy&n; *  Version 0.05&t;Kernel integration.  -ml&n; *  Version 0.06&t;Ooops. Add hwgroup to direct call of ide_intr() -ml&n; */
-multiline_comment|/*&n; * From:  &squot;peterd@pnd-pc.demon.co.uk&squot;&n; *&n; * Here&squot;s another version of the Promise driver for DC4030VL2 cards.&n; * There have been few substantive changes to the code, but it is now in&n; * line with the more recent ide.c changes, and is somewhat more configurable.&n; *&n; * Once you&squot;ve compiled it in, you&squot;ll have to also enable the interface&n; * setup routine from the kernel command line, as in &n; *&n; *&t;&squot;linux ide0=dc4030&squot;&n; *&n; * As before, it seems that somewhere around 3Megs when writing, bad things&n; * start to happen [timeouts/retries -ml]. If anyone can give me more feedback,&n; * I&squot;d really appreciate it.  [email: peterd@pnd-pc.demon.co.uk]&n; *&n; */
+multiline_comment|/*  -*- linux-c -*-&n; *  linux/drivers/block/promise.c&t;Version 0.07  Mar 26, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Principal Author/Maintainer:  peterd@pnd-pc.demon.co.uk&n; *&n; *  This file provides support for the second port and cache of Promise&n; *  IDE interfaces, e.g. DC4030, DC5030.&n; *&n; *  Thanks are due to Mark Lord for advice and patiently answering stupid&n; *  questions, and all those mugs^H^H^H^Hbrave souls who&squot;ve tested this.&n; *&n; *  Version 0.01&t;Initial version, #include&squot;d in ide.c rather than&n; *                      compiled separately.&n; *                      Reads use Promise commands, writes as before. Drives&n; *                      on second channel are read-only.&n; *  Version 0.02        Writes working on second channel, reads on both&n; *                      channels. Writes fail under high load. Suspect&n; *&t;&t;&t;transfers of &gt;127 sectors don&squot;t work.&n; *  Version 0.03        Brought into line with ide.c version 5.27.&n; *                      Other minor changes.&n; *  Version 0.04        Updated for ide.c version 5.30&n; *                      Changed initialization strategy&n; *  Version 0.05&t;Kernel integration.  -ml&n; *  Version 0.06&t;Ooops. Add hwgroup to direct call of ide_intr() -ml&n; *  Version 0.07&t;Added support for DC4030 variants&n; *&t;&t;&t;Secondary interface autodetection&n; */
+multiline_comment|/*&n; * Once you&squot;ve compiled it in, you&squot;ll have to also enable the interface&n; * setup routine from the kernel command line, as in &n; *&n; *&t;&squot;linux ide0=dc4030&squot;&n; *&n; * As before, it seems that somewhere around 3Megs when writing, bad things&n; * start to happen [timeouts/retries -ml]. If anyone can give me more feedback,&n; * I&squot;d really appreciate it.  [email: peterd@pnd-pc.demon.co.uk]&n; *&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;
@@ -449,6 +449,28 @@ suffix:colon
 id|printk
 c_func
 (paren
+l_string|&quot;DC4030VL-2, &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x41
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;DC4030VL-1, &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x40
+suffix:colon
+id|printk
+c_func
+(paren
 l_string|&quot;DC4030VL, &quot;
 )paren
 suffix:semicolon
@@ -459,7 +481,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;unknown - type 0x%02x - please report!, &quot;
+l_string|&quot;unknown - type 0x%02x - please report!&bslash;n&quot;
 comma
 id|ident.type
 )paren
@@ -533,6 +555,87 @@ op_assign
 op_amp
 id|promise_selectproc
 suffix:semicolon
+multiline_comment|/* Shift the remaining interfaces down by one */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|MAX_HWIFS
+op_minus
+l_int|1
+suffix:semicolon
+id|i
+OG
+id|hwif-&gt;index
+op_plus
+l_int|1
+suffix:semicolon
+id|i
+op_decrement
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Shifting i/f %d values to i/f %d&bslash;n&quot;
+comma
+id|i
+op_minus
+l_int|1
+comma
+id|i
+)paren
+suffix:semicolon
+id|ide_hwifs
+(braket
+id|i
+)braket
+dot
+id|io_base
+op_assign
+id|ide_hwifs
+(braket
+id|i
+op_minus
+l_int|1
+)braket
+dot
+id|io_base
+suffix:semicolon
+id|ide_hwifs
+(braket
+id|i
+)braket
+dot
+id|ctl_port
+op_assign
+id|ide_hwifs
+(braket
+id|i
+op_minus
+l_int|1
+)braket
+dot
+id|ctl_port
+suffix:semicolon
+id|ide_hwifs
+(braket
+id|i
+)braket
+dot
+id|noprobe
+op_assign
+id|ide_hwifs
+(braket
+id|i
+op_minus
+l_int|1
+)braket
+dot
+id|noprobe
+suffix:semicolon
+)brace
 id|second_hwif-&gt;is_promise2
 op_assign
 l_int|1
@@ -1156,7 +1259,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * do_promise_rw_disk() issues READ and WRITE commands to a&n; * disk on a promise controller, using LBA to address sectors.  It also&n; * takes care of issuing special DRIVE_CMDs.&n; */
+multiline_comment|/*&n; * do_promise_io() is called from do_rw_disk, having had the block number&n; * already set up. It issues a READ or WRITE command to the Promise&n; * controller, assuming LBA has been used to set up the block number.&n; */
 DECL|function|do_promise_io
 r_void
 id|do_promise_io
@@ -1219,7 +1322,7 @@ op_plus
 id|IDE_COMMAND_OFFSET
 )paren
 suffix:semicolon
-multiline_comment|/* The card&squot;s behaviour is odd at this point. If the data is&n;&t;       available, DRQ will be true, and no interrupt will be&n;&t;       generated by the card. If this is the case, we need to simulate&n;&t;       an interrupt. Ugh! Otherwise, if an interrupt will occur, bit0&n;&t;       of the SELECT register will be high, so we can just return and&n;&t;       be interrupted.*/
+multiline_comment|/* The card&squot;s behaviour is odd at this point. If the data is&n;   available, DRQ will be true, and no interrupt will be&n;   generated by the card. If this is the case, we need to simulate&n;   an interrupt. Ugh! Otherwise, if an interrupt will occur, bit0&n;   of the SELECT register will be high, so we can just return and&n;   be interrupted.*/
 id|timeout
 op_assign
 id|jiffies
@@ -1246,33 +1349,7 @@ op_amp
 id|DRQ_STAT
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|disable_irq
-c_func
-(paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|irq
-)paren
-suffix:semicolon
+multiline_comment|/*                    unsigned long flags;&n;                    save_flags(flags);&n;                    cli();&n;                    disable_irq(HWIF(drive)-&gt;irq);&n;*/
 id|ide_intr
 c_func
 (paren
@@ -1293,24 +1370,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|enable_irq
-c_func
-(paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|irq
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/*                    enable_irq(HWIF(drive)-&gt;irq);&n;                    restore_flags(flags);&n;*/
 r_return
 suffix:semicolon
 )brace
@@ -1331,6 +1391,12 @@ l_int|0x01
 r_return
 suffix:semicolon
 )brace
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop

@@ -1594,7 +1594,7 @@ l_int|20
 )paren
 id|printk
 (paren
-l_string|&quot;EQL enslsave: slave is master or slave is already slave&bslash;n&quot;
+l_string|&quot;EQL enslave: slave is master or slave is already slave&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif  

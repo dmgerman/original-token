@@ -1531,6 +1531,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|DIGI
+comma
+id|DIGI_RIGHTSWITCH
+comma
+l_string|&quot;Digi RightSwitch SE-6&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|MUTECH
 comma
 id|MUTECH_MV1000
@@ -1623,9 +1633,39 @@ c_func
 (paren
 id|CYCLADES
 comma
-id|CYCLADES_Y
+id|CYCLOM_Y_Lo
 comma
-l_string|&quot;Cyclome-Y&quot;
+l_string|&quot;Cyclom-Y below 1Mbyte&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYCLADES
+comma
+id|CYCLOM_Y_Hi
+comma
+l_string|&quot;Cyclom-Y above 1Mbyte&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYCLADES
+comma
+id|CYCLOM_Z_Lo
+comma
+l_string|&quot;Cyclom-Z below 1Mbyte&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYCLADES
+comma
+id|CYCLOM_Z_Hi
+comma
+l_string|&quot;Cyclom-Z above 1Mbyte&quot;
 )paren
 comma
 id|DEVICE

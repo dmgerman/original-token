@@ -1,7 +1,10 @@
 multiline_comment|/*&n; * bios32.c - PCI BIOS functions for Alpha systems not using BIOS&n; *&t;      emulation code.&n; *&n; * Written by Dave Rusling (david.rusling@reo.mts.dec.com)&n; *&n; * Adapted to 64-bit kernel and then rewritten by David Mosberger&n; * (davidm@cs.arizona.edu)&n; *&n; * For more information, please consult&n; *&n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000&n; * +1 (800) 433-5177&n; *&n; * Manuals are $25 each or $50 for all three, plus $7 shipping&n; * within the United States, $35 abroad.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if 0
-mdefine_line|#define DEBUG_PRINT_DEVS 1
+macro_line|# define DBG_DEVS(args)&t;&t;printk args
+macro_line|#else
+DECL|macro|DBG_DEVS
+macro_line|# define DBG_DEVS(args)
 macro_line|#endif
 macro_line|#ifndef CONFIG_PCI
 DECL|function|pcibios_present
@@ -700,9 +703,9 @@ op_or
 id|PCI_COMMAND_MASTER
 )paren
 suffix:semicolon
-macro_line|#if DEBUG_PRINT_DEVS
-id|printk
+id|DBG_DEVS
 c_func
+(paren
 (paren
 l_string|&quot;layout_dev: bus %d  slot 0x%x  VID 0x%x  DID 0x%x  class 0x%x&bslash;n&quot;
 comma
@@ -722,8 +725,8 @@ id|dev
 op_member_access_from_pointer
 r_class
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|layout_bus
 r_static
@@ -759,16 +762,16 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
-macro_line|#if DEBUG_PRINT_DEVS
-id|printk
+id|DBG_DEVS
 c_func
+(paren
 (paren
 l_string|&quot;layout_bus: starting bus %d&bslash;n&quot;
 comma
 id|bus-&gt;number
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -845,16 +848,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * Allocate space to each device:&n;&t; */
-macro_line|#if DEBUG_PRINT_DEVS
-id|printk
+id|DBG_DEVS
 c_func
+(paren
 (paren
 l_string|&quot;layout_bus: starting bus %d devices&bslash;n&quot;
 comma
 id|bus-&gt;number
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -890,16 +893,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * Recursively allocate space for all of the sub-buses:&n;&t; */
-macro_line|#if DEBUG_PRINT_DEVS
-id|printk
+id|DBG_DEVS
 c_func
+(paren
 (paren
 l_string|&quot;layout_bus: starting bus %d children&bslash;n&quot;
 comma
 id|bus-&gt;number
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -2459,21 +2462,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Go through all devices, fixing up irqs as we see fit:&n;&t; */
 id|level_bits
 op_assign
-id|inb
-c_func
-(paren
-l_int|0x4d0
-)paren
-op_or
-(paren
-id|inb
-c_func
-(paren
-l_int|0x4d1
-)paren
-op_lshift
-l_int|8
-)paren
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -2521,7 +2510,7 @@ id|curr
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* read the pin and do the PCI-PCI bridge&n;&t;&t;&t;   interrupt pin swizzle */
+multiline_comment|/*&n;&t;&t;&t; * read the pin and do the PCI-PCI bridge&n;&t;&t;&t; * interrupt pin swizzle&n;&t;&t;&t; */
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -2613,6 +2602,47 @@ id|pin
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|slot
+OL
+l_int|6
+op_logical_or
+id|slot
+op_ge
+l_int|6
+op_plus
+r_sizeof
+(paren
+id|pirq_tab
+)paren
+op_div
+r_sizeof
+(paren
+id|pirq_tab
+(braket
+l_int|0
+)braket
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;bios32.sio_fixup: &quot;
+l_string|&quot;weird, found device %04x:%04x in non-existent slot %d!!&bslash;n&quot;
+comma
+id|dev-&gt;vendor
+comma
+id|dev-&gt;device
+comma
+id|slot
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|pirq
 op_assign
 id|pirq_tab
@@ -2625,11 +2655,12 @@ l_int|6
 id|pin
 )braket
 suffix:semicolon
-macro_line|#if DEBUG_PRINT_DEVS
-id|printk
+id|DBG_DEVS
 c_func
 (paren
-l_string|&quot;sio_fixup: bus %d  slot 0x%x  VID 0x%x  DID 0x%x  int_slot 0x%x  int_pin 0x%x,  pirq 0x%x&bslash;n&quot;
+(paren
+l_string|&quot;sio_fixup: bus %d  slot 0x%x  VID 0x%x  DID 0x%x&bslash;n&quot;
+l_string|&quot;           int_slot 0x%x  int_pin 0x%x,  pirq 0x%x&bslash;n&quot;
 comma
 id|dev-&gt;bus-&gt;number
 comma
@@ -2649,19 +2680,8 @@ id|pin
 comma
 id|pirq
 )paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|pirq
-OL
-l_int|0
 )paren
-(brace
-r_continue
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t; * if its a VGA, enable its BIOS ROM at C0000&n;&t;&t; */
 r_if
 c_cond
@@ -2710,6 +2730,30 @@ r_continue
 suffix:semicolon
 multiline_comment|/* for now, displays get no IRQ */
 )brace
+r_if
+c_cond
+(paren
+id|pirq
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;bios32.sio_fixup: &quot;
+l_string|&quot;weird, device %04x:%04x coming in on slot %d has no irq line!!&bslash;n&quot;
+comma
+id|dev-&gt;vendor
+comma
+id|dev-&gt;device
+comma
+id|slot
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|dev-&gt;irq
 op_assign
 (paren
@@ -2749,7 +2793,7 @@ id|dev-&gt;irq
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  outw() doesn&squot;t&n;&t; * work.&n;&t; */
+multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  inw()/outw()&n;&t; * don&squot;t work.&n;&t; */
 id|level_bits
 op_or_assign
 (paren

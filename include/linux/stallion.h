@@ -17,7 +17,7 @@ mdefine_line|#define&t;STL_MAXPORTS&t;&t;64
 DECL|macro|STL_MAXDEVS
 mdefine_line|#define&t;STL_MAXDEVS&t;&t;(STL_MAXBRDS * STL_MAXPORTS)
 multiline_comment|/*&n; *&t;Define a set of structures to hold all the board/panel/port info&n; *&t;for our ports. These will be dynamically allocated as required.&n; */
-multiline_comment|/*&n; *&t;Define a ring queue structure for each port. This will hold the&n; *&t;TX data waiting to be output. Characters are fed into this buffer&n; *&t;from the line discipline (or even direct from user space!) and&n; *&t;then fed into the UARTs during interrupts. Will use a clasic ring&n; *&t;queue here for this. The good thing about this type of ring queue&n; *&t;is that the head and tail pointers can be updated without interrupt&n; *&t;protection - since &quot;write&quot; code only needs to change the head, and&n; *&t;interrupt code only needs to change the tail.&n; */
+multiline_comment|/*&n; *&t;Define a ring queue structure for each port. This will hold the&n; *&t;TX data waiting to be output. Characters are fed into this buffer&n; *&t;from the line discipline (or even direct from user space!) and&n; *&t;then fed into the UARTs during interrupts. Will use a classic ring&n; *&t;queue here for this. The good thing about this type of ring queue&n; *&t;is that the head and tail pointers can be updated without interrupt&n; *&t;protection - since &quot;write&quot; code only needs to change the head, and&n; *&t;interrupt code only needs to change the tail.&n; */
 r_typedef
 r_struct
 (brace

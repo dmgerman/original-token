@@ -4,14 +4,15 @@ DECL|macro|_TCP_H
 mdefine_line|#define _TCP_H
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
+multiline_comment|/*&n; * 40 is maximal IP options size&n; * 4  is TCP option size (MSS)&n; */
 DECL|macro|MAX_SYN_SIZE
-mdefine_line|#define MAX_SYN_SIZE&t;44 + MAX_HEADER + 15
+mdefine_line|#define MAX_SYN_SIZE&t;(sizeof(struct iphdr) + 40 + sizeof(struct tcphdr) + 4 + MAX_HEADER + 15)
 DECL|macro|MAX_FIN_SIZE
-mdefine_line|#define MAX_FIN_SIZE&t;40 + MAX_HEADER + 15
+mdefine_line|#define MAX_FIN_SIZE&t;(sizeof(struct iphdr) + 40 + sizeof(struct tcphdr) + MAX_HEADER + 15)
 DECL|macro|MAX_ACK_SIZE
-mdefine_line|#define MAX_ACK_SIZE&t;40 + MAX_HEADER + 15
+mdefine_line|#define MAX_ACK_SIZE&t;(sizeof(struct iphdr) + 40 + sizeof(struct tcphdr) + MAX_HEADER + 15)
 DECL|macro|MAX_RESET_SIZE
-mdefine_line|#define MAX_RESET_SIZE&t;40 + MAX_HEADER + 15
+mdefine_line|#define MAX_RESET_SIZE&t;(sizeof(struct iphdr) + 40 + sizeof(struct tcphdr) + MAX_HEADER + 15)
 DECL|macro|MAX_WINDOW
 mdefine_line|#define MAX_WINDOW&t;32767&t;&t;/* Never offer a window over 32767 without using&n;&t;&t;&t;&t;&t;   window scaling (not yet supported). Some poor&n;&t;&t;&t;&t;&t;   stacks do signed 16bit maths! */
 DECL|macro|MIN_WINDOW

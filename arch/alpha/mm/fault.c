@@ -12,6 +12,50 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
+DECL|variable|asn_cache
+r_int
+r_int
+id|asn_cache
+op_assign
+id|ASN_FIRST_VERSION
+suffix:semicolon
+macro_line|#ifndef BROKEN_ASN
+multiline_comment|/*&n; * Select a new ASN and reload the context. This is&n; * not inlined as this expands to a pretty large&n; * function.&n; */
+DECL|function|get_new_asn_and_reload
+r_void
+id|get_new_asn_and_reload
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+id|get_new_mmu_context
+c_func
+(paren
+id|tsk
+comma
+id|mm
+comma
+id|asn_cache
+)paren
+suffix:semicolon
+id|reload_context
+c_func
+(paren
+id|tsk
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_extern
 r_void
 id|die_if_kernel

@@ -2,15 +2,6 @@ multiline_comment|/*&n; * linux/include/linux/cyclades.h&n; *&n; * This file is 
 macro_line|#ifndef _LINUX_CYCLADES_H
 DECL|macro|_LINUX_CYCLADES_H
 mdefine_line|#define _LINUX_CYCLADES_H
-multiline_comment|/* PCI vendor and device ID&squot;s */
-macro_line|#ifndef PCI_VENDOR_ID_CYCLADES
-DECL|macro|PCI_VENDOR_ID_CYCLADES
-mdefine_line|#define&t;PCI_VENDOR_ID_CYCLADES&t;0x120e
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_CYCLOMY
-DECL|macro|PCI_DEVICE_ID_CYCLOMY
-mdefine_line|#define&t;PCI_DEVICE_ID_CYCLOMY&t;0x0100
-macro_line|#endif
 DECL|struct|cyclades_monitor
 r_struct
 id|cyclades_monitor

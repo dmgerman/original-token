@@ -2030,7 +2030,15 @@ id|sb-&gt;s_blocksize
 suffix:semicolon
 id|tmp.f_blocks
 op_assign
+(paren
 id|sb-&gt;u.isofs_sb.s_nzones
+op_lshift
+(paren
+id|sb-&gt;u.isofs_sb.s_log_zone_size
+op_minus
+id|sb-&gt;s_blocksize_bits
+)paren
+)paren
 suffix:semicolon
 id|tmp.f_bfree
 op_assign

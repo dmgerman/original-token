@@ -1,4 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec 274x/284x/294x device driver proc support for Linux.&n; *&n; * Copyright (c) 1995 Dean W. Gehnert&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * ----------------------------------------------------------------&n; *  o Modified from the EATA /proc support.&n; *  o Additional support for device block statistics provided by&n; *    Matthew Jacob.&n; *&n; *  Dean W. Gehnert, deang@ims.com, 08/30/95&n; *&n; *  $Id: aic7xxx_proc.c,v 2.5 1995/12/16 23:11:55 deang Exp $&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver proc support for Linux.&n; *&n; * Copyright (c) 1995 Dean W. Gehnert&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * ----------------------------------------------------------------&n; *  o Modified from the EATA /proc support.&n; *  o Additional support for device block statistics provided by&n; *    Matthew Jacob.&n; *&n; *  Dean W. Gehnert, deang@teleport.com, 08/30/95&n; *&n; *  $Id: aic7xxx_proc.c,v 3.0 1996/04/16 08:52:23 deang Exp $&n; *-M*************************************************************************/
 DECL|macro|BLS
 mdefine_line|#define BLS buffer + len + size
 DECL|macro|HDRB
@@ -185,7 +185,7 @@ suffix:semicolon
 r_static
 r_char
 op_star
-id|bus_name
+id|bus_names
 (braket
 )braket
 op_assign
@@ -195,6 +195,23 @@ comma
 l_string|&quot;Twin&quot;
 comma
 l_string|&quot;Wide&quot;
+)brace
+suffix:semicolon
+r_static
+r_char
+op_star
+id|chip_names
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;AIC-777x&quot;
+comma
+l_string|&quot;AIC-785x&quot;
+comma
+l_string|&quot;AIC-787x&quot;
+comma
+l_string|&quot;AIC-788x&quot;
 )brace
 suffix:semicolon
 id|HBAptr
@@ -493,6 +510,20 @@ id|AIC7XXX_RESET_DELAY
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef AIC7XXX_CMDS_PER_LUN
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;  AIC7XXX_CMDS_PER_LUN   : %d&bslash;n&quot;
+comma
+id|AIC7XXX_CMDS_PER_LUN
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef AIC7XXX_TWIN_SUPPORT
 id|size
 op_add_assign
@@ -641,9 +672,24 @@ c_func
 (paren
 id|BLS
 comma
+l_string|&quot;                        (%s chipset)&bslash;n&quot;
+comma
+id|chip_names
+(braket
+id|p-&gt;chip_type
+)braket
+)paren
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
 l_string|&quot;              Host Bus: %s&bslash;n&quot;
 comma
-id|bus_name
+id|bus_names
 (braket
 id|p-&gt;bus_type
 )braket
@@ -766,20 +812,6 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;         Pause/Unpause: %#.2x/%#.2x&bslash;n&quot;
-comma
-id|p-&gt;pause
-comma
-id|p-&gt;unpause
-)paren
-suffix:semicolon
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
 l_string|&quot;  Extended Translation: %sabled&bslash;n&quot;
 comma
 id|p-&gt;extended
@@ -817,6 +849,23 @@ comma
 l_string|&quot;            Ultra SCSI: %sabled&bslash;n&quot;
 comma
 id|p-&gt;ultra_enabled
+ques
+c_cond
+l_string|&quot;En&quot;
+suffix:colon
+l_string|&quot;Dis&quot;
+)paren
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;     Target Disconnect: %sabled&bslash;n&quot;
+comma
+id|p-&gt;discenable
 ques
 c_cond
 l_string|&quot;En&quot;

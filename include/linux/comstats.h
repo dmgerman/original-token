@@ -275,7 +275,7 @@ DECL|macro|COM_CLRPORTSTATS
 mdefine_line|#define&t;COM_CLRPORTSTATS&t;_IO(&squot;c&squot;,31)
 DECL|macro|COM_GETBRDSTATS
 mdefine_line|#define&t;COM_GETBRDSTATS&t;&t;_IO(&squot;c&squot;,32)
-multiline_comment|/*&n; *&t;Define the set of ioctls that give user level access to the&n; *&t;private port, panel and board structures. The argument required&n; *&t;will be driver dependant!  &n; */
+multiline_comment|/*&n; *&t;Define the set of ioctls that give user level access to the&n; *&t;private port, panel and board structures. The argument required&n; *&t;will be driver dependent!  &n; */
 DECL|macro|COM_READPORT
 mdefine_line|#define&t;COM_READPORT&t;&t;_IO(&squot;c&squot;,40)
 DECL|macro|COM_READBOARD

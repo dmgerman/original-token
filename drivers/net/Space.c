@@ -327,6 +327,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|dgrs_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|smc_init
 c_func
 (paren
@@ -406,6 +416,14 @@ r_if
 c_cond
 (paren
 l_int|1
+macro_line|#ifdef CONFIG_DGRS
+op_logical_and
+id|dgrs_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
 macro_line|#if defined(CONFIG_VORTEX)
 op_logical_and
 id|tc59x_probe

@@ -1,4 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx register and scratch ram definitions.&n; *&n; * Copyright (c) 1994, 1995, 1996 Justin T. Gibbs.&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: aic7xxx_reg.h,v 1.2 1996/02/10 06:23:39 deang Exp $&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx register and scratch ram definitions.&n; *&n; * Copyright (c) 1994, 1995, 1996 Justin T. Gibbs.&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: aic7xxx_reg.h,v 3.0 1996/04/16 08:52:23 deang Exp $&n; *-M*************************************************************************/
 multiline_comment|/*&n; * This header is shared by the sequencer code and the kernel level driver.&n; *&n; * All page numbers refer to the Adaptec AIC-7770 Data Book available from&n; * Adaptec&squot;s Technical Documents Department 1-800-934-2766&n; */
 multiline_comment|/*&n; * SCSI Sequence Control (p. 3-11).&n; * Each bit, when set starts a specific SCSI sequence on the bus&n; */
 DECL|macro|SCSISEQ
@@ -429,8 +429,6 @@ DECL|macro|MSG_BUFFER_BUSY
 mdefine_line|#define&t;&t;&t;MSG_BUFFER_BUSY&t;0xc1&t;/*&n;&t;&t;&t;&t;&t;&t; * Sequencer wants to use the&n;&t;&t;&t;&t;&t;&t; * message buffer, but it&n;&t;&t;&t;&t;&t;&t; * already contains a message&n;&t;&t;&t;&t;&t;&t; */
 DECL|macro|MSGIN_PHASEMIS
 mdefine_line|#define&t;&t;&t;MSGIN_PHASEMIS&t;0xd1&t;/*&n;&t;&t;&t;&t;&t;&t; * Target changed phase on us&n;&t;&t;&t;&t;&t;&t; * when we were expecting&n;&t;&t;&t;&t;&t;&t; * another msgin byte.&n;&t;&t;&t;&t;&t;&t; */
-DECL|macro|PARITY_ERROR
-mdefine_line|#define&t;&t;&t;PARITY_ERROR&t;0xe1&t;/*&n;&t;&t;&t;&t;&t;&t; * Sequencer detected a parity&n;&t;&t;&t;&t;&t;&t; * error.&n;&t;&t;&t;&t;&t;&t; */
 DECL|macro|BRKADRINT
 mdefine_line|#define &t;BRKADRINT 0x08
 DECL|macro|SCSIINT
@@ -725,8 +723,8 @@ DECL|macro|SAVED_TCL
 mdefine_line|#define&t;SAVED_TCL&t;&t;0x056&t;/*&n;&t;&t;&t;&t;&t; * Temporary storage for the&n;&t;&t;&t;&t;&t; * target/channel/lun of a&n;&t;&t;&t;&t;&t; * reconnecting target&n;&t;&t;&t;&t;&t; */
 DECL|macro|WAITING_SCBH
 mdefine_line|#define WAITING_SCBH&t;&t;0x057&t;/*&n;&t;&t;&t;&t;&t; * head of list of SCBs awaiting&n;&t;&t;&t;&t;&t; * selection&n;&t;&t;&t;&t;&t; */
-DECL|macro|WAITING_SCBT
-mdefine_line|#define WAITING_SCBT&t;&t;0x058&t;/*&n;&t;&t;&t;&t;&t; * tail of list of SCBs awaiting&n;&t;&t;&t;&t;&t; * selection&n;&t;&t;&t;&t;&t; */
+DECL|macro|QCNTMASK
+mdefine_line|#define QCNTMASK&t;&t;0x058&t;/*&n;&t;&t;&t;&t;&t; * Mask of bits to test against&n;&t;&t;&t;&t;&t; * when looking at the Queue Count&n;&t;&t;&t;&t;&t; * registers.  Works around a bug&n;&t;&t;&t;&t;&t; * on aic7850 chips. &n;&t;&t;&t;&t;&t; */
 DECL|macro|COMP_SCBCOUNT
 mdefine_line|#define&t;COMP_SCBCOUNT&t;&t;0x059
 DECL|macro|SCB_LIST_NULL

@@ -4924,7 +4924,7 @@ id|dev
 comma
 id|IPPROTO_TCP
 comma
-l_int|NULL
+id|sk-&gt;opt
 comma
 id|MAX_SYN_SIZE
 comma

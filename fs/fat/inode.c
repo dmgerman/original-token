@@ -3130,7 +3130,7 @@ id|i_attrs
 suffix:semicolon
 id|raw_entry-&gt;start
 op_assign
-id|CT_LE_L
+id|CT_LE_W
 c_func
 (paren
 id|MSDOS_I

@@ -224,7 +224,7 @@ op_assign
 initialization_block
 suffix:semicolon
 multiline_comment|/** Elements of Procedure (4.6) **/
-multiline_comment|/*&n; * this section of code was gratiously borrowed from the IEEE 802.1d&n; * specification section 4.9.1 starting on pg 69.  It has been&n; * modified somewhat to fit within out framework and structure.  It&n; * implements the spanning tree algorithm that is the heart of the&n; * 802.1d bridging protocol.&n; */
+multiline_comment|/*&n; * this section of code was graciously borrowed from the IEEE 802.1d&n; * specification section 4.9.1 starting on pg 69.  It has been&n; * modified somewhat to fit within out framework and structure.  It&n; * implements the spanning tree algorithm that is the heart of the&n; * 802.1d bridging protocol.&n; */
 DECL|function|transmit_config
 r_void
 id|transmit_config

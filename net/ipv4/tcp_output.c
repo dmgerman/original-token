@@ -2179,7 +2179,7 @@ id|ndev
 comma
 id|IPPROTO_TCP
 comma
-l_int|NULL
+id|newsk-&gt;opt
 comma
 id|MAX_SYN_SIZE
 comma

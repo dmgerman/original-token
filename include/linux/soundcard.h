@@ -6,7 +6,7 @@ DECL|macro|SOUND_VERSION
 mdefine_line|#define SOUND_VERSION&t;350
 DECL|macro|UNIX_SOUND_SYSTEM
 mdefine_line|#define UNIX_SOUND_SYSTEM
-macro_line|#include &lt;sys/ioctl.h&gt;
+macro_line|#include &lt;linux/ioctl.h&gt;
 multiline_comment|/*&n; *&t;Supported card ID numbers (Should be somewhere else?)&n; */
 DECL|macro|SNDCARD_ADLIB
 mdefine_line|#define SNDCARD_ADLIB&t;&t;1

@@ -989,13 +989,6 @@ r_return
 l_int|0x7fffffff
 suffix:semicolon
 multiline_comment|/* cdrom or tape */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|IS_PROMISE_DRIVE
-)paren
-(brace
 id|drive-&gt;select.b.lba
 op_assign
 l_int|0
@@ -1037,7 +1030,6 @@ id|drive-&gt;select.b.lba
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 )brace
 )brace
 r_return
@@ -4641,6 +4633,13 @@ id|io_base
 op_assign
 id|hwif-&gt;io_base
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
+r_int
+id|use_promise_io
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
 id|OUT_BYTE
 c_func
 (paren
@@ -4659,12 +4658,45 @@ op_plus
 id|IDE_NSECTOR_OFFSET
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
+r_if
+c_cond
+(paren
+id|IS_PROMISE_DRIVE
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|hwif-&gt;is_promise2
+op_logical_or
+id|rq-&gt;cmd
+op_eq
+id|READ
+)paren
+(brace
+id|use_promise_io
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|drive-&gt;select.b.lba
+op_logical_or
+id|use_promise_io
+)paren
+(brace
+macro_line|#else /* !CONFIG_BLK_DEV_PROMISE */
 r_if
 c_cond
 (paren
 id|drive-&gt;select.b.lba
 )paren
 (brace
+macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -4873,17 +4905,7 @@ macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
 r_if
 c_cond
 (paren
-id|IS_PROMISE_DRIVE
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|hwif-&gt;is_promise2
-op_logical_or
-id|rq-&gt;cmd
-op_eq
-id|READ
+id|use_promise_io
 )paren
 (brace
 id|do_promise_io
@@ -4895,7 +4917,6 @@ id|rq
 suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
 r_if
@@ -10956,16 +10977,6 @@ op_eq
 id|ide_disk
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|IS_PROMISE_DRIVE
-)paren
-id|drive-&gt;select.b.lba
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* required by promise driver */
 r_if
 c_cond
 (paren

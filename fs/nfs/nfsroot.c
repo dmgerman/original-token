@@ -32,6 +32,7 @@ macro_line|#include &lt;linux/nfs_mount.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/* Range of privileged ports */
 DECL|macro|STARTPORT
 mdefine_line|#define STARTPORT&t;600

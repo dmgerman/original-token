@@ -16,9 +16,6 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#if 0
-mdefine_line|#define DEBUG_ASYNC_AHEAD
-macro_line|#endif
 multiline_comment|/*&n; * Shared mappings implemented 30.11.1994. It&squot;s not fully working yet,&n; * though.&n; *&n; * Shared mappings now work. 15.8.1995  Bruno.&n; */
 DECL|variable|page_cache_size
 r_int
@@ -1138,9 +1135,201 @@ op_assign
 id|TASK_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is a generic file read routine, and uses the&n; * inode-&gt;i_op-&gt;readpage() function for the actual low-level&n; * stuff.&n; *&n; * This is really ugly. But the goto&squot;s actually try to clarify some&n; * of the logic when it comes to error handling etc.&n; */
+macro_line|#if 0
+mdefine_line|#define PROFILE_READAHEAD
+mdefine_line|#define DEBUG_READAHEAD
+macro_line|#endif
+multiline_comment|/*&n; * Read-ahead profiling informations&n; * ---------------------------------&n; * Every PROFILE_MAXREADCOUNT, the following informations are written &n; * to the syslog:&n; *   Percentage of asynchronous read-ahead.&n; *   Average of read-ahead fields context value.&n; * If DEBUG_READAHEAD is defined, a snapshot of these fields is written &n; * to the syslog.&n; */
+macro_line|#ifdef PROFILE_READAHEAD
+DECL|macro|PROFILE_MAXREADCOUNT
+mdefine_line|#define PROFILE_MAXREADCOUNT 1000
+DECL|variable|total_reada
+r_static
+r_int
+r_int
+id|total_reada
+suffix:semicolon
+DECL|variable|total_async
+r_static
+r_int
+r_int
+id|total_async
+suffix:semicolon
+DECL|variable|total_ramax
+r_static
+r_int
+r_int
+id|total_ramax
+suffix:semicolon
+DECL|variable|total_ralen
+r_static
+r_int
+r_int
+id|total_ralen
+suffix:semicolon
+DECL|variable|total_rawin
+r_static
+r_int
+r_int
+id|total_rawin
+suffix:semicolon
+DECL|function|profile_readahead
+r_static
+r_void
+id|profile_readahead
+c_func
+(paren
+r_int
+id|async
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+op_increment
+id|total_reada
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|async
+)paren
+op_increment
+id|total_async
+suffix:semicolon
+id|total_ramax
+op_add_assign
+id|filp-&gt;f_ramax
+suffix:semicolon
+id|total_ralen
+op_add_assign
+id|filp-&gt;f_ralen
+suffix:semicolon
+id|total_rawin
+op_add_assign
+id|filp-&gt;f_rawin
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|total_reada
+OG
+id|PROFILE_MAXREADCOUNT
+)paren
+(brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|total_reada
+OG
+id|PROFILE_MAXREADCOUNT
+)paren
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;Readahead average:  max=%ld, len=%ld, win=%ld, async=%ld%%&bslash;n&quot;
+comma
+id|total_ramax
+op_div
+id|total_reada
+comma
+id|total_ralen
+op_div
+id|total_reada
+comma
+id|total_rawin
+op_div
+id|total_reada
+comma
+(paren
+id|total_async
+op_star
+l_int|100
+)paren
+op_div
+id|total_reada
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG_READAHEAD
+id|printk
+c_func
+(paren
+l_string|&quot;Readahead snapshot: max=%ld, len=%ld, win=%ld, rapos=%ld&bslash;n&quot;
+comma
+id|filp-&gt;f_ramax
+comma
+id|filp-&gt;f_ralen
+comma
+id|filp-&gt;f_rawin
+comma
+id|filp-&gt;f_rapos
+)paren
+suffix:semicolon
+macro_line|#endif
+id|total_reada
+op_assign
+l_int|0
+suffix:semicolon
+id|total_async
+op_assign
+l_int|0
+suffix:semicolon
+id|total_ramax
+op_assign
+l_int|0
+suffix:semicolon
+id|total_ralen
+op_assign
+l_int|0
+suffix:semicolon
+id|total_rawin
+op_assign
+l_int|0
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif  /* defined PROFILE_READAHEAD */
+multiline_comment|/*&n; * Read-ahead context:&n; * -------------------&n; * The read ahead context fields of the &quot;struct file&quot; are the following:&n; * - f_rapos : position of the first byte after the last page we tried to&n; *             read ahead.&n; * - f_ramax : current read-ahead maximum size.&n; * - f_ralen : length of the current IO read block we tried to read-ahead.&n; * - f_rawin : length of the current read-ahead window.&n; *             if last read-ahead was synchronous then&n; *                  f_rawin = f_ralen&n; *             otherwise (was asynchronous)&n; *                  f_rawin = previous value of f_ralen + f_ralen&n; *&n; * Read-ahead limits:&n; * ------------------&n; * MIN_READAHEAD   : minimum read-ahead size when read-ahead.&n; * MAX_READAHEAD   : maximum read-ahead size when read-ahead.&n; * MAX_READWINDOW  : maximum read window length.&n; *&n; * Synchronous read-ahead benefits:&n; * --------------------------------&n; * Using reasonnable IO xfer length from peripheral devices increase system &n; * performances.&n; * Reasonnable means, in this context, not too large but not too small.&n; * The actual maximum value is MAX_READAHEAD + PAGE_SIZE = 32k&n; *&n; * Asynchronous read-ahead benefits:&n; * ---------------------------------&n; * Overlapping next read request and user process execution increase system &n; * performance.&n; *&n; * Read-ahead risks:&n; * -----------------&n; * We have to guess which further data are needed by the user process.&n; * If these data are often not really needed, it&squot;s bad for system &n; * performances.&n; * However, we know that files are often accessed sequentially by &n; * application programs and it seems that it is possible to have some good &n; * strategy in that guessing.&n; * We only try to read-ahead files that seems to be read sequentially.&n; *&n; * Asynchronous read-ahead risks:&n; * ------------------------------&n; * In order to maximize overlapping, we must start some asynchronous read &n; * request from the device, as soon as possible.&n; * We must be very carefull about:&n; * - The number of effective pending IO read requests.&n; *   ONE seems to be the only reasonnable value.&n; * - The total memory pool usage for the file access stream.&n; *   We try to have a limit of MAX_READWINDOW = 48K.&n; */
+DECL|macro|MAX_READWINDOW
+mdefine_line|#define MAX_READWINDOW (PAGE_SIZE*12)
 DECL|macro|MAX_READAHEAD
-mdefine_line|#define MAX_READAHEAD (PAGE_SIZE*8)
+mdefine_line|#define MAX_READAHEAD (PAGE_SIZE*7)
 DECL|macro|MIN_READAHEAD
 mdefine_line|#define MIN_READAHEAD (PAGE_SIZE)
 DECL|function|generic_file_readahead
@@ -1217,13 +1406,20 @@ id|page
 )paren
 )paren
 (brace
-id|max_ahead
-op_assign
-id|filp-&gt;f_ramax
-suffix:semicolon
 id|rapos
 op_assign
 id|ppos
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rapos
+OL
+id|inode-&gt;i_size
+)paren
+id|max_ahead
+op_assign
+id|filp-&gt;f_ramax
 suffix:semicolon
 id|filp-&gt;f_rawin
 op_assign
@@ -1234,7 +1430,7 @@ op_assign
 id|PAGE_SIZE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The current page is not locked&n; * It may be the moment to try asynchronous read-ahead.&n; * If asynchronous is the suggested tactics and if the current position is&n; * inside the previous read-ahead window, check the last read page:&n; * - if locked, the previous IO request is probably not complete, and&n; *   we will not try to do another IO request.&n; * - if not locked, the previous IO request is probably complete, and&n; *   this is a good moment to try a new asynchronous read-ahead request.&n; * try_async = 2 means that we have to force unplug of the device in&n; * order to force call to the strategy routine of the disk driver and &n; * start IO asynchronously.&n; */
+multiline_comment|/*&n; * The current page is not locked&n; * If the current position is inside the last read-ahead IO request,&n; * it is the moment to try asynchronous read-ahead.&n; * try_async = 2 means that we have to force unplug of the device in&n; * order to force read IO asynchronously.&n; */
 r_else
 r_if
 c_cond
@@ -1258,18 +1454,7 @@ op_ge
 id|rapos
 )paren
 (brace
-r_struct
-id|page
-op_star
-id|a_page
-suffix:semicolon
-multiline_comment|/*&n; * Add ONE page to max_ahead in order to try to have the same IO max size as&n; * synchronous read-ahead (MAX_READAHEAD + 1)*PAGE_SIZE.&n; * Compute the position of the last page we have tried to read.&n; */
-id|max_ahead
-op_assign
-id|filp-&gt;f_ramax
-op_plus
-id|PAGE_SIZE
-suffix:semicolon
+multiline_comment|/*&n; * Add ONE page to max_ahead in order to try to have about the same IO max size&n; * as synchronous read-ahead (MAX_READAHEAD + 1)*PAGE_SIZE.&n; * Compute the position of the last page we have tried to read.&n; */
 id|rapos
 op_sub_assign
 id|PAGE_SIZE
@@ -1281,41 +1466,12 @@ id|rapos
 OL
 id|inode-&gt;i_size
 )paren
-(brace
-id|a_page
-op_assign
-id|find_page
-c_func
-(paren
-id|inode
-comma
-id|rapos
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|a_page
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|PageLocked
-c_func
-(paren
-id|a_page
-)paren
-)paren
 id|max_ahead
 op_assign
-l_int|0
+id|filp-&gt;f_ramax
+op_plus
+id|PAGE_SIZE
 suffix:semicolon
-id|a_page-&gt;count
-op_decrement
-suffix:semicolon
-)brace
-)brace
 r_if
 c_cond
 (paren
@@ -1368,7 +1524,7 @@ id|page_cache
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * If we tried to read some pages,&n; * Compute the new read-ahead position.&n; * It is the position of the next byte.&n; * Store the length of the current read-ahead window.&n; * If necessary,&n; *    Try to force unplug of the device in order to start an asynchronous&n; *    read IO.&n; */
+multiline_comment|/*&n; * If we tried to read some pages,&n; * Update the read-ahead context.&n; * Store the length of the current read-ahead window.&n; * Add PAGE_SIZE to the max read ahead size each time we have read-ahead&n; *   That recipe avoid to do some large IO for files that are not really&n; *   accessed sequentially.&n; * Do that only if the read ahead window is lower that MAX_READWINDOW&n; * in order to limit the amount of pages used for this file access context.&n; * If asynchronous,&n; *    Try to force unplug of the device in order to start an asynchronous&n; *    read IO request.&n; */
 r_if
 c_cond
 (paren
@@ -1391,6 +1547,58 @@ id|ahead
 op_plus
 id|PAGE_SIZE
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|filp-&gt;f_rawin
+OL
+id|MAX_READWINDOW
+)paren
+id|filp-&gt;f_ramax
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|filp-&gt;f_rawin
+OG
+id|MAX_READWINDOW
+op_logical_and
+id|filp-&gt;f_ramax
+OG
+id|PAGE_SIZE
+)paren
+id|filp-&gt;f_ramax
+op_sub_assign
+id|PAGE_SIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|filp-&gt;f_ramax
+OG
+id|MAX_READAHEAD
+)paren
+id|filp-&gt;f_ramax
+op_assign
+id|MAX_READAHEAD
+suffix:semicolon
+macro_line|#ifdef PROFILE_READAHEAD
+id|profile_readahead
+c_func
+(paren
+(paren
+id|try_async
+op_eq
+l_int|2
+)paren
+comma
+id|filp
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1430,6 +1638,7 @@ r_return
 id|page_cache
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This is a generic file read routine, and uses the&n; * inode-&gt;i_op-&gt;readpage() function for the actual low-level&n; * stuff.&n; *&n; * This is really ugly. But the goto&squot;s actually try to clarify some&n; * of the logic when it comes to error handling etc.&n; */
 DECL|function|generic_file_read
 r_int
 id|generic_file_read
@@ -1469,25 +1678,6 @@ suffix:semicolon
 r_int
 id|try_async
 suffix:semicolon
-macro_line|#ifdef DEBUG_ASYNC_AHEAD
-r_static
-r_int
-id|ccount
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|count
-OG
-l_int|0
-)paren
-id|ccount
-op_add_assign
-id|count
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1520,7 +1710,7 @@ id|pos
 op_amp
 id|PAGE_MASK
 suffix:semicolon
-multiline_comment|/*&n; * Check if the current position is inside the previous read-ahead window.&n; * If that&squot;s true, I assume that the file accesses are sequential enough to&n; * continue asynchronous read-ahead.&n; * Do minimum read-ahead at the beginning of the file since some tools&n; * only read the beginning of files.&n; * Break read-ahead if the file position is outside the previous read ahead&n; * window or if read-ahead position is 0.&n; */
+multiline_comment|/*&n; * Check if the current position is inside the previous read-ahead window.&n; * If that&squot;s true, We assume that the file accesses are sequential enough to&n; * continue asynchronous read-ahead.&n; * Do minimum read-ahead at the beginning of the file since some tools&n; * only read the beginning of files.&n; * Break read-ahead if the file position is outside the previous read ahead&n; * window or if read-ahead position is 0.&n; */
 multiline_comment|/*&n; * Will not try asynchronous read-ahead.&n; * Reset to zero, read-ahead context.&n; */
 r_if
 c_cond
@@ -1542,37 +1732,6 @@ id|try_async
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUG_ASYNC_AHEAD
-r_if
-c_cond
-(paren
-id|ccount
-OG
-l_int|10000000
-)paren
-(brace
-id|ccount
-op_assign
-l_int|0
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;XXXXXXXX ppos=%ld rapos=%ld ralen=%ld ramax=%ld rawin=%ld&bslash;n&quot;
-comma
-id|ppos
-comma
-id|filp-&gt;f_rapos
-comma
-id|filp-&gt;f_ralen
-comma
-id|filp-&gt;f_ramax
-comma
-id|filp-&gt;f_rawin
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|filp-&gt;f_rapos
 op_assign
 l_int|0
@@ -1589,7 +1748,7 @@ id|filp-&gt;f_rawin
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Will try asynchronous read-ahead.&n; * Double the max read ahead size each time.&n; *   That heuristic avoid to do some large IO for files that are not really&n; *   accessed sequentially.&n; */
+multiline_comment|/*&n; * Will try asynchronous read-ahead.&n; */
 )brace
 r_else
 (brace
@@ -1597,43 +1756,8 @@ id|try_async
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef DEBUG_ASYNC_AHEAD
-r_if
-c_cond
-(paren
-id|ccount
-OG
-l_int|10000000
-)paren
-(brace
-id|ccount
-op_assign
-l_int|0
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;XXXXXXXX ppos=%ld rapos=%ld ralen=%ld ramax=%ld rawin=%ld&bslash;n&quot;
-comma
-id|ppos
-comma
-id|filp-&gt;f_rapos
-comma
-id|filp-&gt;f_ralen
-comma
-id|filp-&gt;f_ramax
-comma
-id|filp-&gt;f_rawin
-)paren
-suffix:semicolon
 )brace
-macro_line|#endif
-id|filp-&gt;f_ramax
-op_add_assign
-id|filp-&gt;f_ramax
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Compute a good value for read-ahead max&n; * If the read operation stay in the first half page, force no readahead.&n; * Else try first some value near count.&n; *      do at least MIN_READAHEAD and at most MAX_READAHEAD.&n; * (Should be a little reworked)&n; */
+multiline_comment|/*&n; * Adjust the current value of read-ahead max.&n; * If the read operation stay in the first half page, force no readahead.&n; * Otherwise try first some value near count.&n; *      do at least MIN_READAHEAD and at most MAX_READAHEAD.&n; */
 r_if
 c_cond
 (paren
@@ -1886,26 +2010,16 @@ c_cond
 id|try_async
 )paren
 (brace
-id|filp-&gt;f_ramax
-op_assign
-(paren
-id|filp-&gt;f_ramax
-op_div
-l_int|2
-)paren
-op_amp
-id|PAGE_MASK
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|filp-&gt;f_ramax
-OL
+OG
 id|MIN_READAHEAD
 )paren
 id|filp-&gt;f_ramax
-op_assign
-id|MIN_READAHEAD
+op_sub_assign
+id|PAGE_SIZE
 suffix:semicolon
 )brace
 r_if
@@ -3415,12 +3529,12 @@ id|offset
 op_assign
 id|address
 op_amp
-id|PMD_MASK
+id|PGDIR_MASK
 suffix:semicolon
 id|address
 op_and_assign
 op_complement
-id|PMD_MASK
+id|PGDIR_MASK
 suffix:semicolon
 id|end
 op_assign

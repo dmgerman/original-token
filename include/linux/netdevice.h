@@ -18,7 +18,7 @@ DECL|macro|MAX_HEADER
 mdefine_line|#define MAX_HEADER&t;32&t;&t;/* We really need about 18 worst case .. so 32 is aligned */
 macro_line|#else
 DECL|macro|MAX_HEADER
-mdefine_line|#define MAX_HEADER&t;48&t;&t;/* We need to allow for having tunnel headers */
+mdefine_line|#define MAX_HEADER&t;80&t;&t;/* We need to allow for having tunnel headers */
 macro_line|#endif  /* IPIP */
 macro_line|#else
 DECL|macro|MAX_HEADER

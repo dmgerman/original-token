@@ -11,73 +11,42 @@ mdefine_line|#define MAX_ASN 127
 macro_line|#else
 DECL|macro|MAX_ASN
 mdefine_line|#define MAX_ASN 63
+DECL|macro|BROKEN_ASN
+mdefine_line|#define BROKEN_ASN 1
 macro_line|#endif
+r_extern
+r_int
+r_int
+id|asn_cache
+suffix:semicolon
 DECL|macro|ASN_VERSION_SHIFT
 mdefine_line|#define ASN_VERSION_SHIFT 16
 DECL|macro|ASN_VERSION_MASK
 mdefine_line|#define ASN_VERSION_MASK ((~0UL) &lt;&lt; ASN_VERSION_SHIFT)
 DECL|macro|ASN_FIRST_VERSION
 mdefine_line|#define ASN_FIRST_VERSION (1UL &lt;&lt; ASN_VERSION_SHIFT)
-multiline_comment|/*&n; * NOTE! The way this is set up, the high bits of the &quot;asn_cache&quot; (and&n; * the &quot;mm-&gt;context&quot;) are the ASN _version_ code. A version of 0 is&n; * always considered invalid, so to invalidate another process you only&n; * need to do &quot;p-&gt;mm-&gt;context = 0&quot;.&n; *&n; * If we need more ASN&squot;s than the processor has, we invalidate the old&n; * user TLB&squot;s (tbiap()) and start a new ASN version. That will automatically&n; * force a new asn for any other processes the next time they want to&n; * run.&n; */
-DECL|function|get_mmu_context
+DECL|function|get_new_mmu_context
 r_extern
 r_inline
 r_void
-id|get_mmu_context
+id|get_new_mmu_context
 c_func
 (paren
 r_struct
 id|task_struct
 op_star
 id|p
-)paren
-(brace
-macro_line|#ifdef CONFIG_ALPHA_EV5
-r_static
-r_int
-r_int
-id|asn_cache
-op_assign
-id|ASN_FIRST_VERSION
-suffix:semicolon
+comma
 r_struct
 id|mm_struct
 op_star
 id|mm
-op_assign
-id|p-&gt;mm
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|mm
-)paren
-(brace
+comma
 r_int
 r_int
 id|asn
-op_assign
-id|mm-&gt;context
-suffix:semicolon
-multiline_comment|/* Check if our ASN is of an older version and thus invalid */
-r_if
-c_cond
-(paren
-(paren
-id|asn_cache
-op_xor
-id|asn
-)paren
-op_amp
-id|ASN_VERSION_MASK
 )paren
 (brace
-multiline_comment|/* get a new asn of the current version */
-id|asn
-op_assign
-id|asn_cache
-op_increment
-suffix:semicolon
 multiline_comment|/* check if it&squot;s legal.. */
 r_if
 c_cond
@@ -103,10 +72,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|asn_cache
+id|asn
 op_assign
 (paren
-id|asn_cache
+id|asn
 op_amp
 id|ASN_VERSION_MASK
 )paren
@@ -117,18 +86,19 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|asn_cache
+id|asn
 )paren
-id|asn_cache
+id|asn
 op_assign
 id|ASN_FIRST_VERSION
 suffix:semicolon
-id|asn
-op_assign
-id|asn_cache
-op_increment
-suffix:semicolon
 )brace
+id|asn_cache
+op_assign
+id|asn
+op_plus
+l_int|1
+suffix:semicolon
 id|mm-&gt;context
 op_assign
 id|asn
@@ -143,6 +113,62 @@ id|ASN_VERSION_MASK
 suffix:semicolon
 multiline_comment|/* just asn */
 )brace
+multiline_comment|/*&n; * NOTE! The way this is set up, the high bits of the &quot;asn_cache&quot; (and&n; * the &quot;mm-&gt;context&quot;) are the ASN _version_ code. A version of 0 is&n; * always considered invalid, so to invalidate another process you only&n; * need to do &quot;p-&gt;mm-&gt;context = 0&quot;.&n; *&n; * If we need more ASN&squot;s than the processor has, we invalidate the old&n; * user TLB&squot;s (tbiap()) and start a new ASN version. That will automatically&n; * force a new asn for any other processes the next time they want to&n; * run.&n; */
+DECL|function|get_mmu_context
+r_extern
+r_inline
+r_void
+id|get_mmu_context
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+(brace
+macro_line|#ifndef BROKEN_ASN
+r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+id|p-&gt;mm
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mm
+)paren
+(brace
+r_int
+r_int
+id|asn
+op_assign
+id|asn_cache
+suffix:semicolon
+multiline_comment|/* Check if our ASN is of an older version and thus invalid */
+r_if
+c_cond
+(paren
+(paren
+id|mm-&gt;context
+op_xor
+id|asn
+)paren
+op_amp
+id|ASN_VERSION_MASK
+)paren
+id|get_new_mmu_context
+c_func
+(paren
+id|p
+comma
+id|mm
+comma
+id|asn
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 )brace

@@ -448,7 +448,7 @@ r_case
 l_int|2
 suffix:colon
 multiline_comment|/* gentrap */
-multiline_comment|/*&n;&t;&t; * The translation from the gentrap error code into a&n;&t;&t; * siginfo structure (see /usr/include/sys/siginfo.h)&n;&t;&t; * is missing as Linux does not presently support the&n;&t;&t; * siginfo argument that is normally passed to a&n;&t;&t; * signal handler.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The exception code should be passed on to the signal&n;&t;&t; * handler as the second argument.  Linux doesn&squot;t do that&n;&t;&t; * yet (also notice that Linux *always* behaves like&n;&t;&t; * DEC Unix with SA_SIGINFO off; see DEC Unix man page&n;&t;&t; * for sigaction(2)).&n;&t;&t; */
 r_switch
 c_cond
 (paren

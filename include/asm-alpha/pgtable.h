@@ -3,6 +3,7 @@ DECL|macro|_ALPHA_PGTABLE_H
 mdefine_line|#define _ALPHA_PGTABLE_H
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the alpha page table tree.&n; *&n; * This hopefully works with any standard alpha page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; */
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 multiline_comment|/* Caches aren&squot;t brain-dead on the alpha. */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
@@ -14,6 +15,149 @@ DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
+multiline_comment|/*&n; * Force a context reload. This is needed when we&n; * change the page table pointer or when we update&n; * the ASN of the current process.&n; */
+DECL|function|reload_context
+r_static
+r_inline
+r_void
+id|reload_context
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|task
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;bis %0,%0,$16&bslash;n&bslash;t&quot;
+l_string|&quot;call_pal %1&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|task-&gt;tss
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|PAL_swpctx
+)paren
+suffix:colon
+l_string|&quot;$0&quot;
+comma
+l_string|&quot;$1&quot;
+comma
+l_string|&quot;$16&quot;
+comma
+l_string|&quot;$22&quot;
+comma
+l_string|&quot;$23&quot;
+comma
+l_string|&quot;$24&quot;
+comma
+l_string|&quot;$25&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Use a few helper functions to hide the ugly broken ASN&n; * numbers on early alpha&squot;s (ev4 and ev45)&n; */
+macro_line|#ifdef BROKEN_ASN
+DECL|macro|flush_tlb_current
+mdefine_line|#define flush_tlb_current(x) tbiap()
+DECL|macro|flush_tlb_other
+mdefine_line|#define flush_tlb_other(x) do { } while (0)
+macro_line|#else
+r_extern
+r_void
+id|get_new_asn_and_reload
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+comma
+r_struct
+id|mm_struct
+op_star
+)paren
+suffix:semicolon
+DECL|macro|flush_tlb_current
+mdefine_line|#define flush_tlb_current(mm) get_new_asn_and_reload(current, mm)
+DECL|macro|flush_tlb_other
+mdefine_line|#define flush_tlb_other(mm) do { (mm)-&gt;context = 0; } while (0)
+macro_line|#endif
+multiline_comment|/*&n; * Flush just one page in the current TLB set.&n; * We need to be very careful about the icache here, there&n; * is no way to invalidate a specific icache page..&n; */
+DECL|function|flush_tlb_current_page
+r_static
+r_inline
+r_void
+id|flush_tlb_current_page
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+macro_line|#ifdef BROKEN_ASN
+id|tbi
+c_func
+(paren
+l_int|2
+op_plus
+(paren
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_EXEC
+)paren
+op_ne
+l_int|0
+)paren
+comma
+id|addr
+)paren
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_EXEC
+)paren
+id|flush_tlb_current
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
+r_else
+id|tbi
+c_func
+(paren
+l_int|2
+comma
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/*&n; * Flush current user mapping.&n; */
 DECL|function|flush_tlb
 r_static
@@ -25,9 +169,10 @@ c_func
 r_void
 )paren
 (brace
-id|tbiap
+id|flush_tlb_current
 c_func
 (paren
+id|current-&gt;mm
 )paren
 suffix:semicolon
 )brace
@@ -69,14 +214,17 @@ id|mm
 op_ne
 id|current-&gt;mm
 )paren
-id|mm-&gt;context
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-id|tbiap
+id|flush_tlb_other
 c_func
 (paren
+id|mm
+)paren
+suffix:semicolon
+r_else
+id|flush_tlb_current
+c_func
+(paren
+id|mm
 )paren
 suffix:semicolon
 )brace
@@ -112,25 +260,19 @@ id|mm
 op_ne
 id|current-&gt;mm
 )paren
-id|mm-&gt;context
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-id|tbi
+id|flush_tlb_other
 c_func
 (paren
-l_int|2
-op_plus
-(paren
-(paren
-id|vma-&gt;vm_flags
-op_amp
-id|VM_EXEC
+id|mm
 )paren
-op_ne
-l_int|0
-)paren
+suffix:semicolon
+r_else
+id|flush_tlb_current_page
+c_func
+(paren
+id|mm
+comma
+id|vma
 comma
 id|addr
 )paren
@@ -158,21 +300,10 @@ r_int
 id|end
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|mm
-op_ne
-id|current-&gt;mm
-)paren
-id|mm-&gt;context
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-id|tbiap
+id|flush_tlb_mm
 c_func
 (paren
+id|mm
 )paren
 suffix:semicolon
 )brace
@@ -1301,39 +1432,10 @@ id|tsk
 op_eq
 id|current
 )paren
-id|__asm__
-id|__volatile__
+id|reload_context
 c_func
 (paren
-l_string|&quot;bis %0,%0,$16&bslash;n&bslash;t&quot;
-l_string|&quot;call_pal %1&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|tsk-&gt;tss
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|PAL_swpctx
-)paren
-suffix:colon
-l_string|&quot;$0&quot;
-comma
-l_string|&quot;$1&quot;
-comma
-l_string|&quot;$16&quot;
-comma
-l_string|&quot;$22&quot;
-comma
-l_string|&quot;$23&quot;
-comma
-l_string|&quot;$24&quot;
-comma
-l_string|&quot;$25&quot;
+id|tsk
 )paren
 suffix:semicolon
 )brace

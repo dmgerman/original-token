@@ -696,6 +696,17 @@ id|BLIST_NOLUN
 comma
 multiline_comment|/* Locks up if polled for lun != 0 */
 (brace
+l_string|&quot;SANYO&quot;
+comma
+l_string|&quot;CRD-250S&quot;
+comma
+l_string|&quot;1.20&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes &n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
+(brace
 l_string|&quot;SEAGATE&quot;
 comma
 l_string|&quot;ST157N&quot;
