@@ -3,6 +3,7 @@ DECL|macro|_IEEE1394_HOSTS_H
 mdefine_line|#define _IEEE1394_HOSTS_H
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &quot;ieee1394_types.h&quot;
 macro_line|#include &quot;csr.h&quot;
 r_struct
@@ -42,16 +43,13 @@ l_int|2
 )braket
 suffix:semicolon
 DECL|member|tlabel_count
-r_int
+r_struct
+id|semaphore
 id|tlabel_count
 suffix:semicolon
 DECL|member|tlabel_lock
 id|spinlock_t
 id|tlabel_lock
-suffix:semicolon
-DECL|member|tlabel_wait
-id|wait_queue_head_t
-id|tlabel_wait
 suffix:semicolon
 DECL|member|reset_retries
 r_int

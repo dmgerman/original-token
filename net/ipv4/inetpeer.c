@@ -72,8 +72,6 @@ r_static
 r_volatile
 r_int
 id|peer_total
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|inet_peer_threshold
 r_int
@@ -109,8 +107,6 @@ r_struct
 id|inet_peer
 op_star
 id|inet_peer_unused_head
-op_assign
-l_int|NULL
 comma
 DECL|variable|inet_peer_unused_tailp
 op_star

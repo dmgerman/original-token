@@ -182,8 +182,6 @@ DECL|variable|initialized
 r_static
 r_int
 id|initialized
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* !0 means we&squot;ve been initialized */
 DECL|variable|hexchars

@@ -1544,7 +1544,7 @@ id|freeable
 suffix:semicolon
 )brace
 DECL|function|shrink_icache_memory
-r_int
+r_void
 id|shrink_icache_memory
 c_func
 (paren
@@ -1572,7 +1572,6 @@ id|__GFP_IO
 )paren
 )paren
 r_return
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1591,15 +1590,11 @@ c_func
 id|count
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: kmem_cache_shrink here should tell us&n;&t;   the number of pages freed, and it should&n;&t;   work in a __GFP_DMA/__GFP_HIGHMEM behaviour&n;&t;   to free only the interesting pages in&n;&t;   function of the needs of the current allocation. */
 id|kmem_cache_shrink
 c_func
 (paren
 id|inode_cachep
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called with the inode lock held.&n; * NOTE: we are not increasing the inode-refcount, you must call __iget()&n; * by hand after calling find_inode now! This simplifies iunique and won&squot;t&n; * add any additional branch in the common code.&n; */
@@ -1744,25 +1739,16 @@ r_static
 r_struct
 id|address_space_operations
 id|empty_aops
-op_assign
-(brace
-)brace
 suffix:semicolon
 r_static
 r_struct
 id|inode_operations
 id|empty_iops
-op_assign
-(brace
-)brace
 suffix:semicolon
 r_static
 r_struct
 id|file_operations
 id|empty_fops
-op_assign
-(brace
-)brace
 suffix:semicolon
 id|memset
 c_func

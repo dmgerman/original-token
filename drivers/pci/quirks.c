@@ -104,8 +104,6 @@ multiline_comment|/*  The VIA VP2/VP3/MVP3 seem to have some &squot;features&squ
 DECL|variable|isa_dma_bridge_buggy
 r_int
 id|isa_dma_bridge_buggy
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Exported */
 DECL|function|quirk_isa_dma_hangs
@@ -144,8 +142,6 @@ suffix:semicolon
 DECL|variable|pci_pci_problems
 r_int
 id|pci_pci_problems
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Chipsets where PCI-&gt;PCI transfers vanish or hang&n; */
 DECL|function|quirk_nopcipci

@@ -205,8 +205,6 @@ DECL|variable|i2cproc_initialized
 r_static
 r_int
 id|i2cproc_initialized
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#else /* undef CONFIG_PROC_FS */
 DECL|macro|i2cproc_init

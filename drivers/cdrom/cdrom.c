@@ -12289,10 +12289,12 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|cdrom_root_table-&gt;child-&gt;de-&gt;owner
 op_assign
 id|THIS_MODULE
 suffix:semicolon
+macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/* set the defaults */
 id|cdrom_sysctl_settings.autoclose
 op_assign

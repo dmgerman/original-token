@@ -1626,7 +1626,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is called from kswapd when we think we need some&n; * more memory, but aren&squot;t really sure how much. So we&n; * carefully try to free a _bit_ of our dcache, but not&n; * too much.&n; *&n; * Priority:&n; *   0 - very urgent: shrink everything&n; *  ...&n; *   6 - base-level: try to shrink a bit.&n; */
 DECL|function|shrink_dcache_memory
-r_int
+r_void
 id|shrink_dcache_memory
 c_func
 (paren
@@ -1655,7 +1655,6 @@ id|__GFP_IO
 )paren
 )paren
 r_return
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1674,15 +1673,11 @@ c_func
 id|count
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: kmem_cache_shrink here should tell us&n;&t;   the number of pages freed, and it should&n;&t;   work in a __GFP_DMA/__GFP_HIGHMEM behaviour&n;&t;   to free only the interesting pages in&n;&t;   function of the needs of the current allocation. */
 id|kmem_cache_shrink
 c_func
 (paren
 id|dentry_cache
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|macro|NAME_ALLOC_LEN

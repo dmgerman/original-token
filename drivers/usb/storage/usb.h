@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; * Main Header File&n; *&n; * $Id: usb.h,v 1.8 2000/08/25 00:13:51 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; * Main Header File&n; *&n; * $Id: usb.h,v 1.9 2000/09/25 23:25:12 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef _USB_H_
 DECL|macro|_USB_H_
 mdefine_line|#define _USB_H_
@@ -273,6 +273,19 @@ id|us_data
 op_star
 )paren
 suffix:semicolon
+DECL|typedef|extra_data_destructor
+r_typedef
+r_void
+(paren
+op_star
+id|extra_data_destructor
+)paren
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* extra data destructor   */
 multiline_comment|/* we allocate one of these for every device that we remember */
 DECL|struct|us_data
 r_struct
@@ -523,15 +536,8 @@ id|extra
 suffix:semicolon
 multiline_comment|/* Any extra data          */
 DECL|member|extra_destructor
-r_void
-(paren
-op_star
+id|extra_data_destructor
 id|extra_destructor
-)paren
-(paren
-r_void
-op_star
-)paren
 suffix:semicolon
 multiline_comment|/* extra data destructor   */
 )brace
@@ -547,6 +553,12 @@ r_extern
 r_struct
 id|semaphore
 id|us_list_semaphore
+suffix:semicolon
+multiline_comment|/* The structure which defines our driver */
+DECL|variable|usb_storage_driver
+r_struct
+id|usb_driver
+id|usb_storage_driver
 suffix:semicolon
 multiline_comment|/* Function to fill an inquiry response. See usb.c for details */
 r_extern

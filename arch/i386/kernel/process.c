@@ -50,8 +50,6 @@ suffix:semicolon
 DECL|variable|hlt_counter
 r_int
 id|hlt_counter
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Powermanagement idle function, if any..&n; */
 DECL|variable|pm_idle
@@ -63,8 +61,6 @@ id|pm_idle
 (paren
 r_void
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Power off function, if any&n; */
 DECL|variable|pm_power_off
@@ -76,8 +72,6 @@ id|pm_power_off
 (paren
 r_void
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|disable_hlt
 r_void
@@ -327,26 +321,16 @@ id|no_idt
 (braket
 l_int|2
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|reboot_mode
 r_static
 r_int
 id|reboot_mode
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|reboot_thru_bios
 r_static
 r_int
 id|reboot_thru_bios
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|reboot_setup
 r_static

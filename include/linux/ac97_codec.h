@@ -235,6 +235,10 @@ DECL|member|dev_mixer
 r_int
 id|dev_mixer
 suffix:semicolon
+DECL|member|type
+r_int
+id|type
+suffix:semicolon
 multiline_comment|/* codec specific init/reset routines, used mainly for 4 or 6 channel support */
 DECL|member|codec_init
 r_int
@@ -315,6 +319,10 @@ suffix:semicolon
 DECL|member|record_sources
 r_int
 id|record_sources
+suffix:semicolon
+DECL|member|bit_resolution
+r_int
+id|bit_resolution
 suffix:semicolon
 multiline_comment|/* OSS mixer interface */
 DECL|member|read_mixer

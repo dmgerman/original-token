@@ -2424,15 +2424,6 @@ id|blkdevs
 (braket
 id|MAX_BLKDEV
 )braket
-op_assign
-(brace
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-)brace
 suffix:semicolon
 DECL|function|get_blkdev_list
 r_int

@@ -257,7 +257,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|vma-&gt;vm_mm-&gt;rss
+id|mm-&gt;rss
 op_decrement
 suffix:semicolon
 id|flush_tlb_page
@@ -393,7 +393,7 @@ c_func
 id|page_table
 )paren
 suffix:semicolon
-id|vma-&gt;vm_mm-&gt;rss
+id|mm-&gt;rss
 op_decrement
 suffix:semicolon
 id|flush_tlb_page
@@ -407,7 +407,7 @@ suffix:semicolon
 id|vmlist_access_unlock
 c_func
 (paren
-id|vma-&gt;vm_mm
+id|mm
 )paren
 suffix:semicolon
 id|error
@@ -514,7 +514,7 @@ id|entry
 )paren
 suffix:semicolon
 multiline_comment|/* Put the swap entry into the pte after the page is in swapcache */
-id|vma-&gt;vm_mm-&gt;rss
+id|mm-&gt;rss
 op_decrement
 suffix:semicolon
 id|set_pte
@@ -540,7 +540,7 @@ suffix:semicolon
 id|vmlist_access_unlock
 c_func
 (paren
-id|vma-&gt;vm_mm
+id|mm
 )paren
 suffix:semicolon
 multiline_comment|/* OK, do a physical asynchronous write to swap.  */
@@ -715,7 +715,7 @@ r_do
 r_int
 id|result
 suffix:semicolon
-id|vma-&gt;vm_mm-&gt;swap_address
+id|mm-&gt;swap_address
 op_assign
 id|address
 op_plus
@@ -1011,7 +1011,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|vma-&gt;vm_mm
+id|mm
 comma
 id|address
 )paren
@@ -2988,8 +2988,6 @@ id|done
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * don&squot;t be too light against the d/i cache since&n;&t;   &t; * refill_inactive() almost never fail when there&squot;s&n;&t;   &t; * really plenty of memory free. &n;&t;&t; */
-id|count
-op_sub_assign
 id|shrink_dcache_memory
 c_func
 (paren
@@ -2998,8 +2996,6 @@ comma
 id|gfp_mask
 )paren
 suffix:semicolon
-id|count
-op_sub_assign
 id|shrink_icache_memory
 c_func
 (paren
@@ -3008,7 +3004,6 @@ comma
 id|gfp_mask
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Not currently working, see fixme in shrink_?cache_memory&n;&t;&t; * In the inner funtions there is a comment:&n;&t;&t; * &quot;To help debugging, a zero exit status indicates&n;&t;&t; *  all slabs were released.&quot; (-arca?)&n;&t;&t; * lets handle it in a primitive but working way...&n;&t;&t; *&t;if (count &lt;= 0)&n;&t;&t; *&t;&t;goto done;&n;&t;&t; */
 multiline_comment|/* Try to get rid of some shared memory pages.. */
 r_while
 c_loop
@@ -3207,8 +3202,6 @@ c_func
 )paren
 )paren
 (brace
-id|ret
-op_add_assign
 id|shrink_dcache_memory
 c_func
 (paren
@@ -3217,8 +3210,6 @@ comma
 id|gfp_mask
 )paren
 suffix:semicolon
-id|ret
-op_add_assign
 id|shrink_icache_memory
 c_func
 (paren

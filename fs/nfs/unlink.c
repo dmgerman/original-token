@@ -54,8 +54,6 @@ r_struct
 id|nfs_unlinkdata
 op_star
 id|nfs_deletes
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|nfs_delete_queue
 r_static

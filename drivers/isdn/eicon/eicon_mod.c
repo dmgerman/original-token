@@ -1,10 +1,10 @@
-multiline_comment|/* $Id: eicon_mod.c,v 1.35 2000/08/12 18:00:47 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon active cards.&n; * &n; * Copyright 1997      by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1998-2000 by Armin Schindler (mac@melware.de) &n; * Copyright 1999,2000 Cytronics &amp; Melware (info@melware.de)&n; * &n; * Thanks to    Eicon Technology GmbH &amp; Co. oHG for&n; *              documents, informations and hardware.&n; *&n; *&t;&t;Deutsche Mailbox Saar-Lor-Lux GmbH&n; *&t;&t;for sponsoring and testing fax&n; *&t;&t;capabilities with Diva Server cards.&n; *&t;&t;(dor@deutschemailbox.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; */
+multiline_comment|/* $Id: eicon_mod.c,v 1.37 2000/09/02 11:16:47 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon active cards.&n; * &n; * Copyright 1997      by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1998-2000 by Armin Schindler (mac@melware.de) &n; * Copyright 1999,2000 Cytronics &amp; Melware (info@melware.de)&n; * &n; * Thanks to    Eicon Technology GmbH &amp; Co. oHG for&n; *              documents, informations and hardware.&n; *&n; *&t;&t;Deutsche Mailbox Saar-Lor-Lux GmbH&n; *&t;&t;for sponsoring and testing fax&n; *&t;&t;capabilities with Diva Server cards.&n; *&t;&t;(dor@deutschemailbox.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; */
 DECL|macro|DRIVERNAME
 mdefine_line|#define DRIVERNAME &quot;Eicon active ISDN driver&quot;
 DECL|macro|DRIVERRELEASE
 mdefine_line|#define DRIVERRELEASE &quot;2.0&quot;
 DECL|macro|DRIVERPATCH
-mdefine_line|#define DRIVERPATCH &quot;.14&quot;
+mdefine_line|#define DRIVERPATCH &quot;.15&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -38,7 +38,7 @@ r_char
 op_star
 id|eicon_revision
 op_assign
-l_string|&quot;$Revision: 1.35 $&quot;
+l_string|&quot;$Revision: 1.37 $&quot;
 suffix:semicolon
 r_extern
 r_char
@@ -130,12 +130,8 @@ DECL|variable|idi_d
 id|DESCRIPTOR
 id|idi_d
 (braket
-l_int|16
+l_int|32
 )braket
-suffix:semicolon
-DECL|variable|idi_dlength
-r_int
-id|idi_dlength
 suffix:semicolon
 multiline_comment|/* Parameters to be set by insmod */
 macro_line|#ifdef CONFIG_ISDN_DRV_EICON_ISA
@@ -638,6 +634,11 @@ macro_line|#ifdef CONFIG_PCI
 macro_line|#ifdef CONFIG_ISDN_DRV_EICON_PCI
 id|dia_start_t
 id|dstart
+suffix:semicolon
+r_int
+id|idi_length
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
@@ -1535,21 +1536,82 @@ op_ne
 id|EICON_CTYPE_MAESTRAQ
 )paren
 (brace
-id|EtdM_DIDD_Read
+id|DIVA_DIDD_Read
 c_func
 (paren
 id|idi_d
 comma
-op_amp
-id|idi_dlength
+r_sizeof
+(paren
+id|idi_d
+)paren
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|idi_length
+op_assign
+l_int|0
+suffix:semicolon
+id|idi_length
+OL
+l_int|32
+suffix:semicolon
+id|idi_length
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|idi_d
+(braket
+id|idi_length
+)braket
+dot
+id|type
+op_eq
+l_int|0
+)paren
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|idi_length
+OL
+l_int|1
+)paren
+op_logical_or
+(paren
+id|idi_length
+op_ge
+l_int|32
+)paren
+)paren
+(brace
+id|eicon_log
+c_func
+(paren
+id|card
+comma
+l_int|1
+comma
+l_string|&quot;eicon: invalid idi table length.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|card-&gt;d
 op_assign
 op_amp
 id|idi_d
 (braket
-id|idi_dlength
+id|idi_length
 op_minus
 l_int|1
 )braket
@@ -1628,7 +1690,7 @@ id|card
 comma
 l_int|1
 comma
-l_string|&quot;Eicon: %s started, %d channels (feat. 0x%x, SerNo. %d)&bslash;n&quot;
+l_string|&quot;Eicon: %s started, %d channels (feat. 0x%x)&bslash;n&quot;
 comma
 (paren
 id|card-&gt;type
@@ -1644,8 +1706,6 @@ comma
 id|card-&gt;d-&gt;channels
 comma
 id|card-&gt;d-&gt;features
-comma
-id|card-&gt;d-&gt;serial
 )paren
 suffix:semicolon
 )brace
@@ -1654,15 +1714,74 @@ r_else
 r_int
 id|i
 suffix:semicolon
-id|EtdM_DIDD_Read
+id|DIVA_DIDD_Read
 c_func
 (paren
 id|idi_d
 comma
-op_amp
-id|idi_dlength
+r_sizeof
+(paren
+id|idi_d
+)paren
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|idi_length
+op_assign
+l_int|0
+suffix:semicolon
+id|idi_length
+OL
+l_int|32
+suffix:semicolon
+id|idi_length
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|idi_d
+(braket
+id|idi_length
+)braket
+dot
+id|type
+op_eq
+l_int|0
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|idi_length
+OL
+l_int|1
+)paren
+op_logical_or
+(paren
+id|idi_length
+op_ge
+l_int|32
+)paren
+)paren
+(brace
+id|eicon_log
+c_func
+(paren
+id|card
+comma
+l_int|1
+comma
+l_string|&quot;eicon: invalid idi table length.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -1711,7 +1830,7 @@ op_assign
 op_amp
 id|idi_d
 (braket
-id|idi_dlength
+id|idi_length
 op_minus
 (paren
 id|i
@@ -1786,7 +1905,7 @@ id|card
 comma
 l_int|1
 comma
-l_string|&quot;Eicon: %d/4BRI started, %d channels (feat. 0x%x, SerNo. %d)&bslash;n&quot;
+l_string|&quot;Eicon: %d/4BRI started, %d channels (feat. 0x%x)&bslash;n&quot;
 comma
 l_int|4
 op_minus
@@ -1795,8 +1914,6 @@ comma
 id|card-&gt;d-&gt;channels
 comma
 id|card-&gt;d-&gt;features
-comma
-id|card-&gt;d-&gt;serial
 )paren
 suffix:semicolon
 )brace
@@ -6468,7 +6585,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ISDN_DRV_EICON_PCI
 r_void
-id|EtdM_DIDD_Write
+id|DIVA_DIDD_Write
 c_func
 (paren
 id|DESCRIPTOR
@@ -6477,18 +6594,18 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|variable|EtdM_DIDD_Read
+DECL|variable|DIVA_DIDD_Read
 id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
-id|EtdM_DIDD_Read
+id|DIVA_DIDD_Read
 )paren
 suffix:semicolon
-DECL|variable|EtdM_DIDD_Write
+DECL|variable|DIVA_DIDD_Write
 id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
-id|EtdM_DIDD_Write
+id|DIVA_DIDD_Write
 )paren
 suffix:semicolon
 DECL|variable|DivasPrintf

@@ -6560,8 +6560,6 @@ r_static
 r_int
 r_int
 id|mem
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:mem:xxxxxM&quot; */
 DECL|variable|option_precise_width
@@ -6576,8 +6574,6 @@ DECL|variable|inv24
 r_static
 r_int
 id|inv24
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:inv24&quot; */
 DECL|variable|cross4MB
@@ -6593,48 +6589,36 @@ DECL|variable|disabled
 r_static
 r_int
 id|disabled
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:disabled&quot; */
 DECL|variable|noaccel
 r_static
 r_int
 id|noaccel
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:noaccel&quot; */
 DECL|variable|nopan
 r_static
 r_int
 id|nopan
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:nopan&quot; */
 DECL|variable|no_pci_retry
 r_static
 r_int
 id|no_pci_retry
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:nopciretry&quot; */
 DECL|variable|novga
 r_static
 r_int
 id|novga
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:novga&quot; */
 DECL|variable|nobios
 r_static
 r_int
 id|nobios
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:nobios&quot; */
 DECL|variable|noinit
@@ -6649,8 +6633,6 @@ DECL|variable|inverse
 r_static
 r_int
 id|inverse
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:inverse&quot; */
 DECL|variable|hwcursor
@@ -6673,8 +6655,6 @@ DECL|variable|sgram
 r_static
 r_int
 id|sgram
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:sgram&quot; */
 macro_line|#ifdef CONFIG_MTRR
@@ -6691,8 +6671,6 @@ DECL|variable|grayscale
 r_static
 r_int
 id|grayscale
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:grayscale&quot; */
 DECL|variable|fastfont
@@ -6700,8 +6678,6 @@ r_static
 r_int
 r_int
 id|fastfont
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:fastfont:xxxxx&quot; */
 DECL|variable|dev
@@ -6737,8 +6713,6 @@ r_static
 r_int
 r_int
 id|xres
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:xres:xxxxx&quot; */
 DECL|variable|yres
@@ -6746,8 +6720,6 @@ r_static
 r_int
 r_int
 id|yres
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:yres:xxxxx&quot; */
 DECL|variable|upper
@@ -6775,8 +6747,6 @@ r_static
 r_int
 r_int
 id|vslen
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:vslen:xxxxx&quot; */
 DECL|variable|left
@@ -6804,8 +6774,6 @@ r_static
 r_int
 r_int
 id|hslen
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:hslen:xxxxx&quot; */
 DECL|variable|pixclock
@@ -6813,8 +6781,6 @@ r_static
 r_int
 r_int
 id|pixclock
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:pixclock:xxxxx&quot; */
 DECL|variable|sync
@@ -6831,8 +6797,6 @@ r_static
 r_int
 r_int
 id|fv
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:fv:xxxxx&quot; */
 DECL|variable|fh
@@ -6840,8 +6804,6 @@ r_static
 r_int
 r_int
 id|fh
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:fh:xxxxxk&quot; */
 DECL|variable|maxclk
@@ -6849,16 +6811,12 @@ r_static
 r_int
 r_int
 id|maxclk
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:maxclk:xxxxM&quot; */
 DECL|variable|dfp
 r_static
 r_int
 id|dfp
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:dfp */
 DECL|variable|memtype

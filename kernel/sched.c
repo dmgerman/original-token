@@ -314,13 +314,10 @@ op_amp
 id|SCHED_YIELD
 )paren
 (brace
-id|p-&gt;policy
-op_and_assign
-op_complement
-id|SCHED_YIELD
-suffix:semicolon
+multiline_comment|/*&n;&t;&t; * select the current process after every other&n;&t;&t; * runnable process, but before the idle thread.&n;&t;&t; * Also, dont trigger a counter recalculation.&n;&t;&t; */
 r_return
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 r_return
@@ -1173,6 +1170,9 @@ id|prev
 (brace
 macro_line|#ifdef CONFIG_SMP
 r_int
+id|yield
+suffix:semicolon
+r_int
 r_int
 id|flags
 suffix:semicolon
@@ -1185,6 +1185,17 @@ id|runqueue_lock
 comma
 id|flags
 )paren
+suffix:semicolon
+id|yield
+op_assign
+id|prev-&gt;policy
+op_amp
+id|SCHED_YIELD
+suffix:semicolon
+id|prev-&gt;policy
+op_and_assign
+op_complement
+id|SCHED_YIELD
 suffix:semicolon
 id|prev-&gt;has_cpu
 op_assign
@@ -1219,6 +1230,7 @@ suffix:colon
 r_if
 c_cond
 (paren
+(paren
 id|prev
 op_ne
 id|idle_task
@@ -1230,6 +1242,10 @@ c_func
 )paren
 )paren
 )paren
+op_logical_and
+op_logical_neg
+id|yield
+)paren
 id|reschedule_idle
 c_func
 (paren
@@ -1238,6 +1254,12 @@ id|prev
 suffix:semicolon
 r_goto
 id|out_unlock
+suffix:semicolon
+macro_line|#else
+id|prev-&gt;policy
+op_and_assign
+op_complement
+id|SCHED_YIELD
 suffix:semicolon
 macro_line|#endif /* CONFIG_SMP */
 )brace
@@ -3085,13 +3107,7 @@ c_func
 r_void
 )paren
 (brace
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|runqueue_lock
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * This process can only be rescheduled by us,&n;&t; * so this is safe without any locking.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3106,19 +3122,6 @@ suffix:semicolon
 id|current-&gt;need_resched
 op_assign
 l_int|1
-suffix:semicolon
-id|move_last_runqueue
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|spin_unlock_irq
-c_func
-(paren
-op_amp
-id|runqueue_lock
-)paren
 suffix:semicolon
 r_return
 l_int|0

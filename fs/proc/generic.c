@@ -799,10 +799,6 @@ id|PROC_NDYNAMIC
 op_div
 l_int|8
 )braket
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 DECL|function|make_inode_number
 r_static

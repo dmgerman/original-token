@@ -1173,6 +1173,10 @@ op_amp
 id|waiter-&gt;fl_link
 )paren
 suffix:semicolon
+id|waiter-&gt;fl_next
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 multiline_comment|/* Insert waiter into blocker&squot;s block list.&n; * We use a circular list so that processes can be easily woken up in&n; * the order they blocked. The documentation doesn&squot;t require this but&n; * it seems like the reasonable thing to do.&n; */
 DECL|function|locks_insert_block
@@ -1236,6 +1240,10 @@ comma
 op_amp
 id|blocker-&gt;fl_block
 )paren
+suffix:semicolon
+id|waiter-&gt;fl_next
+op_assign
+id|blocker
 suffix:semicolon
 id|list_add
 c_func
@@ -2122,11 +2130,11 @@ id|blocked_pid
 r_return
 l_int|1
 suffix:semicolon
-r_while
-c_loop
+id|list_for_each
+c_func
 (paren
 id|tmp
-op_ne
+comma
 op_amp
 id|blocked_list
 )paren
@@ -2146,10 +2154,6 @@ id|file_lock
 comma
 id|fl_link
 )paren
-suffix:semicolon
-id|tmp
-op_assign
-id|tmp-&gt;next
 suffix:semicolon
 r_if
 c_cond
@@ -2171,12 +2175,6 @@ id|fl
 op_assign
 id|fl-&gt;fl_next
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fl
-)paren
-(brace
 id|blocked_owner
 op_assign
 id|fl-&gt;fl_owner
@@ -2185,7 +2183,6 @@ id|blocked_pid
 op_assign
 id|fl-&gt;fl_pid
 suffix:semicolon
-)brace
 r_goto
 id|next_task
 suffix:semicolon

@@ -268,7 +268,7 @@ id|rdev
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|md_run_setup
 c_func
 (paren

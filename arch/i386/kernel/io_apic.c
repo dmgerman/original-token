@@ -22,8 +22,6 @@ multiline_comment|/*&n; * # of IO-APICs and # of IRQ routing registers&n; */
 DECL|variable|nr_ioapics
 r_int
 id|nr_ioapics
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|nr_ioapic_registers
 r_int
@@ -54,8 +52,6 @@ multiline_comment|/* MP IRQ source entries */
 DECL|variable|mp_irq_entries
 r_int
 id|mp_irq_entries
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#if CONFIG_SMP
 DECL|macro|TARGET_CPUS
@@ -446,14 +442,10 @@ suffix:semicolon
 DECL|variable|pirqs_enabled
 r_int
 id|pirqs_enabled
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|skip_ioapic_setup
 r_int
 id|skip_ioapic_setup
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|ioapic_setup
 r_static

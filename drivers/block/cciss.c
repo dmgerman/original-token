@@ -1950,6 +1950,7 @@ r_sizeof
 id|cciss_pci_info_struct
 )paren
 )paren
+)paren
 r_return
 op_minus
 id|EFAULT
@@ -2020,6 +2021,7 @@ comma
 r_sizeof
 (paren
 id|cciss_coalint_struct
+)paren
 )paren
 )paren
 r_return
@@ -2095,6 +2097,7 @@ comma
 r_sizeof
 (paren
 id|cciss_coalint_struct
+)paren
 )paren
 )paren
 r_return
@@ -2335,6 +2338,7 @@ r_sizeof
 id|NodeName_type
 )paren
 )paren
+)paren
 r_return
 op_minus
 id|EFAULT
@@ -2407,6 +2411,7 @@ comma
 r_sizeof
 (paren
 id|NodeName_type
+)paren
 )paren
 )paren
 r_return
@@ -2584,6 +2589,7 @@ r_sizeof
 id|Heartbeat_type
 )paren
 )paren
+)paren
 r_return
 op_minus
 id|EFAULT
@@ -2647,6 +2653,7 @@ r_sizeof
 id|BusTypes_type
 )paren
 )paren
+)paren
 r_return
 op_minus
 id|EFAULT
@@ -2706,6 +2713,7 @@ r_sizeof
 id|FirmwareVer_type
 )paren
 )paren
+)paren
 r_return
 op_minus
 id|EFAULT
@@ -2751,6 +2759,7 @@ comma
 r_sizeof
 (paren
 id|DriverVer_type
+)paren
 )paren
 )paren
 r_return
@@ -2846,6 +2855,7 @@ comma
 r_sizeof
 (paren
 id|IOCTL_Command_struct
+)paren
 )paren
 )paren
 r_return

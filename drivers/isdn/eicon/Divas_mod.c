@@ -14,7 +14,7 @@ macro_line|#include &quot;uxio.h&quot;
 macro_line|#ifdef MODULE
 macro_line|#include &quot;idi.h&quot;
 r_void
-id|EtdM_DIDD_Write
+id|DIVA_DIDD_Write
 c_func
 (paren
 id|DESCRIPTOR
@@ -23,18 +23,18 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|variable|EtdM_DIDD_Read
+DECL|variable|DIVA_DIDD_Read
 id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
-id|EtdM_DIDD_Read
+id|DIVA_DIDD_Read
 )paren
 suffix:semicolon
-DECL|variable|EtdM_DIDD_Write
+DECL|variable|DIVA_DIDD_Write
 id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
-id|EtdM_DIDD_Write
+id|DIVA_DIDD_Write
 )paren
 suffix:semicolon
 DECL|variable|DivasPrintf
@@ -46,6 +46,9 @@ id|DivasPrintf
 suffix:semicolon
 DECL|macro|Divas_init
 mdefine_line|#define Divas_init init_module
+macro_line|#else
+DECL|macro|Divas_init
+mdefine_line|#define Divas_init eicon_init
 macro_line|#endif
 r_extern
 r_char
@@ -82,7 +85,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;DIVA Server Driver - Version 2.0.12 (%s)&bslash;n&quot;
+l_string|&quot;DIVA Server Driver - Version 2.0.15 (%s)&bslash;n&quot;
 comma
 id|file_check
 c_func
@@ -397,21 +400,6 @@ r_void
 (brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-)brace
-macro_line|#else
-DECL|function|Divas_setup
-id|Divas_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-(brace
 )brace
 macro_line|#endif
 eof

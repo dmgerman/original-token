@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_card.c&n; *&n; * Detection routine for the Sound Blaster cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * 26-11-1999 Patched to compile without ISA PnP support in the&n; * kernel - Daniel Stone (tamriel@ductape.net) &n; *&n; * 06-01-2000 Refined and bugfixed ISA PnP support, added&n; *  CMI 8330 support - Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 18-01-2000 Separated sb_card and sb_common&n; *  Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * 04-02-2000 Added Soundblaster AWE 64 PnP support, isapnpjump&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 11-02-2000 Added Soundblaster AWE 32 PnP support, refined PnP code&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 13-02-2000 Hopefully fixed awe/sb16 related bugs, code cleanup&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 13-03-2000 Added some more cards, thanks to Torsten Werner.&n; *  Removed joystick and wavetable code, there are better places for them.&n; *  Code cleanup plus some fixes. &n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; * &n; * 26-03-2000 Fixed acer, esstype and sm_games module options.&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 12-04-2000 ISAPnP cleanup, reorg, fixes, and multiple card support.&n; *  Thanks to Ga&#xfffd;l Qu&#xfffd;ri and Alessandro Zummo for testing and fixes.&n; *  Paul E. Laufer &lt;pelaufer@csupomona.edu&gt;&n; *&n; * 06-05-2000 added another card. Daniel M. Newman &lt;dmnewman@pobox.com&gt;&n; *&n; * 25-05-2000 Added Creative SB AWE64 Gold (CTL00B2). &n; * &t;P&#xfffd;l-Kristian Engstad &lt;engstad@att.net&gt;&n; *&n; * 12-08-2000 Added Creative SB32 PnP (CTL009F).&n; * &t;Kasatenko Ivan Alex. &lt;skywriter@rnc.ru&gt;&n; */
+multiline_comment|/*&n; * sound/sb_card.c&n; *&n; * Detection routine for the Sound Blaster cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * 26-11-1999 Patched to compile without ISA PnP support in the&n; * kernel - Daniel Stone (tamriel@ductape.net) &n; *&n; * 06-01-2000 Refined and bugfixed ISA PnP support, added&n; *  CMI 8330 support - Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 18-01-2000 Separated sb_card and sb_common&n; *  Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * 04-02-2000 Added Soundblaster AWE 64 PnP support, isapnpjump&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 11-02-2000 Added Soundblaster AWE 32 PnP support, refined PnP code&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 13-02-2000 Hopefully fixed awe/sb16 related bugs, code cleanup&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 13-03-2000 Added some more cards, thanks to Torsten Werner.&n; *  Removed joystick and wavetable code, there are better places for them.&n; *  Code cleanup plus some fixes. &n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; * &n; * 26-03-2000 Fixed acer, esstype and sm_games module options.&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 12-04-2000 ISAPnP cleanup, reorg, fixes, and multiple card support.&n; *  Thanks to Ga&#xfffd;l Qu&#xfffd;ri and Alessandro Zummo for testing and fixes.&n; *  Paul E. Laufer &lt;pelaufer@csupomona.edu&gt;&n; *&n; * 06-05-2000 added another card. Daniel M. Newman &lt;dmnewman@pobox.com&gt;&n; *&n; * 25-05-2000 Added Creative SB AWE64 Gold (CTL00B2). &n; * &t;P&#xfffd;l-Kristian Engstad &lt;engstad@att.net&gt;&n; *&n; * 12-08-2000 Added Creative SB32 PnP (CTL009F).&n; * &t;Kasatenko Ivan Alex. &lt;skywriter@rnc.ru&gt;&n; *&n; * 21-09-2000 Got rid of attach_sbmpu&n; * &t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -3743,7 +3743,7 @@ r_else
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Cards with separate OPL3 device (ALS, CMI, etc.)&n;&t; * This is just to activate the device... */
+multiline_comment|/* Cards with separate OPL3 device (ALS, CMI, etc.)&n;&t; * This is just to activate the device so the OPL module can use it */
 r_if
 c_cond
 (paren
@@ -4320,6 +4320,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sb_isapnp_probe
+r_static
 r_int
 id|__init
 id|sb_isapnp_probe
@@ -4530,7 +4531,11 @@ id|card
 comma
 id|max
 op_assign
+(paren
 id|multiple
+op_logical_and
+id|isapnp
+)paren
 ques
 c_cond
 id|SB_CARDS_MAX
@@ -4599,6 +4604,7 @@ op_logical_neg
 id|sb_cards_num
 )paren
 (brace
+multiline_comment|/* Found no ISAPnP cards, so check for a non-pnp&n;&t;&t;&t;&t; * card and set the detection loop for 1 cycle&n;&t;&t;&t;&t; */
 id|printk
 c_func
 (paren
@@ -4610,8 +4616,13 @@ id|isapnp
 op_assign
 l_int|0
 suffix:semicolon
+id|max
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_else
+multiline_comment|/* found all the ISAPnP cards so exit the&n;&t;&t;&t;&t; * detection loop. */
 r_break
 suffix:semicolon
 )brace
@@ -4683,10 +4694,40 @@ id|card
 )braket
 )paren
 )paren
+(brace
+multiline_comment|/* if one or more cards already registered, don&squot;t&n;&t;&t;&t; * return an error but print a warning. Note, this&n;&t;&t;&t; * should never really happen unless the hardware&n;&t;&t;&t; * or ISAPnP screwed up. */
+r_if
+c_cond
+(paren
+id|sb_cards_num
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;sb.c: There was a &quot;
+"&bslash;"
+l_string|&quot;problem probing one of your SoundBlaster &quot;
+"&bslash;"
+l_string|&quot;ISAPnP soundcards. Continuing.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|card
+op_decrement
+suffix:semicolon
+id|sb_cards_num
+op_decrement
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_else
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+)brace
 id|attach_sb_card
 c_func
 (paren
@@ -4745,6 +4786,8 @@ id|cfg_mpu
 (braket
 id|card
 )braket
+comma
+id|THIS_MODULE
 )paren
 )paren
 id|sbmpu
@@ -4753,26 +4796,6 @@ id|card
 )braket
 op_assign
 l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sbmpu
-(braket
-id|card
-)braket
-)paren
-id|attach_sbmpu
-c_func
-(paren
-op_amp
-id|cfg_mpu
-(braket
-id|card
-)braket
-comma
-id|THIS_MODULE
-)paren
 suffix:semicolon
 )brace
 r_if

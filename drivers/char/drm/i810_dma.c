@@ -835,15 +835,13 @@ suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;%s retcode %d&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;retcode=%d&bslash;n&quot;
 comma
 id|retcode
 )paren
 suffix:semicolon
-r_goto
-id|out_get_buf
+r_return
+id|retcode
 suffix:semicolon
 )brace
 id|retcode
@@ -873,15 +871,13 @@ suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;mapbuf failed in %s retcode %d&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;mapbuf failed, retcode %d&bslash;n&quot;
 comma
 id|retcode
 )paren
 suffix:semicolon
-r_goto
-id|out_get_buf
+r_return
+id|retcode
 suffix:semicolon
 )brace
 id|buf-&gt;pid
@@ -912,8 +908,6 @@ id|buf_priv
 op_member_access_from_pointer
 r_virtual
 suffix:semicolon
-id|out_get_buf
-suffix:colon
 r_return
 id|retcode
 suffix:semicolon
@@ -4697,10 +4691,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -4728,6 +4718,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 id|i810_dma_quiescent_emit
 c_func
 (paren
@@ -4878,10 +4872,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -4909,6 +4899,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 id|i810_dma_emit_flush
 c_func
 (paren
@@ -5356,6 +5350,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5411,10 +5409,6 @@ c_func
 op_amp
 id|dev-&gt;total_sleeps
 )paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|DRM_DEBUG
 c_func

@@ -14,25 +14,12 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|temp
-op_assign
+r_return
 id|drm_ctxbitmap_next
 c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;mga_alloc_queue: %d&bslash;n&quot;
-comma
-id|temp
-)paren
-suffix:semicolon
-r_return
-id|temp
 suffix:semicolon
 )brace
 DECL|function|mga_context_switch
@@ -287,14 +274,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;%d&bslash;n&quot;
-comma
-id|DRM_RESERVED_CONTEXTS
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -520,13 +499,6 @@ op_minus
 l_int|1
 )paren
 (brace
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;Not enough free contexts.&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Should this return -EBUSY instead? */
 r_return
 op_minus
 id|ENOMEM
@@ -924,6 +896,21 @@ comma
 id|ctx.handle
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ctx.handle
+op_eq
+id|DRM_KERNEL_CONTEXT
+op_plus
+l_int|1
+)paren
+(brace
+id|priv-&gt;remove_auth_on_close
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

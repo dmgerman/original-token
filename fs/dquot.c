@@ -5751,6 +5751,18 @@ suffix:semicolon
 id|cnt
 op_increment
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|transfer_to
+(braket
+id|cnt
+)braket
+)paren
+r_continue
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5790,6 +5802,7 @@ suffix:semicolon
 r_goto
 id|put_all
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

@@ -172,10 +172,6 @@ id|inet_protos
 (braket
 id|MAX_INET_PROTOS
 )braket
-op_assign
-(brace
-l_int|NULL
-)brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Add a protocol handler to the hash tables&n; */
 DECL|function|inet_add_protocol

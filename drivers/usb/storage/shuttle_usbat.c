@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for SCM Microsystems USB-ATAPI cable&n; *&n; * $Id: shuttle_usbat.c,v 1.8 2000/09/08 23:20:41 groovyjava Exp $&n; *&n; * SCM driver v0.2:&n; *&n; * Removed any reference to maxlen for bulk transfers.&n; * Changed scm_bulk_transport to allow for transfers without commands.&n; * Changed hp8200e transport to use the request_bufflen field in the&n; *   SCSI command for the length of the transfer, rather than calculating&n; *   it ourselves based on the command.&n; *&n; * SCM driver v0.1:&n; *&n; * First release - hp8200e.&n; *&n; * Current development and maintenance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * Many originally ATAPI devices were slightly modified to meet the USB&n; * market by using some kind of translation from ATAPI to USB on the host,&n; * and the peripheral would translate from USB back to ATAPI.&n; *&n; * SCM Microsystems (www.scmmicro.com) makes a device, sold to OEM&squot;s only, &n; * which does the USB-to-ATAPI conversion.  By obtaining the data sheet on&n; * their device under nondisclosure agreement, I have been able to write&n; * this driver for Linux.&n; *&n; * The chip used in the device can also be used for EPP and ISA translation&n; * as well. This driver is only guaranteed to work with the ATAPI&n; * translation.&n; *&n; * The only peripherals that I know of (as of 14 Jul 2000) that uses this&n; * device is the Hewlett-Packard 8200e CD-Writer Plus.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for SCM Microsystems USB-ATAPI cable&n; *&n; * $Id: shuttle_usbat.c,v 1.10 2000/09/24 00:03:08 groovyjava Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * Many originally ATAPI devices were slightly modified to meet the USB&n; * market by using some kind of translation from ATAPI to USB on the host,&n; * and the peripheral would translate from USB back to ATAPI.&n; *&n; * SCM Microsystems (www.scmmicro.com) makes a device, sold to OEM&squot;s only, &n; * which does the USB-to-ATAPI conversion.  By obtaining the data sheet on&n; * their device under nondisclosure agreement, I have been able to write&n; * this driver for Linux.&n; *&n; * The chip used in the device can also be used for EPP and ISA translation&n; * as well. This driver is only guaranteed to work with the ATAPI&n; * translation.&n; *&n; * The only peripheral that I know of (as of 8 Sep 2000) that uses this&n; * device is the Hewlett-Packard 8200e/8210e CD-Writer Plus.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;usb.h&quot;
@@ -124,10 +124,6 @@ id|xfer_len
 r_int
 id|result
 suffix:semicolon
-singleline_comment|// If data is going to be sent or received with the URB,
-singleline_comment|// then allocate a buffer for it. If data is to be sent,
-singleline_comment|// copy the data into the buffer.
-multiline_comment|/*&n;&t;if (xfer_len &gt; 0) {&n;&t;&t;buffer = kmalloc(xfer_len, GFP_KERNEL);&n;&t;&t;if (!(command[0] &amp; USB_DIR_IN))&n;&t;&t;&t;memcpy(buffer, xfer_data, xfer_len);&n;&t;}&n;*/
 singleline_comment|// Send the URB to the device and wait for a response.
 multiline_comment|/* Why are request and request type reversed in this call? */
 id|result
@@ -152,10 +148,6 @@ comma
 id|xfer_len
 )paren
 suffix:semicolon
-singleline_comment|// If data was sent or received with the URB, free the buffer we
-singleline_comment|// allocated earlier, but not before reading the data out of the
-singleline_comment|// buffer if we wanted to receive data.
-multiline_comment|/*&n;&t;if (xfer_len &gt; 0) {&n;&t;&t;if (command[0] &amp; USB_DIR_IN)&n;&t;&t;&t;memcpy(xfer_data, buffer, xfer_len);&n;&t;&t;kfree(buffer);&n;&t;}&n;*/
 singleline_comment|// Check the return code for the command.
 r_if
 c_cond
@@ -501,9 +493,6 @@ id|transferred
 op_assign
 l_int|0
 suffix:semicolon
-singleline_comment|// unsigned char execute[8] = {
-singleline_comment|//&t;0x40, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-singleline_comment|// };
 r_int
 id|i
 suffix:semicolon
@@ -512,9 +501,6 @@ id|scatterlist
 op_star
 id|sg
 suffix:semicolon
-singleline_comment|// char string[64];
-singleline_comment|// int pipe;
-multiline_comment|/*&n;&t;if (command_len != 0) {&n;&n;&t;&t;// Fix up the command&squot;s data length&n;&n;&t;&t;command[6] = len&amp;0xFF;&n;&t;&t;command[7] = (len&gt;&gt;8)&amp;0xFF;&n;&n;&t;&t;&n;&n;&t;&t;result = usbat_send_control(us, &n;&t;&t;&t;&t;&t;  execute,&n;&t;&t;&t;&t;&t;  command,&n;&t;&t;&t;&t;&t;  command_len);&n;&n;&t;&t;if (result != USB_STOR_TRANSPORT_GOOD)&n;&t;&t;&t;return result;&n;&t;}&n;*/
 r_if
 c_cond
 (paren
@@ -549,10 +535,6 @@ id|SCSI_DATA_READ
 suffix:colon
 id|SCSI_DATA_WRITE
 suffix:semicolon
-multiline_comment|/*&n;&t;if (direction == SCSI_DATA_WRITE) {&n;&n;&t;&t;// Debug-print the first 48 bytes of the write transfer&n;&n;&t;&t;if (!use_sg) {&n;&t;&t;&t;string[0] = 0;&n;&t;&t;&t;for (i=0; i&lt;len &amp;&amp; i&lt;48; i++) {&n;&t;&t;&t;&t;sprintf(string+strlen(string), &quot;%02X &quot;,&n;&t;&t;&t;&t;  data[i]);&n;&t;&t;&t;&t;if ((i%16)==15) {&n;&t;&t;&t;&t;&t;US_DEBUGP(&quot;%s&bslash;n&quot;, string);&n;&t;&t;&t;&t;&t;string[0] = 0;&n;&t;&t;&t;&t;}&n;&t;&t;&t;}&n;&t;&t;&t;if (string[0]!=0)&n;&t;&t;&t;&t;US_DEBUGP(&quot;%s&bslash;n&quot;, string);&n;&t;&t;}&n;&t;}&n;*/
-singleline_comment|//US_DEBUGP(&quot;SCM data %s transfer %d sg buffers %d&bslash;n&quot;,
-singleline_comment|//&t;  ( direction==SCSI_DATA_READ ? &quot;in&quot; : &quot;out&quot;),
-singleline_comment|//&t;  len, use_sg);
 r_if
 c_cond
 (paren
@@ -694,9 +676,6 @@ id|content
 r_int
 id|result
 suffix:semicolon
-singleline_comment|// unsigned char command[8] = {
-singleline_comment|// &t;0xC0, access, reg, 0x00, 0x00, 0x00, 0x00, 0x00
-singleline_comment|// };
 id|result
 op_assign
 id|usbat_send_control
@@ -728,7 +707,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-singleline_comment|// result =  usbat_send_control(us, command, content, 1);
 r_return
 id|result
 suffix:semicolon
@@ -759,9 +737,6 @@ id|content
 r_int
 id|result
 suffix:semicolon
-singleline_comment|// unsigned char command[8] = {
-singleline_comment|//&t;0x40, access|0x01, reg, content, 0x00, 0x00, 0x00, 0x00
-singleline_comment|// };
 id|result
 op_assign
 id|usbat_send_control
@@ -798,7 +773,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-singleline_comment|// result =  usbat_send_control(us, command, NULL, 0);
 r_return
 id|result
 suffix:semicolon
@@ -894,7 +868,6 @@ comma
 l_int|8
 )paren
 suffix:semicolon
-singleline_comment|// result =  usbat_bulk_transport(us, command, 8, 0, NULL, 0, 0);
 r_return
 id|result
 suffix:semicolon
@@ -1026,8 +999,6 @@ comma
 id|use_sg
 )paren
 suffix:semicolon
-singleline_comment|// result =  usbat_bulk_transport(us,
-singleline_comment|//&t;command, 8, 0, content, len, use_sg);
 r_return
 id|result
 suffix:semicolon
@@ -1042,6 +1013,9 @@ r_struct
 id|us_data
 op_star
 id|us
+comma
+r_int
+id|minutes
 )paren
 (brace
 r_int
@@ -1054,7 +1028,7 @@ r_int
 r_char
 id|status
 suffix:semicolon
-multiline_comment|/* Synchronizing cache on a CDR could take a heck of a long time,&n;&t;   but probably not more than 10 minutes or so */
+multiline_comment|/* Synchronizing cache on a CDR could take a heck of a long time,&n;&t; * but probably not more than 10 minutes or so. On the other hand,&n;&t; * doing a full blank on a CDRW at speed 1 will take about 75&n;&t; * minutes!&n;&t; */
 r_for
 c_loop
 (paren
@@ -1064,7 +1038,11 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|1800
+l_int|1200
+op_plus
+id|minutes
+op_star
+l_int|60
 suffix:semicolon
 id|i
 op_increment
@@ -1085,7 +1063,6 @@ op_amp
 id|status
 )paren
 suffix:semicolon
-singleline_comment|// US_DEBUGP(&quot;SCM: Write ATA data status is %02X&bslash;n&quot;, status);
 r_if
 c_cond
 (paren
@@ -1129,9 +1106,20 @@ l_int|0x80
 op_ne
 l_int|0x80
 )paren
+(brace
 singleline_comment|// not busy
-r_break
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Waited not busy for %d steps&bslash;n&quot;
+comma
+id|i
+)paren
 suffix:semicolon
+r_return
+id|USB_STOR_TRANSPORT_GOOD
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1177,41 +1165,24 @@ l_int|100
 suffix:semicolon
 singleline_comment|// 50 seconds
 r_else
-r_if
-c_cond
-(paren
-id|i
-OL
-l_int|1800
-)paren
 id|wait_ms
 c_func
 (paren
 l_int|1000
 )paren
 suffix:semicolon
-singleline_comment|// 10 minutes
+singleline_comment|// X minutes
 )brace
-r_if
-c_cond
-(paren
-id|i
-op_eq
-l_int|1800
-)paren
-r_return
-id|USB_STOR_TRANSPORT_FAILED
-suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Waited not busy for %d steps&bslash;n&quot;
+l_string|&quot;Waited not busy for %d minutes, timing out.&bslash;n&quot;
 comma
-id|i
+id|minutes
 )paren
 suffix:semicolon
 r_return
-id|USB_STOR_TRANSPORT_GOOD
+id|USB_STOR_TRANSPORT_FAILED
 suffix:semicolon
 )brace
 DECL|function|usbat_write_block
@@ -1243,6 +1214,9 @@ id|len
 comma
 r_int
 id|use_sg
+comma
+r_int
+id|minutes
 )paren
 (brace
 r_int
@@ -1351,13 +1325,13 @@ id|USB_STOR_TRANSPORT_GOOD
 r_return
 id|result
 suffix:semicolon
-singleline_comment|// result =  usbat_bulk_transport(us,
-singleline_comment|//&t;command, 8, 0, content, len, use_sg);
 r_return
 id|usbat_wait_not_busy
 c_func
 (paren
 id|us
+comma
+id|minutes
 )paren
 suffix:semicolon
 )brace
@@ -1419,6 +1393,9 @@ id|len
 comma
 r_int
 id|use_sg
+comma
+r_int
+id|minutes
 )paren
 (brace
 r_int
@@ -1830,13 +1807,15 @@ id|usbat_wait_not_busy
 c_func
 (paren
 id|us
+comma
+id|minutes
 )paren
 suffix:semicolon
 )brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Bummer! %s bulk data 10 times failed.&bslash;n&quot;
+l_string|&quot;Bummer! %s bulk data 20 times failed.&bslash;n&quot;
 comma
 id|direction
 op_eq
@@ -1852,6 +1831,7 @@ r_return
 id|USB_STOR_TRANSPORT_FAILED
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Write data to multiple registers at once. Not meant for large&n; * transfers of data!&n; */
 DECL|function|usbat_multiple_write
 r_int
 id|usbat_multiple_write
@@ -2039,8 +2019,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-singleline_comment|// result = usbat_bulk_transport(us, cmd, 8, 0, 
-singleline_comment|//&t;data, num_registers*2, 0);
 r_if
 c_cond
 (paren
@@ -2056,6 +2034,8 @@ id|usbat_wait_not_busy
 c_func
 (paren
 id|us
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -2075,9 +2055,6 @@ op_star
 id|data_flags
 )paren
 (brace
-singleline_comment|// unsigned char command[8] = {
-singleline_comment|//&t;0xC0, 0x82, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-singleline_comment|// };
 r_int
 id|result
 suffix:semicolon
@@ -2109,7 +2086,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-singleline_comment|// result = usbat_send_control(us, command, data_flags, 1);
 r_return
 id|result
 suffix:semicolon
@@ -2133,9 +2109,6 @@ r_char
 id|data_flags
 )paren
 (brace
-singleline_comment|// unsigned char command[8] = {
-singleline_comment|//&t;0x40, 0x82, enable_flags, data_flags, 0x00, 0x00, 0x00, 0x00
-singleline_comment|// };
 r_int
 id|result
 suffix:semicolon
@@ -2173,7 +2146,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-singleline_comment|// result = usbat_send_control(us, command, NULL, 0);
 r_return
 id|result
 suffix:semicolon
@@ -2243,6 +2215,14 @@ id|sg_offset
 op_assign
 l_int|0
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;handle_read10: transfersize %d&bslash;n&quot;
+comma
+id|srb-&gt;transfersize
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2281,6 +2261,8 @@ comma
 id|srb-&gt;request_bufflen
 comma
 id|srb-&gt;use_sg
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -2288,6 +2270,59 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Since we&squot;re requesting more data than we can handle in&n;&t; * a single read command (max is 64k-1), we will perform&n;&t; * multiple reads, but each read must be in multiples of&n;&t; * a sector.  Luckily the sector size is in srb-&gt;transfersize&n;&t; * (see linux/drivers/scsi/sr.c).&n;&t; */
+r_if
+c_cond
+(paren
+id|data
+(braket
+l_int|7
+op_plus
+l_int|0
+)braket
+op_eq
+id|GPCMD_READ_CD
+)paren
+(brace
+id|len
+op_assign
+id|short_pack
+c_func
+(paren
+id|data
+(braket
+l_int|7
+op_plus
+l_int|9
+)braket
+comma
+id|data
+(braket
+l_int|7
+op_plus
+l_int|8
+)braket
+)paren
+suffix:semicolon
+id|len
+op_lshift_assign
+l_int|16
+suffix:semicolon
+id|len
+op_or_assign
+id|data
+(braket
+l_int|7
+op_plus
+l_int|7
+)braket
+suffix:semicolon
+id|srb-&gt;transfersize
+op_assign
+id|srb-&gt;request_bufflen
+op_div
+id|len
+suffix:semicolon
+)brace
 id|len
 op_assign
 (paren
@@ -2510,6 +2545,27 @@ op_amp
 l_int|0xFFFF
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|data
+(braket
+l_int|7
+op_plus
+l_int|0
+)braket
+op_eq
+id|GPCMD_READ_CD
+)paren
+id|data
+(braket
+l_int|7
+op_plus
+l_int|6
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 id|data
 (braket
 l_int|7
@@ -2572,6 +2628,8 @@ comma
 id|len
 comma
 l_int|0
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -3544,26 +3602,10 @@ id|string
 l_int|64
 )braket
 suffix:semicolon
-singleline_comment|// struct scatterlist *sg;
-multiline_comment|/* This table tells us:&n;&t;   X = command not supported&n;&t;   L = return length in cmnd[4] (8 bits).&n;&t;   H = return length in cmnd[7] and cmnd[8] (16 bits).&n;&t;   D = return length in cmnd[6] to cmnd[9] (32 bits).&n;&t;   B = return length/blocksize in cmnd[6] to cmnd[8].&n;&t;   T = return length in cmnd[6] to cmnd[8] (24 bits).&n;&t;   0-9 = fixed return length&n;&t;   W = 24 bytes&n;&t;   h = return length/2048 in cmnd[7-8].&n;&t;*/
-singleline_comment|// static char *lengths =
-multiline_comment|/* 0123456789ABCDEF   0123456789ABCDEF */
-singleline_comment|//   &quot;0XXL0XXXXXXXXXXX&quot; &quot;XXLXXXXXXXX0XX0X&quot;  /* 00-1F */
-singleline_comment|//   &quot;XXXXX8XXhXH0XXX0&quot; &quot;XXXXX0XXXXXXXXXX&quot;  /* 20-3F */
-singleline_comment|//   &quot;XXHHL0X0XXH0XX0X&quot; &quot;XHH00HXX0TH0H0XX&quot;  /* 40-5F */
-singleline_comment|//   &quot;XXXXXXXXXXXXXXXX&quot; &quot;XXXXXXXXXXXXXXXX&quot;  /* 60-7F */
-singleline_comment|//   &quot;XXXXXXXXXXXXXXXX&quot; &quot;XXXXXXXXXXXXXXXX&quot;  /* 80-9F */
-singleline_comment|//   &quot;X0XXX0XXDXDXXXXX&quot; &quot;XXXXXXXXX000XHBX&quot;  /* A0-BF */
-singleline_comment|//   &quot;XXXXXXXXXXXXXXXX&quot; &quot;XXXXXXXXXXXXXXXX&quot;  /* C0-DF */
-singleline_comment|//   &quot;XDXXXXXXXXXXXXXX&quot; &quot;XXW00HXXXXXXXXXX&quot;; /* E0-FF */
-multiline_comment|/*&t;if (us-&gt;flags &amp; US_FL_NEED_INIT) {&n;&t;&t;US_DEBUGP(&quot;8200e: initializing&bslash;n&quot;);&n;&t;&t;init_8200e(us);&n;&t;&t;us-&gt;flags &amp;= ~US_FL_NEED_INIT;&n;&t;} */
 id|len
 op_assign
 id|srb-&gt;request_bufflen
 suffix:semicolon
-multiline_comment|/*&t;if (srb-&gt;sc_data_direction == SCSI_DATA_WRITE)&n;&t;&t;len = srb-&gt;request_bufflen;&n;&t;else {&n;&n;&t;&t;switch (lengths[srb-&gt;cmnd[0]]) {&n;&n;&t;&t;case &squot;L&squot;:&n;&t;&t;&t;len = srb-&gt;cmnd[4];&n;&t;&t;&t;break;&n;&t;&t;case &squot;0&squot;:&n;&t;&t;case &squot;1&squot;:&n;&t;&t;case &squot;2&squot;:&n;&t;&t;case &squot;3&squot;:&n;&t;&t;case &squot;4&squot;:&n;&t;&t;case &squot;5&squot;:&n;&t;&t;case &squot;6&squot;:&n;&t;&t;case &squot;7&squot;:&n;&t;&t;case &squot;8&squot;:&n;&t;&t;case &squot;9&squot;:&n;&t;&t;&t;len = lengths[srb-&gt;cmnd[0]]-&squot;0&squot;;&n;&t;&t;&t;break;&n;&t;&t;case &squot;H&squot;:&n;&t;&t;&t;len = (((unsigned int)srb-&gt;cmnd[7])&lt;&lt;8) | srb-&gt;cmnd[8];&n;&t;&t;&t;break;&n;&t;&t;case &squot;h&squot;:&n;&t;&t;&t;len = (((unsigned int)srb-&gt;cmnd[7])&lt;&lt;8) | srb-&gt;cmnd[8];&n;&t;&t;&t;len &lt;&lt;= 11; // *2048&n;&t;&t;&t;break;&n;&t;&t;case &squot;T&squot;:&n;&t;&t;&t;len = (((unsigned int)srb-&gt;cmnd[6])&lt;&lt;16) |&n;&t;&t;&t;      (((unsigned int)srb-&gt;cmnd[7])&lt;&lt;8) |&n;&t;&t;&t;      srb-&gt;cmnd[8];&n;&t;&t;&t;break;&n;&t;&t;case &squot;D&squot;:&n;&t;&t;&t;len = (((unsigned int)srb-&gt;cmnd[6])&lt;&lt;24) |&n;&t;&t;&t;      (((unsigned int)srb-&gt;cmnd[7])&lt;&lt;16) |&n;&t;&t;&t;      (((unsigned int)srb-&gt;cmnd[8])&lt;&lt;8) |&n;&t;&t;&t;      srb-&gt;cmnd[9];&n;&t;&t;&t;break;&n;&t;&t;case &squot;W&squot;:&n;&t;&t;&t;len = 24;&n;&t;&t;&t;break;&n;&t;&t;case &squot;B&squot;:&n;&t;&t;&t;// Let&squot;s try using the command structure&squot;s&n;&t;&t;&t;//   request_bufflen here &n;&t;&t;&t;len = srb-&gt;request_bufflen;&n;&t;&t;&t;break;&n;&t;&t;default:&n;&t;&t;&t;US_DEBUGP(&quot;Error: UNSUPPORTED COMMAND %02X&bslash;n&quot;,&n;&t;&t;&t;&t;srb-&gt;cmnd[0]);&n;&t;&t;&t;return USB_STOR_TRANSPORT_ERROR;&n;&t;&t;}&n;&t;} */
-singleline_comment|// US_DEBUGP(&quot;XXXXXXXXXXXXXXXX req_bufflen %d, len %d, bufflen %d&bslash;n&quot;, 
-singleline_comment|//&t;srb-&gt;request_bufflen, len, srb-&gt;bufflen);
 multiline_comment|/* Send A0 (ATA PACKET COMMAND).&n;&t;   Note: I guess we&squot;re never going to get any of the ATA&n;&t;   commands... just ATA Packet Commands.&n; &t; */
 id|registers
 (braket
@@ -3773,6 +3815,8 @@ comma
 id|len
 comma
 id|srb-&gt;use_sg
+comma
+l_int|10
 )paren
 suffix:semicolon
 r_if
@@ -3810,6 +3854,13 @@ l_int|0
 )braket
 op_eq
 id|READ_10
+op_logical_or
+id|srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|GPCMD_READ_CD
 )paren
 (brace
 r_return
@@ -3875,6 +3926,10 @@ id|result
 suffix:semicolon
 )brace
 singleline_comment|// Write the 12-byte command header.
+singleline_comment|// If the command is BLANK then set the timer for 75 minutes.
+singleline_comment|// Otherwise set it for 10 minutes.
+singleline_comment|// NOTE: THE 8200 DOCUMENTATION STATES THAT BLANKING A CDRW
+singleline_comment|// AT SPEED 4 IS UNRELIABLE!!!
 r_if
 c_cond
 (paren
@@ -3895,6 +3950,18 @@ comma
 l_int|12
 comma
 l_int|0
+comma
+id|srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|GPCMD_BLANK
+ques
+c_cond
+l_int|75
+suffix:colon
+l_int|10
 )paren
 )paren
 op_ne
@@ -4134,7 +4201,6 @@ id|string
 suffix:semicolon
 )brace
 )brace
-singleline_comment|// US_DEBUGP(&quot;Command result %d&bslash;n&quot;, result);
 r_return
 id|result
 suffix:semicolon

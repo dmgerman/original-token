@@ -40,15 +40,11 @@ r_static
 r_int
 r_int
 id|next_gc
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|nrhosts
 r_static
 r_int
 id|nrhosts
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|DECLARE_MUTEX

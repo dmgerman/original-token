@@ -5,7 +5,7 @@ mdefine_line|#define _VIDEO_1394_H
 DECL|macro|VIDEO1394_DRIVER_NAME
 mdefine_line|#define VIDEO1394_DRIVER_NAME &quot;video1394&quot;
 DECL|macro|VIDEO1394_MAX_SIZE
-mdefine_line|#define VIDEO1394_MAX_SIZE 0x400000
+mdefine_line|#define VIDEO1394_MAX_SIZE 0x4000000
 r_enum
 (brace
 DECL|enumerator|VIDEO1394_BUFFER_FREE

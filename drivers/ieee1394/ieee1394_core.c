@@ -352,9 +352,9 @@ id|packet
 )paren
 suffix:semicolon
 )brace
-DECL|function|reset_host_bus
-r_void
-id|reset_host_bus
+DECL|function|hpsb_reset_bus
+r_int
+id|hpsb_reset_bus
 c_func
 (paren
 r_struct
@@ -371,14 +371,20 @@ id|host-&gt;initialized
 )paren
 (brace
 r_return
+l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|hpsb_bus_reset
 c_func
 (paren
 id|host
 )paren
-suffix:semicolon
+)paren
+(brace
 id|host
 op_member_access_from_pointer
 r_template
@@ -393,9 +399,19 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 )brace
 DECL|function|hpsb_bus_reset
-r_void
+r_int
 id|hpsb_bus_reset
 c_func
 (paren
@@ -408,10 +424,20 @@ id|host
 r_if
 c_cond
 (paren
-op_logical_neg
 id|host-&gt;in_bus_reset
 )paren
 (brace
+id|HPSB_NOTICE
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; called while bus reset already in progress&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|abort_requests
 c_func
 (paren
@@ -440,17 +466,9 @@ id|host-&gt;selfid_count
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-r_else
-(brace
-id|HPSB_NOTICE
-c_func
-(paren
-id|__FUNCTION__
-l_string|&quot; called while bus reset already in progress&quot;
-)paren
+r_return
+l_int|0
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Verify num_of_selfids SelfIDs and return number of nodes.  Return zero in&n; * case verification failed.&n; */
 DECL|function|check_selfids
@@ -1452,7 +1470,7 @@ c_func
 l_string|&quot;error in SelfID stage - resetting&quot;
 )paren
 suffix:semicolon
-id|reset_host_bus
+id|hpsb_reset_bus
 c_func
 (paren
 id|host
@@ -1522,6 +1540,25 @@ suffix:semicolon
 id|inc_hpsb_generation
 c_func
 (paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|isroot
+)paren
+id|host
+op_member_access_from_pointer
+r_template
+op_member_access_from_pointer
+id|devctl
+c_func
+(paren
+id|host
+comma
+id|ACT_CYCLE_MASTER
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|highlevel_host_reset
@@ -1667,7 +1704,7 @@ id|tq_timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * hpsb_send_packet - transmit a packet on the bus&n; * @packet: packet to send&n; *&n; * The packet is sent through the host specified in the packet-&gt;host field.&n; * Before sending, the packet&squot;s transmit speed is automatically determined using&n; * the local speed map.&n; *&n; * Possibilities for failure are that host is either not initialized, in bus&n; * reset, the packet&squot;s generation number doesn&squot;t match the current generation&n; * number or the host reports a transmit error.&n; *&n; * Return value: False (0) on failure, true (1) otherwise.&n; */
+multiline_comment|/**&n; * hpsb_send_packet - transmit a packet on the bus&n; * @packet: packet to send&n; *&n; * The packet is sent through the host specified in the packet-&gt;host field.&n; * Before sending, the packet&squot;s transmit speed is automatically determined using&n; * the local speed map when it is an async, non-broadcast packet.&n; *&n; * Possibilities for failure are that host is either not initialized, in bus&n; * reset, the packet&squot;s generation number doesn&squot;t match the current generation&n; * number or the host reports a transmit error.&n; *&n; * Return value: False (0) on failure, true (1) otherwise.&n; */
 DECL|function|hpsb_send_packet
 r_int
 id|hpsb_send_packet
@@ -1712,6 +1749,18 @@ id|packet-&gt;state
 op_assign
 id|queued
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|packet-&gt;type
+op_eq
+id|async
+op_logical_and
+id|packet-&gt;node_id
+op_ne
+id|ALL_NODES
+)paren
+(brace
 id|packet-&gt;speed_code
 op_assign
 id|host-&gt;speed_map
@@ -1731,6 +1780,7 @@ id|NODE_MASK
 )paren
 )braket
 suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_IEEE1394_VERBOSEDEBUG
 r_switch
 c_cond

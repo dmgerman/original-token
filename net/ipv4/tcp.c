@@ -56,11 +56,6 @@ id|sysctl_tcp_mem
 (braket
 l_int|3
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|sysctl_tcp_wmem
 r_int

@@ -2,7 +2,6 @@ multiline_comment|/*&n; *  linux/fs/adfs/file.c&n; *&n; * Copyright (C) 1997-199
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;

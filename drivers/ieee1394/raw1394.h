@@ -6,7 +6,7 @@ mdefine_line|#define RAW1394_DEVICE_MAJOR      171
 DECL|macro|RAW1394_DEVICE_NAME
 mdefine_line|#define RAW1394_DEVICE_NAME       &quot;raw1394&quot;
 DECL|macro|RAW1394_KERNELAPI_VERSION
-mdefine_line|#define RAW1394_KERNELAPI_VERSION 3
+mdefine_line|#define RAW1394_KERNELAPI_VERSION 4
 multiline_comment|/* state: opened */
 DECL|macro|RAW1394_REQ_INITIALIZE
 mdefine_line|#define RAW1394_REQ_INITIALIZE    1
@@ -24,10 +24,14 @@ DECL|macro|RAW1394_REQ_LOCK
 mdefine_line|#define RAW1394_REQ_LOCK          102
 DECL|macro|RAW1394_REQ_LOCK64
 mdefine_line|#define RAW1394_REQ_LOCK64        103
+DECL|macro|RAW1394_REQ_ISO_SEND
+mdefine_line|#define RAW1394_REQ_ISO_SEND      104
 DECL|macro|RAW1394_REQ_ISO_LISTEN
 mdefine_line|#define RAW1394_REQ_ISO_LISTEN    200
 DECL|macro|RAW1394_REQ_FCP_LISTEN
 mdefine_line|#define RAW1394_REQ_FCP_LISTEN    201
+DECL|macro|RAW1394_REQ_RESET_BUS
+mdefine_line|#define RAW1394_REQ_RESET_BUS     202
 multiline_comment|/* kernel to user */
 DECL|macro|RAW1394_REQ_BUS_RESET
 mdefine_line|#define RAW1394_REQ_BUS_RESET     10000
@@ -164,6 +168,11 @@ comma
 id|connected
 )brace
 id|state
+suffix:semicolon
+DECL|member|protocol_version
+r_int
+r_int
+id|protocol_version
 suffix:semicolon
 DECL|member|host
 r_struct

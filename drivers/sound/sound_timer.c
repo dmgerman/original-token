@@ -10,16 +10,10 @@ r_static
 r_volatile
 r_int
 id|initialized
-op_assign
-l_int|0
 comma
 id|opened
-op_assign
-l_int|0
 comma
 id|tmr_running
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tmr_offs
 DECL|variable|tmr_ctr
@@ -80,8 +74,6 @@ r_struct
 id|sound_lowlev_timer
 op_star
 id|tmr
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|tmr2ticks
 r_static

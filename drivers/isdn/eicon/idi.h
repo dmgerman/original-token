@@ -300,10 +300,7 @@ DECL|member|features
 id|word
 id|features
 suffix:semicolon
-DECL|member|serial
-id|dword
-id|serial
-suffix:semicolon
+multiline_comment|/* dword&t;&t;serial; */
 DECL|member|request
 id|IDI_CALL
 id|request
@@ -314,14 +311,13 @@ id|DESCRIPTOR
 suffix:semicolon
 r_extern
 r_void
-id|EtdM_DIDD_Read
+id|DIVA_DIDD_Read
 c_func
 (paren
 id|DESCRIPTOR
 op_star
 comma
 r_int
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/* descriptor type field coding */

@@ -60,8 +60,6 @@ r_static
 id|Scsi_Disk
 op_star
 id|rscsi_disks
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|sd_sizes
 r_static
@@ -4141,8 +4139,6 @@ DECL|variable|sd_registered
 r_static
 r_int
 id|sd_registered
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|sd_init
 r_static

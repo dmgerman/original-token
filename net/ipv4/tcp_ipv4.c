@@ -66,8 +66,6 @@ r_struct
 id|tcp_ehash_bucket
 op_star
 id|tcp_ehash
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Ok, let&squot;s try this, I give up, we do need a local binding&n; * TCP hash as well as the others for fast bind/connect.&n; */
 DECL|variable|tcp_bhash
@@ -75,20 +73,14 @@ r_struct
 id|tcp_bind_hashbucket
 op_star
 id|tcp_bhash
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|tcp_bhash_size
 r_int
 id|tcp_bhash_size
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tcp_ehash_size
 r_int
 id|tcp_ehash_size
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* All sockets in TCP_LISTEN state will be in here.  This is the only table&n; * where wildcard&squot;d TCP sockets can exist.  Hash function here is just local&n; * port number.&n; */
 DECL|variable|tcp_listening_hash
@@ -99,11 +91,6 @@ id|tcp_listening_hash
 (braket
 id|TCP_LHTABLE_SIZE
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|__tcp_clean_cacheline_pad
 r_char

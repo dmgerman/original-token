@@ -123,16 +123,6 @@ id|write_access
 )paren
 macro_line|#endif
 (brace
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;0x%08lx, %d&bslash;n&quot;
-comma
-id|address
-comma
-id|write_access
-)paren
-suffix:semicolon
 r_return
 id|NOPAGE_SIGBUS
 suffix:semicolon

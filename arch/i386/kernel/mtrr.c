@@ -111,16 +111,12 @@ r_static
 r_char
 op_star
 id|ascii_buffer
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|ascii_buf_bytes
 r_static
 r_int
 r_int
 id|ascii_buf_bytes
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|variable|usage_table
@@ -129,8 +125,6 @@ r_int
 r_int
 op_star
 id|usage_table
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 id|DECLARE_MUTEX
@@ -582,6 +576,9 @@ r_case
 id|X86_VENDOR_CYRIX
 suffix:colon
 multiline_comment|/*  Cyrix have 8 ARRs  */
+r_return
+l_int|8
+suffix:semicolon
 r_case
 id|X86_VENDOR_CENTAUR
 suffix:colon
@@ -1414,8 +1411,6 @@ id|mtrr_type
 op_star
 id|type
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|intel_set_mtrr_up
 r_static
@@ -2120,8 +2115,6 @@ comma
 r_int
 id|do_safe
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 DECL|struct|mtrr_var_range

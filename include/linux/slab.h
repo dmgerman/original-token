@@ -298,26 +298,6 @@ id|kmem_cache_t
 op_star
 id|sigact_cachep
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
-r_extern
-r_int
-r_int
-id|slab_cache_drain_mask
-suffix:semicolon
-r_extern
-r_void
-id|slab_drain_local_cache
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|slab_cache_drain_mask
-mdefine_line|#define slab_cache_drain_mask 0
-DECL|macro|slab_drain_local_cache
-mdefine_line|#define slab_drain_local_cache()&t;do { } while (0)
-macro_line|#endif
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_SLAB_H */
 eof

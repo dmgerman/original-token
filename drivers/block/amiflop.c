@@ -243,8 +243,6 @@ id|floppy_blocksizes
 (braket
 l_int|256
 )braket
-op_assign
-initialization_block
 suffix:semicolon
 multiline_comment|/* hardsector size assumed to be 512 */
 r_static
@@ -314,13 +312,6 @@ id|unit
 (braket
 id|FD_MAX_UNITS
 )braket
-op_assign
-(brace
-(brace
-l_int|0
-comma
-)brace
-)brace
 suffix:semicolon
 DECL|variable|flush_track_timer
 r_static
@@ -373,8 +364,6 @@ r_static
 r_volatile
 r_int
 id|fdc_nested
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|DECLARE_WAIT_QUEUE_HEAD
@@ -404,15 +393,11 @@ DECL|variable|writepending
 r_static
 r_int
 id|writepending
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|writefromint
 r_static
 r_int
 id|writefromint
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|raw_buf
 r_static
@@ -428,8 +413,6 @@ r_static
 r_volatile
 r_char
 id|block_flag
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|DECLARE_WAIT_QUEUE_HEAD

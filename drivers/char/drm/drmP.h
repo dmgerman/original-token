@@ -1179,6 +1179,10 @@ id|drm_device
 op_star
 id|dev
 suffix:semicolon
+DECL|member|remove_auth_on_close
+r_int
+id|remove_auth_on_close
+suffix:semicolon
 DECL|typedef|drm_file_t
 )brace
 id|drm_file_t

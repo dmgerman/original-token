@@ -15,8 +15,6 @@ DECL|variable|smp_b_stepping
 r_static
 r_int
 id|smp_b_stepping
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Setup configured maximum number of CPUs to activate */
 DECL|variable|max_cpus
@@ -39,8 +37,6 @@ DECL|variable|cpu_online_map
 r_int
 r_int
 id|cpu_online_map
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* which CPU (physical APIC ID) maps to which logical CPU number */
 DECL|variable|x86_apicid_to_cpu
@@ -66,8 +62,6 @@ r_volatile
 r_int
 r_int
 id|cpu_callin_map
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|cpu_callout_map
 r_static
@@ -75,8 +69,6 @@ r_volatile
 r_int
 r_int
 id|cpu_callout_map
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Per CPU bogomips and other parameters */
 DECL|variable|cpu_data
@@ -91,8 +83,6 @@ multiline_comment|/* Set when the idlers are all forked */
 DECL|variable|smp_threads_ready
 r_int
 id|smp_threads_ready
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Setup routine for controlling SMP activation&n; *&n; * Command-line option of &quot;nosmp&quot; or &quot;maxcpus=0&quot; will disable SMP&n; * activation entirely (the MPS table probe still happens, though).&n; *&n; * Command-line option of &quot;maxcpus=&lt;NUM&gt;&quot;, where &lt;NUM&gt; is an integer&n; * greater than 0, limits the maximum number of CPUs activated in&n; * SMP mode to &lt;NUM&gt;.&n; */
 DECL|function|nosmp
@@ -414,11 +404,6 @@ id|tsc_values
 (braket
 id|NR_CPUS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|macro|NR_LOOPS
 mdefine_line|#define NR_LOOPS 5
@@ -1263,8 +1248,6 @@ suffix:semicolon
 DECL|variable|cpucount
 r_int
 id|cpucount
-op_assign
-l_int|0
 suffix:semicolon
 r_extern
 r_int

@@ -53,8 +53,6 @@ multiline_comment|/* Shared by v4/v6 udp. */
 DECL|variable|udp_port_rover
 r_int
 id|udp_port_rover
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|udp_v4_get_port
 r_static

@@ -2182,10 +2182,6 @@ comma
 id|current-&gt;pid
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2193,6 +2189,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3249,6 +3249,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3311,10 +3315,6 @@ c_func
 op_amp
 id|dev-&gt;total_sleeps
 )paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|schedule
 c_func

@@ -5724,7 +5724,7 @@ suffix:semicolon
 r_else
 id|memset
 (paren
-id|arg
+id|buf
 comma
 l_int|0
 comma

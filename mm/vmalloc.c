@@ -15,8 +15,6 @@ r_struct
 id|vm_struct
 op_star
 id|vmlist
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|free_area_pte
 r_static

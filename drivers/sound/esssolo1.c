@@ -12357,12 +12357,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_region
+op_logical_neg
+id|request_region
 c_func
 (paren
 id|s-&gt;sbbase
 comma
 id|FMSYNTH_EXTENT
+comma
+l_string|&quot;ESS Solo1&quot;
 )paren
 )paren
 (brace
@@ -12385,16 +12388,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|request_region
-c_func
-(paren
-id|s-&gt;sbbase
-comma
-id|FMSYNTH_EXTENT
-comma
-l_string|&quot;ESS Solo1&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* init the stuff */
 id|outb
 c_func

@@ -7,7 +7,7 @@ mdefine_line|#define I810_NAME&t; &quot;i810&quot;
 DECL|macro|I810_DESC
 mdefine_line|#define I810_DESC&t; &quot;Intel I810&quot;
 DECL|macro|I810_DATE
-mdefine_line|#define I810_DATE&t; &quot;20000910&quot;
+mdefine_line|#define I810_DATE&t; &quot;20000928&quot;
 DECL|macro|I810_MAJOR
 mdefine_line|#define I810_MAJOR&t; 1
 DECL|macro|I810_MINOR
@@ -2534,6 +2534,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2589,10 +2593,6 @@ c_func
 op_amp
 id|dev-&gt;total_sleeps
 )paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|schedule
 c_func

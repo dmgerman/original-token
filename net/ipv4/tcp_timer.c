@@ -45,8 +45,6 @@ suffix:semicolon
 DECL|variable|sysctl_tcp_orphan_retries
 r_int
 id|sysctl_tcp_orphan_retries
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_void

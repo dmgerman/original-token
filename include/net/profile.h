@@ -589,7 +589,7 @@ op_star
 id|pstamp
 )paren
 (brace
-multiline_comment|/* Not &quot;fast&quot; counterpart! On architectures without&n;&t;   cpu clock &quot;fast&quot; routine is absolutely useless in this&n;&t;   situation. do_gettimeofday still says something on slow-slow-slow&n;&t;   boxes, though it eats more cpu time than the sobject of&n;&t;   investigation :-) :-)&n;&t; */
+multiline_comment|/* Not &quot;fast&quot; counterpart! On architectures without&n;&t;   cpu clock &quot;fast&quot; routine is absolutely useless in this&n;&t;   situation. do_gettimeofday still says something on slow-slow-slow&n;&t;   boxes, though it eats more cpu time than the subject of&n;&t;   investigation :-) :-)&n;&t; */
 id|do_gettimeofday
 c_func
 (paren

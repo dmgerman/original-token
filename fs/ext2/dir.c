@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ext2/dir.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/dir.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 directory handling functions&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; */
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/ext2_fs.h&gt;
 DECL|variable|ext2_filetype_table
 r_static
 r_int

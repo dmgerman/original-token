@@ -179,6 +179,8 @@ DECL|macro|VM_RAND_READ
 mdefine_line|#define VM_RAND_READ&t;0x00010000&t;/* App will not benefit from clustered reads */
 DECL|macro|VM_DONTCOPY
 mdefine_line|#define VM_DONTCOPY&t;0x00020000      /* Do not copy this vma on fork */
+DECL|macro|VM_DONTEXPAND
+mdefine_line|#define VM_DONTEXPAND&t;0x00040000&t;/* Cannot expand with mremap() */
 DECL|macro|VM_STACK_FLAGS
 mdefine_line|#define VM_STACK_FLAGS&t;0x00000177
 DECL|macro|VM_READHINTMASK

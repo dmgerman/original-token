@@ -160,8 +160,6 @@ DECL|variable|cursor_drawn
 r_static
 r_int
 id|cursor_drawn
-op_assign
-l_int|0
 suffix:semicolon
 DECL|macro|CURSOR_DRAW_DELAY
 mdefine_line|#define CURSOR_DRAW_DELAY&t;&t;(1)
@@ -180,15 +178,11 @@ DECL|variable|vbl_cursor_cnt
 r_static
 r_int
 id|vbl_cursor_cnt
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|cursor_on
 r_static
 r_int
 id|cursor_on
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|cursor_blink_rate
 r_static
@@ -666,8 +660,6 @@ DECL|variable|vbl_detected
 r_static
 r_int
 id|vbl_detected
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|fbcon_vbl_detect
 r_static

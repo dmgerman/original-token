@@ -2151,20 +2151,11 @@ id|vm86_irqs
 (braket
 l_int|16
 )braket
-op_assign
-(brace
-(brace
-l_int|0
-)brace
-comma
-)brace
 suffix:semicolon
 DECL|variable|irqbits
 r_static
 r_int
 id|irqbits
-op_assign
-l_int|0
 suffix:semicolon
 DECL|macro|ALLOWED_SIGS
 mdefine_line|#define ALLOWED_SIGS ( 1 /* 0 = don&squot;t send a signal */ &bslash;&n;&t;| (1 &lt;&lt; SIGUSR1) | (1 &lt;&lt; SIGUSR2) | (1 &lt;&lt; SIGIO)  | (1 &lt;&lt; SIGURG) &bslash;&n;&t;| (1 &lt;&lt; SIGUNUSED) )

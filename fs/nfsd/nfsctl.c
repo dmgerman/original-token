@@ -139,8 +139,6 @@ DECL|variable|initialized
 r_static
 r_int
 id|initialized
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|exp_procfs_exports

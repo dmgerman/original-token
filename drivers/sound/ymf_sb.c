@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  Legacy audio driver for YMF724, 740, 744, 754 series.&n;  Copyright 2000 Daisuke Nagano &lt;breeze.nagano@nifty.ne.jp&gt;&n;&n;  Based on the VIA 82Cxxx driver by Jeff Garzik &lt;jgarzik@pobox.com&gt;&n;  And ported to 2.3.x by Jeff Garzik too :)  My it is a small world.&n;&n;  Distribued under the GNU PUBLIC LICENSE (GPL) Version 2.&n;  See the &quot;COPYING&quot; file distributed with kernel source tree for more info.&n;&n;  -------------------------------------------------------------------------&n;&n;  It only supports SBPro compatible function of YMF7xx series s.t.&n;    * 22.05kHz, 8-bit and stereo sample&n;    * OPL3-compatible FM synthesizer&n;    * MPU-401 compatible &quot;external&quot; MIDI interface&n;&n;  -------------------------------------------------------------------------&n;&n;  Revision history&n;&n;   Tue May 14 19:00:00 2000   0.0.1&n;   * initial release&n;&n;   Tue May 16 19:29:29 2000   0.0.2&n;&n;   * add a little delays for reset devices.&n;   * fixed addressing bug.&n;&n;   Sun May 21 15:14:37 2000   0.0.3&n;&n;   * Add &squot;master_vol&squot; module parameter to change &squot;PCM out Vol&squot; of AC&squot;97.&n;   * remove native UART401 support. External MIDI port should be supported &n;     by sb_midi driver.&n;   * add support for SPDIF OUT. Module parameter &squot;spdif_out&squot; is now available.&n;&n;   Wed May 31 00:13:57 2000   0.0.4&n;&n;   * remove entries in Hwmcode.h. Now YMF744 / YMF754 sets instructions &n;     in 724hwmcode.h.&n;   * fixed wrong legacy_io setting on YMF744/YMF754 .&n;&n; */
+multiline_comment|/*&n;  Legacy audio driver for YMF724, 740, 744, 754 series.&n;  Copyright 2000 Daisuke Nagano &lt;breeze.nagano@nifty.ne.jp&gt;&n;&n;  Based on the VIA 82Cxxx driver by Jeff Garzik &lt;jgarzik@pobox.com&gt;&n;  And ported to 2.3.x by Jeff Garzik too :)  My it is a small world.&n;&n;  Distribued under the GNU PUBLIC LICENSE (GPL) Version 2.&n;  See the &quot;COPYING&quot; file distributed with kernel source tree for more info.&n;&n;  -------------------------------------------------------------------------&n;&n;  It only supports SBPro compatible function of YMF7xx series s.t.&n;    * 22.05kHz, 8-bit and stereo sample&n;    * OPL3-compatible FM synthesizer&n;    * MPU-401 compatible &quot;external&quot; MIDI interface&n;&n;  -------------------------------------------------------------------------&n;&n;  Revision history&n;&n;   Tue May 14 19:00:00 2000   0.0.1&n;   * initial release&n;&n;   Tue May 16 19:29:29 2000   0.0.2&n;&n;   * add a little delays for reset devices.&n;   * fixed addressing bug.&n;&n;   Sun May 21 15:14:37 2000   0.0.3&n;&n;   * Add &squot;master_vol&squot; module parameter to change &squot;PCM out Vol&squot; of AC&squot;97.&n;   * remove native UART401 support. External MIDI port should be supported &n;     by sb_midi driver.&n;   * add support for SPDIF OUT. Module parameter &squot;spdif_out&squot; is now available.&n;&n;   Wed May 31 00:13:57 2000   0.0.4&n;&n;   * remove entries in Hwmcode.h. Now YMF744 / YMF754 sets instructions &n;     in 724hwmcode.h.&n;   * fixed wrong legacy_io setting on YMF744/YMF754 .&n;&n;   Thu Sep 21 05:32:51 BRT 2000 0.0.5&n;   * got rid of attach_uart401 and attach_sbmpu&n;     Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -281,19 +281,16 @@ mdefine_line|#define MAX_CARDS&t;4
 DECL|macro|PFX
 mdefine_line|#define PFX&t;&t;&quot;ymf_sb: &quot;
 DECL|macro|YMFSB_VERSION
-mdefine_line|#define YMFSB_VERSION&t;&quot;0.0.4&quot;
+mdefine_line|#define YMFSB_VERSION&t;&quot;0.0.5&quot;
 DECL|macro|YMFSB_CARD_NAME
 mdefine_line|#define YMFSB_CARD_NAME&t;&quot;YMF7xx Legacy Audio driver &quot; YMFSB_VERSION
 macro_line|#ifdef SUPPORT_UART401_MIDI
 macro_line|#if 0
 macro_line|# define ymf7xxsb_probe_midi probe_uart401
-macro_line|# define ymf7xxsb_attach_midi attach_uart401
 macro_line|# define ymf7xxsb_unload_midi unload_uart401
 macro_line|#else
 DECL|macro|ymf7xxsb_probe_midi
 macro_line|# define ymf7xxsb_probe_midi probe_sbmpu
-DECL|macro|ymf7xxsb_attach_midi
-macro_line|# define ymf7xxsb_attach_midi attach_sbmpu
 DECL|macro|ymf7xxsb_unload_midi
 macro_line|# define ymf7xxsb_unload_midi unload_sbmpu
 macro_line|#endif
@@ -2856,6 +2853,8 @@ id|mpu_data
 (braket
 id|cards
 )braket
+comma
+id|THIS_MODULE
 )paren
 )paren
 (brace
@@ -2884,17 +2883,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|ymf7xxsb_attach_midi
-(paren
-op_amp
-id|mpu_data
-(braket
-id|cards
-)braket
-comma
-id|THIS_MODULE
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* register legacy OPL3 */

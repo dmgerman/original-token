@@ -94,14 +94,6 @@ r_new
 comma
 id|prev
 suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;%d attempts&bslash;n&quot;
-comma
-id|context
-)paren
-suffix:semicolon
 r_do
 (brace
 id|old
@@ -205,32 +197,10 @@ id|_DRM_LOCK_HELD
 )paren
 (brace
 multiline_comment|/* Have lock */
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;%d&bslash;n&quot;
-comma
-id|context
-)paren
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;%d unable to get lock held by %d&bslash;n&quot;
-comma
-id|context
-comma
-id|_DRM_LOCKING_CONTEXT
-c_func
-(paren
-id|old
-)paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -302,20 +272,6 @@ op_ne
 id|old
 )paren
 suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;%d =&gt; %d&bslash;n&quot;
-comma
-id|_DRM_LOCKING_CONTEXT
-c_func
-(paren
-id|old
-)paren
-comma
-id|context
-)paren
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -352,14 +308,6 @@ id|pid_t
 id|pid
 op_assign
 id|dev-&gt;lock.pid
-suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;%d&bslash;n&quot;
-comma
-id|context
-)paren
 suffix:semicolon
 id|dev-&gt;lock.pid
 op_assign
@@ -515,10 +463,6 @@ op_amp
 id|q-&gt;block_write
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -543,6 +487,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 r_if
 c_cond
 (paren

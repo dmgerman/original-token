@@ -2155,11 +2155,6 @@ id|apic_timer_irqs
 (braket
 id|NR_CPUS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|function|smp_apic_timer_interrupt
 r_void

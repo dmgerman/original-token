@@ -163,16 +163,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_void
-id|reset_host_bus
-c_func
-(paren
-r_struct
-id|hpsb_host
-op_star
-id|host
-)paren
-suffix:semicolon
-r_void
 id|abort_timedouts
 c_func
 (paren
@@ -267,9 +257,20 @@ op_star
 id|packet
 )paren
 suffix:semicolon
+multiline_comment|/* Initiate bus reset on the given host.  Returns 1 if bus reset already in&n; * progress, 0 otherwise. */
+r_int
+id|hpsb_reset_bus
+c_func
+(paren
+r_struct
+id|hpsb_host
+op_star
+id|host
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The following functions are exported for host driver module usage.  All of&n; * them are safe to use in interrupt contexts, although some are quite&n; * complicated so you may want to run them in bottom halves instead of calling&n; * them directly.&n; */
-multiline_comment|/* Notify a bus reset to the core. */
-r_void
+multiline_comment|/* Notify a bus reset to the core.  Returns 1 if bus reset already in progress,&n; * 0 otherwise. */
+r_int
 id|hpsb_bus_reset
 c_func
 (paren

@@ -138,6 +138,8 @@ DECL|macro|EM_SPARCV9
 mdefine_line|#define EM_SPARCV9     43&t;/* SPARC v9 64-bit */
 DECL|macro|EM_IA_64
 mdefine_line|#define EM_IA_64&t;50&t;/* HP/Intel IA-64 */
+DECL|macro|EM_X8664
+mdefine_line|#define EM_X8664&t;62&t;/* AMD x86-64 */
 multiline_comment|/*&n; * This is an interim value that we will use until the committee comes&n; * up with a final number.&n; */
 DECL|macro|EM_ALPHA
 mdefine_line|#define EM_ALPHA&t;0x9026

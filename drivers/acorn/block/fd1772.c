@@ -140,11 +140,6 @@ id|floppy_blocksizes
 (braket
 l_int|256
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* current info on each unit */
 DECL|struct|archy_floppy_struct

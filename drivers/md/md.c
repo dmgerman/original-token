@@ -8075,7 +8075,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|md_run_setup
-r_void
+r_int
 id|md__init
 id|md_run_setup
 c_func
@@ -8232,6 +8232,9 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|get_version
 r_static
@@ -15546,6 +15549,28 @@ comma
 id|minor
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mddev_map
+(braket
+id|minor
+)braket
+dot
+id|mddev
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;.. md%d already autodetected - use raid=noautodetect&bslash;n&quot;
+comma
+id|minor
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|mddev
 op_assign
 id|alloc_mddev

@@ -76,21 +76,21 @@ mdefine_line|#define OHCI1394_MAX_SELF_ID_ERRORS       16
 DECL|macro|AR_REQ_NUM_DESC
 mdefine_line|#define AR_REQ_NUM_DESC                   4 /* number of AR req descriptors */
 DECL|macro|AR_REQ_BUF_SIZE
-mdefine_line|#define AR_REQ_BUF_SIZE                4096 /* size of AR req buffers */
+mdefine_line|#define AR_REQ_BUF_SIZE           PAGE_SIZE /* size of AR req buffers */
 DECL|macro|AR_REQ_SPLIT_BUF_SIZE
-mdefine_line|#define AR_REQ_SPLIT_BUF_SIZE          4096 /* split packet buffer */
+mdefine_line|#define AR_REQ_SPLIT_BUF_SIZE     PAGE_SIZE /* split packet buffer */
 DECL|macro|AR_RESP_NUM_DESC
 mdefine_line|#define AR_RESP_NUM_DESC                  4 /* number of AR resp descriptors */
 DECL|macro|AR_RESP_BUF_SIZE
-mdefine_line|#define AR_RESP_BUF_SIZE               4096 /* size of AR resp buffers */
+mdefine_line|#define AR_RESP_BUF_SIZE          PAGE_SIZE /* size of AR resp buffers */
 DECL|macro|AR_RESP_SPLIT_BUF_SIZE
-mdefine_line|#define AR_RESP_SPLIT_BUF_SIZE         4096 /* split packet buffer */
+mdefine_line|#define AR_RESP_SPLIT_BUF_SIZE    PAGE_SIZE /* split packet buffer */
 DECL|macro|IR_NUM_DESC
 mdefine_line|#define IR_NUM_DESC                      16 /* number of IR descriptors */
 DECL|macro|IR_BUF_SIZE
-mdefine_line|#define IR_BUF_SIZE                    4096 /* 6480 bytes/buffer */
+mdefine_line|#define IR_BUF_SIZE               PAGE_SIZE /* 4096 bytes/buffer */
 DECL|macro|IR_SPLIT_BUF_SIZE
-mdefine_line|#define IR_SPLIT_BUF_SIZE              4096 /* split packet buffer */
+mdefine_line|#define IR_SPLIT_BUF_SIZE         PAGE_SIZE /* split packet buffer */
 DECL|macro|AT_REQ_NUM_DESC
 mdefine_line|#define AT_REQ_NUM_DESC                  32 /* number of AT req descriptors */
 DECL|macro|AT_RESP_NUM_DESC
@@ -117,6 +117,7 @@ id|status
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * FIXME:&n; * It is important that a single at_dma_prg does not cross a page boundary&n; * The proper way to do it would be to do the check dynamically as the&n; * programs are inserted into the AT fifo.&n; */
 DECL|struct|at_dma_prg
 r_struct
 id|at_dma_prg
@@ -138,6 +139,14 @@ r_struct
 id|dma_cmd
 id|end
 suffix:semicolon
+DECL|member|pad
+id|quadlet_t
+id|pad
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* FIXME: quick hack for memory alignment */
 )brace
 suffix:semicolon
 multiline_comment|/* DMA receive context */

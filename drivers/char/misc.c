@@ -84,22 +84,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|watchdog_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|pcwatchdog_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|rtc_sun_init
 c_func
@@ -947,21 +931,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PC110_PAD
 id|pc110pad_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n; *&t;Only one watchdog can succeed. We probe the pcwatchdog first,&n; *&t;then the wdt cards and finally the software watchdog which always&n; *&t;works. This means if your hardware watchdog dies or is &squot;borrowed&squot;&n; *&t;for some reason the software watchdog still gives you some cover.&n; */
-macro_line|#ifdef CONFIG_PCWATCHDOG
-id|pcwatchdog_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOFT_WATCHDOG
-id|watchdog_init
 c_func
 (paren
 )paren

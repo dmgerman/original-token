@@ -62,6 +62,7 @@ r_struct
 id|_drm_mga_freelist
 (brace
 DECL|member|age
+id|__volatile__
 r_int
 r_int
 id|age
@@ -1296,6 +1297,135 @@ DECL|macro|MGAREG_YTOP
 mdefine_line|#define MGAREG_YTOP &t;&t;&t;&t;0x1c98
 DECL|macro|MGAREG_ZORG
 mdefine_line|#define MGAREG_ZORG &t;&t;&t;&t;0x1c0c
+multiline_comment|/* Warp registers */
+DECL|macro|MGAREG_WR0
+mdefine_line|#define MGAREG_WR0                              0x2d00
+DECL|macro|MGAREG_WR1
+mdefine_line|#define MGAREG_WR1                              0x2d04
+DECL|macro|MGAREG_WR2
+mdefine_line|#define MGAREG_WR2                              0x2d08
+DECL|macro|MGAREG_WR3
+mdefine_line|#define MGAREG_WR3                              0x2d0c
+DECL|macro|MGAREG_WR4
+mdefine_line|#define MGAREG_WR4                              0x2d10
+DECL|macro|MGAREG_WR5
+mdefine_line|#define MGAREG_WR5                              0x2d14
+DECL|macro|MGAREG_WR6
+mdefine_line|#define MGAREG_WR6                              0x2d18
+DECL|macro|MGAREG_WR7
+mdefine_line|#define MGAREG_WR7                              0x2d1c
+DECL|macro|MGAREG_WR8
+mdefine_line|#define MGAREG_WR8                              0x2d20
+DECL|macro|MGAREG_WR9
+mdefine_line|#define MGAREG_WR9                              0x2d24
+DECL|macro|MGAREG_WR10
+mdefine_line|#define MGAREG_WR10                             0x2d28
+DECL|macro|MGAREG_WR11
+mdefine_line|#define MGAREG_WR11                             0x2d2c
+DECL|macro|MGAREG_WR12
+mdefine_line|#define MGAREG_WR12                             0x2d30
+DECL|macro|MGAREG_WR13
+mdefine_line|#define MGAREG_WR13                             0x2d34
+DECL|macro|MGAREG_WR14
+mdefine_line|#define MGAREG_WR14                             0x2d38
+DECL|macro|MGAREG_WR15
+mdefine_line|#define MGAREG_WR15                             0x2d3c
+DECL|macro|MGAREG_WR16
+mdefine_line|#define MGAREG_WR16                             0x2d40
+DECL|macro|MGAREG_WR17
+mdefine_line|#define MGAREG_WR17                             0x2d44
+DECL|macro|MGAREG_WR18
+mdefine_line|#define MGAREG_WR18                             0x2d48
+DECL|macro|MGAREG_WR19
+mdefine_line|#define MGAREG_WR19                             0x2d4c
+DECL|macro|MGAREG_WR20
+mdefine_line|#define MGAREG_WR20                             0x2d50
+DECL|macro|MGAREG_WR21
+mdefine_line|#define MGAREG_WR21                             0x2d54
+DECL|macro|MGAREG_WR22
+mdefine_line|#define MGAREG_WR22                             0x2d58
+DECL|macro|MGAREG_WR23
+mdefine_line|#define MGAREG_WR23                             0x2d5c
+DECL|macro|MGAREG_WR24
+mdefine_line|#define MGAREG_WR24                             0x2d60
+DECL|macro|MGAREG_WR25
+mdefine_line|#define MGAREG_WR25                             0x2d64
+DECL|macro|MGAREG_WR26
+mdefine_line|#define MGAREG_WR26                             0x2d68
+DECL|macro|MGAREG_WR27
+mdefine_line|#define MGAREG_WR27                             0x2d6c
+DECL|macro|MGAREG_WR28
+mdefine_line|#define MGAREG_WR28                             0x2d70
+DECL|macro|MGAREG_WR29
+mdefine_line|#define MGAREG_WR29                             0x2d74
+DECL|macro|MGAREG_WR30
+mdefine_line|#define MGAREG_WR30                             0x2d78
+DECL|macro|MGAREG_WR31
+mdefine_line|#define MGAREG_WR31                             0x2d7c
+DECL|macro|MGAREG_WR32
+mdefine_line|#define MGAREG_WR32                             0x2d80
+DECL|macro|MGAREG_WR33
+mdefine_line|#define MGAREG_WR33                             0x2d84
+DECL|macro|MGAREG_WR34
+mdefine_line|#define MGAREG_WR34                             0x2d88
+DECL|macro|MGAREG_WR35
+mdefine_line|#define MGAREG_WR35                             0x2d8c
+DECL|macro|MGAREG_WR36
+mdefine_line|#define MGAREG_WR36                             0x2d90
+DECL|macro|MGAREG_WR37
+mdefine_line|#define MGAREG_WR37                             0x2d94
+DECL|macro|MGAREG_WR38
+mdefine_line|#define MGAREG_WR38                             0x2d98
+DECL|macro|MGAREG_WR39
+mdefine_line|#define MGAREG_WR39                             0x2d9c
+DECL|macro|MGAREG_WR40
+mdefine_line|#define MGAREG_WR40                             0x2da0
+DECL|macro|MGAREG_WR41
+mdefine_line|#define MGAREG_WR41                             0x2da4
+DECL|macro|MGAREG_WR42
+mdefine_line|#define MGAREG_WR42                             0x2da8
+DECL|macro|MGAREG_WR43
+mdefine_line|#define MGAREG_WR43                             0x2dac
+DECL|macro|MGAREG_WR44
+mdefine_line|#define MGAREG_WR44                             0x2db0
+DECL|macro|MGAREG_WR45
+mdefine_line|#define MGAREG_WR45                             0x2db4
+DECL|macro|MGAREG_WR46
+mdefine_line|#define MGAREG_WR46                             0x2db8
+DECL|macro|MGAREG_WR47
+mdefine_line|#define MGAREG_WR47                             0x2dbc
+DECL|macro|MGAREG_WR48
+mdefine_line|#define MGAREG_WR48                             0x2dc0
+DECL|macro|MGAREG_WR49
+mdefine_line|#define MGAREG_WR49                             0x2dc4
+DECL|macro|MGAREG_WR50
+mdefine_line|#define MGAREG_WR50                             0x2dc8
+DECL|macro|MGAREG_WR51
+mdefine_line|#define MGAREG_WR51                             0x2dcc
+DECL|macro|MGAREG_WR52
+mdefine_line|#define MGAREG_WR52                             0x2dd0
+DECL|macro|MGAREG_WR53
+mdefine_line|#define MGAREG_WR53                             0x2dd4
+DECL|macro|MGAREG_WR54
+mdefine_line|#define MGAREG_WR54                             0x2dd8
+DECL|macro|MGAREG_WR55
+mdefine_line|#define MGAREG_WR55                             0x2ddc
+DECL|macro|MGAREG_WR56
+mdefine_line|#define MGAREG_WR56                             0x2de0
+DECL|macro|MGAREG_WR57
+mdefine_line|#define MGAREG_WR57                             0x2de4
+DECL|macro|MGAREG_WR58
+mdefine_line|#define MGAREG_WR58                             0x2de8
+DECL|macro|MGAREG_WR59
+mdefine_line|#define MGAREG_WR59                             0x2dec
+DECL|macro|MGAREG_WR60
+mdefine_line|#define MGAREG_WR60                             0x2df0
+DECL|macro|MGAREG_WR61
+mdefine_line|#define MGAREG_WR61                             0x2df4
+DECL|macro|MGAREG_WR62
+mdefine_line|#define MGAREG_WR62                             0x2df8
+DECL|macro|MGAREG_WR63
+mdefine_line|#define MGAREG_WR63                             0x2dfc
 DECL|macro|PDEA_pagpxfer_enable
 mdefine_line|#define PDEA_pagpxfer_enable&t;&t;&t;0x2
 DECL|macro|WIA_wmode_suspend

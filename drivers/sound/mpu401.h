@@ -7,15 +7,6 @@ r_struct
 id|address_info
 op_star
 id|hw_config
-)paren
-suffix:semicolon
-r_void
-id|attach_uart401
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
 comma
 r_struct
 id|module

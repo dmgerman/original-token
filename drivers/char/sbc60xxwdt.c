@@ -887,9 +887,11 @@ c_func
 id|sbc60xxwdt_init
 )paren
 suffix:semicolon
+DECL|variable|sbc60xxwdt_unload
 id|module_exit
 c_func
 (paren
 id|sbc60xxwdt_unload
 )paren
+suffix:semicolon
 eof

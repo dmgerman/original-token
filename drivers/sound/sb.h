@@ -672,8 +672,8 @@ r_int
 id|port
 )paren
 suffix:semicolon
-r_void
-id|attach_sbmpu
+r_int
+id|probe_sbmpu
 (paren
 r_struct
 id|address_info
@@ -684,15 +684,6 @@ r_struct
 id|module
 op_star
 id|owner
-)paren
-suffix:semicolon
-r_int
-id|probe_sbmpu
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
 )paren
 suffix:semicolon
 r_void

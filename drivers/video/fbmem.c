@@ -1092,8 +1092,6 @@ suffix:semicolon
 DECL|variable|num_registered_fb
 r_int
 id|num_registered_fb
-op_assign
-l_int|0
 suffix:semicolon
 r_extern
 r_int
@@ -1103,8 +1101,6 @@ DECL|variable|first_fb_vc
 r_static
 r_int
 id|first_fb_vc
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|last_fb_vc
 r_static

@@ -3,7 +3,6 @@ macro_line|#ifndef _ASM_PPC_ATOMIC_H_
 DECL|macro|_ASM_PPC_ATOMIC_H_
 mdefine_line|#define _ASM_PPC_ATOMIC_H_
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef
@@ -16,19 +15,6 @@ suffix:semicolon
 )brace
 id|atomic_t
 suffix:semicolon
-macro_line|#else
-DECL|member|counter
-DECL|typedef|atomic_t
-r_typedef
-r_struct
-(brace
-r_int
-id|counter
-suffix:semicolon
-)brace
-id|atomic_t
-suffix:semicolon
-macro_line|#endif
 DECL|macro|ATOMIC_INIT
 mdefine_line|#define ATOMIC_INIT(i)&t;{ (i) }
 DECL|macro|atomic_read
@@ -66,7 +52,7 @@ id|addr
 )paren
 suffix:semicolon
 DECL|function|atomic_add_return
-r_extern
+r_static
 id|__inline__
 r_int
 id|atomic_add_return
@@ -75,7 +61,6 @@ c_func
 r_int
 id|a
 comma
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -97,8 +82,7 @@ id|t
 comma
 l_string|&quot;=m&quot;
 (paren
-op_star
-id|v
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;r&quot;
@@ -113,8 +97,7 @@ id|v
 comma
 l_string|&quot;m&quot;
 (paren
-op_star
-id|v
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;cc&quot;
@@ -125,7 +108,7 @@ id|t
 suffix:semicolon
 )brace
 DECL|function|atomic_sub_return
-r_extern
+r_static
 id|__inline__
 r_int
 id|atomic_sub_return
@@ -134,7 +117,6 @@ c_func
 r_int
 id|a
 comma
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -156,8 +138,7 @@ id|t
 comma
 l_string|&quot;=m&quot;
 (paren
-op_star
-id|v
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;r&quot;
@@ -172,8 +153,7 @@ id|v
 comma
 l_string|&quot;m&quot;
 (paren
-op_star
-id|v
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;cc&quot;
@@ -184,13 +164,12 @@ id|t
 suffix:semicolon
 )brace
 DECL|function|atomic_inc_return
-r_extern
+r_static
 id|__inline__
 r_int
 id|atomic_inc_return
 c_func
 (paren
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -212,8 +191,7 @@ id|t
 comma
 l_string|&quot;=m&quot;
 (paren
-op_star
-id|v
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;r&quot;
@@ -223,8 +201,7 @@ id|v
 comma
 l_string|&quot;m&quot;
 (paren
-op_star
-id|v
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;cc&quot;
@@ -235,13 +212,12 @@ id|t
 suffix:semicolon
 )brace
 DECL|function|atomic_dec_return
-r_extern
+r_static
 id|__inline__
 r_int
 id|atomic_dec_return
 c_func
 (paren
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -263,8 +239,7 @@ id|t
 comma
 l_string|&quot;=m&quot;
 (paren
-op_star
-id|v
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;r&quot;
@@ -274,8 +249,7 @@ id|v
 comma
 l_string|&quot;m&quot;
 (paren
-op_star
-id|v
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;cc&quot;

@@ -912,7 +912,6 @@ id|tco_timer_reload
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: no floating point math */
 id|printk
 (paren
 id|KERN_INFO
@@ -924,7 +923,9 @@ r_int
 (paren
 id|i810_margin
 op_star
-l_float|0.6
+l_int|6
+op_div
+l_int|10
 )paren
 comma
 id|TCOBASE

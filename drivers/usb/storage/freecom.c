@@ -1,4 +1,5 @@
-multiline_comment|/* Driver for Freecom USB/IDE adaptor&n; *&n; * $Id: freecom.c,v 1.11 2000/09/15 23:06:40 mdharm Exp $&n; *&n; * Freecom v0.1:&n; *&n; * First release&n; *&n; * Current development and maintenance by:&n; *   (C) 2000 David Brown &lt;usb-storage@davidb.org&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * This driver was developed with information provided in FREECOM&squot;s USB&n; * Programmers Reference Guide.  For further information contact Freecom&n; * (http://www.freecom.de/)&n; */
+multiline_comment|/* Driver for Freecom USB/IDE adaptor&n; *&n; * $Id: freecom.c,v 1.12 2000/09/22 01:16:17 mdharm Exp $&n; *&n; * Freecom v0.1:&n; *&n; * First release&n; *&n; * Current development and maintenance by:&n; *   (C) 2000 David Brown &lt;usb-storage@davidb.org&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * This driver was developed with information provided in FREECOM&squot;s USB&n; * Programmers Reference Guide.  For further information contact Freecom&n; * (http://www.freecom.de/)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;usb.h&quot;
@@ -179,6 +180,8 @@ mdefine_line|#define FCM_INT_STATUS   INDEX_STAT
 multiline_comment|/* These are the packet types.  The low bit indicates that this command&n; * should wait for an interrupt. */
 DECL|macro|FCM_PACKET_ATAPI
 mdefine_line|#define FCM_PACKET_ATAPI  0x21
+DECL|macro|FCM_PACKET_STATUS
+mdefine_line|#define FCM_PACKET_STATUS 0x20
 multiline_comment|/* Receive data from the IDE interface.  The ATAPI packet has already&n; * waited, so the data should be immediately available. */
 DECL|macro|FCM_PACKET_INPUT
 mdefine_line|#define FCM_PACKET_INPUT  0x81
@@ -1733,6 +1736,8 @@ multiline_comment|/* The ATAPI Command always goes out first. */
 id|fcb-&gt;Type
 op_assign
 id|FCM_PACKET_ATAPI
+op_or
+l_int|0x00
 suffix:semicolon
 id|fcb-&gt;Timeout
 op_assign
@@ -1883,6 +1888,172 @@ comma
 id|partial
 )paren
 suffix:semicolon
+multiline_comment|/* while we haven&squot;t recieved the IRQ */
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|fst-&gt;Status
+op_amp
+l_int|0x2
+)paren
+)paren
+(brace
+multiline_comment|/* send a command to re-fetch the status */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Re-attempting to get status...&bslash;n&quot;
+)paren
+suffix:semicolon
+id|fcb-&gt;Type
+op_assign
+id|FCM_PACKET_STATUS
+suffix:semicolon
+id|fcb-&gt;Timeout
+op_assign
+l_int|0
+suffix:semicolon
+id|memset
+(paren
+id|fcb-&gt;Atapi
+comma
+l_int|0
+comma
+l_int|12
+)paren
+suffix:semicolon
+id|memset
+(paren
+id|fcb-&gt;Filler
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|fcb-&gt;Filler
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Send it out. */
+id|result
+op_assign
+id|usb_stor_bulk_msg
+(paren
+id|us
+comma
+id|fcb
+comma
+id|opipe
+comma
+id|FCM_PACKET_LENGTH
+comma
+op_amp
+id|partial
+)paren
+suffix:semicolon
+multiline_comment|/* The Freecom device will only fail if there is something wrong in&n;&t;&t; * USB land.  It returns the status in its own registers, which&n;&t;&t; * come back in the bulk pipe. */
+r_if
+c_cond
+(paren
+id|result
+op_ne
+l_int|0
+)paren
+(brace
+id|US_DEBUGP
+(paren
+l_string|&quot;freecom xport failure: r=%d, p=%d&bslash;n&quot;
+comma
+id|result
+comma
+id|partial
+)paren
+suffix:semicolon
+multiline_comment|/* -ENOENT -- we canceled this transfer */
+r_if
+c_cond
+(paren
+id|result
+op_eq
+op_minus
+id|ENOENT
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|US_BULK_TRANSFER_ABORTED
+suffix:semicolon
+)brace
+r_return
+id|USB_STOR_TRANSPORT_ERROR
+suffix:semicolon
+)brace
+multiline_comment|/* actually get the status info */
+id|result
+op_assign
+id|usb_stor_bulk_msg
+(paren
+id|us
+comma
+id|fst
+comma
+id|ipipe
+comma
+id|FCM_PACKET_LENGTH
+comma
+op_amp
+id|partial
+)paren
+suffix:semicolon
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;bar Status result %d %d&bslash;n&quot;
+comma
+id|result
+comma
+id|partial
+)paren
+suffix:semicolon
+multiline_comment|/* -ENOENT -- we canceled this transfer */
+r_if
+c_cond
+(paren
+id|result
+op_eq
+op_minus
+id|ENOENT
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|US_BULK_TRANSFER_ABORTED
+suffix:semicolon
+)brace
+id|pdump
+(paren
+(paren
+r_void
+op_star
+)paren
+id|fst
+comma
+id|partial
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2417,6 +2588,12 @@ suffix:semicolon
 r_int
 id|counter
 suffix:semicolon
+r_char
+id|buffer
+(braket
+l_int|33
+)braket
+suffix:semicolon
 multiline_comment|/* Allocate a buffer for us.  The upper usb transport code will&n;         * free this for us when cleaning up. */
 r_if
 c_cond
@@ -2459,6 +2636,49 @@ id|USB_STOR_TRANSPORT_ERROR
 suffix:semicolon
 )brace
 )brace
+id|result
+op_assign
+id|usb_stor_control_msg
+c_func
+(paren
+id|us
+comma
+id|usb_rcvctrlpipe
+c_func
+(paren
+id|us-&gt;pusb_dev
+comma
+l_int|0
+)paren
+comma
+l_int|0x4c
+comma
+l_int|0xc0
+comma
+l_int|0x4346
+comma
+l_int|0x0
+comma
+id|buffer
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+id|buffer
+(braket
+l_int|32
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;String returned from FC init is: %s&bslash;n&quot;
+comma
+id|buffer
+)paren
+suffix:semicolon
 id|result
 op_assign
 id|freecom_ide_write

@@ -7,13 +7,13 @@ mdefine_line|#define MGA_NAME&t; &quot;mga&quot;
 DECL|macro|MGA_DESC
 mdefine_line|#define MGA_DESC&t; &quot;Matrox G200/G400&quot;
 DECL|macro|MGA_DATE
-mdefine_line|#define MGA_DATE&t; &quot;20000910&quot;
+mdefine_line|#define MGA_DATE&t; &quot;20000928&quot;
 DECL|macro|MGA_MAJOR
 mdefine_line|#define MGA_MAJOR&t; 2
 DECL|macro|MGA_MINOR
 mdefine_line|#define MGA_MINOR&t; 0
 DECL|macro|MGA_PATCHLEVEL
-mdefine_line|#define MGA_PATCHLEVEL&t; 0
+mdefine_line|#define MGA_PATCHLEVEL&t; 1
 DECL|variable|mga_device
 r_static
 id|drm_device_t
@@ -1195,6 +1195,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dev-&gt;dev_private
+)paren
+id|mga_dma_cleanup
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|dev-&gt;irq
 )paren
 id|mga_irq_uninstall
@@ -1843,12 +1854,6 @@ id|mga
 )paren
 suffix:semicolon
 macro_line|#endif
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;doing misc_register&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1890,33 +1895,15 @@ id|dev-&gt;name
 op_assign
 id|MGA_NAME
 suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;doing mem init&bslash;n&quot;
-)paren
-suffix:semicolon
 id|drm_mem_init
 c_func
 (paren
-)paren
-suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;doing proc init&bslash;n&quot;
 )paren
 suffix:semicolon
 id|drm_proc_init
 c_func
 (paren
 id|dev
-)paren
-suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;doing agp init&bslash;n&quot;
 )paren
 suffix:semicolon
 id|dev-&gt;agp
@@ -1985,12 +1972,6 @@ l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;doing ctxbitmap init&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2111,12 +2092,6 @@ l_string|&quot;Module unloaded&bslash;n&quot;
 suffix:semicolon
 )brace
 id|drm_ctxbitmap_cleanup
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|mga_dma_cleanup
 c_func
 (paren
 id|dev
@@ -2518,10 +2493,10 @@ comma
 id|priv-&gt;pid
 )paren
 suffix:semicolon
-id|DRM_ERROR
+id|DRM_INFO
 c_func
 (paren
-l_string|&quot;Process %d dead, freeing lock for context %d&bslash;n&quot;
+l_string|&quot;Process %d dead (ctx %d, d_s = 0x%02x)&bslash;n&quot;
 comma
 id|current-&gt;pid
 comma
@@ -2530,7 +2505,39 @@ c_func
 (paren
 id|dev-&gt;lock.hw_lock-&gt;lock
 )paren
+comma
+id|dev-&gt;dev_private
+ques
+c_cond
+(paren
+(paren
+id|drm_mga_private_t
+op_star
 )paren
+id|dev-&gt;dev_private
+)paren
+op_member_access_from_pointer
+id|dispatch_status
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;dev_private
+)paren
+(paren
+(paren
+id|drm_mga_private_t
+op_star
+)paren
+id|dev-&gt;dev_private
+)paren
+op_member_access_from_pointer
+id|dispatch_status
+op_and_assign
+id|MGA_IN_DISPATCH
 suffix:semicolon
 id|drm_lock_free
 c_func
@@ -2547,7 +2554,6 @@ id|dev-&gt;lock.hw_lock-&gt;lock
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: may require heavy-handed reset of&n;                                   hardware at this point, possibly&n;                                   processed via a callback to the X&n;                                   server. */
 )brace
 r_else
 r_if
@@ -2582,6 +2588,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2638,10 +2648,6 @@ op_amp
 id|dev-&gt;total_sleeps
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|schedule
 c_func
 (paren
@@ -2695,6 +2701,23 @@ comma
 id|priv-&gt;pid
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;dev_private
+)paren
+(paren
+(paren
+id|drm_mga_private_t
+op_star
+)paren
+id|dev-&gt;dev_private
+)paren
+op_member_access_from_pointer
+id|dispatch_status
+op_and_assign
+id|MGA_IN_DISPATCH
+suffix:semicolon
 id|drm_lock_free
 c_func
 (paren
@@ -2726,6 +2749,36 @@ op_amp
 id|dev-&gt;struct_sem
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|priv-&gt;remove_auth_on_close
+op_eq
+l_int|1
+)paren
+(brace
+id|drm_file_t
+op_star
+id|temp
+op_assign
+id|dev-&gt;file_first
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|temp
+)paren
+(brace
+id|temp-&gt;authenticated
+op_assign
+l_int|0
+suffix:semicolon
+id|temp
+op_assign
+id|temp-&gt;next
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -2959,22 +3012,6 @@ suffix:semicolon
 op_increment
 id|priv-&gt;ioctl_count
 suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;pid = %d, cmd = 0x%02x, nr = 0x%02x, dev 0x%x, auth = %d&bslash;n&quot;
-comma
-id|current-&gt;pid
-comma
-id|cmd
-comma
-id|nr
-comma
-id|dev-&gt;device
-comma
-id|priv-&gt;authenticated
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3013,7 +3050,18 @@ id|func
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;no function&bslash;n&quot;
+l_string|&quot;no function: pid = %d, cmd = 0x%02x,&quot;
+l_string|&quot; nr = 0x%02x, dev 0x%x, auth = %d&bslash;n&quot;
+comma
+id|current-&gt;pid
+comma
+id|cmd
+comma
+id|nr
+comma
+id|dev-&gt;device
+comma
+id|priv-&gt;authenticated
 )paren
 suffix:semicolon
 id|retcode
@@ -3168,20 +3216,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;%d frees lock (%d holds)&bslash;n&quot;
-comma
-id|lock.context
-comma
-id|_DRM_LOCKING_CONTEXT
-c_func
-(paren
-id|dev-&gt;lock.hw_lock-&gt;lock
-)paren
-)paren
-suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -3238,14 +3272,12 @@ comma
 id|DRM_KERNEL_CONTEXT
 )paren
 )paren
-(brace
 id|DRM_ERROR
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|unblock_all_signals
 c_func
 (paren

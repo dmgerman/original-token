@@ -2787,6 +2787,13 @@ op_assign
 id|HUB_LONG_RESET_TIME
 suffix:semicolon
 )brace
+id|hub-&gt;children
+(braket
+id|port
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
 id|usb_hub_port_disable
 c_func
 (paren

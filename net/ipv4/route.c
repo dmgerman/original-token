@@ -165,8 +165,6 @@ r_static
 r_int
 r_int
 id|rt_deadline
-op_assign
-l_int|0
 suffix:semicolon
 DECL|macro|RTprint
 mdefine_line|#define RTprint(a...)&t;printk(KERN_DEBUG a)

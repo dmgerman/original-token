@@ -27,7 +27,6 @@ DECL|macro|ISORCV_PER_PAGE
 mdefine_line|#define ISORCV_PER_PAGE          (PAGE_SIZE / MAX_ISORCV_SIZE)
 DECL|macro|ISORCV_PAGES
 mdefine_line|#define ISORCV_PAGES             (NUM_ISORCV_PCL / ISORCV_PER_PAGE)
-multiline_comment|/* only iso rcv and localbus use these definitions so far */
 DECL|macro|CHANNEL_LOCALBUS
 mdefine_line|#define CHANNEL_LOCALBUS         0
 DECL|macro|CHANNEL_ASYNC_RCV
@@ -36,6 +35,8 @@ DECL|macro|CHANNEL_ISO_RCV
 mdefine_line|#define CHANNEL_ISO_RCV          2
 DECL|macro|CHANNEL_ASYNC_SEND
 mdefine_line|#define CHANNEL_ASYNC_SEND       3
+DECL|macro|CHANNEL_ISO_SEND
+mdefine_line|#define CHANNEL_ISO_SEND         4
 DECL|typedef|pcl_t
 r_typedef
 r_int
@@ -217,7 +218,9 @@ DECL|member|rcv_active
 r_int
 id|rcv_active
 suffix:semicolon
+DECL|struct|lynx_send_data
 r_struct
+id|lynx_send_data
 (brace
 DECL|member|pcl_start
 DECL|member|pcl
@@ -227,10 +230,14 @@ comma
 id|pcl
 suffix:semicolon
 DECL|member|queue
+DECL|member|queue_last
 r_struct
 id|hpsb_packet
 op_star
 id|queue
+comma
+op_star
+id|queue_last
 suffix:semicolon
 DECL|member|queue_lock
 id|spinlock_t
@@ -243,9 +250,16 @@ id|header_dma
 comma
 id|data_dma
 suffix:semicolon
+DECL|member|channel
+r_int
+id|channel
+suffix:semicolon
 DECL|member|async
+DECL|member|iso_send
 )brace
 id|async
+comma
+id|iso_send
 suffix:semicolon
 r_struct
 (brace
@@ -333,6 +347,7 @@ DECL|member|aux_intr_last_seen
 id|atomic_t
 id|aux_intr_last_seen
 suffix:semicolon
+multiline_comment|/* enum values are the same as LBUS_ADDR_SEL_* values below */
 DECL|enumerator|rom
 DECL|enumerator|aux
 DECL|enumerator|ram
@@ -340,10 +355,16 @@ DECL|member|type
 r_enum
 (brace
 id|rom
+op_assign
+l_int|0x10000
 comma
 id|aux
+op_assign
+l_int|0x20000
 comma
 id|ram
+op_assign
+l_int|0
 )brace
 id|type
 suffix:semicolon
@@ -492,6 +513,8 @@ id|mask
 suffix:semicolon
 )brace
 multiline_comment|/* chip register definitions follow */
+DECL|macro|PCI_LATENCY_CACHELINE
+mdefine_line|#define PCI_LATENCY_CACHELINE             0x0c
 DECL|macro|MISC_CONTROL
 mdefine_line|#define MISC_CONTROL                      0x40
 DECL|macro|MISC_CONTROL_SWRESET
@@ -1536,6 +1559,8 @@ DECL|macro|PCL_WAITSTAT
 mdefine_line|#define PCL_WAITSTAT           (1&lt;&lt;17)
 DECL|macro|PCL_BIGENDIAN
 mdefine_line|#define PCL_BIGENDIAN          (1&lt;&lt;16)
+DECL|macro|PCL_ISOMODE
+mdefine_line|#define PCL_ISOMODE            (1&lt;&lt;12)
 DECL|macro|_
 mdefine_line|#define _(x) (__constant_cpu_to_be32(x))
 DECL|variable|lynx_csr_rom

@@ -156,6 +156,7 @@ r_return
 id|order
 suffix:semicolon
 )brace
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 DECL|function|pci_enable_device
 r_inline
@@ -431,12 +432,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|struct|scatterlist
-r_struct
-id|scatterlist
-(brace
-)brace
-suffix:semicolon
+macro_line|#include &lt;asm/scatterlist.h&gt;
 DECL|function|pci_map_sg
 r_extern
 r_inline

@@ -61,15 +61,6 @@ id|chrdevs
 (braket
 id|MAX_CHRDEV
 )braket
-op_assign
-(brace
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-)brace
 suffix:semicolon
 r_extern
 r_int

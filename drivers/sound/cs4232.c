@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; *&t;cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; *&n; * ifdef ...WAVEFRONT...&n; * &n; *   Support is provided for initializing the WaveFront synth&n; *   interface as well, which is logical device #4. Note that if&n; *   you have a Tropez+ card, you probably don&squot;t need to setup&n; *   the CS4232-supported MIDI interface, since it corresponds to&n; *   the internal 26-pin header that&squot;s hard to access. Using this&n; *   requires an additional IRQ, a resource none too plentiful in&n; *   this environment. Just don&squot;t set module parameters mpuio and&n; *   mpuirq, and the MIDI port will be left uninitialized. You can&n; *   still use the ICS2115 hosted MIDI interface which corresponds&n; *   to the 9-pin D connector on the back of the card.&n; *&n; * endif  ...WAVEFRONT...&n; *&n; * Supported chips are:&n; *      CS4232&n; *      CS4236&n; *      CS4236B&n; *&n; * Note: You will need a PnP config setup to initialise some CS4232 boards&n; * anyway.&n; *&n; * Changes&n; *&t;Alan Cox&t;&t;Modularisation, Basic cleanups.&n; *      Paul Barton-Davis&t;Separated MPU configuration, added&n; *                                       Tropez+ (WaveFront) support&n; *&t;Christoph Hellwig&t;Adapted to module_init/module_exit,&n; * &t;&t;&t;&t;&t;simple cleanups&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; *&t;cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; *&n; * ifdef ...WAVEFRONT...&n; * &n; *   Support is provided for initializing the WaveFront synth&n; *   interface as well, which is logical device #4. Note that if&n; *   you have a Tropez+ card, you probably don&squot;t need to setup&n; *   the CS4232-supported MIDI interface, since it corresponds to&n; *   the internal 26-pin header that&squot;s hard to access. Using this&n; *   requires an additional IRQ, a resource none too plentiful in&n; *   this environment. Just don&squot;t set module parameters mpuio and&n; *   mpuirq, and the MIDI port will be left uninitialized. You can&n; *   still use the ICS2115 hosted MIDI interface which corresponds&n; *   to the 9-pin D connector on the back of the card.&n; *&n; * endif  ...WAVEFRONT...&n; *&n; * Supported chips are:&n; *      CS4232&n; *      CS4236&n; *      CS4236B&n; *&n; * Note: You will need a PnP config setup to initialise some CS4232 boards&n; * anyway.&n; *&n; * Changes&n; *&t;Alan Cox&t;&t;Modularisation, Basic cleanups.&n; *      Paul Barton-Davis&t;Separated MPU configuration, added&n; *                                       Tropez+ (WaveFront) support&n; *&t;Christoph Hellwig&t;Adapted to module_init/module_exit,&n; * &t;&t;&t;&t;&t;simple cleanups&n; * &t;Arnaldo C. de Melo&t;got rid of attach_uart401&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -825,21 +825,14 @@ c_func
 (paren
 op_amp
 id|hw_config2
+comma
+id|THIS_MODULE
 )paren
 )paren
 (brace
 id|mpu_detected
 op_assign
 l_int|1
-suffix:semicolon
-id|attach_uart401
-c_func
-(paren
-op_amp
-id|hw_config2
-comma
-id|THIS_MODULE
-)paren
 suffix:semicolon
 )brace
 r_else

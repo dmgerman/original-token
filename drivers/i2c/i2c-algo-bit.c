@@ -44,23 +44,17 @@ DECL|variable|i2c_debug
 r_static
 r_int
 id|i2c_debug
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|bit_test
 r_static
 r_int
 id|bit_test
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* see if the line-setting functions work&t;*/
 DECL|variable|bit_scan
 r_static
 r_int
 id|bit_scan
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* have a look at what&squot;s hanging &squot;round&t;&t;*/
 multiline_comment|/* --- setting states on the bus with the right timing: ---------------&t;*/

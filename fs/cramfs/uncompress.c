@@ -10,8 +10,6 @@ DECL|variable|initialized
 r_static
 r_int
 id|initialized
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Returns length of decompressed data. */
 DECL|function|cramfs_uncompress_block

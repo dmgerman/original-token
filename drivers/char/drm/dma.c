@@ -1707,10 +1707,6 @@ id|q-&gt;block_write
 )paren
 )paren
 (brace
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -1735,6 +1731,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1621,8 +1621,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 op_logical_neg
+(paren
 id|dentry-&gt;d_flags
 op_amp
 id|DCACHE_NFSD_DISCONNECTED

@@ -16,8 +16,6 @@ multiline_comment|/* Have we found an MP table */
 DECL|variable|smp_found_config
 r_int
 id|smp_found_config
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Various Linux-internal data structures created from the&n; * MP-table.&n; */
 DECL|variable|apic_version
@@ -50,8 +48,6 @@ suffix:semicolon
 DECL|variable|mp_current_pci_id
 r_int
 id|mp_current_pci_id
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|pic_mode
 r_int
@@ -61,8 +57,6 @@ DECL|variable|mp_lapic_addr
 r_int
 r_int
 id|mp_lapic_addr
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Processor that is doing the boot up */
 DECL|variable|boot_cpu_id
@@ -79,16 +73,12 @@ r_static
 r_int
 r_int
 id|num_processors
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Bitmask of physically existing CPUs */
 DECL|variable|phys_cpu_present_map
 r_int
 r_int
 id|phys_cpu_present_map
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Intel MP BIOS table parsing routines:&n; */
 macro_line|#ifndef CONFIG_X86_VISWS_APIC

@@ -39,37 +39,27 @@ r_struct
 id|resource
 op_star
 id|pidxr_res
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|pnpwrp_res
 r_struct
 id|resource
 op_star
 id|pnpwrp_res
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|isapnp_rdp_res
 r_struct
 id|resource
 op_star
 id|isapnp_rdp_res
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|isapnp_disable
 r_int
 id|isapnp_disable
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Disable ISA PnP */
 DECL|variable|isapnp_rdp
 r_int
 id|isapnp_rdp
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Read Data Port */
 DECL|variable|isapnp_reset
@@ -82,8 +72,6 @@ multiline_comment|/* reset all PnP cards (deactivate) */
 DECL|variable|isapnp_skip_pci_scan
 r_int
 id|isapnp_skip_pci_scan
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* skip PCI resource scanning */
 DECL|variable|isapnp_verbose
@@ -390,8 +378,6 @@ DECL|variable|isapnp_detected
 r_static
 r_int
 id|isapnp_detected
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* some prototypes */
 r_static

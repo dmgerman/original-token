@@ -38,8 +38,6 @@ multiline_comment|/*&n; * Machine setup..&n; */
 DECL|variable|ignore_irq13
 r_char
 id|ignore_irq13
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* set if exception 16 works */
 DECL|variable|boot_cpu_data
@@ -73,50 +71,36 @@ DECL|variable|mmu_cr4_features
 r_int
 r_int
 id|mmu_cr4_features
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Bus types ..&n; */
 DECL|variable|EISA_bus
 r_int
 id|EISA_bus
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|MCA_bus
 r_int
 id|MCA_bus
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* for MCA, but anyone else can use it if they want */
 DECL|variable|machine_id
 r_int
 r_int
 id|machine_id
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|machine_submodel_id
 r_int
 r_int
 id|machine_submodel_id
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|BIOS_revision
 r_int
 r_int
 id|BIOS_revision
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|mca_pentium_flag
 r_int
 r_int
 id|mca_pentium_flag
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Setup options&n; */
 DECL|struct|drive_info_struct
@@ -167,10 +151,6 @@ DECL|variable|e820
 r_struct
 id|e820map
 id|e820
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|aux_device_present
 r_int
@@ -626,11 +606,6 @@ id|command_line
 (braket
 id|COMMAND_LINE_SIZE
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|saved_command_line
 r_char

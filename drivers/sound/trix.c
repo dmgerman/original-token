@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTrix AudioTrix Pro&n; * (MT-0002-PC Control Chip)&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes&n; *&t;Alan Cox&t;&t;Modularisation, cleanup.&n; *&t;Christoph Hellwig&t;Adapted to module_init/module_exit&n; */
+multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTrix AudioTrix Pro&n; * (MT-0002-PC Control Chip)&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes&n; *&t;Alan Cox&t;&t;Modularisation, cleanup.&n; *&t;Christoph Hellwig&t;Adapted to module_init/module_exit&n; *&t;Arnaldo C. de Melo&t;Got rid of attach_uart401&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -1378,32 +1378,6 @@ op_assign
 id|old_quiet
 suffix:semicolon
 )brace
-DECL|function|attach_trix_mpu
-r_static
-r_void
-id|__init
-id|attach_trix_mpu
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-id|hw_config-&gt;name
-op_assign
-l_string|&quot;AudioTrix Pro&quot;
-suffix:semicolon
-id|attach_uart401
-c_func
-(paren
-id|hw_config
-comma
-id|THIS_MODULE
-)paren
-suffix:semicolon
-)brace
 DECL|function|probe_trix_mpu
 r_static
 r_int
@@ -1511,31 +1485,6 @@ c_func
 (paren
 l_string|&quot;Trix: MPU mode already initialized&bslash;n&quot;
 )paren
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-id|hw_config-&gt;io_base
-comma
-l_int|4
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;AudioTrix: MPU I/O port conflict (%x)&bslash;n&quot;
-comma
-id|hw_config-&gt;io_base
 )paren
 suffix:semicolon
 r_return
@@ -1668,11 +1617,17 @@ id|mpu_initialized
 op_assign
 l_int|1
 suffix:semicolon
+id|hw_config-&gt;name
+op_assign
+l_string|&quot;AudioTrix Pro&quot;
+suffix:semicolon
 r_return
 id|probe_uart401
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 )brace
@@ -2217,7 +2172,6 @@ op_ne
 op_minus
 l_int|1
 )paren
-(brace
 id|mpu
 op_assign
 id|probe_trix_mpu
@@ -2227,19 +2181,6 @@ op_amp
 id|cfg_mpu
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|mpu
-)paren
-id|attach_trix_mpu
-c_func
-(paren
-op_amp
-id|cfg_mpu
-)paren
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

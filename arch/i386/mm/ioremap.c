@@ -581,7 +581,7 @@ id|t_addr
 )paren
 suffix:semicolon
 id|page
-OL
+op_le
 id|virt_to_page
 c_func
 (paren

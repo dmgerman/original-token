@@ -12,16 +12,6 @@ macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/nfsd/interface.h&gt;
-macro_line|#ifdef CONFIG_CODA_FS
-r_extern
-r_int
-id|init_coda
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_DEVPTS_FS
 r_extern
 r_int
@@ -49,13 +39,6 @@ suffix:semicolon
 multiline_comment|/*  Header file may make this empty  */
 macro_line|#ifdef CONFIG_NFS_FS
 id|init_nfs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_CODA_FS
-id|init_coda
 c_func
 (paren
 )paren

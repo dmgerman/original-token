@@ -18,9 +18,6 @@ id|raw_device_bindings
 (braket
 l_int|256
 )braket
-op_assign
-(brace
-)brace
 suffix:semicolon
 DECL|variable|raw_device_inuse
 r_static
@@ -29,9 +26,6 @@ id|raw_device_inuse
 (braket
 l_int|256
 )braket
-op_assign
-(brace
-)brace
 suffix:semicolon
 DECL|variable|raw_device_sector_size
 r_static
@@ -40,9 +34,6 @@ id|raw_device_sector_size
 (braket
 l_int|256
 )braket
-op_assign
-(brace
-)brace
 suffix:semicolon
 DECL|variable|raw_device_sector_bits
 r_static
@@ -51,9 +42,6 @@ id|raw_device_sector_bits
 (braket
 l_int|256
 )braket
-op_assign
-(brace
-)brace
 suffix:semicolon
 r_static
 id|ssize_t

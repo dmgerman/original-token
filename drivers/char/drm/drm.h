@@ -2,7 +2,15 @@ multiline_comment|/* drm.h -- Header for Direct Rendering Manager -*- linux-c -*
 macro_line|#ifndef _DRM_H_
 DECL|macro|_DRM_H_
 mdefine_line|#define _DRM_H_
+macro_line|#if defined(__linux__)
 macro_line|#include &lt;asm/ioctl.h&gt;&t;&t;/* For _IO* macros */
+DECL|macro|DRM_IOCTL_NR
+mdefine_line|#define DRM_IOCTL_NR(n)&t;     _IOC_NR(n)
+macro_line|#elif defined(__FreeBSD__)
+macro_line|#include &lt;sys/ioccom.h&gt;
+DECL|macro|DRM_IOCTL_NR
+mdefine_line|#define DRM_IOCTL_NR(n)&t;     ((n) &amp; 0xff)
+macro_line|#endif
 DECL|macro|DRM_PROC_DEVICES
 mdefine_line|#define DRM_PROC_DEVICES &quot;/proc/devices&quot;
 DECL|macro|DRM_PROC_MISC
@@ -898,8 +906,6 @@ id|drm_agp_info_t
 suffix:semicolon
 DECL|macro|DRM_IOCTL_BASE
 mdefine_line|#define DRM_IOCTL_BASE&t;     &squot;d&squot;
-DECL|macro|DRM_IOCTL_NR
-mdefine_line|#define DRM_IOCTL_NR(n)&t;     _IOC_NR(n)
 DECL|macro|DRM_IO
 mdefine_line|#define DRM_IO(nr)&t;     _IO(DRM_IOCTL_BASE,nr)
 DECL|macro|DRM_IOR

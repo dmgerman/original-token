@@ -17,8 +17,6 @@ DECL|variable|rpc_task_id
 r_static
 r_int
 id|rpc_task_id
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * We give RPC the same get_free_pages priority as NFS&n; */
@@ -89,8 +87,6 @@ r_struct
 id|rpc_task
 op_star
 id|all_tasks
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * rpciod-related stuff&n; */
 r_static
@@ -119,22 +115,16 @@ r_static
 r_int
 r_int
 id|rpciod_users
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|rpciod_pid
 r_static
 id|pid_t
 id|rpciod_pid
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|rpc_inhibit
 r_static
 r_int
 id|rpc_inhibit
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Spinlock for wait queues. Access to the latter also has to be&n; * interrupt-safe in order to allow timers to wake up sleeping tasks.&n; */
 DECL|variable|rpc_queue_lock
@@ -165,8 +155,6 @@ DECL|variable|swap_buffer_used
 r_static
 r_int
 id|swap_buffer_used
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Make allocation of the swap_buffer SMP-safe&n; */
 DECL|function|rpc_lock_swapbuf

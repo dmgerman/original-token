@@ -998,8 +998,6 @@ id|call_data_struct
 id|data
 suffix:semicolon
 r_int
-id|ret
-comma
 id|cpus
 op_assign
 id|smp_num_cpus
@@ -1086,10 +1084,6 @@ id|barrier
 c_func
 (paren
 )paren
-suffix:semicolon
-id|ret
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

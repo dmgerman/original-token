@@ -13462,12 +13462,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_region
+op_logical_neg
+id|request_region
 c_func
 (paren
 id|s-&gt;iobase
 comma
 id|CM_EXTENT_CODEC
+comma
+l_string|&quot;cmpci&quot;
 )paren
 )paren
 (brace
@@ -13490,25 +13493,18 @@ r_goto
 id|err_region5
 suffix:semicolon
 )brace
-id|request_region
-c_func
-(paren
-id|s-&gt;iobase
-comma
-id|CM_EXTENT_CODEC
-comma
-l_string|&quot;cmpci&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_region
+op_logical_neg
+id|request_region
 c_func
 (paren
 id|s-&gt;iomidi
 comma
 id|CM_EXTENT_MIDI
+comma
+l_string|&quot;cmpci Midi&quot;
 )paren
 )paren
 (brace
@@ -13534,16 +13530,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|request_region
-c_func
-(paren
-id|s-&gt;iomidi
-comma
-id|CM_EXTENT_MIDI
-comma
-l_string|&quot;cmpci Midi&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* set IO based at 0x330 */
 id|outb
 c_func
@@ -13572,12 +13558,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_region
+op_logical_neg
+id|request_region
 c_func
 (paren
 id|s-&gt;iosynth
 comma
 id|CM_EXTENT_SYNTH
+comma
+l_string|&quot;cmpci FM&quot;
 )paren
 )paren
 (brace
@@ -13603,16 +13592,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|request_region
-c_func
-(paren
-id|s-&gt;iosynth
-comma
-id|CM_EXTENT_SYNTH
-comma
-l_string|&quot;cmpci FM&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* enable FM */
 id|outb
 c_func

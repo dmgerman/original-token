@@ -200,8 +200,6 @@ DECL|variable|initialized
 r_static
 r_int
 id|initialized
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Has the drive been initialized? */
 DECL|variable|sony_disc_changed
@@ -216,8 +214,6 @@ DECL|variable|sony_toc_read
 r_static
 r_int
 id|sony_toc_read
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Has the table of contents been&n;&t;&t;&t;&t;&t;   read? */
 DECL|variable|sony_buffer_size
@@ -239,8 +235,6 @@ r_static
 r_int
 r_int
 id|sony_usage
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* How many processes have the&n;&t;&t;&t;&t;&t;   drive open. */
 DECL|variable|sony_first_block
@@ -289,8 +283,6 @@ DECL|variable|sony_inuse
 r_static
 r_int
 id|sony_inuse
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* is the drive in use? Only one&n;&t;&t;&t;&t;&t;   open at a time allowed */
 multiline_comment|/*&n; * The audio status uses the values from read subchannel data as specified&n; * in include/linux/cdrom.h.&n; */
@@ -309,14 +301,6 @@ id|cur_pos_msf
 (braket
 l_int|3
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|final_pos_msf
 r_static
@@ -325,14 +309,6 @@ id|final_pos_msf
 (braket
 l_int|3
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 multiline_comment|/* What IRQ is the drive using?  0 if none. */
 DECL|variable|sony535_irq_used

@@ -65,8 +65,6 @@ DECL|variable|slow_floppy
 r_static
 r_int
 id|slow_floppy
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -154,8 +152,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|macro|K_64
 mdefine_line|#define K_64&t;0x10000&t;&t;/* 64KB */
@@ -172,8 +168,6 @@ DECL|variable|irqdma_allocated
 r_static
 r_int
 id|irqdma_allocated
-op_assign
-l_int|0
 suffix:semicolon
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR FLOPPY_MAJOR
@@ -259,8 +253,6 @@ r_static
 r_int
 r_int
 id|fake_change
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|initialising
 r_static
@@ -1850,24 +1842,6 @@ id|current_type
 (braket
 id|N_DRIVE
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * User-provided type information. current_type points to&n; * the respective entry of this array.&n; */
 DECL|variable|user_params
@@ -1894,19 +1868,12 @@ id|floppy_blocksizes
 (braket
 l_int|256
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * The driver is trying to determine the correct media format&n; * while probing is set. rw_interrupt() clears it after a&n; * successful access.&n; */
 DECL|variable|probing
 r_static
 r_int
 id|probing
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Synchronization of FDC access. */
 DECL|macro|FD_COMMAND_NONE
@@ -1928,8 +1895,6 @@ r_static
 r_int
 r_int
 id|fdc_busy
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|DECLARE_WAIT_QUEUE_HEAD
@@ -2122,13 +2087,10 @@ DECL|macro|NEED_1_RECAL
 mdefine_line|#define NEED_1_RECAL -2
 DECL|macro|NEED_2_RECAL
 mdefine_line|#define NEED_2_RECAL -3
-multiline_comment|/* */
 DECL|variable|usage_count
 r_static
 r_int
 id|usage_count
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* buffer related variables */
 DECL|variable|buffer_track
@@ -2193,15 +2155,11 @@ r_static
 r_int
 r_char
 id|current_drive
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|current_count_sectors
 r_static
 r_int
 id|current_count_sectors
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|sector_t
 r_static
@@ -2365,8 +2323,6 @@ id|lasthandler
 (paren
 r_void
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|interruptjiffies
 r_static
@@ -4008,16 +3964,6 @@ r_static
 r_struct
 id|tq_struct
 id|floppy_tq
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|function|schedule_bh
 r_static
@@ -5237,8 +5183,6 @@ DECL|variable|no_fifo
 r_static
 r_int
 id|no_fifo
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|fdc_configure
 r_static

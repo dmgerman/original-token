@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/dnotify.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|special_file
+mdefine_line|#define special_file(m) (S_ISCHR(m)||S_ISBLK(m)||S_ISFIFO(m)||S_ISSOCK(m))
 DECL|function|vfs_statfs
 r_int
 id|vfs_statfs
@@ -1376,6 +1378,13 @@ id|IS_RDONLY
 c_func
 (paren
 id|nd.dentry-&gt;d_inode
+)paren
+op_logical_and
+op_logical_neg
+id|special_file
+c_func
+(paren
+id|nd.dentry-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 (brace
