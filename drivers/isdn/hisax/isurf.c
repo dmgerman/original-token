@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isurf.c,v 1.3 1999/07/12 21:05:18 keil Exp $&n;&n; * isurf.c  low level stuff for Siemens I-Surf/I-Talk cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * $Log: isurf.c,v $&n; * Revision 1.3  1999/07/12 21:05:18  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:56  keil&n; * Initial version&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: isurf.c,v 1.5 1999/08/25 17:00:02 keil Exp $&n;&n; * isurf.c  low level stuff for Siemens I-Surf/I-Talk cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * $Log: isurf.c,v $&n; * Revision 1.5  1999/08/25 17:00:02  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/22 20:27:09  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.3  1999/07/12 21:05:18  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:56  keil&n; * Initial version&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -20,7 +20,7 @@ r_char
 op_star
 id|ISurf_revision
 op_assign
-l_string|&quot;$Revision: 1.3 $&quot;
+l_string|&quot;$Revision: 1.5 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -763,29 +763,63 @@ suffix:colon
 r_return
 l_int|0
 suffix:semicolon
-r_case
-id|CARD_LOAD_FIRM
-suffix:colon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|isurf_auxcmd
+id|isurf_auxcmd
+c_func
+(paren
+r_struct
+id|IsdnCardState
+op_star
+id|cs
+comma
+id|isdn_ctrl
+op_star
+id|ic
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|isar_load_firmware
+(paren
+id|ic-&gt;command
+op_eq
+id|ISDN_CMD_IOCTL
+)paren
+op_logical_and
+(paren
+id|ic-&gt;arg
+op_eq
+l_int|9
+)paren
+)paren
+(brace
+id|ret
+op_assign
+id|isar_auxcmd
 c_func
 (paren
 id|cs
 comma
-id|arg
+id|ic
 )paren
-)paren
-r_return
-l_int|1
 suffix:semicolon
-id|ll_run
-c_func
+r_if
+c_cond
 (paren
-id|cs
+op_logical_neg
+id|ret
 )paren
-suffix:semicolon
+(brace
 id|reset_isurf
 c_func
 (paren
@@ -828,12 +862,19 @@ comma
 l_int|0x41
 )paren
 suffix:semicolon
+)brace
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|isar_auxcmd
+c_func
+(paren
+id|cs
+comma
+id|ic
+)paren
 suffix:semicolon
 )brace
 DECL|function|__initfunc
@@ -1032,6 +1073,11 @@ id|cs-&gt;irq_func
 op_assign
 op_amp
 id|isurf_interrupt
+suffix:semicolon
+id|cs-&gt;auxcmd
+op_assign
+op_amp
+id|isurf_auxcmd
 suffix:semicolon
 id|cs-&gt;readisac
 op_assign

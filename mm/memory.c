@@ -3531,12 +3531,6 @@ suffix:semicolon
 id|flush_page_to_ram
 c_func
 (paren
-id|old_page
-)paren
-suffix:semicolon
-id|flush_page_to_ram
-c_func
-(paren
 id|new_page
 )paren
 suffix:semicolon

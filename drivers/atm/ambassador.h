@@ -3,6 +3,7 @@ multiline_comment|/*&n;  IMPORTANT NOTE: Madge Networks does not license the mic
 macro_line|#ifndef AMBASSADOR_H
 DECL|macro|AMBASSADOR_H
 mdefine_line|#define AMBASSADOR_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_ATM_AMBASSADOR_DEBUG
 DECL|macro|DEBUG_AMBASSADOR
 mdefine_line|#define DEBUG_AMBASSADOR

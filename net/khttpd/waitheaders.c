@@ -1,6 +1,7 @@
 multiline_comment|/*&n;&n;kHTTPd -- the next generation&n;&n;Wait for headers on the accepted connections&n;&n;*/
 multiline_comment|/****************************************************************&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2, or (at your option)&n; *&t;any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; ****************************************************************/
 multiline_comment|/*&n;&n;Purpose:&n;&n;WaitForHeaders polls all connections in &quot;WaitForHeaderQueue&quot; to see if&n;headers have arived. If so, the headers are decoded and the request is&n;moved to either the &quot;SendingDataQueue&quot; or the &quot;UserspaceQueue&quot;.&n;&n;Return value:&n;&t;The number of requests that changed status&n;*/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;

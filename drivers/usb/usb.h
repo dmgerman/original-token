@@ -47,7 +47,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|hub_cleanup
+id|usb_hub_cleanup
 c_func
 (paren
 r_void
@@ -94,33 +94,34 @@ r_typedef
 r_struct
 (brace
 DECL|member|requesttype
-r_int
-r_char
+id|__u8
 id|requesttype
 suffix:semicolon
 DECL|member|request
-r_int
-r_char
+id|__u8
 id|request
 suffix:semicolon
 DECL|member|value
-r_int
-r_int
+id|__u16
 id|value
 suffix:semicolon
 DECL|member|index
-r_int
-r_int
+id|__u16
 id|index
 suffix:semicolon
 DECL|member|length
-r_int
-r_int
+id|__u16
 id|length
 suffix:semicolon
 DECL|typedef|devrequest
 )brace
 id|devrequest
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Device and/or Interface Class codes&n; */
 DECL|macro|USB_CLASS_PER_INTERFACE
@@ -137,6 +138,8 @@ DECL|macro|USB_CLASS_MASS_STORAGE
 mdefine_line|#define USB_CLASS_MASS_STORAGE&t;&t;8
 DECL|macro|USB_CLASS_HUB
 mdefine_line|#define USB_CLASS_HUB&t;&t;&t;9
+DECL|macro|USB_CLASS_DATA
+mdefine_line|#define USB_CLASS_DATA&t;&t;&t;10
 DECL|macro|USB_CLASS_VENDOR_SPEC
 mdefine_line|#define USB_CLASS_VENDOR_SPEC&t;&t;0xff
 multiline_comment|/*&n; * Descriptor types&n; */
@@ -154,6 +157,10 @@ DECL|macro|USB_DT_HUB
 mdefine_line|#define USB_DT_HUB&t;&t;&t;0x29
 DECL|macro|USB_DT_HID
 mdefine_line|#define USB_DT_HID&t;&t;&t;0x21
+DECL|macro|USB_DT_REPORT
+mdefine_line|#define USB_DT_REPORT&t;&t;&t;0x22
+DECL|macro|USB_DT_PHYSICAL
+mdefine_line|#define USB_DT_PHYSICAL&t;&t;&t;0x23
 multiline_comment|/*&n; * Descriptor sizes per descriptor type&n; */
 DECL|macro|USB_DT_DEVICE_SIZE
 mdefine_line|#define USB_DT_DEVICE_SIZE&t;&t;18
@@ -163,8 +170,8 @@ DECL|macro|USB_DT_INTERFACE_SIZE
 mdefine_line|#define USB_DT_INTERFACE_SIZE&t;&t;9
 DECL|macro|USB_DT_ENDPOINT_SIZE
 mdefine_line|#define USB_DT_ENDPOINT_SIZE&t;&t;7
-DECL|macro|USB_DT_AUCLSTEP_SIZE
-mdefine_line|#define USB_DT_AUCLSTEP_SIZE&t;&t;9&t;/* Audio Classes are special */
+DECL|macro|USB_DT_ENDPOINT_AUDIO_SIZE
+mdefine_line|#define USB_DT_ENDPOINT_AUDIO_SIZE&t;9&t;/* Audio extension */
 DECL|macro|USB_DT_HUB_NONVAR_SIZE
 mdefine_line|#define USB_DT_HUB_NONVAR_SIZE&t;&t;7
 multiline_comment|/*&n; * USB Request Type and Endpoint Directions&n; */
@@ -233,6 +240,12 @@ DECL|macro|USB_RECIP_ENDPOINT
 mdefine_line|#define USB_RECIP_ENDPOINT&t;&t;0x02
 DECL|macro|USB_RECIP_OTHER
 mdefine_line|#define USB_RECIP_OTHER&t;&t;&t;0x03
+DECL|macro|USB_HID_RPT_INPUT
+mdefine_line|#define USB_HID_RPT_INPUT&t;&t;0x01
+DECL|macro|USB_HID_RPT_OUTPUT
+mdefine_line|#define USB_HID_RPT_OUTPUT&t;&t;0x02
+DECL|macro|USB_HID_RPT_FEATURE
+mdefine_line|#define USB_HID_RPT_FEATURE&t;&t;0x03
 multiline_comment|/*&n; * Request target types.&n; */
 DECL|macro|USB_RT_DEVICE
 mdefine_line|#define USB_RT_DEVICE&t;&t;&t;0x00
@@ -246,7 +259,7 @@ DECL|macro|USB_RT_PORT
 mdefine_line|#define USB_RT_PORT&t;&t;&t;(USB_TYPE_CLASS | USB_RECIP_OTHER)
 DECL|macro|USB_RT_HIDD
 mdefine_line|#define USB_RT_HIDD&t;&t;&t;(USB_TYPE_CLASS | USB_RECIP_INTERFACE)
-multiline_comment|/* &n; * Status codes (these follow an OHCI controllers condition codes)&n; */
+multiline_comment|/* &n; * Status codes (these follow OHCI controllers condition codes)&n; */
 DECL|macro|USB_ST_NOERROR
 mdefine_line|#define USB_ST_NOERROR&t;&t;0x0
 DECL|macro|USB_ST_CRC
@@ -288,6 +301,8 @@ DECL|macro|USB_ST_INTERNALERROR
 mdefine_line|#define USB_ST_INTERNALERROR&t;-1
 DECL|macro|USB_ST_NOTSUPPORTED
 mdefine_line|#define USB_ST_NOTSUPPORTED&t;-2
+DECL|macro|USB_ST_BANDWIDTH_ERROR
+mdefine_line|#define USB_ST_BANDWIDTH_ERROR&t;-3
 multiline_comment|/*&n; * USB device number allocation bitmap. There&squot;s one bitmap&n; * per USB tree.&n; */
 DECL|struct|usb_devmap
 r_struct
@@ -313,15 +328,38 @@ r_int
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This is a USB device descriptor.&n; *&n; * USB device information&n; *&n; */
+multiline_comment|/*&n; * This is a USB device descriptor.&n; *&n; * USB device information&n; */
+multiline_comment|/* Everything but the endpoint maximums are aribtrary */
 DECL|macro|USB_MAXCONFIG
 mdefine_line|#define USB_MAXCONFIG&t;&t;8
 DECL|macro|USB_MAXALTSETTING
-mdefine_line|#define USB_MAXALTSETTING   6   
+mdefine_line|#define USB_MAXALTSETTING&t;16
 DECL|macro|USB_MAXINTERFACES
 mdefine_line|#define USB_MAXINTERFACES&t;32
 DECL|macro|USB_MAXENDPOINTS
 mdefine_line|#define USB_MAXENDPOINTS&t;32
+multiline_comment|/* All standard descriptors have these 2 fields in common */
+DECL|struct|usb_descriptor_header
+r_struct
+id|usb_descriptor_header
+(brace
+DECL|member|bLength
+id|__u8
+id|bLength
+suffix:semicolon
+DECL|member|bDescriptorType
+id|__u8
+id|bDescriptorType
+suffix:semicolon
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Device descriptor */
 DECL|struct|usb_device_descriptor
 r_struct
 id|usb_device_descriptor
@@ -383,6 +421,12 @@ id|__u8
 id|bNumConfigurations
 suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* Endpoint descriptor */
 DECL|struct|usb_endpoint_descriptor
@@ -421,12 +465,74 @@ DECL|member|bSynchAddress
 id|__u8
 id|bSynchAddress
 suffix:semicolon
-DECL|member|audio
-r_void
-op_star
-id|audio
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* HID descriptor */
+DECL|struct|usb_hid_class_descriptor
+r_struct
+id|usb_hid_class_descriptor
+(brace
+DECL|member|bDescriptorType
+id|__u8
+id|bDescriptorType
+suffix:semicolon
+DECL|member|wDescriptorLength
+id|__u16
+id|wDescriptorLength
 suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|struct|usb_hid_descriptor
+r_struct
+id|usb_hid_descriptor
+(brace
+DECL|member|bLength
+id|__u8
+id|bLength
+suffix:semicolon
+DECL|member|bDescriptorType
+id|__u8
+id|bDescriptorType
+suffix:semicolon
+DECL|member|bcdHID
+id|__u16
+id|bcdHID
+suffix:semicolon
+DECL|member|bCountryCode
+id|__u8
+id|bCountryCode
+suffix:semicolon
+DECL|member|bNumDescriptors
+id|__u8
+id|bNumDescriptors
+suffix:semicolon
+DECL|member|desc
+r_struct
+id|usb_hid_class_descriptor
+id|desc
+(braket
+l_int|1
+)braket
+suffix:semicolon
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* Interface descriptor */
 DECL|struct|usb_interface_descriptor
@@ -469,18 +575,25 @@ DECL|member|iInterface
 id|__u8
 id|iInterface
 suffix:semicolon
+DECL|member|hid
+r_struct
+id|usb_hid_descriptor
+op_star
+id|hid
+suffix:semicolon
 DECL|member|endpoint
 r_struct
 id|usb_endpoint_descriptor
 op_star
 id|endpoint
 suffix:semicolon
-DECL|member|audio
-r_void
-op_star
-id|audio
-suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|struct|usb_interface
 r_struct
@@ -548,6 +661,12 @@ op_star
 id|interface
 suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* String descriptor */
 DECL|struct|usb_string_descriptor
@@ -570,46 +689,12 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
-suffix:semicolon
-multiline_comment|/* Hub descriptor */
-DECL|struct|usb_hub_descriptor
-r_struct
-id|usb_hub_descriptor
-(brace
-DECL|member|bLength
-id|__u8
-id|bLength
-suffix:semicolon
-DECL|member|bDescriptorType
-id|__u8
-id|bDescriptorType
-suffix:semicolon
-DECL|member|bNbrPorts
-id|__u8
-id|bNbrPorts
-suffix:semicolon
-DECL|member|wHubCharacteristics
-id|__u8
-id|wHubCharacteristics
-(braket
-l_int|2
-)braket
-suffix:semicolon
-multiline_comment|/* __u16 but not aligned! */
-DECL|member|bPwrOn2PwrGood
-id|__u8
-id|bPwrOn2PwrGood
-suffix:semicolon
-DECL|member|bHubContrCurrent
-id|__u8
-id|bHubContrCurrent
-suffix:semicolon
-multiline_comment|/* DeviceRemovable and PortPwrCtrlMask want to be variable-length &n;&t;   bitmaps that hold max 256 entries, but for now they&squot;re ignored */
-DECL|member|filler
-id|__u8
-id|filler
-suffix:semicolon
-)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 r_struct
 id|usb_device
@@ -675,14 +760,183 @@ r_void
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Isoc. support additions&n; */
+DECL|macro|START_FRAME_FUDGE
+mdefine_line|#define START_FRAME_FUDGE      3
+multiline_comment|/* for start_type: */
+r_enum
+(brace
+DECL|enumerator|START_ASAP
+id|START_ASAP
+op_assign
+l_int|0
+comma
+DECL|enumerator|START_ABSOLUTE
+id|START_ABSOLUTE
+comma
+DECL|enumerator|START_RELATIVE
+id|START_RELATIVE
+)brace
+suffix:semicolon
+DECL|macro|START_TYPE_MAX
+mdefine_line|#define START_TYPE_MAX     START_RELATIVE
+multiline_comment|/*&n; * Completion/Callback routine returns an enum,&n; * which tells the interrupt handler what to do&n; * with the completed frames (TDs).&n; */
+r_enum
+(brace
+DECL|enumerator|CB_CONTINUE
+id|CB_CONTINUE
+op_assign
+l_int|0
+comma
+multiline_comment|/* OK, remove all TDs;&n;&t;&t;&t;&t;   needs to be 0 to be consistent with&n;&t;&t;&t;&t;   current callback function ret. values */
+DECL|enumerator|CB_REUSE
+id|CB_REUSE
+comma
+multiline_comment|/* leave descriptors as NULL, not active */
+DECL|enumerator|CB_RESTART
+id|CB_RESTART
+comma
+multiline_comment|/* leave descriptors as they are, alive */
+DECL|enumerator|CB_ABORT
+id|CB_ABORT
+multiline_comment|/* kill this USB transfer request */
+)brace
+suffix:semicolon
+DECL|struct|isoc_frame_desc
+r_struct
+id|isoc_frame_desc
+(brace
+DECL|member|frame_length
+r_int
+id|frame_length
+suffix:semicolon
+multiline_comment|/* may be 0 (i.e., allowed) */
+multiline_comment|/* set by driver for OUTs to devices;&n;&t;&t;&t; * set by USBD for INs from devices,&n;&t;&t;&t; * after I/O complete */
+DECL|member|frame_status
+r_int
+r_int
+id|frame_status
+suffix:semicolon
+multiline_comment|/* set by USBD after I/O complete */
+)brace
+suffix:semicolon
+DECL|struct|usb_isoc_desc
+r_struct
+id|usb_isoc_desc
+(brace
+multiline_comment|/*&n;&t; * The following fields are set by the usb_init_isoc() call.&n;&t; */
+DECL|member|usb_dev
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+suffix:semicolon
+DECL|member|pipe
+r_int
+r_int
+id|pipe
+suffix:semicolon
+DECL|member|frame_count
+r_int
+id|frame_count
+suffix:semicolon
+DECL|member|context
+r_void
+op_star
+id|context
+suffix:semicolon
+multiline_comment|/* driver context (private) ptr */
+DECL|member|frame_size
+r_int
+id|frame_size
+suffix:semicolon
+multiline_comment|/*&n;&t; * The following fields are set by the driver between the&n;&t; * usb_init_isoc() and usb_run_isoc() calls&n;&t; * (along with the &quot;frames&quot; array for OUTput).&n;&t; */
+DECL|member|start_type
+r_int
+id|start_type
+suffix:semicolon
+DECL|member|start_frame
+r_int
+id|start_frame
+suffix:semicolon
+multiline_comment|/* optional, depending on start_type */
+DECL|member|frame_spacing
+r_int
+id|frame_spacing
+suffix:semicolon
+multiline_comment|/* not using (yet?) */
+DECL|member|callback_frames
+r_int
+id|callback_frames
+suffix:semicolon
+multiline_comment|/* every # frames + last one */
+multiline_comment|/* 0 means no callbacks until IOC on last frame */
+DECL|member|callback_fn
+id|usb_device_irq
+id|callback_fn
+suffix:semicolon
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+DECL|member|buf_size
+r_int
+id|buf_size
+suffix:semicolon
+multiline_comment|/*&n;&t; * The following fields are set by the usb_run_isoc() call.&n;&t; */
+DECL|member|end_frame
+r_int
+id|end_frame
+suffix:semicolon
+DECL|member|td
+r_void
+op_star
+id|td
+suffix:semicolon
+multiline_comment|/* UHCI or OHCI TD ptr */
+multiline_comment|/*&n;&t; * The following fields are set by the USB HCD interrupt handler&n;&t; * before calling the driver&squot;s callback function.&n;&t; */
+DECL|member|total_completed_frames
+r_int
+id|total_completed_frames
+suffix:semicolon
+DECL|member|prev_completed_frame
+r_int
+id|prev_completed_frame
+suffix:semicolon
+multiline_comment|/* from the previous callback */
+DECL|member|cur_completed_frame
+r_int
+id|cur_completed_frame
+suffix:semicolon
+multiline_comment|/* from this callback */
+DECL|member|total_length
+r_int
+id|total_length
+suffix:semicolon
+multiline_comment|/* accumulated */
+DECL|member|error_count
+r_int
+id|error_count
+suffix:semicolon
+multiline_comment|/* accumulated */
+DECL|member|frames
+r_struct
+id|isoc_frame_desc
+id|frames
+(braket
+l_int|0
+)braket
+suffix:semicolon
+multiline_comment|/* variable size: [frame_count] */
+)brace
+suffix:semicolon
 DECL|struct|usb_operations
 r_struct
 id|usb_operations
 (brace
 DECL|member|allocate
-r_struct
-id|usb_device
-op_star
+r_int
 (paren
 op_star
 id|allocate
@@ -788,7 +1042,6 @@ op_star
 comma
 r_void
 op_star
-id|handle
 )paren
 suffix:semicolon
 DECL|member|request_bulk
@@ -832,12 +1085,24 @@ r_void
 op_star
 )paren
 suffix:semicolon
-DECL|member|alloc_isoc
-r_void
-op_star
+DECL|member|get_frame_number
+r_int
 (paren
 op_star
-id|alloc_isoc
+id|get_frame_number
+)paren
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+)paren
+suffix:semicolon
+DECL|member|init_isoc
+r_int
+(paren
+op_star
+id|init_isoc
 )paren
 (paren
 r_struct
@@ -849,94 +1114,62 @@ r_int
 r_int
 id|pipe
 comma
-r_void
-op_star
-id|data
-comma
 r_int
-id|len
-comma
-r_int
-id|maxsze
-comma
-id|usb_device_irq
-id|completed
+id|frame_count
 comma
 r_void
 op_star
-id|dev_id
+id|context
+comma
+r_struct
+id|usb_isoc_desc
+op_star
+op_star
+id|isocdesc
 )paren
 suffix:semicolon
-DECL|member|delete_isoc
+DECL|member|free_isoc
 r_void
 (paren
 op_star
-id|delete_isoc
+id|free_isoc
 )paren
 (paren
 r_struct
-id|usb_device
+id|usb_isoc_desc
 op_star
-id|dev
-comma
-r_void
-op_star
-id|_isodesc
+id|isocdesc
 )paren
 suffix:semicolon
-DECL|member|sched_isoc
+DECL|member|run_isoc
 r_int
 (paren
 op_star
-id|sched_isoc
+id|run_isoc
 )paren
 (paren
 r_struct
-id|usb_device
+id|usb_isoc_desc
 op_star
-id|usb_dev
+id|isocdesc
 comma
-r_void
+r_struct
+id|usb_isoc_desc
 op_star
-id|_isodesc
-comma
-r_void
-op_star
-id|_pisodesc
+id|pr_isocdesc
 )paren
 suffix:semicolon
-DECL|member|unsched_isoc
+DECL|member|kill_isoc
 r_int
 (paren
 op_star
-id|unsched_isoc
+id|kill_isoc
 )paren
 (paren
 r_struct
-id|usb_device
+id|usb_isoc_desc
 op_star
-id|usb_dev
-comma
-r_void
-op_star
-id|_isodesc
-)paren
-suffix:semicolon
-DECL|member|compress_isoc
-r_int
-(paren
-op_star
-id|compress_isoc
-)paren
-(paren
-r_struct
-id|usb_device
-op_star
-id|usb_dev
-comma
-r_void
-op_star
-id|_isodesc
+id|isocdesc
 )paren
 suffix:semicolon
 )brace
@@ -977,10 +1210,21 @@ op_star
 id|hcpriv
 suffix:semicolon
 multiline_comment|/* Host Controller private data */
+multiline_comment|/* procfs entry */
+DECL|member|proc_busnum
+r_int
+id|proc_busnum
+suffix:semicolon
+DECL|member|proc_entry
+r_struct
+id|proc_dir_entry
+op_star
+id|proc_entry
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|USB_MAXCHILDREN
-mdefine_line|#define USB_MAXCHILDREN (8)
+mdefine_line|#define USB_MAXCHILDREN (8)&t;/* This is arbitrary */
 DECL|struct|usb_device
 r_struct
 id|usb_device
@@ -995,6 +1239,11 @@ r_int
 id|slow
 suffix:semicolon
 multiline_comment|/* Slow device? */
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
+suffix:semicolon
+multiline_comment|/* Reference count */
 DECL|member|maxpacketsize
 r_int
 id|maxpacketsize
@@ -1047,6 +1296,12 @@ r_int
 id|ifnum
 suffix:semicolon
 multiline_comment|/* active interface number */
+DECL|member|parent
+r_struct
+id|usb_device
+op_star
+id|parent
+suffix:semicolon
 DECL|member|bus
 r_struct
 id|usb_bus
@@ -1074,12 +1329,6 @@ op_star
 id|config
 suffix:semicolon
 multiline_comment|/* All of the configs */
-DECL|member|parent
-r_struct
-id|usb_device
-op_star
-id|parent
-suffix:semicolon
 DECL|member|string
 r_char
 op_star
@@ -1091,6 +1340,25 @@ r_int
 id|string_langid
 suffix:semicolon
 multiline_comment|/* language ID for strings */
+DECL|member|hcpriv
+r_void
+op_star
+id|hcpriv
+suffix:semicolon
+multiline_comment|/* Host Controller private data */
+DECL|member|private
+r_void
+op_star
+r_private
+suffix:semicolon
+multiline_comment|/* Upper layer private data */
+multiline_comment|/* procfs entry */
+DECL|member|proc_entry
+r_struct
+id|proc_dir_entry
+op_star
+id|proc_entry
+suffix:semicolon
 multiline_comment|/*&n;&t; * Child devices - these can be either new devices&n;&t; * (if this is a hub device), or different instances&n;&t; * of this same device.&n;&t; *&n;&t; * Each instance needs its own set of data structures.&n;&t; */
 DECL|member|maxchild
 r_int
@@ -1106,18 +1374,6 @@ id|children
 id|USB_MAXCHILDREN
 )braket
 suffix:semicolon
-DECL|member|hcpriv
-r_void
-op_star
-id|hcpriv
-suffix:semicolon
-multiline_comment|/* Host Controller private data */
-DECL|member|private
-r_void
-op_star
-r_private
-suffix:semicolon
-multiline_comment|/* Upper layer private data */
 )brace
 suffix:semicolon
 r_extern
@@ -1137,6 +1393,37 @@ c_func
 (paren
 r_struct
 id|usb_driver
+op_star
+)paren
+suffix:semicolon
+r_int
+id|usb_find_driver
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+)paren
+suffix:semicolon
+r_void
+id|usb_check_support
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+)paren
+suffix:semicolon
+r_void
+id|usb_driver_purge
+c_func
+(paren
+r_struct
+id|usb_driver
+op_star
+comma
+r_struct
+id|usb_device
 op_star
 )paren
 suffix:semicolon
@@ -1180,6 +1467,79 @@ c_func
 r_struct
 id|usb_bus
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|usb_device
+op_star
+id|usb_alloc_dev
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|parent
+comma
+r_struct
+id|usb_bus
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usb_free_dev
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usb_inc_dev_use
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+)paren
+suffix:semicolon
+DECL|macro|usb_dec_dev_use
+mdefine_line|#define usb_dec_dev_use usb_free_dev
+r_extern
+r_int
+id|usb_control_msg
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+r_int
+id|pipe
+comma
+id|__u8
+id|request
+comma
+id|__u8
+id|requesttype
+comma
+id|__u16
+id|value
+comma
+id|__u16
+id|index
+comma
+r_void
+op_star
+id|data
+comma
+id|__u16
+id|size
 )paren
 suffix:semicolon
 r_extern
@@ -1289,57 +1649,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|usb_find_driver
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_void
-id|usb_check_support
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-)paren
-suffix:semicolon
-r_void
-id|usb_driver_purge
-c_func
-(paren
-r_struct
-id|usb_driver
-op_star
-comma
-r_struct
-id|usb_device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|usb_parse_configuration
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|dev
-comma
-r_void
-op_star
-id|buf
-comma
-r_int
-id|len
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|usb_destroy_configuration
 c_func
@@ -1440,6 +1749,73 @@ comma
 r_void
 op_star
 id|_isodesc
+)paren
+suffix:semicolon
+r_int
+id|usb_get_current_frame_number
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+)paren
+suffix:semicolon
+r_int
+id|usb_init_isoc
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_int
+r_int
+id|pipe
+comma
+r_int
+id|frame_count
+comma
+r_void
+op_star
+id|context
+comma
+r_struct
+id|usb_isoc_desc
+op_star
+op_star
+id|isocdesc
+)paren
+suffix:semicolon
+r_void
+id|usb_free_isoc
+(paren
+r_struct
+id|usb_isoc_desc
+op_star
+id|isocdesc
+)paren
+suffix:semicolon
+r_int
+id|usb_run_isoc
+(paren
+r_struct
+id|usb_isoc_desc
+op_star
+id|isocdesc
+comma
+r_struct
+id|usb_isoc_desc
+op_star
+id|pr_isocdesc
+)paren
+suffix:semicolon
+r_int
+id|usb_kill_isoc
+(paren
+r_struct
+id|usb_isoc_desc
+op_star
+id|isocdesc
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Calling this entity a &quot;pipe&quot; is glorifying it. A USB pipe&n; * is something embarrassingly simple: it basically consists&n; * of the following information:&n; *  - device number (7 bits)&n; *  - endpoint number (4 bits)&n; *  - current Data0/1 state (1 bit)&n; *  - direction (1 bit)&n; *  - speed (1 bit)&n; *  - max packet size (2 bits: 8, 16, 32 or 64)&n; *  - pipe type (2 bits: control, interrupt, bulk, isochronous)&n; *&n; * That&squot;s 18 bits. Really. Nothing more. And the USB people have&n; * documented these eighteen bits as some kind of glorious&n; * virtual data structure.&n; *&n; * Let&squot;s not fall in that trap. We&squot;ll just encode it as a simple&n; * unsigned int. The encoding is:&n; *&n; *  - max size:&t;&t;bits 0-1&t;(00 = 8, 01 = 16, 10 = 32, 11 = 64)&n; *  - direction:&t;bit 7&t;&t;(0 = Host-to-Device [Out], 1 = Device-to-Host [In])&n; *  - device:&t;&t;bits 8-14&n; *  - endpoint:&t;&t;bits 15-18&n; *  - Data0/1:&t;&t;bit 19&n; *  - speed:&t;&t;bit 26&t;&t;(0 = Full, 1 = Low Speed)&n; *  - pipe type:&t;bits 30-31&t;(00 = isochronous, 01 = interrupt, 10 = control, 11 = bulk)&n; *&n; * Why? Because it&squot;s arbitrary, and whatever encoding we select is really&n; * up to us. This one happens to share a lot of bit positions with the UHCI&n; * specification, so that much of the uhci driver can just mask the bits&n; * appropriately.&n; */
@@ -1735,6 +2111,25 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_int
+r_char
+id|type
+comma
+r_int
+r_char
+id|id
+comma
+r_int
+r_char
+id|index
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|size
 )paren
 suffix:semicolon
 r_char
@@ -1793,20 +2188,21 @@ op_star
 )paren
 suffix:semicolon
 r_void
+id|usb_show_hid_descriptor
+c_func
+(paren
+r_struct
+id|usb_hid_descriptor
+op_star
+id|desc
+)paren
+suffix:semicolon
+r_void
 id|usb_show_endpoint_descriptor
 c_func
 (paren
 r_struct
 id|usb_endpoint_descriptor
-op_star
-)paren
-suffix:semicolon
-r_void
-id|usb_show_hub_descriptor
-c_func
-(paren
-r_struct
-id|usb_hub_descriptor
 op_star
 )paren
 suffix:semicolon
@@ -1836,66 +2232,102 @@ r_int
 id|index
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Audio parsing helpers&n; */
-macro_line|#ifdef CONFIG_USB_AUDIO
+multiline_comment|/*&n; * procfs stuff&n; */
+macro_line|#ifdef CONFIG_USB_PROC
 r_void
-id|usb_audio_interface
+id|proc_usb_add_bus
 c_func
 (paren
 r_struct
-id|usb_interface_descriptor
+id|usb_bus
 op_star
-comma
-id|u8
-op_star
+id|bus
 )paren
 suffix:semicolon
 r_void
-id|usb_audio_endpoint
+id|proc_usb_remove_bus
 c_func
 (paren
 r_struct
-id|usb_endpoint_descriptor
+id|usb_bus
 op_star
-comma
-id|u8
+id|bus
+)paren
+suffix:semicolon
+r_void
+id|proc_usb_add_device
+c_func
+(paren
+r_struct
+id|usb_device
 op_star
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|proc_usb_remove_device
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
 )paren
 suffix:semicolon
 macro_line|#else
-DECL|function|usb_audio_interface
+DECL|function|proc_usb_add_bus
 r_extern
 r_inline
 r_void
-id|usb_audio_interface
+id|proc_usb_add_bus
 c_func
 (paren
 r_struct
-id|usb_interface_descriptor
+id|usb_bus
 op_star
-id|interface
-comma
-id|u8
-op_star
-id|data
+id|bus
 )paren
 (brace
 )brace
-DECL|function|usb_audio_endpoint
+DECL|function|proc_usb_remove_bus
 r_extern
 r_inline
 r_void
-id|usb_audio_endpoint
+id|proc_usb_remove_bus
 c_func
 (paren
 r_struct
-id|usb_endpoint_descriptor
+id|usb_bus
 op_star
-id|interface
-comma
-id|u8
+id|bus
+)paren
+(brace
+)brace
+DECL|function|proc_usb_add_device
+r_extern
+r_inline
+r_void
+id|proc_usb_add_device
+c_func
+(paren
+r_struct
+id|usb_device
 op_star
-id|data
+id|dev
+)paren
+(brace
+)brace
+DECL|function|proc_usb_remove_device
+r_extern
+r_inline
+r_void
+id|proc_usb_remove_device
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
 )paren
 (brace
 )brace

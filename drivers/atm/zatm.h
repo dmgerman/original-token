@@ -3,6 +3,7 @@ multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef DRIVER_ATM_ZATM_H
 DECL|macro|DRIVER_ATM_ZATM_H
 mdefine_line|#define DRIVER_ATM_ZATM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;

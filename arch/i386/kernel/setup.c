@@ -5101,7 +5101,7 @@ id|cpu_initialized
 id|printk
 c_func
 (paren
-l_string|&quot;CPU#%d ALREADY INITIALIZED!!!!!!!!!&bslash;n&quot;
+l_string|&quot;CPU#%d already initialized!&bslash;n&quot;
 comma
 id|nr
 )paren
@@ -5124,7 +5124,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;INITIALIZING CPU#%d&bslash;n&quot;
+l_string|&quot;Initializing CPU#%d&bslash;n&quot;
 comma
 id|nr
 )paren

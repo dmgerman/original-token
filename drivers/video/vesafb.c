@@ -27,10 +27,11 @@ multiline_comment|/* -----------------------------------------------------------
 multiline_comment|/*&n; * card parameters&n; */
 multiline_comment|/* card */
 DECL|variable|video_base
-r_char
-op_star
+r_int
+r_int
 id|video_base
 suffix:semicolon
+multiline_comment|/* physical addr */
 DECL|variable|video_size
 r_int
 id|video_size
@@ -2312,10 +2313,6 @@ id|ENXIO
 suffix:semicolon
 id|video_base
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|screen_info.lfb_base
 suffix:semicolon
 id|video_bpp
@@ -2353,15 +2350,43 @@ id|FB_VISUAL_PSEUDOCOLOR
 suffix:colon
 id|FB_VISUAL_TRUECOLOR
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|__request_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|video_base
+comma
+id|video_size
+comma
+l_string|&quot;vesafb&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;vesafb: abort, cannot reserve video memory at 0x%lu&bslash;n&quot;
+comma
+id|video_base
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|video_vbase
 op_assign
 id|ioremap
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|video_base
 comma
 id|video_size
@@ -2371,7 +2396,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;vesafb: framebuffer at 0x%p, mapped to 0x%p, size %dk&bslash;n&quot;
+l_string|&quot;vesafb: framebuffer at 0x%lu, mapped to 0x%p, size %dk&bslash;n&quot;
 comma
 id|video_base
 comma
@@ -2863,14 +2888,18 @@ op_assign
 l_int|256
 suffix:semicolon
 )brace
-id|request_region
+multiline_comment|/* request failure does not faze us, as vgacon probably has this&n;&t; * region already (FIXME) */
+id|__request_region
 c_func
 (paren
+op_amp
+id|ioport_resource
+comma
 l_int|0x3c0
 comma
 l_int|32
 comma
-l_string|&quot;vga+&quot;
+l_string|&quot;vesafb&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2881,10 +2910,6 @@ id|mtrr
 id|mtrr_add
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|video_base
 comma
 id|video_size

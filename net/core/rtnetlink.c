@@ -2386,16 +2386,13 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|rtnetlink_init
 r_void
+id|__init
 id|rtnetlink_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef RTNL_DEBUG

@@ -88,6 +88,11 @@ DECL|macro|UHCI_PTR_QH
 mdefine_line|#define UHCI_PTR_QH&t;&t;0x0002
 DECL|macro|UHCI_PTR_DEPTH
 mdefine_line|#define UHCI_PTR_DEPTH&t;&t;0x0004
+DECL|macro|UHCI_NUMFRAMES
+mdefine_line|#define UHCI_NUMFRAMES&t;&t;1024
+r_struct
+id|uhci_td
+suffix:semicolon
 DECL|struct|uhci_qh
 r_struct
 id|uhci_qh
@@ -123,6 +128,13 @@ op_star
 id|skel
 suffix:semicolon
 multiline_comment|/* Skeleton head */
+DECL|member|first
+r_struct
+id|uhci_td
+op_star
+id|first
+suffix:semicolon
+multiline_comment|/* First TD in the chain */
 DECL|member|wakeup
 id|wait_queue_head_t
 id|wakeup
@@ -167,6 +179,8 @@ suffix:semicolon
 multiline_comment|/*&n; * for TD &lt;status&gt;:&n; */
 DECL|macro|TD_CTRL_SPD
 mdefine_line|#define TD_CTRL_SPD&t;&t;(1 &lt;&lt; 29)&t;/* Short Packet Detect */
+DECL|macro|TD_CTRL_C_ERR_MASK
+mdefine_line|#define TD_CTRL_C_ERR_MASK&t;(3 &lt;&lt; 27)&t;/* Error Counter bits */
 DECL|macro|TD_CTRL_LS
 mdefine_line|#define TD_CTRL_LS&t;&t;(1 &lt;&lt; 26)&t;/* Low Speed Device */
 DECL|macro|TD_CTRL_IOS
@@ -183,8 +197,8 @@ DECL|macro|TD_CTRL_BABBLE
 mdefine_line|#define TD_CTRL_BABBLE&t;&t;(1 &lt;&lt; 20)&t;/* Babble Detected */
 DECL|macro|TD_CTRL_NAK
 mdefine_line|#define TD_CTRL_NAK&t;&t;(1 &lt;&lt; 19)&t;/* NAK Received */
-DECL|macro|TD_CTRL_CRCTIME
-mdefine_line|#define TD_CTRL_CRCTIME&t;&t;(1 &lt;&lt; 18)&t;/* CTC/Time Out Error */
+DECL|macro|TD_CTRL_CRCTIMEO
+mdefine_line|#define TD_CTRL_CRCTIMEO&t;(1 &lt;&lt; 18)&t;/* CRC/Time Out Error */
 DECL|macro|TD_CTRL_BITSTUFF
 mdefine_line|#define TD_CTRL_BITSTUFF&t;(1 &lt;&lt; 17)&t;/* Bit Stuff Error */
 DECL|macro|TD_CTRL_ACTLEN_MASK
@@ -192,7 +206,7 @@ mdefine_line|#define TD_CTRL_ACTLEN_MASK&t;0x7ff&t;&t;/* actual length, encoded 
 DECL|macro|TD_CTRL_ANY_ERROR
 mdefine_line|#define TD_CTRL_ANY_ERROR&t;(TD_CTRL_STALLED | TD_CTRL_DBUFERR | &bslash;&n;&t;&t;&t;&t; TD_CTRL_BABBLE | TD_CTRL_CRCTIME | TD_CTRL_BITSTUFF)
 DECL|macro|uhci_status_bits
-mdefine_line|#define uhci_status_bits(ctrl_sts)&t;((ctrl_sts &gt;&gt; 16) &amp; 0xff)
+mdefine_line|#define uhci_status_bits(ctrl_sts)&t;(ctrl_sts &amp; 0xFE0000)
 DECL|macro|uhci_actual_length
 mdefine_line|#define uhci_actual_length(ctrl_sts)&t;((ctrl_sts + 1) &amp; TD_CTRL_ACTLEN_MASK) /* 1-based */
 DECL|macro|uhci_ptr_to_virt
@@ -200,6 +214,25 @@ mdefine_line|#define uhci_ptr_to_virt(x)&t;bus_to_virt(x &amp; ~UHCI_PTR_BITS)
 multiline_comment|/*&n; * for TD &lt;flags&gt;:&n; */
 DECL|macro|UHCI_TD_REMOVE
 mdefine_line|#define UHCI_TD_REMOVE&t;&t;0x0001&t;&t;/* Remove when done */
+multiline_comment|/*&n; * for TD &lt;info&gt;: (a.k.a. Token)&n; */
+DECL|macro|TD_TOKEN_TOGGLE
+mdefine_line|#define TD_TOKEN_TOGGLE&t;&t;19
+DECL|macro|uhci_maxlen
+mdefine_line|#define uhci_maxlen(token)&t;((token) &gt;&gt; 21)
+DECL|macro|uhci_toggle
+mdefine_line|#define uhci_toggle(token)&t;(((token) &gt;&gt; TD_TOKEN_TOGGLE) &amp; 1)
+DECL|macro|uhci_endpoint
+mdefine_line|#define uhci_endpoint(token)&t;(((token) &gt;&gt; 15) &amp; 0xf)
+DECL|macro|uhci_devaddr
+mdefine_line|#define uhci_devaddr(token)&t;(((token) &gt;&gt; 8) &amp; 0x7f)
+DECL|macro|uhci_devep
+mdefine_line|#define uhci_devep(token)&t;(((token) &gt;&gt; 8) &amp; 0x7ff)
+DECL|macro|uhci_packetid
+mdefine_line|#define uhci_packetid(token)&t;((token) &amp; 0xff)
+DECL|macro|uhci_packetout
+mdefine_line|#define uhci_packetout(token)&t;(uhci_packetid(token) != USB_PID_IN)
+DECL|macro|uhci_packetin
+mdefine_line|#define uhci_packetin(token)&t;(uhci_packetid(token) == USB_PID_IN)
 multiline_comment|/*&n; * for TD &lt;info&gt;: (a.k.a. Token)&n; */
 DECL|macro|TD_TOKEN_TOGGLE
 mdefine_line|#define TD_TOKEN_TOGGLE&t;&t;19
@@ -289,6 +322,11 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Remove, etc */
+DECL|member|isoc_td_number
+r_int
+id|isoc_td_number
+suffix:semicolon
+multiline_comment|/* 0-relative number within a usb_isoc_desc. */
 )brace
 id|__attribute__
 c_func
@@ -349,7 +387,7 @@ macro_line|#if 0
 mdefine_line|#define UHCI_MAXTD&t;64
 mdefine_line|#define UHCI_MAXQH&t;16
 macro_line|#endif
-multiline_comment|/* The usb device part must be first! */
+multiline_comment|/* The usb device part must be first! Not anymore -jerdfelt */
 DECL|struct|uhci_device
 r_struct
 id|uhci_device
@@ -359,6 +397,10 @@ r_struct
 id|usb_device
 op_star
 id|usb
+suffix:semicolon
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
 suffix:semicolon
 DECL|member|uhci
 r_struct
@@ -434,6 +476,11 @@ r_int
 r_int
 id|io_addr
 suffix:semicolon
+DECL|member|io_size
+r_int
+r_int
+id|io_size
+suffix:semicolon
 DECL|member|control_pid
 r_int
 id|control_pid
@@ -501,7 +548,7 @@ id|element
 suffix:semicolon
 multiline_comment|/* Debugging code */
 r_void
-id|show_td
+id|uhci_show_td
 c_func
 (paren
 r_struct
@@ -511,7 +558,7 @@ id|td
 )paren
 suffix:semicolon
 r_void
-id|show_status
+id|uhci_show_status
 c_func
 (paren
 r_struct
@@ -521,7 +568,17 @@ id|uhci
 )paren
 suffix:semicolon
 r_void
-id|show_queues
+id|uhci_show_queue
+c_func
+(paren
+r_struct
+id|uhci_qh
+op_star
+id|qh
+)paren
+suffix:semicolon
+r_void
+id|uhci_show_queues
 c_func
 (paren
 r_struct

@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: concap.h,v 1.1 1998/02/01 00:15:11 keil Exp $&n;*/
+multiline_comment|/* $Id: concap.h,v 1.2 1999/08/23 15:54:21 keil Exp $&n;*/
 macro_line|#ifndef _LINUX_CONCAP_H
 DECL|macro|_LINUX_CONCAP_H
 mdefine_line|#define _LINUX_CONCAP_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/isdn_compat.h&gt;
 multiline_comment|/* Stuff to support encapsulation protocols genericly. The encapsulation&n;   protocol is processed at the uppermost layer of the network interface.&n;&n;   (c) 1997 by Henner Eisen &lt;eis@baty.hanse.de&gt;&n;   This software is subject to the GNU General Public License.&n;&n;   Based on a ideas developed in a &squot;synchronous device&squot; thread in the&n;   linux-x25 mailing list contributed by Alan Cox, Thomasz Motylewski&n;   and Jonathan Naylor.&n;&n;   For more documetation on this refer to Documentation/isdn/README.concap&n;   */
 r_struct
 id|concap_proto_ops

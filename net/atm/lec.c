@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * lec.c: Lan Emulation driver &n; * Marko Kiiskila carnil@cs.tut.fi&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 multiline_comment|/* We are ethernet device */
 macro_line|#include &lt;linux/if_ether.h&gt;
@@ -24,7 +25,6 @@ macro_line|#ifdef CONFIG_BRIDGE
 macro_line|#include &lt;net/br.h&gt;
 macro_line|#endif
 multiline_comment|/* Modular too */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;lec.h&quot;
 macro_line|#include &quot;lec_arpc.h&quot;

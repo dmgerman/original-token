@@ -65,6 +65,58 @@ DECL|macro|HUB_CHAR_COMPOUND
 mdefine_line|#define HUB_CHAR_COMPOUND&t;0x0004
 DECL|macro|HUB_CHAR_OCPM
 mdefine_line|#define HUB_CHAR_OCPM&t;&t;0x0018
+multiline_comment|/* Hub descriptor */
+DECL|struct|usb_hub_descriptor
+r_struct
+id|usb_hub_descriptor
+(brace
+DECL|member|bLength
+id|__u8
+id|bLength
+suffix:semicolon
+DECL|member|bDescriptorType
+id|__u8
+id|bDescriptorType
+suffix:semicolon
+DECL|member|bNbrPorts
+id|__u8
+id|bNbrPorts
+suffix:semicolon
+DECL|member|wHubCharacteristics
+id|__u16
+id|wHubCharacteristics
+suffix:semicolon
+macro_line|#if 0
+id|__u8
+id|wHubCharacteristics
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* __u16 but not aligned! */
+macro_line|#endif
+DECL|member|bPwrOn2PwrGood
+id|__u8
+id|bPwrOn2PwrGood
+suffix:semicolon
+DECL|member|bHubContrCurrent
+id|__u8
+id|bHubContrCurrent
+suffix:semicolon
+multiline_comment|/* DeviceRemovable and PortPwrCtrlMask want to be variable-length &n;&t;   bitmaps that hold max 256 entries, but for now they&squot;re ignored */
+macro_line|#if 0
+id|__u8
+id|filler
+suffix:semicolon
+macro_line|#endif
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
 r_struct
 id|usb_device
 suffix:semicolon

@@ -1739,6 +1739,7 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef MODULE
 r_int
 id|atyfb_setup
 c_func
@@ -1747,6 +1748,7 @@ r_char
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|currcon
 r_static
 r_int
@@ -1849,6 +1851,7 @@ id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef MODULE
 DECL|variable|__initdata
 r_static
 r_const
@@ -1859,6 +1862,7 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_PPC)
 DECL|variable|__initdata
 r_static
@@ -15013,7 +15017,7 @@ c_cond
 (paren
 id|rp-&gt;flags
 op_amp
-id|IORESOURCE_IOPORT
+id|IORESOURCE_IO
 )paren
 id|rp
 op_assign
@@ -15230,7 +15234,7 @@ op_assign
 (paren
 id|rp-&gt;flags
 op_amp
-id|IORESOURCE_IOPORT
+id|IORESOURCE_IO
 )paren
 suffix:semicolon
 id|size
@@ -16850,6 +16854,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 )brace
 macro_line|#endif /* CONFIG_FB_OF */
+macro_line|#ifndef MODULE
 DECL|function|atyfb_setup
 r_int
 id|__init
@@ -17314,11 +17319,17 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+r_else
+id|mode_option
+op_assign
+id|this_opt
+suffix:semicolon
 )brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* !MODULE */
 macro_line|#ifdef CONFIG_ATARI
 DECL|function|store_video_par
 r_static

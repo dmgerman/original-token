@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isar.c,v 1.4 1999/08/05 20:43:18 keil Exp $&n;&n; * isar.c   ISAR (Siemens PSB 7110) specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.c,v $&n; * Revision 1.4  1999/08/05 20:43:18  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:45  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:53  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:47  keil&n; * First version, only init&n; *&n; *&n; */
+multiline_comment|/* $Id: isar.c,v 1.5 1999/08/25 16:59:55 keil Exp $&n;&n; * isar.c   ISAR (Siemens PSB 7110) specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.c,v $&n; * Revision 1.5  1999/08/25 16:59:55  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:18  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:45  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:53  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:47  keil&n; * First version, only init&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -1783,6 +1783,23 @@ id|blk_head.len
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* 10ms delay */
+id|cnt
+op_assign
+l_int|10
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|cnt
+op_decrement
+)paren
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 id|msg
 (braket
 l_int|0
@@ -1998,6 +2015,23 @@ id|ireg-&gt;bstat
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* 10ms delay */
+id|cnt
+op_assign
+l_int|10
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|cnt
+op_decrement
+)paren
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 id|ireg-&gt;iis
 op_assign
 l_int|0
@@ -2038,9 +2072,9 @@ suffix:semicolon
 )brace
 id|cnt
 op_assign
-l_int|1000
+l_int|10000
 suffix:semicolon
-multiline_comment|/* max 10 ms */
+multiline_comment|/* max 100 ms */
 r_while
 c_loop
 (paren
@@ -2063,6 +2097,12 @@ id|cnt
 op_decrement
 suffix:semicolon
 )brace
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2085,7 +2125,6 @@ r_goto
 id|reterrflg
 suffix:semicolon
 )brace
-r_else
 r_if
 c_cond
 (paren
@@ -2185,9 +2224,9 @@ suffix:semicolon
 )brace
 id|cnt
 op_assign
-l_int|10000
+l_int|30000
 suffix:semicolon
-multiline_comment|/* max 100 ms */
+multiline_comment|/* max 300 ms */
 r_while
 c_loop
 (paren
@@ -2210,6 +2249,12 @@ id|cnt
 op_decrement
 suffix:semicolon
 )brace
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2349,6 +2394,42 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|BChannel_bh
+c_func
+(paren
+r_struct
+id|BCState
+op_star
+)paren
+suffix:semicolon
+DECL|macro|B_LL_NOCARRIER
+mdefine_line|#define B_LL_NOCARRIER&t;8
+DECL|macro|B_LL_CONNECT
+mdefine_line|#define B_LL_CONNECT&t;9
+DECL|macro|B_LL_OK
+mdefine_line|#define B_LL_OK&t;&t;10
+r_static
+r_void
+DECL|function|isar_bh
+id|isar_bh
+c_func
+(paren
+r_struct
+id|BCState
+op_star
+id|bcs
+)paren
+(brace
+id|BChannel_bh
+c_func
+(paren
+id|bcs
+)paren
+suffix:semicolon
+)brace
+r_static
 r_void
 DECL|function|isar_sched_event
 id|isar_sched_event
@@ -2767,6 +2848,7 @@ l_int|2
 )paren
 )paren
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -2774,6 +2856,7 @@ id|KERN_WARNING
 l_string|&quot;ISAR: receive out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 id|SET_SKB_FREE
@@ -4036,7 +4119,6 @@ comma
 l_string|&quot;pump stev DSR ON&quot;
 )paren
 suffix:semicolon
-singleline_comment|//&t;&t;&t;sendmsg(cs, dps | ISAR_HIS_PUMPCTRL, 0xCF, 0, NULL);
 r_break
 suffix:semicolon
 r_case
@@ -4151,7 +4233,7 @@ r_static
 r_char
 id|debbuf
 (braket
-l_int|64
+l_int|128
 )braket
 suffix:semicolon
 r_void
@@ -4621,6 +4703,38 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+r_case
+id|ISAR_IIS_INVMSG
+suffix:colon
+id|rcv_mbox
+c_func
+(paren
+id|cs
+comma
+id|ireg
+comma
+id|debbuf
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cs-&gt;debug
+op_amp
+id|L1_DEB_WARN
+)paren
+id|debugl1
+c_func
+(paren
+id|cs
+comma
+l_string|&quot;invalid msg his:%x&quot;
+comma
+id|ireg-&gt;cmsb
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|rcv_mbox
@@ -4664,6 +4778,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+r_static
 r_void
 DECL|function|setup_pump
 id|setup_pump
@@ -4800,41 +4915,51 @@ id|param
 l_int|0
 )braket
 op_assign
-l_int|11
+l_int|6
 suffix:semicolon
-multiline_comment|/* 11 db */
-singleline_comment|//&t;&t;&t;param[1] = PV32P2_V22A | PV32P2_V22B | PV32P2_V21; 
+multiline_comment|/* 6 db */
 id|param
 (braket
 l_int|1
 )braket
 op_assign
+id|PV32P2_V23R
+op_or
 id|PV32P2_V22A
+op_or
+id|PV32P2_V22B
+op_or
+id|PV32P2_V22C
+op_or
+id|PV32P2_V21
+op_or
+id|PV32P2_BEL
 suffix:semicolon
-singleline_comment|//&t;&t;&t;param[2] = PV32P3_AMOD | PV32P3_V32B;
 id|param
 (braket
 l_int|2
 )braket
 op_assign
 id|PV32P3_AMOD
+op_or
+id|PV32P3_V32B
+op_or
+id|PV32P3_V23B
 suffix:semicolon
 id|param
 (braket
 l_int|3
 )braket
 op_assign
-id|PV32P4_48
+id|PV32P4_UT144
 suffix:semicolon
 id|param
 (braket
 l_int|4
 )braket
 op_assign
-id|PV32P5_48
+id|PV32P5_UT144
 suffix:semicolon
-singleline_comment|//&t;&t;&t;param[3] = PV32P4_UT144;
-singleline_comment|//&t;&t;&t;param[4] = PV32P5_UT144;
 r_if
 c_cond
 (paren
@@ -4921,9 +5046,9 @@ id|param
 l_int|0
 )braket
 op_assign
-l_int|8
+l_int|6
 suffix:semicolon
-multiline_comment|/* 8 db */
+multiline_comment|/* 6 db */
 r_if
 c_cond
 (paren
@@ -5002,6 +5127,7 @@ id|bcs-&gt;hw.isar.dpath
 suffix:semicolon
 )brace
 )brace
+r_static
 r_void
 DECL|function|setup_sart
 id|setup_sart
@@ -5130,6 +5256,16 @@ suffix:semicolon
 r_case
 id|L1_MODE_HDLC
 suffix:colon
+r_case
+id|L1_MODE_FAX
+suffix:colon
+id|param
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5147,7 +5283,7 @@ id|SMODE_HDLC
 comma
 l_int|1
 comma
-l_string|&quot;&bslash;0&quot;
+id|param
 )paren
 )paren
 (brace
@@ -5270,6 +5406,7 @@ id|bcs-&gt;hw.isar.dpath
 suffix:semicolon
 )brace
 )brace
+r_static
 r_void
 DECL|function|setup_iom2
 id|setup_iom2
@@ -5512,6 +5649,16 @@ r_case
 id|L1_MODE_NULL
 suffix:colon
 multiline_comment|/* init */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bcs-&gt;hw.isar.dpath
+)paren
+multiline_comment|/* no init for dpath 0 */
+r_return
+l_int|0
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -5573,6 +5720,9 @@ r_break
 suffix:semicolon
 r_case
 id|L1_MODE_V32
+suffix:colon
+r_case
+id|L1_MODE_FAX
 suffix:colon
 multiline_comment|/* only datapath 1 */
 r_if
@@ -5840,6 +5990,23 @@ l_int|0
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+id|i
+)braket
+dot
+id|tqueue.routine
+op_assign
+(paren
+r_void
+op_star
+)paren
+(paren
+r_void
+op_star
+)paren
+id|isar_bh
 suffix:semicolon
 )brace
 )brace
@@ -6605,6 +6772,148 @@ r_return
 (paren
 l_int|0
 )paren
+suffix:semicolon
+)brace
+r_int
+DECL|function|isar_auxcmd
+id|isar_auxcmd
+c_func
+(paren
+r_struct
+id|IsdnCardState
+op_star
+id|cs
+comma
+id|isdn_ctrl
+op_star
+id|ic
+)paren
+(brace
+id|u_long
+id|adr
+suffix:semicolon
+r_int
+id|features
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cs-&gt;debug
+op_amp
+id|L1_DEB_HSCX
+)paren
+id|debugl1
+c_func
+(paren
+id|cs
+comma
+l_string|&quot;isar_auxcmd cmd/ch %x/%d&quot;
+comma
+id|ic-&gt;command
+comma
+id|ic-&gt;arg
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|ic-&gt;command
+)paren
+(brace
+r_case
+(paren
+id|ISDN_CMD_IOCTL
+)paren
+suffix:colon
+r_switch
+c_cond
+(paren
+id|ic-&gt;arg
+)paren
+(brace
+r_case
+(paren
+l_int|9
+)paren
+suffix:colon
+multiline_comment|/* load firmware */
+id|features
+op_assign
+id|ISDN_FEATURE_L2_MODEM
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+op_amp
+id|adr
+comma
+id|ic-&gt;parm.num
+comma
+r_sizeof
+(paren
+id|ulong
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|isar_load_firmware
+c_func
+(paren
+id|cs
+comma
+(paren
+id|u_char
+op_star
+)paren
+id|adr
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_else
+id|ll_run
+c_func
+(paren
+id|cs
+comma
+id|features
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;HiSax: invalid ioclt %d&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|ic-&gt;arg
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|HISAX_INITFUNC

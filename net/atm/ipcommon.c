@@ -1,6 +1,5 @@
 multiline_comment|/* net/atm/ipcommon.c - Common items for all ways of doing IP over ATM */
 multiline_comment|/* Written 1996,1997 by Werner Almesberger, EPFL LRC */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;

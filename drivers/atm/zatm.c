@@ -1,5 +1,6 @@
 multiline_comment|/* drivers/atm/zatm.c - ZeitNet ZN122x device driver */
 multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

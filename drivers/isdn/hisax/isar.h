@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isar.h,v 1.4 1999/08/05 20:43:20 keil Exp $&n; * isar.h   ISAR (Siemens PSB 7110) specific defines&n; *&n; * Author Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.h,v $&n; * Revision 1.4  1999/08/05 20:43:20  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:46  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:54  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:48  keil&n; * First version, only init&n; *&n; *&n; */
+multiline_comment|/* $Id: isar.h,v 1.5 1999/08/25 16:59:59 keil Exp $&n; * isar.h   ISAR (Siemens PSB 7110) specific defines&n; *&n; * Author Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.h,v $&n; * Revision 1.5  1999/08/25 16:59:59  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:20  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:46  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:54  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:48  keil&n; * First version, only init&n; *&n; *&n; */
 DECL|macro|ISAR_IRQMSK
 mdefine_line|#define ISAR_IRQMSK&t;0x04
 DECL|macro|ISAR_IRQSTA
@@ -24,19 +24,19 @@ mdefine_line|#define ISAR_WADR&t;0x4a
 DECL|macro|ISAR_RADR
 mdefine_line|#define ISAR_RADR&t;0x48 
 DECL|macro|ISAR_HIS_VNR
-mdefine_line|#define ISAR_HIS_VNR&t;0x14
+mdefine_line|#define ISAR_HIS_VNR&t;&t;0x14
 DECL|macro|ISAR_HIS_DKEY
-mdefine_line|#define ISAR_HIS_DKEY&t;0x02
+mdefine_line|#define ISAR_HIS_DKEY&t;&t;0x02
 DECL|macro|ISAR_HIS_FIRM
-mdefine_line|#define ISAR_HIS_FIRM&t;0x1e
+mdefine_line|#define ISAR_HIS_FIRM&t;&t;0x1e
 DECL|macro|ISAR_HIS_STDSP
-mdefine_line|#define ISAR_HIS_STDSP  0x08
+mdefine_line|#define ISAR_HIS_STDSP&t;&t;0x08
 DECL|macro|ISAR_HIS_DIAG
-mdefine_line|#define ISAR_HIS_DIAG&t;0x05
+mdefine_line|#define ISAR_HIS_DIAG&t;&t;0x05
 DECL|macro|ISAR_HIS_P0CFG
-mdefine_line|#define ISAR_HIS_P0CFG&t;0x3c
+mdefine_line|#define ISAR_HIS_P0CFG&t;&t;0x3c
 DECL|macro|ISAR_HIS_P12CFG
-mdefine_line|#define ISAR_HIS_P12CFG&t;0x24
+mdefine_line|#define ISAR_HIS_P12CFG&t;&t;0x24
 DECL|macro|ISAR_HIS_SARTCFG
 mdefine_line|#define ISAR_HIS_SARTCFG&t;0x25&t;
 DECL|macro|ISAR_HIS_PUMPCFG
@@ -50,43 +50,45 @@ mdefine_line|#define ISAR_HIS_IOM2REQ&t;0x07
 DECL|macro|ISAR_HIS_IOM2CTRL
 mdefine_line|#define ISAR_HIS_IOM2CTRL&t;0x2b
 DECL|macro|ISAR_HIS_BSTREQ
-mdefine_line|#define ISAR_HIS_BSTREQ&t;0x0c
+mdefine_line|#define ISAR_HIS_BSTREQ&t;&t;0x0c
 DECL|macro|ISAR_HIS_PSTREQ
-mdefine_line|#define ISAR_HIS_PSTREQ&t;0x0e
+mdefine_line|#define ISAR_HIS_PSTREQ&t;&t;0x0e
 DECL|macro|ISAR_HIS_SDATA
-mdefine_line|#define ISAR_HIS_SDATA&t;0x20
+mdefine_line|#define ISAR_HIS_SDATA&t;&t;0x20
 DECL|macro|ISAR_HIS_DPS1
-mdefine_line|#define ISAR_HIS_DPS1&t;0x40
+mdefine_line|#define ISAR_HIS_DPS1&t;&t;0x40
 DECL|macro|ISAR_HIS_DPS2
-mdefine_line|#define ISAR_HIS_DPS2&t;0x80
+mdefine_line|#define ISAR_HIS_DPS2&t;&t;0x80
 DECL|macro|SET_DPS
-mdefine_line|#define SET_DPS(x)&t;((x&lt;&lt;6) &amp; 0xc0)
+mdefine_line|#define SET_DPS(x)&t;&t;((x&lt;&lt;6) &amp; 0xc0)
 DECL|macro|ISAR_IIS_MSCMSD
-mdefine_line|#define ISAR_IIS_MSCMSD 0x3f
+mdefine_line|#define ISAR_IIS_MSCMSD&t;&t;0x3f
 DECL|macro|ISAR_IIS_VNR
-mdefine_line|#define ISAR_IIS_VNR&t;0x15
+mdefine_line|#define ISAR_IIS_VNR&t;&t;0x15
 DECL|macro|ISAR_IIS_DKEY
-mdefine_line|#define ISAR_IIS_DKEY&t;0x03
+mdefine_line|#define ISAR_IIS_DKEY&t;&t;0x03
 DECL|macro|ISAR_IIS_FIRM
-mdefine_line|#define ISAR_IIS_FIRM&t;0x1f
+mdefine_line|#define ISAR_IIS_FIRM&t;&t;0x1f
 DECL|macro|ISAR_IIS_STDSP
-mdefine_line|#define ISAR_IIS_STDSP  0x09
+mdefine_line|#define ISAR_IIS_STDSP&t;&t;0x09
 DECL|macro|ISAR_IIS_DIAG
-mdefine_line|#define ISAR_IIS_DIAG&t;0x25
+mdefine_line|#define ISAR_IIS_DIAG&t;&t;0x25
 DECL|macro|ISAR_IIS_GSTEV
-mdefine_line|#define ISAR_IIS_GSTEV&t;0x0
+mdefine_line|#define ISAR_IIS_GSTEV&t;&t;0x00
 DECL|macro|ISAR_IIS_BSTEV
-mdefine_line|#define ISAR_IIS_BSTEV&t;0x28
+mdefine_line|#define ISAR_IIS_BSTEV&t;&t;0x28
 DECL|macro|ISAR_IIS_BSTRSP
-mdefine_line|#define ISAR_IIS_BSTRSP&t;0x2c
+mdefine_line|#define ISAR_IIS_BSTRSP&t;&t;0x2c
 DECL|macro|ISAR_IIS_PSTRSP
-mdefine_line|#define ISAR_IIS_PSTRSP&t;0x2e
+mdefine_line|#define ISAR_IIS_PSTRSP&t;&t;0x2e
 DECL|macro|ISAR_IIS_PSTEV
-mdefine_line|#define ISAR_IIS_PSTEV&t;0x2a
+mdefine_line|#define ISAR_IIS_PSTEV&t;&t;0x2a
 DECL|macro|ISAR_IIS_IOM2RSP
 mdefine_line|#define ISAR_IIS_IOM2RSP&t;0x27
 DECL|macro|ISAR_IIS_RDATA
-mdefine_line|#define ISAR_IIS_RDATA&t;0x20
+mdefine_line|#define ISAR_IIS_RDATA&t;&t;0x20
+DECL|macro|ISAR_IIS_INVMSG
+mdefine_line|#define ISAR_IIS_INVMSG&t;&t;0x3f
 DECL|macro|ISAR_CTRL_SWVER
 mdefine_line|#define ISAR_CTRL_SWVER&t;0x10
 DECL|macro|ISAR_CTRL_STST
@@ -129,50 +131,53 @@ DECL|macro|PV32P2_V21
 mdefine_line|#define PV32P2_V21&t;0x02
 DECL|macro|PV32P2_BEL
 mdefine_line|#define PV32P2_BEL&t;0x01
+singleline_comment|// LSB MSB in ISAR doc wrong !!! Arghhh
 DECL|macro|PV32P3_AMOD
 mdefine_line|#define PV32P3_AMOD&t;0x80
 DECL|macro|PV32P3_V32B
 mdefine_line|#define PV32P3_V32B&t;0x02
+DECL|macro|PV32P3_V23B
+mdefine_line|#define PV32P3_V23B&t;0x01
 DECL|macro|PV32P4_48
-mdefine_line|#define PV32P4_48&t;0x05
+mdefine_line|#define PV32P4_48&t;0x11
 DECL|macro|PV32P5_48
-mdefine_line|#define PV32P5_48&t;0x11
+mdefine_line|#define PV32P5_48&t;0x05
 DECL|macro|PV32P4_UT48
-mdefine_line|#define PV32P4_UT48&t;0x0d
+mdefine_line|#define PV32P4_UT48&t;0x11
 DECL|macro|PV32P5_UT48
-mdefine_line|#define PV32P5_UT48&t;0x11
+mdefine_line|#define PV32P5_UT48&t;0x0d
 DECL|macro|PV32P4_96
-mdefine_line|#define PV32P4_96&t;0x03
+mdefine_line|#define PV32P4_96&t;0x11
 DECL|macro|PV32P5_96
-mdefine_line|#define PV32P5_96&t;0x11
+mdefine_line|#define PV32P5_96&t;0x03
 DECL|macro|PV32P4_UT96
-mdefine_line|#define PV32P4_UT96&t;0x0f
+mdefine_line|#define PV32P4_UT96&t;0x11
 DECL|macro|PV32P5_UT96
-mdefine_line|#define PV32P5_UT96&t;0x11
+mdefine_line|#define PV32P5_UT96&t;0x0f
 DECL|macro|PV32P4_B96
-mdefine_line|#define PV32P4_B96&t;0x0b
+mdefine_line|#define PV32P4_B96&t;0x91
 DECL|macro|PV32P5_B96
-mdefine_line|#define PV32P5_B96&t;0x91
+mdefine_line|#define PV32P5_B96&t;0x0b
 DECL|macro|PV32P4_UTB96
-mdefine_line|#define PV32P4_UTB96&t;0x0f
+mdefine_line|#define PV32P4_UTB96&t;0xd1
 DECL|macro|PV32P5_UTB96
-mdefine_line|#define PV32P5_UTB96&t;0xd1
+mdefine_line|#define PV32P5_UTB96&t;0x0f
 DECL|macro|PV32P4_120
-mdefine_line|#define PV32P4_120&t;0x09
+mdefine_line|#define PV32P4_120&t;0xb1
 DECL|macro|PV32P5_120
-mdefine_line|#define PV32P5_120&t;0xb1
+mdefine_line|#define PV32P5_120&t;0x09
 DECL|macro|PV32P4_UT120
-mdefine_line|#define PV32P4_UT120&t;0x0f
+mdefine_line|#define PV32P4_UT120&t;0xf1
 DECL|macro|PV32P5_UT120
-mdefine_line|#define PV32P5_UT120&t;0xf1
+mdefine_line|#define PV32P5_UT120&t;0x0f
 DECL|macro|PV32P4_144
-mdefine_line|#define PV32P4_144&t;0x09
+mdefine_line|#define PV32P4_144&t;0x99
 DECL|macro|PV32P5_144
-mdefine_line|#define PV32P5_144&t;0x99
+mdefine_line|#define PV32P5_144&t;0x09
 DECL|macro|PV32P4_UT144
-mdefine_line|#define PV32P4_UT144&t;0x0f
+mdefine_line|#define PV32P4_UT144&t;0xf9
 DECL|macro|PV32P5_UT144
-mdefine_line|#define PV32P5_UT144&t;0xf9
+mdefine_line|#define PV32P5_UT144&t;0x0f
 DECL|macro|PV32P6_CTN
 mdefine_line|#define PV32P6_CTN&t;0x01
 DECL|macro|PV32P6_ATN
@@ -246,7 +251,7 @@ mdefine_line|#define S_P1_CHS_6&t;0x01
 DECL|macro|S_P1_CHS_5
 mdefine_line|#define S_P1_CHS_5&t;0x00
 DECL|macro|S_P2_BFT_DEF
-mdefine_line|#define S_P2_BFT_DEF&t;30
+mdefine_line|#define S_P2_BFT_DEF&t;0x10
 DECL|macro|IOM_CTRL_ENA
 mdefine_line|#define IOM_CTRL_ENA&t;0x80
 DECL|macro|IOM_CTRL_NOPCM
@@ -267,6 +272,8 @@ DECL|macro|HDLC_FST
 mdefine_line|#define HDLC_FST&t;0x20
 DECL|macro|HDLC_ERROR
 mdefine_line|#define HDLC_ERROR&t;0x1c
+DECL|macro|SART_NMD
+mdefine_line|#define SART_NMD&t;0x01
 DECL|macro|BSTAT_RDM0
 mdefine_line|#define BSTAT_RDM0&t;0x1
 DECL|macro|BSTAT_RDM1
@@ -288,21 +295,6 @@ comma
 r_char
 op_star
 id|s
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|isar_load_firmware
-c_func
-(paren
-r_struct
-id|IsdnCardState
-op_star
-id|cs
-comma
-id|u_char
-op_star
-id|buf
 )paren
 suffix:semicolon
 r_extern
@@ -336,6 +328,21 @@ r_struct
 id|BCState
 op_star
 id|bcs
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|isar_auxcmd
+c_func
+(paren
+r_struct
+id|IsdnCardState
+op_star
+id|cs
+comma
+id|isdn_ctrl
+op_star
+id|ic
 )paren
 suffix:semicolon
 eof

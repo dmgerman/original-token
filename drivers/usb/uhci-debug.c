@@ -1,10 +1,10 @@
-multiline_comment|/*&n; * UHCI-specific debugging code. Invaluable when something&n; * goes wrong, but don&squot;t get in my face.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; */
+multiline_comment|/*&n; * UHCI-specific debugging code. Invaluable when something&n; * goes wrong, but don&squot;t get in my face.&n; *&n; * Kernel visible pointers are surrounded in []&squot;s and bus&n; * visible pointers are surrounded in ()&squot;s&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;uhci.h&quot;
-DECL|function|show_td
+DECL|function|uhci_show_td
 r_void
-id|show_td
+id|uhci_show_td
 c_func
 (paren
 r_struct
@@ -28,22 +28,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%se%d %s%s%s%s%s%s%s%s%s%sLength=%x &quot;
-comma
-(paren
-(paren
-id|td-&gt;status
-op_rshift
-l_int|29
-)paren
-op_amp
-l_int|1
-)paren
-ques
-c_cond
-l_string|&quot;SPD &quot;
-suffix:colon
-l_string|&quot;&quot;
+l_string|&quot;e%d %s%s%s%s%s%s%s%s%s%sLength=%x &quot;
 comma
 (paren
 (paren
@@ -56,13 +41,20 @@ l_int|3
 )paren
 comma
 (paren
+id|td-&gt;status
+op_amp
+id|TD_CTRL_SPD
+)paren
+ques
+c_cond
+l_string|&quot;SPD &quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
 (paren
 id|td-&gt;status
-op_rshift
-l_int|26
-)paren
 op_amp
-l_int|1
+id|TD_CTRL_LS
 )paren
 ques
 c_cond
@@ -71,28 +63,9 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
-(paren
 id|td-&gt;status
-op_rshift
-l_int|25
-)paren
 op_amp
-l_int|1
-)paren
-ques
-c_cond
-l_string|&quot;IOS &quot;
-suffix:colon
-l_string|&quot;&quot;
-comma
-(paren
-(paren
-id|td-&gt;status
-op_rshift
-l_int|24
-)paren
-op_amp
-l_int|1
+id|TD_CTRL_IOC
 )paren
 ques
 c_cond
@@ -101,13 +74,9 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
-(paren
 id|td-&gt;status
-op_rshift
-l_int|23
-)paren
 op_amp
-l_int|1
+id|TD_CTRL_ACTIVE
 )paren
 ques
 c_cond
@@ -116,13 +85,9 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
-(paren
 id|td-&gt;status
-op_rshift
-l_int|22
-)paren
 op_amp
-l_int|1
+id|TD_CTRL_STALLED
 )paren
 ques
 c_cond
@@ -131,13 +96,9 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
-(paren
 id|td-&gt;status
-op_rshift
-l_int|21
-)paren
 op_amp
-l_int|1
+id|TD_CTRL_DBUFERR
 )paren
 ques
 c_cond
@@ -146,13 +107,9 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
-(paren
 id|td-&gt;status
-op_rshift
-l_int|20
-)paren
 op_amp
-l_int|1
+id|TD_CTRL_BABBLE
 )paren
 ques
 c_cond
@@ -161,13 +118,9 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
-(paren
 id|td-&gt;status
-op_rshift
-l_int|19
-)paren
 op_amp
-l_int|1
+id|TD_CTRL_NAK
 )paren
 ques
 c_cond
@@ -176,13 +129,9 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
-(paren
 id|td-&gt;status
-op_rshift
-l_int|18
-)paren
 op_amp
-l_int|1
+id|TD_CTRL_CRCTIMEO
 )paren
 ques
 c_cond
@@ -191,13 +140,9 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
-(paren
 id|td-&gt;status
-op_rshift
-l_int|17
-)paren
 op_amp
-l_int|1
+id|TD_CTRL_BITSTUFF
 )paren
 ques
 c_cond
@@ -219,7 +164,7 @@ l_int|0xff
 )paren
 (brace
 r_case
-l_int|0x2d
+id|USB_PID_SETUP
 suffix:colon
 id|spid
 op_assign
@@ -228,7 +173,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|0xe1
+id|USB_PID_OUT
 suffix:colon
 id|spid
 op_assign
@@ -237,7 +182,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|0x69
+id|USB_PID_IN
 suffix:colon
 id|spid
 op_assign
@@ -307,10 +252,10 @@ id|td-&gt;buffer
 )paren
 suffix:semicolon
 )brace
-DECL|function|show_sc
+DECL|function|uhci_show_sc
 r_static
 r_void
-id|show_sc
+id|uhci_show_sc
 c_func
 (paren
 r_int
@@ -333,108 +278,96 @@ comma
 (paren
 id|status
 op_amp
-(paren
-l_int|1
-op_lshift
-l_int|12
-)paren
+id|USBPORTSC_SUSP
 )paren
 ques
 c_cond
-l_string|&quot; PortSuspend&quot;
+l_string|&quot;PortSuspend &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|status
 op_amp
-(paren
-l_int|1
-op_lshift
-l_int|9
-)paren
+id|USBPORTSC_PR
 )paren
 ques
 c_cond
-l_string|&quot; PortReset&quot;
+l_string|&quot;PortReset &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|status
 op_amp
-(paren
-l_int|1
-op_lshift
-l_int|8
-)paren
+id|USBPORTSC_LSDA
 )paren
 ques
 c_cond
-l_string|&quot; LowSpeed&quot;
+l_string|&quot;LowSpeed &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|status
 op_amp
-l_int|0x40
+id|USBPORTSC_RD
 )paren
 ques
 c_cond
-l_string|&quot; ResumeDetect&quot;
+l_string|&quot;ResumeDetect &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|status
 op_amp
-l_int|0x08
+id|USBPORTSC_PEC
 )paren
 ques
 c_cond
-l_string|&quot; EnableChange&quot;
+l_string|&quot;EnableChange &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|status
 op_amp
-l_int|0x04
+id|USBPORTSC_PE
 )paren
 ques
 c_cond
-l_string|&quot; PortEnabled&quot;
+l_string|&quot;PortEnabled &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|status
 op_amp
-l_int|0x02
+id|USBPORTSC_CSC
 )paren
 ques
 c_cond
-l_string|&quot; ConnectChange&quot;
+l_string|&quot;ConnectChange &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|status
 op_amp
-l_int|0x01
+id|USBPORTSC_CCS
 )paren
 ques
 c_cond
-l_string|&quot; PortConnected&quot;
+l_string|&quot;PortConnected &quot;
 suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|show_status
+DECL|function|uhci_show_status
 r_void
-id|show_status
+id|uhci_show_status
 c_func
 (paren
 r_struct
@@ -563,88 +496,88 @@ comma
 (paren
 id|usbcmd
 op_amp
-l_int|0x80
+id|USBCMD_MAXP
 )paren
 ques
 c_cond
-l_string|&quot; Maxp64&quot;
+l_string|&quot;Maxp64 &quot;
 suffix:colon
-l_string|&quot; Maxp32&quot;
+l_string|&quot;Maxp32 &quot;
 comma
 (paren
 id|usbcmd
 op_amp
-l_int|0x40
+id|USBCMD_CF
 )paren
 ques
 c_cond
-l_string|&quot; CF&quot;
-suffix:colon
-l_string|&quot;&quot;
-comma
-(paren
-id|usbcmd
-op_amp
-l_int|0x20
-)paren
-ques
-c_cond
-l_string|&quot; SWDBG&quot;
+l_string|&quot;CF &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbcmd
 op_amp
-l_int|0x10
+id|USBCMD_SWDBG
 )paren
 ques
 c_cond
-l_string|&quot; FGR&quot;
+l_string|&quot;SWDBG &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbcmd
 op_amp
-l_int|0x08
+id|USBCMD_FGR
 )paren
 ques
 c_cond
-l_string|&quot; EGSM&quot;
+l_string|&quot;FGR &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbcmd
 op_amp
-l_int|0x04
+id|USBCMD_EGSM
 )paren
 ques
 c_cond
-l_string|&quot; GRESET&quot;
+l_string|&quot;EGSM &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbcmd
 op_amp
-l_int|0x02
+id|USBCMD_GRESET
 )paren
 ques
 c_cond
-l_string|&quot; HCRESET&quot;
+l_string|&quot;GRESET &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbcmd
 op_amp
-l_int|0x01
+id|USBCMD_HCRESET
 )paren
 ques
 c_cond
-l_string|&quot; RS&quot;
+l_string|&quot;HCRESET &quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+(paren
+id|usbcmd
+op_amp
+id|USBCMD_RS
+)paren
+ques
+c_cond
+l_string|&quot;RS &quot;
 suffix:colon
 l_string|&quot;&quot;
 )paren
@@ -659,66 +592,66 @@ comma
 (paren
 id|usbstat
 op_amp
-l_int|0x20
+id|USBSTS_HCH
 )paren
 ques
 c_cond
-l_string|&quot; HCHalted&quot;
+l_string|&quot;HCHalted &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbstat
 op_amp
-l_int|0x10
+id|USBSTS_HCPE
 )paren
 ques
 c_cond
-l_string|&quot; HostControllerProcessError&quot;
+l_string|&quot;HostControllerProcessError &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbstat
 op_amp
-l_int|0x08
+id|USBSTS_HSE
 )paren
 ques
 c_cond
-l_string|&quot; HostSystemError&quot;
+l_string|&quot;HostSystemError &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbstat
 op_amp
-l_int|0x04
+id|USBSTS_RD
 )paren
 ques
 c_cond
-l_string|&quot; ResumeDetect&quot;
+l_string|&quot;ResumeDetect &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbstat
 op_amp
-l_int|0x02
+id|USBSTS_ERROR
 )paren
 ques
 c_cond
-l_string|&quot; USBError&quot;
+l_string|&quot;USBError &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 (paren
 id|usbstat
 op_amp
-l_int|0x01
+id|USBSTS_USBINT
 )paren
 ques
 c_cond
-l_string|&quot; USBINT&quot;
+l_string|&quot;USBINT &quot;
 suffix:colon
 l_string|&quot;&quot;
 )paren
@@ -773,7 +706,7 @@ comma
 id|sof
 )paren
 suffix:semicolon
-id|show_sc
+id|uhci_show_sc
 c_func
 (paren
 l_int|1
@@ -781,7 +714,7 @@ comma
 id|portsc1
 )paren
 suffix:semicolon
-id|show_sc
+id|uhci_show_sc
 c_func
 (paren
 l_int|2
@@ -825,9 +758,9 @@ id|UHCI_PTR_BITS
 )paren
 suffix:semicolon
 )brace
-DECL|function|show_queue
+DECL|function|uhci_show_queue
 r_void
-id|show_queue
+id|uhci_show_queue
 c_func
 (paren
 r_struct
@@ -840,11 +773,18 @@ r_struct
 id|uhci_td
 op_star
 id|td
+comma
+op_star
+id|first
 suffix:semicolon
 r_int
 id|i
 op_assign
 l_int|0
+comma
+id|count
+op_assign
+l_int|1000
 suffix:semicolon
 r_if
 c_cond
@@ -856,7 +796,7 @@ id|UHCI_PTR_QH
 id|printk
 c_func
 (paren
-l_string|&quot;      Element points to QH?&bslash;n&quot;
+l_string|&quot;      Element points to QH (bug?)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -900,16 +840,23 @@ id|UHCI_PTR_BITS
 id|printk
 c_func
 (paren
-l_string|&quot;      td 0 = NULL&bslash;n&quot;
+l_string|&quot;      td 0: [NULL]&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_for
-c_loop
+r_if
+c_cond
 (paren
-id|td
+id|qh-&gt;first
+)paren
+id|first
+op_assign
+id|qh-&gt;first
+suffix:semicolon
+r_else
+id|first
 op_assign
 id|uhci_link_to_td
 c_func
@@ -917,7 +864,19 @@ c_func
 id|qh-&gt;element
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure it doesn&squot;t runaway */
+r_for
+c_loop
+(paren
 id|td
+op_assign
+id|first
+suffix:semicolon
+id|td
+op_logical_and
+id|count
+OG
+l_int|0
 suffix:semicolon
 id|td
 op_assign
@@ -926,12 +885,15 @@ c_func
 (paren
 id|td-&gt;link
 )paren
+comma
+op_decrement
+id|count
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;      td %d = %p&bslash;n&quot;
+l_string|&quot;      td %d: [%p]&bslash;n&quot;
 comma
 id|i
 op_increment
@@ -945,17 +907,40 @@ c_func
 l_string|&quot;      &quot;
 )paren
 suffix:semicolon
-id|show_td
+id|uhci_show_td
 c_func
 (paren
 id|td
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|td
+op_eq
+id|uhci_link_to_td
+c_func
+(paren
+id|td-&gt;link
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;td links to itself!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 )brace
-DECL|function|is_skeleton_qh
+)brace
+DECL|function|uhci_is_skeleton_qh
+r_static
 r_int
-id|is_skeleton_qh
+id|uhci_is_skeleton_qh
 c_func
 (paren
 r_struct
@@ -1033,9 +1018,9 @@ comma
 l_string|&quot;bulk&quot;
 )brace
 suffix:semicolon
-DECL|function|show_queues
+DECL|function|uhci_show_queues
 r_void
-id|show_queues
+id|uhci_show_queues
 c_func
 (paren
 r_struct
@@ -1129,7 +1114,7 @@ id|qh-&gt;link
 r_if
 c_cond
 (paren
-id|is_skeleton_qh
+id|uhci_is_skeleton_qh
 c_func
 (paren
 id|uhci
@@ -1151,7 +1136,7 @@ comma
 id|qh-&gt;element
 )paren
 suffix:semicolon
-id|show_queue
+id|uhci_show_queue
 c_func
 (paren
 id|qh

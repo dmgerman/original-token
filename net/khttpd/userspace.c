@@ -476,6 +476,12 @@ id|sk-&gt;max_ack_backlog
 )paren
 multiline_comment|/* To many pending requests */
 (brace
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|sock_put
 c_func
 (paren
@@ -502,6 +508,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|sock_put
 c_func
 (paren

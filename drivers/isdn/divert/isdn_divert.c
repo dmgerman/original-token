@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * $Id: isdn_divert.c,v 1.2 1999/07/04 21:37:32 werner Exp $&n; *&n; * DSS1 main diversion supplementary handling for i4l.&n; *&n; * Copyright 1999       by Werner Cornelius (werner@isdn4linux.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_divert.c,v $&n; * Revision 1.2  1999/07/04 21:37:32  werner&n; * Ported from kernel version 2.0&n; *&n; *&n; *&n; */
+multiline_comment|/* &n; * $Id: isdn_divert.c,v 1.4 1999/08/25 20:02:21 werner Exp $&n; *&n; * DSS1 main diversion supplementary handling for i4l.&n; *&n; * Copyright 1999       by Werner Cornelius (werner@isdn4linux.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_divert.c,v $&n; * Revision 1.4  1999/08/25 20:02:21  werner&n; * Changed return values for stat_icall(w) from 3-&gt;4 and 4-&gt;5 because of conflicts&n; * with existing software definitions. (PtP incomplete called party number)&n; *&n; * Revision 1.3  1999/08/22 20:26:35  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.2  1999/07/04 21:37:32  werner&n; * Ported from kernel version 2.0&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -2426,7 +2426,7 @@ id|AUTODEL_TIME
 suffix:semicolon
 id|retval
 op_assign
-l_int|4
+l_int|5
 suffix:semicolon
 )brace
 r_else
@@ -2447,7 +2447,7 @@ l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 id|retval
 op_assign
-l_int|3
+l_int|4
 suffix:semicolon
 multiline_comment|/* only proceed */
 )brace

@@ -638,6 +638,8 @@ id|partial
 suffix:semicolon
 r_int
 id|result
+op_assign
+id|USB_ST_NOERROR
 suffix:semicolon
 r_int
 id|maxretry

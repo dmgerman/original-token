@@ -19,21 +19,6 @@ r_int
 r_int
 id|start
 suffix:semicolon
-DECL|member|lock
-r_int
-r_int
-id|lock
-suffix:semicolon
-DECL|member|rd_openers
-r_int
-r_int
-id|rd_openers
-suffix:semicolon
-DECL|member|wr_openers
-r_int
-r_int
-id|wr_openers
-suffix:semicolon
 DECL|member|readers
 r_int
 r_int
@@ -46,37 +31,34 @@ id|writers
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual&n;   memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
+DECL|macro|PIPE_SIZE
+mdefine_line|#define PIPE_SIZE&t;&t;PAGE_SIZE
+DECL|macro|PIPE_SEM
+mdefine_line|#define PIPE_SEM(inode)&t;&t;(&amp;(inode).i_sem)
 DECL|macro|PIPE_WAIT
-mdefine_line|#define PIPE_WAIT(inode)&t;((inode).i_pipe-&gt;wait)
+mdefine_line|#define PIPE_WAIT(inode)&t;(&amp;(inode).i_pipe-&gt;wait)
 DECL|macro|PIPE_BASE
 mdefine_line|#define PIPE_BASE(inode)&t;((inode).i_pipe-&gt;base)
 DECL|macro|PIPE_START
 mdefine_line|#define PIPE_START(inode)&t;((inode).i_pipe-&gt;start)
 DECL|macro|PIPE_LEN
 mdefine_line|#define PIPE_LEN(inode)&t;&t;((inode).i_size)
-DECL|macro|PIPE_RD_OPENERS
-mdefine_line|#define PIPE_RD_OPENERS(inode)&t;((inode).i_pipe-&gt;rd_openers)
-DECL|macro|PIPE_WR_OPENERS
-mdefine_line|#define PIPE_WR_OPENERS(inode)&t;((inode).i_pipe-&gt;wr_openers)
 DECL|macro|PIPE_READERS
 mdefine_line|#define PIPE_READERS(inode)&t;((inode).i_pipe-&gt;readers)
 DECL|macro|PIPE_WRITERS
 mdefine_line|#define PIPE_WRITERS(inode)&t;((inode).i_pipe-&gt;writers)
-DECL|macro|PIPE_LOCK
-mdefine_line|#define PIPE_LOCK(inode)&t;((inode).i_pipe-&gt;lock)
-DECL|macro|PIPE_SIZE
-mdefine_line|#define PIPE_SIZE(inode)&t;PIPE_LEN(inode)
 DECL|macro|PIPE_EMPTY
-mdefine_line|#define PIPE_EMPTY(inode)&t;(PIPE_SIZE(inode)==0)
+mdefine_line|#define PIPE_EMPTY(inode)&t;(PIPE_LEN(inode) == 0)
 DECL|macro|PIPE_FULL
-mdefine_line|#define PIPE_FULL(inode)&t;(PIPE_SIZE(inode)==PIPE_BUF)
+mdefine_line|#define PIPE_FULL(inode)&t;(PIPE_LEN(inode) == PIPE_SIZE)
 DECL|macro|PIPE_FREE
-mdefine_line|#define PIPE_FREE(inode)&t;(PIPE_BUF - PIPE_LEN(inode))
+mdefine_line|#define PIPE_FREE(inode)&t;(PIPE_SIZE - PIPE_LEN(inode))
 DECL|macro|PIPE_END
-mdefine_line|#define PIPE_END(inode)&t;&t;((PIPE_START(inode)+PIPE_LEN(inode))&amp;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;   (PIPE_BUF-1))
+mdefine_line|#define PIPE_END(inode)&t;((PIPE_START(inode) + PIPE_LEN(inode)) &amp; (PIPE_SIZE-1))
 DECL|macro|PIPE_MAX_RCHUNK
-mdefine_line|#define PIPE_MAX_RCHUNK(inode)&t;(PIPE_BUF - PIPE_START(inode))
+mdefine_line|#define PIPE_MAX_RCHUNK(inode)&t;(PIPE_SIZE - PIPE_START(inode))
 DECL|macro|PIPE_MAX_WCHUNK
-mdefine_line|#define PIPE_MAX_WCHUNK(inode)&t;(PIPE_BUF - PIPE_END(inode))
+mdefine_line|#define PIPE_MAX_WCHUNK(inode)&t;(PIPE_SIZE - PIPE_END(inode))
 macro_line|#endif
 eof

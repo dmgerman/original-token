@@ -9,7 +9,6 @@ id|version
 op_assign
 l_string|&quot;sb1000.c:v1.1.2 6/01/98 (fventuri@mediaone.net)&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

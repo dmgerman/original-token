@@ -496,8 +496,6 @@ DECL|macro|NF_HOOK
 mdefine_line|#define NF_HOOK(pf, hook, skb, indev, outdev, okfn) (okfn)(skb)
 macro_line|#endif /*CONFIG_NETFILTER*/
 multiline_comment|/* From arch/i386/kernel/smp.c:&n; *&n; *&t;Why isn&squot;t this somewhere standard ??&n; *&n; * Maybe because this procedure is horribly buggy, and does&n; * not deserve to live.  Think about signedness issues for five&n; * seconds to see why.&t;&t;- Linus&n; */
-multiline_comment|/* Use which one you mean explicitly.  You have been warned. */
-macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* Two signed, return a signed. */
 DECL|macro|SMAX
 mdefine_line|#define SMAX(a,b) ((ssize_t)(a)&gt;(ssize_t)(b) ? (ssize_t)(a) : (ssize_t)(b))

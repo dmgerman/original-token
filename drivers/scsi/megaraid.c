@@ -5,7 +5,6 @@ DECL|macro|IOCTL_CMD_NEW
 mdefine_line|#define IOCTL_CMD_NEW  0x81
 DECL|macro|MEGARAID_VERSION
 mdefine_line|#define MEGARAID_VERSION &quot;v1.04 (August 16, 1999)&quot;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/modversions.h&gt;

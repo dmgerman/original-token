@@ -51,6 +51,11 @@ r_struct
 id|list_head
 id|list
 suffix:semicolon
+DECL|member|irq_handle
+r_void
+op_star
+id|irq_handle
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|variable|usb_audio_driver
@@ -73,7 +78,7 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-DECL|function|usb_audio_irq
+macro_line|#if 0
 r_static
 r_int
 id|usb_audio_irq
@@ -94,6 +99,7 @@ op_star
 id|dev_id
 )paren
 (brace
+macro_line|#if 0
 r_struct
 id|usb_audio
 op_star
@@ -114,10 +120,12 @@ comma
 id|aud
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|usb_audio_probe
 r_static
 r_int
@@ -133,22 +141,12 @@ id|dev
 r_struct
 id|usb_interface_descriptor
 op_star
-id|intf_desc
-suffix:semicolon
-r_struct
-id|usb_endpoint_descriptor
-op_star
-id|endpoint
+id|interface
 suffix:semicolon
 r_struct
 id|usb_audio
 op_star
 id|aud
-suffix:semicolon
-r_int
-id|bEndpointAddress
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|i
@@ -178,7 +176,7 @@ id|i
 op_increment
 )paren
 (brace
-id|intf_desc
+id|interface
 op_assign
 op_amp
 id|dev-&gt;config-&gt;interface
@@ -194,14 +192,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|intf_desc-&gt;bInterfaceClass
+id|interface-&gt;bInterfaceClass
 op_ne
 l_int|1
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -212,7 +208,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|intf_desc-&gt;bInterfaceSubClass
+id|interface-&gt;bInterfaceSubClass
 )paren
 (brace
 r_case
@@ -222,7 +218,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;audio: Control device.&bslash;n&quot;
+l_string|&quot;audio: control device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -234,7 +230,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;audio: streaming.&bslash;n&quot;
+l_string|&quot;audio: streaming&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -246,7 +242,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;audio: nonstreaming.&bslash;n&quot;
+l_string|&quot;audio: nonstreaming&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -283,9 +279,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|aud
 )paren
-(brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -310,17 +310,8 @@ r_private
 op_assign
 id|aud
 suffix:semicolon
-singleline_comment|//        &t;if (usb_set_configuration(dev, dev-&gt;config[0].bConfigurationValue)) {
-singleline_comment|//&t;&t;&t;printk (KERN_INFO &quot; Failed usb_set_configuration: Audio&bslash;n&quot;);
-singleline_comment|//&t;&t;&t;break;
-singleline_comment|//&t;&t;}
-singleline_comment|//        &t;usb_set_protocol(dev, 0);
-singleline_comment|//        &t;usb_set_idle(dev, 0, 0);
-singleline_comment|//        &t;usb_request_irq(dev,
-singleline_comment|//                        usb_rcvctrlpipe(dev, bEndpointAddress),
-singleline_comment|//                        usb_audio_irq,
-singleline_comment|//                        endpoint-&gt;bInterval,
-singleline_comment|//                        aud);
+multiline_comment|/*&n;&t;if (usb_set_configuration(dev, dev-&gt;config[0].bConfigurationValue)) {&n;&t;&t;printk (KERN_INFO &quot;Failed usb_set_configuration: Audio&bslash;n&quot;);&n;&t;&t;break;&n;&t;}&n;&t;usb_set_protocol(dev, 0);&n;&t;usb_set_idle(dev, 0, 0);&n;*/
+multiline_comment|/*&n;&t;aud-&gt;irq_handle = usb_request_irq(dev,&n;&t;&t;usb_rcvctrlpipe(dev, endpoint-&gt;bEndpointAddress),&n;&t;&t;usb_audio_irq,&n;&t;&t;endpoint-&gt;bInterval,&n;&t;&t;aud);&n;*/
 id|list_add
 c_func
 (paren
@@ -333,21 +324,6 @@ id|usb_audio_list
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|aud
-)paren
-id|kfree
-(paren
-id|aud
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
 suffix:semicolon
 )brace
 DECL|function|usb_audio_disconnect
@@ -379,14 +355,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|aud
 )paren
-(brace
-id|dev
-op_member_access_from_pointer
-r_private
-op_assign
-l_int|NULL
+r_return
 suffix:semicolon
 id|list_del
 c_func
@@ -395,19 +367,29 @@ op_amp
 id|aud-&gt;list
 )paren
 suffix:semicolon
+id|usb_release_irq
+c_func
+(paren
+id|aud-&gt;dev
+comma
+id|aud-&gt;irq_handle
+)paren
+suffix:semicolon
+id|aud-&gt;irq_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 id|kfree
 c_func
 (paren
 id|aud
 )paren
 suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;USB audio driver removed.&bslash;n&quot;
-)paren
+id|dev
+op_member_access_from_pointer
+r_private
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|usb_audio_init

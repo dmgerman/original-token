@@ -20,6 +20,10 @@ DECL|macro|dac_reg
 mdefine_line|#define dac_reg&t;(0x3c8)
 DECL|macro|dac_val
 mdefine_line|#define dac_val&t;(0x3c9)
+DECL|macro|VGA_FB_PHYS
+mdefine_line|#define VGA_FB_PHYS 0xA0000
+DECL|macro|VGA_FB_PHYS_LEN
+mdefine_line|#define VGA_FB_PHYS_LEN 65535
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * card parameters&n; */
 DECL|struct|vga16fb_info
@@ -327,6 +331,13 @@ id|currcon
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|release_io_ports
+r_static
+r_int
+id|release_io_ports
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n;&t; * Open/Release the frame buffer device&n;&t; */
 DECL|function|vga16fb_open
@@ -582,11 +593,11 @@ l_string|&quot;VGA16 VGA&quot;
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-l_int|0xa0000
+id|VGA_FB_PHYS
 suffix:semicolon
 id|fix-&gt;smem_len
 op_assign
-l_int|65536
+id|VGA_FB_PHYS_LEN
 suffix:semicolon
 id|fix-&gt;type
 op_assign
@@ -4616,18 +4627,43 @@ id|KERN_DEBUG
 l_string|&quot;vga16fb: initializing&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|__request_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|VGA_FB_PHYS
+comma
+id|VGA_FB_PHYS_LEN
+comma
+l_string|&quot;vga16fb&quot;
+)paren
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;vga16fb: unable to reserve VGA memory, exiting&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|vga16fb.video_vbase
 op_assign
 id|ioremap
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-l_int|0xa0000
+id|VGA_FB_PHYS
 comma
-l_int|65536
+id|VGA_FB_PHYS_LEN
 )paren
 suffix:semicolon
 id|printk
@@ -4731,31 +4767,26 @@ id|j
 )braket
 suffix:semicolon
 )brace
+multiline_comment|/* note - does not cause failure, b/c vgacon probably still owns this &n;&t; * region (FIXME) */
 r_if
 c_cond
 (paren
-id|vga16fb.isVGA
-)paren
-id|request_region
+id|__request_region
 c_func
 (paren
-l_int|0x3c0
+op_amp
+id|ioport_resource
 comma
-l_int|32
-comma
-l_string|&quot;vga+&quot;
-)paren
-suffix:semicolon
-r_else
-id|request_region
-c_func
-(paren
 l_int|0x3C0
 comma
 l_int|32
 comma
-l_string|&quot;ega&quot;
+l_string|&quot;vga16fb&quot;
 )paren
+)paren
+id|release_io_ports
+op_assign
+l_int|1
 suffix:semicolon
 id|disp.var
 op_assign
@@ -4901,18 +4932,37 @@ op_amp
 id|vga16fb.fb_info
 )paren
 suffix:semicolon
-id|release_region
-c_func
-(paren
-l_int|0x3c0
-comma
-l_int|32
-)paren
-suffix:semicolon
 id|iounmap
 c_func
 (paren
 id|vga16fb.video_vbase
+)paren
+suffix:semicolon
+id|__release_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|VGA_FB_PHYS
+comma
+id|VGA_FB_PHYS_LEN
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|release_io_ports
+)paren
+id|__release_region
+c_func
+(paren
+op_amp
+id|ioport_resource
+comma
+l_int|0x3c0
+comma
+l_int|32
 )paren
 suffix:semicolon
 )brace

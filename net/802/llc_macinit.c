@@ -633,11 +633,9 @@ id|llc_cancel_timers
 suffix:semicolon
 DECL|macro|ALL_TYPES_8022
 mdefine_line|#define ALL_TYPES_8022 0
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|llc_init
 r_void
+id|__init
 id|llc_init
 c_func
 (paren
@@ -645,7 +643,6 @@ r_struct
 id|net_proto
 op_star
 id|proto
-)paren
 )paren
 (brace
 id|printk

@@ -31,12 +31,10 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
-macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
-macro_line|#include &lt;linux/inetdevice.h&gt;
 r_extern
 r_struct
 id|net_proto_family

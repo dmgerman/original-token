@@ -6805,16 +6805,13 @@ id|dev_get_wireless_info
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_PROC_FS */
 macro_line|#endif&t;/* CONFIG_NET_RADIO */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|net_dev_init
 r_int
+id|__init
 id|net_dev_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

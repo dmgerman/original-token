@@ -229,6 +229,14 @@ macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,0)
 DECL|macro|COMPAT_HAS_NEW_WAITQ
 mdefine_line|#define COMPAT_HAS_NEW_WAITQ
 macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,12)
+DECL|macro|COMPAT_HAS_NEW_SETUP
+mdefine_line|#define COMPAT_HAS_NEW_SETUP
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,14)
+DECL|macro|net_device
+mdefine_line|#define net_device device
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_ISDN_COMPAT_H */
 eof

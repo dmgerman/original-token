@@ -7,8 +7,6 @@ singleline_comment|//  __initdata should work as advertized
 singleline_comment|//
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;./ip2/ip2types.h&quot;&t;&t;
 macro_line|#include &quot;./ip2/fip_firm.h&quot;&t;&t;

@@ -4,6 +4,7 @@ multiline_comment|/* too many macros - change to inline functions */
 macro_line|#ifndef DRIVER_ATM_HORIZON_H
 DECL|macro|DRIVER_ATM_HORIZON_H
 mdefine_line|#define DRIVER_ATM_HORIZON_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_ATM_HORIZON_DEBUG
 DECL|macro|DEBUG_HORIZON
 mdefine_line|#define DEBUG_HORIZON

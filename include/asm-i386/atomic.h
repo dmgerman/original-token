@@ -274,13 +274,16 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|atomic_inc_and_test_greater_zero
+DECL|function|atomic_add_negative
 r_extern
 id|__inline__
 r_int
-id|atomic_inc_and_test_greater_zero
+id|atomic_add_negative
 c_func
 (paren
+r_int
+id|i
+comma
 r_volatile
 id|atomic_t
 op_star
@@ -296,7 +299,7 @@ id|__volatile__
 c_func
 (paren
 id|LOCK
-l_string|&quot;incl %0; setg %1&quot;
+l_string|&quot;addl %2,%0; sets %1&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -312,6 +315,11 @@ l_string|&quot;=qm&quot;
 id|c
 )paren
 suffix:colon
+l_string|&quot;ir&quot;
+(paren
+id|i
+)paren
+comma
 l_string|&quot;m&quot;
 (paren
 id|__atomic_fool_gcc
@@ -325,7 +333,6 @@ suffix:semicolon
 r_return
 id|c
 suffix:semicolon
-multiline_comment|/* can be only 0 or 1 */
 )brace
 multiline_comment|/* These are x86-specific, used by some header files */
 DECL|macro|atomic_clear_mask

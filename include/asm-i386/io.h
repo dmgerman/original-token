@@ -273,12 +273,24 @@ DECL|macro|readw
 mdefine_line|#define readw(addr) (*(volatile unsigned short *) __io_virt(addr))
 DECL|macro|readl
 mdefine_line|#define readl(addr) (*(volatile unsigned int *) __io_virt(addr))
+DECL|macro|__raw_readb
+mdefine_line|#define __raw_readb readb
+DECL|macro|__raw_readw
+mdefine_line|#define __raw_readw readw
+DECL|macro|__raw_readl
+mdefine_line|#define __raw_readl readl
 DECL|macro|writeb
 mdefine_line|#define writeb(b,addr) (*(volatile unsigned char *) __io_virt(addr) = (b))
 DECL|macro|writew
 mdefine_line|#define writew(b,addr) (*(volatile unsigned short *) __io_virt(addr) = (b))
 DECL|macro|writel
 mdefine_line|#define writel(b,addr) (*(volatile unsigned int *) __io_virt(addr) = (b))
+DECL|macro|__raw_writeb
+mdefine_line|#define __raw_writeb writeb
+DECL|macro|__raw_writew
+mdefine_line|#define __raw_writew writew
+DECL|macro|__raw_writel
+mdefine_line|#define __raw_writel writel
 DECL|macro|memset_io
 mdefine_line|#define memset_io(a,b,c)&t;memset(__io_virt(a),(b),(c))
 DECL|macro|memcpy_fromio

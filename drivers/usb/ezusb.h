@@ -146,15 +146,15 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|EZUSB_STARTISO
-mdefine_line|#define EZUSB_STARTISO       _IOR(&squot;E&squot;, 8, struct ezusb_isotransfer)
+mdefine_line|#define EZUSB_STARTISO&t;&t;_IOR(&squot;E&squot;, 8, struct ezusb_isotransfer)
 DECL|macro|EZUSB_STOPISO
-mdefine_line|#define EZUSB_STOPISO        _IOR(&squot;E&squot;, 9, unsigned int)
+mdefine_line|#define EZUSB_STOPISO&t;&t;_IOR(&squot;E&squot;, 9, unsigned int)
 DECL|macro|EZUSB_ISODATA
-mdefine_line|#define EZUSB_ISODATA        _IOWR(&squot;E&squot;, 10, struct ezusb_isodata)
+mdefine_line|#define EZUSB_ISODATA&t;&t;_IOWR(&squot;E&squot;, 10, struct ezusb_isodata)
 DECL|macro|EZUSB_PAUSEISO
-mdefine_line|#define EZUSB_PAUSEISO       _IOR(&squot;E&squot;, 11, unsigned int)
+mdefine_line|#define EZUSB_PAUSEISO&t;&t;_IOR(&squot;E&squot;, 11, unsigned int)
 DECL|macro|EZUSB_RESUMEISO
-mdefine_line|#define EZUSB_RESUMEISO      _IOR(&squot;E&squot;, 12, unsigned int)
+mdefine_line|#define EZUSB_RESUMEISO&t;&t;_IOR(&squot;E&squot;, 12, unsigned int)
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#endif /* _LINUX_EZUSB_H */
 eof

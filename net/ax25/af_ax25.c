@@ -7068,11 +7068,9 @@ id|ax25_uid_get_info
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ax25_proto_init
 r_void
+id|__init
 id|ax25_proto_init
 c_func
 (paren
@@ -7080,7 +7078,6 @@ r_struct
 id|net_proto
 op_star
 id|pro
-)paren
 )paren
 (brace
 id|sock_register

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * drivers/video/clgenfb.c - driver for Cirrus Logic chipsets&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@pobox.com&gt;&n; *&n; * Contributors (thanks, all!)&n; *&n; *      Jeff Rugen:&n; *      Major contributions;  Motorola PowerStack (PPC and PCI) support,&n; *      GD54xx, 1280x1024 mode support, change MCLK based on VCLK.&n; *&n; *&t;Geert Uytterhoeven:&n; *&t;Excellent code review.&n; *&n; *&t;Lars Hecking:&n; *&t;Amiga updates and testing.&n; *&n; * Original clgenfb author:  Frank Neumann&n; *&n; * Based on retz3fb.c and clgen.c:&n; *      Copyright (C) 1997 Jes Sorensen&n; *      Copyright (C) 1996 Frank Neumann&n; *&n; ***************************************************************&n; *&n; * Format this code with GNU indent &squot;-kr -i8 -pcs&squot; options.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
 DECL|macro|CLGEN_VERSION
-mdefine_line|#define CLGEN_VERSION &quot;1.9.4.2&quot;
+mdefine_line|#define CLGEN_VERSION &quot;1.9.4.3&quot;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -649,6 +650,14 @@ DECL|member|keyREG
 r_int
 id|keyREG
 suffix:semicolon
+DECL|member|board_addr
+r_int
+r_int
+id|board_addr
+comma
+DECL|member|board_size
+id|board_size
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 DECL|member|pdev
@@ -680,6 +689,13 @@ DECL|variable|clgen_def_mode
 r_static
 r_int
 id|clgen_def_mode
+op_assign
+l_int|1
+suffix:semicolon
+DECL|variable|release_io_ports
+r_static
+r_int
+id|release_io_ports
 op_assign
 l_int|0
 suffix:semicolon
@@ -7435,6 +7451,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#ifdef CLGEN_USE_HARDCODED_RAM_SETTINGS
 multiline_comment|/* &quot;pre-set&quot; a RAMsize; if the test succeeds, double it */
 r_if
 c_cond
@@ -7456,6 +7473,16 @@ id|fb_info-&gt;size
 op_assign
 l_int|0x200000
 suffix:semicolon
+macro_line|#else
+m_assert
+(paren
+id|fb_info-&gt;size
+OG
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* make sure RAM size set by this point */
+macro_line|#endif
 multiline_comment|/* assume it&squot;s a &quot;large memory&quot; board (2/4 MB) */
 id|fb_info-&gt;smallboard
 op_assign
@@ -10371,7 +10398,7 @@ l_int|0
 dot
 id|flags
 op_amp
-id|IORESOURCE_IOPORT
+id|IORESOURCE_IO
 )paren
 (brace
 op_star
@@ -10433,6 +10460,63 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* clgen_pci_unmap only used in modules */
+macro_line|#ifdef MODULE
+DECL|function|clgen_pci_unmap
+r_static
+r_void
+id|clgen_pci_unmap
+(paren
+r_struct
+id|clgenfb_info
+op_star
+id|info
+)paren
+(brace
+id|iounmap
+(paren
+id|info-&gt;fbmem
+)paren
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,13)
+id|__release_region
+(paren
+op_amp
+id|iomem_resource
+comma
+id|info-&gt;fbmem_phys
+comma
+id|info-&gt;size
+)paren
+suffix:semicolon
+id|__release_region
+(paren
+op_amp
+id|iomem_resource
+comma
+l_int|0xA0000
+comma
+l_int|65535
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|release_io_ports
+)paren
+id|__release_region
+(paren
+op_amp
+id|ioport_resource
+comma
+l_int|0x3C0
+comma
+l_int|32
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#endif /* MODULE */
 DECL|function|clgen_pci_setup
 r_static
 r_int
@@ -10574,8 +10658,11 @@ id|PCI_COMMAND_IO
 )paren
 )paren
 (brace
+id|u16
+id|tmp16_o
+op_assign
 id|tmp16
-op_or_assign
+op_or
 id|PCI_COMMAND_MEMORY
 op_or
 id|PCI_COMMAND_IO
@@ -10586,7 +10673,7 @@ id|pdev
 comma
 id|PCI_COMMAND
 comma
-id|tmp16
+id|tmp16_o
 )paren
 suffix:semicolon
 )brace
@@ -10733,6 +10820,119 @@ id|info-&gt;regs
 )paren
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,13)
+r_if
+c_cond
+(paren
+op_logical_neg
+id|__request_region
+(paren
+op_amp
+id|iomem_resource
+comma
+id|board_addr
+comma
+id|board_size
+comma
+l_string|&quot;clgenfb&quot;
+)paren
+)paren
+(brace
+id|pci_write_config_word
+(paren
+id|pdev
+comma
+id|PCI_COMMAND
+comma
+id|tmp16
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;clgen: cannot reserve region 0x%lu, abort&bslash;n&quot;
+comma
+id|board_addr
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|__request_region
+(paren
+op_amp
+id|iomem_resource
+comma
+l_int|0xA0000
+comma
+l_int|65535
+comma
+l_string|&quot;clgenfb&quot;
+)paren
+)paren
+(brace
+id|pci_write_config_word
+(paren
+id|pdev
+comma
+id|PCI_COMMAND
+comma
+id|tmp16
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;clgen: cannot reserve region 0x%lu, abort&bslash;n&quot;
+comma
+l_int|0xA0000L
+)paren
+suffix:semicolon
+id|__release_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|board_addr
+comma
+id|board_size
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|__request_region
+c_func
+(paren
+op_amp
+id|ioport_resource
+comma
+l_int|0x3C0
+comma
+l_int|32
+comma
+l_string|&quot;clgenfb&quot;
+)paren
+)paren
+id|release_io_ports
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif /* kernel &gt; 2.3.13 */
 id|info-&gt;fbmem
 op_assign
 id|ioremap
@@ -10746,13 +10946,17 @@ id|info-&gt;fbmem_phys
 op_assign
 id|board_addr
 suffix:semicolon
+id|info-&gt;size
+op_assign
+id|board_size
+suffix:semicolon
 id|printk
 (paren
-l_string|&quot; RAM (%lu MB) at $%lx, &quot;
+l_string|&quot; RAM (%lu MB) at 0x%lx, &quot;
 comma
-id|board_size
+id|info-&gt;size
 op_div
-l_int|0x100000
+id|MB_
 comma
 id|board_addr
 )paren
@@ -10936,6 +11140,68 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* clgen_zorro_unmap only used in modules */
+macro_line|#ifdef MODULE
+DECL|function|clgen_zorro_unmap
+r_static
+r_void
+id|clgen_zorro_unmap
+(paren
+r_struct
+id|clgenfb_info
+op_star
+id|info
+)paren
+(brace
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,13)
+id|__release_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|info-&gt;board_addr
+comma
+id|info-&gt;board_size
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|info-&gt;btype
+op_eq
+id|BT_PICASSO4
+)paren
+(brace
+id|iounmap
+(paren
+id|info-&gt;board_addr
+)paren
+suffix:semicolon
+id|iounmap
+(paren
+id|info-&gt;fbmem_phys
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|info-&gt;board_addr
+OG
+l_int|0x01000000
+)paren
+id|iounmap
+(paren
+id|info-&gt;board_addr
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 DECL|function|clgen_zorro_setup
 r_static
 r_int
@@ -11052,6 +11318,8 @@ id|zorro_get_board
 id|key
 )paren
 suffix:semicolon
+id|info-&gt;board_addr
+op_assign
 id|board_addr
 op_assign
 (paren
@@ -11060,6 +11328,8 @@ r_int
 )paren
 id|cd-&gt;cd_BoardAddr
 suffix:semicolon
+id|info-&gt;board_size
+op_assign
 id|board_size
 op_assign
 (paren
@@ -11068,13 +11338,45 @@ r_int
 )paren
 id|cd-&gt;cd_BoardSize
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|__request_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|board_addr
+comma
+id|board_size
+comma
+l_string|&quot;clgenfb&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;clgen: cannot reserve region 0x%lu, abort&bslash;n&quot;
+comma
+id|board_addr
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|printk
 (paren
 l_string|&quot; RAM (%lu MB) at $%lx, &quot;
 comma
 id|board_size
 op_div
-l_int|0x100000
+id|MB_
 comma
 id|board_addr
 )paren
@@ -11648,6 +11950,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|clgen_zorro_unmap
+(paren
+id|info
+)paren
+suffix:semicolon
 id|zorro_unconfig_board
 (paren
 id|info-&gt;keyRAM
@@ -11667,6 +11974,12 @@ id|zorro_unconfig_board
 id|info-&gt;keyREG
 comma
 l_int|0
+)paren
+suffix:semicolon
+macro_line|#else
+id|clgen_pci_unmap
+(paren
+id|info
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;&t;/* CONFIG_ZORRO */

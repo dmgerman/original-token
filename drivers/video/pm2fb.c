@@ -1381,11 +1381,10 @@ r_struct
 (brace
 DECL|member|fb_base
 r_int
-r_char
-op_star
+r_int
 id|fb_base
 suffix:semicolon
-multiline_comment|/* framebuffer memory base */
+multiline_comment|/* physical framebuffer memory base */
 DECL|member|fb_size
 id|u32
 id|fb_size
@@ -1393,15 +1392,13 @@ suffix:semicolon
 multiline_comment|/* framebuffer memory size */
 DECL|member|rg_base
 r_int
-r_char
-op_star
+r_int
 id|rg_base
 suffix:semicolon
-multiline_comment|/* register memory base */
+multiline_comment|/* physical register memory base */
 DECL|member|p_fb
 r_int
-r_char
-op_star
+r_int
 id|p_fb
 suffix:semicolon
 multiline_comment|/* physical address of frame buffer */
@@ -1414,8 +1411,7 @@ suffix:semicolon
 multiline_comment|/* virtual address of frame buffer */
 DECL|member|p_regs
 r_int
-r_char
-op_star
+r_int
 id|p_regs
 suffix:semicolon
 multiline_comment|/* physical address of registers&n;&t;&t;&t;&t;&t;   region, must be rg_base or&n;&t;&t;&t;&t;&t;   rg_base+PM2_REGS_SIZE depending on&n;&t;&t;&t;&t;&t;   the host endianness */
@@ -5245,6 +5241,34 @@ id|p-&gt;regions.p_fb
 op_assign
 id|p-&gt;regions.fb_base
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|__request_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|p-&gt;regions.p_fb
+comma
+id|p-&gt;regions.fb_size
+comma
+l_string|&quot;pm2fb&quot;
+)paren
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;pm2fb: cannot reserve fb memory, abort&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|p-&gt;regions.v_fb
 op_assign
 id|MMAP
@@ -5268,6 +5292,42 @@ op_plus
 id|PM2_REGS_SIZE
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|__request_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|p-&gt;regions.p_regs
+comma
+id|PM2_REGS_SIZE
+comma
+l_string|&quot;pm2fb&quot;
+)paren
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;pm2fb: cannot reserve mmio memory, abort&bslash;n&quot;
+)paren
+suffix:semicolon
+id|UNMAP
+c_func
+(paren
+id|p-&gt;regions.v_fb
+comma
+id|p-&gt;regions.fb_size
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|p-&gt;regions.v_regs
 op_assign
 id|MMAP
@@ -5530,11 +5590,6 @@ l_int|0
 suffix:semicolon
 id|p-&gt;regions.fb_base
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|CVPPC_FB_APERTURE_ONE
 suffix:semicolon
 id|p-&gt;regions.fb_size
@@ -5543,11 +5598,6 @@ id|CVPPC_FB_SIZE
 suffix:semicolon
 id|p-&gt;regions.rg_base
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|CVPPC_REGS_REGION
 suffix:semicolon
 id|p-&gt;memclock
@@ -5768,17 +5818,17 @@ l_int|2
 dot
 id|start
 comma
-id|pci-&gt;dev-&gt;rom_address
+id|pci-&gt;dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 )paren
 suffix:semicolon
 macro_line|#ifdef __sparc__
 id|p-&gt;regions.rg_base
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|__pa
 c_func
 (paren
@@ -5792,11 +5842,6 @@ id|start
 suffix:semicolon
 id|p-&gt;regions.fb_base
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|__pa
 c_func
 (paren
@@ -5819,11 +5864,6 @@ id|OPTF_VIRTUAL
 (brace
 id|p-&gt;regions.rg_base
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|__pa
 c_func
 (paren
@@ -5837,11 +5877,6 @@ id|start
 suffix:semicolon
 id|p-&gt;regions.fb_base
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|__pa
 c_func
 (paren
@@ -5859,11 +5894,6 @@ r_else
 id|p-&gt;regions.rg_base
 op_assign
 (paren
-r_int
-r_char
-op_star
-)paren
-(paren
 id|pci-&gt;dev-&gt;resource
 (braket
 l_int|0
@@ -5874,11 +5904,6 @@ id|start
 suffix:semicolon
 id|p-&gt;regions.fb_base
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 (paren
 id|pci-&gt;dev-&gt;resource
 (braket
@@ -10214,15 +10239,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/***************************************************************************&n; * Begin of public functions&n; ***************************************************************************/
+macro_line|#ifdef MODULE
 DECL|function|pm2fb_cleanup
+r_static
 r_void
 id|pm2fb_cleanup
 c_func
 (paren
-r_struct
-id|fb_info
-op_star
-id|info
+r_void
 )paren
 (brace
 r_struct
@@ -10230,17 +10254,18 @@ id|pm2fb_info
 op_star
 id|i
 op_assign
-(paren
-r_struct
-id|pm2fb_info
-op_star
-)paren
-id|info
+op_amp
+id|fb_info
 suffix:semicolon
 id|unregister_framebuffer
 c_func
 (paren
-id|info
+(paren
+r_struct
+id|fb_info
+op_star
+)paren
+id|i
 )paren
 suffix:semicolon
 id|pm2fb_reset
@@ -10249,7 +10274,44 @@ c_func
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME UNMAP()??? */
+id|UNMAP
+c_func
+(paren
+id|i-&gt;regions.v_fb
+comma
+id|i-&gt;regions.fb_size
+)paren
+suffix:semicolon
+id|__release_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|i-&gt;regions.p_fb
+comma
+id|i-&gt;regions.fb_size
+)paren
+suffix:semicolon
+id|UNMAP
+c_func
+(paren
+id|i-&gt;regions.v_regs
+comma
+id|PM2_REGS_SIZE
+)paren
+suffix:semicolon
+id|__release_region
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+id|i-&gt;regions.p_regs
+comma
+id|PM2_REGS_SIZE
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10272,6 +10334,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* MODULE */
 DECL|function|pm2fb_init
 r_int
 id|__init

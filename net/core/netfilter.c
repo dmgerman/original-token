@@ -1,4 +1,5 @@
 multiline_comment|/* netfilter.c: look after the filters for various protocols. &n; * Heavily influenced by the old firewall.c by David Bonn and Alan Cox.&n; *&n; * Thanks to Rob `CmdrTaco&squot; Malda for not influencing this code in any&n; * way.&n; *&n; * Rusty Russell (C)1998 -- This code is GPL.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -581,7 +582,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
 macro_line|#include &lt;net/ip.h&gt;
-macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4.h&gt;
@@ -2664,7 +2664,6 @@ id|pf
 (brace
 )brace
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
-macro_line|#include &lt;linux/netfilter_ipv4.h&gt;
 DECL|function|debug_print_hooks_ip
 r_void
 id|debug_print_hooks_ip

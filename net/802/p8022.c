@@ -279,11 +279,9 @@ c_func
 id|unregister_8022_client
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|p8022_proto_init
 r_void
+id|__init
 id|p8022_proto_init
 c_func
 (paren
@@ -291,7 +289,6 @@ r_struct
 id|net_proto
 op_star
 id|pro
-)paren
 )paren
 (brace
 id|p8022_packet_type.type

@@ -9671,16 +9671,13 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ip_rt_init
 r_void
+id|__init
 id|ip_rt_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS

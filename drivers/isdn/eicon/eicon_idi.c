@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: eicon_idi.c,v 1.11 1999/07/25 15:12:03 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon.Diehl active cards.&n; *        IDI interface &n; *&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_idi.c,v $&n; * Revision 1.11  1999/07/25 15:12:03  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.10  1999/07/11 17:16:24  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.9  1999/03/29 11:19:42  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.8  1999/03/02 12:37:43  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.7  1999/02/03 18:34:35  armin&n; * Channel selection for outgoing calls w/o CHI.&n; * Added channel # in debug messages.&n; * L2 Transparent should work with 800 byte/packet now.&n; *&n; * Revision 1.6  1999/01/26 07:18:59  armin&n; * Bug with wrong added CPN fixed.&n; *&n; * Revision 1.5  1999/01/24 20:14:11  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.4  1999/01/10 18:46:05  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.3  1999/01/05 14:49:34  armin&n; * Added experimental usage of full BC and HLC for&n; * speech, 3.1kHz audio, fax gr.2/3&n; *&n; * Revision 1.2  1999/01/04 13:19:29  armin&n; * Channel status with listen-request wrong - fixed.&n; *&n; * Revision 1.1  1999/01/01 18:09:41  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
+multiline_comment|/* $Id: eicon_idi.c,v 1.13 1999/08/22 20:26:44 calle Exp $&n; *&n; * ISDN lowlevel-module for Eicon.Diehl active cards.&n; *        IDI interface &n; *&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_idi.c,v $&n; * Revision 1.13  1999/08/22 20:26:44  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.12  1999/08/18 20:16:59  armin&n; * Added XLOG function for all cards.&n; * Bugfix of alloc_skb NULL pointer.&n; *&n; * Revision 1.11  1999/07/25 15:12:03  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.10  1999/07/11 17:16:24  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.9  1999/03/29 11:19:42  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.8  1999/03/02 12:37:43  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.7  1999/02/03 18:34:35  armin&n; * Channel selection for outgoing calls w/o CHI.&n; * Added channel # in debug messages.&n; * L2 Transparent should work with 800 byte/packet now.&n; *&n; * Revision 1.6  1999/01/26 07:18:59  armin&n; * Bug with wrong added CPN fixed.&n; *&n; * Revision 1.5  1999/01/24 20:14:11  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.4  1999/01/10 18:46:05  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.3  1999/01/05 14:49:34  armin&n; * Added experimental usage of full BC and HLC for&n; * speech, 3.1kHz audio, fax gr.2/3&n; *&n; * Revision 1.2  1999/01/04 13:19:29  armin&n; * Channel status with listen-request wrong - fixed.&n; *&n; * Revision 1.1  1999/01/01 18:09:41  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -12,7 +12,7 @@ r_char
 op_star
 id|eicon_idi_revision
 op_assign
-l_string|&quot;$Revision: 1.11 $&quot;
+l_string|&quot;$Revision: 1.13 $&quot;
 suffix:semicolon
 DECL|variable|manbuf
 id|eicon_manifbuf
@@ -976,15 +976,11 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|sk_buff
 op_star
 id|skb2
-op_assign
-l_int|0
 suffix:semicolon
 id|eicon_REQ
 op_star
@@ -6049,6 +6045,12 @@ id|chan
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_ISDN_TTY_FAX
+r_if
+c_cond
+(paren
+op_logical_neg
+id|chan-&gt;e.B2Id
+)paren
 id|chan-&gt;fax
 op_assign
 l_int|0
@@ -7065,6 +7067,18 @@ id|chan-&gt;waitpq
 op_assign
 l_int|0
 suffix:semicolon
+id|idi_do_req
+c_func
+(paren
+id|ccard
+comma
+id|chan
+comma
+id|HANGUP
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7095,6 +7109,12 @@ id|cmd
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_ISDN_TTY_FAX
+id|chan-&gt;fax
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -7337,7 +7357,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-r_void
+r_int
 DECL|function|idi_handle_ack_ok
 id|idi_handle_ack_ok
 c_func
@@ -7404,6 +7424,7 @@ id|chan-&gt;e.D3Id
 )paren
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Management Interface */
@@ -7450,7 +7471,7 @@ c_cond
 (paren
 id|DebugVar
 op_amp
-l_int|1
+l_int|16
 )paren
 id|printk
 c_func
@@ -7464,6 +7485,9 @@ id|ack-&gt;Reference
 comma
 id|chan-&gt;e.ref
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 id|ccard-&gt;IdTable
@@ -7484,7 +7508,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;idi_ack: Ch%d: Removed : Id=%d Ch=%d (%s)&bslash;n&quot;
+l_string|&quot;idi_ack: Ch%d: Removed : Id=%x Ch=%d (%s)&bslash;n&quot;
 comma
 id|chan-&gt;No
 comma
@@ -7518,6 +7542,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Signal layer */
@@ -7539,7 +7564,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;idi_ack: Ch%d: RC OK Id=%d Ch=%d (ref:%d)&bslash;n&quot;
+l_string|&quot;idi_ack: Ch%d: RC OK Id=%x Ch=%d (ref:%d)&bslash;n&quot;
 comma
 id|chan-&gt;No
 comma
@@ -7732,7 +7757,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;idi_ack: Ch%d: RC OK Id=%d Ch=%d (ref:%d)&bslash;n&quot;
+l_string|&quot;idi_ack: Ch%d: RC OK Id=%x Ch=%d (ref:%d)&bslash;n&quot;
 comma
 id|chan-&gt;No
 comma
@@ -7745,6 +7770,9 @@ id|ack-&gt;Reference
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
 r_void
 DECL|function|idi_handle_ack
@@ -7878,6 +7906,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|idi_handle_ack_ok
 c_func
 (paren
@@ -7887,6 +7919,10 @@ id|chan
 comma
 id|ack
 )paren
+)paren
+id|chan
+op_assign
+l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -8097,22 +8133,20 @@ id|WRONG_IE
 suffix:colon
 r_default
 suffix:colon
-id|chan-&gt;e.busy
-op_assign
-l_int|0
-suffix:semicolon
+(brace
+)brace
 r_if
 c_cond
 (paren
 id|DebugVar
 op_amp
-l_int|24
+l_int|1
 )paren
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;eicon_ack: Ch%d: Not OK: Rc=%d Id=%d Ch=%d&bslash;n&quot;
+l_string|&quot;eicon_ack: Ch%d: Not OK !!: Rc=%d Id=%x Ch=%d&bslash;n&quot;
 comma
 id|dCh
 comma

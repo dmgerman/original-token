@@ -121,30 +121,6 @@ id|name
 op_assign
 id|dev-&gt;name
 suffix:semicolon
-id|name
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|name
-comma
-l_string|&quot;PCI&lt;%02x:%02x.%d&gt;&quot;
-comma
-id|dev-&gt;bus-&gt;number
-comma
-id|PCI_SLOT
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
-comma
-id|PCI_FUNC
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
-)paren
-suffix:semicolon
 r_do
 (brace
 r_if
@@ -174,7 +150,7 @@ c_func
 (paren
 id|name
 comma
-l_string|&quot; %04x:%04x&quot;
+l_string|&quot;PCI device %04x:%04x&quot;
 comma
 id|dev-&gt;vendor
 comma
@@ -229,7 +205,7 @@ c_func
 (paren
 id|name
 comma
-l_string|&quot; %04x:%04x (%s)&quot;
+l_string|&quot; PCI device %04x:%04x (%s)&quot;
 comma
 id|dev-&gt;vendor
 comma

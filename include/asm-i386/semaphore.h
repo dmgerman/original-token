@@ -15,9 +15,9 @@ DECL|member|count
 id|atomic_t
 id|count
 suffix:semicolon
-DECL|member|waking
+DECL|member|sleepers
 r_int
-id|waking
+id|sleepers
 suffix:semicolon
 DECL|member|wait
 id|wait_queue_head_t
@@ -73,7 +73,7 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|sem-&gt;waking
+id|sem-&gt;sleepers
 op_assign
 l_int|0
 suffix:semicolon

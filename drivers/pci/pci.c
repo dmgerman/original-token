@@ -1291,37 +1291,12 @@ l_int|16
 op_amp
 l_int|0xffff
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI_NO_NAMES
-id|sprintf
-c_func
-(paren
-id|dev-&gt;name
-comma
-l_string|&quot;pci:%02x:%02x.%d&quot;
-comma
-id|bus-&gt;number
-comma
-id|PCI_SLOT
-c_func
-(paren
-id|devfn
-)paren
-comma
-id|PCI_FUNC
-c_func
-(paren
-id|devfn
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
 id|pci_name_device
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* non-destructively determine if device can be a master: */
 id|pci_read_config_byte
 c_func

@@ -2616,6 +2616,14 @@ comma
 id|vma
 )paren
 suffix:semicolon
+macro_line|#if defined(__sparc__)
+multiline_comment|/* Should never get here, all fb drivers should have their own&n;&t;   mmap routines */
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* non-SPARC... */
 id|fb
 op_member_access_from_pointer
 id|fb_get_fix
@@ -2818,8 +2826,6 @@ id|_PAGE_GUARDED
 suffix:semicolon
 macro_line|#elif defined(__alpha__)
 multiline_comment|/* Caching is off in the I/O space quadrant by design.  */
-macro_line|#elif defined(__sparc__)
-multiline_comment|/* Should never get here, all fb drivers should have their own&n;&t;   mmap routines */
 macro_line|#elif defined(__i386__)
 r_if
 c_cond
@@ -2898,6 +2904,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif /* defined(__sparc__) */
 )brace
 r_static
 r_int

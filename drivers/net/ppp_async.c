@@ -1148,7 +1148,7 @@ c_cond
 id|put_user
 c_func
 (paren
-id|ap-&gt;flags
+id|val
 comma
 (paren
 r_int

@@ -1738,5 +1738,32 @@ suffix:semicolon
 )brace
 macro_line|#endif /* !i386 */
 macro_line|#endif
+macro_line|#if defined(__i386__) || defined(__alpha__)
+DECL|macro|fb_readb
+mdefine_line|#define fb_readb __raw_readb
+DECL|macro|fb_readw
+mdefine_line|#define fb_readw __raw_readw
+DECL|macro|fb_readl
+mdefine_line|#define fb_readl __raw_readl
+DECL|macro|fb_writeb
+mdefine_line|#define fb_writeb __raw_writeb
+DECL|macro|fb_writew
+mdefine_line|#define fb_writew __raw_writew
+DECL|macro|fb_writel
+mdefine_line|#define fb_writel __raw_writel
+macro_line|#else
+DECL|macro|fb_readb
+mdefine_line|#define fb_readb(addr) (*(volatile unsigned char *) __io_virt(addr))
+DECL|macro|fb_readw
+mdefine_line|#define fb_readw(addr) (*(volatile unsigned short *) __io_virt(addr))
+DECL|macro|fb_readl
+mdefine_line|#define fb_readl(addr) (*(volatile unsigned int *) __io_virt(addr))
+DECL|macro|fb_writeb
+mdefine_line|#define fb_writeb(b,addr) (*(volatile unsigned char *) __io_virt(addr) = (b))
+DECL|macro|fb_writew
+mdefine_line|#define fb_writew(b,addr) (*(volatile unsigned short *) __io_virt(addr) = (b))
+DECL|macro|fb_writel
+mdefine_line|#define fb_writel(b,addr) (*(volatile unsigned int *) __io_virt(addr) = (b))
+macro_line|#endif
 macro_line|#endif /* _VIDEO_FBCON_H */
 eof

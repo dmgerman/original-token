@@ -267,11 +267,9 @@ c_func
 id|unregister_snap_client
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|snap_proto_init
 r_void
+id|__init
 id|snap_proto_init
 c_func
 (paren
@@ -279,7 +277,6 @@ r_struct
 id|net_proto
 op_star
 id|pro
-)paren
 )paren
 (brace
 id|snap_dl

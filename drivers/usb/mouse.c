@@ -838,7 +838,7 @@ id|dev
 r_struct
 id|usb_interface_descriptor
 op_star
-id|intf_desc
+id|interface
 suffix:semicolon
 r_struct
 id|usb_endpoint_descriptor
@@ -883,7 +883,7 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* Is it a mouse interface? */
-id|intf_desc
+id|interface
 op_assign
 op_amp
 id|dev-&gt;config
@@ -904,7 +904,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|intf_desc-&gt;bInterfaceClass
+id|interface-&gt;bInterfaceClass
 op_ne
 l_int|3
 )paren
@@ -915,7 +915,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|intf_desc-&gt;bInterfaceSubClass
+id|interface-&gt;bInterfaceSubClass
 op_ne
 l_int|1
 )paren
@@ -926,7 +926,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|intf_desc-&gt;bInterfaceProtocol
+id|interface-&gt;bInterfaceProtocol
 op_ne
 l_int|2
 )paren
@@ -938,7 +938,7 @@ multiline_comment|/* Multiple endpoints? What kind of mutant ninja-mouse is this
 r_if
 c_cond
 (paren
-id|intf_desc-&gt;bNumEndpoints
+id|interface-&gt;bNumEndpoints
 op_ne
 l_int|1
 )paren
@@ -949,7 +949,7 @@ suffix:semicolon
 id|endpoint
 op_assign
 op_amp
-id|intf_desc-&gt;endpoint
+id|interface-&gt;endpoint
 (braket
 l_int|0
 )braket

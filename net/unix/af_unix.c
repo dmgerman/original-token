@@ -7081,10 +7081,8 @@ c_func
 r_void
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|unix_proto_init
 c_func
 (paren
@@ -7092,7 +7090,6 @@ r_struct
 id|net_proto
 op_star
 id|pro
-)paren
 )paren
 macro_line|#endif
 (brace

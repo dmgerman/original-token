@@ -1686,30 +1686,12 @@ c_func
 id|start_mem
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * IBM messed up *AGAIN* in their thinkpad: 0xA0000 -&gt; 0x9F000.&n;&t; * They seem to have done something stupid with the floppy&n;&t; * controller as well..&n;&t; * The amount of available base memory is in WORD 40:13.&n;&t; */
+multiline_comment|/*&n;&t; * IBM messed up *AGAIN* in their thinkpad: 0xA0000 -&gt; 0x9F000.&n;&t; * They seem to have done something stupid with the floppy&n;&t; * controller as well..&n;&t; * The amount of available base memory is in WORD 40:13. Except&n;&t; * when it isn&squot;t.&n;&t; */
 id|endbase
 op_assign
 id|PAGE_OFFSET
 op_plus
-(paren
-(paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|__va
-c_func
-(paren
-l_int|0x413
-)paren
-op_star
-l_int|1024
-)paren
-op_amp
-id|PAGE_MASK
-)paren
+l_int|0x9f000
 suffix:semicolon
 r_while
 c_loop

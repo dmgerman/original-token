@@ -3642,11 +3642,9 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Called by socket.c on kernel startup.  &n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|inet_proto_init
 r_void
+id|__init
 id|inet_proto_init
 c_func
 (paren
@@ -3654,7 +3652,6 @@ r_struct
 id|net_proto
 op_star
 id|pro
-)paren
 )paren
 (brace
 r_struct

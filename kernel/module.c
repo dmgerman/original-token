@@ -165,16 +165,13 @@ id|tag_freed
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Called at boot time&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_modules
 r_void
+id|__init
 id|init_modules
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|kernel_module.nsyms

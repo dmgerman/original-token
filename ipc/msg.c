@@ -81,7 +81,7 @@ macro_line|#endif
 DECL|variable|msgque
 r_static
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 id|msgque
 (braket
@@ -170,7 +170,7 @@ id|id
 op_assign
 (paren
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 )paren
 id|IPC_UNUSED
@@ -239,7 +239,7 @@ r_int
 id|id
 suffix:semicolon
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 id|msq
 suffix:semicolon
@@ -634,7 +634,7 @@ id|msgflg
 )paren
 (brace
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 id|msq
 suffix:semicolon
@@ -1221,7 +1221,7 @@ r_int
 id|id
 suffix:semicolon
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 id|msq
 suffix:semicolon
@@ -1301,7 +1301,7 @@ r_int
 id|id
 suffix:semicolon
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 id|msq
 suffix:semicolon
@@ -1342,7 +1342,7 @@ id|id
 op_assign
 (paren
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 )paren
 id|IPC_NOID
@@ -1361,7 +1361,7 @@ id|msq
 op_assign
 (paren
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 )paren
 id|kmalloc
@@ -1389,7 +1389,7 @@ id|id
 op_assign
 (paren
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 )paren
 id|IPC_UNUSED
@@ -1544,7 +1544,7 @@ op_minus
 id|EPERM
 suffix:semicolon
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 id|msq
 suffix:semicolon
@@ -1710,7 +1710,7 @@ id|id
 )paren
 (brace
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 id|msq
 op_assign
@@ -1786,7 +1786,7 @@ id|id
 op_assign
 (paren
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 )paren
 id|IPC_UNUSED
@@ -1891,7 +1891,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 op_star
 id|msq
 suffix:semicolon
@@ -2135,6 +2135,10 @@ id|tbuf.msg_ctime
 op_assign
 id|msq-&gt;msg_ctime
 suffix:semicolon
+id|tbuf.msg_cbytes_old
+op_assign
+id|msq-&gt;msg_cbytes
+suffix:semicolon
 id|tbuf.msg_cbytes
 op_assign
 id|msq-&gt;msg_cbytes
@@ -2142,6 +2146,10 @@ suffix:semicolon
 id|tbuf.msg_qnum
 op_assign
 id|msq-&gt;msg_qnum
+suffix:semicolon
+id|tbuf.msg_qbytes_old
+op_assign
+id|msq-&gt;msg_qbytes
 suffix:semicolon
 id|tbuf.msg_qbytes
 op_assign
@@ -2348,6 +2356,10 @@ id|tbuf.msg_ctime
 op_assign
 id|msq-&gt;msg_ctime
 suffix:semicolon
+id|tbuf.msg_cbytes_old
+op_assign
+id|msq-&gt;msg_cbytes
+suffix:semicolon
 id|tbuf.msg_cbytes
 op_assign
 id|msq-&gt;msg_cbytes
@@ -2355,6 +2367,10 @@ suffix:semicolon
 id|tbuf.msg_qnum
 op_assign
 id|msq-&gt;msg_qnum
+suffix:semicolon
+id|tbuf.msg_qbytes_old
+op_assign
+id|msq-&gt;msg_qbytes
 suffix:semicolon
 id|tbuf.msg_qbytes
 op_assign

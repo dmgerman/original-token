@@ -7832,11 +7832,9 @@ id|atalk_if_get_info
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/* Called by proto.c on kernel start up */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atalk_proto_init
 r_void
+id|__init
 id|atalk_proto_init
 c_func
 (paren
@@ -7844,7 +7842,6 @@ r_struct
 id|net_proto
 op_star
 id|pro
-)paren
 )paren
 (brace
 (paren

@@ -2,6 +2,7 @@ macro_line|#ifndef __LINUX_IP_NETFILTER_H
 DECL|macro|__LINUX_IP_NETFILTER_H
 mdefine_line|#define __LINUX_IP_NETFILTER_H
 multiline_comment|/* IPv4-specific defines for netfilter. &n; * (C)1998 Rusty Russell -- This code is GPL.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
 multiline_comment|/* IP Cache bits. */
 multiline_comment|/* Src IP address. */

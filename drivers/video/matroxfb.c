@@ -27758,6 +27758,7 @@ l_int|64
 )braket
 suffix:semicolon
 multiline_comment|/* &quot;matrox:font:xxxxx&quot; */
+macro_line|#ifndef MODULE
 DECL|variable|videomode
 r_static
 r_char
@@ -27767,6 +27768,7 @@ l_int|64
 )braket
 suffix:semicolon
 multiline_comment|/* &quot;matrox:mode:xxxxx&quot; or &quot;matrox:xxxxx&quot; */
+macro_line|#endif
 macro_line|#ifndef MODULE
 DECL|function|matroxfb_setup
 r_int
@@ -29011,7 +29013,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* !MODULE */
 DECL|function|matroxfb_getmemory
 r_static
 r_int
@@ -32351,7 +32353,7 @@ id|vesafb_defined.bits_per_pixel
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* !MODULE */
 multiline_comment|/* mode modifiers */
 r_if
 c_cond

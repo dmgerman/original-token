@@ -1,6 +1,5 @@
 multiline_comment|/* net/atm/atm_misc.c - Various functions for use by ATM drivers */
 multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL ICA */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;

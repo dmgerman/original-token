@@ -2373,11 +2373,9 @@ id|rif_get_info
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|rif_init
 r_void
+id|__init
 id|rif_init
 c_func
 (paren
@@ -2385,7 +2383,6 @@ r_struct
 id|net_proto
 op_star
 id|unused
-)paren
 )paren
 (brace
 id|rif_timer.expires

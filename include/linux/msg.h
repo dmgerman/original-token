@@ -12,10 +12,11 @@ DECL|macro|MSG_NOERROR
 mdefine_line|#define MSG_NOERROR     010000  /* no error if message is too big */
 DECL|macro|MSG_EXCEPT
 mdefine_line|#define MSG_EXCEPT      020000  /* recv any msg except of specified type.*/
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* one msqid structure for each queue on the system */
-DECL|struct|msqid_ds
+DECL|struct|msqid_ds_kern
 r_struct
-id|msqid_ds
+id|msqid_ds_kern
 (brace
 DECL|member|msg_perm
 r_struct
@@ -75,6 +76,87 @@ DECL|member|msg_qbytes
 r_int
 r_int
 id|msg_qbytes
+suffix:semicolon
+multiline_comment|/* max number of bytes on queue */
+DECL|member|msg_lspid
+id|__kernel_ipc_pid_t
+id|msg_lspid
+suffix:semicolon
+multiline_comment|/* pid of last msgsnd */
+DECL|member|msg_lrpid
+id|__kernel_ipc_pid_t
+id|msg_lrpid
+suffix:semicolon
+multiline_comment|/* last receive pid */
+)brace
+suffix:semicolon
+macro_line|#endif
+DECL|struct|msqid_ds
+r_struct
+id|msqid_ds
+(brace
+DECL|member|msg_perm
+r_struct
+id|ipc_perm
+id|msg_perm
+suffix:semicolon
+DECL|member|msg_first
+r_struct
+id|msg
+op_star
+id|msg_first
+suffix:semicolon
+multiline_comment|/* first message on queue */
+DECL|member|msg_last
+r_struct
+id|msg
+op_star
+id|msg_last
+suffix:semicolon
+multiline_comment|/* last message in queue */
+DECL|member|msg_stime
+id|__kernel_time_t
+id|msg_stime
+suffix:semicolon
+multiline_comment|/* last msgsnd time */
+DECL|member|msg_rtime
+id|__kernel_time_t
+id|msg_rtime
+suffix:semicolon
+multiline_comment|/* last msgrcv time */
+DECL|member|msg_ctime
+id|__kernel_time_t
+id|msg_ctime
+suffix:semicolon
+multiline_comment|/* last change time */
+DECL|member|msg_cbytes
+r_int
+r_int
+id|msg_cbytes
+suffix:semicolon
+multiline_comment|/* Reuse junk fields for 32 bit */
+DECL|member|msg_qbytes
+r_int
+r_int
+id|msg_qbytes
+suffix:semicolon
+multiline_comment|/* ditto */
+DECL|member|msg_cbytes_old
+r_int
+r_int
+id|msg_cbytes_old
+suffix:semicolon
+multiline_comment|/* current number of bytes on queue */
+DECL|member|msg_qnum
+r_int
+r_int
+id|msg_qnum
+suffix:semicolon
+multiline_comment|/* number of messages in queue */
+DECL|member|msg_qbytes_old
+r_int
+r_int
+id|msg_qbytes_old
 suffix:semicolon
 multiline_comment|/* max number of bytes on queue */
 DECL|member|msg_lspid

@@ -4409,15 +4409,12 @@ id|arp_get_info
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|arp_init
 r_void
+id|__init
 id|arp_init
 (paren
 r_void
-)paren
 )paren
 (brace
 id|neigh_table_init
