@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930&n; *      OPTi 82C924&n; *&n; * These audio interface chips don&squot;t produce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;Sound Blaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0c=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; *&n; *&t;Changes&n; *&t;&n; *&t;Alan Cox&t;&t;Clean up, added module selections.&n; *&n; *&t;A. Wik&t;&t;&t;Added support for Opti924 PnP.&n; *&t;&t;&t;&t;Improved debugging support.&t;16-May-1998&n; *&t;&t;&t;&t;Fixed bug.&t;&t;&t;16-Jun-1998&n; *&n; */
+multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930&n; *      OPTi 82C924&n; *&n; * These audio interface chips don&squot;t produce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;Sound Blaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0c=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; *&n; *&t;Changes&n; *&t;&n; *&t;Alan Cox&t;&t;Clean up, added module selections.&n; *&n; *&t;A. Wik&t;&t;&t;Added support for Opti924 PnP.&n; *&t;&t;&t;&t;Improved debugging support.&t;16-May-1998&n; *&t;&t;&t;&t;Fixed bug.&t;&t;&t;16-Jun-1998&n; *&n; *     Torsten Duwe            Made Opti924 PnP support non-destructive&n; *                                                             1998-12-23&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#ifdef MODULE
@@ -794,6 +794,7 @@ l_int|0
 r_return
 l_int|1
 suffix:semicolon
+macro_line|#if 0&t;
 multiline_comment|/* Force off PnP mode. This is not recommended because&n;&t; * the PnP bios will not recognize the chip on the next&n;&t; * warm boot and may assignd different resources to other&n;&t; * PnP/PCI cards.&n;&t; */
 id|mad_write
 c_func
@@ -805,6 +806,7 @@ comma
 l_int|0x04
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -823,9 +825,13 @@ r_char
 id|tmp
 comma
 id|tmp2
+comma
+id|bit
 suffix:semicolon
 r_int
 id|i
+comma
+id|port
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check that reading a register doesn&squot;t return bus float (0xff)&n;&t; * when the card is accessed using password. This may fail in case&n;&t; * the card is in low power mode. Normally at least the power saving&n;&t; * mode bit should be 0.&n;&t; */
 r_if
@@ -963,14 +969,44 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|bit
+op_assign
+(paren
+id|c924pnp
+)paren
+ques
+c_cond
+l_int|0x20
+suffix:colon
+l_int|0x80
+suffix:semicolon
+id|port
+op_assign
+(paren
+id|c924pnp
+)paren
+ques
+c_cond
+id|MC2_PORT
+suffix:colon
+id|MC1_PORT
+suffix:semicolon
+id|tmp
+op_assign
+id|mad_read
+c_func
+(paren
+id|port
+)paren
+suffix:semicolon
 id|mad_write
 c_func
 (paren
-id|MC1_PORT
+id|port
 comma
 id|tmp
 op_xor
-l_int|0x80
+id|bit
 )paren
 suffix:semicolon
 multiline_comment|/* Toggle a bit */
@@ -983,14 +1019,14 @@ op_assign
 id|mad_read
 c_func
 (paren
-id|MC1_PORT
+id|port
 )paren
 )paren
 op_ne
 (paren
 id|tmp
 op_xor
-l_int|0x80
+id|bit
 )paren
 )paren
 multiline_comment|/* Compare the bit */
@@ -998,7 +1034,7 @@ multiline_comment|/* Compare the bit */
 id|mad_write
 c_func
 (paren
-id|MC1_PORT
+id|port
 comma
 id|tmp
 )paren
@@ -1025,7 +1061,7 @@ suffix:semicolon
 id|mad_write
 c_func
 (paren
-id|MC1_PORT
+id|port
 comma
 id|tmp
 )paren
@@ -1521,36 +1557,8 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|c924pnp
-op_increment
-suffix:semicolon
-id|DDB
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;Detect using password = 0xE5 (again), port offset -0x80&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|detect_mad16
-c_func
-(paren
-)paren
-)paren
 multiline_comment|/* No luck. Try different model */
 (brace
-id|c924pnp
-op_assign
-l_int|0
-suffix:semicolon
 id|board_type
 op_assign
 id|C928
@@ -1689,9 +1697,54 @@ c_func
 (paren
 )paren
 )paren
+(brace
+id|board_type
+op_assign
+id|C924
+suffix:semicolon
+id|c924pnp
+op_increment
+suffix:semicolon
+id|DDB
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;Detect using password = 0xE5 (again), port offset -0x80&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|detect_mad16
+c_func
+(paren
+)paren
+)paren
+(brace
+id|c924pnp
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
+id|DDB
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;mad16.c: 82C924 PnP detected&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
 id|DDB
 c_func
 (paren

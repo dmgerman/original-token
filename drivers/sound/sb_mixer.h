@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/sb_mixer.h&n; * &n; * Definitions for the SB Pro and SB16 mixers&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added defines for the Sound Galaxy NX Pro mixer.&n; *&n; *&t;Rolf Fokkens&t;Dec 20 1998&n; *&t;Added (BETA?) support for ES18XX chips.&n; *&t;Which means: you can adjust the recording levels.&n; *&n; */
+multiline_comment|/*&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added defines for the Sound Galaxy NX Pro mixer.&n; *&n; *&t;Rolf Fokkens&t;Dec 20 1998&n; *&t;Added (BETA?) support for ES188x chips.&n; *&t;Which means: you can adjust the recording levels.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;legacy.h&quot;
 macro_line|#ifdef CONFIG_SBDSP
@@ -22,10 +22,10 @@ DECL|macro|ES688_RECORDING_DEVICES
 mdefine_line|#define ES688_RECORDING_DEVICES SBPRO_RECORDING_DEVICES
 DECL|macro|ES688_MIXER_DEVICES
 mdefine_line|#define ES688_MIXER_DEVICES (SBPRO_MIXER_DEVICES|SOUND_MASK_LINE2|SOUND_MASK_SPEAKER)
-DECL|macro|ES18XX_RECORDING_DEVICES
-mdefine_line|#define ES18XX_RECORDING_DEVICES&t;(ES688_RECORDING_DEVICES | SOUND_MASK_LINE2 &bslash;&n;&t;&t;&t;&t;&t; |SOUND_MASK_SYNTH)
-DECL|macro|ES18XX_MIXER_DEVICES
-mdefine_line|#define ES18XX_MIXER_DEVICES (ES688_MIXER_DEVICES)
+DECL|macro|ES188X_RECORDING_DEVICES
+mdefine_line|#define ES188X_RECORDING_DEVICES&t;(ES688_RECORDING_DEVICES | SOUND_MASK_LINE2 &bslash;&n;&t;&t;&t;&t;&t; |SOUND_MASK_SYNTH)
+DECL|macro|ES188X_MIXER_DEVICES
+mdefine_line|#define ES188X_MIXER_DEVICES (ES688_MIXER_DEVICES)
 DECL|macro|SB16_MIXER_DEVICES
 mdefine_line|#define SB16_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_SPEAKER | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | SOUND_MASK_OGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_VOLUME | SOUND_MASK_BASS | SOUND_MASK_TREBLE | &bslash;&n;&t;&t;&t;&t;&t;SOUND_MASK_IMIX)
 multiline_comment|/* These are the only devices that are working at the moment.  Others could&n; * be added once they are identified and a method is found to control them.&n; */
@@ -91,39 +91,39 @@ DECL|macro|LEFT_CHN
 mdefine_line|#define LEFT_CHN&t;0
 DECL|macro|RIGHT_CHN
 mdefine_line|#define RIGHT_CHN&t;1
-multiline_comment|/*&n; * Mixer registers of ES18XX&n; *&n; * These register specifically take care of recording levels. To make the&n; * mapping from playback devices to recording devices every recording&n; * devices = playback device + ES18XX_MIXER_RECDIFF&n; */
-DECL|macro|ES18XX_MIXER_RECBASE
-mdefine_line|#define ES18XX_MIXER_RECBASE&t;(SOUND_MIXER_LINE3 + 1)
-DECL|macro|ES18XX_MIXER_RECDIFF
-mdefine_line|#define ES18XX_MIXER_RECDIFF&t;(ES18XX_MIXER_RECBASE - SOUND_MIXER_SYNTH)
-DECL|macro|ES18XX_MIXER_RECSYNTH
-mdefine_line|#define ES18XX_MIXER_RECSYNTH&t;(SOUND_MIXER_SYNTH&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECPCM
-mdefine_line|#define ES18XX_MIXER_RECPCM&t;(SOUND_MIXER_PCM&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECSPEAKER
-mdefine_line|#define ES18XX_MIXER_RECSPEAKER&t;(SOUND_MIXER_SPEAKER&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECLINE
-mdefine_line|#define ES18XX_MIXER_RECLINE&t;(SOUND_MIXER_LINE&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECMIC
-mdefine_line|#define ES18XX_MIXER_RECMIC&t;(SOUND_MIXER_MIC&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECCD
-mdefine_line|#define ES18XX_MIXER_RECCD&t;(SOUND_MIXER_CD&t;&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECIMIX
-mdefine_line|#define ES18XX_MIXER_RECIMIX&t;(SOUND_MIXER_IMIX&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECALTPCM
-mdefine_line|#define ES18XX_MIXER_RECALTPCM&t;(SOUND_MIXER_ALTPCM&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECRECLEV
-mdefine_line|#define ES18XX_MIXER_RECRECLEV&t;(SOUND_MIXER_RECLEV&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECIGAIN
-mdefine_line|#define ES18XX_MIXER_RECIGAIN&t;(SOUND_MIXER_IGAIN&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECOGAIN
-mdefine_line|#define ES18XX_MIXER_RECOGAIN&t;(SOUND_MIXER_OGAIN&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECLINE1
-mdefine_line|#define ES18XX_MIXER_RECLINE1&t;(SOUND_MIXER_LINE1&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECLINE2
-mdefine_line|#define ES18XX_MIXER_RECLINE2&t;(SOUND_MIXER_LINE2&t;+ ES18XX_MIXER_RECDIFF)
-DECL|macro|ES18XX_MIXER_RECLINE3
-mdefine_line|#define ES18XX_MIXER_RECLINE3&t;(SOUND_MIXER_LINE3&t;+ ES18XX_MIXER_RECDIFF)
+multiline_comment|/*&n; * Mixer registers of ES188x&n; *&n; * These register specifically take care of recording levels. To make the&n; * mapping from playback devices to recording devices every recording&n; * devices = playback device + ES188X_MIXER_RECDIFF&n; */
+DECL|macro|ES188X_MIXER_RECBASE
+mdefine_line|#define ES188X_MIXER_RECBASE&t;(SOUND_MIXER_LINE3 + 1)
+DECL|macro|ES188X_MIXER_RECDIFF
+mdefine_line|#define ES188X_MIXER_RECDIFF&t;(ES188X_MIXER_RECBASE - SOUND_MIXER_SYNTH)
+DECL|macro|ES188X_MIXER_RECSYNTH
+mdefine_line|#define ES188X_MIXER_RECSYNTH&t;(SOUND_MIXER_SYNTH&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECPCM
+mdefine_line|#define ES188X_MIXER_RECPCM&t;(SOUND_MIXER_PCM&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECSPEAKER
+mdefine_line|#define ES188X_MIXER_RECSPEAKER&t;(SOUND_MIXER_SPEAKER&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECLINE
+mdefine_line|#define ES188X_MIXER_RECLINE&t;(SOUND_MIXER_LINE&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECMIC
+mdefine_line|#define ES188X_MIXER_RECMIC&t;(SOUND_MIXER_MIC&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECCD
+mdefine_line|#define ES188X_MIXER_RECCD&t;(SOUND_MIXER_CD&t;&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECIMIX
+mdefine_line|#define ES188X_MIXER_RECIMIX&t;(SOUND_MIXER_IMIX&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECALTPCM
+mdefine_line|#define ES188X_MIXER_RECALTPCM&t;(SOUND_MIXER_ALTPCM&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECRECLEV
+mdefine_line|#define ES188X_MIXER_RECRECLEV&t;(SOUND_MIXER_RECLEV&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECIGAIN
+mdefine_line|#define ES188X_MIXER_RECIGAIN&t;(SOUND_MIXER_IGAIN&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECOGAIN
+mdefine_line|#define ES188X_MIXER_RECOGAIN&t;(SOUND_MIXER_OGAIN&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECLINE1
+mdefine_line|#define ES188X_MIXER_RECLINE1&t;(SOUND_MIXER_LINE1&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECLINE2
+mdefine_line|#define ES188X_MIXER_RECLINE2&t;(SOUND_MIXER_LINE2&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECLINE3
+mdefine_line|#define ES188X_MIXER_RECLINE3&t;(SOUND_MIXER_LINE3&t;+ ES188X_MIXER_RECDIFF)
 multiline_comment|/*&n; * Mixer registers of ALS007&n; */
 DECL|macro|ALS007_RECORD_SRC
 mdefine_line|#define ALS007_RECORD_SRC&t;0x6c
@@ -670,11 +670,11 @@ l_int|0
 )paren
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The ES18XX specifics.&n; * Note that de master volume unlike ES688 is now controlled by two &n; * 6 bit registers.&n; * Also Note that the recording levels (ES18XX_MIXER_REC...) have own &n; * entries as if they were playback devices. They are used internally only!&n; */
-DECL|variable|es18XX_mix
+multiline_comment|/*&n; * The ES188x specifics.&n; * Note that de master volume unlike ES688 is now controlled by two 6 bit&n; * registers. These seem to work OK on 1868 too, but I have no idea if it&squot;s&n; * compatible to 688 or 1688....&n; * Also Note that the recording levels (ES188X_MIXER_REC...) have own &n; * entries as if they were playback devices. They are used internally in the&n; * driver only!&n; */
+DECL|variable|es188x_mix
 r_static
 id|mixer_tab
-id|es18XX_mix
+id|es188x_mix
 op_assign
 (brace
 id|MIX_ENT
@@ -986,7 +986,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECSYNTH
+id|ES188X_MIXER_RECSYNTH
 comma
 l_int|0x6b
 comma
@@ -1004,7 +1004,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECPCM
+id|ES188X_MIXER_RECPCM
 comma
 l_int|0x00
 comma
@@ -1022,7 +1022,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECSPEAKER
+id|ES188X_MIXER_RECSPEAKER
 comma
 l_int|0x00
 comma
@@ -1040,7 +1040,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECLINE
+id|ES188X_MIXER_RECLINE
 comma
 l_int|0x6e
 comma
@@ -1058,7 +1058,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECMIC
+id|ES188X_MIXER_RECMIC
 comma
 l_int|0x68
 comma
@@ -1076,7 +1076,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECCD
+id|ES188X_MIXER_RECCD
 comma
 l_int|0x6a
 comma
@@ -1094,7 +1094,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECIMIX
+id|ES188X_MIXER_RECIMIX
 comma
 l_int|0x00
 comma
@@ -1112,7 +1112,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECALTPCM
+id|ES188X_MIXER_RECALTPCM
 comma
 l_int|0x00
 comma
@@ -1130,7 +1130,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECRECLEV
+id|ES188X_MIXER_RECRECLEV
 comma
 l_int|0x00
 comma
@@ -1148,7 +1148,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECIGAIN
+id|ES188X_MIXER_RECIGAIN
 comma
 l_int|0x00
 comma
@@ -1166,7 +1166,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECOGAIN
+id|ES188X_MIXER_RECOGAIN
 comma
 l_int|0x00
 comma
@@ -1184,7 +1184,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECLINE1
+id|ES188X_MIXER_RECLINE1
 comma
 l_int|0x00
 comma
@@ -1202,7 +1202,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECLINE2
+id|ES188X_MIXER_RECLINE2
 comma
 l_int|0x6c
 comma
@@ -1220,7 +1220,7 @@ comma
 id|MIX_ENT
 c_func
 (paren
-id|ES18XX_MIXER_RECLINE3
+id|ES188X_MIXER_RECLINE3
 comma
 l_int|0x00
 comma

@@ -14777,7 +14777,6 @@ macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|struct|initvol
 r_static
-r_const
 r_struct
 id|initvol
 (brace

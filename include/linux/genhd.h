@@ -322,6 +322,9 @@ DECL|macro|NETBSD_PARTITION
 mdefine_line|#define NETBSD_PARTITION&t;0xa9    /* NetBSD Partition ID */
 DECL|macro|BSDI_PARTITION
 mdefine_line|#define BSDI_PARTITION&t;&t;0xb7    /* BSDI Partition ID */
+multiline_comment|/* Ours is not to wonder why.. */
+DECL|macro|BSD_PARTITION
+mdefine_line|#define BSD_PARTITION&t;&t;FREEBSD_PARTITION
 multiline_comment|/* check against BSD src/sys/sys/disklabel.h for consistency */
 DECL|macro|BSD_DISKMAGIC
 mdefine_line|#define BSD_DISKMAGIC&t;(0x82564557UL)&t;/* The disk magic number */

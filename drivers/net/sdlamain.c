@@ -1,7 +1,4 @@
 multiline_comment|/*****************************************************************************&n;* sdlamain.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver.  Main module.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&t;&t;Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Nov 28, 1997&t;Jaspreet Singh&t;Changed DRV_RELEASE to 1&n;* Nov 10, 1997&t;Jaspreet Singh&t;Changed sti() to restore_flags();&n;* Nov 06, 1997 &t;Jaspreet Singh&t;Changed DRV_VERSION to 4 and DRV_RELEASE to 0&n;* Oct 20, 1997 &t;Jaspreet Singh&t;Modified sdla_isr routine so that card-&gt;in_isr&n;*&t;&t;&t;&t;assignments are taken out and placed in the&n;*&t;&t;&t;&t;sdla_ppp.c, sdla_fr.c and sdla_x25.c isr&n;*&t;&t;&t;&t;routines. Took out &squot;wandev-&gt;tx_int_enabled&squot; and&n;*&t;&t;&t;&t;replaced it with &squot;wandev-&gt;enable_tx_int&squot;. &n;* May 29, 1997&t;Jaspreet Singh&t;Flow Control Problem&n;*&t;&t;&t;&t;added &quot;wandev-&gt;tx_int_enabled=1&quot; line in the&n;*&t;&t;&t;&t;init module. This line intializes the flag for &n;*&t;&t;&t;&t;preventing Interrupt disabled with device set to&n;*&t;&t;&t;&t;busy&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o added UDP management stuff&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
-macro_line|#if&t;!defined(__KERNEL__) || !defined(MODULE)
-macro_line|#error&t;This code MUST be compiled as a kernel module!
-macro_line|#endif
 macro_line|#include &lt;linux/config.h&gt;&t;/* OS configuration options */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -223,12 +220,21 @@ multiline_comment|/* .data */
 suffix:semicolon
 multiline_comment|/******* Kernel Loadable Module Entry Points ********************************/
 multiline_comment|/*============================================================================&n; * Module &squot;insert&squot; entry point.&n; * o print announcement&n; * o allocate adapter data space&n; * o initialize static data&n; * o register all cards with WAN router&n; * o calibrate SDLA shared memory access delay.&n; *&n; * Return:&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; * Context:&t;process&n; */
+macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
 id|init_module
 (paren
 r_void
 )paren
+macro_line|#else
+r_int
+id|wanpipe_init
+c_func
+(paren
+r_void
+)paren
+macro_line|#endif
 (brace
 r_int
 id|cnt
@@ -453,6 +459,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 multiline_comment|/*============================================================================&n; * Module &squot;remove&squot; entry point.&n; * o unregister all adapters from the WAN router&n; * o release all remaining system resources&n; */
 DECL|function|cleanup_module
 r_void
@@ -503,6 +510,7 @@ id|card_array
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/******* WAN Device Driver Entry Points *************************************/
 multiline_comment|/*============================================================================&n; * Setup/confugure WAN link driver.&n; * o check adapter state&n; * o make sure firmware is present in configuration&n; * o make sure I/O port and IRQ are specified&n; * o make sure I/O region is available&n; * o allocate interrupt vector&n; * o setup SDLA hardware&n; * o call appropriate routine to perform protocol-specific initialization&n; * o mark I/O region as used&n; * o if this is the first active card, then schedule background task&n; *&n; * This function is called when router handles ROUTER_SETUP IOCTL. The&n; * configuration structure is in kernel memory (including extended data, if&n; * any).&n; */
 DECL|function|setup

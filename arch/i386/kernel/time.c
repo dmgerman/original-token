@@ -39,10 +39,6 @@ r_int
 id|cpu_hz
 suffix:semicolon
 multiline_comment|/* Detected as we calibrate the TSC */
-DECL|variable|cacheflush_time
-id|cycles_t
-id|cacheflush_time
-suffix:semicolon
 multiline_comment|/* Number of usecs that the last interrupt was delayed */
 DECL|variable|delay_at_last_interrupt
 r_static
@@ -71,6 +67,7 @@ id|xtime_lock
 suffix:semicolon
 DECL|function|do_fast_gettimeoffset
 r_static
+r_inline
 r_int
 r_int
 id|do_fast_gettimeoffset
@@ -156,9 +153,11 @@ op_plus
 id|edx
 suffix:semicolon
 )brace
-multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
+multiline_comment|/*&n; * Older CPU&squot;s don&squot;t have the rdtsc instruction..&n; */
+macro_line|#if CPU &lt; 586
+multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|function|do_slow_gettimeoffset
 r_static
 r_int
@@ -345,6 +344,10 @@ r_void
 op_assign
 id|do_slow_gettimeoffset
 suffix:semicolon
+macro_line|#else
+DECL|macro|do_gettimeoffset
+mdefine_line|#define do_gettimeoffset()&t;do_fast_gettimeoffset()
+macro_line|#endif
 multiline_comment|/*&n; * This version of gettimeofday has microsecond resolution&n; * and better than microsecond precision on fast x86 machines with TSC.&n; */
 DECL|function|do_gettimeofday
 r_void
@@ -1568,10 +1571,12 @@ op_amp
 id|X86_FEATURE_TSC
 )paren
 (brace
+macro_line|#ifndef do_gettimeoffset
 id|do_gettimeoffset
 op_assign
 id|do_fast_gettimeoffset
 suffix:semicolon
+macro_line|#endif
 id|do_get_fast_time
 op_assign
 id|do_gettimeofday
@@ -1640,13 +1645,6 @@ id|cpu_hz
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Rough estimation for SMP scheduling, this is the number of&n;&t; * cycles it takes for a fully memory-limited process to flush&n;&t; * the SMP-local cache.&n;&t; */
-id|cacheflush_time
-op_assign
-id|cpu_hz
-op_div
-l_int|10000
-suffix:semicolon
 id|setup_x86_irq
 c_func
 (paren

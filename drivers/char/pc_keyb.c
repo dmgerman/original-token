@@ -2563,6 +2563,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Random magic cookie for the aux device&n; */
+DECL|macro|AUX_DEV
+mdefine_line|#define AUX_DEV ((void *)queue)
 DECL|function|release_aux
 r_static
 r_int
@@ -2615,25 +2618,14 @@ comma
 id|KBD_CNTL_REG
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MCA
 id|free_irq
 c_func
 (paren
 id|AUX_IRQ
 comma
-id|inode
+id|AUX_DEV
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|AUX_IRQ
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2674,7 +2666,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Flush input queue */
-macro_line|#ifdef CONFIG_MCA
 r_if
 c_cond
 (paren
@@ -2685,39 +2676,14 @@ id|AUX_IRQ
 comma
 id|keyboard_interrupt
 comma
-id|MCA_bus
-ques
-c_cond
 id|SA_SHIRQ
-suffix:colon
-l_int|0
 comma
 l_string|&quot;PS/2 Mouse&quot;
 comma
-id|inode
+id|AUX_DEV
 )paren
 )paren
 (brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|AUX_IRQ
-comma
-id|keyboard_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;PS/2 Mouse&quot;
-comma
-l_int|NULL
-)paren
-)paren
-(brace
-macro_line|#endif
 id|aux_count
 op_decrement
 suffix:semicolon

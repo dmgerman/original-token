@@ -1733,6 +1733,15 @@ c_func
 id|dentry
 )paren
 suffix:semicolon
+id|nfs_refresh_inode
+c_func
+(paren
+id|inode
+comma
+op_amp
+id|fattr
+)paren
+suffix:semicolon
 id|out_valid
 suffix:colon
 r_return

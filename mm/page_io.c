@@ -61,6 +61,8 @@ id|zones_used
 suffix:semicolon
 id|kdev_t
 id|dev
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|block_size

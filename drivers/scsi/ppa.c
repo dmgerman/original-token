@@ -1392,6 +1392,10 @@ id|len
 )paren
 (brace
 multiline_comment|/*&n;     * %eax scratch&n;     * %ebx Data to transfer&n;     * %ecx Counter (Don&squot;t touch!!)&n;     * %edx Port&n;     * %esi Source buffer (mem pointer)&n;     *&n;     * In case you are wondering what the last line of the asm does...&n;     * &lt;output allocation&gt; : &lt;input allocation&gt; : &lt;trashed registers&gt;&n;     */
+r_register
+r_int
+id|d0
+suffix:semicolon
 id|asm
 c_func
 (paren
@@ -1399,7 +1403,7 @@ l_string|&quot;shr $2,%%ecx&bslash;n&quot;
 "&bslash;"
 l_string|&quot;&t;jz .no_more_bulk_bo&bslash;n&quot;
 "&bslash;"
-l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.p2align 4,,7&bslash;n&quot;
 "&bslash;"
 l_string|&quot;.loop_bulk_bo:&bslash;n&quot;
 "&bslash;"
@@ -1443,7 +1447,7 @@ l_string|&quot;&t;addl $4,%%esi&bslash;n&quot;
 "&bslash;"
 l_string|&quot;&t;loop .loop_bulk_bo&bslash;n&quot;
 "&bslash;"
-l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.p2align 4,,7&bslash;n&quot;
 "&bslash;"
 l_string|&quot;.no_more_bulk_bo:&quot;
 "&bslash;"
@@ -1452,8 +1456,13 @@ l_string|&quot;=S&quot;
 (paren
 id|buffer
 )paren
+comma
+l_string|&quot;=c&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;1&quot;
 (paren
 id|len
 )paren
@@ -1463,7 +1472,7 @@ l_string|&quot;d&quot;
 id|base
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;0&quot;
 (paren
 id|buffer
 )paren
@@ -1471,8 +1480,6 @@ suffix:colon
 l_string|&quot;eax&quot;
 comma
 l_string|&quot;ebx&quot;
-comma
-l_string|&quot;ecx&quot;
 )paren
 suffix:semicolon
 id|asm
@@ -1482,7 +1489,7 @@ l_string|&quot;andl $3,%%ecx&bslash;n&quot;
 "&bslash;"
 l_string|&quot;&t;jz .no_more_loose_bo&bslash;n&quot;
 "&bslash;"
-l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.p2align 4,,7&bslash;n&quot;
 "&bslash;"
 l_string|&quot;.loop_loose_bo:&bslash;n&quot;
 "&bslash;"
@@ -1503,9 +1510,12 @@ l_string|&quot;&t;loop .loop_loose_bo&bslash;n&quot;
 l_string|&quot;.no_more_loose_bo:&bslash;n&quot;
 "&bslash;"
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=c&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;0&quot;
 (paren
 id|len
 )paren
@@ -1523,8 +1533,6 @@ suffix:colon
 l_string|&quot;eax&quot;
 comma
 l_string|&quot;ebx&quot;
-comma
-l_string|&quot;ecx&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1554,6 +1562,10 @@ id|len
 )paren
 (brace
 multiline_comment|/*&n;     * %eax scratch&n;     * %ebx Data to transfer&n;     * %ecx Counter (Don&squot;t touch!!)&n;     * %edx Port&n;     * %esi Source buffer (mem pointer)&n;     *&n;     * In case you are wondering what the last line of the asm does...&n;     * &lt;output allocation&gt; : &lt;input allocation&gt; : &lt;trashed registers&gt;&n;     */
+r_register
+r_int
+id|d0
+suffix:semicolon
 id|asm
 c_func
 (paren
@@ -1561,7 +1573,7 @@ l_string|&quot;shr $2,%%ecx&bslash;n&quot;
 "&bslash;"
 l_string|&quot;&t;jz .no_more_bulk_bi&bslash;n&quot;
 "&bslash;"
-l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.p2align 4,,7&bslash;n&quot;
 "&bslash;"
 l_string|&quot;.loop_bulk_bi:&bslash;n&quot;
 "&bslash;"
@@ -1607,7 +1619,7 @@ l_string|&quot;&t;addl $4,%%esi&bslash;n&quot;
 "&bslash;"
 l_string|&quot;&t;loop .loop_bulk_bi&bslash;n&quot;
 "&bslash;"
-l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.p2align 4,,7&bslash;n&quot;
 "&bslash;"
 l_string|&quot;.no_more_bulk_bi:&quot;
 "&bslash;"
@@ -1616,8 +1628,13 @@ l_string|&quot;=S&quot;
 (paren
 id|buffer
 )paren
+comma
+l_string|&quot;=c&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;1&quot;
 (paren
 id|len
 )paren
@@ -1627,7 +1644,7 @@ l_string|&quot;d&quot;
 id|base
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;0&quot;
 (paren
 id|buffer
 )paren
@@ -1635,8 +1652,6 @@ suffix:colon
 l_string|&quot;eax&quot;
 comma
 l_string|&quot;ebx&quot;
-comma
-l_string|&quot;ecx&quot;
 )paren
 suffix:semicolon
 id|asm
@@ -1646,7 +1661,7 @@ l_string|&quot;andl $3,%%ecx&bslash;n&quot;
 "&bslash;"
 l_string|&quot;&t;jz .no_more_loose_bi&bslash;n&quot;
 "&bslash;"
-l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.p2align 4,,7&bslash;n&quot;
 "&bslash;"
 l_string|&quot;.loop_loose_bi:&bslash;n&quot;
 "&bslash;"
@@ -1667,9 +1682,12 @@ l_string|&quot;&t;loop .loop_loose_bi&bslash;n&quot;
 l_string|&quot;.no_more_loose_bi:&bslash;n&quot;
 "&bslash;"
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=c&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;0&quot;
 (paren
 id|len
 )paren
@@ -1687,8 +1705,6 @@ suffix:colon
 l_string|&quot;eax&quot;
 comma
 l_string|&quot;ebx&quot;
-comma
-l_string|&quot;ecx&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1718,6 +1734,10 @@ id|len
 )paren
 (brace
 multiline_comment|/*&n;     * %eax scratch&n;     * %ebx Data to transfer&n;     * %ecx Counter (Don&squot;t touch!!)&n;     * %edx Port&n;     * %esi Source buffer (mem pointer)&n;     *&n;     * In case you are wondering what the last line of the asm does...&n;     * &lt;output allocation&gt; : &lt;input allocation&gt; : &lt;trashed registers&gt;&n;     */
+r_register
+r_int
+id|d0
+suffix:semicolon
 id|asm
 c_func
 (paren
@@ -1725,7 +1745,7 @@ l_string|&quot;shr $2,%%ecx&bslash;n&quot;
 "&bslash;"
 l_string|&quot;&t;jz .no_more_bulk_ni&bslash;n&quot;
 "&bslash;"
-l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.p2align 4,,7&bslash;n&quot;
 "&bslash;"
 l_string|&quot;.loop_bulk_ni:&bslash;n&quot;
 "&bslash;"
@@ -1771,7 +1791,7 @@ l_string|&quot;&t;addl $4,%%esi&bslash;n&quot;
 "&bslash;"
 l_string|&quot;&t;loop .loop_bulk_ni&bslash;n&quot;
 "&bslash;"
-l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.p2align 4,,7&bslash;n&quot;
 "&bslash;"
 l_string|&quot;.no_more_bulk_ni:&quot;
 "&bslash;"
@@ -1780,8 +1800,13 @@ l_string|&quot;=S&quot;
 (paren
 id|buffer
 )paren
+comma
+l_string|&quot;=c&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;1&quot;
 (paren
 id|len
 )paren
@@ -1791,7 +1816,7 @@ l_string|&quot;d&quot;
 id|str_p
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;0&quot;
 (paren
 id|buffer
 )paren
@@ -1799,8 +1824,6 @@ suffix:colon
 l_string|&quot;eax&quot;
 comma
 l_string|&quot;ebx&quot;
-comma
-l_string|&quot;ecx&quot;
 )paren
 suffix:semicolon
 id|asm
@@ -1810,7 +1833,7 @@ l_string|&quot;andl $3,%%ecx&bslash;n&quot;
 "&bslash;"
 l_string|&quot;&t;jz .no_more_loose_ni&bslash;n&quot;
 "&bslash;"
-l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.p2align 4,,7&bslash;n&quot;
 "&bslash;"
 l_string|&quot;.loop_loose_ni:&bslash;n&quot;
 "&bslash;"
@@ -1831,9 +1854,12 @@ l_string|&quot;&t;loop .loop_loose_ni&bslash;n&quot;
 l_string|&quot;.no_more_loose_ni:&bslash;n&quot;
 "&bslash;"
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=c&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;0&quot;
 (paren
 id|len
 )paren
@@ -1851,8 +1877,6 @@ suffix:colon
 l_string|&quot;eax&quot;
 comma
 l_string|&quot;ebx&quot;
-comma
-l_string|&quot;ecx&quot;
 )paren
 suffix:semicolon
 r_return

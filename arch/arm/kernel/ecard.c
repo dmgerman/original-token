@@ -890,7 +890,9 @@ id|jiffies
 comma
 id|last
 op_plus
-l_int|500
+l_int|5
+op_star
+id|HZ
 )paren
 )paren
 (brace

@@ -2491,7 +2491,14 @@ id|reg_01.entries
 op_ne
 l_int|0x17
 )paren
+op_logical_and
 multiline_comment|/* ISA+PCI boards */
+(paren
+id|reg_01.entries
+op_ne
+l_int|0x3F
+)paren
+multiline_comment|/* Xeon boards */
 )paren
 id|UNEXPECTED_IO_APIC
 c_func
@@ -2534,7 +2541,14 @@ id|reg_01.version
 op_ne
 l_int|0x11
 )paren
-multiline_comment|/* my IO-APIC */
+op_logical_and
+multiline_comment|/* Pentium/Pro IO-APICs */
+(paren
+id|reg_01.version
+op_ne
+l_int|0x13
+)paren
+multiline_comment|/* Xeon IO-APICs */
 )paren
 id|UNEXPECTED_IO_APIC
 c_func

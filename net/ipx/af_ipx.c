@@ -9318,9 +9318,6 @@ r_case
 id|SIOCIPXNCPCONN
 suffix:colon
 (brace
-r_int
-id|err
-suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * This socket wants to take care of the NCP connection&n;&t;&t;&t; * handed to us in arg.&n;&t;&t;&t; */
 r_if
 c_cond

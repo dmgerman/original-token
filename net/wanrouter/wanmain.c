@@ -4,9 +4,9 @@ macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;&t;/* support for loadable modules */
 macro_line|#include &lt;linux/malloc.h&gt;&t;/* kmalloc(), kfree() */
-macro_line|#include &lt;linux/vmalloc.h&gt;      /* vmalloc(), vfree() */
 macro_line|#include &lt;linux/mm.h&gt;&t;&t;/* verify_area(), etc. */
 macro_line|#include &lt;linux/string.h&gt;&t;/* inline mem*, str* functions */
+macro_line|#include &lt;linux/vmalloc.h&gt;&t;/* vmalloc, vfree */
 macro_line|#include &lt;asm/segment.h&gt;&t;/* kernel &lt;-&gt; user copy */
 macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy_to/from_user */
@@ -206,7 +206,75 @@ l_int|0xC2
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
+macro_line|#ifndef MODULE
+DECL|function|wanrouter_init
+r_int
+id|wanrouter_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+r_extern
+r_void
+id|wanpipe_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s v%u.%u %s&bslash;n&quot;
+comma
+id|fullname
+comma
+id|ROUTER_VERSION
+comma
+id|ROUTER_RELEASE
+comma
+id|copyright
+)paren
+suffix:semicolon
+id|err
+op_assign
+id|wanrouter_proc_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: can&squot;t create entry in proc filesystem!&bslash;n&quot;
+comma
+id|modname
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Initialise compiled in boards&n;&t; */
+macro_line|#ifdef CONFIG_VENDOR_SANGOMA
+id|wanpipe_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+r_return
+id|err
+suffix:semicolon
+)brace
+macro_line|#else
 multiline_comment|/*&n; *&t;Kernel Loadable Module Entry Points&n; */
 multiline_comment|/*&n; *&t;Module &squot;insert&squot; entry point.&n; *&t;o print announcement&n; *&t;o initialize static data&n; *&t;o create /proc/net/router directory and static entries&n; *&n; *&t;Return:&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; *&t;Context:&t;process&n; */
 DECL|function|init_module
@@ -270,42 +338,6 @@ r_void
 id|wanrouter_proc_cleanup
 c_func
 (paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_void
-id|wanrouter_init
-c_func
-(paren
-r_void
-)paren
-)paren
-(brace
-r_int
-id|err
-op_assign
-id|wanrouter_proc_init
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: can&squot;t create entry in proc filesystem!&bslash;n&quot;
-comma
-id|modname
 )paren
 suffix:semicolon
 )brace
@@ -1392,15 +1424,26 @@ r_else
 id|err
 op_assign
 op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_else
+id|err
+op_assign
+op_minus
 id|ENOBUFS
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|data
+)paren
 id|vfree
 c_func
 (paren
 id|data
 )paren
 suffix:semicolon
-)brace
 )brace
 id|bail
 suffix:colon

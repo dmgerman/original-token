@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cosa.h,v 1.8 1998/11/09 03:54:49 kas Exp $ */
+multiline_comment|/* $Id: cosa.h,v 1.5 1998/12/24 12:40:18 kas Exp $ */
 multiline_comment|/*&n; *  Copyright (C) 1995-1997  Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef COSA_H__
 DECL|macro|COSA_H__
@@ -52,6 +52,8 @@ DECL|macro|SR_START_ADDR
 mdefine_line|#define SR_START_ADDR   0x4400  /* SRP microcode start address */
 DECL|macro|COSA_LOAD_ADDR
 mdefine_line|#define COSA_LOAD_ADDR    0x400  /* SRP microcode load address */
+DECL|macro|COSA_MAX_FIRMWARE_SIZE
+mdefine_line|#define COSA_MAX_FIRMWARE_SIZE&t;0x10000
 multiline_comment|/* ioctls */
 DECL|struct|cosa_download
 r_struct

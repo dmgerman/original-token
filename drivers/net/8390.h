@@ -755,19 +755,23 @@ r_char
 id|saved_irq
 suffix:semicolon
 multiline_comment|/* Original dev-&gt;irq value. */
-multiline_comment|/* The new statistics table. */
 DECL|member|stat
 r_struct
 id|net_device_stats
 id|stat
 suffix:semicolon
+multiline_comment|/* The new statistics table. */
 DECL|member|reg_offset
-r_int
-r_char
+id|u32
 op_star
 id|reg_offset
 suffix:semicolon
 multiline_comment|/* Register mapping table */
+DECL|member|page_lock
+id|spinlock_t
+id|page_lock
+suffix:semicolon
+multiline_comment|/* Page register locks */
 DECL|member|priv
 r_int
 r_int
@@ -786,17 +790,17 @@ DECL|macro|ei_status
 mdefine_line|#define ei_status (*(struct ei_device *)(dev-&gt;priv))
 multiline_comment|/* Some generic ethernet register configurations. */
 DECL|macro|E8390_TX_IRQ_MASK
-mdefine_line|#define E8390_TX_IRQ_MASK 0xa&t;/* For register EN0_ISR */
+mdefine_line|#define E8390_TX_IRQ_MASK&t;0xa&t;/* For register EN0_ISR */
 DECL|macro|E8390_RX_IRQ_MASK
-mdefine_line|#define E8390_RX_IRQ_MASK  0x5
+mdefine_line|#define E8390_RX_IRQ_MASK&t;0x5
 DECL|macro|E8390_RXCONFIG
-mdefine_line|#define E8390_RXCONFIG 0x4&t;/* EN0_RXCR: broadcasts, no multicast,errors */
+mdefine_line|#define E8390_RXCONFIG&t;&t;0x4&t;/* EN0_RXCR: broadcasts, no multicast,errors */
 DECL|macro|E8390_RXOFF
-mdefine_line|#define E8390_RXOFF 0x20&t;/* EN0_RXCR: Accept no packets */
+mdefine_line|#define E8390_RXOFF&t;&t;0x20&t;/* EN0_RXCR: Accept no packets */
 DECL|macro|E8390_TXCONFIG
-mdefine_line|#define E8390_TXCONFIG 0x00&t;/* EN0_TXCR: Normal transmit mode */
+mdefine_line|#define E8390_TXCONFIG&t;&t;0x00&t;/* EN0_TXCR: Normal transmit mode */
 DECL|macro|E8390_TXOFF
-mdefine_line|#define E8390_TXOFF 0x02&t;/* EN0_TXCR: Transmitter off */
+mdefine_line|#define E8390_TXOFF&t;&t;0x02&t;/* EN0_TXCR: Transmitter off */
 multiline_comment|/*  Register accessed at EN_CMD, the 8390 base addr.  */
 DECL|macro|E8390_STOP
 mdefine_line|#define E8390_STOP&t;0x01&t;/* Stop and reset the chip */
@@ -816,6 +820,7 @@ DECL|macro|E8390_PAGE1
 mdefine_line|#define E8390_PAGE1&t;0x40&t;/* using the two high-order bits */
 DECL|macro|E8390_PAGE2
 mdefine_line|#define E8390_PAGE2&t;0x80&t;/* Page 3 is invalid. */
+multiline_comment|/*&n; *&t;Only generate indirect loads given a machine that needs them.&n; */
 macro_line|#if defined(CONFIG_MAC) || defined(CONFIG_AMIGA_PCMCIA) || &bslash;&n;    defined(CONFIG_ARIADNE2) || defined(CONFIG_ARIADNE2_MODULE)
 DECL|macro|EI_SHIFT
 mdefine_line|#define EI_SHIFT(x)&t;(ei_local-&gt;reg_offset[x])

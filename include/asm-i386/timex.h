@@ -8,10 +8,9 @@ DECL|macro|CLOCK_TICK_FACTOR
 mdefine_line|#define CLOCK_TICK_FACTOR&t;20&t;/* Factor of both 1000000 and CLOCK_TICK_RATE */
 DECL|macro|FINETUNE
 mdefine_line|#define FINETUNE ((((((long)LATCH * HZ - CLOCK_TICK_RATE) &lt;&lt; SHIFT_HZ) * &bslash;&n;&t;(1000000/CLOCK_TICK_FACTOR) / (CLOCK_TICK_RATE/CLOCK_TICK_FACTOR)) &bslash;&n;&t;&t;&lt;&lt; (SHIFT_SCALE-SHIFT_HZ)) / HZ)
-multiline_comment|/*&n; * Standard way to access the cycle counter on i586+ CPUs.&n; * Currently only used on SMP.&n; */
+multiline_comment|/*&n; * Standard way to access the cycle counter on i586+ CPUs.&n; * Currently only used on SMP.&n; *&n; * If you really have a SMP machine with i486 chips or older,&n; * compile for that, and this will just always return zero.&n; * That&squot;s ok, it just means that the nicer scheduling heuristics&n; * won&squot;t work for you.&n; *&n; * We only use the low 32 bits, and we&squot;d simply better make sure&n; * that we reschedule before that wraps. Scheduling at least every&n; * four billion cycles just basically sounds like a good idea,&n; * regardless of how fast the machine is. &n; */
 DECL|typedef|cycles_t
 r_typedef
-r_int
 r_int
 r_int
 id|cycles_t
@@ -29,8 +28,16 @@ id|get_cycles
 r_void
 )paren
 (brace
-id|cycles_t
-id|value
+macro_line|#if CPU &lt; 586
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else
+r_int
+r_int
+id|eax
+comma
+id|edx
 suffix:semicolon
 id|__asm__
 c_func
@@ -39,42 +46,19 @@ l_string|&quot;rdtsc&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
-op_star
-(paren
-(paren
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|value
-)paren
-op_plus
-l_int|0
-)paren
+id|eax
 )paren
 comma
 l_string|&quot;=d&quot;
 (paren
-op_star
-(paren
-(paren
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|value
-)paren
-op_plus
-l_int|1
-)paren
+id|edx
 )paren
 )paren
 suffix:semicolon
 r_return
-id|value
+id|eax
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 eof

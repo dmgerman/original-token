@@ -404,6 +404,16 @@ suffix:semicolon
 r_int
 id|status
 suffix:semicolon
+multiline_comment|/* In catatonic mode, we don&squot;t wait for nobody */
+r_if
+c_cond
+(paren
+id|sbi-&gt;catatonic
+)paren
+r_return
+op_minus
+id|ENOENT
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -568,6 +578,36 @@ id|wq-&gt;wait_ctr
 op_increment
 suffix:semicolon
 multiline_comment|/* wq-&gt;name is NULL if and only if the lock is already released */
+r_if
+c_cond
+(paren
+id|sbi-&gt;catatonic
+)paren
+(brace
+multiline_comment|/* We might have slept, so check again for catatonic mode */
+id|wq-&gt;status
+op_assign
+op_minus
+id|ENOENT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|wq-&gt;name
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|wq-&gt;name
+)paren
+suffix:semicolon
+id|wq-&gt;name
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren

@@ -1,5 +1,5 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;  Paul Gortmaker&t;: rewrite Rx overrun handling as per NS specs.&n;  Alexey Kuznetsov&t;: use the 8390&squot;s six bit hash multicast filter.&n;  Paul Gortmaker&t;: tweak ANK&squot;s above multicast changes a bit.&n;  Paul Gortmaker&t;: update packet statistics for v2.1.x&n;  Alan Cox&t;&t;: support arbitary stupid port mappings on the&n;  &t;&t;&t;  68K Macintosh. Support &gt;16bit I/O spaces&n;  Paul Gortmaker&t;: add kmod support for auto-loading of the 8390&n;&t;&t;&t;  module by all drivers that require it.&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;  Paul Gortmaker&t;: rewrite Rx overrun handling as per NS specs.&n;  Alexey Kuznetsov&t;: use the 8390&squot;s six bit hash multicast filter.&n;  Paul Gortmaker&t;: tweak ANK&squot;s above multicast changes a bit.&n;  Paul Gortmaker&t;: update packet statistics for v2.1.x&n;  Alan Cox&t;&t;: support arbitary stupid port mappings on the&n;  &t;&t;&t;  68K Macintosh. Support &gt;16bit I/O spaces&n;  Paul Gortmaker&t;: add kmod support for auto-loading of the 8390&n;&t;&t;&t;  module by all drivers that require it.&n;  Alan Cox&t;&t;: Spinlocking work, added &squot;BUG_83C690&squot;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
 DECL|variable|version
 r_static
 r_const
@@ -32,6 +32,8 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 DECL|macro|NS8390_CORE
 mdefine_line|#define NS8390_CORE
 macro_line|#include &quot;8390.h&quot;
+DECL|macro|BUG_83C690
+mdefine_line|#define BUG_83C690
 multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;void get_8390_hdr(struct device *dev, struct e8390_hdr *hdr, int ring_page)&n;&t;&t;Read the 4 byte, page aligned 8390 header. *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;&t;void block_input(struct device *dev, int count, struct sk_buff *skb, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into the skb data area. Start &n;&t;&t;reading from RING_OFFSET, the address as the 8390 sees it.  This will always&n;&t;&t;follow the read of the 8390 header. &n;*/
 DECL|macro|ei_reset_8390
 mdefine_line|#define ei_reset_8390 (ei_local-&gt;reset_8390)
@@ -125,6 +127,18 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
+r_void
+id|do_set_multicast_list
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;SMP and the 8390 setup.&n; *&n; *&t;The 8390 isnt exactly designed to be multithreaded on RX/TX. There is&n; *&t;a page register that controls bank and packet buffer access. We guard&n; *&t;this with ei_local-&gt;page_lock. Nobody should assume or set the page other&n; *&t;than zero when the lock is not held. Lock holders must restore page 0&n; *&t;before unlocking. Even pure readers must take the lock to protect in &n; *&t;page 0.&n; *&n; *&t;To make life difficult the chip can also be very slow. We therefore can&squot;t&n; *&t;just use spinlocks. For the longer lockups we disable the irq the device&n; *&t;sits on and hold the lock. We must hold the lock because there is a dual&n; *&t;processor case other than interrupts (get stats/set multicast list in&n; *&t;parallel with each other and transmit).&n; *&n; *&t;Note: in theory we can just disable the irq on the card _but_ there is&n; *&t;a latency on SMP irq delivery. So we can easily go &quot;disable irq&quot; &quot;sync irqs&quot;&n; *&t;enter lock, take the queued irq. So we waddle instead of flying.&n; *&n; *&t;Finally by special arrangement for the purpose of being generally &n; *&t;annoying the transmit function is called bh atomic. That places&n; *&t;restrictions on the user context callers as disable_irq won&squot;t save&n; *&t;them.&n; */
 "&f;"
 multiline_comment|/* Open/initialize the board.  This routine goes all-out, setting everything&n;   up anew at each open, even though many of these registers should only&n;   need to be set once at boot.&n;   */
 DECL|function|ei_open
@@ -138,6 +152,10 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|ei_device
 op_star
@@ -173,12 +191,31 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Grab the page lock so we own the register set, then call&n;&t; *&t;the init function.&n;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|NS8390_init
 c_func
 (paren
 id|dev
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|dev-&gt;start
@@ -205,12 +242,47 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|ei_device
+op_star
+id|ei_local
+op_assign
+(paren
+r_struct
+id|ei_device
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Hold the page lock during close&n;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|NS8390_init
 c_func
 (paren
 id|dev
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|dev-&gt;start
@@ -262,7 +334,11 @@ id|send_length
 comma
 id|output_page
 suffix:semicolon
-multiline_comment|/*&n;&t; *  We normally shouldn&squot;t be called if dev-&gt;tbusy is set, but the&n;&t; *  existing code does anyway. If it has been too long since the&n;&t; *  last Tx, we assume the board has died and kick it.&n;&t; */
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n;&t; *  We normally shouldn&squot;t be called if dev-&gt;tbusy is set, but the&n;&t; *  existing code does anyway. If it has been too long since the&n;&t; *  last Tx, we assume the board has died and kick it. We are&n;&t; *  bh_atomic here.&n;&t; */
 r_if
 c_cond
 (paren
@@ -272,15 +348,8 @@ id|dev-&gt;tbusy
 multiline_comment|/* Do timeouts, just like the 8003 driver. */
 r_int
 id|txsr
-op_assign
-id|inb
-c_func
-(paren
-id|e8390_base
-op_plus
-id|EN0_TSR
-)paren
-comma
+suffix:semicolon
+r_int
 id|isr
 suffix:semicolon
 r_int
@@ -289,6 +358,26 @@ op_assign
 id|jiffies
 op_minus
 id|dev-&gt;trans_start
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Need the page lock. Now see what went wrong. This bit is&n;&t;&t; *&t;fast.&n;&t;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|txsr
+op_assign
+id|inb
+c_func
+(paren
+id|e8390_base
+op_plus
+id|EN0_TSR
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -314,9 +403,20 @@ id|ENTSR_PTX
 )paren
 )paren
 )paren
+(brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 id|ei_local-&gt;stat.tx_errors
 op_increment
 suffix:semicolon
@@ -338,6 +438,15 @@ op_eq
 l_int|0
 )paren
 (brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -402,6 +511,35 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Try a different xcvr.  */
 )brace
+multiline_comment|/*&n;&t;&t; *&t;Play shuffle the locks, a reset on some chips takes a few&n;&t;&t; *&t;mS. We very rarely hit this point.&n;&t;&t; */
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Ugly but a reset can be slow, yet must be protected */
+id|disable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+id|synchronize_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+)paren
+suffix:semicolon
 multiline_comment|/* Try to restart the card.  Perhaps the user has fixed something. */
 id|ei_reset_8390
 c_func
@@ -417,6 +555,19 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+)paren
+suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -426,7 +577,16 @@ id|length
 op_assign
 id|skb-&gt;len
 suffix:semicolon
-multiline_comment|/* Mask interrupts from the ethercard. */
+multiline_comment|/* Mask interrupts from the ethercard. &n;&t;   SMP: We have to grab the lock here otherwise the IRQ handler&n;&t;   on another CPU can flip window and race the IRQ mask set. We end&n;&t;   up trashing the mcast filter not disabling irqs if we dont lock */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -437,6 +597,16 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Slow phase with lock held.&n;&t; */
 id|disable_irq
 c_func
 (paren
@@ -446,6 +616,13 @@ suffix:semicolon
 id|synchronize_irq
 c_func
 (paren
+)paren
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
 )paren
 suffix:semicolon
 r_if
@@ -471,6 +648,13 @@ comma
 id|e8390_base
 op_plus
 id|EN0_IMR
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
 )paren
 suffix:semicolon
 id|enable_irq
@@ -637,6 +821,13 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+)paren
+suffix:semicolon
 id|enable_irq
 c_func
 (paren
@@ -785,6 +976,13 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+)paren
+suffix:semicolon
 id|enable_irq
 c_func
 (paren
@@ -877,6 +1075,14 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Protect the irq test too.&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -917,6 +1123,13 @@ id|EN0_IMR
 )paren
 suffix:semicolon
 macro_line|#endif
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -947,6 +1160,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: interrupt(isr=%#2.2x).&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1188,6 +1402,7 @@ id|MAX_SERVICE
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Too much work at interrupt, status %#2.2x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1212,6 +1427,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: unknown interrupt %#2x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1236,10 +1452,17 @@ id|dev-&gt;interrupt
 op_assign
 l_int|0
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * A transmitter error has happened. Most likely excess collisions (which&n; * is a fairly normal condition). If the error is one where the Tx will&n; * have been aborted, we try and send another one right away, instead of&n; * letting the failed packet sit and collect dust in the Tx buffer. This&n; * is a much better solution as it avoids kernel based Tx timeouts, and&n; * an unnecessary card reset.&n; */
+multiline_comment|/*&n; * A transmitter error has happened. Most likely excess collisions (which&n; * is a fairly normal condition). If the error is one where the Tx will&n; * have been aborted, we try and send another one right away, instead of&n; * letting the failed packet sit and collect dust in the Tx buffer. This&n; * is a much better solution as it avoids kernel based Tx timeouts, and&n; * an unnecessary card reset.&n; *&n; * Called with lock held&n; */
 DECL|function|ei_tx_err
 r_static
 r_void
@@ -1436,7 +1659,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* We have finished a transmit: check for errors and then trigger the next&n;   packet to be sent. */
+multiline_comment|/* We have finished a transmit: check for errors and then trigger the next&n;   packet to be sent. Called with lock held */
 DECL|function|ei_tx_intr
 r_static
 r_void
@@ -1781,7 +2004,7 @@ id|NET_BH
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We have a good packet(s), get it/them out of the buffers. */
+multiline_comment|/* We have a good packet(s), get it/them out of the buffers. &n;   Called with lock held */
 DECL|function|ei_receive
 r_static
 r_void
@@ -2315,7 +2538,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * We have a receiver overrun: we have to kick the 8390 to get it started&n; * again. Problem is that you have to kick it exactly as NS prescribes in&n; * the updated datasheets, or &quot;the NIC may act in an unpredictable manner.&quot;&n; * This includes causing &quot;the NIC to defer indefinitely when it is stopped&n; * on a busy network.&quot;  Ugh.&n; */
+multiline_comment|/* &n; * We have a receiver overrun: we have to kick the 8390 to get it started&n; * again. Problem is that you have to kick it exactly as NS prescribes in&n; * the updated datasheets, or &quot;the NIC may act in an unpredictable manner.&quot;&n; * This includes causing &quot;the NIC to defer indefinitely when it is stopped&n; * on a busy network.&quot;  Ugh.&n; * Called with lock held. Don&squot;t call this with the interrupts off or your&n; * computer will hate you - it takes 10mS or so. &n; */
 DECL|function|ei_rx_overrun
 r_static
 r_void
@@ -2540,6 +2763,7 @@ id|E8390_CMD
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Collect the stats. This is called unlocked and from several contexts.&n; */
 DECL|function|get_stats
 r_static
 r_struct
@@ -2571,6 +2795,10 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* If the card is stopped, just return the present stats. */
 r_if
 c_cond
@@ -2582,6 +2810,15 @@ l_int|0
 r_return
 op_amp
 id|ei_local-&gt;stat
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/* Read the counter registers, assuming we are in page 0. */
 id|ei_local-&gt;stat.rx_frame_errors
@@ -2612,6 +2849,15 @@ c_func
 id|ioaddr
 op_plus
 id|EN0_COUNTER2
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -2828,11 +3074,11 @@ l_int|7
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Set or clear the multicast filter for this adaptor.&n; */
-DECL|function|set_multicast_list
+multiline_comment|/*&n; *&t;Set or clear the multicast filter for this adaptor. May be called&n; *&t;from a BH in 2.1.x. Must be called with lock held. &n; */
+DECL|function|do_set_multicast_list
 r_static
 r_void
-id|set_multicast_list
+id|do_set_multicast_list
 c_func
 (paren
 r_struct
@@ -2848,10 +3094,6 @@ id|dev-&gt;base_addr
 suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 r_struct
 id|ei_device
@@ -2932,17 +3174,6 @@ op_plus
 id|EN0_RXCR
 )paren
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -2987,7 +3218,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef NOT_83C690
+macro_line|#ifndef BUG_83C690
 r_if
 c_cond
 (paren
@@ -3031,12 +3262,6 @@ comma
 id|e8390_base
 op_plus
 id|E8390_CMD
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -3093,6 +3318,60 @@ comma
 id|e8390_base
 op_plus
 id|EN0_RXCR
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Called without lock held. This is invoked from user context and may&n; *&t;be parallel to just about everything else. Its also fairly quick and&n; *&t;not called too often. Must protect against both bh and irq users&n; */
+DECL|function|set_multicast_list
+r_static
+r_void
+id|set_multicast_list
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_struct
+id|ei_device
+op_star
+id|ei_local
+op_assign
+(paren
+r_struct
+id|ei_device
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|do_set_multicast_list
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -3182,6 +3461,13 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|ei_local-&gt;page_lock
+)paren
+suffix:semicolon
 )brace
 id|dev-&gt;hard_start_xmit
 op_assign
@@ -3210,6 +3496,7 @@ suffix:semicolon
 "&f;"
 multiline_comment|/* This page of functions should be 8390 generic */
 multiline_comment|/* Follow National Semi&squot;s recommendations for initializing the &quot;NIC&quot;. */
+multiline_comment|/*&n; *&t;Must be called with lock held.&n; */
 DECL|function|NS8390_init
 r_void
 id|NS8390_init
@@ -3257,10 +3544,6 @@ id|ENDCFG_WTS
 )paren
 suffix:colon
 l_int|0x48
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -3429,17 +3712,6 @@ id|EN0_IMR
 )paren
 suffix:semicolon
 multiline_comment|/* Copy the station address into the DS8390 registers. */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -3543,12 +3815,6 @@ op_plus
 id|E8390_CMD
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -3630,7 +3896,7 @@ id|EN0_RXCR
 )paren
 suffix:semicolon
 multiline_comment|/* rx on,  */
-id|set_multicast_list
+id|do_set_multicast_list
 c_func
 (paren
 id|dev
@@ -3641,7 +3907,7 @@ multiline_comment|/* (re)load the mcast table */
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Trigger a transmit start, assuming the length is valid. */
+multiline_comment|/* Trigger a transmit start, assuming the length is valid. &n;   Always called with the page lock held */
 DECL|function|NS8390_trigger_send
 r_static
 r_void

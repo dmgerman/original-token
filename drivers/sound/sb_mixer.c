@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/sb_mixer.c&n; *&n; * The low level mixer driver for the Sound Blaster compatible cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Rolf Fokkens    : ES18XX recording level support&n; */
-multiline_comment|/*&n; * About ES18XX support:&n; *&n; * The standard ES688 support doesn&squot;t take care of the ES18XX recording&n; * levels very well. Whenever a device is selected (recmask) for recording&n; * it&squot;s recording level is loud, and it cannot be changed.&n; *&n; * The ES18XX has separate registers to controll the recording levels. The&n; * ES18XX specific software makes these level the same as their corresponding&n; * playback levels, unless recmask says they aren&squot;t recorded. In tha latter&n; * case the recording volumens are 0.&n; *&n; * Now recording levels of inputs can be controlled, by changing the playback&n; * levels.&n; * Futhermore several devices can be recorded together (which is not possible&n; * with the ES688.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Rolf Fokkens    : ES188x recording level support&n; */
+multiline_comment|/*&n; * About ES188x support:&n; *&n; * The standard ES1688 support doesn&squot;t take care of the ES188x recording&n; * levels very well. Whenever a device is selected (recmask) for recording&n; * it&squot;s recording level is loud, and it cannot be changed.&n; *&n; * The ES188x has separate registers to control the recording levels. The&n; * ES188x specific software makes these level the same as their corresponding&n; * playback levels, unless recmask says they aren&squot;t recorded. In the latter&n; * case the recording volumes are 0.&n; *&n; * Now recording levels of inputs can be controlled, by changing the playback&n; * levels. Futhermore several devices can be recorded together (which is not&n; * possible with the ES1688.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_SBDSP
@@ -561,11 +561,11 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Changing input levels at ES18XX means having to take care of recording&n; * levels of recorded inputs too!&n; */
-DECL|function|es18XX_mixer_set
+multiline_comment|/*&n; * Changing playback levels at ES188x means having to take care of recording&n; * levels of recorded inputs (devc-&gt;recmask) too!&n; */
+DECL|function|es188x_mixer_set
 r_static
 r_int
-id|es18XX_mixer_set
+id|es188x_mixer_set
 c_func
 (paren
 id|sb_devc
@@ -601,7 +601,7 @@ id|devc
 comma
 id|dev
 op_plus
-id|ES18XX_MIXER_RECDIFF
+id|ES188X_MIXER_RECDIFF
 comma
 id|left
 comma
@@ -1046,11 +1046,11 @@ c_cond
 (paren
 id|devc-&gt;submodel
 op_eq
-id|SUBMDL_ES18XX
+id|SUBMDL_ES188X
 )paren
 (brace
 r_return
-id|es18XX_mixer_set
+id|es188x_mixer_set
 c_func
 (paren
 id|devc
@@ -1080,7 +1080,7 @@ id|right
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * set_recsrc doesn&squot;t apply to ES18XX&n; */
+multiline_comment|/*&n; * set_recsrc doesn&squot;t apply to ES188x&n; */
 DECL|function|set_recsrc
 r_static
 r_void
@@ -1123,11 +1123,11 @@ l_int|0x7
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Changing the recmask on a ES18XX means:&n; * (1) Find the differences&n; * (2) For &quot;turned-on&quot;  inputs: make the recording level the playback level&n; * (3) For &quot;turned-off&quot; inputs: make the recording level zero&n; */
-DECL|function|es18XX_set_recmask
+multiline_comment|/*&n; * Changing the recmask on a ES188x means:&n; * (1) Find the differences&n; * (2) For &quot;turned-on&quot;  inputs: make the recording level the playback level&n; * (3) For &quot;turned-off&quot; inputs: make the recording level zero&n; */
+DECL|function|es188x_set_recmask
 r_static
 r_int
-id|es18XX_set_recmask
+id|es188x_set_recmask
 c_func
 (paren
 id|sb_devc
@@ -1197,6 +1197,7 @@ op_amp
 id|i_mask
 )paren
 (brace
+multiline_comment|/* Difference? (1)&t;*/
 r_if
 c_cond
 (paren
@@ -1205,7 +1206,7 @@ op_amp
 id|i_mask
 )paren
 (brace
-multiline_comment|/* Turn it on (2) */
+multiline_comment|/* Turn it on  (2)&t;*/
 id|value
 op_assign
 id|devc-&gt;levels
@@ -1232,7 +1233,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Turn it off (3) */
+multiline_comment|/* Turn it off (3)&t;*/
 id|left
 op_assign
 l_int|0
@@ -1249,7 +1250,7 @@ id|devc
 comma
 id|i
 op_plus
-id|ES18XX_MIXER_RECDIFF
+id|ES188X_MIXER_RECDIFF
 comma
 id|left
 comma
@@ -1300,20 +1301,33 @@ id|devc-&gt;model
 )paren
 (brace
 r_case
+id|MDL_SBPRO
+suffix:colon
+r_case
 id|MDL_ESS
 suffix:colon
-multiline_comment|/* ES18XX needs a separate approach */
+r_case
+id|MDL_JAZZ
+suffix:colon
+r_case
+id|MDL_SMW
+suffix:colon
 r_if
 c_cond
 (paren
+id|devc-&gt;model
+op_eq
+id|MDL_ESS
+op_logical_and
 id|devc-&gt;submodel
 op_eq
-id|SUBMDL_ES18XX
+id|SUBMDL_ES188X
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t;&t; * ES188x needs a separate approach&n;&t;&t;&t;&t; */
 id|devmask
 op_assign
-id|es18XX_set_recmask
+id|es188x_set_recmask
 c_func
 (paren
 id|devc
@@ -1325,15 +1339,6 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-r_case
-id|MDL_SBPRO
-suffix:colon
-r_case
-id|MDL_JAZZ
-suffix:colon
-r_case
-id|MDL_SMW
-suffix:colon
 r_if
 c_cond
 (paren
@@ -2195,7 +2200,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Separate actions for ES18XX:&n;&t; * Change registers 7a and 1c to make the record mixer the input for&n;&t; *&n;&t; * Then call set_recmask twice to do extra ES18XX initializations&n;&t; */
+multiline_comment|/*&n;&t; * Separate actions for ES188x:&n;&t; * Change registers 7a and 1c to make the record mixer the&n;&t; * actual recording source.&n;&t; * Then call set_recmask twice to do extra ES188x initializations&n;&t; */
 r_if
 c_cond
 (paren
@@ -2205,7 +2210,7 @@ id|MDL_ESS
 op_logical_and
 id|devc-&gt;submodel
 op_eq
-id|SUBMDL_ES18XX
+id|SUBMDL_ES188X
 )paren
 (brace
 id|regval
@@ -2273,7 +2278,7 @@ c_func
 (paren
 id|devc
 comma
-id|ES18XX_RECORDING_DEVICES
+id|ES188X_RECORDING_DEVICES
 )paren
 suffix:semicolon
 id|set_recmask
@@ -2391,7 +2396,7 @@ id|devc-&gt;mixer_caps
 op_assign
 id|SOUND_CAP_EXCL_INPUT
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Take care of ES18XX specifics...&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Take care of ES188x specifics...&n;&t;&t;&t; */
 r_switch
 c_cond
 (paren
@@ -2399,20 +2404,20 @@ id|devc-&gt;submodel
 )paren
 (brace
 r_case
-id|SUBMDL_ES18XX
+id|SUBMDL_ES188X
 suffix:colon
 id|devc-&gt;supported_devices
 op_assign
-id|ES18XX_MIXER_DEVICES
+id|ES188X_MIXER_DEVICES
 suffix:semicolon
 id|devc-&gt;supported_rec_devices
 op_assign
-id|ES18XX_RECORDING_DEVICES
+id|ES188X_RECORDING_DEVICES
 suffix:semicolon
 id|devc-&gt;iomap
 op_assign
 op_amp
-id|es18XX_mix
+id|es188x_mix
 suffix:semicolon
 r_break
 suffix:semicolon

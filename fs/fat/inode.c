@@ -2510,7 +2510,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[me=0x%x,cs=%d,#f=%d,fs=%d,fl=%d,ds=%d,de=%d,data=%d,&quot;
+l_string|&quot;[me=0x%x,cs=%d,#f=%d,fs=%d,fl=%ld,ds=%ld,de=%d,data=%ld,&quot;
 l_string|&quot;se=%d,ts=%ld,ls=%d,rc=%ld,fc=%u]&bslash;n&quot;
 comma
 id|b-&gt;media

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Daniel J. Rodriksson: Modified sbintr to handle 8 and 16 bit interrupts&n; *                       for full duplex support ( only sb16 by now )&n; * Rolf Fokkens:&t; Added (BETA?) support for ES18XX chips.&n; *&t;&t;&t; Which means: you can adjust the recording levels.&n; */
+multiline_comment|/*&n; * Daniel J. Rodriksson: Modified sbintr to handle 8 and 16 bit interrupts&n; *                       for full duplex support ( only sb16 by now )&n; * Rolf Fokkens:&t; Added (BETA?) support for ES188x chips.&n; * (fokkensr@vertis.nl)&t; Which means: You can adjust the recording levels.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
@@ -2011,7 +2011,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * This the detection heuristic of ESS technology, though somewhat&n;&t; * changed to actually make it work :-)&n;&t; * This is the most BETA part of the software: Will it work?&n;&t; */
+multiline_comment|/*&n;&t; * This the detection heuristic of ESS technology, though somewhat&n;&t; * changed to actually make it work.&n;&t; * This is the most BETA part of the software: Will the detection&n;         * always work?&n;&t; */
 id|devc-&gt;model
 op_assign
 id|MDL_ESS
@@ -2085,11 +2085,11 @@ l_int|0x7f
 (brace
 id|chip
 op_assign
-l_string|&quot;ES18XX&quot;
+l_string|&quot;ES188x&quot;
 suffix:semicolon
 id|devc-&gt;submodel
 op_assign
-id|SUBMDL_ES18XX
+id|SUBMDL_ES188X
 suffix:semicolon
 )brace
 r_else
@@ -4128,7 +4128,7 @@ id|detected_devc
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Mixer access routines&n; *&n; *&t;ES18XX modifications: some mixer registers reside in the&n; *&t;range above 0xa0. These must be accessed in another way.&n; */
+multiline_comment|/*&n; *&t;Mixer access routines&n; *&n; *&t;ES188x modifications: some mixer registers reside in the&n; *&t;range above 0xa0. These must be accessed in another way.&n; */
 DECL|function|sb_setmixer
 r_void
 id|sb_setmixer

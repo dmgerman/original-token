@@ -457,8 +457,8 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__
-multiline_comment|/*&n;&t; * (&quot;wakeup()&quot; should not be called before we&squot;ve initialized&n;&t; * SMP completely. [Linus, is there any exception to this?]&n;&t; * Basically a not-yet initialized SMP subsystem can be&n;&t; * considered as a not-yet working scheduler, simply dont use&n;&t; * it before it&squot;d up and running ...)&n;&t; *&n;&t; * SMP rescheduling is done in 2 passes:&n;&t; *  - pass #1: faster: &squot;quick decisions&squot;&n;&t; *  - pass #2: slower: &squot;lets try and find another CPU&squot;&n;&t; */
-multiline_comment|/*&n;&t; * Pass #1&n;&t; *&n;&t; * There are two metrics here:&n;&t; *&n;&t; * first, a &squot;cutoff&squot; interval, currently ~250 usecs on&n;&t; * x86 CPUs. If the current process has longer average&n;&t; * timeslices than this, then we utilize the idle CPU.&n;&t; *&n;&t; * second, if the wakeup comes from a process context,&n;&t; * then the two processes are &squot;related&squot;. (they form a&n;&t; * &squot;gang&squot;)&n;&t; *&n;&t; * An idle CPU is almost always a bad thing, thus we skip&n;&t; * the idle-CPU utilization only if both these conditions&n;&t; * are true. (ie. a &squot;process-gang&squot; rescheduling with rather&n;&t; * high frequency should stay on the same CPU).&n;&t; *&n;&t; * [We can switch to something more finegrained in 2.3.]&n;&t; */
+multiline_comment|/*&n;&t; * (&quot;wakeup()&quot; should not be called before we&squot;ve initialized&n;&t; * SMP completely.&n;&t; * Basically a not-yet initialized SMP subsystem can be&n;&t; * considered as a not-yet working scheduler, simply dont use&n;&t; * it before it&squot;s up and running ...)&n;&t; *&n;&t; * SMP rescheduling is done in 2 passes:&n;&t; *  - pass #1: faster: &squot;quick decisions&squot;&n;&t; *  - pass #2: slower: &squot;lets try and find another CPU&squot;&n;&t; */
+multiline_comment|/*&n;&t; * Pass #1&n;&t; *&n;&t; * There are two metrics here:&n;&t; *&n;&t; * first, a &squot;cutoff&squot; interval, currently 0-200 usecs on&n;&t; * x86 CPUs, depending on the size of the &squot;SMP-local cache&squot;.&n;&t; * If the current process has longer average timeslices than&n;&t; * this, then we utilize the idle CPU.&n;&t; *&n;&t; * second, if the wakeup comes from a process context,&n;&t; * then the two processes are &squot;related&squot;. (they form a&n;&t; * &squot;gang&squot;)&n;&t; *&n;&t; * An idle CPU is almost always a bad thing, thus we skip&n;&t; * the idle-CPU utilization only if both these conditions&n;&t; * are true. (ie. a &squot;process-gang&squot; rescheduling with rather&n;&t; * high frequency should stay on the same CPU).&n;&t; *&n;&t; * [We can switch to something more finegrained in 2.3.]&n;&t; */
 r_if
 c_cond
 (paren
@@ -802,12 +802,6 @@ id|p
 )paren
 suffix:semicolon
 )brace
-DECL|variable|_PROC_CHANGE_PENALTY
-r_int
-id|_PROC_CHANGE_PENALTY
-op_assign
-l_int|13
-suffix:semicolon
 multiline_comment|/*&n; * This is the function that decides how desirable a process is..&n; * You can weigh different processes against each other depending&n; * on what CPU they&squot;ve run on lately etc to try to handle cache&n; * and TLB miss penalties.&n; *&n; * Return values:&n; *&t; -1000: never select this&n; *&t;     0: out of time, recalculate counters (but it might still be&n; *&t;&t;selected)&n; *&t;   +ve: &quot;goodness&quot; value (the larger, the better)&n; *&t; +1000: realtime process, select this.&n; */
 DECL|function|goodness
 r_static

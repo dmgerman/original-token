@@ -929,15 +929,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|sound_unload_audiodev
-c_func
-(paren
-id|hw_config-&gt;slots
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
 )brace
 DECL|function|unload_opl3sa_mpu
 r_void
