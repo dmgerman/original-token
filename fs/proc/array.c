@@ -391,7 +391,39 @@ op_star
 id|buffer
 )paren
 (brace
-r_return
+r_int
+id|i
+comma
+id|len
+suffix:semicolon
+r_int
+id|sum
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|sum
+op_add_assign
+id|kstat.interrupts
+(braket
+id|i
+)braket
+suffix:semicolon
+id|len
+op_assign
 id|sprintf
 c_func
 (paren
@@ -401,9 +433,7 @@ l_string|&quot;cpu  %u %u %u %lu&bslash;n&quot;
 l_string|&quot;disk %u %u %u %u&bslash;n&quot;
 l_string|&quot;page %u %u&bslash;n&quot;
 l_string|&quot;swap %u %u&bslash;n&quot;
-l_string|&quot;intr %u&bslash;n&quot;
-l_string|&quot;ctxt %u&bslash;n&quot;
-l_string|&quot;btime %lu&bslash;n&quot;
+l_string|&quot;%u&quot;
 comma
 id|kstat.cpu_user
 comma
@@ -449,7 +479,51 @@ id|kstat.pswpin
 comma
 id|kstat.pswpout
 comma
+id|sum
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot; %u&quot;
+comma
 id|kstat.interrupts
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;nctxt %u&bslash;n&quot;
+l_string|&quot;btime %lu&bslash;n&quot;
 comma
 id|kstat.context_swtch
 comma
@@ -459,6 +533,9 @@ id|jiffies
 op_div
 id|HZ
 )paren
+suffix:semicolon
+r_return
+id|len
 suffix:semicolon
 )brace
 DECL|function|get_uptime

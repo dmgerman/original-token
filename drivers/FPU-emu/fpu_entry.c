@@ -1009,7 +1009,7 @@ c_func
 (paren
 (paren
 r_int
-r_int
+r_char
 op_star
 )paren
 id|FPU_EIP
@@ -1147,6 +1147,17 @@ op_assign
 id|FPU_ORIG_EIP
 suffix:semicolon
 multiline_comment|/* Point to current FPU instruction. */
+r_if
+c_cond
+(paren
+id|addr_modes.vm86
+)paren
+id|FPU_EIP
+op_sub_assign
+id|FPU_CS
+op_lshift
+l_int|4
+suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
 id|current-&gt;tss.trap_no
@@ -2215,7 +2226,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|PREFIX_DS_
+id|PREFIX_DEFAULT
 )brace
 suffix:semicolon
 multiline_comment|/* defaults */
@@ -2322,10 +2333,12 @@ suffix:semicolon
 r_case
 id|PREFIX_DS
 suffix:colon
-multiline_comment|/* Redundant unless preceded by another override. */
 id|override-&gt;segment
 op_assign
 id|PREFIX_DS_
+suffix:semicolon
+r_goto
+id|do_next_byte
 suffix:semicolon
 multiline_comment|/* lock is not a valid prefix for FPU instructions,&n;   let the cpu handle it to generate a SIGILL. */
 multiline_comment|/*&t;case PREFIX_LOCK: */

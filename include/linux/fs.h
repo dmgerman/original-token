@@ -511,6 +511,11 @@ r_struct
 id|sysv_inode_info
 id|sysv_i
 suffix:semicolon
+DECL|member|generic_ip
+r_void
+op_star
+id|generic_ip
+suffix:semicolon
 DECL|member|u
 )brace
 id|u
@@ -748,6 +753,11 @@ DECL|member|sysv_sb
 r_struct
 id|sysv_sb_info
 id|sysv_sb
+suffix:semicolon
+DECL|member|generic_sbp
+r_void
+op_star
+id|generic_sbp
 suffix:semicolon
 DECL|member|u
 )brace

@@ -2434,12 +2434,17 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
+multiline_comment|/* If a master pty, return the slave&squot;s tpgid.&n;&t;&t;&t;   If not, only return the tpgid if this is&n;&t;&t;&t;   the controlling tty. */
 r_if
 c_cond
 (paren
+id|tty
+op_eq
+id|termios_tty
+op_logical_and
 id|current-&gt;tty
 op_ne
-id|termios_dev
+id|dev
 )paren
 r_return
 op_minus

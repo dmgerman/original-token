@@ -848,6 +848,9 @@ op_plus
 id|irq_sigaction
 suffix:semicolon
 id|kstat.interrupts
+(braket
+id|irq
+)braket
 op_increment
 suffix:semicolon
 id|sa
@@ -883,6 +886,9 @@ op_plus
 id|irq_sigaction
 suffix:semicolon
 id|kstat.interrupts
+(braket
+id|irq
+)braket
 op_increment
 suffix:semicolon
 id|sa

@@ -47,6 +47,9 @@ DECL|member|interrupts
 r_int
 r_int
 id|interrupts
+(braket
+l_int|16
+)braket
 suffix:semicolon
 DECL|member|ipackets
 DECL|member|opackets

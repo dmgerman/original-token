@@ -98,6 +98,8 @@ DECL|macro|PREFIX_GS_
 mdefine_line|#define PREFIX_GS_ 5
 DECL|macro|PREFIX_SS_
 mdefine_line|#define PREFIX_SS_ 6
+DECL|macro|PREFIX_DEFAULT
+mdefine_line|#define PREFIX_DEFAULT 7
 multiline_comment|/* These are to defeat the default action, giving the instruction&n;   no net effect: */
 DECL|macro|NO_NET_DATA_EFFECT
 mdefine_line|#define NO_NET_DATA_EFFECT &bslash;&n;      { FPU_data_address = (void *)data_operand_offset; &bslash;&n;&t;FPU_data_selector = operand_selector; }

@@ -1421,7 +1421,7 @@ l_int|0x10
 )paren
 (brace
 macro_line|#if DEBUG_DETECT
-id|printf
+id|printk
 c_func
 (paren
 l_string|&quot; (%x inuse),&quot;
