@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;&t;IP_MASQ_IRC irc masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_irc.c 0.01   03/20/96&n; *&n; * Author:&t;Juan Jose Ciarlante&n; *&n; *&n; * Fixes:&n; *&t;- set NO_DADDR flag in ip_masq_new().&n; *&n; * FIXME:&n; *&t;- detect also previous &quot;PRIVMSG&quot; string ?.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

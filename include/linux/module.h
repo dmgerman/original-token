@@ -3,12 +3,16 @@ macro_line|#ifndef _LINUX_MODULE_H
 DECL|macro|_LINUX_MODULE_H
 mdefine_line|#define _LINUX_MODULE_H
 macro_line|#ifdef __GENKSYMS__
+DECL|macro|_set_ver
+macro_line|#  define _set_ver(sym) sym
 DECL|macro|MODVERSIONS
-macro_line|# undef MODVERSIONS
+macro_line|#  undef  MODVERSIONS
 DECL|macro|MODVERSIONS
-macro_line|# define MODVERSIONS
+macro_line|#  define MODVERSIONS
 macro_line|#else /* ! __GENKSYMS__ */
-macro_line|# if defined(MODVERSIONS) &amp;&amp; !defined(MODULE) &amp;&amp; defined(EXPORT_SYMTAB)
+macro_line|# if !defined(MODVERSIONS) &amp;&amp; defined(EXPORT_SYMTAB)
+DECL|macro|_set_ver
+macro_line|#   define _set_ver(sym) sym
 macro_line|#   include &lt;linux/modversions.h&gt;
 macro_line|# endif
 macro_line|#endif /* __GENKSYMS__ */
@@ -78,6 +82,10 @@ op_star
 id|next_ref
 suffix:semicolon
 )brace
+suffix:semicolon
+multiline_comment|/* TBD */
+r_struct
+id|module_persist
 suffix:semicolon
 DECL|struct|module
 r_struct
@@ -183,6 +191,21 @@ r_int
 id|gp
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Members past this point are extensions to the basic&n;&t;   module support and are optional.  Use mod_opt_member()&n;&t;   to examine them.  */
+DECL|member|persist_start
+r_const
+r_struct
+id|module_persist
+op_star
+id|persist_start
+suffix:semicolon
+DECL|member|persist_end
+r_const
+r_struct
+id|module_persist
+op_star
+id|persist_end
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|module_info
@@ -217,6 +240,8 @@ DECL|macro|MOD_AUTOCLEAN
 mdefine_line|#define MOD_AUTOCLEAN&t;&t;4
 DECL|macro|MOD_VISITED
 mdefine_line|#define MOD_VISITED  &t;&t;8
+DECL|macro|MOD_USED_ONCE
+mdefine_line|#define MOD_USED_ONCE&t;&t;16
 multiline_comment|/* Values for query_module&squot;s which.  */
 DECL|macro|QM_MODULES
 mdefine_line|#define QM_MODULES&t;1
@@ -231,27 +256,34 @@ mdefine_line|#define QM_INFO&t;&t;5
 multiline_comment|/* Backwards compatibility definition.  */
 DECL|macro|GET_USE_COUNT
 mdefine_line|#define GET_USE_COUNT(module)&t;((module)-&gt;usecount)
+multiline_comment|/* When the struct module is extended, new values must be examined using&n;   this macro.  It returns a pointer to the member if available, NULL&n;   otherwise. */
+DECL|macro|mod_opt_member
+mdefine_line|#define mod_opt_member(mod,member) &t;&t;&t;&t;&t;&bslash;&n;&t;({ struct module *_mod = (mod);&t;&t;&t;&t;&t;&bslash;&n;&t;   __typeof__(_mod-&gt;member) *_mem = &amp;_mod-&gt;member;&t;&t;&bslash;&n;&t;   ((char *)(_mem+1) &gt; (char *)_mod + _mod-&gt;size_of_struct&t;&bslash;&n;&t;    ? (__typeof__(_mod-&gt;member) *)NULL : _mem);&t;&t;&t;&bslash;&n;&t;})
 multiline_comment|/* Indirect stringification.  */
 DECL|macro|__MODULE_STRING_1
 mdefine_line|#define __MODULE_STRING_1(x)&t;#x
 DECL|macro|__MODULE_STRING
 mdefine_line|#define __MODULE_STRING(x)&t;__MODULE_STRING_1(x)
-macro_line|#ifdef MODULE
+macro_line|#if defined(MODULE) &amp;&amp; !defined(__GENKSYMS__)
 multiline_comment|/* Embedded module documentation macros.  */
 multiline_comment|/* For documentation purposes only.  */
 DECL|macro|MODULE_AUTHOR
 mdefine_line|#define MODULE_AUTHOR(name)&t;&t;&t;&t;&t;&t;   &bslash;&n;const char __module_author[] __attribute__((section(&quot;.modinfo&quot;))) = &t;   &bslash;&n;&quot;author=&quot; name
+DECL|macro|MODULE_DESCRIPTION
+mdefine_line|#define MODULE_DESCRIPTION(desc)&t;&t;&t;&t;&t;   &bslash;&n;const char __module_description[] __attribute__((section(&quot;.modinfo&quot;))) =   &bslash;&n;&quot;description=&quot; desc
 multiline_comment|/* Could potentially be used by kerneld...  */
 DECL|macro|MODULE_SUPPORTED_DEVICE
 mdefine_line|#define MODULE_SUPPORTED_DEVICE(dev)&t;&t;&t;&t;&t;   &bslash;&n;const char __module_device[] __attribute__((section(&quot;.modinfo&quot;))) = &t;   &bslash;&n;&quot;device=&quot; dev
 multiline_comment|/* Used to verify parameters given to the module.  The TYPE arg should&n;   be a string in the following format:&n;   &t;[min[-max]]{b,h,i,l,s}&n;   The MIN and MAX specifiers delimit the length of the array.  If MAX&n;   is omitted, it defaults to MIN; if both are omitted, the default is 1.&n;   The final character is a type specifier:&n;&t;b&t;byte&n;&t;h&t;short&n;&t;i&t;int&n;&t;l&t;long&n;&t;s&t;string&n;*/
 DECL|macro|MODULE_PARM
 mdefine_line|#define MODULE_PARM(var,type)&t;&t;&t;&bslash;&n;const char __module_parm_##var[]&t;&t;&bslash;&n;__attribute__((section(&quot;.modinfo&quot;))) =&t;&t;&bslash;&n;&quot;parm_&quot; __MODULE_STRING(var) &quot;=&quot; type
-multiline_comment|/* The attributes of a section are set the first time the section is&n;   seen; we want .modinfo to not be allocated.  This header should be&n;   included before any functions or variables are defined.  */
+DECL|macro|MODULE_PARM_DESC
+mdefine_line|#define MODULE_PARM_DESC(var,desc)&t;&t;&bslash;&n;const char __module_parm_desc_##var[]&t;&t;&bslash;&n;__attribute__((section(&quot;.modinfo&quot;))) =&t;&t;&bslash;&n;&quot;parm_desc_&quot; __MODULE_STRING(var) &quot;=&quot; desc
+multiline_comment|/* The attributes of a section are set the first time the section is&n;   seen; we want .modinfo to not be allocated.  */
 id|__asm__
 c_func
 (paren
-l_string|&quot;.section .modinfo&bslash;n&bslash;t.text&quot;
+l_string|&quot;.section .modinfo&bslash;n&bslash;t.previous&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Define the module variable, and usage macros.  */
@@ -261,11 +293,11 @@ id|module
 id|__this_module
 suffix:semicolon
 DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT &bslash;&n;&t;(__this_module.usecount++, __this_module.flags |= MOD_VISITED)
+mdefine_line|#define MOD_INC_USE_COUNT &t;&t;&t;&t;&t;&bslash;&n;&t;(__this_module.usecount++,&t;&t;&t;&t;&bslash;&n;&t; __this_module.flags |= MOD_VISITED|MOD_USED_ONCE)
 DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT &bslash;&n;&t;(__this_module.usecount--, __this_module.flags |= MOD_VISITED)
+mdefine_line|#define MOD_DEC_USE_COUNT&t;&t;&t;&t;&t;&bslash;&n;&t;(__this_module.usecount--, __this_module.flags |= MOD_VISITED)
 DECL|macro|MOD_IN_USE
-mdefine_line|#define MOD_IN_USE &bslash;&n;&t;(__this_module.usecount != 0)
+mdefine_line|#define MOD_IN_USE&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(__this_module.usecount != 0)
 macro_line|#ifndef __NO_VERSION__
 macro_line|#include &lt;linux/version.h&gt;
 DECL|variable|__module_kernel_version
@@ -289,7 +321,7 @@ op_assign
 l_string|&quot;kernel_version=&quot;
 id|UTS_RELEASE
 suffix:semicolon
-macro_line|#if defined(MODVERSIONS) &amp;&amp; !defined(__GENKSYMS__)
+macro_line|#ifdef MODVERSIONS
 DECL|variable|__module_using_checksums
 r_const
 r_char
@@ -315,10 +347,15 @@ macro_line|#endif
 macro_line|#else /* MODULE */
 DECL|macro|MODULE_AUTHOR
 mdefine_line|#define MODULE_AUTHOR(name)
+DECL|macro|MODULE_DESCRIPTION
+mdefine_line|#define MODULE_DESCRIPTION(desc)
 DECL|macro|MODULE_SUPPORTED_DEVICE
 mdefine_line|#define MODULE_SUPPORTED_DEVICE(name)
 DECL|macro|MODULE_PARM
 mdefine_line|#define MODULE_PARM(var,type)
+DECL|macro|MODULE_PARM_DESC
+mdefine_line|#define MODULE_PARM_DESC(var,desc)
+macro_line|#ifndef __GENKSYMS__
 DECL|macro|MOD_INC_USE_COUNT
 mdefine_line|#define MOD_INC_USE_COUNT&t;do { } while (0)
 DECL|macro|MOD_DEC_USE_COUNT
@@ -331,30 +368,52 @@ id|module
 op_star
 id|module_list
 suffix:semicolon
+macro_line|#endif /* !__GENKSYMS__ */
 macro_line|#endif /* MODULE */
 multiline_comment|/* Export a symbol either from the kernel or a module.&n;&n;   In the kernel, the symbol is added to the kernel&squot;s global symbol table.&n;&n;   In a module, it controls which variables are exported.  If no&n;   variables are explicitly exported, the action is controled by the&n;   insmod -[xX] flags.  Otherwise, only the variables listed are exported.&n;   This obviates the need for the old register_symtab() function.  */
 macro_line|#if defined(__GENKSYMS__)
 multiline_comment|/* We want the EXPORT_SYMBOL tag left intact for recognition.  */
+macro_line|#elif !defined(EXPORT_SYMTAB)
+DECL|macro|__EXPORT_SYMBOL
+mdefine_line|#define __EXPORT_SYMBOL(sym,str)   error EXPORT_SYMTAB_not_defined
+DECL|macro|EXPORT_SYMBOL
+mdefine_line|#define EXPORT_SYMBOL(var)&t;   error EXPORT_SYMTAB_not_defined
+DECL|macro|EXPORT_SYMBOL_NOVERS
+mdefine_line|#define EXPORT_SYMBOL_NOVERS(var)  error EXPORT_SYMTAB_not_defined
+macro_line|#elif !defined(AUTOCONF_INCLUDED)
+DECL|macro|__EXPORT_SYMBOL
+mdefine_line|#define __EXPORT_SYMBOL(sym,str)   error config_must_be_included_before_module
+DECL|macro|EXPORT_SYMBOL
+mdefine_line|#define EXPORT_SYMBOL(var)&t;   error config_must_be_included_before_module
+DECL|macro|EXPORT_SYMBOL_NOVERS
+mdefine_line|#define EXPORT_SYMBOL_NOVERS(var)  error config_must_be_included_before_module
 macro_line|#elif !defined(CONFIG_MODULES)
+DECL|macro|__EXPORT_SYMBOL
+mdefine_line|#define __EXPORT_SYMBOL(sym,str)
 DECL|macro|EXPORT_SYMBOL
 mdefine_line|#define EXPORT_SYMBOL(var)
 DECL|macro|EXPORT_SYMBOL_NOVERS
 mdefine_line|#define EXPORT_SYMBOL_NOVERS(var)
-DECL|macro|EXPORT_NO_SYMBOLS
-mdefine_line|#define EXPORT_NO_SYMBOLS
+macro_line|#else
+DECL|macro|__EXPORT_SYMBOL
+mdefine_line|#define __EXPORT_SYMBOL(sym, str)&t;&t;&t;&bslash;&n;const char __kstrtab_##sym[]&t;&t;&t;&t;&bslash;&n;__attribute__((section(&quot;.kstrtab&quot;))) = str;&t;&t;&bslash;&n;const struct module_symbol __ksymtab_##sym &t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&bslash;&n;{ (unsigned long)&amp;sym, __kstrtab_##sym }
+macro_line|#if defined(MODVERSIONS) || !defined(CONFIG_MODVERSIONS)
+DECL|macro|EXPORT_SYMBOL
+mdefine_line|#define EXPORT_SYMBOL(var)  __EXPORT_SYMBOL(var, __MODULE_STRING(var))
 macro_line|#else
 DECL|macro|EXPORT_SYMBOL
-mdefine_line|#define EXPORT_SYMBOL(var)&t;&t;&t;&t;&bslash;&n;const struct module_symbol __export_##var &t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) = {&t;&t;&bslash;&n;&t;(unsigned long)&amp;var, __MODULE_STRING(var)&t;&bslash;&n;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;
+mdefine_line|#define EXPORT_SYMBOL(var)  __EXPORT_SYMBOL(var, __MODULE_STRING(__VERSIONED_SYMBOL(var)))
+macro_line|#endif
 DECL|macro|EXPORT_SYMBOL_NOVERS
-mdefine_line|#define EXPORT_SYMBOL_NOVERS(var) EXPORT_SYMBOL(var)
+mdefine_line|#define EXPORT_SYMBOL_NOVERS(var)  __EXPORT_SYMBOL(var, __MODULE_STRING(var))
+macro_line|#endif /* __GENKSYMS__ */
 macro_line|#ifdef MODULE
 multiline_comment|/* Force a module to export no symbols.  */
 DECL|macro|EXPORT_NO_SYMBOLS
-mdefine_line|#define EXPORT_NO_SYMBOLS&t;&t;&t;&t;&bslash;&n;__asm__(&quot;.section __ksymtab&bslash;n.text&quot;)
+mdefine_line|#define EXPORT_NO_SYMBOLS  __asm__(&quot;.section __ksymtab&bslash;n.previous&quot;)
 macro_line|#else
 DECL|macro|EXPORT_NO_SYMBOLS
 mdefine_line|#define EXPORT_NO_SYMBOLS
 macro_line|#endif /* MODULE */
-macro_line|#endif
 macro_line|#endif /* _LINUX_MODULE_H */
 eof

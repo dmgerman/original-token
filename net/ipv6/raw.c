@@ -403,7 +403,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|msg-&gt;msg_control
+id|msg-&gt;msg_controllen
 )paren
 (brace
 r_int
@@ -796,6 +796,11 @@ id|u16
 id|proto
 suffix:semicolon
 r_int
+id|hlimit
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|err
 suffix:semicolon
 multiline_comment|/* Mirror BSD error message compatibility */
@@ -1028,6 +1033,9 @@ op_amp
 id|saddr
 comma
 id|opt
+comma
+op_amp
+id|hlimit
 )paren
 suffix:semicolon
 r_if
@@ -1129,6 +1137,8 @@ id|opt
 comma
 id|proto
 comma
+id|hlimit
+comma
 id|msg-&gt;msg_flags
 op_amp
 id|MSG_DONTWAIT
@@ -1159,6 +1169,8 @@ comma
 id|opt
 comma
 id|proto
+comma
+id|hlimit
 comma
 id|msg-&gt;msg_flags
 op_amp

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *      1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *      1994  Eberhard Moenkeberg - multi session handling.&n; *      1995  Mark Dobie - allow mounting of some weird VideoCDs and PhotoCDs.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -2018,7 +2018,7 @@ c_func
 id|io
 comma
 l_string|&quot;1-&quot;
-id|__MODULE_PARM
+id|__MODULE_STRING
 c_func
 (paren
 id|MAX_ULTRA_CARDS
@@ -2032,7 +2032,7 @@ c_func
 id|irq
 comma
 l_string|&quot;1-&quot;
-id|__MODULE_PARM
+id|__MODULE_STRING
 c_func
 (paren
 id|MAX_ULTRA_CARDS

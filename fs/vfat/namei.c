@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/vfat/namei.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Windows95/Windows NT compatible extended MSDOS filesystem&n; *    by Gordon Chaffee Copyright (C) 1995.  Send bug reports for the&n; *    VFAT filesystem to &lt;chaffee@plateau.cs.berkeley.edu&gt;.  Specify&n; *    what file operation caused you trouble and if you can duplicate&n; *    the problem, send a script that demonstrates it.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;

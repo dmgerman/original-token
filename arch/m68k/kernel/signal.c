@@ -757,7 +757,7 @@ l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 2b,4b&bslash;n&quot;
 l_string|&quot;   .long 3b,4b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 multiline_comment|/* no outputs, it doesn&squot;t ever return */
 suffix:colon

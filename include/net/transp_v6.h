@@ -109,6 +109,10 @@ r_struct
 id|ipv6_options
 op_star
 id|opt
+comma
+r_int
+op_star
+id|hlimit
 )paren
 suffix:semicolon
 DECL|macro|LOOPBACK4_IPV6

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/fs/msdos/msdosfs_syms.c&n; *&n; * Exported kernel symbols for the MS-DOS filesystem.&n; * These symbols are used by umsdos.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;

@@ -95,11 +95,7 @@ multiline_comment|/* ex_table_start */
 id|__stop___ex_table
 comma
 multiline_comment|/* ex_table_end */
-macro_line|#ifdef __alpha__
-l_int|NULL
-comma
-multiline_comment|/* gp */
-macro_line|#endif
+multiline_comment|/* Rest are NULL */
 )brace
 suffix:semicolon
 DECL|variable|module_list
@@ -715,7 +711,7 @@ r_goto
 id|err1
 suffix:semicolon
 )brace
-multiline_comment|/* In the future we can check for various known sizes, but for&n;&t;   now there is only one.  */
+multiline_comment|/* Check for legal module header sizes.  */
 r_if
 c_cond
 (paren
@@ -737,18 +733,36 @@ l_int|0
 r_goto
 id|err1
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|mod_user_size
-op_ne
+)paren
+(brace
+r_case
 r_sizeof
 (paren
 r_struct
 id|module
 )paren
+suffix:colon
+r_case
+op_amp
+(paren
+(paren
+r_struct
+id|module
+op_star
 )paren
-(brace
+l_int|0L
+)paren
+op_member_access_from_pointer
+id|persist_start
+suffix:colon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|printk
 c_func
 (paren
@@ -1614,6 +1628,8 @@ op_or
 id|MOD_RUNNING
 op_or
 id|MOD_DELETED
+op_or
+id|MOD_USED_ONCE
 )paren
 )paren
 op_eq
@@ -1621,6 +1637,8 @@ op_eq
 id|MOD_AUTOCLEAN
 op_or
 id|MOD_RUNNING
+op_or
+id|MOD_USED_ONCE
 )paren
 )paren
 )paren

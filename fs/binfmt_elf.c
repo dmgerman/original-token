@@ -5630,6 +5630,9 @@ id|vma-&gt;vm_end
 op_minus
 id|vma-&gt;vm_start
 suffix:semicolon
+id|i
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5641,9 +5644,6 @@ id|vma
 )paren
 )paren
 r_continue
-suffix:semicolon
-id|i
-op_increment
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk

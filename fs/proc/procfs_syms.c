@@ -1,5 +1,5 @@
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/*&n; * This is all required so that if we load all of scsi as a module,&n; * that the scsi code will be able to talk to the /proc/scsi handling&n; * in the procfs.&n; */

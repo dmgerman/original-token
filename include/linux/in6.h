@@ -142,6 +142,8 @@ DECL|macro|IPV6_PKTOPTIONS
 mdefine_line|#define IPV6_PKTOPTIONS&t;&t;6
 DECL|macro|IPV6_CHECKSUM
 mdefine_line|#define IPV6_CHECKSUM&t;&t;7
+DECL|macro|IPV6_HOPLIMIT
+mdefine_line|#define IPV6_HOPLIMIT&t;&t;8
 multiline_comment|/*&n; *&t;Alternative names&n; */
 DECL|macro|IPV6_TXINFO
 mdefine_line|#define IPV6_TXINFO&t;&t;IPV6_RXINFO

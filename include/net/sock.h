@@ -229,6 +229,21 @@ id|rxinfo
 suffix:colon
 l_int|1
 comma
+DECL|member|rxhlim
+id|rxhlim
+suffix:colon
+l_int|1
+comma
+DECL|member|hopopts
+id|hopopts
+suffix:colon
+l_int|1
+comma
+DECL|member|dstopts
+id|dstopts
+suffix:colon
+l_int|1
+comma
 DECL|member|mc_loop
 id|mc_loop
 suffix:colon
@@ -237,7 +252,7 @@ comma
 DECL|member|unused
 id|unused
 suffix:colon
-l_int|4
+l_int|2
 suffix:semicolon
 multiline_comment|/* device for outgoing mcast packets */
 DECL|member|mc_if

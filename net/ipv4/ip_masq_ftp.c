@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;&t;IP_MASQ_FTP ftp masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_ftp.c 0.01   02/05/96&n; *&n; * Author:&t;Wouter Gadeyne&n; *&n; *&n; * Fixes:&n; *&t;Wouter Gadeyne&t;&t;:&t;Fixed masquerading support of ftp PORT commands&n; * &t;Juan Jose Ciarlante&t;:&t;Code moved and adapted from ip_fw.c&n; *&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

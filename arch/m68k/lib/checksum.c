@@ -330,7 +330,7 @@ l_string|&quot;.long 18b,7b&bslash;n&quot;
 l_string|&quot;.long 19b,7b&bslash;n&quot;
 l_string|&quot;.long 20b,7b&bslash;n&quot;
 l_string|&quot;.long 21b,7b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren

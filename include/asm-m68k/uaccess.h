@@ -90,7 +90,7 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * Tell gcc we read from memory instead of writing: this is because&n; * we do not write to any memory gcc knows about, so there are no&n; * aliasing issues.&n; */
 DECL|macro|__put_user_asm
-mdefine_line|#define __put_user_asm(err,x,ptr,bwl)&t;&t;&t;&bslash;&n;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;    (&quot;21:moves&quot; #bwl &quot; %2,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;1:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;     &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;   .even&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;2: movel %3,%0&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;   jra 1b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;     &quot;   .align 4&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;   .long 21b,2b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;   .long 1b,2b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;.text&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;     : &quot;=d&quot;(err)&t;&t;&t;&t;&t;&bslash;&n;     : &quot;m&quot;(*(ptr)), &quot;r&quot;(x), &quot;i&quot;(-EFAULT), &quot;0&quot;(0))
+mdefine_line|#define __put_user_asm(err,x,ptr,bwl)&t;&t;&t;&bslash;&n;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;    (&quot;21:moves&quot; #bwl &quot; %2,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;1:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;     &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;   .even&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;2: movel %3,%0&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;   jra 1b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;     &quot;   .align 4&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;   .long 21b,2b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;   .long 1b,2b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;.previous&quot;&t;&t;&t;&t;&t;&bslash;&n;     : &quot;=d&quot;(err)&t;&t;&t;&t;&t;&bslash;&n;     : &quot;m&quot;(*(ptr)), &quot;r&quot;(x), &quot;i&quot;(-EFAULT), &quot;0&quot;(0))
 DECL|macro|get_user
 mdefine_line|#define get_user(x, ptr)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    int __gu_err;&t;&t;&t;&t;&t;&t;&bslash;&n;    typeof(*(ptr)) __gu_val;&t;&t;&t;&t;&t;&bslash;&n;    switch (sizeof(*(ptr))) {&t;&t;&t;&t;&t;&bslash;&n;    case 1:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__get_user_asm(__gu_err, __gu_val, ptr, b, &quot;=d&quot;);&t;&bslash;&n;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    case 2:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__get_user_asm(__gu_err, __gu_val, ptr, w, &quot;=r&quot;);&t;&bslash;&n;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    case 4:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__get_user_asm(__gu_err, __gu_val, ptr, l, &quot;=r&quot;);&t;&bslash;&n;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    default:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__gu_val = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__gu_err = __get_user_bad();&t;&t;&t;&t;&bslash;&n;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    }&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    (x) = __gu_val;&t;&t;&t;&t;&t;&t;&bslash;&n;    __gu_err;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__get_user
@@ -104,7 +104,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|__get_user_asm
-mdefine_line|#define __get_user_asm(err,x,ptr,bwl,reg)&t;&bslash;&n;__asm__ __volatile__&t;&t;&t;&t;&bslash;&n;    (&quot;1: moves&quot; #bwl &quot; %2,%1&bslash;n&quot;&t;&t;&t;&bslash;&n;     &quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;     &quot;   .even&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;3: movel %3,%0&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;   sub&quot; #bwl &quot; %1,%1&bslash;n&quot;&t;&t;&t;&bslash;&n;     &quot;   jra 2b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&bslash;&n;     &quot;   .align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;   .long 1b,3b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;.text&quot;&t;&t;&t;&t;&t;&bslash;&n;     : &quot;=d&quot;(err), reg(x)&t;&t;&t;&bslash;&n;     : &quot;m&quot;(*(ptr)), &quot;i&quot; (-EFAULT), &quot;0&quot;(0))
+mdefine_line|#define __get_user_asm(err,x,ptr,bwl,reg)&t;&bslash;&n;__asm__ __volatile__&t;&t;&t;&t;&bslash;&n;    (&quot;1: moves&quot; #bwl &quot; %2,%1&bslash;n&quot;&t;&t;&t;&bslash;&n;     &quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;     &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;     &quot;   .even&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;3: movel %3,%0&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;   sub&quot; #bwl &quot; %1,%1&bslash;n&quot;&t;&t;&t;&bslash;&n;     &quot;   jra 2b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&bslash;&n;     &quot;   .align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;   .long 1b,3b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;     &quot;.previous&quot;&t;&t;&t;&t;&bslash;&n;     : &quot;=d&quot;(err), reg(x)&t;&t;&t;&bslash;&n;     : &quot;m&quot;(*(ptr)), &quot;i&quot; (-EFAULT), &quot;0&quot;(0))
 r_static
 r_inline
 r_int
@@ -159,12 +159,13 @@ l_string|&quot;8: addql #2,%2&bslash;n&quot;
 l_string|&quot;   jra 6b&bslash;n&quot;
 l_string|&quot;9: addql #1,%2&bslash;n&quot;
 l_string|&quot;   jra 6b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,7b&bslash;n&quot;
 l_string|&quot;   .long 3b,8b&bslash;n&quot;
 l_string|&quot;   .long 5b,9b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -273,6 +274,7 @@ l_string|&quot;7: addql #2,%2&bslash;n&quot;
 l_string|&quot;   jra 5b&bslash;n&quot;
 l_string|&quot;8: addql #1,%2&bslash;n&quot;
 l_string|&quot;   jra 5b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 22b,6b&bslash;n&quot;
@@ -281,7 +283,7 @@ l_string|&quot;   .long 24b,7b&bslash;n&quot;
 l_string|&quot;   .long 4b,7b&bslash;n&quot;
 l_string|&quot;   .long 25b,8b&bslash;n&quot;
 l_string|&quot;   .long 5b,8b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -333,7 +335,7 @@ id|n
 suffix:semicolon
 )brace
 DECL|macro|__copy_from_user_big
-mdefine_line|#define __copy_from_user_big(to, from, n, fixup, copy)&t;&bslash;&n;    __asm__ __volatile__&t;&t;&t;&t;&bslash;&n;&t;(&quot;10: movesl (%1)+,%%d0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    movel %%d0,(%0)+&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    subql #1,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jne 10b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .even&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;11: lsll #2,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; fixup &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jra 12f&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    .long 10b,11b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.text&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; copy &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;.text&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;12:&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; : &quot;=a&quot;(to), &quot;=a&quot;(from), &quot;=d&quot;(n)&t;&t;&bslash;&n;&t; : &quot;0&quot;(to), &quot;1&quot;(from), &quot;2&quot;(n/4)&t;&t;&t;&bslash;&n;&t; : &quot;d0&quot;, &quot;memory&quot;)
+mdefine_line|#define __copy_from_user_big(to, from, n, fixup, copy)&t;&bslash;&n;    __asm__ __volatile__&t;&t;&t;&t;&bslash;&n;&t;(&quot;10: movesl (%1)+,%%d0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    movel %%d0,(%0)+&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    subql #1,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jne 10b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .even&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;11: lsll #2,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; fixup &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jra 12f&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    .long 10b,11b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; copy &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;12:&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; : &quot;=a&quot;(to), &quot;=a&quot;(from), &quot;=d&quot;(n)&t;&t;&bslash;&n;&t; : &quot;0&quot;(to), &quot;1&quot;(from), &quot;2&quot;(n/4)&t;&t;&t;&bslash;&n;&t; : &quot;d0&quot;, &quot;memory&quot;)
 r_static
 r_inline
 r_int
@@ -380,10 +382,11 @@ l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;3: addql #1,%2&bslash;n&quot;
 l_string|&quot;   jra 2b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,3b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -435,10 +438,11 @@ l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;3: addql #2,%2&bslash;n&quot;
 l_string|&quot;   jra 2b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,3b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -493,11 +497,12 @@ l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;4: addql #2,%2&bslash;n&quot;
 l_string|&quot;5: addql #1,%2&bslash;n&quot;
 l_string|&quot;   jra 3b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,4b&bslash;n&quot;
 l_string|&quot;   .long 2b,5b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -549,10 +554,11 @@ l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;3: addql #4,%2&bslash;n&quot;
 l_string|&quot;   jra 2b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,3b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -607,11 +613,12 @@ l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;4: addql #4,%2&bslash;n&quot;
 l_string|&quot;5: addql #4,%2&bslash;n&quot;
 l_string|&quot;   jra 3b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,4b&bslash;n&quot;
 l_string|&quot;   .long 2b,5b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -669,12 +676,13 @@ l_string|&quot;5: addql #4,%2&bslash;n&quot;
 l_string|&quot;6: addql #4,%2&bslash;n&quot;
 l_string|&quot;7: addql #4,%2&bslash;n&quot;
 l_string|&quot;   jra 4b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,5b&bslash;n&quot;
 l_string|&quot;   .long 2b,6b&bslash;n&quot;
 l_string|&quot;   .long 3b,7b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -735,13 +743,14 @@ l_string|&quot;7: addql #4,%2&bslash;n&quot;
 l_string|&quot;8: addql #4,%2&bslash;n&quot;
 l_string|&quot;9: addql #4,%2&bslash;n&quot;
 l_string|&quot;   jra 5b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,6b&bslash;n&quot;
 l_string|&quot;   .long 2b,7b&bslash;n&quot;
 l_string|&quot;   .long 3b,8b&bslash;n&quot;
 l_string|&quot;   .long 4b,9b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -830,7 +839,8 @@ multiline_comment|/* copy */
 l_string|&quot;2: movesb (%1)+,%%d0&bslash;n&quot;
 l_string|&quot;   moveb %%d0,(%0)+&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-l_string|&quot;   .long 2b,1b&quot;
+l_string|&quot;   .long 2b,1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
 )paren
 suffix:semicolon
 r_break
@@ -854,7 +864,8 @@ multiline_comment|/* copy */
 l_string|&quot;2: movesw (%1)+,%%d0&bslash;n&quot;
 l_string|&quot;   movew %%d0,(%0)+&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-l_string|&quot;   .long 2b,1b&quot;
+l_string|&quot;   .long 2b,1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
 )paren
 suffix:semicolon
 r_break
@@ -882,7 +893,8 @@ l_string|&quot;4: movesb (%1)+,%%d0&bslash;n&quot;
 l_string|&quot;   moveb %%d0,(%0)+&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .long 3b,1b&bslash;n&quot;
-l_string|&quot;   .long 4b,2b&quot;
+l_string|&quot;   .long 4b,2b&bslash;n&quot;
+l_string|&quot;.previous&quot;
 )paren
 suffix:semicolon
 r_break
@@ -896,7 +908,7 @@ id|n
 suffix:semicolon
 )brace
 DECL|macro|__copy_to_user_big
-mdefine_line|#define __copy_to_user_big(to, from, n, fixup, copy)&t;&bslash;&n;    __asm__ __volatile__&t;&t;&t;&t;&bslash;&n;&t;(&quot;10: movel (%1)+,%%d0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;31: movesl %%d0,(%0)+&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;11: subql #1,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jne 10b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;   .even&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;12: lsll #2,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; fixup &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jra 13f&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    .long 31b,12b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    .long 11b,12b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.text&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; copy &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;.text&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;13:&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; : &quot;=a&quot;(to), &quot;=a&quot;(from), &quot;=d&quot;(n)&t;&t;&bslash;&n;&t; : &quot;0&quot;(to), &quot;1&quot;(from), &quot;2&quot;(n/4)&t;&t;&t;&bslash;&n;&t; : &quot;d0&quot;)
+mdefine_line|#define __copy_to_user_big(to, from, n, fixup, copy)&t;&bslash;&n;    __asm__ __volatile__&t;&t;&t;&t;&bslash;&n;&t;(&quot;10: movel (%1)+,%%d0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;31: movesl %%d0,(%0)+&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;11: subql #1,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jne 10b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;   .even&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;12: lsll #2,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; fixup &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jra 13f&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    .long 31b,12b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    .long 11b,12b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; copy &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;13:&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; : &quot;=a&quot;(to), &quot;=a&quot;(from), &quot;=d&quot;(n)&t;&t;&bslash;&n;&t; : &quot;0&quot;(to), &quot;1&quot;(from), &quot;2&quot;(n/4)&t;&t;&t;&bslash;&n;&t; : &quot;d0&quot;)
 r_static
 r_inline
 r_int
@@ -943,11 +955,12 @@ l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;2: addql #1,%2&bslash;n&quot;
 l_string|&quot;   jra 1b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n  &quot;
 l_string|&quot;   .long 21b,2b&bslash;n&quot;
 l_string|&quot;   .long 1b,2b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -999,11 +1012,12 @@ l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;2: addql #2,%2&bslash;n&quot;
 l_string|&quot;   jra 1b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 21b,2b&bslash;n&quot;
 l_string|&quot;   .long 1b,2b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1058,13 +1072,14 @@ l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;3: addql #2,%2&bslash;n&quot;
 l_string|&quot;4: addql #1,%2&bslash;n&quot;
 l_string|&quot;   jra 2b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 21b,3b&bslash;n&quot;
 l_string|&quot;   .long 1b,3b&bslash;n&quot;
 l_string|&quot;   .long 22b,4b&bslash;n&quot;
 l_string|&quot;   .long 2b,4b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1116,11 +1131,12 @@ l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;2: addql #4,%2&bslash;n&quot;
 l_string|&quot;   jra 1b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 21b,2b&bslash;n&quot;
 l_string|&quot;   .long 1b,2b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1175,13 +1191,14 @@ l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;3: addql #4,%2&bslash;n&quot;
 l_string|&quot;4: addql #4,%2&bslash;n&quot;
 l_string|&quot;   jra 2b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 21b,3b&bslash;n&quot;
 l_string|&quot;   .long 1b,3b&bslash;n&quot;
 l_string|&quot;   .long 22b,4b&bslash;n&quot;
 l_string|&quot;   .long 2b,4b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1239,6 +1256,7 @@ l_string|&quot;4: addql #4,%2&bslash;n&quot;
 l_string|&quot;5: addql #4,%2&bslash;n&quot;
 l_string|&quot;6: addql #4,%2&bslash;n&quot;
 l_string|&quot;   jra 3b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 21b,4b&bslash;n&quot;
@@ -1247,7 +1265,7 @@ l_string|&quot;   .long 22b,5b&bslash;n&quot;
 l_string|&quot;   .long 2b,5b&bslash;n&quot;
 l_string|&quot;   .long 23b,6b&bslash;n&quot;
 l_string|&quot;   .long 3b,6b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1308,6 +1326,7 @@ l_string|&quot;6: addql #4,%2&bslash;n&quot;
 l_string|&quot;7: addql #4,%2&bslash;n&quot;
 l_string|&quot;8: addql #4,%2&bslash;n&quot;
 l_string|&quot;   jra 4b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 21b,5b&bslash;n&quot;
@@ -1318,7 +1337,7 @@ l_string|&quot;   .long 23b,7b&bslash;n&quot;
 l_string|&quot;   .long 3b,7b&bslash;n&quot;
 l_string|&quot;   .long 24b,8b&bslash;n&quot;
 l_string|&quot;   .long 4b,8b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1409,7 +1428,8 @@ l_string|&quot;22:movesb %%d0,(%0)+&bslash;n&quot;
 l_string|&quot;2:&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .long 22b,1b&bslash;n&quot;
-l_string|&quot;   .long 2b,1b&quot;
+l_string|&quot;   .long 2b,1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1435,7 +1455,8 @@ l_string|&quot;22:movesw %%d0,(%0)+&bslash;n&quot;
 l_string|&quot;2:&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .long 22b,1b&bslash;n&quot;
-l_string|&quot;   .long 2b,1b&quot;
+l_string|&quot;   .long 2b,1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1466,7 +1487,8 @@ l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .long 23b,1b&bslash;n&quot;
 l_string|&quot;   .long 3b,1b&bslash;n&quot;
 l_string|&quot;   .long 24b,2b&bslash;n&quot;
-l_string|&quot;   .long 4b,2b&quot;
+l_string|&quot;   .long 4b,2b&bslash;n&quot;
+l_string|&quot;.previous&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1531,11 +1553,12 @@ l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;4: movel %4,%0&bslash;n&quot;
 l_string|&quot;   jra 3b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,4b&bslash;n&quot;
 l_string|&quot;   .long 12b,4b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren
@@ -1627,11 +1650,12 @@ l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;3: moveq %2,%0&bslash;n&quot;
 l_string|&quot;   jra 2b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,3b&bslash;n&quot;
 l_string|&quot;   .long 12b,3b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren
@@ -1708,6 +1732,7 @@ l_string|&quot;7: addql #2,%1&bslash;n&quot;
 l_string|&quot;   jra 5b&bslash;n&quot;
 l_string|&quot;8: addql #1,%1&bslash;n&quot;
 l_string|&quot;   jra 5b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
 l_string|&quot;   .long 1b,6b&bslash;n&quot;
@@ -1716,7 +1741,7 @@ l_string|&quot;   .long 24b,7b&bslash;n&quot;
 l_string|&quot;   .long 4b,7b&bslash;n&quot;
 l_string|&quot;   .long 25b,8b&bslash;n&quot;
 l_string|&quot;   .long 5b,8b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren

@@ -2,9 +2,7 @@ multiline_comment|/*&n; *  linux/fs/filesystems.c&n; *&n; *  Copyright (C) 1991,
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
-macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/xia_fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -16,6 +14,7 @@ macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/affs_fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
+macro_line|#include &lt;linux/romfs_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 r_extern
 r_void
@@ -73,22 +72,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_EXT_FS
-id|init_ext_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_EXT2_FS
 id|init_ext2_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_XIA_FS
-id|init_xiafs_fs
 c_func
 (paren
 )paren
@@ -187,6 +172,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_UFS_FS
 id|init_ufs_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ROMFS_FS
+id|init_romfs_fs
 c_func
 (paren
 )paren

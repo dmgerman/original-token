@@ -2994,6 +2994,12 @@ c_func
 l_string|&quot;&bslash;tputs $autocfg &bslash;&quot; */&bslash;&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tputs $autocfg &bslash;&quot;#define AUTOCONF_INCLUDED&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren

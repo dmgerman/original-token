@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * linux/arch/alpha/kernel/ksyms.c&n; *&n; * Export the alpha-specific functions that are needed for loadable&n; * modules.&n; */
-macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
@@ -29,6 +29,54 @@ r_struct
 id|hwrpb_struct
 op_star
 id|hwrpb
+suffix:semicolon
+r_extern
+r_int
+id|__kernel_thread
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+(paren
+op_star
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|dump_thread
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_struct
+id|user
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|dump_fpu
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+id|elf_fpregset_t
+op_star
+)paren
 suffix:semicolon
 multiline_comment|/* these are C runtime functions with special calling conventions: */
 r_extern
@@ -85,33 +133,6 @@ r_void
 id|__remqu
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|dump_thread
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-comma
-r_struct
-id|user
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dump_fpu
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-comma
-id|elf_fpregset_t
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/* platform dependent support */
@@ -372,6 +393,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|wrusp
+)paren
+suffix:semicolon
+DECL|variable|__kernel_thread
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__kernel_thread
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * The following are specially called from the uaccess assembly stubs.&n; */

@@ -667,6 +667,9 @@ r_int
 id|proto
 comma
 r_int
+id|hlimit
+comma
+r_int
 id|noblock
 )paren
 suffix:semicolon

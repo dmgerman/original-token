@@ -4569,6 +4569,12 @@ id|krn_msg_ctl
 op_assign
 l_int|NULL
 suffix:semicolon
+r_void
+op_star
+id|usr_msg_ctl
+op_assign
+l_int|NULL
+suffix:semicolon
 r_int
 id|err
 suffix:semicolon
@@ -4577,6 +4583,8 @@ id|total_len
 suffix:semicolon
 r_int
 id|len
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* kernel mode address */
 r_char
@@ -4708,6 +4716,7 @@ c_cond
 id|msg_sys.msg_controllen
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;FIXME:&n;&t;&t; *&t;I&squot;m assuming that the kernel may have to examine&n;&t;&t; *&t;the acciliary control messages passed by the user.&n;&t;&t; *&t;Find out what POSIX says about this...&n;&t;&t; */
 id|krn_msg_ctl
 op_assign
 id|kmalloc
@@ -4751,8 +4760,19 @@ c_cond
 (paren
 id|err
 )paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_goto
 id|flush_it
+suffix:semicolon
+)brace
+id|usr_msg_ctl
+op_assign
+id|msg_sys.msg_control
 suffix:semicolon
 id|msg_sys.msg_control
 op_assign
@@ -4845,8 +4865,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|err
+op_ge
+l_int|0
 op_logical_and
 id|msg_sys.msg_controllen
 )paren
@@ -4856,7 +4877,7 @@ op_assign
 id|copy_to_user
 c_func
 (paren
-id|msg_sys.msg_control
+id|usr_msg_ctl
 comma
 id|krn_msg_ctl
 comma
@@ -4896,6 +4917,8 @@ r_if
 c_cond
 (paren
 id|err
+OL
+l_int|0
 )paren
 r_return
 id|err

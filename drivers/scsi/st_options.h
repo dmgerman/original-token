@@ -48,5 +48,8 @@ mdefine_line|#define ST_AUTO_LOCK 0
 multiline_comment|/* If ST_FAST_MTEOM is non-zero, the MTEOM ioctl is done using the&n;   direct SCSI command. The file number status is lost but this method&n;   is fast with some drives. Otherwise MTEOM is done by spacing over&n;   files and the file number status is retained. */
 DECL|macro|ST_FAST_MTEOM
 mdefine_line|#define ST_FAST_MTEOM 0
+multiline_comment|/* If ST_SYSV is non-zero, the tape behaves according to the SYS V semantics.&n;   The default is BSD semantics. */
+DECL|macro|ST_SYSV
+mdefine_line|#define ST_SYSV 0
 macro_line|#endif
 eof

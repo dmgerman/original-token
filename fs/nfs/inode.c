@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/nfs/inode.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  nfs inode and superblock handling functions&n; *&n; *  Modularised by Alan Cox &lt;Alan.Cox@linux.org&gt;, while hacking some&n; *  experimental NFS changes. Modularisation taken straight from SYS5 fs.&n; *&n; *  Change to nfs_read_super() to permit NFS mounts to multi-homed hosts.&n; *  J.S.Peatfield@damtp.cam.ac.uk&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;

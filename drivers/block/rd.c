@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
+macro_line|#include &lt;linux/romfs_fs.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -924,7 +925,7 @@ suffix:semicolon
 macro_line|#endif  /* MODULE */
 multiline_comment|/* End of non-loading portions of the ramdisk driver */
 macro_line|#ifdef RD_LOADER 
-multiline_comment|/*&n; * This routine tries to a ramdisk image to load, and returns the&n; * number of blocks to read for a non-compressed image, 0 if the image&n; * is a compressed image, and -1 if an image with the right magic&n; * numbers could not be found.&n; *&n; * We currently check for the following magic numbers:&n; * &t;minix&n; * &t;ext2&n; * &t;gzip&n; */
+multiline_comment|/*&n; * This routine tries to a ramdisk image to load, and returns the&n; * number of blocks to read for a non-compressed image, 0 if the image&n; * is a compressed image, and -1 if an image with the right magic&n; * numbers could not be found.&n; *&n; * We currently check for the following magic numbers:&n; * &t;minix&n; * &t;ext2&n; *&t;romfs&n; * &t;gzip&n; */
 r_int
 DECL|function|identify_ramdisk_image
 id|identify_ramdisk_image
@@ -957,6 +958,11 @@ r_struct
 id|ext2_super_block
 op_star
 id|ext2sb
+suffix:semicolon
+r_struct
+id|romfs_super_block
+op_star
+id|romfsb
 suffix:semicolon
 r_int
 id|nblocks
@@ -1007,6 +1013,15 @@ op_assign
 (paren
 r_struct
 id|ext2_super_block
+op_star
+)paren
+id|buf
+suffix:semicolon
+id|romfsb
+op_assign
+(paren
+r_struct
+id|romfs_super_block
 op_star
 )paren
 id|buf
@@ -1107,6 +1122,48 @@ suffix:semicolon
 id|nblocks
 op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|done
+suffix:semicolon
+)brace
+multiline_comment|/* romfs is at block zero too */
+r_if
+c_cond
+(paren
+id|romfsb-&gt;word0
+op_eq
+id|ROMSB_WORD0
+op_logical_and
+id|romfsb-&gt;word1
+op_eq
+id|ROMSB_WORD1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;RAMDISK: Romfs filesystem found at block %d&bslash;n&quot;
+comma
+id|start_block
+)paren
+suffix:semicolon
+id|nblocks
+op_assign
+(paren
+id|ntohl
+c_func
+(paren
+id|romfsb-&gt;size
+)paren
+op_plus
+id|BLOCK_SIZE
+op_minus
+l_int|1
+)paren
+op_rshift
+id|BLOCK_SIZE_BITS
 suffix:semicolon
 r_goto
 id|done

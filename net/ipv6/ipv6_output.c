@@ -1192,6 +1192,9 @@ r_int
 id|proto
 comma
 r_int
+id|hlimit
+comma
+r_int
 id|noblock
 )paren
 (brace
@@ -1199,9 +1202,6 @@ id|rt6_output_method_t
 id|output_method
 op_assign
 id|default_output_method
-suffix:semicolon
-r_int
-id|hlimit
 suffix:semicolon
 r_struct
 id|ipv6_pinfo
@@ -1290,6 +1290,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|hlimit
+OL
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|addr_type
 op_amp
 id|IPV6_ADDR_MULTICAST
@@ -1318,6 +1326,7 @@ id|hlimit
 op_assign
 id|np-&gt;hop_limit
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

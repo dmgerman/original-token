@@ -888,13 +888,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* rebooting needs to touch the page at absolute addr 0 */
-id|pg0
-(braket
-l_int|0
-)braket
-op_assign
-l_int|7
-suffix:semicolon
 op_star
 (paren
 (paren
@@ -902,7 +895,11 @@ r_int
 r_int
 op_star
 )paren
+id|__va
+c_func
+(paren
 l_int|0x472
+)paren
 )paren
 op_assign
 id|reboot_mode

@@ -1020,7 +1020,7 @@ l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
 l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
 l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
 l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -1087,7 +1087,7 @@ l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
 l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
 l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
 l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -1158,7 +1158,7 @@ l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
 l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
 l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
 l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -1236,7 +1236,7 @@ l_string|&quot;&t;.gprel32 3b&bslash;n&quot;
 l_string|&quot;&t;lda $31,5b-3b(%0)&bslash;n&quot;
 l_string|&quot;&t;.gprel32 4b&bslash;n&quot;
 l_string|&quot;&t;lda $31,5b-4b(%0)&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -1322,7 +1322,7 @@ l_string|&quot;&t;.gprel32 3b&bslash;n&quot;
 l_string|&quot;&t;lda $31,5b-3b(%0)&bslash;n&quot;
 l_string|&quot;&t;.gprel32 4b&bslash;n&quot;
 l_string|&quot;&t;lda $31,5b-4b(%0)&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -1407,7 +1407,7 @@ l_string|&quot;&t;.gprel32 3b&bslash;n&quot;
 l_string|&quot;&t;lda $31,5b-3b(%0)&bslash;n&quot;
 l_string|&quot;&t;.gprel32 4b&bslash;n&quot;
 l_string|&quot;&t;lda $31,5b-4b(%0)&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

@@ -1749,6 +1749,11 @@ r_int
 id|addr_type
 suffix:semicolon
 r_int
+id|hlimit
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|err
 suffix:semicolon
 r_if
@@ -1957,6 +1962,9 @@ op_amp
 id|saddr
 comma
 id|opt
+comma
+op_amp
+id|hlimit
 )paren
 suffix:semicolon
 r_if
@@ -2041,6 +2049,8 @@ comma
 id|opt
 comma
 id|IPPROTO_UDP
+comma
+id|hlimit
 comma
 id|msg-&gt;msg_flags
 op_amp

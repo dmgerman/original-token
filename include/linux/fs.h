@@ -516,17 +516,16 @@ suffix:semicolon
 )brace
 macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
-macro_line|#include &lt;linux/ext_fs_i.h&gt;
 macro_line|#include &lt;linux/ext2_fs_i.h&gt;
 macro_line|#include &lt;linux/hpfs_fs_i.h&gt;
 macro_line|#include &lt;linux/msdos_fs_i.h&gt;
 macro_line|#include &lt;linux/umsdos_fs_i.h&gt;
 macro_line|#include &lt;linux/iso_fs_i.h&gt;
 macro_line|#include &lt;linux/nfs_fs_i.h&gt;
-macro_line|#include &lt;linux/xia_fs_i.h&gt;
 macro_line|#include &lt;linux/sysv_fs_i.h&gt;
 macro_line|#include &lt;linux/affs_fs_i.h&gt;
 macro_line|#include &lt;linux/ufs_fs_i.h&gt;
+macro_line|#include &lt;linux/romfs_fs_i.h&gt;
 multiline_comment|/*&n; * Attribute flags.  These should be or-ed together to figure out what&n; * has been changed!&n; */
 DECL|macro|ATTR_MODE
 mdefine_line|#define ATTR_MODE&t;1
@@ -801,11 +800,6 @@ r_struct
 id|minix_inode_info
 id|minix_i
 suffix:semicolon
-DECL|member|ext_i
-r_struct
-id|ext_inode_info
-id|ext_i
-suffix:semicolon
 DECL|member|ext2_i
 r_struct
 id|ext2_inode_info
@@ -836,11 +830,6 @@ r_struct
 id|nfs_inode_info
 id|nfs_i
 suffix:semicolon
-DECL|member|xiafs_i
-r_struct
-id|xiafs_inode_info
-id|xiafs_i
-suffix:semicolon
 DECL|member|sysv_i
 r_struct
 id|sysv_inode_info
@@ -855,6 +844,11 @@ DECL|member|ufs_i
 r_struct
 id|ufs_inode_info
 id|ufs_i
+suffix:semicolon
+DECL|member|romfs_i
+r_struct
+id|romfs_inode_info
+id|romfs_i
 suffix:semicolon
 DECL|member|socket_i
 r_struct
@@ -1300,16 +1294,15 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#include &lt;linux/minix_fs_sb.h&gt;
-macro_line|#include &lt;linux/ext_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext2_fs_sb.h&gt;
 macro_line|#include &lt;linux/hpfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/msdos_fs_sb.h&gt;
 macro_line|#include &lt;linux/iso_fs_sb.h&gt;
 macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
-macro_line|#include &lt;linux/xia_fs_sb.h&gt;
 macro_line|#include &lt;linux/sysv_fs_sb.h&gt;
 macro_line|#include &lt;linux/affs_fs_sb.h&gt;
 macro_line|#include &lt;linux/ufs_fs_sb.h&gt;
+macro_line|#include &lt;linux/romfs_fs_sb.h&gt;
 DECL|struct|super_block
 r_struct
 id|super_block
@@ -1401,11 +1394,6 @@ r_struct
 id|minix_sb_info
 id|minix_sb
 suffix:semicolon
-DECL|member|ext_sb
-r_struct
-id|ext_sb_info
-id|ext_sb
-suffix:semicolon
 DECL|member|ext2_sb
 r_struct
 id|ext2_sb_info
@@ -1431,11 +1419,6 @@ r_struct
 id|nfs_sb_info
 id|nfs_sb
 suffix:semicolon
-DECL|member|xiafs_sb
-r_struct
-id|xiafs_sb_info
-id|xiafs_sb
-suffix:semicolon
 DECL|member|sysv_sb
 r_struct
 id|sysv_sb_info
@@ -1450,6 +1433,11 @@ DECL|member|ufs_sb
 r_struct
 id|ufs_sb_info
 id|ufs_sb
+suffix:semicolon
+DECL|member|romfs_sb
+r_struct
+id|romfs_sb_info
+id|romfs_sb
 suffix:semicolon
 DECL|member|generic_sbp
 r_void

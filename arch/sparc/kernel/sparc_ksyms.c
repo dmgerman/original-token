@@ -328,7 +328,7 @@ op_star
 suffix:semicolon
 multiline_comment|/* One thing to note is that the way the symbols of the mul/div&n; * support routines are named is a mess, they all start with&n; * a &squot;.&squot; which makes it a bitch to export, here is the trick:&n; */
 DECL|macro|EXPORT_SYMBOL_DOT
-mdefine_line|#define EXPORT_SYMBOL_DOT(sym)&t;&t;&t;&t;&t;&bslash;&n;extern int __sparc_dot_ ## sym (int) __asm__(&quot;.&quot; ## #sym);&t;&bslash;&n;const struct module_symbol __export_dot_##sym&t;&t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&t;&bslash;&n;{ (unsigned long) &amp;__sparc_dot_ ## sym, &quot;.&quot; ## #sym }
+mdefine_line|#define EXPORT_SYMBOL_DOT(sym)&t;&t;&t;&t;&t;&bslash;&n;extern int __sparc_dot_ ## sym (int) __asm__(&quot;.&quot; #sym);&t;&t;&bslash;&n;__EXPORT_SYMBOL(__sparc_dot_ ## sym, &quot;.&quot; #sym)
 multiline_comment|/* used by various drivers */
 DECL|variable|sparc_cpu_model
 id|EXPORT_SYMBOL

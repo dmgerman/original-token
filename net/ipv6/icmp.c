@@ -725,6 +725,8 @@ l_int|NULL
 comma
 id|IPPROTO_ICMPV6
 comma
+l_int|0
+comma
 l_int|1
 )paren
 suffix:semicolon
@@ -889,6 +891,8 @@ comma
 l_int|NULL
 comma
 id|IPPROTO_ICMPV6
+comma
+l_int|0
 comma
 l_int|1
 )paren

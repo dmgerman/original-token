@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; * &n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; * &t;int rs_open(struct tty_struct * tty, struct file * filp)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -9,7 +10,6 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/serial_reg.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -13070,6 +13070,23 @@ id|state-&gt;type
 dot
 id|dfl_xmit_fifo_size
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|state-&gt;type
+op_eq
+id|PORT_UNKNOWN
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|request_region
 c_func
 (paren
@@ -13815,36 +13832,6 @@ id|state-&gt;flags
 op_assign
 id|req-&gt;flags
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-id|state-&gt;port
-comma
-l_int|8
-)paren
-)paren
-(brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;register_serial(): I/O region in use&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* Area in use */
-)brace
 id|autoconfig
 c_func
 (paren

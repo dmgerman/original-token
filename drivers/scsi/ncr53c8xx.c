@@ -1,5 +1,5 @@
 multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;26 December 1996, version 1.16b&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(NCR BIOS in flash-bios required) &n;**&t;&t;53C815&t;&t;(~53C810 with on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide, NCR BIOS in flash bios required)&n;**&t;&t;53C825&t;&t;(Wide, ~53C820 with on board rom BIOS)&n;**&t;&t;53C860&t;&t;(Narrow fast 20, BIOS required)&n;**&t;&t;53C875&t;&t;(Wide fast 40 with on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/*&n;**&t;12 January 1997, version 1.16e&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(NCR BIOS in flash-bios required) &n;**&t;&t;53C815&t;&t;(~53C810 with on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide, NCR BIOS in flash bios required)&n;**&t;&t;53C825&t;&t;(Wide, ~53C820 with on board rom BIOS)&n;**&t;&t;53C860&t;&t;(Narrow fast 20, BIOS required)&n;**&t;&t;53C875&t;&t;(Wide fast 40 with on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 DECL|macro|SCSI_NCR_DEBUG
 mdefine_line|#define SCSI_NCR_DEBUG
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
@@ -418,7 +418,7 @@ id|ptr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;**&t;Transfer direction&n;**&n;**&t;The middle scsi driver of Linux does not provide the transfer&n;**&t;direction in the command structure.&n;**&t;FreeBsd ncr driver requires this information.&n;**&n;**&t;I spent some hours to read the scsi2 documentation to see if&n;**&t;it was possible to deduce the direction of transfer from the opcode&n;**&t;of the command. It seems that it&squot;s OK.&n;**&t;guess_xfer_direction() seems to work. If it&squot;s wrong we will&n;**&t;get a phase mismatch on some opcode.&n;*/
+multiline_comment|/*&n;**&t;Transfer direction&n;**&n;**&t;Low-level scsi drivers under Linux do not receive the expected &n;**&t;data transfer direction from upper scsi drivers.&n;**&t;The driver will only check actual data direction for common &n;**&t;scsi opcodes. Other ones may cause problem, since they may &n;**&t;depend on device type or be vendor specific.&n;**&t;I would prefer to never trust the device for data direction, &n;**&t;but that is not possible.&n;**&n;**&t;The original driver requires the expected direction to be known.&n;**&t;The Linux version of the driver has been enhanced in order to &n;**&t;be able to transfer data in the direction choosen by the target. &n;*/
 DECL|macro|XferNone
 mdefine_line|#define XferNone&t;0
 DECL|macro|XferIn
@@ -586,6 +586,10 @@ suffix:semicolon
 DECL|member|debug
 r_int
 id|debug
+suffix:semicolon
+DECL|member|burst_max
+r_int
+id|burst_max
 suffix:semicolon
 DECL|variable|driver_setup
 )brace
@@ -854,8 +858,10 @@ DECL|macro|SIR_IGN_RESIDUE
 mdefine_line|#define&t;SIR_IGN_RESIDUE&t;&t;(11)
 DECL|macro|SIR_MISSING_SAVE
 mdefine_line|#define&t;SIR_MISSING_SAVE&t;(12)
+DECL|macro|SIR_DATA_IO_IS_OUT
+mdefine_line|#define&t;SIR_DATA_IO_IS_OUT&t;(13)
 DECL|macro|SIR_MAX
-mdefine_line|#define&t;SIR_MAX&t;&t;&t;(12)
+mdefine_line|#define&t;SIR_MAX&t;&t;&t;(13)
 multiline_comment|/*==========================================================&n;**&n;**&t;Extended error codes.&n;**&t;xerr_status field of struct ccb.&n;**&n;**==========================================================&n;*/
 DECL|macro|XE_OK
 mdefine_line|#define&t;XE_OK&t;&t;(0)
@@ -1506,6 +1512,11 @@ DECL|member|tag
 id|u_char
 id|tag
 suffix:semicolon
+multiline_comment|/*&n;&t;**&t;Number of segments of the scatter list.&n;&t;**&t;Used for recalculation of savep/goalp/lastp on &n;&t;**&t;SIR_DATA_IO_IS_OUT interrupt.&n;&t;*/
+DECL|member|segments
+id|u_char
+id|segments
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|CCB_PHYS
@@ -1581,6 +1592,10 @@ suffix:semicolon
 DECL|member|sv_ctest4
 id|u_char
 id|sv_ctest4
+suffix:semicolon
+DECL|member|sv_ctest5
+id|u_char
+id|sv_ctest5
 suffix:semicolon
 DECL|member|rv_dmode
 id|u_char
@@ -2181,6 +2196,14 @@ id|resel_tag
 l_int|24
 )braket
 suffix:semicolon
+DECL|member|data_io
+id|ncrcmd
+id|data_io
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* MUST be just before data_in */
 DECL|member|data_in
 id|ncrcmd
 id|data_in
@@ -6392,6 +6415,23 @@ comma
 l_int|0
 comma
 )brace
+multiline_comment|/*-------------------------&lt; DATA_IO &gt;--------------------*/
+comma
+(brace
+multiline_comment|/*&n;**&t;Because Linux does not provide xfer data direction &n;**&t;to low-level scsi drivers, we must trust the target &n;**&t;for actual data direction when we cannot guess it.&n;**&t;The programmed interrupt patches savep, lastp, goalp,&n;**&t;etc.., and restarts the scsi script at data_out.&n;*/
+id|SCR_INT
+op_xor
+id|IFTRUE
+(paren
+id|WHEN
+(paren
+id|SCR_DATA_OUT
+)paren
+)paren
+comma
+id|SIR_DATA_IO_IS_OUT
+comma
+)brace
 multiline_comment|/*-------------------------&lt; DATA_IN &gt;--------------------*/
 comma
 (brace
@@ -9754,6 +9794,10 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*----------------------------------------------------&n;&t;**&n;&t;**&t;Set the SAVED_POINTER.&n;&t;**&n;&t;**----------------------------------------------------&n;&t;*/
+id|cp-&gt;segments
+op_assign
+id|segments
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -9762,6 +9806,32 @@ id|xfer_direction
 (brace
 r_default
 suffix:colon
+r_case
+id|XferBoth
+suffix:colon
+id|cp-&gt;phys.header.savep
+op_assign
+id|NCB_SCRIPT_PHYS
+(paren
+id|np
+comma
+id|data_io
+)paren
+suffix:semicolon
+id|cp-&gt;phys.header.goalp
+op_assign
+id|cp-&gt;phys.header.savep
+op_plus
+l_int|8
+op_plus
+l_int|20
+op_plus
+id|segments
+op_star
+l_int|16
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|XferIn
 suffix:colon
@@ -10727,6 +10797,14 @@ c_func
 id|nc_ctest4
 comma
 id|np-&gt;sv_ctest4
+)paren
+suffix:semicolon
+id|OUTB
+c_func
+(paren
+id|nc_ctest5
+comma
+id|np-&gt;sv_ctest5
 )paren
 suffix:semicolon
 r_if
@@ -12096,6 +12174,85 @@ suffix:semicolon
 )brace
 suffix:semicolon
 )brace
+multiline_comment|/*===============================================================&n;**&n;**&t;NCR chips allow burst lengths of 2, 4, 8, 16, 32, 64, 128 &n;**&t;transfers. 32,64,128 are only supported by 875 chips.&n;**&t;We use log base 2 (burst length) as internal code, with &n;**&t;value 0 meaning &quot;burst disabled&quot;.&n;**&n;**===============================================================&n;*/
+multiline_comment|/*&n; *&t;Burst length from burst code.&n; */
+DECL|macro|burst_length
+mdefine_line|#define burst_length(bc) (!(bc))? 0 : 1 &lt;&lt; (bc)
+multiline_comment|/*&n; *&t;Burst code from io register bits.&n; */
+DECL|macro|burst_code
+mdefine_line|#define burst_code(dmode, ctest4, ctest5) &bslash;&n;&t;(ctest4) &amp; 0x80? 0 : (((dmode) &amp; 0xc0) &gt;&gt; 6) + ((ctest5) &amp; 0x04) + 1
+multiline_comment|/*&n; *&t;Set initial io register bits from burst code.&n; */
+DECL|function|ncr_init_burst
+r_static
+r_void
+id|ncr_init_burst
+c_func
+(paren
+id|ncb_p
+id|np
+comma
+id|u_char
+id|bc
+)paren
+(brace
+id|np-&gt;rv_ctest4
+op_and_assign
+op_complement
+l_int|0x80
+suffix:semicolon
+id|np-&gt;rv_dmode
+op_and_assign
+op_complement
+(paren
+l_int|0x3
+op_lshift
+l_int|6
+)paren
+suffix:semicolon
+id|np-&gt;rv_ctest5
+op_and_assign
+op_complement
+l_int|0x4
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bc
+)paren
+(brace
+id|np-&gt;rv_ctest4
+op_or_assign
+l_int|0x80
+suffix:semicolon
+)brace
+r_else
+(brace
+op_decrement
+id|bc
+suffix:semicolon
+id|np-&gt;rv_dmode
+op_or_assign
+(paren
+(paren
+id|bc
+op_amp
+l_int|0x3
+)paren
+op_lshift
+l_int|6
+)paren
+suffix:semicolon
+id|np-&gt;rv_ctest5
+op_or_assign
+(paren
+id|bc
+op_amp
+l_int|0x4
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*==========================================================&n;**&n;**&n;**&t;Start NCR chip.&n;**&n;**&n;**==========================================================&n;*/
 DECL|function|ncr_init
 r_void
@@ -12120,6 +12277,9 @@ id|usrsync
 suffix:semicolon
 id|u_char
 id|usrwide
+suffix:semicolon
+id|u_char
+id|burst_max
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Reset chip.&n;&t;*/
 id|OUTB
@@ -12236,6 +12396,22 @@ id|np-&gt;rv_ctest4
 op_assign
 id|np-&gt;sv_ctest4
 suffix:semicolon
+id|np-&gt;rv_ctest5
+op_assign
+id|np-&gt;sv_ctest5
+suffix:semicolon
+id|burst_max
+op_assign
+id|burst_code
+c_func
+(paren
+id|np-&gt;sv_dmode
+comma
+id|np-&gt;sv_ctest4
+comma
+id|np-&gt;sv_ctest5
+)paren
+suffix:semicolon
 macro_line|#else
 id|np-&gt;rv_dmode
 op_assign
@@ -12253,6 +12429,40 @@ id|np-&gt;rv_ctest4
 op_assign
 l_int|0
 suffix:semicolon
+id|burst_max
+op_assign
+id|driver_setup.burst_max
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|burst_max
+op_eq
+l_int|255
+)paren
+id|burst_max
+op_assign
+id|burst_code
+c_func
+(paren
+id|np-&gt;sv_dmode
+comma
+id|np-&gt;sv_ctest4
+comma
+id|np-&gt;sv_ctest5
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|burst_max
+OG
+l_int|7
+)paren
+id|burst_max
+op_assign
+l_int|7
+suffix:semicolon
 multiline_comment|/**&t;NCR53C810&t;&t;&t;**/
 r_if
 c_cond
@@ -12266,11 +12476,17 @@ op_eq
 l_int|0
 )paren
 (brace
-id|np-&gt;rv_dmode
+id|burst_max
 op_assign
-l_int|0x80
+id|burst_max
+OL
+l_int|4
+ques
+c_cond
+id|burst_max
+suffix:colon
+l_int|4
 suffix:semicolon
-multiline_comment|/* burst length 8 */
 )brace
 r_else
 multiline_comment|/**&t;NCR53C815&t;&t;&t;**/
@@ -12282,11 +12498,17 @@ op_eq
 id|PCI_DEVICE_ID_NCR_53C815
 )paren
 (brace
-id|np-&gt;rv_dmode
+id|burst_max
 op_assign
-l_int|0x80
+id|burst_max
+OL
+l_int|4
+ques
+c_cond
+id|burst_max
+suffix:colon
+l_int|4
 suffix:semicolon
-multiline_comment|/* burst length 8 */
 )brace
 r_else
 multiline_comment|/**&t;NCR53C825&t;&t;&t;**/
@@ -12302,11 +12524,22 @@ op_eq
 l_int|0
 )paren
 (brace
+id|burst_max
+op_assign
+id|burst_max
+OL
+l_int|4
+ques
+c_cond
+id|burst_max
+suffix:colon
+l_int|4
+suffix:semicolon
 id|np-&gt;rv_dmode
 op_assign
-l_int|0x8a
+l_int|0x0a
 suffix:semicolon
-multiline_comment|/* burst length 8, burst opcode fetch */
+multiline_comment|/* burst opcode fetch */
 )brace
 r_else
 multiline_comment|/**&t;NCR53C810A or NCR53C860&t;&t;**/
@@ -12334,17 +12567,32 @@ c_cond
 op_logical_neg
 id|driver_setup.special_features
 )paren
-id|np-&gt;rv_dmode
+id|burst_max
 op_assign
-l_int|0xc0
+id|burst_max
+OL
+l_int|4
+ques
+c_cond
+id|burst_max
+suffix:colon
+l_int|4
 suffix:semicolon
-multiline_comment|/* burst length 16 */
 r_else
 (brace
+id|burst_max
+op_assign
+id|burst_max
+OL
+l_int|4
+ques
+c_cond
+id|burst_max
+suffix:colon
+l_int|4
+suffix:semicolon
 id|np-&gt;rv_dmode
 op_assign
-l_int|0xc0
-op_or
 id|BOF
 op_or
 id|ERMP
@@ -12352,7 +12600,7 @@ op_or
 id|ERL
 suffix:semicolon
 multiline_comment|/* burst op-code fetch, read multiple */
-multiline_comment|/* read line, burst 16 */
+multiline_comment|/* read line */
 id|np-&gt;rv_dcntl
 op_assign
 id|PFEN
@@ -12365,11 +12613,6 @@ op_assign
 id|WRIE
 suffix:semicolon
 multiline_comment|/* write and invalidate */
-id|np-&gt;rv_ctest4
-op_assign
-l_int|0x0
-suffix:semicolon
-multiline_comment|/* burst not disabled */
 )brace
 )brace
 r_else
@@ -12398,17 +12641,32 @@ c_cond
 op_logical_neg
 id|driver_setup.special_features
 )paren
-id|np-&gt;rv_dmode
+id|burst_max
 op_assign
-l_int|0xc0
+id|burst_max
+OL
+l_int|4
+ques
+c_cond
+id|burst_max
+suffix:colon
+l_int|4
 suffix:semicolon
-multiline_comment|/* burst length 16 */
 r_else
 (brace
+id|burst_max
+op_assign
+id|burst_max
+OL
+l_int|7
+ques
+c_cond
+id|burst_max
+suffix:colon
+l_int|7
+suffix:semicolon
 id|np-&gt;rv_dmode
 op_assign
-l_int|0xc0
-op_or
 id|BOF
 op_or
 id|ERMP
@@ -12429,34 +12687,93 @@ op_assign
 id|WRIE
 suffix:semicolon
 multiline_comment|/* write and invalidate */
-id|np-&gt;rv_ctest4
-op_assign
-l_int|0x0
-suffix:semicolon
-multiline_comment|/* burst not disabled */
 id|np-&gt;rv_ctest5
 op_assign
-l_int|0x24
+l_int|0x20
 suffix:semicolon
-multiline_comment|/* burst 128&t;(0x04) */
-multiline_comment|/* dma fifo 536&t;(0x20) */
+multiline_comment|/* dma fifo 536 (0x20) */
 )brace
 )brace
 multiline_comment|/**&t;OTHERS&t;&t;&t;&t;**/
 r_else
 (brace
-id|np-&gt;rv_dmode
+id|burst_max
 op_assign
-l_int|0xc0
+id|burst_max
+OL
+l_int|4
+ques
+c_cond
+id|burst_max
+suffix:colon
+l_int|4
 suffix:semicolon
-multiline_comment|/* burst length 16 */
 )brace
 macro_line|#endif /* SCSI_NCR_TRUST_BIOS_SETTING */
+multiline_comment|/*&n;&t; *&t;Prepare initial io register bits for burst length&n;&t; */
+id|ncr_init_burst
+c_func
+(paren
+id|np
+comma
+id|burst_max
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bootverbose
+OG
+l_int|1
+)paren
+(brace
+id|printf
+(paren
+l_string|&quot;%s: initial value of dmode/ctest4/ctest5 = 0x%02x/0x%02x/0x%02x&bslash;n&quot;
+comma
+id|ncr_name
+c_func
+(paren
+id|np
+)paren
+comma
+id|np-&gt;sv_dmode
+comma
+id|np-&gt;sv_ctest4
+comma
+id|np-&gt;sv_ctest5
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|bootverbose
+)paren
+(brace
+id|printf
+(paren
+l_string|&quot;%s: final value of dmode/ctest4/ctest5 = 0x%02x/0x%02x/0x%02x&bslash;n&quot;
+comma
+id|ncr_name
+c_func
+(paren
+id|np
+)paren
+comma
+id|np-&gt;rv_dmode
+comma
+id|np-&gt;rv_ctest4
+comma
+id|np-&gt;rv_ctest5
+)paren
+suffix:semicolon
+)brace
 macro_line|#if 0
 id|printf
 c_func
 (paren
-l_string|&quot;%s: bios: dmode=0x%02x, dcntl=0x%02x, ctest3=0x%02x, ctest4=0x%02x&bslash;n&quot;
+l_string|&quot;%s: bios: dmode=0x%02x, dcntl=0x%02x, ctest3=0x%02x, ctest4=0x%02x, ctest5=0x%02x&bslash;n&quot;
 comma
 id|ncr_name
 c_func
@@ -12471,12 +12788,14 @@ comma
 id|np-&gt;sv_ctest3
 comma
 id|np-&gt;sv_ctest4
+comma
+id|np-&gt;sv_ctest5
 )paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;%s: used: dmode=0x%02x, dcntl=0x%02x, ctest3=0x%02x, ctest4=0x%02x&bslash;n&quot;
+l_string|&quot;%s: used: dmode=0x%02x, dcntl=0x%02x, ctest3=0x%02x, ctest4=0x%02x, ctest5=0x%02x&bslash;n&quot;
 comma
 id|ncr_name
 c_func
@@ -12491,6 +12810,8 @@ comma
 id|np-&gt;rv_ctest3
 comma
 id|np-&gt;rv_ctest4
+comma
+id|np-&gt;rv_ctest5
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -17364,6 +17685,62 @@ c_cond
 id|num
 )paren
 (brace
+r_case
+id|SIR_DATA_IO_IS_OUT
+suffix:colon
+multiline_comment|/*&n;**&t;We did not guess the direction of transfer. We assumed DATA IN,&n;**&t;but the the target drove DATA OUT.&n;**&t;We have to patch the script context with DATA OUT context and &n;**&t;restart processing at data out script address.&n;*/
+id|cp-&gt;phys.header.savep
+op_assign
+id|NCB_SCRIPT_PHYS
+(paren
+id|np
+comma
+id|data_out
+)paren
+suffix:semicolon
+id|cp-&gt;phys.header.goalp
+op_assign
+id|cp-&gt;phys.header.savep
+op_plus
+l_int|20
+op_plus
+id|cp-&gt;segments
+op_star
+l_int|16
+suffix:semicolon
+id|cp-&gt;phys.header.lastp
+op_assign
+id|cp-&gt;phys.header.savep
+suffix:semicolon
+id|np-&gt;header.savep
+op_assign
+id|cp-&gt;phys.header.savep
+suffix:semicolon
+id|np-&gt;header.goalp
+op_assign
+id|cp-&gt;phys.header.goalp
+suffix:semicolon
+id|np-&gt;header.lastp
+op_assign
+id|cp-&gt;phys.header.lastp
+suffix:semicolon
+id|OUTL
+(paren
+id|nc_temp
+comma
+id|np-&gt;header.savep
+)paren
+suffix:semicolon
+id|OUTL
+(paren
+id|nc_dsp
+comma
+id|np-&gt;header.savep
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+multiline_comment|/* break; */
 multiline_comment|/*--------------------------------------------------------------------&n;**&n;**&t;Processing of interrupted getcc selects&n;**&n;**--------------------------------------------------------------------&n;*/
 r_case
 id|SIR_SENSE_RESTART
@@ -17890,7 +18267,7 @@ op_assign
 id|tp-&gt;maxoffs
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;**&t;Check against controller limits.&n;&t;&t;**&t;--------------------------------&n;&t;&t;**&t;per &lt;= 13  special case, allow fast 20 MHz transfer.&n;&t;&t;**&t;per &lt;  25  fast 20&n;&t;&t;**&t;per &lt;  50  fast&n;&t;&t;**&t;per &lt; 100  slow&n;&t;&t;**&t;Use a value p2 twice the controller limit in order to &n;&t;&t;**&t;not do wrong integer calculation for 80 MHz clock.&n;&t;&t;**&t;(12.5x2 = 25ns).&n;&t;&t;**&t;Compute scntl3&amp;0xf0 sync clock divisor for 50 ns period.&n;&t;&t;**&t;Ajust it according to actual controller sync period.&n;&t;&t;**&t;- 0x40 divides it by 4  -&gt; 50/4 = 12.5ns&n;&t;&t;**&t;- 0x20 divides it by 2  -&gt; 50/2 = 25 ns&n;&t;&t;**&t;Similar stuff is used in ncr_getclock().&n;&t;&t;*/
+multiline_comment|/*&n;&t;&t;**&t;Check against controller limits.&n;&t;&t;**&t;--------------------------------&n;&t;&t;**&t;per &lt;  25  fast20&n;&t;&t;**&t;per &lt;  50  fast&n;&t;&t;**&t;per &lt; 100  slow&n;&t;&t;**&t;Use a value p2 twice the controller limit in order to &n;&t;&t;**&t;not do wrong integer calculation for 80 MHz clock.&n;&t;&t;**&t;(12.5x2 = 25ns).&n;&t;&t;**&t;Compute scntl3&amp;0xf0 sync clock divisor for 50 ns period &n;&t;&t;**&t;from the async pre-scaler.&n;&t;&t;**&t;Ajust it according to actual controller sync period.&n;&t;&t;**&t;- 0x40 divides it by 4  -&gt; 50/4 = 12.5ns&n;&t;&t;**&t;- 0x20 divides it by 2  -&gt; 50/2 = 25 ns&n;&t;&t;**&t;Similar stuff is used in ncr_getclock().&n;&t;&t;*/
 id|fak
 op_assign
 l_int|7
@@ -17924,31 +18301,6 @@ l_int|0x07
 op_lshift
 l_int|4
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|per
-op_le
-l_int|13
-)paren
-(brace
-id|fak
-op_assign
-l_int|0
-suffix:semicolon
-id|scntl3
-op_assign
-(paren
-id|scntl3
-op_minus
-l_int|0x40
-)paren
-op_or
-l_int|0x80
-suffix:semicolon
-)brace
-r_else
-(brace
 r_if
 c_cond
 (paren
@@ -18022,7 +18374,6 @@ id|ofs
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 )brace
 )brace
 r_if
@@ -21586,7 +21937,7 @@ id|np-&gt;rv_scntl3
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;**&t;Save some features set by bios&n;**&n;**&t;DMODE   0xce&n;**&t;&t;0x02&t;burst op-code fetch&n;**&t;&t;0x04&t;enable read multiple&n;**&t;&t;0x08&t;enable read line&n;**&t;&t;0xc0&t;burst length 16/8/2&n;**&t;DCNTL   0xa0&n;**&t;&t;0x20&t;enable pre-fetch&n;**&t;&t;0x80&t;enable cache line size&n;**&t;CTEST3  0x01&n;**&t;&t;0x01&t;set write and invalidate&n;**&t;CTEST4  0x80&n;**&t;&t;0x80&t;burst disabled&n;*/
+multiline_comment|/*&n;**&t;Save some features set by bios&n;**&n;**&t;DMODE   0xce&n;**&t;&t;0x02&t;burst op-code fetch&n;**&t;&t;0x04&t;enable read multiple&n;**&t;&t;0x08&t;enable read line&n;**&t;&t;0xc0&t;burst length 16/8/2&n;**&t;DCNTL   0xa8&n;**&t;&t;0x08&t;totem pole irq&n;**&t;&t;0x20&t;enable pre-fetch&n;**&t;&t;0x80&t;enable cache line size&n;**&t;CTEST3  0x01&n;**&t;&t;0x01&t;set write and invalidate&n;**&t;CTEST4  0x80&n;**&t;&t;0x80&t;burst disabled&n;**&t;CTEST5  0x24&n;**&t;&t;0x20&t;dma fifo 536&t;&t;(875 only)&n;**&t;&t;0x04&t;burst len 32/64/128&t;(875 only)&n;*/
 DECL|function|ncr_save_bios_setting
 r_static
 r_void
@@ -21625,7 +21976,7 @@ c_func
 id|nc_dcntl
 )paren
 op_amp
-l_int|0xa0
+l_int|0xa8
 suffix:semicolon
 id|np-&gt;sv_ctest3
 op_assign
@@ -21646,6 +21997,16 @@ id|nc_ctest4
 )paren
 op_amp
 l_int|0x80
+suffix:semicolon
+id|np-&gt;sv_ctest5
+op_assign
+id|INB
+c_func
+(paren
+id|nc_ctest5
+)paren
+op_amp
+l_int|0x24
 suffix:semicolon
 )brace
 multiline_comment|/*===================== LINUX ENTRY POINTS SECTION ==========================*/
@@ -22032,6 +22393,25 @@ id|driver_setup.debug
 op_assign
 id|val
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|cur
+comma
+l_string|&quot;burst:&quot;
+comma
+l_int|6
+)paren
+)paren
+id|driver_setup.burst_max
+op_assign
+id|val
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -22263,7 +22643,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;ncr53c8xx: setup=disc:%c,specf:%c,ultra:%c,tags:%d,sync:%d&bslash;n&quot;
+l_string|&quot;ncr53c8xx: setup=disc:%c,specf:%c,ultra:%c,tags:%d,sync:%d,burst:%d&bslash;n&quot;
 comma
 id|YesNo
 c_func
@@ -22288,6 +22668,8 @@ comma
 id|driver_setup.default_sync
 op_div
 l_int|1000
+comma
+id|driver_setup.burst_max
 )paren
 suffix:semicolon
 id|printk
@@ -23860,7 +24242,7 @@ suffix:semicolon
 )brace
 DECL|macro|next_wcmd
 macro_line|#undef next_wcmd
-multiline_comment|/*&n;**&t;In order to patch the SCSI script for SAVE/RESTORE DATA POINTER,&n;**&t;we need the direction of transfer.&n;**&t;Linux middle-level scsi driver does not provide this information.&n;**&t;So we have to guess it.&n;**&t;My documentation about SCSI-II standard is old. Probably some opcode&n;**&t;are missing.&n;**&t;If I do&squot;nt know the command code, I assume input transfer direction.&n;*/
+multiline_comment|/*&n;**&t;Returns data transfer direction for common op-codes.&n;*/
 DECL|function|guess_xfer_direction
 r_static
 r_int
@@ -23881,14 +24263,6 @@ id|opcode
 )paren
 (brace
 r_case
-l_int|0x00
-suffix:colon
-multiline_comment|/*&t;TEST UNIT READY&t;&t;&t;00 */
-r_case
-l_int|0x08
-suffix:colon
-multiline_comment|/*&t;READ(6)&t;&t;&t;&t;08 */
-r_case
 l_int|0x12
 suffix:colon
 multiline_comment|/*&t;INQUIRY&t;&t;&t;&t;12 */
@@ -23905,14 +24279,6 @@ l_int|0x1A
 suffix:colon
 multiline_comment|/*&t;MODE SENSE(6)&t;&t;&t;1A */
 r_case
-l_int|0x28
-suffix:colon
-multiline_comment|/*&t;READ(10)&t;&t;&t;28 */
-r_case
-l_int|0xA8
-suffix:colon
-multiline_comment|/*&t;READ(12)&t;&t;&t;A8 */
-r_case
 l_int|0x3C
 suffix:colon
 multiline_comment|/*&t;READ BUFFER&t;&t;&t;3C */
@@ -23921,72 +24287,9 @@ l_int|0x1C
 suffix:colon
 multiline_comment|/*&t;RECEIVE DIAGNOSTIC RESULTS&t;1C */
 r_case
-l_int|0xB7
-suffix:colon
-multiline_comment|/*&t;READ DEFECT DATA(12)&t;&t;B7 */
-r_case
-l_int|0xB8
-suffix:colon
-multiline_comment|/*&t;READ ELEMENT STATUS&t;&t;B8 */
-multiline_comment|/*&t;GET WINDOW&t;&t;&t;25 */
-r_case
-l_int|0x25
-suffix:colon
-multiline_comment|/*&t;READ CAPACITY&t;&t;&t;25 */
-r_case
-l_int|0x29
-suffix:colon
-multiline_comment|/*&t;READ GENERATION&t;&t;&t;29 */
-r_case
-l_int|0x3E
-suffix:colon
-multiline_comment|/*&t;READ LONG&t;&t;&t;3E */
-multiline_comment|/*&t;GET DATA BUFFER STATUS&t;&t;34 */
-multiline_comment|/*&t;PRE-FETCH&t;&t;&t;34 */
-r_case
-l_int|0x34
-suffix:colon
-multiline_comment|/*&t;READ POSITION&t;&t;&t;34 */
-r_case
 l_int|0x03
 suffix:colon
 multiline_comment|/*&t;REQUEST SENSE&t;&t;&t;03 */
-r_case
-l_int|0x05
-suffix:colon
-multiline_comment|/*&t;READ BLOCK LIMITS&t;&t;05 */
-r_case
-l_int|0x0F
-suffix:colon
-multiline_comment|/*&t;READ REVERSE&t;&t;&t;0F */
-r_case
-l_int|0x14
-suffix:colon
-multiline_comment|/*&t;RECOVER BUFFERED DATA&t;&t;14 */
-r_case
-l_int|0x2D
-suffix:colon
-multiline_comment|/*&t;READ UPDATED BLOCK&t;&t;2D */
-r_case
-l_int|0x37
-suffix:colon
-multiline_comment|/*&t;READ DEFECT DATA(10)&t;&t;37 */
-r_case
-l_int|0x42
-suffix:colon
-multiline_comment|/*&t;READ SUB-CHANNEL&t;&t;42 */
-r_case
-l_int|0x43
-suffix:colon
-multiline_comment|/*&t;READ TOC&t;&t;&t;43 */
-r_case
-l_int|0x44
-suffix:colon
-multiline_comment|/*&t;READ HEADER&t;&t;&t;44 */
-r_case
-l_int|0xC7
-suffix:colon
-multiline_comment|/*  ???                  ???        C7 */
 id|d
 op_assign
 id|XferIn
@@ -24001,12 +24304,6 @@ r_case
 l_int|0x3A
 suffix:colon
 multiline_comment|/*&t;COPY AND VERIFY&t;&t;&t;3A */
-multiline_comment|/*&t;PRINT&t;&t;&t;&t;0A */
-multiline_comment|/*&t;SEND MESSAGE(6)&t;&t;&t;0A */
-r_case
-l_int|0x0A
-suffix:colon
-multiline_comment|/*&t;WRITE(6)&t;&t;&t;0A */
 r_case
 l_int|0x18
 suffix:colon
@@ -24031,91 +24328,10 @@ r_case
 l_int|0x40
 suffix:colon
 multiline_comment|/*&t;CHANGE DEFINITION&t;&t;40 */
-multiline_comment|/*&t;SEND MESSAGE(12)&t;&t;AA */
-r_case
-l_int|0xAA
-suffix:colon
-multiline_comment|/*&t;WRITE(12)&t;&t;&t;AA */
-r_case
-l_int|0xB6
-suffix:colon
-multiline_comment|/*&t;SEND VOLUME TAG&t;&t;&t;B6 */
-r_case
-l_int|0x3F
-suffix:colon
-multiline_comment|/*&t;WRITE LONG&t;&t;&t;3F */
-r_case
-l_int|0x04
-suffix:colon
-multiline_comment|/*&t;FORMAT UNIT&t;&t;&t;04 */
-multiline_comment|/*&t;INITIALIZE ELEMENT STATUS&t;07 */
-r_case
-l_int|0x07
-suffix:colon
-multiline_comment|/*&t;REASSIGN BLOCKS&t;&t;&t;07 */
 r_case
 l_int|0x15
 suffix:colon
 multiline_comment|/*&t;MODE SELECT(6)&t;&t;&t;15 */
-r_case
-l_int|0x24
-suffix:colon
-multiline_comment|/*&t;SET WINDOW&t;&t;&t;24 */
-r_case
-l_int|0x2A
-suffix:colon
-multiline_comment|/*&t;WRITE(10)&t;&t;&t;2A */
-r_case
-l_int|0x2E
-suffix:colon
-multiline_comment|/*&t;WRITE AND VERIFY(10)&t;&t;2E */
-r_case
-l_int|0xAE
-suffix:colon
-multiline_comment|/*&t;WRITE AND VERIFY(12)&t;&t;AE */
-r_case
-l_int|0xB0
-suffix:colon
-multiline_comment|/*&t;SEARCH DATA HIGH(12)&t;&t;B0 */
-r_case
-l_int|0xB1
-suffix:colon
-multiline_comment|/*&t;SEARCH DATA EQUAL(12)&t;&t;B1 */
-r_case
-l_int|0xB2
-suffix:colon
-multiline_comment|/*&t;SEARCH DATA LOW(12)&t;&t;B2 */
-multiline_comment|/*&t;OBJECT POSITION&t;&t;&t;31 */
-r_case
-l_int|0x30
-suffix:colon
-multiline_comment|/*&t;SEARCH DATA HIGH(10)&t;&t;30 */
-r_case
-l_int|0x31
-suffix:colon
-multiline_comment|/*&t;SEARCH DATA EQUAL(10)&t;&t;31 */
-r_case
-l_int|0x32
-suffix:colon
-multiline_comment|/*&t;SEARCH DATA LOW(10)&t;&t;32 */
-r_case
-l_int|0x38
-suffix:colon
-multiline_comment|/*&t;MEDIUM SCAN&t;&t;&t;38 */
-r_case
-l_int|0x3D
-suffix:colon
-multiline_comment|/*&t;UPDATE BLOCK&t;&t;&t;3D */
-r_case
-l_int|0x41
-suffix:colon
-multiline_comment|/*&t;WRITE SAME&t;&t;&t;41 */
-multiline_comment|/*&t;LOAD UNLOAD&t;&t;&t;1B */
-multiline_comment|/*&t;SCAN&t;&t;&t;&t;1B */
-r_case
-l_int|0x1B
-suffix:colon
-multiline_comment|/*&t;START STOP UNIT&t;&t;&t;1B */
 id|d
 op_assign
 id|XferOut
@@ -24123,118 +24339,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|0x01
+l_int|0x00
 suffix:colon
-multiline_comment|/*&t;REZERO UNIT&t;&t;&t;01 */
-multiline_comment|/*&t;SEEK(6)&t;&t;&t;&t;0B */
-r_case
-l_int|0x0B
-suffix:colon
-multiline_comment|/*&t;SLEW AND PRINT&t;&t;&t;0B */
-multiline_comment|/*&t;SYNCHRONIZE BUFFER&t;&t;10 */
-r_case
-l_int|0x10
-suffix:colon
-multiline_comment|/*&t;WRITE FILEMARKS&t;&t;&t;10 */
-r_case
-l_int|0x11
-suffix:colon
-multiline_comment|/*&t;SPACE&t;&t;&t;&t;11 */
-r_case
-l_int|0x13
-suffix:colon
-multiline_comment|/*&t;VERIFY&t;&t;&t;&t;13 */
-r_case
-l_int|0x16
-suffix:colon
-multiline_comment|/*&t;RESERVE UNIT&t;&t;&t;16 */
-r_case
-l_int|0x17
-suffix:colon
-multiline_comment|/*&t;RELEASE UNIT&t;&t;&t;17 */
-r_case
-l_int|0x19
-suffix:colon
-multiline_comment|/*&t;ERASE&t;&t;&t;&t;19 */
-multiline_comment|/*&t;LOCATE&t;&t;&t;&t;2B */
-multiline_comment|/*&t;POSITION TO ELEMENT&t;&t;2B */
-r_case
-l_int|0x2B
-suffix:colon
-multiline_comment|/*&t;SEEK(10)&t;&t;&t;2B */
-r_case
-l_int|0x1E
-suffix:colon
-multiline_comment|/*&t;PREVENT ALLOW MEDIUM REMOVAL&t;1E */
-r_case
-l_int|0x2C
-suffix:colon
-multiline_comment|/*&t;ERASE(10)&t;&t;&t;2C */
-r_case
-l_int|0xAC
-suffix:colon
-multiline_comment|/*&t;ERASE(12)&t;&t;&t;AC */
-r_case
-l_int|0x2F
-suffix:colon
-multiline_comment|/*&t;VERIFY(10)&t;&t;&t;2F */
-r_case
-l_int|0xAF
-suffix:colon
-multiline_comment|/*&t;VERIFY(12)&t;&t;&t;AF */
-r_case
-l_int|0x33
-suffix:colon
-multiline_comment|/*&t;SET LIMITS(10)&t;&t;&t;33 */
-r_case
-l_int|0xB3
-suffix:colon
-multiline_comment|/*&t;SET LIMITS(12)&t;&t;&t;B3 */
-r_case
-l_int|0x35
-suffix:colon
-multiline_comment|/*&t;SYNCHRONIZE CACHE&t;&t;35 */
-r_case
-l_int|0x36
-suffix:colon
-multiline_comment|/*&t;LOCK UNLOCK CACHE&t;&t;36 */
-r_case
-l_int|0x45
-suffix:colon
-multiline_comment|/*&t;PLAY AUDIO(10)&t;&t;&t;45 */
-r_case
-l_int|0x47
-suffix:colon
-multiline_comment|/*&t;PLAY AUDIO MSF&t;&t;&t;47 */
-r_case
-l_int|0x48
-suffix:colon
-multiline_comment|/*&t;PLAY AUDIO TRACK/INDEX&t;&t;48 */
-r_case
-l_int|0x49
-suffix:colon
-multiline_comment|/*&t;PLAY TRACK RELATIVE(10)&t;&t;49 */
-r_case
-l_int|0xA9
-suffix:colon
-multiline_comment|/*&t;PLAY TRACK RELATIVE(12)&t;&t;A9 */
-r_case
-l_int|0x4B
-suffix:colon
-multiline_comment|/*&t;PAUSE/RESUME&t;&t;&t;4B */
-multiline_comment|/*&t;MOVE MEDIUM&t;&t;&t;A5 */
-r_case
-l_int|0xA5
-suffix:colon
-multiline_comment|/*&t;PLAY AUDIO(12)&t;&t;&t;A5 */
-r_case
-l_int|0xA6
-suffix:colon
-multiline_comment|/*&t;EXCHANGE MEDIUM&t;&t;&t;A6 */
-r_case
-l_int|0xB5
-suffix:colon
-multiline_comment|/*&t;REQUEST VOLUME ELEMENT ADDRESS&t;B5 */
+multiline_comment|/*&t;TEST UNIT READY&t;&t;&t;00 */
 id|d
 op_assign
 id|XferNone
@@ -24245,7 +24352,7 @@ r_default
 suffix:colon
 id|d
 op_assign
-id|XferIn
+id|XferBoth
 suffix:semicolon
 r_break
 suffix:semicolon
