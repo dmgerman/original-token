@@ -498,6 +498,14 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+r_int
+id|rc
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|device
 op_assign
 id|DEVICE_NR
@@ -519,9 +527,13 @@ op_ne
 id|device
 )paren
 (brace
-r_return
+id|rc
+op_assign
 op_minus
 id|EBUSY
+suffix:semicolon
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 r_if
@@ -595,9 +607,8 @@ id|DEVICE_NAME
 l_string|&quot;: no such entry in z2ram_map&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 id|paddr
@@ -724,9 +735,8 @@ id|DEVICE_NAME
 l_string|&quot;: cannot get mem for z2ram_map&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 r_while
@@ -815,9 +825,8 @@ id|DEVICE_NAME
 l_string|&quot;: cannot get mem for z2ram_map&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 id|get_z2ram
@@ -892,9 +901,8 @@ id|DEVICE_NAME
 l_string|&quot;: cannot get mem for z2ram_map&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 id|get_z2ram
@@ -952,9 +960,8 @@ id|DEVICE_NAME
 l_string|&quot;: cannot get mem for z2ram_map&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 id|get_chipram
@@ -985,9 +992,15 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-r_return
+id|rc
+op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+r_goto
+id|err_out
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 r_if
@@ -998,12 +1011,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|kfree
-c_func
-(paren
-id|z2ram_map
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1012,9 +1019,8 @@ id|DEVICE_NAME
 l_string|&quot;: no unused ZII/Chip RAM found&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|err_out_kfree
 suffix:semicolon
 )brace
 id|current_device
@@ -1042,10 +1048,23 @@ op_assign
 id|z2_sizes
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|err_out_kfree
+suffix:colon
+id|kfree
+c_func
+(paren
+id|z2ram_map
+)paren
+suffix:semicolon
+id|err_out
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+id|rc
 suffix:semicolon
 )brace
 r_static

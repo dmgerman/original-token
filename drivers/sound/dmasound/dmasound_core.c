@@ -4149,8 +4149,6 @@ op_star
 id|file
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|dmasound.mach
 dot
 id|open
@@ -4193,8 +4191,6 @@ id|release
 c_func
 (paren
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -4358,6 +4354,10 @@ id|file_operations
 id|mixer_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|sound_lseek
@@ -5579,8 +5579,6 @@ id|file
 r_int
 id|rc
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|dmasound.mach
 dot
 id|open
@@ -5618,8 +5616,6 @@ id|release
 c_func
 (paren
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 id|rc
@@ -5896,8 +5892,6 @@ id|release
 c_func
 (paren
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* There is probably a DOS atack here. They change the mode flag. */
 multiline_comment|/* XXX add check here */
@@ -6449,6 +6443,10 @@ id|file_operations
 id|sq_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|sound_lseek
@@ -6619,8 +6617,6 @@ id|state.busy
 r_return
 op_minus
 id|EBUSY
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|dmasound.mach
 dot
@@ -6959,8 +6955,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7052,6 +7046,10 @@ id|file_operations
 id|state_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|sound_lseek

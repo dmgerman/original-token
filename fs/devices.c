@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -564,6 +565,9 @@ id|ENODEV
 suffix:semicolon
 id|filp-&gt;f_op
 op_assign
+id|fops_get
+c_func
+(paren
 id|get_chrfops
 c_func
 (paren
@@ -579,13 +583,12 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 )paren
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|filp-&gt;f_op
-op_ne
-l_int|NULL
 )paren
 (brace
 id|ret

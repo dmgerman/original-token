@@ -320,8 +320,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Activate &n;&t;&t;&t; */
 id|acq_is_open
 op_assign
@@ -407,8 +405,6 @@ id|acq_lock
 )paren
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -466,6 +462,10 @@ id|file_operations
 id|acq_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|acq_read

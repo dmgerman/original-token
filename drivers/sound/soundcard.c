@@ -2375,6 +2375,10 @@ id|file_operations
 id|oss_sound_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|sound_lseek

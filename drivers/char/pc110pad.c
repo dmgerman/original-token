@@ -1461,8 +1461,6 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* switch off digitiser */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1497,8 +1495,6 @@ op_increment
 )paren
 r_return
 l_int|0
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|save_flags
 c_func
@@ -2060,6 +2056,10 @@ id|file_operations
 id|pad_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|read_pad

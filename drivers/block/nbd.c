@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
@@ -60,6 +61,13 @@ id|nbd_dev
 (braket
 id|MAX_NBD
 )braket
+suffix:semicolon
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG( s )
@@ -2290,6 +2298,49 @@ l_int|9
 )paren
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;nbd&quot;
+comma
+l_int|0
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|devfs_register_series
+(paren
+id|devfs_handle
+comma
+l_string|&quot;%u&quot;
+comma
+id|MAX_NBD
+comma
+id|DEVFS_FL_DEFAULT
+comma
+id|MAJOR_NR
+comma
+l_int|0
+comma
+id|S_IFBLK
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|nbd_fops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2303,6 +2354,11 @@ c_func
 r_void
 )paren
 (brace
+id|devfs_unregister
+(paren
+id|devfs_handle
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -459,12 +459,13 @@ id|ide_trm290
 suffix:semicolon
 id|cfgbase
 op_assign
-id|dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|dev
+comma
 l_int|4
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -483,8 +484,6 @@ id|cfgbase
 id|hwif-&gt;config_data
 op_assign
 id|cfgbase
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 id|printk
 c_func

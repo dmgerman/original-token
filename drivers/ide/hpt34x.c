@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/ide/hpt34x.c&t;&t;Version 0.30&t;Mar. 18, 2000&n; *&n; * Copyright (C) 1998-2000&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; *&n; * 00:12.0 Unknown mass storage controller:&n; * Triones Technologies, Inc.&n; * Unknown device 0003 (rev 01)&n; *&n; * hde: UDMA 2 (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: UDMA 2 (0x0002 0x0012) (0x0010 0x0030)&n; * hde: DMA 2  (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: DMA 2  (0x0002 0x0012) (0x0010 0x0030)&n; * hdg: DMA 1  (0x0012 0x0052) (0x0030 0x0070)&n; * hdh: DMA 1  (0x0052 0x0252) (0x0070 0x00f0)&n; *&n; * ide-pci.c reference&n; *&n; * Since there are two cards that report almost identically,&n; * the only discernable difference is the values reported in pcicmd.&n; * Booting-BIOS card or HPT363 :: pcicmd == 0x07&n; * Non-bootable card or HPT343 :: pcicmd == 0x05&n; */
+multiline_comment|/*&n; * linux/drivers/ide/hpt34x.c&t;&t;Version 0.31&t;June. 9, 2000&n; *&n; * Copyright (C) 1998-2000&t;Andre Hedrick &lt;andre@linux-ide.org&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; *&n; * 00:12.0 Unknown mass storage controller:&n; * Triones Technologies, Inc.&n; * Unknown device 0003 (rev 01)&n; *&n; * hde: UDMA 2 (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: UDMA 2 (0x0002 0x0012) (0x0010 0x0030)&n; * hde: DMA 2  (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: DMA 2  (0x0002 0x0012) (0x0010 0x0030)&n; * hdg: DMA 1  (0x0012 0x0052) (0x0030 0x0070)&n; * hdh: DMA 1  (0x0052 0x0252) (0x0070 0x00f0)&n; *&n; * ide-pci.c reference&n; *&n; * Since there are two cards that report almost identically,&n; * the only discernable difference is the values reported in pcicmd.&n; * Booting-BIOS card or HPT363 :: pcicmd == 0x07&n; * Non-bootable card or HPT343 :: pcicmd == 0x05&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -110,12 +110,13 @@ suffix:semicolon
 id|u32
 id|bibma
 op_assign
-id|bmide_dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|bmide_dev
+comma
 l_int|4
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|u8
 id|c0
@@ -1892,12 +1893,13 @@ r_int
 r_int
 id|hpt34xIoBase
 op_assign
-id|dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|dev
+comma
 l_int|4
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_int
 r_int
@@ -1952,12 +1954,13 @@ id|PCI_COMMAND_MEMORY
 r_if
 c_cond
 (paren
-id|dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|dev
+comma
 id|PCI_ROM_RESOURCE
-)braket
-dot
-id|start
+)paren
 )paren
 (brace
 id|pci_write_config_byte

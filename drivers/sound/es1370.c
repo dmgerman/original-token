@@ -4948,8 +4948,6 @@ id|file-&gt;private_data
 op_assign
 id|s
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4988,8 +4986,6 @@ c_func
 (paren
 id|s
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -5045,6 +5041,10 @@ id|file_operations
 id|es1370_mixer_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|es1370_llseek
@@ -9119,8 +9119,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -9264,8 +9262,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -9278,6 +9274,10 @@ id|file_operations
 id|es1370_audio_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|es1370_llseek
@@ -10691,7 +10691,7 @@ op_logical_neg
 (paren
 id|s-&gt;ctrl
 op_amp
-id|CTRL_DAC2_EN
+id|CTRL_DAC1_EN
 )paren
 op_logical_and
 (paren
@@ -11558,8 +11558,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -11650,8 +11648,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -11664,6 +11660,10 @@ id|file_operations
 id|es1370_dac_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|es1370_llseek
@@ -12945,8 +12945,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -13247,8 +13245,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -13261,6 +13257,10 @@ id|file_operations
 id|es1370_midi_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|es1370_llseek

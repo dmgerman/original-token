@@ -175,8 +175,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -252,8 +250,6 @@ id|mixcomwd_timer
 )paren
 suffix:semicolon
 macro_line|#endif
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|clear_bit
 c_func
 (paren
@@ -474,6 +470,10 @@ id|file_operations
 id|mixcomwd_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|write
 suffix:colon
 id|mixcomwd_write

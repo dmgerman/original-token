@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * Support for VIA 82Cxxx Audio Codecs&n; * Copyright 1999,2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Distributed under the GNU GENERAL PUBLIC LICENSE (GPL) Version 2.&n; * See the &quot;COPYING&quot; file distributed with this software for more info.&n; *&n; * For a list of known bugs (errata) and documentation,&n; * see via82cxxx.txt in linux/Documentation/sound.&n; *&n; */
+multiline_comment|/*&n; * Support for VIA 82Cxxx Audio Codecs&n; * Copyright 1999,2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Distributed under the GNU GENERAL PUBLIC LICENSE (GPL) Version 2.&n; * See the &quot;COPYING&quot; file distributed with this software for more info.&n; *&n; * For a list of known bugs (errata) and documentation,&n; * see via-audio.pdf in linux/Documentation/DocBook.&n; * If this documentation does not exist, run &quot;make pdfdocs&quot;.&n; * If &quot;make pdfdocs&quot; fails, obtain the documentation from&n; * the driver&squot;s Website at&n; * http://gtf.org/garzik/drivers/via82cxxx/&n; *&n; */
 DECL|macro|VIA_VERSION
-mdefine_line|#define VIA_VERSION&t;&quot;1.1.6&quot;
+mdefine_line|#define VIA_VERSION&t;&quot;1.1.8&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -657,11 +657,6 @@ id|PCI_ANY_ID
 comma
 id|PCI_ANY_ID
 comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
@@ -704,6 +699,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/****************************************************************&n; *&n; * Low-level base 0 register read/write helpers&n; *&n; *&n; */
+multiline_comment|/**&n; *&t;via_chan_stop - Terminate DMA on specified PCM channel&n; *&t;@iobase: PCI base address for SGD channel registers&n; *&n; *&t;Terminate scatter-gather DMA operation for given&n; *&t;channel (derived from @iobase), if DMA is active.&n; *&n; *&t;Note that @iobase is not the PCI base address,&n; *&t;but the PCI base address plus an offset to&n; *&t;one of three PCM channels supported by the chip.&n; *&n; */
 DECL|function|via_chan_stop
 r_static
 r_inline
@@ -736,6 +732,7 @@ id|VIA_PCM_CONTROL
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_status_clear - Clear status flags on specified DMA channel&n; *&t;@iobase: PCI base address for SGD channel registers&n; *&n; *&t;Clear any pending status flags for the given&n; *&t;DMA channel (derived from @iobase), if any&n; *&t;flags are asserted.&n; *&n; *&t;Note that @iobase is not the PCI base address,&n; *&t;but the PCI base address plus an offset to&n; *&t;one of three PCM channels supported by the chip.&n; *&n; */
 DECL|function|via_chan_status_clear
 r_static
 r_inline
@@ -773,6 +770,7 @@ id|VIA_PCM_STATUS
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;sg_begin - Begin recording or playback on a PCM channel&n; *&t;@chan: Channel for which DMA operation shall begin&n; *&n; *&t;Start scatter-gather DMA for the given channel.&n; *&n; */
 DECL|function|sg_begin
 r_static
 r_inline
@@ -795,6 +793,7 @@ id|VIA_PCM_CONTROL
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_bufs_in_use - Number of buffers waiting to be consumed&n; *&t;@chan: Channel for which DMA buffers will be counted&n; *&n; *&t;Count the number of buffers waiting to be consumed.  For a&n; *&t;playback operation, this is the number of buffers which have&n; *&t;yet to be sent to the DAC.  For a recording operation, this&n; *&t;is the number of buffers waiting to be consumed by software&n; *&t;calling read() system call.&n; *&n; */
 DECL|function|via_chan_bufs_in_use
 r_static
 r_inline
@@ -823,6 +822,7 @@ id|chan-&gt;buf_in_use
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_full - Check for no-free-buffers condition&n; *&t;@chan: Channel for which DMA full condition will be checked&n; *&n; *&t;Count the number of buffers waiting to be consumed, and return&n; *&t;true (non-zero) if no buffers are available to be filled on the&n; *&t;given DMA channel.&n; *&n; */
 DECL|function|via_chan_full
 r_static
 r_inline
@@ -846,6 +846,7 @@ id|VIA_DMA_BUFFERS
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_empty - Check for no-buffers-in-use condition&n; *&t;@chan: Channel for which DMA empty condition will be checked&n; *&n; *&t;Count the number of buffers waiting to be consumed, and return&n; *&t;true (non-zero) if no buffers are currently in use.&n; *&n; */
 DECL|function|via_chan_empty
 r_static
 r_inline
@@ -877,6 +878,7 @@ id|chan-&gt;buf_in_use
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************&n; *&n; * Miscellaneous debris&n; *&n; *&n; */
+multiline_comment|/**&n; *&t;via_stop_everything - Stop all audio operations&n; *&t;@card: Private info for specified board&n; *&n; *&t;Stops all DMA operations and interrupts, and clear&n; *&t;any pending status bits resulting from those operations.&n; */
 DECL|function|via_stop_everything
 r_static
 r_void
@@ -978,6 +980,7 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_set_rate - Set PCM rate for given channel&n; *&t;@card: Private info for specified board&n; *&t;@rate: Desired PCM sample rate, in Khz&n; *&t;@inhale_deeply: Boolean.  If non-zero (true), the recording sample rate&n; *&t;&t;&t;is set.  If zero (false), the playback sample rate&n; *&t;&t;&t;is set.&n; *&n; *&t;Sets the PCM sample rate for a channel.&n; *&n; *&t;Values for @rate are clamped to a range of 4000 Khz through 48000 Khz,&n; *&t;due to hardware constraints.&n; *&n; *&t;FIXME:  @inhale_deeply argument is ignored, and %AC97_PCM_FRONT_DAC_RATE&n; *&t;is the only rate which is really set.  This needs to be fixed when&n; *&t;recording support is added.&n; */
 DECL|function|via_set_rate
 r_static
 r_int
@@ -1092,6 +1095,7 @@ r_return
 id|rate
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_set_adc_rate - Set PCM rate for recording channel&n; *&t;@card: Private info for specified board&n; *&t;@rate: Desired PCM sample rate, in Khz&n; *&n; *&t;Sets the PCM sample rate for a recording channel.&n; *&n; *&t;FIXME:  @inhale_deeply argument to via_set_rate is ignored, and %AC97_PCM_FRONT_DAC_RATE&n; *&t;is the only rate which is really set.  Thus, this function will&n; *&t;not work until via_set_rate is fixed.&n; */
 DECL|function|via_set_adc_rate
 r_static
 r_inline
@@ -1118,6 +1122,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_set_dac_rate - Set PCM rate for playback channel&n; *&t;@card: Private info for specified board&n; *&t;@rate: Desired PCM sample rate, in Khz&n; *&n; *&t;Sets the PCM sample rate for a playback channel.&n; */
 DECL|function|via_set_dac_rate
 r_static
 r_inline
@@ -1145,6 +1150,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************&n; *&n; * Channel-specific operations&n; *&n; *&n; */
+multiline_comment|/**&n; *&t;via_chan_init - Initialize PCM channel&n; *&t;@card: Private audio chip info&n; *&t;@chan: Channel to be initialized&n; *&t;@chan_ofs: Offset from PCI address, which determines the&n; *&t;&t;   set of SGD registers to use.&n; *&n; *&t;Performs all the preparations necessary to begin&n; *&t;using a PCM channel.&n; *&n; *&t;Currently the preparations include allocating the&n; *&t;scatter-gather DMA table and buffers, setting the&n; *&t;PCM channel to a known state, and passing the&n; *&t;address of the DMA table to the hardware.&n; *&n; *&t;Note that special care is taken when passing the&n; *&t;DMA table address to hardware, because it was found&n; *&t;during driver development that the hardware did not&n; *&t;always &quot;take&quot; the address.&n; */
 DECL|function|via_chan_init
 r_static
 r_int
@@ -1579,6 +1585,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_free - Release a PCM channel&n; *&t;@card: Private audio chip info&n; *&t;@chan: Channel to be released&n; *&n; *&t;Performs all the functions necessary to clean up&n; *&t;an initialized channel.&n; *&n; *&t;Currently these functions include disabled any&n; *&t;active DMA operations, setting the PCM channel&n; *&t;back to a known state, and releasing any allocated&n; *&t;sound buffers.&n; */
 DECL|function|via_chan_free
 r_static
 r_void
@@ -1773,6 +1780,7 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_pcm_fmt - Update PCM channel settings&n; *&t;@card: Private audio chip info&n; *&t;@chan: Channel to be updated&n; *&t;@reset: Boolean.  If non-zero, channel will be reset&n; *&t;&t;to 8-bit mono mode.&n; *&n; *&t;Stores the settings of the current PCM format,&n; *&t;8-bit or 16-bit, and mono/stereo, into the&n; *&t;hardware settings for the specified channel.&n; *&t;If @reset is non-zero, the channel is reset&n; *&t;to 8-bit mono mode.  Otherwise, the channel&n; *&t;is set to the values stored in the channel&n; *&t;information struct @chan.&n; */
 DECL|function|via_chan_pcm_fmt
 r_static
 r_void
@@ -1872,6 +1880,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_clear - Stop DMA channel operation, and reset pointers&n; *&t;@chan: Channel to be cleared&n; *&n; *&t;Call via_chan_stop to halt DMA operations, and then resets&n; *&t;all software pointers which track DMA operation.&n; */
 DECL|function|via_chan_clear
 r_static
 r_void
@@ -1913,6 +1922,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_set_speed - Set PCM sample rate for given channel&n; *&t;@card: Private info for specified board&n; *&t;@chan: Channel whose sample rate will be adjusted&n; *&t;@val: New sample rate, in Khz&n; *&n; *&t;Helper function for the %SNDCTL_DSP_SPEED ioctl.  OSS semantics&n; *&t;demand that all audio operations halt (if they are not already&n; *&t;halted) when the %SNDCTL_DSP_SPEED is given.&n; *&n; *&t;This function halts all audio operations for the given channel&n; *&t;@chan, and then calls via_set_rate to set the audio hardware&n; *&t;to the new rate.&n; */
 DECL|function|via_chan_set_speed
 r_static
 r_int
@@ -1969,6 +1979,7 @@ r_return
 id|val
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_set_fmt - Set PCM sample size for given channel&n; *&t;@card: Private info for specified board&n; *&t;@chan: Channel whose sample size will be adjusted&n; *&t;@val: New sample size, use the %AFMT_xxx constants&n; *&n; *&t;Helper function for the %SNDCTL_DSP_SETFMT ioctl.  OSS semantics&n; *&t;demand that all audio operations halt (if they are not already&n; *&t;halted) when the %SNDCTL_DSP_SETFMT is given.&n; *&n; *&t;This function halts all audio operations for the given channel&n; *&t;@chan, and then calls via_chan_pcm_fmt to set the audio hardware&n; *&t;to the new sample size, either 8-bit or 16-bit.&n; */
 DECL|function|via_chan_set_fmt
 r_static
 r_int
@@ -2085,6 +2096,7 @@ r_return
 id|val
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_chan_set_stereo - Enable or disable stereo for a DMA channel&n; *&t;@card: Private info for specified board&n; *&t;@chan: Channel whose stereo setting will be adjusted&n; *&t;@val: New sample size, use the %AFMT_xxx constants&n; *&n; *&t;Helper function for the %SNDCTL_DSP_CHANNELS and %SNDCTL_DSP_STEREO ioctls.  OSS semantics&n; *&t;demand that all audio operations halt (if they are not already&n; *&t;halted) when %SNDCTL_DSP_CHANNELS or SNDCTL_DSP_STEREO is given.&n; *&n; *&t;This function halts all audio operations for the given channel&n; *&t;@chan, and then calls via_chan_pcm_fmt to set the audio hardware&n; *&t;to enable or disable stereo.&n; */
 DECL|function|via_chan_set_stereo
 r_static
 r_int
@@ -2191,6 +2203,7 @@ id|val
 suffix:semicolon
 )brace
 macro_line|#if 0
+multiline_comment|/**&n; *&t;via_chan_dump_bufs - Display DMA table contents&n; *&t;@chan: Channel whose DMA table will be displayed&n; *&n; *&t;Debugging function which displays the contents of the&n; *&t;scatter-gather DMA table for the given channel @chan.&n; */
 r_static
 r_void
 id|via_chan_dump_bufs
@@ -2291,6 +2304,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/****************************************************************&n; *&n; * Interface to ac97-codec module&n; *&n; *&n; */
+multiline_comment|/**&n; *&t;via_ac97_wait_idle - Wait until AC97 codec is not busy&n; *&t;@card: Private info for specified board&n; *&n; *&t;Sleep until the AC97 codec is no longer busy.&n; *&t;Returns the final value read from the SGD&n; *&t;register being polled.&n; */
 DECL|function|via_ac97_wait_idle
 r_static
 id|u8
@@ -2389,6 +2403,7 @@ r_return
 id|tmp8
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_ac97_read_reg - Read AC97 standard register&n; *&t;@codec: Pointer to generic AC97 codec info&n; *&t;@reg: Index of AC97 register to be read&n; *&n; *&t;Read the value of a single AC97 codec register,&n; *&t;as defined by the Intel AC97 specification.&n; *&n; *&t;Defines the standard AC97 read-register operation&n; *&t;required by the kernel&squot;s ac97_codec interface.&n; *&n; *&t;Returns the 16-bit value stored in the specified&n; *&t;register.&n; */
 DECL|function|via_ac97_read_reg
 r_static
 id|u16
@@ -2598,6 +2613,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;via_ac97_write_reg - Write AC97 standard register&n; *&t;@codec: Pointer to generic AC97 codec info&n; *&t;@reg: Index of AC97 register to be written&n; *&t;@value: Value to be written to AC97 register&n; *&n; *&t;Write the value of a single AC97 codec register,&n; *&t;as defined by the Intel AC97 specification.&n; *&n; *&t;Defines the standard AC97 write-register operation&n; *&t;required by the kernel&squot;s ac97_codec interface.&n; */
 DECL|function|via_ac97_write_reg
 r_static
 r_void
@@ -2783,8 +2799,6 @@ id|DPRINTK
 l_string|&quot;ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|pci_for_each_dev
 c_func
 (paren
@@ -2835,8 +2849,6 @@ id|DPRINTK
 l_string|&quot;EXIT, returning -ENODEV&bslash;n&quot;
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|ENODEV
@@ -2847,38 +2859,6 @@ id|file-&gt;private_data
 op_assign
 op_amp
 id|card-&gt;ac97
-suffix:semicolon
-id|DPRINTK
-(paren
-l_string|&quot;EXIT, returning 0&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|via_mixer_release
-r_static
-r_int
-id|via_mixer_release
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|DPRINTK
-(paren
-l_string|&quot;ENTER&bslash;n&quot;
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|DPRINTK
 (paren
@@ -2989,13 +2969,13 @@ id|file_operations
 id|via_mixer_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|open
 suffix:colon
 id|via_mixer_open
-comma
-id|release
-suffix:colon
-id|via_mixer_release
 comma
 id|llseek
 suffix:colon
@@ -3362,6 +3342,7 @@ id|udelay
 l_int|100
 )paren
 suffix:semicolon
+macro_line|#if 0 /* this breaks on K7M */
 multiline_comment|/* disable legacy stuff */
 id|pci_write_config_byte
 (paren
@@ -3378,6 +3359,7 @@ c_func
 l_int|10
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* route FM trap to IRQ, disable FM trap */
 id|pci_write_config_byte
 (paren
@@ -3871,27 +3853,6 @@ suffix:semicolon
 id|u8
 id|status
 suffix:semicolon
-r_int
-id|unhandled
-op_assign
-l_int|1
-suffix:semicolon
-r_static
-r_int
-id|intcount
-op_assign
-l_int|0
-suffix:semicolon
-m_assert
-(paren
-id|irq
-op_eq
-id|card-&gt;pdev-&gt;irq
-)paren
-suffix:semicolon
-id|intcount
-op_increment
-suffix:semicolon
 id|status
 op_assign
 id|inb
@@ -3919,10 +3880,6 @@ op_assign
 op_amp
 id|card-&gt;ch_out
 suffix:semicolon
-id|unhandled
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3954,11 +3911,9 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;FLAG intr, status=0x%02X, intcount=%ld&bslash;n&quot;
+l_string|&quot;FLAG intr, status=0x%02X&bslash;n&quot;
 comma
 id|status
-comma
-id|intcount
 )paren
 suffix:semicolon
 id|via_interrupt_write
@@ -3998,11 +3953,9 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;EOL intr, status=0x%02X, intcount=%ld&bslash;n&quot;
+l_string|&quot;EOL intr, status=0x%02X&bslash;n&quot;
 comma
 id|status
-comma
-id|intcount
 )paren
 suffix:semicolon
 id|via_interrupt_write
@@ -4031,11 +3984,9 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;STOPPED intr, status=0x%02X, intcount=%ld&bslash;n&quot;
+l_string|&quot;STOPPED intr, status=0x%02X&bslash;n&quot;
 comma
 id|status
-comma
-id|intcount
 )paren
 suffix:semicolon
 )brace
@@ -4048,27 +3999,6 @@ id|card-&gt;ch_out
 suffix:semicolon
 macro_line|#endif
 )brace
-r_if
-c_cond
-(paren
-id|unhandled
-)paren
-id|printk
-(paren
-id|KERN_WARNING
-id|PFX
-l_string|&quot;unhandled interrupt, st=%02x, st32=%08x&bslash;n&quot;
-comma
-id|status
-comma
-id|inl
-(paren
-id|card-&gt;baseaddr
-op_plus
-l_int|0x84
-)paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|via_interrupt_disable
 r_static
@@ -4371,6 +4301,10 @@ id|file_operations
 id|via_dsp_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|open
 suffix:colon
 id|via_dsp_open
@@ -7279,8 +7213,6 @@ comma
 id|file-&gt;f_mode
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7662,8 +7594,6 @@ id|flags
 suffix:semicolon
 id|err_out
 suffix:colon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -7794,8 +7724,6 @@ id|wake_up
 op_amp
 id|card-&gt;open_wait
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|DPRINTK
 c_func
@@ -9108,6 +9036,11 @@ id|via_dsp_cleanup
 id|card
 )paren
 suffix:semicolon
+id|via_ac97_cleanup
+(paren
+id|card
+)paren
+suffix:semicolon
 id|release_region
 (paren
 id|pci_resource_start
@@ -9185,8 +9118,6 @@ id|DPRINTK
 l_string|&quot;ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|rc
 op_assign
 id|via_init_proc
@@ -9199,8 +9130,6 @@ c_cond
 id|rc
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;EXIT, returning %d&bslash;n&quot;
@@ -9245,8 +9174,6 @@ id|via_cleanup_proc
 (paren
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;EXIT, returning -ENODEV&bslash;n&quot;
@@ -9257,8 +9184,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;EXIT, returning 0&bslash;n&quot;

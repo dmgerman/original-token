@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * programming the msp34* sound processor family&n; *&n; * (c) 1997,1998 Gerd Knorr &lt;kraxel@goldbach.in-berlin.de&gt;&n; *&n; * what works and what doesn&squot;t:&n; *&n; *  AM-Mono&n; *      Support for Hauppauge cards added (decoding handled by tuner) added by&n; *      Frederic Crozat &lt;fcrozat@mail.dotcom.fr&gt;&n; *&n; *  FM-Mono&n; *      should work. The stereo modes are backward compatible to FM-mono,&n; *      therefore FM-Mono should be allways available.&n; *&n; *  FM-Stereo (B/G, used in germany)&n; *      should work, with autodetect&n; *&n; *  FM-Stereo (satellite)&n; *      should work, no autodetect (i.e. default is mono, but you can&n; *      switch to stereo -- untested)&n; *&n; *  NICAM (B/G, L , used in UK, Scandinavia, Spain and France)&n; *      should work, with autodetect. Support for NICAM was added by&n; *      Pekka Pietikainen &lt;pp@netppl.fi&gt;&n; *&n; *&n; * TODO:&n; *   - better SAT support&n; *&n; *&n; * 980623  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *         using soundcore instead of OSS&n; *&n; */
+multiline_comment|/*&n; * programming the msp34* sound processor family&n; *&n; * (c) 1997-2000 Gerd Knorr &lt;kraxel@goldbach.in-berlin.de&gt;&n; *&n; * what works and what doesn&squot;t:&n; *&n; *  AM-Mono&n; *      Support for Hauppauge cards added (decoding handled by tuner) added by&n; *      Frederic Crozat &lt;fcrozat@mail.dotcom.fr&gt;&n; *&n; *  FM-Mono&n; *      should work. The stereo modes are backward compatible to FM-mono,&n; *      therefore FM-Mono should be allways available.&n; *&n; *  FM-Stereo (B/G, used in germany)&n; *      should work, with autodetect&n; *&n; *  FM-Stereo (satellite)&n; *      should work, no autodetect (i.e. default is mono, but you can&n; *      switch to stereo -- untested)&n; *&n; *  NICAM (B/G, L , used in UK, Scandinavia, Spain and France)&n; *      should work, with autodetect. Support for NICAM was added by&n; *      Pekka Pietikainen &lt;pp@netppl.fi&gt;&n; *&n; *&n; * TODO:&n; *   - better SAT support&n; *&n; *&n; * 980623  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *         using soundcore instead of OSS&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -20,11 +21,8 @@ DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &quot;audiochip.h&quot;
-DECL|macro|WAIT_QUEUE
-mdefine_line|#define WAIT_QUEUE                 wait_queue_head_t
 multiline_comment|/* sound mixer stuff */
-macro_line|#if defined(CONFIG_SOUND) || defined(CONFIG_SOUND_MODULE)
-DECL|macro|REGISTER_MIXER
+macro_line|#if 0 /* defined(CONFIG_SOUND) || defined(CONFIG_SOUND_MODULE) */
 macro_line|# define REGISTER_MIXER 1
 macro_line|#endif
 multiline_comment|/* Addresses to scan */
@@ -51,7 +49,7 @@ op_assign
 (brace
 l_int|0x40
 comma
-l_int|0x44
+l_int|0x40
 comma
 id|I2C_CLIENT_END
 )brace
@@ -261,7 +259,7 @@ op_star
 id|thread
 suffix:semicolon
 DECL|member|wq
-id|WAIT_QUEUE
+id|wait_queue_head_t
 id|wq
 suffix:semicolon
 DECL|member|notify
@@ -3498,6 +3496,12 @@ c_func
 id|current
 )paren
 suffix:semicolon
+id|exit_fs
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 id|current-&gt;session
 op_assign
 l_int|1
@@ -3512,10 +3516,6 @@ c_func
 op_amp
 id|current-&gt;blocked
 )paren
-suffix:semicolon
-id|current-&gt;fs-&gt;umask
-op_assign
-l_int|0
 suffix:semicolon
 id|strcpy
 c_func
@@ -4977,6 +4977,12 @@ c_func
 id|current
 )paren
 suffix:semicolon
+id|exit_fs
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 id|current-&gt;session
 op_assign
 l_int|1
@@ -4991,10 +4997,6 @@ c_func
 op_amp
 id|current-&gt;blocked
 )paren
-suffix:semicolon
-id|current-&gt;fs-&gt;umask
-op_assign
-l_int|0
 suffix:semicolon
 id|strcpy
 c_func
@@ -6606,8 +6608,6 @@ c_func
 id|client-&gt;adapter
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6649,8 +6649,6 @@ c_func
 id|client-&gt;adapter
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6685,6 +6683,10 @@ id|file_operations
 id|msp3400c_mixer_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|msp3400c_mixer_llseek
@@ -7173,7 +7175,24 @@ l_int|1
 multiline_comment|/* default mode */
 id|msp-&gt;simple
 op_assign
+(paren
+(paren
+(paren
+id|rev2
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+)paren
+op_eq
 l_int|0
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -8304,22 +8323,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ----------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|msp3400_init_module
 r_int
-id|init_module
+id|msp3400_init_module
 c_func
 (paren
 r_void
 )paren
-macro_line|#else
-r_int
-id|msp3400c_init
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif
 (brace
 id|i2c_add_driver
 c_func
@@ -8332,10 +8342,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|msp3400_cleanup_module
 r_void
-id|cleanup_module
+id|msp3400_cleanup_module
 c_func
 (paren
 r_void
@@ -8349,6 +8358,19 @@ id|driver
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|msp3400_init_module
+id|module_init
+c_func
+(paren
+id|msp3400_init_module
+)paren
+suffix:semicolon
+DECL|variable|msp3400_cleanup_module
+id|module_exit
+c_func
+(paren
+id|msp3400_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-basic-offset: 8&n; * End:&n; */
 eof

@@ -48,6 +48,10 @@ suffix:semicolon
 mdefine_line|#define CMD640_DUMP_REGS cmd640_dump_regs() /* for debugging cmd640 chipset */
 macro_line|#endif
 macro_line|#endif  /* CONFIG_BLK_DEV_CMD640 */
+macro_line|#ifndef DISABLE_IRQ_NOSYNC
+DECL|macro|DISABLE_IRQ_NOSYNC
+mdefine_line|#define DISABLE_IRQ_NOSYNC&t;0
+macro_line|#endif
 multiline_comment|/*&n; * IDE_DRIVE_CMD is used to implement many features of the hdparm utility&n; */
 DECL|macro|IDE_DRIVE_CMD
 mdefine_line|#define IDE_DRIVE_CMD&t;&t;99&t;/* (magic) undef to reduce kernel size*/
@@ -205,6 +209,14 @@ DECL|macro|WAIT_MIN_SLEEP
 mdefine_line|#define WAIT_MIN_SLEEP&t;(2*HZ/100)&t;/* 20msec - minimum sleep time */
 DECL|macro|SELECT_DRIVE
 mdefine_line|#define SELECT_DRIVE(hwif,drive)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;selectproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;selectproc(drive);&t;&t;&t;&bslash;&n;&t;OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]); &bslash;&n;}
+DECL|macro|SELECT_INTERRUPT
+mdefine_line|#define SELECT_INTERRUPT(hwif,drive)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;intrproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;intrproc(drive);&t;&t;&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;OUT_BYTE((drive)-&gt;ctl|2, hwif-&gt;io_ports[IDE_CONTROL_OFFSET]);&t;&bslash;&n;}
+DECL|macro|SELECT_MASK
+mdefine_line|#define SELECT_MASK(hwif,drive,mask)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;maskproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;maskproc(drive,mask);&t;&t;&t;&bslash;&n;}
+DECL|macro|SELECT_READ_WRITE
+mdefine_line|#define SELECT_READ_WRITE(hwif,drive,func)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;rwproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;rwproc(drive,func);&t;&t;&t;&bslash;&n;}
+DECL|macro|QUIRK_LIST
+mdefine_line|#define QUIRK_LIST(hwif,drive)&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;quirkproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;(drive)-&gt;quirk_list = hwif-&gt;quirkproc(drive);&t;&bslash;&n;}
 multiline_comment|/*&n; * Check for an interrupt and acknowledge the interrupt status&n; */
 r_struct
 id|hwif_s
@@ -772,6 +784,16 @@ r_int
 id|lun
 suffix:semicolon
 multiline_comment|/* logical unit */
+DECL|member|crc_count
+r_int
+id|crc_count
+suffix:semicolon
+multiline_comment|/* crc counter to reduce drive speed */
+DECL|member|quirk_list
+id|byte
+id|quirk_list
+suffix:semicolon
+multiline_comment|/* drive is considered quirky if set for a specific host */
 DECL|member|init_speed
 id|byte
 id|init_speed
@@ -904,6 +926,54 @@ id|ide_resetproc_t
 (paren
 id|ide_drive_t
 op_star
+)paren
+suffix:semicolon
+DECL|typedef|ide_quirkproc_t
+r_typedef
+r_int
+(paren
+id|ide_quirkproc_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
+DECL|typedef|ide_intrproc_t
+r_typedef
+r_void
+(paren
+id|ide_intrproc_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
+DECL|typedef|ide_maskproc_t
+r_typedef
+r_void
+(paren
+id|ide_maskproc_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|typedef|ide_rw_proc_t
+r_typedef
+r_void
+(paren
+id|ide_rw_proc_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+comma
+id|ide_dma_action_t
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * hwif_chipset_t is used to keep track of the specific hardware&n; * chipset used by each IDE interface, if known.&n; */
@@ -1056,6 +1126,30 @@ op_star
 id|resetproc
 suffix:semicolon
 multiline_comment|/* routine to reset controller after a disk reset */
+DECL|member|intrproc
+id|ide_intrproc_t
+op_star
+id|intrproc
+suffix:semicolon
+multiline_comment|/* special interrupt handling for shared pci interrupts */
+DECL|member|maskproc
+id|ide_maskproc_t
+op_star
+id|maskproc
+suffix:semicolon
+multiline_comment|/* special host masking for drive selection */
+DECL|member|quirkproc
+id|ide_quirkproc_t
+op_star
+id|quirkproc
+suffix:semicolon
+multiline_comment|/* check host&squot;s drive quirk list */
+DECL|member|rwproc
+id|ide_rw_proc_t
+op_star
+id|rwproc
+suffix:semicolon
+multiline_comment|/* adjust timing based upon rq-&gt;cmd direction */
 DECL|member|dmaproc
 id|ide_dmaproc_t
 op_star
@@ -2029,7 +2123,7 @@ op_star
 id|hwgroup
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is used for (nearly) all data transfers from/to the IDE interface&n; */
+multiline_comment|/*&n; * This is used for (nearly) all data transfers from/to the IDE interface&n; * FIXME for 2.5, to a pointer pass verses memcpy........&n; */
 r_void
 id|ide_input_data
 (paren
@@ -2062,7 +2156,7 @@ r_int
 id|wcount
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is used for (nearly) all ATAPI data transfers from/to the IDE interface&n; */
+multiline_comment|/*&n; * This is used for (nearly) all ATAPI data transfers from/to the IDE interface&n; * FIXME for 2.5, to a pointer pass verses memcpy........&n; */
 r_void
 id|atapi_input_bytes
 (paren
@@ -2427,6 +2521,14 @@ id|drive
 comma
 id|byte
 id|speed
+)paren
+suffix:semicolon
+id|byte
+id|eighty_ninty_three
+(paren
+id|ide_drive_t
+op_star
+id|drive
 )paren
 suffix:semicolon
 r_int

@@ -2315,10 +2315,6 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif /* MODULE */
 r_return
 l_int|0
 suffix:semicolon
@@ -2381,10 +2377,6 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2396,6 +2388,10 @@ id|file_operations
 id|dsp56k_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|dsp56k_read

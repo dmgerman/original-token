@@ -356,8 +356,7 @@ id|adb_mouse_interrupt_hook
 op_assign
 l_int|NULL
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
+multiline_comment|/*&n;&t; *&t;FIXME?: adb_mouse_interrupt_hook may still be executing&n;&t; *&t;on another CPU.&n;&t; */
 r_return
 l_int|0
 suffix:semicolon
@@ -379,8 +378,6 @@ op_star
 id|file
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|adb_mouse_interrupt_hook
 op_assign
 id|adb_mouse_interrupt
@@ -399,6 +396,8 @@ op_assign
 id|ADB_MOUSE_MINOR
 comma
 l_string|&quot;adbmouse&quot;
+comma
+id|THIS_MODULE
 comma
 id|open_mouse
 comma

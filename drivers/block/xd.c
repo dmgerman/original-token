@@ -1146,6 +1146,8 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1170,10 +1172,6 @@ op_amp
 id|xd_wait_open
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif /* MODULE */
 id|xd_access
 (braket
 id|dev
@@ -1186,7 +1184,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_else
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO

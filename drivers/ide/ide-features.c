@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-features.c&t;Version 0.03&t;Feb. 10, 2000&n; *&n; *  Copyright (C) 1999-2000&t;Linus Torvalds &amp; authors (see below)&n; *  &n; *  Copyright (C) 1999-2000&t;Andre Hedrick &lt;andre@suse.com&gt;&n; *&n; *  Extracts if ide.c to address the evolving transfer rate code for&n; *  the SETFEATURES_XFER callouts.  Various parts of any given function&n; *  are credited to previous ATA-IDE maintainers.&n; *&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-features.c&t;Version 0.04&t;June 9, 2000&n; *&n; *  Copyright (C) 1999-2000&t;Linus Torvalds &amp; authors (see below)&n; *  &n; *  Copyright (C) 1999-2000&t;Andre Hedrick &lt;andre@linux-ide.org&gt;&n; *&n; *  Extracts if ide.c to address the evolving transfer rate code for&n; *  the SETFEATURES_XFER callouts.  Various parts of any given function&n; *  are credited to previous ATA-IDE maintainers.&n; *&n; *  Auto-CRC downgrade for Ultra DMA(ing)&n; *&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -351,6 +351,19 @@ op_star
 id|drive
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|drive-&gt;crc_count
+)paren
+r_return
+id|drive-&gt;current_speed
+suffix:semicolon
+id|drive-&gt;crc_count
+op_assign
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -583,6 +596,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|SELECT_MASK
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+comma
+id|drive
+comma
+l_int|1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -647,6 +674,20 @@ c_func
 id|irqs
 )paren
 suffix:semicolon
+id|SELECT_MASK
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+comma
+id|drive
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -695,6 +736,20 @@ id|BAD_R_STAT
 )paren
 )paren
 (brace
+id|SELECT_MASK
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+comma
+id|drive
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -720,6 +775,20 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* local CPU only; some systems need this */
+id|SELECT_MASK
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+comma
+id|drive
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|id
 op_assign
 id|kmalloc
@@ -857,7 +926,7 @@ id|udma_four
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Speed warnings UDMA 3/4 is not functional.&bslash;n&quot;
+l_string|&quot;%s: Speed warnings UDMA 3/4/5 is not functional.&bslash;n&quot;
 comma
 id|HWIF
 c_func
@@ -872,6 +941,20 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_IDEDMA_IVB
+r_if
+c_cond
+(paren
+(paren
+id|drive-&gt;id-&gt;hw_config
+op_amp
+l_int|0x6000
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+macro_line|#else /* !CONFIG_IDEDMA_IVB */
 r_if
 c_cond
 (paren
@@ -884,10 +967,11 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#endif /* CONFIG_IDEDMA_IVB */
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Speed warnings UDMA 3/4 is not functional.&bslash;n&quot;
+l_string|&quot;%s: Speed warnings UDMA 3/4/5 is not functional.&bslash;n&quot;
 comma
 id|drive-&gt;name
 )paren
@@ -956,6 +1040,54 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *  All hosts that use the 80c ribbon mus use!&n; */
+DECL|function|eighty_ninty_three
+id|byte
+id|eighty_ninty_three
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+r_return
+(paren
+(paren
+id|byte
+)paren
+(paren
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|udma_four
+)paren
+op_logical_and
+macro_line|#ifndef CONFIG_IDEDMA_IVB
+(paren
+id|drive-&gt;id-&gt;hw_config
+op_amp
+l_int|0x4000
+)paren
+op_logical_and
+macro_line|#endif /* CONFIG_IDEDMA_IVB */
+(paren
+id|drive-&gt;id-&gt;hw_config
+op_amp
+l_int|0x2000
+)paren
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Similar to ide_wait_stat(), except it never calls ide_error internally.&n; * This is a kludge to handle the new ide_config_drive_speed() function,&n; * and should not otherwise be used anywhere.  Eventually, the tuneproc&squot;s&n; * should be updated to return ide_startstop_t, in which case we can get&n; * rid of this abomination again.  :)   -ml&n; *&n; * It is gone..........&n; *&n; * const char *msg == consider adding for verbose errors.&n; */
 DECL|function|ide_config_drive_speed
 r_int
@@ -989,7 +1121,7 @@ suffix:semicolon
 id|byte
 id|stat
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PCI
+macro_line|#if defined(CONFIG_BLK_DEV_IDEDMA) &amp;&amp; !defined(CONFIG_DMA_NONPCI)
 id|byte
 id|unit
 op_assign
@@ -1026,7 +1158,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_PCI */
+macro_line|#endif /* (CONFIG_BLK_DEV_IDEDMA) &amp;&amp; !(CONFIG_DMA_NONPCI) */
 multiline_comment|/*&n;&t; * Don&squot;t use ide_wait_cmd here - it will&n;&t; * attempt to set_geometry and recalibrate,&n;&t; * but for some reason these don&squot;t work at&n;&t; * this point (lost interrupt).&n;&t; */
 multiline_comment|/*&n;         * Select the drive, and issue the SETFEATURES command&n;         */
 id|disable_irq
@@ -1052,6 +1184,20 @@ id|drive
 )paren
 comma
 id|drive
+)paren
+suffix:semicolon
+id|SELECT_MASK
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+comma
+id|drive
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|udelay
@@ -1261,6 +1407,20 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|SELECT_MASK
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+comma
+id|drive
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|enable_irq
 c_func
 (paren
@@ -1305,7 +1465,7 @@ op_and_assign
 op_complement
 l_int|0x0F00
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PCI
+macro_line|#if defined(CONFIG_BLK_DEV_IDEDMA) &amp;&amp; !defined(CONFIG_DMA_NONPCI)
 r_if
 c_cond
 (paren
@@ -1371,7 +1531,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_PCI */
+macro_line|#endif /* (CONFIG_BLK_DEV_IDEDMA) &amp;&amp; !(CONFIG_DMA_NONPCI) */
 r_switch
 c_cond
 (paren
@@ -1539,6 +1699,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|set_transfer
+)paren
+suffix:semicolon
+DECL|variable|eighty_ninty_three
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|eighty_ninty_three
 )paren
 suffix:semicolon
 DECL|variable|ide_config_drive_speed

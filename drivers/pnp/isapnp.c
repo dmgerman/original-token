@@ -11481,6 +11481,13 @@ id|isapnp_rdp_res
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE
+macro_line|#ifdef CONFIG_PROC_FS
+id|isapnp_proc_done
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -11517,13 +11524,6 @@ id|list
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
-id|isapnp_proc_done
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 )brace
 DECL|function|isapnp_do_reserve_irq

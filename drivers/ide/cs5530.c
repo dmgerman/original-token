@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/ide/cs5530.c&t;&t;Version 0.6&t;Mar. 18, 2000&n; *&n; * Copyright (C) 2000&t;&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; * Ditto of GNU General Public License.&n; *&n; * Copyright (C) 2000&t;&t;&t;Mark Lord &lt;mlord@pobox.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Development of this chipset driver was funded&n; * by the nice folks at National Semiconductor.&n; */
+multiline_comment|/*&n; * linux/drivers/ide/cs5530.c&t;&t;Version 0.6&t;Mar. 18, 2000&n; *&n; * Copyright (C) 2000&t;&t;&t;Andre Hedrick &lt;andre@linux-ide.org&gt;&n; * Ditto of GNU General Public License.&n; *&n; * Copyright (C) 2000&t;&t;&t;Mark Lord &lt;mlord@pobox.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Development of this chipset driver was funded&n; * by the nice folks at National Semiconductor.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -104,12 +104,13 @@ suffix:semicolon
 id|u32
 id|bibma
 op_assign
-id|bmide_dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|bmide_dev
+comma
 l_int|4
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|u8
 id|c0

@@ -518,6 +518,13 @@ id|disable_gconsole
 (paren
 )paren
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|r
 op_assign
 id|do_mmap
@@ -546,6 +553,13 @@ op_or
 id|MAP_PRIVATE
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if

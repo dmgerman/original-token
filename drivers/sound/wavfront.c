@@ -7017,8 +7017,6 @@ id|dev.opened
 op_assign
 id|file-&gt;f_flags
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7047,8 +7045,6 @@ suffix:semicolon
 id|dev.debug
 op_assign
 l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -7194,6 +7190,10 @@ id|file_operations
 id|wavefront_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|wavefront_llseek

@@ -929,8 +929,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Activate &n;&t;&t;&t; */
 id|wdt_is_open
 op_assign
@@ -1008,8 +1006,6 @@ suffix:semicolon
 r_case
 id|TEMP_MINOR
 suffix:colon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1074,8 +1070,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1141,6 +1135,10 @@ id|file_operations
 id|wdt_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|wdt_llseek

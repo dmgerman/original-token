@@ -44,6 +44,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;linux/pm.h&gt;
 r_static
 r_int
@@ -9034,8 +9035,6 @@ id|file-&gt;private_data
 op_assign
 id|card
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -9074,8 +9073,6 @@ c_func
 (paren
 id|card
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -9144,6 +9141,10 @@ id|file_operations
 id|ess_mixer_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|ess_llseek
@@ -13995,8 +13996,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -14162,8 +14161,6 @@ op_amp
 id|s-&gt;open_wait
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -14175,6 +14172,10 @@ id|file_operations
 id|ess_audio_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|ess_llseek
@@ -16421,26 +16422,14 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|init_maestro
 r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
-r_int
-id|SILLY_MAKE_INIT
-c_func
-(paren
+id|__init
 id|init_maestro
 c_func
 (paren
 r_void
 )paren
-)paren
-macro_line|#endif
 (brace
 r_struct
 id|pci_dev
@@ -16891,14 +16880,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* MODULE */
-DECL|variable|init_maestro
-id|__initcall
-c_func
-(paren
-id|init_maestro
-)paren
-suffix:semicolon
 macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 r_void
@@ -17568,4 +17549,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|init_maestro
+id|module_init
+c_func
+(paren
+id|init_maestro
+)paren
+suffix:semicolon
 eof

@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/utime.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/quotaops.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|vfs_statfs
 r_int
@@ -2844,7 +2845,11 @@ l_int|0
 suffix:semicolon
 id|f-&gt;f_op
 op_assign
+id|fops_get
+c_func
+(paren
 id|inode-&gt;i_fop
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2907,6 +2912,12 @@ id|f
 suffix:semicolon
 id|cleanup_all
 suffix:colon
+id|fops_put
+c_func
+(paren
+id|f-&gt;f_op
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

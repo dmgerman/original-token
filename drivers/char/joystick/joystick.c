@@ -3570,6 +3570,10 @@ id|file_operations
 id|js_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|js_read

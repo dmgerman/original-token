@@ -1143,8 +1143,6 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/* If ABORTOPEN is set and the printer is offline or out of paper,&n;&t;   we may still want to open it to perform ioctl()s.  Therefore we&n;&t;   have commandeered O_NONBLOCK, even though it is being used in&n;&t;   a non-standard manner.  This is strictly a Linux hack, and&n;&t;   should most likely only ever be used by the tunelp application. */
 r_if
 c_cond
@@ -1215,8 +1213,6 @@ comma
 id|minor
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|LP_F
 c_func
 (paren
@@ -1252,8 +1248,6 @@ comma
 id|minor
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|LP_F
 c_func
 (paren
@@ -1288,8 +1282,6 @@ l_string|&quot;lp%d printer error&bslash;n&quot;
 comma
 id|minor
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|LP_F
 c_func
@@ -1337,8 +1329,6 @@ dot
 id|lp_buffer
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|LP_F
 c_func
 (paren
@@ -1405,8 +1395,6 @@ dot
 id|lp_buffer
 op_assign
 l_int|NULL
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|LP_F
 c_func
@@ -1980,6 +1968,10 @@ id|file_operations
 id|lp_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|write
 suffix:colon
 id|lp_write

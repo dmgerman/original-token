@@ -1786,8 +1786,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|rtc_status
 op_or_assign
 id|RTC_IS_OPEN
@@ -1958,8 +1956,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|spin_lock_irq
 (paren
 op_amp
@@ -2062,6 +2058,10 @@ id|file_operations
 id|rtc_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|rtc_llseek

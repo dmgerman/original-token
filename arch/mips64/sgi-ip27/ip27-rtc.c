@@ -617,8 +617,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|rtc_status
 op_or_assign
 id|RTC_IS_OPEN
@@ -645,8 +643,6 @@ id|file
 )paren
 (brace
 multiline_comment|/*&n;&t; * Turn off all interrupts once the device is no longer&n;&t; * in use, and clear the data.&n;&t; */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|rtc_status
 op_and_assign
 op_complement
@@ -664,6 +660,10 @@ id|file_operations
 id|rtc_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|ioctl
 suffix:colon
 id|rtc_ioctl

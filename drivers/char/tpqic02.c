@@ -7278,16 +7278,6 @@ comma
 id|filp
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|open_error
-)paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-)brace
 r_return
 id|open_error
 suffix:semicolon
@@ -8173,10 +8163,6 @@ id|TIM_R
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -9314,6 +9300,10 @@ id|file_operations
 id|qic02_tape_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|qic02_tape_lseek

@@ -5283,8 +5283,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|file-&gt;private_data
 op_assign
 id|card
@@ -5318,8 +5316,6 @@ comma
 l_string|&quot;emu10k1_mixer_release()&bslash;n&quot;
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5330,6 +5326,10 @@ id|file_operations
 id|emu10k1_mixer_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|emu10k1_mixer_llseek

@@ -537,7 +537,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_else
 r_if
 c_cond
 (paren
@@ -4899,7 +4898,7 @@ op_assign
 id|lockflag
 ques
 c_cond
-l_int|3
+l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
@@ -5366,11 +5365,16 @@ id|sense
 )paren
 (brace
 r_int
+id|minor
+comma
 id|stat
 comma
 id|ntracks
 comma
 id|i
+suffix:semicolon
+id|kdev_t
+id|dev
 suffix:semicolon
 r_struct
 id|cdrom_info
@@ -5991,12 +5995,16 @@ id|ms_tmp.hdr.last_track
 )paren
 suffix:semicolon
 multiline_comment|/* Now try to get the total cdrom capacity. */
-macro_line|#if 0
-id|stat
+id|minor
 op_assign
-id|cdrom_get_last_written
-c_func
 (paren
+id|drive-&gt;select.b.unit
+)paren
+op_lshift
+id|PARTN_BITS
+suffix:semicolon
+id|dev
+op_assign
 id|MKDEV
 c_func
 (paren
@@ -6010,6 +6018,13 @@ id|major
 comma
 id|minor
 )paren
+suffix:semicolon
+id|stat
+op_assign
+id|cdrom_get_last_written
+c_func
+(paren
+id|dev
 comma
 (paren
 r_int
@@ -6024,7 +6039,6 @@ c_cond
 (paren
 id|stat
 )paren
-macro_line|#endif
 id|stat
 op_assign
 id|cdrom_read_capacity

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/ide/sis5513.c&t;&t;Version 0.10&t;Mar. 18, 2000&n; *&n; * Copyright (C) 1999-2000&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to SIS Taiwan for direct support and hardware.&n; * Tested and designed on the SiS620/5513 chipset.&n; */
+multiline_comment|/*&n; * linux/drivers/ide/sis5513.c&t;&t;Version 0.11&t;June 9, 2000&n; *&n; * Copyright (C) 1999-2000&t;Andre Hedrick &lt;andre@linux-ide.org&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to SIS Taiwan for direct support and hardware.&n; * Tested and designed on the SiS620/5513 chipset.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -408,14 +408,13 @@ id|pci_dev
 op_star
 id|bmide_dev
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|cable_type
 r_static
 r_char
 op_star
 id|cable_type
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 l_string|&quot;80 pins&quot;
@@ -423,25 +422,23 @@ comma
 l_string|&quot;40 pins&quot;
 )brace
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|recovery_time
 r_static
 r_char
 op_star
 id|recovery_time
 (braket
 )braket
-id|__initdata
 op_assign
 initialization_block
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|cycle_time
 r_static
 r_char
 op_star
 id|cycle_time
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 l_string|&quot;Undefined&quot;
@@ -461,14 +458,13 @@ comma
 l_string|&quot;8 CLK&quot;
 )brace
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|active_time
 r_static
 r_char
 op_star
 id|active_time
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 l_string|&quot;8 PCICLK&quot;
@@ -913,7 +909,7 @@ comma
 id|active_time
 (braket
 (paren
-id|reg
+id|reg1
 op_amp
 l_int|0x07
 )paren
@@ -1162,7 +1158,7 @@ comma
 id|active_time
 (braket
 (paren
-id|reg
+id|reg1
 op_amp
 l_int|0x07
 )paren
@@ -1796,7 +1792,7 @@ suffix:semicolon
 )brace
 macro_line|#endif /* SIS5513_TUNEPROC */
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
-multiline_comment|/*&n; * ((id-&gt;hw_config &amp; 0x2000) &amp;&amp; (HWIF(drive)-&gt;udma_four))&n; */
+multiline_comment|/*&n; * ((id-&gt;hw_config &amp; 0x4000|0x2000) &amp;&amp; (HWIF(drive)-&gt;udma_four))&n; */
 DECL|function|config_chipset_for_dma
 r_static
 r_int
@@ -1877,22 +1873,11 @@ suffix:semicolon
 id|byte
 id|udma_66
 op_assign
+id|eighty_ninty_three
+c_func
 (paren
-(paren
-id|id-&gt;hw_config
-op_amp
-l_int|0x2000
+id|drive
 )paren
-op_logical_and
-(paren
-id|hwif-&gt;udma_four
-)paren
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3101,7 +3086,7 @@ l_int|0x04
 )paren
 )paren
 (brace
-multiline_comment|/* set IDE controller to operate in Compabitility mode obly */
+multiline_comment|/* set IDE controller to operate in Compabitility mode only */
 id|pci_write_config_byte
 c_func
 (paren

@@ -849,7 +849,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*  Support functions follow  */
-multiline_comment|/**&n; *&t;search_for_entry_in_dir - Search for a devfs entry inside another devfs entry.&n; *&t;@parent:  The parent devfs entry.&n; *&t;@name:  The name of the entry.&n; *&t;@namelen:  The number of characters in @name.&n; *&t;@traverse_symlink:  If %TRUE then the entry is traversed if it is a symlink.&n; *&n; *&t;Returns a pointer to the entry on success, else %NULL.&n; */
+multiline_comment|/**&n; *&t;search_for_entry_in_dir - Search for a devfs entry inside another devfs entry.&n; *&t;@parent:  The parent devfs entry.&n; *&t;@name:  The name of the entry.&n; *&t;@namelen:  The number of characters in @name.&n; *&t;@traverse_symlink:  If %TRUE then the entry is traversed if it is a symlink.&n; *&n; *  Search for a devfs entry inside another devfs entry and returns a pointer&n; *   to the entry on success, else %NULL.&n; */
 DECL|function|search_for_entry_in_dir
 r_static
 r_struct
@@ -1651,7 +1651,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function search_for_entry  */
-multiline_comment|/**&n; *&t;find_by_dev - Find a devfs entry in a directory.&n; *&t;@major: The major number to search for.&n; *&t;@minor: The minor number to search for.&n; *&t;@type: The type of special file to search for. This may be either&n; *&t;&t;%DEVFS_SPECIAL_CHR or %DEVFS_SPECIAL_BLK.&n; *&n; *&t;Returns the devfs_entry pointer on success, else %NULL.&n; */
+multiline_comment|/**&n; *&t;find_by_dev - Find a devfs entry in a directory.&n; *&t;@dir: The directory where to search&n; *&t;@major: The major number to search for.&n; *&t;@minor: The minor number to search for.&n; *&t;@type: The type of special file to search for. This may be either&n; *&t;&t;%DEVFS_SPECIAL_CHR or %DEVFS_SPECIAL_BLK.&n; *&n; *&t;Returns the devfs_entry pointer on success, else %NULL.&n; */
 DECL|function|find_by_dev
 r_static
 r_struct
@@ -5001,7 +5001,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_ops  */
-multiline_comment|/**&n; *&t;devfs_set_file_size - Set the file size for a devfs regular file.&n; *&t;de: The handle to the device entry.&n; *&t;size: The new file size.&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
+multiline_comment|/**&n; *&t;devfs_set_file_size - Set the file size for a devfs regular file.&n; *&t;@de: The handle to the device entry.&n; *&t;@size: The new file size.&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
 DECL|function|devfs_set_file_size
 r_int
 id|devfs_set_file_size
@@ -5145,7 +5145,7 @@ id|de-&gt;info
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_info  */
-multiline_comment|/**&n; *&t;devfs_set_info - Set the info pointer written to private_data upon open.&n; *&t;@de: The handle to the device entry.&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
+multiline_comment|/**&n; *&t;devfs_set_info - Set the info pointer written to private_data upon open.&n; *&t;@de: The handle to the device entry.&n; *&t;@info: pointer to the data&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
 DECL|function|devfs_set_info
 r_int
 id|devfs_set_info
@@ -5523,7 +5523,7 @@ id|bdops
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_register_blkdev  */
-multiline_comment|/**&n; *&t;devfs_unregister_chrdev - Optionally unregister a conventional character driver.&n; *&t;major: The major number for the driver.&n; *&t;name: The name of the driver (as seen in /proc/devices).&n; *&n; *&t;This function will unregister a character driver provided the &quot;devfs=only&quot;&n; *&t;option was not provided at boot time.&n; *&t;Returns 0 on success, else a negative error code on failure.&n; */
+multiline_comment|/**&n; *&t;devfs_unregister_chrdev - Optionally unregister a conventional character driver.&n; *&t;@major: The major number for the driver.&n; *&t;@name: The name of the driver (as seen in /proc/devices).&n; *&n; *&t;This function will unregister a character driver provided the &quot;devfs=only&quot;&n; *&t;option was not provided at boot time.&n; *&t;Returns 0 on success, else a negative error code on failure.&n; */
 DECL|function|devfs_unregister_chrdev
 r_int
 id|devfs_unregister_chrdev
@@ -5594,7 +5594,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_unregister_blkdev  */
 macro_line|#ifndef MODULE
-multiline_comment|/**&n; *&t;devfs_setup - Process kernel boot options.&n; *&t;@str: The boot options after the &quot;devfs=&quot;.&n; *&t;@unused: Unused.&n; */
+multiline_comment|/**&n; *&t;devfs_setup - Process kernel boot options.&n; *&t;@str: The boot options after the &quot;devfs=&quot;.&n; */
 DECL|function|devfs_setup
 id|SETUP_STATIC
 r_int
@@ -7585,6 +7585,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|unused
 )paren
 (brace
 r_int
@@ -8708,7 +8711,16 @@ suffix:semicolon
 r_else
 id|file-&gt;f_op
 op_assign
+id|fops_get
+c_func
+(paren
+(paren
+r_struct
+id|file_operations
+op_star
+)paren
 id|df-&gt;ops
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/ide/ide-probe.c&t;Version 1.05&t;July 3, 1999&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t; by Andrea Arcangeli&n; * Version 1.03&t;&t;fix for (hwif-&gt;chipset == ide_4drives)&n; * Version 1.04&t;&t;fixed buggy treatments of known flash memory cards&n; *&n; * Version 1.05&t;&t;fix for (hwif-&gt;chipset == ide_pdc4030)&n; *&t;&t;&t;added ide6/7/8/9&n; *&t;&t;&t;allowed for secondary flash card to be detectable&n; *&t;&t;&t; with new flag : drive-&gt;ata_flash : 1;&n; */
+multiline_comment|/*&n; *  linux/drivers/ide/ide-probe.c&t;Version 1.06&t;June 9, 2000&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *                and Andre Hedrick &lt;andre@linux-ide.org&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t; by Andrea Arcangeli&n; * Version 1.03&t;&t;fix for (hwif-&gt;chipset == ide_4drives)&n; * Version 1.04&t;&t;fixed buggy treatments of known flash memory cards&n; *&n; * Version 1.05&t;&t;fix for (hwif-&gt;chipset == ide_pdc4030)&n; *&t;&t;&t;added ide6/7/8/9&n; *&t;&t;&t;allowed for secondary flash card to be detectable&n; *&t;&t;&t; with new flag : drive-&gt;ata_flash : 1;&n; * Version 1.06&t;&t;stream line request queue and prep for cascade project.&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -627,6 +628,18 @@ id|printk
 c_func
 (paren
 l_string|&quot;ATA DISK drive&bslash;n&quot;
+)paren
+suffix:semicolon
+id|QUIRK_LIST
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+comma
+id|drive
 )paren
 suffix:semicolon
 r_return

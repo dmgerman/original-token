@@ -977,8 +977,6 @@ suffix:semicolon
 id|nvram_open_cnt
 op_increment
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1026,8 +1024,6 @@ id|nvram_open_mode
 op_and_assign
 op_complement
 id|NVRAM_WRITE
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1240,6 +1236,10 @@ id|file_operations
 id|nvram_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|nvram_llseek

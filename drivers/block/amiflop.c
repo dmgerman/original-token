@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/amifdreg.h&gt;
 macro_line|#include &lt;linux/amifd.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
@@ -90,14 +91,6 @@ DECL|macro|DESELECT
 mdefine_line|#define DESELECT(mask)  (ciab.prb |= mask)
 DECL|macro|SELMASK
 mdefine_line|#define SELMASK(drive)  (1 &lt;&lt; (3 + (drive &amp; 3)))
-DECL|macro|DRIVE
-mdefine_line|#define DRIVE(x) ((x) &amp; 3)
-DECL|macro|PROBE
-mdefine_line|#define PROBE(x) ((x) &gt;&gt; 2) &amp; 1)
-DECL|macro|TYPE
-mdefine_line|#define TYPE(x)  ((x) &gt;&gt; 3) &amp; 2)
-DECL|macro|DATA
-mdefine_line|#define DATA(x)  ((x) &gt;&gt; 5) &amp; 3)
 DECL|variable|drive_types
 r_static
 r_struct
@@ -9435,6 +9428,43 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *  We request DSKPTR, DSKLEN and DSKDATA only, because the other&n;&t; *  floppy registers are too spreaded over the custom register space&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|0x20
+comma
+l_int|8
+comma
+l_string|&quot;amiflop [Paula]&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;fd: cannot get floppy registers&bslash;n&quot;
+)paren
+suffix:semicolon
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;fd&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -9460,6 +9490,16 @@ id|printk
 c_func
 (paren
 l_string|&quot;fd: cannot get chip mem buffer&bslash;n&quot;
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|0x20
+comma
+l_int|8
 )paren
 suffix:semicolon
 id|unregister_blkdev
@@ -9503,6 +9543,16 @@ id|amiga_chip_free
 c_func
 (paren
 id|raw_buf
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|0x20
+comma
+l_int|8
 )paren
 suffix:semicolon
 id|unregister_blkdev
@@ -9556,6 +9606,16 @@ c_func
 id|raw_buf
 )paren
 suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|0x20
+comma
+l_int|8
+)paren
+suffix:semicolon
 id|unregister_blkdev
 c_func
 (paren
@@ -9601,6 +9661,16 @@ id|amiga_chip_free
 c_func
 (paren
 id|raw_buf
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|0x20
+comma
+l_int|8
 )paren
 suffix:semicolon
 id|unregister_blkdev
@@ -9975,6 +10045,16 @@ c_func
 (paren
 id|MAJOR_NR
 )paren
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|0x20
+comma
+l_int|8
 )paren
 suffix:semicolon
 id|unregister_blkdev

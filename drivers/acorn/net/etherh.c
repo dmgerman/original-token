@@ -2253,11 +2253,6 @@ r_return
 op_minus
 id|ENOSYS
 suffix:semicolon
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 id|ecard_startfind
 c_func
 (paren
@@ -2346,7 +2341,7 @@ c_cond
 (paren
 id|ret
 )paren
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren
@@ -2467,7 +2462,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

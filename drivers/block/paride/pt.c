@@ -627,6 +627,10 @@ id|file_operations
 id|pt_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|pt_read
@@ -3528,8 +3532,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|pt_identify
 c_func
 (paren
@@ -3547,8 +3549,6 @@ id|PT_MEDIA
 (brace
 id|PT.access
 op_decrement
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -3576,8 +3576,6 @@ l_int|2
 (brace
 id|PT.access
 op_decrement
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -3622,8 +3620,6 @@ l_int|NULL
 (brace
 id|PT.access
 op_decrement
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|printk
 c_func
@@ -3890,8 +3886,6 @@ suffix:semicolon
 id|PT.bufptr
 op_assign
 l_int|NULL
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

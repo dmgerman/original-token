@@ -870,6 +870,10 @@ id|file_operations
 id|ip2_ipl
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|ip2_ipl_read
@@ -13516,7 +13520,6 @@ l_string|&quot;IP2IPL: open&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-singleline_comment|//MOD_INC_USE_COUNT; // Needs close entry with decrement.
 r_switch
 c_cond
 (paren

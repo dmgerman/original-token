@@ -6217,8 +6217,6 @@ id|file-&gt;private_data
 op_assign
 id|s
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6257,8 +6255,6 @@ c_func
 (paren
 id|s
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -6314,6 +6310,10 @@ id|file_operations
 id|sv_mixer_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|sv_llseek
@@ -10290,8 +10290,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -10430,8 +10428,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -10444,6 +10440,10 @@ id|file_operations
 id|sv_audio_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|sv_llseek
@@ -11804,8 +11804,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -12113,8 +12111,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -12127,6 +12123,10 @@ id|file_operations
 id|sv_midi_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|sv_llseek
@@ -13290,8 +13290,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -13415,8 +13413,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -13429,6 +13425,10 @@ id|file_operations
 id|sv_dmfm_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|sv_llseek

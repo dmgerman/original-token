@@ -64,6 +64,8 @@ DECL|macro|ES1371REV_ES1371_B
 mdefine_line|#define ES1371REV_ES1371_B  0x09
 DECL|macro|EV1938REV_EV1938_A
 mdefine_line|#define EV1938REV_EV1938_A  0x00
+DECL|macro|ES1371REV_ES1373_8
+mdefine_line|#define ES1371REV_ES1373_8  0x08
 DECL|macro|ES1371_MAGIC
 mdefine_line|#define ES1371_MAGIC  ((PCI_VENDOR_ID_ENSONIQ&lt;&lt;16)|PCI_DEVICE_ID_ENSONIQ_ES1371)
 DECL|macro|ES1371_EXTENT
@@ -5531,8 +5533,6 @@ id|file-&gt;private_data
 op_assign
 id|s
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5571,8 +5571,6 @@ c_func
 (paren
 id|s
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -5643,6 +5641,10 @@ id|file_operations
 id|es1371_mixer_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|es1371_llseek
@@ -9637,8 +9639,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -9777,8 +9777,6 @@ op_amp
 id|s-&gt;open_wait
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -9791,6 +9789,10 @@ id|file_operations
 id|es1371_audio_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|es1371_llseek
@@ -11111,7 +11113,7 @@ op_logical_neg
 (paren
 id|s-&gt;ctrl
 op_amp
-id|CTRL_DAC2_EN
+id|CTRL_DAC1_EN
 )paren
 op_logical_and
 (paren
@@ -11953,8 +11955,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -12045,8 +12045,6 @@ op_amp
 id|s-&gt;open_wait
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -12059,6 +12057,10 @@ id|file_operations
 id|es1371_dac_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|es1371_llseek
@@ -13340,8 +13342,6 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -13639,8 +13639,6 @@ op_amp
 id|s-&gt;open_wait
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -13653,6 +13651,10 @@ id|file_operations
 id|es1371_midi_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|es1371_llseek
@@ -14832,6 +14834,16 @@ op_logical_and
 id|s-&gt;rev
 op_eq
 id|ES1371REV_CT5880_A
+)paren
+op_logical_or
+(paren
+id|s-&gt;device
+op_eq
+id|PCI_DEVICE_ID_ENSONIQ_ES1371
+op_logical_and
+id|s-&gt;rev
+op_eq
+id|ES1371REV_ES1373_8
 )paren
 )paren
 )paren

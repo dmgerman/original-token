@@ -4455,8 +4455,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4488,8 +4486,6 @@ id|ERROR
 c_func
 (paren
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -4559,8 +4555,6 @@ id|ERROR
 c_func
 (paren
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -4859,8 +4853,6 @@ id|ERROR
 c_func
 (paren
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -5351,8 +5343,6 @@ c_func
 op_amp
 id|card-&gt;open_wait
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -6444,6 +6434,10 @@ id|file_operations
 id|emu10k1_audio_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|emu10k1_audio_llseek

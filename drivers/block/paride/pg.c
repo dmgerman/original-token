@@ -577,6 +577,10 @@ id|file_operations
 id|pg_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|pg_read
@@ -2535,8 +2539,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2586,8 +2588,6 @@ l_int|NULL
 (brace
 id|PG.access
 op_decrement
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|printk
 c_func
@@ -2662,8 +2662,6 @@ suffix:semicolon
 id|PG.bufptr
 op_assign
 l_int|NULL
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

@@ -6484,14 +6484,8 @@ id|timer_list
 id|beep_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|awacs_nosound
 )brace
 suffix:semicolon
@@ -9337,7 +9331,7 @@ r_case
 id|MIXER_WRITE
 c_func
 (paren
-id|SOUND_MASK_MONITOR
+id|SOUND_MIXER_MONITOR
 )paren
 suffix:colon
 id|IOCTL_IN
@@ -9390,7 +9384,7 @@ r_case
 id|MIXER_READ
 c_func
 (paren
-id|SOUND_MASK_MONITOR
+id|SOUND_MIXER_MONITOR
 )paren
 suffix:colon
 id|data

@@ -3,7 +3,13 @@ macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,28) 
+mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,31)
+macro_line|#ifndef PCI_GET_DRIVER_DATA
+DECL|macro|PCI_GET_DRIVER_DATA
+macro_line|# define PCI_GET_DRIVER_DATA(pdev)         ((pdev)-&gt;driver_data)
+DECL|macro|PCI_SET_DRIVER_DATA
+macro_line|# define PCI_SET_DRIVER_DATA(pdev,data)    (((pdev)-&gt;driver_data) = (data))
+macro_line|#endif /* PCI_GET_DRIVER_DATA */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
@@ -11,9 +17,26 @@ macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/i2c-algo-bit.h&gt;
 macro_line|#include &quot;audiochip.h&quot;
 macro_line|#include &quot;bt848.h&quot;
-DECL|macro|WAIT_QUEUE
-mdefine_line|#define WAIT_QUEUE                 wait_queue_head_t
-multiline_comment|/* returns card type, &n;   for possible values see lines below beginning with #define BTTV_UNKNOWN&n;   returns negative value if error ocurred &n;*/
+multiline_comment|/* returns card type + card ID (for bt878-based ones)&n;   for possible values see lines below beginning with #define BTTV_UNKNOWN&n;   returns negative value if error ocurred &n;*/
+r_extern
+r_int
+id|bttv_get_cardinfo
+c_func
+(paren
+r_int
+r_int
+id|card
+comma
+r_int
+op_star
+id|type
+comma
+r_int
+op_star
+id|cardid
+)paren
+suffix:semicolon
+multiline_comment|/* obsolete, use bttv_get_cardinfo instead */
 r_extern
 r_int
 id|bttv_get_id
@@ -80,7 +103,7 @@ id|data
 suffix:semicolon
 multiline_comment|/* returns pointer to task queue which can be used as parameter to &n;   interruptible_sleep_on&n;   in interrupt handler if BT848_INT_GPINT bit is set - this queue is activated&n;   (wake_up_interruptible) and following call to the function bttv_read_gpio &n;   should return new value of GPDATA,&n;   returns NULL value if error ocurred or queue is not available&n;   WARNING: because there is no buffer for GPIO data, one MUST &n;   process data ASAP&n;*/
 r_extern
-id|WAIT_QUEUE
+id|wait_queue_head_t
 op_star
 id|bttv_get_gpio_queue
 c_func
@@ -277,6 +300,10 @@ id|video_audio
 id|audio_dev
 suffix:semicolon
 multiline_comment|/* Current audio params */
+DECL|member|s_lock
+id|spinlock_t
+id|s_lock
+suffix:semicolon
 DECL|member|lock
 r_struct
 id|semaphore
@@ -329,10 +356,6 @@ suffix:semicolon
 DECL|member|channel
 r_int
 id|channel
-suffix:semicolon
-DECL|member|s_lock
-id|spinlock_t
-id|s_lock
 suffix:semicolon
 DECL|member|nr
 r_int
@@ -404,6 +427,10 @@ r_int
 id|type
 suffix:semicolon
 multiline_comment|/* card type  */
+DECL|member|cardid
+r_int
+id|cardid
+suffix:semicolon
 DECL|member|audio
 r_int
 id|audio
@@ -442,20 +469,12 @@ id|u32
 id|bus_vbi_odd
 suffix:semicolon
 DECL|member|vbiq
-id|WAIT_QUEUE
+id|wait_queue_head_t
 id|vbiq
 suffix:semicolon
 DECL|member|capq
-id|WAIT_QUEUE
+id|wait_queue_head_t
 id|capq
-suffix:semicolon
-DECL|member|capqo
-id|WAIT_QUEUE
-id|capqo
-suffix:semicolon
-DECL|member|capqe
-id|WAIT_QUEUE
-id|capqe
 suffix:semicolon
 DECL|member|vbip
 r_int
@@ -562,7 +581,7 @@ r_int
 id|needs_restart
 suffix:semicolon
 DECL|member|gpioq
-id|WAIT_QUEUE
+id|wait_queue_head_t
 id|gpioq
 suffix:semicolon
 DECL|member|shutdown
@@ -744,6 +763,10 @@ DECL|macro|BTTV_AVPHONE98
 mdefine_line|#define BTTV_AVPHONE98     0x29
 DECL|macro|BTTV_PV951
 mdefine_line|#define BTTV_PV951         0x2a
+DECL|macro|BTTV_ONAIR_TV
+mdefine_line|#define BTTV_ONAIR_TV      0x2b
+DECL|macro|BTTV_SIGMA_TVII_FM
+mdefine_line|#define BTTV_SIGMA_TVII_FM 0x2c
 DECL|macro|PLL_NONE
 mdefine_line|#define PLL_NONE 0
 DECL|macro|PLL_28

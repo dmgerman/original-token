@@ -1494,6 +1494,13 @@ l_int|0xfffff000
 )paren
 suffix:semicolon
 macro_line|#endif
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|do_mmap
@@ -1518,6 +1525,13 @@ comma
 id|eppnt-&gt;p_offset
 op_amp
 l_int|0xfffff000
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if
@@ -2117,6 +2131,12 @@ l_int|0
 suffix:semicolon
 id|dput_and_out
 suffix:colon
+id|allow_write_access
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|fput
 c_func
 (paren
@@ -2308,6 +2328,13 @@ id|PROT_EXEC
 suffix:colon
 l_int|0
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 (paren
 r_void
 )paren
@@ -2341,6 +2368,13 @@ id|epp-&gt;p_offset
 op_amp
 l_int|0xfffff000
 )paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 multiline_comment|/* Fixup location tracking vars. */
@@ -3453,6 +3487,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if 0 /* XXX No fucking way dude... */
 multiline_comment|/* Why this, you ask???  Well SVr4 maps page 0 as read-only,&n;&t; * and some applications &quot;depend&quot; upon this behavior.&n;&t; * Since we do not have the power to recompile these, we&n;&t; * emulate the SVr4 behavior.  Sigh.&n;&t; */
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 (paren
 r_void
 )paren
@@ -3474,6 +3515,13 @@ op_or
 id|MAP_PRIVATE
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3514,6 +3562,12 @@ id|retval
 suffix:semicolon
 id|out_free_dentry
 suffix:colon
+id|allow_write_access
+c_func
+(paren
+id|interpreter
+)paren
+suffix:semicolon
 id|fput
 c_func
 (paren
@@ -4208,6 +4262,13 @@ id|PROT_EXEC
 suffix:colon
 l_int|0
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|do_mmap
@@ -4246,6 +4307,13 @@ id|hp-&gt;p_offset
 op_amp
 l_int|0xfffff000
 )paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if

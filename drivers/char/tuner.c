@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;tuner.h&quot;
 macro_line|#include &quot;audiochip.h&quot;
 multiline_comment|/* Addresses to scan */
@@ -2105,22 +2106,13 @@ id|driver
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|tuner_init_module
 r_int
-id|init_module
+id|tuner_init_module
 c_func
 (paren
 r_void
 )paren
-macro_line|#else
-r_int
-id|i2c_tuner_init
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif
 (brace
 id|i2c_add_driver
 c_func
@@ -2133,10 +2125,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|tuner_cleanup_module
 r_void
-id|cleanup_module
+id|tuner_cleanup_module
 c_func
 (paren
 r_void
@@ -2150,6 +2141,19 @@ id|driver
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|tuner_init_module
+id|module_init
+c_func
+(paren
+id|tuner_init_module
+)paren
+suffix:semicolon
+DECL|variable|tuner_cleanup_module
+id|module_exit
+c_func
+(paren
+id|tuner_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-basic-offset: 8&n; * End:&n; */
 eof

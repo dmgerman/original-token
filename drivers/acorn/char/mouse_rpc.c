@@ -155,6 +155,8 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 l_int|7
 )brace
 suffix:semicolon

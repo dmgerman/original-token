@@ -789,6 +789,10 @@ id|file_operations
 id|slm_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|slm_read

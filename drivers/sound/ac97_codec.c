@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ac97_codec.c: Generic AC97 mixer/modem module&n; *&n; * Derived from ac97 mixer in maestro and trident driver.&n; *&n; * Copyright 2000 Silicon Integrated System Corporation&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * History&n; * v0.4 Mar 15 2000 Ollie Lho&n; *&t;dual codec support verified with 4 channel output&n; * v0.3 Feb 22 2000 Ollie Lho&n; *&t;bug fix for record mask setting&n; * v0.2 Feb 10 2000 Ollie Lho&n; *&t;add ac97_read_proc for /proc/driver/{vendor}/ac97&n; * v0.1 Jan 14 2000 Ollie Lho &lt;ollie@sis.com.tw&gt; &n; *&t;Isolated from trident.c to support multiple ac97 codec&n; */
+multiline_comment|/*&n; * ac97_codec.c: Generic AC97 mixer/modem module&n; *&n; * Derived from ac97 mixer in maestro and trident driver.&n; *&n; * Copyright 2000 Silicon Integrated System Corporation&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * History&n; * v0.4 Mar 15 2000 Ollie Lho&n; *&t;dual codecs support verified with 4 channels output&n; * v0.3 Feb 22 2000 Ollie Lho&n; *&t;bug fix for record mask setting&n; * v0.2 Feb 10 2000 Ollie Lho&n; *&t;add ac97_read_proc for /proc/driver/{vendor}/ac97&n; * v0.1 Jan 14 2000 Ollie Lho &lt;ollie@sis.com.tw&gt; &n; *&t;Isolated from trident.c to support multiple ac97 codec&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2268,11 +2268,9 @@ c_cond
 op_logical_neg
 id|val
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2397,6 +2395,11 @@ r_struct
 id|ac97_codec
 op_star
 id|codec
+suffix:semicolon
+r_int
+id|is_ac97_20
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2541,6 +2544,15 @@ l_string|&quot;2.0 or later&quot;
 suffix:colon
 l_string|&quot;1.0&quot;
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|extid
+)paren
+id|is_ac97_20
+op_assign
+l_int|1
 suffix:semicolon
 id|cap
 op_assign
@@ -2807,6 +2819,18 @@ suffix:colon
 l_string|&quot;off&quot;
 )paren
 suffix:semicolon
+id|extid
+op_assign
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_EXTENDED_ID
+)paren
+suffix:semicolon
 id|cap
 op_assign
 id|extid
@@ -2885,10 +2909,39 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|is_ac97_20
+)paren
+(brace
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;Front DAC rate   : %d&bslash;n&quot;
+comma
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_PCM_FRONT_DAC_RATE
+)paren
+)paren
+suffix:semicolon
+)brace
 r_return
 id|len
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;ac97_probe_codec - Initialize and setup AC97-compatible codec&n; *&t;@codec: (in/out) Kernel info for a single AC97 codec&n; *&n; *&t;Reset the AC97 codec, then initialize the mixer and&n; *&t;the rest of the @codec structure.&n; *&n; *&t;The codec_read and codec_write fields of @codec are&n; *&t;required to be setup and working when this function&n; *&t;is called.  All other fields are set by this function.&n; *&n; *&t;codec_wait field of @codec can optionally be provided&n; *&t;when calling this function.  If codec_wait is not %NULL,&n; *&t;this function will call codec_wait any time it is&n; *&t;necessary to wait for the audio chip to reach the&n; *&t;codec-ready state.  If codec_wait is %NULL, then&n; *&t;the default behavior is to call schedule_timeout.&n; *&t;Currently codec_wait is used to wait for AC97 codec&n; *&t;reset to complete. &n; *&n; *&t;Returns 1 (true) on success, or 0 (false) on failure.&n; */
 DECL|function|ac97_probe_codec
 r_int
 id|ac97_probe_codec
@@ -2913,7 +2966,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* probing AC97 codec, AC97 2.0 says that bit 15 of register 0x00 (reset) should &n;&t;   be read zero. Probing of AC97 in this way is not reliable, it is not even SAFE !! */
+multiline_comment|/* probing AC97 codec, AC97 2.0 says that bit 15 of register 0x00 (reset) should &n;&t; * be read zero.&n;&t; *&n;&t; * FIXME: is the following comment outdated?  -jgarzik &n;&t; * Probing of AC97 in this way is not reliable, it is not even SAFE !!&n;&t; */
 id|codec
 op_member_access_from_pointer
 id|codec_write
@@ -2924,6 +2977,27 @@ comma
 id|AC97_RESET
 comma
 l_int|0L
+)paren
+suffix:semicolon
+multiline_comment|/* also according to spec, we wait for codec-ready state */
+r_if
+c_cond
+(paren
+id|codec-&gt;codec_wait
+)paren
+id|codec
+op_member_access_from_pointer
+id|codec_wait
+c_func
+(paren
+id|codec
+)paren
+suffix:semicolon
+r_else
+id|schedule_timeout
+c_func
+(paren
+l_int|5
 )paren
 suffix:semicolon
 r_if
@@ -3098,19 +3172,18 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ac97_codec: AC97 %s codec, vendor id1: 0x%04x, &quot;
-l_string|&quot;id2: 0x%04x (%s)&bslash;n&quot;
+l_string|&quot;ac97_codec: AC97%s codec, id: 0x%04x:0x%04x (%s)&bslash;n&quot;
 comma
 id|audio
 ques
 c_cond
-l_string|&quot;Audio&quot;
+l_string|&quot; audio&quot;
 suffix:colon
 (paren
 id|modem
 ques
 c_cond
-l_string|&quot;Modem&quot;
+l_string|&quot; modem&quot;
 suffix:colon
 l_string|&quot;&quot;
 )paren
@@ -3335,22 +3408,6 @@ suffix:semicolon
 )brace
 r_return
 l_int|1
-suffix:semicolon
-)brace
-DECL|function|ac97_init_modem
-r_static
-r_int
-id|ac97_init_modem
-c_func
-(paren
-r_struct
-id|ac97_codec
-op_star
-id|codec
-)paren
-(brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|sigmatel_init

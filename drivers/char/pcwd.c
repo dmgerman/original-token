@@ -1330,8 +1330,6 @@ suffix:semicolon
 r_case
 id|TEMP_MINOR
 suffix:colon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1471,8 +1469,6 @@ op_star
 id|filep
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1904,6 +1900,10 @@ id|file_operations
 id|pcwd_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|pcwd_read

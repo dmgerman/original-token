@@ -207,6 +207,10 @@ id|file_operations
 id|dtlk_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|dtlk_read
@@ -1114,8 +1118,6 @@ op_star
 id|file
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|TRACE_TEXT
 c_func
 (paren
@@ -1172,8 +1174,6 @@ op_star
 id|file
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|TRACE_TEXT
 c_func
 (paren

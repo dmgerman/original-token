@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/ide/aec62xx.c&t;&t;Version 0.08&t;Mar. 28, 2000&n; *&n; * Copyright (C) 2000&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; */
+multiline_comment|/*&n; * linux/drivers/ide/aec62xx.c&t;&t;Version 0.09&t;June. 9, 2000&n; *&n; * Copyright (C) 1999-2000&t;Andre Hedrick (andre@linux-ide.org)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -120,12 +120,13 @@ suffix:semicolon
 id|u32
 id|bibma
 op_assign
-id|bmide_dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|bmide_dev
+comma
 l_int|4
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|u8
 id|c0
@@ -2855,22 +2856,11 @@ suffix:semicolon
 id|byte
 id|ultra66
 op_assign
+id|eighty_ninty_three
+c_func
 (paren
-(paren
-id|id-&gt;hw_config
-op_amp
-l_int|0x2000
+id|drive
 )paren
-op_logical_and
-(paren
-id|hwif-&gt;udma_four
-)paren
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3693,6 +3683,44 @@ c_func
 id|drive
 )paren
 suffix:semicolon
+r_case
+id|ide_dma_lostirq
+suffix:colon
+r_case
+id|ide_dma_timeout
+suffix:colon
+r_switch
+c_cond
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|pci_dev-&gt;device
+)paren
+(brace
+r_case
+id|PCI_DEVICE_ID_ARTOP_ATP860
+suffix:colon
+r_case
+id|PCI_DEVICE_ID_ARTOP_ATP860R
+suffix:colon
+singleline_comment|//&t;&t;&t;&t;&t;{
+singleline_comment|//&t;&t;&t;&t;&t;&t;int i = 0;
+singleline_comment|//&t;&t;&t;&t;&t;&t;byte reg49h = 0;
+singleline_comment|//&t;&t;&t;&t;&t;&t;pci_read_config_byte(HWIF(drive)-&gt;pci_dev, 0x49, &amp;reg49h);
+singleline_comment|//&t;&t;&t;&t;&t;&t;for (i=0;i&lt;256;i++)
+singleline_comment|//&t;&t;&t;&t;&t;&t;&t;pci_write_config_byte(HWIF(drive)-&gt;pci_dev, 0x49, reg49h|0x10);
+singleline_comment|//&t;&t;&t;&t;&t;&t;pci_write_config_byte(HWIF(drive)-&gt;pci_dev, 0x49, reg49h &amp; ~0x10);
+singleline_comment|//&t;&t;&t;&t;&t;}
+singleline_comment|//&t;&t;&t;&t;&t;return 0;
+r_default
+suffix:colon
+r_break
+suffix:semicolon
+)brace
 r_default
 suffix:colon
 r_break
@@ -3836,29 +3864,6 @@ op_amp
 id|ata66
 )paren
 suffix:semicolon
-macro_line|#if 1
-id|printk
-c_func
-(paren
-l_string|&quot;AEC6260: reg49h=0x%02x ATA-%s Cable Port%d&bslash;n&quot;
-comma
-id|ata66
-comma
-(paren
-id|ata66
-op_amp
-id|mask
-)paren
-ques
-c_cond
-l_string|&quot;33&quot;
-suffix:colon
-l_string|&quot;66&quot;
-comma
-id|hwif-&gt;channel
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 (paren
 (paren

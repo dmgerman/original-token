@@ -4,6 +4,9 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 r_static
 id|ssize_t
@@ -1661,6 +1664,12 @@ id|de
 )paren
 r_continue
 suffix:semicolon
+id|fops_put
+c_func
+(paren
+id|filp-&gt;f_op
+)paren
+suffix:semicolon
 id|filp-&gt;f_op
 op_assign
 l_int|NULL
@@ -1689,6 +1698,7 @@ id|proc_dir_entry
 op_star
 id|parent
 comma
+r_const
 r_char
 op_star
 id|dest
@@ -2547,7 +2557,7 @@ c_cond
 id|ino
 OL
 id|PROC_DYNAMIC_FIRST
-op_logical_and
+op_logical_or
 id|ino
 op_ge
 id|PROC_DYNAMIC_FIRST

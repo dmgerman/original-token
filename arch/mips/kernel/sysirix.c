@@ -4943,6 +4943,13 @@ op_or
 id|MAP_DENYWRITE
 )paren
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|do_mmap
@@ -4959,6 +4966,13 @@ comma
 id|flags
 comma
 id|offset
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/ide/via82cxxx.c&t;Version 0.09&t;Apr. 02, 2000&n; *&n; *  Copyright (C) 1998-99&t;Michel Aubry, Maintainer&n; *  Copyright (C) 1999&t;&t;Jeff Garzik, MVP4 Support&n; *&t;&t;&t;&t;&t;(jgarzik@mandrakesoft.com)&n; *  Copyright (C) 1998-2000&t;Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  The VIA MVP-4 is reported OK with UDMA.&n; *  The VIA MVP-3 is reported OK with UDMA.&n; *  The TX Pro III is also reported OK with UDMA.&n; *&n; *  VIA chips also have a single FIFO, with the same 64 bytes deep&n; *  buffer (16 levels of 4 bytes each).&n; *&n; *  However, VIA chips can have the buffer split either 8:8 levels,&n; *  16:0 levels or 0:16 levels between both channels. One could think&n; *  of using this feature, as even if no level of FIFO is given to a&n; *  given channel, one can for instance always reach ATAPI drives through&n; *  it, or, if one channel is unused, configuration defaults to&n; *  an even split FIFO levels.&n; *  &n; *  This feature is available only through a kernel command line :&n; *&t;&t;&quot;splitfifo=Chan,Thr0,Thr1&quot; or &quot;splitfifo=Chan&quot;.&n; *&t;&t;where:  Chan =1,2,3 or 4 and Thrx = 1,2,3,or 4.&n; *&n; *  If Chan == 1:&n; *&t;gives all the fifo to channel 0,&n; *&t;sets its threshold to Thr0/4,&n; *&t;and disables any dma access to channel 1.&n; *&n; *  If chan == 2:&n; *&t;gives all the fifo to channel 1,&n; *&t;sets its threshold to Thr1/4,&n; *&t;and disables any dma access to channel 0.&n; *&n; *  If chan == 3 or 4:&n; *&t;shares evenly fifo between channels,&n; *&t;gives channel 0 a threshold of Thr0/4,&n; *&t;and channel 1 a threshold of Thr1/4.&n; *&n; *  Note that by default (if no command line is provided) and if a channel&n; *  has been disabled in Bios, all the fifo is given to the active channel,&n; *  and its threshold is set to 3/4.&n; *&n; *  VT82c586B&n; *&n; *    Offset 4B-48 - Drive Timing Control&n; *             | pio0 | pio1 | pio2 | pio3 | pio4&n; *    25.0 MHz | 0xA8 | 0x65 | 0x65 | 0x31 | 0x20 &n; *    33.0 MHz | 0xA8 | 0x65 | 0x65 | 0x31 | 0x20&n; *    37.5 MHz | 0xA9 | 0x76 | 0x76 | 0x32 | 0x21&n; *&n; *    Offset 53-50 - UltraDMA Extended Timing Control&n; *      UDMA   |  NO  |   0  |   1  |   2&n; *             | 0x03 | 0x62 | 0x61 | 0x60&n; *&n; *  VT82c596B &amp; VT82c686A&n; *&n; *    Offset 4B-48 - Drive Timing Control&n; *             | pio0 | pio1 | pio2 | pio3 | pio4&n; *    25.0 MHz | 0xA8 | 0x65 | 0x65 | 0x31 | 0x20&n; *    33.0 MHz | 0xA8 | 0x65 | 0x65 | 0x31 | 0x20&n; *    37.5 MHz | 0xDB | 0x87 | 0x87 | 0x42 | 0x31&n; *    41.5 MHz | 0xFE | 0xA8 | 0xA8 | 0x53 | 0x32&n; *&n; *    Offset 53-50 - UltraDMA Extended Timing Control&n; *      UDMA   |  NO  |   0  |   1  |   2&n; *    33.0 MHz | 0x03 | 0xE2 | 0xE1 | 0xE0&n; *    37.5 MHz | 0x03 | 0xE2 | 0xE2 | 0xE1   (1)&n; *&n; *    Offset 53-50 - UltraDMA Extended Timing Control&n; *      UDMA   |  NO  |   0  |   1  |   2  |   3  |   4&n; *    33.0 MHz |  (2) | 0xE6 | 0xE4 | 0xE2 | 0xE1 | 0xE0&n; *    37.5 MHz |  (2) | 0xE6 | 0xE6 | 0xE4 | 0xE2 | 0xE1   (1)&n; *&n; */
+multiline_comment|/*&n; * linux/drivers/ide/via82cxxx.c&t;Version 0.10&t;June 9, 2000&n; *&n; *  Copyright (C) 1998-99&t;Michel Aubry, Maintainer&n; *  Copyright (C) 1999&t;&t;Jeff Garzik, MVP4 Support&n; *&t;&t;&t;&t;&t;(jgarzik@mandrakesoft.com)&n; *  Copyright (C) 1998-2000&t;Andre Hedrick &lt;andre@linux-ide.org&gt;&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  The VIA MVP-4 is reported OK with UDMA.&n; *  The VIA MVP-3 is reported OK with UDMA.&n; *  The TX Pro III is also reported OK with UDMA.&n; *&n; *  VIA chips also have a single FIFO, with the same 64 bytes deep&n; *  buffer (16 levels of 4 bytes each).&n; *&n; *  However, VIA chips can have the buffer split either 8:8 levels,&n; *  16:0 levels or 0:16 levels between both channels. One could think&n; *  of using this feature, as even if no level of FIFO is given to a&n; *  given channel, one can for instance always reach ATAPI drives through&n; *  it, or, if one channel is unused, configuration defaults to&n; *  an even split FIFO levels.&n; *  &n; *  This feature is available only through a kernel command line :&n; *&t;&t;&quot;splitfifo=Chan,Thr0,Thr1&quot; or &quot;splitfifo=Chan&quot;.&n; *&t;&t;where:  Chan =1,2,3 or 4 and Thrx = 1,2,3,or 4.&n; *&n; *  If Chan == 1:&n; *&t;gives all the fifo to channel 0,&n; *&t;sets its threshold to Thr0/4,&n; *&t;and disables any dma access to channel 1.&n; *&n; *  If chan == 2:&n; *&t;gives all the fifo to channel 1,&n; *&t;sets its threshold to Thr1/4,&n; *&t;and disables any dma access to channel 0.&n; *&n; *  If chan == 3 or 4:&n; *&t;shares evenly fifo between channels,&n; *&t;gives channel 0 a threshold of Thr0/4,&n; *&t;and channel 1 a threshold of Thr1/4.&n; *&n; *  Note that by default (if no command line is provided) and if a channel&n; *  has been disabled in Bios, all the fifo is given to the active channel,&n; *  and its threshold is set to 3/4.&n; *&n; *  VT82c586B&n; *&n; *    Offset 4B-48 - Drive Timing Control&n; *             | pio0 | pio1 | pio2 | pio3 | pio4&n; *    25.0 MHz | 0xA8 | 0x65 | 0x65 | 0x31 | 0x20 &n; *    33.0 MHz | 0xA8 | 0x65 | 0x65 | 0x31 | 0x20&n; *    37.5 MHz | 0xA9 | 0x76 | 0x76 | 0x32 | 0x21&n; *&n; *    Offset 53-50 - UltraDMA Extended Timing Control&n; *      UDMA   |  NO  |   0  |   1  |   2&n; *             | 0x03 | 0x62 | 0x61 | 0x60&n; *&n; *  VT82c596B &amp; VT82c686A&n; *&n; *    Offset 4B-48 - Drive Timing Control&n; *             | pio0 | pio1 | pio2 | pio3 | pio4&n; *    25.0 MHz | 0xA8 | 0x65 | 0x65 | 0x31 | 0x20&n; *    33.0 MHz | 0xA8 | 0x65 | 0x65 | 0x31 | 0x20&n; *    37.5 MHz | 0xDB | 0x87 | 0x87 | 0x42 | 0x31&n; *    41.5 MHz | 0xFE | 0xA8 | 0xA8 | 0x53 | 0x32&n; *&n; *    Offset 53-50 - UltraDMA Extended Timing Control&n; *      UDMA   |  NO  |   0  |   1  |   2&n; *    33.0 MHz | 0x03 | 0xE2 | 0xE1 | 0xE0&n; *    37.5 MHz | 0x03 | 0xE2 | 0xE2 | 0xE1   (1)&n; *&n; *    Offset 53-50 - UltraDMA Extended Timing Control&n; *      UDMA   |  NO  |   0  |   1  |   2  |   3  |   4&n; *    33.0 MHz |  (2) | 0xE6 | 0xE4 | 0xE2 | 0xE1 | 0xE0&n; *    37.5 MHz |  (2) | 0xE6 | 0xE6 | 0xE4 | 0xE2 | 0xE1   (1)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -40,37 +40,37 @@ DECL|member|xfer_speed
 id|byte
 id|xfer_speed
 suffix:semicolon
-DECL|member|chipset_settings_25
-id|byte
-id|chipset_settings_25
-suffix:semicolon
 DECL|member|ultra_settings_25
 id|byte
 id|ultra_settings_25
 suffix:semicolon
-DECL|member|chipset_settings_33
+DECL|member|chipset_settings_25
 id|byte
-id|chipset_settings_33
+id|chipset_settings_25
 suffix:semicolon
 DECL|member|ultra_settings_33
 id|byte
 id|ultra_settings_33
 suffix:semicolon
-DECL|member|chipset_settings_37
+DECL|member|chipset_settings_33
 id|byte
-id|chipset_settings_37
+id|chipset_settings_33
 suffix:semicolon
 DECL|member|ultra_settings_37
 id|byte
 id|ultra_settings_37
 suffix:semicolon
-DECL|member|chipset_settings_41
+DECL|member|chipset_settings_37
 id|byte
-id|chipset_settings_41
+id|chipset_settings_37
 suffix:semicolon
 DECL|member|ultra_settings_41
 id|byte
 id|ultra_settings_41
+suffix:semicolon
+DECL|member|chipset_settings_41
+id|byte
+id|chipset_settings_41
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -84,6 +84,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 DECL|variable|via82cxxx_type_one
+r_static
 r_struct
 id|chipset_bus_clock_list_entry
 id|via82cxxx_type_one
@@ -380,6 +381,7 @@ l_int|0x00
 )brace
 suffix:semicolon
 DECL|variable|via82cxxx_type_two
+r_static
 r_struct
 id|chipset_bus_clock_list_entry
 id|via82cxxx_type_two
@@ -676,6 +678,7 @@ l_int|0xFE
 )brace
 suffix:semicolon
 DECL|variable|via82cxxx_type_three
+r_static
 r_struct
 id|chipset_bus_clock_list_entry
 id|via82cxxx_type_three
@@ -972,6 +975,7 @@ l_int|0xFE
 )brace
 suffix:semicolon
 DECL|variable|via82cxxx_type_four
+r_static
 r_struct
 id|chipset_bus_clock_list_entry
 id|via82cxxx_type_four
@@ -1569,18 +1573,17 @@ suffix:semicolon
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof(*(x)))
 DECL|macro|DISPLAY_VIA_TIMINGS
-macro_line|#undef DISPLAY_VIA_TIMINGS
+mdefine_line|#define DISPLAY_VIA_TIMINGS
 macro_line|#if defined(DISPLAY_VIA_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-DECL|variable|__initdata
+DECL|variable|FIFO_str
 r_static
 r_char
 op_star
 id|FIFO_str
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 l_string|&quot; 1 &quot;
@@ -1592,14 +1595,13 @@ comma
 l_string|&quot;1/4&quot;
 )brace
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|control3_str
 r_static
 r_char
 op_star
 id|control3_str
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 l_string|&quot;No limitation&quot;
@@ -4484,9 +4486,47 @@ id|speed
 op_assign
 l_int|0x00
 suffix:semicolon
+id|byte
+id|ultra66
+op_assign
+id|eighty_ninty_three
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+id|byte
+id|ultra100
+op_assign
+l_int|0
+suffix:semicolon
 r_int
 id|rval
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;dma_ultra
+op_amp
+l_int|0x0020
+)paren
+op_logical_and
+(paren
+id|ultra66
+)paren
+op_logical_and
+(paren
+id|ultra100
+)paren
+)paren
+(brace
+id|speed
+op_assign
+id|XFER_UDMA_5
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -4497,13 +4537,7 @@ l_int|0x0010
 )paren
 op_logical_and
 (paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|udma_four
+id|ultra66
 )paren
 )paren
 (brace
@@ -4523,13 +4557,7 @@ l_int|0x0008
 )paren
 op_logical_and
 (paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|udma_four
+id|ultra66
 )paren
 )paren
 (brace
@@ -4623,48 +4651,6 @@ id|XFER_MW_DMA_0
 suffix:semicolon
 )brace
 r_else
-r_if
-c_cond
-(paren
-id|id-&gt;dma_1word
-op_amp
-l_int|0x0004
-)paren
-(brace
-id|speed
-op_assign
-id|XFER_SW_DMA_2
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|id-&gt;dma_1word
-op_amp
-l_int|0x0002
-)paren
-(brace
-id|speed
-op_assign
-id|XFER_SW_DMA_1
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|id-&gt;dma_1word
-op_amp
-l_int|0x0001
-)paren
-(brace
-id|speed
-op_assign
-id|XFER_SW_DMA_0
-suffix:semicolon
-)brace
-r_else
 (brace
 r_return
 (paren
@@ -4721,19 +4707,6 @@ suffix:colon
 (paren
 (paren
 id|id-&gt;dma_mword
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|7
-)paren
-ques
-c_cond
-id|ide_dma_on
-suffix:colon
-(paren
-(paren
-id|id-&gt;dma_1word
 op_rshift
 l_int|8
 )paren
@@ -4831,7 +4804,7 @@ c_cond
 (paren
 id|id-&gt;dma_ultra
 op_amp
-l_int|0x001F
+l_int|0x002F
 )paren
 (brace
 multiline_comment|/* Force if Capable UltraDMA */
@@ -4877,17 +4850,9 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
 id|id-&gt;dma_mword
 op_amp
 l_int|0x0007
-)paren
-op_logical_or
-(paren
-id|id-&gt;dma_1word
-op_amp
-l_int|0x0007
-)paren
 )paren
 (brace
 multiline_comment|/* Force if Capable regular DMA modes */
@@ -5131,7 +5096,12 @@ id|host
 op_assign
 id|pci_find_device
 (paren
-id|PCI_VENDOR_ID_VIA
+id|ApolloHostChipInfo
+(braket
+id|i
+)braket
+dot
+id|vendor_id
 comma
 id|ApolloHostChipInfo
 (braket

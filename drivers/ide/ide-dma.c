@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *  linux/drivers/ide/ide-dma.c&t;&t;Version 4.09&t;April 23, 1999&n; *&n; *  Copyright (c) 1999  Andre Hedrick&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; *  linux/drivers/ide/ide-dma.c&t;&t;Version 4.10&t;June 9, 2000&n; *&n; *  Copyright (c) 1999-2000&t;Andre Hedrick &lt;andre@linux-ide.org&gt;&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
 multiline_comment|/*&n; *  Special Thanks to Mark for his Six years of work.&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
-multiline_comment|/*&n; * This module provides support for the bus-master IDE DMA functions&n; * of various PCI chipsets, including the Intel PIIX (i82371FB for&n; * the 430 FX chipset), the PIIX3 (i82371SB for the 430 HX/VX and &n; * 440 chipsets), and the PIIX4 (i82371AB for the 430 TX chipset)&n; * (&quot;PIIX&quot; stands for &quot;PCI ISA IDE Xcellerator&quot;).&n; *&n; * Pretty much the same code works for other IDE PCI bus-mastering chipsets.&n; *&n; * DMA is supported for all IDE devices (disk drives, cdroms, tapes, floppies).&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which already have DMA enabled (UltraDMA or mode 2 multi/single),&n; * or which are recognized as &quot;good&quot; (see table below).  Drives with only mode0&n; * or mode1 (multi/single) DMA should also work with this chipset/driver&n; * (eg. MC2112A) but are not enabled by default.&n; *&n; * Use &quot;hdparm -i&quot; to view modes supported by a given drive.&n; *&n; * The hdparm-3.5 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing has been done with a rather extensive number of drives,&n; * with Quantum &amp; Western Digital models generally outperforming the pack,&n; * and Fujitsu &amp; Conner (and some Seagate which are really Conner) drives&n; * showing more lackluster throughput.&n; *&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * Thanks to &quot;Christopher J. Reimer&quot; &lt;reimer@doe.carleton.ca&gt; for&n; * fixing the problem with the BIOS on some Acer motherboards.&n; *&n; * Thanks to &quot;Benoit Poulot-Cazajous&quot; &lt;poulot@chorus.fr&gt; for testing&n; * &quot;TX&quot; chipset compatibility and for providing patches for the &quot;TX&quot; chipset.&n; *&n; * Thanks to Christian Brunner &lt;chb@muc.de&gt; for taking a good first crack&n; * at generic DMA -- his patches were referred to when preparing this code.&n; *&n; * Most importantly, thanks to Robert Bringman &lt;rob@mars.trion.com&gt;&n; * for supplying a Promise UDMA board &amp; WD UDMA drive for this work!&n; *&n; * And, yes, Intel Zappa boards really *do* use both PIIX IDE ports.&n; *&n; * ACARD ATP850UF Chipset &quot;Modified SCSI Class&quot; with other names&n; *       AEC6210 U/UF&n; *       SIIG&squot;s UltraIDE Pro CN-2449&n; * TTI   HPT343 Chipset &quot;Modified SCSI Class&quot; but reports as an&n; *       unknown storage device.&n; * NEW&t; check_drive_lists(ide_drive_t *drive, int good_bad)&n; */
+multiline_comment|/*&n; * This module provides support for the bus-master IDE DMA functions&n; * of various PCI chipsets, including the Intel PIIX (i82371FB for&n; * the 430 FX chipset), the PIIX3 (i82371SB for the 430 HX/VX and &n; * 440 chipsets), and the PIIX4 (i82371AB for the 430 TX chipset)&n; * (&quot;PIIX&quot; stands for &quot;PCI ISA IDE Xcellerator&quot;).&n; *&n; * Pretty much the same code works for other IDE PCI bus-mastering chipsets.&n; *&n; * DMA is supported for all IDE devices (disk drives, cdroms, tapes, floppies).&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which already have DMA enabled (UltraDMA or mode 2 multi/single),&n; * or which are recognized as &quot;good&quot; (see table below).  Drives with only mode0&n; * or mode1 (multi/single) DMA should also work with this chipset/driver&n; * (eg. MC2112A) but are not enabled by default.&n; *&n; * Use &quot;hdparm -i&quot; to view modes supported by a given drive.&n; *&n; * The hdparm-3.5 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing has been done with a rather extensive number of drives,&n; * with Quantum &amp; Western Digital models generally outperforming the pack,&n; * and Fujitsu &amp; Conner (and some Seagate which are really Conner) drives&n; * showing more lackluster throughput.&n; *&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * Thanks to &quot;Christopher J. Reimer&quot; &lt;reimer@doe.carleton.ca&gt; for&n; * fixing the problem with the BIOS on some Acer motherboards.&n; *&n; * Thanks to &quot;Benoit Poulot-Cazajous&quot; &lt;poulot@chorus.fr&gt; for testing&n; * &quot;TX&quot; chipset compatibility and for providing patches for the &quot;TX&quot; chipset.&n; *&n; * Thanks to Christian Brunner &lt;chb@muc.de&gt; for taking a good first crack&n; * at generic DMA -- his patches were referred to when preparing this code.&n; *&n; * Most importantly, thanks to Robert Bringman &lt;rob@mars.trion.com&gt;&n; * for supplying a Promise UDMA board &amp; WD UDMA drive for this work!&n; *&n; * And, yes, Intel Zappa boards really *do* use both PIIX IDE ports.&n; *&n; * check_drive_lists(ide_drive_t *drive, int good_bad)&n; *&n; * ATA-66/100 and recovery functions, I forgot the rest......&n; * SELECT_READ_WRITE(hwif,drive,func) for active tuning based on IO direction.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1145,19 +1145,11 @@ l_int|4
 )paren
 op_logical_and
 (paren
-id|id-&gt;hw_config
-op_amp
-l_int|0x2000
-)paren
-op_logical_and
-(paren
-id|HWIF
+id|eighty_ninty_three
 c_func
 (paren
 id|drive
 )paren
-op_member_access_from_pointer
-id|udma_four
 )paren
 op_logical_and
 (paren
@@ -1169,10 +1161,31 @@ op_rshift
 l_int|11
 )paren
 op_amp
-l_int|3
+l_int|7
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;dma_ultra
+op_rshift
+l_int|13
+)paren
+op_amp
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, UDMA(100)&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* UDMA BIOS-enabled! */
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -1373,7 +1386,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
-multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 3/4) enabled */
+multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 3/4/5) enabled */
 r_if
 c_cond
 (paren
@@ -1384,13 +1397,11 @@ l_int|4
 )paren
 op_logical_and
 (paren
-id|hwif-&gt;udma_four
-)paren
-op_logical_and
+id|eighty_ninty_three
+c_func
 (paren
-id|id-&gt;hw_config
-op_amp
-l_int|0x2000
+id|drive
+)paren
 )paren
 )paren
 r_if
@@ -1405,7 +1416,7 @@ op_rshift
 l_int|11
 )paren
 op_amp
-l_int|3
+l_int|7
 )paren
 )paren
 r_return
@@ -1527,6 +1538,61 @@ id|ide_dma_off_quietly
 comma
 id|drive
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * 1 dmaing, 2 error, 4 intr&n; */
+DECL|function|dma_timer_expiry
+r_static
+r_int
+id|dma_timer_expiry
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+id|byte
+id|dma_stat
+op_assign
+id|inb
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|dma_base
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;%s: dma_timer_expiry: dma status == 0x%02x&bslash;n&quot;
+comma
+id|drive-&gt;name
+comma
+id|dma_stat
+)paren
+suffix:semicolon
+macro_line|#endif /* DEBUG */
+r_if
+c_cond
+(paren
+id|dma_stat
+op_amp
+l_int|1
+)paren
+multiline_comment|/* DMAing */
+r_return
+id|WAIT_CMD
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * ide_dmaproc() initiates/aborts DMA read/write operations on a drive.&n; *&n; * The caller is assumed to have selected the drive and programmed the drive&squot;s&n; * sector address using CHS or LBA.  All that remains is to prepare for DMA&n; * and then issue the actual read/write DMA/PIO command to the drive.&n; *&n; * For ATAPI devices, we just prepare for DMA and return. The caller should&n; * then issue the packet command to the drive and call us again with&n; * ide_dma_begin afterwards.&n; *&n; * Returns 0 if all went well.&n; * Returns 1 if DMA read/write could not be started, in which case&n; * the caller should revert to PIO for the current request.&n; * May also be invoked from trm290.c&n; */
@@ -1691,6 +1757,16 @@ suffix:semicolon
 r_case
 id|ide_dma_write
 suffix:colon
+id|SELECT_READ_WRITE
+c_func
+(paren
+id|hwif
+comma
+id|drive
+comma
+id|func
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1774,7 +1850,7 @@ id|ide_dma_intr
 comma
 id|WAIT_CMD
 comma
-l_int|NULL
+id|dma_timer_expiry
 )paren
 suffix:semicolon
 multiline_comment|/* issue cmd to drive */
@@ -2346,22 +2422,19 @@ r_else
 (brace
 id|dma_base
 op_assign
-id|dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|dev
+comma
 l_int|4
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|dma_base
-op_logical_or
-id|dma_base
-op_eq
-id|PCI_BASE_ADDRESS_IO_MASK
 )paren
 (brace
 id|printk

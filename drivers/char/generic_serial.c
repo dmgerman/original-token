@@ -1075,8 +1075,6 @@ r_struct
 id|gs_port
 op_star
 id|port
-op_assign
-id|tty-&gt;driver_data
 suffix:semicolon
 id|func_enter
 (paren

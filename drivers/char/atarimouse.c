@@ -57,7 +57,7 @@ id|buf
 r_int
 id|buttons
 suffix:semicolon
-multiline_comment|/*    ikbd_mouse_disable(); */
+multiline_comment|/*&t;ikbd_mouse_disable(); */
 id|buttons
 op_assign
 (paren
@@ -115,7 +115,7 @@ op_xor
 l_int|7
 )paren
 suffix:semicolon
-multiline_comment|/*    ikbd_mouse_rel_pos(); */
+multiline_comment|/*&t;ikbd_mouse_rel_pos(); */
 )brace
 DECL|function|release_mouse
 r_static
@@ -142,8 +142,6 @@ suffix:semicolon
 id|atari_mouse_interrupt_hook
 op_assign
 l_int|NULL
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -192,8 +190,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|atari_mouse_interrupt_hook
 op_assign
 id|atari_mouse_interrupt
@@ -212,6 +208,8 @@ op_assign
 id|ATARIMOUSE_MINOR
 comma
 l_string|&quot;atarimouse&quot;
+comma
+id|THIS_MODULE
 comma
 id|open_mouse
 comma

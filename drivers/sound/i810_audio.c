@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel i810 and friends ICH driver for Linux&n; *&t;Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *  Built from:&n; *&t;Low level code:  Zach Brown (original nonworking i810 OSS driver)&n; *&t;&t;&t; Jaroslav Kysela &lt;perex@suse.cz&gt; (working ALSA driver)&n; *&n; *&t;Framework: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *&t;Extended by: Zach Brown &lt;zab@redhat.com&gt;  &n; *&t;&t;&t;and others..&n; *&n; *  Hardware Provided By:&n; *&t;Analog Devices (A major AC97 codec maker)&n; *&t;Intel Corp  (you&squot;ve probably heard of them already)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&t;Intel 810 theory of operation&n; *&n; *&t;The chipset provides three DMA channels that talk to an AC97&n; *&t;CODEC (AC97 is a digital/analog mixer standard). At its simplest&n; *&t;you get 48Khz audio with basic volume and mixer controls. At the&n; *&t;best you get rate adaption in the codec. We set the card up so&n; *&t;that we never take completion interrupts but instead keep the card&n; *&t;chasing its tail around a ring buffer. This is needed for mmap&n; *&t;mode audio and happens to work rather well for non-mmap modes too.&n; *&n; *&t;The board has one output channel for PCM audio (supported) and&n; *&t;a stereo line in and mono microphone input. Again these are normally&n; *&t;locked to 48Khz only. Right now recording is not finished.&n; *&n; *&t;There is no midi support, no synth support. Use timidity. To get&n; *&t;esd working you need to use esd -r 48000 as it won&squot;t probe 48KHz&n; *&t;by default. mpg123 can&squot;t handle 48Khz only audio so use xmms.&n; */
+multiline_comment|/*&n; *&t;Intel i810 and friends ICH driver for Linux&n; *&t;Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *  Built from:&n; *&t;Low level code:  Zach Brown (original nonworking i810 OSS driver)&n; *&t;&t;&t; Jaroslav Kysela &lt;perex@suse.cz&gt; (working ALSA driver)&n; *&n; *&t;Framework: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *&t;Extended by: Zach Brown &lt;zab@redhat.com&gt;  &n; *&t;&t;&t;and others..&n; *&n; *  Hardware Provided By:&n; *&t;Analog Devices (A major AC97 codec maker)&n; *&t;Intel Corp  (you&squot;ve probably heard of them already)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&t;Intel 810 theory of operation&n; *&n; *&t;The chipset provides three DMA channels that talk to an AC97&n; *&t;CODEC (AC97 is a digital/analog mixer standard). At its simplest&n; *&t;you get 48Khz audio with basic volume and mixer controls. At the&n; *&t;best you get rate adaption in the codec. We set the card up so&n; *&t;that we never take completion interrupts but instead keep the card&n; *&t;chasing its tail around a ring buffer. This is needed for mmap&n; *&t;mode audio and happens to work rather well for non-mmap modes too.&n; *&n; *&t;The board has one output channel for PCM audio (supported) and&n; *&t;a stereo line in and mono microphone input. Again these are normally&n; *&t;locked to 48Khz only. Right now recording is not finished.&n; *&n; *&t;There is no midi support, no synth support. Use timidity. To get&n; *&t;esd working you need to use esd -r 48000 as it won&squot;t probe 48KHz&n; *&t;by default. mpg123 can&squot;t handle 48Khz only audio so use xmms.&n; *&n; *&t;Fix The Sound On Dell&n; *&n; *&t;Not everyone uses 48KHz. We know of no way to detect this reliably&n; *&t;and certainly not to get the right data. If your i810 audio sounds&n; *&t;stupid you may need to investigate other speeds. According to Analog&n; *&t;they tend to use a 14.318MHz clock which gives you a base rate of&n; *&t;41194Hz.&n; *&n; *&t;This is available via the &squot;ftsodell=1&squot; option. &n; *&n; *&t;If you need to force a specific rate set the clocking= option&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -26,10 +26,28 @@ macro_line|#ifndef PCI_DEVICE_ID_INTEL_82901
 DECL|macro|PCI_DEVICE_ID_INTEL_82901
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82901&t;0x2425
 macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_INTEL_ICH2
+DECL|macro|PCI_DEVICE_ID_INTEL_ICH2
+mdefine_line|#define PCI_DEVICE_ID_INTEL_ICH2&t;0x2445
+macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_INTEL_440MX
 DECL|macro|PCI_DEVICE_ID_INTEL_440MX
 mdefine_line|#define PCI_DEVICE_ID_INTEL_440MX&t;0x7195
 macro_line|#endif
+DECL|variable|ftsodell
+r_static
+r_int
+id|ftsodell
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|clocking
+r_static
+r_int
+id|clocking
+op_assign
+l_int|48000
+suffix:semicolon
 DECL|macro|ADC_RUNNING
 mdefine_line|#define ADC_RUNNING&t;1
 DECL|macro|DAC_RUNNING
@@ -258,6 +276,10 @@ id|ICH82901AB
 comma
 DECL|enumerator|INTEL440MX
 id|INTEL440MX
+comma
+DECL|enumerator|INTELICH2
+id|INTELICH2
+comma
 )brace
 suffix:semicolon
 DECL|variable|card_names
@@ -274,6 +296,8 @@ comma
 l_string|&quot;Intel ICH 82901AB&quot;
 comma
 l_string|&quot;Intel 440MX&quot;
+comma
+l_string|&quot;Intel ICH2&quot;
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -332,6 +356,22 @@ comma
 l_int|0
 comma
 id|INTEL440MX
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_ICH2
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|INTELICH2
 )brace
 comma
 (brace
@@ -657,22 +697,6 @@ suffix:semicolon
 r_static
 r_int
 id|i810_open_mixdev
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-suffix:semicolon
-r_static
-r_int
-id|i810_release_mixdev
 c_func
 (paren
 r_struct
@@ -1084,8 +1108,12 @@ l_int|0x0001
 )paren
 )paren
 (brace
+id|dmabuf-&gt;rate
+op_assign
+id|clocking
+suffix:semicolon
 r_return
-l_int|48000
+id|clocking
 suffix:semicolon
 )brace
 r_if
@@ -1104,12 +1132,37 @@ c_cond
 (paren
 id|rate
 OL
-l_int|4000
+l_int|8000
 )paren
 id|rate
 op_assign
-l_int|4000
+l_int|8000
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Adjust for misclocked crap&n;&t; */
+id|rate
+op_assign
+(paren
+id|rate
+op_star
+id|clocking
+)paren
+op_div
+l_int|48000
+suffix:semicolon
+multiline_comment|/* Analog codecs can go lower via magic registers but others&n;&t;   might not */
+r_if
+c_cond
+(paren
+id|rate
+OL
+l_int|8000
+)paren
+(brace
+id|rate
+op_assign
+l_int|8000
+suffix:semicolon
+)brace
 multiline_comment|/* Power down the DAC */
 id|dacp
 op_assign
@@ -1154,22 +1207,17 @@ comma
 id|AC97_PCM_FRONT_DAC_RATE
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;DAC rate set to %d Returned %d&bslash;n&quot;
-comma
-id|rate
-comma
-(paren
-r_int
-)paren
-id|rp
-)paren
-suffix:semicolon
+singleline_comment|//&t;printk(&quot;DAC rate set to %d Returned %d&bslash;n&quot;, 
+singleline_comment|//&t;&t;rate, (int)rp);
 id|rate
 op_assign
+(paren
 id|rp
+op_star
+l_int|48000
+)paren
+op_div
+id|clocking
 suffix:semicolon
 multiline_comment|/* Power it back up */
 id|i810_ac97_set
@@ -1252,8 +1300,12 @@ l_int|0x0001
 )paren
 )paren
 (brace
+id|dmabuf-&gt;rate
+op_assign
+id|clocking
+suffix:semicolon
 r_return
-l_int|48000
+id|clocking
 suffix:semicolon
 )brace
 r_if
@@ -1272,12 +1324,37 @@ c_cond
 (paren
 id|rate
 OL
-l_int|4000
+l_int|8000
 )paren
 id|rate
 op_assign
-l_int|4000
+l_int|8000
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Adjust for misclocked crap&n;&t; */
+id|rate
+op_assign
+(paren
+id|rate
+op_star
+id|clocking
+)paren
+op_div
+l_int|48000
+suffix:semicolon
+multiline_comment|/* Analog codecs can go lower via magic registers but others&n;&t;   might not */
+r_if
+c_cond
+(paren
+id|rate
+OL
+l_int|8000
+)paren
+(brace
+id|rate
+op_assign
+l_int|8000
+suffix:semicolon
+)brace
 multiline_comment|/* Power down the ADC */
 id|dacp
 op_assign
@@ -1307,7 +1384,7 @@ c_func
 (paren
 id|codec
 comma
-id|AC97_PCM_LR_ADC_RATE
+id|AC97_PCM_LR_DAC_RATE
 comma
 id|rate
 )paren
@@ -1319,25 +1396,20 @@ c_func
 (paren
 id|codec
 comma
-id|AC97_PCM_LR_ADC_RATE
+id|AC97_PCM_LR_DAC_RATE
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;ADC rate set to %d Returned %d&bslash;n&quot;
-comma
-id|rate
-comma
-(paren
-r_int
-)paren
-id|rp
-)paren
-suffix:semicolon
+singleline_comment|//&t;printk(&quot;ADC rate set to %d Returned %d&bslash;n&quot;, 
+singleline_comment|//&t;&t;rate, (int)rp);
 id|rate
 op_assign
+(paren
 id|rp
+op_star
+l_int|48000
+)paren
+op_div
+id|clocking
 suffix:semicolon
 multiline_comment|/* Power it back up */
 id|i810_ac97_set
@@ -6794,8 +6866,6 @@ op_amp
 id|state-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6969,8 +7039,6 @@ op_amp
 id|state-&gt;open_sem
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6983,6 +7051,10 @@ id|file_operations
 id|i810_audio_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|i810_llseek
@@ -7263,31 +7335,6 @@ id|card-&gt;ac97_codec
 id|i
 )braket
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|i810_release_mixdev
-r_static
-r_int
-id|i810_release_mixdev
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7351,6 +7398,10 @@ id|file_operations
 id|i810_mixer_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|i810_llseek
@@ -7362,10 +7413,6 @@ comma
 id|open
 suffix:colon
 id|i810_open_mixdev
-comma
-id|release
-suffix:colon
-id|i810_release_mixdev
 comma
 )brace
 suffix:semicolon
@@ -8191,6 +8238,22 @@ c_func
 l_string|&quot;Intel 810 audio support&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|ftsodell
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|clocking
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|macro|I810_MODULE_NAME
 mdefine_line|#define I810_MODULE_NAME &quot;intel810_audio&quot;
 DECL|variable|i810_pci_driver
@@ -8241,6 +8304,19 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ftsodell
+op_eq
+l_int|1
+)paren
+(brace
+id|clocking
+op_assign
+l_int|41194
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren

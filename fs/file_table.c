@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* SLAB cache for filp&squot;s. */
 DECL|variable|filp_cache
@@ -452,6 +453,12 @@ c_func
 id|inode
 comma
 id|filp
+)paren
+suffix:semicolon
+id|fops_put
+c_func
+(paren
+id|filp-&gt;f_op
 )paren
 suffix:semicolon
 id|filp-&gt;f_dentry

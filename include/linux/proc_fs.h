@@ -505,6 +505,7 @@ r_struct
 id|proc_dir_entry
 op_star
 comma
+r_const
 r_char
 op_star
 )paren

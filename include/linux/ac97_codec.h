@@ -69,8 +69,8 @@ DECL|macro|AC97_PCM_SURR_DAC_RATE
 mdefine_line|#define AC97_PCM_SURR_DAC_RATE    0x002E       /* PCM Surround DAC Rate */
 DECL|macro|AC97_PCM_LFE_DAC_RATE
 mdefine_line|#define AC97_PCM_LFE_DAC_RATE     0x0030       /* PCM LFE DAC Rate */
-DECL|macro|AC97_PCM_LR_ADC_RATE
-mdefine_line|#define AC97_PCM_LR_ADC_RATE      0x0032       /* PCM LR ADC Rate */
+DECL|macro|AC97_PCM_LR_DAC_RATE
+mdefine_line|#define AC97_PCM_LR_DAC_RATE      0x0032       /* PCM LR DAC Rate */
 DECL|macro|AC97_PCM_MIC_ADC_RATE
 mdefine_line|#define AC97_PCM_MIC_ADC_RATE     0x0034       /* PCM MIC ADC Rate */
 DECL|macro|AC97_CENTER_LFE_MASTER
@@ -211,7 +211,7 @@ mdefine_line|#define AC97_SUPPORTED_MASK (AC97_STEREO_MASK | &bslash;&n;&t;SOUND
 DECL|macro|AC97_RECORD_MASK
 mdefine_line|#define AC97_RECORD_MASK (SOUND_MASK_MIC|&bslash;&n;&t;SOUND_MASK_CD|SOUND_MASK_IGAIN|SOUND_MASK_VIDEO|&bslash;&n;&t;SOUND_MASK_LINE1| SOUND_MASK_LINE|&bslash;&n;&t;SOUND_MASK_PHONEIN)
 DECL|macro|supported_mixer
-mdefine_line|#define supported_mixer(CODEC,FOO) ( CODEC-&gt;supported_mixers &amp; (1&lt;&lt;FOO) )
+mdefine_line|#define supported_mixer(CODEC,FOO) ((CODEC)-&gt;supported_mixers &amp; (1&lt;&lt;FOO) )
 DECL|struct|ac97_codec
 r_struct
 id|ac97_codec
@@ -283,6 +283,20 @@ id|reg
 comma
 id|u16
 id|val
+)paren
+suffix:semicolon
+multiline_comment|/* Wait for codec-ready.  Ok to sleep here.  */
+DECL|member|codec_wait
+r_void
+(paren
+op_star
+id|codec_wait
+)paren
+(paren
+r_struct
+id|ac97_codec
+op_star
+id|codec
 )paren
 suffix:semicolon
 multiline_comment|/* OSS mixer masks */
