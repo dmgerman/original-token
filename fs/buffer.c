@@ -930,7 +930,7 @@ c_func
 r_void
 )paren
 (brace
-id|sync_dev
+id|fsync_dev
 c_func
 (paren
 l_int|0
@@ -2048,6 +2048,10 @@ id|size
 )paren
 r_return
 l_int|NULL
+suffix:semicolon
+id|bh-&gt;b_reuse
+op_assign
+l_int|0
 suffix:semicolon
 id|bh-&gt;b_count
 op_increment
@@ -5238,6 +5242,10 @@ op_assign
 l_int|1
 suffix:semicolon
 id|bh-&gt;b_dirt
+op_assign
+l_int|0
+suffix:semicolon
+id|bh-&gt;b_reuse
 op_assign
 l_int|0
 suffix:semicolon

@@ -3886,7 +3886,7 @@ id|ARPHRD_AX25
 suffix:semicolon
 id|hlen
 op_assign
-l_int|7
+id|AX25_ADDR_LEN
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3901,7 +3901,7 @@ id|ARPHRD_NETROM
 suffix:semicolon
 id|hlen
 op_assign
-l_int|7
+id|AX25_ADDR_LEN
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
@@ -4796,11 +4797,6 @@ op_star
 id|skb
 )paren
 (brace
-r_extern
-r_struct
-id|device
-id|loopback_dev
-suffix:semicolon
 r_struct
 id|device
 op_star

@@ -210,8 +210,6 @@ DECL|macro|SL_MODE_AX25
 mdefine_line|#define SL_MODE_AX25&t;4
 DECL|macro|SL_MODE_ADAPTIVE
 mdefine_line|#define SL_MODE_ADAPTIVE 8
-DECL|macro|SL_MODE_AX25VC
-mdefine_line|#define&t;SL_MODE_AX25VC&t;16
 )brace
 suffix:semicolon
 DECL|macro|SLIP_MAGIC

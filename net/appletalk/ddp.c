@@ -14,6 +14,8 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -26,6 +28,7 @@ macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#ifdef CONFIG_ATALK
 DECL|macro|APPLETALK_DEBUG
 mdefine_line|#define APPLETALK_DEBUG
@@ -527,6 +530,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 id|atalk_socket
@@ -3071,6 +3077,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_struct
@@ -3246,6 +3255,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_struct
@@ -7477,6 +7489,11 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
 comma
 id|atalk_rt_get_info
 )brace

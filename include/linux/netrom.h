@@ -8,6 +8,8 @@ DECL|macro|NETROM_T2
 mdefine_line|#define NETROM_T2&t;2
 DECL|macro|NETROM_N2
 mdefine_line|#define NETROM_N2&t;3
+DECL|macro|NETROM_HDRINCL
+mdefine_line|#define&t;NETROM_HDRINCL&t;4
 DECL|macro|SIOCNRGETPARMS
 mdefine_line|#define&t;SIOCNRGETPARMS&t;&t;(SIOCPROTOPRIVATE+0)
 DECL|macro|SIOCNRSETPARMS

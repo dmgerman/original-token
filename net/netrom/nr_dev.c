@@ -725,7 +725,7 @@ id|AX25_BPQ_HEADER_LEN
 op_plus
 id|AX25_MAX_HEADER_LEN
 op_plus
-l_int|2
+l_int|3
 op_plus
 id|NR_NETWORK_LEN
 op_plus

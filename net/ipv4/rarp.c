@@ -32,6 +32,7 @@ macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#if&t;defined(CONFIG_INET_RARP) || defined(MODULE)
 r_extern
 r_int

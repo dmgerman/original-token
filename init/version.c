@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/version.c&n; *&n; *  Copyright (C) 1992  Theodo
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/compile.h&gt;
 DECL|variable|system_utsname
 r_struct
 id|new_utsname

@@ -25,6 +25,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;net/netrom.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -227,12 +228,6 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-id|nr_rt_device_down
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Handle device status changes.&n; */
 DECL|function|nr_device_event
@@ -250,6 +245,18 @@ op_star
 id|ptr
 )paren
 (brace
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+(paren
+r_struct
+id|device
+op_star
+)paren
+id|ptr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -263,7 +270,13 @@ suffix:semicolon
 id|nr_kill_by_device
 c_func
 (paren
-id|ptr
+id|dev
+)paren
+suffix:semicolon
+id|nr_rt_device_down
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -1052,6 +1065,21 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+r_case
+id|NETROM_HDRINCL
+suffix:colon
+id|sk-&gt;nr-&gt;hdrincl
+op_assign
+id|opt
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 r_default
 suffix:colon
 r_return
@@ -1152,7 +1180,11 @@ id|NETROM_T1
 suffix:colon
 id|val
 op_assign
+(paren
 id|sk-&gt;nr-&gt;t1
+op_star
+l_int|2
+)paren
 op_div
 id|PR_SLOWHZ
 suffix:semicolon
@@ -1175,6 +1207,15 @@ suffix:colon
 id|val
 op_assign
 id|sk-&gt;nr-&gt;n2
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|NETROM_HDRINCL
+suffix:colon
+id|val
+op_assign
+id|sk-&gt;nr-&gt;hdrincl
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1798,6 +1839,10 @@ id|nr-&gt;fraglen
 op_assign
 l_int|0
 suffix:semicolon
+id|nr-&gt;hdrincl
+op_assign
+l_int|0
+suffix:semicolon
 id|nr-&gt;state
 op_assign
 id|NR_STATE_0
@@ -2188,6 +2233,10 @@ suffix:semicolon
 id|nr-&gt;bpqext
 op_assign
 id|osk-&gt;nr-&gt;bpqext
+suffix:semicolon
+id|nr-&gt;hdrincl
+op_assign
+id|osk-&gt;nr-&gt;hdrincl
 suffix:semicolon
 id|nr-&gt;fraglen
 op_assign
@@ -3814,19 +3863,9 @@ l_int|NULL
 )paren
 )paren
 (brace
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-id|NR_NETWORK_LEN
-)paren
-suffix:semicolon
 id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;data
-op_plus
-id|NR_TRANSPORT_LEN
 suffix:semicolon
 r_if
 c_cond
@@ -3841,7 +3880,7 @@ id|NR_CONNACK
 op_logical_and
 id|skb-&gt;len
 op_eq
-l_int|7
+l_int|22
 )paren
 id|sk-&gt;nr-&gt;bpqext
 op_assign
@@ -4771,8 +4810,6 @@ id|sip
 suffix:semicolon
 r_int
 id|copied
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|sk_buff
@@ -4817,7 +4854,7 @@ op_star
 id|sax
 )paren
 suffix:semicolon
-multiline_comment|/* This works for seqpacket too. The receiver has ordered the queue for us! We do one quick check first though */
+multiline_comment|/*&n;&t; * This works for seqpacket too. The receiver has ordered the queue for&n;&t; * us! We do one quick check first though&n;&t; */
 r_if
 c_cond
 (paren
@@ -4859,22 +4896,40 @@ l_int|NULL
 r_return
 id|er
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;nr-&gt;hdrincl
+)paren
+(brace
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|NR_NETWORK_LEN
+op_plus
+id|NR_TRANSPORT_LEN
+)paren
+suffix:semicolon
+id|skb-&gt;h.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
+)brace
 id|copied
 op_assign
 (paren
 id|size
 OL
 id|skb-&gt;len
-op_minus
-id|NR_TRANSPORT_LEN
 )paren
 ques
 c_cond
 id|size
 suffix:colon
 id|skb-&gt;len
-op_minus
-id|NR_TRANSPORT_LEN
 suffix:semicolon
 id|skb_copy_datagram
 c_func

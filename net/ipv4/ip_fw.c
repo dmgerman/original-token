@@ -27,6 +27,7 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 multiline_comment|/*&n; *&t;Implement IP packet firewall&n; */
 macro_line|#ifdef CONFIG_IPFIREWALL_DEBUG 
 DECL|macro|dprintf1

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/ipx.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -24,6 +25,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#ifdef CONFIG_IPX
 multiline_comment|/* Configuration Variables */
 DECL|variable|ipxcfg_max_hops

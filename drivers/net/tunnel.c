@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;&t;&t;/* If using 1.3.0-pre net code */
