@@ -3048,7 +3048,7 @@ c_cond
 id|bdev-&gt;bd_op
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * This crockload is due to bad choice of -&gt;open() type.&n;&t;&t; * It will go away.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * This crockload is due to bad choice of -&gt;open() type.&n;&t;&t; * It will go away.&n;&t;&t; * For now, block device -&gt;open() routine must _not_&n;&t;&t; * examine anything in &squot;inode&squot; argument except -&gt;i_rdev.&n;&t;&t; */
 r_struct
 id|file
 id|fake_file

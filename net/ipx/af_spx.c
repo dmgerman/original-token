@@ -1845,6 +1845,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus
@@ -3280,6 +3286,11 @@ op_amp
 id|err
 )paren
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3294,11 +3305,6 @@ id|err
 )paren
 suffix:semicolon
 )brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk

@@ -2727,6 +2727,12 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

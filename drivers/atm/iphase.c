@@ -8900,6 +8900,15 @@ c_func
 l_string|&quot;tx_dle_intr: vcc is null&bslash;n&quot;
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|iadev-&gt;tx_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|dev_kfree_skb_any
 c_func
 (paren
@@ -8928,6 +8937,15 @@ id|printk
 c_func
 (paren
 l_string|&quot;tx_dle_intr: iavcc is null&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|iadev-&gt;tx_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|dev_kfree_skb_any

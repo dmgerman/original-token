@@ -14624,12 +14624,6 @@ r_int
 id|param
 )paren
 (brace
-DECL|macro|IOCTL_MODE_BIT
-mdefine_line|#define IOCTL_MODE_BIT 8
-DECL|macro|OPEN_WRITE_BIT
-mdefine_line|#define OPEN_WRITE_BIT 16
-DECL|macro|IOCTL_ALLOWED
-mdefine_line|#define IOCTL_ALLOWED (filp &amp;&amp; (filp-&gt;f_mode &amp; IOCTL_MODE_BIT))
 DECL|macro|OUT
 mdefine_line|#define OUT(c,x) case c: outparam = (const char *) (x); break
 DECL|macro|IN
@@ -14903,7 +14897,11 @@ l_int|0x40
 )paren
 op_logical_and
 op_logical_neg
-id|IOCTL_ALLOWED
+(paren
+id|filp-&gt;f_mode
+op_amp
+l_int|2
+)paren
 )paren
 op_logical_or
 (paren
@@ -15513,8 +15511,6 @@ r_else
 r_return
 l_int|0
 suffix:semicolon
-DECL|macro|IOCTL_ALLOWED
-macro_line|#undef IOCTL_ALLOWED
 DECL|macro|OUT
 macro_line|#undef OUT
 DECL|macro|IN
@@ -16252,43 +16248,6 @@ id|old_dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Allow ioctls if we have write-permissions even if read-only open */
-r_if
-c_cond
-(paren
-(paren
-id|filp-&gt;f_mode
-op_amp
-l_int|2
-)paren
-op_logical_or
-(paren
-id|permission
-c_func
-(paren
-id|inode
-comma
-l_int|2
-)paren
-op_eq
-l_int|0
-)paren
-)paren
-id|filp-&gt;f_mode
-op_or_assign
-id|IOCTL_MODE_BIT
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|filp-&gt;f_mode
-op_amp
-l_int|2
-)paren
-id|filp-&gt;f_mode
-op_or_assign
-id|OPEN_WRITE_BIT
-suffix:semicolon
 r_if
 c_cond
 (paren

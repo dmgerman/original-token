@@ -10996,6 +10996,7 @@ id|remove
 suffix:colon
 id|eepro100_remove_one
 comma
+macro_line|#if 0&t;/* These seem to be broken.. */
 id|suspend
 suffix:colon
 id|eepro100_suspend
@@ -11004,6 +11005,7 @@ id|resume
 suffix:colon
 id|eepro100_resume
 comma
+macro_line|#endif
 )brace
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,48)

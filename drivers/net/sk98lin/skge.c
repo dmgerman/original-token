@@ -8762,7 +8762,7 @@ id|i
 op_increment
 )paren
 (brace
-id|spin_lock_irqsave
+id|spin_lock
 c_func
 (paren
 op_amp
@@ -8775,8 +8775,6 @@ id|TX_PRIO_LOW
 )braket
 dot
 id|TxDesRingLock
-comma
-id|Flags
 )paren
 suffix:semicolon
 )brace
@@ -9270,7 +9268,7 @@ id|i
 op_decrement
 )paren
 (brace
-id|spin_unlock_irqrestore
+id|spin_unlock
 c_func
 (paren
 op_amp
@@ -9283,8 +9281,6 @@ id|TX_PRIO_LOW
 )braket
 dot
 id|TxDesRingLock
-comma
-id|Flags
 )paren
 suffix:semicolon
 )brace
