@@ -328,7 +328,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* We only turn interrupts back on for a moment, but because the interrupt queues anything built up&n;&t;&t;&t;   before this will clear before we jump back and cli, so its not as bad as it looks */
+multiline_comment|/* We only turn interrupts back on for a moment, but because the interrupt queues anything built up&n;&t;&t;&t;   before this will clear before we jump back and cli, so it&squot;s not as bad as it looks */
 r_if
 c_cond
 (paren

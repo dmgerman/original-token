@@ -1398,7 +1398,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * Try to place the inode in it&squot;s parent directory&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Try to place the inode in its parent directory&n;&t;&t; */
 id|i
 op_assign
 id|dir-&gt;u.ext2_i.i_block_group

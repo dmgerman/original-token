@@ -4378,6 +4378,9 @@ comma
 id|p
 )paren
 suffix:semicolon
+id|p
+op_increment
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/* used by selection: complement pointer position */

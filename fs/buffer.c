@@ -3464,7 +3464,7 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-multiline_comment|/* OK, FINALLY we know that this buffer is the only one of it&squot;s kind, */
+multiline_comment|/* OK, FINALLY we know that this buffer is the only one of its kind, */
 multiline_comment|/* and that it&squot;s unused (b_count=0), unlocked (b_lock=0), and clean */
 id|bh-&gt;b_count
 op_assign

@@ -2724,7 +2724,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* MODE1 = original AD1848 */
-multiline_comment|/*&n; * Check that the I/O address is in use.&n; *&n; * The bit 0x80 of the base I/O port is known to be 0 after the&n; * chip has performed it&squot;s power on initialization. Just assume&n; * this has happened before the OS is starting.&n; *&n; * If the I/O address is unused, it typically returns 0xff.&n; */
+multiline_comment|/*&n; * Check that the I/O address is in use.&n; *&n; * The bit 0x80 of the base I/O port is known to be 0 after the&n; * chip has performed its power on initialization. Just assume&n; * this has happened before the OS is starting.&n; *&n; * If the I/O address is unused, it typically returns 0xff.&n; */
 r_if
 c_cond
 (paren

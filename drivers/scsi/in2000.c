@@ -1836,7 +1836,7 @@ id|bufflen
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * What it looks like.  Boy did I get tired of reading it&squot;s output.&n;     */
+multiline_comment|/*&n;     * What it looks like.  Boy did I get tired of reading its output.&n;     */
 r_if
 c_cond
 (paren

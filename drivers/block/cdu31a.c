@@ -4051,7 +4051,7 @@ l_int|1
 (brace
 id|cdu31a_request_startover
 suffix:colon
-multiline_comment|/*&n;       * The beginning here is stolen from the hard disk driver.  I hope&n;       * its right.&n;       */
+multiline_comment|/*&n;       * The beginning here is stolen from the hard disk driver.  I hope&n;       * it&squot;s right.&n;       */
 r_if
 c_cond
 (paren
@@ -8945,7 +8945,7 @@ l_int|0
 )paren
 )paren
 (brace
-multiline_comment|/* If the drive is already playing, its ok.  */
+multiline_comment|/* If the drive is already playing, it&squot;s ok.  */
 r_if
 c_cond
 (paren
@@ -9485,7 +9485,7 @@ op_ne
 l_int|0xff
 )paren
 (brace
-multiline_comment|/*&n;       * Reset the drive and wait for attention from it (to say its reset).&n;       * If you don&squot;t wait, the next operation will probably fail.&n;       */
+multiline_comment|/*&n;       * Reset the drive and wait for attention from it (to say it&squot;s reset).&n;       * If you don&squot;t wait, the next operation will probably fail.&n;       */
 id|reset_drive
 c_func
 (paren

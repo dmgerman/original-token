@@ -3674,7 +3674,7 @@ OL
 l_int|8
 )paren
 (brace
-multiline_comment|/* It&squot;s wrong but its better than nothing */
+multiline_comment|/* It&squot;s wrong but it&squot;s better than nothing */
 id|icmp_send
 c_func
 (paren
@@ -3696,7 +3696,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Fragment the datagram.&n;&t; */
-multiline_comment|/*&n;&t; *&t;The initial offset is 0 for a complete frame. When&n;&t; *&t;fragmenting fragments its wherever this one starts.&n;&t; */
+multiline_comment|/*&n;&t; *&t;The initial offset is 0 for a complete frame. When&n;&t; *&t;fragmenting fragments it&squot;s wherever this one starts.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4422,7 +4422,7 @@ id|ip_acct_chain
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;
-multiline_comment|/*&n;&t;&t;&t; *&t;Map service types to priority. We lie about&n;&t;&t;&t; *&t;throughput being low priority, but its a good&n;&t;&t;&t; *&t;choice to help improve general usage.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Map service types to priority. We lie about&n;&t;&t;&t; *&t;throughput being low priority, but it&squot;s a good&n;&t;&t;&t; *&t;choice to help improve general usage.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren

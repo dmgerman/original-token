@@ -1014,7 +1014,7 @@ multiline_comment|/*&n;&t;&t; *&t;Packet is now solely the responsibility of the
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Transmission failed, put skb back into a list. Once on the list its safe and&n;&t; *&t;no longer device locked (it can be freed safely from the device queue)&n;&t; */
+multiline_comment|/*&n;&t; *&t;Transmission failed, put skb back into a list. Once on the list it&squot;s safe and&n;&t; *&t;no longer device locked (it can be freed safely from the device queue)&n;&t; */
 id|cli
 c_func
 (paren

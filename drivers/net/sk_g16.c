@@ -1173,7 +1173,7 @@ id|SK_POS2
 )paren
 suffix:semicolon
 multiline_comment|/* Boot_ROM + RAM off */
-multiline_comment|/* We found a Boot_ROM and its gone. Set RAM address on&n;         * Boot_ROM address. &n;         */
+multiline_comment|/* We found a Boot_ROM and it&squot;s gone. Set RAM address on&n;         * Boot_ROM address. &n;         */
 r_if
 c_cond
 (paren

@@ -1523,9 +1523,6 @@ l_int|1
 r_return
 l_int|0
 suffix:semicolon
-id|vma-&gt;vm_task-&gt;mm-&gt;rss
-op_decrement
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1533,6 +1530,10 @@ id|vma-&gt;vm_ops
 op_logical_and
 id|vma-&gt;vm_ops-&gt;swapout
 )paren
+(brace
+id|vma-&gt;vm_task-&gt;mm-&gt;rss
+op_decrement
+suffix:semicolon
 id|vma-&gt;vm_ops
 op_member_access_from_pointer
 id|swapout
@@ -1547,6 +1548,7 @@ comma
 id|page_table
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 r_if
@@ -1564,6 +1566,9 @@ c_func
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|vma-&gt;vm_task-&gt;mm-&gt;rss
+op_decrement
 suffix:semicolon
 id|pte_val
 c_func

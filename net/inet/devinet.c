@@ -420,7 +420,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Find an interface that can handle addresses for a certain address. &n; *&n; *&t;This needs optimising, since its relatively trivial to collapse&n; *&t;the two loops into one.&n; */
+multiline_comment|/*&n; *&t;Find an interface that can handle addresses for a certain address. &n; *&n; *&t;This needs optimising, since it&squot;s relatively trivial to collapse&n; *&t;the two loops into one.&n; */
 DECL|function|ip_dev_check
 r_struct
 id|device

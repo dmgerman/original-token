@@ -92,7 +92,7 @@ r_return
 id|memory_start
 suffix:semicolon
 )brace
-multiline_comment|/* Lame prom console routines, gets registered below. Thanks for the&n; * tip Linus.  First comes the V0 prom routine, then the V3 version&n; * writen by Paul Hatchman (paul@sfe.com.au).&n; */
+multiline_comment|/* Lame prom console routines, gets registered below. Thanks for the&n; * tip Linus.  First comes the V0 prom routine, then the V3 version&n; * written by Paul Hatchman (paul@sfe.com.au).&n; */
 DECL|function|sparc_console_print
 r_void
 id|sparc_console_print
@@ -221,7 +221,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* This routine will in the future do all the nasty prom stuff&n; * to probe for the mmu type and it&squot;s parameters, etc. This will&n; * also be where SMP things happen plus the Sparc specific memory&n; * physical memory probe as on the alpha.&n; */
+multiline_comment|/* This routine will in the future do all the nasty prom stuff&n; * to probe for the mmu type and its parameters, etc. This will&n; * also be where SMP things happen plus the Sparc specific memory&n; * physical memory probe as on the alpha.&n; */
 r_extern
 r_void
 id|register_console

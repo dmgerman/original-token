@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#ifdef CONFIG_SOUND
 r_extern
 r_int
@@ -365,8 +366,8 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#if 0 &amp;&amp; defined(__i386__)
-multiline_comment|/*&n;&t; * hmm.. This disables high-memory caching, as the XFree86 team wondered&n;&t; * about that at one time. It doesn&squot;t seem to make a difference, though:&n;&t; * the surround logic should disable caching for the high device addresses&n;&t; * anyway.&n;&t; */
+macro_line|#if defined(__i386__)
+multiline_comment|/*&n;&t; * hmm.. This disables high-memory caching, as the XFree86 team&n;&t; * wondered about that at one time.&n;&t; * The surround logic should disable caching for the high device&n;&t; * addresses anyway, but right now this seems still needed.&n;&t; */
 r_if
 c_cond
 (paren
@@ -378,9 +379,13 @@ id|vma-&gt;vm_offset
 op_ge
 id|high_memory
 )paren
+id|pgprot_val
+c_func
+(paren
 id|vma-&gt;vm_page_prot
+)paren
 op_or_assign
-id|PAGE_PCD
+id|_PAGE_PCD
 suffix:semicolon
 macro_line|#endif
 r_if

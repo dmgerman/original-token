@@ -1427,7 +1427,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;We can&squot;t return errors to select, so its either yes or no. &n;&t; */
+multiline_comment|/*&n;&t; *&t;We can&squot;t return errors to select, so it&squot;s either yes or no. &n;&t; */
 r_if
 c_cond
 (paren
@@ -2557,7 +2557,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Bind a name to a socket. Nothing much to do here since its&n; *&t;the protocol&squot;s responsibility to handle the local address.&n; *&n; *&t;We move the socket address to kernel space before we call&n; *&t;the protocol layer (having also checked the address is ok).&n; */
+multiline_comment|/*&n; *&t;Bind a name to a socket. Nothing much to do here since it&squot;s&n; *&t;the protocol&squot;s responsibility to handle the local address.&n; *&n; *&t;We move the socket address to kernel space before we call&n; *&t;the protocol layer (having also checked the address is ok).&n; */
 DECL|function|sock_bind
 r_static
 r_int

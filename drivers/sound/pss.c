@@ -363,7 +363,7 @@ id|val
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*_____ pss_checkint&n;         This function tests an interrupt number to see if&n;&t; it is available. It takes the interrupt button&n;&t; as it&squot;s argument and returns TRUE if the interrupt&n;&t; is ok.&n;*/
+multiline_comment|/*_____ pss_checkint&n;         This function tests an interrupt number to see if&n;&t; it is available. It takes the interrupt button&n;&t; as its argument and returns TRUE if the interrupt&n;&t; is ok.&n;*/
 r_static
 r_int
 DECL|function|pss_checkint

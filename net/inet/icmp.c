@@ -2481,7 +2481,7 @@ suffix:semicolon
 r_case
 id|ICMP_ADDRESSREPLY
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; *&t;We ought to set our netmask on receiving this, but &n;&t;&t;&t; *&t;experience shows its a waste of effort.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;We ought to set our netmask on receiving this, but &n;&t;&t;&t; *&t;experience shows it&squot;s a waste of effort.&n;&t;&t;&t; */
 id|icmp_statistics.IcmpInAddrMaskReps
 op_increment
 suffix:semicolon

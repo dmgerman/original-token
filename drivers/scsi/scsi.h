@@ -593,7 +593,7 @@ mdefine_line|#define SCSI_RESET_PUNT 1
 multiline_comment|/* This means that we were able to reset the bus.  We have restarted all of&n;   the commands that should be restarted, and we should be able to continue&n;   on normally from here.  We do not expect any interrupts that will return&n;   DID_RESET to any of the other commands in the host_queue, and the mid-level&n;   code does not need to do anything special to keep the commands alive. */
 DECL|macro|SCSI_RESET_SUCCESS
 mdefine_line|#define SCSI_RESET_SUCCESS 2
-multiline_comment|/* We called for an reset of this bus, and we should get an interrupt &n;   when this succeeds.  Each command should get it&squot;s own status&n;   passed up to scsi_done, but this has not happened yet. */
+multiline_comment|/* We called for a reset of this bus, and we should get an interrupt &n;   when this succeeds.  Each command should get its own status&n;   passed up to scsi_done, but this has not happened yet. */
 DECL|macro|SCSI_RESET_PENDING
 mdefine_line|#define SCSI_RESET_PENDING 3
 multiline_comment|/* We did a reset, but do not expect an interrupt to signal DID_RESET.&n;   This tells the upper level code to request the sense info, and this&n;   should keep the command alive. */

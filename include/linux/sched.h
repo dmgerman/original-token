@@ -604,6 +604,10 @@ DECL|macro|PF_PTRACED
 mdefine_line|#define PF_PTRACED&t;0x00000010&t;/* set if ptrace (0) has been called. */
 DECL|macro|PF_TRACESYS
 mdefine_line|#define PF_TRACESYS&t;0x00000020&t;/* tracing system calls */
+DECL|macro|PF_STARTING
+mdefine_line|#define PF_STARTING&t;0x00000100&t;/* being created */
+DECL|macro|PF_EXITING
+mdefine_line|#define PF_EXITING&t;0x00000200&t;/* getting shut down */
 multiline_comment|/*&n; * cloning flags:&n; */
 DECL|macro|CSIGNAL
 mdefine_line|#define CSIGNAL&t;&t;0x000000ff&t;/* signal mask to be sent at exit */

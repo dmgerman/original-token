@@ -36,6 +36,8 @@ DECL|macro|_PAGE_RW
 mdefine_line|#define _PAGE_RW&t;0x002
 DECL|macro|_PAGE_USER
 mdefine_line|#define _PAGE_USER&t;0x004
+DECL|macro|_PAGE_PCD
+mdefine_line|#define _PAGE_PCD&t;0x010
 DECL|macro|_PAGE_ACCESSED
 mdefine_line|#define _PAGE_ACCESSED&t;0x020
 DECL|macro|_PAGE_DIRTY

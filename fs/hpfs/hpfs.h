@@ -770,7 +770,7 @@ l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* file name */
-multiline_comment|/* dnode_secno down;&t;  btree down pointer, if present,&n;     &t;&t;&t;  follows name on next word boundary, or maybe it&squot;s&n;&t;&t;&t;  precedes next dirent, which is on a word boundary. */
+multiline_comment|/* dnode_secno down;&t;  btree down pointer, if present,&n;     &t;&t;&t;  follows name on next word boundary, or maybe it&n;&t;&t;&t;  precedes next dirent, which is on a word boundary. */
 )brace
 suffix:semicolon
 multiline_comment|/* The b-tree down pointer from a dir entry */

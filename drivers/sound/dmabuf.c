@@ -2893,7 +2893,7 @@ r_int
 id|event_type
 )paren
 (brace
-multiline_comment|/*&n; * Event types:&n; *&t;0 = DMA transfer done. Device still has more data in the local&n; *&t;    buffer.&n; *&t;1 = DMA transfer done. Device doesn&squot;t have local buffer or it&squot;s&n; *&t;    empty now.&n; *&t;2 = No DMA transfer but the device has now more space in it&squot;s local&n; *&t;    buffer.&n; */
+multiline_comment|/*&n; * Event types:&n; *&t;0 = DMA transfer done. Device still has more data in the local&n; *&t;    buffer.&n; *&t;1 = DMA transfer done. Device doesn&squot;t have local buffer or it&squot;s&n; *&t;    empty now.&n; *&t;2 = No DMA transfer but the device has now more space in its local&n; *&t;    buffer.&n; */
 r_int
 r_int
 id|flags

@@ -1841,6 +1841,10 @@ suffix:semicolon
 )brace
 id|fake_volatile
 suffix:colon
+id|current-&gt;flags
+op_or_assign
+id|PF_EXITING
+suffix:semicolon
 id|sem_exit
 c_func
 (paren

@@ -745,7 +745,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* just to be safe. */
-multiline_comment|/* Incase it&squot;s sleeping somewhere. */
+multiline_comment|/* In case it&squot;s sleeping somewhere. */
 r_if
 c_cond
 (paren
@@ -2602,13 +2602,19 @@ id|sk
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t; * If linger is set, we don&squot;t return until the close&n;&t; * is complete.  Other wise we return immediately. The&n;&t; * actually closing is done the same either way.&n;&t; */
+multiline_comment|/*&n;&t; * If linger is set, we don&squot;t return until the close&n;&t; * is complete.  Other wise we return immediately. The&n;&t; * actually closing is done the same either way.&n;&t; *&n;&t; * If the close is due to the process exiting, we never&n;&t; * linger..&n;&t; */
 r_if
 c_cond
 (paren
 id|sk-&gt;linger
 op_eq
 l_int|0
+op_logical_or
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_EXITING
+)paren
 )paren
 (brace
 id|sk-&gt;prot
@@ -3530,7 +3536,7 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t; * We&squot;ve been passed an extra socket.&n;&t; * We need to free it up because the tcp module creates&n;&t; * it&squot;s own when it accepts one.&n;&t; */
+multiline_comment|/*&n;&t; * We&squot;ve been passed an extra socket.&n;&t; * We need to free it up because the tcp module creates&n;&t; * its own when it accepts one.&n;&t; */
 r_if
 c_cond
 (paren

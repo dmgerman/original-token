@@ -10246,6 +10246,10 @@ id|current_drive
 op_logical_or
 multiline_comment|/* bad drive */
 id|sector_t
+OG
+id|buffer_max
+op_logical_or
+id|sector_t
 OL
 id|buffer_min
 op_logical_or

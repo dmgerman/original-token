@@ -39,7 +39,7 @@ multiline_comment|/*****/
 multiline_comment|/* offset 6 */
 multiline_comment|/* This is the sync transfer divisor, XTALFREQ/X will be the maximum&n;   achievable data rate (assuming the rest of the system is capable&n;   and set properly) */
 DECL|macro|SYNCXFRPD
-mdefine_line|#define SYNCXFRPD 4
+mdefine_line|#define SYNCXFRPD 5
 multiline_comment|/*(XTALFREQ/5)*/
 multiline_comment|/*****/
 multiline_comment|/* offset 7 */
@@ -48,10 +48,18 @@ DECL|macro|SYNCOFFST
 mdefine_line|#define SYNCOFFST 0
 multiline_comment|/* for the curious, bits 7&amp;6 control the deassertion delay in 1/2 cycles&n;&t;of the 40Mhz clock. If FASTCLK is 1, specifying 01 (1/2) will&n;&t;cause the deassertion to be early by 1/2 clock.  Bits 5&amp;4 control&n;&t;the assertion delay, also in 1/2 clocks (FASTCLK is ignored here). */
 multiline_comment|/*----------------------------------------------------------------*/
-macro_line|#if defined(MODULE) || defined(PCMCIA)
+macro_line|#ifdef PCMCIA
+DECL|macro|MODULE
+mdefine_line|#define MODULE
+macro_line|#endif 
+macro_line|#if defined(MODULE)
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
+macro_line|#ifdef PCMCIA
+DECL|macro|MODULE
+macro_line|#undef MODULE
+macro_line|#endif 
 macro_line|#include &quot;../block/blk.h&quot;&t;/* to get disk capacity */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

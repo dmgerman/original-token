@@ -486,7 +486,7 @@ DECL|macro|SEQ_AFTERTOUCH
 mdefine_line|#define SEQ_AFTERTOUCH&t;&t;9
 DECL|macro|SEQ_CONTROLLER
 mdefine_line|#define SEQ_CONTROLLER&t;&t;10
-multiline_comment|/*******************************************&n; *&t;Midi controller numbers&n; *******************************************&n; * Controllers 0 to 31 (0x00 to 0x1f) and&n; * 32 to 63 (0x20 to 0x3f) are continuous&n; * controllers.&n; * In the MIDI 1.0 these controllers are sent using&n; * two messages. Controller numbers 0 to 31 are used&n; * to send the LSB and the controller numbers 32 to 63&n; * are for the LSB.&n; *&n; * This driver uses just the numbers 0 to 31 to store both&n; * the LSB and MSB. The controller value is a unsigned short&n; * and it&squot;s valid range is between 0 and 16383 (0x0000 to 0x3fff).&n; * The driver sends the controller value using two messages when&n; * necessary.&n; */
+multiline_comment|/*******************************************&n; *&t;Midi controller numbers&n; *******************************************&n; * Controllers 0 to 31 (0x00 to 0x1f) and&n; * 32 to 63 (0x20 to 0x3f) are continuous&n; * controllers.&n; * In the MIDI 1.0 these controllers are sent using&n; * two messages. Controller numbers 0 to 31 are used&n; * to send the LSB and the controller numbers 32 to 63&n; * are for the LSB.&n; *&n; * This driver uses just the numbers 0 to 31 to store both&n; * the LSB and MSB. The controller value is a unsigned short&n; * and its valid range is between 0 and 16383 (0x0000 to 0x3fff).&n; * The driver sends the controller value using two messages when&n; * necessary.&n; */
 DECL|macro|CTL_BANK_SELECT
 mdefine_line|#define&t;   CTL_BANK_SELECT&t;&t;0x00
 DECL|macro|CTL_MODWHEEL

@@ -656,7 +656,7 @@ op_amp
 id|buf-&gt;f_ffree
 )paren
 suffix:semicolon
-multiline_comment|/* We should really try to interrogate the remote server to find&n;&t;   it&squot;s maximum name length here */
+multiline_comment|/* We should really try to interrogate the remote server to find&n;&t;   its maximum name length here */
 id|put_fs_long
 c_func
 (paren

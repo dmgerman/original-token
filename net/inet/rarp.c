@@ -320,7 +320,7 @@ op_star
 id|tha
 suffix:semicolon
 multiline_comment|/* s for &quot;source&quot;, t for &quot;target&quot; */
-multiline_comment|/*&n; *&t;If this test doesn&squot;t pass, its not IP, or we should ignore it anyway&n; */
+multiline_comment|/*&n; *&t;If this test doesn&squot;t pass, it&squot;s not IP, or we should ignore it anyway&n; */
 r_if
 c_cond
 (paren

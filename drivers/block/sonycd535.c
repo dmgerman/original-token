@@ -2047,7 +2047,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* its already spinning */
+multiline_comment|/* it&squot;s already spinning */
 multiline_comment|/* otherwise, give the spin-up command */
 id|cmd
 op_assign
@@ -2399,7 +2399,7 @@ c_loop
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * The beginning here is stolen from the hard disk driver.  I hope&n;&t;&t; * its right.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The beginning here is stolen from the hard disk driver.  I hope&n;&t;&t; * it&squot;s right.&n;&t;&t; */
 r_if
 c_cond
 (paren

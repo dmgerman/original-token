@@ -1192,7 +1192,7 @@ id|upd-&gt;refcnt
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Now its complete - bgm */
+multiline_comment|/* Now it&squot;s complete - bgm */
 r_return
 l_int|0
 suffix:semicolon
@@ -1571,7 +1571,7 @@ id|upd-&gt;sockaddr_len
 op_assign
 id|sockaddr_len
 suffix:semicolon
-multiline_comment|/* now its legal */
+multiline_comment|/* now it&squot;s legal */
 r_return
 l_int|0
 suffix:semicolon

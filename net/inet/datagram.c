@@ -429,7 +429,7 @@ op_logical_neg
 id|skb-&gt;prev
 )paren
 (brace
-multiline_comment|/* Been dequeued by someone - ie its read */
+multiline_comment|/* Been dequeued by someone - ie it&squot;s read */
 id|kfree_skb
 c_func
 (paren
