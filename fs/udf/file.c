@@ -1289,7 +1289,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|variable|udf_file_operations
-r_static
 r_struct
 id|file_operations
 id|udf_file_operations
@@ -1335,9 +1334,6 @@ id|inode_operations
 id|udf_file_inode_operations
 op_assign
 (brace
-op_amp
-id|udf_file_operations
-comma
 macro_line|#if CONFIG_UDF_RW == 1
 id|truncate
 suffix:colon

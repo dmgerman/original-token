@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.32 2000/02/15 10:04:54 jj Exp $ */
+multiline_comment|/* $Id: io.h,v 1.33 2000/02/25 05:47:38 davem Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -956,17 +956,17 @@ DECL|macro|sbus_writew
 mdefine_line|#define sbus_writew(__w, __addr)&t;(_sbus_writew((__w), (unsigned long)(__addr)))
 DECL|macro|sbus_writel
 mdefine_line|#define sbus_writel(__l, __addr)&t;(_sbus_writel((__l), (unsigned long)(__addr)))
-DECL|function|sbus_memset_io
+DECL|function|_sbus_memset_io
 r_static
 r_inline
 r_void
 op_star
-id|sbus_memset_io
+id|_sbus_memset_io
 c_func
 (paren
-r_void
-op_star
-id|__dst
+r_int
+r_int
+id|dst
 comma
 r_int
 id|c
@@ -975,16 +975,6 @@ id|__kernel_size_t
 id|n
 )paren
 (brace
-r_int
-r_int
-id|dst
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|__dst
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1012,12 +1002,14 @@ op_star
 id|dst
 suffix:semicolon
 )brace
+DECL|macro|sbus_memset_io
+mdefine_line|#define sbus_memset_io(d,c,sz)&t;&bslash;&n;&t;_sbus_memset_io((unsigned long)d,(int)c,(__kernel_size_t)sz)
 r_static
 r_inline
 r_void
 op_star
-DECL|function|memset_io
-id|memset_io
+DECL|function|_memset_io
+id|_memset_io
 c_func
 (paren
 r_void
@@ -1060,12 +1052,14 @@ r_return
 id|dst
 suffix:semicolon
 )brace
+DECL|macro|memset_io
+mdefine_line|#define memset_io(d,c,sz)&t;&bslash;&n;&t;_memset_io((void *)d,(int)c,(__kernel_size_t)sz)
 r_static
 r_inline
 r_void
 op_star
-DECL|function|memcpy_fromio
-id|memcpy_fromio
+DECL|function|_memcpy_fromio
+id|_memcpy_fromio
 c_func
 (paren
 r_void
@@ -1116,12 +1110,14 @@ r_return
 id|dst
 suffix:semicolon
 )brace
+DECL|macro|memcpy_fromio
+mdefine_line|#define memcpy_fromio(d,s,sz)&t;&bslash;&n;&t;_memcpy_fromio((void *)d,(unsigned long)s,(__kernel_size_t)sz)
 r_static
 r_inline
 r_void
 op_star
-DECL|function|memcpy_toio
-id|memcpy_toio
+DECL|function|_memcpy_toio
+id|_memcpy_toio
 c_func
 (paren
 r_int
@@ -1184,6 +1180,8 @@ op_star
 id|dst
 suffix:semicolon
 )brace
+DECL|macro|memcpy_toio
+mdefine_line|#define memcpy_toio(d,s,sz)&t;&bslash;&n;&t;_memcpy_toio((unsigned long)d,(const void *)s,(__kernel_size_t)sz)
 DECL|function|check_signature
 r_static
 r_inline

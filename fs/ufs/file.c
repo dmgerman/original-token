@@ -121,7 +121,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the ufs filesystem.&n; */
 DECL|variable|ufs_file_operations
-r_static
 r_struct
 id|file_operations
 id|ufs_file_operations
@@ -151,9 +150,6 @@ id|inode_operations
 id|ufs_file_inode_operations
 op_assign
 (brace
-op_amp
-id|ufs_file_operations
-comma
 id|truncate
 suffix:colon
 id|ufs_truncate

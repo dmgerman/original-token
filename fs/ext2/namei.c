@@ -624,6 +624,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|ext2_lookup
+r_static
 r_struct
 id|dentry
 op_star
@@ -1620,6 +1621,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * By the time this is called, we already have created&n; * the directory cache entry for the new file, but it&n; * is so far negative - it has no inode.&n; *&n; * If the create succeeds, we fill in the inode information&n; * with d_instantiate(). &n; */
 DECL|function|ext2_create
+r_static
 r_int
 id|ext2_create
 (paren
@@ -1684,6 +1686,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|ext2_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|ext2_file_operations
 suffix:semicolon
 id|inode-&gt;i_mapping-&gt;a_ops
 op_assign
@@ -1817,6 +1824,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ext2_mknod
+r_static
 r_int
 id|ext2_mknod
 (paren
@@ -2027,6 +2035,7 @@ id|out
 suffix:semicolon
 )brace
 DECL|function|ext2_mkdir
+r_static
 r_int
 id|ext2_mkdir
 c_func
@@ -2111,6 +2120,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|ext2_dir_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|ext2_dir_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
@@ -2844,6 +2858,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|ext2_rmdir
+r_static
 r_int
 id|ext2_rmdir
 (paren
@@ -3083,6 +3098,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|ext2_unlink
+r_static
 r_int
 id|ext2_unlink
 c_func
@@ -3307,6 +3323,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|ext2_symlink
+r_static
 r_int
 id|ext2_symlink
 (paren
@@ -3608,6 +3625,7 @@ id|out
 suffix:semicolon
 )brace
 DECL|function|ext2_link
+r_static
 r_int
 id|ext2_link
 (paren
@@ -3791,6 +3809,7 @@ DECL|macro|PARENT_INO
 mdefine_line|#define PARENT_INO(buffer) &bslash;&n;&t;((struct ext2_dir_entry_2 *) ((char *) buffer + &bslash;&n;&t;le16_to_cpu(((struct ext2_dir_entry_2 *) buffer)-&gt;rec_len)))-&gt;inode
 multiline_comment|/*&n; * Anybody can rename anything with this: the permission checks are left to the&n; * higher-level routines.&n; */
 DECL|function|ext2_rename
+r_static
 r_int
 id|ext2_rename
 (paren
@@ -4333,4 +4352,49 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * directories can handle most operations...&n; */
+DECL|variable|ext2_dir_inode_operations
+r_struct
+id|inode_operations
+id|ext2_dir_inode_operations
+op_assign
+(brace
+id|create
+suffix:colon
+id|ext2_create
+comma
+id|lookup
+suffix:colon
+id|ext2_lookup
+comma
+id|link
+suffix:colon
+id|ext2_link
+comma
+id|unlink
+suffix:colon
+id|ext2_unlink
+comma
+id|symlink
+suffix:colon
+id|ext2_symlink
+comma
+id|mkdir
+suffix:colon
+id|ext2_mkdir
+comma
+id|rmdir
+suffix:colon
+id|ext2_rmdir
+comma
+id|mknod
+suffix:colon
+id|ext2_mknod
+comma
+id|rename
+suffix:colon
+id|ext2_rename
+comma
+)brace
+suffix:semicolon
 eof

@@ -639,7 +639,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Dummy default file-operations: the only thing this does&n; * is contain the open that then fills in the correct operations&n; * depending on the access mode of the file...&n; */
 DECL|variable|def_fifo_fops
-r_static
 r_struct
 id|file_operations
 id|def_fifo_fops
@@ -650,18 +649,6 @@ suffix:colon
 id|fifo_open
 comma
 multiline_comment|/* will set read or write pipe_fops */
-)brace
-suffix:semicolon
-DECL|variable|fifo_inode_operations
-r_struct
-id|inode_operations
-id|fifo_inode_operations
-op_assign
-(brace
-op_amp
-id|def_fifo_fops
-comma
-multiline_comment|/* default file operations */
 )brace
 suffix:semicolon
 eof

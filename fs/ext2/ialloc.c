@@ -1784,10 +1784,6 @@ id|inode-&gt;u.ext2_i.i_block_group
 op_assign
 id|i
 suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 r_if
 c_cond
 (paren

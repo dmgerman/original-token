@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ns87415.c&t;Version 1.00  December 7, 1997&n; *&n; * Copyright (C) 1997-1998  Mark Lord&n; * Copyright (C) 1998       Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Inspired by an earlier effort from David S. Miller (davem@caipfs.rutgers.edu)&n; */
+multiline_comment|/*&n; * linux/drivers/block/ns87415.c&t;&t;Version 1.00  December 7, 1997&n; *&n; * Copyright (C) 1997-1998  Mark Lord&n; * Copyright (C) 1998       Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Inspired by an earlier effort from David S. Miller (davem@caipfs.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;

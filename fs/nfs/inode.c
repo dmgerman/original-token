@@ -88,20 +88,6 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_int
-id|nfs_notify_change
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-comma
-r_struct
-id|iattr
-op_star
-)paren
-suffix:semicolon
-r_static
 r_void
 id|nfs_put_super
 c_func
@@ -144,38 +130,30 @@ id|super_operations
 id|nfs_sops
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|nfs_read_inode
 comma
-multiline_comment|/* read inode */
-l_int|NULL
-comma
-multiline_comment|/* write inode */
+id|put_inode
+suffix:colon
 id|nfs_put_inode
 comma
-multiline_comment|/* put inode */
+id|delete_inode
+suffix:colon
 id|nfs_delete_inode
 comma
-multiline_comment|/* delete inode */
-id|nfs_notify_change
-comma
-multiline_comment|/* notify change */
+id|put_super
+suffix:colon
 id|nfs_put_super
 comma
-multiline_comment|/* put superblock */
-l_int|NULL
-comma
-multiline_comment|/* write superblock */
+id|statfs
+suffix:colon
 id|nfs_statfs
 comma
-multiline_comment|/* stat filesystem */
-l_int|NULL
-comma
-multiline_comment|/* no remount */
-l_int|NULL
-comma
-multiline_comment|/* no clear inode */
+id|umount_begin
+suffix:colon
 id|nfs_umount_begin
-multiline_comment|/* umount attempt begin */
+comma
 )brace
 suffix:semicolon
 DECL|variable|nfs_rpcstat
@@ -212,10 +190,6 @@ suffix:semicolon
 id|inode-&gt;i_rdev
 op_assign
 l_int|0
-suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
 suffix:semicolon
 id|NFS_FILEID
 c_func
@@ -1856,6 +1830,12 @@ id|inode-&gt;i_mode
 op_assign
 id|fattr-&gt;mode
 suffix:semicolon
+multiline_comment|/* Why so? Because we want revalidate for devices/FIFOs, and&n;&t;&t; * that&squot;s precisely what we have in nfs_file_inode_operations.&n;&t;&t; */
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|nfs_file_inode_operations
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1866,10 +1846,10 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|nfs_file_inode_operations
+id|nfs_file_operations
 suffix:semicolon
 id|inode-&gt;i_data.a_ops
 op_assign
@@ -1887,11 +1867,18 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
+(brace
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|nfs_dir_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|nfs_dir_operations
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond

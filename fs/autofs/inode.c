@@ -191,25 +191,30 @@ id|super_operations
 id|autofs_sops
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|autofs_read_inode
 comma
+id|write_inode
+suffix:colon
 id|autofs_write_inode
 comma
+id|put_inode
+suffix:colon
 id|autofs_put_inode
 comma
+id|delete_inode
+suffix:colon
 id|autofs_delete_inode
 comma
-l_int|NULL
-comma
-multiline_comment|/* notify_change */
+id|put_super
+suffix:colon
 id|autofs_put_super
 comma
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|autofs_statfs
 comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|parse_options
@@ -1262,12 +1267,13 @@ suffix:semicolon
 multiline_comment|/* Initialize to the default case (stub directory) */
 id|inode-&gt;i_op
 op_assign
-l_int|NULL
-suffix:semicolon
-id|inode-&gt;i_op
-op_assign
 op_amp
 id|autofs_dir_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|autofs_dir_operations
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
@@ -1323,6 +1329,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|autofs_root_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|autofs_root_operations
 suffix:semicolon
 id|inode-&gt;i_uid
 op_assign

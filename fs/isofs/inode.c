@@ -269,28 +269,18 @@ id|super_operations
 id|isofs_sops
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|isofs_read_inode
 comma
-l_int|NULL
-comma
-multiline_comment|/* write_inode */
-l_int|NULL
-comma
-multiline_comment|/* put_inode */
-l_int|NULL
-comma
-multiline_comment|/* delete_inode */
-l_int|NULL
-comma
-multiline_comment|/* notify_change */
+id|put_super
+suffix:colon
 id|isofs_put_super
 comma
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|isofs_statfs
 comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|isofs_dentry_ops
@@ -5298,10 +5288,6 @@ l_char|&squot;y&squot;
 suffix:semicolon
 )brace
 multiline_comment|/* Install the inode operations vector */
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 macro_line|#ifndef IGNORE_WRONG_MULTI_VOLUME_SPECS
 r_if
 c_cond
@@ -5344,10 +5330,10 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|isofs_file_inode_operations
+id|generic_ro_fops
 suffix:semicolon
 id|inode-&gt;i_data.a_ops
 op_assign
@@ -5365,11 +5351,18 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
+(brace
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|isofs_dir_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|isofs_dir_operations
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -5414,46 +5407,11 @@ suffix:semicolon
 id|fail
 suffix:colon
 multiline_comment|/* With a data error we return this information */
-id|inode-&gt;i_mtime
-op_assign
-id|inode-&gt;i_atime
-op_assign
-id|inode-&gt;i_ctime
-op_assign
-l_int|0
-suffix:semicolon
-id|inode-&gt;u.isofs_i.i_first_extent
-op_assign
-l_int|0
-suffix:semicolon
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
-id|inode-&gt;i_blocks
-op_assign
-id|inode-&gt;i_blksize
-op_assign
-l_int|0
-suffix:semicolon
-id|inode-&gt;i_nlink
-op_assign
-l_int|1
-suffix:semicolon
-id|inode-&gt;i_uid
-op_assign
-id|inode-&gt;i_gid
-op_assign
-l_int|0
-suffix:semicolon
-id|inode-&gt;i_mode
-op_assign
-id|S_IFREG
-suffix:semicolon
-multiline_comment|/*Regular file, no one gets to read*/
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
+id|make_bad_inode
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon

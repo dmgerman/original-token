@@ -132,12 +132,15 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|variable|autofs_dir_operations
-r_static
 r_struct
 id|file_operations
 id|autofs_dir_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|autofs_dir_readdir
@@ -150,16 +153,10 @@ id|inode_operations
 id|autofs_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|autofs_dir_operations
-comma
-multiline_comment|/* file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|autofs_dir_lookup
 comma
-multiline_comment|/* lookup */
 )brace
 suffix:semicolon
 eof

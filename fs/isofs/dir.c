@@ -27,12 +27,15 @@ id|filldir_t
 )paren
 suffix:semicolon
 DECL|variable|isofs_dir_operations
-r_static
 r_struct
 id|file_operations
 id|isofs_dir_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|isofs_readdir
@@ -46,16 +49,10 @@ id|inode_operations
 id|isofs_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|isofs_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|isofs_lookup
 comma
-multiline_comment|/* lookup */
 )brace
 suffix:semicolon
 DECL|function|isofs_name_translate

@@ -1083,38 +1083,22 @@ id|super_operations
 id|adfs_sops
 op_assign
 (brace
-id|adfs_read_inode
-comma
-multiline_comment|/* read_inode&t;&t;*/
+id|write_inode
+suffix:colon
 id|adfs_write_inode
 comma
-multiline_comment|/* write_inode&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* put_inode&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* delete_inode&t;&t;*/
-id|adfs_notify_change
-comma
-multiline_comment|/* notify_change&t;*/
+id|put_super
+suffix:colon
 id|adfs_put_super
 comma
-multiline_comment|/* put_super&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* write_super&t;&t;*/
+id|statfs
+suffix:colon
 id|adfs_statfs
 comma
-multiline_comment|/* statfs&t;&t;*/
+id|remount_fs
+suffix:colon
 id|adfs_remount
 comma
-multiline_comment|/* remount_fs&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* clear_inode&t;&t;*/
-l_int|NULL
-multiline_comment|/* umount_begin&t;&t;*/
 )brace
 suffix:semicolon
 DECL|function|adfs_read_map

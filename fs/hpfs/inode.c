@@ -2,7 +2,6 @@ multiline_comment|/*&n; *  linux/fs/hpfs/inode.c&n; *&n; *  Mikulas Patocka (mik
 macro_line|#include &quot;hpfs_fn.h&quot;
 DECL|variable|hpfs_file_ops
 r_static
-r_const
 r_struct
 id|file_operations
 id|hpfs_file_ops
@@ -36,61 +35,23 @@ comma
 suffix:semicolon
 DECL|variable|hpfs_file_iops
 r_static
-r_const
 r_struct
 id|inode_operations
 id|hpfs_file_iops
 op_assign
 (brace
-(paren
-id|nonconst
-op_star
-)paren
-op_amp
-id|hpfs_file_ops
-comma
-multiline_comment|/* default file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
+id|truncate
+suffix:colon
 id|hpfs_truncate
 comma
-multiline_comment|/* truncate */
+id|setattr
+suffix:colon
+id|hpfs_notify_change
+comma
 )brace
 suffix:semicolon
 DECL|variable|hpfs_dir_ops
 r_static
-r_const
 r_struct
 id|file_operations
 id|hpfs_dir_ops
@@ -102,7 +63,7 @@ id|hpfs_dir_lseek
 comma
 id|read
 suffix:colon
-id|hpfs_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -124,47 +85,47 @@ comma
 suffix:semicolon
 DECL|variable|hpfs_dir_iops
 r_static
-r_const
 r_struct
 id|inode_operations
 id|hpfs_dir_iops
 op_assign
 (brace
-(paren
-id|nonconst
-op_star
-)paren
-op_amp
-id|hpfs_dir_ops
-comma
-multiline_comment|/* default directory file ops */
+id|create
+suffix:colon
 id|hpfs_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|hpfs_lookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|hpfs_unlink
 comma
-multiline_comment|/* unlink */
+id|symlink
+suffix:colon
 id|hpfs_symlink
 comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|hpfs_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|hpfs_rmdir
 comma
-multiline_comment|/* rmdir */
+id|mknod
+suffix:colon
 id|hpfs_mknod
 comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|hpfs_rename
 comma
-multiline_comment|/* rename */
+id|setattr
+suffix:colon
+id|hpfs_notify_change
+comma
 )brace
 suffix:semicolon
 DECL|variable|hpfs_symlink_aops
@@ -213,10 +174,6 @@ id|ea
 suffix:semicolon
 r_int
 id|ea_size
-suffix:semicolon
-id|i-&gt;i_op
-op_assign
-l_int|0
 suffix:semicolon
 id|init_MUTEX
 c_func
@@ -353,13 +310,13 @@ l_int|0111
 suffix:semicolon
 id|i-&gt;i_op
 op_assign
-(paren
-r_struct
-id|inode_operations
-op_star
-)paren
 op_amp
 id|hpfs_file_iops
+suffix:semicolon
+id|i-&gt;i_fop
+op_assign
+op_amp
+id|hpfs_file_ops
 suffix:semicolon
 id|i-&gt;i_nlink
 op_assign
@@ -388,7 +345,7 @@ id|bh
 )paren
 )paren
 (brace
-multiline_comment|/*i-&gt;i_mode |= S_IFREG;&n;&t;&t;i-&gt;i_mode &amp;= ~0111;&n;&t;&t;i-&gt;i_op = (struct inode_operations *) &amp;hpfs_file_iops;&n;&t;&t;i-&gt;i_nlink = 0;*/
+multiline_comment|/*i-&gt;i_mode |= S_IFREG;&n;&t;&t;i-&gt;i_mode &amp;= ~0111;&n;&t;&t;i-&gt;i_op = &amp;hpfs_file_iops;&n;&t;&t;i-&gt;i_fop = &amp;hpfs_file_ops;&n;&t;&t;i-&gt;i_nlink = 0;*/
 id|make_bad_inode
 c_func
 (paren
@@ -816,13 +773,13 @@ id|S_IFDIR
 suffix:semicolon
 id|i-&gt;i_op
 op_assign
-(paren
-r_struct
-id|inode_operations
-op_star
-)paren
 op_amp
 id|hpfs_dir_iops
+suffix:semicolon
+id|i-&gt;i_fop
+op_assign
+op_amp
+id|hpfs_dir_ops
 suffix:semicolon
 id|i-&gt;i_hpfs_parent_dir
 op_assign
@@ -933,13 +890,13 @@ l_int|0111
 suffix:semicolon
 id|i-&gt;i_op
 op_assign
-(paren
-r_struct
-id|inode_operations
-op_star
-)paren
 op_amp
 id|hpfs_file_iops
+suffix:semicolon
+id|i-&gt;i_fop
+op_assign
+op_amp
+id|hpfs_file_ops
 suffix:semicolon
 id|i-&gt;i_nlink
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/char/mem.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Added devfs support. &n; *    Jan-11-1998, C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;&n; */
+multiline_comment|/*&n; *  linux/drivers/char/mem.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Added devfs support. &n; *    Jan-11-1998, C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;&n; *  Shared /dev/zero mmaping support, Feb 2000, Kanoj Sarcar &lt;kanoj@sgi.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
@@ -1844,8 +1844,11 @@ op_amp
 id|VM_SHARED
 )paren
 r_return
-op_minus
-id|EINVAL
+id|map_zero_setup
+c_func
+(paren
+id|vma
+)paren
 suffix:semicolon
 r_if
 c_cond

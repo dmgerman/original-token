@@ -21,16 +21,6 @@ mdefine_line|#define SMBFS_PARANOIA 1
 multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
 r_static
 r_void
-id|smb_read_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
 id|smb_put_inode
 c_func
 (paren
@@ -96,32 +86,22 @@ id|super_operations
 id|smb_sops
 op_assign
 (brace
-id|smb_read_inode
-comma
-multiline_comment|/* read inode */
-l_int|NULL
-comma
-multiline_comment|/* write inode */
+id|put_inode
+suffix:colon
 id|smb_put_inode
 comma
-multiline_comment|/* put inode */
+id|delete_inode
+suffix:colon
 id|smb_delete_inode
 comma
-multiline_comment|/* delete inode */
-id|smb_notify_change
-comma
-multiline_comment|/* notify change */
+id|put_super
+suffix:colon
 id|smb_put_super
 comma
-multiline_comment|/* put superblock */
-l_int|NULL
-comma
-multiline_comment|/* write superblock */
+id|statfs
+suffix:colon
 id|smb_statfs
 comma
-multiline_comment|/* stat filesystem */
-l_int|NULL
-multiline_comment|/* remount filesystem */
 )brace
 suffix:semicolon
 multiline_comment|/* FIXME: Look at all inodes whether so that we do not get duplicate&n; * inode numbers. */
@@ -268,6 +248,11 @@ op_assign
 op_amp
 id|smb_file_inode_operations
 suffix:semicolon
+id|result-&gt;i_fop
+op_assign
+op_amp
+id|smb_file_operations
+suffix:semicolon
 id|result-&gt;i_data.a_ops
 op_assign
 op_amp
@@ -284,16 +269,18 @@ c_func
 id|result-&gt;i_mode
 )paren
 )paren
+(brace
 id|result-&gt;i_op
 op_assign
 op_amp
 id|smb_dir_inode_operations
 suffix:semicolon
-r_else
-id|result-&gt;i_op
+id|result-&gt;i_fop
 op_assign
-l_int|NULL
+op_amp
+id|smb_dir_operations
 suffix:semicolon
+)brace
 id|insert_inode_hash
 c_func
 (paren
@@ -488,28 +475,6 @@ multiline_comment|/*&n;&t; * Update the &quot;last time refreshed&quot; field fo
 id|inode-&gt;u.smbfs_i.oldmtime
 op_assign
 id|jiffies
-suffix:semicolon
-)brace
-r_static
-r_void
-DECL|function|smb_read_inode
-id|smb_read_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-multiline_comment|/* Now it can be called only by NFS */
-id|printk
-c_func
-(paren
-l_string|&quot;smb_read_inode called from invalid point&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is called if the connection has gone bad ...&n; * try to kill off all the current inodes.&n; */

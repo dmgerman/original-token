@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.80 2000/02/09 21:11:06 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/*  $Id: init.c,v 1.81 2000/02/26 11:59:31 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -51,6 +51,20 @@ DECL|variable|pgt_quicklists
 r_struct
 id|pgtable_cache_struct
 id|pgt_quicklists
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPIN_LOCK_UNLOCKED
+comma
+id|SPIN_LOCK_UNLOCKED
+)brace
 suffix:semicolon
 multiline_comment|/* References to section boundaries */
 r_extern

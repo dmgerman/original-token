@@ -56,8 +56,8 @@ id|efs_dir_inode_operations
 suffix:semicolon
 r_extern
 r_struct
-id|inode_operations
-id|efs_file_inode_operations
+id|file_operations
+id|efs_dir_operations
 suffix:semicolon
 r_extern
 r_struct

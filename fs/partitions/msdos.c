@@ -1473,7 +1473,7 @@ l_int|0
 suffix:semicolon
 id|read_mbr
 suffix:colon
-macro_line|#endif
+macro_line|#endif /* CONFIG_BLK_DEV_IDE */
 r_if
 c_cond
 (paren
@@ -1520,7 +1520,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|check_table
 suffix:colon
-macro_line|#endif
+macro_line|#endif /* CONFIG_BLK_DEV_IDE */
 multiline_comment|/* Use bforget(), because we may have changed the disk geometry */
 r_if
 c_cond

@@ -41,23 +41,12 @@ id|loff_t
 op_star
 )paren
 suffix:semicolon
-r_static
-r_void
-id|cap_info_truncate
-c_func
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/*================ Function-like macros ================*/
 multiline_comment|/*&n; * OVERLAPS()&n; *&n; * Determines if a given range overlaps the specified structure member&n; */
 DECL|macro|OVERLAPS
 mdefine_line|#define OVERLAPS(START, END, TYPE, MEMB) &bslash;&n;&t;((END &gt; offsetof(TYPE, MEMB)) &amp;&amp; &bslash;&n;&t; (START &lt; offsetof(TYPE, MEMB) + sizeof(((TYPE *)0)-&gt;MEMB)))
 multiline_comment|/*================ Global variables ================*/
 DECL|variable|hfs_cap_info_operations
-r_static
 r_struct
 id|file_operations
 id|hfs_cap_info_operations
@@ -83,46 +72,10 @@ id|inode_operations
 id|hfs_cap_info_inode_operations
 op_assign
 (brace
-op_amp
-id|hfs_cap_info_operations
+id|setattr
+suffix:colon
+id|hfs_notify_change_cap
 comma
-multiline_comment|/* default file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-id|cap_info_truncate
-comma
-multiline_comment|/* truncate */
 )brace
 suffix:semicolon
 multiline_comment|/*================ File-local functions ================*/
@@ -994,38 +947,5 @@ suffix:semicolon
 r_return
 id|count
 suffix:semicolon
-)brace
-multiline_comment|/*&n; * cap_info_truncate()&n; *&n; * This is the truncate field in the inode_operations structure for&n; * CAP metadata files.&n; */
-DECL|function|cap_info_truncate
-r_static
-r_void
-id|cap_info_truncate
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_size
-OG
-id|HFS_FORK_MAX
-)paren
-(brace
-id|inode-&gt;i_size
-op_assign
-id|HFS_FORK_MAX
-suffix:semicolon
-id|mark_inode_dirty
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-)brace
 )brace
 eof

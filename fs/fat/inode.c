@@ -2102,6 +2102,11 @@ id|inode-&gt;i_op
 op_assign
 id|sbi-&gt;dir_ops
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|fat_dir_operations
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2298,27 +2303,26 @@ id|super_operations
 id|fat_sops
 op_assign
 (brace
-l_int|NULL
-comma
+id|write_inode
+suffix:colon
 id|fat_write_inode
 comma
-l_int|NULL
-comma
+id|delete_inode
+suffix:colon
 id|fat_delete_inode
 comma
-id|fat_notify_change
-comma
+id|put_super
+suffix:colon
 id|fat_put_super
 comma
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|fat_statfs
 comma
-l_int|NULL
-comma
-multiline_comment|/* remount */
+id|clear_inode
+suffix:colon
 id|fat_clear_inode
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Read the super block of an MS-DOS FS.&n; *&n; * Note that this may be called from vfat_read_super&n; * with some fields already initialized.&n; */
@@ -4303,6 +4307,11 @@ id|inode-&gt;i_op
 op_assign
 id|sbi-&gt;dir_ops
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|fat_dir_operations
+suffix:semicolon
 id|MSDOS_I
 c_func
 (paren
@@ -4587,6 +4596,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|fat_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|fat_file_operations
 suffix:semicolon
 id|inode-&gt;i_mapping-&gt;a_ops
 op_assign

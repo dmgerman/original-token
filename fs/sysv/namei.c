@@ -361,6 +361,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|sysv_lookup
+r_static
 r_struct
 id|dentry
 op_star
@@ -797,6 +798,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sysv_create
+r_static
 r_int
 id|sysv_create
 c_func
@@ -855,6 +857,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|sysv_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|sysv_file_operations
 suffix:semicolon
 id|inode-&gt;i_mapping-&gt;a_ops
 op_assign
@@ -945,6 +952,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sysv_mknod
+r_static
 r_int
 id|sysv_mknod
 c_func
@@ -1128,6 +1136,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sysv_mkdir
+r_static
 r_int
 id|sysv_mkdir
 c_func
@@ -1232,6 +1241,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|sysv_dir_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|sysv_dir_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
@@ -1764,6 +1778,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|sysv_rmdir
+r_static
 r_int
 id|sysv_rmdir
 c_func
@@ -1952,6 +1967,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|sysv_unlink
+r_static
 r_int
 id|sysv_unlink
 c_func
@@ -2110,6 +2126,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|sysv_symlink
+r_static
 r_int
 id|sysv_symlink
 c_func
@@ -2207,7 +2224,7 @@ suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|page_symlink_inode_operations
+id|sysv_symlink_inode_operations
 suffix:semicolon
 id|inode-&gt;i_mapping-&gt;a_ops
 op_assign
@@ -2319,6 +2336,7 @@ id|out
 suffix:semicolon
 )brace
 DECL|function|sysv_link
+r_static
 r_int
 id|sysv_link
 c_func
@@ -2503,6 +2521,7 @@ DECL|macro|PARENT_INO
 mdefine_line|#define PARENT_INO(buffer) &bslash;&n;(((struct sysv_dir_entry *) ((buffer) + 1*SYSV_DIRSIZE))-&gt;inode)
 multiline_comment|/*&n; * Anybody can rename anything with this: the permission checks are left to the&n; * higher-level routines.&n; */
 DECL|function|sysv_rename
+r_static
 r_int
 id|sysv_rename
 c_func
@@ -2938,4 +2957,53 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * directories can handle most operations...&n; */
+DECL|variable|sysv_dir_inode_operations
+r_struct
+id|inode_operations
+id|sysv_dir_inode_operations
+op_assign
+(brace
+id|create
+suffix:colon
+id|sysv_create
+comma
+id|lookup
+suffix:colon
+id|sysv_lookup
+comma
+id|link
+suffix:colon
+id|sysv_link
+comma
+id|unlink
+suffix:colon
+id|sysv_unlink
+comma
+id|symlink
+suffix:colon
+id|sysv_symlink
+comma
+id|mkdir
+suffix:colon
+id|sysv_mkdir
+comma
+id|rmdir
+suffix:colon
+id|sysv_rmdir
+comma
+id|mknod
+suffix:colon
+id|sysv_mknod
+comma
+id|rename
+suffix:colon
+id|sysv_rename
+comma
+id|setattr
+suffix:colon
+id|sysv_notify_change
+comma
+)brace
+suffix:semicolon
 eof

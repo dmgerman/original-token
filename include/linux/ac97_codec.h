@@ -1,8 +1,6 @@
 macro_line|#ifndef _AC97_CODEC_H_
 DECL|macro|_AC97_CODEC_H_
 mdefine_line|#define _AC97_CODEC_H_
-macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;sound_calls.h&quot;
 multiline_comment|/* AC97 1.0 */
 DECL|macro|AC97_RESET
 mdefine_line|#define  AC97_RESET               0x0000      

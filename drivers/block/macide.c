@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/macide.c -- Macintosh IDE Driver&n; *&n; *     Copyright (C) 1998 by Michael Schmitz&n; *&n; *  This driver was written based on information obtained from the MacOS IDE&n; *  driver binary by Mikael Forselius&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*&n; *  linux/drivers/ide/macide.c -- Macintosh IDE Driver&n; *&n; *     Copyright (C) 1998 by Michael Schmitz&n; *&n; *  This driver was written based on information obtained from the MacOS IDE&n; *  driver binary by Mikael Forselius&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -34,6 +34,7 @@ mdefine_line|#define MAC_HD_CONTROL&t;0x38&t;&t;/* control/altstatus */
 DECL|variable|macide_offsets
 r_static
 r_int
+id|__init
 id|macide_offsets
 (braket
 id|IDE_NR_PORTS
@@ -128,6 +129,7 @@ suffix:semicolon
 multiline_comment|/*&n;     *  Probe for a Macintosh IDE interface&n;     */
 DECL|function|macide_init
 r_void
+id|__init
 id|macide_init
 c_func
 (paren

@@ -1337,7 +1337,7 @@ comma
 id|bcs-&gt;hw.hscx.count
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb
@@ -2130,7 +2130,7 @@ id|bcs-&gt;rqueue
 )paren
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
@@ -2152,7 +2152,7 @@ id|bcs-&gt;squeue
 )paren
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
@@ -2165,7 +2165,7 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb

@@ -192,6 +192,11 @@ id|bfs_file_inops
 suffix:semicolon
 r_extern
 r_struct
+id|file_operations
+id|bfs_file_operations
+suffix:semicolon
+r_extern
+r_struct
 id|address_space_operations
 id|bfs_aops
 suffix:semicolon
@@ -200,6 +205,11 @@ r_extern
 r_struct
 id|inode_operations
 id|bfs_dir_inops
+suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+id|bfs_dir_operations
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_BFS_FS_H */

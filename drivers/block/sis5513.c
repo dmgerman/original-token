@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/sis5513.c&t;Version 0.08&t;Dec. 13, 1999&n; *&n; * Copyright (C) 1999&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to SIS Taiwan for direct support and hardware.&n; * Tested and designed on the SiS620/5513 chipset.&n; */
+multiline_comment|/*&n; * linux/drivers/block/sis5513.c&t;&t;Version 0.09&t;Feb. 10, 2000&n; *&n; * Copyright (C) 1999-2000&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to SIS Taiwan for direct support and hardware.&n; * Tested and designed on the SiS620/5513 chipset.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -104,6 +104,15 @@ comma
 id|SIS5513_FLAG_ATA_66
 op_or
 id|SIS5513_FLAG_LATENCY
+comma
+)brace
+comma
+(brace
+l_string|&quot;SiS5591&quot;
+comma
+id|PCI_DEVICE_ID_SI_5591
+comma
+id|SIS5513_FLAG_ATA_33
 comma
 )brace
 comma
@@ -1281,6 +1290,21 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+r_int
+r_int
+id|dma_base
+op_assign
+id|hwif-&gt;dma_base
+suffix:semicolon
+id|byte
+id|unit
+op_assign
+(paren
+id|drive-&gt;select.b.unit
+op_amp
+l_int|0x01
+)paren
+suffix:semicolon
 id|byte
 id|speed
 op_assign
@@ -1307,11 +1331,7 @@ suffix:colon
 l_int|0
 )paren
 op_plus
-(paren
-id|drive-&gt;select.b.unit
-op_amp
-l_int|0x01
-)paren
+id|unit
 )paren
 suffix:semicolon
 id|byte
@@ -1925,6 +1945,32 @@ id|ide_dma_off_quietly
 )paren
 suffix:semicolon
 )brace
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|dma_base
+op_plus
+l_int|2
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+(paren
+l_int|5
+op_plus
+id|unit
+)paren
+)paren
+comma
+id|dma_base
+op_plus
+l_int|2
+)paren
+suffix:semicolon
 id|err
 op_assign
 id|ide_config_drive_speed
@@ -3050,6 +3096,9 @@ id|PCI_DEVICE_ID_SI_5600
 suffix:colon
 r_case
 id|PCI_DEVICE_ID_SI_5597
+suffix:colon
+r_case
+id|PCI_DEVICE_ID_SI_5591
 suffix:colon
 id|hwif-&gt;autodma
 op_assign

@@ -128,6 +128,8 @@ DECL|macro|WIN_SRST
 mdefine_line|#define WIN_SRST&t;&t;0x08&t;/* ATAPI soft reset command */
 DECL|macro|WIN_PACKETCMD
 mdefine_line|#define WIN_PACKETCMD&t;&t;0xA0&t;/* Send a packet command. */
+DECL|macro|DISABLE_SEAGATE
+mdefine_line|#define DISABLE_SEAGATE&t;&t;0xFB
 DECL|macro|EXABYTE_ENABLE_NEST
 mdefine_line|#define EXABYTE_ENABLE_NEST&t;0xF0
 multiline_comment|/* WIN_SMART sub-commands */
@@ -154,6 +156,8 @@ DECL|macro|SETFEATURES_EN_WCACHE
 mdefine_line|#define SETFEATURES_EN_WCACHE&t;0x02&t;/* Enable write cache */
 DECL|macro|SETFEATURES_XFER
 mdefine_line|#define SETFEATURES_XFER&t;0x03&t;/* Set transfer mode */
+DECL|macro|XFER_UDMA_7
+macro_line|#&t;define XFER_UDMA_7&t;0x47&t;/* 0100|0111 */
 DECL|macro|XFER_UDMA_6
 macro_line|#&t;define XFER_UDMA_6&t;0x46&t;/* 0100|0110 */
 DECL|macro|XFER_UDMA_5
@@ -192,6 +196,8 @@ DECL|macro|XFER_PIO_0
 macro_line|#&t;define XFER_PIO_0&t;0x08&t;/* 0000|1000 */
 DECL|macro|XFER_PIO_SLOW
 macro_line|#&t;define XFER_PIO_SLOW&t;0x00&t;/* 0000|0000 */
+DECL|macro|SETFEATURES_DIS_DEFECT
+mdefine_line|#define SETFEATURES_DIS_DEFECT&t;0x04&t;/* Disable Defect Management */
 DECL|macro|SETFEATURES_EN_APM
 mdefine_line|#define SETFEATURES_EN_APM&t;0x05&t;/* Enable advanced power management */
 DECL|macro|SETFEATURES_DIS_MSN
@@ -206,12 +212,16 @@ DECL|macro|SETFEATURES_DIS_RPOD
 mdefine_line|#define SETFEATURES_DIS_RPOD&t;0x66&t;/* Disable reverting to power on defaults */
 DECL|macro|SETFEATURES_DIS_WCACHE
 mdefine_line|#define SETFEATURES_DIS_WCACHE&t;0x82&t;/* Disable write cache */
+DECL|macro|SETFEATURES_EN_DEFECT
+mdefine_line|#define SETFEATURES_EN_DEFECT&t;0x84&t;/* Enable Defect Management */
 DECL|macro|SETFEATURES_DIS_APM
 mdefine_line|#define SETFEATURES_DIS_APM&t;0x85&t;/* Disable advanced power management */
 DECL|macro|SETFEATURES_EN_MSN
 mdefine_line|#define SETFEATURES_EN_MSN&t;0x95&t;/* Enable Media Status Notification */
 DECL|macro|SETFEATURES_EN_RLA
 mdefine_line|#define SETFEATURES_EN_RLA&t;0xAA&t;/* Enable read look-ahead feature */
+DECL|macro|SETFEATURES_PREFETCH
+mdefine_line|#define SETFEATURES_PREFETCH&t;0xAB&t;/* Sets drive prefetch value */
 DECL|macro|SETFEATURES_EN_RPOD
 mdefine_line|#define SETFEATURES_EN_RPOD&t;0xCC&t;/* Enable reverting to power on defaults */
 DECL|macro|SETFEATURES_DIS_RI
@@ -583,61 +593,32 @@ r_int
 id|eide_pio_iordy
 suffix:semicolon
 multiline_comment|/* min cycle time (ns), with IORDY */
-macro_line|#if 0
+DECL|member|words69_70
 r_int
 r_int
-id|words69_74
+id|words69_70
 (braket
-l_int|6
+l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/* reserved words 69-74 */
-macro_line|#else
-DECL|member|word69
-r_int
-r_int
-id|word69
-suffix:semicolon
-multiline_comment|/* reserved (word 69) */
-DECL|member|word70
-r_int
-r_int
-id|word70
-suffix:semicolon
-multiline_comment|/* reserved (word 70) */
+multiline_comment|/* reserved words 69-70 */
 multiline_comment|/* HDIO_GET_IDENTITY currently returns only words 0 through 70 */
-DECL|member|word71
+DECL|member|words71_74
 r_int
 r_int
-id|word71
+id|words71_74
+(braket
+l_int|4
+)braket
 suffix:semicolon
-multiline_comment|/* reserved (word 71) */
-DECL|member|word72
-r_int
-r_int
-id|word72
-suffix:semicolon
-multiline_comment|/* reserved (word 72) */
-DECL|member|word73
-r_int
-r_int
-id|word73
-suffix:semicolon
-multiline_comment|/* reserved (word 73) */
-DECL|member|word74
-r_int
-r_int
-id|word74
-suffix:semicolon
-multiline_comment|/* reserved (word 74) */
-macro_line|#endif
+multiline_comment|/* reserved words 71-74 */
 DECL|member|queue_depth
 r_int
 r_int
 id|queue_depth
 suffix:semicolon
 multiline_comment|/*  */
-macro_line|#if 0
+DECL|member|words76_79
 r_int
 r_int
 id|words76_79
@@ -646,32 +627,6 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* reserved words 76-79 */
-macro_line|#else
-DECL|member|word76
-r_int
-r_int
-id|word76
-suffix:semicolon
-multiline_comment|/* reserved (word 76) */
-DECL|member|word77
-r_int
-r_int
-id|word77
-suffix:semicolon
-multiline_comment|/* reserved (word 77) */
-DECL|member|word78
-r_int
-r_int
-id|word78
-suffix:semicolon
-multiline_comment|/* reserved (word 78) */
-DECL|member|word79
-r_int
-r_int
-id|word79
-suffix:semicolon
-multiline_comment|/* reserved (word 79) */
-macro_line|#endif
 DECL|member|major_rev_num
 r_int
 r_int
@@ -756,215 +711,21 @@ r_int
 id|hw_config
 suffix:semicolon
 multiline_comment|/* hardware config */
-macro_line|#if 0
+DECL|member|words94_125
 r_int
 r_int
-id|words94_126
+id|words94_125
 (braket
-l_int|34
+l_int|33
 )braket
 suffix:semicolon
-multiline_comment|/* reserved words 94-126 */
-macro_line|#else
-DECL|member|word94
+multiline_comment|/* reserved words 94-125 */
+DECL|member|last_lun
 r_int
 r_int
-id|word94
-suffix:semicolon
-multiline_comment|/* reserved (word 94) */
-DECL|member|word95
-r_int
-r_int
-id|word95
-suffix:semicolon
-multiline_comment|/* reserved (word 95) */
-DECL|member|word96
-r_int
-r_int
-id|word96
-suffix:semicolon
-multiline_comment|/* reserved (word 96) */
-DECL|member|word97
-r_int
-r_int
-id|word97
-suffix:semicolon
-multiline_comment|/* reserved (word 97) */
-DECL|member|word98
-r_int
-r_int
-id|word98
-suffix:semicolon
-multiline_comment|/* reserved (word 98) */
-DECL|member|word99
-r_int
-r_int
-id|word99
-suffix:semicolon
-multiline_comment|/* reserved (word 99) */
-DECL|member|word100
-r_int
-r_int
-id|word100
-suffix:semicolon
-multiline_comment|/* reserved (word 100) */
-DECL|member|word101
-r_int
-r_int
-id|word101
-suffix:semicolon
-multiline_comment|/* reserved (word 101) */
-DECL|member|word102
-r_int
-r_int
-id|word102
-suffix:semicolon
-multiline_comment|/* reserved (word 102) */
-DECL|member|word103
-r_int
-r_int
-id|word103
-suffix:semicolon
-multiline_comment|/* reserved (word 103) */
-DECL|member|word104
-r_int
-r_int
-id|word104
-suffix:semicolon
-multiline_comment|/* reserved (word 104) */
-DECL|member|word105
-r_int
-r_int
-id|word105
-suffix:semicolon
-multiline_comment|/* reserved (word 105) */
-DECL|member|word106
-r_int
-r_int
-id|word106
-suffix:semicolon
-multiline_comment|/* reserved (word 106) */
-DECL|member|word107
-r_int
-r_int
-id|word107
-suffix:semicolon
-multiline_comment|/* reserved (word 107) */
-DECL|member|word108
-r_int
-r_int
-id|word108
-suffix:semicolon
-multiline_comment|/* reserved (word 108) */
-DECL|member|word109
-r_int
-r_int
-id|word109
-suffix:semicolon
-multiline_comment|/* reserved (word 109) */
-DECL|member|word110
-r_int
-r_int
-id|word110
-suffix:semicolon
-multiline_comment|/* reserved (word 110) */
-DECL|member|word111
-r_int
-r_int
-id|word111
-suffix:semicolon
-multiline_comment|/* reserved (word 111) */
-DECL|member|word112
-r_int
-r_int
-id|word112
-suffix:semicolon
-multiline_comment|/* reserved (word 112) */
-DECL|member|word113
-r_int
-r_int
-id|word113
-suffix:semicolon
-multiline_comment|/* reserved (word 113) */
-DECL|member|word114
-r_int
-r_int
-id|word114
-suffix:semicolon
-multiline_comment|/* reserved (word 114) */
-DECL|member|word115
-r_int
-r_int
-id|word115
-suffix:semicolon
-multiline_comment|/* reserved (word 115) */
-DECL|member|word116
-r_int
-r_int
-id|word116
-suffix:semicolon
-multiline_comment|/* reserved (word 116) */
-DECL|member|word117
-r_int
-r_int
-id|word117
-suffix:semicolon
-multiline_comment|/* reserved (word 117) */
-DECL|member|word118
-r_int
-r_int
-id|word118
-suffix:semicolon
-multiline_comment|/* reserved (word 118) */
-DECL|member|word119
-r_int
-r_int
-id|word119
-suffix:semicolon
-multiline_comment|/* reserved (word 119) */
-DECL|member|word120
-r_int
-r_int
-id|word120
-suffix:semicolon
-multiline_comment|/* reserved (word 120) */
-DECL|member|word121
-r_int
-r_int
-id|word121
-suffix:semicolon
-multiline_comment|/* reserved (word 121) */
-DECL|member|word122
-r_int
-r_int
-id|word122
-suffix:semicolon
-multiline_comment|/* reserved (word 122) */
-DECL|member|word123
-r_int
-r_int
-id|word123
-suffix:semicolon
-multiline_comment|/* reserved (word 123) */
-DECL|member|word124
-r_int
-r_int
-id|word124
-suffix:semicolon
-multiline_comment|/* reserved (word 124) */
-DECL|member|word125
-r_int
-r_int
-id|word125
-suffix:semicolon
-multiline_comment|/* reserved (word 125) */
-DECL|member|word126
-r_int
-r_int
-id|word126
+id|last_lun
 suffix:semicolon
 multiline_comment|/* reserved (word 126) */
-macro_line|#endif
 DECL|member|word127
 r_int
 r_int
@@ -983,14 +744,24 @@ r_int
 id|csfo
 suffix:semicolon
 multiline_comment|/* current set features options&n;&t;&t;&t;&t;&t; * 15:4&t;reserved&n;&t;&t;&t;&t;&t; * 3&t;auto reassign&n;&t;&t;&t;&t;&t; * 2&t;reverting&n;&t;&t;&t;&t;&t; * 1&t;read-look-ahead&n;&t;&t;&t;&t;&t; * 0&t;write cache&n;&t;&t;&t;&t;&t; */
-DECL|member|reserved
+DECL|member|words130_159
 r_int
 r_int
-id|reserved
+id|words130_159
 (braket
-l_int|126
+l_int|30
 )braket
 suffix:semicolon
+multiline_comment|/* reserved vendor words 130-159 */
+DECL|member|words160_255
+r_int
+r_int
+id|words160_255
+(braket
+l_int|96
+)braket
+suffix:semicolon
+multiline_comment|/* reserved words 160-255 */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * IDE &quot;nice&quot; flags. These are used on a per drive basis to determine&n; * when to be nice and give more bandwidth to the other devices which&n; * share the same IDE bus.&n; */

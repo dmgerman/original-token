@@ -431,6 +431,14 @@ id|follow_link
 suffix:colon
 id|nfs_follow_link
 comma
+id|revalidate
+suffix:colon
+id|nfs_revalidate
+comma
+id|setattr
+suffix:colon
+id|nfs_notify_change
+comma
 )brace
 suffix:semicolon
 eof

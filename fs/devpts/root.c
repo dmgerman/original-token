@@ -48,12 +48,15 @@ r_int
 )paren
 suffix:semicolon
 DECL|variable|devpts_root_operations
-r_static
 r_struct
 id|file_operations
 id|devpts_root_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|devpts_root_readdir
@@ -66,16 +69,10 @@ id|inode_operations
 id|devpts_root_inode_operations
 op_assign
 (brace
-op_amp
-id|devpts_root_operations
-comma
-multiline_comment|/* file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|devpts_root_lookup
 comma
-multiline_comment|/* lookup */
 )brace
 suffix:semicolon
 DECL|variable|devpts_dentry_operations

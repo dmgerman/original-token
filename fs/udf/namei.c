@@ -1319,6 +1319,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * udf_lookup&n; *&n; * PURPOSE&n; *&t;Look-up the inode for a given name.&n; *&n; * DESCRIPTION&n; *&t;Required - lookup_dentry() will return -ENOTDIR if this routine is not&n; *&t;available for a directory. The filesystem is useless if this routine is&n; *&t;not available for at least the filesystem&squot;s root directory.&n; *&n; *&t;This routine is passed an incomplete dentry - it must be completed by&n; *&t;calling d_add(dentry, inode). If the name does not exist, then the&n; *&t;specified inode must be set to null. An error should only be returned&n; *&t;when the lookup fails for a reason other than the name not existing.&n; *&t;Note that the directory inode semaphore is held during the call.&n; *&n; *&t;Refer to lookup_dentry() in fs/namei.c&n; *&t;lookup_dentry() -&gt; lookup() -&gt; real_lookup() -&gt; .&n; *&n; * PRE-CONDITIONS&n; *&t;dir&t;&t;&t;Pointer to inode of parent directory.&n; *&t;dentry&t;&t;&t;Pointer to dentry to complete.&n; *&n; * POST-CONDITIONS&n; *&t;&lt;return&gt;&t;&t;Zero on success.&n; *&n; * HISTORY&n; *&t;July 1, 1997 - Andrew E. Mileski&n; *&t;Written, tested, and released.&n; */
+r_static
 r_struct
 id|dentry
 op_star
@@ -3211,6 +3212,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|udf_create
+r_static
 r_int
 id|udf_create
 c_func
@@ -3279,6 +3281,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|udf_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|udf_file_operations
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
@@ -3461,6 +3468,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|udf_mknod
+r_static
 r_int
 id|udf_mknod
 c_func
@@ -3541,14 +3549,6 @@ id|mode
 comma
 id|rdev
 )paren
-suffix:semicolon
-id|inode-&gt;i_mode
-op_assign
-id|mode
-suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -3733,6 +3733,7 @@ id|err
 suffix:semicolon
 )brace
 DECL|function|udf_mkdir
+r_static
 r_int
 id|udf_mkdir
 c_func
@@ -3833,6 +3834,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|udf_dir_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|udf_dir_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
@@ -4652,6 +4658,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|udf_rmdir
+r_static
 r_int
 id|udf_rmdir
 c_func
@@ -4901,6 +4908,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|udf_unlink
+r_static
 r_int
 id|udf_unlink
 c_func
@@ -5122,6 +5130,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|udf_symlink
+r_static
 r_int
 id|udf_symlink
 c_func
@@ -5772,6 +5781,7 @@ id|err
 suffix:semicolon
 )brace
 DECL|function|udf_link
+r_static
 r_int
 id|udf_link
 c_func
@@ -6094,6 +6104,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Anybody can rename anything with this: the permission checks are left to the&n; * higher-level routines.&n; */
 DECL|function|udf_rename
+r_static
 r_int
 id|udf_rename
 (paren
@@ -6776,4 +6787,50 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|variable|udf_dir_inode_operations
+r_struct
+id|inode_operations
+id|udf_dir_inode_operations
+op_assign
+(brace
+id|lookup
+suffix:colon
+id|udf_lookup
+comma
+macro_line|#if CONFIG_UDF_RW == 1
+id|create
+suffix:colon
+id|udf_create
+comma
+id|link
+suffix:colon
+id|udf_link
+comma
+id|unlink
+suffix:colon
+id|udf_unlink
+comma
+id|symlink
+suffix:colon
+id|udf_symlink
+comma
+id|mkdir
+suffix:colon
+id|udf_mkdir
+comma
+id|rmdir
+suffix:colon
+id|udf_rmdir
+comma
+id|mknod
+suffix:colon
+id|udf_mknod
+comma
+id|rename
+suffix:colon
+id|udf_rename
+comma
+macro_line|#endif
+)brace
+suffix:semicolon
 eof

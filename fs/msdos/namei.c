@@ -3186,37 +3186,34 @@ id|inode_operations
 id|msdos_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|fat_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
+id|create
+suffix:colon
 id|msdos_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|msdos_lookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|msdos_unlink
 comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|msdos_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|msdos_rmdir
 comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|msdos_rename
 comma
-multiline_comment|/* rename */
+id|setattr
+suffix:colon
+id|fat_notify_change
+comma
 )brace
 suffix:semicolon
 DECL|function|msdos_put_super_callback

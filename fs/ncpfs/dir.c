@@ -51,24 +51,6 @@ op_star
 )paren
 suffix:semicolon
 r_static
-id|ssize_t
-id|ncp_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-comma
-id|loff_t
-op_star
-)paren
-suffix:semicolon
-r_static
 r_int
 id|ncp_readdir
 c_func
@@ -202,7 +184,6 @@ op_star
 suffix:semicolon
 macro_line|#endif
 DECL|variable|ncp_dir_operations
-r_static
 r_struct
 id|file_operations
 id|ncp_dir_operations
@@ -210,7 +191,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|ncp_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -228,88 +209,42 @@ id|inode_operations
 id|ncp_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|ncp_dir_operations
-comma
-multiline_comment|/* default directory file ops */
+id|create
+suffix:colon
 id|ncp_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|ncp_lookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|ncp_unlink
 comma
-multiline_comment|/* unlink */
 macro_line|#ifdef CONFIG_NCPFS_EXTRAS
+id|symlink
+suffix:colon
 id|ncp_symlink
 comma
-multiline_comment|/* symlink */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* symlink */
 macro_line|#endif
+id|mkdir
+suffix:colon
 id|ncp_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|ncp_rmdir
 comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|ncp_rename
 comma
-multiline_comment|/* rename */
-l_int|NULL
+id|setattr
+suffix:colon
+id|ncp_notify_change
 comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-r_static
-id|ssize_t
-DECL|function|ncp_dir_read
-id|ncp_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Dentry operations routines&n; */
 r_static
 r_int

@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: hfc_sx.c,v 1.3 2000/01/20 19:49:36 keil Exp $&n;&n; * hfc_sx.c     low level driver for CCD&#xfffd;s hfc-s+/sp based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD HFC PCI cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hfc_sx.c,v $&n; * Revision 1.3  2000/01/20 19:49:36  keil&n; * Support teles 13.3c vendor version 2.1&n; *&n; * Revision 1.2  1999/12/19 13:09:42  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.1  1999/11/18 00:09:18  werner&n; *&n; * Initial release of files for HFC-S+ and HFC-SP cards with 32K-RAM.&n; * Audio and Echo are supported.&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: hfc_sx.c,v 1.4 2000/02/26 00:35:12 keil Exp $&n;&n; * hfc_sx.c     low level driver for CCD&#xfffd;s hfc-s+/sp based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD HFC PCI cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hfc_sx.c,v $&n; * Revision 1.4  2000/02/26 00:35:12  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.3  2000/01/20 19:49:36  keil&n; * Support teles 13.3c vendor version 2.1&n; *&n; * Revision 1.2  1999/12/19 13:09:42  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.1  1999/11/18 00:09:18  werner&n; *&n; * Initial release of files for HFC-S+ and HFC-SP cards with 32K-RAM.&n; * Audio and Echo are supported.&n; *&n; *&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|hfcsx_revision
 op_assign
-l_string|&quot;$Revision: 1.3 $&quot;
+l_string|&quot;$Revision: 1.4 $&quot;
 suffix:semicolon
 multiline_comment|/***************************************/
 multiline_comment|/* IRQ-table for CCDs demo board       */
@@ -1556,7 +1557,7 @@ id|HFCSX_FIF_DRD
 )paren
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -2812,7 +2813,7 @@ l_int|0
 )paren
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|cs-&gt;tx_skb
@@ -2943,7 +2944,7 @@ comma
 id|bcs-&gt;tx_skb-&gt;len
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb
@@ -3735,7 +3736,7 @@ id|skb-&gt;len
 )paren
 suffix:semicolon
 )brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
@@ -4674,7 +4675,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|cs-&gt;tx_skb
@@ -6629,7 +6630,7 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb

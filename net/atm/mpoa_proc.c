@@ -111,19 +111,6 @@ id|proc_mpc_write
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *   Define allowed INODE OPERATIONS&n; */
-DECL|variable|mpc_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|mpc_inode_operations
-op_assign
-(brace
-op_amp
-id|mpc_file_operations
-comma
-)brace
-suffix:semicolon
 DECL|function|print_header
 r_static
 r_int
@@ -1953,10 +1940,10 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-id|p-&gt;ops
+id|p-&gt;proc_fops
 op_assign
 op_amp
-id|mpc_inode_operations
+id|mpc_file_operations
 suffix:semicolon
 r_return
 l_int|0

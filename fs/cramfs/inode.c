@@ -14,17 +14,17 @@ r_struct
 id|super_operations
 id|cramfs_ops
 suffix:semicolon
-DECL|variable|cramfs_file_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|cramfs_file_inode_operations
-suffix:semicolon
 DECL|variable|cramfs_dir_inode_operations
 r_static
 r_struct
 id|inode_operations
 id|cramfs_dir_inode_operations
+suffix:semicolon
+DECL|variable|cramfs_directory_operations
+r_static
+r_struct
+id|file_operations
+id|cramfs_directory_operations
 suffix:semicolon
 DECL|variable|cramfs_aops
 r_static
@@ -125,10 +125,10 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|cramfs_file_inode_operations
+id|generic_ro_fops
 suffix:semicolon
 id|inode-&gt;i_data.a_ops
 op_assign
@@ -146,11 +146,18 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
+(brace
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|cramfs_dir_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|cramfs_directory_operations
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -1592,24 +1599,7 @@ suffix:colon
 id|cramfs_readpage
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Our operations:&n; *&n; * A regular file can be read and mmap&squot;ed.&n; */
-DECL|variable|cramfs_file_operations
-r_static
-r_struct
-id|file_operations
-id|cramfs_file_operations
-op_assign
-(brace
-id|read
-suffix:colon
-id|generic_file_read
-comma
-id|mmap
-suffix:colon
-id|generic_file_mmap
-comma
-)brace
-suffix:semicolon
+multiline_comment|/*&n; * Our operations:&n; */
 multiline_comment|/*&n; * A directory can only readdir&n; */
 DECL|variable|cramfs_directory_operations
 r_static
@@ -1618,21 +1608,13 @@ id|file_operations
 id|cramfs_directory_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|cramfs_readdir
-comma
-)brace
-suffix:semicolon
-DECL|variable|cramfs_file_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|cramfs_file_inode_operations
-op_assign
-(brace
-op_amp
-id|cramfs_file_operations
 comma
 )brace
 suffix:semicolon
@@ -1643,15 +1625,10 @@ id|inode_operations
 id|cramfs_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|cramfs_directory_operations
-comma
-l_int|NULL
-comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|cramfs_lookup
 comma
-multiline_comment|/* lookup */
 )brace
 suffix:semicolon
 DECL|variable|cramfs_ops
@@ -1661,32 +1638,14 @@ id|super_operations
 id|cramfs_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* read inode */
-l_int|NULL
-comma
-multiline_comment|/* write inode */
-l_int|NULL
-comma
-multiline_comment|/* put inode */
-l_int|NULL
-comma
-multiline_comment|/* delete inode */
-l_int|NULL
-comma
-multiline_comment|/* notify change */
+id|put_super
+suffix:colon
 id|cramfs_put_super
 comma
-multiline_comment|/* put super */
-l_int|NULL
-comma
-multiline_comment|/* write super */
+id|statfs
+suffix:colon
 id|cramfs_statfs
 comma
-multiline_comment|/* statfs */
-l_int|NULL
-multiline_comment|/* remount */
 )brace
 suffix:semicolon
 DECL|variable|cramfs_fs_type

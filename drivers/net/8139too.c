@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|RTL8139_VERSION
-mdefine_line|#define RTL8139_VERSION &quot;0.9.3.3.2&quot;
+mdefine_line|#define RTL8139_VERSION &quot;0.9.4&quot;
 DECL|macro|RTL8139_MODULE_NAME
 mdefine_line|#define RTL8139_MODULE_NAME &quot;8139too&quot;
 DECL|macro|RTL8139_DRIVER_NAME
@@ -790,6 +790,22 @@ DECL|enumerator|CSCR_LinkDownCmd
 id|CSCR_LinkDownCmd
 op_assign
 l_int|0x0f3c0
+comma
+)brace
+suffix:semicolon
+DECL|enum|Cfg9346Bits
+r_enum
+id|Cfg9346Bits
+(brace
+DECL|enumerator|Cfg9346_Lock
+id|Cfg9346_Lock
+op_assign
+l_int|0x00
+comma
+DECL|enumerator|Cfg9346_Unlock
+id|Cfg9346_Unlock
+op_assign
+l_int|0xC0
 comma
 )brace
 suffix:semicolon
@@ -2331,7 +2347,7 @@ id|RTL_W8
 (paren
 id|Cfg9346
 comma
-l_int|0xC0
+id|Cfg9346_Unlock
 )paren
 suffix:semicolon
 id|RTL_W8
@@ -3821,12 +3837,12 @@ l_int|4
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Hmmm, do these belong here? */
+multiline_comment|/* unlock Config[01234] and BMCR register writes */
 id|RTL_W8
 (paren
 id|Cfg9346
 comma
-l_int|0x00
+id|Cfg9346_Unlock
 )paren
 suffix:semicolon
 id|tp-&gt;cur_rx
@@ -3999,13 +4015,6 @@ suffix:semicolon
 multiline_comment|/* check_duplex() here. */
 id|RTL_W8
 (paren
-id|Cfg9346
-comma
-l_int|0xC0
-)paren
-suffix:semicolon
-id|RTL_W8
-(paren
 id|Config1
 comma
 id|tp-&gt;full_duplex
@@ -4016,11 +4025,12 @@ suffix:colon
 l_int|0x20
 )paren
 suffix:semicolon
+multiline_comment|/* lock Config[01234] and BMCR register writes */
 id|RTL_W8
 (paren
 id|Cfg9346
 comma
-l_int|0x00
+id|Cfg9346_Lock
 )paren
 suffix:semicolon
 id|RTL_W32
@@ -4038,9 +4048,26 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* release lock cuz set_rx_mode wants it */
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|rtl8139_set_rx_mode
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|RTL_W8
@@ -4612,7 +4639,7 @@ id|RTL_W8
 (paren
 id|Cfg9346
 comma
-l_int|0xC0
+id|Cfg9346_Unlock
 )paren
 suffix:semicolon
 id|RTL_W8
@@ -4631,7 +4658,7 @@ id|RTL_W8
 (paren
 id|Cfg9346
 comma
-l_int|0x00
+id|Cfg9346_Lock
 )paren
 suffix:semicolon
 )brace
@@ -5705,12 +5732,6 @@ id|tp-&gt;dirty_tx
 op_assign
 id|dirty_tx
 suffix:semicolon
-id|spin_unlock
-(paren
-op_amp
-id|dev-&gt;xmit_lock
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* The data sheet doesn&squot;t describe the Rx ring at all, so I&squot;m guessing at the&n;   field alignments and semantics. */
 DECL|function|rtl8139_rx_interrupt
@@ -5842,10 +5863,6 @@ id|rx_status
 op_rshift
 l_int|16
 suffix:semicolon
-macro_line|#ifdef RTL8139_DEBUG
-r_int
-id|i
-suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;%s:  rtl8139_rx() status %4.4x, size %4.4x,&quot;
@@ -5859,6 +5876,11 @@ id|rx_size
 comma
 id|cur_rx
 )paren
+suffix:semicolon
+macro_line|#if RTL8139_DEBUG &gt; 2
+(brace
+r_int
+id|i
 suffix:semicolon
 id|DPRINTK
 (paren
@@ -5898,6 +5920,7 @@ id|printk
 l_string|&quot;.&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/* E. Gill */
 multiline_comment|/* Note from BSD driver:&n;&t;&t; * Here&squot;s a totally undocumented fact for you. When the&n;&t;&t; * RealTek chip is in the process of copying a packet into&n;&t;&t; * RAM for you, the length will be 0xfff0. If you spot a&n;&t;&t; * packet header with this value, you need to stop. The&n;&t;&t; * datasheet makes absolutely no mention of this and&n;&t;&t; * RealTek should be shot for this.&n;&t;&t; */
@@ -6433,7 +6456,7 @@ id|RTL_W8
 (paren
 id|Cfg9346
 comma
-l_int|0xC0
+id|Cfg9346_Unlock
 )paren
 suffix:semicolon
 id|RTL_W8
@@ -6452,7 +6475,7 @@ id|RTL_W8
 (paren
 id|Cfg9346
 comma
-l_int|0x00
+id|Cfg9346_Lock
 )paren
 suffix:semicolon
 )brace
@@ -7153,7 +7176,7 @@ id|RTL_W8
 (paren
 id|Cfg9346
 comma
-l_int|0xC0
+id|Cfg9346_Unlock
 )paren
 suffix:semicolon
 id|RTL_W8
@@ -7224,6 +7247,15 @@ op_star
 op_amp
 id|rq-&gt;ifr_data
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|rc
+op_assign
+l_int|0
+suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;ENTER&bslash;n&quot;
@@ -7258,6 +7290,14 @@ op_plus
 l_int|1
 suffix:colon
 multiline_comment|/* Read the specified MII register. */
+id|spin_lock_irqsave
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|data
 (braket
 l_int|3
@@ -7280,13 +7320,15 @@ op_amp
 l_int|0x1f
 )paren
 suffix:semicolon
-id|DPRINTK
+id|spin_unlock_irqrestore
 (paren
-l_string|&quot;EXIT&bslash;n&quot;
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_case
 id|SIOCDEVPRIVATE
@@ -7303,9 +7345,22 @@ id|capable
 id|CAP_NET_ADMIN
 )paren
 )paren
-r_return
+(brace
+id|rc
+op_assign
 op_minus
 id|EPERM
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|spin_lock_irqsave
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
 suffix:semicolon
 id|mdio_write
 (paren
@@ -7329,30 +7384,35 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
-id|DPRINTK
+id|spin_unlock_irqrestore
 (paren
-l_string|&quot;EXIT&bslash;n&quot;
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DPRINTK
-(paren
-l_string|&quot;EXIT&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
+id|rc
+op_assign
 op_minus
 id|EOPNOTSUPP
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 id|DPRINTK
 (paren
-l_string|&quot;EXIT&bslash;n&quot;
+l_string|&quot;EXIT, returning %d&bslash;n&quot;
+comma
+id|rc
 )paren
+suffix:semicolon
+r_return
+id|rc
 suffix:semicolon
 )brace
 DECL|function|rtl8139_get_stats
@@ -7604,6 +7664,10 @@ id|i
 comma
 id|rx_mode
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;ENTER&bslash;n&quot;
@@ -7771,6 +7835,23 @@ id|mc_filter
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* if called from irq handler, lock already acquired */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_irq
+(paren
+)paren
+)paren
+id|spin_lock_irqsave
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* We can safely update without stopping the chip. */
 id|RTL_W32
 (paren
@@ -7803,6 +7884,22 @@ id|mc_filter
 (braket
 l_int|1
 )braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_irq
+(paren
+)paren
+)paren
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|DPRINTK

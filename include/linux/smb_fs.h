@@ -155,6 +155,11 @@ id|smb_file_inode_operations
 suffix:semicolon
 r_extern
 r_struct
+id|file_operations
+id|smb_file_operations
+suffix:semicolon
+r_extern
+r_struct
 id|address_space_operations
 id|smb_file_aops
 suffix:semicolon
@@ -163,6 +168,11 @@ r_extern
 r_struct
 id|inode_operations
 id|smb_dir_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+id|smb_dir_operations
 suffix:semicolon
 r_void
 id|smb_renew_times

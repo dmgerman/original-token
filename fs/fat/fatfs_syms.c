@@ -8,11 +8,6 @@ macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/fat_cvf.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
 macro_line|#include &quot;tables.h&quot;
-r_extern
-r_struct
-id|file_operations
-id|fat_dir_operations
-suffix:semicolon
 DECL|variable|fat_new_dir
 id|EXPORT_SYMBOL
 c_func
@@ -67,13 +62,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|fat_delete_inode
-)paren
-suffix:semicolon
-DECL|variable|fat_dir_operations
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|fat_dir_operations
 )paren
 suffix:semicolon
 DECL|variable|fat_esc2uni

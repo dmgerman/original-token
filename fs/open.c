@@ -2955,7 +2955,7 @@ id|inode-&gt;i_op
 )paren
 id|f-&gt;f_op
 op_assign
-id|inode-&gt;i_op-&gt;default_file_ops
+id|inode-&gt;i_fop
 suffix:semicolon
 r_if
 c_cond

@@ -1568,10 +1568,6 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
 id|inode-&gt;i_blksize

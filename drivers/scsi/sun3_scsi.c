@@ -149,28 +149,6 @@ mdefine_line|#define SUN3_DVMA_BUFSIZE 0xe000
 multiline_comment|/* minimum number of bytes to to dma on */
 DECL|macro|SUN3_DMA_MINSIZE
 mdefine_line|#define SUN3_DMA_MINSIZE 128
-DECL|variable|proc_scsi_sun3_5380
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_scsi_sun3_5380
-op_assign
-(brace
-id|PROC_SCSI_MAC
-comma
-l_int|13
-comma
-l_string|&quot;Sun3 5380 SCSI&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-comma
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|variable|sun3_scsi_regp
 r_static
 r_volatile
@@ -401,10 +379,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_sun3_5380
+l_string|&quot;Sun3 5380 SCSI&quot;
 suffix:semicolon
 multiline_comment|/* setup variables */
 id|tpnt-&gt;can_queue

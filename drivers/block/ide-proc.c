@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-proc.c&t;Version 1.03&t;January   2, 1998&n; *&n; *  Copyright (C) 1997-1998&t;Mark Lord&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-proc.c&t;Version 1.03&t;January  2, 1998&n; *&n; *  Copyright (C) 1997-1998&t;Mark Lord&n; */
 multiline_comment|/*&n; * This is the /proc/ide/ filesystem implementation.&n; *&n; * The major reason this exists is to provide sufficient access&n; * to driver and config data, such that user-mode programs can&n; * be developed to handle chipset tuning for most PCI interfaces.&n; * This should provide better utilities, and less kernel bloat.&n; *&n; * The entire pci config space for a PCI interface chipset can be&n; * retrieved by just reading it.  e.g.    &quot;cat /proc/ide3/config&quot;&n; *&n; * To modify registers *safely*, do something like:&n; *   echo &quot;P40:88&quot; &gt;/proc/ide/ide3/config&n; * That expression writes 0x88 to pci config register 0x40&n; * on the chip which controls ide3.  Multiple tuples can be issued,&n; * and the writes will be completed as an atomic set:&n; *   echo &quot;P40:88 P41:35 P42:00 P43:00&quot; &gt;/proc/ide/ide3/config&n; *&n; * All numbers must be specified using pairs of ascii hex digits.&n; * It is important to note that these writes will be performed&n; * after waiting for the IDE controller (both interfaces)&n; * to be completely idle, to ensure no corruption of I/O in progress.&n; *&n; * Non-PCI registers can also be written, using &quot;R&quot; in place of &quot;P&quot;&n; * in the above examples.  The size of the port transfer is determined&n; * by the number of pairs of hex digits given for the data.  If a two&n; * digit value is given, the write will be a byte operation; if four&n; * digits are used, the write will be performed as a 16-bit operation;&n; * and if eight digits are specified, a 32-bit &quot;dword&quot; write will be&n; * performed.  Odd numbers of digits are not permitted.&n; *&n; * If there is an error *anywhere* in the string of registers/data&n; * then *none* of the writes will be performed.&n; *&n; * Drive/Driver settings can be retrieved by reading the drive&squot;s&n; * &quot;settings&quot; files.  e.g.    &quot;cat /proc/ide0/hda/settings&quot;&n; * To write a new value &quot;val&quot; into a specific setting &quot;name&quot;, use:&n; *   echo &quot;name:val&quot; &gt;/proc/ide/ide0/hda/settings&n; *&n; * Also useful, &quot;cat /proc/ide0/hda/[identify, smart_values,&n; * smart_thresholds, capabilities]&quot; will issue an IDENTIFY /&n; * PACKET_IDENTIFY / SMART_READ_VALUES / SMART_READ_THRESHOLDS /&n; * SENSE CAPABILITIES command to /dev/hda, and then dump out the&n; * returned data as 256 16-bit words.  The &quot;hdparm&quot; utility will&n; * be updated someday soon to use this mechanism.&n; *&n; * Feel free to develop and distribute fancy GUI configuration&n; * utilities for you favorite PCI chipsets.  I&squot;ll be working on&n; * one for the Promise 20246 someday soon.  -ml&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -15,6 +15,33 @@ macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a) &lt; (b)) ? (a) : (b))
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
+r_extern
+id|byte
+id|aec6210_proc
+suffix:semicolon
+DECL|variable|aec6210_display_info
+r_int
+(paren
+op_star
+id|aec6210_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_AEC6210 */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_extern
 id|byte
@@ -42,6 +69,168 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
+macro_line|#ifdef CONFIG_BLK_DEV_AMD7409
+r_extern
+id|byte
+id|amd7409_proc
+suffix:semicolon
+DECL|variable|amd7409_display_info
+r_int
+(paren
+op_star
+id|amd7409_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_AMD7409 */
+macro_line|#ifdef CONFIG_BLK_DEV_CMD64X
+r_extern
+id|byte
+id|cmd64x_proc
+suffix:semicolon
+DECL|variable|cmd64x_display_info
+r_int
+(paren
+op_star
+id|cmd64x_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_CMD64X */
+macro_line|#ifdef CONFIG_BLK_DEV_CS5530
+r_extern
+id|byte
+id|cs5530_proc
+suffix:semicolon
+DECL|variable|cs5530_display_info
+r_int
+(paren
+op_star
+id|cs5530_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_CS5530 */
+macro_line|#ifdef CONFIG_BLK_DEV_HPT34X
+r_extern
+id|byte
+id|hpt34x_proc
+suffix:semicolon
+DECL|variable|hpt34x_display_info
+r_int
+(paren
+op_star
+id|hpt34x_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_HPT34X */
+macro_line|#ifdef CONFIG_BLK_DEV_HPT366
+r_extern
+id|byte
+id|hpt366_proc
+suffix:semicolon
+DECL|variable|hpt366_display_info
+r_int
+(paren
+op_star
+id|hpt366_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_HPT366 */
+macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
+r_extern
+id|byte
+id|pdc202xx_proc
+suffix:semicolon
+DECL|variable|pdc202xx_display_info
+r_int
+(paren
+op_star
+id|pdc202xx_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_PDC202XX */
 macro_line|#ifdef CONFIG_BLK_DEV_PIIX
 r_extern
 id|byte
@@ -911,9 +1100,9 @@ comma
 id|is_pci
 ques
 c_cond
-l_char|&squot;PCI&squot;
+l_string|&quot;PCI&quot;
 suffix:colon
-l_char|&squot;non-PCI&squot;
+l_string|&quot;non-PCI&quot;
 comma
 id|reg
 comma
@@ -1490,10 +1679,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;type
-op_eq
-id|IDE_DRIVER_MODULE
-op_logical_and
 id|driver
 )paren
 id|out
@@ -4174,6 +4359,31 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
+r_if
+c_cond
+(paren
+(paren
+id|aec6210_display_info
+)paren
+op_logical_and
+(paren
+id|aec6210_proc
+)paren
+)paren
+id|create_proc_info_entry
+c_func
+(paren
+l_string|&quot;aec6210&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+comma
+id|aec6210_display_info
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_AEC6210 */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_if
 c_cond
@@ -4199,6 +4409,156 @@ id|ali_display_info
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
+macro_line|#ifdef CONFIG_BLK_DEV_AMD7409
+r_if
+c_cond
+(paren
+(paren
+id|amd7409_display_info
+)paren
+op_logical_and
+(paren
+id|amd7409_proc
+)paren
+)paren
+id|create_proc_info_entry
+c_func
+(paren
+l_string|&quot;amd7409&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+comma
+id|amd7409_display_info
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_AMD7409 */
+macro_line|#ifdef CONFIG_BLK_DEV_CMD64X
+r_if
+c_cond
+(paren
+(paren
+id|cmd64x_display_info
+)paren
+op_logical_and
+(paren
+id|cmd64x_proc
+)paren
+)paren
+id|create_proc_info_entry
+c_func
+(paren
+l_string|&quot;cmd64x&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+comma
+id|cmd64x_display_info
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_CMD64X */
+macro_line|#ifdef CONFIG_BLK_DEV_CS5530
+r_if
+c_cond
+(paren
+(paren
+id|cs5530_display_info
+)paren
+op_logical_and
+(paren
+id|cs5530_proc
+)paren
+)paren
+id|create_proc_info_entry
+c_func
+(paren
+l_string|&quot;cs5530&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+comma
+id|cs5530_display_info
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_CS5530 */
+macro_line|#ifdef CONFIG_BLK_DEV_HPT34X
+r_if
+c_cond
+(paren
+(paren
+id|hpt34x_display_info
+)paren
+op_logical_and
+(paren
+id|hpt34x_proc
+)paren
+)paren
+id|create_proc_info_entry
+c_func
+(paren
+l_string|&quot;&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+comma
+id|hpt34x_display_info
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_HPT34X */
+macro_line|#ifdef CONFIG_BLK_DEV_HPT366
+r_if
+c_cond
+(paren
+(paren
+id|hpt366_display_info
+)paren
+op_logical_and
+(paren
+id|hpt366_proc
+)paren
+)paren
+id|create_proc_info_entry
+c_func
+(paren
+l_string|&quot;&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+comma
+id|hpt366_display_info
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_HPT366 */
+macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
+r_if
+c_cond
+(paren
+(paren
+id|pdc202xx_display_info
+)paren
+op_logical_and
+(paren
+id|pdc202xx_proc
+)paren
+)paren
+id|create_proc_info_entry
+c_func
+(paren
+l_string|&quot;pdc202xx&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+comma
+id|pdc202xx_display_info
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_PDC202XX */
 macro_line|#ifdef CONFIG_BLK_DEV_PIIX
 r_if
 c_cond
@@ -4284,6 +4644,27 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n;&t; * Mmmm.. does this free up all resources,&n;&t; * or do we need to do a more proper cleanup here ??&n;&t; */
+macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
+r_if
+c_cond
+(paren
+(paren
+id|aec6210_display_info
+)paren
+op_logical_and
+(paren
+id|aec6210_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/aec6210&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_AEC6210 */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_if
 c_cond
@@ -4305,6 +4686,132 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
+macro_line|#ifdef CONFIG_BLK_DEV_AMD7409
+r_if
+c_cond
+(paren
+(paren
+id|amd7409_display_info
+)paren
+op_logical_and
+(paren
+id|amd7409_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/amd7409&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_AMD7409 */
+macro_line|#ifdef CONFIG_BLK_DEV_CMD64X
+r_if
+c_cond
+(paren
+(paren
+id|cmd64x_display_info
+)paren
+op_logical_and
+(paren
+id|cmd64x_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/cmd64x&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_CMD64X */
+macro_line|#ifdef CONFIG_BLK_DEV_CS5530
+r_if
+c_cond
+(paren
+(paren
+id|cs5530_display_info
+)paren
+op_logical_and
+(paren
+id|cs5530_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/cs5530&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_CS5530 */
+macro_line|#ifdef CONFIG_BLK_DEV_HPT34X
+r_if
+c_cond
+(paren
+(paren
+id|hpt34x_display_info
+)paren
+op_logical_and
+(paren
+id|hpt34x_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/hpt34x&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_HPT34X */
+macro_line|#ifdef CONFIG_BLK_DEV_HPT366
+r_if
+c_cond
+(paren
+(paren
+id|hpt366_display_info
+)paren
+op_logical_and
+(paren
+id|hpt366_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/hpt366&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_HPT366 */
+macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
+r_if
+c_cond
+(paren
+(paren
+id|pdc202xx_display_info
+)paren
+op_logical_and
+(paren
+id|pdc202xx_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/pdc202xx&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_PDC202XX */
 macro_line|#ifdef CONFIG_BLK_DEV_PIIX
 r_if
 c_cond

@@ -53,8 +53,12 @@ r_int
 id|free_pages
 suffix:semicolon
 DECL|member|low_on_memory
-r_int
+r_char
 id|low_on_memory
+suffix:semicolon
+DECL|member|zone_wake_kswapd
+r_char
+id|zone_wake_kswapd
 suffix:semicolon
 DECL|member|pages_min
 DECL|member|pages_low
@@ -207,6 +211,12 @@ DECL|member|node_id
 r_int
 id|node_id
 suffix:semicolon
+DECL|member|node_next
+r_struct
+id|pglist_data
+op_star
+id|node_next
+suffix:semicolon
 DECL|typedef|pg_data_t
 )brace
 id|pg_data_t
@@ -214,6 +224,11 @@ suffix:semicolon
 r_extern
 r_int
 id|numnodes
+suffix:semicolon
+r_extern
+id|pg_data_t
+op_star
+id|pgdat_list
 suffix:semicolon
 DECL|macro|memclass
 mdefine_line|#define memclass(pgzone, tzone)&t;(((pgzone)-&gt;zone_pgdat == (tzone)-&gt;zone_pgdat) &bslash;&n;&t;&t;&t;&amp;&amp; (((pgzone) - (pgzone)-&gt;zone_pgdat-&gt;node_zones) &lt;= &bslash;&n;&t;&t;&t;((tzone) - (pgzone)-&gt;zone_pgdat-&gt;node_zones)))

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/aec6210.c&t;Version 0.04&t;Dec. 13, 1999&n; *&n; * Copyright (C) 1998-99&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; *  pio 0 ::       40: 00 07 00 00 00 00 00 00 02 07 a6 04 00 02 00 02&n; *  pio 1 ::       40: 0a 07 00 00 00 00 00 00 02 07 a6 05 00 02 00 02&n; *  pio 2 ::       40: 08 07 00 00 00 00 00 00 02 07 a6 05 00 02 00 02&n; *  pio 3 ::       40: 03 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  pio 4 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 0 ::       40: 0a 07 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 1 ::       40: 02 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 2 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 00 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 0 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 01 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 1 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 01 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 2 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 02 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * auto   ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 02 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * auto   ::       40: 01 04 01 04 01 04 01 04 02 05 a6 cf 00 02 00 02&n; *                 50: ff ff ff ff aa 06 04 00 00 00 00 00 00 00 00 00&n; *&n; *                 NO-Devices&n; *                 40: 00 00 00 00 00 00 00 00 02 05 a6 00 00 02 00 02&n; *                 50: ff ff ff ff 00 06 00 00 00 00 00 00 00 00 00 00&n; */
+multiline_comment|/*&n; * linux/drivers/block/aec6210.c&t;&t;Version 0.05&t;Feb. 10, 2000&n; *&n; * Copyright (C) 1998-2000&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; *  pio 0 ::       40: 00 07 00 00 00 00 00 00 02 07 a6 04 00 02 00 02&n; *  pio 1 ::       40: 0a 07 00 00 00 00 00 00 02 07 a6 05 00 02 00 02&n; *  pio 2 ::       40: 08 07 00 00 00 00 00 00 02 07 a6 05 00 02 00 02&n; *  pio 3 ::       40: 03 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  pio 4 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 0 ::       40: 0a 07 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 1 ::       40: 02 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 2 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 00 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 0 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 01 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 1 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 01 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 2 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 02 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * auto   ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 02 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * auto   ::       40: 01 04 01 04 01 04 01 04 02 05 a6 cf 00 02 00 02&n; *                 50: ff ff ff ff aa 06 04 00 00 00 00 00 00 00 00 00&n; *&n; *                 NO-Devices&n; *                 40: 00 00 00 00 00 00 00 00 02 05 a6 00 00 02 00 02&n; *                 50: ff ff ff ff 00 06 00 00 00 00 00 00 00 00 00 00&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,7 +17,301 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;ide_modes.h&quot;
 DECL|macro|ACARD_DEBUG_DRIVE_INFO
 mdefine_line|#define ACARD_DEBUG_DRIVE_INFO 1
-macro_line|#ifdef CONFIG_BLK_DEV_AEC6210_TUNING
+DECL|macro|DISPLAY_AEC6210_TIMINGS
+mdefine_line|#define DISPLAY_AEC6210_TIMINGS
+macro_line|#if defined(DISPLAY_AEC6210_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
+r_static
+r_int
+id|aec6210_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|aec6210_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* ide-proc.c */
+r_extern
+r_char
+op_star
+id|ide_media_verbose
+c_func
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
+DECL|variable|bmide_dev
+r_static
+r_struct
+id|pci_dev
+op_star
+id|bmide_dev
+suffix:semicolon
+DECL|function|aec6210_get_info
+r_static
+r_int
+id|aec6210_get_info
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|addr
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|count
+)paren
+(brace
+r_char
+op_star
+id|p
+op_assign
+id|buffer
+suffix:semicolon
+id|u32
+id|bibma
+op_assign
+id|bmide_dev-&gt;resource
+(braket
+l_int|4
+)braket
+dot
+id|start
+suffix:semicolon
+id|u8
+id|c0
+op_assign
+l_int|0
+comma
+id|c1
+op_assign
+l_int|0
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;&bslash;n                                AEC6210 Chipset.&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;         * at that point bibma+0x2 et bibma+0xa are byte registers&n;         * to investigate:&n;         */
+id|c0
+op_assign
+id|inb_p
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|bibma
+op_plus
+l_int|0x02
+)paren
+suffix:semicolon
+id|c1
+op_assign
+id|inb_p
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|bibma
+op_plus
+l_int|0x0a
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;--------------- Primary Channel ---------------- Secondary Channel -------------&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;                %sabled                         %sabled&bslash;n&quot;
+comma
+(paren
+id|c0
+op_amp
+l_int|0x80
+)paren
+ques
+c_cond
+l_string|&quot;dis&quot;
+suffix:colon
+l_string|&quot; en&quot;
+comma
+(paren
+id|c1
+op_amp
+l_int|0x80
+)paren
+ques
+c_cond
+l_string|&quot;dis&quot;
+suffix:colon
+l_string|&quot; en&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;--------------- drive0 --------- drive1 -------- drive0 ---------- drive1 ------&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;DMA enabled:    %s              %s             %s               %s&bslash;n&quot;
+comma
+(paren
+id|c0
+op_amp
+l_int|0x20
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+comma
+(paren
+id|c0
+op_amp
+l_int|0x40
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+comma
+(paren
+id|c1
+op_amp
+l_int|0x20
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+comma
+(paren
+id|c1
+op_amp
+l_int|0x40
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;UDMA&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;DMA&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;PIO&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|p
+op_minus
+id|buffer
+suffix:semicolon
+multiline_comment|/* =&gt; must be less than 4k! */
+)brace
+macro_line|#endif&t;/* defined(DISPLAY_AEC6210_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS) */
+DECL|variable|aec6210_proc
+id|byte
+id|aec6210_proc
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef CONFIG_AEC6210_TUNING
 DECL|struct|chipset_bus_clock_list_entry
 r_struct
 id|chipset_bus_clock_list_entry
@@ -1231,7 +1525,7 @@ id|drive
 suffix:semicolon
 multiline_comment|/* use standard DMA stuff */
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_AEC6210_TUNING */
+macro_line|#endif /* CONFIG_AEC6210_TUNING */
 DECL|function|pci_init_aec6210
 r_int
 r_int
@@ -1293,6 +1587,21 @@ id|start
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(DISPLAY_AEC6210_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+id|aec6210_proc
+op_assign
+l_int|1
+suffix:semicolon
+id|bmide_dev
+op_assign
+id|dev
+suffix:semicolon
+id|aec6210_display_info
+op_assign
+op_amp
+id|aec6210_get_info
+suffix:semicolon
+macro_line|#endif /* DISPLAY_AEC6210_TIMINGS &amp;&amp; CONFIG_PROC_FS */
 r_return
 id|dev-&gt;irq
 suffix:semicolon
@@ -1307,7 +1616,7 @@ op_star
 id|hwif
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_AEC6210_TUNING
+macro_line|#ifdef CONFIG_AEC6210_TUNING
 id|hwif-&gt;tuneproc
 op_assign
 op_amp
@@ -1346,7 +1655,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_AEC6210_TUNING */
+macro_line|#endif /* CONFIG_AEC6210_TUNING */
 )brace
 DECL|function|ide_dmacapable_aec6210
 r_void

@@ -98,33 +98,6 @@ id|umsdos_dentry_dput
 multiline_comment|/* d_delete(struct dentry *) */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * So  grep *  doesn&squot;t complain in the presence of directories.&n; */
-DECL|function|dummy_dir_read
-r_int
-id|dummy_dir_read
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buff
-comma
-r_int
-id|size
-comma
-id|loff_t
-op_star
-id|count
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 DECL|struct|UMSDOS_DIR_ONCE
 r_struct
 id|UMSDOS_DIR_ONCE
@@ -2695,7 +2668,6 @@ id|out_free
 suffix:semicolon
 )brace
 DECL|variable|umsdos_dir_operations
-r_static
 r_struct
 id|file_operations
 id|umsdos_dir_operations
@@ -2703,7 +2675,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|dummy_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -2721,37 +2693,46 @@ id|inode_operations
 id|umsdos_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|umsdos_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
+id|create
+suffix:colon
 id|UMSDOS_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|UMSDOS_lookup
 comma
-multiline_comment|/* lookup */
+id|link
+suffix:colon
 id|UMSDOS_link
 comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|UMSDOS_unlink
 comma
-multiline_comment|/* unlink */
+id|symlink
+suffix:colon
 id|UMSDOS_symlink
 comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|UMSDOS_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|UMSDOS_rmdir
 comma
-multiline_comment|/* rmdir */
+id|mknod
+suffix:colon
 id|UMSDOS_mknod
 comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|UMSDOS_rename
 comma
-multiline_comment|/* rename */
+id|setattr
+suffix:colon
+id|UMSDOS_notify_change
+comma
 )brace
 suffix:semicolon
 eof

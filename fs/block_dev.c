@@ -3523,18 +3523,6 @@ id|blkdev_ioctl
 comma
 )brace
 suffix:semicolon
-DECL|variable|blkdev_inode_operations
-r_struct
-id|inode_operations
-id|blkdev_inode_operations
-op_assign
-(brace
-op_amp
-id|def_blk_fops
-comma
-multiline_comment|/* default file operations */
-)brace
-suffix:semicolon
 DECL|function|bdevname
 r_const
 r_char

@@ -25,26 +25,7 @@ comma
 id|filldir_t
 )paren
 suffix:semicolon
-r_static
-id|ssize_t
-id|affs_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-comma
-id|loff_t
-op_star
-)paren
-suffix:semicolon
 DECL|variable|affs_dir_operations
-r_static
 r_struct
 id|file_operations
 id|affs_dir_operations
@@ -52,7 +33,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|affs_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -71,67 +52,44 @@ id|inode_operations
 id|affs_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|affs_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
+id|create
+suffix:colon
 id|affs_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|affs_lookup
 comma
-multiline_comment|/* lookup */
+id|link
+suffix:colon
 id|affs_link
 comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|affs_unlink
 comma
-multiline_comment|/* unlink */
+id|symlink
+suffix:colon
 id|affs_symlink
 comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|affs_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|affs_rmdir
 comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|affs_rename
 comma
-multiline_comment|/* rename */
+id|setattr
+suffix:colon
+id|affs_notify_change
+comma
 )brace
 suffix:semicolon
-r_static
-id|ssize_t
-DECL|function|affs_dir_read
-id|affs_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 r_static
 r_int
 DECL|function|affs_readdir

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.83 2000/02/11 06:57:17 jj Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.84 2000/02/25 05:44:41 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -5053,5 +5053,15 @@ suffix:colon
 l_string|&quot;g1&quot;
 )paren
 suffix:semicolon
+)brace
+DECL|function|init_irq_proc
+r_void
+id|init_irq_proc
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* For now, nothing... */
 )brace
 eof

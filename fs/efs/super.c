@@ -32,32 +32,18 @@ id|super_operations
 id|efs_superblock_operations
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|efs_read_inode
 comma
-multiline_comment|/* read_inode */
-l_int|NULL
-comma
-multiline_comment|/* write_inode */
-l_int|NULL
-comma
-multiline_comment|/* put_inode */
-l_int|NULL
-comma
-multiline_comment|/* delete_inode */
-l_int|NULL
-comma
-multiline_comment|/* notify_change */
+id|put_super
+suffix:colon
 id|efs_put_super
 comma
-multiline_comment|/* put_super */
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|efs_statfs
 comma
-multiline_comment|/* statfs */
-l_int|NULL
-multiline_comment|/* remount */
 )brace
 suffix:semicolon
 DECL|function|init_efs_fs

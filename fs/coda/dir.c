@@ -307,50 +307,54 @@ id|inode_operations
 id|coda_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|coda_dir_operations
-comma
+id|create
+suffix:colon
 id|coda_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|coda_lookup
 comma
-multiline_comment|/* lookup */
+id|link
+suffix:colon
 id|coda_link
 comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|coda_unlink
 comma
-multiline_comment|/* unlink */
+id|symlink
+suffix:colon
 id|coda_symlink
 comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|coda_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|coda_rmdir
 comma
-multiline_comment|/* rmdir */
+id|mknod
+suffix:colon
 id|coda_mknod
 comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|coda_rename
 comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
+id|permission
+suffix:colon
 id|coda_permission
 comma
-multiline_comment|/* permission */
+id|revalidate
+suffix:colon
 id|coda_revalidate_inode
-multiline_comment|/* revalidate */
+comma
+id|setattr
+suffix:colon
+id|coda_notify_change
+comma
 )brace
 suffix:semicolon
 DECL|variable|coda_dir_operations
@@ -359,6 +363,10 @@ id|file_operations
 id|coda_dir_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|coda_readdir

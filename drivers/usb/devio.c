@@ -5444,7 +5444,6 @@ id|mask
 suffix:semicolon
 )brace
 DECL|variable|usbdevfs_device_file_operations
-r_static
 r_struct
 id|file_operations
 id|usbdevfs_device_file_operations
@@ -5474,18 +5473,6 @@ id|release
 suffix:colon
 id|usbdev_release
 comma
-)brace
-suffix:semicolon
-DECL|variable|usbdevfs_device_inode_operations
-r_struct
-id|inode_operations
-id|usbdevfs_device_inode_operations
-op_assign
-(brace
-op_amp
-id|usbdevfs_device_file_operations
-comma
-multiline_comment|/* file-ops */
 )brace
 suffix:semicolon
 eof

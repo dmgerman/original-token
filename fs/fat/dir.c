@@ -17,34 +17,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(X)
-DECL|function|fat_dir_read
-r_static
-id|ssize_t
-id|fat_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 DECL|variable|fat_dir_operations
 r_struct
 id|file_operations
@@ -53,7 +25,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|fat_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon

@@ -232,10 +232,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|inode-&gt;i_op
-op_logical_or
-op_logical_neg
-id|inode-&gt;i_op-&gt;default_file_ops
+id|inode-&gt;i_fop
 )paren
 r_goto
 id|out
@@ -304,7 +301,7 @@ l_int|0
 suffix:semicolon
 id|f-&gt;f_op
 op_assign
-id|inode-&gt;i_op-&gt;default_file_ops
+id|inode-&gt;i_fop
 suffix:semicolon
 r_if
 c_cond
@@ -1441,10 +1438,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|inode-&gt;i_op
-op_logical_or
-op_logical_neg
-id|inode-&gt;i_op-&gt;default_file_ops
+id|inode-&gt;i_fop
 )paren
 r_goto
 id|end_readexec
@@ -3891,10 +3885,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|inode-&gt;i_op
-op_logical_or
-op_logical_neg
-id|inode-&gt;i_op-&gt;default_file_ops
+id|inode-&gt;i_fop
 )paren
 r_goto
 id|close_fail

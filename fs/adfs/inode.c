@@ -983,11 +983,18 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
+(brace
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|adfs_dir_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|adfs_dir_operations
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -1003,6 +1010,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|adfs_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|adfs_file_operations
 suffix:semicolon
 id|inode-&gt;i_mapping-&gt;a_ops
 op_assign
@@ -1024,33 +1036,6 @@ id|out
 suffix:colon
 r_return
 id|inode
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * This is no longer a valid way to obtain the metadata associated with the&n; * inode number on this filesystem.  This means that this filesystem cannot&n; * be shared via NFS.&n; */
-DECL|function|adfs_read_inode
-r_void
-id|adfs_read_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-id|adfs_error
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-l_string|&quot;unsupported method of reading inode&quot;
-)paren
-suffix:semicolon
-id|make_bad_inode
-c_func
-(paren
-id|inode
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Validate and convert a changed access mode/time to their ADFS equivalents.&n; * adfs_write_inode will actually write the information back to the directory&n; * later.&n; */

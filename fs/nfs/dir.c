@@ -28,24 +28,6 @@ op_star
 )paren
 suffix:semicolon
 r_static
-id|ssize_t
-id|nfs_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-comma
-id|loff_t
-op_star
-)paren
-suffix:semicolon
-r_static
 r_int
 id|nfs_readdir
 c_func
@@ -213,7 +195,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|variable|nfs_dir_operations
-r_static
 r_struct
 id|file_operations
 id|nfs_dir_operations
@@ -221,7 +202,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|nfs_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -243,82 +224,52 @@ id|inode_operations
 id|nfs_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|nfs_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
+id|create
+suffix:colon
 id|nfs_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|nfs_lookup
 comma
-multiline_comment|/* lookup */
+id|link
+suffix:colon
 id|nfs_link
 comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|nfs_unlink
 comma
-multiline_comment|/* unlink */
+id|symlink
+suffix:colon
 id|nfs_symlink
 comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|nfs_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|nfs_rmdir
 comma
-multiline_comment|/* rmdir */
+id|mknod
+suffix:colon
 id|nfs_mknod
 comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|nfs_rename
 comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
+id|revalidate
+suffix:colon
 id|nfs_revalidate
 comma
-multiline_comment|/* revalidate */
+id|setattr
+suffix:colon
+id|nfs_notify_change
+comma
 )brace
 suffix:semicolon
-r_static
-id|ssize_t
-DECL|function|nfs_dir_read
-id|nfs_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 multiline_comment|/* Each readdir response is composed of entries which look&n; * like the following, as per the NFSv2 RFC:&n; *&n; *&t;__u32&t;not_end&t;&t;&t;zero if end of response&n; *&t;__u32&t;file ID&t;&t;&t;opaque ino_t&n; *&t;__u32&t;namelen&t;&t;&t;size of name string&n; *&t;VAR&t;name string&t;&t;the string, padded to modulo 4 bytes&n; *&t;__u32&t;cookie&t;&t;&t;opaque ID of next entry&n; *&n; * When you hit not_end being zero, the next __u32 is non-zero if&n; * this is the end of the complete set of readdir entires for this&n; * directory.  This can be used, for example, to initiate pre-fetch.&n; *&n; * In order to know what to ask the server for, we only need to know&n; * the final cookie of the previous page, and offset zero has cookie&n; * zero, so we cache cookie to page offset translations in chunks.&n; */
 DECL|macro|COOKIES_PER_CHUNK
 mdefine_line|#define COOKIES_PER_CHUNK (8 - ((sizeof(void *) / sizeof(__u32))))

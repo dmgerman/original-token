@@ -420,13 +420,13 @@ id|inode-&gt;i_sb
 op_logical_and
 id|inode-&gt;i_sb-&gt;s_op
 op_logical_and
-id|inode-&gt;i_sb-&gt;s_op-&gt;notify_change
+id|inode-&gt;i_op-&gt;setattr
 )paren
 id|error
 op_assign
-id|inode-&gt;i_sb-&gt;s_op
+id|inode-&gt;i_op
 op_member_access_from_pointer
-id|notify_change
+id|setattr
 c_func
 (paren
 id|dentry

@@ -685,6 +685,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|ufs_lookup
+r_static
 r_struct
 id|dentry
 op_star
@@ -1791,6 +1792,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * By the time this is called, we already have created&n; * the directory cache entry for the new file, but it&n; * is so far negative - it has no inode.&n; *&n; * If the create succeeds, we fill in the inode information&n; * with d_instantiate(). &n; */
 DECL|function|ufs_create
+r_static
 r_int
 id|ufs_create
 (paren
@@ -1884,6 +1886,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|ufs_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|ufs_file_operations
 suffix:semicolon
 id|inode-&gt;i_mapping-&gt;a_ops
 op_assign
@@ -2021,6 +2028,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ufs_mknod
+r_static
 r_int
 id|ufs_mknod
 (paren
@@ -2250,6 +2258,7 @@ id|out
 suffix:semicolon
 )brace
 DECL|function|ufs_mkdir
+r_static
 r_int
 id|ufs_mkdir
 c_func
@@ -2356,6 +2365,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|ufs_dir_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|ufs_dir_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
@@ -3081,6 +3095,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|ufs_rmdir
+r_static
 r_int
 id|ufs_rmdir
 (paren
@@ -3347,6 +3362,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|ufs_unlink
+r_static
 r_int
 id|ufs_unlink
 c_func
@@ -3618,6 +3634,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Create symbolic link. We use only slow symlinks at this time.&n; */
 DECL|function|ufs_symlink
+r_static
 r_int
 id|ufs_symlink
 (paren
@@ -3930,6 +3947,7 @@ id|out
 suffix:semicolon
 )brace
 DECL|function|ufs_link
+r_static
 r_int
 id|ufs_link
 (paren
@@ -4115,6 +4133,7 @@ DECL|macro|PARENT_INO
 mdefine_line|#define PARENT_INO(buffer) &bslash;&n;&t;((struct ufs_dir_entry *) ((char *) buffer + &bslash;&n;&t;SWAB16(((struct ufs_dir_entry *) buffer)-&gt;d_reclen)))-&gt;d_ino
 multiline_comment|/*&n; * Anybody can rename anything with this: the permission checks are left to the&n; * higher-level routines.&n; */
 DECL|function|ufs_rename
+r_static
 r_int
 id|ufs_rename
 (paren
@@ -4663,4 +4682,48 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|variable|ufs_dir_inode_operations
+r_struct
+id|inode_operations
+id|ufs_dir_inode_operations
+op_assign
+(brace
+id|create
+suffix:colon
+id|ufs_create
+comma
+id|lookup
+suffix:colon
+id|ufs_lookup
+comma
+id|link
+suffix:colon
+id|ufs_link
+comma
+id|unlink
+suffix:colon
+id|ufs_unlink
+comma
+id|symlink
+suffix:colon
+id|ufs_symlink
+comma
+id|mkdir
+suffix:colon
+id|ufs_mkdir
+comma
+id|rmdir
+suffix:colon
+id|ufs_rmdir
+comma
+id|mknod
+suffix:colon
+id|ufs_mknod
+comma
+id|rename
+suffix:colon
+id|ufs_rename
+comma
+)brace
+suffix:semicolon
 eof

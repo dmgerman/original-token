@@ -2197,9 +2197,6 @@ id|inode_operations
 id|ntfs_inode_operations_nobmap
 op_assign
 (brace
-op_amp
-id|ntfs_file_operations_nommap
-comma
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_NTFS_RW
@@ -2491,6 +2488,11 @@ op_assign
 op_amp
 id|ntfs_inode_operations_nobmap
 suffix:semicolon
+id|r-&gt;i_fop
+op_assign
+op_amp
+id|ntfs_file_operations_nommap
+comma
 id|r-&gt;i_mode
 op_assign
 id|S_IFREG
@@ -2812,6 +2814,11 @@ op_assign
 op_amp
 id|ntfs_dir_inode_operations
 suffix:semicolon
+id|r-&gt;i_fop
+op_assign
+op_amp
+id|ntfs_dir_operations
+suffix:semicolon
 id|r-&gt;i_mode
 op_assign
 id|S_IFDIR
@@ -2989,9 +2996,6 @@ id|inode_operations
 id|ntfs_inode_operations
 op_assign
 (brace
-op_amp
-id|ntfs_file_operations
-comma
 )brace
 suffix:semicolon
 DECL|variable|ntfs_dir_operations
@@ -3001,6 +3005,10 @@ id|file_operations
 id|ntfs_dir_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|ntfs_readdir
@@ -3014,46 +3022,20 @@ id|inode_operations
 id|ntfs_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|ntfs_dir_operations
-comma
-macro_line|#ifdef CONFIG_NTFS_RW
-id|ntfs_create
-comma
-multiline_comment|/* create */
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
+id|lookup
+suffix:colon
 id|ntfs_lookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
 macro_line|#ifdef CONFIG_NTFS_RW
+id|create
+suffix:colon
+id|ntfs_create
+comma
+id|mkdir
+suffix:colon
 id|_linux_ntfs_mkdir
 comma
-multiline_comment|/* mkdir */
-macro_line|#else
-l_int|NULL
-comma
 macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
 )brace
 suffix:semicolon
 DECL|function|ntfs_writepage
@@ -3249,10 +3231,6 @@ c_func
 (paren
 id|inode
 )paren
-suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
@@ -3525,6 +3503,11 @@ op_assign
 op_amp
 id|ntfs_dir_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|ntfs_dir_operations
+suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 id|S_IFDIR
@@ -3547,6 +3530,11 @@ op_assign
 op_amp
 id|ntfs_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|ntfs_file_operations
+suffix:semicolon
 id|inode-&gt;i_mapping-&gt;a_ops
 op_assign
 op_amp
@@ -3564,6 +3552,11 @@ op_assign
 op_amp
 id|ntfs_inode_operations_nobmap
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|ntfs_file_operations_nommap
+comma
 )brace
 id|inode-&gt;i_mode
 op_assign
@@ -4006,37 +3999,32 @@ id|super_operations
 id|ntfs_super_operations
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|ntfs_read_inode
 comma
 macro_line|#ifdef CONFIG_NTFS_RW
+id|write_inode
+suffix:colon
 id|ntfs_write_inode
 comma
-macro_line|#else
-l_int|NULL
-comma
 macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* put_inode */
-l_int|NULL
-comma
-multiline_comment|/* delete_inode */
-l_int|NULL
-comma
-multiline_comment|/* notify_change */
+id|put_super
+suffix:colon
 id|ntfs_put_super
 comma
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|ntfs_statfs
 comma
+id|remount_fs
+suffix:colon
 id|ntfs_remount_fs
 comma
-multiline_comment|/* remount */
+id|clear_inode
+suffix:colon
 id|_ntfs_clear_inode
 comma
-multiline_comment|/* clear_inode */
 )brace
 suffix:semicolon
 multiline_comment|/* Called to mount a filesystem by read_super() in fs/super.c&n; * Return a super block, the main structure of a filesystem&n; *&n; * NOTE : Don&squot;t store a pointer to an option, as the page containing the&n; * options is freed after ntfs_read_super() returns.&n; *&n; * NOTE : A context switch can happen in kernel code only if the code blocks&n; * (= calls schedule() in kernel/sched.c).&n; */

@@ -15,10 +15,10 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/ac97_codec.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &quot;trident.h&quot;
-macro_line|#include &quot;ac97_codec.h&quot;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 DECL|macro|DRIVER_VERSION
@@ -4639,7 +4639,7 @@ id|SB_IRQ
 (brace
 multiline_comment|/* Midi - TODO */
 )brace
-multiline_comment|/* manually clear interrupt status, bad hardware design, balme T^2 */
+multiline_comment|/* manually clear interrupt status, bad hardware design, blame T^2 */
 id|outl
 c_func
 (paren

@@ -4,35 +4,6 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sysv_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|function|sysv_dir_read
-r_static
-id|ssize_t
-id|sysv_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 r_static
 r_int
 id|sysv_readdir
@@ -49,7 +20,6 @@ id|filldir_t
 )paren
 suffix:semicolon
 DECL|variable|sysv_dir_operations
-r_static
 r_struct
 id|file_operations
 id|sysv_dir_operations
@@ -57,7 +27,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|sysv_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -67,46 +37,6 @@ id|fsync
 suffix:colon
 id|file_fsync
 comma
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * directories can handle most operations...&n; */
-DECL|variable|sysv_dir_inode_operations
-r_struct
-id|inode_operations
-id|sysv_dir_inode_operations
-op_assign
-(brace
-op_amp
-id|sysv_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
-id|sysv_create
-comma
-multiline_comment|/* create */
-id|sysv_lookup
-comma
-multiline_comment|/* lookup */
-id|sysv_link
-comma
-multiline_comment|/* link */
-id|sysv_unlink
-comma
-multiline_comment|/* unlink */
-id|sysv_symlink
-comma
-multiline_comment|/* symlink */
-id|sysv_mkdir
-comma
-multiline_comment|/* mkdir */
-id|sysv_rmdir
-comma
-multiline_comment|/* rmdir */
-id|sysv_mknod
-comma
-multiline_comment|/* mknod */
-id|sysv_rename
-comma
-multiline_comment|/* rename */
 )brace
 suffix:semicolon
 DECL|function|sysv_readdir

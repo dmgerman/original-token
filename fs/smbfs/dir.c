@@ -11,24 +11,6 @@ multiline_comment|/* #define pr_debug printk */
 DECL|macro|SMBFS_MAX_AGE
 mdefine_line|#define SMBFS_MAX_AGE 5*HZ
 r_static
-id|ssize_t
-id|smb_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-comma
-id|loff_t
-op_star
-)paren
-suffix:semicolon
-r_static
 r_int
 id|smb_readdir
 c_func
@@ -156,7 +138,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|variable|smb_dir_operations
-r_static
 r_struct
 id|file_operations
 id|smb_dir_operations
@@ -164,7 +145,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|smb_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -186,82 +167,40 @@ id|inode_operations
 id|smb_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|smb_dir_operations
-comma
-multiline_comment|/* default directory file ops */
+id|create
+suffix:colon
 id|smb_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|smb_lookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|smb_unlink
 comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|smb_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|smb_rmdir
 comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|smb_rename
 comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
+id|revalidate
+suffix:colon
 id|smb_revalidate_inode
 comma
-multiline_comment|/* revalidate */
+id|setattr
+suffix:colon
+id|smb_notify_change
+comma
 )brace
 suffix:semicolon
-r_static
-id|ssize_t
-DECL|function|smb_dir_read
-id|smb_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 r_static
 r_int
 DECL|function|smb_readdir

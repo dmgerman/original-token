@@ -305,51 +305,36 @@ id|super_operations
 id|udf_sb_ops
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|udf_read_inode
 comma
-multiline_comment|/* read_inode */
-macro_line|#if CONFIG_UDF_RW == 1
-id|udf_write_inode
-comma
-multiline_comment|/* write_inode */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* write_inode */
-macro_line|#endif
+id|put_inode
+suffix:colon
 id|udf_put_inode
 comma
-multiline_comment|/* put_inode */
-macro_line|#if CONFIG_UDF_RW == 1
-id|udf_delete_inode
-comma
-multiline_comment|/* delete_inode */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* delete_inode */
-macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* notify_change */
+id|put_super
+suffix:colon
 id|udf_put_super
 comma
-multiline_comment|/* put_super */
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|udf_statfs
 comma
-multiline_comment|/* statfs */
+id|remount_fs
+suffix:colon
 id|udf_remount_fs
 comma
-multiline_comment|/* remount_fs */
-l_int|NULL
+macro_line|#if CONFIG_UDF_RW == 1
+id|write_inode
+suffix:colon
+id|udf_write_inode
 comma
-multiline_comment|/* clear_inode */
-l_int|NULL
+id|delete_inode
+suffix:colon
+id|udf_delete_inode
 comma
-multiline_comment|/* umount_begin */
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|udf_options

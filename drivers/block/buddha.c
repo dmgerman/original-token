@@ -24,6 +24,7 @@ DECL|variable|buddha_bases
 r_static
 r_const
 id|u_int
+id|__init
 id|buddha_bases
 (braket
 id|CATWEASEL_NUM_HWIFS
@@ -59,6 +60,7 @@ mdefine_line|#define BUDDHA_CONTROL&t;0x11a
 DECL|variable|buddha_offsets
 r_static
 r_int
+id|__init
 id|buddha_offsets
 (braket
 id|IDE_NR_PORTS
@@ -95,6 +97,7 @@ DECL|variable|buddha_irqports
 r_static
 r_const
 r_int
+id|__init
 id|buddha_irqports
 (braket
 id|CATWEASEL_NUM_HWIFS
@@ -174,6 +177,7 @@ multiline_comment|/*&n;     *  Any Buddha or Catweasel boards present?&n;     */
 DECL|function|find_buddha
 r_static
 r_int
+id|__init
 id|find_buddha
 c_func
 (paren
@@ -316,6 +320,7 @@ suffix:semicolon
 multiline_comment|/*&n;     *  Probe for a Buddha or Catweasel IDE interface&n;     *  We support only _one_ of them, no multiple boards!&n;     */
 DECL|function|buddha_init
 r_void
+id|__init
 id|buddha_init
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/hpt34x.c&t;&t;Version 0.28&t;Dec. 13, 1999&n; *&n; * Copyright (C) 1998-99&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; *&n; * 00:12.0 Unknown mass storage controller:&n; * Triones Technologies, Inc.&n; * Unknown device 0003 (rev 01)&n; *&n; * hde: UDMA 2 (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: UDMA 2 (0x0002 0x0012) (0x0010 0x0030)&n; * hde: DMA 2  (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: DMA 2  (0x0002 0x0012) (0x0010 0x0030)&n; * hdg: DMA 1  (0x0012 0x0052) (0x0030 0x0070)&n; * hdh: DMA 1  (0x0052 0x0252) (0x0070 0x00f0)&n; *&n; */
+multiline_comment|/*&n; * linux/drivers/block/hpt34x.c&t;&t;Version 0.29&t;Feb. 10, 2000&n; *&n; * Copyright (C) 1998-2000&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; *&n; * 00:12.0 Unknown mass storage controller:&n; * Triones Technologies, Inc.&n; * Unknown device 0003 (rev 01)&n; *&n; * hde: UDMA 2 (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: UDMA 2 (0x0002 0x0012) (0x0010 0x0030)&n; * hde: DMA 2  (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: DMA 2  (0x0002 0x0012) (0x0010 0x0030)&n; * hdg: DMA 1  (0x0012 0x0052) (0x0030 0x0070)&n; * hdh: DMA 1  (0x0052 0x0252) (0x0070 0x00f0)&n; *&n; * ide-pci.c reference&n; *&n; * Since there are two cards that report almost identically,&n; * the only discernable difference is the values reported in pcicmd.&n; * Booting-BIOS card or HPT363 :: pcicmd == 0x07&n; * Non-bootable card or HPT343 :: pcicmd == 0x05&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,11 +20,301 @@ DECL|macro|SPLIT_BYTE
 mdefine_line|#define SPLIT_BYTE(B,H,L)&t;((H)=(B&gt;&gt;4), (L)=(B-((B&gt;&gt;4)&lt;&lt;4)))
 macro_line|#endif
 DECL|macro|HPT343_DEBUG_DRIVE_INFO
-mdefine_line|#define HPT343_DEBUG_DRIVE_INFO&t;&t;0
-DECL|macro|HPT343_DISABLE_ALL_DMAING
-mdefine_line|#define HPT343_DISABLE_ALL_DMAING&t;0
-DECL|macro|HPT343_DMA_DISK_ONLY
-mdefine_line|#define HPT343_DMA_DISK_ONLY&t;&t;0
+mdefine_line|#define HPT343_DEBUG_DRIVE_INFO&t;&t;1
+DECL|macro|DISPLAY_HPT34X_TIMINGS
+mdefine_line|#define DISPLAY_HPT34X_TIMINGS
+macro_line|#if defined(DISPLAY_HPT34X_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
+r_static
+r_int
+id|hpt34x_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|hpt34x_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* ide-proc.c */
+r_extern
+r_char
+op_star
+id|ide_media_verbose
+c_func
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
+DECL|variable|bmide_dev
+r_static
+r_struct
+id|pci_dev
+op_star
+id|bmide_dev
+suffix:semicolon
+DECL|function|hpt34x_get_info
+r_static
+r_int
+id|hpt34x_get_info
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|addr
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|count
+)paren
+(brace
+r_char
+op_star
+id|p
+op_assign
+id|buffer
+suffix:semicolon
+id|u32
+id|bibma
+op_assign
+id|bmide_dev-&gt;resource
+(braket
+l_int|4
+)braket
+dot
+id|start
+suffix:semicolon
+id|u8
+id|c0
+op_assign
+l_int|0
+comma
+id|c1
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;         * at that point bibma+0x2 et bibma+0xa are byte registers&n;         * to investigate:&n;         */
+id|c0
+op_assign
+id|inb_p
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|bibma
+op_plus
+l_int|0x02
+)paren
+suffix:semicolon
+id|c1
+op_assign
+id|inb_p
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|bibma
+op_plus
+l_int|0x0a
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;&bslash;n                                HPT34X Chipset.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;--------------- Primary Channel ---------------- Secondary Channel -------------&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;                %sabled                         %sabled&bslash;n&quot;
+comma
+(paren
+id|c0
+op_amp
+l_int|0x80
+)paren
+ques
+c_cond
+l_string|&quot;dis&quot;
+suffix:colon
+l_string|&quot; en&quot;
+comma
+(paren
+id|c1
+op_amp
+l_int|0x80
+)paren
+ques
+c_cond
+l_string|&quot;dis&quot;
+suffix:colon
+l_string|&quot; en&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;--------------- drive0 --------- drive1 -------- drive0 ---------- drive1 ------&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;DMA enabled:    %s              %s             %s               %s&bslash;n&quot;
+comma
+(paren
+id|c0
+op_amp
+l_int|0x20
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+comma
+(paren
+id|c0
+op_amp
+l_int|0x40
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+comma
+(paren
+id|c1
+op_amp
+l_int|0x20
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+comma
+(paren
+id|c1
+op_amp
+l_int|0x40
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;UDMA&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;DMA&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;PIO&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|p
+op_minus
+id|buffer
+suffix:semicolon
+multiline_comment|/* =&gt; must be less than 4k! */
+)brace
+macro_line|#endif  /* defined(DISPLAY_HPT34X_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS) */
+DECL|variable|hpt34x_proc
+id|byte
+id|hpt34x_proc
+op_assign
+l_int|0
+suffix:semicolon
 r_extern
 r_char
 op_star
@@ -490,16 +780,6 @@ id|speed
 op_assign
 l_int|0x00
 suffix:semicolon
-macro_line|#if HPT343_DISABLE_ALL_DMAING
-r_return
-(paren
-(paren
-r_int
-)paren
-id|ide_dma_off
-)paren
-suffix:semicolon
-macro_line|#elif HPT343_DMA_DISK_ONLY
 r_if
 c_cond
 (paren
@@ -515,7 +795,6 @@ r_int
 id|ide_dma_off_quietly
 )paren
 suffix:semicolon
-macro_line|#endif /* HPT343_DISABLE_ALL_DMAING */
 id|hpt34x_clear_chipset
 c_func
 (paren
@@ -1331,7 +1610,7 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#ifndef CONFIG_HPT34X_AUTODMA
 r_if
 c_cond
 (paren
@@ -1343,7 +1622,7 @@ id|dma_func
 op_assign
 id|ide_dma_off
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_HPT34X_AUTODMA */
 r_return
 id|HWIF
 c_func
@@ -1389,15 +1668,6 @@ id|dma_base
 op_assign
 id|hwif-&gt;dma_base
 suffix:semicolon
-id|byte
-id|unit
-op_assign
-(paren
-id|drive-&gt;select.b.unit
-op_amp
-l_int|0x01
-)paren
-suffix:semicolon
 r_int
 r_int
 id|count
@@ -1415,72 +1685,6 @@ c_cond
 id|func
 )paren
 (brace
-r_case
-id|ide_dma_off
-suffix:colon
-r_case
-id|ide_dma_off_quietly
-suffix:colon
-id|outb
-c_func
-(paren
-id|inb
-c_func
-(paren
-id|dma_base
-op_plus
-l_int|2
-)paren
-op_amp
-op_complement
-(paren
-l_int|1
-op_lshift
-(paren
-l_int|5
-op_plus
-id|unit
-)paren
-)paren
-comma
-id|dma_base
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ide_dma_on
-suffix:colon
-id|outb
-c_func
-(paren
-id|inb
-c_func
-(paren
-id|dma_base
-op_plus
-l_int|2
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-(paren
-l_int|5
-op_plus
-id|unit
-)paren
-)paren
-comma
-id|dma_base
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|ide_dma_check
 suffix:colon
@@ -2016,6 +2220,21 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* local CPU only */
+macro_line|#if defined(DISPLAY_HPT34X_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+id|hpt34x_proc
+op_assign
+l_int|1
+suffix:semicolon
+id|bmide_dev
+op_assign
+id|dev
+suffix:semicolon
+id|hpt34x_display_info
+op_assign
+op_amp
+id|hpt34x_get_info
+suffix:semicolon
+macro_line|#endif /* DISPLAY_HPT34X_TIMINGS &amp;&amp; CONFIG_PROC_FS */
 r_return
 id|dev-&gt;irq
 suffix:semicolon
@@ -2058,8 +2277,6 @@ op_amp
 id|pcicmd
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_HPT34X_DMA
-macro_line|#if 0
 id|hwif-&gt;autodma
 op_assign
 (paren
@@ -2073,8 +2290,6 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif /* CONFIG_BLK_DEV_HPT34X_DMA */
 id|hwif-&gt;dmaproc
 op_assign
 op_amp

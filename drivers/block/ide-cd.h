@@ -1,7 +1,7 @@
+multiline_comment|/*&n; *  linux/drivers/block/ide_cd.h&n; *&n; *  Copyright (C) 1996-98  Erik Andersen&n; *  Copyright (C) 1998-2000 Jens Axboe&n; */
 macro_line|#ifndef _IDE_CD_H
 DECL|macro|_IDE_CD_H
 mdefine_line|#define _IDE_CD_H
-multiline_comment|/*&n; *  linux/drivers/block/ide_cd.h&n; *&n; *  Copyright (C) 1996, 1997, 1998  Erik Andersen&n; *  Copyright (C) 1998, 1999 Jens Axboe&n; */
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */

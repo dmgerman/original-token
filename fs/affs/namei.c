@@ -1356,7 +1356,12 @@ id|SF_OFS
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|affs_file_inode_operations_ofs
+id|affs_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|affs_file_operations_ofs
 suffix:semicolon
 r_else
 (brace
@@ -1364,6 +1369,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|affs_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|affs_file_operations
 suffix:semicolon
 id|inode-&gt;i_mapping-&gt;a_ops
 op_assign
@@ -1533,6 +1543,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|affs_dir_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|affs_dir_operations
 suffix:semicolon
 id|error
 op_assign
@@ -1972,7 +1987,7 @@ suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|page_symlink_inode_operations
+id|affs_symlink_inode_operations
 suffix:semicolon
 id|inode-&gt;i_data.a_ops
 op_assign
@@ -2474,6 +2489,10 @@ suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 id|oldinode-&gt;i_op
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+id|oldinode-&gt;i_fop
 suffix:semicolon
 id|inode-&gt;u.affs_i.i_protect
 op_assign

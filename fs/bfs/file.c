@@ -14,7 +14,6 @@ DECL|macro|dprintf
 mdefine_line|#define dprintf(x...)
 macro_line|#endif
 DECL|variable|bfs_file_operations
-r_static
 r_struct
 id|file_operations
 id|bfs_file_operations
@@ -693,11 +692,6 @@ id|inode_operations
 id|bfs_file_inops
 op_assign
 (brace
-id|default_file_ops
-suffix:colon
-op_amp
-id|bfs_file_operations
-comma
 )brace
 suffix:semicolon
 eof

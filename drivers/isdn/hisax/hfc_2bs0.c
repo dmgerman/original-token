@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hfc_2bs0.c,v 1.12 1999/12/19 14:17:12 keil Exp $&n;&n; *  specific routines for CCD&squot;s HFC 2BS0&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: hfc_2bs0.c,v $&n; * Revision 1.12  1999/12/19 14:17:12  keil&n; * fix compiler warning&n; *&n; * Revision 1.11  1999/11/21 12:41:18  werner&n; *&n; * Implemented full audio support&n; *&n; * Revision 1.10  1999/10/14 20:25:28  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.9  1999/07/01 08:11:36  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.8  1998/11/15 23:54:43  keil&n; * changes from 2.0&n; *&n; * Revision 1.7  1998/09/30 22:24:46  keil&n; * Fix missing line in setstack*&n; *&n; * Revision 1.6  1998/08/13 23:36:28  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.5  1998/05/25 12:57:54  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.4  1998/02/12 23:07:29  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.3  1997/11/06 17:13:35  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 19:04:47  keil&n; * changes for 2.1&n; *&n; * Revision 1.1  1997/09/11 17:31:33  keil&n; * Common part for HFC 2BS0 based cards&n; *&n; *&n; */
+multiline_comment|/* $Id: hfc_2bs0.c,v 1.13 2000/02/26 00:35:12 keil Exp $&n;&n; *  specific routines for CCD&squot;s HFC 2BS0&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: hfc_2bs0.c,v $&n; * Revision 1.13  2000/02/26 00:35:12  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.12  1999/12/19 14:17:12  keil&n; * fix compiler warning&n; *&n; * Revision 1.11  1999/11/21 12:41:18  werner&n; *&n; * Implemented full audio support&n; *&n; * Revision 1.10  1999/10/14 20:25:28  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.9  1999/07/01 08:11:36  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.8  1998/11/15 23:54:43  keil&n; * changes from 2.0&n; *&n; * Revision 1.7  1998/09/30 22:24:46  keil&n; * Fix missing line in setstack*&n; *&n; * Revision 1.6  1998/08/13 23:36:28  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.5  1998/05/25 12:57:54  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.4  1998/02/12 23:07:29  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.3  1997/11/06 17:13:35  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 19:04:47  keil&n; * changes for 2.1&n; *&n; * Revision 1.1  1997/09/11 17:31:33  keil&n; * Common part for HFC 2BS0 based cards&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -1326,7 +1326,7 @@ comma
 id|bcs-&gt;channel
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
@@ -1490,7 +1490,7 @@ comma
 l_string|&quot;FIFO CRC error&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
@@ -2049,7 +2049,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb
@@ -3302,7 +3302,7 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb

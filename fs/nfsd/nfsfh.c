@@ -243,10 +243,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dir-&gt;i_op
-op_logical_or
-op_logical_neg
-id|dir-&gt;i_op-&gt;default_file_ops
+id|dir-&gt;i_fop
 )paren
 r_goto
 id|out

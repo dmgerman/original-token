@@ -910,6 +910,16 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|map_zero_setup
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|zap_page_range
 c_func

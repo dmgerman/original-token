@@ -186,40 +186,6 @@ id|proc_self_inode_operations
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef __powerpc__
-DECL|variable|proc_root_ppc_htab
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_root_ppc_htab
-op_assign
-(brace
-l_int|0
-comma
-l_int|8
-comma
-l_string|&quot;ppc_htab&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-op_or
-id|S_IWUSR
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_ppc_htab_inode_operations
-comma
-)brace
-suffix:semicolon
-macro_line|#endif
 DECL|function|proc_root_init
 r_void
 id|__init
@@ -555,16 +521,10 @@ id|inode_operations
 id|proc_root_inode_operations
 op_assign
 (brace
-op_amp
-id|proc_root_operations
-comma
-multiline_comment|/* default base directory file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|proc_root_lookup
 comma
-multiline_comment|/* lookup */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is the root &quot;inode&quot; in the /proc tree..&n; */
@@ -596,6 +556,9 @@ l_int|0
 comma
 op_amp
 id|proc_root_inode_operations
+comma
+op_amp
+id|proc_root_operations
 comma
 l_int|NULL
 comma

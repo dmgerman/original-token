@@ -1017,51 +1017,6 @@ op_assign
 l_string|&quot;Please don&squot;t add commas in your insmod command!!&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * Our directory Entry in /proc/scsi for the user to &n; * access the driver. &n; */
-macro_line|#if 0
-multiline_comment|/* Need to add in proc_fs.h     PROC_SCSI_QL1280 */
-mdefine_line|#define PROC_SCSI_QL1280  PROC_SCSI_QLOGICISP
-r_struct
-id|proc_dir_entry
-id|proc_scsi_qla1280
-op_assign
-(brace
-id|PROC_SCSI_QL1280
-comma
-l_int|7
-comma
-l_string|&quot;qla1280&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* We use the Scsi_Pointer structure that&squot;s included with each command&n; * SCSI_Cmnd as a scratchpad for our SRB.&n; *&n; * SCp will always point to the SRB structure (defined in qla1280.h).&n; * It is define as follows:&n; *  - SCp.ptr  -- &gt; pointer back to the cmd&n; *  - SCp.this_residual --&gt; used as forward pointer to next srb&n; *  - SCp.buffer --&gt; used as backward pointer to next srb&n; *  - SCp.buffers_residual --&gt; used as flags field&n; *  - SCp.have_data_in --&gt; not used&n; *  - SCp.sent_command --&gt; not used&n; *  - SCp.phase --&gt; not used&n; */
 DECL|macro|CMD_SP
 mdefine_line|#define&t;CMD_SP(Cmnd)&t;&t;(&amp;(Cmnd)-&gt;SCp)

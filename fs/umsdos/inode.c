@@ -16,11 +16,6 @@ r_struct
 id|dentry_operations
 id|umsdos_dentry_operations
 suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|umsdos_rdir_inode_operations
-suffix:semicolon
 DECL|variable|saved_root
 r_struct
 id|dentry
@@ -108,7 +103,7 @@ id|dentry
 suffix:semicolon
 id|filp-&gt;f_op
 op_assign
-id|dentry-&gt;d_inode-&gt;i_op-&gt;default_file_ops
+id|dentry-&gt;d_inode-&gt;i_fop
 suffix:semicolon
 )brace
 DECL|function|UMSDOS_put_inode
@@ -289,6 +284,11 @@ op_assign
 op_amp
 id|umsdos_rdir_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|umsdos_rdir_operations
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -316,6 +316,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|umsdos_dir_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|umsdos_dir_operations
 suffix:semicolon
 )brace
 )brace
@@ -379,6 +384,44 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|variable|umsdos_file_inode_operations
+r_static
+r_struct
+id|inode_operations
+id|umsdos_file_inode_operations
+op_assign
+(brace
+id|truncate
+suffix:colon
+id|fat_truncate
+comma
+id|setattr
+suffix:colon
+id|UMSDOS_notify_change
+comma
+)brace
+suffix:semicolon
+DECL|variable|umsdos_symlink_inode_operations
+r_static
+r_struct
+id|inode_operations
+id|umsdos_symlink_inode_operations
+op_assign
+(brace
+id|readlink
+suffix:colon
+id|page_readlink
+comma
+id|follow_link
+suffix:colon
+id|page_follow_link
+comma
+id|setattr
+suffix:colon
+id|UMSDOS_notify_change
+comma
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Connect the proper tables in the inode and add some info.&n; */
 multiline_comment|/* #Specification: inode / umsdos info&n; * The first time an inode is seen (inode-&gt;i_count == 1),&n; * the inode number of the EMD file which controls this inode&n; * is tagged to this inode. It allows operations such as&n; * notify_change to be handled.&n; */
 DECL|function|umsdos_patch_dentry_inode
@@ -431,6 +474,11 @@ comma
 id|f_pos
 )paren
 suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|umsdos_file_inode_operations
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -440,7 +488,7 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-multiline_comment|/* All set */
+multiline_comment|/* address_space operations already set */
 )brace
 r_else
 r_if
@@ -473,7 +521,7 @@ multiline_comment|/* address_space operations already set */
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|page_symlink_inode_operations
+id|umsdos_symlink_inode_operations
 suffix:semicolon
 )brace
 r_else
@@ -1027,35 +1075,30 @@ id|super_operations
 id|umsdos_sops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* read_inode */
+id|write_inode
+suffix:colon
 id|UMSDOS_write_inode
 comma
-multiline_comment|/* write_inode */
+id|put_inode
+suffix:colon
 id|UMSDOS_put_inode
 comma
-multiline_comment|/* put_inode */
+id|delete_inode
+suffix:colon
 id|fat_delete_inode
 comma
-multiline_comment|/* delete_inode */
-id|UMSDOS_notify_change
-comma
-multiline_comment|/* notify_change */
+id|put_super
+suffix:colon
 id|UMSDOS_put_super
 comma
-multiline_comment|/* put_super */
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|fat_statfs
 comma
-multiline_comment|/* statfs */
-l_int|NULL
-comma
-multiline_comment|/* remount_fs */
+id|clear_inode
+suffix:colon
 id|fat_clear_inode
-multiline_comment|/* clear_inode */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Read the super block of an Extended MS-DOS FS.&n; */

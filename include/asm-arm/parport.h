@@ -156,6 +156,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|count
+op_add_assign
+id|parport_pc_init_superio
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Probe all the likely ports. */
 r_if
 c_cond

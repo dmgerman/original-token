@@ -527,34 +527,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*================ Global functions ================*/
-multiline_comment|/*&n; * hfs_dir_read()&n; *&n; * This is the read() entry in the file_operations structure for HFS&n; * directories.&t; It simply returns an error code, since reading is not&n; * supported.&n; */
-DECL|function|hfs_dir_read
-id|hfs_rwret_t
-id|hfs_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-id|hfs_rwarg_t
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * hfs_create()&n; *&n; * This is the create() entry in the inode_operations structure for&n; * regular HFS directories.  The purpose is to create a new file in&n; * a directory and return a corresponding inode, given the inode for&n; * the directory and the name (and its length) of the new file.&n; */
 DECL|function|hfs_create
 r_int

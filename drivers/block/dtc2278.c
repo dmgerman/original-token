@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/dtc2278.c       Version 0.02  Feb 10, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/dtc2278.c&t;&t;Version 0.02&t;Feb 10, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO           /* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;
@@ -217,6 +217,7 @@ suffix:semicolon
 )brace
 DECL|function|init_dtc2278
 r_void
+id|__init
 id|init_dtc2278
 (paren
 r_void

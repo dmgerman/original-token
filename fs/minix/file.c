@@ -1,19 +1,8 @@
 multiline_comment|/*&n; *  linux/fs/minix/file.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  minix regular file handling primitives&n; */
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/locks.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/pagemap.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 multiline_comment|/*&n; * We have mostly NULLs here: the current defaults are OK for&n; * the minix filesystem.&n; */
 DECL|variable|minix_file_operations
-r_static
 r_struct
 id|file_operations
 id|minix_file_operations
@@ -43,9 +32,6 @@ id|inode_operations
 id|minix_file_inode_operations
 op_assign
 (brace
-op_amp
-id|minix_file_operations
-comma
 id|truncate
 suffix:colon
 id|minix_truncate

@@ -5538,6 +5538,11 @@ op_assign
 op_amp
 id|udf_dir_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|udf_dir_operations
+suffix:semicolon
 id|inode-&gt;i_mode
 op_or_assign
 id|S_IFDIR
@@ -5581,6 +5586,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|udf_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|udf_file_operations
 suffix:semicolon
 id|inode-&gt;i_mode
 op_or_assign

@@ -1340,5 +1340,21 @@ id|page
 )paren
 (brace
 )brace
+DECL|function|map_zero_setup
+r_int
+id|map_zero_setup
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 macro_line|#endif /* CONFIG_SYSVIPC */
 eof

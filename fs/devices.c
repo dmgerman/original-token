@@ -630,18 +630,6 @@ id|chrdev_open
 comma
 )brace
 suffix:semicolon
-DECL|variable|chrdev_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|chrdev_inode_operations
-op_assign
-(brace
-op_amp
-id|def_chr_fops
-multiline_comment|/* default file operations */
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * Print device name (in decimal, hexadecimal or symbolic)&n; * Note: returns pointer to static data!&n; */
 DECL|function|kdevname
 r_const
@@ -776,10 +764,6 @@ id|inode-&gt;i_mode
 op_assign
 id|mode
 suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -790,10 +774,10 @@ id|mode
 )paren
 )paren
 (brace
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|chrdev_inode_operations
+id|def_chr_fops
 suffix:semicolon
 id|inode-&gt;i_rdev
 op_assign
@@ -815,10 +799,10 @@ id|mode
 )paren
 )paren
 (brace
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|blkdev_inode_operations
+id|def_blk_fops
 suffix:semicolon
 id|inode-&gt;i_rdev
 op_assign
@@ -847,10 +831,10 @@ c_func
 id|mode
 )paren
 )paren
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|fifo_inode_operations
+id|def_fifo_fops
 suffix:semicolon
 r_else
 r_if

@@ -659,10 +659,6 @@ id|inode
 op_assign
 id|CURRENT_UTIME
 suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 id|insert_inode_hash
 c_func
 (paren

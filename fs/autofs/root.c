@@ -117,12 +117,15 @@ r_int
 )paren
 suffix:semicolon
 DECL|variable|autofs_root_operations
-r_static
 r_struct
 id|file_operations
 id|autofs_root_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|autofs_root_readdir
@@ -139,31 +142,26 @@ id|inode_operations
 id|autofs_root_inode_operations
 op_assign
 (brace
-op_amp
-id|autofs_root_operations
-comma
-multiline_comment|/* file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|autofs_root_lookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|autofs_root_unlink
 comma
-multiline_comment|/* unlink */
+id|symlink
+suffix:colon
 id|autofs_root_symlink
 comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|autofs_root_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|autofs_root_rmdir
 comma
-multiline_comment|/* rmdir */
 )brace
 suffix:semicolon
 DECL|function|autofs_root_readdir

@@ -97,7 +97,7 @@ id|devpts_root_inode_operations
 suffix:semicolon
 r_extern
 r_struct
-id|inode_operations
-id|devpts_device_inode_operations
+id|file_operations
+id|devpts_root_operations
 suffix:semicolon
 eof

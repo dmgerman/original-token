@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-pci.c&t;Version 1.04&t;July 27, 1999&n; *&n; *  Copyright (c) 1998-1999  Andre Hedrick&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-pci.c&t;&t;Version 1.04&t;July 27, 1999&n; *&n; *  Copyright (c) 1998-1999  Andre Hedrick&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
 multiline_comment|/*&n; *  This module provides support for automatic detection and&n; *  configuration of all PCI IDE interfaces present in a system.  &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -23,6 +23,8 @@ DECL|macro|DEVID_PIIX4E
 mdefine_line|#define DEVID_PIIX4E&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82801AB_1})
 DECL|macro|DEVID_PIIX4U
 mdefine_line|#define DEVID_PIIX4U&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82801AA_1})
+DECL|macro|DEVID_PIIX4U2
+mdefine_line|#define DEVID_PIIX4U2&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82372FB_1})
 DECL|macro|DEVID_VIA_IDE
 mdefine_line|#define DEVID_VIA_IDE&t;((ide_pci_devid_t){PCI_VENDOR_ID_VIA,     PCI_DEVICE_ID_VIA_82C561})
 DECL|macro|DEVID_VP_IDE
@@ -207,6 +209,21 @@ macro_line|#ifdef CONFIG_BLK_DEV_AMD7409
 r_extern
 r_int
 r_int
+id|pci_init_amd7409
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
 id|ata66_amd7409
 c_func
 (paren
@@ -223,15 +240,35 @@ id|ide_hwif_t
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ide_dmacapable_amd7409
+c_func
+(paren
+id|ide_hwif_t
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|PCI_AMD7409
+mdefine_line|#define PCI_AMD7409&t;&amp;pci_init_amd7409
 DECL|macro|ATA66_AMD7409
 mdefine_line|#define ATA66_AMD7409&t;&amp;ata66_amd7409
 DECL|macro|INIT_AMD7409
 mdefine_line|#define INIT_AMD7409&t;&amp;ide_init_amd7409
+DECL|macro|DMA_AMD7409
+mdefine_line|#define DMA_AMD7409&t;&amp;ide_dmacapable_amd7409
 macro_line|#else
+DECL|macro|PCI_AMD7409
+mdefine_line|#define PCI_AMD7409&t;NULL
 DECL|macro|ATA66_AMD7409
 mdefine_line|#define ATA66_AMD7409&t;NULL
 DECL|macro|INIT_AMD7409
 mdefine_line|#define INIT_AMD7409&t;NULL
+DECL|macro|DMA_AMD7409
+mdefine_line|#define DMA_AMD7409&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_CMD64X
 r_extern
@@ -359,15 +396,15 @@ id|ide_hwif_t
 op_star
 )paren
 suffix:semicolon
-DECL|macro|INIT_CS5530
-mdefine_line|#define INIT_CS5530&t;&amp;ide_init_cs5530
 DECL|macro|PCI_CS5530
 mdefine_line|#define PCI_CS5530&t;&amp;pci_init_cs5530
-macro_line|#else
 DECL|macro|INIT_CS5530
-mdefine_line|#define INIT_CS5530&t;NULL
+mdefine_line|#define INIT_CS5530&t;&amp;ide_init_cs5530
+macro_line|#else
 DECL|macro|PCI_CS5530
 mdefine_line|#define PCI_CS5530&t;NULL
+DECL|macro|INIT_CS5530
+mdefine_line|#define INIT_CS5530&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_HPT34X
 r_extern
@@ -402,7 +439,7 @@ macro_line|#else
 DECL|macro|PCI_HPT34X
 mdefine_line|#define PCI_HPT34X&t;NULL
 DECL|macro|INIT_HPT34X
-mdefine_line|#define INIT_HPT34X&t;NULL
+mdefine_line|#define INIT_HPT34X&t;IDE_IGNORE
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_HPT366
 r_extern
@@ -1095,6 +1132,42 @@ l_int|0
 comma
 (brace
 id|DEVID_PIIX4U
+comma
+l_string|&quot;PIIX4&quot;
+comma
+id|PCI_PIIX
+comma
+id|ATA66_PIIX
+comma
+id|INIT_PIIX
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x41
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+comma
+(brace
+l_int|0x43
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+)brace
+comma
+id|ON_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEVID_PIIX4U2
 comma
 l_string|&quot;PIIX4&quot;
 comma
@@ -2178,13 +2251,13 @@ id|DEVID_AMD7409
 comma
 l_string|&quot;AMD7409&quot;
 comma
-l_int|NULL
+id|PCI_AMD7409
 comma
 id|ATA66_AMD7409
 comma
 id|INIT_AMD7409
 comma
-l_int|NULL
+id|DMA_AMD7409
 comma
 (brace
 (brace
@@ -2271,164 +2344,6 @@ c_cond
 id|dev-&gt;device
 )paren
 (brace
-r_case
-id|PCI_DEVICE_ID_TTI_HPT343
-suffix:colon
-(brace
-r_int
-id|i
-suffix:semicolon
-r_int
-r_int
-id|hpt34xIoBase
-op_assign
-id|dev-&gt;resource
-(braket
-l_int|4
-)braket
-dot
-id|start
-suffix:semicolon
-r_int
-r_int
-id|pcicmd
-op_assign
-l_int|0
-suffix:semicolon
-id|pci_write_config_byte
-c_func
-(paren
-id|dev
-comma
-l_int|0x80
-comma
-l_int|0x00
-)paren
-suffix:semicolon
-id|pci_read_config_word
-c_func
-(paren
-id|dev
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|pcicmd
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|pcicmd
-op_amp
-id|PCI_COMMAND_MEMORY
-)paren
-)paren
-(brace
-id|pci_write_config_byte
-c_func
-(paren
-id|dev
-comma
-id|PCI_LATENCY_TIMER
-comma
-l_int|0x20
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|pci_write_config_byte
-c_func
-(paren
-id|dev
-comma
-id|PCI_LATENCY_TIMER
-comma
-l_int|0xF0
-)paren
-suffix:semicolon
-)brace
-id|dev-&gt;resource
-(braket
-l_int|0
-)braket
-dot
-id|start
-op_assign
-(paren
-id|hpt34xIoBase
-op_plus
-l_int|0x20
-)paren
-suffix:semicolon
-id|dev-&gt;resource
-(braket
-l_int|1
-)braket
-dot
-id|start
-op_assign
-(paren
-id|hpt34xIoBase
-op_plus
-l_int|0x34
-)paren
-suffix:semicolon
-id|dev-&gt;resource
-(braket
-l_int|2
-)braket
-dot
-id|start
-op_assign
-(paren
-id|hpt34xIoBase
-op_plus
-l_int|0x28
-)paren
-suffix:semicolon
-id|dev-&gt;resource
-(braket
-l_int|3
-)braket
-dot
-id|start
-op_assign
-(paren
-id|hpt34xIoBase
-op_plus
-l_int|0x3c
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|4
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|dev-&gt;resource
-(braket
-id|i
-)braket
-dot
-id|flags
-op_or_assign
-id|PCI_BASE_ADDRESS_SPACE_IO
-suffix:semicolon
-)brace
-)brace
 r_case
 id|PCI_DEVICE_ID_TTI_HPT366
 suffix:colon
@@ -3249,28 +3164,20 @@ id|DEVID_HPT34X
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Since there are two cards that report almost identically,&n;&t;&t; * the only discernable difference is the values&n;&t;&t; * reported in pcicmd.&n;&t;&t; * Booting-BIOS card or HPT363 :: pcicmd == 0x07&n;&t;&t; * Non-bootable card or HPT343 :: pcicmd == 0x05&n;&t;&t; */
-r_if
-c_cond
+multiline_comment|/* see comments in hpt34x.c on why..... */
+id|d-&gt;bootable
+op_assign
 (paren
 id|pcicmd
 op_amp
 id|PCI_COMMAND_MEMORY
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: is IDE Express HPT363.&bslash;n&quot;
-comma
-id|d-&gt;name
-)paren
-suffix:semicolon
-id|d-&gt;bootable
-op_assign
+ques
+c_cond
 id|OFF_BOARD
+suffix:colon
+id|NEVER_BOARD
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; * Set up the IDE ports&n;&t; */
 r_for
@@ -3779,7 +3686,6 @@ comma
 id|DEVID_AEC6210
 )paren
 op_logical_or
-macro_line|#ifdef CONFIG_BLK_DEV_HPT34X
 id|IDE_PCI_DEVID_EQ
 c_func
 (paren
@@ -3788,7 +3694,6 @@ comma
 id|DEVID_HPT34X
 )paren
 op_logical_or
-macro_line|#endif /* CONFIG_BLK_DEV_HPT34X */
 id|IDE_PCI_DEVID_EQ
 c_func
 (paren

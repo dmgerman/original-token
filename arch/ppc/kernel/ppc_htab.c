@@ -142,7 +142,6 @@ r_int
 id|pte_errors
 suffix:semicolon
 DECL|variable|ppc_htab_operations
-r_static
 r_struct
 id|file_operations
 id|ppc_htab_operations
@@ -160,19 +159,6 @@ id|write
 suffix:colon
 id|ppc_htab_write
 comma
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * proc files can do almost nothing..&n; */
-DECL|variable|proc_ppc_htab_inode_operations
-r_struct
-id|inode_operations
-id|proc_ppc_htab_inode_operations
-op_assign
-(brace
-op_amp
-id|ppc_htab_operations
-comma
-multiline_comment|/* default proc file-ops */
 )brace
 suffix:semicolon
 multiline_comment|/* these will go into processor.h when I&squot;m done debugging -- Cort */

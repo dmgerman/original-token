@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.114 2000/01/29 01:08:57 anton Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.115 2000/02/26 04:24:31 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1078,6 +1078,14 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+r_extern
+r_void
+id|paging_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|setup_arch
 r_void
 id|__init
@@ -2034,6 +2042,11 @@ id|serial_console
 id|conswitchp
 op_assign
 l_int|NULL
+suffix:semicolon
+id|paging_init
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|sys_ioperm

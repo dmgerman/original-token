@@ -884,19 +884,6 @@ id|proc_bus_pci_write
 comma
 )brace
 suffix:semicolon
-DECL|variable|proc_bus_pci_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|proc_bus_pci_inode_operations
-op_assign
-(brace
-op_amp
-id|proc_bus_pci_operations
-comma
-multiline_comment|/* default base directory file-ops */
-)brace
-suffix:semicolon
 macro_line|#if BITS_PER_LONG == 32
 DECL|macro|LONG_FORMAT
 mdefine_line|#define LONG_FORMAT &quot;&bslash;t%08lx&quot;
@@ -1326,10 +1313,10 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|e-&gt;ops
+id|e-&gt;proc_fops
 op_assign
 op_amp
-id|proc_bus_pci_inode_operations
+id|proc_bus_pci_operations
 suffix:semicolon
 id|e-&gt;data
 op_assign

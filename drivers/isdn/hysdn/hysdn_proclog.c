@@ -1703,11 +1703,6 @@ l_int|NULL
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|variable|log_inode_operations
-r_struct
-id|inode_operations
-id|log_inode_operations
-suffix:semicolon
 multiline_comment|/***********************************************************************************/
 multiline_comment|/* hysdn_proclog_init is called when the module is loaded after creating the cards */
 multiline_comment|/* conf files.                                                                     */
@@ -1769,26 +1764,6 @@ id|procdata
 )paren
 )paren
 suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|log_inode_operations
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|inode_operations
-)paren
-)paren
-suffix:semicolon
-id|log_inode_operations.default_file_ops
-op_assign
-op_amp
-id|log_fops
-suffix:semicolon
 id|sprintf
 c_func
 (paren
@@ -1824,10 +1799,10 @@ id|hysdn_proc_entry
 op_ne
 l_int|NULL
 )paren
-id|pd-&gt;log-&gt;ops
+id|pd-&gt;log-&gt;proc_fops
 op_assign
 op_amp
-id|log_inode_operations
+id|log_fops
 suffix:semicolon
 multiline_comment|/* set new operations table */
 id|init_waitqueue_head

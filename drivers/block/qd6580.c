@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/qd6580.c       Version 0.02  Feb 09, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/qd6580.c&t;&t;Version 0.02&t;Feb 09, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
 multiline_comment|/*&n; * QDI QD6580 EIDE controller fast support by Colten Edwards.&n; * No net access, but (maybe) can be reached at pje120@cs.usask.ca&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO           /* most systems can safely undef this */
@@ -108,6 +108,7 @@ multiline_comment|/* all CPUs */
 )brace
 DECL|function|init_qd6580
 r_void
+id|__init
 id|init_qd6580
 (paren
 r_void

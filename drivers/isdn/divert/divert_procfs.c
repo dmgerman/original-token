@@ -1165,11 +1165,6 @@ l_int|NULL
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|variable|divert_file_inode_operations
-r_struct
-id|inode_operations
-id|divert_file_inode_operations
-suffix:semicolon
 multiline_comment|/****************************/
 multiline_comment|/* isdn subdir in /proc/net */
 multiline_comment|/****************************/
@@ -1275,30 +1270,10 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|memset
-c_func
-(paren
-op_amp
-id|divert_file_inode_operations
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|inode_operations
-)paren
-)paren
-suffix:semicolon
-id|divert_file_inode_operations.default_file_ops
+id|isdn_divert_entry-&gt;proc_fops
 op_assign
 op_amp
 id|isdn_fops
-suffix:semicolon
-id|isdn_divert_entry-&gt;ops
-op_assign
-op_amp
-id|divert_file_inode_operations
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_PROC_FS */
 r_return

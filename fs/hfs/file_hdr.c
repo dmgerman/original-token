@@ -52,19 +52,8 @@ id|loff_t
 op_star
 )paren
 suffix:semicolon
-r_static
-r_void
-id|hdr_truncate
-c_func
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/*================ Global variables ================*/
 DECL|variable|hfs_hdr_operations
-r_static
 r_struct
 id|file_operations
 id|hfs_hdr_operations
@@ -90,46 +79,10 @@ id|inode_operations
 id|hfs_hdr_inode_operations
 op_assign
 (brace
-op_amp
-id|hfs_hdr_operations
+id|setattr
+suffix:colon
+id|hfs_notify_change_hdr
 comma
-multiline_comment|/* default file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-id|hdr_truncate
-comma
-multiline_comment|/* truncate */
 )brace
 suffix:semicolon
 DECL|variable|hfs_dbl_fil_hdr_layout
@@ -4493,7 +4446,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * hdr_truncate()&n; *&n; * This is the truncate field in the inode_operations structure for&n; * header files.  The purpose is to allocate or release blocks as needed&n; * to satisfy a change in file length.&n; */
 DECL|function|hdr_truncate
-r_static
 r_void
 id|hdr_truncate
 c_func
@@ -4502,6 +4454,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|size
 )paren
 (brace
 r_struct
@@ -4523,14 +4478,13 @@ op_star
 id|layout
 suffix:semicolon
 r_int
-id|size
-op_assign
-id|inode-&gt;i_size
-suffix:semicolon
-r_int
 id|lcv
 comma
 id|last
+suffix:semicolon
+id|inode-&gt;i_size
+op_assign
+id|size
 suffix:semicolon
 r_if
 c_cond

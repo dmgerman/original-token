@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.101 2000/02/09 11:15:03 davem Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.102 2000/02/25 05:44:35 davem Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2726,5 +2726,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+DECL|function|init_irq_proc
+r_void
+id|init_irq_proc
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* For now, nothing... */
 )brace
 eof

@@ -216,6 +216,10 @@ id|hwif_s
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifndef NO_DMA
+DECL|macro|NO_DMA
+mdefine_line|#define NO_DMA  255
+macro_line|#endif
 multiline_comment|/*&n; * Structure to hold all information about the location of this port&n; */
 DECL|struct|hw_regs_s
 r_typedef
@@ -235,6 +239,11 @@ r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* our irq number */
+DECL|member|dma
+r_int
+id|dma
+suffix:semicolon
+multiline_comment|/* our dma entry */
 DECL|member|ack_intr
 id|ide_ack_intr_t
 op_star
@@ -928,6 +937,7 @@ DECL|typedef|hwif_chipset_t
 )brace
 id|hwif_chipset_t
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
 DECL|struct|ide_pci_devid_s
 r_typedef
 r_struct
@@ -951,6 +961,7 @@ DECL|macro|IDE_PCI_DEVID_NULL
 mdefine_line|#define IDE_PCI_DEVID_NULL&t;((ide_pci_devid_t){0,0})
 DECL|macro|IDE_PCI_DEVID_EQ
 mdefine_line|#define IDE_PCI_DEVID_EQ(a,b)&t;(a.vid == b.vid &amp;&amp; a.did == b.did)
+macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
 DECL|struct|hwif_s
 r_typedef
 r_struct
@@ -1169,6 +1180,7 @@ id|byte
 id|channel
 suffix:semicolon
 multiline_comment|/* for dual-port chips: 0=primary, 1=secondary */
+macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
 DECL|member|pci_dev
 r_struct
 id|pci_dev
@@ -1181,6 +1193,7 @@ id|ide_pci_devid_t
 id|pci_devid
 suffix:semicolon
 multiline_comment|/* for pci chipsets: {VID,DID} */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
 DECL|member|last_time
 r_int
@@ -1934,6 +1947,11 @@ r_extern
 id|ide_module_t
 op_star
 id|ide_modules
+suffix:semicolon
+r_extern
+id|ide_module_t
+op_star
+id|ide_probe
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * We need blk.h, but we replace its end_request by our own version.&n; */
@@ -2804,5 +2822,13 @@ id|name
 id|__init
 suffix:semicolon
 macro_line|#endif
+r_void
+id|hwif_unregister
+(paren
+id|ide_hwif_t
+op_star
+id|hwif
+)paren
+suffix:semicolon
 macro_line|#endif /* _IDE_H */
 eof

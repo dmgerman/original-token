@@ -35,6 +35,7 @@ mdefine_line|#define GAYLE_CONTROL&t;0x101a
 DECL|variable|gayle_offsets
 r_static
 r_int
+id|__init
 id|gayle_offsets
 (braket
 id|IDE_NR_PORTS
@@ -213,6 +214,7 @@ suffix:semicolon
 multiline_comment|/*&n;     *  Probe for a Gayle IDE interface (and optionally for an IDE doubler)&n;     */
 DECL|function|gayle_init
 r_void
+id|__init
 id|gayle_init
 c_func
 (paren

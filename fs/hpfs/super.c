@@ -820,45 +820,31 @@ suffix:semicolon
 multiline_comment|/* Super operations */
 DECL|variable|hpfs_sops
 r_static
-r_const
 r_struct
 id|super_operations
 id|hpfs_sops
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|hpfs_read_inode
 comma
-multiline_comment|/* read_inode */
-l_int|NULL
-comma
-multiline_comment|/* write_inode */
-l_int|NULL
-comma
-multiline_comment|/* put_inode */
+id|delete_inode
+suffix:colon
 id|hpfs_delete_inode
 comma
-multiline_comment|/* delete inode */
-id|hpfs_notify_change
-comma
-multiline_comment|/* notify_change */
+id|put_super
+suffix:colon
 id|hpfs_put_super
 comma
-multiline_comment|/* put_super */
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|hpfs_statfs
 comma
-multiline_comment|/* statfs */
+id|remount_fs
+suffix:colon
 id|hpfs_remount_fs
 comma
-multiline_comment|/* remount_fs */
-l_int|NULL
-comma
-multiline_comment|/* clear inode */
-l_int|NULL
-comma
-multiline_comment|/* umount_begin */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * A tiny parser for option strings, stolen from dosfs.&n; *&n; * Stolen again from read-only hpfs.&n; */
@@ -2351,11 +2337,6 @@ l_int|9
 suffix:semicolon
 id|s-&gt;s_op
 op_assign
-(paren
-r_struct
-id|super_operations
-op_star
-)paren
 op_amp
 id|hpfs_sops
 suffix:semicolon

@@ -763,12 +763,15 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|variable|ufs_dir_operations
-r_static
 r_struct
 id|file_operations
 id|ufs_dir_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|ufs_readdir
@@ -777,59 +780,6 @@ id|fsync
 suffix:colon
 id|file_fsync
 comma
-)brace
-suffix:semicolon
-DECL|variable|ufs_dir_inode_operations
-r_struct
-id|inode_operations
-id|ufs_dir_inode_operations
-op_assign
-(brace
-op_amp
-id|ufs_dir_operations
-comma
-multiline_comment|/* default directory file operations */
-id|ufs_create
-comma
-multiline_comment|/* create */
-id|ufs_lookup
-comma
-multiline_comment|/* lookup */
-id|ufs_link
-comma
-multiline_comment|/* link */
-id|ufs_unlink
-comma
-multiline_comment|/* unlink */
-id|ufs_symlink
-comma
-multiline_comment|/* symlink */
-id|ufs_mkdir
-comma
-multiline_comment|/* mkdir */
-id|ufs_rmdir
-comma
-multiline_comment|/* rmdir */
-id|ufs_mknod
-comma
-multiline_comment|/* mknod */
-id|ufs_rename
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-id|ufs_permission
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 eof

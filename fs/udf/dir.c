@@ -48,12 +48,15 @@ op_star
 suffix:semicolon
 multiline_comment|/* readdir and lookup functions */
 DECL|variable|udf_dir_operations
-r_static
 r_struct
 id|file_operations
 id|udf_dir_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|udf_readdir
@@ -66,74 +69,6 @@ id|fsync
 suffix:colon
 id|udf_sync_file
 comma
-)brace
-suffix:semicolon
-DECL|variable|udf_dir_inode_operations
-r_struct
-id|inode_operations
-id|udf_dir_inode_operations
-op_assign
-(brace
-op_amp
-id|udf_dir_operations
-comma
-macro_line|#if CONFIG_UDF_RW == 1
-id|udf_create
-comma
-multiline_comment|/* create */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* create */
-macro_line|#endif
-id|udf_lookup
-comma
-multiline_comment|/* lookup */
-macro_line|#if CONFIG_UDF_RW == 1
-id|udf_link
-comma
-multiline_comment|/* link */
-id|udf_unlink
-comma
-multiline_comment|/* unlink */
-id|udf_symlink
-comma
-multiline_comment|/* symlink */
-id|udf_mkdir
-comma
-multiline_comment|/* mkdir */
-id|udf_rmdir
-comma
-multiline_comment|/* rmdir */
-id|udf_mknod
-comma
-multiline_comment|/* mknod */
-id|udf_rename
-comma
-multiline_comment|/* rename */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * udf_readdir&n; *&n; * PURPOSE&n; *&t;Read a directory entry.&n; *&n; * DESCRIPTION&n; *&t;Optional - sys_getdents() will return -ENOTDIR if this routine is not&n; *&t;available.&n; *&n; *&t;Refer to sys_getdents() in fs/readdir.c&n; *&t;sys_getdents() -&gt; .&n; *&n; * PRE-CONDITIONS&n; *&t;filp&t;&t;&t;Pointer to directory file.&n; *&t;buf&t;&t;&t;Pointer to directory entry buffer.&n; *&t;filldir&t;&t;&t;Pointer to filldir function.&n; *&n; * POST-CONDITIONS&n; *&t;&lt;return&gt;&t;&t;&gt;=0 on success.&n; *&n; * HISTORY&n; *&t;July 1, 1997 - Andrew E. Mileski&n; *&t;Written, tested, and released.&n; */

@@ -25,27 +25,6 @@ macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,93)
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#endif
-DECL|variable|Proc_Scsi_Pci2000
-r_struct
-id|proc_dir_entry
-id|Proc_Scsi_Pci2000
-op_assign
-(brace
-id|PROC_SCSI_PCI2000
-comma
-l_int|7
-comma
-l_string|&quot;pci2000&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 singleline_comment|//#define DEBUG 1
 macro_line|#ifdef DEBUG
 DECL|macro|DEB

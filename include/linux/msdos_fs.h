@@ -1281,6 +1281,11 @@ id|inode_operations
 id|fat_file_inode_operations_readpage
 suffix:semicolon
 r_extern
+r_struct
+id|file_operations
+id|fat_file_operations
+suffix:semicolon
+r_extern
 id|ssize_t
 id|fat_file_read
 c_func

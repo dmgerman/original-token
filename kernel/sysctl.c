@@ -371,55 +371,16 @@ comma
 )brace
 suffix:semicolon
 DECL|variable|proc_sys_inode_operations
+r_static
 r_struct
 id|inode_operations
 id|proc_sys_inode_operations
 op_assign
 (brace
-op_amp
-id|proc_sys_file_operations
-comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
+id|permission
+suffix:colon
 id|proc_sys_permission
 comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 r_extern
@@ -3023,11 +2984,18 @@ c_cond
 (paren
 id|table-&gt;proc_handler
 )paren
-id|de-&gt;ops
+(brace
+id|de-&gt;proc_fops
+op_assign
+op_amp
+id|proc_sys_file_operations
+suffix:semicolon
+id|de-&gt;proc_iops
 op_assign
 op_amp
 id|proc_sys_inode_operations
 suffix:semicolon
+)brace
 )brace
 id|table-&gt;de
 op_assign

@@ -123,51 +123,62 @@ id|inode_operations
 id|bad_inode_ops
 op_assign
 (brace
-op_amp
-id|bad_file_ops
-comma
-multiline_comment|/* default file operations */
+id|create
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* lookup */
+id|link
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* unlink */
+id|symlink
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* rmdir */
+id|mknod
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* rename */
+id|readlink
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* readlink */
+id|follow_link
+suffix:colon
 id|bad_follow_link
 comma
-multiline_comment|/* follow_link */
+id|truncate
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* truncate */
+id|permission
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* permission */
+id|revalidate
+suffix:colon
 id|EIO_ERROR
-multiline_comment|/* revalidate */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* &n; * When a filesystem is unable to read an inode due to an I/O error in&n; * its read_inode() function, it can call make_bad_inode() to return a&n; * set of stubs which will return EIO errors as required. &n; *&n; * We only need to do limited initialisation: all other fields are&n; * preinitialised to zero automatically.&n; */
@@ -198,6 +209,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|bad_inode_ops
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|bad_file_ops
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This tests whether an inode has been flagged as bad. The test uses&n; * &amp;bad_inode_ops to cover the case of invalidated inodes as well as&n; * those created by make_bad_inode() above.&n; */

@@ -295,19 +295,6 @@ id|proc_bus_zorro_read
 comma
 )brace
 suffix:semicolon
-DECL|variable|proc_bus_zorro_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|proc_bus_zorro_inode_operations
-op_assign
-(brace
-op_amp
-id|proc_bus_zorro_operations
-comma
-multiline_comment|/* default base directory file-ops */
-)brace
-suffix:semicolon
 r_static
 r_int
 DECL|function|get_zorro_dev_info
@@ -522,10 +509,10 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|entry-&gt;ops
+id|entry-&gt;proc_fops
 op_assign
 op_amp
-id|proc_bus_zorro_inode_operations
+id|proc_bus_zorro_operations
 suffix:semicolon
 id|entry-&gt;data
 op_assign

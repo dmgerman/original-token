@@ -7039,37 +7039,34 @@ id|inode_operations
 id|vfat_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|fat_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
+id|create
+suffix:colon
 id|vfat_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|vfat_lookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|vfat_unlink
 comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|vfat_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|vfat_rmdir
 comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|vfat_rename
 comma
-multiline_comment|/* rename */
+id|setattr
+suffix:colon
+id|fat_notify_change
+comma
 )brace
 suffix:semicolon
 DECL|function|vfat_read_super

@@ -1301,65 +1301,6 @@ l_int|NULL
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|variable|log_inode_operations
-r_struct
-id|inode_operations
-id|log_inode_operations
-op_assign
-(brace
-op_amp
-id|log_fops
-comma
-multiline_comment|/* log proc file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create      */
-l_int|NULL
-comma
-multiline_comment|/* lookup      */
-l_int|NULL
-comma
-multiline_comment|/* link        */
-l_int|NULL
-comma
-multiline_comment|/* unlink      */
-l_int|NULL
-comma
-multiline_comment|/* symlink     */
-l_int|NULL
-comma
-multiline_comment|/* mkdir       */
-l_int|NULL
-comma
-multiline_comment|/* rmdir       */
-l_int|NULL
-comma
-multiline_comment|/* mknod       */
-l_int|NULL
-comma
-multiline_comment|/* rename      */
-l_int|NULL
-comma
-multiline_comment|/* readlink    */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* readpage    */
-l_int|NULL
-comma
-multiline_comment|/* writepage   */
-l_int|NULL
-comma
-multiline_comment|/* bmap        */
-l_int|NULL
-comma
-multiline_comment|/* truncate    */
-l_int|NULL
-multiline_comment|/* permission  */
-)brace
-suffix:semicolon
 multiline_comment|/*****************************************/
 multiline_comment|/* Output info data to the cardinfo file */
 multiline_comment|/*****************************************/
@@ -1827,10 +1768,10 @@ id|hysdn_proc_entry
 op_ne
 l_int|NULL
 )paren
-id|pd-&gt;log-&gt;ops
+id|pd-&gt;log-&gt;proc_fops
 op_assign
 op_amp
-id|log_inode_operations
+id|log_fops
 suffix:semicolon
 multiline_comment|/* set new operations table */
 id|init_waitqueue_head

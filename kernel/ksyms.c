@@ -925,6 +925,13 @@ c_func
 id|generic_file_mmap
 )paren
 suffix:semicolon
+DECL|variable|generic_ro_fops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|generic_ro_fops
+)paren
+suffix:semicolon
 DECL|variable|generic_buffer_fdatasync
 id|EXPORT_SYMBOL
 c_func
@@ -1063,6 +1070,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|vfs_rename
+)paren
+suffix:semicolon
+DECL|variable|generic_read_dir
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|generic_read_dir
 )paren
 suffix:semicolon
 DECL|variable|__pollwait

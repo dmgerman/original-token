@@ -62,32 +62,26 @@ id|super_operations
 id|hfs_super_operations
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|hfs_read_inode
 comma
-multiline_comment|/* read_inode */
-l_int|NULL
-comma
-multiline_comment|/* write_inode */
+id|put_inode
+suffix:colon
 id|hfs_put_inode
 comma
-multiline_comment|/* put_inode     - in inode.c */
-l_int|NULL
-comma
-multiline_comment|/* delete_inode  */
-id|hfs_notify_change
-comma
-multiline_comment|/* notify_change - in inode.c */
+id|put_super
+suffix:colon
 id|hfs_put_super
 comma
-multiline_comment|/* put_super */
+id|write_super
+suffix:colon
 id|hfs_write_super
 comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|hfs_statfs
 comma
-multiline_comment|/* statfs */
-l_int|NULL
-multiline_comment|/* remount_fs */
 )brace
 suffix:semicolon
 multiline_comment|/*================ File-local variables ================*/
@@ -124,10 +118,6 @@ id|inode
 id|inode-&gt;i_mode
 op_assign
 l_int|0
-suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * hfs_write_super()&n; *&n; * Description:&n; *   This function is called by the VFS only. When the filesystem&n; *   is mounted r/w it updates the MDB on disk.&n; * Input Variable(s):&n; *   struct super_block *sb: Pointer to the hfs superblock&n; * Output Variable(s):&n; *   NONE&n; * Returns:&n; *   void&n; * Preconditions:&n; *   &squot;sb&squot; points to a &quot;valid&quot; (struct super_block).&n; * Postconditions:&n; *   The MDB is marked &squot;unsuccessfully unmounted&squot; by clearing bit 8 of drAtrb&n; *   (hfs_put_super() must set this flag!). Some MDB fields are updated&n; *   and the MDB buffer is written to disk by calling hfs_mdb_commit().&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/alim15x3.c&t;Version 0.08&t;Jan. 14, 2000&n; *&n; *  Copyright (C) 1998-2000 Michel Aubry, Maintainer&n; *  Copyright (C) 1998-2000 Andrzej Krzysztofowicz, Maintainer&n; *&n; *  Copyright (C) 1998-2000 Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  (U)DMA capable version of ali 1533/1543(C), 1535(D)&n; *&n; *  version: 1.0 beta2 (Sep. 2, 1999)&n; *&t;e-mail your problems to cjtsai@ali.com.tw&n; *&n; **********************************************************************&n; *  9/7/99 --Parts from the above author are included and need to be&n; *  converted into standard interface, once I finish the thought.&n; */
+multiline_comment|/*&n; * linux/drivers/block/alim15x3.c&t;&t;Version 0.08&t;Jan. 14, 2000&n; *&n; *  Copyright (C) 1998-2000 Michel Aubry, Maintainer&n; *  Copyright (C) 1998-2000 Andrzej Krzysztofowicz, Maintainer&n; *&n; *  Copyright (C) 1998-2000 Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  (U)DMA capable version of ali 1533/1543(C), 1535(D)&n; *&n; *  version: 1.0 beta2 (Sep. 2, 1999)&n; *&t;e-mail your problems to cjtsai@ali.com.tw&n; *&n; **********************************************************************&n; *  9/7/99 --Parts from the above author are included and need to be&n; *  converted into standard interface, once I finish the thought.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3059,6 +3059,21 @@ id|name
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(DISPLAY_ALI_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+id|ali_proc
+op_assign
+l_int|1
+suffix:semicolon
+id|bmide_dev
+op_assign
+id|dev
+suffix:semicolon
+id|ali_display_info
+op_assign
+op_amp
+id|ali_get_info
+suffix:semicolon
+macro_line|#endif  /* defined(DISPLAY_ALI_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS) */
 r_return
 l_int|0
 suffix:semicolon
@@ -3590,24 +3605,6 @@ id|hwif-&gt;autodma
 op_assign
 l_int|1
 suffix:semicolon
-id|hwif-&gt;drives
-(braket
-l_int|0
-)braket
-dot
-id|autotune
-op_assign
-l_int|0
-suffix:semicolon
-id|hwif-&gt;drives
-(braket
-l_int|1
-)braket
-dot
-id|autotune
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -3634,29 +3631,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if defined(DISPLAY_ALI_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ali_proc
-)paren
-(brace
-id|ali_proc
-op_assign
-l_int|1
-suffix:semicolon
-id|bmide_dev
-op_assign
-id|hwif-&gt;pci_dev
-suffix:semicolon
-id|ali_display_info
-op_assign
-op_amp
-id|ali_get_info
-suffix:semicolon
-)brace
-macro_line|#endif  /* defined(DISPLAY_ALI_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS) */
 r_return
 suffix:semicolon
 )brace

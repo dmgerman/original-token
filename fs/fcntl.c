@@ -1206,7 +1206,7 @@ id|NSIGPOLL
 id|si.si_band
 op_assign
 op_complement
-l_int|0
+l_int|0L
 suffix:semicolon
 r_else
 id|si.si_band

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: w6692.c,v 1.1 1999/09/04 06:28:58 keil Exp $&n;&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; * $Log: w6692.c,v $&n; * Revision 1.1  1999/09/04 06:28:58  keil&n; * first revision&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: w6692.c,v 1.2 2000/02/26 00:35:13 keil Exp $&n;&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; * $Log: w6692.c,v $&n; * Revision 1.2  2000/02/26 00:35:13  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.1  1999/09/04 06:28:58  keil&n; * first revision&n; *&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -97,7 +97,7 @@ r_char
 op_star
 id|w6692_revision
 op_assign
-l_string|&quot;$Revision: 1.1 $&quot;
+l_string|&quot;$Revision: 1.2 $&quot;
 suffix:semicolon
 DECL|macro|DBUSY_TIMER_VALUE
 mdefine_line|#define DBUSY_TIMER_VALUE 80
@@ -1990,7 +1990,7 @@ comma
 id|bcs-&gt;hw.w6692.count
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|bcs-&gt;tx_skb
@@ -2588,7 +2588,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|cs-&gt;tx_skb
@@ -3671,7 +3671,7 @@ c_cond
 id|cs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|cs-&gt;tx_skb
@@ -3927,7 +3927,7 @@ c_cond
 id|cs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|cs-&gt;tx_skb
@@ -4595,7 +4595,7 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb

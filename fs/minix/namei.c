@@ -390,6 +390,7 @@ multiline_comment|/* compare */
 )brace
 suffix:semicolon
 DECL|function|minix_lookup
+r_static
 r_struct
 id|dentry
 op_star
@@ -805,6 +806,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|minix_create
+r_static
 r_int
 id|minix_create
 c_func
@@ -874,6 +876,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|minix_file_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|minix_file_operations
 suffix:semicolon
 id|inode-&gt;i_mapping-&gt;a_ops
 op_assign
@@ -964,6 +971,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|minix_mknod
+r_static
 r_int
 id|minix_mknod
 c_func
@@ -1126,6 +1134,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|minix_mkdir
+r_static
 r_int
 id|minix_mkdir
 c_func
@@ -1219,6 +1228,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|minix_dir_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|minix_dir_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
@@ -1722,6 +1736,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|minix_rmdir
+r_static
 r_int
 id|minix_rmdir
 c_func
@@ -1938,6 +1953,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|minix_unlink
+r_static
 r_int
 id|minix_unlink
 c_func
@@ -2108,6 +2124,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|minix_symlink
+r_static
 r_int
 id|minix_symlink
 c_func
@@ -2326,6 +2343,7 @@ id|out
 suffix:semicolon
 )brace
 DECL|function|minix_link
+r_static
 r_int
 id|minix_link
 c_func
@@ -2474,6 +2492,7 @@ DECL|macro|PARENT_INO
 mdefine_line|#define PARENT_INO(buffer) &bslash;&n;(((struct minix_dir_entry *) ((buffer)+info-&gt;s_dirsize))-&gt;inode)
 multiline_comment|/*&n; * Anybody can rename anything with this: the permission checks are left to the&n; * higher-level routines.&n; */
 DECL|function|minix_rename
+r_static
 r_int
 id|minix_rename
 c_func
@@ -2939,4 +2958,49 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * directories can handle most operations...&n; */
+DECL|variable|minix_dir_inode_operations
+r_struct
+id|inode_operations
+id|minix_dir_inode_operations
+op_assign
+(brace
+id|create
+suffix:colon
+id|minix_create
+comma
+id|lookup
+suffix:colon
+id|minix_lookup
+comma
+id|link
+suffix:colon
+id|minix_link
+comma
+id|unlink
+suffix:colon
+id|minix_unlink
+comma
+id|symlink
+suffix:colon
+id|minix_symlink
+comma
+id|mkdir
+suffix:colon
+id|minix_mkdir
+comma
+id|rmdir
+suffix:colon
+id|minix_rmdir
+comma
+id|mknod
+suffix:colon
+id|minix_mknod
+comma
+id|rename
+suffix:colon
+id|minix_rename
+comma
+)brace
+suffix:semicolon
 eof

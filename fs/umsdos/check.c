@@ -262,11 +262,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * check an inode&n; */
-r_extern
-r_struct
-id|inode_operations
-id|umsdos_rdir_inode_operations
-suffix:semicolon
 DECL|function|check_inode
 r_void
 id|check_inode

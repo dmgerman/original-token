@@ -1386,10 +1386,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|inode-&gt;i_op
-op_logical_or
-op_logical_neg
-id|inode-&gt;i_op-&gt;default_file_ops
+id|inode-&gt;i_fop
 )paren
 r_goto
 id|out
@@ -1434,7 +1431,7 @@ id|filp
 suffix:semicolon
 id|filp-&gt;f_op
 op_assign
-id|inode-&gt;i_op-&gt;default_file_ops
+id|inode-&gt;i_fop
 suffix:semicolon
 id|atomic_set
 c_func
@@ -1728,12 +1725,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_op-&gt;default_file_ops
+id|inode-&gt;i_fop
 op_logical_and
 (paren
 id|fsync
 op_assign
-id|inode-&gt;i_op-&gt;default_file_ops-&gt;fsync
+id|inode-&gt;i_fop-&gt;fsync
 )paren
 )paren
 (brace

@@ -114,13 +114,10 @@ id|EM_486
 op_logical_or
 (paren
 op_logical_neg
-id|bprm-&gt;dentry-&gt;d_inode-&gt;i_op
+id|bprm-&gt;dentry-&gt;d_inode-&gt;i_fop
 op_logical_or
 op_logical_neg
-id|bprm-&gt;dentry-&gt;d_inode-&gt;i_op-&gt;default_file_ops
-op_logical_or
-op_logical_neg
-id|bprm-&gt;dentry-&gt;d_inode-&gt;i_op-&gt;default_file_ops-&gt;mmap
+id|bprm-&gt;dentry-&gt;d_inode-&gt;i_fop-&gt;mmap
 )paren
 )paren
 (brace

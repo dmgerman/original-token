@@ -92,50 +92,14 @@ id|inode_operations
 id|coda_ioctl_inode_operations
 op_assign
 (brace
-op_amp
-id|coda_ioctl_operations
-comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
+id|permission
+suffix:colon
 id|coda_ioctl_permission
 comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
+id|setattr
+suffix:colon
+id|coda_notify_change
+comma
 )brace
 suffix:semicolon
 DECL|variable|coda_ioctl_operations

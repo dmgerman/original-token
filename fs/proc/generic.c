@@ -139,19 +139,6 @@ id|proc_file_write
 comma
 )brace
 suffix:semicolon
-DECL|variable|proc_file_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|proc_file_inode_operations
-op_assign
-(brace
-op_amp
-id|proc_file_operations
-comma
-multiline_comment|/* default proc file-ops */
-)brace
-suffix:semicolon
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a) &lt; (b)) ? (a) : (b))
@@ -1401,21 +1388,16 @@ comma
 suffix:semicolon
 multiline_comment|/*&n; * proc directories can do almost nothing..&n; */
 DECL|variable|proc_dir_inode_operations
+r_static
 r_struct
 id|inode_operations
 id|proc_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|proc_dir_operations
-comma
-multiline_comment|/* default net directory file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|proc_lookup
 comma
-multiline_comment|/* lookup */
 )brace
 suffix:semicolon
 DECL|function|proc_register
@@ -1484,15 +1466,22 @@ id|dp-&gt;mode
 r_if
 c_cond
 (paren
-id|dp-&gt;ops
+id|dp-&gt;proc_iops
 op_eq
 l_int|NULL
 )paren
-id|dp-&gt;ops
+(brace
+id|dp-&gt;proc_fops
+op_assign
+op_amp
+id|proc_dir_operations
+suffix:semicolon
+id|dp-&gt;proc_iops
 op_assign
 op_amp
 id|proc_dir_inode_operations
 suffix:semicolon
+)brace
 id|dir-&gt;nlink
 op_increment
 suffix:semicolon
@@ -1511,11 +1500,11 @@ id|dp-&gt;mode
 r_if
 c_cond
 (paren
-id|dp-&gt;ops
+id|dp-&gt;proc_iops
 op_eq
 l_int|NULL
 )paren
-id|dp-&gt;ops
+id|dp-&gt;proc_iops
 op_assign
 op_amp
 id|proc_link_inode_operations
@@ -1535,14 +1524,14 @@ id|dp-&gt;mode
 r_if
 c_cond
 (paren
-id|dp-&gt;ops
+id|dp-&gt;proc_fops
 op_eq
 l_int|NULL
 )paren
-id|dp-&gt;ops
+id|dp-&gt;proc_fops
 op_assign
 op_amp
-id|proc_file_inode_operations
+id|proc_file_operations
 suffix:semicolon
 )brace
 r_return
@@ -2261,7 +2250,12 @@ id|ent-&gt;namelen
 op_assign
 id|len
 suffix:semicolon
-id|ent-&gt;ops
+id|ent-&gt;proc_fops
+op_assign
+op_amp
+id|proc_dir_operations
+suffix:semicolon
+id|ent-&gt;proc_iops
 op_assign
 op_amp
 id|proc_dir_inode_operations
@@ -2473,7 +2467,12 @@ id|S_IRUGO
 op_or
 id|S_IXUGO
 suffix:semicolon
-id|ent-&gt;ops
+id|ent-&gt;proc_fops
+op_assign
+op_amp
+id|proc_dir_operations
+suffix:semicolon
+id|ent-&gt;proc_iops
 op_assign
 op_amp
 id|proc_dir_inode_operations

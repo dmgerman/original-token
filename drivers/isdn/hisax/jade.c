@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: jade.c,v 1.2 1999/07/01 08:07:57 keil Exp $&n; *&n; * jade.c   JADE stuff (derived from original hscx.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: jade.c,v $&n; * Revision 1.2  1999/07/01 08:07:57  keil&n; * Initial version&n; *&n; *&n; */
+multiline_comment|/* $Id: jade.c,v 1.3 2000/02/26 00:35:13 keil Exp $&n; *&n; * jade.c   JADE stuff (derived from original hscx.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: jade.c,v $&n; * Revision 1.3  2000/02/26 00:35:13  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.2  1999/07/01 08:07:57  keil&n; * Initial version&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -1173,7 +1173,7 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb

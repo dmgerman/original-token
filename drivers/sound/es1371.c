@@ -16,11 +16,11 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/ac97_codec.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
-macro_line|#include &quot;ac97_codec.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|OSS_DOCUMENTED_MIXER_SEMANTICS
 macro_line|#undef OSS_DOCUMENTED_MIXER_SEMANTICS
@@ -448,6 +448,10 @@ DECL|macro|FMODE_MIDI_WRITE
 mdefine_line|#define FMODE_MIDI_WRITE (FMODE_WRITE &lt;&lt; FMODE_MIDI_SHIFT)
 DECL|macro|SND_DEV_DSP16
 mdefine_line|#define SND_DEV_DSP16   5 
+DECL|macro|ES1371_MODULE_NAME
+mdefine_line|#define ES1371_MODULE_NAME &quot;es1371&quot;
+DECL|macro|PFX
+mdefine_line|#define PFX ES1371_MODULE_NAME &quot;: &quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|struct|es1371_state
 r_struct
@@ -893,7 +897,8 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;es1371: sample rate converter timeout r = 0x%08x&bslash;n&quot;
+id|PFX
+l_string|&quot;sample rate converter timeout r = 0x%08x&bslash;n&quot;
 comma
 id|r
 )paren
@@ -4960,7 +4965,8 @@ id|invalid_magic
 )braket
 op_assign
 id|KERN_CRIT
-l_string|&quot;es1371: invalid magic value&bslash;n&quot;
+id|PFX
+l_string|&quot;invalid magic value&bslash;n&quot;
 suffix:semicolon
 DECL|macro|VALIDATE_STATE
 mdefine_line|#define VALIDATE_STATE(s)                         &bslash;&n;({                                                &bslash;&n;&t;if (!(s) || (s)-&gt;magic != ES1371_MAGIC) { &bslash;&n;&t;&t;printk(invalid_magic);            &bslash;&n;&t;&t;return -ENXIO;                    &bslash;&n;&t;}                                         &bslash;&n;})
@@ -5397,7 +5403,8 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;es1371: dac1 dma timed out??&bslash;n&quot;
+id|PFX
+l_string|&quot;dac1 dma timed out??&bslash;n&quot;
 )paren
 suffix:semicolon
 )paren
@@ -5618,7 +5625,8 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;es1371: dac2 dma timed out??&bslash;n&quot;
+id|PFX
+l_string|&quot;dac2 dma timed out??&bslash;n&quot;
 )paren
 suffix:semicolon
 )paren
@@ -13081,7 +13089,8 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;es1371: midi timed out??&bslash;n&quot;
+id|PFX
+l_string|&quot;midi timed out??&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -13748,7 +13757,8 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;es1371: out of memory&bslash;n&quot;
+id|PFX
+l_string|&quot;out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -13887,7 +13897,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;es1371: found chip, vendor id 0x%04x device id 0x%04x revision 0x%02x&bslash;n&quot;
+id|PFX
+l_string|&quot;found chip, vendor id 0x%04x device id 0x%04x revision 0x%02x&bslash;n&quot;
 comma
 id|s-&gt;vendor
 comma
@@ -13915,7 +13926,8 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;es1371: io ports %#lx-%#lx in use&bslash;n&quot;
+id|PFX
+l_string|&quot;io ports %#lx-%#lx in use&bslash;n&quot;
 comma
 id|s-&gt;io
 comma
@@ -13952,7 +13964,8 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;es1371: irq %u in use&bslash;n&quot;
+id|PFX
+l_string|&quot;irq %u in use&bslash;n&quot;
 comma
 id|s-&gt;irq
 )paren
@@ -13971,9 +13984,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;es1371: found es1371 rev %d at io %#lx irq %u&bslash;n&quot;
+id|PFX
+l_string|&quot;found es1371 rev %d at io %#lx irq %u&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;es1371: features: joystick 0x%x&bslash;n&quot;
+id|PFX
+l_string|&quot;features: joystick 0x%x&bslash;n&quot;
 comma
 id|s-&gt;rev
 comma
@@ -14134,7 +14149,8 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;es1371: joystick address 0x%x already in use&bslash;n&quot;
+id|PFX
+l_string|&quot;joystick address 0x%x already in use&bslash;n&quot;
 comma
 id|joystick
 (braket
@@ -14197,7 +14213,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;es1371: enabling S/PDIF output&bslash;n&quot;
+id|PFX
+l_string|&quot;enabling S/PDIF output&bslash;n&quot;
 )paren
 suffix:semicolon
 id|cssr
@@ -14215,7 +14232,8 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;es1371: revision %d does not support S/PDIF&bslash;n&quot;
+id|PFX
+l_string|&quot;revision %d does not support S/PDIF&bslash;n&quot;
 comma
 id|s-&gt;rev
 )paren
@@ -14577,7 +14595,8 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;es1371: cannot register misc device&bslash;n&quot;
+id|PFX
+l_string|&quot;cannot register misc device&bslash;n&quot;
 )paren
 suffix:semicolon
 id|free_irq
@@ -14932,7 +14951,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;es1371: unloading&bslash;n&quot;
+id|PFX
+l_string|&quot;unloading&bslash;n&quot;
 )paren
 suffix:semicolon
 id|pci_unregister_driver

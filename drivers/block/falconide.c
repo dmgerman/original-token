@@ -33,6 +33,7 @@ mdefine_line|#define ATA_HD_CONTROL&t;0x39
 DECL|variable|falconide_offsets
 r_static
 r_int
+id|__init
 id|falconide_offsets
 (braket
 id|IDE_NR_PORTS
@@ -64,6 +65,7 @@ suffix:semicolon
 multiline_comment|/*&n;     *  Probe for a Falcon IDE interface&n;     */
 DECL|function|falconide_init
 r_void
+id|__init
 id|falconide_init
 c_func
 (paren

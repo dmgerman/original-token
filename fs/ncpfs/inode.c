@@ -70,32 +70,22 @@ id|super_operations
 id|ncp_sops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* read inode */
-l_int|NULL
-comma
-multiline_comment|/* write inode */
+id|put_inode
+suffix:colon
 id|ncp_put_inode
 comma
-multiline_comment|/* put inode */
+id|delete_inode
+suffix:colon
 id|ncp_delete_inode
 comma
-multiline_comment|/* delete inode */
-id|ncp_notify_change
-comma
-multiline_comment|/* notify change */
+id|put_super
+suffix:colon
 id|ncp_put_super
 comma
-multiline_comment|/* put superblock */
-l_int|NULL
-comma
-multiline_comment|/* write superblock */
+id|statfs
+suffix:colon
 id|ncp_statfs
 comma
-multiline_comment|/* stat filesystem */
-l_int|NULL
-multiline_comment|/* remount */
 )brace
 suffix:semicolon
 r_extern
@@ -876,6 +866,27 @@ id|nwinfo
 )paren
 suffix:semicolon
 )brace
+DECL|variable|ncp_symlink_inode_operations
+r_static
+r_struct
+id|inode_operations
+id|ncp_symlink_inode_operations
+op_assign
+(brace
+id|readlink
+suffix:colon
+id|page_readlink
+comma
+id|follow_link
+suffix:colon
+id|page_follow_link
+comma
+id|setattr
+suffix:colon
+id|ncp_notify_change
+comma
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Get a new inode.&n; */
 r_struct
 id|inode
@@ -967,6 +978,11 @@ op_assign
 op_amp
 id|ncp_file_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|ncp_file_operations
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -984,6 +1000,11 @@ op_assign
 op_amp
 id|ncp_dir_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|ncp_dir_operations
+suffix:semicolon
 macro_line|#ifdef CONFIG_NCPFS_EXTRAS
 )brace
 r_else
@@ -1000,7 +1021,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|page_symlink_inode_operations
+id|ncp_symlink_inode_operations
 suffix:semicolon
 id|inode-&gt;i_data.a_ops
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hfc_pci.c,v 1.26 2000/02/09 20:22:55 werner Exp $&n;&n; * hfc_pci.c     low level driver for CCD&#xfffd;s hfc-pci based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD hfc ISA cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; * Copyright 1999  by Karsten Keil (keil@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hfc_pci.c,v $&n; * Revision 1.26  2000/02/09 20:22:55  werner&n; *&n; * Updated PCI-ID table&n; *&n; * Revision 1.25  1999/12/19 13:09:42  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.24  1999/11/17 23:59:55  werner&n; *&n; * removed unneeded data&n; *&n; * Revision 1.23  1999/11/07 17:01:55  keil&n; * fix for 2.3 pci structs&n; *&n; * Revision 1.22  1999/10/10 20:14:27  werner&n; *&n; * Correct B2-chan usage in conjuntion with echo mode. First implementation of NT-leased line mode.&n; *&n; * Revision 1.21  1999/10/02 17:47:49  werner&n; *&n; * Changed init order, added correction for page alignment with shared mem&n; *&n; * Revision 1.20  1999/09/07 06:18:55  werner&n; *&n; * Added io parameter for HFC-PCI based cards. Needed only with multiple cards&n; * when initialisation/selection order needs to be set.&n; *&n; * Revision 1.19  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.18  1999/08/29 17:05:44  werner&n; * corrected tx_lo line setup. Datasheet is not correct.&n; *&n; * Revision 1.17  1999/08/28 21:04:27  werner&n; * Implemented full audio support (transparent mode)&n; *&n; * Revision 1.16  1999/08/25 17:01:27  keil&n; * Use new LL-&gt;HL auxcmd call&n; *&n; * Revision 1.15  1999/08/22 20:27:05  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.14  1999/08/12 18:59:45  werner&n; * Added further manufacturer and device ids to PCI list&n; *&n; * Revision 1.13  1999/08/11 21:01:28  keil&n; * new PCI codefix&n; *&n; * Revision 1.12  1999/08/10 16:01:58  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.11  1999/08/09 19:13:32  werner&n; * moved constant pci ids to pci id table&n; *&n; * Revision 1.10  1999/08/08 10:17:34  werner&n; * added new PCI vendor and card ids for Manufacturer 0x1043&n; *&n; * Revision 1.9  1999/08/07 21:09:10  werner&n; * Fixed another memcpy problem in fifo handling.&n; * Thanks for debugging aid by Olaf Kordwittenborg.&n; *&n; * Revision 1.8  1999/07/23 14:25:15  werner&n; * Some smaller bug fixes and prepared support for GCI/IOM bus&n; *&n; * Revision 1.7  1999/07/14 21:24:20  werner&n; * fixed memcpy problem when using E-channel feature&n; *&n; * Revision 1.6  1999/07/13 21:08:08  werner&n; * added echo channel logging feature.&n; *&n; * Revision 1.5  1999/07/12 21:05:10  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.4  1999/07/04 21:51:39  werner&n; * Changes to solve problems with irq sharing and smp machines&n; * Thanks to Karsten Keil and Alex Holden for giving aid with&n; * testing and debugging&n; *&n; * Revision 1.3  1999/07/01 09:43:19  keil&n; * removed additional schedules in timeouts&n; *&n; * Revision 1.2  1999/07/01 08:07:51  keil&n; * Initial version&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: hfc_pci.c,v 1.27 2000/02/26 00:35:12 keil Exp $&n;&n; * hfc_pci.c     low level driver for CCD&#xfffd;s hfc-pci based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD hfc ISA cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; * Copyright 1999  by Karsten Keil (keil@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hfc_pci.c,v $&n; * Revision 1.27  2000/02/26 00:35:12  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.26  2000/02/09 20:22:55  werner&n; *&n; * Updated PCI-ID table&n; *&n; * Revision 1.25  1999/12/19 13:09:42  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.24  1999/11/17 23:59:55  werner&n; *&n; * removed unneeded data&n; *&n; * Revision 1.23  1999/11/07 17:01:55  keil&n; * fix for 2.3 pci structs&n; *&n; * Revision 1.22  1999/10/10 20:14:27  werner&n; *&n; * Correct B2-chan usage in conjuntion with echo mode. First implementation of NT-leased line mode.&n; *&n; * Revision 1.21  1999/10/02 17:47:49  werner&n; *&n; * Changed init order, added correction for page alignment with shared mem&n; *&n; * Revision 1.20  1999/09/07 06:18:55  werner&n; *&n; * Added io parameter for HFC-PCI based cards. Needed only with multiple cards&n; * when initialisation/selection order needs to be set.&n; *&n; * Revision 1.19  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.18  1999/08/29 17:05:44  werner&n; * corrected tx_lo line setup. Datasheet is not correct.&n; *&n; * Revision 1.17  1999/08/28 21:04:27  werner&n; * Implemented full audio support (transparent mode)&n; *&n; * Revision 1.16  1999/08/25 17:01:27  keil&n; * Use new LL-&gt;HL auxcmd call&n; *&n; * Revision 1.15  1999/08/22 20:27:05  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.14  1999/08/12 18:59:45  werner&n; * Added further manufacturer and device ids to PCI list&n; *&n; * Revision 1.13  1999/08/11 21:01:28  keil&n; * new PCI codefix&n; *&n; * Revision 1.12  1999/08/10 16:01:58  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.11  1999/08/09 19:13:32  werner&n; * moved constant pci ids to pci id table&n; *&n; * Revision 1.10  1999/08/08 10:17:34  werner&n; * added new PCI vendor and card ids for Manufacturer 0x1043&n; *&n; * Revision 1.9  1999/08/07 21:09:10  werner&n; * Fixed another memcpy problem in fifo handling.&n; * Thanks for debugging aid by Olaf Kordwittenborg.&n; *&n; * Revision 1.8  1999/07/23 14:25:15  werner&n; * Some smaller bug fixes and prepared support for GCI/IOM bus&n; *&n; * Revision 1.7  1999/07/14 21:24:20  werner&n; * fixed memcpy problem when using E-channel feature&n; *&n; * Revision 1.6  1999/07/13 21:08:08  werner&n; * added echo channel logging feature.&n; *&n; * Revision 1.5  1999/07/12 21:05:10  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.4  1999/07/04 21:51:39  werner&n; * Changes to solve problems with irq sharing and smp machines&n; * Thanks to Karsten Keil and Alex Holden for giving aid with&n; * testing and debugging&n; *&n; * Revision 1.3  1999/07/01 09:43:19  keil&n; * removed additional schedules in timeouts&n; *&n; * Revision 1.2  1999/07/01 08:07:51  keil&n; * Initial version&n; *&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -22,7 +22,7 @@ r_char
 op_star
 id|hfcpci_revision
 op_assign
-l_string|&quot;$Revision: 1.26 $&quot;
+l_string|&quot;$Revision: 1.27 $&quot;
 suffix:semicolon
 multiline_comment|/* table entry in the PCI devices list */
 r_typedef
@@ -2917,7 +2917,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|cs-&gt;tx_skb
@@ -3339,7 +3339,7 @@ comma
 id|bcs-&gt;tx_skb-&gt;len
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb
@@ -3742,7 +3742,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb
@@ -5842,7 +5842,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|cs-&gt;tx_skb
@@ -7947,7 +7947,7 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|bcs-&gt;tx_skb

@@ -356,12 +356,15 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|variable|qnx4_dir_operations
-r_static
 r_struct
 id|file_operations
 id|qnx4_dir_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|qnx4_readdir
@@ -378,22 +381,15 @@ id|inode_operations
 id|qnx4_dir_inode_operations
 op_assign
 (brace
-id|default_file_ops
+id|lookup
 suffix:colon
-op_amp
-id|qnx4_dir_operations
+id|qnx4_lookup
 comma
 macro_line|#ifdef CONFIG_QNX4FS_RW
 id|create
 suffix:colon
 id|qnx4_create
 comma
-macro_line|#endif
-id|lookup
-suffix:colon
-id|qnx4_lookup
-comma
-macro_line|#ifdef CONFIG_QNX4FS_RW
 id|unlink
 suffix:colon
 id|qnx4_unlink

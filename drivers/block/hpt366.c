@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/hpt366.c&t;&t;Version 0.15&t;Dec. 22, 1999&n; *&n; * Copyright (C) 1999&t;&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to HighPoint Technologies for their assistance, and hardware.&n; * Special Thanks to Jon Burchmore in SanDiego for the deep pockets, his&n; * donation of an ABit BP6 mainboard, processor, and memory acellerated&n; * development and support.&n; */
+multiline_comment|/*&n; * linux/drivers/block/hpt366.c&t;&t;Version 0.16&t;Feb. 10, 2000&n; *&n; * Copyright (C) 1999-2000&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to HighPoint Technologies for their assistance, and hardware.&n; * Special Thanks to Jon Burchmore in SanDiego for the deep pockets, his&n; * donation of an ABit BP6 mainboard, processor, and memory acellerated&n; * development and support.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15,6 +15,12 @@ macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;ide_modes.h&quot;
+DECL|macro|DISPLAY_HPT366_TIMINGS
+mdefine_line|#define DISPLAY_HPT366_TIMINGS
+macro_line|#if defined(DISPLAY_HPT366_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#endif  /* defined(DISPLAY_HPT366_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS) */
 DECL|variable|bad_ata66_4
 r_const
 r_char
@@ -436,6 +442,318 @@ DECL|macro|HPT366_ALLOW_ATA66_4
 mdefine_line|#define HPT366_ALLOW_ATA66_4&t;&t;1
 DECL|macro|HPT366_ALLOW_ATA66_3
 mdefine_line|#define HPT366_ALLOW_ATA66_3&t;&t;1
+macro_line|#if defined(DISPLAY_HPT366_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+r_static
+r_int
+id|hpt366_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|hpt366_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* ide-proc.c */
+r_extern
+r_char
+op_star
+id|ide_media_verbose
+c_func
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
+DECL|variable|bmide_dev
+r_static
+r_struct
+id|pci_dev
+op_star
+id|bmide_dev
+suffix:semicolon
+DECL|variable|bmide2_dev
+r_static
+r_struct
+id|pci_dev
+op_star
+id|bmide2_dev
+suffix:semicolon
+DECL|function|hpt366_get_info
+r_static
+r_int
+id|hpt366_get_info
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|addr
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|count
+)paren
+(brace
+r_char
+op_star
+id|p
+op_assign
+id|buffer
+suffix:semicolon
+id|u32
+id|bibma
+op_assign
+id|bmide_dev-&gt;resource
+(braket
+l_int|4
+)braket
+dot
+id|start
+suffix:semicolon
+id|u32
+id|bibma2
+op_assign
+id|bmide2_dev-&gt;resource
+(braket
+l_int|4
+)braket
+dot
+id|start
+suffix:semicolon
+id|u8
+id|c0
+op_assign
+l_int|0
+comma
+id|c1
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;         * at that point bibma+0x2 et bibma+0xa are byte registers&n;         * to investigate:&n;         */
+id|c0
+op_assign
+id|inb_p
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|bibma
+op_plus
+l_int|0x02
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bmide2_dev
+)paren
+id|c1
+op_assign
+id|inb_p
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|bibma2
+op_plus
+l_int|0x02
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;&bslash;n                                HPT366 Chipset.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;--------------- Primary Channel ---------------- Secondary Channel -------------&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;                %sabled                         %sabled&bslash;n&quot;
+comma
+(paren
+id|c0
+op_amp
+l_int|0x80
+)paren
+ques
+c_cond
+l_string|&quot;dis&quot;
+suffix:colon
+l_string|&quot; en&quot;
+comma
+(paren
+id|c1
+op_amp
+l_int|0x80
+)paren
+ques
+c_cond
+l_string|&quot;dis&quot;
+suffix:colon
+l_string|&quot; en&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;--------------- drive0 --------- drive1 -------- drive0 ---------- drive1 ------&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;DMA enabled:    %s              %s             %s               %s&bslash;n&quot;
+comma
+(paren
+id|c0
+op_amp
+l_int|0x20
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+comma
+(paren
+id|c0
+op_amp
+l_int|0x40
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+comma
+(paren
+id|c1
+op_amp
+l_int|0x20
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+comma
+(paren
+id|c1
+op_amp
+l_int|0x40
+)paren
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no &quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;UDMA&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;DMA&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;PIO&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|p
+op_minus
+id|buffer
+suffix:semicolon
+multiline_comment|/* =&gt; must be less than 4k! */
+)brace
+macro_line|#endif  /* defined(DISPLAY_HPT366_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS) */
+DECL|variable|hpt366_proc
+id|byte
+id|hpt366_proc
+op_assign
+l_int|0
+suffix:semicolon
 r_extern
 r_char
 op_star
@@ -1135,7 +1453,7 @@ op_amp
 id|reg51h
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_HPT366_FAST_IRQ_PREDICTION
+macro_line|#ifdef CONFIG_HPT366_FIP
 multiline_comment|/*&n;&t; * Some drives prefer/allow for the method of handling interrupts.&n;&t; */
 r_if
 c_cond
@@ -1165,7 +1483,7 @@ op_or
 l_int|0x80
 )paren
 suffix:semicolon
-macro_line|#else /* ! CONFIG_HPT366_FAST_IRQ_PREDICTION */
+macro_line|#else /* ! CONFIG_HPT366_FIP */
 multiline_comment|/*&n;&t; * Disable the &quot;fast interrupt&quot; prediction.&n;&t; * Instead, always wait for the real interrupt from the drive!&n;&t; */
 r_if
 c_cond
@@ -1193,7 +1511,7 @@ op_complement
 l_int|0x80
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_HPT366_FAST_IRQ_PREDICTION */
+macro_line|#endif /* CONFIG_HPT366_FIP */
 multiline_comment|/*&n;&t; * Preserve existing PIO settings:&n;&t; */
 id|pci_read_config_dword
 c_func
@@ -2065,8 +2383,6 @@ multiline_comment|/* ide_set_handler(drive, &amp;ide_dma_intr, WAIT_CMD, NULL); 
 r_case
 id|ide_dma_timeout
 suffix:colon
-r_break
-suffix:semicolon
 r_default
 suffix:colon
 r_break
@@ -2244,6 +2560,52 @@ comma
 l_int|0x08
 )paren
 suffix:semicolon
+macro_line|#if defined(DISPLAY_HPT366_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hpt366_proc
+)paren
+(brace
+id|hpt366_proc
+op_assign
+l_int|1
+suffix:semicolon
+id|bmide_dev
+op_assign
+id|dev
+suffix:semicolon
+id|hpt366_display_info
+op_assign
+op_amp
+id|hpt366_get_info
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|hpt366_proc
+)paren
+op_logical_and
+(paren
+(paren
+id|dev-&gt;devfn
+op_minus
+id|bmide_dev-&gt;devfn
+)paren
+op_eq
+l_int|1
+)paren
+)paren
+(brace
+id|bmide2_dev
+op_assign
+id|dev
+suffix:semicolon
+)brace
+macro_line|#endif /* DISPLAY_HPT366_TIMINGS &amp;&amp; CONFIG_PROC_FS */
 r_return
 id|dev-&gt;irq
 suffix:semicolon
@@ -2327,66 +2689,6 @@ op_star
 id|hwif
 )paren
 (brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-(paren
-id|PCI_FUNC
-c_func
-(paren
-id|hwif-&gt;pci_dev-&gt;devfn
-)paren
-op_amp
-l_int|1
-)paren
-op_logical_and
-(paren
-id|hpt363_shared_irq
-)paren
-)paren
-(brace
-id|hwif-&gt;mate
-op_assign
-op_amp
-id|ide_hwifs
-(braket
-id|hwif-&gt;index
-op_minus
-l_int|1
-)braket
-suffix:semicolon
-id|hwif-&gt;mate-&gt;mate
-op_assign
-id|hwif
-suffix:semicolon
-id|hwif-&gt;serialized
-op_assign
-id|hwif-&gt;mate-&gt;serialized
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|PCI_FUNC
-c_func
-(paren
-id|hwif-&gt;pci_dev-&gt;devfn
-)paren
-op_amp
-l_int|1
-)paren
-op_logical_and
-(paren
-id|hpt363_shared_pin
-)paren
-)paren
-(brace
-)brace
-macro_line|#endif
 id|hwif-&gt;tuneproc
 op_assign
 op_amp

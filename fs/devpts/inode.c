@@ -194,32 +194,22 @@ id|super_operations
 id|devpts_sops
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|devpts_read_inode
 comma
+id|write_inode
+suffix:colon
 id|devpts_write_inode
 comma
-l_int|NULL
-comma
-multiline_comment|/* put_inode */
-l_int|NULL
-comma
-multiline_comment|/* delete_inode */
-l_int|NULL
-comma
-multiline_comment|/* notify_change */
+id|put_super
+suffix:colon
 id|devpts_put_super
 comma
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|devpts_statfs
 comma
-l_int|NULL
-comma
-multiline_comment|/* remount_fs */
-l_int|NULL
-comma
-multiline_comment|/* clear_inode */
 )brace
 suffix:semicolon
 DECL|function|devpts_parse_options
@@ -1023,10 +1013,6 @@ c_func
 id|inode-&gt;i_sb
 )paren
 suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 l_int|0
@@ -1083,6 +1069,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|devpts_root_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|devpts_root_operations
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign

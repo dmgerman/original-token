@@ -105,6 +105,19 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+r_int
+id|coda_notify_change
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|iattr
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* global variables */
 r_extern
 r_int

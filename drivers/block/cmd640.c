@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 1.02  Sep 01, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;&t;Version 1.02  Sep 01, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
 multiline_comment|/*&n; *  Original authors:&t;abramov@cecmow.enet.dec.com (Igor Abramov)&n; *  &t;&t;&t;mlord@pobox.com (Mark Lord)&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  These chips are basically fucked by design, and getting this driver&n; *  to work on every motherboard design that uses this screwed chip seems&n; *  bloody well impossible.  However, we&squot;re still trying.&n; *&n; *  Version 0.97 worked for everybody.&n; *&n; *  User feedback is essential.  Many thanks to the beta test team:&n; *&n; *  A.Hartgers@stud.tue.nl, JZDQC@CUNYVM.CUNY.edu, abramov@cecmow.enet.dec.com,&n; *  bardj@utopia.ppp.sn.no, bart@gaga.tue.nl, bbol001@cs.auckland.ac.nz,&n; *  chrisc@dbass.demon.co.uk, dalecki@namu26.Num.Math.Uni-Goettingen.de,&n; *  derekn@vw.ece.cmu.edu, florian@btp2x3.phy.uni-bayreuth.de,&n; *  flynn@dei.unipd.it, gadio@netvision.net.il, godzilla@futuris.net,&n; *  j@pobox.com, jkemp1@mises.uni-paderborn.de, jtoppe@hiwaay.net,&n; *  kerouac@ssnet.com, meskes@informatik.rwth-aachen.de, hzoli@cs.elte.hu,&n; *  peter@udgaard.isgtec.com, phil@tazenda.demon.co.uk, roadcapw@cfw.com,&n; *  s0033las@sun10.vsz.bme.hu, schaffer@tam.cornell.edu, sjd@slip.net,&n; *  steve@ei.org, ulrpeg@bigcomm.gun.de, ism@tardis.ed.ac.uk, mack@cray.com&n; *  liug@mama.indstate.edu, and others.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable prefetch&n; *&t;&t;&t;for versions &squot;B&squot; and &squot;C&squot; of chip by default,&n; *&t;&t;&t;some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with prefetch mode. Separate function for setting&n; *&t;&t;&t;prefetch is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *&n; *  Version 0.04&t;Now configs/compiles separate from ide.c&n; *&n; *  Version 0.05&t;Major rewrite of interface timing code.&n; *&t;&t;&t;Added new function cmd640_set_mode to set PIO mode&n; *&t;&t;&t;from ioctl call. New drives added to black list.&n; *&n; *  Version 0.06&t;More code cleanup. Prefetch is enabled only for&n; *&t;&t;&t;detected hard drives, not included in prefetch&n; *&t;&t;&t;black list.&n; *&n; *  Version 0.07&t;Changed to more conservative drive tuning policy.&n; *&t;&t;&t;Unknown drives, which report PIO &lt; 4 are set to&n; *&t;&t;&t;(reported_PIO - 1) if it is supported, or to PIO0.&n; *&t;&t;&t;List of known drives extended by info provided by&n; *&t;&t;&t;CMD at their ftp site.&n; *&n; *  Version 0.08&t;Added autotune/noautotune support.&n; *&n; *  Version 0.09&t;Try to be smarter about 2nd port enabling.&n; *  Version 0.10&t;Be nice and don&squot;t reset 2nd port.&n; *  Version 0.11&t;Try to handle more wierd situations.&n; *&n; *  Version 0.12&t;Lots of bug fixes from Laszlo Peter&n; *&t;&t;&t;irq unmasking disabled for reliability.&n; *&t;&t;&t;try to be even smarter about the second port.&n; *&t;&t;&t;tidy up source code formatting.&n; *  Version 0.13&t;permit irq unmasking again.&n; *  Version 0.90&t;massive code cleanup, some bugs fixed.&n; *&t;&t;&t;defaults all drives to PIO mode0, prefetch off.&n; *&t;&t;&t;autotune is OFF by default, with compile time flag.&n; *&t;&t;&t;prefetch can be turned OFF/ON using &quot;hdparm -p8/-p9&quot;&n; *&t;&t;&t; (requires hdparm-3.1 or newer)&n; *  Version 0.91&t;first release to linux-kernel list.&n; *  Version 0.92&t;move initial reg dump to separate callable function&n; *&t;&t;&t;change &quot;readahead&quot; to &quot;prefetch&quot; to avoid confusion&n; *  Version 0.95&t;respect original BIOS timings unless autotuning.&n; *&t;&t;&t;tons of code cleanup and rearrangement.&n; *&t;&t;&t;added CONFIG_BLK_DEV_CMD640_ENHANCED option&n; *&t;&t;&t;prevent use of unmask when prefetch is on&n; *  Version 0.96&t;prevent use of io_32bit when prefetch is off&n; *  Version 0.97&t;fix VLB secondary interface for sjd@slip.net&n; *&t;&t;&t;other minor tune-ups:  0.96 was very good.&n; *  Version 0.98&t;ignore PCI version when disabled by BIOS&n; *  Version 0.99&t;display setup/active/recovery clocks with PIO mode&n; *  Version 1.00&t;Mmm.. cannot depend on PCMD_ENA in all systems&n; *  Version 1.01&t;slow/fast devsel can be selected with &quot;hdparm -p6/-p7&quot;&n; *&t;&t;&t; (&quot;fast&quot; is necessary for 32bit I/O in some systems)&n; *  Version 1.02&t;fix bug that resulted in slow &quot;setup times&quot;&n; *&t;&t;&t; (patch courtesy of Zoltan Hidvegi)&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
@@ -662,6 +662,7 @@ suffix:semicolon
 DECL|function|match_pci_cmd640_device
 r_static
 r_int
+id|__init
 id|match_pci_cmd640_device
 (paren
 r_void
@@ -758,6 +759,7 @@ multiline_comment|/*&n; * Probe for CMD640x -- pci method 1&n; */
 DECL|function|probe_for_cmd640_pci1
 r_static
 r_int
+id|__init
 id|probe_for_cmd640_pci1
 (paren
 r_void
@@ -808,6 +810,7 @@ multiline_comment|/*&n; * Probe for CMD640x -- pci method 2&n; */
 DECL|function|probe_for_cmd640_pci2
 r_static
 r_int
+id|__init
 id|probe_for_cmd640_pci2
 (paren
 r_void
@@ -858,6 +861,7 @@ multiline_comment|/*&n; * Probe for CMD640x -- vlb&n; */
 DECL|function|probe_for_cmd640_vlb
 r_static
 r_int
+id|__init
 id|probe_for_cmd640_vlb
 (paren
 r_void
@@ -947,6 +951,7 @@ multiline_comment|/*&n; *  Returns 1 if an IDE interface/drive exists at 0x170,&
 DECL|function|secondary_port_responding
 r_static
 r_int
+id|__init
 id|secondary_port_responding
 (paren
 r_void
@@ -1142,6 +1147,7 @@ multiline_comment|/*&n; * Check whether prefetch is on for a drive,&n; * and ini
 DECL|function|check_prefetch
 r_static
 r_void
+id|__init
 id|check_prefetch
 (paren
 r_int
@@ -1217,6 +1223,7 @@ multiline_comment|/*&n; * Figure out which devices we control&n; */
 DECL|function|setup_device_ptrs
 r_static
 r_void
+id|__init
 id|setup_device_ptrs
 (paren
 r_void
@@ -1602,6 +1609,7 @@ multiline_comment|/*&n; * This routine retrieves the initial drive timings from 
 DECL|function|retrieve_drive_counts
 r_static
 r_void
+id|__init
 id|retrieve_drive_counts
 (paren
 r_int
@@ -2435,6 +2443,7 @@ macro_line|#endif /* CONFIG_BLK_DEV_CMD640_ENHANCED */
 multiline_comment|/*&n; * Probe for a cmd640 chipset, and initialize it if found.  Called from ide.c&n; */
 DECL|function|ide_probe_for_cmd640x
 r_int
+id|__init
 id|ide_probe_for_cmd640x
 (paren
 r_void

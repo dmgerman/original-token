@@ -6,21 +6,8 @@ macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Maximum number of ports to support.  It is useless to set this greater&n;   than PARPORT_MAX (in &lt;linux/parport.h&gt;).  */
 DECL|macro|PARPORT_PC_MAX_PORTS
 mdefine_line|#define PARPORT_PC_MAX_PORTS  8
-multiline_comment|/* If parport_cs (PCMCIA) is managing ports for us, we&squot;ll need the&n; * probing routines forever; otherwise we can lose them at boot time. */
-macro_line|#ifdef CONFIG_PARPORT_PC_PCMCIA
-DECL|macro|__maybe_initdata
-mdefine_line|#define __maybe_initdata
-DECL|macro|__maybe_init
-mdefine_line|#define __maybe_init
-macro_line|#else
-DECL|macro|__maybe_initdata
-mdefine_line|#define __maybe_initdata __initdata
-DECL|macro|__maybe_init
-mdefine_line|#define __maybe_init __init
-macro_line|#endif
 r_static
 r_int
-id|__maybe_init
 id|parport_pc_init_pci
 c_func
 (paren
@@ -31,11 +18,19 @@ r_int
 id|dma
 )paren
 suffix:semicolon
-DECL|variable|__maybe_initdata
+r_static
+r_int
+id|parport_pc_init_superio
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|variable|__devinitdata
 r_static
 r_int
 id|user_specified
-id|__maybe_initdata
+id|__devinitdata
 op_assign
 l_int|0
 suffix:semicolon
@@ -156,7 +151,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Probe all the likely ports. */
+id|count
+op_add_assign
+id|parport_pc_init_superio
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -235,6 +235,7 @@ l_int|NULL
 id|count
 op_increment
 suffix:semicolon
+multiline_comment|/* probe for other PCI parallel devices */
 id|count
 op_add_assign
 id|parport_pc_init_pci

@@ -210,17 +210,6 @@ id|i2cproc_bus_read
 comma
 )brace
 suffix:semicolon
-DECL|variable|i2cproc_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|i2cproc_inode_operations
-op_assign
-(brace
-op_amp
-id|i2cproc_operations
-)brace
-suffix:semicolon
 DECL|variable|i2cproc_initialized
 r_static
 r_int
@@ -400,10 +389,10 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
-id|proc_entry-&gt;ops
+id|proc_entry-&gt;proc_fops
 op_assign
 op_amp
-id|i2cproc_inode_operations
+id|i2cproc_operations
 suffix:semicolon
 macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,27))
 id|proc_entry-&gt;owner

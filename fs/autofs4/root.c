@@ -133,22 +133,39 @@ op_star
 )paren
 suffix:semicolon
 DECL|variable|autofs4_root_operations
-r_static
 r_struct
 id|file_operations
 id|autofs4_root_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|autofs4_dir_readdir
 comma
-multiline_comment|/* readdir */
 id|ioctl
 suffix:colon
 id|autofs4_root_ioctl
 comma
-multiline_comment|/* ioctl */
+)brace
+suffix:semicolon
+DECL|variable|autofs4_dir_operations
+r_struct
+id|file_operations
+id|autofs4_dir_operations
+op_assign
+(brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
+id|readdir
+suffix:colon
+id|autofs4_dir_readdir
+comma
 )brace
 suffix:semicolon
 DECL|variable|autofs4_root_inode_operations
@@ -157,49 +174,26 @@ id|inode_operations
 id|autofs4_root_inode_operations
 op_assign
 (brace
-op_amp
-id|autofs4_root_operations
-comma
-multiline_comment|/* file operations */
 id|lookup
 suffix:colon
 id|autofs4_root_lookup
 comma
-multiline_comment|/* lookup */
 id|unlink
 suffix:colon
 id|autofs4_dir_unlink
 comma
-multiline_comment|/* unlink */
 id|symlink
 suffix:colon
 id|autofs4_dir_symlink
 comma
-multiline_comment|/* symlink */
 id|mkdir
 suffix:colon
 id|autofs4_dir_mkdir
 comma
-multiline_comment|/* mkdir */
 id|rmdir
 suffix:colon
 id|autofs4_dir_rmdir
 comma
-multiline_comment|/* rmdir */
-)brace
-suffix:semicolon
-DECL|variable|autofs4_dir_operations
-r_static
-r_struct
-id|file_operations
-id|autofs4_dir_operations
-op_assign
-(brace
-id|readdir
-suffix:colon
-id|autofs4_dir_readdir
-comma
-multiline_comment|/* readdir */
 )brace
 suffix:semicolon
 DECL|variable|autofs4_dir_inode_operations
@@ -208,35 +202,26 @@ id|inode_operations
 id|autofs4_dir_inode_operations
 op_assign
 (brace
-op_amp
-id|autofs4_dir_operations
-comma
-multiline_comment|/* file operations */
 id|lookup
 suffix:colon
 id|autofs4_dir_lookup
 comma
-multiline_comment|/* lookup */
 id|unlink
 suffix:colon
 id|autofs4_dir_unlink
 comma
-multiline_comment|/* unlink */
 id|symlink
 suffix:colon
 id|autofs4_dir_symlink
 comma
-multiline_comment|/* symlink */
 id|mkdir
 suffix:colon
 id|autofs4_dir_mkdir
 comma
-multiline_comment|/* mkdir */
 id|rmdir
 suffix:colon
 id|autofs4_dir_rmdir
 comma
-multiline_comment|/* rmdir */
 )brace
 suffix:semicolon
 DECL|function|nth_child

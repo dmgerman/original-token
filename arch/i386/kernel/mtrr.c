@@ -5949,19 +5949,6 @@ comma
 )brace
 suffix:semicolon
 macro_line|#  ifdef CONFIG_PROC_FS
-DECL|variable|proc_mtrr_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|proc_mtrr_inode_operations
-op_assign
-(brace
-op_amp
-id|mtrr_fops
-comma
-multiline_comment|/* default property file-ops */
-)brace
-suffix:semicolon
 DECL|variable|proc_root_mtrr
 r_static
 r_struct
@@ -7414,10 +7401,10 @@ op_amp
 id|proc_root
 )paren
 suffix:semicolon
-id|proc_root_mtrr-&gt;ops
+id|proc_root_mtrr-&gt;proc_fops
 op_assign
 op_amp
-id|proc_mtrr_inode_operations
+id|mtrr_fops
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_DEVFS_FS

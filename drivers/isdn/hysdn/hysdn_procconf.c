@@ -1745,12 +1745,6 @@ l_int|NULL
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|variable|conf_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|conf_inode_operations
-suffix:semicolon
 multiline_comment|/*****************************/
 multiline_comment|/* hysdn subdir in /proc/net */
 multiline_comment|/*****************************/
@@ -1873,26 +1867,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|memset
-c_func
-(paren
-op_amp
-id|conf_inode_operations
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|inode_operations
-)paren
-)paren
-suffix:semicolon
-id|conf_inode_operations.default_file_ops
-op_assign
-op_amp
-id|conf_fops
-suffix:semicolon
 (paren
 (paren
 r_struct
@@ -1902,10 +1876,10 @@ op_star
 id|card-&gt;procconf
 )paren
 op_member_access_from_pointer
-id|ops
+id|proc_fops
 op_assign
 op_amp
-id|conf_inode_operations
+id|conf_fops
 suffix:semicolon
 id|hysdn_proclog_init
 c_func

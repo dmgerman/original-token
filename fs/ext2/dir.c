@@ -1,32 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/ext2/dir.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/dir.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 directory handling functions&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; */
 macro_line|#include &lt;linux/fs.h&gt;
-DECL|function|ext2_dir_read
-r_static
-id|ssize_t
-id|ext2_dir_read
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 r_static
 r_int
 id|ext2_readdir
@@ -43,7 +16,6 @@ id|filldir_t
 )paren
 suffix:semicolon
 DECL|variable|ext2_dir_operations
-r_static
 r_struct
 id|file_operations
 id|ext2_dir_operations
@@ -51,7 +23,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|ext2_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -65,46 +37,6 @@ id|fsync
 suffix:colon
 id|ext2_sync_file
 comma
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * directories can handle most operations...&n; */
-DECL|variable|ext2_dir_inode_operations
-r_struct
-id|inode_operations
-id|ext2_dir_inode_operations
-op_assign
-(brace
-op_amp
-id|ext2_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
-id|ext2_create
-comma
-multiline_comment|/* create */
-id|ext2_lookup
-comma
-multiline_comment|/* lookup */
-id|ext2_link
-comma
-multiline_comment|/* link */
-id|ext2_unlink
-comma
-multiline_comment|/* unlink */
-id|ext2_symlink
-comma
-multiline_comment|/* symlink */
-id|ext2_mkdir
-comma
-multiline_comment|/* mkdir */
-id|ext2_rmdir
-comma
-multiline_comment|/* rmdir */
-id|ext2_mknod
-comma
-multiline_comment|/* mknod */
-id|ext2_rename
-comma
-multiline_comment|/* rename */
 )brace
 suffix:semicolon
 DECL|function|ext2_check_dir_entry

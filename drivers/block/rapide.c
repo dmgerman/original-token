@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/block/ide-rapide.c&n; *&n; * Copyright (c) 1996-1998 Russell King.&n; *&n; * Changelog:&n; *  08-06-1996&t;RMK&t;Created&n; *  13-04-1998&t;RMK&t;Added manufacturer and product IDs&n; */
+multiline_comment|/*&n; * linux/drivers/block/rapide.c&n; *&n; * Copyright (c) 1996-1998 Russell King.&n; *&n; * Changelog:&n; *  08-06-1996&t;RMK&t;Created&n; *  13-04-1998&t;RMK&t;Added manufacturer and product IDs&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
@@ -9,6 +9,7 @@ DECL|variable|rapide_cids
 r_static
 r_const
 id|card_ids
+id|__init
 id|rapide_cids
 (braket
 )braket
@@ -149,6 +150,7 @@ suffix:semicolon
 )brace
 DECL|function|rapide_init
 r_int
+id|__init
 id|rapide_init
 c_func
 (paren

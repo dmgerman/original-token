@@ -183,53 +183,13 @@ id|inode_operations
 id|router_inode
 op_assign
 (brace
-op_amp
-id|router_fops
-comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
+id|permission
+suffix:colon
 id|router_proc_perms
 comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;/proc/net/router/&lt;device&gt; file and inode operations&n; */
+multiline_comment|/*&n; *&t;/proc/net/router/&lt;device&gt; file operations&n; */
 DECL|variable|wandev_fops
 r_static
 r_struct
@@ -245,59 +205,6 @@ id|ioctl
 suffix:colon
 id|wanrouter_ioctl
 comma
-)brace
-suffix:semicolon
-DECL|variable|wandev_inode
-r_static
-r_struct
-id|inode_operations
-id|wandev_inode
-op_assign
-(brace
-op_amp
-id|wandev_fops
-comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-id|router_proc_perms
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;/proc/net/router &n; */
@@ -384,7 +291,12 @@ id|p
 r_goto
 id|fail_config
 suffix:semicolon
-id|p-&gt;ops
+id|p-&gt;proc_fops
+op_assign
+op_amp
+id|router_fops
+suffix:semicolon
+id|p-&gt;proc_iops
 op_assign
 op_amp
 id|router_inode
@@ -414,7 +326,12 @@ id|p
 r_goto
 id|fail_stat
 suffix:semicolon
-id|p-&gt;ops
+id|p-&gt;proc_fops
+op_assign
+op_amp
+id|router_fops
+suffix:semicolon
+id|p-&gt;proc_iops
 op_assign
 op_amp
 id|router_inode
@@ -529,10 +446,15 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|wandev-&gt;dent-&gt;ops
+id|wandev-&gt;dent-&gt;proc_fops
 op_assign
 op_amp
-id|wandev_inode
+id|wandev_fops
+suffix:semicolon
+id|wandev-&gt;dent-&gt;proc_iops
+op_assign
+op_amp
+id|router_inode
 suffix:semicolon
 id|wandev-&gt;dent-&gt;get_info
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/via82cxxx.c&t;Version 0.06&t;Dec. 13, 1999&n; *&n; *  Copyright (C) 1998-99 Michel Aubry, Maintainer&n; *  Copyright (C) 1999 Jeff Garzik, MVP4 Support (jgarzik@mandrakesoft.com)&n; *  Copyright (C) 1998-99 Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  The VIA MVP-4 is reported OK with UDMA.&n; *  The VIA MVP-3 is reported OK with UDMA.&n; *  The TX Pro III is also reported OK with UDMA.&n; *&n; *  VIA chips also have a single FIFO, with the same 64 bytes deep&n; *  buffer (16 levels of 4 bytes each).&n; *&n; *  However, VIA chips can have the buffer split either 8:8 levels,&n; *  16:0 levels or 0:16 levels between both channels. One could think&n; *  of using this feature, as even if no level of FIFO is given to a&n; *  given channel, one can for instance always reach ATAPI drives through&n; *  it, or, if one channel is unused, configuration defaults to&n; *  an even split FIFO levels.&n; *  &n; *  This feature is available only through a kernel command line :&n; *&t;&t;&quot;splitfifo=Chan,Thr0,Thr1&quot; or &quot;splitfifo=Chan&quot;.&n; *&t;&t;where:  Chan =1,2,3 or 4 and Thrx = 1,2,3,or 4.&n; *&n; *  If Chan == 1:&n; *&t;gives all the fifo to channel 0,&n; *&t;sets its threshold to Thr0/4,&n; *&t;and disables any dma access to channel 1.&n; *&n; *  If chan == 2:&n; *&t;gives all the fifo to channel 1,&n; *&t;sets its threshold to Thr1/4,&n; *&t;and disables any dma access to channel 0.&n; *&n; *  If chan == 3 or 4:&n; *&t;shares evenly fifo between channels,&n; *&t;gives channel 0 a threshold of Thr0/4,&n; *&t;and channel 1 a threshold of Thr1/4.&n; *&n; *  Note that by default (if no command line is provided) and if a channel&n; *  has been disabled in Bios, all the fifo is given to the active channel,&n; *  and its threshold is set to 3/4.&n; */
+multiline_comment|/*&n; * linux/drivers/block/via82cxxx.c&t;Version 0.07&t;Feb. 10, 2000&n; *&n; *  Copyright (C) 1998-99&t;Michel Aubry, Maintainer&n; *  Copyright (C) 1999&t;&t;Jeff Garzik, MVP4 Support&n; *&t;&t;&t;&t;&t;(jgarzik@mandrakesoft.com)&n; *  Copyright (C) 1998-2000&t;Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  The VIA MVP-4 is reported OK with UDMA.&n; *  The VIA MVP-3 is reported OK with UDMA.&n; *  The TX Pro III is also reported OK with UDMA.&n; *&n; *  VIA chips also have a single FIFO, with the same 64 bytes deep&n; *  buffer (16 levels of 4 bytes each).&n; *&n; *  However, VIA chips can have the buffer split either 8:8 levels,&n; *  16:0 levels or 0:16 levels between both channels. One could think&n; *  of using this feature, as even if no level of FIFO is given to a&n; *  given channel, one can for instance always reach ATAPI drives through&n; *  it, or, if one channel is unused, configuration defaults to&n; *  an even split FIFO levels.&n; *  &n; *  This feature is available only through a kernel command line :&n; *&t;&t;&quot;splitfifo=Chan,Thr0,Thr1&quot; or &quot;splitfifo=Chan&quot;.&n; *&t;&t;where:  Chan =1,2,3 or 4 and Thrx = 1,2,3,or 4.&n; *&n; *  If Chan == 1:&n; *&t;gives all the fifo to channel 0,&n; *&t;sets its threshold to Thr0/4,&n; *&t;and disables any dma access to channel 1.&n; *&n; *  If chan == 2:&n; *&t;gives all the fifo to channel 1,&n; *&t;sets its threshold to Thr1/4,&n; *&t;and disables any dma access to channel 0.&n; *&n; *  If chan == 3 or 4:&n; *&t;shares evenly fifo between channels,&n; *&t;gives channel 0 a threshold of Thr0/4,&n; *&t;and channel 1 a threshold of Thr1/4.&n; *&n; *  Note that by default (if no command line is provided) and if a channel&n; *  has been disabled in Bios, all the fifo is given to the active channel,&n; *  and its threshold is set to 3/4.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2340,21 +2340,6 @@ l_string|&quot;1/2&quot;
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(DISPLAY_VIA_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
-id|via_proc
-op_assign
-l_int|1
-suffix:semicolon
-id|bmide_dev
-op_assign
-id|hwif-&gt;pci_dev
-suffix:semicolon
-id|via_display_info
-op_assign
-op_amp
-id|via_get_info
-suffix:semicolon
-macro_line|#endif /* DISPLAY_VIA_TIMINGS &amp;&amp;  CONFIG_PROC_FS*/
 r_return
 l_int|0
 suffix:semicolon
@@ -2625,6 +2610,21 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(DISPLAY_VIA_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+id|via_proc
+op_assign
+l_int|1
+suffix:semicolon
+id|bmide_dev
+op_assign
+id|dev
+suffix:semicolon
+id|via_display_info
+op_assign
+op_amp
+id|via_get_info
+suffix:semicolon
+macro_line|#endif /* DISPLAY_VIA_TIMINGS &amp;&amp;  CONFIG_PROC_FS*/
 r_return
 l_int|0
 suffix:semicolon
@@ -2706,7 +2706,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-multiline_comment|/*&n; *  ide_dmacapable_via82c568(ide_hwif_t *, unsigned long)&n; *  checks if channel &quot;channel&quot; of if hwif is dma&n; *  capable or not, according to kernel command line,&n; *  and the new fifo settings.&n; *  It calls &quot;ide_setup_dma&quot; on capable mainboards, and&n; *  bypasses the setup if not capable.&n; */
+multiline_comment|/*&n; *  ide_dmacapable_via82cxxx(ide_hwif_t *, unsigned long)&n; *  checks if channel &quot;channel&quot; of if hwif is dma&n; *  capable or not, according to kernel command line,&n; *  and the new fifo settings.&n; *  It calls &quot;ide_setup_dma&quot; on capable mainboards, and&n; *  bypasses the setup if not capable.&n; */
 DECL|function|ide_dmacapable_via82cxxx
 r_void
 id|ide_dmacapable_via82cxxx

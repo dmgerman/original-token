@@ -36,27 +36,6 @@ mdefine_line|#define&t;WRITE_CMD&t;&t;&t;&t;IDE_CMD_WRITE_MULTIPLE
 DECL|macro|MAX_BUS_MASTER_BLOCKS
 mdefine_line|#define&t;MAX_BUS_MASTER_BLOCKS&t;SECTORSXFER&t;&t;
 singleline_comment|// This is the maximum we can bus master
-DECL|variable|Proc_Scsi_Pci2220i
-r_struct
-id|proc_dir_entry
-id|Proc_Scsi_Pci2220i
-op_assign
-(brace
-id|PROC_SCSI_PCI2220I
-comma
-l_int|8
-comma
-l_string|&quot;pci2220i&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 macro_line|#ifdef DEBUG
 DECL|macro|DEB
 mdefine_line|#define DEB(x) x

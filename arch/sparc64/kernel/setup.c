@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.50 1999/12/01 10:44:45 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.51 2000/02/26 04:24:32 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1843,6 +1843,14 @@ l_string|&quot;&squot; linux-.soft2 to .soft2&quot;
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|paging_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|setup_arch
 r_void
 id|__init
@@ -2445,6 +2453,11 @@ id|serial_console
 id|conswitchp
 op_assign
 l_int|NULL
+suffix:semicolon
+id|paging_init
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|sys_ioperm

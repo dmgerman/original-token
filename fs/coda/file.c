@@ -54,51 +54,18 @@ id|inode_operations
 id|coda_file_inode_operations
 op_assign
 (brace
-op_amp
-id|coda_file_operations
-comma
-multiline_comment|/* default file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
+id|permission
+suffix:colon
 id|coda_permission
 comma
-multiline_comment|/* permission */
+id|revalidate
+suffix:colon
 id|coda_revalidate_inode
-multiline_comment|/* revalidate */
+comma
+id|setattr
+suffix:colon
+id|coda_notify_change
+comma
 )brace
 suffix:semicolon
 DECL|variable|coda_file_operations
@@ -470,7 +437,7 @@ id|coda_file-&gt;f_owner
 suffix:semicolon
 id|cont_file-&gt;f_op
 op_assign
-id|cont_inode-&gt;i_op-&gt;default_file_ops
+id|cont_inode-&gt;i_fop
 suffix:semicolon
 id|cont_file-&gt;f_dentry
 op_assign

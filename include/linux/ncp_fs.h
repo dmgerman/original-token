@@ -580,6 +580,11 @@ r_struct
 id|inode_operations
 id|ncp_dir_inode_operations
 suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+id|ncp_dir_operations
+suffix:semicolon
 r_int
 id|ncp_conn_logged_in
 c_func
@@ -732,6 +737,11 @@ r_extern
 r_struct
 id|inode_operations
 id|ncp_file_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+id|ncp_file_operations
 suffix:semicolon
 r_int
 id|ncp_make_open

@@ -3042,123 +3042,6 @@ op_minus
 id|buf
 suffix:semicolon
 )brace
-DECL|variable|_sparc_iomap_proc_entry
-r_static
-r_struct
-id|proc_dir_entry
-id|_sparc_iomap_proc_entry
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* Inode number - dynamic */
-l_int|6
-comma
-multiline_comment|/* Length of the file name */
-l_string|&quot;io_map&quot;
-comma
-multiline_comment|/* The file name */
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-multiline_comment|/* File mode */
-l_int|1
-comma
-multiline_comment|/* Number of links */
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* The uid and gid for the file */
-l_int|0
-comma
-multiline_comment|/* The size of the file reported by ls. */
-l_int|NULL
-comma
-multiline_comment|/* struct inode_operations * ops */
-l_int|NULL
-comma
-multiline_comment|/* get_info: backward compatibility */
-l_int|NULL
-comma
-multiline_comment|/* owner */
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* linkage */
-op_amp
-id|sparc_iomap
-comma
-id|_sparc_io_get_info
-comma
-multiline_comment|/* The read function for this file */
-l_int|NULL
-comma
-multiline_comment|/* and more stuff */
-)brace
-suffix:semicolon
-DECL|variable|_sparc_dvma_proc_entry
-r_static
-r_struct
-id|proc_dir_entry
-id|_sparc_dvma_proc_entry
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* Inode number - dynamic */
-l_int|8
-comma
-multiline_comment|/* Length of the file name */
-l_string|&quot;dvma_map&quot;
-comma
-multiline_comment|/* The file name */
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-multiline_comment|/* File mode */
-l_int|1
-comma
-multiline_comment|/* Number of links */
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* The uid and gid for the file */
-l_int|0
-comma
-multiline_comment|/* The size of the file reported by ls. */
-l_int|NULL
-comma
-multiline_comment|/* struct inode_operations * ops */
-l_int|NULL
-comma
-multiline_comment|/* get_info: backward compatibility */
-l_int|NULL
-comma
-multiline_comment|/* owner */
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* linkage */
-op_amp
-id|_sparc_dvma
-comma
-id|_sparc_io_get_info
-comma
-l_int|NULL
-comma
-multiline_comment|/* some more stuff */
-)brace
-suffix:semicolon
 macro_line|#endif CONFIG_PROC_FS
 multiline_comment|/*&n; * This is a version of find_resource and it belongs to kernel/resource.c.&n; * Until we have agreement with Linus and Martin, it lingers here.&n; *&n; * XXX Too slow. Can have 8192 DVMA pages on sun4m in the worst case.&n; * This probably warrants some sort of hashing.&n; */
 r_struct
@@ -3336,24 +3219,34 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register
+id|create_proc_read_entry
 c_func
 (paren
-op_amp
-id|proc_root
+l_string|&quot;io_map&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|_sparc_io_get_info
 comma
 op_amp
-id|_sparc_iomap_proc_entry
+id|sparc_iomap
 )paren
 suffix:semicolon
-id|proc_register
+id|create_proc_read_entry
 c_func
 (paren
-op_amp
-id|proc_root
+l_string|&quot;dvma_map&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|_sparc_io_get_info
 comma
 op_amp
-id|_sparc_dvma_proc_entry
+id|_sparc_dvma
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -172,7 +172,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|variable|proc_kmsg_operations
-r_static
 r_struct
 id|file_operations
 id|proc_kmsg_operations
@@ -194,18 +193,6 @@ id|release
 suffix:colon
 id|kmsg_release
 comma
-)brace
-suffix:semicolon
-DECL|variable|proc_kmsg_inode_operations
-r_struct
-id|inode_operations
-id|proc_kmsg_inode_operations
-op_assign
-(brace
-op_amp
-id|proc_kmsg_operations
-comma
-multiline_comment|/* default base directory file-ops */
 )brace
 suffix:semicolon
 eof

@@ -4,35 +4,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|function|minix_dir_read
-r_static
-id|ssize_t
-id|minix_dir_read
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 r_static
 r_int
 id|minix_readdir
@@ -49,7 +20,6 @@ id|filldir_t
 )paren
 suffix:semicolon
 DECL|variable|minix_dir_operations
-r_static
 r_struct
 id|file_operations
 id|minix_dir_operations
@@ -57,7 +27,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|minix_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -67,46 +37,6 @@ id|fsync
 suffix:colon
 id|file_fsync
 comma
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * directories can handle most operations...&n; */
-DECL|variable|minix_dir_inode_operations
-r_struct
-id|inode_operations
-id|minix_dir_inode_operations
-op_assign
-(brace
-op_amp
-id|minix_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
-id|minix_create
-comma
-multiline_comment|/* create */
-id|minix_lookup
-comma
-multiline_comment|/* lookup */
-id|minix_link
-comma
-multiline_comment|/* link */
-id|minix_unlink
-comma
-multiline_comment|/* unlink */
-id|minix_symlink
-comma
-multiline_comment|/* symlink */
-id|minix_mkdir
-comma
-multiline_comment|/* mkdir */
-id|minix_rmdir
-comma
-multiline_comment|/* rmdir */
-id|minix_mknod
-comma
-multiline_comment|/* mknod */
-id|minix_rename
-comma
-multiline_comment|/* rename */
 )brace
 suffix:semicolon
 DECL|function|minix_readdir

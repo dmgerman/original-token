@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/qnx4_fs.h&gt;
 multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the qnx4 filesystem.&n; */
 DECL|variable|qnx4_file_operations
-r_static
 r_struct
 id|file_operations
 id|qnx4_file_operations
@@ -40,11 +39,6 @@ id|inode_operations
 id|qnx4_file_inode_operations
 op_assign
 (brace
-id|default_file_ops
-suffix:colon
-op_amp
-id|qnx4_file_operations
-comma
 macro_line|#ifdef CONFIG_QNX4FS_RW
 id|truncate
 suffix:colon

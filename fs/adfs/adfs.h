@@ -456,6 +456,11 @@ id|adfs_dir_inode_operations
 suffix:semicolon
 r_extern
 r_struct
+id|file_operations
+id|adfs_dir_operations
+suffix:semicolon
+r_extern
+r_struct
 id|adfs_dir_ops
 id|adfs_f_dir_ops
 suffix:semicolon
@@ -485,6 +490,11 @@ r_extern
 r_struct
 id|inode_operations
 id|adfs_file_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+id|adfs_file_operations
 suffix:semicolon
 DECL|function|signed_asl
 r_extern

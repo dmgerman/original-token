@@ -600,7 +600,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* #Specification: dual mode / introduction&n; * One goal of UMSDOS is to allow a practical and simple coexistence&n; * between MS-DOS and Linux in a single partition. Using the EMD file&n; * in each directory, UMSDOS adds Unix semantics and capabilities to&n; * a normal DOS filesystem. To help and simplify coexistence, here is&n; * the logic related to the EMD file.&n; * &n; * If it is missing, then the directory is managed by the MS-DOS driver.&n; * The names are limited to DOS limits (8.3). No links, no device special&n; * and pipe and so on.&n; * &n; * If it is there, it is the directory. If it is there but empty, then&n; * the directory looks empty. The utility umssync allows synchronisation&n; * of the real DOS directory and the EMD.&n; * &n; * Whenever umssync is applied to a directory without EMD, one is&n; * created on the fly.  The directory is promoted to full Unix semantics.&n; * Of course, the ls command will show exactly the same content as before&n; * the umssync session.&n; * &n; * It is believed that the user/admin will promote directories to Unix&n; * semantics as needed.&n; * &n; * The strategy to implement this is to use two function table (struct&n; * inode_operations). One for true UMSDOS directory and one for directory&n; * with missing EMD.&n; * &n; * Functions related to the DOS semantic (but aware of UMSDOS) generally&n; * have a &quot;r&quot; prefix (r for real) such as UMSDOS_rlookup, to differentiate&n; * from the one with full UMSDOS semantics.&n; */
 DECL|variable|umsdos_rdir_operations
-r_static
 r_struct
 id|file_operations
 id|umsdos_rdir_operations
@@ -608,7 +607,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|dummy_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -626,37 +625,34 @@ id|inode_operations
 id|umsdos_rdir_inode_operations
 op_assign
 (brace
-op_amp
-id|umsdos_rdir_operations
-comma
-multiline_comment|/* default directory file-ops */
+id|create
+suffix:colon
 id|msdos_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|UMSDOS_rlookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|msdos_unlink
 comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|msdos_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|UMSDOS_rrmdir
 comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|msdos_rename
 comma
-multiline_comment|/* rename */
+id|setattr
+suffix:colon
+id|UMSDOS_notify_change
+comma
 )brace
 suffix:semicolon
 eof

@@ -48,22 +48,6 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_int
-id|coda_notify_change
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dentry
-comma
-r_struct
-id|iattr
-op_star
-id|attr
-)paren
-suffix:semicolon
-r_static
 r_void
 id|coda_put_inode
 c_func
@@ -119,38 +103,26 @@ id|super_operations
 id|coda_super_operations
 op_assign
 (brace
+id|read_inode
+suffix:colon
 id|coda_read_inode
 comma
-multiline_comment|/* read_inode */
-l_int|NULL
-comma
-multiline_comment|/* write_inode */
+id|put_inode
+suffix:colon
 id|coda_put_inode
 comma
-multiline_comment|/* put_inode */
+id|delete_inode
+suffix:colon
 id|coda_delete_inode
 comma
-multiline_comment|/* delete_inode */
-id|coda_notify_change
-comma
-multiline_comment|/* notify_change */
+id|put_super
+suffix:colon
 id|coda_put_super
 comma
-multiline_comment|/* put_super */
-l_int|NULL
-comma
-multiline_comment|/* write_super */
+id|statfs
+suffix:colon
 id|coda_statfs
 comma
-multiline_comment|/* statfs */
-l_int|NULL
-comma
-multiline_comment|/* remount_fs */
-l_int|NULL
-comma
-multiline_comment|/* no clear inode */
-l_int|NULL
-multiline_comment|/* umount attempt begin */
 )brace
 suffix:semicolon
 DECL|function|coda_read_super
@@ -794,7 +766,6 @@ id|EXIT
 suffix:semicolon
 )brace
 DECL|function|coda_notify_change
-r_static
 r_int
 id|coda_notify_change
 c_func

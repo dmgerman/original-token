@@ -9,7 +9,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &quot;adfs.h&quot;
 multiline_comment|/*&n; * We have mostly NULLs here: the current defaults are OK for&n; * the adfs filesystem.&n; */
 DECL|variable|adfs_file_operations
-r_static
 r_struct
 id|file_operations
 id|adfs_file_operations
@@ -41,11 +40,15 @@ id|inode_operations
 id|adfs_file_inode_operations
 op_assign
 (brace
+id|setattr
+suffix:colon
+id|adfs_notify_change
+comma
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
 op_amp
 id|adfs_file_operations
 comma
 multiline_comment|/* default file operations */
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
 id|readpage
 suffix:colon
 id|generic_readpage

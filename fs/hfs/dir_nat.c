@@ -165,7 +165,6 @@ mdefine_line|#define DOT_PARENT&t;(&amp;hfs_nat_reserved1[3])
 DECL|macro|ROOTINFO
 mdefine_line|#define ROOTINFO        (&amp;hfs_nat_reserved2[0])
 DECL|variable|hfs_nat_dir_operations
-r_static
 r_struct
 id|file_operations
 id|hfs_nat_dir_operations
@@ -173,7 +172,7 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|hfs_dir_read
+id|generic_read_dir
 comma
 id|readdir
 suffix:colon
@@ -191,37 +190,34 @@ id|inode_operations
 id|hfs_nat_ndir_inode_operations
 op_assign
 (brace
-op_amp
-id|hfs_nat_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
+id|create
+suffix:colon
 id|hfs_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|nat_lookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|hfs_unlink
 comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
+id|mkdir
+suffix:colon
 id|hfs_mkdir
 comma
-multiline_comment|/* mkdir */
+id|rmdir
+suffix:colon
 id|nat_rmdir
 comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|hfs_rename
 comma
-multiline_comment|/* rename */
+id|setattr
+suffix:colon
+id|hfs_notify_change
+comma
 )brace
 suffix:semicolon
 DECL|variable|hfs_nat_hdir_inode_operations
@@ -230,37 +226,26 @@ id|inode_operations
 id|hfs_nat_hdir_inode_operations
 op_assign
 (brace
-op_amp
-id|hfs_nat_dir_operations
-comma
-multiline_comment|/* default directory file-ops */
+id|create
+suffix:colon
 id|hfs_create
 comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|nat_lookup
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
+id|unlink
+suffix:colon
 id|nat_hdr_unlink
 comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
+id|rename
+suffix:colon
 id|nat_hdr_rename
 comma
-multiline_comment|/* rename */
+id|setattr
+suffix:colon
+id|hfs_notify_change
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*================ File-local functions ================*/

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/ali14xx.c       Version 0.03  Feb 09, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ali14xx.c&t;&t;Version 0.03&t;Feb 09, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
 multiline_comment|/*&n; * ALI M14xx chipset EIDE controller&n; *&n; * Works for ALI M1439/1443/1445/1487/1489 chipsets.&n; *&n; * Adapted from code developed by derekn@vw.ece.cmu.edu.  -ml&n; * Derek&squot;s notes follow:&n; *&n; * I think the code should be pretty understandable,&n; * but I&squot;ll be happy to (try to) answer questions.&n; *&n; * The critical part is in the setupDrive function.  The initRegisters&n; * function doesn&squot;t seem to be necessary, but the DOS driver does it, so&n; * I threw it in.&n; *&n; * I&squot;ve only tested this on my system, which only has one disk.  I posted&n; * it to comp.sys.linux.hardware, so maybe some other people will try it&n; * out.&n; *&n; * Derek Noonburg  (derekn@ece.cmu.edu)&n; * 95-sep-26&n; *&n; * Update 96-jul-13:&n; *&n; * I&squot;ve since upgraded to two disks and a CD-ROM, with no trouble, and&n; * I&squot;ve also heard from several others who have used it successfully.&n; * This driver appears to work with both the 1443/1445 and the 1487/1489&n; * chipsets.  I&squot;ve added support for PIO mode 4 for the 1487.  This&n; * seems to work just fine on the 1443 also, although I&squot;m not sure it&squot;s&n; * advertised as supporting mode 4.  (I&squot;ve been running a WDC AC21200 in&n; * mode 4 for a while now with no trouble.)  -Derek&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO           /* most systems can safely undef this */
@@ -19,6 +19,7 @@ mdefine_line|#define ALI_NUM_PORTS 4
 DECL|variable|ports
 r_static
 r_int
+id|__init
 id|ports
 (braket
 id|ALI_NUM_PORTS
@@ -52,6 +53,7 @@ suffix:semicolon
 DECL|variable|initData
 r_static
 id|RegInitializer
+id|__init
 id|initData
 (braket
 )braket
@@ -635,6 +637,7 @@ multiline_comment|/*&n; * Auto-detect the IDE controller port.&n; */
 DECL|function|findPort
 r_static
 r_int
+id|__init
 id|findPort
 (paren
 r_void
@@ -805,6 +808,7 @@ multiline_comment|/*&n; * Initialize controller registers with default values.&n
 DECL|function|initRegisters
 r_static
 r_int
+id|__init
 id|initRegisters
 (paren
 r_void
@@ -903,6 +907,7 @@ suffix:semicolon
 )brace
 DECL|function|init_ali14xx
 r_void
+id|__init
 id|init_ali14xx
 (paren
 r_void

@@ -1153,10 +1153,6 @@ id|inode-&gt;u.ufs_i.i_lastfrag
 op_assign
 l_int|0
 suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 id|insert_inode_hash
 c_func
 (paren

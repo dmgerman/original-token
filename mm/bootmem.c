@@ -285,7 +285,7 @@ id|bdata-&gt;node_bootmem_map
 id|printk
 c_func
 (paren
-l_string|&quot;hm, page %08x reserved twice.&bslash;n&quot;
+l_string|&quot;hm, page %08lx reserved twice.&bslash;n&quot;
 comma
 id|i
 op_star

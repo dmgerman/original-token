@@ -58,7 +58,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|variable|proc_kcore_operations
-r_static
 r_struct
 id|file_operations
 id|proc_kcore_operations
@@ -71,17 +70,6 @@ comma
 id|open
 suffix:colon
 id|open_kcore
-comma
-)brace
-suffix:semicolon
-DECL|variable|proc_kcore_inode_operations
-r_struct
-id|inode_operations
-id|proc_kcore_inode_operations
-op_assign
-(brace
-op_amp
-id|proc_kcore_operations
 comma
 )brace
 suffix:semicolon
@@ -1511,7 +1499,7 @@ r_int
 id|num_vma
 suffix:semicolon
 multiline_comment|/* XXX we need to somehow lock vmlist between here&n;&t; * and after elf_kcore_store_hdr() returns.&n;&t; * For now assume that num_vma does not change (TA)&n;&t; */
-id|proc_root_kcore.size
+id|proc_root_kcore-&gt;size
 op_assign
 id|size
 op_assign

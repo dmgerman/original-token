@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: l3dss1.c,v 2.22 2000/01/20 19:44:20 keil Exp $&n;&n; * EURO/DSS1 D-channel protocol&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; * $Log: l3dss1.c,v $&n; * Revision 2.22  2000/01/20 19:44:20  keil&n; * Fixed uninitialiesed location&n; * Fixed redirecting number IE in Setup&n; * Changes from certification&n; * option for disabling use of KEYPAD protocol&n; *&n; * Revision 2.21  1999/12/19 20:25:17  keil&n; * fixed LLC for outgoing analog calls&n; * IE Signal is valid on older local switches&n; *&n; * Revision 2.20  1999/10/11 22:16:27  keil&n; * Suspend/Resume is possible without explicit ID too&n; *&n; * Revision 2.19  1999/08/25 16:55:23  keil&n; * Fix for test case TC10011&n; *&n; * Revision 2.18  1999/08/11 20:54:39  keil&n; * High layer compatibility is valid in SETUP&n; *&n; * Revision 2.17  1999/07/25 16:18:25  keil&n; * Fix Suspend/Resume&n; *&n; * Revision 2.16  1999/07/21 14:46:23  keil&n; * changes from EICON certification&n; *&n; * Revision 2.14  1999/07/09 08:30:08  keil&n; * cosmetics&n; *&n; * Revision 2.13  1999/07/01 08:11:58  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.12  1998/11/15 23:55:10  keil&n; * changes from 2.0&n; *&n; * Revision 2.11  1998/08/13 23:36:51  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.10  1998/05/25 14:10:20  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.9  1998/05/25 12:58:17  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.8  1998/03/19 13:18:47  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 2.7  1998/02/12 23:08:01  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 2.6  1998/02/03 23:26:35  keil&n; * V110 extensions from Thomas Pfeiffer&n; *&n; * Revision 2.5  1998/02/02 13:34:28  keil&n; * Support australian Microlink net and german AOCD&n; *&n; * Revision 2.4  1997/11/06 17:12:25  keil&n; * KERN_NOTICE --&gt; KERN_INFO&n; *&n; * Revision 2.3  1997/10/29 19:03:01  keil&n; * changes for 2.1&n; *&n; * Revision 2.2  1997/08/07 17:44:36  keil&n; * Fix RESTART&n; *&n; * Revision 2.1  1997/08/03 14:36:33  keil&n; * Implement RESTART procedure&n; *&n; * Revision 2.0  1997/07/27 21:15:43  keil&n; * New Callref based layer3&n; *&n; * Revision 1.17  1997/06/26 11:11:46  keil&n; * SET_SKBFREE now on creation of a SKB&n; *&n; * Revision 1.15  1997/04/17 11:50:48  keil&n; * pa-&gt;loc was undefined, if it was not send by the exchange&n; *&n; * Old log removed /KKe&n; *&n; */
+multiline_comment|/* $Id: l3dss1.c,v 2.23 2000/02/26 01:38:14 keil Exp $&n;&n; * EURO/DSS1 D-channel protocol&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; * $Log: l3dss1.c,v $&n; * Revision 2.23  2000/02/26 01:38:14  keil&n; * Fixes for V.110 encoding LLC from Jens Jakobsen&n; *&n; * Revision 2.22  2000/01/20 19:44:20  keil&n; * Fixed uninitialiesed location&n; * Fixed redirecting number IE in Setup&n; * Changes from certification&n; * option for disabling use of KEYPAD protocol&n; *&n; * Revision 2.21  1999/12/19 20:25:17  keil&n; * fixed LLC for outgoing analog calls&n; * IE Signal is valid on older local switches&n; *&n; * Revision 2.20  1999/10/11 22:16:27  keil&n; * Suspend/Resume is possible without explicit ID too&n; *&n; * Revision 2.19  1999/08/25 16:55:23  keil&n; * Fix for test case TC10011&n; *&n; * Revision 2.18  1999/08/11 20:54:39  keil&n; * High layer compatibility is valid in SETUP&n; *&n; * Revision 2.17  1999/07/25 16:18:25  keil&n; * Fix Suspend/Resume&n; *&n; * Revision 2.16  1999/07/21 14:46:23  keil&n; * changes from EICON certification&n; *&n; * Revision 2.14  1999/07/09 08:30:08  keil&n; * cosmetics&n; *&n; * Revision 2.13  1999/07/01 08:11:58  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.12  1998/11/15 23:55:10  keil&n; * changes from 2.0&n; *&n; * Revision 2.11  1998/08/13 23:36:51  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.10  1998/05/25 14:10:20  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.9  1998/05/25 12:58:17  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.8  1998/03/19 13:18:47  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 2.7  1998/02/12 23:08:01  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 2.6  1998/02/03 23:26:35  keil&n; * V110 extensions from Thomas Pfeiffer&n; *&n; * Revision 2.5  1998/02/02 13:34:28  keil&n; * Support australian Microlink net and german AOCD&n; *&n; * Revision 2.4  1997/11/06 17:12:25  keil&n; * KERN_NOTICE --&gt; KERN_INFO&n; *&n; * Revision 2.3  1997/10/29 19:03:01  keil&n; * changes for 2.1&n; *&n; * Revision 2.2  1997/08/07 17:44:36  keil&n; * Fix RESTART&n; *&n; * Revision 2.1  1997/08/03 14:36:33  keil&n; * Implement RESTART procedure&n; *&n; * Revision 2.0  1997/07/27 21:15:43  keil&n; * New Callref based layer3&n; *&n; * Revision 1.17  1997/06/26 11:11:46  keil&n; * SET_SKBFREE now on creation of a SKB&n; *&n; * Revision 1.15  1997/04/17 11:50:48  keil&n; * pa-&gt;loc was undefined, if it was not send by the exchange&n; *&n; * Old log removed /KKe&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -24,7 +24,7 @@ r_char
 op_star
 id|dss1_revision
 op_assign
-l_string|&quot;$Revision: 2.22 $&quot;
+l_string|&quot;$Revision: 2.23 $&quot;
 suffix:semicolon
 DECL|macro|EXT_BEARER_CAPS
 mdefine_line|#define EXT_BEARER_CAPS 1
@@ -4840,13 +4840,16 @@ id|p
 l_int|0
 )braket
 op_assign
+l_int|0
+suffix:semicolon
 id|p
 (braket
 l_int|1
 )braket
 op_assign
-l_int|0
+l_int|0x40
 suffix:semicolon
+singleline_comment|// Intermediate rate: 16 kbit/s jj 2000.02.19
 id|p
 (braket
 l_int|2
@@ -4899,7 +4902,7 @@ id|p
 (braket
 l_int|2
 )braket
-op_assign
+op_add_assign
 l_int|32
 suffix:semicolon
 r_if

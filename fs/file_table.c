@@ -323,7 +323,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Clear and initialize a (private) struct file for the given dentry,&n; * and call the open function (if any).  The caller must verify that&n; * inode-&gt;i_op and inode-&gt;i_op-&gt;default_file_ops are not NULL.&n; */
+multiline_comment|/*&n; * Clear and initialize a (private) struct file for the given dentry,&n; * and call the open function (if any).  The caller must verify that&n; * inode-&gt;i_fop is not NULL.&n; */
 DECL|function|init_private_file
 r_int
 id|init_private_file
@@ -384,7 +384,7 @@ id|current-&gt;fsgid
 suffix:semicolon
 id|filp-&gt;f_op
 op_assign
-id|dentry-&gt;d_inode-&gt;i_op-&gt;default_file_ops
+id|dentry-&gt;d_inode-&gt;i_fop
 suffix:semicolon
 r_if
 c_cond

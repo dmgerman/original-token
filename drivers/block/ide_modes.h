@@ -1,7 +1,7 @@
+multiline_comment|/*&n; *  linux/drivers/block/ide_modes.h&n; *&n; *  Copyright (C) 1996  Linus Torvalds, Igor Abramov, and Mark Lord&n; */
 macro_line|#ifndef _IDE_MODES_H
 DECL|macro|_IDE_MODES_H
 mdefine_line|#define _IDE_MODES_H
-multiline_comment|/*&n; *  linux/drivers/block/ide_modes.h&n; *&n; *  Copyright (C) 1996  Linus Torvalds, Igor Abramov, and Mark Lord&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Shared data/functions for determining best PIO mode for an IDE drive.&n; * Most of this stuff originally lived in cmd640.c, and changes to the&n; * ide_pio_blacklist[] table should be made with EXTREME CAUTION to avoid&n; * breaking the fragile cmd640.c support.&n; */
 macro_line|#ifdef CONFIG_BLK_DEV_IDE_MODES

@@ -938,18 +938,6 @@ id|pid_maps_read
 comma
 )brace
 suffix:semicolon
-DECL|variable|proc_maps_inode_operations
-r_struct
-id|inode_operations
-id|proc_maps_inode_operations
-op_assign
-(brace
-op_amp
-id|proc_maps_operations
-comma
-multiline_comment|/* default base directory file-ops */
-)brace
-suffix:semicolon
 DECL|macro|PROC_BLOCK_SIZE
 mdefine_line|#define PROC_BLOCK_SIZE&t;(3*1024)&t;&t;/* 4K page size but our output routines use some slack for overruns */
 DECL|function|proc_info_read
@@ -1177,19 +1165,6 @@ id|read
 suffix:colon
 id|proc_info_read
 comma
-)brace
-suffix:semicolon
-DECL|variable|proc_info_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|proc_info_inode_operations
-op_assign
-(brace
-op_amp
-id|proc_info_file_operations
-comma
-multiline_comment|/* default proc file-ops */
 )brace
 suffix:semicolon
 DECL|macro|MAY_PTRACE
@@ -1625,51 +1600,10 @@ id|inode_operations
 id|proc_mem_inode_operations
 op_assign
 (brace
-op_amp
-id|proc_mem_operations
-comma
-multiline_comment|/* default base directory file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
+id|permission
+suffix:colon
 id|proc_permission
 comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|function|proc_pid_follow_link
@@ -2093,34 +2027,6 @@ suffix:colon
 id|proc_pid_follow_link
 )brace
 suffix:semicolon
-multiline_comment|/* reading from directory - bad */
-DECL|function|proc_dir_read
-r_static
-id|ssize_t
-id|proc_dir_read
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-r_return
-op_minus
-id|EISDIR
-suffix:semicolon
-)brace
 DECL|struct|pid_entry
 r_struct
 id|pid_entry
@@ -3421,14 +3327,12 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|proc_dir_read
+id|generic_read_dir
 comma
-multiline_comment|/* read - bad */
 id|readdir
 suffix:colon
 id|proc_readfd
 comma
-multiline_comment|/* readdir */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * proc directories can do almost nothing..&n; */
@@ -3439,49 +3343,14 @@ id|inode_operations
 id|proc_fd_inode_operations
 op_assign
 (brace
-op_amp
-id|proc_fd_operations
-comma
-multiline_comment|/* default base directory file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|proc_lookupfd
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
+id|permission
+suffix:colon
 id|proc_permission
 comma
-multiline_comment|/* permission */
 )brace
 suffix:semicolon
 DECL|function|proc_base_lookup
@@ -3629,6 +3498,11 @@ op_assign
 op_amp
 id|proc_fd_inode_operations
 suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|proc_fd_operations
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3676,10 +3550,10 @@ suffix:semicolon
 r_case
 id|PROC_PID_ENVIRON
 suffix:colon
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|proc_info_inode_operations
+id|proc_info_file_operations
 suffix:semicolon
 id|inode-&gt;u.proc_i.op.proc_read
 op_assign
@@ -3690,10 +3564,10 @@ suffix:semicolon
 r_case
 id|PROC_PID_STATUS
 suffix:colon
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|proc_info_inode_operations
+id|proc_info_file_operations
 suffix:semicolon
 id|inode-&gt;u.proc_i.op.proc_read
 op_assign
@@ -3704,10 +3578,10 @@ suffix:semicolon
 r_case
 id|PROC_PID_STAT
 suffix:colon
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|proc_info_inode_operations
+id|proc_info_file_operations
 suffix:semicolon
 id|inode-&gt;u.proc_i.op.proc_read
 op_assign
@@ -3718,10 +3592,10 @@ suffix:semicolon
 r_case
 id|PROC_PID_CMDLINE
 suffix:colon
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|proc_info_inode_operations
+id|proc_info_file_operations
 suffix:semicolon
 id|inode-&gt;u.proc_i.op.proc_read
 op_assign
@@ -3732,10 +3606,10 @@ suffix:semicolon
 r_case
 id|PROC_PID_STATM
 suffix:colon
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|proc_info_inode_operations
+id|proc_info_file_operations
 suffix:semicolon
 id|inode-&gt;u.proc_i.op.proc_read
 op_assign
@@ -3746,10 +3620,10 @@ suffix:semicolon
 r_case
 id|PROC_PID_MAPS
 suffix:colon
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|proc_maps_inode_operations
+id|proc_maps_operations
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3757,10 +3631,10 @@ macro_line|#ifdef __SMP__
 r_case
 id|PROC_PID_CPU
 suffix:colon
-id|inode-&gt;i_op
+id|inode-&gt;i_fop
 op_assign
 op_amp
-id|proc_info_inode_operations
+id|proc_info_file_operations
 suffix:semicolon
 id|inode-&gt;u.proc_i.op.proc_read
 op_assign
@@ -3776,6 +3650,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|proc_mem_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|proc_mem_operations
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3839,14 +3718,12 @@ op_assign
 (brace
 id|read
 suffix:colon
-id|proc_dir_read
+id|generic_read_dir
 comma
-multiline_comment|/* read - bad */
 id|readdir
 suffix:colon
 id|proc_base_readdir
 comma
-multiline_comment|/* readdir */
 )brace
 suffix:semicolon
 DECL|variable|proc_base_inode_operations
@@ -3856,16 +3733,10 @@ id|inode_operations
 id|proc_base_inode_operations
 op_assign
 (brace
-op_amp
-id|proc_base_operations
-comma
-multiline_comment|/* default base directory file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
+id|lookup
+suffix:colon
 id|proc_base_lookup
 comma
-multiline_comment|/* lookup */
 )brace
 suffix:semicolon
 DECL|function|proc_pid_lookup
@@ -4060,6 +3931,11 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|proc_base_inode_operations
+suffix:semicolon
+id|inode-&gt;i_fop
+op_assign
+op_amp
+id|proc_base_operations
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign

@@ -278,7 +278,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the ext2 filesystem.&n; */
 DECL|variable|ext2_file_operations
-r_static
 r_struct
 id|file_operations
 id|ext2_file_operations
@@ -324,9 +323,6 @@ id|inode_operations
 id|ext2_file_inode_operations
 op_assign
 (brace
-op_amp
-id|ext2_file_operations
-comma
 id|truncate
 suffix:colon
 id|ext2_truncate
