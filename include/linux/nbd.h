@@ -1,22 +1,20 @@
 macro_line|#ifndef LINUX_NBD_H
 DECL|macro|LINUX_NBD_H
 mdefine_line|#define LINUX_NBD_H
-macro_line|#include &lt;linux/ioctl.h&gt;
-macro_line|#include &lt;asm/types.h&gt;
 DECL|macro|NBD_SET_SOCK
-mdefine_line|#define NBD_SET_SOCK _IO( 0xab, 0 )
+mdefine_line|#define NBD_SET_SOCK&t;_IO( 0xab, 0 )
 DECL|macro|NBD_SET_BLKSIZE
-mdefine_line|#define NBD_SET_BLKSIZE _IO( 0xab, 1 )
+mdefine_line|#define NBD_SET_BLKSIZE&t;_IO( 0xab, 1 )
 DECL|macro|NBD_SET_SIZE
-mdefine_line|#define NBD_SET_SIZE _IO( 0xab, 2 )
+mdefine_line|#define NBD_SET_SIZE&t;_IO( 0xab, 2 )
 DECL|macro|NBD_DO_IT
-mdefine_line|#define NBD_DO_IT _IO( 0xab, 3 )
+mdefine_line|#define NBD_DO_IT&t;_IO( 0xab, 3 )
 DECL|macro|NBD_CLEAR_SOCK
-mdefine_line|#define NBD_CLEAR_SOCK _IO( 0xab, 4 )
+mdefine_line|#define NBD_CLEAR_SOCK&t;_IO( 0xab, 4 )
 DECL|macro|NBD_CLEAR_QUE
-mdefine_line|#define NBD_CLEAR_QUE _IO( 0xab, 5 )
+mdefine_line|#define NBD_CLEAR_QUE&t;_IO( 0xab, 5 )
 DECL|macro|NBD_PRINT_DEBUG
-mdefine_line|#define NBD_PRINT_DEBUG _IO( 0xab, 6 )
+mdefine_line|#define NBD_PRINT_DEBUG&t;_IO( 0xab, 6 )
 macro_line|#ifdef MAJOR_NR
 macro_line|#include &lt;linux/locks.h&gt;
 DECL|macro|LOCAL_END_REQUEST
@@ -130,28 +128,25 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* This now IS in some kind of include file...&t;*/
+multiline_comment|/* These are send over network in request/reply magic field */
 DECL|macro|NBD_REQUEST_MAGIC
-mdefine_line|#define NBD_REQUEST_MAGIC 0x12560953
+mdefine_line|#define NBD_REQUEST_MAGIC 0x25609513
 DECL|macro|NBD_REPLY_MAGIC
-mdefine_line|#define NBD_REPLY_MAGIC 0x96744668
-DECL|macro|LO_MAGIC
-mdefine_line|#define LO_MAGIC 0x68797548
+mdefine_line|#define NBD_REPLY_MAGIC 0x67446698
+multiline_comment|/* Do *not* use magics: 0x12560953 0x96744668. */
 DECL|struct|nbd_request
 r_struct
 id|nbd_request
 (brace
 DECL|member|magic
-id|__u32
+id|u32
 id|magic
 suffix:semicolon
-DECL|member|from
-id|__u32
-id|from
+DECL|member|type
+id|u32
+id|type
 suffix:semicolon
-DECL|member|len
-id|__u32
-id|len
-suffix:semicolon
+multiline_comment|/* == READ || == WRITE &t;*/
 DECL|member|handle
 r_char
 id|handle
@@ -159,11 +154,14 @@ id|handle
 l_int|8
 )braket
 suffix:semicolon
-DECL|member|type
-id|__u32
-id|type
+DECL|member|from
+id|u64
+id|from
 suffix:semicolon
-multiline_comment|/* == READ || == WRITE &t;*/
+DECL|member|len
+id|u32
+id|len
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|nbd_reply
@@ -171,9 +169,14 @@ r_struct
 id|nbd_reply
 (brace
 DECL|member|magic
-id|__u32
+id|u32
 id|magic
 suffix:semicolon
+DECL|member|error
+id|u32
+id|error
+suffix:semicolon
+multiline_comment|/* 0 = ok, else error&t;*/
 DECL|member|handle
 r_char
 id|handle
@@ -182,11 +185,6 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* handle you got from request&t;*/
-DECL|member|error
-id|__u32
-id|error
-suffix:semicolon
-multiline_comment|/* 0 = ok, else error&t;*/
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -1586,12 +1586,6 @@ comma
 id|this_cpu
 )paren
 suffix:semicolon
-id|__check_locks
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
 multiline_comment|/* Do &quot;administrative&quot; work here while we don&squot;t hold any locks */
 r_if
 c_cond

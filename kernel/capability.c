@@ -217,7 +217,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|task_capacibility_lock
+id|task_capability_lock
 )paren
 suffix:semicolon
 r_if

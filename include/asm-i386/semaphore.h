@@ -2,20 +2,6 @@ macro_line|#ifndef _I386_SEMAPHORE_H
 DECL|macro|_I386_SEMAPHORE_H
 mdefine_line|#define _I386_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
-macro_line|#ifdef __SMP__
-r_extern
-r_void
-id|__check_locks
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|__check_locks
-mdefine_line|#define __check_locks(x)&t;do { } while (0)
-macro_line|#endif
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * Modified 1996-12-23 by Dave Grothe &lt;dave@gcom.com&gt; to fix bugs in&n; *                     the original code and to make semaphore waits&n; *                     interruptible so that processes waiting on&n; *                     semaphores can be killed.&n; *&n; * If you would like to see an analysis of this implementation, please&n; * ftp to gcom.com and download the file&n; * /pub/linux/src/semaphore/semaphore-2.0.24.tar.gz.&n; *&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
@@ -213,12 +199,6 @@ op_star
 id|sem
 )paren
 (brace
-id|__check_locks
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -261,12 +241,6 @@ id|sem
 (brace
 r_int
 id|result
-suffix:semicolon
-id|__check_locks
-c_func
-(paren
-l_int|0
-)paren
 suffix:semicolon
 id|__asm__
 id|__volatile__

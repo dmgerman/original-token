@@ -562,6 +562,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -584,6 +585,7 @@ id|num_physpages
 )paren
 r_break
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -633,12 +635,6 @@ multiline_comment|/* is it a buffer cache page? */
 r_if
 c_cond
 (paren
-(paren
-id|gfp_mask
-op_amp
-id|__GFP_IO
-)paren
-op_logical_and
 id|bh
 op_logical_and
 id|try_to_free_buffer
@@ -721,7 +717,7 @@ op_assign
 (paren
 id|limit
 op_lshift
-l_int|2
+l_int|1
 )paren
 op_rshift
 (paren
@@ -735,7 +731,7 @@ op_assign
 (paren
 id|limit
 op_lshift
-l_int|2
+l_int|1
 )paren
 op_rshift
 (paren
@@ -1257,6 +1253,15 @@ comma
 id|offset
 comma
 id|hash
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|PG_referenced
+comma
+op_amp
+id|page-&gt;flags
 )paren
 suffix:semicolon
 id|inode-&gt;i_op

@@ -37,6 +37,7 @@ comma
 id|offset
 suffix:semicolon
 r_int
+r_int
 id|fixup
 suffix:semicolon
 r_if

@@ -1314,6 +1314,11 @@ id|skb-&gt;protocol
 op_assign
 id|qp-&gt;fragments-&gt;skb-&gt;protocol
 suffix:semicolon
+multiline_comment|/*&n;&t;*  Clearly bogus, because security markings of the individual&n;&t;*  fragments should have been checked for consistency before&n;&t;*  gluing, and intermediate coalescing of fragments may have&n;&t;*  taken place in ip_defrag() before ip_glue() ever got called.&n;&t;*  If we&squot;re not going to do the consistency checking, we might&n;&t;*  as well take the value associated with the first fragment.&n;&t;*&t;--rct&n;&t;*/
+id|skb-&gt;security
+op_assign
+id|qp-&gt;fragments-&gt;skb-&gt;security
+suffix:semicolon
 multiline_comment|/* Done with all fragments. Fixup the new IP header. */
 id|iph
 op_assign

@@ -367,6 +367,28 @@ op_amp
 id|tty-&gt;flags
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_UNIX98_PTYS
+(brace
+r_int
+r_int
+id|major
+op_assign
+id|MAJOR
+c_func
+(paren
+id|tty-&gt;device
+)paren
+op_minus
+id|UNIX98_PTY_MASTER_MAJOR
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|major
+OL
+id|UNIX98_NR_MAJORS
+)paren
+(brace
 id|devpts_pty_kill
 c_func
 (paren
@@ -377,8 +399,13 @@ id|tty-&gt;device
 )paren
 op_minus
 id|tty-&gt;driver.minor_start
+op_plus
+id|tty-&gt;driver.name_base
 )paren
 suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 )brace
 )brace
 multiline_comment|/*&n; * The unthrottle routine is called by the line discipline to signal&n; * that it can receive more characters.  For PTY&squot;s, the TTY_THROTTLED&n; * flag is always set, to force the line discipline to always call the&n; * unthrottle routine when there are fewer than TTY_THRESHOLD_UNTHROTTLE &n; * characters in the queue.  This is necessary since each time this&n; * happens, we need to wake up any sleeping processes that could be&n; * (1) trying to send data to the pty, or (2) waiting in wait_until_sent()&n; * for the pty buffer to be drained.&n; */
@@ -810,11 +837,12 @@ id|count
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Return the minor device number of a given pty.  This lets us&n; * open a master pty with the multi-headed ptmx device, then&n; * find out which one we got after it is open, with an ioctl.&n; */
-DECL|function|pty_get_device_minor
+multiline_comment|/* &n; * Return the device number of a Unix98 PTY (only!).  This lets us open a&n; * master pty with the multi-headed ptmx device, then find out which&n; * one we got after it is open, with an ioctl.&n; */
+macro_line|#ifdef CONFIG_UNIX98_PTYS
+DECL|function|pty_get_device_number
 r_static
 r_int
-id|pty_get_device_minor
+id|pty_get_device_number
 c_func
 (paren
 r_struct
@@ -837,6 +865,10 @@ c_func
 (paren
 id|tty-&gt;device
 )paren
+op_minus
+id|tty-&gt;driver.minor_start
+op_plus
+id|tty-&gt;driver.name_base
 suffix:semicolon
 r_return
 id|put_user
@@ -848,6 +880,7 @@ id|value
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Set the lock flag on a pty */
 DECL|function|pty_set_lock
 r_static
@@ -911,10 +944,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|pty_ioctl
+DECL|function|pty_bsd_ioctl
 r_static
 r_int
-id|pty_ioctl
+id|pty_bsd_ioctl
 c_func
 (paren
 r_struct
@@ -961,24 +994,6 @@ id|cmd
 )paren
 (brace
 r_case
-id|TIOCGPTN
-suffix:colon
-multiline_comment|/* Get PT Number */
-r_return
-id|pty_get_device_minor
-c_func
-(paren
-id|tty
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
-r_case
 id|TIOCSPTLCK
 suffix:colon
 multiline_comment|/* Set PT Lock (disallow slave open) */
@@ -1001,6 +1016,90 @@ op_minus
 id|ENOIOCTLCMD
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_UNIX98_PTYS
+DECL|function|pty_unix98_ioctl
+r_static
+r_int
+id|pty_unix98_ioctl
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tty
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;pty_unix98_ioctl called with NULL tty!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|cmd
+)paren
+(brace
+r_case
+id|TIOCGPTN
+suffix:colon
+multiline_comment|/* Get PT Number */
+r_return
+id|pty_get_device_number
+c_func
+(paren
+id|tty
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+)brace
+r_return
+id|pty_bsd_ioctl
+c_func
+(paren
+id|tty
+comma
+id|file
+comma
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|pty_flush_buffer
 r_static
 r_void
@@ -1526,7 +1625,7 @@ suffix:semicolon
 multiline_comment|/* &n;&t; * only the master pty gets this ioctl (which is why we&n;&t; * assign it here, instead of up with the rest of the&n;&t; * pty_driver initialization. &lt;cananian@alumni.princeton.edu&gt;&n;&t; */
 id|pty_driver.ioctl
 op_assign
-id|pty_ioctl
+id|pty_bsd_ioctl
 suffix:semicolon
 multiline_comment|/* Unix98 devices */
 macro_line|#ifdef CONFIG_UNIX98_PTYS
@@ -1599,6 +1698,17 @@ dot
 id|minor_start
 op_assign
 l_int|0
+suffix:semicolon
+id|ptm_driver
+(braket
+id|i
+)braket
+dot
+id|name_base
+op_assign
+id|i
+op_star
+id|NR_PTYS
 suffix:semicolon
 id|ptm_driver
 (braket
@@ -1720,6 +1830,17 @@ id|pts_driver
 id|i
 )braket
 dot
+id|name_base
+op_assign
+id|i
+op_star
+id|NR_PTYS
+suffix:semicolon
+id|pts_driver
+(braket
+id|i
+)braket
+dot
 id|num
 op_assign
 id|ptm_driver
@@ -1797,7 +1918,7 @@ id|i
 dot
 id|ioctl
 op_assign
-id|pty_ioctl
+id|pty_unix98_ioctl
 suffix:semicolon
 r_if
 c_cond

@@ -562,6 +562,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|wait_queue
+op_star
+id|kswapd_wait
+suffix:semicolon
 DECL|macro|free_page
 mdefine_line|#define free_page(addr) free_pages((addr),0)
 r_extern
@@ -1033,10 +1039,8 @@ suffix:semicolon
 multiline_comment|/*&n; * GFP bitmasks..&n; */
 DECL|macro|__GFP_WAIT
 mdefine_line|#define __GFP_WAIT&t;0x01
-DECL|macro|__GFP_IO
-mdefine_line|#define __GFP_IO&t;0x02
 DECL|macro|__GFP_LOW
-mdefine_line|#define __GFP_LOW&t;0x00
+mdefine_line|#define __GFP_LOW&t;0x02
 DECL|macro|__GFP_MED
 mdefine_line|#define __GFP_MED&t;0x04
 DECL|macro|__GFP_HIGH
@@ -1048,11 +1052,11 @@ mdefine_line|#define GFP_BUFFER&t;(__GFP_LOW | __GFP_WAIT)
 DECL|macro|GFP_ATOMIC
 mdefine_line|#define GFP_ATOMIC&t;(__GFP_HIGH)
 DECL|macro|GFP_USER
-mdefine_line|#define GFP_USER&t;(__GFP_LOW | __GFP_WAIT | __GFP_IO)
+mdefine_line|#define GFP_USER&t;(__GFP_LOW | __GFP_WAIT)
 DECL|macro|GFP_KERNEL
-mdefine_line|#define GFP_KERNEL&t;(__GFP_MED | __GFP_WAIT | __GFP_IO)
+mdefine_line|#define GFP_KERNEL&t;(__GFP_MED | __GFP_WAIT)
 DECL|macro|GFP_NFS
-mdefine_line|#define GFP_NFS&t;&t;(__GFP_HIGH | __GFP_WAIT | __GFP_IO)
+mdefine_line|#define GFP_NFS&t;&t;(__GFP_HIGH | __GFP_WAIT)
 multiline_comment|/* Flag - indicates that the buffer will be suitable for DMA.  Ignored on some&n;   platforms, used as appropriate on others */
 DECL|macro|GFP_DMA
 mdefine_line|#define GFP_DMA&t;&t;__GFP_DMA

@@ -1456,10 +1456,10 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-)brace
 r_return
 id|skb
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|NULL
@@ -1539,10 +1539,10 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-)brace
 r_return
 id|skb
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|NULL

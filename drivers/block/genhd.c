@@ -1589,6 +1589,11 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n;&t;&t;&t; * Examine the partition table for common translations.&n;&t;&t;&t; * This is necessary for drives for situations where&n;&t;&t;&t; * the translated geometry is unavailable from the BIOS.&n;&t;&t;&t; */
+r_int
+id|xlate_done
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1599,6 +1604,9 @@ suffix:semicolon
 id|i
 OL
 l_int|4
+op_logical_and
+op_logical_neg
+id|xlate_done
 suffix:semicolon
 id|i
 op_increment
@@ -1682,10 +1690,32 @@ comma
 l_string|&quot; [PTBL]&quot;
 )paren
 suffix:semicolon
-r_break
+id|xlate_done
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 )brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|xlate_done
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * Default translation is equivalent of &quot;BIOS LBA&quot;:&n;&t;&t;&t;&t; */
+id|ide_xlate_1024
+c_func
+(paren
+id|dev
+comma
+op_minus
+l_int|2
+comma
+l_string|&quot; [LBA]&quot;
+)paren
+suffix:semicolon
 )brace
 )brace
 )brace

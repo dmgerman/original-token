@@ -1260,11 +1260,11 @@ suffix:semicolon
 r_return
 (paren
 id|count
-op_eq
+OG
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* one remaining use count? */
+multiline_comment|/* remaining users? */
 )brace
 multiline_comment|/*&n; * Search the dentry child list for the specified parent,&n; * and move any unused dentries to the end of the unused&n; * list for prune_dcache(). We descend to the next level&n; * whenever the d_subdirs list is non-empty and continue&n; * searching.&n; */
 DECL|function|select_parent

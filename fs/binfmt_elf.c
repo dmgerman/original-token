@@ -4536,6 +4536,7 @@ comma
 id|dataoff
 suffix:semicolon
 r_int
+r_int
 id|limit
 op_assign
 id|current-&gt;rlim
@@ -4636,6 +4637,7 @@ id|vma
 )paren
 )paren
 (brace
+r_int
 r_int
 id|sz
 op_assign

@@ -1,17 +1,22 @@
-multiline_comment|/*&n; * Network block device - make block devices work over TCP&n; *&n; * Note that you can not swap over this thing, yet. Seems to work but&n; * deadlocks sometimes - you can not swap over TCP in general.&n; * &n; * Copyright 1997 Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; * &n; * (part of code stolen from loop.c)&n; *&n; * 97-3-25 compiled 0-th version, not yet tested it &n; *   (it did not work, BTW) (later that day) HEY! it works!&n; *   (bit later) hmm, not that much... 2:00am next day:&n; *   yes, it works, but it gives something like 50kB/sec&n; * 97-4-01 complete rewrite to make it possible for many requests at &n; *   once to be processed&n; * 97-4-11 Making protocol independent of endianity etc.&n; * 97-9-13 Cosmetic changes&n; *&n; * possible FIXME: make set_sock / set_blksize / set_size / do_it one syscall&n; * why not: would need verify_area and friends, would share yet another &n; *          structure with userland&n; */
+multiline_comment|/*&n; * Network block device - make block devices work over TCP&n; *&n; * Note that you can not swap over this thing, yet. Seems to work but&n; * deadlocks sometimes - you can not swap over TCP in general.&n; * &n; * Copyright 1997 Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; * &n; * (part of code stolen from loop.c)&n; *&n; * 97-3-25 compiled 0-th version, not yet tested it &n; *   (it did not work, BTW) (later that day) HEY! it works!&n; *   (bit later) hmm, not that much... 2:00am next day:&n; *   yes, it works, but it gives something like 50kB/sec&n; * 97-4-01 complete rewrite to make it possible for many requests at &n; *   once to be processed&n; * 97-4-11 Making protocol independent of endianity etc.&n; * 97-9-13 Cosmetic changes&n; * 98-5-13 Attempt to make 64-bit-clean on 64-bit machines&n; *&n; * possible FIXME: make set_sock / set_blksize / set_size / do_it one syscall&n; * why not: would need verify_area and friends, would share yet another &n; *          structure with userland&n; */
 DECL|macro|PARANOIA
 mdefine_line|#define PARANOIA
 macro_line|#include &lt;linux/major.h&gt;
-DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR NBD_MAJOR
-macro_line|#include &lt;linux/nbd.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
+macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/types.h&gt;
+DECL|macro|MAJOR_NR
+mdefine_line|#define MAJOR_NR NBD_MAJOR
+macro_line|#include &lt;linux/nbd.h&gt;
+DECL|macro|LO_MAGIC
+mdefine_line|#define LO_MAGIC 0x68797548
 DECL|variable|nbd_blksizes
 r_static
 r_int
@@ -130,8 +135,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Send or receive packet.&n; */
-r_static
 DECL|function|nbd_xmit
+r_static
 r_int
 id|nbd_xmit
 c_func
@@ -434,11 +439,17 @@ id|req-&gt;cmd
 suffix:semicolon
 id|request.from
 op_assign
-id|htonl
+id|cpu_to_be64
 c_func
 (paren
+(paren
+id|u64
+)paren
 id|req-&gt;sector
 op_star
+(paren
+id|u64
+)paren
 l_int|512
 )paren
 suffix:semicolon
@@ -555,11 +566,10 @@ suffix:semicolon
 )brace
 DECL|macro|HARDFAIL
 mdefine_line|#define HARDFAIL( s ) { printk( KERN_ERR &quot;NBD: &quot; s &quot;(result %d)&bslash;n&quot;, result ); lo-&gt;harderror = result; return NULL; }
+DECL|function|nbd_read_stat
 r_struct
 id|request
 op_star
-multiline_comment|/* NULL returned = something went wrong, inform userspace       */
-DECL|function|nbd_read_stat
 id|nbd_read_stat
 c_func
 (paren
@@ -568,6 +578,7 @@ id|nbd_device
 op_star
 id|lo
 )paren
+multiline_comment|/* NULL returned = something went wrong, inform userspace       */
 (brace
 r_int
 id|result
@@ -1682,14 +1693,14 @@ r_struct
 id|nbd_request
 )paren
 op_ne
-l_int|24
+l_int|28
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;Sizeof nbd_request needs to be 24 in order to work!&bslash;n&quot;
+l_string|&quot;Sizeof nbd_request needs to be 28 in order to work!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

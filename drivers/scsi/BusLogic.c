@@ -1,11 +1,12 @@
 multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster and FlashPoint SCSI Host Adapters&n;&n;  Copyright 1995-1998 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;  Special thanks to Wayne Yen, Jin-Lon Hon, and Alex Win of BusLogic, whose&n;  advice has been invaluable, to David Gentzel, for writing the original Linux&n;  BusLogic driver, and to Paul Gortmaker, for being such a dedicated test site.&n;&n;  Finally, special thanks to Mylex/BusLogic for making the FlashPoint SCCB&n;  Manager available as freely redistributable source code.&n;&n;*/
 DECL|macro|BusLogic_DriverVersion
-mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.1.13&quot;
+mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.1.15&quot;
 DECL|macro|BusLogic_DriverDate
-mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;17 April 1998&quot;
+mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;17 August 1998&quot;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
@@ -3483,9 +3484,11 @@ id|SavedProbeInfo
 comma
 id|BusLogic_ProbeInfoList
 comma
+id|BusLogic_ProbeInfoCount
+op_star
 r_sizeof
 (paren
-id|BusLogic_ProbeInfoList
+id|BusLogic_ProbeInfo_T
 )paren
 )paren
 suffix:semicolon
@@ -13919,14 +13922,6 @@ r_char
 op_star
 id|Buffer
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|WriteFlag
-)paren
-r_return
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -13977,6 +13972,39 @@ id|TargetStatistics
 op_assign
 id|HostAdapter-&gt;TargetStatistics
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|WriteFlag
+)paren
+(brace
+id|HostAdapter-&gt;ExternalHostAdapterResets
+op_assign
+l_int|0
+suffix:semicolon
+id|HostAdapter-&gt;HostAdapterInternalErrors
+op_assign
+l_int|0
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|TargetStatistics
+comma
+l_int|0
+comma
+id|BusLogic_MaxTargetDevices
+op_star
+r_sizeof
+(paren
+id|BusLogic_TargetStatistics_T
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|Buffer
 op_assign
 id|HostAdapter-&gt;MessageBuffer

@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n;&t;modprobe_path is set via /proc/sys.&n;*/
 DECL|variable|modprobe_path
@@ -15,24 +16,6 @@ l_int|256
 )braket
 op_assign
 l_string|&quot;/sbin/modprobe&quot;
-suffix:semicolon
-DECL|variable|envp
-r_static
-r_char
-op_star
-id|envp
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;HOME=/&quot;
-comma
-l_string|&quot;TERM=linux&quot;
-comma
-l_string|&quot;PATH=/sbin:/usr/sbin:/bin:/usr/bin&quot;
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 multiline_comment|/*&n;&t;exec_modprobe is spawned from a kernel-mode user process,&n;&t;then changes its state to behave _as_if_ it was spawned&n;&t;from the kernel&squot;s init process&n;&t;(ppid and {e,}gid are not adjusted, but that shouldn&squot;t&n;&t;be a problem since we trust modprobe)&n;*/
 DECL|macro|task_init
@@ -64,8 +47,12 @@ id|current-&gt;fs
 op_assign
 id|task_init-&gt;fs
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|current-&gt;fs-&gt;count
-op_increment
+)paren
 suffix:semicolon
 id|unlock_kernel
 c_func
@@ -84,6 +71,23 @@ op_star
 id|module_name
 )paren
 (brace
+r_static
+r_char
+op_star
+id|envp
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;HOME=/&quot;
+comma
+l_string|&quot;TERM=linux&quot;
+comma
+l_string|&quot;PATH=/sbin:/usr/sbin:/bin:/usr/bin&quot;
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 r_char
 op_star
 id|argv
@@ -267,6 +271,9 @@ suffix:semicolon
 r_int
 id|waitpid_result
 suffix:semicolon
+id|sigset_t
+id|tmpsig
+suffix:semicolon
 multiline_comment|/* Don&squot;t allow request_module() before the root fs is mounted!  */
 r_if
 c_cond
@@ -317,7 +324,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;kmod: fork failed, errno %d&bslash;n&quot;
+l_string|&quot;request_module[%s]: fork failed, errno %d&bslash;n&quot;
+comma
+id|module_name
 comma
 op_minus
 id|pid
@@ -327,6 +336,53 @@ r_return
 id|pid
 suffix:semicolon
 )brace
+multiline_comment|/* Block everything but SIGKILL/SIGSTOP */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|tmpsig
+op_assign
+id|current-&gt;blocked
+suffix:semicolon
+id|siginitset
+c_func
+(paren
+op_amp
+id|current-&gt;blocked
+comma
+op_complement
+(paren
+id|sigmask
+c_func
+(paren
+id|SIGKILL
+)paren
+op_or
+id|sigmask
+c_func
+(paren
+id|SIGSTOP
+)paren
+)paren
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 id|waitpid_result
 op_assign
 id|waitpid
@@ -337,6 +393,31 @@ comma
 l_int|NULL
 comma
 id|__WCLONE
+)paren
+suffix:semicolon
+multiline_comment|/* Allow signals again.. */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|current-&gt;blocked
+op_assign
+id|tmpsig
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 r_if

@@ -358,11 +358,12 @@ id|autofs_expire
 c_func
 (paren
 r_struct
-id|autofs_dirhash
+id|super_block
 op_star
 comma
-r_int
-r_int
+r_struct
+id|autofs_sb_info
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Operations structures */

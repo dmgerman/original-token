@@ -851,6 +851,8 @@ DECL|macro|PF_DUMPCORE
 mdefine_line|#define PF_DUMPCORE&t;0x00000200&t;/* dumped core */
 DECL|macro|PF_SIGNALED
 mdefine_line|#define PF_SIGNALED&t;0x00000400&t;/* killed by a signal */
+DECL|macro|PF_MEMALLOC
+mdefine_line|#define PF_MEMALLOC&t;0x00000800&t;/* Allocating memory */
 DECL|macro|PF_USEDFPU
 mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* task used FPU this quantum (SMP) */
 DECL|macro|PF_DTRACE

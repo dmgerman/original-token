@@ -9334,7 +9334,7 @@ l_int|64
 op_star
 l_int|1024
 suffix:semicolon
-multiline_comment|/* 64k Rom */
+multiline_comment|/* 64k ROM */
 )brace
 r_else
 (brace
@@ -9344,7 +9344,7 @@ l_int|32
 op_star
 l_int|1024
 suffix:semicolon
-multiline_comment|/* 32k Rom */
+multiline_comment|/* 32k ROM */
 )brace
 id|pAdapterInfo-&gt;ai_stateinfo
 op_or_assign
@@ -16735,7 +16735,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*---------------------------------------------------------------------&n; *&n; * Function: Sccb_bad_isr&n; *&n; * Description: Some type of interrupt has occured which is slightly&n; *              out of the ordinary.  We will now decode it fully, in&n; *              this routine.  This is broken up in an attempt to save&n; *              processing time.&n; *&n; *---------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------&n; *&n; * Function: Sccb_bad_isr&n; *&n; * Description: Some type of interrupt has occurred which is slightly&n; *              out of the ordinary.  We will now decode it fully, in&n; *              this routine.  This is broken up in an attempt to save&n; *              processing time.&n; *&n; *---------------------------------------------------------------------*/
 macro_line|#if defined(DOS)
 DECL|function|SccbMgr_bad_isr
 id|UCHAR
@@ -24856,7 +24856,7 @@ id|AUTO_INT
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*---------------------------------------------------------------------&n; *&n; * Function: sssyncv&n; *&n; * Description: Write the desired value to the Sync Regisiter for the&n; *              ID specified.&n; *&n; *---------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------&n; *&n; * Function: sssyncv&n; *&n; * Description: Write the desired value to the Sync Register for the&n; *              ID specified.&n; *&n; *---------------------------------------------------------------------*/
 macro_line|#if defined(DOS)
 DECL|function|sssyncv
 r_void
