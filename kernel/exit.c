@@ -468,6 +468,28 @@ c_func
 id|p
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|STACK_MAGIC
+op_ne
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|p-&gt;kernel_stack_page
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;release: %s kernel stack corruption. Aiee&bslash;n&quot;
+comma
+id|p-&gt;comm
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -1945,18 +1967,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|current-&gt;state
-op_assign
-id|TASK_ZOMBIE
-suffix:semicolon
-id|current-&gt;exit_code
-op_assign
-id|code
-suffix:semicolon
-id|current-&gt;rss
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* &n;&t; * Check to see if any process groups have become orphaned&n;&t; * as a result of our exiting, and if they have any stopped&n;&t; * jobs, send them a SIGUP and then a SIGCONT.  (POSIX 3.2.2.2)&n;&t; *&n;&t; * Case i: Our father is in a different pgrp than we are&n;&t; * and we were the only connection outside, so our pgrp&n;&t; * is about to become orphaned.&n; &t; */
 r_if
 c_cond
@@ -2171,6 +2181,18 @@ id|current
 id|last_task_used_math
 op_assign
 l_int|NULL
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_ZOMBIE
+suffix:semicolon
+id|current-&gt;exit_code
+op_assign
+id|code
+suffix:semicolon
+id|current-&gt;rss
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#ifdef DEBUG_PROC_TREE
 id|audit_ptree

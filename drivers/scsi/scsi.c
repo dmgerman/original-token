@@ -237,6 +237,15 @@ id|blacklist
 op_assign
 (brace
 (brace
+l_string|&quot;CHINON&quot;
+comma
+l_string|&quot;CD-ROM CDS-431&quot;
+comma
+l_string|&quot;H42&quot;
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
+(brace
 l_string|&quot;DENON&quot;
 comma
 l_string|&quot;DRD-25X&quot;

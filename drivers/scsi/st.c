@@ -1337,7 +1337,7 @@ id|NR_ST
 r_return
 (paren
 op_minus
-id|ENODEV
+id|ENXIO
 )paren
 suffix:semicolon
 id|STp

@@ -310,7 +310,7 @@ r_return
 (paren
 id|x
 op_amp
-l_int|0x000000ff
+l_int|0x000000ffU
 )paren
 op_lshift
 l_int|24
@@ -320,7 +320,7 @@ op_or
 (paren
 id|x
 op_amp
-l_int|0x0000ff00
+l_int|0x0000ff00U
 )paren
 op_lshift
 l_int|8
@@ -330,7 +330,7 @@ op_or
 (paren
 id|x
 op_amp
-l_int|0x00ff0000
+l_int|0x00ff0000U
 )paren
 op_rshift
 l_int|8
@@ -340,7 +340,7 @@ op_or
 (paren
 id|x
 op_amp
-l_int|0xff000000
+l_int|0xff000000U
 )paren
 op_rshift
 l_int|24
@@ -433,13 +433,13 @@ DECL|macro|__constant_htons
 mdefine_line|#define __constant_htons(x) __constant_ntohs(x)
 macro_line|#ifdef  __OPTIMIZE__
 DECL|macro|ntohl
-macro_line|#  define ntohl(x) &bslash;&n;(__builtin_constant_p((x)) ? &bslash;&n; __constant_ntohl((x)) : &bslash;&n; __ntohl((x)))
+macro_line|#  define ntohl(x) &bslash;&n;(__builtin_constant_p((long)(x)) ? &bslash;&n; __constant_ntohl((x)) : &bslash;&n; __ntohl((x)))
 DECL|macro|ntohs
-macro_line|#  define ntohs(x) &bslash;&n;(__builtin_constant_p((x)) ? &bslash;&n; __constant_ntohs((x)) : &bslash;&n; __ntohs((x)))
+macro_line|#  define ntohs(x) &bslash;&n;(__builtin_constant_p((short)(x)) ? &bslash;&n; __constant_ntohs((x)) : &bslash;&n; __ntohs((x)))
 DECL|macro|htonl
-macro_line|#  define htonl(x) &bslash;&n;(__builtin_constant_p((x)) ? &bslash;&n; __constant_htonl((x)) : &bslash;&n; __htonl((x)))
+macro_line|#  define htonl(x) &bslash;&n;(__builtin_constant_p((long)(x)) ? &bslash;&n; __constant_htonl((x)) : &bslash;&n; __htonl((x)))
 DECL|macro|htons
-macro_line|#  define htons(x) &bslash;&n;(__builtin_constant_p((x)) ? &bslash;&n; __constant_htons((x)) : &bslash;&n; __htons((x)))
+macro_line|#  define htons(x) &bslash;&n;(__builtin_constant_p((short)(x)) ? &bslash;&n; __constant_htons((x)) : &bslash;&n; __htons((x)))
 macro_line|#endif
 macro_line|#endif&t;/* _LINUX_IN_H */
 eof

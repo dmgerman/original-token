@@ -1134,7 +1134,7 @@ id|device
 (brace
 r_return
 op_minus
-id|ENODEV
+id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/* No such device */

@@ -183,8 +183,7 @@ id|NR_SG
 )paren
 r_return
 op_minus
-id|ENODEV
-suffix:semicolon
+id|ENXIO
 r_switch
 c_cond
 (paren
@@ -289,7 +288,7 @@ id|NR_SG
 )paren
 r_return
 op_minus
-id|ENODEV
+id|ENXIO
 suffix:semicolon
 r_if
 c_cond

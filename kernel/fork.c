@@ -642,7 +642,7 @@ op_logical_neg
 (paren
 id|p-&gt;kernel_stack_page
 op_assign
-id|__get_free_page
+id|get_free_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -651,6 +651,16 @@ id|GFP_KERNEL
 )paren
 r_goto
 id|bad_fork_cleanup
+suffix:semicolon
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|p-&gt;kernel_stack_page
+op_assign
+id|STACK_MAGIC
 suffix:semicolon
 id|p-&gt;tss.es
 op_assign

@@ -1898,6 +1898,19 @@ c_cond
 (paren
 id|i
 op_eq
+op_minus
+id|EEXIST
+)paren
+id|i
+op_assign
+op_minus
+id|EADDRINUSE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
 l_int|0
 )paren
 id|i
@@ -1931,9 +1944,11 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|dprintf
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;UNIX: bind: can&squot;t open socket %s&bslash;n&quot;
 comma
 id|fname

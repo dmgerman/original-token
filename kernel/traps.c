@@ -348,10 +348,31 @@ c_func
 id|i
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|STACK_MAGIC
+op_ne
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|current-&gt;kernel_stack_page
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;Pid: %d, process nr: %d (%s)&bslash;nStack: &quot;
+l_string|&quot;Corrupted stack page&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Process %s (pid: %d, process nr: %d, stackpage=%08lx)&bslash;nStack: &quot;
+comma
+id|current-&gt;comm
 comma
 id|current-&gt;pid
 comma
@@ -359,7 +380,7 @@ l_int|0xffff
 op_amp
 id|i
 comma
-id|current-&gt;comm
+id|current-&gt;kernel_stack_page
 )paren
 suffix:semicolon
 r_for
