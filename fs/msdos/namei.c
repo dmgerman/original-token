@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/msdos/namei.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *  Hidden files 1995 by Albert Cahalan &lt;albert@ccs.neu.edu&gt; &lt;adc@coe.neu.edu&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -23,6 +24,7 @@ id|reserved_names
 )braket
 op_assign
 (brace
+macro_line|#ifndef CONFIG_ATARI /* GEMDOS is less stupid */
 l_string|&quot;CON     &quot;
 comma
 l_string|&quot;PRN     &quot;
@@ -47,6 +49,7 @@ l_string|&quot;COM3    &quot;
 comma
 l_string|&quot;COM4    &quot;
 comma
+macro_line|#endif
 l_int|NULL
 )brace
 suffix:semicolon
@@ -60,6 +63,18 @@ id|bad_chars
 op_assign
 l_string|&quot;*?&lt;&gt;|&bslash;&quot;&quot;
 suffix:semicolon
+macro_line|#ifdef CONFIG_ATARI
+multiline_comment|/* GEMDOS is less restrictive */
+DECL|variable|bad_if_strict
+r_static
+r_char
+id|bad_if_strict
+(braket
+)braket
+op_assign
+l_string|&quot; &quot;
+suffix:semicolon
+macro_line|#else
 DECL|variable|bad_if_strict
 r_static
 r_char
@@ -69,6 +84,7 @@ id|bad_if_strict
 op_assign
 l_string|&quot;+=,; &quot;
 suffix:semicolon
+macro_line|#endif
 DECL|function|msdos_put_super
 r_void
 id|msdos_put_super
@@ -315,11 +331,19 @@ id|len
 op_decrement
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_ATARI
 id|space
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* disallow names that _really_ start with a dot */
+macro_line|#else
+id|space
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* GEMDOS does not care */
+macro_line|#endif
 id|c
 op_assign
 l_int|0
@@ -649,15 +673,33 @@ op_logical_or
 id|c
 op_eq
 l_char|&squot;&bslash;&bslash;&squot;
-op_logical_or
-id|c
-op_eq
-l_char|&squot;.&squot;
 )paren
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_char|&squot;.&squot;
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|conv
+op_eq
+l_char|&squot;s&squot;
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

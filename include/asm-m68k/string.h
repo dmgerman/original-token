@@ -1430,7 +1430,9 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&bslash;t&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
 l_string|&quot;move16 %2@+,%0@+&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&bslash;n&bslash;t&quot;
 l_string|&quot;subqw  #8,%2&bslash;n&bslash;t&quot;
 l_string|&quot;subqw  #8,%2&bslash;n&bslash;t&quot;
 l_string|&quot;dbra   %1,1b&bslash;n&bslash;t&quot;
@@ -1595,8 +1597,10 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&bslash;t&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
 l_string|&quot;move16 %1@+,%0@+&bslash;n&bslash;t&quot;
 l_string|&quot;move16 %1@+,%0@+&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&bslash;n&bslash;t&quot;
 l_string|&quot;dbra  %2,1b&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=a&quot;

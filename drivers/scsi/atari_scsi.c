@@ -72,8 +72,9 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -202,14 +203,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 suffix:semicolon
 r_static
@@ -220,14 +221,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 suffix:semicolon
 r_static
@@ -489,7 +490,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|boot_info.num_memory
+id|m68k_num_memory
 suffix:semicolon
 op_increment
 id|i
@@ -497,14 +498,14 @@ id|i
 (brace
 id|end_addr
 op_assign
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
 dot
 id|addr
 op_plus
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -542,14 +543,14 @@ id|scsi_dma_buserr
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 r_int
@@ -636,14 +637,14 @@ id|scsi_tt_intr
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 macro_line|#ifdef REAL_DMA
@@ -888,14 +889,14 @@ id|scsi_falcon_intr
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 macro_line|#ifdef REAL_DMA
@@ -1788,7 +1789,7 @@ c_func
 id|EXTD_DMA
 )paren
 op_logical_and
-id|boot_info.num_memory
+id|m68k_num_memory
 OG
 l_int|1
 )paren
@@ -1869,7 +1870,7 @@ c_func
 )paren
 (brace
 multiline_comment|/* This int is actually &quot;pseudo-slow&quot;, i.e. it acts like a slow&n;&t;&t; * interrupt after having cleared the pending flag for the DMA&n;&t;&t; * interrupt. */
-id|add_isr
+id|request_irq
 c_func
 (paren
 id|IRQ_TT_MFP_SCSI
@@ -1878,9 +1879,9 @@ id|scsi_tt_intr
 comma
 id|IRQ_TYPE_SLOW
 comma
-l_int|NULL
-comma
 l_string|&quot;SCSI NCR5380&quot;
+comma
+id|scsi_tt_intr
 )paren
 suffix:semicolon
 id|tt_mfp.active_edge
@@ -2008,13 +2009,12 @@ c_func
 (paren
 )paren
 )paren
-id|remove_isr
+id|free_irq
+c_func
 (paren
 id|IRQ_TT_MFP_SCSI
 comma
 id|scsi_tt_intr
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -2482,6 +2482,17 @@ id|IRQ_MFP_FSCSI
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|rv
+op_amp
+id|SCSI_RESET_ACTION
+)paren
+op_eq
+id|SCSI_RESET_SUCCESS
+)paren
 id|falcon_release_lock_if_possible
 c_func
 (paren
@@ -3139,11 +3150,18 @@ id|possible_len
 op_assign
 id|limit
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|possible_len
+op_ne
+id|wanted_len
+)paren
 id|DMA_PRINTK
 c_func
 (paren
-l_string|&quot;Sorry, must cut DMA transfer size to %ld bytes instead &quot;
-l_string|&quot;of %ld&bslash;n&quot;
+l_string|&quot;Sorry, must cut DMA transfer size to %ld bytes &quot;
+l_string|&quot;instead of %ld&bslash;n&quot;
 comma
 id|possible_len
 comma

@@ -618,9 +618,9 @@ op_eq
 l_int|12
 ques
 c_cond
-l_int|0xff8
+id|EOF_FAT12
 suffix:colon
-l_int|0xfff8
+id|EOF_FAT16
 )paren
 suffix:semicolon
 r_if

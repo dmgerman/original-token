@@ -7,8 +7,8 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
@@ -140,6 +140,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -183,17 +184,6 @@ id|fb
 r_return
 op_minus
 id|ENODEV
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|count
-OL
-l_int|0
-)paren
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 id|fb
 op_member_access_from_pointer
@@ -276,6 +266,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -319,17 +310,6 @@ id|fb
 r_return
 op_minus
 id|ENODEV
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|count
-OL
-l_int|0
-)paren
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 id|fb
 op_member_access_from_pointer
@@ -1379,7 +1359,11 @@ id|EINVAL
 suffix:semicolon
 id|vma-&gt;vm_offset
 op_add_assign
+id|__pa
+c_func
+(paren
 id|fix.smem_start
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1396,7 +1380,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m68k_is040or060
+id|CPU_IS_040_OR_060
 )paren
 (brace
 id|pgprot_val
@@ -1414,7 +1398,7 @@ c_func
 id|vma-&gt;vm_page_prot
 )paren
 op_or_assign
-id|_PAGE_CACHE040W
+id|_PAGE_NOCACHE_S
 suffix:semicolon
 )brace
 r_if

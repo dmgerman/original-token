@@ -5860,6 +5860,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef WIRELESS_EXT&t;/* If wireless extension exist in the kernel */
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Frequency setting (for hardware able of it)&n; * It&squot;s a bit complicated and you don&squot;t really want to look into it...&n; * (called in wavelan_ioctl)&n; */
 r_static
@@ -5873,17 +5874,11 @@ id|u_short
 id|ioaddr
 comma
 multiline_comment|/* i/o port of the card */
-r_float
+id|iw_freq
+op_star
 id|frequency
 )paren
 (brace
-id|u_short
-id|table
-(braket
-l_int|10
-)braket
-suffix:semicolon
-multiline_comment|/* Authorized frequency table */
 r_const
 r_int
 id|BAND_NUM
@@ -5902,6 +5897,130 @@ r_int
 id|i
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Setting by frequency */
+multiline_comment|/* Theoritically, you may set any frequency between&n;   * the two limits with a 0.5 MHz precision. In practice,&n;   * I don&squot;t want you to have trouble with local&n;   * regulations... */
+r_if
+c_cond
+(paren
+(paren
+id|frequency-&gt;e
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+id|frequency-&gt;m
+op_ge
+(paren
+r_int
+)paren
+l_float|2.412e8
+)paren
+op_logical_and
+(paren
+id|frequency-&gt;m
+op_le
+(paren
+r_int
+)paren
+l_float|2.487e8
+)paren
+)paren
+(brace
+id|freq
+op_assign
+(paren
+(paren
+id|frequency-&gt;m
+op_div
+l_int|10000
+)paren
+op_minus
+l_int|24000L
+)paren
+op_div
+l_int|5
+suffix:semicolon
+)brace
+multiline_comment|/* Setting by channel (same as wfreqsel) */
+multiline_comment|/* Warning : each channel is 22MHz wide, so some of the channels&n;   * will interfere... */
+r_if
+c_cond
+(paren
+(paren
+id|frequency-&gt;e
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+id|frequency-&gt;m
+op_ge
+l_int|0
+)paren
+op_logical_and
+(paren
+id|frequency-&gt;m
+OL
+id|BAND_NUM
+)paren
+)paren
+(brace
+multiline_comment|/* frequency in 1/4 of MHz (as read in the offset register) */
+r_int
+id|bands
+(braket
+)braket
+op_assign
+(brace
+l_int|0x30
+comma
+l_int|0x58
+comma
+l_int|0x64
+comma
+l_int|0x7A
+comma
+l_int|0x80
+comma
+l_int|0xA8
+comma
+l_int|0xD0
+comma
+l_int|0xF0
+comma
+l_int|0xF8
+comma
+l_int|0x150
+)brace
+suffix:semicolon
+multiline_comment|/* Get frequency offset */
+id|freq
+op_assign
+id|bands
+(braket
+id|frequency-&gt;m
+)braket
+op_rshift
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Verify if the frequency is allowed */
+r_if
+c_cond
+(paren
+id|freq
+op_ne
+l_int|0L
+)paren
+(brace
+id|u_short
+id|table
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* Authorized frequency table */
 multiline_comment|/* Read the frequency table */
 id|fee_read
 c_func
@@ -5958,49 +6077,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Setting by frequency */
-multiline_comment|/* Theoritically, you may set any frequency between&n;   * the two limits with a 0.5 MHz precision. In practice,&n;   * I don&squot;t want you to have trouble with local&n;   * regulations... */
-r_if
-c_cond
-(paren
-(paren
-id|frequency
-op_ge
-l_float|2.412e9
-)paren
-op_logical_and
-(paren
-id|frequency
-op_le
-l_float|2.487e9
-)paren
-)paren
-(brace
-multiline_comment|/* Warning : rounding problems... */
-id|freq
-op_assign
-(paren
-(paren
-(paren
-r_int
-)paren
-(paren
-(paren
-id|frequency
-op_div
-l_float|1e5
-)paren
-op_plus
-dot
-l_int|4
-)paren
-)paren
-op_minus
-l_int|24000L
-)paren
-op_div
-l_int|5
-suffix:semicolon
 multiline_comment|/* Look in the table if the frequency is allowed */
 r_if
 c_cond
@@ -6045,114 +6121,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* not allowed */
 )brace
-multiline_comment|/* Setting by channel (same as wfreqsel) */
-multiline_comment|/* Warning : each channel is 22MHz wide, so some of the channels&n;   * will interfere... */
-r_if
-c_cond
-(paren
-(paren
-id|frequency
-op_ge
-l_float|0.0
-)paren
-op_logical_and
-(paren
-id|frequency
-OL
-(paren
-r_float
-)paren
-id|BAND_NUM
-)paren
-)paren
-(brace
-multiline_comment|/* frequency in 1/4 of MHz (as read in the offset register) */
-r_int
-id|bands
-(braket
-)braket
-op_assign
-(brace
-l_int|0x30
-comma
-l_int|0x58
-comma
-l_int|0x64
-comma
-l_int|0x7A
-comma
-l_int|0x80
-comma
-l_int|0xA8
-comma
-l_int|0xD0
-comma
-l_int|0xF0
-comma
-l_int|0xF8
-comma
-l_int|0x150
-)brace
-suffix:semicolon
-multiline_comment|/* Get frequency offset */
-id|freq
-op_assign
-id|bands
-(braket
-(paren
-(paren
-r_int
-)paren
-id|frequency
-)paren
-)braket
-op_rshift
-l_int|1
-suffix:semicolon
-multiline_comment|/* Look in the table if the frequency is allowed */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|table
-(braket
-l_int|9
-op_minus
-(paren
-(paren
-id|freq
-op_minus
-l_int|24
-)paren
-op_div
-l_int|16
-)paren
-)braket
-op_amp
-(paren
-l_int|1
-op_lshift
-(paren
-(paren
-id|freq
-op_minus
-l_int|24
-)paren
-op_mod
-l_int|16
-)paren
-)paren
-)paren
-)paren
-(brace
+r_else
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
-multiline_comment|/* not allowed */
-)brace
 multiline_comment|/* If we get a usable frequency */
 r_if
 c_cond
@@ -6785,9 +6758,8 @@ id|EINVAL
 suffix:semicolon
 multiline_comment|/* Bah, never get there... */
 )brace
-macro_line|#ifdef WIRELESS_EXT&t;/* If wireless extension exist in the kernel */
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Frequency setting (for hardware able of it)&n; * It&squot;s a bit complicated and you don&squot;t really want to look into it...&n; * (called in wavelan_ioctl)&n; */
+multiline_comment|/*&n; * Give the list of available frequencies&n; */
 r_static
 r_inline
 r_int
@@ -6799,7 +6771,7 @@ id|u_short
 id|ioaddr
 comma
 multiline_comment|/* i/o port of the card */
-r_float
+id|iw_freq
 op_star
 id|list
 comma
@@ -6889,8 +6861,9 @@ multiline_comment|/* put in the list */
 id|list
 (braket
 id|i
-op_increment
 )braket
+dot
+id|m
 op_assign
 (paren
 (paren
@@ -6906,7 +6879,17 @@ op_plus
 l_int|24000L
 )paren
 op_star
-l_float|1e5
+l_int|10000
+suffix:semicolon
+id|list
+(braket
+id|i
+op_increment
+)braket
+dot
+id|e
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/* Check number */
 r_if
@@ -7569,7 +7552,10 @@ c_func
 (paren
 id|ioaddr
 comma
+op_amp
+(paren
 id|wrq-&gt;u.freq
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -7631,7 +7617,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|wrq-&gt;u.freq
+id|wrq-&gt;u.freq.m
 op_assign
 (paren
 (paren
@@ -7645,12 +7631,16 @@ op_plus
 l_int|24000L
 )paren
 op_star
-l_float|1e5
+l_int|10000
+suffix:semicolon
+id|wrq-&gt;u.freq.e
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_else
 (brace
-r_float
+r_int
 id|bands
 (braket
 )braket
@@ -7658,13 +7648,13 @@ op_assign
 (brace
 l_float|915e6
 comma
-l_float|2.425e9
+l_float|2.425e8
 comma
-l_float|2.46e9
+l_float|2.46e8
 comma
-l_float|2.484e9
+l_float|2.484e8
 comma
-l_float|2.4305e9
+l_float|2.4305e8
 )brace
 suffix:semicolon
 id|psa_read
@@ -7707,12 +7697,20 @@ op_le
 l_int|4
 )paren
 (brace
-id|wrq-&gt;u.freq
+id|wrq-&gt;u.freq.m
 op_assign
 id|bands
 (braket
 id|psa.psa_subband
 )braket
+suffix:semicolon
+id|wrq-&gt;u.freq.e
+op_assign
+(paren
+id|psa.psa_subband
+op_ne
+l_int|0
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -9159,7 +9157,7 @@ l_int|8
 op_or
 id|m.mmr_wrong_nwid_l
 suffix:semicolon
-id|wstats-&gt;discard.crypt
+id|wstats-&gt;discard.code
 op_assign
 l_int|0L
 suffix:semicolon
@@ -10970,6 +10968,11 @@ id|psa.psa_quality_thr
 op_assign
 l_int|0x03
 suffix:semicolon
+multiline_comment|/* It is configured */
+id|psa.psa_conf_status
+op_or_assign
+l_int|1
+suffix:semicolon
 macro_line|#ifdef USE_PSA_CONFIG
 multiline_comment|/* Write the psa */
 id|psa_write
@@ -11062,6 +11065,38 @@ op_star
 )paren
 op_amp
 id|psa.psa_quality_thr
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|psa_write
+c_func
+(paren
+id|ioaddr
+comma
+id|lp-&gt;hacr
+comma
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|psa.psa_conf_status
+op_minus
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|psa
+comma
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
+id|psa.psa_conf_status
 comma
 l_int|1
 )paren

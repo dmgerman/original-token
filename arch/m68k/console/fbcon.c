@@ -117,12 +117,14 @@ DECL|macro|CONFIG_FBCON_PACKED
 macro_line|#undef CONFIG_FBCON_PACKED
 macro_line|#endif
 DECL|variable|fb_info
+r_static
 r_struct
 id|fb_info
 op_star
 id|fb_info
 suffix:semicolon
 DECL|variable|disp
+r_static
 r_struct
 id|display
 op_star
@@ -2269,6 +2271,7 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#ifdef CONFIG_FBCON_MONO
 DECL|variable|dispsw_mono
+r_static
 r_struct
 id|display_switch
 id|dispsw_mono
@@ -2288,6 +2291,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FBCON_MONO */
 macro_line|#ifdef CONFIG_FBCON_ILBM
 DECL|variable|dispsw_ilbm
+r_static
 r_struct
 id|display_switch
 id|dispsw_ilbm
@@ -2307,6 +2311,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FBCON_ILBM */
 macro_line|#ifdef CONFIG_FBCON_PLANES
 DECL|variable|dispsw_plan
+r_static
 r_struct
 id|display_switch
 id|dispsw_plan
@@ -2326,6 +2331,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FBCON_PLANES */
 macro_line|#ifdef CONFIG_FBCON_2PLANE
 DECL|variable|dispsw_2_plane
+r_static
 r_struct
 id|display_switch
 id|dispsw_2_plane
@@ -2345,6 +2351,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FBCON_2PLANE */
 macro_line|#ifdef CONFIG_FBCON_4PLANE
 DECL|variable|dispsw_4_plane
+r_static
 r_struct
 id|display_switch
 id|dispsw_4_plane
@@ -2364,6 +2371,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FBCON_4PLANE */
 macro_line|#ifdef CONFIG_FBCON_8PLANE
 DECL|variable|dispsw_8_plane
+r_static
 r_struct
 id|display_switch
 id|dispsw_8_plane
@@ -2383,6 +2391,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FBCON_8PLANE */
 macro_line|#ifdef CONFIG_FBCON_8PACKED
 DECL|variable|dispsw_8_packed
+r_static
 r_struct
 id|display_switch
 id|dispsw_8_packed
@@ -2402,6 +2411,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FBCON_8PACKED */
 macro_line|#ifdef CONFIG_FBCON_16PACKED
 DECL|variable|dispsw_16_packed
+r_static
 r_struct
 id|display_switch
 id|dispsw_16_packed
@@ -2421,6 +2431,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FBCON_16PACKED */
 macro_line|#ifdef CONFIG_FBCON_CYBER
 DECL|variable|dispsw_cyber
+r_static
 r_struct
 id|display_switch
 id|dispsw_cyber

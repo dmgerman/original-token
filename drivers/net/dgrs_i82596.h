@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;i82596 ethernet controller bits and structures (little endian)&n; *&n; *&t;$Id: i82596.h,v 1.7 1996/03/18 15:31:47 rick Exp $&n; */
+multiline_comment|/*&n; *&t;i82596 ethernet controller bits and structures (little endian)&n; *&n; *&t;$Id: i82596.h,v 1.8 1996/09/03 11:19:03 rick Exp $&n; */
 multiline_comment|/************************************************************************/
 multiline_comment|/*&t;&t;&t;&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/*&t;PORT commands (p. 4-20).  The least significant nibble is one&t;*/
@@ -141,25 +141,29 @@ id|ulong
 id|count
 suffix:semicolon
 multiline_comment|/* for speed */
-DECL|member|addr
+multiline_comment|/* Application defined data follows structure... */
+macro_line|#if 0&t;/* We don&squot;t use these intel defined ones */
 id|uchar
 id|addr
 (braket
 l_int|6
 )braket
 suffix:semicolon
-macro_line|#if 1&t;/* We don&squot;t use these */
-DECL|member|len
 id|ushort
 id|len
 suffix:semicolon
-DECL|member|data
 id|uchar
 id|data
 (braket
 l_int|1
 )braket
 suffix:semicolon
+macro_line|#else
+DECL|member|dstchan
+id|ulong
+id|dstchan
+suffix:semicolon
+multiline_comment|/* Used by multi-NIC mode */
 macro_line|#endif
 DECL|typedef|I596_TFD
 )brace
@@ -180,7 +184,7 @@ r_volatile
 r_struct
 id|_I596_RBD
 (brace
-macro_line|#if INTEL_RENTENTIVE
+macro_line|#if INTEL_RETENTIVE
 DECL|member|count
 id|ushort
 id|count
@@ -210,7 +214,7 @@ op_star
 id|buf
 suffix:semicolon
 multiline_comment|/* Data buffer */
-macro_line|#if INTEL_RENTENTIVE
+macro_line|#if INTEL_RETENTIVE
 DECL|member|size
 id|ushort
 id|size
@@ -227,7 +231,7 @@ id|size
 suffix:semicolon
 multiline_comment|/* Size of buf (constant) */
 macro_line|#endif
-multiline_comment|/* application defined data */
+multiline_comment|/* Application defined data follows structure... */
 DECL|member|chan
 id|uchar
 id|chan
@@ -295,25 +299,29 @@ id|ushort
 id|size
 suffix:semicolon
 multiline_comment|/* Size of RFD buffer: always 0 */
-macro_line|#&t;if 1&t;/* We don&squot;t use these */
-DECL|member|addr
+multiline_comment|/* Application defined data follows structure... */
+macro_line|#&t;if 0&t;/* We don&squot;t use these intel defined ones */
 id|uchar
 id|addr
 (braket
 l_int|6
 )braket
 suffix:semicolon
-DECL|member|len
 id|ushort
 id|len
 suffix:semicolon
-DECL|member|data
 id|uchar
 id|data
 (braket
 l_int|1
 )braket
 suffix:semicolon
+macro_line|#&t;else
+DECL|member|dstchan
+id|ulong
+id|dstchan
+suffix:semicolon
+multiline_comment|/* Used by multi-nic mode */
 macro_line|#&t;endif
 DECL|typedef|I596_RFD
 )brace
@@ -840,7 +848,7 @@ mdefine_line|#define&t;I596_SCB_ACK&t;&t;0xF000&t;/* ACKNOWLEDGMENTS */
 DECL|macro|I596_SCB_ACK_CX
 mdefine_line|#define&t;I596_SCB_ACK_CX&t;&t;0x8000&t;/* Ack command completion */
 DECL|macro|I596_SCB_ACK_FR
-mdefine_line|#define&t;I596_SCB_ACK_FR&t;&t;0x4000&t;/* Ack received frame */
+mdefine_line|#define&t;I596_SCB_ACK_FR&t;&t;0x4000&t;/* Ack recieved frame */
 DECL|macro|I596_SCB_ACK_CNA
 mdefine_line|#define&t;I596_SCB_ACK_CNA&t;0x2000&t;/* Ack command unit not active */
 DECL|macro|I596_SCB_ACK_RNR
@@ -883,7 +891,7 @@ mdefine_line|#define&t;I596_SCB_STAT&t;&t;0xF000&t;/* STATUS */
 DECL|macro|I596_SCB_CX
 mdefine_line|#define&t;I596_SCB_CX&t;&t;0x8000&t;/* command completion */
 DECL|macro|I596_SCB_FR
-mdefine_line|#define&t;I596_SCB_FR&t;&t;0x4000&t;/* received frame */
+mdefine_line|#define&t;I596_SCB_FR&t;&t;0x4000&t;/* recieved frame */
 DECL|macro|I596_SCB_CNA
 mdefine_line|#define&t;I596_SCB_CNA&t;&t;0x2000&t;/* command unit not active */
 DECL|macro|I596_SCB_RNR

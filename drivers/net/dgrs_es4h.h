@@ -6,7 +6,7 @@ multiline_comment|/*&t;&t;NOTE: this name is a misnomer now that there is a PCI&
 multiline_comment|/*&t;&t;board.  Everything that says &quot;es4h&quot; should really be&t;*/
 multiline_comment|/*&t;&t;&quot;se4&quot;.  But we&squot;ll keep the old name for now.&t;&t;*/
 multiline_comment|/*&t;&t;&t;&t;&t;&t;&t;&t;&t;*/
-multiline_comment|/*&t;$Id: es4h.h,v 1.9 1996/04/18 02:58:25 rick Exp $&t;&t;*/
+multiline_comment|/*&t;$Id: es4h.h,v 1.10 1996/08/22 17:16:53 rick Exp $&t;&t;*/
 multiline_comment|/*&t;&t;&t;&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/************************************************************************/
 multiline_comment|/************************************************************************/
@@ -57,11 +57,11 @@ macro_line|#&t;define ES4H_IS_INTMASK&t;&t;0x07&t;/* WO, interrupt select */
 DECL|macro|ES4H_IS_INTOFF
 macro_line|#&t;define ES4H_IS_INTOFF&t;&t;0x00&t;&t;/* No IRQ */
 DECL|macro|ES4H_IS_INT3
-macro_line|#&t;define ES4H_IS_INT3&t;&t;0x01&t;&t;/* IRQ 3 */
+macro_line|#&t;define ES4H_IS_INT3&t;&t;0x03&t;&t;/* IRQ 3 */
 DECL|macro|ES4H_IS_INT5
 macro_line|#&t;define ES4H_IS_INT5&t;&t;0x02&t;&t;/* IRQ 5 */
 DECL|macro|ES4H_IS_INT7
-macro_line|#&t;define ES4H_IS_INT7&t;&t;0x03&t;&t;/* IRQ 7 */
+macro_line|#&t;define ES4H_IS_INT7&t;&t;0x01&t;&t;/* IRQ 7 */
 DECL|macro|ES4H_IS_INT10
 macro_line|#&t;define ES4H_IS_INT10&t;&t;0x04&t;&t;/* IRQ 10 */
 DECL|macro|ES4H_IS_INT11
@@ -185,6 +185,8 @@ DECL|macro|SE6_GPP_EECS
 macro_line|#&t;define SE6_GPP_EECS&t;&t;0x0002&t;/* RW, EEPROM chip select */
 DECL|macro|SE6_GPP_EECK
 macro_line|#&t;define SE6_GPP_EECK&t;&t;0x0004&t;/* RW, EEPROM clock */
+DECL|macro|SE6_GPP_LINK
+macro_line|#&t;define SE6_GPP_LINK&t;&t;0x00fc&t;/* R, Link status LEDs */
 DECL|macro|ES4H_INTVEC
 mdefine_line|#define&t;ES4H_INTVEC&t;&t;0xA2060000&t;/* RO: Interrupt Vector */
 DECL|macro|ES4H_IV_DMA0
@@ -239,7 +241,7 @@ DECL|macro|ES4H_INT_ETHER2
 mdefine_line|#define&t;ES4H_INT_ETHER2&t;&t;IDT_INT4
 DECL|macro|ES4H_INT_ETHER3
 mdefine_line|#define&t;ES4H_INT_ETHER3&t;&t;IDT_INT5
-multiline_comment|/*&n; *&t;Because there are differences between the SE-4 and the SE-6,&n; *&t;we assume that the following globals will be set up at init&n; *&t;time in main.c to contain the appropriate constants from above&n; */
+multiline_comment|/*&n; *&t;Because there are differences between the SE-4 and the SE-6,&n; *&t;we assume that the following globals will be set up at init&n; *&t;time in main.c to containt the appropriate constants from above&n; */
 r_extern
 id|ushort
 id|Gpp

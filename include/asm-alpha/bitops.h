@@ -703,6 +703,15 @@ DECL|macro|ext2_find_first_zero_bit
 mdefine_line|#define ext2_find_first_zero_bit     find_first_zero_bit
 DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit      find_next_zero_bit
+multiline_comment|/* Bitmap functions for the minix filesystem.  */
+DECL|macro|minix_set_bit
+mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+DECL|macro|minix_clear_bit
+mdefine_line|#define minix_clear_bit(nr,addr) clear_bit(nr,addr)
+DECL|macro|minix_test_bit
+mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
+DECL|macro|minix_find_first_zero_bit
+mdefine_line|#define minix_find_first_zero_bit(addr,size) find_first_zero_bit(addr,size)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _ALPHA_BITOPS_H */
 eof

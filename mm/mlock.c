@@ -987,7 +987,7 @@ c_cond
 (paren
 id|locked
 OG
-id|max_mapnr
+id|num_physpages
 op_div
 l_int|2
 )paren
@@ -1254,7 +1254,7 @@ c_cond
 (paren
 id|current-&gt;mm-&gt;total_vm
 OG
-id|max_mapnr
+id|num_physpages
 op_div
 l_int|2
 )paren

@@ -1104,6 +1104,7 @@ macro_line|#endif /* CONFIG_M68060 */
 macro_line|#if defined (CONFIG_M68040)
 DECL|function|probe040
 r_static
+r_inline
 r_int
 r_int
 id|probe040
@@ -1146,48 +1147,40 @@ multiline_comment|/* write */
 id|asm
 r_volatile
 (paren
-l_string|&quot;movel %1,%/a0&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf548&bslash;n&bslash;t&quot;
-multiline_comment|/* ptestw (a0) */
-l_string|&quot;.long 0x4e7a8805&bslash;n&bslash;t&quot;
-multiline_comment|/* movec mmusr,a0 */
-l_string|&quot;movel %/a0,%0&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;ptestw (%1)&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%mmusr,%0&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
-l_string|&quot;=g&quot;
+l_string|&quot;=r&quot;
 (paren
 id|mmusr
 )paren
 suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;a&quot;
 (paren
 id|addr
 )paren
-suffix:colon
-l_string|&quot;a0&quot;
 )paren
 suffix:semicolon
 r_else
 id|asm
 r_volatile
 (paren
-l_string|&quot;movel %1,%/a0&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf568&bslash;n&bslash;t&quot;
-multiline_comment|/* ptestr (a0) */
-l_string|&quot;.long 0x4e7a8805&bslash;n&bslash;t&quot;
-multiline_comment|/* movec mmusr,a0 */
-l_string|&quot;movel %/a0,%0&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;ptestr (%1)&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%mmusr,%0&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
-l_string|&quot;=g&quot;
+l_string|&quot;=r&quot;
 (paren
 id|mmusr
 )paren
 suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;a&quot;
 (paren
 id|addr
 )paren
-suffix:colon
-l_string|&quot;a0&quot;
 )paren
 suffix:semicolon
 id|set_fs
@@ -1201,6 +1194,7 @@ suffix:semicolon
 )brace
 DECL|function|do_040writeback
 r_static
+r_inline
 r_void
 id|do_040writeback
 (paren
@@ -1470,7 +1464,16 @@ comma
 id|addr
 )paren
 suffix:semicolon
-multiline_comment|/*&n;#ifdef DEBUG&n;&t;&t;printk(&quot;mmusr = %lx&bslash;n&quot;, mmusr);&n;#endif&n;*/
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;mmusr = %lx&bslash;n&quot;
+comma
+id|mmusr
+)paren
+suffix:semicolon
+macro_line|#endif
 id|errorcode
 op_assign
 (paren
@@ -2735,7 +2738,7 @@ macro_line|#ifdef DEBUG
 r_if
 c_cond
 (paren
-id|boot_info.cputype
+id|m68k_cputype
 op_amp
 id|CPU_68030
 )paren
@@ -3921,7 +3924,9 @@ suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;fsave %0@&quot;
+l_string|&quot;.chip 68k/68881&bslash;n&bslash;t&quot;
+l_string|&quot;fsave %0@&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
@@ -3962,7 +3967,9 @@ suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;frestore %0@&quot;
+l_string|&quot;.chip 68k/68881&bslash;n&bslash;t&quot;
+l_string|&quot;frestore %0@&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;

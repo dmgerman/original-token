@@ -10,8 +10,6 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &lt;asm/amigatypes.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;

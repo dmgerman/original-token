@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.30 1996/12/03 08:44:44 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.32 1996/12/18 06:33:45 tridge Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -524,12 +524,14 @@ c_func
 id|srmmu_unmapioaddr
 )paren
 comma
+macro_line|#if CONFIG_SBUS
 id|X
 c_func
 (paren
 id|SBus_chain
 )paren
 comma
+macro_line|#endif
 multiline_comment|/* Solaris/SunOS binary compatibility */
 id|X
 c_func
@@ -669,6 +671,12 @@ id|X
 c_func
 (paren
 id|prom_apply_sbus_ranges
+)paren
+comma
+id|X
+c_func
+(paren
+id|prom_getint
 )paren
 comma
 id|X
@@ -946,12 +954,5 @@ op_amp
 id|arch_symbol_table
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|ap_register_ksyms
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 eof

@@ -25,7 +25,7 @@ macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
 DECL|macro|USE_STATIC_SCSI_MEMORY
 macro_line|#undef USE_STATIC_SCSI_MEMORY
-multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/scsi.c,v 1.5 1993/09/24 12:45:18 drew Exp drew $&quot;;&n;*/
+multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/scsi.c,v 1.34 1996/11/19 11:25:50 davem Exp $&quot;;&n;*/
 multiline_comment|/* Command groups 3 and 4 are reserved and should never be used.  */
 DECL|variable|scsi_command_size
 r_const
@@ -87,7 +87,6 @@ op_star
 id|SCpnt
 )paren
 suffix:semicolon
-r_static
 r_int
 id|update_timeout
 (paren
@@ -876,6 +875,17 @@ id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* scanjet iicx */
+(brace
+l_string|&quot;YAMAHA&quot;
+comma
+l_string|&quot;CDR102&quot;
+comma
+l_string|&quot;1.00&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* extra reset */
 multiline_comment|/*&n; * Other types of devices that have special flags.&n; */
 (brace
 l_string|&quot;SONY&quot;
@@ -8217,7 +8227,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * The strategy is to cause the timer code to call scsi_times_out()&n; * when the soonest timeout is pending.&n; * The arguments are used when we are queueing a new command, because&n; * we do not want to subtract the time used from this time, but when we&n; * set the timer, we want to take this value into account.&n; */
 DECL|function|update_timeout
-r_static
 r_int
 id|update_timeout
 c_func

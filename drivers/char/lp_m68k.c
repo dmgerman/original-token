@@ -1,20 +1,20 @@
 multiline_comment|/*&n; * split in two parts for better support of different hardware&n; * by Joerg Dorchain (dorchain@mpi-sb.mpg.de)&n; *&n; * Amiga printer device by Michael Rausch (linux@uni-koblenz.de);&n; * Atari support added by Andreas Schwab (schwab@ls5.informatik.uni-dortmund.de);&n; * based upon work from&n; *&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; */
 multiline_comment|/* 01/17/95: Matthias Welwarsky (dg8y@rs11.hrz.th-darmstadt.de)&n; * lp_write(): rewritten from scratch&n; * lp_interrupt(): fixed cli()/sti()-bug&n; * &n; * 95/05/28: Andreas Schwab (schwab@issan.informatik.uni-dortmund.de)&n; * lp_write() fixed to make it work again.&n; * 95/08/18: Andreas Schwab&n; * lp_write_interrupt: fix race condition&n; *&n; *  * CAUTION, please do check! *    &n; * &n; *  on 68000-based machines sti() must NEVER appear in interrupt driven&n; *  code. The 68k-CPU has a priority-based interrupt scheme. while an interrupt&n; *  with a certain priority is executed, all requests with lower or same&n; *  priority get locked out. executing the sti()-macro allows ANY interrupt&n; *  to be served. this really causes BIG trouble!&n; *  to protect an interrupt driven routine against being interrupted &n; *  (if absolutely needed!) one should use save_flags();cli()/restore_flags()!&n; *&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_AMIGA
-macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#ifdef CONFIG_MULTIFACE_III_LP
 macro_line|#include &lt;linux/lp_mfc.h&gt;
 macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATARI
-macro_line|#include &lt;asm/atarihw.h&gt;
-macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/lp_m68k.h&gt;
 macro_line|#include &lt;linux/lp_intern.h&gt;
@@ -27,25 +27,20 @@ DECL|macro|FORCE_POLLING
 mdefine_line|#define FORCE_POLLING&t; 0
 DECL|macro|FORCE_INTERRUPT
 mdefine_line|#define FORCE_INTERRUPT&t; 1
-DECL|macro|PREFER_INTERRUPT
-mdefine_line|#define PREFER_INTERRUPT 2
+multiline_comment|/*&n; *  PREFER_INTERRUPT doesn&squot;t make much sense on m68k.&n; *  it is preserved here in case of joining with the i386 driver&n; *&n;#define PREFER_INTERRUPT 2&n; */
 DECL|macro|WHICH_DRIVER
 mdefine_line|#define WHICH_DRIVER&t;FORCE_INTERRUPT
-DECL|macro|MAX_LP
-mdefine_line|#define MAX_LP 3 /* the maximum number of devices */
 DECL|variable|lp_table
 r_struct
 id|lp_struct
+op_star
 id|lp_table
 (braket
 id|MAX_LP
 )braket
 op_assign
 (brace
-(brace
-l_int|0
-comma
-)brace
+l_int|NULL
 comma
 )brace
 suffix:semicolon
@@ -114,7 +109,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_is_busy
 c_func
 (paren
@@ -127,7 +122,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|chars
 )paren
 suffix:semicolon
@@ -140,7 +135,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|chars
 )paren
 (brace
@@ -176,7 +171,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_out
 c_func
 (paren
@@ -229,7 +224,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_is_busy
 c_func
 (paren
@@ -241,7 +236,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_out
 c_func
 (paren
@@ -264,7 +259,6 @@ r_int
 id|lp_error
 suffix:semicolon
 DECL|function|lp_interrupt
-r_static
 r_void
 id|lp_interrupt
 c_func
@@ -272,14 +266,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 r_int
@@ -298,7 +292,7 @@ l_int|0
 suffix:semicolon
 id|dev
 OL
-id|max_lp
+id|MAX_LP
 suffix:semicolon
 id|dev
 op_increment
@@ -307,11 +301,21 @@ op_increment
 r_if
 c_cond
 (paren
+(paren
 id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_ne
+l_int|NULL
+)paren
+op_logical_and
+(paren
+id|lp_table
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
 id|lp_my_interrupt
 c_func
 (paren
@@ -320,6 +324,7 @@ id|dev
 op_ne
 l_int|0
 )paren
+)paren
 r_if
 c_cond
 (paren
@@ -327,7 +332,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|do_print
 )paren
 (brace
@@ -338,7 +343,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|copy_size
 )paren
 (brace
@@ -363,14 +368,14 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_buffer
 (braket
 id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|bytes_written
 )braket
 comma
@@ -383,7 +388,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|copy_size
 suffix:semicolon
 op_increment
@@ -391,7 +396,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|bytes_written
 suffix:semicolon
 id|restore_flags
@@ -407,7 +412,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|do_print
 op_assign
 l_int|0
@@ -430,7 +435,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_wait_q
 )paren
 suffix:semicolon
@@ -442,7 +447,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|do_print
 op_assign
 l_int|0
@@ -459,7 +464,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_wait_q
 )paren
 suffix:semicolon
@@ -490,6 +495,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 macro_line|#else
@@ -513,6 +519,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -546,7 +553,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|do_print
 op_assign
 l_int|0
@@ -556,7 +563,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|bytes_written
 op_assign
 l_int|0
@@ -570,7 +577,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|copy_size
 op_assign
 (paren
@@ -591,7 +598,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_buffer
 comma
 id|buf
@@ -600,7 +607,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|copy_size
 )paren
 suffix:semicolon
@@ -611,7 +618,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|copy_size
 )paren
 (brace
@@ -631,7 +638,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|do_print
 op_assign
 l_int|1
@@ -647,14 +654,14 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_buffer
 (braket
 id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|bytes_written
 )braket
 comma
@@ -667,7 +674,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|bytes_written
 suffix:semicolon
 op_decrement
@@ -675,7 +682,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|copy_size
 suffix:semicolon
 id|lp_error
@@ -690,7 +697,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|do_print
 op_assign
 l_int|0
@@ -733,7 +740,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_wait_q
 )paren
 suffix:semicolon
@@ -748,7 +755,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|do_print
 op_assign
 l_int|0
@@ -761,7 +768,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|bytes_written
 suffix:semicolon
 r_if
@@ -801,7 +808,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_has_pout
 c_func
 (paren
@@ -839,7 +846,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_is_online
 c_func
 (paren
@@ -876,7 +883,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_is_busy
 c_func
 (paren
@@ -912,7 +919,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_amp
 id|LP_ABORT
@@ -930,7 +937,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|copy_size
 )paren
 (brace
@@ -940,7 +947,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|bytes_written
 suffix:semicolon
 id|buf
@@ -949,7 +956,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|bytes_written
 suffix:semicolon
 id|count
@@ -958,7 +965,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|bytes_written
 suffix:semicolon
 )brace
@@ -976,6 +983,18 @@ r_return
 id|total_bytes_written
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|variable|lp_interrupt
+r_void
+(paren
+op_star
+id|lp_interrupt
+)paren
+(paren
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
 macro_line|#endif
 macro_line|#if WHICH_DRIVER != FORCE_INTERRUPT
 macro_line|#if WHICH_DRIVER == FORCE_POLLING
@@ -1001,6 +1020,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 macro_line|#else
@@ -1024,6 +1044,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -1056,7 +1077,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|time
 )paren
 (brace
@@ -1125,7 +1146,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_has_pout
 c_func
 (paren
@@ -1149,7 +1170,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_amp
 id|LP_ABORT
@@ -1192,7 +1213,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_is_online
 c_func
 (paren
@@ -1216,7 +1237,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_amp
 id|LP_ABORT
@@ -1259,7 +1280,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|lp_is_busy
 c_func
 (paren
@@ -1283,7 +1304,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_amp
 id|LP_ABORT
@@ -1357,7 +1378,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|time
 )paren
 suffix:semicolon
@@ -1378,7 +1399,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|time
 suffix:semicolon
 id|schedule
@@ -1396,7 +1417,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|variable|lp_irq
-r_static
 r_int
 r_int
 id|lp_irq
@@ -1425,6 +1445,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -1466,6 +1487,7 @@ macro_line|#endif
 DECL|function|lp_lseek
 r_static
 r_int
+r_int
 id|lp_lseek
 c_func
 (paren
@@ -1479,7 +1501,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -1522,7 +1545,57 @@ c_cond
 (paren
 id|dev
 op_ge
-id|max_lp
+id|MAX_LP
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+macro_line|#ifdef CONFIG_KERNELD
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp_table
+(braket
+id|dev
+)braket
+)paren
+(brace
+r_char
+id|modname
+(braket
+l_int|30
+)braket
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|modname
+comma
+l_string|&quot;char-major-%d-%d&quot;
+comma
+id|LP_MAJOR
+comma
+id|dev
+)paren
+suffix:semicolon
+id|request_module
+c_func
+(paren
+id|modname
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp_table
+(braket
+id|dev
+)braket
 )paren
 r_return
 op_minus
@@ -1537,7 +1610,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_amp
 id|LP_EXIST
@@ -1554,7 +1627,7 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_amp
 id|LP_BUSY
@@ -1567,10 +1640,22 @@ id|lp_table
 (braket
 id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_or_assign
 id|LP_BUSY
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|lp_table
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|lp_open
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -1593,19 +1678,36 @@ op_star
 id|file
 )paren
 (brace
-id|lp_table
-(braket
+r_int
+id|dev
+op_assign
 id|MINOR
 c_func
 (paren
 id|inode-&gt;i_rdev
 )paren
+suffix:semicolon
+id|lp_table
+(braket
+id|dev
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_and_assign
 op_complement
 id|LP_BUSY
+suffix:semicolon
+id|lp_table
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|lp_release
+c_func
+(paren
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|lp_ioctl
@@ -1682,7 +1784,7 @@ id|lp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_amp
 id|LP_EXIST
@@ -1705,7 +1807,7 @@ id|lp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|time
 op_assign
 id|arg
@@ -1719,7 +1821,7 @@ id|lp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|chars
 op_assign
 id|arg
@@ -1738,7 +1840,7 @@ id|lp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_or_assign
 id|LP_ABORT
@@ -1748,7 +1850,7 @@ id|lp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|flags
 op_and_assign
 op_complement
@@ -1763,7 +1865,7 @@ id|lp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|wait
 op_assign
 id|arg
@@ -1784,6 +1886,36 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+(brace
+)brace
+r_if
+c_cond
+(paren
+id|lp_table
+(braket
+id|minor
+)braket
+op_member_access_from_pointer
+id|lp_ioctl
+)paren
+id|retval
+op_assign
+id|lp_table
+(braket
+id|minor
+)braket
+op_member_access_from_pointer
+id|lp_ioctl
+c_func
+(paren
+id|minor
+comma
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+r_else
 id|retval
 op_assign
 op_minus
@@ -1824,6 +1956,55 @@ comma
 id|lp_release
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_MODULES
+DECL|variable|parallel_syms
+r_static
+r_struct
+id|symbol_table
+id|parallel_syms
+op_assign
+(brace
+macro_line|#include &lt;linux/symtab_begin.h&gt;
+id|X
+c_func
+(paren
+id|lp_table
+)paren
+comma
+id|X
+c_func
+(paren
+id|lp_irq
+)paren
+comma
+id|X
+c_func
+(paren
+id|lp_interrupt
+)paren
+comma
+id|X
+c_func
+(paren
+id|lp_init
+)paren
+comma
+id|X
+c_func
+(paren
+id|register_parallel
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_parallel
+)paren
+comma
+macro_line|#include &lt;linux/symtab_end.h&gt;
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|lp_init
 r_int
 id|lp_init
@@ -1872,6 +2053,7 @@ id|lp_fops
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;unable to get major %d for line printer&bslash;n&quot;
 comma
 id|LP_MAJOR
@@ -1879,9 +2061,42 @@ id|LP_MAJOR
 suffix:semicolon
 r_return
 op_minus
-id|EBUSY
+id|ENXIO
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MODULES
+r_if
+c_cond
+(paren
+id|register_symtab
+c_func
+(paren
+op_amp
+id|parallel_syms
+)paren
+)paren
+(brace
+id|unregister_chrdev
+c_func
+(paren
+id|LP_MAJOR
+comma
+l_string|&quot;lp&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;unable to register parallel symtab&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#if WHICH_DRIVER == FORCE_POLLING
 id|lp_irq
 op_assign
@@ -1895,135 +2110,28 @@ l_string|&quot;lp_init: lp using polling driver&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
-macro_line|#ifdef CONFIG_AMIGA
-r_if
-c_cond
-(paren
-id|MACH_IS_AMIGA
-op_logical_and
-id|AMIGAHW_PRESENT
-c_func
-(paren
-id|AMI_PARALLEL
-)paren
-)paren
 id|lp_irq
 op_assign
-id|add_isr
-c_func
-(paren
-id|IRQ_AMIGA_CIAA_FLG
-comma
-id|lp_interrupt
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_string|&quot;printer&quot;
-)paren
+l_int|1
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATARI
-r_if
-c_cond
-(paren
-id|MACH_IS_ATARI
-)paren
-id|lp_irq
-op_assign
-id|add_isr
-c_func
-(paren
-id|IRQ_MFP_BUSY
-comma
-id|lp_interrupt
-comma
-id|IRQ_TYPE_SLOW
-comma
-l_int|NULL
-comma
-l_string|&quot;printer&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|lp_irq
-)paren
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;lp_init: lp using interrupt&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-macro_line|#if WHICH_DRIVER == PREFER_INTERRUPT
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;lp_init: lp using polling driver&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#else
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;lp_init: can&squot;t get interrupt, and polling driver not configured&bslash;n&quot;
+l_string|&quot;lp_init: lp using interrupt driver&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif
-id|max_lp
-op_assign
-l_int|0
-suffix:semicolon
-id|max_lp
-op_add_assign
+macro_line|#ifndef MODULE
 id|lp_internal_init
 c_func
 (paren
-id|lp_table
-comma
-id|max_lp
-comma
-id|MAX_LP
-comma
-id|WHICH_DRIVER
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MULTIFACE_III_LP
-id|max_lp
-op_add_assign
 id|lp_mfc_init
 c_func
 (paren
-id|lp_table
-comma
-id|max_lp
-comma
-id|MAX_LP
-comma
-id|WHICH_DRIVER
-)paren
-suffix:semicolon
-macro_line|#if WHICH_DRIVER != FORCE_POLLING
-id|add_isr
-c_func
-(paren
-id|IRQ_AMIGA_PORTS
-comma
-id|lp_interrupt
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_string|&quot;Multiface III printer&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2048,4 +2156,190 @@ id|ints
 )paren
 (brace
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|lp_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_chrdev
+c_func
+(paren
+id|LP_MAJOR
+comma
+l_string|&quot;lp&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*&n; * (un-)register for hardware drivers&n; * tab is an inititalised lp_struct, dev the desired minor&n; * if dev &lt; 0, let the driver choose the first free minor&n; * if sucessful return the minor, else -1&n; */
+DECL|function|register_parallel
+r_int
+id|register_parallel
+c_func
+(paren
+r_struct
+id|lp_struct
+op_star
+id|tab
+comma
+r_int
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev
+OL
+l_int|0
+)paren
+(brace
+id|dev
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|dev
+OL
+id|MAX_LP
+)paren
+op_logical_and
+(paren
+id|lp_table
+(braket
+id|dev
+)braket
+op_ne
+l_int|NULL
+)paren
+)paren
+id|dev
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|dev
+OG
+id|MAX_LP
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp_table
+(braket
+id|dev
+)braket
+op_ne
+l_int|NULL
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|lp_table
+(braket
+id|dev
+)braket
+op_assign
+id|tab
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;lp%d: %s at 0x%08lx&bslash;n&quot;
+comma
+id|dev
+comma
+id|tab-&gt;name
+comma
+(paren
+r_int
+)paren
+id|tab-&gt;base
+)paren
+suffix:semicolon
+r_return
+id|dev
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_MODULES
+DECL|function|unregister_parallel
+r_void
+id|unregister_parallel
+c_func
+(paren
+r_int
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|dev
+OL
+l_int|0
+)paren
+op_logical_or
+(paren
+id|dev
+OG
+id|MAX_LP
+)paren
+op_logical_or
+(paren
+id|lp_table
+(braket
+id|dev
+)braket
+op_eq
+l_int|NULL
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;WARNING: unregister_parallel for non-existant device ignored!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|lp_table
+(braket
+id|dev
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -426,6 +425,8 @@ DECL|macro|SPRITEMEMSIZE
 mdefine_line|#define SPRITEMEMSIZE&t;&t;(64*64/4) /* max 64*64*4 */
 DECL|macro|DUMMYSPRITEMEMSIZE
 mdefine_line|#define DUMMYSPRITEMEMSIZE&t;(8)
+DECL|macro|CHIPRAM_SAFETY_LIMIT
+mdefine_line|#define CHIPRAM_SAFETY_LIMIT&t;(16384)
 DECL|variable|videomemory
 DECL|variable|spritememory
 r_static
@@ -477,6 +478,7 @@ DECL|typedef|copins
 id|copins
 suffix:semicolon
 DECL|struct|copdisplay
+r_static
 r_struct
 id|copdisplay
 (brace
@@ -560,6 +562,7 @@ id|dummysprite
 suffix:semicolon
 multiline_comment|/*&n;&t; * Current Video Mode&n;&t; */
 DECL|struct|amiga_fb_par
+r_static
 r_struct
 id|amiga_fb_par
 (brace
@@ -1049,6 +1052,7 @@ l_string|&quot;user7&quot;
 )brace
 suffix:semicolon
 DECL|variable|amiga_fb_predefined
+r_static
 r_struct
 id|fb_var_screeninfo
 id|amiga_fb_predefined
@@ -7279,7 +7283,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|boot_info.bi_amiga.chipset
+id|amiga_chipset
 )paren
 (brace
 macro_line|#ifdef CONFIG_AMIFB_OCS
@@ -7336,7 +7340,7 @@ multiline_comment|/* Set the Default Video Mode */
 id|get_video_mode
 c_func
 (paren
-id|boot_info.bi_un.bi_ami.vblank
+id|amiga_vblank
 op_eq
 l_int|50
 ques
@@ -7414,7 +7418,7 @@ id|AMBER_FF
 id|get_video_mode
 c_func
 (paren
-id|boot_info.bi_un.bi_ami.vblank
+id|amiga_vblank
 op_eq
 l_int|50
 ques
@@ -7428,7 +7432,7 @@ r_else
 id|get_video_mode
 c_func
 (paren
-id|boot_info.bi_un.bi_ami.vblank
+id|amiga_vblank
 op_eq
 l_int|50
 ques
@@ -7442,9 +7446,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|boot_info.bi_amiga.chip_size
+id|amiga_chip_avail
+c_func
+(paren
+)paren
+op_minus
+id|CHIPRAM_SAFETY_LIMIT
 OG
-l_int|1048576
+id|VIDEOMEMSIZE_ECS_1M
 )paren
 id|videomemorysize
 op_assign
@@ -7515,9 +7524,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|boot_info.bi_amiga.chip_size
+id|amiga_chip_avail
+c_func
+(paren
+)paren
+op_minus
+id|CHIPRAM_SAFETY_LIMIT
 OG
-l_int|1048576
+id|VIDEOMEMSIZE_AGA_1M
 )paren
 id|videomemorysize
 op_assign
@@ -10590,7 +10604,7 @@ r_else
 r_if
 c_cond
 (paren
-id|boot_info.bi_un.bi_ami.vblank
+id|amiga_vblank
 op_ne
 l_int|50
 )paren
@@ -10689,7 +10703,7 @@ r_else
 r_if
 c_cond
 (paren
-id|boot_info.bi_un.bi_ami.vblank
+id|amiga_vblank
 op_ne
 l_int|60
 )paren

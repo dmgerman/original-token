@@ -355,12 +355,9 @@ id|size
 suffix:semicolon
 id|dir
 op_assign
-id|pgd_offset
+id|pgd_offset_k
 c_func
 (paren
-op_amp
-id|init_mm
-comma
 id|address
 )paren
 suffix:semicolon
@@ -670,12 +667,9 @@ id|size
 suffix:semicolon
 id|dir
 op_assign
-id|pgd_offset
+id|pgd_offset_k
 c_func
 (paren
-op_amp
-id|init_mm
-comma
 id|address
 )paren
 suffix:semicolon

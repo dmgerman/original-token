@@ -295,7 +295,7 @@ id|dead_task
 multiline_comment|/*&n;&t; * Nothing to do&n;&t; */
 )brace
 DECL|function|copy_thread
-r_void
+r_int
 id|copy_thread
 c_func
 (paren
@@ -447,6 +447,9 @@ id|ST0_CU2
 op_or
 id|ST0_CU1
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * fill in the fpu structure for a core dump..&n; *&n; * Actually this is &quot;int dump_fpu (struct elf_fpregset_t *fpu)&quot;&n; */

@@ -1,10 +1,11 @@
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -55,14 +56,14 @@ id|a3000_intr
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 r_int
@@ -353,24 +354,7 @@ c_cond
 (paren
 id|dir_in
 )paren
-(brace
 multiline_comment|/* invalidate any cache */
-multiline_comment|/*&n;         * On the 68040 it&squot;s not ok to use cache_clear, as it just invalidates&n;         * cache-lines, and thereby trashing them. We need to use cache_push&n;         * to avoid problems/crashes.&n;         * This was a real bitch to catch :-( -Jes&n;         */
-r_if
-c_cond
-(paren
-id|boot_info.cputype
-op_amp
-id|CPU_68040
-)paren
-id|cache_push
-(paren
-id|addr
-comma
-id|cmd-&gt;SCp.this_residual
-)paren
-suffix:semicolon
-r_else
 id|cache_clear
 (paren
 id|addr
@@ -378,7 +362,6 @@ comma
 id|cmd-&gt;SCp.this_residual
 )paren
 suffix:semicolon
-)brace
 r_else
 multiline_comment|/* push any dirty cache */
 id|cache_push
@@ -741,6 +724,11 @@ op_assign
 op_amp
 id|proc_scsi_a3000
 suffix:semicolon
+id|tpnt-&gt;proc_info
+op_assign
+op_amp
+id|wd33c93_proc_info
+suffix:semicolon
 id|a3000_host
 op_assign
 id|scsi_register
@@ -766,6 +754,13 @@ c_func
 (paren
 l_int|0xDD0000
 )paren
+suffix:semicolon
+id|a3000_host-&gt;irq
+op_assign
+id|IRQ_AMIGA_PORTS
+op_amp
+op_complement
+id|IRQ_MACHSPEC
 suffix:semicolon
 id|DMA
 c_func
@@ -804,7 +799,7 @@ comma
 id|WD33C93_FS_12_15
 )paren
 suffix:semicolon
-id|add_isr
+id|request_irq
 c_func
 (paren
 id|IRQ_AMIGA_PORTS
@@ -813,9 +808,9 @@ id|a3000_intr
 comma
 l_int|0
 comma
-l_int|NULL
-comma
 l_string|&quot;A3000 SCSI&quot;
+comma
+id|a3000_intr
 )paren
 suffix:semicolon
 id|DMA
@@ -834,6 +829,58 @@ id|called
 op_assign
 l_int|1
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#ifdef MODULE
+DECL|macro|HOSTS_C
+mdefine_line|#define HOSTS_C
+macro_line|#include &quot;a3000.h&quot;
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|A3000_SCSI
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
+DECL|function|a3000_release
+r_int
+id|a3000_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+)paren
+(brace
+macro_line|#ifdef MODULE
+id|wd33c93_release
+c_func
+(paren
+)paren
+suffix:semicolon
+id|DMA
+c_func
+(paren
+id|instance
+)paren
+op_member_access_from_pointer
+id|CNTR
+op_assign
+l_int|0
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|IRQ_AMIGA_PORTS
+comma
+id|a3000_intr
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon

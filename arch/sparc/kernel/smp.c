@@ -392,6 +392,22 @@ id|smp_buf
 l_int|512
 )braket
 suffix:semicolon
+multiline_comment|/* Not supported on Sparc yet. */
+DECL|function|smp_setup
+r_void
+id|smp_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+)brace
 DECL|function|smp_info
 r_char
 op_star

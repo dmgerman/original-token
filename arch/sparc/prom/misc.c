@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.11 1996/10/12 13:12:58 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: misc.c,v 1.12 1996/12/18 06:46:55 tridge Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -420,16 +420,6 @@ id|sfunc_t
 id|funcp
 )paren
 (brace
-macro_line|#ifdef CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;not doing setsync&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

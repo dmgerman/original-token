@@ -353,6 +353,12 @@ comma
 id|X
 c_func
 (paren
+id|num_physpages
+)paren
+comma
+id|X
+c_func
+(paren
 id|high_memory
 )paren
 comma

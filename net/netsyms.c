@@ -162,6 +162,18 @@ comma
 id|X
 c_func
 (paren
+id|sock_sendmsg
+)paren
+comma
+id|X
+c_func
+(paren
+id|sock_recvmsg
+)paren
+comma
+id|X
+c_func
+(paren
 id|sk_alloc
 )paren
 comma
@@ -231,7 +243,7 @@ c_func
 id|datagram_select
 )paren
 comma
-multiline_comment|/* ?? needed by smbfs.o */
+multiline_comment|/* Needed by smbfs.o */
 id|X
 c_func
 (paren
@@ -360,18 +372,6 @@ id|X
 c_func
 (paren
 id|inet_family_ops
-)paren
-comma
-id|X
-c_func
-(paren
-id|__scm_send
-)paren
-comma
-id|X
-c_func
-(paren
-id|__scm_destroy
 )paren
 comma
 macro_line|#ifdef CONFIG_IP_FORWARD
@@ -844,6 +844,24 @@ id|X
 c_func
 (paren
 id|tr_type_trans
+)paren
+comma
+id|X
+c_func
+(paren
+id|register_trdev
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_trdev
+)paren
+comma
+id|X
+c_func
+(paren
+id|init_trdev
 )paren
 comma
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.20 1996/11/13 05:09:40 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
+multiline_comment|/* $Id: time.c,v 1.22 1996/12/19 08:06:32 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16,9 +16,6 @@ macro_line|#include &lt;asm/mostek.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifdef CONFIG_AP1000
-macro_line|#include &lt;asm/ap1000/apservice.h&gt;
-macro_line|#endif
 DECL|variable|sp_clock_typ
 r_enum
 id|sparc_clock_type
@@ -604,6 +601,12 @@ id|cpuunit
 comma
 id|bootbus
 suffix:semicolon
+id|cpuunit
+op_assign
+id|bootbus
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Determine the correct starting PROM node for the probe. */
 id|node
 op_assign
@@ -1102,21 +1105,13 @@ c_func
 id|timer_interrupt
 )paren
 suffix:semicolon
-(brace
-r_extern
-r_struct
-id|cap_init
-id|cap_init
+id|ap_init_time
+c_func
+(paren
+op_amp
+id|xtime
+)paren
 suffix:semicolon
-id|xtime.tv_sec
-op_assign
-id|cap_init.init_time
-suffix:semicolon
-id|xtime.tv_usec
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 macro_line|#endif
@@ -1240,7 +1235,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if !CONFIG_AP1000
 DECL|function|do_gettimeoffset
 r_static
 id|__inline__
@@ -1297,7 +1291,6 @@ op_plus
 id|count
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|do_gettimeofday
 r_void
 id|do_gettimeofday

@@ -898,6 +898,27 @@ op_amp
 id|st
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|st.st_size
+op_eq
+l_int|0
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;%s is empty&bslash;n&quot;
+comma
+id|filename
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|mapsize
 op_assign
 id|st.st_size

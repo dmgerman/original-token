@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.45 1996/12/11 10:23:06 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: init.c,v 1.46 1996/12/18 06:43:24 tridge Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -504,6 +504,27 @@ l_int|0x50000000
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|ap1000
+suffix:colon
+macro_line|#if CONFIG_AP1000
+id|start_mem
+op_assign
+id|apmmu_paging_init
+c_func
+(paren
+id|start_mem
+comma
+id|end_mem
+)paren
+suffix:semicolon
+id|sparc_unmapped_base
+op_assign
+l_int|0x50000000
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|prom_printf

@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;

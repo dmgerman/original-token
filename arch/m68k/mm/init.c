@@ -341,6 +341,12 @@ id|pte_t
 op_star
 id|ptablep
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|memavailp
+)paren
+(brace
 id|ptablep
 op_assign
 (paren
@@ -354,6 +360,20 @@ op_star
 id|memavailp
 op_add_assign
 id|PAGE_SIZE
+suffix:semicolon
+)brace
+r_else
+id|ptablep
+op_assign
+(paren
+id|pte_t
+op_star
+)paren
+id|__get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
 suffix:semicolon
 id|nocache_page
 (paren
@@ -1059,7 +1079,7 @@ l_int|0
 suffix:semicolon
 id|chunk
 OL
-id|boot_info.num_memory
+id|m68k_num_memory
 suffix:semicolon
 id|chunk
 op_increment
@@ -1069,14 +1089,14 @@ id|mem_avail
 op_assign
 id|map_chunk
 (paren
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|chunk
 )braket
 dot
 id|addr
 comma
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|chunk
 )braket
@@ -1248,13 +1268,13 @@ id|CPU_IS_040_OR_060
 id|asm
 id|__volatile__
 (paren
-l_string|&quot;movel %0,%/d0&bslash;n&bslash;t&quot;
-l_string|&quot;.long 0x4e7b0806&quot;
-multiline_comment|/* movec d0,urp */
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;movec %0,%%urp&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;r&quot;
 (paren
 id|task
 (braket
@@ -1266,21 +1286,19 @@ id|tss.crp
 l_int|1
 )braket
 )paren
-suffix:colon
-l_string|&quot;d0&quot;
 )paren
 suffix:semicolon
 r_else
 id|asm
 id|__volatile__
 (paren
-l_string|&quot;movel %0,%/a0&bslash;n&bslash;t&quot;
-l_string|&quot;.long 0xf0104c00&quot;
-multiline_comment|/* pmove %/a0@,%/crp */
+l_string|&quot;.chip 68030&bslash;n&bslash;t&quot;
+l_string|&quot;pmove %0,%%crp&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;m&quot;
 (paren
 id|task
 (braket
@@ -1288,9 +1306,10 @@ l_int|0
 )braket
 op_member_access_from_pointer
 id|tss.crp
+(braket
+l_int|0
+)braket
 )paren
-suffix:colon
-l_string|&quot;a0&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -1367,6 +1386,8 @@ op_star
 id|end_mem
 suffix:semicolon
 id|max_mapnr
+op_assign
+id|num_physpages
 op_assign
 id|MAP_NR
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsix.c,v 1.18 1996/11/13 05:10:19 davem Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsix.c,v 1.19 1996/12/19 08:07:35 davem Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -839,6 +839,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_static
 r_void
 id|cg6_fill
@@ -852,6 +853,7 @@ r_int
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Ugh: X wants to mmap a bunch of cute stuff at the same time :-( */
 multiline_comment|/* So, we just mmap the things that are being asked for */
 r_static
@@ -2728,7 +2730,7 @@ DECL|macro|GX_FILL_START
 mdefine_line|#define GX_FILL_START(attr) &bslash;&n;&t;{ &bslash;&n;&t;&t;register struct cg6_fbc *gx = fbinfo[0].info.cg6.fbc; &bslash;&n;&t;&t;register uint i; &bslash;&n;&t;&t;do { &bslash;&n;&t;&t;&t;i = gx-&gt;s; &bslash;&n;&t;&t;} while (i &amp; 0x10000000); &bslash;&n;&t;&t;gx-&gt;fg = attr &amp; 0xf; &bslash;&n;&t;&t;gx-&gt;bg = 0; &bslash;&n;&t;&t;gx-&gt;pixelm = ~(0); &bslash;&n;&t;&t;gx-&gt;s = 0; &bslash;&n;&t;&t;gx-&gt;alu = 0xea80ff00; &bslash;&n;&t;&t;gx-&gt;pm = ~(0); &bslash;&n;&t;&t;gx-&gt;clip = 0;
 DECL|macro|GX_FILL_END
 mdefine_line|#define GX_FILL_END &bslash;&n;&t;}
-DECL|function|cg6_fill
+macro_line|#if 0
 r_static
 r_void
 id|cg6_fill
@@ -2823,4 +2825,5 @@ suffix:semicolon
 )brace
 id|GX_FILL_END
 )brace
+macro_line|#endif
 eof

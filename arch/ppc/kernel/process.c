@@ -648,7 +648,7 @@ id|t
 )brace
 multiline_comment|/*&n; * Copy a thread..&n; */
 DECL|function|copy_thread
-r_void
+r_int
 id|copy_thread
 c_func
 (paren
@@ -938,6 +938,9 @@ suffix:semicolon
 )brace
 id|p-&gt;tss.fp_used
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;hdlcdrv.h  -- HDLC packet radio network driver.&n; * The Linux soundcard driver for 1200 baud and 9600 baud packet radio&n; * (C) 1996 by Thomas Sailer, HB9JNX/AE4WA&n; */
+multiline_comment|/*&n; * hdlcdrv.h  -- HDLC packet radio network driver.&n; * The Linux soundcard driver for 1200 baud and 9600 baud packet radio&n; * (C) 1996 by Thomas Sailer, HB9JNX/AE4WA&n; */
 macro_line|#ifndef _HDLCDRV_H
 DECL|macro|_HDLCDRV_H
 mdefine_line|#define _HDLCDRV_H

@@ -872,7 +872,7 @@ comma
 id|n
 comma
 multiline_comment|/* fixup */
-l_string|&quot;1: addql #2,%2&quot;
+l_string|&quot;1: addql #2,%2&bslash;n&quot;
 l_string|&quot;2: addql #1,%2&quot;
 comma
 multiline_comment|/* copy */
@@ -1453,7 +1453,7 @@ comma
 id|n
 comma
 multiline_comment|/* fixup */
-l_string|&quot;1: addql #2,%2&quot;
+l_string|&quot;1: addql #2,%2&bslash;n&quot;
 l_string|&quot;2: addql #1,%2&quot;
 comma
 multiline_comment|/* copy */
@@ -1609,6 +1609,7 @@ id|src
 r_int
 id|res
 op_assign
+op_minus
 (paren
 r_int
 )paren
@@ -1620,8 +1621,7 @@ id|__volatile__
 l_string|&quot;1: movesb (%1)+,%%d0&bslash;n&quot;
 l_string|&quot;12:tstb %%d0&bslash;n&quot;
 l_string|&quot;   jne 1b&bslash;n&quot;
-l_string|&quot;   subl %1,%0&bslash;n&quot;
-l_string|&quot;   negl %0&bslash;n&quot;
+l_string|&quot;   addl %1,%0&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
@@ -1659,8 +1659,6 @@ id|src
 )paren
 suffix:colon
 l_string|&quot;d0&quot;
-comma
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return

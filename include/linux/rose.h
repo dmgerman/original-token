@@ -72,6 +72,11 @@ DECL|member|address
 id|rose_address
 id|address
 suffix:semicolon
+DECL|member|mask
+r_int
+r_int
+id|mask
+suffix:semicolon
 DECL|member|neighbour
 id|ax25_address
 id|neighbour

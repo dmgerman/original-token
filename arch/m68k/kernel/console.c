@@ -3761,6 +3761,7 @@ suffix:semicolon
 )brace
 DECL|function|cursor_report
 r_static
+r_inline
 r_void
 id|cursor_report
 c_func
@@ -5261,6 +5262,7 @@ suffix:semicolon
 )brace
 DECL|function|insert_char
 r_static
+r_inline
 r_void
 id|insert_char
 c_func

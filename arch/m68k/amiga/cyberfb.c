@@ -2014,6 +2014,10 @@ id|fix-&gt;ywrapstep
 op_assign
 l_int|0
 suffix:semicolon
+id|fix-&gt;line_length
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4340,7 +4344,7 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|to
@@ -4355,7 +4359,7 @@ suffix:semicolon
 r_case
 l_int|2
 suffix:colon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|to

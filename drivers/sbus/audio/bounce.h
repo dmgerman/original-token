@@ -1,0 +1,62 @@
+macro_line|#ifndef _BOUNCE_H_
+DECL|macro|_BOUNCE_H_
+mdefine_line|#define _BOUNCE_H_
+macro_line|#include &lt;linux/types.h&gt;
+multiline_comment|/* Each page that is used for a bounce buffer has the following header&n; * at the top which points to the next page in the free or in-use list&n; * and provides some other stats for drivers.&n; */
+DECL|macro|NR_BOUNCE_PAGES
+mdefine_line|#define NR_BOUNCE_PAGES 32
+DECL|struct|bounce_page
+r_struct
+id|bounce_page
+(brace
+DECL|member|next
+r_struct
+id|bounce_page
+op_star
+id|next
+suffix:semicolon
+DECL|member|size
+id|__u32
+id|size
+suffix:semicolon
+DECL|member|remaining
+id|__u32
+id|remaining
+suffix:semicolon
+DECL|member|current
+id|__u8
+op_star
+id|current
+suffix:semicolon
+DECL|member|data
+id|__u8
+id|data
+(braket
+id|PAGE_SIZE
+op_minus
+l_int|1
+op_star
+r_sizeof
+(paren
+r_struct
+id|bounce_page
+op_star
+)paren
+op_minus
+l_int|2
+op_star
+r_sizeof
+(paren
+id|__u32
+)paren
+op_minus
+r_sizeof
+(paren
+id|__u8
+)paren
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
+eof

@@ -15,12 +15,12 @@ macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/*&n; * In-kernel byte order macros to handle stuff like&n; * byte-order-dependent filesystems etc.&n; */
 DECL|macro|le16_to_cpu
 mdefine_line|#define le16_to_cpu(__val) __swab16(__val)
-DECL|macro|le32_to_cpu
-mdefine_line|#define le32_to_cpu(__val) __swab32(__val)
-DECL|macro|cpu_to_le32
-mdefine_line|#define cpu_to_le32(__val) __swab32(__val)
 DECL|macro|cpu_to_le16
 mdefine_line|#define cpu_to_le16(__val) __swab16(__val)
+DECL|macro|le32_to_cpu
+mdefine_line|#define le32_to_cpu(x) &bslash;&n;(__builtin_constant_p(x) ? __constant_swab32(x) : __swab32(x))
+DECL|macro|cpu_to_le32
+mdefine_line|#define cpu_to_le32(x) &bslash;&n;(__builtin_constant_p(x) ? __constant_swab32(x) : __swab32(x))
 DECL|function|__swab16
 r_extern
 id|__inline__
@@ -42,6 +42,50 @@ op_or
 id|val
 op_rshift
 l_int|8
+)paren
+suffix:semicolon
+)brace
+DECL|function|__constant_swab32
+r_extern
+id|__inline__
+id|__u32
+id|__constant_swab32
+(paren
+id|__u32
+id|val
+)paren
+(brace
+r_return
+(paren
+id|val
+op_lshift
+l_int|24
+)paren
+op_or
+(paren
+(paren
+id|val
+op_lshift
+l_int|8
+)paren
+op_amp
+l_int|0xff0000
+)paren
+op_or
+(paren
+(paren
+id|val
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff00
+)paren
+op_or
+(paren
+id|val
+op_rshift
+l_int|24
 )paren
 suffix:semicolon
 )brace

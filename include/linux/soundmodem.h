@@ -10,19 +10,25 @@ DECL|struct|sm_debug_data
 r_struct
 id|sm_debug_data
 (brace
-DECL|member|debug1
+DECL|member|int_rate
 r_int
 r_int
-id|debug1
+id|int_rate
 suffix:semicolon
-DECL|member|debug2
+DECL|member|mod_cycles
 r_int
 r_int
-id|debug2
+id|mod_cycles
 suffix:semicolon
-DECL|member|debug3
+DECL|member|demod_cycles
 r_int
-id|debug3
+r_int
+id|demod_cycles
+suffix:semicolon
+DECL|member|dma_residue
+r_int
+r_int
+id|dma_residue
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -139,29 +145,15 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* -------------------------------------------------------------------- */
-multiline_comment|/*&n; * config: hardware&n; */
-DECL|macro|SM_HARDWARE_INVALID
-mdefine_line|#define SM_HARDWARE_INVALID   -1
-DECL|macro|SM_HARDWARE_SBC
-mdefine_line|#define SM_HARDWARE_SBC       0
-DECL|macro|SM_HARDWARE_WSS
-mdefine_line|#define SM_HARDWARE_WSS       1
-DECL|macro|SM_HARDWARE_WSSFDX
-mdefine_line|#define SM_HARDWARE_WSSFDX    2  /* currently does not work! */
-multiline_comment|/*&n; * config: mode&n; */
-DECL|macro|SM_MODE_INVALID
-mdefine_line|#define SM_MODE_INVALID       -1
-DECL|macro|SM_MODE_AFSK1200
-mdefine_line|#define SM_MODE_AFSK1200      0
-DECL|macro|SM_MODE_FSK9600
-mdefine_line|#define SM_MODE_FSK9600       1
 multiline_comment|/*&n; * diagnose modes&n; */
 DECL|macro|SM_DIAGMODE_OFF
-mdefine_line|#define SM_DIAGMODE_OFF        0
+mdefine_line|#define SM_DIAGMODE_OFF            0
 DECL|macro|SM_DIAGMODE_INPUT
-mdefine_line|#define SM_DIAGMODE_INPUT      1
+mdefine_line|#define SM_DIAGMODE_INPUT          1
 DECL|macro|SM_DIAGMODE_DEMOD
-mdefine_line|#define SM_DIAGMODE_DEMOD      2
+mdefine_line|#define SM_DIAGMODE_DEMOD          2
+DECL|macro|SM_DIAGMODE_CONSTELLATION
+mdefine_line|#define SM_DIAGMODE_CONSTELLATION  3
 multiline_comment|/*&n; * diagnose flags&n; */
 DECL|macro|SM_DIAGFLAG_DCDGATE
 mdefine_line|#define SM_DIAGFLAG_DCDGATE    (1&lt;&lt;0)
@@ -172,6 +164,8 @@ DECL|macro|SM_MIXER_INVALID
 mdefine_line|#define SM_MIXER_INVALID       0
 DECL|macro|SM_MIXER_AD1848
 mdefine_line|#define SM_MIXER_AD1848        0x10
+DECL|macro|SM_MIXER_CRYSTAL
+mdefine_line|#define SM_MIXER_CRYSTAL       0x11
 DECL|macro|SM_MIXER_CT1335
 mdefine_line|#define SM_MIXER_CT1335        0x20
 DECL|macro|SM_MIXER_CT1345
@@ -179,10 +173,6 @@ mdefine_line|#define SM_MIXER_CT1345        0x21
 DECL|macro|SM_MIXER_CT1745
 mdefine_line|#define SM_MIXER_CT1745        0x22
 multiline_comment|/*&n; * ioctl values&n; */
-DECL|macro|SMCTL_GETMODEMTYPE
-mdefine_line|#define SMCTL_GETMODEMTYPE     0x80
-DECL|macro|SMCTL_SETMODEMTYPE
-mdefine_line|#define SMCTL_SETMODEMTYPE     0x81
 DECL|macro|SMCTL_DIAGNOSE
 mdefine_line|#define SMCTL_DIAGNOSE         0x82
 DECL|macro|SMCTL_GETMIXER

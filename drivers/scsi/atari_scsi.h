@@ -88,7 +88,7 @@ DECL|macro|atari_scsi_release
 mdefine_line|#define atari_scsi_release NULL
 macro_line|#endif
 multiline_comment|/* The values for CMD_PER_LUN and CAN_QUEUE are somehow arbitrary. Higher&n; * values should work, too; try it! (but cmd_per_lun costs memory!) */
-multiline_comment|/* But there seems to be a bug somewhere that requires CAN_QUEUE to be&n; * 2*CMD_OER_LUN. At least on a TT, no spurious timeouts seen since&n; * changed CMD_PER_LUN... */
+multiline_comment|/* But there seems to be a bug somewhere that requires CAN_QUEUE to be&n; * 2*CMD_PER_LUN. At least on a TT, no spurious timeouts seen since&n; * changed CMD_PER_LUN... */
 multiline_comment|/* Note: The Falcon currently uses 8/1 setting due to unsolved problems with&n; * cmd_per_lun != 1 */
 DECL|macro|ATARI_TT_CAN_QUEUE
 mdefine_line|#define ATARI_TT_CAN_QUEUE&t;&t;16
@@ -131,55 +131,168 @@ DECL|macro|NCR5380_dma_residual
 mdefine_line|#define NCR5380_dma_residual(inst) atari_scsi_dma_residual( inst )
 DECL|macro|NCR5380_dma_xfer_len
 mdefine_line|#define&t;NCR5380_dma_xfer_len(i,cmd,phase) &bslash;&n;&t;atari_dma_xfer_len(cmd-&gt;SCp.this_residual,cmd,((phase) &amp; SR_IO) ? 0 : 1)
-multiline_comment|/* Debugging printk definitions:&n; * DPRINTK() is the generic one, takes an NDEBUG_* mask as argument;&n; * all others are hardcoded to one NDEBUG_* code:&n; *&n; *  ARB  -&gt; arbitration&n; *  ASEN -&gt; auto-sense&n; *  DMA  -&gt; DMA&n; *  HSH  -&gt; PIO handshake&n; *  INF  -&gt; information transfer&n; *  INI  -&gt; initialization&n; *  INT  -&gt; interrupt&n; *  LNK  -&gt; linked commands&n; *  MAIN -&gt; NCR5380_main() control flow&n; *  NDAT -&gt; no data-out phase&n; *  NWR  -&gt; no write commands&n; *  PIO  -&gt; PIO transfers&n; *  PDMA -&gt; pseudo DMA (unused on Atari)&n; *  QU   -&gt; queues&n; *  RSL  -&gt; reselections&n; *  SEL  -&gt; selections&n; *  USL  -&gt; usleep cpde (unused on Atari)&n; *  LBS  -&gt; last byte sent (unused on Atari)&n; *  RSS  -&gt; restarting of selections&n; *  EXT  -&gt; extended messages&n; *  ABRT -&gt; aborting and resetting&n; *  TAG  -&gt; queue tag handling&n; *  MER  -&gt; merging of consec. buffers&n; *&n; */
-DECL|macro|DPRINTK
-mdefine_line|#define DPRINTK(mask, format, args...)&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (NDEBUG &amp; (mask))&t;&t;&t;&t;&bslash;&n;&t;&t;&t;printk(KERN_DEBUG format , ## args);&t;&bslash;&n;&t;} while(0)
+multiline_comment|/* Debugging printk definitions:&n; *&n; *  ARB  -&gt; arbitration&n; *  ASEN -&gt; auto-sense&n; *  DMA  -&gt; DMA&n; *  HSH  -&gt; PIO handshake&n; *  INF  -&gt; information transfer&n; *  INI  -&gt; initialization&n; *  INT  -&gt; interrupt&n; *  LNK  -&gt; linked commands&n; *  MAIN -&gt; NCR5380_main() control flow&n; *  NDAT -&gt; no data-out phase&n; *  NWR  -&gt; no write commands&n; *  PIO  -&gt; PIO transfers&n; *  PDMA -&gt; pseudo DMA (unused on Atari)&n; *  QU   -&gt; queues&n; *  RSL  -&gt; reselections&n; *  SEL  -&gt; selections&n; *  USL  -&gt; usleep cpde (unused on Atari)&n; *  LBS  -&gt; last byte sent (unused on Atari)&n; *  RSS  -&gt; restarting of selections&n; *  EXT  -&gt; extended messages&n; *  ABRT -&gt; aborting and resetting&n; *  TAG  -&gt; queue tag handling&n; *  MER  -&gt; merging of consec. buffers&n; *&n; */
+macro_line|#if NDEBUG &amp; NDEBUG_ARBITRATION
 DECL|macro|ARB_PRINTK
-mdefine_line|#define ARB_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_ARBITRATION, format , ##args)
+mdefine_line|#define ARB_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|ARB_PRINTK
+mdefine_line|#define ARB_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_AUTOSENSE
 DECL|macro|ASEN_PRINTK
-mdefine_line|#define ASEN_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_AUTOSENSE, format , ##args)
+mdefine_line|#define ASEN_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|ASEN_PRINTK
+mdefine_line|#define ASEN_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_DMA
 DECL|macro|DMA_PRINTK
-mdefine_line|#define DMA_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_DMA, format , ##args)
+mdefine_line|#define DMA_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|DMA_PRINTK
+mdefine_line|#define DMA_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_HANDSHAKE
 DECL|macro|HSH_PRINTK
-mdefine_line|#define HSH_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_HANDSHAKE, format , ##args)
+mdefine_line|#define HSH_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|HSH_PRINTK
+mdefine_line|#define HSH_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_INFORMATION
 DECL|macro|INF_PRINTK
-mdefine_line|#define INF_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_INFORMATION, format , ##args)
+mdefine_line|#define INF_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|INF_PRINTK
+mdefine_line|#define INF_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_INIT
 DECL|macro|INI_PRINTK
-mdefine_line|#define INI_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_INIT, format , ##args)
+mdefine_line|#define INI_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|INI_PRINTK
+mdefine_line|#define INI_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_INTR
 DECL|macro|INT_PRINTK
-mdefine_line|#define INT_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_INTR, format , ##args)
+mdefine_line|#define INT_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|INT_PRINTK
+mdefine_line|#define INT_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_LINKED
 DECL|macro|LNK_PRINTK
-mdefine_line|#define LNK_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_LINKED, format , ##args)
+mdefine_line|#define LNK_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|LNK_PRINTK
+mdefine_line|#define LNK_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_MAIN
 DECL|macro|MAIN_PRINTK
-mdefine_line|#define MAIN_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_MAIN, format , ##args)
+mdefine_line|#define MAIN_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|MAIN_PRINTK
+mdefine_line|#define MAIN_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_NO_DATAOUT
 DECL|macro|NDAT_PRINTK
-mdefine_line|#define NDAT_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_NO_DATAOUT, format , ##args)
+mdefine_line|#define NDAT_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|NDAT_PRINTK
+mdefine_line|#define NDAT_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_NO_WRITE
 DECL|macro|NWR_PRINTK
-mdefine_line|#define NWR_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_NO_WRITE, format , ##args)
+mdefine_line|#define NWR_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|NWR_PRINTK
+mdefine_line|#define NWR_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_PIO
 DECL|macro|PIO_PRINTK
-mdefine_line|#define PIO_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_PIO, format , ##args)
+mdefine_line|#define PIO_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|PIO_PRINTK
+mdefine_line|#define PIO_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_PSEUDO_DMA
 DECL|macro|PDMA_PRINTK
-mdefine_line|#define PDMA_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_PSEUDO_DMA, format , ##args)
+mdefine_line|#define PDMA_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|PDMA_PRINTK
+mdefine_line|#define PDMA_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_QUEUES
 DECL|macro|QU_PRINTK
-mdefine_line|#define QU_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_QUEUES, format , ##args)
+mdefine_line|#define QU_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|QU_PRINTK
+mdefine_line|#define QU_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_RESELECTION
 DECL|macro|RSL_PRINTK
-mdefine_line|#define RSL_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_RESELECTION, format , ##args)
+mdefine_line|#define RSL_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|RSL_PRINTK
+mdefine_line|#define RSL_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_SELECTION
 DECL|macro|SEL_PRINTK
-mdefine_line|#define SEL_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_SELECTION, format , ##args)
+mdefine_line|#define SEL_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|SEL_PRINTK
+mdefine_line|#define SEL_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_USLEEP
 DECL|macro|USL_PRINTK
-mdefine_line|#define USL_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_USLEEP, format , ##args)
+mdefine_line|#define USL_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|USL_PRINTK
+mdefine_line|#define USL_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_LAST_BYTE_SENT
 DECL|macro|LBS_PRINTK
-mdefine_line|#define LBS_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_LAST_BYTE_SENT, format , ##args)
+mdefine_line|#define LBS_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|LBS_PRINTK
+mdefine_line|#define LBS_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_RESTART_SELECT
 DECL|macro|RSS_PRINTK
-mdefine_line|#define RSS_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_RESTART_SELECT, format , ##args)
+mdefine_line|#define RSS_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|RSS_PRINTK
+mdefine_line|#define RSS_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_EXTENDED
 DECL|macro|EXT_PRINTK
-mdefine_line|#define EXT_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_EXTENDED, format , ##args)
+mdefine_line|#define EXT_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|EXT_PRINTK
+mdefine_line|#define EXT_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_ABORT
 DECL|macro|ABRT_PRINTK
-mdefine_line|#define ABRT_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_ABORT, format , ##args)
+mdefine_line|#define ABRT_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|ABRT_PRINTK
+mdefine_line|#define ABRT_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_TAGS
 DECL|macro|TAG_PRINTK
-mdefine_line|#define TAG_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_TAGS, format , ##args)
+mdefine_line|#define TAG_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|TAG_PRINTK
+mdefine_line|#define TAG_PRINTK(format, args...)
+macro_line|#endif
+macro_line|#if NDEBUG &amp; NDEBUG_MERGING
 DECL|macro|MER_PRINTK
-mdefine_line|#define MER_PRINTK(format, args...) &bslash;&n;&t;DPRINTK(NDEBUG_MERGING, format , ##args)
+mdefine_line|#define MER_PRINTK(format, args...) &bslash;&n;&t;printk(KERN_DEBUG format , ## args)
+macro_line|#else
+DECL|macro|MER_PRINTK
+mdefine_line|#define MER_PRINTK(format, args...)
+macro_line|#endif
 multiline_comment|/* conditional macros for NCR5380_print_{,phase,status} */
 DECL|macro|NCR_PRINT
 mdefine_line|#define NCR_PRINT(mask)&t;&bslash;&n;&t;((NDEBUG &amp; (mask)) ? NCR5380_print(instance) : (void)0)

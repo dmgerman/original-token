@@ -115,16 +115,16 @@ DECL|macro|IDETAPE_MAJOR
 mdefine_line|#define IDETAPE_MAJOR&t;37
 DECL|macro|Z2RAM_MAJOR
 mdefine_line|#define Z2RAM_MAJOR&t;37
+DECL|macro|APBLOCK_MAJOR
+mdefine_line|#define APBLOCK_MAJOR   38   /* AP1000 Block device */
+DECL|macro|DDV_MAJOR
+mdefine_line|#define DDV_MAJOR       39   /* AP1000 DDV block device */
 DECL|macro|RISCOM8_NORMAL_MAJOR
 mdefine_line|#define RISCOM8_NORMAL_MAJOR 48
 DECL|macro|RISCOM8_CALLOUT_MAJOR
 mdefine_line|#define RISCOM8_CALLOUT_MAJOR 49
 DECL|macro|MKISS_MAJOR
 mdefine_line|#define MKISS_MAJOR&t;55
-DECL|macro|APBLOCK_MAJOR
-mdefine_line|#define APBLOCK_MAJOR   60   /* AP1000 Block device */
-DECL|macro|DDV_MAJOR
-mdefine_line|#define DDV_MAJOR       61   /* AP1000 DDV block device */
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
 DECL|macro|SCSI_BLK_MAJOR
 mdefine_line|#define SCSI_BLK_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR)

@@ -1,4 +1,5 @@
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/*&n; * This is all required so that if we load all of scsi as a module,&n; * that the scsi code will be able to talk to the /proc/scsi handling&n; * in the procfs.&n; */
@@ -72,6 +73,12 @@ comma
 id|X
 c_func
 (paren
+id|proc_get_inode
+)paren
+comma
+id|X
+c_func
+(paren
 id|in_group_p
 )paren
 comma
@@ -112,6 +119,20 @@ c_func
 id|dispatch_scsi_info_ptr
 )paren
 comma
+macro_line|#if defined(CONFIG_SUN_OPENPROMFS_MODULE)
+id|X
+c_func
+(paren
+id|proc_openprom_register
+)paren
+comma
+id|X
+c_func
+(paren
+id|proc_openprom_deregister
+)paren
+comma
+macro_line|#endif&t;
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon

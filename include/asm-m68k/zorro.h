@@ -1,10 +1,8 @@
 multiline_comment|/*&n; * asm-m68k/zorro.h -- Amiga AutoConfig (Zorro) Expansion Device Definitions&n; *&n; * Copyright (C) 1995 Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
-macro_line|#ifndef _ASM_M68K_ZORRO_H_
-DECL|macro|_ASM_M68K_ZORRO_H_
-mdefine_line|#define _ASM_M68K_ZORRO_H_
+macro_line|#ifndef _M68K_ZORRO_H
+DECL|macro|_M68K_ZORRO_H
+mdefine_line|#define _M68K_ZORRO_H
 macro_line|#ifndef __ASSEMBLY__
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;asm/amigatypes.h&gt;
 multiline_comment|/*&n; * Defined Board Manufacturers&n; *&n; * Please update arch/m68k/amiga/zorro.c if you make changes here&n; * Many IDs were obtained from ExpName/Identify ((C) Richard K&#xfffd;rber)&n; * and by looking at the NetBSD-Amiga kernel sources&n; */
 DECL|macro|MANUF_PACIFIC
 mdefine_line|#define MANUF_PACIFIC          (0x00D3)&t;/* Pacific Peripherals */
@@ -1042,6 +1040,22 @@ l_int|4
 )paren
 macro_line|#endif&t;/* __ASSEMBLY__ */
 macro_line|#ifndef __ASSEMBLY__
+DECL|macro|ZORRO_NUM_AUTO
+mdefine_line|#define ZORRO_NUM_AUTO&t;&t;16
+macro_line|#ifdef __KERNEL__
+r_extern
+r_int
+id|zorro_num_autocon
+suffix:semicolon
+multiline_comment|/* # of autoconfig devices found */
+r_extern
+r_struct
+id|ConfigDev
+id|zorro_autocon
+(braket
+id|ZORRO_NUM_AUTO
+)braket
+suffix:semicolon
 multiline_comment|/*&n; * Zorro Functions&n; */
 r_extern
 r_int
@@ -1117,7 +1131,6 @@ mdefine_line|#define Z2RAM_CHUNKMASK&t;&t;(0x0000ffff)
 DECL|macro|Z2RAM_CHUNKSHIFT
 mdefine_line|#define Z2RAM_CHUNKSHIFT&t;(16)
 multiline_comment|/*&n; * Verbose Board Identification&n; */
-macro_line|#ifdef CONFIG_ZORRO
 r_extern
 r_void
 id|zorro_identify
@@ -1136,7 +1149,7 @@ op_star
 id|buffer
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_ZORRO
-macro_line|#endif&t;/* __ASSEMBLY__ */
-macro_line|#endif /* _ASM_M68K_ZORRO_H_ */
+macro_line|#endif&t;/* !__ASSEMBLY__ */
+macro_line|#endif&t;/* __KERNEL__ */
+macro_line|#endif /* __ASMm68K_ZORRO_H */
 eof

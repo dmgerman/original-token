@@ -395,7 +395,7 @@ r_int
 r_int
 id|limit
 op_assign
-id|max_mapnr
+id|num_physpages
 suffix:semicolon
 r_struct
 id|buffer_head

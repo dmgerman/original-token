@@ -1,12 +1,13 @@
-multiline_comment|/*&n; *&t;Digi RightSwitch SE-X loadable device driver for Linux&n; *&n; *&t;The RightSwitch is a 4 (EISA) or 6 (PCI) port etherswitch and&n; *&t;a NIC on an internal board.&n; *&n; *&t;Author: Rick Richardson, rick@dgii.com, rick_richardson@dgii.com&n; *&t;Derived from the SVR4.2 (UnixWare) driver for the same card.&n; *&n; *&t;Copyright 1995-1996 Digi International Inc.&n; *&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU General Public License, incorporated herein by reference.&n; *&n; *&t;For information on purchasing a RightSwitch SE-4 or SE-6&n; *&t;board, please contact Digi&squot;s sales department at 1-612-912-3444&n; *&t;or 1-800-DIGIBRD.  Outside the U.S., please check our Web page&n; *&t;at http://www.dgii.com for sales offices worldwide.&n; *&n; */
+multiline_comment|/*&n; *&t;Digi RightSwitch SE-X loadable device driver for Linux&n; *&n; *&t;The RightSwitch is a 4 (EISA) or 6 (PCI) port etherswitch and&n; *&t;a NIC on an internal board.&n; *&n; *&t;Author: Rick Richardson, rick@dgii.com, rick_richardson@dgii.com&n; *&t;Derived from the SVR4.2 (UnixWare) driver for the same card.&n; *&n; *&t;Copyright 1995-1996 Digi International Inc.&n; *&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU General Public License, incorporated herein by reference.&n; *&n; *&t;For information on purchasing a RightSwitch SE-4 or SE-6&n; *&t;board, please contact Digi&squot;s sales department at 1-612-912-3444&n; *&t;or 1-800-DIGIBRD.  Outside the U.S., please check our Web page&n; *&t;at http://www.dgii.com for sales offices worldwide.&n; *&n; *&t;OPERATION:&n; *&t;When compiled as a loadable module, this driver can operate&n; *&t;the board as either a 4/6 port switch with a 5th or 7th port&n; *&t;that is a conventional NIC interface as far as the host is&n; *&t;concerned, OR as 4/6 independant NICs.  To select multi-NIC&n; *&t;mode, add &quot;nicmode=1&quot; on the insmod load line for the driver.&n; *&n; *&t;This driver uses the &quot;dev&quot; common ethernet device structure&n; *&t;and a private &quot;priv&quot; (dev-&gt;priv) structure that contains&n; *&t;mostly DGRS-specific information and statistics.  To keep&n; *&t;the code for both the switch mode and the multi-NIC mode&n; *&t;as similar as possible, I have introduced the concept of&n; *&t;&quot;dev0&quot;/&quot;priv0&quot; and &quot;devN&quot;/&quot;privN&quot;  pointer pairs in subroutines&n; *&t;where needed.  The first pair of pointers points to the&n; *&t;&quot;dev&quot; and &quot;priv&quot; structures of the zeroth (0th) device&n; *&t;interface associated with a board.  The second pair of&n; *&t;pointers points to the current (Nth) device interface&n; *&t;for the board: the one for which we are processing data.&n; *&n; *&t;In switch mode, the pairs of pointers are always the same,&n; *&t;that is, dev0 == devN and priv0 == privN.  This is just&n; *&t;like previous releases of this driver which did not support&n; *&t;NIC mode.&n; *&n; *&t;In multi-NIC mode, the pairs of pointers may be different.&n; *&t;We use the devN and privN pointers to reference just the&n; *&t;name, port number, and statistics for the current interface.&n; *&t;We use the dev0 and priv0 pointers to access the variables&n; *&t;that control access to the board, such as board address&n; *&t;and simulated 82596 variables.  This is because there is&n; *&t;only one &quot;fake&quot; 82596 that serves as the interface to&n; *&t;the board.  We do not want to try to keep the variables&n; *&t;associated with this 82596 in sync across all devices.&n; *&n; *&t;This scheme works well.  As you will see, except for&n; *&t;initialization, there is very little difference between&n; *&t;the two modes as far as this driver is concerned.  On the&n; *&t;receive side in NIC mode, the interrupt *always* comes in on&n; *&t;the 0th interface (dev0/priv0).  We then figure out which&n; *&t;real 82596 port it came in on from looking at the &quot;chan&quot;&n; *&t;member that the board firmware adds at the end of each&n; *&t;RBD (a.k.a. TBD). We get the channel number like this:&n; *&t;&t;int chan = ((I596_RBD *) S2H(cbp-&gt;xmit.tbdp))-&gt;chan;&n; *&n; *&t;On the transmit side in multi-NIC mode, we specify the&n; *&t;output 82596 port by setting the new &quot;dstchan&quot; structure&n; *&t;member that is at the end of the RFD, like this:&n; *&t;&t;priv0-&gt;rfdp-&gt;dstchan = privN-&gt;chan;&n; *&n; *&t;TODO:&n; *&t;- Multi-NIC mode is not yet supported when the driver is linked&n; *&t;  into the kernel.&n; *&t;- Better handling of multicast addresses.&n; *&n; */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;$Id: dgrs.c,v 1.8 1996/04/18 03:11:14 rick Exp $&quot;
+l_string|&quot;$Id: dgrs.c,v 1.12 1996/12/21 13:43:58 rick Exp $&quot;
 suffix:semicolon
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,11 +22,31 @@ macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+multiline_comment|/*&n; *&t;API changed at linux version 2.1.0&n; */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
+macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|IOREMAP
+mdefine_line|#define IOREMAP(ADDR, LEN)&t;&t;ioremap(ADDR, LEN)
+DECL|macro|IOUNMAP
+mdefine_line|#define IOUNMAP(ADDR)&t;&t;&t;iounmap(ADDR)
+DECL|macro|COPY_FROM_USER
+mdefine_line|#define COPY_FROM_USER(DST,SRC,LEN)&t;copy_from_user(DST,SRC,LEN)
+DECL|macro|COPY_TO_USER
+mdefine_line|#define COPY_TO_USER(DST,SRC,LEN)&t;copy_to_user(DST,SRC,LEN)
+macro_line|#else
+DECL|macro|IOREMAP
+mdefine_line|#define IOREMAP(ADDR, LEN)&t;&t;vremap(ADDR, LEN)
+DECL|macro|IOUNMAP
+mdefine_line|#define IOUNMAP(ADDR)&t;&t;&t;vfree(ADDR)
+DECL|macro|COPY_FROM_USER
+mdefine_line|#define COPY_FROM_USER(DST,SRC,LEN)&t;memcpy_fromfs(DST,SRC,LEN)
+DECL|macro|COPY_TO_USER
+mdefine_line|#define COPY_TO_USER(DST,SRC,LEN)&t;memcpy_tofs(DST,SRC,LEN)
+macro_line|#endif
 multiline_comment|/*&n; *&t;DGRS include files&n; */
 DECL|typedef|uchar
 r_typedef
@@ -88,9 +109,11 @@ DECL|macro|OUTL
 mdefine_line|#define&t;OUTL(ADDR, VAL)&t;outl(VAL, ADDR)
 multiline_comment|/*&n; *&t;Macros to convert switch to host and host to switch addresses&n; *&t;(assumes a local variable priv points to board dependent struct)&n; */
 DECL|macro|S2H
-mdefine_line|#define&t;S2H(A)&t;( ((unsigned long)(A)&amp;0x00ffffff) + priv-&gt;vmem )
+mdefine_line|#define&t;S2H(A)&t;( ((unsigned long)(A)&amp;0x00ffffff) + priv0-&gt;vmem )
+DECL|macro|S2HN
+mdefine_line|#define&t;S2HN(A)&t;( ((unsigned long)(A)&amp;0x00ffffff) + privN-&gt;vmem )
 DECL|macro|H2S
-mdefine_line|#define&t;H2S(A)&t;( ((char *) (A) - priv-&gt;vmem) + 0xA3000000 )
+mdefine_line|#define&t;H2S(A)&t;( ((char *) (A) - priv0-&gt;vmem) + 0xA3000000 )
 multiline_comment|/*&n; *&t;Convert a switch address to a &quot;safe&quot; address for use with the&n; *&t;PLX 9060 DMA registers and the associated HW kludge that allows&n; *&t;for host access of the DMA registers.&n; */
 DECL|macro|S2DMA
 mdefine_line|#define&t;S2DMA(A)&t;( (unsigned long)(A) &amp; 0x00ffffff)
@@ -138,12 +161,35 @@ comma
 l_int|0xff
 )brace
 suffix:semicolon
+DECL|variable|dgrs_iptrap
+id|uchar
+id|dgrs_iptrap
+(braket
+l_int|4
+)braket
+op_assign
+(brace
+l_int|0xff
+comma
+l_int|0xff
+comma
+l_int|0xff
+comma
+l_int|0xff
+)brace
+suffix:semicolon
 DECL|variable|dgrs_ipxnet
 r_int
 id|dgrs_ipxnet
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+DECL|variable|dgrs_nicmode
+r_int
+id|dgrs_nicmode
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Chain of device structures&n; */
 macro_line|#ifdef MODULE
@@ -270,6 +316,27 @@ op_star
 id|dmadesc_h
 suffix:semicolon
 multiline_comment|/* area for DMA chains (Host Virtual) */
+multiline_comment|/*&n;&t; *&t;Multi-NIC mode variables&n;&t; *&n;&t; *&t;All entries of the devtbl[] array are valid for the 0th&n;&t; *&t;device (i.e. eth0, but not eth1...eth5).  devtbl[0] is&n;&t; *&t;valid for all devices (i.e. eth0, eth1, ..., eth5).&n;&t; */
+DECL|member|nports
+r_int
+id|nports
+suffix:semicolon
+multiline_comment|/* Number of physical ports (4 or 6) */
+DECL|member|chan
+r_int
+id|chan
+suffix:semicolon
+multiline_comment|/* Channel # (1-6) for this device */
+DECL|member|devtbl
+r_struct
+id|device
+op_star
+id|devtbl
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* Ptrs to N device structs */
 DECL|typedef|DGRS_PRIV
 )brace
 id|DGRS_PRIV
@@ -284,7 +351,7 @@ c_func
 r_struct
 id|device
 op_star
-id|dev
+id|dev0
 comma
 r_int
 id|reset
@@ -292,18 +359,18 @@ id|reset
 (brace
 id|DGRS_PRIV
 op_star
-id|priv
+id|priv0
 op_assign
 (paren
 id|DGRS_PRIV
 op_star
 )paren
-id|dev-&gt;priv
+id|dev0-&gt;priv
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|priv-&gt;plxreg
+id|priv0-&gt;plxreg
 )paren
 (brace
 id|ulong
@@ -314,7 +381,7 @@ op_assign
 id|inl
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|PLX_MISC_CSR
 )paren
@@ -337,7 +404,7 @@ suffix:semicolon
 id|OUTL
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|PLX_MISC_CSR
 comma
@@ -350,7 +417,7 @@ r_else
 id|OUTB
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|ES4H_PC
 comma
@@ -374,23 +441,23 @@ c_func
 r_struct
 id|device
 op_star
-id|dev
+id|dev0
 )paren
 (brace
 id|DGRS_PRIV
 op_star
-id|priv
+id|priv0
 op_assign
 (paren
 id|DGRS_PRIV
 op_star
 )paren
-id|dev-&gt;priv
+id|dev0-&gt;priv
 suffix:semicolon
 id|ulong
 id|x
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;If Space.c says not to use DMA, or if it&squot;s not a PLX based&n;&t; *&t;PCI board, or if the expansion ROM space is not PCI&n;&t; *&t;configured, then return false.&n;&t; */
+multiline_comment|/*&n;&t; *&t;If Space.c says not to use DMA, or if its not a PLX based&n;&t; *&t;PCI board, or if the expansion ROM space is not PCI&n;&t; *&t;configured, then return false.&n;&t; */
 r_if
 c_cond
 (paren
@@ -398,10 +465,10 @@ op_logical_neg
 id|dgrs_dma
 op_logical_or
 op_logical_neg
-id|priv-&gt;plxreg
+id|priv0-&gt;plxreg
 op_logical_or
 op_logical_neg
-id|priv-&gt;plxdma
+id|priv0-&gt;plxdma
 )paren
 r_return
 (paren
@@ -412,7 +479,7 @@ multiline_comment|/*&n;&t; *&t;Set the local address remap register of the &quot
 id|OUTL
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|PLX_ROM_BASE_ADDR
 comma
@@ -423,7 +490,7 @@ multiline_comment|/*&n;&t; * Set the PCI region descriptor to:&n;&t; *      Spac
 id|OUTL
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|PLX_BUS_REGION
 comma
@@ -431,15 +498,15 @@ l_int|0x49430343
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now map the DMA registers into our virtual space&n;&t; */
-id|priv-&gt;vplxdma
+id|priv0-&gt;vplxdma
 op_assign
 (paren
 id|ulong
 op_star
 )paren
-id|ioremap
+id|IOREMAP
 (paren
-id|priv-&gt;plxdma
+id|priv0-&gt;plxdma
 comma
 l_int|256
 )paren
@@ -448,15 +515,15 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|priv-&gt;vplxdma
+id|priv0-&gt;vplxdma
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: can&squot;t ioremap() the DMA regs&quot;
+l_string|&quot;%s: can&squot;t *remap() the DMA regs&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev0-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -466,7 +533,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Now test to see if we can access the DMA registers&n;&t; *&t;If we write -1 and get back 1FFF, then we accessed the&n;&t; *&t;DMA register.  Otherwise, we probably have an old board&n;&t; *&t;and wrote into regular RAM.&n;&t; */
-id|priv-&gt;vplxdma
+id|priv0-&gt;vplxdma
 (braket
 id|PLX_DMA0_MODE
 op_div
@@ -477,7 +544,7 @@ l_int|0xFFFFFFFF
 suffix:semicolon
 id|x
 op_assign
-id|priv-&gt;vplxdma
+id|priv0-&gt;vplxdma
 (braket
 id|PLX_DMA0_MODE
 op_div
@@ -502,7 +569,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Initiate DMA using PLX part on PCI board.  Spin the&n; *&t;processor until completed.  All addresses are physical!&n; *&n; *&t;If pciaddr is NULL, then it&squot;s a chaining DMA, and lcladdr is&n; *&t;the address of the first DMA descriptor in the chain.&n; *&n; *&t;If pciaddr is not NULL, then it&squot;s a single DMA.&n; *&n; *&t;In either case, &quot;lcladdr&quot; must have been fixed up to make&n; *&t;sure the MSB isn&squot;t set using the S2DMA macro before passing&n; *&t;the address to this routine.&n; */
+multiline_comment|/*&n; *&t;Initiate DMA using PLX part on PCI board.  Spin the&n; *&t;processor until completed.  All addresses are physical!&n; *&n; *&t;If pciaddr is NULL, then its a chaining DMA, and lcladdr is&n; *&t;the address of the first DMA descriptor in the chain.&n; *&n; *&t;If pciaddr is not NULL, then its a single DMA.&n; *&n; *&t;In either case, &quot;lcladdr&quot; must have been fixed up to make&n; *&t;sure the MSB isn&squot;t set using the S2DMA macro before passing&n; *&t;the address to this routine.&n; */
 r_static
 r_int
 DECL|function|do_plx_dma
@@ -721,7 +788,7 @@ id|PLX_DMA_CSR_0_DONE
 id|printk
 c_func
 (paren
-l_string|&quot;%s: DMA done never occurred. DMA disabled.&quot;
+l_string|&quot;%s: DMA done never occurred. DMA disabled.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -738,7 +805,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Process a received frame&n; */
+multiline_comment|/*&n; *&t;dgrs_rcv_frame()&n; *&n; *&t;Process a received frame.  This is called from the interrupt&n; *&t;routine, and works for both switch mode and multi-NIC mode.&n; *&n; *&t;Note that when in multi-NIC mode, we want to always access the&n; *&t;hardware using the dev and priv structures of the first port,&n; *&t;so that we are using only one set of variables to maintain&n; *&t;the board interface status, but we want to use the Nth port&n; *&t;dev and priv structures to maintain statistics and to pass&n; *&t;the packet up.&n; *&n; *&t;Only the first device structure is attached to the interrupt.&n; *&t;We use the special &quot;chan&quot; variable at the end of the first RBD&n; *&t;to select the Nth device in multi-NIC mode.&n; *&n; *&t;We currently do chained DMA on a per-packet basis when the&n; *&t;packet is &quot;long&quot;, and we spin the CPU a short time polling&n; *&t;for DMA completion.  This avoids a second interrupt overhead,&n; *&t;and gives the best performance for light traffic to the host.&n; *&n; *&t;However, a better scheme that could be implemented would be&n; *&t;to see how many packets are outstanding for the host, and if&n; *&t;the number is &quot;large&quot;, create a long chain to DMA several&n; *&t;packets into the host in one go.  In this case, we would set&n; *&t;up some state variables to let the host CPU continue doing&n; *&t;other things until a DMA completion interrupt comes along.&n; */
 r_void
 DECL|function|dgrs_rcv_frame
 id|dgrs_rcv_frame
@@ -747,11 +814,11 @@ c_func
 r_struct
 id|device
 op_star
-id|dev
+id|dev0
 comma
 id|DGRS_PRIV
 op_star
-id|priv
+id|priv0
 comma
 id|I596_CB
 op_star
@@ -778,6 +845,81 @@ id|uchar
 op_star
 id|p
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|devN
+suffix:semicolon
+id|DGRS_PRIV
+op_star
+id|privN
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Determine Nth priv and dev structure pointers&n;&t; */
+r_if
+c_cond
+(paren
+id|dgrs_nicmode
+)paren
+(brace
+multiline_comment|/* Multi-NIC mode */
+r_int
+id|chan
+op_assign
+(paren
+(paren
+id|I596_RBD
+op_star
+)paren
+id|S2H
+c_func
+(paren
+id|cbp-&gt;xmit.tbdp
+)paren
+)paren
+op_member_access_from_pointer
+id|chan
+suffix:semicolon
+id|devN
+op_assign
+id|priv0-&gt;devtbl
+(braket
+id|chan
+op_minus
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If devN is null, we got an interrupt before the I/F&n;&t;&t; * has been initialized.  Pitch the packet.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|devN
+op_eq
+l_int|NULL
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|privN
+op_assign
+(paren
+id|DGRS_PRIV
+op_star
+)paren
+id|devN-&gt;priv
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Switch mode */
+id|devN
+op_assign
+id|dev0
+suffix:semicolon
+id|privN
+op_assign
+id|priv0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -786,9 +928,9 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: rcv len=%ld&quot;
+l_string|&quot;%s: rcv len=%ld&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 comma
 id|cbp-&gt;xmit.count
 )paren
@@ -819,13 +961,13 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;%s: dev_alloc_skb failed for rcv buffer&quot;
+l_string|&quot;%s: dev_alloc_skb failed for rcv buffer&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 )paren
 suffix:semicolon
 op_increment
-id|priv-&gt;stats.rx_dropped
+id|privN-&gt;stats.rx_dropped
 suffix:semicolon
 multiline_comment|/* discarding the frame */
 r_goto
@@ -834,7 +976,7 @@ suffix:semicolon
 )brace
 id|skb-&gt;dev
 op_assign
-id|dev
+id|devN
 suffix:semicolon
 id|skb_reserve
 c_func
@@ -859,20 +1001,20 @@ comma
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;There are three modes here for doing the packet copy.&n;&t; *&t;If we have DMA, and the packet is &quot;long&quot;, we use the&n;&t; *&t;chaining mode of DMA.  If it&squot;s shorter, we use single&n;&t; *&t;DMA&squot;s.  Otherwise, we use memcpy().&n;&t; */
+multiline_comment|/*&n;&t; *&t;There are three modes here for doing the packet copy.&n;&t; *&t;If we have DMA, and the packet is &quot;long&quot;, we use the&n;&t; *&t;chaining mode of DMA.  If its shorter, we use single&n;&t; *&t;DMA&squot;s.  Otherwise, we use memcpy().&n;&t; */
 r_if
 c_cond
 (paren
-id|priv-&gt;use_dma
+id|priv0-&gt;use_dma
 op_logical_and
-id|priv-&gt;dmadesc_h
+id|priv0-&gt;dmadesc_h
 op_logical_and
 id|len
 OG
 l_int|64
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;If we can use DMA and it&squot;s a long frame, copy it using&n;&t;&t; *&t;DMA chaining.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;If we can use DMA and its a long frame, copy it using&n;&t;&t; *&t;DMA chaining.&n;&t;&t; */
 id|DMACHAIN
 op_star
 id|ddp_h
@@ -902,11 +1044,11 @@ id|putp
 suffix:semicolon
 id|ddp_h
 op_assign
-id|priv-&gt;dmadesc_h
+id|priv0-&gt;dmadesc_h
 suffix:semicolon
 id|ddp_s
 op_assign
-id|priv-&gt;dmadesc_s
+id|priv0-&gt;dmadesc_s
 suffix:semicolon
 id|tbdp
 op_assign
@@ -968,9 +1110,9 @@ id|len
 id|printk
 c_func
 (paren
-l_string|&quot;%s: cbp = %x&quot;
+l_string|&quot;%s: cbp = %x&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 comma
 id|H2S
 c_func
@@ -982,7 +1124,7 @@ suffix:semicolon
 id|proc_reset
 c_func
 (paren
-id|dev
+id|dev0
 comma
 l_int|1
 )paren
@@ -1075,7 +1217,7 @@ c_cond
 (paren
 id|ddp_h
 op_minus
-id|priv-&gt;dmadesc_h
+id|priv0-&gt;dmadesc_h
 )paren
 (brace
 r_int
@@ -1086,14 +1228,14 @@ op_assign
 id|do_plx_dma
 c_func
 (paren
-id|dev
+id|dev0
 comma
 l_int|0
 comma
 (paren
 id|ulong
 )paren
-id|priv-&gt;dmadesc_s
+id|priv0-&gt;dmadesc_s
 comma
 id|len
 comma
@@ -1111,7 +1253,7 @@ c_func
 (paren
 l_string|&quot;%s: Chained DMA failure&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 )paren
 suffix:semicolon
 r_goto
@@ -1124,10 +1266,10 @@ r_else
 r_if
 c_cond
 (paren
-id|priv-&gt;use_dma
+id|priv0-&gt;use_dma
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;If we can use DMA and it&squot;s a shorter frame, copy it&n;&t;&t; *&t;using single DMA transfers.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;If we can use DMA and its a shorter frame, copy it&n;&t;&t; *&t;using single DMA transfers.&n;&t;&t; */
 id|uchar
 op_star
 id|phys_p
@@ -1208,9 +1350,9 @@ id|len
 id|printk
 c_func
 (paren
-l_string|&quot;%s: cbp = %x&quot;
+l_string|&quot;%s: cbp = %x&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 comma
 id|H2S
 c_func
@@ -1222,7 +1364,7 @@ suffix:semicolon
 id|proc_reset
 c_func
 (paren
-id|dev
+id|dev0
 comma
 l_int|1
 )paren
@@ -1237,7 +1379,7 @@ op_assign
 id|do_plx_dma
 c_func
 (paren
-id|dev
+id|dev0
 comma
 (paren
 id|ulong
@@ -1280,7 +1422,7 @@ c_func
 (paren
 l_string|&quot;%s: Single DMA failed&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 )paren
 suffix:semicolon
 )brace
@@ -1378,9 +1520,9 @@ id|len
 id|printk
 c_func
 (paren
-l_string|&quot;%s: cbp = %x&quot;
+l_string|&quot;%s: cbp = %x&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 comma
 id|H2S
 c_func
@@ -1392,7 +1534,7 @@ suffix:semicolon
 id|proc_reset
 c_func
 (paren
-id|dev
+id|dev0
 comma
 l_int|1
 )paren
@@ -1451,7 +1593,7 @@ c_func
 (paren
 id|skb
 comma
-id|dev
+id|devN
 )paren
 suffix:semicolon
 id|netif_rx
@@ -1461,7 +1603,7 @@ id|skb
 )paren
 suffix:semicolon
 op_increment
-id|priv-&gt;stats.rx_packets
+id|privN-&gt;stats.rx_packets
 suffix:semicolon
 id|out
 suffix:colon
@@ -1472,7 +1614,7 @@ op_or
 id|I596_CB_STATUS_OK
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Start transmission of a frame&n; *&n; *&t;The interface to the board is simple: we pretend that we are&n; *&t;a fifth 82596 ethernet controller &squot;receiving&squot; data, and copy the&n; *&t;data into the same structures that a real 82596 would.  This way,&n; *&t;the board firmware handles the host &squot;port&squot; the same as any other.&n; *&n; *&t;NOTE: we do not use Bus master DMA for this routine.  Turns out&n; *&t;that it is not needed.  Slave writes over the PCI bus are about&n; *&t;as fast as DMA, due to the fact that the PLX part can do burst&n; *&t;writes.  The same is not true for data being read from the board.&n; */
+multiline_comment|/*&n; *&t;Start transmission of a frame&n; *&n; *&t;The interface to the board is simple: we pretend that we are&n; *&t;a fifth 82596 ethernet controller &squot;receiving&squot; data, and copy the&n; *&t;data into the same structures that a real 82596 would.  This way,&n; *&t;the board firmware handles the host &squot;port&squot; the same as any other.&n; *&n; *&t;NOTE: we do not use Bus master DMA for this routine.  Turns out&n; *&t;that it is not needed.  Slave writes over the PCI bus are about&n; *&t;as fast as DMA, due to the fact that the PLX part can do burst&n; *&t;writes.  The same is not true for data being read from the board.&n; *&n; *&t;For multi-NIC mode, we tell the firmware the desired 82596&n; *&t;output port by setting the special &quot;dstchan&quot; member at the&n; *&t;end of the traditional 82596 RFD structure.&n; */
 r_static
 r_int
 DECL|function|dgrs_start_xmit
@@ -1487,18 +1629,27 @@ comma
 r_struct
 id|device
 op_star
-id|dev
+id|devN
 )paren
 (brace
 id|DGRS_PRIV
 op_star
-id|priv
+id|privN
 op_assign
 (paren
 id|DGRS_PRIV
 op_star
 )paren
-id|dev-&gt;priv
+id|devN-&gt;priv
+suffix:semicolon
+r_struct
+id|device
+op_star
+id|dev0
+suffix:semicolon
+id|DGRS_PRIV
+op_star
+id|priv0
 suffix:semicolon
 id|I596_RBD
 op_star
@@ -1516,6 +1667,40 @@ id|amt
 suffix:semicolon
 DECL|macro|mymin
 macro_line|#&t;define&t;&t;mymin(A,B)&t;( (A) &lt; (B) ? (A) : (B) )
+multiline_comment|/*&n;&t; *&t;Determine 0th priv and dev structure pointers&n;&t; */
+r_if
+c_cond
+(paren
+id|dgrs_nicmode
+)paren
+(brace
+id|dev0
+op_assign
+id|privN-&gt;devtbl
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|priv0
+op_assign
+(paren
+id|DGRS_PRIV
+op_star
+)paren
+id|dev0-&gt;priv
+suffix:semicolon
+)brace
+r_else
+(brace
+id|dev0
+op_assign
+id|devN
+suffix:semicolon
+id|priv0
+op_assign
+id|privN
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1526,25 +1711,28 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;%s: xmit len=%ld&bslash;n&quot;
+l_string|&quot;%s: xmit len=%d&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 comma
+(paren
+r_int
+)paren
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|dev-&gt;trans_start
+id|devN-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|dev-&gt;tbusy
+id|devN-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|priv-&gt;rfdp-&gt;cmd
+id|priv0-&gt;rfdp-&gt;cmd
 op_amp
 id|I596_RFD_EL
 )paren
@@ -1558,9 +1746,9 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: NO RFD&squot;s&quot;
+l_string|&quot;%s: NO RFD&squot;s&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 )paren
 suffix:semicolon
 r_goto
@@ -1569,13 +1757,13 @@ suffix:semicolon
 )brace
 id|rbdp
 op_assign
-id|priv-&gt;rbdp
+id|priv0-&gt;rbdp
 suffix:semicolon
 id|count
 op_assign
 l_int|0
 suffix:semicolon
-id|priv-&gt;rfdp-&gt;rbdp
+id|priv0-&gt;rfdp-&gt;rbdp
 op_assign
 (paren
 id|I596_RBD
@@ -1619,9 +1807,9 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: NO RBD&squot;s&quot;
+l_string|&quot;%s: NO RBD&squot;s&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|devN-&gt;name
 )paren
 suffix:semicolon
 r_goto
@@ -1758,17 +1946,26 @@ suffix:semicolon
 )brace
 id|frame_done
 suffix:colon
-id|priv-&gt;rbdp
+id|priv0-&gt;rbdp
 op_assign
 id|rbdp
 suffix:semicolon
-id|priv-&gt;rfdp-&gt;status
+r_if
+c_cond
+(paren
+id|dgrs_nicmode
+)paren
+id|priv0-&gt;rfdp-&gt;dstchan
+op_assign
+id|privN-&gt;chan
+suffix:semicolon
+id|priv0-&gt;rfdp-&gt;status
 op_assign
 id|I596_RFD_C
 op_or
 id|I596_RFD_OK
 suffix:semicolon
-id|priv-&gt;rfdp
+id|priv0-&gt;rfdp
 op_assign
 (paren
 id|I596_RFD
@@ -1777,11 +1974,11 @@ op_star
 id|S2H
 c_func
 (paren
-id|priv-&gt;rfdp-&gt;next
+id|priv0-&gt;rfdp-&gt;next
 )paren
 suffix:semicolon
 op_increment
-id|priv-&gt;stats.tx_packets
+id|privN-&gt;stats.tx_packets
 suffix:semicolon
 id|dev_kfree_skb
 (paren
@@ -1797,7 +1994,7 @@ l_int|0
 suffix:semicolon
 id|no_resources
 suffix:colon
-id|priv-&gt;scbp-&gt;status
+id|priv0-&gt;scbp-&gt;status
 op_or_assign
 id|I596_SCB_RNR
 suffix:semicolon
@@ -1954,7 +2151,7 @@ c_func
 r_struct
 id|device
 op_star
-id|dev
+id|devN
 comma
 r_struct
 id|ifreq
@@ -1967,13 +2164,13 @@ id|cmd
 (brace
 id|DGRS_PRIV
 op_star
-id|priv
+id|privN
 op_assign
 (paren
 id|DGRS_PRIV
 op_star
 )paren
-id|dev-&gt;priv
+id|devN-&gt;priv
 suffix:semicolon
 id|DGRS_IOCTL
 id|ioc
@@ -2019,7 +2216,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|copy_from_user
+id|COPY_FROM_USER
 c_func
 (paren
 op_amp
@@ -2082,13 +2279,13 @@ r_return
 id|rc
 )paren
 suffix:semicolon
-id|copy_to_user
+id|COPY_TO_USER
 c_func
 (paren
 id|ioc.data
 comma
 op_amp
-id|dev-&gt;mem_start
+id|devN-&gt;mem_start
 comma
 id|ioc.len
 )paren
@@ -2132,7 +2329,7 @@ c_cond
 (paren
 id|ioc.port
 OG
-id|priv-&gt;bcomm-&gt;bc_nports
+id|privN-&gt;bcomm-&gt;bc_nports
 )paren
 r_return
 op_minus
@@ -2154,7 +2351,7 @@ c_cond
 (paren
 id|ioc.len
 OG
-id|priv-&gt;bcomm-&gt;bc_filter_area_len
+id|privN-&gt;bcomm-&gt;bc_filter_area_len
 )paren
 r_return
 op_minus
@@ -2182,7 +2379,7 @@ c_cond
 (paren
 r_volatile
 )paren
-id|priv-&gt;bcomm-&gt;bc_filter_cmd
+id|privN-&gt;bcomm-&gt;bc_filter_cmd
 op_le
 l_int|0
 )paren
@@ -2206,15 +2403,15 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-id|priv-&gt;bcomm-&gt;bc_filter_port
+id|privN-&gt;bcomm-&gt;bc_filter_port
 op_assign
 id|ioc.port
 suffix:semicolon
-id|priv-&gt;bcomm-&gt;bc_filter_num
+id|privN-&gt;bcomm-&gt;bc_filter_num
 op_assign
 id|ioc.filter
 suffix:semicolon
-id|priv-&gt;bcomm-&gt;bc_filter_len
+id|privN-&gt;bcomm-&gt;bc_filter_len
 op_assign
 id|ioc.len
 suffix:semicolon
@@ -2224,13 +2421,13 @@ c_cond
 id|ioc.len
 )paren
 (brace
-id|copy_from_user
+id|COPY_FROM_USER
 c_func
 (paren
-id|S2H
+id|S2HN
 c_func
 (paren
-id|priv-&gt;bcomm-&gt;bc_filter_area
+id|privN-&gt;bcomm-&gt;bc_filter_area
 )paren
 comma
 id|ioc.data
@@ -2238,13 +2435,13 @@ comma
 id|ioc.len
 )paren
 suffix:semicolon
-id|priv-&gt;bcomm-&gt;bc_filter_cmd
+id|privN-&gt;bcomm-&gt;bc_filter_cmd
 op_assign
 id|BC_FILTER_SET
 suffix:semicolon
 )brace
 r_else
-id|priv-&gt;bcomm-&gt;bc_filter_cmd
+id|privN-&gt;bcomm-&gt;bc_filter_cmd
 op_assign
 id|BC_FILTER_CLR
 suffix:semicolon
@@ -2259,7 +2456,7 @@ id|EOPNOTSUPP
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Process interrupts&n; */
+multiline_comment|/*&n; *&t;Process interrupts&n; *&n; *&t;dev, priv will always refer to the 0th device in Multi-NIC mode.&n; */
 r_static
 r_void
 DECL|function|dgrs_intr
@@ -2282,7 +2479,7 @@ id|regs
 r_struct
 id|device
 op_star
-id|dev
+id|dev0
 op_assign
 (paren
 r_struct
@@ -2293,13 +2490,13 @@ id|dev_id
 suffix:semicolon
 id|DGRS_PRIV
 op_star
-id|priv
+id|priv0
 op_assign
 (paren
 id|DGRS_PRIV
 op_star
 )paren
-id|dev-&gt;priv
+id|dev0-&gt;priv
 suffix:semicolon
 id|I596_CB
 op_star
@@ -2308,8 +2505,11 @@ suffix:semicolon
 r_int
 id|cmd
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 op_increment
-id|priv-&gt;intrcnt
+id|priv0-&gt;intrcnt
 suffix:semicolon
 r_if
 c_cond
@@ -2317,7 +2517,7 @@ c_cond
 l_int|1
 )paren
 op_increment
-id|priv-&gt;bcomm-&gt;bc_cnt
+id|priv0-&gt;bcomm-&gt;bc_cnt
 (braket
 l_int|4
 )braket
@@ -2327,20 +2527,36 @@ c_cond
 (paren
 l_int|0
 )paren
+(brace
+r_static
+r_int
+id|cnt
+op_assign
+l_int|100
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|cnt
+OG
+l_int|0
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;%s: interrupt: irq %d&quot;
+l_string|&quot;%s: interrupt: irq %d&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev0-&gt;name
 comma
 id|irq
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Get 596 command&n;&t; */
 id|cmd
 op_assign
-id|priv-&gt;scbp-&gt;cmd
+id|priv0-&gt;scbp-&gt;cmd
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;See if RU has been restarted&n;&t; */
 r_if
@@ -2363,12 +2579,12 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: RUC start&quot;
+l_string|&quot;%s: RUC start&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev0-&gt;name
 )paren
 suffix:semicolon
-id|priv-&gt;rfdp
+id|priv0-&gt;rfdp
 op_assign
 (paren
 id|I596_RFD
@@ -2377,10 +2593,10 @@ op_star
 id|S2H
 c_func
 (paren
-id|priv-&gt;scbp-&gt;rfdp
+id|priv0-&gt;scbp-&gt;rfdp
 )paren
 suffix:semicolon
-id|priv-&gt;rbdp
+id|priv0-&gt;rbdp
 op_assign
 (paren
 id|I596_RBD
@@ -2389,15 +2605,10 @@ op_star
 id|S2H
 c_func
 (paren
-id|priv-&gt;rfdp-&gt;rbdp
+id|priv0-&gt;rfdp-&gt;rbdp
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* tell upper half */
-id|priv-&gt;scbp-&gt;status
+id|priv0-&gt;scbp-&gt;status
 op_and_assign
 op_complement
 (paren
@@ -2405,6 +2616,42 @@ id|I596_SCB_RNR
 op_or
 id|I596_SCB_RUS
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Tell upper half (halves)&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|dgrs_nicmode
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|priv0-&gt;nports
+suffix:semicolon
+op_increment
+id|i
+)paren
+id|priv0-&gt;devtbl
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|tbusy
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+id|dev0-&gt;tbusy
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* if (bd-&gt;flags &amp; TX_QUEUED)&n;&t;&t;&t;DL_sched(bd, bdd); */
 )brace
@@ -2421,7 +2668,7 @@ op_ne
 id|I596_SCB_CUC_START
 )paren
 (brace
-id|priv-&gt;scbp-&gt;cmd
+id|priv0-&gt;scbp-&gt;cmd
 op_assign
 l_int|0
 suffix:semicolon
@@ -2430,7 +2677,7 @@ r_goto
 id|ack_intr
 suffix:semicolon
 )brace
-id|priv-&gt;scbp-&gt;status
+id|priv0-&gt;scbp-&gt;status
 op_and_assign
 op_complement
 (paren
@@ -2449,10 +2696,10 @@ op_star
 id|S2H
 c_func
 (paren
-id|priv-&gt;scbp-&gt;cbp
+id|priv0-&gt;scbp-&gt;cbp
 )paren
 suffix:semicolon
-id|priv-&gt;scbp-&gt;cmd
+id|priv0-&gt;scbp-&gt;cmd
 op_assign
 l_int|0
 suffix:semicolon
@@ -2478,9 +2725,9 @@ suffix:colon
 id|dgrs_rcv_frame
 c_func
 (paren
-id|dev
+id|dev0
 comma
-id|priv
+id|priv0
 comma
 id|cbp
 )paren
@@ -2520,7 +2767,7 @@ id|cbp-&gt;nop.next
 )paren
 suffix:semicolon
 )brace
-id|priv-&gt;scbp-&gt;status
+id|priv0-&gt;scbp-&gt;status
 op_or_assign
 id|I596_SCB_CNA
 suffix:semicolon
@@ -2530,12 +2777,12 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|priv-&gt;plxreg
+id|priv0-&gt;plxreg
 )paren
 id|OUTL
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|PLX_LCL2PCI_DOORBELL
 comma
@@ -2553,18 +2800,18 @@ c_func
 r_struct
 id|device
 op_star
-id|dev
+id|dev0
 )paren
 (brace
 id|DGRS_PRIV
 op_star
-id|priv
+id|priv0
 op_assign
 (paren
 id|DGRS_PRIV
 op_star
 )paren
-id|dev-&gt;priv
+id|dev0-&gt;priv
 suffix:semicolon
 r_int
 id|is
@@ -2614,12 +2861,12 @@ id|ES4H_IS_INT15
 )brace
 suffix:semicolon
 multiline_comment|/*&n;&t; * Map in the dual port memory&n;&t; */
-id|priv-&gt;vmem
+id|priv0-&gt;vmem
 op_assign
-id|ioremap
+id|IOREMAP
 c_func
 (paren
-id|dev-&gt;mem_start
+id|dev0-&gt;mem_start
 comma
 l_int|2048
 op_star
@@ -2630,7 +2877,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|priv-&gt;vmem
+id|priv0-&gt;vmem
 )paren
 (brace
 id|printk
@@ -2638,7 +2885,7 @@ c_func
 (paren
 l_string|&quot;%s: cannot map in board memory&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev0-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -2650,14 +2897,14 @@ multiline_comment|/*&n;&t; *&t;Hold the processor and configure the board addres
 r_if
 c_cond
 (paren
-id|priv-&gt;plxreg
+id|priv0-&gt;plxreg
 )paren
 (brace
 multiline_comment|/* PCI bus */
 id|proc_reset
 c_func
 (paren
-id|dev
+id|dev0
 comma
 l_int|1
 )paren
@@ -2670,7 +2917,7 @@ id|is
 op_assign
 id|iv2is
 (braket
-id|dev-&gt;irq
+id|dev0-&gt;irq
 op_amp
 l_int|0x0f
 )braket
@@ -2687,9 +2934,9 @@ c_func
 (paren
 l_string|&quot;%s: Illegal IRQ %d&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev0-&gt;name
 comma
-id|dev-&gt;irq
+id|dev0-&gt;irq
 )paren
 suffix:semicolon
 r_return
@@ -2700,7 +2947,7 @@ suffix:semicolon
 id|OUTB
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|ES4H_AS_31_24
 comma
@@ -2708,7 +2955,7 @@ comma
 id|uchar
 )paren
 (paren
-id|dev-&gt;mem_start
+id|dev0-&gt;mem_start
 op_rshift
 l_int|24
 )paren
@@ -2717,7 +2964,7 @@ suffix:semicolon
 id|OUTB
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|ES4H_AS_23_16
 comma
@@ -2725,13 +2972,13 @@ comma
 id|uchar
 )paren
 (paren
-id|dev-&gt;mem_start
+id|dev0-&gt;mem_start
 op_rshift
 l_int|16
 )paren
 )paren
 suffix:semicolon
-id|priv-&gt;is_reg
+id|priv0-&gt;is_reg
 op_assign
 id|ES4H_IS_LINEAR
 op_or
@@ -2742,7 +2989,7 @@ op_or
 id|uchar
 )paren
 (paren
-id|dev-&gt;mem_start
+id|dev0-&gt;mem_start
 op_rshift
 l_int|8
 )paren
@@ -2753,17 +3000,17 @@ suffix:semicolon
 id|OUTB
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|ES4H_IS
 comma
-id|priv-&gt;is_reg
+id|priv0-&gt;is_reg
 )paren
 suffix:semicolon
 id|OUTB
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|ES4H_EC
 comma
@@ -2773,7 +3020,7 @@ suffix:semicolon
 id|OUTB
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|ES4H_PC
 comma
@@ -2783,7 +3030,7 @@ suffix:semicolon
 id|OUTB
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|ES4H_MW
 comma
@@ -2794,32 +3041,32 @@ l_int|0x00
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;See if we can do DMA on the SE-6&n;&t; */
-id|priv-&gt;use_dma
+id|priv0-&gt;use_dma
 op_assign
 id|check_board_dma
 c_func
 (paren
-id|dev
+id|dev0
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|priv-&gt;use_dma
+id|priv0-&gt;use_dma
 )paren
 id|printk
 c_func
 (paren
 l_string|&quot;%s: Bus Master DMA is enabled.&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev0-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Load and verify the code at the desired address&n;&t; */
 id|memcpy
 c_func
 (paren
-id|priv-&gt;vmem
+id|priv0-&gt;vmem
 comma
 id|dgrs_code
 comma
@@ -2833,7 +3080,7 @@ c_cond
 id|memcmp
 c_func
 (paren
-id|priv-&gt;vmem
+id|priv0-&gt;vmem
 comma
 id|dgrs_code
 comma
@@ -2841,13 +3088,13 @@ id|dgrs_ncode
 )paren
 )paren
 (brace
-id|iounmap
+id|IOUNMAP
 c_func
 (paren
-id|priv-&gt;vmem
+id|priv0-&gt;vmem
 )paren
 suffix:semicolon
-id|priv-&gt;vmem
+id|priv0-&gt;vmem
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2856,7 +3103,7 @@ c_func
 (paren
 l_string|&quot;%s: download compare failed&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev0-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -2865,7 +3112,7 @@ id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Configurables&n;&t; */
-id|priv-&gt;bcomm
+id|priv0-&gt;bcomm
 op_assign
 (paren
 r_struct
@@ -2873,53 +3120,58 @@ id|bios_comm
 op_star
 )paren
 (paren
-id|priv-&gt;vmem
+id|priv0-&gt;vmem
 op_plus
 l_int|0x0100
 )paren
 suffix:semicolon
-id|priv-&gt;bcomm-&gt;bc_nowait
+id|priv0-&gt;bcomm-&gt;bc_nowait
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Tell board to make printf not wait */
-id|priv-&gt;bcomm-&gt;bc_host
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Tell board there is a host port */
-id|priv-&gt;bcomm-&gt;bc_squelch
+id|priv0-&gt;bcomm-&gt;bc_squelch
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Flag from Space.c */
-id|priv-&gt;bcomm-&gt;bc_150ohm
+id|priv0-&gt;bcomm-&gt;bc_150ohm
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Flag from Space.c */
-id|priv-&gt;bcomm-&gt;bc_spew
+id|priv0-&gt;bcomm-&gt;bc_spew
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Debug flag from Space.c */
-id|priv-&gt;bcomm-&gt;bc_maxrfd
+id|priv0-&gt;bcomm-&gt;bc_maxrfd
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Debug flag from Space.c */
-id|priv-&gt;bcomm-&gt;bc_maxrbd
+id|priv0-&gt;bcomm-&gt;bc_maxrbd
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Debug flag from Space.c */
+multiline_comment|/*&n;&t; * Tell board we are operating in switch mode (1) or in&n;&t; * multi-NIC mode (2).&n;&t; */
+id|priv0-&gt;bcomm-&gt;bc_host
+op_assign
+id|dgrs_nicmode
+ques
+c_cond
+id|BC_MULTINIC
+suffix:colon
+id|BC_SWITCH
+suffix:semicolon
 multiline_comment|/*&n;&t; * Request memory space on board for DMA chains&n;&t; */
 r_if
 c_cond
 (paren
-id|priv-&gt;use_dma
+id|priv0-&gt;use_dma
 )paren
-id|priv-&gt;bcomm-&gt;bc_hostarea_len
+id|priv0-&gt;bcomm-&gt;bc_hostarea_len
 op_assign
 (paren
 l_int|2048
@@ -2930,18 +3182,18 @@ op_star
 l_int|16
 suffix:semicolon
 multiline_comment|/*&n;&t; * NVRAM configurables from Space.c&n;&t; */
-id|priv-&gt;bcomm-&gt;bc_spantree
+id|priv0-&gt;bcomm-&gt;bc_spantree
 op_assign
 id|dgrs_spantree
 suffix:semicolon
-id|priv-&gt;bcomm-&gt;bc_hashexpire
+id|priv0-&gt;bcomm-&gt;bc_hashexpire
 op_assign
 id|dgrs_hashexpire
 suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|priv-&gt;bcomm-&gt;bc_ipaddr
+id|priv0-&gt;bcomm-&gt;bc_ipaddr
 comma
 id|dgrs_ipaddr
 comma
@@ -2951,7 +3203,17 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|priv-&gt;bcomm-&gt;bc_ipxnet
+id|priv0-&gt;bcomm-&gt;bc_iptrap
+comma
+id|dgrs_iptrap
+comma
+l_int|4
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|priv0-&gt;bcomm-&gt;bc_ipxnet
 comma
 op_amp
 id|dgrs_ipxnet
@@ -2959,11 +3221,11 @@ comma
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Release processor, wait 5 seconds for board to initialize&n;&t; */
+multiline_comment|/*&n;&t; * Release processor, wait 8 seconds for board to initialize&n;&t; */
 id|proc_reset
 c_func
 (paren
-id|dev
+id|dev0
 comma
 l_int|0
 )paren
@@ -2975,7 +3237,7 @@ id|i
 op_assign
 id|jiffies
 op_plus
-l_int|5
+l_int|8
 op_star
 id|HZ
 suffix:semicolon
@@ -2988,7 +3250,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|priv-&gt;bcomm-&gt;bc_status
+id|priv0-&gt;bcomm-&gt;bc_status
 op_ge
 id|BC_RUN
 )paren
@@ -2998,7 +3260,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|priv-&gt;bcomm-&gt;bc_status
+id|priv0-&gt;bcomm-&gt;bc_status
 OL
 id|BC_RUN
 )paren
@@ -3006,9 +3268,9 @@ id|BC_RUN
 id|printk
 c_func
 (paren
-l_string|&quot;%s: board not operating&quot;
+l_string|&quot;%s: board not operating&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev0-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -3016,7 +3278,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-id|priv-&gt;port
+id|priv0-&gt;port
 op_assign
 (paren
 id|PORT
@@ -3025,10 +3287,10 @@ op_star
 id|S2H
 c_func
 (paren
-id|priv-&gt;bcomm-&gt;bc_port
+id|priv0-&gt;bcomm-&gt;bc_port
 )paren
 suffix:semicolon
-id|priv-&gt;scbp
+id|priv0-&gt;scbp
 op_assign
 (paren
 id|I596_SCB
@@ -3037,11 +3299,10 @@ op_star
 id|S2H
 c_func
 (paren
-id|priv-&gt;port-&gt;scbp
+id|priv0-&gt;port-&gt;scbp
 )paren
 suffix:semicolon
-macro_line|#if 0&t;/* These two methods are identical, but the 2nd is better */
-id|priv-&gt;rfdp
+id|priv0-&gt;rfdp
 op_assign
 (paren
 id|I596_RFD
@@ -3050,10 +3311,10 @@ op_star
 id|S2H
 c_func
 (paren
-id|priv-&gt;port-&gt;rfd_head
+id|priv0-&gt;scbp-&gt;rfdp
 )paren
 suffix:semicolon
-id|priv-&gt;rbdp
+id|priv0-&gt;rbdp
 op_assign
 (paren
 id|I596_RBD
@@ -3062,42 +3323,16 @@ op_star
 id|S2H
 c_func
 (paren
-id|priv-&gt;port-&gt;rbd_head
+id|priv0-&gt;rfdp-&gt;rbdp
 )paren
 suffix:semicolon
-macro_line|#else
-id|priv-&gt;rfdp
-op_assign
-(paren
-id|I596_RFD
-op_star
-)paren
-id|S2H
-c_func
-(paren
-id|priv-&gt;scbp-&gt;rfdp
-)paren
-suffix:semicolon
-id|priv-&gt;rbdp
-op_assign
-(paren
-id|I596_RBD
-op_star
-)paren
-id|S2H
-c_func
-(paren
-id|priv-&gt;rfdp-&gt;rbdp
-)paren
-suffix:semicolon
-macro_line|#endif
-id|priv-&gt;scbp-&gt;status
+id|priv0-&gt;scbp-&gt;status
 op_assign
 id|I596_SCB_CNA
 suffix:semicolon
 multiline_comment|/* CU is idle */
 multiline_comment|/*&n;&t; *&t;Get switch physical and host virtual pointers to DMA&n;&t; *&t;chaining area.  NOTE: the MSB of the switch physical&n;&t; *&t;address *must* be turned off.  Otherwise, the HW kludge&n;&t; *&t;that allows host access of the PLX DMA registers will&n;&t; *&t;erroneously select the PLX registers.&n;&t; */
-id|priv-&gt;dmadesc_s
+id|priv0-&gt;dmadesc_s
 op_assign
 (paren
 id|DMACHAIN
@@ -3106,15 +3341,15 @@ op_star
 id|S2DMA
 c_func
 (paren
-id|priv-&gt;bcomm-&gt;bc_hostarea
+id|priv0-&gt;bcomm-&gt;bc_hostarea
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|priv-&gt;dmadesc_s
+id|priv0-&gt;dmadesc_s
 )paren
-id|priv-&gt;dmadesc_h
+id|priv0-&gt;dmadesc_h
 op_assign
 (paren
 id|DMACHAIN
@@ -3123,11 +3358,11 @@ op_star
 id|S2H
 c_func
 (paren
-id|priv-&gt;dmadesc_s
+id|priv0-&gt;dmadesc_s
 )paren
 suffix:semicolon
 r_else
-id|priv-&gt;dmadesc_h
+id|priv0-&gt;dmadesc_h
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -3135,21 +3370,21 @@ multiline_comment|/*&n;&t; *&t;Enable board interrupts&n;&t; */
 r_if
 c_cond
 (paren
-id|priv-&gt;plxreg
+id|priv0-&gt;plxreg
 )paren
 (brace
 multiline_comment|/* PCI bus */
 id|OUTL
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|PLX_INT_CSR
 comma
 id|inl
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|PLX_INT_CSR
 )paren
@@ -3161,7 +3396,7 @@ multiline_comment|/* Enable intr to host */
 id|OUTL
 c_func
 (paren
-id|dev-&gt;base_addr
+id|dev0-&gt;base_addr
 op_plus
 id|PLX_LCL2PCI_DOORBELL
 comma
@@ -3210,7 +3445,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Digi RightSwitch at io=%lx mem=%lx irq=%d plx=%lx dma=%lx &quot;
+l_string|&quot;%s: Digi RightSwitch io=%lx mem=%lx irq=%d plx=%lx dma=%lx&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3240,17 +3475,19 @@ c_cond
 id|rc
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|rc
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Get ether address of board&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Ethernet address&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -3313,7 +3550,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Illegal Ethernet Address&quot;
+l_string|&quot;%s: Illegal Ethernet Address&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -3412,7 +3649,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Not interrupting on IRQ %d (%d)&quot;
+l_string|&quot;%s: Not interrupting on IRQ %d (%d)&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3476,6 +3713,84 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_int
+DECL|function|dgrs_initclone
+id|dgrs_initclone
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|DGRS_PRIV
+op_star
+id|priv
+op_assign
+(paren
+id|DGRS_PRIV
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Digi RightSwitch port %d &quot;
+comma
+id|dev-&gt;name
+comma
+id|priv-&gt;chan
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+op_increment
+id|i
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%c%2.2x&quot;
+comma
+id|i
+ques
+c_cond
+l_char|&squot;:&squot;
+suffix:colon
+l_char|&squot; &squot;
+comma
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_static
 r_int
 DECL|function|dgrs_found_device
@@ -3506,6 +3821,9 @@ id|plxdma
 id|DGRS_PRIV
 op_star
 id|priv
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 macro_line|#ifdef MODULE
 (brace
@@ -3612,6 +3930,17 @@ id|priv-&gt;vplxdma
 op_assign
 l_int|NULL
 suffix:semicolon
+id|priv-&gt;chan
+op_assign
+l_int|1
+suffix:semicolon
+id|priv-&gt;devtbl
+(braket
+l_int|0
+)braket
+op_assign
+id|dev
+suffix:semicolon
 id|dev-&gt;init
 op_assign
 id|dgrs_probe1
@@ -3645,6 +3974,179 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dgrs_nicmode
+)paren
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Switch mode, we are done */
+multiline_comment|/*&n;&t;&t; * Operating card as N separate NICs&n;&t;&t; */
+id|priv-&gt;nports
+op_assign
+id|priv-&gt;bcomm-&gt;bc_nports
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|i
+OL
+id|priv-&gt;nports
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+r_struct
+id|device
+op_star
+id|devN
+suffix:semicolon
+id|DGRS_PRIV
+op_star
+id|privN
+suffix:semicolon
+multiline_comment|/* Allocate new dev and priv structures */
+id|devN
+op_assign
+(paren
+r_struct
+id|device
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+id|dev_size
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+multiline_comment|/* Make it an exact copy of dev[0]... */
+id|memcpy
+c_func
+(paren
+id|devN
+comma
+id|dev
+comma
+id|dev_size
+)paren
+suffix:semicolon
+id|devN-&gt;priv
+op_assign
+(paren
+(paren
+r_void
+op_star
+)paren
+id|devN
+)paren
+op_plus
+r_sizeof
+(paren
+r_struct
+id|device
+)paren
+suffix:semicolon
+id|privN
+op_assign
+(paren
+id|DGRS_PRIV
+op_star
+)paren
+id|devN-&gt;priv
+suffix:semicolon
+multiline_comment|/* ... but seset devname to a NULL string */
+id|privN-&gt;devname
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|devN-&gt;name
+op_assign
+id|privN-&gt;devname
+suffix:semicolon
+multiline_comment|/* ... and zero out VM areas */
+id|privN-&gt;vmem
+op_assign
+l_int|0
+suffix:semicolon
+id|privN-&gt;vplxdma
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* ... and zero out IRQ */
+id|devN-&gt;irq
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* ... and base MAC address off address of 1st port */
+id|devN-&gt;dev_addr
+(braket
+l_int|5
+)braket
+op_add_assign
+id|i
+suffix:semicolon
+id|privN-&gt;chan
+op_assign
+id|i
+op_plus
+l_int|1
+suffix:semicolon
+id|priv-&gt;devtbl
+(braket
+id|i
+)braket
+op_assign
+id|devN
+suffix:semicolon
+id|devN-&gt;init
+op_assign
+id|dgrs_initclone
+suffix:semicolon
+id|ether_setup
+c_func
+(paren
+id|devN
+)paren
+suffix:semicolon
+id|privN-&gt;next_dev
+op_assign
+id|dgrs_root_dev
+suffix:semicolon
+id|dgrs_root_dev
+op_assign
+id|devN
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+id|devN
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 )brace
 macro_line|#else
 (brace
@@ -3733,6 +4235,17 @@ suffix:semicolon
 id|priv-&gt;vplxdma
 op_assign
 l_int|NULL
+suffix:semicolon
+id|priv-&gt;chan
+op_assign
+l_int|1
+suffix:semicolon
+id|priv-&gt;devtbl
+(braket
+l_int|0
+)braket
+op_assign
+id|dev
 suffix:semicolon
 id|dgrs_probe1
 c_func
@@ -4282,7 +4795,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Module/driver initialization points.  Two ways, depending on&n; *&t;whether we are a module or statically linked, ala Don Becker&squot;s&n; *&t;3c59x driver.&n; */
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; *&t;Variables that can be overridden from command line&n; */
+multiline_comment|/*&n; *&t;Variables that can be overriden from command line&n; */
 DECL|variable|debug
 r_static
 r_int
@@ -4328,10 +4841,31 @@ op_minus
 l_int|1
 )brace
 suffix:semicolon
+DECL|variable|iptrap
+r_static
+r_int
+id|iptrap
+(braket
+l_int|4
+)braket
+op_assign
+(brace
+op_minus
+l_int|1
+)brace
+suffix:semicolon
 DECL|variable|ipxnet
 r_static
 r_int
 id|ipxnet
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|nicmode
+r_static
+r_int
+id|nicmode
 op_assign
 op_minus
 l_int|1
@@ -4347,7 +4881,10 @@ r_void
 r_int
 id|cards_found
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Command line variable overrides&n;&t; *&t;&t;debug=NNN&n;&t; *&t;&t;dma=0/1&n;&t; *&t;&t;spantree=0/1&n;&t; *&t;&t;hashexpire=NNN&n;&t; *&t;&t;ipaddr=A,B,C,D&n;&t; *&t;&t;ipxnet=NNN&n;&t; */
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Command line variable overrides&n;&t; *&t;&t;debug=NNN&n;&t; *&t;&t;dma=0/1&n;&t; *&t;&t;spantree=0/1&n;&t; *&t;&t;hashexpire=NNN&n;&t; *&t;&t;ipaddr=A,B,C,D&n;&t; *&t;&t;iptrap=A,B,C,D&n;&t; *&t;&t;ipxnet=NNN&n;&t; *&t;&t;nicmode=NNN&n;&t; */
 r_if
 c_cond
 (paren
@@ -4369,6 +4906,17 @@ l_int|0
 id|dgrs_dma
 op_assign
 id|dma
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nicmode
+op_ge
+l_int|0
+)paren
+id|dgrs_nicmode
+op_assign
+id|nicmode
 suffix:semicolon
 r_if
 c_cond
@@ -4403,10 +4951,6 @@ op_ne
 op_minus
 l_int|1
 )paren
-(brace
-r_int
-id|i
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4431,7 +4975,41 @@ id|ipaddr
 id|i
 )braket
 suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+id|iptrap
+(braket
+l_int|0
+)braket
+op_ne
+op_minus
+l_int|1
+)paren
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+op_increment
+id|i
+)paren
+id|dgrs_iptrap
+(braket
+id|i
+)braket
+op_assign
+id|iptrap
+(braket
+id|i
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4534,7 +5112,10 @@ suffix:semicolon
 id|proc_reset
 c_func
 (paren
-id|dgrs_root_dev
+id|priv-&gt;devtbl
+(braket
+l_int|0
+)braket
 comma
 l_int|1
 )paren
@@ -4544,7 +5125,7 @@ c_cond
 (paren
 id|priv-&gt;vmem
 )paren
-id|iounmap
+id|IOUNMAP
 c_func
 (paren
 id|priv-&gt;vmem
@@ -4555,7 +5136,7 @@ c_cond
 (paren
 id|priv-&gt;vplxdma
 )paren
-id|iounmap
+id|IOUNMAP
 c_func
 (paren
 (paren
@@ -4573,6 +5154,11 @@ comma
 l_int|256
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dgrs_root_dev-&gt;irq
+)paren
 id|free_irq
 c_func
 (paren

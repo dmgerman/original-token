@@ -8,15 +8,7 @@ r_int
 id|lp_internal_init
 c_func
 (paren
-r_struct
-id|lp_struct
-op_star
-comma
-r_int
-comma
-r_int
-comma
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif

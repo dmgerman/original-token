@@ -55,11 +55,11 @@ id|dp
 suffix:semicolon
 id|stramaddr
 op_assign
-id|boot_info.bi_atari.stram_start
+id|atari_stram_start
 suffix:semicolon
 id|stramsize
 op_assign
-id|boot_info.bi_atari.stram_size
+id|atari_stram_size
 suffix:semicolon
 multiline_comment|/* initialize start boundary */
 id|dp
@@ -645,7 +645,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|boot_info.num_memory
+id|m68k_num_memory
 suffix:semicolon
 op_increment
 id|i
@@ -654,7 +654,7 @@ id|i
 r_if
 c_cond
 (paren
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -683,7 +683,7 @@ id|rsvd_stram_beg
 op_minus
 l_int|0x800
 op_plus
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.8 1996/11/13 05:10:06 davem Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: init.c,v 1.9 1996/12/18 06:46:55 tridge Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -67,28 +67,29 @@ id|rp
 )paren
 )paren
 (brace
+macro_line|#if CONFIG_AP1000
+r_extern
+r_struct
+id|linux_romvec
+op_star
+id|ap_prom_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|rp
+op_assign
+id|ap_prom_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|romvec
 op_assign
 id|rp
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|prom_vers
-op_assign
-id|PROM_AP1000
-suffix:semicolon
-id|prom_meminit
-c_func
-(paren
-)paren
-suffix:semicolon
-id|prom_ranges_init
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -139,6 +140,16 @@ id|prom_halt
 c_func
 (paren
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|42
+suffix:colon
+multiline_comment|/* why not :-) */
+id|prom_vers
+op_assign
+id|PROM_AP1000
 suffix:semicolon
 r_break
 suffix:semicolon

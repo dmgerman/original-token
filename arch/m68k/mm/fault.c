@@ -305,6 +305,11 @@ id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 multiline_comment|/* There seems to be a missing invalidate somewhere in do_no_page.&n;&t; * Until I found it, this one cures the problem and makes&n;&t; * 1.2 run on the 68040 (Martin Apel).&n;&t; */
+r_if
+c_cond
+(paren
+id|CPU_IS_040_OR_060
+)paren
 id|flush_tlb_page
 c_func
 (paren
@@ -378,6 +383,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
 comma
 id|fault_pc

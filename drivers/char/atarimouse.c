@@ -5,10 +5,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_mouse.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 DECL|variable|mouse
 r_static
 r_struct
@@ -346,6 +346,7 @@ op_star
 id|buffer
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -374,6 +375,7 @@ r_char
 op_star
 id|buffer
 comma
+r_int
 r_int
 id|count
 )paren
@@ -858,7 +860,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE
-macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 DECL|function|init_module
 r_int
 id|init_module

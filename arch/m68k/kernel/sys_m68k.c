@@ -917,7 +917,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Convert virtual address VADDR to physical address PADDR, recording&n;   in VALID whether the virtual address is actually mapped.  */
 DECL|macro|virt_to_phys_040
-mdefine_line|#define virt_to_phys_040(vaddr, paddr, valid)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  register unsigned long _tmp1 __asm__ (&quot;a0&quot;) = (vaddr);&t;&t;&bslash;&n;  register unsigned long _tmp2 __asm__ (&quot;d0&quot;);&t;&t;&t;&t;&bslash;&n;  unsigned long _mmusr;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  __asm__ __volatile__ (&quot;.word 0xf568 /* ptestr (%1) */&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&quot;.long 0x4e7a0805 /* movec %%mmusr,%0 */&quot;&t;&bslash;&n;&t;&t;&t;: &quot;=d&quot; (_tmp2)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;a&quot; (_tmp1));&t;&t;&t;&t;&t;&bslash;&n;  _mmusr = _tmp2;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  if (!(_mmusr &amp; MMU_R_040))&t;&t;&t;&t;&t;&t;&bslash;&n;    (valid) = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  else&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      (valid) = 1;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      (paddr) = _mmusr &amp; PAGE_MASK;&t;&t;&t;&t;&t;&bslash;&n;    }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define virt_to_phys_040(vaddr, paddr, valid)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  unsigned long _mmusr;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  __asm__ __volatile__ (&quot;.chip 68040&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&quot;ptestr (%1)&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&quot;movec %%mmusr,%0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&quot;.chip 68k&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=r&quot; (_mmusr)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;a&quot; (vaddr));&t;&t;&t;&t;&t;&bslash;&n;  if (!(_mmusr &amp; MMU_R_040))&t;&t;&t;&t;&t;&t;&bslash;&n;    (valid) = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  else&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      (valid) = 1;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      (paddr) = _mmusr &amp; PAGE_MASK;&t;&t;&t;&t;&t;&bslash;&n;    }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 r_static
 r_inline
 r_int
@@ -969,7 +969,9 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf478 /* cpusha %%dc */&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpusha %dc&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 )paren
 suffix:semicolon
 r_break
@@ -981,7 +983,9 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4b8 /* cpusha %%ic */&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpusha %ic&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 )paren
 suffix:semicolon
 r_break
@@ -995,7 +999,9 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4f8 /* cpusha %%bc */&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpusha %bc&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1078,17 +1084,6 @@ id|len
 op_decrement
 )paren
 (brace
-r_register
-r_int
-r_int
-id|tmp
-id|__asm__
-(paren
-l_string|&quot;a0&quot;
-)paren
-op_assign
-id|paddr
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1102,12 +1097,14 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf468 /* cpushl %%dc,(%0) */&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpushl %%dc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1120,12 +1117,14 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4a8 /* cpushl %%ic,(%0) */&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpushl %%ic,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1140,7 +1139,9 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4e8 /* cpushl %%bc,(%0) */&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpushl %%bc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
@@ -1271,15 +1272,6 @@ op_add_assign
 id|PAGE_SIZE
 )paren
 (brace
-r_register
-r_int
-r_int
-id|tmp
-id|__asm__
-(paren
-l_string|&quot;a0&quot;
-)paren
-suffix:semicolon
 id|virt_to_phys_040
 (paren
 id|addr
@@ -1297,10 +1289,6 @@ id|valid
 )paren
 r_continue
 suffix:semicolon
-id|tmp
-op_assign
-id|paddr
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1314,12 +1302,14 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf470 /* cpushp %%dc,(%0) */&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpushp %%dc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1332,12 +1322,14 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4b0 /* cpushp %%ic,(%0) */&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpushp %%ic,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1352,12 +1344,14 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4f0 /* cpushp %%bc,(%0) */&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpushp %%bc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1373,7 +1367,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|macro|virt_to_phys_060
-mdefine_line|#define virt_to_phys_060(vaddr, paddr, valid)&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  register unsigned long _tmp __asm__ (&quot;a0&quot;) = (vaddr);&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  __asm__ __volatile__ (&quot;.word 0xf5c8 /* plpar (%1) */&quot;&t;&bslash;&n;&t;&t;&t;: &quot;=a&quot; (_tmp)&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;0&quot; (_tmp));&t;&t;&t;&bslash;&n;  (valid) = 1; /* XXX */&t;&t;&t;&t;&bslash;&n;  (paddr) = _tmp;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define virt_to_phys_060(vaddr, paddr, valid)&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  __asm__ __volatile__ (&quot;.chip 68060&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&quot;plpar (%0)&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&quot;.chip 68k&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=a&quot; (paddr)&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;0&quot; (vaddr));&t;&t;&t;&bslash;&n;  (valid) = 1; /* XXX */&t;&t;&t;&t;&bslash;&n;}
 r_static
 r_inline
 r_int
@@ -1423,8 +1417,10 @@ suffix:colon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf478 /* cpusha %%dc */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf458 /* cinva %%dc */&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpusha %dc&bslash;n&bslash;t&quot;
+l_string|&quot;cinva %dc&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1435,8 +1431,10 @@ suffix:colon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf4b8 /* cpusha %%ic */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf498 /* cinva %%ic */&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpusha %ic&bslash;n&bslash;t&quot;
+l_string|&quot;cinva %ic&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1449,8 +1447,10 @@ suffix:colon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf4f8 /* cpusha %%bc */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4d8 /* cinva %%bc */&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpusha %bc&bslash;n&bslash;t&quot;
+l_string|&quot;cinva %bc&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1533,17 +1533,6 @@ id|len
 op_decrement
 )paren
 (brace
-r_register
-r_int
-r_int
-id|tmp
-id|__asm__
-(paren
-l_string|&quot;a0&quot;
-)paren
-op_assign
-id|paddr
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1556,13 +1545,15 @@ suffix:colon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf468 /* cpushl %%dc,(%0) */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf448 /* cinv %%dc,(%0) */&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpushl %%dc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;cinvl %%dc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1574,13 +1565,15 @@ suffix:colon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf4a8 /* cpushl %%ic,(%0) */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf488 /* cinv %%ic,(%0) */&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpushl %%ic,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;cinvl %%ic,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1594,8 +1587,10 @@ suffix:colon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf4e8 /* cpushl %%bc,(%0) */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4c8 /* cinv %%bc,(%0) */&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpushl %%bc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;cinvl %%bc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
@@ -1726,15 +1721,6 @@ op_add_assign
 id|PAGE_SIZE
 )paren
 (brace
-r_register
-r_int
-r_int
-id|tmp
-id|__asm__
-(paren
-l_string|&quot;a0&quot;
-)paren
-suffix:semicolon
 id|virt_to_phys_060
 (paren
 id|addr
@@ -1752,10 +1738,6 @@ id|valid
 )paren
 r_continue
 suffix:semicolon
-id|tmp
-op_assign
-id|paddr
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1768,13 +1750,15 @@ suffix:colon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf470 /* cpushp %%dc,(%0) */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf450 /* cinv %%dc,(%0) */&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpushp %%dc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;cinvp %%dc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1786,13 +1770,15 @@ suffix:colon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf4b0 /* cpushp %%ic,(%0) */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf490 /* cinv %%ic,(%0) */&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpushp %%ic,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;cinvp %%ic,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1806,13 +1792,15 @@ suffix:colon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.word 0xf4f0 /* cpushp %%bc,(%0) */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4d0 /* cinv %%bc,(%0) */&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpushp %%bc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;cinvp %%bc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|tmp
+id|paddr
 )paren
 )paren
 suffix:semicolon
@@ -1925,44 +1913,138 @@ c_cond
 id|CPU_IS_020_OR_030
 )paren
 (brace
-multiline_comment|/* Always flush the whole cache, everything else would not be&n;       worth the hassle.  */
+r_if
+c_cond
+(paren
+id|scope
+op_eq
+id|FLUSH_SCOPE_LINE
+)paren
+(brace
+r_int
+r_int
+id|cacr
+suffix:semicolon
 id|__asm__
-id|__volatile__
 (paren
-l_string|&quot;movec %%cacr, %%d0&bslash;n&bslash;t&quot;
-l_string|&quot;or %0, %%d0&bslash;n&bslash;t&quot;
-l_string|&quot;movec %%d0, %%cacr&quot;
+l_string|&quot;movec %%cacr, %0&quot;
 suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;di&quot;
+l_string|&quot;=r&quot;
 (paren
+id|cacr
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|cache
 op_amp
 id|FLUSH_CACHE_INSN
-ques
-c_cond
-l_int|8
-suffix:colon
-l_int|0
 )paren
-op_or
+id|cacr
+op_or_assign
+l_int|4
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|cache
 op_amp
 id|FLUSH_CACHE_DATA
-ques
-c_cond
-l_int|0x800
-suffix:colon
-l_int|0
 )paren
+id|cacr
+op_or_assign
+l_int|0x400
+suffix:semicolon
+id|len
+op_rshift_assign
+l_int|4
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|len
+op_decrement
 )paren
+(brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;movec %1, %%caar&bslash;n&bslash;t&quot;
+l_string|&quot;movec %0, %%cacr&quot;
 suffix:colon
-l_string|&quot;d0&quot;
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|cacr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
 )paren
 suffix:semicolon
+id|addr
+op_add_assign
+l_int|16
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* Flush the whole cache, even if page granularity is requested.  */
+r_int
+r_int
+id|cacr
+suffix:semicolon
+id|__asm__
+(paren
+l_string|&quot;movec %%cacr, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cacr
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cache
+op_amp
+id|FLUSH_CACHE_INSN
+)paren
+id|cacr
+op_or_assign
+l_int|8
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cache
+op_amp
+id|FLUSH_CACHE_DATA
+)paren
+id|cacr
+op_or_assign
+l_int|0x800
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;movec %0, %%cacr&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|cacr
+)paren
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

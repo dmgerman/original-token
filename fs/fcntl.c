@@ -440,7 +440,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* required for SunOS emulation */
+multiline_comment|/* required for strict SunOS emulation */
 r_if
 c_cond
 (paren
@@ -467,6 +467,8 @@ id|O_APPEND
 op_or
 id|O_NONBLOCK
 op_or
+id|O_NDELAY
+op_or
 id|FASYNC
 )paren
 suffix:semicolon
@@ -478,6 +480,8 @@ op_amp
 id|O_APPEND
 op_or
 id|O_NONBLOCK
+op_or
+id|O_NDELAY
 op_or
 id|FASYNC
 )paren

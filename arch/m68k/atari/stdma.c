@@ -18,7 +18,6 @@ multiline_comment|/* (can be determined by looking at its status register).     
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;

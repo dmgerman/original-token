@@ -30,6 +30,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU31A
+macro_line|#ifdef CONFIG_ATARI_ACSI
+r_extern
+r_int
+id|acsi_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_ATARI_ACSI
 macro_line|#ifdef CONFIG_MCD
 r_extern
 r_int
@@ -180,6 +190,36 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_BLK_DEV_MD
+macro_line|#ifdef CONFIG_APBLOCK
+r_extern
+r_int
+id|ap_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_DDV
+r_extern
+r_int
+id|ddv_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_AMIGA_Z2RAM
+r_extern
+r_int
+id|z2_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|set_device_ro
@@ -254,6 +294,11 @@ r_int
 id|mount_initrd
 suffix:semicolon
 multiline_comment|/* zero if initrd should not be mounted */
+r_extern
+r_int
+id|initrd_below_start_ok
+suffix:semicolon
+multiline_comment|/* 1 if it is not an error if initrd_start &lt; memory_start */
 r_void
 id|initrd_init
 c_func
@@ -297,6 +342,18 @@ DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
 DECL|macro|DEVICE_NO_RANDOM
 mdefine_line|#define DEVICE_NO_RANDOM
+macro_line|#elif (MAJOR_NR == Z2RAM_MAJOR)
+multiline_comment|/* Zorro II Ram */
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Z2RAM&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_z2_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif (MAJOR_NR == FLOPPY_MAJOR)
 r_static
 r_void
@@ -418,6 +475,19 @@ DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_cdu31a_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == ACSI_MAJOR) &amp;&amp; (defined(CONFIG_ATARI_ACSI) || defined(CONFIG_ATARI_ACSI_MODULE))
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;ACSI&quot;
+DECL|macro|DEVICE_INTR
+mdefine_line|#define DEVICE_INTR do_acsi
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_acsi_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 4)
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
@@ -556,6 +626,28 @@ DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == APBLOCK_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;apblock&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST ap_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device) 
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == DDV_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;ddv&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST ddv_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device)&gt;&gt;PARTN_BITS)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device) 
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
 macro_line|#endif /* MAJOR_NR == whatever */

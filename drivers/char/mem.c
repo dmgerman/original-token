@@ -191,7 +191,8 @@ id|read
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(__sparc__) /* we don&squot;t have page 0 mapped on sparc.. */
+macro_line|#if defined(__sparc__) || defined(__mc68000__)
+multiline_comment|/* we don&squot;t have page 0 mapped on sparc and m68k.. */
 r_while
 c_loop
 (paren
@@ -335,7 +336,8 @@ id|written
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(__sparc__) /* we don&squot;t have page 0 mapped on sparc.. */
+macro_line|#if defined(__sparc__) || defined(__mc68000__)
+multiline_comment|/* we don&squot;t have page 0 mapped on sparc and m68k.. */
 r_while
 c_loop
 (paren
@@ -1719,7 +1721,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_BUSMOUSE) || defined(CONFIG_UMISC) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG) || &bslash;&n;    defined (CONFIG_PCWATCHDOG) || &bslash;&n;    defined (CONFIG_APM) || defined (CONFIG_RTC) || defined (CONFIG_SUN_MOUSE)
+macro_line|#if defined (CONFIG_BUSMOUSE) || defined(CONFIG_UMISC) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG) || &bslash;&n;    defined (CONFIG_AMIGAMOUSE) || defined (CONFIG_ATARIMOUSE) || &bslash;&n;    defined (CONFIG_PCWATCHDOG) || &bslash;&n;    defined (CONFIG_APM) || defined (CONFIG_RTC) || defined (CONFIG_SUN_MOUSE)
 id|misc_init
 c_func
 (paren

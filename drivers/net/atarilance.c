@@ -18,12 +18,12 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -538,6 +538,15 @@ l_int|0
 )brace
 comma
 multiline_comment|/* PAMCard VME in TT and MSTE&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   (highest byte stripped) */
+(brace
+l_int|0xfecf0000
+comma
+l_int|0xfecffff0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Rhotron&squot;s PAMCard VME in TT and MSTE&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   (highest byte stripped) */
 )brace
 suffix:semicolon
 DECL|macro|N_LANCE_ADDR
@@ -731,15 +740,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_struct
-id|device
-op_star
-id|dev
 )paren
 suffix:semicolon
 r_static
@@ -1594,21 +1602,18 @@ l_int|0xffe00000
 )paren
 (brace
 multiline_comment|/* PAMs card and Riebl on ST use level 5 autovector */
-id|add_isr
+id|request_irq
 c_func
 (paren
 id|IRQ_AUTO_5
 comma
-(paren
-id|isrfunc
-)paren
 id|lance_interrupt
 comma
 id|IRQ_TYPE_PRIO
 comma
-id|dev
-comma
 l_string|&quot;PAM/Riebl-ST Ethernet&quot;
+comma
+id|dev
 )paren
 suffix:semicolon
 id|dev-&gt;irq
@@ -1649,21 +1654,18 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|add_isr
+id|request_irq
 c_func
 (paren
 id|irq
 comma
-(paren
-id|isrfunc
-)paren
 id|lance_interrupt
 comma
 id|IRQ_TYPE_PRIO
 comma
-id|dev
-comma
 l_string|&quot;Riebl-VME Ethernet&quot;
+comma
+id|dev
 )paren
 suffix:semicolon
 id|dev-&gt;irq
@@ -3212,17 +3214,23 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
+)paren
+(brace
 r_struct
 id|device
 op_star
 id|dev
-)paren
-(brace
+op_assign
+id|dev_id
+suffix:semicolon
 r_struct
 id|lance_private
 op_star

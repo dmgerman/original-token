@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/minix/bitmap.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; * Modified for 680x0 by Hamish Macdonald&n; * Fixed for 680x0 by Andreas Schwab&n; */
 multiline_comment|/* bitmap.c contains the code that handles the inode and block bitmaps */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
@@ -294,7 +295,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|clear_bit
+id|minix_clear_bit
 c_func
 (paren
 id|bit
@@ -405,7 +406,7 @@ c_cond
 (paren
 id|j
 op_assign
-id|find_first_zero_bit
+id|minix_find_first_zero_bit
 c_func
 (paren
 id|bh-&gt;b_data
@@ -438,7 +439,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|minix_set_bit
 c_func
 (paren
 id|j
@@ -1090,7 +1091,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|clear_bit
+id|minix_clear_bit
 c_func
 (paren
 id|ino
@@ -1220,7 +1221,7 @@ c_cond
 (paren
 id|j
 op_assign
-id|find_first_zero_bit
+id|minix_find_first_zero_bit
 c_func
 (paren
 id|bh-&gt;b_data
@@ -1257,7 +1258,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|minix_set_bit
 c_func
 (paren
 id|j

@@ -15,6 +15,10 @@ DECL|macro|PORT_16550A
 mdefine_line|#define PORT_16550A&t;4
 DECL|macro|PORT_CIRRUS
 mdefine_line|#define PORT_CIRRUS     5
+DECL|macro|PORT_16650V2
+mdefine_line|#define PORT_16650V2&t;7
+DECL|macro|PORT_16750
+mdefine_line|#define PORT_16750&t;8
 DECL|macro|SER_SCC_NORM
 mdefine_line|#define SER_SCC_NORM&t;100&t;/* standard SCC channel */
 DECL|macro|SER_SCC_DMA
@@ -370,7 +374,7 @@ mdefine_line|#define ASYNC_SAK&t;0x0004&t;/* Secure Attention Key (Orange book) 
 DECL|macro|ASYNC_SPLIT_TERMIOS
 mdefine_line|#define ASYNC_SPLIT_TERMIOS 0x0008 /* Separate termios for dialin/callout */
 DECL|macro|ASYNC_SPD_MASK
-mdefine_line|#define ASYNC_SPD_MASK&t;0x0030
+mdefine_line|#define ASYNC_SPD_MASK&t;0x1030
 DECL|macro|ASYNC_SPD_HI
 mdefine_line|#define ASYNC_SPD_HI&t;0x0010&t;/* Use 56000 instead of 38400 bps */
 DECL|macro|ASYNC_SPD_VHI
@@ -387,10 +391,16 @@ DECL|macro|ASYNC_PGRP_LOCKOUT
 mdefine_line|#define ASYNC_PGRP_LOCKOUT    0x0200 /* Lock out cua opens based on pgrp */
 DECL|macro|ASYNC_CALLOUT_NOHUP
 mdefine_line|#define ASYNC_CALLOUT_NOHUP   0x0400 /* Don&squot;t do hangups for cua device */
+DECL|macro|ASYNC_HARDPPS_CD
+mdefine_line|#define ASYNC_HARDPPS_CD&t;0x0800&t;/* Call hardpps when CD goes high  */
+DECL|macro|ASYNC_SPD_SHI
+mdefine_line|#define ASYNC_SPD_SHI&t;0x1000&t;/* Use 230400 instead of 38400 bps */
+DECL|macro|ASYNC_SPD_WARP
+mdefine_line|#define ASYNC_SPD_WARP&t;0x1010&t;/* Use 460800 instead of 38400 bps */
 DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x0FFF&t;/* Possible legal async flags */
+mdefine_line|#define ASYNC_FLAGS&t;0x1FFF&t;/* Possible legal async flags */
 DECL|macro|ASYNC_USR_MASK
-mdefine_line|#define ASYNC_USR_MASK 0x0430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
+mdefine_line|#define ASYNC_USR_MASK 0x1430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
 multiline_comment|/* Internal flags used only by drivers/char/m68kserial.c */
 DECL|macro|ASYNC_INITIALIZED
 mdefine_line|#define ASYNC_INITIALIZED&t;0x80000000 /* Serial port was initialized */
@@ -406,6 +416,8 @@ DECL|macro|ASYNC_CTS_FLOW
 mdefine_line|#define ASYNC_CTS_FLOW&t;&t;0x04000000 /* Do CTS flow control */
 DECL|macro|ASYNC_CHECK_CD
 mdefine_line|#define ASYNC_CHECK_CD&t;&t;0x02000000 /* i.e., CLOCAL */
+DECL|macro|ASYNC_INTERNAL_FLAGS
+mdefine_line|#define ASYNC_INTERNAL_FLAGS&t;0xFF000000 /* Internal flags */
 multiline_comment|/*&n; * Serial input interrupt line counters -- external structure&n; * Four lines can interrupt: CTS, DSR, RI, DCD&n; */
 DECL|struct|serial_icounter_struct
 r_struct

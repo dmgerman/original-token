@@ -583,6 +583,7 @@ op_star
 id|buf_end
 suffix:semicolon
 r_static
+r_int
 r_char
 id|msg_level
 op_assign
@@ -909,6 +910,7 @@ id|buf
 l_int|16
 )braket
 suffix:semicolon
+r_int
 r_char
 id|msg_level
 op_assign

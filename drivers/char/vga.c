@@ -321,7 +321,7 @@ comma
 id|video_mem_term
 op_minus
 id|video_mem_base
-op_plus
+op_minus
 l_int|1
 )paren
 op_rshift

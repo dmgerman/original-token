@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.83 1996/12/10 07:38:39 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.85 1996/12/18 06:33:42 tridge Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -904,6 +904,19 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#if __MPP__
+id|printk
+c_func
+(paren
+l_string|&quot;CID: %d&bslash;n&quot;
+comma
+id|mpp_cid
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1381,7 +1394,7 @@ id|current-&gt;tss.sstk_info.the_stack
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* No new signal delivey by default */
+multiline_comment|/* No new signal delivery by default */
 id|current-&gt;tss.new_signal
 op_assign
 l_int|0
@@ -1704,7 +1717,7 @@ suffix:semicolon
 multiline_comment|/* Copy a Sparc thread.  The fork() return value conventions&n; * under SunOS are nothing short of bletcherous:&n; * Parent --&gt;  %o0 == childs  pid, %o1 == 0&n; * Child  --&gt;  %o0 == parents pid, %o1 == 1&n; *&n; * NOTE: We have a separate fork kpsr/kwim because&n; *       the parent could change these values between&n; *       sys_fork invocation and when we reach here&n; *       if the parent should sleep while trying to&n; *       allocate the task_struct and kernel stack in&n; *       do_fork().&n; */
 r_extern
 r_void
-id|ret_sys_call
+id|ret_from_syscall
 c_func
 (paren
 r_void
@@ -1912,7 +1925,7 @@ op_assign
 r_int
 r_int
 )paren
-id|ret_sys_call
+id|ret_from_syscall
 )paren
 op_minus
 l_int|0x8

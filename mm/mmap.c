@@ -95,7 +95,7 @@ id|nr_swap_pages
 suffix:semicolon
 id|freepages
 op_sub_assign
-id|max_mapnr
+id|num_physpages
 op_rshift
 l_int|4
 suffix:semicolon

@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#ifndef __alpha__
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__sparc__)
 multiline_comment|/*&n; * For backward compatibility?  Maybe this should be moved&n; * into arch/i386 instead?&n; */
 DECL|function|cp_old_stat
 r_static
@@ -357,7 +357,7 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__sparc__)
 multiline_comment|/*&n; * For backward compatibility?  Maybe this should be moved&n; * into arch/i386 instead?&n; */
 DECL|function|sys_stat
 id|asmlinkage
@@ -530,7 +530,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__sparc__)
 multiline_comment|/*&n; * For backward compatibility?  Maybe this should be moved&n; * into arch/i386 instead?&n; */
 DECL|function|sys_lstat
 id|asmlinkage
@@ -703,7 +703,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__sparc__)
 multiline_comment|/*&n; * For backward compatibility?  Maybe this should be moved&n; * into arch/i386 instead?&n; */
 DECL|function|sys_fstat
 id|asmlinkage

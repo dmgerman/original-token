@@ -2372,7 +2372,7 @@ suffix:semicolon
 r_struct
 id|sockaddr_un
 op_star
-id|sun
+id|sunaddr
 op_assign
 (paren
 r_struct
@@ -2443,7 +2443,7 @@ op_assign
 id|unix_mkname
 c_func
 (paren
-id|sun
+id|sunaddr
 comma
 id|alen
 comma
@@ -2466,7 +2466,7 @@ op_assign
 id|unix_find_other
 c_func
 (paren
-id|sun
+id|sunaddr
 comma
 id|alen
 comma

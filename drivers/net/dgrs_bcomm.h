@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The bios low-memory structure&n; *&n; * Some of the variables in here can be used to set parameters that&n; * are stored in NVRAM and will retain their old values the next time&n; * the card is brought up.  To use the values stored in NVRAM, the&n; * parameter should be set to &quot;all ones&quot;.  This tells the firmware to&n; * use the NVRAM value or a suitable default.  The value that is used&n; * will be stored back into this structure by the firmware.  If the&n; * value of the variable is not &quot;all ones&quot;, then that value will be&n; * used and will be stored into NVRAM if it isn&squot;t already there.&n; * The variables this applies to are the following:&n; *&t;Variable&t;Set to:&t;&t;Gets default of:&n; *&t;bc_hashexpire&t;-1&t;&t;300&t;(5 minutes)&n; *&t;bc_spantree&t;-1&t;&t;1&t;(spanning tree on)&n; *&t;bc_ipaddr&t;FF:FF:FF:FF&t;0&t;(no IP address)&n; *&t;bc_ipxnet&t;FF:FF:FF:FF&t;0&t;(no IPX net)&n; *&n; * Some variables MUST have their value set after the firmware&n; * is loaded onto the board, but before the processor is released.&n; * These are:&n; *&t;bc_host&t;&t;0 means no host &quot;port&quot;, run as standalone switch.&n; *&t;&t;&t;1 means there is a host &quot;port&quot; (normal).&n; *&t;bc_nowait&n; *&t;bc_hostarea_len&n; *&t;bc_filter_len&n; *&t;&t;&t;&n; */
+multiline_comment|/*&n; * The bios low-memory structure&n; *&n; * Some of the variables in here can be used to set parameters that&n; * are stored in NVRAM and will retain their old values the next time&n; * the card is brought up.  To use the values stored in NVRAM, the&n; * parameter should be set to &quot;all ones&quot;.  This tells the firmware to&n; * use the NVRAM value or a suitable default.  The value that is used&n; * will be stored back into this structure by the firmware.  If the&n; * value of the variable is not &quot;all ones&quot;, then that value will be&n; * used and will be stored into NVRAM if it isn&squot;t already there.&n; * The variables this applies to are the following:&n; *&t;Variable&t;Set to:&t;&t;Gets default of:&n; *&t;bc_hashexpire&t;-1&t;&t;300&t;(5 minutes)&n; *&t;bc_spantree&t;-1&t;&t;1&t;(spanning tree on)&n; *&t;bc_ipaddr&t;FF:FF:FF:FF&t;0&t;(no SNMP IP address)&n; *&t;bc_ipxnet&t;FF:FF:FF:FF&t;0&t;(no SNMP IPX net)&n; *&t;bc_iptrap&t;FF:FF:FF:FF&t;0&t;(no SNMP IP trap address)&n; *&n; * Some variables MUST have their value set after the firmware&n; * is loaded onto the board, but before the processor is released.&n; * These are:&n; *&t;bc_host&t;&t;0 means no host &quot;port&quot;, run as standalone switch.&n; *&t;&t;&t;1 means run as a switch, with a host port. (normal)&n; *&t;&t;&t;2 means run as multiple NICs, not as a switch.&n; *&t;&t;&t;-1 means run in diagnostics mode.&n; *&t;bc_nowait&n; *&t;bc_hostarea_len&n; *&t;bc_filter_len&n; *&t;&t;&t;&n; */
 id|BEGIN_STRUCT
 c_func
 (paren
@@ -468,6 +468,17 @@ comma
 id|bc_filter_num
 )paren
 multiline_comment|/* RW: Filter #, 0=input, 1=output */
+multiline_comment|/* more SNMP agent addresses */
+id|S1A
+c_func
+(paren
+id|uchar
+comma
+id|bc_iptrap
+comma
+l_int|4
+)paren
+multiline_comment|/* IP address for SNMP */
 id|S4A
 c_func
 (paren
@@ -475,7 +486,7 @@ r_int
 comma
 id|bc_spare
 comma
-l_int|3
+l_int|2
 )paren
 multiline_comment|/* spares */
 id|END_STRUCT
@@ -490,6 +501,15 @@ DECL|macro|BC_INIT
 mdefine_line|#define&t;BC_INIT&t;0
 DECL|macro|BC_RUN
 mdefine_line|#define&t;BC_RUN&t;100
+multiline_comment|/*&n; *&t;bc_host values&n; */
+DECL|macro|BC_DIAGS
+mdefine_line|#define&t;BC_DIAGS&t;-1
+DECL|macro|BC_SASWITCH
+mdefine_line|#define BC_SASWITCH&t;0
+DECL|macro|BC_SWITCH
+mdefine_line|#define&t;BC_SWITCH&t;1
+DECL|macro|BC_MULTINIC
+mdefine_line|#define&t;BC_MULTINIC&t;2
 multiline_comment|/*&n; *&t;Values for spew (debugging)&n; */
 DECL|macro|BC_SPEW_ENABLE
 mdefine_line|#define&t;BC_SPEW_ENABLE&t;0x80000000

@@ -308,5 +308,109 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|macro|_HAVE_ARCH_IPV6_CSUM
+mdefine_line|#define _HAVE_ARCH_IPV6_CSUM
+r_static
+id|__inline__
+r_int
+r_int
+r_int
+DECL|function|csum_ipv6_magic
+id|csum_ipv6_magic
+c_func
+(paren
+r_struct
+id|in6_addr
+op_star
+id|saddr
+comma
+r_struct
+id|in6_addr
+op_star
+id|daddr
+comma
+id|__u16
+id|len
+comma
+r_int
+r_int
+id|proto
+comma
+r_int
+r_int
+id|sum
+)paren
+(brace
+r_register
+r_int
+r_int
+id|tmp
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;addl %2@,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movel %2@(4),%1&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movel %2@(8),%1&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movel %2@(12),%1&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movel %3@,%1&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movel %3@(4),%1&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movel %3@(8),%1&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movel %3@(12),%1&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %4,%0&bslash;n&bslash;t&quot;
+l_string|&quot;clrl %1&bslash;n&bslash;t&quot;
+l_string|&quot;addxl %1,%0&quot;
+suffix:colon
+l_string|&quot;=&amp;d&quot;
+(paren
+id|sum
+)paren
+comma
+l_string|&quot;=&amp;d&quot;
+(paren
+id|tmp
+)paren
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|saddr
+)paren
+comma
+l_string|&quot;a&quot;
+(paren
+id|daddr
+)paren
+comma
+l_string|&quot;d&quot;
+(paren
+(paren
+id|__u32
+)paren
+id|len
+op_plus
+id|proto
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|sum
+)paren
+)paren
+suffix:semicolon
+r_return
+id|csum_fold
+c_func
+(paren
+id|sum
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif /* _M68K_CHECKSUM_H */
 eof

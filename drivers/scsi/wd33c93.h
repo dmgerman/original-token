@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *    wd33c93.h -  Linux device driver definitions for the&n; *                 Commodore Amiga A2091/590 SCSI controller card&n; *&n; *    IMPORTANT: This file is for version 1.21 - 20/Mar/1996&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
+multiline_comment|/*&n; *    wd33c93.h -  Linux device driver definitions for the&n; *                 Commodore Amiga A2091/590 SCSI controller card&n; *&n; *    IMPORTANT: This file is for version 1.23 - 04/Nov/1996&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
 macro_line|#ifndef WD33C93_H
 DECL|macro|WD33C93_H
 mdefine_line|#define WD33C93_H
@@ -301,7 +301,7 @@ id|status
 )paren
 suffix:semicolon
 DECL|macro|DEFAULT_SX_PER
-mdefine_line|#define DEFAULT_SX_PER   500     /* (ns) fairly safe */
+mdefine_line|#define DEFAULT_SX_PER   376     /* (ns) fairly safe */
 DECL|macro|DEFAULT_SX_OFF
 mdefine_line|#define DEFAULT_SX_OFF   0       /* aka async */
 DECL|macro|OPTIMUM_SX_PER
@@ -369,6 +369,11 @@ suffix:semicolon
 DECL|member|dma_stop
 id|dma_stop_t
 id|dma_stop
+suffix:semicolon
+DECL|member|dma_xfer_mask
+r_int
+r_int
+id|dma_xfer_mask
 suffix:semicolon
 DECL|member|dma_bounce_buffer
 id|uchar
@@ -501,12 +506,61 @@ id|uchar
 id|no_sync
 suffix:semicolon
 multiline_comment|/* bitmask: don&squot;t do sync on these targets */
-macro_line|#if 0
+DECL|member|no_dma
+id|uchar
+id|no_dma
+suffix:semicolon
+multiline_comment|/* set this flag to disable DMA */
+DECL|member|proc
 id|uchar
 id|proc
 suffix:semicolon
 multiline_comment|/* bitmask: what&squot;s in proc output */
-macro_line|#endif
+DECL|member|cmd_cnt
+r_int
+r_int
+id|cmd_cnt
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* # of commands issued per target */
+DECL|member|int_cnt
+r_int
+r_int
+id|int_cnt
+suffix:semicolon
+multiline_comment|/* # of interrupts serviced */
+DECL|member|pio_cnt
+r_int
+r_int
+id|pio_cnt
+suffix:semicolon
+multiline_comment|/* # of pio data transfers */
+DECL|member|dma_cnt
+r_int
+r_int
+id|dma_cnt
+suffix:semicolon
+multiline_comment|/* # of DMA data transfers */
+DECL|member|disc_allowed_cnt
+r_int
+r_int
+id|disc_allowed_cnt
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* # of disconnects allowed per target */
+DECL|member|disc_done_cnt
+r_int
+r_int
+id|disc_done_cnt
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* # of disconnects done per target*/
 )brace
 suffix:semicolon
 multiline_comment|/* defines for hostdata-&gt;chip */
@@ -588,8 +642,8 @@ DECL|macro|PR_VERSION
 mdefine_line|#define PR_VERSION   1&lt;&lt;0
 DECL|macro|PR_INFO
 mdefine_line|#define PR_INFO      1&lt;&lt;1
-DECL|macro|PR_TOTALS
-mdefine_line|#define PR_TOTALS    1&lt;&lt;2
+DECL|macro|PR_STATISTICS
+mdefine_line|#define PR_STATISTICS 1&lt;&lt;2
 DECL|macro|PR_CONNECTED
 mdefine_line|#define PR_CONNECTED 1&lt;&lt;3
 DECL|macro|PR_INPUTQ
@@ -695,12 +749,6 @@ id|wd33c93_reset
 id|Scsi_Cmnd
 op_star
 )paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if 0
-r_struct
-id|proc_dir_entry
-id|proc_scsi_wd33c93
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif /* WD33C93_H */

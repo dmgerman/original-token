@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.76 1996/11/13 05:09:32 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.78 1996/12/19 08:06:30 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -280,6 +280,7 @@ DECL|macro|BOOTME_SINGLE
 mdefine_line|#define BOOTME_SINGLE 0x2
 DECL|macro|BOOTME_KGDB
 mdefine_line|#define BOOTME_KGDB   0x4
+macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_extern
 r_char
 op_star
@@ -292,6 +293,7 @@ id|console_fb
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 DECL|function|kernel_enter_debugger
 r_void
 id|kernel_enter_debugger
@@ -638,6 +640,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#if CONFIG_SUN_CONSOLE
 r_if
 c_cond
 (paren
@@ -718,6 +721,7 @@ id|commands
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -828,6 +832,22 @@ r_extern
 r_int
 id|root_mountflags
 suffix:semicolon
+r_extern
+r_void
+id|register_console
+c_func
+(paren
+r_void
+(paren
+op_star
+id|proc
+)paren
+(paren
+r_char
+op_star
+)paren
+)paren
+suffix:semicolon
 DECL|variable|saved_command_line
 r_char
 id|saved_command_line
@@ -906,31 +926,6 @@ id|i
 comma
 id|packed
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|register_console
-c_func
-(paren
-id|prom_printf
-)paren
-suffix:semicolon
-(paren
-(paren
-r_char
-op_star
-)paren
-(paren
-op_amp
-id|cputypval
-)paren
-)paren
-(braket
-l_int|4
-)braket
-op_assign
-l_char|&squot;m&squot;
-suffix:semicolon
-multiline_comment|/* ugly :-( */
-macro_line|#endif
 id|sparc_ttable
 op_assign
 (paren
@@ -1078,6 +1073,21 @@ op_assign
 id|sun4u
 suffix:semicolon
 )brace
+macro_line|#if CONFIG_AP1000
+id|sparc_cpu_model
+op_assign
+id|ap1000
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+op_amp
+id|cputypval
+comma
+l_string|&quot;ap+&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1187,6 +1197,27 @@ c_func
 (paren
 l_string|&quot;SUN4U&bslash;n&quot;
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ap1000
+suffix:colon
+id|register_console
+c_func
+(paren
+id|prom_printf
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;AP1000&bslash;n&quot;
+)paren
+suffix:semicolon
+id|packed
+op_assign
+l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1460,6 +1491,12 @@ id|sparc_cpu_model
 op_eq
 id|sun4d
 )paren
+op_logical_or
+(paren
+id|sparc_cpu_model
+op_eq
+id|ap1000
+)paren
 )paren
 (brace
 op_star
@@ -1634,6 +1671,7 @@ op_assign
 op_amp
 id|fake_swapper_regs
 suffix:semicolon
+macro_line|#ifdef CONFIG_SUN_SERIAL
 op_star
 id|memory_start_p
 op_assign
@@ -1645,6 +1683,7 @@ id|memory_start_p
 )paren
 suffix:semicolon
 multiline_comment|/* set this up ASAP */
+macro_line|#endif
 (brace
 r_extern
 r_int
@@ -1893,15 +1932,6 @@ id|sparc_fpu_type
 id|cpuid
 )braket
 comma
-macro_line|#if CONFIG_AP1000
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-macro_line|#else
 id|romvec-&gt;pv_romvers
 comma
 id|prom_rev
@@ -1915,7 +1945,6 @@ r_int
 )paren
 id|romvec-&gt;pv_printrev
 comma
-macro_line|#endif
 op_amp
 id|cputypval
 comma

@@ -1503,6 +1503,9 @@ suffix:colon
 r_case
 id|IDE3_MAJOR
 suffix:colon
+r_case
+id|ACSI_MAJOR
+suffix:colon
 multiline_comment|/*&n;&t;&t; * The scsi disk and cdrom drivers completely remove the request&n;&t;&t; * from the queue when they start processing an entry.  For this&n;&t;&t; * reason it is safe to continue to add links to the top entry for&n;&t;&t; * those devices.&n;&t;&t; *&n;&t;&t; * All other drivers need to jump over the first entry, as that&n;&t;&t; * entry may be busy being processed and we thus can&squot;t change it.&n;&t;&t; */
 r_if
 c_cond
@@ -2730,6 +2733,26 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_EZ
+r_extern
+r_void
+id|ez_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BPCD
+r_extern
+r_void
+id|bpcd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|blk_dev_init
 r_int
 id|blk_dev_init
@@ -2836,6 +2859,13 @@ id|ro_bits
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_AMIGA_Z2RAM
+id|z2_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 id|rd_init
 c_func
@@ -2887,6 +2917,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_EZ
+id|ez_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_FD
 id|floppy_init
 c_func
@@ -2894,6 +2931,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#else
+macro_line|#if !defined (__mc68000__)
 id|outb_p
 c_func
 (paren
@@ -2903,6 +2941,7 @@ l_int|0x3f2
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
 macro_line|#ifdef CONFIG_CDU31A
 id|cdu31a_init
 c_func
@@ -2910,6 +2949,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU31A
+macro_line|#ifdef CONFIG_ATARI_ACSI
+id|acsi_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_ATARI_ACSI
 macro_line|#ifdef CONFIG_MCD
 id|mcd_init
 c_func
@@ -2952,6 +2998,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_GSCD
+macro_line|#ifdef CONFIG_BPCD
+id|bpcd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_BPCD
 macro_line|#ifdef CONFIG_CM206
 id|cm206_init
 c_func

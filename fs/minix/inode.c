@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Copyright (C) 1996  Gertjan van Wingerde    (gertjan@cs.vu.nl)&n; *&t;Minix V2 fs support.&n; */
+multiline_comment|/*&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Copyright (C) 1996  Gertjan van Wingerde    (gertjan@cs.vu.nl)&n; *&t;Minix V2 fs support.&n; *&n; *  Modified for 680x0 by Andreas Schwab&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
@@ -1217,7 +1217,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|set_bit
+id|minix_set_bit
 c_func
 (paren
 l_int|0
@@ -1230,7 +1230,7 @@ op_member_access_from_pointer
 id|b_data
 )paren
 suffix:semicolon
-id|set_bit
+id|minix_set_bit
 c_func
 (paren
 l_int|0

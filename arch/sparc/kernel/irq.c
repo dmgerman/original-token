@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.57 1996/11/30 02:13:53 davem Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.58 1996/12/18 06:33:41 tridge Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1615,23 +1615,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-r_extern
-r_void
-id|ap_init_IRQ
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-id|ap_init_IRQ
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -1658,6 +1641,19 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|ap1000
+suffix:colon
+macro_line|#if CONFIG_AP1000
+id|ap_init_IRQ
+c_func
+(paren
+)paren
+suffix:semicolon
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|prom_printf

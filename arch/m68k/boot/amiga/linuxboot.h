@@ -3,7 +3,111 @@ macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/zorro.h&gt;
 multiline_comment|/*&n;     *  Amiboot Version&n;     */
 DECL|macro|AMIBOOT_VERSION
-mdefine_line|#define AMIBOOT_VERSION&t;&t;&quot;4.0&quot;
+mdefine_line|#define AMIBOOT_VERSION&t;&t;&quot;5.1&quot;
+multiline_comment|/*&n;     *  Amiga Bootinfo Definitions&n;     *&n;     *  All limits herein are `soft&squot; limits, i.e. they don&squot;t put constraints&n;     *  on the actual parameters in the kernel.&n;     */
+DECL|struct|amiga_bootinfo
+r_struct
+id|amiga_bootinfo
+(brace
+DECL|member|machtype
+id|u_long
+id|machtype
+suffix:semicolon
+multiline_comment|/* machine type */
+DECL|member|cputype
+id|u_long
+id|cputype
+suffix:semicolon
+multiline_comment|/* system CPU */
+DECL|member|fputype
+id|u_long
+id|fputype
+suffix:semicolon
+multiline_comment|/* system FPU */
+DECL|member|mmutype
+id|u_long
+id|mmutype
+suffix:semicolon
+multiline_comment|/* system MMU */
+DECL|member|num_memory
+r_int
+id|num_memory
+suffix:semicolon
+multiline_comment|/* # of memory blocks found */
+DECL|member|memory
+r_struct
+id|mem_info
+id|memory
+(braket
+id|NUM_MEMINFO
+)braket
+suffix:semicolon
+multiline_comment|/* memory description */
+DECL|member|ramdisk
+r_struct
+id|mem_info
+id|ramdisk
+suffix:semicolon
+multiline_comment|/* ramdisk description */
+DECL|member|command_line
+r_char
+id|command_line
+(braket
+id|CL_SIZE
+)braket
+suffix:semicolon
+multiline_comment|/* kernel command line parameters */
+DECL|member|model
+id|u_long
+id|model
+suffix:semicolon
+multiline_comment|/* Amiga Model */
+DECL|member|num_autocon
+r_int
+id|num_autocon
+suffix:semicolon
+multiline_comment|/* # of autoconfig devices found */
+DECL|member|autocon
+r_struct
+id|ConfigDev
+id|autocon
+(braket
+id|ZORRO_NUM_AUTO
+)braket
+suffix:semicolon
+multiline_comment|/* autoconfig devices */
+DECL|member|chip_size
+id|u_long
+id|chip_size
+suffix:semicolon
+multiline_comment|/* size of chip memory (bytes) */
+DECL|member|vblank
+id|u_char
+id|vblank
+suffix:semicolon
+multiline_comment|/* VBLANK frequency */
+DECL|member|psfreq
+id|u_char
+id|psfreq
+suffix:semicolon
+multiline_comment|/* power supply frequency */
+DECL|member|eclock
+id|u_long
+id|eclock
+suffix:semicolon
+multiline_comment|/* EClock frequency */
+DECL|member|chipset
+id|u_long
+id|chipset
+suffix:semicolon
+multiline_comment|/* native chipset present */
+DECL|member|serper
+id|u_short
+id|serper
+suffix:semicolon
+multiline_comment|/* serial port period */
+)brace
+suffix:semicolon
 multiline_comment|/*&n;     *  Parameters passed to linuxboot()&n;     */
 DECL|struct|linuxboot_args
 r_struct
@@ -38,6 +142,10 @@ suffix:semicolon
 DECL|member|reset_boards
 r_int
 id|reset_boards
+suffix:semicolon
+DECL|member|baud
+id|u_int
+id|baud
 suffix:semicolon
 DECL|member|puts
 r_void
@@ -178,7 +286,7 @@ id|modify_bootinfo
 )paren
 (paren
 r_struct
-id|bootinfo
+id|amiga_bootinfo
 op_star
 id|bi
 )paren

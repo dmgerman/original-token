@@ -834,6 +834,9 @@ comma
 id|pgprot_t
 )paren
 suffix:semicolon
+multiline_comment|/* to find an entry in a kernel page-table-directory */
+DECL|macro|pgd_offset_k
+mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
 multiline_comment|/* to find an entry in a page-table-directory */
 r_extern
 id|pgd_t

@@ -1,0 +1,263 @@
+multiline_comment|/*&n; * drivers/sbus/audio/amd7930.h&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; *&n; * Definitions for the AMD79C30 Digital Subscriber Controller which is&n; * used as an audio chip in sun4c architecture machines. The&n; * information in this file is based on Advanced Micro Devices&n; * Publication 09893, Rev G, Amendment /0, Final (a.k.a. the data&n; * sheet).&n; */
+macro_line|#ifndef _AMD7930_H_
+DECL|macro|_AMD7930_H_
+mdefine_line|#define _AMD7930_H_
+macro_line|#include &lt;linux/types.h&gt;
+multiline_comment|/* Register interface presented to the CPU by the amd7930. */
+DECL|struct|amd7930
+r_struct
+id|amd7930
+(brace
+DECL|member|cr
+id|__volatile__
+id|__u8
+id|cr
+suffix:semicolon
+multiline_comment|/* Command Register (W) */
+DECL|macro|ir
+mdefine_line|#define ir cr&t;&t;&t;&t;/* Interrupt Register (R) */
+DECL|member|dr
+id|__volatile__
+id|__u8
+id|dr
+suffix:semicolon
+multiline_comment|/* Data Register (R/W) */
+DECL|member|dsr1
+id|__volatile__
+id|__u8
+id|dsr1
+suffix:semicolon
+multiline_comment|/* D-channel Status Register 1 (R) */
+DECL|member|der
+id|__volatile__
+id|__u8
+id|der
+suffix:semicolon
+multiline_comment|/* D-channel Error Register (R) */
+DECL|member|dctb
+id|__volatile__
+id|__u8
+id|dctb
+suffix:semicolon
+multiline_comment|/* D-channel Transmit Buffer (W) */
+DECL|macro|dcrb
+mdefine_line|#define dcrb dctb&t;&t;&t;/* D-channel Receive Buffer (R) */
+DECL|member|bbtb
+id|__volatile__
+id|__u8
+id|bbtb
+suffix:semicolon
+multiline_comment|/* Bb-channel Transmit Buffer (W) */
+DECL|macro|bbrb
+mdefine_line|#define bbrb bbtb&t;&t;&t;/* Bb-channel Receive Buffer (R) */
+DECL|member|bctb
+id|__volatile__
+id|__u8
+id|bctb
+suffix:semicolon
+multiline_comment|/* Bc-channel Transmit Buffer (W) */
+DECL|macro|bcrb
+mdefine_line|#define bcrb bctb&t;&t;&t;/* Bc-channel Receive Buffer (R) */
+DECL|member|dsr2
+id|__volatile__
+id|__u8
+id|dsr2
+suffix:semicolon
+multiline_comment|/* D-channel Status Register 2 (R) */
+)brace
+suffix:semicolon
+multiline_comment|/* The amd7930 has &quot;indirect registers&quot; which are accessed by writing&n; * the register number into the Command Register and then reading or&n; * writing values from the Data Register as appropriate. We define the&n; * AMR_* macros to be the indirect register numbers and AM_* macros to&n; * be bits in whatever register is referred to.&n; */
+multiline_comment|/* Initialization */
+DECL|macro|AMR_INIT
+mdefine_line|#define&t;AMR_INIT&t;&t;&t;0x21
+DECL|macro|AM_INIT_ACTIVE
+mdefine_line|#define&t;&t;AM_INIT_ACTIVE&t;&t;&t;0x01
+DECL|macro|AM_INIT_DATAONLY
+mdefine_line|#define&t;&t;AM_INIT_DATAONLY&t;&t;0x02
+DECL|macro|AM_INIT_POWERDOWN
+mdefine_line|#define&t;&t;AM_INIT_POWERDOWN&t;&t;0x03
+DECL|macro|AM_INIT_DISABLE_INTS
+mdefine_line|#define&t;&t;AM_INIT_DISABLE_INTS&t;&t;0x04
+DECL|macro|AMR_INIT2
+mdefine_line|#define AMR_INIT2&t;&t;&t;0x20
+DECL|macro|AM_INIT2_ENABLE_POWERDOWN
+mdefine_line|#define&t;&t;AM_INIT2_ENABLE_POWERDOWN&t;0x20
+DECL|macro|AM_INIT2_ENABLE_MULTIFRAME
+mdefine_line|#define&t;&t;AM_INIT2_ENABLE_MULTIFRAME&t;0x10
+multiline_comment|/* Line Interface Unit */
+DECL|macro|AMR_LIU_LSR
+mdefine_line|#define&t;AMR_LIU_LSR&t;&t;&t;0xA1
+DECL|macro|AMR_LIU_LPR
+mdefine_line|#define&t;AMR_LIU_LPR&t;&t;&t;0xA2
+DECL|macro|AMR_LIU_LMR1
+mdefine_line|#define&t;AMR_LIU_LMR1&t;&t;&t;0xA3
+DECL|macro|AMR_LIU_LMR2
+mdefine_line|#define&t;AMR_LIU_LMR2&t;&t;&t;0xA4
+DECL|macro|AMR_LIU_2_4
+mdefine_line|#define&t;AMR_LIU_2_4&t;&t;&t;0xA5
+DECL|macro|AMR_LIU_MF
+mdefine_line|#define&t;AMR_LIU_MF&t;&t;&t;0xA6
+DECL|macro|AMR_LIU_MFSB
+mdefine_line|#define&t;AMR_LIU_MFSB&t;&t;&t;0xA7
+DECL|macro|AMR_LIU_MFQB
+mdefine_line|#define&t;AMR_LIU_MFQB&t;&t;&t;0xA8
+multiline_comment|/* Multiplexor */
+DECL|macro|AMR_MUX_MCR1
+mdefine_line|#define&t;AMR_MUX_MCR1&t;&t;&t;0x41
+DECL|macro|AMR_MUX_MCR2
+mdefine_line|#define&t;AMR_MUX_MCR2&t;&t;&t;0x42
+DECL|macro|AMR_MUX_MCR3
+mdefine_line|#define&t;AMR_MUX_MCR3&t;&t;&t;0x43
+DECL|macro|AM_MUX_CHANNEL_B1
+mdefine_line|#define&t;&t;AM_MUX_CHANNEL_B1&t;&t;0x01
+DECL|macro|AM_MUX_CHANNEL_B2
+mdefine_line|#define&t;&t;AM_MUX_CHANNEL_B2&t;&t;0x02
+DECL|macro|AM_MUX_CHANNEL_Ba
+mdefine_line|#define&t;&t;AM_MUX_CHANNEL_Ba&t;&t;0x03
+DECL|macro|AM_MUX_CHANNEL_Bb
+mdefine_line|#define&t;&t;AM_MUX_CHANNEL_Bb&t;&t;0x04
+DECL|macro|AM_MUX_CHANNEL_Bc
+mdefine_line|#define&t;&t;AM_MUX_CHANNEL_Bc&t;&t;0x05
+DECL|macro|AM_MUX_CHANNEL_Bd
+mdefine_line|#define&t;&t;AM_MUX_CHANNEL_Bd&t;&t;0x06
+DECL|macro|AM_MUX_CHANNEL_Be
+mdefine_line|#define&t;&t;AM_MUX_CHANNEL_Be&t;&t;0x07
+DECL|macro|AM_MUX_CHANNEL_Bf
+mdefine_line|#define&t;&t;AM_MUX_CHANNEL_Bf&t;&t;0x08
+DECL|macro|AMR_MUX_MCR4
+mdefine_line|#define&t;AMR_MUX_MCR4&t;&t;&t;0x44
+DECL|macro|AM_MUX_MCR4_ENABLE_INTS
+mdefine_line|#define&t;&t;AM_MUX_MCR4_ENABLE_INTS&t;&t;0x08
+DECL|macro|AM_MUX_MCR4_REVERSE_Bb
+mdefine_line|#define&t;&t;AM_MUX_MCR4_REVERSE_Bb&t;&t;0x10
+DECL|macro|AM_MUX_MCR4_REVERSE_Bc
+mdefine_line|#define&t;&t;AM_MUX_MCR4_REVERSE_Bc&t;&t;0x20
+DECL|macro|AMR_MUX_1_4
+mdefine_line|#define&t;AMR_MUX_1_4&t;&t;&t;0x45
+multiline_comment|/* Main Audio Processor */
+DECL|macro|AMR_MAP_X
+mdefine_line|#define&t;AMR_MAP_X&t;&t;&t;0x61
+DECL|macro|AMR_MAP_R
+mdefine_line|#define&t;AMR_MAP_R&t;&t;&t;0x62
+DECL|macro|AMR_MAP_GX
+mdefine_line|#define&t;AMR_MAP_GX&t;&t;&t;0x63
+DECL|macro|AMR_MAP_GR
+mdefine_line|#define&t;AMR_MAP_GR&t;&t;&t;0x64
+DECL|macro|AMR_MAP_GER
+mdefine_line|#define&t;AMR_MAP_GER&t;&t;&t;0x65
+DECL|macro|AMR_MAP_STG
+mdefine_line|#define&t;AMR_MAP_STG&t;&t;&t;0x66
+DECL|macro|AMR_MAP_FTGR_1_2
+mdefine_line|#define&t;AMR_MAP_FTGR_1_2&t;&t;0x67
+DECL|macro|AMR_MAP_ATGR_1_2
+mdefine_line|#define&t;AMR_MAP_ATGR_1_2&t;&t;0x68
+DECL|macro|AMR_MAP_MMR1
+mdefine_line|#define&t;AMR_MAP_MMR1&t;&t;&t;0x69
+DECL|macro|AM_MAP_MMR1_ALAW
+mdefine_line|#define&t;&t;AM_MAP_MMR1_ALAW&t;&t;0x01
+DECL|macro|AM_MAP_MMR1_GX
+mdefine_line|#define&t;&t;AM_MAP_MMR1_GX&t;&t;&t;0x02
+DECL|macro|AM_MAP_MMR1_GR
+mdefine_line|#define&t;&t;AM_MAP_MMR1_GR&t;&t;&t;0x04
+DECL|macro|AM_MAP_MMR1_GER
+mdefine_line|#define&t;&t;AM_MAP_MMR1_GER&t;&t;&t;0x08
+DECL|macro|AM_MAP_MMR1_X
+mdefine_line|#define&t;&t;AM_MAP_MMR1_X&t;&t;&t;0x10
+DECL|macro|AM_MAP_MMR1_R
+mdefine_line|#define&t;&t;AM_MAP_MMR1_R&t;&t;&t;0x20
+DECL|macro|AM_MAP_MMR1_STG
+mdefine_line|#define&t;&t;AM_MAP_MMR1_STG&t;&t;&t;0x40
+DECL|macro|AM_MAP_MMR1_LOOPBACK
+mdefine_line|#define&t;&t;AM_MAP_MMR1_LOOPBACK&t;&t;0x80
+DECL|macro|AMR_MAP_MMR2
+mdefine_line|#define&t;AMR_MAP_MMR2&t;&t;&t;0x6A
+DECL|macro|AM_MAP_MMR2_AINB
+mdefine_line|#define&t;&t;AM_MAP_MMR2_AINB&t;&t;0x01
+DECL|macro|AM_MAP_MMR2_LS
+mdefine_line|#define&t;&t;AM_MAP_MMR2_LS&t;&t;&t;0x02
+DECL|macro|AM_MAP_MMR2_ENABLE_DTMF
+mdefine_line|#define&t;&t;AM_MAP_MMR2_ENABLE_DTMF&t;&t;0x04
+DECL|macro|AM_MAP_MMR2_ENABLE_TONEGEN
+mdefine_line|#define&t;&t;AM_MAP_MMR2_ENABLE_TONEGEN&t;0x08
+DECL|macro|AM_MAP_MMR2_ENABLE_TONERING
+mdefine_line|#define&t;&t;AM_MAP_MMR2_ENABLE_TONERING&t;0x10
+DECL|macro|AM_MAP_MMR2_DISABLE_HIGHPASS
+mdefine_line|#define&t;&t;AM_MAP_MMR2_DISABLE_HIGHPASS&t;0x20
+DECL|macro|AM_MAP_MMR2_DISABLE_AUTOZERO
+mdefine_line|#define&t;&t;AM_MAP_MMR2_DISABLE_AUTOZERO&t;0x40
+DECL|macro|AMR_MAP_1_10
+mdefine_line|#define&t;AMR_MAP_1_10&t;&t;&t;0x6B
+DECL|macro|AMR_MAP_MMR3
+mdefine_line|#define&t;AMR_MAP_MMR3&t;&t;&t;0x6C
+DECL|macro|AMR_MAP_STRA
+mdefine_line|#define&t;AMR_MAP_STRA&t;&t;&t;0x6D
+DECL|macro|AMR_MAP_STRF
+mdefine_line|#define&t;AMR_MAP_STRF&t;&t;&t;0x6E
+DECL|macro|AMR_MAP_PEAKX
+mdefine_line|#define&t;AMR_MAP_PEAKX&t;&t;&t;0x70
+DECL|macro|AMR_MAP_PEAKR
+mdefine_line|#define&t;AMR_MAP_PEAKR&t;&t;&t;0x71
+DECL|macro|AMR_MAP_15_16
+mdefine_line|#define&t;AMR_MAP_15_16&t;&t;&t;0x72
+multiline_comment|/* Data Link Controller */
+DECL|macro|AMR_DLC_FRAR_1_2_3
+mdefine_line|#define&t;AMR_DLC_FRAR_1_2_3&t;&t;0x81
+DECL|macro|AMR_DLC_SRAR_1_2_3
+mdefine_line|#define&t;AMR_DLC_SRAR_1_2_3&t;&t;0x82
+DECL|macro|AMR_DLC_TAR
+mdefine_line|#define&t;AMR_DLC_TAR&t;&t;&t;0x83
+DECL|macro|AMR_DLC_DRLR
+mdefine_line|#define&t;AMR_DLC_DRLR&t;&t;&t;0x84
+DECL|macro|AMR_DLC_DTCR
+mdefine_line|#define&t;AMR_DLC_DTCR&t;&t;&t;0x85
+DECL|macro|AMR_DLC_DMR1
+mdefine_line|#define&t;AMR_DLC_DMR1&t;&t;&t;0x86
+DECL|macro|AMR_DLC_DMR2
+mdefine_line|#define&t;AMR_DLC_DMR2&t;&t;&t;0x87
+DECL|macro|AMR_DLC_1_7
+mdefine_line|#define&t;AMR_DLC_1_7&t;&t;&t;0x88
+DECL|macro|AMR_DLC_DRCR
+mdefine_line|#define&t;AMR_DLC_DRCR&t;&t;&t;0x89
+DECL|macro|AMR_DLC_RNGR1
+mdefine_line|#define&t;AMR_DLC_RNGR1&t;&t;&t;0x8A
+DECL|macro|AMR_DLC_RNGR2
+mdefine_line|#define&t;AMR_DLC_RNGR2&t;&t;&t;0x8B
+DECL|macro|AMR_DLC_FRAR4
+mdefine_line|#define&t;AMR_DLC_FRAR4&t;&t;&t;0x8C
+DECL|macro|AMR_DLC_SRAR4
+mdefine_line|#define&t;AMR_DLC_SRAR4&t;&t;&t;0x8D
+DECL|macro|AMR_DLC_DMR3
+mdefine_line|#define&t;AMR_DLC_DMR3&t;&t;&t;0x8E
+DECL|macro|AMR_DLC_DMR4
+mdefine_line|#define&t;AMR_DLC_DMR4&t;&t;&t;0x8F
+DECL|macro|AMR_DLC_12_15
+mdefine_line|#define&t;AMR_DLC_12_15&t;&t;&t;0x90
+DECL|macro|AMR_DLC_ASR
+mdefine_line|#define&t;AMR_DLC_ASR&t;&t;&t;0x91
+DECL|macro|AMR_DLC_EFCR
+mdefine_line|#define&t;AMR_DLC_EFCR&t;&t;&t;0x92
+multiline_comment|/* Peripheral Port */
+DECL|macro|AMR_PP_PPCR1
+mdefine_line|#define&t;AMR_PP_PPCR1&t;&t;&t;0xC0
+DECL|macro|AMR_PP_PPSR
+mdefine_line|#define&t;AMR_PP_PPSR&t;&t;&t;0xC1
+DECL|macro|AMR_PP_PPIER
+mdefine_line|#define&t;AMR_PP_PPIER&t;&t;&t;0xC2
+DECL|macro|AMR_PP_MTDR
+mdefine_line|#define&t;AMR_PP_MTDR&t;&t;&t;0xC3
+DECL|macro|AMR_PP_MRDR
+mdefine_line|#define&t;AMR_PP_MRDR&t;&t;&t;0xC3
+DECL|macro|AMR_PP_CITDR0
+mdefine_line|#define&t;AMR_PP_CITDR0&t;&t;&t;0xC4
+DECL|macro|AMR_PP_CIRDR0
+mdefine_line|#define&t;AMR_PP_CIRDR0&t;&t;&t;0xC4
+DECL|macro|AMR_PP_CITDR1
+mdefine_line|#define&t;AMR_PP_CITDR1&t;&t;&t;0xC5
+DECL|macro|AMR_PP_CIRDR1
+mdefine_line|#define&t;AMR_PP_CIRDR1&t;&t;&t;0xC5
+DECL|macro|AMR_PP_PPCR2
+mdefine_line|#define&t;AMR_PP_PPCR2&t;&t;&t;0xC8
+DECL|macro|AMR_PP_PPCR3
+mdefine_line|#define&t;AMR_PP_PPCR3&t;&t;&t;0xC9
+macro_line|#endif
+eof

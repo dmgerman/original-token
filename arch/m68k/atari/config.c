@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atarihdreg.h&gt;
@@ -17,7 +18,16 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
-r_extern
+DECL|variable|atari_mch_cookie
+id|u_long
+id|atari_mch_cookie
+suffix:semicolon
+DECL|variable|atari_hw_present
+r_struct
+id|atari_hw_present
+id|atari_hw_present
+suffix:semicolon
+r_static
 r_void
 id|atari_sched_init
 c_func
@@ -148,8 +158,28 @@ op_star
 id|buf
 )paren
 suffix:semicolon
+r_static
+r_void
+id|atari_get_model
+c_func
+(paren
+r_char
+op_star
+id|model
+)paren
+suffix:semicolon
+r_static
+r_int
+id|atari_get_hardware_list
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+suffix:semicolon
 multiline_comment|/* atari specific timer functions */
-r_extern
+r_static
 r_int
 r_int
 id|atari_gettimeoffset
@@ -157,7 +187,7 @@ id|atari_gettimeoffset
 r_void
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_void
 id|atari_mste_gettod
 (paren
@@ -180,7 +210,7 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_void
 id|atari_gettod
 (paren
@@ -203,7 +233,7 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_int
 id|atari_mste_hwclk
 (paren
@@ -214,7 +244,7 @@ id|hwclk_time
 op_star
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_int
 id|atari_hwclk
 (paren
@@ -225,7 +255,7 @@ id|hwclk_time
 op_star
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_int
 id|atari_mste_set_clock_mmss
 (paren
@@ -233,7 +263,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_int
 id|atari_set_clock_mmss
 (paren
@@ -255,7 +285,7 @@ r_int
 id|ticks
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_void
 id|atari_reset
 c_func
@@ -284,7 +314,7 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-r_extern
+r_static
 r_void
 id|atari_waitbut
 (paren
@@ -307,7 +337,7 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_void
 id|atari_debug_init
 (paren
@@ -324,6 +354,14 @@ op_star
 comma
 r_int
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|atari_syms_export
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -740,6 +778,59 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     *  Parse an Atari-specific record in the bootinfo&n;     */
+DECL|function|atari_parse_bootinfo
+r_int
+id|atari_parse_bootinfo
+c_func
+(paren
+r_const
+r_struct
+id|bi_record
+op_star
+id|record
+)paren
+(brace
+r_int
+id|unknown
+op_assign
+l_int|0
+suffix:semicolon
+r_const
+id|u_long
+op_star
+id|data
+op_assign
+id|record-&gt;data
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|record-&gt;tag
+)paren
+(brace
+r_case
+id|BI_ATARI_MCH_COOKIE
+suffix:colon
+id|atari_mch_cookie
+op_assign
+op_star
+id|data
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|unknown
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_return
+id|unknown
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     *  Setup the Atari configuration info&n;     */
 DECL|function|config_atari
 r_void
 id|config_atari
@@ -748,6 +839,20 @@ c_func
 r_void
 )paren
 (brace
+id|memset
+c_func
+(paren
+op_amp
+id|atari_hw_present
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|atari_hw_present
+)paren
+)paren
+suffix:semicolon
 id|mach_sched_init
 op_assign
 id|atari_sched_init
@@ -783,6 +888,14 @@ suffix:semicolon
 id|mach_disable_irq
 op_assign
 id|atari_disable_irq
+suffix:semicolon
+id|mach_get_model
+op_assign
+id|atari_get_model
+suffix:semicolon
+id|mach_get_hardware_list
+op_assign
+id|atari_get_hardware_list
 suffix:semicolon
 id|mach_get_irq_list
 op_assign
@@ -834,6 +947,10 @@ suffix:semicolon
 id|mach_video_setup
 op_assign
 id|atari_video_setup
+suffix:semicolon
+id|mach_syms_export
+op_assign
+id|atari_syms_export
 suffix:semicolon
 id|kd_mksound
 op_assign
@@ -1745,6 +1862,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|atari_sched_init
+r_static
 r_void
 id|atari_sched_init
 c_func
@@ -1803,6 +1921,7 @@ DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE 10000
 multiline_comment|/* This is always executed with interrupts disabled.  */
 DECL|function|atari_gettimeoffset
+r_static
 r_int
 r_int
 id|atari_gettimeoffset
@@ -2098,6 +2217,7 @@ mdefine_line|#define&t;RTC_READ(reg)&t;&t;&t;&t;&bslash;&n;    ({&t;unsigned cha
 DECL|macro|RTC_WRITE
 mdefine_line|#define&t;RTC_WRITE(reg,val)&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;outb(reg,&amp;tt_rtc.regsel);&t;&bslash;&n;&t;&t;tt_rtc.data = (val);&t;&t;&bslash;&n;&t;} while(0)
 DECL|function|atari_mste_gettod
+r_static
 r_void
 id|atari_mste_gettod
 (paren
@@ -2267,6 +2387,7 @@ l_int|80
 suffix:semicolon
 )brace
 DECL|function|atari_gettod
+r_static
 r_void
 id|atari_gettod
 (paren
@@ -2541,6 +2662,7 @@ suffix:semicolon
 DECL|macro|HWCLK_POLL_INTERVAL
 mdefine_line|#define HWCLK_POLL_INTERVAL&t;5
 DECL|function|atari_mste_hwclk
+r_static
 r_int
 id|atari_mste_hwclk
 c_func
@@ -2875,6 +2997,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|atari_hwclk
+r_static
 r_int
 id|atari_hwclk
 c_func
@@ -3495,6 +3618,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|atari_mste_set_clock_mmss
+r_static
 r_int
 id|atari_mste_set_clock_mmss
 (paren
@@ -3606,6 +3730,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|atari_set_clock_mmss
+r_static
 r_int
 id|atari_set_clock_mmss
 (paren
@@ -3784,6 +3909,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|atari_waitbut
+r_static
 r_void
 id|atari_waitbut
 (paren
@@ -4134,6 +4260,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|atari_debug_init
+r_static
 r_void
 id|atari_debug_init
 c_func
@@ -4180,7 +4307,7 @@ id|m68k_debug_device
 comma
 (paren
 (paren
-id|boot_info.bi_atari.mch_cookie
+id|atari_mch_cookie
 op_rshift
 l_int|16
 )paren
@@ -4535,6 +4662,7 @@ suffix:semicolon
 multiline_comment|/* ++roman:&n; *&n; * This function does a reset on machines that lack the ability to&n; * assert the processor&squot;s _RESET signal somehow via hardware. It is&n; * based on the fact that you can find the initial SP and PC values&n; * after a reset at physical addresses 0 and 4. This works pretty well&n; * for Atari machines, since the lowest 8 bytes of physical memory are&n; * really ROM (mapped by hardware). For other 680x0 machines: don&squot;t&n; * know if it works...&n; *&n; * To get the values at addresses 0 and 4, the MMU better is turned&n; * off first. After that, we have to jump into physical address space&n; * (the PC before the pmove statement points to the virtual address of&n; * the code). Getting that physical address is not hard, but the code&n; * becomes a bit complex since I&squot;ve tried to ensure that the jump&n; * statement after the pmove is in the cache already (otherwise the&n; * processor can&squot;t fetch it!). For that, the code first jumps to the&n; * jump statement with the (virtual) address of the pmove section in&n; * an address register . The jump statement is surely in the cache&n; * now. After that, that physical address of the reset code is loaded&n; * into the same address register, pmove is done and the same jump&n; * statements goes to the reset code. Since there are not many&n; * statements between the two jumps, I hope it stays in the cache.&n; *&n; * The C code makes heavy use of the GCC features that you can get the&n; * address of a C label. No hope to compile this with another compiler&n; * than GCC!&n; */
 multiline_comment|/* ++andreas: no need for complicated code, just depend on prefetch */
 DECL|function|atari_reset
+r_static
 r_void
 id|atari_reset
 (paren
@@ -4615,8 +4743,9 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;moveq&t;#0,%/d0&bslash;n&bslash;t&quot;
-l_string|&quot;.long&t;0x4e7b0808&quot;
-multiline_comment|/* movec d0,pcr */
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%d0,%%pcr&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 suffix:colon
@@ -4631,10 +4760,10 @@ l_string|&quot;movel    %0,%/d0&bslash;n&bslash;t&quot;
 l_string|&quot;andl     #0xff000000,%/d0&bslash;n&bslash;t&quot;
 l_string|&quot;orw      #0xe020,%/d0&bslash;n&bslash;t&quot;
 multiline_comment|/* map 16 MB, enable, cacheable */
-l_string|&quot;.long    0x4e7b0004&bslash;n&bslash;t&quot;
-multiline_comment|/* movec d0,itt0 */
-l_string|&quot;.long    0x4e7b0006&bslash;n&bslash;t&quot;
-multiline_comment|/* movec d0,dtt0 */
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;movec    %%d0,%%itt0&bslash;n&bslash;t&quot;
+l_string|&quot;movec    %%d0,%%dtt0&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&bslash;n&bslash;t&quot;
 l_string|&quot;jmp   %0@&bslash;n&bslash;t&quot;
 suffix:colon
 multiline_comment|/* no outputs */
@@ -4654,12 +4783,11 @@ id|__volatile__
 (paren
 l_string|&quot;moveq #0,%/d0&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf4d8&bslash;n&bslash;t&quot;
-multiline_comment|/* cinva i/d */
-l_string|&quot;.word 0xf518&bslash;n&bslash;t&quot;
-multiline_comment|/* pflusha */
-l_string|&quot;.long 0x4e7b0003&bslash;n&bslash;t&quot;
-multiline_comment|/* movec d0,tc */
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cinva %%bc&bslash;n&bslash;t&quot;
+l_string|&quot;pflusha&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%d0,%%tc&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&bslash;n&bslash;t&quot;
 l_string|&quot;jmp %0@&quot;
 suffix:colon
 multiline_comment|/* no outputs */
@@ -4696,6 +4824,7 @@ id|reset_addr
 suffix:semicolon
 )brace
 DECL|function|atari_get_model
+r_static
 r_void
 id|atari_get_model
 c_func
@@ -4716,7 +4845,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|boot_info.bi_atari.mch_cookie
+id|atari_mch_cookie
 op_rshift
 l_int|16
 )paren
@@ -4757,7 +4886,7 @@ r_if
 c_cond
 (paren
 (paren
-id|boot_info.bi_atari.mch_cookie
+id|atari_mch_cookie
 op_amp
 l_int|0xffff
 )paren
@@ -4832,7 +4961,7 @@ id|model
 comma
 l_string|&quot;(unknown mach cookie 0x%lx)&quot;
 comma
-id|boot_info.bi_atari.mch_cookie
+id|atari_mch_cookie
 )paren
 suffix:semicolon
 r_break
@@ -4840,6 +4969,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|atari_get_hardware_list
+r_static
 r_int
 id|atari_get_hardware_list
 c_func
@@ -4865,7 +4995,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|boot_info.num_memory
+id|m68k_num_memory
 suffix:semicolon
 id|i
 op_increment
@@ -4880,7 +5010,7 @@ id|len
 comma
 l_string|&quot;&bslash;t%3ld MB at 0x%08lx (%s)&bslash;n&quot;
 comma
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -4889,7 +5019,7 @@ id|size
 op_rshift
 l_int|20
 comma
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -4897,7 +5027,7 @@ dot
 id|addr
 comma
 (paren
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket

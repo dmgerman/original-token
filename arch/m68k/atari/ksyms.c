@@ -15,14 +15,26 @@ r_int
 id|cmd
 )paren
 suffix:semicolon
-DECL|variable|mach_atari_symbol_table
+DECL|variable|atari_symbol_table
 r_static
 r_struct
 id|symbol_table
-id|mach_atari_symbol_table
+id|atari_symbol_table
 op_assign
 (brace
 macro_line|#include &lt;linux/symtab_begin.h&gt;
+id|X
+c_func
+(paren
+id|atari_mch_cookie
+)paren
+comma
+id|X
+c_func
+(paren
+id|atari_hw_present
+)paren
+comma
 id|X
 c_func
 (paren
@@ -86,6 +98,12 @@ comma
 id|X
 c_func
 (paren
+id|atari_mch_cookie
+)paren
+comma
+id|X
+c_func
+(paren
 id|ikbd_write
 )paren
 comma
@@ -122,9 +140,9 @@ comma
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon
-DECL|function|mach_atari_syms_export
+DECL|function|atari_syms_export
 r_void
-id|mach_atari_syms_export
+id|atari_syms_export
 c_func
 (paren
 r_void
@@ -134,7 +152,7 @@ id|register_symtab
 c_func
 (paren
 op_amp
-id|mach_atari_symbol_table
+id|atari_symbol_table
 )paren
 suffix:semicolon
 )brace

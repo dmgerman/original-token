@@ -1,7 +1,7 @@
 macro_line|#ifndef _M68K_PGTABLE_H
 DECL|macro|_M68K_PGTABLE_H
 mdefine_line|#define _M68K_PGTABLE_H
-macro_line|#include&lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the m68k page table tree.&n; */
 multiline_comment|/*&n; * flush all atc entries (user-space entries only for the 680[46]0).&n; */
@@ -24,18 +24,17 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.word 0xf510&bslash;n&quot;
-op_scope_resolution
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;pflushan&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* pflushan */
 r_else
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;pflusha&bslash;n&quot;
-op_scope_resolution
+l_string|&quot;pflusha&quot;
 )paren
 suffix:semicolon
 )brace
@@ -57,28 +56,18 @@ c_cond
 id|CPU_IS_040_OR_060
 )paren
 (brace
-r_register
-r_int
-r_int
-id|a0
-id|__asm__
-(paren
-l_string|&quot;a0&quot;
-)paren
-op_assign
-id|addr
-suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.word 0xf508&quot;
-multiline_comment|/* pflush (%a0) */
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;pflush (%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|a0
+id|addr
 )paren
 )paren
 suffix:semicolon
@@ -120,18 +109,17 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.word 0xf518&bslash;n&quot;
-op_scope_resolution
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;pflusha&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* pflusha */
 r_else
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;pflusha&bslash;n&quot;
-op_scope_resolution
+l_string|&quot;pflusha&quot;
 )paren
 suffix:semicolon
 )brace
@@ -228,7 +216,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
-mdefine_line|#define set_pte(pteptr, pteval) do{&t;&bslash;&n;&t;((*(pteptr)) = (pteval));&t;&bslash;&n;&t;if (CPU_IS_060)&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&quot;.word 0xf518&bslash;n&quot;::); /* pflusha */ &bslash;&n;&t;} while(0)
+mdefine_line|#define set_pte(pteptr, pteval)&t;&t;&t;&t;&t;&bslash;&n;&t;do{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;*(pteptr) = (pteval);&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_060)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&quot;.chip 68060&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;pflusha&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;.chip 68k&quot;);&t;&t;&bslash;&n;&t;} while(0)
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;22
@@ -1483,45 +1471,49 @@ id|CPU_IS_040_OR_060
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;movel %0@,%/d0&bslash;n&bslash;t&quot;
-l_string|&quot;.long 0x4e7b0806&bslash;n&bslash;t&quot;
-multiline_comment|/* movec d0,urp */
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;movec %0,%%urp&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
-l_string|&quot;a&quot;
+l_string|&quot;r&quot;
 (paren
-op_amp
 id|tsk-&gt;tss.crp
 (braket
 l_int|1
 )braket
 )paren
-suffix:colon
-l_string|&quot;d0&quot;
 )paren
 suffix:semicolon
 r_else
+(brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;movec  %/cacr,%/d0&bslash;n&bslash;t&quot;
-l_string|&quot;oriw #0x0808,%/d0&bslash;n&bslash;t&quot;
-l_string|&quot;movec %/d0,%/cacr&bslash;n&bslash;t&quot;
-l_string|&quot;pmove %0@,%/crp&bslash;n&bslash;t&quot;
+l_string|&quot;movec  %%cacr,%0&bslash;n&bslash;t&quot;
+l_string|&quot;orw #0x0808,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movec %0,%%cacr&bslash;n&bslash;t&quot;
+l_string|&quot;pmove %1,%%crp&bslash;n&bslash;t&quot;
 suffix:colon
-suffix:colon
-l_string|&quot;a&quot;
+l_string|&quot;=d&quot;
 (paren
-op_amp
+id|tmp
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
 id|tsk-&gt;tss.crp
 (braket
 l_int|0
 )braket
 )paren
-suffix:colon
-l_string|&quot;d0&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 DECL|macro|PAGE_DIR_OFFSET
@@ -1721,11 +1713,12 @@ id|CPU_IS_060
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;movel %0,%/a0&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf470&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;cpushp (%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;a&quot;
 (paren
 id|VTOP
 c_func
@@ -1733,8 +1726,6 @@ c_func
 id|vaddr
 )paren
 )paren
-suffix:colon
-l_string|&quot;a0&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2730,7 +2721,7 @@ id|get_pointer_table
 suffix:semicolon
 )brace
 DECL|macro|flush_icache
-mdefine_line|#define flush_icache() &bslash;&n;do { &bslash;&n;&t;if (CPU_IS_040_OR_060) &bslash;&n;&t;&t;asm __volatile__ (&quot;nop; .word 0xf498 /* cinva %%ic */&quot;); &bslash;&n;&t;else &bslash;&n;&t;&t;asm __volatile__ (&quot;movec %/cacr,%/d0;&quot; &bslash;&n;&t;&t;     &quot;oriw %0,%/d0;&quot; &bslash;&n;&t;&t;     &quot;movec %/d0,%/cacr&quot; &bslash;&n;&t;&t;     : /* no outputs */ &bslash;&n;&t;&t;     : &quot;i&quot; (FLUSH_I) &bslash;&n;&t;&t;     : &quot;d0&quot;); &bslash;&n;} while (0)
+mdefine_line|#define flush_icache()&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_040_OR_060)&t;&t;&t;&t;&bslash;&n;&t;&t;asm __volatile__ (&quot;nop&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;  &quot;.chip 68040&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;&t;  &quot;cinva %%ic&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;&t;  &quot;.chip 68k&quot;);&t;&t;&bslash;&n;&t;else {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _tmp;&t;&t;&t;&bslash;&n;&t;&t;asm __volatile__ (&quot;movec %%cacr,%0&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;     &quot;orw %1,%0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;     &quot;movec %0,%%cacr&quot;&t;&t;&t;&bslash;&n;&t;&t;     : &quot;=&amp;d&quot; (_tmp)&t;&t;&t;&bslash;&n;&t;&t;     : &quot;id&quot; (FLUSH_I));&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * invalidate the cache for the specified memory range.&n; * It starts at the physical address specified for&n; * the given number of bytes.&n; */
 r_extern
 r_void
@@ -2777,9 +2768,9 @@ DECL|macro|FLUSH_I
 mdefine_line|#define FLUSH_I &t;(0x00000008)
 multiline_comment|/* This is needed whenever the virtual mapping of the current&n;   process changes.  */
 DECL|macro|__flush_cache_all
-mdefine_line|#define __flush_cache_all()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_040_OR_060)&t;&t;&t;&t;&t;        &bslash;&n;               __asm__ __volatile__ (&quot;nop; .word 0xf478&bslash;n&quot; ::);         &bslash;&n;        else                                                            &bslash;&n;&t;       __asm__ __volatile__ (&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;orw %0,%%d0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;movec %%d0,%%cacr&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     : : &quot;di&quot; (FLUSH_I_AND_D) : &quot;d0&quot;);&t;&bslash;&n;    } while (0)
+mdefine_line|#define __flush_cache_all()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_040_OR_060)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      &quot;.chip 68040&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      &quot;cpusha %dc&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      &quot;.chip 68k&quot;);&t;&t;&t;&bslash;&n;&t;else {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _tmp;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (&quot;movec %%cacr,%0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;      &quot;orw %1,%0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      &quot;movec %0,%%cacr&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=&amp;d&quot; (_tmp)&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;di&quot; (FLUSH_I_AND_D));&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    } while (0)
 DECL|macro|__flush_cache_030
-mdefine_line|#define __flush_cache_030()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_020_OR_030)&t;&t;&t;&t;&t;&bslash;&n;&t;       __asm__ __volatile__ (&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;orw %0,%%d0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;     &quot;movec %%d0,%%cacr&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;     : : &quot;di&quot; (FLUSH_I_AND_D) : &quot;d0&quot;);&t;&bslash;&n;    } while (0)
+mdefine_line|#define __flush_cache_030()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_020_OR_030) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _tmp;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (&quot;movec %%cacr,%0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;      &quot;orw %1,%0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      &quot;movec %0,%%cacr&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=&amp;d&quot; (_tmp)&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;di&quot; (FLUSH_I_AND_D));&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    } while (0)
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all() __flush_cache_all()
 DECL|function|flush_cache_mm
@@ -2943,53 +2934,52 @@ c_cond
 id|CPU_IS_040_OR_060
 )paren
 (brace
-r_register
-r_int
-r_int
-id|tmp
-id|__asm
+id|__asm__
+id|__volatile__
 (paren
-l_string|&quot;a0&quot;
-)paren
-op_assign
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpushp %%dc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;cinvp %%ic,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
 id|VTOP
 c_func
 (paren
 id|address
 )paren
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf470 /* cpushp %%dc,(%0) */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf490 /* cinvp %%ic,(%0) */&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-id|tmp
 )paren
 )paren
 suffix:semicolon
 )brace
 r_else
+(brace
+r_int
+r_int
+id|_tmp
+suffix:semicolon
 id|__asm
 r_volatile
 (paren
-l_string|&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;
-l_string|&quot;orw %0,%%d0&bslash;n&bslash;t&quot;
-l_string|&quot;movec %%d0,%%cacr&quot;
+l_string|&quot;movec %%cacr,%0&bslash;n&bslash;t&quot;
+l_string|&quot;orw %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movec %0,%%cacr&quot;
 suffix:colon
+l_string|&quot;=&amp;d&quot;
+(paren
+id|_tmp
+)paren
 suffix:colon
 l_string|&quot;di&quot;
 (paren
 id|FLUSH_I
 )paren
-suffix:colon
-l_string|&quot;d0&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Push n pages at kernel virtual address and clear the icache */
 DECL|function|flush_pages_to_ram
@@ -3019,32 +3009,23 @@ id|n
 op_decrement
 )paren
 (brace
-r_register
-r_int
-r_int
-id|tmp
-id|__asm
+id|__asm__
+id|__volatile__
 (paren
-l_string|&quot;a0&quot;
-)paren
-op_assign
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;cpushp %%dc,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;cinvp %%ic,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
 id|VTOP
 c_func
 (paren
 id|address
 )paren
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf470 /* cpushp %%dc,(%0) */&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf490 /* cinvp %%ic,(%0) */&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-id|tmp
 )paren
 )paren
 suffix:semicolon
@@ -3055,22 +3036,30 @@ suffix:semicolon
 )brace
 )brace
 r_else
+(brace
+r_int
+r_int
+id|_tmp
+suffix:semicolon
 id|__asm
 r_volatile
 (paren
-l_string|&quot;movec %%cacr,%%d0&bslash;n&bslash;t&quot;
-l_string|&quot;orw %0,%%d0&bslash;n&bslash;t&quot;
-l_string|&quot;movec %%d0,%%cacr&quot;
+l_string|&quot;movec %%cacr,%0&bslash;n&bslash;t&quot;
+l_string|&quot;orw %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movec %0,%%cacr&quot;
 suffix:colon
+l_string|&quot;=&amp;d&quot;
+(paren
+id|_tmp
+)paren
 suffix:colon
 l_string|&quot;di&quot;
 (paren
 id|FLUSH_I
 )paren
-suffix:colon
-l_string|&quot;d0&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Check if the addr/len goes up to the end of a physical&n; * memory chunk.  Used for DMA functions.&n; */
 r_int

@@ -3,6 +3,234 @@ macro_line|#ifndef _LINUX_ATARIHW_H_
 DECL|macro|_LINUX_ATARIHW_H_
 mdefine_line|#define _LINUX_ATARIHW_H_
 macro_line|#include &lt;linux/types.h&gt;
+r_extern
+id|u_long
+id|atari_mch_cookie
+suffix:semicolon
+multiline_comment|/* mch_cookie values (upper word) */
+DECL|macro|ATARI_MCH_ST
+mdefine_line|#define ATARI_MCH_ST&t;&t;0
+DECL|macro|ATARI_MCH_STE
+mdefine_line|#define ATARI_MCH_STE&t;&t;1
+DECL|macro|ATARI_MCH_TT
+mdefine_line|#define ATARI_MCH_TT&t;&t;2
+DECL|macro|ATARI_MCH_FALCON
+mdefine_line|#define ATARI_MCH_FALCON&t;3
+multiline_comment|/*&n; * Define several Hardware-Chips for indication so that for the ATARI we do&n; * no longer decide whether it is a Falcon or other machine . It&squot;s just&n; * important what hardware the machine uses&n; */
+multiline_comment|/* ++roman 08/08/95: rewritten from ORing constants to a C bitfield */
+DECL|macro|ATARIHW_DECLARE
+mdefine_line|#define ATARIHW_DECLARE(name)&t;unsigned name : 1
+DECL|macro|ATARIHW_SET
+mdefine_line|#define ATARIHW_SET(name)&t;(atari_hw_present.name = 1)
+DECL|macro|ATARIHW_PRESENT
+mdefine_line|#define ATARIHW_PRESENT(name)&t;(atari_hw_present.name)
+DECL|struct|atari_hw_present
+r_struct
+id|atari_hw_present
+(brace
+multiline_comment|/* video hardware */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|STND_SHIFTER
+)paren
+suffix:semicolon
+multiline_comment|/* ST-Shifter - no base low ! */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|EXTD_SHIFTER
+)paren
+suffix:semicolon
+multiline_comment|/* STe-Shifter - 24 bit address */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|TT_SHIFTER
+)paren
+suffix:semicolon
+multiline_comment|/* TT-Shifter */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|VIDEL_SHIFTER
+)paren
+suffix:semicolon
+multiline_comment|/* Falcon-Shifter */
+multiline_comment|/* sound hardware */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|YM_2149
+)paren
+suffix:semicolon
+multiline_comment|/* Yamaha YM 2149 */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|PCM_8BIT
+)paren
+suffix:semicolon
+multiline_comment|/* PCM-Sound in STe-ATARI */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|CODEC
+)paren
+suffix:semicolon
+multiline_comment|/* CODEC Sound (Falcon) */
+multiline_comment|/* disk storage interfaces */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|TT_SCSI
+)paren
+suffix:semicolon
+multiline_comment|/* Directly mapped NCR5380 */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|ST_SCSI
+)paren
+suffix:semicolon
+multiline_comment|/* NCR5380 via ST-DMA (Falcon) */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|ACSI
+)paren
+suffix:semicolon
+multiline_comment|/* Standard ACSI like in STs */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|IDE
+)paren
+suffix:semicolon
+multiline_comment|/* IDE Interface */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|FDCSPEED
+)paren
+suffix:semicolon
+multiline_comment|/* 8/16 MHz switch for FDC */
+multiline_comment|/* other I/O hardware */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|ST_MFP
+)paren
+suffix:semicolon
+multiline_comment|/* The ST-MFP (there should be no Atari&n;&t;&t;&t;&t;&t;   without it... but who knows?) */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|TT_MFP
+)paren
+suffix:semicolon
+multiline_comment|/* 2nd MFP */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|SCC
+)paren
+suffix:semicolon
+multiline_comment|/* Serial Communications Contr. */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|ST_ESCC
+)paren
+suffix:semicolon
+multiline_comment|/* SCC Z83230 in an ST */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|ANALOG_JOY
+)paren
+suffix:semicolon
+multiline_comment|/* Paddle Interface for STe&n;&t;&t;&t;&t;&t;   and Falcon */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|MICROWIRE
+)paren
+suffix:semicolon
+multiline_comment|/* Microwire Interface */
+multiline_comment|/* DMA */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|STND_DMA
+)paren
+suffix:semicolon
+multiline_comment|/* 24 Bit limited ST-DMA */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|EXTD_DMA
+)paren
+suffix:semicolon
+multiline_comment|/* 32 Bit ST-DMA */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|SCSI_DMA
+)paren
+suffix:semicolon
+multiline_comment|/* DMA for the NCR5380 */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|SCC_DMA
+)paren
+suffix:semicolon
+multiline_comment|/* DMA for the SCC */
+multiline_comment|/* real time clocks */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|TT_CLK
+)paren
+suffix:semicolon
+multiline_comment|/* TT compatible clock chip */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|MSTE_CLK
+)paren
+suffix:semicolon
+multiline_comment|/* Mega ST(E) clock chip */
+multiline_comment|/* supporting hardware */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|SCU
+)paren
+suffix:semicolon
+multiline_comment|/* System Control Unit */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|BLITTER
+)paren
+suffix:semicolon
+multiline_comment|/* Blitter */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|VME
+)paren
+suffix:semicolon
+multiline_comment|/* VME Bus */
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|atari_hw_present
+id|atari_hw_present
+suffix:semicolon
 multiline_comment|/* Reading the MFP port register gives a machine independent delay, since the&n; * MFP always has a 8 MHz clock. This avoids problems with the varying length&n; * of nops on various machines. Somebody claimed that the tstb takes 600 ns.&n; */
 DECL|macro|MFPDELAY
 mdefine_line|#define&t;MFPDELAY() &bslash;&n;&t;__asm__ __volatile__ ( &quot;tstb %0&quot; : : &quot;m&quot; (mfp.par_dt_reg) : &quot;cc&quot; );

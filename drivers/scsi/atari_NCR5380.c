@@ -1,5 +1,5 @@
 multiline_comment|/* &n; * NCR 5380 generic driver routines.  These should make it *trivial*&n; * &t;to implement 5380 SCSI drivers under Linux with a non-trantor&n; *&t;architecture.&n; *&n; *&t;Note that these routines also work with NR53c400 family chips.&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 6. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
-multiline_comment|/*&n; * ++roman: To port the 5380 driver to the Atari, I had to do some changes in&n; * this file, too:&n; *&n; *  - Some of the debug statements were incorrect (undefined variables and the&n; *    like). I fixed that.&n; *&n; *  - In information_transfer(), I think a #ifdef was wrong. Looking at the&n; *    possible DMA transfer size should also happen for REAL_DMA. I added this&n; *    in the #if statement.&n; *&n; *  - When using real DMA, information_transfer() should return in a DATAOUT&n; *    phase after starting the DMA. It has nothing more to do.&n; *&n; *  - The interrupt service routine should run main after end of DMA, too (not&n; *    only after RESELECTION interrupts). Additionally, it should _not_ test&n; *    for more interrupts after running main, since a DMA process may have&n; *    been started and interrupts are turned on now. The new int could happen&n; *    inside the execution of NCR5380_intr(), leading to recursive&n; *    calls.&n; *&n; *  - I&squot;ve added a function merge_consecutive_buffers() that tries to&n; *    merge scatter-gather buffers that are located at consecutive&n; *    physical addresses and can be processed with the same DMA setup.&n; *    Since most scatter-gather operations work on a page (4K) of&n; *    4 buffers (1K), in more than 90% of all cases three interrupts and&n; *    DMA setup actions are saved.&n; *&n; * - I&squot;ve deleted all the stuff for AUTOPROBE_IRQ, REAL_DMA_POLL, PSEUDO_DMA&n; *    and USLEEP, because these were messing up readability and will never be&n; *    needed for Atari SCSI.&n; * &n; * - I&squot;ve revised the NCR5380_main() calling scheme (relax the &squot;main_running&squot;&n; *   stuff), and &squot;main&squot; is executed in a bottom half if awoken by an&n; *   interrupt.&n; *&n; * - The code was quite cluttered up by &quot;#if (NDEBUG &amp; NDEBUG_*) printk...&quot;&n; *   constructs. In my eyes, this made the source rather unreadable, so I&n; *   finally replaced that by the *_PRINTK() macros.&n; *&n; */
+multiline_comment|/*&n; * ++roman: To port the 5380 driver to the Atari, I had to do some changes in&n; * this file, too:&n; *&n; *  - Some of the debug statements were incorrect (undefined variables and the&n; *    like). I fixed that.&n; *&n; *  - In information_transfer(), I think a #ifdef was wrong. Looking at the&n; *    possible DMA transfer size should also happen for REAL_DMA. I added this&n; *    in the #if statement.&n; *&n; *  - When using real DMA, information_transfer() should return in a DATAOUT&n; *    phase after starting the DMA. It has nothing more to do.&n; *&n; *  - The interrupt service routine should run main after end of DMA, too (not&n; *    only after RESELECTION interrupts). Additionally, it should _not_ test&n; *    for more interrupts after running main, since a DMA process may have&n; *    been started and interrupts are turned on now. The new int could happen&n; *    inside the execution of NCR5380_intr(), leading to recursive&n; *    calls.&n; *&n; *  - I&squot;ve added a function merge_contiguous_buffers() that tries to&n; *    merge scatter-gather buffers that are located at contiguous&n; *    physical addresses and can be processed with the same DMA setup.&n; *    Since most scatter-gather operations work on a page (4K) of&n; *    4 buffers (1K), in more than 90% of all cases three interrupts and&n; *    DMA setup actions are saved.&n; *&n; * - I&squot;ve deleted all the stuff for AUTOPROBE_IRQ, REAL_DMA_POLL, PSEUDO_DMA&n; *    and USLEEP, because these were messing up readability and will never be&n; *    needed for Atari SCSI.&n; * &n; * - I&squot;ve revised the NCR5380_main() calling scheme (relax the &squot;main_running&squot;&n; *   stuff), and &squot;main&squot; is executed in a bottom half if awoken by an&n; *   interrupt.&n; *&n; * - The code was quite cluttered up by &quot;#if (NDEBUG &amp; NDEBUG_*) printk...&quot;&n; *   constructs. In my eyes, this made the source rather unreadable, so I&n; *   finally replaced that by the *_PRINTK() macros.&n; *&n; */
 multiline_comment|/*&n; * Further development / testing that should be done : &n; * 1.  Test linked command handling code after Eric is ready with &n; *     the high level code.&n; */
 macro_line|#if (NDEBUG &amp; NDEBUG_LISTS)
 DECL|macro|LIST
@@ -544,7 +544,6 @@ id|cmd-&gt;lun
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 1
 DECL|function|free_all_tags
 r_static
 r_void
@@ -632,14 +631,12 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif
 macro_line|#endif /* SUPPORT_TAGS */
-multiline_comment|/*&n; * Function: void merge_consecutive_buffers( Scsi_Cmnd *cmd )&n; *&n; * Purpose: Try to merge several scatter-gather requests into one DMA&n; *    transfer. This is possible if the scatter buffers lie on&n; *    physical consecutive addresses.&n; *&n; * Parameters: Scsi_Cmnd *cmd&n; *    The command to work on. The first scatter buffer&squot;s data are&n; *    assumed to be already transfered into ptr/this_residual.&n; */
-multiline_comment|/* A special issue is when the buffer is exactly at the end of the&n; * last physical memory chunk: VTOP would have to calculate the&n; * physical address just 1 byte behind the end of physical memory. But&n; * it will panic if given this address :-( So we need to avoid calling&n; * VTOP on addresses that don&squot;t exist. This is done by keeping&n; * &squot;endadr&squot; to be the real end address of the buffer, not one byte&n; * more (which would be easier).&n; */
-DECL|function|merge_consecutive_buffers
+multiline_comment|/*&n; * Function: void merge_contiguous_buffers( Scsi_Cmnd *cmd )&n; *&n; * Purpose: Try to merge several scatter-gather requests into one DMA&n; *    transfer. This is possible if the scatter buffers lie on&n; *    physical contiguous addresses.&n; *&n; * Parameters: Scsi_Cmnd *cmd&n; *    The command to work on. The first scatter buffer&squot;s data are&n; *    assumed to be already transfered into ptr/this_residual.&n; */
+DECL|function|merge_contiguous_buffers
 r_static
 r_void
-id|merge_consecutive_buffers
+id|merge_contiguous_buffers
 c_func
 (paren
 id|Scsi_Cmnd
@@ -649,7 +646,7 @@ id|cmd
 (brace
 r_int
 r_int
-id|endadr
+id|endaddr
 suffix:semicolon
 macro_line|#if (NDEBUG &amp; NDEBUG_MERGING)
 r_int
@@ -667,7 +664,7 @@ macro_line|#endif
 r_for
 c_loop
 (paren
-id|endadr
+id|endaddr
 op_assign
 id|VTOP
 c_func
@@ -678,45 +675,39 @@ id|cmd-&gt;SCp.this_residual
 op_minus
 l_int|1
 )paren
+op_plus
+l_int|1
 suffix:semicolon
 id|cmd-&gt;SCp.buffers_residual
 op_logical_and
 id|VTOP
 c_func
 (paren
-(paren
 id|cmd-&gt;SCp.buffer
-op_plus
+(braket
 l_int|1
-)paren
-op_member_access_from_pointer
+)braket
+dot
 id|address
 )paren
 op_eq
-id|endadr
-op_plus
-l_int|1
+id|endaddr
 suffix:semicolon
 )paren
 (brace
 id|MER_PRINTK
 c_func
 (paren
-l_string|&quot;%08lx == %08lx -&gt; merging&bslash;n&quot;
+l_string|&quot;VTOP(%p) == %08lx -&gt; merging&bslash;n&quot;
 comma
-id|VTOP
-c_func
-(paren
-(paren
 id|cmd-&gt;SCp.buffer
-op_plus
+(braket
 l_int|1
-)paren
-op_member_access_from_pointer
+)braket
+dot
 id|address
-)paren
 comma
-id|endadr
+id|endaddr
 )paren
 suffix:semicolon
 macro_line|#if (NDEBUG &amp; NDEBUG_MERGING)
@@ -734,7 +725,7 @@ id|cmd-&gt;SCp.this_residual
 op_add_assign
 id|cmd-&gt;SCp.buffer-&gt;length
 suffix:semicolon
-id|endadr
+id|endaddr
 op_add_assign
 id|cmd-&gt;SCp.buffer-&gt;length
 suffix:semicolon
@@ -750,16 +741,11 @@ id|cmd-&gt;SCp.this_residual
 id|MER_PRINTK
 c_func
 (paren
-l_string|&quot;merged %d buffers from %08lx, new length %08lx&bslash;n&quot;
+l_string|&quot;merged %d buffers from %p, new length %08x&bslash;n&quot;
 comma
 id|cnt
 comma
-(paren
-r_int
-)paren
-(paren
 id|cmd-&gt;SCp.ptr
-)paren
 comma
 id|cmd-&gt;SCp.this_residual
 )paren
@@ -813,8 +799,8 @@ id|cmd-&gt;SCp.this_residual
 op_assign
 id|cmd-&gt;SCp.buffer-&gt;length
 suffix:semicolon
-multiline_comment|/* ++roman: Try to merge some scatter-buffers if they are at&n;&t; * consecutive physical addresses.&n;&t; */
-id|merge_consecutive_buffers
+multiline_comment|/* ++roman: Try to merge some scatter-buffers if they are at&n;&t; * contiguous physical addresses.&n;&t; */
+id|merge_contiguous_buffers
 c_func
 (paren
 id|cmd
@@ -1612,7 +1598,7 @@ id|main_running
 )paren
 (brace
 multiline_comment|/* If in interrupt and NCR5380_main() not already running,&n;&t;   queue it on the &squot;immediate&squot; task queue, to be processed&n;&t;   immediately after the current interrupt processing has&n;&t;   finished. */
-id|queue_task_irq
+id|queue_task
 c_func
 (paren
 op_amp
@@ -1716,10 +1702,8 @@ id|instance
 )paren
 (brace
 r_char
+op_star
 id|pr_bfr
-(braket
-l_int|256
-)braket
 suffix:semicolon
 r_char
 op_star
@@ -1740,6 +1724,34 @@ c_func
 id|NDEBUG_ANY
 )paren
 suffix:semicolon
+id|pr_bfr
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|__get_free_page
+c_func
+(paren
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pr_bfr
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;NCR5380_print_status: no memory for print buffer&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|len
 op_assign
 id|NCR5380_proc_info
@@ -1752,10 +1764,7 @@ id|start
 comma
 l_int|0
 comma
-r_sizeof
-(paren
-id|pr_bfr
-)paren
+id|PAGE_SIZE
 comma
 id|HOSTNO
 comma
@@ -1777,13 +1786,23 @@ comma
 id|pr_bfr
 )paren
 suffix:semicolon
+id|free_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|pr_bfr
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/******************************************/
 multiline_comment|/*&n; * /proc/scsi/[dtc pas16 t128 generic]/[0-ASC_NUM_BOARD_SUPPORTED]&n; *&n; * *buffer: I/O buffer&n; * **start: if inout == FALSE pointer into buffer where user read should start&n; * offset: current offset&n; * length: length of buffer&n; * hostno: Scsi_Host host_no&n; * inout: TRUE - user is writing; FALSE - user is reading&n; *&n; * Return the number of bytes read from or written&n;*/
 DECL|macro|SPRINTF
 macro_line|#undef SPRINTF
 DECL|macro|SPRINTF
-mdefine_line|#define SPRINTF(args...) do { if(pos &lt; buffer + length) pos += sprintf(pos, ## args); } while(0)
+mdefine_line|#define SPRINTF(fmt,args...) &bslash;&n;  do { if (pos + strlen(fmt) + 20 /* slop */ &lt; buffer + length) &bslash;&n;&t; pos += sprintf(pos, fmt , ## args); } while(0)
 r_static
 r_char
 op_star
@@ -2484,6 +2503,7 @@ OG
 l_int|1
 )paren
 op_logical_or
+(paren
 id|instance-&gt;can_queue
 OG
 l_int|1
@@ -2576,7 +2596,7 @@ id|flags
 suffix:semicolon
 r_extern
 r_int
-id|scsi_update_timeout
+id|update_timeout
 c_func
 (paren
 id|Scsi_Cmnd
@@ -2782,7 +2802,7 @@ c_func
 (brace
 id|oldto
 op_assign
-id|scsi_update_timeout
+id|update_timeout
 c_func
 (paren
 id|cmd
@@ -2795,7 +2815,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|scsi_update_timeout
+id|update_timeout
 c_func
 (paren
 id|cmd
@@ -2927,6 +2947,18 @@ c_cond
 id|intr_count
 OG
 l_int|0
+op_logical_or
+(paren
+(paren
+id|flags
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|7
+)paren
+op_ge
+l_int|6
 )paren
 id|queue_main
 c_func
@@ -2986,6 +3018,13 @@ id|flags
 suffix:semicolon
 multiline_comment|/*&n;     * We run (with interrupts disabled) until we&squot;re sure that none of &n;     * the host adapters have anything that can be done, at which point &n;     * we set main_running to 0 and exit.&n;     *&n;     * Interrupts are enabled before doing various other internal &n;     * instructions, after we&squot;ve decided that we need to run through&n;     * the loop again.&n;     *&n;     * this should prevent any race conditions.&n;     * &n;     * ++roman: Just disabling the NCR interrupt isn&squot;t sufficient here,&n;     * because also a timer int can trigger an abort or reset, which can&n;     * alter queues and touch the Falcon lock.&n;     */
 multiline_comment|/* Tell int handlers main() is now already executing.  Note that&n;       no races are possible here. If an int comes in before&n;       &squot;main_running&squot; is set here, and queues/executes main via the&n;       task queue, it doesn&squot;t do any harm, just this instance of main&n;       won&squot;t find any work left to do. */
+r_if
+c_cond
+(paren
+id|main_running
+)paren
+r_return
+suffix:semicolon
 id|main_running
 op_assign
 l_int|1
@@ -3265,15 +3304,11 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t;&t;     * Attempt to establish an I_T_L nexus here. &n;&t;&t;     * On success, instance-&gt;hostdata-&gt;connected is set.&n;&t;&t;     * On failure, we must add the command back to the&n;&t;&t;     *   issue queue so we can keep trying.&t;&n;&t;&t;     */
-id|DPRINTK
+id|MAIN_PRINTK
 c_func
 (paren
-id|NDEBUG_MAIN
-op_or
-id|NDEBUG_QUEUES
-comma
-l_string|&quot;scsi%d: main(): command for target %d lun %d &quot;
-l_string|&quot;removed from issue_queue&bslash;n&quot;
+l_string|&quot;scsi%d: main(): command for target %d &quot;
+l_string|&quot;lun %d removed from issue_queue&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -3383,13 +3418,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|DPRINTK
+id|MAIN_PRINTK
 c_func
 (paren
-id|NDEBUG_MAIN
-op_or
-id|NDEBUG_QUEUES
-comma
 l_string|&quot;scsi%d: main(): select() failed, &quot;
 l_string|&quot;returned to issue_queue&bslash;n&quot;
 comma
@@ -6405,8 +6436,8 @@ id|cmd-&gt;SCp.ptr
 op_assign
 id|cmd-&gt;SCp.buffer-&gt;address
 suffix:semicolon
-multiline_comment|/* ++roman: Try to merge some scatter-buffers if&n;&t;&t;     * they are at consecutive physical addresses.&n;&t;&t;     */
-id|merge_consecutive_buffers
+multiline_comment|/* ++roman: Try to merge some scatter-buffers if&n;&t;&t;     * they are at contiguous physical addresses.&n;&t;&t;     */
+id|merge_contiguous_buffers
 c_func
 (paren
 id|cmd
@@ -6808,12 +6839,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|status_byte
+c_func
+(paren
 id|cmd-&gt;SCp.Status
+)paren
 op_eq
 id|QUEUE_FULL
 )paren
 (brace
 multiline_comment|/* Turn a QUEUE FULL status into BUSY, I think the&n;&t;&t;&t; * mid level cannot handle QUEUE FULL :-( (The&n;&t;&t;&t; * command is retried after BUSY). Also update our&n;&t;&t;&t; * queue size to the number of currently issued&n;&t;&t;&t; * commands now.&n;&t;&t;&t; */
+multiline_comment|/* ++Andreas: the mid level code knows about&n;&t;&t;&t;   QUEUE_FULL now. */
 id|TAG_ALLOC
 op_star
 id|ta
@@ -6852,10 +6888,6 @@ id|ta-&gt;nr_allocated
 id|ta-&gt;nr_allocated
 op_assign
 id|ta-&gt;queue_size
-suffix:semicolon
-id|cmd-&gt;SCp.Status
-op_assign
-id|BUSY
 suffix:semicolon
 )brace
 macro_line|#else
@@ -6906,7 +6938,11 @@ r_else
 r_if
 c_cond
 (paren
+id|status_byte
+c_func
+(paren
 id|cmd-&gt;SCp.Status
+)paren
 op_ne
 id|GOOD
 )paren
@@ -6938,7 +6974,11 @@ id|REQUEST_SENSE
 )paren
 op_logical_and
 (paren
+id|status_byte
+c_func
+(paren
 id|cmd-&gt;SCp.Status
+)paren
 op_eq
 id|CHECK_CONDITION
 )paren
@@ -6997,15 +7037,23 @@ l_int|5
 op_assign
 l_int|0
 suffix:semicolon
-id|cmd-&gt;SCp.buffer
+id|cmd-&gt;cmd_len
 op_assign
-l_int|NULL
+id|COMMAND_SIZE
+c_func
+(paren
+id|cmd-&gt;cmnd
+(braket
+l_int|0
+)braket
+)paren
 suffix:semicolon
-id|cmd-&gt;SCp.buffers_residual
+id|cmd-&gt;use_sg
 op_assign
 l_int|0
 suffix:semicolon
-id|cmd-&gt;SCp.ptr
+multiline_comment|/* this is initialized from initialize_SCp &n;&t;&t;&t;cmd-&gt;SCp.buffer = NULL;&n;&t;&t;&t;cmd-&gt;SCp.buffers_residual = 0;&n;&t;&t;&t;*/
+id|cmd-&gt;request_buffer
 op_assign
 (paren
 r_char
@@ -7013,7 +7061,7 @@ op_star
 )paren
 id|cmd-&gt;sense_buffer
 suffix:semicolon
-id|cmd-&gt;SCp.this_residual
+id|cmd-&gt;request_bufflen
 op_assign
 r_sizeof
 (paren
@@ -8349,7 +8397,7 @@ l_string|&quot;scsi%d: warning: target bitmask %02x lun %d &quot;
 macro_line|#ifdef SUPPORT_TAGS
 l_string|&quot;tag %d &quot;
 macro_line|#endif
-l_string|&quot;not in disconnect_queue.&bslash;n&quot;
+l_string|&quot;not in disconnected_queue.&bslash;n&quot;
 comma
 id|HOSTNO
 comma
@@ -8522,9 +8570,6 @@ op_eq
 id|cmd
 )paren
 (brace
-r_int
-id|rv
-suffix:semicolon
 id|ABRT_PRINTK
 c_func
 (paren
@@ -8533,32 +8578,29 @@ comma
 id|HOSTNO
 )paren
 suffix:semicolon
-id|hostdata-&gt;aborted
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/*&n; * We should perform BSY checking, and make sure we haven&squot;t slipped&n; * into BUS FREE.&n; */
 multiline_comment|/*&t;NCR5380_write(INITIATOR_COMMAND_REG, ICR_ASSERT_ATN); */
 multiline_comment|/* &n; * Since we can&squot;t change phases until we&squot;ve completed the current &n; * handshake, we have to source or sink a byte of data if the current&n; * phase is not MSGOUT.&n; */
-multiline_comment|/* &n; * MSch: use the do_abort function instead ... unless there is need to wait&n; * a longer period for the target to go into MSGOUT.&n; */
-id|rv
-op_assign
+multiline_comment|/* &n; * Return control to the executing NCR drive so we can clear the&n; * aborted flag and get back into our main loop.&n; */
+r_if
+c_cond
+(paren
 id|do_abort
 c_func
 (paren
 id|instance
 )paren
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
+op_eq
+l_int|0
 )paren
+(brace
+id|hostdata-&gt;aborted
+op_assign
+l_int|1
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
+id|hostdata-&gt;connected
+op_assign
+l_int|NULL
 suffix:semicolon
 id|cmd-&gt;result
 op_assign
@@ -8595,7 +8637,7 @@ id|flags
 suffix:semicolon
 id|cmd
 op_member_access_from_pointer
-id|done
+id|scsi_done
 c_func
 (paren
 id|cmd
@@ -8607,15 +8649,25 @@ c_func
 id|hostdata
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Return control to the executing NCR drive so we can clear the&n; * aborted flag and get back into our main loop.&n; */
 r_return
-id|rv
-ques
-c_cond
 id|SCSI_ABORT_SUCCESS
-suffix:colon
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&t;  restore_flags(flags); */
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: abort of connected command failed!&bslash;n&quot;
+comma
+id|HOSTNO
+)paren
+suffix:semicolon
+r_return
 id|SCSI_ABORT_ERROR
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 multiline_comment|/* &n; * Case 2 : If the command hasn&squot;t been issued yet, we simply remove it &n; * &t;    from the issue queue.&n; */
@@ -8727,7 +8779,7 @@ suffix:semicolon
 multiline_comment|/* Tagged queuing note: no tag to free here, hasn&squot;t been assigned&n;&t;     * yet... */
 id|tmp
 op_member_access_from_pointer
-id|done
+id|scsi_done
 c_func
 (paren
 id|tmp
@@ -8973,7 +9025,7 @@ id|flags
 suffix:semicolon
 id|tmp
 op_member_access_from_pointer
-id|done
+id|scsi_done
 c_func
 (paren
 id|tmp
@@ -9048,6 +9100,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#if 1
 id|Scsi_Cmnd
 op_star
 id|connected
@@ -9055,6 +9108,7 @@ comma
 op_star
 id|disconnected_queue
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9161,7 +9215,9 @@ c_func
 id|RESET_PARITY_INTERRUPT_REG
 )paren
 suffix:semicolon
-macro_line|#if 1 /* XXX Should now be done by midlevel code, bug isn&squot;t XXX */
+macro_line|#if 1 /* XXX Should now be done by midlevel code, but it&squot;s broken XXX */
+multiline_comment|/* XXX see below                                            XXX */
+multiline_comment|/* MSch: old-style reset: actually abort all command processing here */
 multiline_comment|/* After the reset, there are no more connected or disconnected commands&n;     * and no busy units; to avoid problems with re-inserting the commands&n;     * into the issue_queue (via scsi_done()), the aborted commands are&n;     * remembered in local variables first.&n;     */
 id|save_flags
 c_func
@@ -9240,6 +9296,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* In order to tell the mid-level code which commands were aborted, &n;     * set the command status to DID_RESET and call scsi_done() !!!&n;     * This ultimately aborts processing of these commands in the mid-level.&n;     */
 r_if
 c_cond
 (paren
@@ -9359,10 +9416,139 @@ suffix:semicolon
 multiline_comment|/* The Falcon lock should be released after a reset...&n; */
 multiline_comment|/* ++guenther: moved to atari_scsi_reset(), to prevent a race between&n; * unlocking and enabling dma interrupt.&n; */
 multiline_comment|/*    falcon_release_lock_if_possible( hostdata );*/
-macro_line|#endif /* 1 */
+multiline_comment|/* since all commands have been explicitly terminated, we need to tell&n;     * the midlevel code that the reset was SUCCESSFUL, and there is no &n;     * need to &squot;wake up&squot; the commands by a request_sense&n;     */
+r_return
+id|SCSI_RESET_SUCCESS
+op_or
+id|SCSI_RESET_BUS_RESET
+suffix:semicolon
+macro_line|#else /* 1 */
+multiline_comment|/* MSch: new-style reset handling: let the mid-level do what it can */
+multiline_comment|/* ++guenther: MID-LEVEL IS STILL BROKEN.&n;     * Mid-level is supposed to requeue all commands that were active on the&n;     * various low-level queues. In fact it does this, but that&squot;s not enough&n;     * because all these commands are subject to timeout. And if a timeout&n;     * happens for any removed command, *_abort() is called but all queues&n;     * are now empty. Abort then gives up the falcon lock, which is fatal,&n;     * since the mid-level will queue more commands and must have the lock&n;     * (it&squot;s all happening inside timer interrupt handler!!).&n;     * Even worse, abort will return NOT_RUNNING for all those commands not&n;     * on any queue, so they won&squot;t be retried ...&n;     *&n;     * Conclusion: either scsi.c disables timeout for all resetted commands&n;     * immediately, or we loose!  As of linux-2.0.20 it doesn&squot;t.&n;     */
+multiline_comment|/* After the reset, there are no more connected or disconnected commands&n;     * and no busy units; so clear the low-level status here to avoid &n;     * conflicts when the mid-level code tries to wake up the affected &n;     * commands!&n;     */
+r_if
+c_cond
+(paren
+id|hostdata-&gt;issue_queue
+)paren
+id|ABRT_PRINTK
+c_func
+(paren
+l_string|&quot;scsi%d: reset aborted issued command(s)&bslash;n&quot;
+comma
+id|H_NO
+c_func
+(paren
+id|cmd
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hostdata-&gt;connected
+)paren
+id|ABRT_PRINTK
+c_func
+(paren
+l_string|&quot;scsi%d: reset aborted a connected command&bslash;n&quot;
+comma
+id|H_NO
+c_func
+(paren
+id|cmd
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hostdata-&gt;disconnected_queue
+)paren
+id|ABRT_PRINTK
+c_func
+(paren
+l_string|&quot;scsi%d: reset aborted disconnected command(s)&bslash;n&quot;
+comma
+id|H_NO
+c_func
+(paren
+id|cmd
+)paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|hostdata-&gt;issue_queue
+op_assign
+l_int|NULL
+suffix:semicolon
+id|hostdata-&gt;connected
+op_assign
+l_int|NULL
+suffix:semicolon
+id|hostdata-&gt;disconnected_queue
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#ifdef SUPPORT_TAGS
+id|free_all_tags
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|8
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+id|hostdata-&gt;busy
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#ifdef REAL_DMA
+id|hostdata-&gt;dma_len
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* we did no complete reset of all commands, so a wakeup is required */
 r_return
 id|SCSI_RESET_WAKEUP
+op_or
+id|SCSI_RESET_BUS_RESET
 suffix:semicolon
+macro_line|#endif /* 1 */
 )brace
 multiline_comment|/* Local Variables: */
 multiline_comment|/* tab-width: 8     */

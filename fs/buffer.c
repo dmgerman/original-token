@@ -8881,7 +8881,7 @@ suffix:semicolon
 r_int
 id|memsize
 op_assign
-id|max_mapnr
+id|num_physpages
 op_lshift
 id|PAGE_SHIFT
 suffix:semicolon

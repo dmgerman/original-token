@@ -473,6 +473,7 @@ DECL|member|green
 DECL|member|blue
 DECL|member|pad
 DECL|variable|MV300_color
+r_static
 r_struct
 (brace
 r_int
@@ -493,6 +494,7 @@ l_int|256
 suffix:semicolon
 macro_line|#endif /* ATAFB_EXT */
 DECL|variable|inverse
+r_static
 r_int
 id|inverse
 op_assign
@@ -1048,6 +1050,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|fb_var_names
+r_static
 r_char
 op_star
 op_star
@@ -1125,6 +1128,7 @@ multiline_comment|/* this causes a sigsegv on my gcc-2.5.8 */
 )brace
 suffix:semicolon
 DECL|variable|atari_fb_predefined
+r_static
 r_struct
 id|fb_var_screeninfo
 id|atari_fb_predefined
@@ -2806,6 +2810,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|num_atari_fb_predefined
+r_static
 r_int
 id|num_atari_fb_predefined
 op_assign
@@ -11228,6 +11233,7 @@ suffix:semicolon
 multiline_comment|/* ------------ Interfaces to hardware functions ------------ */
 macro_line|#ifdef ATAFB_TT
 DECL|variable|tt_switch
+r_static
 r_struct
 id|fb_hwswitch
 id|tt_switch
@@ -11259,6 +11265,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef ATAFB_FALCON
 DECL|variable|falcon_switch
+r_static
 r_struct
 id|fb_hwswitch
 id|falcon_switch
@@ -11290,6 +11297,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef ATAFB_STE
 DECL|variable|st_switch
+r_static
 r_struct
 id|fb_hwswitch
 id|st_switch
@@ -11321,6 +11329,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef ATAFB_EXT
 DECL|variable|ext_switch
+r_static
 r_struct
 id|fb_hwswitch
 id|ext_switch
@@ -11784,6 +11793,7 @@ l_int|0xffff
 )brace
 suffix:semicolon
 DECL|variable|default_16_colors
+r_static
 r_struct
 id|fb_cmap
 id|default_16_colors
@@ -11803,6 +11813,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|default_4_colors
+r_static
 r_struct
 id|fb_cmap
 id|default_4_colors
@@ -11822,6 +11833,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|default_2_colors
+r_static
 r_struct
 id|fb_cmap
 id|default_2_colors

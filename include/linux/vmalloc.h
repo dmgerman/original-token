@@ -92,6 +92,7 @@ id|pgd_t
 id|entry
 )paren
 (brace
+macro_line|#ifndef __mc68000__
 r_struct
 id|task_struct
 op_star
@@ -123,6 +124,7 @@ op_assign
 id|entry
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 macro_line|#endif
 eof

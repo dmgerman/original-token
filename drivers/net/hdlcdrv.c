@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;hdlcdrv.c  -- HDLC packet radio network driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *  The driver was derived from Donald Beckers skeleton.c&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *&t;  13.12.96  Fixed for Linux networking changes. (JSN)&n; */
+multiline_comment|/*&n; *&t;hdlcdrv.c  -- HDLC packet radio network driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *  The driver was derived from Donald Beckers skeleton.c&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines &n; *                  (copy_{to,from}_user)&n; *   0.2  21.11.96  various small changes&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -857,7 +857,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* ---------------------------------------------------------------------- */
 DECL|macro|tenms_to_2flags
-mdefine_line|#define tenms_to_2flags(s,tenms) ((tenms * s-&gt;ops-&gt;bitrate) / 100 / 16)
+mdefine_line|#define tenms_to_2flags(s,tenms) ((tenms * s-&gt;par.bitrate) / 100 / 16)
 multiline_comment|/* ---------------------------------------------------------------------- */
 multiline_comment|/*&n; * The HDLC routines&n; */
 DECL|function|hdlc_rx_add_bytes
@@ -2871,6 +2871,8 @@ id|SIOCDEVPRIVATE
 r_if
 c_cond
 (paren
+id|s-&gt;ops
+op_logical_and
 id|s-&gt;ops-&gt;ioctl
 )paren
 r_return
@@ -2882,6 +2884,9 @@ c_func
 id|dev
 comma
 id|ifr
+comma
+op_amp
+id|bi
 comma
 id|cmd
 )paren
@@ -2925,6 +2930,8 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|s-&gt;ops
+op_logical_and
 id|s-&gt;ops-&gt;ioctl
 )paren
 r_return
@@ -2936,6 +2943,9 @@ c_func
 id|dev
 comma
 id|ifr
+comma
+op_amp
+id|bi
 comma
 id|cmd
 )paren
@@ -3027,6 +3037,10 @@ id|bi.data.mp.dma
 op_assign
 id|dev-&gt;dma
 suffix:semicolon
+id|bi.data.mp.dma2
+op_assign
+id|s-&gt;ptt_out.dma2
+suffix:semicolon
 id|bi.data.mp.seriobase
 op_assign
 id|s-&gt;ptt_out.seriobase
@@ -3072,6 +3086,10 @@ suffix:semicolon
 id|dev-&gt;dma
 op_assign
 id|bi.data.mp.dma
+suffix:semicolon
+id|s-&gt;ptt_out.dma2
+op_assign
+id|bi.data.mp.dma2
 suffix:semicolon
 id|s-&gt;ptt_out.seriobase
 op_assign
@@ -3120,7 +3138,7 @@ id|s-&gt;hdlctx.calibrate
 op_assign
 id|bi.data.calibrate
 op_star
-id|s-&gt;ops-&gt;bitrate
+id|s-&gt;par.bitrate
 op_div
 l_int|16
 suffix:semicolon
@@ -3213,6 +3231,42 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif /* HDLCDRV_DEBUG */
+r_case
+id|HDLCDRVCTL_DRIVERNAME
+suffix:colon
+r_if
+c_cond
+(paren
+id|s-&gt;ops
+op_logical_and
+id|s-&gt;ops-&gt;drvname
+)paren
+(brace
+id|strncpy
+c_func
+(paren
+id|bi.data.drivername
+comma
+id|s-&gt;ops-&gt;drvname
+comma
+r_sizeof
+(paren
+id|bi.data.drivername
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|bi.data.drivername
+(braket
+l_int|0
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -3239,82 +3293,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* --------------------------------------------------------------------- */
-multiline_comment|/*&n; * Fill in the MAC-level header &n; */
-macro_line|#ifdef CONFIG_AX25
-DECL|function|hdlcdrv_header
-r_static
-r_int
-id|hdlcdrv_header
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|type
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|saddr
-comma
-r_int
-id|len
-)paren
-(brace
-r_return
-id|ax25_encapsulate
-c_func
-(paren
-id|skb
-comma
-id|dev
-comma
-id|type
-comma
-id|daddr
-comma
-id|saddr
-comma
-id|len
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* --------------------------------------------------------------------- */
-multiline_comment|/*&n; * Rebuild the MAC-level header&n; */
-DECL|function|hdlcdrv_rebuild_header
-r_static
-r_int
-id|hdlcdrv_rebuild_header
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-(brace
-r_return
-id|ax25_rebuild_header
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_AX25 */
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, allocate space for the device and return success&n; * (detachable devices only).&n; */
 DECL|function|hdlcdrv_probe
@@ -3512,11 +3490,11 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_AX25
 id|dev-&gt;hard_header
 op_assign
-id|hdlcdrv_header
+id|ax25_encapsulate
 suffix:semicolon
 id|dev-&gt;rebuild_header
 op_assign
-id|hdlcdrv_rebuild_header
+id|ax25_rebuild_header
 suffix:semicolon
 macro_line|#else /* CONFIG_AX25 */
 id|dev-&gt;hard_header
@@ -3964,14 +3942,14 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hdlcdrv: v0.1 (C) 1996 Thomas Sailer HB9JNX/AE4WA&bslash;n&quot;
+l_string|&quot;hdlcdrv: (C) 1996 Thomas Sailer HB9JNX/AE4WA&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hdlcdrv: compiled %s %s&bslash;n&quot;
+l_string|&quot;hdlcdrv: version 0.2 compiled %s %s&bslash;n&quot;
 comma
 id|__TIME__
 comma

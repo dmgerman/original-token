@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tree.c,v 1.12 1996/10/12 12:37:40 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: tree.c,v 1.13 1996/12/18 06:46:56 tridge Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -44,23 +44,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;prom_getchild -&gt; 0&bslash;n&quot;
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -146,7 +129,6 @@ suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* Return the next sibling of node &squot;node&squot; or zero if no more siblings&n; * at this level of depth in the tree.&n; */
 r_int
@@ -178,23 +160,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;prom_getsibling -&gt; 0&bslash;n&quot;
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -280,7 +245,6 @@ suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* Return the length in bytes of property &squot;prop&squot; at node &squot;node&squot;.&n; * Return -1 on error.&n; */
 r_int
@@ -314,26 +278,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;prom_getproplen(%s) -&gt; -1&bslash;n&quot;
-comma
-id|prop
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -440,26 +384,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;prom_getproperty(%s) -&gt; -1&bslash;n&quot;
-comma
-id|prop
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#endif
 id|plen
 op_assign
 id|prom_getproplen
@@ -567,20 +491,6 @@ r_static
 r_int
 id|intprop
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;prom_getint(%s) -&gt; -1&bslash;n&quot;
-comma
-id|prop
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -637,19 +547,6 @@ id|deflt
 r_int
 id|retval
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;prom_getintdefault(%s) -&gt; 0&bslash;n&quot;
-comma
-id|property
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|retval
 op_assign
 id|prom_getint
@@ -694,19 +591,6 @@ id|prop
 r_int
 id|retval
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;prom_getbool(%s) -&gt; 0&bslash;n&quot;
-comma
-id|prop
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|retval
 op_assign
 id|prom_getproplen
@@ -758,18 +642,6 @@ id|ubuf_size
 r_int
 id|len
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;prom_getstring(%s) -&gt; .&bslash;n&quot;
-comma
-id|prop
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-macro_line|#endif
 id|len
 op_assign
 id|prom_getproperty

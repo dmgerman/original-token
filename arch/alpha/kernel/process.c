@@ -394,7 +394,7 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * Copy an alpha thread..&n; *&n; * Note the &quot;stack_offset&quot; stuff: when returning to kernel mode, we need&n; * to have some extra stack-space for the kernel stack that still exists&n; * after the &quot;ret_from_sys_call&quot;. When returning to user mode, we only&n; * want the space needed by the syscall stack frame (ie &quot;struct pt_regs&quot;).&n; * Use the passed &quot;regs&quot; pointer to determine how much space we need&n; * for a kernel fork().&n; */
 DECL|function|copy_thread
-r_void
+r_int
 id|copy_thread
 c_func
 (paren
@@ -570,6 +570,9 @@ id|current-&gt;tss.flags
 suffix:semicolon
 id|p-&gt;mm-&gt;context
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace

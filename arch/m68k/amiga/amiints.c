@@ -372,6 +372,8 @@ id|ciab_base
 suffix:semicolon
 )brace
 DECL|function|amiga_insert_irq
+r_static
+r_inline
 r_void
 id|amiga_insert_irq
 c_func
@@ -529,6 +531,8 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|amiga_delete_irq
+r_static
+r_inline
 r_void
 id|amiga_delete_irq
 c_func

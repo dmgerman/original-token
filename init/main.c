@@ -138,7 +138,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MCA
 r_extern
 r_int
 id|mca_init
@@ -149,7 +148,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_void
 id|sysctl_init
@@ -298,6 +296,22 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_EZ
+r_extern
+r_void
+id|ez_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|floppy_setup
@@ -536,7 +550,6 @@ op_star
 id|ints
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SCSI_IBMMCA
 r_extern
 r_void
 id|ibmmca_scsi_setup
@@ -551,7 +564,6 @@ op_star
 id|ints
 )paren
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_void
 id|in2000_setup
@@ -639,6 +651,20 @@ suffix:semicolon
 r_extern
 r_void
 id|reboot_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|video_setup
 c_func
 (paren
 r_char
@@ -792,6 +818,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_GSCD
+macro_line|#ifdef CONFIG_BPCD
+r_extern
+r_void
+id|bpcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_BPCD
 macro_line|#ifdef CONFIG_CM206
 r_extern
 r_void
@@ -1537,6 +1579,14 @@ id|no_initrd
 comma
 macro_line|#endif
 macro_line|#endif
+macro_line|#if defined (CONFIG_AMIGA) || defined (CONFIG_ATARI)
+(brace
+l_string|&quot;video=&quot;
+comma
+id|video_setup
+)brace
+comma
+macro_line|#endif
 (brace
 l_string|&quot;swap=&quot;
 comma
@@ -1801,6 +1851,14 @@ id|xd_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_EZ
+(brace
+l_string|&quot;ez=&quot;
+comma
+id|ez_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_FD
 (brace
 l_string|&quot;floppy=&quot;
@@ -1817,7 +1875,7 @@ id|ed_setup
 )brace
 comma
 (brace
-l_string|&quot;tp720&quot;
+l_string|&quot;tp720=&quot;
 comma
 id|tp720_setup
 )brace
@@ -1879,6 +1937,14 @@ id|gscd_setup
 )brace
 comma
 macro_line|#endif CONFIG_GSCD
+macro_line|#ifdef CONFIG_BPCD
+(brace
+l_string|&quot;bpcd=&quot;
+comma
+id|bpcd_setup
+)brace
+comma
+macro_line|#endif CONFIG_BPCD
 macro_line|#ifdef CONFIG_CM206
 (brace
 l_string|&quot;cm206=&quot;
@@ -2622,6 +2688,36 @@ l_int|0x0840
 )brace
 comma
 (brace
+l_string|&quot;ada&quot;
+comma
+l_int|0x1c00
+)brace
+comma
+(brace
+l_string|&quot;adb&quot;
+comma
+l_int|0x1c10
+)brace
+comma
+(brace
+l_string|&quot;adc&quot;
+comma
+l_int|0x1c20
+)brace
+comma
+(brace
+l_string|&quot;add&quot;
+comma
+l_int|0x1c30
+)brace
+comma
+(brace
+l_string|&quot;ade&quot;
+comma
+l_int|0x1c40
+)brace
+comma
+(brace
 l_string|&quot;fd&quot;
 comma
 l_int|0x0200
@@ -2691,6 +2787,18 @@ comma
 l_string|&quot;sonycd&quot;
 comma
 l_int|0x1800
+)brace
+comma
+(brace
+l_string|&quot;eza&quot;
+comma
+l_int|0x2800
+)brace
+comma
+(brace
+l_string|&quot;bpcd&quot;
+comma
+l_int|0x2900
 )brace
 comma
 (brace

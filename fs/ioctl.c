@@ -211,6 +211,10 @@ op_star
 id|filp
 suffix:semicolon
 r_int
+r_int
+id|flag
+suffix:semicolon
+r_int
 id|on
 comma
 id|error
@@ -299,6 +303,26 @@ l_int|0
 r_return
 id|error
 suffix:semicolon
+id|flag
+op_assign
+id|O_NONBLOCK
+suffix:semicolon
+macro_line|#ifdef __sparc__
+multiline_comment|/* SunOS compatability item. */
+r_if
+c_cond
+(paren
+id|O_NONBLOCK
+op_ne
+id|O_NDELAY
+)paren
+(brace
+id|flag
+op_or_assign
+id|O_NDELAY
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -306,13 +330,13 @@ id|on
 )paren
 id|filp-&gt;f_flags
 op_or_assign
-id|O_NONBLOCK
+id|flag
 suffix:semicolon
 r_else
 id|filp-&gt;f_flags
 op_and_assign
 op_complement
-id|O_NONBLOCK
+id|flag
 suffix:semicolon
 r_return
 l_int|0

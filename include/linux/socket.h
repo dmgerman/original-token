@@ -232,16 +232,17 @@ DECL|struct|ucred
 r_struct
 id|ucred
 (brace
+multiline_comment|/* Should we be using __kernel_*_t here ?? */
 DECL|member|pid
-id|pid_t
+id|__kernel_pid_t
 id|pid
 suffix:semicolon
 DECL|member|uid
-id|uid_t
+id|__kernel_uid_t
 id|uid
 suffix:semicolon
 DECL|member|gid
-id|gid_t
+id|__kernel_gid_t
 id|gid
 suffix:semicolon
 )brace

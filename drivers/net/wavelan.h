@@ -2,7 +2,7 @@ multiline_comment|/*&n; *&t;Wavelan ISA driver&n; *&n; *&t;&t;Jean II - HPLB &sq
 macro_line|#ifndef _WAVELAN_H
 DECL|macro|_WAVELAN_H
 mdefine_line|#define&t;_WAVELAN_H
-multiline_comment|/* The detection of the wavelan card is made by reading the MAC address&n; * from the card and checking it. If you have a non AT&amp;T product (OEM,&n; * like DEC RoamAbout, or Digital Ocean, Epson, ...), you must modify this&n; * part to accomodate your hardware...&n; */
+multiline_comment|/* The detection of the wavelan card is made by reading the MAC&n; * address from the card and checking it. If you have a non AT&amp;T&n; * product (OEM, like DEC RoamAbout, or Digital Ocean, Epson, ...),&n; * you might need to modify this part to accomodate your hardware...&n; */
 DECL|variable|MAC_ADDRESSES
 r_const
 r_char
@@ -22,7 +22,7 @@ comma
 l_int|0x0E
 )brace
 comma
-multiline_comment|/* AT&amp;T Wavelan (standard) */
+multiline_comment|/* AT&amp;T Wavelan (standard) &amp; DEC RoamAbout */
 (brace
 l_int|0x08
 comma
@@ -32,7 +32,7 @@ l_int|0x6A
 )brace
 comma
 multiline_comment|/* AT&amp;T Wavelan (alternate) */
-multiline_comment|/* Add your card here */
+multiline_comment|/* Add your card here and send me the patch ! */
 )brace
 suffix:semicolon
 DECL|macro|WAVELAN_ADDR_SIZE

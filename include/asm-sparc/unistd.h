@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.24 1996/08/29 09:49:06 davem Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.25 1996/12/18 06:56:10 tridge Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
@@ -485,6 +485,8 @@ DECL|macro|__NR_fdatasync
 mdefine_line|#define __NR_fdatasync          253
 DECL|macro|__NR_nfsctl
 mdefine_line|#define __NR_nfsctl             254
+DECL|macro|__NR_aplib
+mdefine_line|#define __NR_aplib              255
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ __volatile__ (&quot;or %%g0, %0, %%g1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;t 0x10&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;bcc 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;or %%g0, %%o0, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;sub %%g0, %%o0, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      : &quot;=r&quot; (__res)&bslash;&n;&t;&t;      : &quot;0&quot; (__NR_##name) &bslash;&n;&t;&t;      : &quot;g1&quot;, &quot;o0&quot;); &bslash;&n;if (__res &gt;= 0) &bslash;&n;    return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall1

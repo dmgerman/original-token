@@ -1,5 +1,4 @@
 multiline_comment|/*&n;** linux/arch/m68k/boot/amiga/bootstrap.h -- This file is part of the Amiga&n;**&t;&t;&t;&t;&t;     bootloader.&n;**&n;** Copyright 1993, 1994 by Hamish Macdonald&n;**&n;** Some minor additions by Michael Rausch 1-11-94&n;** Modified 11-May-94 by Geert Uytterhoeven&n;**&t;&t;&t;(Geert.Uytterhoeven@cs.kuleuven.ac.be)&n;**     - inline Supervisor() call&n;** Modified 10-Jan-96 by Geert Uytterhoeven&n;**     - The real Linux/m68k boot code moved to linuxboot.[ch]&n;** Modified 9-Sep-96 by Geert Uytterhoeven&n;**     - const library bases&n;**     - fixed register naming for m68k-cbm-amigados-gcc&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
-macro_line|#include &lt;asm/amigatypes.h&gt;
 DECL|struct|MsgPort
 r_struct
 id|MsgPort

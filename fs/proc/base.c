@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/proc/base.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  proc base directory handling functions&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -592,6 +593,44 @@ id|proc_pid_fill_inode
 comma
 )brace
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+DECL|variable|proc_pid_ringbuf
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_pid_ringbuf
+op_assign
+(brace
+id|PROC_PID_RINGBUF
+comma
+l_int|7
+comma
+l_string|&quot;ringbuf&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUSR
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_ringbuf_inode_operations
+comma
+l_int|NULL
+comma
+id|proc_pid_fill_inode
+comma
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|proc_base_init
 r_void
 id|proc_base_init
@@ -600,6 +639,18 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if CONFIG_AP1000
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_pid
+comma
+op_amp
+id|proc_pid_ringbuf
+)paren
+suffix:semicolon
+macro_line|#endif
 id|proc_register
 c_func
 (paren

@@ -1,7 +1,321 @@
 multiline_comment|/*&n;** asm-m68k/amigahw.h -- This header defines some macros and pointers for&n;**                    the various Amiga custom hardware registers.&n;**                    The naming conventions used here conform to those&n;**                    used in the Amiga Hardware Reference Manual, 3rd Edition&n;**&n;** Copyright 1992 by Greg Harp&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;** Created: 9/24/92 by Greg Harp&n;*/
-macro_line|#ifndef _ASMm68k_AMIGAHW_H_
-DECL|macro|_ASMm68k_AMIGAHW_H_
-mdefine_line|#define _ASMm68k_AMIGAHW_H_
+macro_line|#ifndef _M68K_AMIGAHW_H
+DECL|macro|_M68K_AMIGAHW_H
+mdefine_line|#define _M68K_AMIGAHW_H
+multiline_comment|/*&n;     *  Different Amiga models&n;     */
+r_extern
+id|u_long
+id|amiga_model
+suffix:semicolon
+DECL|macro|AMI_UNKNOWN
+mdefine_line|#define AMI_UNKNOWN&t;(0)
+DECL|macro|AMI_500
+mdefine_line|#define AMI_500&t;&t;(1)
+DECL|macro|AMI_500PLUS
+mdefine_line|#define AMI_500PLUS&t;(2)
+DECL|macro|AMI_600
+mdefine_line|#define AMI_600&t;&t;(3)
+DECL|macro|AMI_1000
+mdefine_line|#define AMI_1000&t;(4)
+DECL|macro|AMI_1200
+mdefine_line|#define AMI_1200&t;(5)
+DECL|macro|AMI_2000
+mdefine_line|#define AMI_2000&t;(6)
+DECL|macro|AMI_2500
+mdefine_line|#define AMI_2500&t;(7)
+DECL|macro|AMI_3000
+mdefine_line|#define AMI_3000&t;(8)
+DECL|macro|AMI_3000T
+mdefine_line|#define AMI_3000T&t;(9)
+DECL|macro|AMI_3000PLUS
+mdefine_line|#define AMI_3000PLUS&t;(10)
+DECL|macro|AMI_4000
+mdefine_line|#define AMI_4000&t;(11)
+DECL|macro|AMI_4000T
+mdefine_line|#define AMI_4000T&t;(12)
+DECL|macro|AMI_CDTV
+mdefine_line|#define AMI_CDTV&t;(13)
+DECL|macro|AMI_CD32
+mdefine_line|#define AMI_CD32&t;(14)
+DECL|macro|AMI_DRACO
+mdefine_line|#define AMI_DRACO&t;(15)
+multiline_comment|/*&n;     *  Chipsets&n;     */
+r_extern
+id|u_long
+id|amiga_chipset
+suffix:semicolon
+DECL|macro|CS_STONEAGE
+mdefine_line|#define CS_STONEAGE&t;(0)
+DECL|macro|CS_OCS
+mdefine_line|#define CS_OCS&t;&t;(1)
+DECL|macro|CS_ECS
+mdefine_line|#define CS_ECS&t;&t;(2)
+DECL|macro|CS_AGA
+mdefine_line|#define CS_AGA&t;&t;(3)
+multiline_comment|/*&n;     *  Miscellaneous&n;     */
+r_extern
+id|u_long
+id|amiga_eclock
+suffix:semicolon
+multiline_comment|/* 700 kHz E Peripheral Clock */
+r_extern
+id|u_long
+id|amiga_masterclock
+suffix:semicolon
+multiline_comment|/* 28 MHz Master Clock */
+r_extern
+id|u_long
+id|amiga_colorclock
+suffix:semicolon
+multiline_comment|/* 3.5 MHz Color Clock */
+r_extern
+id|u_long
+id|amiga_chip_size
+suffix:semicolon
+multiline_comment|/* Chip RAM Size (bytes) */
+r_extern
+id|u_char
+id|amiga_vblank
+suffix:semicolon
+multiline_comment|/* VBLANK Frequency */
+r_extern
+id|u_char
+id|amiga_psfreq
+suffix:semicolon
+multiline_comment|/* Power Supply Frequency */
+DECL|macro|AMIGAHW_DECLARE
+mdefine_line|#define AMIGAHW_DECLARE(name)&t;unsigned name : 1
+DECL|macro|AMIGAHW_SET
+mdefine_line|#define AMIGAHW_SET(name)&t;(amiga_hw_present.name = 1)
+DECL|macro|AMIGAHW_PRESENT
+mdefine_line|#define AMIGAHW_PRESENT(name)&t;(amiga_hw_present.name)
+DECL|struct|amiga_hw_present
+r_struct
+id|amiga_hw_present
+(brace
+multiline_comment|/* video hardware */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AMI_VIDEO
+)paren
+suffix:semicolon
+multiline_comment|/* Amiga Video */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AMI_BLITTER
+)paren
+suffix:semicolon
+multiline_comment|/* Amiga Blitter */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AMBER_FF
+)paren
+suffix:semicolon
+multiline_comment|/* Amber Flicker Fixer */
+multiline_comment|/* sound hardware */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AMI_AUDIO
+)paren
+suffix:semicolon
+multiline_comment|/* Amiga Audio */
+multiline_comment|/* disk storage interfaces */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AMI_FLOPPY
+)paren
+suffix:semicolon
+multiline_comment|/* Amiga Floppy */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|A3000_SCSI
+)paren
+suffix:semicolon
+multiline_comment|/* SCSI (wd33c93, A3000 alike) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|A4000_SCSI
+)paren
+suffix:semicolon
+multiline_comment|/* SCSI (ncr53c710, A4000T alike) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|A1200_IDE
+)paren
+suffix:semicolon
+multiline_comment|/* IDE (A1200 alike) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|A4000_IDE
+)paren
+suffix:semicolon
+multiline_comment|/* IDE (A4000 alike) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|CD_ROM
+)paren
+suffix:semicolon
+multiline_comment|/* CD ROM drive */
+multiline_comment|/* other I/O hardware */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AMI_KEYBOARD
+)paren
+suffix:semicolon
+multiline_comment|/* Amiga Keyboard */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AMI_MOUSE
+)paren
+suffix:semicolon
+multiline_comment|/* Amiga Mouse */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AMI_SERIAL
+)paren
+suffix:semicolon
+multiline_comment|/* Amiga Serial */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AMI_PARALLEL
+)paren
+suffix:semicolon
+multiline_comment|/* Amiga Parallel */
+multiline_comment|/* real time clocks */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|A2000_CLK
+)paren
+suffix:semicolon
+multiline_comment|/* Hardware Clock (A2000 alike) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|A3000_CLK
+)paren
+suffix:semicolon
+multiline_comment|/* Hardware Clock (A3000 alike) */
+multiline_comment|/* supporting hardware */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|CHIP_RAM
+)paren
+suffix:semicolon
+multiline_comment|/* Chip RAM */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|PAULA
+)paren
+suffix:semicolon
+multiline_comment|/* Paula (8364) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|DENISE
+)paren
+suffix:semicolon
+multiline_comment|/* Denise (8362) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|DENISE_HR
+)paren
+suffix:semicolon
+multiline_comment|/* Denise (8373) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|LISA
+)paren
+suffix:semicolon
+multiline_comment|/* Lisa (8375) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AGNUS_PAL
+)paren
+suffix:semicolon
+multiline_comment|/* Normal/Fat PAL Agnus (8367/8371) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AGNUS_NTSC
+)paren
+suffix:semicolon
+multiline_comment|/* Normal/Fat NTSC Agnus (8361/8370) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AGNUS_HR_PAL
+)paren
+suffix:semicolon
+multiline_comment|/* Fat Hires PAL Agnus (8372) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|AGNUS_HR_NTSC
+)paren
+suffix:semicolon
+multiline_comment|/* Fat Hires NTSC Agnus (8372) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|ALICE_PAL
+)paren
+suffix:semicolon
+multiline_comment|/* PAL Alice (8374) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|ALICE_NTSC
+)paren
+suffix:semicolon
+multiline_comment|/* NTSC Alice (8374) */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|MAGIC_REKICK
+)paren
+suffix:semicolon
+multiline_comment|/* A3000 Magic Hard Rekick */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|ZORRO
+)paren
+suffix:semicolon
+multiline_comment|/* Zorro AutoConfig */
+id|AMIGAHW_DECLARE
+c_func
+(paren
+id|ZORRO3
+)paren
+suffix:semicolon
+multiline_comment|/* Zorro III */
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|amiga_hw_present
+id|amiga_hw_present
+suffix:semicolon
 DECL|struct|CUSTOM
 r_struct
 id|CUSTOM
@@ -710,21 +1024,12 @@ l_int|0xff
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#if 1
 DECL|macro|zTwoBase
 mdefine_line|#define zTwoBase (0x80000000)
 DECL|macro|ZTWO_PADDR
 mdefine_line|#define ZTWO_PADDR(x) (((unsigned long)(x))-zTwoBase)
 DECL|macro|ZTWO_VADDR
 mdefine_line|#define ZTWO_VADDR(x) (((unsigned long)(x))+zTwoBase)
-macro_line|#else
-DECL|macro|zTwoBase
-mdefine_line|#define zTwoBase 0
-DECL|macro|ZTWO_PADDR
-mdefine_line|#define ZTWO_PADDR(x) (x)
-DECL|macro|ZTWO_VADDR
-mdefine_line|#define ZTWO_VADDR(x) (x)
-macro_line|#endif
 DECL|macro|CUSTOM_PHYSADDR
 mdefine_line|#define CUSTOM_PHYSADDR     (0xdff000)
 DECL|macro|custom
@@ -1149,5 +1454,5 @@ DECL|macro|TOD2000_HOUR1_PM
 mdefine_line|#define TOD2000_HOUR1_PM&t;(1&lt;&lt;2)
 DECL|macro|TOD_2000
 mdefine_line|#define TOD_2000 ((struct tod2000 *)(zTwoBase+0xDC0000))
-macro_line|#endif /* asm-m68k/amigahw.h */
+macro_line|#endif /* __ASMm68k_AMIGAHW_H */
 eof

@@ -16,7 +16,6 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/zorro.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;ariadne.h&quot;
@@ -243,14 +242,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|data
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|data
 )paren
 suffix:semicolon
 r_static
@@ -1113,8 +1112,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|add_isr
+id|request_irq
 c_func
 (paren
 id|IRQ_AMIGA_PORTS
@@ -1123,9 +1121,9 @@ id|ariadne_interrupt
 comma
 l_int|0
 comma
-id|dev
-comma
 l_string|&quot;Ariadne Ethernet&quot;
+comma
+id|dev
 )paren
 )paren
 r_return
@@ -1627,12 +1625,10 @@ id|board-&gt;Lance.RDP
 op_assign
 id|STOP
 suffix:semicolon
-id|remove_isr
+id|free_irq
 c_func
 (paren
 id|IRQ_AMIGA_PORTS
-comma
-id|ariadne_interrupt
 comma
 id|dev
 )paren
@@ -1652,14 +1648,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|data
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|data
 )paren
 (brace
 r_struct

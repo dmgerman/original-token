@@ -39,7 +39,6 @@ op_star
 id|netdev_chain
 suffix:semicolon
 multiline_comment|/* &n; *&t;Determine a default network mask, based on the IP address. &n; */
-r_static
 DECL|function|ip_get_mask
 r_int
 r_int

@@ -754,6 +754,8 @@ id|end_mem
 suffix:semicolon
 id|max_mapnr
 op_assign
+id|num_physpages
+op_assign
 id|MAP_NR
 c_func
 (paren

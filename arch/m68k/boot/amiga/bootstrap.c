@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** linux/arch/m68k/boot/amiga/bootstrap.c -- This program loads the Linux/m68k&n;**&t;&t;&t;&t;&t;     kernel into an Amiga and launches&n;**&t;&t;&t;&t;&t;     it.&n;**&n;** Copyright 1993,1994 by Hamish Macdonald, Greg Harp&n;**&n;** Modified 11-May-94 by Geert Uytterhoeven&n;**&t;&t;&t;(Geert.Uytterhoeven@cs.kuleuven.ac.be)&n;**     - A3640 MapROM check&n;** Modified 31-May-94 by Geert Uytterhoeven&n;**     - Memory thrash problem solved&n;** Modified 07-March-95 by Geert Uytterhoeven&n;**     - Memory block sizes are rounded to a multiple of 256K instead of 1M&n;**&t; This _requires_ &gt;0.9pl5 to work!&n;**&t; (unless all block sizes are multiples of 1M :-)&n;** Modified 11-July-95 by Andreas Schwab&n;**     - Support for ELF kernel (untested!)&n;** Modified 10-Jan-96 by Geert Uytterhoeven&n;**     - The real Linux/m68k boot code moved to linuxboot.[ch]&n;** Modified 9-Sep-96 by Geert Uytterhoeven&n;**     - Rewritten option parsing&n;**     - New parameter passing to linuxboot() (linuxboot_args)&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
+multiline_comment|/*&n;** linux/arch/m68k/boot/amiga/bootstrap.c -- This program loads the Linux/m68k&n;**&t;&t;&t;&t;&t;     kernel into an Amiga and launches&n;**&t;&t;&t;&t;&t;     it.&n;**&n;** Copyright 1993,1994 by Hamish Macdonald, Greg Harp&n;**&n;** Modified 11-May-94 by Geert Uytterhoeven&n;**&t;&t;&t;(Geert.Uytterhoeven@cs.kuleuven.ac.be)&n;**     - A3640 MapROM check&n;** Modified 31-May-94 by Geert Uytterhoeven&n;**     - Memory thrash problem solved&n;** Modified 07-March-95 by Geert Uytterhoeven&n;**     - Memory block sizes are rounded to a multiple of 256K instead of 1M&n;**&t; This _requires_ &gt;0.9pl5 to work!&n;**&t; (unless all block sizes are multiples of 1M :-)&n;** Modified 11-July-95 by Andreas Schwab&n;**     - Support for ELF kernel (untested!)&n;** Modified 10-Jan-96 by Geert Uytterhoeven&n;**     - The real Linux/m68k boot code moved to linuxboot.[ch]&n;** Modified 9-Sep-96 by Geert Uytterhoeven&n;**     - Rewritten option parsing&n;**     - New parameter passing to linuxboot() (linuxboot_args)&n;** Modified 6-Oct-96 by Geert Uytterhoeven&n;**     - Updated for the new boot information structure&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
 macro_line|#include &lt;stddef.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;stdio.h&gt;
@@ -10,7 +10,7 @@ macro_line|#include &lt;unistd.h&gt;
 multiline_comment|/* required Linux/m68k include files */
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
-macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/* Amiga bootstrap include files */
 macro_line|#include &quot;linuxboot.h&quot;
@@ -211,7 +211,7 @@ id|ModifyBootinfo
 c_func
 (paren
 r_struct
-id|bootinfo
+id|amiga_bootinfo
 op_star
 id|bi
 )paren
@@ -239,6 +239,7 @@ l_string|&quot;    -h, --help           Display this usage information&bslash;n&
 l_string|&quot;    -k, --kernel file    Use kernel image `file&squot; (default is `vmlinux&squot;)&bslash;n&quot;
 l_string|&quot;    -r, --ramdisk file   Use ramdisk image `file&squot;&bslash;n&quot;
 l_string|&quot;    -d, --debug          Enable debug mode&bslash;n&quot;
+l_string|&quot;    -b, --baud speed     Set the serial port speed (default is 9600)&bslash;n&quot;
 l_string|&quot;    -m, --memfile file   Use memory file `file&squot;&bslash;n&quot;
 l_string|&quot;    -v, --keep-video     Don&squot;t reset the video mode&bslash;n&quot;
 l_string|&quot;    -t, --model id       Set the Amiga model to `id&squot;&bslash;n&bslash;n&quot;
@@ -276,6 +277,11 @@ op_assign
 l_int|0
 comma
 id|keep_video
+op_assign
+l_int|0
+suffix:semicolon
+id|u_int
+id|baud
 op_assign
 l_int|0
 suffix:semicolon
@@ -491,6 +497,65 @@ l_string|&quot;--debug&quot;
 id|debugflag
 op_assign
 l_int|1
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|argv
+(braket
+l_int|0
+)braket
+comma
+l_string|&quot;-b&quot;
+)paren
+op_logical_or
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|argv
+(braket
+l_int|0
+)braket
+comma
+l_string|&quot;--baud&quot;
+)paren
+)paren
+r_if
+c_cond
+(paren
+op_decrement
+id|argc
+op_logical_and
+op_logical_neg
+id|baud
+)paren
+(brace
+id|baud
+op_assign
+id|atoi
+c_func
+(paren
+id|argv
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+id|argv
+op_increment
+suffix:semicolon
+)brace
+r_else
+id|Usage
+c_func
+(paren
+)paren
 suffix:semicolon
 r_else
 r_if
@@ -829,6 +894,10 @@ suffix:semicolon
 id|args.reset_boards
 op_assign
 l_int|1
+suffix:semicolon
+id|args.baud
+op_assign
+id|baud
 suffix:semicolon
 id|args.puts
 op_assign
@@ -1307,7 +1376,7 @@ id|ModifyBootinfo
 c_func
 (paren
 r_struct
-id|bootinfo
+id|amiga_bootinfo
 op_star
 id|bi
 )paren
@@ -1375,7 +1444,7 @@ comma
 l_string|&quot;%lu&quot;
 comma
 op_amp
-id|bi-&gt;bi_amiga.chip_size
+id|bi-&gt;chip_size
 )paren
 op_ne
 l_int|1
@@ -1476,7 +1545,7 @@ id|model
 op_ne
 id|AMI_UNKNOWN
 )paren
-id|bi-&gt;bi_amiga.model
+id|bi-&gt;model
 op_assign
 id|model
 suffix:semicolon

@@ -84,21 +84,6 @@ id|cpu_ctr
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|printk
-c_func
-(paren
-l_string|&quot;Not scanning device list for CPUs&bslash;n&quot;
-)paren
-suffix:semicolon
-id|linux_num_cpus
-op_assign
-l_int|1
-suffix:semicolon
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#endif
 id|prom_getstring
 c_func
 (paren

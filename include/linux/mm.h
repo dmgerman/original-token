@@ -12,6 +12,11 @@ r_int
 id|max_mapnr
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|num_physpages
+suffix:semicolon
+r_extern
 r_void
 op_star
 id|high_memory

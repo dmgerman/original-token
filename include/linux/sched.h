@@ -760,6 +760,8 @@ DECL|macro|PF_USEDFPU
 mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* Process used the FPU this quantum (SMP only) */
 DECL|macro|PF_DTRACE
 mdefine_line|#define PF_DTRACE&t;0x00200000&t;/* delayed trace (used on m68k) */
+DECL|macro|PF_ONSIGSTK
+mdefine_line|#define PF_ONSIGSTK&t;0x00400000&t;/* works on signal stack (m68k only) */
 multiline_comment|/*&n; * Limit the stack by to some sane default: root can always&n; * increase this limit if needed..  8MB seems reasonable.&n; */
 DECL|macro|_STK_LIM
 mdefine_line|#define _STK_LIM&t;(8*1024*1024)
@@ -1060,7 +1062,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_extern
-r_void
+r_int
 id|copy_thread
 c_func
 (paren

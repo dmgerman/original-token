@@ -1,12 +1,8 @@
-multiline_comment|/* $Id: pgtsrmmu.h,v 1.24 1996/10/07 03:03:06 davem Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsrmmu.h,v 1.25 1996/12/18 06:56:07 tridge Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSRMMU_H
 DECL|macro|_SPARC_PGTSRMMU_H
 mdefine_line|#define _SPARC_PGTSRMMU_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#if CONFIG_AP1000
-macro_line|#include &lt;asm/ap1000/apreg.h&gt;
-macro_line|#endif
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|SRMMU_PMD_SHIFT
 mdefine_line|#define SRMMU_PMD_SHIFT         18
@@ -98,14 +94,6 @@ DECL|macro|SRMMU_FAULT_STATUS
 mdefine_line|#define SRMMU_FAULT_STATUS       0x00000300
 DECL|macro|SRMMU_FAULT_ADDR
 mdefine_line|#define SRMMU_FAULT_ADDR         0x00000400
-multiline_comment|/*&n; * &quot;normal&quot; sun systems have their memory on bus 0. This means the top&n; * 4 bits of 36 bit physical addresses are 0. We use this define to&n; * determine if a piece of memory might be normal memory, or if its&n; * definately some sort of device memory.  &n; *&n; * On the AP+ normal memory is on bus 8. Why? Ask Fujitsu :-)&n;*/
-macro_line|#if CONFIG_AP1000
-DECL|macro|MEM_BUS_SPACE
-mdefine_line|#define MEM_BUS_SPACE 8
-macro_line|#else
-DECL|macro|MEM_BUS_SPACE
-mdefine_line|#define MEM_BUS_SPACE 0
-macro_line|#endif
 multiline_comment|/* Accessing the MMU control register. */
 DECL|function|srmmu_get_mmureg
 r_extern
@@ -200,16 +188,6 @@ op_amp
 id|SRMMU_CTX_PMASK
 )paren
 suffix:semicolon
-macro_line|#if MEM_BUS_SPACE
-id|paddr
-op_or_assign
-(paren
-id|MEM_BUS_SPACE
-op_lshift
-l_int|28
-)paren
-suffix:semicolon
-macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -319,17 +297,6 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-multiline_comment|/* The AP1000+ message controller also needs to know&n;&t;   the current task&squot;s context. */
-id|MSC_OUT
-c_func
-(paren
-id|MSC_PID
-comma
-id|context
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|srmmu_get_context
 r_extern
@@ -464,21 +431,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if CONFIG_AP1000
-r_extern
-r_void
-id|mc_tlb_flush_all
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-id|mc_tlb_flush_all
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -512,13 +464,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if CONFIG_AP1000
-id|mc_tlb_flush_ctx
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -553,13 +498,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if CONFIG_AP1000
-id|mc_tlb_flush_region
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|addr
 op_and_assign
 id|SRMMU_PGDIR_MASK
@@ -600,13 +538,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if CONFIG_AP1000
-id|mc_tlb_flush_segment
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|addr
 op_and_assign
 id|SRMMU_PMD_MASK
@@ -647,14 +578,6 @@ r_int
 id|page
 )paren
 (brace
-macro_line|#if CONFIG_AP1000
-id|mc_tlb_flush_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-macro_line|#endif
 id|page
 op_and_assign
 id|PAGE_MASK

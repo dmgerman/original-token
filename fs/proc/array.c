@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -80,7 +81,7 @@ r_struct
 id|user
 id|dump
 suffix:semicolon
-macro_line|#ifdef __i386__
+macro_line|#if defined (__i386__) || defined (__mc68000__)
 DECL|macro|FIRST_MAPPED
 macro_line|#&t;define FIRST_MAPPED&t;PAGE_SIZE&t;/* we don&squot;t have page 0 mapped on x86.. */
 macro_line|#else
@@ -723,6 +724,16 @@ r_int
 r_int
 id|total_forks
 suffix:semicolon
+r_int
+r_int
+id|ticks
+suffix:semicolon
+id|ticks
+op_assign
+id|jiffies
+op_star
+id|smp_num_cpus
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -767,7 +778,7 @@ id|kstat.cpu_nice
 comma
 id|kstat.cpu_system
 comma
-id|jiffies
+id|ticks
 op_minus
 (paren
 id|kstat.cpu_user
@@ -2006,6 +2017,152 @@ r_return
 id|pc
 suffix:semicolon
 )brace
+macro_line|#elif defined(__mc68000__)
+(brace
+r_int
+r_int
+id|fp
+comma
+id|pc
+suffix:semicolon
+r_int
+r_int
+id|stack_page
+suffix:semicolon
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+r_extern
+r_int
+id|sys_pause
+(paren
+r_void
+)paren
+suffix:semicolon
+id|stack_page
+op_assign
+id|p-&gt;kernel_stack_page
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|stack_page
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|fp
+op_assign
+(paren
+(paren
+r_struct
+id|switch_stack
+op_star
+)paren
+id|p-&gt;tss.ksp
+)paren
+op_member_access_from_pointer
+id|a6
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+id|fp
+OL
+id|stack_page
+op_logical_or
+id|fp
+op_ge
+l_int|4088
+op_plus
+id|stack_page
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|pc
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|fp
+)paren
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* FIXME: This depends on the order of these functions. */
+r_if
+c_cond
+(paren
+(paren
+id|pc
+OL
+(paren
+r_int
+r_int
+)paren
+id|__down
+op_logical_or
+id|pc
+op_ge
+(paren
+r_int
+r_int
+)paren
+id|add_timer
+)paren
+op_logical_and
+(paren
+id|pc
+OL
+(paren
+r_int
+r_int
+)paren
+id|schedule
+op_logical_or
+id|pc
+op_ge
+(paren
+r_int
+r_int
+)paren
+id|sys_pause
+)paren
+)paren
+r_return
+id|pc
+suffix:semicolon
+id|fp
+op_assign
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|fp
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|count
+op_increment
+OL
+l_int|16
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
 r_return
 l_int|0
@@ -2024,13 +2181,16 @@ DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk)&t;(*(unsigned long *)(tsk-&gt;kernel_stack_page + PT_REG(pc)))
 DECL|macro|KSTK_ESP
 macro_line|# define KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
-macro_line|#elif defined(__sparc__)
-DECL|macro|PT_REG
-macro_line|# define PT_REG(reg)            (PAGE_SIZE - sizeof(struct pt_regs)     &bslash;&n;                                 + (long)&amp;((struct pt_regs *)0)-&gt;reg)
+macro_line|#elif defined(__mc68000__)
 DECL|macro|KSTK_EIP
-macro_line|# define KSTK_EIP(tsk)  (*(unsigned long *)(tsk-&gt;kernel_stack_page + PT_REG(pc)))
+mdefine_line|#define&t;KSTK_EIP(tsk)&t;&bslash;&n;    ({&t;&t;&t;&bslash;&n;&t;unsigned long eip = 0;&t; &bslash;&n; &t;if ((tsk)-&gt;tss.esp0 &gt; PAGE_SIZE &amp;&amp; &bslash;&n;&t;    MAP_NR((tsk)-&gt;tss.esp0) &lt; max_mapnr) &bslash;&n;&t;      eip = ((struct pt_regs *) (tsk)-&gt;tss.esp0)-&gt;pc;&t; &bslash;&n;        eip; })
 DECL|macro|KSTK_ESP
-macro_line|# define KSTK_ESP(tsk)  (*(unsigned long *)(tsk-&gt;kernel_stack_page + PT_REG(u_regs[UREG_FP])))
+mdefine_line|#define&t;KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
+macro_line|#elif defined(__sparc__)
+DECL|macro|KSTK_EIP
+macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;tss.kregs-&gt;pc)
+DECL|macro|KSTK_ESP
+macro_line|# define KSTK_ESP(tsk)  ((tsk)-&gt;tss.kregs-&gt;u_regs[UREG_FP])
 macro_line|#endif
 multiline_comment|/* Gcc optimizes away &quot;strlen(x)&quot; for constant x */
 DECL|macro|ADDBUF
@@ -4455,6 +4615,17 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ZORRO
+r_extern
+r_int
+id|zorro_get_list
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|get_root_array
 r_static
 r_int
@@ -4715,6 +4886,18 @@ c_func
 id|page
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ZORRO
+r_case
+id|PROC_ZORRO
+suffix:colon
+r_return
+id|zorro_get_list
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 op_minus

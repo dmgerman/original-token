@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.65 1996/12/10 07:08:09 tridge Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; * The sunos_poll routine is based on iBCS2&squot;s poll routine, this&n; * is the copyright message for that file:&n; *&n; * This file contains the procedures for the handling of poll.&n; *&n; * Copyright (C) 1994 Eric Youngdale&n; *&n; * Created for Linux based loosely upon linux select code, which&n; * in turn is loosely based upon Mathius Lattner&squot;s minix&n; * patches by Peter MacDonald. Heavily edited by Linus.&n; *&n; * Poll is used by SVr4 instead of select, and it has considerably&n; * more functionality.  Parts of it are related to STREAMS, and since&n; * we do not have streams, we fake it.  In fact, select() still exists&n; * under SVr4, but libc turns it into a poll() call instead.  We attempt&n; * to do the inverse mapping.&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.68 1996/12/19 05:25:43 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; * The sunos_poll routine is based on iBCS2&squot;s poll routine, this&n; * is the copyright message for that file:&n; *&n; * This file contains the procedures for the handling of poll.&n; *&n; * Copyright (C) 1994 Eric Youngdale&n; *&n; * Created for Linux based loosely upon linux select code, which&n; * in turn is loosely based upon Mathius Lattner&squot;s minix&n; * patches by Peter MacDonald. Heavily edited by Linus.&n; *&n; * Poll is used by SVr4 instead of select, and it has considerably&n; * more functionality.  Parts of it are related to STREAMS, and since&n; * we do not have streams, we fake it.  In fact, select() still exists&n; * under SVr4, but libc turns it into a poll() call instead.  We attempt&n; * to do the inverse mapping.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -281,6 +281,37 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4c
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|addr
+op_ge
+l_int|0x20000000
+)paren
+op_logical_and
+(paren
+id|addr
+OL
+l_int|0xe0000000
+)paren
+)paren
+)paren
+(brace
+r_return
+id|current-&gt;mm-&gt;brk
+suffix:semicolon
+)brace
 )brace
 id|retval
 op_assign
@@ -3702,14 +3733,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if CONFIG_AP1000
-r_return
-id|mpp_cid
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 (paren
 (paren
@@ -3727,7 +3750,6 @@ r_int
 )paren
 id|idprom-&gt;id_sernum
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|sunos_sysconf
 r_extern
@@ -5611,6 +5633,8 @@ id|err
 suffix:semicolon
 r_int
 id|old_fs
+op_assign
+id|USER_DS
 suffix:semicolon
 id|current-&gt;personality
 op_or_assign
@@ -5709,6 +5733,11 @@ r_else
 (brace
 id|tmp_sap
 op_assign
+(paren
+r_struct
+id|sigaction
+op_star
+)paren
 id|action
 suffix:semicolon
 )brace

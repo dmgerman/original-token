@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Rose release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;Rose 001&t;Jonathan(G4KLX)&t;Cloned from nr_route.c.&n; */
+multiline_comment|/*&n; *&t;Rose release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;Rose 001&t;Jonathan(G4KLX)&t;Cloned from nr_route.c.&n; *&t;&t;&t;Terry(VK2KTJ)&t;Added support for variable length&n; *&t;&t;&t;&t;&t;address masks.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -95,6 +95,12 @@ r_struct
 id|rose_node
 op_star
 id|rose_node
+comma
+op_star
+id|rose_tmpn
+comma
+op_star
+id|rose_tmpp
 suffix:semicolon
 r_struct
 id|rose_neigh
@@ -126,7 +132,14 @@ id|rose_node-&gt;next
 r_if
 c_cond
 (paren
-id|rosecmp
+(paren
+id|rose_node-&gt;mask
+op_eq
+id|rose_route-&gt;mask
+)paren
+op_logical_and
+(paren
+id|rosecmpm
 c_func
 (paren
 op_amp
@@ -134,9 +147,12 @@ id|rose_route-&gt;address
 comma
 op_amp
 id|rose_node-&gt;address
+comma
+id|rose_route-&gt;mask
 )paren
 op_eq
 l_int|0
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -362,6 +378,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * This is a new node to be inserted into the list. Find where it needs&n;&t; * to be inserted into the list, and insert it. We want to be sure&n;&t; * to order the list in descending order of mask size to ensure that&n;&t; * later when we are searching this list the first match will be the&n;&t; * best match.&n;&t; */
 r_if
 c_cond
 (paren
@@ -370,6 +387,46 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|rose_tmpn
+op_assign
+id|rose_node_list
+suffix:semicolon
+id|rose_tmpp
+op_assign
+l_int|NULL
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|rose_tmpn
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|rose_tmpn-&gt;mask
+OG
+id|rose_route-&gt;mask
+)paren
+(brace
+id|rose_tmpp
+op_assign
+id|rose_tmpn
+suffix:semicolon
+id|rose_tmpn
+op_assign
+id|rose_tmpn-&gt;next
+suffix:semicolon
+)brace
+r_else
+(brace
+r_break
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* create new node */
 r_if
 c_cond
 (paren
@@ -404,6 +461,10 @@ id|rose_node-&gt;address
 op_assign
 id|rose_route-&gt;address
 suffix:semicolon
+id|rose_node-&gt;mask
+op_assign
+id|rose_route-&gt;mask
+suffix:semicolon
 id|rose_node-&gt;which
 op_assign
 l_int|0
@@ -430,6 +491,55 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rose_tmpn
+op_eq
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|rose_tmpp
+op_eq
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* Empty list */
+id|rose_node_list
+op_assign
+id|rose_node
+suffix:semicolon
+id|rose_node-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_else
+(brace
+id|rose_tmpp-&gt;next
+op_assign
+id|rose_node
+suffix:semicolon
+id|rose_node-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|rose_tmpp
+op_eq
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* 1st node */
 id|rose_node-&gt;next
 op_assign
 id|rose_node_list
@@ -438,6 +548,19 @@ id|rose_node_list
 op_assign
 id|rose_node
 suffix:semicolon
+)brace
+r_else
+(brace
+id|rose_tmpp-&gt;next
+op_assign
+id|rose_node
+suffix:semicolon
+id|rose_node-&gt;next
+op_assign
+id|rose_tmpn
+suffix:semicolon
+)brace
+)brace
 id|restore_flags
 c_func
 (paren
@@ -997,7 +1120,14 @@ id|rose_node-&gt;next
 r_if
 c_cond
 (paren
-id|rosecmp
+(paren
+id|rose_node-&gt;mask
+op_eq
+id|rose_route-&gt;mask
+)paren
+op_logical_and
+(paren
+id|rosecmpm
 c_func
 (paren
 op_amp
@@ -1005,9 +1135,12 @@ id|rose_route-&gt;address
 comma
 op_amp
 id|rose_node-&gt;address
+comma
+id|rose_route-&gt;mask
 )paren
 op_eq
 l_int|0
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -1641,13 +1774,15 @@ id|node-&gt;next
 r_if
 c_cond
 (paren
-id|rosecmp
+id|rosecmpm
 c_func
 (paren
+id|addr
+comma
 op_amp
 id|node-&gt;address
 comma
-id|addr
+id|node-&gt;mask
 )paren
 op_eq
 l_int|0
@@ -1790,6 +1925,18 @@ op_ne
 l_int|NULL
 )paren
 multiline_comment|/* Can&squot;t add routes to ourself */
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rose_route.mask
+OG
+l_int|10
+)paren
+multiline_comment|/* Mask can&squot;t be more than 10 digits */
 r_return
 op_minus
 id|EINVAL
@@ -2652,13 +2799,15 @@ id|rose_node-&gt;next
 r_if
 c_cond
 (paren
-id|rosecmp
+id|rosecmpm
 c_func
 (paren
+id|dest_addr
+comma
 op_amp
 id|rose_node-&gt;address
 comma
-id|dest_addr
+id|rose_node-&gt;mask
 )paren
 op_eq
 l_int|0
@@ -2889,7 +3038,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;address    w n neigh neigh neigh&bslash;n&quot;
+l_string|&quot;address    mask w n neigh neigh neigh&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -2917,7 +3066,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-10s %d %d&quot;
+l_string|&quot;%-10s %04d %d %d&quot;
 comma
 id|rose2asc
 c_func
@@ -2925,6 +3074,8 @@ c_func
 op_amp
 id|rose_node-&gt;address
 )paren
+comma
+id|rose_node-&gt;mask
 comma
 id|rose_node-&gt;which
 op_plus

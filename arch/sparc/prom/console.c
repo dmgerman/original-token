@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.9 1996/09/19 20:27:17 davem Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: console.c,v 1.10 1996/12/18 06:46:54 tridge Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -288,12 +288,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else
-id|i
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 macro_line|#endif
 r_break
 suffix:semicolon

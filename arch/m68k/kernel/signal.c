@@ -505,7 +505,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|boot_info.cputype
+id|m68k_fputype
 op_amp
 id|FPU_68881
 )paren
@@ -535,7 +535,7 @@ r_else
 r_if
 c_cond
 (paren
-id|boot_info.cputype
+id|m68k_fputype
 op_amp
 id|FPU_68882
 )paren
@@ -565,7 +565,7 @@ r_else
 r_if
 c_cond
 (paren
-id|boot_info.cputype
+id|m68k_fputype
 op_amp
 id|FPU_68040
 )paren
@@ -605,7 +605,7 @@ r_else
 r_if
 c_cond
 (paren
-id|boot_info.cputype
+id|m68k_fputype
 op_amp
 id|FPU_68060
 )paren
@@ -817,6 +817,7 @@ DECL|macro|UFRAME_SIZE
 mdefine_line|#define UFRAME_SIZE(fs) (sizeof(struct sigcontext)/4 + 6 + fs/4)
 DECL|function|setup_frame
 r_static
+r_inline
 r_void
 id|setup_frame
 (paren
@@ -1315,6 +1316,7 @@ suffix:semicolon
 multiline_comment|/*&n; * OK, we&squot;re invoking a handler&n; */
 DECL|function|handle_signal
 r_static
+r_inline
 r_void
 id|handle_signal
 c_func

@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.28 1996/12/12 09:39:25 jj Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.32 1996/12/19 05:25:46 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
@@ -10,6 +11,7 @@ macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/ipc.h&gt;
 multiline_comment|/* XXX Make this per-binary type, this way we can detect the type of&n; * XXX a binary.  Every Sparc executable calls this very early on.&n; */
 DECL|function|sys_getpagesize
 id|asmlinkage
@@ -144,44 +146,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * sys_ipc() is the de-multiplexer for the SysV IPC calls..&n; *&n; * This is really horribly ugly.&n; */
-DECL|struct|ipc_kludge
-r_struct
-id|ipc_kludge
-(brace
-DECL|member|msgp
-r_struct
-id|msgbuf
-op_star
-id|msgp
-suffix:semicolon
-DECL|member|msgtyp
-r_int
-id|msgtyp
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|SEMOP
-mdefine_line|#define SEMOP&t; &t;1
-DECL|macro|SEMGET
-mdefine_line|#define SEMGET &t;&t;2
-DECL|macro|SEMCTL
-mdefine_line|#define SEMCTL &t;&t;3
-DECL|macro|MSGSND
-mdefine_line|#define MSGSND &t;&t;11
-DECL|macro|MSGRCV
-mdefine_line|#define MSGRCV &t;&t;12
-DECL|macro|MSGGET
-mdefine_line|#define MSGGET &t;&t;13
-DECL|macro|MSGCTL
-mdefine_line|#define MSGCTL &t;&t;14
-DECL|macro|SHMAT
-mdefine_line|#define SHMAT &t;&t;21
-DECL|macro|SHMDT
-mdefine_line|#define SHMDT &t;&t;22
-DECL|macro|SHMGET
-mdefine_line|#define SHMGET &t;&t;23
-DECL|macro|SHMCTL
-mdefine_line|#define SHMCTL &t;&t;24
 DECL|function|sys_ipc
 id|asmlinkage
 r_int
@@ -821,6 +785,37 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4c
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|addr
+op_ge
+l_int|0x20000000
+)paren
+op_logical_and
+(paren
+id|addr
+OL
+l_int|0xe0000000
+)paren
+)paren
+)paren
+(brace
+r_return
+id|current-&gt;mm-&gt;brk
+suffix:semicolon
+)brace
+)brace
 id|retval
 op_assign
 id|do_mmap
@@ -999,4 +994,21 @@ id|oldaction
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef CONFIG_AP1000
+multiline_comment|/* only AP+ systems have sys_aplib */
+DECL|function|sys_aplib
+id|asmlinkage
+r_int
+id|sys_aplib
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

@@ -1051,7 +1051,7 @@ id|dead_task
 (brace
 )brace
 DECL|function|copy_thread
-r_void
+r_int
 id|copy_thread
 c_func
 (paren
@@ -1356,6 +1356,9 @@ l_string|&quot;=m&quot;
 id|p-&gt;tss.i387
 )paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * fill in the fpu structure for a core dump..&n; */

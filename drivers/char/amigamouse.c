@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Amiga Mouse Driver for Linux 68k by Michael Rausch&n; * based upon:&n; *&n; * Logitech Bus Mouse Driver for Linux&n; * by James Banks&n; *&n; * Mods by Matthew Dillon&n; *   calls verify_area()&n; *   tracks better when X is busy or paging&n; *&n; * Heavily modified by David Giller&n; *   changed from queue- to counter- driven&n; *   hacked out a (probably incorrect) mouse_select&n; *&n; * Modified again by Nathan Laredo to interface with&n; *   0.96c-pl1 IRQ handling changes (13JUL92)&n; *   didn&squot;t bother touching select code.&n; *&n; * Modified the select() code blindly to conform to the VFS&n; *   requirements. 92.07.14 - Linus. Somebody should test it out.&n; *&n; * Modified by Johan Myreen to make room for other mice (9AUG92)&n; *   removed assignment chr_fops[10] = &amp;mouse_fops; see mouse.c&n; *   renamed mouse_fops =&gt; bus_mouse_fops, made bus_mouse_fops public.&n; *   renamed this file mouse.c =&gt; busmouse.c&n; *&n; * Modified for use in the 1.3 kernels by Jes Sorensen.&n; */
+multiline_comment|/*&n; * Amiga Mouse Driver for Linux 68k by Michael Rausch&n; * based upon:&n; *&n; * Logitech Bus Mouse Driver for Linux&n; * by James Banks&n; *&n; * Mods by Matthew Dillon&n; *   calls verify_area()&n; *   tracks better when X is busy or paging&n; *&n; * Heavily modified by David Giller&n; *   changed from queue- to counter- driven&n; *   hacked out a (probably incorrect) mouse_select&n; *&n; * Modified again by Nathan Laredo to interface with&n; *   0.96c-pl1 IRQ handling changes (13JUL92)&n; *   didn&squot;t bother touching select code.&n; *&n; * Modified the select() code blindly to conform to the VFS&n; *   requirements. 92.07.14 - Linus. Somebody should test it out.&n; *&n; * Modified by Johan Myreen to make room for other mice (9AUG92)&n; *   removed assignment chr_fops[10] = &amp;mouse_fops; see mouse.c&n; *   renamed mouse_fops =&gt; bus_mouse_fops, made bus_mouse_fops public.&n; *   renamed this file mouse.c =&gt; busmouse.c&n; *&n; * Modified for use in the 1.3 kernels by Jes Sorensen.&n; *&n; * Moved the isr-allocation to the mouse_{open,close} calls, as there&n; *   is no reason to service the mouse in the vertical blank isr if&n; *   the mouse is not in use.             Jes Sorensen&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,13 +8,13 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigamouse.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 DECL|macro|MSE_INT_ON
 mdefine_line|#define MSE_INT_ON()&t;mouseint_allowed = 1
 DECL|macro|MSE_INT_OFF
@@ -39,14 +39,14 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dummy
+comma
 r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_void
-op_star
-id|dummy
 )paren
 (brace
 r_static
@@ -553,6 +553,14 @@ id|mouse.active
 )paren
 r_return
 suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|IRQ_AMIGA_VERTB
+comma
+id|mouse_interrupt
+)paren
+suffix:semicolon
 id|MSE_INT_OFF
 c_func
 (paren
@@ -598,6 +606,41 @@ op_increment
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; *  use VBL to poll mouse deltas&n;&t; */
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|IRQ_AMIGA_VERTB
+comma
+id|mouse_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;Amiga mouse&quot;
+comma
+id|mouse_interrupt
+)paren
+)paren
+(brace
+id|mouse.present
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Installing Amiga mouse failed.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|mouse.ready
 op_assign
 l_int|0
@@ -652,6 +695,7 @@ op_star
 id|buffer
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -681,6 +725,7 @@ r_char
 op_star
 id|buffer
 comma
+r_int
 r_int
 id|count
 )paren
@@ -739,7 +784,7 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-multiline_comment|/*&n;&t; * Obtain the current mouse parameters and limit as appropriate for&n;&t; * the return data format.  Interrupts are only disabled while &n;&t; * obtaining the parameters, NOT during the puts_fs_byte() calls,&n;&t; * so paging in put_fs_byte() does not effect mouse tracking.&n;&t; */
+multiline_comment|/*&n;&t; * Obtain the current mouse parameters and limit as appropriate for&n;&t; * the return data format.  Interrupts are only disabled while &n;&t; * obtaining the parameters, NOT during the puts_user() calls,&n;&t; * so paging in put_user() does not effect mouse tracking.&n;&t; */
 id|MSE_INT_OFF
 c_func
 (paren
@@ -824,7 +869,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|buttons
@@ -834,7 +879,7 @@ comma
 id|buffer
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -847,7 +892,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -874,7 +919,7 @@ suffix:semicolon
 id|r
 op_increment
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0x00
@@ -1052,42 +1097,6 @@ id|mouse.wait
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;&t; *  use VBL to poll mouse deltas&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|add_isr
-c_func
-(paren
-id|IRQ_AMIGA_VERTB
-comma
-id|mouse_interrupt
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_string|&quot;Amiga mouse&quot;
-)paren
-)paren
-(brace
-id|mouse.present
-op_assign
-l_int|0
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Installing Amiga mouse failed.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
 id|mouse.present
 op_assign
 l_int|1
@@ -1111,7 +1120,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 DECL|function|init_module
 r_int
 id|init_module
@@ -1135,16 +1144,6 @@ c_func
 r_void
 )paren
 (brace
-id|remove_isr
-c_func
-(paren
-id|IRQ_AMIGA_VERTB
-comma
-id|mouse_interrupt
-comma
-l_int|NULL
-)paren
-suffix:semicolon
 id|misc_deregister
 c_func
 (paren

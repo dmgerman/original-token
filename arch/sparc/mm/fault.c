@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.84 1996/12/10 06:06:23 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: fault.c,v 1.85 1996/12/18 06:43:23 tridge Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1194,14 +1194,19 @@ id|_SUN4C_PAGE_PRESENT
 )paren
 )paren
 (brace
+op_star
+id|ptep
+op_assign
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 op_star
 id|ptep
 )paren
-op_or_assign
-(paren
+op_or
 id|_SUN4C_PAGE_ACCESSED
 op_or
 id|_SUN4C_PAGE_MODIFIED
@@ -1268,14 +1273,19 @@ id|_SUN4C_PAGE_PRESENT
 )paren
 )paren
 (brace
+op_star
+id|ptep
+op_assign
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 op_star
 id|ptep
 )paren
-op_or_assign
-(paren
+op_or
 id|_SUN4C_PAGE_ACCESSED
 op_or
 id|_SUN4C_PAGE_VALID

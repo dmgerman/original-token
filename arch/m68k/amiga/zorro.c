@@ -2623,13 +2623,24 @@ mdefine_line|#define NUM_MANUF (sizeof(Manufacturers)/sizeof(struct Manufacturer
 DECL|macro|NUM_GVP_PROD
 mdefine_line|#define NUM_GVP_PROD (sizeof(Ext_Prod_GVP)/sizeof(struct GVP_Product))
 macro_line|#endif /* CONFIG_ZORRO */
-multiline_comment|/*&n;    *    Configured Expansion Devices&n;    */
+multiline_comment|/*&n;    *    Expansion Devices&n;    */
+r_int
+id|zorro_num_autocon
+suffix:semicolon
+DECL|variable|zorro_autocon
+r_struct
+id|ConfigDev
+id|zorro_autocon
+(braket
+id|ZORRO_NUM_AUTO
+)braket
+suffix:semicolon
 DECL|variable|BoardPartFlags
 r_static
 id|u_long
 id|BoardPartFlags
 (braket
-id|NUM_AUTO
+id|ZORRO_NUM_AUTO
 )braket
 op_assign
 (brace
@@ -2719,7 +2730,7 @@ l_int|1
 suffix:semicolon
 id|key
 op_le
-id|boot_info.bi_amiga.num_autocon
+id|zorro_num_autocon
 suffix:semicolon
 id|key
 op_increment
@@ -2728,7 +2739,7 @@ op_increment
 id|cd
 op_assign
 op_amp
-id|boot_info.bi_amiga.autocon
+id|zorro_autocon
 (braket
 id|key
 op_minus
@@ -2772,7 +2783,7 @@ suffix:semicolon
 r_return
 id|key
 op_le
-id|boot_info.bi_amiga.num_autocon
+id|zorro_num_autocon
 ques
 c_cond
 id|key
@@ -2811,7 +2822,7 @@ op_logical_or
 (paren
 id|key
 OG
-id|boot_info.bi_amiga.num_autocon
+id|zorro_num_autocon
 )paren
 )paren
 id|printk
@@ -2826,7 +2837,7 @@ r_else
 id|cd
 op_assign
 op_amp
-id|boot_info.bi_amiga.autocon
+id|zorro_autocon
 (braket
 id|key
 op_minus
@@ -2862,7 +2873,7 @@ op_logical_or
 (paren
 id|key
 OG
-id|boot_info.bi_amiga.num_autocon
+id|zorro_num_autocon
 )paren
 )paren
 id|printk
@@ -2935,7 +2946,7 @@ op_logical_or
 (paren
 id|key
 OG
-id|boot_info.bi_amiga.num_autocon
+id|zorro_num_autocon
 )paren
 )paren
 id|printk
@@ -3057,7 +3068,7 @@ suffix:semicolon
 id|cd
 op_assign
 op_amp
-id|boot_info.bi_amiga.autocon
+id|zorro_autocon
 (braket
 id|devnum
 )braket
@@ -3506,7 +3517,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|boot_info.bi_amiga.num_autocon
+id|zorro_num_autocon
 suffix:semicolon
 id|i
 op_increment
@@ -3531,7 +3542,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|boot_info.bi_amiga.num_autocon
+id|zorro_num_autocon
 )paren
 id|printk
 c_func
@@ -3597,7 +3608,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|boot_info.bi_amiga.num_autocon
+id|zorro_num_autocon
 suffix:semicolon
 id|i
 op_increment
@@ -3872,7 +3883,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|boot_info.bi_amiga.num_autocon
+id|zorro_num_autocon
 suffix:semicolon
 id|i
 op_increment
@@ -3881,7 +3892,7 @@ op_increment
 id|cd
 op_assign
 op_amp
-id|boot_info.bi_amiga.autocon
+id|zorro_autocon
 (braket
 id|i
 )braket
@@ -3917,7 +3928,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|boot_info.num_memory
+id|m68k_num_memory
 suffix:semicolon
 id|i
 op_increment
@@ -3925,14 +3936,14 @@ op_increment
 id|mark_region
 c_func
 (paren
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
 dot
 id|addr
 comma
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket

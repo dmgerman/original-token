@@ -1056,6 +1056,139 @@ id|page
 suffix:semicolon
 )brace
 )brace
+DECL|function|transp_transl_matches
+r_static
+r_int
+r_int
+id|transp_transl_matches
+c_func
+(paren
+r_int
+r_int
+id|regval
+comma
+r_int
+r_int
+id|vaddr
+)paren
+(brace
+r_int
+r_int
+id|base
+comma
+id|mask
+suffix:semicolon
+multiline_comment|/* enabled? */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|regval
+op_amp
+l_int|0x8000
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|CPU_IS_030
+)paren
+(brace
+multiline_comment|/* function code match? */
+id|base
+op_assign
+(paren
+id|regval
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|7
+suffix:semicolon
+id|mask
+op_assign
+op_complement
+(paren
+id|regval
+op_amp
+l_int|7
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|SUPER_DATA
+op_amp
+id|mask
+)paren
+op_ne
+(paren
+id|base
+op_amp
+id|mask
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* must not be user-only */
+r_if
+c_cond
+(paren
+(paren
+id|regval
+op_amp
+l_int|0x6000
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* address match? */
+id|base
+op_assign
+id|regval
+op_amp
+l_int|0xff000000
+suffix:semicolon
+id|mask
+op_assign
+op_complement
+(paren
+(paren
+id|regval
+op_lshift
+l_int|8
+)paren
+op_amp
+l_int|0xff000000
+)paren
+suffix:semicolon
+r_return
+(paren
+id|vaddr
+op_amp
+id|mask
+)paren
+op_eq
+(paren
+id|base
+op_amp
+id|mask
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The following two routines map from a physical address to a kernel&n; * virtual address and vice versa.&n; */
 DECL|function|mm_vtop
 r_int
@@ -1069,6 +1202,8 @@ id|vaddr
 (brace
 r_int
 id|i
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 r_int
@@ -1082,20 +1217,7 @@ id|offset
 op_assign
 l_int|0
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|boot_info.num_memory
-suffix:semicolon
-id|i
-op_increment
-)paren
+r_do
 (brace
 r_if
 c_cond
@@ -1104,7 +1226,7 @@ id|voff
 OL
 id|offset
 op_plus
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -1119,7 +1241,7 @@ l_string|&quot;VTOP(%lx)=%lx&bslash;n&quot;
 comma
 id|vaddr
 comma
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -1133,7 +1255,7 @@ id|offset
 suffix:semicolon
 macro_line|#endif
 r_return
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -1148,15 +1270,157 @@ suffix:semicolon
 r_else
 id|offset
 op_add_assign
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
 dot
 id|size
 suffix:semicolon
+id|i
+op_increment
+suffix:semicolon
 )brace
-multiline_comment|/* not in one of the memory chunks; get the actual&n;&t; * physical address from the MMU.&n;&t; */
+r_while
+c_loop
+(paren
+id|i
+OL
+id|m68k_num_memory
+)paren
+suffix:semicolon
+multiline_comment|/* not in one of the memory chunks; test for applying transparent&n;&t; * translation */
+r_if
+c_cond
+(paren
+id|CPU_IS_030
+)paren
+(brace
+r_int
+r_int
+id|ttreg
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;pmove %/tt0,%0@&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+op_amp
+id|ttreg
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|transp_transl_matches
+c_func
+(paren
+id|ttreg
+comma
+id|vaddr
+)paren
+)paren
+r_return
+id|vaddr
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;pmove %/tt1,%0@&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+op_amp
+id|ttreg
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|transp_transl_matches
+c_func
+(paren
+id|ttreg
+comma
+id|vaddr
+)paren
+)paren
+r_return
+id|vaddr
+suffix:semicolon
+)brace
+r_else
+(brace
+r_register
+r_int
+r_int
+id|ttreg
+id|__asm__
+c_func
+(paren
+l_string|&quot;d0&quot;
+)paren
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;.long 0x4e7a0006&quot;
+multiline_comment|/* movec %dtt0,%d0 */
+suffix:colon
+l_string|&quot;=d&quot;
+(paren
+id|ttreg
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|transp_transl_matches
+c_func
+(paren
+id|ttreg
+comma
+id|vaddr
+)paren
+)paren
+r_return
+id|vaddr
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;.long 0x4e7a0007&quot;
+multiline_comment|/* movec %dtt1,%d0 */
+suffix:colon
+l_string|&quot;=d&quot;
+(paren
+id|ttreg
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|transp_transl_matches
+c_func
+(paren
+id|ttreg
+comma
+id|vaddr
+)paren
+)paren
+r_return
+id|vaddr
+suffix:semicolon
+)brace
+multiline_comment|/* no match, too, so get the actual physical address from the MMU. */
 r_if
 c_cond
 (paren
@@ -1185,22 +1449,19 @@ multiline_comment|/* The PLPAR instruction causes an access error if the transla
 id|asm
 r_volatile
 (paren
-l_string|&quot;movel %1,%/a0&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf5c8&bslash;n&bslash;t&quot;
-multiline_comment|/* plpar (a0) */
-l_string|&quot;movel %/a0,%0&quot;
+l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
+l_string|&quot;plpar (%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
-l_string|&quot;=g&quot;
+l_string|&quot;=a&quot;
 (paren
 id|paddr
 )paren
 suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;0&quot;
 (paren
 id|vaddr
 )paren
-suffix:colon
-l_string|&quot;a0&quot;
 )paren
 suffix:semicolon
 id|set_fs
@@ -1240,26 +1501,20 @@ suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;movel %1,%/a0&bslash;n&bslash;t&quot;
-l_string|&quot;.word 0xf568&bslash;n&bslash;t&quot;
-multiline_comment|/* ptestr (a0) */
-l_string|&quot;.long 0x4e7a8805&bslash;n&bslash;t&quot;
-multiline_comment|/* movec mmusr, a0 */
-l_string|&quot;movel %/a0,%0&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;ptestr (%1)&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%mmusr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
-l_string|&quot;=g&quot;
+l_string|&quot;=r&quot;
 (paren
 id|mmusr
 )paren
 suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;a&quot;
 (paren
 id|vaddr
 )paren
-suffix:colon
-l_string|&quot;a0&quot;
-comma
-l_string|&quot;d0&quot;
 )paren
 suffix:semicolon
 id|set_fs
@@ -1477,6 +1732,8 @@ id|paddr
 (brace
 r_int
 id|i
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 r_int
@@ -1484,27 +1741,14 @@ id|offset
 op_assign
 l_int|0
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|boot_info.num_memory
-suffix:semicolon
-id|i
-op_increment
-)paren
+r_do
 (brace
 r_if
 c_cond
 (paren
 id|paddr
 op_ge
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -1514,14 +1758,14 @@ op_logical_and
 id|paddr
 OL
 (paren
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
 dot
 id|addr
 op_plus
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -1540,7 +1784,7 @@ comma
 (paren
 id|paddr
 op_minus
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -1556,7 +1800,7 @@ r_return
 (paren
 id|paddr
 op_minus
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
@@ -1570,14 +1814,25 @@ suffix:semicolon
 r_else
 id|offset
 op_add_assign
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
 dot
 id|size
 suffix:semicolon
+id|i
+op_increment
+suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+id|i
+OL
+id|m68k_num_memory
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * assume that the kernel virtual address is the same as the&n;&t; * physical address.&n;&t; *&n;&t; * This should be reasonable in most situations:&n;&t; *  1) They shouldn&squot;t be dereferencing the virtual address&n;&t; *     unless they are sure that it is valid from kernel space.&n;&t; *  2) The only usage I see so far is converting a page table&n;&t; *     reference to some non-FASTMEM address space when freeing&n;         *     mmaped &quot;/dev/mem&quot; pages.  These addresses are just passed&n;&t; *     to &quot;free_page&quot;, which ignores addresses that aren&squot;t in&n;&t; *     the memory list anyway.&n;&t; *&n;&t; */
 multiline_comment|/*&n;&t; * if on an amiga and address is in first 16M, move it &n;&t; * to the ZTWO_ADDR range&n;&t; */
 r_if
@@ -1606,25 +1861,25 @@ suffix:semicolon
 )brace
 multiline_comment|/* invalidate page in both caches */
 DECL|macro|clear040
-mdefine_line|#define&t;clear040(paddr) __asm__ __volatile__ (&quot;movel %0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;nop&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf4d0&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* CINVP I/D (a0) */&bslash;&n;&t;&t;&t;&t;&t;      : : &quot;g&quot; ((paddr))&bslash;&n;&t;&t;&t;&t;&t;      : &quot;a0&quot;)
+mdefine_line|#define&t;clear040(paddr)&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68040&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;      &quot;cinvp %%bc,(%0)&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68k&quot;&t;&t;&bslash;&n;&t;&t;&t;      : : &quot;a&quot; (paddr))
 multiline_comment|/* invalidate page in i-cache */
 DECL|macro|cleari040
-mdefine_line|#define&t;cleari040(paddr) __asm__ __volatile__ (&quot;movel %0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;       /* CINVP I (a0) */&bslash;&n;&t;&t;&t;&t;&t;       &quot;nop&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;       &quot;.word 0xf490&quot;&bslash;&n;&t;&t;&t;&t;&t;       : : &quot;g&quot; ((paddr))&bslash;&n;&t;&t;&t;&t;&t;       : &quot;a0&quot;)
+mdefine_line|#define&t;cleari040(paddr)&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68040&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;      &quot;cinvp %%ic,(%0)&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68k&quot;&t;&t;&bslash;&n;&t;&t;&t;      : : &quot;a&quot; (paddr))
 multiline_comment|/* push page in both caches */
 DECL|macro|push040
-mdefine_line|#define&t;push040(paddr) __asm__ __volatile__ (&quot;movel %0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;nop&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;     &quot;.word 0xf4f0&quot;&bslash;&n;&t;&t;&t;&t;&t;     /* CPUSHP I/D (a0) */&bslash;&n;&t;&t;&t;&t;&t;     : : &quot;g&quot; ((paddr))&bslash;&n;&t;&t;&t;&t;&t;     : &quot;a0&quot;)
+mdefine_line|#define&t;push040(paddr)&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68040&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;      &quot;cpushp %%bc,(%0)&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68k&quot;&t;&t;&bslash;&n;&t;&t;&t;      : : &quot;a&quot; (paddr))
 multiline_comment|/* push and invalidate page in both caches */
 DECL|macro|pushcl040
-mdefine_line|#define&t;pushcl040(paddr) do { push040((paddr));&bslash;&n;&t;&t;&t;      if (CPU_IS_060) clear040((paddr));&bslash;&n;&t;&t;&t; } while(0)
+mdefine_line|#define&t;pushcl040(paddr)&t;&t;&t;&bslash;&n;&t;do { push040(paddr);&t;&t;&t;&bslash;&n;&t;     if (CPU_IS_060) clear040(paddr);&t;&bslash;&n;&t;} while(0)
 multiline_comment|/* push page in both caches, invalidate in i-cache */
 DECL|macro|pushcli040
-mdefine_line|#define&t;pushcli040(paddr) do { push040((paddr));&bslash;&n;&t;&t;&t;       if (CPU_IS_060) cleari040((paddr));&bslash;&n;&t;&t;&t;  } while(0)
+mdefine_line|#define&t;pushcli040(paddr)&t;&t;&t;&bslash;&n;&t;do { push040(paddr);&t;&t;&t;&bslash;&n;&t;     if (CPU_IS_060) cleari040(paddr);&t;&bslash;&n;&t;} while(0)
 multiline_comment|/* push page defined by virtual address in both caches */
 DECL|macro|pushv040
-mdefine_line|#define&t;pushv040(vaddr) __asm__ __volatile__ (&quot;movel %0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* ptestr (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;nop&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf568&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* movec mmusr,d0 */&bslash;&n;&t;&t;&t;&t;&t;      &quot;.long 0x4e7a0805&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;andw #0xf000,%/d0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;movel %/d0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* CPUSHP I/D (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;nop&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf4f0&quot;&bslash;&n;&t;&t;&t;&t;&t;      : : &quot;g&quot; ((vaddr))&bslash;&n;&t;&t;&t;&t;&t;      : &quot;a0&quot;, &quot;d0&quot;)
+mdefine_line|#define&t;pushv040(vaddr)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do { unsigned long _tmp1, _tmp2;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68040&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;      &quot;ptestr (%2)&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;      &quot;movec %%mmusr,%0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;      &quot;andw #0xf000,%0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;      &quot;movel %0,%1&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;      &quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;      &quot;cpushp %%bc,(%1)&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68k&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;      : &quot;=d&quot; (_tmp1), &quot;=a&quot; (_tmp2)&t;&bslash;&n;&t;&t;&t;      : &quot;a&quot; (vaddr));&t;&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/* push page defined by virtual address in both caches */
 DECL|macro|pushv060
-mdefine_line|#define&t;pushv060(vaddr) __asm__ __volatile__ (&quot;movel %0,%/a0&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* plpar (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf5c8&bslash;n&bslash;t&quot;&bslash;&n;&t;&t;&t;&t;&t;      /* CPUSHP I/D (a0) */&bslash;&n;&t;&t;&t;&t;&t;      &quot;.word 0xf4f0&quot;&bslash;&n;&t;&t;&t;&t;&t;      : : &quot;g&quot; ((vaddr))&bslash;&n;&t;&t;&t;&t;&t;      : &quot;a0&quot;)
+mdefine_line|#define&t;pushv060(vaddr)&t;&t;&t;&t;&t;&bslash;&n;&t;do { unsigned long _tmp;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;.chip 68060&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;      &quot;plpar (%0)&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;      &quot;cpushp %%bc,(%0)&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68k&quot;&t;&t;&bslash;&n;&t;&t;&t;      : &quot;=a&quot; (_tmp)&t;&t;&bslash;&n;&t;&t;&t;      : &quot;0&quot; (vaddr));&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * 040: Hit every page containing an address in the range paddr..paddr+len-1.&n; * (Low order bits of the ea of a CINVP/CPUSHP are &quot;don&squot;t care&quot;s).&n; * Hit every page until there is a page or less to go. Hit the next page,&n; * and the one after that if the range hits it.&n; */
 multiline_comment|/* ++roman: A little bit more care is required here: The CINVP instruction&n; * invalidates cache entries WITHOUT WRITING DIRTY DATA BACK! So the beginning&n; * and the end of the region must be treated differently if they are not&n; * exactly at the beginning or end of a page boundary. Else, maybe too much&n; * data becomes invalidated and thus lost forever. CPUSHP does what we need:&n; * it invalidates the page after pushing dirty data to memory. (Thanks to Jes&n; * for discovering the problem!)&n; */
 multiline_comment|/* ... but on the &squot;060, CPUSH doesn&squot;t invalidate (for us, since we have set&n; * the DPI bit in the CACR; would it cause problems with temporarily changing&n; * this?). So we have to push first and then additionally to invalidate.&n; */
@@ -2165,7 +2420,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|boot_info.num_memory
+id|m68k_num_memory
 suffix:semicolon
 id|i
 op_increment
@@ -2173,14 +2428,14 @@ op_increment
 r_if
 c_cond
 (paren
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket
 dot
 id|addr
 op_plus
-id|boot_info.memory
+id|m68k_memory
 (braket
 id|i
 )braket

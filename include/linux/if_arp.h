@@ -50,7 +50,7 @@ mdefine_line|#define ARPHRD_TUNNEL&t;768&t;&t;/* IPIP tunnel&t;&t;&t;*/
 DECL|macro|ARPHRD_TUNNEL6
 mdefine_line|#define ARPHRD_TUNNEL6&t;769&t;&t;/* IPIP6 tunnel&t;&t;&t;*/
 DECL|macro|ARPHRD_FRAD
-mdefine_line|#define ARPHRD_FRAD&t;770&t;&t;/* Frame Relay Access Device&t;*/
+mdefine_line|#define ARPHRD_FRAD&t;770             /* Frame Relay Access Device    */
 DECL|macro|ARPHRD_SKIP
 mdefine_line|#define ARPHRD_SKIP&t;771&t;&t;/* SKIP vif&t;&t;&t;*/
 DECL|macro|ARPHRD_LOOPBACK
@@ -58,7 +58,9 @@ mdefine_line|#define ARPHRD_LOOPBACK&t;772&t;&t;/* Loopback device&t;&t;*/
 DECL|macro|ARPHRD_LOCALTLK
 mdefine_line|#define ARPHRD_LOCALTLK 773&t;&t;/* Localtalk device&t;&t;*/
 DECL|macro|ARPHRD_FDDI
-mdefine_line|#define ARPHRD_FDDI&t;774&t;&t;/* FDDI interfaces&t;&t;*/
+mdefine_line|#define ARPHRD_FDDI&t;774&t;&t;/* Fiber Distributed Data Interface */
+DECL|macro|ARPHRD_BIF
+mdefine_line|#define ARPHRD_BIF      775             /* AP1000 BIF                   */
 DECL|macro|ARPHRD_SIT
 mdefine_line|#define ARPHRD_SIT&t;776&t;&t;/* sit0 device - IPv6-in-IPv4&t;*/
 multiline_comment|/* ARP protocol opcodes. */

@@ -25,6 +25,13 @@ id|max_mapnr
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|num_physpages
+r_int
+r_int
+id|num_physpages
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|high_memory
 r_void
 op_star

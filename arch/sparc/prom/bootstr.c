@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bootstr.c,v 1.11 1996/07/27 05:02:06 zaitcev Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bootstr.c,v 1.12 1996/12/18 06:46:54 tridge Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -177,7 +177,6 @@ suffix:semicolon
 r_case
 id|PROM_AP1000
 suffix:colon
-multiline_comment|/*&n;&t;   * Get message from host boot process.&n;&t;   */
 macro_line|#if CONFIG_AP1000
 id|ap_getbootargs
 c_func
@@ -187,9 +186,9 @@ comma
 id|BARG_LEN
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 r_break

@@ -547,6 +547,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+r_extern
+r_void
+id|halt_now
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 id|asmlinkage
 id|sys_kill
@@ -594,9 +604,15 @@ id|magic
 op_ne
 l_int|0xfee1dead
 op_logical_or
+(paren
 id|magic_too
 op_ne
 l_int|672274793
+op_logical_and
+id|magic_too
+op_ne
+l_int|85072278
+)paren
 )paren
 r_return
 op_minus
@@ -666,6 +682,13 @@ id|KERN_EMERG
 l_string|&quot;System halted&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|halt_now
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 id|sys_kill
 c_func
 (paren

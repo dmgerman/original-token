@@ -338,6 +338,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Negotiate for sync transfers */
+DECL|member|wide
+r_int
+id|wide
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Negotiate for WIDE transfers */
 DECL|member|single_lun
 r_int
 id|single_lun

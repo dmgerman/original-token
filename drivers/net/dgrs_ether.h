@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;A filtering function&n; */
+multiline_comment|/*&n; *&t;A filtering function.  There are two filters/port.  Filter &quot;0&quot;&n; *&t;is the input filter, and filter &quot;1&quot; is the output filter.&n; */
 DECL|typedef|FILTER_FUNC
 r_typedef
 r_int
@@ -16,6 +16,9 @@ comma
 id|ulong
 op_star
 id|scratch
+comma
+r_int
+id|port
 )paren
 suffix:semicolon
 DECL|macro|NFILTERS
@@ -381,12 +384,21 @@ r_extern
 r_int
 id|FirstChan
 suffix:semicolon
-multiline_comment|/* 0 or 1, depending on whether host is used */
+multiline_comment|/* 0 or 1, depedning on whether host is used */
 r_extern
 r_int
 id|NumChan
 suffix:semicolon
 multiline_comment|/* 4 or 5 */
+multiline_comment|/*&n; *&t;A few globals&n; */
+r_extern
+r_int
+id|IsPromisc
+suffix:semicolon
+r_extern
+r_int
+id|MultiNicMode
+suffix:semicolon
 multiline_comment|/*&n; *&t;Functions&n; */
 r_extern
 r_void

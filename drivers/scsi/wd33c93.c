@@ -1,9 +1,11 @@
 multiline_comment|/*&n; *    wd33c93.c - Linux-68k device driver for the Commodore&n; *                Amiga A2091/590 SCSI controller card&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; *&n; * Drew Eckhardt&squot;s excellent &squot;Generic NCR5380&squot; sources from Linux-PC&n; * provided much of the inspiration and some of the code for this&n; * driver. Everything I know about Amiga DMA was gleaned from careful&n; * reading of Hamish Mcdonald&squot;s original wd33c93 driver; in fact, I&n; * borrowed shamelessly from all over that source. Thanks Hamish!&n; *&n; * _This_ driver is (I feel) an improvement over the old one in&n; * several respects:&n; *&n; *    -  Target Disconnection/Reconnection  is now supported. Any&n; *          system with more than one device active on the SCSI bus&n; *          will benefit from this. The driver defaults to what I&squot;m&n; *          &squot;adaptive disconnect&squot; - meaning that each command is&n; *          evaluated individually as to whether or not it should&n; *          be run with the option to disconnect/reselect (if the&n; *          device chooses), or as a &quot;SCSI-bus-hog&quot;.&n; *&n; *    -  Synchronous data transfers are now supported. Because of&n; *          a few devices that choke after telling the driver that&n; *          they can do sync transfers, we don&squot;t automatically use&n; *          this faster protocol - it can be enabled via the command-&n; *          line on a device-by-device basis.&n; *&n; *    -  Runtime operating parameters can now be specified through&n; *       the &squot;amiboot&squot; or the &squot;insmod&squot; command line. For amiboot do:&n; *          &quot;amiboot [usual stuff] wd33c93=blah,blah,blah&quot;&n; *       The defaults should be good for most people. See the comment&n; *       for &squot;setup_strings&squot; below for more details.&n; *&n; *    -  The old driver relied exclusively on what the Western Digital&n; *          docs call &quot;Combination Level 2 Commands&quot;, which are a great&n; *          idea in that the CPU is relieved of a lot of interrupt&n; *          overhead. However, by accepting a certain (user-settable)&n; *          amount of additional interrupts, this driver achieves&n; *          better control over the SCSI bus, and data transfers are&n; *          almost as fast while being much easier to define, track,&n; *          and debug.&n; *&n; *&n; * TODO:&n; *       more speed. linked commands.&n; *&n; *&n; * People with bug reports, wish-lists, complaints, comments,&n; * or improvements are asked to pah-leeez email me (John Shifflett)&n; * at john@geolog.com or jshiffle@netcom.com! I&squot;m anxious to get&n; * this thing into as good a shape as possible, and I&squot;m positive&n; * there are lots of lurking bugs and &quot;Stupid Places&quot;.&n; *&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#else
@@ -11,23 +13,22 @@ macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#endif
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#include &quot;wd33c93.h&quot;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
+DECL|macro|PROC_INTERFACE
+mdefine_line|#define PROC_INTERFACE     /* add code for /proc/scsi/wd33c93/xxx interface */
+macro_line|#ifdef  PROC_INTERFACE
+DECL|macro|PROC_STATISTICS
+mdefine_line|#define PROC_STATISTICS    /* add code for keeping various real time stats */
 macro_line|#endif
-multiline_comment|/* Leave this undefined for now - need to make some changes in the&n; * a3000/a2019/gvp11 files to get it working right&n; */
-multiline_comment|/*#define PROC_INTERFACE*/
-multiline_comment|/* add code for /proc/scsi/wd33c93/xxx interface */
 DECL|macro|SYNC_DEBUG
 mdefine_line|#define SYNC_DEBUG         /* extra info on sync negotiation printed */
 DECL|macro|DEBUGGING_ON
-mdefine_line|#define DEBUGGING_ON       /* enable command-line debugging bitmask */
+macro_line|#undef DEBUGGING_ON        /* enable command-line debugging bitmask */
 DECL|macro|DEBUG_DEFAULTS
 mdefine_line|#define DEBUG_DEFAULTS 0   /* default debugging bitmask */
 DECL|macro|WD33C93_VERSION
-mdefine_line|#define WD33C93_VERSION    &quot;1.21&quot;
+mdefine_line|#define WD33C93_VERSION    &quot;1.23&quot;
 DECL|macro|WD33C93_DATE
-mdefine_line|#define WD33C93_DATE       &quot;20/Apr/1996&quot;
+mdefine_line|#define WD33C93_DATE       &quot;04/Nov/1996&quot;
 macro_line|#ifdef DEBUGGING_ON
 DECL|macro|DB
 mdefine_line|#define DB(f,a) if (hostdata-&gt;args &amp; (f)) a;
@@ -35,9 +36,8 @@ macro_line|#else
 DECL|macro|DB
 mdefine_line|#define DB(f,a)
 macro_line|#endif
-DECL|macro|IS_DIR_OUT
-mdefine_line|#define IS_DIR_OUT(cmd) ((cmd)-&gt;cmnd[0] == WRITE_6  || &bslash;&n;                         (cmd)-&gt;cmnd[0] == WRITE_10 || &bslash;&n;                         (cmd)-&gt;cmnd[0] == WRITE_12)
-multiline_comment|/*&n; * setup_strings is an array of strings that define some of the operating&n; * parameters and settings for this driver. It is used unless an amiboot&n; * or insmod command line has been specified, in which case those settings&n; * are combined with the ones here. The driver recognizes the following&n; * keywords (lower case required) and arguments:&n; *&n; * -  nosync:bitmask -bitmask is a byte where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices. Set a bit to prevent sync&n; *                    negotiation on that device. To maintain backwards&n; *                    compatibility, a command-line such as &quot;wd33c93=255&quot; will&n; *                    be automatically translated to &quot;wd33c93=nosync:0xff&quot;.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bit mask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in wd33c93.h&n; * -  clock:x        -x = clock input in MHz for WD33c93 chip. Normal values&n; *                    would be from 8 through 20. Default is 8.&n; * -  next           -No argument. Used to separate blocks of keywords when&n; *                    there&squot;s more than one host adapter in the system.&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner, except in the case of &squot;setup_strings[]&squot; (see&n; *    below), which is simply a C array of pointers to char. Each element&n; *    in the array is a string comprising one keyword &amp; argument.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_strings[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_strings[] element.&n; * -  If a keyword is used more than once, the first one applies to the first&n; *    SCSI host found, the second to the second card, etc, unless the &squot;next&squot;&n; *    keyword is used to change the order.&n; *&n; * Some amiboot examples (for insmod, use &squot;setup_strings&squot; instead of &squot;wd33c93&squot;):&n; * -  wd33c93=nosync:255&n; * -  wd33c93=disconnect:2,nosync:0x08,period:250&n; * -  wd33c93=debug:0x1c&n; */
+macro_line|#include &quot;wd33c93.h&quot;
+multiline_comment|/*&n; * setup_strings is an array of strings that define some of the operating&n; * parameters and settings for this driver. It is used unless an amiboot&n; * or insmod command line has been specified, in which case those settings&n; * are combined with the ones here. The driver recognizes the following&n; * keywords (lower case required) and arguments:&n; *&n; * -  nosync:bitmask -bitmask is a byte where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices. Set a bit to prevent sync&n; *                    negotiation on that device. To maintain backwards&n; *                    compatibility, a command-line such as &quot;wd33c93=255&quot; will&n; *                    be automatically translated to &quot;wd33c93=nosync:0xff&quot;.&n; * -  nodma:x        -x = 1 to disable DMA, x = 0 to enable it. Argument is&n; *                    optional - if not present, same as &quot;nodma:1&quot;.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bit mask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in wd33c93.h&n; * -  clock:x        -x = clock input in MHz for WD33c93 chip. Normal values&n; *                    would be from 8 through 20. Default is 8.&n; * -  next           -No argument. Used to separate blocks of keywords when&n; *                    there&squot;s more than one host adapter in the system.&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner, except in the case of &squot;setup_strings[]&squot; (see&n; *    below), which is simply a C array of pointers to char. Each element&n; *    in the array is a string comprising one keyword &amp; argument.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_strings[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_strings[] element.&n; * -  If a keyword is used more than once, the first one applies to the first&n; *    SCSI host found, the second to the second card, etc, unless the &squot;next&squot;&n; *    keyword is used to change the order.&n; *&n; * Some amiboot examples (for insmod, use &squot;setup_strings&squot; instead of &squot;wd33c93&squot;):&n; * -  wd33c93=nosync:255&n; * -  wd33c93=nodma&n; * -  wd33c93=nodma:1&n; * -  wd33c93=disconnect:2,nosync:0x08,period:250&n; * -  wd33c93=debug:0x1c&n; */
 DECL|variable|setup_strings
 r_static
 r_char
@@ -72,18 +72,6 @@ comma
 l_string|&quot;&quot;
 )brace
 suffix:semicolon
-macro_line|#ifdef PROC_INTERFACE
-DECL|variable|disc_allowed_total
-r_int
-r_int
-id|disc_allowed_total
-suffix:semicolon
-DECL|variable|disc_taken_total
-r_int
-r_int
-id|disc_taken_total
-suffix:semicolon
-macro_line|#endif
 DECL|function|read_wd33c93
 r_inline
 id|uchar
@@ -316,6 +304,127 @@ r_return
 id|value
 suffix:semicolon
 )brace
+multiline_comment|/* The 33c93 needs to be told which direction a command transfers its&n; * data; we use this function to figure it out. Returns true if there&n; * will be a DATA_OUT phase with this command, false otherwise.&n; * (Thanks to Joerg Dorchain for the research and suggestion.)&n; */
+DECL|function|is_dir_out
+r_static
+r_int
+id|is_dir_out
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|cmd
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|cmd-&gt;cmnd
+(braket
+l_int|0
+)braket
+)paren
+(brace
+r_case
+id|WRITE_6
+suffix:colon
+r_case
+id|WRITE_10
+suffix:colon
+r_case
+id|WRITE_12
+suffix:colon
+r_case
+id|WRITE_LONG
+suffix:colon
+r_case
+id|WRITE_SAME
+suffix:colon
+r_case
+id|WRITE_BUFFER
+suffix:colon
+r_case
+id|WRITE_VERIFY
+suffix:colon
+r_case
+id|WRITE_VERIFY_12
+suffix:colon
+r_case
+id|COMPARE
+suffix:colon
+r_case
+id|COPY
+suffix:colon
+r_case
+id|COPY_VERIFY
+suffix:colon
+r_case
+id|SEARCH_EQUAL
+suffix:colon
+r_case
+id|SEARCH_HIGH
+suffix:colon
+r_case
+id|SEARCH_LOW
+suffix:colon
+r_case
+id|SEARCH_EQUAL_12
+suffix:colon
+r_case
+id|SEARCH_HIGH_12
+suffix:colon
+r_case
+id|SEARCH_LOW_12
+suffix:colon
+r_case
+id|FORMAT_UNIT
+suffix:colon
+r_case
+id|REASSIGN_BLOCKS
+suffix:colon
+r_case
+id|RESERVE
+suffix:colon
+r_case
+id|MODE_SELECT
+suffix:colon
+r_case
+id|MODE_SELECT_10
+suffix:colon
+r_case
+id|LOG_SELECT
+suffix:colon
+r_case
+id|SEND_DIAGNOSTIC
+suffix:colon
+r_case
+id|CHANGE_DEFINITION
+suffix:colon
+r_case
+id|UPDATE_BLOCK
+suffix:colon
+r_case
+id|SET_WINDOW
+suffix:colon
+r_case
+id|MEDIUM_SCAN
+suffix:colon
+r_case
+id|SEND_VOLUME_TAG
+suffix:colon
+r_case
+l_int|0xea
+suffix:colon
+r_return
+l_int|1
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+)brace
 DECL|variable|sx_table
 r_static
 r_struct
@@ -540,19 +649,10 @@ id|Scsi_Cmnd
 op_star
 id|tmp
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
+id|disable_irq
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
+id|cmd-&gt;host-&gt;irq
 )paren
 suffix:semicolon
 id|hostdata
@@ -746,10 +846,10 @@ comma
 id|cmd-&gt;pid
 )paren
 )paren
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|cmd-&gt;host-&gt;irq
 )paren
 suffix:semicolon
 r_return
@@ -784,21 +884,12 @@ op_star
 id|prev
 suffix:semicolon
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|i
 suffix:semicolon
-id|save_flags
+id|disable_irq
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 id|hostdata
@@ -844,10 +935,10 @@ c_func
 l_string|&quot;)EX-0 &quot;
 )paren
 )paren
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 r_return
@@ -923,10 +1014,10 @@ c_func
 l_string|&quot;)EX-1 &quot;
 )paren
 )paren
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 r_return
@@ -951,11 +1042,19 @@ op_star
 )paren
 id|cmd-&gt;host_scribble
 suffix:semicolon
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;cmd_cnt
+(braket
+id|cmd-&gt;target
+)braket
+op_increment
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;    * Start the selection process&n;    */
 r_if
 c_cond
 (paren
-id|IS_DIR_OUT
+id|is_dir_out
 c_func
 (paren
 id|cmd
@@ -1119,8 +1218,11 @@ id|cmd-&gt;SCp.phase
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef PROC_INTERFACE
-id|disc_allowed_total
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;disc_allowed_cnt
+(braket
+id|cmd-&gt;target
+)braket
 op_increment
 suffix:semicolon
 macro_line|#endif
@@ -1318,13 +1420,21 @@ comma
 id|cmd-&gt;cmd_len
 )paren
 suffix:semicolon
-multiline_comment|/* When doing a non-disconnect command, we can save ourselves a DATA&n;    * phase interrupt later by setting everything up now.&n;    */
+multiline_comment|/* When doing a non-disconnect command with DMA, we can save&n;    * ourselves a DATA phase interrupt later by setting everything&n;    * up ahead of time.&n;    */
 r_if
 c_cond
+(paren
 (paren
 id|cmd-&gt;SCp.phase
 op_eq
 l_int|0
+)paren
+op_logical_and
+(paren
+id|hostdata-&gt;no_dma
+op_eq
+l_int|0
+)paren
 )paren
 (brace
 r_if
@@ -1338,7 +1448,7 @@ c_func
 id|cmd
 comma
 (paren
-id|IS_DIR_OUT
+id|is_dir_out
 c_func
 (paren
 id|cmd
@@ -1436,10 +1546,10 @@ comma
 id|cmd-&gt;pid
 )paren
 )paren
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 )brace
@@ -1479,7 +1589,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;(%p,%d,%s)&quot;
+l_string|&quot;(%p,%d,%s:&quot;
 comma
 id|buf
 comma
@@ -1637,6 +1747,10 @@ id|WD33C93_hostdata
 op_star
 id|hostdata
 suffix:semicolon
+r_int
+r_int
+id|length
+suffix:semicolon
 id|hostdata
 op_assign
 (paren
@@ -1684,7 +1798,17 @@ id|cmd-&gt;target
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* &squot;dma_setup()&squot; will return TRUE if we can&squot;t do DMA. */
+multiline_comment|/* &squot;hostdata-&gt;no_dma&squot; is TRUE if we don&squot;t even want to try DMA.&n; * Update &squot;this_residual&squot; and &squot;ptr&squot; after &squot;transfer_pio()&squot; returns.&n; */
+r_if
+c_cond
+(paren
+id|hostdata-&gt;no_dma
+)paren
+r_goto
+id|use_transfer_pio
+suffix:semicolon
+multiline_comment|/* &squot;dma_setup()&squot; will return TRUE if we can&squot;t do DMA.&n; * Update &squot;this_residual&squot; and &squot;ptr&squot; after &squot;transfer_pio()&squot; returns.&n; */
+r_else
 r_if
 c_cond
 (paren
@@ -1699,6 +1823,13 @@ id|data_in_dir
 )paren
 )paren
 (brace
+id|use_transfer_pio
+suffix:colon
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;pio_cnt
+op_increment
+suffix:semicolon
+macro_line|#endif
 id|transfer_pio
 c_func
 (paren
@@ -1708,7 +1839,6 @@ comma
 id|uchar
 op_star
 )paren
-op_amp
 id|cmd-&gt;SCp.ptr
 comma
 id|cmd-&gt;SCp.this_residual
@@ -1718,10 +1848,35 @@ comma
 id|hostdata
 )paren
 suffix:semicolon
+id|length
+op_assign
+id|cmd-&gt;SCp.this_residual
+suffix:semicolon
+id|cmd-&gt;SCp.this_residual
+op_assign
+id|read_wd33c93_count
+c_func
+(paren
+id|regp
+)paren
+suffix:semicolon
+id|cmd-&gt;SCp.ptr
+op_add_assign
+(paren
+id|length
+op_minus
+id|cmd-&gt;SCp.this_residual
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* We are able to do DMA (in fact, the Amiga hardware is&n; * already going!), so start up the wd33c93 in DMA mode.&n; * We set &squot;hostdata-&gt;dma&squot; = D_DMA_RUNNING so that when the&n; * transfer completes and causes an interrupt, we&squot;re&n; * reminded to tell the Amiga to shut down its end. We&squot;ll&n; * postpone the updating of &squot;this_residual&squot; and &squot;ptr&squot;&n; * until then.&n; */
 r_else
 (brace
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;dma_cnt
+op_increment
+suffix:semicolon
+macro_line|#endif
 id|write_wd33c93
 c_func
 (paren
@@ -1824,10 +1979,6 @@ id|wd33c93_regs
 op_star
 id|regp
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|uchar
 id|asr
 comma
@@ -1886,18 +2037,11 @@ id|ASR_BSY
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* OK - it should be safe to re-enable system interrupts */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;int_cnt
+op_increment
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
+macro_line|#endif
 id|cmd
 op_assign
 (paren
@@ -2040,9 +2184,10 @@ c_func
 l_string|&quot;TIMEOUT&quot;
 )paren
 )paren
-id|cli
+id|disable_irq
 c_func
 (paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 r_if
@@ -2103,9 +2248,10 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are not connected to a target - check to see if there&n; * are commands waiting to be executed.&n; */
-id|sti
+id|enable_irq
 c_func
 (paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 id|wd33c93_execute
@@ -2120,9 +2266,10 @@ multiline_comment|/* Note: this interrupt should not occur in a LEVEL2 command *
 r_case
 id|CSR_SELECT
 suffix:colon
-id|cli
+id|disable_irq
 c_func
 (paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 id|DB
@@ -2540,9 +2687,10 @@ c_func
 l_string|&quot;MSG_IN=&quot;
 )paren
 )paren
-id|cli
+id|disable_irq
 c_func
 (paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 id|msg
@@ -3199,9 +3347,10 @@ multiline_comment|/* Note: this interrupt will occur only after a LEVEL2 command
 r_case
 id|CSR_SEL_XFER_DONE
 suffix:colon
-id|cli
+id|disable_irq
 c_func
 (paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure that reselection is enabled at this point - it may&n; * have been turned off for the command that just completed.&n; */
@@ -3332,6 +3481,12 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are no longer  connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
+id|enable_irq
+c_func
+(paren
+id|instance-&gt;irq
+)paren
+suffix:semicolon
 id|wd33c93_execute
 c_func
 (paren
@@ -3488,9 +3643,10 @@ r_case
 id|CSR_UNEXP_DISC
 suffix:colon
 multiline_comment|/* I think I&squot;ve seen this after a request-sense that was in response&n; * to an error condition, but not sure. We certainly need to do&n; * something when we get this interrupt - the question is &squot;what?&squot;.&n; * Let&squot;s think positively, and assume some command has finished&n; * in a legal manner (like a command that provokes a request-sense),&n; * so we treat it as a normal command-complete-disconnect.&n; */
-id|cli
+id|disable_irq
 c_func
 (paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure that reselection is enabled at this point - it may&n; * have been turned off for the command that just completed.&n; */
@@ -3609,6 +3765,12 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
+id|enable_irq
+c_func
+(paren
+id|instance-&gt;irq
+)paren
+suffix:semicolon
 id|wd33c93_execute
 c_func
 (paren
@@ -3620,9 +3782,10 @@ suffix:semicolon
 r_case
 id|CSR_DISC
 suffix:colon
-id|cli
+id|disable_irq
 c_func
 (paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure that reselection is enabled at this point - it may&n; * have been turned off for the command that just completed.&n; */
@@ -3775,8 +3938,11 @@ id|hostdata-&gt;state
 op_assign
 id|S_UNCONNECTED
 suffix:semicolon
-macro_line|#ifdef PROC_INTERFACE
-id|disc_taken_total
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;disc_done_cnt
+(braket
+id|cmd-&gt;target
+)braket
 op_increment
 suffix:semicolon
 macro_line|#endif
@@ -3796,6 +3962,12 @@ id|S_UNCONNECTED
 suffix:semicolon
 )brace
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
+id|enable_irq
+c_func
+(paren
+id|instance-&gt;irq
+)paren
+suffix:semicolon
 id|wd33c93_execute
 c_func
 (paren
@@ -3818,9 +3990,10 @@ c_func
 l_string|&quot;RESEL&quot;
 )paren
 )paren
-id|cli
+id|disable_irq
 c_func
 (paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 multiline_comment|/* First we have to make sure this reselection didn&squot;t */
@@ -4085,7 +4258,7 @@ multiline_comment|/* We don&squot;t need to worry about &squot;initialize_SCp()&
 r_if
 c_cond
 (paren
-id|IS_DIR_OUT
+id|is_dir_out
 c_func
 (paren
 id|cmd
@@ -4189,10 +4362,10 @@ id|phs
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 id|DB
@@ -4460,10 +4633,6 @@ id|SCpnt
 )paren
 macro_line|#endif
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
@@ -4498,15 +4667,10 @@ comma
 id|instance-&gt;host_no
 )paren
 suffix:semicolon
-id|save_flags
+id|disable_irq
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 (paren
@@ -4618,10 +4782,10 @@ id|DID_RESET
 op_lshift
 l_int|16
 suffix:semicolon
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|instance-&gt;irq
 )paren
 suffix:semicolon
 r_return
@@ -4658,18 +4822,10 @@ comma
 op_star
 id|prev
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
+id|disable_irq
 c_func
 (paren
+id|cmd-&gt;host-&gt;irq
 )paren
 suffix:semicolon
 id|instance
@@ -4745,18 +4901,18 @@ comma
 id|cmd-&gt;pid
 )paren
 suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|cmd-&gt;host-&gt;irq
+)paren
+suffix:semicolon
 id|cmd
 op_member_access_from_pointer
 id|scsi_done
 c_func
 (paren
 id|cmd
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -5036,24 +5192,24 @@ id|DID_ABORT
 op_lshift
 l_int|16
 suffix:semicolon
-id|cmd
-op_member_access_from_pointer
-id|scsi_done
-c_func
-(paren
-id|cmd
-)paren
-suffix:semicolon
 multiline_comment|/*      sti();*/
 id|wd33c93_execute
 (paren
 id|instance
 )paren
 suffix:semicolon
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|cmd-&gt;host-&gt;irq
+)paren
+suffix:semicolon
+id|cmd
+op_member_access_from_pointer
+id|scsi_done
+c_func
+(paren
+id|cmd
 )paren
 suffix:semicolon
 r_return
@@ -5099,10 +5255,10 @@ c_func
 l_string|&quot;returning ABORT_SNOOZE. &quot;
 )paren
 suffix:semicolon
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|cmd-&gt;host-&gt;irq
 )paren
 suffix:semicolon
 r_return
@@ -5125,10 +5281,10 @@ id|wd33c93_execute
 id|instance
 )paren
 suffix:semicolon
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|cmd-&gt;host-&gt;irq
 )paren
 suffix:semicolon
 id|printk
@@ -5697,6 +5853,29 @@ op_assign
 id|SS_UNSET
 suffix:semicolon
 multiline_comment|/* using default sync values */
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;cmd_cnt
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|hostdata-&gt;disc_allowed_cnt
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|hostdata-&gt;disc_done_cnt
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 id|hostdata-&gt;input_Q
 op_assign
@@ -5751,6 +5930,11 @@ op_assign
 l_int|0xff
 suffix:semicolon
 multiline_comment|/* sync defaults to off */
+id|hostdata-&gt;no_dma
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* default is DMA enabled */
 macro_line|#ifdef PROC_INTERFACE
 id|hostdata-&gt;proc
 op_assign
@@ -5758,7 +5942,7 @@ id|PR_VERSION
 op_or
 id|PR_INFO
 op_or
-id|PR_TOTALS
+id|PR_STATISTICS
 op_or
 id|PR_CONNECTED
 op_or
@@ -5768,14 +5952,20 @@ id|PR_DISCQ
 op_or
 id|PR_STOP
 suffix:semicolon
-id|disc_allowed_total
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;dma_cnt
 op_assign
 l_int|0
 suffix:semicolon
-id|disc_taken_total
+id|hostdata-&gt;pio_cnt
 op_assign
 l_int|0
 suffix:semicolon
+id|hostdata-&gt;int_cnt
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 r_if
 c_cond
@@ -5796,6 +5986,37 @@ id|buf
 )paren
 id|hostdata-&gt;no_sync
 op_assign
+id|val
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_setup_strings
+c_func
+(paren
+l_string|&quot;nodma&quot;
+comma
+op_amp
+id|flags
+comma
+op_amp
+id|val
+comma
+id|buf
+)paren
+)paren
+id|hostdata-&gt;no_dma
+op_assign
+(paren
+id|val
+op_eq
+op_minus
+l_int|1
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
 id|val
 suffix:semicolon
 r_if
@@ -6051,7 +6272,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;wd33c93-%d: chip=%s microcode=%02x&bslash;n&quot;
+l_string|&quot;wd33c93-%d: chip=%s/%d no_sync=0x%x no_dma=%d&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 comma
@@ -6085,17 +6306,29 @@ suffix:colon
 l_string|&quot;unknown&quot;
 comma
 id|hostdata-&gt;microcode
+comma
+id|hostdata-&gt;no_sync
+comma
+id|hostdata-&gt;no_dma
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUGGING_ON
 id|printk
 c_func
 (paren
-l_string|&quot;wd33c93-%d: setup_strings=&quot;
+l_string|&quot;           debug_flags=0x%02x setup_strings=&quot;
 comma
-id|instance-&gt;host_no
+id|hostdata-&gt;args
 )paren
 suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;           debugging=OFF setup_strings=&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -6130,37 +6363,18 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;wd33c93-%d: debug_flags = %04x&bslash;n&quot;
-comma
-id|instance-&gt;host_no
-comma
-id|hostdata-&gt;args
-)paren
-suffix:semicolon
-macro_line|#endif
-id|printk
-c_func
-(paren
-l_string|&quot;wd33c93-%d: driver version %s - %s&bslash;n&quot;
-comma
-id|instance-&gt;host_no
+l_string|&quot;           Version %s - %s, Compiled %s at %s&bslash;n&quot;
 comma
 id|WD33C93_VERSION
 comma
 id|WD33C93_DATE
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;wd33c93-%d: compiled on %s at %s&bslash;n&quot;
-comma
-id|instance-&gt;host_no
 comma
 id|__DATE__
 comma
 id|__TIME__
 )paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|wd33c93_proc_info
@@ -6235,7 +6449,7 @@ c_loop
 (paren
 id|instance
 op_assign
-id|instance_list
+id|scsi_hostlist
 suffix:semicolon
 id|instance
 suffix:semicolon
@@ -6285,7 +6499,7 @@ op_star
 )paren
 id|instance-&gt;hostdata
 suffix:semicolon
-multiline_comment|/* If &squot;in&squot; is TRUE we need to _read_ the proc file. We accept the following&n; * keywords (same format as command-line, but only ONE per read):&n; *    debug&n; *    disconnect&n; *    period&n; *    resync&n; *    proc&n; */
+multiline_comment|/* If &squot;in&squot; is TRUE we need to _read_ the proc file. We accept the following&n; * keywords (same format as command-line, but only ONE per read):&n; *    debug&n; *    disconnect&n; *    period&n; *    resync&n; *    proc&n; *    nodma&n; */
 r_if
 c_cond
 (paren
@@ -6533,6 +6747,39 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;nodma:&quot;
+comma
+l_int|6
+)paren
+)paren
+(brace
+id|bp
+op_add_assign
+l_int|6
+suffix:semicolon
+id|hd-&gt;no_dma
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|bp
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_return
 id|len
 suffix:semicolon
@@ -6598,14 +6845,49 @@ op_amp
 id|PR_INFO
 )paren
 (brace
-suffix:semicolon
-)brace
-r_if
-c_cond
+id|sprintf
+c_func
 (paren
-id|hd-&gt;proc
-op_amp
-id|PR_TOTALS
+id|tbuf
+comma
+l_string|&quot;&bslash;nclock_freq=%02x no_sync=%02x no_dma=%d&quot;
+comma
+id|hd-&gt;clock_freq
+comma
+id|hd-&gt;no_sync
+comma
+id|hd-&gt;no_dma
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;&bslash;nsync_xfer[] =&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|8
+suffix:semicolon
+id|x
+op_increment
 )paren
 (brace
 id|sprintf
@@ -6613,11 +6895,12 @@ c_func
 (paren
 id|tbuf
 comma
-l_string|&quot;&bslash;n%ld disc_allowed, %ld disc_taken&quot;
+l_string|&quot; %02x&quot;
 comma
-id|disc_allowed_total
-comma
-id|disc_taken_total
+id|hd-&gt;sync_xfer
+(braket
+id|x
+)braket
 )paren
 suffix:semicolon
 id|strcat
@@ -6629,6 +6912,220 @@ id|tbuf
 )paren
 suffix:semicolon
 )brace
+id|strcat
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;&bslash;nsync_stat[] =&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|8
+suffix:semicolon
+id|x
+op_increment
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot; %02x&quot;
+comma
+id|hd-&gt;sync_stat
+(braket
+id|x
+)braket
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#ifdef PROC_STATISTICS
+r_if
+c_cond
+(paren
+id|hd-&gt;proc
+op_amp
+id|PR_STATISTICS
+)paren
+(brace
+id|strcat
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;&bslash;ncommands issued:    &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|8
+suffix:semicolon
+id|x
+op_increment
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot; %ld&quot;
+comma
+id|hd-&gt;cmd_cnt
+(braket
+id|x
+)braket
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+id|strcat
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;&bslash;ndisconnects allowed:&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|8
+suffix:semicolon
+id|x
+op_increment
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot; %ld&quot;
+comma
+id|hd-&gt;disc_allowed_cnt
+(braket
+id|x
+)braket
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+id|strcat
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;&bslash;ndisconnects done:   &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|8
+suffix:semicolon
+id|x
+op_increment
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot; %ld&quot;
+comma
+id|hd-&gt;disc_done_cnt
+(braket
+id|x
+)braket
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot;&bslash;ninterrupts: %ld, DATA_PHASE ints: %ld DMA, %ld PIO&quot;
+comma
+id|hd-&gt;int_cnt
+comma
+id|hd-&gt;dma_cnt
+comma
+id|hd-&gt;pio_cnt
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6894,12 +7391,37 @@ suffix:semicolon
 macro_line|#endif   /* PROC_INTERFACE */
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|driver_template
-id|Scsi_Host_Template
-id|driver_template
-op_assign
-id|WD33C93
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
 suffix:semicolon
-macro_line|#include &quot;scsi_module.c&quot;
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+DECL|function|wd33c93_release
+r_void
+id|wd33c93_release
+c_func
+(paren
+r_void
+)paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

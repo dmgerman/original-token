@@ -1958,6 +1958,7 @@ suffix:semicolon
 multiline_comment|/* bytes in output buffer */
 DECL|variable|exit_code
 r_static
+r_int
 id|exit_code
 op_assign
 l_int|0

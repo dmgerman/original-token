@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: asyncd.c,v 1.8 1996/09/21 04:30:12 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
+multiline_comment|/*  $Id: asyncd.c,v 1.9 1996/12/18 06:43:22 tridge Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -10,11 +10,45 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/segment.h&gt; /* for memcpy_to/fromfs */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG 0
+DECL|macro|WRITE_LIMIT
+mdefine_line|#define WRITE_LIMIT 100
+DECL|macro|LOOP_LIMIT
+mdefine_line|#define LOOP_LIMIT 200
+r_static
+r_struct
+(brace
+DECL|member|faults
+DECL|member|read
+DECL|member|write
+DECL|member|success
+DECL|member|failure
+DECL|member|errors
+r_int
+id|faults
+comma
+id|read
+comma
+id|write
+comma
+id|success
+comma
+id|failure
+comma
+id|errors
+suffix:semicolon
+DECL|variable|stats
+)brace
+id|stats
+suffix:semicolon
 multiline_comment|/* &n; * The wait queue for waking up the async daemon:&n; */
 DECL|variable|asyncd_wait
 r_static
@@ -155,11 +189,41 @@ c_cond
 op_logical_neg
 id|a
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;out of memory in asyncd&bslash;n&quot;
+l_string|&quot;ERROR: out of memory in asyncd&bslash;n&quot;
 )paren
+suffix:semicolon
+id|a
+op_member_access_from_pointer
+id|callback
+c_func
+(paren
+id|taskid
+comma
+id|address
+comma
+id|write
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|write
+)paren
+id|stats.write
+op_increment
+suffix:semicolon
+r_else
+id|stats.read
+op_increment
 suffix:semicolon
 id|a-&gt;next
 op_assign
@@ -258,6 +322,9 @@ id|mm
 op_assign
 id|tsk-&gt;mm
 suffix:semicolon
+id|stats.faults
+op_increment
+suffix:semicolon
 macro_line|#if 0
 id|printk
 c_func
@@ -291,6 +358,12 @@ op_amp
 id|asyncd_wait
 )paren
 suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|TQUEUE_BH
+)paren
+suffix:semicolon
 )brace
 DECL|function|fault_in_page
 r_static
@@ -313,6 +386,16 @@ r_int
 id|write
 )paren
 (brace
+r_static
+r_int
+id|last_address
+suffix:semicolon
+r_static
+r_int
+id|last_task
+comma
+id|loop_counter
+suffix:semicolon
 r_struct
 id|task_struct
 op_star
@@ -377,6 +460,83 @@ id|address
 r_goto
 id|bad_area
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|address
+op_eq
+id|last_address
+op_logical_and
+id|taskid
+op_eq
+id|last_task
+)paren
+(brace
+id|loop_counter
+op_increment
+suffix:semicolon
+)brace
+r_else
+(brace
+id|loop_counter
+op_assign
+l_int|0
+suffix:semicolon
+id|last_address
+op_assign
+id|address
+suffix:semicolon
+id|last_task
+op_assign
+id|taskid
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|loop_counter
+op_eq
+id|WRITE_LIMIT
+op_logical_and
+op_logical_neg
+id|write
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;MSC bug? setting write request&bslash;n&quot;
+)paren
+suffix:semicolon
+id|stats.errors
+op_increment
+suffix:semicolon
+id|write
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|loop_counter
+op_eq
+id|LOOP_LIMIT
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;MSC bug? failing request&bslash;n&quot;
+)paren
+suffix:semicolon
+id|stats.errors
+op_increment
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|pgd
 op_assign
 id|pgd_offset
@@ -540,6 +700,9 @@ suffix:semicolon
 multiline_comment|/* Fall through for do_wp_page */
 id|finish_up
 suffix:colon
+id|stats.success
+op_increment
+suffix:semicolon
 id|update_mmu_cache
 c_func
 (paren
@@ -556,6 +719,9 @@ l_int|0
 suffix:semicolon
 id|no_memory
 suffix:colon
+id|stats.failure
+op_increment
+suffix:semicolon
 id|oom
 c_func
 (paren
@@ -567,6 +733,9 @@ l_int|1
 suffix:semicolon
 id|bad_area
 suffix:colon
+id|stats.failure
+op_increment
+suffix:semicolon
 id|tsk-&gt;tss.sig_address
 op_assign
 id|address
@@ -602,6 +771,9 @@ r_void
 r_int
 id|ret
 suffix:semicolon
+r_int
+id|flags
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -613,24 +785,45 @@ r_struct
 id|async_job
 op_star
 id|a
-op_assign
-id|async_queue
 suffix:semicolon
 r_struct
 id|mm_struct
 op_star
 id|mm
-op_assign
-id|a-&gt;mm
 suffix:semicolon
 r_struct
 id|vm_area_struct
 op_star
 id|vma
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|a
+op_assign
+id|async_queue
+suffix:semicolon
 id|async_queue
 op_assign
 id|async_queue-&gt;next
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|mm
+op_assign
+id|a-&gt;mm
 suffix:semicolon
 id|down
 c_func
@@ -663,6 +856,22 @@ comma
 id|a-&gt;write
 )paren
 suffix:semicolon
+macro_line|#if DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;fault_in_page(task=%d addr=%x write=%d) = %d&bslash;n&quot;
+comma
+id|a-&gt;taskid
+comma
+id|a-&gt;address
+comma
+id|a-&gt;write
+comma
+id|ret
+)paren
+suffix:semicolon
+macro_line|#endif
 id|a
 op_member_access_from_pointer
 id|callback
@@ -702,6 +911,41 @@ id|a
 suffix:semicolon
 )brace
 )brace
+macro_line|#if CONFIG_AP1000
+DECL|function|asyncd_info
+r_static
+r_void
+id|asyncd_info
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;CID(%d) faults: total=%d  read=%d  write=%d  success=%d fail=%d err=%d&bslash;n&quot;
+comma
+id|mpp_cid
+c_func
+(paren
+)paren
+comma
+id|stats.faults
+comma
+id|stats.read
+comma
+id|stats.write
+comma
+id|stats.success
+comma
+id|stats.failure
+comma
+id|stats.errors
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * The background async daemon.&n; * Started as a kernel thread from the init process.&n; */
 DECL|function|asyncd
 r_int
@@ -735,7 +979,7 @@ op_complement
 l_int|0UL
 suffix:semicolon
 multiline_comment|/* block all signals */
-multiline_comment|/* Give kswapd a realtime priority. */
+multiline_comment|/* Give asyncd a realtime priority. */
 id|current-&gt;policy
 op_assign
 id|SCHED_FIFO
@@ -751,10 +995,43 @@ c_func
 l_string|&quot;Started asyncd&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|bif_add_debug_key
+c_func
+(paren
+l_char|&squot;a&squot;
+comma
+id|asyncd_info
+comma
+l_string|&quot;stats on asyncd&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren
 l_int|1
+)paren
+(brace
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|async_queue
 )paren
 (brace
 id|current-&gt;signal
@@ -766,6 +1043,13 @@ c_func
 (paren
 op_amp
 id|asyncd_wait
+)paren
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|run_async_queue

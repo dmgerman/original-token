@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.43 1996/12/10 06:06:37 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.44 1996/12/18 06:56:08 tridge Exp $ */
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
@@ -55,6 +55,12 @@ id|sun_unknown
 op_assign
 l_int|0x06
 comma
+DECL|enumerator|ap1000
+id|ap1000
+op_assign
+l_int|0x07
+comma
+multiline_comment|/* almost a sun4m */
 )brace
 suffix:semicolon
 r_extern

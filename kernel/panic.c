@@ -4,6 +4,7 @@ macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 id|asmlinkage
 r_void
 id|sys_sync
@@ -161,6 +162,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|smp_message_pass
+c_func
+(paren
+id|MSG_ALL_BUT_SELF
+comma
+id|MSG_STOP_CPU
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -212,6 +227,19 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __sparc__
+id|printk
+c_func
+(paren
+l_string|&quot;Press L1-A to return to the boot prom&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren

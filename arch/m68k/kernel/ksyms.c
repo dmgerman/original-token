@@ -1,4 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7,6 +6,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
@@ -27,33 +27,6 @@ id|m68k_debug_device
 (braket
 )braket
 suffix:semicolon
-macro_line|#ifdef CONFIG_ATARI
-r_extern
-r_void
-id|mach_atari_syms_export
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AMIGA
-r_extern
-r_void
-id|mach_amiga_syms_export
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MAC
-r_extern
-r_void
-id|mach_mac_syms_export
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 r_extern
 r_void
 id|dump_thread
@@ -95,7 +68,13 @@ comma
 id|X
 c_func
 (paren
-id|boot_info
+id|m68k_machtype
+)paren
+comma
+id|X
+c_func
+(paren
+id|m68k_cputype
 )paren
 comma
 id|X
@@ -182,6 +161,12 @@ c_func
 id|strrchr
 )paren
 comma
+id|X
+c_func
+(paren
+id|strstr
+)paren
+comma
 multiline_comment|/* The following are special because they&squot;re not called&n;&t;   explicitly (the C compiler generates them).  Fortunately,&n;&t;   their interface isn&squot;t gonna change any time soon now, so&n;&t;   it&squot;s OK to leave it out of version control.  */
 id|XNOVERS
 c_func
@@ -231,52 +216,15 @@ op_amp
 id|arch_symbol_table
 )paren
 suffix:semicolon
-r_switch
+r_if
 c_cond
 (paren
-id|boot_info.machtype
+id|mach_syms_export
 )paren
-(brace
-macro_line|#ifdef CONFIG_ATARI
-r_case
-id|MACH_ATARI
-suffix:colon
-id|mach_atari_syms_export
+id|mach_syms_export
 c_func
 (paren
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AMIGA
-r_case
-id|MACH_AMIGA
-suffix:colon
-id|mach_amiga_syms_export
-c_func
-(paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MAC
-r_case
-id|MACH_MAC
-suffix:colon
-id|mach_mac_syms_export
-c_func
-(paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-r_default
-suffix:colon
-r_break
-suffix:semicolon
-)brace
 )brace
 eof

@@ -1,7 +1,6 @@
 multiline_comment|/*&n;**  linux/amiga/chipram.c&n;**&n;**      Modified 03-May-94 by Geert Uytterhoeven&n;**                           (Geert.Uytterhoeven@cs.kuleuven.ac.be)&n;**          - 64-bit aligned allocations for full AGA compatibility&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 DECL|struct|chip_desc
 r_struct
@@ -40,11 +39,9 @@ multiline_comment|/* We suppose this makes this struct 64 bits long!! */
 suffix:semicolon
 DECL|macro|DP
 mdefine_line|#define DP(ptr) ((struct chip_desc *)(ptr))
-DECL|variable|chipsize
-r_static
-r_int
-r_int
-id|chipsize
+DECL|variable|amiga_chip_size
+id|u_long
+id|amiga_chip_size
 suffix:semicolon
 DECL|variable|chipavail
 r_static
@@ -101,10 +98,6 @@ id|CHIP_RAM
 )paren
 r_return
 suffix:semicolon
-id|chipsize
-op_assign
-id|boot_info.bi_amiga.chip_size
-suffix:semicolon
 multiline_comment|/* initialize start boundary */
 id|dp
 op_assign
@@ -124,7 +117,7 @@ l_int|0
 suffix:semicolon
 id|dp-&gt;length
 op_assign
-id|chipsize
+id|amiga_chip_size
 op_minus
 l_int|2
 op_star
@@ -142,7 +135,7 @@ c_func
 (paren
 id|chipaddr
 op_plus
-id|chipsize
+id|amiga_chip_size
 )paren
 op_minus
 l_int|1
@@ -157,7 +150,7 @@ l_int|0
 suffix:semicolon
 id|dp-&gt;length
 op_assign
-id|chipsize
+id|amiga_chip_size
 op_minus
 l_int|2
 op_star
@@ -233,7 +226,7 @@ c_func
 (paren
 id|chipaddr
 op_plus
-id|chipsize
+id|amiga_chip_size
 )paren
 op_minus
 l_int|1

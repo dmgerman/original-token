@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;2&t;30.10.96&n; *&n; * Authors :&t;Jean II - HPLB - MCD &lt;jt@hplb.hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;3&t;18.12.96&n; *&n; * Authors :&t;Jean Tourrilhes - HPLB - &lt;jt@hplb.hpl.hp.com&gt;&n; */
 macro_line|#ifndef _LINUX_WIRELESS_H
 DECL|macro|_LINUX_WIRELESS_H
 mdefine_line|#define _LINUX_WIRELESS_H
@@ -12,7 +12,8 @@ multiline_comment|/**************************** CONSTANTS **********************
 multiline_comment|/* --------------------------- VERSION --------------------------- */
 multiline_comment|/*&n; * This constant is used to know the availability of the wireless&n; * extensions and to know which version of wireless extensions it is&n; * (there is some stuff that will be added in the future...)&n; * I just plan to increment with each new version.&n; */
 DECL|macro|WIRELESS_EXT
-mdefine_line|#define WIRELESS_EXT&t;2
+mdefine_line|#define WIRELESS_EXT&t;3
+multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some imcompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; */
 multiline_comment|/* -------------------------- IOCTL LIST -------------------------- */
 multiline_comment|/* Basic operations */
 DECL|macro|SIOCSIWNAME
@@ -85,21 +86,22 @@ DECL|macro|IW_MAX_SPY
 mdefine_line|#define IW_MAX_SPY&t;&t;8
 multiline_comment|/****************************** TYPES ******************************/
 multiline_comment|/* --------------------------- SUBTYPES --------------------------- */
-multiline_comment|/*&n; *&t;A frequency&n; */
-r_typedef
+multiline_comment|/*&n; *&t;A frequency&n; *&t;For numbers lower than 10^9, we encode the number in &squot;mant&squot; and&n; *&t;set &squot;exp&squot; to 0&n; *&t;For number greater than 10^9, we divide it by a power of 10.&n; *&t;The power of 10 is in &squot;exp&squot;, the result is in &squot;mant&squot;.&n; */
+DECL|struct|iw_freq
 r_struct
+id|iw_freq
 (brace
-DECL|member|value
+DECL|member|m
 id|__u32
-id|value
+id|m
 suffix:semicolon
-DECL|member|scale
+multiline_comment|/* Mantissa */
+DECL|member|e
 id|__u16
-id|scale
+id|e
 suffix:semicolon
-DECL|typedef|wireless_freq_t
+multiline_comment|/* Exponent */
 )brace
-id|wireless_freq_t
 suffix:semicolon
 multiline_comment|/*&n; *&t;Quality of the link&n; */
 DECL|struct|iw_quality
@@ -138,11 +140,11 @@ id|__u32
 id|nwid
 suffix:semicolon
 multiline_comment|/* Wrong nwid */
-DECL|member|codec
+DECL|member|code
 id|__u32
-id|codec
+id|code
 suffix:semicolon
-multiline_comment|/* Unable to core/decode */
+multiline_comment|/* Unable to code/decode */
 DECL|member|misc
 id|__u32
 id|misc
@@ -226,7 +228,8 @@ DECL|member|nwid
 id|nwid
 suffix:semicolon
 DECL|member|freq
-id|wireless_freq_t
+r_struct
+id|iw_freq
 id|freq
 suffix:semicolon
 multiline_comment|/* frequency or channel :&n;&t;&t;&t;&t;&t; * 0-1000 = channel&n;&t;&t;&t;&t;&t; * &gt; 1000 = frequency in Hz */
@@ -238,14 +241,14 @@ id|__u8
 id|method
 suffix:semicolon
 multiline_comment|/* Algorithm number / off */
-DECL|member|data
+DECL|member|code
 id|__u64
-id|data
+id|code
 suffix:semicolon
 multiline_comment|/* Data used for algorithm */
-DECL|member|encoder
+DECL|member|encoding
 )brace
-id|encoder
+id|encoding
 suffix:semicolon
 r_struct
 multiline_comment|/* For all data bigger than 16 octets */
@@ -275,7 +278,7 @@ id|u
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&t;-------------------------- IOCTL DATA --------------------------&t;*/
+multiline_comment|/* -------------------------- IOCTL DATA -------------------------- */
 multiline_comment|/*&n; *&t;For those ioctl which want to exchange mode data that what could&n; *&t;fit in the above structure...&n; */
 multiline_comment|/*&n; *&t;Range of parameters&n; */
 DECL|struct|iw_range
@@ -311,7 +314,8 @@ id|num_frequency
 suffix:semicolon
 multiline_comment|/* Number of entry in the list */
 DECL|member|freq
-id|wireless_freq_t
+r_struct
+id|iw_freq
 id|freq
 (braket
 id|IW_MAX_FREQUENCIES

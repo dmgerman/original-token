@@ -1051,6 +1051,9 @@ op_amp
 id|PAGE_MASK
 suffix:semicolon
 )brace
+multiline_comment|/* to find an entry in a kernel page-table-directory */
+DECL|macro|pgd_offset_k
+mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
 multiline_comment|/* to find an entry in a page-table-directory */
 DECL|function|pgd_offset
 r_extern

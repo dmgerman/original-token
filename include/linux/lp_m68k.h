@@ -2,8 +2,9 @@ macro_line|#ifndef _LINUX_LP_H
 DECL|macro|_LINUX_LP_H
 mdefine_line|#define _LINUX_LP_H
 multiline_comment|/*&n; * split in two parts by Joerg Dorchain&n; * usr/include/linux/lp.h  modified for Amiga by Michael Rausch&n; * modified for Atari by Andreas Schwab&n; * bug fixed by Jes Sorensen 18/8-94:&n; *     It was not possible to compile the kernel only for Atari or Amiga.&n; *&n; * linux i386 version  c.1991-1992 James Wiegand&n; * many modifications copyright (C) 1992 Michael K. Johnson&n; * Interrupt support added 1993 Nigel Gamble&n; */
-macro_line|#include &lt;linux/autoconf.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
+multiline_comment|/*&n; *  many many printers are we going to support? currently, this is the&n; *  hardcoded limit&n; */
+DECL|macro|MAX_LP
+mdefine_line|#define MAX_LP 5
 multiline_comment|/*&n; * Per POSIX guidelines, this module reserves the LP and lp prefixes&n; * These are the lp_table[minor].flags flags...&n; */
 DECL|macro|LP_EXIST
 mdefine_line|#define LP_EXIST 0x0001
@@ -52,6 +53,32 @@ DECL|macro|LP_TIMEOUT_POLLED
 mdefine_line|#define LP_TIMEOUT_POLLED&t;(10 * HZ)
 DECL|macro|LP_BUFFER_SIZE
 mdefine_line|#define LP_BUFFER_SIZE 1024 /*256*/
+DECL|enum|lp_type
+r_enum
+id|lp_type
+(brace
+DECL|enumerator|LP_UNKNOWN
+id|LP_UNKNOWN
+op_assign
+l_int|0
+comma
+DECL|enumerator|LP_AMIGA
+id|LP_AMIGA
+op_assign
+l_int|1
+comma
+DECL|enumerator|LP_ATARI
+id|LP_ATARI
+op_assign
+l_int|2
+comma
+DECL|enumerator|LP_MFC
+id|LP_MFC
+op_assign
+l_int|3
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * warning: this structure is in kernel space and has to fit in one page,&n; * i.e. must not be larger than 4k&n; */
 DECL|struct|lp_struct
 r_struct
 id|lp_struct
@@ -119,6 +146,44 @@ id|lp_my_interrupt
 r_int
 )paren
 suffix:semicolon
+DECL|member|lp_ioctl
+r_int
+(paren
+op_star
+id|lp_ioctl
+)paren
+(paren
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|lp_open
+r_void
+(paren
+op_star
+id|lp_open
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* for module use counter */
+DECL|member|lp_release
+r_void
+(paren
+op_star
+id|lp_release
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* for module use counter */
 DECL|member|flags
 r_int
 id|flags
@@ -148,6 +213,17 @@ op_star
 id|lp_wait_q
 suffix:semicolon
 multiline_comment|/*strobe wait */
+DECL|member|base
+r_void
+op_star
+id|base
+suffix:semicolon
+multiline_comment|/* hardware drivers internal use*/
+DECL|member|type
+r_enum
+id|lp_type
+id|type
+suffix:semicolon
 DECL|member|lp_buffer
 r_char
 id|lp_buffer
@@ -172,16 +248,54 @@ suffix:semicolon
 r_extern
 r_struct
 id|lp_struct
+op_star
 id|lp_table
 (braket
+id|MAX_LP
 )braket
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|lp_irq
+suffix:semicolon
+r_void
+id|lp_interrupt
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 r_int
 id|lp_init
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_int
+id|register_parallel
+c_func
+(paren
+r_struct
+id|lp_struct
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_void
+id|unregister_parallel
+c_func
+(paren
+r_int
 )paren
 suffix:semicolon
 macro_line|#endif

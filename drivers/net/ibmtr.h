@@ -17,12 +17,12 @@ DECL|macro|NOTOK
 mdefine_line|#define NOTOK 0
 DECL|macro|TOKDEBUG
 mdefine_line|#define TOKDEBUG 1
-macro_line|#ifndef IBMTR_SHARED_RAM_BASE
-DECL|macro|IBMTR_SHARED_RAM_BASE
-mdefine_line|#define IBMTR_SHARED_RAM_BASE 0xD0
 DECL|macro|IBMTR_SHARED_RAM_SIZE
-mdefine_line|#define IBMTR_SHARED_RAM_SIZE 0x10
-macro_line|#endif
+mdefine_line|#define IBMTR_SHARED_RAM_SIZE 0x10000
+DECL|macro|IBMTR_IO_EXTENT
+mdefine_line|#define IBMTR_IO_EXTENT 4
+DECL|macro|IBMTR_MAX_ADAPTERS
+mdefine_line|#define IBMTR_MAX_ADAPTERS 2
 DECL|macro|CHANNEL_ID
 mdefine_line|#define CHANNEL_ID      0X1F30
 DECL|macro|AIP
@@ -60,8 +60,6 @@ DECL|macro|MMIOStartLocP
 mdefine_line|#define MMIOStartLocP   0x0a20  /* Primary adapter&squot;s starting MMIO area */
 DECL|macro|MMIOStartLocA
 mdefine_line|#define MMIOStartLocA   0x0a24  /* Alternate adapter&squot;s starting MMIO area */
-DECL|macro|TR_IO_EXTENT
-mdefine_line|#define TR_IO_EXTENT&t;4&t;/* size of used IO range */
 DECL|macro|GLOBAL_INT_ENABLE
 mdefine_line|#define GLOBAL_INT_ENABLE 0x02f0
 multiline_comment|/* MMIO bits 0-4 select register */
@@ -373,6 +371,12 @@ r_int
 r_char
 id|readlog_pending
 suffix:semicolon
+DECL|member|adapter_int_enable
+r_int
+r_int
+id|adapter_int_enable
+suffix:semicolon
+multiline_comment|/* Adapter-specific int enable */
 )brace
 suffix:semicolon
 multiline_comment|/* token ring adapter commands */

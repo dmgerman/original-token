@@ -9,6 +9,15 @@ id|Scsi_Host_Template
 op_star
 )paren
 suffix:semicolon
+r_int
+id|a3000_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+suffix:semicolon
 r_const
 r_char
 op_star
@@ -74,7 +83,7 @@ id|proc_dir_entry
 id|proc_scsi_a3000
 suffix:semicolon
 DECL|macro|A3000_SCSI
-mdefine_line|#define A3000_SCSI {  /* next */                NULL,            &bslash;&n;&t;&t;      /* usage_count */         NULL,&t;         &bslash;&n;&t;&t;      /* proc_dir_entry */      &amp;proc_scsi_a3000, &bslash;&n;&t;&t;      /* proc_info */           NULL,            &bslash;&n;&t;&t;      /* name */                &quot;Amiga 3000 built-in SCSI&quot;, &bslash;&n;&t;&t;      /* detect */              a3000_detect,    &bslash;&n;&t;&t;      /* release */             NULL,            &bslash;&n;&t;&t;      /* info */                NULL,&t;         &bslash;&n;&t;&t;      /* command */             NULL,            &bslash;&n;&t;&t;      /* queuecommand */        wd33c93_queuecommand, &bslash;&n;&t;&t;      /* abort */               wd33c93_abort,   &bslash;&n;&t;&t;      /* reset */               wd33c93_reset,   &bslash;&n;&t;&t;      /* slave_attach */        NULL,            &bslash;&n;&t;&t;      /* bios_param */          NULL, &t;         &bslash;&n;&t;&t;      /* can_queue */           CAN_QUEUE,       &bslash;&n;&t;&t;      /* this_id */             7,               &bslash;&n;&t;&t;      /* sg_tablesize */        SG_ALL,          &bslash;&n;&t;&t;      /* cmd_per_lun */&t;        CMD_PER_LUN,     &bslash;&n;&t;&t;      /* present */             0,               &bslash;&n;&t;&t;      /* unchecked_isa_dma */   0,               &bslash;&n;&t;&t;      /* use_clustering */      DISABLE_CLUSTERING }
+mdefine_line|#define A3000_SCSI {  /* next */                NULL,            &bslash;&n;&t;&t;      /* usage_count */         NULL,&t;         &bslash;&n;&t;&t;      /* proc_dir_entry */      &amp;proc_scsi_a3000, &bslash;&n;&t;&t;      /* proc_info */           NULL,            &bslash;&n;&t;&t;      /* name */                &quot;Amiga 3000 built-in SCSI&quot;, &bslash;&n;&t;&t;      /* detect */              a3000_detect,    &bslash;&n;&t;&t;      /* release */             a3000_release,   &bslash;&n;&t;&t;      /* info */                NULL,&t;         &bslash;&n;&t;&t;      /* command */             NULL,            &bslash;&n;&t;&t;      /* queuecommand */        wd33c93_queuecommand, &bslash;&n;&t;&t;      /* abort */               wd33c93_abort,   &bslash;&n;&t;&t;      /* reset */               wd33c93_reset,   &bslash;&n;&t;&t;      /* slave_attach */        NULL,            &bslash;&n;&t;&t;      /* bios_param */          NULL, &t;         &bslash;&n;&t;&t;      /* can_queue */           CAN_QUEUE,       &bslash;&n;&t;&t;      /* this_id */             7,               &bslash;&n;&t;&t;      /* sg_tablesize */        SG_ALL,          &bslash;&n;&t;&t;      /* cmd_per_lun */&t;        CMD_PER_LUN,     &bslash;&n;&t;&t;      /* present */             0,               &bslash;&n;&t;&t;      /* unchecked_isa_dma */   0,               &bslash;&n;&t;&t;      /* use_clustering */      ENABLE_CLUSTERING }
 macro_line|#else
 multiline_comment|/*&n; * if the transfer address ANDed with this results in a non-zero&n; * result, then we can&squot;t use DMA.&n; */
 DECL|macro|A3000_XFER_MASK

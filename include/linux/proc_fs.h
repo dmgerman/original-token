@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_PROC_FS_H
 DECL|macro|_LINUX_PROC_FS_H
 mdefine_line|#define _LINUX_PROC_FS_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 multiline_comment|/*&n; * The proc filesystem constants/structures&n; */
@@ -104,6 +105,9 @@ id|PROC_RTC
 comma
 DECL|enumerator|PROC_LOCKS
 id|PROC_LOCKS
+comma
+DECL|enumerator|PROC_ZORRO
+id|PROC_ZORRO
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos
@@ -147,6 +151,12 @@ id|PROC_PID_STATM
 comma
 DECL|enumerator|PROC_PID_MAPS
 id|PROC_PID_MAPS
+comma
+macro_line|#if CONFIG_AP1000
+DECL|enumerator|PROC_PID_RINGBUF
+id|PROC_PID_RINGBUF
+comma
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|enum|pid_subdirectory_inos
@@ -502,6 +512,16 @@ DECL|macro|PROC_DYNAMIC_FIRST
 mdefine_line|#define PROC_DYNAMIC_FIRST 4096
 DECL|macro|PROC_NDYNAMIC
 mdefine_line|#define PROC_NDYNAMIC      4096
+DECL|macro|PROC_OPENPROM_FIRST
+mdefine_line|#define PROC_OPENPROM_FIRST (PROC_DYNAMIC_FIRST+PROC_NDYNAMIC)
+DECL|macro|PROC_OPENPROM
+mdefine_line|#define PROC_OPENPROM&t;   PROC_OPENPROM_FIRST
+DECL|macro|PROC_NOPENPROM
+mdefine_line|#define PROC_NOPENPROM&t;   4096
+DECL|macro|PROC_OPENPROMD_FIRST
+mdefine_line|#define PROC_OPENPROMD_FIRST (PROC_OPENPROM_FIRST+PROC_NOPENPROM)
+DECL|macro|PROC_NOPENPROMD
+mdefine_line|#define PROC_NOPENPROMD&t;   4096
 DECL|macro|PROC_SUPER_MAGIC
 mdefine_line|#define PROC_SUPER_MAGIC 0x9fa0
 multiline_comment|/*&n; * This is not completely implemented yet. The idea is to&n; * create an in-memory tree (like the actual /proc filesystem&n; * tree) of these proc_dir_entries, so that we can dynamically&n; * add new files to /proc.&n; *&n; * The &quot;next&quot; pointer creates a linked list of one /proc directory,&n; * while parent/subdir create the directory structure (every&n; * /proc file has a parent, but &quot;subdir&quot; is NULL for all&n; * non-directory entries).&n; *&n; * &quot;get_info&quot; is called at &quot;read&quot;, while &quot;fill_inode&quot; is used to&n; * fill in file type/protection/owner information specific to the&n; * particular /proc file.&n; */
@@ -654,6 +674,11 @@ r_extern
 r_struct
 id|proc_dir_entry
 id|proc_sys
+suffix:semicolon
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_openprom
 suffix:semicolon
 r_extern
 r_struct
@@ -1103,6 +1128,152 @@ op_star
 op_star
 )paren
 suffix:semicolon
+DECL|struct|openpromfs_dev
+r_struct
+id|openpromfs_dev
+(brace
+DECL|member|next
+r_struct
+id|openpromfs_dev
+op_star
+id|next
+suffix:semicolon
+DECL|member|node
+id|u32
+id|node
+suffix:semicolon
+DECL|member|inode
+id|ino_t
+id|inode
+suffix:semicolon
+DECL|member|rdev
+id|kdev_t
+id|rdev
+suffix:semicolon
+DECL|member|mode
+id|mode_t
+id|mode
+suffix:semicolon
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|32
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+op_star
+id|proc_openprom_register
+c_func
+(paren
+r_int
+(paren
+op_star
+id|readdir
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+r_void
+op_star
+comma
+id|filldir_t
+)paren
+comma
+r_int
+(paren
+op_star
+id|lookup
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+r_int
+comma
+r_struct
+id|inode
+op_star
+op_star
+)paren
+comma
+r_void
+(paren
+op_star
+id|use
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+comma
+r_struct
+id|openpromfs_dev
+op_star
+op_star
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|proc_openprom_deregister
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|proc_openprom_use
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|proc_openprom_regdev
+c_func
+(paren
+r_struct
+id|openpromfs_dev
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|proc_openprom_unregdev
+c_func
+(paren
+r_struct
+id|openpromfs_dev
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_struct
 id|inode_operations
@@ -1122,6 +1293,11 @@ r_extern
 r_struct
 id|inode_operations
 id|proc_scsi_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|proc_openprom_inode_operations
 suffix:semicolon
 r_extern
 r_struct
@@ -1168,5 +1344,12 @@ r_struct
 id|inode_operations
 id|proc_fd_inode_operations
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+r_extern
+r_struct
+id|inode_operations
+id|proc_ringbuf_inode_operations
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

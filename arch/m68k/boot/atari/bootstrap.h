@@ -1,7 +1,72 @@
-multiline_comment|/*&n;** bootstrap.h -- This file is a part of the Atari bootloader.&n;**&n;** Copyright 1993 by Arjan Knor&n;**&n;** Modified by Andreas Schwab&n;** - clear transparent translation registers&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
+multiline_comment|/*&n;** bootstrap.h -- This file is a part of the Atari bootloader.&n;**&n;** Copyright 1993 by Arjan Knor&n;**&n;** Modified by Andreas Schwab&n;**     - clear transparent translation registers&n;** Modified 18-Aug-96 by Geert Uytterhoeven&n;**     - Updated for the new boot information structure (untested!)&n;** Modified 1996-11-12 by Andreas Schwab&n;**     - Fixed and tested previous change&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
 macro_line|#ifndef BOOTSTRAP_H
 DECL|macro|BOOTSTRAP_H
 mdefine_line|#define BOOTSTRAP_H
+multiline_comment|/*&n;     *  Atari Bootinfo Definitions&n;     *&n;     *  All limits herein are `soft&squot; limits, i.e. they don&squot;t put constraints&n;     *  on the actual parameters in the kernel.&n;     */
+DECL|struct|atari_bootinfo
+r_struct
+id|atari_bootinfo
+(brace
+DECL|member|machtype
+r_int
+r_int
+id|machtype
+suffix:semicolon
+multiline_comment|/* machine type */
+DECL|member|cputype
+r_int
+r_int
+id|cputype
+suffix:semicolon
+multiline_comment|/* system CPU */
+DECL|member|fputype
+r_int
+r_int
+id|fputype
+suffix:semicolon
+multiline_comment|/* system FPU */
+DECL|member|mmutype
+r_int
+r_int
+id|mmutype
+suffix:semicolon
+multiline_comment|/* system MMU */
+DECL|member|num_memory
+r_int
+id|num_memory
+suffix:semicolon
+multiline_comment|/* # of memory blocks found */
+DECL|member|memory
+r_struct
+id|mem_info
+id|memory
+(braket
+id|NUM_MEMINFO
+)braket
+suffix:semicolon
+multiline_comment|/* memory description */
+DECL|member|ramdisk
+r_struct
+id|mem_info
+id|ramdisk
+suffix:semicolon
+multiline_comment|/* ramdisk description */
+DECL|member|command_line
+r_char
+id|command_line
+(braket
+id|CL_SIZE
+)braket
+suffix:semicolon
+multiline_comment|/* kernel command line parameters */
+DECL|member|mch_cookie
+r_int
+r_int
+id|mch_cookie
+suffix:semicolon
+multiline_comment|/* _MCH cookie from TOS */
+)brace
+suffix:semicolon
 multiline_comment|/* _MCH cookie values */
 DECL|macro|MACH_ST
 mdefine_line|#define MACH_ST  0
@@ -154,7 +219,7 @@ suffix:semicolon
 )brace
 r_extern
 r_struct
-id|bootinfo
+id|atari_bootinfo
 id|bi
 suffix:semicolon
 DECL|function|disable_cache
