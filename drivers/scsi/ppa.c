@@ -4263,6 +4263,7 @@ c_cond
 (paren
 id|retv
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -4309,6 +4310,7 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* Try again in a jiffy */
+)brace
 )brace
 id|cmd-&gt;SCp.phase
 op_increment

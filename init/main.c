@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bugs.h&gt;
@@ -4764,71 +4765,12 @@ c_func
 l_string|&quot;POSIX conformance testing by UNIFIX&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; *&t;We count on the initial thread going ok &n;&t; *&t;Like idlers init is an unlocked kernel thread, which will&n;&t; *&t;make syscalls (and thus be locked).&n;&t; */
 id|smp_init
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Ok, the machine is now initialized. None of the devices&n;&t; * have been touched yet, but the CPU subsystem is up and&n;&t; * running, and memory management works.&n;&t; *&n;&t; * Now we can finally start doing some real work..&n;&t; */
-macro_line|#if defined(CONFIG_MTRR)&t;/* Do this after SMP initialization */
-multiline_comment|/*&n; * We should probably create some architecture-dependent &quot;fixup after&n; * everything is up&quot; style function where this would belong better&n; * than in init/main.c..&n; */
-id|mtrr_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SYSCTL
-id|sysctl_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_DIO
-id|dio_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t; * Ok, at this point all CPU&squot;s should be initialized, so&n;&t; * we can start looking into devices..&n;&t; */
-macro_line|#ifdef CONFIG_PCI
-id|pci_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SBUS
-id|sbus_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_CHRP)
-id|powermac_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MCA
-id|mca_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ARCH_ACORN
-id|ecard_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* &n;&t; *&t;We count on the initial thread going ok &n;&t; *&t;Like idlers init is an unlocked kernel thread, which will&n;&t; *&t;make syscalls (and thus be locked).&n;&t; */
 id|kernel_thread
 c_func
 (paren
@@ -4843,7 +4785,6 @@ op_or
 id|CLONE_SIGHAND
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * task[0] is meant to be used as an &quot;idle&quot; task: it may not sleep, but&n; * it might do some general things like count free pages or it could be&n; * used to implement a reasonable LRU algorithm for the paging routines:&n; * anything that can be useful, but shouldn&squot;t take time from the real&n; * processes.&n; *&n; * Right now task[0] just does an infinite idle loop.&n; */
 id|cpu_idle
 c_func
 (paren
@@ -4965,6 +4906,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * Ok, the machine is now initialized. None of the devices&n; * have been touched yet, but the CPU subsystem is up and&n; * running, and memory and process management works.&n; *&n; * Now we can finally start doing some real work..&n; */
 DECL|function|do_basic_setup
 r_static
 r_void
@@ -4978,6 +4920,64 @@ r_void
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 r_int
 id|real_root_mountflags
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_MTRR)&t;/* Do this after SMP initialization */
+multiline_comment|/*&n; * We should probably create some architecture-dependent &quot;fixup after&n; * everything is up&quot; style function where this would belong better&n; * than in init/main.c..&n; */
+id|mtrr_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SYSCTL
+id|sysctl_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_DIO
+id|dio_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * Ok, at this point all CPU&squot;s should be initialized, so&n;&t; * we can start looking into devices..&n;&t; */
+macro_line|#ifdef CONFIG_PCI
+id|pci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SBUS
+id|sbus_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_CHRP)
+id|powermac_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MCA
+id|mca_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_ACORN
+id|ecard_init
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Networking initialization needs a process context */
@@ -5259,6 +5259,11 @@ op_star
 id|unused
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|do_basic_setup
 c_func
 (paren
@@ -5266,6 +5271,11 @@ c_func
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, we have completed the initial bootup, and&n;&t; * we&squot;re essentially up and running. Get rid of the&n;&t; * initmem segments and start the user-mode stuff..&n;&t; */
 id|free_initmem
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren

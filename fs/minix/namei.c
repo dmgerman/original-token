@@ -314,6 +314,7 @@ r_int
 id|i
 suffix:semicolon
 r_const
+r_int
 r_char
 op_star
 id|name

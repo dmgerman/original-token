@@ -159,6 +159,13 @@ c_func
 id|memcpy_fromiovec
 )paren
 suffix:semicolon
+DECL|variable|memcpy_tokerneliovec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|memcpy_tokerneliovec
+)paren
+suffix:semicolon
 DECL|variable|sock_create
 id|EXPORT_SYMBOL
 c_func

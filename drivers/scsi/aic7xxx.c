@@ -24273,6 +24273,10 @@ id|p-&gt;pause
 op_assign
 id|temp-&gt;pause
 suffix:semicolon
+id|p-&gt;pdev
+op_assign
+id|temp-&gt;pdev
+suffix:semicolon
 id|p-&gt;pci_bus
 op_assign
 id|temp-&gt;pci_bus
