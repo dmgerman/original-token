@@ -1,13 +1,12 @@
-multiline_comment|/* $Id: advansys.c,v 1.29 1996/11/15 00:45:07 bobf Exp bobf $ */
-multiline_comment|/*&n; * advansys.c - Linux Host Driver for AdvanSys SCSI Adapters&n; * &n; * Copyright (c) 1995-1996 Advanced System Products, Inc.&n; * All Rights Reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that redistributions of source&n; * code retain the above copyright notice and this comment without&n; * modification.&n; *&n; * The latest version of this driver is available at the AdvanSys&n; * FTP and BBS sites listed below.&n; *&n; * Please send questions, comments, bug reports to:&n; * bobf@advansys.com (Bob Frey)&n; */
-multiline_comment|/*&n; * The driver has been used in the following kernels:&n; *  v1.2.13, v1.3.57, v2.0.25, v2.1.9&n; */
+multiline_comment|/* $Id: advansys.c,v 1997/05/28 00:06:55 bobf Exp bobf $ */
 DECL|macro|ASC_VERSION
-mdefine_line|#define ASC_VERSION &quot;2.0&quot;    /* AdvanSys Driver Version */
-multiline_comment|/*&n;&n;  Documentation for the AdvanSys Driver&n;&n;  A. Adapters Supported by this Driver&n;  B. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;  C. Linux v1.3.1 - v1.3.57 - Directions for Adding the AdvanSys Driver&n;  D. Linux v1.3.58 and Newer - Upgrading the AdvanSys Driver&n;  E. Source Comments&n;  F. Driver Compile Time Options and Debugging&n;  G. Driver LILO Option&n;  H. Release History&n;  I. Known Problems or Issues&n;  J. Credits&n;  K. AdvanSys Contact Information&n;&n;  A. Adapters Supported by this Driver&n; &n;     AdvanSys (Advanced System Products, Inc.) manufactures the following&n;     Bus-Mastering SCSI-2 Host Adapters for the ISA, EISA, VL, and PCI&n;     buses. This Linux driver supports all of these adapters.&n;     &n;     The CDB counts below indicate the number of SCSI CDB (Command&n;     Descriptor Block) requests that can be stored in the RISC chip&n;     cache and board LRAM. A CDB is a single SCSI command. The driver&n;     detect routine will display the number of CDBs available for each&n;     adapter detected. The number of CDBs used by the driver can be&n;     lowered in the BIOS by changing the &squot;Host Queue Size&squot; adapter setting.&n;&n;     Connectivity Products:&n;        ABP510/5150 - Bus-Master ISA (240 CDB) (Footnote 1)&n;        ABP5140 - Bus-Master ISA PnP (16 CDB) (Footnote 1, 3)&n;        ABP5142 - Bus-Master ISA PnP with floppy (16 CDB) (Footnote 4)&n;        ABP920 - Bus-Master PCI (16 CDB)&n;        ABP930 - Bus-Master PCI (16 CDB) (Footnote 5)&n;        ABP930U - Bus-Master PCI Ultra (16 CDB)&n;        ABP960 - Bus-Master PCI MAC/PC (16 CDB) (Footnote 2)&n;        ABP960U - Bus-Master PCI MAC/PC Ultra (16 CDB)&n;     &n;     Single Channel Products:&n;        ABP542 - Bus-Master ISA with floppy (240 CDB)&n;        ABP742 - Bus-Master EISA (240 CDB)&n;        ABP842 - Bus-Master VL (240 CDB)&n;        ABP940 - Bus-Master PCI (240 CDB)&n;        ABP940U - Bus-Master PCI Ultra (240 CDB)&n;        ABP970 - Bus-Master PCI MAC/PC (240 CDB)&n;        ABP970U - Bus-Master PCI MAC/PC Ultra (240 CDB)&n;     &n;     Dual Channel Products:&n;        ABP752 - Dual Channel Bus-Master EISA (240 CDB Per Channel)&n;        ABP852 - Dual Channel Bus-Master VL (240 CDB Per Channel)&n;        ABP950 - Dual Channel Bus-Master PCI (240 CDB Per Channel)&n;     &n;     Footnotes:&n;       1. This board has been shipped by HP with the 4020i CD-R drive.&n;          The board has no BIOS so it cannot control a boot device, but&n;          it can control any secondary SCSI device.&n;       2. This board has been sold by Iomega as a Jaz Jet PCI adapter.&n;       3. This board has been sold by SIIG as the i540 SpeedMaster.&n;       4. This board has been sold by SIIG as the i542 SpeedMaster.&n;       5. This board has been sold by SIIG as the Fast SCSI Pro PCI.&n;&n;  B. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.2.13. For versions that follow v1.2.13.&n;     but precede v1.3.57 some of the changes for Linux v1.3.X listed&n;     below may need to be modified or included. A patch is available&n;     for v1.2.13 from the AdvanSys WWW and FTP sites.&n; &n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;    &n;     1. Add the following line to /usr/src/linux/arch/i386/config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;    &n;          bool &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS y&n;    &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;    &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;    &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;    &n;          ifdef CONFIG_SCSI_ADVANSYS&n;          SCSI_SRCS := $(SCSI_SRCS) advansys.c&n;          SCSI_OBJS := $(SCSI_OBJS) advansys.o&n;          else&n;          SCSI_MODULE_OBJS := $(SCSI_MODULE_OBJS) advansys.o&n;          endif&n;&n;     4. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;&n;          extern void advansys_setup(char *str, int *ints);&n;&n;        and add the following lines to the bootsetups[] array.&n;&n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;&n;     5. If you have the HP 4020i CD-R driver and Linux v1.2.X you should&n;        add a fix to the CD-ROM target driver. This fix will allow&n;        you to mount CDs with the iso9660 file system. Linux v1.3.X&n;        already has this fix. In the file /usr/src/linux/drivers/scsi/sr.c&n;        and function get_sectorsize() after the line:&n;&n;        if(scsi_CDs[i].sector_size == 0) scsi_CDs[i].sector_size = 2048;&n;&n;        add the following line:&n;&n;        if(scsi_CDs[i].sector_size == 2340) scsi_CDs[i].sector_size = 2048;&n;&n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n; &n;  C. Linux v1.3.1 - v1.3.57 - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.3.57. For versions that precede v1.3.57&n;     some of these changes may need to be modified or eliminated. A patch&n;     is available for v1.3.57 from the AdvanSys WWW and FTP sites.&n;     Beginning with v1.3.58 this driver is included with the Linux&n;     distribution eliminating the need for making any changes.&n;&n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;   &n;     1. Add the following line to /usr/src/linux/drivers/scsi/Config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;   &n;          dep_tristate &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS $CONFIG_SCSI&n;   &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;   &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;   &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;   &n;          ifeq ($(CONFIG_SCSI_ADVANSYS),y)&n;          L_OBJS += advansys.o&n;          else&n;            ifeq ($(CONFIG_SCSI_ADVANSYS),m)&n;            M_OBJS += advansys.o&n;            endif&n;          endif&n;   &n;     4. Add the following line to /usr/src/linux/include/linux/proc_fs.h&n;        in the enum scsi_directory_inos array:&n;   &n;          PROC_SCSI_ADVANSYS,&n;   &n;     5. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;   &n;          extern void advansys_setup(char *str, int *ints);&n;   &n;        and add the following lines to the bootsetups[] array.&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;   &n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n;&n;  D. Linux v1.3.58 and Newer - Upgrading the AdvanSys Driver&n;&n;     To upgrade the AdvanSys driver in a Linux v1.3.58 and newer&n;     kernel, first check the version of the current driver. The&n;     version is defined by the manifest constant ASC_VERSION at&n;     the beginning of advansys.c. The new driver should have a&n;     ASC_VERSION value greater than the current version. To install&n;     the new driver rename advansys.c and advansys.h in the Linux&n;     kernel source tree drivers/scsi directory to different names&n;     or save them to a different directory in case you want to revert&n;     to the old version of the driver. After the old driver is saved&n;     copy the new advansys.c and advansys.h to drivers/scsi, rebuild&n;     the kernel, and install the new kernel. No other changes are needed.&n;&n;  E. Source Comments&n; &n;     1. Use tab stops set to 4 for the source files. For vi use &squot;se tabstops=4&squot;.&n; &n;     2. This driver should be maintained in multiple files. But to make&n;        it easier to include with Linux and to follow Linux conventions,&n;        the whole driver is maintained in the source files advansys.h and&n;        advansys.c. In this file logical sections of the driver begin with&n;        a comment that contains &squot;---&squot;. The following are the logical sections&n;        of the driver below.&n; &n;           --- Linux Version&n;           --- Linux Include Files &n;           --- Driver Options&n;           --- Asc Library Constants and Macros&n;           --- Debugging Header&n;           --- Driver Constants and Macros&n;           --- Driver Structures&n;           --- Driver Data&n;           --- Driver Function Prototypes&n;           --- Linux &squot;Scsi_Host_Template&squot; and advansys_setup() Functions&n;           --- Loadable Driver Support&n;           --- Miscellaneous Driver Functions&n;           --- Functions Required by the Asc Library&n;           --- Tracing and Debugging Functions&n;           --- Asc Library Functions&n; &n;     3. The string &squot;XXX&squot; is used to flag code that needs to be re-written&n;        or that contains a problem that needs to be addressed.&n; &n;     4. I have stripped comments from and reformatted the source for the&n;        Asc Library which is included in this file. I haven&squot;t done this&n;        to obfuscate the code. Actually I have done this to deobfuscate&n;        the code. The Asc Library source can be found under the following&n;        headings.&n; &n;           --- Asc Library Constants and Macros&n;           --- Asc Library Functions&n; &n;  F. Driver Compile Time Options and Debugging&n; &n;     In this source file the following constants can be defined. They are&n;     defined in the source below. Both of these options are enabled by&n;     default.&n; &n;     1. ADVANSYS_DEBUG - enable for debugging and assertions&n; &n;        The amount of debugging output can be controlled with the global&n;        variable &squot;asc_dbglvl&squot;. The higher the number the more output. By&n;        default the debug level is 0.&n;        &n;        If the driver is loaded at boot time and the LILO Driver Option&n;        is included in the system, the debug level can be changed by&n;        specifying a 5th (ASC_NUM_BOARD_SUPPORTED + 1) I/O Port. The&n;        first three hex digits of the pseudo I/O Port must be set to&n;        &squot;deb&squot; and the fourth hex digit specifies the debug level: 0 - F.&n;        The following command line will look for an adapter at 0x330&n;        and set the debug level to 2.&n;&n;           linux advansys=0x330,0,0,0,0xdeb2&n;&n;        If the driver is built as a loadable module this variable can be&n;        defined when the driver is loaded. The following insmod command&n;        will set the debug level to one.&n;  &n;           insmod advansys.o asc_dbglvl=1&n; &n;        Debugging Message Levels:&n;           0: Errors Only&n;           1: High-Level Tracing&n;           2-N: Verbose Tracing&n; &n;        I don&squot;t know the approved way for turning on printk()s to the&n;        console. Here&squot;s a program I use to do this. Debug output is&n;        logged in /var/adm/messages.&n; &n;          main()&n;          {&n;                  syscall(103, 7, 0, 0);&n;          }&n; &n;        I found that increasing LOG_BUF_LEN to 40960 in kernel/printk.c&n;        prevents most level 1 debug messages from being lost.&n; &n;     2. ADVANSYS_STATS - enable statistics&n; &n;        Statistics are maintained on a per adapter basis. Driver entry&n;        point call counts and transfer size counts are maintained.&n;        Statistics are only available for kernels greater than or equal&n;        to v1.3.0 with the CONFIG_PROC_FS (/proc) file system configured.&n;&n;        AdvanSys SCSI adapter files have the following path name format:&n;&n;           /proc/scsi/advansys/[0-(ASC_NUM_BOARD_SUPPORTED-1)]&n;&n;        This information can be displayed with cat. For example:&n;&n;           cat /proc/scsi/advansys/0&n;&n;        When ADVANSYS_STATS is not defined the AdvanSys /proc files only&n;        contain adapter and device configuration information.&n;&n;&n;  G. Driver LILO Option&n; &n;     If init/main.c is modified as described in the &squot;Directions for Adding&n;     the AdvanSys Driver to Linux&squot; section (B.4.) above, the driver will&n;     recognize the &squot;advansys&squot; LILO command line and /etc/lilo.conf option.&n;     This option can be used to either disable I/O port scanning or to limit&n;     scanning to 1 - 4 I/O ports. Regardless of the option setting EISA and&n;     PCI boards will still be searched for and detected. This option only&n;     affects searching for ISA and VL boards.&n;&n;     Examples:&n;       1. Eliminate I/O port scanning:&n;            boot: linux advansys=&n;              or&n;            boot: linux advansys=0x0&n;       2. Limit I/O port scanning to one I/O port:&n;            boot: linux advansys=0x110&n;       3. Limit I/O port scanning to four I/O ports:&n;            boot: linux advansys=0x110,0x210,0x230,0x330&n;&n;     For a loadable module the same effect can be achieved by setting&n;     the &squot;asc_iopflag&squot; variable and &squot;asc_ioport&squot; array when loading&n;     the driver, e.g.&n;&n;           insmod advansys.o asc_iopflag=1 asc_ioport=0x110,0x330&n;&n;     If ADVANSYS_DEBUG is defined a 5th (ASC_NUM_BOARD_SUPPORTED + 1)&n;     I/O Port may be added to specify the driver debug level. Refer to&n;     the &squot;Driver Compile Time Options and Debugging&squot; section above for&n;     more information.&n;&n;  H. Release History&n;&n;     BETA-1.0 (12/23/95): &n;         First Release&n;&n;     BETA-1.1 (12/28/95):&n;         1. Prevent advansys_detect() from being called twice.&n;         2. Add LILO 0xdeb[0-f] option to set &squot;asc_dbglvl&squot;.&n;&n;     1.2 (1/12/96):&n;         1. Prevent re-entrancy in the interrupt handler which&n;            resulted in the driver hanging Linux.&n;         2. Fix problem that prevented ABP-940 cards from being&n;            recognized on some PCI motherboards.&n;         3. Add support for the ABP-5140 PnP ISA card.&n;         4. Fix check condition return status.&n;         5. Add conditionally compiled code for Linux v1.3.X.&n;&n;     1.3 (2/23/96):&n;         1. Fix problem in advansys_biosparam() that resulted in the&n;            wrong drive geometry being returned for drives &gt; 1GB with&n;            extended translation enabled.&n;         2. Add additional tracing during device initialization.&n;         3. Change code that only applies to ISA PnP adapter.&n;         4. Eliminate &squot;make dep&squot; warning.&n;         5. Try to fix problem with handling resets by increasing their&n;            timeout value.&n;&n;     1.4 (5/8/96):&n;         1. Change definitions to eliminate conflicts with other subsystems.&n;         2. Add versioning code for the shared interrupt changes.&n;         3. Eliminate problem in asc_rmqueue() with iterating after removing&n;            a request.&n;         4. Remove reset request loop problem from the &quot;Known Problems or&n;            Issues&quot; section. This problem was isolated and fixed in the&n;            mid-level SCSI driver.&n;        &n;     1.5 (8/8/96):&n;         1. Add support for ABP-940U (PCI Ultra) adapter.&n;         2. Add support for IRQ sharing by setting the SA_SHIRQ flag for&n;            request_irq and supplying a dev_id pointer to both request_irq()&n;            and free_irq().&n;         3. In AscSearchIOPortAddr11() restore a call to check_region() which&n;            should be used before I/O port probing.&n;         4. Fix bug in asc_prt_hex() which resulted in the displaying&n;            the wrong data.&n;         5. Incorporate miscellaneous Asc Library bug fixes and new microcode.&n;         6. Change driver versioning to be specific to each Linux sub-level.&n;         7. Change statistics gathering to be per adapter instead of global&n;            to the driver.&n;         8. Add more information and statistics to the adapter /proc file:&n;            /proc/scsi/advansys[0...].&n;         9. Remove &squot;cmd_per_lun&squot; from the &quot;Known Problems or Issues&quot; list.&n;            This problem has been addressed with the SCSI mid-level changes&n;            made in v1.3.89. The advansys_select_queue_depths() function&n;            was added for the v1.3.89 changes.&n;&n;     1.6 (9/10/96):&n;         1. Incorporate miscellaneous Asc Library bug fixes and new microcode.&n;&n;     1.7 (9/25/96):&n;         1. Enable clustering and optimize the setting of the maximum number&n;            of scatter gather elements for any particular board. Clustering&n;            increases CPU utilization, but results in a relatively larger&n;            increase in I/O throughput.&n;         2. Improve the performance of the request queuing functions by&n;            adding a last pointer to the queue structure.&n;         3. Correct problems with reset and abort request handling that&n;            could have hung or crashed Linux.&n;         4. Add more information to the adapter /proc file:&n;            /proc/scsi/advansys[0...].&n;         5. Remove the request timeout issue form the driver issues list.&n;         6. Miscellaneous documentation additions and changes.&n;&n;     1.8 (10/4/96):&n;         1. Make changes to handle the new v2.1.0 kernel memory mapping&n;            in which a kernel virtual address may not be equivalent to its&n;            bus or DMA memory address.&n;         2. Change abort and reset request handling to make it yet even&n;            more robust.&n;         3. Try to mitigate request starvation by sending ordered requests&n;            to heavily loaded, tag queuing enabled devices.&n;         4. Maintain statistics on request response time.&n;         5. Add request response time statistics and other information to&n;            the adapter /proc file: /proc/scsi/advansys[0...].&n;&n;     1.9 (10/21/96):&n;         1. Add conditionally compiled code (ASC_QUEUE_FLOW_CONTROL) to&n;            make use of mid-level SCSI driver device queue depth flow&n;            control mechanism. This will eliminate aborts caused by a&n;            device being unable to keep up with requests and eliminate&n;            repeat busy or QUEUE FULL status returned by a device.&n;         2. Incorporate miscellaneous Asc Library bug fixes.&n;         3. To allow the driver to work in kernels with broken module&n;            support set &squot;cmd_per_lun&squot; if the driver is compile as a&n;            module. This change affects kernels v1.3.89 to present.&n;         4. Remove PCI BIOS address from the driver banner. The PCI BIOS&n;            is relocated by the motherboard BIOS and its new address can&n;            not be determined by the driver.&n;         5. Add mid-level SCSI queue depth information to the adapter&n;            /proc file: /proc/scsi/advansys[0...].&n;&n;     2.0 (11/14/96):&n;         1. Change allocation of global structures used for device&n;            initialization to guarantee they are in DMA-able memory.&n;            Previously when the driver was loaded as a module these&n;            structures might not have been in DMA-able memory, causing&n;            device initialization to fail.&n;&n;  I. Known Problems or Issues&n;&n;         1. Remove conditional constants (ASC_QUEUE_FLOW_CONTROL) around&n;            the queue depth flow control code when mid-level SCSI changes&n;            are included in Linux.&n;&n;  J. Credits&n;&n;     Nathan Hartwell &lt;mage@cdc3.cdc.net&gt; provided the directions and&n;     basis for the Linux v1.3.X changes which were included in the&n;     1.2 release.&n;&n;     Thomas E Zerucha &lt;zerucha@shell.portal.com&gt; pointed out a bug&n;     in advansys_biosparam() which was fixed in the 1.3 release.&n;&n;  K. AdvanSys Contact Information&n; &n;     Mail:                   Advanced System Products, Inc.&n;                             1150 Ringwood Court&n;                             San Jose, CA 95131&n;     Operator:               1-408-383-9400&n;     FAX:                    1-408-383-9612&n;     Tech Support:           1-800-525-7440/1-408-467-2930&n;     BBS:                    1-408-383-9540 (14400,N,8,1)&n;     Interactive FAX:        1-408-383-9753&n;     Customer Direct Sales:  1-800-883-1099/1-408-383-5777&n;     Tech Support E-Mail:    support@advansys.com&n;     FTP Site:               ftp.advansys.com (login: anonymous)&n;     Web Site:               http://www.advansys.com&n;*/
+mdefine_line|#define ASC_VERSION &quot;2.8&quot;    /* AdvanSys Driver Version */
+multiline_comment|/*&n; * advansys.c - Linux Host Driver for AdvanSys SCSI Adapters&n; * &n; * Copyright (c) 1995-1997 Advanced System Products, Inc.&n; * All Rights Reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that redistributions of source&n; * code retain the above copyright notice and this comment without&n; * modification.&n; *&n; * There is an AdvanSys Linux WWW page at:&n; *  http://www.advansys.com/linux.html&n; *&n; * The latest version of the AdvanSys driver is available at:&n; *  ftp://ftp.advansys.com/pub/linux&n; *&n; * Please send questions, comments, bug reports to:&n; * bobf@advansys.com (Bob Frey)&n; */
+multiline_comment|/*&n;&n;  Documentation for the AdvanSys Driver&n;&n;  A. Linux Kernel Testing&n;  B. Adapters Supported by this Driver&n;  C. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;  D. Linux v1.3.1 - v1.3.57 - Directions for Adding the AdvanSys Driver&n;  E. Linux v1.3.58 and Newer - Upgrading the AdvanSys Driver&n;  F. Source Comments&n;  G. Driver Compile Time Options and Debugging&n;  H. Driver LILO Option&n;  I. Release History&n;  J. Known Problems or Issues&n;  K. Credits&n;  L. AdvanSys Contact Information&n;&n;  A. Linux Kernel Testing&n;&n;     This driver has been tested in the following Linux kernels: v1.2.13,&n;     v1.3.57, v2.0.30, v2.1.40. These kernel versions are major releases&n;     of Linux or the latest Linux kernel versions available when this version&n;     of the driver was released. The driver should also work in earlier&n;     versions of the Linux kernel. Beginning with v1.3.58 the AdvanSys driver&n;     is included with all Linux kernels. Please refer to sections C, D, and&n;     E for instructions on adding or upgrading the AdvanSys driver.&n;&n;  B. Adapters Supported by this Driver&n; &n;     AdvanSys (Advanced System Products, Inc.) manufactures the following&n;     Bus-Mastering SCSI-2 Host Adapters for the ISA, EISA, VL, and PCI&n;     buses. This Linux driver supports all of these adapters.&n;     &n;     The CDB counts below indicate the number of SCSI CDB (Command&n;     Descriptor Block) requests that can be stored in the RISC chip&n;     cache and board LRAM. A CDB is a single SCSI command. The driver&n;     detect routine will display the number of CDBs available for each&n;     adapter detected. The number of CDBs used by the driver can be&n;     lowered in the BIOS by changing the &squot;Host Queue Size&squot; adapter setting.&n;&n;     Connectivity Products:&n;        ABP510/5150 - Bus-Master ISA (240 CDB) (Footnote 1)&n;        ABP5140 - Bus-Master ISA PnP (16 CDB) (Footnote 1, 3)&n;        ABP5142 - Bus-Master ISA PnP with floppy (16 CDB) (Footnote 4)&n;        ABP920 - Bus-Master PCI (16 CDB)&n;        ABP930 - Bus-Master PCI (16 CDB) (Footnote 5)&n;        ABP930U - Bus-Master PCI Ultra (16 CDB)&n;        ABP930UA - Bus-Master PCI Ultra (16 CDB)&n;        ABP960 - Bus-Master PCI MAC/PC (16 CDB) (Footnote 2)&n;        ABP960U - Bus-Master PCI MAC/PC Ultra (16 CDB)&n;     &n;     Single Channel Products:&n;        ABP542 - Bus-Master ISA with floppy (240 CDB)&n;        ABP742 - Bus-Master EISA (240 CDB)&n;        ABP842 - Bus-Master VL (240 CDB)&n;        ABP940 - Bus-Master PCI (240 CDB)&n;        ABP940U - Bus-Master PCI Ultra (240 CDB)&n;        ABP970 - Bus-Master PCI MAC/PC (240 CDB)&n;        ABP970U - Bus-Master PCI MAC/PC Ultra (240 CDB)&n;     &n;     Dual Channel Products:&n;        ABP752 - Dual Channel Bus-Master EISA (240 CDB Per Channel)&n;        ABP852 - Dual Channel Bus-Master VL (240 CDB Per Channel)&n;        ABP950 - Dual Channel Bus-Master PCI (240 CDB Per Channel)&n;     &n;     Footnotes:&n;       1. This board has been shipped by HP with the 4020i CD-R drive.&n;          The board has no BIOS so it cannot control a boot device, but&n;          it can control any secondary SCSI device.&n;       2. This board has been sold by Iomega as a Jaz Jet PCI adapter.&n;       3. This board has been sold by SIIG as the i540 SpeedMaster.&n;       4. This board has been sold by SIIG as the i542 SpeedMaster.&n;       5. This board has been sold by SIIG as the Fast SCSI Pro PCI.&n;&n;  C. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.2.13. For versions that follow v1.2.13.&n;     but precede v1.3.57 some of the changes for Linux v1.3.X listed&n;     below may need to be modified or included. A patch is available&n;     for v1.2.13 from the AdvanSys WWW and FTP sites.&n; &n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;    &n;     1. Add the following line to /usr/src/linux/arch/i386/config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;    &n;          bool &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS y&n;    &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;    &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;    &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;    &n;          ifdef CONFIG_SCSI_ADVANSYS&n;          SCSI_SRCS := $(SCSI_SRCS) advansys.c&n;          SCSI_OBJS := $(SCSI_OBJS) advansys.o&n;          else&n;          SCSI_MODULE_OBJS := $(SCSI_MODULE_OBJS) advansys.o&n;          endif&n;&n;     4. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;&n;          extern void advansys_setup(char *str, int *ints);&n;&n;        and add the following lines to the bootsetups[] array.&n;&n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;&n;     5. If you have the HP 4020i CD-R driver and Linux v1.2.X you should&n;        add a fix to the CD-ROM target driver. This fix will allow&n;        you to mount CDs with the iso9660 file system. Linux v1.3.X&n;        already has this fix. In the file /usr/src/linux/drivers/scsi/sr.c&n;        and function get_sectorsize() after the line:&n;&n;        if(scsi_CDs[i].sector_size == 0) scsi_CDs[i].sector_size = 2048;&n;&n;        add the following line:&n;&n;        if(scsi_CDs[i].sector_size == 2340) scsi_CDs[i].sector_size = 2048;&n;&n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n; &n;  D. Linux v1.3.1 - v1.3.57 - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.3.57. For versions that precede v1.3.57&n;     some of these changes may need to be modified or eliminated. A patch&n;     is available for v1.3.57 from the AdvanSys WWW and FTP sites.&n;     Beginning with v1.3.58 this driver is included with the Linux&n;     distribution eliminating the need for making any changes.&n;&n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;   &n;     1. Add the following line to /usr/src/linux/drivers/scsi/Config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;   &n;          dep_tristate &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS $CONFIG_SCSI&n;   &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;   &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;   &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;   &n;          ifeq ($(CONFIG_SCSI_ADVANSYS),y)&n;          L_OBJS += advansys.o&n;          else&n;            ifeq ($(CONFIG_SCSI_ADVANSYS),m)&n;            M_OBJS += advansys.o&n;            endif&n;          endif&n;   &n;     4. Add the following line to /usr/src/linux/include/linux/proc_fs.h&n;        in the enum scsi_directory_inos array:&n;   &n;          PROC_SCSI_ADVANSYS,&n;   &n;     5. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;   &n;          extern void advansys_setup(char *str, int *ints);&n;   &n;        and add the following lines to the bootsetups[] array.&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;   &n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n;&n;  E. Linux v1.3.58 and Newer - Upgrading the AdvanSys Driver&n;&n;     To upgrade the AdvanSys driver in a Linux v1.3.58 and newer&n;     kernel, first check the version of the current driver. The&n;     version is defined by the manifest constant ASC_VERSION at&n;     the beginning of advansys.c. The new driver should have a&n;     ASC_VERSION value greater than the current version. To install&n;     the new driver rename advansys.c and advansys.h in the Linux&n;     kernel source tree drivers/scsi directory to different names&n;     or save them to a different directory in case you want to revert&n;     to the old version of the driver. After the old driver is saved&n;     copy the new advansys.c and advansys.h to drivers/scsi, rebuild&n;     the kernel, and install the new kernel. No other changes are needed.&n;&n;  F. Source Comments&n; &n;     1. Use tab stops set to 4 for the source files. For vi use &squot;se tabstops=4&squot;.&n; &n;     2. This driver should be maintained in multiple files. But to make&n;        it easier to include with Linux and to follow Linux conventions,&n;        the whole driver is maintained in the source files advansys.h and&n;        advansys.c. In this file logical sections of the driver begin with&n;        a comment that contains &squot;---&squot;. The following are the logical sections&n;        of the driver below.&n; &n;           --- Linux Version&n;           --- Linux Include Files &n;           --- Driver Options&n;           --- Debugging Header&n;           --- Asc Library Constants and Macros&n;           --- Driver Constants and Macros&n;           --- Driver Structures&n;           --- Driver Data&n;           --- Driver Function Prototypes&n;           --- Linux &squot;Scsi_Host_Template&squot; and advansys_setup() Functions&n;           --- Loadable Driver Support&n;           --- Miscellaneous Driver Functions&n;           --- Functions Required by the Asc Library&n;           --- Tracing and Debugging Functions&n;           --- Asc Library Functions&n; &n;     3. The string &squot;XXX&squot; is used to flag code that needs to be re-written&n;        or that contains a problem that needs to be addressed.&n; &n;     4. I have stripped comments from and reformatted the source for the&n;        Asc Library which is included in this file. I haven&squot;t done this&n;        to obfuscate the code. Actually I have done this to deobfuscate&n;        the code. The Asc Library source can be found under the following&n;        headings.&n; &n;           --- Asc Library Constants and Macros&n;           --- Asc Library Functions&n; &n;  G. Driver Compile Time Options and Debugging&n; &n;     In this source file the following constants can be defined. They are&n;     defined in the source below. Both of these options are enabled by&n;     default.&n; &n;     1. ADVANSYS_ASSERT - Enable driver assertions (Def: Enabled)&n;&n;        Enabling this option adds assertion logic statements to the&n;        driver. If an assertion fails a message will be displayed to&n;        the console, but the system will continue to operate. Any&n;        assertions encountered should be reported to the person&n;        responsible for the driver. Assertion statements may proactively&n;        detect problems with the driver and facilitate fixing these&n;        problems. Enabling assertions will add a small overhead to the&n;        execution of the driver.&n;&n;     2. ADVANSYS_DEBUG - Enable driver debugging (Def: Disabled)&n;&n;        Enabling this option adds tracing functions to the driver and&n;        the ability to set a driver tracing level at boot time. This&n;        option will also symbols not required outside the driver to&n;        the kernel name space. This option is very useful for debugging&n;        the driver, but it will add to the size of the driver execution&n;        image and add overhead to the execution of the driver.&n; &n;        The amount of debugging output can be controlled with the global&n;        variable &squot;asc_dbglvl&squot;. The higher the number the more output. By&n;        default the debug level is 0.&n;        &n;        If the driver is loaded at boot time and the LILO Driver Option&n;        is included in the system, the debug level can be changed by&n;        specifying a 5th (ASC_NUM_BOARD_SUPPORTED + 1) I/O Port. The&n;        first three hex digits of the pseudo I/O Port must be set to&n;        &squot;deb&squot; and the fourth hex digit specifies the debug level: 0 - F.&n;        The following command line will look for an adapter at 0x330&n;        and set the debug level to 2.&n;&n;           linux advansys=0x330,0,0,0,0xdeb2&n;&n;        If the driver is built as a loadable module this variable can be&n;        defined when the driver is loaded. The following insmod command&n;        will set the debug level to one.&n;  &n;           insmod advansys.o asc_dbglvl=1&n; &n;        Debugging Message Levels:&n;           0: Errors Only&n;           1: High-Level Tracing&n;           2-N: Verbose Tracing&n; &n;        I don&squot;t know the approved way for turning on printk()s to the&n;        console. Here&squot;s a program I use to do this. Debug output is&n;        logged in /var/adm/messages.&n; &n;          main()&n;          {&n;                  syscall(103, 7, 0, 0);&n;          }&n; &n;        I found that increasing LOG_BUF_LEN to 40960 in kernel/printk.c&n;        prevents most level 1 debug messages from being lost.&n;&n;        this constant for debugging purposes, but for normal use of&n;        the driver the constant should not be defined. This option&n;        does not add overhead to the driver, but it does add unnecessary&n;        symbols to the kernel name space.&n; &n;     3. ADVANSYS_STATS - Enable statistics (Def: Enabled &gt;= v1.3.0)&n; &n;        Enabling this option adds statistics collection and display&n;        through /proc to the driver. The information is useful for&n;        monitoring driver and device performance. It will add to the&n;        size of the driver execution image and add minor overhead to&n;        the execution of the driver.&n;&n;        Statistics are maintained on a per adapter basis. Driver entry&n;        point call counts and transfer size counts are maintained.&n;        Statistics are only available for kernels greater than or equal&n;        to v1.3.0 with the CONFIG_PROC_FS (/proc) file system configured.&n;&n;        AdvanSys SCSI adapter files have the following path name format:&n;&n;           /proc/scsi/advansys/[0-(ASC_NUM_BOARD_SUPPORTED-1)]&n;&n;        This information can be displayed with cat. For example:&n;&n;           cat /proc/scsi/advansys/0&n;&n;        When ADVANSYS_STATS is not defined the AdvanSys /proc files only&n;        contain adapter and device configuration information.&n;&n;&n;  H. Driver LILO Option&n; &n;     If init/main.c is modified as described in the &squot;Directions for Adding&n;     the AdvanSys Driver to Linux&squot; section (B.4.) above, the driver will&n;     recognize the &squot;advansys&squot; LILO command line and /etc/lilo.conf option.&n;     This option can be used to either disable I/O port scanning or to limit&n;     scanning to 1 - 4 I/O ports. Regardless of the option setting EISA and&n;     PCI boards will still be searched for and detected. This option only&n;     affects searching for ISA and VL boards.&n;&n;     Examples:&n;       1. Eliminate I/O port scanning:&n;            boot: linux advansys=&n;              or&n;            boot: linux advansys=0x0&n;       2. Limit I/O port scanning to one I/O port:&n;            boot: linux advansys=0x110&n;       3. Limit I/O port scanning to four I/O ports:&n;            boot: linux advansys=0x110,0x210,0x230,0x330&n;&n;     For a loadable module the same effect can be achieved by setting&n;     the &squot;asc_iopflag&squot; variable and &squot;asc_ioport&squot; array when loading&n;     the driver, e.g.&n;&n;           insmod advansys.o asc_iopflag=1 asc_ioport=0x110,0x330&n;&n;     If ADVANSYS_DEBUG is defined a 5th (ASC_NUM_BOARD_SUPPORTED + 1)&n;     I/O Port may be added to specify the driver debug level. Refer to&n;     the &squot;Driver Compile Time Options and Debugging&squot; section above for&n;     more information.&n;&n;  I. Release History&n;&n;     BETA-1.0 (12/23/95): &n;         First Release&n;&n;     BETA-1.1 (12/28/95):&n;         1. Prevent advansys_detect() from being called twice.&n;         2. Add LILO 0xdeb[0-f] option to set &squot;asc_dbglvl&squot;.&n;&n;     1.2 (1/12/96):&n;         1. Prevent re-entrancy in the interrupt handler which&n;            resulted in the driver hanging Linux.&n;         2. Fix problem that prevented ABP-940 cards from being&n;            recognized on some PCI motherboards.&n;         3. Add support for the ABP-5140 PnP ISA card.&n;         4. Fix check condition return status.&n;         5. Add conditionally compiled code for Linux v1.3.X.&n;&n;     1.3 (2/23/96):&n;         1. Fix problem in advansys_biosparam() that resulted in the&n;            wrong drive geometry being returned for drives &gt; 1GB with&n;            extended translation enabled.&n;         2. Add additional tracing during device initialization.&n;         3. Change code that only applies to ISA PnP adapter.&n;         4. Eliminate &squot;make dep&squot; warning.&n;         5. Try to fix problem with handling resets by increasing their&n;            timeout value.&n;&n;     1.4 (5/8/96):&n;         1. Change definitions to eliminate conflicts with other subsystems.&n;         2. Add versioning code for the shared interrupt changes.&n;         3. Eliminate problem in asc_rmqueue() with iterating after removing&n;            a request.&n;         4. Remove reset request loop problem from the &quot;Known Problems or&n;            Issues&quot; section. This problem was isolated and fixed in the&n;            mid-level SCSI driver.&n;        &n;     1.5 (8/8/96):&n;         1. Add support for ABP-940U (PCI Ultra) adapter.&n;         2. Add support for IRQ sharing by setting the SA_SHIRQ flag for&n;            request_irq and supplying a dev_id pointer to both request_irq()&n;            and free_irq().&n;         3. In AscSearchIOPortAddr11() restore a call to check_region() which&n;            should be used before I/O port probing.&n;         4. Fix bug in asc_prt_hex() which resulted in the displaying&n;            the wrong data.&n;         5. Incorporate miscellaneous Asc Library bug fixes and new microcode.&n;         6. Change driver versioning to be specific to each Linux sub-level.&n;         7. Change statistics gathering to be per adapter instead of global&n;            to the driver.&n;         8. Add more information and statistics to the adapter /proc file:&n;            /proc/scsi/advansys[0...].&n;         9. Remove &squot;cmd_per_lun&squot; from the &quot;Known Problems or Issues&quot; list.&n;            This problem has been addressed with the SCSI mid-level changes&n;            made in v1.3.89. The advansys_select_queue_depths() function&n;            was added for the v1.3.89 changes.&n;&n;     1.6 (9/10/96):&n;         1. Incorporate miscellaneous Asc Library bug fixes and new microcode.&n;&n;     1.7 (9/25/96):&n;         1. Enable clustering and optimize the setting of the maximum number&n;            of scatter gather elements for any particular board. Clustering&n;            increases CPU utilization, but results in a relatively larger&n;            increase in I/O throughput.&n;         2. Improve the performance of the request queuing functions by&n;            adding a last pointer to the queue structure.&n;         3. Correct problems with reset and abort request handling that&n;            could have hung or crashed Linux.&n;         4. Add more information to the adapter /proc file:&n;            /proc/scsi/advansys[0...].&n;         5. Remove the request timeout issue form the driver issues list.&n;         6. Miscellaneous documentation additions and changes.&n;&n;     1.8 (10/4/96):&n;         1. Make changes to handle the new v2.1.0 kernel memory mapping&n;            in which a kernel virtual address may not be equivalent to its&n;            bus or DMA memory address.&n;         2. Change abort and reset request handling to make it yet even&n;            more robust.&n;         3. Try to mitigate request starvation by sending ordered requests&n;            to heavily loaded, tag queuing enabled devices.&n;         4. Maintain statistics on request response time.&n;         5. Add request response time statistics and other information to&n;            the adapter /proc file: /proc/scsi/advansys[0...].&n;&n;     1.9 (10/21/96):&n;         1. Add conditionally compiled code (ASC_QUEUE_FLOW_CONTROL) to&n;            make use of mid-level SCSI driver device queue depth flow&n;            control mechanism. This will eliminate aborts caused by a&n;            device being unable to keep up with requests and eliminate&n;            repeat busy or QUEUE FULL status returned by a device.&n;         2. Incorporate miscellaneous Asc Library bug fixes.&n;         3. To allow the driver to work in kernels with broken module&n;            support set &squot;cmd_per_lun&squot; if the driver is compile as a&n;            module. This change affects kernels v1.3.89 to present.&n;         4. Remove PCI BIOS address from the driver banner. The PCI BIOS&n;            is relocated by the motherboard BIOS and its new address can&n;            not be determined by the driver.&n;         5. Add mid-level SCSI queue depth information to the adapter&n;            /proc file: /proc/scsi/advansys[0...].&n;&n;     2.0 (11/14/96):&n;         1. Change allocation of global structures used for device&n;            initialization to guarantee they are in DMA-able memory.&n;            Previously when the driver was loaded as a module these&n;            structures might not have been in DMA-able memory, causing&n;            device initialization to fail.&n;&n;     2.1 (12/30/96):&n;         1. In advansys_reset(), if the request is a synchronous reset&n;            request, even if the request serial number has changed, then&n;            complete the request.&n;         2. Add Asc Library bug fixes including new microcode.&n;         3. Clear inquiry buffer before using it.&n;         4. Correct ifdef typo.&n;&n;     2.2 (1/15/97):&n;         1. Add Asc Library bug fixes including new microcode.&n;         2. Add synchronous data transfer rate information to the&n;            adapter /proc file: /proc/scsi/advansys[0...].&n;         3. Change ADVANSYS_DEBUG to be disabled by default. This&n;            will reduce the size of the driver image, eliminate execution&n;            overhead, and remove unneeded symbols from the kernel symbol&n;            space that were previously added by the driver.&n;         4. Add new compile-time option ADVANSYS_ASSERT for assertion&n;            code that used to be defined within ADVANSYS_DEBUG. This&n;            option is enabled by default.&n;&n;     2.8 (5/26/97):&n;         1. Change version number to 2.8, skipping 2.3 through 2.7, in&n;            order to synchronize the Linux driver version numbering with&n;            other AdvanSys drivers.&n;         2. Reformat source files without tabs to give everyone everyone&n;            the same view of the file regardless of the tab setting used.&n;         3. Add Asc Library bug fixes.&n;&n;  J. Known Problems or Issues&n;&n;         1. Remove conditional constants (ASC_QUEUE_FLOW_CONTROL) around&n;            the queue depth flow control code when mid-level SCSI changes&n;            are included in Linux.&n;&n;  K. Credits&n;&n;     Nathan Hartwell &lt;mage@cdc3.cdc.net&gt; provided the directions and&n;     basis for the Linux v1.3.X changes which were included in the&n;     1.2 release.&n;&n;     Thomas E Zerucha &lt;zerucha@shell.portal.com&gt; pointed out a bug&n;     in advansys_biosparam() which was fixed in the 1.3 release.&n;&n;     Erik Ratcliffe &lt;erik@caldera.com&gt; has done a lot of testing of&n;     the AdvanSys driver in the Caldera releases.&n;&n;  L. AdvanSys Contact Information&n; &n;     Mail:                   Advanced System Products, Inc.&n;                             1150 Ringwood Court&n;                             San Jose, CA 95131&n;     Operator:               1-408-383-9400&n;     FAX:                    1-408-383-9612&n;     Tech Support:           1-800-525-7440/1-408-467-2930&n;     BBS:                    1-408-383-9540 (14400,N,8,1)&n;     Interactive FAX:        1-408-383-9753&n;     Customer Direct Sales:  1-800-883-1099/1-408-383-5777&n;     Tech Support E-Mail:    support@advansys.com&n;     FTP Site:               ftp.advansys.com (login: anonymous)&n;     Web Site:               http://www.advansys.com&n;&n;*/
 multiline_comment|/*&n; * --- Linux Version&n; */
 multiline_comment|/* Convert Linux Version, Patch-level, Sub-level to LINUX_VERSION_CODE. */
 DECL|macro|ASC_LINUX_VERSION
-mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
+mdefine_line|#define ASC_LINUX_VERSION(V, P, S)    (((V) * 65536) + ((P) * 256) + (S))
 macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif /* LINUX_VERSION_CODE */
@@ -27,8 +26,10 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#endif /* version &gt;= v1.3.0 */
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(2,1,23)
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#endif /* version &gt;= v2.1.23 */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -43,8 +44,11 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;advansys.h&quot;
 multiline_comment|/*&n; * --- Driver Options&n; */
-DECL|macro|ADVANSYS_DEBUG
-mdefine_line|#define ADVANSYS_DEBUG /* Enable assertions and tracing. */
+multiline_comment|/* Enable driver assertions. */
+DECL|macro|ADVANSYS_ASSERT
+mdefine_line|#define ADVANSYS_ASSERT
+multiline_comment|/* Enable driver tracing. */
+multiline_comment|/*#define ADVANSYS_DEBUG*/
 multiline_comment|/*&n; * Because of no /proc to display them, statistics are disabled&n; * for version prior to v1.3.0.&n; */
 macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(1,3,0)
 DECL|macro|ADVANSYS_STATS
@@ -53,13 +57,21 @@ macro_line|#else /* version &gt;= v1.3.0 */
 DECL|macro|ADVANSYS_STATS
 mdefine_line|#define ADVANSYS_STATS /* Enable statistics. */
 macro_line|#endif /* version &gt;= v1.3.0 */
+multiline_comment|/*&n; * --- Debugging Header&n; */
+macro_line|#ifdef ADVANSYS_DEBUG
+DECL|macro|STATIC
+mdefine_line|#define STATIC
+macro_line|#else /* ADVANSYS_DEBUG */
+DECL|macro|STATIC
+mdefine_line|#define STATIC static
+macro_line|#endif /* ADVANSYS_DEBUG */
 multiline_comment|/*&n; * --- Asc Library Constants and Macros&n; */
 DECL|macro|ASC_LIB_VERSION_MAJOR
 mdefine_line|#define ASC_LIB_VERSION_MAJOR  1
 DECL|macro|ASC_LIB_VERSION_MINOR
 mdefine_line|#define ASC_LIB_VERSION_MINOR  22
 DECL|macro|ASC_LIB_SERIAL_NUMBER
-mdefine_line|#define ASC_LIB_SERIAL_NUMBER  91
+mdefine_line|#define ASC_LIB_SERIAL_NUMBER  105
 DECL|typedef|uchar
 r_typedef
 r_int
@@ -97,9 +109,9 @@ mdefine_line|#define ruint    REG __u32
 DECL|macro|rulong
 mdefine_line|#define rulong   REG __u32
 DECL|macro|NULLPTR
-mdefine_line|#define NULLPTR   ( void *)0
+mdefine_line|#define NULLPTR  (void *)0
 DECL|macro|FNULLPTR
-mdefine_line|#define FNULLPTR  ( void dosfar *)0UL
+mdefine_line|#define FNULLPTR (void *)0UL
 DECL|macro|EOF
 mdefine_line|#define EOF      (-1)
 DECL|macro|EOS
@@ -113,23 +125,23 @@ mdefine_line|#define UW_ERR   (uint)(0xFFFF)
 DECL|macro|UL_ERR
 mdefine_line|#define UL_ERR   (ulong)(0xFFFFFFFFUL)
 DECL|macro|iseven_word
-mdefine_line|#define iseven_word( val )  ( ( ( ( uint )val) &amp; ( uint )0x0001 ) == 0 )
+mdefine_line|#define iseven_word(val)  ((((uint)val) &amp; (uint)0x0001) == 0)
 DECL|macro|isodd_word
-mdefine_line|#define isodd_word( val )   ( ( ( ( uint )val) &amp; ( uint )0x0001 ) != 0 )
+mdefine_line|#define isodd_word(val)   ((((uint)val) &amp; (uint)0x0001) != 0)
 DECL|macro|toeven_word
-mdefine_line|#define toeven_word( val )  ( ( ( uint )val ) &amp; ( uint )0xFFFE )
+mdefine_line|#define toeven_word(val)  (((uint)val) &amp; (uint)0xFFFE)
 DECL|macro|biton
-mdefine_line|#define biton( val, bits )   ((( uint )( val &gt;&gt; bits ) &amp; (uint)0x0001 ) != 0 )
+mdefine_line|#define biton(val, bits)   (((uint)(val &gt;&gt; bits) &amp; (uint)0x0001) != 0)
 DECL|macro|bitoff
-mdefine_line|#define bitoff( val, bits )  ((( uint )( val &gt;&gt; bits ) &amp; (uint)0x0001 ) == 0 )
+mdefine_line|#define bitoff(val, bits)  (((uint)(val &gt;&gt; bits) &amp; (uint)0x0001) == 0)
 DECL|macro|lbiton
-mdefine_line|#define lbiton( val, bits )  ((( ulong )( val &gt;&gt; bits ) &amp; (ulong)0x00000001UL ) != 0 )
+mdefine_line|#define lbiton(val, bits)  (((ulong)(val &gt;&gt; bits) &amp; (ulong)0x00000001UL) != 0)
 DECL|macro|lbitoff
-mdefine_line|#define lbitoff( val, bits ) ((( ulong )( val &gt;&gt; bits ) &amp; (ulong)0x00000001UL ) == 0 )
+mdefine_line|#define lbitoff(val, bits) (((ulong)(val &gt;&gt; bits) &amp; (ulong)0x00000001UL) == 0)
 DECL|macro|absh
-mdefine_line|#define  absh( val )    ( ( val ) &lt; 0 ? -( val ) : ( val ) )
+mdefine_line|#define  absh(val)    ((val) &lt; 0 ? -(val) : (val))
 DECL|macro|swapbyte
-mdefine_line|#define  swapbyte( ch )  ( ( ( (ch) &lt;&lt; 4 ) | ( (ch) &gt;&gt; 4 ) ) )
+mdefine_line|#define  swapbyte(ch)  ((((ch) &lt;&lt; 4) | ((ch) &gt;&gt; 4)))
 macro_line|#ifndef GBYTE
 DECL|macro|GBYTE
 mdefine_line|#define GBYTE       (0x40000000UL)
@@ -143,13 +155,13 @@ DECL|macro|KBYTE
 mdefine_line|#define KBYTE       (0x400)
 macro_line|#endif
 DECL|macro|HI_BYTE
-mdefine_line|#define HI_BYTE(x) ( *( ( __u8 *)(&amp;x)+1 ) )
+mdefine_line|#define HI_BYTE(x) (*((__u8 *)(&amp;x)+1))
 DECL|macro|LO_BYTE
-mdefine_line|#define LO_BYTE(x) ( *( ( __u8 *)&amp;x ) )
+mdefine_line|#define LO_BYTE(x) (*((__u8 *)&amp;x))
 DECL|macro|HI_WORD
-mdefine_line|#define HI_WORD(x) ( *( ( __u16 *)(&amp;x)+1 ) )
+mdefine_line|#define HI_WORD(x) (*((__u16 *)(&amp;x)+1))
 DECL|macro|LO_WORD
-mdefine_line|#define LO_WORD(x) ( *( ( __u16 *)&amp;x ) )
+mdefine_line|#define LO_WORD(x) (*((__u16 *)&amp;x))
 macro_line|#ifndef MAKEWORD
 DECL|macro|MAKEWORD
 mdefine_line|#define MAKEWORD(lo, hi)    ((__u16) (((__u16) lo) | ((__u16) hi &lt;&lt; 8)))
@@ -166,8 +178,6 @@ DECL|macro|BigToLittle
 mdefine_line|#define BigToLittle(dWord) ((__u32) (SwapWords(MAKELONG(SwapBytes(LO_WORD(dWord)), SwapBytes(HI_WORD(dWord))))))
 DECL|macro|LittleToBig
 mdefine_line|#define LittleToBig(dWord)      BigToLittle(dWord)
-DECL|macro|AscPCICmdRegBits_BusMastering
-mdefine_line|#define AscPCICmdRegBits_BusMastering     0x0007
 DECL|macro|AscPCIConfigVendorIDRegister
 mdefine_line|#define AscPCIConfigVendorIDRegister      0x0000
 DECL|macro|AscPCIConfigDeviceIDRegister
@@ -176,42 +186,52 @@ DECL|macro|AscPCIConfigCommandRegister
 mdefine_line|#define AscPCIConfigCommandRegister       0x0004
 DECL|macro|AscPCIConfigStatusRegister
 mdefine_line|#define AscPCIConfigStatusRegister        0x0006
+DECL|macro|AscPCIConfigRevisionIDRegister
+mdefine_line|#define AscPCIConfigRevisionIDRegister    0x0008
 DECL|macro|AscPCIConfigCacheSize
 mdefine_line|#define AscPCIConfigCacheSize             0x000C
 DECL|macro|AscPCIConfigLatencyTimer
 mdefine_line|#define AscPCIConfigLatencyTimer          0x000D
 DECL|macro|AscPCIIOBaseRegister
 mdefine_line|#define AscPCIIOBaseRegister              0x0010
+DECL|macro|AscPCICmdRegBits_IOMemBusMaster
+mdefine_line|#define AscPCICmdRegBits_IOMemBusMaster   0x0007
 DECL|macro|ASC_PCI_ID2BUS
-mdefine_line|#define ASC_PCI_ID2BUS( id )    ((id) &amp; 0xFF)
+mdefine_line|#define ASC_PCI_ID2BUS(id)    ((id) &amp; 0xFF)
 DECL|macro|ASC_PCI_ID2DEV
-mdefine_line|#define ASC_PCI_ID2DEV( id )    (((id) &gt;&gt; 11) &amp; 0x1F)
+mdefine_line|#define ASC_PCI_ID2DEV(id)    (((id) &gt;&gt; 11) &amp; 0x1F)
 DECL|macro|ASC_PCI_ID2FUNC
-mdefine_line|#define ASC_PCI_ID2FUNC( id )   (((id) &gt;&gt; 8) &amp; 0x7)
+mdefine_line|#define ASC_PCI_ID2FUNC(id)   (((id) &gt;&gt; 8) &amp; 0x7)
 DECL|macro|ASC_PCI_MKID
-mdefine_line|#define ASC_PCI_MKID( bus, dev, func ) ((((dev) &amp; 0x1F) &lt;&lt; 11) | (((func) &amp; 0x7) &lt;&lt; 8) | ((bus) &amp; 0xFF))
+mdefine_line|#define ASC_PCI_MKID(bus, dev, func) ((((dev) &amp; 0x1F) &lt;&lt; 11) | (((func) &amp; 0x7) &lt;&lt; 8) | ((bus) &amp; 0xFF))
+DECL|macro|ASC_PCI_VENDORID
+mdefine_line|#define ASC_PCI_VENDORID                  0x10CD
+DECL|macro|ASC_PCI_DEVICEID_1200A
+mdefine_line|#define ASC_PCI_DEVICEID_1200A            0x1100
+DECL|macro|ASC_PCI_DEVICEID_1200B
+mdefine_line|#define ASC_PCI_DEVICEID_1200B            0x1200
+DECL|macro|ASC_PCI_DEVICEID_ULTRA
+mdefine_line|#define ASC_PCI_DEVICEID_ULTRA            0x1300 
+DECL|macro|ASC_PCI_REVISION_3150
+mdefine_line|#define ASC_PCI_REVISION_3150             0x02
+DECL|macro|ASC_PCI_REVISION_3050
+mdefine_line|#define ASC_PCI_REVISION_3050             0x03
 DECL|macro|ASC_DVCLIB_CALL_DONE
 mdefine_line|#define  ASC_DVCLIB_CALL_DONE     (1)
 DECL|macro|ASC_DVCLIB_CALL_FAILED
 mdefine_line|#define  ASC_DVCLIB_CALL_FAILED   (0)
 DECL|macro|ASC_DVCLIB_CALL_ERROR
 mdefine_line|#define  ASC_DVCLIB_CALL_ERROR    (-1)
-DECL|macro|Lptr
-mdefine_line|#define Lptr
-DECL|macro|dosfar
-mdefine_line|#define dosfar
-DECL|macro|far
-mdefine_line|#define far
 DECL|macro|PortAddr
-mdefine_line|#define PortAddr  unsigned short&t;/* port address size  */
+mdefine_line|#define PortAddr            unsigned short    /* port address size  */
 DECL|macro|Ptr2Func
-mdefine_line|#define Ptr2Func&t;ulong
+mdefine_line|#define Ptr2Func            ulong
 DECL|macro|inp
 mdefine_line|#define inp(port)           inb(port)
 DECL|macro|inpw
 mdefine_line|#define inpw(port)          inw(port)
 DECL|macro|inpl
-mdefine_line|#define inpl(port)    &t;&t;inl(port)
+mdefine_line|#define inpl(port)          inl(port)
 DECL|macro|outp
 mdefine_line|#define outp(port, byte)    outb((byte), (port))
 DECL|macro|outpw
@@ -219,63 +239,49 @@ mdefine_line|#define outpw(port, word)   outw((word), (port))
 DECL|macro|outpl
 mdefine_line|#define outpl(port, long)   outl((long), (port))
 DECL|macro|ASC_MAX_SG_QUEUE
-mdefine_line|#define ASC_MAX_SG_QUEUE&t;7
+mdefine_line|#define ASC_MAX_SG_QUEUE    7
 DECL|macro|ASC_MAX_SG_LIST
-mdefine_line|#define ASC_MAX_SG_LIST&t;&t;SG_ALL
-DECL|macro|CC_INIT_INQ_DISPLAY
-mdefine_line|#define CC_INIT_INQ_DISPLAY     FALSE
+mdefine_line|#define ASC_MAX_SG_LIST     SG_ALL
 DECL|macro|CC_CLEAR_LRAM_SRB_PTR
-mdefine_line|#define CC_CLEAR_LRAM_SRB_PTR   FALSE
+mdefine_line|#define CC_CLEAR_LRAM_SRB_PTR           FALSE
 DECL|macro|CC_VERIFY_LRAM_COPY
-mdefine_line|#define CC_VERIFY_LRAM_COPY     FALSE
+mdefine_line|#define CC_VERIFY_LRAM_COPY             FALSE
 DECL|macro|CC_DEBUG_SG_LIST
-mdefine_line|#define CC_DEBUG_SG_LIST        FALSE
+mdefine_line|#define CC_DEBUG_SG_LIST                FALSE
 DECL|macro|CC_FAST_STRING_IO
-mdefine_line|#define CC_FAST_STRING_IO       FALSE
+mdefine_line|#define CC_FAST_STRING_IO               FALSE
 DECL|macro|CC_WRITE_IO_COUNT
-mdefine_line|#define CC_WRITE_IO_COUNT       FALSE
+mdefine_line|#define CC_WRITE_IO_COUNT               FALSE
 DECL|macro|CC_CLEAR_DMA_REMAIN
-mdefine_line|#define CC_CLEAR_DMA_REMAIN     FALSE
+mdefine_line|#define CC_CLEAR_DMA_REMAIN             FALSE
 DECL|macro|CC_DISABLE_PCI_PARITY_INT
-mdefine_line|#define CC_DISABLE_PCI_PARITY_INT TRUE
-DECL|macro|CC_LINK_BUSY_Q
-mdefine_line|#define CC_LINK_BUSY_Q         FALSE
+mdefine_line|#define CC_DISABLE_PCI_PARITY_INT       TRUE
 DECL|macro|CC_LITTLE_ENDIAN_HOST
-mdefine_line|#define CC_LITTLE_ENDIAN_HOST  TRUE
+mdefine_line|#define CC_LITTLE_ENDIAN_HOST           TRUE
 DECL|macro|CC_STRUCT_ALIGNED
-mdefine_line|#define CC_STRUCT_ALIGNED      TRUE
+mdefine_line|#define CC_STRUCT_ALIGNED               TRUE
 DECL|macro|CC_MEMORY_MAPPED_IO
-mdefine_line|#define CC_MEMORY_MAPPED_IO    FALSE
+mdefine_line|#define CC_MEMORY_MAPPED_IO             FALSE
 DECL|macro|CC_INCLUDE_EEP_CONFIG
-mdefine_line|#define CC_INCLUDE_EEP_CONFIG  TRUE
+mdefine_line|#define CC_INCLUDE_EEP_CONFIG           TRUE
 DECL|macro|CC_PCI_ULTRA
-mdefine_line|#define CC_PCI_ULTRA           TRUE
+mdefine_line|#define CC_PCI_ULTRA                    TRUE
 DECL|macro|CC_ASC_SCSI_Q_USRDEF
-mdefine_line|#define CC_ASC_SCSI_Q_USRDEF         FALSE
+mdefine_line|#define CC_ASC_SCSI_Q_USRDEF            FALSE
 DECL|macro|CC_ASC_SCSI_REQ_Q_USRDEF
-mdefine_line|#define CC_ASC_SCSI_REQ_Q_USRDEF     FALSE
+mdefine_line|#define CC_ASC_SCSI_REQ_Q_USRDEF        FALSE
 DECL|macro|CC_ASCISR_CHECK_INT_PENDING
-mdefine_line|#define CC_ASCISR_CHECK_INT_PENDING  TRUE
+mdefine_line|#define CC_ASCISR_CHECK_INT_PENDING     TRUE
 DECL|macro|CC_CHK_FIX_EEP_CONTENT
-mdefine_line|#define CC_CHK_FIX_EEP_CONTENT       TRUE
-DECL|macro|CC_CHK_AND_COALESCE_SG_LIST
-mdefine_line|#define CC_CHK_AND_COALESCE_SG_LIST  FALSE
-DECL|macro|CC_DISABLE_PCI_PARITY_INT
-mdefine_line|#define CC_DISABLE_PCI_PARITY_INT    TRUE
+mdefine_line|#define CC_CHK_FIX_EEP_CONTENT          TRUE
 DECL|macro|CC_INCLUDE_EEP_CONFIG
-mdefine_line|#define CC_INCLUDE_EEP_CONFIG        TRUE
-DECL|macro|CC_INIT_INQ_DISPLAY
-mdefine_line|#define CC_INIT_INQ_DISPLAY          FALSE
+mdefine_line|#define CC_INCLUDE_EEP_CONFIG           TRUE
 DECL|macro|CC_PLEXTOR_VL
-mdefine_line|#define CC_PLEXTOR_VL                FALSE
+mdefine_line|#define CC_PLEXTOR_VL                   FALSE
 DECL|macro|CC_TMP_USE_EEP_SDTR
-mdefine_line|#define CC_TMP_USE_EEP_SDTR          FALSE
+mdefine_line|#define CC_TMP_USE_EEP_SDTR             FALSE
 DECL|macro|CC_CHK_COND_REDO_SDTR
-mdefine_line|#define CC_CHK_COND_REDO_SDTR        TRUE
-DECL|macro|CC_SET_PCI_LATENCY_TIMER_ZERO
-mdefine_line|#define CC_SET_PCI_LATENCY_TIMER_ZERO  TRUE
-DECL|macro|CC_DISABLE_ASYN_FIX_WANGTEK_TAPE
-mdefine_line|#define CC_DISABLE_ASYN_FIX_WANGTEK_TAPE  TRUE
+mdefine_line|#define CC_CHK_COND_REDO_SDTR           TRUE
 DECL|macro|ASC_CS_TYPE
 mdefine_line|#define ASC_CS_TYPE  unsigned short
 macro_line|#ifndef asc_ptr_type
@@ -284,10 +290,10 @@ mdefine_line|#define asc_ptr_type
 macro_line|#endif
 macro_line|#ifndef ASC_GET_PTR2FUNC
 DECL|macro|ASC_GET_PTR2FUNC
-mdefine_line|#define ASC_GET_PTR2FUNC( fun )  ( Ptr2Func )( fun )
+mdefine_line|#define ASC_GET_PTR2FUNC(fun)  (Ptr2Func)(fun)
 macro_line|#endif
 DECL|macro|FLIP_BYTE_NIBBLE
-mdefine_line|#define FLIP_BYTE_NIBBLE( x )    ( ((x&lt;&lt;4)&amp; 0xFF) | (x&gt;&gt;4) )
+mdefine_line|#define FLIP_BYTE_NIBBLE(x)    (((x&lt;&lt;4)&amp; 0xFF) | (x&gt;&gt;4))
 DECL|macro|ASC_IS_ISA
 mdefine_line|#define ASC_IS_ISA          (0x0001)
 DECL|macro|ASC_IS_ISAPNP
@@ -336,8 +342,12 @@ DECL|macro|ASC_CHIP_VER_ISAPNP_BIT
 mdefine_line|#define ASC_CHIP_VER_ISAPNP_BIT  (0x20)
 DECL|macro|ASC_CHIP_VER_ASYN_BUG
 mdefine_line|#define ASC_CHIP_VER_ASYN_BUG    (0x21)
-DECL|macro|ASC_CHIP_VER_1ST_PCI_ULTRA
-mdefine_line|#define ASC_CHIP_VER_1ST_PCI_ULTRA   (0x0A)
+DECL|macro|ASC_CHIP_VER_PCI
+mdefine_line|#define ASC_CHIP_VER_PCI             0x08
+DECL|macro|ASC_CHIP_VER_PCI_ULTRA_3150
+mdefine_line|#define ASC_CHIP_VER_PCI_ULTRA_3150  (ASC_CHIP_VER_PCI | 0x02)
+DECL|macro|ASC_CHIP_VER_PCI_ULTRA_3050
+mdefine_line|#define ASC_CHIP_VER_PCI_ULTRA_3050  (ASC_CHIP_VER_PCI | 0x03)
 DECL|macro|ASC_CHIP_MIN_VER_EISA
 mdefine_line|#define ASC_CHIP_MIN_VER_EISA (0x41)
 DECL|macro|ASC_CHIP_MAX_VER_EISA
@@ -345,7 +355,7 @@ mdefine_line|#define ASC_CHIP_MAX_VER_EISA (0x47)
 DECL|macro|ASC_CHIP_VER_EISA_BIT
 mdefine_line|#define ASC_CHIP_VER_EISA_BIT (0x40)
 DECL|macro|ASC_CHIP_LATEST_VER_EISA
-mdefine_line|#define ASC_CHIP_LATEST_VER_EISA   ( ( ASC_CHIP_MIN_VER_EISA - 1 ) + 3 )
+mdefine_line|#define ASC_CHIP_LATEST_VER_EISA   ((ASC_CHIP_MIN_VER_EISA - 1) + 3)
 DECL|macro|ASC_MAX_LIB_SUPPORTED_ISA_CHIP_VER
 mdefine_line|#define ASC_MAX_LIB_SUPPORTED_ISA_CHIP_VER   0x21
 DECL|macro|ASC_MAX_LIB_SUPPORTED_PCI_CHIP_VER
@@ -368,40 +378,40 @@ DECL|macro|ASC_MAX_EISA_DMA_COUNT
 mdefine_line|#define ASC_MAX_EISA_DMA_COUNT  (0x07FFFFFFL)
 macro_line|#if !CC_STRUCT_ALIGNED
 DECL|macro|DvcGetQinfo
-mdefine_line|#define DvcGetQinfo( iop_base, s_addr, outbuf, words)  &bslash;&n;AscMemWordCopyFromLram(iop_base, s_addr, outbuf, words)
+mdefine_line|#define DvcGetQinfo(iop_base, s_addr, outbuf, words)  &bslash;&n;AscMemWordCopyFromLram(iop_base, s_addr, outbuf, words)
 DECL|macro|DvcPutScsiQ
-mdefine_line|#define DvcPutScsiQ( iop_base, s_addr, outbuf, words) &bslash;&n;AscMemWordCopyToLram(iop_base, s_addr, outbuf, words)
+mdefine_line|#define DvcPutScsiQ(iop_base, s_addr, outbuf, words) &bslash;&n;AscMemWordCopyToLram(iop_base, s_addr, outbuf, words)
 macro_line|#endif
 macro_line|#ifdef ASC_CHIP_VERSION
 macro_line|#endif
 macro_line|#if CC_MEMORY_MAPPED_IO
 DECL|macro|inp
-mdefine_line|#define inp( port )            *( (uchar *)(port) )
+mdefine_line|#define inp(port)            *((uchar *)(port))
 DECL|macro|outp
-mdefine_line|#define outp( port, data )     *( (uchar *)(port) ) = ( uchar )( data )
+mdefine_line|#define outp(port, data)     *((uchar *)(port)) = (uchar)(data)
 macro_line|#if CC_LITTLE_ENDIAN_HOST
 DECL|macro|inpw
-mdefine_line|#define inpw( port )              *( (ushort *)(port) )
+mdefine_line|#define inpw(port)              *((ushort *)(port))
 DECL|macro|outpw
-mdefine_line|#define outpw( port, data )       *( (ushort *)(port) ) = ( ushort )( data )
+mdefine_line|#define outpw(port, data)       *((ushort *)(port)) = (ushort)(data)
 macro_line|#else
 DECL|macro|inpw
-mdefine_line|#define inpw( port )             EndianSwap16Bit( (*((ushort *)(port))) )
+mdefine_line|#define inpw(port)             EndianSwap16Bit((*((ushort *)(port))))
 DECL|macro|outpw
-mdefine_line|#define outpw( port, data )      *( (ushort *)(port) ) = EndianSwap16Bit( (ushort)(data) )
+mdefine_line|#define outpw(port, data)      *((ushort *)(port)) = EndianSwap16Bit((ushort)(data))
 DECL|macro|inpw_noswap
-mdefine_line|#define inpw_noswap( port )          *( (ushort *)(port) )
+mdefine_line|#define inpw_noswap(port)          *((ushort *)(port))
 DECL|macro|outpw_noswap
-mdefine_line|#define outpw_noswap( port, data )   *( (ushort *)(port) ) = ( ushort )( data )
+mdefine_line|#define outpw_noswap(port, data)   *((ushort *)(port)) = (ushort)(data)
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifndef inpw_noswap
 DECL|macro|inpw_noswap
-mdefine_line|#define inpw_noswap( port )         inpw( port )
+mdefine_line|#define inpw_noswap(port)         inpw(port)
 macro_line|#endif
 macro_line|#ifndef outpw_noswap
 DECL|macro|outpw_noswap
-mdefine_line|#define outpw_noswap( port, data )  outpw( port, data )
+mdefine_line|#define outpw_noswap(port, data)  outpw(port, data)
 macro_line|#endif
 DECL|macro|ASC_SCSI_ID_BITS
 mdefine_line|#define ASC_SCSI_ID_BITS  3
@@ -586,13 +596,13 @@ mdefine_line|#define SCSI_SENKEY_MISCOMP       0x0E
 DECL|macro|SCSI_SENKEY_RESERVED
 mdefine_line|#define SCSI_SENKEY_RESERVED      0x0F
 DECL|macro|ASC_SRB_HOST
-mdefine_line|#define ASC_SRB_HOST( x )  ( ( uchar )( ( uchar )( x ) &gt;&gt; 4 ) )
+mdefine_line|#define ASC_SRB_HOST(x)  ((uchar)((uchar)(x) &gt;&gt; 4))
 DECL|macro|ASC_SRB_TID
-mdefine_line|#define ASC_SRB_TID( x )   ( ( uchar )( ( uchar )( x ) &amp; ( uchar )0x0F ) )
+mdefine_line|#define ASC_SRB_TID(x)   ((uchar)((uchar)(x) &amp; (uchar)0x0F))
 DECL|macro|ASC_SRB_LUN
-mdefine_line|#define ASC_SRB_LUN( x )   ( ( uchar )( ( uint )( x ) &gt;&gt; 13 ) )
+mdefine_line|#define ASC_SRB_LUN(x)   ((uchar)((uint)(x) &gt;&gt; 13))
 DECL|macro|PUT_CDB1
-mdefine_line|#define PUT_CDB1( x )   ( ( uchar )( ( uint )( x ) &gt;&gt; 8 ) )
+mdefine_line|#define PUT_CDB1(x)   ((uchar)((uint)(x) &gt;&gt; 8))
 DECL|macro|SS_GOOD
 mdefine_line|#define SS_GOOD              0x00
 DECL|macro|SS_CHK_CONDITION
@@ -619,6 +629,14 @@ DECL|macro|MS_SDTR_LEN
 mdefine_line|#define MS_SDTR_LEN    0x03
 DECL|macro|MS_SDTR_CODE
 mdefine_line|#define MS_SDTR_CODE   0x01
+DECL|macro|MS_WDTR_LEN
+mdefine_line|#define MS_WDTR_LEN    0x02
+DECL|macro|MS_WDTR_CODE
+mdefine_line|#define MS_WDTR_CODE   0x03
+DECL|macro|MS_MDP_LEN
+mdefine_line|#define MS_MDP_LEN    0x05
+DECL|macro|MS_MDP_CODE
+mdefine_line|#define MS_MDP_CODE   0x00
 DECL|macro|M1_SAVE_DATA_PTR
 mdefine_line|#define M1_SAVE_DATA_PTR        0x02
 DECL|macro|M1_RESTORE_PTRS
@@ -1488,19 +1506,19 @@ mdefine_line|#define ASC_STOP_CLEAN_UP_DISC_Q    0x20
 DECL|macro|ASC_STOP_HOST_REQ_RISC_HALT
 mdefine_line|#define ASC_STOP_HOST_REQ_RISC_HALT 0x40
 DECL|macro|ASC_TIDLUN_TO_IX
-mdefine_line|#define ASC_TIDLUN_TO_IX( tid, lun )  ( ASC_SCSI_TIX_TYPE )( (tid) + ((lun)&lt;&lt;ASC_SCSI_ID_BITS) )
+mdefine_line|#define ASC_TIDLUN_TO_IX(tid, lun)  (ASC_SCSI_TIX_TYPE)((tid) + ((lun)&lt;&lt;ASC_SCSI_ID_BITS))
 DECL|macro|ASC_TID_TO_TARGET_ID
-mdefine_line|#define ASC_TID_TO_TARGET_ID( tid )   ( ASC_SCSI_BIT_ID_TYPE )( 0x01 &lt;&lt; (tid) )
+mdefine_line|#define ASC_TID_TO_TARGET_ID(tid)   (ASC_SCSI_BIT_ID_TYPE)(0x01 &lt;&lt; (tid))
 DECL|macro|ASC_TIX_TO_TARGET_ID
-mdefine_line|#define ASC_TIX_TO_TARGET_ID( tix )   ( 0x01 &lt;&lt; ( (tix) &amp; ASC_MAX_TID ) )
+mdefine_line|#define ASC_TIX_TO_TARGET_ID(tix)   (0x01 &lt;&lt; ((tix) &amp; ASC_MAX_TID))
 DECL|macro|ASC_TIX_TO_TID
-mdefine_line|#define ASC_TIX_TO_TID( tix )         ( (tix) &amp; ASC_MAX_TID )
+mdefine_line|#define ASC_TIX_TO_TID(tix)         ((tix) &amp; ASC_MAX_TID)
 DECL|macro|ASC_TID_TO_TIX
-mdefine_line|#define ASC_TID_TO_TIX( tid )         ( (tid) &amp; ASC_MAX_TID )
+mdefine_line|#define ASC_TID_TO_TIX(tid)         ((tid) &amp; ASC_MAX_TID)
 DECL|macro|ASC_TIX_TO_LUN
-mdefine_line|#define ASC_TIX_TO_LUN( tix )         ( ( (tix) &gt;&gt; ASC_SCSI_ID_BITS ) &amp; ASC_MAX_LUN )
+mdefine_line|#define ASC_TIX_TO_LUN(tix)         (((tix) &gt;&gt; ASC_SCSI_ID_BITS) &amp; ASC_MAX_LUN)
 DECL|macro|ASC_QNO_TO_QADDR
-mdefine_line|#define ASC_QNO_TO_QADDR( q_no )      ( (ASC_QADR_BEG)+( ( int )(q_no) &lt;&lt; 6 ) )
+mdefine_line|#define ASC_QNO_TO_QADDR(q_no)      ((ASC_QADR_BEG)+((int)(q_no) &lt;&lt; 6))
 DECL|struct|asc_scisq_1
 r_typedef
 r_struct
@@ -1792,55 +1810,6 @@ DECL|macro|QCX_SORT
 mdefine_line|#define QCX_SORT        (0x0001)
 DECL|macro|QCX_COALEASE
 mdefine_line|#define QCX_COALEASE    (0x0002)
-macro_line|#if CC_LINK_BUSY_Q
-DECL|struct|asc_ext_scsi_q
-r_typedef
-r_struct
-id|asc_ext_scsi_q
-(brace
-DECL|member|lba
-id|ulong
-id|lba
-suffix:semicolon
-DECL|member|lba_len
-id|ushort
-id|lba_len
-suffix:semicolon
-DECL|member|next
-r_struct
-id|asc_scsi_q
-id|dosfar
-op_star
-id|next
-suffix:semicolon
-DECL|member|join
-r_struct
-id|asc_scsi_q
-id|dosfar
-op_star
-id|join
-suffix:semicolon
-DECL|member|cntl
-id|ushort
-id|cntl
-suffix:semicolon
-DECL|member|buffer_id
-id|ushort
-id|buffer_id
-suffix:semicolon
-DECL|member|q_required
-id|uchar
-id|q_required
-suffix:semicolon
-DECL|member|res
-id|uchar
-id|res
-suffix:semicolon
-DECL|typedef|ASC_EXT_SCSI_Q
-)brace
-id|ASC_EXT_SCSI_Q
-suffix:semicolon
-macro_line|#endif
 DECL|struct|asc_scsi_q
 r_typedef
 r_struct
@@ -1856,22 +1825,14 @@ id|q2
 suffix:semicolon
 DECL|member|cdbptr
 id|uchar
-id|dosfar
 op_star
 id|cdbptr
 suffix:semicolon
 DECL|member|sg_head
 id|ASC_SG_HEAD
-id|dosfar
 op_star
 id|sg_head
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-DECL|member|ext
-id|ASC_EXT_SCSI_Q
-id|ext
-suffix:semicolon
-macro_line|#endif
 macro_line|#if CC_ASC_SCSI_Q_USRDEF
 DECL|member|usr
 id|ASC_SCSI_Q_USR
@@ -1897,25 +1858,16 @@ id|r2
 suffix:semicolon
 DECL|member|cdbptr
 id|uchar
-id|dosfar
 op_star
 id|cdbptr
 suffix:semicolon
 DECL|member|sg_head
 id|ASC_SG_HEAD
-id|dosfar
 op_star
 id|sg_head
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-DECL|member|ext
-id|ASC_EXT_SCSI_Q
-id|ext
-suffix:semicolon
-macro_line|#endif
 DECL|member|sense_ptr
 id|uchar
-id|dosfar
 op_star
 id|sense_ptr
 suffix:semicolon
@@ -1962,19 +1914,16 @@ id|r2
 suffix:semicolon
 DECL|member|cdbptr
 id|uchar
-id|dosfar
 op_star
 id|cdbptr
 suffix:semicolon
 DECL|member|sg_head
 id|ASC_SG_HEAD
-id|dosfar
 op_star
 id|sg_head
 suffix:semicolon
 DECL|member|sense_ptr
 id|uchar
-id|dosfar
 op_star
 id|sense_ptr
 suffix:semicolon
@@ -2235,7 +2184,7 @@ mdefine_line|#define ASC_DEF_TAG_Q_PER_DVC   (0x04)
 DECL|macro|ASC_MIN_FREE_Q
 mdefine_line|#define ASC_MIN_FREE_Q        ASC_MIN_REMAIN_Q
 DECL|macro|ASC_MIN_TOTAL_QNG
-mdefine_line|#define ASC_MIN_TOTAL_QNG     (( ASC_MAX_SG_QUEUE )+( ASC_MIN_FREE_Q ))
+mdefine_line|#define ASC_MIN_TOTAL_QNG     ((ASC_MAX_SG_QUEUE)+(ASC_MIN_FREE_Q))
 DECL|macro|ASC_MAX_TOTAL_QNG
 mdefine_line|#define ASC_MAX_TOTAL_QNG 240
 DECL|macro|ASC_MAX_PCI_ULTRA_INRAM_TOTAL_QNG
@@ -2253,25 +2202,25 @@ mdefine_line|#define ASC_IOADR_GAP   0x10
 DECL|macro|ASC_SEARCH_IOP_GAP
 mdefine_line|#define ASC_SEARCH_IOP_GAP 0x10
 DECL|macro|ASC_MIN_IOP_ADDR
-mdefine_line|#define ASC_MIN_IOP_ADDR   ( PortAddr )0x0100
+mdefine_line|#define ASC_MIN_IOP_ADDR   (PortAddr)0x0100
 DECL|macro|ASC_MAX_IOP_ADDR
-mdefine_line|#define ASC_MAX_IOP_ADDR   ( PortAddr )0x3F0
+mdefine_line|#define ASC_MAX_IOP_ADDR   (PortAddr)0x3F0
 DECL|macro|ASC_IOADR_1
-mdefine_line|#define ASC_IOADR_1     ( PortAddr )0x0110
+mdefine_line|#define ASC_IOADR_1     (PortAddr)0x0110
 DECL|macro|ASC_IOADR_2
-mdefine_line|#define ASC_IOADR_2     ( PortAddr )0x0130
+mdefine_line|#define ASC_IOADR_2     (PortAddr)0x0130
 DECL|macro|ASC_IOADR_3
-mdefine_line|#define ASC_IOADR_3     ( PortAddr )0x0150
+mdefine_line|#define ASC_IOADR_3     (PortAddr)0x0150
 DECL|macro|ASC_IOADR_4
-mdefine_line|#define ASC_IOADR_4     ( PortAddr )0x0190
+mdefine_line|#define ASC_IOADR_4     (PortAddr)0x0190
 DECL|macro|ASC_IOADR_5
-mdefine_line|#define ASC_IOADR_5     ( PortAddr )0x0210
+mdefine_line|#define ASC_IOADR_5     (PortAddr)0x0210
 DECL|macro|ASC_IOADR_6
-mdefine_line|#define ASC_IOADR_6     ( PortAddr )0x0230
+mdefine_line|#define ASC_IOADR_6     (PortAddr)0x0230
 DECL|macro|ASC_IOADR_7
-mdefine_line|#define ASC_IOADR_7     ( PortAddr )0x0250
+mdefine_line|#define ASC_IOADR_7     (PortAddr)0x0250
 DECL|macro|ASC_IOADR_8
-mdefine_line|#define ASC_IOADR_8     ( PortAddr )0x0330
+mdefine_line|#define ASC_IOADR_8     (PortAddr)0x0330
 DECL|macro|ASC_IOADR_DEF
 mdefine_line|#define ASC_IOADR_DEF   ASC_IOADR_8
 DECL|macro|ASC_LIB_SCSIQ_WK_SP
@@ -2334,12 +2283,10 @@ DECL|macro|SYN_ULTRA_XFER_NS_14
 mdefine_line|#define SYN_ULTRA_XFER_NS_14  100
 DECL|macro|SYN_ULTRA_XFER_NS_15
 mdefine_line|#define SYN_ULTRA_XFER_NS_15  107
-DECL|macro|SYN_XMSG_WLEN
-mdefine_line|#define SYN_XMSG_WLEN  3
-DECL|struct|sdtr_xmsg
+DECL|struct|ext_msg
 r_typedef
 r_struct
-id|sdtr_xmsg
+id|ext_msg
 (brace
 DECL|member|msg_type
 id|uchar
@@ -2353,22 +2300,80 @@ DECL|member|msg_req
 id|uchar
 id|msg_req
 suffix:semicolon
-DECL|member|xfer_period
+r_union
+(brace
+r_struct
+(brace
+DECL|member|sdtr_xfer_period
 id|uchar
-id|xfer_period
+id|sdtr_xfer_period
 suffix:semicolon
-DECL|member|req_ack_offset
+DECL|member|sdtr_req_ack_offset
 id|uchar
-id|req_ack_offset
+id|sdtr_req_ack_offset
+suffix:semicolon
+DECL|member|sdtr
+)brace
+id|sdtr
+suffix:semicolon
+r_struct
+(brace
+DECL|member|wdtr_width
+id|uchar
+id|wdtr_width
+suffix:semicolon
+DECL|member|wdtr
+)brace
+id|wdtr
+suffix:semicolon
+r_struct
+(brace
+DECL|member|mdp_b3
+id|uchar
+id|mdp_b3
+suffix:semicolon
+DECL|member|mdp_b2
+id|uchar
+id|mdp_b2
+suffix:semicolon
+DECL|member|mdp_b1
+id|uchar
+id|mdp_b1
+suffix:semicolon
+DECL|member|mdp_b0
+id|uchar
+id|mdp_b0
+suffix:semicolon
+DECL|member|mdp
+)brace
+id|mdp
+suffix:semicolon
+DECL|member|u_ext_msg
+)brace
+id|u_ext_msg
 suffix:semicolon
 DECL|member|res
 id|uchar
 id|res
 suffix:semicolon
-DECL|typedef|SDTR_XMSG
+DECL|typedef|EXT_MSG
 )brace
-id|SDTR_XMSG
+id|EXT_MSG
 suffix:semicolon
+DECL|macro|xfer_period
+mdefine_line|#define xfer_period     u_ext_msg.sdtr.sdtr_xfer_period
+DECL|macro|req_ack_offset
+mdefine_line|#define req_ack_offset  u_ext_msg.sdtr.sdtr_req_ack_offset
+DECL|macro|wdtr_width
+mdefine_line|#define wdtr_width      u_ext_msg.wdtr.wdtr_width
+DECL|macro|mdp_b3
+mdefine_line|#define mdp_b3          u_ext_msg.mdp_b3
+DECL|macro|mdp_b2
+mdefine_line|#define mdp_b2          u_ext_msg.mdp_b2
+DECL|macro|mdp_b1
+mdefine_line|#define mdp_b1          u_ext_msg.mdp_b1
+DECL|macro|mdp_b0
+mdefine_line|#define mdp_b0          u_ext_msg.mdp_b0
 DECL|struct|asc_dvc_cfg
 r_typedef
 r_struct
@@ -2441,7 +2446,6 @@ l_int|1
 suffix:semicolon
 DECL|member|overrun_buf
 id|uchar
-id|dosfar
 op_star
 id|overrun_buf
 suffix:semicolon
@@ -2617,7 +2621,6 @@ l_int|1
 suffix:semicolon
 DECL|member|scsiq_busy_head
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 id|scsiq_busy_head
 (braket
@@ -2628,7 +2631,6 @@ l_int|1
 suffix:semicolon
 DECL|member|scsiq_busy_tail
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 id|scsiq_busy_tail
 (braket
@@ -2646,7 +2648,6 @@ id|ASC_MAX_SYN_XFER_NO
 suffix:semicolon
 DECL|member|cfg
 id|ASC_DVC_CFG
-id|dosfar
 op_star
 id|cfg
 suffix:semicolon
@@ -2719,7 +2720,6 @@ DECL|typedef|ASC_ISR_CALLBACK
 r_typedef
 r_int
 (paren
-id|dosfar
 op_star
 id|ASC_ISR_CALLBACK
 )paren
@@ -2729,7 +2729,6 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 )paren
 suffix:semicolon
@@ -2737,7 +2736,6 @@ DECL|typedef|ASC_EXE_CALLBACK
 r_typedef
 r_int
 (paren
-id|dosfar
 op_star
 id|ASC_EXE_CALLBACK
 )paren
@@ -2747,7 +2745,6 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 )paren
 suffix:semicolon
@@ -2815,37 +2812,37 @@ DECL|typedef|ASC_CAP_INFO_ARRAY
 id|ASC_CAP_INFO_ARRAY
 suffix:semicolon
 DECL|macro|ASC_MCNTL_NO_SEL_TIMEOUT
-mdefine_line|#define ASC_MCNTL_NO_SEL_TIMEOUT  ( ushort )0x0001
+mdefine_line|#define ASC_MCNTL_NO_SEL_TIMEOUT  (ushort)0x0001
 DECL|macro|ASC_MCNTL_NULL_TARGET
-mdefine_line|#define ASC_MCNTL_NULL_TARGET     ( ushort )0x0002
+mdefine_line|#define ASC_MCNTL_NULL_TARGET     (ushort)0x0002
 DECL|macro|ASC_CNTL_INITIATOR
-mdefine_line|#define ASC_CNTL_INITIATOR         ( ushort )0x0001
+mdefine_line|#define ASC_CNTL_INITIATOR         (ushort)0x0001
 DECL|macro|ASC_CNTL_BIOS_GT_1GB
-mdefine_line|#define ASC_CNTL_BIOS_GT_1GB       ( ushort )0x0002
+mdefine_line|#define ASC_CNTL_BIOS_GT_1GB       (ushort)0x0002
 DECL|macro|ASC_CNTL_BIOS_GT_2_DISK
-mdefine_line|#define ASC_CNTL_BIOS_GT_2_DISK    ( ushort )0x0004
+mdefine_line|#define ASC_CNTL_BIOS_GT_2_DISK    (ushort)0x0004
 DECL|macro|ASC_CNTL_BIOS_REMOVABLE
-mdefine_line|#define ASC_CNTL_BIOS_REMOVABLE    ( ushort )0x0008
+mdefine_line|#define ASC_CNTL_BIOS_REMOVABLE    (ushort)0x0008
 DECL|macro|ASC_CNTL_NO_SCAM
-mdefine_line|#define ASC_CNTL_NO_SCAM           ( ushort )0x0010
+mdefine_line|#define ASC_CNTL_NO_SCAM           (ushort)0x0010
 DECL|macro|ASC_CNTL_INT_MULTI_Q
-mdefine_line|#define ASC_CNTL_INT_MULTI_Q       ( ushort )0x0080
+mdefine_line|#define ASC_CNTL_INT_MULTI_Q       (ushort)0x0080
 DECL|macro|ASC_CNTL_NO_LUN_SUPPORT
-mdefine_line|#define ASC_CNTL_NO_LUN_SUPPORT    ( ushort )0x0040
+mdefine_line|#define ASC_CNTL_NO_LUN_SUPPORT    (ushort)0x0040
 DECL|macro|ASC_CNTL_NO_VERIFY_COPY
-mdefine_line|#define ASC_CNTL_NO_VERIFY_COPY    ( ushort )0x0100
+mdefine_line|#define ASC_CNTL_NO_VERIFY_COPY    (ushort)0x0100
 DECL|macro|ASC_CNTL_RESET_SCSI
-mdefine_line|#define ASC_CNTL_RESET_SCSI        ( ushort )0x0200
+mdefine_line|#define ASC_CNTL_RESET_SCSI        (ushort)0x0200
 DECL|macro|ASC_CNTL_INIT_INQUIRY
-mdefine_line|#define ASC_CNTL_INIT_INQUIRY      ( ushort )0x0400
+mdefine_line|#define ASC_CNTL_INIT_INQUIRY      (ushort)0x0400
 DECL|macro|ASC_CNTL_INIT_VERBOSE
-mdefine_line|#define ASC_CNTL_INIT_VERBOSE      ( ushort )0x0800
+mdefine_line|#define ASC_CNTL_INIT_VERBOSE      (ushort)0x0800
 DECL|macro|ASC_CNTL_SCSI_PARITY
-mdefine_line|#define ASC_CNTL_SCSI_PARITY       ( ushort )0x1000
+mdefine_line|#define ASC_CNTL_SCSI_PARITY       (ushort)0x1000
 DECL|macro|ASC_CNTL_BURST_MODE
-mdefine_line|#define ASC_CNTL_BURST_MODE        ( ushort )0x2000
+mdefine_line|#define ASC_CNTL_BURST_MODE        (ushort)0x2000
 DECL|macro|ASC_CNTL_SDTR_ENABLE_ULTRA
-mdefine_line|#define ASC_CNTL_SDTR_ENABLE_ULTRA ( ushort )0x4000
+mdefine_line|#define ASC_CNTL_SDTR_ENABLE_ULTRA (ushort)0x4000
 DECL|macro|ASC_EEP_DVC_CFG_BEG_VL
 mdefine_line|#define ASC_EEP_DVC_CFG_BEG_VL    2
 DECL|macro|ASC_EEP_MAX_DVC_ADDR_VL
@@ -2955,6 +2952,12 @@ DECL|typedef|ASCEEP_CONFIG
 )brace
 id|ASCEEP_CONFIG
 suffix:semicolon
+DECL|macro|ASC_PCI_CFG_LSW_SCSI_PARITY
+mdefine_line|#define ASC_PCI_CFG_LSW_SCSI_PARITY  0x0800
+DECL|macro|ASC_PCI_CFG_LSW_BURST_MODE
+mdefine_line|#define ASC_PCI_CFG_LSW_BURST_MODE   0x0080
+DECL|macro|ASC_PCI_CFG_LSW_INTR_ABLE
+mdefine_line|#define ASC_PCI_CFG_LSW_INTR_ABLE    0x0020
 DECL|macro|ASC_EEP_CMD_READ
 mdefine_line|#define ASC_EEP_CMD_READ          0x80
 DECL|macro|ASC_EEP_CMD_WRITE
@@ -2976,7 +2979,7 @@ mdefine_line|#define ASCV_MSGOUT_SDTR_PERIOD (ASCV_MSGOUT_BEG+3)
 DECL|macro|ASCV_MSGOUT_SDTR_OFFSET
 mdefine_line|#define ASCV_MSGOUT_SDTR_OFFSET (ASCV_MSGOUT_BEG+4)
 DECL|macro|ASCV_BREAK_SAVED_CODE
-mdefine_line|#define ASCV_BREAK_SAVED_CODE   ( ushort )0x0006
+mdefine_line|#define ASCV_BREAK_SAVED_CODE   (ushort)0x0006
 DECL|macro|ASCV_MSGIN_BEG
 mdefine_line|#define ASCV_MSGIN_BEG          (ASCV_MSGOUT_BEG+8)
 DECL|macro|ASCV_MSGIN_SDTR_PERIOD
@@ -2988,87 +2991,87 @@ mdefine_line|#define ASCV_SDTR_DATA_BEG      (ASCV_MSGIN_BEG+8)
 DECL|macro|ASCV_SDTR_DONE_BEG
 mdefine_line|#define ASCV_SDTR_DONE_BEG      (ASCV_SDTR_DATA_BEG+8)
 DECL|macro|ASCV_MAX_DVC_QNG_BEG
-mdefine_line|#define ASCV_MAX_DVC_QNG_BEG    ( ushort )0x0020
+mdefine_line|#define ASCV_MAX_DVC_QNG_BEG    (ushort)0x0020
 DECL|macro|ASCV_BREAK_ADDR
-mdefine_line|#define ASCV_BREAK_ADDR           ( ushort )0x0028
+mdefine_line|#define ASCV_BREAK_ADDR           (ushort)0x0028
 DECL|macro|ASCV_BREAK_NOTIFY_COUNT
-mdefine_line|#define ASCV_BREAK_NOTIFY_COUNT   ( ushort )0x002A
+mdefine_line|#define ASCV_BREAK_NOTIFY_COUNT   (ushort)0x002A
 DECL|macro|ASCV_BREAK_CONTROL
-mdefine_line|#define ASCV_BREAK_CONTROL        ( ushort )0x002C
+mdefine_line|#define ASCV_BREAK_CONTROL        (ushort)0x002C
 DECL|macro|ASCV_BREAK_HIT_COUNT
-mdefine_line|#define ASCV_BREAK_HIT_COUNT      ( ushort )0x002E
+mdefine_line|#define ASCV_BREAK_HIT_COUNT      (ushort)0x002E
 DECL|macro|ASCV_ASCDVC_ERR_CODE_W
-mdefine_line|#define ASCV_ASCDVC_ERR_CODE_W  ( ushort )0x0030
+mdefine_line|#define ASCV_ASCDVC_ERR_CODE_W  (ushort)0x0030
 DECL|macro|ASCV_MCODE_CHKSUM_W
-mdefine_line|#define ASCV_MCODE_CHKSUM_W   ( ushort )0x0032
+mdefine_line|#define ASCV_MCODE_CHKSUM_W   (ushort)0x0032
 DECL|macro|ASCV_MCODE_SIZE_W
-mdefine_line|#define ASCV_MCODE_SIZE_W     ( ushort )0x0034
+mdefine_line|#define ASCV_MCODE_SIZE_W     (ushort)0x0034
 DECL|macro|ASCV_STOP_CODE_B
-mdefine_line|#define ASCV_STOP_CODE_B      ( ushort )0x0036
+mdefine_line|#define ASCV_STOP_CODE_B      (ushort)0x0036
 DECL|macro|ASCV_DVC_ERR_CODE_B
-mdefine_line|#define ASCV_DVC_ERR_CODE_B   ( ushort )0x0037
+mdefine_line|#define ASCV_DVC_ERR_CODE_B   (ushort)0x0037
 DECL|macro|ASCV_OVERRUN_PADDR_D
-mdefine_line|#define ASCV_OVERRUN_PADDR_D  ( ushort )0x0038
+mdefine_line|#define ASCV_OVERRUN_PADDR_D  (ushort)0x0038
 DECL|macro|ASCV_OVERRUN_BSIZE_D
-mdefine_line|#define ASCV_OVERRUN_BSIZE_D  ( ushort )0x003C
+mdefine_line|#define ASCV_OVERRUN_BSIZE_D  (ushort)0x003C
 DECL|macro|ASCV_HALTCODE_W
-mdefine_line|#define ASCV_HALTCODE_W       ( ushort )0x0040
+mdefine_line|#define ASCV_HALTCODE_W       (ushort)0x0040
 DECL|macro|ASCV_CHKSUM_W
-mdefine_line|#define ASCV_CHKSUM_W         ( ushort )0x0042
+mdefine_line|#define ASCV_CHKSUM_W         (ushort)0x0042
 DECL|macro|ASCV_MC_DATE_W
-mdefine_line|#define ASCV_MC_DATE_W        ( ushort )0x0044
+mdefine_line|#define ASCV_MC_DATE_W        (ushort)0x0044
 DECL|macro|ASCV_MC_VER_W
-mdefine_line|#define ASCV_MC_VER_W         ( ushort )0x0046
+mdefine_line|#define ASCV_MC_VER_W         (ushort)0x0046
 DECL|macro|ASCV_NEXTRDY_B
-mdefine_line|#define ASCV_NEXTRDY_B        ( ushort )0x0048
+mdefine_line|#define ASCV_NEXTRDY_B        (ushort)0x0048
 DECL|macro|ASCV_DONENEXT_B
-mdefine_line|#define ASCV_DONENEXT_B       ( ushort )0x0049
+mdefine_line|#define ASCV_DONENEXT_B       (ushort)0x0049
 DECL|macro|ASCV_USE_TAGGED_QNG_B
-mdefine_line|#define ASCV_USE_TAGGED_QNG_B ( ushort )0x004A
+mdefine_line|#define ASCV_USE_TAGGED_QNG_B (ushort)0x004A
 DECL|macro|ASCV_SCSIBUSY_B
-mdefine_line|#define ASCV_SCSIBUSY_B       ( ushort )0x004B
+mdefine_line|#define ASCV_SCSIBUSY_B       (ushort)0x004B
 DECL|macro|ASCV_Q_DONE_IN_PROGRESS_B
-mdefine_line|#define ASCV_Q_DONE_IN_PROGRESS_B  ( ushort )0x004C
+mdefine_line|#define ASCV_Q_DONE_IN_PROGRESS_B  (ushort)0x004C
 DECL|macro|ASCV_CURCDB_B
-mdefine_line|#define ASCV_CURCDB_B         ( ushort )0x004D
+mdefine_line|#define ASCV_CURCDB_B         (ushort)0x004D
 DECL|macro|ASCV_RCLUN_B
-mdefine_line|#define ASCV_RCLUN_B          ( ushort )0x004E
+mdefine_line|#define ASCV_RCLUN_B          (ushort)0x004E
 DECL|macro|ASCV_BUSY_QHEAD_B
-mdefine_line|#define ASCV_BUSY_QHEAD_B     ( ushort )0x004F
+mdefine_line|#define ASCV_BUSY_QHEAD_B     (ushort)0x004F
 DECL|macro|ASCV_DISC1_QHEAD_B
-mdefine_line|#define ASCV_DISC1_QHEAD_B    ( ushort )0x0050
+mdefine_line|#define ASCV_DISC1_QHEAD_B    (ushort)0x0050
 DECL|macro|ASCV_DISC_ENABLE_B
-mdefine_line|#define ASCV_DISC_ENABLE_B    ( ushort )0x0052
+mdefine_line|#define ASCV_DISC_ENABLE_B    (ushort)0x0052
 DECL|macro|ASCV_CAN_TAGGED_QNG_B
-mdefine_line|#define ASCV_CAN_TAGGED_QNG_B ( ushort )0x0053
+mdefine_line|#define ASCV_CAN_TAGGED_QNG_B (ushort)0x0053
 DECL|macro|ASCV_HOSTSCSI_ID_B
-mdefine_line|#define ASCV_HOSTSCSI_ID_B    ( ushort )0x0055
+mdefine_line|#define ASCV_HOSTSCSI_ID_B    (ushort)0x0055
 DECL|macro|ASCV_MCODE_CNTL_B
-mdefine_line|#define ASCV_MCODE_CNTL_B     ( ushort )0x0056
+mdefine_line|#define ASCV_MCODE_CNTL_B     (ushort)0x0056
 DECL|macro|ASCV_NULL_TARGET_B
-mdefine_line|#define ASCV_NULL_TARGET_B    ( ushort )0x0057
+mdefine_line|#define ASCV_NULL_TARGET_B    (ushort)0x0057
 DECL|macro|ASCV_FREE_Q_HEAD_W
-mdefine_line|#define ASCV_FREE_Q_HEAD_W    ( ushort )0x0058
+mdefine_line|#define ASCV_FREE_Q_HEAD_W    (ushort)0x0058
 DECL|macro|ASCV_DONE_Q_TAIL_W
-mdefine_line|#define ASCV_DONE_Q_TAIL_W    ( ushort )0x005A
+mdefine_line|#define ASCV_DONE_Q_TAIL_W    (ushort)0x005A
 DECL|macro|ASCV_FREE_Q_HEAD_B
-mdefine_line|#define ASCV_FREE_Q_HEAD_B    ( ushort )(ASCV_FREE_Q_HEAD_W+1)
+mdefine_line|#define ASCV_FREE_Q_HEAD_B    (ushort)(ASCV_FREE_Q_HEAD_W+1)
 DECL|macro|ASCV_DONE_Q_TAIL_B
-mdefine_line|#define ASCV_DONE_Q_TAIL_B    ( ushort )(ASCV_DONE_Q_TAIL_W+1)
+mdefine_line|#define ASCV_DONE_Q_TAIL_B    (ushort)(ASCV_DONE_Q_TAIL_W+1)
 DECL|macro|ASCV_HOST_FLAG_B
-mdefine_line|#define ASCV_HOST_FLAG_B      ( ushort )0x005D
+mdefine_line|#define ASCV_HOST_FLAG_B      (ushort)0x005D
 DECL|macro|ASCV_TOTAL_READY_Q_B
-mdefine_line|#define ASCV_TOTAL_READY_Q_B  ( ushort )0x0064
+mdefine_line|#define ASCV_TOTAL_READY_Q_B  (ushort)0x0064
 DECL|macro|ASCV_VER_SERIAL_B
-mdefine_line|#define ASCV_VER_SERIAL_B     ( ushort )0x0065
+mdefine_line|#define ASCV_VER_SERIAL_B     (ushort)0x0065
 DECL|macro|ASCV_HALTCODE_SAVED_W
-mdefine_line|#define ASCV_HALTCODE_SAVED_W ( ushort )0x0066
+mdefine_line|#define ASCV_HALTCODE_SAVED_W (ushort)0x0066
 DECL|macro|ASCV_WTM_FLAG_B
-mdefine_line|#define ASCV_WTM_FLAG_B       ( ushort )0x0068
+mdefine_line|#define ASCV_WTM_FLAG_B       (ushort)0x0068
 DECL|macro|ASCV_RISC_FLAG_B
-mdefine_line|#define ASCV_RISC_FLAG_B      ( ushort )0x006A
+mdefine_line|#define ASCV_RISC_FLAG_B      (ushort)0x006A
 DECL|macro|ASCV_REQ_SG_LIST_QP
-mdefine_line|#define ASCV_REQ_SG_LIST_QP   ( ushort )0x006B
+mdefine_line|#define ASCV_REQ_SG_LIST_QP   (ushort)0x006B
 DECL|macro|ASC_HOST_FLAG_IN_ISR
 mdefine_line|#define ASC_HOST_FLAG_IN_ISR        0x01
 DECL|macro|ASC_HOST_FLAG_ACK_INT
@@ -3154,57 +3157,61 @@ mdefine_line|#define IFC_ACT_NEG       (0x40)
 DECL|macro|IFC_INP_FILTER
 mdefine_line|#define IFC_INP_FILTER    (0x80)
 DECL|macro|IFC_INIT_DEFAULT
-mdefine_line|#define IFC_INIT_DEFAULT  ( IFC_ACT_NEG | IFC_REG_UNLOCK )
+mdefine_line|#define IFC_INIT_DEFAULT  (IFC_ACT_NEG | IFC_REG_UNLOCK)
 DECL|macro|SC_SEL
-mdefine_line|#define SC_SEL   ( uchar )(0x80)
+mdefine_line|#define SC_SEL   (uchar)(0x80)
 DECL|macro|SC_BSY
-mdefine_line|#define SC_BSY   ( uchar )(0x40)
+mdefine_line|#define SC_BSY   (uchar)(0x40)
 DECL|macro|SC_ACK
-mdefine_line|#define SC_ACK   ( uchar )(0x20)
+mdefine_line|#define SC_ACK   (uchar)(0x20)
 DECL|macro|SC_REQ
-mdefine_line|#define SC_REQ   ( uchar )(0x10)
+mdefine_line|#define SC_REQ   (uchar)(0x10)
 DECL|macro|SC_ATN
-mdefine_line|#define SC_ATN   ( uchar )(0x08)
+mdefine_line|#define SC_ATN   (uchar)(0x08)
 DECL|macro|SC_IO
-mdefine_line|#define SC_IO    ( uchar )(0x04)
+mdefine_line|#define SC_IO    (uchar)(0x04)
 DECL|macro|SC_CD
-mdefine_line|#define SC_CD    ( uchar )(0x02)
+mdefine_line|#define SC_CD    (uchar)(0x02)
 DECL|macro|SC_MSG
-mdefine_line|#define SC_MSG   ( uchar )(0x01)
+mdefine_line|#define SC_MSG   (uchar)(0x01)
+DECL|macro|SEC_SCSI_CTL
+mdefine_line|#define SEC_SCSI_CTL         (uchar)(0x80)
 DECL|macro|SEC_ACTIVE_NEGATE
-mdefine_line|#define SEC_ACTIVE_NEGATE    ( uchar )( 0x40 )
+mdefine_line|#define SEC_ACTIVE_NEGATE    (uchar)(0x40)
 DECL|macro|SEC_SLEW_RATE
-mdefine_line|#define SEC_SLEW_RATE        ( uchar )( 0x20 )
+mdefine_line|#define SEC_SLEW_RATE        (uchar)(0x20)
+DECL|macro|SEC_ENABLE_FILTER
+mdefine_line|#define SEC_ENABLE_FILTER    (uchar)(0x10)
 DECL|macro|ASC_HALT_EXTMSG_IN
-mdefine_line|#define ASC_HALT_EXTMSG_IN     ( ushort )0x8000
+mdefine_line|#define ASC_HALT_EXTMSG_IN     (ushort)0x8000
 DECL|macro|ASC_HALT_CHK_CONDITION
-mdefine_line|#define ASC_HALT_CHK_CONDITION ( ushort )0x8100
+mdefine_line|#define ASC_HALT_CHK_CONDITION (ushort)0x8100
 DECL|macro|ASC_HALT_SS_QUEUE_FULL
-mdefine_line|#define ASC_HALT_SS_QUEUE_FULL ( ushort )0x8200
+mdefine_line|#define ASC_HALT_SS_QUEUE_FULL (ushort)0x8200
 DECL|macro|ASC_HALT_DISABLE_ASYN_USE_SYN_FIX
-mdefine_line|#define ASC_HALT_DISABLE_ASYN_USE_SYN_FIX  ( ushort )0x8300
+mdefine_line|#define ASC_HALT_DISABLE_ASYN_USE_SYN_FIX  (ushort)0x8300
 DECL|macro|ASC_HALT_ENABLE_ASYN_USE_SYN_FIX
-mdefine_line|#define ASC_HALT_ENABLE_ASYN_USE_SYN_FIX   ( ushort )0x8400
+mdefine_line|#define ASC_HALT_ENABLE_ASYN_USE_SYN_FIX   (ushort)0x8400
 DECL|macro|ASC_HALT_SDTR_REJECTED
-mdefine_line|#define ASC_HALT_SDTR_REJECTED ( ushort )0x4000
+mdefine_line|#define ASC_HALT_SDTR_REJECTED (ushort)0x4000
 DECL|macro|ASC_MAX_QNO
 mdefine_line|#define ASC_MAX_QNO        0xF8
 DECL|macro|ASC_DATA_SEC_BEG
-mdefine_line|#define ASC_DATA_SEC_BEG   ( ushort )0x0080
+mdefine_line|#define ASC_DATA_SEC_BEG   (ushort)0x0080
 DECL|macro|ASC_DATA_SEC_END
-mdefine_line|#define ASC_DATA_SEC_END   ( ushort )0x0080
+mdefine_line|#define ASC_DATA_SEC_END   (ushort)0x0080
 DECL|macro|ASC_CODE_SEC_BEG
-mdefine_line|#define ASC_CODE_SEC_BEG   ( ushort )0x0080
+mdefine_line|#define ASC_CODE_SEC_BEG   (ushort)0x0080
 DECL|macro|ASC_CODE_SEC_END
-mdefine_line|#define ASC_CODE_SEC_END   ( ushort )0x0080
+mdefine_line|#define ASC_CODE_SEC_END   (ushort)0x0080
 DECL|macro|ASC_QADR_BEG
 mdefine_line|#define ASC_QADR_BEG       (0x4000)
 DECL|macro|ASC_QADR_USED
-mdefine_line|#define ASC_QADR_USED      ( ushort )( ASC_MAX_QNO * 64 )
+mdefine_line|#define ASC_QADR_USED      (ushort)(ASC_MAX_QNO * 64)
 DECL|macro|ASC_QADR_END
-mdefine_line|#define ASC_QADR_END       ( ushort )0x7FFF
+mdefine_line|#define ASC_QADR_END       (ushort)0x7FFF
 DECL|macro|ASC_QLAST_ADR
-mdefine_line|#define ASC_QLAST_ADR      ( ushort )0x7FC0
+mdefine_line|#define ASC_QLAST_ADR      (ushort)0x7FC0
 DECL|macro|ASC_QBLK_SIZE
 mdefine_line|#define ASC_QBLK_SIZE      0x40
 DECL|macro|ASC_BIOS_DATA_QBEG
@@ -3248,65 +3255,65 @@ mdefine_line|#define ASC_CFG1_LRAM_8BITS_ON  0x0800
 DECL|macro|ASC_CFG_MSW_CLR_MASK
 mdefine_line|#define ASC_CFG_MSW_CLR_MASK    0x30C0
 DECL|macro|CSW_TEST1
-mdefine_line|#define CSW_TEST1             ( ASC_CS_TYPE )0x8000
+mdefine_line|#define CSW_TEST1             (ASC_CS_TYPE)0x8000
 DECL|macro|CSW_AUTO_CONFIG
-mdefine_line|#define CSW_AUTO_CONFIG       ( ASC_CS_TYPE )0x4000
+mdefine_line|#define CSW_AUTO_CONFIG       (ASC_CS_TYPE)0x4000
 DECL|macro|CSW_RESERVED1
-mdefine_line|#define CSW_RESERVED1         ( ASC_CS_TYPE )0x2000
+mdefine_line|#define CSW_RESERVED1         (ASC_CS_TYPE)0x2000
 DECL|macro|CSW_IRQ_WRITTEN
-mdefine_line|#define CSW_IRQ_WRITTEN       ( ASC_CS_TYPE )0x1000
+mdefine_line|#define CSW_IRQ_WRITTEN       (ASC_CS_TYPE)0x1000
 DECL|macro|CSW_33MHZ_SELECTED
-mdefine_line|#define CSW_33MHZ_SELECTED    ( ASC_CS_TYPE )0x0800
+mdefine_line|#define CSW_33MHZ_SELECTED    (ASC_CS_TYPE)0x0800
 DECL|macro|CSW_TEST2
-mdefine_line|#define CSW_TEST2             ( ASC_CS_TYPE )0x0400
+mdefine_line|#define CSW_TEST2             (ASC_CS_TYPE)0x0400
 DECL|macro|CSW_TEST3
-mdefine_line|#define CSW_TEST3             ( ASC_CS_TYPE )0x0200
+mdefine_line|#define CSW_TEST3             (ASC_CS_TYPE)0x0200
 DECL|macro|CSW_RESERVED2
-mdefine_line|#define CSW_RESERVED2         ( ASC_CS_TYPE )0x0100
+mdefine_line|#define CSW_RESERVED2         (ASC_CS_TYPE)0x0100
 DECL|macro|CSW_DMA_DONE
-mdefine_line|#define CSW_DMA_DONE          ( ASC_CS_TYPE )0x0080
+mdefine_line|#define CSW_DMA_DONE          (ASC_CS_TYPE)0x0080
 DECL|macro|CSW_FIFO_RDY
-mdefine_line|#define CSW_FIFO_RDY          ( ASC_CS_TYPE )0x0040
+mdefine_line|#define CSW_FIFO_RDY          (ASC_CS_TYPE)0x0040
 DECL|macro|CSW_EEP_READ_DONE
-mdefine_line|#define CSW_EEP_READ_DONE     ( ASC_CS_TYPE )0x0020
+mdefine_line|#define CSW_EEP_READ_DONE     (ASC_CS_TYPE)0x0020
 DECL|macro|CSW_HALTED
-mdefine_line|#define CSW_HALTED            ( ASC_CS_TYPE )0x0010
+mdefine_line|#define CSW_HALTED            (ASC_CS_TYPE)0x0010
 DECL|macro|CSW_SCSI_RESET_ACTIVE
-mdefine_line|#define CSW_SCSI_RESET_ACTIVE ( ASC_CS_TYPE )0x0008
+mdefine_line|#define CSW_SCSI_RESET_ACTIVE (ASC_CS_TYPE)0x0008
 DECL|macro|CSW_PARITY_ERR
-mdefine_line|#define CSW_PARITY_ERR        ( ASC_CS_TYPE )0x0004
+mdefine_line|#define CSW_PARITY_ERR        (ASC_CS_TYPE)0x0004
 DECL|macro|CSW_SCSI_RESET_LATCH
-mdefine_line|#define CSW_SCSI_RESET_LATCH  ( ASC_CS_TYPE )0x0002
+mdefine_line|#define CSW_SCSI_RESET_LATCH  (ASC_CS_TYPE)0x0002
 DECL|macro|CSW_INT_PENDING
-mdefine_line|#define CSW_INT_PENDING       ( ASC_CS_TYPE )0x0001
+mdefine_line|#define CSW_INT_PENDING       (ASC_CS_TYPE)0x0001
 DECL|macro|CIW_CLR_SCSI_RESET_INT
-mdefine_line|#define CIW_CLR_SCSI_RESET_INT ( ASC_CS_TYPE )0x1000
+mdefine_line|#define CIW_CLR_SCSI_RESET_INT (ASC_CS_TYPE)0x1000
 DECL|macro|CIW_INT_ACK
-mdefine_line|#define CIW_INT_ACK      ( ASC_CS_TYPE )0x0100
+mdefine_line|#define CIW_INT_ACK      (ASC_CS_TYPE)0x0100
 DECL|macro|CIW_TEST1
-mdefine_line|#define CIW_TEST1        ( ASC_CS_TYPE )0x0200
+mdefine_line|#define CIW_TEST1        (ASC_CS_TYPE)0x0200
 DECL|macro|CIW_TEST2
-mdefine_line|#define CIW_TEST2        ( ASC_CS_TYPE )0x0400
+mdefine_line|#define CIW_TEST2        (ASC_CS_TYPE)0x0400
 DECL|macro|CIW_SEL_33MHZ
-mdefine_line|#define CIW_SEL_33MHZ    ( ASC_CS_TYPE )0x0800
+mdefine_line|#define CIW_SEL_33MHZ    (ASC_CS_TYPE)0x0800
 DECL|macro|CIW_IRQ_ACT
-mdefine_line|#define CIW_IRQ_ACT      ( ASC_CS_TYPE )0x1000
+mdefine_line|#define CIW_IRQ_ACT      (ASC_CS_TYPE)0x1000
 DECL|macro|CC_CHIP_RESET
-mdefine_line|#define CC_CHIP_RESET   ( uchar )0x80
+mdefine_line|#define CC_CHIP_RESET   (uchar)0x80
 DECL|macro|CC_SCSI_RESET
-mdefine_line|#define CC_SCSI_RESET   ( uchar )0x40
+mdefine_line|#define CC_SCSI_RESET   (uchar)0x40
 DECL|macro|CC_HALT
-mdefine_line|#define CC_HALT         ( uchar )0x20
+mdefine_line|#define CC_HALT         (uchar)0x20
 DECL|macro|CC_SINGLE_STEP
-mdefine_line|#define CC_SINGLE_STEP  ( uchar )0x10
+mdefine_line|#define CC_SINGLE_STEP  (uchar)0x10
 DECL|macro|CC_DMA_ABLE
-mdefine_line|#define CC_DMA_ABLE     ( uchar )0x08
+mdefine_line|#define CC_DMA_ABLE     (uchar)0x08
 DECL|macro|CC_TEST
-mdefine_line|#define CC_TEST         ( uchar )0x04
+mdefine_line|#define CC_TEST         (uchar)0x04
 DECL|macro|CC_BANK_ONE
-mdefine_line|#define CC_BANK_ONE     ( uchar )0x02
+mdefine_line|#define CC_BANK_ONE     (uchar)0x02
 DECL|macro|CC_DIAG
-mdefine_line|#define CC_DIAG         ( uchar )0x01
+mdefine_line|#define CC_DIAG         (uchar)0x01
 DECL|macro|ASC_1000_ID0W
 mdefine_line|#define ASC_1000_ID0W      0x04C1
 DECL|macro|ASC_1000_ID0W_FIX
@@ -3328,19 +3335,19 @@ mdefine_line|#define ASC_EISA_PID_IOP_MASK  (0x0C80)
 DECL|macro|ASC_EISA_CFG_IOP_MASK
 mdefine_line|#define ASC_EISA_CFG_IOP_MASK  (0x0C86)
 DECL|macro|ASC_GET_EISA_SLOT
-mdefine_line|#define ASC_GET_EISA_SLOT( iop )  ( PortAddr )( (iop) &amp; 0xF000 )
+mdefine_line|#define ASC_GET_EISA_SLOT(iop)  (PortAddr)((iop) &amp; 0xF000)
 DECL|macro|ASC_EISA_ID_740
 mdefine_line|#define ASC_EISA_ID_740    0x01745004UL
 DECL|macro|ASC_EISA_ID_750
 mdefine_line|#define ASC_EISA_ID_750    0x01755004UL
 DECL|macro|INS_HALTINT
-mdefine_line|#define INS_HALTINT        ( ushort )0x6281
+mdefine_line|#define INS_HALTINT        (ushort)0x6281
 DECL|macro|INS_HALT
-mdefine_line|#define INS_HALT           ( ushort )0x6280
+mdefine_line|#define INS_HALT           (ushort)0x6280
 DECL|macro|INS_SINT
-mdefine_line|#define INS_SINT           ( ushort )0x6200
+mdefine_line|#define INS_SINT           (ushort)0x6200
 DECL|macro|INS_RFLAG_WTM
-mdefine_line|#define INS_RFLAG_WTM      ( ushort )0x7380
+mdefine_line|#define INS_RFLAG_WTM      (ushort)0x7380
 DECL|macro|ASC_MC_SAVE_CODE_WSIZE
 mdefine_line|#define ASC_MC_SAVE_CODE_WSIZE  0x500
 DECL|macro|ASC_MC_SAVE_DATA_WSIZE
@@ -3369,145 +3376,146 @@ DECL|typedef|ASC_MC_SAVED
 id|ASC_MC_SAVED
 suffix:semicolon
 DECL|macro|AscGetQDoneInProgress
-mdefine_line|#define AscGetQDoneInProgress( port )         AscReadLramByte( (port), ASCV_Q_DONE_IN_PROGRESS_B )
+mdefine_line|#define AscGetQDoneInProgress(port)         AscReadLramByte((port), ASCV_Q_DONE_IN_PROGRESS_B)
 DECL|macro|AscPutQDoneInProgress
-mdefine_line|#define AscPutQDoneInProgress( port, val )    AscWriteLramByte( (port), ASCV_Q_DONE_IN_PROGRESS_B, val )
+mdefine_line|#define AscPutQDoneInProgress(port, val)    AscWriteLramByte((port), ASCV_Q_DONE_IN_PROGRESS_B, val)
 DECL|macro|AscGetVarFreeQHead
-mdefine_line|#define AscGetVarFreeQHead( port )            AscReadLramWord( (port), ASCV_FREE_Q_HEAD_W )
+mdefine_line|#define AscGetVarFreeQHead(port)            AscReadLramWord((port), ASCV_FREE_Q_HEAD_W)
 DECL|macro|AscGetVarDoneQTail
-mdefine_line|#define AscGetVarDoneQTail( port )            AscReadLramWord( (port), ASCV_DONE_Q_TAIL_W )
+mdefine_line|#define AscGetVarDoneQTail(port)            AscReadLramWord((port), ASCV_DONE_Q_TAIL_W)
 DECL|macro|AscPutVarFreeQHead
-mdefine_line|#define AscPutVarFreeQHead( port, val )       AscWriteLramWord( (port), ASCV_FREE_Q_HEAD_W, val )
+mdefine_line|#define AscPutVarFreeQHead(port, val)       AscWriteLramWord((port), ASCV_FREE_Q_HEAD_W, val)
 DECL|macro|AscPutVarDoneQTail
-mdefine_line|#define AscPutVarDoneQTail( port, val )       AscWriteLramWord( (port), ASCV_DONE_Q_TAIL_W, val )
+mdefine_line|#define AscPutVarDoneQTail(port, val)       AscWriteLramWord((port), ASCV_DONE_Q_TAIL_W, val)
 DECL|macro|AscGetRiscVarFreeQHead
-mdefine_line|#define AscGetRiscVarFreeQHead( port )        AscReadLramByte( (port), ASCV_NEXTRDY_B )
+mdefine_line|#define AscGetRiscVarFreeQHead(port)        AscReadLramByte((port), ASCV_NEXTRDY_B)
 DECL|macro|AscGetRiscVarDoneQTail
-mdefine_line|#define AscGetRiscVarDoneQTail( port )        AscReadLramByte( (port), ASCV_DONENEXT_B )
+mdefine_line|#define AscGetRiscVarDoneQTail(port)        AscReadLramByte((port), ASCV_DONENEXT_B)
 DECL|macro|AscPutRiscVarFreeQHead
-mdefine_line|#define AscPutRiscVarFreeQHead( port, val )   AscWriteLramByte( (port), ASCV_NEXTRDY_B, val )
+mdefine_line|#define AscPutRiscVarFreeQHead(port, val)   AscWriteLramByte((port), ASCV_NEXTRDY_B, val)
 DECL|macro|AscPutRiscVarDoneQTail
-mdefine_line|#define AscPutRiscVarDoneQTail( port, val )   AscWriteLramByte( (port), ASCV_DONENEXT_B, val )
+mdefine_line|#define AscPutRiscVarDoneQTail(port, val)   AscWriteLramByte((port), ASCV_DONENEXT_B, val)
 DECL|macro|AscPutMCodeSDTRDoneAtID
-mdefine_line|#define AscPutMCodeSDTRDoneAtID( port, id, data )  AscWriteLramByte( (port), ( ushort )( ( ushort )ASCV_SDTR_DONE_BEG+( ushort )id ), (data) ) ;
+mdefine_line|#define AscPutMCodeSDTRDoneAtID(port, id, data)  AscWriteLramByte((port), (ushort)((ushort)ASCV_SDTR_DONE_BEG+(ushort)id), (data)) ;
 DECL|macro|AscGetMCodeSDTRDoneAtID
-mdefine_line|#define AscGetMCodeSDTRDoneAtID( port, id )        AscReadLramByte( (port), ( ushort )( ( ushort )ASCV_SDTR_DONE_BEG+( ushort )id ) ) ;
+mdefine_line|#define AscGetMCodeSDTRDoneAtID(port, id)        AscReadLramByte((port), (ushort)((ushort)ASCV_SDTR_DONE_BEG+(ushort)id)) ;
 DECL|macro|AscPutMCodeInitSDTRAtID
-mdefine_line|#define AscPutMCodeInitSDTRAtID( port, id, data )  AscWriteLramByte( (port), ( ushort )( ( ushort )ASCV_SDTR_DATA_BEG+( ushort )id ), data ) ;
+mdefine_line|#define AscPutMCodeInitSDTRAtID(port, id, data)  AscWriteLramByte((port), (ushort)((ushort)ASCV_SDTR_DATA_BEG+(ushort)id), data) ;
 DECL|macro|AscGetMCodeInitSDTRAtID
-mdefine_line|#define AscGetMCodeInitSDTRAtID( port, id )        AscReadLramByte( (port), ( ushort )( ( ushort )ASCV_SDTR_DATA_BEG+( ushort )id ) ) ;
+mdefine_line|#define AscGetMCodeInitSDTRAtID(port, id)        AscReadLramByte((port), (ushort)((ushort)ASCV_SDTR_DATA_BEG+(ushort)id)) ;
 DECL|macro|AscSynIndexToPeriod
-mdefine_line|#define AscSynIndexToPeriod( index )        ( uchar )( asc_dvc-&gt;sdtr_period_tbl[ (index) ] )
+mdefine_line|#define AscSynIndexToPeriod(index)        (uchar)(asc_dvc-&gt;sdtr_period_tbl[ (index) ])
 DECL|macro|AscGetChipSignatureByte
-mdefine_line|#define AscGetChipSignatureByte( port )     ( uchar )inp( (port)+IOP_SIG_BYTE )
+mdefine_line|#define AscGetChipSignatureByte(port)     (uchar)inp((port)+IOP_SIG_BYTE)
 DECL|macro|AscGetChipSignatureWord
-mdefine_line|#define AscGetChipSignatureWord( port )     ( ushort )inpw( (port)+IOP_SIG_WORD )
+mdefine_line|#define AscGetChipSignatureWord(port)     (ushort)inpw((port)+IOP_SIG_WORD)
 DECL|macro|AscGetChipVerNo
-mdefine_line|#define AscGetChipVerNo( port )             ( uchar )inp( (port)+IOP_VERSION )
+mdefine_line|#define AscGetChipVerNo(port)             (uchar)inp((port)+IOP_VERSION)
 DECL|macro|AscGetChipCfgLsw
-mdefine_line|#define AscGetChipCfgLsw( port )            ( ushort )inpw( (port)+IOP_CONFIG_LOW )
+mdefine_line|#define AscGetChipCfgLsw(port)            (ushort)inpw((port)+IOP_CONFIG_LOW)
 DECL|macro|AscGetChipCfgMsw
-mdefine_line|#define AscGetChipCfgMsw( port )            ( ushort )inpw( (port)+IOP_CONFIG_HIGH )
+mdefine_line|#define AscGetChipCfgMsw(port)            (ushort)inpw((port)+IOP_CONFIG_HIGH)
 DECL|macro|AscSetChipCfgLsw
-mdefine_line|#define AscSetChipCfgLsw( port, data )      outpw( (port)+IOP_CONFIG_LOW, data )
+mdefine_line|#define AscSetChipCfgLsw(port, data)      outpw((port)+IOP_CONFIG_LOW, data)
 DECL|macro|AscSetChipCfgMsw
-mdefine_line|#define AscSetChipCfgMsw( port, data )      outpw( (port)+IOP_CONFIG_HIGH, data )
+mdefine_line|#define AscSetChipCfgMsw(port, data)      outpw((port)+IOP_CONFIG_HIGH, data)
 DECL|macro|AscGetChipEEPCmd
-mdefine_line|#define AscGetChipEEPCmd( port )            ( uchar )inp( (port)+IOP_EEP_CMD )
+mdefine_line|#define AscGetChipEEPCmd(port)            (uchar)inp((port)+IOP_EEP_CMD)
 DECL|macro|AscSetChipEEPCmd
-mdefine_line|#define AscSetChipEEPCmd( port, data )      outp( (port)+IOP_EEP_CMD, data )
+mdefine_line|#define AscSetChipEEPCmd(port, data)      outp((port)+IOP_EEP_CMD, data)
 DECL|macro|AscGetChipEEPData
-mdefine_line|#define AscGetChipEEPData( port )           ( ushort )inpw( (port)+IOP_EEP_DATA )
+mdefine_line|#define AscGetChipEEPData(port)           (ushort)inpw((port)+IOP_EEP_DATA)
 DECL|macro|AscSetChipEEPData
-mdefine_line|#define AscSetChipEEPData( port, data )     outpw( (port)+IOP_EEP_DATA, data )
+mdefine_line|#define AscSetChipEEPData(port, data)     outpw((port)+IOP_EEP_DATA, data)
 DECL|macro|AscGetChipLramAddr
-mdefine_line|#define AscGetChipLramAddr( port )          ( ushort )inpw( ( PortAddr )((port)+IOP_RAM_ADDR) )
+mdefine_line|#define AscGetChipLramAddr(port)          (ushort)inpw((PortAddr)((port)+IOP_RAM_ADDR))
 DECL|macro|AscSetChipLramAddr
-mdefine_line|#define AscSetChipLramAddr( port, addr )    outpw( ( PortAddr )( (port)+IOP_RAM_ADDR ), addr )
+mdefine_line|#define AscSetChipLramAddr(port, addr)    outpw((PortAddr)((port)+IOP_RAM_ADDR), addr)
 DECL|macro|AscGetChipLramData
-mdefine_line|#define AscGetChipLramData( port )          ( ushort )inpw( (port)+IOP_RAM_DATA )
+mdefine_line|#define AscGetChipLramData(port)          (ushort)inpw((port)+IOP_RAM_DATA)
 DECL|macro|AscSetChipLramData
-mdefine_line|#define AscSetChipLramData( port, data )    outpw( (port)+IOP_RAM_DATA, data )
+mdefine_line|#define AscSetChipLramData(port, data)    outpw((port)+IOP_RAM_DATA, data)
 DECL|macro|AscGetChipLramDataNoSwap
-mdefine_line|#define AscGetChipLramDataNoSwap( port )         ( ushort )inpw_noswap( (port)+IOP_RAM_DATA )
+mdefine_line|#define AscGetChipLramDataNoSwap(port)         (ushort)inpw_noswap((port)+IOP_RAM_DATA)
 DECL|macro|AscSetChipLramDataNoSwap
-mdefine_line|#define AscSetChipLramDataNoSwap( port, data )   outpw_noswap( (port)+IOP_RAM_DATA, data )
+mdefine_line|#define AscSetChipLramDataNoSwap(port, data)   outpw_noswap((port)+IOP_RAM_DATA, data)
 DECL|macro|AscGetChipIFC
-mdefine_line|#define AscGetChipIFC( port )               ( uchar )inp( (port)+IOP_REG_IFC )
+mdefine_line|#define AscGetChipIFC(port)               (uchar)inp((port)+IOP_REG_IFC)
 DECL|macro|AscSetChipIFC
-mdefine_line|#define AscSetChipIFC( port, data )          outp( (port)+IOP_REG_IFC, data )
+mdefine_line|#define AscSetChipIFC(port, data)          outp((port)+IOP_REG_IFC, data)
 DECL|macro|AscGetChipStatus
-mdefine_line|#define AscGetChipStatus( port )            ( ASC_CS_TYPE )inpw( (port)+IOP_STATUS )
+mdefine_line|#define AscGetChipStatus(port)            (ASC_CS_TYPE)inpw((port)+IOP_STATUS)
 DECL|macro|AscSetChipStatus
-mdefine_line|#define AscSetChipStatus( port, cs_val )    outpw( (port)+IOP_STATUS, cs_val )
+mdefine_line|#define AscSetChipStatus(port, cs_val)    outpw((port)+IOP_STATUS, cs_val)
 DECL|macro|AscGetChipControl
-mdefine_line|#define AscGetChipControl( port )           ( uchar )inp( (port)+IOP_CTRL )
+mdefine_line|#define AscGetChipControl(port)           (uchar)inp((port)+IOP_CTRL)
 DECL|macro|AscSetChipControl
-mdefine_line|#define AscSetChipControl( port, cc_val )   outp( (port)+IOP_CTRL, cc_val )
+mdefine_line|#define AscSetChipControl(port, cc_val)   outp((port)+IOP_CTRL, cc_val)
 DECL|macro|AscGetChipSyn
-mdefine_line|#define AscGetChipSyn( port )               ( uchar )inp( (port)+IOP_SYN_OFFSET )
+mdefine_line|#define AscGetChipSyn(port)               (uchar)inp((port)+IOP_SYN_OFFSET)
 DECL|macro|AscSetChipSyn
-mdefine_line|#define AscSetChipSyn( port, data )         outp( (port)+IOP_SYN_OFFSET, data )
+mdefine_line|#define AscSetChipSyn(port, data)         outp((port)+IOP_SYN_OFFSET, data)
 DECL|macro|AscSetPCAddr
-mdefine_line|#define AscSetPCAddr( port, data )          outpw( (port)+IOP_REG_PC, data )
+mdefine_line|#define AscSetPCAddr(port, data)          outpw((port)+IOP_REG_PC, data)
 DECL|macro|AscGetPCAddr
-mdefine_line|#define AscGetPCAddr( port )                ( ushort )inpw( (port)+IOP_REG_PC )
+mdefine_line|#define AscGetPCAddr(port)                (ushort)inpw((port)+IOP_REG_PC)
 DECL|macro|AscIsIntPending
-mdefine_line|#define AscIsIntPending( port )             ( AscGetChipStatus(port) &amp; ( CSW_INT_PENDING | CSW_SCSI_RESET_LATCH ) )
+mdefine_line|#define AscIsIntPending(port)             (AscGetChipStatus(port) &amp; (CSW_INT_PENDING | CSW_SCSI_RESET_LATCH))
 DECL|macro|AscGetChipScsiID
-mdefine_line|#define AscGetChipScsiID( port )            ( ( AscGetChipCfgLsw(port) &gt;&gt; 8 ) &amp; ASC_MAX_TID )
+mdefine_line|#define AscGetChipScsiID(port)            ((AscGetChipCfgLsw(port) &gt;&gt; 8) &amp; ASC_MAX_TID)
 DECL|macro|AscGetExtraControl
-mdefine_line|#define AscGetExtraControl( port )          ( uchar )inp( (port)+IOP_EXTRA_CONTROL )
+mdefine_line|#define AscGetExtraControl(port)          (uchar)inp((port)+IOP_EXTRA_CONTROL)
 DECL|macro|AscSetExtraControl
-mdefine_line|#define AscSetExtraControl( port, data )    outp( (port)+IOP_EXTRA_CONTROL, data )
+mdefine_line|#define AscSetExtraControl(port, data)    outp((port)+IOP_EXTRA_CONTROL, data)
 DECL|macro|AscReadChipAX
-mdefine_line|#define AscReadChipAX( port )               ( ushort )inpw( (port)+IOP_REG_AX )
+mdefine_line|#define AscReadChipAX(port)               (ushort)inpw((port)+IOP_REG_AX)
 DECL|macro|AscWriteChipAX
-mdefine_line|#define AscWriteChipAX( port, data )        outpw( (port)+IOP_REG_AX, data )
+mdefine_line|#define AscWriteChipAX(port, data)        outpw((port)+IOP_REG_AX, data)
 DECL|macro|AscReadChipIX
-mdefine_line|#define AscReadChipIX( port )               ( uchar )inp( (port)+IOP_REG_IX )
+mdefine_line|#define AscReadChipIX(port)               (uchar)inp((port)+IOP_REG_IX)
 DECL|macro|AscWriteChipIX
-mdefine_line|#define AscWriteChipIX( port, data )        outp( (port)+IOP_REG_IX, data )
+mdefine_line|#define AscWriteChipIX(port, data)        outp((port)+IOP_REG_IX, data)
 DECL|macro|AscReadChipIH
-mdefine_line|#define AscReadChipIH( port )               ( ushort )inpw( (port)+IOP_REG_IH )
+mdefine_line|#define AscReadChipIH(port)               (ushort)inpw((port)+IOP_REG_IH)
 DECL|macro|AscWriteChipIH
-mdefine_line|#define AscWriteChipIH( port, data )        outpw( (port)+IOP_REG_IH, data )
+mdefine_line|#define AscWriteChipIH(port, data)        outpw((port)+IOP_REG_IH, data)
 DECL|macro|AscReadChipQP
-mdefine_line|#define AscReadChipQP( port )               ( uchar )inp( (port)+IOP_REG_QP )
+mdefine_line|#define AscReadChipQP(port)               (uchar)inp((port)+IOP_REG_QP)
 DECL|macro|AscWriteChipQP
-mdefine_line|#define AscWriteChipQP( port, data )        outp( (port)+IOP_REG_QP, data )
+mdefine_line|#define AscWriteChipQP(port, data)        outp((port)+IOP_REG_QP, data)
 DECL|macro|AscReadChipFIFO_L
-mdefine_line|#define AscReadChipFIFO_L( port )           ( ushort )inpw( (port)+IOP_REG_FIFO_L )
+mdefine_line|#define AscReadChipFIFO_L(port)           (ushort)inpw((port)+IOP_REG_FIFO_L)
 DECL|macro|AscWriteChipFIFO_L
-mdefine_line|#define AscWriteChipFIFO_L( port, data )    outpw( (port)+IOP_REG_FIFO_L, data )
+mdefine_line|#define AscWriteChipFIFO_L(port, data)    outpw((port)+IOP_REG_FIFO_L, data)
 DECL|macro|AscReadChipFIFO_H
-mdefine_line|#define AscReadChipFIFO_H( port )           ( ushort )inpw( (port)+IOP_REG_FIFO_H )
+mdefine_line|#define AscReadChipFIFO_H(port)           (ushort)inpw((port)+IOP_REG_FIFO_H)
 DECL|macro|AscWriteChipFIFO_H
-mdefine_line|#define AscWriteChipFIFO_H( port, data )    outpw( (port)+IOP_REG_FIFO_H, data )
+mdefine_line|#define AscWriteChipFIFO_H(port, data)    outpw((port)+IOP_REG_FIFO_H, data)
 DECL|macro|AscReadChipDmaSpeed
-mdefine_line|#define AscReadChipDmaSpeed( port )         ( uchar )inp( (port)+IOP_DMA_SPEED )
+mdefine_line|#define AscReadChipDmaSpeed(port)         (uchar)inp((port)+IOP_DMA_SPEED)
 DECL|macro|AscWriteChipDmaSpeed
-mdefine_line|#define AscWriteChipDmaSpeed( port, data )  outp( (port)+IOP_DMA_SPEED, data )
+mdefine_line|#define AscWriteChipDmaSpeed(port, data)  outp((port)+IOP_DMA_SPEED, data)
 DECL|macro|AscReadChipDA0
-mdefine_line|#define AscReadChipDA0( port )              ( ushort )inpw( (port)+IOP_REG_DA0 )
+mdefine_line|#define AscReadChipDA0(port)              (ushort)inpw((port)+IOP_REG_DA0)
 DECL|macro|AscWriteChipDA0
-mdefine_line|#define AscWriteChipDA0( port )             outpw( (port)+IOP_REG_DA0, data )
+mdefine_line|#define AscWriteChipDA0(port)             outpw((port)+IOP_REG_DA0, data)
 DECL|macro|AscReadChipDA1
-mdefine_line|#define AscReadChipDA1( port )              ( ushort )inpw( (port)+IOP_REG_DA1 )
+mdefine_line|#define AscReadChipDA1(port)              (ushort)inpw((port)+IOP_REG_DA1)
 DECL|macro|AscWriteChipDA1
-mdefine_line|#define AscWriteChipDA1( port )             outpw( (port)+IOP_REG_DA1, data )
+mdefine_line|#define AscWriteChipDA1(port)             outpw((port)+IOP_REG_DA1, data)
 DECL|macro|AscReadChipDC0
-mdefine_line|#define AscReadChipDC0( port )              ( ushort )inpw( (port)+IOP_REG_DC0 )
+mdefine_line|#define AscReadChipDC0(port)              (ushort)inpw((port)+IOP_REG_DC0)
 DECL|macro|AscWriteChipDC0
-mdefine_line|#define AscWriteChipDC0( port )             outpw( (port)+IOP_REG_DC0, data )
+mdefine_line|#define AscWriteChipDC0(port)             outpw((port)+IOP_REG_DC0, data)
 DECL|macro|AscReadChipDC1
-mdefine_line|#define AscReadChipDC1( port )              ( ushort )inpw( (port)+IOP_REG_DC1 )
+mdefine_line|#define AscReadChipDC1(port)              (ushort)inpw((port)+IOP_REG_DC1)
 DECL|macro|AscWriteChipDC1
-mdefine_line|#define AscWriteChipDC1( port )             outpw( (port)+IOP_REG_DC1, data )
+mdefine_line|#define AscWriteChipDC1(port)             outpw((port)+IOP_REG_DC1, data)
 DECL|macro|AscReadChipDvcID
-mdefine_line|#define AscReadChipDvcID( port )            ( uchar )inp( (port)+IOP_REG_ID )
+mdefine_line|#define AscReadChipDvcID(port)            (uchar)inp((port)+IOP_REG_ID)
 DECL|macro|AscWriteChipDvcID
-mdefine_line|#define AscWriteChipDvcID( port, data )     outp( (port)+IOP_REG_ID, data )
+mdefine_line|#define AscWriteChipDvcID(port, data)     outp((port)+IOP_REG_ID, data)
+id|STATIC
 r_int
 id|AscWriteEEPCmdReg
 c_func
@@ -3519,6 +3527,7 @@ id|uchar
 id|cmd_reg
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscWriteEEPDataReg
 c_func
@@ -3530,6 +3539,7 @@ id|ushort
 id|data_reg
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscWaitEEPRead
 c_func
@@ -3537,6 +3547,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscWaitEEPWrite
 c_func
@@ -3544,6 +3555,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscReadEEPWord
 c_func
@@ -3553,6 +3565,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscWriteEEPWord
 c_func
@@ -3564,6 +3577,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscGetEEPConfig
 c_func
@@ -3571,12 +3585,12 @@ c_func
 id|PortAddr
 comma
 id|ASCEEP_CONFIG
-id|dosfar
 op_star
 comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscSetEEPConfigOnce
 c_func
@@ -3584,12 +3598,12 @@ c_func
 id|PortAddr
 comma
 id|ASCEEP_CONFIG
-id|dosfar
 op_star
 comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscSetEEPConfig
 c_func
@@ -3597,23 +3611,12 @@ c_func
 id|PortAddr
 comma
 id|ASCEEP_CONFIG
-id|dosfar
 op_star
 comma
 id|ushort
 )paren
 suffix:semicolon
-id|ushort
-id|AscEEPSum
-c_func
-(paren
-id|PortAddr
-comma
-id|uchar
-comma
-id|uchar
-)paren
-suffix:semicolon
+id|STATIC
 r_int
 id|AscStartChip
 c_func
@@ -3621,6 +3624,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscStopChip
 c_func
@@ -3628,6 +3632,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscSetChipIH
 c_func
@@ -3637,6 +3642,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscIsChipHalted
 c_func
@@ -3644,36 +3650,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
-r_void
-id|AscResetScsiBus
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
-r_int
-id|AscResetChip
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
-r_void
-id|AscSetChipCfgDword
-c_func
-(paren
-id|PortAddr
-comma
-id|ulong
-)paren
-suffix:semicolon
-id|ulong
-id|AscGetChipCfgDword
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
+id|STATIC
 r_void
 id|AscAckInterrupt
 c_func
@@ -3681,6 +3658,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscDisableInterrupt
 c_func
@@ -3688,6 +3666,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscEnableInterrupt
 c_func
@@ -3695,6 +3674,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscSetBank
 c_func
@@ -3704,13 +3684,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
-id|uchar
-id|AscGetBank
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
+id|STATIC
 r_int
 id|AscResetChipAndScsiBus
 c_func
@@ -3718,6 +3692,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscGetIsaDmaChannel
 c_func
@@ -3725,6 +3700,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscSetIsaDmaChannel
 c_func
@@ -3734,6 +3710,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscSetIsaDmaSpeed
 c_func
@@ -3743,6 +3720,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscGetIsaDmaSpeed
 c_func
@@ -3750,6 +3728,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscReadLramByte
 c_func
@@ -3759,6 +3738,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscReadLramWord
 c_func
@@ -3768,6 +3748,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 id|ulong
 id|AscReadLramDWord
 c_func
@@ -3777,6 +3758,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscWriteLramWord
 c_func
@@ -3788,6 +3770,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscWriteLramDWord
 c_func
@@ -3799,6 +3782,7 @@ comma
 id|ulong
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscWriteLramByte
 c_func
@@ -3810,39 +3794,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
-r_int
-id|AscVerWriteLramDWord
-c_func
-(paren
-id|PortAddr
-comma
-id|ushort
-comma
-id|ulong
-)paren
-suffix:semicolon
-r_int
-id|AscVerWriteLramWord
-c_func
-(paren
-id|PortAddr
-comma
-id|ushort
-comma
-id|ushort
-)paren
-suffix:semicolon
-r_int
-id|AscVerWriteLramByte
-c_func
-(paren
-id|PortAddr
-comma
-id|ushort
-comma
-id|uchar
-)paren
-suffix:semicolon
+id|STATIC
 id|ulong
 id|AscMemSumLramWord
 c_func
@@ -3854,6 +3806,7 @@ comma
 id|rint
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscMemWordSetLram
 c_func
@@ -3867,6 +3820,7 @@ comma
 id|rint
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscMemWordCopyToLram
 c_func
@@ -3876,12 +3830,12 @@ comma
 id|ushort
 comma
 id|ushort
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscMemDWordCopyToLram
 c_func
@@ -3891,12 +3845,12 @@ comma
 id|ushort
 comma
 id|ulong
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscMemWordCopyFromLram
 c_func
@@ -3906,27 +3860,12 @@ comma
 id|ushort
 comma
 id|ushort
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
-r_int
-id|AscMemWordCmpToLram
-c_func
-(paren
-id|PortAddr
-comma
-id|ushort
-comma
-id|ushort
-id|dosfar
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
+id|STATIC
 id|ushort
 id|AscInitAscDvcVar
 c_func
@@ -3936,6 +3875,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscInitFromEEP
 c_func
@@ -3945,15 +3885,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
-id|ushort
-id|AscInitWithoutEEP
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-)paren
-suffix:semicolon
+id|STATIC
 id|ushort
 id|AscInitFromAscDvcVar
 c_func
@@ -3963,6 +3895,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscInitMicroCodeVar
 c_func
@@ -3973,8 +3906,8 @@ op_star
 id|asc_dvc
 )paren
 suffix:semicolon
+id|STATIC
 r_void
-id|dosfar
 id|AscInitPollIsrCallBack
 c_func
 (paren
@@ -3983,10 +3916,10 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscTestExternalLram
 c_func
@@ -3996,13 +3929,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
-id|ushort
-id|AscTestLramEndian
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
+id|STATIC
 id|uchar
 id|AscMsgOutSDTR
 c_func
@@ -4016,6 +3943,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscCalSDTRData
 c_func
@@ -4029,6 +3957,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscSetChipSDTR
 c_func
@@ -4040,17 +3969,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
-r_int
-id|AscInitChipAllSynReg
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|uchar
-)paren
-suffix:semicolon
+id|STATIC
 id|uchar
 id|AscGetSynPeriodIndex
 c_func
@@ -4062,6 +3981,7 @@ comma
 id|ruchar
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscAllocFreeQueue
 c_func
@@ -4071,6 +3991,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscAllocMultipleFreeQueue
 c_func
@@ -4082,6 +4003,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscRiscHaltedAbortSRB
 c_func
@@ -4093,6 +4015,8 @@ comma
 id|ulong
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|STATIC
 r_int
 id|AscRiscHaltedAbortTIX
 c_func
@@ -4104,15 +4028,8 @@ comma
 id|uchar
 )paren
 suffix:semicolon
-r_int
-id|AscRiscHaltedAbortALL
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-)paren
-suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|STATIC
 r_int
 id|AscHostReqRiscHalt
 c_func
@@ -4120,6 +4037,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscStopQueueExe
 c_func
@@ -4127,6 +4045,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscStartQueueExe
 c_func
@@ -4134,6 +4053,8 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|STATIC
 r_int
 id|AscCleanUpDiscQueue
 c_func
@@ -4141,6 +4062,8 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|STATIC
 r_int
 id|AscCleanUpBusyQueue
 c_func
@@ -4148,36 +4071,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
-r_int
-id|_AscAbortTidBusyQueue
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_QDONE_INFO
-id|dosfar
-op_star
-comma
-id|uchar
-)paren
-suffix:semicolon
-r_int
-id|_AscAbortSrbBusyQueue
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_QDONE_INFO
-id|dosfar
-op_star
-comma
-id|ulong
-)paren
-suffix:semicolon
+id|STATIC
 r_int
 id|AscWaitTixISRDone
 c_func
@@ -4189,6 +4083,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscWaitISRDone
 c_func
@@ -4198,6 +4093,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 id|ulong
 id|AscGetOnePhyAddr
 c_func
@@ -4207,12 +4103,12 @@ id|asc_ptr_type
 op_star
 comma
 id|uchar
-id|dosfar
 op_star
 comma
 id|ulong
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscSendScsiQueue
 c_func
@@ -4223,7 +4119,6 @@ op_star
 id|asc_dvc
 comma
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 id|scsiq
 comma
@@ -4231,6 +4126,7 @@ id|uchar
 id|n_q_required
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscPutReadyQueue
 c_func
@@ -4240,12 +4136,12 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscPutReadySgListQueue
 c_func
@@ -4255,38 +4151,12 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 comma
 id|uchar
 )paren
 suffix:semicolon
-r_int
-id|AscAbortScsiIO
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_void
-id|AscExeScsiIO
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-suffix:semicolon
+id|STATIC
 r_int
 id|AscSetChipSynRegAtID
 c_func
@@ -4298,6 +4168,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscSetRunChipSynRegAtID
 c_func
@@ -4309,6 +4180,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscInitLram
 c_func
@@ -4318,6 +4190,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscReInitLram
 c_func
@@ -4327,6 +4200,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscInitQLinkVar
 c_func
@@ -4336,6 +4210,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscSetLibErrorCode
 c_func
@@ -4347,6 +4222,8 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|STATIC
 r_int
 id|_AscWaitQDone
 c_func
@@ -4354,24 +4231,11 @@ c_func
 id|PortAddr
 comma
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 )paren
 suffix:semicolon
-r_int
-id|AscEnterCritical
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|AscLeaveCritical
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|STATIC
 r_int
 id|AscIsrChipHalted
 c_func
@@ -4381,6 +4245,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|_AscCopyLramScsiDoneQ
 c_func
@@ -4390,12 +4255,12 @@ comma
 id|ushort
 comma
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 comma
 id|ulong
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscIsrQDone
 c_func
@@ -4405,17 +4270,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
-id|ushort
-id|AscIsrExeBusyQueue
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|uchar
-)paren
-suffix:semicolon
+id|STATIC
 r_int
 id|AscScsiSetupCmdQ
 c_func
@@ -4425,16 +4280,15 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 comma
 id|uchar
-id|dosfar
 op_star
 comma
 id|ulong
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscScsiInquiry
 c_func
@@ -4444,16 +4298,15 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 comma
 id|uchar
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscScsiTestUnitReady
 c_func
@@ -4463,10 +4316,10 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscScsiStartStopUnit
 c_func
@@ -4476,12 +4329,12 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscScsiReadCapacity
 c_func
@@ -4491,25 +4344,23 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 comma
 id|uchar
-id|dosfar
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 id|ulong
-id|dosfar
 op_star
 id|swapfarbuf4
 c_func
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|PollQueueDone
 c_func
@@ -4519,12 +4370,12 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|PollScsiReadCapacity
 c_func
@@ -4534,14 +4385,13 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 comma
 id|ASC_CAP_INFO
-id|dosfar
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|PollScsiInquiry
 c_func
@@ -4551,16 +4401,15 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 comma
 id|uchar
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|PollScsiTestUnitReady
 c_func
@@ -4570,10 +4419,10 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|PollScsiStartUnit
 c_func
@@ -4583,10 +4432,10 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|InitTestUnitReady
 c_func
@@ -4596,23 +4445,10 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 suffix:semicolon
-r_void
-id|AscDispInquiry
-c_func
-(paren
-id|uchar
-comma
-id|uchar
-comma
-id|ASC_SCSI_INQUIRY
-id|dosfar
-op_star
-)paren
-suffix:semicolon
+id|STATIC
 r_int
 id|AscPollQDone
 c_func
@@ -4622,12 +4458,12 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscCompareString
 c_func
@@ -4641,44 +4477,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-r_int
-id|AscSetBIOSBank
-c_func
-(paren
-id|PortAddr
-comma
-r_int
-comma
-id|ushort
-)paren
-suffix:semicolon
-r_int
-id|AscSetVlBIOSBank
-c_func
-(paren
-id|PortAddr
-comma
-r_int
-)paren
-suffix:semicolon
-r_int
-id|AscSetEisaBIOSBank
-c_func
-(paren
-id|PortAddr
-comma
-r_int
-)paren
-suffix:semicolon
-r_int
-id|AscSetIsaBIOSBank
-c_func
-(paren
-id|PortAddr
-comma
-r_int
-)paren
-suffix:semicolon
+id|STATIC
 id|ushort
 id|AscGetEisaChipCfg
 c_func
@@ -4686,31 +4485,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
-id|ushort
-id|AscGetEisaChipGpReg
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
-id|ushort
-id|AscSetEisaChipCfg
-c_func
-(paren
-id|PortAddr
-comma
-id|ushort
-)paren
-suffix:semicolon
-id|ushort
-id|AscSetEisaChipGpReg
-c_func
-(paren
-id|PortAddr
-comma
-id|ushort
-)paren
-suffix:semicolon
+id|STATIC
 id|ulong
 id|AscGetEisaProductID
 c_func
@@ -4718,6 +4493,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 id|PortAddr
 id|AscSearchIOPortAddrEISA
 c_func
@@ -4725,13 +4501,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
-r_void
-id|AscClrResetScsiBus
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
+id|STATIC
 id|uchar
 id|AscGetChipScsiCtrl
 c_func
@@ -4739,6 +4509,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscSetChipScsiID
 c_func
@@ -4748,6 +4519,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscGetChipVersion
 c_func
@@ -4757,6 +4529,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscGetChipBusType
 c_func
@@ -4764,6 +4537,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 id|ulong
 id|AscLoadMicroCode
 c_func
@@ -4773,12 +4547,12 @@ comma
 id|ushort
 comma
 id|ushort
-id|dosfar
 op_star
 comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscFindSignature
 c_func
@@ -4786,6 +4560,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 id|PortAddr
 id|AscSearchIOPortAddr11
 c_func
@@ -4793,13 +4568,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
-id|PortAddr
-id|AscSearchIOPortAddr100
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
+id|STATIC
 r_void
 id|AscToggleIRQAct
 c_func
@@ -4807,130 +4576,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
-r_void
-id|AscClrResetChip
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
-r_int
-id|itos
-c_func
-(paren
-id|ushort
-comma
-id|uchar
-id|dosfar
-op_star
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_int
-id|insnchar
-c_func
-(paren
-id|uchar
-id|dosfar
-op_star
-comma
-r_int
-comma
-r_int
-comma
-id|ruchar
-comma
-r_int
-)paren
-suffix:semicolon
-r_void
-id|itoh
-c_func
-(paren
-id|ushort
-comma
-id|ruchar
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_void
-id|btoh
-c_func
-(paren
-id|uchar
-comma
-id|ruchar
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_void
-id|ltoh
-c_func
-(paren
-id|ulong
-comma
-id|ruchar
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-id|uchar
-id|dosfar
-op_star
-id|todstr
-c_func
-(paren
-id|ushort
-comma
-id|uchar
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-id|uchar
-id|dosfar
-op_star
-id|tohstr
-c_func
-(paren
-id|ushort
-comma
-id|uchar
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-id|uchar
-id|dosfar
-op_star
-id|tobhstr
-c_func
-(paren
-id|uchar
-comma
-id|uchar
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-id|uchar
-id|dosfar
-op_star
-id|tolhstr
-c_func
-(paren
-id|ulong
-comma
-id|uchar
-id|dosfar
-op_star
-)paren
-suffix:semicolon
+id|STATIC
 r_void
 id|AscSetISAPNPWaitForKey
 c_func
@@ -4938,6 +4584,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscGetChipIRQ
 c_func
@@ -4947,6 +4594,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 id|uchar
 id|AscSetChipIRQ
 c_func
@@ -4958,24 +4606,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
-r_int
-id|AscIsBiosEnabled
-c_func
-(paren
-id|PortAddr
-comma
-id|ushort
-)paren
-suffix:semicolon
-r_int
-id|AscEnableBios
-c_func
-(paren
-id|PortAddr
-comma
-id|ushort
-)paren
-suffix:semicolon
+id|STATIC
 id|ushort
 id|AscGetChipBiosAddress
 c_func
@@ -4985,117 +4616,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
-id|ushort
-id|AscSetChipBiosAddress
-c_func
-(paren
-id|PortAddr
-comma
-id|ushort
-comma
-id|ushort
-)paren
-suffix:semicolon
-r_void
-id|AscSingleStepChip
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
-r_int
-id|AscPollQTailSync
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
-r_int
-id|AscPollQHeadSync
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
-r_int
-id|AscWaitQTailSync
-c_func
-(paren
-id|PortAddr
-)paren
-suffix:semicolon
-r_int
-id|_AscRestoreMicroCode
-c_func
-(paren
-id|PortAddr
-comma
-id|ASC_MC_SAVED
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_int
-id|AscSCAM
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-)paren
-suffix:semicolon
-id|ushort
-id|SwapByteOfWord
-c_func
-(paren
-id|ushort
-id|word_val
-)paren
-suffix:semicolon
-id|ulong
-id|SwapWordOfDWord
-c_func
-(paren
-id|ulong
-id|dword_val
-)paren
-suffix:semicolon
-id|ulong
-id|AdjEndianDword
-c_func
-(paren
-id|ulong
-id|dword_val
-)paren
-suffix:semicolon
-r_int
-id|AscAdjEndianScsiQ
-c_func
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_int
-id|AscAdjEndianQDoneInfo
-c_func
-(paren
-id|ASC_QDONE_INFO
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_int
-id|AscCoalesceSgList
-c_func
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_extern
+id|STATIC
 r_int
 id|DvcEnterCritical
 c_func
@@ -5103,7 +4624,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
+id|STATIC
 r_void
 id|DvcLeaveCritical
 c_func
@@ -5111,37 +4632,7 @@ c_func
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|DvcSetMemory
-c_func
-(paren
-id|uchar
-id|dosfar
-op_star
-comma
-id|uint
-comma
-id|uchar
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|DvcCopyMemory
-c_func
-(paren
-id|uchar
-id|dosfar
-op_star
-comma
-id|uchar
-id|dosfar
-op_star
-comma
-id|uint
-)paren
-suffix:semicolon
-r_extern
+id|STATIC
 r_void
 id|DvcInPortWords
 c_func
@@ -5149,13 +4640,12 @@ c_func
 id|PortAddr
 comma
 id|ushort
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
-r_extern
+id|STATIC
 r_void
 id|DvcOutPortWords
 c_func
@@ -5163,13 +4653,12 @@ c_func
 id|PortAddr
 comma
 id|ushort
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
-r_extern
+id|STATIC
 r_void
 id|DvcOutPortDWords
 c_func
@@ -5177,13 +4666,12 @@ c_func
 id|PortAddr
 comma
 id|ulong
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
-r_extern
+id|STATIC
 id|uchar
 id|DvcReadPCIConfigByte
 c_func
@@ -5195,7 +4683,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
-r_extern
+id|STATIC
 r_void
 id|DvcWritePCIConfigByte
 c_func
@@ -5209,6 +4697,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscGetChipBiosAddress
 c_func
@@ -5218,7 +4707,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
-r_extern
+id|STATIC
 r_void
 id|DvcSleepMilliSecond
 c_func
@@ -5226,7 +4715,7 @@ c_func
 id|ulong
 )paren
 suffix:semicolon
-r_extern
+id|STATIC
 r_void
 id|DvcDelayNanoSecond
 c_func
@@ -5238,31 +4727,7 @@ comma
 id|ulong
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|DvcDisplayString
-c_func
-(paren
-id|uchar
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_extern
-id|ulong
-id|DvcGetPhyAddr
-c_func
-(paren
-id|uchar
-id|dosfar
-op_star
-id|buf_addr
-comma
-id|ulong
-id|buf_len
-)paren
-suffix:semicolon
-r_extern
+id|STATIC
 id|ulong
 id|DvcGetSGList
 c_func
@@ -5272,40 +4737,15 @@ id|asc_ptr_type
 op_star
 comma
 id|uchar
-id|dosfar
 op_star
 comma
 id|ulong
 comma
 id|ASC_SG_HEAD
-id|dosfar
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|DvcSCAMDelayMS
-c_func
-(paren
-id|ulong
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|DvcDisableCPUInterrupt
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|DvcRestoreCPUInterrupt
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
+id|STATIC
 r_void
 id|DvcPutScsiQ
 c_func
@@ -5315,12 +4755,12 @@ comma
 id|ushort
 comma
 id|ushort
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|DvcGetQinfo
 c_func
@@ -5330,12 +4770,12 @@ comma
 id|ushort
 comma
 id|ushort
-id|dosfar
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 id|PortAddr
 id|AscSearchIOPortAddr
 c_func
@@ -5345,6 +4785,7 @@ comma
 id|ushort
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscInitGetConfig
 c_func
@@ -5354,6 +4795,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscInitSetConfig
 c_func
@@ -5363,6 +4805,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscInitAsc1000Driver
 c_func
@@ -5372,29 +4815,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
-r_int
-id|AscInitScsiTarget
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_DVC_INQ_INFO
-id|dosfar
-op_star
-comma
-id|uchar
-id|dosfar
-op_star
-comma
-id|ASC_CAP_INFO_ARRAY
-id|dosfar
-op_star
-comma
-id|ushort
-)paren
-suffix:semicolon
+id|STATIC
 r_int
 id|AscInitPollBegin
 c_func
@@ -5404,6 +4825,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscInitPollEnd
 c_func
@@ -5413,6 +4835,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscInitPollTarget
 c_func
@@ -5422,18 +4845,16 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 comma
 id|ASC_SCSI_INQUIRY
-id|dosfar
 op_star
 comma
 id|ASC_CAP_INFO
-id|dosfar
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscExeScsiQueue
 c_func
@@ -5443,10 +4864,10 @@ id|asc_ptr_type
 op_star
 comma
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscISR
 c_func
@@ -5456,56 +4877,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
-r_void
-id|AscISR_AckInterrupt
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-)paren
-suffix:semicolon
-r_int
-id|AscISR_CheckQDone
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_QDONE_INFO
-id|dosfar
-op_star
-comma
-id|uchar
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_int
-id|AscStartUnit
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_SCSI_TIX_TYPE
-)paren
-suffix:semicolon
-r_int
-id|AscStopUnit
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-id|asc_dvc
-comma
-id|ASC_SCSI_TIX_TYPE
-id|target_ix
-)paren
-suffix:semicolon
+id|STATIC
 id|uint
 id|AscGetNumOfFreeQueue
 c_func
@@ -5519,6 +4891,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|AscSgListToQueue
 c_func
@@ -5526,24 +4899,7 @@ c_func
 r_int
 )paren
 suffix:semicolon
-r_int
-id|AscQueueToSgList
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
-r_int
-id|AscSetDvcErrorCode
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|uchar
-)paren
-suffix:semicolon
+id|STATIC
 r_int
 id|AscAbortSRB
 c_func
@@ -5555,6 +4911,8 @@ comma
 id|ulong
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|STATIC
 r_int
 id|AscResetDevice
 c_func
@@ -5566,6 +4924,8 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|STATIC
 r_int
 id|AscResetSB
 c_func
@@ -5575,6 +4935,7 @@ id|asc_ptr_type
 op_star
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|AscEnableIsaDma
 c_func
@@ -5582,20 +4943,7 @@ c_func
 id|uchar
 )paren
 suffix:semicolon
-r_void
-id|AscDisableIsaDma
-c_func
-(paren
-id|uchar
-)paren
-suffix:semicolon
-id|ulong
-id|AscGetMaxDmaAddress
-c_func
-(paren
-id|ushort
-)paren
-suffix:semicolon
+id|STATIC
 id|ulong
 id|AscGetMaxDmaCount
 c_func
@@ -5603,99 +4951,68 @@ c_func
 id|ushort
 )paren
 suffix:semicolon
-r_int
-id|AscSaveMicroCode
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_MC_SAVED
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_int
-id|AscRestoreOldMicroCode
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_MC_SAVED
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-r_int
-id|AscRestoreNewMicroCode
-c_func
-(paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-comma
-id|ASC_MC_SAVED
-id|dosfar
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * --- Debugging Header&n; */
-macro_line|#ifdef ADVANSYS_DEBUG
-DECL|macro|STATIC
-mdefine_line|#define STATIC
-macro_line|#else /* ADVANSYS_DEBUG */
-DECL|macro|STATIC
-mdefine_line|#define STATIC static
-macro_line|#endif /* ADVANSYS_DEBUG */
 multiline_comment|/*&n; * --- Driver Constants and Macros&n; */
 DECL|macro|ASC_NUM_BOARD_SUPPORTED
 mdefine_line|#define ASC_NUM_BOARD_SUPPORTED 4
 DECL|macro|ASC_NUM_BUS
-mdefine_line|#define ASC_NUM_BUS&t;&t;&t;&t;4
+mdefine_line|#define ASC_NUM_BUS             4
 multiline_comment|/* Reference Scsi_Host hostdata */
 DECL|macro|ASC_BOARDP
 mdefine_line|#define ASC_BOARDP(host) ((asc_board_t *) &amp;((host)-&gt;hostdata))
 multiline_comment|/* asc_board_t flags */
 DECL|macro|ASC_HOST_IN_RESET
-mdefine_line|#define ASC_HOST_IN_RESET&t;&t;0x01
+mdefine_line|#define ASC_HOST_IN_RESET       0x01
 DECL|macro|ASC_HOST_IN_ABORT
-mdefine_line|#define ASC_HOST_IN_ABORT&t;&t;0x02
+mdefine_line|#define ASC_HOST_IN_ABORT       0x02
 DECL|macro|NO_ISA_DMA
-mdefine_line|#define NO_ISA_DMA&t;&t;&t;&t;0xff&t;&t;/* No ISA DMA Channel Used */
+mdefine_line|#define NO_ISA_DMA              0xff        /* No ISA DMA Channel Used */
+multiline_comment|/*&n; * If the Linux kernel version supports throwing away initialization code&n; * and data after loading, define macros for this purpose. These macros&n; * are not used when the driver is built as a module, cf. linux/init.h.&n; */
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(2,1,23)
+DECL|macro|ASC_INITFUNC
+mdefine_line|#define ASC_INITFUNC(func)      __initfunc(func)
+DECL|macro|ASC_INITDATA
+mdefine_line|#define ASC_INITDATA            __initdata
+DECL|macro|ASC_INIT
+mdefine_line|#define ASC_INIT                __init
+macro_line|#else /* version &gt;= v2.1.23 */
+DECL|macro|ASC_INITFUNC
+mdefine_line|#define ASC_INITFUNC(func)      func
+DECL|macro|ASC_INITDATA
+mdefine_line|#define ASC_INITDATA
+DECL|macro|ASC_INIT
+mdefine_line|#define ASC_INIT
+macro_line|#endif /* version &gt;= v2.1.23 */
 DECL|macro|ASC_INFO_SIZE
-mdefine_line|#define ASC_INFO_SIZE&t;&t;&t;128&t;&t;&t;/* advansys_info() line size */
+mdefine_line|#define ASC_INFO_SIZE           128            /* advansys_info() line size */
 multiline_comment|/* /proc/scsi/advansys/[0...] related definitions */
 DECL|macro|ASC_PRTBUF_SIZE
-mdefine_line|#define ASC_PRTBUF_SIZE&t;&t;&t;2048
+mdefine_line|#define ASC_PRTBUF_SIZE         2048
 DECL|macro|ASC_PRTLINE_SIZE
-mdefine_line|#define ASC_PRTLINE_SIZE&t;&t;160
+mdefine_line|#define ASC_PRTLINE_SIZE        160
 DECL|macro|ASC_PRT_NEXT
-mdefine_line|#define ASC_PRT_NEXT() &bslash;&n;&t;if (cp) { &bslash;&n;&t;&t;totlen += len; &bslash;&n;&t;&t;leftlen -= len; &bslash;&n;&t;&t;if (leftlen == 0) { &bslash;&n;&t;&t;&t;return totlen; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;cp += len; &bslash;&n;&t;}
+mdefine_line|#define ASC_PRT_NEXT() &bslash;&n;    if (cp) { &bslash;&n;        totlen += len; &bslash;&n;        leftlen -= len; &bslash;&n;        if (leftlen == 0) { &bslash;&n;            return totlen; &bslash;&n;        } &bslash;&n;        cp += len; &bslash;&n;    }
 DECL|macro|ASC_MIN
 mdefine_line|#define ASC_MIN(a, b) (((a) &lt; (b)) ? (a) : (b))
 multiline_comment|/* Asc Library return codes */
 DECL|macro|ASC_TRUE
-mdefine_line|#define ASC_TRUE&t;&t;1
+mdefine_line|#define ASC_TRUE        1
 DECL|macro|ASC_FALSE
-mdefine_line|#define ASC_FALSE&t;&t;0
+mdefine_line|#define ASC_FALSE       0
 DECL|macro|ASC_NOERROR
-mdefine_line|#define ASC_NOERROR&t;&t;1
+mdefine_line|#define ASC_NOERROR     1
 DECL|macro|ASC_BUSY
-mdefine_line|#define ASC_BUSY&t;&t;0
+mdefine_line|#define ASC_BUSY        0
 DECL|macro|ASC_ERROR
-mdefine_line|#define ASC_ERROR&t;&t;(-1)
+mdefine_line|#define ASC_ERROR       (-1)
 multiline_comment|/* Scsi_Cmnd function return codes */
 DECL|macro|STATUS_BYTE
-mdefine_line|#define STATUS_BYTE(byte)&t;(byte)
+mdefine_line|#define STATUS_BYTE(byte)   (byte)
 DECL|macro|MSG_BYTE
-mdefine_line|#define MSG_BYTE(byte)&t;&t;((byte) &lt;&lt; 8)
+mdefine_line|#define MSG_BYTE(byte)      ((byte) &lt;&lt; 8)
 DECL|macro|HOST_BYTE
-mdefine_line|#define HOST_BYTE(byte)&t;&t;((byte) &lt;&lt; 16)
+mdefine_line|#define HOST_BYTE(byte)     ((byte) &lt;&lt; 16)
 DECL|macro|DRIVER_BYTE
-mdefine_line|#define DRIVER_BYTE(byte)&t;((byte) &lt;&lt; 24)
+mdefine_line|#define DRIVER_BYTE(byte)   ((byte) &lt;&lt; 24)
 multiline_comment|/*&n; * The following definitions and macros are OS independent interfaces to&n; * the queue functions:&n; *  REQ - SCSI request structure&n; *  REQP - pointer to SCSI request structure&n; *  REQPTID(reqp) - reqp&squot;s target id&n; *  REQPNEXT(reqp) - reqp&squot;s next pointer&n; *  REQPNEXTP(reqp) - pointer to reqp&squot;s next pointer&n; *  REQPTIME(reqp) - reqp&squot;s time stamp value&n; *  REQTIMESTAMP() - system time stamp value&n; */
 DECL|typedef|REQ
 DECL|typedef|REQP
@@ -5707,138 +5024,138 @@ op_star
 id|REQP
 suffix:semicolon
 DECL|macro|REQPNEXT
-mdefine_line|#define REQPNEXT(reqp)&t;&t;((REQP) ((reqp)-&gt;host_scribble))
+mdefine_line|#define REQPNEXT(reqp)        ((REQP) ((reqp)-&gt;host_scribble))
 DECL|macro|REQPNEXTP
-mdefine_line|#define REQPNEXTP(reqp)&t;&t;((REQP *) &amp;((reqp)-&gt;host_scribble))
+mdefine_line|#define REQPNEXTP(reqp)        ((REQP *) &amp;((reqp)-&gt;host_scribble))
 DECL|macro|REQPTID
-mdefine_line|#define REQPTID(reqp)&t;&t;((reqp)-&gt;target)
+mdefine_line|#define REQPTID(reqp)        ((reqp)-&gt;target)
 DECL|macro|REQPTIME
-mdefine_line|#define REQPTIME(reqp)&t;&t;((reqp)-&gt;SCp.this_residual)
+mdefine_line|#define REQPTIME(reqp)        ((reqp)-&gt;SCp.this_residual)
 DECL|macro|REQTIMESTAMP
-mdefine_line|#define REQTIMESTAMP()&t;&t;(jiffies)
+mdefine_line|#define REQTIMESTAMP()        (jiffies)
 DECL|macro|REQTIMESTAT
-mdefine_line|#define REQTIMESTAT(function, ascq, reqp, tid) &bslash;&n;{ &bslash;&n;&t;/*&n;&t; * If the request time stamp is less than the system time stamp, then &bslash;&n;&t; * maybe the system time stamp wrapped. Set the request time to zero.&bslash;&n;&t; */ &bslash;&n;&t;if (REQPTIME(reqp) &lt;= REQTIMESTAMP()) { &bslash;&n;&t;&t;REQPTIME(reqp) = REQTIMESTAMP() - REQPTIME(reqp); &bslash;&n;&t;} else { &bslash;&n;&t;&t;/* Indicate an error occurred with the assertion. */ &bslash;&n;&t;&t;ASC_ASSERT(REQPTIME(reqp) &lt;= REQTIMESTAMP()); &bslash;&n;&t;&t;REQPTIME(reqp) = 0; &bslash;&n;&t;} &bslash;&n;&t;/* Handle first minimum time case without external initialization. */ &bslash;&n;&t;if (((ascq)-&gt;q_tot_cnt[tid] == 1) ||  &bslash;&n;&t;&t;(REQPTIME(reqp) &lt; (ascq)-&gt;q_min_tim[tid])) { &bslash;&n;&t;&t;&t;(ascq)-&gt;q_min_tim[tid] = REQPTIME(reqp); &bslash;&n;&t;&t;&t;ASC_DBG3(1, &quot;%s: new q_min_tim[%d] %u&bslash;n&quot;, &bslash;&n;&t;&t;&t;&t;(function), (tid), (ascq)-&gt;q_min_tim[tid]); &bslash;&n;&t;&t;} &bslash;&n;&t;if (REQPTIME(reqp) &gt; (ascq)-&gt;q_max_tim[tid]) { &bslash;&n;&t;&t;(ascq)-&gt;q_max_tim[tid] = REQPTIME(reqp); &bslash;&n;&t;&t;ASC_DBG3(1, &quot;%s: new q_max_tim[%d] %u&bslash;n&quot;, &bslash;&n;&t;&t;&t;(function), tid, (ascq)-&gt;q_max_tim[tid]); &bslash;&n;&t;} &bslash;&n;&t;(ascq)-&gt;q_tot_tim[tid] += REQPTIME(reqp); &bslash;&n;&t;/* Reset the time stamp field. */ &bslash;&n;&t;REQPTIME(reqp) = 0; &bslash;&n;}
+mdefine_line|#define REQTIMESTAT(function, ascq, reqp, tid) &bslash;&n;{ &bslash;&n;    /*&n;     * If the request time stamp is less than the system time stamp, then &bslash;&n;     * maybe the system time stamp wrapped. Set the request time to zero.&bslash;&n;     */ &bslash;&n;    if (REQPTIME(reqp) &lt;= REQTIMESTAMP()) { &bslash;&n;        REQPTIME(reqp) = REQTIMESTAMP() - REQPTIME(reqp); &bslash;&n;    } else { &bslash;&n;        /* Indicate an error occurred with the assertion. */ &bslash;&n;        ASC_ASSERT(REQPTIME(reqp) &lt;= REQTIMESTAMP()); &bslash;&n;        REQPTIME(reqp) = 0; &bslash;&n;    } &bslash;&n;    /* Handle first minimum time case without external initialization. */ &bslash;&n;    if (((ascq)-&gt;q_tot_cnt[tid] == 1) ||  &bslash;&n;        (REQPTIME(reqp) &lt; (ascq)-&gt;q_min_tim[tid])) { &bslash;&n;            (ascq)-&gt;q_min_tim[tid] = REQPTIME(reqp); &bslash;&n;            ASC_DBG3(1, &quot;%s: new q_min_tim[%d] %u&bslash;n&quot;, &bslash;&n;                (function), (tid), (ascq)-&gt;q_min_tim[tid]); &bslash;&n;        } &bslash;&n;    if (REQPTIME(reqp) &gt; (ascq)-&gt;q_max_tim[tid]) { &bslash;&n;        (ascq)-&gt;q_max_tim[tid] = REQPTIME(reqp); &bslash;&n;        ASC_DBG3(1, &quot;%s: new q_max_tim[%d] %u&bslash;n&quot;, &bslash;&n;            (function), tid, (ascq)-&gt;q_max_tim[tid]); &bslash;&n;    } &bslash;&n;    (ascq)-&gt;q_tot_tim[tid] += REQPTIME(reqp); &bslash;&n;    /* Reset the time stamp field. */ &bslash;&n;    REQPTIME(reqp) = 0; &bslash;&n;}
 multiline_comment|/* asc_enqueue() flags */
 DECL|macro|ASC_FRONT
-mdefine_line|#define ASC_FRONT&t;&t;1
+mdefine_line|#define ASC_FRONT        1
 DECL|macro|ASC_BACK
-mdefine_line|#define ASC_BACK&t;&t;2
+mdefine_line|#define ASC_BACK        2
 multiline_comment|/* asc_dequeue_list() argument */
 DECL|macro|ASC_TID_ALL
-mdefine_line|#define ASC_TID_ALL&t;&t;(-1)
+mdefine_line|#define ASC_TID_ALL        (-1)
 multiline_comment|/* Return non-zero, if the queue is empty. */
 DECL|macro|ASC_QUEUE_EMPTY
-mdefine_line|#define ASC_QUEUE_EMPTY(ascq)&t;((ascq)-&gt;q_tidmask == 0)
+mdefine_line|#define ASC_QUEUE_EMPTY(ascq)    ((ascq)-&gt;q_tidmask == 0)
 multiline_comment|/* PCI configuration declarations */
 DECL|macro|PCI_BASE_CLASS_PREDEFINED
-mdefine_line|#define PCI_BASE_CLASS_PREDEFINED&t;&t;&t;0x00
+mdefine_line|#define PCI_BASE_CLASS_PREDEFINED               0x00
 DECL|macro|PCI_BASE_CLASS_MASS_STORAGE
-mdefine_line|#define PCI_BASE_CLASS_MASS_STORAGE&t;&t;&t;0x01
+mdefine_line|#define PCI_BASE_CLASS_MASS_STORAGE             0x01
 DECL|macro|PCI_BASE_CLASS_NETWORK
-mdefine_line|#define PCI_BASE_CLASS_NETWORK&t;&t;&t;&t;0x02
+mdefine_line|#define PCI_BASE_CLASS_NETWORK                  0x02
 DECL|macro|PCI_BASE_CLASS_DISPLAY
-mdefine_line|#define PCI_BASE_CLASS_DISPLAY&t;&t;&t;&t;0x03
+mdefine_line|#define PCI_BASE_CLASS_DISPLAY                  0x03
 DECL|macro|PCI_BASE_CLASS_MULTIMEDIA
-mdefine_line|#define PCI_BASE_CLASS_MULTIMEDIA&t;&t;&t;0x04
+mdefine_line|#define PCI_BASE_CLASS_MULTIMEDIA               0x04
 DECL|macro|PCI_BASE_CLASS_MEMORY_CONTROLLER
-mdefine_line|#define PCI_BASE_CLASS_MEMORY_CONTROLLER&t;0x05
+mdefine_line|#define PCI_BASE_CLASS_MEMORY_CONTROLLER        0x05
 DECL|macro|PCI_BASE_CLASS_BRIDGE_DEVICE
-mdefine_line|#define PCI_BASE_CLASS_BRIDGE_DEVICE&t;&t;0x06
+mdefine_line|#define PCI_BASE_CLASS_BRIDGE_DEVICE            0x06
 multiline_comment|/* MASS STORAGE */
 DECL|macro|PCI_SUB_CLASS_SCSI_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_SCSI_CONTROLLER&t;&t;&t;0x00
+mdefine_line|#define PCI_SUB_CLASS_SCSI_CONTROLLER           0x00
 DECL|macro|PCI_SUB_CLASS_IDE_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_IDE_CONTROLLER&t;&t;&t;0x01
+mdefine_line|#define PCI_SUB_CLASS_IDE_CONTROLLER            0x01
 DECL|macro|PCI_SUB_CLASS_FLOPPY_DISK_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_FLOPPY_DISK_CONTROLLER&t;0x02
+mdefine_line|#define PCI_SUB_CLASS_FLOPPY_DISK_CONTROLLER    0x02
 DECL|macro|PCI_SUB_CLASS_IPI_BUS_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_IPI_BUS_CONTROLLER&t;&t;0x03
+mdefine_line|#define PCI_SUB_CLASS_IPI_BUS_CONTROLLER        0x03
 DECL|macro|PCI_SUB_CLASS_OTHER_MASS_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_OTHER_MASS_CONTROLLER&t;&t;0x80
+mdefine_line|#define PCI_SUB_CLASS_OTHER_MASS_CONTROLLER     0x80
 multiline_comment|/* NETWORK CONTROLLER */
 DECL|macro|PCI_SUB_CLASS_ETHERNET_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_ETHERNET_CONTROLLER&t;&t;0x00
+mdefine_line|#define PCI_SUB_CLASS_ETHERNET_CONTROLLER       0x00
 DECL|macro|PCI_SUB_CLASS_TOKEN_RING_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_TOKEN_RING_CONTROLLER&t;&t;0x01
+mdefine_line|#define PCI_SUB_CLASS_TOKEN_RING_CONTROLLER     0x01
 DECL|macro|PCI_SUB_CLASS_FDDI_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_FDDI_CONTROLLER&t;&t;&t;0x02
+mdefine_line|#define PCI_SUB_CLASS_FDDI_CONTROLLER           0x02
 DECL|macro|PCI_SUB_CLASS_OTHER_NETWORK_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_OTHER_NETWORK_CONTROLLER&t;0x80
+mdefine_line|#define PCI_SUB_CLASS_OTHER_NETWORK_CONTROLLER  0x80
 multiline_comment|/* DISPLAY CONTROLLER */
 DECL|macro|PCI_SUB_CLASS_VGA_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_VGA_CONTROLLER&t;&t;&t;0x00
+mdefine_line|#define PCI_SUB_CLASS_VGA_CONTROLLER            0x00
 DECL|macro|PCI_SUB_CLASS_XGA_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_XGA_CONTROLLER&t;&t;&t;0x01
+mdefine_line|#define PCI_SUB_CLASS_XGA_CONTROLLER            0x01
 DECL|macro|PCI_SUB_CLASS_OTHER_DISPLAY_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_OTHER_DISPLAY_CONTROLLER&t;0x80
+mdefine_line|#define PCI_SUB_CLASS_OTHER_DISPLAY_CONTROLLER  0x80
 multiline_comment|/* MULTIMEDIA CONTROLLER */
 DECL|macro|PCI_SUB_CLASS_VIDEO_DEVICE
-mdefine_line|#define PCI_SUB_CLASS_VIDEO_DEVICE&t;&t;&t;&t;0x00
+mdefine_line|#define PCI_SUB_CLASS_VIDEO_DEVICE              0x00
 DECL|macro|PCI_SUB_CLASS_AUDIO_DEVICE
-mdefine_line|#define PCI_SUB_CLASS_AUDIO_DEVICE&t;&t;&t;&t;0x01
+mdefine_line|#define PCI_SUB_CLASS_AUDIO_DEVICE              0x01
 DECL|macro|PCI_SUB_CLASS_OTHER_MULTIMEDIA_DEVICE
-mdefine_line|#define PCI_SUB_CLASS_OTHER_MULTIMEDIA_DEVICE&t;0x80
+mdefine_line|#define PCI_SUB_CLASS_OTHER_MULTIMEDIA_DEVICE   0x80
 multiline_comment|/* MEMORY CONTROLLER */
 DECL|macro|PCI_SUB_CLASS_RAM_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_RAM_CONTROLLER&t;&t;&t;0x00
+mdefine_line|#define PCI_SUB_CLASS_RAM_CONTROLLER            0x00
 DECL|macro|PCI_SUB_CLASS_FLASH_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_FLASH_CONTROLLER&t;&t;&t;0x01
+mdefine_line|#define PCI_SUB_CLASS_FLASH_CONTROLLER          0x01
 DECL|macro|PCI_SUB_CLASS_OTHER_MEMORY_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_OTHER_MEMORY_CONTROLLER&t;0x80
+mdefine_line|#define PCI_SUB_CLASS_OTHER_MEMORY_CONTROLLER   0x80
 multiline_comment|/* BRIDGE CONTROLLER */
 DECL|macro|PCI_SUB_CLASS_HOST_BRIDGE_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_HOST_BRIDGE_CONTROLLER&t;&t;0x00
+mdefine_line|#define PCI_SUB_CLASS_HOST_BRIDGE_CONTROLLER    0x00
 DECL|macro|PCI_SUB_CLASS_ISA_BRIDGE_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_ISA_BRIDGE_CONTROLLER&t;&t;&t;0x01
+mdefine_line|#define PCI_SUB_CLASS_ISA_BRIDGE_CONTROLLER     0x01
 DECL|macro|PCI_SUB_CLASS_EISA_BRIDGE_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_EISA_BRIDGE_CONTROLLER&t;&t;0x02
+mdefine_line|#define PCI_SUB_CLASS_EISA_BRIDGE_CONTROLLER    0x02
 DECL|macro|PCI_SUB_CLASS_MC_BRIDGE_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_MC_BRIDGE_CONTROLLER&t;&t;&t;0x03
+mdefine_line|#define PCI_SUB_CLASS_MC_BRIDGE_CONTROLLER      0x03
 DECL|macro|PCI_SUB_CLASS_PCI_TO_PCI_BRIDGE_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_PCI_TO_PCI_BRIDGE_CONTROLLER&t;0x04
+mdefine_line|#define PCI_SUB_CLASS_PCI_TO_PCI_BRIDGE_CONTROLLER    0x04
 DECL|macro|PCI_SUB_CLASS_PCMCIA_BRIDGE_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_PCMCIA_BRIDGE_CONTROLLER&t;&t;0x05
+mdefine_line|#define PCI_SUB_CLASS_PCMCIA_BRIDGE_CONTROLLER  0x05
 DECL|macro|PCI_SUB_CLASS_OTHER_BRIDGE_CONTROLLER
-mdefine_line|#define PCI_SUB_CLASS_OTHER_BRIDGE_CONTROLLER&t;&t;0x80
+mdefine_line|#define PCI_SUB_CLASS_OTHER_BRIDGE_CONTROLLER   0x80
 DECL|macro|PCI_MAX_SLOT
-mdefine_line|#define PCI_MAX_SLOT&t;&t;&t;0x1F
+mdefine_line|#define PCI_MAX_SLOT            0x1F
 DECL|macro|PCI_MAX_BUS
-mdefine_line|#define PCI_MAX_BUS&t;&t;&t;&t;0xFF
+mdefine_line|#define PCI_MAX_BUS             0xFF
 DECL|macro|PCI_IOADDRESS_MASK
-mdefine_line|#define PCI_IOADDRESS_MASK&t;&t;0xFFFE
+mdefine_line|#define PCI_IOADDRESS_MASK      0xFFFE
 DECL|macro|ASC_PCI_VENDORID
-mdefine_line|#define ASC_PCI_VENDORID&t;&t;0x10CD
+mdefine_line|#define ASC_PCI_VENDORID        0x10CD
 DECL|macro|ASC_PCI_DEVICE_ID_1100
-mdefine_line|#define ASC_PCI_DEVICE_ID_1100&t;0x1100
+mdefine_line|#define ASC_PCI_DEVICE_ID_1100  0x1100
 DECL|macro|ASC_PCI_DEVICE_ID_1200
-mdefine_line|#define ASC_PCI_DEVICE_ID_1200&t;0x1200
+mdefine_line|#define ASC_PCI_DEVICE_ID_1200  0x1200
 DECL|macro|ASC_PCI_DEVICE_ID_1300
-mdefine_line|#define ASC_PCI_DEVICE_ID_1300&t;0x1300
+mdefine_line|#define ASC_PCI_DEVICE_ID_1300  0x1300
 multiline_comment|/* PCI IO Port Addresses to generate special cycle */
 DECL|macro|PCI_CONFIG_ADDRESS_MECH1
-mdefine_line|#define PCI_CONFIG_ADDRESS_MECH1&t;&t;0x0CF8
+mdefine_line|#define PCI_CONFIG_ADDRESS_MECH1          0x0CF8
 DECL|macro|PCI_CONFIG_DATA_MECH1
-mdefine_line|#define PCI_CONFIG_DATA_MECH1&t;&t;&t;0x0CFC
+mdefine_line|#define PCI_CONFIG_DATA_MECH1             0x0CFC
 DECL|macro|PCI_CONFIG_FORWARD_REGISTER
-mdefine_line|#define PCI_CONFIG_FORWARD_REGISTER&t;&t;0x0CFA&t;/* 0=type 0; 1=type 1; */
+mdefine_line|#define PCI_CONFIG_FORWARD_REGISTER       0x0CFA    /* 0=type 0; 1=type 1; */
 DECL|macro|PCI_CONFIG_BUS_NUMBER_MASK
-mdefine_line|#define PCI_CONFIG_BUS_NUMBER_MASK&t;&t;0x00FF0000
+mdefine_line|#define PCI_CONFIG_BUS_NUMBER_MASK        0x00FF0000
 DECL|macro|PCI_CONFIG_DEVICE_FUNCTION_MASK
-mdefine_line|#define PCI_CONFIG_DEVICE_FUNCTION_MASK&t;0x0000FF00
+mdefine_line|#define PCI_CONFIG_DEVICE_FUNCTION_MASK   0x0000FF00
 DECL|macro|PCI_CONFIG_REGISTER_NUMBER_MASK
-mdefine_line|#define PCI_CONFIG_REGISTER_NUMBER_MASK&t;0x000000F8
+mdefine_line|#define PCI_CONFIG_REGISTER_NUMBER_MASK   0x000000F8
 DECL|macro|PCI_DEVICE_FOUND
-mdefine_line|#define PCI_DEVICE_FOUND&t;&t;&t;&t;0x0000
+mdefine_line|#define PCI_DEVICE_FOUND                0x0000
 DECL|macro|PCI_DEVICE_NOT_FOUND
-mdefine_line|#define PCI_DEVICE_NOT_FOUND&t;&t;&t;0xffff
+mdefine_line|#define PCI_DEVICE_NOT_FOUND            0xffff
 DECL|macro|SUBCLASS_OFFSET
-mdefine_line|#define SUBCLASS_OFFSET &t;0x0A
+mdefine_line|#define SUBCLASS_OFFSET         0x0A
 DECL|macro|CLASSCODE_OFFSET
-mdefine_line|#define CLASSCODE_OFFSET&t;0x0B
+mdefine_line|#define CLASSCODE_OFFSET        0x0B
 DECL|macro|VENDORID_OFFSET
-mdefine_line|#define VENDORID_OFFSET&t;&t;0x00
+mdefine_line|#define VENDORID_OFFSET         0x00
 DECL|macro|DEVICEID_OFFSET
-mdefine_line|#define DEVICEID_OFFSET&t;&t;0x02
+mdefine_line|#define DEVICEID_OFFSET         0x02
 macro_line|#ifndef ADVANSYS_STATS
 DECL|macro|ASC_STATS
 mdefine_line|#define ASC_STATS(shp, counter)
@@ -5846,86 +5163,89 @@ DECL|macro|ASC_STATS_ADD
 mdefine_line|#define ASC_STATS_ADD(shp, counter, count)
 macro_line|#else /* ADVANSYS_STATS */
 DECL|macro|ASC_STATS
-mdefine_line|#define ASC_STATS(shp, counter) &bslash;&n;&t;(ASC_BOARDP(shp)-&gt;asc_stats.counter++)
+mdefine_line|#define ASC_STATS(shp, counter) &bslash;&n;    (ASC_BOARDP(shp)-&gt;asc_stats.counter++)
 DECL|macro|ASC_STATS_ADD
-mdefine_line|#define ASC_STATS_ADD(shp, counter, count) &bslash;&n;&t;(ASC_BOARDP(shp)-&gt;asc_stats.counter += (count))
+mdefine_line|#define ASC_STATS_ADD(shp, counter, count) &bslash;&n;    (ASC_BOARDP(shp)-&gt;asc_stats.counter += (count))
 macro_line|#endif /* ADVANSYS_STATS */
 DECL|macro|ASC_CEILING
 mdefine_line|#define ASC_CEILING(val, unit) (((val) + ((unit) - 1))/(unit))
 multiline_comment|/* If the result wraps when calculating tenths, return 0. */
 DECL|macro|ASC_TENTHS
-mdefine_line|#define ASC_TENTHS(num, den) &bslash;&n;&t;(((10 * ((num)/(den))) &gt; (((num) * 10)/(den))) ? &bslash;&n;&t;0 : ((((num) * 10)/(den)) - (10 * ((num)/(den)))))
+mdefine_line|#define ASC_TENTHS(num, den) &bslash;&n;    (((10 * ((num)/(den))) &gt; (((num) * 10)/(den))) ? &bslash;&n;    0 : ((((num) * 10)/(den)) - (10 * ((num)/(den)))))
 multiline_comment|/*&n; * Display a message to the console.&n; */
 DECL|macro|ASC_PRINT
-mdefine_line|#define ASC_PRINT(s) &bslash;&n;&t;{ &bslash;&n;&t;&t;printk(&quot;advansys: &quot;); &bslash;&n;&t;&t;printk(s); &bslash;&n;&t;}
+mdefine_line|#define ASC_PRINT(s) &bslash;&n;    { &bslash;&n;        printk(&quot;advansys: &quot;); &bslash;&n;        printk(s); &bslash;&n;    }
 DECL|macro|ASC_PRINT1
-mdefine_line|#define ASC_PRINT1(s, a1) &bslash;&n;&t;{ &bslash;&n;&t;&t;printk(&quot;advansys: &quot;); &bslash;&n;&t;&t;printk((s), (a1)); &bslash;&n;&t;}
+mdefine_line|#define ASC_PRINT1(s, a1) &bslash;&n;    { &bslash;&n;        printk(&quot;advansys: &quot;); &bslash;&n;        printk((s), (a1)); &bslash;&n;    }
 DECL|macro|ASC_PRINT2
-mdefine_line|#define ASC_PRINT2(s, a1, a2) &bslash;&n;&t;{ &bslash;&n;&t;&t;printk(&quot;advansys: &quot;); &bslash;&n;&t;&t;printk((s), (a1), (a2)); &bslash;&n;&t;}
+mdefine_line|#define ASC_PRINT2(s, a1, a2) &bslash;&n;    { &bslash;&n;        printk(&quot;advansys: &quot;); &bslash;&n;        printk((s), (a1), (a2)); &bslash;&n;    }
 DECL|macro|ASC_PRINT3
-mdefine_line|#define ASC_PRINT3(s, a1, a2, a3) &bslash;&n;&t;{ &bslash;&n;&t;&t;printk(&quot;advansys: &quot;); &bslash;&n;&t;&t;printk((s), (a1), (a2), (a3)); &bslash;&n;&t;}
+mdefine_line|#define ASC_PRINT3(s, a1, a2, a3) &bslash;&n;    { &bslash;&n;        printk(&quot;advansys: &quot;); &bslash;&n;        printk((s), (a1), (a2), (a3)); &bslash;&n;    }
 DECL|macro|ASC_PRINT4
-mdefine_line|#define ASC_PRINT4(s, a1, a2, a3, a4) &bslash;&n;&t;{ &bslash;&n;&t;&t;printk(&quot;advansys: &quot;); &bslash;&n;&t;&t;printk((s), (a1), (a2), (a3), (a4)); &bslash;&n;&t;}
+mdefine_line|#define ASC_PRINT4(s, a1, a2, a3, a4) &bslash;&n;    { &bslash;&n;        printk(&quot;advansys: &quot;); &bslash;&n;        printk((s), (a1), (a2), (a3), (a4)); &bslash;&n;    }
 macro_line|#ifndef ADVANSYS_DEBUG
 DECL|macro|ASC_DBG
-mdefine_line|#define&t;ASC_DBG(lvl, s)
+mdefine_line|#define ASC_DBG(lvl, s)
 DECL|macro|ASC_DBG1
-mdefine_line|#define&t;ASC_DBG1(lvl, s, a1)
+mdefine_line|#define ASC_DBG1(lvl, s, a1)
 DECL|macro|ASC_DBG2
-mdefine_line|#define&t;ASC_DBG2(lvl, s, a1, a2)
+mdefine_line|#define ASC_DBG2(lvl, s, a1, a2)
 DECL|macro|ASC_DBG3
-mdefine_line|#define&t;ASC_DBG3(lvl, s, a1, a2, a3)
+mdefine_line|#define ASC_DBG3(lvl, s, a1, a2, a3)
 DECL|macro|ASC_DBG4
-mdefine_line|#define&t;ASC_DBG4(lvl, s, a1, a2, a3, a4)
+mdefine_line|#define ASC_DBG4(lvl, s, a1, a2, a3, a4)
 DECL|macro|ASC_DBG_PRT_SCSI_HOST
-mdefine_line|#define&t;ASC_DBG_PRT_SCSI_HOST(lvl, s)
+mdefine_line|#define ASC_DBG_PRT_SCSI_HOST(lvl, s)
 DECL|macro|ASC_DBG_PRT_SCSI_CMND
-mdefine_line|#define&t;ASC_DBG_PRT_SCSI_CMND(lvl, s)
+mdefine_line|#define ASC_DBG_PRT_SCSI_CMND(lvl, s)
 DECL|macro|ASC_DBG_PRT_SCSI_Q
-mdefine_line|#define&t;ASC_DBG_PRT_SCSI_Q(lvl, scsiqp)
+mdefine_line|#define ASC_DBG_PRT_SCSI_Q(lvl, scsiqp)
 DECL|macro|ASC_DBG_PRT_QDONE_INFO
-mdefine_line|#define&t;ASC_DBG_PRT_QDONE_INFO(lvl, qdone)
+mdefine_line|#define ASC_DBG_PRT_QDONE_INFO(lvl, qdone)
 DECL|macro|ASC_DBG_PRT_HEX
-mdefine_line|#define&t;ASC_DBG_PRT_HEX(lvl, name, start, length)
+mdefine_line|#define ASC_DBG_PRT_HEX(lvl, name, start, length)
 DECL|macro|ASC_DBG_PRT_CDB
-mdefine_line|#define&t;ASC_DBG_PRT_CDB(lvl, cdb, len)
+mdefine_line|#define ASC_DBG_PRT_CDB(lvl, cdb, len)
 DECL|macro|ASC_DBG_PRT_SENSE
-mdefine_line|#define&t;ASC_DBG_PRT_SENSE(lvl, sense, len)
+mdefine_line|#define ASC_DBG_PRT_SENSE(lvl, sense, len)
 DECL|macro|ASC_DBG_PRT_INQUIRY
 mdefine_line|#define ASC_DBG_PRT_INQUIRY(lvl, inq, len)
-DECL|macro|ASC_ASSERT
-mdefine_line|#define ASC_ASSERT(a)
 macro_line|#else /* ADVANSYS_DEBUG */
 multiline_comment|/*&n; * Debugging Message Levels:&n; * 0: Errors Only&n; * 1: High-Level Tracing&n; * 2-N: Verbose Tracing&n; */
 DECL|macro|ASC_DBG
-mdefine_line|#define&t;ASC_DBG(lvl, s) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;printk(s); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG(lvl, s) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            printk(s); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG1
-mdefine_line|#define&t;ASC_DBG1(lvl, s, a1) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;printk((s), (a1)); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG1(lvl, s, a1) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            printk((s), (a1)); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG2
-mdefine_line|#define&t;ASC_DBG2(lvl, s, a1, a2) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;printk((s), (a1), (a2)); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG2(lvl, s, a1, a2) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            printk((s), (a1), (a2)); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG3
-mdefine_line|#define&t;ASC_DBG3(lvl, s, a1, a2, a3) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;printk((s), (a1), (a2), (a3)); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG3(lvl, s, a1, a2, a3) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            printk((s), (a1), (a2), (a3)); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG4
-mdefine_line|#define&t;ASC_DBG4(lvl, s, a1, a2, a3, a4) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;printk((s), (a1), (a2), (a3), (a4)); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG4(lvl, s, a1, a2, a3, a4) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            printk((s), (a1), (a2), (a3), (a4)); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG_PRT_SCSI_HOST
-mdefine_line|#define&t;ASC_DBG_PRT_SCSI_HOST(lvl, s) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;asc_prt_scsi_host(s); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG_PRT_SCSI_HOST(lvl, s) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            asc_prt_scsi_host(s); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG_PRT_SCSI_CMND
-mdefine_line|#define&t;ASC_DBG_PRT_SCSI_CMND(lvl, s) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;asc_prt_scsi_cmnd(s); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG_PRT_SCSI_CMND(lvl, s) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            asc_prt_scsi_cmnd(s); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG_PRT_SCSI_Q
-mdefine_line|#define&t;ASC_DBG_PRT_SCSI_Q(lvl, scsiqp) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;asc_prt_scsi_q(scsiqp); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG_PRT_SCSI_Q(lvl, scsiqp) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            asc_prt_scsi_q(scsiqp); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG_PRT_QDONE_INFO
-mdefine_line|#define&t;ASC_DBG_PRT_QDONE_INFO(lvl, qdone) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;asc_prt_qdone_info(qdone); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG_PRT_QDONE_INFO(lvl, qdone) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            asc_prt_qdone_info(qdone); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG_PRT_HEX
-mdefine_line|#define&t;ASC_DBG_PRT_HEX(lvl, name, start, length) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;&t;&t;&t;asc_prt_hex((name), (start), (length)); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG_PRT_HEX(lvl, name, start, length) &bslash;&n;    { &bslash;&n;        if (asc_dbglvl &gt;= (lvl)) { &bslash;&n;            asc_prt_hex((name), (start), (length)); &bslash;&n;        } &bslash;&n;    }
 DECL|macro|ASC_DBG_PRT_CDB
-mdefine_line|#define&t;ASC_DBG_PRT_CDB(lvl, cdb, len) &bslash;&n;&t;&t;ASC_DBG_PRT_HEX((lvl), &quot;CDB&quot;, (uchar *) (cdb), (len));
+mdefine_line|#define ASC_DBG_PRT_CDB(lvl, cdb, len) &bslash;&n;        ASC_DBG_PRT_HEX((lvl), &quot;CDB&quot;, (uchar *) (cdb), (len));
 DECL|macro|ASC_DBG_PRT_SENSE
-mdefine_line|#define&t;ASC_DBG_PRT_SENSE(lvl, sense, len) &bslash;&n;&t;&t;ASC_DBG_PRT_HEX((lvl), &quot;SENSE&quot;, (uchar *) (sense), (len));
+mdefine_line|#define ASC_DBG_PRT_SENSE(lvl, sense, len) &bslash;&n;        ASC_DBG_PRT_HEX((lvl), &quot;SENSE&quot;, (uchar *) (sense), (len));
 DECL|macro|ASC_DBG_PRT_INQUIRY
-mdefine_line|#define ASC_DBG_PRT_INQUIRY(lvl, inq, len) &bslash;&n;&t;&t;ASC_DBG_PRT_HEX((lvl), &quot;INQUIRY&quot;, (uchar *) (inq), (len));
-DECL|macro|ASC_ASSERT
-mdefine_line|#define ASC_ASSERT(a) &bslash;&n;&t;{ &bslash;&n;&t;&t;if (!(a)) { &bslash;&n;&t;&t;&t;printk(&quot;ASC_ASSERT() Failure: file %s, line %d&bslash;n&quot;, &bslash;&n;&t;&t;&t;&t;__FILE__, __LINE__); &bslash;&n;&t;&t;} &bslash;&n;&t;}
+mdefine_line|#define ASC_DBG_PRT_INQUIRY(lvl, inq, len) &bslash;&n;        ASC_DBG_PRT_HEX((lvl), &quot;INQUIRY&quot;, (uchar *) (inq), (len));
 macro_line|#endif /* ADVANSYS_DEBUG */
+macro_line|#ifndef ADVANSYS_ASSERT
+DECL|macro|ASC_ASSERT
+mdefine_line|#define ASC_ASSERT(a)
+macro_line|#else /* ADVANSYS_ASSERT */
+DECL|macro|ASC_ASSERT
+mdefine_line|#define ASC_ASSERT(a) &bslash;&n;    { &bslash;&n;        if (!(a)) { &bslash;&n;            printk(&quot;ASC_ASSERT() Failure: file %s, line %d&bslash;n&quot;, &bslash;&n;                __FILE__, __LINE__); &bslash;&n;        } &bslash;&n;    }
+macro_line|#endif /* ADVANSYS_ASSERT */
 multiline_comment|/*&n; * --- Driver Structures&n; */
 macro_line|#ifdef ADVANSYS_STATS
 multiline_comment|/* Per board statistics structure */
@@ -6206,6 +5526,16 @@ l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* Starvation request count */
+DECL|member|sdtr_data
+id|uchar
+id|sdtr_data
+(braket
+id|ASC_MAX_TID
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* SDTR information */
 macro_line|#if ASC_QUEUE_FLOW_CONTROL
 DECL|member|nerrcnt
 id|ushort
@@ -6242,7 +5572,7 @@ DECL|member|last_reset
 id|ulong
 id|last_reset
 suffix:semicolon
-multiline_comment|/* Saved time of last reset */
+multiline_comment|/* Saved last reset time */
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
 multiline_comment|/* /proc/scsi/advansys/[0...] */
 DECL|member|prtbuf
@@ -6527,13 +5857,14 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* List of supported bus types. */
-DECL|variable|asc_bus
+DECL|variable|ASC_INITDATA
 id|STATIC
 id|ushort
 id|asc_bus
 (braket
 id|ASC_NUM_BUS
 )braket
+id|ASC_INITDATA
 op_assign
 (brace
 id|ASC_IS_ISA
@@ -6546,22 +5877,25 @@ id|ASC_IS_PCI
 comma
 )brace
 suffix:semicolon
-DECL|variable|pci_scan_method
+DECL|variable|ASC_INITDATA
 id|STATIC
 r_int
 id|pci_scan_method
+id|ASC_INITDATA
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n; * Used with the LILO &squot;advansys&squot; option to eliminate or&n; * limit I/O port probing at boot time, cf. advansys_setup().&n; */
 DECL|variable|asc_iopflag
+id|STATIC
 r_int
 id|asc_iopflag
 op_assign
 id|ASC_FALSE
 suffix:semicolon
 DECL|variable|asc_ioport
+id|STATIC
 r_int
 id|asc_ioport
 (braket
@@ -6579,6 +5913,7 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#ifdef ADVANSYS_DEBUG
+id|STATIC
 r_char
 op_star
 DECL|variable|asc_bus_name
@@ -6599,12 +5934,21 @@ comma
 )brace
 suffix:semicolon
 DECL|variable|asc_dbglvl
+id|STATIC
 r_int
 id|asc_dbglvl
 op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif /* ADVANSYS_DEBUG */
+multiline_comment|/* Declaration for Asc Library internal data referenced by driver. */
+DECL|variable|_asc_def_iop_base
+id|STATIC
+id|PortAddr
+id|_asc_def_iop_base
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/*&n; * --- Driver Function Prototypes&n; *&n; * advansys.h contains function prototypes for functions global to Linux.&n; */
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
 id|STATIC
@@ -6791,6 +6135,7 @@ comma
 id|uchar
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|asc_enqueue
 c_func
@@ -6803,6 +6148,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 id|REQP
 id|asc_dequeue
 c_func
@@ -6813,6 +6159,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 id|REQP
 id|asc_dequeue_list
 c_func
@@ -6826,6 +6173,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|asc_rmqueue
 c_func
@@ -6836,6 +6184,7 @@ comma
 id|REQP
 )paren
 suffix:semicolon
+id|STATIC
 r_int
 id|asc_isqueued
 c_func
@@ -6846,6 +6195,7 @@ comma
 id|REQP
 )paren
 suffix:semicolon
+id|STATIC
 r_void
 id|asc_execute_queue
 c_func
@@ -6854,6 +6204,7 @@ id|asc_queue_t
 op_star
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
 id|STATIC
 r_int
 id|asc_prt_board_devices
@@ -6916,26 +6267,6 @@ r_int
 suffix:semicolon
 id|STATIC
 r_int
-id|asc_proc_copy
-c_func
-(paren
-id|off_t
-comma
-id|off_t
-comma
-r_char
-op_star
-comma
-r_int
-comma
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-id|STATIC
-r_int
 id|asc_prt_line
 c_func
 (paren
@@ -6953,7 +6284,9 @@ dot
 dot
 )paren
 suffix:semicolon
-multiline_comment|/* XXX - Asc Library Routines not supposed to be used directly */
+macro_line|#endif /* version &gt;= v1.3.0 */
+multiline_comment|/* Declaration for Asc Library internal functions reference by driver. */
+id|STATIC
 r_int
 id|AscFindSignature
 c_func
@@ -6961,6 +6294,7 @@ c_func
 id|PortAddr
 )paren
 suffix:semicolon
+id|STATIC
 id|ushort
 id|AscGetEEPConfig
 c_func
@@ -7061,6 +6395,8 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif /* ADVANSYS_DEBUG */
+macro_line|#ifdef ADVANSYS_ASSERT
 id|STATIC
 r_int
 id|interrupts_enabled
@@ -7069,7 +6405,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* ADVANSYS_DEBUG */
+macro_line|#endif /* ADVANSYS_ASSERT */
 multiline_comment|/*&n; * --- Linux &squot;Scsi_Host_Template&squot; and advansys_setup() Functions&n; */
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
 multiline_comment|/*&n; * advansys_proc_info() - /proc/scsi/advansys/[0-(ASC_NUM_BOARD_SUPPORTED-1)]&n; *&n; * *buffer: I/O buffer&n; * **start: if inout == FALSE pointer into buffer where user read should start&n; * offset: current offset into a /proc/scsi/advansys/[0...] file&n; * length: length of buffer&n; * hostno: Scsi_Host host_no&n; * inout: TRUE - user is writing; FALSE - user is reading&n; *&n; * Return the number of bytes read from or written to a&n; * /proc/scsi/advansys/[0...] file.&n; *&n; * Note: This function uses the per board buffer &squot;prtbuf&squot; which is&n; * allocated when the board is initialized in advansys_detect(). The&n; * buffer is ASC_PRTBUF_SIZE bytes. The function asc_proc_copy() is&n; * used to write to the buffer. The way asc_proc_copy() is written&n; * if &squot;prtbuf&squot; is too small it will not be overwritten. Instead the&n; * user just won&squot;t get all the available statistics.&n; */
@@ -7147,7 +6483,7 @@ comma
 l_string|&quot;advansys_proc_info: begin&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * User write not supported.&n;&t; */
+multiline_comment|/*&n;     * User write not supported.&n;     */
 r_if
 c_cond
 (paren
@@ -7161,7 +6497,7 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * User read of /proc/scsi/advansys/[0...] file.&n;&t; */
+multiline_comment|/*&n;     * User read of /proc/scsi/advansys/[0...] file.&n;     */
 multiline_comment|/* Find the specified board. */
 r_for
 c_loop
@@ -7245,7 +6581,7 @@ id|leftlen
 op_assign
 id|length
 suffix:semicolon
-multiline_comment|/*&n;&t; * Get board configuration information.&n;&t; *&n;&t; * advansys_info() returns the board string from its own static buffer.&n;&t; */
+multiline_comment|/*&n;     * Get board configuration information.&n;     *&n;     * advansys_info() returns the board string from its own static buffer.&n;     */
 id|cp
 op_assign
 (paren
@@ -7331,7 +6667,7 @@ id|curbuf
 op_add_assign
 id|cnt
 suffix:semicolon
-multiline_comment|/*&n;&t; * Display driver information for each device attached to the board.&n;&t; */
+multiline_comment|/*&n;     * Display driver information for each device attached to the board.&n;     */
 id|cp
 op_assign
 id|boardp-&gt;prtbuf
@@ -7412,7 +6748,7 @@ id|curbuf
 op_add_assign
 id|cnt
 suffix:semicolon
-multiline_comment|/*&n;&t; * Display target driver information for each device attached&n;&t; * to the board.&n;&t; */
+multiline_comment|/*&n;     * Display target driver information for each device attached&n;     * to the board.&n;     */
 r_for
 c_loop
 (paren
@@ -7439,7 +6775,7 @@ id|cp
 op_assign
 id|boardp-&gt;prtbuf
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Note: If proc_print_scsidevice() writes more than&n;&t;&t;&t; * ASC_PRTBUF_SIZE bytes, it will overrun &squot;prtbuf&squot;.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Note: If proc_print_scsidevice() writes more than&n;             * ASC_PRTBUF_SIZE bytes, it will overrun &squot;prtbuf&squot;.&n;             */
 id|proc_print_scsidevice
 c_func
 (paren
@@ -7519,7 +6855,7 @@ id|cnt
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Display EEPROM configuration for the board.&n;&t; */
+multiline_comment|/*&n;     * Display EEPROM configuration for the board.&n;     */
 id|cp
 op_assign
 id|boardp-&gt;prtbuf
@@ -7600,7 +6936,7 @@ id|curbuf
 op_add_assign
 id|cnt
 suffix:semicolon
-multiline_comment|/*&n;&t; * Display driver configuration and information for the board.&n;&t; */
+multiline_comment|/*&n;     * Display driver configuration and information for the board.&n;     */
 id|cp
 op_assign
 id|boardp-&gt;prtbuf
@@ -7682,7 +7018,7 @@ op_add_assign
 id|cnt
 suffix:semicolon
 macro_line|#ifdef ADVANSYS_STATS
-multiline_comment|/*&n;&t; * Display driver statistics for the board.&n;&t; */
+multiline_comment|/*&n;     * Display driver statistics for the board.&n;     */
 id|cp
 op_assign
 id|boardp-&gt;prtbuf
@@ -7764,7 +7100,7 @@ op_add_assign
 id|cnt
 suffix:semicolon
 macro_line|#endif /* ADVANSYS_STATS */
-multiline_comment|/*&n;&t; * Display Asc Library dynamic configuration information&n;&t; * for the board.&n;&t; */
+multiline_comment|/*&n;     * Display Asc Library dynamic configuration information&n;     * for the board.&n;     */
 id|cp
 op_assign
 id|boardp-&gt;prtbuf
@@ -7861,8 +7197,8 @@ suffix:semicolon
 )brace
 macro_line|#endif /* version &gt;= v1.3.0 */
 multiline_comment|/*&n; * advansys_detect()&n; *&n; * Detect function for AdvanSys adapters.&n; *&n; * Argument is a pointer to the host driver&squot;s scsi_hosts entry.&n; *&n; * Return number of adapters found.&n; *&n; * Note: Because this function is called during system initialization&n; * it must not call SCSI mid-level functions including scsi_malloc()&n; * and scsi_free().&n; */
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
 c_func
 (paren
 r_int
@@ -7919,13 +7255,6 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-r_extern
-id|PortAddr
-id|_asc_def_iop_base
-(braket
-id|ASC_IOADR_TABLE_MAX_IX
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7970,7 +7299,7 @@ id|asc_board_count
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * If I/O port probing has been modified, then verify and&n;&t; * clean-up the &squot;asc_ioport&squot; list.&n;&t; */
+multiline_comment|/*&n;     * If I/O port probing has been modified, then verify and&n;     * clean-up the &squot;asc_ioport&squot; list.&n;     */
 r_if
 c_cond
 (paren
@@ -8214,7 +7543,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * ISA and VL I/O port scanning has either been&n;&t;&t;&t;&t;&t; * eliminated or limited to selected ports on&n;&t;&t;&t;&t;&t; * the LILO command line, /etc/lilo.conf, or&n;&t;&t;&t;&t;&t; * by setting variables when the module was loaded.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;                     * ISA and VL I/O port scanning has either been&n;                     * eliminated or limited to selected ports on&n;                     * the LILO command line, /etc/lilo.conf, or&n;                     * by setting variables when the module was loaded.&n;                     */
 id|ASC_DBG
 c_func
 (paren
@@ -8345,7 +7674,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * If this isn&squot;t an ISA board, then it must be&n;&t;&t;&t;&t;&t;&t;&t; * a VL board. If currently looking an ISA&n;&t;&t;&t;&t;&t;&t;&t; * board is being looked for then try for&n;&t;&t;&t;&t;&t;&t;&t; * another ISA board in &squot;asc_ioport&squot;.&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;                             * If this isn&squot;t an ISA board, then it must be&n;                             * a VL board. If currently looking an ISA&n;                             * board is being looked for then try for&n;                             * another ISA board in &squot;asc_ioport&squot;.&n;                             */
 r_if
 c_cond
 (paren
@@ -8371,7 +7700,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Don&squot;t clear &squot;asc_ioport[ioport]&squot;. Try&n;&t;&t;&t;&t;&t;&t;&t;&t; * this board again for VL. Increment&n;&t;&t;&t;&t;&t;&t;&t;&t; * &squot;ioport&squot; past this board.&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;                                 * Don&squot;t clear &squot;asc_ioport[ioport]&squot;. Try&n;                                 * this board again for VL. Increment&n;                                 * &squot;ioport&squot; past this board.&n;                                 */
 id|ioport
 op_increment
 suffix:semicolon
@@ -8380,7 +7709,7 @@ id|ioport_try_again
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * This board appears good, don&squot;t try the I/O port&n;&t;&t;&t;&t;&t;&t; * again by clearing its value. Increment &squot;ioport&squot;&n;&t;&t;&t;&t;&t;&t; * for the next iteration.&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;                         * This board appears good, don&squot;t try the I/O port&n;                         * again by clearing its value. Increment &squot;ioport&squot;&n;                         * for the next iteration.&n;                         */
 id|asc_ioport
 (braket
 id|ioport
@@ -8506,7 +7835,7 @@ comma
 id|iop
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Adapter not found, try next bus type.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Adapter not found, try next bus type.&n;             */
 r_if
 c_cond
 (paren
@@ -8518,7 +7847,7 @@ l_int|0
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Adapter found.&n;&t;&t;&t; *&n;&t;&t;&t; * Register the adapter, get its configuration, and&n;&t;&t;&t; * initialize it.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Adapter found.&n;             *&n;             * Register the adapter, get its configuration, and&n;             * initialize it.&n;             */
 id|ASC_DBG
 c_func
 (paren
@@ -8650,7 +7979,7 @@ r_continue
 suffix:semicolon
 )brace
 macro_line|#endif /* version &gt;= v1.3.0 */
-multiline_comment|/*&n;&t;&t;&t; * Set the board bus type and PCI IRQ for AscInitGetConfig().&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Set the board bus type and PCI IRQ for AscInitGetConfig().&n;             */
 id|asc_dvc_varp-&gt;bus_type
 op_assign
 id|asc_bus
@@ -8761,7 +8090,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Get the board configuration.&n;&t;&t;&t; *&n;&t;&t;&t; * NOTE: AscInitGetConfig() may change the board&squot;s bus_type&n;&t;&t;&t; * value. The asc_bus[bus] value should no longer be used. If&n;&t;&t;&t; * the bus_type field must be referenced only use the bit-wise&n;&t;&t;&t; * AND operator &quot;&amp;&quot;.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Get the board configuration.&n;             *&n;             * NOTE: AscInitGetConfig() may change the board&squot;s bus_type&n;             * value. The asc_bus[bus] value should no longer be used. If&n;             * the bus_type field must be referenced only use the bit-wise&n;             * AND operator &quot;&amp;&quot;.&n;             */
 id|ASC_DBG
 c_func
 (paren
@@ -8908,7 +8237,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Set the adapter&squot;s target id bit in the init_tidmask field.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Set the adapter&squot;s target id bit in the init_tidmask field.&n;             */
 id|boardp-&gt;init_tidmask
 op_or_assign
 id|ASC_TIX_TO_TARGET_ID
@@ -8917,7 +8246,7 @@ c_func
 id|asc_dvc_varp-&gt;cfg-&gt;chip_scsi_id
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Save EEPROM settings for the board.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Save EEPROM settings for the board.&n;             */
 id|boardp-&gt;eep_config.init_sdtr
 op_assign
 id|asc_dvc_varp-&gt;init_sdtr
@@ -8962,7 +8291,7 @@ id|asc_dvc_varp-&gt;cfg-&gt;max_tag_qng
 l_int|0
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Modify board configuration.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Modify board configuration.&n;             */
 id|asc_dvc_varp-&gt;isr_callback
 op_assign
 (paren
@@ -9123,7 +8452,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Finish initializing the &squot;Scsi_Host&squot; structure.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Finish initializing the &squot;Scsi_Host&squot; structure.&n;             */
 multiline_comment|/* AscInitSetConfig() will set the IRQ for non-PCI boards. */
 r_if
 c_cond
@@ -9142,7 +8471,7 @@ op_assign
 id|asc_dvc_varp-&gt;irq_no
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * One host supports one channel. There are two different&n;&t;&t;&t; * hosts for each channel of a dual channel board.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * One host supports one channel. There are two different&n;             * hosts for each channel of a dual channel board.&n;             */
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
 id|shp-&gt;max_channel
 op_assign
@@ -9179,7 +8508,7 @@ op_assign
 id|asc_dvc_varp-&gt;max_total_qng
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(1,3,89)
-multiline_comment|/*&n;&t;&t;&t; * Set a conservative &squot;cmd_per_lun&squot; value to prevent memory&n;&t;&t;&t; * allocation failures.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Set a conservative &squot;cmd_per_lun&squot; value to prevent memory&n;             * allocation failures.&n;             */
 macro_line|#ifdef MODULE
 id|shp-&gt;cmd_per_lun
 op_assign
@@ -9202,13 +8531,13 @@ id|shp-&gt;cmd_per_lun
 )paren
 suffix:semicolon
 macro_line|#else /* version &gt;= v1.3.89 */
-multiline_comment|/*&n;&t;&t;&t; * Use the host &squot;select_queue_depths&squot; function to determine&n;&t;&t;&t; * the number of commands to queue per device.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Use the host &squot;select_queue_depths&squot; function to determine&n;             * the number of commands to queue per device.&n;             */
 id|shp-&gt;select_queue_depths
 op_assign
 id|advansys_select_queue_depths
 suffix:semicolon
 macro_line|#ifdef MODULE
-multiline_comment|/*&n;&t;&t;&t; * Following v1.3.89, &squot;cmd_per_lun&squot; is no longer needed&n;&t;&t;&t; * and should be set to zero. But because of a bug introduced&n;&t;&t;&t; * in v1.3.89 if the driver is compiled as a module and&n;&t;&t;&t; * &squot;cmd_per_lun&squot; is zero, the Mid-Level SCSI function&n;&t;&t;&t; * &squot;allocate_device&squot; will panic. To allow the driver to&n;&t;&t;&t; * work as a module in these kernels set &squot;cmd_per_lun&squot; to 1.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Following v1.3.89, &squot;cmd_per_lun&squot; is no longer needed&n;             * and should be set to zero. But because of a bug introduced&n;             * in v1.3.89 if the driver is compiled as a module and&n;             * &squot;cmd_per_lun&squot; is zero, the Mid-Level SCSI function&n;             * &squot;allocate_device&squot; will panic. To allow the driver to&n;             * work as a module in these kernels set &squot;cmd_per_lun&squot; to 1.&n;             */
 id|shp-&gt;cmd_per_lun
 op_assign
 l_int|1
@@ -9220,15 +8549,15 @@ l_int|0
 suffix:semicolon
 macro_line|#endif /* MODULE */
 macro_line|#endif /* version &gt;= v1.3.89 */
-multiline_comment|/*&n;&t;&t;&t; * Set the maximum number of scatter-gather elements adapter&n;&t;&t;&t; * can handle.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Set the maximum number of scatter-gather elements adapter&n;             * can handle.&n;             */
 macro_line|#ifdef MODULE
-multiline_comment|/*&n;&t;&t;&t; * If the driver is compiled as a module, set a conservative&n;&t;&t;&t; * &squot;sg_tablesize&squot; value to prevent memory allocation failures.&n;&t;&t;&t; * Memory allocation errors are more likely to occur at module&n;&t;&t;&t; * load time, then at driver initialization time.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * If the driver is compiled as a module, set a conservative&n;             * &squot;sg_tablesize&squot; value to prevent memory allocation failures.&n;             * Memory allocation errors are more likely to occur at module&n;             * load time, then at driver initialization time.&n;             */
 id|shp-&gt;sg_tablesize
 op_assign
 l_int|8
 suffix:semicolon
 macro_line|#else /* MODULE */
-multiline_comment|/*&n;&t;&t;&t; * Allow two commands with &squot;sg_tablesize&squot; scatter-gather&n;&t;&t;&t; * elements to be executed simultaneously. This value is&n;&t;&t;&t; * the theoretical hardware limit. It may be decreased&n;&t;&t;&t; * below.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Allow two commands with &squot;sg_tablesize&squot; scatter-gather&n;             * elements to be executed simultaneously. This value is&n;             * the theoretical hardware limit. It may be decreased&n;             * below.&n;             */
 id|shp-&gt;sg_tablesize
 op_assign
 (paren
@@ -9248,7 +8577,7 @@ op_plus
 l_int|1
 suffix:semicolon
 macro_line|#endif /* MODULE */
-multiline_comment|/*&n;&t;&t;&t; * The value of &squot;sg_tablesize&squot; can not exceed the SCSI&n;&t;&t;&t; * mid-level driver definition of SG_ALL. SG_ALL also&n;&t;&t;&t; * must not be exceeded, because it is used to define the&n;&t;&t;&t; * size of the scatter-gather table in &squot;struct asc_sg_head&squot;.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * The value of &squot;sg_tablesize&squot; can not exceed the SCSI&n;             * mid-level driver definition of SG_ALL. SG_ALL also&n;             * must not be exceeded, because it is used to define the&n;             * size of the scatter-gather table in &squot;struct asc_sg_head&squot;.&n;             */
 r_if
 c_cond
 (paren
@@ -9292,7 +8621,7 @@ id|asc_dvc_varp-&gt;bus_type
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Register Board Resources - I/O Port, DMA, IRQ&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Register Board Resources - I/O Port, DMA, IRQ&n;             */
 multiline_comment|/* Register I/O port range */
 id|ASC_DBG
 c_func
@@ -9525,7 +8854,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Initialize board RISC chip and enable interrupts.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Initialize board RISC chip and enable interrupts.&n;             */
 id|ASC_DBG
 c_func
 (paren
@@ -10012,7 +9341,6 @@ id|shp-&gt;irq
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef ADVANSYS_DEBUG
 id|ASC_ASSERT
 c_func
 (paren
@@ -10025,7 +9353,6 @@ OL
 id|ASC_INFO_SIZE
 )paren
 suffix:semicolon
-macro_line|#endif /* ADVANSYS_DEBUG */
 id|ASC_DBG
 c_func
 (paren
@@ -10083,7 +9410,7 @@ comma
 id|advansys_command_done
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * XXX - Can host drivers block here instead of spinning on&n;&t; * command status?&n;&t; */
+multiline_comment|/*&n;     * XXX - Can host drivers block here instead of spinning on&n;     * command status?&n;     */
 r_while
 c_loop
 (paren
@@ -10166,7 +9493,7 @@ comma
 id|queuecommand
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Disable interrupts to preserve request ordering and provide&n;&t; * mutually exclusive access to global structures used to initiate&n;&t; * a request.&n;&t; */
+multiline_comment|/*&n;     * Disable interrupts to preserve request ordering and provide&n;     * mutually exclusive access to global structures used to initiate&n;     * a request.&n;     */
 id|save_flags
 c_func
 (paren
@@ -10178,7 +9505,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Block new commands while handling a reset or abort request.&n;&t; */
+multiline_comment|/*&n;     * Block new commands while handling a reset or abort request.&n;     */
 r_if
 c_cond
 (paren
@@ -10245,7 +9572,7 @@ id|DID_ABORT
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Add blocked requests to the board&squot;s &squot;done&squot; queue. The queued&n;&t;&t; * requests will be completed at the end of the abort or reset&n;&t;&t; * handling.&n;&t;&t; */
+multiline_comment|/*&n;         * Add blocked requests to the board&squot;s &squot;done&squot; queue. The queued&n;         * requests will be completed at the end of the abort or reset&n;         * handling.&n;         */
 id|asc_enqueue
 c_func
 (paren
@@ -10267,7 +9594,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Attempt to execute any waiting commands for the board.&n;&t; */
+multiline_comment|/*&n;     * Attempt to execute any waiting commands for the board.&n;     */
 r_if
 c_cond
 (paren
@@ -10296,7 +9623,7 @@ id|boardp-&gt;waiting
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Save the function pointer to Linux mid-level &squot;done&squot; function&n;&t; * and attempt to execute the command.&n;&t; *&n;&t; * If ASC_ERROR is returned the request has been added to the&n;&t; * board&squot;s &squot;active&squot; queue and will be completed by the interrupt&n;&t; * handler.&n;&t; *&n;&t; * If ASC_BUSY is returned add the request to the board&squot;s per&n;&t; * target waiting list.&n;&t; * &n;&t; * If an error occurred, the request will have been placed on the&n;&t; * board&squot;s &squot;done&squot; queue and must be completed before returning.&n;&t; */
+multiline_comment|/*&n;     * Save the function pointer to Linux mid-level &squot;done&squot; function&n;     * and attempt to execute the command.&n;     *&n;     * If ASC_ERROR is returned the request has been added to the&n;     * board&squot;s &squot;active&squot; queue and will be completed by the interrupt&n;     * handler.&n;     *&n;     * If ASC_BUSY is returned add the request to the board&squot;s per&n;     * target waiting list.&n;     * &n;     * If an error occurred, the request will have been placed on the&n;     * board&squot;s &squot;done&squot; queue and must be completed before returning.&n;     */
 id|scp-&gt;scsi_done
 op_assign
 id|done
@@ -10456,7 +9783,7 @@ m_abort
 suffix:semicolon
 )brace
 macro_line|#endif /* ADVANSYS_STATS */
-macro_line|#ifdef ADVVANSYS_DEBUG
+macro_line|#ifdef ADVANSYS_ASSERT
 id|do_scsi_done
 op_assign
 id|ASC_ERROR
@@ -10469,7 +9796,7 @@ id|ret
 op_assign
 id|ASC_ERROR
 suffix:semicolon
-macro_line|#endif /* ADVANSYS_DEBUG */
+macro_line|#endif /* ADVANSYS_ASSERT */
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
 r_if
 c_cond
@@ -10656,7 +9983,7 @@ op_eq
 id|ASC_TRUE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; &t; * If asc_rmqueue() found the command on the waiting&n;&t;&t;&t; * queue, it had not been sent to the device. After&n;&t;&t;&t; * the queue is removed, no other handling is required.&n;&t;&t; &t; */
+multiline_comment|/*&n;              * If asc_rmqueue() found the command on the waiting&n;             * queue, it had not been sent to the device. After&n;             * the queue is removed, no other handling is required.&n;              */
 id|ASC_DBG1
 c_func
 (paren
@@ -10703,7 +10030,7 @@ op_eq
 id|ASC_TRUE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; &t; * If asc_isqueued() found the command on the active&n;&t;&t;&t; * queue, it has been sent to the device. The command&n;&t;&t;&t; * should be returned through the interrupt handler after&n;&t;&t;&t; * calling AscAbortSRB().&n;&t;&t; &t; */
+multiline_comment|/*&n;              * If asc_isqueued() found the command on the active&n;             * queue, it has been sent to the device. The command&n;             * should be returned through the interrupt handler after&n;             * calling AscAbortSRB().&n;              */
 id|asc_dvc_varp
 op_assign
 op_amp
@@ -10812,7 +10139,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * The request will either still be on the active queue&n;&t;&t;&t; * or have been added to the board&squot;s done queue.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * The request will either still be on the active queue&n;             * or have been added to the board&squot;s done queue.&n;             */
 r_if
 c_cond
 (paren
@@ -10866,7 +10193,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t; * The command was not found on the active or waiting queues.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * The command was not found on the active or waiting queues.&n;             */
 id|do_scsi_done
 op_assign
 id|ASC_TRUE
@@ -10886,7 +10213,7 @@ op_and_assign
 op_complement
 id|ASC_HOST_IN_ABORT
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Because the ASC_HOST_IN_ABORT flag causes both&n;&t;&t; * &squot;advansys_interrupt&squot; and &squot;asc_isr_callback&squot; to&n;&t;&t; * queue requests to the board&squot;s &squot;done&squot; queue and&n;&t;&t; * prevents waiting commands from being executed,&n;&t;&t; * these queued requests must be handled here.&n;&t;&t; */
+multiline_comment|/*&n;         * Because the ASC_HOST_IN_ABORT flag causes both&n;         * &squot;advansys_interrupt&squot; and &squot;asc_isr_callback&squot; to&n;         * queue requests to the board&squot;s &squot;done&squot; queue and&n;         * prevents waiting commands from being executed,&n;         * these queued requests must be handled here.&n;         */
 id|done_scp
 op_assign
 id|asc_dequeue_list
@@ -10900,7 +10227,7 @@ comma
 id|ASC_TID_ALL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Start any waiting commands for the board.&n;&t;&t; */
+multiline_comment|/*&n;         * Start any waiting commands for the board.&n;         */
 r_if
 c_cond
 (paren
@@ -10931,7 +10258,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Interrupts could be enabled here. */
-multiline_comment|/*&n;&t; * Complete the request to be aborted, unless it has been&n;&t; * restarted as detected above, even if it was not found on&n;&t; * the device active or waiting queues.&n;&t; */
+multiline_comment|/*&n;     * Complete the request to be aborted, unless it has been&n;     * restarted as detected above, even if it was not found on&n;     * the device active or waiting queues.&n;     */
 id|ASC_ASSERT
 c_func
 (paren
@@ -11016,7 +10343,7 @@ id|scp
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * It is possible for the request done function to re-enable&n;&t; * interrupts without confusing the driver. But here interrupts&n;&t; * aren&squot;t enabled until all requests have been completed.&n;&t; */
+multiline_comment|/*&n;     * It is possible for the request done function to re-enable&n;     * interrupts without confusing the driver. But here interrupts&n;     * aren&squot;t enabled until all requests have been completed.&n;     */
 r_if
 c_cond
 (paren
@@ -11183,9 +10510,17 @@ macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
 r_if
 c_cond
 (paren
+(paren
+id|reset_flags
+op_amp
+id|SCSI_RESET_ASYNCHRONOUS
+)paren
+op_logical_and
+(paren
 id|scp-&gt;serial_number
 op_ne
 id|scp-&gt;serial_number_at_timeout
+)paren
 )paren
 (brace
 id|ASC_PRINT1
@@ -11360,7 +10695,7 @@ id|HZ
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Don&squot;t allow a reset to be attempted within 10 seconds&n;&t;&t; * of the last reset.&n;&t;&t; *&n;&t;&t; * If &squot;jiffies&squot; wrapping occurs, the reset request will go&n;&t;&t; * through, because a wrapped &squot;jiffies&squot; would not pass the&n;&t;&t; * test above.&n;&t;&t; */
+multiline_comment|/*&n;         * Don&squot;t allow a reset to be attempted within 10 seconds&n;         * of the last reset.&n;         *&n;         * If &squot;jiffies&squot; wrapping occurs, the reset request will go&n;         * through, because a wrapped &squot;jiffies&squot; would not pass the&n;         * test above.&n;         */
 id|ASC_DBG
 c_func
 (paren
@@ -11444,7 +10779,7 @@ id|boardp-&gt;flags
 op_or_assign
 id|ASC_HOST_IN_RESET
 suffix:semicolon
-multiline_comment|/*&n;&t; &t; * If the request is on the target waiting or active queue&n;&t;&t; * or the board done queue, then remove it and note that it&n;&t;&t; * was found.&n;&t;&t; */
+multiline_comment|/*&n;          * If the request is on the target waiting or active queue&n;         * or the board done queue, then remove it and note that it&n;         * was found.&n;         */
 r_if
 c_cond
 (paren
@@ -11530,7 +10865,7 @@ op_assign
 id|ASC_FALSE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * If the suggest reset bus flags are set, reset the bus.&n;&t;&t; * Otherwise only reset the device.&n;&t;&t; */
+multiline_comment|/*&n;         * If the suggest reset bus flags are set, reset the bus.&n;         * Otherwise only reset the device.&n;         */
 id|asc_dvc_varp
 op_assign
 op_amp
@@ -11550,7 +10885,7 @@ id|SCSI_RESET_SUGGEST_HOST_RESET
 )paren
 (brace
 macro_line|#endif /* version &gt;= v1.3.89 */
-multiline_comment|/*&n;&t;&t;&t; * Reset the target&squot;s SCSI bus.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Reset the target&squot;s SCSI bus.&n;             */
 id|ASC_DBG
 c_func
 (paren
@@ -11625,7 +10960,7 @@ macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Reset the specified device. If the device reset fails,&n;&t;&t;&t; * then reset the SCSI bus.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Reset the specified device. If the device reset fails,&n;             * then reset the SCSI bus.&n;             */
 id|ASC_DBG1
 c_func
 (paren
@@ -11657,7 +10992,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * If the device has been reset, try to initialize it.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * If the device has been reset, try to initialize it.&n;             */
 r_if
 c_cond
 (paren
@@ -11784,7 +11119,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* version &gt;= v1.3.89 */
-multiline_comment|/*&n;&t;&t; * Because the ASC_HOST_IN_RESET flag causes both&n;&t;&t; * &squot;advansys_interrupt&squot; and &squot;asc_isr_callback&squot; to&n;&t;&t; * queue requests to the board&squot;s &squot;done&squot; queue and&n;&t;&t; * prevents waiting commands from being executed,&n;&t;&t; * these queued requests must be handled here.&n;&t;&t; */
+multiline_comment|/*&n;         * Because the ASC_HOST_IN_RESET flag causes both&n;         * &squot;advansys_interrupt&squot; and &squot;asc_isr_callback&squot; to&n;         * queue requests to the board&squot;s &squot;done&squot; queue and&n;         * prevents waiting commands from being executed,&n;         * these queued requests must be handled here.&n;         */
 id|done_scp
 op_assign
 id|asc_dequeue_list
@@ -11799,7 +11134,7 @@ comma
 id|ASC_TID_ALL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * If a device reset was performed dequeue all waiting&n;&t;&t; * and active requests for the device and set the request&n;&t;&t; * status to DID_RESET.&n;&t;&t; *&n;&t;&t; * If a SCSI bus reset was performed dequeue all waiting&n;&t;&t; * and active requests for all devices and set the request&n;&t;&t; * status to DID_RESET.&n;&t;&t; */
+multiline_comment|/*&n;         * If a device reset was performed dequeue all waiting&n;         * and active requests for the device and set the request&n;         * status to DID_RESET.&n;         *&n;         * If a SCSI bus reset was performed dequeue all waiting&n;         * and active requests for all devices and set the request&n;         * status to DID_RESET.&n;         */
 r_if
 c_cond
 (paren
@@ -11820,7 +11155,7 @@ op_assign
 id|ASC_TID_ALL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Add active requests to &squot;done_scp&squot; and set the request status&n;&t;&t; * to DID_RESET.&n;&t;&t; */
+multiline_comment|/*&n;         * Add active requests to &squot;done_scp&squot; and set the request status&n;         * to DID_RESET.&n;         */
 r_if
 c_cond
 (paren
@@ -11956,7 +11291,7 @@ id|new_last_scp
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;&t; * Add waiting requests to &squot;done_scp&squot; and set the request status&n;&t;&t; * to DID_RESET.&n;&t;&t; */
+multiline_comment|/*&n;         * Add waiting requests to &squot;done_scp&squot; and set the request status&n;         * to DID_RESET.&n;         */
 r_if
 c_cond
 (paren
@@ -12103,7 +11438,7 @@ op_and_assign
 op_complement
 id|ASC_HOST_IN_RESET
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Start any waiting commands for the board.&n;&t;&t; */
+multiline_comment|/*&n;         * Start any waiting commands for the board.&n;         */
 r_if
 c_cond
 (paren
@@ -12222,7 +11557,7 @@ id|scp
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * It is possible for the request done function to re-enable&n;&t; * interrupts without confusing the driver. But here interrupts&n;&t; * aren&squot;t enabled until requests have been completed.&n;&t; */
+multiline_comment|/*&n;     * It is possible for the request done function to re-enable&n;     * interrupts without confusing the driver. But here interrupts&n;     * aren&squot;t enabled until requests have been completed.&n;     */
 r_if
 c_cond
 (paren
@@ -12403,9 +11738,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * advansys_setup()&n; *&n; * This function is called from init/main.c at boot time.&n; * It it passed LILO parameters that can be set from the&n; * LILO command line or in /etc/lilo.conf.&n; *&n; * It is used by the AdvanSys driver to either disable I/O&n; * port scanning or to limit scanning to 1 - 4 I/O ports.&n; * Regardless of the option setting EISA and PCI boards&n; * will still be searched for and detected. This option&n; * only affects searching for ISA and VL boards.&n; *&n; * If ADVANSYS_DEBUG is defined the driver debug level may&n; * be set using the 5th (ASC_NUM_BOARD_SUPPORTED + 1) I/O Port.&n; *&n; * Examples:&n; * 1. Eliminate I/O port scanning:&n; * &t;&t;boot: linux advansys=&n; *       or&n; * &t;&t;boot: linux advansys=0x0&n; * 2. Limit I/O port scanning to one I/O port:&n; *&t;&t;boot: linux advansys=0x110&n; * 3. Limit I/O port scanning to four I/O ports:&n; *&t;&t;boot: linux advansys=0x110,0x210,0x230,0x330&n; * 4. If ADVANSYS_DEBUG, limit I/O port scanning to four I/O ports and&n; *    set the driver debug level to 2.&n; *&t;&t;boot: linux advansys=0x110,0x210,0x230,0x330,0xdeb2&n; *&n; * ints[0] - number of arguments&n; * ints[1] - first argument&n; * ints[2] - second argument&n; * ...&n; */
+multiline_comment|/*&n; * advansys_setup()&n; *&n; * This function is called from init/main.c at boot time.&n; * It it passed LILO parameters that can be set from the&n; * LILO command line or in /etc/lilo.conf.&n; *&n; * It is used by the AdvanSys driver to either disable I/O&n; * port scanning or to limit scanning to 1 - 4 I/O ports.&n; * Regardless of the option setting EISA and PCI boards&n; * will still be searched for and detected. This option&n; * only affects searching for ISA and VL boards.&n; *&n; * If ADVANSYS_DEBUG is defined the driver debug level may&n; * be set using the 5th (ASC_NUM_BOARD_SUPPORTED + 1) I/O Port.&n; *&n; * Examples:&n; * 1. Eliminate I/O port scanning:&n; *         boot: linux advansys=&n; *       or&n; *         boot: linux advansys=0x0&n; * 2. Limit I/O port scanning to one I/O port:&n; *        boot: linux advansys=0x110&n; * 3. Limit I/O port scanning to four I/O ports:&n; *        boot: linux advansys=0x110,0x210,0x230,0x330&n; * 4. If ADVANSYS_DEBUG, limit I/O port scanning to four I/O ports and&n; *    set the driver debug level to 2.&n; *        boot: linux advansys=0x110,0x210,0x230,0x330,0xdeb2&n; *&n; * ints[0] - number of arguments&n; * ints[1] - first argument&n; * ints[2] - second argument&n; * ...&n; */
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
 r_void
-DECL|function|advansys_setup
 id|advansys_setup
 c_func
 (paren
@@ -12416,6 +11754,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int
@@ -12711,7 +12050,7 @@ comma
 l_string|&quot;advansys_interrupt: begin&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check for interrupts on all boards.&n;&t; * AscISR() will call asc_isr_callback().&n;&t; */
+multiline_comment|/*&n;     * Check for interrupts on all boards.&n;     * AscISR() will call asc_isr_callback().&n;     */
 r_for
 c_loop
 (paren
@@ -12791,7 +12130,7 @@ id|boardp-&gt;asc_dvc_var
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Start waiting requests and create a list of completed requests.&n;&t;&t; * &n;&t;&t; * If a reset or abort request is being performed for the board,&n;&t;&t; * the reset or abort handler will complete pending requests after&n;&t;&t; * it has completed.&n;&t;&t; */
+multiline_comment|/*&n;         * Start waiting requests and create a list of completed requests.&n;         * &n;         * If a reset or abort request is being performed for the board,&n;         * the reset or abort handler will complete pending requests after&n;         * it has completed.&n;         */
 r_if
 c_cond
 (paren
@@ -12837,7 +12176,7 @@ id|boardp-&gt;waiting
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Add to the list of requests that must be completed.&n;&t;&t;&t; */
+multiline_comment|/*&n;             * Add to the list of requests that must be completed.&n;             */
 r_if
 c_cond
 (paren
@@ -12918,7 +12257,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Interrupts could be enabled here. */
-multiline_comment|/*&n;&t; * It is possible for the request done function to re-enable&n;&t; * interrupts without confusing the driver. But here interrupts&n;&t; * aren&squot;t enabled until all requests have been completed.&n;&t; */
+multiline_comment|/*&n;     * It is possible for the request done function to re-enable&n;     * interrupts without confusing the driver. But here interrupts&n;     * aren&squot;t enabled until all requests have been completed.&n;     */
 id|asc_scsi_done_list
 c_func
 (paren
@@ -13004,7 +12343,7 @@ id|shp
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Save a pointer to the device and set its initial/maximum&n;&t;&t; * queue depth.&n;&t;&t; */
+multiline_comment|/*&n;         * Save a pointer to the device and set its initial/maximum&n;         * queue depth.&n;         */
 id|boardp-&gt;device
 (braket
 id|device-&gt;id
@@ -13141,7 +12480,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Execute a single &squot;Scsi_Cmnd&squot;.&n; *&n; * The function &squot;done&squot; is called when the request has been completed.&n; *&n; * Scsi_Cmnd:&n; *&n; *  host - board controlling device&n; *  device - device to send command&n; *  target - target of device&n; *  lun - lun of device&n; *  cmd_len - length of SCSI CDB&n; *&t;cmnd - buffer for SCSI 8, 10, or 12 byte CDB&n; *  use_sg - if non-zero indicates scatter-gather request with use_sg elements&n; *&n; *  if (use_sg == 0)&n; *&t;&t;request_buffer - buffer address for request&n; *&t;&t;request_bufflen - length of request buffer&n; *  else&n; *&t;&t;request_buffer - pointer to scatterlist structure&n; *&n; *  sense_buffer - sense command buffer&n; *&n; *  result (4 bytes of an int):&n; *   Byte Meaning&n; *   0&t;  SCSI Status Byte Code&n; *   1&t;  SCSI One Byte Message Code&n; *   2 &t;  Host Error Code&n; *   3&t;  Mid-Level Error Code&n; *&n; *  host driver fields:&n; *  SCp - Scsi_Pointer used for command processing status&n; *  scsi_done - used to save caller&squot;s done function&n; * &t;host_scribble - used for pointer to another Scsi_Cmnd&n; *&n; * If this function returns ASC_NOERROR or ASC_ERROR the request&n; * has been enqueued on the board&squot;s &squot;done&squot; queue and must be&n; * completed by the caller.&n; *&n; * If ASC_BUSY is returned the request must be enqueued by the&n; * caller and re-tried later.&n; */
+multiline_comment|/*&n; * Execute a single &squot;Scsi_Cmnd&squot;.&n; *&n; * The function &squot;done&squot; is called when the request has been completed.&n; *&n; * Scsi_Cmnd:&n; *&n; *  host - board controlling device&n; *  device - device to send command&n; *  target - target of device&n; *  lun - lun of device&n; *  cmd_len - length of SCSI CDB&n; *    cmnd - buffer for SCSI 8, 10, or 12 byte CDB&n; *  use_sg - if non-zero indicates scatter-gather request with use_sg elements&n; *&n; *  if (use_sg == 0)&n; *        request_buffer - buffer address for request&n; *        request_bufflen - length of request buffer&n; *  else&n; *        request_buffer - pointer to scatterlist structure&n; *&n; *  sense_buffer - sense command buffer&n; *&n; *  result (4 bytes of an int):&n; *   Byte Meaning&n; *   0      SCSI Status Byte Code&n; *   1      SCSI One Byte Message Code&n; *   2       Host Error Code&n; *   3      Mid-Level Error Code&n; *&n; *  host driver fields:&n; *  SCp - Scsi_Pointer used for command processing status&n; *  scsi_done - used to save caller&squot;s done function&n; *     host_scribble - used for pointer to another Scsi_Cmnd&n; *&n; * If this function returns ASC_NOERROR or ASC_ERROR the request&n; * has been enqueued on the board&squot;s &squot;done&squot; queue and must be&n; * completed by the caller.&n; *&n; * If ASC_BUSY is returned the request must be enqueued by the&n; * caller and re-tried later.&n; */
 id|STATIC
 r_int
 DECL|function|asc_execute_scsi_cmnd
@@ -13217,7 +12556,7 @@ id|boardp-&gt;device
 id|scp-&gt;target
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t; * If this is the first command, then initialize the device. If&n;&t; * no device is found set &squot;DID_BAD_TARGET&squot; and return.&n;&t; */
+multiline_comment|/*&n;     * If this is the first command, then initialize the device. If&n;     * no device is found set &squot;DID_BAD_TARGET&squot; and return.&n;     */
 r_if
 c_cond
 (paren
@@ -13280,7 +12619,7 @@ id|scp-&gt;target
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Mutually exclusive access is required to &squot;asc_scsi_q&squot; and&n;&t; * &squot;asc_sg_head&squot; until after the request is started.&n;&t; */
+multiline_comment|/*&n;     * Mutually exclusive access is required to &squot;asc_scsi_q&squot; and&n;     * &squot;asc_sg_head&squot; until after the request is started.&n;     */
 id|memset
 c_func
 (paren
@@ -13295,7 +12634,7 @@ id|ASC_SCSI_Q
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Point the ASC_SCSI_Q to the &squot;Scsi_Cmnd&squot;.&n;&t; */
+multiline_comment|/*&n;     * Point the ASC_SCSI_Q to the &squot;Scsi_Cmnd&squot;.&n;     */
 id|asc_scsi_q.q2.srb_ptr
 op_assign
 (paren
@@ -13303,7 +12642,7 @@ id|ulong
 )paren
 id|scp
 suffix:semicolon
-multiline_comment|/*&n;&t; * Build the ASC_SCSI_Q request.&n;&t; */
+multiline_comment|/*&n;     * Build the ASC_SCSI_Q request.&n;     */
 id|asc_scsi_q.cdbptr
 op_assign
 op_amp
@@ -13371,7 +12710,7 @@ r_sizeof
 id|scp-&gt;sense_buffer
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If there are any outstanding requests for the current target,&n;&t; * then every 255th request send an ORDERED request. This heuristic&n;&t; * tries to retain the benefit of request sorting while preventing&n;&t; * request starvation. 255 is the max number of tags or pending commands&n;&t; * a device may have outstanding.&n;&t; *&n;&t; * The request count is incremented below for every successfully&n;&t; * started request.&n;&t; * &n;&t; */
+multiline_comment|/*&n;     * If there are any outstanding requests for the current target,&n;     * then every 255th request send an ORDERED request. This heuristic&n;     * tries to retain the benefit of request sorting while preventing&n;     * request starvation. 255 is the max number of tags or pending commands&n;     * a device may have outstanding.&n;     *&n;     * The request count is incremented below for every successfully&n;     * started request.&n;     * &n;     */
 r_if
 c_cond
 (paren
@@ -13408,7 +12747,7 @@ op_assign
 id|M2_QTAG_MSG_SIMPLE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Build ASC_SCSI_Q for a contiguous buffer or a scatter-gather&n;&t; * buffer command.&n;&t; */
+multiline_comment|/*&n;     * Build ASC_SCSI_Q for a contiguous buffer or a scatter-gather&n;     * buffer command.&n;     */
 r_if
 c_cond
 (paren
@@ -13417,7 +12756,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * CDB request of single contiguous buffer.&n;&t;&t; */
+multiline_comment|/*&n;         * CDB request of single contiguous buffer.&n;         */
 id|ASC_STATS
 c_func
 (paren
@@ -13475,7 +12814,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * CDB scatter-gather request list.&n;&t;&t; */
+multiline_comment|/*&n;         * CDB scatter-gather request list.&n;         */
 r_int
 id|sgcnt
 suffix:semicolon
@@ -13535,7 +12874,7 @@ comma
 id|sg_cnt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Allocate a ASC_SG_HEAD structure and set the ASC_SCSI_Q&n;&t;&t; * to point to it.&n;&t;&t; */
+multiline_comment|/*&n;         * Allocate a ASC_SG_HEAD structure and set the ASC_SCSI_Q&n;         * to point to it.&n;         */
 id|memset
 c_func
 (paren
@@ -13583,7 +12922,7 @@ comma
 id|asc_sg_head.entry_cnt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Convert scatter-gather list into ASC_SG_HEAD list.&n;&t;&t; */
+multiline_comment|/*&n;         * Convert scatter-gather list into ASC_SG_HEAD list.&n;         */
 id|slp
 op_assign
 (paren
@@ -13685,7 +13024,7 @@ comma
 id|scp-&gt;cmd_len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Execute the command. If there is no error, add the command&n;&t; * to the active queue.&n;&t; */
+multiline_comment|/*&n;     * Execute the command. If there is no error, add the command&n;     * to the active queue.&n;     */
 r_switch
 c_cond
 (paren
@@ -13712,7 +13051,7 @@ comma
 id|asc_noerror
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Increment monotonically increasing per device successful&n;&t;&t; * request counter. Wrapping doesn&squot;t matter.&n;&t;&t; */
+multiline_comment|/*&n;         * Increment monotonically increasing per device successful&n;         * request counter. Wrapping doesn&squot;t matter.&n;         */
 id|boardp-&gt;reqcnt
 (braket
 id|scp-&gt;target
@@ -13720,7 +13059,7 @@ id|scp-&gt;target
 op_increment
 suffix:semicolon
 macro_line|#if ASC_QUEUE_FLOW_CONTROL
-multiline_comment|/*&n;&t;&t; * Conditionally increment the device queue depth.&n;&t;&t; *&n;&t; &t; * If no error occurred and there have been 100 consecutive&n;&t;&t; * successfull requests and the current queue depth is less&n;&t;&t; * than the maximum queue depth, then increment the current&n;&t;&t; * queue depth.&n;&t;&t; */
+multiline_comment|/*&n;         * Conditionally increment the device queue depth.&n;         *&n;          * If no error occurred and there have been 100 consecutive&n;         * successfull requests and the current queue depth is less&n;         * than the maximum queue depth, then increment the current&n;         * queue depth.&n;         */
 r_if
 c_cond
 (paren
@@ -13812,7 +13151,7 @@ id|asc_busy
 )paren
 suffix:semicolon
 macro_line|#if ASC_QUEUE_FLOW_CONTROL
-multiline_comment|/*&n;&t;&t; * Clear consecutive no error counter and if possbile decrement&n;&t;&t; * queue depth.&n;&t;&t; */
+multiline_comment|/*&n;         * Clear consecutive no error counter and if possbile decrement&n;         * queue depth.&n;         */
 id|boardp-&gt;nerrcnt
 (braket
 id|scp-&gt;target
@@ -13963,6 +13302,7 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * asc_isr_callback() - Second Level Interrupt Handler called by AscISR().&n; */
+id|STATIC
 r_void
 DECL|function|asc_isr_callback
 id|asc_isr_callback
@@ -14030,7 +13370,7 @@ comma
 id|qdonep
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Get the Scsi_Cmnd structure and Scsi_Host structure for the&n;&t; * command that has been completed.&n;&t; */
+multiline_comment|/*&n;     * Get the Scsi_Cmnd structure and Scsi_Host structure for the&n;     * command that has been completed.&n;     */
 id|scp
 op_assign
 (paren
@@ -14079,7 +13419,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If the request&squot;s host pointer is not valid, display a&n;&t; * message and return.&n;&t; */
+multiline_comment|/*&n;     * If the request&squot;s host pointer is not valid, display a&n;     * message and return.&n;     */
 id|shp
 op_assign
 id|scp-&gt;host
@@ -14162,7 +13502,7 @@ r_int
 id|shp
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the request isn&squot;t found on the active queue, it may&n;&t; * have been removed to handle a reset or abort request.&n;&t; * Display a message and return.&n;&t; */
+multiline_comment|/*&n;     * If the request isn&squot;t found on the active queue, it may&n;     * have been removed to handle a reset or abort request.&n;     * Display a message and return.&n;     */
 id|boardp
 op_assign
 id|ASC_BOARDP
@@ -14202,7 +13542,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * &squot;qdonep&squot; contains the command&squot;s ending status.&n;&t; */
+multiline_comment|/*&n;     * &squot;qdonep&squot; contains the command&squot;s ending status.&n;     */
 r_switch
 c_cond
 (paren
@@ -14300,7 +13640,7 @@ id|scp-&gt;sense_buffer
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Note: The &squot;status_byte()&squot; macro used by target drivers&n;&t;&t;&t;&t; * defined in scsi.h shifts the status byte returned by&n;&t;&t;&t;&t; * host drivers right by 1 bit. This is why target drivers&n;&t;&t;&t;&t; * also use right shifted status byte definitions. For&n;&t;&t;&t;&t; * instance target drivers use CHECK_CONDITION, defined to&n;&t;&t;&t;&t; * 0x1, instead of the SCSI defined check condition value&n;&t;&t;&t;&t; * of 0x2. Host drivers are supposed to return the status&n;&t;&t;&t;&t; * byte as it is defined by SCSI.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;                 * Note: The &squot;status_byte()&squot; macro used by target drivers&n;                 * defined in scsi.h shifts the status byte returned by&n;                 * host drivers right by 1 bit. This is why target drivers&n;                 * also use right shifted status byte definitions. For&n;                 * instance target drivers use CHECK_CONDITION, defined to&n;                 * 0x1, instead of the SCSI defined check condition value&n;                 * of 0x2. Host drivers are supposed to return the status&n;                 * byte as it is defined by SCSI.&n;                 */
 id|scp-&gt;result
 op_assign
 id|DRIVER_BYTE
@@ -14433,7 +13773,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; * Because interrupts may be enabled by the &squot;Scsi_Cmnd&squot; done&n;&t; * function, add the command to the end of the board&squot;s done queue.&n;&t; * The done function for the command will be called from&n;&t; * advansys_interrupt().&n;&t; */
+multiline_comment|/* &n;     * Because interrupts may be enabled by the &squot;Scsi_Cmnd&squot; done&n;     * function, add the command to the end of the board&squot;s done queue.&n;     * The done function for the command will be called from&n;     * advansys_interrupt().&n;     */
 id|asc_enqueue
 c_func
 (paren
@@ -14570,7 +13910,20 @@ op_assign
 op_amp
 id|boardp-&gt;inquiry
 suffix:semicolon
-multiline_comment|/*&n;&t; * XXX - AscInitPollBegin() re-initializes these fields to&n;&t; * zero. &squot;Or&squot; in the new values and restore them before calling &n;&t; * AscInitPollEnd(). Normally all targets are initialized within&n;&t; * a call to AscInitPollBegin() and AscInitPollEnd().&n;&t; */
+id|memset
+c_func
+(paren
+id|inquiry
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|ASC_SCSI_INQUIRY
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     * XXX - AscInitPollBegin() re-initializes these fields to&n;     * zero. &squot;Or&squot; in the new values and restore them before calling &n;     * AscInitPollEnd(). Normally all targets are initialized within&n;     * a call to AscInitPollBegin() and AscInitPollEnd().&n;     */
 id|save_use_tagged_qng
 op_assign
 id|asc_dvc_varp-&gt;use_tagged_qng
@@ -14883,8 +14236,8 @@ id|found
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Search for an AdvanSys PCI device in the PCI configuration space.&n; */
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
 c_func
 (paren
 id|STATIC
@@ -15051,7 +14404,7 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Determine the access method to be used for &squot;pciDevice&squot;.&n; */
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
 id|STATIC
@@ -15198,8 +14551,8 @@ id|type
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check for an AdvanSys PCI device in &squot;pciDevice&squot;.&n; *&n; * Return PCI_DEVICE_FOUND if found, otherwise return PCI_DEVICE_NOT_FOUND.&n; */
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
 c_func
 (paren
 id|STATIC
@@ -15437,8 +14790,8 @@ id|PCI_DEVICE_NOT_FOUND
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read PCI configuration data into &squot;pciConfig&squot;.&n; */
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
 c_func
 (paren
 id|STATIC
@@ -15559,7 +14912,7 @@ id|counter
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a word (16 bits) from the PCI configuration space.&n; *&n; * The configuration mechanism is checked for the correct access method.&n; */
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
 id|STATIC
@@ -15621,7 +14974,7 @@ comma
 id|lfunc
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check type of configuration mechanism.&n;&t; */
+multiline_comment|/*&n;     * Check type of configuration mechanism.&n;     */
 r_if
 c_cond
 (paren
@@ -15630,7 +14983,7 @@ op_eq
 l_int|2
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Save registers to be restored later.&n;&t;&t; */
+multiline_comment|/*&n;         * Save registers to be restored later.&n;         */
 id|t2CFA
 op_assign
 id|inp
@@ -15649,7 +15002,7 @@ l_int|0xCF8
 )paren
 suffix:semicolon
 multiline_comment|/* save config space enable register */
-multiline_comment|/*&n;&t;&t; * Write the bus and enable registers.&n;&t;&t; */
+multiline_comment|/*&n;         * Write the bus and enable registers.&n;         */
 multiline_comment|/* set for type 1 cycle, if needed */
 id|outp
 c_func
@@ -15674,7 +15027,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Read the configuration space type 2 locations.&n;&t;&t; */
+multiline_comment|/*&n;         * Read the configuration space type 2 locations.&n;         */
 id|tmp
 op_assign
 (paren
@@ -15717,7 +15070,7 @@ multiline_comment|/* save config space enable register */
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * Type 1 or 3 configuration mechanism.&n;&t;&t; *&n;&t;&t; * Save the CONFIG_ADDRESS and CONFIG_DATA register values.&n;&t;&t; */
+multiline_comment|/*&n;         * Type 1 or 3 configuration mechanism.&n;         *&n;         * Save the CONFIG_ADDRESS and CONFIG_DATA register values.&n;         */
 id|t1CF8
 op_assign
 id|inpl
@@ -15734,7 +15087,7 @@ c_func
 l_int|0xCFC
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * enable &lt;31&gt;, bus = &lt;23:16&gt;, slot = &lt;15:11&gt;,&n;&t;&t; * func = &lt;10:8&gt;, reg = &lt;7:2&gt;&n;&t;&t; */
+multiline_comment|/*&n;         * enable &lt;31&gt;, bus = &lt;23:16&gt;, slot = &lt;15:11&gt;,&n;         * func = &lt;10:8&gt;, reg = &lt;7:2&gt;&n;         */
 id|address
 op_assign
 (paren
@@ -15768,7 +15121,7 @@ op_or
 l_int|0x80000000L
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Write out the address to CONFIG_ADDRESS.&n;&t;&t; */
+multiline_comment|/*&n;         * Write out the address to CONFIG_ADDRESS.&n;         */
 id|outpl
 c_func
 (paren
@@ -15777,7 +15130,7 @@ comma
 id|address
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Read in word from CONFIG_DATA.&n;&t;&t; */
+multiline_comment|/*&n;         * Read in word from CONFIG_DATA.&n;         */
 id|tmp
 op_assign
 (paren
@@ -15805,7 +15158,7 @@ op_amp
 l_int|0xFFFF
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Restore registers.&n;&t;&t; */
+multiline_comment|/*&n;         * Restore registers.&n;         */
 id|outpl
 c_func
 (paren
@@ -15838,7 +15191,7 @@ id|tmp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Reads a byte from the PCI configuration space.&n; *&n; * The configuration mechanism is checked for the correct access method.&n; */
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
 id|STATIC
@@ -15892,7 +15245,7 @@ comma
 id|pciData-&gt;type
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check type of configuration mechanism.&n;&t; */
+multiline_comment|/*&n;     * Check type of configuration mechanism.&n;     */
 r_if
 c_cond
 (paren
@@ -15901,7 +15254,7 @@ op_eq
 l_int|2
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Save registers to be restored later.&n;&t;&t; */
+multiline_comment|/*&n;         * Save registers to be restored later.&n;         */
 id|t2CFA
 op_assign
 id|inp
@@ -15920,7 +15273,7 @@ l_int|0xCF8
 )paren
 suffix:semicolon
 multiline_comment|/* save config space enable register */
-multiline_comment|/*&n;&t;&t; * Write the bus and enable registers.&n;&t;&t; */
+multiline_comment|/*&n;         * Write the bus and enable registers.&n;         */
 multiline_comment|/* set for type 1 cycle, if needed */
 id|outp
 c_func
@@ -15945,7 +15298,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Read configuration space type 2 locations.&n;&t;&t; */
+multiline_comment|/*&n;         * Read configuration space type 2 locations.&n;         */
 id|tmp
 op_assign
 id|inp
@@ -15964,7 +15317,7 @@ id|pciData-&gt;offset
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Restore registers.&n;&t;&t; */
+multiline_comment|/*&n;         * Restore registers.&n;         */
 id|outp
 c_func
 (paren
@@ -15986,7 +15339,7 @@ multiline_comment|/* restore PCI bus register */
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * Type 1 or 3 configuration mechanism.&n;&t;&t; *&n;&t;&t; * Save CONFIG_ADDRESS and CONFIG_DATA register values.&n;&t;&t; */
+multiline_comment|/*&n;         * Type 1 or 3 configuration mechanism.&n;         *&n;         * Save CONFIG_ADDRESS and CONFIG_DATA register values.&n;         */
 id|t1CF8
 op_assign
 id|inpl
@@ -16003,7 +15356,7 @@ c_func
 l_int|0xCFC
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * enable &lt;31&gt;, bus = &lt;23:16&gt;, slot = &lt;15:11&gt;, func = &lt;10:8&gt;,&n;&t;&t; * reg = &lt;7:2&gt;&n;&t;&t; */
+multiline_comment|/*&n;         * enable &lt;31&gt;, bus = &lt;23:16&gt;, slot = &lt;15:11&gt;, func = &lt;10:8&gt;,&n;         * reg = &lt;7:2&gt;&n;         */
 id|address
 op_assign
 (paren
@@ -16037,7 +15390,7 @@ op_or
 l_int|0x80000000L
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Write out address to CONFIG_ADDRESS.&n;&t;&t; */
+multiline_comment|/*&n;         * Write out address to CONFIG_ADDRESS.&n;         */
 id|outpl
 c_func
 (paren
@@ -16046,7 +15399,7 @@ comma
 id|address
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Read in word from CONFIG_DATA.&n;&t;&t; */
+multiline_comment|/*&n;         * Read in word from CONFIG_DATA.&n;         */
 id|tmp
 op_assign
 (paren
@@ -16074,7 +15427,7 @@ op_amp
 l_int|0xFF
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Restore registers.&n;&t;&t; */
+multiline_comment|/*&n;         * Restore registers.&n;         */
 id|outpl
 c_func
 (paren
@@ -16107,10 +15460,11 @@ id|tmp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write a byte to the PCI configuration space.&n; */
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 r_void
 id|asc_put_cfg_byte
 c_func
@@ -16165,7 +15519,7 @@ comma
 id|byte_data
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check type of configuration mechanism.&n;&t; */
+multiline_comment|/*&n;     * Check type of configuration mechanism.&n;     */
 r_if
 c_cond
 (paren
@@ -16174,7 +15528,7 @@ op_eq
 l_int|2
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Save registers to be restored later.&n;&t;&t; */
+multiline_comment|/*&n;         * Save registers to be restored later.&n;         */
 id|t2CFA
 op_assign
 id|inp
@@ -16193,7 +15547,7 @@ l_int|0xCF8
 )paren
 suffix:semicolon
 multiline_comment|/* save config space enable register */
-multiline_comment|/*&n;&t;&t; * Write bus and enable registers.&n;&t;&t; */
+multiline_comment|/*&n;         * Write bus and enable registers.&n;         */
 id|outp
 c_func
 (paren
@@ -16202,7 +15556,7 @@ comma
 id|pciData-&gt;bus
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Set the function number.&n;&t;&t; */
+multiline_comment|/*&n;         * Set the function number.&n;         */
 id|outp
 c_func
 (paren
@@ -16217,7 +15571,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Write the configuration space type 2 locations.&n;&t;&t; */
+multiline_comment|/*&n;         * Write the configuration space type 2 locations.&n;         */
 id|outp
 c_func
 (paren
@@ -16236,7 +15590,7 @@ comma
 id|byte_data
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Restore registers.&n;&t;&t; */
+multiline_comment|/*&n;         * Restore registers.&n;         */
 id|outp
 c_func
 (paren
@@ -16254,11 +15608,11 @@ comma
 id|t2CFA
 )paren
 suffix:semicolon
-multiline_comment|/* restore PCI bus register&t;*/
+multiline_comment|/* restore PCI bus register    */
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * Type 1 or 3 configuration mechanism.&n;&t;&t; *&n;&t;&t; * Save the CONFIG_ADDRESS and CONFIG_DATA register values.&n;&t;&t; */
+multiline_comment|/*&n;         * Type 1 or 3 configuration mechanism.&n;         *&n;         * Save the CONFIG_ADDRESS and CONFIG_DATA register values.&n;         */
 id|t1CF8
 op_assign
 id|inpl
@@ -16275,7 +15629,7 @@ c_func
 l_int|0xCFC
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * enable &lt;31&gt;, bus = &lt;23:16&gt;, slot = &lt;15:11&gt;, func = &lt;10:8&gt;,&n;&t;&t; * reg = &lt;7:2&gt;&n;&t;&t; */
+multiline_comment|/*&n;         * enable &lt;31&gt;, bus = &lt;23:16&gt;, slot = &lt;15:11&gt;, func = &lt;10:8&gt;,&n;         * reg = &lt;7:2&gt;&n;         */
 id|address
 op_assign
 (paren
@@ -16309,7 +15663,7 @@ op_or
 l_int|0x80000000L
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Write out address to CONFIG_ADDRESS.&n;&t;&t; */
+multiline_comment|/*&n;         * Write out address to CONFIG_ADDRESS.&n;         */
 id|outpl
 c_func
 (paren
@@ -16318,7 +15672,7 @@ comma
 id|address
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Write double word to CONFIG_DATA preserving the bytes&n;&t;&t; * in the double not written.&n;&t;&t; */
+multiline_comment|/*&n;         * Write double word to CONFIG_DATA preserving the bytes&n;         * in the double not written.&n;         */
 id|tmpl
 op_assign
 id|inpl
@@ -16364,7 +15718,7 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Restore registers.&n;&t;&t; */
+multiline_comment|/*&n;         * Restore registers.&n;         */
 id|outpl
 c_func
 (paren
@@ -16392,6 +15746,7 @@ l_string|&quot;asc_put_cfg_byte: end&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Add a &squot;REQP&squot; to the end of specified queue. Set &squot;tidmask&squot;&n; * to indicate a command is queued for the device.&n; *&n; * &squot;flag&squot; may be either ASC_FRONT or ASC_BACK.&n; *&n; * &squot;REQPNEXT(reqp)&squot; returns reqp&squot;s next pointer.&n; */
+id|STATIC
 r_void
 DECL|function|asc_enqueue
 id|asc_enqueue
@@ -16683,6 +16038,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return first queued &squot;REQP&squot; on the specified queue for&n; * the specified target device. Clear the &squot;tidmask&squot; bit for&n; * the device if no more commands are left queued for it.&n; *&n; * &squot;REQPNEXT(reqp)&squot; returns reqp&squot;s next pointer.&n; */
+id|STATIC
 id|REQP
 DECL|function|asc_dequeue
 id|asc_dequeue
@@ -16866,6 +16222,7 @@ id|reqp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return a pointer to a singly linked list of all the requests queued&n; * for &squot;tid&squot; on the &squot;asc_queue_t&squot; pointed to by &squot;ascq&squot;.&n; *&n; * If &squot;lastpp&squot; is not NULL, &squot;*lastpp&squot; will be set to point to the &n; * the last request returned in the singly linked list.&n; *&n; * &squot;tid&squot; should either be a valid target id or if it is ASC_TID_ALL,&n; * then all queued requests are concatenated into one list and&n; * returned.&n; *&n; * Note: If &squot;lastpp&squot; is used to append a new list to the end of&n; * an old list, only change the old list last pointer if &squot;*lastpp&squot;&n; * (or the function return value) is not NULL, i.e. use a temporary&n; * variable for &squot;lastpp&squot; and check its value after the function return&n; * before assigning it to the list last pointer.&n; *&n; * Unfortunately collecting queuing time statistics adds overhead to&n; * the function that isn&squot;t inherent to the function&squot;s algorithm.&n; */
+id|STATIC
 id|REQP
 DECL|function|asc_dequeue_list
 id|asc_dequeue_list
@@ -16937,7 +16294,7 @@ id|ASC_MAX_TID
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If &squot;tid&squot; is not ASC_TID_ALL, return requests only for&n;&t; * the specified &squot;tid&squot;. If &squot;tid&squot; is ASC_TID_ALL, return all&n;&t; * requests for all tids.&n;&t; */
+multiline_comment|/*&n;     * If &squot;tid&squot; is not ASC_TID_ALL, return requests only for&n;     * the specified &squot;tid&squot;. If &squot;tid&squot; is ASC_TID_ALL, return all&n;     * requests for all tids.&n;     */
 r_if
 c_cond
 (paren
@@ -17244,6 +16601,7 @@ id|firstp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Remove the specified &squot;REQP&squot; from the specified queue for&n; * the specified target device. Clear the &squot;tidmask&squot; bit for the&n; * device if no more commands are left queued for it.&n; *&n; * &squot;REQPNEXT(reqp)&squot; returns reqp&squot;s the next pointer.&n; *&n; * Return ASC_TRUE if the command was found and removed,&n; * otherwise return ASC_FALSE.&n; */
+id|STATIC
 r_int
 DECL|function|asc_rmqueue
 id|asc_rmqueue
@@ -17327,7 +16685,7 @@ op_le
 id|ASC_MAX_TID
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Handle the common case of &squot;reqp&squot; being the first&n;&t; * entry on the queue.&n;&t; */
+multiline_comment|/*&n;     * Handle the common case of &squot;reqp&squot; being the first&n;     * entry on the queue.&n;     */
 r_if
 c_cond
 (paren
@@ -17418,7 +16776,7 @@ op_ne
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Because the case of &squot;reqp&squot; being the first entry has been&n;&t;&t; * handled above and it is known the queue is not empty, if&n;&t;&t; * &squot;reqp&squot; is found on the queue it is guaranteed the queue will&n;&t;&t; * not become empty and that &squot;q_first[tid]&squot; will not be changed.&n;&t;&t; *&n;&t;&t; * Set &squot;prevp&squot; to the first entry, &squot;currp&squot; to the second entry,&n;&t;&t; * and search for &squot;reqp&squot;.&n;&t;&t; */
+multiline_comment|/*&n;         * Because the case of &squot;reqp&squot; being the first entry has been&n;         * handled above and it is known the queue is not empty, if&n;         * &squot;reqp&squot; is found on the queue it is guaranteed the queue will&n;         * not become empty and that &squot;q_first[tid]&squot; will not be changed.&n;         *&n;         * Set &squot;prevp&squot; to the first entry, &squot;currp&squot; to the second entry,&n;         * and search for &squot;reqp&squot;.&n;         */
 r_for
 c_loop
 (paren
@@ -17569,6 +16927,7 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * If the specified &squot;REQP&squot; is queued on the specified queue for&n; * the specified target device, return ASC_TRUE.&n; */
+id|STATIC
 r_int
 DECL|function|asc_isqueued
 id|asc_isqueued
@@ -17714,6 +17073,7 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Execute as many queued requests as possible for the specified queue.&n; *&n; * Calls asc_execute_scsi_cmnd() to execute a REQP/Scsi_Cmnd.&n; */
+id|STATIC
 r_void
 DECL|function|asc_execute_queue
 id|asc_execute_queue
@@ -17757,7 +17117,7 @@ op_eq
 id|ASC_FALSE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Execute queued commands for devices attached to&n;&t; * the current board in round-robin fashion.&n;&t; */
+multiline_comment|/*&n;     * Execute queued commands for devices attached to&n;     * the current board in round-robin fashion.&n;     */
 id|scan_tidmask
 op_assign
 id|ascq-&gt;q_tidmask
@@ -17869,6 +17229,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
 multiline_comment|/*&n; * asc_prt_board_devices()&n; *&n; * Print driver information for devices attached to the board.&n; *&n; * Note: no single line should be greater than ASC_PRTLINE_SIZE,&n; * cf. asc_prt_line().&n; *&n; * Return the number of characters copied into &squot;cp&squot;. No more than&n; * &squot;cplen&squot; characters will be copied to &squot;cp&squot;.&n; */
 id|STATIC
 r_int
@@ -19258,117 +18619,6 @@ id|cp
 comma
 id|leftlen
 comma
-l_string|&quot; Synchronous Transfer:    &quot;
-)paren
-suffix:semicolon
-id|ASC_PRT_NEXT
-c_func
-(paren
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-op_le
-id|ASC_MAX_TID
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|boardp-&gt;asc_dvc_cfg.chip_scsi_id
-op_eq
-id|i
-)paren
-op_logical_or
-(paren
-(paren
-id|boardp-&gt;init_tidmask
-op_amp
-id|ASC_TIX_TO_TARGET_ID
-c_func
-(paren
-id|i
-)paren
-)paren
-op_eq
-l_int|0
-)paren
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
-id|len
-op_assign
-id|asc_prt_line
-c_func
-(paren
-id|cp
-comma
-id|leftlen
-comma
-l_string|&quot; %d:%c&quot;
-comma
-id|i
-comma
-(paren
-id|v-&gt;sdtr_done
-op_amp
-id|ASC_TIX_TO_TARGET_ID
-c_func
-(paren
-id|i
-)paren
-)paren
-ques
-c_cond
-l_char|&squot;Y&squot;
-suffix:colon
-l_char|&squot;N&squot;
-)paren
-suffix:semicolon
-id|ASC_PRT_NEXT
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-id|len
-op_assign
-id|asc_prt_line
-c_func
-(paren
-id|cp
-comma
-id|leftlen
-comma
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASC_PRT_NEXT
-c_func
-(paren
-)paren
-suffix:semicolon
-id|len
-op_assign
-id|asc_prt_line
-c_func
-(paren
-id|cp
-comma
-id|leftlen
-comma
 l_string|&quot; Command Queuing:         &quot;
 )paren
 suffix:semicolon
@@ -19807,11 +19057,286 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+l_string|&quot; Synchronous Transfer:    &quot;
+)paren
+suffix:semicolon
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|ASC_MAX_TID
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|boardp-&gt;asc_dvc_cfg.chip_scsi_id
+op_eq
+id|i
+)paren
+op_logical_or
+(paren
+(paren
+id|boardp-&gt;init_tidmask
+op_amp
+id|ASC_TIX_TO_TARGET_ID
+c_func
+(paren
+id|i
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+l_string|&quot; %d:%c&quot;
+comma
+id|i
+comma
+(paren
+id|v-&gt;sdtr_done
+op_amp
+id|ASC_TIX_TO_TARGET_ID
+c_func
+(paren
+id|i
+)paren
+)paren
+ques
+c_cond
+l_char|&squot;Y&squot;
+suffix:colon
+l_char|&squot;N&squot;
+)paren
+suffix:semicolon
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|ASC_MAX_TID
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|uchar
+id|syn_period_ix
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|boardp-&gt;asc_dvc_cfg.chip_scsi_id
+op_eq
+id|i
+)paren
+op_logical_or
+(paren
+(paren
+id|boardp-&gt;init_tidmask
+op_amp
+id|ASC_TIX_TO_TARGET_ID
+c_func
+(paren
+id|i
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|v-&gt;sdtr_done
+op_amp
+id|ASC_TIX_TO_TARGET_ID
+c_func
+(paren
+id|i
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+id|syn_period_ix
+op_assign
+(paren
+id|boardp-&gt;sdtr_data
+(braket
+id|i
+)braket
+op_rshift
+l_int|4
+)paren
+op_amp
+(paren
+id|v-&gt;max_sdtr_index
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+l_string|&quot;   %d:&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+l_string|&quot; Transfer Period Factor: %d (%d.%d Mhz),&quot;
+comma
+id|v-&gt;sdtr_period_tbl
+(braket
+id|syn_period_ix
+)braket
+comma
+l_int|250
+op_div
+id|v-&gt;sdtr_period_tbl
+(braket
+id|syn_period_ix
+)braket
+comma
+id|ASC_TENTHS
+c_func
+(paren
+l_int|250
+comma
+id|v-&gt;sdtr_period_tbl
+(braket
+id|syn_period_ix
+)braket
+)paren
+)paren
+suffix:semicolon
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|asc_prt_line
+c_func
+(paren
+id|cp
+comma
+id|leftlen
+comma
+l_string|&quot; REQ/ACK Offset: %d&bslash;n&quot;
+comma
+id|boardp-&gt;sdtr_data
+(braket
+id|i
+)braket
+op_amp
+id|ASC_SYN_MAX_OFFSET
+)paren
+suffix:semicolon
+id|ASC_PRT_NEXT
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_return
 id|totlen
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
 multiline_comment|/*&n; * asc_proc_copy() &n; *&n; * Copy proc information to a read buffer taking into account the current&n; * read offset in the file and the remaining space in the read buffer.&n; */
 id|STATIC
 r_int
@@ -19992,8 +19517,8 @@ r_return
 id|cnt
 suffix:semicolon
 )brace
-macro_line|#endif /* version &gt;= v1.3.0 */
 multiline_comment|/*&n; * asc_prt_line()&n; *&n; * If &squot;cp&squot; is NULL print to the console, otherwise print to a buffer.&n; *&n; * Return 0 if printing to the console, otherwise return the number of&n; * bytes written to the buffer.&n; *&n; * Note: If any single line is greater than ASC_PRTLINE_SIZE bytes the stack&n; * will be corrupted. &squot;s[]&squot; is defined to be ASC_PRTLINE_SIZE bytes.&n; */
+id|STATIC
 r_int
 DECL|function|asc_prt_line
 id|asc_prt_line
@@ -20110,8 +19635,10 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+macro_line|#endif /* version &gt;= v1.3.0 */
 multiline_comment|/*&n; * --- Functions Required by the Asc Library&n; */
 multiline_comment|/*&n; * Delay for &squot;n&squot; milliseconds. Don&squot;t use the &squot;jiffies&squot;&n; * global variable which is incremented once every 5 ms&n; * from a timer interrupt, because this function may be&n; * called when interrupts are disabled.&n; */
+id|STATIC
 r_void
 DECL|function|DvcSleepMilliSecond
 id|DvcSleepMilliSecond
@@ -20157,23 +19684,7 @@ l_int|1000
 suffix:semicolon
 )brace
 )brace
-r_void
-DECL|function|DvcDisplayString
-id|DvcDisplayString
-c_func
-(paren
-id|uchar
-op_star
-id|s
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-)brace
+id|STATIC
 r_int
 DECL|function|DvcEnterCritical
 id|DvcEnterCritical
@@ -20200,6 +19711,7 @@ r_return
 id|flags
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|DvcLeaveCritical
 id|DvcLeaveCritical
@@ -20216,45 +19728,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Convert a virtual address to a bus address.&n; */
-id|ulong
-DECL|function|DvcGetPhyAddr
-id|DvcGetPhyAddr
-c_func
-(paren
-id|uchar
-op_star
-id|buf_addr
-comma
-id|ulong
-id|buf_len
-)paren
-(brace
-id|ulong
-id|bus_addr
-suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,0,0)
-id|bus_addr
-op_assign
-(paren
-id|ulong
-)paren
-id|buf_addr
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.0.0 */
-id|bus_addr
-op_assign
-id|virt_to_bus
-c_func
-(paren
-id|buf_addr
-)paren
-suffix:semicolon
-macro_line|#endif /* version &gt;= v2.0.0 */
-r_return
-id|bus_addr
-suffix:semicolon
-)brace
+id|STATIC
 id|ulong
 DECL|function|DvcGetSGList
 id|DvcGetSGList
@@ -20328,7 +19802,8 @@ r_return
 id|buf_size
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * void&n; * DvcPutScsiQ(PortAddr iop_base, ushort s_addr, ushort *outbuf, int words)&n; *&n; * Calling/Exit State:&n; *&t;none&n; *&n; * Description:&n; * &t;Output an ASC_SCSI_Q structure to the chip&n; */
+multiline_comment|/*&n; * void&n; * DvcPutScsiQ(PortAddr iop_base, ushort s_addr, ushort *outbuf, int words)&n; *&n; * Calling/Exit State:&n; *    none&n; *&n; * Description:&n; *     Output an ASC_SCSI_Q structure to the chip&n; */
+id|STATIC
 r_void
 DECL|function|DvcPutScsiQ
 id|DvcPutScsiQ
@@ -20421,7 +19896,8 @@ id|outbuf
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * void&n; * DvcGetQinfo(PortAddr iop_base, ushort s_addr, ushort *inbuf, int words)&n; *&n; * Calling/Exit State:&n; *&t;none&n; *&n; * Description:&n; * &t;Input an ASC_QDONE_INFO structure from the chip&n; */
+multiline_comment|/*&n; * void&n; * DvcGetQinfo(PortAddr iop_base, ushort s_addr, ushort *inbuf, int words)&n; *&n; * Calling/Exit State:&n; *    none&n; *&n; * Description:&n; *     Input an ASC_QDONE_INFO structure from the chip&n; */
+id|STATIC
 r_void
 DECL|function|DvcGetQinfo
 id|DvcGetQinfo
@@ -20510,7 +19986,8 @@ id|words
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * void&t;DvcOutPortWords(ushort iop_base, ushort &amp;outbuf, int words)&n; *&n; * Calling/Exit State:&n; *&t;none&n; *&n; * Description:&n; * &t;output a buffer to an i/o port address&n; */
+multiline_comment|/*&n; * void    DvcOutPortWords(ushort iop_base, ushort &amp;outbuf, int words)&n; *&n; * Calling/Exit State:&n; *    none&n; *&n; * Description:&n; *     output a buffer to an i/o port address&n; */
+id|STATIC
 r_void
 DECL|function|DvcOutPortWords
 id|DvcOutPortWords
@@ -20557,7 +20034,8 @@ id|outbuf
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * void&t;DvcInPortWords(ushort iop_base, ushort &amp;outbuf, int words)&n; *&n; * Calling/Exit State:&n; *&t;none&n; *&n; * Description:&n; * &t;input a buffer from an i/o port address&n; */
+multiline_comment|/*&n; * void    DvcInPortWords(ushort iop_base, ushort &amp;outbuf, int words)&n; *&n; * Calling/Exit State:&n; *    none&n; *&n; * Description:&n; *     input a buffer from an i/o port address&n; */
+id|STATIC
 r_void
 DECL|function|DvcInPortWords
 id|DvcInPortWords
@@ -20604,7 +20082,8 @@ id|iop_base
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * void DvcOutPortDWords(PortAddr port, ulong *pdw, int dwords)&n; *&n; * Calling/Exit State:&n; *&t;none&n; *&n; * Description:&n; * &t;output a buffer of 32-bit integers to an i/o port address in&n; *  16 bit integer units&n; */
+multiline_comment|/*&n; * void DvcOutPortDWords(PortAddr port, ulong *pdw, int dwords)&n; *&n; * Calling/Exit State:&n; *    none&n; *&n; * Description:&n; *     output a buffer of 32-bit integers to an i/o port address in&n; *  16 bit integer units&n; */
+id|STATIC
 r_void
 DECL|function|DvcOutPortDWords
 id|DvcOutPortDWords
@@ -20677,9 +20156,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a PCI configuration byte.&n; */
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|uchar
 DECL|function|DvcReadPCIConfigByte
 id|DvcReadPCIConfigByte
@@ -20740,10 +20220,11 @@ id|pciData
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write a PCI configuration byte.&n; */
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 r_void
 id|DvcWritePCIConfigByte
 c_func
@@ -20807,9 +20288,10 @@ id|byte_data
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return the BIOS address of the adapter at the specified&n; * I/O port and with the specified bus type.&n; */
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|ushort
 DECL|function|AscGetChipBiosAddress
 id|AscGetChipBiosAddress
@@ -20829,7 +20311,7 @@ suffix:semicolon
 id|ushort
 id|bios_addr
 suffix:semicolon
-multiline_comment|/*&n;&t; * The PCI BIOS is re-located by the motherboard BIOS. Because&n;&t; * of this the driver can not determine where a PCI BIOS is&n;&t; * loaded and executes.&n;&t; */
+multiline_comment|/*&n;     * The PCI BIOS is re-located by the motherboard BIOS. Because&n;     * of this the driver can not determine where a PCI BIOS is&n;     * loaded and executes.&n;     */
 r_if
 c_cond
 (paren
@@ -21102,7 +20584,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Display data transfer statistics.&n;&t; */
+multiline_comment|/*&n;     * Display data transfer statistics.&n;     */
 r_if
 c_cond
 (paren
@@ -21361,7 +20843,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Display request queuing statistics.&n;&t; */
+multiline_comment|/*&n;     * Display request queuing statistics.&n;     */
 id|len
 op_assign
 id|asc_prt_line
@@ -22785,6 +22267,8 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* ADVANSYS_DEBUG */
+macro_line|#ifdef ADVANSYS_ASSERT
 multiline_comment|/*&n; * interrupts_enabled()&n; *&n; * Return 1 if interrupts are enabled, otherwise return 0.&n; */
 id|STATIC
 r_int
@@ -22823,8 +22307,12 @@ id|ASC_FALSE
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* ADVANSYS_DEBUG */
+macro_line|#endif /* ADVANSYS_ASSERT */
 multiline_comment|/*&n; * --- Asc Library Functions&n; */
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ushort
 DECL|function|AscGetEisaChipCfg
 id|AscGetEisaChipCfg
@@ -22832,6 +22320,7 @@ c_func
 (paren
 id|PortAddr
 id|iop_base
+)paren
 )paren
 (brace
 id|PortAddr
@@ -22865,6 +22354,10 @@ id|eisa_cfg_iop
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|uchar
 DECL|function|AscSetChipScsiID
 id|AscSetChipScsiID
@@ -22875,6 +22368,7 @@ id|iop_base
 comma
 id|uchar
 id|new_host_id
+)paren
 )paren
 (brace
 id|ushort
@@ -22943,6 +22437,10 @@ id|iop_base
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|uchar
 DECL|function|AscGetChipScsiCtrl
 id|AscGetChipScsiCtrl
@@ -22950,6 +22448,7 @@ c_func
 (paren
 id|PortAddr
 id|iop_base
+)paren
 )paren
 (brace
 id|uchar
@@ -22987,9 +22486,10 @@ id|sc
 )paren
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|uchar
 DECL|function|AscGetChipVersion
 id|AscGetChipVersion
@@ -23072,6 +22572,10 @@ id|iop_base
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ushort
 DECL|function|AscGetChipBusType
 id|AscGetChipBusType
@@ -23079,6 +22583,7 @@ c_func
 (paren
 id|PortAddr
 id|iop_base
+)paren
 )paren
 (brace
 id|ushort
@@ -23209,9 +22714,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|ulong
 DECL|function|AscLoadMicroCode
 id|AscLoadMicroCode
@@ -23224,7 +22730,6 @@ id|ushort
 id|s_addr
 comma
 id|ushort
-id|dosfar
 op_star
 id|mcode_buf
 comma
@@ -23349,10 +22854,11 @@ id|chksum
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 r_int
 id|AscFindSignature
 c_func
@@ -23423,18 +22929,22 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|variable|_isa_pnp_inited
+DECL|variable|ASC_INITDATA
+id|STATIC
 id|uchar
 id|_isa_pnp_inited
+id|ASC_INITDATA
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|_asc_def_iop_base
+DECL|variable|ASC_INITDATA
+id|STATIC
 id|PortAddr
 id|_asc_def_iop_base
 (braket
 id|ASC_IOADR_TABLE_MAX_IX
 )braket
+id|ASC_INITDATA
 op_assign
 (brace
 l_int|0x100
@@ -23460,9 +22970,10 @@ comma
 id|ASC_IOADR_8
 )brace
 suffix:semicolon
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|PortAddr
 DECL|function|AscSearchIOPortAddr
 id|AscSearchIOPortAddr
@@ -23641,9 +23152,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|PortAddr
 DECL|function|AscSearchIOPortAddr11
 id|AscSearchIOPortAddr11
@@ -23769,13 +23281,18 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 r_void
-DECL|function|AscToggleIRQAct
 id|AscToggleIRQAct
 c_func
 (paren
 id|PortAddr
 id|iop_base
+)paren
 )paren
 (brace
 id|AscSetChipStatus
@@ -23797,53 +23314,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if CC_INIT_INQ_DISPLAY
-DECL|variable|_hextbl_
-id|uchar
-id|_hextbl_
-(braket
-l_int|16
-)braket
-op_assign
-(brace
-l_char|&squot;0&squot;
-comma
-l_char|&squot;1&squot;
-comma
-l_char|&squot;2&squot;
-comma
-l_char|&squot;3&squot;
-comma
-l_char|&squot;4&squot;
-comma
-l_char|&squot;5&squot;
-comma
-l_char|&squot;6&squot;
-comma
-l_char|&squot;7&squot;
-comma
-l_char|&squot;8&squot;
-comma
-l_char|&squot;9&squot;
-comma
-l_char|&squot;A&squot;
-comma
-l_char|&squot;B&squot;
-comma
-l_char|&squot;C&squot;
-comma
-l_char|&squot;D&squot;
-comma
-l_char|&squot;E&squot;
-comma
-l_char|&squot;F&squot;
-)brace
-suffix:semicolon
-macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 r_void
 id|AscSetISAPNPWaitForKey
 c_func
@@ -23871,6 +23346,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|uchar
 DECL|function|AscGetChipIRQ
 id|AscGetChipIRQ
@@ -23881,6 +23360,7 @@ id|iop_base
 comma
 id|ushort
 id|bus_type
+)paren
 )paren
 (brace
 id|ushort
@@ -24106,6 +23586,10 @@ id|ASC_MIN_IRQ_NO
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|uchar
 DECL|function|AscSetChipIRQ
 id|AscSetChipIRQ
@@ -24119,6 +23603,7 @@ id|irq_no
 comma
 id|ushort
 id|bus_type
+)paren
 )paren
 (brace
 id|ushort
@@ -24380,13 +23865,18 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 r_void
-DECL|function|AscEnableIsaDma
 id|AscEnableIsaDma
 c_func
 (paren
 id|uchar
 id|dma_channel
+)paren
 )paren
 (brace
 r_if
@@ -24468,6 +23958,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscIsrChipHalted
 id|AscIsrChipHalted
@@ -24480,10 +23971,10 @@ op_star
 id|asc_dvc
 )paren
 (brace
-id|SDTR_XMSG
-id|sdtr_xmsg
+id|EXT_MSG
+id|ext_msg
 suffix:semicolon
-id|SDTR_XMSG
+id|EXT_MSG
 id|out_msg
 suffix:semicolon
 id|ushort
@@ -24515,8 +24006,6 @@ id|halt_qp
 suffix:semicolon
 id|uchar
 id|sdtr_data
-op_assign
-l_int|0
 suffix:semicolon
 id|uchar
 id|target_ix
@@ -24534,6 +24023,26 @@ id|asyn_sdtr
 suffix:semicolon
 id|uchar
 id|scsi_status
+suffix:semicolon
+id|asc_board_t
+op_star
+id|boardp
+suffix:semicolon
+id|ASC_ASSERT
+c_func
+(paren
+id|asc_dvc-&gt;drv_ptr
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+id|boardp
+op_assign
+(paren
+id|asc_board_t
+op_star
+)paren
+id|asc_dvc-&gt;drv_ptr
 suffix:semicolon
 id|iop_base
 op_assign
@@ -24672,6 +24181,13 @@ comma
 id|tid_no
 )paren
 suffix:semicolon
+id|boardp-&gt;sdtr_data
+(braket
+id|tid_no
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 id|AscWriteLramWord
 c_func
@@ -24716,6 +24232,13 @@ comma
 id|tid_no
 )paren
 suffix:semicolon
+id|boardp-&gt;sdtr_data
+(braket
+id|tid_no
+)braket
+op_assign
+id|asyn_sdtr
+suffix:semicolon
 )brace
 id|AscWriteLramWord
 c_func
@@ -24751,11 +24274,10 @@ id|ASCV_MSGIN_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 op_amp
-id|sdtr_xmsg
+id|ext_msg
 comma
 (paren
 id|ushort
@@ -24763,7 +24285,7 @@ id|ushort
 (paren
 r_sizeof
 (paren
-id|SDTR_XMSG
+id|EXT_MSG
 )paren
 op_rshift
 l_int|1
@@ -24773,17 +24295,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|sdtr_xmsg.msg_type
+id|ext_msg.msg_type
 op_eq
 id|MS_EXTEND
-)paren
 op_logical_and
-(paren
-id|sdtr_xmsg.msg_len
+id|ext_msg.msg_req
+op_eq
+id|MS_SDTR_CODE
+op_logical_and
+id|ext_msg.msg_len
 op_eq
 id|MS_SDTR_LEN
-)paren
 )paren
 (brace
 id|sdtr_accept
@@ -24793,16 +24315,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sdtr_xmsg.msg_req
-op_eq
-id|MS_SDTR_CODE
-)paren
-(brace
-r_if
-c_cond
 (paren
-(paren
-id|sdtr_xmsg.req_ack_offset
+id|ext_msg.req_ack_offset
 OG
 id|ASC_SYN_MAX_OFFSET
 )paren
@@ -24812,7 +24326,7 @@ id|sdtr_accept
 op_assign
 id|FALSE
 suffix:semicolon
-id|sdtr_xmsg.req_ack_offset
+id|ext_msg.req_ack_offset
 op_assign
 id|ASC_SYN_MAX_OFFSET
 suffix:semicolon
@@ -24821,7 +24335,7 @@ r_if
 c_cond
 (paren
 (paren
-id|sdtr_xmsg.xfer_period
+id|ext_msg.xfer_period
 OL
 id|asc_dvc-&gt;sdtr_period_tbl
 (braket
@@ -24830,7 +24344,7 @@ id|asc_dvc-&gt;host_init_sdtr_index
 )paren
 op_logical_or
 (paren
-id|sdtr_xmsg.xfer_period
+id|ext_msg.xfer_period
 OG
 id|asc_dvc-&gt;sdtr_period_tbl
 (braket
@@ -24843,7 +24357,7 @@ id|sdtr_accept
 op_assign
 id|FALSE
 suffix:semicolon
-id|sdtr_xmsg.xfer_period
+id|ext_msg.xfer_period
 op_assign
 id|asc_dvc-&gt;sdtr_period_tbl
 (braket
@@ -24864,9 +24378,9 @@ c_func
 (paren
 id|asc_dvc
 comma
-id|sdtr_xmsg.xfer_period
+id|ext_msg.xfer_period
 comma
-id|sdtr_xmsg.req_ack_offset
+id|ext_msg.req_ack_offset
 )paren
 suffix:semicolon
 r_if
@@ -24903,12 +24417,19 @@ comma
 id|tid_no
 )paren
 suffix:semicolon
+id|boardp-&gt;sdtr_data
+(braket
+id|tid_no
+)braket
+op_assign
+id|asyn_sdtr
+suffix:semicolon
 )brace
 )brace
 r_if
 c_cond
 (paren
-id|sdtr_xmsg.req_ack_offset
+id|ext_msg.req_ack_offset
 op_eq
 l_int|0
 )paren
@@ -24978,9 +24499,9 @@ c_func
 (paren
 id|asc_dvc
 comma
-id|sdtr_xmsg.xfer_period
+id|ext_msg.xfer_period
 comma
-id|sdtr_xmsg.req_ack_offset
+id|ext_msg.req_ack_offset
 )paren
 suffix:semicolon
 id|AscSetChipSDTR
@@ -24992,6 +24513,13 @@ id|sdtr_data
 comma
 id|tid_no
 )paren
+suffix:semicolon
+id|boardp-&gt;sdtr_data
+(braket
+id|tid_no
+)braket
+op_assign
+id|sdtr_data
 suffix:semicolon
 )brace
 r_else
@@ -25005,9 +24533,9 @@ c_func
 (paren
 id|asc_dvc
 comma
-id|sdtr_xmsg.xfer_period
+id|ext_msg.xfer_period
 comma
-id|sdtr_xmsg.req_ack_offset
+id|ext_msg.req_ack_offset
 )paren
 suffix:semicolon
 id|asc_dvc-&gt;pci_fix_asyn_xfer
@@ -25022,9 +24550,9 @@ c_func
 (paren
 id|asc_dvc
 comma
-id|sdtr_xmsg.xfer_period
+id|ext_msg.xfer_period
 comma
-id|sdtr_xmsg.req_ack_offset
+id|ext_msg.req_ack_offset
 )paren
 suffix:semicolon
 id|AscSetChipSDTR
@@ -25036,6 +24564,13 @@ id|sdtr_data
 comma
 id|tid_no
 )paren
+suffix:semicolon
+id|boardp-&gt;sdtr_data
+(braket
+id|tid_no
+)braket
+op_assign
+id|sdtr_data
 suffix:semicolon
 id|asc_dvc-&gt;sdtr_done
 op_or_assign
@@ -25083,6 +24618,166 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|ext_msg.msg_type
+op_eq
+id|MS_EXTEND
+op_logical_and
+id|ext_msg.msg_req
+op_eq
+id|MS_WDTR_CODE
+op_logical_and
+id|ext_msg.msg_len
+op_eq
+id|MS_WDTR_LEN
+)paren
+(brace
+id|ext_msg.wdtr_width
+op_assign
+l_int|0
+suffix:semicolon
+id|AscMemWordCopyToLram
+c_func
+(paren
+id|iop_base
+comma
+id|ASCV_MSGOUT_BEG
+comma
+(paren
+id|ushort
+op_star
+)paren
+op_amp
+id|ext_msg
+comma
+(paren
+id|ushort
+)paren
+(paren
+r_sizeof
+(paren
+id|EXT_MSG
+)paren
+op_rshift
+l_int|1
+)paren
+)paren
+suffix:semicolon
+id|q_cntl
+op_or_assign
+id|QC_MSG_OUT
+suffix:semicolon
+id|AscWriteLramByte
+c_func
+(paren
+id|iop_base
+comma
+(paren
+id|ushort
+)paren
+(paren
+id|halt_q_addr
+op_plus
+(paren
+id|ushort
+)paren
+id|ASC_SCSIQ_B_CNTL
+)paren
+comma
+id|q_cntl
+)paren
+suffix:semicolon
+id|AscWriteLramWord
+c_func
+(paren
+id|iop_base
+comma
+id|ASCV_HALTCODE_W
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ext_msg.msg_type
+op_assign
+id|M1_MSG_REJECT
+suffix:semicolon
+id|AscMemWordCopyToLram
+c_func
+(paren
+id|iop_base
+comma
+id|ASCV_MSGOUT_BEG
+comma
+(paren
+id|ushort
+op_star
+)paren
+op_amp
+id|ext_msg
+comma
+(paren
+id|ushort
+)paren
+(paren
+r_sizeof
+(paren
+id|EXT_MSG
+)paren
+op_rshift
+l_int|1
+)paren
+)paren
+suffix:semicolon
+id|q_cntl
+op_or_assign
+id|QC_MSG_OUT
+suffix:semicolon
+id|AscWriteLramByte
+c_func
+(paren
+id|iop_base
+comma
+(paren
+id|ushort
+)paren
+(paren
+id|halt_q_addr
+op_plus
+(paren
+id|ushort
+)paren
+id|ASC_SCSIQ_B_CNTL
+)paren
+comma
+id|q_cntl
+)paren
+suffix:semicolon
+id|AscWriteLramWord
+c_func
+(paren
+id|iop_base
+comma
+id|ASCV_HALTCODE_W
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
 )brace
 )brace
 r_else
@@ -25103,24 +24798,12 @@ r_if
 c_cond
 (paren
 (paren
-(paren
 id|asc_dvc-&gt;init_sdtr
 op_amp
 id|target_id
 )paren
 op_ne
 l_int|0
-)paren
-op_logical_and
-(paren
-(paren
-id|asc_dvc-&gt;sdtr_done
-op_amp
-id|target_id
-)paren
-op_ne
-l_int|0
-)paren
 )paren
 (brace
 id|asc_dvc-&gt;sdtr_done
@@ -25383,7 +25066,6 @@ id|ASCV_MSGOUT_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 op_amp
@@ -25395,7 +25077,7 @@ id|ushort
 (paren
 r_sizeof
 (paren
-id|SDTR_XMSG
+id|EXT_MSG
 )paren
 op_rshift
 l_int|1
@@ -25444,9 +25126,13 @@ comma
 id|tid_no
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
+id|boardp-&gt;sdtr_data
+(braket
+id|tid_no
+)braket
+op_assign
+id|asyn_sdtr
+suffix:semicolon
 )brace
 id|q_cntl
 op_and_assign
@@ -25647,21 +25333,7 @@ comma
 id|cur_dvc_qng
 )paren
 suffix:semicolon
-)brace
-(brace
-id|asc_board_t
-op_star
-id|boardp
-suffix:semicolon
-id|boardp
-op_assign
-(paren
-id|asc_board_t
-op_star
-)paren
-id|asc_dvc-&gt;drv_ptr
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Set the device queue depth to the number of&n;&t;&t;&t;&t; * active requests when the QUEUE FULL condition&n;&t;&t;&t;&t; * was encountered.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;                     * Set the device queue depth to the number of&n;                     * active requests when the QUEUE FULL condition&n;                     * was encountered.&n;                     */
 id|boardp-&gt;queue_full
 op_or_assign
 id|target_id
@@ -25723,6 +25395,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|uchar
 DECL|function|_AscCopyLramScsiDoneQ
 id|_AscCopyLramScsiDoneQ
@@ -25736,7 +25409,6 @@ id|q_addr
 comma
 id|REG
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 id|scsiq
 comma
@@ -25769,7 +25441,6 @@ id|ASC_SCSIQ_DONE_INFO_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 id|scsiq
@@ -25918,7 +25589,7 @@ l_int|8
 suffix:semicolon
 id|scsiq-&gt;remain_bytes
 op_assign
-id|AscReadLramDWord
+id|AscReadLramWord
 c_func
 (paren
 id|iop_base
@@ -25946,6 +25617,7 @@ id|sg_queue_cnt
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscIsrQDone
 id|AscIsrQDone
@@ -25979,11 +25651,6 @@ suffix:semicolon
 id|uchar
 id|tid_no
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-id|uchar
-id|exe_tid_no
-suffix:semicolon
-macro_line|#endif
 id|ASC_SCSI_BIT_ID_TYPE
 id|scsi_busy
 suffix:semicolon
@@ -26007,7 +25674,6 @@ id|scsiq_buf
 suffix:semicolon
 id|REG
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 id|scsiq
 suffix:semicolon
@@ -26017,11 +25683,6 @@ suffix:semicolon
 id|ASC_ISR_CALLBACK
 id|asc_isr_callback
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-id|ushort
-id|n_busy_q_done
-suffix:semicolon
-macro_line|#endif
 id|iop_base
 op_assign
 id|asc_dvc-&gt;iop_base
@@ -26041,7 +25702,6 @@ id|scsiq
 op_assign
 (paren
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 )paren
 op_amp
@@ -26710,100 +26370,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#if CC_LINK_BUSY_Q
-id|n_busy_q_done
-op_assign
-id|AscIsrExeBusyQueue
-c_func
-(paren
-id|asc_dvc
-comma
-id|tid_no
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|n_busy_q_done
-op_eq
-l_int|0
-)paren
-(brace
-id|exe_tid_no
-op_assign
-(paren
-id|uint
-)paren
-id|tid_no
-op_plus
-l_int|1
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|TRUE
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|exe_tid_no
-OG
-id|ASC_MAX_TID
-)paren
-id|exe_tid_no
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|exe_tid_no
-op_eq
-(paren
-id|uint
-)paren
-id|tid_no
-)paren
-r_break
-suffix:semicolon
-id|n_busy_q_done
-op_assign
-id|AscIsrExeBusyQueue
-c_func
-(paren
-id|asc_dvc
-comma
-id|exe_tid_no
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|n_busy_q_done
-op_ne
-l_int|0
-)paren
-r_break
-suffix:semicolon
-id|exe_tid_no
-op_increment
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|n_busy_q_done
-op_eq
-l_int|0xFFFF
-)paren
-r_return
-(paren
-l_int|0x80
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 (paren
 l_int|1
@@ -26858,8 +26424,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#if CC_LINK_BUSY_Q
-macro_line|#endif
+id|STATIC
 r_int
 DECL|function|AscISR
 id|AscISR
@@ -27354,6 +26919,7 @@ id|int_pending
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscScsiSetupCmdQ
 id|AscScsiSetupCmdQ
@@ -27367,12 +26933,10 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 comma
 id|uchar
-id|dosfar
 op_star
 id|buf_addr
 comma
@@ -27427,7 +26991,6 @@ id|scsiq-&gt;cdbptr
 op_assign
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 id|scsiq-&gt;cdb
@@ -27436,7 +26999,6 @@ id|scsiq-&gt;sense_ptr
 op_assign
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 id|scsiq-&gt;sense
@@ -27498,7 +27060,6 @@ id|asc_dvc
 comma
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 id|buf_addr
@@ -27534,7 +27095,6 @@ id|asc_dvc
 comma
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 id|scsiq-&gt;sense_ptr
@@ -27565,12 +27125,13 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|variable|__initdata
+DECL|variable|ASC_INITDATA
+id|STATIC
 id|uchar
 id|_mcode_buf
 (braket
 )braket
-id|__initdata
+id|ASC_INITDATA
 op_assign
 (brace
 l_int|0x01
@@ -27709,7 +27270,7 @@ l_int|0x00
 comma
 l_int|0x00
 comma
-l_int|0x10
+l_int|0x79
 comma
 l_int|0x0D
 comma
@@ -27775,7 +27336,7 @@ l_int|0x23
 comma
 l_int|0x00
 comma
-l_int|0x21
+l_int|0x22
 comma
 l_int|0x00
 comma
@@ -27817,7 +27378,7 @@ l_int|0x00
 comma
 l_int|0x00
 comma
-l_int|0xDC
+l_int|0xCC
 comma
 l_int|0x88
 comma
@@ -27893,7 +27454,7 @@ l_int|0x92
 comma
 l_int|0x80
 comma
-l_int|0x18
+l_int|0x08
 comma
 l_int|0x98
 comma
@@ -27905,7 +27466,7 @@ l_int|0xF5
 comma
 l_int|0x00
 comma
-l_int|0x42
+l_int|0x32
 comma
 l_int|0x98
 comma
@@ -27933,7 +27494,7 @@ l_int|0xF5
 comma
 l_int|0x00
 comma
-l_int|0x42
+l_int|0x32
 comma
 l_int|0x98
 comma
@@ -27997,7 +27558,7 @@ l_int|0xD6
 comma
 l_int|0x00
 comma
-l_int|0xA0
+l_int|0x90
 comma
 l_int|0x97
 comma
@@ -28013,7 +27574,7 @@ l_int|0x84
 comma
 l_int|0x01
 comma
-l_int|0xCC
+l_int|0xD8
 comma
 l_int|0x84
 comma
@@ -28041,7 +27602,7 @@ l_int|0xE2
 comma
 l_int|0x01
 comma
-l_int|0xA0
+l_int|0x90
 comma
 l_int|0x97
 comma
@@ -28057,7 +27618,7 @@ l_int|0x02
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28085,7 +27646,7 @@ l_int|0x4F
 comma
 l_int|0x00
 comma
-l_int|0x7E
+l_int|0x6E
 comma
 l_int|0x97
 comma
@@ -28105,7 +27666,7 @@ l_int|0x03
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28125,7 +27686,7 @@ l_int|0x05
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28201,7 +27762,7 @@ l_int|0x04
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28221,7 +27782,7 @@ l_int|0x0D
 comma
 l_int|0x23
 comma
-l_int|0x62
+l_int|0x52
 comma
 l_int|0x98
 comma
@@ -28229,7 +27790,7 @@ l_int|0x4D
 comma
 l_int|0x04
 comma
-l_int|0xEA
+l_int|0xF6
 comma
 l_int|0x84
 comma
@@ -28241,7 +27802,7 @@ l_int|0x0D
 comma
 l_int|0x23
 comma
-l_int|0x62
+l_int|0x52
 comma
 l_int|0x98
 comma
@@ -28253,7 +27814,7 @@ l_int|0x15
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
@@ -28293,7 +27854,7 @@ l_int|0x0A
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28317,7 +27878,7 @@ l_int|0x0B
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28337,7 +27898,7 @@ l_int|0x1A
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28393,7 +27954,7 @@ l_int|0x84
 comma
 l_int|0x81
 comma
-l_int|0x40
+l_int|0x30
 comma
 l_int|0x97
 comma
@@ -28477,7 +28038,7 @@ l_int|0x1B
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28485,7 +28046,7 @@ l_int|0x06
 comma
 l_int|0x23
 comma
-l_int|0x62
+l_int|0x52
 comma
 l_int|0x98
 comma
@@ -28493,7 +28054,7 @@ l_int|0xCD
 comma
 l_int|0x04
 comma
-l_int|0xCC
+l_int|0xD8
 comma
 l_int|0x84
 comma
@@ -28521,7 +28082,7 @@ l_int|0xE2
 comma
 l_int|0x01
 comma
-l_int|0xCC
+l_int|0xD8
 comma
 l_int|0x84
 comma
@@ -28533,7 +28094,7 @@ l_int|0xA0
 comma
 l_int|0x01
 comma
-l_int|0xCC
+l_int|0xD8
 comma
 l_int|0x84
 comma
@@ -28577,7 +28138,7 @@ l_int|0x4F
 comma
 l_int|0x00
 comma
-l_int|0x7E
+l_int|0x6E
 comma
 l_int|0x97
 comma
@@ -28601,7 +28162,7 @@ l_int|0x4F
 comma
 l_int|0x00
 comma
-l_int|0x5C
+l_int|0x4C
 comma
 l_int|0x97
 comma
@@ -28613,7 +28174,7 @@ l_int|0x84
 comma
 l_int|0x80
 comma
-l_int|0xEA
+l_int|0xDA
 comma
 l_int|0x97
 comma
@@ -28665,11 +28226,11 @@ l_int|0x11
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
-l_int|0xFE
+l_int|0xEE
 comma
 l_int|0x97
 comma
@@ -28701,7 +28262,7 @@ l_int|0x31
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28713,11 +28274,11 @@ l_int|0x03
 comma
 l_int|0xD8
 comma
-l_int|0xAC
+l_int|0x9C
 comma
 l_int|0x98
 comma
-l_int|0x36
+l_int|0x44
 comma
 l_int|0x96
 comma
@@ -28725,7 +28286,7 @@ l_int|0x48
 comma
 l_int|0x82
 comma
-l_int|0xC6
+l_int|0xD4
 comma
 l_int|0x95
 comma
@@ -28785,11 +28346,11 @@ l_int|0x10
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
-l_int|0x62
+l_int|0x6E
 comma
 l_int|0x95
 comma
@@ -28797,7 +28358,7 @@ l_int|0x4A
 comma
 l_int|0x82
 comma
-l_int|0x2C
+l_int|0x3A
 comma
 l_int|0x96
 comma
@@ -28821,7 +28382,7 @@ l_int|0xA1
 comma
 l_int|0x01
 comma
-l_int|0x22
+l_int|0x2E
 comma
 l_int|0x84
 comma
@@ -28893,7 +28454,7 @@ l_int|0x02
 comma
 l_int|0xA6
 comma
-l_int|0xA4
+l_int|0xB0
 comma
 l_int|0x02
 comma
@@ -28913,6 +28474,30 @@ l_int|0x64
 comma
 l_int|0x02
 comma
+l_int|0x03
+comma
+l_int|0xA6
+comma
+l_int|0x12
+comma
+l_int|0x04
+comma
+l_int|0x01
+comma
+l_int|0xA6
+comma
+l_int|0xBA
+comma
+l_int|0x02
+comma
+l_int|0x00
+comma
+l_int|0xA6
+comma
+l_int|0xBA
+comma
+l_int|0x02
+comma
 l_int|0x00
 comma
 l_int|0x33
@@ -28921,7 +28506,7 @@ l_int|0x12
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -28997,7 +28582,7 @@ l_int|0x00
 comma
 l_int|0x00
 comma
-l_int|0xE4
+l_int|0xF0
 comma
 l_int|0x82
 comma
@@ -29013,7 +28598,7 @@ l_int|0x18
 comma
 l_int|0xA0
 comma
-l_int|0xDC
+l_int|0xE8
 comma
 l_int|0x02
 comma
@@ -29033,7 +28618,7 @@ l_int|0x1F
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -29053,7 +28638,7 @@ l_int|0x0E
 comma
 l_int|0x3D
 comma
-l_int|0x78
+l_int|0x68
 comma
 l_int|0x98
 comma
@@ -29065,7 +28650,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x0E
+l_int|0x1A
 comma
 l_int|0x03
 comma
@@ -29073,7 +28658,7 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0x0E
+l_int|0x1A
 comma
 l_int|0x03
 comma
@@ -29081,7 +28666,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x06
+l_int|0x12
 comma
 l_int|0x03
 comma
@@ -29089,7 +28674,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x0A
+l_int|0x16
 comma
 l_int|0x03
 comma
@@ -29097,7 +28682,7 @@ l_int|0x03
 comma
 l_int|0xA6
 comma
-l_int|0x06
+l_int|0x12
 comma
 l_int|0x04
 comma
@@ -29117,27 +28702,27 @@ l_int|0x33
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
-l_int|0x62
+l_int|0x6E
 comma
 l_int|0x95
 comma
-l_int|0xE8
+l_int|0xF4
 comma
 l_int|0x82
 comma
-l_int|0x2C
+l_int|0x3A
 comma
 l_int|0x96
 comma
-l_int|0xE8
+l_int|0xF4
 comma
 l_int|0x82
 comma
-l_int|0x7C
+l_int|0x6C
 comma
 l_int|0x98
 comma
@@ -29145,7 +28730,7 @@ l_int|0x80
 comma
 l_int|0x42
 comma
-l_int|0x78
+l_int|0x68
 comma
 l_int|0x98
 comma
@@ -29173,7 +28758,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x4E
+l_int|0x5A
 comma
 l_int|0x03
 comma
@@ -29189,11 +28774,11 @@ l_int|0x05
 comma
 l_int|0x05
 comma
-l_int|0x80
+l_int|0x70
 comma
 l_int|0x98
 comma
-l_int|0x78
+l_int|0x68
 comma
 l_int|0x98
 comma
@@ -29201,7 +28786,7 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0x10
+l_int|0x1C
 comma
 l_int|0x03
 comma
@@ -29209,7 +28794,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x46
+l_int|0x52
 comma
 l_int|0x03
 comma
@@ -29217,7 +28802,7 @@ l_int|0x03
 comma
 l_int|0xA6
 comma
-l_int|0x22
+l_int|0x2E
 comma
 l_int|0x04
 comma
@@ -29225,7 +28810,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x4A
+l_int|0x56
 comma
 l_int|0x03
 comma
@@ -29233,7 +28818,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x10
+l_int|0x1C
 comma
 l_int|0x03
 comma
@@ -29245,23 +28830,23 @@ l_int|0x25
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
-l_int|0x62
+l_int|0x6E
 comma
 l_int|0x95
 comma
-l_int|0x2C
+l_int|0x38
 comma
 l_int|0x83
 comma
-l_int|0x2C
+l_int|0x3A
 comma
 l_int|0x96
 comma
-l_int|0x2C
+l_int|0x38
 comma
 l_int|0x83
 comma
@@ -29285,7 +28870,7 @@ l_int|0x42
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -29301,7 +28886,7 @@ l_int|0xFF
 comma
 l_int|0xA2
 comma
-l_int|0x6C
+l_int|0x78
 comma
 l_int|0x03
 comma
@@ -29317,7 +28902,7 @@ l_int|0xB2
 comma
 l_int|0x01
 comma
-l_int|0x28
+l_int|0x34
 comma
 l_int|0x83
 comma
@@ -29333,7 +28918,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x8C
+l_int|0x98
 comma
 l_int|0x03
 comma
@@ -29365,7 +28950,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x88
+l_int|0x94
 comma
 l_int|0x03
 comma
@@ -29373,19 +28958,19 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0x88
+l_int|0x94
 comma
 l_int|0x03
 comma
-l_int|0xFC
+l_int|0x08
 comma
-l_int|0x83
+l_int|0x84
 comma
 l_int|0x80
 comma
 l_int|0x42
 comma
-l_int|0x78
+l_int|0x68
 comma
 l_int|0x98
 comma
@@ -29393,7 +28978,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x96
+l_int|0xA2
 comma
 l_int|0x03
 comma
@@ -29401,15 +28986,15 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0xAE
+l_int|0xBA
 comma
 l_int|0x03
 comma
-l_int|0xFC
+l_int|0x08
 comma
-l_int|0x83
+l_int|0x84
 comma
-l_int|0xA0
+l_int|0x90
 comma
 l_int|0x98
 comma
@@ -29421,7 +29006,7 @@ l_int|0x01
 comma
 l_int|0xA6
 comma
-l_int|0x96
+l_int|0xA2
 comma
 l_int|0x03
 comma
@@ -29429,19 +29014,19 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xA4
+l_int|0xB0
 comma
 l_int|0x03
 comma
-l_int|0xC6
+l_int|0xD2
 comma
 l_int|0x83
 comma
-l_int|0x62
+l_int|0x6E
 comma
 l_int|0x95
 comma
-l_int|0x9A
+l_int|0xA6
 comma
 l_int|0x83
 comma
@@ -29453,11 +29038,11 @@ l_int|0x2F
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
-l_int|0xA0
+l_int|0x90
 comma
 l_int|0x98
 comma
@@ -29469,7 +29054,7 @@ l_int|0x00
 comma
 l_int|0xA6
 comma
-l_int|0xAE
+l_int|0xBA
 comma
 l_int|0x03
 comma
@@ -29477,19 +29062,19 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xBC
+l_int|0xC8
 comma
 l_int|0x03
 comma
-l_int|0xC6
+l_int|0xD2
 comma
 l_int|0x83
 comma
-l_int|0x62
+l_int|0x6E
 comma
 l_int|0x95
 comma
-l_int|0xB2
+l_int|0xBE
 comma
 l_int|0x83
 comma
@@ -29501,7 +29086,7 @@ l_int|0x26
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -29533,83 +29118,7 @@ l_int|0xA1
 comma
 l_int|0x01
 comma
-l_int|0xFC
-comma
-l_int|0x83
-comma
-l_int|0x04
-comma
-l_int|0xF0
-comma
-l_int|0x80
-comma
-l_int|0x6B
-comma
-l_int|0x00
-comma
-l_int|0x33
-comma
-l_int|0x20
-comma
-l_int|0x00
-comma
-l_int|0xBA
-comma
-l_int|0x88
-comma
-l_int|0x03
-comma
-l_int|0xA6
-comma
-l_int|0xFA
-comma
-l_int|0x03
-comma
-l_int|0x07
-comma
-l_int|0xA6
-comma
-l_int|0xF2
-comma
-l_int|0x03
-comma
-l_int|0x06
-comma
-l_int|0xA6
-comma
-l_int|0xF6
-comma
-l_int|0x03
-comma
-l_int|0x00
-comma
-l_int|0x33
-comma
-l_int|0x17
-comma
-l_int|0x00
-comma
-l_int|0xBA
-comma
-l_int|0x88
-comma
-l_int|0x62
-comma
-l_int|0x95
-comma
-l_int|0xE0
-comma
-l_int|0x83
-comma
-l_int|0x2C
-comma
-l_int|0x96
-comma
-l_int|0xE0
-comma
-l_int|0x83
-comma
-l_int|0x06
+l_int|0x08
 comma
 l_int|0x84
 comma
@@ -29629,7 +29138,83 @@ l_int|0x20
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
+comma
+l_int|0x88
+comma
+l_int|0x03
+comma
+l_int|0xA6
+comma
+l_int|0x06
+comma
+l_int|0x04
+comma
+l_int|0x07
+comma
+l_int|0xA6
+comma
+l_int|0xFE
+comma
+l_int|0x03
+comma
+l_int|0x06
+comma
+l_int|0xA6
+comma
+l_int|0x02
+comma
+l_int|0x04
+comma
+l_int|0x00
+comma
+l_int|0x33
+comma
+l_int|0x17
+comma
+l_int|0x00
+comma
+l_int|0xAA
+comma
+l_int|0x88
+comma
+l_int|0x6E
+comma
+l_int|0x95
+comma
+l_int|0xEC
+comma
+l_int|0x83
+comma
+l_int|0x3A
+comma
+l_int|0x96
+comma
+l_int|0xEC
+comma
+l_int|0x83
+comma
+l_int|0x12
+comma
+l_int|0x84
+comma
+l_int|0x04
+comma
+l_int|0xF0
+comma
+l_int|0x80
+comma
+l_int|0x6B
+comma
+l_int|0x00
+comma
+l_int|0x33
+comma
+l_int|0x20
+comma
+l_int|0x00
+comma
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -29641,7 +29226,7 @@ l_int|0x03
 comma
 l_int|0xA6
 comma
-l_int|0x22
+l_int|0x2E
 comma
 l_int|0x04
 comma
@@ -29649,7 +29234,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x1A
+l_int|0x26
 comma
 l_int|0x04
 comma
@@ -29657,7 +29242,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x1E
+l_int|0x2A
 comma
 l_int|0x04
 comma
@@ -29669,23 +29254,23 @@ l_int|0x30
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
-l_int|0x62
+l_int|0x6E
 comma
 l_int|0x95
 comma
-l_int|0x06
+l_int|0x12
 comma
 l_int|0x84
 comma
-l_int|0x2C
+l_int|0x3A
 comma
 l_int|0x96
 comma
-l_int|0x06
+l_int|0x12
 comma
 l_int|0x84
 comma
@@ -29733,7 +29318,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x40
+l_int|0x4C
 comma
 l_int|0x04
 comma
@@ -29745,7 +29330,7 @@ l_int|0x18
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -29765,7 +29350,7 @@ l_int|0x07
 comma
 l_int|0xA4
 comma
-l_int|0x4A
+l_int|0x56
 comma
 l_int|0x04
 comma
@@ -29777,35 +29362,11 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x6C
+l_int|0x78
 comma
 l_int|0x04
 comma
 l_int|0x0A
-comma
-l_int|0xA0
-comma
-l_int|0x5C
-comma
-l_int|0x04
-comma
-l_int|0xE0
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x33
-comma
-l_int|0x1D
-comma
-l_int|0x00
-comma
-l_int|0xBA
-comma
-l_int|0x88
-comma
-l_int|0x0B
 comma
 l_int|0xA0
 comma
@@ -29821,11 +29382,35 @@ l_int|0x00
 comma
 l_int|0x33
 comma
+l_int|0x1D
+comma
+l_int|0x00
+comma
+l_int|0xAA
+comma
+l_int|0x88
+comma
+l_int|0x0B
+comma
+l_int|0xA0
+comma
+l_int|0x74
+comma
+l_int|0x04
+comma
+l_int|0xE0
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x33
+comma
 l_int|0x1E
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -29833,7 +29418,7 @@ l_int|0x42
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
@@ -29845,7 +29430,7 @@ l_int|0x22
 comma
 l_int|0xA3
 comma
-l_int|0xCC
+l_int|0xD8
 comma
 l_int|0x04
 comma
@@ -29857,7 +29442,7 @@ l_int|0x22
 comma
 l_int|0xA3
 comma
-l_int|0x88
+l_int|0x94
 comma
 l_int|0x04
 comma
@@ -29869,7 +29454,7 @@ l_int|0x22
 comma
 l_int|0xA3
 comma
-l_int|0x94
+l_int|0xA0
 comma
 l_int|0x04
 comma
@@ -29881,7 +29466,7 @@ l_int|0x22
 comma
 l_int|0xA3
 comma
-l_int|0xAA
+l_int|0xB6
 comma
 l_int|0x04
 comma
@@ -29889,7 +29474,7 @@ l_int|0x42
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
@@ -29905,7 +29490,7 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0x94
+l_int|0xA0
 comma
 l_int|0x04
 comma
@@ -29913,11 +29498,11 @@ l_int|0x45
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
-l_int|0xFE
+l_int|0xEE
 comma
 l_int|0x97
 comma
@@ -29925,11 +29510,11 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0xA6
+l_int|0xB2
 comma
 l_int|0x04
 comma
-l_int|0xAC
+l_int|0x9C
 comma
 l_int|0x98
 comma
@@ -29957,7 +29542,7 @@ l_int|0x47
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
@@ -29969,11 +29554,11 @@ l_int|0x0B
 comma
 l_int|0xDE
 comma
-l_int|0xFE
+l_int|0xEE
 comma
 l_int|0x97
 comma
-l_int|0xAC
+l_int|0x9C
 comma
 l_int|0x98
 comma
@@ -30009,7 +29594,7 @@ l_int|0x43
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
@@ -30041,7 +29626,7 @@ l_int|0x03
 comma
 l_int|0xA3
 comma
-l_int|0xDA
+l_int|0xE6
 comma
 l_int|0x04
 comma
@@ -30053,7 +29638,7 @@ l_int|0x27
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -30081,11 +29666,11 @@ l_int|0xA0
 comma
 l_int|0x01
 comma
-l_int|0xFE
+l_int|0xEE
 comma
 l_int|0x97
 comma
-l_int|0x0C
+l_int|0x18
 comma
 l_int|0x95
 comma
@@ -30109,7 +29694,7 @@ l_int|0x00
 comma
 l_int|0xA3
 comma
-l_int|0x08
+l_int|0x14
 comma
 l_int|0x05
 comma
@@ -30129,15 +29714,15 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x02
+l_int|0x0E
 comma
 l_int|0x05
 comma
-l_int|0xF0
+l_int|0xFC
 comma
 l_int|0x84
 comma
-l_int|0x40
+l_int|0x30
 comma
 l_int|0x97
 comma
@@ -30145,7 +29730,7 @@ l_int|0xCD
 comma
 l_int|0x04
 comma
-l_int|0x0A
+l_int|0x16
 comma
 l_int|0x85
 comma
@@ -30173,7 +29758,7 @@ l_int|0x82
 comma
 l_int|0x01
 comma
-l_int|0x1A
+l_int|0x26
 comma
 l_int|0x85
 comma
@@ -30197,7 +29782,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x26
+l_int|0x32
 comma
 l_int|0x05
 comma
@@ -30289,7 +29874,7 @@ l_int|0xFF
 comma
 l_int|0xA0
 comma
-l_int|0x46
+l_int|0x52
 comma
 l_int|0x05
 comma
@@ -30333,7 +29918,7 @@ l_int|0x07
 comma
 l_int|0xA4
 comma
-l_int|0xC4
+l_int|0xD2
 comma
 l_int|0x05
 comma
@@ -30345,11 +29930,11 @@ l_int|0x02
 comma
 l_int|0xA0
 comma
-l_int|0x74
+l_int|0x80
 comma
 l_int|0x05
 comma
-l_int|0xC0
+l_int|0xCE
 comma
 l_int|0x85
 comma
@@ -30361,7 +29946,7 @@ l_int|0x2D
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -30369,7 +29954,7 @@ l_int|0x04
 comma
 l_int|0xA0
 comma
-l_int|0x9A
+l_int|0xA6
 comma
 l_int|0x05
 comma
@@ -30389,7 +29974,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x86
+l_int|0x92
 comma
 l_int|0x05
 comma
@@ -30417,11 +30002,11 @@ l_int|0x50
 comma
 l_int|0x00
 comma
-l_int|0x5C
+l_int|0x4C
 comma
 l_int|0x97
 comma
-l_int|0xEA
+l_int|0xF6
 comma
 l_int|0x84
 comma
@@ -30437,7 +30022,7 @@ l_int|0x82
 comma
 l_int|0x01
 comma
-l_int|0xEA
+l_int|0xF6
 comma
 l_int|0x84
 comma
@@ -30445,11 +30030,11 @@ l_int|0x08
 comma
 l_int|0xA0
 comma
-l_int|0xA0
+l_int|0xAC
 comma
 l_int|0x05
 comma
-l_int|0xC0
+l_int|0xCE
 comma
 l_int|0x85
 comma
@@ -30457,11 +30042,11 @@ l_int|0x03
 comma
 l_int|0xA0
 comma
-l_int|0xA6
+l_int|0xB2
 comma
 l_int|0x05
 comma
-l_int|0xC0
+l_int|0xCE
 comma
 l_int|0x85
 comma
@@ -30469,7 +30054,7 @@ l_int|0x01
 comma
 l_int|0xA0
 comma
-l_int|0xB2
+l_int|0xBC
 comma
 l_int|0x05
 comma
@@ -30481,19 +30066,15 @@ l_int|0x80
 comma
 l_int|0x63
 comma
-l_int|0xB0
+l_int|0xAA
 comma
-l_int|0x96
-comma
-l_int|0x62
-comma
-l_int|0x85
+l_int|0x86
 comma
 l_int|0x07
 comma
 l_int|0xA0
 comma
-l_int|0xBE
+l_int|0xC8
 comma
 l_int|0x05
 comma
@@ -30501,7 +30082,7 @@ l_int|0x06
 comma
 l_int|0x23
 comma
-l_int|0x62
+l_int|0x52
 comma
 l_int|0x98
 comma
@@ -30509,11 +30090,19 @@ l_int|0x48
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
-l_int|0xC0
+l_int|0x07
+comma
+l_int|0x23
+comma
+l_int|0x80
+comma
+l_int|0x00
+comma
+l_int|0xF0
 comma
 l_int|0x86
 comma
@@ -30521,7 +30110,7 @@ l_int|0x80
 comma
 l_int|0x63
 comma
-l_int|0x62
+l_int|0x6E
 comma
 l_int|0x85
 comma
@@ -30541,7 +30130,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x02
+l_int|0x10
 comma
 l_int|0x06
 comma
@@ -30573,7 +30162,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0xE4
+l_int|0xF2
 comma
 l_int|0x05
 comma
@@ -30585,7 +30174,7 @@ l_int|0x37
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -30601,7 +30190,7 @@ l_int|0x46
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
@@ -30621,9 +30210,9 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0xFC
+l_int|0x0A
 comma
-l_int|0x05
+l_int|0x06
 comma
 l_int|0x00
 comma
@@ -30633,7 +30222,7 @@ l_int|0x38
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -30673,7 +30262,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x1A
+l_int|0x28
 comma
 l_int|0x06
 comma
@@ -30757,7 +30346,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x48
+l_int|0x56
 comma
 l_int|0x06
 comma
@@ -30765,15 +30354,15 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x9C
+l_int|0x6E
 comma
-l_int|0x06
+l_int|0x05
 comma
 l_int|0x02
 comma
 l_int|0xA6
 comma
-l_int|0xF4
+l_int|0xE4
 comma
 l_int|0x06
 comma
@@ -30785,7 +30374,7 @@ l_int|0x39
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -30797,11 +30386,11 @@ l_int|0x01
 comma
 l_int|0xA0
 comma
-l_int|0x0E
+l_int|0xFE
 comma
-l_int|0x07
+l_int|0x06
 comma
-l_int|0xC6
+l_int|0xD4
 comma
 l_int|0x95
 comma
@@ -30817,7 +30406,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x5C
+l_int|0x6A
 comma
 l_int|0x06
 comma
@@ -30825,9 +30414,9 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x9C
+l_int|0x6E
 comma
-l_int|0x06
+l_int|0x05
 comma
 l_int|0x00
 comma
@@ -30837,9 +30426,9 @@ l_int|0x01
 comma
 l_int|0xA0
 comma
-l_int|0x0E
+l_int|0xFE
 comma
-l_int|0x07
+l_int|0x06
 comma
 l_int|0x00
 comma
@@ -30861,7 +30450,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x78
+l_int|0x86
 comma
 l_int|0x06
 comma
@@ -30869,9 +30458,9 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x9C
+l_int|0x6E
 comma
-l_int|0x06
+l_int|0x05
 comma
 l_int|0x00
 comma
@@ -30881,7 +30470,7 @@ l_int|0x3A
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -30901,7 +30490,7 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0x6A
+l_int|0x78
 comma
 l_int|0x06
 comma
@@ -30909,7 +30498,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x90
+l_int|0x9E
 comma
 l_int|0x06
 comma
@@ -30917,9 +30506,9 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x9C
+l_int|0x6E
 comma
-l_int|0x06
+l_int|0x05
 comma
 l_int|0x00
 comma
@@ -30929,7 +30518,7 @@ l_int|0x3B
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -30949,59 +30538,19 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x9C
+l_int|0x6E
 comma
-l_int|0x06
+l_int|0x05
 comma
 l_int|0x00
 comma
 l_int|0x63
-comma
-l_int|0x03
-comma
-l_int|0x03
-comma
-l_int|0x80
-comma
-l_int|0x63
-comma
-l_int|0x88
-comma
-l_int|0x00
-comma
-l_int|0x01
-comma
-l_int|0xA2
-comma
-l_int|0xB0
-comma
-l_int|0x06
-comma
-l_int|0x07
-comma
-l_int|0xA2
-comma
-l_int|0xF4
-comma
-l_int|0x06
-comma
-l_int|0x00
-comma
-l_int|0x33
-comma
-l_int|0x35
-comma
-l_int|0x00
-comma
-l_int|0xBA
-comma
-l_int|0x88
 comma
 l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xBA
+l_int|0xB4
 comma
 l_int|0x06
 comma
@@ -31013,33 +30562,13 @@ l_int|0x2A
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
 l_int|0x03
 comma
 l_int|0x03
-comma
-l_int|0x03
-comma
-l_int|0xA2
-comma
-l_int|0xC6
-comma
-l_int|0x06
-comma
-l_int|0x07
-comma
-l_int|0x23
-comma
-l_int|0x80
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x87
 comma
 l_int|0x80
 comma
@@ -31057,7 +30586,7 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0xD6
+l_int|0xC6
 comma
 l_int|0x06
 comma
@@ -31069,7 +30598,7 @@ l_int|0x29
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -31081,7 +30610,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0xE2
+l_int|0xD2
 comma
 l_int|0x06
 comma
@@ -31093,7 +30622,7 @@ l_int|0x80
 comma
 l_int|0x63
 comma
-l_int|0xCC
+l_int|0xBC
 comma
 l_int|0x86
 comma
@@ -31129,9 +30658,9 @@ l_int|0x80
 comma
 l_int|0x63
 comma
-l_int|0x00
+l_int|0x6E
 comma
-l_int|0x63
+l_int|0x85
 comma
 l_int|0x80
 comma
@@ -31169,7 +30698,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x54
+l_int|0x62
 comma
 l_int|0x06
 comma
@@ -31181,7 +30710,7 @@ l_int|0x2C
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -31189,11 +30718,11 @@ l_int|0x0C
 comma
 l_int|0xA2
 comma
-l_int|0x28
+l_int|0x18
 comma
 l_int|0x07
 comma
-l_int|0xC6
+l_int|0xD4
 comma
 l_int|0x95
 comma
@@ -31209,7 +30738,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x26
+l_int|0x16
 comma
 l_int|0x07
 comma
@@ -31217,9 +30746,9 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x9C
+l_int|0x6E
 comma
-l_int|0x06
+l_int|0x05
 comma
 l_int|0x00
 comma
@@ -31229,7 +30758,7 @@ l_int|0x3D
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -31253,7 +30782,7 @@ l_int|0x0C
 comma
 l_int|0xA0
 comma
-l_int|0x3E
+l_int|0x2E
 comma
 l_int|0x07
 comma
@@ -31261,9 +30790,9 @@ l_int|0x07
 comma
 l_int|0xA6
 comma
-l_int|0x9C
+l_int|0x6E
 comma
-l_int|0x06
+l_int|0x05
 comma
 l_int|0xBF
 comma
@@ -31277,7 +30806,7 @@ l_int|0x84
 comma
 l_int|0x01
 comma
-l_int|0xCC
+l_int|0xD8
 comma
 l_int|0x84
 comma
@@ -31521,7 +31050,7 @@ l_int|0x03
 comma
 l_int|0xA1
 comma
-l_int|0xBE
+l_int|0xAE
 comma
 l_int|0x07
 comma
@@ -31533,7 +31062,7 @@ l_int|0x07
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -31589,7 +31118,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0xDE
+l_int|0xCE
 comma
 l_int|0x07
 comma
@@ -31597,7 +31126,7 @@ l_int|0x00
 comma
 l_int|0x05
 comma
-l_int|0xD4
+l_int|0xC4
 comma
 l_int|0x87
 comma
@@ -31689,11 +31218,11 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0x0E
+l_int|0xFE
 comma
-l_int|0x08
+l_int|0x07
 comma
-l_int|0x10
+l_int|0x00
 comma
 l_int|0x88
 comma
@@ -31749,7 +31278,7 @@ l_int|0x00
 comma
 l_int|0xA2
 comma
-l_int|0x3E
+l_int|0x2E
 comma
 l_int|0x08
 comma
@@ -31777,19 +31306,19 @@ l_int|0x01
 comma
 l_int|0xA1
 comma
-l_int|0x1E
+l_int|0x0E
 comma
 l_int|0x08
 comma
-l_int|0xFE
+l_int|0xEE
 comma
 l_int|0x97
 comma
-l_int|0x0C
+l_int|0x18
 comma
 l_int|0x95
 comma
-l_int|0x1E
+l_int|0x0E
 comma
 l_int|0x88
 comma
@@ -31809,7 +31338,7 @@ l_int|0x75
 comma
 l_int|0x04
 comma
-l_int|0x54
+l_int|0x44
 comma
 l_int|0x88
 comma
@@ -31821,19 +31350,19 @@ l_int|0x04
 comma
 l_int|0xD8
 comma
-l_int|0x40
+l_int|0x30
 comma
 l_int|0x97
 comma
-l_int|0xFE
+l_int|0xEE
 comma
 l_int|0x97
 comma
-l_int|0x0C
+l_int|0x18
 comma
 l_int|0x95
 comma
-l_int|0x44
+l_int|0x34
 comma
 l_int|0x88
 comma
@@ -31845,7 +31374,7 @@ l_int|0x00
 comma
 l_int|0xA3
 comma
-l_int|0x5E
+l_int|0x4E
 comma
 l_int|0x08
 comma
@@ -31853,7 +31382,7 @@ l_int|0x00
 comma
 l_int|0x05
 comma
-l_int|0x48
+l_int|0x38
 comma
 l_int|0x88
 comma
@@ -31877,7 +31406,7 @@ l_int|0x06
 comma
 l_int|0xA6
 comma
-l_int|0x70
+l_int|0x60
 comma
 l_int|0x08
 comma
@@ -31889,7 +31418,7 @@ l_int|0x3E
 comma
 l_int|0x00
 comma
-l_int|0xBA
+l_int|0xAA
 comma
 l_int|0x88
 comma
@@ -31913,7 +31442,7 @@ l_int|0x38
 comma
 l_int|0x2B
 comma
-l_int|0x96
+l_int|0x86
 comma
 l_int|0x88
 comma
@@ -31921,7 +31450,7 @@ l_int|0x38
 comma
 l_int|0x2B
 comma
-l_int|0x8C
+l_int|0x7C
 comma
 l_int|0x88
 comma
@@ -31933,7 +31462,7 @@ l_int|0x31
 comma
 l_int|0x05
 comma
-l_int|0x8C
+l_int|0x7C
 comma
 l_int|0x98
 comma
@@ -32025,7 +31554,7 @@ l_int|0x00
 comma
 l_int|0xA0
 comma
-l_int|0xAC
+l_int|0x9C
 comma
 l_int|0x08
 comma
@@ -32073,7 +31602,7 @@ l_int|0x13
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
@@ -32105,7 +31634,7 @@ l_int|0x81
 comma
 l_int|0x62
 comma
-l_int|0xDA
+l_int|0xCA
 comma
 l_int|0x88
 comma
@@ -32141,7 +31670,7 @@ l_int|0x41
 comma
 l_int|0x23
 comma
-l_int|0xF0
+l_int|0xE0
 comma
 l_int|0x88
 comma
@@ -32161,30 +31690,35 @@ l_int|0xA0
 comma
 l_int|0x01
 comma
-l_int|0xCC
+l_int|0xD8
 comma
 l_int|0x84
 comma
 )brace
 suffix:semicolon
-DECL|variable|_mcode_size
+DECL|variable|ASC_INITDATA
+id|STATIC
 id|ushort
 id|_mcode_size
+id|ASC_INITDATA
 op_assign
 r_sizeof
 (paren
 id|_mcode_buf
 )paren
 suffix:semicolon
-DECL|variable|_mcode_chksum
+DECL|variable|ASC_INITDATA
+id|STATIC
 id|ulong
 id|_mcode_chksum
+id|ASC_INITDATA
 op_assign
-l_int|0x012BA2FAUL
+l_int|0x01297F32UL
 suffix:semicolon
 DECL|macro|ASC_SYN_OFFSET_ONE_DISABLE_LIST
 mdefine_line|#define ASC_SYN_OFFSET_ONE_DISABLE_LIST  16
 DECL|variable|_syn_offset_one_disable_cmd
+id|STATIC
 id|uchar
 id|_syn_offset_one_disable_cmd
 (braket
@@ -32225,6 +31759,7 @@ comma
 l_int|0xFF
 )brace
 suffix:semicolon
+id|STATIC
 r_int
 DECL|function|AscExeScsiQueue
 id|AscExeScsiQueue
@@ -32238,7 +31773,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 id|scsiq
 )paren
@@ -32296,30 +31830,12 @@ id|uchar
 id|disable_cmd
 suffix:semicolon
 id|ASC_SG_HEAD
-id|dosfar
 op_star
 id|sg_head
 suffix:semicolon
 id|ulong
 id|data_cnt
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-id|scsiq_tail
-suffix:semicolon
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-id|scsiq_next
-suffix:semicolon
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-id|scsiq_prev
-suffix:semicolon
-macro_line|#endif
 id|iop_base
 op_assign
 id|asc_dvc-&gt;iop_base
@@ -32354,7 +31870,6 @@ id|scsiq
 op_eq
 (paren
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 )paren
 l_int|0L
@@ -32430,7 +31945,6 @@ r_if
 c_cond
 (paren
 (paren
-(paren
 id|asc_dvc-&gt;init_sdtr
 op_amp
 id|scsiq-&gt;q1.target_id
@@ -32438,18 +31952,12 @@ id|scsiq-&gt;q1.target_id
 op_ne
 l_int|0
 )paren
-op_logical_and
-(paren
-(paren
-id|asc_dvc-&gt;sdtr_done
-op_amp
-id|scsiq-&gt;q1.target_id
-)paren
-op_ne
-l_int|0
-)paren
-)paren
 (brace
+id|asc_dvc-&gt;sdtr_done
+op_and_assign
+op_complement
+id|scsiq-&gt;q1.target_id
+suffix:semicolon
 id|sdtr_data
 op_assign
 id|AscGetMCodeInitSDTRAtID
@@ -32632,21 +32140,6 @@ op_or
 id|QC_SG_SWAP_QUEUE
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-macro_line|#if CC_CHK_AND_COALESCE_SG_LIST
-id|AscCoalesceSgList
-c_func
-(paren
-id|scsiq
-)paren
-suffix:semicolon
-id|sg_entry_cnt
-op_assign
-id|sg_head-&gt;entry_cnt
-suffix:semicolon
-macro_line|#endif
 )brace
 id|sg_entry_cnt_minus_one
 op_assign
@@ -33045,37 +32538,6 @@ c_func
 id|sg_entry_cnt
 )paren
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-id|scsiq_next
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-id|asc_dvc-&gt;scsiq_busy_head
-(braket
-id|tid_no
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scsiq_next
-op_ne
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-)paren
-(brace
-r_goto
-id|link_scisq_to_busy_list
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -33274,37 +32736,6 @@ id|n_q_required
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-id|scsiq_next
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-id|asc_dvc-&gt;scsiq_busy_head
-(braket
-id|tid_no
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scsiq_next
-op_ne
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-)paren
-(brace
-r_goto
-id|link_scisq_to_busy_list
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -33389,307 +32820,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#if CC_LINK_BUSY_Q
-r_if
-c_cond
-(paren
-id|sta
-op_eq
-l_int|0
-)paren
-(brace
-id|link_scisq_to_busy_list
-suffix:colon
-id|scsiq-&gt;ext.q_required
-op_assign
-id|n_q_required
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scsiq_next
-op_eq
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-)paren
-(brace
-id|asc_dvc-&gt;scsiq_busy_head
-(braket
-id|tid_no
-)braket
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-id|scsiq
-suffix:semicolon
-id|asc_dvc-&gt;scsiq_busy_tail
-(braket
-id|tid_no
-)braket
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-id|scsiq
-suffix:semicolon
-id|scsiq-&gt;ext.next
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-suffix:semicolon
-id|scsiq-&gt;ext.join
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-suffix:semicolon
-id|scsiq-&gt;q1.status
-op_assign
-id|QS_BUSY
-suffix:semicolon
-id|sta
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_else
-(brace
-id|scsiq_tail
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-id|asc_dvc-&gt;scsiq_busy_tail
-(braket
-id|tid_no
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scsiq_tail-&gt;ext.next
-op_eq
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|scsiq-&gt;q1.cntl
-op_amp
-id|QC_URGENT
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|asc_dvc-&gt;scsiq_busy_head
-(braket
-id|tid_no
-)braket
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-id|scsiq
-suffix:semicolon
-id|scsiq-&gt;ext.next
-op_assign
-id|scsiq_next
-suffix:semicolon
-id|scsiq-&gt;ext.join
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|scsiq-&gt;ext.cntl
-op_amp
-id|QCX_SORT
-)paren
-(brace
-r_do
-(brace
-id|scsiq_prev
-op_assign
-id|scsiq_next
-suffix:semicolon
-id|scsiq_next
-op_assign
-id|scsiq_next-&gt;ext.next
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scsiq-&gt;ext.lba
-OL
-id|scsiq_prev-&gt;ext.lba
-)paren
-r_break
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|scsiq_next
-op_ne
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-)paren
-suffix:semicolon
-id|scsiq_prev-&gt;ext.next
-op_assign
-id|scsiq
-suffix:semicolon
-id|scsiq-&gt;ext.next
-op_assign
-id|scsiq_next
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scsiq_next
-op_eq
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-)paren
-(brace
-id|asc_dvc-&gt;scsiq_busy_tail
-(braket
-id|tid_no
-)braket
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-id|scsiq
-suffix:semicolon
-)brace
-id|scsiq-&gt;ext.join
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-suffix:semicolon
-)brace
-r_else
-(brace
-id|scsiq_tail-&gt;ext.next
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-id|scsiq
-suffix:semicolon
-id|asc_dvc-&gt;scsiq_busy_tail
-(braket
-id|tid_no
-)braket
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-id|scsiq
-suffix:semicolon
-id|scsiq-&gt;ext.next
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-suffix:semicolon
-id|scsiq-&gt;ext.join
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-suffix:semicolon
-)brace
-)brace
-id|scsiq-&gt;q1.status
-op_assign
-id|QS_BUSY
-suffix:semicolon
-id|sta
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_else
-(brace
-id|AscSetLibErrorCode
-c_func
-(paren
-id|asc_dvc
-comma
-id|ASCQ_ERR_SCSIQ_BAD_NEXT_PTR
-)paren
-suffix:semicolon
-id|sta
-op_assign
-id|ERR
-suffix:semicolon
-)brace
-)brace
-)brace
-macro_line|#endif
 id|asc_dvc-&gt;in_critical_cnt
 op_decrement
 suffix:semicolon
@@ -33705,6 +32835,7 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscSendScsiQueue
 id|AscSendScsiQueue
@@ -33718,7 +32849,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 id|scsiq
 comma
@@ -33968,6 +33098,7 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscSgListToQueue
 id|AscSgListToQueue
@@ -34018,6 +33149,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|uint
 DECL|function|AscGetNumOfFreeQueue
 id|AscGetNumOfFreeQueue
@@ -34220,6 +33352,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscPutReadyQueue
 id|AscPutReadyQueue
@@ -34233,7 +33366,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 id|scsiq
 comma
@@ -34392,7 +33524,6 @@ id|ASC_SCSIQ_CDB_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 id|scsiq-&gt;cdbptr
@@ -34437,7 +33568,6 @@ id|ASC_SCSIQ_CPY_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 op_amp
@@ -34529,7 +33659,6 @@ id|ASC_SCSIQ_CDB_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 id|scsiq-&gt;cdbptr
@@ -34583,7 +33712,6 @@ id|ASC_SCSIQ_CPY_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 op_amp
@@ -34717,6 +33845,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscPutReadySgListQueue
 id|AscPutReadySgListQueue
@@ -34730,7 +33859,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 id|scsiq
 comma
@@ -34745,7 +33873,6 @@ r_int
 id|i
 suffix:semicolon
 id|ASC_SG_HEAD
-id|dosfar
 op_star
 id|sg_head
 suffix:semicolon
@@ -35023,7 +34150,6 @@ id|ASC_SCSIQ_SGHD_CPY_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 op_amp
@@ -35058,7 +34184,6 @@ id|ASC_SGQ_LIST_BEG
 comma
 (paren
 id|ulong
-id|dosfar
 op_star
 )paren
 op_amp
@@ -35113,6 +34238,7 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscAbortSRB
 id|AscAbortSRB
@@ -35226,6 +34352,8 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|STATIC
 r_int
 DECL|function|AscResetDevice
 id|AscResetDevice
@@ -35260,12 +34388,10 @@ id|ASC_SCSI_REQ_Q
 id|scsiq_buf
 suffix:semicolon
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 suffix:semicolon
 id|uchar
-id|dosfar
 op_star
 id|buf
 suffix:semicolon
@@ -35366,7 +34492,6 @@ id|scsiq
 op_assign
 (paren
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 op_amp
@@ -35376,7 +34501,6 @@ id|buf
 op_assign
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 op_amp
@@ -35440,7 +34564,6 @@ id|scsiq-&gt;cdbptr
 op_assign
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 id|scsiq-&gt;cdb
@@ -35482,7 +34605,6 @@ id|asc_dvc
 comma
 (paren
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 )paren
 id|scsiq
@@ -35508,7 +34630,6 @@ id|iop_base
 comma
 (paren
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 )paren
 id|scsiq
@@ -35604,6 +34725,8 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|STATIC
 r_int
 DECL|function|AscResetSB
 id|AscResetSB
@@ -35796,6 +34919,7 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscSetRunChipSynRegAtID
 id|AscSetRunChipSynRegAtID
@@ -35856,6 +34980,7 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscSetChipSynRegAtID
 id|AscSetChipSynRegAtID
@@ -36028,6 +35153,7 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscReInitLram
 id|AscReInitLram
@@ -36058,6 +35184,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|ushort
 DECL|function|AscInitLram
 id|AscInitLram
@@ -36451,6 +35578,7 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|ushort
 DECL|function|AscInitQLinkVar
 id|AscInitQLinkVar
@@ -36659,6 +35787,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscSetLibErrorCode
 id|AscSetLibErrorCode
@@ -36703,6 +35832,8 @@ id|err_code
 )paren
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|STATIC
 r_int
 DECL|function|_AscWaitQDone
 id|_AscWaitQDone
@@ -36713,7 +35844,6 @@ id|iop_base
 comma
 id|REG
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 id|scsiq
 )paren
@@ -36799,6 +35929,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|STATIC
 id|uchar
 DECL|function|AscMsgOutSDTR
 id|AscMsgOutSDTR
@@ -36817,7 +35949,7 @@ id|uchar
 id|sdtr_offset
 )paren
 (brace
-id|SDTR_XMSG
+id|EXT_MSG
 id|sdtr_buf
 suffix:semicolon
 id|uchar
@@ -36881,13 +36013,22 @@ id|ASCV_MSGOUT_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 op_amp
 id|sdtr_buf
 comma
-id|SYN_XMSG_WLEN
+(paren
+id|ushort
+)paren
+(paren
+r_sizeof
+(paren
+id|EXT_MSG
+)paren
+op_rshift
+l_int|1
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -36917,13 +36058,22 @@ id|ASCV_MSGOUT_BEG
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 op_amp
 id|sdtr_buf
 comma
-id|SYN_XMSG_WLEN
+(paren
+id|ushort
+)paren
+(paren
+r_sizeof
+(paren
+id|EXT_MSG
+)paren
+op_rshift
+l_int|1
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -36933,6 +36083,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+id|STATIC
 id|uchar
 DECL|function|AscCalSDTRData
 id|AscCalSDTRData
@@ -37003,6 +36154,7 @@ id|byte
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscSetChipSDTR
 id|AscSetChipSDTR
@@ -37041,6 +36193,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 id|uchar
 DECL|function|AscGetSynPeriodIndex
 id|AscGetSynPeriodIndex
@@ -37164,6 +36317,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+id|STATIC
 id|uchar
 DECL|function|AscAllocFreeQueue
 id|AscAllocFreeQueue
@@ -37262,6 +36416,7 @@ id|ASC_QLINK_END
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|uchar
 DECL|function|AscAllocMultipleFreeQueue
 id|AscAllocMultipleFreeQueue
@@ -37326,6 +36481,7 @@ id|free_q_head
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscRiscHaltedAbortSRB
 id|AscRiscHaltedAbortSRB
@@ -37354,7 +36510,6 @@ id|ASC_QDONE_INFO
 id|scsiq_buf
 suffix:semicolon
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 id|scsiq
 suffix:semicolon
@@ -37386,24 +36541,11 @@ id|scsiq
 op_assign
 (paren
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 )paren
 op_amp
 id|scsiq_buf
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-id|_AscAbortSrbBusyQueue
-c_func
-(paren
-id|asc_dvc
-comma
-id|scsiq
-comma
-id|srb_ptr
-)paren
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -37579,6 +36721,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|STATIC
 r_int
 DECL|function|AscRiscHaltedAbortTIX
 id|AscRiscHaltedAbortTIX
@@ -37607,7 +36751,6 @@ id|ASC_QDONE_INFO
 id|scsiq_buf
 suffix:semicolon
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 id|scsiq
 suffix:semicolon
@@ -37617,11 +36760,6 @@ suffix:semicolon
 r_int
 id|last_int_level
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-id|uchar
-id|tid_no
-suffix:semicolon
-macro_line|#endif
 id|iop_base
 op_assign
 id|asc_dvc-&gt;iop_base
@@ -37644,32 +36782,11 @@ id|scsiq
 op_assign
 (paren
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 )paren
 op_amp
 id|scsiq_buf
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-id|tid_no
-op_assign
-id|ASC_TIX_TO_TID
-c_func
-(paren
-id|target_ix
-)paren
-suffix:semicolon
-id|_AscAbortTidBusyQueue
-c_func
-(paren
-id|asc_dvc
-comma
-id|scsiq
-comma
-id|tid_no
-)paren
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -37820,8 +36937,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#if CC_LINK_BUSY_Q
-macro_line|#endif
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|STATIC
 r_int
 DECL|function|AscHostReqRiscHalt
 id|AscHostReqRiscHalt
@@ -37931,6 +37048,7 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscStopQueueExe
 id|AscStopQueueExe
@@ -38016,6 +37134,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscStartQueueExe
 id|AscStartQueueExe
@@ -38056,6 +37175,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscCleanUpBusyQueue
 id|AscCleanUpBusyQueue
@@ -38147,6 +37267,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
+id|STATIC
 r_int
 DECL|function|AscCleanUpDiscQueue
 id|AscCleanUpDiscQueue
@@ -38238,6 +37360,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* version &gt;= v1.3.89 */
+id|STATIC
 r_int
 DECL|function|AscWaitTixISRDone
 id|AscWaitTixISRDone
@@ -38317,6 +37441,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscWaitISRDone
 id|AscWaitISRDone
@@ -38366,6 +37491,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|ulong
 DECL|function|AscGetOnePhyAddr
 id|AscGetOnePhyAddr
@@ -38378,7 +37504,6 @@ op_star
 id|asc_dvc
 comma
 id|uchar
-id|dosfar
 op_star
 id|buf_addr
 comma
@@ -38403,7 +37528,6 @@ id|asc_dvc
 comma
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 id|buf_addr
@@ -38412,7 +37536,6 @@ id|buf_size
 comma
 (paren
 id|ASC_SG_HEAD
-id|dosfar
 op_star
 )paren
 op_amp
@@ -38453,6 +37576,7 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|DvcDelayNanoSecond
 id|DvcDelayNanoSecond
@@ -38505,9 +37629,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|ulong
 DECL|function|AscGetEisaProductID
 id|AscGetEisaProductID
@@ -38579,9 +37704,10 @@ id|product_id
 )paren
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|PortAddr
 DECL|function|AscSearchIOPortAddrEISA
 id|AscSearchIOPortAddrEISA
@@ -38747,6 +37873,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscStartChip
 id|AscStartChip
@@ -38792,6 +37919,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscStopChip
 id|AscStopChip
@@ -38882,6 +38010,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscIsChipHalted
 id|AscIsChipHalted
@@ -38936,6 +38065,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscSetChipIH
 id|AscSetChipIH
@@ -38975,6 +38105,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscAckInterrupt
 id|AscAckInterrupt
@@ -39124,6 +38255,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscDisableInterrupt
 id|AscDisableInterrupt
@@ -39160,6 +38292,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscEnableInterrupt
 id|AscEnableInterrupt
@@ -39193,6 +38326,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscSetBank
 id|AscSetBank
@@ -39279,6 +38413,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscResetChipAndScsiBus
 id|AscResetChipAndScsiBus
@@ -39390,6 +38525,10 @@ id|iop_base
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ulong
 DECL|function|AscGetMaxDmaCount
 id|AscGetMaxDmaCount
@@ -39397,6 +38536,7 @@ c_func
 (paren
 id|ushort
 id|bus_type
+)paren
 )paren
 (brace
 r_if
@@ -39434,6 +38574,10 @@ id|ASC_MAX_PCI_DMA_COUNT
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ushort
 DECL|function|AscGetIsaDmaChannel
 id|AscGetIsaDmaChannel
@@ -39441,6 +38585,7 @@ c_func
 (paren
 id|PortAddr
 id|iop_base
+)paren
 )paren
 (brace
 id|ushort
@@ -39489,6 +38634,10 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ushort
 DECL|function|AscSetIsaDmaChannel
 id|AscSetIsaDmaChannel
@@ -39499,6 +38648,7 @@ id|iop_base
 comma
 id|ushort
 id|dma_channel
+)paren
 )paren
 (brace
 id|ushort
@@ -39579,6 +38729,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|uchar
 DECL|function|AscSetIsaDmaSpeed
 id|AscSetIsaDmaSpeed
@@ -39589,6 +38743,7 @@ id|iop_base
 comma
 id|uchar
 id|speed_value
+)paren
 )paren
 (brace
 id|speed_value
@@ -39629,6 +38784,10 @@ id|iop_base
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|uchar
 DECL|function|AscGetIsaDmaSpeed
 id|AscGetIsaDmaSpeed
@@ -39636,6 +38795,7 @@ c_func
 (paren
 id|PortAddr
 id|iop_base
+)paren
 )paren
 (brace
 id|uchar
@@ -39675,9 +38835,73 @@ id|speed_value
 )paren
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
+id|ushort
+DECL|function|AscReadPCIConfigWord
+id|AscReadPCIConfigWord
+c_func
+(paren
+id|ASC_DVC_VAR
+id|asc_ptr_type
+op_star
+id|asc_dvc
+comma
+id|ushort
+id|pci_config_offset
+)paren
+)paren
+(brace
+id|uchar
+id|lsb
+comma
+id|msb
+suffix:semicolon
+id|lsb
+op_assign
+id|DvcReadPCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|pci_config_offset
+)paren
+suffix:semicolon
+id|msb
+op_assign
+id|DvcReadPCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|pci_config_offset
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_return
+(paren
+(paren
+id|ushort
+)paren
+(paren
+(paren
+id|msb
+op_lshift
+l_int|8
+)paren
+op_or
+id|lsb
+)paren
+)paren
+suffix:semicolon
+)brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ushort
 DECL|function|AscInitGetConfig
 id|AscInitGetConfig
@@ -39693,9 +38917,28 @@ id|asc_dvc
 id|ushort
 id|warn_code
 suffix:semicolon
+id|PortAddr
+id|iop_base
+suffix:semicolon
+id|ushort
+id|PCIDeviceID
+suffix:semicolon
+id|ushort
+id|PCIVendorID
+suffix:semicolon
+id|uchar
+id|PCIRevisionID
+suffix:semicolon
+id|uchar
+id|prevCmdRegBits
+suffix:semicolon
 id|warn_code
 op_assign
 l_int|0
+suffix:semicolon
+id|iop_base
+op_assign
+id|asc_dvc-&gt;iop_base
 suffix:semicolon
 id|asc_dvc-&gt;init_state
 op_assign
@@ -39708,18 +38951,232 @@ id|asc_dvc-&gt;err_code
 op_ne
 l_int|0
 )paren
+(brace
 r_return
 (paren
 id|UW_ERR
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|asc_dvc-&gt;bus_type
+op_eq
+id|ASC_IS_PCI
+)paren
+(brace
+id|PCIVendorID
+op_assign
+id|AscReadPCIConfigWord
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigVendorIDRegister
+)paren
+suffix:semicolon
+id|PCIDeviceID
+op_assign
+id|AscReadPCIConfigWord
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigDeviceIDRegister
+)paren
+suffix:semicolon
+id|PCIRevisionID
+op_assign
+id|DvcReadPCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigRevisionIDRegister
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PCIVendorID
+op_ne
+id|ASC_PCI_VENDORID
+)paren
+(brace
+id|warn_code
+op_or_assign
+id|ASC_WARN_SET_PCI_CONFIG_SPACE
+suffix:semicolon
+)brace
+id|prevCmdRegBits
+op_assign
+id|DvcReadPCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigCommandRegister
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|prevCmdRegBits
+op_amp
+id|AscPCICmdRegBits_IOMemBusMaster
+)paren
+op_ne
+id|AscPCICmdRegBits_IOMemBusMaster
+)paren
+(brace
+id|DvcWritePCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigCommandRegister
+comma
+(paren
+id|prevCmdRegBits
+op_or
+id|AscPCICmdRegBits_IOMemBusMaster
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|DvcReadPCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigCommandRegister
+)paren
+op_amp
+id|AscPCICmdRegBits_IOMemBusMaster
+)paren
+op_ne
+id|AscPCICmdRegBits_IOMemBusMaster
+)paren
+(brace
+id|warn_code
+op_or_assign
+id|ASC_WARN_SET_PCI_CONFIG_SPACE
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|PCIDeviceID
+op_eq
+id|ASC_PCI_DEVICEID_1200A
+)paren
+op_logical_or
+(paren
+id|PCIDeviceID
+op_eq
+id|ASC_PCI_DEVICEID_1200B
+)paren
+)paren
+(brace
+id|DvcWritePCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigLatencyTimer
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|DvcReadPCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigLatencyTimer
+)paren
+op_ne
+l_int|0x00
+)paren
+(brace
+id|warn_code
+op_or_assign
+id|ASC_WARN_SET_PCI_CONFIG_SPACE
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|PCIDeviceID
+op_eq
+id|ASC_PCI_DEVICEID_ULTRA
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|DvcReadPCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigLatencyTimer
+)paren
+OL
+l_int|0x20
+)paren
+(brace
+id|DvcWritePCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigLatencyTimer
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|DvcReadPCIConfigByte
+c_func
+(paren
+id|asc_dvc
+comma
+id|AscPCIConfigLatencyTimer
+)paren
+OL
+l_int|0x20
+)paren
+(brace
+id|warn_code
+op_or_assign
+id|ASC_WARN_SET_PCI_CONFIG_SPACE
+suffix:semicolon
+)brace
+)brace
+)brace
+)brace
 r_if
 c_cond
 (paren
 id|AscFindSignature
 c_func
 (paren
-id|asc_dvc-&gt;iop_base
+id|iop_base
 )paren
 )paren
 (brace
@@ -39731,26 +39188,6 @@ c_func
 id|asc_dvc
 )paren
 suffix:semicolon
-macro_line|#if CC_INCLUDE_EEP_CONFIG
-r_if
-c_cond
-(paren
-id|asc_dvc-&gt;init_state
-op_amp
-id|ASC_INIT_STATE_WITHOUT_EEP
-)paren
-(brace
-id|warn_code
-op_or_assign
-id|AscInitWithoutEEP
-c_func
-(paren
-id|asc_dvc
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|warn_code
 op_or_assign
 id|AscInitFromEEP
@@ -39759,17 +39196,6 @@ c_func
 id|asc_dvc
 )paren
 suffix:semicolon
-)brace
-macro_line|#else
-id|warn_code
-op_or_assign
-id|AscInitWithoutEEP
-c_func
-(paren
-id|asc_dvc
-)paren
-suffix:semicolon
-macro_line|#endif
 id|asc_dvc-&gt;init_state
 op_or_assign
 id|ASC_INIT_STATE_END_GET_CFG
@@ -39796,14 +39222,13 @@ id|ASC_IERR_BAD_SIGNATURE
 suffix:semicolon
 )brace
 r_return
-(paren
 id|warn_code
-)paren
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|ushort
 DECL|function|AscInitSetConfig
 id|AscInitSetConfig
@@ -39875,9 +39300,10 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|ushort
 DECL|function|AscInitFromAscDvcVar
 id|AscInitFromAscDvcVar
@@ -40093,70 +39519,6 @@ id|asc_dvc-&gt;bug_fix_cntl
 op_or_assign
 id|ASC_BUG_FIX_ASYN_USE_SYN
 suffix:semicolon
-macro_line|#if CC_SET_PCI_LATENCY_TIMER_ZERO
-id|DvcWritePCIConfigByte
-c_func
-(paren
-id|asc_dvc
-comma
-id|AscPCIConfigCommandRegister
-comma
-id|AscPCICmdRegBits_BusMastering
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|DvcReadPCIConfigByte
-c_func
-(paren
-id|asc_dvc
-comma
-id|AscPCIConfigCommandRegister
-)paren
-op_amp
-id|AscPCICmdRegBits_BusMastering
-)paren
-op_ne
-id|AscPCICmdRegBits_BusMastering
-)paren
-(brace
-id|warn_code
-op_or_assign
-id|ASC_WARN_SET_PCI_CONFIG_SPACE
-suffix:semicolon
-)brace
-id|DvcWritePCIConfigByte
-c_func
-(paren
-id|asc_dvc
-comma
-id|AscPCIConfigLatencyTimer
-comma
-l_int|0x00
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|DvcReadPCIConfigByte
-c_func
-(paren
-id|asc_dvc
-comma
-id|AscPCIConfigLatencyTimer
-)paren
-op_ne
-l_int|0x00
-)paren
-(brace
-id|warn_code
-op_or_assign
-id|ASC_WARN_SET_PCI_CONFIG_SPACE
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 )brace
 )brace
@@ -40239,9 +39601,10 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|ushort
 DECL|function|AscInitAsc1000Driver
 id|AscInitAsc1000Driver
@@ -40397,7 +39760,6 @@ l_int|0
 comma
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 id|_mcode_buf
@@ -40442,9 +39804,10 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
-id|__initfunc
+id|ASC_INITFUNC
 c_func
 (paren
+id|STATIC
 id|ushort
 DECL|function|AscInitAscDvcVar
 id|AscInitAscDvcVar
@@ -40522,48 +39885,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#if CC_LINK_BUSY_Q
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-op_le
-id|ASC_MAX_TID
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|asc_dvc-&gt;scsiq_busy_head
-(braket
-id|i
-)braket
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-suffix:semicolon
-id|asc_dvc-&gt;scsiq_busy_tail
-(braket
-id|i
-)braket
-op_assign
-(paren
-id|ASC_SCSI_Q
-id|dosfar
-op_star
-)paren
-l_int|0L
-suffix:semicolon
-)brace
-macro_line|#endif
 id|asc_dvc-&gt;bug_fix_cntl
 op_assign
 l_int|0
@@ -40780,10 +40101,14 @@ op_logical_and
 (paren
 id|chip_version
 op_ge
-id|ASC_CHIP_VER_1ST_PCI_ULTRA
+id|ASC_CHIP_VER_PCI_ULTRA_3150
 )paren
 )paren
 (brace
+id|asc_dvc-&gt;bus_type
+op_assign
+id|ASC_IS_PCI_ULTRA
+suffix:semicolon
 id|asc_dvc-&gt;sdtr_period_tbl
 (braket
 l_int|0
@@ -40900,6 +40225,14 @@ id|asc_dvc-&gt;max_sdtr_index
 op_assign
 l_int|15
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|chip_version
+op_eq
+id|ASC_CHIP_VER_PCI_ULTRA_3150
+)paren
+(brace
 id|AscSetExtraControl
 c_func
 (paren
@@ -40912,9 +40245,49 @@ id|SEC_SLEW_RATE
 )paren
 )paren
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|chip_version
+op_ge
+id|ASC_CHIP_VER_PCI_ULTRA_3050
+)paren
+(brace
+id|AscSetExtraControl
+c_func
+(paren
+id|iop_base
+comma
+(paren
+id|SEC_ACTIVE_NEGATE
+op_or
+id|SEC_ENABLE_FILTER
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
 id|asc_dvc-&gt;bus_type
-op_assign
-id|ASC_IS_PCI_ULTRA
+op_eq
+id|ASC_IS_PCI
+)paren
+(brace
+id|AscSetExtraControl
+c_func
+(paren
+id|iop_base
+comma
+(paren
+id|SEC_ACTIVE_NEGATE
+op_or
+id|SEC_SLEW_RATE
+)paren
+)paren
 suffix:semicolon
 )brace
 id|asc_dvc-&gt;cfg-&gt;isa_dma_speed
@@ -41006,7 +40379,6 @@ id|i
 op_assign
 (paren
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 )paren
 l_int|0L
@@ -41018,7 +40390,6 @@ id|i
 op_assign
 (paren
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 )paren
 l_int|0L
@@ -41038,6 +40409,10 @@ id|warn_code
 suffix:semicolon
 )brace
 macro_line|#if CC_INCLUDE_EEP_CONFIG
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ushort
 DECL|function|AscInitFromEEP
 id|AscInitFromEEP
@@ -41048,12 +40423,12 @@ id|asc_ptr_type
 op_star
 id|asc_dvc
 )paren
+)paren
 (brace
 id|ASCEEP_CONFIG
 id|eep_config_buf
 suffix:semicolon
 id|ASCEEP_CONFIG
-id|dosfar
 op_star
 id|eep_config
 suffix:semicolon
@@ -41205,7 +40580,6 @@ id|eep_config
 op_assign
 (paren
 id|ASCEEP_CONFIG
-id|dosfar
 op_star
 )paren
 op_amp
@@ -41697,206 +41071,10 @@ id|warn_code
 suffix:semicolon
 )brace
 macro_line|#endif
-id|ushort
-DECL|function|AscInitWithoutEEP
-id|AscInitWithoutEEP
+id|ASC_INITFUNC
 c_func
 (paren
-id|ASC_DVC_VAR
-id|asc_ptr_type
-op_star
-id|asc_dvc
-)paren
-(brace
-id|PortAddr
-id|iop_base
-suffix:semicolon
-id|ushort
-id|warn_code
-suffix:semicolon
-id|ushort
-id|cfg_msw
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-id|iop_base
-op_assign
-id|asc_dvc-&gt;iop_base
-suffix:semicolon
-id|warn_code
-op_assign
-l_int|0
-suffix:semicolon
-id|cfg_msw
-op_assign
-id|AscGetChipCfgMsw
-c_func
-(paren
-id|iop_base
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|cfg_msw
-op_amp
-id|ASC_CFG_MSW_CLR_MASK
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|cfg_msw
-op_and_assign
-(paren
-op_complement
-(paren
-id|ASC_CFG_MSW_CLR_MASK
-)paren
-)paren
-suffix:semicolon
-id|warn_code
-op_or_assign
-id|ASC_WARN_CFG_MSW_RECOVER
-suffix:semicolon
-id|AscSetChipCfgMsw
-c_func
-(paren
-id|iop_base
-comma
-id|cfg_msw
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|AscTestExternalLram
-c_func
-(paren
-id|asc_dvc
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|asc_dvc-&gt;bus_type
-op_amp
-id|ASC_IS_PCI_ULTRA
-)paren
-op_eq
-id|ASC_IS_PCI_ULTRA
-)paren
-)paren
-(brace
-id|asc_dvc-&gt;max_total_qng
-op_assign
-id|ASC_MAX_PCI_ULTRA_INRAM_TOTAL_QNG
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-op_le
-id|ASC_MAX_TID
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|asc_dvc-&gt;cfg-&gt;max_tag_qng
-(braket
-id|i
-)braket
-op_assign
-id|ASC_MAX_PCI_ULTRA_INRAM_TAG_QNG
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-id|cfg_msw
-op_or_assign
-l_int|0x0800
-suffix:semicolon
-id|AscSetChipCfgMsw
-c_func
-(paren
-id|iop_base
-comma
-id|cfg_msw
-)paren
-suffix:semicolon
-id|asc_dvc-&gt;max_total_qng
-op_assign
-id|ASC_MAX_PCI_INRAM_TOTAL_QNG
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-op_le
-id|ASC_MAX_TID
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|asc_dvc-&gt;cfg-&gt;max_tag_qng
-(braket
-id|i
-)braket
-op_assign
-id|ASC_MAX_INRAM_TAG_QNG
-suffix:semicolon
-)brace
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|asc_dvc-&gt;bus_type
-op_amp
-(paren
-id|ASC_IS_ISA
-op_or
-id|ASC_IS_VL
-op_or
-id|ASC_IS_EISA
-)paren
-)paren
-(brace
-id|asc_dvc-&gt;irq_no
-op_assign
-id|AscGetChipIRQ
-c_func
-(paren
-id|iop_base
-comma
-id|asc_dvc-&gt;bus_type
-)paren
-suffix:semicolon
-)brace
-r_return
-(paren
-id|warn_code
-)paren
-suffix:semicolon
-)brace
+id|STATIC
 id|ushort
 DECL|function|AscInitMicroCodeVar
 id|AscInitMicroCodeVar
@@ -41906,6 +41084,7 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
+)paren
 )paren
 (brace
 r_int
@@ -42000,7 +41179,6 @@ id|asc_dvc
 comma
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 id|asc_dvc-&gt;cfg-&gt;overrun_buf
@@ -42136,8 +41314,8 @@ id|warn_code
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_void
-id|dosfar
 DECL|function|AscInitPollIsrCallBack
 id|AscInitPollIsrCallBack
 c_func
@@ -42148,13 +41326,11 @@ op_star
 id|asc_dvc
 comma
 id|ASC_QDONE_INFO
-id|dosfar
 op_star
 id|scsi_done_q
 )paren
 (brace
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq_req
 suffix:semicolon
@@ -42191,7 +41367,6 @@ id|scsiq_req
 op_assign
 (paren
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 id|scsi_done_q-&gt;d2.srb_ptr
@@ -42335,8 +41510,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 r_int
-DECL|function|AscTestExternalLram
 id|AscTestExternalLram
 c_func
 (paren
@@ -42344,6 +41523,7 @@ id|ASC_DVC_VAR
 id|asc_ptr_type
 op_star
 id|asc_dvc
+)paren
 )paren
 (brace
 id|PortAddr
@@ -42448,8 +41628,12 @@ id|sta
 suffix:semicolon
 )brace
 macro_line|#if CC_INCLUDE_EEP_CONFIG
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 r_int
-DECL|function|AscWriteEEPCmdReg
 id|AscWriteEEPCmdReg
 c_func
 (paren
@@ -42458,6 +41642,7 @@ id|iop_base
 comma
 id|uchar
 id|cmd_reg
+)paren
 )paren
 (brace
 id|uchar
@@ -42529,8 +41714,12 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 r_int
-DECL|function|AscWriteEEPDataReg
 id|AscWriteEEPDataReg
 c_func
 (paren
@@ -42539,6 +41728,7 @@ id|iop_base
 comma
 id|ushort
 id|data_reg
+)paren
 )paren
 (brace
 id|ushort
@@ -42610,12 +41800,17 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 r_void
-DECL|function|AscWaitEEPRead
 id|AscWaitEEPRead
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|DvcSleepMilliSecond
@@ -42627,12 +41822,17 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 r_void
-DECL|function|AscWaitEEPWrite
 id|AscWaitEEPWrite
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|DvcSleepMilliSecond
@@ -42644,6 +41844,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ushort
 DECL|function|AscReadEEPWord
 id|AscReadEEPWord
@@ -42654,6 +41858,7 @@ id|iop_base
 comma
 id|uchar
 id|addr
+)paren
 )paren
 (brace
 id|ushort
@@ -42713,6 +41918,10 @@ id|read_wval
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ushort
 DECL|function|AscWriteEEPWord
 id|AscWriteEEPWord
@@ -42726,6 +41935,7 @@ id|addr
 comma
 id|ushort
 id|word_val
+)paren
 )paren
 (brace
 id|ushort
@@ -42829,6 +42039,10 @@ id|read_wval
 )paren
 suffix:semicolon
 )brace
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 id|ushort
 DECL|function|AscGetEEPConfig
 id|AscGetEEPConfig
@@ -42838,12 +42052,12 @@ id|PortAddr
 id|iop_base
 comma
 id|ASCEEP_CONFIG
-id|dosfar
 op_star
 id|cfg_buf
 comma
 id|ushort
 id|bus_type
+)paren
 )paren
 (brace
 id|ushort
@@ -42853,7 +42067,6 @@ id|ushort
 id|sum
 suffix:semicolon
 id|ushort
-id|dosfar
 op_star
 id|wbuf
 suffix:semicolon
@@ -42873,7 +42086,6 @@ id|wbuf
 op_assign
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 id|cfg_buf
@@ -43025,8 +42237,12 @@ id|sum
 suffix:semicolon
 )brace
 macro_line|#if CC_CHK_FIX_EEP_CONTENT
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 r_int
-DECL|function|AscSetEEPConfigOnce
 id|AscSetEEPConfigOnce
 c_func
 (paren
@@ -43034,19 +42250,18 @@ id|PortAddr
 id|iop_base
 comma
 id|ASCEEP_CONFIG
-id|dosfar
 op_star
 id|cfg_buf
 comma
 id|ushort
 id|bus_type
 )paren
+)paren
 (brace
 r_int
 id|n_error
 suffix:semicolon
 id|ushort
-id|dosfar
 op_star
 id|wbuf
 suffix:semicolon
@@ -43066,7 +42281,6 @@ id|wbuf
 op_assign
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 id|cfg_buf
@@ -43241,7 +42455,6 @@ id|wbuf
 op_assign
 (paren
 id|ushort
-id|dosfar
 op_star
 )paren
 id|cfg_buf
@@ -43334,8 +42547,12 @@ id|n_error
 )paren
 suffix:semicolon
 )brace
+DECL|function|ASC_INITFUNC
+id|ASC_INITFUNC
+c_func
+(paren
+id|STATIC
 r_int
-DECL|function|AscSetEEPConfig
 id|AscSetEEPConfig
 c_func
 (paren
@@ -43343,12 +42560,12 @@ id|PortAddr
 id|iop_base
 comma
 id|ASCEEP_CONFIG
-id|dosfar
 op_star
 id|cfg_buf
 comma
 id|ushort
 id|bus_type
+)paren
 )paren
 (brace
 r_int
@@ -43411,6 +42628,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#endif
+id|STATIC
 r_int
 DECL|function|AscInitPollBegin
 id|AscInitPollBegin
@@ -43430,19 +42648,6 @@ id|iop_base
 op_assign
 id|asc_dvc-&gt;iop_base
 suffix:semicolon
-macro_line|#if CC_INIT_INQ_DISPLAY
-id|DvcDisplayString
-c_func
-(paren
-(paren
-id|uchar
-id|dosfar
-op_star
-)paren
-l_string|&quot;&bslash;r&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|AscDisableInterrupt
 c_func
 (paren
@@ -43492,6 +42697,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscInitPollEnd
 id|AscInitPollEnd
@@ -43605,19 +42811,6 @@ c_func
 id|iop_base
 )paren
 suffix:semicolon
-macro_line|#if CC_INIT_INQ_DISPLAY
-id|DvcDisplayString
-c_func
-(paren
-(paren
-id|uchar
-id|dosfar
-op_star
-)paren
-l_string|&quot;&bslash;r&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|asc_dvc-&gt;init_state
 op_or_assign
 id|ASC_INIT_STATE_END_INQUIRY
@@ -43629,11 +42822,13 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|variable|_asc_wait_slow_device_
+id|STATIC
 r_int
 id|_asc_wait_slow_device_
 op_assign
 id|FALSE
 suffix:semicolon
+id|STATIC
 r_int
 DECL|function|AscInitPollTarget
 id|AscInitPollTarget
@@ -43647,19 +42842,16 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 comma
 id|REG
 id|ASC_SCSI_INQUIRY
-id|dosfar
 op_star
 id|inq
 comma
 id|REG
 id|ASC_CAP_INFO
-id|dosfar
 op_star
 id|cap_info
 )paren
@@ -43765,7 +42957,6 @@ id|scsiq
 comma
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 id|inq
@@ -43877,18 +43068,6 @@ id|TRUE
 suffix:semicolon
 )brace
 )brace
-macro_line|#if CC_INIT_INQ_DISPLAY
-id|AscDispInquiry
-c_func
-(paren
-id|tid_no
-comma
-id|lun
-comma
-id|inq
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -44057,7 +43236,88 @@ id|asc_dvc-&gt;pci_fix_asyn_xfer
 op_or_assign
 id|tid_bits
 suffix:semicolon
-macro_line|#if CC_DISABLE_ASYN_FIX_WANGTEK_TAPE
+r_if
+c_cond
+(paren
+(paren
+id|dvc_type
+op_eq
+id|SCSI_TYPE_PROC
+)paren
+op_logical_or
+(paren
+id|dvc_type
+op_eq
+id|SCSI_TYPE_SCANNER
+)paren
+)paren
+(brace
+id|asc_dvc-&gt;pci_fix_asyn_xfer
+op_and_assign
+op_complement
+id|tid_bits
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|dvc_type
+op_eq
+id|SCSI_TYPE_SASD
+)paren
+op_logical_and
+(paren
+id|AscCompareString
+c_func
+(paren
+(paren
+id|uchar
+op_star
+)paren
+id|inq-&gt;vendor_id
+comma
+(paren
+id|uchar
+op_star
+)paren
+l_string|&quot;TANDBERG&quot;
+comma
+l_int|8
+)paren
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+id|AscCompareString
+c_func
+(paren
+(paren
+id|uchar
+op_star
+)paren
+id|inq-&gt;product_id
+comma
+(paren
+id|uchar
+op_star
+)paren
+l_string|&quot; TDC 36&quot;
+comma
+l_int|7
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|asc_dvc-&gt;pci_fix_asyn_xfer
+op_and_assign
+op_complement
+id|tid_bits
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -44096,7 +43356,66 @@ op_complement
 id|tid_bits
 suffix:semicolon
 )brace
-macro_line|#endif
+r_if
+c_cond
+(paren
+(paren
+id|dvc_type
+op_eq
+id|SCSI_TYPE_CDROM
+)paren
+op_logical_and
+(paren
+id|AscCompareString
+c_func
+(paren
+(paren
+id|uchar
+op_star
+)paren
+id|inq-&gt;vendor_id
+comma
+(paren
+id|uchar
+op_star
+)paren
+l_string|&quot;NEC     &quot;
+comma
+l_int|8
+)paren
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+id|AscCompareString
+c_func
+(paren
+(paren
+id|uchar
+op_star
+)paren
+id|inq-&gt;product_id
+comma
+(paren
+id|uchar
+op_star
+)paren
+l_string|&quot;CD-ROM DRIVE    &quot;
+comma
+l_int|16
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|asc_dvc-&gt;pci_fix_asyn_xfer
+op_and_assign
+op_complement
+id|tid_bits
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -44208,6 +43527,18 @@ id|tid_bits
 suffix:semicolon
 )brace
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|tmp_disable_init_sdtr
+)paren
+(brace
+id|asc_dvc-&gt;init_sdtr
+op_or_assign
+id|tid_bits
+suffix:semicolon
+)brace
 id|ASC_DBG1
 c_func
 (paren
@@ -44224,6 +43555,7 @@ id|dvc_found
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|PollQueueDone
 id|PollQueueDone
@@ -44237,7 +43569,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 comma
@@ -44286,7 +43617,6 @@ id|asc_dvc
 comma
 (paren
 id|ASC_SCSI_Q
-id|dosfar
 op_star
 )paren
 id|scsiq
@@ -44507,6 +43837,7 @@ id|QD_WITH_ERROR
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|PollScsiInquiry
 id|PollScsiInquiry
@@ -44520,12 +43851,10 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 comma
 id|uchar
-id|dosfar
 op_star
 id|buf
 comma
@@ -44568,7 +43897,6 @@ id|asc_dvc
 comma
 (paren
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 id|scsiq
@@ -44578,6 +43906,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|PollScsiStartUnit
 id|PollScsiStartUnit
@@ -44591,7 +43920,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 )paren
@@ -44629,7 +43957,6 @@ id|asc_dvc
 comma
 (paren
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 id|scsiq
@@ -44639,6 +43966,7 @@ l_int|40
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|PollScsiReadCapacity
 id|PollScsiReadCapacity
@@ -44652,13 +43980,11 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 comma
 id|REG
 id|ASC_CAP_INFO
-id|dosfar
 op_star
 id|cap_info
 )paren
@@ -44681,7 +44007,6 @@ id|scsiq
 comma
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 op_amp
@@ -44708,7 +44033,6 @@ id|asc_dvc
 comma
 (paren
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 id|scsiq
@@ -44736,7 +44060,6 @@ c_func
 (paren
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 op_amp
@@ -44754,7 +44077,6 @@ c_func
 (paren
 (paren
 id|uchar
-id|dosfar
 op_star
 )paren
 op_amp
@@ -44785,15 +44107,14 @@ id|QD_WITH_ERROR
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|ulong
-id|dosfar
 op_star
 DECL|function|swapfarbuf4
 id|swapfarbuf4
 c_func
 (paren
 id|uchar
-id|dosfar
 op_star
 id|buf
 )paren
@@ -44853,13 +44174,13 @@ r_return
 (paren
 (paren
 id|ulong
-id|dosfar
 op_star
 )paren
 id|buf
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|PollScsiTestUnitReady
 id|PollScsiTestUnitReady
@@ -44873,7 +44194,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 )paren
@@ -44909,7 +44229,6 @@ id|asc_dvc
 comma
 (paren
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 )paren
 id|scsiq
@@ -44919,6 +44238,7 @@ l_int|12
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|InitTestUnitReady
 id|InitTestUnitReady
@@ -44932,7 +44252,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 )paren
@@ -44944,7 +44263,6 @@ r_int
 id|retry
 suffix:semicolon
 id|ASC_REQ_SENSE
-id|dosfar
 op_star
 id|sen
 suffix:semicolon
@@ -45006,7 +44324,6 @@ id|sen
 op_assign
 (paren
 id|ASC_REQ_SENSE
-id|dosfar
 op_star
 )paren
 id|scsiq-&gt;sense_ptr
@@ -45154,6 +44471,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscPollQDone
 id|AscPollQDone
@@ -45167,7 +44485,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 comma
@@ -45381,6 +44698,7 @@ id|sta
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscCompareString
 id|AscCompareString
@@ -45455,6 +44773,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|uchar
 DECL|function|AscReadLramByte
 id|AscReadLramByte
@@ -45553,6 +44872,7 @@ id|byte_data
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|ushort
 DECL|function|AscReadLramWord
 id|AscReadLramWord
@@ -45590,6 +44910,7 @@ id|word_data
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 id|ulong
 DECL|function|AscReadLramDWord
 id|AscReadLramDWord
@@ -45656,6 +44977,7 @@ id|dword_data
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscWriteLramWord
 id|AscWriteLramWord
@@ -45690,6 +45012,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscWriteLramDWord
 id|AscWriteLramDWord
@@ -45753,6 +45076,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscWriteLramByte
 id|AscWriteLramByte
@@ -45855,6 +45179,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscMemWordCopyToLram
 id|AscMemWordCopyToLram
@@ -45867,7 +45192,6 @@ id|ushort
 id|s_addr
 comma
 id|ushort
-id|dosfar
 op_star
 id|s_buffer
 comma
@@ -45898,6 +45222,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscMemDWordCopyToLram
 id|AscMemDWordCopyToLram
@@ -45910,7 +45235,6 @@ id|ushort
 id|s_addr
 comma
 id|ulong
-id|dosfar
 op_star
 id|s_buffer
 comma
@@ -45941,6 +45265,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscMemWordCopyFromLram
 id|AscMemWordCopyFromLram
@@ -45953,7 +45278,6 @@ id|ushort
 id|s_addr
 comma
 id|ushort
-id|dosfar
 op_star
 id|d_buffer
 comma
@@ -45984,6 +45308,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 id|ulong
 DECL|function|AscMemSumLramWord
 id|AscMemSumLramWord
@@ -46045,6 +45370,7 @@ id|sum
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_void
 DECL|function|AscMemWordSetLram
 id|AscMemWordSetLram
@@ -46101,6 +45427,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscScsiInquiry
 id|AscScsiInquiry
@@ -46114,12 +45441,10 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 comma
 id|uchar
-id|dosfar
 op_star
 id|buf
 comma
@@ -46213,6 +45538,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscScsiReadCapacity
 id|AscScsiReadCapacity
@@ -46226,12 +45552,10 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 comma
 id|uchar
-id|dosfar
 op_star
 id|info
 )paren
@@ -46347,6 +45671,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscScsiTestUnitReady
 id|AscScsiTestUnitReady
@@ -46360,7 +45685,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 )paren
@@ -46458,6 +45782,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|STATIC
 r_int
 DECL|function|AscScsiStartStopUnit
 id|AscScsiStartStopUnit
@@ -46471,7 +45796,6 @@ id|asc_dvc
 comma
 id|REG
 id|ASC_SCSI_REQ_Q
-id|dosfar
 op_star
 id|scsiq
 comma

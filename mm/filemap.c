@@ -4353,12 +4353,6 @@ id|vma-&gt;vm_ops-&gt;sync
 r_int
 id|error
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Horrible */
 id|error
 op_assign
 id|vma-&gt;vm_ops
@@ -4377,12 +4371,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Horrible */
 r_if
 c_cond
 (paren
@@ -4449,11 +4437,9 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-id|down
+id|lock_kernel
 c_func
 (paren
-op_amp
-id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if
@@ -4663,11 +4649,9 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|up
+id|unlock_kernel
 c_func
 (paren
-op_amp
-id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return
