@@ -108,7 +108,12 @@ multiline_comment|/* Only process if socket is not in use. */
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 (brace
 id|sk-&gt;timer.expires

@@ -1158,7 +1158,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 id|printk
 c_func
@@ -3606,7 +3611,12 @@ multiline_comment|/*&n;&t; * Check whether the socket is locked ... supposedly&n
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 id|printk
 c_func

@@ -166,8 +166,12 @@ op_star
 id|sk
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
-op_increment
+)paren
 suffix:semicolon
 )brace
 DECL|function|unix_unlock
@@ -183,8 +187,12 @@ id|sk
 )paren
 (brace
 r_return
-op_decrement
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 suffix:semicolon
 )brace
 DECL|function|unix_locked
@@ -200,7 +208,12 @@ id|sk
 )paren
 (brace
 r_return
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 suffix:semicolon
 )brace
 DECL|function|unix_release_addr
@@ -974,7 +987,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|unix_unlock
 c_func
 (paren
@@ -1269,9 +1281,14 @@ id|sk-&gt;protinfo.af_unix.dentry
 op_assign
 l_int|NULL
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* Us */
 id|sk-&gt;protinfo.af_unix.readsem
@@ -5539,7 +5556,12 @@ l_string|&quot;%p: %08X %08X %08lX %04X %02X %5ld&quot;
 comma
 id|s
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|s-&gt;sock_readers
+)paren
 comma
 l_int|0
 comma

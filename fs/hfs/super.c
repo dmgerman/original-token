@@ -1514,13 +1514,11 @@ id|dev
 op_assign
 id|s-&gt;s_dev
 suffix:semicolon
-macro_line|#ifndef CONFIG_MAC_PARTITION
 id|hfs_s32
 id|part_size
 comma
 id|part_start
 suffix:semicolon
-macro_line|#endif
 r_struct
 id|inode
 op_star
@@ -1581,8 +1579,30 @@ comma
 id|HFS_SECTOR_SIZE
 )paren
 suffix:semicolon
-multiline_comment|/* look for a partition table and find the correct partition */
-macro_line|#ifndef CONFIG_MAC_PARTITION
+macro_line|#ifdef CONFIG_MAC_PARTITION
+multiline_comment|/* check to see if we&squot;re in a partition */
+id|mdb
+op_assign
+id|hfs_mdb_get
+c_func
+(paren
+id|s
+comma
+id|s-&gt;s_flags
+op_amp
+id|MS_RDONLY
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* erk. try parsing the partition table ourselves */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mdb
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -1621,7 +1641,32 @@ comma
 id|part_start
 )paren
 suffix:semicolon
+)brace
 macro_line|#else
+r_if
+c_cond
+(paren
+id|hfs_part_find
+c_func
+(paren
+id|s
+comma
+id|part
+comma
+id|silent
+comma
+op_amp
+id|part_size
+comma
+op_amp
+id|part_start
+)paren
+)paren
+(brace
+r_goto
+id|bail2
+suffix:semicolon
+)brace
 id|mdb
 op_assign
 id|hfs_mdb_get
@@ -1633,7 +1678,7 @@ id|s-&gt;s_flags
 op_amp
 id|MS_RDONLY
 comma
-l_int|0
+id|part_start
 )paren
 suffix:semicolon
 macro_line|#endif

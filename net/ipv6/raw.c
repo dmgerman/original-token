@@ -880,7 +880,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 (brace
 id|__skb_queue_tail

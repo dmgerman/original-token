@@ -311,7 +311,7 @@ mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count[cpu] ? 0 : (local_bh
 DECL|macro|softirq_endlock
 mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[cpu] = 0)
 DECL|macro|synchronize_bh
-mdefine_line|#define synchronize_bh()&t;do { } while (0)
+mdefine_line|#define synchronize_bh()&t;barrier()
 macro_line|#endif&t;/* SMP */
 multiline_comment|/*&n; * These use a mask count to correctly handle&n; * nested disable/enable calls&n; */
 DECL|function|disable_bh

@@ -57,12 +57,6 @@ r_int
 r_char
 id|s_utf8
 suffix:semicolon
-DECL|member|s_name_check
-r_int
-r_char
-id|s_name_check
-suffix:semicolon
-multiline_comment|/* r = relaxed, s = strict */
 DECL|member|s_cruft
 r_int
 r_char

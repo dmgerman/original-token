@@ -4329,6 +4329,9 @@ multiline_comment|/* js_mmap */
 id|js_open
 comma
 multiline_comment|/* js_open */
+l_int|NULL
+comma
+multiline_comment|/* js_flush */
 id|js_release
 comma
 multiline_comment|/* js_release */

@@ -1696,7 +1696,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * This is called when we want to synchronize with&n; * bottom half handlers. We need to wait until&n; * no other CPU is executing any bottom half handler.&n; *&n; * Don&squot;t wait if we&squot;re already running in an interrupt&n; * context or are inside a bh handler.&n; */
+multiline_comment|/*&n; * This is called when we want to synchronize with&n; * bottom half handlers. We need to wait until&n; * no other CPU is executing any bottom half handler.&n; *&n; * Don&squot;t wait if we&squot;re already running in an interrupt&n; * context or are inside a bh handler. &n; */
 DECL|function|synchronize_bh
 r_void
 id|synchronize_bh

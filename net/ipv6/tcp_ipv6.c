@@ -2696,7 +2696,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 (brace
 multiline_comment|/* remove later */
@@ -2748,7 +2753,12 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 r_return
 suffix:semicolon
@@ -5126,7 +5136,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 r_return
 id|tcp_v6_do_rcv

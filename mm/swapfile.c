@@ -2295,7 +2295,8 @@ id|nr_good_pages
 op_assign
 l_int|0
 suffix:semicolon
-r_char
+r_int
+r_int
 id|tmp_lock_map
 op_assign
 l_int|0
@@ -2689,6 +2690,10 @@ suffix:semicolon
 )brace
 id|p-&gt;swap_lockmap
 op_assign
+(paren
+r_char
+op_star
+)paren
 op_amp
 id|tmp_lock_map
 suffix:semicolon
@@ -2714,7 +2719,7 @@ id|swap_header
 suffix:semicolon
 id|p-&gt;swap_lockmap
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond

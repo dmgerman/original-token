@@ -711,7 +711,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 (brace
 multiline_comment|/* Try again in second. */
@@ -1647,7 +1652,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 (brace
 multiline_comment|/* Try again in a second. */
@@ -1927,7 +1937,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 op_logical_and
 id|tp-&gt;syn_wait_queue
 )paren

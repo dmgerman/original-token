@@ -2985,7 +2985,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 (brace
 id|lock_sock
@@ -3337,7 +3342,12 @@ multiline_comment|/* Prevent race conditions with accept() - &n;&t;&t; * ICMP is
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 (brace
 multiline_comment|/* XXX: add a counter here to profile this. &n;&t;&t;&t; * If too many ICMPs get dropped on busy&n;&t;&t;&t; * servers this needs to be solved differently.&n;&t;&t;&t; */
@@ -4808,9 +4818,14 @@ id|newsk-&gt;dport
 op_assign
 id|req-&gt;rmt_port
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|newsk-&gt;sock_readers
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 id|atomic_set
 c_func
@@ -6424,7 +6439,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;sock_readers
+)paren
 )paren
 r_return
 id|tcp_v4_do_rcv

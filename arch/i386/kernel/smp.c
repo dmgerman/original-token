@@ -652,7 +652,7 @@ id|mpc
 )paren
 suffix:semicolon
 r_int
-id|apics
+id|ioapics
 op_assign
 l_int|0
 suffix:semicolon
@@ -1242,7 +1242,7 @@ op_amp
 id|MPC_APIC_USABLE
 )paren
 (brace
-id|apics
+id|ioapics
 op_increment
 suffix:semicolon
 id|printk
@@ -1257,6 +1257,13 @@ comma
 id|m-&gt;mpc_apicaddr
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * we use the first one only currently&n;&t;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ioapics
+)paren
 id|mp_ioapic_addr
 op_assign
 id|m-&gt;mpc_apicaddr
@@ -1389,18 +1396,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|apics
+id|ioapics
 OG
 l_int|1
 )paren
-(brace
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: Multiple APICs not supported.&bslash;n&quot;
+l_string|&quot;Warning: Multiple IO-APICs not yet supported.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
 id|num_processors
 suffix:semicolon

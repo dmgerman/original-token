@@ -1513,12 +1513,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* Make sure the timer isn&squot;t running in parallell.. */
-id|synchronize_bh
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
