@@ -33,9 +33,8 @@ c_func
 (paren
 r_int
 r_int
-comma
-r_int
-r_int
+op_star
+id|zones_size
 )paren
 suffix:semicolon
 DECL|variable|bad_pmd_string

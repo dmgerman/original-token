@@ -29,9 +29,11 @@ DECL|macro|PSC6_SOURCE_BASE
 mdefine_line|#define PSC6_SOURCE_BASE&t;48
 DECL|macro|NUBUS_SOURCE_BASE
 mdefine_line|#define NUBUS_SOURCE_BASE&t;56
-multiline_comment|/*&n; * Maximum IRQ number is NUBUS_SOURCE_BASE + 7,&n; * giving us IRQs up through 63.&n; */
+DECL|macro|BABOON_SOURCE_BASE
+mdefine_line|#define BABOON_SOURCE_BASE&t;64
+multiline_comment|/*&n; * Maximum IRQ number is BABOON_SOURCE_BASE + 7,&n; * giving us IRQs up through 71&n; */
 DECL|macro|NUM_MAC_SOURCES
-mdefine_line|#define NUM_MAC_SOURCES&t;&t;64
+mdefine_line|#define NUM_MAC_SOURCES&t;&t;72
 multiline_comment|/* &n; * clean way to separate IRQ into its source and index&n; */
 DECL|macro|IRQ_SRC
 mdefine_line|#define IRQ_SRC(irq)&t;(irq &gt;&gt; 3)
@@ -181,6 +183,15 @@ DECL|macro|IRQ_NUBUS_E
 mdefine_line|#define IRQ_NUBUS_E&t;  (61)
 DECL|macro|IRQ_NUBUS_F
 mdefine_line|#define IRQ_NUBUS_F&t;  (62)
+multiline_comment|/* Baboon interrupts (cascaded to nubus slot $C) */
+DECL|macro|IRQ_BABOON_0
+mdefine_line|#define IRQ_BABOON_0&t;  (64)
+DECL|macro|IRQ_BABOON_1
+mdefine_line|#define IRQ_BABOON_1&t;  (65)
+DECL|macro|IRQ_BABOON_2
+mdefine_line|#define IRQ_BABOON_2&t;  (66)
+DECL|macro|IRQ_BABOON_3
+mdefine_line|#define IRQ_BABOON_3&t;  (67)
 DECL|macro|SLOT2IRQ
 mdefine_line|#define SLOT2IRQ(x)&t;  (x + 47)
 DECL|macro|IRQ2SLOT

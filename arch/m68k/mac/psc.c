@@ -326,7 +326,7 @@ c_func
 r_void
 )paren
 (brace
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 l_int|3
@@ -335,7 +335,7 @@ id|psc_irq
 comma
 id|IRQ_FLG_LOCK
 comma
-l_string|&quot;PSC Dispatch&quot;
+l_string|&quot;psc3&quot;
 comma
 (paren
 r_void
@@ -344,7 +344,7 @@ op_star
 l_int|0x30
 )paren
 suffix:semicolon
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 l_int|4
@@ -353,7 +353,7 @@ id|psc_irq
 comma
 id|IRQ_FLG_LOCK
 comma
-l_string|&quot;PSC Dispatch&quot;
+l_string|&quot;psc4&quot;
 comma
 (paren
 r_void
@@ -362,7 +362,7 @@ op_star
 l_int|0x40
 )paren
 suffix:semicolon
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 l_int|5
@@ -371,7 +371,7 @@ id|psc_irq
 comma
 id|IRQ_FLG_LOCK
 comma
-l_string|&quot;PSC Dispatch&quot;
+l_string|&quot;psc5&quot;
 comma
 (paren
 r_void
@@ -380,7 +380,7 @@ op_star
 l_int|0x50
 )paren
 suffix:semicolon
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 l_int|6
@@ -389,7 +389,7 @@ id|psc_irq
 comma
 id|IRQ_FLG_LOCK
 comma
-l_string|&quot;PSC Dispatch&quot;
+l_string|&quot;psc6&quot;
 comma
 (paren
 r_void

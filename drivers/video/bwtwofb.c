@@ -16,7 +16,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;video/sbusfb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifndef __sparc_v9__
+macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__mc68000__)
 macro_line|#include &lt;asm/sun4paddr.h&gt;
 macro_line|#endif
 macro_line|#include &lt;video/fbcon-mfb.h&gt;
@@ -962,6 +962,7 @@ l_int|NULL
 suffix:semicolon
 r_default
 suffix:colon
+macro_line|#ifndef CONFIG_FB_SUN3
 id|prom_printf
 c_func
 (paren
@@ -975,6 +976,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;&t;
 r_return
 l_int|NULL
 suffix:semicolon

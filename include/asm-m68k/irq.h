@@ -6,7 +6,7 @@ multiline_comment|/*&n; * # of m68k interrupts&n; */
 DECL|macro|SYS_IRQS
 mdefine_line|#define SYS_IRQS 8
 multiline_comment|/*&n; * This should be the same as the max(NUM_X_SOURCES) for all the&n; * different m68k hosts compiled into the kernel.&n; * Currently the Atari has 72 and the Amiga 24, but if both are&n; * supported in the kernel it is better to make room for 72.&n; */
-macro_line|#if defined(CONFIG_ATARI)
+macro_line|#if defined(CONFIG_ATARI) || defined(CONFIG_MAC)
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS (72+SYS_IRQS)
 macro_line|#else

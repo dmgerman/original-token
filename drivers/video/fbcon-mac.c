@@ -1873,6 +1873,7 @@ id|dest32
 comma
 id|pix32
 suffix:semicolon
+multiline_comment|/* There *are* 68k Macs that support more than 832x624, you know :-) */
 r_if
 c_cond
 (paren
@@ -1886,11 +1887,11 @@ l_int|0
 op_logical_or
 id|pixel_x
 op_ge
-l_int|832
+id|p-&gt;var.xres
 op_logical_or
 id|pixel_y
 op_ge
-l_int|624
+id|p-&gt;var.yres
 )paren
 (brace
 r_int

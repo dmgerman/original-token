@@ -35,8 +35,6 @@ macro_line|#else
 DECL|macro|NDEBUG
 mdefine_line|#define NDEBUG (NDEBUG_ABORT)
 macro_line|#endif
-DECL|macro|USE_WRAPPER
-mdefine_line|#define USE_WRAPPER
 DECL|macro|RESET_BOOT
 mdefine_line|#define RESET_BOOT
 DECL|macro|DRIVER_SETUP
@@ -48,49 +46,10 @@ macro_line|#undef RESET_BOOT
 DECL|macro|DRIVER_SETUP
 macro_line|#undef DRIVER_SETUP
 macro_line|#endif
-multiline_comment|/* &n; * Need to define this to make SCSI work on RBV machines; leave undefined&n; * to enable interrupts a bit more on other machines &n; * Changes method of SCSI interrupt disable from software mask to VIA IER!&n; * (don&squot;t know if that&squot;s essential)&n; *&n; * 990502 (jmt) - not needed (and won&squot;t work) on new irq architecture&n; */
-multiline_comment|/* #define RBV_HACK */
-macro_line|#ifdef RBV_HACK
-DECL|macro|ENABLE_IRQ
-mdefine_line|#define&t;ENABLE_IRQ()&t;mac_turnon_irq( IRQ_MAC_SCSI ); 
-DECL|macro|DISABLE_IRQ
-mdefine_line|#define&t;DISABLE_IRQ()&t;mac_turnoff_irq( IRQ_MAC_SCSI );
-macro_line|#else
 DECL|macro|ENABLE_IRQ
 mdefine_line|#define&t;ENABLE_IRQ()&t;mac_enable_irq( IRQ_MAC_SCSI ); 
 DECL|macro|DISABLE_IRQ
 mdefine_line|#define&t;DISABLE_IRQ()&t;mac_disable_irq( IRQ_MAC_SCSI );
-macro_line|#endif
-DECL|macro|mac_turnon_irq
-mdefine_line|#define mac_turnon_irq(x) mac_enable_irq(x)
-DECL|macro|mac_turnoff_irq
-mdefine_line|#define mac_turnoff_irq(x) mac_disable_irq(x)
-r_extern
-r_void
-id|via_scsi_clear
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
-r_void
-id|scsi_mac_intr
-c_func
-(paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dummy
-comma
-r_struct
-id|pt_regs
-op_star
-id|fp
-)paren
-suffix:semicolon
 macro_line|#ifdef RESET_BOOT
 r_static
 r_void
@@ -633,7 +592,7 @@ l_int|0
 suffix:semicolon
 id|tpnt-&gt;proc_name
 op_assign
-l_string|&quot;Mac 5380 SCSI&quot;
+l_string|&quot;mac5380&quot;
 suffix:semicolon
 multiline_comment|/* setup variables */
 id|tpnt-&gt;can_queue
@@ -841,7 +800,6 @@ id|instance-&gt;irq
 op_ne
 id|IRQ_NONE
 )paren
-macro_line|#ifdef USE_WRAPPER
 r_if
 c_cond
 (paren
@@ -850,36 +808,16 @@ c_func
 (paren
 id|instance-&gt;irq
 comma
-id|scsi_mac_intr
+id|NCR5380_intr
 comma
 id|IRQ_FLG_SLOW
 comma
-l_string|&quot;MacSCSI-5380&quot;
+l_string|&quot;ncr5380&quot;
 comma
-l_int|NULL
+id|NCR5380_intr
 )paren
 )paren
 (brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|instance-&gt;irq
-comma
-id|macscsi_intr
-comma
-id|IRQ_FLG_SLOW
-comma
-l_string|&quot;MacSCSI-5380&quot;
-comma
-l_int|NULL
-)paren
-)paren
-(brace
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -989,7 +927,7 @@ id|free_irq
 (paren
 id|shpnt-&gt;irq
 comma
-l_int|NULL
+id|NCR5380_intr
 )paren
 suffix:semicolon
 r_return
@@ -1033,7 +971,7 @@ l_string|&quot;Macintosh SCSI: resetting the SCSI bus...&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* switch off SCSI IRQ - catch an interrupt without IRQ bit set else */
-id|mac_turnoff_irq
+id|mac_disable_irq
 c_func
 (paren
 id|IRQ_MAC_SCSI
@@ -1111,7 +1049,7 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* switch on SCSI IRQ again */
-id|mac_turnon_irq
+id|mac_enable_irq
 c_func
 (paren
 id|IRQ_MAC_SCSI
@@ -1184,113 +1122,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef USE_WRAPPER
-multiline_comment|/*&n; * SCSI interrupt wrapper - just to make sure it&squot;s the proper irq, and &n; * that we leave the handler in a clean state&n; */
-DECL|function|scsi_mac_intr
-r_static
-r_void
-id|scsi_mac_intr
-(paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|fp
-)paren
-(brace
-macro_line|#ifndef RBV_HACK
-r_int
-r_int
-id|flags
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef RBV_HACK
-id|mac_turnoff_irq
-c_func
-(paren
-id|IRQ_MAC_SCSI
-)paren
-suffix:semicolon
-macro_line|#else
-id|mac_disable_irq
-c_func
-(paren
-id|IRQ_MAC_SCSI
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|irq
-op_eq
-id|IRQ_MAC_SCSI
-)paren
-(brace
-macro_line|#ifndef RBV_HACK
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|restore_irq
-c_func
-(paren
-id|fp
-)paren
-suffix:semicolon
-macro_line|#endif
-id|NCR5380_intr
-(paren
-id|irq
-comma
-id|dev_id
-comma
-id|fp
-)paren
-suffix:semicolon
-macro_line|#ifndef RBV_HACK
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-multiline_comment|/* To be sure the int is not masked */
-macro_line|#ifdef RBV_HACK
-id|mac_turnon_irq
-c_func
-(paren
-id|IRQ_MAC_SCSI
-)paren
-suffix:semicolon
-macro_line|#else
-id|mac_enable_irq
-c_func
-(paren
-id|IRQ_MAC_SCSI
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if 1&t;/* ??? 0 worked */
-multiline_comment|/* Clear the IRQ */
-id|via_scsi_clear
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-macro_line|#endif
 multiline_comment|/*&n; * pseudo-DMA transfer functions, copied and modified from Russel King&squot;s&n; * ARM 5380 driver (cumana_1)&n; *&n; * Work in progress (sort of), didn&squot;t work last time I checked, don&squot;t use!&n; */
 macro_line|#ifdef NOT_EFFICIENT
 DECL|macro|CTRL
@@ -2800,8 +2631,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef USE_WRAPPER
-id|scsi_mac_intr
+id|NCR5380_intr
 c_func
 (paren
 id|IRQ_MAC_SCSI
@@ -2811,18 +2641,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-id|macscsi_intr
-c_func
-(paren
-id|IRQ_MAC_SCSI
-comma
-id|instance
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#endif
 id|restore_flags
 c_func
 (paren

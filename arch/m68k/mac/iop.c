@@ -853,7 +853,7 @@ c_cond
 id|oss_present
 )paren
 (brace
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 id|OSS_IRQLEV_IOPISM

@@ -66,7 +66,7 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|mac_SCC_handler
+id|mac_scc_dispatch
 c_func
 (paren
 r_int
@@ -157,7 +157,7 @@ c_func
 r_void
 )paren
 (brace
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 id|OSS_IRQLEV_SCSI
@@ -166,7 +166,7 @@ id|oss_irq
 comma
 id|IRQ_FLG_LOCK
 comma
-l_string|&quot;OSS SCSI Dispatch&quot;
+l_string|&quot;scsi&quot;
 comma
 (paren
 r_void
@@ -175,21 +175,21 @@ op_star
 id|oss
 )paren
 suffix:semicolon
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 id|OSS_IRQLEV_IOPSCC
 comma
-id|mac_SCC_handler
+id|mac_scc_dispatch
 comma
 id|IRQ_FLG_LOCK
 comma
-l_string|&quot;SCC Dispatch&quot;
+l_string|&quot;scc&quot;
 comma
-id|mac_SCC_handler
+id|mac_scc_dispatch
 )paren
 suffix:semicolon
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 id|OSS_IRQLEV_NUBUS
@@ -198,7 +198,7 @@ id|oss_nubus_irq
 comma
 id|IRQ_FLG_LOCK
 comma
-l_string|&quot;Nubus Dispatch&quot;
+l_string|&quot;nubus&quot;
 comma
 (paren
 r_void
@@ -207,7 +207,7 @@ op_star
 id|oss
 )paren
 suffix:semicolon
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 id|OSS_IRQLEV_SOUND
@@ -216,7 +216,7 @@ id|oss_irq
 comma
 id|IRQ_FLG_LOCK
 comma
-l_string|&quot;OSS Sound Dispatch&quot;
+l_string|&quot;sound&quot;
 comma
 (paren
 r_void
@@ -225,7 +225,7 @@ op_star
 id|oss
 )paren
 suffix:semicolon
-id|request_irq
+id|sys_request_irq
 c_func
 (paren
 id|OSS_IRQLEV_VIA1
@@ -234,7 +234,7 @@ id|via1_irq
 comma
 id|IRQ_FLG_LOCK
 comma
-l_string|&quot;VIA1 Dispatch&quot;
+l_string|&quot;via1&quot;
 comma
 (paren
 r_void
@@ -254,34 +254,6 @@ c_func
 r_void
 )paren
 (brace
-)brace
-multiline_comment|/*&n; * Turn off the power via the ROM control register&n; *&n; * FIXME: not sure how this is supposed to work exactly...&n; */
-DECL|function|oss_poweroff
-r_void
-id|oss_poweroff
-c_func
-(paren
-r_void
-)paren
-(brace
-id|oss-&gt;rom_ctrl
-op_assign
-id|OSS_POWEROFF
-suffix:semicolon
-multiline_comment|/* We should never make it this far... */
-id|printk
-(paren
-l_string|&quot;It is now safe to switch off your machine.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Handle miscellaneous OSS interrupts. Right now that&squot;s just sound&n; * and SCSI; everything else is routed to its own autovector IRQ.&n; */
 DECL|function|oss_irq

@@ -502,6 +502,23 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|sun3fb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sun3fb_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|sgivwfb_init
 c_func
 (paren
@@ -901,6 +918,16 @@ id|fm2fb_setup
 )brace
 comma
 macro_line|#endif 
+macro_line|#ifdef CONFIG_FB_SUN3
+(brace
+l_string|&quot;sun3&quot;
+comma
+id|sun3fb_init
+comma
+id|sun3fb_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_GSP_RESOLVER
 multiline_comment|/* Not a real frame buffer device... */
 (brace
@@ -2584,6 +2611,16 @@ id|VM_IO
 suffix:semicolon
 macro_line|#else
 macro_line|#if defined(__mc68000__)
+macro_line|#if defined(CONFIG_SUN3)
+id|pgprot_val
+c_func
+(paren
+id|vma-&gt;vm_page_prot
+)paren
+op_or_assign
+id|SUN3_PAGE_NOCACHE
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2621,6 +2658,7 @@ op_or_assign
 id|_PAGE_NOCACHE_S
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#elif defined(__powerpc__)
 id|pgprot_val
 c_func

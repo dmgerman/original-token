@@ -265,6 +265,8 @@ DECL|macro|MAC_IDE_QUADRA
 mdefine_line|#define MAC_IDE_QUADRA&t;&t;1
 DECL|macro|MAC_IDE_PB
 mdefine_line|#define MAC_IDE_PB&t;&t;2
+DECL|macro|MAC_IDE_BABOON
+mdefine_line|#define MAC_IDE_BABOON&t;&t;3
 DECL|macro|MAC_SCC_II
 mdefine_line|#define MAC_SCC_II&t;&t;1
 DECL|macro|MAC_SCC_QUADRA

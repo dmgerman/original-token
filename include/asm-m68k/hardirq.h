@@ -12,6 +12,8 @@ id|NR_CPUS
 suffix:semicolon
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() (local_irq_count[smp_processor_id()] + local_bh_count[smp_processor_id()] != 0)
+DECL|macro|in_irq
+mdefine_line|#define in_irq() (local_irq_count[smp_processor_id()] != 0)
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
 DECL|macro|hardirq_endlock

@@ -1664,6 +1664,7 @@ comma
 id|esp
 )paren
 suffix:semicolon
+macro_line|#if 0&t;/* conflicts with IOP ADB */
 id|request_irq
 c_func
 (paren
@@ -1678,6 +1679,7 @@ comma
 id|esp
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1706,6 +1708,7 @@ id|esp-&gt;irq
 op_assign
 id|IRQ_MAC_SCSIDRQ
 suffix:semicolon
+macro_line|#if 0&t;/* conflicts with IOP ADB */
 id|request_irq
 c_func
 (paren
@@ -1720,6 +1723,7 @@ comma
 id|esp
 )paren
 suffix:semicolon
+macro_line|#endif
 id|esp-&gt;cfreq
 op_assign
 l_int|25000000

@@ -107,6 +107,7 @@ suffix:semicolon
 id|tpnt-&gt;proc_name
 op_assign
 l_string|&quot;MVME16x&quot;
+suffix:semicolon
 id|options
 op_assign
 id|OPTION_MEMORY_MAPPED
