@@ -14,8 +14,18 @@ DECL|macro|FPU_info
 mdefine_line|#define FPU_info&t;&t;(I387.soft.info)
 DECL|macro|FPU_CS
 mdefine_line|#define FPU_CS&t;&t;&t;(*(unsigned short *) &amp;(FPU_info-&gt;___cs))
+DECL|macro|FPU_SS
+mdefine_line|#define FPU_SS&t;&t;&t;(*(unsigned short *) &amp;(FPU_info-&gt;___ss))
 DECL|macro|FPU_DS
 mdefine_line|#define FPU_DS&t;&t;&t;(*(unsigned short *) &amp;(FPU_info-&gt;___ds))
+DECL|macro|FPU_VM86_ES
+mdefine_line|#define FPU_VM86_ES             ((&amp;FPU_SS)[2])
+DECL|macro|FPU_VM86_DS
+mdefine_line|#define FPU_VM86_DS             ((&amp;FPU_SS)[4])
+DECL|macro|FPU_VM86_FS
+mdefine_line|#define FPU_VM86_FS             ((&amp;FPU_SS)[6])
+DECL|macro|FPU_VM86_GS
+mdefine_line|#define FPU_VM86_GS             ((&amp;FPU_SS)[8])
 DECL|macro|FPU_EAX
 mdefine_line|#define FPU_EAX&t;&t;&t;(FPU_info-&gt;___eax)
 DECL|macro|FPU_EFLAGS

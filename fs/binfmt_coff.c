@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * These are the functions used to load COFF IBSC style executables.&n; * Information on COFF format may be obtained in either the Intel Binary&n; * Compatibility Specification 2 or O&squot;Rilley&squot;s book on COFF. The shared&n; * libraries are defined only the in the Intel book.&n; *&n; * This file is based upon code written by Eric Youndale for the ELF object&n; * file format.&n; *&n; * Revision information:&n; *    28 August 1993&n; *       Al Longyear (longyear@sii.com)&n; *       initial release to alpha level testing. This version does not load&n; *       shared libraries, but will identify them and log the file names.&n; *&n; *     4 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Added support for shared libraries.&n; *&n; *     9 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Load the FS register with the proper value prior to the call to&n; *       sys_uselib().&n; *&n; *       Built the parameter and envionment strings before destroying the&n; *       current executable.&n; *&n; *    10 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Added new parameter to the create_tables() function to allow the&n; *       proper creation of the IBCS environment stack when the process is&n; *       started.&n; *&n; *       Added code to create_tables() which I mistakenly deleted in the&n; *       last patch.&n; *&n; *    13 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Removed erroneous code which mistakenly folded .data with .bss for&n; *       a shared library. &n; *&n; *     8 Janurary 1994&n; *       Al Longyear (longyear@sii.com)&n; *       Corrected problem with read of library section returning the byte&n; *       count rather than zero. This was a change between the pl12 and&n; *       pl14 kernels which slipped by me.&n; */
+multiline_comment|/*&n; * These are the functions used to load COFF IBSC style executables.&n; * Information on COFF format may be obtained in either the Intel Binary&n; * Compatibility Specification 2 or O&squot;Rilley&squot;s book on COFF. The shared&n; * libraries are defined only the in the Intel book.&n; *&n; * This file is based upon code written by Eric Youndale for the ELF object&n; * file format.&n; *&n; * Author: Al Longyear (longyear@sii.com)&n; *&n; * Latest Revision:&n; *    3 Feburary 1994&n; *      Al Longyear (longyear@sii.com)&n; *      Cleared first page of bss section using put_fs_byte.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -181,6 +181,114 @@ id|ENOEXEC
 suffix:colon
 l_int|0
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *    Clear the bytes in the last page of data.&n; */
+r_static
+DECL|function|clear_memory
+r_int
+id|clear_memory
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+r_int
+id|status
+suffix:semicolon
+id|size
+op_assign
+(paren
+id|PAGE_SIZE
+op_minus
+(paren
+id|addr
+op_amp
+op_complement
+id|PAGE_MASK
+)paren
+)paren
+op_amp
+op_complement
+id|PAGE_MASK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+op_eq
+l_int|0
+)paren
+id|status
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+(brace
+macro_line|#ifdef COFF_DEBUG
+id|printk
+(paren
+l_string|&quot;un-initialized storage in last page %d&bslash;n&quot;
+comma
+id|size
+)paren
+suffix:semicolon
+macro_line|#endif
+id|status
+op_assign
+id|verify_area
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|addr
+comma
+id|size
+)paren
+suffix:semicolon
+macro_line|#ifdef COFF_DEBUG
+id|printk
+(paren
+l_string|&quot;result from verify_area = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|status
+op_ge
+l_int|0
+)paren
+r_while
+c_loop
+(paren
+id|size
+op_decrement
+op_ne
+l_int|0
+)paren
+id|put_fs_byte
+(paren
+l_int|0
+comma
+id|addr
+op_increment
+)paren
+suffix:semicolon
+)brace
+r_return
+id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Helper function to process the load operation.&n; */
@@ -1506,11 +1614,24 @@ comma
 id|PAGE_COPY
 )paren
 suffix:semicolon
+id|status
+op_assign
+id|clear_memory
+(paren
+id|bss_vaddr
+comma
+id|bss_size
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Load any shared library for the executable.&n; */
 r_if
 c_cond
 (paren
+id|status
+op_ge
+l_int|0
+op_logical_and
 id|lib_ok
 op_logical_and
 id|lib_count

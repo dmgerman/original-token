@@ -109,8 +109,8 @@ id|fpu_reg
 id|FPU_REG
 suffix:semicolon
 DECL|member|address_size
+DECL|member|operand_size
 DECL|member|segment
-DECL|typedef|overrides
 r_typedef
 r_struct
 (brace
@@ -118,10 +118,30 @@ r_int
 r_char
 id|address_size
 comma
+id|operand_size
+comma
 id|segment
 suffix:semicolon
 )brace
+DECL|typedef|overrides
 id|overrides
+suffix:semicolon
+multiline_comment|/* This structure is 32 bits: */
+DECL|member|override
+r_typedef
+r_struct
+(brace
+id|overrides
+id|override
+suffix:semicolon
+DECL|member|vm86
+DECL|typedef|fpu_addr_modes
+r_int
+r_char
+id|vm86
+suffix:semicolon
+)brace
+id|fpu_addr_modes
 suffix:semicolon
 DECL|macro|st
 mdefine_line|#define&t;st(x)&t;( regs[((top+x) &amp;7 )] )

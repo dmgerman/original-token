@@ -451,17 +451,11 @@ DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;atp_dev)
 macro_line|#endif
 multiline_comment|/* The first device defaults to I/O base &squot;0&squot;, which means autoprobe. */
-macro_line|#ifdef EI8390
-DECL|macro|ETH0_ADDR
-macro_line|# define ETH0_ADDR EI8390
-macro_line|#else
+macro_line|#ifndef ETH0_ADDR
 DECL|macro|ETH0_ADDR
 macro_line|# define ETH0_ADDR 0
 macro_line|#endif
-macro_line|#ifdef EI8390_IRQ
-DECL|macro|ETH0_IRQ
-macro_line|# define ETH0_IRQ EI8390_IRQ
-macro_line|#else
+macro_line|#ifndef ETH0_IRQ
 DECL|macro|ETH0_IRQ
 macro_line|# define ETH0_IRQ 0
 macro_line|#endif

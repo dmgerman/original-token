@@ -472,8 +472,29 @@ r_int
 r_char
 id|FPU_modrm
 comma
-id|overrides
-id|override
+r_int
+r_int
+op_star
+id|fpu_eip
+comma
+id|fpu_addr_modes
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|get_address_16
+c_func
+(paren
+r_int
+r_char
+id|FPU_modrm
+comma
+r_int
+r_int
+op_star
+id|fpu_eip
+comma
+id|fpu_addr_modes
 )paren
 suffix:semicolon
 multiline_comment|/* load_store.c */
@@ -485,8 +506,8 @@ c_func
 r_char
 id|type
 comma
-id|overrides
-id|override
+id|fpu_addr_modes
+id|addr_modes
 )paren
 suffix:semicolon
 multiline_comment|/* poly_2xm1.c */
@@ -722,8 +743,7 @@ r_int
 id|reg_load_extended
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -731,8 +751,7 @@ r_int
 id|reg_load_double
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -740,8 +759,7 @@ r_int
 id|reg_load_single
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -749,8 +767,7 @@ r_void
 id|reg_load_int64
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -758,8 +775,7 @@ r_void
 id|reg_load_int32
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -767,8 +783,7 @@ r_void
 id|reg_load_int16
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -776,8 +791,7 @@ r_void
 id|reg_load_bcd
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -785,8 +799,7 @@ r_int
 id|reg_store_extended
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -794,8 +807,7 @@ r_int
 id|reg_store_double
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -803,8 +815,7 @@ r_int
 id|reg_store_single
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -812,8 +823,7 @@ r_int
 id|reg_store_int64
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -821,8 +831,7 @@ r_int
 id|reg_store_int32
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -830,8 +839,7 @@ r_int
 id|reg_store_int16
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -839,8 +847,7 @@ r_int
 id|reg_store_bcd
 c_func
 (paren
-id|overrides
-id|override
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -859,7 +866,8 @@ op_star
 id|fldenv
 c_func
 (paren
-r_void
+id|fpu_addr_modes
+id|addr_modes
 )paren
 suffix:semicolon
 r_extern
@@ -867,7 +875,8 @@ r_void
 id|frstor
 c_func
 (paren
-r_void
+id|fpu_addr_modes
+id|addr_modes
 )paren
 suffix:semicolon
 r_extern
@@ -885,7 +894,8 @@ op_star
 id|fstenv
 c_func
 (paren
-r_void
+id|fpu_addr_modes
+id|addr_modes
 )paren
 suffix:semicolon
 r_extern
@@ -893,7 +903,8 @@ r_void
 id|fsave
 c_func
 (paren
-r_void
+id|fpu_addr_modes
+id|addr_modes
 )paren
 suffix:semicolon
 multiline_comment|/* reg_mul.c */

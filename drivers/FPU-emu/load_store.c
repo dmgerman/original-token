@@ -100,8 +100,8 @@ c_func
 r_char
 id|type
 comma
-id|overrides
-id|override
+id|fpu_addr_modes
+id|addr_modes
 )paren
 (brace
 id|FPU_REG
@@ -235,7 +235,6 @@ suffix:semicolon
 id|reg_load_single
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 r_if
@@ -290,7 +289,6 @@ suffix:semicolon
 id|reg_load_int32
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 id|reg_move
@@ -316,7 +314,6 @@ suffix:semicolon
 id|reg_load_double
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 r_if
@@ -371,7 +368,6 @@ suffix:semicolon
 id|reg_load_int16
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 id|reg_move
@@ -397,7 +393,6 @@ suffix:semicolon
 id|reg_store_single
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 r_break
@@ -414,7 +409,6 @@ suffix:semicolon
 id|reg_store_int32
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 r_break
@@ -431,7 +425,6 @@ suffix:semicolon
 id|reg_store_double
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 r_break
@@ -448,7 +441,6 @@ suffix:semicolon
 id|reg_store_int16
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 r_break
@@ -468,7 +460,6 @@ c_cond
 id|reg_store_single
 c_func
 (paren
-id|override
 )paren
 )paren
 id|pop_0
@@ -494,7 +485,6 @@ c_cond
 id|reg_store_int32
 c_func
 (paren
-id|override
 )paren
 )paren
 id|pop_0
@@ -520,7 +510,6 @@ c_cond
 id|reg_store_double
 c_func
 (paren
-id|override
 )paren
 )paren
 id|pop_0
@@ -546,7 +535,6 @@ c_cond
 id|reg_store_int16
 c_func
 (paren
-id|override
 )paren
 )paren
 id|pop_0
@@ -564,6 +552,7 @@ multiline_comment|/* fldenv  m14/28byte */
 id|fldenv
 c_func
 (paren
+id|addr_modes
 )paren
 suffix:semicolon
 r_break
@@ -575,6 +564,7 @@ multiline_comment|/* frstor m94/108byte */
 id|frstor
 c_func
 (paren
+id|addr_modes
 )paren
 suffix:semicolon
 r_break
@@ -591,7 +581,6 @@ suffix:semicolon
 id|reg_load_bcd
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 id|reg_move
@@ -689,7 +678,6 @@ suffix:semicolon
 id|reg_load_extended
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 id|reg_move
@@ -715,7 +703,6 @@ suffix:semicolon
 id|reg_load_int64
 c_func
 (paren
-id|override
 )paren
 suffix:semicolon
 id|reg_move
@@ -736,6 +723,7 @@ multiline_comment|/* fstenv  m14/28byte */
 id|fstenv
 c_func
 (paren
+id|addr_modes
 )paren
 suffix:semicolon
 id|NO_NET_DATA_EFFECT
@@ -749,6 +737,7 @@ multiline_comment|/* fsave */
 id|fsave
 c_func
 (paren
+id|addr_modes
 )paren
 suffix:semicolon
 id|NO_NET_DATA_EFFECT
@@ -770,7 +759,6 @@ c_cond
 id|reg_store_bcd
 c_func
 (paren
-id|override
 )paren
 )paren
 id|pop_0
@@ -832,7 +820,6 @@ c_cond
 id|reg_store_extended
 c_func
 (paren
-id|override
 )paren
 )paren
 id|pop_0
@@ -897,7 +884,6 @@ c_cond
 id|reg_store_int64
 c_func
 (paren
-id|override
 )paren
 )paren
 id|pop_0

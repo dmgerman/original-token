@@ -335,7 +335,7 @@ r_int
 id|secondary_page_list
 suffix:semicolon
 DECL|macro|MAX_SECONDARY_PAGES
-mdefine_line|#define MAX_SECONDARY_PAGES 10
+mdefine_line|#define MAX_SECONDARY_PAGES 20
 multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; */
 r_extern
 r_int
